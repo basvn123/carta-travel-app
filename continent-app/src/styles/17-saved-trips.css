@@ -1,0 +1,2076 @@
+/* Account panel, saved trips, past trips, extras, trip record.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ─── Saved trips overview: three clearly-labelled shelves (destinations,
+   trip plans, day plans), each a card so what-belongs-where reads at a
+   glance. The shelf heading sits in the UI face at sentence case: the old
+   tracked-out uppercase mono fought the serif page title above it. ─── */
+.saved-section { margin-bottom: 6px; }
+.saved-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.saved-section-title {
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+/* A count is a status, not a spare form control: a tinted pill when there is
+   something on the shelf, a quiet one when there is not. */
+.saved-section-count {
+  min-width: 20px;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--ink-mute);
+  background: var(--paper-dim);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+.saved-section-count.on { color: var(--on-fill); background: var(--accent); }
+.saved-section-sub {
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+/* No overflow clipping here: the actions menu opens out of the card, so the
+   footer strip rounds its own bottom corners instead. */
+.saved-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.saved-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
+.saved-card-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 6px;
+}
+/* Asking first: the card becomes the question, in place, with the safe
+   choice sitting closest to where the tap came from. */
+.saved-card-confirm {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 10px 10px 14px;
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.saved-card-confirm-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-card-confirm-keep,
+.saved-card-confirm-go {
+  flex: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.saved-card-confirm-keep {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+.saved-card-confirm-keep:hover { border-color: var(--ink-soft); color: var(--ink); }
+.saved-card-confirm-go {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-fill);
+}
+.saved-card-confirm-go:hover { opacity: 0.9; }
+/* The whole row opens the trip. No chevron, no competing buttons: one target
+   the width of the card, with the tools folded into the menu beside it. */
+.saved-card-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 4px 13px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+/* A round frame, not a rounded rectangle inside a rounded rectangle: nesting
+   the same shape twice was the busiest thing on the card. Flags carry their
+   own edge, so they get no tile behind them at all. */
+.saved-card-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  overflow: hidden;
+}
+.saved-card-icon.is-flag { background: none; overflow: visible; }
+/* Country flag tiles on saved trip cards */
+.country-flag { border-radius: 3px; box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.12); display: block; }
+.country-flag-stack { display: flex; align-items: center; justify-content: center; }
+/* Two or three countries: overlap the flags like a fanned hand */
+.country-flag-stack.n2 .country-flag + .country-flag,
+.country-flag-stack.n3 .country-flag + .country-flag { margin-left: -8px; }
+.country-flag-stack.n2 .country-flag,
+.country-flag-stack.n3 .country-flag { box-shadow: 0 0 0 2px var(--bg-card); }
+/* A saved day plan wears a photo of its city */
+.saved-card-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+/* One quiet affordance for everything the card can do besides open. */
+.saved-card-menu { position: relative; flex: none; }
+.saved-card-more {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-mute);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.saved-card-more:hover { background: var(--paper-dim); color: var(--ink); }
+.saved-card-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 4;
+  min-width: 168px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-2);
+}
+.saved-card-pop-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-align: left;
+  cursor: pointer;
+}
+.saved-card-pop-item:hover { background: var(--paper-dim); color: var(--ink); }
+.saved-card-pop-item svg { flex: none; color: var(--ink-mute); }
+.saved-card-pop-item.danger { color: var(--accent); }
+.saved-card-pop-item.danger svg { color: var(--accent); }
+.saved-card-pop-item.danger:hover { background: var(--accent-bg); color: var(--accent); }
+
+/* Share / download actions under the trip overview: one toggle, collapsed by
+   default, opening into a clean vertical list instead of up to six equal-width
+   buttons squeezed into a row (each wrapping its label across 2-3 lines). */
+.itin-export { margin-top: 10px; }
+.itin-export-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.itin-export-toggle > span:first-child { display: inline-flex; align-items: center; gap: 8px; }
+.itin-export-toggle svg:first-child { color: var(--accent); }
+.itin-export.open .itin-export-toggle {
+  border-color: var(--ink-mute);
+  border-radius: 12px 12px 0 0;
+  border-bottom: none;
+}
+.itin-export-menu {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+.itin-export-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--paper);
+  text-decoration: none; /* the Google Maps action is an <a>, keep it button-like */
+  border-top: 1px dashed var(--rule);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.itin-export-item:first-child { border-top: none; }
+.itin-export-item svg { color: var(--accent); flex: none; }
+.itin-export-item:hover { background: var(--paper-dim); color: var(--ink); }
+.itin-export-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 2px 0; text-align: center; }
+
+/* Bookings / notes / packing list on the planned itinerary. One rhythm:
+   28px between sections, carried by the section wrapper rather than by each
+   title's own ad-hoc margin, so inserting a section (the inbox appears and
+   disappears) never changes its neighbours' spacing. */
+.trip-extras { margin-top: 4px; }
+.extras-section + .extras-section { margin-top: 28px; }
+/* The expense ledger is its own component but the same stack: it keeps the
+   28px beat where the sections hand over to it. */
+.trip-extras + .trip-extras.exp-ledger { margin-top: 28px; }
+.trip-extras .trip-block-title { display: flex; align-items: baseline; gap: 8px; }
+.extras-count { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); font-weight: 400; }
+
+/* ── Magic import: documents in, filled rows + staged activities out ── */
+.extras-dropzone {
+  margin: 10px 0 4px;
+  padding: 14px 16px;
+  border: 1.5px dashed var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+  transition: border-color .15s, background .15s;
+}
+.extras-dropzone.over { border-color: var(--accent); background: var(--accent-bg); }
+.extras-drop-lead {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: 12.5px; line-height: 1.5; color: var(--ink-soft);
+}
+.extras-drop-glyph {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 2px;
+  color: var(--accent);
+  padding-top: 1px;
+}
+.extras-drop-actions { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+.extras-drop-actions .extras-add-btn { margin-top: 0; background: var(--paper); }
+.extras-drop-hint { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.extras-drop-busy {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12.5px; color: var(--ink-soft);
+  padding: 4px 0;
+}
+.extras-drop-spinner {
+  flex: none;
+  width: 14px; height: 14px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: extras-spin 0.9s linear infinite;
+}
+@keyframes extras-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .extras-drop-spinner { animation: none; border-top-color: var(--rule); }
+}
+.extras-drop-status { margin-top: 8px; font-size: 12px; }
+.extras-drop-status.ok { color: var(--green); }
+.extras-drop-status.err { color: var(--danger); }
+
+/* What the import touched, named where it touched it. */
+.extras-ai-badge {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+/* ── Activity Inbox: staged activities waiting for a day ── */
+.extras-inbox-count {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  min-width: 18px; height: 18px;
+  padding: 0 5px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.extras-inbox-sub { font-size: 11.5px; color: var(--ink-mute); margin: 2px 0 8px; }
+.extras-inbox-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  margin-bottom: 6px;
+}
+.extras-inbox-glyph { flex: none; color: var(--ink-mute); display: inline-flex; }
+.extras-inbox-info { flex: 1; min-width: 0; }
+.extras-inbox-name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.extras-inbox-meta { font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
+.extras-inbox-day { flex: none; }
+.extras-inbox-day .dropdown-trigger {
+  min-width: 0;
+  height: 28px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--accent);
+  border-color: var(--accent-soft);
+  white-space: nowrap;
+}
+.extras-inbox-day .dropdown-trigger:hover { background: var(--accent-bg); border-color: var(--accent); }
+
+/* Imported activities pinned onto a day row in the days list. */
+.itin-day-extras { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 0 6px 10px; }
+.itin-day-extra {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 5px 3px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.itin-day-extra small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.itin-day-extra button {
+  border: none; background: none; cursor: pointer;
+  color: var(--ink-mute); font-size: 13px; line-height: 1; padding: 0 2px;
+}
+.itin-day-extra button:hover { color: var(--accent); }
+.extras-row { padding: 8px 0 10px; border-bottom: 1px solid rgba(196, 190, 169, 0.45); }
+.extras-row-head { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+.extras-row-head input[type='checkbox'] { accent-color: var(--accent); flex: none; }
+.extras-label { flex: 1; min-width: 0; font-weight: 600; color: var(--ink); }
+.extras-row.done .extras-label { color: var(--ink-mute); }
+.extras-est { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); white-space: nowrap; }
+.extras-remove {
+  flex: none; border: none; background: none; color: var(--ink-mute);
+  font-size: 16px; line-height: 1; padding: 0 4px; cursor: pointer;
+}
+.extras-remove:hover { color: var(--accent); }
+/* Two fixed rows per booking: code beside the paid amount, then the link on
+   its own full line. The old flex-wrap laid the three fields out differently
+   per card depending on how long each value happened to be. */
+.extras-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 6px;
+  margin-top: 7px;
+}
+.extras-input {
+  min-width: 0; width: 100%; padding: 6px 9px; font-size: 12.5px;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--paper);
+  color: var(--ink);
+}
+.extras-input:focus { outline: none; border-color: var(--accent); }
+.extras-input::placeholder { color: var(--ink-mute); }
+.extras-price { font-variant-numeric: tabular-nums; }
+.extras-url-wrap { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; }
+.extras-url { flex: 1; }
+.extras-label-input {
+  flex: 1; min-width: 0; padding: 4px 8px; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink);
+}
+.extras-label-input:focus { outline: none; border-color: var(--accent); }
+.extras-open-link { flex: none; display: inline-flex; align-items: center; color: var(--accent); padding: 2px; }
+.extras-delta { font-size: 11px; margin-top: 5px; color: var(--ink-soft); }
+.extras-delta.under { color: var(--good-ink-alt); }
+.extras-delta.over { color: var(--accent); }
+.extras-add-btn {
+  margin-top: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--rule); border-radius: 8px; background: transparent;
+  color: var(--ink-soft); cursor: pointer;
+}
+.extras-add-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--ink-mute); }
+.extras-add-btn:disabled { opacity: 0.4; cursor: default; }
+.extras-notes {
+  width: 100%; resize: vertical; padding: 8px 10px; font-size: 12.5px; line-height: 1.5;
+  font-family: inherit; border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--paper); color: var(--ink);
+}
+.extras-notes:focus { outline: none; border-color: var(--accent); }
+.extras-notes::placeholder { color: var(--ink-mute); }
+.extras-check-row {
+  display: flex; align-items: center; gap: 8px; padding: 5px 0;
+  border-bottom: 1px solid rgba(196, 190, 169, 0.35); font-size: 13px; cursor: pointer;
+}
+.extras-check-row input[type='checkbox'] { accent-color: var(--accent); flex: none; }
+.extras-check-text { flex: 1; min-width: 0; }
+.extras-check-row.done .extras-check-text { color: var(--ink-mute); text-decoration: line-through; }
+.extras-check-add { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+.extras-check-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
+
+/* ── Group expense ledger ── */
+.exp-ledger { margin-top: 4px; }
+.exp-people { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.exp-person { flex: 1 1 110px; min-width: 0; }
+.exp-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.exp-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.exp-row-main b { font-size: 12.5px; }
+.exp-row-main small { font-size: 10.5px; color: var(--ink-mute); }
+.exp-row-amt { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.exp-add { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+.exp-desc { flex: 2 1 150px; min-width: 0; }
+.exp-cur, .exp-payer { flex: 0 0 auto; }
+.exp-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
+.exp-sharers {
+  flex-basis: 100%;
+  display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+}
+.exp-sharers-lbl { font-size: 10.5px; color: var(--ink-mute); }
+.exp-sharer-chip {
+  padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--rule);
+  font-size: 11px; color: var(--ink-mute);
+  background: transparent;
+}
+.exp-sharer-chip.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+.exp-balances {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.exp-total { font-size: 12px; font-weight: 700; color: var(--ink); }
+.exp-settle { margin-top: 4px; font-size: 12px; color: var(--ink-soft); }
+.exp-square { color: var(--green); }
+.exp-rate-note { margin-top: 6px; font-size: 10px; color: var(--ink-mute); }
+.saved-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+/* The trip's name earns the display face, the same one the panel title wears;
+   its details drop the mono, which read as a data dump at this size. */
+.saved-card-title {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-card-meta {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-mute);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-card-stack { display: flex; flex-direction: column; gap: 10px; }
+/* The trip plan's own day-planning shortcut. It used to branch off the card
+   on a connector line, which split one saved trip into two things to read;
+   it now lives inside the same border as a full-width strip. */
+.saved-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-top: 1px solid var(--rule);
+  border-radius: 0 0 13px 13px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s, color .15s;
+}
+.saved-card-footer:hover { background: var(--accent-bg); color: var(--accent); }
+.saved-card-footer-go { font-size: 15px; line-height: 1; color: var(--ink-mute); }
+.saved-card-footer:hover .saved-card-footer-go { color: var(--accent); }
+/* Desktop: breathing space between sections and larger cards. The width that
+   used to live here (min(560px, 46vw), a docked column) is gone: the panel
+   takes the whole screen from 769px up, see the block further down. */
+@media (min-width: 881px) {
+  .saved-trips-panel .saved-section { margin-bottom: 14px; }
+  .saved-trips-panel .saved-card-stack { gap: 12px; }
+  .saved-trips-panel .saved-card-main { padding: 15px 4px 15px 16px; }
+  .saved-trips-panel .saved-card-title { font-size: 17px; }
+  .saved-trips-panel .saved-card-icon { width: 44px; height: 44px; }
+}
+
+/* Even vertical rhythm. The band between the "Saved trips" rule and the first
+   shelf ran wider than the gaps between the shelves themselves, so the panel
+   opened on a hole. One 16px step everywhere instead. */
+.saved-trips-panel .panel-header { padding-bottom: 14px; }
+.saved-trips-panel .panel-section { padding-top: 18px; padding-bottom: 18px; }
+.saved-trips-panel .saved-section-sub { margin-bottom: 12px; }
+
+/* One gutter, one left edge. The header carried the panel's own 16px inset
+   while every shelf below it used .panel-section's 28px, so "Saved trips",
+   the tab pill and the map each began on a different vertical. Nothing in the
+   panel now sets its own horizontal padding: both read this variable, so the
+   heading, the tabs, the map and every card share one line down the page. */
+.saved-trips-panel { --saved-gutter: 16px; }
+.saved-trips-panel .panel-header,
+.saved-trips-panel .panel-section {
+  padding-left: var(--saved-gutter);
+  padding-right: var(--saved-gutter);
+}
+
+/* ── Desktop: the record is a section, not a drawer ──
+   My trips arrived as a 440px slide-over pinned to the right edge, so the
+   longest list in the app read in a column narrower than a phone while two
+   thirds of the window sat behind it showing whatever tab you happened to
+   leave. It takes the whole screen now, exactly as it does on a phone, with
+   its contents on the same 1180px column every other tab uses.
+
+   No cross either, for the same reason the phone has none: this is a
+   destination you navigate to, and the way out is the header (press Saved
+   trips again, or any other tab) or Escape. A cross would be the only close
+   control in the app that closes a page rather than an overlay. */
+@media (min-width: 769px) {
+  .panel.saved-trips-panel {
+    left: 0;
+    width: auto;
+    max-width: none;
+    border-left: none;
+    box-shadow: none;
+    /* The centred column, expressed as the panel's own gutter so every child
+       inherits it: header, tabs, map and cards keep one left edge. */
+    padding-left: max(28px, calc((100% - 1180px) / 2));
+    padding-right: max(28px, calc((100% - 1180px) / 2));
+  }
+  .saved-trips-panel .panel-close { display: none; }
+}
+
+/* An empty shelf should invite, not look like a broken upload zone. A dashed
+   outline reads as "drop a file here"; a soft filled panel with one thing to
+   press reads as "here is where this begins". */
+.saved-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--paper-dim);
+}
+.saved-empty-mark {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--accent);
+}
+.saved-empty-text {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.saved-empty-cta {
+  padding: 8px 16px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--paper);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.saved-empty-cta:hover { background: var(--accent); border-color: var(--accent); }
+
+/* ─── Saved trips v2: two states of travelling under one roof. Favorites is
+   the shortlist (photo-led, aspirational), Planned trips is the calendar
+   (mini map, ledger, upcoming > day plans > past, in falling visual weight).
+   The dates do the filing: nothing is archived by hand. ─── */
+
+/* The segmented control lives inside the sticky header so the two states are
+   always one tap apart, however deep the scroll. */
+.saved-panel-header { padding-bottom: 16px; }
+/* Three states of travelling on one row, never wrapping to a second. */
+.saved-tabs { margin-top: 14px; grid-template-columns: repeat(3, 1fr); }
+.saved-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.saved-tabs button small {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.6;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  opacity: 1;
+}
+.saved-tabs button.seg-on small { background: rgba(255, 255, 255, 0.18); color: var(--paper); }
+
+/* The record's map: every city of every finished trip, pinned, over the
+   countries those trips painted. Same embed contract as the AI route preview:
+   the map normally lays itself out full-bleed beside the side panel, so pin it
+   to this frame with force. */
+.saved-map-section { padding-bottom: 16px; }
+.saved-map {
+  position: relative;
+  /* Tall enough that a continent of pins is a shape rather than a smudge.
+     240 on a phone, 360 from the desktop breakpoint down the file. */
+  height: 240px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.saved-map .trip-map,
+.saved-map > div { position: absolute !important; inset: 0 !important; }
+.saved-map-loading { position: absolute; inset: 0; background: var(--paper-dim); }
+
+/* The travel ledger: what the record adds up to. Two cards, each a measured
+   fact in mono with its own evidence underneath, flags with names on one
+   side, the city roll on the other. */
+.ledger2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.ledger2-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 15px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+.ledger2-title { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.ledger2-num {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 27px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.ledger2-of { font-size: 13px; color: var(--ink-mute); }
+.ledger2-cap { font-size: 11px; line-height: 1.35; color: var(--ink-soft); }
+.ledger2-flags { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 8px; }
+.ledger2-flagitem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 34px;
+}
+.ledger2-flagitem .country-flag { border-radius: 3px; box-shadow: 0 0 0 1px var(--rule); }
+.ledger2-flagname {
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.ledger2-flagitem.is-more {
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.ledger2-cities {
+  margin-top: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* ── Adding a trip that already happened. The form is a quiet sheet inside
+   the record's own shelf rather than a modal: what you type lands in the
+   list a few centimetres below it, in the same card as everything else.
+   Only where and when are asked outright; the rest of a trip (who came, how
+   you travelled, where you slept, what it cost, how it was, the photographs)
+   waits in folds that say what is already in them. ── */
+.saved-section-action { margin-left: auto; }
+.saved-add-past {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px 5px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.saved-add-past svg { color: var(--ink-mute); }
+.saved-add-past:hover { border-color: var(--ink); color: var(--ink); }
+.saved-add-past:hover svg { color: var(--ink); }
+.saved-add-past.is-open {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.saved-add-past.is-open svg { color: var(--accent); }
+
+.saved-record-row { display: flex; flex-direction: column; }
+
+.pasttrip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+.pasttrip-field { display: flex; flex-direction: column; gap: 8px; }
+.pasttrip-label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.pasttrip-sublabel { font-size: 11px; color: var(--ink-mute); }
+.pasttrip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.pasttrip-listrow { display: flex; align-items: center; gap: 6px; }
+.pasttrip-listrow .pasttrip-input { flex: 1; min-width: 0; }
+
+/* ── The places, in visit order, each holding its own nights ── */
+.pasttrip-places { display: flex; flex-direction: column; gap: 6px; }
+.pasttrip-place {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 9px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper-dim);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.pasttrip-place-mark { display: flex; color: var(--ink-mute); }
+.pasttrip-place-mark .country-flag { border-radius: 2px; }
+.pasttrip-place-name { font-weight: 600; }
+.pasttrip-place-own {
+  margin-left: 6px;
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+.pasttrip-place-nights { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.pasttrip-place-nights small {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.pasttrip-place-x,
+.pasttrip-chip-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.pasttrip-place-x:hover { background: var(--accent-bg); color: var(--accent); }
+
+.pasttrip-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.pasttrip-stepper button {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.pasttrip-stepper button:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+.pasttrip-stepper button:disabled { opacity: .35; cursor: default; }
+.pasttrip-stepper-val {
+  min-width: 20px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--ink);
+}
+
+/* ── Search, catalogue first, then anywhere on request ── */
+.pasttrip-search { position: relative; }
+.pasttrip-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-mute);
+  pointer-events: none;
+}
+.pasttrip-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px 0 32px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.pasttrip-input.is-plain { padding-left: 12px; }
+.pasttrip-input.is-amount {
+  width: 96px;
+  padding-left: 10px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.pasttrip-input::placeholder { color: var(--ink-mute); }
+.pasttrip-input:focus { outline: none; border-color: var(--accent); }
+
+.pasttrip-select {
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.pasttrip-select.is-narrow { width: 88px; font-family: var(--mono); }
+.pasttrip-select:focus { outline: none; border-color: var(--accent); }
+
+.pasttrip-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  resize: vertical;
+}
+.pasttrip-textarea:focus { outline: none; border-color: var(--accent); }
+
+.pasttrip-results {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.pasttrip-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13px;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+.pasttrip-result:last-child { border-bottom: none; }
+.pasttrip-result:hover { background: var(--paper-dim); }
+.pasttrip-result svg { flex: none; color: var(--ink-mute); }
+.pasttrip-result-city { font-weight: 600; }
+.pasttrip-result-country {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.pasttrip-result.is-found {
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+}
+.pasttrip-geo { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+
+.pasttrip-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  padding: 6px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.pasttrip-ghost:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.pasttrip-ghost:disabled { opacity: .45; cursor: default; }
+.pasttrip-ghost.is-icon { padding: 6px 8px; }
+
+.pasttrip-dates { display: flex; flex-wrap: wrap; gap: 10px 20px; }
+.pasttrip-datecell { display: flex; flex-direction: column; gap: 3px; }
+.pasttrip-note {
+  margin: 0;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.pasttrip-error { margin: 0; font-size: 12px; color: var(--accent); }
+
+/* ── The folds: everything a trip is, past where and when ── */
+.pasttrip-folds {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--rule-soft);
+}
+.pasttrip-fold { border-bottom: 1px solid var(--rule-soft); }
+.pasttrip-fold-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 2px;
+  border: none;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+.pasttrip-fold-mark { display: flex; color: var(--ink-mute); }
+.pasttrip-fold-title { font-weight: 600; }
+.pasttrip-fold-sum {
+  margin-left: auto;
+  overflow: hidden;
+  max-width: 55%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.pasttrip-fold-chev {
+  margin-left: auto;
+  flex: none;
+  color: var(--ink-mute);
+  transition: transform .15s;
+}
+.pasttrip-fold-sum + .pasttrip-fold-chev { margin-left: 6px; }
+.pasttrip-fold.is-open .pasttrip-fold-chev { transform: rotate(180deg); }
+.pasttrip-fold-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px 2px 14px;
+}
+
+.pasttrip-leg { display: flex; flex-direction: column; gap: 5px; }
+.pasttrip-modes { display: flex; flex-wrap: wrap; gap: 5px; }
+.pasttrip-mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.pasttrip-mode:hover { border-color: var(--ink-soft); color: var(--ink); }
+.pasttrip-mode.on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.pasttrip-stay { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.pasttrip-stay .pasttrip-sublabel { width: 100%; }
+.pasttrip-stay .pasttrip-input { flex: 1 1 150px; min-width: 0; }
+
+.pasttrip-spend { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.pasttrip-spendrow { display: flex; flex-direction: column; gap: 3px; }
+.pasttrip-total {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 2px solid var(--ink);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.pasttrip-total b {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.pasttrip-total small { margin-left: auto; font-size: 11px; color: var(--ink-mute); }
+
+.pasttrip-rating { display: flex; flex-wrap: wrap; gap: 4px; }
+.pasttrip-rate {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.pasttrip-rate:hover { border-color: var(--rate); color: var(--rate); }
+.pasttrip-rate.on {
+  border-color: var(--rate);
+  background: var(--rate);
+  color: var(--paper);
+}
+
+.pasttrip-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 8px;
+}
+.pasttrip-photo { position: relative; }
+.pasttrip-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--rule-soft);
+}
+.pasttrip-photo.is-cover img { border-color: var(--accent); }
+.pasttrip-photo-acts {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  gap: 4px;
+}
+.pasttrip-photo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, .58);
+  color: var(--on-fill);
+  cursor: pointer;
+}
+.pasttrip-photo-btn:hover { background: rgba(15, 23, 42, .8); }
+.pasttrip-photo.is-cover .pasttrip-photo-btn:first-child { background: var(--accent); }
+.pasttrip-photo-cap {
+  width: 100%;
+  margin-top: 4px;
+  padding: 3px 6px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 6px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 11px;
+  color: var(--ink);
+}
+.pasttrip-photo-cap:focus { outline: none; border-color: var(--accent); }
+.pasttrip-file { display: none; }
+
+.pasttrip-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.pasttrip-cancel,
+.pasttrip-save {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.pasttrip-cancel {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+}
+.pasttrip-cancel:hover { border-color: var(--ink); color: var(--ink); }
+.pasttrip-save {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.pasttrip-save:hover { background: var(--ink-soft); border-color: var(--ink-soft); }
+.pasttrip-save:disabled,
+.pasttrip-cancel:disabled { opacity: .45; cursor: default; }
+.pasttrip-save:disabled:hover { background: var(--ink); border-color: var(--ink); }
+
+/* ── A logged trip, read back under its own card ── */
+.memo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: -6px 0 2px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-card);
+}
+.memo-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+}
+.memo-photo { margin: 0; }
+.memo-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.memo-photo figcaption {
+  margin-top: 4px;
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--ink-mute);
+}
+.memo-block { display: flex; flex-direction: column; gap: 6px; }
+.memo-title {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.memo-rating {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--rate-bg);
+  color: var(--rate);
+}
+.memo-rating svg { align-self: center; }
+.memo-rating b {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.memo-rating small { font-family: var(--mono); font-size: 10px; }
+.memo-story {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  color: var(--ink-soft);
+}
+.memo-list { margin: 0; padding-left: 16px; font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); }
+.memo-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.memo-line svg { color: var(--ink-mute); }
+
+.memo-route { display: flex; flex-direction: column; gap: 4px; }
+.memo-stop {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.memo-leg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  color: var(--ink-mute);
+}
+.memo-leg.is-plain { width: 20px; }
+.memo-stop-mark { display: flex; }
+.memo-stop-mark .country-flag { border-radius: 2px; }
+.memo-stop-city { font-weight: 600; }
+.memo-stop-city.is-home { font-weight: 400; color: var(--ink-mute); }
+.memo-stop-nights {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.memo-stop-stay {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  overflow: hidden;
+  max-width: 45%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+.memo-receipt { display: flex; flex-direction: column; }
+.memo-recline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.memo-recline b {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.memo-recline.is-total {
+  margin-top: 2px;
+  border-top: 2px solid var(--ink);
+  border-bottom: none;
+  padding-top: 8px;
+  color: var(--ink);
+}
+.memo-recline.is-total b { font-size: 17px; }
+.memo-recline.is-each { border-bottom: none; color: var(--ink-mute); }
+.memo-recline.is-each b { font-size: 12px; color: var(--ink-mute); }
+.memo-note { margin: 0; font-size: 11px; color: var(--ink-mute); }
+
+.memo-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.memo-edit:hover { border-color: var(--ink); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pasttrip-fold-chev,
+  .saved-add-past,
+  .pasttrip-mode,
+  .pasttrip-save,
+  .pasttrip-cancel { transition: none; }
+}
+
+/* Favorites: a photo grid, because a wishlist is looked at, not audited. */
+.fav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fav-card {
+  position: relative;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.fav-card-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.fav-card-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  transition: transform .35s ease;
+}
+.fav-card-open:hover .fav-card-photo { transform: scale(1.04); }
+.fav-card-photo.is-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+}
+/* Legibility shade under the caption, dark enough to carry white text even
+   over the paper-dim fallback tile. */
+.fav-card-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 42%, rgba(15, 23, 42, 0.78) 100%);
+}
+/* The country flag as a corner badge, on its own paper chip so it reads over
+   any photo. */
+.fav-card-flag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 6px;
+  border-radius: 8px;
+  background: rgba(248, 246, 240, 0.92);
+}
+.fav-card-flag .country-flag { display: block; border-radius: 2px; }
+.fav-card-text {
+  position: absolute;
+  left: 12px;
+  right: 44px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fav-card-city {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--on-fill);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fav-card-sub { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.fav-card-country {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fav-card-dates { flex: none; font-family: var(--mono); font-size: 10px; color: rgba(255, 255, 255, 0.75); }
+/* When and as what it was kept: the trip-kind tag plus the saved date. */
+.fav-card-kept {
+  display: flex;
+  flex-wrap: wrap; /* the saved date drops to its own line on narrow cards */
+  align-items: center;
+  gap: 3px 6px;
+  margin-top: 3px;
+  min-width: 0;
+}
+.fav-card-kind {
+  flex: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(248, 246, 240, 0.24);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+}
+.fav-card-savedon {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.75);
+}
+/* The bookmark IS the saved state: tapping it is how a favorite is let go. */
+.fav-card-mark {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.45);
+  color: var(--on-fill);
+  cursor: pointer;
+  transition: background .15s;
+}
+.fav-card-mark:hover { background: var(--accent); }
+.fav-card-ask {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(248, 246, 240, 0.94);
+  text-align: center;
+}
+.fav-card-ask-text { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.fav-card-ask-row { display: flex; gap: 8px; }
+
+/* Upcoming trips: the heaviest object in the panel, photo full-bleed, the
+   countdown worn as a chip, tools tucked into the usual corner menu. */
+.uptrip-card {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+  transition: border-color .15s, box-shadow .15s;
+}
+.uptrip-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
+.uptrip-visual { position: relative; }
+.uptrip-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 178px;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+}
+.uptrip-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  transition: transform .35s ease;
+}
+.uptrip-open:hover .uptrip-photo { transform: scale(1.03); }
+.uptrip-photo.is-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+}
+.uptrip-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.10) 0%, rgba(15, 23, 42, 0) 35%, rgba(15, 23, 42, 0.78) 100%);
+}
+.uptrip-when {
+  position: absolute;
+  top: 10px;
+  left: 44px; /* clears the corner menu button */
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(248, 246, 240, 0.92);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink);
+}
+/* The country flag as a corner badge, on its own paper chip. */
+.uptrip-flag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 7px;
+  border-radius: 9px;
+  background: rgba(248, 246, 240, 0.92);
+}
+.uptrip-flag .country-flag { display: block; border-radius: 2px; }
+.uptrip-text {
+  position: absolute;
+  left: 14px;
+  right: 54px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.uptrip-title {
+  font-family: var(--display);
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--on-fill);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uptrip-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uptrip-dateblock {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 4px;
+}
+.uptrip-datelabel { font-size: 10px; color: rgba(255, 255, 255, 0.68); }
+.uptrip-dates { font-family: var(--mono); font-size: 11px; color: rgba(255, 255, 255, 0.92); }
+/* The state mark: a calendar for a commitment, a check for a memory. */
+.uptrip-state {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(248, 246, 240, 0.92);
+  color: var(--ink);
+}
+.uptrip-card.is-visited .uptrip-state { background: var(--ink); color: var(--paper); }
+.uptrip-menu { position: absolute; top: 6px; left: 6px; }
+.uptrip-menu .saved-card-more { background: rgba(248, 246, 240, 0.85); color: var(--ink-soft); }
+.uptrip-menu .saved-card-more:hover { background: var(--paper); color: var(--ink); }
+/* The menu popover hangs from the left corner here, not the right. */
+.uptrip-menu .saved-card-pop { left: 0; right: auto; }
+
+/* ─── Who came, on the face of a finished trip. A quiet strip under the
+   photograph: initials for the people already on it, the names in a line, and
+   one plus that opens the friend list and a name field. Same list the expense
+   ledger splits by, so this is a shortcut into an existing roster, not a
+   second copy of it. ─── */
+.uptrip-crew {
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+}
+.uptrip-crew-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px 9px 12px;
+}
+.uptrip-crew-stack { display: inline-flex; flex: none; }
+.uptrip-crew-dot {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--bg-card);
+  background: var(--paper-dim);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+/* Overlapped, so a crew reads as one group rather than a row of badges. */
+.uptrip-crew-dot + .uptrip-crew-dot { margin-left: -7px; }
+.uptrip-crew-dot.is-more { background: var(--ink); color: var(--paper); }
+.uptrip-crew-line {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.uptrip-crew-add {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s, transform .15s;
+}
+.uptrip-crew-add:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.uptrip-crew.is-open .uptrip-crew-add { transform: rotate(45deg); }
+.uptrip-crew-pop {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 0 12px 12px;
+}
+.uptrip-crew-cap {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-mute);
+}
+.uptrip-crew-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.uptrip-crew-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.uptrip-crew-chip:hover { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+.uptrip-crew-typerow { display: flex; gap: 6px; }
+.uptrip-crew-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13px;
+  color: var(--ink);
+}
+.uptrip-crew-input:focus { outline: none; border-color: var(--ink-soft); }
+.uptrip-crew-save {
+  flex: none;
+  padding: 8px 15px;
+  border: 1px solid var(--ink);
+  border-radius: 9px;
+  background: var(--ink);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--paper);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, opacity .15s;
+}
+.uptrip-crew-save:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
+.uptrip-crew-save:disabled { opacity: 0.45; cursor: default; }
+.uptrip-crew-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.uptrip-crew-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 5px 4px 10px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-size: 12px;
+  color: var(--ink);
+}
+.uptrip-crew-drop {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink-mute);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.uptrip-crew-drop:hover { background: var(--rule); color: var(--ink); }
+
+/* ─── The record's map at device size. Expanding is the only way to zoom in
+   far enough to find one town, so the small frame carries a corner control and
+   the big one covers everything. The overlay is portalled to <body>, because
+   the panel it lives in is transformed and would otherwise become the
+   containing block for this fixed layer. ─── */
+.saved-map-expand {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: rgba(248, 246, 240, 0.94);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.saved-map-expand:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.savedmap-full {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: var(--paper);
+}
+/* The map fills the layer; the bar floats over it so no pixel of the record
+   is spent on chrome. */
+.savedmap-full-map { position: absolute; inset: 0; }
+.savedmap-full-map .trip-map,
+.savedmap-full-map > div { position: absolute !important; inset: 0 !important; }
+.savedmap-full-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(12px + env(safe-area-inset-top)) 14px 12px;
+  pointer-events: none;
+}
+.savedmap-full-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: rgba(248, 246, 240, 0.94);
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--ink);
+}
+/* The way out never wraps or shrinks: on a phone the title gives up its
+   width first, because a clipped heading still reads and a stacked button
+   stops looking like one thing to press. */
+.savedmap-full-close {
+  pointer-events: auto;
+  flex: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--paper);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.savedmap-full-close:hover { background: var(--accent); border-color: var(--accent); }
+/* MapLibre parks its zoom stack top-right, which is exactly where Close sits.
+   Drop the stack below the bar rather than move Close: the way out of a
+   full-screen layer belongs in the corner people already reach for. */
+.savedmap-full .maplibregl-ctrl-top-right {
+  top: calc(52px + env(safe-area-inset-top));
+}
+
+/* The one heading that names each tab's main list steps up to the display
+   face; the shelf headings around it stay quiet. */
+.saved-section.is-big .saved-section-title {
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  color: var(--ink);
+}
+
+/* Desktop: the roomier sheet lets the imagery breathe. */
+@media (min-width: 881px) {
+  .saved-map { height: 360px; }
+  .uptrip-open { height: 208px; }
+  .fav-grid { gap: 12px; }
+  .uptrip-title { font-size: 25px; }
+  .saved-section.is-big .saved-section-title { font-size: 23px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fav-card-photo,
+  .uptrip-photo { transition: none; }
+  .fav-card-open:hover .fav-card-photo,
+  .uptrip-open:hover .uptrip-photo { transform: none; }
+}
+
+/* Day planner: save state, top-right of the plan header card. */
+.day-topcard-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.day-save-btn {
+  flex: none;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.day-save-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.day-save-btn.saved, .day-save-btn:disabled { color: var(--good-ink-soft); border-color: rgba(44, 125, 84, 0.4); cursor: default; }
+
+/* Itinerary overview: the arrival/return flight rows around the stops list. */
+.itin-flight-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+}
+.itin-flight-row svg { color: var(--accent); flex: none; }
+.itin-flight-row b { color: var(--ink); font-weight: 600; }
+.itin-flight-row small { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); white-space: nowrap; }
+
+/* Airport-transfer rows are buttons: tap to open the public/taxi/rental
+   comparison right in the route view (same look as the plain flight rows). */
+.itin-transfer-main {
+  width: 100%;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.itin-transfer-main:disabled { cursor: default; }
+.itin-transfer-main small { margin-left: auto; }
+.itin-transfer-main .itin-leg-change { flex: none; margin-left: 8px; }
+.itin-transfer-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
+.itin-transfer-modes { padding: 6px 0 2px; }
+
+/* Home<->first/last-stop drive rows (own-car trips): title stacked over the
+   distance/time, rather than side by side like the short flight rows above -
+   both lines run long ("Drive out: home to Monaco" / "~1014 km, about 11h18
+   behind the wheel") and never fit on one line without wrapping badly. */
+.itin-drive-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.itin-drive-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.itin-drive-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.itin-drive-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.itin-drive-label b { color: var(--accent); font-weight: 600; }
+.itin-drive-sub { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+
+.account-signout {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}/* ─── Best time to go (period comparison for the selected destination) ─── */
+/* Cheapest trip total by month (BestTimePanel MonthBars): rounded bars,
+   taller = pricier, green = cheapest month, ink dot = the user's month.
+   Same visual language as the weekday and climate strips below. */
+
+.mo-col.is-cheap .mo-val { color: var(--leaf-ink); }
+.mo-col.is-cheap .mo-bar { background: var(--leaf-ink); }
+.mo-col.is-cheap .mo-name,
+.mo-col.is-you .mo-name { color: var(--ink); font-weight: 700; }
+
+.bt-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.bt-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+}
+.bt-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+.bt-dot-accent { background: var(--accent); }
+.dow-bar.min { background: var(--leaf-ink); }
+.dow-bar.max { background: var(--accent); }
+.dow-val.min { color: var(--leaf-ink); }
+.nearby-sub .gem { color: var(--accent); }
+
+/* Climate strip (BestTimePanel ClimateStrip) - 12-month comfort normals */
+.climate-best {
+  margin: 2px 0 10px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.climate-best b { color: var(--ink); font-weight: 700; }
+.climate-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 108px;
+}
+.climate-col {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+  cursor: default;
+}
+.climate-temp {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+}
+.climate-bar-track {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  flex: 1;
+}
+.climate-bar {
+  width: 100%;
+  border-radius: 4px 4px 2px 2px;
+  transition: filter 0.12s;
+}
+.climate-col.is-best .climate-bar { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px currentColor; }
+.climate-col:hover .climate-bar { filter: brightness(1.08); }
+.climate-great { background: var(--leaf-ink); color: var(--leaf-ink); }
+.climate-good  { background: var(--climate-good); color: var(--climate-good); }
+.climate-mixed { background: var(--accent-soft); color: var(--accent-soft); }
+.climate-poor  { background: var(--climate-poor); color: var(--climate-poor); }
+.climate-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+.climate-col.is-best .climate-name { color: var(--ink); font-weight: 700; }
+.climate-dot-great { background: var(--leaf-ink); }
+.climate-dot-good  { background: var(--climate-good); }
+.climate-dot-mixed { background: var(--accent-soft); }
+.climate-dot-poor  { background: var(--climate-poor); }
+.climate-legend { margin-top: 10px; }
+.climate-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.climate-tip b { font-weight: 700; }
+

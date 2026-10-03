@@ -1,0 +1,3778 @@
+/* Desktop and phone feature pages, cycling, guides, journeys.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ───────── Desktop: the page, the rail, the column ───────── */
+
+@media (min-width: 769px) {
+  .saved-shell, .account-shell {
+    display: flex;
+    align-items: stretch;
+    position: absolute;
+    top: var(--filter-h);
+    left: 0; right: 0; bottom: 0;
+    z-index: 56;
+    background: var(--paper);
+  }
+  /* The slide-over stops sliding: it is a page now, so it gives up the
+     translate, the drop shadow and the left border, and takes whatever width
+     the rail leaves it. */
+  .saved-shell > .panel,
+  .account-shell > .panel {
+    position: relative;
+    top: auto; left: auto; right: auto; bottom: auto;
+    z-index: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    max-width: none;
+    border: none;
+    box-shadow: none;
+    transform: none;
+  }
+  /* The centred column is measured on the CONTENT, never as padding on the
+     page. A percentage padding resolves against the containing block, which
+     is now the shell rather than the window, so the old
+     `calc((100% - 1180px) / 2)` counted the rail's 264px twice and took a
+     seventh of the record map's width off with it, dropping the map below
+     the zoom at which its pins carry photographs. Centring each block inside
+     the panel is measured against the panel, which is what was meant.
+
+     My trips keeps the 1180px column it shares with the browse tabs. A
+     settings page is read rather than scanned, so Account takes a column
+     measured for prose and forms instead. */
+  .saved-shell > .panel.saved-trips-panel,
+  .account-shell > .panel.account-panel {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .saved-shell > .panel .panel-header,
+  .saved-shell > .panel .panel-section,
+  .account-shell > .panel .panel-header,
+  .account-shell > .panel .panel-section {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .saved-shell > .panel .panel-header,
+  .saved-shell > .panel .panel-section { max-width: 1180px; }
+  /* 24px, the gutter .places-wrap and .explore-wrap already stand on, so all
+     four pages begin their content on the same line in from the panel. */
+  .saved-trips-panel { --saved-gutter: 24px; }
+  .account-shell > .panel .panel-header,
+  .account-shell > .panel .panel-section {
+    max-width: 808px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  /* The panel names the page, so the content stops naming it too: with the
+     rail up, the "Account" overline above the profile card was the same word
+     twice, one under the other. */
+  .account-shell .panel-tag { display: none; }
+  .account-shell .panel-header.account-header-bare + .panel-section { padding-top: 22px; }
+
+  /* The way out is the header (press the tab again) or Escape, exactly as it
+     is on a phone and on My trips. A cross would be the only close control in
+     the app that closes a page rather than an overlay. */
+  .account-panel .panel-close { display: none; }
+  /* The rail says where you are, so the back link has nothing left to add. */
+  .account-shell .account-back { display: none; }
+  /* And the hub's help rows fold away, the way the browse toolbars do the
+     moment the panel appears: one set of doors, never two. */
+  .account-shell .account-help-section { display: none; }
+  /* My trips keeps its tabs in the rail for the same reason. */
+  .saved-trips-panel .saved-tabs { display: none; }
+
+  /* The rail's rows. Modelled on .side-sort: a quiet tile until it is the
+     page you are on, and then the full accent. */
+  .side-nav { display: flex; flex-direction: column; gap: 6px; }
+  .side-navrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-align: left;
+    transition: color .15s, background .15s, border-color .15s;
+  }
+  .side-navrow svg { flex: none; }
+  .side-navrow span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .side-navrow:hover { color: var(--ink); border-color: var(--rule); }
+  .side-navrow.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+  .side-navrow.on svg { color: var(--on-fill); }
+  .side-navrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* My trips: three states of travelling, one under the other. The browse
+     panels put six categories in a 2-up grid; three tabs read better as
+     rows, and the count rides the right edge where a count belongs. */
+  .saved-side .side-cats { grid-template-columns: 1fr; gap: 6px; }
+  .saved-side .side-cat {
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+  }
+  .saved-side .side-cat span { flex: 1; text-align: left; }
+  .saved-side .side-cat small {
+    flex: none;
+    min-width: 20px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--paper);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  .saved-side .side-cat.on small { background: rgba(255, 255, 255, 0.22); color: var(--on-fill); }
+}
+
+/* Narrow desktop windows: the rail is worth less than the content beside it,
+   so it gives up width first, in the same two steps the header takes. */
+@media (min-width: 769px) and (max-width: 1120px) {
+  .saved-side, .account-side { flex-basis: 216px; width: 216px; padding-left: 16px; }
+}
+
+/* ───────── Phone: the same page, banded ───────── */
+
+@media (max-width: 768px) {
+  /* The header stops being a block of air above a dark pill and becomes the
+     first band of the page: tiles, then one hairline. */
+  .saved-trips-panel .panel-header.saved-panel-header {
+    padding-top: 8px;
+    padding-bottom: 0;
+  }
+  .saved-tabs {
+    display: flex;
+    gap: 7px;
+    margin-top: 0;
+    padding: 3px 0 12px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .saved-cat {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 13px 4px 9px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    transition: color .15s, background .15s, border-color .15s;
+  }
+  /* The small accent tick every tab on this app wears. */
+  .saved-cat::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 50%;
+    transform: translateX(-50%);
+    width: 14px; height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .saved-cat span {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  /* The count as a corner badge: a third line under the tile would push the
+     label off, and the tick owns the top centre. */
+  .saved-cat small {
+    position: absolute;
+    top: 5px; right: 5px;
+    min-width: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--paper);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    line-height: 1.7;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  .saved-cat.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+  .saved-cat.on svg { color: var(--on-fill); }
+  .saved-cat.on::before { background: rgba(255, 255, 255, 0.7); }
+  .saved-cat.on small { background: rgba(255, 255, 255, 0.22); color: var(--on-fill); }
+  .saved-cat:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Account: the rule between sections softens to the hairline the browse
+     bands use, so the page reads as one sheet rather than a stack of slabs. */
+  .account-shell .panel-section { border-bottom-color: var(--rule-soft); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-navrow, .saved-cat { transition: none; }
+}
+
+
+/* == Published guides (community/GuidesPanel.jsx) ==========================
+   A gallery of DOCUMENTS, so the units here are objects and get borders,
+   while the route inside one is a list and gets hairlines. Photographs come
+   from the reader's own catalogue, never from a stranger's payload.
+   ========================================================================= */
+.guides-panel { z-index: 1200; }
+
+/* The door on Explore and at the foot of the friends page. One real count,
+   one action, and it removes itself when there is nothing to open. */
+.gld-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.gld-strip-icon { display: inline-flex; flex: none; color: var(--ink-mute); }
+.gld-strip-text {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+/* A count is a measured fact, so it is set like one. */
+.gld-strip-n {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+}
+.gld-strip-btn {
+  flex: none;
+  min-height: 32px;
+  padding: 6px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.gld-strip-btn:hover { border-color: var(--ink); color: var(--ink); }
+.frn-guides { padding-top: 0; }
+
+/* The gallery. ONE column, and the card runs across rather than down.
+   A two-up grid of photo tiles is a shape for a page; this lives in a 440px
+   slide-over, where two columns left every title truncated mid-word. Across,
+   a card holds its full title, its route, its facts and its byline at 380px
+   and at 440px alike. */
+.gld-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.gld-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+.gld-card:hover { border-color: var(--ink-mute); }
+.gld-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gld-card-photo {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 116px;
+  align-self: stretch;
+  background: var(--paper-dim);
+}
+.gld-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.gld-card-nophoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--ink-mute);
+}
+.gld-card-flags {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  display: inline-flex;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+}
+.gld-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+  padding: 11px 13px 11px 12px;
+}
+/* Two lines before it truncates: a guide's title is the one thing on the card
+   that carries what it is about, so clipping it at 20 characters made every
+   card read the same. */
+.gld-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.gld-card-route {
+  font-size: 12px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Nights and season are measured facts. Comma separated, never a middot. */
+.gld-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.gld-card-by {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+/* One guide, opened. */
+.gld-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 5px 11px 5px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.gld-back:hover { border-color: var(--ink); color: var(--ink); }
+.gld-back-chev { transform: rotate(90deg); }
+.gld-title {
+  margin: 0 0 6px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.gld-byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-bottom: 12px;
+}
+.gld-by {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.gld-meta {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.gld-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.gld-copy:hover { border-color: var(--ink); color: var(--ink); }
+.gld-map {
+  position: relative;
+  height: 210px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+/* The route is a list of related facts, so hairlines rather than a card each. */
+.gld-stops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.gld-stop {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.gld-stop:last-child { border-bottom: 0; }
+.gld-stop-mark { display: inline-flex; flex: none; color: var(--ink-mute); }
+.gld-stop-city {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gld-stop-nights {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.gld-story {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+}
+.gld-highlights {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+/* What a published guide never carries, said once at the foot rather than
+   asked to be taken on trust. */
+.gld-note {
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--ink-mute);
+}
+/* The notice form under a guide (DSA Article 16, migration 037). Closed it is
+   the same quiet outlined button as Copy link; open it reuses the account
+   feedback form's fields. The focus rings are added here because the shared
+   .auth-field input style swaps its outline for a border colour only. */
+.gld-report-open { color: var(--ink-soft); }
+.gld-report {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.gld-report .section-title { margin-bottom: 0; }
+.gld-report-lede {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.gld-report .auth-hint { margin: 0; }
+.gld-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.gld-report-actions .auth-submit { min-height: 44px; margin-top: 0; }
+.gld-report-actions .gld-copy { min-height: 44px; }
+.gld-report textarea:focus-visible,
+.gld-report input:focus-visible,
+.gld-report button:focus-visible,
+.gld-report-open:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.gld-report-done {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--green);
+}
+.gld-report-done p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink); }
+@media (prefers-reduced-motion: reduce) {
+  .gld-report .account-feedback-input,
+  .gld-report .auth-field input,
+  .gld-report .auth-submit { transition: none; }
+}
+.gld-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.gld-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.gld-chip:hover { border-color: var(--ink-mute); }
+.gld-chip.on {
+  border-color: transparent;
+  background: var(--ink-fill);
+  color: var(--on-fill);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gld-card, .gld-chip, .gld-strip-btn { transition: none; }
+}
+
+
+/* == Co-planners (auth/coplanners.js, TripSharePanel, FriendsSpoke) ========
+   Who else may edit one trip. A list of people, so hairlines, and it sits
+   inside the same panel that answers "who can see this": one screen, one
+   subject. The sub-line states what a co-planner gets and what stays with
+   its owner, because a control that shares without saying what it shares is
+   the thing this whole layer exists to avoid.
+   ========================================================================= */
+.tshare-coplan {
+  margin: 0 0 16px;
+  padding: 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.coplan-title { display: block; margin-bottom: 4px; }
+.coplan-sub { margin-bottom: 10px; }
+.coplan-list { margin-bottom: 10px; }
+.coplan-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.coplan-row:last-child { border-bottom: 0; }
+.coplan-who {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.coplan-who b {
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Asked, or editing. A state, so it takes the ochre seal rather than the
+   accent, which in this app means "press this". */
+.coplan-state {
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.coplan-ask {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.coplan-pick {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.coplan-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.coplan-ask-btn {
+  flex: none;
+  min-height: 36px;
+  padding: 7px 15px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.coplan-ask-btn:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.coplan-ask-btn:disabled { opacity: 0.5; cursor: default; }
+/* A trip somebody else owns, in a list of your own. It says whose it is
+   rather than looking identical to the ones you can delete. */
+.uptrip-coplan {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--rate-soft);
+}
+
+/* ---- Region layer: travel band dividers and the region page ---------- */
+/* A band divider is a rule in the list, not a card: it says "everything
+   below this line is a day trip away" and nothing else. Full width in the
+   card grid, hairline under the label, same ink as the near header. */
+.places-bandhead {
+  grid-column: 1 / -1;
+  margin: 14px 2px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+
+/* The region page: one full screen record, same shell as the other pages. */
+.rgnp {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow-y: auto;
+  background: var(--paper);
+}
+.rgnp-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 18px 20px 64px;
+}
+.rgnp-back {
+  border: 0;
+  background: none;
+  padding: 8px 4px;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.rgnp-share {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: none;
+  padding: 5px 10px;
+  margin: 2px 0 4px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.rgnp-kind {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+.rgnp h1 {
+  margin: 2px 0 14px;
+  font-size: 26px;
+  line-height: 1.15;
+}
+.rgnp-sect {
+  margin: 22px 2px 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.rgnp-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 700px) {
+  .rgnp-list { grid-template-columns: 1fr 1fr; }
+}
+.rgnp-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  padding: 8px;
+  background: var(--bg-card);
+  cursor: pointer;
+}
+.rgnp-card img {
+  width: 84px;
+  height: 63px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex: none;
+  background: var(--paper-dim);
+}
+.rgnp-card-noimg {
+  width: 84px;
+  height: 63px;
+  border-radius: 6px;
+  flex: none;
+  background: var(--paper-dim);
+}
+.rgnp-card-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+.rgnp-card-sub {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+/* The listed card is a DIFFERENT kind of thing, and it looks like one: a
+   dashed border where rated cards have a solid one, and a plain chip where
+   they have a score. Never a grey 0.0, never a dash where a number lives. */
+.rgnp-card.rgnp-listed {
+  border-style: dashed;
+}
+.rgnp-listed-chip {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 1px 7px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.rgnp-neigh {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rgnp-neigh button {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: none;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------------------
+   The cycling layer.
+
+   Nothing here invents a look: the page shell mirrors .rgnp, the cards reuse
+   .places-tcard, and every colour is a token. Two rules from the design
+   system do most of the work in this block:
+
+   THE MONO RULE. var(--mono) carries measured facts only: kilometres, metres
+   of ascent, percent paved, safety scores, agreement percentages. Route names,
+   town names and every sentence stay in the body face. That is why a stage
+   line sets its distance in mono and its destination in sans on the same row.
+
+   LISTS GET HAIRLINES, OBJECTS GET BORDERS. Stages and family sections are
+   runs of related facts, so they are divided by rules. A route card is a
+   bounded thing, so it gets a border.
+   --------------------------------------------------------------------------- */
+
+.cycle-page {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow-y: auto;
+  background: var(--paper);
+  padding: 18px 20px 64px;
+}
+/* One centred column. Centring every direct child of the page instead
+   (`.cycle-page > *`) broke the moment any child rule set its own side
+   margins, which the title, the subline and the section list all did: the
+   family page rendered its heading centred and its rows flush left. */
+.cycle-inner { max-width: 860px; margin: 0 auto; }
+
+.cycle-close, .cycle-back {
+  display: block;
+  border: 0;
+  background: none;
+  padding: 8px 4px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+}
+/* The page header: back arrow, the title block, then the score.
+ *
+ * .cycle-head had NO rule at all, so the three sat in document order with no
+ * relationship to each other, and .cycle-title styles the WRAPPER while the
+ * heading inside it is an <h1> with no rule of its own: it fell through to
+ * the browser default and rendered about twice the intended size, pushing
+ * everything below the fold. */
+.cycle-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.cycle-head .cycle-back { flex: none; margin-top: 2px; }
+.cycle-title { flex: 1; min-width: 0; margin: 0; }
+.cycle-title h1 {
+  margin: 0 0 2px;
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.cycle-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+/* The map. `position` is pinned because maplibre's own stylesheet loads
+   lazily with the page chunk and would otherwise win the cascade; the
+   height is the page's, not the library's. */
+.cycle-map {
+  position: relative !important;
+  width: 100%;
+  height: 320px;
+  margin: 4px 0 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.cycle-map-pin {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--on-fill);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+.cycle-map-pin.end { background: var(--ink); }
+.cycle-elev { margin: 4px 0 10px; }
+.cycle-note { margin: 6px 0; font-size: 14px; color: var(--ink-soft); }
+
+/* Measured facts. Tabular so a column of distances does not jitter. */
+.cycle-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 10px 0 4px;
+  padding: 10px 0;
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.cycle-surface, .cycle-safety, .cycle-free, .cycle-bike,
+.cycle-pace, .cycle-season, .cycle-agree { white-space: nowrap; }
+.cycle-safety-note, .cycle-credit {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+.cycle-why { margin: 10px 0; padding-left: 18px; font-size: 15px; color: var(--ink-soft); }
+.cycle-why li { margin: 3px 0; }
+
+/* Stages: a run of facts, so hairlines rather than boxes. */
+.cycle-stages { margin: 8px 0; padding: 0; list-style: none; }
+/* Five children: the day label, then four lines of text. The label spans
+   every row of the second column and the text is pinned to that column
+   explicitly; left to auto-placement, the third line wrapped round into the
+   label column, which then grew to fit it and squeezed the rest of the
+   stage into a strip down the right-hand side. */
+.cycle-stage {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 2px 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.cycle-stage > :not(.cycle-stage-day) { grid-column: 2; }
+.cycle-stage-day {
+  grid-column: 1;
+  grid-row: 1 / 6;
+  align-self: start;
+  min-width: 34px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.cycle-stage-line { font-size: 15px; color: var(--ink); }
+.cycle-stage-meta, .cycle-stage-sleep, .cycle-stage-bail {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+
+.cycle-checks {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.cycle-gpx {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: none;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--ink);
+}
+.cycle-gpx:hover { background: var(--paper-dim); }
+
+.cycle-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0; }
+/* .cycle-shot is a <figure> wrapping an <img> and a <figcaption>, not the
+   image itself: aspect-ratio and object-fit on it did nothing, and the
+   figure's default browser margin let it measure 1280px inside an 860px
+   gallery, so every photograph bled off the right of the page. The box
+   belongs to the figure; the fitting belongs to the img. */
+.cycle-shot { margin: 0; min-width: 0; }
+.cycle-shot img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.cycle-shot figcaption {
+  margin-top: 4px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--ink-mute);
+}
+
+/* Route and tour cards use the photo-card template every other layer
+   uses (.places-bcard), so they carry no layout of their own. What is
+   cycling's alone is the unscored marker in the badge slot. */
+.places-card-right .cycle-card-unrated {
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--on-fill);
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.cycle-tourcard-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+.cycle-tourcard-meta, .cycle-tourcard-pace, .cycle-card-meta,
+.cycle-card-surface, .cycle-card-score {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.cycle-tourcard-towns, .cycle-card-why { font-size: 13px; color: var(--ink-soft); }
+.cycle-card-name { font-size: 15px; font-weight: 600; color: var(--ink); }
+/* A listed row has no score, and says so rather than showing a gap. */
+.cycle-card-unrated, .cycle-unrated {
+  font-size: 12.5px;
+  font-style: normal;
+  color: var(--ink-mute);
+}
+
+/* EuroVelo families: chips, because each is one continental route. */
+.cycle-famrow {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 2px 4px;
+}
+.cycle-famchip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+}
+.cycle-famchip:hover { background: var(--paper-dim); }
+.cycle-famchip-ref { font-size: 14px; font-weight: 600; }
+.cycle-famchip-meta {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.cycle-famlist { margin: 6px 0; padding: 0; list-style: none; }
+.cycle-famitem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.cycle-famitem-name { flex: 1; font-size: 15px; color: var(--ink); }
+.cycle-famitem-km {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.cycle-famitem-un { font-size: 12.5px; color: var(--ink-mute); }
+
+.cycle-famchip:focus-visible, .cycle-gpx:focus-visible,
+.cycle-close:focus-visible, .cycle-back:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+
+/* The one button that holds the local network back. */
+.cycle-localtoggle {
+  display: block;
+  margin: 6px 0 4px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  padding: 8px 14px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+}
+.cycle-localtoggle:hover { background: var(--paper-dim); }
+.cycle-localtoggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The Europe-wide list, and the note that says it is one. */
+.cycle-topnote { margin: 8px 0 2px; font-size: 13.5px; color: var(--ink-soft); }
+
+/* Towns along the way, in riding order. */
+.cycle-towns { list-style: none; margin: 4px 0 12px; padding: 0; }
+.cycle-town {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 14px;
+}
+.cycle-town-km {
+  flex: none;
+  min-width: 56px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.cycle-town-name { flex: 1; min-width: 0; color: var(--ink); }
+.cycle-town-has { font-size: 12.5px; color: var(--ink-soft); text-align: right; }
+
+/* A published EuroVelo section is a door to its route. */
+.cycle-famitem-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cycle-famitem-open:hover { background: var(--paper-dim); }
+.cycle-famitem-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 560px) {
+  .cycle-map { height: 240px; }
+  .cycle-town-has { display: none; }
+}
+@media (max-width: 560px) {
+  .cycle-page { padding: 14px 16px 56px; }
+  .cycle-title { font-size: 22px; }
+  .cycle-gallery { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cycle-famchip, .cycle-gpx { transition: none; }
+}
+
+/* ── Cross-layer neighbours (brief 08): "trails up this mountain" ────────
+   One block per neighbouring layer on every layer page, composed from the
+   build-time nb ids. List idiom, not cards: these are related facts under
+   the page's object, so they get hairlines (same shape as .lpage-walks). */
+.nbx { display: grid; gap: 18px; }
+.nbx-block h2 { margin-bottom: 4px; }
+.nbx-list { margin: 0; padding: 0; list-style: none; }
+.nbx-list li { border-top: 1px solid var(--rule-soft); }
+.nbx-list li:last-child { border-bottom: 1px solid var(--rule-soft); }
+.nbx-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 2px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.nbx-item:hover .nbx-name { text-decoration: underline; }
+.nbx-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.nbx-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nbx-meta { display: flex; align-items: center; gap: 8px; flex: none; }
+.nbx-meta small {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.nbx-unscored {
+  font-size: 11px;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Curated trip library (journeys): the Trips tab's front door.
+   Ten style cards, one style's trips as photo cards, and the journey page.
+   ========================================================================== */
+
+/* The one-line introduction over the style grid. */
+.jsec-lede {
+  grid-column: 1 / -1;
+  margin: 2px 2px 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* A style card is the country strip's grammar with more photograph: the
+   image IS the message, so it gets a taller box and a display-face name. */
+.jstyle-card { aspect-ratio: 16 / 9; }
+.jstyle-card .jstyle-name {
+  font-size: 21px;
+  white-space: normal;
+  line-height: 1.15;
+}
+@media (min-width: 640px) {
+  .jstyle-card .jstyle-name { font-size: 23px; }
+}
+
+/* One curated trip. Slightly taller than a destination card so the facts
+   row breathes; everything rides on the photograph, nothing under it. */
+.jcard { aspect-ratio: 2 / 1; }
+.jcard .jcard-title { white-space: normal; line-height: 1.2; }
+.jcard .jcard-facts { margin-top: 6px; }
+
+/* The composer's own door at the end of the grid: a bordered instrument
+   row, deliberately not a photo card, because it is a different product. */
+.jcomposed-card {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  text-align: left;
+  cursor: pointer;
+}
+.jcomposed-card:hover { border-color: var(--ink-mute); }
+.jcomposed-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.jcomposed-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  flex: none;
+}
+.jcomposed-text { flex: 1; min-width: 0; }
+.jcomposed-title {
+  display: block;
+  font-family: var(--display);
+  font-size: 16.5px;
+  font-weight: 600;
+}
+.jcomposed-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* The head of one style's list: the way back, then the name and the count. */
+.jsec-head { grid-column: 1 / -1; margin: 2px 2px 0; }
+.jsec-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.jsec-back:hover { border-color: var(--ink-mute); color: var(--ink); }
+.jsec-back:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.jsec-back-solo { margin-top: 12px; }
+.jsec-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 10px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.jsec-n {
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-mute);
+}
+
+/* ── The journey page ── */
+
+/* A region line that is only a line: the pin is a capital or gateway
+   fallback, so it links nowhere and prints no coordinates. */
+.jpage-where-flat { cursor: default; }
+
+.jpage-chips { flex-wrap: wrap; }
+.jpage-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.jpage-chip.mono { font-family: var(--mono); font-weight: 500; }
+
+.jpage-tags { margin-top: 10px; }
+
+/* The budget as an itemised receipt: hairline rows, right-aligned mono,
+   a heavier rule above the sum. */
+.jpage-budget-rows { list-style: none; margin: 0; padding: 0; }
+.jpage-budget-rows li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.jpage-budget-rows li:first-child { border-top: 0; }
+.jpage-budget-label { font-size: 13px; }
+.jpage-budget-label small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  line-height: 1.4;
+}
+.jpage-budget-eur {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.jpage-budget-total {
+  border-top: 2px solid var(--ink) !important;
+}
+.jpage-budget-total .jpage-budget-label { font-weight: 600; }
+.jpage-budget-total .jpage-budget-eur { font-size: 15px; font-weight: 500; }
+
+/* One authored day: the number in mono, the title in display, then the
+   three parts of the day with their labels in the margin of the text. */
+.jpage-day {
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--rule-soft);
+}
+.jpage-day:first-of-type { border-top: 0; padding-top: 4px; }
+.jpage-day-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.jpage-day-n {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--rate);
+  white-space: nowrap;
+}
+.jpage-day-head h3 {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.jpage-day-part { margin-bottom: 8px; }
+.jpage-day-when {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 2px;
+}
+.jpage-day-text {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.jpage-day-stats {
+  margin: 6px 0 8px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.jpage-day-sleep {
+  margin: 4px 0 8px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+/* Where to sleep: one bordered card per named property. */
+.jpage-stay {
+  padding: 14px 16px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+  margin-bottom: 10px;
+}
+.jpage-stay header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 4px;
+}
+.jpage-stay h3 { font-size: 14px; font-weight: 700; }
+.jpage-stay-kind { font-size: 12px; color: var(--ink-mute); }
+.jpage-stay-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.jpage-stay-book {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.jpage-stay-book .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Good to know: the logistics slots as definition rows. */
+.jpage-log-row dd { color: var(--ink-soft); }
+.jpage-log-text { font-size: 13px; line-height: 1.5; }
+
+.jpage-tips ul { list-style: none; margin: 0; padding: 0; }
+.jpage-tips li {
+  position: relative;
+  padding: 8px 0 8px 18px;
+  border-top: 1px solid var(--rule-soft);
+}
+.jpage-tips li:first-child { border-top: 0; }
+.jpage-tips li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 15px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rate);
+}
+.jpage-tip-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* What must be re-checked before booking, said once, tinted, never buried. */
+.jpage-verify {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--rate-bg);
+  color: var(--rate);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.jpage-verify svg { flex: none; margin-top: 2px; }
+
+/* Journeys on a phone: the style cards keep the two-abreast tile grammar
+   (the .places-ccard rules above already reshape them), only the display
+   name steps down to tile size. A trip card carries a title, a place line
+   and a fact row, and half a column cannot hold that, so like the composed
+   itinerary card it keeps the full row. */
+@media (max-width: 768px) {
+  .jstyle-card .jstyle-name { font-size: 15.5px; }
+  .jcard {
+    grid-column: 1 / -1;
+    aspect-ratio: 2 / 1;
+  }
+  .jcard .jcard-title { font-size: 16px; }
+  .jsec-title { font-size: 19px; }
+}
+
+/* ==========================================================================
+   Explore rebuild (PLAN.md C3, C4, C6): the mosaic grid, the four-slot card,
+   the always-visible filter rail and the chip row. Kind picks the span, so
+   the grid itself is the legend: metros and the top tier take half a row,
+   landscapes letterbox, cities sit three up, towns and villages four up.
+   ========================================================================== */
+
+.explore-grid--mosaic {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.explore-grid--mosaic .xcard { grid-column: span var(--xspan, 3); }
+@media (max-width: 899px) {
+  /* uniform two-up on small tablets */
+  .explore-grid--mosaic { grid-template-columns: repeat(2, 1fr); }
+  .explore-grid--mosaic .xcard { grid-column: span 1; }
+}
+@media (max-width: 619px) {
+  /* the phone reads one clean column */
+  .explore-grid--mosaic { grid-template-columns: 1fr; }
+}
+
+/* --- the four-slot card body ------------------------------------------- */
+.xcard-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.xcard-kindword { font-weight: 600; letter-spacing: 0.01em; }
+.xcard-dot { opacity: 0.6; }
+.kind-glyph { flex: none; display: inline-block; }
+.xcard .xcard-name {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.xcard--s6 .xcard-name, .xcard--metro .xcard-name { font-size: 22px; }
+.xcard-verdict {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-height: 20px;
+}
+.xcard-country-line {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rate-soft);
+}
+.xcard-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.xcard-role { font-weight: 600; }
+.xcard-hours { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-mute); }
+.xcard-car { display: inline-flex; color: var(--ink-mute); }
+.xcard-cost { margin-left: auto; }
+
+/* the verdict ribbon: filled for the top tier, outlined for a detour */
+.xcard-seal--filled { background: var(--rate); color: var(--on-fill); border-color: var(--rate); }
+.xcard-seal--outline {
+  background: var(--bg-card);
+  color: var(--rate);
+  border: 1px solid var(--rate);
+}
+.xcard-gem {
+  position: absolute;
+  top: 42px;              /* below the shortlist star, which owns the corner */
+  right: 8px;
+  background: var(--gem-bg);
+  color: var(--gem-ink);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* --- grid header: the live count and the sort select -------------------- */
+.xgrid-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 2px 10px;
+}
+.xgrid-count {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.xgrid-sort {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+.xgrid-sort select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  padding: 5px 8px;
+}
+
+/* --- the filter rail ---------------------------------------------------- */
+.xrail { display: flex; flex-direction: column; gap: 14px; }
+.xrail-group { border: 0; margin: 0; padding: 0; min-width: 0; }
+.xrail-legend {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 0 0 6px;
+}
+.xrail-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+.xrail-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.xrail-toggle:hover { border-color: var(--rule); }
+.xrail-toggle.on {
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
+  color: var(--on-fill);
+}
+.xrail-toggle.on .kind-glyph rect,
+.xrail-toggle.on .kind-glyph circle,
+.xrail-toggle.on .kind-glyph polygon { fill: var(--on-fill); }
+.xrail-toggle.xrail-gem.on { background: var(--gem-ink); border-color: var(--gem-ink); }
+.xrail-month {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.xrail-month select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  padding: 4px 6px;
+}
+.xrail-countries {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 4px;
+}
+.xrail-country {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  padding: 3px 2px;
+  cursor: pointer;
+}
+.xrail-count {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  margin: 0 0 10px;
+}
+.xrail-count-inline {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- active-filter chips ------------------------------------------------- */
+.xchips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 2px 10px; }
+.xchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--rate-bg);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.xchip:hover { border-color: var(--rate-soft); }
+.xchip-x { font-weight: 700; opacity: 0.6; }
+.xchip-clear { background: transparent; border-color: var(--rule-soft); color: var(--ink-mute); }
+
+/* --- the phone Filters door ---------------------------------------------- */
+/* Was a <details> fold; it is now the same .places-filter-btn Destinations
+   uses, opening the shared sheet. The .explore-fold rules below are kept so a
+   revert is one JSX swap. */
+.explore-filterbar {
+  display: flex;
+  margin: 0 0 10px;
+}
+.explore-filterbar .places-filter-btn { flex: 1 1 auto; justify-content: center; }
+@media (min-width: 769px) {
+  .explore-filterbar { display: none; }
+}
+
+.explore-fold {
+  margin: 0 0 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  padding: 0;
+}
+.explore-fold > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  cursor: pointer;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.explore-fold > summary::-webkit-details-marker { display: none; }
+.explore-fold[open] > summary { border-bottom: 1px solid var(--rule-soft); }
+.explore-fold .xrail { padding: 12px 14px 14px; }
+@media (min-width: 769px) {
+  .explore-fold { display: none; }
+}
+
+/* The mosaic card is body-forward again: the pre-rebuild desktop CSS hid
+   .xcard-body behind a photo overlay that no longer exists. Scoped to the
+   mosaic grid so nothing else that reuses .xcard changes. */
+.explore-grid--mosaic .xcard-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px 12px;
+}
+.explore-grid--mosaic .xcard-best { display: inline-flex; }
+.explore-grid--mosaic .xcard-media { aspect-ratio: auto; }
+
+/* --- Explore rails (PLAN.md C5): editorial strips before the grid -------- */
+.xrails { display: flex; flex-direction: column; gap: 18px; margin: 0 0 22px; }
+.xrails-head { display: flex; align-items: baseline; gap: 12px; margin: 0 2px 8px; }
+.xrails-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+.xrails-all {
+  margin-left: auto;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--rate-soft);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.xrails-all:hover { text-decoration: underline; }
+.xrails-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 2px 2px 8px;
+}
+.railcard {
+  flex: 0 0 172px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font: inherit;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+}
+.railcard-media { position: relative; display: block; }
+.railcard-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.railcard-seal {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rate);
+}
+.railcard-seal.rt-2 { background: var(--bg-card); border: 2px solid var(--rate); }
+.railcard-body { display: flex; flex-direction: column; gap: 3px; padding: 8px 10px 10px; }
+.railcard-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.railcard-name {
+  font-family: var(--display);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- tier legend (PLAN.md C8) ------------------------------------------- */
+.tierlegend {
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  padding: 9px 12px;
+  margin: 0 0 12px;
+}
+.tierlegend-rows {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.tierlegend-row { display: inline-flex; align-items: center; gap: 5px; }
+.tierlegend-mark { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.tierlegend-mark.tl-3 { background: var(--rate); }
+.tierlegend-mark.tl-2 { background: var(--bg-card); border: 2px solid var(--rate); }
+.tierlegend-mark.tl-1 { background: var(--rate-bg); border: 1px solid var(--rate-soft); }
+.tierlegend-mark.tl-gem { background: var(--gem-ink); }
+.tierlegend-label { font-weight: 600; color: var(--ink); }
+.tierlegend-count { font-size: 11px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.tierlegend-kinds { display: inline-flex; gap: 10px; margin-left: 4px; }
+.tierlegend-kind { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-mute); }
+.tierlegend-why {
+  margin-left: auto;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--rate-soft);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.tierlegend-why:hover { text-decoration: underline; }
+.tierlegend-x {
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--ink-mute);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.tierlegend-method {
+  margin: 8px 2px 2px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  max-width: 68ch;
+}
+.tierlegend-pip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink-mute);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 0 0 10px;
+}
+@media (max-width: 768px) {
+  .tierlegend-kinds { display: none; } /* the grid is single-column there */
+}
+
+/* --- Explore map view (PLAN.md C7) --------------------------------------- */
+.xview-toggle {
+  display: inline-flex;
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-left: auto;
+}
+.xgrid-head .xview-toggle + .xgrid-sort { margin-left: 0; }
+.xview-toggle button {
+  font: inherit;
+  font-size: 12.5px;
+  padding: 5px 12px;
+  border: 0;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.xview-toggle button.on { background: var(--ink-fill); color: var(--on-fill); }
+.xmap {
+  height: min(72vh, 760px);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  margin: 0 0 14px;
+}
+.xmap-canvas { width: 100%; height: 100%; }
+.xmap-pop { font-size: 12.5px; line-height: 1.35; }
+.xmap-pop strong { font-size: 13px; margin-right: 6px; }
+.xmap-pop-sub { color: var(--slate-mute); }
+.xmap-pop-score {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.xmap-pop-score.rt-3, .xmap-pop-score.rt-2 { color: var(--rate); }
+.explore-grid--mosaic[hidden] { display: none; } /* display:grid beats the hidden attr otherwise */
+
+/* --- country pages (PLAN.md C9) ------------------------------------------ */
+.cpage {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--paper);
+  overflow-y: auto;
+  padding: 18px clamp(16px, 4vw, 40px) 40px;
+}
+.cpage-top { display: flex; align-items: center; gap: 10px; margin: 0 0 6px; }
+.cpage-back {
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.cpage-name { font-family: var(--display); font-size: 28px; font-weight: 600; margin: 0; }
+.cpage-facts { color: var(--ink-soft); font-size: 14px; margin: 0 0 18px; max-width: 78ch; }
+.cpage-body { display: flex; flex-direction: column; gap: 20px; }
+.cpage-h { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0 0 8px; }
+.cpage-banner {
+  display: block;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rate-soft);
+  background: var(--rate-bg);
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 14px;
+  margin: 0 0 12px;
+  cursor: pointer;
+  text-align: left;
+}
+.xrail-country-row { display: flex; align-items: center; gap: 4px; }
+.xrail-country-row .xrail-country { flex: 1; }
+.xrail-country-page {
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink-mute);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.xrail-country-page:hover { color: var(--rate-soft); background: var(--rate-bg); }
+
+/* --- search hints and suggestions (PLAN.md B2) --------------------------- */
+.xsearch-hint {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  background: var(--rate-bg);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 0 0 10px;
+  display: inline-block;
+}
+.xsearch-suggest { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; }
+.xsearch-suggest-btn {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--rate-soft);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Destination page rebuild (PLAN.md D1-D7): the decision sequence, the
+   verdict card, sleep, getting there, the sized highlight grid, consensus
+   groups and area members.
+   ========================================================================== */
+.destp-subnav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 6px 14px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.destp-subnav button {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 4px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.destp-subnav button:hover { border-color: var(--rule); color: var(--ink); }
+
+.destp-verdict-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.destp-verdict-label { font-family: var(--display); font-size: 18px; font-weight: 600; color: var(--rate); }
+.destp-verdict-country { font-size: 13px; font-weight: 600; color: var(--rate-soft); }
+.destp-confidence {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  background: var(--rate-bg);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin: 10px 0 0;
+  max-width: 64ch;
+}
+.destp-howlong { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; }
+
+/* sleep */
+.destp-hoods { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.destp-hood { display: grid; grid-template-columns: minmax(90px, 1fr) 2fr 52px; align-items: center; gap: 8px; font-size: 12.5px; }
+.destp-hood-name { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.destp-hood-bar { height: 7px; background: var(--rule-soft); border-radius: 4px; overflow: hidden; }
+.destp-hood-bar span { display: block; height: 100%; background: var(--rate-soft); border-radius: 4px; }
+.destp-hood-eur { text-align: right; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.destp-sleep-note { font-size: 11.5px; color: var(--ink-mute); margin: 8px 0 0; }
+.destp-sleep-tiers { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); margin: 8px 0 0; }
+.destp-season { margin: 10px 0 0; }
+.destp-season-bars { display: flex; align-items: flex-end; gap: 3px; height: 42px; }
+.destp-season-bars span { flex: 1; background: var(--rule); border-radius: 2px 2px 0 0; }
+.destp-season-bars span.is-low { background: var(--green); }
+.destp-season-note { font-size: 11.5px; color: var(--green); margin: 4px 0 0; font-weight: 600; }
+
+/* getting there */
+.destp-getting { display: flex; flex-direction: column; gap: 7px; }
+.destp-get-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink); margin: 0; }
+.destp-get-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.destp-get-transit.is-excellent .destp-get-dot, .destp-get-transit.is-good .destp-get-dot { background: var(--status-success); }
+.destp-get-transit.is-limited .destp-get-dot { background: var(--rate-soft); }
+.destp-get-transit.is-poor .destp-get-dot { background: var(--danger); }
+
+/* crowding + water */
+.destp-crowd, .destp-water { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--rule-soft); }
+.destp-crowd-head, .destp-water-head { display: flex; align-items: center; gap: 8px; }
+.destp-crowd-year { font-size: 11px; color: var(--ink-mute); }
+.destp-water-line { font-size: 12.5px; color: var(--ink-soft); margin: 6px 0 0; }
+
+/* highlights: size, plates, groups, significance */
+.destp-hl-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 2px 6px; }
+.destp-hl.is-top { grid-column: span 2; }
+.destp-hl.is-top img, .destp-hl.is-top .destp-hl-plate { min-height: 150px; }
+.destp-hl-plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92px;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 600;
+}
+.destp-hl-sig { color: var(--rate-soft); font-size: 10px; letter-spacing: 1px; }
+.destp-do-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 2px 6px; }
+.destp-do-group .mono { color: var(--rate-soft); }
+
+/* members */
+.destp-members { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.destp-member { border: 1px solid var(--rule-soft); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.destp-member.is-focus { border-color: var(--rate); background: var(--rate-bg); }
+.destp-member-head { display: flex; align-items: center; gap: 6px; }
+.destp-member-name { font-weight: 600; color: var(--ink); }
+.destp-member-h { margin-left: auto; font-size: 11px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 3px; }
+.destp-member-desc { font-size: 12px; color: var(--ink-soft); }
+.destp-member-link { font-size: 11.5px; color: var(--rate-soft); font-weight: 600; }
+
+/* A payment gate loses to nothing: the shared day-saved-overlay sits at
+   z 62, and the full-screen destination page at z 240 was burying the pass
+   modal launched from its own PDF button - a guest clicked and saw nothing
+   happen. The pass variant outranks every page. */
+.day-saved-overlay.pass-overlay { z-index: 320; }
+
+/* --- practical layer (PLAN.md D4) ---------------------------------------- */
+.destp-rhythm { font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; max-width: 66ch; }
+.destp-bookahead {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--rate-bg);
+  border-radius: 8px;
+  padding: 8px 11px;
+  margin: 10px 0 0;
+}
+.destp-bookahead-mark {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--rate);
+  color: var(--on-fill);
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(2px);
+}
+.destp-pairs { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin: 12px 0 0; }
+.destp-pairs-label { font-size: 12px; font-weight: 700; color: var(--ink-mute); }
+.destp-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 4px 11px;
+  cursor: pointer;
+}
+.destp-pair:hover { border-color: var(--rate-soft); }
+.destp-pair .mono { color: var(--ink-mute); font-size: 11px; }
+.destp-triptotal {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  border-top: 1px solid var(--rule-soft);
+  padding-top: 9px;
+}
+
+/* ==========================================================================
+   Explore v5 (2026-09-12): the calm page.
+   One control bar over the feed, three collections then the grid, a card
+   that carries four facts and no more, a filter rail in folds, and on a
+   desktop a map beside the grid rather than in place of it. Every rule
+   here is a later, same-specificity override of the v4 Explore chrome
+   above; nothing outside Explore is touched.
+   ========================================================================== */
+
+/* --- the control bar: title, live count, grid/map, sort ------------------ */
+.xbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin: 4px 0 14px;
+  padding: 0;
+}
+.xbar-lead { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.xbar-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.xbar .xgrid-count { font-size: 12.5px; color: var(--ink-mute); }
+.xbar .explore-mock { margin: 0; align-self: flex-start; }
+.xbar-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.xbar .xview-toggle {
+  margin-left: 0;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  overflow: visible;
+}
+.xbar .xview-toggle button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 13px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-weight: 600;
+  transition: background .15s, color .15s;
+}
+.xbar .xview-toggle button:hover { color: var(--ink); }
+.xbar .xview-toggle button.on { background: var(--ink); color: var(--on-fill); }
+.xbar .xview-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.xbar .xgrid-sort { margin-left: 0; gap: 8px; color: var(--ink-mute); }
+.xgrid-sort-field { position: relative; display: inline-flex; align-items: center; }
+.xbar .xgrid-sort select {
+  appearance: none;
+  height: 38px;
+  padding: 0 32px 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.xbar .xgrid-sort select:hover { border-color: var(--ink-mute); }
+.xbar .xgrid-sort select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.xgrid-sort-chev { position: absolute; right: 11px; pointer-events: none; color: var(--ink-mute); }
+
+/* Under the bar: the active chips wear the accent tint, the one colour
+   "selected" has on this page, and the key becomes one quiet line. */
+.xchips { margin: -4px 0 14px; }
+.xchip { padding: 5px 11px; background: var(--accent-bg); color: var(--ink); font-weight: 500; }
+.xchip:hover { border-color: var(--accent-soft); }
+.xchip-clear { background: transparent; color: var(--ink-mute); }
+
+.tierlegend { margin: 0 0 18px; padding: 0; border: 0; border-radius: 0; background: none; }
+.tierlegend-rows { gap: 8px 16px; font-size: 11.5px; }
+.tierlegend-count { display: inline-flex; align-items: center; font-size: 10.5px; }
+.tierlegend-cut::before {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 8px;
+  margin: 0 5px;
+  background: var(--rule);
+}
+.tierlegend-kinds { margin-left: 4px; padding-left: 14px; border-left: 1px solid var(--rule-soft); }
+.tierlegend-why { color: var(--ink-soft); }
+.tierlegend-why:hover { color: var(--ink); }
+.tierlegend-pip { margin: -6px 0 14px; }
+
+/* --- the rails: three strips and a row of doors ------------------------- */
+.xrails { gap: 26px; margin: 0 0 30px; }
+.xrails-head { align-items: center; gap: 12px; margin: 0 0 10px; }
+.xrails-title { font-size: 20px; letter-spacing: -0.01em; }
+.xrails-all { margin-left: auto; color: var(--accent); font-weight: 600; }
+.xrails-all:hover { color: var(--accent-soft); text-decoration: none; }
+.xrails-nav { display: none; gap: 6px; }
+.xrails-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.xrails-arrow:hover { border-color: var(--ink); color: var(--ink); }
+.xrails-arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.xrails-arrow--prev svg { transform: scaleX(-1); }
+@media (min-width: 769px) and (hover: hover) { .xrails-nav { display: inline-flex; } }
+.xrails-strip {
+  gap: 14px;
+  padding: 4px 2px 10px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.xrails-strip::-webkit-scrollbar { display: none; }
+.railcard {
+  flex: 0 0 200px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  box-shadow: var(--shadow-1);
+  transition: transform .2s cubic-bezier(.16, 1, .3, 1), box-shadow .2s;
+}
+.railcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+.railcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.railcard-body { gap: 4px; padding: 10px 12px 12px; }
+.railcard-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.railcard-name { flex: 1 1 auto; min-width: 0; font-size: 15px; }
+.railcard-kind { gap: 5px; font-size: 11px; }
+.xrails-more { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.xrails-more-label { margin-right: 2px; font-size: 12.5px; font-weight: 600; color: var(--ink-mute); }
+.xrails-more-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.xrails-more-chip:hover { border-color: var(--ink); }
+.xrails-more-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.xrails-more-n { font-family: var(--mono); font-size: 11px; font-variant-numeric: tabular-nums; color: var(--ink-mute); }
+
+/* --- the card: four facts, soft elevation -------------------------------- */
+.explore-grid--mosaic { gap: 18px; }
+.xcard {
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow .22s cubic-bezier(.16, 1, .3, 1), transform .22s cubic-bezier(.16, 1, .3, 1), border-color .22s;
+}
+.xcard:hover { transform: translateY(-2px); border-color: var(--rule-soft); box-shadow: var(--shadow-2); }
+.xcard.selected { border-color: var(--accent); }
+.xcard-hit:focus-visible { border-radius: 14px; }
+.xcard:hover .xcard-img { transform: scale(1.025); }
+.xcard-seal { left: 10px; top: 10px; border-radius: 6px; box-shadow: none; }
+.xcard-star { top: 10px; right: 10px; box-shadow: none; }
+.xcard-info { top: 46px; right: 10px; }
+/* The gem chip used to share the star's column with the info button; it
+   now holds the photo's other corner. */
+.xcard-gem { top: auto; right: auto; bottom: 10px; left: 10px; }
+
+.explore-grid--mosaic .xcard-body { gap: 5px; padding: 11px 13px 12px; }
+.xcard-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; }
+.xcard-head .xcard-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 17px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.explore-grid--mosaic .xcard--metro .xcard-name,
+.explore-grid--mosaic .xcard--area .xcard-name { font-size: 19px; }
+.xcard-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.xcard-place { display: inline-flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; white-space: nowrap; }
+.xcard-country { overflow: hidden; text-overflow: ellipsis; }
+.xcard-kindword {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 6px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--ink-mute);
+}
+.xcard-kindword::before { content: ''; width: 1px; height: 10px; background: var(--rule); }
+.xcard-meta .xcard-cost { margin-left: auto; flex: none; gap: 6px; }
+.xcard-meta .xcard-cost-eur { font-size: 13px; }
+.xcard-meta .xcard-cost-unit { font-size: 11px; }
+
+/* Two rows the card gave up, now in the preview: the role beside the
+   country, and the country rank where one was earned. */
+.xcard-preview-role { display: inline-flex; align-items: center; gap: 6px; }
+.xcard-preview-role::before { content: ''; width: 1px; height: 9px; background: rgba(255, 255, 255, 0.35); }
+.xcard-preview-rank { margin: 0; font-size: 11.5px; font-weight: 600; color: var(--rate-bg); }
+
+/* --- the feed: grid alone, or grid beside a sticky map ------------------- */
+.xcontent { display: block; min-width: 0; }
+.xcontent-main { min-width: 0; }
+@media (min-width: 769px) {
+  .xcontent--split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 46%);
+    gap: 20px;
+    align-items: start;
+  }
+  .xcontent-map { position: sticky; top: 12px; }
+  .xcontent-map .xmap {
+    height: calc(100vh - var(--filter-h) - 36px);
+    margin: 0;
+    border-radius: 16px;
+    box-shadow: var(--shadow-1);
+  }
+  .xcontent--split .explore-grid--mosaic { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .xcontent--split .explore-grid--mosaic .xcard { grid-column: span 1; }
+  .xcontent--split .explore-grid--mosaic .xcard-media { aspect-ratio: 4 / 3; }
+  .xcontent--split .xcard-head .xcard-name { font-size: 16px; }
+}
+@media (min-width: 769px) and (max-width: 1180px) {
+  .xcontent--split { grid-template-columns: minmax(0, 1fr) minmax(300px, 44%); }
+  .xcontent--split .explore-grid--mosaic { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .xcontent--split .xcontent-main { display: none; }
+  .xcontent-map .xmap { height: 64vh; min-height: 380px; margin: 0; border-radius: 14px; }
+}
+
+/* --- the phone: two-up cards, the bar without its title, a floating switch */
+@media (max-width: 619px) {
+  .explore-grid--mosaic { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .explore-grid--mosaic .xcard-media { aspect-ratio: 4 / 3; }
+  .explore-grid--mosaic .xcard-body { gap: 4px; padding: 9px 10px 10px; }
+  .xcard-head .xcard-name { font-size: 15px; }
+  .xcard-meta { flex-wrap: wrap; gap: 3px 8px; font-size: 11.5px; }
+  .xcard-meta .xcard-cost { flex-basis: 100%; margin-left: 0; }
+  .xcard-seal { left: 8px; top: 8px; }
+  .xcard-star { top: 8px; right: 8px; }
+  .xcard-gem { bottom: 8px; left: 8px; }
+}
+@media (max-width: 768px) {
+  .xbar { align-items: center; margin: 2px 0 12px; padding-bottom: 12px; }
+  .xbar-title,
+  .xbar .xgrid-sort-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  .xbar .xgrid-count { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .xbar .xview-toggle { display: none; }
+  .xbar .xgrid-sort select { height: 36px; }
+}
+.xview-fab { display: none; }
+@media (max-width: 768px) {
+  .xview-fab {
+    position: fixed;
+    right: 14px;
+    bottom: calc(var(--bottom-nav-h) + 14px);
+    z-index: 40;
+    display: inline-flex;
+    gap: 2px;
+    margin: 0;
+    padding: 3px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    background: var(--ink);
+    box-shadow: var(--shadow-2);
+  }
+  .xview-fab button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 13px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .xview-fab button.on { background: var(--paper); color: var(--ink); }
+  .xview-fab button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+}
+
+/* --- the side panel: tighter tiles, the rail in folds -------------------- */
+@media (min-width: 769px) {
+  .side-panel.explore-side { padding: 18px 16px 28px 24px; }
+  .explore-side .side-block + .side-block { margin-top: 18px; padding-top: 14px; }
+  .explore-side .kind-rail-scroll { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .explore-side .kind-rail-chip {
+    gap: 5px;
+    padding: 10px 3px 8px;
+    border-color: var(--rule-soft);
+    border-radius: 10px;
+    background: var(--bg-card);
+    font-size: 10.5px;
+  }
+  .explore-side .kind-rail-chip:hover { border-color: var(--rule); color: var(--ink); }
+  .explore-side .kind-rail-chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+  .explore-side .kind-rail-icon { width: 16px; height: 16px; }
+  .explore-side .kind-rail-clear { grid-column: 1 / -1; }
+}
+.xrail { gap: 0; }
+.xrail-group { border-top: 1px solid var(--rule-soft); }
+.xrail-group:first-child { border-top: 0; }
+.xrail-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 0;
+  list-style: none;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  user-select: none;
+}
+.xrail-legend::-webkit-details-marker { display: none; }
+.xrail-legend:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.xrail-legend-text { flex: 1 1 auto; }
+.xrail-legend-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.xrail-legend-chev { flex: none; color: var(--ink-mute); transition: transform .2s ease; }
+.xrail-group[open] > .xrail-legend .xrail-legend-chev { transform: rotate(180deg); }
+.xrail-group-body { padding: 0 0 14px; }
+.xrail-toggles { gap: 6px; }
+.xrail-toggle {
+  padding: 6px 11px;
+  border-color: var(--rule-soft);
+  background: var(--bg-card);
+  font-weight: 500;
+  transition: background .12s, border-color .12s, color .12s, transform .12s;
+}
+.xrail-toggle:hover { border-color: var(--rule); color: var(--ink); }
+.xrail-toggle:active { transform: scale(0.97); }
+.xrail-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.xrail-toggle.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+.xrail-toggle.xrail-gem.on { background: var(--gem-ink); border-color: var(--gem-ink); }
+.xrail-month { margin-top: 10px; }
+.xrail-month select { padding: 5px 8px; border-radius: 8px; }
+.xrail-countries { max-height: 240px; gap: 1px; }
+.xrail-country { padding: 5px 6px; border-radius: 6px; }
+.xrail-country:hover { background: var(--paper-dim); }
+.xrail-country input { width: 14px; height: 14px; margin: 0; accent-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) {
+  .xrail-legend-chev, .xrail-toggle, .xcard, .railcard, .xcard-img,
+  .xrails-arrow, .xrails-more-chip, .xbar .xview-toggle button { transition: none; }
+  .xcard:hover, .railcard:hover { transform: none; }
+}
+
+/* v5 follow-ups from the first screenshots. */
+/* The key's two actions hold the right edge and never wrap under the row. */
+.tierlegend-actions { display: inline-flex; align-items: center; gap: 10px; flex: none; margin-left: auto; }
+.tierlegend-why { margin-left: 0; }
+/* A narrow card lets the place line wrap rather than cut "Spain" to "Sp". */
+.xcard-place { flex-wrap: wrap; white-space: normal; }
+/* The phone fold repeats the count only while it is open and has pushed the
+   control bar's own count off screen. */
+.explore-fold:not([open]) .xrail-count-inline { display: none; }
+@media (max-width: 768px) {
+  /* Room under the last row for the floating grid/map switch. */
+  .explore-wrap { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (min-width: 769px) {
+  /* "Food & wine" fits a three-up tile at this size; 10.5px cut it short. */
+  .explore-side .kind-rail-chip { padding: 10px 2px 8px; font-size: 10px; }
+}
+
+
+/* ==========================================================================
+   Destination page v2 (.destp-v2), 2026-09-12
+
+   The page became a stack of cards that scrolled for ten screens on a phone.
+   This block turns it into folding sections whose closed headers still
+   answer the question ("When to go: best Apr, May"), a four-fact strip under
+   the head, photo tiles that swipe sideways on a phone instead of stacking,
+   things to do as cards with an evidence meter, day trips as photo cards,
+   one "around here" section with a tab per outdoor layer, and a rating panel
+   whose scale reads without a legend. Every picture is a photograph or a
+   basemap tile; nothing lettered ever stands in for one.
+   ========================================================================== */
+
+.destp-v2 .destp-gallery { height: clamp(200px, 32vh, 400px); }
+.destp-slide-cap {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  max-width: 70%;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.55);
+  color: var(--on-fill);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.destp-v2 .destp-gallery-count { left: auto; right: 40px; bottom: 10px; }
+.destp-v2 .destp-slide-credit { width: 24px; height: 24px; }
+
+/* ── The head ── */
+.destp-v2 .destp-head { padding: 16px 16px 8px; gap: 12px 22px; }
+.destp-v2 .destp-head-main { max-width: 720px; }
+.destp-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.destp-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 8px 2px 2px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+}
+.destp-score:hover { border-color: var(--rule); background: var(--bg-card); }
+.destp-score-label { font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--rate); }
+.destp-v2 .destp-country { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.destp-rank { font-size: 12px; font-weight: 700; color: var(--rate); }
+.destp-short {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 10px 0 0;
+  max-width: 66ch;
+}
+.destp-short-src {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 12px;
+  color: var(--ink-mute);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.destp-short-src:hover { color: var(--accent); }
+.destp-v2 .destp-head-actions { align-self: flex-start; }
+.destp-v2 .destp-pdf { height: 38px; padding: 0 14px; }
+.destp-share-btn { display: none; }
+@media (max-width: 720px) {
+  .destp-v2 .destp-head { padding: 12px 14px 6px; }
+  .destp-v2 .destp-head-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  .destp-v2 .destp-head-actions .panel-fav { padding: 0 6px; font-size: 12px; }
+  .destp-v2 .destp-head-actions .panel-fav span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .destp-v2 .destp-pdf { grid-column: 1 / -1; }
+  .destp-share-btn { display: inline-flex; }
+  .destp-v2 .destp-head-actions .panel-fav { justify-content: center; }
+}
+
+/* ── The fact strip: four measured facts, a timetable row. ── */
+.dfacts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  max-width: 1180px;
+  margin: 8px auto 12px;
+  padding: 0 16px;
+  width: 100%;
+}
+.dfact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule-soft);
+  border-left-width: 0;
+  background: var(--bg-card);
+  min-width: 0;
+}
+.dfact:first-child { border-left-width: 1px; border-radius: 10px 0 0 10px; }
+.dfact:last-child { border-radius: 0 10px 10px 0; }
+.dfact dt { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-mute); }
+.dfact dd { margin: 0; font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 720px) {
+  .dfacts { grid-template-columns: 1fr 1fr; padding: 0 14px; margin: 6px auto 10px; }
+  .dfact { border-left-width: 1px; border-top-width: 0; }
+  .dfact:nth-child(-n + 2) { border-top-width: 1px; }
+  .dfact:nth-child(2n) { border-left-width: 0; }
+  .dfact:first-child { border-radius: 10px 0 0 0; }
+  .dfact:nth-child(2) { border-radius: 0 10px 0 0; }
+  .dfact:last-child { border-radius: 0 0 10px 0; }
+  .dfact:nth-last-child(2):nth-child(odd) { border-radius: 0 0 0 10px; }
+  .dfact:only-child { border-radius: 10px; }
+  .dfact dd { font-size: 14px; }
+}
+
+/* ── The section rail ── */
+.destp-v2 .destp-subnav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper);
+  overflow: hidden;
+}
+.destp-subnav-scroll {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.destp-subnav-scroll::-webkit-scrollbar { display: none; }
+.destp-v2 .destp-subnav button {
+  flex: none;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.destp-v2 .destp-subnav button:hover { border-color: var(--rule); color: var(--ink); }
+.destp-subnav-all { color: var(--rate) !important; }
+
+/* ── Folding sections ── */
+.destp-v2 .destp-grid { padding: 0 16px 44px; }
+@media (min-width: 1020px) {
+  .destp-v2 .destp-grid { grid-template-columns: minmax(0, 1fr) 380px; gap: 0 18px; }
+}
+.dsec {
+  margin: 0 0 10px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-1);
+  scroll-margin-top: 8px;
+}
+.dsec-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 0 14px 0 0; }
+.dsec-toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 14px;
+  border: none;
+  background: none;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+.dsec-toggle:hover .dsec-title { color: var(--accent); }
+.dsec-icon { flex: none; color: var(--accent); }
+.dsec-title { font-family: var(--display); font-size: 16px; font-weight: 600; letter-spacing: -0.005em; white-space: nowrap; }
+.dsec-summary {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dsec-summary::before { content: ''; display: inline-block; width: 1px; height: 12px; background: var(--rule); margin: 0 9px 0 0; vertical-align: -2px; }
+.dsec-chev { flex: none; margin-left: auto; color: var(--ink-mute); transition: transform .18s ease; }
+.dsec.is-open .dsec-chev { transform: rotate(180deg); }
+.dsec-aside { flex: none; }
+.dsec-body { padding: 0 14px 14px; }
+.dsec-tips { background: var(--rate-bg); border-color: var(--rate-soft); }
+.dsec-tips .dsec-icon { color: var(--rate); }
+.dsec-more {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  margin-top: 10px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.dsec-more:hover { color: var(--ink); border-color: var(--ink-soft); }
+@media (max-width: 720px) {
+  .destp-v2 .destp-grid { padding: 0 14px 96px; }
+  .dsec-toggle { padding: 11px 12px; gap: 8px; }
+  .dsec-title { font-size: 15px; }
+  .dsec-body { padding: 0 12px 12px; }
+  .dsec-summary { font-size: 12px; }
+  .dsec-head { padding-right: 12px; }
+  .dsec-aside { width: 100%; padding: 0 12px 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .dsec-chev { transition: none; } }
+
+/* ── Highlights: the map and the tiles ── */
+.dhl-wrap .dmap { height: 300px; border-radius: 10px; }
+.dhl-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 10px;
+  margin-top: 12px;
+}
+.dhl { position: relative; margin: 0; min-width: 0; border-radius: 10px; }
+.dhl-pic {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.dhl-photo,
+.dhl-pic .is-blank {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+}
+.dhl-photo.is-tile { filter: saturate(0.85); }
+.dhl-pic .is-blank { display: flex; align-items: center; justify-content: center; color: var(--ink-mute); }
+.dhl-n {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+}
+.dhl-heritage {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--rate);
+  color: var(--on-fill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.dhl.is-focus .dhl-photo { outline: 2px solid var(--accent); outline-offset: 1px; }
+.dhl figcaption { padding: 6px 2px 0; }
+.dhl-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.dhl-sub { display: flex; align-items: center; gap: 8px; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-mute); margin-top: 2px; }
+.dhl-link { display: inline-flex; color: var(--ink-mute); margin-left: auto; }
+.dhl-link:hover { color: var(--accent); }
+.dhl-fact {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin-top: 3px;
+}
+@media (max-width: 720px) {
+  .dhl-wrap .dmap { height: 250px; }
+  /* A swipe strip: 2.3 tiles in view, the rest a flick away. Saves the
+     phone six screens of stacked cards. */
+  .dhl-strip {
+    display: flex;
+    gap: 10px;
+    margin: 10px -12px 0;
+    padding: 0 12px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .dhl-strip::-webkit-scrollbar { display: none; }
+  .dhl { flex: 0 0 150px; scroll-snap-align: start; }
+  .dhl-fact { -webkit-line-clamp: 2; font-size: 11.5px; }
+}
+.dmap-pin.is-hl .dmap-pin-in { padding: 2px 8px 2px 2px; }
+.dmap-pin.is-focus .dmap-pin-in { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg), var(--shadow-1); }
+.dmap-pin.is-focus .dmap-pin-n { background: var(--ink-fill); }
+.dmap-pin.is-nature .dmap-pin-dot { border-color: var(--paper); }
+.dmap-pin.is-trails .dmap-pin-name { color: var(--trail-pin); }
+.dmap-pin.is-cycling .dmap-pin-name { color: var(--swim-ink); }
+.dmap-pin.is-mountains .dmap-pin-name { color: var(--mountain-ink); }
+.dmap-pin.is-lakes .dmap-pin-name { color: var(--lake-ink); }
+.dmap-pin.is-beaches .dmap-pin-name { color: var(--beach-ink); }
+.destp-v2 .destp-layers { margin: 0; }
+.destp-v2 .destp-layer { height: 28px; font-size: 11.5px; }
+
+/* ── Things to do: cards with an evidence meter ── */
+.ddo-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 10px 2px 6px; }
+.ddo-group:first-child { margin-top: 0; }
+.ddo-group .mono { color: var(--rate-soft); }
+.ddo-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.ddo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--rule-soft);
+  background: var(--bg-card);
+  text-align: left;
+  text-decoration: none;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  position: relative;
+}
+.ddo.is-static { cursor: default; }
+.ddo:not(.is-static):hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
+.ddo:not(.is-static):hover .ddo-name { color: var(--accent); }
+.ddo-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  padding: 2px 8px 2px 6px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  border: 1px solid var(--rule-soft);
+}
+.ddo-type.is-trail { background: var(--trail-bg); color: var(--trail-ink); border-color: var(--trail-rule); }
+.ddo-type.is-festival { background: var(--rate-bg); color: var(--rate); border-color: var(--rate-soft); }
+.ddo-type.is-swim { background: var(--swim-bg); color: var(--swim-ink); border-color: var(--swim-rule); }
+.ddo-type.is-experience { background: var(--accent-bg); color: var(--experience-ink); border-color: var(--experience-rule); }
+.ddo-name { font-size: 13.5px; font-weight: 600; line-height: 1.3; color: var(--ink); }
+.ddo-detail {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.ddo-foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; font-size: 11px; color: var(--ink-mute); }
+.ddo-season { color: var(--rate); font-weight: 600; }
+.ddo-ev { display: inline-flex; align-items: center; gap: 7px; color: var(--rate); font-weight: 600; }
+.ddo-ev.is-open { color: var(--ink-mute); font-weight: 500; }
+.ddo-ev-bar { display: inline-block; width: 44px; height: 5px; border-radius: 3px; background: var(--paper-dim); overflow: hidden; }
+.ddo-ev-bar span { display: block; height: 100%; border-radius: 3px; background: var(--rate-soft); }
+.ddo-ev.is-open .ddo-ev-bar span { background: var(--rule); }
+.ddo-go { margin-left: auto; color: var(--ink-mute); }
+@media (max-width: 720px) {
+  .ddo-grid { grid-template-columns: 1fr; gap: 7px; }
+  .ddo { padding: 10px 11px; }
+}
+
+/* ── Around here: tabs, rows, pictures for every row ── */
+.dar-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+@media (max-width: 720px) {
+  .dar-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 0 -12px; padding: 0 12px 2px; scrollbar-width: none; }
+  .dar-tabs::-webkit-scrollbar { display: none; }
+  .dar-tab { flex: none; }
+}
+.dar-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.dar-tab .mono { font-size: 10.5px; color: var(--ink-mute); }
+.dar-tab.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--paper); }
+.dar-tab.on .mono { color: var(--paper); opacity: 0.75; }
+.dar-note { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: var(--ink-mute); margin: 8px 0 4px; }
+.dar-map {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.dar-map:hover { color: var(--ink); border-color: var(--ink-soft); }
+.dar-list { list-style: none; margin: 0; padding: 0; }
+.dar-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 7px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer;
+}
+.dar-list li:last-child .dar-row { border-bottom: none; }
+.dar-row:disabled { cursor: default; }
+.dar-photo,
+.dar-photo.is-blank {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+}
+.dar-photo.is-tile { filter: saturate(0.85); }
+.dar-main { min-width: 0; }
+.dar-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dar-row:hover:not(:disabled) .dar-name { color: var(--accent); }
+.dar-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
+.dar-sub svg { color: var(--ink-mute); }
+.dar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex: none; }
+.dar-km { font-size: 11.5px; color: var(--ink-soft); white-space: nowrap; }
+
+/* ── Day trips: photo cards ── */
+.dtrips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+}
+.dtrip {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid var(--rule-soft);
+  background: var(--bg-card);
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+}
+.dtrip:hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
+.dtrip:hover .dtrip-name { color: var(--accent); }
+.dtrip:disabled { cursor: default; }
+.dtrip-photo,
+.dtrip-photo.is-blank {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.dtrip-photo.is-blank { display: flex; align-items: center; justify-content: center; }
+.dtrip-photo.is-tile { filter: saturate(0.85); }
+.dtrip-body { display: flex; flex-direction: column; gap: 3px; padding: 9px 11px 10px; min-width: 0; }
+.dtrip-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.dtrip-name { font-size: 13.5px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dtrip-sub { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); }
+.dtrip-why {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.dtrip-go { display: inline-flex; align-items: center; gap: 2px; margin-top: 3px; font-size: 11.5px; font-weight: 600; color: var(--rate); }
+@media (max-width: 720px) {
+  .dtrips { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .dtrip-body { padding: 8px 9px 9px; }
+  .dtrip-why { -webkit-line-clamp: 2; font-size: 11.5px; }
+}
+@media (max-width: 380px) { .dtrips { grid-template-columns: 1fr; } }
+
+/* ── Rating v2: the scale in bands, the parts in tiles ── */
+.rb-head { display: flex; align-items: center; gap: 12px; margin: 2px 0 12px; }
+.rb-score {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 10px 6px;
+  border-radius: 10px;
+  letter-spacing: -0.02em;
+}
+.rb-score.rt-3 { background: var(--rate); color: var(--paper); }
+.rb-score.rt-2 { background: var(--rate-bg); color: var(--rate); }
+.rb-score.rt-1 { background: var(--paper-dim); color: var(--ink-soft); }
+.rb-score.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
+.rb-head-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rb-label { font-family: var(--display); font-size: 18px; font-weight: 600; color: var(--ink); line-height: 1.15; }
+.rb-country { font-size: 12px; font-weight: 600; color: var(--rate); }
+.rb-scale { margin: 0 0 14px; }
+.rb-bands { position: relative; display: flex; height: 10px; border-radius: 5px; overflow: visible; gap: 2px; }
+.rb-band { display: block; height: 100%; border-radius: 3px; background: var(--paper-dim); }
+.rb-band.rt-1 { background: var(--rule); }
+.rb-band.rt-2 { background: var(--rate-bg); }
+.rb-band.rt-3 { background: var(--rate-soft); opacity: 0.55; }
+.rb-me {
+  position: absolute;
+  top: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: var(--ink-fill);
+  border: 3px solid var(--paper);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+}
+.rb-me.rt-2, .rb-me.rt-3 { background: var(--rate); }
+.rb-ticks { position: relative; height: 16px; margin-top: 6px; }
+.rb-legend { display: flex; gap: 4px 12px; flex-wrap: wrap; font-size: 10.5px; color: var(--ink-mute); margin-top: 2px; }
+.rb-leg { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.rb-leg-swatch { display: inline-block; width: 10px; height: 6px; border-radius: 2px; background: var(--rule); }
+.rb-leg.rt-2 .rb-leg-swatch { background: var(--rate-bg); border: 1px solid var(--rate-soft); }
+.rb-leg.rt-3 .rb-leg-swatch { background: var(--rate-soft); opacity: 0.7; }
+.rb-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-size: 10px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.rb-tick::before { content: ''; display: block; width: 1px; height: 5px; background: var(--rule); }
+.rb-tick .mono { font-size: 10.5px; color: var(--ink-soft); }
+.rb-parts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rb-part { display: flex; flex-direction: column; gap: 4px; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--rule-soft); background: var(--bg-card); }
+.rb-part-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.rb-part-name { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+.rb-part-val { font-size: 14px; font-weight: 600; color: var(--ink); }
+.rb-part-track { display: block; height: 5px; border-radius: 3px; background: var(--paper-dim); overflow: hidden; }
+.rb-part-fill { display: block; height: 100%; border-radius: 3px; background: var(--rate-soft); }
+.rb-part-weight { font-size: 10.5px; color: var(--ink-mute); }
+.rate-break-v2 .rate-break-note { margin-top: 10px; }
+@media (max-width: 380px) { .rb-parts { grid-template-columns: 1fr; } }
+
+/* ── Parking: the city's own word beside the OSM rows ── */
+.dpark-web { padding: 10px 12px; border-radius: 10px; background: var(--trail-bg); border: 1px solid var(--trail-rule); margin-bottom: 10px; }
+.dpark-web-head { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; font-size: 11.5px; font-weight: 700; color: var(--trail-ink); }
+.dpark-web-line { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink); }
+.dpark-web-line.is-warn { color: var(--danger); font-weight: 600; }
+.dpark-web-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--trail-ink); text-decoration: underline; text-underline-offset: 2px; }
+.dpark-ok { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--trail-ink); }
+.dpark-search { margin-top: 10px; width: 100%; justify-content: center; }
+.destp-v2 .destp-park-nav a { height: 26px; padding: 0 9px; font-size: 11px; }
+@media (max-width: 380px) {
+  .destp-v2 .destp-park { flex-wrap: wrap; }
+  .destp-v2 .destp-park-nav { width: 100%; }
+}
+
+/* Live webcam views: the provider's own player in an iframe, never stored. */
+.webcams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+  gap: var(--space-4);
+  margin: 0 0 var(--space-3);
+}
+.webcam-card {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.webcam-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.webcam-location {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+/* foto-webcam.eu asks for height = width * 9/16 + 95 px (+145 px under 450 px). */
+.webcam-frame-wrap {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: calc(56.25% + 95px);
+  overflow: hidden;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+}
+@container (max-width: 449px) {
+  .webcam-frame-wrap { padding-bottom: calc(56.25% + 145px); }
+}
+/* The player needs about 320 px; on a 380 px phone the card is 311 px, so the frame bleeds 8 px each side (9 px more height at 9/16). */
+@media (max-width: 400px) {
+  .webcam-frame-wrap {
+    width: auto;
+    margin-inline: calc(-1 * var(--space-2));
+    padding-bottom: calc(56.25% + 154px);
+  }
+}
+.webcam-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.webcam-credit {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.webcam-credit a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.webcam-credit a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.webcam-note {
+  margin: var(--space-3) 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+
+/* Side-column facts keep their existing styles; the fold only frames them. */
+.destp-v2 .destp-howlong { margin-top: 8px; }
+.destp-v2 .destp-further { grid-template-columns: 1fr 1fr; }
+.destp-v2 .destp-tip-list li { font-size: 13px; }
+.destp-v2 .xp-source { margin-top: 8px; }
+
+.destp-sleep-tier { display: inline-flex; align-items: center; }
+.destp-sleep-sep { display: inline-block; width: 1px; height: 11px; background: var(--rule); margin: 0 8px; }
+
+/* Routes from here (ROUTES.md R6). One row per PATH, with the stretch that
+   passes named underneath, so the reader can tell the Via Francigena from
+   the nine kilometres of it that happen to run past this town. Deliberately
+   text only: a route is a line and a 64px thumbnail of one is a smudge, which
+   is why this does not borrow .dar-row's photo column. */
+.drh-group + .drh-group { margin-top: 16px; }
+.drh-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.drh-list { list-style: none; margin: 0; padding: 0; }
+.drh-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer;
+}
+.drh-list li:last-child .drh-row { border-bottom: none; }
+.drh-row:disabled { cursor: default; }
+.drh-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.drh-name { font-weight: 600; }
+.drh-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+}
+.drh-stage,
+.drh-carfree {
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+.drh-carfree {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink);
+}
+.drh-go { color: var(--ink-mute); }
+.drh-note,
+.drh-credit {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+.drh-credit { color: var(--ink-mute); }
+
+/* Route page parts (ROUTES.md R7): what is underfoot, the stages of a path,
+   and our own towns along the line. Shared by the trail and cycle pages via
+   browse/RouteParts.jsx. Colours come from the existing surface tokens where
+   they exist, so a gravel segment here and a gravel chip on a card cannot
+   drift apart. */
+.rsurf-bar {
+  display: flex;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+}
+.rsurf-seg { display: block; height: 100%; }
+.rsurf-seg.is-paved,
+.rsurf-dot.is-paved { background: var(--ink-soft); }
+.rsurf-seg.is-gravel,
+.rsurf-dot.is-gravel { background: var(--rate); }
+.rsurf-seg.is-path,
+.rsurf-dot.is-path { background: var(--green); }
+.rsurf-seg.is-other,
+.rsurf-dot.is-other { background: var(--ink-mute); }
+/* The unmapped share is hatched rather than coloured: it is an absence of a
+   reading, and a flat block of colour would read as one more surface. */
+.rsurf-seg.is-unknown {
+  background: repeating-linear-gradient(
+    45deg, var(--paper-dim), var(--paper-dim) 3px,
+    var(--rule-soft) 3px, var(--rule-soft) 6px);
+}
+.rsurf-dot.is-unknown { background: var(--rule-soft); }
+.rsurf-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+.rsurf-keys li { display: inline-flex; align-items: center; gap: 5px; }
+.rsurf-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.rstages, .rbases { list-style: none; margin: 0; padding: 0; }
+.rstage, .rbase {
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer;
+}
+.rstage { grid-template-columns: 26px 1fr auto; }
+.rbase { grid-template-columns: 62px 1fr auto; }
+.rstages li:last-child .rstage,
+.rbases li:last-child .rbase { border-bottom: none; }
+.rstage:disabled, .rbase:disabled { cursor: default; }
+.rstage-n, .rbase-at { color: var(--ink-soft); font-size: 0.86rem; }
+.rstage-name, .rbase-name { font-weight: 600; }
+.rstage-off { font-size: 0.8rem; color: var(--ink-mute); }
+.rbase-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.rbase-sub { font-size: 0.84rem; color: var(--ink-soft); }
+
+/* Node-network cycling (ROUTES.md R8): a measurement of the mesh, never a
+   list of its edges. Sits inside the routes block, after the routes. */
+.drh-nodenet { margin-top: 16px; }
+.drh-nn-line {
+  margin: 0;
+  font-weight: 600;
+}
+.drh-nn-how {
+  margin: 3px 0 0;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+
+/* ========================================================================
+   P4: Explore and the destination page
+   ======================================================================== */
+
+/* --- P4.1 the card label -------------------------------------------------
+   Three faults the grid showed: the label strip stood a different height on
+   every card (a wrapped country line, a water badge), so the rows were
+   ragged; the white label took a third of a small card; and the score read
+   as a plain block. The strip is now a fixed two-line box, each line clamped
+   to one line, and the photo takes the height the label gives back. */
+.explore-grid--mosaic .xcard-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+  height: 62px;
+  box-sizing: border-box;
+}
+.xcard-head { flex: none; }
+/* min-width:0 lets the flex children actually shrink; without it the line
+   overflows its box and the country is clipped away rather than ellipsed. */
+.xcard-meta { flex: none; flex-wrap: nowrap; min-width: 0; }
+/* One line each, cut with an ellipsis rather than pushing the row taller. */
+.xcard-head .xcard-name {
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.explore-grid--mosaic .xcard--metro .xcard-name,
+.explore-grid--mosaic .xcard--area .xcard-name { font-size: 18.5px; }
+/* This is the rule that made the rows ragged: the place line was allowed to
+   wrap onto a second line on a narrow card. It stays on one line now. */
+.xcard-place { flex-wrap: nowrap; white-space: nowrap; }
+/* The place line takes what it needs and the country ellipses inside it.
+   flex-basis:auto (not 0) is what stops it collapsing to nothing beside a
+   flex:none cost figure, which is how the country came to vanish. */
+.xcard-meta > .xcard-place { min-width: 0; flex: 1 1 auto; overflow: hidden; }
+.explore-grid--mosaic .xcard-country {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+/* The badge is a fact, not a fourth thing the line has to fit. */
+.xcard-meta .water-badge { flex: none; }
+/* The euros-a-day figure takes only its own width. It was flex:none with
+   margin-left:auto, which on a narrow card claimed the whole line and left
+   the place nothing, so the country read as missing rather than truncated. */
+.explore-grid--mosaic .xcard-meta .xcard-cost { flex: 0 0 auto; width: auto; margin-left: auto; }
+
+/* The photo takes clearly more of the card. A 16:9.6 frame under a 76px
+   label gave the label a third of a square card; 4:3 under a 62px strip
+   puts the picture back in charge at every span. */
+.explore-grid--mosaic .xcard-media { aspect-ratio: 4 / 3; }
+.explore-grid--mosaic .xcard--metro .xcard-media,
+.explore-grid--mosaic .xcard--city .xcard-media { aspect-ratio: 16 / 10; }
+.explore-grid--mosaic .xcard--area .xcard-media { aspect-ratio: 21 / 9; }
+
+/* "Best trips from here" on the destination page: the same three fixes, on
+   the card that page draws itself. This card carries more than a name and a
+   travel line, so the body is sized by its content. A fixed 62px height cut
+   the blurb and the "Open the page" link in half, because the card clips. */
+.dtrip-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-1);
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  box-sizing: border-box;
+}
+.dtrip-name,
+.dtrip-sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The travel line is one row of chips that must not wrap into the blurb. */
+.dtrip-sub { flex: none; flex-wrap: nowrap; }
+.dtrip-sub .mono { overflow: hidden; text-overflow: ellipsis; }
+/* The link sits at the foot of every card, so a short blurb and a long one
+   still line up across the row. */
+.dtrip-go { margin-top: auto; padding-top: var(--space-1); }
+/* Equal-height cards: the grid row stretches, the body takes the slack. */
+.dtrips { align-items: stretch; }
+.dtrip { height: 100%; }
+.dtrip-photo { aspect-ratio: 4 / 3; flex: none; }
+
+/* --- P4.2 the rail title and the score explainer -------------------------
+   A rail called "The 41" told the reader nothing. Every rail now says what
+   the list is and, under it, how it was chosen. */
+.xrails-head { flex-wrap: wrap; }
+.xrails-headings { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.xrails-sub {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ink-mute);
+  max-width: 62ch;
+}
+.xrails-head .xrails-all { flex: none; align-self: center; }
+
+/* The "?" is a real icon button on the legend row's baseline, and the method
+   opens in the app's sheet rather than reflowing the legend under it. */
+.tierlegend-why {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 32px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.tierlegend-why:hover { border-color: var(--ink-mute); color: var(--ink); text-decoration: none; }
+.tierlegend-why:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tierlegend-why-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--rate);
+  color: var(--paper);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  flex: none;
+}
+.tierlegend-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: 50%;
+}
+.tierlegend-x:hover { background: var(--paper-dim); color: var(--ink); }
+.tierlegend-pip { width: 32px; height: 32px; font-size: 13px; }
+
+/* The method, in the sheet the rest of the app uses. */
+.tiersheet { max-width: 520px; }
+.tiersheet-body { padding: var(--space-4); }
+.tiersheet-method { margin: 0 0 var(--space-4); font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+.tiersheet-rows { display: flex; flex-direction: column; gap: var(--space-2); }
+.tiersheet-row { display: flex; align-items: baseline; gap: var(--space-2); font-size: 13px; }
+.tiersheet-row .tierlegend-mark { align-self: center; }
+.tiersheet-name { font-weight: 600; color: var(--ink); }
+.tiersheet-cut { margin-left: auto; font-family: var(--mono); font-size: 11.5px; font-variant-numeric: tabular-nums; color: var(--ink-mute); }
+
+/* --- P4.3 rhythm and touch targets ---------------------------------------
+   At 375px the first screen was mostly gaps. These are the rules the audit
+   actually touched, on the new scale rather than more hand-tuned pixels. */
+@media (max-width: 768px) {
+  .xrails { gap: var(--space-5); margin: 0 0 var(--space-5); }
+  .xrails-head { margin: 0 0 var(--space-2); }
+  .xrails-title { font-size: 18px; }
+  .xrails-sub { font-size: 12px; }
+  .tierlegend-rows { gap: var(--space-2) var(--space-3); }
+  /* At 375px the first photograph sat 567px down an 812px screen: a search
+     field, a lifestyle line, a Filters button, a sort, and a four-row key
+     to a grid the reader had not reached yet. The key is a legend, so on a
+     phone it folds to its "?" until asked for, and the stack tightens. */
+  .tierlegend { margin: 0 0 var(--space-2); }
+  .tierlegend-rows { display: none; }
+  .tierlegend-actions { margin-left: 0; }
+  .tierlegend .tierlegend-x { display: none; }
+  .explore-grid { margin-top: var(--space-2); }
+  .explore-grid--mosaic .xcard-body { height: 58px; padding: 0 var(--space-2); }
+  /* Two cards to a row at 390px: one ratio for every kind, or cards that
+     sit side by side stand at different heights and the row reads as a
+     mistake. The mosaic's per-kind framing is a desktop device, where a
+     card's SPAN is what varies. */
+  .explore-grid--mosaic .xcard-media,
+  .explore-grid--mosaic .xcard--metro .xcard-media,
+  .explore-grid--mosaic .xcard--city .xcard-media,
+  .explore-grid--mosaic .xcard--area .xcard-media { aspect-ratio: 4 / 3; }
+  /* The kind word does not fit beside the country on a half-width card,
+     and the filter rail already names the kinds. */
+  .explore-grid--mosaic .xcard-kindword { display: none; }
+  /* A half-width card has room for the country OR the swim badge, not
+     both: keeping both truncated France to "Fra" and Spain to "S", which
+     says less than the flag beside it already does. The badge is the rarer
+     fact and the one the flag cannot stand in for, so where a card carries
+     one, the country name gives up its place and the flag speaks for it. */
+  .explore-grid--mosaic .xcard-place:has(.water-badge) .xcard-country { display: none; }
+  /* The euros hold their width; the country takes what is left. */
+  .explore-grid--mosaic .xcard-meta .xcard-cost { flex: none; }
+  /* "a day" repeated on every card in a grid of per-day prices is 30px of
+     the line spent saying what the grid already says once. The figure
+     keeps its aria-label, so nothing is lost to a screen reader. */
+  .explore-grid--mosaic .xcard-meta .xcard-cost-unit { display: none; }
+}
+
+/* The destination page's own controls: shortlist, share, open in Maps and
+   the PDF export stood 26px high on 5px of padding, under the 44px a
+   finger needs (WCAG 2.5.5). The glyphs and labels keep their size; the
+   box around them grows, and the row wraps rather than overflowing once
+   they do. */
+.destp-head-actions { flex-wrap: wrap; gap: var(--space-2); }
+.destp-head-actions .panel-fav,
+.destp-head-actions .destp-pdf,
+.destp-bar-actions .panel-fav {
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-4);
+  font-size: 12.5px;
+}
+/* Icon-only buttons need the width too, not just the height. */
+.destp-head-actions .panel-fav:not(:has(span)),
+.destp-bar-actions .panel-fav:not(:has(span)) { min-width: var(--tap); justify-content: center; }
+
+/* "Highlights and map" ran on three gutters at once: the strip sat 12px
+   under the map, its columns were 10px apart and its rows 12px, so nothing
+   in the section lined up with anything else. One token for all three, and
+   the map spans the strip's full width so both share their two edges. */
+.dhl-wrap { display: grid; gap: var(--space-3); }
+.dhl-wrap .dmap { width: 100%; margin: 0; }
+.dhl-strip { gap: var(--space-3); margin-top: 0; }
+
+/* --- P4.5 the map card ---------------------------------------------------
+   Zoomed in, a pin opens as a small card: the photo, the place, the rating
+   and one line of what it is known for. */
+.xmap-card { width: 216px; font-size: 12.5px; line-height: 1.35; }
+.xmap-card-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--paper-dim);
+}
+.xmap-card-body { padding: var(--space-2) 10px 10px; }
+.xmap-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.xmap-card-name {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.xmap-card-sub { margin: 2px 0 0; font-size: 11.5px; color: var(--ink-mute); }
+.xmap-card-lead {
+  margin: var(--space-1) 0 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.xmap-card-score {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 999px;
+  flex: none;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.xmap-card-score.rt-3 { background: var(--rate); color: var(--paper); }
+.xmap-card-score.rt-2 { background: var(--rate-bg); color: var(--rate); }
+/* The popup IS the card: maplibre own padding would box it twice. */
+.xmap .maplibregl-popup-content { padding: 0; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-2); }
+.xmap .maplibregl-popup-close-button { display: none; }
+.xmap-card-hit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* The thumbnail on "Best things to do" (P4.4). The card becomes a photo
+   beside its text; where the shard has no photograph of the place, the
+   frame holds the type glyph rather than a hole. */
+.ddo {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-rows: auto;
+  align-items: start;
+  column-gap: 10px;
+}
+.ddo-photo {
+  grid-row: 1 / span 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.ddo-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ddo-type, .ddo-name, .ddo-detail, .ddo-foot { grid-column: 2; }
+

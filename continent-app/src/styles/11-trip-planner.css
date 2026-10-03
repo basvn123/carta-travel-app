@@ -1,0 +1,891 @@
+/* Trip planner sheet and mobile launcher, guided-trip CTA, fare provenance.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ───────── Trip planner (map backdrop + bottom sheet) ───────── */
+
+.trip-planner-screen {
+  position: absolute;
+  top: var(--filter-h);
+  left: 0; right: 0; bottom: var(--bottom-nav-h);
+  overflow: hidden;
+}
+/* !important: maplibre stamps its own .maplibregl-map { position: relative }
+   on the container, and its stylesheet loads after ours (lazy-loaded tab
+   chunk), which used to collapse the map to 0px height. Same fight as
+   .day-build-map further down. */
+.trip-map { position: absolute !important; inset: 0; }
+
+/* Numbered stop pins on the map.
+   The outer element is maplibre's: it rewrites that element's inline transform
+   on every frame, so any transform WE put there is overwritten (which is how
+   the teardrop lost its rotation while the number inside kept a -45deg twist,
+   and a 6 came to read as a 9). Everything visual therefore lives on an inner
+   .trip-pin-shape, which also carries the screen-space de-collision nudge
+   TripMap hands down as --pin-dx / --pin-dy. */
+.trip-pin {
+  width: 26px; height: 26px;
+  cursor: pointer;
+  /* The planned route is the one thing on this map that may not be buried
+     under a candidate place pin. */
+  z-index: 4;
+}
+.trip-pin-shape {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; height: 100%;
+  border-radius: 50% 50% 50% 2px;
+  transform: translate(var(--pin-dx, 0px), var(--pin-dy, 0px)) rotate(45deg);
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  box-shadow: 0 2px 6px rgba(26,26,26,0.35);
+  transition: transform .2s, background .2s;
+}
+.trip-pin.active { z-index: 6; }
+.trip-pin.active .trip-pin-shape {
+  background: var(--ink);
+  transform: translate(var(--pin-dx, 0px), var(--pin-dy, 0px)) rotate(45deg) scale(1.2);
+}
+/* Lifted clear of a cluster: a slightly deeper shadow says the pin is floating
+   above its point rather than sitting on a different place. */
+.trip-pin.nudged .trip-pin-shape { box-shadow: 0 3px 9px rgba(26,26,26,0.45); }
+/* Keep the number upright inside the rotated teardrop */
+.trip-pin-no {
+  transform: rotate(-45deg);
+  color: var(--on-fill);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+/* A place that is marked, not sequenced (the travel record): a pushpin, head
+   on a needle, its tip on the coordinate. The needle is what makes it read as
+   stuck into the map rather than as another route stop. */
+.trip-pin-plain { width: 24px; height: 30px; }
+.trip-pin-plain .trip-pin-shape {
+  transform: translate(var(--pin-dx, 0px), var(--pin-dy, 0px));
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.trip-pin-push {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 3px rgba(15, 23, 42, 0.32));
+}
+/* The lifted-off-a-cluster shadow belongs to the pin's SHAPE, which for a
+   pushpin is a transparent box: a box-shadow on it draws a grey rectangle
+   floating next to the pin. It goes on the glyph instead. */
+.trip-pin-plain.nudged .trip-pin-shape { box-shadow: none; }
+.trip-pin-plain.nudged .trip-pin-push { filter: drop-shadow(0 3px 5px rgba(15, 23, 42, 0.42)); }
+.trip-pin-head { fill: var(--accent); }
+.trip-pin-dot { fill: var(--on-fill); opacity: 0.34; }
+.trip-pin-needle { fill: var(--ink-soft); }
+
+/* Zoomed in, the pushpin's head becomes the place itself: the photo rises off
+   the needle, which stays stuck in the map, and the name reads under the tip.
+   Below the threshold both are absent, so a continent of pins stays a
+   continent of pins. */
+.trip-pin-photo,
+.trip-pin-label {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.trip-pin-photo {
+  bottom: 14px;
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  background: var(--paper-dim) center / cover no-repeat;
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(15, 23, 42, 0.32);
+  transform: translateY(6px) scale(0.55);
+  transform-origin: 50% 100%;
+}
+.trip-pin-label {
+  top: calc(100% + 3px);
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+  white-space: nowrap;
+  transform: translate(-50%, -3px);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.16);
+}
+.pins-photo .trip-pin-plain.has-photo .trip-pin-photo {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.pins-photo .trip-pin-plain.has-photo .trip-pin-label {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.pins-photo .trip-pin-plain.has-photo .trip-pin-head,
+.pins-photo .trip-pin-plain.has-photo .trip-pin-dot { opacity: 0; }
+.trip-pin-head, .trip-pin-dot { transition: opacity .18s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .trip-pin-photo, .trip-pin-label, .trip-pin-head, .trip-pin-dot { transition: none; }
+}
+.trip-pin-plain.active .trip-pin-head { fill: var(--ink); }
+.trip-pin-plain.active .trip-pin-shape {
+  transform: translate(var(--pin-dx, 0px), var(--pin-dy, 0px)) scale(1.12);
+}
+
+/* The traveller's own stay: a quiet ink pin without a stop number */
+.trip-pin-stay {
+  width: 18px; height: 18px;
+  cursor: default;
+  z-index: 3;
+}
+.trip-pin-stay .trip-pin-shape { background: var(--ink); }
+
+/* Floating trip header */
+/* Trip header - a static bar at the top of the panel (was a floating card) */
+.trip-topcard {
+  position: relative;
+  flex-shrink: 0;
+  padding: 6px 20px 12px;
+  border-bottom: 1px solid var(--rule);
+}
+.trip-topcard-close {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.trip-topcard-close:hover {
+  background: var(--rule);
+  color: var(--ink);
+}
+.trip-topcard-name {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  font-family: var(--display);
+  font-size: 19px;
+  color: var(--ink);
+  /* Right padding leaves room for the absolute close button in the corner. */
+  padding: 0 34px 0 0;
+}
+.trip-topcard-name::placeholder { color: var(--ink-mute); }
+.trip-topcard-name:focus { outline: none; }
+.trip-topcard-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+.trip-topcard-count {
+  margin-left: 8px;
+  color: var(--accent);
+}
+
+/* Bottom sheet */
+.trip-sheet {
+  position: absolute;
+  /* Centered with auto margins, NOT translateX(-50%): a transform would make
+     this sheet the containing block for position: fixed descendants, pinning
+     the mobile calendar / origin popovers to the sheet instead of the screen. */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  bottom: 0;
+  width: min(100%, 660px);
+  max-height: calc(100% - 12px);
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-bottom: none;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -6px 28px rgba(26,26,26,0.14);
+  z-index: 7;
+  transition: height .28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.trip-sheet.dragging { transition: none; }
+/* Generous, draggable hit-area around the grip (the trip header card below it
+   drags too - see TripPlannerTab - so the whole top of the sheet is a handle) */
+.trip-sheet-grip-hit {
+  flex-shrink: 0;
+  padding: 12px 0 8px;
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.trip-sheet-grip {
+  width: 40px; height: 4px;
+  border-radius: 2px;
+  background: var(--rule);
+  margin: 0 auto;
+  transition: background .15s, width .15s;
+}
+.trip-sheet-grip-hit:hover .trip-sheet-grip { background: var(--ink-mute); width: 52px; }
+.trip-sheet-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* A classic (non-overlay) scrollbar is laid out INSIDE the padding box, so on
+     Windows it ate 15 of these 20px and drew itself through the timeline's
+     connector rail. The gutter reserves its own strip beside the padding. */
+  scrollbar-gutter: stable;
+  padding: 6px 20px 22px;
+}
+
+.trip-block { margin-top: 18px; }
+.trip-block:first-child { margin-top: 6px; }
+.trip-block-title {
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+/* Travel window row */
+.trip-dates-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.trip-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+.trip-field-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-mute);
+}
+.trip-dates-arrow {
+  color: var(--ink-mute);
+  padding-bottom: 8px;
+  font-size: 15px;
+}
+.trip-field-people { min-width: 0; margin-left: auto; }
+.trip-people {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 4px 6px;
+  background: var(--paper);
+}
+.trip-people span { font-family: var(--mono); font-size: 13px; min-width: 12px; text-align: center; }
+.trip-people button {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+}
+.trip-people button:disabled { opacity: 0.3; cursor: default; }
+
+/* Planned nights */
+.trip-nights-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+.nights-ring-track { stroke: var(--rule); }
+.nights-ring-arc { stroke: var(--green); transition: stroke-dashoffset .3s; }
+.nights-ring-arc.over { stroke: var(--accent); }
+.trip-nights-text { font-size: 13px; color: var(--ink-soft); }
+.trip-nights-text strong { color: var(--ink); font-family: var(--mono); }
+.trip-nights-warn { color: var(--accent); font-size: 12px; }
+
+/* Stops */
+.trip-stops { margin-top: 14px; }
+.trip-stop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, opacity .15s;
+}
+.trip-stop.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
+.trip-stop.dragging { opacity: 0.45; }
+.trip-stop-idx {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  cursor: grab;
+}
+.trip-stop-idx:active { cursor: grabbing; }
+.trip-stop-body { flex: 1; min-width: 0; }
+.trip-stop-city {
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.trip-stop-when {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  margin-top: 1px;
+}
+
+.trip-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.trip-step-btn {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 16px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .15s, color .15s;
+}
+.trip-step-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.trip-step-btn:disabled { opacity: 0.3; cursor: default; }
+.trip-step-val { text-align: center; min-width: 30px; line-height: 1.05; }
+.trip-step-num { font-family: var(--mono); font-size: 15px; color: var(--ink); display: block; }
+.trip-step-suffix { font-size: 9px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+
+.trip-stop-tools { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.trip-stop-move, .trip-stop-remove {
+  width: 26px; height: 24px;
+  color: var(--ink-mute);
+  font-size: 12px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: color .15s;
+}
+.trip-stop-remove { font-size: 16px; }
+/* Reorder and remove are the day view's most-used controls and they sat in a
+   20x18px box. A finger is not a mouse pointer, so on touch they get a real
+   target; the pointer-fine layout stays compact. */
+@media (pointer: coarse) {
+  .trip-stop-move, .trip-stop-remove { width: 40px; height: 38px; }
+  .trip-stop-remove { font-size: 19px; }
+  .day-timeline-tools { gap: 0; }
+}
+.trip-stop-move:hover { color: var(--ink); }
+.trip-stop-remove:hover { color: var(--accent); }
+
+.trip-leg {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  padding: 6px 12px 6px 24px;
+}
+
+/* Suggestions */
+.trip-suggest-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.trip-suggest-card {
+  flex: 0 0 132px;
+  width: 132px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper);
+  text-align: left;
+  transition: border-color .15s, transform .15s;
+}
+.trip-suggest-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.trip-suggest-thumb {
+  position: relative;
+  height: 78px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.trip-suggest-fallback { font-family: var(--display); font-size: 26px; color: var(--ink-mute); }
+.trip-suggest-chip {
+  position: absolute;
+  left: 6px; bottom: 6px;
+  background: rgba(26,26,26,0.72);
+  color: var(--on-fill);
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+.trip-suggest-meta { padding: 7px 9px 9px; }
+.trip-suggest-city {
+  display: block;
+  font-family: var(--display);
+  font-size: 13.5px;
+  color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.trip-suggest-sub {
+  display: flex; align-items: center; gap: 3px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 2px;
+}
+
+/* Add stop */
+.trip-add-row { display: flex; gap: 10px; align-items: stretch; }
+.trip-add-row .dropdown { flex: 1; }
+.trip-add-row .dropdown.trip-add-country { flex: 0 0 34%; }
+/* Phones: country + city as an even pair, Add on its own full-width row -
+   three unequal controls squeezed side by side read as clutter. */
+@media (max-width: 768px) {
+  .trip-add-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .trip-add-row .dropdown,
+  .trip-add-row .dropdown.trip-add-country,
+  .trip-add-row .dropdown.trip-add-city { width: 100%; min-width: 0; }
+  .trip-add-row .trip-add-btn { grid-column: 1 / -1; padding: 11px 16px; }
+}
+.dropdown-trigger.disabled { opacity: 0.45; cursor: default; }
+.trip-add-btn {
+  padding: 0 20px;
+  border-radius: 10px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background .15s, opacity .15s;
+}
+.trip-add-btn:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
+.trip-add-btn:disabled { opacity: 0.35; cursor: default; }
+
+/* Totals */
+.trip-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.trip-total-row .lbl { color: var(--ink-soft); font-size: 13px; }
+.trip-total-row .lbl small { display: block; color: var(--ink-mute); font-size: 10.5px; font-family: var(--mono); margin-top: 1px; }
+.trip-total-row .val { font-family: var(--mono); font-size: 13px; color: var(--ink); white-space: nowrap; }
+.trip-total-row.grand { border-bottom: none; padding-top: 12px; }
+.trip-total-row.grand .lbl { font-family: var(--display); font-size: 16px; color: var(--ink); }
+.trip-total-row.grand .val { font-size: 17px; font-weight: 600; }
+
+.trip-note { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin-top: 8px; }
+.trip-note-error { color: var(--accent); }
+
+/* Own-flight (another airline) editable fields in the Trip total block: the
+   traveller names the airline and enters the total fare so the estimate can
+   include a flight Carta doesn't price itself. */
+.trip-ownflight-fields { display: flex; gap: 8px; margin-top: 8px; }
+.trip-ownflight-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  font-family: inherit;
+}
+.trip-ownflight-input:focus { outline: none; border-color: var(--accent); }
+.trip-ownflight-cost { flex: 0 0 108px; font-family: var(--mono); }
+
+.trip-save-row { display: flex; gap: 10px; margin-top: 16px; }
+.trip-save-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: opacity .15s;
+}
+.trip-save-btn:hover:not(:disabled) { opacity: 0.9; }
+.trip-save-btn:disabled { opacity: 0.6; cursor: default; }
+.trip-newtrip-btn {
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.trip-newtrip-btn:hover { border-color: var(--ink-soft); }
+
+/* Saved trips.
+   A saved plan is a thing you OPEN, so the row has to read as a row of a list
+   and not as a filled-in text field with a small x beside it (which is exactly
+   what a bordered box with a divider and a 38px cross reads as). Hence the
+   paper card, the chevron that says "this goes somewhere", and a delete target
+   big enough to hit on a phone without hitting the row. */
+.trip-saved-list { display: flex; flex-direction: column; gap: 8px; }
+.trip-saved-item {
+  display: flex;
+  align-items: stretch;
+  min-height: 48px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-card);
+  transition: border-color .15s, box-shadow .15s;
+}
+.trip-saved-item:hover { border-color: var(--accent); box-shadow: var(--shadow-1); }
+.trip-saved-item.active { border-color: var(--accent); }
+/* The Day-planner's own inline saved list. The Saved-trips panel styles its
+   rows separately (.saved-card-*), this one stays compact. */
+.trip-saved-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  padding: 10px 12px;
+  font-family: var(--ui);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.trip-saved-main:hover { background: var(--paper-dim); }
+.trip-saved-label { flex: 1 1 auto; min-width: 0; }
+.trip-saved-go { flex: 0 0 auto; color: var(--ink-mute); display: inline-flex; }
+.trip-saved-main:hover .trip-saved-go { color: var(--accent); }
+.trip-saved-del {
+  width: 44px;
+  min-height: 44px;
+  align-self: stretch;
+  color: var(--ink-mute);
+  font-size: 17px;
+  border-left: 1px solid var(--rule);
+}
+.trip-saved-del:hover { color: var(--accent); background: var(--paper-dim); }
+
+@media (max-width: 768px) {
+  .trip-sheet { max-height: calc(100% - 8px); border-radius: 16px 16px 0 0; }
+  .trip-sheet-scroll { padding: 6px 15px 18px; }
+  .trip-field { min-width: 104px; }
+}
+
+/* Desktop: fixed full-height left panel + map on the right (no bottom-nav
+   overlap, panel scrolls internally rather than the whole sheet being tiny). */
+@media (min-width: 769px) {
+  .trip-map { left: var(--panel-w); }
+  .trip-sheet {
+    left: 0; right: auto;
+    margin: 0;
+    top: 0; bottom: 0;
+    width: var(--panel-w);
+    max-width: none;
+    max-height: none;
+    height: auto !important;      /* beat any leftover inline drag height */
+    border: none;
+    border-right: 1px solid var(--rule);
+    border-radius: 0;
+    box-shadow: 4px 0 20px rgba(26, 26, 26, 0.05);
+    transition: none;
+  }
+  .trip-sheet-grip-hit { display: none; }
+  .trip-topcard { padding-top: 16px; }
+}
+
+/* ───────── Guided trip: CTA in the sheet ───────── */
+
+.trip-guide-cta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  margin-top: 8px;
+  border-radius: 14px;
+  border: 1px solid var(--accent);
+  background: linear-gradient(100deg, var(--accent-bg), var(--paper));
+  transition: transform .15s, box-shadow .15s;
+}
+.trip-guide-cta:hover { transform: translateY(-1px); box-shadow: var(--shadow-1); }
+.trip-guide-spark {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 15px;
+}
+.trip-guide-cta-text { flex: 1; min-width: 0; }
+.trip-guide-cta-text b { display: block; font-family: var(--display); font-size: 15px; color: var(--ink); }
+.trip-guide-cta-text small { display: block; color: var(--ink-soft); font-size: 11.5px; margin-top: 1px; }
+.trip-guide-arrow { color: var(--accent); font-size: 18px; flex-shrink: 0; }
+
+/* ───────── Trip planner: mobile launcher (before the sheet is raised) ───────── */
+.trip-launcher {
+  position: absolute;
+  left: 0; right: 0; bottom: 0; top: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px calc(24px + var(--bottom-nav-h));
+  pointer-events: none;   /* let the map pan around the card */
+}
+.trip-launcher-card {
+  pointer-events: auto;
+  width: min(100%, 420px);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(26, 26, 26, 0.18);
+  padding: 28px 24px 22px;
+  text-align: center;
+}
+.trip-launcher-spark {
+  width: 48px; height: 48px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-fill);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.trip-launcher-title {
+  font-family: var(--display);
+  font-size: 23px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.trip-launcher-sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin: 8px 0 20px;
+}
+.trip-launcher-primary {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--accent);
+  transition: opacity .15s;
+}
+.trip-launcher-primary:hover { opacity: 0.9; }
+.trip-sheet.sheet-hidden { display: none; }
+
+/* Planned view: the Save / Edit / Replan / Start over actions live in one
+   footer pinned at the BOTTOM of the sheet (mobile and desktop alike):
+   a full-width primary Save/Update on top, the secondary actions - each
+   plainly labelled - in a row beneath it. */
+.trip-edit-btn, .trip-plan-again-btn, .trip-save-planned-btn, .trip-startover-btn {
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.trip-save-planned-btn { width: 100%; padding: 12px 16px; background: var(--accent); color: var(--on-fill); }
+.trip-save-planned-btn:hover:not(:disabled) { opacity: 0.9; }
+.trip-save-planned-btn:disabled { opacity: 0.6; cursor: default; }
+.trip-edit-btn { background: var(--paper); border: 1px solid var(--rule); color: var(--ink); }
+.trip-edit-btn:hover { border-color: var(--ink-soft); }
+.trip-plan-again-btn, .trip-startover-btn { background: var(--paper); border: 1px solid var(--rule); color: var(--ink-soft); }
+.trip-plan-again-btn:hover { border-color: var(--accent); color: var(--accent); }
+.trip-planned-secondary {
+  display: flex;
+  gap: 8px;
+}
+.trip-planned-secondary > button { flex: 1 1 0; min-width: 0; }
+
+/* Day planner: base-city + day-trip transport recommendation. */
+.daytrip-base .trip-block-title { display: flex; align-items: center; gap: 6px; }
+.daytrip-base .trip-block-title svg { color: var(--accent); }
+.daytrip-reco {
+  display: flex; align-items: flex-start; gap: 11px;
+  padding: 11px 13px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: rgba(200, 80, 30, 0.04);
+}
+.daytrip-reco-icon { color: var(--accent); margin-top: 2px; }
+.daytrip-reco-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.daytrip-reco-main b { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--ink); }
+.daytrip-reco-main b svg { color: var(--accent); }
+.daytrip-reco-main small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
+.daytrip-hint { color: var(--good-ink-soft); }
+.daytrip-hint.warn { color: var(--warn-ink); }
+/* "You're already in the city" note - icon aligned to the first line. */
+.daytrip-here { display: flex; gap: 6px; align-items: baseline; }
+.daytrip-here svg { flex: none; color: var(--accent); position: relative; top: 1px; }
+.daytrip-more {
+  align-self: center;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.daytrip-more:hover { border-color: var(--accent); color: var(--accent); }
+.daytrip-modes { margin-top: 10px; }
+/* The three modes are BUTTONS: pick one and the whole day plans around it. */
+.daytrip-mode-btn { font: inherit; transition: border-color 0.12s ease, box-shadow 0.12s ease; }
+.daytrip-mode-btn span { display: inline-flex; align-items: center; gap: 4px; }
+.daytrip-mode-btn span svg:last-child:not(:first-child) { color: var(--accent); }
+.daytrip-mode-btn:hover { border-color: var(--accent); }
+.daytrip-mode-btn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.daytrip-pick-note { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); }/* "Fly to a nearby airport instead" alternatives (no direct fare). */
+
+
+/* First-visit "Ryanair fares only" notice. */
+.fare-notice { max-width: 420px; padding: 26px 26px 22px; }
+.fare-notice-text { font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); margin: 10px 0 0; }
+.fare-notice-text b { color: var(--ink); }
+.fare-notice-btn { margin-top: 18px; width: 100%; }
+
+/* ───────── Fare provenance (FareProvenance.jsx) ─────────
+   Freshness and estimate labeling on price surfaces. The "from" word and the
+   age chip are metadata (muted, small); the est. tag is a quiet bordered chip,
+   deliberately NOT the accent or the rating ochre: an estimate is a caveat,
+   not an action and not a measure. */
+.prov-from {
+  /* Prose, not a measured number: keep it in the UI face even inside a mono
+     price block, and let the figure keep the mono. */
+  font-family: var(--ui);
+  font-size: 0.8em;
+  font-weight: 400;
+  color: var(--ink-mute);
+  margin-right: 0.32em;
+  letter-spacing: 0;
+}
+.fare-prov {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-left: 6px;
+  vertical-align: baseline;
+}
+.fare-prov-est {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+  border-radius: 4px;
+  padding: 0 4px;
+  cursor: help;
+  white-space: nowrap;
+}
+.fare-prov-age {
+  font-size: 10px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.booking-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin: 4px 0 0; }
+/* Inside a flex link row the note takes its own full-width line. */
+.cost-group-links .booking-note { flex: 1 0 100%; margin: 0; }
+.trip-leg-links .booking-note { flex: 1 0 100%; margin: 0; }/* The hover card's freshness line (built in plain DOM by MapView). */
+
+.tip-price .prov-from { margin-right: 2px; font-size: 9px; align-self: baseline; }
+
+/* "Open this shared trip?" dialog (a trip arriving via a share link). */
+.share-trip-modal { max-width: 420px; padding: 26px 26px 22px; }
+.share-trip-name { font-size: 14px; color: var(--ink-soft); margin: 10px 0 0; }
+.share-trip-name b { color: var(--ink); }
+.share-trip-warn { color: var(--accent); }
+.share-trip-actions { display: flex; gap: 10px; margin-top: 18px; }
+.share-trip-actions .guide-next { flex: 1; }
+.share-trip-dismiss {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.share-trip-dismiss:hover { color: var(--ink); border-color: var(--ink-mute); }
+
+/* Planned-trip actions pinned at the bottom of the sheet (both layouts). */
+.trip-sheet-footer {
+  flex: none;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+}
+.trip-sheet-footer-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.trip-footer-error { margin: 0 0 8px; }
+
+.trip-origin-row { display: flex; }
+.trip-origin-row .origin-picker { position: relative; }
+.trip-startover-btn:hover { border-color: var(--warn-ink); color: var(--warn-ink); }
+.trip-planned-error {
+  position: absolute;
+  top: 58px; right: 14px;
+  z-index: 6;
+  max-width: 300px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(245,241,232,0.97);
+  border: 1px solid var(--warn-ink);
+  color: var(--warn-ink);
+  font-size: 12px;
+  box-shadow: var(--shadow-1);
+}
+

@@ -1,0 +1,134 @@
+{
+  "measured_at": "2026-10-02T23:46:29.390Z",
+  "runs_per_cell": 3,
+  "cpu_throttle_phone": 4,
+  "note": "Local dist over a static server on loopback, the method of baseline_vitals.mjs (T011) with a scripted trip-page interaction: three folds opened and closed, one stop picked, a scroll.",
+  "rows": [
+    {
+      "device": "desktop",
+      "url": "/#itin=at-salzburg-vienna-chain-6d",
+      "runs": 3,
+      "ok": true,
+      "inp_ms": 136,
+      "lcp_ms": 3236,
+      "cls": 0.0047,
+      "interactions": 21,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 2916,
+          "cls": 0.0047,
+          "inp": 176,
+          "inp_event": "pointerdown",
+          "interactions": 21,
+          "done": [
+            "open The route:40",
+            "close The route:40",
+            "open Practical:96",
+            "close Practical:56",
+            "open Day by day:72",
+            "close Day by day:56",
+            "stop:176"
+          ]
+        },
+        {
+          "ok": true,
+          "lcp": 4448,
+          "cls": 0.0047,
+          "inp": 128,
+          "inp_event": "pointerdown",
+          "interactions": 21,
+          "done": [
+            "open The route:120",
+            "close The route:88",
+            "open Practical:80",
+            "close Practical:40",
+            "open Day by day:48",
+            "close Day by day:64",
+            "stop:128"
+          ]
+        },
+        {
+          "ok": true,
+          "lcp": 3236,
+          "cls": 0.0049,
+          "inp": 136,
+          "inp_event": "pointerdown",
+          "interactions": 21,
+          "done": [
+            "open The route:56",
+            "close The route:56",
+            "open Practical:32",
+            "close Practical:48",
+            "open Day by day:40",
+            "close Day by day:40",
+            "stop:136"
+          ]
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "url": "/#itin=at-salzburg-vienna-chain-6d",
+      "runs": 3,
+      "ok": true,
+      "inp_ms": 368,
+      "lcp_ms": 6004,
+      "cls": 0.0191,
+      "interactions": 21,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 6004,
+          "cls": 0.0191,
+          "inp": 240,
+          "inp_event": "pointerdown",
+          "interactions": 21,
+          "done": [
+            "open The route:64",
+            "close The route:240",
+            "open Practical:56",
+            "close Practical:64",
+            "open Day by day:56",
+            "close Day by day:56",
+            "stop:192"
+          ]
+        },
+        {
+          "ok": true,
+          "lcp": 5372,
+          "cls": 0.025,
+          "inp": 696,
+          "inp_event": "pointerdown",
+          "interactions": 21,
+          "done": [
+            "open The route:200",
+            "close The route:64",
+            "open Practical:40",
+            "close Practical:72",
+            "open Day by day:40",
+            "close Day by day:216",
+            "stop:696"
+          ]
+        },
+        {
+          "ok": true,
+          "lcp": 7272,
+          "cls": 0.019,
+          "inp": 368,
+          "inp_event": "pointerdown",
+          "interactions": 21,
+          "done": [
+            "open The route:368",
+            "close The route:296",
+            "open Practical:32",
+            "close Practical:32",
+            "open Day by day:40",
+            "close Day by day:264",
+            "stop:168"
+          ]
+        }
+      ]
+    }
+  ]
+}

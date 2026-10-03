@@ -1,0 +1,55 @@
+{
+  "measured_at": "2026-10-02T23:24:11.235Z",
+  "runs": 3,
+  "note": "T061 session twice in one tab: open, zoom toward a city, pan; back to the list; the same again. Tile requests per half, and how many the browser served from its cache.",
+  "first_open_tiles_median": 17,
+  "reopen_tiles_median": 17,
+  "reopen_from_cache_median": 17,
+  "samples": [
+    {
+      "run": 0,
+      "opened": [
+        true,
+        true
+      ],
+      "first": {
+        "tiles": 17,
+        "cached": 0
+      },
+      "second": {
+        "tiles": 17,
+        "cached": 17
+      }
+    },
+    {
+      "run": 1,
+      "opened": [
+        true,
+        true
+      ],
+      "first": {
+        "tiles": 17,
+        "cached": 0
+      },
+      "second": {
+        "tiles": 17,
+        "cached": 17
+      }
+    },
+    {
+      "run": 2,
+      "opened": [
+        true,
+        true
+      ],
+      "first": {
+        "tiles": 17,
+        "cached": 0
+      },
+      "second": {
+        "tiles": 17,
+        "cached": 16
+      }
+    }
+  ]
+}

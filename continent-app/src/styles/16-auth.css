@@ -1,0 +1,435 @@
+/* Top-bar account slot, auth overlay, entry gate, email-confirmed toast.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ─── Top-bar account slot ─── */
+
+.account-slot {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.account-signin-btn {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background .15s, border-color .15s;
+}
+.account-signin-btn:hover { background: var(--accent); border-color: var(--accent); }
+
+.account-avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px 5px 5px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: inherit;
+  box-shadow: var(--shadow-1);
+  transition: border-color .15s, background .15s;
+}
+.account-avatar-btn:hover { border-color: var(--ink); background: var(--paper-dim); }
+/* On the account page. The bar has to say so: the section tabs give up their
+   underline while a page stands over them, and nothing else in the row would
+   otherwise mark where you are. */
+.account-avatar-btn.on {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+.account-avatar-btn.on .account-avatar-label { color: var(--paper); }
+.account-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.account-avatar-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+/* "See pricing" in the header: quiet chrome next to the account button, the
+   same pill height, terracotta only on the glyph so it reads as a place to go
+   rather than an alert. */
+.header-pricing-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.header-pricing-btn svg { color: var(--accent); flex-shrink: 0; }
+.header-pricing-btn:hover { border-color: var(--ink); background: var(--paper-dim); color: var(--ink); }
+/* Short "Passes" wording is the mobile chip's label; desktop keeps the full
+   "See pricing". The narrowest phones fall back to the glyph alone, still on
+   a 44px target. */
+.header-pricing-label-short { display: none; }
+@media (max-width: 379px) {
+  .app-header-account .header-pricing-label-short { display: none; }
+  .app-header-account .header-pricing-btn { padding: 0 8px; }
+}
+
+@media (max-width: 880px) {
+  .account-slot { width: 100%; justify-content: flex-end; margin: 2px 0 0; }
+  .account-avatar-label { display: none; }
+  .account-avatar-btn { padding: 4px; }
+}
+/* Below 768px the desktop account slot is replaced by .mobile-account-btn in
+   the filter bar's own header row (see the mobile filter-bar block above);
+   this rule must come after the base .account-slot definition above so it
+   actually wins the cascade at this width. */
+@media (max-width: 768px) {
+  .account-slot { display: none; }
+}
+
+/* ─── Auth overlay + modal (sign in / create account / forgot password) ─── */
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(26, 26, 26, 0.36);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.auth-overlay-solid {
+  background: var(--paper);
+  backdrop-filter: none;
+}
+
+.auth-modal {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+  padding: 32px 30px 30px;
+}
+
+.auth-close {
+  position: absolute;
+  top: 16px; right: 16px;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 22px;
+}
+.auth-brand-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.auth-tabs {
+  width: 100%;
+  margin-bottom: 22px;
+}
+.auth-tabs button {
+  flex: 1;
+  text-align: center;
+}
+
+.auth-title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.auth-sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.auth-form-inline { gap: 14px; }
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.auth-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-mute);
+}
+.auth-field input {
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color .15s, background .15s;
+}
+.auth-field input:hover { border-color: var(--ink-soft); }
+.auth-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--paper-dim);
+}
+.auth-field input::placeholder { color: var(--ink-mute); }
+
+.auth-submit {
+  margin-top: 4px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background .15s;
+}
+.auth-submit:hover:not(:disabled) { background: var(--accent); }
+.auth-submit:disabled { opacity: 0.55; cursor: default; }
+
+/* "Continue with Google" + the or-divider under it. */
+.auth-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.auth-google:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 6px;
+  color: var(--ink-mute);
+  font-size: 11px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* Privacy policy modal + entry-gate link. */
+.auth-gate-privacy { display: block; margin: 14px auto 0; font-size: 11px; color: var(--ink-mute); }
+.privacy-modal { max-height: 84vh; overflow-y: auto; }
+.privacy-updated { font-size: 11px; color: var(--ink-mute); margin: -6px 0 12px; }
+.privacy-body { font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); text-align: left; }
+.privacy-body h3 { font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink); margin: 14px 0 4px; }
+.privacy-body p { margin: 0 0 8px; }
+.privacy-body a { color: var(--accent); }
+.privacy-table { font-size: 12px; margin: 8px 0; }
+.privacy-table th, .privacy-table td { text-align: left; padding: 6px 0.5rem; color: var(--ink-soft); }
+.privacy-table th { font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--stroke); }
+.privacy-table td { border-bottom: 1px solid var(--stroke-soft); }
+
+/* ── "Travel cheaper" tailored tips ── */
+.cheap-tip-group { margin-bottom: 10px; }
+.cheap-tip-group-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 8px 0 6px;
+}
+.cheap-tip-generic-toggle { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; background: none; border: 0; padding: 0; }
+.cheap-tip {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+}
+.cheap-tip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.cheap-tip-head b { font-size: 12px; color: var(--ink); }
+.cheap-tip-save {
+  flex: none;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--good-ink);
+  background: color-mix(in srgb, var(--good-ink) 9%, var(--paper));
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.cheap-tip small { display: block; font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); margin-top: 3px; }
+.cheap-tip-cat { display: inline-block; font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin-top: 5px; }
+
+/* Account deletion (danger zone). */
+.account-delete-actions { display: flex; gap: 8px; margin-top: 12px; }
+.account-delete-btn { background: var(--danger); border-color: var(--danger); color: var(--on-fill); }
+.account-delete-btn:hover:not(:disabled) { background: var(--danger-dark); }
+.account-delete-btn:disabled { opacity: 0.6; cursor: default; }
+
+.auth-link {
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-align: left;
+  width: fit-content;
+  transition: color .15s;
+}
+.auth-link:hover { color: var(--accent); }
+.auth-forgot { align-self: flex-end; margin-top: -6px; }
+.auth-back { align-self: center; margin-top: 2px; }
+
+.auth-error {
+  padding: 9px 12px;
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.auth-notice {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.55;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.auth-notice-inline {
+  padding: 8px 12px;
+  color: var(--green);
+  background: transparent;
+  border: none;
+  font-size: 12.5px;
+}
+
+/* ─── Entry gate (sign in / create account / continue as guest) ─── */
+
+.auth-gate {
+  max-width: 400px;
+  padding: 40px 34px 34px;
+  text-align: center;
+}
+.auth-brand-center {
+  justify-content: center;
+  margin-bottom: 26px;
+}
+.auth-gate-title { text-align: center; }
+.auth-gate-sub {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.auth-gate-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.auth-submit-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.auth-submit-ghost:hover:not(:disabled) {
+  background: var(--paper-dim);
+  color: var(--ink);
+}
+.auth-gate-guest {
+  align-self: center;
+  margin: 20px auto 0;
+}
+
+/* ─── Email-confirmed toast ─── */
+
+.confirm-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13px;
+  box-shadow: var(--shadow-2);
+  animation: confirm-toast-in .25s ease-out;
+}
+.confirm-toast-check {
+  color: var(--green);
+  font-weight: 700;
+}
+.confirm-toast-close {
+  color: var(--paper);
+  opacity: 0.6;
+  font-size: 16px;
+  line-height: 1;
+  margin-left: 4px;
+}
+.confirm-toast-close:hover { opacity: 1; }
+@keyframes confirm-toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ─── Account panel (side panel: profile, saved trips, change password) ─── */
+
+.account-heading {
+  font-size: 26px;
+  word-break: break-word;
+}
+

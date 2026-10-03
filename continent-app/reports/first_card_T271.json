@@ -1,0 +1,111 @@
+{
+  "measured_at": "2026-10-02T23:30:13.514Z",
+  "runs_per_cell": 3,
+  "cpu_throttle": 4,
+  "network": {
+    "latency_ms": 150,
+    "down_bytes_per_s": 1677721.6
+  },
+  "rows": [
+    {
+      "arm": "A: no rank tier (pre-T271 path)",
+      "screen": "destinations",
+      "runs": 3,
+      "first_card_ms": 14520,
+      "bytes_kb": 2786,
+      "dest_files": 240,
+      "samples": [
+        {
+          "ms": 15292,
+          "bytes_kb": 2786,
+          "dest_files": 240
+        },
+        {
+          "ms": 14388,
+          "bytes_kb": 2786,
+          "dest_files": 240
+        },
+        {
+          "ms": 14520,
+          "bytes_kb": 2786,
+          "dest_files": 240
+        }
+      ]
+    },
+    {
+      "arm": "A: no rank tier (pre-T271 path)",
+      "screen": "explore",
+      "runs": 3,
+      "first_card_ms": 13856,
+      "bytes_kb": 2886,
+      "dest_files": 240,
+      "samples": [
+        {
+          "ms": 16303,
+          "bytes_kb": 4843,
+          "dest_files": 240
+        },
+        {
+          "ms": 12019,
+          "bytes_kb": 2886,
+          "dest_files": 240
+        },
+        {
+          "ms": 13856,
+          "bytes_kb": 2841,
+          "dest_files": 240
+        }
+      ]
+    },
+    {
+      "arm": "B: rank tier",
+      "screen": "destinations",
+      "runs": 3,
+      "first_card_ms": 5681,
+      "bytes_kb": 2015,
+      "dest_files": 95,
+      "samples": [
+        {
+          "ms": 5681,
+          "bytes_kb": 2015,
+          "dest_files": 95
+        },
+        {
+          "ms": 5923,
+          "bytes_kb": 2162,
+          "dest_files": 125
+        },
+        {
+          "ms": 4076,
+          "bytes_kb": 1572,
+          "dest_files": 48
+        }
+      ]
+    },
+    {
+      "arm": "B: rank tier",
+      "screen": "explore",
+      "runs": 3,
+      "first_card_ms": 3931,
+      "bytes_kb": 1361,
+      "dest_files": 56,
+      "samples": [
+        {
+          "ms": 4888,
+          "bytes_kb": 1483,
+          "dest_files": 77
+        },
+        {
+          "ms": 3571,
+          "bytes_kb": 1361,
+          "dest_files": 35
+        },
+        {
+          "ms": 3931,
+          "bytes_kb": 1229,
+          "dest_files": 56
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Carta, Europe Travel
+   Editorial / cartographic aesthetic
+
+   Write STANDARD properties only; the build (Lightning CSS, targets in
+   vite.config.js) generates vendor prefixes. Hand-writing a -webkit- twin
+   next to the standard property is actively harmful here: given both,
+   Lightning CSS collapsed the pair down to the -webkit- spelling alone, and
+   Chromium dropped -webkit-backdrop-filter years ago, so every blurred
+   surface in the app shipped with no blur while dev looked correct.
+   ========================================================================== */
+
+:root {
+  /* Palette - warm alabaster canvas, deep slate ink, terracotta accent */
+  --paper:        #f8f6f0;
+  --paper-dim:    #efece2;
+  --ink:          #0f172a;
+  --ink-soft:     #414b5e;
+  --ink-mute:     #7d8393;
+  /* The fill behind an ACTIVE control. One step off --ink, which is body text
+     and reads as pure black when a whole button is painted with it. Still
+     11:1 against --paper, so white labels stay well past AA. */
+  --ink-fill:     #2b3446;
+  --rule:         #ccc7b8;
+  --rule-soft:    #e2ded1;       /* hairlines inside a card, where --rule is too loud */
+  --accent:       #e05a47;       /* terracotta: actions, alerts, the live route */
+  --accent-soft:  #e97f6b;
+  --accent-bg:    #f7dcd4;
+  /* Ratings are a MEASURE, not a warning. On the accent they read as errors
+     ("Rome 9.5" in a saturated red bubble), and they competed with the buttons
+     and route pins that do need to shout. Deep ochre: warm like a seal on a
+     map, and dark enough to pass AA both as a fill (paper text on --rate,
+     5.3:1) and as text (--rate on --rate-bg, 4.7:1; --rate-soft on paper,
+     4.8:1), which the amber a rating chip wants to be does not. */
+  --rate:         #8f5a0c;
+  --rate-soft:    #946313;
+  --rate-bg:      #f6e6cb;
+  --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
+  /* Destructive only, never decoration. Terracotta is the app's action colour
+     and cannot also mean "this erases everything", so deleting an account gets
+     a colour nothing else in the product uses. Both directions clear AA on
+     paper (5.6:1 as text) and as a fill (6.0:1 with white on it). */
+  --danger:       #b3372a;
+  --danger-dark:  #96291e;
+  --status-success: #10b981;     /* indicator-only green: compliance ticks, open-now dots */
+  --bg-card:      #ffffff;
+  --shadow-1:     0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --shadow-2:     0 4px 16px rgba(15, 23, 42, 0.10), 0 12px 32px rgba(15, 23, 42, 0.08);
+  --shadow-card:  0 4px 20px rgba(15, 23, 42, 0.06);
+
+  /* Card taxonomy (PLAN.md C2). KIND is an ink-density ramp, not a rainbow:
+     the hierarchy reads as weight, so it survives greyscale and colour-blind
+     viewing. Values are ink mixed over paper at 100/78/62/45/50%. VERDICT
+     stays on the rating's ochre seal (--rate) - ratings are a measure here,
+     never the terracotta action colour. GEM gets its own quiet teal, the one
+     hue nothing else in the product uses, so "the world hasn't noticed" and
+     "worth the journey" can never be confused. The app is deliberately
+     single-theme (no prefers-color-scheme / data-theme blocks exist), so
+     these live only in this :root like every other token. */
+  --kind-metro:   #0f172a;
+  --kind-city:    #424856;
+  --kind-town:    #686c75;
+  --kind-village: #8f9297;
+  --kind-area:    #84868d;
+  --verdict-3:    var(--rate);       /* filled ribbon */
+  --verdict-2:    var(--rate);       /* outline ribbon */
+  --verdict-1:    var(--ink-mute);   /* text only */
+  --gem-ink:      #2c6e63;
+  --gem-bg:       #d9eae5;
+
+  /* Spacing scale (P4.3). The stylesheet grew with hand-tuned px literals and
+     no rhythm, which is why the phone wastes a screen before the first card.
+     New and touched rules take these; nothing is rewritten wholesale. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 22px;
+  --space-6: 30px;
+  --space-7: 40px;
+  --space-8: 56px;
+  /* The floor a finger needs. Icon-only controls get this as a minimum box
+     even where the glyph inside is 15px (WCAG 2.5.5). */
+  --tap: 44px;
+
+  /* On-fill ink. Text, icons and strokes painted on a filled or photographic
+     surface (an --accent button, an --ink-fill pill, a map pin). Pure white, the
+     same value as --bg-card, kept as its own token so a card fill and a label
+     colour can diverge later without a search. Buttons and chips take their
+     label colour from here. */
+  --on-fill:      #ffffff;
+
+  /* Good, nature and trail greens. Indicators and small text, never fills for actions. */
+  --good-ink:           #16794f;   /* text-safe green for open-now, verified and good-deal text */
+  --good-ink-soft:      #2c7d54;   /* a step lighter than --good-ink, trip budget done state */
+  --good-ink-alt:       #2e7d4f;   /* extras delta under budget */
+  --good-mid:           #3a9d6b;   /* icons and borders for a great tier */
+  --good-vivid:         #2e9e5b;   /* swim and way-in indicators, good water */
+  --leaf-ink:           #2c6a1f;   /* add stamps and positive chips */
+  --trail-ink:          #3d6b42;   /* trail and park text */
+  --trail-pin:          #3d7a4e;   /* trail and nature map pins */
+  --trail-bg:           #e8f0e6;   /* trail and park card fill */
+  --trail-rule:         #d2e0cf;   /* trail and park card border */
+  --trail-bg-alt:       #e8f3e6;   /* a second trail tint */
+  --trail-rule-alt:     #c5dfbe;   /* a second trail border */
+  --event-ink:          #1f6b41;   /* AI event tag and pin */
+  --event-bg:           #e2f0e6;   /* AI event tag fill */
+  --climate-good:       #6b9e3f;   /* climate band, good month */
+  --budget-low-bg:      #e4edda;   /* budget band, low */
+  --budget-low-rule:    #c3d2ba;   /* budget band, low border */
+  --water-good-bg:      #ddeedd;   /* day extras water quality, good */
+  --water-good-ink:     #2c6136;   /* day extras water quality, good text */
+
+  /* Water and sky blues. */
+  --water-clear:        #1f8fb0;   /* excellent bathing water, clear sea blue */
+  --water-pin:          #2a8fbd;   /* beach pins and chips */
+  --lake-ink:           #2a6f9e;   /* lake pin name */
+  --water-link:         #2b6f9e;   /* blue text inside water facts */
+  --swim-ink:           #2c6376;   /* swim type text */
+  --swim-bg:            #e2eef2;   /* swim type fill */
+  --swim-rule:          #cbdfe6;   /* swim type border */
+  --rain-ink:           #4a70a8;   /* rain figure in a weather day */
+  --climate-poor:       #9bb0bd;   /* climate band, poor month */
+  --water-excellent-bg: #d8ecf5;   /* day extras water quality, excellent */
+  --water-excellent-ink:#11607f;   /* day extras water quality, excellent text */
+
+  /* Cautions: amber, orange and red-brown. Warnings that are not destructive (--danger is the destructive one). */
+  --warn-ink:           #b3402a;   /* over budget, no fare, cautions */
+  --warn-vivid:         #cc4433;   /* poor water and swim-stop indicator */
+  --amber:              #c68a12;   /* sufficient water, hazard rules, amber indicator */
+  --amber-ink:          #8a5a18;   /* warning note text */
+  --amber-ink-alt:      #8a5f0d;   /* amber text beside the ochre family */
+  --amber-ink-deep:     #855a0a;   /* deepest amber text */
+  --amber-warm:         #b3690f;   /* warm amber text */
+  --beach-ink:          #c48a2a;   /* beach pin name */
+  --amber-bg:           #fdf3e2;   /* warning note fill */
+  --amber-bg-alt:       #fcf2dd;   /* a second warning tint */
+  --amber-rule:         #efd9a3;   /* warning border */
+  --rate-rule:          #e0cba4;   /* rating band border */
+  --crowd-hot:          #d06a2a;   /* crowded indicator */
+  --orange:             #d35a26;   /* orange fill */
+  --experience-ink:     #9a3a2a;   /* experience type text */
+  --experience-rule:    #eec7bb;   /* experience type border */
+  --danger-bg:          #f6dcd8;   /* poor water fill */
+
+  /* Accent states and tints. */
+  --accent-hover:       #cf4c3a;   /* hover fill of an accent button */
+  --accent-press:       #b0431a;   /* hover fill of a primary cost action */
+  --accent-press-alt:   #b3491b;   /* hover fill, stay search */
+  --accent-wash:        #f6ede0;   /* a warm hover wash */
+  --accent-wash-alt:    #fdf6f0;   /* a faint accent tint behind advice */
+
+  /* Violet, slate and surface tints. Single-use domain colours. */
+  --ai-violet:          #5b3fa8;   /* AI-planned stops */
+  --ai-violet-bg:       #eee7fb;   /* AI chip fill */
+  --mountain-ink:       #6b5b95;   /* mountains pin name */
+  --slate-ink:          #55606f;   /* unknown or neutral swim and way label */
+  --slate-pin:          #5b6472;   /* town pin */
+  --crowd-mid:          #6b7280;   /* moderate crowd indicator */
+  --slate-mute:         #6f7688;   /* map popup subtitle */
+  --wash:               #f6f3ee;   /* a faint wash for a current tier */
+  --paper-hover:        #efe9db;   /* hover fill on paper */
+  --paper-lift:         #fdfbf5;   /* a card ground one step off paper */
+  --mask-solid:         #000;   /* the opaque stop of a mask-image gradient */
+
+  /* Type */
+  --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --ui:           'Plus Jakarta Sans', 'Inter Tight', system-ui, -apple-system, sans-serif;
+  --mono:         'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+  /* Layout */
+  --filter-h:     132px;
+  --panel-w:      440px;
+  --bottom-nav-h: 86px;
+}

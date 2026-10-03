@@ -1,0 +1,62 @@
+[
+ {
+  "profile": "desktop",
+  "run": 0,
+  "bootEnd": 293,
+  "firstCard": 2044,
+  "shards": 238,
+  "firstShard": 768,
+  "lastShard": 1619,
+  "bytesGzip": 0
+ },
+ {
+  "profile": "desktop",
+  "run": 1,
+  "bootEnd": 471,
+  "firstCard": 1773,
+  "shards": 238,
+  "firstShard": 945,
+  "lastShard": 1397,
+  "bytesGzip": 0
+ },
+ {
+  "profile": "desktop",
+  "run": 2,
+  "bootEnd": 241,
+  "firstCard": 1287,
+  "shards": 238,
+  "firstShard": 524,
+  "lastShard": 1069,
+  "bytesGzip": 0
+ },
+ {
+  "profile": "phone-slow4g",
+  "run": 0,
+  "bootEnd": 2082,
+  "firstCard": 24634,
+  "shards": 238,
+  "firstShard": 4693,
+  "lastShard": 16442,
+  "bytesGzip": 0
+ },
+ {
+  "profile": "phone-slow4g",
+  "run": 1,
+  "bootEnd": 2107,
+  "firstCard": 24361,
+  "shards": 238,
+  "firstShard": 5651,
+  "lastShard": 16559,
+  "bytesGzip": 0
+ },
+ {
+  "profile": "phone-slow4g",
+  "run": 2,
+  "bootEnd": 2049,
+  "firstCard": 24729,
+  "shards": 238,
+  "firstShard": 4385,
+  "lastShard": 16032,
+  "bytesGzip": 0
+ }
+]

@@ -1,0 +1,1 @@
+Fraunces, SIL Open Font License 1.1, Google Fonts (fonts.google.com/specimen/Fraunces). Weight 600, optical size 72, latin and latin-ext. Used only by scripts/og to set place names on the generated share images.

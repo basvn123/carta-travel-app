@@ -1,0 +1,2707 @@
+/* Filters and controls: two-tier filters, filter sheets, dropdowns, sliders, steppers, side panel, lifestyle panel.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ─── Two-tier filters: one always-visible row + a refine tray ───────────────
+   The bar itself carries only what DEFINES the trip (when, who, how it's
+   priced). Everything that NARROWS the result set (budget, place, quality,
+   trip style) lives in .filter-tray, a panel that drops below the header and
+   overlays the map, so opening it never grows --filter-h and shrinks the map.
+   On mobile all of this collapses (see the mobile sheet block further down)
+   and the fields fall straight into the existing 2-column grid. */
+
+.filter-row-primary { align-items: stretch; }/* Trigger + reset, pushed to the trailing edge of the primary row. */
+
+
+.filter-tray-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.filter-tray-btn:hover { color: var(--ink); border-color: var(--ink-mute); }
+.filter-tray-btn.open {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.filter-tray-btn.has-active { border-color: var(--accent); color: var(--accent); }
+.filter-tray-btn.has-active.open { color: var(--paper); }
+.filter-tray-btn svg { flex: none; }
+/* Count of narrowing filters, so one left on inside a closed tray can never
+   silently explain an empty map. */
+.filter-tray-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--paper);
+  font-size: 10px;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.filter-tray-btn.open .filter-tray-caret { transform: rotate(180deg); }
+
+/* Closed by default at every width; the desktop rule below opens it, the
+   mobile sheet dissolves it into the grid. */
+.filter-tray { display: none; }
+
+@media (min-width: 769px) {
+  /* Anchor for the tray: the full-width filters band of the header. Scoped to
+     desktop because the MOBILE sheet (.filter-bar.mobile-open .filter-rows)
+     anchors to .top-bar instead and would clip inside this band. */
+  .app-header-filters { position: relative; }
+
+  .filter-tray.is-open {
+    display: block;
+    position: absolute;
+    /* Clears the header's 9px bottom padding + rule, and then the category
+       rail: the tray cannot escape .app-header (backdrop-filter makes it a
+       containing block), so it is told how tall the rail is instead. Without
+       this the rail's chips paint over the tray's first row, which is where
+       the Budget and Quality captions live. */
+    top: calc(100% + 10px);
+    left: 0; right: 0;
+    z-index: 30;
+    /* Fully opaque: at even 2% transparency the results rows and price pills
+       behind it ghost straight through the tray's own labels. */
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 0 0 14px 14px;
+    border-top: none;
+    box-shadow: 0 16px 34px rgba(26, 26, 26, 0.16);
+    animation: filter-tray-in .18s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }/* Three labelled groups on a fixed grid (Budget | Quality over Where), not a
+     flex wrap that re-orders itself at every window width. The panel is the
+     surface, so the group cards drop their own chrome and lean on captions
+     plus gutter hairlines instead. Trip style used to hold the fourth cell;
+     the category rail owns that question now. */
+
+  .filter-tray .filter-group {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 0 26px 13px 0;
+  }
+  /* Wrap rather than squeeze: a quadrant's slider keeps its full rail and the
+     band box / toggles drop onto a second line when the column is narrow. */
+  .filter-tray .group-fields { flex-wrap: wrap; gap: 14px 20px; }
+
+  /* Hairlines live on the quadrants themselves, so a group that wraps its
+     fields can't leave a rule floating at the wrong height. */
+  .filter-tray .group-quality {
+    border-left: 1px solid var(--rule);
+    padding-left: 26px;
+  }
+  .filter-tray .group-place {
+    border-top: 1px solid var(--rule);
+    padding-top: 15px;
+  }
+}
+
+/* Narrow desktop windows: one column, so a quadrant never squeezes a slider
+   down to a stub. The hairlines become simple row rules. */
+@media (min-width: 769px) and (max-width: 1120px) {
+  .filter-tray .group-quality { border-left: none; padding-left: 0; }
+  .filter-tray .group-quality,
+  .filter-tray .group-place {
+    border-top: 1px solid var(--rule);
+    padding-top: 15px;
+  }
+}
+
+@keyframes filter-tray-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}/* Section heading over each cluster of tray fields. */
+
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 3px;
+  min-width: 0;
+}/* Rules between categories are obsolete now the group cards carry their own
+   borders; the elements stay in the markup for the mobile grid's sake. */
+
+
+.filter-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  line-height: 12px;
+  min-height: 12px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--ink-mute);
+}
+
+.filter-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter select,
+.filter input[type="number"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  padding: 2px 22px 4px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  min-width: 0;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%231a1a1a' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  transition: border-color .15s;
+}
+.filter select:hover, .filter input[type="number"]:hover { border-bottom-color: var(--ink); }
+.filter select:focus, .filter input[type="number"]:focus { outline: none; border-bottom-color: var(--accent); }
+
+.filter input[type="number"] {
+  width: 60px;
+  background-image: none;
+  padding-right: 0;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-pill {
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--rule);
+  position: relative;
+  transition: background .2s;
+}
+.toggle-pill::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--paper);
+  transition: transform .2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.toggle.on .toggle-pill { background: var(--accent); }
+.toggle.on .toggle-pill::after { transform: translateX(14px); }
+
+.filter-stats {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.3;
+}
+.filter-stats strong {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+/* ───────── Map ───────── */
+
+.map-wrap {
+  position: absolute;
+  top: var(--filter-h); left: var(--panel-w);
+  right: 0; bottom: var(--bottom-nav-h);
+}
+
+.maplibregl-ctrl-bottom-left,
+.maplibregl-ctrl-bottom-right {
+  margin-bottom: 8px !important;
+}
+
+.maplibregl-ctrl-attrib {
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  background: rgba(245, 241, 232, 0.7) !important;
+}/* Custom price marker
+   Structure: <marker-root> contains <price-pill> + <pin-dot>
+   marker-root is positioned by MapLibre (anchor: bottom);
+   we keep it width:auto so children determine size. */
+
+
+.price-pill {
+  display: inline-block;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.12), 0 2px 6px rgba(26, 26, 26, 0.06);
+  transition: transform .14s cubic-bezier(.2,.9,.3,1.2), box-shadow .14s, background .14s, color .14s, border-color .14s;
+  user-select: none;
+}
+
+.marker-root:hover .price-pill {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(26, 26, 26, 0.18), 0 8px 20px rgba(26, 26, 26, 0.12);
+  z-index: 100;
+}
+
+/* "Deal" - cheapest 25% - gets the rust accent */
+.price-pill.is-deal {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(200, 80, 30, 0.30), 0 2px 6px rgba(200, 80, 30, 0.18);
+}
+.marker-root:hover .price-pill.is-deal {
+  background: var(--orange);
+  box-shadow: 0 3px 6px rgba(200, 80, 30, 0.40), 0 8px 20px rgba(200, 80, 30, 0.22);
+}
+
+/* Selected: invert to ink for high contrast */
+.price-pill.selected {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  font-weight: 600;
+  z-index: 50;
+}
+.price-pill.is-deal.selected {
+  /* keep deal-rust but stronger */
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* Tiny dot at the actual lat/lon (below the pill) */
+.pin-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 1.5px var(--paper);
+  transition: transform .14s, background .14s, box-shadow .14s;
+}
+.pin-dot.is-deal {
+  background: var(--accent);
+}
+.pin-dot.selected {
+  transform: scale(1.6);
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
+}
+
+.marker-root:hover .pin-dot {
+  transform: scale(1.4);
+}
+.marker-root:hover .pin-dot.selected {
+  transform: scale(1.8);
+}
+
+.cluster-pill {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-1);
+  white-space: nowrap;
+  user-select: none;
+  transition: transform .12s;
+}
+.cluster-pill:hover { transform: scale(1.06); }
+
+/* ───────── Side panel ───────── */
+
+.panel {
+  position: absolute;
+  top: var(--filter-h); right: 0; bottom: var(--bottom-nav-h);
+  width: var(--panel-w);
+  max-width: 100vw;
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+  z-index: 15;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(0.2, 0.9, 0.3, 1);
+  box-shadow: var(--shadow-2);
+}
+.panel.open { transform: translateX(0); }
+
+/* Account & Saved trips slide-overs open over whatever tab is showing, so
+   they layer above the tab bodies while staying under the auth overlays
+   (z 60). The destination detail panel keeps the base z-index. */
+.account-panel { z-index: 56; }/* ── The destination panel's identity bar ────────────────────────────────
+   Eyebrow, score, name and the one badge that is a warning rather than a
+   qualifier, above the hero and pinned. Everything below it scrolls, so the
+   answer to "which place am I reading about" is never more than a glance
+   away, however deep into the receipt you are. */
+/* It floats over the photograph until the photograph has gone, then it
+   becomes a real bar with the place's name in it. Two states, one element, so
+   the cross is in the same place at every scroll position: a full screen
+   surface whose only exit scrolls away is a trap. */
+
+.dsheet-bar.is-stuck {
+  background: var(--paper);
+  border-bottom-color: var(--rule);
+}
+.dsheet-bar-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+.dsheet-bar.is-stuck .dsheet-bar-name { opacity: 1; transform: none; }
+
+/* The card under the hero: country, what the place is known for, the badges
+   the bar leaves out, and the two save actions. */
+.panel-header {
+  background: var(--paper);
+  padding: 14px 16px 13px;
+  z-index: 1;
+}
+/* The way out. Over the hero it is a dark disc, because it is sitting on a
+   photograph and nothing else on it can be relied on for contrast; under the
+   bar it becomes a quiet outlined button like every other control. 38px, so
+   it is a thumb target rather than a pixel-hunt. */
+.panel-close {
+  flex: none;
+  margin-left: auto;
+  pointer-events: auto;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(26, 26, 26, 0.55);
+  line-height: 1;
+  color: var(--on-fill);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.panel-close:hover { background: rgba(26, 26, 26, 0.72); }
+.panel-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dsheet-bar.is-stuck .panel-close {
+  border-color: var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+.dsheet-bar.is-stuck .panel-close:hover {
+  background: var(--paper-dim);
+  color: var(--ink);
+  border-color: var(--ink-soft);
+}
+
+.panel-tag {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  margin-bottom: 6px;
+}
+.panel-city {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.panel-section {
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--rule);
+}
+.panel-section:last-child { border-bottom: none; }
+
+.section-title {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  margin-bottom: 12px;
+}
+
+.total-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.total-row.grand {
+  border-top: 2px solid var(--ink);
+  margin-top: 10px;
+  padding-top: 14px;
+}
+.total-row .label {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.total-row.grand .label {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--ink);
+}
+.total-row .val {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.total-row.grand .val {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px dotted var(--rule);
+}
+.line:last-child { border-bottom: none; }
+.line .lbl { color: var(--ink-soft); }
+.line .lbl small { color: var(--ink-mute); display: block; font-size: 11px; margin-top: 2px; }
+.line .v {
+  font-family: var(--mono);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px 18px;
+  font-size: 12px;
+}
+.weather-grid .w-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dotted var(--rule);
+  padding: 5px 0;
+}
+.weather-grid .w-row span:first-child { color: var(--ink-soft); }
+.weather-grid .w-row span:last-child { font-family: var(--mono); }
+
+.attr-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.attr-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+.attr-item:last-child { border-bottom: none; }
+.attr-img {
+  width: 56px; height: 56px;
+  flex-shrink: 0;
+  background: var(--paper-dim);
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+}
+.attr-text { flex: 1; min-width: 0; }
+.attr-name {
+  font-weight: 500;
+  font-size: 13px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.attr-name a { color: var(--ink); text-decoration: none; border-bottom: 1px solid transparent; }
+.attr-name a:hover { border-bottom-color: var(--accent); }
+.attr-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.attr-desc {
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.tab {
+  padding: 8px 14px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-mute);
+  border-bottom: 2px solid transparent;
+  transform: translateY(1px);
+  transition: color .15s, border-color .15s;
+}
+.tab:hover { color: var(--ink-soft); }
+.tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.book-row {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 14px;
+}
+.book-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background .15s;
+}
+.book-btn:hover { background: var(--accent); }
+.book-btn.secondary {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.book-btn.secondary:hover { border-color: var(--ink); background: var(--paper-dim); }
+.book-btn .arrow { font-family: var(--mono); font-size: 14px; }
+
+.empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--ink-mute);
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 16px;
+}
+
+/* loading */
+.loading-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  z-index: 100;
+  gap: 18px;
+}
+.loading-screen .name {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.loading-screen .sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+}
+.loading-screen .pulse {
+  width: 28px; height: 1px; background: var(--ink);
+  animation: pulse-line 1.6s ease-in-out infinite;
+}
+@keyframes pulse-line {
+  0%, 100% { width: 8px; opacity: 0.4; }
+  50%      { width: 64px; opacity: 1; }
+}/* ─── Mobile helpers (inert on desktop) ───
+   The header wrapper collapses out of the layout on desktop via `display:
+   contents`, so the brand stays a direct flex child of .filter-bar exactly as
+   before; the account/calendar/filter icon triggers and bottom nav are
+   hidden until the mobile query switches them on. */
+
+/* Scoped to .filter-bar so these win over later, equal-specificity rules and
+   stay hidden on desktop. */
+.filter-bar .mobile-account-btn,
+.filter-bar .mobile-header-actions { display: none; }
+/* Depart/Return are normal stacked label-over-value fields on desktop, same
+   as every other card field; hidden on mobile because the calendar icon's
+   popover covers the same two fields instead. */
+.row-date-fields { display: flex; }
+
+@media (max-width: 880px) {
+  .filter-bar { flex-wrap: wrap; padding: 12px 16px; height: auto; gap: 12px; }
+  .filters { gap: 14px; }
+  .panel { width: 100%; }
+  /* The ranked list is hidden below 880px (see its own rule); reclaim its left
+     gutter so the map fills the width instead of leaving a blank column. */
+  .map-wrap { left: 0; }
+}
+
+/* ─── Filter bar additions: segmented toggle, country dropdown, range slider ─── */
+
+.filter-section-break {
+  width: 1px;
+  align-self: stretch;
+  background: var(--rule);
+  margin: 0 4px;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.segmented button {
+  background: transparent;
+  border: none;
+  padding: 5px 13px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: color .15s, background .15s;
+}
+.segmented button:hover { color: var(--ink); }
+.segmented button.seg-on {
+  background: var(--ink);
+  color: var(--paper);
+}
+.segmented.compact button {
+  padding: 5px 11px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* Icon-only variant (Travel by plane / car). */
+.segmented.seg-icons button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 11px;
+}
+.segmented.seg-icons svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+/* ─── Pill toggles (UNESCO / Top beaches highlights) ─── */
+.pill-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pill-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  transition: color .15s, background .15s, border-color .15s;
+}
+.pill-toggle .gem { opacity: 0.7; flex: none; }
+.pill-toggle:hover {
+  color: var(--ink);
+  border-color: var(--ink-mute);
+}
+.pill-toggle.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+.pill-toggle.on .gem { opacity: 1; }
+
+/* Reach filter: the quiet "no travel-time data" state where the hour chips
+   would be. Sized like a chip row so the tray doesn't jump between origins. */
+.reach-note {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  font-size: 12px;
+  color: var(--ink-mute);
+}/* ─── Band sliders: rating (0-10) and price, each a dual-handle rail with a
+   bordered box echoing the chosen range (or "Any" when untouched). Shared
+   layout/box classes keep the two filters visually consistent. ─── */
+/* The rating slider carries a 0/5/10 axis under its rail that the price slider
+   doesn't, making it taller than the pill/box controls beside it. Centering
+   against that extra height drops "Hidden gems only" below the top-aligned
+   UNESCO / Top beaches pills next door, so top-align this row instead. */
+
+/* Tier-cutoff guide ticks drawn on the slider rail. */
+.dual-range-mark {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 9px;
+  background: var(--ink-mute);
+  opacity: 0.4;
+  border-radius: 1px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.range-band-box.is-narrowed {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--ink);
+}
+
+.reset-filters-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 13px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  align-self: center;   /* the row is align-items:stretch; keep the pill its own height */
+  transition: color .15s, background .15s, border-color .15s;
+}
+.reset-filters-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+/* ─── Collapsible left list ───
+   A chevron in the list header hides it (widening the map); a floating tab
+   brings it back. */
+.results-collapse {
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  color: var(--ink-mute);
+  font-size: 16px;
+  line-height: 1;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.results-collapse:hover {
+  color: var(--ink);
+  border-color: var(--ink-soft);
+  background: var(--paper-dim);
+}
+
+/* ── The map's floating control row ──────────────────────────────────────
+   One strip under the top panel carrying the map's own controls: the
+   list-reopen tab and the "travelling from" picker. It tracks the left edge
+   of the MAP (not the viewport), so it clears the destinations gutter when
+   that is open and slides left with it when it collapses. Pointer events are
+   off on the strip itself so the map stays draggable through the gaps. */
+.map-toolrow {
+  position: absolute;
+  top: calc(var(--filter-h) + 12px);
+  left: calc(var(--panel-w) + 12px);
+  /* Above the drive prompt (z 15): the picker's popover drops over that card,
+     and the popover is where the prompt's own button sends you. */
+  z-index: 16;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: none;
+}
+/* The strip is a stacking context, so nothing inside it can climb over the top
+   bar (z 25) however high its own z-index is - which is what buried the From
+   popover under the trip-kind chips. Lift the whole strip for as long as the
+   popover is down, and only then, so the header's filter tray keeps the map to
+   itself the rest of the time. */
+.map-toolrow.pop-open { z-index: 26; }
+.map-toolrow > * { pointer-events: auto; }
+.app.list-collapsed .map-toolrow { left: 12px; }
+
+/* ── Size toggle: cities, or everything down to the villages ──────────────
+   Sits to the right of the From picker and wears the same map-control pill, so
+   the two read as one strip of answers about what is on screen. The caption
+   holds still and only the value changes, exactly like the picker beside it. */
+.size-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px 9px 12px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.size-toggle:hover { border-color: var(--ink); }
+.size-toggle-icon { display: inline-flex; flex: none; color: var(--ink-mute); }
+.size-toggle-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.1;
+  min-width: 0;
+}
+.size-toggle-cap {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-mute);
+}
+.size-toggle-label b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.size-toggle-value-short { display: none; }   /* phones only, see the media query */
+/* On: the map is NOT showing everything, and a filled pill says that at a
+   glance. Ink, like the category chips right above it, not the accent: the
+   accent already means "deal" on this screen. */
+.size-toggle.on {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.size-toggle.on .size-toggle-icon,
+.size-toggle.on .size-toggle-label b { color: var(--paper); }
+.size-toggle.on .size-toggle-cap { color: rgba(248, 246, 240, 0.72); }
+
+.list-reopen {
+  display: none;            /* shown only when .app.list-collapsed */
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px 7px 9px;
+  align-self: center;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  box-shadow: var(--shadow-1);
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  transition: border-color .15s, color .15s;
+}
+.list-reopen:hover { border-color: var(--ink); color: var(--ink); }
+.list-reopen .chev { font-size: 14px; line-height: 1; }
+
+.app.list-collapsed .results-list { display: none; }
+.app.list-collapsed .map-wrap { left: 0; }
+.app.list-collapsed .accom-panel { left: 0; }
+.app.list-collapsed .list-reopen { display: inline-flex; }
+
+.panel-segment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+}
+.panel-segment button {
+  padding: 12px 14px;
+  text-align: center;
+  font-size: 13px;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  transition: background .15s, color .15s;
+}
+.panel-segment button:hover { color: var(--ink); }
+.panel-segment button.seg-on { background: var(--ink-fill); color: var(--paper); }
+.panel-segment button small { color: inherit; opacity: 0.7; }
+
+/* ─── Dual-handle range slider ─── */
+
+.filter.price-range {
+  min-width: 130px;
+}
+.dual-range {
+  width: 124px;
+}
+.dual-range-track {
+  position: relative;
+  height: 18px;
+  display: flex;
+  align-items: center;
+}
+.dual-range-track::before {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 2px;
+  background: var(--rule);
+  transform: translateY(-50%);
+  border-radius: 2px;
+}
+.dual-range-fill {
+  position: absolute;
+  height: 2px;
+  background: var(--accent);
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.dual-range-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  appearance: none;
+  pointer-events: none;
+  margin: 0;
+}
+.dual-range-input::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  pointer-events: auto;
+  margin-top: 0;
+}
+.dual-range-input::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.dual-range-input::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 100%;
+}
+.dual-range-input::-moz-range-track {
+  background: transparent;
+  height: 100%;
+}
+.dual-range-vals {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Static 0/5/10 scale under the rating rail: a plain reference, positioned by
+   value so the endpoints sit flush with the track ends. */
+.dual-range-axis {
+  position: relative;
+  height: 12px;
+  margin-top: 3px;
+}
+.dual-range-axis-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.dual-range-axis-tick:first-child { transform: none; }
+.dual-range-axis-tick:last-child { transform: translateX(-100%); }
+
+/* ─── Stepper (cars / drivers) ─── */
+
+.rental-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 14px;
+  background: var(--paper-dim);
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+}
+.stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stepper-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-mute);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.stepper-label .stepper-hint {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: none;
+  font-style: italic;
+  color: var(--ink-mute);
+  opacity: 0.7;
+}
+.stepper-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stepper-controls button {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.stepper-controls button:hover:not(:disabled) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.stepper-controls button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.stepper-value {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ─── Footnote (small italic note under sections) ─── */
+
+.footnote {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-style: normal;
+  line-height: 1.5;
+}
+
+/* ─── Trip-kind chips (used by the Lifestyle panel) ─── */
+
+.kind-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.chip.on {
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
+  color: var(--paper);
+}
+
+/* ─── Weather filter ─── */
+
+.filter.weather-filter {
+  min-width: 320px;
+}
+.filter.weather-filter .filter-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+.mini-toggle {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-mute);
+  cursor: pointer;
+  line-height: 1.4;
+  transition: all .15s;
+}
+.mini-toggle:hover { border-color: var(--ink); color: var(--ink); }
+.mini-toggle.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+/* Single-handle slider (used in weather max-rain) */
+.single-range {
+  width: 200px;
+  appearance: none;
+  background: transparent;
+  height: 18px;
+  cursor: pointer;
+}
+.single-range::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--rule);
+  border-radius: 2px;
+}
+.single-range::-moz-range-track {
+  height: 2px;
+  background: var(--rule);
+  border-radius: 2px;
+}
+.single-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px; height: 14px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+}
+.single-range::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+}
+
+/* ─── "More filters" button + popover ─── */
+
+.more-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  transition: border-color .15s, color .15s;
+}
+.more-btn:hover { border-color: var(--ink); color: var(--ink); }
+.more-btn.open {
+  background: var(--paper-dim);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.more-btn.has-active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.more-btn .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+}
+.more-btn .chev {
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+.account-lifestyle-btn { width: 100%; justify-content: space-between; }
+
+/* ─── Account hub: app language ───
+   Moved here from the top bar. All six languages visible at once, the active
+   one ticked, no dropdown to open. */
+.account-lang-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.account-lang-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.account-lang-opt:hover { border-color: var(--ink); color: var(--ink); }
+.account-lang-opt.on {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.account-lang-opt .country-flag { border-radius: 2px; flex: none; }
+.account-lang-label { flex: 1; }
+
+/* ─── Mobile top-bar: one segmented pill (dates | filters) ───
+   Replaces the old row of unlabelled 40px icon circles. Modelled on the
+   desktop search strip: a single bordered row split by an internal hairline,
+   the dates half stating the chosen window in mono (a measured fact), the
+   filters half a labelled trigger carrying its active count. */
+
+.mobile-seg {
+  display: inline-flex;
+  align-items: stretch;
+  min-height: 44px;
+  max-width: 100%;
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+}
+.mobile-seg .mobile-dates-anchor {
+  display: flex;
+  min-width: 0;
+}
+.mobile-seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 13px;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s;
+}
+.mobile-seg-btn:hover,
+.mobile-seg-btn.open { background: var(--paper-dim); color: var(--ink); }
+.mobile-seg-btn.has-active { color: var(--accent); }
+.mobile-seg-btn svg { flex-shrink: 0; }/* The chosen dates are a measured fact, so they read in mono. Ellipsis is the
+   safety valve for the widest locales on the narrowest phones. */
+
+.mobile-seg-count {
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 17px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PHONE FILTER SHEET  (.fsheet, see browse/FilterSheet.jsx)
+
+   A modal bottom sheet, not a drawer inside the header. Filtering is a modal
+   task: the sheet takes the screen, a scrim covers the map, the bottom nav and
+   the trip button underneath it (they used to sit on top of the price slider),
+   and one sticky bar at the bottom carries the two things a filter screen owes
+   you, "clear all" and how many places you are left with.
+
+   Every measurement here is a multiple of 8 (4 only inside a component), so
+   the vertical rhythm is predictable: 8px binds a label to its control, 16px
+   separates fields inside a section, 32px and a hairline separate sections.
+   Every control is at least 44px tall.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.fsheet-scrim {
+  position: fixed;
+  inset: 0;
+  /* Over the bottom nav (z 50) and its raised plus: while the sheet is up,
+     nothing from the shell may overlap the controls. */
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.44);
+  animation: fsheet-scrim-in .2s ease-out;
+}
+
+.fsheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  max-height: 92dvh;
+  background: var(--paper);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -8px 40px rgba(15, 23, 42, 0.22);
+  transition: transform .22s cubic-bezier(0.2, 0.9, 0.3, 1);
+  animation: fsheet-in .26s cubic-bezier(0.2, 0.9, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes fsheet-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fsheet-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* ── The same sheet, hung off its button on a pointer screen ──
+   One component serves every width, which is right for the content and was
+   wrong for the shape: on a 1920px window a 560px panel rose from the bottom
+   edge with a grab handle on top and the whole page dimmed behind it, to
+   change one country. Given coordinates by sheetAnchor.js it becomes what it
+   should have been there, a menu under the control that opened it: no scrim
+   over the page, no handle to grab, and the list you are filtering still
+   visible beside it. The phone keeps the bottom sheet. */
+.fsheet-scrim.is-anchored {
+  display: block;
+  background: none;
+  animation: none;
+}
+.fsheet.is-anchored {
+  position: fixed;
+  width: auto;             /* the hook sets width/top/left/max-height inline */
+  max-width: none;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: 0 18px 48px -22px rgba(15, 23, 42, 0.45), 0 2px 6px rgba(15, 23, 42, 0.06);
+  animation: fsheet-pop .16s ease-out;
+}
+@keyframes fsheet-pop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* The handle is a touch affordance and the drag it advertises is bound to
+   touch pointers only, so on a menu it would be a lie. */
+.fsheet.is-anchored .fsheet-grab { display: none; }
+.fsheet.is-anchored .fsheet-head { padding-top: 12px; touch-action: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fsheet, .fsheet-scrim { animation: none; transition: none; }
+}
+
+/* ── Header: grab handle, title, close. Owns the drag gesture, so it opts out
+      of touch scrolling. ── */
+.fsheet-head {
+  flex: none;
+  padding: 8px 16px 12px;
+  border-bottom: 1px solid var(--rule-soft);
+  touch-action: none;
+}
+.fsheet-grab {
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 8px;
+  border-radius: 2px;
+  background: var(--rule);
+}
+.fsheet-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+}
+.fsheet-title {
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.fsheet-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -8px;    /* optical: the glyph lines up with the body edge */
+  border-radius: 50%;
+  color: var(--ink-soft);
+  transition: background .15s, color .15s;
+}
+.fsheet-close:hover { background: var(--paper-dim); color: var(--ink); }
+
+/* ── Body ── */
+.fsheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 24px 16px 32px;
+}
+
+.fsheet-section + .fsheet-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule-soft);
+}
+.fsheet-caption {
+  margin-bottom: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+}
+.fsheet-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fsheet-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  /* --ink-mute is 3.4:1 on paper, below the floor for 10px type; the labels
+     are the map of this screen, so they get the darker grey. */
+  color: var(--ink-soft);
+}
+.fsheet-field > .fsheet-label { margin-bottom: 8px; }
+.fsheet-hint {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-mute);
+}/* Label left, control right, one line: the counts do not deserve two rows. */
+
+
+/* ── Chips: every option visible, one tap to switch, wrapping across the
+      horizontal axis instead of stacking dropdowns down the vertical one.
+      Ink fill means "this is my trip"; terracotta means "this is hiding
+      destinations from the map", the same thing the accent means everywhere
+      else in the app. ── */
+.fchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fchips.cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.fchip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.fchip svg { flex: none; }
+.fchip:hover { border-color: var(--ink-mute); color: var(--ink); }
+.fchip.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.fchip.on.narrow {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-fill);
+}
+
+/* ── Steppers: a count is set by two 44px buttons, not by summoning the
+      keyboard over the sheet you are reading. The glyph is 14px inside a
+      44px target, which is the whole point of the pattern. ── */
+.fstepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.fstepper-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--ink);
+  transition: border-color .15s, background .15s, color .15s;
+}
+.fstepper-btn:hover:not(:disabled) { border-color: var(--ink); background: var(--paper-dim); }
+.fstepper-btn:disabled { color: var(--ink-mute); border-color: var(--rule-soft); cursor: default; }
+.fstepper-value {
+  min-width: 32px;
+  text-align: center;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ── Sliders: the rail carries the price distribution, so a handle is dragged
+      against the shape of the data instead of into the dark. ── */
+.fsheet .dual-range { width: 100%; }
+.fsheet .dual-range-track { height: 40px; }
+.fsheet .dual-range-track::before,
+.fsheet .dual-range-fill { height: 3px; border-radius: 3px; }
+/* 24px clears the WCAG 2.5.8 target minimum with the handle still reading as
+   a handle; the readout below takes the precision work. */
+.fsheet .dual-range-input::-webkit-slider-thumb {
+  width: 24px; height: 24px;
+  border-width: 2px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.22);
+}
+.fsheet .dual-range-input::-moz-range-thumb {
+  width: 24px; height: 24px;
+  border-width: 2px;
+}
+.fsheet .dual-range-axis-tick { font-size: 10.5px; }
+.fsheet .dual-range-hist { height: 34px; }
+
+.dual-range-hist {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  /* Shallow on the desktop tray, where the rail is 124px wide and a tall
+     chart would swamp it; the sheet gives it room below. */
+  height: 22px;
+  margin-bottom: 2px;
+  pointer-events: none;
+}
+.dual-range-bar {
+  flex: 1;
+  min-height: 1px;
+  border-radius: 1px 1px 0 0;
+  background: var(--rule);
+  transition: background .15s;
+}
+/* Muted, not the full accent: the bars are context, and the one thing on this
+   screen allowed to shout in terracotta is the action button. */
+.dual-range-bar.in { background: var(--accent-soft); opacity: 0.62; }
+
+/* Secondary, full-width action inside a section (lifestyle). */
+
+
+
+/* Country picker: the one control the markdown leaves as a dropdown, because
+   43 countries is a real list. It just has to be a 44px field like the rest. */
+.fsheet .dropdown { width: 100%; }
+.fsheet .dropdown-trigger {
+  width: 100%;
+  max-width: none;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  font-size: 14px;
+}
+
+/* ── Sticky action bar ── */
+.fsheet-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+  box-shadow: 0 -2px 14px rgba(15, 23, 42, 0.07);
+}
+.fsheet-clear {
+  flex: none;
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.fsheet-clear:disabled {
+  color: var(--ink-mute);
+  text-decoration: none;
+  cursor: default;
+}
+.fsheet-apply {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-height: 52px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 15px;
+  font-weight: 600;
+  transition: background .15s;
+}
+.fsheet-apply:hover { background: var(--accent-hover); }
+.fsheet-apply-main { display: inline-flex; align-items: baseline; }
+.fsheet-apply-count {
+  margin: 0 5px;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+/* Nothing matches: the primary action is no longer "show me", it is "undo
+   what you just did", so the button steps back and Clear all takes the lead. */
+.fsheet-apply.is-empty {
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+.fsheet-apply.is-empty:hover { background: var(--paper-dim); }
+.fsheet-foot.is-empty .fsheet-clear { color: var(--accent); }
+
+.fsheet button:focus-visible,
+.fsheet [tabindex]:focus-visible,
+.fsheet input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.more-panel {
+  position: absolute;
+  top: var(--filter-h);
+  left: var(--panel-w);
+  right: 0;
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  box-shadow: var(--shadow-2);
+  padding: 24px 28px 20px;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1.4fr;
+  gap: 32px;
+  align-items: start;
+  z-index: 18;
+  animation: slide-down 0.18s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.more-panel.with-detail {
+  right: var(--panel-w);
+  border-right: 1px solid var(--rule);
+  /* Tighter columns when squeezed between two side panels */
+  grid-template-columns: 1.2fr 0.9fr 1.4fr;
+  gap: 20px;
+  padding: 20px 22px 18px;
+}
+.more-panel.with-detail .big-toggle {
+  padding: 10px 12px;
+  gap: 10px;
+}
+.more-panel.with-detail .big-toggle-text strong {
+  font-size: 13px;
+}
+.more-panel.with-detail .big-toggle-text small {
+  font-size: 10px;
+}
+@keyframes slide-down {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.more-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.more-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.more-section-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+}
+.more-clear {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  background: transparent;
+  border: none;
+  color: var(--ink-mute);
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.more-clear:hover { color: var(--accent); }
+
+.more-close {
+  position: static;
+  grid-column: 1 / -1;
+  justify-self: end;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  padding: 6px 16px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all .15s;
+  margin-top: 8px;
+}
+.more-close:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ─── Trip-kind chips ─── */
+
+.kind-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.chip:hover { border-color: var(--ink); color: var(--ink); }
+.chip.on {
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
+  color: var(--paper);
+}
+
+/* ─── Big toggle (car only) ─── */
+
+.big-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color .15s, background .15s;
+  width: 100%;
+}
+.big-toggle:hover { border-color: var(--ink); }
+.big-toggle.on {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+.big-toggle-pill {
+  width: 32px; height: 18px;
+  border-radius: 999px;
+  background: var(--rule);
+  position: relative;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.big-toggle-pill::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--paper);
+  transition: transform .15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.big-toggle.on .big-toggle-pill { background: var(--accent); }
+.big-toggle.on .big-toggle-pill::after { transform: translateX(14px); }
+.big-toggle-text {
+  display: flex;
+  flex-direction: column;
+}
+.big-toggle-text strong {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.big-toggle-text small {
+  font-size: 11px;
+  color: var(--ink-mute);
+  margin-top: 2px;
+}
+
+/* ─── Weather filter ─── */
+
+.weather-section {
+  min-width: 0;
+}
+/* ─── Weather filter - cleaner, darker ─── */
+
+.weather-control {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 8px;
+  padding: 14px 16px;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  transition: opacity .15s, border-color .15s;
+}
+.weather-control[data-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+/* When weather is on, give it a slightly stronger boundary */
+.weather-section .mini-toggle.on ~ .weather-control,
+.weather-control:not([data-disabled="true"]) {
+  border-color: var(--ink-soft);
+}
+
+.weather-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sub-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.sub-vals {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+.weather-sub .dual-range { width: 100%; }
+
+/* Make the dual-range tracks heavier inside the weather panel */
+.weather-control .dual-range-track::before {
+  height: 3px;
+}
+.weather-control .dual-range-fill {
+  height: 3px;
+  background: var(--ink);
+}
+.weather-control .dual-range-input::-webkit-slider-thumb {
+  width: 16px; height: 16px;
+  border-width: 2px;
+}
+.weather-control .dual-range-input::-moz-range-thumb {
+  width: 16px; height: 16px;
+  border-width: 2px;
+}
+
+.mini-toggle {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-mute);
+  cursor: pointer;
+  line-height: 1.4;
+  transition: all .15s;
+  font-weight: 600;
+}
+.mini-toggle:hover { border-color: var(--ink); color: var(--ink); }
+.mini-toggle.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.single-range {
+  width: 100%;
+  appearance: none;
+  background: transparent;
+  height: 20px;
+  cursor: pointer;
+}
+.single-range::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--rule);
+  border-radius: 2px;
+}
+.single-range::-moz-range-track {
+  height: 3px;
+  background: var(--rule);
+  border-radius: 2px;
+}
+.single-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px; height: 16px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+}
+.single-range::-moz-range-thumb {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+}
+
+/* ─── Custom dropdown ─── */
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  min-width: 0;
+}
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 104px;
+  max-width: 240px;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .15s, background .15s;
+}
+.dropdown-trigger:hover { border-color: var(--ink-soft); }
+.dropdown-trigger.open {
+  border-color: var(--ink);
+  background: var(--paper-dim);
+}
+.dropdown-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dropdown-placeholder {
+  color: var(--ink-mute);
+}
+.dropdown-chev {
+  font-size: 10px;
+  color: var(--ink-mute);
+  flex-shrink: 0;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  max-width: 320px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow: var(--shadow-2);
+  z-index: 100;
+  overflow: hidden;
+  animation: dropdown-in 0.12s ease-out;
+}
+@keyframes dropdown-in {
+  from { transform: translateY(-4px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.dropdown-search {
+  border-bottom: 1px solid var(--rule);
+  padding: 8px;
+}
+.dropdown-search input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper-dim);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--ink);
+}
+.dropdown-search input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--paper);
+}
+.dropdown-search input::placeholder {
+  color: var(--ink-mute);
+}
+
+.dropdown-list {
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 4px;
+}
+.dropdown-list::-webkit-scrollbar {
+  width: 8px;
+}
+.dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dropdown-list::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 4px;
+}
+.dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-mute);
+}
+
+.dropdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  transition: background .12s;
+}
+.dropdown-item:hover {
+  background: var(--paper-dim);
+}
+.dropdown-item.selected {
+  background: var(--ink);
+  color: var(--paper);
+}
+.dropdown-item.selected:hover {
+  background: var(--ink);
+}
+.dropdown-item-label {
+  font-weight: 400;
+}
+.dropdown-item-sublabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  letter-spacing: 0.04em;
+}
+.dropdown-item.selected .dropdown-item-sublabel {
+  color: rgba(245, 241, 232, 0.6);
+}
+
+/* Multi-select rows: a leading check, laid out as a single line. Selected rows
+   stay light (a checkmark, not a solid fill) so several picks don't turn the
+   menu into a wall of black. */
+.dropdown-item.is-multi {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.dropdown-item.is-multi.selected {
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-weight: 500;
+}
+.dropdown-item.is-multi.selected:hover {
+  background: var(--paper-dim);
+}
+.dropdown-check {
+  flex: 0 0 14px;
+  width: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.dropdown-empty {
+  padding: 12px 10px;
+  font-size: 12px;
+  color: var(--ink-mute);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ─── Sub-row in breakdown (sub-line for baggage under flight) ─── */
+
+.total-row.sub-row {
+  padding-top: 6px;
+  padding-bottom: 14px;
+  border-bottom: none;
+  padding-left: 16px;
+  position: relative;
+}
+.total-row.sub-row::before {
+  content: "";
+  position: absolute;
+  left: 4px; top: 6px; bottom: 14px;
+  width: 1px;
+  background: var(--rule);
+}
+.total-row.sub-row .label {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.total-row.sub-row .val {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+/* ─── Accommodation panel (left side) ─── */
+
+.accom-panel {
+  position: absolute;
+  top: var(--filter-h); left: 0; bottom: var(--bottom-nav-h);
+  width: var(--panel-w);
+  max-width: 100vw;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+  z-index: 15;
+  overflow-y: auto;
+}
+
+/* Explore opens Lifestyle as a right-hand drawer over a scrim, so the grid it
+   reprices stays visible behind it and the reader keeps their place. Every
+   other tab keeps the left-hand panel the map layout was built around. */
+.accom-panel.from-right {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid var(--rule);
+  width: clamp(360px, 34vw, 520px);
+  box-shadow: var(--shadow-2);
+  z-index: 41;
+}
+/* The scrim dims the grid the drawer reprices, and stops at the bar. It used
+   to cover the window (inset: 0) and out-rank .top-bar (z-index 25), so with
+   Lifestyle open the section tabs were behind it: pressing Trip planner only
+   dismissed the panel and you had to press it twice. The bar is permanent
+   chrome, the same way .trip-planner-screen and .account-shell treat it. */
+.lifestyle-scrim {
+  position: fixed;
+  top: var(--filter-h, 0px);
+  left: 0; right: 0; bottom: 0;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.28);
+  animation: lifestyle-scrim-in .16s ease-out;
+}
+@keyframes lifestyle-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .lifestyle-scrim { animation: none; } }
+@media (max-width: 768px) {
+  .accom-panel.from-right { width: 100vw; }
+}
+
+.accom-panel .panel-header {
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  padding: 28px 28px 18px;
+  border-bottom: 1px solid var(--rule);
+  z-index: 1;
+}
+
+/* ─── Lifestyle panel readability ───
+   Shares classes with other panels, so scoped here. Darker text and plain,
+   sentence-case stepper labels instead of faint tiny-caps - less visual fuss,
+   easier to read. */
+.accom-panel .panel-country { color: var(--ink-soft); }
+.accom-panel .section-title { color: var(--ink-soft); }
+.accom-panel .footnote { color: var(--ink-soft); }
+.accom-panel .line .lbl { color: var(--ink-soft); }
+.accom-panel .stepper-label {
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+.accom-panel .stepper-label .stepper-hint {
+  font-size: 10.5px;
+  letter-spacing: 0;
+  font-style: normal;
+  opacity: 1;
+  color: var(--ink-mute);
+}
+/* ══════════════════════════════════════════════════════════════════════════
+   Lifestyle panel
+   Two questions, asked as two grids of tiles: where you sleep and how you eat
+   and drink. It was six wrapped chips, six more wrapped chips and six open
+   steppers under two mono paragraphs, which is a form, not a choice.
+
+   The tiles are the Destinations category card verbatim (.side-cat): quiet
+   --paper-dim until one is on, then the full accent. Same product, same one
+   way "selected" reads. The panel ground stays --paper throughout, header
+   included, so nothing in here stands on white.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.lifestyle-panel .panel-header { padding-bottom: 16px; }
+.lifestyle-panel .panel-city { margin-bottom: 6px; }
+
+/* One line under the title, in sans, doing the work the two mono paragraphs
+   used to. Prose is never mono here: mono carries measured facts. */
+.lifestyle-sub {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+/* Section heading. Plain sentence case, no icon and no tiny-caps: the tiles
+   below are already the loud thing, and an iconed overline over a grid of
+   iconed tiles is two decorations doing one job. */
+.ls-head {
+  margin-bottom: 11px;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.ls-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.ls-tiles-3 { grid-template-columns: repeat(3, 1fr); }
+
+.ls-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 74px;
+  padding: 12px 5px 11px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper-dim);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.ls-tile svg { flex: none; color: var(--ink-mute); transition: color .15s; }
+.ls-tile span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ls-tile:hover { color: var(--ink); border-color: var(--rule); }
+.ls-tile:hover svg { color: var(--ink-soft); }
+.ls-tile.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-fill);
+}
+.ls-tile.on svg { color: var(--on-fill); }
+.ls-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Which hotel, asked only once a hotel is the answer, so the four ways to
+   sleep stay four tiles wide instead of six. The row is tinted rather than
+   bare, which is what marks it as belonging to the tile above it. */
+.ls-grades {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 9px 11px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 10px;
+  background: var(--accent-bg);
+}
+.ls-grades-label {
+  margin-right: 2px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.ls-grade {
+  padding: 5px 11px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.ls-grade:hover { color: var(--ink); border-color: var(--accent-soft); }
+.ls-grade.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+.ls-grade:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The honest small print, in sans and in one line. */
+.ls-note {
+  margin-top: 10px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+
+/* The six counts, closed. A preset answers this for almost everybody, and
+   open they were most of the panel's height. */
+.ls-tune-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper-dim);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: color .15s, border-color .15s;
+}
+.ls-tune-btn:hover { color: var(--ink); border-color: var(--rule); }
+.ls-tune-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ls-tune-btn .ls-tune-chev { flex: none; color: var(--ink-mute); transition: transform .15s; }
+.ls-tune-btn.open { color: var(--ink); }
+.ls-tune-btn.open .ls-tune-chev { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .ls-tune-btn .ls-tune-chev { transition: none; }
+}
+
+.ls-tune { margin-top: 14px; }
+/* Two colours in this panel, beige and terracotta. .panel-segment's default
+   active fill is --ink-fill, which is right in the map's dark chrome and a
+   third colour in here, so the cadence toggle takes the accent like every
+   other "on" state on this screen. It is also a secondary control sitting
+   under a disclosure, so it gives up the 12px padding it uses elsewhere. */
+.ls-tune .lifestyle-cadence { width: 100%; margin-bottom: 16px; border-color: var(--rule-soft); }
+.ls-tune .lifestyle-cadence button { padding: 8px 12px; font-size: 12.5px; font-weight: 600; }
+.ls-tune .lifestyle-cadence button.seg-on { background: var(--accent); color: var(--on-fill); }
+
+/* One line per count: name on the left, the stepper on the right. Stacked
+   (the panel's old shape) each count took three lines, and the per-week hint
+   under every one of them repeated what the toggle above says once. */
+.lifestyle-food .stepper {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.lifestyle-food .stepper-label { flex: 1; min-width: 0; }
+.lifestyle-food .stepper-controls { flex: none; }
+/* Hairlines rather than 20px of air: a run of related facts is divided by
+   rules, and one-line rows this close need the rule to stay separate. */
+.lifestyle-food .stepper + .stepper {
+  margin-top: 11px;
+  padding-top: 11px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+/* Two abreast on a phone, where the panel is the full 390px. Four sleep tiles
+   read as 2x2 and the six habits as 3x2, which is the shape the tiles were
+   drawn for. */
+@media (max-width: 480px) {
+  .ls-tiles { grid-template-columns: repeat(2, 1fr); }
+  .ls-tiles-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* The account hub's lifestyle row states what it is set to on its right
+   edge, the way the pass row states its expiry: a setting you can read
+   without opening it is a setting people keep correct. */
+.account-menu-value {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55%;
+}
+
+/* Type selector - three big buttons */
+
+.accom-types {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.accom-type-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color .15s, background .15s;
+}
+.accom-type-btn:hover { border-color: var(--ink-soft); }
+.accom-type-btn.on {
+  border-color: var(--ink);
+  background: var(--paper-dim);
+}
+.accom-type-icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.accom-type-text {
+  display: flex;
+  flex-direction: column;
+}
+.accom-type-text strong {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+  margin-bottom: 2px;
+}
+.accom-type-text small {
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+
+/* Star rating row */
+
+.stars-section {
+  margin-top: 18px;
+}
+.stars-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.star-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 4px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.star-btn:hover { border-color: var(--ink-soft); }
+.star-btn.on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.star-number {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.star-btn.on .star-number { color: var(--paper); }
+.star-icons {
+  font-size: 8px;
+  letter-spacing: 0;
+  color: var(--accent);
+  line-height: 1;
+}
+.star-btn.on .star-icons { color: var(--accent); }
+.star-label {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.star-btn.on .star-label { color: rgba(245, 241, 232, 0.7); }
+
+.hostel-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  font-style: italic;
+  padding: 14px 16px;
+  background: var(--paper-dim);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent);
+}
+
+.accom-preview {
+  background: var(--paper-dim);
+  margin: 0 28px 20px;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+}
+.accom-preview .section-title {
+  margin-top: 0;
+}
+.accom-preview .line.total {
+  border-top: 1px solid var(--rule);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.accom-preview .line.total strong {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Additions / refinements to existing styles.css
+   ─ Append these to the bottom of styles.css (or merge into the relevant
+   ─ sections). They override earlier rules where needed.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+

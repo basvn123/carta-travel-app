@@ -1,0 +1,7 @@
+:root { --accent: #e05a47; }
+.hero { background: linear-gradient(#0f172a, #5b21b6); color: #123456; }
+.card { box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+.btn:focus { outline: none; }
+.strip { animation: marquee 10s linear infinite; }
+:root { --font-display: "Cormorant Garamond", serif; }
+.hero h1 { font-family: 'Cormorant Garamond', serif; }

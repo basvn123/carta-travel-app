@@ -1,0 +1,2616 @@
+/* Traveller rating chips, guide itinerary and the wizard rules that grew beside them.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ─── Traveller rating (schema v14): score chip + tier diamonds + gem tag ───
+   One visual language for destination quality. Tiers follow the Michelin
+   Green Guide idiom (3 = worth the journey, 2 = worth a detour, 1 = worth a
+   visit); colour stays inside the paper/rust palette - the accent is earned
+   by the top tier only, so a three-diamond place reads instantly. */
+.rating-badge { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+.score-chip {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  border-radius: 4px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+/* Heavier top padding optically centres the digits: JetBrains Mono sits high
+   in a line-height:1 box, which otherwise leaves a gap under the number. */
+.score-chip.xs { font-size: 9.5px; padding: 3px 5px 2px; gap: 3px; border-radius: 999px; }
+.score-chip.sm { font-size: 11.5px; padding: 4px 7px 3px; gap: 4px; border-radius: 999px; }
+.score-chip.lg { font-size: 15px; padding: 6px 10px 4px; gap: 5px; border-radius: 999px; }
+.score-chip.rt-3 { background: var(--rate); color: var(--paper); }
+.score-chip.rt-2 { background: var(--rate-bg); color: var(--rate); }
+.score-chip.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
+.score-chip.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
+.score-chip-n { display: inline-block; }
+/* The tier's own mark, the same one the legend teaches: filled for the top
+   tier, ringed for a detour, pale for a visit, teal for a gem. Inside a
+   filled chip it inverts to the chip's paper, since ochre on ochre is a
+   hole rather than a mark. */
+.score-chip-mark {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex: none;
+  background: currentColor;
+}
+.score-chip.lg .score-chip-mark { width: 6px; height: 6px; }
+.score-chip .score-chip-mark.tl-2 { background: var(--rate); }
+.score-chip .score-chip-mark.tl-1 { background: var(--rate-soft); }
+.score-chip .score-chip-mark.tl-gem { background: var(--gem-ink); }
+.score-chip.rt-3 .score-chip-mark { background: var(--paper); }
+.score-chip.rt-3 .score-chip-mark.tl-gem {
+  background: var(--gem-bg);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+.rating-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.rating-label.rt-3 { color: var(--rate); }
+.rating-label.rt-2 { color: var(--rate-soft); }
+.rating-label.rt-1, .rating-label.rt-0 { color: var(--ink-mute); }
+.hidden-gem-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green);
+  border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.hidden-gem-tag.lg { font-size: 10px; padding: 2px 7px; }
+.hidden-gem-tag .gem { color: var(--green); }
+
+/* Bathing-water quality pill (dest.bathing_water, EEA WISE). Same mono/uppercase
+   language as the hidden-gem tag; colour carries the Directive class. */
+.water-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-radius: 3px;
+  padding: 1px 5px 1px 4px;
+  white-space: nowrap;
+  color: var(--bw-ink);
+  border: 1px solid color-mix(in srgb, var(--bw-ink) 42%, transparent);
+  background: color-mix(in srgb, var(--bw-ink) 9%, transparent);
+}
+.water-badge.lg { font-size: 10px; padding: 2px 7px 2px 6px; }
+.water-badge svg { flex: none; }
+.water-badge.bw-excellent { --bw-ink: var(--water-clear); }   /* clear sea blue */
+.water-badge.bw-good      { --bw-ink: var(--good-vivid); }   /* green */
+.water-badge.bw-sufficient{ --bw-ink: var(--amber); }   /* amber */
+.water-badge.bw-poor      { --bw-ink: var(--warn-vivid); }   /* red */
+
+/* Regional crowding pill (dest.crowding, JRC Tourism Density). Same language as
+   the water badge; only the Quiet/Crowded extremes surface in the header. */
+.crowd-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-radius: 3px;
+  padding: 1px 5px 1px 4px;
+  white-space: nowrap;
+  color: var(--cr-ink);
+  border: 1px solid color-mix(in srgb, var(--cr-ink) 42%, transparent);
+  background: color-mix(in srgb, var(--cr-ink) 9%, transparent);
+}
+.crowd-badge.lg { font-size: 10px; padding: 2px 7px 2px 6px; }
+.crowd-badge svg { flex: none; }
+.crowd-badge.cr-quiet    { --cr-ink: var(--good-vivid); }    /* calm green - avoid the crowds */
+.crowd-badge.cr-moderate { --cr-ink: var(--crowd-mid); }    /* neutral grey */
+.crowd-badge.cr-busy     { --cr-ink: var(--amber); }    /* amber */
+.crowd-badge.cr-crowded  { --cr-ink: var(--crowd-hot); }/* warning orange */
+/* Detail panel: the rating hero row under the city name */
+
+
+/* Map: three-diamond destinations get a ring so the continent's icons pop
+   even at low zoom; hidden gems keep the dashed-green treatment previously
+   tied to the record tier. */
+.pin-dot.is-top {
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent);
+}
+.price-pill.is-top { border-color: var(--accent); }
+
+/* ============================================================
+   Guided wizard v2: entry paths, recap strip, flight map,
+   city briefing panel, country suggestions
+   ============================================================ */
+
+/* -- Step 0: what are you looking for? -- */
+.guide-path-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.guide-path {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 14px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  cursor: pointer;
+}
+.guide-path:hover { border-color: var(--accent); }
+.guide-path-icon {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+/* Two glyphs, because this path is about transport AND a bed, and a single
+   tick said only "done" without saying done with what. */
+.guide-path-duo { display: inline-flex; align-items: center; gap: 2px; }
+.guide-path-duo svg:last-child { opacity: 0.7; }
+.guide-path-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.guide-path-text b { font-size: 14px; }
+.guide-path-text small { font-size: 11.5px; color: var(--ink-mute); line-height: 1.45; }
+.guide-path .guide-arrow { margin-left: auto; color: var(--ink-mute); }
+
+/* -- The "planning around" recap strip -- */
+.guide-recap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper-dim);
+}
+.guide-recap-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.guide-recap-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* -- Country quiz + suggestions -- */
+.guide-vibe-grid { grid-template-columns: repeat(3, 1fr); margin: 8px 0 10px; }
+.guide-country-suggest-list { display: flex; flex-direction: column; gap: 7px; margin-top: 7px; }
+.guide-country-suggest {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 9px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 11px;
+  background: var(--paper);
+  cursor: pointer;
+}
+.guide-country-suggest:hover { border-color: var(--ink-soft); }
+.guide-country-suggest.on { border-color: var(--accent); background: var(--accent-bg); }
+.guide-country-suggest-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.guide-country-suggest-text b { font-size: 13px; }
+.guide-country-suggest-text small { font-size: 11px; color: var(--ink-mute); }
+.guide-country-suggest > svg { margin-left: auto; color: var(--accent); flex: none; }
+
+/* -- Plus-minus-2-days chip -- */
+.guide-flexpad { margin-top: 10px; }
+
+/* -- Getting there: the flight map + its side panel -- */
+.guide-flight-wrap { display: flex; gap: 12px; align-items: stretch; }
+.guide-flight-wrap .fpm-map { flex: 1.35; min-width: 0; height: 380px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule); }
+.guide-flight-side {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  max-height: 380px;
+  background: var(--paper);
+}
+.guide-flight-side-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ink-mute);
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 12px;
+}
+.guide-flight-side-head { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.guide-flight-side-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.guide-flight-side-title b { font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+.guide-flight-side-title small { font-size: 11px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.guide-flight-side-breakdown { font-family: var(--mono); font-size: 10.5px; opacity: 0.8; }
+/* The concrete date a flexible fare falls on, so "I'm flexible" travellers still
+   see exactly when the flight they picked departs/returns. */
+.guide-flight-side-date { font-size: 11px; font-weight: 600; color: var(--accent); display: inline-flex; align-items: center; gap: 4px; }
+.guide-flight-side-rating { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-soft); margin: 6px 0; flex-wrap: wrap; }
+/* The in-depth "what is this place / region" copy: given room to breathe so the
+   character of where you land actually reads. */
+.guide-flight-side-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 6px 0 4px;
+}
+.guide-flight-side-region {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border-radius: 8px;
+  padding: 7px 9px;
+  margin: 4px 0 8px;
+}
+.guide-flight-side-region svg { flex: none; margin-top: 2px; }
+.guide-flight-side-car {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border-radius: 8px;
+  padding: 7px 9px;
+  margin: 6px 0;
+}
+.guide-nearby-list { display: flex; flex-direction: column; gap: 8px; }
+.guide-nearby { display: flex; gap: 9px; align-items: flex-start; }
+.guide-nearby-thumb {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guide-nearby-info { min-width: 0; }
+.guide-nearby-name { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; flex-wrap: wrap; }
+.guide-nearby-sub { font-size: 11px; color: var(--ink-mute); line-height: 1.45; }
+
+/* Flight map pins */
+.fpm-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+}
+.fpm-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); }
+.fpm-pin.on { background: var(--accent); border-color: var(--accent); color: var(--paper); z-index: 2; }
+/* The city you actually fly into is always labelled - every pin names its
+   airport city, not just the selected one. */
+.fpm-pin .fpm-city {
+  display: inline;
+  font-family: inherit;
+  font-weight: 600;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fpm-pin.on { z-index: 3; }
+.fpm-origin { display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; }
+.fpm-origin-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2.5px solid var(--paper);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+.fpm-origin-name {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 1px 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* -- Stay step: map + city briefing panel -- */
+.guide-stay-wrap { display: flex; gap: 12px; align-items: stretch; }
+.guide-stay-wrap .citypick-map { flex: 1.35; min-width: 0; height: 400px; }
+.guide-city-side {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  max-height: 400px;
+  background: var(--paper);
+}
+.guide-city-side-photo {
+  width: 100%;
+  height: 110px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guide-city-side-title { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.guide-city-side-title b { font-size: 15px; }
+.guide-city-side-insight { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin: 4px 0 8px; }
+.guide-city-side-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.guide-city-side-add { width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.citypick-pin.focused { box-shadow: 0 0 0 3px var(--accent-bg), 0 1px 6px rgba(0, 0, 0, 0.18); border-color: var(--accent); }
+
+/* Mobile: the city briefing stacks under the map and its facts table runs long,
+   so the "Add to trip" action used to sit below the fold with nothing but a
+   disabled Next and a "0 of N nights" pill for company, a dead end. The panel
+   now flows in the page's own scroll and its primary action docks to the bottom
+   of the viewport, riding just above the wizard footer while the facts scroll
+   behind it. The action the whole step exists for is never more than a glance
+   away. (Desktop keeps the bounded side panel, where it was always visible.) */
+@media (max-width: 999px) {
+  .trip-wizard-modal .guide-stay-wrap .guide-city-side {
+    max-height: none;
+    overflow: visible;
+  }
+  /* The single "Add to trip" button keeps its accent fill and lifts off the
+     scrolling facts on a shadow, a docked primary action floating above the
+     footer. (Painting a paper bar behind it would have to sit UNDER the button,
+     not on it, so the button paints its own separation via the shadow.) */
+  .trip-wizard-modal .guide-stay-wrap .guide-city-side-add {
+    position: sticky;
+    bottom: 8px;
+    z-index: 3;
+    margin-top: 14px;
+    box-shadow: 0 6px 22px rgba(26, 26, 26, 0.26);
+  }
+  /* Once a city is in the trip the action becomes a control cluster (nights
+     stepper + remove), which does want a paper bar behind it so the -/+ read
+     against the page rather than over the facts. */
+  .trip-wizard-modal .guide-stay-wrap .guide-city-side-actions {
+    position: sticky;
+    bottom: 6px;
+    z-index: 3;
+    margin: 12px -12px 0;
+    padding: 12px;
+    background: var(--paper);
+    border-top: 1px solid var(--rule);
+    box-shadow: 0 -8px 18px -10px rgba(26, 26, 26, 0.22);
+  }
+}
+
+/* -- Stay style + final summary -- */
+.guide-staystyle { margin-bottom: 10px; }
+.guide-staystyle .trip-field-label { display: block; margin-bottom: 6px; }
+.guide-final-stop { display: flex; align-items: center; gap: 7px; font-size: 12.5px; padding: 4px 0; color: var(--ink-soft); }
+.guide-final-stop b { color: var(--ink); }
+.guide-arrival-when { margin-top: 12px; }
+.guide-city-btn { cursor: pointer; text-align: left; width: 100%; }
+.guide-arrival-picked .guide-back { margin-left: auto; flex: none; }
+
+/* Narrow screens: the side panels stack under their maps.
+   The wrap flips to a column here, which turns the map's `flex: 1.35`
+   into a VERTICAL grow with a `flex-basis: 0%` - that basis overrides the
+   explicit height and, with no defined wrap height, collapses the map to
+   nothing (it vanished entirely on phones). `flex: none` cancels the flex
+   sizing so the map's own height is honoured again. */
+@media (max-width: 700px) {
+  .guide-flight-wrap, .guide-stay-wrap { flex-direction: column; }
+  .guide-flight-wrap .fpm-map,
+  .guide-stay-wrap .citypick-map {
+    flex: none;
+    width: 100%;
+    height: 58vh;
+    min-height: 320px;
+    max-height: 440px;
+  }
+  .guide-flight-side, .guide-city-side { flex: none; max-height: 340px; }
+  .guide-vibe-grid { grid-template-columns: repeat(2, 1fr); }
+}.day-explore-search-text b .score-chip { margin-left: 6px; vertical-align: 1px; }.day-guide-btn.on { box-shadow: 0 0 0 2px var(--accent-bg); }.day-guide-moods { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.day-guide-mood {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.day-guide-mood svg { flex: 0 0 auto; color: var(--ink-soft); }
+.day-guide-mood.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+.day-guide-mood.on svg { color: var(--accent); }.day-guide-range-opt.on { border-color: var(--accent); background: var(--accent-bg); }
+.day-guide-range-opt.on small { color: var(--ink-soft); }.day-guide-toponly.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }.day-guide-rec.picked { border-color: var(--good-ink); background: rgba(22, 121, 79, 0.05); }.day-guide-badge.must { background: var(--accent-bg); color: var(--accent); }
+.day-guide-badge.rated { background: var(--paper-dim); color: var(--ink-soft); }
+.day-guide-badge.heritage { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }.day-guide-rec-add.on { background: var(--good-ink); border-color: var(--good-ink); color: var(--on-fill); }
+
+@media (max-width: 700px) {
+  .day-guide-moods { grid-template-columns: 1fr; }
+}.day-explore-wrap .dem-map { flex: none; width: 100%; height: clamp(480px, 68vh, 760px); border-radius: 14px; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 8px 24px -18px rgba(26, 26, 26, 0.5); }/* Ultrawide: a taller map and a slightly roomier rail beside it. */
+@media (min-width: 1800px) {
+  .day-explore-wrap .dem-map { height: clamp(560px, 74vh, 980px); }}
+/* The place-detail card and the Carta guide panel each become the right-hand
+   rail beside the big map: both fill its height and scroll inside themselves,
+   so the map is never pushed off-screen. (Descendant selectors: the guide sits
+   in a display:contents wrapper that keeps it mounted while a briefing shows.) */
+.day-explore-side .guide-city-side { flex: 1; min-height: 0; max-height: none; }
+/* The traveller's stay: a pulsing home dot that cannot be missed */
+.dem-stay { display: flex; flex-direction: column; align-items: center; pointer-events: none; position: relative; }
+.dem-stay.dem-stay-clickable { pointer-events: auto; cursor: pointer; }
+.dem-stay.dem-stay-clickable:hover .dem-stay-pin { transform: scale(1.08); }
+.dem-stay-pin {
+  position: relative;
+  display: block;
+  line-height: 0;
+  transform-origin: bottom center;
+  transition: transform 0.12s ease;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.32));
+}
+.dem-stay.focused .dem-stay-pin {
+  filter: drop-shadow(0 0 3px var(--accent)) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.32));
+}
+.dem-stay-body { fill: var(--accent); stroke: var(--on-fill); stroke-width: 2; }
+.dem-stay-glyph { fill: none; stroke: var(--on-fill); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.dem-stay-pulse {
+  position: absolute;
+  top: 1px;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.25;
+  animation: dem-pulse 1.8s ease-out infinite;
+  z-index: -1;
+}
+.dem-stay-name {
+  order: -1;
+  margin-bottom: 3px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 1px 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@keyframes dem-pulse {
+  0% { transform: scale(0.5); opacity: 0.45; }
+  80% { transform: scale(1.5); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* Category pins: a tinted icon badge + label, one visual language per
+   category so the map reads at a glance and stays legible when crowded. */
+.dem-pin {
+  --cat: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  padding: 2px 9px 2px 2px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.10);
+  white-space: nowrap;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.dem-pin-ico,
+.dem-pin-chk {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 999px;
+  background: var(--cat);
+  color: var(--on-fill);
+}
+.dem-pin-ico svg,
+.dem-pin-chk svg { width: 12px; height: 12px; }
+.dem-pin-chk { display: none; background: var(--good-ink); }
+/* A place's name is the whole point of the pin, and "Salzburg Hauptbahnho..."
+   is a pin the traveller has to click to identify. So the label wraps onto a
+   second line instead of being clipped: a pin may grow taller, it may not lie
+   about what it is. (The declutter pass measures the real box, so a two-line
+   pin still yields its name to a better-rated neighbour when they collide.) */
+.dem-pin-lbl {
+  max-width: 150px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.2;
+  text-align: left;
+}
+.dem-pin:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 4px 14px rgba(0, 0, 0, 0.16); z-index: 2; }
+
+/* ── Decluttered states (set by declutterPins) ───────────────────────────
+   Where pins would overlap, the lower-priority one gives up its name, then
+   everything but its dot. Nothing is ever hidden outright: a place that
+   vanished from the map would be a place the traveller never considered.
+   Hovering always restores the full pin, so a dot is still explorable. */
+.dem-pin.is-tight { padding-right: 2px; }
+.dem-pin.is-tight .dem-pin-lbl { display: none; }
+.dem-pin.is-dot {
+  gap: 0;
+  padding: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+}
+.dem-pin.is-dot .dem-pin-lbl,
+.dem-pin.is-dot .dem-pin-rate,
+.dem-pin.is-dot .dem-pin-star,
+.dem-pin.is-dot .trip-poi-pin-add { display: none; }
+.dem-pin.is-dot .dem-pin-ico { width: 13px; height: 13px; }
+.dem-pin.is-dot .dem-pin-ico svg { width: 8px; height: 8px; }
+/* Hover wins over any demotion: reach for a dot and it becomes a pin again. */
+.dem-pin.is-tight:hover, .dem-pin.is-dot:hover { z-index: 6; padding: 2px 9px 2px 2px; gap: 5px; }
+.dem-pin.is-tight:hover .dem-pin-lbl,
+.dem-pin.is-dot:hover .dem-pin-lbl { display: inline; }
+.dem-pin.is-dot:hover .dem-pin-rate,
+.dem-pin.is-dot:hover .dem-pin-star { display: inline-flex; }
+.dem-pin.is-dot:hover .dem-pin-ico { width: 19px; height: 19px; }
+.dem-pin.is-dot:hover .dem-pin-ico svg { width: 12px; height: 12px; }
+.dem-pin.cat-town { --cat: var(--slate-pin); }
+.dem-pin.cat-beach { --cat: var(--water-pin); }
+.dem-pin.cat-sight { --cat: var(--accent); }
+.dem-pin.cat-active { --cat: var(--good-mid); }
+/* Added to the plan: green ring + check badge, so multiple picks are obvious. */
+.dem-pin.on {
+  border-color: var(--good-ink);
+  box-shadow: 0 0 0 1.5px var(--good-ink), 0 2px 8px rgba(0, 0, 0, 0.14);
+}
+.dem-pin.on .dem-pin-ico { display: none; }
+.dem-pin.on .dem-pin-chk { display: inline-flex; }
+.dem-pin.focused { border-color: var(--cat); box-shadow: 0 0 0 3px var(--accent-bg), 0 2px 10px rgba(0, 0, 0, 0.2); z-index: 3; }
+.dem-pin.on.focused { box-shadow: 0 0 0 2px var(--good-ink), 0 0 0 5px var(--accent-bg), 0 2px 10px rgba(0, 0, 0, 0.2); }
+
+/* Towns wear their 0-10 traveller rating on the pin (tier colours match the
+   ScoreChip language); must-see places wear a star. Guidance at a glance. */
+.dem-pin-rate {
+  flex: 0 0 auto;
+  margin-left: -3px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+.dem-pin-rate.rt-3 { background: var(--rate); color: var(--paper); }
+.dem-pin-rate.rt-2 { background: var(--rate-bg); color: var(--rate); }
+.dem-pin-rate.rt-1 { background: var(--paper-dim); color: var(--ink-soft); }
+.dem-pin-rate.rt-0 { background: var(--paper-dim); color: var(--ink-mute); }
+.dem-pin-star {
+  flex: 0 0 auto;
+  display: inline-flex;
+  margin-left: -3px;
+  color: var(--accent);
+}
+.dem-pin-star svg { width: 10px; height: 10px; }
+
+/* A planner tab that's mounted but not active: fully hidden, zero layout.
+   MapLibre v4 re-measures via ResizeObserver when it comes back. */
+.tab-keep-hidden { display: none; }
+
+/* Filter chips wear their category tint when active */
+.guide-chip.dem-chip-beach.on { background: var(--water-pin); border-color: var(--water-pin); }
+.guide-chip.dem-chip-sight.on { background: var(--accent); border-color: var(--accent); }
+.guide-chip.dem-chip-active.on { background: var(--good-mid); border-color: var(--good-mid); }
+
+/* Each chip shows how many places it holds, on or off. */
+.dem-chip-count {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+.guide-chip.on .dem-chip-count { background: rgba(255, 255, 255, 0.25); }.guide-city-side-photo-empty { color: var(--ink-mute); }
+
+/* Below the wide-desktop breakpoint the landing column is narrow (480px),
+   so the map and its side rail stack instead of splitting the row. */
+@media (max-width: 999px) {  /* Column layout turns the map's `flex: 1` into a vertical grow whose
+     `flex-basis: 0%` overrides the height and collapses the map to nothing;
+     `flex: none` restores its own height (same fix as the wizard maps). */
+  .day-explore-wrap .dem-map {
+    flex: none;
+    width: 100%;
+    height: 58vh;
+    min-height: 320px;
+    max-height: 440px;
+  }}
+
+/* ================================================================== */
+/* Day planner refresh: one step at a time, the plan first, modern    */
+/* cards for everything pickable.                                     */
+/* ================================================================== */
+
+/* Wizard progress: four thin segments, one per question. */
+.shape-progress { display: flex; gap: 6px; margin-top: 12px; }
+.shape-progress-dot {
+  height: 4px;
+  flex: 1;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  transition: background .25s;
+}
+.shape-progress-dot.done { background: var(--accent); opacity: 0.4; }
+.shape-progress-dot.now { background: var(--accent); }
+
+/* One-question screens: bigger, calmer touch targets. */
+.shape-question-list { gap: 11px; }
+.shape-question-list .shape-style { padding: 15px 18px; border-radius: 14px; }
+.shape-question-list .shape-style-text b { font-size: 15px; }
+.shape-question-list .shape-style-text small { font-size: 12.5px; }
+.shape-modal .guide-title { font-size: 22px; }
+.shape-modal .guide-sub { font-size: 13.5px; }
+.shape-modal .guide-body { display: flex; flex-direction: column; }
+.shape-modal .shape-card { margin-top: 4px; }
+
+/* Landing steps: numbered badges so the flow reads 1-2-3. */
+.day-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  align-self: center;
+  width: 22px; height: 22px;
+  min-width: 22px;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  text-indent: 1px;
+  margin-right: 11px;
+}.day-picks-steplabel { width: 100%; margin-bottom: 4px; }
+
+/* In-plan day strip: city + day chips in one sticky bar, so switching a day
+   or city never needs a scroll back to the top. */
+.trip-block.day-strip {
+  position: sticky;
+  top: -6px;
+  z-index: 6;
+  margin: 0 -20px;
+  padding: 12px 20px 10px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  box-shadow: 0 6px 12px -10px rgba(26, 26, 26, 0.25);
+}
+.day-strip .day-strip-cities { margin-bottom: 8px; }
+
+/* ---------------------------------------------------------------------------
+   Collapsible cards (Today's plan, local intel, walk, tips): calm by default,
+   the whole header a single tap target, and a summary line so a shut card is
+   never a mystery box.
+--------------------------------------------------------------------------- */
+.day-collapse {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.day-collapse-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background .15s;
+}
+.day-collapse-head:hover { background: var(--paper-dim); }
+.day-collapse.open .day-collapse-head { border-bottom: 1px solid var(--rule); }
+.day-collapse.open .day-collapse-head:hover { background: none; }
+.day-collapse-headline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.day-collapse-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+}
+.day-collapse-title svg { color: var(--accent); flex: none; }
+.day-collapse-count {
+  min-width: 20px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+.day-collapse-caret {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-size: 17px;
+  line-height: 1;
+}
+.day-collapse.open .day-collapse-caret { background: var(--accent-bg); color: var(--accent); }
+.day-collapse-summary {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.day-collapse-body { padding: 14px 16px 16px; }
+
+/* The collapsed plan's "where you'll go" line: plain names, no mono, no
+   middots - kept to two lines so long days don't push the card open. */
+.day-plan-summary-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Nested collapsibles inside the plan card read as sub-shelves, not new cards:
+   softer surround, tighter padding. */
+.day-nested {
+  margin-top: 12px;
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.day-nested .day-collapse-head { padding: 11px 13px; }
+.day-nested .day-collapse-head:hover { background: rgba(26, 26, 26, 0.03); }
+.day-nested .day-collapse-title { font-size: 13.5px; }
+.day-nested .day-collapse-body { padding: 12px 13px 13px; background: var(--paper); }
+
+/* "How Carta routed this": the route explanation lives behind an info icon
+   instead of a mono-uppercase banner over the timeline. */
+.day-route-info-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.day-route-info-btn:hover,
+.day-route-info-btn.open { border-color: var(--accent); color: var(--accent); }
+.day-route-info-btn svg { flex: none; }
+.day-route-info-note {
+  margin: -2px 0 12px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* Stay bar sits at the very top of the sheet; the map-editor link that used to
+   hang below it now lives inside the plan card. */
+.day-stay-top { margin-top: 6px; }
+.day-changeplaces-inline { margin-top: 14px; }
+
+/* "Things to do" tiers as modern cards: contained, rounded, calm. */
+.day-tier {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.day-tier.open { margin-bottom: 12px; }
+.day-tier-head {
+  padding: 12px 14px;
+  margin-bottom: 0;
+  border-radius: 0;
+}
+.day-tier.open .day-tier-head { border-bottom: 1px solid var(--rule); }
+.day-tier-count {
+  margin-left: 2px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.day-tier .day-activity-list { padding: 10px; gap: 8px; }
+.day-tier .day-activity-row { border-radius: 12px; }
+.day-tier-must .day-activity-row { border-left-width: 3px; }
+/* One padding for the whole card, and a thumbnail that isn't crowding the
+   title. The row used to run 8px on the left and 4px on the right, which read
+   as a list that had been squeezed rather than composed. */
+.day-activity-main { gap: 12px; padding: 11px 6px 11px 12px; }
+
+/* Pickable rows: larger imagery, clearer hover, softer chrome. */
+.day-thumb { width: 46px; height: 46px; border-radius: 10px; }
+.day-activity-row { transition: border-color .15s, background .15s, box-shadow .15s; }
+.day-activity-row:hover { box-shadow: 0 2px 10px rgba(26, 26, 26, 0.08); }
+.day-assigned-name { font-size: 14px; }
+
+/* Today's plan timeline: stops joined by a hairline so the day reads as one
+   route, not a stack of cards. */
+.day-plan-block .day-timeline { position: relative; }
+.day-plan-block .day-timeline::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 11px;
+  width: 2px;
+  background: var(--rule);
+}
+.day-plan-block .day-timeline-row,
+.day-plan-block .day-timeline-walk { position: relative; }
+/* Phase headers line up with the row content, clear of the route hairline. */
+.day-plan-block .day-phase-head { position: relative; padding-left: 34px; }
+.day-plan-block .day-timeline-num { box-shadow: 0 0 0 3px var(--paper); }
+.day-plan-block .day-timeline-row .day-assigned-row { border-radius: 12px; }
+.day-plan-block .day-timeline-walk {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+/* Trip wizard: the same shell language as the day planner's wizard - a large,
+   calm modal with thin progress segments and one clear question per screen.
+   The question logic is untouched; only the clothes changed. */
+.trip-wizard-modal .guide-title { font-size: 22px; }
+.trip-wizard-modal .guide-sub { font-size: 13.5px; }
+.trip-wizard-modal .guide-path { padding: 15px 18px; border-radius: 14px; }
+.trip-wizard-modal .guide-path-text b { font-size: 15px; }
+.trip-wizard-modal .guide-path-text small { font-size: 12.5px; }
+
+/* Full-bleed wizard: the trip wizard takes the whole page on every screen
+   size, so city grids, maps and pick lists get real room and the questions
+   are easy to work through. Declared after the shared mobile blocks above so
+   those (padded overlay, 88vh sheet) do not shrink it back on phones. */
+.trip-wizard-overlay { padding: 0; align-items: stretch; justify-content: stretch; }
+.trip-wizard-modal {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  border-radius: 0;
+}
+/* ── The measured canvas ──────────────────────────────────────────────────
+   The shell runs full-bleed, its CONTENT never does. Each step declares the
+   width it actually needs and the header, estimate band, recap, body and
+   footer all centre on that one column, so a label and its control stay
+   within a single glance and the primary button lands under the content
+   instead of alone in a far corner of a 1600px monitor.
+     form - one column of questions
+     mid  - card decks and the trip summary
+     wide - only where a map earns the room */
+.trip-wizard-modal { --wiz-max: 1060px; }
+/* 880, not 780: every form step is one question now, so the column carries
+   a single card and a 780px measure left a 1600px screen mostly empty around
+   it. Wide enough for the two-column answers (booked bits, travel styles) to
+   breathe, still short enough to read as one glance. */
+.trip-wizard-modal.wiz-form { --wiz-max: 880px; }
+.trip-wizard-modal.wiz-mid { --wiz-max: 1060px; }
+.trip-wizard-modal.wiz-wide { --wiz-max: 1560px; }
+
+.trip-wizard-modal .guide-head-inner,
+.trip-wizard-modal .guide-canvas,
+.trip-wizard-modal .guide-estimate-main,
+.trip-wizard-modal .guide-estimate-detail {
+  width: 100%;
+  max-width: var(--wiz-max);
+  margin-inline: auto;
+}
+.trip-wizard-modal .guide-recap-inner,
+.trip-wizard-modal .guide-foot-inner {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: var(--wiz-max);
+  margin-inline: auto;
+}
+.guide-recap-inner { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+.guide-foot-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+/* The width switch is a layout change, not an animation; only the gutter
+   eases so stepping between a form and a map step doesn't jolt. */
+.trip-wizard-modal .guide-canvas { transition: max-width .18s ease; }
+
+/* Wide screens: the canvas max-width does the holding-off-the-edge work, so
+   the shell itself only needs comfortable gutters. */
+@media (min-width: 900px) {
+  .trip-wizard-modal .guide-head,
+  .trip-wizard-modal .guide-foot,
+  .trip-wizard-modal .guide-recap,
+  .trip-wizard-modal .guide-estimate-main,
+  .trip-wizard-modal .guide-estimate-detail { padding-left: 28px; padding-right: 28px; }
+  .trip-wizard-modal .guide-body { padding: 28px 28px 40px; }
+  /* Wide enough to read the estimate line by line without opening anything. */
+  .trip-wizard-modal .guide-estimate-chips { display: flex; }
+  .trip-wizard-modal .guide-estimate-detail {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    column-gap: 40px;
+  }
+  .trip-wizard-modal .guide-estimate-total { grid-column: 1 / -1; }
+}
+/* Phones: keep the footer clear of the home indicator now that the wizard
+   runs to the bottom edge. */
+.trip-wizard-modal .guide-foot { padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+/* Inline, the wizard runs inside .trip-planner-screen, which already stops at
+   var(--bottom-nav-h), and the bottom nav already carries the home-indicator
+   inset. Paying the inset twice left a band of empty paper under the footer. */
+.trip-wizard-modal.wiz-inline .guide-foot { padding-bottom: 12px; }
+
+/* ── Wizard design system ────────────────────────────────────────────────
+   Controls live on white cards floating over the beige paper, so a group of
+   questions reads as one object instead of dissolving into the background. */
+.guide-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(26, 26, 26, 0.05);
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.guide-card + .guide-card { margin-top: 0; }
+.guide-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.guide-card-head svg { color: var(--accent); flex: none; }
+.guide-card-head small {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-mute);
+  margin-left: auto;
+}
+.guide-card-row { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--rule); }
+.guide-card > .guide-card-row:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+/* Form and card-deck steps centre in the page instead of clinging to the top
+   with a void underneath. margin auto (not justify-content) so a long step
+   still scrolls from its true top rather than being clipped. */
+.trip-wizard-modal.wiz-form .guide-body,
+.trip-wizard-modal.wiz-mid .guide-body { display: flex; flex-direction: column; }
+.trip-wizard-modal.wiz-form .guide-canvas,
+.trip-wizard-modal.wiz-mid .guide-canvas { margin-block: auto; }
+/* A list that grows as you add to it starts at the top: centring it left a
+   third of the screen empty above two stops and then crept upward as a third
+   was added. */
+.trip-wizard-modal.wiz-top .guide-canvas { margin-block: 0 auto; }
+
+/* ── Step 0: what are you looking for? ───────────────────────────────────
+   Three feature cards side by side. A full-width bar with tiny text in the
+   middle and an arrow off at the screen edge made the three options read as
+   list rows; as cards they read as a choice. */
+.trip-wizard-modal .guide-path-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+/* Compact by default: icon | (title + description) | chevron on ONE row, so
+   all three options sit inside a phone viewport instead of one-and-a-half
+   tall stacked cards. The roomy vertical treatment is reserved for the wide
+   grid below, where there is horizontal room for it. */
+.trip-wizard-modal .guide-path {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.04);
+  transition: border-color .14s, box-shadow .14s, transform .1s;
+}
+.trip-wizard-modal .guide-path:hover {
+  border-color: var(--accent);
+  box-shadow: 0 8px 20px rgba(26, 26, 26, 0.09);
+}
+/* Tactile confirmation on tap: the whole card is the target, so pressing it
+   dips it, the way a physical button gives under a finger. */
+.trip-wizard-modal .guide-path:active { transform: scale(0.985); }
+.trip-wizard-modal .guide-path-icon { width: 46px; height: 46px; border-radius: 14px; flex: none; }
+.trip-wizard-modal .guide-path-icon svg { width: 22px; height: 22px; }
+.trip-wizard-modal .guide-path-text { gap: 3px; }
+.trip-wizard-modal .guide-path-text b { font-size: 16px; line-height: 1.25; }
+/* Reading contrast, not hint contrast: --ink-mute failed AA on paper. */
+.trip-wizard-modal .guide-path-text small { font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
+.trip-wizard-modal .guide-path-chev {
+  flex: none;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink-mute);
+  transition: transform .14s, color .14s;
+}
+.trip-wizard-modal .guide-path:hover .guide-path-chev { color: var(--accent); transform: translateX(2px); }
+/* Only when the deck can lay out as a real multi-column grid does the roomy
+   vertical card earn its space. */
+@media (min-width: 720px) {
+  .trip-wizard-modal .guide-path {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 24px 22px 20px;
+    height: 100%;
+  }
+  .trip-wizard-modal .guide-path-icon { width: 48px; height: 48px; border-radius: 15px; }
+  .trip-wizard-modal .guide-path-text b { font-size: 17px; }
+  .trip-wizard-modal .guide-path-chev { margin: auto 0 0; }
+  .trip-wizard-modal .guide-path:hover { transform: translateY(-2px); }
+  .trip-wizard-modal .guide-path:active { transform: translateY(-1px) scale(0.99); }
+}
+/* The one-question intro reads as a headline, so it centres over its deck. */
+.guide-lede { text-align: center; }
+.guide-lede .guide-sub { max-width: 56ch; margin-inline: auto; }
+.guide-lede .guide-path { text-align: left; }
+
+/* ── The wizard as a page, not a modal ───────────────────────────────────
+   The trip planner opens straight on the guide (an empty planner has no
+   stops, no route and no prices to put on a map), so the wizard runs inside
+   .trip-planner-screen: below the app header, above the bottom nav, no
+   backdrop and no shadow. Same shell, different frame. */
+.guide-inline { position: absolute; inset: 0; display: flex; }
+.trip-wizard-modal.wiz-inline {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--paper);
+}
+/* No modal header on the opening question: the header strip only repeated
+   "Let Carta guide you" under the app's own header. The question is the
+   title of the page. */
+.wiz-inline .guide-body { padding-top: 0; }
+
+/* ── Step 0: the question owns the page ──────────────────────────────────
+   One headline, one line of help, three cards. The card is a flat object on
+   the paper: a hairline, a wash panel behind the icon, and a chevron that
+   moves on hover. The lift and the tint are the only decoration, because the
+   three options carry the whole screen. */
+.guide-lede .guide-title {
+  font-size: clamp(26px, 3.4vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.guide-lede .guide-sub { font-size: 15px; color: var(--ink-soft); margin-top: 10px; }
+/* A short accent rule under the question: the one piece of chrome on the
+   page, and it ties the deck to the headline above it. */
+.guide-lede .guide-title::after {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 2px;
+  margin: 16px auto 0;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.trip-wizard-modal.wiz-inline .guide-path-list { margin-top: 34px; gap: 18px; }
+.trip-wizard-modal.wiz-inline .guide-path {
+  background: var(--bg-card);
+  border-color: var(--rule-soft);
+  box-shadow: var(--shadow-card);
+}
+/* The tint reads as the card being picked up, so it belongs to hover, not to
+   the resting state. */
+.trip-wizard-modal.wiz-inline .guide-path:hover {
+  border-color: var(--accent);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10);
+}
+.trip-wizard-modal.wiz-inline .guide-path:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+/* The chevron sits in its own circle so the card has a visible "go" the eye
+   can land on; it fills with the accent on hover. */
+.trip-wizard-modal.wiz-inline .guide-path-chev {
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper);
+  transition: background .14s, border-color .14s, color .14s, transform .14s;
+}
+.trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-chev {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-fill);
+  transform: translateX(2px);
+}
+.trip-wizard-modal.wiz-inline .guide-path-icon {
+  background: var(--accent-bg);
+  color: var(--accent);
+  transition: transform .14s;
+}
+.trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-icon { transform: translateY(-1px); }
+
+/* The deck is dealt: each card arrives just after the one before it. One
+   entrance on one screen, not an effect on every section. */
+@media (prefers-reduced-motion: no-preference) {
+  .guide-lede .guide-path {
+    animation: guide-path-in .34s cubic-bezier(.22, .68, .32, 1) backwards;
+    animation-delay: calc(var(--path-i, 0) * 70ms);
+  }
+}
+@keyframes guide-path-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (min-width: 720px) {
+  /* Cards of equal height with the chevron in the bottom-RIGHT corner, where
+     the eye finishes the card, so the three "go" targets line up however long
+     the descriptions run. Bottom-left put it under the text like a stray
+     bullet. */
+  .trip-wizard-modal.wiz-inline .guide-path { padding: 26px 24px 22px; gap: 16px; }
+  .trip-wizard-modal.wiz-inline .guide-path-text small { max-width: 34ch; }
+  .trip-wizard-modal.wiz-inline .guide-path-chev { margin: auto 0 0 auto; }
+}
+@media (max-width: 719px) {
+  .trip-wizard-modal.wiz-inline .guide-path-list { margin-top: 24px; gap: 12px; }
+  .guide-lede .guide-title::after { margin-top: 14px; }
+}
+
+/* ── Step 1: countries as photographs, or as the map ─────────────────────
+   The country list and the map used to share the width, which left the cards
+   too small to carry a picture and the map too small to read Europe. They are
+   two views of one question now, switched by the toggle, each with the whole
+   column. */
+/* A flow root, so the toggle's own 4px top margin never collapses out
+   through the column. It collapsed while the step was one plain block and
+   stopped the moment the brief turned .guide-where into a grid container,
+   which moved the whole picker down 4px as the drawer opened. */
+.guide-where-col { min-width: 0; display: flow-root; }
+/* The toggle is a control, not a banner: it sizes to a thumb, sitting under
+   the search row it belongs to. */
+.guide-where-view { width: min(100%, 340px); margin-top: 4px; }
+/* Same control, same size, on the flight step. */
+.guide-canvas > .guide-stay-view,
+.trip-wizard-modal .guide-stay-view:not(.guide-toolbar .guide-stay-view) { width: min(100%, 340px); }
+
+.guide-cgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+}
+/* A country card is its best-rated place, photographed. Name and city count
+   sit on the picture, so the card carries no second block of text under it. */
+.guide-ccard {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  background: var(--paper-dim);
+  text-align: left;
+  transition: box-shadow .16s, border-color .16s, transform .12s;
+}
+/* The crop sits above centre for the same reason the Destinations cards do:
+   what a country is recognised by (a skyline, a ridge, a spire) is in the top
+   half of the frame, and a centred 4:3 crop of a 3:2 photograph trades it for
+   foreground. See the --card-focus note on .places-card-img. */
+.guide-ccard-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% var(--card-focus, 38%);
+  display: block;
+  transition: transform .3s ease;
+}
+/* HeroImage's no-photo placeholder wears the same class, so it is already
+   placed and sized by the rule above; only the initials need scaling down to
+   a 170px card. */
+.hero-blank.guide-ccard-img .hero-blank-mark { font-size: 18px; }
+.guide-ccard:hover { border-color: var(--rule); box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12); }
+.guide-ccard:hover .guide-ccard-img { transform: scale(1.04); }
+.guide-ccard:active { transform: scale(0.99); }
+.guide-ccard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Photographs are unpredictable: the scrim is what keeps a country's name
+   readable over a bright sky as reliably as over a dark harbour. */
+.guide-ccard-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.80) 0%, rgba(15, 23, 42, 0.14) 58%, rgba(15, 23, 42, 0) 100%);
+  pointer-events: none;
+}
+.guide-ccard-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px 11px;
+}
+/* A long name (Bosnia and Herzegovina, North Macedonia) has to wrap rather
+   than run off the photograph, and the flag stays on the first line with it. */
+.guide-ccard-name {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--on-fill);
+  overflow-wrap: anywhere;
+}
+.guide-ccard-name .guide-flag-img-sm { flex: none; margin-top: 2px; }
+/* Picked: a terracotta ring around the whole card and a tick in the corner,
+   readable at a glance across a grid of 43. */
+.guide-ccard.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.guide-ccard-check {
+  position: absolute;
+  top: 8px; right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-fill);
+}
+/* The map view gets the height the split layout could never give it. Its
+   width is capped: run to 1500px and fitting Europe into that letterbox pulls
+   Kazakhstan into frame. */
+.guide-where-map { max-width: 1180px; }
+.guide-where-map .cpm { height: min(52vh, 520px); margin-bottom: 0; }
+
+/* Two columns on a phone, not "as many as fit": three 120px cards in a row
+   render a country's photograph at postage-stamp size, and the point of the
+   card is the photograph. */
+@media (max-width: 768px) {
+  .guide-cgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+}
+@media (max-width: 719px) {
+  .guide-ccard-name { font-size: 14px; }
+  .guide-where-map .cpm { height: 56vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-ccard, .guide-ccard-img { transition: none; }
+  .guide-ccard:hover .guide-ccard-img { transform: none; }
+}
+
+/* ── Trip basics: origin, airports, party, style ────────────────────────
+   The origin-first step. The typed address is optional chrome-free input on
+   a card; the airports it unlocks read as quiet chips, not choices - the
+   choosing happens later, with fares attached. */
+.guide-origin-picked-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.guide-origin-picked-main b { font-size: 15px; }
+.guide-airport-chips { margin-top: 14px; }
+.guide-airport-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+.guide-airport-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 12px;
+}
+.guide-airport-chip b { font-family: var(--mono); font-size: 11px; }
+.guide-airport-chip small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+
+/* "Not sure where to go yet?": the hand-off to Google Flights Explore, on the
+   From step under the airports and on the Where step under the matches. It is
+   a link, not a button, because it leaves the app, and it is deliberately
+   quieter than the country cards beside it: it is the alternative to choosing
+   here, not the thing to do first. */
+.guide-explore-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  min-height: var(--tap);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper);
+  color: inherit;
+  text-decoration: none;
+}
+.guide-explore-card:hover { border-color: var(--rule); }
+.guide-explore-icon { display: inline-flex; color: var(--ink-mute); flex: none; }
+.guide-explore-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.guide-explore-text b { font-size: 13px; font-weight: 600; }
+.guide-explore-text small { font-size: 12px; color: var(--ink-soft); }
+/* The outbound arrow, wherever a link leaves Carta. */
+.ext-arrow { margin-left: 4px; color: var(--ink-mute); flex: none; }
+
+.guide-style-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+/* The panel that tunes the spending behind these presets, one tap from the
+   preset that stands in for it. */
+.guide-lifestyle-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 12px;
+  color: var(--ink-soft);
+  transition: border-color .14s, color .14s;
+}
+.guide-lifestyle-link:hover { border-color: var(--accent); color: var(--accent); }
+.guide-lifestyle-link svg { color: var(--accent); }
+.guide-style-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+/* Below the width that fits three, an even stack beats a 2 + 1 orphan. */
+@media (max-width: 620px) {
+  .guide-style-cards { grid-template-columns: 1fr; }
+}
+.guide-style-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  transition: border-color .14s, box-shadow .14s;
+}
+.guide-style-card:hover { border-color: var(--accent-soft); }
+.guide-style-card.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.guide-style-card b { font-size: 14px; }
+.guide-style-card small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.4; }
+.guide-style-card .guide-mode-check { position: absolute; top: 8px; right: 8px; }
+
+/* ── Stay: curated route templates ─────────────────────────────────────
+   Each card IS a designed route (cities, nights, road km), one tap to take. */
+.guide-templates { margin: 4px 0 14px; }
+.guide-template-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+  margin-top: 7px;
+}
+.guide-template {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 13px 15px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  transition: border-color .14s, box-shadow .14s, transform .1s;
+}
+.guide-template:hover { border-color: var(--accent); box-shadow: var(--shadow-1); transform: translateY(-1px); }
+.guide-template-name { font-family: var(--display); font-size: 14px; }
+.guide-template-route { display: flex; flex-wrap: wrap; gap: 3px 6px; font-size: 12px; }
+.guide-template-stop small { font-family: var(--mono); font-size: 10px; color: var(--accent); margin-left: 2px; }
+.guide-template-arrow { color: var(--ink-mute); margin-right: 6px; }
+.guide-template-legs { font-size: 11px; color: var(--ink-mute); }
+
+/* ── Split steps: a picking column beside a tall map ─────────────────────
+   Both halves are full height and scroll as one, so choosing on the map and
+   choosing from the list are the same act rather than two separate screens
+   stacked on top of each other. */
+.guide-split {
+  display: grid;
+  grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+  gap: 22px;
+  align-items: start;
+}
+.guide-split-main { min-width: 0; }
+.guide-split-side { min-width: 0; position: sticky; top: 0; }
+.guide-split-side .cpm {
+  height: clamp(420px, calc(100vh - 300px), 760px);
+  margin-bottom: 0;
+}
+@media (max-width: 1000px) {
+  /* Stacked: the map goes FIRST, otherwise it sits below a 43-row country
+     grid and nobody scrolls far enough to find it. */
+  .guide-split { grid-template-columns: 1fr; }
+  .guide-split-side { position: static; order: -1; }
+  .guide-split-side .cpm { height: 340px; margin-bottom: 16px; }
+}
+
+/* Picked countries pop with a solid accent ring and a check, not a tint that
+   half the screen already shares. */
+.guide-country { position: relative; }
+.guide-country.on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.guide-country-check {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 17px; height: 17px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-fill);
+}
+
+/* A stepper stretched across a wide card puts - and + a mouse-drag apart. */
+.guide-people-lg { width: 100%; max-width: 260px; justify-content: space-between; gap: 16px; padding: 8px 14px; }
+.guide-people-lg button { width: 36px; height: 36px; font-size: 19px; }
+.guide-people-lg span { font-size: 16px; min-width: 28px; }
+
+/* ── The booked path: one route, the stays and the hops between them ─────
+   Trip-wide answers (first night, party size) sit in a header bar above the
+   route; the route itself is a numbered vertical list where every pair of
+   stays is joined by the journey between them. Those hops used to be absent
+   entirely, so a three-city trip could be filled in without ever saying how
+   the cities were crossed, and the overview had to guess. */
+.guide-trip-meta {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.guide-trip-meta-rule { width: 1px; align-self: stretch; background: var(--rule-soft); }
+.guide-trip-meta-sum {
+  margin-left: auto;
+  padding-bottom: 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.guide-trip-meta .trip-field-label { display: flex; align-items: center; gap: 5px; }
+
+/* One rhythm down the whole route: 16px between every stacked element, and
+   the rail painted on the ITEM rather than on the connector alone, so the
+   spacing sits inside the line instead of cutting it into segments. The stop
+   card's own fill hides the rail where it passes behind a card. */
+/* Where the rail sits: the stop number's own centre line, which is the card
+   border (1) + its padding (14) + half a 26px disc, less the 1px the 2px-wide
+   line needs to straddle it. */
+.booked-route { list-style: none; --booked-rail: 27px; }
+.booked-route-item {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 16px;
+  background: linear-gradient(var(--rule), var(--rule)) var(--booked-rail) 0 / 2px 100% no-repeat;
+}
+.booked-stop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+}
+/* Both ends of the row are the same 26px box, so the card's left and right
+   gutters read as equal weight and not just measure equal. */
+.booked-stop-index {
+  flex: none;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+}
+.booked-stop .trip-stop-remove { width: 26px; height: 26px; }
+.booked-stop-thumb {
+  flex: none;
+  width: 46px; height: 46px;
+  border-radius: 9px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.booked-stop-thumb .guide-thumb-fallback { font-size: 18px; color: var(--ink-mute); }
+.booked-stop-info { flex: 1; min-width: 0; }
+/* The flag rides with the last word, not off in the far corner: as a flex
+   item beside a name long enough to wrap ("Agrigento (Valley of the
+   Temples)") it was pushed to the opposite edge of the card. */
+.booked-stop-city {
+  font-family: var(--display);
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.booked-stop-city .guide-flag-img-sm { display: inline-block; vertical-align: -2px; margin-left: 3px; }
+.booked-stop-sub { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--ink-soft); }
+.booked-stop-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); white-space: nowrap; }
+
+/* The connector. Its glyph column is twice the rail offset, so the icon lands
+   dead on the line the stop numbers sit on, and the glyph's own fill covers
+   the rail where it crosses. */
+.booked-hop { display: flex; align-items: center; gap: 10px; }
+.booked-hop-glyph {
+  flex: none;
+  align-self: stretch;
+  width: calc(var(--booked-rail) * 2 + 2px);
+  min-height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-soft);
+}
+.booked-hop-glyph svg {
+  display: block;
+  box-sizing: content-box;
+  width: 13px; height: 13px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--paper-dim);
+}
+.booked-hop.own .booked-hop-glyph { color: var(--accent); }
+.booked-hop-to { flex: 1; min-width: 0; font-size: 12.5px; color: var(--ink-soft); }
+.booked-hop-mode { flex: 0 0 158px; }
+/* The estimate and the typed fare are the same column, so the mode pickers
+   line up down the route whichever way each hop is travelled. */
+.booked-hop-est {
+  flex: 0 0 132px;
+  display: flex; flex-direction: column; align-items: flex-end;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.booked-hop-est small { font-size: 10.5px; color: var(--ink-mute); }
+.booked-hop-none { font-size: 11px; color: var(--ink-mute); }
+.booked-hop-cost {
+  flex: 0 0 132px;
+  display: flex; align-items: center; gap: 5px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  transition: border-color .15s;
+}
+.booked-hop-cost:focus-within { border-color: var(--accent); }
+.booked-hop-cost-cur { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); }
+.booked-hop-cost input {
+  width: 100%; min-width: 0;
+  border: none; background: none; outline: none;
+  font-family: var(--mono); font-size: 13px; color: var(--ink);
+}
+
+/* Adding a stop extends the route in place, so it keeps the rail. The 8px
+   here sits under the item's own 16px, giving the creation row the 24px it
+   needs to stop reading as part of the stack above it. */
+.booked-add:not(:first-child) {
+  padding-top: 8px;
+  background: linear-gradient(var(--rule), var(--rule)) var(--booked-rail) 0 / 2px 8px no-repeat;
+}
+/* Two even fields and a button that hugs its label. Left to grow, the city
+   select swallowed every spare pixel and opened a void before "Add". */
+.booked-add .trip-add-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+}
+.booked-add .trip-add-btn { padding: 0 28px; }
+/* Same not-yet treatment as the footer's primary: a ghosted ink button read
+   as a live one someone had dimmed. */
+.booked-add .trip-add-btn:disabled {
+  opacity: 1;
+  background: var(--paper-dim);
+  border-color: var(--rule);
+  color: var(--ink-mute);
+}
+.booked-add-btn {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  transition: border-color .15s, color .15s;
+}
+.booked-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Every control on this screen is the same height, so the row reads as one
+   object; the shared dropdown's 24px filter-bar size does not belong here. */
+.booked-route .dropdown-trigger,
+.booked-hop-mode .dropdown-trigger {
+  width: 100%;
+  max-width: none;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.booked-route .trip-add-btn { height: 38px; }
+
+/* Phones: both the stop and its hop become two rows under one continuous
+   rail. Squeezed onto single lines 340px wide, a city name broke across four
+   lines and its date across three. */
+@media (max-width: 700px) {
+  .booked-stop {
+    display: grid;
+    grid-template-columns: 26px 46px minmax(0, 1fr) auto;
+    grid-template-areas: 'idx thumb info info' 'idx thumb nights remove';
+    column-gap: 10px;
+    row-gap: 8px;
+  }
+  .booked-stop-index { grid-area: idx; }
+  .booked-stop-thumb { grid-area: thumb; }
+  .booked-stop-info { grid-area: info; }
+  .booked-stop .guide-nights { grid-area: nights; }
+  .booked-stop .trip-stop-remove { grid-area: remove; }
+
+  .booked-hop {
+    display: grid;
+    grid-template-columns: calc(var(--booked-rail) * 2 + 2px) minmax(0, 1fr) auto;
+    grid-template-areas: 'glyph to to' 'glyph mode price';
+    align-items: center;
+    row-gap: 7px;
+  }
+  .booked-hop-glyph { grid-area: glyph; min-height: 0; }
+  .booked-hop-to { grid-area: to; }
+  .booked-hop-mode { grid-area: mode; flex: none; }
+  .booked-hop-est, .booked-hop-cost { grid-area: price; flex: none; width: 118px; }
+
+  /* Three controls side by side do not fit 390px, so Add takes its own line
+     (the same shape the planner's add row already uses on phones). */
+  .booked-add .trip-add-row { grid-template-columns: 1fr 1fr; }
+  .booked-add .trip-add-btn { grid-column: 1 / -1; }
+}
+
+/* ── Step 2: when ────────────────────────────────────────────────────────
+   Month pills as an even grid: as free-flowing chips they wrapped into a
+   ragged line and read as leftovers in a field of beige. */
+.guide-card-row > .trip-field-label { display: block; margin-bottom: 8px; }
+.guide-month-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+  margin-top: 0;
+}
+.guide-month-grid .guide-chip {
+  justify-content: center;
+  text-align: center;
+  padding: 10px 8px;
+  font-size: 12.5px;
+}
+.guide-card .guide-when-dates { margin-bottom: 0; }
+.guide-card .guide-arrival-when { margin-top: 0; }
+.guide-card .guide-note { margin-top: 10px; }
+.guide-card .guide-datemode { margin-bottom: 0; }
+
+/* ── Step 3: how do you get there? ───────────────────────────────────────
+   Fly and Car as picture-and-promise cards, capped so two options never
+   stretch to the width of a monitor. */
+.guide-mode-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+  max-width: 700px;
+  margin: 0 0 14px;
+}
+.guide-mode-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  text-align: left;
+  padding: 15px 16px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: 0 4px 12px rgba(26, 26, 26, 0.05);
+  cursor: pointer;
+  transition: border-color .14s, box-shadow .14s, transform .14s;
+}
+.guide-mode-card:hover { border-color: var(--ink-soft); transform: translateY(-1px); }
+.guide-mode-card.on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--accent), 0 6px 16px rgba(26, 26, 26, 0.08);
+}
+.guide-mode-icon {
+  flex: none;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.guide-mode-card.on .guide-mode-icon { background: var(--accent-bg); color: var(--accent); }
+.guide-mode-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.guide-mode-text b { font-size: 15px; color: var(--ink); }
+.guide-mode-text small { font-size: 11.5px; color: var(--ink-mute); line-height: 1.4; }
+/* Leave the check its corner: a title running under it reads as a typo. */
+.guide-mode-text > b:first-child { padding-right: 22px; }
+.guide-mode-check {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 19px; height: 19px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-fill);
+}
+
+/* Origin and drive-from are form modules, not banners across the screen. */
+.guide-origin-card { max-width: 560px; padding: 16px 18px; }
+.guide-origin-card .guide-origin-row { margin: 0; }
+.trip-wizard-modal .guide-carfrom { max-width: 620px; }
+
+/* ── Map steps: a true half-and-half ─────────────────────────────────────
+   Map on the left, everything the pick tells you on the right, both the same
+   height. The old 1.35 : 1 flex left the briefing column too narrow to hold
+   a photo, a rating and a description without them all going thin. */
+@media (min-width: 1000px) {
+  .trip-wizard-modal .guide-flight-wrap,
+  .trip-wizard-modal .guide-stay-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+  }
+  /* Height is what the step actually leaves once its own chrome is counted,
+     so the map ends at the fold instead of running under the footer. The
+     subtraction differs per step because the question above the map does. */
+  .trip-wizard-modal .guide-flight-wrap .fpm-map,
+  .trip-wizard-modal .guide-flight-side {
+    height: clamp(340px, calc(100vh - 570px), 640px);
+    max-height: none;
+  }
+  .trip-wizard-modal .guide-stay-wrap .citypick-map,
+  .trip-wizard-modal .guide-city-side {
+    height: clamp(340px, calc(100vh - 545px), 640px);
+    max-height: none;
+  }
+  /* Getting home asks nothing above the map, so it gets the whole page. */
+  .trip-wizard-modal .guide-flight-wrap-home .fpm-map,
+  .trip-wizard-modal .guide-flight-wrap-home .guide-flight-side {
+    height: clamp(400px, calc(100vh - 330px), 720px);
+  }
+  .trip-wizard-modal .guide-flight-side,
+  .trip-wizard-modal .guide-city-side {
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(26, 26, 26, 0.05);
+  }
+  .trip-wizard-modal .guide-city-side-photo { height: 170px; }
+}
+
+/* The briefing column before anything is picked: a heading, then the picks
+   worth tapping first. */
+.guide-side-idle { display: flex; flex-direction: column; height: 100%; }
+.guide-side-idle-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--ink-mute);
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 22px 12px 18px;
+}
+.guide-side-idle-list { display: flex; flex-direction: column; gap: 8px; }
+.guide-side-idle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color .14s, background .14s;
+}
+.guide-side-idle-row:hover { border-color: var(--accent); background: var(--accent-bg); }
+.guide-side-idle-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.guide-side-idle-text b { font-size: 13px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.guide-side-idle-flag { width: 16px; height: 12px; flex: none; }
+.guide-side-idle-text small {
+  font-size: 11px;
+  color: var(--ink-mute);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.guide-side-idle-fare { font-family: var(--mono); font-size: 13px; color: var(--accent); flex: none; }
+
+/* One control bar above a map step: search, narrowing filters, view switch. */
+.guide-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 4px 0 14px;
+}
+.guide-toolbar .guide-search { flex: 1 1 240px; margin-bottom: 0; }
+.guide-toolbar .guide-stay-filters { margin: 0; }
+.guide-toolbar .guide-stay-view { margin: 0 0 0 auto; flex: none; }
+
+/* ── Step 5: the trip summary card ───────────────────────────────────────
+   Photo, the four facts that define the trip, the stops and the money, then
+   the commit button right underneath, where the reading flow ends. */
+.guide-summary {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: 0 6px 18px rgba(26, 26, 26, 0.07);
+  overflow: hidden;
+  margin: 20px 0 18px;
+}
+.guide-summary-hero {
+  height: 190px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guide-summary-hero .guide-thumb-fallback { font-size: 42px; }
+.guide-summary-body { padding: 20px 22px 22px; }
+.guide-summary-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.guide-summary-title b { font-family: var(--display); font-size: 21px; color: var(--ink); }
+.guide-summary-title small { font-family: var(--mono); font-size: 11.5px; color: var(--ink-mute); }
+.guide-summary-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.guide-summary-fact { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.guide-summary-fact-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.guide-summary-fact-label svg { color: var(--accent); flex: none; }
+.guide-summary-fact b { font-size: 13.5px; color: var(--ink); line-height: 1.35; }
+
+/* T1: party size moved out of its own wizard step and onto the two places a
+   price is actually on screen: the Finish summary card and the planned
+   itinerary's breakdown. Both reuse the .guide-people pill stepper. */
+.guide-summary-party { gap: 6px; align-items: flex-start; justify-content: flex-start; }
+.guide-summary-party .guide-people { padding: 5px 7px; }
+.guide-summary-party .guide-people button { width: var(--tap); height: 30px; }
+.guide-summary-kids {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.guide-kids-add {
+  font-family: var(--mono); font-size: 11px; color: var(--accent);
+  min-height: var(--tap); padding: 0 2px; text-align: left;
+  align-self: flex-start;
+}
+.guide-kids-note { font-size: 11px; line-height: 1.45; margin: 2px 0 0; }
+.itin-bd-party {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--rule);
+}
+.itin-bd-party-lbl {
+  font-family: var(--mono); font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-mute);
+}
+.itin-bd-party .guide-people button { width: var(--tap); height: 30px; }
+.guide-summary-stops { padding: 12px 0 4px; }
+.guide-summary-stops .guide-final-stop { gap: 8px; }
+.guide-summary-stops .guide-final-stop span { margin-left: auto; font-family: var(--mono); font-size: 11.5px; }
+.guide-summary-cost { border-top: 1px solid var(--rule); margin-top: 8px; padding-top: 12px; }
+.guide-summary-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 22px;
+  font-size: 15px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(26, 26, 26, 0.12);
+}
+
+/* The ground legs on the receipt: what it costs to move between the stops,
+   which the total used to omit entirely. */
+.guide-summary-legs { padding: 12px 0 4px; border-top: 1px solid var(--rule); margin-top: 8px; }
+.guide-summary-leg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.guide-summary-leg svg { color: var(--accent); flex: none; }
+.guide-summary-leg-label { color: var(--ink); min-width: 0; }
+.guide-summary-leg small { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+.guide-summary-leg b { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--ink); }
+
+/* ── Named step rail ─────────────────────────────────────────────────────
+   Thin anonymous segments say how far along you are but never what is still
+   coming, which is what makes a six-step form feel open-ended. */
+.wiz-steps {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.wiz-steps::-webkit-scrollbar { display: none; }
+.wiz-step { flex: 1 1 0; min-width: 0; }
+.wiz-step-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 7px 4px 9px;
+  border: none;
+  border-top: 2px solid var(--rule);
+  background: none;
+  text-align: left;
+  cursor: default;
+  transition: border-color .16s, color .16s;
+}
+.wiz-step.done .wiz-step-btn { cursor: pointer; border-top-color: var(--accent-soft); }
+.wiz-step.now .wiz-step-btn { border-top-color: var(--accent); }
+.wiz-step-mark {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: 19px; height: 19px;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.wiz-step.done .wiz-step-mark { background: var(--green); color: var(--on-fill); }
+.wiz-step.now .wiz-step-mark { background: var(--accent); color: var(--on-fill); }
+.wiz-step-name {
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wiz-step.now .wiz-step-name { color: var(--ink); font-weight: 600; }
+.wiz-step.done .wiz-step-name { color: var(--ink-soft); }
+.wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--accent); }
+/* Phones: the rail keeps the marks and drops the names it has no room for.
+   Kept for the DAY planner's rail, which has four steps and fits. The trip
+   wizard has seven and renders .wiz-mini instead (below). */
+@media (max-width: 700px) {
+  .wiz-step-name { display: none; }
+  .wiz-step-btn { justify-content: center; padding-left: 0; padding-right: 0; }
+}
+
+/* ── T8.1 The phone's step rail: one line and a sheet ────────────────────
+   Seven steps at 375px is 49px each, which is a circle and no name, in a row
+   that scrolls sideways to hide the rest. So the phone gets the step it is on,
+   how far that is, and a tap for the whole list. */
+.wiz-mini {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.wiz-mini-line {
+  display: flex; align-items: center; gap: 6px;
+  min-height: 24px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.wiz-mini-line svg { flex: none; color: var(--ink-mute); }
+.wiz-mini-now { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wiz-mini-bar {
+  display: block;
+  height: 3px;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: var(--rule);
+  overflow: hidden;
+}
+.wiz-mini-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width .2s ease;
+}
+
+/* The list behind that line, in a SheetShell. Every row is a full tap target;
+   the ones still to come are named but inert. */
+.wiz-sheet-list { list-style: none; margin: 0; padding: 0; }
+.wiz-sheet-step + .wiz-sheet-step { border-top: 1px solid var(--rule); }
+.wiz-sheet-step > button {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 10px 2px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: default;
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+.wiz-sheet-step.done > button { cursor: pointer; color: var(--ink-soft); }
+.wiz-sheet-step.now > button { color: var(--ink); font-weight: 600; }
+.wiz-sheet-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wiz-sheet-edit {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--accent);
+}
+
+/* ── T8.7 Recap chips that go back to the step that set them ───────────── */
+.guide-recap-chip.is-link {
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  min-height: 26px;
+}
+.guide-recap-chip.is-link:hover { color: var(--accent); border-color: var(--accent); }
+.guide-recap-chip.is-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+/* On a phone every chip is also a tap target, so it gets the room to be one. */
+@media (max-width: 768px) {
+  .guide-recap-chip.is-link { min-height: var(--tap); padding-block: 0; }
+}
+
+/* ── T8.4 "From your shortlist", above the country grid ─────────────────── */
+.guide-shortrow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--accent-bg);
+}
+.guide-shortrow-label {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.guide-shortrow-label svg { color: var(--rate); }
+.guide-shortrow-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.guide-shortrow-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+.guide-shortrow-chip.on { border-color: var(--accent); background: var(--accent); color: var(--on-fill); }
+.guide-shortrow-chip.on .guide-shortrow-n { background: rgba(255, 255, 255, 0.24); color: var(--on-fill); }
+.guide-shortrow-n {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--paper-dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+
+/* ── T8.4 The star on a favourited ready-made trip ─────────────────────── */
+.wtrip-star {
+  position: absolute;
+  top: 8px; right: 8px;
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(26, 26, 26, 0.55);
+  color: var(--rate);
+}
+
+/* ── T8.5/T8.6 The two hand-offs out of the trip planner ───────────────── */
+.trip-awaiting-dates {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.trip-to-legs-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  min-height: var(--tap);
+  margin-top: 12px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.trip-planday-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  min-height: var(--tap);
+  margin-bottom: 8px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.trip-planday-btn svg { flex: none; }
+/* Two solid accent buttons stacked read as two primaries. Planning the days is
+   the step forward; saving is the step that keeps what is already there, so it
+   drops to an outline beneath it. */
+.trip-planday-btn + .trip-save-planned-btn {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+.trip-planday-btn + .trip-save-planned-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* The gate on the Stay step, stated in the footer beside Next. */
+.guide-nights-budget {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.guide-nights-budget b { color: var(--accent); }
+.guide-nights-budget.done { border-color: var(--green); color: var(--good-ink-soft); }
+.guide-nights-budget.done b, .guide-nights-budget.done svg { color: var(--good-ink-soft); }
+.guide-nights-budget.over { border-color: var(--warn-ink); color: var(--warn-ink); }
+.guide-nights-budget.over b { color: var(--warn-ink); }
+
+/* An answered question, folded: still visible, still changeable, no longer
+   competing with the map every time the step re-renders. */
+.guide-answered {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+}
+.guide-answered-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.guide-answered-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.guide-answered-value svg { color: var(--accent); }
+.guide-answered-edit {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: none;
+  padding: 3px 9px;
+  cursor: pointer;
+}
+.guide-answered-edit:hover { color: var(--accent); border-color: var(--accent); }
+
+.guide-inline-field { display: flex; align-items: center; gap: 10px; flex: none; }
+.guide-inline-field .trip-field-label { margin: 0; white-space: nowrap; }
+/* The quiet variant of the "let Carta decide" CTA: an offer, not the headline. */
+/* The escape hatch on the country step, sized to its own words. Full width
+   and dashed, it was the loudest thing under the title and read as a drop
+   zone; picking countries is the job of that screen and this is the offer to
+   skip it. */
+.guide-design-btn-quiet {
+  flex: 0 1 auto;
+  width: auto;
+  max-width: 100%;
+  padding: 9px 13px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  box-shadow: none;
+}
+.guide-design-btn-quiet:hover { border-color: var(--accent); }
+.guide-design-btn-quiet .guide-design-spark,
+.guide-design-btn-quiet svg { color: var(--accent); }
+.guide-design-btn-quiet small { color: var(--ink-mute); }
+.guide-design-btn-quiet.on { background: var(--accent-bg); border-color: var(--accent); }
+
+/* Step 3: what changing the departure airport actually buys, in the space the
+   picker used to leave blank. */
+.guide-origin-facts { display: inline-flex; align-items: center; gap: 14px; margin-left: auto; flex-wrap: wrap; }
+.guide-origin-fact { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); white-space: nowrap; }
+.guide-origin-fact b { color: var(--accent); font-size: 12px; }
+
+/* Carta's suggested length vs the nights actually booked: two answers to one
+   question, so they can never again share a label. */
+.guide-city-fact-booked {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--accent);
+}
+
+/* ── Map pin density ─────────────────────────────────────────────────────
+   Zoomed out, name pills collide with each other and with the basemap's own
+   labels. Each map drops the widest part of its pin below a zoom threshold
+   and brings it back on hover, on selection, and as you zoom in. */
+.fpm-pin:hover { z-index: 4; }
+
+/* Collision demotion (declutterPins): a crowded pill first drops its city
+   name, keeping the price, then collapses to a bare dot. Nothing vanishes,
+   and hover or selection always restores the full pill. */
+.fpm-pin.is-tight .fpm-city { display: none; }
+.fpm-pin.is-dot {
+  gap: 0;
+  padding: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.fpm-pin.is-dot .fpm-price,
+.fpm-pin.is-dot .fpm-city,
+.fpm-pin.is-dot svg { display: none; }
+.fpm-pin.is-dot::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.fpm-pin.is-tight:hover, .fpm-pin.is-dot:hover { z-index: 6; gap: 4px; padding: 3px 8px; }
+.fpm-pin.is-tight:hover .fpm-city, .fpm-pin.is-dot:hover .fpm-city { display: inline; }
+.fpm-pin.is-dot:hover .fpm-price, .fpm-pin.is-dot:hover svg { display: inline; }
+.fpm-pin.is-dot:hover::before { display: none; }
+.citypick-pin:hover, .citypick-pin.focused, .citypick-pin.sel { z-index: 4; }
+
+/* ── Inline range calendar ───────────────────────────────────────────────
+   In the page, two months at a time, with the chosen span shaded as one
+   band. Two trigger buttons that each opened their own popover made picking
+   a span a trip through two modals and never showed the trip as a shape. */
+.date-field-inline { position: static; width: 100%; }
+.cal-inline {
+  position: static;
+  width: 100%;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  background: none;
+}
+.cal-inline .cal-head { margin-bottom: 2px; }
+/* Two or more panes label themselves, so the head keeps just the arrows. A
+   single pane has no other label, and a month grid with no month on it is a
+   guessing game. */
+.cal-inline:not(.cal-panes-1) .cal-title { visibility: hidden; }
+/* An arrows-only row is a whole line of height spent on two glyphs, so the
+   arrows ride on the month titles instead and flank them, the way every
+   booking calendar does it. */
+.cal-inline:not(.cal-panes-1) { position: relative; }
+.cal-inline:not(.cal-panes-1) .cal-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.cal-inline:not(.cal-panes-1) .cal-nav {
+  pointer-events: auto;
+  width: 22px;
+  height: 22px;
+  font-size: 16px;
+}
+.cal-inline:not(.cal-panes-1) .cal-pane-title { min-height: 22px; }
+.cal-panes { display: grid; grid-template-columns: 1fr; gap: 22px; }
+/* Width is free on this card, height is not: a square day cell across a 780px
+   step grows to ~46px, and two six-row months then push the footer off the
+   screen. Cap the calendar's width and the row height so the whole span is
+   pickable in one view, with no scroll. */
+/* Side-by-side months hold their own width: stretched across the whole card
+   the two grids drift apart and the arrows lose the calendar they belong to. */
+.cal-inline:not(.cal-panes-1) { max-width: 560px; margin-inline: auto; }
+.cal-inline .cal-panes {
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 18px;
+}
+.cal-pane-title {
+  font-family: var(--display);
+  font-size: 13px;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.cal-inline .cal-day { font-size: 13px; border-radius: 8px; }
+.cal-inline .cal-weekday { padding-bottom: 3px; }
+/* Range: caps at the ends, a connected band between. */
+.cal-day.in-range { background: var(--accent-bg); border-radius: 0; }
+.cal-day.in-range:hover:not(.disabled) { background: var(--accent-bg); }
+.cal-day.range-start { border-radius: 8px 0 0 8px; }
+.cal-day.range-end { border-radius: 0 8px 8px 0; }
+.cal-day.range-start.range-end { border-radius: 8px; }
+.cal-inline .cal-grid { gap: 0 0; row-gap: 2px; }
+
+/* The two ends of the range, read back above the calendar. `next` marks the
+   end the following click will set, so the calendar is never ambiguous. */
+.guide-range-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.guide-range-end {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  min-width: 126px;
+}
+.guide-range-end b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
+.guide-range-end.empty b { color: var(--ink-mute); font-weight: 400; }
+/* "Next" marks which end the next tap sets, so it needs to read as active,
+   not as a warning: a quiet accent border and faint tint, not a glowing 2px
+   ring that out-shouted the calendar it sits above. The start/end labels keep
+   their meaning; the emphasis just stops competing. */
+.guide-range-end.next { border-color: var(--accent-soft); background: var(--accent-bg); }
+
+/* The dates step is the one form step tall enough to scroll, and scrolling to
+   reach Next on a question this simple reads as broken. The rules between its
+   rows earn less room here than the calendar does. */
+.guide-when-card .guide-card-row { margin-top: 12px; padding-top: 12px; }
+.guide-when-card .guide-flexpad { margin-top: 0; }
+/* Height is the scarce dimension on this step, and a square day cell on a
+   780px card grows to ~46px: six rows of that, twice over, pushed Next off
+   the screen. The cells keep their width and give up their height. */
+.guide-when-card .cal-inline .cal-day { aspect-ratio: auto; height: 26px; }
+
+/* ── Roomy desktop ───────────────────────────────────────────────────────
+   The wizard runs as a page now, not as a modal squeezed into a viewport, so
+   on a screen with room to spare the dates step stops sitting in the middle
+   of the canvas as a postage stamp: bigger question, bigger card, day cells
+   you can hit without aiming. The tightening passes below (short windows)
+   still win, they are more specific about height. */
+@media (min-width: 900px) and (min-height: 860px) {
+  .trip-wizard-modal.wiz-inline.wiz-when.wiz-form { --wiz-max: 920px; }
+  .wiz-inline .guide-canvas > .guide-title { font-size: 27px; letter-spacing: -0.018em; }
+  .wiz-inline .guide-canvas > .guide-sub { font-size: 15px; margin-bottom: 20px; }
+  .wiz-inline .guide-when-card { padding: 26px 30px 24px; }
+  .wiz-inline .guide-when-card .guide-datemode { margin-bottom: 20px; }
+  .wiz-inline .guide-when-card .guide-datemode button { font-size: 14.5px; padding: 12px 14px; }
+  .wiz-inline .guide-when-card .guide-card-row { margin-top: 20px; padding-top: 20px; }
+  .wiz-inline .guide-when-card .guide-range-end { min-width: 168px; padding: 8px 16px; }
+  .wiz-inline .guide-when-card .guide-range-end b { font-size: 15px; }
+  .wiz-inline .guide-when-card .cal-inline:not(.cal-panes-1) { max-width: 780px; }
+  .wiz-inline .guide-when-card .cal-inline .cal-panes {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 34px;
+  }
+  .wiz-inline .guide-when-card .cal-inline .cal-day { height: 40px; font-size: 15px; border-radius: 10px; }
+  .wiz-inline .guide-when-card .cal-inline .cal-weekday { font-size: 11.5px; padding-bottom: 8px; }
+  .wiz-inline .guide-when-card .cal-pane-title { font-size: 16px; margin-bottom: 10px; }
+  .wiz-inline .guide-when-card .cal-inline:not(.cal-panes-1) .cal-nav { width: 30px; height: 30px; font-size: 20px; }
+  .wiz-inline .guide-when-card .guide-flexpad { font-size: 13.5px; padding: 9px 16px; }
+}
+
+/* Short laptops: the step fits a 900px-tall window comfortably, and a 720px
+   one only once the gaps give up a few more pixels each. Everything here is
+   spacing and type scale, nothing is hidden, so the step stays whole. */
+@media (max-height: 840px) {
+  .trip-wizard-modal.wiz-when .guide-body { padding-top: 16px; padding-bottom: 20px; }
+  .trip-wizard-modal.wiz-when .guide-title { font-size: 19px; }
+  /* The shared rhythm gives the title var(--space-5). On a short window that is
+     the single tallest gap on the step, so it comes down with everything else,
+     by the same proportion as the padding above it. */
+  .trip-wizard-modal.wiz-when .guide-canvas > .guide-title { margin-bottom: var(--space-3); }
+  .trip-wizard-modal.wiz-when .guide-sub { margin-bottom: 10px; font-size: 13px; }
+  .guide-when-card { padding: 14px 18px; margin-bottom: 0; }
+  .guide-when-card .guide-card-row { margin-top: 9px; padding-top: 9px; }
+  .guide-when-card .guide-datemode button { padding-top: 8px; padding-bottom: 8px; }
+  .guide-when-card .guide-range-head { margin-bottom: 6px; }
+  .guide-when-card .guide-range-end { padding: 4px 10px; }
+  .guide-when-card .cal-inline .cal-day { height: 23px; }
+  .guide-when-card .cal-inline .cal-panes { gap: 14px; }
+}
+
+/* Smaller windows again: a browser at half height. Same pass, one notch
+   tighter, down to where a date is still a comfortable tap target. */
+@media (max-height: 700px) {
+  .trip-wizard-modal.wiz-when .guide-body { padding-top: 10px; padding-bottom: 12px; }
+  .trip-wizard-modal.wiz-when .guide-title { font-size: 17px; }
+  .trip-wizard-modal.wiz-when .guide-canvas > .guide-title { margin-bottom: var(--space-2); }
+  .trip-wizard-modal.wiz-when .guide-sub { margin-bottom: 5px; font-size: 12.5px; }
+  .guide-when-card { padding: 11px 16px; }
+  .guide-when-card .guide-card-row { margin-top: 6px; padding-top: 6px; }
+  .guide-when-card .guide-flexpad { padding-top: 5px; padding-bottom: 5px; }
+  .guide-when-card .guide-datemode button { padding-top: 6px; padding-bottom: 6px; }
+  .guide-when-card .guide-range-end { padding: 3px 10px; }
+  .guide-when-card .cal-inline .cal-day { height: 21px; }
+  .guide-when-card .cal-inline .cal-weekday { padding-bottom: 2px; }
+  .guide-when-card .cal-pane-title { font-size: 12.5px; margin-bottom: 2px; }
+}
+
+/* ── Step transitions ────────────────────────────────────────────────────
+   Moving between steps should read as travel through one form, not as a page
+   reload. Content only; the shell, footer and estimate band hold still. */
+@keyframes wiz-in-fwd { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+@keyframes wiz-in-back { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+.trip-wizard-modal .guide-canvas { animation: wiz-in-fwd .3s cubic-bezier(0.25, 1, 0.5, 1); }
+.trip-wizard-modal.wiz-back .guide-canvas { animation-name: wiz-in-back; }
+@media (prefers-reduced-motion: reduce) {
+  .trip-wizard-modal .guide-canvas { animation: none; }
+  .trip-wizard-modal .guide-canvas { transition: none; }
+}
+
+/* Sparse steps: a two-way toggle stretched across 1400px reads as a mistake,
+   so the date-mode switch keeps a sane width inside the full-bleed shell. */
+.trip-wizard-modal .guide-datemode { max-width: 520px; }
+
+.guide-design-btn-lg {
+  gap: 14px;
+  padding: 18px 20px;
+  margin-top: 6px;
+  margin-bottom: 18px;
+  font-size: 15px;
+}
+.guide-design-btn-lg small { font-size: 12px; margin-top: 3px; }
+

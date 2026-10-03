@@ -1,0 +1,1076 @@
+/* Carta chat planner, passes modal, password fields, pass card, danger zone.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ───────── Carta chat planner ───────── */
+
+/* The conversation sits on its own card, same treatment as the guided steps
+   before it, so the bot reads as a contained thing rather than loose bubbles
+   drifting on the page background. */
+.chat-flow {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: calc(100vh - var(--header-h, 64px) - 92px);
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 26px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2, 0 10px 30px -22px rgba(26, 26, 26, 0.45));
+}
+.chat-head {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+.chat-back {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 20px; line-height: 1;
+  cursor: pointer;
+}
+.chat-back:hover { border-color: var(--accent); color: var(--accent); }
+.chat-head-title {
+  flex: 1 1 auto;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 14px; font-weight: 700; color: var(--accent);
+}
+.chat-progress { font-family: var(--mono); font-size: 11.5px; color: var(--ink-mute); }
+/* The transcript scrolls, so it grows a scrollbar, and the platform default is
+   a thick opaque slab sitting inside a warm paper card. Thin and tinted, it
+   still says "there is more above" without being the loudest thing on screen.
+   (Firefox takes the two-keyword form; Chromium and Safari take the
+   ::-webkit-scrollbar pseudo-elements, so both are given.) */
+.chat-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 18px 2px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+.chat-body::-webkit-scrollbar { width: 8px; }
+.chat-body::-webkit-scrollbar-track { background: transparent; }
+.chat-body::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--rule);
+  border: 2px solid var(--paper);
+  background-clip: padding-box;
+}
+.chat-body::-webkit-scrollbar-thumb:hover { background: var(--ink-mute); }
+.chat-turn { margin-bottom: 18px; }
+.chat-bubble {
+  display: inline-block;
+  max-width: 88%;
+  padding: 11px 15px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.chat-bubble.bot { background: var(--paper-dim); color: var(--ink); border-bottom-left-radius: 5px; }
+.chat-bubble.bot.chat-bubble-live { font-size: 17px; font-weight: 600; }
+.chat-bubble-warn { background: var(--amber-bg); color: var(--amber-ink); }
+.chat-bubble.me {
+  display: block;
+  margin: 7px 0 0 auto;
+  background: var(--accent);
+  color: var(--on-fill);
+  border-bottom-right-radius: 5px;
+  width: fit-content;
+  max-width: 88%;
+}
+/* Still the right shape for the town picker's short "ask Carta" wait, which
+   is one question to one answer. The ROUTE build, which is long and has real
+   stages, gets .rbs below instead. */
+.chat-typing { display: inline-flex; gap: 5px; align-items: center; }
+.chat-typing span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ink-mute);
+  animation: chat-blink 1.2s infinite ease-in-out;
+}
+.chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes chat-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+
+/* ── The route being built ───────────────────────────────────────────────
+   A build takes ten to thirty seconds. A typing bubble spent all of it saying
+   "something is happening", in the vocabulary of a messaging app rather than
+   of the routing engine that is actually running. This is the same wait spent
+   showing the work: a route drawing itself stop by stop, over a log of the
+   real passes, with the real numbers in them. */
+.rbs {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.rbs-head { padding: 13px 16px 0; }
+.rbs-title { font-family: var(--display); font-size: 16px; font-weight: 600; color: var(--ink); }
+.rbs-canvas { padding: 8px 14px 4px; }
+.rbs-svg { display: block; width: 100%; height: auto; }
+/* The survey grid the route is drawn over: present, never competing. */
+.rbs-grid-line { stroke: var(--rule-soft); }
+.rbs-grid { opacity: 0.75; }
+/* The corridor under consideration, then the line that won it. */
+.rbs-ghost { stroke: var(--rule); stroke-width: 1.6; stroke-dasharray: 3 6; opacity: 0.7; }
+.rbs-line {
+  stroke: var(--accent);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: rbs-draw 2800ms linear infinite;
+}
+@keyframes rbs-draw {
+  0% { stroke-dashoffset: 1; }
+  86%, 100% { stroke-dashoffset: 0; }
+}
+.rbs-node-halo { fill: var(--accent); opacity: 0.14; }
+.rbs-node-dot { fill: var(--paper); stroke: var(--accent); stroke-width: 2; }
+/* Every stop runs the SAME 2800ms cycle as the line, and appears at its own
+   point inside it, so the whole canvas shares one phase. Staggering with
+   animation-delay instead gave each stop its own loop, and the late ones
+   stayed lit right through the next redraw. */
+.rbs-node { opacity: 0; animation-duration: 2800ms; animation-timing-function: linear; animation-iteration-count: infinite; }
+.rbs-node-0 { animation-name: rbs-pop-0; }
+.rbs-node-1 { animation-name: rbs-pop-1; }
+.rbs-node-2 { animation-name: rbs-pop-2; }
+.rbs-node-3 { animation-name: rbs-pop-3; }
+.rbs-node-4 { animation-name: rbs-pop-4; }
+@keyframes rbs-pop-0 { 0% { opacity: 0; } 4%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rbs-pop-1 { 0%, 19% { opacity: 0; } 24%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rbs-pop-2 { 0%, 38% { opacity: 0; } 43%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rbs-pop-3 { 0%, 59% { opacity: 0; } 64%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rbs-pop-4 { 0%, 81% { opacity: 0; } 86%, 94% { opacity: 1; } 100% { opacity: 0; } }
+.rbs-head-dot { fill: var(--accent); }
+.rbs-log {
+  list-style: none;
+  margin: 0;
+  padding: 4px 16px 14px;
+  display: flex; flex-direction: column; gap: 7px;
+}
+.rbs-line-row {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.rbs-line-ico {
+  flex: none;
+  width: 19px; height: 19px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.rbs-line-row.done .rbs-line-ico { background: var(--accent-bg); color: var(--accent); }
+.rbs-line-row.now { color: var(--ink); font-weight: 600; }
+.rbs-line-row.now .rbs-line-ico {
+  background: var(--accent);
+  color: var(--on-fill);
+  animation: rbs-pulse 1.5s ease-in-out infinite;
+}
+@keyframes rbs-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+/* Numbers inside the log are measured facts, so they are set like every other
+   measured fact in the app. */
+.rbs-line-text { min-width: 0; font-variant-numeric: tabular-nums; }
+/* Motion is the point here, but it is never the message: every line is
+   readable, and the finished route is the resting state. */
+@media (prefers-reduced-motion: reduce) {
+  .rbs-line, .rbs-node, .rbs-line-row.now .rbs-line-ico { animation: none; }
+  .rbs-line { stroke-dashoffset: 0; }
+  .rbs-node { opacity: 1; }
+  /* SMIL does not read the motion preference, so the travelling head is
+     removed outright rather than paused. */
+  .rbs-head-dot { display: none; }
+}
+
+.chat-opts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
+.chat-opt {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 12px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease, transform 0.12s ease;
+}
+.chat-opt:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.chat-opt.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+.chat-opt-text { display: flex; flex-direction: column; gap: 1px; text-align: left; }
+.chat-opt-text b { font-size: 14px; font-weight: 600; }
+.chat-opt-text small { font-size: 11.5px; color: var(--ink-mute); }
+.chat-opts-multi .chat-opt { padding: 10px 14px; }
+.chat-send {
+  margin-top: 12px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 12px 22px;
+  border: none; border-radius: 12px;
+  background: var(--accent); color: var(--on-fill);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+}
+.chat-send-multi { display: block; }
+.chat-skip {
+  margin-left: 10px;
+  border: none; background: transparent;
+  color: var(--ink-mute); font-size: 13px;
+  text-decoration: underline; cursor: pointer;
+}
+.chat-free { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+/* The final free-text step stacks: the input, then a full-width "Build my
+   route" as the clear primary action, then "Skip" as a quiet line of its own.
+   Build sitting inline next to a small Skip link read as two peers and muddied
+   which one finishes the flow. (Scoped so the town-picker search rows, which
+   also use .chat-free, keep their own layout.) */
+.chat-free-final { flex-direction: column; align-items: stretch; }
+/* In a column the input's flex-basis would size its HEIGHT (it was authored as
+   a row width), ballooning the box to 260px tall. Reset it to a normal field. */
+.chat-free-final .chat-free-input { flex: none; width: 100%; }
+.chat-free-final .chat-send {
+  width: 100%;
+  justify-content: center;
+  margin-top: 4px;
+}
+.chat-free-final .chat-skip {
+  margin-left: 0;
+  align-self: center;
+  padding: 4px 8px;
+}
+.chat-free-input {
+  flex: 1 1 260px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit; font-size: 14px;
+  padding: 12px 14px;
+}
+.chat-free-input:focus { outline: none; border-color: var(--accent); }
+
+/* Town picker ("where do you want to spend the day?"): four tabs landing on
+   the same answer, the nearby list, a catalogue/anywhere search, the stay
+   map, or an AI suggestion. */
+.chat-town-picker { margin-top: 12px; }
+.chat-town-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.chat-town-tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 12.5px; font-weight: 600;
+  cursor: pointer;
+}
+.chat-town-tab:hover { border-color: var(--accent); color: var(--accent); }
+.chat-town-tab.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+.chat-town-tab:disabled { opacity: .5; cursor: default; }
+.chat-town-tab:disabled:hover { border-color: var(--rule); color: var(--ink-soft); }
+.chat-town-note { margin-top: 8px; }
+.chat-town-resolve { margin-top: 10px; }
+.chat-town-resolve .chat-opt { margin-top: 8px; }
+/* Researching a town Carta has never held is the answer to what was asked, so
+   it leads the card; snapping to a neighbour sits under it as the fallback. */
+.chat-town-resolve .chat-opt-lead {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.chat-town-resolve .chat-opt-lead b { color: var(--accent); }
+.chat-town-working { margin-top: 8px; }
+.chat-town-working .trip-note { display: flex; align-items: center; gap: 6px; }
+.chat-town-working .chat-typing { margin-top: 8px; }
+.chat-town-anywhere { margin-top: 10px; }
+.chat-town-anywhere .chat-send { margin-top: 0; }
+.chat-town-map {
+  height: clamp(220px, 38vh, 340px);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  position: relative;
+}
+.chat-town-ai .chat-free { margin-top: 0; }
+
+.chat-result { margin-bottom: 10px; }
+.chat-route {
+  margin-top: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  padding: 14px 16px;
+}
+.chat-route-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.chat-route-stats { font-size: 11.5px; color: var(--ink-soft); }
+.chat-refine { margin-top: 14px; }
+.chat-opts-nudge { margin-bottom: 9px; }
+
+/* ---- The reworked question flow (D5) ---- */
+
+/* A past answer is a button back to its own question. It stays an answer
+   bubble first: the affordance is a quiet word at the end, not a second
+   control competing with the live question above it. */
+.chat-bubble-edit {
+  border: none;
+  font: inherit;
+  text-align: right;
+  cursor: pointer;
+  display: flex; align-items: baseline; justify-content: flex-end; gap: 8px;
+}
+.chat-bubble-edit-text { text-align: left; }
+.chat-bubble-edit-hint {
+  flex: 0 0 auto;
+  margin-left: 8px;
+  font-size: 11px;
+  opacity: 0.72;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.chat-bubble-edit:hover .chat-bubble-edit-hint { opacity: 1; }
+.chat-bubble-edit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The start chips sit under the window answers, so they need a word saying
+   what they are: four buttons and three chips with no label reads as seven
+   answers to one question. */
+.chat-opts-start { align-items: center; margin-top: 12px; }
+.chat-opts-label {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  margin-right: 2px;
+}
+.chat-opts-hint {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+/* The final screen's two switches. Wider than an option, because each is a
+   statement about the whole day rather than one answer among several. */
+.chat-opts-toggles { flex-direction: column; align-items: stretch; gap: 8px; }
+.chat-toggle {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 15px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+.chat-toggle .chat-opt-text { flex: 1 1 auto; }
+.chat-toggle:hover { border-color: var(--accent); }
+.chat-toggle.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+
+.chat-weather-note {
+  margin: 12px 0 0;
+  padding: 10px 13px;
+  border-radius: 12px;
+  background: var(--paper-dim);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* Phones: the proposal is a map you look at and a list you read, and the
+   import button must stay reachable without scrolling back past either. */
+@media (max-width: 720px) {
+  .chat-result .ai-route-map { height: 40vh; }
+  .chat-foot {
+    position: sticky;
+    bottom: 0;
+    background: var(--paper);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .chat-opt { flex: 1 1 100%; }
+  .chat-opts-multi .chat-opt { flex: 0 1 auto; }
+}
+.chat-foot {
+  flex: 0 0 auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+.chat-foot-warn { font-size: 12px; color: var(--amber-ink); }
+.chat-import {
+  width: 100%;
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 15px;
+  border: none; border-radius: 12px;
+  background: var(--accent); color: var(--on-fill);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+}
+.chat-import:hover { box-shadow: 0 3px 14px rgba(200, 80, 30, 0.32); }
+
+@media (max-width: 768px) {
+  .day-flow { padding: 14px 14px 30px; }
+  .day-flow-q { font-size: 23px; }
+  /* Stacked and full width, the recommended card first (it is first in the
+     DOM, so source order already does it). Nothing clips sideways. */
+  .day-flow-cards { grid-template-columns: 1fr; }
+  .day-flow-card { min-height: 150px; padding: var(--space-5); }
+  .day-flow-card b { font-size: 18px; }
+  .day-flow-card-prev { height: 54px; }
+  /* The shared rail drops its names on a phone because the trip planner has
+     seven of them. The day planner has three, and "Stay", "When" and "How"
+     fit a 110px segment with room to spare, so here they stay: three bare
+     numbers would say nothing about what the flow is going to ask. */
+  .day-flow-top .wiz-step-name { display: block; font-size: 11px; }
+  .day-flow-top .wiz-step-btn { justify-content: flex-start; padding-left: 4px; }
+  .day-flow-next { width: 100%; }
+  /* On a phone the card would be a border tight against the screen edge, so
+     it drops its chrome and the step just uses the full width. */
+  .day-flow-panel {
+    padding: 20px 16px 18px;
+    border-radius: 16px;
+    gap: 14px;
+  }
+  .day-flow-chip { width: 100%; justify-content: center; }
+  .chat-flow {
+    height: calc(100vh - var(--header-h, 56px) - 40px);
+    padding: 14px 14px 12px;
+    border-radius: 16px;
+  }
+  .chat-bubble { max-width: 92%; }
+  .chat-opt { width: 100%; }
+}
+
+/* Guided-flow refinements: the search keeps the app's standard
+   pill-with-button treatment. (Reading width is the panel's job now: it
+   centres itself and everything inside it fills it.) */
+.day-flow-search { border-radius: 12px; }
+.day-flow-search .day-stay-input { font-size: 16px; padding: 15px 18px; }
+.day-flow-search .trip-add-btn { padding-left: 22px; padding-right: 22px; font-size: 14px; }
+
+/* Saved work reads as a quiet footer under the first question, never as a
+   competing block. */
+/* Work you already have is a different thing from the question on screen, so
+   it gets its own card rather than a bare list hanging off a rule. It lives
+   in the question column (.day-flow-saved), directly under the card it
+   continues, so it needs no width of its own: the column already has one. */
+.day-flow .day-landing-section {
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
+}
+.day-flow-saved .trip-note { margin: 0; }
+
+@media (max-width: 768px) {
+  .day-flow-step > *, .day-flow-step > .day-flow-q, .day-flow-step > .day-flow-cards { max-width: none; }
+}
+
+/* ---- Step 1 on a phone -------------------------------------------------- */
+@media (max-width: 700px) {
+  /* 48px of field: the thumb target for the one control this step exists for.
+     (The wrapper carries the height so the button beside it matches it.) */
+  .day-flow-search .day-stay-input { min-height: 48px; padding: 0 16px; }
+  .day-flow-search .trip-add-btn { min-height: 48px; }
+  /* The list runs the full width of the panel and loses its own box: on a
+     phone a bordered card inside a bordered card is two frames saying the
+     same thing. */
+  .day-flow-results {
+    margin-inline: -16px;
+    border-inline: none;
+    border-radius: 0;
+    max-height: none;
+  }
+  .day-stay-hit { padding-inline: 16px; }
+  /* Continue docks to the bottom of the scroll rather than sitting below a
+     list that can run past the fold: the answer is chosen at the top of the
+     screen and confirmed at the bottom of the thumb's reach. */
+  .day-flow-panel > .day-flow-next {
+    position: sticky;
+    bottom: 10px;
+    z-index: 3;
+    box-shadow: 0 6px 22px rgba(26, 26, 26, 0.26);
+  }
+}
+
+/* The refine row must clear the sticky import bar. */
+.chat-body { padding-bottom: 26px; }
+
+/* ───────── Passes: the pricing modal and the account pass row ───────── */
+
+/* Wider than the AI dialog because it holds three columns. It still collapses
+   to one on phones, where a horizontal pricing table is unreadable. */
+.pass-card {
+  width: min(100%, 800px);
+  text-align: left;
+  animation: pass-card-in .38s cubic-bezier(.16, .84, .32, 1) backwards;
+}
+.pass-overlay { animation: pass-overlay-in .25s ease backwards; }
+
+@keyframes pass-overlay-in { from { opacity: 0; } }
+@keyframes pass-card-in { from { opacity: 0; transform: translateY(14px) scale(.985); } }
+
+.pass-current {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  background: var(--wash);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+
+/* The withdrawal waiver line, above the buy buttons. Same shape as
+   .pass-current, one step up in size because unlike the VAT and
+   no-subscription notes at the foot of the modal this one has to actually be
+   read: it is the statement that ends a legal right. Left on the wash ground
+   rather than given a warning colour, because it is a term of the sale and not
+   an error. */
+.pass-waiver {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: var(--wash);
+  border-radius: 8px;
+  padding: 9px 11px;
+  margin-bottom: 12px;
+}
+.pass-waiver .pass-terms-link { font-size: inherit; }
+
+.pass-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 6px 0 4px;
+}
+
+.pass-tier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 16px 14px 14px;
+  background: var(--paper);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  /* One-shot on open; `backwards` (never `both`) so the finished state is the
+     stylesheet's own, and the hover transform underneath still applies. */
+  animation: pass-tier-rise .45s cubic-bezier(.16, .84, .32, 1) backwards;
+}
+.pass-tier:nth-child(2) { animation-delay: .07s; }
+.pass-tier:nth-child(3) { animation-delay: .14s; }
+.pass-tier:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+
+@keyframes pass-tier-rise { from { opacity: 0; transform: translateY(12px); } }
+
+/* The Trip Pass is the one being sold, so it gets the accent border and the
+   flag. Everything else stays quiet rather than competing with it. */
+.pass-tier.featured { border-color: var(--accent); border-width: 2px; padding: 15px 13px 13px; }
+.pass-tier.current { background: var(--wash); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pass-overlay, .pass-card, .pass-tier { animation: none; }
+  .pass-tier, .pass-tier:hover { transition: none; transform: none; }
+}
+
+.pass-flag {
+  position: absolute;
+  top: -9px; left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.pass-tier h4 {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.pass-price {
+  font-family: var(--display);
+  font-size: 27px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.pass-price small {
+  display: block;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-mute);
+  margin-top: 2px;
+}
+.pass-blurb { font-size: 12px; color: var(--ink-soft); line-height: 1.45; margin: 8px 0 10px; }
+
+.pass-features { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 6px; }
+.pass-features li {
+  display: grid;
+  grid-template-columns: 13px 1fr;
+  gap: 7px;
+  align-items: start;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.pass-features svg { margin-top: 2px; color: var(--accent); }
+
+/* Buttons sit on a shared baseline however uneven the feature lists are. */
+.pass-tier .pass-buy, .pass-buy-placeholder { margin-top: auto; }
+.pass-buy { width: 100%; justify-content: center; }
+/* The Year Pass buys too, but only the featured pass gets the filled button:
+   two identical primaries would say neither is the answer. */
+.pass-buy-quiet {
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.pass-buy-quiet:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.pass-buy-quiet:disabled { opacity: 0.4; cursor: default; }
+.pass-buy-placeholder {
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  text-align: center;
+  min-height: 18px;
+}
+
+.ai-plan-balance { color: var(--ink-soft); }
+.ai-plan-upsell-link { margin-left: 6px; }
+
+@media (max-width: 720px) {
+  .pass-grid { grid-template-columns: 1fr; }
+  .pass-card { margin: 2vh auto; max-height: 92vh; overflow-y: auto; }
+  /* Stacked, the flag would overlap the card above it. */
+  .pass-tier.featured { margin-top: 10px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Account panel, 2026-07-28 settings audit.
+
+   Three things drove this block. Contrast: the section headings and field
+   labels were --ink-mute at 9.5px, roughly 3.4:1 on paper, which is unreadable
+   on a phone in daylight and fails AA outright. Targets: the close button was
+   30px and the text links were 12px with no padding, both under any sane
+   thumb. Weight: the destructive action looked like a footnote while the
+   password form looked like the point of the page, and it is the other way
+   round.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Headings and labels carry real contrast here. --ink-soft is 8.1:1 on paper
+   against --ink-mute's 3.4:1, and the extra half point of size costs nothing. */
+.account-panel .section-title { color: var(--ink-soft); font-size: 10px; }
+.account-panel .auth-label { color: var(--ink-soft); font-size: 10px; letter-spacing: 0.14em; }
+
+/* A 44px target, anchored to the sticky header (see AccountPanel.jsx) so it
+   is still there when you are at the bottom of the panel, and header padding
+   that keeps a long name clear of it. */
+.account-panel .panel-close {
+  top: 12px; right: 12px;
+  width: 44px; height: 44px;
+  font-size: 18px;
+}
+.account-panel .panel-header { padding-right: 68px; }
+
+/* Signed in, the hub carries no title of its own (the profile card below is
+   the title), so the header shrinks to its overline and the card climbs up to
+   meet the Passes row instead of floating half a thumb below it. */
+.account-panel .panel-header.account-header-bare { padding-bottom: 0; }
+.account-panel .panel-header.account-header-bare .panel-tag { margin-bottom: 0; }
+.account-panel .panel-header.account-header-bare + .panel-section { padding-top: 10px; }
+
+.account-section-hint {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.account-wide-btn {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+  text-align: center;
+}
+.account-panel .auth-submit { min-height: 44px; }
+/* The profile form saves an edit somebody already made, so it does not need
+   to compete with the two buttons in this panel that start something. */
+.auth-submit-quiet {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.auth-submit-quiet:hover:not(:disabled) { background: var(--paper-dim); border-color: var(--ink); }
+.auth-submit-quiet:disabled { opacity: 1; color: var(--ink-mute); border-color: var(--rule-soft); }
+
+/* A field's verdict, at the end of its own label line. The profile form asks
+   for three things that can each be wrong on their own, and one error at the
+   foot of the form makes the reader work out which. */
+.auth-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.auth-label-row .auth-label { flex: 1; min-width: 0; }
+.auth-mark {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--paper);
+}
+.auth-mark.is-ok { background: var(--green); }
+.auth-mark.is-bad { background: var(--danger); }
+/* Colour is never the only carrier: the tick and the cross differ in shape,
+   and each one names itself for a screen reader. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+/* Inside a password field the mark sits beside the reveal, so a confirmed
+   match needs no extra line under the input. */
+.auth-field.has-mark .pw-input-wrap input { padding-right: 74px; }
+.pw-input-wrap .auth-mark {
+  position: absolute;
+  top: 50%;
+  right: 44px;
+  transform: translateY(-50%);
+}
+
+/* Avatar: emoji, chosen and saved, because migration 010 rules out uploading
+   a photograph of a person on purpose. */
+.account-avatar-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.account-avatar-edit:hover { border-color: var(--ink-soft); color: var(--ink); background: var(--paper-dim); }
+.account-avatar-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  max-width: 280px;
+}
+.account-avatar-opt {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.account-avatar-opt:hover { border-color: var(--ink-soft); }
+.account-avatar-opt.on { border-color: var(--accent); background: var(--accent-bg); }
+
+.auth-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+/* ─── Password fields: reveal toggle, entropy meter, live requirements ─── */
+
+.pw-input-wrap { position: relative; display: block; }
+.pw-input-wrap input { width: 100%; padding-right: 48px; }
+.pw-reveal {
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s;
+}
+.pw-reveal:hover { color: var(--ink); background: var(--paper-dim); }
+
+.pw-gauge { display: flex; flex-direction: column; gap: 8px; margin-top: -4px; }
+.pw-strength { display: flex; align-items: center; gap: 10px; }
+.pw-strength-track { flex: 1; display: flex; gap: 3px; }
+.pw-strength-seg {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--rule-soft);
+  transition: background .15s;
+}
+.pw-strength.weak .pw-strength-seg.on { background: var(--danger); }
+.pw-strength.fair .pw-strength-seg.on { background: var(--rate); }
+.pw-strength.strong .pw-strength-seg.on { background: var(--green); }
+.pw-strength-label {
+  flex: none;
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+/* The word is prose, the bit count is a measurement. Only the second is mono. */
+.pw-strength-label b {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--ink-mute);
+  margin-left: 6px;
+}
+
+.pw-reqs { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.pw-req {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.pw-req.met { color: var(--green); }
+.pw-req svg { flex: none; }
+.pw-req-dot {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+}
+
+/* A field's error belongs under that field, not in a pile at the foot of the
+   form. Red on the border as well as the text, because somebody scanning a
+   three-field form reads the outline before they read the sentence. */
+.auth-field.has-error input { border-color: var(--danger); }
+.auth-field.has-error input:focus { border-color: var(--danger); }
+.auth-field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--danger);
+}
+.auth-field-hint { display: flex; flex-direction: column; gap: 8px; }
+
+/* Live match state under the confirm field. Same shape as one checklist row,
+   because it is the same kind of fact: a condition that is met or is not. */
+/* Only ever the mismatch: a match is reported by the tick in the field. */
+.pw-match {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--danger);
+}
+
+/* "Sign out of every other device". A real label wrapping a real checkbox, so
+   the whole row is the hit target and the 44px floor is met by its padding. */
+.auth-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 4px 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.auth-check input[type='checkbox'] {
+  accent-color: var(--accent);
+  flex: none;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+.auth-check:hover { color: var(--ink); }
+
+/* The success banner. Dismissible, because it outlives the moment it reports:
+   without the close it is still sitting there the next time the panel opens. */
+.auth-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 14px;
+  padding: 11px 8px 11px 12px;
+  border: 1px solid color-mix(in srgb, var(--green) 34%, var(--paper));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--green) 7%, var(--paper));
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--green);
+}
+.auth-banner svg { flex: none; margin-top: 1px; }
+.auth-banner-text { flex: 1; min-width: 0; }
+.auth-banner-x {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: -3px 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--green);
+  cursor: pointer;
+  transition: background .15s;
+}
+.auth-banner-x:hover { background: color-mix(in srgb, var(--green) 14%, var(--paper)); }
+
+/* Forgot your password, as a step rather than a trapdoor. Pressing the link
+   used to mail a reset immediately; this says which address it is going to
+   first, in the same arm-then-confirm shape the delete section uses. */
+.auth-forgot-confirm {
+  margin-top: -4px;
+  padding: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-dim);
+}
+.auth-forgot-text {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.auth-forgot-actions { display: flex; gap: 8px; }
+.auth-forgot-actions .book-btn { flex: 1; justify-content: center; min-height: 40px; }
+
+.auth-forgot-inline { margin-top: -6px; padding: 4px 0; }
+.account-privacy-link { padding: 6px 0; min-height: 32px; display: inline-flex; align-items: center; }
+
+/* ─── Pass card: what you hold, and what the next one adds ─── */
+
+.account-pass-card {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 14px 16px;
+}
+.account-pass-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.account-pass-tier { font-size: 15px; font-weight: 700; color: var(--ink); }
+/* A sentence, so it is set in the UI face. Mono is for measured facts, and
+   spending it on running prose is what stops it meaning anything when it
+   lands on the price below. Tabular figures because the balance ticks down. */
+.account-pass-status {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  text-align: right;
+}
+.account-pass-upsell {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule-soft);
+}
+.account-pass-upsell-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.account-pass-feats { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.account-pass-feat {
+  display: flex;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.account-pass-feat svg { flex: none; margin-top: 2px; color: var(--green); }
+.account-pass-price {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  margin: 12px 0 10px;
+}
+.account-pass-price span { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); margin-left: 4px; }
+.account-pass-cta { width: 100%; margin-top: 0; }
+
+/* ─── Danger zone: the only red in the app, and it earns it ─── */
+
+.account-danger-title { color: var(--danger); }
+.account-danger-title svg { color: var(--danger); }
+.account-danger {
+  border: 1px solid color-mix(in srgb, var(--danger) 38%, var(--paper));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--danger) 5%, var(--paper));
+  padding: 14px 16px;
+}
+/* Was mono at 11px in --ink-mute, which read as a caption nobody had to take
+   seriously. This is the most consequential sentence in the panel. */
+.account-danger-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.account-delete-arm {
+  background: var(--paper);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--paper));
+  min-height: 44px;
+}
+.account-delete-arm:hover { background: var(--paper); border-color: var(--danger); color: var(--danger-dark); }
+.account-delete-actions .book-btn { flex: 1; justify-content: center; min-height: 44px; }
+
+@media (max-width: 520px) {
+  .account-pass-status { text-align: left; }
+  .account-delete-actions { flex-direction: column; }
+}
+

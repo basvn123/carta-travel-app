@@ -1,0 +1,1279 @@
+/* Date calendar, fare badge, right panel, map markers, legend, hover card.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ─── 1. Date fields - custom calendar in the editorial palette ───────────────
+   The native <input type="date"> popup is rendered by the browser/OS (white
+   chrome, blue selection) and can't be styled, so we use a custom DateField
+   component. The trigger keeps the same transparent underline treatment as the
+   number inputs; the calendar popup matches the paper/ink/rust palette. */
+
+.date-field {
+  position: relative;
+  display: inline-block;
+}
+
+.date-field-trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 2px 0 4px 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+  color: var(--ink);
+  width: 130px;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.date-field-trigger:hover { border-bottom-color: var(--ink); }
+/* Inside the desktop Dates card the value is 11 mono chars; trim the excess
+   width so the card hugs its fields. (The mobile calendar popover keeps the
+   roomier 130px base width above, since its font bumps to 16px.) */
+.group-dates .date-field-trigger { width: 104px; }
+.date-field-trigger:focus { outline: none; border-bottom-color: var(--accent); }
+.date-field-trigger.open { border-bottom-color: var(--accent); }
+.date-field-trigger.placeholder { color: var(--ink-mute); }
+
+/* ── Calendar popup ── */
+.cal {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 40;
+  width: 252px;
+  padding: 14px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  box-shadow: var(--shadow-2);
+}
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.cal-title {
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.cal-nav {
+  appearance: none;
+  background: transparent;
+  border: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-soft);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.cal-nav:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+.cal-nav:disabled { color: var(--rule); cursor: default; }
+
+.cal-weekdays,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal-weekday {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+  padding-bottom: 6px;
+}
+
+.cal-day {
+  appearance: none;
+  background: transparent;
+  border: none;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.cal-day:hover:not(.disabled):not(.selected) { background: var(--paper-dim); }
+.cal-day.outside { color: var(--ink-mute); opacity: 0.55; }
+.cal-day.today:not(.selected) { box-shadow: inset 0 0 0 1px var(--rule); }
+.cal-day.selected {
+  background: var(--accent);
+  color: var(--paper);
+  font-weight: 600;
+}
+/* A day you cannot pick has to LOOK unpickable, not merely faint: at 0.4
+   opacity a past day read as "slightly less important" and got clicked
+   anyway. The rule through the numeral is the unambiguous version, and it is
+   a shape rather than a shade, so it survives a low-contrast screen and
+   forced-colours mode where the opacity does not. */
+.cal-day.disabled,
+.cal-day[aria-disabled='true'] {
+  color: var(--ink-mute);
+  cursor: not-allowed;
+  opacity: 0.45;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.cal-day[aria-disabled='true']:hover { background: transparent; }
+/* The grid is one tab stop walked with the arrows, so the focus ring is the
+   only thing telling a keyboard user where they are. It has to be loud. */
+.cal-day:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* The "Nights" derived value, shown next to date inputs */
+.filter .derived-value {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 10px 4px 0;
+  min-width: 28px;
+  text-align: left;
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule);
+  cursor: default;
+  user-select: none;
+}
+
+
+/* ─── 2. Fare-source badge ──
+   Tiny pill that tells the user how confident the price is. Ryanair = real
+   API data; estimate = distance-based model (±25%); no_flight = no flight
+   needed (e.g. Brussels itself). */
+
+.fare-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  margin-left: 8px;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+.fare-badge.ryanair {
+  background: var(--trail-bg-alt);
+  color: var(--leaf-ink);
+  border: 1px solid var(--trail-rule-alt);
+}
+
+.fare-badge.estimate {
+  background: var(--amber-bg-alt);
+  color: var(--amber-ink-deep);
+  border: 1px solid var(--amber-rule);
+}
+
+.fare-badge.no_flight {
+  background: var(--ink-faint);
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+}
+
+.fare-badge.unknown,
+.fare-badge.mixed {
+  background: var(--ink-faint);
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+}
+
+
+/* ─── 3. Right-panel - tighter, clearer visual rhythm ────────────────── */
+
+/* Section title gets a touch more weight so it reads as a real heading
+   instead of sitting at the same level as line items. */
+.panel-section .section-title {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Line items get slightly tighter vertical rhythm */
+.total-row {
+  padding: 9px 0;
+}
+
+.total-row + .total-row {
+  border-top: 1px dotted var(--rule);
+}
+
+/* Sub-row (e.g. baggage under flight) sits closer to its parent */
+.total-row.sub-row {
+  padding-top: 4px;
+  padding-bottom: 6px;
+  border-top: none;
+}
+
+/* The grand total gets a cleaner separator and breathing room */
+.total-row.grand {
+  margin-top: 12px;
+  padding-top: 16px;
+  padding-bottom: 4px;
+  border-top: 2px solid var(--ink);
+}
+
+.total-row.grand + .footnote {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+
+/* Sub-text under each line item (e.g. "Apartment, 3 bedrooms")
+   should be tighter and lower contrast so the price reads first. */
+.total-row .label small {
+  display: block;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+/* Header refinements: tag is denser, sub-info gets a divider */
+.panel-header .panel-via {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  margin-top: 6px;
+  color: var(--ink-mute);
+  letter-spacing: 0.02em;
+}
+
+.panel-header .panel-blurb {
+  font-size: 12.5px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dotted var(--rule);
+  line-height: 1.45;
+  color: var(--ink-mute);
+  font-style: normal;
+}
+
+/* Trip-type tags in the detail header - the same vocabulary as the filter
+   chips, so what a destination is "good for" is visible, not just filterable. */
+.panel-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.panel-kind {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ─── Gem markers - visually distinct from airport markers ──────────────── */
+/* Rationale: gems aren't airports themselves; they're towns/villages reached
+   from a nearby anchor airport. A dashed pill border + slightly smaller dot
+   keeps the visual hierarchy honest without making gems feel second-class. */
+
+.price-pill.is-gem {
+  border-style: dashed;
+  border-width: 1px;
+  font-style: italic;
+}
+
+.price-pill.is-gem.is-deal {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+
+.pin-dot.is-gem {
+  width: 4px;
+  height: 4px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-shadow: none;
+}
+
+.pin-dot.is-gem.is-deal {
+  border-color: var(--accent);
+}
+
+.pin-dot.is-gem.selected {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: scale(1.5);
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
+}
+
+/* ─── Map markers: how you'd get there ────────────────────────────────────────
+   Colour is already spoken for (rust = deal) and the border style too (dashed =
+   gem), so the transport mode rides in on a glyph instead: plane or car, inside
+   the pill, inheriting currentColor so it stays legible on every pill state. */
+
+.price-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.price-pill.is-deal .pill-ico,
+.price-pill.selected .pill-ico { opacity: 0.95; }
+
+/* Drivable, but no flight from home - only ever shown in plane mode, where a
+   price pill would be read as a fare you could actually book. Hollow ring, so it
+   reads as "there, but not by plane" rather than "broken". */
+.pin-dot.is-caronly {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid rgba(120, 120, 120, 0.75);
+  box-shadow: none;
+}
+.pin-dot.is-caronly.selected {
+  transform: scale(1.6);
+  background: var(--ink);
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
+}
+
+/* No flight and too far to drive. Filled grey - a dead end, not a choice. */
+.pin-dot.is-unreach {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(120, 120, 120, 0.45);
+  border: 1px solid rgba(90, 90, 90, 0.6);
+  box-shadow: none;
+}
+.pin-dot.is-unreach.selected {
+  width: 11px;
+  height: 11px;
+  box-shadow: 0 0 0 3px rgba(120, 120, 120, 0.25);
+}
+
+/* ─── Map legend ──────────────────────────────────────────────────────────── */
+
+/* Bottom-left: the one free corner of the map. Top-right is the "Start here"
+   pill, bottom-right the zoom + attribution controls. */
+.map-legend {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 6;
+  width: 250px;
+  /* Translucent + blurred rather than solid paper: the map keeps reading as
+     one continuous surface underneath instead of being punched out by an
+     opaque cream rectangle, and the sea no longer meets a hard edge. */
+  background: rgba(245, 241, 232, 0.82);
+  backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(196, 190, 169, 0.6);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.06), 0 8px 22px rgba(26, 26, 26, 0.10);
+  overflow: hidden;
+  transition: background .15s;
+}
+/* Reading the fine print is a deliberate act: settle to near-opaque on hover
+   so the descriptions never fight the tiles behind them. */
+.map-legend:hover { background: rgba(245, 241, 232, 0.96); }
+.map-legend.is-collapsed { width: auto; }
+
+.legend-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 7px 10px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.legend-head:hover { color: var(--ink); }
+.legend-chev { font-size: 13px; line-height: 1; }
+
+.legend-body {
+  padding: 2px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* What every price on the map includes, stated once at the top of the key. */
+.legend-allin {
+  margin: 0 0 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.legend-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+/* A miniature of the real marker, so the legend and the map can't drift apart. */
+.legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+  margin-top: 1px;
+  padding: 2px 5px;
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-style: normal;
+}
+.legend-pill i { font-style: normal; }
+/* The plane/car glyphs sit at ~13px; a heavier stroke keeps them legible on
+   standard-DPI screens, where the toggle's 1.7 stroke washes out to a faint line. */
+.legend-pill svg { stroke-width: 2.1px; flex: none; }
+.legend-pill.is-deal {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+.legend-pill.is-gem {
+  border-style: dashed;
+  font-style: italic;
+}
+
+.legend-swatch {
+  flex: none;
+  width: 30px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.legend-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.legend-text b {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.legend-text em {
+  font-style: normal;
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+
+.legend-sep {
+  height: 1px;
+  background: var(--rule);
+  margin: 1px 0;
+}
+
+@media (max-width: 880px) {
+  .map-legend { bottom: 8px; left: 8px; width: 216px; }
+  .legend-text em { font-size: 10px; }
+}
+
+/* ─── Map hover card (MapView popup, .map-tip) ────────────────────────────
+   Replaces MapLibre's default white popup with the app's editorial card:
+   paper, rounded, soft shadow, a hero thumbnail and the rating score-chip. */
+.map-tip.maplibregl-popup { z-index: 20; will-change: transform; }
+/* A clean floating card reads more modern than an arrow, and it sidesteps
+   matching the tip triangle's border to the card edge. */
+.map-tip .maplibregl-popup-tip { display: none; }
+.map-tip .maplibregl-popup-content {
+  padding: 0;
+  background: transparent;
+  border-radius: 12px;
+  box-shadow: none;
+  pointer-events: none;   /* the card must never eat the hover that spawned it */
+}
+/* The cards that open themselves once you are zoomed in (MapView, CARD_ZOOM).
+   Unlike the hover card there is no cursor to protect, and the card IS the way
+   into the destination, so it takes clicks. */
+.map-tip-auto .maplibregl-popup-content { pointer-events: auto; }
+.map-tip-auto .tip-card { cursor: pointer; }
+.map-tip-auto .tip-card:hover {
+  border-color: var(--ink-mute);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14), 0 16px 40px rgba(15, 23, 42, 0.10);
+}
+
+.tip-card {
+  width: 226px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-2);
+  font-family: var(--ui);
+  color: var(--ink);
+  animation: tip-in 120ms ease-out;
+}
+.tip-card.is-dim { opacity: 0.92; }
+@keyframes tip-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.tip-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}/* Legibility floor for the price chip over a bright photo. */
+
+
+.tip-body { padding: 9px 12px 11px; }
+.tip-city {
+  font-family: var(--display);
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+  min-width: 0;
+}/* Price: an overlay chip on the photo, or an inline chip when there's no image. */
+
+.tip-price.is-overlay {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  font-size: 13px;
+  padding: 3px 7px;
+  box-shadow: 0 1px 4px rgba(26, 26, 26, 0.28);
+}
+.tip-price.is-inline {
+  flex: none;
+  font-size: 12.5px;
+  padding: 2px 6px;
+}
+.tip-score.rt-3 { background: var(--rate); color: var(--paper); }
+.tip-score.rt-2 { background: var(--rate-bg); color: var(--rate); }
+.tip-score.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
+.tip-score.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
+.tip-rlabel.rt-3 { color: var(--rate); }
+.tip-rlabel.rt-2 { color: var(--rate-soft); }
+.tip-rlabel.rt-1, .tip-rlabel.rt-0 { color: var(--ink-mute); }
+
+/* --- Plane/Car comparison toggle (detail panel) --- */
+.mode-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.mode-pill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.mode-pill:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.mode-pill:disabled { opacity: .45; cursor: default; }
+.mode-pill.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.mode-pill-top {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.mode-pill-val { font-size: 15px; font-weight: 600; }/* --- "Is a car needed here?" advisory --- */
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Results list (left gutter) - ranked, sortable, shortlist-able
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.results-list {
+  position: absolute;
+  top: var(--filter-h); left: 0; bottom: var(--bottom-nav-h);
+  width: var(--panel-w);
+  max-width: 100vw;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+}
+
+.results-head {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+}
+.results-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+/* Location search - live-filters both the list and the map markers. */
+.results-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+}
+.results-search-icon {
+  position: absolute;
+  left: 11px;
+  color: var(--ink-mute);
+  pointer-events: none;
+}
+.results-search-input {
+  width: 100%;
+  padding: 9px 32px 9px 34px;
+  border: 1px solid var(--rule);
+  background: var(--paper-dim);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.results-search-input::placeholder { color: var(--ink-mute); }
+.results-search-input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--paper);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+.results-search-clear {
+  position: absolute;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: var(--rule);
+  color: var(--ink);
+  border-radius: 50%;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.results-search-clear:hover { background: var(--ink-mute); color: var(--paper); }
+.results-sort button.on { background: var(--ink-fill); color: var(--paper); }
+
+.fav-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  transition: all .15s;
+}
+.fav-filter:hover { border-color: var(--ink); color: var(--ink); }
+.fav-filter.on {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.results-compare, .results-share {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition: all .15s;
+}
+.results-share {
+  background: var(--paper);
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+}
+.results-share:hover { border-color: var(--ink); color: var(--ink); }
+.results-empty {
+  padding: 28px 24px;
+  font-size: 13px;
+  color: var(--ink-mute);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 20px;
+  border-bottom: 1px dotted var(--rule);
+  cursor: pointer;
+  transition: background .12s;
+}
+.result-row:hover { background: var(--paper-dim); }
+.result-row.selected {
+  background: var(--paper-dim);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+/* Only the name truncates; the hidden-gem tag stays fully visible (below). */
+.result-city-name {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.result-gem {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0 4px;
+  font-style: normal;
+}
+/* Breathing room between the country name and the rating chip */
+.result-sub .rating-badge { margin-left: 6px; }
+
+/* Confirmation toast after saving/updating a trip */
+.trip-save-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 84px;
+  transform: translateX(-50%);
+  z-index: 60;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+  animation: toast-in 0.18s ease-out;
+  pointer-events: none;
+  max-width: min(88vw, 420px);
+  text-align: center;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.result-price {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.result-price small { font-size: 9px; color: var(--ink-mute); margin-left: 1px; }
+.result-price.is-deal { color: var(--accent); font-weight: 600; }
+.result-star.on { color: var(--accent); }/* ─── Unreachable-via-Ryanair section ───
+   A clearly separated, quieter block beneath the priced list. */
+
+.results-subhead .results-count {
+  font-size: 10px;
+  letter-spacing: 0;
+}
+.result-row.is-unreachable {
+  background: transparent;
+  border-bottom-style: solid;
+}
+.result-row.is-unreachable .result-city { color: var(--ink-soft); font-weight: 400; }
+.result-row.is-unreachable:hover { background: var(--paper); }/* Favorite / save-trip toggles in the detail panel header. In normal flow
+   (not absolute) so the pills can never overlap each other, the close button
+   or the city name - they wrap onto their own line instead. */
+
+.panel-fav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.panel-fav:hover { border-color: var(--ink); color: var(--ink); }
+.panel-fav:disabled { opacity: 0.6; cursor: default; }
+.panel-fav.on {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}/* ═══════════════════════════════════════════════════════════════════════
+   Compare modal
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.compare-table .is-cheapest { background: var(--accent-bg); }
+
+.results-footnote {
+  padding: 16px 20px 22px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--ink-mute);
+}
+
+@media (max-width: 880px) {
+  .results-list { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PHONE LAYOUT  (<= 768px)
+   The desktop shell is three absolutely-positioned columns (list gutter +
+   map + detail panel), each var(--panel-w)=440px - wider than a phone. Here
+   we collapse it to a single full-bleed column: the map fills the whole
+   screen and the destinations list becomes a full-screen overlay, toggled
+   by the same collapse/"Destinations" pill mechanism as desktop (see
+   .list-reopen) - it just starts collapsed so the map opens as big as
+   possible. The filter bar folds into a tap-to-open sheet.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Use the dynamic viewport unit so the iOS/Android URL bar doesn't clip the
+     bottom of the app. Falls back to the 100vh rule above on older browsers. */
+  html, body, #root { height: 100dvh; }
+  .app {
+    height: 100dvh;
+    width: 100vw;
+  }
+
+  /* ── Filter bar → collapsible top sheet ── */
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    min-height: 0;
+    height: auto;
+  }
+  /* Brand and account access now live in the always-visible AppHeader above
+     this bar; only the calendar/filter icon triggers remain here. */
+  .filter-bar .mobile-header-actions { display: inline-flex; }
+  /* The Filters segment keeps its label; when width runs out it is the dates
+     value that ellipsizes. */
+  .mobile-seg > .mobile-seg-btn { flex-shrink: 0; }
+
+  /* Depart/Return live behind the calendar icon's popover instead. */
+  .row-date-fields { display: none; }
+
+  /* The desktop rows are not rendered at this width at all: FilterBar mounts
+     the modal bottom sheet (.fsheet) instead, so the old inline drawer, its
+     2-column grid, the `display: contents` group flattening and the ordering
+     rules that went with it are gone. The bar itself is just the header pill. */
+  .filter-rows { display: none; }
+  .filter-stats { display: none; }
+
+  /* iOS Safari zooms the viewport when a focused field is < 16px. Bump the
+     interactive controls so focusing them doesn't yank the layout around. */
+  .filter input[type="number"],
+  .filter select,
+  .dropdown-trigger,
+  .dropdown-search input,
+  .results-search-input,
+  .date-field-trigger { font-size: 16px; }
+
+  /* ── Map fills the whole screen, sitting under the overlays ── */
+  .map-wrap {
+    left: 0;
+    right: 0;
+    bottom: var(--bottom-nav-h);
+  }
+
+  /* ── List / detail / lifestyle become full-width overlays ── */
+  .results-list,
+  .panel,
+  .accom-panel {
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* The ranked list overlays the map, above it but below the detail panel.
+     Visibility is driven by .list-collapsed on .app - the same mechanism as
+     desktop's list gutter (see .list-reopen) - it just starts collapsed on
+     phones so the map opens as big as possible. Re-asserts display:flex to
+     override the <=880px hide rule above; .list-collapsed (higher
+     specificity) still wins when collapsed. */
+  .results-list {
+    display: flex;
+    z-index: 14;
+    bottom: var(--bottom-nav-h);
+    transform: none;
+    box-shadow: var(--shadow-2);
+  }
+
+  /* Detail + lifestyle slide over everything; each has its own close button.
+     Anchor at top:0 (NOT var(--filter-h)) so an expanded filter sheet can't
+     push them off-screen - this is what made the lifestyle panel unreachable
+     after opening it from the filter sheet. They scroll internally
+     (overflow-y:auto). Bottom stops above the persistent bottom nav, same as
+     every other full-bleed panel, rather than covering it. */
+  .panel { z-index: 40; top: 0; bottom: var(--bottom-nav-h); }
+  .accom-panel { z-index: 40; top: 0; bottom: var(--bottom-nav-h); }
+
+  /* The detail panel uses translateX for its open/close transition; keep that
+     working at full width. */
+  .panel { transform: translateX(100%); }
+  .panel.open { transform: translateX(0); }/* ── Compare modal → full screen ── */
+
+}
+
+/* Very small / landscape phones: trim the oversized display type so headers
+   don't overflow. */
+@media (max-width: 420px) {
+  .panel-city { font-size: 30px; }
+}/* ─────────────────────────────────────────────────────────────────────────
+   Destination imagery + "things to do" + best-trips-from-here
+   ───────────────────────────────────────────────────────────────────────── */
+/* Hero: the most impressive image of the region, atop the detail panel. */
+
+/* ── The identity card ────────────────────────────────────────────────────
+   One object: the photograph, the verdict over it, and under it the name, the
+   country, what the place is known for and the two things you can do with it.
+   It used to be three pieces (a bar, a loose hero, a header card), which read
+   as three things about three subjects. */
+.xp-hero-card {
+  position: relative;
+  margin: 0 14px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+.xp-hero-card .panel-hero { border-radius: 0; }
+/* A deeper top on the card's own hero: two chips and a cross sit up there and
+   a photograph of a white facade gives neither of them anything to stand on. */
+.xp-hero-card .panel-hero-shade {
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 26, 26, 0.42) 0%,
+    rgba(26, 26, 26, 0.10) 26%,
+    rgba(245, 241, 232, 0) 62%,
+    var(--paper) 100%
+  );
+}
+/* The score and the crowding warning ride at the top of the photograph,
+   opposite the cross, where the shade is darkest. At the bottom they sat in
+   the fade that dissolves the picture into the card and the warning chip lost
+   its contrast exactly where it mattered. */
+.xp-hero-badges {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  max-width: calc(100% - 24px);
+}
+.xp-hero-badges.is-inline { position: static; margin-bottom: 8px; }
+/* On a photograph the badges cannot borrow the page's ground, so they bring
+   their own: the crowding chip's 9 per cent wash is invisible over a white
+   facade, and a chip nobody can read is a warning nobody gets. */
+.xp-hero-badges:not(.is-inline) > * { box-shadow: 0 1px 8px rgba(26, 26, 26, 0.3); }
+.xp-hero-badges:not(.is-inline) .crowd-badge {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: color-mix(in srgb, var(--cr-ink) 55%, transparent);
+}
+.xp-hero-card .panel-header { padding: 14px 16px 15px; }
+.xp-hero-card .panel-city {
+  display: block;
+  font-size: 30px;
+  line-height: 1.08;
+}
+.xp-hero-card .panel-country { margin-top: 5px; }
+.xp-hero-card .panel-rating-row { margin-top: 9px; }
+.xp-hero-card .panel-knownfor { margin: 9px 0 0; }
+/* How long the place is worth, said where the decision is made rather than
+   two screens down among the facts. */
+.xp-hero-stay {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.xp-hero-stay svg { flex: none; color: var(--ink-mute); }
+.xp-hero-card .panel-action-row { margin-top: 13px; }
+
+/* With a hero above it, the header sits directly under the photograph: the
+   old negative margin lifted a separate card over a separate picture, and
+   there is only one card now. */
+.panel-header.has-hero { margin-top: 0; }
+
+/* ── Destination highlights: the place in its own photographs ─────────────
+   A scrolling strip by default and a grid when the reader asks for all of
+   them, because six thumbnails answer "what does it look like" and
+   twenty four answer "show me everything", and those are different questions.
+   The captions are the sights' own names, so the strip doubles as a list of
+   what there is to see. */
+.xp-shots {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.xp-shots.is-all {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  overflow: visible;
+}
+.xp-shot {
+  flex: 0 0 132px;
+  margin: 0;
+  scroll-snap-align: start;
+  min-width: 0;
+}
+.xp-shots.is-all .xp-shot { flex: none; }
+.xp-shot img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--paper-dim);
+}
+.xp-shot figcaption {
+  margin-top: 5px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.xp-shots-toggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+.xp-shots-toggle:hover { text-decoration: underline; }
+
+/* ── The handover, at the foot of the page ────────────────────────────────
+   Two outbound searches, side by side, neither pretending to be a price. */
+.xp-further-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.xp-further-btn {
+  flex: 1 1 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .15s, background .15s;
+}
+.xp-further-btn:hover { border-color: var(--accent-soft); background: var(--accent-bg); }
+.xp-further-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.xp-further-btn svg { flex: none; color: var(--accent); }
+
+/* ── Cards: the panel is a stack of them ─────────────────────────────────
+   One bounded object per card (identity, price, receipt, guide), inset from
+   the panel edge, so the eye can skip a whole block instead of reading a
+   continuous column of sections divided by hairlines. */
+.dsheet-card {
+  position: relative;
+  margin: 0 14px 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-1);
+}/* The price card: the number the whole panel exists to justify, and the one
+   primary action on the surface. */
+/* Two doors into the Explore tab at the foot of the receipt. Each says what
+   is behind it, so neither is a mystery link. */
+/* The Explore tab: cards, not a wall of prose. */
+
+.dsheet-explore .dsheet-card { margin-bottom: 12px; }
+.dsheet-explore .trails-nearby { padding: 0 14px; border-bottom: none; }
+
+/* Things-to-do list */
+.todo-list { list-style: none; margin: 0 0 4px; padding: 0; }
+.todo-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+.todo-item:last-child { border-bottom: none; }
+.todo-name { font-size: 13.5px; color: var(--ink); line-height: 1.35; }
+.todo-kind {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.todo-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  text-decoration: none;
+}
+.todo-link:hover .todo-name { color: var(--accent); text-decoration: underline; }
+.todo-guide {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Best trips from here - a small card grid of nearby destinations. */
+.nearby-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.nearby-card {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.nearby-card:hover {
+  border-color: var(--accent-soft);
+  box-shadow: var(--shadow-1);
+  transform: translateY(-1px);
+}
+.nearby-thumb {
+  height: 74px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nearby-thumb-fallback {
+  font-family: var(--display);
+  font-size: 26px;
+  color: var(--ink-mute);
+}
+.nearby-meta { padding: 7px 9px 8px; }
+.nearby-city {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.nearby-sub {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Accounts - sign-in button, auth modal, account panel
+   ═══════════════════════════════════════════════════════════════════════ */
+

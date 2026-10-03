@@ -1,0 +1,1020 @@
+/* Shortlist star, grouped shortlist, day extras, water quality.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ─── The shortlist star on a feature page (components/FavStar.jsx) ───
+   A trail, a beach, a lake, a mountain, a cycle route and a ready-made trip
+   are kept the same way a city is: the same polygon, and the same accent for
+   "kept", as the star on an Explore card (.result-star.on above). It rides in
+   the page's top bar and inherits .tpage-bar-act's box, so only the kept
+   colour is new here. */
+.fav-star.on { color: var(--accent); }
+.fav-star.on:hover { color: var(--accent); }
+
+/* CyclePage's header has no share button to sit beside, so the star stands at
+   the end of the header row on its own, sized like the bar action it is. */
+.cycle-fav {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--ink-soft);
+}
+.cycle-fav:hover { background: var(--paper-dim); color: var(--ink); }
+.cycle-fav.on, .cycle-fav.on:hover { color: var(--accent); }
+
+/* ─── My trips: one way to draw a photograph ───
+   Every picture in this panel used to be a background-image, which meant the
+   browser could not pick a size, could not lazy-load and could not reserve
+   the box: each card fetched one arbitrary width and reflowed when it landed.
+   They are real <img> elements now (ShotPhoto in SavedTripsPanel.jsx), so the
+   old background-* rules have nothing left to paint and the fill happens
+   here instead. object-fit keeps ONE aspect across the panel whatever shape
+   the source photograph is. */
+.fav-card-img,
+.uptrip-img,
+.saved-card-img,
+.slist-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ─── The shortlist, grouped by kind (hooks/useFavoriteItems.js) ───
+   Quieter and denser than the saved-destination cards above it: a shortlist
+   is a list of wishes and runs long, where a saved trip is a considered few. */
+.slist-group + .slist-group { margin-top: 14px; }
+.slist-group-title {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 6px;
+}
+/* A run of related facts is a LIST, so it is divided by hairlines rather
+   than boxed one card per row. The rows also stop at a readable measure: at
+   1280px a full-bleed row put the star half a screen from the name it
+   belongs to. */
+.slist-rows {
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+  border-top: 1px solid var(--rule-soft);
+}
+.slist-row {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.slist-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.slist-open:hover { background: var(--paper-dim); }
+.slist-open:focus-visible, .slist-drop:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.slist-open:disabled { cursor: default; opacity: 0.55; }
+.slist-shot {
+  flex: none;
+  position: relative;
+  width: 54px;
+  aspect-ratio: 3 / 2;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.slist-img.is-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+}
+.slist-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.slist-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slist-sub {
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slist-flag { flex: none; display: flex; align-items: center; }
+/* A row the layer no longer publishes: still listed, visibly inert, and
+   droppable. A wish that silently vanished is worse than one the app admits
+   it can no longer find. */
+.slist-row.is-missing .slist-name { color: var(--ink-mute); font-style: italic; }
+.slist-drop {
+  flex: none;
+  width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+}
+.slist-drop:hover { background: var(--paper-dim); }
+
+
+/* ==========================================================================
+   The Where step, rebuilt (prompt T2)
+   Two tabs over one selection: a quiz that recommends countries from the
+   catalogue, and the map or grid you pick them on yourself. Nothing here
+   prints a price: what a country costs is on its brief, and a fare is not a
+   fact about a country.
+   ========================================================================== */
+
+/* ---- Planner rhythm -----------------------------------------------------
+   The global `* { margin: 0 }` reset left every captioned block to invent its
+   own spacing, so titles sat on their content. One section shape, one set of
+   margins, used by PlannerSection.jsx. */
+.guide-section + .guide-section { margin-top: var(--space-7); }
+.guide-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.guide-section-title {
+  font-family: var(--display);
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--ink);
+}
+.guide-section-aside { flex: none; }
+.guide-section-sub {
+  margin-top: calc(-1 * var(--space-2));
+  margin-bottom: var(--space-3);
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+
+/* The step heading and the block under it. Most steps (Booked, From, When,
+   Trips) render no .guide-sub at all, so the sub's margin was the only thing
+   holding the title off its content and those four steps had none: the title
+   touched the card. The margin belongs to the title, and the sub, when a step
+   has one, pulls itself up into that space rather than adding to it. */
+.guide-canvas > .guide-title { margin-bottom: var(--space-5); }
+.guide-canvas > .guide-title + .guide-sub {
+  margin-top: calc(-1 * var(--space-3));
+  margin-bottom: var(--space-5);
+}
+/* A label directly inside a planner surface, not one nested in a card that
+   already sets its own. */
+.guide-canvas > .trip-field-label,
+.guide-section > .trip-field-label { display: block; margin-bottom: var(--space-2); }
+
+@media (max-width: 768px) {
+  .guide-section + .guide-section { margin-top: var(--space-6); }
+}
+
+/* The same rhythm on the day planner, but its question lives inside a flex
+   column, so the space under it is a gap, not a margin. Setting both is how
+   you get 38px where you asked for 22: the panel's own gap carries the
+   question's rhythm, and the margin applies only outside a gapped panel. */
+.day-flow-q { margin-bottom: var(--space-5); }
+.day-flow-panel { gap: var(--space-5); }
+.day-flow-panel > .day-flow-q { margin-bottom: 0; }
+
+/* ---- The two tabs ------------------------------------------------------- */
+.guide-wtabs { width: min(100%, 420px); margin-bottom: var(--space-5); }
+.guide-wtabs button { min-height: var(--tap); }
+
+/* ---- The quiz ----------------------------------------------------------- */
+.wq { display: block; }
+.wq-q { scroll-margin-top: 12px; }
+/* A collapsed answer is a sibling of the next question, not a section, so the
+   `.guide-section + .guide-section` rule never fires between them and the next
+   heading landed on the answer above it. */
+.wq-done + .guide-section,
+.guide-section + .wq-done { margin-top: var(--space-5); }
+
+.wq-group + .wq-group { margin-top: var(--space-4); }
+.wq-group-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: var(--space-2);
+}
+
+.wq-chips { display: grid; gap: var(--space-2); }
+.wq-cols-1 { grid-template-columns: 1fr; }
+.wq-cols-2 { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); }
+
+.wq-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 9px 12px;
+  text-align: left;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 11px;
+  cursor: pointer;
+  color: var(--ink);
+  transition: border-color .12s, background .12s;
+}
+.wq-chip:hover:not(:disabled) { border-color: var(--ink-soft); }
+.wq-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wq-chip.on { border-color: var(--accent); background: var(--accent-bg); }
+.wq-chip:disabled { opacity: .45; cursor: default; }
+.wq-chip-icon { flex: none; display: flex; color: var(--ink-soft); }
+.wq-chip.on .wq-chip-icon { color: var(--accent); }
+.wq-chip-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.wq-chip-text b { font-size: 13.5px; font-weight: 550; }
+.wq-chip-text small { font-size: 11.5px; color: var(--ink-mute); }
+.wq-chip-check { margin-left: auto; flex: none; display: flex; color: var(--accent); }
+
+/* An answered question, collapsed to its answer. It stays a button, so
+   changing your mind is one tap rather than a walk back through the quiz. */
+.wq-done {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: 8px 12px;
+  margin-top: var(--space-3);
+  text-align: left;
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.wq-done:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+.wq-done:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wq-done-check { flex: none; display: flex; color: var(--accent); }
+.wq-done-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.wq-done-text small {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.wq-done-text b { font-size: 13.5px; font-weight: 550; }
+.wq-done-edit { flex: none; display: flex; color: var(--ink-mute); }
+
+.wq-next {
+  margin-top: var(--space-3);
+  min-height: var(--tap);
+  padding: 0 18px;
+  background: var(--accent);
+  color: var(--on-fill);
+  border: none;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wq-month {
+  margin-top: var(--space-4);
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+
+.wq-results { margin-top: var(--space-7); }
+
+/* ---- The recommendation cards ------------------------------------------- */
+.mcards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: var(--space-4);
+}
+.mcard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.mcard.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+/* The button owns the shape and the image fills it absolutely, the same way
+   the Destinations cards do it. Letting the <img> carry the ratio does not
+   work: HeroImage sets width/height ATTRIBUTES to the ratio (3 and 2), and a
+   2px-tall image is what you get, with the country name stranded outside it. */
+.mcard-pick {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.mcard-img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% var(--card-focus, 38%);
+}
+.mcard-scrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 58%;
+  background: linear-gradient(to top, rgba(0, 0, 0, .58), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+.mcard-head {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--on-fill);
+  font-family: var(--display);
+  font-size: 17px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+}
+.mcard-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-fill);
+}
+
+.mcard-body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); }
+.mcard-match {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.mcard-month { font-weight: 400; color: var(--ink-mute); }
+
+.mcard-why { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.mcard-why li {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  padding-left: 13px;
+  position: relative;
+}
+.mcard-why li::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+
+.mcard-places { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.mcard-place { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mcard-place { position: relative; }
+.mcard-place-img {
+  display: block;
+  width: 100%;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--paper-dim);
+}
+.mcard-place-name {
+  font-size: 11px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mcard-acts { display: flex; gap: var(--space-2); margin-top: auto; }
+.mcard-add,
+.mcard-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: var(--tap);
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mcard-add {
+  flex: 1;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-fill);
+}
+.mcard-add.on { background: var(--accent-bg); color: var(--accent); }
+.mcard-info {
+  flex: none;
+  border: 1px solid var(--rule);
+  background: none;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.mcard-info:hover { border-color: var(--ink-soft); }
+
+.mcards-more {
+  display: block;
+  margin: var(--space-4) auto 0;
+  min-height: var(--tap);
+  padding: 0 18px;
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  cursor: pointer;
+}
+.mcards-more:hover { border-color: var(--ink-soft); }
+
+/* ---- The country map, now polygons -------------------------------------- */
+/* The map is taller than it is wide on a phone and wider than it is tall on a
+   desktop, and Europe is roughly square, so the height is capped rather than
+   let run to the full column: a very tall box fits Europe by WIDTH and fills
+   the spare height with Greenland and the Atlantic. */
+.cpm-wrap { position: relative; }
+.cpm { height: min(58vh, 520px); min-height: 380px; margin-bottom: 0; }
+.guide-where-map .cpm { height: min(58vh, 520px); margin-bottom: 0; }
+
+.cpm-legend {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: flex;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid var(--rule);
+  font-size: 11px;
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+.cpm-legend-item { display: inline-flex; align-items: center; gap: 5px; }
+.cpm-legend i { width: 11px; height: 11px; border-radius: 3px; display: block; }
+.cpm-key-sel { background: var(--accent-bg); border: 1.5px solid var(--accent); }
+.cpm-key-rec { border: 1.5px dashed var(--accent); }
+
+/* Touch: a tap opens this instead of a hover tooltip nobody can reach. */
+.cpm-card {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .16);
+}
+.cpm-card-img { width: 56px; height: 56px; border-radius: 9px; object-fit: cover; flex: none; }
+.cpm-card-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+.cpm-card-text b { font-family: var(--display); font-size: 15px; }
+.cpm-card-acts { display: flex; gap: var(--space-2); }
+.cpm-card-add,
+.cpm-card-info {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cpm-card-add { border: 1px solid var(--accent); background: var(--accent); color: var(--on-fill); }
+.cpm-card-add.on { background: var(--accent-bg); color: var(--accent); }
+.cpm-card-info { border: 1px solid var(--rule); background: none; color: var(--ink-soft); font-weight: 500; }
+.cpm-card-close {
+  flex: none;
+  align-self: flex-start;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+
+
+/* The shortlist badge on a hand-picked country card. */
+.guide-ccard-fav {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .94);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .guide-section + .guide-section { margin-top: var(--space-6); }
+  .wq-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .wq-chip { padding: 8px 10px; }
+  .wq-chip-text b { font-size: 12.5px; }
+  .mcards { grid-template-columns: 1fr; }
+  .cpm, .guide-where-map .cpm { height: 62vh; min-height: 380px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wq-chip { transition: none; }
+}
+
+/* ============================================================
+   D6 "Build it myself": the guided builder around a stay
+   ============================================================
+   The screen this replaced was a map with four chips over it, so the only
+   thing it could tell you about a place was where it was. Here the places
+   lead: rails of photo cards, each rail answering a different question, with
+   the map demoted to a view you switch to. The tray at the bottom is the one
+   piece of persistent state, because "what is in my day so far" is the
+   question the whole screen exists to keep answering. */
+.dayex { display: flex; flex-direction: column; gap: 14px; padding-bottom: 96px; }
+
+/* The stay, as a place rather than a line of grey text. */
+.dayex-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+}
+.dayex-head-photo {
+  flex: 0 0 auto;
+  width: 76px; height: 57px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  display: block;
+}
+.dayex-head-photo img, .dayex-head-photo .hero-blank {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.dayex-head-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.dayex-head-text b { font-family: var(--display); font-size: 19px; letter-spacing: -0.01em; }
+.dayex-head-text small { font-size: 12.5px; color: var(--ink-soft); }
+.dayex-head-acts { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.dayex-search-btn, .dayex-change {
+  height: 36px;
+  padding: 0 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.dayex-search-btn { width: 36px; padding: 0; }
+.dayex-search-btn:hover, .dayex-change:hover { border-color: var(--ink-soft); }
+.dayex-searchrow { position: relative; }
+.dayex-search-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 38px 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  font: inherit; font-size: 15px;
+}
+.dayex-search-input:focus { outline: none; border-color: var(--ink-soft); }
+.dayex-search-clear {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px;
+  border: none; border-radius: 50%;
+  background: var(--paper-dim);
+  cursor: pointer; font-size: 17px; line-height: 1; color: var(--ink-soft);
+}
+
+/* The filter row sticks, because the chips are how you get back out of a
+   category you followed three screens deep. */
+.dayex-bar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 0;
+  background: var(--paper);
+}
+.dayex-chips {
+  display: flex; gap: 7px; align-items: center;
+  overflow-x: auto; flex: 1 1 auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.dayex-chips::-webkit-scrollbar { display: none; }
+.dayex-chips .guide-chip { flex: 0 0 auto; }
+.dayex-view {
+  flex: 0 0 auto;
+  display: inline-flex;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.dayex-view button {
+  border: none; background: none; cursor: pointer;
+  padding: 7px 14px;
+  font: inherit; font-size: 12.5px; font-weight: 600;
+  color: var(--ink-soft);
+}
+.dayex-view button.on { background: var(--ink-fill); color: var(--on-fill); }
+
+/* Phone leads with the list; the map is a view you ask for. */
+.dayex-body { display: block; }
+.dayex-mapcol { display: none; }
+.dayex-mapview .dayex-list { display: none; }
+.dayex-mapview .dayex-mapcol { display: block; }
+.dayex-mapcol .dem-map {
+  width: 100%;
+  height: clamp(420px, 62vh, 700px);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+}
+
+/* ---- a rail ------------------------------------------------------------ */
+.dayex-rail { margin: 0; }
+.dayex-more {
+  border: none; background: none; cursor: pointer;
+  font: inherit; font-size: 12.5px; font-weight: 600;
+  color: var(--accent);
+  padding: 0;
+}
+.dayex-count { font-size: 12.5px; color: var(--ink-mute); }
+/* Phone: a horizontal strip that snaps, so a rail reads as "there is more
+   this way" rather than as a truncated list. */
+.dayex-cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+  margin: 0 -14px;
+  padding-inline: 14px;
+  scrollbar-width: none;
+}
+.dayex-cards::-webkit-scrollbar { display: none; }
+.dayex-cards > * { flex: 0 0 62%; scroll-snap-align: start; }
+
+/* ---- a card ------------------------------------------------------------ */
+.dayex-card {
+  position: relative;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  overflow: hidden;
+  min-width: 0;
+}
+.dayex-card.is-hi { border-color: var(--accent); }
+.dayex-card-skel { min-height: 210px; background: var(--paper-dim); border-style: dashed; }
+.dayex-card-body {
+  display: flex; flex-direction: column;
+  border: none; background: none; cursor: pointer;
+  padding: 0; margin: 0; text-align: left; font: inherit;
+  min-width: 0;
+}
+.dayex-card-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+.dayex-card-photo img, .dayex-card-photo .hero-blank {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.dayex-card-flag {
+  position: absolute; left: 8px; top: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.dayex-card-text { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px; min-width: 0; }
+.dayex-card-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.dayex-card-name b { font-size: 14.5px; line-height: 1.3; }
+/* How far, in the unit the distance deserves. Mono, because it is measured. */
+.dayex-card-dist { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); }
+.dayex-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.dayex-card-fact { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.dayex-card-sub { font-size: 11.5px; color: var(--ink-mute); }
+/* The official bathing-water verdict, in the badge's own colours. */
+.dayex-water {
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10.5px; font-weight: 600;
+}
+.dayex-water.bw-excellent { background: var(--water-excellent-bg); color: var(--water-excellent-ink); }
+.dayex-water.bw-good { background: var(--water-good-bg); color: var(--water-good-ink); }
+.dayex-water.bw-sufficient { background: var(--rate-bg); color: var(--rate); }
+.dayex-water.bw-poor { background: var(--danger-bg); color: var(--danger); }
+
+/* 44px, because it is the one control on the card that has to be hittable
+   with a thumb while the card body underneath does something else. */
+.dayex-add {
+  position: absolute; right: 8px; top: 8px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-1);
+}
+.dayex-add:hover { border-color: var(--accent); color: var(--accent); }
+.dayex-add.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+
+/* ---- the tray ---------------------------------------------------------- */
+/* Phone: a bar above the bottom nav, so the running total of the day and the
+   two ways out of the screen are reachable without scrolling back up. */
+.dayex-tray {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: var(--bottom-nav-h, 62px);
+  z-index: 40;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+  box-shadow: 0 -6px 20px -14px rgba(15, 23, 42, 0.5);
+}
+.dayex-tray-summary {
+  flex: 1 1 auto; min-width: 0;
+  border: none; background: none; cursor: pointer;
+  padding: 0; text-align: left;
+  font: inherit; font-size: 13px; font-weight: 600;
+  color: var(--ink);
+  /* Two short lines beat one elided one: "1 place, ..." hides the step count,
+     which is the half of this label that says what kind of day it is. */
+  line-height: 1.3;
+}
+.dayex-tray-acts { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; margin-left: auto; }
+@media (max-width: 460px) {
+  .dayex-tray-summary { flex: 1 0 100%; }
+  .dayex-tray-acts { width: 100%; }
+  .dayex-tray-carta, .dayex-tray-open { flex: 1 1 0; }
+}
+.dayex-tray-carta, .dayex-tray-open {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dayex-tray-carta { border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.dayex-tray-carta:hover { border-color: var(--ink-soft); }
+.dayex-tray-open { border: 1px solid var(--accent); background: var(--accent); color: var(--on-fill); }
+.dayex-tray-open:disabled { opacity: 0.45; cursor: not-allowed; }
+.dayex-tray-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.dayex-tray-list li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.dayex-tray-list li:last-child { border-bottom: none; }
+.dayex-tray-name { flex: 1 1 auto; min-width: 0; font-size: 14px; overflow: hidden; text-overflow: ellipsis; }
+.dayex-tray-moves { display: flex; gap: 4px; flex: 0 0 auto; }
+.dayex-tray-moves button {
+  width: 32px; height: 32px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  cursor: pointer; font: inherit; font-size: 14px; color: var(--ink-soft);
+}
+.dayex-tray-moves button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ---- the detail sheet -------------------------------------------------- */
+.dayex-detail-photo {
+  display: block;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  margin-bottom: 12px;
+}
+.dayex-detail-photo img, .dayex-detail-photo .hero-blank {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.dayex-detail-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.dayex-detail-dist { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+.dayex-detail-desc { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 14px; }
+.dayex-detail-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.dayex-detail-acts > * { flex: 1 1 auto; }
+
+/* ---- desktop ----------------------------------------------------------- */
+@media (min-width: 1100px) {
+  /* List left, map right, both in view: hovering a card lights its pin and
+     tapping a pin scrolls its card in, which is what makes the two halves
+     one surface instead of two lists of the same places. */
+  .dayex-body { display: grid; grid-template-columns: minmax(520px, 1fr) minmax(0, 440px); gap: 20px; align-items: start; }
+  .dayex-list { display: block; min-width: 0; }
+  .dayex-mapcol { display: block; position: sticky; top: 64px; }
+  .dayex-mapview .dayex-list { display: block; }
+  .dayex-view { display: none; }
+  .dayex-mapcol .dem-map { height: calc(100vh - 210px); max-height: 760px; }
+  /* A grid, not a strip: there is room to compare six places at once. */
+  .dayex-cards {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible; margin: 0; padding-inline: 0;
+  }
+  .dayex-cards > * { flex: none; }
+  /* The tray stops floating over the page and becomes a card in the column. */
+  .dayex-tray {
+    position: sticky; bottom: 12px; left: auto; right: auto;
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    margin-top: 6px;
+  }
+  .dayex { padding-bottom: 20px; }
+}
+
+/* ---- Hand-offs into the planners (I1) ------------------------------------
+   Two doors on a destination page (trip wizard, day flow), one on a trail,
+   beach, lake or mountain page, and the way back from a day to its trip. */
+.destp-plan-btn { color: var(--ink); border-color: var(--ink); }
+.destp-plan-btn:hover { background: var(--ink); color: var(--paper); }
+.feat-dayplan {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.feat-dayplan:hover { background: var(--ink); color: var(--paper); }
+.feat-dayplan:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.day-topcard-trip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.day-topcard-trip:hover { text-decoration: underline; }
+
+/* ── Q1 phone audit (2026-09-19): every control a thumb meets is 44px ────
+   scripts/shoot-planners.mjs walks both planners at 375px and lists every
+   button, link and field under 44x44. This block is the answer to that list,
+   grouped by surface. Widths stay as they were; only the tap box grows. */
+@media (max-width: 768px) {
+  /* app chrome */
+  .header-pricing-btn { height: var(--tap); min-width: var(--tap); }
+
+  /* trip wizard */
+  .wiz-mini { min-height: var(--tap); padding: 5px 0 6px; margin-top: 2px; }
+  .guide-search { min-height: var(--tap); }
+  .guide-back { min-height: var(--tap); }
+  .guide-startover { display: inline-flex; align-items: center; min-height: var(--tap); }
+  .guide-chip { min-height: var(--tap); }
+  .guide-people-lg button { width: var(--tap); height: var(--tap); }
+  .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .guide-recap-inner::-webkit-scrollbar { display: none; }
+  .guide-recap-chip, .guide-recap-label { flex: none; white-space: nowrap; }
+  .dsec-toggle { min-height: var(--tap); }
+  .cbrief-add { min-height: var(--tap); }
+
+  /* day planner rail and questions */
+  .wiz-step-btn { min-height: var(--tap); }
+  .day-flow-help { width: var(--tap); height: var(--tap); }
+  .day-flow-chip { min-height: var(--tap); }
+  .day-flow-dest-change { min-height: var(--tap); padding-block: 0; }
+  .cal-nav { width: var(--tap); height: var(--tap); }
+  /* 7 cells of 44px need 308px plus gaps; the card gutter gives it back. */
+  .day-flow-date .date-field-inline { max-width: none; margin-inline: -6px; width: auto; }
+  .day-flow-date .cal-inline .cal-day { min-height: var(--tap); }
+  .day-ideas-when { padding: 0; }
+  .day-ideas-when-btn { min-height: var(--tap); }
+  .day-ideas-chip-x { width: var(--tap); height: var(--tap); }
+
+  /* the bot */
+  .chat-back { width: var(--tap); height: var(--tap); }
+  .chat-bubble.chat-bubble-edit { min-height: var(--tap); display: flex; align-items: center; }
+  .carta-plan-chip { min-height: var(--tap); }
+  .ai-refine-input { min-height: var(--tap); }
+  .ai-refine-row .trip-add-btn { min-height: var(--tap); }
+
+  /* the builder */
+  .dayex-search-btn, .dayex-change { height: var(--tap); }
+  .dayex-search-btn { width: var(--tap); }
+  .dayex-more { min-height: var(--tap); padding: 0 6px; }
+  .dayex-view button { min-height: var(--tap); }
+  /* The chip strip slides under the List/Map switch; fade it out rather than
+     cut a chip in half. */
+  .dayex-chips { mask-image: linear-gradient(to right, var(--mask-solid) calc(100% - 28px), transparent); padding-right: 28px; }
+  .dayex-tray-summary { min-height: var(--tap); display: flex; align-items: center; }
+  .dayex-tray-carta, .dayex-tray-open { height: var(--tap); }
+  .dayex-tray-moves button { width: var(--tap); height: var(--tap); }
+  /* Map pins keep their size (a 44px dot would hide the map) and grow an
+     invisible tap box around them instead; the audit measures that box. */
+  /* No position on .dem-pin itself: it IS the MapLibre marker element, and
+     MapLibre owns its position and transform (see maplibre-marker gotcha). */
+  .dem-pin::before { content: ''; position: absolute; inset: -12px; }
+  .dem-pin.is-dot::before { inset: -13px; }
+  .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
+}
+
+/* Q1 phone audit, second pass: the Where grid, the Trips step, the trip page,
+   Getting there, Finish and the planned view. */
+@media (max-width: 768px) {
+  .app-header-account .header-pricing-btn { height: var(--tap); min-width: var(--tap); }
+  .guide-chip { min-width: var(--tap); }
+  .guide-datemode button { min-height: var(--tap); }
+  .guide-ccard-info { width: var(--tap); height: var(--tap); }
+  .wtrip-len { min-height: var(--tap); min-width: var(--tap); }
+  .wready-more { min-height: var(--tap); }
+  .wready-link, .tday-more, .itin-stop-open, .guide-answered-edit, .tleg-link {
+    display: inline-flex; align-items: center; min-height: var(--tap);
+  }
+  .tpage-back { min-height: var(--tap); }
+  .tpage-bar-act { width: var(--tap); height: var(--tap); }
+  .tlegs-shift-btn { width: var(--tap); height: var(--tap); }
+  .tleg-mode { min-height: var(--tap); }
+  .guide-people button,
+  .guide-summary-party .guide-people button,
+  .itin-bd-party .guide-people button { width: var(--tap); height: var(--tap); }
+  .extras-check-row { min-height: var(--tap); padding-block: 0; }
+  .extras-row-head { min-height: var(--tap); }
+  .tprac-row.is-link > a { min-height: var(--tap); align-items: center; }
+  .itin-drive-row { min-height: var(--tap); }
+  .itin-tab, .itin-day-row-main, .itin-day-plan-btn,
+  .itin-overview-total, .itin-export-toggle,
+  .extras-add-btn, .extras-input, .exp-sharer-chip,
+  .trip-topcard-name, .trip-save-planned-btn, .trip-edit-btn, .trip-startover-btn { min-height: var(--tap); }
+  .trip-topcard-close { width: var(--tap); height: var(--tap); }
+  /* MapLibre's own stylesheet loads after this one; the extra class wins. */
+  .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-in,
+  .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-out { width: var(--tap); height: var(--tap); }
+  /* "Next: Getting there" does not fit beside Back and Start over at 375px;
+     the actions drop to their own line only when the label needs it, rather
+     than breaking the button in two. */
+  .guide-foot-inner { flex-wrap: wrap; }
+  .guide-foot-actions { flex: 1 1 auto; justify-content: flex-end; }
+  .guide-next { white-space: nowrap; }
+}
+
+/* Licence names behind a credit line, collapsed (T313). */
+.credit-fold { margin: 6px 0 0; font-size: 11px; color: var(--ink-mute); }
+.credit-fold > summary { cursor: pointer; min-height: 24px; }
+.credit-fold > p { margin: 4px 0 0; }

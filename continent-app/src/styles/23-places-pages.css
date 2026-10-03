@@ -1,0 +1,3699 @@
+/* Destinations tab and the place, trail, beach and lake pages.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ───────── Destinations tab (.places-tab): the catalogue and the published
+   trips as a full section. One centred column; lists divided by hairlines,
+   never boxed; every measured number in mono. ───────── */
+
+.places-tab {
+  position: absolute;
+  top: var(--filter-h);
+  left: 0; right: 0; bottom: var(--bottom-nav-h);
+  overflow-y: auto;
+  /* Always hold the scrollbar's gutter, so the column keeps one width
+     whether the list is long or short, and matches the top bar (which
+     reserves the same via --sbw). */
+  scrollbar-gutter: stable;
+  background: var(--paper);
+}
+/* The same 1180px column Explore uses. At 780 the catalogue was a narrow
+   strip down the middle of a 1920px screen with a third of the window empty
+   on either side, and the toolbar card above it was narrower than the header
+   it sits under. */
+.places-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 12px 24px calc(32px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── The toolbar: one card holding every control this tab has. ──
+   The categories, the search field, the sorts, the Filters door and the
+   chips used to sit loose on the page ground in five separate bands, which
+   read as five unrelated widgets that happened to share a background. This
+   is the same instrument Explore carries, in the same order, so a reader who
+   has used one has already used the other. */
+.places-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  /* No margin of its own: the wrap's own top padding is the whole distance
+     from the header, so the card starts the same 12px under the Passes row
+     as Explore's does instead of twice that. */
+  padding: 12px 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-1);
+}
+
+/* Six category tabs: icon above a tiny label, the active one on the warm
+   accent tile. General is the catalogue; the other five browse the wire.
+   A grid rather than a flex row, like Explore's kind rail: equal columns mean
+   the block ends flush with the search field under it. */
+.places-cats {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+  flex-basis: 100%;
+  min-width: 0;
+}
+.places-cat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 7px 2px 6px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 9px;
+  background: var(--paper);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.places-cat span {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Six categories, not five. At 390px the labels are 59px apart and
+   "Mountains" lost its last two letters to the ellipsis, so the rail tightens
+   on a narrow phone rather than scrolling: a brand new category nobody knows
+   about must not be the one that starts off screen. */
+@media (max-width: 430px) {
+  .places-cats { gap: 4px; }
+  .places-cat { padding: 7px 0 6px; font-size: 9.5px; }
+}
+/* A phone cannot hold six legible columns (at 390px that is a 58px card,
+   narrower than the word "Mountains"), so the rail drops to three and takes a
+   second row. Every row still spans the card exactly. The rest of the phone
+   toolbar rules live in the two width blocks further down this sheet, which
+   already own those widths and would otherwise override anything set here. */
+@media (max-width: 560px) {
+  .places-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.places-cat:hover { color: var(--ink); }
+.places-cat.on {
+  background: var(--accent-bg);
+  border-color: var(--accent-soft);
+  color: var(--ink);
+}
+.places-cat.on svg { color: var(--accent); }
+
+/* Size rail: which places are on screen, by how big they are.
+   The glyph sits in a real circle because the four sizes are a set you scan
+   rather than four labels you read, and a round token reads as "one of these"
+   faster than a row of words. The circle is a hairline ring on paper, not a
+   tinted tile: the accent arrives only when a size is switched on, so an
+   untouched rail stays quiet next to the prices, which are what this tab is
+   actually for. Multi-select, because "towns and villages" is a real way to
+   look for somewhere and forcing one choice would not allow it. */
+/* Wraps rather than scrolling: four sizes do not fit one 390px row once each
+   carries a count, and a size that has scrolled off the edge is a size nobody
+   discovers. Two tidy rows beat one row with a secret in it. */
+.places-classes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.places-class {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  padding: 5px 12px 5px 5px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: color .15s, border-color .15s, background .15s;
+}
+.places-class-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  transition: background .15s, color .15s;
+}
+.places-class-n {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.places-class:hover:not(:disabled) { color: var(--ink); border-color: var(--rule); }
+.places-class:hover:not(:disabled) .places-class-dot { background: var(--rule-soft); }
+.places-class.on {
+  border-color: var(--accent-soft);
+  color: var(--ink);
+}
+.places-class.on .places-class-dot { background: var(--accent-bg); color: var(--accent); }
+.places-class.on .places-class-n { color: var(--ink-soft); }
+.places-class:disabled { opacity: .4; }
+.places-class:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The same glyph on the card, so the size stays legible while scrolling.
+   Bottom-left, opposite the km badge, over the scrim where the type already
+   sits on dark. */
+.places-card-class {
+  position: absolute;
+  top: 10px; left: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(26, 26, 26, 0.55);
+  color: var(--on-fill);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .places-class, .places-class-dot { transition: none; }
+}
+
+/* Sort: one segmented control rather than a row of separate pills, because
+   the four are one choice and only one of them can be on. The arrow says
+   which way the active one runs. */
+.places-sorts {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+}
+.places-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  transition: color .15s, background .15s;
+}
+.places-sort:hover { color: var(--ink); }
+.places-sort.on {
+  background: var(--ink-fill);
+  color: var(--paper);
+}
+.places-sort.on .places-sort-dir { color: var(--paper); }
+.places-sort-dir { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+
+.places-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex-basis: 100%;
+  min-width: 0;
+}
+/* Search takes the whole row. This column is 780px wide, so the sorts and
+   the Filters group never fit beside it at any width: capping the field at
+   400px only left a hole to the right of it on desktop while the controls
+   wrapped underneath anyway. */
+.places-search {
+  position: relative;
+  flex: 1 1 100%;
+  max-width: none;
+  min-width: 180px;
+}
+.places-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  row-gap: 10px;
+  flex-wrap: wrap;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+/* Filters, the country, the origin and the stay tier as one group, so a wrap
+   breaks after the sorts rather than splitting this group's own members. */
+.places-chips {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+/* Filters is the one primary door in the row, the way to everything else
+   that can narrow the list, so it carries the accent fill. Everything beside
+   it stays a neutral pill. */
+.places-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--on-fill);
+  transition: background .15s, border-color .15s;
+}
+.places-filter-btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+.places-filter-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.places-filter-btn .filter-tray-badge { background: var(--paper); color: var(--accent); }
+
+/* What this tab narrows by, in the same card: a chip that changes WHICH rows
+   are listed is the same kind of control as the search field above it, and it
+   used to sit outside the card entirely. Stacked one labelled group per row
+   rather than wrapped into one flex pool: with seven-plus groups (Mountains
+   alone has eight) a wrapped pool reads as a single wall of identical pills,
+   because nothing on screen says where one group's chips end and the next
+   one's begin. The top divider that used to mark the seam is gone too - once
+   every group carries its own caption, a second, unrelated hairline directly
+   under Filters/All countries read as a stray mark rather than structure. */
+.places-facets {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-basis: 100%;
+  min-width: 0;
+  margin-top: 14px;
+}
+.places-facet-group { min-width: 0; }
+.places-facet-label {
+  margin: 0 0 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-mute);
+}
+.places-facets .places-classes { margin-top: 0; }
+.places-facets .trip-slider { flex: 1 1 100%; max-width: 420px; }
+.places-search-icon {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-mute);
+  pointer-events: none;
+}
+.places-search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 42px 0 34px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.places-search input::placeholder { color: var(--ink-mute); }
+/* "Near me", the field's own trailing action: the crosshair asks the browser
+   the question the input asks in words. */
+.places-locate {
+  position: absolute;
+  right: 6px; top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.places-locate:hover { background: var(--paper-dim); color: var(--accent); }
+.places-locate:disabled { cursor: default; }
+.places-locate-spin {
+  width: 14px; height: 14px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: extras-spin 0.9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .places-locate-spin { animation: none; border-top-color: var(--rule); }
+}
+.places-locate-err {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.places-country {
+  height: 38px;
+  max-width: 190px;
+  padding: 0 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.places-country:hover { border-color: var(--ink-mute); color: var(--ink); }
+/* A chip in the sheet carries the same count its twin in the toolbar does,
+   so the two rows say the same thing about the same filter. */
+.fchip-n {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  opacity: .7;
+}
+.places-country:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The country filter, as a button + anchored panel (CountryPicker) rather
+   than a native <select>: a native select hands its open list to the OS to
+   place, which is why it used to land flush against the viewport edge
+   instead of under the pill. .country-picker is just the positioning root;
+   .places-country still carries the pill's own look so every existing size
+   rule (side panel, mobile stack, toolbar) keeps applying unchanged. */
+.country-picker { position: relative; display: inline-flex; min-width: 0; }
+.country-picker .places-country {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  cursor: pointer;
+}
+.country-picker .places-country.on { border-color: var(--accent-soft); color: var(--ink); }
+.country-picker-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.country-picker .origin-btn-caret { font-size: 9px; }
+/* Left-anchored, unlike origin's right-anchored pop: the country pill sits
+   left of the toolbar, not at its right edge. Desktop/tablet only - the
+   phone breakpoint below pins .origin-pop (which this also is) to the
+   viewport instead, and must win over this unscoped rule. */
+@media (min-width: 769px) {
+  .country-picker-pop { left: 0; right: auto; width: 280px; }
+}
+/* The departure the prices were computed from. The shared OriginPicker wears
+   its map pill by default, so it takes the row's 38px shell here: Filters,
+   the country, this and Lifestyle are one bar and used to stand at three
+   different heights. */
+.places-controls .origin-btn {
+  height: 38px;
+  max-width: none;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.places-controls .origin-btn:hover { background: var(--bg-card); border-color: var(--accent-soft); }
+/* The narrow-screen rule that drops the caption is for the header pill; here
+   the caption is what says these prices depend on the airport. */
+.places-controls .origin-btn-from { display: block; }
+.places-controls .origin-btn-label b { max-width: none; }
+
+/* The lifestyle door lives in .lifestyle-btn (one rule set for every tab);
+   this only gives it the 38px shell the rest of this bar uses. */
+.places-controls .lifestyle-btn { height: 38px; border-radius: 10px; }
+
+/* Near-search suggestions, anchored under the input. */
+.places-sugg {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  z-index: 20;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+.places-sugg-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  text-align: left;
+}
+.places-sugg-item + .places-sugg-item { border-top: 1px solid var(--rule-soft); }
+.places-sugg-item:hover { background: var(--paper-dim); }
+.places-sugg-city {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.places-sugg-city svg { color: var(--ink-mute); flex-shrink: 0; }
+.places-sugg-country { font-size: 11.5px; color: var(--ink-mute); }
+/* A geocoded hit is an address, not a two-word city: it stacks, so the street
+   line stays readable and the rest of the address can be clipped instead of
+   squeezing the name. */
+.places-sugg-item.is-geo {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.places-sugg-item.is-geo .places-sugg-city,
+.places-sugg-item.is-geo .places-sugg-country {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.places-sugg-any .places-sugg-city { color: var(--accent); }
+.places-sugg-any:disabled { cursor: default; }
+.places-sugg-any:disabled .places-sugg-city { color: var(--ink-mute); }
+/* Group headings, only on screen once there are two groups to tell apart. */
+.places-sugg-head {
+  margin: 0;
+  padding: 8px 14px 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  background: var(--paper-dim);
+}
+.places-sugg-head + .places-sugg-item { border-top: 1px solid var(--rule-soft); }
+.places-sugg-note {
+  margin: 0;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.places-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+@media (min-width: 640px) {
+  .places-list { grid-template-columns: 1fr 1fr; }
+}
+/* Three across once the column is wide enough to keep a card above ~370px,
+   which is where the 2.6:1 photo strip still reads as a photograph. */
+@media (min-width: 1040px) {
+  .places-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.places-list > .places-empty,
+.places-list > .places-credit,
+.places-list > .places-sentinel { grid-column: 1 / -1; }
+
+/* ── Photo cards: every list entry is an image with its facts laid over a
+      scrim, the mono numbers stay mono. One shared overlay grammar for
+      destination cards, trip cards and country flag cards. ── */
+
+.places-dcard, .places-ccard, .places-tcard {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  text-align: left;
+}
+
+/* The card heights, as ratios rather than pixels so a phone card and a two
+   column desktop card crop identically.
+
+   These are the shipped heights (92px for a country, 150px for a place, 158
+   for a trail, at ~360px wide) expressed as the boxes they actually were. A
+   3:2 frame showed 89 per cent of each photograph against 65 here, but it
+   also made the page two and a half screens longer, and a list you scroll
+   past is worth less than a crop. What pays for the crop instead is
+   --card-focus below. */
+.places-dcard { aspect-ratio: 12 / 5; }
+/* The country strip was 4:1, and at that shape the average catalogue
+   photograph keeps 37 per cent of its frame: measured over the 3,021 heroes
+   whose size the wire now carries, only 136 are 2:1 or wider, so no choice of
+   picture could rescue it and the index read as a row of doorways and roofs.
+   2.6:1 keeps 58 per cent of a 3:2 photograph, and is still a shade wider
+   than the destination card under it. */
+.places-ccard { aspect-ratio: 2.6 / 1; }
+.places-tcard { aspect-ratio: 9 / 4; }
+.places-dcard:focus-visible, .places-ccard:focus-visible, .places-tcard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Where a wide card crops its photograph.
+ *
+ * A 12:5 box over a 3:2 photograph keeps a horizontal band and throws away
+ * the rest, and centred, that band is the middle of the frame: roofs, the
+ * near bank, the car park. What people recognise a place by sits ABOVE the
+ * middle, because that is where a photographer puts a skyline, a ridge or a
+ * spire. Measured against the shipped centre crop on the country index, 38
+ * per cent is where the church, the mountains and the towers come back.
+ *
+ * Beaches, lakes and mountains keep their own value: on water the subject is
+ * the water, and pulling the crop up on a beach card buys sky. */
+.places-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% var(--card-focus, 38%);
+  display: block;
+  transition: transform .3s ease;
+}
+.places-bcard .places-card-img { --card-focus: 48%; }
+.places-dcard:hover .places-card-img,
+.places-ccard:hover .places-card-img,
+.places-tcard:hover .places-card-img { transform: scale(1.03); }
+.places-card-noimg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+
+/* The walk drawn as itself, for the third of the wire that ships without a
+   photograph and has no town close enough to borrow one from. A drawing, not
+   a fake photograph: paper ground, one accent line, no chrome. */
+.places-card-shape {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 30% 20%, var(--paper) 0%, var(--paper-dim) 70%);
+}
+.places-card-shape svg {
+  width: 100%;
+  height: 100%;
+}
+.places-card-shape path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  opacity: .85;
+}
+
+/* When the picture is the nearest town's rather than the walk's own, the
+   card says so. Unlabelled it would be a claim about the path. */
+.places-card-photoof {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(26, 26, 26, 0.55);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--on-fill);
+  white-space: nowrap;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The veil the overlay text sits on. Both stops moved with the 3:2 frame: the
+   old ramp was a straight fade over the top 62 per cent of a 150px strip, and
+   on a 240px card that same fade greyed out half the photograph. This one is
+   DARKER where the text actually is, the bottom quarter, and clears by the
+   halfway line, so the card gains contrast under the name and loses the haze
+   over the sky. */
+.places-card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+    rgba(26, 26, 26, 0.82) 0%,
+    rgba(26, 26, 26, 0.62) 18%,
+    rgba(26, 26, 26, 0.20) 34%,
+    rgba(26, 26, 26, 0) 48%);
+  pointer-events: none;
+}
+/* A country card carries one name and one count, so its veil can stop sooner
+   still. */
+.places-ccard .places-card-scrim {
+  background: linear-gradient(to top,
+    rgba(26, 26, 26, 0.80) 0%,
+    rgba(26, 26, 26, 0.52) 15%,
+    rgba(26, 26, 26, 0.12) 30%,
+    rgba(26, 26, 26, 0) 42%);
+}
+
+/* The small flag sits beside the country name on the cover photo. */
+.places-card-flag {
+  display: inline-block;
+  vertical-align: -1px;
+  margin-right: 8px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.places-card-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 10px 12px;
+  /* The overlay is absolutely positioned, so nothing was ever stopping it
+     growing past the top of its own card: a trail card is 109px at phone
+     width and the overlay reached 177px, which is how the name ended up
+     sitting above the picture it belongs to. Bounding it to the card makes
+     the card the authority on its own height, and what will not fit is
+     clipped at the top, away from the name on the bottom row. */
+  max-height: 100%;
+  overflow: hidden;
+}
+.places-card-main { flex: 1; min-width: 0; }
+.places-card-name {
+  display: block;
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--on-fill);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(26, 26, 26, 0.4);
+}
+.places-card-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.88);
+}
+/* One row of measured figures, never two. "16.4 km 7.8 h +985 m" wrapping to
+   a second line was the other half of the overflow, and a ragged second line
+   of numbers reads as a different card. Mono and tabular because these are
+   measurements, per the mono rule. */
+.places-card-facts {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px 10px;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.92);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+.places-card-facts > * { flex: none; }
+.places-card-kind {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--on-fill);
+  white-space: nowrap;
+}
+.places-card-kind.city { background: rgba(200, 80, 30, 0.55); }
+.places-card-right {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+.places-card-price {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-fill);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 2px rgba(26, 26, 26, 0.4);
+}
+.places-card-price small { font-size: 10px; font-weight: 400; opacity: 0.8; }
+.places-card-price .prov-from { margin-right: 4px; color: rgba(255, 255, 255, 0.8); }
+.places-card-diff {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+.places-card-chev { color: rgba(255, 255, 255, 0.8); flex-shrink: 0; }
+.places-card-km {
+  position: absolute;
+  top: 10px; right: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(26, 26, 26, 0.55);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--on-fill);
+  font-variant-numeric: tabular-nums;
+}
+
+.places-empty {
+  padding: 20px 2px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.places-empty p { margin: 0; }
+/* The way out of an empty result: search the map for what was typed. */
+.places-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 9px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+.places-empty-cta:hover { border-color: var(--accent-soft); }
+.places-empty-cta:disabled { color: var(--ink-mute); cursor: default; }
+
+/* A layer that failed to LOAD, which is not the same as a layer with nothing
+   published. The empty state makes a claim about the catalogue; this one only
+   reports what happened to the request, and carries the way back. */
+.places-loaderr { display: block; }
+.places-loaderr-msg { margin: 0; }
+
+.places-nearhead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 12px 2px 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.places-nearname { flex-shrink: 0; }
+/* The rest of the address: which Gent, which Springfield. Clipped rather than
+   wrapped, so the row stays one line on a phone. */
+.places-nearsub {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--ink-mute);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.places-nearclear {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 2px 4px;
+}
+.places-nearclear:hover { text-decoration: underline; }
+
+.places-credit { margin: 14px 0 0; font-size: 11px; color: var(--ink-mute); }
+
+@media (max-width: 768px) {
+  .places-wrap { padding: 8px 16px calc(32px + env(safe-area-inset-bottom, 0px)); }
+  .places-toolbar { padding: 10px; gap: 8px; }
+  .places-search { flex: 1 1 100%; max-width: none; }
+  .places-toolbar-right { margin-left: 0; width: 100%; }
+  .places-sorts { width: 100%; }
+  .places-sort { flex: 1; justify-content: center; padding: 7px 6px; }
+  .places-country, .country-picker { flex: 1 1 130px; max-width: none; }
+}
+@media (max-width: 480px) {
+  /* Stacked: every control takes the full width, the origin pill included, so
+     the column reads as one set rather than three widths.
+
+     flex: none on the field is not a tidy-up. In a COLUMN flex container the
+     basis is a height, so the search wrapper inherited its 240px basis as a
+     240px tall box with the input floating in the middle of it. */
+  .places-controls { flex-direction: column; align-items: stretch; }
+  .places-search { flex: none; width: 100%; min-width: 0; }
+  .places-toolbar-right { flex-direction: column; align-items: stretch; }
+  .places-chips { width: 100%; }
+  .places-filter-btn { flex: 1 1 120px; justify-content: center; }
+  /* min-width: 0 is what lets the two share a row. A <select>'s automatic
+     minimum size is the width of its longest option ("Bosnia and
+     Herzegovina"), so below about 390px it stopped fitting beside Filters and
+     took a band of its own. */
+  .places-country, .country-picker { max-width: none; flex: 1 1 130px; min-width: 0; }
+  /* The departure and the stay tier share one row rather than taking a
+     full-width band each: they are both statements about what the prices
+     below assume, and stacking them cost the card 46px on the width where
+     it matters most. Both ellipse rather than push the row wider. */
+  .places-controls .origin-picker { flex: 1 1 140px; min-width: 0; }
+  .places-controls .origin-btn { width: 100%; }
+  .places-controls .origin-btn-label { flex: 1; min-width: 0; }
+  .places-controls .origin-btn-label b { max-width: 100%; }
+  .places-controls .lifestyle-btn { flex: 1 1 140px; min-width: 0; max-width: none; overflow: hidden; }
+  /* The bed already says which kind of fact this is, so on a phone the word
+     "Lifestyle" gives up its room to the answer: "Entire place" reads,
+     "Lifestyle Entire ..." does not. The habits go with it. */
+  .places-controls .lifestyle-btn .lifestyle-btn-label,
+  .places-controls .lifestyle-btn .lifestyle-btn-vibe { display: none; }
+  .trip-slider { max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .places-cat, .places-sort, .places-card-img { transition: none; }
+  .places-dcard:hover .places-card-img,
+  .places-ccard:hover .places-card-img,
+  .places-tcard:hover .places-card-img { transform: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Beaches: the published beach layer (pipeline/beaches) on the Destinations
+   tab, and the page one card opens.
+
+   The card is a photograph with three things over it, and they are chosen
+   because a beach is picked differently from a city: where it is (the pin,
+   which is the first question a beach photograph raises), what makes it worth
+   the drive (up to three reason chips from the index), and the score. No
+   price, no stay tier, no size glyph. None of those decide a beach.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* The line above the list: how many beaches, in how many countries. A number
+   rather than an adjective, and the only place the tab explains itself. */
+.places-beachhead {
+  grid-column: 1 / -1;
+  margin: 2px 2px 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.places-bcard {
+  position: relative;
+  display: block;
+  width: 100%;
+  /* The photo-card frame, see .places-dcard. */
+  aspect-ratio: 25 / 12;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  text-align: left;
+}
+.places-bcard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.places-bcard:hover .places-card-img { transform: scale(1.03); }
+
+.places-bcard-where {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.places-bcard-where svg { flex: none; opacity: .9; }
+
+.places-bcard-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+.places-bcard-tags span {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--on-fill);
+  white-space: nowrap;
+}
+
+/* ── The beach page ─────────────────────────────────────────────────────
+   Shares the trail page's shell (.tpage: fixed overlay, bar, scroller) and
+   nothing else. No map: the page is opened from a list and read on a phone,
+   and a map library to draw one pin would be the heaviest thing on it. */
+
+.bpage-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 14px 16px 48px;
+}
+
+/* Where it is, first thing on the page. A link, because the only thing anyone
+   wants to do with a coordinate is open it somewhere that can drive them
+   there. */
+.bpage-where {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.bpage-where:hover { border-color: var(--accent-soft); color: var(--ink); }
+.bpage-where svg:first-child { flex: none; color: var(--accent); }
+.bpage-where-text {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bpage-where-coord {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 480px) {
+  .bpage-where-coord { display: none; }
+}
+
+.bpage-head { margin: 16px 0 12px; }
+.bpage-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--display);
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.bpage-flag { flex: none; border-radius: 2px; }
+.bpage-local {
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+.bpage-scorerow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 10px;
+}
+.bpage-band { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+
+/* ── Photographs. One large, the rest as a strip under it. ── */
+.bpage-gallery { margin: 0 0 18px; }
+.bpage-shot {
+  display: block;
+  width: 100%;
+  /* The img's width and height attributes map to CSS width and height, and
+     without this the height attribute wins over aspect-ratio: the hero drew
+     10 px tall from 2026-09-14 (width 16, height 10) until T052. With it the
+     attributes only tell the browser the shape to reserve. */
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.bpage-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 6px;
+  margin-top: 6px;
+}
+.bpage-thumb {
+  position: relative;
+  height: 62px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  opacity: .72;
+  transition: opacity .15s ease;
+}
+.bpage-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bpage-thumb.on { opacity: 1; box-shadow: inset 0 0 0 2px var(--accent); }
+.bpage-thumb:hover { opacity: 1; }
+.bpage-thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.bpage-credit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.bpage-credit svg { flex: none; }
+.bpage-credit a { color: var(--ink-mute); text-decoration: none; }
+.bpage-credit a:hover { color: var(--ink-soft); text-decoration: underline; }
+
+/* ── The reasons, as chips and then as prose ── */
+.bpage-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.bpage-tags li {
+  padding: 4px 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 7px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.bpage-wrap section { margin-bottom: 24px; }
+.bpage-wrap section h2 {
+  margin-bottom: 8px;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.bpage-lede {
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bpage-prose {
+  margin-top: 8px;
+  font-size: 14.5px;
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+.bpage-for { margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
+.bpage-for b { color: var(--ink); }
+
+/* ── What is there. A run of facts is a list with hairlines, not cards. ── */
+.bpage-facts dl { margin: 0; }
+.bpage-fact {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.bpage-fact:last-child { border-bottom: 1px solid var(--rule-soft); }
+.bpage-fact dt {
+  flex: none;
+  width: 132px;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+.bpage-fact dd {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.bpage-fact dd.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.bpage-fact.bpage-fact-empty dd {
+  color: var(--ink-mute);
+}
+.bpage-fact dd small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+/* ── The month strip: twelve cells, January to December. Good months are a
+      tinted fill, avoid months a hairline strike, the rest plain. The tint is
+      --green mixed into the card white, because DESIGN.md has no green ground
+      and the spec's --signal-wash belongs to the retired blue palette. ── */
+.mstrip-row { display: flex; align-items: center; gap: 8px; }
+.mstrip-cells {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  flex: 1;
+  max-width: 400px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mstrip-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+.mstrip-cell.is-good {
+  background: color-mix(in srgb, var(--green) 16%, var(--bg-card));
+  color: var(--green);
+  font-weight: 600;
+}
+.mstrip-cell.is-avoid { color: var(--ink-mute); }
+.mstrip-cell.is-avoid span {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.mstrip-info {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.mstrip-info:hover { color: var(--ink); }
+.mstrip-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mstrip-panel {
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.mstrip-panel[hidden] { display: none; }
+.mstrip-panel p { margin: 0 0 6px; }
+.mstrip-panel p:last-child { margin-bottom: 0; }
+@media (max-width: 420px) {
+  .mstrip-cell { height: 26px; font-size: 11px; }
+}
+
+/* ── Difficulty as five segments, and the gateway as airport rows. Carta-design
+      has no rule for a meter; these are small, flat and use the existing ink
+      and rule tokens, with no colour coding of the level. ── */
+.fmeter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+.fmeter-segs { display: inline-flex; gap: 3px; }
+.fmeter-seg {
+  width: 18px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--rule-soft);
+}
+.fmeter-seg.is-on { background: var(--ink-fill); }
+.fmeter-text { font-size: 13px; color: var(--ink); }
+.fmeter-panel { flex-basis: 100%; }
+.fgate { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; }
+.fgate-rows { flex: 1; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.fgate-row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 8px;
+  padding: 2px 0;
+  font-size: 13.5px;
+}
+.fgate-code { font-size: 12.5px; color: var(--ink); }
+.fgate-name { color: var(--ink); }
+.fgate-detail {
+  grid-column: 2;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.fgate .mstrip-panel { flex-basis: 100%; }
+
+/* ── The score, shown as its parts. The number is only worth as much as the
+      reader's ability to check it. ── */
+.bpage-note {
+  margin-bottom: 12px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-mute);
+}
+.bpage-bars { margin: 0; padding: 0; list-style: none; }
+.bpage-bars li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+}
+.bpage-bar-label {
+  flex: none;
+  width: 132px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.bpage-bar-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+.bpage-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--rate);
+}
+.bpage-bar-n {
+  flex: none;
+  width: 26px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  text-align: right;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Where to sleep near it: the one link back into the priced catalogue. */
+.bpage-base {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+}
+.bpage-base:hover { border-color: var(--accent-soft); }
+.bpage-base small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+.bpage-base svg { flex: none; color: var(--ink-mute); }
+
+.bpage-sources ul { margin: 0; padding: 0; list-style: none; }
+.bpage-sources li { padding: 5px 0; }
+.bpage-sources a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.bpage-sources a:hover { text-decoration: underline; }
+.bpage-attrib {
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ink-mute);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .places-bcard .places-card-img,
+  .bpage-thumb { transition: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   The lake layer. Reuses the beach card and the beach page wholesale (the two
+   are the same shape: a photograph, a place, a score, a reason list) and adds
+   only the parts a lake has and a beach does not.
+
+   The swimming verdict is the reason this block exists at all. On a beach the
+   answer is always yes, so nothing has to say it. On a lake it is yes, only in
+   part, no, or nobody recorded a rule, and the difference between those four
+   is the single most useful thing on the page: Plitvice, Morskie Oko and half
+   the drinking water reservoirs of Europe are on exactly the lists that call
+   them beautiful. So the verdict rides on the card AND above the photograph
+   on the page.
+
+   Colour follows the pattern .water-badge already set: one --ink custom
+   property per tone, a 42 per cent border and a 9 per cent wash mixed from
+   it. The four hues are the ones that file already uses, so this adds no new
+   colour to the product.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.places-lcard-swim {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--on-fill);
+  /* Opaque, not a blur. backdrop-filter would make every card in a long
+     scrolling list a containing block for its own descendants and cost a
+     compositor layer each, for a chip that is already legible on a scrim. */
+  background: var(--sw-ink);
+}
+.places-lcard-swim.swim-stop { --sw-ink: var(--warn-vivid); }
+.places-lcard-swim.swim-warn { --sw-ink: var(--amber); }
+.places-lcard-swim.swim-unknown { --sw-ink: var(--slate-ink); }
+
+/* The hidden gem chip on a card sits with the other tag chips, so it takes
+   their shape and only changes colour. It is a claim about the ranking, not
+   about the lake, which is why it never looks like the physical tags. */
+/* The listed tier, rendered as a LIST rather than as cards, and that is the
+   design decision rather than an economy: a listed row has no score, no
+   ranking and often no photograph, so a photo card would promise a judgement
+   that was never made. Hairlines, per the design system's "lists get
+   hairlines, objects get borders". */
+.places-alsohere {
+  grid-column: 1 / -1;
+  margin-top: 18px;
+}
+.places-listedrows {
+  margin: 6px 2px 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.places-listedrow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13.5px;
+}
+.places-listedrow-name { font-weight: 600; }
+.places-listedrow-ele {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.places-listedrow-chip {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+/* The difficulty chip on a mountain card. Same chip as the rest of the row
+   rather than a new colour: difficulty is a FACET here, never a judgement,
+   and a red "technical climb" badge would rank it by making it look
+   dangerous. peak_index_v2 keeps difficulty out of the score for exactly
+   that reason, and the card should not put it back in through the palette. */
+.places-mcard-diff {
+  font-variant-numeric: tabular-nums;
+}
+/* The floor line, under a country header. Its own line rather than a
+   parenthesis, because it explains a short list and a reader who wants the
+   explanation is looking under the count. */
+.places-beachhead-note {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-soft);
+}
+/* Every way in, under the way up. A quiet row: the lift already has the
+   loud slot above it, and these are the answers for somebody without a car. */
+.mpage-way-ways {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+.mpage-way-ways span {
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.places-bcard-tags .tag-gem {
+  background: color-mix(in srgb, var(--rate) 78%, transparent);
+}
+
+/* ── The lake page ──────────────────────────────────────────────────────── */
+
+/* The verdict, above the photograph, full width, never a small chip. */
+.lpage-swim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0 0 16px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--sw-ink) 42%, transparent);
+  background: color-mix(in srgb, var(--sw-ink) 9%, transparent);
+}
+.lpage-swim-ok { --sw-ink: var(--good-vivid); }
+.lpage-swim-warn { --sw-ink: var(--amber); }
+.lpage-swim-stop { --sw-ink: var(--warn-vivid); }
+.lpage-swim-unknown { --sw-ink: var(--slate-ink); }
+.lpage-swim-word {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sw-ink);
+}
+.lpage-swim-src { font-size: 12.5px; color: var(--ink-soft); }
+.lpage-swim-season {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* The credit line is one flex item so the comma between the author and the
+   licence keeps its own spacing instead of inheriting the row's gap. */
+.lpage-credit-line {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lpage-gem {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--rate-bg);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--rate);
+}
+
+/* The three sub scores. Side by side and equal, because choosing between a
+   cold beautiful lake and a warm ordinary one is the actual decision, and one
+   blended number hides it. Mono on the figures: they are measured. */
+.lpage-subs {
+  /* Flex, not a three column grid. `activity` is withheld until the shore has
+     been swept, so the row is sometimes two tiles, and a fixed three column
+     grid left an empty grey cell that read as a rendering fault. */
+  display: flex;
+  gap: 1px;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--rule-soft);
+}
+.lpage-subs li {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 11px 6px 10px;
+  background: var(--paper);
+}
+.lpage-sub-n {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.lpage-sub-label {
+  font-size: 11px;
+  color: var(--ink-mute);
+  text-align: center;
+}
+
+/* Hazards, in their own block and never folded into the paragraph: a cold
+   shock warning that got trimmed off the end of a sentence is a warning that
+   was not given. */
+.lpage-hazards {
+  padding: 14px 15px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--amber) 38%, transparent);
+  background: color-mix(in srgb, var(--amber) 8%, transparent);
+}
+.lpage-hazards h2 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  color: var(--amber-ink-alt);
+}
+.lpage-hazards h2 svg { flex: none; }
+.lpage-hazards ul { margin: 0; padding: 0; list-style: none; }
+.lpage-hazards li {
+  padding: 6px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.lpage-hazards li + li { border-top: 1px solid color-mix(in srgb, var(--amber) 22%, transparent); }
+
+/* The month strip. Twelve bars, the warm ones filled. An estimate, and the
+   note above it says so. */
+.lpage-months {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.lpage-months li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.lpage-month-bar {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 54px;
+  border-radius: 4px;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+.lpage-month-bar > span {
+  width: 100%;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ink-mute) 45%, transparent);
+}
+.lpage-months li.warm .lpage-month-bar > span {
+  background: color-mix(in srgb, var(--water-clear) 78%, transparent);
+}
+.lpage-month-c {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.lpage-months li.warm .lpage-month-c { color: var(--ink); font-weight: 500; }
+.lpage-month-m {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* Walks from here: our own published trails wire, joined by bounding box. A
+   list of related facts, so hairlines rather than cards. */
+.lpage-walks ul { margin: 0; padding: 0; list-style: none; }
+.lpage-walks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.lpage-walks li:last-child { border-bottom: 1px solid var(--rule-soft); }
+.lpage-walks li svg { flex: none; color: var(--ink-mute); }
+.lpage-walks li span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lpage-walks li small {
+  flex: none;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+@media (max-width: 420px) {
+  /* Twelve bars will not fit a narrow phone with a legible number under each,
+     so the figure goes and the bars stay: the shape of the season is the
+     point, and the exact degree is in the sentence above. */
+  .lpage-month-c { display: none; }
+  .lpage-month-bar { height: 44px; }
+}
+
+/* ── The mountain page ──────────────────────────────────────────────────── */
+
+/* The way up, above the photograph, full width, never a small chip. Same
+   shape as the lake page's swimming verdict and for the same reason: it is
+   the field the reader came for, so it cannot be something you scroll past.
+   Three tones, and none of them is a warning colour, because "you have to
+   walk" is not a hazard. */
+.mpage-way {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0 0 16px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--way-ink) 42%, transparent);
+  background: color-mix(in srgb, var(--way-ink) 9%, transparent);
+}
+.mpage-way-ride { --way-ink: var(--good-vivid); }
+.mpage-way-near { --way-ink: var(--slate-ink); }
+.mpage-way-foot { --way-ink: var(--slate-ink); }
+.mpage-way-word {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--way-ink);
+}
+/* The lift's own name is a proper noun off the map, so it reads as a name
+   rather than as part of the sentence. */
+.mpage-way-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.mpage-way-src { font-size: 12.5px; color: var(--ink-soft); }
+.mpage-way-note {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* Height beside the score. Mono, because it is measured. */
+.mpage-height {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* The line under the hazards that sends the reader to a local forecast. Not
+   small print: it is the most important sentence in the block. */
+.mpage-check {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--amber-ink-alt);
+}
+
+/* The card's height and way up, on one line under the name. */
+.places-mcard-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.places-mcard-ele {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+/* The way-up chip on a mountain card. Exactly the corner badge the lake card
+   uses for its swimming verdict, in the one tone that layer never needed: the
+   lake chip only ever appears to say no, and this one only ever appears to
+   say yes, you can ride to the top. */
+.places-mcard-way { --sw-ink: var(--good-vivid); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   The trail page: a published hike or city day as a page of its own, opened
+   from a card in the Destinations tab or from a shared #trail= link. Replaced
+   the old .tsheet dialog, which had nowhere to put a description, an export
+   row or a live follow HUD.
+
+   Two states in one component: reading (map at the top, everything under it)
+   and following (the map takes the whole page under the bar, HUD over it).
+   ══════════════════════════════════════════════════════════════════════════ */
+.tpage {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+
+/* Back, the name, share. Sticky by being outside the scroller. */
+.tpage-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper);
+}
+.tpage-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 10px 0 7px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.tpage-back:hover { background: var(--paper-dim); }
+/* The bar carries the name only once the heading has scrolled out of the
+   page, so the two never sit on screen saying the same thing. */
+.tpage-bar-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+.tpage-bar-title.on { opacity: 1; }
+.tpage-bar-act {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--ink-soft);
+}
+.tpage-bar-act:hover { background: var(--paper-dim); color: var(--ink); }
+
+.tpage-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ── The route map ── */
+.tpage-hero {
+  position: relative;
+  height: 44vh;
+  min-height: 240px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper-dim);
+}
+@media (min-width: 900px) {
+  .tpage-hero { height: 400px; }
+}
+/* !important is load order, not taste: MapLibre puts .maplibregl-map on the
+   CONTAINER (this element), and maplibre-gl.css arrives with the lazy chunk
+   AFTER styles.css. Same specificity, later sheet wins, so its
+   "position: relative; overflow: hidden" collapses the map to zero height and
+   the route disappears behind its own clip. */
+.tpage-map {
+  position: absolute !important;
+  inset: 0 !important;
+}
+.tpage-start-pin {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2.5px solid var(--on-fill);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.35);
+}
+/* The walker's own position. MapLibre rewrites a marker element's inline
+   transform every frame, so anything animated lives on the inner dot. */
+.tpage-me { display: block; width: 26px; height: 26px; }
+.tpage-me-dot {
+  display: block;
+  width: 15px;
+  height: 15px;
+  margin: 5.5px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 3px solid var(--on-fill);
+  box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.35);
+  animation: tpage-me-pulse 2s ease-out infinite;
+}
+@keyframes tpage-me-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.30); }
+  70% { box-shadow: 0 0 0 12px rgba(15, 23, 42, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0); }
+}
+
+/* ── Following: the map takes the page, the HUD reports on it ── */
+.tpage.following .tpage-scroll { overflow: hidden; }
+.tpage.following .tpage-hero {
+  position: absolute;
+  inset: 52px 0 0;
+  height: auto;
+  min-height: 0;
+  z-index: 5;
+  border-bottom: none;
+}
+/* The HUD card would sit on top of the basemap credit, which has to stay
+   readable, so the map's own control row moves above it while following.
+   !important to beat the app-wide 8px control margin, which is itself
+   !important (see .maplibregl-ctrl-bottom-left above). */
+.tpage.following .maplibregl-ctrl-bottom-right,
+.tpage.following .maplibregl-ctrl-bottom-left {
+  margin-bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+}
+.tpage-hud { position: absolute; inset: 0; pointer-events: none; }
+.tpage-hud-close {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.tpage-recentre {
+  position: absolute;
+  left: 50%;
+  bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  box-shadow: var(--shadow-1);
+}
+.tpage-hud-card {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  pointer-events: auto;
+  padding: 12px 14px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2);
+}
+@media (min-width: 900px) {
+  .tpage-hud-card { left: auto; right: 16px; width: 340px; }
+  .tpage-recentre { left: auto; right: 186px; transform: none; }
+}
+.tpage-hud-err, .tpage-hud-wait {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tpage-hud-off {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--danger);
+}
+.tpage-hud-top { display: flex; align-items: baseline; gap: 7px; }
+.tpage-hud-done {
+  font-family: var(--mono);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tpage-hud-of {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.tpage-hud-track {
+  height: 6px;
+  margin: 9px 0 8px;
+  border-radius: 3px;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+.tpage-hud-fill { display: block; height: 100%; background: var(--accent); }
+.tpage-hud-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.tpage-hud-acc { color: var(--ink-mute); }
+
+/* ── The page body ── */
+.tpage-col {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px 18px calc(44px + env(safe-area-inset-bottom, 0px));
+}
+.tpage-head .places-card-kind {
+  margin-top: 0;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.tpage-head .places-card-kind.city { background: var(--accent-bg); color: var(--accent); }
+.tpage-title {
+  margin: 8px 0 0;
+  font-family: var(--display);
+  font-size: clamp(21px, 4.4vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.18;
+  color: var(--ink);
+}
+.tpage-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+
+/* The measured facts as one bordered instrument. A 1px grid gap over a hairline
+   ground draws the dividers, so cells stay even however many facts a route has
+   and no nth-child arithmetic decides where a border goes. */
+/* A route with seven facts, which is the ordinary case on a hike (distance,
+   time, ascent, descent, high point, difficulty, shape), ended on a row of
+   one with two empty cells beside it. Those dead cells read as missing data
+   on a page whose whole job is measured fact, and auto-fit does not fix it:
+   auto-fit collapses EMPTY TRACKS, and a short last row has no empty track,
+   only unfilled cells in a full one.
+   Flex does what is actually wanted. Every cell has the same basis and grows
+   to share the slack, so a last row of one or two stretches across the width
+   instead of leaving holes, at every count and every viewport. The 1px gap
+   over a hairline ground still draws the dividers, so no nth-child
+   arithmetic decides where a border goes. */
+.tpage-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  margin-top: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--rule-soft);
+  overflow: hidden;
+}
+.tpage-facts > * {
+  flex: 1 1 92px;
+  min-width: 0;
+}
+.tpage-fact {
+  padding: 9px 12px 10px;
+  background: var(--bg-card);
+}
+.tpage-fact-val {
+  display: block;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Difficulty is a word, not a measurement, so it leaves the mono column. */
+.tpage-fact-val.is-word { font-family: var(--ui); font-size: 14px; font-weight: 600; }
+.tpage-fact-label {
+  display: block;
+  margin-top: 2px;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+
+/* The one primary action: leaving with the route. Following it in the browser
+   sits in the secondary row below, because a tab cannot promise more. */
+.tpage-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  margin-top: 14px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 15px;
+  font-weight: 600;
+}
+.tpage-primary:hover { filter: brightness(0.95); }
+@media (min-width: 700px) {
+  /* A 720px wide button reads as a banner, not an action. */
+  .tpage-primary { max-width: 340px; }
+}
+.tpage-primary + .tpage-acts { margin-top: 10px; }
+
+.tpage-sec { margin-top: 24px; }
+.tpage-sec-title {
+  margin: 0 0 9px;
+  font-family: var(--display);
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* What to expect: a run of related facts, so hairlines rather than boxes. */
+.tpage-story { list-style: none; margin: 0; padding: 0; }
+.tpage-story li {
+  display: flex;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tpage-story li:first-child { border-top: none; padding-top: 2px; }
+.tpage-story-icon { flex: none; margin-top: 2px; color: var(--ink-soft); }
+
+.tpage-prose p {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.tpage-elev { margin-top: 2px; }
+.tpage-elev-svg { display: block; width: 100%; height: 96px; }
+.tpage-elev-area { fill: var(--accent-bg); stroke: none; }
+.tpage-elev-line { fill: none; stroke: var(--accent); stroke-width: 1.6; }
+.tpage-elev-here { stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 3; }
+.tpage-elev-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+.tpage-stops { margin: 0; padding: 0 0 0 22px; }
+.tpage-stops li { padding: 7px 0; border-top: 1px solid var(--rule-soft); }
+.tpage-stops li:first-child { border-top: none; }
+.tpage-stops li::marker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+.tpage-stop-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.tpage-stop-facts {
+  display: flex;
+  gap: 12px;
+  margin-top: 1px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+.tpage-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.tpage-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+.tpage-act:hover { background: var(--paper-dim); }
+.tpage-act-wide { width: 100%; justify-content: center; margin-top: 10px; }
+.tpage-note {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+.tpage-note + .tpage-note { margin-top: 6px; }
+
+.tpage-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+.tpage-start-coords {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tpage-start-near { font-size: 12.5px; color: var(--ink-soft); }
+
+.tpage-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+.tpage-cta-right { display: flex; align-items: center; gap: 10px; }
+.tpage-cta-price {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+.tpage-credit {
+  margin: 20px 0 0;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+
+/* ── Why this walk ─────────────────────────────────────────────────────
+   Reuses .tpage-story wholesale: the reasons and the "what to expect"
+   lines are the same kind of thing (one measured fact per row) and giving
+   them two visual treatments would suggest one is worth more. What the
+   section adds is a tint, because this block is the argument for the walk
+   and the reader should find it without looking. */
+.tpage-why {
+  padding: 12px 14px 4px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.tpage-why .tpage-sec-title { margin-bottom: 4px; }
+.tpage-why .tpage-story li { border-top-color: var(--rule); }
+.tpage-why .tpage-story-icon { color: var(--accent); }
+
+/* Loop marker beside the title, matching the chip on the card. */
+.tpage-loop {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* ── Views along the way ───────────────────────────────────────────────
+   A horizontal strip rather than a grid: the pictures are ordered along
+   the route, so scrolling them left to right is walking it. Snap points
+   keep a frame centred instead of leaving two half-photographs. */
+.tpage-views {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+  margin: 0 -18px;
+  padding-left: 18px;
+  padding-right: 18px;
+  scrollbar-width: thin;
+}
+.tpage-view {
+  position: relative;
+  flex: 0 0 auto;
+  width: 232px;
+  height: 156px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+.tpage-view img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tpage-view-at {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(15, 18, 26, 0.66);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--on-fill);
+  font-variant-numeric: tabular-nums;
+}
+/* The credit only appears on tap. Commons requires it to travel with the
+   file, and it does: it is one tap away on every frame and the source line
+   under the strip covers the set. Burning it into every thumbnail would
+   make the strip unreadable as photographs. */
+.tpage-view-credit {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 6px 8px;
+  background: rgba(15, 18, 26, 0.82);
+  font-size: 10px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+}
+.tpage-views-credit { margin-top: 8px; }
+
+/* ── What you walk past ────────────────────────────────────────────────
+   Numbered like the city-day stop list, because it is the same promise:
+   these are in the order you meet them. */
+.tpage-highlights { margin: 0; padding: 0 0 0 22px; }
+.tpage-highlights li { padding: 7px 0; border-top: 1px solid var(--rule-soft); }
+.tpage-highlights li:first-child { border-top: none; }
+.tpage-highlights li::marker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+.tpage-hl-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.tpage-hl-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 1px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Trails filter rail ────────────────────────────────────────────────
+   The length chips carry no glyph (a number is its own picture), so they
+   lose the left inset .places-class reserves for one. The loop chip keeps
+   it, which is also what sets it apart from the four lengths beside it. */
+.places-bands .places-class { padding: 5px 12px; }
+.places-bands .places-loopchip { padding: 5px 12px 5px 5px; }
+.places-loopchip { margin-left: 4px; }
+
+/* Kind chips on a trip card sit on one line, so "Day hike" and "Loop"
+   read as one statement about the walk rather than as a stack.
+   `wrap` was the lie in that sentence: with a kind, a loop and two
+   highlights the row wrapped to three, four and five lines inside a 109px
+   card, pushed the name up out of its own box and clipped it mid-word. The
+   overlay measured 121 to 177px in a 109px card at 375px wide, which is the
+   collision. One line, and what does not fit is dropped rather than stacked:
+   a chip nobody can read is not information, and the page behind the card
+   carries the full list. */
+.places-card-kinds {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  /* Chips are ordered kind, loop, highlights, so what falls off the end is
+     always the least load-bearing. flex: none stops the first chip being
+     squeezed to a sliver to make room for one that will be clipped anyway.
+     A chip is clipped at its own edge rather than mid-word: a lone "L" or
+     "S" hanging off the end reads as a rendering fault, where a row that
+     simply stops reads as a row that ran out of space. mask does the
+     clipping so the last visible chip fades instead of being guillotined. */
+}
+.places-card-kinds > * { flex: none; }
+@supports (mask-image: linear-gradient(to right, var(--mask-solid), transparent)) {
+  .places-card-kinds {
+    mask-image: linear-gradient(to right, var(--mask-solid) calc(100% - 18px), transparent 100%);
+  }
+}
+.places-card-loop {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* Highlight chips on a trip card: what the walk goes past, in the walker's
+   own words. Dimmer than the loop chip on purpose, because a loop is a fact
+   about the shape and a waterfall is a fact about the day: the eye should
+   reach the name and the length first and then find these. */
+.places-card-hl {
+  background: rgba(255, 255, 255, 0.18);
+  font-weight: 500;
+}
+
+/* A listed row says what it is instead of showing a number it never earned.
+   Sits exactly where the rating badge would, so a column of cards keeps one
+   right-hand rhythm whether or not a row is scored. */
+.places-card-unrated {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.86);
+  white-space: nowrap;
+}
+
+/* The tilde on a derived grade. A whole word ("estimated") would not fit a
+   card and a different colour would read as a warning; one character that
+   the title attribute explains is the smallest honest mark. */
+.places-card-diff.est i,
+.tpage-chip.est i {
+  font-style: normal;
+  opacity: 0.65;
+  margin-left: 2px;
+}
+
+/* ── Trail page: what you pass, who it suits ───────────────────────────
+   Two chip families in one wrap, deliberately different weights. A
+   highlight is a reason to go and carries the accent; a suitability is a
+   constraint being satisfied and carries the rule. */
+.tpage-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.tpage-chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.tpage-chip-hl {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.tpage-chip-suit {
+  border: 1px solid var(--rule);
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+
+/* Provenance: claims about the DATA rather than about the walk. Set small
+   and quiet, because somebody choosing a Saturday walk does not need to
+   read them and somebody deciding whether to trust the line does. */
+.tpage-provenance {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper-dim);
+}
+.tpage-provenance p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tpage-provenance p + p { margin-top: 6px; }
+
+/* The path a stage belongs to. Set as a section rather than as a chip
+   because it is a different KIND of fact from the rest: not something about
+   this walk, but the thing this walk is part of. */
+.tpage-family .tpage-sec-title { margin-bottom: 2px; }
+.tpage-family-n {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.tpage-toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 30;
+  padding: 11px 16px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--shadow-2);
+}
+
+.tpage-back:focus-visible, .tpage-bar-act:focus-visible, .tpage-primary:focus-visible,
+.tpage-act:focus-visible, .tpage-cta:focus-visible, .tpage-hud-close:focus-visible,
+.tpage-recentre:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tpage-me-dot { animation: none; }
+  .tpage-bar-title { transition: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Destination detail v2: a bottom sheet on phones, folded sections and a
+   tighter header everywhere. The palette and type stay the app's own; the
+   compaction is structural (see Travel App UI modernization brief).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* The detail panel owns its scroll in an inner container so the phone sheet
+   can pin a grip above it. Side effect on desktop: the close button now
+   stays put while the content scrolls, instead of scrolling away. */
+.panel.dest-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Fold: the animated collapse behind the cost groups and the about
+      accordion. The body stays mounted; grid-rows animates the height and
+      visibility keeps the closed content out of the tab order. ── */
+.acc-fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows .26s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear .26s;
+}
+.acc-fold[aria-hidden="false"] {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows .26s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.acc-fold-inner { overflow: hidden; min-height: 0; }
+
+/* ── About accordion: population, nearest nature and the guide lead, folded
+      into one tappable row instead of a permanently open block. ── */
+.panel-section-acc { padding: 0; }
+.panel-acc-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 14px 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+.panel-acc-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.panel-acc-icon { display: flex; color: var(--ink-mute); }
+.panel-acc-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+}
+.panel-acc-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  max-width: 40%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.panel-acc-chev {
+  flex: none;
+  color: var(--ink-mute);
+  transition: transform .22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.panel-acc.open .panel-acc-chev { transform: rotate(180deg); }
+.panel-acc-body { padding: 0 22px 16px; }/* ── Header compaction: same content, less air, so price and dates arrive
+      a full screen earlier. Scoped to the destination panel only. ── */
+
+/* Three tabs in a 440px panel: tight enough that none of them wraps onto a
+   second line, at every width. A tab label broken in half reads as a fault. */
+.dest-panel .panel-tabs .tab {
+  flex: none;
+  white-space: nowrap;
+  padding-left: 0;
+  padding-right: 15px;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+}
+.dest-panel .panel-city { font-size: 33px; }
+.dest-panel .panel-section { padding: 16px 22px; }
+
+/* ── Micro-interactions: press states on everything tappable in the panel.
+      Transform only, so layout never shifts. ── */
+.panel-fav:active,
+.stay-tier-chip:active,
+.bt-cta:active,
+.via-airport-open:active,
+.panel-tabs .tab:active { transform: scale(0.96); }
+.cost-action:active { transform: translateY(1px) scale(0.98); }
+.cost-group-head:active { background: var(--rule); }
+.panel-acc-head:active .panel-acc-title { color: var(--ink-soft); }
+
+/* ── Phone layout: the panel is a page over the whole device ──────────────
+      It used to be a bottom sheet: a half snap on open, a grip to drag it
+      taller, a fling to dismiss. Two thirds of a phone screen for a surface
+      that carries fourteen sections meant everything below the first card
+      started life off the bottom of the screen, and the only way out was a
+      gesture nobody is told about. So it covers the screen, the bottom bar
+      included, and the cross in its own bar is the way back. ── */
+@media (max-width: 768px) {
+  .panel.dest-panel {
+    position: fixed;
+    inset: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    /* Over the bottom nav (50) and the header (57), under the auth overlays
+       (60): while a destination is open it IS the screen. */
+    z-index: 58;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+  .panel.dest-panel.open { transform: translateY(0); }
+  .xp-hero-card { margin: 0 12px 12px; }
+  .dsheet-card { margin-left: 12px; margin-right: 12px; }
+  /* Clear of the floating bar: the hero starts at the top of the page, so the
+     first card carries the inset instead of the scroller. */
+  .dest-panel-scroll > .xp-hero-card:first-child { margin-top: 0; }/* Three tabs on a 390px screen: they scroll rather than wrap into a
+     three-line block that pushes the receipt off the sheet. */
+
+
+  /* Charts turn into swipeable strips instead of squeezing 12 columns into
+     a phone width: each month keeps a readable column and the row scrolls. */
+  .dest-panel .climate-chart,
+  .dest-panel .dow-chart {
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+  .dest-panel .climate-col { flex: 0 0 40px; scroll-snap-align: start; }
+
+  /* Chip rows swipe sideways rather than stacking three rows tall. */
+  .dest-panel .bt-length-chips,
+  .dest-panel .stay-tier-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .dest-panel .bt-length-chips .chip,
+  .dest-panel .stay-tier-chip { flex: none; }
+
+  /* The tall header scrolls away on the phone sheet (sticky, it ate ~250px
+     of an 844px screen); the slim tab bar sticks instead, so switching
+     between the breakdown and best-time stays one tap from anywhere. */
+  .dest-panel .panel-header { position: static; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel.dest-panel,
+  .dsheet-bar,
+  .dsheet-bar-name,
+  .acc-fold,
+  .cost-group-caret,
+  .panel-acc-chev { transition: none; }
+}
+
+/* ── Sharing a saved trip (auth/TripSharePanel.jsx) ─────────────────────────
+   Opens under the trip's card, so it borrows the memory view's shape: no top
+   border, squared into the card above it. ───────────────────────────────── */
+.tshare {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: -6px 0 2px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-card);
+}
+.tshare-lede {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tshare-scopes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.tshare-scope {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--ui);
+  color: var(--ink-soft);
+}
+.tshare-scope b { font-size: 13px; color: var(--ink); }
+.tshare-scope span { font-size: 11.5px; line-height: 1.4; }
+.tshare-scope:hover { border-color: var(--ink-mute); }
+.tshare-scope.on {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.tshare-never {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+
+/* ── Statement of reasons under a plan card (migration 039) ─────────────── */
+/* Attached under the card like the share panel. The statement is a run of
+   related facts, so hairlines divide them rather than boxes. */
+.modnote {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin: -6px 0 2px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-card);
+}
+.modnote-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--ink-soft); }
+.modnote-title { margin: 0; font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--ink); }
+.modnote-date { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.modnote-line { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.modnote-toggle { min-height: 44px; }
+.modnote-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
+.modnote-facts { margin: 0; width: 100%; }
+.modnote-facts > div { padding: 9px 0; border-top: 1px solid var(--rule-soft); }
+.modnote-facts dt { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+.modnote-facts dd { margin: 2px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
+.modnote-quote { white-space: pre-line; }
+.modnote-form { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.modnote-form .auth-field { margin: 0; }
+.modnote-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.modnote-actions .auth-submit { min-height: 44px; margin-top: 0; }
+.modnote-actions .gld-copy { min-height: 44px; }
+.modnote button:focus-visible,
+.modnote textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .modnote .auth-submit,
+  .modnote .account-feedback-input { transition: none; }
+}
+.tshare-make {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  align-self: flex-start;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tshare-make:hover { background: var(--accent-soft); }
+.tshare-make:disabled { opacity: .6; cursor: default; }
+.tshare-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule-soft);
+}
+.tshare-list-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.tshare-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tshare-row-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.tshare-row-meta b { font-size: 12.5px; color: var(--ink); }
+.tshare-row-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.tshare-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tshare-copy:hover { border-color: var(--ink); color: var(--ink); }
+.tshare-revoke {
+  display: inline-flex;
+  padding: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.tshare-revoke:hover { color: var(--danger); }
+
+@media (max-width: 460px) {
+  .tshare-scopes { grid-template-columns: 1fr; }
+}
+
+/* ── Somebody else's trip, opened from a link (auth/SharedTripView.jsx) ──── */
+.stview-overlay {
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 0;
+}
+.stview {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 28px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.stview-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.stview-brand-name {
+  font-family: var(--display);
+  font-size: 19px;
+  color: var(--ink);
+}
+.stview-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.stview-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 27px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.stview-dates,
+.stview-loading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.stview-sub {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.stview-gone {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 32px 0;
+}
+.stview-stops {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule-soft);
+}
+.stview-stop {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 2px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.stview-stop-mark { display: inline-flex; color: var(--ink-mute); }
+.stview-stop-city { flex: 1; font-size: 14px; color: var(--ink); }
+.stview-stop-dates {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.stview-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule-soft);
+}
+.stview-from { font-size: 12px; color: var(--ink-mute); }
+/* The memory view is built to sit under a card; standing alone it needs its
+   own top edge back. */
+.stview .memo {
+  margin: 6px 0 0;
+  border-top: 1px solid var(--rule);
+  border-radius: 14px;
+}
+
+/* ── The handle field in the profile spoke (auth/profiles.js) ────────────────
+   The @ sits inside the field's own border rather than beside it, so the
+   handle reads as one thing and the prefix cannot be typed over. ─────────── */
+/* The handle sits in the same stack as name and email, so it takes the same
+   fill, radius and focus colour as a plain field. It read as the odd one out
+   for carrying a card background and a rounder corner than its neighbours. */
+.acct-handle-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  overflow: hidden;
+  transition: border-color .15s, background .15s;
+}
+.acct-handle-row:hover { border-color: var(--ink-soft); }
+.acct-handle-row:focus-within { border-color: var(--accent); background: var(--paper-dim); }
+.acct-handle-at {
+  padding: 0 2px 0 11px;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+.acct-handle-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 11px 10px 2px;
+  border: 0;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink);
+}
+.acct-handle-row input:focus { outline: none; }
+
+/* ── Friends (auth/FriendsSpoke.jsx) ────────────────────────────────────────
+   A list of people is a list, so it gets hairlines rather than a card each. */
+.frn-find {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+.frn-find .acct-handle-row { flex: 1; min-width: 0; }
+.frn-find .auth-submit { width: auto; white-space: nowrap; }
+.frn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.frn-row:last-child { border-bottom: 0; }
+.frn-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 15px;
+  color: var(--ink-mute);
+}
+.frn-who {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.frn-who b {
+  font-size: 13.5px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frn-handle {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.frn-acts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+/* What a person is DOING, under their name: a plan they published, never a
+   state they are in. The date half is mono because it is a measured fact and
+   the place half is not, which is the app's rule everywhere else too. */
+.frn-fact {
+  margin-top: 1px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frn-fact-when {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+/* A count beside a heading is a measured number, so it is set like one rather
+   than folded into the uppercased title text. */
+.frn-count {
+  margin-left: 7px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: var(--ink-mute);
+}
+/* Empty states are invitations. The plain one names the space; the one with
+   an action hands over the button that fills it. Neither apologises. */
+.frn-empty {
+  margin: 10px 0 2px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.frn-empty-act {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+}
+.frn-empty-act p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.frn-empty-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.frn-empty-btn:hover { border-color: var(--ink); }
+.frn-yes,
+.frn-no {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-family: var(--ui);
+  font-size: 12px;
+  cursor: pointer;
+}
+.frn-yes {
+  border: 0;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-weight: 600;
+}
+.frn-yes:hover { background: var(--accent-soft); }
+.frn-no {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+}
+.frn-no:hover { border-color: var(--ink); color: var(--ink); }
+.frn-text { padding: 6px 12px; }
+.frn-found {
+  margin-top: 10px;
+  padding: 2px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.frn-foot { margin-top: 12px; }
+
+/* ── Who can see this trip, at the head of the share panel ──────────────── */
+.tshare-vis {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+/* The co-planner block shares these two treatments, and says so here rather
+   than borrowing the visibility control's class names in the markup: one
+   selector answering for two blocks is how a restyle breaks the other one. */
+.tshare-vis-title,
+.coplan-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.tshare-vis-opts {
+  display: inline-flex;
+  align-self: flex-start;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.tshare-vis-opt {
+  padding: 7px 15px;
+  border: 0;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.tshare-vis-opt.on { background: var(--ink); color: var(--paper); }
+.tshare-vis-sub,
+.coplan-sub {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+
+/* ── A friend's trip, opened under its card ─────────────────────────────── */
+.ftrip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: -6px 0 2px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-card);
+}
+.ftrip-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+.ftrip .stview-stops { margin-top: 0; }
+.ftrip .memo { margin: 4px 0 0; border-top: 1px solid var(--rule); border-radius: 14px; }
+
+/* ── Picking a friend into a past trip's crew (auth/PastTripForm.jsx) ────── */
+.pasttrip-friends {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+.pasttrip-friendchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pasttrip-friendchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.pasttrip-friendchip:hover { border-color: var(--ink); color: var(--ink); }
+.pasttrip-linked {
+  display: inline-flex;
+  flex: none;
+  color: var(--ink-mute);
+}
+
+/* ── A friend's trip inside the Friends spoke ───────────────────────────── */
+.frn-trip { margin-bottom: 8px; }
+.frn-trip-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+.frn-trip-row:hover { border-color: var(--ink-mute); }
+.frn-trip-row.on { border-radius: 12px 12px 0 0; }
+.frn-trip-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.frn-trip-meta b {
+  font-size: 13.5px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frn-trip-who {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* When it last moved, so the shelf reads as a change log. Mono: it is a
+   measured interval, not prose. */
+.frn-trip-when {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.frn-trip-dates {
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+/* NEW is a status, not an action and not a measure, so it takes neither the
+   accent (which means "press this") nor a fresh hue. The ochre seal is what
+   this app already uses for a quiet mark. */
+.frn-trip-new {
+  margin-left: 7px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--rate-bg);
+  font-family: var(--ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--rate);
+  vertical-align: 1px;
+}
+.frn-trip .ftrip { margin: 0; border-radius: 0 0 12px 12px; }
+
+/* ── Friend chips under the ledger's traveller slots ────────────────────── */
+.exp-friendrow {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-basis: 100%;
+  margin-top: 2px;
+}
+
+/* ── Your own handle, at the head of the Friends page ───────────────────────
+   The thing you hand over to be added, so it leads the page rather than
+   hiding in the profile spoke. Mono: a handle is an identifier. ─────────── */
+.frn-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.frn-me-handle {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frn-me-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  min-height: 32px;
+  padding: 6px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.frn-me-copy:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ── How friends work, folded behind an icon ───────────────────────────── */
+.frn-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.frn-about-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.frn-about-btn:hover,
+.frn-about-btn.on { color: var(--ink); background: var(--paper-dim); }
+.frn-about {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.frn-about p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* ── The header stays put while a slide-over is open ───────────────────────
+   Account and My trips are full-bleed on a phone and used to start at top:0,
+   which buried the row carrying Passes. They now begin below it, and the
+   header out-ranks them, so the one control that sells the product is
+   reachable from every screen instead of only from the ones behind a panel.
+   56px is the mobile header row (see .app-header-account). ─────────────── */
+@media (max-width: 768px) {
+  .app-header { z-index: 57; }
+  .account-panel,
+  .saved-trips-panel {
+    top: 56px;
+    /* Read as a tab, not as a sheet laid over one. Explore is the model:
+       .explore-tab is one page of paper starting under the header with no
+       rule and no shadow, and on a phone these two are reached the same way,
+       from the bottom bar. The slide-over's border and drop shadow drew a
+       hard seam under the Passes row and darkened the band above it, which
+       is the only reason the header looked like a different colour: both
+       surfaces are --paper. Desktop keeps the sheet chrome, where these
+       really do float over the tab behind them. */
+    border: none;
+    box-shadow: none;
+  }
+  /* No cross either. The bottom bar is the way out on a phone (the same
+     five slots that opened the panel), and Explore does not carry one. It
+     stays on desktop, where the bar is hidden and the cross is the only
+     door back. */
+  .account-panel .panel-close,
+  .saved-trips-panel .panel-close { display: none; }
+  /* The gutter the cross used to need goes back to the shared one, so the
+     heading starts on the same vertical as everything under it. */
+  .account-panel .panel-header { padding-right: 16px; }
+}
+
+/* ── Friends: its own door in the top row, beside Passes ────────────────── */
+.header-friends-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.header-friends-btn:hover { border-color: var(--ink); color: var(--ink); }
+.header-friends-btn.on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (max-width: 768px) {
+  /* Beside the Passes chip, same height, label kept: an icon alone in a row
+     that already carries one would be a guess. */
+  .header-friends-btn { height: 38px; padding: 0 11px; font-size: 12.5px; }
+}
+@media (max-width: 420px) {
+  /* The label always shows: an icon alone in a row that already carries
+     another icon is a guess, and this door is new enough that nobody knows
+     the glyph yet. Both chips tighten instead, which is what actually makes
+     them fit next to each other on a 390px screen. */
+  .header-friends-btn { padding: 0 9px; gap: 5px; font-size: 12px; }
+  .app-header-account { gap: 6px; padding: 0 14px 0 8px; }
+  .app-header-account .header-pricing-btn { padding: 0 10px; }
+}
+
+/* Sharing your handle: copy for the people who want the text, share for the
+   ones who want it in a chat. Both fit beside the handle at 390px. */
+.frn-me-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  min-height: 32px;
+  padding: 6px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.frn-me-share:hover { border-color: var(--ink); color: var(--ink); }
+/* ONE accent per view. Accepting a request is the page's primary whenever one
+   is waiting, because it answers a question somebody asked. Inviting takes the
+   accent only in the one state where growing the graph really is the job:
+   nothing pending and nobody added yet. */
+.frn-me-share.primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--on-fill);
+}
+.frn-me-share.primary:hover { background: var(--accent-soft); border-color: transparent; }
+.frn-me { flex-wrap: wrap; }
+.frn-me-handle { flex: 1 1 100%; }
+@media (min-width: 420px) {
+  .frn-me-handle { flex: 1 1 auto; }
+}
+
+/* ── Somebody else's trip, as a shape before it is a list ────────────────────
+   The map leads both foreign-trip views. Same containment rule as the record
+   map: TripMap positions itself absolutely, so the frame has to give it a
+   height and reset its inset or fitBounds runs against a 34px canvas. ───── */
+.ftrip-map {
+  position: relative;
+  height: 200px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.ftrip-map .trip-map,
+.ftrip-map > div { position: absolute !important; inset: 0 !important; }
+.stview .ftrip-map { height: 260px; border-radius: 14px; }
+@media (max-width: 480px) {
+  .stview .ftrip-map { height: 210px; }
+}
+
+/* ── How long a link lives ──────────────────────────────────────────────── */
+.tshare-life {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.tshare-life-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.tshare-life-opts {
+  display: inline-flex;
+  align-self: flex-start;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.tshare-life-opt {
+  padding: 6px 13px;
+  border: 0;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tshare-life-opt.on { background: var(--ink); color: var(--paper); }
+
+/* ── Your record, next to what friends have shown you ───────────────────────
+   A list with hairlines, not cards: these are rows of one comparable fact,
+   and boxing each one would suggest they are objects to open. ──────────── */
+.fledger { margin-top: 18px; }
+.fledger-head { display: flex; align-items: center; gap: 6px; }
+.fledger-rows {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  border-top: 1px solid var(--rule-soft);
+}
+.fledger-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.fledger-row:last-child { border-bottom: 0; }
+.fledger-who {
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fledger-row.is-me .fledger-who { font-weight: 600; }
+.fledger-num {
+  min-width: 34px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--ink);
+}
+.fledger-num.is-soft { color: var(--ink-mute); }
+/* The legend is the column key, not a row of data, so it carries no rule and
+   states the two headings in the same places the numbers stand. */
+.fledger-row.is-legend {
+  padding-top: 6px;
+  border-bottom: 0;
+}
+.fledger-row.is-legend .fledger-num {
+  font-family: var(--ui);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ── Friend milestones (auth/FriendBadges.jsx) ──────────────────────────────
+   Five medallions at the foot of the friends spoke. An earned one takes the
+   ochre seal treatment (--rate: warm like a mark on a map, the same reasoning
+   the rating token carries), a locked one is a muted dashed outline whose job
+   is to say, on a tap, what would earn it. The one counted badge wears a thin
+   progress ring fed by the friend list the spoke already fetched. */
+
+.fbadge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 2px;
+}
+.fbadge {
+  flex: 1 1 0;
+  min-width: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 4px 8px;
+  background: none;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font: inherit;
+}
+.fbadge:hover,
+.fbadge.on { background: var(--paper-dim); }
+.fbadge-medal {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1.5px dashed var(--rule);
+  color: var(--ink-mute);
+  opacity: .6;
+}
+.fbadge-earned .fbadge-medal {
+  border: 1.5px solid var(--rate);
+  background: var(--rate-bg);
+  color: var(--rate);
+  opacity: 1;
+}
+.fbadge-name {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1.25;
+  text-align: center;
+  color: var(--ink-mute);
+}
+.fbadge-earned .fbadge-name { color: var(--rate-soft); }
+.fbadge-count {
+  margin-top: -3px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+
+/* The ring starts at 12 o'clock and clears the medal's edge by a pixel:
+   the svg is drawn in a 48-unit box and the negative inset scales it out. */
+.fbadge-ring {
+  position: absolute;
+  inset: -4px;
+  transform: rotate(-90deg);
+}
+.fbadge-ring circle {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.fbadge-ring-track { stroke: var(--rule-soft); }
+.fbadge-ring-fill {
+  stroke: var(--rate);
+  transition: stroke-dashoffset .4s ease;
+}
+
+/* A badge that arrives during the visit pops once: a scale settle plus one
+   expanding halo (--rate at low alpha). Already-earned badges never animate,
+   so the pop only ever means "that thing you just did". */
+@keyframes fbadge-pop {
+  0% { transform: scale(.55); }
+  55% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes fbadge-halo {
+  0% { box-shadow: 0 0 0 0 rgba(143, 90, 12, .35); }
+  100% { box-shadow: 0 0 0 15px rgba(143, 90, 12, 0); }
+}
+.fbadge-fresh .fbadge-medal {
+  animation: fbadge-pop .5s cubic-bezier(.2, 1.4, .4, 1), fbadge-halo .9s ease-out .15s;
+}
+
+.fbadge-about {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  background: var(--paper-dim);
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.fbadge-about b { font-size: 12px; color: var(--ink); }
+.fbadge-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--rate-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fbadge-fresh .fbadge-medal { animation: none; }
+  .fbadge-ring-fill { transition: none; }
+}
+

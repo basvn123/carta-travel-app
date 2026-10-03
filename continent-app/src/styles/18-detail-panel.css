@@ -1,0 +1,1661 @@
+/* Detail panel: cost groups, stay tiers, day planner route mode, shape-your-day, crash guard.
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Country intel cards (CountryIntel.jsx) - deep per-country travel knowledge
+   ──────────────────────────────────────────────────────────────────────────── */
+.cintel {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.cintel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--ui);
+  text-align: left;
+}
+.cintel-head:hover { background: var(--paper); }
+.cintel-flag { width: 24px; height: auto; border-radius: 3px; box-shadow: var(--shadow-1); flex: none; }
+.cintel-country { font-weight: 600; font-size: 14px; color: var(--ink); }
+.cintel-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.cintel-chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.cintel-chip.budget-low { background: var(--budget-low-bg); color: var(--green); }
+.cintel-chip.budget-high, .cintel-chip.budget-very_high { background: var(--accent-bg); color: var(--accent); }
+.cintel-caret { font-family: var(--mono); color: var(--ink-mute); font-size: 14px; margin-left: 4px; }
+.cintel-body { padding: 2px 14px 6px; border-top: 1px solid var(--rule); }
+.cintel-row { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--paper-dim); }
+.cintel-row:last-child { border-bottom: 0; }
+.cintel-label {
+  flex: none;
+  width: 82px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-mute);
+  padding-top: 3px;
+}
+.cintel-row > div { min-width: 0; flex: 1; }
+.cintel-row p { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); margin: 0 0 4px; }
+.cintel-row p:last-child { margin-bottom: 0; }
+.cintel-warn { color: var(--ink); }
+
+/* Icon-led lines (getting around / by car) */
+.cintel-lines { display: flex; flex-direction: column; gap: 7px; }
+.cintel-line {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.cintel-ico {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  color: var(--ink-mute);
+  transform: translateY(2px);
+}
+.cintel-line-warn { color: var(--ink); }
+.cintel-line-warn .cintel-ico { color: var(--accent); }
+.cintel-link { color: var(--accent); text-decoration: none; font-weight: 600; }
+.cintel-link:hover { text-decoration: underline; }
+.cintel-sights { display: flex; flex-direction: column; gap: 6px; }
+.cintel-sight { font-size: 12.5px; line-height: 1.45; }
+.cintel-sight-name { font-weight: 600; color: var(--ink); }
+.cintel-sight-region {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-left: 6px;
+}
+.cintel-sight-why { display: block; color: var(--ink-soft); }
+.cintel-more {
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+}
+.cintel-insights { margin: 0; padding-left: 16px; }
+.cintel-insights li { font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 4px; }
+.panel-cintel { padding: 0 20px 16px; }
+
+/* Trip planner: transport preference + per-leg mode picker */
+.trip-transport-seg { display: flex; gap: 6px; }
+.trip-transport-seg button {
+  flex: 1;
+  padding: 8px 6px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.trip-transport-seg button.on {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--ink);
+  font-weight: 600;
+}
+.trip-leg-rich { padding: 0; }
+.trip-leg-main {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 6px 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  text-align: left;
+  cursor: pointer;
+}
+.trip-leg-main:hover { color: var(--ink-soft); }
+.trip-leg-caret { float: right; }
+.trip-leg-detail { padding: 4px 8px 10px; }
+.trip-leg-modes { display: flex; gap: 6px; margin-bottom: 6px; }
+.trip-leg-mode {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  padding: 7px 4px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.trip-leg-mode b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.trip-leg-mode small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.trip-leg-mode.on { border-color: var(--accent); background: var(--accent-bg); }
+.trip-leg-note { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; margin: 4px 0; }
+
+/* Bag check: the chosen tier as each airline's real allowance + gate fee. */
+.bag-check {
+  margin: 10px 0 4px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.bag-check-title {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; color: var(--ink);
+  margin-bottom: 5px;
+}
+.bag-check-line {
+  display: flex; align-items: flex-start; gap: 6px;
+  margin: 4px 0 0;
+  font-size: 11.5px; line-height: 1.5; color: var(--ink-soft);
+}
+.bag-check-line svg { flex: none; margin-top: 3px; }
+.bag-check-ok { color: var(--status-success); }
+.bag-check-warn { color: var(--ink-soft); }
+.bag-check-warn svg { color: var(--accent); }
+
+/* Curated secondary-hub shuttle note under a flight row. */
+.itin-groundlink {
+  display: flex; align-items: flex-start; gap: 6px;
+  padding: 2px 0 4px 24px;
+  font-size: 10.5px; line-height: 1.5;
+  color: var(--ink-mute);
+}
+.itin-groundlink svg { flex: none; margin-top: 2px; }
+
+/* Airport-transfer mode picker (how you get from the plane to your stay). */
+.transfer-picker { margin: 6px 0 2px; }
+.transfer-picker-title {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--ui); font-size: 11px; color: var(--ink-mute); margin-bottom: 5px;
+}
+.transfer-picker-modes { display: flex; gap: 6px; }
+.transfer-mode {
+  flex: 1;
+  display: flex; flex-direction: column; gap: 2px; align-items: center;
+  padding: 7px 4px;
+  border: 1px solid var(--rule); border-radius: 10px; background: var(--bg-card);
+  font-family: var(--ui); font-size: 11px; color: var(--ink-soft); cursor: pointer;
+}
+.transfer-mode-lbl { display: flex; align-items: center; gap: 4px; }
+.transfer-mode b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.transfer-mode.on { border-color: var(--accent); background: var(--accent-bg); color: var(--ink); }
+.trip-leg-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0; }
+.trip-leg-links a { font-size: 11.5px; color: var(--accent); font-weight: 600; text-decoration: none; }
+.trip-leg-links a:hover { text-decoration: underline; }
+.trip-leg-disclaimer { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); margin: 4px 0 0; }
+
+/* Trip planner: "take it cheaper" savings block */
+.trip-savings { border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; background: var(--paper-lift); }
+.trip-saving-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--paper-dim);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.trip-saving-row:last-of-type { border-bottom: 0; }
+.trip-saving-row b { color: var(--ink); }
+.trip-saving-amount { color: var(--green); font-style: normal; font-weight: 700; }
+.trip-saving-row button {
+  flex: none;
+  margin-left: auto;
+  padding: 5px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.trip-saving-row button:hover { background: var(--accent-bg); }
+
+/* Guided wizard: travel step (car advice + transport/pace tiles) */
+.guide-subtitle { font-family: var(--display); font-size: 17px; margin: 18px 0 10px; color: var(--ink); }
+.guide-car-advice {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--ink-mute);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.guide-car-advice.yes { border-left-color: var(--accent); background: var(--accent-wash-alt); }
+.guide-car-advice.maybe { border-left-color: var(--accent-soft); }
+.guide-car-advice-head { font-weight: 700; font-size: 13.5px; color: var(--ink); margin-bottom: 4px; }
+.guide-car-advice p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin: 3px 0; }
+.guide-car-note { color: var(--ink); }
+.guide-transport-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.guide-transport {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  cursor: pointer;
+  font-family: var(--ui);
+  text-align: left;
+}
+.guide-transport.on { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 2px var(--accent-bg); }
+.guide-transport-icon { font-size: 20px; }
+.guide-transport-label { font-weight: 700; font-size: 13px; color: var(--ink); }
+.guide-transport-sub { font-size: 11px; color: var(--ink-mute); line-height: 1.4; }
+@media (max-width: 560px) { .guide-transport-grid { grid-template-columns: 1fr; } }
+
+/* Day planner: start-time chips, picker map, Google Maps link */
+.day-start-row { margin-top: 8px; }.day-build-map .trip-map, .day-build-map > div { position: absolute !important; inset: 0; }
+.day-gmaps-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.day-gmaps-link:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2026-07 polish pass: icon-led sections, grouped cost breakdown, guided
+   day-shaping deck, day-plan actions, mobile filter grid.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── Icon-led section titles + tabs ─── */
+.section-title-iconed {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.section-title-iconed svg { flex: none; color: var(--accent); }
+.tab-iconed.active svg { color: var(--accent); }
+
+/* ─── Detail panel: grouped cost breakdown ───
+   Three clearly separated buckets (getting there / your stay / on the
+   ground), each an icon-led card in the same visual language as the
+   lifestyle panel's preview table. */
+.cost-group {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+/* One cost line, as a row you could read off a receipt: a tinted glyph tile,
+   what it is and what it assumes, then the figure with the single fact that
+   says what the figure is for. */
+.cost-group-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 14px;
+  background: var(--paper);
+  cursor: pointer;
+}
+.cost-group-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }/* Prose, so it is set in the UI face: the mono is reserved for the figures
+   in the column to its right. */
+
+.cost-group-val {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.cost-group-head[aria-expanded="true"] .cost-group-caret { transform: rotate(180deg); }
+.cost-group-body { padding: 4px 14px 12px; border-top: 1px solid var(--rule); }
+.cost-group-body .total-row:first-child { border-top: none; }
+.cost-group-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ─── Stay tier chips: how expensive to sleep ───
+   Dorm bed through 4-5 star hotel; the active tier prices the stay and every
+   map label. The mono figure is the measured nightly (per bed for dorms, per
+   room for the rest); a chip without one has no measurement in this city and
+   will fall back to the entire-home price. */
+.stay-tier-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+.stay-tier-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.stay-tier-chip:hover { border-color: var(--ink-soft); }
+.stay-tier-chip.on { border-color: var(--accent); background: var(--accent-bg); }
+.stay-tier-chip b {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.stay-tier-chip.on b { color: var(--accent); }
+
+/* ─── Cost-group actions: verify this price, or change what drives it ───
+   Every figure in the panel is an estimate; these are the only ways out of
+   one, so they read as buttons rather than the underlined footnotes they
+   used to be. */
+.cost-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s, transform .12s;
+}
+.cost-action:active { transform: translateY(1px); }
+.cost-action svg { flex: none; }
+
+.cost-action.is-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+.cost-action.is-primary:hover { background: var(--accent-press); border-color: var(--accent-press); }
+
+.cost-action.is-secondary {
+  background: none;
+  border-color: var(--rule);
+  color: var(--ink-soft);
+}
+.cost-action.is-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+.cost-action.is-action {
+  background: var(--paper-dim);
+  border-color: var(--rule);
+  color: var(--ink);
+}
+.cost-action.is-action:hover { border-color: var(--ink); background: var(--paper); }
+
+/* ─── Cautions inside a cost group (no flight on these dates, a vignette you
+   have to buy before you drive). Amber and icon-led: these cost money or stop
+   the trip if they're read as decoration. ─── */
+.cost-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 10px 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(217, 131, 36, 0.45);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: rgba(217, 131, 36, 0.09);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.cost-warning svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--amber-warm);
+}
+.cost-info-btn:hover, .cost-info-btn.open { color: var(--accent); background: var(--accent-bg); }
+.cost-info-pop {
+  margin: 0;
+  padding: 8px 14px;
+  border-top: 1px solid var(--rule);
+  background: var(--paper-dim);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.cost-local-rates-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.cost-local-rates-label {
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.cost-local-rates-row .cost-info-pop {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+  padding: 6px 0 0;
+  border-top: none;
+  background: none;
+}
+.cost-local-rates {
+  margin: 8px 0 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--ink-mute);
+}/* The grand total pins to the foot of the panel while the groups above are
+   being read, so the figure the whole breakdown is explaining is never
+   scrolled off. It settles into place naturally at the end of the section.
+   The wrapper (not the card) is what sticks: its paper background is the
+   skirt that stops rows sliding out from under the card's rounded corners.
+   Scroll container is .panel, the same one .panel-header sticks inside. */
+/* Not sticky any more. It was pinned so the number could not scroll away, but
+   the price card at the top of the panel carries that number now, and pinning
+   this cost the receipt its second and third rows on a phone: one line and a
+   total, with the rest hidden behind it. */
+
+
+/* The sum that closes the receipt. The emphatic figure moved to the price card
+   at the top of the panel, so this is the arithmetic line the rows add up to:
+   a rule above it, the label left, the figure right. It still sticks to the
+   foot of the panel, so the number never scrolls away. */
+.cost-total-card {
+  margin-top: 0;
+  border: none;
+  border-top: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  padding: 12px 4px 6px;
+}
+.cost-total-label {
+  font-family: var(--ui);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.cost-total-label small {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-mute);
+  margin-left: 7px;
+}
+
+/* ─── Lifestyle: filter-bar entry point + unit rates ─── */
+.lifestyle-pill {
+  gap: 6px;
+  padding: 6px 12px;
+}
+.lifestyle-pill svg { flex: none; }
+.line .lbl small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 1px;
+}
+
+
+/* ─── Bigger Home shortcut on mobile (overrides the 19px rule above) ─── */
+@media (max-width: 768px) {
+  .header-home-icon { width: 22px; height: 22px; }
+}
+
+/* ─── Day planner: landing "Days" stepper sits inline in its city row ───
+   It shares a flex row with the city name (flex:1) and the × remove button,
+   so it must size to its own content - a full-width stepper overlaps them. */
+.day-days-stepper {
+  flex: none;
+  width: auto;
+  white-space: nowrap;
+}
+.day-days-stepper > span { white-space: nowrap; }
+
+/* ─── Day planner: route mode + ordered plan ─── */
+.day-route-mode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.day-route-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+}
+.day-route-status.auto { color: var(--accent); }
+.day-route-optimize {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 11.5px;
+  font-weight: 600;
+  transition: background .15s, color .15s;
+}
+.day-route-optimize:hover { background: var(--accent-bg); }
+.day-timeline-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+/* Rows carry a wrapped title plus a description now, so the step number rides
+   at the top beside the name rather than floating in the middle of the card. */
+.day-timeline-row { padding: 3px 0; align-items: flex-start; }
+.day-timeline-num { margin-top: 12px; }
+.day-timeline-walk { padding-left: 34px; }
+.day-route-total {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* Labeled action buttons under the day plan (export + share). */
+.day-actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.day-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.day-action-btn:hover { border-color: var(--ink-soft); }
+.day-action-btn.day-action-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-fill);
+}
+.day-action-btn.day-action-primary:hover { opacity: 0.92; }
+.day-action-btn svg { flex: none; }
+
+/* One export menu instead of a row of six buttons: the popover holds PDF,
+   My Maps, calendar, share and the saved-trips state, so the plan itself is
+   what fills the panel. */
+.day-export { position: relative; display: inline-flex; }
+.day-export-btn.open { border-color: var(--ink-soft); background: var(--paper-dim); }
+.day-export-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 236px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+  z-index: 40;
+}
+.day-export-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background .12s;
+}
+.day-export-item:hover { background: var(--paper-dim); }
+.day-export-item svg { flex: none; color: var(--ink-soft); }
+
+/* The day's numbers in the plan header, above the scroll so they never leave
+   the screen: stops, kilometres on foot, the loose end-of-day time. */
+.day-topcard-stats {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.day-stat-sep { width: 1px; height: 11px; background: var(--rule); }
+
+/* Timeline row <-> map pin sync: hovering a card lifts its pin on the map;
+   tapping a pin scrolls to its card and rings it once. */
+.day-timeline-row .day-assigned-row { transition: border-color .15s, box-shadow .15s; }
+.day-timeline-row:hover .day-assigned-row { border-color: var(--ink-soft); }
+.day-timeline-row.map-focus .day-assigned-row {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+/* Multi-city chips: city + its own remove control. */
+.day-city-chip {
+  display: inline-flex;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+}
+.day-city-chip-main {
+  padding: 7px 10px 7px 14px;
+  font: inherit;
+  color: inherit;
+}
+.day-city-chip-del {
+  padding: 0 10px 0 4px;
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+.day-city-chip-del:hover { color: var(--accent); }
+
+/* Collapsible activity tiers: the header is now a full-width toggle. */
+.day-tier-head {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  padding: 8px 2px;
+  border-radius: 8px;
+}
+.day-tier-head:hover { background: var(--paper-dim); }
+.day-tier-caret {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+.day-tier { margin-bottom: 8px; }
+.day-tier.open { margin-bottom: 16px; }
+
+/* Must-see star on individual rows. */
+.day-badge-must {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  color: var(--accent);
+  vertical-align: -1px;
+}
+
+/* Activity rows: the info glyph is a toggle now, and the expanded detail
+   wraps below the row. */
+.day-activity-row { flex-wrap: wrap; }
+.day-activity-info {
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+.day-activity-info.open { color: var(--accent); }
+.day-activity-detail {
+  flex-basis: 100%;
+  padding: 0 12px 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.day-activity-detail p { margin: 0 0 4px; }
+.day-activity-detail a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 11.5px;
+}
+.day-activity-detail a:hover { text-decoration: underline; }
+/* The info panel opens on the place's photo, bigger than the row thumbnail,
+   so "what is this?" is answered visually first. */
+.day-detail-photo {
+  display: block;
+  width: 100%;
+  height: 150px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  margin: 2px 0 8px;
+}
+
+/* ─── Shape-your-day: style cards ─── */
+.shape-style-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.shape-style {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  transition: border-color .15s, background .15s, transform .15s;
+}
+.shape-style:hover { border-color: var(--accent); transform: translateY(-1px); }
+.shape-style.on { border-color: var(--accent); background: var(--accent-bg); }
+.shape-style-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.shape-style-text { flex: 1; min-width: 0; }
+.shape-style-text b {
+  display: block;
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.shape-style-text small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  margin-top: 1px;
+}
+.shape-style-arrow { color: var(--ink-mute); font-size: 18px; flex-shrink: 0; }
+
+/* ─── Shape-your-day: swipe deck ─── */
+.shape-deck-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.shape-deck-added { color: var(--accent); font-weight: 700; }
+.shape-card {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: var(--shadow-2);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+.shape-card:active { cursor: grabbing; }
+.shape-card-photo {
+  position: relative;
+  height: 190px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.shape-card-fallback { font-family: var(--display); font-size: 44px; color: var(--ink-mute); }
+.shape-card-must {
+  position: absolute;
+  top: 10px; left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.shape-card-stamp {
+  position: absolute;
+  top: 14px;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transform: rotate(-8deg);
+  border: 2.5px solid currentColor;
+  background: rgba(245, 241, 232, 0.85);
+}
+.shape-card-stamp.add { right: 14px; color: var(--leaf-ink); }
+.shape-card-stamp.skip { left: 14px; color: var(--warn-ink); transform: rotate(8deg); }
+.shape-card-body { padding: 14px 16px 16px; }
+.shape-card-name {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.shape-card-kind {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  margin-top: 3px;
+}
+.shape-card-desc {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.shape-card-pair {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--accent-bg);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.shape-card-pair svg { flex: none; color: var(--accent); transform: translateY(1px); }
+.shape-card-pair b { color: var(--ink); }
+.shape-deck-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.shape-deck-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: opacity .15s, background .15s;
+}
+.shape-deck-btn.skip {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+.shape-deck-btn.skip:hover { border-color: var(--warn-ink); color: var(--warn-ink); }
+.shape-deck-btn.add {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-fill);
+}
+.shape-deck-btn.add:hover { opacity: 0.92; }
+.shape-deck-hint {
+  margin: 10px 0 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+
+/* ─── Shape-your-day: pick overview + live map ───
+   Step 5 widens the modal and splits it: a tappable overview list on the left,
+   a live map on the right. Adding a place lights up its pin, so the traveller
+   watches the day take shape in real time. */
+.shape-modal.shape-modal-wide { max-width: 940px; }
+.shape-pick { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; }
+.shape-pick-list { max-height: 460px; overflow-y: auto; padding-right: 4px; }
+.shape-pick-list-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin: 0 2px 10px; font-size: 12px; color: var(--ink-soft);
+}
+.shape-pick-list-head .shape-deck-added { color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+/* Category filter chips: pick a kind of place (all / sights / nature / …). */
+.shape-cat-filter {
+  display: flex; flex-wrap: wrap; gap: 6px; margin: 0 2px 8px;
+}
+.shape-cat-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 9px; border-radius: 999px;
+  border: 1px solid var(--rule); background: var(--paper);
+  font-size: 11.5px; font-weight: 600; color: var(--ink-soft);
+  cursor: pointer; transition: border-color .14s, background .14s, color .14s;
+}
+.shape-cat-chip svg { color: var(--ink-mute); flex: none; }
+.shape-cat-chip:hover { border-color: var(--accent); color: var(--ink); }
+.shape-cat-chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+.shape-cat-chip.on svg { color: var(--on-fill); }
+.shape-cat-count {
+  font-family: var(--mono); font-size: 10px; opacity: .8;
+  padding-left: 2px;
+}
+
+/* Legend: teaches the star + the 0-10 number + the info affordance in one line. */
+.shape-pick-legend {
+  display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0 2px 10px;
+  font-size: 10.5px; color: var(--ink-mute);
+}
+.shape-pick-legend > span { display: inline-flex; align-items: center; gap: 4px; }
+.shape-pick-legend-must svg { color: var(--accent); }
+
+.shape-pick-item { margin-bottom: 7px; }
+.shape-pick-row {
+  display: flex; align-items: stretch; gap: 6px; width: 100%;
+  padding: 6px 8px; border: 1px solid var(--rule); border-radius: 12px;
+  background: var(--paper);
+  transition: border-color .14s, background .14s, transform .1s;
+}
+.shape-pick-row:hover { border-color: var(--accent); transform: translateY(-1px); }
+.shape-pick-row.on { border-color: var(--accent); background: var(--accent-bg); }
+.shape-pick-item.open .shape-pick-row { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.shape-pick-body {
+  display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0;
+  padding: 2px; background: none; border: none; text-align: left; cursor: pointer;
+}
+.shape-pick-thumb {
+  flex: none; width: 46px; height: 46px; border-radius: 9px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center; color: var(--ink-mute);
+}
+.shape-pick-text { flex: 1; min-width: 0; }
+.shape-pick-text b {
+  display: block;
+  font-family: var(--display); font-size: 14px; font-weight: 600; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.shape-pick-meta {
+  display: flex; align-items: center; gap: 6px; margin-top: 3px; min-width: 0;
+}
+.shape-pick-tag {
+  display: inline-flex; align-items: center; gap: 3px; flex: none;
+  font-size: 10.5px; font-weight: 600; color: var(--ink-soft);
+}
+.shape-pick-tag.must { color: var(--accent); }
+.shape-pick-tag.must svg { color: var(--accent); }
+.shape-pick-meta small {
+  font-size: 11px; color: var(--ink-soft);
+  text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.shape-pick-info, .shape-pick-toggle {
+  flex: none; align-self: center; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink-mute);
+  cursor: pointer; transition: border-color .14s, background .14s, color .14s;
+}
+.shape-pick-info:hover, .shape-pick-info.on { border-color: var(--accent); color: var(--accent); }
+.shape-pick-info.on { background: var(--accent-bg); }
+.shape-pick-toggle { font-size: 17px; line-height: 1; }
+.shape-pick-row:hover .shape-pick-toggle { border-color: var(--accent); color: var(--accent); }
+.shape-pick-toggle.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+.shape-pick-desc {
+  padding: 9px 12px 11px; border: 1px solid var(--rule); border-top: none;
+  border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+  background: var(--paper-dim);
+}
+.shape-pick-desc p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
+.shape-pick-desc-why { margin-top: 6px !important; font-size: 11px !important; color: var(--ink-mute) !important; }
+.shape-pick-desc-why b { color: var(--ink-soft); font-weight: 700; }
+/* The pick-row score chip reuses the shared .score-chip.xs sizing; just give
+   it a steady min-width so the numbers line up down the column. */
+.shape-pick-meta .score-chip { min-width: 24px; justify-content: center; }
+.shape-pick-map {
+  height: 460px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule);
+}
+.shape-pick-map .dem-map, .shape-pick-map .cpm { height: 100%; }
+
+/* Mobile: lift the wizard clear of the bottom edge (home-indicator space)
+   and keep rounded corners since it now floats. */
+@media (max-width: 768px) {
+  .guide-overlay {
+    padding: 12px 10px calc(26px + env(safe-area-inset-bottom, 0px));
+    align-items: flex-end;
+  }
+  .guide-modal { border-radius: 18px; max-height: 88vh; }
+  .guide-foot { padding-bottom: 16px; flex-wrap: wrap; }
+  /* The footer's action buttons ("Next", "Let Carta arrange it") take the
+     full row on phones instead of squeezing into a tall skinny pill. */
+  .guide-foot-actions { flex: 1 1 100%; }
+  .guide-foot-actions .guide-next { flex: 1; }
+  /* T8.2: 10px of padding around 13.5px type is a 39px button, and the whole
+     way forward through a seven-step form runs through it. */
+  .guide-foot-actions .guide-next,
+  .guide-foot-actions .guide-back {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: var(--tap);
+  }
+  /* Step 5 on phones: map on top, the tappable list under it, each stacked. */
+  .shape-modal.shape-modal-wide { max-width: 100%; }
+  .shape-pick { grid-template-columns: 1fr; gap: 12px; }
+  .shape-pick-map { order: -1; height: 40vh; min-height: 240px; }
+  .shape-pick-list { max-height: 42vh; }
+}
+
+/* The 2-column inline drawer that used to live here (a grid of the desktop
+   fields, ordered by `order`) is gone: phones get the modal bottom sheet in
+   the .fsheet block instead. */
+
+/* ─── Date pickers: never off-screen on phones. The POPOVER anchors to its
+   trigger on desktop and becomes a centered dialog on mobile. An inline
+   calendar is not a popover: it lives in the page, so it must be excluded
+   here or it gets yanked to fixed-centre and overlaps the form above it. ─── */
+@media (max-width: 768px) {
+  .cal:not(.cal-inline) {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(300px, calc(100vw - 32px));
+    z-index: 90;
+    box-shadow: 0 18px 48px rgba(26, 26, 26, 0.28);
+  }
+}/* ═══════════════════════════════════════════════════════════════════════
+   2026-07 UX pass: known-for lines, structured info facts, lifestyle panel
+   simplification, day-planner start flow, PDF/save actions, design quiz
+   ═══════════════════════════════════════════════════════════════════════ */
+/* What the destination is known for, under the country line in the detail
+   panel. Replaces the generic category chips. */
+/* "About this place": population + nearest protected area + a short guide lead,
+   built from the geonames / nature / guide data slices. A `.panel-section`
+   like every other block in the panel (same side inset + divider) rather than
+   its own inset card, so it doesn't sit flush against the panel edge on
+   narrow screens. */
+/* Structured label/value rows inside the ⓘ popovers (stay, on the ground,
+   local rates). One fact per line, label column fixed, easy to scan. */
+
+
+/* Lifestyle panel: one merged Eating & drinking section with the cadence
+   toggle in its header row; consistent section rhythm. */
+.lifestyle-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.lifestyle-section-head .section-title { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+.lifestyle-cadence { margin: 0; }
+.accom-panel .panel-section { padding: 18px 26px; }
+
+/* Wizard stay rows: the ⓘ button + expandable facts */
+.guide-city-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: var(--ink-mute);
+  flex: none;
+}
+.guide-city-info-btn:hover, .guide-city-info-btn.open { color: var(--accent); background: var(--accent-bg); }
+.guide-city-facts {
+  margin: 7px 0 4px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-dim);
+  padding: 2px 0;
+}
+.guide-city-fact {
+  display: flex;
+  gap: 10px;
+  padding: 5px 11px;
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+.guide-city-fact + .guide-city-fact { border-top: 1px dashed var(--rule); }
+.guide-city-fact-label {
+  flex: none;
+  width: 84px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-mute);
+  padding-top: 2px;
+}
+.guide-city-fact-value { flex: 1; min-width: 0; color: var(--ink-soft); }
+/* "Known for" reads like every other fact row - same body font, just ink-dark
+   so it still leads the card without the cramped serif wrapping. */
+.guide-city-fact-known .guide-city-fact-value { color: var(--ink); }
+
+/* Wizard: "Let Carta pick my cities" questionnaire */
+.guide-design-quiz {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+  padding: 14px 16px;
+  margin: 10px 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.guide-quiz-q .trip-field-label { display: block; margin-bottom: 7px; }
+.guide-quiz-go { align-self: flex-start; }/* Keep the step label ("1 Where are you staying?") on a single line - the
+   step-number chip + text would otherwise wrap on a narrow field column. */
+.day-build-field .trip-field-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+  white-space: nowrap;
+}/* Address search reads as one control: the text field and the accent Find
+   button share a single rounded, bordered pill (input flush left, button flush
+   right) instead of two detached elements. */
+.day-stay-search {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.day-stay-search:focus-within {
+  border-color: var(--ink-soft);
+  box-shadow: 0 0 0 3px rgba(200, 80, 30, 0.10);
+}
+.day-stay-input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 14px;
+  border: none;
+  background: transparent;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.day-stay-input:focus { outline: none; }
+.day-stay-input::placeholder { color: var(--ink-mute); }
+.day-stay-search .trip-add-btn {
+  flex: none;
+  border: none;
+  border-radius: 0;
+  padding: 0 22px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+.day-stay-search .trip-add-btn:hover:not(:disabled) { background: var(--accent-press-alt); }
+/* Before three characters are typed the button is disabled, and it used to
+   render paper text on a --rule fill: two close values that left "Find"
+   barely legible. A disabled control still has to be readable, so it sits on
+   the dimmer paper tone with muted-ink text (clearly inactive, still a word). */
+.day-stay-search .trip-add-btn:disabled { background: var(--paper-dim); color: var(--ink-mute); cursor: default; opacity: 1; }
+.day-stay-results {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.day-stay-result {
+  text-align: left;
+  padding: 9px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  background: var(--paper);
+}
+.day-stay-result + .day-stay-result { border-top: 1px solid var(--rule); }
+.day-stay-result:hover { background: var(--paper-dim); color: var(--ink); }
+.day-stay-chosen {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 8px 6px 8px 12px;
+}
+.day-stay-chosen-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* "Change places on the map": jump back to the explore map to add/drop towns
+   and sights, editing this plan in place. */
+.day-changeplaces-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.day-changeplaces-btn:hover { border-color: var(--accent); color: var(--accent); }
+.day-changeplaces-btn svg { color: var(--accent); }
+/* Two ways back to the map: adjust by hand, or with Carta's guide open. */
+.day-stay-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.day-stay-actions .day-changeplaces-btn { margin-top: 10px; }
+/* Re-enter the shape-your-day questions after a day is already planned. */
+.day-carta-reshape {
+  margin-top: 12px;
+  background: none;
+  border: 1px dashed var(--rule);
+  color: var(--ink-soft);
+}
+.day-carta-reshape:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+.day-carta-reshape svg { color: var(--accent); }
+
+/* A leg that demands over an hour on foot gets an honest warning. */
+.day-timeline-longwalk { color: var(--warn-ink); font-size: 9.5px; }
+
+/* -- Carta's local intel: hand-curated area guide with one-tap adds -- */
+.day-intel {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  padding: 11px 13px;
+  background: rgba(200, 80, 30, 0.03);
+}
+.day-intel .trip-block-title { display: flex; align-items: center; gap: 6px; }
+.day-intel .trip-block-title svg { color: var(--accent); }
+.day-intel-intro { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); margin: 2px 0 10px; }
+.day-intel-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid var(--rule);
+}
+.day-intel-row.added .day-intel-name { color: var(--good-ink); }
+.day-intel-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.day-intel-name {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.day-intel-tag {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.day-intel-note { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); }
+.day-intel-add {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--accent);
+}
+.day-intel-add:hover { border-color: var(--accent); }
+.day-intel-row.added .day-intel-add { background: var(--good-ink); border-color: var(--good-ink); color: var(--on-fill); }
+.day-intel-tip {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  margin: 9px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.day-intel-tip svg { flex: none; color: var(--accent); position: relative; top: 1px; }
+
+/* Edit-mode banner on the explore/build screen when changing an existing plan */
+.day-edit-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  background: var(--accent-bg);
+}
+.day-edit-banner > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--ink);
+}
+.day-edit-banner svg { color: var(--accent); flex-shrink: 0; }
+.day-edit-cancel {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.day-edit-cancel:hover { border-color: var(--accent); color: var(--accent); }
+
+/* "Let Carta plan this city" (replaces the ambiguous Shape-my-day chip) */
+.day-carta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.day-carta-btn:hover { opacity: 0.85; }
+.day-carta-btn svg { color: var(--accent-bg); }
+
+/* Timeline rows now carry an ⓘ; the expanded detail spans the full row */
+.day-assigned-with-info { flex-wrap: wrap; }
+.day-timeline-detail { flex-basis: 100%; }
+
+/* Things-to-do tiers: Recommended gets its own accent, must-see rows pop */
+.day-tier-worth .day-tier-badge { color: var(--accent); }
+.day-tier-must .day-tier-head { font-weight: 700; }
+.day-tier-must .day-activity-row .day-assigned-name { font-weight: 600; }
+
+/* Shape-day wizard: feasibility step groups */
+.shape-feas-group { margin-bottom: 14px; }
+.shape-feas-group .trip-field-label { display: block; margin-bottom: 7px; }
+.shape-feas-group .shape-style { padding: 10px 14px; }
+
+/* Sight search inside "Add to your trip" + distance notes on far sights */
+.day-poi-search { margin-bottom: 10px; }
+
+/* ── Custom places: the search's "not in the catalogue" escape hatch ── */
+/* The catalogue is a head start, not a gatekeeper: whatever was typed can
+   become a stop. Dashed like the other "make something new" affordances. */
+.day-custom-add {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%;
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border: 1px dashed var(--accent-soft);
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: var(--accent);
+  text-align: center;
+  transition: border-color .15s, background .15s;
+}
+.day-custom-add:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
+.day-custom-add:disabled { color: var(--ink-mute); border-color: var(--rule); cursor: default; }
+.day-custom-spin {
+  flex: none;
+  width: 12px; height: 12px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: extras-spin 0.9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .day-custom-spin { animation: none; }
+}
+
+/* ── Import ideas drawer: extracted activities awaiting a day ── */
+.day-import-collapse .extras-dropzone { margin: 0 0 10px; }
+.day-idea-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.day-idea-row:last-child { border-bottom: none; }
+.day-idea-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.day-idea-text b { font-size: 12.5px; color: var(--ink); font-weight: 600; }
+.day-idea-text small { font-size: 11px; color: var(--ink-soft); }
+.day-idea-add {
+  flex: none;
+  padding: 5px 11px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--accent);
+  white-space: nowrap;
+  transition: background .15s, border-color .15s;
+}
+.day-idea-add:hover:not(:disabled) { background: var(--accent-bg); border-color: var(--accent); }
+.day-idea-add:disabled { color: var(--ink-mute); border-color: var(--rule); cursor: default; }
+
+/* The link row inside the dropzone: a URL is a document too. */
+.extras-drop-url { display: flex; gap: 6px; margin-top: 8px; }
+.extras-drop-url input {
+  flex: 1; min-width: 0;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.extras-drop-url input:focus { outline: none; border-color: var(--accent); }
+.extras-drop-url input::placeholder { color: var(--ink-mute); }
+.extras-drop-url .extras-add-btn { margin-top: 0; white-space: nowrap; background: var(--paper); }
+.day-search-results { margin-bottom: 12px; }
+.day-poi-note {
+  display: block;
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 2px;
+}
+.day-tier-far .day-tier-badge { color: var(--accent); }
+
+/* Door-to-first-sight leg at the top of the timeline */
+.day-timeline-stay {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* Clear the vertical connector line (left: 11px) so it never cuts through
+     the preamble text or the wrapped "Directions" link. */
+  padding-left: 34px;
+  color: var(--ink-soft);
+}
+
+/* "Make the walk itself beautiful": near-zero scenic detours on the route */
+.day-scenic {
+  margin-top: 12px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.day-scenic-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.day-scenic-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 4px;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 8px;
+}
+.day-scenic-row:hover { background: var(--paper-dim); }
+.day-scenic-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.day-scenic-text b { font-size: 12.5px; color: var(--ink); }
+.day-scenic-text small { font-size: 11px; color: var(--ink-soft); }
+
+/* Researched "most beautiful walk" cards per city */
+.day-walk {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 10px 12px;
+}
+.day-walk + .day-walk { margin-top: 8px; }
+.day-walk b { font-size: 13px; color: var(--ink); }
+.day-walk small { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); }
+/* Walk cards became addable: text left, the +/✓ pin button right. */
+.day-walk { flex-direction: row; align-items: center; gap: 10px; }
+.day-walk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.day-walk-add { flex: none; }
+.day-walk.added { border-color: var(--accent); }
+
+/* A walk pinned onto the day, shown with the plan itself. */
+.day-plan-walks { margin-top: 10px; }
+.day-plan-walk {
+  display: flex; align-items: flex-start; gap: 10px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 9px 10px;
+}
+.day-plan-walk + .day-plan-walk { margin-top: 6px; }
+.day-plan-walk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.day-plan-walk-text b { font-size: 12.5px; color: var(--ink); }
+.day-plan-walk-text small { font-size: 11px; line-height: 1.45; color: var(--ink-soft); }
+/* Full / Half / Taste: how much of the pinned walk today holds. */
+.day-walk-len { display: inline-flex; gap: 4px; margin-top: 4px; }
+.day-walk-len-btn {
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 9px;
+  cursor: pointer;
+}
+.day-walk-len-btn.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--paper));
+}
+
+/* ───────── Crash guard (ErrorBoundary fallback) ───────── */
+.crash-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: var(--paper);
+}
+.crash-card {
+  max-width: 460px; width: 100%;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule); border-radius: 16px;
+  padding: 26px 24px; box-shadow: var(--shadow-2);
+}
+.crash-title { font-family: var(--display); font-size: 22px; color: var(--ink); margin: 0 0 8px; }
+.crash-lead { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.5; }
+.crash-detail {
+  font-family: var(--mono); font-size: 12px; color: var(--accent);
+  background: rgba(200, 80, 30, 0.08); border-radius: 8px;
+  padding: 10px 12px; margin: 0 0 18px;
+  white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto;
+}
+.crash-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+

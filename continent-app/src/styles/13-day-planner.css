@@ -1,0 +1,649 @@
+/* Day planner: first block (landing, days stepper, rail).
+   Part of the modular stylesheet (T191). Load order is set by styles.css and
+   must not change: the cascade depends on it. */
+
+/* ───────── Day planner ───────── */
+
+.day-empty-screen { display: flex; align-items: center; justify-content: center; }
+.day-empty {
+  max-width: 420px;
+  padding: 0 24px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+.day-empty .section-title {
+  font-family: var(--display);
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.day-empty .trip-saved-list { margin-top: 16px; text-align: left; }
+
+/* Day-planner landing: scrollable column, left-aligned (unlike the centered
+   .day-empty message) so the "plan any city" builder + saved lists fit. */
+.day-landing-screen {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+.day-landing {
+  width: 100%;
+  max-width: 560px;
+  padding: 32px 24px 48px;
+  color: var(--ink-soft);
+}/* Desktop: before a stay is chosen the landing is a centered, readable card.
+   Once the explore map appears (.day-landing-wide) the page goes full width
+   so the map can be the hero - but every form-like piece keeps a capped,
+   CENTERED column, so nothing hugs the left edge of an ultrawide window. */
+@media (min-width: 1000px) {
+  .day-landing.day-landing-wide { max-width: none; padding: 32px clamp(28px, 3.5vw, 72px) 48px; }
+  .day-landing-wide .panel-tag,
+  .day-landing-wide .day-landing-title,
+  .day-landing-wide .day-landing-lead,
+  .day-landing-wide .day-landing-section,
+  .day-landing-wide .day-edit-banner,
+  .day-landing-wide .day-build-top,
+  .day-landing-wide .day-stay-results,
+  .day-landing-wide .day-build-cities,
+  .day-landing-wide .day-build-hint,
+  .day-landing-wide .trip-save-btn.day-build-btn { width: 100%; max-width: 680px; margin-inline: auto; }}
+/* Header mirrors the Saved-trips panel (.panel-tag overline + a display-serif
+   title in sentence case), body copy is explicitly the UI face - the Day
+   planner must read as the same family as everything else saved. */
+.day-landing-title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.day-landing-lead { font-family: var(--ui); font-size: 13px; line-height: 1.55; margin-bottom: 20px; }
+/* Section headers on the landing ("Your day plans", "Plan a day from a saved
+   trip"): the Saved-trips panel's mono uppercase section style, not the serif
+   block title, so saved things are labelled identically everywhere. */
+.day-landing-section .trip-block-title {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}.day-build .trip-add-row { display: block; }.day-build-row .trip-field { flex: 1; }.day-build-place-row .trip-field { flex: 1 1 140px; min-width: 0; }.day-landing-section { margin-top: 24px; }.day-build-map .trip-map { position: absolute; inset: 0; }
+/* "When does your day start" chips reuse .day-chip; just space the row. */
+.day-start-row { margin-top: 8px; }
+
+/* Open-in-Google-Maps export link under the day's timeline. */
+.day-gmaps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.day-gmaps-link:hover { filter: brightness(1.05); }
+.day-saved-sub {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+.day-chip-add { border-style: dashed; color: var(--accent); }
+.day-chip-add:hover { border-color: var(--accent); }
+
+.day-chip-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+.day-chip {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  transition: border-color .15s, color .15s, background .15s;
+}
+.day-chip:hover { border-color: var(--ink-soft); }
+.day-chip.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+
+.day-assigned-list, .day-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.day-assigned-row, .day-activity-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* Tighter on the right so the +/tools sit a comfortable distance from the
+     card edge rather than floating in dead space. */
+  padding: 9px 8px 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+}
+.day-activity-row { transition: border-color .15s, background .15s; }
+.day-activity-row:hover { border-color: var(--ink-soft); }
+.day-activity-row.added { border-color: var(--accent); background: var(--accent-bg); }
+.day-assigned-idx {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.day-assigned-body { flex: 1; min-width: 0; text-align: left; }
+/* The name owns its whole line and WRAPS, badges drop underneath: sharing
+   one flex line with a badge cluster in a 380px rail is what once rendered
+   "Hohensalzburg Fortress" as "H...". A place row whose name cannot be read
+   has no reason to exist, in the browse lists exactly as on the timeline. */
+.day-assigned-name {
+  display: block;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.day-assigned-title {
+  display: block;
+  min-width: 0;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.day-assigned-badges {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+}
+/* The badges already sit in a spaced cluster; their own nudges would double up. */
+.day-assigned-badges .day-badge-must,
+.day-assigned-badges .day-badge-heritage { margin-left: 0; }
+/* A place of the traveller's own making, and honest about a centre-fallback
+   pin: the badge is the quiet "this one is yours" mark on row and timeline. */
+.day-badge-custom {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  white-space: nowrap;
+}
+.day-assigned-kind {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+}
+.day-activity-add {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+.day-activity-row.added .day-activity-add { color: var(--accent); }
+
+.day-timeline-note { margin-bottom: 10px; }
+.day-timeline { display: flex; flex-direction: column; }
+.day-timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.day-timeline-time {
+  width: 58px;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  text-align: right;
+}
+.day-timeline-row .day-assigned-row { flex: 1; }
+/* A planned stop shows its FULL name (stacked title + badges is now the base
+   .day-assigned-name treatment everywhere). With a wrapped title and a
+   description under it the row is tall, so the thumbnail and the tools align
+   to the top rather than floating in the middle. */
+.day-timeline-row .day-assigned-badges { margin-top: 4px; }
+.day-timeline-row .day-assigned-row { align-items: flex-start; }
+.day-timeline-row .day-thumb { margin-top: 2px; }
+.day-timeline-tools { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.day-timeline-walk {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  padding: 6px 0 6px 68px;
+}
+
+/* Visit estimate on every planned stop. Deliberately NOT an arrival time: a
+   leisure day runs on "about 45 minutes here", not on 09:33, and a clock face
+   on every row turns a holiday into a corporate agenda nobody dares run late
+   on. The exact minutes still exist in the model for the calendar export. */
+.day-assigned-when {
+  display: inline-block;
+  margin-top: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* The sentence that says what a place actually is: the bot's reason when the
+   day came from an import, the catalogue description otherwise. It takes a
+   full-width line of the card (flex-basis 100% in a wrapping row), not the
+   narrow title column, so two lines is a real two lines of prose. */
+/* The card's second line: description then visit estimate, across its whole
+   width rather than inside the ~160px title column. */
+.day-assigned-foot { flex: 1 0 100%; min-width: 0; }
+.day-assigned-note {
+  margin: 5px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.day-assigned-note.from-ai { color: var(--ink-soft); }
+
+/* Macro phase headers standing in for per-stop clock times. */
+.day-phase-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 6px;
+}
+.day-phase-head:first-child { margin-top: 2px; }
+.day-phase-label {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.day-phase-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* Lunch pause slotted into the first opening past 12:30. */
+.day-timeline-lunch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+}
+
+/* "Done around 16:10" + open-time note under the route total. */
+.day-done-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.day-done-line svg { flex: none; }
+
+/* A ferry leg (lake/sea crossing) - flagged so it never reads as a walk. */
+.day-timeline-ferry {
+  color: var(--water-link);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* The door -> first sight RIDE (stay beyond walking range): the chosen
+   day-trip mode's icon, its own directions link, and a hand-off note - so a
+   14 km hop never reads as a three-hour "walk from your stay". */
+.day-timeline-ride {
+  color: var(--accent);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.day-timeline-ride svg { flex: none; }
+.day-timeline-ride-dir { color: var(--accent); font-weight: 700; text-decoration: none; }
+.day-timeline-ride-dir:hover { text-decoration: underline; }
+.day-timeline-ride-note {
+  flex-basis: 100%;
+  font-size: 9.5px;
+  color: var(--ink-mute);
+}
+
+/* Rated-but-not-must places: quiet guidance next to the name. */
+.day-badge-rated {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--good-ink-soft);
+  background: rgba(44, 125, 84, 0.12);
+  vertical-align: 2px;
+}
+
+/* --- Gradated "Things to do" tiers (schema v12: rate/heritage/img/desc) --- */
+.day-tier { margin-bottom: 14px; }
+.day-tier-head {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.day-tier-badge { color: var(--accent); }
+.day-tier-count {
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+/* Must-sees stand out: accent edge + slightly stronger name. */
+.day-tier-must .day-activity-row { border-left: 3px solid var(--accent); }
+.day-tier-must .day-assigned-name { font-weight: 600; }
+
+/* Rich rows: the outer keeps the card chrome, the inner button does the layout
+   so the wiki ⓘ can sit beside it without nesting buttons. */
+.day-activity-rich { padding: 0; }
+.day-activity-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 4px 8px 8px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.day-activity-info {
+  flex-shrink: 0;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 10px 0 4px;
+  font-size: 13px;
+  color: var(--ink-mute);
+  text-decoration: none;
+}
+.day-activity-info:hover { color: var(--accent); }
+
+/* Thumbnails (activity rows + timeline). */
+.day-thumb {
+  /* Blockified for free when it is a flex item (every list row), but the AI
+     proposal nests it inside a badge wrapper, and an inline span ignores both
+     of the sizes below. */
+  display: block;
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--accent-bg);
+  object-fit: cover;
+}
+/* No photo? The thumbnail still says what kind of place this is: a category
+   glyph on warm paper with a hairline inset, rather than a flat pink square
+   holding a single cropped letter. */
+.day-thumb-empty {
+  display: flex; align-items: center; justify-content: center;
+  background-color: var(--paper-dim);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink-mute);
+}
+.day-thumb-empty svg { display: block; }
+.day-timeline-row .day-thumb { width: 34px; height: 34px; }
+
+.day-badge-heritage {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  background: var(--accent-bg);
+  vertical-align: 2px;
+}
+
+.day-more-btn {
+  width: 100%;
+  padding: 9px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.day-more-btn:hover { border-color: var(--ink-soft); }
+
+/* Lunch row in the timeline. */
+.day-timeline-lunch .day-assigned-row {
+  border-style: dashed;
+  background: var(--accent-bg);
+}
+
+/* Inline SVG icon alignment: icons that sit inside text lines (block titles,
+   mode labels, chips, badges) hang from the baseline without this. */
+.trip-block-title svg,
+.day-chip svg,
+.day-assigned-name svg,
+.trip-leg-main svg,
+.trip-leg-mode svg,
+.trip-transport-seg svg,
+.guide-car-advice-head svg,
+.guide-car-note svg {
+  vertical-align: -2px;
+}
+.day-tier-badge,
+.guide-reco-mark {
+  display: inline-flex;
+  align-items: center;
+}
+.guide-reco-mark {
+  color: var(--accent);
+  margin-left: 4px;
+  vertical-align: -1px;
+}
+.guide-interest-icon,
+.guide-transport-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+}
+.guide-interest.on .guide-interest-icon,
+.guide-transport.on .guide-transport-icon { color: var(--accent); }
+
+/* --- Shape-your-day wizard (reuses the guided-wizard shell) --- */
+/* Roomier than the trip wizard: one question per screen, so the modal can
+   afford to be large and nothing ever needs scrolling. */
+.shape-modal {
+  max-width: 640px;
+  max-height: min(92vh, 830px);
+  min-height: min(540px, 86vh);
+}
+.shape-head-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14.5px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+  /* Clear of the absolute-positioned close (×) in the top-right corner. */
+  padding-right: 36px;
+}
+.shape-head-step {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.shape-field-title {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin: 16px 0 8px;
+}
+.shape-pace-row { display: flex; gap: 8px; }
+.shape-pace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.shape-pace:hover { border-color: var(--ink-soft); }
+.shape-pace.on { border-color: var(--accent); background: var(--accent-bg); }
+.shape-pace-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.shape-pace-hint {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-mute);
+}
+.shape-lunch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.shape-lunch input { accent-color: var(--accent); }
+.shape-skip {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.shape-skip:hover { color: var(--ink); }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  line-height: 1;
+  /* Vertically centre the logo against the two filter rows so there's no dead
+     space beneath it. */
+  align-self: center;
+}
+.brand-mark {
+  display: block;
+  flex-shrink: 0;
+}
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+.brand .name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.brand .sub {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  margin-top: 4px;
+}
+
+.brand-divider {
+  width: 1px;
+  height: 30px;
+  background: var(--rule);
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.filter-rows {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  padding: 0;
+}/* Each row is a set of labelled category cards packed from the left with a
+   consistent gap; `stretch` keeps every card in a row the same height. */
+/* A category card: a small caption over a row of its member filters, wrapped
+   in a subtle panel so each cluster reads as one unit instead of loose
+   controls drifting in whitespace. On mobile this collapses (`display:
+   contents`, see the mobile block) so the fields drop straight into the
+   2-column grid and the card chrome disappears. */
+/* Stretch (not flex-end) so every filter's grey caption sits on the SAME top
+   line regardless of how tall its control is (the price slider's value row
+   used to push "Show" / "Travel by" out of line with "Price per person"). */
+
+

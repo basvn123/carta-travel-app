@@ -1,0 +1,281 @@
+{
+  "measured_at": "2026-10-03T00:03:17.938Z",
+  "runs_per_cell": 3,
+  "cpu_throttle_phone": 4,
+  "note": "Local dist over a static server on loopback. Network is not throttled, so these LCP figures are a floor: they isolate payload and CPU cost, not RTT.",
+  "mode": {
+    "layers": false
+  },
+  "rows": [
+    {
+      "device": "desktop",
+      "page": "price-map",
+      "url": "/?tab=map",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 19228,
+      "inp_ms": 152,
+      "cls": 0.1333,
+      "settled_ms": 19761,
+      "lcp_element": "IMG.railcard-img",
+      "interactions": 12,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 19548,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 20093,
+          "cls": 0.1559,
+          "inp": 160,
+          "interactions": 12,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 18476,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 19018,
+          "cls": 0.1311,
+          "inp": 136,
+          "interactions": 12,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 19228,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 19761,
+          "cls": 0.1333,
+          "inp": 152,
+          "interactions": 13,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "page": "destination-page",
+      "url": "/#dest=gem:valbona",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 17192,
+      "inp_ms": 40,
+      "cls": 0.1503,
+      "settled_ms": 20424,
+      "lcp_element": "P.destp-short",
+      "interactions": 6,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 17192,
+          "lcpEl": "P.destp-short",
+          "settled": 20623,
+          "cls": 0.1503,
+          "inp": 40,
+          "interactions": 6,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 16740,
+          "lcpEl": "P.destp-short",
+          "settled": 20125,
+          "cls": 0.092,
+          "inp": 32,
+          "interactions": 3,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 17408,
+          "lcpEl": "P.destp-short",
+          "settled": 20424,
+          "cls": 0.1652,
+          "inp": 40,
+          "interactions": 6,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "page": "trip-page",
+      "url": "/#itin=at-salzburg-vienna-chain-6d",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 3336,
+      "inp_ms": null,
+      "cls": 0,
+      "settled_ms": 9621,
+      "lcp_element": "DIV.name",
+      "interactions": 0,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 3336,
+          "lcpEl": "DIV.name",
+          "settled": 9621,
+          "cls": 0,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 3320,
+          "lcpEl": "DIV.name",
+          "settled": 9263,
+          "cls": 0,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 3596,
+          "lcpEl": "DIV.name",
+          "settled": 9831,
+          "cls": 0,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "price-map",
+      "url": "/?tab=map",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 20448,
+      "inp_ms": 976,
+      "cls": 0.1442,
+      "settled_ms": 24254,
+      "lcp_element": "H3.xrails-title",
+      "interactions": 11,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 20448,
+          "lcpEl": "H3.xrails-title",
+          "settled": 24092,
+          "cls": 0.1442,
+          "inp": 976,
+          "interactions": 11,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 22248,
+          "lcpEl": "H3.xrails-title",
+          "settled": 25802,
+          "cls": 0.1442,
+          "inp": 1336,
+          "interactions": 12,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 20208,
+          "lcpEl": "H3.xrails-title",
+          "settled": 24254,
+          "cls": 0.1443,
+          "inp": 544,
+          "interactions": 9,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "destination-page",
+      "url": "/#dest=gem:valbona",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 21672,
+      "inp_ms": 176,
+      "cls": 0.3093,
+      "settled_ms": 23767,
+      "lcp_element": "P.destp-short",
+      "interactions": 3,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 20316,
+          "lcpEl": "P.destp-short",
+          "settled": 23524,
+          "cls": 0.3093,
+          "inp": 176,
+          "interactions": 3,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 22012,
+          "lcpEl": "IMG",
+          "settled": 23767,
+          "cls": 0.3093,
+          "inp": 392,
+          "interactions": 3,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 21672,
+          "lcpEl": "IMG",
+          "settled": 24845,
+          "cls": 0.3092,
+          "inp": 144,
+          "interactions": 3,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "trip-page",
+      "url": "/#itin=at-salzburg-vienna-chain-6d",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 3896,
+      "inp_ms": null,
+      "cls": 0,
+      "settled_ms": 9739,
+      "lcp_element": "DIV.name",
+      "interactions": 0,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 3896,
+          "lcpEl": "DIV.name",
+          "settled": 9739,
+          "cls": 0,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 3732,
+          "lcpEl": "DIV.name",
+          "settled": 9814,
+          "cls": 0,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 3964,
+          "lcpEl": "DIV.name",
+          "settled": 9591,
+          "cls": 0,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        }
+      ]
+    }
+  ]
+}
