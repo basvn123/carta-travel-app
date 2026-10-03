@@ -53,6 +53,11 @@
  * behaviour; it can prove that a refactor which removes the branch does not
  * pass this file silently, which is the failure mode worth catching.
  *
+ * Since T323 the same branches are also EXECUTED, not just pattern-checked, by
+ * scripts/ai/test_edge_exec.mjs (the real index.ts files run against a stub
+ * Supabase client and a stub fetch). Part C stays as the cheap guard that runs
+ * without Node 24 type stripping.
+ *
  * It never touches the live Supabase project. Part A creates and drops a
  * database named carta_t037_test.
  */

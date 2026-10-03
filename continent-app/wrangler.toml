@@ -6,11 +6,12 @@
 # on every build, so they ship with the deploy rather than living in a dashboard
 # where they cannot be reviewed or reverted.
 #
-# There are no bindings here on purpose. The app talks to Supabase over HTTPS
-# from the browser and, once T054 lands, will read data shards from R2 over a
-# public custom domain (data.carta-europetravel.com). Neither needs a Pages
-# binding, and adding one would put a Worker in a request path that is currently
-# pure static serving.
+# The app talks to Supabase over HTTPS from the browser and reads its data
+# shards from R2 over a public custom domain (data.carta-europetravel.com).
+# Neither needs a binding. The one binding below is for the one Pages Function,
+# functions/[[path]].js (T221), which serves the prerendered pages. Only the
+# paths in public/_routes.json reach it; everything else stays pure static
+# serving, as before.
 #
 # See Execution/P1/T024-cloudflare-pages-migration.md for the cut-over runbook,
 # including the DNS steps, which cannot be done from this file.
@@ -18,6 +19,17 @@
 name = "carta-app"
 compatibility_date = "2026-09-23"
 pages_build_output_dir = "dist"
+
+# The prerendered pages and their share cards (T221, owner decision T272).
+# A bucket of its own, with no custom domain and no public access, so the same
+# HTML is never reachable on a second host (a duplicate for every page) and the
+# data bucket's lifecycle and CORS rules never touch it. Filled by
+# scripts/prerender/push.mjs; create it once before the first deploy that
+# carries this file:
+#   npx wrangler r2 bucket create carta-prerender
+[[r2_buckets]]
+binding = "PRERENDER"
+bucket_name = "carta-prerender"
 
 # Build settings, for reference when configuring the Pages project. Pages runs
 # these from its own dashboard or from `wrangler pages deploy`; they are recorded

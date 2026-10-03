@@ -511,7 +511,7 @@ export const nl = {
   "account.deleteConfirmPassword": "Bevestig met je wachtwoord",
   // data export (GDPR Article 20)
   "account.dataTitle": "Jouw gegevens",
-  "account.exportHint": "Download alles wat Carta van je bewaart als JSON-bestand: je reizen, de stops en data, en welke pasaanbiedingen je te zien kreeg.",
+  "account.exportHint": "Download alles wat Carta van je bewaart als JSON-bestand: je reizen en dagplannen, je profiel, vrienden en medeplanners, je passen en aankopen, je AI-gebruik en de geschiedenis van je account.",
   "account.exportBtn": "Mijn gegevens downloaden",
   "account.exportConfirmHint": "Bevestig dat jij het bent, dan wordt het bestand gedownload. Het bevat je hele account, dus bewaar het ergens privé.",
   "account.exportCancel": "Annuleren",

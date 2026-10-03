@@ -511,7 +511,7 @@ export const de = {
   "account.deleteConfirmPassword": "Mit deinem Passwort bestätigen",
   // data export (GDPR Article 20)
   "account.dataTitle": "Deine Daten",
-  "account.exportHint": "Lade alles herunter, was Carta über dich speichert, als JSON-Datei: deine Reisen, ihre Stationen und Daten, und welche Pass-Angebote dir gezeigt wurden.",
+  "account.exportHint": "Lade alles herunter, was Carta über dich speichert, als JSON-Datei: deine Reisen und Tagespläne, dein Profil, Freunde und Mitplaner, deine Pässe und Käufe, deine KI-Nutzung und den Verlauf deines Kontos.",
   "account.exportBtn": "Meine Daten herunterladen",
   "account.exportConfirmHint": "Bestätige, dass du es bist, dann wird die Datei heruntergeladen. Sie enthält dein ganzes Konto, bewahre sie also privat auf.",
   "account.exportCancel": "Abbrechen",

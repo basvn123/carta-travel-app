@@ -20,7 +20,9 @@ import React from 'react';
  *    section here is what that checkbox refers to.
  *  - The estimates paragraph. Every figure is a modelled or measured estimate
  *    with provenance, and no operator's live prices are republished. This is
- *    the closed Ryanair decision written down where it belongs.
+ *    the closed Ryanair decision written down where it belongs. Since T273
+ *    (owner decision 2026-10-02) Carta prices no flights: the only flight
+ *    figure in a total is the one the traveller typed (T319 wording).
  *  - That Carta is not a travel agent and sells no travel.
  *  - Liability limits that stay inside what Belgian consumer law allows.
  *  - Belgian law, Belgian courts, the Belgian consumer mediation service.
@@ -33,7 +35,7 @@ import React from 'react';
  * The legal identity of the provider lives in Imprint.jsx (T015 fills it in),
  * so these terms point there rather than repeating placeholders.
  */
-const UPDATED = '23 September 2026';
+const UPDATED = '3 October 2026';
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function TermsOfService({ onClose }) {
@@ -90,16 +92,24 @@ export function TermsOfService({ onClose }) {
           <h3>Every figure is an estimate</h3>
           <p>
             Carta publishes modelled and measured estimates with their
-            provenance. It does not republish any operator's live prices. A
-            fare figure is our estimate of what a route typically costs for
-            the dates you chose, built from historical observations of
-            published fares, from calibrated models, and from public schedule
-            and pricing data. Where an estimate rests on a particular carrier
-            or data source, the fare surface names it, and a freshness note
-            says when the underlying observation was made. Stay prices, food,
-            local transport and daily budgets are estimates in the same sense:
-            typical figures for a place and a travel style, not an offer to
-            sell anything at that price.
+            provenance. It does not republish any operator's live prices.
+          </p>
+          <p>
+            Carta does not price flights. No flight figure of ours appears on
+            a screen or in a total. A flight counts in a total only when you
+            type in what you paid, and that figure is yours, shown as yours;
+            we do not check it.
+          </p>
+          <p>
+            A ground fare (a train, bus or ferry leg, local transport, an
+            airport transfer) is our estimate of what that journey typically
+            costs, built from per-kilometre fare levels for each country and
+            mode and calibrated on prices we have observed. Stay prices, food
+            and daily budgets are estimates in the same sense: typical figures
+            for a place and a travel style, not an offer to sell anything at
+            that price. Where a figure rests on a measured price, the screen
+            names its source and says when it was observed; where it is a
+            model, the screen says so.
           </p>
           <p>
             An estimate is not a quote. The only price that counts is the one
@@ -108,7 +118,8 @@ export function TermsOfService({ onClose }) {
             because operators add fees, and because a model cannot see a sale
             that starts tomorrow. Check the figure at the operator before you
             commit money, and treat Carta's totals as a budget to plan around,
-            not a promise.
+            not a promise. A total leaves your flights out unless you entered
+            your own fare.
           </p>
           <p>
             The same applies to every other fact in the app: opening hours,
