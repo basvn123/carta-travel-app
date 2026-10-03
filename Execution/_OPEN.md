@@ -769,3 +769,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T166-e | T166 | Not measured for filled primaries: cycling route page (#cycle=1150&cc=AT did not open in dev), cycling tour page (shows Reload the app in dev, same at 70cba6f, cause not investigated), account panel, later planner steps, My trips at 1280px | next task | open |  |
 | T166-f | T166 | The destination, trail and layer-page action buttons are bespoke CSS classes, not the shared Button; moving them changes radius and height of whole rows and needs JSX edits, so do it as its own task | next task | open |  |
 | T166-g | T166 | The browser audit that counts filled primaries per view lives in a session scratchpad; add it to scripts/ as a verify script so the one-primary rule is checked | next task | open |  |
+| T168-a | T168 | 3,333 of the grid cells are a derived standard kit; D1 must backfill packingNotes as {icon, item, whyThisTrip} for the 153 empty trips and top up the 100 written ones, using the icon keys in PackIcons.jsx | next task | open |  |
+| T168-b | T168 | The 20px pack icons were drawn by hand in one pass and need a design review at full size | user | open |  |
