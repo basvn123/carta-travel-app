@@ -498,7 +498,7 @@ def _mutations(good):
     return [
         ("euro amount in a risk", m(lambda f: f["whatCouldGoWrong"][0].update(consequence="A taxi back costs EUR 35 and a long wait for one.")), "figure"),
         ("figure with a unit", m(lambda f: f["packingNotes"][0].update(whyThisTrip="The Danube path has a 12 km gravel stretch near Passau where a flat is likely.")), "figure"),
-        ("em dash", m(lambda f: f["packingNotes"][1].update(item="Rain jacket — packable")), "shape"),
+        ("em dash", m(lambda f: f["packingNotes"][1].update(item="Rain jacket \u2014 packable")), "shape"),
         ("unknown icon key", m(lambda f: f["packingNotes"][2].update(icon="sunscreen")), "shape"),
         ("extra key", m(lambda f: f["packingNotes"][0].update(price=5)), "shape"),
         ("missing key", m(lambda f: f["whatCouldGoWrong"][1].pop("whatToDo")), "shape"),
