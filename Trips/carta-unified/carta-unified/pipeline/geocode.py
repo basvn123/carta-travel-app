@@ -3,11 +3,11 @@
 Uses the `geonamescache` package (bundled GeoNames extract, no network) so the
 pipeline stays reproducible. Every coordinate carries a `precision` field:
 
-  source   — latitude/longitude stated in the source record
-  city     — matched a named basecamp or sub-region town in the trip's country,
-             or derived from the places the itinerary names (see below)
-  gateway  — matched only the gateway airport's city, which can be hours away
-  country  — fell back to the country's capital; a map pin, not a location
+  source: latitude/longitude stated in the source record
+  city: matched a named basecamp or sub-region town in the trip's country,
+    or derived from the places the itinerary names (see below)
+  gateway: matched only the gateway airport's city, which can be hours away
+  country: fell back to the country's capital; a map pin, not a location
 
 Itinerary derivation (T090, trips spec J1). geonamescache only knows towns
 over 15,000 people, so most basecamps (Motovun, Capileira, Zabljak) never
