@@ -1,0 +1,19 @@
+{
+  "note": "The one aggregator block list (T327, register row T041-f). Content farms and aggregators: high volume, no independent observation. Read by pipeline/dossier/common.py (Python) and by publisher.mjs beside this file (the Edge Functions). It lives under supabase/functions because an Edge Function bundle can only carry files from there; the pipeline reads it by path. Edit the list here and nowhere else; tests/test_blocked_domains.py checks both readers agree.",
+  "domains": [
+    "pinterest.com",
+    "quora.com",
+    "facebook.com",
+    "instagram.com",
+    "x.com",
+    "twitter.com",
+    "youtube.com",
+    "reddit.com",
+    "tripadvisor.com",
+    "booking.com",
+    "expedia.com",
+    "agoda.com",
+    "hotels.com",
+    "trip.com"
+  ]
+}
