@@ -159,7 +159,10 @@ PASS_EXTRAS = {
                       "required": ["path", "url", "basis"],
                       "properties": {
                           "path": {"type": "string", "maxLength": 80},
-                          "url": {"type": "string", "pattern": "^https?://", "maxLength": 400},
+                          "url": {"anyOf": [{"type": "string", "pattern": "^https?://", "maxLength": 400},
+                                            {"type": "null"}],
+                                  "description": "The page the figure came from, or null for an estimate "
+                                                 "from general knowledge (allowed only where the prompt says)."},
                           "basis": {"type": "string", "minLength": 5, "maxLength": 240},
                       }},
             "description": "One row per figure: its dotted path, the page it came from, how the page gives it.",
@@ -508,16 +511,28 @@ def apply_evidence(fields, evidence, chunks, today):
                 figure = value
             dotted = G._path(path)
             row = by_path.get(dotted)
-            ok = bool(row) and url_was_read(row["url"], chunks)
+            estimate = bool(row) and not row.get("url")
+            if estimate and pattern in G.ESTIMATE_OK:
+                # T146: general knowledge is a fair basis for a food budget
+                # or a riding time and for nothing else.
+                rows.append({"path": dotted, "value": figure, "class": "estimate", "sourceUrl": None,
+                             "basis": row["basis"], "status": "estimated", "fetchedAt": None})
+                continue
+            ok = bool(row) and not estimate and url_was_read(row["url"], chunks)
             cls = next((c for k, c in FIGURE_CLASS.items() if k in dotted), "static")
             rows.append({"path": dotted, "value": figure, "class": cls,
                          "sourceUrl": row["url"] if ok else None,
                          "basis": row["basis"] if row else None,
-                         "status": "sourced" if ok else ("unread-url" if row else "unsourced"),
+                         "status": "sourced" if ok else ("unread-url" if row and not estimate
+                                                         else "unsourced"),
                          "fetchedAt": today if ok else None})
             if ok:
                 continue
-            why = f"{dotted}: {'its source was not among the pages read' if row else 'no source given'}"
+            if estimate:
+                reason = "an estimate is not allowed for this figure"
+            else:
+                reason = "its source was not among the pages read" if row else "no source given"
+            why = f"{dotted}: {reason}"
             if required:
                 fatal.append(f"unsourced-required: {why}")
             else:
@@ -525,6 +540,34 @@ def apply_evidence(fields, evidence, chunks, today):
                 flags.append(f"Withheld {why}")
     fields["verifyFlags"] = flags[:40]
     return fields, rows, fatal
+
+
+def make_figures(fields, rows, today):
+    """T146 (spec K3): the record's `figures` list, one row per numeric
+    figure, from the evidence rows apply_evidence returned. Sourced and
+    estimated come from the evidence; the two computed figures (the week total
+    and the per-day range) are derived, or estimated when any budget row they
+    are summed from is. A figure with no evidence row gets no row here, and
+    the gate then rejects the record as unlabelled: fail closed."""
+    probe = copy.deepcopy(fields)
+    total = (probe.get("budget") or {}).get("totalEur") or {}
+    if total.get("low") is not None and total.get("high") is not None:
+        probe["budget"]["perDayEur"] = {"low": 0, "high": 0}   # derive() fills the numbers
+    by_path = {r["path"]: r for r in rows}
+    row_conf = [by_path.get(f"budget.breakdown.{k}", {}).get("status")
+                for k in ("accommodation", "food", "transport", "activities")]
+    out = []
+    for path in G.figure_paths(probe):
+        pat = G.figure_pattern(path)
+        if pat in G.COMPUTED_FIGURES:
+            out.append({"path": path, "confidence": "estimated" if "estimated" in row_conf else "derived",
+                        "sourceUrl": None, "checkedAt": today})
+            continue
+        r = by_path.get(path)
+        if r and r["status"] in ("sourced", "estimated"):
+            out.append({"path": path, "confidence": r["status"], "sourceUrl": r["sourceUrl"],
+                        "checkedAt": today})
+    return out
 
 
 def set_totals(fields):
@@ -548,7 +591,8 @@ def set_totals(fields):
 # snapshot. It never sees the k2 prompts or the evidence rows.
 
 CRITIC_KINDS = ("contradiction", "arithmetic", "terrain", "existence", "stale", "access")
-CRITIC_HIDDEN = ("provenance", "sources", "verifyFlags", "verifyFlagCount", "volatilePricing", "snapshot")
+CRITIC_HIDDEN = ("provenance", "sources", "verifyFlags", "verifyFlagCount", "volatilePricing", "snapshot",
+                 "figures")
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
 CRITIC_MAX_DISPUTES = 30
 _NO_DASH = "^[^\u2014\u2013\u00b7]*$"
@@ -1001,6 +1045,7 @@ def generate(brief, client, out_dir=DEFAULT_OUT, *, reuse=True, today=None, crit
     fields = merge(so_far, strip_extras(3, p3))
     fields, rows, fatal = apply_evidence(fields, p3.get("evidence"), chunks, today)
     set_totals(fields)
+    fields["figures"] = make_figures(fields, rows, today)
     model = passes[1]["model"] or "gemini-unknown"
 
     def build(f):

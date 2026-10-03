@@ -1,4 +1,4 @@
-version: 1
+version: 2
 pass: numbers
 temperature: 0.0
 grounding: true
@@ -15,7 +15,7 @@ Answer with one JSON object and nothing around it, matching this schema exactly:
 
 Rules:
 
-1. You may not invent a figure. Every figure you give must come from a page you actually read in this session. For each figure give one evidence row: path is the dotted path of the figure (for example budget.breakdown.food, itinerary[2].dayStats.distanceKm, accommodationStrategy[0].priceEur, typeSpecific.surfaceMix), url is the page it came from, basis is one sentence on how the page gives it. A figure without an evidence row whose url you really read is treated as invented and withheld.
+1. You may not invent a figure. Every figure you give must come from a page you actually read in this session. For each figure give one evidence row: path is the dotted path of the figure (for example budget.breakdown.food, itinerary[2].dayStats.distanceKm, accommodationStrategy[0].priceEur, typeSpecific.surfaceMix), url is the page it came from, basis is one sentence on how the page gives it. A figure without an evidence row whose url you really read is treated as invented and withheld, except for the two estimates rule 12 allows.
 2. When a figure cannot be sourced, give null for it and add one line to verifyFlags saying which figure and why. Giving null is right; guessing is wrong. The budget breakdown rows (accommodation, food, transport, activities, per person for the week, in euros) are the one place null is not allowed: source them from price pages, booking sites or official tourism figures, and say in the row's note what the range assumes, in words without euro amounts.
 3. Distances in kilometres and climbs in metres come from route pages, trail portals, official cycle route sites or mapping services. timeMin is a realistic moving-time range in minutes. spendEur is what that day's tickets, tastings, hire or tolls cost per person, or null.
 4. gateways[].transferMin is the usual airport-to-base transfer in minutes from the operator's timetable or official site.
@@ -26,3 +26,4 @@ Rules:
 9. Notes beside a typed number (totalNote, breakdown notes, priceNote, dayStats.note, currencyNote) carry no euro figures and no ranges of their own: the figures are in the typed fields next to them.
 10. Prices in another currency are converted to euros at today's rate and the conversion is said in the evidence basis.
 11. No em dash, en dash or middot anywhere. Dates as YYYY-MM-DD.
+12. Two figures only may be an estimate from general knowledge instead of a page: budget.breakdown.food and each itinerary[].dayStats.timeMin. For one of those, give an evidence row whose url is null and whose basis says in one sentence what the estimate assumes. The page shows it marked as an estimate. Every other figure, hotel prices, ticket and day spends, transfer times, distances, climbs, the exchange rate and the other budget rows, needs a page you read; a null url there is treated as invented and withheld.
