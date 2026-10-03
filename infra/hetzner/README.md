@@ -13,9 +13,14 @@ steps to bring them up are in `Execution/P3/_OPEN-hetzner.md`.
 
 ## The always-on orchestrator, cax11/
 
-The box is a CAX11: Ampere arm64, 2 vCPU, 4 GB RAM, 40 GB NVMe and 20 TB of
-traffic, at EUR 5.99 a month at the post-June-2026 price the architecture
-document quotes. Its job is cron, `run_pipeline.py`, the collectors under
+The box is a CAX11 by default: Ampere arm64, 2 vCPU, 4 GB RAM, 40 GB NVMe and
+20 TB of traffic, at EUR 5.99 a month at the post-June-2026 price the
+architecture document quotes. When Hetzner has no ARM stock (every CAX type was
+out of stock on 2026-10-03), `CARTA_SERVER_TYPE=cpx22` provisions an x86 box
+instead: AMD, 2 vCPU, 4 GB RAM, 80 GB. carta-bootstrap reads the architecture
+from dpkg and installs the matching hcloud, rclone and node builds, each
+pinned to its own checksum (T299). `hcloud server-type describe <type>` shows
+the current price and stock per location. Its job is cron, `run_pipeline.py`, the collectors under
 `src/ingestion`, the fare harvests and pushing results to R2. None of that is
 CPU-bound; the harvests wait on the network and the collectors on rate limits,
 so two cores and 4 GB are enough. Everything that is CPU- or memory-bound
@@ -58,7 +63,8 @@ constraints.txt`, the laptop's pinned versions, and stamped with the hash
 the Claude API; `requirements.txt` no longer lists it, so the filter is a
 belt. Wheels only (`--only-binary=:all:`): T046 resolved the whole set against
 Linux aarch64 wheels for CPython 3.12 and every package has one or is pure
-Python, so nothing compiles on the box.
+Python, so nothing compiles on the box. T299 resolved the same pins for
+x86_64 (manylinux_2_28): all 71 resolve, at identical versions.
 
 `weekly.sh` is the job the timer runs. It loads the secrets file through
 `load-env.sh`, writes one "cron fired" line to `/home/carta/logs/weekly.log`
@@ -91,12 +97,14 @@ and ufw hardening, unattended upgrades and available memory, and says whether
 the venv is stamped for the current `constraints.txt`. It exits 1 if anything
 failed.
 
-## IPv6-only, and why it probably cannot stay that way
+## IPv4 by default, and why IPv6-only cannot work
 
-The server is created without a public IPv4 unless `IPV4=1` is set. That is
-the architecture document's default: IPv6 is free, an IPv4 costs about EUR 0.60
-a month, and nobody needs to reach this box except the owner over SSH, which
-works over IPv6 from any network that has it.
+Since T299 the server gets a public IPv4 unless `IPV4=0` is set. Until then it
+was created IPv6-only, the architecture document's default: IPv6 is free, an
+IPv4 costs about EUR 0.60 a month, and nobody needs to reach this box except
+the owner over SSH, which works over IPv6 from any network that has it. The
+owner's laptop has none (checked 2026-10-03), and the reasons below rule it
+out on the box's side as well (register rows T046-a, T300-w).
 
 The problem is outbound, not inbound. An IPv6-only server can only reach hosts
 that publish an IPv6 address, and on 2026-09-27 several that this box must
@@ -116,10 +124,9 @@ keeps only Ryanair. The fare harvests are the main reason the box exists.
 
 The document's line "IPv6-only plus Cloudflare in front works" is about serving
 the app, where Cloudflare answers on both protocols. It does not carry over to
-a machine that makes outbound calls. The code keeps IPv6-only as the default
-because that is what the task asked for, prints a warning on every IPv6-only
-run, and leaves the choice to the owner (register row T046-b). The practical
-answer is `IPV4=1`. Alternatives, such as a public NAT64 gateway or routing
+a machine that makes outbound calls. T046 kept IPv6-only as the default
+because that is what the task asked for; T299 turned it around, and
+`IPV4=0` still prints a warning. Alternatives, such as a public NAT64 gateway or routing
 through another host, add a dependency on a third party in the path of every
 harvest to save sixty cents a month.
 
@@ -127,8 +134,8 @@ harvest to save sixty cents a month.
 
 | Item | Monthly |
 |---|---|
-| CAX11, always on | EUR 5.99 |
-| Primary IPv4, only with IPV4=1 | about EUR 0.60 |
+| CAX11, always on (an x86 fallback costs what its describe output says) | EUR 5.99 |
+| Primary IPv4 (default; IPV4=0 drops it) | about EUR 0.60 |
 | CAX41 workers, on demand (T047) | EUR 0.056 an hour of existence; see cax41/cost.py |
 | Traffic, up to 20 TB | included |
 | Hetzner backups | not enabled |

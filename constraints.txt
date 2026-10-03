@@ -17,6 +17,8 @@
 # package in it pinned to the version installed on the laptop
 # (importlib.metadata). The same compile run against these pins resolves all
 # of them with a Linux aarch64 CPython 3.12 wheel or a pure-Python one.
+# T299 ran the same compile with --python-platform x86_64-manylinux_2_28 for
+# the x86 fallback box: all 71 resolve, at versions identical to aarch64.
 # colorama is a Windows-only dependency, pinned for the laptop's sake.
 #
 # To move a pin: change it here, re-run the compile above, and let the next

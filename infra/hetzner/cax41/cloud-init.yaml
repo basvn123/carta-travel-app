@@ -77,8 +77,9 @@ write_files:
       RCLONE_CONFIG_R2_SECRET_ACCESS_KEY='@@R2_SECRET_ACCESS_KEY@@'
       # Empty unless spawn.sh ran with CARTA_WORKER_SELF_DELETE=1.
       CARTA_WORKER_HCLOUD_TOKEN='@@CARTA_WORKER_HCLOUD_TOKEN@@'
-      # Same pin and checksum as the orchestrator (cax11/cloud-init.yaml);
-      # change both together.
+      # Same pin as the orchestrator (cax11/cloud-init.yaml), whose arm64
+      # checksum this is; that file also carries the amd64 one (T299). Workers
+      # are arm64 only. Change the version in both files together.
       # https://downloads.rclone.org/v1.75.1/SHA256SUMS
       RCLONE_VERSION='1.75.1'
       RCLONE_SHA256='03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9'

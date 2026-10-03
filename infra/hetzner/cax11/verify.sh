@@ -39,7 +39,11 @@ info() { printf 'INFO  %s\n' "$*"; }
 check() { local name="$1"; shift; if "$@" >/dev/null 2>&1; then pass "$name"; else fail "$name"; fi; }
 
 arch="$(uname -m)"
-[ "$arch" = "aarch64" ] && pass "architecture $arch" || fail "architecture is $arch, expected aarch64"
+# arm64 (CAX, the default) or x86_64 (CX/CPX/CCX, T299); carta-bootstrap installs both.
+case "$arch" in
+  aarch64|x86_64) pass "architecture $arch" ;;
+  *) fail "architecture is $arch, expected aarch64 or x86_64" ;;
+esac
 
 . /etc/os-release 2>/dev/null
 [ "${VERSION_ID:-}" = "24.04" ] && pass "Ubuntu ${VERSION_ID}" || fail "OS is ${PRETTY_NAME:-unknown}, expected Ubuntu 24.04"
@@ -130,7 +134,7 @@ total_kb="$(awk '/^MemTotal:/ {print $2}' /proc/meminfo 2>/dev/null)"
 avail_mb=$(( ${avail_kb:-0} / 1024 ))
 total_mb=$(( ${total_kb:-0} / 1024 ))
 if [ "$avail_mb" -ge 2048 ]; then pass "memory: ${avail_mb} MB available of ${total_mb} MB"
-else fail "memory: only ${avail_mb} MB available of ${total_mb} MB (expected at least 2048 on an idle CAX11)"; fi
+else fail "memory: only ${avail_mb} MB available of ${total_mb} MB (expected at least 2048 on an idle 4 GB box)"; fi
 info "disk: $(df -h --output=avail,size / | tail -1 | awk '{print $1" free of "$2}') on /"
 
 if curl -4 -s -o /dev/null -m 10 https://github.com; then info "IPv4 egress: yes"; else info "IPv4 egress: no (IPv6-only; GitHub and several fare APIs unreachable)"; fi

@@ -1,7 +1,8 @@
 #cloud-config
 #
-# Carta orchestrator: Hetzner CAX11 (Ampere arm64, 2 vCPU, 4 GB, 40 GB NVMe),
-# Ubuntu 24.04. The always-on box of CARTA_CLOUD_ARCHITECTURE.md section 6.2:
+# Carta orchestrator: a Hetzner CAX11 (Ampere arm64, 2 vCPU, 4 GB) by default,
+# or an x86 type such as the CPX22 (T299), Ubuntu 24.04. carta-bootstrap
+# reads the architecture from dpkg and installs the matching builds. The always-on box of CARTA_CLOUD_ARCHITECTURE.md section 6.2:
 # cron, run_pipeline.py orchestration, the collectors, the fare harvests and
 # publishing to R2. Task report: Execution/P3/T046-cax11-orchestrator.md.
 #
@@ -25,7 +26,7 @@
 # The weekly units below are T046's, on purpose (T263). They fire weekly.sh,
 # which only logs "cron fired" because they do not set
 # CARTA_PIPELINE_ENABLED=1, so a new box never starts a pipeline run before
-# its secrets are filled and its tasks verified on arm64. The real units
+# its secrets are filled and its tasks verified on the box. The real units
 # (CARTA_PIPELINE_ENABLED=1, the 48 hour timeout, no boot run, the Sunday
 # reboot window) come from infra/hetzner/cron/install.sh, the last owner step
 # (Execution/_OPEN-MASTER.md 7.9).
@@ -114,16 +115,23 @@ write_files:
       # installed version differs from the pin.
       CARTA_REPO_URL="@@CARTA_REPO_URL@@"
       CARTA_REPO_BRANCH="@@CARTA_REPO_BRANCH@@"
+      # One checksum per architecture (arm64 for CAX, amd64 for CX/CPX/CCX,
+      # T299); carta-bootstrap picks the pair's half from dpkg. Both halves
+      # were read from the sums files below on 2026-10-03.
       # https://github.com/hetznercloud/cli/releases/download/v1.69.0/checksums.txt
       HCLOUD_VERSION="1.69.0"
-      HCLOUD_SHA256="3afa68ac6c7dfb62f41d4a740376aaf88d3772e95f94a8816f41050c4bf1077e"
+      HCLOUD_SHA256_ARM64="3afa68ac6c7dfb62f41d4a740376aaf88d3772e95f94a8816f41050c4bf1077e"
+      HCLOUD_SHA256_AMD64="aca1a346c8d218a094f1811ee1705013d394cabf48e40887292caff464b64277"
       # https://downloads.rclone.org/v1.75.1/SHA256SUMS
+      # infra/hetzner/cax41/cloud-init.yaml pins the same version (arm64 only).
       RCLONE_VERSION="1.75.1"
-      RCLONE_SHA256="03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9"
+      RCLONE_SHA256_ARM64="03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9"
+      RCLONE_SHA256_AMD64="982b5aa772841168f8e380f139e9e787b2a105403e32b94da8676a0e1c0a13ab"
       # Node 24 is the active LTS line (Krypton); the laptop runs 24.14.
       # https://nodejs.org/dist/v24.21.0/SHASUMS256.txt
       NODE_VERSION="24.21.0"
-      NODE_SHA256="6ad1325edbdb5649c379b75a237147a666c95d4f9ae8d340fef2d1575d289ad2"
+      NODE_SHA256_ARM64="6ad1325edbdb5649c379b75a237147a666c95d4f9ae8d340fef2d1575d289ad2"
+      NODE_SHA256_AMD64="fd8e59d5a511510f6a298afb548f18c7d2b1be404d8b4a27d94fbe49f56cb2d6"
       # pg_dump must be 17 or newer for Supabase's Postgres 17, and Ubuntu
       # 24.04 ships 16, so the client comes from the PGDG repository (T048-g).
       # The signing key is checked against its published fingerprint.
@@ -157,14 +165,31 @@ write_files:
 
       fetch_verified() {  # url sha256 dest
         local url="$1" sum="$2" dest="$3"
+        [ -n "$sum" ] || { say "no checksum for $url: the architecture step failed"; return 1; }
         curl -fsSL --retry 3 --connect-timeout 20 -o "$dest" "$url" || { say "download failed: $url"; return 1; }
         echo "$sum  $dest" | sha256sum -c - || { say "checksum mismatch: $url"; rm -f "$dest"; return 1; }
+      }
+
+      # The box's own architecture picks the build and its checksum (T299).
+      # hcloud and rclone name the x86 build amd64, node names it x64.
+      # CARTA_ARCH overrides dpkg, for testing the selection off the box.
+      # Empty until select_arch runs, so set -u never trips on them.
+      ARCH=""; NODE_ARCH=""; HCLOUD_SHA256=""; RCLONE_SHA256=""; NODE_SHA256=""
+      select_arch() {
+        local a="${CARTA_ARCH:-$(dpkg --print-architecture 2>/dev/null)}"
+        case "$a" in
+          arm64) ARCH=arm64; NODE_ARCH=arm64
+                 HCLOUD_SHA256="$HCLOUD_SHA256_ARM64"; RCLONE_SHA256="$RCLONE_SHA256_ARM64"; NODE_SHA256="$NODE_SHA256_ARM64" ;;
+          amd64) ARCH=amd64; NODE_ARCH=x64
+                 HCLOUD_SHA256="$HCLOUD_SHA256_AMD64"; RCLONE_SHA256="$RCLONE_SHA256_AMD64"; NODE_SHA256="$NODE_SHA256_AMD64" ;;
+          *) say "unsupported architecture '${a:-unknown}': carta-bootstrap installs arm64 or amd64 builds only"; return 1 ;;
+        esac
       }
 
       install_hcloud() {
         if command -v hcloud >/dev/null && hcloud version 2>/dev/null | grep -q "$HCLOUD_VERSION"; then return 0; fi
         local t; t=$(mktemp -d)
-        fetch_verified "https://github.com/hetznercloud/cli/releases/download/v${HCLOUD_VERSION}/hcloud-linux-arm64.tar.gz" \
+        fetch_verified "https://github.com/hetznercloud/cli/releases/download/v${HCLOUD_VERSION}/hcloud-linux-${ARCH}.tar.gz" \
           "$HCLOUD_SHA256" "$t/hcloud.tar.gz" || { rm -rf "$t"; return 1; }
         tar -xzf "$t/hcloud.tar.gz" -C "$t" hcloud && install -m 0755 "$t/hcloud" /usr/local/bin/hcloud
         local rc=$?; rm -rf "$t"; return $rc
@@ -173,9 +198,9 @@ write_files:
       install_rclone() {
         if command -v rclone >/dev/null && rclone version 2>/dev/null | head -1 | grep -q "v${RCLONE_VERSION}\$"; then return 0; fi
         local t; t=$(mktemp -d)
-        fetch_verified "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-arm64.zip" \
+        fetch_verified "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-${ARCH}.zip" \
           "$RCLONE_SHA256" "$t/rclone.zip" || { rm -rf "$t"; return 1; }
-        unzip -q "$t/rclone.zip" -d "$t" && install -m 0755 "$t/rclone-v${RCLONE_VERSION}-linux-arm64/rclone" /usr/local/bin/rclone
+        unzip -q "$t/rclone.zip" -d "$t" && install -m 0755 "$t/rclone-v${RCLONE_VERSION}-linux-${ARCH}/rclone" /usr/local/bin/rclone
         local rc=$?; rm -rf "$t"; return $rc
       }
 
@@ -198,7 +223,7 @@ write_files:
       install_node() {
         if command -v node >/dev/null && [ "$(node --version 2>/dev/null)" = "v${NODE_VERSION}" ]; then return 0; fi
         local t; t=$(mktemp -d)
-        fetch_verified "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-arm64.tar.xz" \
+        fetch_verified "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.xz" \
           "$NODE_SHA256" "$t/node.tar.xz" || { rm -rf "$t"; return 1; }
         rm -rf /opt/node && mkdir -p /opt/node && tar -xJf "$t/node.tar.xz" -C /opt/node --strip-components=1 || { rm -rf "$t"; return 1; }
         rm -rf "$t"
@@ -262,6 +287,7 @@ write_files:
         systemctl daemon-reload && systemctl enable --now carta-weekly.timer
       }
 
+      step "architecture $(dpkg --print-architecture 2>/dev/null)" select_arch
       step "hcloud ${HCLOUD_VERSION}" install_hcloud
       step "rclone ${RCLONE_VERSION}" install_rclone
       step "node ${NODE_VERSION}" install_node
