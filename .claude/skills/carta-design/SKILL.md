@@ -145,6 +145,10 @@ keeps the same background as the other. Never dim the free plan. State limits as
 **Cards in general.** `--bg-card` fill, `1px solid var(--rule-soft)` or `--rule`, radius 10 to 12px,
 `--shadow-card` at most.
 
+**Suitability strip.** Under a trip hero, a solid `--paper` band at full opacity, flush with the photo's bottom edge, `--rule` border, square corners where it meets the photo. No alpha, no gradient, no text over the photo. Exactly three cells in fixed order: difficulty (five squares, filled `--ink` up to the level, outlined `--ink-mute` beyond it, never `--rate` or `--accent`, plus the level as a word), style (one or two words from tags), total cost (mono face, with currency). A missing value shows a placeholder word ("Unrated", "Mixed", "Price on request") so every trip shows three cells. One row of three on a phone.
+
+**Secondary chrome.** The desktop "Get a pass" chip and the phone's round plus button are secondaries (transparent or `--bg-card` with a `--rule` border; 6 px radius on the chip, `999px` on the round icon button, 44 px minimum target). The accent is kept for each page's one primary action.
+
 ## Interaction
 
 Focus: `outline: 2px solid var(--accent); outline-offset: 2px` on `:focus-visible`. Inputs may swap the
