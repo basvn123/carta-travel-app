@@ -2,7 +2,7 @@
 
 This is the deterministic design system for Carta: the exact values the shipped app runs on, with the one job each value has. Read it after PRODUCT.md and before writing any CSS, JSX, HTML, email or image for Carta. Treat every value here as a rule, not a suggestion. If a design needs something this file does not define, that is a task to raise, not a value to invent.
 
-The source of truth is the `:root` block of `continent-app/src/styles.css`. This file is a record of it, kept in step by hand; when the two disagree, `styles.css` is what ships and this file is wrong. Never hardcode a hex, a font name or a pixel spacing in a component: reference the custom property.
+The source of truth is the `:root` block of `continent-app/src/styles/01-tokens.css`. This file is a record of it, kept in step by hand; when the two disagree, that file is what ships and this file is wrong. `src/styles.css` is only the entry point that imports the domain files in `src/styles/`, in a fixed order (T191). Never hardcode a hex, a font name or a pixel spacing in a component: reference the custom property.
 
 The carta-design skill (`.claude/skills/carta-design/SKILL.md`) still governs structure, the mono rule, the receipt, the search strip, the copy rules, the "never do this" list and the quality floor. Its banner of 2026-07-28 declares the palette and type below as the decided state. The skill's older body (cool-grey Timetable palette, `--signal` blue, Instrument Sans, IBM Plex Mono, "no serif anywhere", `assets/tokens.css`) was built for the landing page and reverted; it contradicts the banner and this file, and this file wins on colour and type. T198 recorded the typography decision under Type below; T325 rewrites the skill body to match.
 
@@ -17,6 +17,7 @@ Warm alabaster ground, deep slate ink, one terracotta accent. The app is single-
 | `--paper` | `#f8f6f0` | The page ground, and the text colour on a dark fill |
 | `--paper-dim` | `#efece2` | Alternating section grounds, input fills, a quiet band on paper |
 | `--bg-card` | `#ffffff` | Card fill. The only pure white in the product |
+| `--on-fill` | `#ffffff` | Label, icon and stroke colour on any filled surface (an accent button, an ink-fill pill, a pin). Shared by buttons and chips |
 | `--ink` | `#0f172a` | Body text, headings, the fill of a dark surface |
 | `--ink-soft` | `#414b5e` | Secondary text, supporting paragraphs |
 | `--ink-mute` | `#7d8393` | Metadata, captions, placeholders, at 12 to 14 px, never body copy |
@@ -40,6 +41,101 @@ Warm alabaster ground, deep slate ink, one terracotta accent. The app is single-
 | `--status-success` | `#10b981` | Indicator-only green: compliance ticks, open-now dots. Never text |
 
 Three rules that matter more than the list. Ratings are a measure, not a warning, so they are ochre and never terracotta: "Rome 9.5" in a saturated red bubble reads as an error. Terracotta is the action colour and so cannot also mean "this erases everything"; that is why `--danger` exists and why nothing else may use it. Teal (below) belongs to hidden gems and to nothing else.
+
+### Domain colours
+
+Added by T191 so that no hex literal has to live outside `:root`. Every value is the exact colour the stylesheet already used, so nothing on screen moved. These are single-purpose indicator and tint colours for one feature each (water quality, trails, crowding, AI stops, warnings). They are not part of the brand palette: a new screen takes its colours from the two tables above and reaches for one of these only when it draws the same feature the token is named after. A component never takes one of them as a general-purpose colour.
+
+`--on-fill` is the one shared token here. It is `#ffffff`, the label, icon and stroke colour on any filled surface: an `--accent` button, an `--ink-fill` pill, a map pin. `--bg-card` stays the fill of a card; both are pure white today, and the split lets them diverge without a search. A shared Button takes its label colour from `--on-fill`.
+
+
+**Good, nature and trail greens. Indicators and small text, never fills for actions**
+
+| Token | Value | Only for |
+|---|---|---|
+| `--good-ink` | `#16794f` | text-safe green for open-now, verified and good-deal text |
+| `--good-ink-soft` | `#2c7d54` | a step lighter than --good-ink, trip budget done state |
+| `--good-ink-alt` | `#2e7d4f` | extras delta under budget |
+| `--good-mid` | `#3a9d6b` | icons and borders for a great tier |
+| `--good-vivid` | `#2e9e5b` | swim and way-in indicators, good water |
+| `--leaf-ink` | `#2c6a1f` | add stamps and positive chips |
+| `--trail-ink` | `#3d6b42` | trail and park text |
+| `--trail-pin` | `#3d7a4e` | trail and nature map pins |
+| `--trail-bg` | `#e8f0e6` | trail and park card fill |
+| `--trail-rule` | `#d2e0cf` | trail and park card border |
+| `--trail-bg-alt` | `#e8f3e6` | a second trail tint |
+| `--trail-rule-alt` | `#c5dfbe` | a second trail border |
+| `--event-ink` | `#1f6b41` | AI event tag and pin |
+| `--event-bg` | `#e2f0e6` | AI event tag fill |
+| `--climate-good` | `#6b9e3f` | climate band, good month |
+| `--budget-low-bg` | `#e4edda` | budget band, low |
+| `--budget-low-rule` | `#c3d2ba` | budget band, low border |
+| `--water-good-bg` | `#ddeedd` | day extras water quality, good |
+| `--water-good-ink` | `#2c6136` | day extras water quality, good text |
+
+**Water and sky blues**
+
+| Token | Value | Only for |
+|---|---|---|
+| `--water-clear` | `#1f8fb0` | excellent bathing water, clear sea blue |
+| `--water-pin` | `#2a8fbd` | beach pins and chips |
+| `--lake-ink` | `#2a6f9e` | lake pin name |
+| `--water-link` | `#2b6f9e` | blue text inside water facts |
+| `--swim-ink` | `#2c6376` | swim type text |
+| `--swim-bg` | `#e2eef2` | swim type fill |
+| `--swim-rule` | `#cbdfe6` | swim type border |
+| `--rain-ink` | `#4a70a8` | rain figure in a weather day |
+| `--climate-poor` | `#9bb0bd` | climate band, poor month |
+| `--water-excellent-bg` | `#d8ecf5` | day extras water quality, excellent |
+| `--water-excellent-ink` | `#11607f` | day extras water quality, excellent text |
+
+**Cautions: amber, orange and red-brown. Warnings that are not destructive (--danger is the destructive one)**
+
+| Token | Value | Only for |
+|---|---|---|
+| `--warn-ink` | `#b3402a` | over budget, no fare, cautions |
+| `--warn-vivid` | `#cc4433` | poor water and swim-stop indicator |
+| `--amber` | `#c68a12` | sufficient water, hazard rules, amber indicator |
+| `--amber-ink` | `#8a5a18` | warning note text |
+| `--amber-ink-alt` | `#8a5f0d` | amber text beside the ochre family |
+| `--amber-ink-deep` | `#855a0a` | deepest amber text |
+| `--amber-warm` | `#b3690f` | warm amber text |
+| `--beach-ink` | `#c48a2a` | beach pin name |
+| `--amber-bg` | `#fdf3e2` | warning note fill |
+| `--amber-bg-alt` | `#fcf2dd` | a second warning tint |
+| `--amber-rule` | `#efd9a3` | warning border |
+| `--rate-rule` | `#e0cba4` | rating band border |
+| `--crowd-hot` | `#d06a2a` | crowded indicator |
+| `--orange` | `#d35a26` | orange fill |
+| `--experience-ink` | `#9a3a2a` | experience type text |
+| `--experience-rule` | `#eec7bb` | experience type border |
+| `--danger-bg` | `#f6dcd8` | poor water fill |
+
+**Accent states and tints**
+
+| Token | Value | Only for |
+|---|---|---|
+| `--accent-hover` | `#cf4c3a` | hover fill of an accent button |
+| `--accent-press` | `#b0431a` | hover fill of a primary cost action |
+| `--accent-press-alt` | `#b3491b` | hover fill, stay search |
+| `--accent-wash` | `#f6ede0` | a warm hover wash |
+| `--accent-wash-alt` | `#fdf6f0` | a faint accent tint behind advice |
+
+**Violet, slate and surface tints. Single-use domain colours**
+
+| Token | Value | Only for |
+|---|---|---|
+| `--ai-violet` | `#5b3fa8` | AI-planned stops |
+| `--ai-violet-bg` | `#eee7fb` | AI chip fill |
+| `--mountain-ink` | `#6b5b95` | mountains pin name |
+| `--slate-ink` | `#55606f` | unknown or neutral swim and way label |
+| `--slate-pin` | `#5b6472` | town pin |
+| `--crowd-mid` | `#6b7280` | moderate crowd indicator |
+| `--slate-mute` | `#6f7688` | map popup subtitle |
+| `--wash` | `#f6f3ee` | a faint wash for a current tier |
+| `--paper-hover` | `#efe9db` | hover fill on paper |
+| `--paper-lift` | `#fdfbf5` | a card ground one step off paper |
+| `--mask-solid` | `#000` | the opaque stop of a mask-image gradient |
 
 ### Card taxonomy
 
@@ -128,7 +224,7 @@ Buttons: height `--tap`, radius 6 px, sentence case, verb first, one primary per
 
 Read the diff and answer these seven questions, from the carta-design skill.
 
-1. Any hex value outside the `:root` of `styles.css`?
+1. Any hex value outside `src/styles/01-tokens.css`? (`node scripts/ci/design-lint.mjs` checks this.)
 2. Any gradient, any colour not in this file, any second saturated hue beside `--accent`?
 3. Is ochre used for anything but a rating, teal for anything but a gem, `--danger` for anything but destruction?
 4. Is any mono text prose rather than a measured fact, or any column number set in sans?
@@ -136,4 +232,4 @@ Read the diff and answer these seven questions, from the carta-design skill.
 6. Does every headline contain a verb or a number, and is the diff free of em dashes and the banned words?
 7. Remove one thing. There is almost always one decoration that is carrying nothing.
 
-Last synced with `styles.css` `:root`: 2026-10-01 (T195). Known drift at that date: 378 hex literals live outside `:root` in `styles.css`; T191 (design tokens and CSS modules) owns bringing them onto the tokens.
+Last synced with `src/styles/01-tokens.css`: 2026-10-03 (T191). No hex literal remains outside the token file; the design lint baseline carries zero `hex-literal` entries.
