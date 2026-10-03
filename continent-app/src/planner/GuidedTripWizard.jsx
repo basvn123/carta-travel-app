@@ -60,6 +60,7 @@ import {
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { suggestedNights, Flag, CityThumb, StayRow } from './GuidedTripWizardParts.jsx';
 
 const ROUTES_PREVIEW = 14;
@@ -2351,7 +2352,7 @@ export function GuidedTripWizard({
                     </button>
                   </div>
 
-                  {tripLoading && <p className="guide-empty">{t('ready.loadingTrip')}</p>}
+                  {tripLoading && <LoadingBlock label={t('ready.loadingTrip')} rows={3} />}
 
                   {tripDetail && (
                     <>

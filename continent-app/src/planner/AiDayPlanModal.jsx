@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { DAY_STYLES } from './dayDraft.js';
 import { stopPhaseLabels } from './daySchedule.js';
@@ -291,7 +292,7 @@ export function AiDayPlanModal({
 
         {phase === 'busy' && (
           <div className="ai-plan-busy">
-            <span className="ai-plan-spinner" aria-hidden="true" />
+            <LoadingBlock label={t('ai.generating', { city })} rows={3} shape="line" />
             <p>{rounds ? t('ai.regenerating') : t('ai.generating', { city })}</p>
           </div>
         )}

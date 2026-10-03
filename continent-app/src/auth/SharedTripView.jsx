@@ -3,6 +3,7 @@ import Logo from '../components/Logo.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { MapPinIcon, CalendarIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import { foreignMemory } from './foreignTrip.js';
 import { ForeignTripPins } from './FriendTripPanel.jsx';
@@ -68,7 +69,7 @@ export function SharedTripView({ token, onDismiss, destinations }) {
         </div>
 
         {state.loading ? (
-          <p className="stview-loading">{t('share.loading')}</p>
+          <LoadingBlock label={t('share.loading')} rows={3} />
         ) : !trip ? (
           <div className="stview-gone">
             <h2 className="stview-title">{t('share.gone')}</h2>

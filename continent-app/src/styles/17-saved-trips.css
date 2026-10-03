@@ -285,18 +285,6 @@
   font-size: 12.5px; color: var(--ink-soft);
   padding: 4px 0;
 }
-.extras-drop-spinner {
-  flex: none;
-  width: 14px; height: 14px;
-  border: 2px solid var(--rule);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: extras-spin 0.9s linear infinite;
-}
-@keyframes extras-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) {
-  .extras-drop-spinner { animation: none; border-top-color: var(--rule); }
-}
 .extras-drop-status { margin-top: 8px; font-size: 12px; }
 .extras-drop-status.ok { color: var(--green); }
 .extras-drop-status.err { color: var(--danger); }

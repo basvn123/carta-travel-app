@@ -15,6 +15,7 @@ import { listCoplanInvites, acceptCoplanInvite, removeCoplanner } from './coplan
 import { FriendTripPanel } from './FriendTripPanel.jsx';
 import { FriendBadges } from './FriendBadges.jsx';
 import { CountryFlagStack } from '../components/CountryFlag.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
 
 /**
@@ -430,7 +431,7 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
         {notice && <div className="auth-notice auth-notice-inline">{notice}</div>}
 
         {loading ? (
-          <div className="footnote">{t('saved.loading')}</div>
+          <LoadingBlock label={t('saved.loading')} rows={2} />
         ) : friends.length === 0 ? (
           <p className="frn-empty">{t('friends.emptyPeople')}</p>
         ) : (

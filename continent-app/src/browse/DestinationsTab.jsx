@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
@@ -68,6 +69,7 @@ import {
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
 import CreditFold from './CreditFold.jsx';
+import { CoverageFooter } from './HonestFooters.jsx';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -940,10 +942,7 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
 function LayerError({ onRetry, t }) {
   return (
     <div className="places-empty places-loaderr" role="status">
-      <p className="places-loaderr-msg">{t('layer.loadFailed')}</p>
-      <button type="button" className="places-empty-cta" onClick={onRetry}>
-        {t('layer.retry')}
-      </button>
+      <ErrorBlock message={t('layer.loadFailed')} onRetry={onRetry} retryLabel={t('layer.retry')} />
     </div>
   );
 }
@@ -2709,7 +2708,7 @@ export function DestinationsTab({
           aria-label={t('places.useMyLocation')}
         >
           {locBusy
-            ? <span className="places-locate-spin" aria-hidden="true" />
+            ? <span className="state-pulse"><CrosshairIcon size={16} /></span>
             : <CrosshairIcon size={16} />}
         </button>
       )}
@@ -3053,7 +3052,12 @@ export function DestinationsTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {beachRows?.length > 0 && <p className="places-credit">{t('beach.credit')}</p>}
+            {beachRows?.length > 0 && (
+              <>
+                <p className="places-credit">{t('beach.credit')}</p>
+                <CoverageFooter layer="beach" cc={wantBeachCountry} countryName={countryName} />
+              </>
+            )}
           </div>
         )}
 
@@ -3154,7 +3158,12 @@ export function DestinationsTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {lakeRows?.length > 0 && <p className="places-credit">{t('lake.credit')}</p>}
+            {lakeRows?.length > 0 && (
+              <>
+                <p className="places-credit">{t('lake.credit')}</p>
+                <CoverageFooter layer="lake" cc={wantLakeCountry} countryName={countryName} />
+              </>
+            )}
           </div>
         )}
 
@@ -3271,7 +3280,12 @@ export function DestinationsTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {mountainRows?.length > 0 && <p className="places-credit">{t('mtn.credit')}</p>}
+            {mountainRows?.length > 0 && (
+              <>
+                <p className="places-credit">{t('mtn.credit')}</p>
+                <CoverageFooter layer="mountain" cc={wantMountainCountry} countryName={countryName} />
+              </>
+            )}
           </div>
         )}
 
@@ -3407,7 +3421,8 @@ export function DestinationsTab({
               <p className="places-credit" data-testid="cycle-credit-foot">
                 {t('cycle.sourceNote')}
               </p>
-              <CreditFold t={t} licenceKeys={['credit.licence.cycle']} /></>
+              <CreditFold t={t} licenceKeys={['credit.licence.cycle']} />
+              <CoverageFooter layer="cycling" cc={wantCycleCountry} countryName={countryName} /></>
             )}
           </div>
         )}
@@ -3540,7 +3555,12 @@ export function DestinationsTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {showTripRows && <p className="places-credit">{t('trails.credit')}</p>}
+            {showTripRows && (
+              <>
+                <p className="places-credit">{t('trails.credit')}</p>
+                <CoverageFooter layer="trail" cc={trailsCountry} countryName={countryName} />
+              </>
+            )}
           </div>
         )}
       </div>

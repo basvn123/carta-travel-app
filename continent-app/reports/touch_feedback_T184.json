@@ -1,0 +1,29 @@
+{
+ "base": "http://localhost:5209",
+ "at": "2026-10-03T09:58:30.362Z",
+ "screens": {
+  "explore": {
+   "groups": 12,
+   "responds": 12,
+   "missing": [],
+   "slow": []
+  },
+  "destination": {
+   "groups": 23,
+   "responds": 23,
+   "missing": [],
+   "slow": []
+  },
+  "trip": {
+   "groups": 24,
+   "responds": 24,
+   "missing": [],
+   "slow": []
+  }
+ },
+ "totals": {
+  "groups": 59,
+  "missing": 0,
+  "slow": 0
+ }
+}

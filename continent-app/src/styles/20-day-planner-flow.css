@@ -484,15 +484,6 @@
 .ai-plan-secondary { text-align: center; }
 .ai-plan-busy { text-align: center; padding: 26px 0 18px; }
 .ai-plan-busy p { font-size: 13px; color: var(--ink-soft); margin-top: 12px; }
-.ai-plan-spinner {
-  display: inline-block;
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  border: 3px solid var(--accent-bg);
-  border-top-color: var(--accent);
-  animation: ai-spin 0.9s linear infinite;
-}
-@keyframes ai-spin { to { transform: rotate(360deg); } }
 
 /* The proposed schedule (modal) + the applied schedule card (day rail). */
 .ai-sched { list-style: none; margin: 8px 0 0; padding: 0; }

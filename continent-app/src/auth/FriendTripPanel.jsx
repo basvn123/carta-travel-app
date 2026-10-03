@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { MapPinIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import { foreignMemory, foreignTripPoints } from './foreignTrip.js';
 import { getFriendTrip } from './friends.js';
@@ -60,18 +61,28 @@ export function ForeignTripPins({ stops, memory, destinations }) {
  */
 export function FriendTripPanel({ planId, destinations }) {
   const { t } = useI18n();
-  const [state, setState] = useState({ loading: true, trip: null });
+  const [state, setState] = useState({ loading: true, trip: null, failed: false });
+  const [tries, setTries] = useState(0);
 
   useEffect(() => {
     let live = true;
+    setState({ loading: true, trip: null, failed: false });
     getFriendTrip(planId)
-      .then((trip) => { if (live) setState({ loading: false, trip }); })
-      .catch(() => { if (live) setState({ loading: false, trip: null }); });
+      .then((trip) => { if (live) setState({ loading: false, trip, failed: false }); })
+      .catch(() => { if (live) setState({ loading: false, trip: null, failed: true }); });
     return () => { live = false; };
-  }, [planId]);
+  }, [planId, tries]);
 
   if (state.loading) {
-    return <div className="ftrip"><p className="ftrip-note">{t('share.loading')}</p></div>;
+    return <div className="ftrip"><LoadingBlock label={t('share.loading')} rows={3} /></div>;
+  }
+  // A failed read is not a trip that went private: say which it was.
+  if (state.failed) {
+    return (
+      <div className="ftrip">
+        <ErrorBlock message={t('state.friendTripFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
+      </div>
+    );
   }
   // Set back to private, or the friendship ended, between the list and the tap.
   if (!state.trip) {

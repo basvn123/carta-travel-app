@@ -1482,17 +1482,6 @@
 }
 .day-custom-add:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
 .day-custom-add:disabled { color: var(--ink-mute); border-color: var(--rule); cursor: default; }
-.day-custom-spin {
-  flex: none;
-  width: 12px; height: 12px;
-  border: 2px solid var(--rule);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: extras-spin 0.9s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .day-custom-spin { animation: none; }
-}
 
 /* ── Import ideas drawer: extracted activities awaiting a day ── */
 .day-import-collapse .extras-dropzone { margin: 0 0 10px; }

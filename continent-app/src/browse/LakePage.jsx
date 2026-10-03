@@ -1,9 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { FigureFooter } from './HonestFooters.jsx';
+import { LAKE_KIND } from '../lib/footers.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { NotFor } from '../components/NotFor.jsx';
+import { notForLines } from '../lib/notFor.js';
 import {
   lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeSeason, lakeHazards,
   bestForLabel, componentLabel, serviceLabel, accessLabel, monthWord,
@@ -268,6 +272,8 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
             {seasonLine && <span className="lpage-swim-season">{seasonLine}</span>}
           </div>
 
+          <NotFor lines={notForLines('lake', lake)} />
+
           {main && (
             <figure className="bpage-gallery">
               <LayerPhoto
@@ -455,6 +461,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
             {lake.credit?.length > 0 && (
               <p className="bpage-attrib">{lake.credit.join('. ')}</p>
             )}
+            <FigureFooter kinds={facts.map((f) => LAKE_KIND[f.key])} />
           </section>
         </div>
       </div>

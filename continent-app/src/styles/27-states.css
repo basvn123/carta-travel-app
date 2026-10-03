@@ -1,0 +1,36 @@
+/* Loading and error states (T189). Components: src/components/StateBlocks.jsx. */
+
+/* Skeleton: rows at the height of the content they stand in for. */
+.state-skel { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2) 0; }
+.state-skel-item {
+  display: block;
+  border-radius: 6px;
+  background: var(--paper-dim);
+  animation: state-skel-breathe 1.6s ease-in-out infinite;
+}
+.state-skel-row .state-skel-item { height: 56px; }
+.state-skel-card .state-skel-item { height: 120px; border-radius: 10px; }
+.state-skel-line .state-skel-item { height: 14px; width: 60%; }
+.state-skel-line .state-skel-item:first-of-type { width: 80%; }
+.state-skel-item:nth-child(3n + 2) { animation-delay: 0.2s; }
+.state-skel-item:nth-child(3n) { animation-delay: 0.4s; }
+@keyframes state-skel-breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) {
+  .state-skel-item { animation: none; }
+}
+
+/* Error: prose on paper, one sentence and one secondary button. */
+.state-err {
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+.state-err-msg { margin: 0; font-size: 14px; line-height: 1.45; color: var(--ink); }
+
+/* The busy rows that replaced two spinners sit inside their old wrappers. */
+.extras-drop-busy .state-skel { flex: 1; padding: 0; }
+.extras-drop-busy .state-skel-line .state-skel-item { height: 10px; }
+.ai-plan-busy .state-skel { margin: 0 auto; max-width: 320px; }
+
+/* A control that is waiting says so by breathing, not by turning. */
+.state-pulse { display: inline-flex; animation: state-skel-breathe 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .state-pulse { animation: none; } }

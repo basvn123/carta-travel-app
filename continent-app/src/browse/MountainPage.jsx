@@ -1,9 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { FigureFooter } from './HonestFooters.jsx';
+import { mountainKind } from '../lib/footers.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { NotFor } from '../components/NotFor.jsx';
+import { notForLines } from '../lib/notFor.js';
 import {
   mountainHeadline, mountainWhy, mountainTags, mountainHazards, mountainSeason,
   bestForLabel, componentLabel, liftLabel, isLiftServed, isHiddenGem,
@@ -320,6 +324,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
 
           <WayUp mountain={mountain} t={t} />
 
+          <NotFor lines={notForLines('mountain', mountain, { word: difficultyLabel(mountain, t) })} />
+
           {main && (
             <figure className="bpage-gallery">
               <LayerPhoto
@@ -503,6 +509,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
             {mountain.credit?.length > 0 && (
               <p className="bpage-attrib">{mountain.credit.join('. ')}</p>
             )}
+            <FigureFooter kinds={facts.map((f) => mountainKind(f.key, mountain))} />
           </section>
         </div>
       </div>

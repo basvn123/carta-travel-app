@@ -336,16 +336,6 @@
 }
 .places-locate:hover { background: var(--paper-dim); color: var(--accent); }
 .places-locate:disabled { cursor: default; }
-.places-locate-spin {
-  width: 14px; height: 14px;
-  border: 2px solid var(--rule);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: extras-spin 0.9s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .places-locate-spin { animation: none; border-top-color: var(--rule); }
-}
 .places-locate-err {
   margin: 10px 0 0;
   font-size: 12.5px;
@@ -1110,6 +1100,24 @@
 }
 .bpage-for { margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
 .bpage-for b { color: var(--ink); }
+
+/* Who this is not for. Plain on purpose: dim paper, a hairline above and
+   below, no icon and no colour. It is the one block on the page that is not
+   selling anything, and the plainness is how it reads that way. */
+.notfor {
+  margin: 16px 0;
+  padding: 12px 14px;
+  background: var(--paper-dim);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.notfor-line {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.notfor-line + .notfor-line { margin-top: 6px; }
 
 /* ── What is there. A run of facts is a list with hairlines, not cards. ── */
 .bpage-facts dl { margin: 0; }

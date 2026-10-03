@@ -1,0 +1,590 @@
+{
+ "base": "http://localhost:5209",
+ "at": "2026-10-03T09:54:22.320Z",
+ "screens": {
+  "explore": {
+   "groups": 12,
+   "responds": 4,
+   "missing": [
+    {
+     "group": "button.app-header-brand",
+     "count": 1,
+     "label": "CartaEurope Travel",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-cat",
+     "count": 6,
+     "label": "Trips",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-cat",
+     "count": 6,
+     "label": "Trails",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-locate",
+     "count": 1,
+     "label": "Use my location",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-country",
+     "count": 1,
+     "label": "All countries",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-ccard",
+     "count": 10,
+     "label": "Cycling trips26 trips",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-ccard",
+     "count": 10,
+     "label": "Trail running25 trips",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.jcomposed-card",
+     "count": 1,
+     "label": "Build a city route day by dayC",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    }
+   ],
+   "slow": [
+    {
+     "group": "button.header-pricing-btn",
+     "count": 1,
+     "label": "See pricingGet a pass",
+     "changed": [
+      "self.backgroundColor"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-item",
+     "count": 4,
+     "label": "Destinations",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-item",
+     "count": 4,
+     "label": "Explore",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-plus",
+     "count": 1,
+     "label": "Plan something new",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 200,
+     "responds": true,
+     "inside100": false
+    }
+   ]
+  },
+  "destination": {
+   "groups": 23,
+   "responds": 4,
+   "missing": [
+    {
+     "group": "button.app-header-brand",
+     "count": 1,
+     "label": "CartaEurope Travel",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-cat",
+     "count": 6,
+     "label": "Trips",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-cat",
+     "count": 6,
+     "label": "Trails",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-locate",
+     "count": 1,
+     "label": "Use my location",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-country",
+     "count": 1,
+     "label": "All countries",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-ccard",
+     "count": 10,
+     "label": "Cycling trips26 trips",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-ccard",
+     "count": 10,
+     "label": "Trail running25 trips",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.jcomposed-card",
+     "count": 1,
+     "label": "Build a city route day by dayC",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.destp-back",
+     "count": 1,
+     "label": "Close",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.destp-bar-btn",
+     "count": 1,
+     "label": "Share",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.",
+     "count": 7,
+     "label": "Highlights",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.",
+     "count": 7,
+     "label": "To do",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.destp-subnav-all",
+     "count": 1,
+     "label": "Expand all",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.dtrip",
+     "count": 3,
+     "label": "Njeguši7.5102 min by car88 kmL",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.dtrip",
+     "count": 3,
+     "label": "Durmitor8.0115 min by car100 k",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.dsec-toggle",
+     "count": 9,
+     "label": "Villages and towns inside",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.dsec-toggle",
+     "count": 9,
+     "label": "Why it rates 7.7Worth a visit",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "a.destp-member-link",
+     "count": 2,
+     "label": "Read more",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "a.destp-member-link",
+     "count": 2,
+     "label": "Read more",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    }
+   ],
+   "slow": [
+    {
+     "group": "button.header-pricing-btn",
+     "count": 1,
+     "label": "See pricingGet a pass",
+     "changed": [
+      "self.backgroundColor"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-item",
+     "count": 4,
+     "label": "Destinations",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-item",
+     "count": 4,
+     "label": "Explore",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-plus",
+     "count": 1,
+     "label": "Plan something new",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 200,
+     "responds": true,
+     "inside100": false
+    }
+   ]
+  },
+  "trip": {
+   "groups": 24,
+   "responds": 4,
+   "missing": [
+    {
+     "group": "button.app-header-brand",
+     "count": 1,
+     "label": "CartaEurope Travel",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-cat",
+     "count": 6,
+     "label": "Trips",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-cat",
+     "count": 6,
+     "label": "Trails",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-locate",
+     "count": 1,
+     "label": "Use my location",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-filter-btn",
+     "count": 1,
+     "label": "Filters",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-country",
+     "count": 1,
+     "label": "All countries",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.lifestyle-btn",
+     "count": 1,
+     "label": "Lifestyle: Entire place, Easyg",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "label.trip-slider",
+     "count": 1,
+     "label": "Trip lengthAny lengthAny714 da",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "input.trip-slider-input",
+     "count": 1,
+     "label": "How many days",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-class",
+     "count": 5,
+     "label": "Relaxed105",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-class",
+     "count": 5,
+     "label": "Balanced129",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.jsec-back",
+     "count": 1,
+     "label": "Trip styles",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-icard",
+     "count": 17,
+     "label": "6 days6 days, Salzburg and Vie",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.places-icard",
+     "count": 17,
+     "label": "6 days6 days, Naples and Rome9",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.tpage-back",
+     "count": 1,
+     "label": "Trips",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.tpage-bar-act",
+     "count": 2,
+     "label": "Add to shortlist",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.tpage-bar-act",
+     "count": 2,
+     "label": "Share this trip",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.itin-use",
+     "count": 1,
+     "label": "Open in the trip planner",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.dsec-toggle",
+     "count": 7,
+     "label": "The routeSalzburg - Vienna",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    },
+    {
+     "group": "button.dsec-toggle",
+     "count": 7,
+     "label": "Practical",
+     "changed": [],
+     "ms": 0,
+     "responds": false,
+     "inside100": false
+    }
+   ],
+   "slow": [
+    {
+     "group": "button.header-pricing-btn",
+     "count": 1,
+     "label": "See pricingGet a pass",
+     "changed": [
+      "self.backgroundColor"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-item",
+     "count": 4,
+     "label": "Destinations",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-item",
+     "count": 4,
+     "label": "Explore",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 150,
+     "responds": true,
+     "inside100": false
+    },
+    {
+     "group": "button.bottom-nav-plus",
+     "count": 1,
+     "label": "Plan something new",
+     "changed": [
+      "self.transform"
+     ],
+     "ms": 200,
+     "responds": true,
+     "inside100": false
+    }
+   ]
+  }
+ },
+ "totals": {
+  "groups": 59,
+  "missing": 47,
+  "slow": 12
+ }
+}

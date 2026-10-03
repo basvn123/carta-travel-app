@@ -4,6 +4,7 @@ import {
   PersonIcon, LinkIcon, CheckIcon, ChevronDownIcon, MapPinIcon,
 } from '../components/Icons.jsx';
 import { CountryFlag, CountryFlagStack } from '../components/CountryFlag.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import {
   listGuides, getGuide, reportGuideOpened, fmtMonths, fmtRoute, buildGuideUrl,
 } from './guides.js';
@@ -115,7 +116,7 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
     } catch { /* a refused clipboard is not worth an error banner */ }
   };
 
-  if (state.loading) return <div className="panel-section"><div className="footnote">{t('saved.loading')}</div></div>;
+  if (state.loading) return <div className="panel-section"><LoadingBlock label={t('saved.loading')} rows={3} /></div>;
   if (!guide) {
     return (
       <div className="panel-section">
@@ -230,17 +231,21 @@ export function GuidesPanel({ onClose, destinations, openGuideId }) {
   const { t, lang } = useI18n();
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [tries, setTries] = useState(0);
   const [country, setCountry] = useState('');
   const [open, setOpen] = useState(openGuideId || '');
 
   useEffect(() => {
     let live = true;
     setLoading(true);
+    setFailed(false);
     listGuides({ country: country || null })
       .then((rows) => { if (live) setGuides(rows); })
+      .catch(() => { if (live) { setGuides([]); setFailed(true); } })
       .finally(() => { if (live) setLoading(false); });
     return () => { live = false; };
-  }, [country]);
+  }, [country, tries]);
 
   // Every country that actually has a guide, so the filter can never offer a
   // chip that returns nothing. Built from the unfiltered first load only,
@@ -312,7 +317,9 @@ export function GuidesPanel({ onClose, destinations, openGuideId }) {
 
           <div className="panel-section">
             {loading ? (
-              <div className="footnote">{t('saved.loading')}</div>
+              <LoadingBlock label={t('saved.loading')} rows={3} shape="card" />
+            ) : failed ? (
+              <ErrorBlock message={t('state.guidesFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
             ) : guides.length === 0 ? (
               <p className="frn-empty">{t('guides.empty')}</p>
             ) : (

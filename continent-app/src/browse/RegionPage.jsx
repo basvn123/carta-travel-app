@@ -22,6 +22,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { loadRegion, regionShareUrl } from '../lib/regions.js';
 import { useI18n } from '../i18n/index.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 const KIND_KEY = {
@@ -138,10 +139,7 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
             aria-label={t('detail.close')} ref={backRef}>
             {'←'}
           </button>
-          <p className="rgnp-card-sub">{t('layer.loadFailed')}</p>
-          <button className="rgnp-share" onClick={() => setTries((n) => n + 1)}>
-            {t('layer.retry')}
-          </button>
+          <ErrorBlock message={t('layer.loadFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
         </div>
       </div>
     );
@@ -159,7 +157,7 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
             aria-label={t('detail.close')} ref={backRef}>
             {'←'}
           </button>
-          <p className="rgnp-card-sub">{t('region.loading')}</p>
+          <LoadingBlock label={t('region.loading')} rows={4} />
         </div>
       </div>
     );

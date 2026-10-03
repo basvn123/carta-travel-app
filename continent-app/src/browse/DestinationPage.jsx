@@ -15,6 +15,7 @@ import { packingList, packMonth } from '../lib/packing.js';
 import { cheapestStayMonths } from '../lib/costIndex.js';
 import { useI18n } from '../i18n/index.jsx';
 import { Fold } from './Fold.jsx';
+import { FigureFooter } from './HonestFooters.jsx';
 import { RatingBreakdown } from './RatingBreakdown.jsx';
 import { Neighbourhoods } from './Neighbourhoods.jsx';
 import { GettingThere } from './GettingThere.jsx';
@@ -1287,6 +1288,18 @@ export function DestinationPage({
                 the product - do not remove it from those two places as well. */}
           </div>
         </div>
+        )}
+
+        {/* The four facts in the strip above. Hours here are a rule of thumb,
+            the best months are counted from the climate record, and both
+            money figures are indicative, so they are estimates. */}
+        {settled && (
+          <FigureFooter kinds={[
+            destination.place?.visit_h != null && 'e',
+            bestMonths && 'c',
+            cost?.dayEur != null && 'e',
+            bedFrom != null && 'e',
+          ]} />
         )}
       </div>
     </div>

@@ -5,6 +5,7 @@ import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { NON_PHOTO_IMG } from '../lib/countryCovers.js';
 import { isFav } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { RouteIcon, CheckIcon, SparkIcon, StarIcon } from '../components/Icons.jsx';
 
@@ -289,7 +290,7 @@ export function ReadyTripsStep({
         ))}
       </div>
 
-      {rows == null && <p className="guide-empty">{t('ready.loading')}</p>}
+      {rows == null && <LoadingBlock label={t('ready.loading')} rows={3} shape="card" />}
 
       {empty && (
         <div className="wready-empty">

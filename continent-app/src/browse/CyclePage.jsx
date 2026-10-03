@@ -14,8 +14,11 @@ import {
   surfaceLine, trafficFreeLine, whyLines,
 } from '../lib/cycleStory.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
+import { NotFor } from '../components/NotFor.jsx';
+import { notForLines } from '../lib/notFor.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import CreditFold from './CreditFold.jsx';
+import { FigureFooter } from './HonestFooters.jsx';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
 } from '../components/Icons.jsx';
@@ -547,6 +550,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               {`${Math.round(tour.km)} km`}
               {tour.asc != null ? `, ${tour.asc} m` : ''}
             </p>
+            <NotFor lines={notForLines('cycle', { km: tour.km, asc: tour.asc, bike: tour.bike })} />
             <p className="cycle-pace">{paceLine(tour.pace, t)}</p>
             <p className="cycle-bike">
               <BikeIcon size={13} />
@@ -574,6 +578,10 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
                 one of the ten checks it passed to get here, drawn from the
                 routes it rides and ordered along them. */}
             <Photos images={tour.images} />
+            {/* A tour is summed from its stages, so its totals are calculated. */}
+            <FigureFooter kinds={[
+              tour.days != null && 'c', tour.km != null && 'c', tour.asc != null && 'c',
+            ]} />
           </section>
         )}
 
@@ -587,6 +595,16 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               )}
             </p>
             {!rated && <p className="cycle-unrated">{listedLine(t)}</p>}
+
+            <NotFor lines={notForLines('cycle', {
+              km: route.km,
+              asc: route.asc,
+              bike: carta.surface && carta.surface.bike,
+              paved: carta.surface && (carta.surface.surface_known_share == null
+                || carta.surface.surface_known_share >= 0.25) ? carta.surface.paved_share : null,
+              safety: carta.safety && (carta.safety.known_share == null
+                || carta.safety.known_share >= 0.33) ? carta.safety.score : null,
+            })} />
 
             {carta.elevation && Array.isArray(carta.elevation.profile)
               && carta.elevation.profile.length > 1 && (
@@ -643,6 +661,16 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
                 onOpen={onOpenNeighbour}
               />
             )}
+
+            {/* Length and climb are read off the geometry. The surface mix,
+                the traffic-free share and the safety figure are our arithmetic
+                on it, and the safety one is a house measure. */}
+            <FigureFooter kinds={[
+              route.km != null && 'm', route.asc != null && 'm',
+              carta.surface?.bike && 'c',
+              trafficFreeLine(carta.surface, t) && 'c',
+              carta.safety && 'c',
+            ]} />
 
             {/* One credit line. The wire's own attribution is the specific
                 one (it names the source that supplied this route);

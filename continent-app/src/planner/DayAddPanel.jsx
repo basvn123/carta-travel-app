@@ -266,9 +266,9 @@ export function DayAddPanel({
               ))}
               {/* The catalogue is a head start, never a gate. */}
               {query.trim().length >= 3 && !exactHit && (
-                <button className="daya-custom-add" onClick={() => onAddCustom(query)} disabled={customBusy}>
+                <button className="daya-custom-add" onClick={() => onAddCustom(query)} disabled={customBusy} aria-busy={customBusy || undefined}>
                   {customBusy
-                    ? <><span className="daya-spin" aria-hidden="true" /> {t('day.customAdding')}</>
+                    ? <span className="state-pulse">{t('day.customAdding')}</span>
                     : <><PlusIcon size={13} /> {t('day.customAdd', { q: query.trim() })}</>}
                 </button>
               )}

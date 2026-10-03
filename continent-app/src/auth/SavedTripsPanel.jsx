@@ -28,6 +28,7 @@ import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
 import { FAV_KIND_LABEL, parseFavKey } from '../lib/favorites.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 
 // The mini map at the top of Planned trips rides on the same code-split chunk
 // as the big map: opening the panel before the map tab must not stall on
@@ -1454,9 +1455,9 @@ export function SavedTripsPanel({
               onCta={configured ? onOpenAuth : null}
             />
           ) : loading ? (
-            <div className="footnote">{t('saved.loading')}</div>
+            <LoadingBlock label={t('saved.loading')} rows={3} />
           ) : error ? (
-            <div className="auth-error">{error}</div>
+            <ErrorBlock message={t('state.savedFailed')} onRetry={loadTrips} retryLabel={t('layer.retry')} />
           ) : trips.length === 0 ? (
             <SavedEmpty
               Icon={MapPinIcon}
@@ -1494,9 +1495,9 @@ export function SavedTripsPanel({
             big
           >
             {!authed ? signedOutEmpty : tripPlansLoading ? (
-              <div className="footnote">{t('saved.loading')}</div>
+              <LoadingBlock label={t('saved.loading')} rows={2} shape="card" />
             ) : tripPlansError ? (
-              <div className="auth-error">{tripPlansError}</div>
+              <ErrorBlock message={t('state.savedFailed')} onRetry={loadTripPlans} retryLabel={t('layer.retry')} />
             ) : upcomingPlans.length === 0 ? (
               <SavedEmpty
                 Icon={RouteIcon}

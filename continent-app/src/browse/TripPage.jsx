@@ -16,6 +16,9 @@ import { eur } from '../lib/format.js';
 import { loadTrip, tripShareUrl } from '../lib/trips.js';
 import { creditFor } from '../lib/imageCredit.js';
 import { Fold } from './Fold.jsx';
+import { NotFor } from '../components/NotFor.jsx';
+import { notForLines } from '../lib/notFor.js';
+import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useFolds } from './useFolds.js';
 import { TripPractical } from './TripPractical.jsx';
 import { TripDayPhotos } from './TripDayPhotos.jsx';
@@ -340,6 +343,14 @@ export function TripPage({
   const season = seasonLabel(detail
     ? { season: detail.season.best, seasonBasis: detail.season.basis }
     : (card.season ? card : { season: [] }), t);
+  const seasonMonths = (detail ? detail.season?.best : card.season) || [];
+  const notFor = ready ? notForLines('trip', {
+    transport: trip.transport,
+    archetype: trip.archetype,
+    stops: (trip.cities || trip.stops || []).length,
+    days: trip.days,
+    seasonText: seasonMonths.length > 0 && seasonMonths.length < 12 ? fmtMonthRanges(seasonMonths) : '',
+  }) : [];
   const themes = (trip.themes || []).map((x) => themeLabel(x, t)).filter(Boolean);
   // The card already carries the chosen photograph, so it paints
   // immediately and the detail does not change it.
@@ -428,6 +439,8 @@ export function TripPage({
               </button>
             </div>
           )}
+
+          {ready && !failed && <NotFor lines={notFor} />}
 
           {ready && !failed && (
           <div className="tpage-facts itin-facts">

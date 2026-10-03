@@ -1,8 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useI18n } from '../i18n/index.jsx';
+import { FigureFooter } from './HonestFooters.jsx';
+import { BEACH_KIND } from '../lib/footers.js';
 import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { NotFor } from '../components/NotFor.jsx';
+import { notForLines } from '../lib/notFor.js';
 import {
   beachHeadline, beachWhy, beachTags, bestForLabel, componentLabel,
   COMPONENT_ORDER, beachRating, componentWeights,
@@ -302,6 +306,10 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
             )}
           </div>
 
+          <NotFor lines={notForLines('beach', beach, {
+            word: beach.surface ? t(`beach.surfaceWord${beach.surface.charAt(0).toUpperCase()}${beach.surface.slice(1)}`) : '',
+          })} />
+
           {main && (
             <figure className="bpage-gallery">
               <LayerPhoto
@@ -438,6 +446,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
             {beach.credit?.length > 0 && (
               <p className="bpage-attrib">{beach.credit.join('. ')}</p>
             )}
+            <FigureFooter kinds={facts.map((f) => BEACH_KIND[f.key])} />
           </section>
         </div>
       </div>

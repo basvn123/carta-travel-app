@@ -23,6 +23,8 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { NotFor } from '../components/NotFor.jsx';
+import { notForLines } from '../lib/notFor.js';
 import {
   ArrowLeftIcon, ShareIcon, DownloadIcon, CompassIcon, RouteIcon, BootIcon,
   ClockIcon, MountainIcon, MapPinIcon, CheckIcon, ListDayIcon, CloseIcon,
@@ -32,6 +34,7 @@ import {
 } from '../components/Icons.jsx';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { isNum } from '../map/coords.js';
+import { FigureFooter } from './HonestFooters.jsx';
 
 /**
  * The trail page: a published hike or city day as a page of its own, opened
@@ -628,6 +631,13 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
             )}
           </div>
 
+          <NotFor lines={notForLines('trail', tr, {
+            reasons: detail?.reasons || tr.reasons,
+            grade,
+            ascent,
+            totalM,
+          })} />
+
           <div className="tpage-facts">
             {isNum(totalM) && <Fact label={t('trails.factDistance')} value={`${km1(totalM)} km`} />}
             {isNum(src.duration_min) && <Fact label={t(isCityDay ? 'trails.factDay' : 'trails.factTime')} value={`${hoursText(src.duration_min)} h`} />}
@@ -911,6 +921,19 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
             headings={{ peak: 'nb.trail.peak', lake: 'nb.trail.lake', beach: 'nb.trail.beach' }}
             onOpen={onOpenNeighbour}
           />
+
+          {/* Length, climb and height are read off the geometry and the
+              elevation model. The time is our arithmetic on them, and a
+              grade that is not the mapper's own is ours too. */}
+          <FigureFooter kinds={[
+            isNum(totalM) && 'm',
+            isNum(src.duration_min) && 'c',
+            isNum(ascent) && 'm',
+            isNum(detail?.descent_m) && 'm',
+            isNum(detail?.elevation?.ele_max_m) && 'm',
+            isCityDay && isNum(tr.n_stops) && 'm',
+            diffKey && (derivedGrade ? 'c' : 'm'),
+          ]} />
 
           <p className="tpage-credit">{detail?.attribution_text || tr.attribution_text}</p>
         </div>

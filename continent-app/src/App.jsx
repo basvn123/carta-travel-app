@@ -85,6 +85,7 @@ import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
+import { Button } from './components/Button.jsx';
 import { CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
@@ -909,9 +910,9 @@ function TravelApp() {
         <Logo size={56} />
         <div className="name">Carta</div>
         <div className="sub">{t('shell.loadErrorHelp')}</div>
-        <button className="guide-next" style={{ marginTop: 18 }} onClick={() => window.location.reload()}>
+        <Button variant="primary" style={{ marginTop: 18 }} onClick={() => window.location.reload()}>
           {t('shell.retry')}
-        </button>
+        </Button>
       </div>
     );
   }

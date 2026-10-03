@@ -11,6 +11,10 @@ import { trailheadDirectionsUrl } from '../lib/trailExport.js';
 import { safeUrl } from '../lib/format.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { Fold } from './Fold.jsx';
+import { NotFor } from '../components/NotFor.jsx';
+import { notForLines } from '../lib/notFor.js';
+import { BookingOrder } from './BookingOrder.jsx';
+import { bookingOrder, bookingSource } from '../lib/bookingOrder.js';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { DifficultyMeter, GatewayList } from '../components/FactMeter.jsx';
 import { parseGateway } from '../lib/gateway.js';
@@ -388,10 +392,17 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
   const pinReal = coords.precision === 'source' || coords.precision === 'city';
   const budget = trip.budget || {};
   const spec = trip.typeSpecific || {};
+  // The booking order (T169) carries every booking-window clause, so the three
+  // slots it reads are not printed a second time when it has steps to show.
+  const bookSource = bookingSource(trip);
+  const bookSteps = bookSource ? bookingOrder(bookSource).steps.length > 0 : false;
+  const BOOK_SLOTS = ['bookingWindows', 'bookingTimeline', 'hutBooking'];
   const specRows = SPEC_SLOTS
+    .filter(([slot]) => !(bookSteps && BOOK_SLOTS.includes(slot)))
     .map(([slot, key]) => (spec[slot] ? { slot, key, value: spec[slot] } : null))
     .filter(Boolean);
   const logRows = LOG_SLOTS
+    .filter(([slot]) => !(bookSteps && BOOK_SLOTS.includes(slot)))
     .map(([slot, key]) => (trip.logistics?.[slot]
       ? { slot, label: t(key), text: trip.logistics[slot] } : null))
     .filter(Boolean)
@@ -450,6 +461,13 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
               )}
             </div>
           </div>
+
+          <NotFor lines={notForLines('journey', {
+            carRequired: trip.profile?.carRequired,
+            familyFriendly: trip.profile?.familyFriendly,
+            label: trip.profile?.difficultyLabel,
+            word: trip.profile?.difficultyLabel ? diffLabel(trip.profile.difficultyLabel, t) : '',
+          })} />
 
           {trip.hero?.url && (
             <figure className="bpage-gallery">
@@ -630,6 +648,15 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                 </article>
               ))}
             </Fold>
+          )}
+
+          {bookSteps && (
+            <BookingOrder
+              tripId={trip.id}
+              source={bookSource}
+              open={isOpen('book')}
+              onToggle={() => toggle('book')}
+            />
           )}
 
           {logRows.length > 0 && (

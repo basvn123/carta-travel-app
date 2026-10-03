@@ -33,3 +33,43 @@ input, select {
   color: inherit;
 }
 
+
+/* Touch feedback (T184, G1). Every control changes state the moment a finger
+   lands, before any handler or data: it shifts shade (opacity) and compresses
+   (the individual `scale` property, which composes with any transform a rule
+   already sets, so a centred or rotated control does not jump). Transform and
+   opacity only; the press transition is 60 ms so the change is on screen well
+   inside 100 ms even where a rule sets a slower transition for release.
+   Rules written for one control (a `.x:active` with its own look) keep working;
+   they sit beside this, they are not replaced by it. Reduced motion keeps the
+   shade shift and drops the compression. Sliders are handled separately below
+   because scaling the whole input would move the track under the thumb. */
+:is(button, a[href], summary, label, [role="button"], [role="tab"], [role="switch"],
+    [role="checkbox"], [role="radio"], [tabindex="0"], input[type="checkbox"],
+    input[type="radio"]):active:not(:disabled):not([aria-disabled="true"]) {
+  opacity: 0.78;
+  scale: 0.98;
+  transition-duration: 0.06s;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(button, a[href], summary, label, [role="button"], [role="tab"], [role="switch"],
+      [role="checkbox"], [role="radio"], [tabindex="0"], input[type="checkbox"],
+      input[type="radio"]):active:not(:disabled):not([aria-disabled="true"]) {
+    scale: none;
+    transition-duration: 0s;
+  }
+}
+/* Slider thumbs grow under the finger. The dual range input ignores pointer
+   events except on its thumbs, so :active still fires from a thumb press. */
+.dual-range-input:active::-webkit-slider-thumb,
+.single-range:active::-webkit-slider-thumb { scale: 1.3; background: var(--accent-bg); }
+.dual-range-input:active::-moz-range-thumb,
+.single-range:active::-moz-range-thumb { scale: 1.3; background: var(--accent-bg); }
+.trip-slider-input:active { opacity: 0.8; }
+.trip-slider:has(.trip-slider-input:active) .trip-slider-label b { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) {
+  .dual-range-input:active::-webkit-slider-thumb,
+  .single-range:active::-webkit-slider-thumb,
+  .dual-range-input:active::-moz-range-thumb,
+  .single-range:active::-moz-range-thumb { scale: none; }
+}

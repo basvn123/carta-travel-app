@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { SparkIcon, UploadIcon } from '../components/Icons.jsx';
 import {
@@ -112,8 +113,8 @@ export function MagicImportZone({ onResult, importContext, leadKey = 'extras.imp
       />
       {state.phase === 'busy' ? (
         <div className="extras-drop-busy">
-          <span className="extras-drop-spinner" aria-hidden="true" />
-          {t('extras.importBusy')}
+          <LoadingBlock label={t('extras.importBusy')} rows={2} shape="line" />
+          <span aria-hidden="true">{t('extras.importBusy')}</span>
         </div>
       ) : (
         <>

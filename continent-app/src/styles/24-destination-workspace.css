@@ -4212,14 +4212,6 @@
 }
 .daya-custom-add:hover { background: var(--accent-bg); }
 .daya-custom-add:disabled { opacity: 0.6; cursor: default; }
-.daya-spin {
-  width: 13px; height: 13px;
-  border: 2px solid var(--accent-bg);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: daya-spin .8s linear infinite;
-}
-@keyframes daya-spin { to { transform: rotate(360deg); } }
 
 .daya-sugg {
   padding: 11px 13px;
@@ -4476,7 +4468,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .daya-spin { animation: none; }
   .dayws-stay-btn, .dayws-tips-btn, .dayp-round, .daya-card, .daya-pick,
   .dayws-tab, .dayf-drop, .dayws-bot-fab, .daya-mode, .dayr-tools {
     transition: none;
