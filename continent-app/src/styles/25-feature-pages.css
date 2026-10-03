@@ -1468,6 +1468,38 @@
 /* Good to know: the logistics slots as definition rows. */
 .jpage-log-row dd { color: var(--ink-soft); }
 .jpage-log-text { font-size: 13px; line-height: 1.5; }
+.jpage-lrows { border-top: 1px solid var(--rule-soft); }
+.jpage-lrow { border-bottom: 1px solid var(--rule-soft); }
+.jpage-lrow-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+.jpage-lrow-icon { flex: none; color: var(--ink-soft); }
+.jpage-lrow-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jpage-lrow-label { flex: none; font-size: 13px; font-weight: 600; }
+.jpage-lrow-sum {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jpage-lrow-chev { flex: none; margin-left: auto; color: var(--ink-mute); transition: transform .18s ease; }
+.jpage-lrow.is-open .jpage-lrow-chev { transform: rotate(180deg); }
+.jpage-lrow-body { padding: 0 0 var(--space-3) var(--space-5); }
+@media (prefers-reduced-motion: reduce) { .jpage-lrow-chev { transition: none; } }
 
 .jpage-tips ul { list-style: none; margin: 0; padding: 0; }
 .jpage-tips li {
@@ -3892,3 +3924,197 @@
   .jstrip-cell { padding: 8px 8px; font-size: 12px; }
   .jstrip-sq { width: 8px; height: 8px; }
 }
+
+/* What to pack: a grid of 20px icons, no tile, one why-line below. */
+.pack-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: var(--space-1) var(--space-2); }
+.pack-cell {
+  width: 100%;
+  min-height: var(--tap);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: var(--space-2) var(--space-1);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 6px;
+  color: var(--ink-soft);
+  font: inherit;
+  cursor: pointer;
+}
+.pack-cell:hover { color: var(--ink); }
+.pack-cell.is-on { color: var(--ink); border-bottom-color: var(--ink); }
+.pack-cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pack-label { font-size: 12px; line-height: 1.25; text-align: center; }
+.pack-why {
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--rule-soft);
+  min-height: 3em;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+
+/* The week plan (T170, spec M2, M3, M5): how the week runs, arrive and
+   leave, and the weather plan. Weight carries the measure, not hue: effort
+   bars are ink, the hard days full ink, and a change of bed is a 2px ink
+   edge on the new base. */
+.jweek-sum { margin: 0 0 var(--space-3); font-size: 13.5px; line-height: 1.5; color: var(--ink); }
+.jweek-effort,
+.jweek-days,
+.jweek-beds {
+  display: grid;
+  grid-template-columns: repeat(var(--jweek-days, 7), minmax(0, 1fr));
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.jweek-effort {
+  height: 48px;
+  align-items: end;
+  border-bottom: 1px solid var(--rule);
+}
+.jweek-col {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.jweek-bar {
+  display: block;
+  width: 60%;
+  max-width: 28px;
+  height: 0;
+  border-radius: 3px 3px 0 0;
+  background: var(--ink-soft);
+}
+.jweek-col.lv-1 .jweek-bar { height: 33%; }
+.jweek-col.lv-2 .jweek-bar { height: 66%; }
+.jweek-col.lv-3 .jweek-bar { height: 100%; background: var(--ink); }
+.jweek-rest {
+  position: absolute;
+  bottom: var(--space-1);
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.jweek-days { margin-top: var(--space-1); }
+.jweek-days span {
+  text-align: center;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.jweek-beds { margin-top: var(--space-2); }
+.jweek-bed {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+}
+.jweek-bed.is-move { border-left: 2px solid var(--ink); }
+.jweek-bed.is-out { border-style: dashed; background: transparent; }
+.jweek-bed-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--ink);
+}
+.jweek-bed.is-out .jweek-bed-name { color: var(--ink-mute); }
+.jweek-key { margin: var(--space-3) 0 0; font-size: 12px; line-height: 1.45; color: var(--ink-mute); }
+
+.jends { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+.jends-side h3,
+.jwx-groups h3,
+.jwx-sub {
+  margin: 0 0 var(--space-2);
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.jends .bpage-fact dt { width: 104px; }
+.jends .bpage-fact dd { line-height: 1.5; }
+.jends .bpage-fact dd .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+@media (min-width: 760px) {
+  .jends { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.jwx-groups { margin-bottom: var(--space-5); }
+.jwx-hint { margin: 0 0 var(--space-2); font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
+.jwx-group ul { margin: 0; padding: 0; list-style: none; }
+.jwx-group li + li { margin-top: var(--space-1); }
+@media (max-width: 480px) {
+  .jwx-group { flex-direction: column; gap: var(--space-1); }
+  .jwx-group dt { width: auto; }
+}
+.jwx-n {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.jwx-days { margin: 0; padding: 0; list-style: none; }
+.jwx-days li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.jwx-days li:first-child { border-top: 0; }
+.jwx-days .jwx-n { padding-top: 2px; }
+.jwx-title { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.jwx-body p { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.jwx-body p b { font-weight: 600; color: var(--ink); }
+.jwx-days li.is-empty .jwx-body p { color: var(--ink-mute); }
+
+/* T171: three computed ways out at the foot of a journey, and the one detail
+   from the route in the footer. Hairlines, not cards (a run of related links). */
+.jpage-hook { margin: 0 0 var(--space-3); }
+.jpage-exits { margin: 0 0 var(--space-5); }
+.jpage-exits h2 {
+  margin: 0 0 var(--space-2);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.jpage-exits ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule-soft); }
+.jpage-exits li { border-bottom: 1px solid var(--rule-soft); }
+.jpage-exit {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+.jpage-exit:hover .jpage-exit-title { color: var(--accent); }
+.jpage-exit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jpage-exit-kind { font-size: 12.5px; color: var(--ink-soft); }
+.jpage-exit-title { font-size: 14px; font-weight: 600; line-height: 1.35; }
+.jpage-exit-meta { font-size: 12.5px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.jpage-detail b { font-weight: 600; color: var(--ink); }

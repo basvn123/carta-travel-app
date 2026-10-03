@@ -175,6 +175,7 @@ function Sight({ poi, t }) {
  */
 function DayCard({ day, detail, t }) {
   const [more, setMore] = React.useState(false);
+  const panelId = React.useId();
   const stop = detail.stops[day.stop];
   const out = day.daytrip
     ? (detail.daytrips || []).find((x) => x.dest === day.daytrip) : null;
@@ -241,28 +242,31 @@ function DayCard({ day, detail, t }) {
             className="tday-more"
             onClick={() => setMore((v) => !v)}
             aria-expanded={more}
+            aria-controls={panelId}
           >
             <ChevronDownIcon size={13} className={more ? 'tday-more-chev is-open' : 'tday-more-chev'} />
             <span>{t('trip.moreAboutDay')}</span>
           </button>
-          {more && (
-            <div className="tday-prose">
-              {leg && (
-                <p className="itin-day-leg">
-                  <ClockIcon size={12} />
-                  {legLine(leg, t)}
-                </p>
-              )}
-              {items.length > 0 && (
-                <ul className="itin-sights">
-                  {items.map((p) => <Sight key={p.name} poi={p} t={t} />)}
-                </ul>
-              )}
-              {items.length === 0 && day.kind === 'depart' && (
-                <p className="itin-day-note">{t('trip.departNote', { city: stop.city })}</p>
-              )}
+          <div id={panelId} className={more ? 'tday-panel is-open' : 'tday-panel'}>
+            <div className="tday-panel-in">
+              <div className="tday-prose">
+                {leg && (
+                  <p className="itin-day-leg">
+                    <ClockIcon size={12} />
+                    {legLine(leg, t)}
+                  </p>
+                )}
+                {items.length > 0 && (
+                  <ul className="itin-sights">
+                    {items.map((p) => <Sight key={p.name} poi={p} t={t} />)}
+                  </ul>
+                )}
+                {items.length === 0 && day.kind === 'depart' && (
+                  <p className="itin-day-note">{t('trip.departNote', { city: stop.city })}</p>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </>
       )}
     </li>

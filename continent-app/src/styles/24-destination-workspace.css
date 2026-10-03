@@ -1866,6 +1866,23 @@
 .tday-more-chev.is-open { transform: rotate(180deg); }
 .tday-prose { padding-bottom: 4px; }
 
+/* The accordion. The panel is always mounted and animates its row height
+   from 0fr to 1fr, so the card grows in place and nothing else reflows
+   until it is asked to. Closed, it is visibility:hidden, which keeps the
+   prose out of the tab order and away from screen readers. */
+.tday-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows .22s ease, visibility 0s linear .22s;
+}
+.tday-panel.is-open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows .22s ease, visibility 0s;
+}
+.tday-panel-in { overflow: hidden; min-height: 0; }
+
 /* The practical block: runs of facts, divided by hairlines. */
 .tprac-group + .tprac-group { margin-top: 18px; }
 .tprac-group-title {
@@ -1917,6 +1934,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .tday-more-chev { transition: none; }
+  .tday-panel, .tday-panel.is-open { transition: none; }
 }
 /* TRIPS-LAYER-END */
 

@@ -3,17 +3,20 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import {
   loadJourney, typeLabel, diffLabel, eurRange, boldSegments, lastCheckedMonth,
-  dayStatsLine, packingText, riskText, stayPriceText, minutesText,
+  dayStatsLine, riskText, stayPriceText, minutesText,
   figureLedger, anyEstimated, dayEstimated, monthLabel,
+  hookLine, humanDetail, loadAllJourneyCards, journeyExits,
 } from '../lib/journeys.js';
 import { srcSetFor } from '../lib/heroImage.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
 import { safeUrl } from '../lib/format.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { Fold } from './Fold.jsx';
+import { PackGrid } from './PackGrid.jsx';
 import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import { BookingOrder } from './BookingOrder.jsx';
+import { WeekPlan } from './WeekPlan.jsx';
 import { bookingOrder, bookingSource } from '../lib/bookingOrder.js';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { DifficultyMeter, GatewayList } from '../components/FactMeter.jsx';
@@ -22,7 +25,8 @@ import { useFolds } from './useFolds.js';
 import {
   ArrowLeftIcon, MapPinIcon, ChevronRightIcon, CameraIcon, AlertIcon,
   LinkIcon, ChevronDownIcon, CalendarIcon, ReceiptIcon, BedIcon,
-  InfoIcon, BulbIcon, BackpackIcon, CompassIcon,
+  InfoIcon, BulbIcon, BackpackIcon, CompassIcon, TrainIcon, PlugIcon,
+  TicketIcon, ClockIcon, CloudIcon, HeartIcon, ShieldIcon, PiggyIcon,
 } from '../components/Icons.jsx';
 
 /**
@@ -64,6 +68,86 @@ function Prose({ text, className = 'bpage-prose' }) {
         ? <b key={i}>{seg.text}</b>
         : <React.Fragment key={i}>{seg.text}</React.Fragment>))}
     </p>
+  );
+}
+
+/** The most words a block may show before the reader asks for it (T164, spec C4). */
+const BLOCK_WORD_LIMIT = 60;
+const wordCount = (text) => String(text || '').trim().split(/\s+/).filter(Boolean).length;
+
+/**
+ * A six-word preview of a written block: its first words, markers and the
+ * trailing punctuation removed, so a closed row says what is inside without
+ * costing a tap. Cut at the first sentence when that is shorter.
+ */
+const PREVIEW_TAIL = /^(and|or|but|the|a|an|of|to|in|on|at|for|with|by|from|are|is|was|take|takes|only|between|that|which|as|into)$/i;
+
+function previewWords(text, n = 6) {
+  const plain = String(text || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+  if (!plain) return '';
+  const sentence = plain.split(/(?<=[.!?;:])\s/)[0];
+  const words = sentence.split(' ').slice(0, n);
+  // A preview that stops on a joining word reads as broken, so drop those.
+  while (words.length > 2 && PREVIEW_TAIL.test(words[words.length - 1].replace(/[.,;:!?]+$/, ''))) words.pop();
+  return words.join(' ').replace(/[\s.,;:!?-]+$/, '');
+}
+
+/**
+ * One closed row of Good to know: icon, label and a six-word preview, the
+ * full text one tap down. Each row opens on its own.
+ */
+function LogRow({ id, icon, label, text }) {
+  const Icon = icon;
+  const [open, setOpen] = React.useState(false);
+  const preview = previewWords(text);
+  return (
+    <div className={`jpage-lrow ${open ? 'is-open' : ''}`}>
+      <button
+        type="button"
+        className="jpage-lrow-btn"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls={`${id}-body`}
+      >
+        <Icon size={20} className="jpage-lrow-icon" />
+        <span className="jpage-lrow-label">{label}</span>
+        {!open && preview && <span className="jpage-lrow-sum">{preview}</span>}
+        <ChevronDownIcon size={13} className="jpage-lrow-chev" />
+      </button>
+      {open && (
+        <div className="jpage-lrow-body" id={`${id}-body`}>
+          <Prose text={text} className="jpage-log-text" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Prose that shows a six-word preview and a control when it is over the limit. */
+function LongProse({ text, className, t }) {
+  const [open, setOpen] = React.useState(false);
+  if (!text) return null;
+  if (wordCount(text) <= BLOCK_WORD_LIMIT || open) {
+    return (
+      <>
+        <Prose text={text} className={className} />
+        {open && (
+          <button type="button" className="tday-more" onClick={() => setOpen(false)} aria-expanded>
+            <ChevronDownIcon size={13} className="tday-more-chev is-open" />
+            <span>{t('journey.showLess')}</span>
+          </button>
+        )}
+      </>
+    );
+  }
+  return (
+    <>
+      <p className={className}>{previewWords(text, 14)}</p>
+      <button type="button" className="tday-more" onClick={() => setOpen(true)} aria-expanded={false}>
+        <ChevronDownIcon size={13} className="tday-more-chev" />
+        <span>{t('journey.readMore')}</span>
+      </button>
+    </>
   );
 }
 
@@ -189,6 +273,7 @@ function HeroCredit({ hero, t }) {
  */
 function Day({ day, t, lang, est }) {
   const [more, setMore] = React.useState(false);
+  const panelId = React.useId();
   const parts = [['morning', day.morning], ['afternoon', day.afternoon], ['evening', day.evening]]
     .filter(([, text]) => text);
   return (
@@ -217,20 +302,23 @@ function Day({ day, t, lang, est }) {
             className="tday-more"
             onClick={() => setMore((v) => !v)}
             aria-expanded={more}
+            aria-controls={panelId}
           >
             <ChevronDownIcon size={13} className={more ? 'tday-more-chev is-open' : 'tday-more-chev'} />
             <span>{t('journey.moreAboutDay')}</span>
           </button>
-          {more && (
-            <div className="tday-prose">
-              {parts.map(([part, text]) => (
-                <div key={part} className="jpage-day-part">
-                  <span className="jpage-day-when">{t(`journey.${part}`)}</span>
-                  <Prose text={text} className="jpage-day-text" />
-                </div>
-              ))}
+          <div id={panelId} className={more ? 'tday-panel is-open' : 'tday-panel'}>
+            <div className="tday-panel-in">
+              <div className="tday-prose">
+                {parts.map(([part, text]) => (
+                  <div key={part} className="jpage-day-part">
+                    <span className="jpage-day-when">{t(`journey.${part}`)}</span>
+                    <Prose text={text} className="jpage-day-text" />
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
+          </div>
         </>
       )}
     </article>
@@ -250,6 +338,13 @@ const LOG_SLOTS = [
   ['health', 'journey.logHealth'],
   ['emergency', 'journey.logEmergency'],
 ];
+
+// logistics slot -> the row's icon; `other` rows fall back to the info mark.
+const LOG_ICONS = {
+  gettingThere: TrainIcon, transportRules: TicketIcon, connectivity: PlugIcon,
+  money: PiggyIcon, bookingWindows: ClockIcon, permits: ShieldIcon,
+  weather: CloudIcon, health: HeartIcon, emergency: AlertIcon,
+};
 
 // typeSpecific slot -> label key. Only non-null slots render, so a cycling
 // week shows surface and distance and a ski week shows lifts and snow.
@@ -272,7 +367,7 @@ const BUDGET_ROWS = [
   ['activities', 'journey.bActivities'],
 ];
 
-export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
+export function JourneyPage({ id, gatewayDest, onClose, onSelectDest, onOpenJourney }) {
   const { t, lang } = useI18n();
   const [trip, setTrip] = useState(undefined);   // undefined = loading
   const { isOpen, toggle } = useFolds(OPEN_BY_DEFAULT, id);
@@ -281,6 +376,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
   const backRef = useRef(null);
   const titleEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
+  const [library, setLibrary] = useState(null);   // every card, for the exits
 
   useEffect(() => {
     let live = true;
@@ -305,7 +401,20 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
     return () => io.disconnect();
   }, [trip?.id]);
 
+  useEffect(() => {
+    let live = true;
+    loadAllJourneyCards().then((rows) => { if (live) setLibrary(rows); });
+    return () => { live = false; };
+  }, []);
+
   const ledger = useMemo(() => figureLedger(trip), [trip]);
+  const hook = useMemo(() => hookLine(trip), [trip]);
+  const detail = useMemo(() => humanDetail(trip), [trip]);
+  const exits = useMemo(() => {
+    if (!trip || !library?.length) return [];
+    const me = library.find((c) => c.id === trip.id);
+    return journeyExits(me || trip, library);
+  }, [trip, library]);
 
   const facts = useMemo(() => {
     if (!trip) return [];
@@ -452,11 +561,11 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
   const logRows = LOG_SLOTS
     .filter(([slot]) => !(bookSteps && BOOK_SLOTS.includes(slot)))
     .map(([slot, key]) => (trip.logistics?.[slot]
-      ? { slot, label: t(key), text: trip.logistics[slot] } : null))
+      ? { slot, label: t(key), text: trip.logistics[slot], icon: LOG_ICONS[slot] } : null))
     .filter(Boolean)
     .concat((trip.logistics?.other || [])
       .filter((row) => row?.text)
-      .map((row, i) => ({ slot: `other-${i}`, label: row.label || '', text: row.text })));
+      .map((row, i) => ({ slot: `other-${i}`, label: row.label || '', text: row.text, icon: InfoIcon })));
 
   return (
     <div className="tpage bpage jpage" role="dialog" aria-modal="true" aria-label={trip.title} ref={pageRef}>
@@ -510,6 +619,12 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             </div>
           </div>
 
+          {hook && (
+            <p className="bpage-lede jpage-hook">
+              {hook.built ? t('journey.hookBuilt', hook.built) : <Prose text={hook.line} className="" />}
+            </p>
+          )}
+
           <NotFor lines={notForLines('journey', {
             carRequired: trip.profile?.carRequired,
             familyFriendly: trip.profile?.familyFriendly,
@@ -538,10 +653,20 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             open={isOpen('why')}
             onToggle={() => toggle('why')}
           >
-            {trip.hook && <Prose text={trip.hook} className="bpage-lede" />}
-            {trip.summary && !trip.summaryGenerated && (
-              <Prose text={trip.summary} />
-            )}
+            {(() => {
+              // The one-line hook above already said its sentence; the fold
+              // carries the rest of whichever text it came from.
+              const fromHook = hook?.source === 'hook';
+              const fromSummary = hook?.source === 'summary';
+              const hookText = fromHook ? hook.rest : trip.hook;
+              const sumText = fromSummary ? hook.rest : trip.summary;
+              return (
+                <>
+                  {hookText && <Prose text={hookText} className="bpage-lede" />}
+                  {sumText && !trip.summaryGenerated && <Prose text={sumText} />}
+                </>
+              );
+            })()}
             {trip.tags?.length > 0 && (
               <ul className="bpage-tags jpage-tags">
                 {trip.tags.slice(0, 6).map((tag) => (
@@ -649,6 +774,10 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             </Fold>
           )}
 
+          {/* The shape of the week, day zero and the day after the last, and
+              the weather plan (T170): read from the days, shown before them. */}
+          <WeekPlan trip={trip} />
+
           {trip.itinerary?.length > 0 && (
             <Fold
               id="sec-itin"
@@ -680,7 +809,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                       {[stay.style, stay.location].filter(Boolean).join(', ')}
                     </span>
                   </header>
-                  {stay.description && <Prose text={stay.description} className="jpage-stay-desc" />}
+                  {stay.description && <LongProse text={stay.description} className="jpage-stay-desc" t={t} />}
                   {(stay.booking || stayPriceText(stay, lang)) && (
                     <p className="jpage-stay-book">
                       {stayPriceText(stay, lang) && <span className="mono">{stayPriceText(stay, lang)}</span>}
@@ -717,14 +846,11 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
               onToggle={() => toggle('log')}
               className="jpage-log"
             >
-              <dl>
+              <div className="jpage-lrows">
                 {logRows.map((row) => (
-                  <div key={row.slot} className="bpage-fact jpage-log-row">
-                    <dt>{row.label}</dt>
-                    <dd><Prose text={row.text} className="jpage-log-text" /></dd>
-                  </div>
+                  <LogRow key={row.slot} id={`log-${row.slot}`} icon={row.icon} label={row.label} text={row.text} />
                 ))}
-              </dl>
+              </div>
             </Fold>
           )}
 
@@ -745,22 +871,16 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             </Fold>
           )}
 
-          {trip.packingNotes?.length > 0 && (
-            <Fold
-              id="sec-pack"
-              icon={BackpackIcon}
-              title={t('journey.packHead')}
-              open={isOpen('pack')}
-              onToggle={() => toggle('pack')}
-              className="jpage-tips"
-            >
-              <ul>
-                {trip.packingNotes.map((note, i) => (
-                  <li key={i}><Prose text={packingText(note)} className="jpage-tip-text" /></li>
-                ))}
-              </ul>
-            </Fold>
-          )}
+          <Fold
+            id="sec-pack"
+            icon={BackpackIcon}
+            title={t('journey.packHead')}
+            open={isOpen('pack')}
+            onToggle={() => toggle('pack')}
+            className="jpage-pack"
+          >
+            <PackGrid trip={trip} />
+          </Fold>
 
           {/* Deliberately NOT folded. Everything else on this page may be one
               tap away; a safety advisory that a reader has to discover is a
@@ -804,6 +924,32 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             </button>
           )}
 
+          {exits.length > 0 && (
+            <section className="jpage-exits" aria-labelledby="jpage-exits-h">
+              <h2 id="jpage-exits-h">{t('journey.exitsHead')}</h2>
+              <ul>
+                {exits.map(({ kind, card }) => (
+                  <li key={card.id}>
+                    <button type="button" className="jpage-exit" onClick={() => onOpenJourney?.(card)}>
+                      <span className="jpage-exit-kind">
+                        {kind === 'easier' ? t('journey.exitEasier')
+                          : kind === 'cheaper' ? t('journey.exitCheaper')
+                            : t('journey.exitNearby')}
+                      </span>
+                      <span className="jpage-exit-title">{card.title}</span>
+                      <span className="jpage-exit-meta mono">
+                        {[t('journey.nDays', { n: card.days || 7 }),
+                          card.eur ? eurRange(card.eur, lang) : null,
+                          card.diffLabel ? diffLabel(card.diffLabel, t) : null,
+                        ].filter(Boolean).join(', ')}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           <section className="bpage-sources">
             <h2>{t('journey.sourcesHead')}</h2>
             {ledger && (
@@ -831,6 +977,13 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                   </a>
                 </li>
               </ul>
+            )}
+            {detail && (
+              <p className="bpage-attrib jpage-detail">
+                <b>{t('journey.detailHead')}</b>
+                {' '}
+                {detail}
+              </p>
             )}
             <p className="bpage-attrib">{t('journey.credit')}</p>
           </section>

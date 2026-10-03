@@ -3591,6 +3591,7 @@ export function DestinationsTab({
             })()}
             onClose={() => setPageJourney(null)}
             onSelectDest={(id) => { setPageJourney(null); onSelectDest(id); }}
+            onOpenJourney={(card) => setPageJourney({ id: card.id, gw: card.gw || null })}
           />
         </Suspense>
       )}

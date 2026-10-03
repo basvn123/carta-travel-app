@@ -278,3 +278,139 @@ export function coverageFacts(index) {
     stylesIn: (cc) => perCountry.get(cc) || 0,
   };
 }
+
+/* ── One sentence, three exits, one human detail (T171, spec M7 + M8 + M10) ─ */
+
+const stripBold = (s) => String(s || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+
+/* Sentence split that does not cut at "St.", "km.", "e.g." or a decimal. */
+const ABBR = /(?:\b(?:St|Mt|Dr|Mr|Mrs|Ms|vs|e\.g|i\.e|c|approx|no|km|m|ca)\.)$/i;
+function sentences(text) {
+  const clean = stripBold(text);
+  if (!clean) return [];
+  const parts = clean.split(/(?<=[.!?])\s+(?=[A-Z"\u201C\u00C0-\u00DE])/);
+  const out = [];
+  for (const p of parts) {
+    if (out.length && ABBR.test(out[out.length - 1])) out[out.length - 1] += ` ${p}`;
+    else out.push(p);
+  }
+  return out;
+}
+
+const NUMBER_WORD = /\b(?:one|two|three|four|five|six|seven|eight|nine|ten|twelve|twenty|thirty|forty|fifty|hundred|thousand)\b/i;
+const MAX_LINE = 190;
+
+function clip(sentence) {
+  if (sentence.length <= MAX_LINE) return sentence;
+  const cut = sentence.slice(0, MAX_LINE);
+  const at = Math.max(cut.lastIndexOf(', '), cut.lastIndexOf(': '), cut.lastIndexOf('; '));
+  return `${(at > 80 ? cut.slice(0, at) : cut.slice(0, cut.lastIndexOf(' '))).replace(/[,;:]$/, '')}.`;
+}
+
+/**
+ * The one-line reason this week exists. Looks in the authored hook, then the
+ * summary: the first sentence of 40 to 190 characters that carries a number
+ * (a digit or a number word), else the first sentence, clipped at a clause.
+ * Returns { line, rest } where rest is the source text minus that sentence,
+ * so the fold under it does not say it twice; null when there is no prose.
+ */
+export function hookLine(trip) {
+  for (const key of ['hook', 'summary']) {
+    if (key === 'summary' && trip?.summaryGenerated) continue;
+    const list = sentences(trip?.[key]);
+    if (!list.length) continue;
+    const fits = (s) => s.length >= 40 && s.length <= MAX_LINE;
+    const pick = list.find((s) => fits(s) && (/\d/.test(s) || NUMBER_WORD.test(s))) || list.find(fits) || list[0];
+    const rest = list.filter((s) => s !== pick).join(' ');
+    return { line: clip(pick), source: key, rest };
+  }
+  // A generated trip has no authored prose worth quoting. Build the line from
+  // the days themselves: how many, where, and the first and last stop.
+  const days = trip?.itinerary || [];
+  const head = (d) => String(d?.title || '').split(':')[0].trim();
+  const place = [trip?.subRegion || trip?.country].filter(Boolean).join('');
+  if (days.length > 1 && place && head(days[0]) && head(days[days.length - 1])) {
+    return { built: { n: days.length, place, first: head(days[0]), last: head(days[days.length - 1]) }, source: 'built', rest: '' };
+  }
+  return null;
+}
+
+/**
+ * A detail only someone who went would know: the first pro tip that carries
+ * a figure, else the first tip, trimmed to two sentences. Null when none.
+ */
+export function humanDetail(trip) {
+  const tips = (trip?.proTips || []).map(stripBold).filter(Boolean);
+  if (!tips.length) return null;
+  const tip = tips.find((s) => /\d/.test(s)) || tips[0];
+  const list = sentences(tip);
+  const out = list.slice(0, 2).join(' ');
+  return out.length > 260 ? list[0] : out;
+}
+
+/** Every card of every style, once, from the index. Resolves [] when absent. */
+export function loadAllJourneyCards() {
+  return loadJourneyIndex().then((ix) => {
+    if (!ix) return [];
+    return Promise.all(ix.types.map((tp) => loadJourneyType(tp.slug)
+      .then((rows) => (rows || []).map((r) => ({ ...r, type: tp.slug })))))
+      .then((lists) => lists.flat());
+  });
+}
+
+const mid = (c) => (c?.eur ? (c.eur.low + c.eur.high) / 2 : null);
+
+/**
+ * Three computed ways out of a trip, from difficulty, cost and place; nothing
+ * hand-picked. easier: one step gentler (or the nearest gentler) in the same
+ * country and style first, widening to country, then style. cheaper: at least
+ * 15 percent lower in total, the least change of character first. nearby:
+ * same country, another style, closest in price. A slot with no candidate
+ * even after widening is left out, and the page shows what it has.
+ * `cards` is the whole library; `me` is this trip's card or the full trip.
+ */
+export function journeyExits(me, cards) {
+  if (!me || !Array.isArray(cards)) return [];
+  const cc = me.cc || me.countryCode;
+  const type = me.type || me.tripTypeSlug;
+  const myDiff = me.diff ?? me.profile?.difficulty;
+  const myMid = mid(me.eur ? me : { eur: me.budget?.totalEur ? { low: me.budget.totalEur.low, high: me.budget.totalEur.high } : null });
+  const others = cards.filter((c) => c.id !== me.id);
+  const used = new Set();
+  const take = (list, score) => {
+    const ranked = list.filter((c) => !used.has(c.id)).sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id));
+    if (!ranked.length) return null;
+    used.add(ranked[0].id);
+    return ranked[0];
+  };
+  const sameC = (c) => (c.cc === cc ? 3 : 0);
+  const sameT = (c) => (c.type === type ? 2 : 0);
+  const exits = [];
+
+  if (Number.isFinite(myDiff) && myDiff > 1) {
+    const easier = others.filter((c) => Number.isFinite(c.diff) && c.diff < myDiff);
+    const pick = take(easier, (c) => sameC(c) + sameT(c) - Math.abs(c.diff - (myDiff - 1)) * 1.5
+      - (myMid && mid(c) ? Math.abs(mid(c) - myMid) / myMid : 0));
+    if (pick) exits.push({ kind: 'easier', card: pick });
+  }
+  if (myMid) {
+    const cheaper = others.filter((c) => mid(c) && mid(c) <= myMid * 0.85);
+    const pick = take(cheaper, (c) => sameC(c) + sameT(c)
+      - Math.abs((c.diff ?? myDiff ?? 0) - (myDiff ?? 0)) - (myMid - mid(c)) / myMid);
+    if (pick) exits.push({ kind: 'cheaper', card: pick });
+  }
+  const near = others.filter((c) => c.cc === cc && c.type !== type);
+  const nearPick = take(near.length ? near : others.filter((c) => c.type !== type),
+    (c) => sameC(c) - (myMid && mid(c) ? Math.abs(mid(c) - myMid) / myMid : 0));
+  if (nearPick) exits.push({ kind: 'nearby', card: nearPick });
+  // The gentlest or cheapest trip in the library has no easier or cheaper
+  // sibling. Fill the empty slot with another trip in the same country, or
+  // failing that the nearest in price, so no page is a dead end.
+  while (exits.length < 3) {
+    const more = take(others.filter((c) => c.cc === cc).length ? others.filter((c) => c.cc === cc) : others,
+      (c) => sameT(c) - (myMid && mid(c) ? Math.abs(mid(c) - myMid) / myMid : 0));
+    if (!more) break;
+    exits.push({ kind: 'nearby', card: more });
+  }
+  return exits;
+}
