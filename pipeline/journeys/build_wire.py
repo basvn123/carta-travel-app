@@ -365,6 +365,124 @@ def pick_hero(candidates, images):
     return None
 
 
+def photo_key(img):
+    """The Commons file behind a hero, whatever thumb width serves it: the
+    last path segment of the URL without its query or a leading NNNpx-
+    prefix, percent-escapes decoded, case folded. Two heroes are the same
+    photograph when their keys match (the validator's hero-duplicate check
+    uses the same rule)."""
+    name = urllib.parse.unquote(str(img["url"]).split("?")[0].rsplit("/", 1)[-1])
+    return re.sub(r"^\d+px-", "", name).lower()
+
+
+# Day titles are prose headings, so most of what they hold is not a place:
+# "Arrival", "Stage 3", "Day trip", "Nordic skiing", a country. A second-tier
+# name that matches any of these is skipped, as is any country the catalogue
+# covers (COUNTRY_NAMES is filled from the master in main()): the lead image
+# of a country article is a flag, a map or a skyline of its capital.
+TIER2_JUNK_RE = re.compile(
+    r"\b(arrival|arrive|departure|depart|stage|day|days|transfer|morning|evening|"
+    r"afternoon|final|rest|return|orientation|loop|route|trail|skiing|ski|sledging|"
+    r"touring|cycling|hiking|running|sailing|kayak\w*|surf\w*|kite\w*|freeride|"
+    r"peak|ridge|riding|ride|walk|hike|market|lunch|dinner|breakfast|tasting)\b",
+    re.IGNORECASE)
+COUNTRY_NAMES = set()
+
+
+def itinerary_place_candidates(trip):
+    """Second-tier places, used only when a trip's own candidates all
+    resolve to photographs another trip already holds: the town named in each
+    day's title and sleep line, which the itinerary names in structured slots
+    (the same slots geocode.py reads). Free prose is never read."""
+    out = []
+    for day in trip.get("itinerary") or []:
+        for text in (day.get("sleep"), day.get("title")):
+            if not text:
+                continue
+            for part in re.split(r"[:;,/\u2192>&+()]|\bto\b|\band\b|\bthe\b|\bin\b|\bat\b",
+                                 str(text)):
+                part = re.sub(r"'s\b", "", part).strip(" ,.")
+                words = part.split()
+                if (part and 1 <= len(words) <= 3 and part[0].isupper()
+                        and not PLACE_JUNK_RE.search(part)
+                        and not TIER2_JUNK_RE.search(part)
+                        and part not in COUNTRY_NAMES and part not in out):
+                    out.append(part)
+    return out
+
+
+def hero_claim_rank(trip, img, per_trip, images):
+    """How strongly this trip claims the photograph: the position of the
+    place that gave it in the trip's own candidate list (0 is the first
+    basecamp). A hero that did not come from a candidate (a search hit, an
+    audit replacement) claims it more weakly than any candidate would."""
+    key = photo_key(img)
+    for i, name in enumerate(per_trip.get(trip["id"], [])):
+        got = images.get(name)
+        if got and got.get("url") and photo_key(got) == key:
+            return i
+    return 99
+
+
+def make_heroes_unique(trips, heroes, per_trip, images, pinned):
+    """No photograph fronts more than one trip (spec J2).
+
+    Two weeks opening on one photograph is the plainest sign the catalogue is
+    generated, and it happens because neighbouring trips name the same town
+    (a Prague city week and a Moravia beer week; a Vienna week and the
+    Danube ride). The trip with the strongest claim keeps the photograph: the
+    lowest candidate position, then a city trip over any other style, then the
+    id, so the result does not depend on dict order. Every other trip walks its
+    own candidates again, then the itinerary's named towns, and takes the
+    first usable lead image no other trip holds. A trip in `pinned` (the audit
+    patch, a person's choice) is never moved.
+
+    Returns the ids still without a unique hero; the caller refuses to write
+    the wire while that list is not empty."""
+    by_id = {t["id"]: t for t in trips}
+    taken = {}  # photo key -> trip id that holds it
+
+    def claim_order(tid):
+        t = by_id[tid]
+        return (0 if tid in pinned else 1,
+                hero_claim_rank(t, heroes[tid], per_trip, images),
+                0 if t.get("tripTypeSlug") == "city" else 1, tid)
+
+    holders = {}
+    for tid, h in heroes.items():
+        if h:
+            holders.setdefault(photo_key(h), []).append(tid)
+    losers = []
+    for key, tids in holders.items():
+        tids.sort(key=claim_order)
+        taken[key] = tids[0]
+        losers += [x for x in tids[1:] if x not in pinned]
+    for tid in sorted(t["id"] for t in trips if not heroes.get(t["id"])):
+        losers.append(tid)
+
+    unresolved = []
+    for tid in sorted(set(losers)):
+        t = by_id[tid]
+        names = list(per_trip.get(tid, []))
+        names += [n for n in itinerary_place_candidates(t) if n not in names]
+        pick = None
+        for landscape in (True, False):
+            for name in names:
+                img = images.get(name)
+                if usable(img, landscape=landscape) and photo_key(img) not in taken:
+                    pick = strip_utm(img)
+                    break
+            if pick:
+                break
+        if pick:
+            heroes[tid] = pick
+            taken[photo_key(pick)] = tid
+        else:
+            heroes[tid] = None
+            unresolved.append(tid)
+    return unresolved
+
+
 # ── Cards and details ────────────────────────────────────────────────────────
 
 def month_short(months):
@@ -549,6 +667,9 @@ def main():
                     help="write the wire here instead of continent-app/public/journeys")
     ap.add_argument("--no-fetch", action="store_true",
                     help="cache only; never touch the network")
+    ap.add_argument("--cache", default=None,
+                    help="read and write this image cache instead of "
+                         "cache/journey_images.json (a scratch copy for a trial build)")
     ap.add_argument("--src", default=None,
                     help="read this master-shaped JSON instead of trips.master.json "
                          "(a scratch set of candidate trips; pair it with --out)")
@@ -556,6 +677,9 @@ def main():
     global OUT
     if args.out:
         OUT = Path(args.out)
+    global CACHE_PATH
+    if args.cache:
+        CACHE_PATH = Path(args.cache)
     src = Path(args.src) if args.src else SRC
 
     master = json.loads(src.read_text(encoding="utf-8"))
@@ -564,6 +688,9 @@ def main():
 
     cache = load_cache()
     allow = not args.no_fetch
+    for t in trips:
+        COUNTRY_NAMES.update([t.get("country")] + [c.get("name") for c in t.get("countries") or []])
+    COUNTRY_NAMES.discard(None)
 
     # One flat list of every place any trip names, fetched in batches.
     per_trip = {t["id"]: place_candidates(t) for t in trips}
@@ -598,6 +725,36 @@ def main():
             n_over += 1
     if n_over:
         print(f"{n_over} hero(es) replaced from the audit patch")
+    n_before = len(heroes) - len({photo_key(h) for h in heroes.values() if h})
+    # J2: one photograph, one trip. The second-tier places (day titles and
+    # sleep towns) are looked up only for the trips that need another photo.
+    held = {}
+    for tid, h in heroes.items():
+        if h:
+            held.setdefault(photo_key(h), []).append(tid)
+    need = {tid for tids in held.values() if len(tids) > 1 for tid in tids}
+    need |= {tid for tid, h in heroes.items() if not h}
+    extra = []
+    for t in trips:
+        if t["id"] in need:
+            for n in itinerary_place_candidates(t):
+                if n not in all_titles and n not in extra:
+                    extra.append(n)
+    if extra:
+        images.update(fetch_lead_images(extra, cache, allow))
+        if allow:
+            save_cache(cache)
+    unresolved = make_heroes_unique(trips, heroes, per_trip, images,
+                                    pinned=set(overrides))
+    n_dup_after = (len([h for h in heroes.values() if h])
+                   - len({photo_key(h) for h in heroes.values() if h}))
+    print(f"{n_before} duplicate hero(es) before the J2 pass, "
+          f"{n_dup_after} after, {len(unresolved)} trip(s) unresolved")
+    if unresolved:
+        print("  ! no unique hero for: " + ", ".join(unresolved) + "\n"
+              "    add a place to MANUAL_PLACES (or an audit-patch hero) for each, "
+              "then rebuild; the wire was not written.", file=sys.stderr)
+        sys.exit(1)
     n_img = sum(1 for h in heroes.values() if h)
     print(f"{n_img}/{len(trips)} trips have a hero photograph")
 

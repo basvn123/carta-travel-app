@@ -33,6 +33,7 @@ import sys
 import time
 import unicodedata
 import urllib.error
+import urllib.parse
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -690,6 +691,7 @@ def validate(dataset, wire=None, verify_urls=False, places=None):
                             "no journeys wire found, hero checks skipped"))
     else:
         pending = {}
+        by_photo = {}
         for t in trips:
             tid = t.get("id") or "<no id>"
             rec = wire.get(tid)
@@ -717,8 +719,18 @@ def validate(dataset, wire=None, verify_urls=False, places=None):
             elif long_edge < HERO_MIN_W:
                 err(tid, "hero-below-floor",
                     f"hero long edge is {long_edge}px, floor is {HERO_MIN_W}px")
+            by_photo.setdefault(hero_photo_key(hero["url"]), []).append(tid)
             if verify_urls:
                 pending.setdefault(hero["url"], []).append(tid)
+        # J2: two weeks opening on the same photograph is what a generated
+        # catalogue looks like. The check reads the file name, not the URL,
+        # because one file is served at several thumb widths.
+        for key, tids in by_photo.items():
+            if len(tids) > 1:
+                for tid in tids:
+                    others = ", ".join(x for x in tids if x != tid)
+                    err(tid, "hero-duplicate",
+                        f"hero photograph {key} is also the hero of {others}")
         if pending:
             results = check_urls(list(pending))
             for url, (status, reason) in results.items():
@@ -731,6 +743,14 @@ def validate(dataset, wire=None, verify_urls=False, places=None):
                         err(tid, "hero-url-dead", f"HTTP {status} for {url}")
 
     return issues
+
+
+def hero_photo_key(url):
+    """The Commons file a hero URL serves, whatever the thumb width: the
+    last path segment, query and a leading NNNpx- derivative prefix removed,
+    percent-escapes decoded, case folded."""
+    name = urllib.parse.unquote(str(url).split("?")[0].rsplit("/", 1)[-1])
+    return re.sub(r"^\d+px-", "", name).lower()
 
 
 def coverage_stats(trips):
@@ -748,7 +768,8 @@ def coverage_stats(trips):
 K5_CODES = ["budget-sum-mismatch", "per-day-mismatch", "comma-range",
             "surface-percent-sum", "accommodation-not-slept",
             "place-outside-country", "comma-range-wire", "hero-below-floor",
-            "hero-missing", "coordinate-capital-fallback", "coordinate-outside-country"]
+            "hero-missing", "coordinate-capital-fallback", "coordinate-outside-country",
+            "hero-duplicate"]
 SEED_DEAD_URL = ("https://upload.wikimedia.org/wikipedia/commons/0/00/"
                  "Carta_trip_validator_seeded_missing_file.jpg")
 # A town far from every trip in the catalogue, and the country it sits in.
@@ -816,8 +837,17 @@ def self_test(dataset, places, verify_urls):
     bare_rec = copy.deepcopy(bare)
     bare_rec["hero"] = {}
 
-    data = {"trips": [control, bad, bare]}
-    seeded_wire = {control["id"]: control_rec, bad["id"]: bad_rec, bare["id"]: bare_rec}
+    # a fourth copy that opens on the same photograph as the bad one
+    twin = copy.deepcopy(bad)
+    twin["id"] = control["id"] + "-seeded-twin"
+    twin_rec = copy.deepcopy(bad_rec)
+    twin_rec["id"] = twin["id"]
+    twin_rec["hero"] = {"url": SEED_DEAD_URL.replace("/commons/0/00/", "/commons/thumb/0/00/") + "/1280px-"
+                        + SEED_DEAD_URL.rsplit("/", 1)[-1], "w": 1280, "h": 853}
+
+    data = {"trips": [control, bad, bare, twin]}
+    seeded_wire = {control["id"]: control_rec, bad["id"]: bad_rec, bare["id"]: bare_rec,
+                   twin["id"]: twin_rec}
     issues = validate(data, wire=seeded_wire, verify_urls=verify_urls, places=places)
     on = collections.defaultdict(set)
     for i in issues:
