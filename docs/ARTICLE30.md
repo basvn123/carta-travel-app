@@ -66,7 +66,7 @@ tier only), the daily totals tables, `pipeline_runs` (041), `site_config` (014).
 | Cloudflare | Processor (hosting: Pages for the app, R2 for the data files, DNS and proxy for the domain, T293) | Row 19: IP address and request metadata of every visitor | **Not checked.** No Cloudflare DPA has been reviewed or accepted since the move (row T300-j) | Unknown until T300-j is done |
 | Vercel | Former host, rollback only (T293: the old deployment still serves on Vercel's own URL) | Row 19 for anyone who reaches that URL | DPA covers Pro and Enterprise only; Carta was on Hobby (T018) | Yes (US) |
 | OpenStreetMap Nominatim, FOSSGIS routing (`routing.openstreetmap.de`), Overpass | Independent recipients, public services | Coordinates or address text a traveller searches, a town's area for live research (`src/lib/cityResearch.js`), and the visitor's IP | None (public services) | Server location not checked by T319 |
-| CARTO and OpenStreetMap tiles, Wikimedia, Geograph, flagcdn.com, Google Fonts, foto-webcam.eu | Independent recipients: the browser fetches files from them directly (`public/_headers` CSP `img-src`, `style-src`, `font-src`, `frame-src`) | The visitor's IP and the file requested | None | Google Fonts and some CDNs serve globally; row T319-d proposes self-hosting the fonts |
+| CARTO and OpenStreetMap tiles, Wikimedia, Geograph, flagcdn.com, foto-webcam.eu | Independent recipients: the browser fetches files from them directly (`public/_headers` CSP `img-src`, `frame-src`; fonts are self-hosted from `public/fonts` since T199) | The visitor's IP and the file requested | None | Some of these CDNs serve globally; not checked by T319 |
 
 ## 4. Data subject rights
 
@@ -115,7 +115,6 @@ It also named Vercel as the host; production moved to Cloudflare Pages on
 - T300-j: check and accept Cloudflare's DPA and record its version here.
 - T319-b: the 180-day prune of `paywall_events` must run (on write, like 040) before or with the 022 paste.
 - T319-c: `ai_plan_cache` rows are never deleted; parse-booking rows should go after 24 hours.
-- T319-d: fonts load from Google Fonts on every page view.
 - T217-d: account deletion erases `pass_grants`, including the VAT and waiver record.
 - T068-g, T070-g: retention for content reports and statements of reasons.
 - The Supabase region was not re-read for this record; confirm "EU" in the Dashboard (T319-a).
