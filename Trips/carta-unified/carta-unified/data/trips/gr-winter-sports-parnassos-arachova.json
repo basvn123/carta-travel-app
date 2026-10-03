@@ -42,10 +42,10 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 900,
-      "high": 1650
+      "low": 940,
+      "high": 1730
     },
-    "totalNote": "€900–€1,650 per person, excl. international flights",
+    "totalNote": "€940 to €1,730 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 400,
@@ -69,8 +69,8 @@
       }
     },
     "perDayEur": {
-      "low": 129,
-      "high": 236
+      "low": 134,
+      "high": 247
     }
   },
   "profile": {
@@ -193,7 +193,8 @@
       "location": "between Arachova and Delphi",
       "description": "The comfortable option, set on the ridge with pool, spa and a long view down the Pleistos valley toward the sea. Choose it for the parking, the family space and the ability to reach both Delphi and the ski road quickly without navigating Arachova's lanes. Roughly €110–€200 per room.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -202,7 +203,8 @@
       "location": null,
       "description": "The counter-strategy: sleep on the quiet, forested northern flank of Parnassos, pay 30–40% less, eat better and more cheaply, and approach the ski centre from the north road. The cost is distance from Delphi and total absence of nightlife — which for many travellers is the point. Roughly €50–€90 per room.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

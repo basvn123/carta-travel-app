@@ -195,7 +195,8 @@
       "location": "Suvo Rudište",
       "description": "The apartment village at the heart of the resort, cheaper than the hotels, with the ski school, rental shops, supermarket and the entire après strip on the doorstep. It is the right choice for families and groups who want to cook some meals and be able to walk home from the noise. Roughly €50–€90 per person per night in a shared apartment.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -204,7 +205,8 @@
       "location": null,
       "description": "The counter-strategy since the gondola opened: sleep at 1,050 m in a real village with real restaurants, pay 30–40% less, and ride up in eight minutes instead of driving a mountain road. The cost is the gondola's operating hours and a warmer, wetter base in a marginal snow year. Roughly €30–€60 per person per night.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

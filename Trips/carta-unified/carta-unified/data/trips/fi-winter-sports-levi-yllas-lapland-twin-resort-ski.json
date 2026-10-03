@@ -52,20 +52,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1500,
-      "high": 2400
+      "low": 1605,
+      "high": 2965
     },
-    "totalNote": "€1,500–2,400 per person",
+    "totalNote": "€1,605 to €2,965 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 120,
-        "highEur": 260,
-        "note": "€120–260 per night for a 2–4 person ski cabin; hotel doubles €150–280; peak Christmas–New Year and Easter can double this"
+        "lowEur": 720,
+        "highEur": 1560,
+        "note": "€120–260 per night for a 2–4 person ski cabin; hotel doubles €150–280; peak Christmas–New Year and Easter can double this. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 55,
-        "highEur": 95,
-        "note": "€55–95 per day; cabins have full kitchens and the supermarket is far cheaper than the slope restaurants"
+        "lowEur": 385,
+        "highEur": 665,
+        "note": "€55–95 per day; cabins have full kitchens and the supermarket is far cheaper than the slope restaurants. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 250,
@@ -73,14 +73,14 @@
         "note": "€250–420: flights to Kittilä (Levi is 15 minutes away) or Kolari rail, plus airport transfer and a ski bus pass"
       },
       "activities": {
-        "lowEur": 55,
-        "highEur": 70,
-        "note": "Lift passes €55–70 per day, roughly €250–320 for six days; add €150–350 for a husky or reindeer day, snowmobile safari or a guided off-piste day"
+        "lowEur": 250,
+        "highEur": 320,
+        "note": "Lift passes €55–70 per day, roughly €250–320 for six days; add €150–350 for a husky or reindeer day, snowmobile safari or a guided off-piste day. The breakdown figure is the stated week or six-day total."
       }
     },
     "perDayEur": {
-      "low": 214,
-      "high": 343
+      "low": 229,
+      "high": 424
     }
   },
   "profile": {

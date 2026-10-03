@@ -48,10 +48,10 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1350,
-      "high": 2250
+      "low": 1300,
+      "high": 2280
     },
-    "totalNote": "€1,350–€2,250 per person, excl. international flights",
+    "totalNote": "€1,300 to €2,280 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 420,
@@ -75,8 +75,8 @@
       }
     },
     "perDayEur": {
-      "low": 193,
-      "high": 321
+      "low": 186,
+      "high": 326
     }
   },
   "profile": {
@@ -190,7 +190,8 @@
       "location": "N-340 km 78, between Tarifa and Valdevaqueros",
       "description": "The original wind hotel, with gardens, two pools, its own beach access and a windsurf/kite centre attached, which means you can walk to the water and rig without loading the car. Rooms are dated in places but the position is unbeatable for a wind-driven week. Roughly €130–€230 double in season.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 2
     },
     {
       "rank": 2,

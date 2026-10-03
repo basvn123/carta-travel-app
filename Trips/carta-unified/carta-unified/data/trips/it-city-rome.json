@@ -199,7 +199,8 @@
       "location": "west bank",
       "description": "Right for a second visit or a trip weighted to the Vatican and the Gianicolo, and served directly by the FL1 regional train from Fiumicino at €8. The trade-off is noise: the Piazza Trilussa–San Calisto axis is loud until 02:00 at weekends, so ask for a courtyard room. €150–€240 per room.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -208,7 +209,8 @@
       "location": "north of the Vatican",
       "description": "Quiet, residential, on a grid, with the Mercato Trionfale and Via Cola di Rienzo for self-catering, and Cipro/Ottaviano metro for everything else. It is the sensible choice for a family or anyone who wants a kitchen and a lift. €140–€220 per apartment.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

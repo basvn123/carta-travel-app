@@ -195,7 +195,8 @@
       "location": "Bohinjska Bistrica",
       "description": "The alternative axis: sleep near **Lake Bohinj** rather than Kranjska Gora, put **Vogel** twenty minutes away instead of an hour, and get **Vodni park Bohinj** attached to the building for the rest day. Pokljuka is also closer from here. The trade is a longer daily drive to Kranjska Gora and Krvavec. Roughly €90–€150 per room.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,

@@ -48,20 +48,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 650,
-      "high": 1000
+      "low": 670,
+      "high": 1240
     },
-    "totalNote": "€650–1,000 per person",
+    "totalNote": "€670 to €1,240 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 55,
-        "highEur": 110,
-        "note": "€55–110 per night, double (guesthouse to spa hotel); manor splurge €220+"
+        "lowEur": 330,
+        "highEur": 660,
+        "note": "€55–110 per night, double (guesthouse to spa hotel); manor splurge €220+. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 30,
-        "highEur": 50,
-        "note": "€30–50 per day — Estonia's islands are the best value in this dataset"
+        "lowEur": 210,
+        "highEur": 350,
+        "note": "€30–50 per day — Estonia's islands are the best value in this dataset. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 90,
@@ -75,8 +75,8 @@
       }
     },
     "perDayEur": {
-      "low": 93,
-      "high": 143
+      "low": 96,
+      "high": 177
     }
   },
   "profile": {

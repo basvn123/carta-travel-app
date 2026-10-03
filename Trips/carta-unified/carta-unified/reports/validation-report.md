@@ -2,7 +2,7 @@
 
 Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 
-**606 errors, 624 warnings, 30 notices**
+**464 errors, 624 warnings, 30 notices**
 
 ## Issue counts by check
 
@@ -12,17 +12,16 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 | `comma-range-wire` | ERROR | 209 |
 | `no-sleep-lines` | WARNING | 183 |
 | `missing-connectivity` | WARNING | 115 |
-| `budget-sum-mismatch` | ERROR | 98 |
 | `missing-booking-windows` | WARNING | 67 |
 | `approximate-coordinates` | WARNING | 61 |
 | `gateway-coordinates` | WARNING | 54 |
-| `accommodation-not-slept` | ERROR | 46 |
 | `missing-type-detail` | WARNING | 44 |
 | `missing-evening` | WARNING | 30 |
 | `missing-gateway` | WARNING | 30 |
 | `generated-summary` | INFO | 30 |
 | `missing-difficulty` | WARNING | 21 |
 | `place-outside-country` | WARNING | 19 |
+| `accommodation-not-slept` | ERROR | 2 |
 
 ## Errors by check
 
@@ -114,93 +113,10 @@ Dataset: **253 trips**, schema v2.0, generated 2026-09-02
 - `sk-trail-running-mala-fatra-low-tatras`: 9 comma range(s) in the shipped copy, e.g. '000}, "totalNote": "€595, €1,000", "breakdow'
 - …and 169 more (full list in validation-issues.json)
 
-### `budget-sum-mismatch`: 98 record(s)
+### `accommodation-not-slept`: 2 record(s)
 
-- `dk-cycling-bornholm-round-granite-coast-smokehouse-loop`: low: breakdown sums to €315 against a stated total of €1050 (-70%)
-- `dk-cycling-bornholm-round-granite-coast-smokehouse-loop`: high: breakdown sums to €520 against a stated total of €1500 (-65%)
-- `ee-cycling-saaremaa-muhu-juniper-island-loop`: low: breakdown sums to €215 against a stated total of €650 (-67%)
-- `ee-cycling-saaremaa-muhu-juniper-island-loop`: high: breakdown sums to €390 against a stated total of €1000 (-61%)
-- `fr-cycling-alsace-vineyard-route`: low: breakdown sums to €960 against a stated total of €950 (+1%)
-- `fr-cycling-alsace-vineyard-route`: high: breakdown sums to €1420 against a stated total of €1400 (+1%)
-- `hr-cycling-istria-parenzana`: low: breakdown sums to €1280 against a stated total of €1200 (+7%)
-- `hr-cycling-istria-parenzana`: high: breakdown sums to €2050 against a stated total of €1850 (+11%)
-- `me-cycling-kotor-lovcen`: high: breakdown sums to €1700 against a stated total of €1650 (+3%)
-- `se-cycling-kattegattleden-gothenburg-helsingborg`: low: breakdown sums to €345 against a stated total of €1150 (-70%)
-- `se-cycling-kattegattleden-gothenburg-helsingborg`: high: breakdown sums to €555 against a stated total of €1650 (-66%)
-- `fo-trail-running-faroese-ridgelines-streymoy-vagar`: low: breakdown sums to €505 against a stated total of €1700 (-70%)
-- `fo-trail-running-faroese-ridgelines-streymoy-vagar`: high: breakdown sums to €865 against a stated total of €2500 (-65%)
-- `hr-trail-running-velebit-premuzic`: high: breakdown sums to €1290 against a stated total of €1250 (+3%)
-- `ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla`: low: breakdown sums to €285 against a stated total of €900 (-68%)
-- `ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla`: high: breakdown sums to €500 against a stated total of €1350 (-63%)
-- `no-trail-running-romsdal-ridges-andalsnes-skyrunning-week`: low: breakdown sums to €460 against a stated total of €1600 (-71%)
-- `no-trail-running-romsdal-ridges-andalsnes-skyrunning-week`: high: breakdown sums to €770 against a stated total of €2300 (-67%)
-- `dk-city-copenhagen-by-neighbourhood-block`: low: breakdown sums to €345 against a stated total of €1600 (-78%)
-- `dk-city-copenhagen-by-neighbourhood-block`: high: breakdown sums to €630 against a stated total of €2600 (-76%)
-- `ee-city-tallinn-limestone-bastions-telliskivi`: low: breakdown sums to €195 against a stated total of €800 (-76%)
-- `ee-city-tallinn-limestone-bastions-telliskivi`: high: breakdown sums to €390 against a stated total of €1300 (-70%)
-- `lv-city-riga-art-nouveau-market-halls-daugava`: low: breakdown sums to €180 against a stated total of €700 (-74%)
-- `lv-city-riga-art-nouveau-market-halls-daugava`: high: breakdown sums to €360 against a stated total of €1150 (-69%)
-- `dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg`: low: breakdown sums to €330 against a stated total of €1050 (-69%)
-- `dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg`: high: breakdown sums to €570 against a stated total of €1600 (-64%)
-- `gr-cozy-towns-pelion`: high: breakdown sums to €1490 against a stated total of €1450 (+3%)
-- `lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages`: low: breakdown sums to €240 against a stated total of €700 (-66%)
-- `lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages`: high: breakdown sums to €450 against a stated total of €1100 (-59%)
-- `lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi`: low: breakdown sums to €235 against a stated total of €600 (-61%)
-- `lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi`: high: breakdown sums to €415 against a stated total of €950 (-56%)
-- `es-road-trip-andalucia-ronda-alpujarras`: high: breakdown sums to €1650 against a stated total of €1600 (+3%)
-- `fo-road-trip-subsea-loop`: low: breakdown sums to €675 against a stated total of €1800 (-62%)
-- `fo-road-trip-subsea-loop`: high: breakdown sums to €1090 against a stated total of €2600 (-58%)
-- `gr-road-trip-peloponnese-loop`: high: breakdown sums to €1540 against a stated total of €1500 (+3%)
-- `ie-road-trip-wild-atlantic-way-dingle-iveragh-burren`: low: breakdown sums to €615 against a stated total of €1600 (-62%)
-- `ie-road-trip-wild-atlantic-way-dingle-iveragh-burren`: high: breakdown sums to €1010 against a stated total of €2400 (-58%)
-- `it-road-trip-sicily-circuit`: high: breakdown sums to €1690 against a stated total of €1650 (+2%)
-- `me-road-trip-tara`: high: breakdown sums to €1380 against a stated total of €1350 (+2%)
-- `no-road-trip-lofoten-e10-fishing-villages-arctic-light`: low: breakdown sums to €775 against a stated total of €2000 (-61%)
-- …and 58 more (full list in validation-issues.json)
-
-### `accommodation-not-slept`: 46 record(s)
-
-- `es-cycling-girona-costa-brava`: 'Bike Breaks Girona Cycle Centre apartments' is in accommodationStrategy but no day sleeps there
-- `hr-cycling-istria-parenzana`: 'La Parenzana' is in accommodationStrategy but no day sleeps there
-- `me-cycling-kotor-lovcen`: 'A Njeguši village house' is in accommodationStrategy but no day sleeps there
-- `si-cycling-soca-brda`: 'Nebesa Chalets' is in accommodationStrategy but no day sleeps there
-- `me-trail-running-durmitor`: 'Guesthouse or apartman in Ivan Do' is in accommodationStrategy but no day sleeps there
-- `es-city-seville`: 'Hotel Palacio de Villapanés' is in accommodationStrategy but no day sleeps there
-- `es-city-seville`: 'Corral del Rey' is in accommodationStrategy but no day sleeps there
-- `gr-city-athens`: 'Perianth Hotel' is in accommodationStrategy but no day sleeps there
-- `gr-city-athens`: 'Athens Was' is in accommodationStrategy but no day sleeps there
-- `it-city-naples`: "Casa D'Anna" is in accommodationStrategy but no day sleeps there
-- `it-city-naples`: "Grand Hotel Parker's" is in accommodationStrategy but no day sleeps there
-- `it-city-rome`: 'A Trastevere guesthouse' is in accommodationStrategy but no day sleeps there
-- `it-city-rome`: 'A Prati apartment' is in accommodationStrategy but no day sleeps there
-- `pt-city-lisbon`: 'Memmo Alfama' is in accommodationStrategy but no day sleeps there
-- `pt-city-lisbon`: 'Casa Amora' is in accommodationStrategy but no day sleeps there
-- `rs-city-belgrade`: 'Hotel Moskva' is in accommodationStrategy but no day sleeps there
-- `rs-city-belgrade`: 'Square Nine' is in accommodationStrategy but no day sleeps there
-- `ba-cozy-towns-slowly-mostar-blagaj-pocitelj-trebinje`: 'Hotel Kriva Ćuprija or a Blagaj pansion' is in accommodationStrategy but no day sleeps there
-- `es-cozy-towns-pueblos-blancos`: 'Hotel Fuerte Grazalema or Casa Rural La Mimbrera' is in accommodationStrategy but no day sleeps there
-- `it-cozy-towns-umbria`: 'Palazzo Brunamonti' is in accommodationStrategy but no day sleeps there
-- `mk-cozy-towns-ohrid-bitola`: 'Villa Jovan or Hotel De Niro' is in accommodationStrategy but no day sleeps there
-- `pt-cozy-towns-alentejo-villages`: 'Casa Pinto or Pousada de Marvão' is in accommodationStrategy but no day sleeps there
-- `sm-cozy-towns-montefeltro`: 'Locanda San Leone or a Montefeltro agriturismo' is in accommodationStrategy but no day sleeps there
-- `hr-culinary-istria-truffles`: 'San Canzian Village & Hotel' is in accommodationStrategy but no day sleeps there
-- `it-culinary-tuscany-chianti-montalcino`: 'Castello di Velona' is in accommodationStrategy but no day sleeps there
-- `mk-culinary-tikves`: 'Tikveš Winery guest accommodation / Kavadarci town hotels' is in accommodationStrategy but no day sleeps there
-- `ad-winter-sports-grandvalira`: 'Sport Hotel Hermitage & Spa' is in accommodationStrategy but no day sleeps there
-- `ad-winter-sports-grandvalira`: 'Andorra Park Hotel' is in accommodationStrategy but no day sleeps there
-- `ba-winter-sports-jahorina-bjelasnica`: 'Hotel Bistrica' is in accommodationStrategy but no day sleeps there
-- `es-winter-sports-baqueira-beret`: 'Hotel Val de Neu' is in accommodationStrategy but no day sleeps there
-- `es-winter-sports-baqueira-beret`: 'Parador de Arties' is in accommodationStrategy but no day sleeps there
-- `gr-winter-sports-parnassos-arachova`: 'Domotel Anemolia Mountain Resort' is in accommodationStrategy but no day sleeps there
-- `gr-winter-sports-parnassos-arachova`: 'Polydrosos or Eptalofos guesthouses' is in accommodationStrategy but no day sleeps there
-- `it-winter-sports-dolomiti-superski`: 'Hotel Portillo Dolomites 1966' is in accommodationStrategy but no day sleeps there
-- `it-winter-sports-dolomiti-superski`: 'Hotel Gran Baita' is in accommodationStrategy but no day sleeps there
-- `rs-winter-sports-kopaonik`: 'Konaci (Sunčani Vrhovi) apartments' is in accommodationStrategy but no day sleeps there
-- `rs-winter-sports-kopaonik`: 'Brzeće village' is in accommodationStrategy but no day sleeps there
-- `si-winter-sports-kranjska-gora-vogel`: 'Bohinj ECO Hotel' is in accommodationStrategy but no day sleeps there
-- `al-nature-escape-prespa-shebenik`: 'A Prespa bujtina' is in accommodationStrategy but no day sleeps there
 - `ba-nature-escape-una-national-park`: 'Camp Lučica' is in accommodationStrategy but no day sleeps there
-- …and 6 more (full list in validation-issues.json)
+- `ba-nature-escape-una-national-park`: 'Rafting-operator wooden bungalows' is in accommodationStrategy but no day sleeps there
 
 ## Warnings by check
 

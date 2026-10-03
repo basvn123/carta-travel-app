@@ -48,20 +48,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 600,
-      "high": 950
+      "low": 635,
+      "high": 1235
     },
-    "totalNote": "€600–950 per person",
+    "totalNote": "€635 to €1,235 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 50,
-        "highEur": 110,
-        "note": "€50–110 per night, double; manor houses €120–170"
+        "lowEur": 300,
+        "highEur": 660,
+        "note": "€50–110 per night, double; manor houses €120–170. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 25,
-        "highEur": 45,
-        "note": "€25–45 per day — the cheapest good eating in this dataset"
+        "lowEur": 175,
+        "highEur": 315,
+        "note": "€25–45 per day — the cheapest good eating in this dataset. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 130,
@@ -75,8 +75,8 @@
       }
     },
     "perDayEur": {
-      "low": 86,
-      "high": 136
+      "low": 91,
+      "high": 176
     }
   },
   "profile": {

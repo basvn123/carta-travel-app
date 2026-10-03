@@ -48,20 +48,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1700,
-      "high": 2500
+      "low": 1435,
+      "high": 2375
     },
-    "totalNote": "€1,700–2,500 per person",
+    "totalNote": "€1,435 to €2,375 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 120,
-        "highEur": 200,
-        "note": "€120–200 per night, double; guesthouses €80–130"
+        "lowEur": 720,
+        "highEur": 1200,
+        "note": "€120–200 per night, double; guesthouses €80–130. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 55,
-        "highEur": 85,
-        "note": "€55–85 per day; a heimablídni home-dinner runs €70–110 per person"
+        "lowEur": 385,
+        "highEur": 595,
+        "note": "€55–85 per day; a heimablídni home-dinner runs €70–110 per person. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 250,
@@ -75,8 +75,8 @@
       }
     },
     "perDayEur": {
-      "low": 243,
-      "high": 357
+      "low": 205,
+      "high": 339
     }
   },
   "profile": {

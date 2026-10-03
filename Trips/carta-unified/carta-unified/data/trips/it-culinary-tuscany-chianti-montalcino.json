@@ -204,7 +204,8 @@
       "location": "Castelnuovo dell'Abate",
       "description": "The splurge: an eleventh-century castle above Sant'Antimo with thermal pools, isolated enough to force the driver arrangement the week needs anyway. €350–€600 double.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 2
     }
   ],
   "logistics": {

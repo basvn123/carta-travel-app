@@ -206,7 +206,8 @@
       "location": "edge of the park",
       "description": "The runner's alternative: apartments a kilometre from the Crno jezero trailhead, €35–€55 a night, with a kitchen for early breakfasts and late dinners. Ideal if you want to start on foot rather than driving to the lake each morning.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

@@ -195,7 +195,8 @@
       "location": "Travessa das Merceeiras, Alfama",
       "description": "The right base if Alfama is the priority: red-tiled pool terrace over the Tagus, in a lane no tour group reaches with wheeled bags. Steep approach — taxi to Largo de São Rafael on arrival. €190–260.",
       "booking": null,
-      "priceNote": "€190–260"
+      "priceNote": "€190–260",
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -204,7 +205,8 @@
       "location": "Príncipe Real",
       "description": "Quieter and greener for a full week, with kitchenettes for the Mercado de Campo de Ourique haul and a flat ten minutes to Metro Rato. €130–180.",
       "booking": null,
-      "priceNote": "€130–180"
+      "priceNote": "€130–180",
+      "alternativeTo": 1
     }
   ],
   "logistics": {

@@ -52,20 +52,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 550,
-      "high": 900
+      "low": 635,
+      "high": 1295
     },
-    "totalNote": "€550–900 per person",
+    "totalNote": "€635 to €1,295 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 45,
-        "highEur": 110,
-        "note": "€45–110 per night for a forest cabin or guesthouse; whole cottages from €70; camping €8–15"
+        "lowEur": 270,
+        "highEur": 660,
+        "note": "€45–110 per night for a forest cabin or guesthouse; whole cottages from €70; camping €8–15. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 25,
-        "highEur": 45,
-        "note": "€25–45 per day; self-catering with roadside honey, smoked fish and market vegetables"
+        "lowEur": 175,
+        "highEur": 315,
+        "note": "€25–45 per day; self-catering with roadside honey, smoked fish and market vegetables. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 150,
@@ -79,8 +79,8 @@
       }
     },
     "perDayEur": {
-      "low": 79,
-      "high": 129
+      "low": 91,
+      "high": 185
     }
   },
   "profile": {

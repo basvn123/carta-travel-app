@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 2000,
-      "high": 3000
+      "low": 1865,
+      "high": 3210
     },
-    "totalNote": "€2,000–3,000 per person",
+    "totalNote": "€1,865 to €3,210 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 140,
-        "highEur": 260,
-        "note": "€140–260 per night for a rorbu (fisherman's cabin) sleeping 2–4; hostels €50–70 pp"
+        "lowEur": 840,
+        "highEur": 1560,
+        "note": "€140–260 per night for a rorbu (fisherman's cabin) sleeping 2–4; hostels €50–70 pp. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 65,
-        "highEur": 100,
-        "note": "€65–100 per day; self-catering in the rorbu kitchen cuts this by half"
+        "lowEur": 455,
+        "highEur": 700,
+        "note": "€65–100 per day; self-catering in the rorbu kitchen cuts this by half. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 450,
@@ -77,8 +77,8 @@
       }
     },
     "perDayEur": {
-      "low": 286,
-      "high": 429
+      "low": 266,
+      "high": 459
     }
   },
   "profile": {

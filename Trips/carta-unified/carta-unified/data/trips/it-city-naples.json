@@ -202,7 +202,8 @@
       "location": "Via dei Cristallini 138, Sanità",
       "description": "A frescoed apartment above Sanità with a library, a terrace and hosts who know the catacomb schedule. Fifteen minutes' downhill walk to the Duomo, and it puts you inside the neighbourhood rather than visiting it. €120–170.",
       "booking": null,
-      "priceNote": "€120–170"
+      "priceNote": "€120–170",
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -211,7 +212,8 @@
       "location": "Corso Vittorio Emanuele 135, Vomero slope",
       "description": "The 1870 grande dame with a rooftop restaurant over the bay, on the funicular line and away from the Centro Storico's night noise. Worth it if you want quiet and a car-accessible entrance. €200–300.",
       "booking": null,
-      "priceNote": "€200–300"
+      "priceNote": "€200–300",
+      "alternativeTo": 1
     }
   ],
   "logistics": {

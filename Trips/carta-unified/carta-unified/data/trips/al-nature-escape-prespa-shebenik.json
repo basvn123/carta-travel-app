@@ -46,10 +46,10 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 700,
+      "low": 680,
       "high": 1100
     },
-    "totalNote": "€700–€1,100 per person, excl. international flights",
+    "totalNote": "€680 to €1,100 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 200,
@@ -73,7 +73,7 @@
       }
     },
     "perDayEur": {
-      "low": 100,
+      "low": 97,
       "high": 157
     }
   },
@@ -122,7 +122,8 @@
       "afternoon": "Walk the Old Bazaar, the Mirahori mosque (founded in the 1490s), and the National Museum of Medieval Art, which holds the best collection of Albanian icons in the country, including work by the Onufri school. Buy a week's supplies here — it is the last full supermarket before the mountains.",
       "evening": "Dinner in the bazaar on Korçë staples: lakror pie, kernacka sausages, and a Birra Korça, brewed in the city since 1928.",
       "dayStats": "180 km drive / 2 h 30 / Korçë 850 m / last full supermarket for 3 days / museum entry roughly 700 ALL (€7)",
-      "sleep": "Hani i Pazarit or a bazaar guesthouse, Korçë"
+      "sleep": "Hani i Pazarit or a bazaar guesthouse, Korçë",
+      "sleepRef": 3
     },
     {
       "day": 2,
@@ -140,7 +141,8 @@
       "afternoon": "Take a boat from Gorica or Pustec to Maligrad, the small rock island in Albanian water, where the fourteenth-century cave church of Shën Maria is built into an overhang with surviving frescoes. Back on shore, walk up to the rock-cut hermitages above Zaroshkë, cut into the cliff face and reached by a steep scramble.",
       "evening": "Homestay dinner: Prespa beans, which are the local pride, lake fish, and rakia poured by the host until you stop him.",
       "dayStats": "55 km drive / 1 h 15 / Prespa 850 m, Ohrid 695 m, 155 m apart and connected through karst / Maligrad boat roughly 3,000–5,000 ALL (€30–€50) per boat / homestay 2,500–4,000 ALL per person with dinner",
-      "sleep": "Bujtina homestay, Pustec or Gollomboç"
+      "sleep": "Bujtina homestay, Pustec or Gollomboç",
+      "sleepRef": 1
     },
     {
       "day": 4,
@@ -149,7 +151,8 @@
       "afternoon": "Deliberately nothing. Swim — Prespa is warm and clean by August. Walk the shore path between two villages. Watch the bean harvest if it is September. There is no attraction to tick here and that is the point.",
       "evening": "Sunset from the Zaroshkë cliffs, then back for dinner. Ask your host about the winter, when the lake sometimes freezes at the edges and the village halves.",
       "dayStats": "0–8 km walking / Prespa NP Albania roughly 27,750 ha, declared 1999 / Lesser Prespa holds the world's largest Dalmatian pelican colony / no entry fee / power cuts common, charge everything when you can",
-      "sleep": "Bujtina homestay, Pustec or Gollomboç"
+      "sleep": "Bujtina homestay, Pustec or Gollomboç",
+      "sleepRef": 1
     },
     {
       "day": 5,
@@ -167,7 +170,8 @@
       "afternoon": "Arrange the 4x4 up from Fushë-Studë towards the glacial lakes. Shebenik-Jabllanicë covers about 34,500 hectares and holds fourteen glacial lakes between roughly 1,500 and 1,900 m, most of them shallow, cold and completely silent. Walk in from wherever the track gives up.",
       "evening": "Back down to a Rrajcë or Fushë-Studë bujtina. Wood stove, spring water, no signal, dinner from the garden and the flock.",
       "dayStats": "60 km drive / 4x4 track 9–12 km from Fushë-Studë / lakes at 1,500–1,900 m / park roughly 34,500 ha, free entry / 14 glacial lakes / Shebenik peak 2,262 m",
-      "sleep": "Bujtina at Rrajcë or Fushë-Studë"
+      "sleep": "Bujtina at Rrajcë or Fushë-Studë",
+      "sleepRef": 2
     },
     {
       "day": 7,

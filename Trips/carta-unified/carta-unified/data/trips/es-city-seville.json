@@ -196,7 +196,8 @@
       "location": "Calle Santiago 31, San Bartolomé",
       "description": "An 18th-century palace with a proper Baroque staircase, a courtyard pool and enough distance from Santa Cruz to feel residential while staying a 10-minute walk from the Cathedral. €200–290.",
       "booking": null,
-      "priceNote": "€200–290"
+      "priceNote": "€200–290",
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -205,7 +206,8 @@
       "location": "Calle Corral del Rey 12, Alfalfa",
       "description": "Thirteen rooms in a 17th-century *casa señorial* with Roman columns in the courtyard, dropped into the best tapas grid in the city. €190–280; the roof plunge pool is the July argument.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

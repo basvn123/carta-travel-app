@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1600,
-      "high": 2600
+      "low": 1455,
+      "high": 2650
     },
-    "totalNote": "€1,600–2,600 per person",
+    "totalNote": "€1,455 to €2,650 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 150,
-        "highEur": 260,
-        "note": "€150–260 per night, double, central; design hotels €280+; hostels €45–70 pp"
+        "lowEur": 900,
+        "highEur": 1560,
+        "note": "€150–260 per night, double, central; design hotels €280+; hostels €45–70 pp. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 60,
-        "highEur": 120,
-        "note": "€60–120 per day; one high-end tasting menu adds €250–450 per person"
+        "lowEur": 420,
+        "highEur": 840,
+        "note": "€60–120 per day; one high-end tasting menu adds €250–450 per person. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 45,
@@ -77,8 +77,8 @@
       }
     },
     "perDayEur": {
-      "low": 229,
-      "high": 371
+      "low": 208,
+      "high": 379
     }
   },
   "profile": {

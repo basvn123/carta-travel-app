@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1900,
-      "high": 2900
+      "low": 1790,
+      "high": 3330
     },
-    "totalNote": "€1,900–2,900 per person",
+    "totalNote": "€1,790 to €3,330 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 130,
-        "highEur": 240,
-        "note": "€130–240 per night, double; country-house rooms €250–400"
+        "lowEur": 780,
+        "highEur": 1440,
+        "note": "€130–240 per night, double; country-house rooms €250–400. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 80,
-        "highEur": 160,
-        "note": "€80–160 per day; a starred tasting menu €120–200 per person"
+        "lowEur": 560,
+        "highEur": 1120,
+        "note": "€80–160 per day; a starred tasting menu €120–200 per person. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 300,
@@ -77,8 +77,8 @@
       }
     },
     "perDayEur": {
-      "low": 271,
-      "high": 414
+      "low": 256,
+      "high": 476
     }
   },
   "profile": {

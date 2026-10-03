@@ -2012,20 +2012,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1050,
-          "high": 1500
+          "low": 1035,
+          "high": 1690
         },
-        "totalNote": "€1,050–1,500 per person for 7 days",
+        "totalNote": "€1,035 to €1,690 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 90,
-            "highEur": 150,
-            "note": "€90–150 per night, double (guesthouse to design hotel); hostels €35–55 pp"
+            "lowEur": 540,
+            "highEur": 900,
+            "note": "€90–150 per night, double (guesthouse to design hotel); hostels €35–55 pp. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 45,
-            "highEur": 70,
-            "note": "€45–70 per day (smokehouse buffets €20–28, dinner €35–60)"
+            "lowEur": 315,
+            "highEur": 490,
+            "note": "€45–70 per day (smokehouse buffets €20–28, dinner €35–60). The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 120,
@@ -2039,8 +2039,8 @@
           }
         },
         "perDayEur": {
-          "low": 150,
-          "high": 214
+          "low": 148,
+          "high": 241
         }
       },
       "profile": {
@@ -2283,20 +2283,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 650,
-          "high": 1000
+          "low": 670,
+          "high": 1240
         },
-        "totalNote": "€650–1,000 per person",
+        "totalNote": "€670 to €1,240 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 55,
-            "highEur": 110,
-            "note": "€55–110 per night, double (guesthouse to spa hotel); manor splurge €220+"
+            "lowEur": 330,
+            "highEur": 660,
+            "note": "€55–110 per night, double (guesthouse to spa hotel); manor splurge €220+. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 30,
-            "highEur": 50,
-            "note": "€30–50 per day — Estonia's islands are the best value in this dataset"
+            "lowEur": 210,
+            "highEur": 350,
+            "note": "€30–50 per day — Estonia's islands are the best value in this dataset. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 90,
@@ -2310,8 +2310,8 @@
           }
         },
         "perDayEur": {
-          "low": 93,
-          "high": 143
+          "low": 96,
+          "high": 177
         }
       },
       "profile": {
@@ -2721,7 +2721,8 @@
           "location": "Girona",
           "description": "Purpose-built for riders: workshop access, wash bay, laundry, and a shop downstairs that will fix anything. Less charming than a hotel, considerably more useful across a six-day riding block. Around €90–€140 for a twin apartment.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -2849,10 +2850,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 950,
-          "high": 1400
+          "low": 960,
+          "high": 1420
         },
-        "totalNote": null,
+        "totalNote": "€960 to €1,420 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 460,
@@ -2876,8 +2877,8 @@
           }
         },
         "perDayEur": {
-          "low": 136,
-          "high": 200
+          "low": 137,
+          "high": 203
         }
       },
       "profile": {
@@ -3769,10 +3770,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1200,
-          "high": 1850
+          "low": 1280,
+          "high": 2050
         },
-        "totalNote": "€1,200–€1,850 per person, excl. international flights",
+        "totalNote": "€1,280 to €2,050 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 560,
@@ -3796,8 +3797,8 @@
           }
         },
         "perDayEur": {
-          "low": 171,
-          "high": 264
+          "low": 183,
+          "high": 293
         }
       },
       "profile": {
@@ -3927,7 +3928,8 @@
           "location": "Volpija near Buje",
           "description": "Literally on the old railway formation, with a bike shed, a workshop bench and a restaurant doing Istrian home cooking. The budget option at roughly €70–€100 double, and the most convenient base if you intend to ride the corridor end to end rather than detour.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -5248,9 +5250,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1050,
-          "high": 1650
+          "high": 1700
         },
-        "totalNote": "€1,050–€1,650 per person, excl. international flights",
+        "totalNote": "€1,050 to €1,700 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 400,
@@ -5275,7 +5277,7 @@
         },
         "perDayEur": {
           "low": 150,
-          "high": 236
+          "high": 243
         }
       },
       "profile": {
@@ -5396,7 +5398,8 @@
           "location": "plateau stay at 880 m",
           "description": "Sleeping at the top of the serpentine flips the week: you descend to breakfast and climb home. Rooms are simple, heating matters even in May, and dinner is whatever the household is smoking. Around €40–€60 per room, cash. Worth one night to ride Lovćen on fresh legs.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -7062,20 +7065,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1150,
-          "high": 1650
+          "low": 1120,
+          "high": 1855
         },
-        "totalNote": "€1,150–1,650 per person",
+        "totalNote": "€1,120 to €1,855 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 95,
-            "highEur": 170,
-            "note": "€95–170 per night, double; STF hostels €40–60 pp; two seaside spa nights push the top end"
+            "lowEur": 570,
+            "highEur": 1020,
+            "note": "€95–170 per night, double; STF hostels €40–60 pp; two seaside spa nights push the top end. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 50,
-            "highEur": 75,
-            "note": "€50–75 per day (bakery breakfast, harbour lunch, one proper dinner)"
+            "lowEur": 350,
+            "highEur": 525,
+            "note": "€50–75 per day (bakery breakfast, harbour lunch, one proper dinner). The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 150,
@@ -7089,8 +7092,8 @@
           }
         },
         "perDayEur": {
-          "low": 164,
-          "high": 236
+          "low": 160,
+          "high": 265
         }
       },
       "profile": {
@@ -7509,7 +7512,8 @@
           "location": "Livek",
           "description": "The luxury option at 700 m directly above the Livek climb: your morning is an 8 km descent, your evening an 8 km penalty. Glass-fronted cabins, shared sauna, dinner included, roughly €280–€340 per cabin.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -10087,20 +10091,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1700,
-          "high": 2500
+          "low": 1435,
+          "high": 2375
         },
-        "totalNote": "€1,700–2,500 per person",
+        "totalNote": "€1,435 to €2,375 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 120,
-            "highEur": 200,
-            "note": "€120–200 per night, double; guesthouses €80–130"
+            "lowEur": 720,
+            "highEur": 1200,
+            "note": "€120–200 per night, double; guesthouses €80–130. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 55,
-            "highEur": 85,
-            "note": "€55–85 per day; a heimablídni home-dinner runs €70–110 per person"
+            "lowEur": 385,
+            "highEur": 595,
+            "note": "€55–85 per day; a heimablídni home-dinner runs €70–110 per person. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 250,
@@ -10114,8 +10118,8 @@
           }
         },
         "perDayEur": {
-          "low": 243,
-          "high": 357
+          "low": 205,
+          "high": 339
         }
       },
       "profile": {
@@ -11283,9 +11287,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 780,
-          "high": 1250
+          "high": 1290
         },
-        "totalNote": "€780–€1,250 per person, excl. international flights",
+        "totalNote": "€780 to €1,290 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 300,
@@ -11310,7 +11314,7 @@
         },
         "perDayEur": {
           "low": 111,
-          "high": 179
+          "high": 184
         }
       },
       "profile": {
@@ -11878,20 +11882,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 900,
-          "high": 1350
+          "low": 1005,
+          "high": 1720
         },
-        "totalNote": "€900–1,350 per person",
+        "totalNote": "€1,005 to €1,720 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 90,
-            "highEur": 160,
-            "note": "€90–160 per night, double; An Óige hostels €30–45 pp"
+            "lowEur": 540,
+            "highEur": 960,
+            "note": "€90–160 per night, double; An Óige hostels €30–45 pp. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 45,
-            "highEur": 70,
-            "note": "€45–70 per day (pub dinners €20–30, Dublin dinner more)"
+            "lowEur": 315,
+            "highEur": 490,
+            "note": "€45–70 per day (pub dinners €20–30, Dublin dinner more). The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 120,
@@ -11905,8 +11909,8 @@
           }
         },
         "perDayEur": {
-          "low": 129,
-          "high": 193
+          "low": 144,
+          "high": 246
         }
       },
       "profile": {
@@ -13546,7 +13550,8 @@
           "location": "edge of the park",
           "description": "The runner's alternative: apartments a kilometre from the Crno jezero trailhead, €35–€55 a night, with a kitchen for early breakfasts and late dinners. Ideal if you want to start on foot rather than driving to the lake each morning.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -13663,20 +13668,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1600,
-          "high": 2300
+          "low": 1470,
+          "high": 2410
         },
-        "totalNote": "€1,600–2,300 per person",
+        "totalNote": "€1,470 to €2,410 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 130,
-            "highEur": 220,
-            "note": "€130–220 per night, double; DNT cabins €35–55 pp for members"
+            "lowEur": 780,
+            "highEur": 1320,
+            "note": "€130–220 per night, double; DNT cabins €35–55 pp for members. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 60,
-            "highEur": 90,
-            "note": "€60–90 per day — Norway is the most expensive country in this dataset; self-cater breakfasts and trail food"
+            "lowEur": 420,
+            "highEur": 630,
+            "note": "€60–90 per day — Norway is the most expensive country in this dataset; self-cater breakfasts and trail food. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 180,
@@ -13690,8 +13695,8 @@
           }
         },
         "perDayEur": {
-          "low": 229,
-          "high": 329
+          "low": 210,
+          "high": 344
         }
       },
       "profile": {
@@ -17588,20 +17593,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1600,
-          "high": 2600
+          "low": 1455,
+          "high": 2650
         },
-        "totalNote": "€1,600–2,600 per person",
+        "totalNote": "€1,455 to €2,650 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 150,
-            "highEur": 260,
-            "note": "€150–260 per night, double, central; design hotels €280+; hostels €45–70 pp"
+            "lowEur": 900,
+            "highEur": 1560,
+            "note": "€150–260 per night, double, central; design hotels €280+; hostels €45–70 pp. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 60,
-            "highEur": 120,
-            "note": "€60–120 per day; one high-end tasting menu adds €250–450 per person"
+            "lowEur": 420,
+            "highEur": 840,
+            "note": "€60–120 per day; one high-end tasting menu adds €250–450 per person. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 45,
@@ -17615,8 +17620,8 @@
           }
         },
         "perDayEur": {
-          "low": 229,
-          "high": 371
+          "low": 208,
+          "high": 379
         }
       },
       "profile": {
@@ -17877,20 +17882,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 800,
-          "high": 1300
+          "low": 785,
+          "high": 1560
         },
-        "totalNote": "€800–1,300 per person",
+        "totalNote": "€785 to €1,560 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 70,
-            "highEur": 150,
-            "note": "€70–150 per night, double; design hotels €180+; hostels €25–40 pp"
+            "lowEur": 420,
+            "highEur": 900,
+            "note": "€70–150 per night, double; design hotels €180+; hostels €25–40 pp. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 40,
-            "highEur": 70,
-            "note": "€40–70 per day; tasting menus €90–160 — Estonia's best value is at the top end"
+            "lowEur": 280,
+            "highEur": 490,
+            "note": "€40–70 per day; tasting menus €90–160 — Estonia's best value is at the top end. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 25,
@@ -17904,8 +17909,8 @@
           }
         },
         "perDayEur": {
-          "low": 114,
-          "high": 186
+          "low": 112,
+          "high": 223
         }
       },
       "profile": {
@@ -18311,7 +18316,8 @@
           "location": "Calle Santiago 31, San Bartolomé",
           "description": "An 18th-century palace with a proper Baroque staircase, a courtyard pool and enough distance from Santa Cruz to feel residential while staying a 10-minute walk from the Cathedral. €200–290.",
           "booking": null,
-          "priceNote": "€200–290"
+          "priceNote": "€200–290",
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -18320,7 +18326,8 @@
           "location": "Calle Corral del Rey 12, Alfalfa",
           "description": "Thirteen rooms in a 17th-century *casa señorial* with Roman columns in the courtyard, dropped into the best tapas grid in the city. €190–280; the roof plunge pool is the July argument.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -18910,7 +18917,8 @@
           "location": "Limpona 2, Monastiraki",
           "description": "A restored 1930s modernist block with commissioned Greek art, a bakery downstairs and immediate access to Psyrri and the Agora. Right for a trip weighted toward evenings out. €180–250.",
           "booking": null,
-          "priceNote": "€180–250"
+          "priceNote": "€180–250",
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -18919,7 +18927,8 @@
           "location": "Dionysiou Areopagitou 5, Makrygianni",
           "description": "On the pedestrianised archaeological promenade, mid-century Greek design, rooms with sightlines to the south slope. Pricier per night but eliminates all transit on the two Acropolis days. €190–270.",
           "booking": null,
-          "priceNote": "€190–270"
+          "priceNote": "€190–270",
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -19492,7 +19501,8 @@
           "location": "Via dei Cristallini 138, Sanità",
           "description": "A frescoed apartment above Sanità with a library, a terrace and hosts who know the catacomb schedule. Fifteen minutes' downhill walk to the Duomo, and it puts you inside the neighbourhood rather than visiting it. €120–170.",
           "booking": null,
-          "priceNote": "€120–170"
+          "priceNote": "€120–170",
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -19501,7 +19511,8 @@
           "location": "Corso Vittorio Emanuele 135, Vomero slope",
           "description": "The 1870 grande dame with a rooftop restaurant over the bay, on the funicular line and away from the Centro Storico's night noise. Worth it if you want quiet and a car-accessible entrance. €200–300.",
           "booking": null,
-          "priceNote": "€200–300"
+          "priceNote": "€200–300",
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -19771,7 +19782,8 @@
           "location": "west bank",
           "description": "Right for a second visit or a trip weighted to the Vatican and the Gianicolo, and served directly by the FL1 regional train from Fiumicino at €8. The trade-off is noise: the Piazza Trilussa–San Calisto axis is loud until 02:00 at weekends, so ask for a courtyard room. €150–€240 per room.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -19780,7 +19792,8 @@
           "location": "north of the Vatican",
           "description": "Quiet, residential, on a grid, with the Mercato Trionfale and Via Cola di Rienzo for self-catering, and Cipro/Ottaviano metro for everything else. It is the sensible choice for a family or anyone who wants a kitchen and a lift. €140–€220 per apartment.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -20244,20 +20257,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 700,
-          "high": 1150
+          "low": 715,
+          "high": 1450
         },
-        "totalNote": "€700–1,150 per person",
+        "totalNote": "€715 to €1,450 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 65,
-            "highEur": 140,
-            "note": "€65–140 per night, double; design hotels €170+; hostels €20–35 pp"
+            "lowEur": 390,
+            "highEur": 840,
+            "note": "€65–140 per night, double; design hotels €170+; hostels €20–35 pp. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 35,
-            "highEur": 65,
-            "note": "€35–65 per day; a top tasting menu €80–140"
+            "lowEur": 245,
+            "highEur": 455,
+            "note": "€35–65 per day; a top tasting menu €80–140. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 25,
@@ -20271,8 +20284,8 @@
           }
         },
         "perDayEur": {
-          "low": 100,
-          "high": 164
+          "low": 102,
+          "high": 207
         }
       },
       "profile": {
@@ -21919,7 +21932,8 @@
           "location": "Travessa das Merceeiras, Alfama",
           "description": "The right base if Alfama is the priority: red-tiled pool terrace over the Tagus, in a lane no tour group reaches with wheeled bags. Steep approach — taxi to Largo de São Rafael on arrival. €190–260.",
           "booking": null,
-          "priceNote": "€190–260"
+          "priceNote": "€190–260",
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -21928,7 +21942,8 @@
           "location": "Príncipe Real",
           "description": "Quieter and greener for a full week, with kitchenettes for the Mercado de Campo de Ourique haul and a flat ten minutes to Metro Rato. €130–180.",
           "booking": null,
-          "priceNote": "€130–180"
+          "priceNote": "€130–180",
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -22490,7 +22505,8 @@
           "location": "Terazije 20, Stari Grad",
           "description": "The 1908 Secessionist landmark, green Pécs ceramic on the façade, and the single most Belgrade address there is. Rooms are dated for the price but the location and the ground-floor café are the point. €110–150.",
           "booking": null,
-          "priceNote": "€110–150"
+          "priceNote": "€110–150",
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -22499,7 +22515,8 @@
           "location": "Studentski Trg 9, Stari Grad",
           "description": "The best hotel in the country, a Leman-designed interior on a quiet square two minutes from Kalemegdan, with a pool and a serious breakfast. €200–280, and worth it if a week of kafanas needs one soft landing.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -23660,7 +23677,8 @@
           "location": "alternatives",
           "description": "Kriva Ćuprija sits on the Radobolja stream in Mostar's old town, a small conversion of mill buildings, if Muslibegović is full. Staying out at Blagaj instead is a real option for a quieter week — but it puts you 12 km from Mostar's evenings.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -25665,20 +25683,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1050,
-          "high": 1600
+          "low": 1130,
+          "high": 1950
         },
-        "totalNote": "€1,050–1,600 per person",
+        "totalNote": "€1,130 to €1,950 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 100,
-            "highEur": 180,
-            "note": "€100–180 per night, double, in a kro or town hotel; €220+ for a manor stay"
+            "lowEur": 600,
+            "highEur": 1080,
+            "note": "€100–180 per night, double, in a kro or town hotel; €220+ for a manor stay. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 50,
-            "highEur": 80,
-            "note": "€50–80 per day; a kro dinner €40–65"
+            "lowEur": 350,
+            "highEur": 560,
+            "note": "€50–80 per day; a kro dinner €40–65. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 120,
@@ -25692,8 +25710,8 @@
           }
         },
         "perDayEur": {
-          "low": 150,
-          "high": 229
+          "low": 161,
+          "high": 279
         }
       },
       "profile": {
@@ -26112,7 +26130,8 @@
           "location": "sierra edge",
           "description": "If Casa de las Piedras is full, take a rural house on the Grazalema–Benamahoma road instead of dropping to a chain in Ronda; the point of this week is waking inside the park boundary, not near it.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -26872,9 +26891,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 900,
-          "high": 1450
+          "high": 1490
         },
-        "totalNote": "€900–€1,450 per person, excl. international flights",
+        "totalNote": "€900 to €1,490 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 420,
@@ -26899,7 +26918,7 @@
         },
         "perDayEur": {
           "low": 129,
-          "high": 207
+          "high": 213
         }
       },
       "profile": {
@@ -27620,7 +27639,8 @@
           "location": "Bevagna",
           "description": "The value alternative on Corso Matteotti: 18th-century townhouse, vaulted breakfast room, and a garage — the pick if you're driving. Roughly €90–€130 per double.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 2
         }
       ],
       "logistics": {
@@ -27735,20 +27755,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 700,
-          "high": 1100
+          "low": 825,
+          "high": 1560
         },
-        "totalNote": "€700–1,100 per person",
+        "totalNote": "€825 to €1,560 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 75,
-            "highEur": 150,
-            "note": "€75–150 per night, double, in a wooden fisherman's-house guesthouse; €190+ for the Nida boutique hotels in August"
+            "lowEur": 450,
+            "highEur": 900,
+            "note": "€75–150 per night, double, in a wooden fisherman's-house guesthouse; €190+ for the Nida boutique hotels in August. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 35,
-            "highEur": 60,
-            "note": "€35–60 per day; smoked fish and a lagoon-side dinner"
+            "lowEur": 245,
+            "highEur": 420,
+            "note": "€35–60 per day; smoked fish and a lagoon-side dinner. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 90,
@@ -27762,8 +27782,8 @@
           }
         },
         "perDayEur": {
-          "low": 100,
-          "high": 157
+          "low": 118,
+          "high": 223
         }
       },
       "profile": {
@@ -28350,20 +28370,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 600,
-          "high": 950
+          "low": 635,
+          "high": 1235
         },
-        "totalNote": "€600–950 per person",
+        "totalNote": "€635 to €1,235 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 50,
-            "highEur": 110,
-            "note": "€50–110 per night, double; manor houses €120–170"
+            "lowEur": 300,
+            "highEur": 660,
+            "note": "€50–110 per night, double; manor houses €120–170. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 25,
-            "highEur": 45,
-            "note": "€25–45 per day — the cheapest good eating in this dataset"
+            "lowEur": 175,
+            "highEur": 315,
+            "note": "€25–45 per day — the cheapest good eating in this dataset. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 130,
@@ -28377,8 +28397,8 @@
           }
         },
         "perDayEur": {
-          "low": 86,
-          "high": 136
+          "low": 91,
+          "high": 176
         }
       },
       "profile": {
@@ -29091,7 +29111,8 @@
           "location": "small-scale alternatives",
           "description": "Villa Jovan is a 19th-century house in Ohrid's old town with fewer than ten rooms; De Niro is a small Bitola hotel a block from Magnolia Square. Both are the right scale for this week if the first choices are full — avoid the lakefront blocks east of Ohrid town, which are 25 minutes' walk from anything worth walking to.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -29987,7 +30008,8 @@
           "location": null,
           "description": "Casa Pinto is a small, eccentric guesthouse inside Monsaraz's walls if you want to sleep behind the gates rather than below them. The Pousada in Marvão puts you inside the ramparts at 865 m — worth one night if the Barrocal budget is out of reach.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -30859,7 +30881,8 @@
           "location": "rural alternative",
           "description": "If you would rather sleep among the hills than in a town, take a small relais in the Marecchia valley between San Leo and Verucchio. It costs less, it is quieter, and it removes the evening square from your week — decide which you want before booking.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -33143,9 +33166,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1050,
-          "high": 1600
+          "high": 1650
         },
-        "totalNote": "€1,050–€1,600 per person, excl. international flights",
+        "totalNote": "€1,050 to €1,650 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 440,
@@ -33170,7 +33193,7 @@
         },
         "perDayEur": {
           "low": 150,
-          "high": 229
+          "high": 236
         }
       },
       "profile": {
@@ -33424,20 +33447,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1800,
-          "high": 2600
+          "low": 1605,
+          "high": 2630
         },
-        "totalNote": "€1,800–2,600 per person",
+        "totalNote": "€1,605 to €2,630 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 120,
-            "highEur": 200,
-            "note": "€120–200 per night, double; guesthouses €85–140"
+            "lowEur": 720,
+            "highEur": 1200,
+            "note": "€120–200 per night, double; guesthouses €85–140. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 55,
-            "highEur": 90,
-            "note": "€55–90 per day; heimablídni home dinners €70–110 pp"
+            "lowEur": 385,
+            "highEur": 630,
+            "note": "€55–90 per day; heimablídni home dinners €70–110 pp. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 400,
@@ -33451,8 +33474,8 @@
           }
         },
         "perDayEur": {
-          "low": 257,
-          "high": 371
+          "low": 229,
+          "high": 376
         }
       },
       "profile": {
@@ -34038,9 +34061,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 980,
-          "high": 1500
+          "high": 1540
         },
-        "totalNote": "€980–€1,500 per person, excl. international flights",
+        "totalNote": "€980 to €1,540 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 400,
@@ -34065,7 +34088,7 @@
         },
         "perDayEur": {
           "low": 140,
-          "high": 214
+          "high": 220
         }
       },
       "profile": {
@@ -34608,20 +34631,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1600,
-          "high": 2400
+          "low": 1545,
+          "high": 2650
         },
-        "totalNote": "€1,600–2,400 per person",
+        "totalNote": "€1,545 to €2,650 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 120,
-            "highEur": 220,
-            "note": "€120–220 per night, double; country-house hotels €250–400"
+            "lowEur": 720,
+            "highEur": 1320,
+            "note": "€120–220 per night, double; country-house hotels €250–400. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 55,
-            "highEur": 90,
-            "note": "€55–90 per day; a seafood dinner in Dingle €40–60"
+            "lowEur": 385,
+            "highEur": 630,
+            "note": "€55–90 per day; a seafood dinner in Dingle €40–60. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 350,
@@ -34635,8 +34658,8 @@
           }
         },
         "perDayEur": {
-          "low": 229,
-          "high": 343
+          "low": 221,
+          "high": 379
         }
       },
       "profile": {
@@ -34903,9 +34926,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1050,
-          "high": 1650
+          "high": 1690
         },
-        "totalNote": "€1,050–€1,650 per person, excl. international flights",
+        "totalNote": "€1,050 to €1,690 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 420,
@@ -34930,7 +34953,7 @@
         },
         "perDayEur": {
           "low": 150,
-          "high": 236
+          "high": 241
         }
       },
       "profile": {
@@ -36433,9 +36456,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 880,
-          "high": 1350
+          "high": 1380
         },
-        "totalNote": "€880–€1,350 per person, excl. international flights",
+        "totalNote": "€880 to €1,380 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 320,
@@ -36460,7 +36483,7 @@
         },
         "perDayEur": {
           "low": 126,
-          "high": 193
+          "high": 197
         }
       },
       "profile": {
@@ -37042,20 +37065,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 2000,
-          "high": 3000
+          "low": 1865,
+          "high": 3210
         },
-        "totalNote": "€2,000–3,000 per person",
+        "totalNote": "€1,865 to €3,210 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 140,
-            "highEur": 260,
-            "note": "€140–260 per night for a rorbu (fisherman's cabin) sleeping 2–4; hostels €50–70 pp"
+            "lowEur": 840,
+            "highEur": 1560,
+            "note": "€140–260 per night for a rorbu (fisherman's cabin) sleeping 2–4; hostels €50–70 pp. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 65,
-            "highEur": 100,
-            "note": "€65–100 per day; self-catering in the rorbu kitchen cuts this by half"
+            "lowEur": 455,
+            "highEur": 700,
+            "note": "€65–100 per day; self-catering in the rorbu kitchen cuts this by half. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 450,
@@ -37069,8 +37092,8 @@
           }
         },
         "perDayEur": {
-          "low": 286,
-          "high": 429
+          "low": 266,
+          "high": 459
         }
       },
       "profile": {
@@ -37635,10 +37658,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 950,
-          "high": 1500
+          "low": 920,
+          "high": 1510
         },
-        "totalNote": "€950–€1,500 per person, excl. international flights",
+        "totalNote": "€920 to €1,510 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 380,
@@ -37662,8 +37685,8 @@
           }
         },
         "perDayEur": {
-          "low": 136,
-          "high": 214
+          "low": 131,
+          "high": 216
         }
       },
       "profile": {
@@ -38238,9 +38261,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1150,
-          "high": 1750
+          "high": 1770
         },
-        "totalNote": "€1,150–€1,750 per person, excl. international flights",
+        "totalNote": "€1,150 to €1,770 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 480,
@@ -38265,7 +38288,7 @@
         },
         "perDayEur": {
           "low": 164,
-          "high": 250
+          "high": 253
         }
       },
       "profile": {
@@ -39416,10 +39439,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 850,
-          "high": 1200
+          "low": 830,
+          "high": 1140
         },
-        "totalNote": null,
+        "totalNote": "€830 to €1,140 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 450,
@@ -39443,8 +39466,8 @@
           }
         },
         "perDayEur": {
-          "low": 121,
-          "high": 171
+          "low": 119,
+          "high": 163
         }
       },
       "profile": {
@@ -39729,9 +39752,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 550,
-          "high": 900
+          "high": 950
         },
-        "totalNote": "€550–€900 per person, excl. international flights",
+        "totalNote": "€550 to €950 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 180,
@@ -39756,7 +39779,7 @@
         },
         "perDayEur": {
           "low": 79,
-          "high": 129
+          "high": 136
         }
       },
       "profile": {
@@ -42129,20 +42152,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 600,
-          "high": 950
+          "low": 382,
+          "high": 675
         },
-        "totalNote": "€600–950 per person",
+        "totalNote": "€382 to €675 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 12,
-            "highEur": 20,
-            "note": "Wilderness open huts are free; reservation huts €12–20 pp; hotels at either end €90–160 per night, double"
+            "lowEur": 72,
+            "highEur": 120,
+            "note": "Wilderness open huts are free; reservation huts €12–20 pp; hotels at either end €90–160 per night, double. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 20,
-            "highEur": 35,
-            "note": "€20–35 per day carried in; there is nowhere to buy anything on the trail"
+            "lowEur": 140,
+            "highEur": 245,
+            "note": "€20–35 per day carried in; there is nowhere to buy anything on the trail. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 150,
@@ -42156,8 +42179,8 @@
           }
         },
         "perDayEur": {
-          "low": 86,
-          "high": 136
+          "low": 55,
+          "high": 96
         }
       },
       "profile": {
@@ -43894,20 +43917,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1300,
-          "high": 1900
+          "low": 955,
+          "high": 1535
         },
-        "totalNote": "€1,300–1,900 per person",
+        "totalNote": "€955 to €1,535 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 45,
-            "highEur": 80,
-            "note": "DNT staffed huts €45–80 per night for members in dormitory or room, plus €25–40 for dinner and €15–20 for breakfast; DNT membership pays for itself in three nights"
+            "lowEur": 270,
+            "highEur": 480,
+            "note": "DNT staffed huts €45–80 per night for members in dormitory or room, plus €25–40 for dinner and €15–20 for breakfast; DNT membership pays for itself in three nights. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 55,
-            "highEur": 85,
-            "note": "€55–85 per day if eating hut meals; €25–35 self-catering from hut provision stores"
+            "lowEur": 385,
+            "highEur": 595,
+            "note": "€55–85 per day if eating hut meals; €25–35 self-catering from hut provision stores. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 180,
@@ -43921,8 +43944,8 @@
           }
         },
         "perDayEur": {
-          "low": 186,
-          "high": 271
+          "low": 136,
+          "high": 219
         }
       },
       "profile": {
@@ -44766,20 +44789,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1100,
-          "high": 1600
+          "low": 865,
+          "high": 1410
         },
-        "totalNote": "€1,100–1,600 per person",
+        "totalNote": "€865 to €1,410 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 45,
-            "highEur": 70,
-            "note": "STF mountain huts €45–70 per night for members; Kebnekaise Fjällstation €70–140; Abisko Turiststation €60–110"
+            "lowEur": 270,
+            "highEur": 420,
+            "note": "STF mountain huts €45–70 per night for members; Kebnekaise Fjällstation €70–140; Abisko Turiststation €60–110. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 35,
-            "highEur": 60,
-            "note": "€35–60 per day — hut shops sell freeze-dried meals and staples at mountain prices; carry your own for the middle stages"
+            "lowEur": 245,
+            "highEur": 420,
+            "note": "€35–60 per day — hut shops sell freeze-dried meals and staples at mountain prices; carry your own for the middle stages. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 200,
@@ -44793,8 +44816,8 @@
           }
         },
         "perDayEur": {
-          "low": 157,
-          "high": 229
+          "low": 124,
+          "high": 201
         }
       },
       "profile": {
@@ -48902,9 +48925,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1250,
-          "high": 2000
+          "high": 2050
         },
-        "totalNote": "€1,250–€2,000 per person, excl. international flights",
+        "totalNote": "€1,250 to €2,050 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 490,
@@ -48929,7 +48952,7 @@
         },
         "perDayEur": {
           "low": 179,
-          "high": 286
+          "high": 293
         }
       },
       "profile": {
@@ -49178,10 +49201,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1400,
-          "high": 2300
+          "low": 1490,
+          "high": 2450
         },
-        "totalNote": "€1,400–€2,300 per person, excl. international flights",
+        "totalNote": "€1,490 to €2,450 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 560,
@@ -49205,8 +49228,8 @@
           }
         },
         "perDayEur": {
-          "low": 200,
-          "high": 329
+          "low": 213,
+          "high": 350
         }
       },
       "profile": {
@@ -49336,7 +49359,8 @@
           "location": "Buje",
           "description": "An abandoned stone village rebuilt as a hotel between Momjan and Grožnjan, well placed for the wine and oil days and quieter than Motovun in October. €180–€300.",
           "booking": null,
-          "priceNote": "€180–€300"
+          "priceNote": "€180–€300",
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -49749,20 +49773,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1900,
-          "high": 2900
+          "low": 1790,
+          "high": 3330
         },
-        "totalNote": "€1,900–2,900 per person",
+        "totalNote": "€1,790 to €3,330 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 130,
-            "highEur": 240,
-            "note": "€130–240 per night, double; country-house rooms €250–400"
+            "lowEur": 780,
+            "highEur": 1440,
+            "note": "€130–240 per night, double; country-house rooms €250–400. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 80,
-            "highEur": 160,
-            "note": "€80–160 per day; a starred tasting menu €120–200 per person"
+            "lowEur": 560,
+            "highEur": 1120,
+            "note": "€80–160 per day; a starred tasting menu €120–200 per person. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 300,
@@ -49776,8 +49800,8 @@
           }
         },
         "perDayEur": {
-          "low": 271,
-          "high": 414
+          "low": 256,
+          "high": 476
         }
       },
       "profile": {
@@ -50212,7 +50236,8 @@
           "location": "Castelnuovo dell'Abate",
           "description": "The splurge: an eleventh-century castle above Sant'Antimo with thermal pools, isolated enough to force the driver arrangement the week needs anyway. €350–€600 double.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 2
         }
       ],
       "logistics": {
@@ -50333,20 +50358,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 850,
-          "high": 1350
+          "low": 940,
+          "high": 1755
         },
-        "totalNote": "€850–1,350 per person",
+        "totalNote": "€940 to €1,755 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 70,
-            "highEur": 140,
-            "note": "€70–140 per night, double, in Vilnius; €50–90 in the regions"
+            "lowEur": 420,
+            "highEur": 840,
+            "note": "€70–140 per night, double, in Vilnius; €50–90 in the regions. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 40,
-            "highEur": 75,
-            "note": "€40–75 per day; a Vilnius tasting menu €70–130"
+            "lowEur": 280,
+            "highEur": 525,
+            "note": "€40–75 per day; a Vilnius tasting menu €70–130. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 180,
@@ -50360,8 +50385,8 @@
           }
         },
         "perDayEur": {
-          "low": 121,
-          "high": 193
+          "low": 134,
+          "high": 251
         }
       },
       "profile": {
@@ -51229,9 +51254,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 850,
-          "high": 1450
+          "high": 1435
         },
-        "totalNote": "€850–€1,450 per person, excl. international flights",
+        "totalNote": "€850 to €1,435 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 360,
@@ -51256,7 +51281,7 @@
         },
         "perDayEur": {
           "low": 121,
-          "high": 207
+          "high": 205
         }
       },
       "profile": {
@@ -51386,7 +51411,8 @@
           "location": null,
           "description": "If you want to be inside the vineyard basin rather than at its southern edge, Kavadarci has plain, cheap town hotels and Tikveš's own estates offer limited guest capacity — book by email, as online listings are patchy. MKD 2,500–4,500 (€40–€73).",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -52096,10 +52122,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1500,
-          "high": 2500
+          "low": 1600,
+          "high": 2590
         },
-        "totalNote": "€1,500–€2,500 per person, excl. international flights",
+        "totalNote": "€1,600 to €2,590 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 700,
@@ -52123,8 +52149,8 @@
           }
         },
         "perDayEur": {
-          "low": 214,
-          "high": 357
+          "low": 229,
+          "high": 370
         }
       },
       "profile": {
@@ -52667,20 +52693,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1700,
-          "high": 2600
+          "low": 1660,
+          "high": 2980
         },
-        "totalNote": "€1,700–2,600 per person",
+        "totalNote": "€1,660 to €2,980 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 130,
-            "highEur": 230,
-            "note": "€130–230 per night, double; vineyard and manor stays €200–320"
+            "lowEur": 780,
+            "highEur": 1380,
+            "note": "€130–230 per night, double; vineyard and manor stays €200–320. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 80,
-            "highEur": 150,
-            "note": "€80–150 per day; a destination tasting menu €150–250 per person"
+            "lowEur": 560,
+            "highEur": 1050,
+            "note": "€80–150 per day; a destination tasting menu €150–250 per person. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 200,
@@ -52694,8 +52720,8 @@
           }
         },
         "perDayEur": {
-          "low": 243,
-          "high": 371
+          "low": 237,
+          "high": 426
         }
       },
       "profile": {
@@ -52978,9 +53004,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1200,
-          "high": 1900
+          "high": 1950
         },
-        "totalNote": "€1,200–€1,900 per person, excl. international flights",
+        "totalNote": "€1,200 to €1,950 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 490,
@@ -53005,7 +53031,7 @@
         },
         "perDayEur": {
           "low": 171,
-          "high": 271
+          "high": 279
         }
       },
       "profile": {
@@ -53692,7 +53718,8 @@
           "location": "Soldeu",
           "description": "The luxury anchor at the foot of the Soldeu gondola, with the Sport Wellness Mountain Spa and two serious restaurants, Ibaya and the Japanese Koy Hermitage. Ski to the door and pay for it: €300–€500 per room. Book it if comfort, not mileage, is the point.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -53701,7 +53728,8 @@
           "location": "Andorra la Vella",
           "description": "The counter-strategy: sleep in the capital, save 30–40% on the bed, walk to Caldea and the shops, and commute to snow via the Funicamp at Encamp ten minutes away, which lands you high. The cost is 25–40 minutes each way and no ski-in/ski-out. Roughly €130–€220 per room.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -54580,7 +54608,8 @@
           "location": "Jahorina",
           "description": "The 1984 Games hotel, refurbished, still the biggest bed-block on the mountain and sitting at the Rajska Dolina base. Choose it for ski-in/ski-out and Olympic-legacy atmosphere rather than finesse — the practical family and group option. Roughly 90–150 BAM (€46–€77) pppn.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -56666,7 +56695,8 @@
           "location": "Baqueira 1500",
           "description": "The ski-in/ski-out option at the foot of the lifts, with a spa and the shortest possible morning. You are buying twenty minutes a day and paying heavily for it: roughly €250–€450 per room, and there is no village outside the door. Worth it with small children or a short trip.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -56675,7 +56705,8 @@
           "location": "Arties",
           "description": "Built around the Casa de Don Gaspar de Portolà in Arties at 1,143 m, midway between Vielha and Salardú, with the valley's best restaurant cluster on the doorstep. A 15-minute ski-bus run to the lifts. Roughly €120–€200 per room, and the most characterful bed in Aran.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -56799,20 +56830,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1500,
-          "high": 2400
+          "low": 1605,
+          "high": 2965
         },
-        "totalNote": "€1,500–2,400 per person",
+        "totalNote": "€1,605 to €2,965 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 120,
-            "highEur": 260,
-            "note": "€120–260 per night for a 2–4 person ski cabin; hotel doubles €150–280; peak Christmas–New Year and Easter can double this"
+            "lowEur": 720,
+            "highEur": 1560,
+            "note": "€120–260 per night for a 2–4 person ski cabin; hotel doubles €150–280; peak Christmas–New Year and Easter can double this. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 55,
-            "highEur": 95,
-            "note": "€55–95 per day; cabins have full kitchens and the supermarket is far cheaper than the slope restaurants"
+            "lowEur": 385,
+            "highEur": 665,
+            "note": "€55–95 per day; cabins have full kitchens and the supermarket is far cheaper than the slope restaurants. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 250,
@@ -56820,14 +56851,14 @@
             "note": "€250–420: flights to Kittilä (Levi is 15 minutes away) or Kolari rail, plus airport transfer and a ski bus pass"
           },
           "activities": {
-            "lowEur": 55,
-            "highEur": 70,
-            "note": "Lift passes €55–70 per day, roughly €250–320 for six days; add €150–350 for a husky or reindeer day, snowmobile safari or a guided off-piste day"
+            "lowEur": 250,
+            "highEur": 320,
+            "note": "Lift passes €55–70 per day, roughly €250–320 for six days; add €150–350 for a husky or reindeer day, snowmobile safari or a guided off-piste day. The breakdown figure is the stated week or six-day total."
           }
         },
         "perDayEur": {
-          "low": 214,
-          "high": 343
+          "low": 229,
+          "high": 424
         }
       },
       "profile": {
@@ -57703,10 +57734,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 900,
-          "high": 1650
+          "low": 940,
+          "high": 1730
         },
-        "totalNote": "€900–€1,650 per person, excl. international flights",
+        "totalNote": "€940 to €1,730 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 400,
@@ -57730,8 +57761,8 @@
           }
         },
         "perDayEur": {
-          "low": 129,
-          "high": 236
+          "low": 134,
+          "high": 247
         }
       },
       "profile": {
@@ -57854,7 +57885,8 @@
           "location": "between Arachova and Delphi",
           "description": "The comfortable option, set on the ridge with pool, spa and a long view down the Pleistos valley toward the sea. Choose it for the parking, the family space and the ability to reach both Delphi and the ski road quickly without navigating Arachova's lanes. Roughly €110–€200 per room.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -57863,7 +57895,8 @@
           "location": null,
           "description": "The counter-strategy: sleep on the quiet, forested northern flank of Parnassos, pay 30–40% less, eat better and more cheaply, and approach the ski centre from the north road. The cost is distance from Delphi and total absence of nightlife — which for many travellers is the point. Roughly €50–€90 per room.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -57980,9 +58013,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1900,
-          "high": 3200
+          "high": 3250
         },
-        "totalNote": "€1,900–€3,200 per person, excl. international flights",
+        "totalNote": "€1,900 to €3,250 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 900,
@@ -58007,7 +58040,7 @@
         },
         "perDayEur": {
           "low": 271,
-          "high": 457
+          "high": 464
         }
       },
       "profile": {
@@ -58129,7 +58162,8 @@
           "location": "Passo Campolongo",
           "description": "On the pass itself between Corvara and Arabba, so you start the circuit already 300 m higher and ahead of the village queues, and the Arabba side is a ski-out. The trade is isolation: no village to walk to in the evening. Roughly €130–€200 pppn.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -58138,7 +58172,8 @@
           "location": "Selva Val Gardena",
           "description": "The Val Gardena alternative if the Saslong and Seceda matter more to you than Alta Badia. Walking distance to the Ciampinoi and Dantercepies stations, so both Sellaronda directions and the World Cup piste are on the doorstep. Roughly €140–€230 pppn half board.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -58567,20 +58602,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 2000,
-          "high": 2900
+          "low": 1980,
+          "high": 3320
         },
-        "totalNote": "€2,000–2,900 per person",
+        "totalNote": "€1,980 to €3,320 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 160,
-            "highEur": 300,
-            "note": "€160–300 per night for an apartment sleeping 4–6; hotel doubles €180–320"
+            "lowEur": 960,
+            "highEur": 1800,
+            "note": "€160–300 per night for an apartment sleeping 4–6; hotel doubles €180–320. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 70,
-            "highEur": 110,
-            "note": "€70–110 per day; self-catering roughly halves it, and Norway makes that decision for you"
+            "lowEur": 490,
+            "highEur": 770,
+            "note": "€70–110 per day; self-catering roughly halves it, and Norway makes that decision for you. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 250,
@@ -58588,14 +58623,14 @@
             "note": "€250–400: Oslo–Gol on the Bergen line plus bus, or a hire car; airport transfers"
           },
           "activities": {
-            "lowEur": 60,
-            "highEur": 75,
-            "note": "Lift passes roughly €60–75 per day, €280–350 for six days; guided ski touring €150–250 per day"
+            "lowEur": 280,
+            "highEur": 350,
+            "note": "Lift passes roughly €60–75 per day, €280–350 for six days; guided ski touring €150–250 per day. The breakdown figure is the stated week or six-day total."
           }
         },
         "perDayEur": {
-          "low": 286,
-          "high": 414
+          "low": 283,
+          "high": 474
         }
       },
       "profile": {
@@ -59595,7 +59630,8 @@
           "location": "Suvo Rudište",
           "description": "The apartment village at the heart of the resort, cheaper than the hotels, with the ski school, rental shops, supermarket and the entire après strip on the doorstep. It is the right choice for families and groups who want to cook some meals and be able to walk home from the noise. Roughly €50–€90 per person per night in a shared apartment.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -59604,7 +59640,8 @@
           "location": null,
           "description": "The counter-strategy since the gondola opened: sleep at 1,050 m in a real village with real restaurants, pay 30–40% less, and ride up in eight minutes instead of driving a mountain road. The cost is the gondola's operating hours and a warmer, wetter base in a marginal snow year. Roughly €30–€60 per person per night.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         }
       ],
       "logistics": {
@@ -59726,20 +59763,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1800,
-          "high": 2700
+          "low": 1730,
+          "high": 3060
         },
-        "totalNote": "€1,800–2,700 per person",
+        "totalNote": "€1,730 to €3,060 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 140,
-            "highEur": 280,
-            "note": "€140–280 per night for an apartment sleeping 4; hotel doubles €160–300; ski-in/ski-out mountain lodges €300+"
+            "lowEur": 840,
+            "highEur": 1680,
+            "note": "€140–280 per night for an apartment sleeping 4; hotel doubles €160–300; ski-in/ski-out mountain lodges €300+. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 60,
-            "highEur": 100,
-            "note": "€60–100 per day; apartment self-catering roughly halves it"
+            "lowEur": 420,
+            "highEur": 700,
+            "note": "€60–100 per day; apartment self-catering roughly halves it. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 200,
@@ -59747,14 +59784,14 @@
             "note": "€200–350: night train Stockholm–Åre (the station is in the village) or flights to Åre Östersund, plus transfers"
           },
           "activities": {
-            "lowEur": 55,
-            "highEur": 70,
-            "note": "Lift passes roughly €55–70 per day, €270–330 for six days; guided off-piste €150–250; heliskiing where operating, considerably more"
+            "lowEur": 270,
+            "highEur": 330,
+            "note": "Lift passes roughly €55–70 per day, €270–330 for six days; guided off-piste €150–250; heliskiing where operating, considerably more. The breakdown figure is the stated week or six-day total."
           }
         },
         "perDayEur": {
-          "low": 257,
-          "high": 386
+          "low": 247,
+          "high": 437
         }
       },
       "profile": {
@@ -60170,7 +60207,8 @@
           "location": "Bohinjska Bistrica",
           "description": "The alternative axis: sleep near **Lake Bohinj** rather than Kranjska Gora, put **Vogel** twenty minutes away instead of an hour, and get **Vodni park Bohinj** attached to the building for the rest day. Pokljuka is also closer from here. The trade is a longer daily drive to Kranjska Gora and Krvavec. Roughly €90–€150 per room.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -60590,10 +60628,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 700,
+          "low": 680,
           "high": 1100
         },
-        "totalNote": "€700–€1,100 per person, excl. international flights",
+        "totalNote": "€680 to €1,100 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 200,
@@ -60617,7 +60655,7 @@
           }
         },
         "perDayEur": {
-          "low": 100,
+          "low": 97,
           "high": 157
         }
       },
@@ -60666,7 +60704,8 @@
           "afternoon": "Walk the Old Bazaar, the Mirahori mosque (founded in the 1490s), and the National Museum of Medieval Art, which holds the best collection of Albanian icons in the country, including work by the Onufri school. Buy a week's supplies here — it is the last full supermarket before the mountains.",
           "evening": "Dinner in the bazaar on Korçë staples: lakror pie, kernacka sausages, and a Birra Korça, brewed in the city since 1928.",
           "dayStats": "180 km drive / 2 h 30 / Korçë 850 m / last full supermarket for 3 days / museum entry roughly 700 ALL (€7)",
-          "sleep": "Hani i Pazarit or a bazaar guesthouse, Korçë"
+          "sleep": "Hani i Pazarit or a bazaar guesthouse, Korçë",
+          "sleepRef": 3
         },
         {
           "day": 2,
@@ -60684,7 +60723,8 @@
           "afternoon": "Take a boat from Gorica or Pustec to Maligrad, the small rock island in Albanian water, where the fourteenth-century cave church of Shën Maria is built into an overhang with surviving frescoes. Back on shore, walk up to the rock-cut hermitages above Zaroshkë, cut into the cliff face and reached by a steep scramble.",
           "evening": "Homestay dinner: Prespa beans, which are the local pride, lake fish, and rakia poured by the host until you stop him.",
           "dayStats": "55 km drive / 1 h 15 / Prespa 850 m, Ohrid 695 m, 155 m apart and connected through karst / Maligrad boat roughly 3,000–5,000 ALL (€30–€50) per boat / homestay 2,500–4,000 ALL per person with dinner",
-          "sleep": "Bujtina homestay, Pustec or Gollomboç"
+          "sleep": "Bujtina homestay, Pustec or Gollomboç",
+          "sleepRef": 1
         },
         {
           "day": 4,
@@ -60693,7 +60733,8 @@
           "afternoon": "Deliberately nothing. Swim — Prespa is warm and clean by August. Walk the shore path between two villages. Watch the bean harvest if it is September. There is no attraction to tick here and that is the point.",
           "evening": "Sunset from the Zaroshkë cliffs, then back for dinner. Ask your host about the winter, when the lake sometimes freezes at the edges and the village halves.",
           "dayStats": "0–8 km walking / Prespa NP Albania roughly 27,750 ha, declared 1999 / Lesser Prespa holds the world's largest Dalmatian pelican colony / no entry fee / power cuts common, charge everything when you can",
-          "sleep": "Bujtina homestay, Pustec or Gollomboç"
+          "sleep": "Bujtina homestay, Pustec or Gollomboç",
+          "sleepRef": 1
         },
         {
           "day": 5,
@@ -60711,7 +60752,8 @@
           "afternoon": "Arrange the 4x4 up from Fushë-Studë towards the glacial lakes. Shebenik-Jabllanicë covers about 34,500 hectares and holds fourteen glacial lakes between roughly 1,500 and 1,900 m, most of them shallow, cold and completely silent. Walk in from wherever the track gives up.",
           "evening": "Back down to a Rrajcë or Fushë-Studë bujtina. Wood stove, spring water, no signal, dinner from the garden and the flock.",
           "dayStats": "60 km drive / 4x4 track 9–12 km from Fushë-Studë / lakes at 1,500–1,900 m / park roughly 34,500 ha, free entry / 14 glacial lakes / Shebenik peak 2,262 m",
-          "sleep": "Bujtina at Rrajcë or Fushë-Studë"
+          "sleep": "Bujtina at Rrajcë or Fushë-Studë",
+          "sleepRef": 2
         },
         {
           "day": 7,
@@ -61191,9 +61233,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 750,
-          "high": 1200
+          "high": 1220
         },
-        "totalNote": "€750–€1,200 per person, excl. international flights",
+        "totalNote": "€750 to €1,220 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 280,
@@ -61218,7 +61260,7 @@
         },
         "perDayEur": {
           "low": 107,
-          "high": 171
+          "high": 174
         }
       },
       "profile": {
@@ -63674,20 +63716,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 750,
-          "high": 1200
+          "low": 1100,
+          "high": 2130
         },
-        "totalNote": "€750–1,200 per person",
+        "totalNote": "€1,100 to €2,130 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 110,
-            "highEur": 220,
-            "note": "€110–220 per night for a whole cabin sleeping 4–6; island wilderness huts and rental cabins from €60; upmarket lakeside villas €280+"
+            "lowEur": 660,
+            "highEur": 1320,
+            "note": "€110–220 per night for a whole cabin sleeping 4–6; island wilderness huts and rental cabins from €60; upmarket lakeside villas €280+. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 30,
-            "highEur": 50,
-            "note": "€30–50 per day self-catering; there is essentially no restaurant option once you are on the water"
+            "lowEur": 210,
+            "highEur": 350,
+            "note": "€30–50 per day self-catering; there is essentially no restaurant option once you are on the water. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 150,
@@ -63701,8 +63743,8 @@
           }
         },
         "perDayEur": {
-          "low": 107,
-          "high": 171
+          "low": 157,
+          "high": 304
         }
       },
       "profile": {
@@ -63973,20 +64015,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1600,
-          "high": 2300
+          "low": 1345,
+          "high": 2285
         },
-        "totalNote": "€1,600–2,300 per person",
+        "totalNote": "€1,345 to €2,285 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 100,
-            "highEur": 180,
-            "note": "€100–180 per night for a guesthouse or a self-catering house; village houses rented whole from €130"
+            "lowEur": 600,
+            "highEur": 1080,
+            "note": "€100–180 per night for a guesthouse or a self-catering house; village houses rented whole from €130. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 45,
-            "highEur": 75,
-            "note": "€45–75 per day; self-catering is near-obligatory outside Tvøroyri and Vágur"
+            "lowEur": 315,
+            "highEur": 525,
+            "note": "€45–75 per day; self-catering is near-obligatory outside Tvøroyri and Vágur. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 350,
@@ -64000,8 +64042,8 @@
           }
         },
         "perDayEur": {
-          "low": 229,
-          "high": 329
+          "low": 192,
+          "high": 326
         }
       },
       "profile": {
@@ -65172,9 +65214,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1150,
-          "high": 1750
+          "high": 1780
         },
-        "totalNote": "€1,150–€1,750 per person, excl. international flights",
+        "totalNote": "€1,150 to €1,780 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 480,
@@ -65199,7 +65241,7 @@
         },
         "perDayEur": {
           "low": 164,
-          "high": 250
+          "high": 254
         }
       },
       "profile": {
@@ -65774,20 +65816,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 550,
-          "high": 900
+          "low": 635,
+          "high": 1295
         },
-        "totalNote": "€550–900 per person",
+        "totalNote": "€635 to €1,295 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 45,
-            "highEur": 110,
-            "note": "€45–110 per night for a forest cabin or guesthouse; whole cottages from €70; camping €8–15"
+            "lowEur": 270,
+            "highEur": 660,
+            "note": "€45–110 per night for a forest cabin or guesthouse; whole cottages from €70; camping €8–15. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 25,
-            "highEur": 45,
-            "note": "€25–45 per day; self-catering with roadside honey, smoked fish and market vegetables"
+            "lowEur": 175,
+            "highEur": 315,
+            "note": "€25–45 per day; self-catering with roadside honey, smoked fish and market vegetables. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 150,
@@ -65801,8 +65843,8 @@
           }
         },
         "perDayEur": {
-          "low": 79,
-          "high": 129
+          "low": 91,
+          "high": 185
         }
       },
       "profile": {
@@ -66370,10 +66412,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 850,
-          "high": 1350
+          "low": 780,
+          "high": 1270
         },
-        "totalNote": "€850–€1,350 per person, excl. international flights",
+        "totalNote": "€780 to €1,270 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 260,
@@ -66397,8 +66439,8 @@
           }
         },
         "perDayEur": {
-          "low": 121,
-          "high": 193
+          "low": 111,
+          "high": 181
         }
       },
       "profile": {
@@ -67656,7 +67698,8 @@
           "afternoon": "Climb to Soajo and walk out to the *eira*, the granite threshing floor where two dozen espigueiros stand on bare rock, most of them 18th and 19th century, still communally owned and some still used. Then the short river walk down to the Poço Negro pools on the Adrão.",
           "evening": "Dinner in Soajo on cabrito assado — kid roasted in a wood oven — with vinho verde from the jug. Order the day before if you can.",
           "dayStats": "115 km / 1 h 35 drive / Soajo at 800 m / 24 espigueiros on the eira / last supermarket 22 km back at Arcos",
-          "sleep": "Granite village house, Soajo"
+          "sleep": "Granite village house, Soajo",
+          "sleepRef": 1
         },
         {
           "day": 2,
@@ -67665,7 +67708,8 @@
           "afternoon": "Continue to Castro Laboreiro, the border village with a ruined castle on a rock spur, and drive or walk one of the *branda* tracks — the summer settlements the villagers moved up to with their herds, paired with lower *inverneiras* for winter. Bostelinhos and Ameijoeira are the accessible ones.",
           "evening": "Back at Soajo, or eat in Castro Laboreiro where the menu is smoked pork, potato and broth.",
           "dayStats": "70 km on narrow mountain road / Peneda sanctuary at 620 m, plateau at 1,100–1,300 m / branda tracks 4–8 km unsealed / keep 30 m from garranos / Castro Laboreiro is 3 km from the Spanish border",
-          "sleep": "Granite village house, Soajo"
+          "sleep": "Granite village house, Soajo",
+          "sleepRef": 1
         },
         {
           "day": 3,
@@ -67674,7 +67718,8 @@
           "afternoon": "Walk down to the ruins of the Mosteiro de Santa Maria das Júnias, founded in the 9th century and rebuilt in the 12th, with a Romanesque church shell in a wet green hollow, and continue to the waterfall below it. Then stop. Sit in the village. Watch the cattle come in.",
           "evening": "The village's few restaurants do bísaro pork, smoked sausage and Barroso beef — the local breed carries a protected designation and tastes like it.",
           "dayStats": "95 km / 2 h drive on mountain roads / Pitões at ~1,150 m / monastery walk 2.5 km round trip, 120 m descent and return / no fuel within 25 km",
-          "sleep": "Village house, Pitões das Júnias"
+          "sleep": "Village house, Pitões das Júnias",
+          "sleepRef": 1
         },
         {
           "day": 4,
@@ -67683,7 +67728,8 @@
           "afternoon": "The Cávado and Rabagão arms below Cabril hold a chain of granite pools locals call the Tahiti — deep, cold, and reached by a short walk from the road. Swim if the water is above 16°C, which in June it is not.",
           "evening": "Grill at the house. If it is outside the critical fire period and you are using a built fireplace, this is the night for it; otherwise the stove.",
           "dayStats": "45 km / 5 km of unsealed track to the fojo area / water 14–18°C in June, up to 22°C in September / open flame banned 1 July–30 September outside authorised installations",
-          "sleep": "Village house at Cabril or Ermida"
+          "sleep": "Village house at Cabril or Ermida",
+          "sleepRef": 1
         },
         {
           "day": 5,
@@ -67692,7 +67738,8 @@
           "afternoon": "Continue to Portela do Homem on the Spanish border and the cascade below it, then loop back down the N308 past the Arado waterfall. Go early or late: the Arado car park is full by mid-morning in summer.",
           "evening": "Vilar da Veiga in the Gerês valley, where the old spa town has proper restaurants. Order trout, or the *rojões*.",
           "dayStats": "Albergaria gate €1.50/vehicle/day, roughly 14 Jun–14 Sep, 11:00–18:00, three collection points / no stopping outside bays inside the zone / Portela do Homem at 820 m / Geira milestones number in the dozens",
-          "sleep": "Aquafalls Nature Hotel or a valley guesthouse, Vilar da Veiga"
+          "sleep": "Aquafalls Nature Hotel or a valley guesthouse, Vilar da Veiga",
+          "sleepRef": 3
         },
         {
           "day": 6,
@@ -67701,7 +67748,8 @@
           "afternoon": "Continue on the old Geira track or the reservoir circuit, or take a kayak out onto the water. This is a long, easy, quiet day and it should not be rushed.",
           "evening": "Back in the valley for dinner, then early to bed — the last morning starts at dawn.",
           "dayStats": "12–16 km walk / 350 m ascent / village ruins visible mainly Aug–Nov at low water / museum small, closed some weekdays out of season",
-          "sleep": "Vilar da Veiga, or bungalow at Parque de Campismo de Vilarinho das Furnas"
+          "sleep": "Vilar da Veiga, or bungalow at Parque de Campismo de Vilarinho das Furnas",
+          "sleepRef": 2
         },
         {
           "day": 7,
@@ -68449,10 +68497,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1050,
-          "high": 1750
+          "low": 1090,
+          "high": 2000
         },
-        "totalNote": "€1,050–€1,750 per person, excl. international flights",
+        "totalNote": "€1,090 to €2,000 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 350,
@@ -68476,8 +68524,8 @@
           }
         },
         "perDayEur": {
-          "low": 150,
-          "high": 250
+          "low": 156,
+          "high": 286
         }
       },
       "profile": {
@@ -70330,20 +70378,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1000,
-          "high": 1600
+          "low": 1235,
+          "high": 2125
         },
-        "totalNote": "€1,000–1,600 per person",
+        "totalNote": "€1,235 to €2,125 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 90,
-            "highEur": 170,
-            "note": "€90–170 per night for a summerhouse or apartment; surf-camp beds €40–70 pp"
+            "lowEur": 540,
+            "highEur": 1020,
+            "note": "€90–170 per night for a summerhouse or apartment; surf-camp beds €40–70 pp. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 45,
-            "highEur": 75,
-            "note": "€45–75 per day; the fish landing places and smokehouses are the cheap and correct option"
+            "lowEur": 315,
+            "highEur": 525,
+            "note": "€45–75 per day; the fish landing places and smokehouses are the cheap and correct option. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 180,
@@ -70351,14 +70399,14 @@
             "note": "€180–280: train Copenhagen–Thisted (about 5–6 h) or fly to Aalborg and drive 90 minutes; car hire €45–60 per day"
           },
           "activities": {
-            "lowEur": 35,
-            "highEur": 60,
-            "note": "Board and wetsuit hire €35–60 per day; lessons €60–90; a week's rental package €200–300"
+            "lowEur": 200,
+            "highEur": 300,
+            "note": "Board and wetsuit hire €35–60 per day; lessons €60–90; a week's rental package €200–300. The breakdown figure is the stated week or six-day total."
           }
         },
         "perDayEur": {
-          "low": 143,
-          "high": 229
+          "low": 176,
+          "high": 304
         }
       },
       "profile": {
@@ -70643,20 +70691,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 800,
-          "high": 1250
+          "low": 900,
+          "high": 1745
         },
-        "totalNote": "€800–1,250 per person",
+        "totalNote": "€900 to €1,745 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 60,
-            "highEur": 130,
-            "note": "€60–130 per night, double; island guesthouses €50–90; Pärnu spa hotels €90–160"
+            "lowEur": 360,
+            "highEur": 780,
+            "note": "€60–130 per night, double; island guesthouses €50–90; Pärnu spa hotels €90–160. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 30,
-            "highEur": 55,
-            "note": "€30–55 per day"
+            "lowEur": 210,
+            "highEur": 385,
+            "note": "€30–55 per day. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 150,
@@ -70664,14 +70712,14 @@
             "note": "€150–250: car hire €40–55 per day, island ferries (car €10–20 each way), fuel"
           },
           "activities": {
-            "lowEur": 30,
-            "highEur": 55,
-            "note": "Board and wetsuit hire €30–55 per day; lessons €50–80; a guided sea-kayak day €60–110"
+            "lowEur": 180,
+            "highEur": 330,
+            "note": "Board and wetsuit hire €30–55 per day; lessons €50–80; a guided sea-kayak day €60–110. The breakdown figure is the daily rate times 6 days."
           }
         },
         "perDayEur": {
-          "low": 114,
-          "high": 179
+          "low": 129,
+          "high": 249
         }
       },
       "profile": {
@@ -70954,10 +71002,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1350,
-          "high": 2250
+          "low": 1300,
+          "high": 2280
         },
-        "totalNote": "€1,350–€2,250 per person, excl. international flights",
+        "totalNote": "€1,300 to €2,280 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 420,
@@ -70981,8 +71029,8 @@
           }
         },
         "perDayEur": {
-          "low": 193,
-          "high": 321
+          "low": 186,
+          "high": 326
         }
       },
       "profile": {
@@ -71096,7 +71144,8 @@
           "location": "N-340 km 78, between Tarifa and Valdevaqueros",
           "description": "The original wind hotel, with gardens, two pools, its own beach access and a windsurf/kite centre attached, which means you can walk to the water and rig without loading the car. Rooms are dated in places but the position is unbeatable for a wind-driven week. Roughly €130–€230 double in season.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 2
         },
         {
           "rank": 2,
@@ -72243,7 +72292,8 @@
           "afternoon": "Provision at the big Tommy or Konzum near the marina rather than on the islands, where the same basket costs 40% more. Sail out on the first of the maestral through the Split gate and cross to Šolta, anchoring in Šešula bay — deep, sheltered, thick mud holding.",
           "evening": "Konoba Šišmiš at Šešula, on the water at the head of the bay, with a dinghy dock. Order the peka if you call ahead — it takes three hours and cannot be ordered on arrival.",
           "dayStats": "Split–Šešula roughly 11 nm / maestral fills 11:00–13:00, 12–18 knots by mid-afternoon / Šešula anchor in 8–12 m over mud / peka must be ordered 3 h ahead",
-          "sleep": "At anchor, Šešula bay, Šolta — or Hotel Martinis Marchi, Maslinica"
+          "sleep": "At anchor, Šešula bay, Šolta — or Hotel Martinis Marchi, Maslinica",
+          "sleepRef": 1
         },
         {
           "day": 2,
@@ -72252,7 +72302,8 @@
           "afternoon": "Komiža is the working fishing town and the Blue Cave departure point. Walk the harbour, look at the *falkuša* fishing boats in the Fishermen's Museum in the Venetian tower, then swim off Kamenica beach. Divers: the Komiža centres run the *Teti* wreck and the B-17 bomber.",
           "evening": "Konoba Jastožera in Komiža, built over the old lobster pens with the sea running under the floor. Order lobster with pasta if the budget allows, or the fish stew if it does not.",
           "dayStats": "Šolta–Vis roughly 22–25 nm / Komiža town quay or Vis ACI marina, roughly €9.50–€11.50/m/day for a monohull / crossing best before 11:00",
-          "sleep": "At anchor or on the quay, Komiža — or Hotel San Giorgio, Vis town"
+          "sleep": "At anchor or on the quay, Komiža — or Hotel San Giorgio, Vis town",
+          "sleepRef": 1
         },
         {
           "day": 3,
@@ -72261,7 +72312,8 @@
           "afternoon": "Sail back around the south coast of Vis to Stiniva, the pebble cove behind its rock gate. Boats hold off outside; swim or dinghy in. Then the Green Cave at Ravnik, which you can actually swim into, and where the light comes through a hole in the roof.",
           "evening": "Return to Vis town and eat at Pojoda, in a courtyard of orange trees behind the waterfront — old-school Dalmatian, and the best cooking on the island.",
           "dayStats": "Blue Cave entry ~€24 high season / ~€18 shoulder, cash only, no ATM on Biševo / cave open roughly 1 April–1 November, closed on southerly swell / peak light 11:00–12:00 / taxi boat from Komiža ~€35 pp, 15–20 min",
-          "sleep": "Vis town, at anchor or on the ACI quay"
+          "sleep": "Vis town, at anchor or on the ACI quay",
+          "sleepRef": 1
         },
         {
           "day": 4,
@@ -72270,7 +72322,8 @@
           "afternoon": "Berth at ACI Marina Palmižana on Sv. Klement or anchor off Vinogradišće on the island's sheltered south side. Palmižana bay is north-facing and exposed to any bura, so check the forecast before committing to an anchor there overnight.",
           "evening": "Taxi boat into Hvar town — they run until late and cost a few euros. Eat at Konoba Menego in the stepped lanes above the square, then walk up to the Fortica for the view back over the Pakleni. **Plan B if jugo is forecast:** skip Hvar town, stay on the protected south side, and eat at Toto's or Laganini on Vinogradišće.",
           "dayStats": "Vis–Palmižana roughly 18–20 nm / ACI Palmižana premium berth, budget €130–€200/night for a 13 m monohull in August / Hvar taxi boat runs to ~01:00 in season / Fortica climb 20 min, roughly €10",
-          "sleep": "ACI Marina Palmižana, Sv. Klement"
+          "sleep": "ACI Marina Palmižana, Sv. Klement",
+          "sleepRef": 1
         },
         {
           "day": 5,
@@ -72279,7 +72332,8 @@
           "afternoon": "Off the water before the maestral has the channels white-capping. Snorkel the shallow ledges off Jerolim, then a long lunch at Palmižana. The gardens above the bay were planted by the Meneghello family in the 1900s and are worth the walk.",
           "evening": "Back into Hvar town for the Franciscan monastery and Zoraić or Gariful on the harbour. **Plan B if wind is up:** stay island-side; the guided kayak operators cancel above about 15 knots and will move you to the following morning.",
           "dayStats": "Pakleni kayak day 12–16 km / guided day €70–€110 pp with boat, spray deck, dry bag and lunch / visibility typically 15–20 m / operators cancel above ~15 knots",
-          "sleep": "ACI Marina Palmižana, Sv. Klement"
+          "sleep": "ACI Marina Palmižana, Sv. Klement",
+          "sleepRef": 1
         },
         {
           "day": 6,
@@ -72288,7 +72342,8 @@
           "afternoon": "The reason you came. Rig at Big Blue Sport on Beach Borak, immediately west of the Zlatni Rat spit — side-shore maestral, pebble bottom, flat inshore water and short chop outside. If the wind is under 12 knots, take their sea kayak or SUP option and paddle west along the cliffs instead.",
           "evening": "Konoba Mlin in Bol, in an old olive mill in the back lanes. Order the lamb and ask for a Brač Plavac Mali. **Plan B for a windless afternoon:** drive or taxi up to the Blaca hermitage — a 15th-century monastery in a gorge, reachable only on foot for the last kilometre.",
           "dayStats": "Hvar channel crossing 8–10 nm / Big Blue Sport funboard ~€50/hour or ~€310/week; beginner course ~€200 for 6 hours; private advanced ~€140/hour / board storage €5–€7/day / Bol channel adds 4–8 knots",
-          "sleep": "Hotel Kaštil, Bol — or at anchor off Borak"
+          "sleep": "Hotel Kaštil, Bol — or at anchor off Borak",
+          "sleepRef": 2
         },
         {
           "day": 7,
@@ -72897,7 +72952,8 @@
           "location": "Palau",
           "description": "Ten minutes from Porto Pollo and in walking distance of the La Maddalena ferry, Palau's restaurants and the boat-rental quays, which makes it the right choice for the archipelago and Capo d'Orso days. Parking, air conditioning and a proper breakfast, which the campsite does not offer. Roughly €100–€180 double.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -73029,20 +73085,20 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 900,
-          "high": 1400
+          "low": 990,
+          "high": 1905
         },
-        "totalNote": "€900–1,400 per person",
+        "totalNote": "€990 to €1,905 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
-            "lowEur": 60,
-            "highEur": 140,
-            "note": "€60–140 per night, double, in Svencelė, Kintai or Nida; camp beds €30–50"
+            "lowEur": 360,
+            "highEur": 840,
+            "note": "€60–140 per night, double, in Svencelė, Kintai or Nida; camp beds €30–50. The breakdown figure is the nightly rate times 6 nights."
           },
           "food": {
-            "lowEur": 30,
-            "highEur": 55,
-            "note": "€30–55 per day"
+            "lowEur": 210,
+            "highEur": 385,
+            "note": "€30–55 per day. The breakdown figure is the daily rate times 7 days."
           },
           "transport": {
             "lowEur": 120,
@@ -73050,14 +73106,14 @@
             "note": "€120–200: flights to Palanga or Vilnius plus transfer, car hire €40–55 per day, Curonian Spit ferry and eco-fee"
           },
           "activities": {
-            "lowEur": 50,
-            "highEur": 80,
-            "note": "Kite or wing gear rental €50–80 per day; lessons €60–90 per hour, a full beginner course €300–450"
+            "lowEur": 300,
+            "highEur": 480,
+            "note": "Kite or wing gear rental €50–80 per day; lessons €60–90 per hour, a full beginner course €300–450. The breakdown figure is the daily rate times 6 days."
           }
         },
         "perDayEur": {
-          "low": 129,
-          "high": 200
+          "low": 141,
+          "high": 272
         }
       },
       "profile": {
@@ -73978,10 +74034,10 @@
       "budget": {
         "currency": "EUR",
         "totalEur": {
-          "low": 1150,
-          "high": 1900
+          "low": 1180,
+          "high": 2010
         },
-        "totalNote": "€1,150–€1,900 per person, excl. international flights",
+        "totalNote": "€1,180 to €2,010 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 420,
@@ -74005,8 +74061,8 @@
           }
         },
         "perDayEur": {
-          "low": 164,
-          "high": 271
+          "low": 169,
+          "high": 287
         }
       },
       "profile": {
@@ -74129,7 +74185,8 @@
           "location": "Perast",
           "description": "For anyone who wants to be on the water in the most beautiful village in the bay: everything in Perast is on foot, the boat shuttle to Our Lady of the Rocks leaves from the quay, and the bay at dawn from a Perast balcony is the single best view of the trip. Roughly €120–€250 double.",
           "booking": null,
-          "priceNote": null
+          "priceNote": null,
+          "alternativeTo": 1
         },
         {
           "rank": 3,
@@ -75202,9 +75259,9 @@
         "currency": "EUR",
         "totalEur": {
           "low": 1150,
-          "high": 1950
+          "high": 2010
         },
-        "totalNote": "€1,150–€1,950 per person, excl. international flights",
+        "totalNote": "€1,150 to €2,010 per person for 7 days, the sum of the breakdown.",
         "breakdown": {
           "accommodation": {
             "lowEur": 380,
@@ -75229,7 +75286,7 @@
         },
         "perDayEur": {
           "low": 164,
-          "high": 279
+          "high": 287
         }
       },
       "profile": {

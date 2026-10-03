@@ -102,18 +102,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €315 against a stated total of €1050 (-70%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €520 against a stated total of €1500 (-65%)"
-  },
-  {
     "level": "WARNING",
     "trip": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
     "code": "missing-evening",
@@ -138,18 +126,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €215 against a stated total of €650 (-67%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €390 against a stated total of €1000 (-61%)"
-  },
-  {
     "level": "WARNING",
     "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
     "code": "missing-evening",
@@ -172,24 +148,6 @@
     "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "es-cycling-girona-costa-brava",
-    "code": "accommodation-not-slept",
-    "detail": "'Bike Breaks Girona Cycle Centre apartments' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fr-cycling-alsace-vineyard-route",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €960 against a stated total of €950 (+1%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fr-cycling-alsace-vineyard-route",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1420 against a stated total of €1400 (+1%)"
   },
   {
     "level": "WARNING",
@@ -228,28 +186,10 @@
     "detail": "pin falls back to the Greece capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "hr-cycling-istria-parenzana",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €1280 against a stated total of €1200 (+7%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "hr-cycling-istria-parenzana",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €2050 against a stated total of €1850 (+11%)"
-  },
-  {
     "level": "WARNING",
     "trip": "hr-cycling-istria-parenzana",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Croatia capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "hr-cycling-istria-parenzana",
-    "code": "accommodation-not-slept",
-    "detail": "'La Parenzana' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -300,22 +240,10 @@
     "detail": "'Lozova' is a town in UA and nothing in GB/MD/RO/RU carries the name"
   },
   {
-    "level": "ERROR",
-    "trip": "me-cycling-kotor-lovcen",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1700 against a stated total of €1650 (+3%)"
-  },
-  {
     "level": "WARNING",
     "trip": "me-cycling-kotor-lovcen",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Montenegro capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "me-cycling-kotor-lovcen",
-    "code": "accommodation-not-slept",
-    "detail": "'A Njeguši village house' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -372,18 +300,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €345 against a stated total of €1150 (-70%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €555 against a stated total of €1650 (-66%)"
-  },
-  {
     "level": "WARNING",
     "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
     "code": "missing-evening",
@@ -418,12 +334,6 @@
     "trip": "si-cycling-soca-brda",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Slovenia capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "si-cycling-soca-brda",
-    "code": "accommodation-not-slept",
-    "detail": "'Nebesa Chalets' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -606,18 +516,6 @@
     "detail": "pin falls back to the Spain capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €505 against a stated total of €1700 (-70%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €865 against a stated total of €2500 (-65%)"
-  },
-  {
     "level": "WARNING",
     "trip": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
     "code": "missing-evening",
@@ -702,12 +600,6 @@
     "detail": "pin falls back to the Greece capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "hr-trail-running-velebit-premuzic",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1290 against a stated total of €1250 (+3%)"
-  },
-  {
     "level": "WARNING",
     "trip": "hr-trail-running-velebit-premuzic",
     "code": "gateway-coordinates",
@@ -718,18 +610,6 @@
     "trip": "hu-trail-running-bukk-matra",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €285 against a stated total of €900 (-68%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €500 against a stated total of €1350 (-63%)"
   },
   {
     "level": "WARNING",
@@ -838,24 +718,6 @@
     "trip": "me-trail-running-durmitor",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Montenegro capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "me-trail-running-durmitor",
-    "code": "accommodation-not-slept",
-    "detail": "'Guesthouse or apartman in Ivan Do' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €460 against a stated total of €1600 (-71%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €770 against a stated total of €2300 (-67%)"
   },
   {
     "level": "WARNING",
@@ -1044,18 +906,6 @@
     "detail": "no difficulty rating in the source record"
   },
   {
-    "level": "ERROR",
-    "trip": "dk-city-copenhagen-by-neighbourhood-block",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €345 against a stated total of €1600 (-78%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "dk-city-copenhagen-by-neighbourhood-block",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €630 against a stated total of €2600 (-76%)"
-  },
-  {
     "level": "WARNING",
     "trip": "dk-city-copenhagen-by-neighbourhood-block",
     "code": "missing-evening",
@@ -1092,18 +942,6 @@
     "detail": "no difficulty rating in the source record"
   },
   {
-    "level": "ERROR",
-    "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €195 against a stated total of €800 (-76%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €390 against a stated total of €1300 (-70%)"
-  },
-  {
     "level": "WARNING",
     "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
     "code": "missing-evening",
@@ -1128,18 +966,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "es-city-seville",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel Palacio de Villapanés' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "es-city-seville",
-    "code": "accommodation-not-slept",
-    "detail": "'Corral del Rey' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "fr-city-paris-arrondissement-blocks",
     "code": "missing-connectivity",
@@ -1158,52 +984,16 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "gr-city-athens",
-    "code": "accommodation-not-slept",
-    "detail": "'Perianth Hotel' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "gr-city-athens",
-    "code": "accommodation-not-slept",
-    "detail": "'Athens Was' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "hu-city-budapest",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "it-city-naples",
-    "code": "accommodation-not-slept",
-    "detail": "\"Casa D'Anna\" is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "it-city-naples",
-    "code": "accommodation-not-slept",
-    "detail": "\"Grand Hotel Parker's\" is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "it-city-rome",
     "code": "missing-type-detail",
     "detail": "no transit pass detail captured for this trip type"
-  },
-  {
-    "level": "ERROR",
-    "trip": "it-city-rome",
-    "code": "accommodation-not-slept",
-    "detail": "'A Trastevere guesthouse' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "it-city-rome",
-    "code": "accommodation-not-slept",
-    "detail": "'A Prati apartment' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -1240,18 +1030,6 @@
     "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €180 against a stated total of €700 (-74%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €360 against a stated total of €1150 (-69%)"
   },
   {
     "level": "WARNING",
@@ -1344,34 +1122,10 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "pt-city-lisbon",
-    "code": "accommodation-not-slept",
-    "detail": "'Memmo Alfama' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "pt-city-lisbon",
-    "code": "accommodation-not-slept",
-    "detail": "'Casa Amora' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "ro-city-bucharest",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "rs-city-belgrade",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel Moskva' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "rs-city-belgrade",
-    "code": "accommodation-not-slept",
-    "detail": "'Square Nine' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -1414,12 +1168,6 @@
     "trip": "ba-cozy-towns-slowly-mostar-blagaj-pocitelj-trebinje",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Bosnia and Herzegovina capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ba-cozy-towns-slowly-mostar-blagaj-pocitelj-trebinje",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel Kriva Ćuprija or a Blagaj pansion' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -1548,18 +1296,6 @@
     "detail": "no difficulty rating in the source record"
   },
   {
-    "level": "ERROR",
-    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €330 against a stated total of €1050 (-69%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €570 against a stated total of €1600 (-64%)"
-  },
-  {
     "level": "WARNING",
     "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
     "code": "missing-evening",
@@ -1590,12 +1326,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "es-cozy-towns-pueblos-blancos",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel Fuerte Grazalema or Casa Rural La Mimbrera' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "fr-cozy-towns-alsace-villages",
     "code": "approximate-coordinates",
@@ -1642,12 +1372,6 @@
     "trip": "fr-cozy-towns-dordogne-perigord",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "gr-cozy-towns-pelion",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1490 against a stated total of €1450 (+3%)"
   },
   {
     "level": "WARNING",
@@ -1668,28 +1392,10 @@
     "detail": "pin falls back to the Italy capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "it-cozy-towns-umbria",
-    "code": "accommodation-not-slept",
-    "detail": "'Palazzo Brunamonti' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €240 against a stated total of €700 (-66%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €450 against a stated total of €1100 (-59%)"
   },
   {
     "level": "WARNING",
@@ -1738,18 +1444,6 @@
     "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €235 against a stated total of €600 (-61%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €415 against a stated total of €950 (-56%)"
   },
   {
     "level": "WARNING",
@@ -1794,12 +1488,6 @@
     "detail": "pin falls back to the North Macedonia capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "mk-cozy-towns-ohrid-bitola",
-    "code": "accommodation-not-slept",
-    "detail": "'Villa Jovan or Hotel De Niro' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "nl-cozy-towns-hanseatic-ijssel",
     "code": "missing-connectivity",
@@ -1830,12 +1518,6 @@
     "detail": "pin falls back to the Portugal capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "pt-cozy-towns-alentejo-villages",
-    "code": "accommodation-not-slept",
-    "detail": "'Casa Pinto or Pousada de Marvão' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "ro-cozy-towns-saxon-transylvania",
     "code": "no-sleep-lines",
@@ -1846,12 +1528,6 @@
     "trip": "sk-cozy-towns-spis-stiavnica",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "sm-cozy-towns-montefeltro",
-    "code": "accommodation-not-slept",
-    "detail": "'Locanda San Leone or a Montefeltro agriturismo' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -1956,28 +1632,10 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "es-road-trip-andalucia-ronda-alpujarras",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1650 against a stated total of €1600 (+3%)"
-  },
-  {
     "level": "WARNING",
     "trip": "fo-road-trip-subsea-loop",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fo-road-trip-subsea-loop",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €675 against a stated total of €1800 (-62%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fo-road-trip-subsea-loop",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1090 against a stated total of €2600 (-58%)"
   },
   {
     "level": "WARNING",
@@ -2028,12 +1686,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "gr-road-trip-peloponnese-loop",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1540 against a stated total of €1500 (+3%)"
-  },
-  {
     "level": "WARNING",
     "trip": "gr-road-trip-peloponnese-loop",
     "code": "approximate-coordinates",
@@ -2050,18 +1702,6 @@
     "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €615 against a stated total of €1600 (-62%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1010 against a stated total of €2400 (-58%)"
   },
   {
     "level": "WARNING",
@@ -2092,12 +1732,6 @@
     "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "it-road-trip-sicily-circuit",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1690 against a stated total of €1650 (+2%)"
   },
   {
     "level": "WARNING",
@@ -2166,12 +1800,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "me-road-trip-tara",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1380 against a stated total of €1350 (+2%)"
-  },
-  {
     "level": "WARNING",
     "trip": "me-road-trip-tara",
     "code": "approximate-coordinates",
@@ -2200,18 +1828,6 @@
     "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €775 against a stated total of €2000 (-61%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1310 against a stated total of €3000 (-56%)"
   },
   {
     "level": "WARNING",
@@ -2256,12 +1872,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "pt-road-trip-n2-serra-estrela",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €920 against a stated total of €950 (-3%)"
-  },
-  {
     "level": "WARNING",
     "trip": "pt-road-trip-n2-serra-estrela",
     "code": "gateway-coordinates",
@@ -2272,12 +1882,6 @@
     "trip": "ro-road-trip-transfagarasan-transalpina",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "si-road-trip-julian-alps-passes",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1770 against a stated total of €1750 (+1%)"
   },
   {
     "level": "WARNING",
@@ -2334,18 +1938,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "at-hiking-stubai-hoehenweg",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €830 against a stated total of €850 (-2%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "at-hiking-stubai-hoehenweg",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1140 against a stated total of €1200 (-5%)"
-  },
-  {
     "level": "WARNING",
     "trip": "at-hiking-stubai-hoehenweg",
     "code": "gateway-coordinates",
@@ -2368,12 +1960,6 @@
     "trip": "at-hiking-stubai-hoehenweg",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ba-hiking-sutjeska-via-dinarica",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €950 against a stated total of €900 (+6%)"
   },
   {
     "level": "WARNING",
@@ -2532,18 +2118,6 @@
     "detail": "pin sits on the gateway city (Zaragoza), not on the trip's basecamp"
   },
   {
-    "level": "ERROR",
-    "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €202 against a stated total of €600 (-66%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €365 against a stated total of €950 (-62%)"
-  },
-  {
     "level": "WARNING",
     "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
     "code": "missing-evening",
@@ -2664,18 +2238,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €400 against a stated total of €1300 (-69%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €625 against a stated total of €1900 (-67%)"
-  },
-  {
     "level": "WARNING",
     "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
     "code": "missing-evening",
@@ -2716,18 +2278,6 @@
     "trip": "ro-hiking-fagaras-ridge",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €430 against a stated total of €1100 (-61%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €700 against a stated total of €1600 (-56%)"
   },
   {
     "level": "WARNING",
@@ -2922,34 +2472,10 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "gr-culinary-crete",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €2050 against a stated total of €2000 (+2%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "hr-culinary-istria-truffles",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €1490 against a stated total of €1400 (+6%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "hr-culinary-istria-truffles",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €2450 against a stated total of €2300 (+7%)"
-  },
-  {
     "level": "WARNING",
     "trip": "hr-culinary-istria-truffles",
     "code": "gateway-coordinates",
     "detail": "pin sits on the gateway city (Pula), not on the trip's basecamp"
-  },
-  {
-    "level": "ERROR",
-    "trip": "hr-culinary-istria-truffles",
-    "code": "accommodation-not-slept",
-    "detail": "'San Canzian Village & Hotel' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -2962,18 +2488,6 @@
     "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €660 against a stated total of €1900 (-65%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1170 against a stated total of €2900 (-60%)"
   },
   {
     "level": "WARNING",
@@ -3012,28 +2526,10 @@
     "detail": "pin falls back to the Italy capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "it-culinary-tuscany-chianti-montalcino",
-    "code": "accommodation-not-slept",
-    "detail": "'Castello di Velona' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €350 against a stated total of €850 (-59%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €605 against a stated total of €1350 (-55%)"
   },
   {
     "level": "WARNING",
@@ -3090,18 +2586,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "mk-culinary-tikves",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1435 against a stated total of €1450 (-1%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "mk-culinary-tikves",
-    "code": "accommodation-not-slept",
-    "detail": "'Tikveš Winery guest accommodation / Kavadarci town hotels' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "mk-culinary-tikves",
     "code": "place-outside-country",
@@ -3132,18 +2616,6 @@
     "detail": "'Salt' is a town in ES and nothing in FR/IT/PL/SK carries the name"
   },
   {
-    "level": "ERROR",
-    "trip": "pt-culinary-douro-valley",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €1600 against a stated total of €1500 (+7%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "pt-culinary-douro-valley",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €2590 against a stated total of €2500 (+4%)"
-  },
-  {
     "level": "WARNING",
     "trip": "pt-culinary-douro-valley",
     "code": "approximate-coordinates",
@@ -3160,18 +2632,6 @@
     "trip": "se-culinary-skane-country-osterlen-kullabygden",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "se-culinary-skane-country-osterlen-kullabygden",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €530 against a stated total of €1700 (-69%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "se-culinary-skane-country-osterlen-kullabygden",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €930 against a stated total of €2600 (-64%)"
   },
   {
     "level": "WARNING",
@@ -3204,12 +2664,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "si-culinary-vipava-karst",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1950 against a stated total of €1900 (+3%)"
-  },
-  {
     "level": "WARNING",
     "trip": "si-culinary-vipava-karst",
     "code": "approximate-coordinates",
@@ -3232,18 +2686,6 @@
     "trip": "ad-winter-sports-grandvalira",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Andorra capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ad-winter-sports-grandvalira",
-    "code": "accommodation-not-slept",
-    "detail": "'Sport Hotel Hermitage & Spa' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ad-winter-sports-grandvalira",
-    "code": "accommodation-not-slept",
-    "detail": "'Andorra Park Hotel' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -3286,12 +2728,6 @@
     "trip": "ba-winter-sports-jahorina-bjelasnica",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Bosnia and Herzegovina capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ba-winter-sports-jahorina-bjelasnica",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel Bistrica' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -3408,34 +2844,10 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "es-winter-sports-baqueira-beret",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel Val de Neu' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "es-winter-sports-baqueira-beret",
-    "code": "accommodation-not-slept",
-    "detail": "'Parador de Arties' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €480 against a stated total of €1500 (-68%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €845 against a stated total of €2400 (-65%)"
   },
   {
     "level": "WARNING",
@@ -3510,58 +2922,16 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "gr-winter-sports-parnassos-arachova",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €940 against a stated total of €900 (+4%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "gr-winter-sports-parnassos-arachova",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1730 against a stated total of €1650 (+5%)"
-  },
-  {
     "level": "WARNING",
     "trip": "gr-winter-sports-parnassos-arachova",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Greece capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "gr-winter-sports-parnassos-arachova",
-    "code": "accommodation-not-slept",
-    "detail": "'Domotel Anemolia Mountain Resort' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "gr-winter-sports-parnassos-arachova",
-    "code": "accommodation-not-slept",
-    "detail": "'Polydrosos or Eptalofos guesthouses' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "it-winter-sports-dolomiti-superski",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €3250 against a stated total of €3200 (+2%)"
-  },
-  {
     "level": "WARNING",
     "trip": "it-winter-sports-dolomiti-superski",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Italy capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "it-winter-sports-dolomiti-superski",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel Portillo Dolomites 1966' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "it-winter-sports-dolomiti-superski",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel Gran Baita' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -3598,18 +2968,6 @@
     "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €540 against a stated total of €2000 (-73%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €885 against a stated total of €2900 (-69%)"
   },
   {
     "level": "WARNING",
@@ -3666,34 +3024,10 @@
     "detail": "pin falls back to the Serbia capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "rs-winter-sports-kopaonik",
-    "code": "accommodation-not-slept",
-    "detail": "'Konaci (Sunčani Vrhovi) apartments' is in accommodationStrategy but no day sleeps there"
-  },
-  {
-    "level": "ERROR",
-    "trip": "rs-winter-sports-kopaonik",
-    "code": "accommodation-not-slept",
-    "detail": "'Brzeće village' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "se-winter-sports-are-lift-linked-capital",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "se-winter-sports-are-lift-linked-capital",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €455 against a stated total of €1800 (-75%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "se-winter-sports-are-lift-linked-capital",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €800 against a stated total of €2700 (-70%)"
   },
   {
     "level": "WARNING",
@@ -3732,28 +3066,10 @@
     "detail": "pin falls back to the Slovenia capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "si-winter-sports-kranjska-gora-vogel",
-    "code": "accommodation-not-slept",
-    "detail": "'Bohinj ECO Hotel' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "sk-winter-sports-jasna-tatras",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "al-nature-escape-prespa-shebenik",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €680 against a stated total of €700 (-3%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "al-nature-escape-prespa-shebenik",
-    "code": "accommodation-not-slept",
-    "detail": "'A Prespa bujtina' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -3778,12 +3094,6 @@
     "trip": "at-nature-escape-gesaeuse-almhuette",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ba-nature-escape-una-national-park",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1220 against a stated total of €1200 (+2%)"
   },
   {
     "level": "WARNING",
@@ -3936,18 +3246,6 @@
     "detail": "no difficulty rating in the source record"
   },
   {
-    "level": "ERROR",
-    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €370 against a stated total of €750 (-51%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €730 against a stated total of €1200 (-39%)"
-  },
-  {
     "level": "WARNING",
     "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
     "code": "missing-evening",
@@ -3982,18 +3280,6 @@
     "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €575 against a stated total of €1600 (-64%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €935 against a stated total of €2300 (-59%)"
   },
   {
     "level": "WARNING",
@@ -4074,12 +3360,6 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "it-nature-escape-sardinia-supramonte",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1780 against a stated total of €1750 (+2%)"
-  },
-  {
     "level": "WARNING",
     "trip": "it-nature-escape-sardinia-supramonte",
     "code": "gateway-coordinates",
@@ -4114,18 +3394,6 @@
     "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €260 against a stated total of €550 (-53%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €475 against a stated total of €900 (-47%)"
   },
   {
     "level": "WARNING",
@@ -4174,18 +3442,6 @@
     "trip": "md-nature-escape-orheiul-vechi-padurea-domneasca",
     "code": "place-outside-country",
     "detail": "'Lozova' is a town in UA and nothing in GB/MD/RO/RU carries the name"
-  },
-  {
-    "level": "ERROR",
-    "trip": "mk-nature-escape-mavrovo-galicica",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €780 against a stated total of €850 (-8%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "mk-nature-escape-mavrovo-galicica",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €1270 against a stated total of €1350 (-6%)"
   },
   {
     "level": "WARNING",
@@ -4260,12 +3516,6 @@
     "detail": "pin falls back to the Portugal capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "pt-nature-escape-peneda-geres",
-    "code": "accommodation-not-slept",
-    "detail": "'ADERE-Peneda-Gerês village houses' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "ro-nature-escape-apuseni-maramures-cabin",
     "code": "no-sleep-lines",
@@ -4288,18 +3538,6 @@
     "trip": "sk-nature-escape-slovensky-raj-cabin",
     "code": "place-outside-country",
     "detail": "'Muráň' is a town in FR and nothing in HU/SK carries the name"
-  },
-  {
-    "level": "ERROR",
-    "trip": "al-water-sports-riviera-karaburun",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €1090 against a stated total of €1050 (+4%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "al-water-sports-riviera-karaburun",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €2000 against a stated total of €1750 (+14%)"
   },
   {
     "level": "WARNING",
@@ -4410,18 +3648,6 @@
     "detail": "no difficulty rating in the source record"
   },
   {
-    "level": "ERROR",
-    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €350 against a stated total of €1000 (-65%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €585 against a stated total of €1600 (-63%)"
-  },
-  {
     "level": "WARNING",
     "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
     "code": "missing-evening",
@@ -4458,18 +3684,6 @@
     "detail": "no difficulty rating in the source record"
   },
   {
-    "level": "ERROR",
-    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €270 against a stated total of €800 (-66%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €490 against a stated total of €1250 (-61%)"
-  },
-  {
     "level": "WARNING",
     "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
     "code": "missing-evening",
@@ -4504,24 +3718,6 @@
     "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
     "code": "place-outside-country",
     "detail": "'Kalana' is a town in DE and nothing in EE/GB/RU carries the name"
-  },
-  {
-    "level": "ERROR",
-    "trip": "es-water-sports-tarifa-costa-luz",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €1300 against a stated total of €1350 (-4%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "es-water-sports-tarifa-costa-luz",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €2280 against a stated total of €2250 (+1%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "es-water-sports-tarifa-costa-luz",
-    "code": "accommodation-not-slept",
-    "detail": "'Hurricane Hotel' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -4590,12 +3786,6 @@
     "detail": "pin falls back to the Greece capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "hr-water-sports-dalmatia-sailing-kayak",
-    "code": "accommodation-not-slept",
-    "detail": "'The bareboat itself' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "hu-water-sports-balaton-tisza",
     "code": "approximate-coordinates",
@@ -4614,28 +3804,10 @@
     "detail": "pin falls back to the Italy capital, no basecamp town resolved"
   },
   {
-    "level": "ERROR",
-    "trip": "it-water-sports-sardinia-porto-pollo",
-    "code": "accommodation-not-slept",
-    "detail": "'Hotel La Vecchia Fonte' is in accommodationStrategy but no day sleeps there"
-  },
-  {
     "level": "WARNING",
     "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
     "code": "missing-difficulty",
     "detail": "no difficulty rating in the source record"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €260 against a stated total of €900 (-71%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €475 against a stated total of €1400 (-66%)"
   },
   {
     "level": "WARNING",
@@ -4704,28 +3876,10 @@
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
   },
   {
-    "level": "ERROR",
-    "trip": "me-water-sports-boka-ada-bojana",
-    "code": "budget-sum-mismatch",
-    "detail": "low: breakdown sums to €1180 against a stated total of €1150 (+3%)"
-  },
-  {
-    "level": "ERROR",
-    "trip": "me-water-sports-boka-ada-bojana",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €2010 against a stated total of €1900 (+6%)"
-  },
-  {
     "level": "WARNING",
     "trip": "me-water-sports-boka-ada-bojana",
     "code": "approximate-coordinates",
     "detail": "pin falls back to the Montenegro capital, no basecamp town resolved"
-  },
-  {
-    "level": "ERROR",
-    "trip": "me-water-sports-boka-ada-bojana",
-    "code": "accommodation-not-slept",
-    "detail": "'Heritage Grand Perast or a Perast waterfront apartment' is in accommodationStrategy but no day sleeps there"
   },
   {
     "level": "WARNING",
@@ -4774,12 +3928,6 @@
     "trip": "pl-water-sports-masuria-hel",
     "code": "no-sleep-lines",
     "detail": "no day names where the night is spent, so the accommodation strategy cannot be checked against the itinerary"
-  },
-  {
-    "level": "ERROR",
-    "trip": "pt-water-sports-ericeira-peniche",
-    "code": "budget-sum-mismatch",
-    "detail": "high: breakdown sums to €2010 against a stated total of €1950 (+3%)"
   },
   {
     "level": "WARNING",

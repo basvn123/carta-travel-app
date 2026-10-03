@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1700,
-      "high": 2600
+      "low": 1660,
+      "high": 2980
     },
-    "totalNote": "€1,700–2,600 per person",
+    "totalNote": "€1,660 to €2,980 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 130,
-        "highEur": 230,
-        "note": "€130–230 per night, double; vineyard and manor stays €200–320"
+        "lowEur": 780,
+        "highEur": 1380,
+        "note": "€130–230 per night, double; vineyard and manor stays €200–320. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 80,
-        "highEur": 150,
-        "note": "€80–150 per day; a destination tasting menu €150–250 per person"
+        "lowEur": 560,
+        "highEur": 1050,
+        "note": "€80–150 per day; a destination tasting menu €150–250 per person. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 200,
@@ -77,8 +77,8 @@
       }
     },
     "perDayEur": {
-      "low": 243,
-      "high": 371
+      "low": 237,
+      "high": 426
     }
   },
   "profile": {

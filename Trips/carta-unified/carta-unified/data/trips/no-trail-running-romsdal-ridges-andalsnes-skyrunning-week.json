@@ -46,20 +46,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1600,
-      "high": 2300
+      "low": 1470,
+      "high": 2410
     },
-    "totalNote": "€1,600–2,300 per person",
+    "totalNote": "€1,470 to €2,410 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 130,
-        "highEur": 220,
-        "note": "€130–220 per night, double; DNT cabins €35–55 pp for members"
+        "lowEur": 780,
+        "highEur": 1320,
+        "note": "€130–220 per night, double; DNT cabins €35–55 pp for members. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 60,
-        "highEur": 90,
-        "note": "€60–90 per day — Norway is the most expensive country in this dataset; self-cater breakfasts and trail food"
+        "lowEur": 420,
+        "highEur": 630,
+        "note": "€60–90 per day — Norway is the most expensive country in this dataset; self-cater breakfasts and trail food. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 180,
@@ -73,8 +73,8 @@
       }
     },
     "perDayEur": {
-      "low": 229,
-      "high": 329
+      "low": 210,
+      "high": 344
     }
   },
   "profile": {

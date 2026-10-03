@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 900,
-      "high": 1400
+      "low": 990,
+      "high": 1905
     },
-    "totalNote": "€900–1,400 per person",
+    "totalNote": "€990 to €1,905 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 60,
-        "highEur": 140,
-        "note": "€60–140 per night, double, in Svencelė, Kintai or Nida; camp beds €30–50"
+        "lowEur": 360,
+        "highEur": 840,
+        "note": "€60–140 per night, double, in Svencelė, Kintai or Nida; camp beds €30–50. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 30,
-        "highEur": 55,
-        "note": "€30–55 per day"
+        "lowEur": 210,
+        "highEur": 385,
+        "note": "€30–55 per day. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 120,
@@ -71,14 +71,14 @@
         "note": "€120–200: flights to Palanga or Vilnius plus transfer, car hire €40–55 per day, Curonian Spit ferry and eco-fee"
       },
       "activities": {
-        "lowEur": 50,
-        "highEur": 80,
-        "note": "Kite or wing gear rental €50–80 per day; lessons €60–90 per hour, a full beginner course €300–450"
+        "lowEur": 300,
+        "highEur": 480,
+        "note": "Kite or wing gear rental €50–80 per day; lessons €60–90 per hour, a full beginner course €300–450. The breakdown figure is the daily rate times 6 days."
       }
     },
     "perDayEur": {
-      "low": 129,
-      "high": 200
+      "low": 141,
+      "high": 272
     }
   },
   "profile": {

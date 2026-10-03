@@ -210,7 +210,8 @@
       "location": "sierra edge",
       "description": "If Casa de las Piedras is full, take a rural house on the Grazalema–Benamahoma road instead of dropping to a chain in Ronda; the point of this week is waking inside the park boundary, not near it.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

@@ -44,20 +44,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1600,
-      "high": 2400
+      "low": 1545,
+      "high": 2650
     },
-    "totalNote": "€1,600–2,400 per person",
+    "totalNote": "€1,545 to €2,650 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 120,
-        "highEur": 220,
-        "note": "€120–220 per night, double; country-house hotels €250–400"
+        "lowEur": 720,
+        "highEur": 1320,
+        "note": "€120–220 per night, double; country-house hotels €250–400. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 55,
-        "highEur": 90,
-        "note": "€55–90 per day; a seafood dinner in Dingle €40–60"
+        "lowEur": 385,
+        "highEur": 630,
+        "note": "€55–90 per day; a seafood dinner in Dingle €40–60. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 350,
@@ -71,8 +71,8 @@
       }
     },
     "perDayEur": {
-      "low": 229,
-      "high": 343
+      "low": 221,
+      "high": 379
     }
   },
   "profile": {

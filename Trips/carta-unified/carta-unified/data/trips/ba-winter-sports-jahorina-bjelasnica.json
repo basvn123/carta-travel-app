@@ -195,7 +195,8 @@
       "location": "Jahorina",
       "description": "The 1984 Games hotel, refurbished, still the biggest bed-block on the mountain and sitting at the Rajska Dolina base. Choose it for ski-in/ski-out and Olympic-legacy atmosphere rather than finesse — the practical family and group option. Roughly 90–150 BAM (€46–€77) pppn.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,

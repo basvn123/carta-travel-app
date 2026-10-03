@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1800,
-      "high": 2700
+      "low": 1730,
+      "high": 3060
     },
-    "totalNote": "€1,800–2,700 per person",
+    "totalNote": "€1,730 to €3,060 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 140,
-        "highEur": 280,
-        "note": "€140–280 per night for an apartment sleeping 4; hotel doubles €160–300; ski-in/ski-out mountain lodges €300+"
+        "lowEur": 840,
+        "highEur": 1680,
+        "note": "€140–280 per night for an apartment sleeping 4; hotel doubles €160–300; ski-in/ski-out mountain lodges €300+. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 60,
-        "highEur": 100,
-        "note": "€60–100 per day; apartment self-catering roughly halves it"
+        "lowEur": 420,
+        "highEur": 700,
+        "note": "€60–100 per day; apartment self-catering roughly halves it. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 200,
@@ -71,14 +71,14 @@
         "note": "€200–350: night train Stockholm–Åre (the station is in the village) or flights to Åre Östersund, plus transfers"
       },
       "activities": {
-        "lowEur": 55,
-        "highEur": 70,
-        "note": "Lift passes roughly €55–70 per day, €270–330 for six days; guided off-piste €150–250; heliskiing where operating, considerably more"
+        "lowEur": 270,
+        "highEur": 330,
+        "note": "Lift passes roughly €55–70 per day, €270–330 for six days; guided off-piste €150–250; heliskiing where operating, considerably more. The breakdown figure is the stated week or six-day total."
       }
     },
     "perDayEur": {
-      "low": 257,
-      "high": 386
+      "low": 247,
+      "high": 437
     }
   },
   "profile": {

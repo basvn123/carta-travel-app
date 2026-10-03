@@ -198,7 +198,8 @@
       "location": "Terazije 20, Stari Grad",
       "description": "The 1908 Secessionist landmark, green Pécs ceramic on the façade, and the single most Belgrade address there is. Rooms are dated for the price but the location and the ground-floor café are the point. €110–150.",
       "booking": null,
-      "priceNote": "€110–150"
+      "priceNote": "€110–150",
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -207,7 +208,8 @@
       "location": "Studentski Trg 9, Stari Grad",
       "description": "The best hotel in the country, a Leman-designed interior on a quiet square two minutes from Kalemegdan, with a pool and a serious breakfast. €200–280, and worth it if a week of kafanas needs one soft landing.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

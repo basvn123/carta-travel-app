@@ -48,20 +48,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 800,
-      "high": 1250
+      "low": 900,
+      "high": 1745
     },
-    "totalNote": "€800–1,250 per person",
+    "totalNote": "€900 to €1,745 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 60,
-        "highEur": 130,
-        "note": "€60–130 per night, double; island guesthouses €50–90; Pärnu spa hotels €90–160"
+        "lowEur": 360,
+        "highEur": 780,
+        "note": "€60–130 per night, double; island guesthouses €50–90; Pärnu spa hotels €90–160. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 30,
-        "highEur": 55,
-        "note": "€30–55 per day"
+        "lowEur": 210,
+        "highEur": 385,
+        "note": "€30–55 per day. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 150,
@@ -69,14 +69,14 @@
         "note": "€150–250: car hire €40–55 per day, island ferries (car €10–20 each way), fuel"
       },
       "activities": {
-        "lowEur": 30,
-        "highEur": 55,
-        "note": "Board and wetsuit hire €30–55 per day; lessons €50–80; a guided sea-kayak day €60–110"
+        "lowEur": 180,
+        "highEur": 330,
+        "note": "Board and wetsuit hire €30–55 per day; lessons €50–80; a guided sea-kayak day €60–110. The breakdown figure is the daily rate times 6 days."
       }
     },
     "perDayEur": {
-      "low": 114,
-      "high": 179
+      "low": 129,
+      "high": 249
     }
   },
   "profile": {

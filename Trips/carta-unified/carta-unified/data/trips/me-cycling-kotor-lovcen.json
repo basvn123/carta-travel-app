@@ -49,9 +49,9 @@
     "currency": "EUR",
     "totalEur": {
       "low": 1050,
-      "high": 1650
+      "high": 1700
     },
-    "totalNote": "€1,050–€1,650 per person, excl. international flights",
+    "totalNote": "€1,050 to €1,700 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 400,
@@ -76,7 +76,7 @@
     },
     "perDayEur": {
       "low": 150,
-      "high": 236
+      "high": 243
     }
   },
   "profile": {
@@ -197,7 +197,8 @@
       "location": "plateau stay at 880 m",
       "description": "Sleeping at the top of the serpentine flips the week: you descend to breakfast and climb home. Rooms are simple, heating matters even in May, and dinner is whatever the household is smoking. Around €40–€60 per room, cash. Worth one night to ride Lovćen on fresh legs.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,

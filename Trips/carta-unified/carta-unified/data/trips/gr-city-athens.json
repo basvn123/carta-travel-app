@@ -200,7 +200,8 @@
       "location": "Limpona 2, Monastiraki",
       "description": "A restored 1930s modernist block with commissioned Greek art, a bakery downstairs and immediate access to Psyrri and the Agora. Right for a trip weighted toward evenings out. €180–250.",
       "booking": null,
-      "priceNote": "€180–250"
+      "priceNote": "€180–250",
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -209,7 +210,8 @@
       "location": "Dionysiou Areopagitou 5, Makrygianni",
       "description": "On the pedestrianised archaeological promenade, mid-century Greek design, rooms with sightlines to the south slope. Pricier per night but eliminates all transit on the two Acropolis days. €190–270.",
       "booking": null,
-      "priceNote": "€190–270"
+      "priceNote": "€190–270",
+      "alternativeTo": 1
     }
   ],
   "logistics": {

@@ -45,9 +45,9 @@
     "currency": "EUR",
     "totalEur": {
       "low": 1900,
-      "high": 3200
+      "high": 3250
     },
-    "totalNote": "€1,900–€3,200 per person, excl. international flights",
+    "totalNote": "€1,900 to €3,250 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 900,
@@ -72,7 +72,7 @@
     },
     "perDayEur": {
       "low": 271,
-      "high": 457
+      "high": 464
     }
   },
   "profile": {
@@ -194,7 +194,8 @@
       "location": "Passo Campolongo",
       "description": "On the pass itself between Corvara and Arabba, so you start the circuit already 300 m higher and ahead of the village queues, and the Arabba side is a ski-out. The trade is isolation: no village to walk to in the evening. Roughly €130–€200 pppn.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -203,7 +204,8 @@
       "location": "Selva Val Gardena",
       "description": "The Val Gardena alternative if the Saslong and Seceda matter more to you than Alta Badia. Walking distance to the Ciampinoi and Dantercepies stations, so both Sellaronda directions and the World Cup piste are on the doorstep. Roughly €140–€230 pppn half board.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {
