@@ -128,3 +128,29 @@ export function logCapRejection(service, reason, kind, tier) {
       .then(() => {}, () => {});
   } catch { /* telemetry never fails a request */ }
 }
+
+/**
+ * Record which model produced a generation (public.ai_model_events, migration
+ * 028), without making the traveller wait for it.
+ *
+ * T038 meant this to be fire-and-forget but plan-day awaited the insert, so
+ * every plan paid one database round trip for telemetry (T300-r). This helper
+ * starts the insert and returns at once. The insert still runs to completion:
+ * `waitUntil` is the Supabase Edge runtime's EdgeRuntime.waitUntil, which keeps
+ * the worker alive after the response is sent, and a failure is logged with
+ * console.error so a broken table shows up in the function logs rather than
+ * silently. It never throws and never rejects.
+ */
+export function logModelEvent(service, row, waitUntil) {
+  try {
+    const p = Promise.resolve(service.from('ai_model_events').insert(row)).then(
+      (res) => {
+        if (res && res.error) console.error('ai_model_events insert failed:', res.error.message || res.error);
+      },
+      (e) => console.error('ai_model_events insert threw:', e && e.message ? e.message : e),
+    );
+    if (typeof waitUntil === 'function') waitUntil(p);
+  } catch (e) {
+    console.error('ai_model_events log failed:', e && e.message ? e.message : e);
+  }
+}
