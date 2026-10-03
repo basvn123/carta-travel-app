@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Provision the Carta orchestrator on Hetzner Cloud: one CAX11 (Ampere arm64,
-# 2 vCPU, 4 GB, 40 GB NVMe, EUR 5.99/mo), Ubuntu 24.04, first boot driven by
-# cloud-init.yaml next to this file. Task report:
-# Execution/P3/T046-cax11-orchestrator.md. Owner procedure:
-# Execution/P3/_OPEN-hetzner.md.
+# Provision the Carta orchestrator on Hetzner Cloud: one small server, a CAX11
+# (Ampere arm64, 2 vCPU, 4 GB) by default or an x86 type such as the CX23
+# (2 vCPU, 4 GB, 40 GB) with CARTA_SERVER_TYPE, Ubuntu 24.04, first boot
+# driven by cloud-init.yaml next to this file, which installs the arm64 or
+# amd64 builds to match. Task reports: Execution/P3/T046-cax11-orchestrator.md
+# and Execution/P3/T299-x86-orchestrator.md. Owner procedure: stage 7 of
+# Execution/_OPEN-MASTER.md.
 #
 # Idempotent. Each resource is looked up by name first and created only when
 # absent, so a second run after a partial failure picks up where it stopped
@@ -12,14 +14,20 @@
 # Usage, from the repo root in Git Bash, WSL or any Linux/macOS shell:
 #   bash infra/hetzner/cax11/provision.sh --dry-run    print every command, run none
 #   HCLOUD_TOKEN=... bash infra/hetzner/cax11/provision.sh
-#   IPV4=1 HCLOUD_TOKEN=... bash infra/hetzner/cax11/provision.sh
+#   CARTA_SERVER_TYPE=cx23 HCLOUD_TOKEN=... bash infra/hetzner/cax11/provision.sh
 #
 # Settings (environment, all optional except HCLOUD_TOKEN for a real run):
 #   HCLOUD_TOKEN          project API token, Read & Write. Required unless --dry-run.
-#   IPV4=1                also give the server a public IPv4 (a small monthly
-#                         charge). Default is IPv6-only. Read README.md first:
-#                         GitHub and several fare APIs have no IPv6 address.
-#   CARTA_LOCATION        fsn1 (default) or nbg1.
+#   IPV4                  1 (default since T299): the server also gets a public
+#                         IPv4, a small monthly charge. 0 makes it IPv6-only,
+#                         which cannot clone from GitHub (no IPv6 address) and
+#                         cannot be reached from a laptop without IPv6.
+#   CARTA_SERVER_TYPE     cax11 (default, arm64). Any cax* type is arm64; cx*,
+#                         cpx* and ccx* types are x86 (amd64). Use an x86 type
+#                         when Hetzner has no ARM stock: hcloud server-type
+#                         describe <type> shows availability per location.
+#   CARTA_LOCATION        fsn1 (default), nbg1 or hel1. Workers (cax41/spawn.sh)
+#                         start in the orchestrator's location.
 #   CARTA_SERVER_NAME     default carta-orchestrator
 #   CARTA_SSH_KEY_NAME    name of the key in Hetzner, default carta-orchestrator
 #   CARTA_SSH_KEY_FILE    local private key, default ~/.ssh/carta_orchestrator_ed25519
@@ -39,15 +47,16 @@ DRY_RUN=0
 for arg in "$@"; do
   case "$arg" in
     --dry-run) DRY_RUN=1 ;;
-    -h|--help) sed -n '2,32p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,40p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown argument: $arg (try --help)" >&2; exit 2 ;;
   esac
 done
 
-SERVER_TYPE="cax11"
+SERVER_TYPE="${CARTA_SERVER_TYPE:-cax11}"
+# Hetzner resolves the image name to the arm64 or x86 build of the type.
 IMAGE="ubuntu-24.04"
 LABEL="role=orchestrator"
-IPV4="${IPV4:-0}"
+IPV4="${IPV4:-1}"
 LOCATION="${CARTA_LOCATION:-fsn1}"
 SERVER_NAME="${CARTA_SERVER_NAME:-carta-orchestrator}"
 KEY_NAME="${CARTA_SSH_KEY_NAME:-carta-orchestrator}"
@@ -57,9 +66,16 @@ SSH_SOURCES="${CARTA_SSH_SOURCES:-0.0.0.0/0,::/0}"
 REPO_URL="${CARTA_REPO_URL:-https://github.com/basvn123/carta-travel-app.git}"
 REPO_BRANCH="${CARTA_REPO_BRANCH:-main}"
 
+# The bootstrap downloads arm64 or amd64 builds (cloud-init.yaml); these are
+# the Hetzner families it knows the architecture of.
+case "$SERVER_TYPE" in
+  cax[0-9]*) ARCH="arm64" ;;
+  cx[0-9]*|cpx[0-9]*|ccx[0-9]*) ARCH="amd64" ;;
+  *) echo "CARTA_SERVER_TYPE must be a cax*, cx*, cpx* or ccx* type (got '$SERVER_TYPE')" >&2; exit 2 ;;
+esac
 case "$LOCATION" in
-  fsn1|nbg1) ;;
-  *) echo "CARTA_LOCATION must be fsn1 or nbg1 (got '$LOCATION')" >&2; exit 2 ;;
+  fsn1|nbg1|hel1) ;;
+  *) echo "CARTA_LOCATION must be fsn1, nbg1 or hel1 (got '$LOCATION')" >&2; exit 2 ;;
 esac
 case "$IPV4" in
   0|1) ;;
@@ -94,13 +110,14 @@ else
   say "# DRY RUN: nothing is created, no token is needed, existence checks are skipped."
   say "# Every command below is what a real run would execute on an empty project."
 fi
+say "# server type $SERVER_TYPE ($ARCH) in $LOCATION"
 
 if [ "$IPV4" -eq 0 ]; then
   say ""
-  say "# WARNING: IPv6-only (the default). github.com and the GitHub release"
+  say "# WARNING: IPV4=0, an IPv6-only box. github.com and the GitHub release"
   say "# downloads publish no IPv6 address (checked 2026-09-27). The repo clone"
   say "# and the hcloud download in carta-bootstrap will fail on this box."
-  say "# Re-run with IPV4=1 unless that has"
+  say "# Re-run without IPV4=0 unless that has"
   say "# been solved another way. See infra/hetzner/README.md."
   say ""
 fi
@@ -174,19 +191,21 @@ fi
 
 # 5. Where it is and what next -----------------------------------------------
 say ""
+# With IPv4 the next steps use the IPv4 address: a laptop without IPv6 (the
+# owner's, checked 2026-10-03) cannot reach the IPv6 one.
 if [ "$DRY_RUN" -eq 1 ]; then
   run hcloud server ip --ipv6 "$SERVER_NAME"
-  if [ "$IPV4" -eq 1 ]; then run hcloud server ip "$SERVER_NAME"; fi
-  ADDR="<ipv6 address>"
+  if [ "$IPV4" -eq 1 ]; then run hcloud server ip "$SERVER_NAME"; ADDR="<ipv4 address>"; else ADDR="<ipv6 address>"; fi
 else
-  ADDR="$(hcloud server ip --ipv6 "$SERVER_NAME")"
-  say "IPv6: $ADDR"
-  if [ "$IPV4" -eq 1 ]; then say "IPv4: $(hcloud server ip "$SERVER_NAME")"; fi
+  ADDR6="$(hcloud server ip --ipv6 "$SERVER_NAME")"
+  say "IPv6: $ADDR6"
+  ADDR="$ADDR6"
+  if [ "$IPV4" -eq 1 ]; then ADDR="$(hcloud server ip "$SERVER_NAME")"; say "IPv4: $ADDR"; fi
 fi
 
 cat <<EOF
 
-Next steps (Execution/P3/_OPEN-hetzner.md has the full procedure):
+Next steps (stage 7 of Execution/_OPEN-MASTER.md has the full procedure):
   1. Wait for first boot to finish, about 5 to 10 minutes:
        ssh -i $KEY_FILE carta@$ADDR 'cloud-init status --wait; tail -n 20 /var/log/carta-bootstrap.log'
      If a bootstrap step failed, fix the cause and run: sudo carta-bootstrap

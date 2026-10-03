@@ -527,11 +527,11 @@ the rewrite only matters if GitHub starts warning about repository size.
 
 ---
 
-# Stage 7. You, about three days, mostly waiting: the CAX11 box
+# Stage 7. You, about three days, mostly waiting: the orchestrator box
 
-[OPEN] Not started. Three things changed since it was written: run the provision as
-`IPV4=1` exactly as 7.2 says, because `provision.sh` still defaults to IPv6 only (T300-w);
-set `VITE_DATA_BASE` in 7.3 straight away, because the cutover is live; and 7.11 was partly
+[OPEN] Not started. Three things changed since it was written: the box is a CX23
+(x86) while Hetzner has no ARM stock, and `provision.sh` now gives it an IPv4 by
+default (T299, closing T300-w); set `VITE_DATA_BASE` in 7.3 straight away, because the cutover is live; and 7.11 was partly
 done early (see there). Wave 9 (T324) lands the box readiness code first: the heartbeat on
 every failure, the image job widened, arm64 portability.
 
@@ -564,27 +564,48 @@ shell you provision from only:
 
 ```
 export HCLOUD_TOKEN=<token>
-hcloud server-type describe cax11      # proves the token and shows the price
+hcloud server-type describe cx23       # proves the token, shows the price and stock per location
 ```
 
 Never write this token into a file in the repository.
 
+On 2026-10-03 every ARM type (CAX11 to CAX41) was out of stock in every
+location, and had been since 2026-09-03, so the box is a **CX23**: x86,
+2 vCPU, 4 GB, 40 GB disk, EUR 6.64 a month with VAT (the CAX11 is EUR 7.25,
+the always-stocked CPX22 EUR 23.58 and the CPX12, 1 vCPU and 2 GB, EUR 13.90).
+`provision.sh` supports x86 since T299. CX23 stock comes and goes within the
+hour, so 7.2 waits for it.
+
 ## 7.2 Provision (T046-a, T046-d)
 
-IPv4 is on: github.com has no IPv6 address, so an IPv6-only box cannot clone
-(about EUR 0.60 a month). From the repo root in Git Bash:
+IPv4 is on by default (T299): github.com has no IPv6 address, so an IPv6-only
+box cannot clone, and the laptop has no IPv6 to reach one. About EUR 0.60 a
+month. From the repo root in Git Bash, in the window with `HCLOUD_TOKEN`:
 
 ```
-bash infra/hetzner/cax11/provision.sh --dry-run
-IPV4=1 bash infra/hetzner/cax11/provision.sh
+CARTA_SERVER_TYPE=cx23 bash infra/hetzner/cax11/provision.sh --dry-run
+while true; do
+  for L in fsn1 hel1 nbg1; do
+    if hcloud server-type describe cx23 | grep -A1 "Location:  *$L" | grep -q "Available: *yes"; then
+      CARTA_SERVER_TYPE=cx23 CARTA_LOCATION=$L bash infra/hetzner/cax11/provision.sh && break 2
+    fi
+  done
+  echo "$(date +%H:%M) no CX23 in stock, trying again in 2 minutes"; sleep 120
+done
 ```
 
-The box clones `main`, which has everything since stage 1. Wait five to ten
-minutes, then:
+The loop costs nothing while it waits and stops once the server exists;
+`provision.sh` is idempotent, so a failed attempt is simply retried. Any of
+the three locations will do (stage 8's workers start in the orchestrator's
+location, T299-a). The script prints the IPv4 address at the end; `<address>` below is
+that address, never the IPv6 one. The box clones GitHub `main`, so anything
+the box needs must be pushed first. Wait five to ten minutes, then:
 
 ```
 ssh -i ~/.ssh/carta_orchestrator_ed25519 carta@<address> 'cloud-init status --wait; tail -n 30 /var/log/carta-bootstrap.log'
 ```
+
+The log must show "ok: architecture amd64" near the top.
 
 It must end "finished, all steps ok". If not, fix the cause and run
 `sudo carta-bootstrap` on the box.
@@ -618,7 +639,8 @@ At least ten minutes after the last boot, from the laptop:
 bash infra/hetzner/cax11/verify.sh <address>
 ```
 
-It must print ALL CHECKS PASSED, including "placeholder job fired N time(s)".
+It must print ALL CHECKS PASSED, including "architecture x86_64" and
+"placeholder job fired N time(s)".
 
 ## 7.5 Prepare the box (T048-a)
 
