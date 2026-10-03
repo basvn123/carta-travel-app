@@ -238,6 +238,41 @@ def test_rating_distribution():
         "\n  ".join(problems)
 
 
+def test_anchor_curve_meets_the_contract():
+    """Gate 3 on the curve itself, not only on the scores it last produced.
+
+    T321: the frozen curve in reports/rating_calibration_anchors.json did not
+    reproduce the catalogue it was frozen on, and nothing checked it, so the
+    next rating run shipped a fitted SD of 0.706 against a curated 0.987.
+    Published scores only change when the data lane re-scores, so a bad
+    curve reached the wire before anything measured it. This test projects
+    the input's fitted places through the stored curve (raw outputs rebuilt
+    from the stored components, as rating_layer computes them) and asserts
+    the same gap threshold on the same reference population, so a bad curve
+    fails the moment it is committed, before any rating run uses it.
+    """
+    import calibration_anchors as anchors   # pipeline/diagnostics, on path
+
+    data = anchors.load_wire(INPUT)
+    model = data["meta"].get("rating_model") or {}
+    if model.get("version") == BASELINE_MODEL or "fallback_fit" not in model:
+        msg = "no fitted calibration in this input; curve check idle"
+        if pytest:
+            pytest.skip(msg)
+        print("SKIP:", msg)
+        return
+    curves = json.loads(anchors.ANCHOR_PATH.read_text(encoding="utf-8"))["curves"]
+    fig = anchors.contract_figures(data, anchors.project(data, curves))
+    print(f"stored curve projected on {INPUT.name}: curated sd "
+          f"{fig['curated_sd']:.3f}  fitted sd {fig['fitted_sd']:.3f}  "
+          f"gap {fig['gap']:.3f}")
+    assert fig["gap"] < MAX_SD_GAP, (
+        f"the stored calibration curve gives a curated/fitted sd gap of "
+        f"{fig['gap']:.3f} >= {MAX_SD_GAP} on the reference population")
+
+
 if __name__ == "__main__":
     test_rating_distribution()
     print("distribution assertions hold")
+    test_anchor_curve_meets_the_contract()
+    print("anchor curve meets the contract")
