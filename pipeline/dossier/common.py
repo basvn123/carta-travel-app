@@ -597,11 +597,17 @@ def sanitize_strings(obj):
 
 # Content farms and aggregators: high volume, no independent observation. An
 # aggregator republishing what its users typed is not a second opinion.
-BLOCKED_DOMAINS = {
-    "pinterest.com", "quora.com", "facebook.com", "instagram.com", "x.com",
-    "twitter.com", "youtube.com", "reddit.com", "tripadvisor.com",
-    "booking.com", "expedia.com", "agoda.com", "hotels.com", "trip.com",
-}
+#
+# The list itself lives in supabase/functions/_shared/blocked_domains.json
+# (T327): the facts refresh Edge Function needs the same list, an Edge
+# Function bundle can only carry files from under supabase/functions, and two
+# copies would drift the way the two halves of the sweep once did. The rule
+# (registrable, is_blocked) is mirrored in _shared/publisher.mjs, and
+# tests/test_blocked_domains.py checks the two agree.
+BLOCKED_DOMAINS_FILE = os.path.join(ROOT, "supabase", "functions", "_shared",
+                                    "blocked_domains.json")
+with open(BLOCKED_DOMAINS_FILE, encoding="utf-8") as _fh:
+    BLOCKED_DOMAINS = frozenset(json.load(_fh)["domains"])
 _TLD2 = {"co", "com", "org", "net", "gov", "ac", "edu"}
 
 
