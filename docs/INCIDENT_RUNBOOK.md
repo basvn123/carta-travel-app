@@ -16,11 +16,47 @@ that says "all systems operational" during an outage is worse than none. The ven
 own pages (status.supabase.com, www.cloudflarestatus.com, status.stripe.com, aistudio.google.com/status).
 So the surface is a line inside the app, shown to the people who are affected.
 
-Today that line is the site notice: Admin, Site tab, announcement on, tone warn, one sentence such as
-"Saving trips is down, your trips are safe, back within the hour." It is read from Supabase site_config,
-so it cannot show while Supabase itself is down. The second half, a static status file on the data host
-that the app reads at boot, is code and waits for stages 6 and 7 (register T218-a). For a Supabase
-outage before then, there is no in-app line; post nothing rather than something wrong.
+The line has two sources and one look. Both draw the same bar at the foot of the screen (AnnouncementBar):
+one sentence, warn or info tone, and a close button that remembers the exact text it waved away, so a
+changed sentence shows again.
+
+The site notice: Admin, Site tab, announcement on, tone warn, one sentence such as "Saving trips is down,
+your trips are safe, back within the hour." It is read from Supabase site_config, so it cannot show while
+Supabase itself is down. Use it for everything that is not a Supabase outage.
+
+The status file (T316): status.json on the data host, at
+https://data.carta-europetravel.com/data/status.json (R2 object carta/data/status.json). The app reads it
+once per page load with a 3 second timeout and shows it in place of the site notice when both are live,
+so it works with Supabase down. Use it for a Supabase outage, and for anything else when the Admin panel
+cannot be reached. Only a build with a data host asks for it (build-pages.mjs always sets one); a dev
+server or a plain npm run build never does. Its fields:
+
+| Field | Meaning |
+|---|---|
+| enabled | must be true to show anything; the quiet state is {"enabled": false} |
+| text | the sentence, or a map by language {"en": "...", "nl": "..."} with English as the fallback |
+| tone | "warn" for the warning look, anything else for info |
+| until | optional ISO time; after it the line stops showing by itself |
+
+Write the file with the helper, from continent-app/. It checks the file against the app's own parser,
+prints the line a traveller will see, sets until 24 hours ahead unless told otherwise, saves it to the
+system temp folder (never inside a repository) without the byte order mark PowerShell's Out-File adds,
+and prints the upload command with that path filled in:
+
+    node scripts/status_notice.mjs "Signing in and saving trips are down. Your trips are safe." --until 2026-10-04T18:00Z
+    npx wrangler r2 object put carta/data/status.json --file <the path it printed> --content-type application/json --cache-control "public, max-age=60" --remote
+    curl -s https://data.carta-europetravel.com/data/status.json
+
+wrangler needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID exported. The helper also prints the rclone
+equivalent, for when the RCLONE_CONFIG_R2_* variables of scripts/r2/push-data.mjs are set instead. With
+max-age=60 a change reaches new page loads within about a minute; a traveller who already has the app
+open sees it on their next load. To take it down, write the quiet file and upload it the same way:
+
+    node scripts/status_notice.mjs --clear
+
+Prefer the quiet file to deleting the object: it keeps a normal day a 200, where a missing file is a 404
+in every visitor's browser console. The weekly data push never touches status.json, because
+push-data.mjs only copies and prunes the entries named in R2_TIER.
 
 Maintenance mode (Admin, Site tab) blocks the whole app for visitors. Use it only to stop damage, for
 example a bad data push that shows wrong prices, never to announce an outage of one feature.
@@ -113,8 +149,10 @@ Response. Check that it is Cloudflare and not us: a bad publish shows as wrong o
 wait and watch the Cloudflare status page. Between stage 5 and stage 6 (data on R2, shell on Vercel) the
 rollback is to remove VITE_DATA_BASE in Vercel Production and redeploy, which serves everything
 same-origin again. In the week after the Pages move, Vercel stays deployed and repointing DNS to it is
-the rollback (T024 runbook). After that week there is no second host, and the honest answer is the
-static status line once T218-a exists.
+the rollback (T024 runbook). After that week there is no second host. The status file lives on the
+same R2 host, so it cannot speak for an R2 outage; with only R2 down, Supabase still answers, so use the
+site notice ("Destination details and photos are not loading. The map and your saved trips still
+work."). With the whole zone down nothing of Carta's loads, and there is no in-app line to post.
 
 ## 5. The Supabase project has a problem
 
@@ -123,7 +161,9 @@ for platform incidents (T218-d). The Admin health line names missing tables afte
 
 What the traveller sees. The catalogue, map and destination pages come from static files and keep
 working. Sign-in, saved trips, shared trips, the bot, booking import and checkout fail with their own
-error lines. The site notice is stored in Supabase and cannot be shown.
+error lines. The site notice is stored in Supabase and cannot be shown; post the status file instead
+(the status surface, above), for example "Signing in and saving trips are down. Your trips are safe.",
+and clear it with --clear when the project is back.
 
 Response, by kind. A platform incident: wait, nothing local fixes it. A paused or over-limit project:
 the Dashboard says which limit; restore the project or reduce the cause, and plan the move to Pro
