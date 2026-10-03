@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate one trip in three passes with three different jobs (T144, spec K2).
 
-    python pipeline/generate_trip.py run BRIEF.json [--out DIR] [--model M] [--no-reuse]
+    python pipeline/generate_trip.py run BRIEF.json [--out DIR] [--model M] [--critic-model M] [--no-reuse]
     python pipeline/generate_trip.py run BRIEF.json --stub DIR      replay recorded answers
     python pipeline/generate_trip.py pass-schema 1|2|3              what each pass is asked
     python pipeline/generate_trip.py cost [--ledger FILE]           spend per trip and pass
@@ -25,10 +25,25 @@ its own mechanical check before the next pass may start:
                          figure is withheld (null plus a verifyFlag) or, for
                          the budget rows that may not be null, the trip fails.
 
-Only pass three touches grounded search, the surface that costs money
-(CARTA_UNIT_ECONOMICS.md 2.2). The three answers are merged, derive() from
-generation_gate.py fills the arithmetic fields, and generation_gate.admit()
-decides whether the record is written. Nothing is repaired on the way.
+The three answers are merged, derive() from generation_gate.py fills the
+arithmetic fields and the gate checks the record. A record the gate would
+admit then goes to a fourth call (T145, spec K4):
+
+  the CRITIC             a separate call with its own prompt
+                         (pipeline/prompts/k4-critic.md) and no memory of the
+                         writing: it sees the finished record without its
+                         provenance, its sources paragraph or its flags, never
+                         the writer's prompts or evidence rows. Its only job is
+                         to find what is wrong. Each dispute names a field that
+                         exists and quotes its value; the disputes become
+                         verifyFlags and the full critique is kept beside the
+                         record as <id>.critique.json. A critic that cannot
+                         give a usable answer twice rejects the trip: nothing
+                         is admitted unchecked.
+
+Passes three and four use grounded search, the surface that costs money
+(CARTA_UNIT_ECONOMICS.md 2.2). generation_gate.admit() decides whether the
+record is written. Nothing is repaired on the way.
 
 Every call's token counts and search counts go to a ledger (ledger.jsonl in the
 output folder), priced from the table below, so the cost per trip is recorded
@@ -187,7 +202,7 @@ UNIT_RE = re.compile(r"\b\d+(?:[.,]\d+)?\s?(?:km|m|min|minutes?|metres?|meters?|
 def load_prompt(n):
     """The pass's prompt file: a header of 'key: value' lines, a blank line,
     the body. Returns (header dict, body)."""
-    name = {1: "k2-skeleton.md", 2: "k2-prose.md", 3: "k2-numbers.md"}[n]
+    name = {1: "k2-skeleton.md", 2: "k2-prose.md", 3: "k2-numbers.md", 4: "k4-critic.md"}[n]
     with open(os.path.join(PROMPT_DIR, name), encoding="utf-8") as fh:
         text = fh.read()
     head, _, body = text.partition("\n\n")
@@ -202,8 +217,11 @@ def load_prompt(n):
 
 
 def prompt_version():
-    """k2-{v1}.{v2}.{v3}, written into provenance.promptVersion."""
-    return "k2-" + ".".join(str(load_prompt(n)[0]["version"]) for n in (1, 2, 3))
+    """k2-{v1}.{v2}.{v3}-k4-{v4}, written into provenance.promptVersion. The
+    critic's version is part of it because the record's verifyFlags depend
+    on the critic prompt as much as its figures depend on pass three's."""
+    return ("k2-" + ".".join(str(load_prompt(n)[0]["version"]) for n in (1, 2, 3))
+            + f"-k4-{load_prompt(4)[0]['version']}")
 
 
 def fill(template, values):
@@ -256,7 +274,10 @@ def _add_extras(schema, extras):
 
 
 def pass_schema(n):
-    """JSON Schema (draft 2020-12) of what pass n must answer."""
+    """JSON Schema (draft 2020-12) of what pass n must answer. Pass 4, the
+    critic, answers about the record, not into it: its schema is its own."""
+    if n == 4:
+        return copy.deepcopy(CRITIC_SCHEMA)
     full = G.model_schema()
     out = _prune(full, [_split(p) for p in PASS_PATHS[n]])
     out["title"] = f"Carta trip generation, pass {n}"
@@ -290,6 +311,8 @@ def pass_errors(n, fragment):
     elif n == 2:
         errs += _no_figures(fragment, "pass2")
         errs += _word_caps(fragment)
+    elif n == 4:
+        errs += _critic_rules(fragment)
     return errs
 
 
@@ -515,6 +538,166 @@ def set_totals(fields):
     fields["budget"] = b
 
 
+# ── pass four, the critic: no memory of the writing (T145, spec K4) ──────────
+# A writer asked to check its own work agrees with itself. So the check is a
+# separate call with a separate prompt, and it is given only the finished
+# record, minus every key that would tell it what the writer thought: who
+# wrote it and with which prompt (provenance), the writer's own account of
+# what it verified (sources), the flags the writer or the evidence rule
+# raised (verifyFlags and the two keys derived from them) and the empty
+# snapshot. It never sees the k2 prompts or the evidence rows.
+
+CRITIC_KINDS = ("contradiction", "arithmetic", "terrain", "existence", "stale", "access")
+CRITIC_HIDDEN = ("provenance", "sources", "verifyFlags", "verifyFlagCount", "volatilePricing", "snapshot")
+SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
+CRITIC_MAX_DISPUTES = 30
+_NO_DASH = "^[^\u2014\u2013\u00b7]*$"
+
+CRITIC_SCHEMA = {
+    "title": "Carta trip critique, pass 4",
+    "type": "object", "additionalProperties": False, "required": ["checks", "disputes"],
+    "properties": {
+        "checks": {
+            "type": "array", "minItems": len(CRITIC_KINDS), "maxItems": len(CRITIC_KINDS),
+            "description": "One row per kind of fault saying what was examined, also when nothing was found.",
+            "items": {"type": "object", "additionalProperties": False, "required": ["kind", "looked"],
+                      "properties": {
+                          "kind": {"type": "string", "enum": list(CRITIC_KINDS)},
+                          "looked": {"type": "string", "minLength": 10, "maxLength": 240, "pattern": _NO_DASH},
+                      }},
+        },
+        "disputes": {
+            "type": "array", "maxItems": CRITIC_MAX_DISPUTES,
+            "items": {"type": "object", "additionalProperties": False,
+                      "required": ["path", "kind", "severity", "quote", "reason", "url"],
+                      "properties": {
+                          "path": {"type": "string", "minLength": 2, "maxLength": 80},
+                          "kind": {"type": "string", "enum": list(CRITIC_KINDS)},
+                          "severity": {"type": "string", "enum": list(SEVERITY_ORDER)},
+                          "quote": {"type": "string", "minLength": 1, "maxLength": 120},
+                          "reason": {"type": "string", "minLength": 20, "maxLength": 180, "pattern": _NO_DASH},
+                          "url": {"anyOf": [{"type": "string", "pattern": "^https?://", "maxLength": 400},
+                                            {"type": "null"}]},
+                      }},
+        },
+    },
+}
+
+PATH_RE = re.compile(r"^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*|\[\d+\])*$")
+_NUM_RE = re.compile(r"\d+(?:[.,]\d+)?")
+
+
+def critic_view(rec):
+    """What the critic is shown: the record without the writer's memory."""
+    return {k: copy.deepcopy(v) for k, v in rec.items() if k not in CRITIC_HIDDEN}
+
+
+def resolve_path(node, dotted):
+    """(True, value) when dotted names a field of node, else (False, None)."""
+    if not PATH_RE.match(dotted or ""):
+        return False, None
+    for name, index in re.findall(r"([A-Za-z_]\w*)|\[(\d+)\]", dotted):
+        if name:
+            if not isinstance(node, dict) or name not in node:
+                return False, None
+            node = node[name]
+        else:
+            i = int(index)
+            if not isinstance(node, list) or i >= len(node):
+                return False, None
+            node = node[i]
+    return True, node
+
+
+def _squash(s):
+    return re.sub(r"\s+", " ", s).strip().strip("\"'").lower()
+
+
+def quote_matches(quote, value):
+    """A dispute must quote what it disputes, so a critic cannot argue with a
+    field it imagined. Text: the quote is a phrase of the field. A number or
+    an object: every number in the quote is a number of the field."""
+    if value is None:
+        return False
+    if isinstance(value, str):
+        return _squash(quote) in _squash(value)
+    have = set(_NUM_RE.findall(json.dumps(value, ensure_ascii=False)))
+    want = _NUM_RE.findall(quote)
+    if want:
+        return all(w in have for w in want)
+    return _squash(quote) in _squash(json.dumps(value, ensure_ascii=False))
+
+
+def _critic_rules(fragment):
+    """Shape rules a schema cannot say: each kind checked exactly once, each
+    field disputed at most once per kind."""
+    out = []
+    kinds = [c["kind"] for c in fragment.get("checks") or []]
+    missing = [k for k in CRITIC_KINDS if k not in kinds]
+    if missing:
+        out.append(f"critic-checks: checks: no row for {missing}; every kind needs one, also when clean")
+    seen = set()
+    for i, d in enumerate(fragment.get("disputes") or []):
+        if (d["path"], d["kind"]) in seen:
+            out.append(f"critic-duplicate: disputes[{i}]: {d['path']} disputed twice as {d['kind']}")
+        seen.add((d["path"], d["kind"]))
+    return out
+
+
+def critic_errors(view, fragment):
+    """Each dispute must point at a field the critic was shown, that field
+    must hold a value, and the quote must be that value."""
+    out = []
+    for i, d in enumerate(fragment.get("disputes") or []):
+        found, value = resolve_path(view, d["path"])
+        if not found:
+            out.append(f"critic-path: disputes[{i}]: {d['path']!r} is not a field of the trip")
+        elif value is None:
+            out.append(f"critic-null: disputes[{i}]: {d['path']} is null; there is nothing to dispute")
+        elif not quote_matches(d["quote"], value):
+            out.append(f"critic-quote: disputes[{i}]: {d['quote']!r} is not what {d['path']} says")
+    return out
+
+
+def dispute_flag(d):
+    """One verifyFlags line, within the contract's 200 characters."""
+    text = f"Disputed {d['path']}, {d['severity']} {d['kind']}: {d['reason']}"
+    if len(text) > 200:
+        text = text[:197].rsplit(" ", 1)[0] + "..."
+    return text
+
+
+def apply_critique(fields, rows, critique, chunks):
+    """Disputes become verifyFlags after the evidence rule's own flags, high
+    severity first; the contract holds 40 and the sidecar keeps the rest.
+    Figure rows a dispute covers carry it, so the review queue (K7) can see
+    a sourced figure the critic doubts. Returns (fields, disputes, dropped)."""
+    fields = copy.deepcopy(fields)
+    disputes = []
+    for d in sorted(critique.get("disputes") or [], key=lambda d: SEVERITY_ORDER[d["severity"]]):
+        disputes.append({**d, "urlRead": bool(d["url"]) and url_was_read(d["url"], chunks),
+                         "flag": dispute_flag(d)})
+    flags = list(fields.get("verifyFlags") or [])
+    dropped = 0
+    for d in disputes:
+        if d["flag"] in flags:
+            continue
+        if len(flags) >= 40:
+            dropped += 1
+            continue
+        flags.append(d["flag"])
+    fields["verifyFlags"] = flags
+
+    def covers(a, b):
+        return a == b or b.startswith((a + ".", a + "[")) or a.startswith((b + ".", b + "["))
+    for r in rows:
+        hit = [{"kind": d["kind"], "severity": d["severity"], "reason": d["reason"]}
+               for d in disputes if covers(d["path"], r["path"])]
+        if hit:
+            r["disputes"] = hit
+    return fields, disputes, dropped
+
+
 # ── clients ──────────────────────────────────────────────────────────────────
 
 class GeminiClient:
@@ -690,7 +873,8 @@ def print_cost(ledger_path):
         print(f"{tid}: {t['calls']} calls, USD {t['usd']:.4f}")
         for n in sorted(t["passes"]):
             p = t["passes"][n]
-            print(f"  pass {n}: {p['calls']} call(s), {p['tokensIn']} in, {p['tokensOut']} out, "
+            name = PASS_LABEL.get(n, f"pass {n}")
+            print(f"  {name}: {p['calls']} call(s), {p['tokensIn']} in, {p['tokensOut']} out, "
                   f"{p['searches']} searches, USD {p['usd']:.4f}")
         total += t["usd"]
     print(f"{len(trips)} trip(s), USD {total:.4f}, mean USD {total / len(trips):.4f} per trip")
@@ -699,6 +883,9 @@ def print_cost(ledger_path):
 
 
 # ── the run ──────────────────────────────────────────────────────────────────
+
+PASS_LABEL = {4: "critic"}   # the stub and ledger name of a call; otherwise "pass{n}"
+
 
 class PassFailed(Exception):
     def __init__(self, n, errors, raw):
@@ -727,7 +914,7 @@ def run_pass(n, user, *, client, key, out_dir, ledger, trip_label, reuse=True,
     schema = None if meta["grounding"] else pass_gemini_schema(n)
     prompt, raw_text, errs, body = user, "", [], None
     for attempt in (1, 2):
-        body = client.generate(f"pass{n}", prompt, response_schema=schema,
+        body = client.generate(PASS_LABEL.get(n, f"pass{n}"), prompt, response_schema=schema,
                                grounding=meta["grounding"], temperature=meta["temperature"])
         usage = usage_of(body)
         ledger_append(ledger, {"at": today or _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
@@ -762,9 +949,11 @@ def load_brief(path):
     return brief
 
 
-def generate(brief, client, out_dir=DEFAULT_OUT, *, reuse=True, today=None):
-    """The three passes, the merge, the gate. Returns a result dict; writes
-    the record (or the reject), the evidence sidecar and the ledger."""
+def generate(brief, client, out_dir=DEFAULT_OUT, *, reuse=True, today=None, critic_client=None):
+    """The three passes, the merge, the gate, the critic. Returns a result
+    dict; writes the record (or the reject), the evidence sidecar, the
+    critique and the ledger. critic_client, when given, answers the critic
+    call instead of client, so the critic can run on a different model."""
     today = today or _dt.date.today().isoformat()
     key = re.sub(r"[^a-z0-9-]", "-", brief["key"].lower())
     ledger = os.path.join(out_dir, "ledger.jsonl")
@@ -813,9 +1002,40 @@ def generate(brief, client, out_dir=DEFAULT_OUT, *, reuse=True, today=None):
     fields, rows, fatal = apply_evidence(fields, p3.get("evidence"), chunks, today)
     set_totals(fields)
     model = passes[1]["model"] or "gemini-unknown"
-    rec = G.derive(fields, batch=brief.get("batch", "generated"), model=model,
-                   prompt_version=prompt_version(), today=today)
-    errors = list(fatal)
+
+    def build(f):
+        return G.derive(f, batch=brief.get("batch", "generated"), model=model,
+                        prompt_version=prompt_version(), today=today)
+    rec = build(fields)
+    # The gate runs before the critic so a record it would reject anyway
+    # does not pay for a grounded call; admit() runs it again afterwards.
+    errors = list(fatal) or G.check(rec)
+    stage, critique, critic_raw = "gate", None, None
+    if not errors:
+        view = critic_view(rec)
+        _, body4 = load_prompt(4)
+        try:
+            p4, r4 = run_pass(4, fill(body4, {"trip": view}), client=critic_client or client,
+                              key=key, out_dir=out_dir, ledger=ledger, trip_label=key,
+                              reuse=reuse, today=today,
+                              extra_check=lambda f, _b: critic_errors(view, f))
+        except PassFailed as pf:
+            stage, critic_raw = "critic", pf.raw
+            errors = [f"critic-failed: {e}" for e in pf.errors]
+        else:
+            passes[4] = usage_of(r4)
+            fields, disputes, dropped = apply_critique(fields, rows, p4, grounding_chunks(r4))
+            rec = build(fields)
+            writers = {passes[n]["model"] for n in (1, 2, 3)}
+            critique = {"id": rec["id"], "entityKey": f"trip:{rec['id']}",
+                        "promptVersion": f"k4-{load_prompt(4)[0]['version']}",
+                        "model": passes[4]["model"], "writerModels": sorted(m for m in writers if m),
+                        "sameModelAsWriter": passes[4]["model"] in writers,
+                        "critiquedAt": today, "hidden": list(CRITIC_HIDDEN),
+                        "pagesRead": [{"uri": u, "title": t} for u, t in grounding_chunks(r4)],
+                        "checks": p4["checks"], "disputes": disputes,
+                        "flagsAdded": sum(d["flag"] in rec["verifyFlags"] for d in disputes),
+                        "flagsDropped": dropped}
     if not errors:
         ok, errors, path = G.admit(rec, dest, rejects, name=key)
     else:
@@ -825,16 +1045,26 @@ def generate(brief, client, out_dir=DEFAULT_OUT, *, reuse=True, today=None):
         path = os.path.join(rejects, f"{stamp}-{key}.json")
         G._write_atomic(path, json.dumps(rec, ensure_ascii=False, indent=1) + "\n")
         G._write_atomic(path[:-5] + ".errors.txt", "\n".join(errors) + "\n")
+        if critic_raw is not None:
+            G._write_atomic(path[:-5] + ".critic.txt", critic_raw)
+    where = dest if ok else rejects
     sidecar = {"id": rec["id"], "entityKey": f"trip:{rec['id']}", "promptVersion": prompt_version(),
                "models": {str(n): u["model"] for n, u in passes.items()}, "fetchedAt": today,
                "pagesRead": [{"uri": u, "title": t} for u, t in chunks], "figures": rows}
-    G._write_atomic(os.path.join(dest if ok else rejects, f"{rec['id']}.evidence.json"),
+    G._write_atomic(os.path.join(where, f"{rec['id']}.evidence.json"),
                     json.dumps(sidecar, ensure_ascii=False, indent=1) + "\n")
+    if critique is not None:
+        G._write_atomic(os.path.join(where, f"{rec['id']}.critique.json"),
+                        json.dumps(critique, ensure_ascii=False, indent=1) + "\n")
     trips, _ = cost_report(ledger)
-    return {"ok": ok, "stage": "gate", "errors": errors, "path": path, "id": rec["id"],
+    return {"ok": ok, "stage": stage, "errors": errors, "path": path, "id": rec["id"],
             "passes": passes, "usd": trips.get(key, {}).get("usd"),
             "figures": {"sourced": sum(r["status"] == "sourced" for r in rows),
-                        "withheld": sum(r["status"] != "sourced" for r in rows)}}
+                        "withheld": sum(r["status"] != "sourced" for r in rows)},
+            "critic": None if critique is None else {
+                "disputes": len(critique["disputes"]), "flagsAdded": critique["flagsAdded"],
+                "flagsDropped": critique["flagsDropped"], "model": critique["model"],
+                "sameModelAsWriter": critique["sameModelAsWriter"]}}
 
 
 # ── fixtures: the T143 example split into three answers ──────────────────────
@@ -932,7 +1162,25 @@ def fixture_bodies(example=None):
                                          "webSearchQueries": ["fixture query"] * 3}
         return {"candidates": [cand], "modelVersion": "gemini-fixture",
                 "usageMetadata": {"promptTokenCount": 0, "candidatesTokenCount": 0}}
-    return {"pass1": body(p1), "pass2": body(p2), "pass3": body(p3, grounded=True)}
+    return {"pass1": body(p1), "pass2": body(p2), "pass3": body(p3, grounded=True),
+            "critic": critic_body(fixture_critique())}
+
+
+def fixture_critique(disputes=()):
+    """A critic answer for tests: the six checks, and the disputes given.
+    The fixture's own answer disputes nothing; a test adds what it needs."""
+    return {"checks": [{"kind": k, "looked": f"fixture check of the {k} rules"} for k in CRITIC_KINDS],
+            "disputes": list(disputes)}
+
+
+def critic_body(critique, chunks=()):
+    """A recorded critic response: grounded, with the pages it read."""
+    return {"candidates": [{"content": {"parts": [{"text": json.dumps(critique, ensure_ascii=False)}]},
+                            "groundingMetadata": {"groundingChunks": [{"web": {"uri": u, "title": t}}
+                                                                      for u, t in chunks],
+                                                  "webSearchQueries": ["fixture query"] * 2}}],
+            "modelVersion": "gemini-fixture",
+            "usageMetadata": {"promptTokenCount": 0, "candidatesTokenCount": 0}}
 
 
 FIXTURE_BRIEF = {"key": "fixture-donauradweg", "countryCode": "AT", "tripTypeSlug": "cycling",
@@ -1066,6 +1314,43 @@ def self_test():
         if not align_errors(p1, short):
             fails.append("a six-day prose answer aligned with a seven-day skeleton")
 
+        # 9. The critic (T145): runs on every trip the gate would admit, sees
+        # no writer memory, and its disputes become verifyFlags.
+        if res.get("critic") is None or 4 not in res.get("passes", {}):
+            fails.append("the critic did not run on the admitted fixture")
+        today = example["provenance"]["ingestedAt"]
+        dispute = {"path": "itinerary[3].dayStats.ascentM", "kind": "terrain", "severity": "high",
+                   "quote": "290", "reason": "Self-test dispute: the climb does not fit a riverside day.",
+                   "url": None}
+        crit = copy.deepcopy(bodies)
+        crit["critic"] = critic_body(fixture_critique([dispute]))
+        client = StubClient(crit)
+        res7 = generate({**FIXTURE_BRIEF, "key": "fixture-disputed"}, client, tmp, today=today)
+        if not res7["ok"]:
+            fails.append(f"a disputed trip should still admit, flagged: {res7['errors'][:3]}")
+        else:
+            with open(res7["path"], encoding="utf-8") as fh:
+                rec7 = json.load(fh)
+            if not any(f.startswith("Disputed itinerary[3].dayStats.ascentM") for f in rec7["verifyFlags"]) \
+                    or rec7["verifyFlagCount"] != len(rec7["verifyFlags"]) or not rec7["volatilePricing"]:
+                fails.append("a dispute did not become a verifyFlag")
+            prompt = next(c[1] for c in client.calls if c[0] == "critic")
+            for hidden in ('"provenance"', '"sources"', '"verifyFlags"', '"evidence"'):
+                if hidden in prompt:
+                    fails.append(f"the critic was shown {hidden}")
+        for label, bad_d in (("path", {**dispute, "path": "itinerary[3].dayStats.climbM"}),
+                             ("quote", {**dispute, "quote": "1200"})):
+            crit["critic"] = critic_body(fixture_critique([bad_d]))
+            res8 = generate({**FIXTURE_BRIEF, "key": f"fixture-critic-{label}"}, StubClient(crit), tmp, today=today)
+            if res8["ok"] or res8["stage"] != "critic" or not any(f"critic-{label}" in e for e in res8["errors"]):
+                fails.append(f"a dispute with an invented {label} was accepted")
+        thin = fixture_critique()
+        thin["checks"] = thin["checks"][:5] + [thin["checks"][0]]
+        if not any(e.startswith("critic-checks") for e in pass_errors(4, thin)):
+            fails.append("a critique that skipped a kind of check was accepted")
+        if not res4["ok"] and 4 in res4.get("passes", {}):
+            fails.append("the critic was paid for on a trip the evidence rule had already failed")
+
         # 8. Pricing: the table prices a known model and refuses an unknown one.
         u = {"model": "gemini-2.5-flash", "tokensIn": 1_000_000, "tokensOut": 1_000_000,
              "tokensThought": 0, "tokensTool": 0, "searches": 4, "grounded": True}
@@ -1087,7 +1372,8 @@ def self_test():
     if not fails:
         print("SELF-TEST OK: three slices cover the contract, fixture admitted through the gate, "
               "rerun replays the cache, unread sources withheld, unsourced budget rejected, "
-              "word caps and figure bans bite, retry once, prices known")
+              "word caps and figure bans bite, retry once, prices known, critic flags disputes "
+              "and rejects invented ones")
     return 1 if fails else 0
 
 
@@ -1100,7 +1386,9 @@ def main():
     r.add_argument("brief")
     r.add_argument("--out", default=DEFAULT_OUT)
     r.add_argument("--model", action="append", help="pin the model chain (repeatable)")
-    r.add_argument("--stub", help="folder of pass1.json, pass2.json, pass3.json response bodies")
+    r.add_argument("--critic-model", action="append",
+                   help="pin the critic's model chain (repeatable); default: the writer's chain")
+    r.add_argument("--stub", help="folder of pass1.json, pass2.json, pass3.json, critic.json response bodies")
     r.add_argument("--no-reuse", action="store_true", help="ignore cached pass answers")
     s = sub.add_parser("pass-schema")
     s.add_argument("n", type=int, choices=(1, 2, 3))
@@ -1132,14 +1420,20 @@ def main():
         except ImportError:
             pass
         client = GeminiClient(args.model)
-    res = generate(brief, client, args.out, reuse=not args.no_reuse)
+    critic_client = GeminiClient(args.critic_model) if args.critic_model and not args.stub else None
+    res = generate(brief, client, args.out, reuse=not args.no_reuse, critic_client=critic_client)
     print(f"{'ADMIT ' if res['ok'] else 'REJECT'} {res.get('id', brief['key'])} -> {res['path']}")
     for e in res["errors"][:25]:
         print(f"  {e}")
     if res.get("figures"):
         print(f"  figures: {res['figures']['sourced']} sourced, {res['figures']['withheld']} withheld")
+    if res.get("critic"):
+        c = res["critic"]
+        print(f"  critic: {c['disputes']} dispute(s), {c['flagsAdded']} flag(s) added, "
+              f"{c['flagsDropped']} over the cap of 40"
+              + (", same model as the writer" if c["sameModelAsWriter"] else ""))
     for n, u in res["passes"].items():
-        print(f"  pass {n}: {u['model']}, {u['tokensIn']} in, {u['tokensOut'] + u['tokensThought']} out, "
+        print(f"  {PASS_LABEL.get(n, f'pass {n}')}: {u['model']}, {u['tokensIn']} in, {u['tokensOut'] + u['tokensThought']} out, "
               f"{u['searches']} searches, {u['elapsedS']} s")
     if res.get("usd") is not None:
         print(f"  cost so far for this trip: USD {res['usd']:.4f} (see `cost`)")
