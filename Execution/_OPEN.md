@@ -790,3 +790,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T171-a | T171 | Only the first cycling trip was opened in a browser; the dev server crashes the page, so any further visual check needs a build and preview | next task | open |  |
 | T171-b | T171 | Only 81 of 253 hook lines contain a number; a content pass could rewrite hooks as number-led sentences | next task | open |  |
 | T171-c | T171 | Exits cannot match by region because the wire cards carry no region key; add one in build_wire.py if country is too coarse | next task | open |  |
+| T175-a | T175 | The data sheet shows the T151 numbers only after the journey wire is rebuilt (same step as T151-a) | user | open |  |
+| T175-b | T175 | Nature escapes cannot lead with remoteness and last-shop distance because no typeSpecific slot holds them; add the slots to the schema and generator | next task | open |  |
+| T175-c | T175 | Water sports have wind as one text slot and a distance on 3 of 24 trips; wind and swell by month need a structured slot | next task | open |  |
+| T175-d | T175 | Transit score and food-cost index are a text slot and a budget line, not indexes; a real index needs a pipeline definition | next task | open |  |
+| T175-e | T175 | The data sheet text slots print the sources' ** bold markers raw; route them through the page's bold renderer | next task | open |  |
