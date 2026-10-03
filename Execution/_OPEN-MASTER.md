@@ -529,7 +529,7 @@ the rewrite only matters if GitHub starts warning about repository size.
 
 # Stage 7. You, about three days, mostly waiting: the orchestrator box
 
-[OPEN] Not started. Three things changed since it was written: the box is a CPX22
+[OPEN] Not started. Three things changed since it was written: the box is a CX23
 (x86) while Hetzner has no ARM stock, and `provision.sh` now gives it an IPv4 by
 default (T299, closing T300-w); set `VITE_DATA_BASE` in 7.3 straight away, because the cutover is live; and 7.11 was partly
 done early (see there). Wave 9 (T324) lands the box readiness code first: the heartbeat on
@@ -564,16 +564,17 @@ shell you provision from only:
 
 ```
 export HCLOUD_TOKEN=<token>
-hcloud server-type describe cpx22      # proves the token, shows the price and stock per location
+hcloud server-type describe cx23       # proves the token, shows the price and stock per location
 ```
 
 Never write this token into a file in the repository.
 
 On 2026-10-03 every ARM type (CAX11 to CAX41) was out of stock in every
-location, and had been since 2026-09-03, so the box is a **CPX22**: AMD x86,
-2 vCPU, 4 GB, 80 GB disk. `provision.sh` supports it since T299. When ARM
-stock returns, a CAX11 is the cheaper default; `hcloud server-type describe
-cax11` shows it.
+location, and had been since 2026-09-03, so the box is a **CX23**: x86,
+2 vCPU, 4 GB, 40 GB disk, EUR 6.64 a month with VAT (the CAX11 is EUR 7.25,
+the always-stocked CPX22 EUR 23.58 and the CPX12, 1 vCPU and 2 GB, EUR 13.90).
+`provision.sh` supports x86 since T299. CX23 stock comes and goes within the
+hour, so 7.2 waits for it.
 
 ## 7.2 Provision (T046-a, T046-d)
 
@@ -582,12 +583,21 @@ box cannot clone, and the laptop has no IPv6 to reach one. About EUR 0.60 a
 month. From the repo root in Git Bash, in the window with `HCLOUD_TOKEN`:
 
 ```
-CARTA_SERVER_TYPE=cpx22 bash infra/hetzner/cax11/provision.sh --dry-run
-CARTA_SERVER_TYPE=cpx22 bash infra/hetzner/cax11/provision.sh
+CARTA_SERVER_TYPE=cx23 bash infra/hetzner/cax11/provision.sh --dry-run
+while true; do
+  for L in fsn1 hel1 nbg1; do
+    if hcloud server-type describe cx23 | grep -A1 "Location:  *$L" | grep -q "Available: *yes"; then
+      CARTA_SERVER_TYPE=cx23 CARTA_LOCATION=$L bash infra/hetzner/cax11/provision.sh && break 2
+    fi
+  done
+  echo "$(date +%H:%M) no CX23 in stock, trying again in 2 minutes"; sleep 120
+done
 ```
 
-Location fsn1 (the default): stage 8's workers start in the orchestrator's
-location. The script prints the IPv4 address at the end; `<address>` below is
+The loop costs nothing while it waits and stops once the server exists;
+`provision.sh` is idempotent, so a failed attempt is simply retried. Any of
+the three locations will do (stage 8's workers start in the orchestrator's
+location, T299-a). The script prints the IPv4 address at the end; `<address>` below is
 that address, never the IPv6 one. The box clones GitHub `main`, so anything
 the box needs must be pushed first. Wait five to ten minutes, then:
 

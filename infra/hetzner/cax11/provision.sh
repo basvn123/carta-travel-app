@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Provision the Carta orchestrator on Hetzner Cloud: one small server, a CAX11
-# (Ampere arm64, 2 vCPU, 4 GB) by default or an x86 type such as the CPX22
-# (AMD, 2 vCPU, 4 GB, 80 GB) with CARTA_SERVER_TYPE, Ubuntu 24.04, first boot
+# (Ampere arm64, 2 vCPU, 4 GB) by default or an x86 type such as the CX23
+# (2 vCPU, 4 GB, 40 GB) with CARTA_SERVER_TYPE, Ubuntu 24.04, first boot
 # driven by cloud-init.yaml next to this file, which installs the arm64 or
 # amd64 builds to match. Task reports: Execution/P3/T046-cax11-orchestrator.md
 # and Execution/P3/T299-x86-orchestrator.md. Owner procedure: stage 7 of
@@ -14,7 +14,7 @@
 # Usage, from the repo root in Git Bash, WSL or any Linux/macOS shell:
 #   bash infra/hetzner/cax11/provision.sh --dry-run    print every command, run none
 #   HCLOUD_TOKEN=... bash infra/hetzner/cax11/provision.sh
-#   CARTA_SERVER_TYPE=cpx22 HCLOUD_TOKEN=... bash infra/hetzner/cax11/provision.sh
+#   CARTA_SERVER_TYPE=cx23 HCLOUD_TOKEN=... bash infra/hetzner/cax11/provision.sh
 #
 # Settings (environment, all optional except HCLOUD_TOKEN for a real run):
 #   HCLOUD_TOKEN          project API token, Read & Write. Required unless --dry-run.

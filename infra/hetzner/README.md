@@ -16,8 +16,10 @@ steps to bring them up are in `Execution/P3/_OPEN-hetzner.md`.
 The box is a CAX11 by default: Ampere arm64, 2 vCPU, 4 GB RAM, 40 GB NVMe and
 20 TB of traffic, at EUR 5.99 a month at the post-June-2026 price the
 architecture document quotes. When Hetzner has no ARM stock (every CAX type was
-out of stock on 2026-10-03), `CARTA_SERVER_TYPE=cpx22` provisions an x86 box
-instead: AMD, 2 vCPU, 4 GB RAM, 80 GB. carta-bootstrap reads the architecture
+out of stock on 2026-10-03), `CARTA_SERVER_TYPE=cx23` provisions an x86 box
+instead: 2 vCPU, 4 GB RAM, 40 GB, EUR 6.64 a month with VAT on 2026-10-03,
+against EUR 23.58 for the always-stocked CPX22. CX23 stock comes and goes, so
+stage 7.2 provisions it with a loop that waits for it. carta-bootstrap reads the architecture
 from dpkg and installs the matching hcloud, rclone and node builds, each
 pinned to its own checksum (T299). `hcloud server-type describe <type>` shows
 the current price and stock per location. Its job is cron, `run_pipeline.py`, the collectors under

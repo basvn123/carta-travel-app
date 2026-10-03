@@ -10,7 +10,16 @@ T299
 
 ## What changed
 
-Stage 7 could not start: on 2026-10-03 the owner's `hcloud server-type describe` showed every ARM type (CAX11, CAX21, CAX31) as unavailable in fsn1, nbg1 and hel1. The console's availability table shows no CAX type in any location since 2026-09-03. The account itself is fine. A listing of every type with stock showed the x86 CPX and CCX families available in all three European locations. The cheap x86 CX23 was out of stock as well.
+Stage 7 could not start: on 2026-10-03 the owner's `hcloud server-type describe` showed every ARM type (CAX11, CAX21, CAX31) as unavailable in fsn1, nbg1 and hel1. The console's availability table shows no CAX type in any location since 2026-09-03. The account itself is fine. A listing of every type with stock showed the x86 CPX and CCX families available in all three European locations. The cheap x86 CX23 was out of stock as well, but its stock comes and goes within the hour.
+
+The box type is the CX23 (2 vCPU, 4 GB, 40 GB). The owner's prices for fsn1 on 2026-10-03, VAT included:
+
+- CX23: EUR 6.64
+- CAX11: EUR 7.25
+- CPX12 (1 vCPU, 2 GB): EUR 13.90
+- CPX22 (2 vCPU, 4 GB, 80 GB): EUR 23.58
+
+Python needs about 1 GB to load the 114 MB master (measured on the laptop), so 4 GB is comfortable and 2 GB would be tight. The CPX22 was planned first because it was in stock, but it was turned down on price, so stage 7.2 waits for CX23 stock in a loop instead.
 
 The box scripts assumed ARM in three places, and all three now handle x86. ARM stays the default.
 
@@ -25,7 +34,7 @@ Docs follow the code:
 - The README box and cost sections.
 - One line in the `constraints.txt` header.
 - The rclone comment in `cax41/cloud-init.yaml`. Workers stay arm64 only; see T299-a.
-- Stage 7 of `_OPEN-MASTER.md`: the title, the open note, 7.1 (`describe cpx22`, and why), 7.2 (`CARTA_SERVER_TYPE=cpx22`, the IPv4 `<address>`, push before provisioning, the "architecture amd64" log line) and 7.4 ("architecture x86_64").
+- Stage 7 of `_OPEN-MASTER.md`: the title, the open note, 7.1 (`describe cx23`, and why), 7.2 (`CARTA_SERVER_TYPE=cx23` in a loop that waits for stock, the IPv4 `<address>`, push before provisioning, the "architecture amd64" log line) and 7.4 ("architecture x86_64").
 
 ## Files touched
 
@@ -102,7 +111,7 @@ None.
 
 ## What is still open
 
-The real proof is the owner's: stage 7.2 to 7.4 on a CPX22. The bootstrap log must show "ok: architecture amd64" and end "finished, all steps ok", and `verify.sh <IPv4>` must print ALL CHECKS PASSED with "architecture x86_64". GitHub `main` must hold this commit before 7.2, because the box clones it.
+The real proof is the owner's: stage 7.2 to 7.4 on a CX23. The bootstrap log must show "ok: architecture amd64" and end "finished, all steps ok", and `verify.sh <IPv4>` must print ALL CHECKS PASSED with "architecture x86_64". GitHub `main` must hold this commit before 7.2, because the box clones it.
 
 T299-a: stage 8's workers are CAX41s and just as out of stock. `CARTA_WORKER_TYPE` exists, but the worker cloud-init pins only the arm64 rclone, and `jobs/` installs aarch64 torch wheels.
 
