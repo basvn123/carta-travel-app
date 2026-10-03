@@ -775,3 +775,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T361-d | T361 | The booking text only reaches the app after the journeys wire rebuild, the owner step already in T085-a, T090-a and T091-a | user | open | T085-a first |
 
 | T360-a | T360 | The strip's style cell takes the first one or two word tag, and some tags are place names (e.g. "comapedrosa"); 30 of 253 trips show the placeholder Mixed. A curated style word per trip would read better | next task | open | |
+| T163-a | T163 | Day accordion was checked by lint and build only, not looked at in a browser on desktop and phone width; open a trip and a journey page and toggle a day | next task | closed by T163 |  |
+| T163-b | T163 | When the day carousel (T162) is built, its cards must reuse the tday-panel accordion rather than add a second expander | next task | open |  |
