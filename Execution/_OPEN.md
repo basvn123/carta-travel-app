@@ -804,3 +804,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T175-c | T175 | Water sports have wind as one text slot and a distance on 3 of 24 trips; wind and swell by month need a structured slot | next task | open |  |
 | T175-d | T175 | Transit score and food-cost index are a text slot and a budget line, not indexes; a real index needs a pipeline definition | next task | open |  |
 | T175-e | T175 | The data sheet text slots print the sources' ** bold markers raw; route them through the page's bold renderer | next task | open |  |
+| T185-a | T185 | A day card has no photograph to expand into the full map (days are picked from a sheet); the day half of G2 needs a decision on what the day card shows | user | open |  |
+| T185-b | T185 | Closing a destination or trip page does not reverse the photo morph; a second named element would be needed | next task | open |  |
