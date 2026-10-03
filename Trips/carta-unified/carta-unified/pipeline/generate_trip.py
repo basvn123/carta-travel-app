@@ -77,8 +77,9 @@ API = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateC
 MODEL_CHAIN = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
 
 # Word caps from carta-trips-enhancement-spec.md D4: summary under 120 words,
-# each Morning/Afternoon/Evening under 45, each pro tip under 35.
-SUMMARY_WORDS, DAY_WORDS, TIP_WORDS = 120, 45, 35
+# each Morning/Afternoon/Evening under 45, each pro tip under 35. The numbers
+# live in generation_gate.py so the prompt, this check and the validator agree.
+SUMMARY_WORDS, DAY_WORDS, TIP_WORDS = G.SUMMARY_WORDS, G.DAY_WORDS, G.TIP_WORDS
 
 # USD list prices from https://ai.google.dev/gemini-api/docs/pricing, read
 # 2026-10-03: (input per 1M tokens, output per 1M tokens including thinking,
@@ -345,20 +346,7 @@ def _no_figures(fragment, label):
 
 
 def _word_caps(fragment):
-    out = []
-    n = len((fragment.get("summary") or "").split())
-    if n > SUMMARY_WORDS:
-        out.append(f"word-cap: summary: {n} words, cap {SUMMARY_WORDS}")
-    for i, d in enumerate(fragment.get("itinerary") or []):
-        for block in ("morning", "afternoon", "evening"):
-            n = len((d.get(block) or "").split())
-            if n > DAY_WORDS:
-                out.append(f"word-cap: itinerary[{i}].{block}: {n} words, cap {DAY_WORDS}")
-    for i, tip in enumerate(fragment.get("proTips") or []):
-        n = len(tip.split())
-        if n > TIP_WORDS:
-            out.append(f"word-cap: proTips[{i}]: {n} words, cap {TIP_WORDS}")
-    return out
+    return G.word_cap_errors(fragment)
 
 
 def _skeleton_rules(fragment):

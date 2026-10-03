@@ -130,9 +130,9 @@
   {
    "day": 1,
    "title": "Out of Passau on the Schlögen bend",
-   "morning": "Collect bikes in Passau. Donau Touristik of Linz and Eurobike Aktiv-Reisen both deliver hire bikes and e-bikes to Passau hotels and take them back in Vienna, a one-way rental here should never involve a return journey. Check rack bolts at the Dreiflüsseeck, where the Inn, Ilz and Danube meet.",
-   "afternoon": "Ride the German bank to Obernzell, cross into Austria near Jochenstein and pick up the Austrian Donauradweg signage. This upper stretch is quiet, wooded and slightly damp underfoot in the shaded cuttings. At Engelhartszell, the Trappist abbey of Stift Engelszell brews Gregorius and Nivard on site; the shop closes mid-afternoon.",
-   "evening": "The Schlögener Schlinge is the Danube's 180-degree hairpin, best seen from the water rather than above it. The Rollfähre at Au-Schlögen is a cable ferry that swings across on the current; approx €3.50 with a bike. Eat trout at the riverside and watch the barges take the bend.",
+   "morning": "Collect bikes in Passau. Check rack bolts at the Dreiflüsseeck, where the Inn, Ilz and Danube meet.",
+   "afternoon": "Ride the German bank to Obernzell, cross into Austria near Jochenstein and pick up the Austrian Donauradweg signage. At Engelhartszell, the Trappist abbey of Stift Engelszell brews Gregorius and Nivard on site; the shop closes mid-afternoon.",
+   "evening": "The Schlögener Schlinge is the Danube's 180-degree hairpin, best seen from the water rather than above it. Eat trout at the riverside and watch the barges take the bend.",
    "dayStats": {
     "mode": "ride",
     "distanceKm": 52,
@@ -155,7 +155,7 @@
    "day": 2,
    "title": "Locks, orchards and the Linz waterfront",
    "morning": "North bank to Aschach, then the wide farmed flats below Eferding. The Aschach power station is the first of the run-of-river dams you cross; cyclists use the marked service deck.",
-   "afternoon": "Take the Ottensheim ferry to the south bank for the last 12 km into Linz, quieter, and it drops you at the Ars Electronica Center rather than in industrial Urfahr. The Lentos art museum and the Höhenrausch roof walks are both a five-minute push from the cycle path.",
+   "afternoon": "Take the Ottensheim ferry to the south bank for the last 12 km into Linz, quieter, and it drops you at the Ars Electronica Center rather than in industrial Urfahr.",
    "evening": "Linz eats late and well. The Altstadt around Hofgasse and Hauptplatz has the Linzer Torte in every window; the version at Konditorei Jindrak is the one locals argue about.",
    "dayStats": {
     "mode": "ride",
@@ -209,7 +209,7 @@
    "day": 5,
    "title": "Wachau, both banks",
    "morning": "The Wachau is 36 km of terraced Grüner Veltliner and Riesling between Melk and Krems, and it is UNESCO-listed for the terraces, not the castles. Ride the south bank first through Aggsbach and Rossatz, less traffic, better light before noon.",
-   "afternoon": "Cross at Spitz-Arnsdorf or Weißenkirchen-St. Lorenz (approx €3 with bike, roughly every 30 minutes in season) and climb the Ruine Aggstein spur or the path up to Burgruine Dürnstein, where Richard the Lionheart was held. The ruin is a 25-minute walk from the village; leave the bike locked in the church square rack.",
+   "afternoon": "Cross at Spitz-Arnsdorf or Weißenkirchen-St. The ruin is a 25-minute walk from the village; leave the bike locked in the church square rack.",
    "evening": "Dürnstein at dusk, once the coach parties have gone, is a different town. Wachauer Marille, the protected apricot, turns up as schnapps, dumplings and jam in every second window.",
    "dayStats": {
     "mode": "ride",

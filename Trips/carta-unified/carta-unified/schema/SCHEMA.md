@@ -221,3 +221,10 @@ not, and pass three withholds one that arrives without a page. A total built on 
 row is itself `estimated`. The pipeline writes `figures` from the evidence rows (it is in
 `DERIVED`, so the model is never asked and cannot label its own work), and the gate rejects a
 record whose rows do not match its figures one to one. The v2.0 records have no `figures`.
+
+Prose is capped (T152, spec D4): `summary` at most 120 words, each day's `morning`,
+`afternoon` and `evening` at most 45, each `proTips` entry at most 35. The numbers live in
+`generation_gate.py` (`SUMMARY_WORDS`, `DAY_WORDS`, `TIP_WORDS`); the pass-two prompt, the
+gate and `validate.py` all read them. The gate rejects a generated record over a cap, and
+the validator reports `word-cap` as an ERROR for a generated trip and a WARNING for a
+trip from the original source batches.
