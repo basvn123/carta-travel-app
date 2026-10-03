@@ -220,6 +220,12 @@ Motion: transitions under 300 ms on transform and opacity only, and every transi
 
 Buttons: height `--tap`, radius 6 px, sentence case, verb first, one primary per view. Primary is `--accent` filled with white text; an active toggle is `--ink-fill` with white text; secondary is transparent with a `--rule` border.
 
+## Components
+
+**Suitability strip (T360, accepted on owner instruction 2026-10-03).** A strip under a trip hero is a solid `--paper` band at full opacity, flush against the bottom edge of the hero, with a `--rule` border and square corners where it meets the photo. No alpha, no gradient, no text over the photograph. It holds exactly three cells in fixed order: difficulty, style, total cost. Difficulty is five small squares, filled `--ink` up to the level and outlined `--ink-mute` beyond it (never `--rate` or `--accent`), plus the level as a word. Style is one or two words from the trip's tags. Total cost is in the mono face with the currency. A missing value shows a placeholder word ("Unrated", "Mixed", "Price on request") so every trip shows three cells. It stays one row of three on a phone. Built as `.jstrip` in `src/styles/25-feature-pages.css`; no new token.
+
+**Secondary chrome (T360).** The "Get a pass" chip in the desktop bar is transparent with a `--rule` border and 6 px radius. The phone's round plus button is `--bg-card` with a `--rule` border, `999px` radius and a `--tap` or larger target. Neither is `--accent` filled, which leaves the accent for each page's one primary action.
+
 ## Before you ship
 
 Read the diff and answer these seven questions, from the carta-design skill.
