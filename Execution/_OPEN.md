@@ -790,3 +790,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T171-a | T171 | Only the first cycling trip was opened in a browser; the dev server crashes the page, so any further visual check needs a build and preview | next task | open |  |
 | T171-b | T171 | Only 81 of 253 hook lines contain a number; a content pass could rewrite hooks as number-led sentences | next task | open |  |
 | T171-c | T171 | Exits cannot match by region because the wire cards carry no region key; add one in build_wire.py if country is too coarse | next task | open |  |
+| T102-a | T102 | Rail time and fare are a straight-line prior model; use Transitous itineraries for real durations and a calibration artifact for fares | next task | open |  |
+| T102-b | T102 | The 61 trips still pinned at a country capital in the tracked journeys wire show no rail line: T090 (J1, merged) re-pinned all 115 capital and gateway trips in trips.master.json, but public/journeys has not been rebuilt, so the app still reads the old pins; rebuild with build_wire.py with fetching on (the T090-a step) and the lines appear with no code change | user | open | after T090-a |
+| T102-c | T102 | The rail start is the departure airport city, not the traveller's home town; use the home point when one is set | next task | open |  |
+| T102-d | T102 | The rail alternative is only on the journey page, not on the trip planner's cost breakdown | next task | open |  |
