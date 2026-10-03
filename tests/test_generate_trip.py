@@ -79,7 +79,7 @@ def test_fixture_runs_through_the_gate(tmp_path, bodies, example):
     client = T.StubClient(bodies)
     res = T.generate(T.FIXTURE_BRIEF, client, str(tmp_path), today=example["provenance"]["ingestedAt"])
     assert res["ok"], res["errors"]
-    assert [c[0] for c in client.calls] == ["pass1", "pass2", "pass3"]
+    assert [c[0] for c in client.calls] == ["pass1", "pass2", "pass3", "critic"]   # T145: the critic runs
     rec = json.loads(Path(res["path"]).read_text(encoding="utf-8"))
     assert not G.check(rec)
     assert rec["id"] == "at-cycling-donauradweg-wachau-example"
@@ -103,7 +103,7 @@ def test_rerun_replays_the_cache(tmp_path, bodies):
     assert res["ok"] and client.calls == []
     res = T.generate(T.FIXTURE_BRIEF, T.StubClient(bodies), str(tmp_path), reuse=False)
     assert res["ok"]
-    assert sum(1 for _ in (tmp_path / "ledger.jsonl").read_text().splitlines()) == 6
+    assert sum(1 for _ in (tmp_path / "ledger.jsonl").read_text().splitlines()) == 8   # four calls a run
 
 
 def test_unread_source_withholds_the_figure(tmp_path, bodies):
@@ -193,10 +193,10 @@ def test_failed_pass_is_retried_once_then_rejected(tmp_path, bodies):
     assert "word-cap: itinerary[2].morning" in client.calls[2][1]
     assert any(e.startswith("word-cap") for e in res["errors"])
     good_second = T.StubClient({"pass1": bodies["pass1"], "pass2": [body, bodies["pass2"]],
-                                "pass3": bodies["pass3"]})
+                                "pass3": bodies["pass3"], "critic": bodies["critic"]})
     res = T.generate({**T.FIXTURE_BRIEF, "key": "second-try"}, good_second, str(tmp_path))
     assert res["ok"]
-    assert [c[0] for c in good_second.calls] == ["pass1", "pass2", "pass2", "pass3"]
+    assert [c[0] for c in good_second.calls] == ["pass1", "pass2", "pass2", "pass3", "critic"]
 
 
 def test_misaligned_prose_is_rejected(tmp_path, bodies):
@@ -225,12 +225,12 @@ def test_ledger_and_cost_report(tmp_path, bodies):
     res = T.generate(T.FIXTURE_BRIEF, T.StubClient(bodies), str(tmp_path))
     assert res["ok"]
     rows = [json.loads(l) for l in (tmp_path / "ledger.jsonl").read_text(encoding="utf-8").splitlines()]
-    assert [r["pass"] for r in rows] == [1, 2, 3]
+    assert [r["pass"] for r in rows] == [1, 2, 3, 4]
     assert rows[2]["usage"]["searches"] == 3 and rows[2]["usage"]["grounded"]
     assert all(r["usd"] is None for r in rows)
     trips, unpriced = T.cost_report(str(tmp_path / "ledger.jsonl"))
     assert unpriced == {"gemini-fixture"}
-    assert trips[T.FIXTURE_BRIEF["key"]]["calls"] == 3
+    assert trips[T.FIXTURE_BRIEF["key"]]["calls"] == 4
 
 
 def test_brief_is_checked(tmp_path):
