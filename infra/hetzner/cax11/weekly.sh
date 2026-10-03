@@ -57,4 +57,18 @@ bash "$HERE/run_pipeline.sh" "$@"
 rc=$?
 printf '%s pipeline run finished on %s with exit %d (0 ok, 1 task failed, 2 refused, 3 archive step failed, 75 already running)\n' \
   "$(date -Is)" "$(hostname)" "$rc" >> "$LOG_DIR/weekly.log"
+
+# T218-c: run_pipeline.py pings the heartbeat itself (success or /fail) before
+# run_pipeline.sh's archive and publish steps run, so an exit 3 (pipeline ok,
+# R2 step failed) or any other non-zero exit after that point would leave the
+# monitor green. Ping /fail here on every non-zero exit. A ping failure is
+# logged and never changes the exit code. No CARTA_HEARTBEAT_URL, no ping.
+if [ "$rc" -ne 0 ] && [ -n "${CARTA_HEARTBEAT_URL:-}" ]; then
+  if command -v curl >/dev/null 2>&1 \
+     && curl -fsS -m 10 --retry 2 -o /dev/null "${CARTA_HEARTBEAT_URL%/}/fail" 2>/dev/null; then
+    printf '%s heartbeat /fail sent (exit %d)\n' "$(date -Is)" "$rc" >> "$LOG_DIR/weekly.log"
+  else
+    printf '%s heartbeat /fail could not be sent (exit %d; curl missing or the ping failed)\n' "$(date -Is)" "$rc" >> "$LOG_DIR/weekly.log"
+  fi
+fi
 exit $rc

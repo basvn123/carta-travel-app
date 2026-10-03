@@ -11,7 +11,18 @@
 
 services:
   trailslab-db:
-    image: pgrouting/pgrouting:17-3.5-3.7
+    # T324 (T300-f, from T006): multi-arch, so the lab can run on the ARM boxes.
+    # pgrouting/pgrouting:17-3.5-3.7 is linux/amd64 only. This is the
+    # imresamu bundle0 image (PostgreSQL 17, PostGIS 3.5, pgRouting), amd64 and
+    # arm64, pinned by the digest of the multi-arch index (read from the
+    # registry 2026-10-03, equal to the one T006 recorded).
+    # The laptop keeps its old image until the owner decides: an existing
+    # volume has the pgRouting extension at the old version, and the new image
+    # may ship a newer one, so after a swap run once, in the lab database:
+    #   ALTER EXTENSION pgrouting UPDATE;
+    # To stay on the old image: TRAILSLAB_IMAGE=pgrouting/pgrouting:17-3.5-3.7
+    # in the repo-root .env (compose reads it) or in the shell.
+    image: ${TRAILSLAB_IMAGE:-imresamu/postgis:17-3.5-bundle0-bookworm@sha256:a8ea1a9b5aacd6d9c80d4655d8fbfe3874f33d52b2d8e3b5d6fef5ccb44bd1b1}
     container_name: trailslab-db
     # 5433 on the host: the machine already runs a native PostgreSQL on 5432.
     # Loopback-only: the dev password is a known literal, so the port must
