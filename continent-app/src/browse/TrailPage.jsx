@@ -14,6 +14,7 @@ import {
   hikeTimeMin, isLoopRoute, basesAlong,
 } from '../lib/trailGeo.js';
 import { SurfaceBar, Stages, Bases } from './RouteParts.jsx';
+import { ElevationChart } from './RouteFigures.jsx';
 import {
   trailGpx, trailKml, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
   shareOrDownloadFile, shareTrailLink, stopNamesOf, downloadTextFile,
@@ -136,40 +137,6 @@ function ViewStrip({ images, t }) {
       </div>
       <p className="tpage-credit tpage-views-credit">{t('trails.viewsCredit')}</p>
     </section>
-  );
-}
-
-/** The elevation profile as an instrument chart, with the walker's position on
- *  it while following. */
-function ElevationChart({ elevation, atM, t }) {
-  const profile = elevation?.profile;
-  if (!Array.isArray(profile) || profile.length < 2) return null;
-  const W = 320, H = 84, PAD = 2;
-  const dMax = profile[profile.length - 1][0] || 1;
-  const eMin = elevation.ele_min_m ?? Math.min(...profile.map((p) => p[1]));
-  const eMax = elevation.ele_max_m ?? Math.max(...profile.map((p) => p[1]));
-  const span = Math.max(1, eMax - eMin);
-  const x = (d) => PAD + (Math.min(1, d / dMax)) * (W - 2 * PAD);
-  const y = (e) => H - PAD - ((e - eMin) / span) * (H - 2 * PAD);
-  const pts = profile.map(([d, e]) => `${x(d).toFixed(1)},${y(e).toFixed(1)}`);
-  const here = isNum(atM) ? x(atM) : null;
-  return (
-    <div className="tpage-elev">
-      {/* Stretched to the column's width, so every stroke opts out of the
-          non-uniform scale or the vertical marker ends up fatter than the
-          profile line. */}
-      <svg viewBox={`0 0 ${W} ${H}`} className="tpage-elev-svg" role="img" aria-label={t('trails.elevTitle')} preserveAspectRatio="none">
-        <polyline points={`${PAD},${H - PAD} ${pts.join(' ')} ${W - PAD},${H - PAD}`} className="tpage-elev-area" />
-        <polyline points={pts.join(' ')} className="tpage-elev-line" vectorEffect="non-scaling-stroke" />
-        {here != null && (
-          <line x1={here} y1={PAD} x2={here} y2={H - PAD} className="tpage-elev-here" vectorEffect="non-scaling-stroke" />
-        )}
-      </svg>
-      <div className="tpage-elev-axis">
-        <span>{Math.round(eMin)} m</span>
-        <span>{Math.round(eMax)} m {t('trails.elevMax')}</span>
-      </div>
-    </div>
   );
 }
 
@@ -777,7 +744,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
           {!isCityDay && detail?.elevation && (
             <section className="tpage-sec">
               <h2 className="tpage-sec-title">{t('trails.elevTitle')}</h2>
-              <ElevationChart elevation={detail.elevation} atM={follow && onRoute ? onRoute.m : null} t={t} />
+              <ElevationChart elevation={detail.elevation} atM={follow && onRoute ? onRoute.m : null} label={t('trails.elevTitle')} maxLabel={t('trails.elevMax')} />
             </section>
           )}
 

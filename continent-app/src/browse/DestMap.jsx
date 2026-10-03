@@ -2,6 +2,7 @@ import React from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { isNum, declutterPins } from '../map/coords.js';
+import { keyablePin, nameMarker } from '../map/pinKeys.js';
 
 /**
  * The destination page's one map. Four toggleable layers rather than four
@@ -17,6 +18,11 @@ import { isNum, declutterPins } from '../map/coords.js';
  * Pins talk back: a numbered pin click calls onPickHighlight(index) so the
  * matching tile can scroll into view, and the `focus` prop marks one pin as
  * the tile the reader is looking at.
+ *
+ * Every pin that does something on click is also a keyboard stop (T190,
+ * map/pinKeys.js): Tab reaches it, Enter or Space does what the click does.
+ * Pins with nothing behind them (the town itself, a day trip that is not a
+ * catalogue place) stay out of the tab order.
  */
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
@@ -86,6 +92,7 @@ const DestMap = React.forwardRef(function DestMap({
       new maplibregl.Marker({ element: main, anchor: 'center' })
         .setLngLat([lon, lat]).addTo(map),
     );
+    nameMarker(main, '');
 
     const entries = [];
     rows.forEach((row, i) => {
@@ -97,12 +104,14 @@ const DestMap = React.forwardRef(function DestMap({
         if (onPickHighlight) {
           el.style.cursor = 'pointer';
           el.addEventListener('click', (e) => { e.stopPropagation(); onPickHighlight(i); });
+          keyablePin(el, `${i + 1}. ${row.name || ''}`, () => onPickHighlight(i), { map, lngLat: [row.lon, row.lat] });
         }
       } else if (active === 'trips') {
         el = makeEl('dmap-pin is-trip', `<span class="dmap-pin-in"><span class="dmap-pin-dot"></span><span class="dmap-pin-name">${esc(row.name)}${row.travel?.minutes ? ` <span class="mono">${Math.round(row.travel.minutes)}m</span>` : ''}</span></span>`);
         if (onPickTrip && row.kind === 'destination') {
           el.style.cursor = 'pointer';
           el.addEventListener('click', (e) => { e.stopPropagation(); onPickTrip(row); });
+          keyablePin(el, row.name, () => onPickTrip(row), { map, lngLat: [row.lon, row.lat] });
         }
       } else {
         const color = LAYER_COLOR[row.layer] || LAYER_COLOR.nearby;
@@ -110,11 +119,13 @@ const DestMap = React.forwardRef(function DestMap({
         if (onPickFeature && row.layer) {
           el.style.cursor = 'pointer';
           el.addEventListener('click', (e) => { e.stopPropagation(); onPickFeature(row.layer, row); });
+          keyablePin(el, row.name, () => onPickFeature(row.layer, row), { map, lngLat: [row.lon, row.lat] });
         }
       }
       el.title = row.name || '';
       const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
         .setLngLat([row.lon, row.lat]).addTo(map);
+      nameMarker(el);
       markersRef.current.push(marker);
       entries.push({ el, lngLat: [row.lon, row.lat] });
       pinElsRef.current.push(el);

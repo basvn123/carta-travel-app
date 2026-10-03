@@ -81,9 +81,10 @@ export function declutterPins(map, entries, { padding = 2 } = {}) {
         };
         return placed.some((p) => !(r.r < p.l || r.l > p.r || r.b < p.t || r.t > p.b)) ? null : r;
       };
-      // Pinned pins keep their full label whatever else is around them.
+      // Pinned pins keep their full label whatever else is around them, and
+      // so does the pin that holds keyboard focus (T190).
       if (it.keep || it.el.classList.contains('on') || it.el.classList.contains('focused')
-        || it.el.classList.contains('sel')) {
+        || it.el.classList.contains('sel') || it.el === document.activeElement) {
         const r = hit(it.el);
         placed.push(r || {
           l: pt.x - 20, r: pt.x + 20, t: pt.y - 12, b: pt.y + 12,

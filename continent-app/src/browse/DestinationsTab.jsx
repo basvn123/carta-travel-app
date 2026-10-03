@@ -6,6 +6,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPicker } from '../components/CountryPicker.jsx';
 import { count, eur } from '../lib/format.js';
 import { needsCountry } from '../lib/favorites.js';
+import { railOrigin } from '../lib/railAlternative.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { trailPath } from '../lib/trailShape.js';
@@ -69,6 +70,7 @@ import {
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
 import CreditFold from './CreditFold.jsx';
+import { openShared } from '../lib/sharedElement.js';
 import { CoverageFooter } from './HonestFooters.jsx';
 
 /**
@@ -848,7 +850,7 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
   const season = seasonLabel(tr, t);
   const warned = (tr.warned || []).length;
   return (
-    <button className="places-icard" onClick={() => onOpen(tr)}>
+    <button className="places-icard" onClick={(e) => openShared(e.currentTarget, tr.id, () => onOpen(tr))}>
       <span className="itin-card-media">
         {/* cardThumb alone pins this to the 500px rendering, which was right
             for a 132px strip and is soft in a 3:2 frame. The srcset lets a
@@ -949,7 +951,7 @@ function LayerError({ onRetry, t }) {
 
 export function DestinationsTab({
   data, pricedAll, availableCountries = [], onSelectDest,
-  stayTier = 'home', lifestyle, onOpenLifestyle,
+  stayTier = 'home', lifestyle, onOpenLifestyle, origin = null,
   openTrail = null, onOpenTrailConsumed,
   openBeach = null, onOpenBeachConsumed,
   openLake = null, onOpenLakeConsumed,
@@ -3583,6 +3585,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <JourneyPage
             id={pageJourney.id}
+            railFrom={railOrigin(data, origin)}
             gatewayDest={(() => {
               // The gateway airport code doubles as a catalogue id (BCN,
               // VIE...), which is what lets the page end on a priced CTA.

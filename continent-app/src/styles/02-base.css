@@ -73,3 +73,14 @@ input, select {
   .dual-range-input:active::-moz-range-thumb,
   .single-range:active::-moz-range-thumb { scale: none; }
 }
+
+/* The focus floor (T190). Every control that takes keyboard focus shows the
+   house ring, even where no component rule names it: the browser's own ring
+   is a blue double line that is not Carta's and disappears on dark fills.
+   :where() keeps this at zero specificity, so any component's own
+   :focus-visible rule (an inset ring, an ink ring on an accent fill, an
+   input's accent border) still wins. */
+:where(a[href], button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

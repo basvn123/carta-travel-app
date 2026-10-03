@@ -23,6 +23,7 @@ import {
   ChevronDownIcon, MapPinIcon, ListDayIcon,
 } from '../components/Icons.jsx';
 import { LifestyleButton } from './LifestyleButton.jsx';
+import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 
 // The map is the ONE thing in this tab that pulls maplibre-gl (~930 KB raw),
@@ -262,7 +263,7 @@ const ExploreCard = React.memo(function ExploreCard({
     >
       <button
         className="xcard-hit"
-        onClick={() => onSelect(p.id)}
+        onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
         aria-label={t('explore.openDest', { city: p.city })}
@@ -898,6 +899,20 @@ export function ExploreTab({
             phone the map takes the column and the floating switch brings
             the list back. */}
         <div className={`xcontent ${view === 'map' ? 'xcontent--split' : ''}`.trim()}>
+          {/* The map comes first in the DOM and CSS puts it in the right
+              column (T190): the keyboard reaches the map the reader just
+              asked for straight after the control bar, instead of after
+              every card of an infinitely scrolling list, which on a long
+              list meant never. */}
+          {view === 'map' && (
+            <div className="xcontent-map">
+              <React.Suspense fallback={<div className="loading-screen"><div className="pulse" /></div>}>
+                <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
+                  onSelect={openWithMember} onViewport={onMapViewport}
+                  onNeedDetail={onMapNeedDetail} t={t} />
+              </React.Suspense>
+            </div>
+          )}
           <div className="xcontent-main">
             {railsIdle && <ExploreRails rails={rails} onSelect={openWithMember} t={t} />}
 
@@ -940,16 +955,6 @@ export function ExploreTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
           </div>
-
-          {view === 'map' && (
-            <div className="xcontent-map">
-              <React.Suspense fallback={<div className="loading-screen"><div className="pulse" /></div>}>
-                <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
-                  onSelect={openWithMember} onViewport={onMapViewport}
-                  onNeedDetail={onMapNeedDetail} t={t} />
-              </React.Suspense>
-            </div>
-          )}
         </div>
       </div>
 

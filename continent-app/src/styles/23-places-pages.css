@@ -1156,6 +1156,12 @@
   color: var(--ink-mute);
 }
 
+/* The data sheet (T175): the first three rows are what this trip type leads
+   with, so they carry weight; the strip row needs the full width. */
+.dsheet-lead dd.mono { font-weight: 600; }
+.dsheet-row dd small { font-family: var(--ui); font-weight: 400; }
+.dsheet-row dd .ms { max-width: 100%; }
+
 /* ── The month strip: twelve cells, January to December. Good months are a
       tinted fill, avoid months a hairline strike, the rest plain. The tint is
       --green mixed into the card white, because DESIGN.md has no green ground
@@ -1502,7 +1508,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* Room inside the clip for a focused link's ring (T190); the negative
+     margin keeps the line exactly where it was. */
+  padding: 2px;
+  margin: -2px;
 }
+.lpage-credit-line a:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
 
 .lpage-gem {
   padding: 2px 8px;

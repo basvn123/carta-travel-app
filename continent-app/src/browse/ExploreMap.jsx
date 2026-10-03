@@ -40,6 +40,20 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
  * ignores the filters it cannot be judged on yet, and asks for its country
  * through onNeedDetail when hovered. onViewport(bounds, zoom) is how the
  * caller learns what to fetch next.
+ *
+ * Keyboard (T190). The pins are pixels in a WebGL canvas, so nothing in them
+ * can take focus. The canvas itself can (maplibre gives it tabindex 0, arrow
+ * keys pan, + and - zoom), and over it sits a layer of real buttons, one per
+ * pin or cluster the map is drawing right now: transparent, pointer-events
+ * none (the mouse still talks to the canvas), each centred on its pin and
+ * sized to it, so the focus ring lands on the dot the reader is looking at.
+ * Focus shows the same tip or card a hover shows, Escape dismisses it, Enter
+ * opens the place, and Enter on a cluster zooms into it and hands focus to
+ * the canvas so the next Tab walks the pins it split into. The layer is
+ * rebuilt when the map goes idle and repositioned on every move frame. It
+ * holds at most KPIN_CAP stops, the best-rated in view, in reading order:
+ * a keyboard walk through 300 dots helps nobody, and zooming in (or the list
+ * beside the map on a desktop) reaches the rest.
  */
 
 const KIND_RADIUS = { metro: 9, city: 7, area: 7, town: 5.5, village: 4.5 };
@@ -54,6 +68,12 @@ const CARD_FROM = 8;
 // Above this the source draws individual pins, so a filter expression is
 // the whole story; below it the clusters carry counts that must be true.
 const CLUSTER_TO = 6;
+
+// The keyboard layer: at most this many pin stops, ordered in bands of this
+// many pixels top to bottom, left to right within a band.
+const KPIN_CAP = 30;
+const KPIN_ROW = 64;
+const CLUSTER_R = (n) => (n >= 100 ? 24 : n >= 25 ? 18 : 14);
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -181,6 +201,50 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
   }, []);
   const { closePop, showTip, showCard } = popHelpers;
 
+  // The keyboard layer. `kpins` is what React renders; the move handler
+  // repositions the same buttons through kpinElsRef without a render.
+  const [kpins, setKpins] = React.useState([]);
+  const kpinsRef = useRef(kpins);
+  kpinsRef.current = kpins;
+  const kpinElsRef = useRef(new Map());
+  // The pin that last held focus, so a rebuild that drops it (the map moved
+  // it out of view, or a cluster split) can hand focus to the canvas instead
+  // of losing it to the page body.
+  const lastKpinRef = useRef(null);
+
+  const collectKpins = React.useCallback((map) => {
+    const canvas = map.getCanvas();
+    const W = canvas.clientWidth; const H = canvas.clientHeight;
+    const layers = ['clusters', 'dest-dots'].filter((l) => map.getLayer(l));
+    if (!layers.length) return [];
+    const seen = new Set();
+    const out = [];
+    for (const f of map.queryRenderedFeatures({ layers })) {
+      const pr = f.properties || {};
+      const cluster = pr.cluster_id != null;
+      const key = cluster ? `c${pr.cluster_id}` : `d${pr.id}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      // A pin whose record has not arrived has no name to read out yet; it
+      // joins the layer on the idle after its country lands.
+      if (!cluster && pr.ld === 0) continue;
+      const lngLat = f.geometry.coordinates;
+      const pt = map.project(lngLat);
+      if (pt.x < 0 || pt.y < 0 || pt.x > W || pt.y > H) continue;
+      out.push({
+        key, cluster, lngLat, x: pt.x, y: pt.y,
+        id: pr.id, clusterId: pr.cluster_id, n: pr.point_count || 0,
+        city: pr.city, country: pr.country, score: pr.score, tier: pr.tier ?? 0,
+        r: cluster ? CLUSTER_R(pr.point_count || 0) : (pr.r || 5.5),
+        feature: { geometry: { coordinates: lngLat }, properties: pr },
+      });
+    }
+    out.sort((a, b) => (Number(b.cluster) - Number(a.cluster))
+      || (a.cluster ? b.n - a.n : (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1))));
+    return out.slice(0, KPIN_CAP).sort((a, b) => (
+      Math.floor(a.y / KPIN_ROW) - Math.floor(b.y / KPIN_ROW)) || (a.x - b.x));
+  }, []);
+
   useEffect(() => {
     if (mapRef.current) return undefined;
     const map = new maplibregl.Map({
@@ -276,6 +340,17 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
         const b = map.getBounds();
         onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], map.getZoom());
       });
+      // Keyboard layer: follow the pins every frame, rebuild when settled.
+      map.on('move', () => {
+        for (const k of kpinsRef.current) {
+          const el = kpinElsRef.current.get(k.key);
+          if (!el) continue;
+          const pt = map.project(k.lngLat);
+          el.style.left = `${pt.x}px`;
+          el.style.top = `${pt.y}px`;
+        }
+      });
+      map.on('idle', () => setKpins(collectKpins(map)));
       readyRef.current = true;
     });
     return () => {
@@ -284,9 +359,51 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
       mapRef.current = null;
       readyRef.current = false;
     };
-    // The map is built once: the popup helpers are one memo with no
-    // dependencies, so listing them never rebuilds it.
-  }, [closePop, showTip, showCard]);
+    // The map is built once: the popup helpers and collectKpins are memos
+    // with no dependencies, so listing them never rebuilds it.
+  }, [closePop, showTip, showCard, collectKpins]);
+
+  // A rebuild that dropped the focused pin hands focus to the canvas, so the
+  // keyboard stays on the map instead of falling to the top of the page.
+  useEffect(() => {
+    const last = lastKpinRef.current;
+    if (!last || kpins.some((k) => k.key === last)) return;
+    lastKpinRef.current = null;
+    const a = document.activeElement;
+    if (!a || a === document.body) mapRef.current?.getCanvas().focus({ preventScroll: true });
+  }, [kpins]);
+
+  const kpinLabel = (k) => {
+    if (k.cluster) return t('explore.clusterAria', { n: k.n });
+    if (k.score == null) return [k.city, k.country].filter(Boolean).join(', ');
+    return t('explore.pinAria', { city: k.city, country: k.country, score: Number(k.score).toFixed(1) });
+  };
+  const kpinFocus = (k) => {
+    lastKpinRef.current = k.key;
+    const map = mapRef.current;
+    if (!map || k.cluster) return;
+    if (map.getZoom() >= CARD_FROM) showCard(map, k.feature);
+    else showTip(map, k.feature);
+  };
+  const kpinBlur = (e) => {
+    // Focus moving to a real element clears the memory; a blur with no
+    // target is the button being removed under focus (see the effect above).
+    if (e.relatedTarget) lastKpinRef.current = null;
+    closePop();
+  };
+  const kpinActivate = async (k) => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (!k.cluster) { onSelectRef.current?.(k.id); return; }
+    // The cluster button is about to vanish with the cluster: park focus on
+    // the canvas first, then zoom to where it splits.
+    lastKpinRef.current = null;
+    map.getCanvas().focus({ preventScroll: true });
+    try {
+      const zoom = await map.getSource('dests').getClusterExpansionZoom(k.clusterId);
+      map.easeTo({ center: k.lngLat, zoom });
+    } catch { /* the cluster dissolved while we asked */ }
+  };
 
   // The payload is serialised once (the memo above depends on `all`, which
   // does not change while the user filters), so this fires on mount and
@@ -338,6 +455,24 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
   return (
     <div className="xmap" role="region" aria-label={t('explore.mapAria')}>
       <div ref={containerRef} className="xmap-canvas" />
+      {kpins.length > 0 && (
+        <div className="xmap-kpins" role="group" aria-label={t('explore.mapPinsAria')}>
+          {kpins.map((k) => (
+            <button
+              key={k.key}
+              type="button"
+              ref={(el) => { if (el) kpinElsRef.current.set(k.key, el); else kpinElsRef.current.delete(k.key); }}
+              className={`xmap-kpin${k.cluster ? ' is-cluster' : ''}`}
+              style={{ left: k.x, top: k.y, '--kpin-d': `${Math.round(k.r * 2 + 4)}px` }}
+              aria-label={kpinLabel(k)}
+              onFocus={() => kpinFocus(k)}
+              onBlur={kpinBlur}
+              onKeyDown={(e) => { if (e.key === 'Escape' && popupRef.current) { e.stopPropagation(); closePop(); } }}
+              onClick={() => kpinActivate(k)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

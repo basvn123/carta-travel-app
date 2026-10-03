@@ -1367,6 +1367,11 @@
 .jpage-budget-total .jpage-budget-label { font-weight: 600; }
 .jpage-budget-total .jpage-budget-eur { font-size: 15px; font-weight: 500; }
 
+/* The rail alternative sits under the receipt, outside the sum. */
+.jpage-rail { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--rule-soft); }
+.jpage-rail-label { font-size: 13px; font-weight: 600; }
+.jpage-rail-line { margin: var(--space-1) 0 0; font-size: 14px; color: var(--ink); }
+
 /* One authored day: the number in mono, the title in display, then the
    three parts of the day with their labels in the margin of the text. */
 .jpage-day {
@@ -1990,6 +1995,7 @@
 }
 .xview-toggle button.on { background: var(--ink-fill); color: var(--on-fill); }
 .xmap {
+  position: relative;
   height: min(72vh, 760px);
   border-radius: 14px;
   overflow: hidden;
@@ -1997,6 +2003,23 @@
   margin: 0 0 14px;
 }
 .xmap-canvas { width: 100%; height: 100%; }
+/* T190: the keyboard layer over the WebGL pins (ExploreMap.jsx). One
+   transparent button per pin in view, centred on it and sized to it, so the
+   house ring lands on the dot. Pointer events pass through to the canvas:
+   the mouse and a finger keep talking to the map exactly as before. */
+.xmap-kpins { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.xmap-kpin {
+  position: absolute;
+  width: var(--kpin-d, 16px);
+  height: var(--kpin-d, 16px);
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.xmap-kpin:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .xmap-pop { font-size: 12.5px; line-height: 1.35; }
 .xmap-pop strong { font-size: 13px; margin-right: 6px; }
 .xmap-pop-sub { color: var(--slate-mute); }
@@ -2482,6 +2505,10 @@
     align-items: start;
   }
   .xcontent-map { position: sticky; top: 12px; }
+  /* The map is first in the DOM for the keyboard (ExploreTab.jsx, T190);
+     the grid still draws it on the right. */
+  .xcontent--split .xcontent-map { grid-column: 2; grid-row: 1; }
+  .xcontent--split .xcontent-main { grid-column: 1; grid-row: 1; }
   .xcontent-map .xmap {
     height: calc(100vh - var(--filter-h) - 36px);
     margin: 0;
@@ -2564,6 +2591,10 @@
   }
   .xview-fab button.on { background: var(--paper); color: var(--ink); }
   .xview-fab button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* The floating switch covers the bottom of the feed. Telling the scroller
+     so makes a control that takes keyboard focus down there scroll up clear
+     of it, instead of being focused underneath it (T190). */
+  .explore-tab { scroll-padding-bottom: 64px; }
 }
 
 /* --- the side panel: tighter tiles, the rail in folds -------------------- */
@@ -3430,6 +3461,7 @@
    drift apart. */
 .rsurf-bar {
   display: flex;
+  gap: 1px;
   height: 10px;
   border-radius: 5px;
   overflow: hidden;
@@ -3437,22 +3469,28 @@
   border: 1px solid var(--rule-soft);
 }
 .rsurf-seg { display: block; height: 100%; }
+/* T174: the surface tones are an ink ramp, smooth ground darkest, because a
+   surface is a measure of roughness, not a category: weight, not hue (the
+   same rule as the place-kind ramp). Ochre is for ratings and green for good
+   news, so neither colours a surface any more. The traffic bar uses the same
+   segments; only its away-from-cars share is green, because that one is the
+   good news a nervous rider is looking for. */
 .rsurf-seg.is-paved,
-.rsurf-dot.is-paved { background: var(--ink-soft); }
+.rsurf-dot.is-paved { background: var(--ink); }
 .rsurf-seg.is-gravel,
-.rsurf-dot.is-gravel { background: var(--rate); }
+.rsurf-dot.is-gravel { background: var(--ink-soft); }
 .rsurf-seg.is-path,
-.rsurf-dot.is-path { background: var(--green); }
+.rsurf-dot.is-path { background: var(--ink-mute); }
 .rsurf-seg.is-other,
-.rsurf-dot.is-other { background: var(--ink-mute); }
-/* The unmapped share is hatched rather than coloured: it is an absence of a
-   reading, and a flat block of colour would read as one more surface. */
-.rsurf-seg.is-unknown {
-  background: repeating-linear-gradient(
-    45deg, var(--paper-dim), var(--paper-dim) 3px,
-    var(--rule-soft) 3px, var(--rule-soft) 6px);
-}
-.rsurf-dot.is-unknown { background: var(--rule-soft); }
+.rsurf-dot.is-other { background: var(--rule); }
+.rsurf-seg.is-free,
+.rsurf-dot.is-free { background: var(--green); }
+.rsurf-seg.is-shared,
+.rsurf-dot.is-shared { background: var(--ink-soft); }
+/* The unknown share is the bar's own ground, not a colour: it is an absence
+   of a reading, and a block of colour would read as one more surface. */
+.rsurf-seg.is-unknown { background: transparent; }
+.rsurf-dot.is-unknown { background: var(--paper-dim); border: 1px solid var(--rule); }
 .rsurf-keys {
   display: flex;
   flex-wrap: wrap;
@@ -4118,3 +4156,39 @@
 .jpage-exit-title { font-size: 14px; font-weight: 600; line-height: 1.35; }
 .jpage-exit-meta { font-size: 12.5px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
 .jpage-detail b { font-weight: 600; color: var(--ink); }
+
+/* The week profile and the journey route fold (T174, trips spec E3 and E4).
+   The chart is the trail page's elevation chart (.tpage-elev-*); this adds
+   the descent below the line, the day hairlines and the figures under each
+   column. */
+.rfig-week { margin: 10px 0 4px; }
+.rfig-down-area { fill: var(--paper-dim); stroke: none; }
+.rfig-down-line { fill: none; stroke: var(--ink-soft); stroke-width: 1.2; }
+.rfig-day { stroke: var(--rule-soft); stroke-width: 1; }
+.rfig-days {
+  display: grid;
+  grid-template-columns: repeat(var(--rfig-n, 7), minmax(0, 1fr));
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+.rfig-days li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.rfig-days span { min-height: 1.35em; line-height: 1.35; white-space: nowrap; }
+.rfig-up { color: var(--ink); }
+.rfig-down { color: var(--ink-soft); }
+.rfig-dn { color: var(--ink-mute); }
+.jroute-h {
+  margin: var(--space-5) 0 var(--space-2);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.cycle-bars { margin: var(--space-2) 0 var(--space-4); }
+.cycle-bars .rsurf + .rsurf { margin-top: var(--space-3); }

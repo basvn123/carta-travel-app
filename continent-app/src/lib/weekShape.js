@@ -194,12 +194,19 @@ function ascentM(s) {
   const pats = [
     new RegExp(`(?:\\+|↑|D\\+\\s*)\\s*${RANGE}\\s*m\\b`, 'i'),
     new RegExp(`${RANGE}\\s*m\\s*(?:of\\s+)?(?:ascent|climb|climbing|gain|up\\b|D\\+|vert|elevation gain)`, 'i'),
-    new RegExp(`km\\s*[,/]\\s*${RANGE}\\s*m\\b(?!\\s*(?:descent|altitude|high|asl|summit))`, 'i'),
+    // "12 km return, 1,470 m" and "14 km flat-ish, 350 m" put a word or two
+    // between the distance and the climb (T174); a digit or a place name
+    // after the comma still stops it ("6 km / Escaldes 1,100 m" is a height).
+    // "11 km descent, 700 m negative" names a drop, not a climb.
+    new RegExp(`km\\b(?![^,/\\d]{0,20}descen)[^,/\\d]{0,20}[,/]\\s*${RANGE}\\s*m\\b(?!\\s*(?:descent|down|negative|loss|altitude|high|asl|summit|of relief))`, 'i'),
+    // "14 km / +1,000 / -1,000 m" writes the unit only after the descent.
+    new RegExp(`\\+\\s*${RANGE}\\s*(?=\\/|$)`, 'i'),
   ];
   for (const p of pats) {
     const m = s.match(p);
     if (m) return mid(m);
   }
+  if (/negligible ascent|no ascent/i.test(s)) return 0;
   return null;
 }
 
@@ -293,6 +300,38 @@ export function dayEffort(day, typeSlug) {
   if (value == null || !Number.isFinite(value)) return { level: null, rest: false, value: null, unit: rule.unit };
   if (value === 0) return { level: 0, rest: true, value, unit: rule.unit };
   return { level: level(value, rule.cuts), rest: false, value, unit: rule.unit };
+}
+
+/* The climb and the drop of one day (T174, trips spec E3). The same readers
+   as the effort above, so the profile and the strip can never disagree on a
+   day's climb. Descent is only ever read where the line states it: a day that
+   names no descent returns null, never a guess from the climb. */
+
+function descentM(s) {
+  if (/negligible descent|no descent/i.test(s)) return 0;
+  const pats = [
+    new RegExp(`${RANGE}\\s*m\\s*(?:of\\s+)?(?:descent|down\\b|D-|loss|descending)`, 'i'),
+    new RegExp(`(?:−|↓|D-\\s*)\\s*${RANGE}\\s*m\\b`, 'i'),
+  ];
+  for (const p of pats) {
+    const m = s.match(p);
+    if (m) return mid(m);
+  }
+  return null;
+}
+
+/** { km, up, down, rest } for one day, each null where the line does not say. */
+export function dayRelief(day, typeSlug) {
+  const { rest } = dayEffort(day, typeSlug);
+  if (rest) return { km: 0, up: 0, down: 0, rest: true };
+  const stats = day?.dayStats;
+  if (stats && typeof stats === 'object') {
+    const n = (v) => (Number.isFinite(v) ? v : null);
+    return { km: n(stats.distanceKm), up: n(stats.ascentM), down: n(stats.descentM), rest: false };
+  }
+  const s = strip(stats);
+  if (!s) return { km: null, up: null, down: null, rest: false };
+  return { km: moveKm(s), up: ascentM(s), down: descentM(s), rest: false };
 }
 
 /** The whole strip: bases and effort, plus the counts the summary line says. */

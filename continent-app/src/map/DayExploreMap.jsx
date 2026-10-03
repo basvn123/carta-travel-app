@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
+import { keyablePin, clearKeyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, finitePts, declutterPins } from './coords.js';
 
@@ -100,6 +101,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     stayRef.current = new maplibregl.Marker({ element: el, anchor: 'bottom' })
       .setLngLat([stay.lon, stay.lat])
       .addTo(map);
+    nameMarker(el, '');
     map.jumpTo({ center: [stay.lon, stay.lat], zoom: 10.3 });
   }, [stay?.lat, stay?.lon]); // eslint-disable-line react-hooks/exhaustive-deps -- value key on the coordinates: only a move re-pins and recentres, never a new stay object or a label change
 
@@ -115,13 +117,16 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     });
   }, [flyTo?.k]); // eslint-disable-line react-hooks/exhaustive-deps -- request key: each ask bumps flyTo.k, so the same place asked twice still glides
 
-  // The pin only behaves as a button when there's a town to brief.
+  // The pin only behaves as a button when there's a town to brief, and then
+  // for the keyboard too (T190).
   useEffect(() => {
     const el = stayElRef.current;
     if (!el) return;
     el.classList.toggle('dem-stay-clickable', !!onStayClick);
+    if (onStayClick) keyablePin(el, stay?.label || 'Your stay', () => onStayClickRef.current?.());
+    else clearKeyablePin(el);
     el.classList.toggle('focused', !!stayFocused);
-  }, [onStayClick, stayFocused, stay?.lat, stay?.lon]);
+  }, [onStayClick, stayFocused, stay?.lat, stay?.lon, stay?.label]);
 
   // Rebuild pins when the visible marker set changes (filters, radius).
   const markerKey = markers.map((m) => m.id).join(';');
@@ -192,6 +197,8 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([m.lon, m.lat])
           .addTo(map);
+        nameMarker(el);
+        revealOnFocus(el, map, [m.lon, m.lat]);
         pinsRef.current.set(m.id, { marker, el, m });
       });
       sync();

@@ -80,6 +80,7 @@ import {
 } from './DayTripCards.jsx';
 import { MagicImportZone } from './MagicImportZone.jsx';
 import { toInboxItems } from './bookingImport.js';
+import { gripKeyHeight, gripValue } from './sheetGripKeys.js';
 
 // How the explore search & "Let Carta guide you" name each pin category.
 // i18n keys, resolved with t() at render time.
@@ -3933,6 +3934,19 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           role="separator"
           aria-label={t('dayws.gripAria')}
           title={t('dayws.gripTitle')}
+          // The keyboard half of the drag (T190, planner/sheetGripKeys.js).
+          tabIndex={isNarrow ? 0 : -1}
+          aria-orientation="horizontal"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={gripValue(sheetHeight ?? sheetPx)}
+          onKeyDown={isNarrow ? (e) => {
+            const next = gripKeyHeight(e, sheetRef.current);
+            if (next == null) return;
+            e.preventDefault();
+            setSheetHeight(next);
+            persistSheetHeight(next);
+          } : undefined}
         >
           <div className="trip-sheet-grip" />
         </div>

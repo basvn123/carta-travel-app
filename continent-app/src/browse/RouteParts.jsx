@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronRightIcon } from '../components/Icons.jsx';
+import { MixBar } from './RouteFigures.jsx';
 
 /**
  * The three things ROUTES.md R7 asks a route page for that neither
@@ -11,8 +12,6 @@ import { ChevronRightIcon } from '../components/Icons.jsx';
  * component renders NOTHING when its data is absent, so a wire published
  * before these keys existed simply shows the page it always showed.
  */
-
-const pct = (v) => `${Math.round(v * 100)}%`;
 
 // The order the bar stacks in, hardest ground last, with the unknown share
 // always at the end where it cannot be mistaken for a measurement.
@@ -26,33 +25,15 @@ const SURFACE_KEY = {
  * Surface as one stacked bar. `sf` is route_schema.surface_summary: five
  * shares that sum to 1, where `unknown` is the share of the line no mapper
  * has tagged. ROUTES.md is explicit that the unknown share stays visible:
- * hiding it would turn "nobody has said" into "it is fine".
+ * hiding it would turn "nobody has said" into "it is fine". The bar itself
+ * is the shared MixBar (RouteFigures.jsx), the same one a journey's surface
+ * split and the cycling page draw (T174).
  */
 export function SurfaceBar({ sf, t }) {
   if (!sf) return null;
   const parts = SURFACE_ORDER
-    .map((k) => [k, Number(sf[k]) || 0])
-    .filter(([, v]) => v > 0.005);
-  if (!parts.length) return null;
-  return (
-    <div className="rsurf" data-testid="route-surface">
-      <div className="rsurf-bar" role="img"
-        aria-label={parts.map(([k, v]) => `${t(SURFACE_KEY[k])} ${pct(v)}`).join(', ')}>
-        {parts.map(([k, v]) => (
-          <span key={k} className={`rsurf-seg is-${k}`} style={{ width: pct(v) }} />
-        ))}
-      </div>
-      <ul className="rsurf-keys">
-        {parts.map(([k, v]) => (
-          <li key={k}>
-            <span className={`rsurf-dot is-${k}`} aria-hidden="true" />
-            {t(SURFACE_KEY[k])}
-            <span className="mono">{pct(v)}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+    .map((k) => ({ key: k, tone: k, label: t(SURFACE_KEY[k]), share: Number(sf[k]) || 0 }));
+  return <MixBar parts={parts} testId="route-surface" />;
 }
 
 /**

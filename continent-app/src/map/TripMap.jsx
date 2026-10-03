@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
+import { keyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, declutterPins } from './coords.js';
 
@@ -558,9 +559,13 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           e.stopPropagation();
           onSelectRef.current?.(i);
         });
+        // A keyboard stop too (T190), named by its title, when someone is
+        // listening for the pick.
+        if (onSelectRef.current) keyablePin(el, el.title, () => onSelectRef.current?.(i), { map, lngLat: [p.lon, p.lat] });
         const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
           .setLngLat([p.lon, p.lat])
           .addTo(map);
+        nameMarker(el);
         return { marker, el, lngLat: [p.lon, p.lat] };
       });
       spreadStopPins();
@@ -739,6 +744,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           lngLat: [p.lon, p.lat],
           priority: 9,
         });
+        nameMarker(el);
         return;
       }
       // A selected pin ("show selected" mode) is a status, not a control:
@@ -762,6 +768,8 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         // Already in the plan > must-see > everything else.
         priority: p.sel ? 10 : p.must ? 8 : 4,
       });
+      nameMarker(el);
+      revealOnFocus(el, map, [p.lon, p.lat]);
     });
     // Filtering the deck rebuilds every pin without moving the map, so ask for
     // a collision pass: otherwise the new set draws all its labels at once and

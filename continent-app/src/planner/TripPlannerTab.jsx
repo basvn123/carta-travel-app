@@ -25,6 +25,7 @@ import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { fareProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
 import { cityLabel } from '../lib/placeName.js';
+import { gripKeyHeight, gripValue } from './sheetGripKeys.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 // One shared empty catalogue for the moments before data lands. A fresh `{}`
@@ -754,6 +755,20 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           role="separator"
           aria-label={t('trip.gripAria')}
           title={t('trip.gripTitle')}
+          // The keyboard half of the drag (T190, planner/sheetGripKeys.js).
+          // Only on a phone, where the sheet moves at all.
+          tabIndex={isNarrow ? 0 : -1}
+          aria-orientation="horizontal"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={gripValue(sheetHeight)}
+          onKeyDown={isNarrow ? (e) => {
+            const next = gripKeyHeight(e, sheetRef.current);
+            if (next == null) return;
+            e.preventDefault();
+            setSheetHeight(next);
+            persistHeight(next);
+          } : undefined}
         >
           <div className="trip-sheet-grip" />
         </div>
@@ -916,6 +931,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                           className={`trip-stop ${selectedStop === i ? 'active' : ''} ${dragIdx === i ? 'dragging' : ''}`}
                           ref={(el) => { stopRefs.current[i] = el; }}
                           onClick={() => setSelectedStop(i)}
+                          // The row has no button of its own to pick it with,
+                          // so focus reaching any control inside the row
+                          // picks it, the way a click on the row does (T190).
+                          onFocus={() => setSelectedStop(i)}
                           onDragOver={(e) => { if (dragIdx != null) e.preventDefault(); }}
                           onDrop={(e) => {
                             e.preventDefault();

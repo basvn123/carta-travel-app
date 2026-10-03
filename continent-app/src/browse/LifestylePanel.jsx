@@ -7,6 +7,7 @@ import {
 } from '../components/Icons.jsx';
 import { SLEEP_GROUPS, HOTEL_GRADES, sleepGroupOf } from '../lib/sleepGroups.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 /**
  * Lifestyle settings panel.
@@ -116,6 +117,13 @@ export function matchProfile(ls) {
 
 export function LifestylePanel({ choices, setChoices, onClose, data, side = 'left' }) {
   const { t } = useI18n();
+  // A dialog for the keyboard: focus moves in to the close button on open,
+  // Tab cycles inside, Escape closes, and focus goes back to the Lifestyle
+  // button that opened it. Before T190 focus stayed on that button, and Tab
+  // walked the Explore grid hidden behind the scrim, ringless.
+  const panelRef = React.useRef(null);
+  const closeRef = React.useRef(null);
+  useFocusTrap(panelRef, onClose, { initialFocusRef: closeRef });
   const ls = choices.lifestyle || {};
   const cadence = ls.cadence || 'week';
 
@@ -159,12 +167,18 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
   const maxFor = (key) => PERIOD_FIELDS.find((f) => f.key === key).max[cadence];
 
   return (
-    <div className={`accom-panel lifestyle-panel open${side === 'right' ? ' from-right' : ''}`}>
-      <button className="panel-close" onClick={onClose} aria-label={t('lifestyle.close')}>x</button>
+    <div
+      ref={panelRef}
+      className={`accom-panel lifestyle-panel open${side === 'right' ? ' from-right' : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lifestyle-title"
+    >
+      <button ref={closeRef} className="panel-close" onClick={onClose} aria-label={t('lifestyle.close')}>x</button>
 
       <div className="panel-header">
         <div className="panel-tag">{t('lifestyle.tag')}</div>
-        <h2 className="panel-city">{t('lifestyle.title')}</h2>
+        <h2 className="panel-city" id="lifestyle-title">{t('lifestyle.title')}</h2>
         <p className="lifestyle-sub">{t('lifestyle.sub')}</p>
       </div>
 
@@ -247,8 +261,8 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
         {tuned && (
           <div className="ls-tune">
             <div className="panel-segment lifestyle-cadence">
-              <button className={cadence === 'week' ? 'seg-on' : ''} onClick={() => setCadence('week')}>{t('lifestyle.perWeek')}</button>
-              <button className={cadence === 'day' ? 'seg-on' : ''} onClick={() => setCadence('day')}>{t('lifestyle.perDay')}</button>
+              <button className={cadence === 'week' ? 'seg-on' : ''} aria-pressed={cadence === 'week'} onClick={() => setCadence('week')}>{t('lifestyle.perWeek')}</button>
+              <button className={cadence === 'day' ? 'seg-on' : ''} aria-pressed={cadence === 'day'} onClick={() => setCadence('day')}>{t('lifestyle.perDay')}</button>
             </div>
             <Stepper label={t('lifestyle.dinnersOut')} value={ls.dinners_per_week ?? 0}
               onChange={(v) => setLs({ dinners_per_week: v })} min={0} max={maxFor('dinners_per_week')} />
@@ -283,7 +297,7 @@ function Stepper({ label, value, onChange, min, max, hint }) {
       </div>
       <div className="stepper-controls">
         <button onClick={dec} disabled={value <= min} aria-label={t('lifestyle.decrease', { label })}>-</button>
-        <span className="stepper-value">{value}</span>
+        <span className="stepper-value" aria-live="polite">{value}</span>
         <button onClick={inc} disabled={value >= max} aria-label={t('lifestyle.increase', { label })}>+</button>
       </div>
     </div>

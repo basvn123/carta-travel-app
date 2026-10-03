@@ -14,13 +14,16 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { Fold } from './Fold.jsx';
 import { PackGrid } from './PackGrid.jsx';
 import { NotFor } from '../components/NotFor.jsx';
+import { dataSheetRows } from '../lib/dataSheet.js';
 import { notForLines } from '../lib/notFor.js';
 import { BookingOrder } from './BookingOrder.jsx';
 import { WeekPlan } from './WeekPlan.jsx';
+import { JourneyRoute } from './JourneyRoute.jsx';
 import { bookingOrder, bookingSource } from '../lib/bookingOrder.js';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { DifficultyMeter, GatewayList } from '../components/FactMeter.jsx';
 import { parseGateway } from '../lib/gateway.js';
+import { railAlternative } from '../lib/railAlternative.js';
 import { useFolds } from './useFolds.js';
 import {
   ArrowLeftIcon, MapPinIcon, ChevronRightIcon, CameraIcon, AlertIcon,
@@ -57,7 +60,7 @@ import {
 const fmtCoord = (n) => (Number.isFinite(n) ? n.toFixed(4) : '');
 
 /** What opens on arrival: the sections you travel with. */
-const OPEN_BY_DEFAULT = ['facts', 'budget', 'itin', 'sleep'];
+const OPEN_BY_DEFAULT = ['facts', 'route', 'budget', 'itin', 'sleep'];
 
 /** Authored prose with its **bold** markers honoured, never as HTML. */
 function Prose({ text, className = 'bpage-prose' }) {
@@ -346,20 +349,6 @@ const LOG_ICONS = {
   weather: CloudIcon, health: HeartIcon, emergency: AlertIcon,
 };
 
-// typeSpecific slot -> label key. Only non-null slots render, so a cycling
-// week shows surface and distance and a ski week shows lifts and snow.
-const SPEC_SLOTS = [
-  ['surface', 'journey.specSurface'],
-  ['technicalRating', 'journey.specTechnical'],
-  ['transitPass', 'journey.specTransit'],
-  ['hutBooking', 'journey.specHut'],
-  ['liftNetwork', 'journey.specLift'],
-  ['snowReliability', 'journey.specSnow'],
-  ['windConditions', 'journey.specWind'],
-  ['bookingTimeline', 'journey.specBooking'],
-  ['audience', 'journey.specAudience'],
-];
-
 const BUDGET_ROWS = [
   ['accommodation', 'journey.bAccommodation'],
   ['food', 'journey.bFood'],
@@ -367,7 +356,7 @@ const BUDGET_ROWS = [
   ['activities', 'journey.bActivities'],
 ];
 
-export function JourneyPage({ id, gatewayDest, onClose, onSelectDest, onOpenJourney }) {
+export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelectDest, onOpenJourney }) {
   const { t, lang } = useI18n();
   const [trip, setTrip] = useState(undefined);   // undefined = loading
   const { isOpen, toggle } = useFolds(OPEN_BY_DEFAULT, id);
@@ -409,6 +398,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest, onOpenJour
 
   const ledger = useMemo(() => figureLedger(trip), [trip]);
   const hook = useMemo(() => hookLine(trip), [trip]);
+  const rail = useMemo(() => railAlternative(railFrom, trip), [railFrom, trip]);
   const detail = useMemo(() => humanDetail(trip), [trip]);
   const exits = useMemo(() => {
     if (!trip || !library?.length) return [];
@@ -554,10 +544,8 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest, onOpenJour
   const bookSource = bookingSource(trip);
   const bookSteps = bookSource ? bookingOrder(bookSource).steps.length > 0 : false;
   const BOOK_SLOTS = ['bookingWindows', 'bookingTimeline', 'hutBooking'];
-  const specRows = SPEC_SLOTS
-    .filter(([slot]) => !(bookSteps && BOOK_SLOTS.includes(slot)))
-    .map(([slot, key]) => (spec[slot] ? { slot, key, value: spec[slot] } : null))
-    .filter(Boolean);
+  // The data sheet reorders itself by trip type (T175, spec E5).
+  const specRows = dataSheetRows(trip, { skip: bookSteps ? BOOK_SLOTS : [] });
   const logRows = LOG_SLOTS
     .filter(([slot]) => !(bookSteps && BOOK_SLOTS.includes(slot)))
     .map(([slot, key]) => (trip.logistics?.[slot]
@@ -712,6 +700,10 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest, onOpenJour
             </Fold>
           )}
 
+          {/* The climb day by day and, on a ride, the surface and traffic
+              (T174): drawn with the trail and cycling pages' components. */}
+          <JourneyRoute trip={trip} t={t} open={isOpen('route')} onToggle={() => toggle('route')} />
+
           {budget.breakdown && (
             <Fold
               id="sec-budget"
@@ -751,6 +743,20 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest, onOpenJour
               <p className="bpage-note">
                 {budget.totalNote || t('journey.fBudgetNote')}
               </p>
+              {rail && (
+                <div className="jpage-rail">
+                  <span className="jpage-rail-label">{t('journey.railLabel')}</span>
+                  <p className="jpage-rail-line">
+                    {t('journey.railLine', {
+                      eur: new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(rail.eurPp),
+                      time: minutesText(Math.round(rail.hours * 60)),
+                      from: rail.from,
+                    })}
+                    {rail.est && <EstMark t={t} />}
+                  </p>
+                  <p className="bpage-note">{t('journey.railNote')}</p>
+                </div>
+              )}
             </Fold>
           )}
 
@@ -764,10 +770,25 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest, onOpenJour
               className="jpage-spec"
             >
               <dl>
-                {specRows.map((row) => (
-                  <div key={row.slot} className="bpage-fact">
-                    <dt>{t(row.key)}</dt>
-                    <dd>{row.value}</dd>
+                {specRows.map((row, i) => (
+                  <div key={row.field} className={`bpage-fact dsheet-row${i < 3 ? ' dsheet-lead' : ''}`}>
+                    <dt>{t(row.labelKey)}</dt>
+                    <dd className={row.kind === 'num' || row.kind === 'eur' ? 'mono' : ''}>
+                      {row.kind === 'num' && (
+                        <>
+                          {new Intl.NumberFormat(lang).format(row.value)} {row.unit}
+                          {row.perDay > 0 && <small>{t('journey.dsPerDay', { n: row.perDay })}</small>}
+                        </>
+                      )}
+                      {row.kind === 'eur' && (
+                        <>
+                          {eurRange({ low: row.low, high: row.high }, lang)}
+                          <small>{t('journey.dsFoodNote')}</small>
+                        </>
+                      )}
+                      {row.kind === 'months' && <MonthStrip good={row.good} avoid={row.avoid} />}
+                      {row.kind === 'text' && row.value}
+                    </dd>
                   </div>
                 ))}
               </dl>

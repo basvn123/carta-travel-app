@@ -19,6 +19,7 @@ import { notForLines } from '../lib/notFor.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import CreditFold from './CreditFold.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
+import { ElevationChart, MixBar, TrafficBar } from './RouteFigures.jsx';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
 } from '../components/Icons.jsx';
@@ -181,38 +182,31 @@ function useRouteMap(mapEl, geometry, bbox) {
   }, [geometry, bbox]);
 }
 
-/** The elevation profile, the same instrument chart the trail page draws. */
-function ElevationChart({ elevation, t }) {
-  const profile = elevation && elevation.profile;
-  if (!Array.isArray(profile) || profile.length < 2) return null;
-  const W = 320; const H = 84; const PAD = 2;
-  const dMax = profile[profile.length - 1][0] || 1;
-  let eMin = elevation.ele_min_m;
-  let eMax = elevation.ele_max_m;
-  if (!Number.isFinite(eMin) || !Number.isFinite(eMax)) {
-    eMin = Infinity; eMax = -Infinity;
-    for (const p of profile) {
-      if (p[1] < eMin) eMin = p[1];
-      if (p[1] > eMax) eMax = p[1];
-    }
-  }
-  const span = Math.max(1, eMax - eMin);
-  const x = (d) => PAD + Math.min(1, d / dMax) * (W - 2 * PAD);
-  const y = (e) => H - PAD - ((e - eMin) / span) * (H - 2 * PAD);
-  const pts = profile.map(([d, e]) => `${x(d).toFixed(1)},${y(e).toFixed(1)}`);
-  return (
-    <div className="tpage-elev cycle-elev" data-testid="cycle-elev">
-      <svg viewBox={`0 0 ${W} ${H}`} className="tpage-elev-svg" role="img"
-        aria-label={t('cycle.elevTitle')} preserveAspectRatio="none">
-        <polyline points={`${PAD},${H - PAD} ${pts.join(' ')} ${W - PAD},${H - PAD}`} className="tpage-elev-area" />
-        <polyline points={pts.join(' ')} className="tpage-elev-line" vectorEffect="non-scaling-stroke" />
-      </svg>
-      <div className="tpage-elev-axis">
-        <span>{Math.round(eMin)} m</span>
-        <span>{Math.round(eMax)} m {t('cycle.elevMax')}</span>
-      </div>
-    </div>
-  );
+/**
+ * The wire's surface block as MixBar parts. paved_share is measured over the
+ * tagged length only, so it is scaled by surface_known_share and the rest of
+ * the line is the unknown share, never stretched paved or unpaved. Below a
+ * quarter known, surfaceLine already says the surface is not recorded, and
+ * the bar stays away for the same reason.
+ */
+function surfaceParts(surface, t) {
+  const known = surface?.surface_known_share;
+  const paved = surface?.paved_share;
+  if (!Number.isFinite(known) || !Number.isFinite(paved) || known < 0.25) return null;
+  return [
+    { key: 'paved', tone: 'paved', label: t('route.surfPaved'), share: paved * known },
+    { key: 'unpaved', tone: 'gravel', label: t('route.surfUnpaved'), share: (1 - paved) * known },
+    { key: 'unknown', tone: 'unknown', label: t('route.surfUnknown'), share: 1 - known },
+  ];
+}
+
+/** traffic_free_share is measured over the length with a highway tag, the
+ *  same scaling as the surface. */
+function trafficParts(surface) {
+  const free = surface?.traffic_free_share;
+  const known = surface?.highway_known_share;
+  if (!Number.isFinite(free) || !Number.isFinite(known) || known < 0.33) return null;
+  return { free: free * known, shared: (1 - free) * known, unknown: 1 - known };
 }
 
 /**
@@ -610,7 +604,8 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               && carta.elevation.profile.length > 1 && (
               <>
                 <h2>{t('cycle.elevTitle')}</h2>
-                <ElevationChart elevation={carta.elevation} t={t} />
+                <ElevationChart elevation={carta.elevation} label={t('cycle.elevTitle')} maxLabel={t('cycle.elevMax')}
+                  className="cycle-elev" testId="cycle-elev" />
               </>
             )}
 
@@ -624,6 +619,14 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             )}
 
             <h2>{t('cycle.safetyTitle')}</h2>
+            {/* The surface and the traffic as bars, from the same block the
+                sentences below read (T174, destinations spec C6). */}
+            {(surfaceParts(carta.surface, t) || trafficParts(carta.surface)) && (
+              <div className="cycle-bars">
+                <MixBar parts={surfaceParts(carta.surface, t)} testId="cycle-surface-bar" />
+                <TrafficBar split={trafficParts(carta.surface)} t={t} testId="cycle-traffic-bar" />
+              </div>
+            )}
             <p className="cycle-surface" data-testid="cycle-surface">
               {surfaceLine(carta.surface, t)}
             </p>

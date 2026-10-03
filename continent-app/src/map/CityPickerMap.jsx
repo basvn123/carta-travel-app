@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
+import { nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, keepFitted } from './coords.js';
 
@@ -106,6 +107,9 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([c.lon, c.lat])
           .addTo(map);
+        // Named by its own text (city, then its tier line), not "Map marker".
+        nameMarker(el);
+        revealOnFocus(el, map, [c.lon, c.lat]);
         pinsRef.current.set(c.id, { marker, el, label, meta });
       });
       fitRef.current = null;

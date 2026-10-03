@@ -3,6 +3,7 @@ import { knownFor } from '../lib/knownFor.js';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { CrowdingBadge, crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { ClimateStrip, MONTHS_SHORT, fmtMonthRanges } from './ClimateStrip.jsx';
+import { claimShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CostReceipt } from '../components/CostSummary.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
@@ -165,7 +166,10 @@ function tipText(tip, t) {
   return t(`tip.${tip.code}`, args);
 }
 
-function GalleryStrip({ gallery, city, iso2, fallbackUrl }) {
+function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
+  // The first photograph takes the card photograph's name (G2), so the card's
+  // picture grows into this one instead of the page appearing from nothing.
+  const claimRef = React.useCallback((el) => claimShared(el, destId), [destId]);
   const scroller = React.useRef(null);
   const [idx, setIdx] = React.useState(0);
   const [failed, setFailed] = React.useState(() => new Set());
@@ -199,6 +203,7 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl }) {
         {imgs.map((g, i) => (
           <figure className="destp-slide" key={g.url}>
             <img
+              ref={i === 0 ? claimRef : undefined}
               src={g.url}
               alt={g.caption || ''}
               loading={i === 0 ? 'eager' : 'lazy'}
@@ -506,7 +511,14 @@ export function DestinationPage({
       <nav className="destp-subnav" aria-label={t('dest.subnavAria')}>
         <div className="destp-subnav-scroll">
           {navItems.map(([id, key]) => (
-            <button key={id} type="button" onClick={() => jumpTo(id)}>{t(key)}</button>
+            <button
+              key={id}
+              type="button"
+              onClick={() => jumpTo(id)}
+              // Chrome left a half-visible pill under "Expand all" when Tab
+              // reached it; bring it fully into the strip (T190).
+              onFocus={(e) => e.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })}
+            >{t(key)}</button>
           ))}
         </div>
         <button type="button" className="destp-subnav-all" onClick={() => setAllOpen(allIds, !allOpen)}>
@@ -520,6 +532,7 @@ export function DestinationPage({
           city={city}
           iso2={destination.iso2}
           fallbackUrl={destination.image?.url}
+          destId={destination.id}
         />
 
         <div className="destp-head">
@@ -641,12 +654,30 @@ export function DestinationPage({
                 open={isOpen('highlights')}
                 onToggle={() => toggle('highlights')}
                 aside={layerChoices.length > 1 && (
-                  <div className="destp-layers" role="tablist" aria-label={t('dest.mapTitle')}>
+                  // A tablist behaves like one (T190): one tab stop, the
+                  // arrows move between layers and switch as they go, Home
+                  // and End jump to the ends.
+                  <div
+                    className="destp-layers"
+                    role="tablist"
+                    aria-label={t('dest.mapTitle')}
+                    onKeyDown={(e) => {
+                      const n = layerChoices.length;
+                      const i = Math.max(0, layerChoices.findIndex((c) => c.key === effectiveLayer));
+                      const j = { ArrowRight: (i + 1) % n, ArrowDown: (i + 1) % n,
+                        ArrowLeft: (i - 1 + n) % n, ArrowUp: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
+                      if (j == null) return;
+                      e.preventDefault();
+                      setMapLayer(layerChoices[j].key);
+                      e.currentTarget.querySelectorAll('[role="tab"]')[j]?.focus();
+                    }}
+                  >
                     {layerChoices.map((c) => (
                       <button
                         key={c.key}
                         type="button"
                         role="tab"
+                        tabIndex={effectiveLayer === c.key ? 0 : -1}
                         aria-selected={effectiveLayer === c.key}
                         className={`destp-layer ${effectiveLayer === c.key ? 'on' : ''}`}
                         onClick={() => setMapLayer(c.key)}

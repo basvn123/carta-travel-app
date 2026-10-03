@@ -23,6 +23,7 @@ import { useFolds } from './useFolds.js';
 import { TripPractical } from './TripPractical.jsx';
 import { TripDayPhotos } from './TripDayPhotos.jsx';
 import { dayShots } from './dayShots.js';
+import { claimShared } from '../lib/sharedElement.js';
 import {
   tripHeadline, transportLabel, seasonLabel, tripWhy, tripWarnings,
   dayTitle, legLine, themeLabel, cardThumb, countryNames,
@@ -392,6 +393,7 @@ export function TripPage({
         <div className="itin-photohero">
           {hero ? (
             <img
+              ref={(el) => claimShared(el, card.id)}
               className="itin-photohero-img"
               src={fallbackSrc(hero.url, 1280)}
               srcSet={srcSetFor(hero.url, 1280)}

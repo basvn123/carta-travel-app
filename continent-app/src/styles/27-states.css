@@ -34,3 +34,20 @@
 /* A control that is waiting says so by breathing, not by turning. */
 .state-pulse { display: inline-flex; animation: state-skel-breathe 1.6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .state-pulse { animation: none; } }
+
+/* G2: the card photograph grows into the page header. The browser draws the
+   morph; this only sets how long it takes and removes it for reduced motion. */
+::view-transition-group(carta-shared-hero) {
+  animation-duration: 260ms;
+  animation-timing-function: ease-out;
+}
+::view-transition-old(carta-shared-hero),
+::view-transition-new(carta-shared-hero) {
+  height: 100%;
+  object-fit: cover;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
