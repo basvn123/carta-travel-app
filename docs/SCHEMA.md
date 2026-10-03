@@ -855,9 +855,9 @@ here yet.
 | `member_model` | meta | required | not yet described |
 | `origin_coverage` | meta | required | not yet described |
 | `place_model` | meta | required | not yet described |
-| `rating_model` | meta | required | not yet described |
+| `rating_model` | meta | required | Schema v14 section 1 |
 | `stay_tiers_available` | meta | required | not yet described |
-| `tourist_premium_model` | meta | required | not yet described |
+| `tourist_premium_model` | meta | required | Schema v14 section 3 |
 | `id` | destination | every | app_data.json block; the record's key |
 | `tier` | destination | every | app_data.json block |
 | `iata` | destination | every | app_data.json block |
@@ -891,10 +891,10 @@ here yet.
 | `driving_toll` | destination | some | Schema v14 section 2 |
 | `bathing_water` | destination | some | Schema v16 |
 | `crowding` | destination | some | Schema v17 |
-| `geonames` | destination | some | not yet described (population and settlement, `harvest_geonames.py`) |
+| `geonames` | destination | some | Schema v14 section 4b (`geonames.population`) |
 | `designations` | destination | some | not yet described (heritage and award registries, `apply_designations.py`) |
 | `nature` | destination | some | not yet described (nearest protected area, `harvest_protected_areas_osm.py`) |
 | `guide` | destination | some | not yet described (Wikivoyage lead and link, `apply_wikivoyage.py`) |
 | `members` | destination | some | not yet described (towns grouped under this one, `member_layer.py`) |
-| `wikidata` | destination | some | not yet described (QID, sitelinks, heritage flags) |
-| `anchor_estimated` | destination | some | not yet described (`apply_airport_anchors.py`) |
+| `wikidata` | destination | some | Schema v15 section 2 |
+| `anchor_estimated` | destination | some | Flight data provenance (auto-anchored destinations) |
