@@ -790,3 +790,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T171-a | T171 | Only the first cycling trip was opened in a browser; the dev server crashes the page, so any further visual check needs a build and preview | next task | open |  |
 | T171-b | T171 | Only 81 of 253 hook lines contain a number; a content pass could rewrite hooks as number-led sentences | next task | open |  |
 | T171-c | T171 | Exits cannot match by region because the wire cards carry no region key; add one in build_wire.py if country is too coarse | next task | open |  |
+| T185-a | T185 | A day card has no photograph to expand into the full map (days are picked from a sheet); the day half of G2 needs a decision on what the day card shows | user | open |  |
+| T185-b | T185 | Closing a destination or trip page does not reverse the photo morph; a second named element would be needed | next task | open |  |
