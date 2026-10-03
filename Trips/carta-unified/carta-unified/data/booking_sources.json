@@ -1,0 +1,470 @@
+{
+  "at-cycling-donauradweg-wachau": {
+    "sources": [
+      {
+        "url": "https://www.radlobby.at/radmitnahme-in-zuegen",
+        "supports": "Fernverkehr: bike reservation mandatory (online or app); Nahverkehr R, S, REX, CJX: no reservation needed, space-dependent. No advance deadline stated."
+      }
+    ]
+  },
+  "be-cycling-vennbahn-ardennes": {
+    "sources": [
+      {
+        "url": "https://www.bahn.de/angebot/zusatzticket/fahrrad",
+        "supports": "Long-distance: 'Sie koennen im Fernverkehr bereits ab 6 Monaten vor Reisebeginn buchen'; bike ticket plus space reservation compulsory; spaces fill quickly on summer peak weekends."
+      },
+      {
+        "url": "https://www.bahn.de/faq/pk/angebot/regionale-angebote/sitzplatzreservierung",
+        "supports": "'Nein, wir bieten keine Stellplatzreservierungen fuer Fahrraeder im Nahverkehr an' (no bike space reservations in regional transport)."
+      }
+    ]
+  },
+  "cz-cycling-south-bohemia-ponds": {
+    "sources": [
+      {
+        "url": "https://www.ceskedrahy.cz/en/press-center/press-releases/ceske-drahy-has-launched-advance-sales-tickets-2026-timetable",
+        "supports": "advance sales and seat reservations are possible up to 180 days before the planned journey (about 6 months)"
+      },
+      {
+        "url": "https://www.cd.cz/en/eshop/jizdni-kola/default.htm",
+        "supports": "ticket bought in the e-shop includes a reservation for you and your bike (no longer lead time stated)"
+      },
+      {
+        "url": "https://www.zamek-ceskykrumlov.cz/en/visitors-information/tours/1069-baroque-castle-theatre-in-cesky-krumlov",
+        "supports": "reservation needed, max 20 people per tour; no lead time stated"
+      }
+    ]
+  },
+  "de-cycling-bodensee-radweg": {
+    "sources": [
+      {
+        "url": "https://pressefoyer.at/de/aktuelles/vorverkauf-fuer-die-saison-2026/",
+        "supports": "Presale for the 2026 season begins on 29 September 2025 (late September the year before)."
+      },
+      {
+        "url": "https://bregenzerfestspiele.com/de/karten-besuch/haeufige-fragen",
+        "supports": "Recommends booking early for popular events; presale info appears from season end."
+      },
+      {
+        "url": "https://www.der-katamaran.de/die-katamarane/kat-bike.html",
+        "supports": "Catamaran carries a maximum of 10 bikes; use off-peak times early morning or early afternoon. No lead time stated."
+      }
+    ]
+  },
+  "fr-cycling-alsace-vineyard-route": {
+    "sources": [
+      {
+        "url": "https://www.echoduvelo.com/guides/transport-velo-train-tgv-ter/",
+        "supports": "TGV inOui: 'L'ouverture des ventes a lieu 4 mois avant la date de depart'; bike booked with the passenger ticket; TER: 'aucune reservation prealable, le seul billet voyageur suffit'"
+      }
+    ]
+  },
+  "nl-cycling-green-heart-waterline": {
+    "sources": [
+      {
+        "url": "https://www.rietveldschroderhuis.nl/en/about/contact",
+        "supports": "Tickets are only available for the next two months; time slot booking mandatory"
+      },
+      {
+        "url": "https://www.staatsbosbeheer.nl/uit-in-de-natuur/locaties/fort-bij-rijnauwen/activiteiten",
+        "supports": "Limited number of guided tours April through October; search result for the Staatsbosbeheer visitor page stated advance registration is mandatory and weekly tours run 1 April to 30 September"
+      }
+    ]
+  },
+  "nl-cycling-wadden-frisian-dikes": {
+    "sources": [
+      {
+        "url": "https://www.wpd.nl/veelgestelde-vragen/passagiers",
+        "supports": "Bicycles must be reserved ('Deze zal je nu wel moeten reserveren'); no lead time stated, so none given."
+      }
+    ]
+  },
+  "ch-trail-running-engadin-ridges": {
+    "sources": [
+      {
+        "url": "https://booking.engadin.ch/de/experiences/hotel--bergbahnen-inklusive",
+        "supports": "mountain railway ticket included 'ab der zweiten Uebernachtung' at participating hotels, valid 1 May to 31 October 2026, no separate application"
+      }
+    ]
+  },
+  "de-trail-running-berchtesgaden": {
+    "sources": [
+      {
+        "url": "https://www.alpenverein-muenchen-oberland.de/huetten/alpenvereinshuetten/watzmannhaus",
+        "supports": "Reservierungen fuer 2027 sind ab Mitte Dezember moeglich; overnight stays reserved online only"
+      },
+      {
+        "url": "https://www.das-kehlsteinhaus.de/preise-eintritt/",
+        "supports": "No ticket or reservation needed for the Kehlsteinhaus itself; reserve a bus ticket because places fill at popular times (no lead time stated)"
+      }
+    ]
+  },
+  "fr-trail-running-mercantour-vesubie": {
+    "sources": [
+      {
+        "url": "https://www.vallee-merveilles.com/preparez-votre-visite/",
+        "supports": "Online booking recommended; tickets also sold on site while places remain; no lead time stated."
+      },
+      {
+        "url": "https://refugedesmerveilles.ffcam.fr/FR_bons-plans.html",
+        "supports": "Guided visit departures 8h and 13h30; refuge 'De mi-juin a fin octobre : reservation en ligne uniquement'."
+      },
+      {
+        "url": "https://chaletmadonedefenestre.ffcam.fr/faq-reservation.html",
+        "supports": "'Du 1er juin au 30 septembre. Reservation uniquement en ligne.'"
+      }
+    ]
+  },
+  "li-trail-running-fuerstensteig-drei-schwestern": {
+    "sources": [
+      {
+        "url": "https://www.alpenverein.li/huetten/pfaelzerhuette-2108m",
+        "supports": "booking through the Hut Reservation online system; no lead time stated; cash only"
+      },
+      {
+        "url": "https://www.alpenverein.li/huetten/gafadurahuette-1428m",
+        "supports": "overnight reservations by email, state half board or breakfast only; no lead time stated; cash only"
+      }
+    ]
+  },
+  "de-city-berlin-neighbourhoods": {
+    "sources": [
+      {
+        "url": "https://www.bundestag.de/en/visittheBundestag/dome/registration-245686",
+        "supports": "Prior registration is required; in-person registration must be issued a minimum of two hours before the visit. Page gives no online lead time."
+      }
+    ]
+  },
+  "lu-city-ville-fortress": {
+    "sources": [
+      {
+        "url": "https://www.luxembourg-city.com/en/place/iconic-buildings/grand-ducal-palace",
+        "supports": "All tours for summer 2026 sold out; ticket sales reopen in spring/summer 2027 on website and at tourist office reception, Place Guillaume II; tours summer months only"
+      }
+    ]
+  },
+  "nl-city-amsterdam-canal-belt": {
+    "sources": [
+      {
+        "url": "https://www.annefrank.org/en/museum/tickets/",
+        "supports": "Every Tuesday at 10am CEST all tickets become available for a visit six weeks later"
+      },
+      {
+        "url": "https://amsterdam-explorer.com/pre-booking-museums/",
+        "supports": "Van Gogh Museum: book 3-6 weeks ahead, online only, sells out weeks ahead March-October; Rijksmuseum: at least 2-3 days ahead (third-party guide)"
+      }
+    ]
+  },
+  "at-cozy-towns-salzkammergut": {
+    "sources": [
+      {
+        "url": "https://www.5schaetze.at/en/schafbergbahn/prices-and-timetables.html",
+        "supports": "Operates 25 April to 1 November 2026, tickets online or at offices; no lead time stated."
+      }
+    ]
+  },
+  "be-cozy-towns-bruges-damme-veurne": {
+    "sources": [
+      {
+        "url": "https://www.visitbruges.be/en/things-to-do/culture-and-heritage/belfort-belfry",
+        "supports": "'recommended to book a time slot in advance'; approx 15 to 25 visitors may begin climbing every 20 minutes; Musea Brugge Card holders should also pre-book. No numeric lead time stated"
+      }
+    ]
+  },
+  "ch-cozy-towns-appenzell": {
+    "sources": [
+      {
+        "url": "https://www.appenzell.ch/en/culture-traditions/customs-and-traditions/landsgemeinde-cantonal-assembly.html",
+        "supports": "Event on the last Sunday in April; visitors advised to contact the tourist office well in advance (no figure stated)."
+      }
+    ]
+  },
+  "cz-cozy-towns-south-bohemia-telc": {
+    "sources": [
+      {
+        "url": "https://www.zamek-ceskykrumlov.cz/en/visitors-information/tours/1069-baroque-castle-theatre-in-cesky-krumlov",
+        "supports": "Group reservation needed; max 20 people per tour; no lead time stated (page listed Sept 21 to Oct 31 departures; May to October season is from a search result)"
+      },
+      {
+        "url": "https://www.zamek-telc.cz/cs/informace-pro-navstevniky/rezervace",
+        "supports": "Reservations free; arrive 10 minutes before tour; foreign-language guide on request; no lead time stated"
+      }
+    ]
+  },
+  "de-cozy-towns-mosel-villages": {
+    "sources": [
+      {
+        "url": "https://reichsburg-cochem.de/faq-items/where-can-i-buy-tickets-for-the-guided-tour/?lang=en",
+        "supports": "'Tickets for the regular castle tour are only available on site in the castle souvenir shop.'"
+      }
+    ]
+  },
+  "fr-cozy-towns-alsace-villages": {
+    "sources": [
+      {
+        "url": "https://www.grapeguru.de/en/knowledge/wine-travel-guides/elsass",
+        "supports": "renowned family estates by appointment only; cooperatives need no advance booking; leading estates close for weeks in August (no lead time stated)"
+      },
+      {
+        "url": "https://www.trimbach.fr/en/contact",
+        "supports": "Trimbach: tasting by appointment"
+      }
+    ]
+  },
+  "fr-cozy-towns-dordogne-perigord": {
+    "sources": [
+      {
+        "url": "https://lascauxiv.com/visitor-guide/",
+        "supports": "Popular slots in July and August and school holidays sell out, sometimes days ahead."
+      },
+      {
+        "url": "https://lascaux.fr/en/questions/",
+        "supports": "Recommends booking in advance; office tickets subject to availability."
+      }
+    ]
+  },
+  "lu-cozy-towns-little-switzerland": {
+    "sources": [
+      {
+        "url": "https://castle-vianden.lu/gb/besuch/",
+        "supports": "'A reservation in advance is not necessary'; guided tour requires contacting castle administration by mail; no guided tours during medieval festival 25 July to 2 August 2026. No numeric lead time"
+      }
+    ]
+  },
+  "at-road-trip-grossglockner-tyrol": {
+    "sources": [
+      {
+        "url": "https://heiligenblut.at/en/grossglockner-hochalpenstrasse/",
+        "supports": "Day ticket valid for an entire calendar day with exit and re-entry free; later trips same calendar year discounted on presenting original ticket linked to plate; road open April through early November; advance tickets optional at Heiligenblut"
+      }
+    ]
+  },
+  "ch-road-trip-bernina-gotthard-ticino": {
+    "sources": [
+      {
+        "url": "https://www.trekking.ch/bungy?lang=en",
+        "supports": "Booking in advance 'highly recommended'; online booking platform recommended; groups of 5+ register via form or phone. No numeric lead time stated."
+      }
+    ]
+  },
+  "ch-road-trip-passes-furka": {
+    "sources": [
+      {
+        "url": "https://www.grimselwelt.ch/en/railways/gelmerbahn/",
+        "supports": "online booking in advance strongly recommended; 24 people per trip; quickly fully booked in good weather; no ticket sales point at the mountain station; no lead time stated"
+      },
+      {
+        "url": "https://www.dfb.ch/en/pages/dampfbahnfahrten-furka-bergstrecke",
+        "supports": "seat reservation is part of the steam train offer; no lead time stated"
+      }
+    ]
+  },
+  "cz-road-trip-bohemia-castles-spas": {
+    "sources": [
+      {
+        "url": "https://www.sedlec.info/en/",
+        "supports": "Tickets must be purchased in advance for a specific date and time; no lead time stated."
+      },
+      {
+        "url": "https://www.zamek-becov.cz/en/visitors-information/tours/1581-the-st-maurus-s-shrine",
+        "supports": "Reservations required only for groups of more than 15; individuals buy online or at the ticket office."
+      },
+      {
+        "url": "https://www.en.hrensko.net/gorges-opening-hours-and-prices/",
+        "supports": "Boat tickets bought on site; online sales not yet available (search summary: tickets only on the day of visit)."
+      }
+    ]
+  },
+  "de-road-trip-black-forest-b500": {
+    "sources": [
+      {
+        "url": "https://www.triberg.de/tourismus-freizeit",
+        "supports": "tickets can be bought in advance at shop.triberg.de to bypass the queue at the waterfall entrance. No numeric lead time"
+      }
+    ]
+  },
+  "fr-road-trip-route-des-grandes-alpes": {
+    "sources": [
+      {
+        "url": "https://en.routedesgrandesalpes.com/practical/when-leave",
+        "supports": "Most passes open end May; Iseran, Galibier, Izoard only from mid-June, or even from 20 June with significant snow. Page states no accommodation lead times."
+      }
+    ]
+  },
+  "nl-road-trip-delta-afsluitdijk": {
+    "sources": [
+      {
+        "url": "https://www.rijkswaterstaat.nl/nieuws/archief/2026/09/functioneringssluiting-maeslantkering-12-september-2026",
+        "supports": "Test on 12 September 2026, grounds open 11:00-18:00, tours paid and to be reserved in advance; no lead time stated."
+      },
+      {
+        "url": "https://www.woudagemaal.nl/stoomgemaal-lemmer",
+        "supports": "Steam days occur on average twice a year; newsletter gives dates."
+      }
+    ]
+  },
+  "no-road-trip-lofoten-e10-fishing-villages-arctic-light": {
+    "sources": [
+      {
+        "url": "https://guidetolofoten.com/ferry-bodo-moskenes/",
+        "supports": "'booking for reserved spots must be made before 20:00 on the day before departure'; 'Only 50% of the ferry's capacity is open for pre-booking'; strongly advises prebooking at any time of year. No longer lead time stated"
+      }
+    ]
+  },
+  "cz-hiking-bohemian-switzerland": {
+    "sources": [
+      {
+        "url": "https://pbrana.cz/",
+        "supports": "Skip the line and save with online booking; season opening hours (no lead time stated)"
+      },
+      {
+        "url": "https://www.hrensko.cz/inpage/edmundova-souteska/",
+        "supports": "Boat rides are not booked in advance (plavba se neobjednava); regular season 18 June to 1 November 2026"
+      }
+    ]
+  },
+  "li-hiking-panorama": {
+    "sources": [
+      {
+        "url": "https://www.outdooractive.com/en/hut/raetikon/palatinate-hut/27866736/",
+        "supports": "'Reservations can only be made by e-mail from November to May - for the remaining months, please call.' Season mid-June to mid/end October."
+      },
+      {
+        "url": "https://www.alpenverein.li/huetten/pfaelzerhuette-2108m",
+        "supports": "Links to online hut reservation system (hut-reservation.org); no lead time stated."
+      }
+    ]
+  },
+  "li-winter-sports-malbun-family": {
+    "sources": [
+      {
+        "url": "https://www.swiss-ski-school.ch/de/schulen/schweizer-skischule-malbun/",
+        "supports": "online booking link for lessons; no lead time stated"
+      },
+      {
+        "url": "https://www.bergbahnen.li/winter/angebote-aktivitaten/skitouren",
+        "supports": "guided ski tours with mountain guides arranged via Malbun Center; no lead time stated"
+      }
+    ]
+  },
+  "be-nature-escape-hoge-kempen-cabin": {
+    "sources": [
+      {
+        "url": "https://terhills.be/en/hoge-kempen-national-park/",
+        "supports": "for guided walks with a National Park Ranger advance booking is mandatory; no lead time stated for the walks"
+      }
+    ]
+  },
+  "ch-nature-escape-swiss-national-park-engadin": {
+    "sources": [
+      {
+        "url": "https://nationalpark.ch/en/visit/accommodation/chamanna-cluozza/",
+        "supports": "Open mid-June to mid-October; reserve online (preferred) or by phone at short notice; waitlist if full; payment in cash only. No advance window stated."
+      }
+    ]
+  },
+  "cz-nature-escape-sumava-wilderness": {
+    "sources": [
+      {
+        "url": "https://www.npsumava.cz/navstivte-sumavu/zelene-linky-sumavy-2026/",
+        "supports": "Weekends 1 May to 11 Oct 2026, daily generally 28 June to 31 Aug 2026; bike bus places can be reserved ahead; no lead time stated."
+      }
+    ]
+  },
+  "de-nature-escape-bayerischer-wald": {
+    "sources": [
+      {
+        "url": "https://www.nationalpark-ferienland-bayerischer-wald.de/fuehrungen/",
+        "supports": "register with the Nationalpark-Fuehrungsservice at the latest one day before"
+      },
+      {
+        "url": "https://www.nationalpark-bayerischer-wald.bayern.de/service/fragen/index.htm",
+        "supports": "Waldschmidthaus currently closed due to construction work"
+      }
+    ]
+  },
+  "lu-nature-escape-upper-sure-oesling": {
+    "sources": [
+      {
+        "url": "https://www.visit-eislek.lu/guided-tour/stargazing-in-eislek-discover-the-night-sky",
+        "supports": "reservation request via online form; min 2, max 15 participants; page states no booking deadline"
+      }
+    ]
+  },
+  "nl-nature-escape-drenthe-dwingelderveld": {
+    "sources": [
+      {
+        "url": "https://www.camras.nl/en/visitor-info/",
+        "supports": "Registration mandatory; 'as soon as registration is possible, you can do so'; permanent opening days in school holidays and summer; Dark-Sky Night special event. No fixed window stated."
+      }
+    ]
+  },
+  "nl-nature-escape-veluwe-hoge-veluwe": {
+    "sources": [
+      {
+        "url": "https://www.hogeveluwe.nl/en/plan-your-visit/tickets",
+        "supports": "E-tickets can be bought in advance for specific dates; online purchase recommended in busy periods"
+      },
+      {
+        "url": "https://krollermuller.nl/en/de-hoge-veluwe-national-park",
+        "supports": "Online ticket gives priority at the entrance on busy days; Sint Hubertus tours require separate advance reservation (no lead time stated)"
+      }
+    ]
+  },
+  "at-water-sports-salzkammergut-lakes": {
+    "sources": [
+      {
+        "url": "https://www.5schaetze.at/de/schafbergbahn/FAQ-schafbergbahn.html",
+        "supports": "No reservation required for individuals; groups of 20+ reserve; specific departure time can be booked online in advance."
+      }
+    ]
+  },
+  "be-water-sports-de-panne-kite-landyacht": {
+    "sources": [
+      {
+        "url": "https://www.stevokitesurf.com/kitesurflessen",
+        "supports": "reservation required via its booking page; lesson does not go ahead in too little, too much or unsafe wind; no lead time stated"
+      }
+    ]
+  },
+  "fr-water-sports-landes-hossegor-surf": {
+    "sources": [
+      {
+        "url": "https://hossegor-surf.fr/reservation/?lang=en",
+        "supports": "Private lessons and surf spirit formula can only be booked by phone 48 hours before; lesson times communicated 48 hours before the first lesson."
+      }
+    ]
+  },
+  "fr-water-sports-quiberon-morbihan": {
+    "sources": [
+      {
+        "url": "https://www.belle-ile.com/organiser/venir-en-bateau-une-ile-plusieurs-ports-de-depart/au-depart-de-quiberon/depart-pour-belle-ile-en-mer-toute-l-annee/",
+        "supports": "Reservation very strongly recommended for weekends, holidays and school holidays; book round trip with vehicle as early as possible; online up to the day of departure; pedestrians up to 20 minutes before departure; trailers/campers by phone only"
+      }
+    ]
+  },
+  "mc-water-sports-sailing-riviera": {
+    "sources": [
+      {
+        "url": "https://www.yachtclubsanremo.it/en/berths/",
+        "supports": "club offers spaces for boats in transit; contact details given; no lead time stated"
+      }
+    ]
+  },
+  "nl-water-sports-frisian-lakes-ijsselmeer": {
+    "sources": [
+      {
+        "url": "https://aanmeren.nl/gidsen/sneekweek-2026",
+        "supports": "Reserve accommodation well ahead because the city fills up; reserve a berth; no figure stated. Dates 31 July to 6 August 2026."
+      }
+    ]
+  },
+  "nl-water-sports-zeeland-brouwersdam-kite": {
+    "sources": [
+      {
+        "url": "https://www.neeltjejans.nl/en/plan-your-visit/prices-tickets/",
+        "supports": "'highly recommended to buy tickets by date online in advance' due to limited capacity; no numeric lead time"
+      }
+    ]
+  }
+}
