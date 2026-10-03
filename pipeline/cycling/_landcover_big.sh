@@ -22,11 +22,22 @@
 set -u
 cd "$(dirname "$0")/../.." || exit 1
 
+# Counts the python processes doing extract work. Two implementations, one
+# meaning: a python process whose command line mentions landcover, "steps
+# services" or harvest_cycling. Where pgrep exists (Linux, macOS, the ARM
+# boxes, T300-f) it is used; otherwise (Git Bash on the Windows laptop, which
+# has no pgrep) the original PowerShell query runs unchanged.
 PS_COUNT="((Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | Where-Object { \$_.CommandLine -like '*landcover*' -or \$_.CommandLine -like '*steps services*' -or \$_.CommandLine -like '*harvest_cycling*' }) | Measure-Object).Count"
 
 extract_passes_running () {
   local n
-  n=$(powershell -NoProfile -Command "$PS_COUNT" 2>/dev/null | tr -d '\r\n ')
+  if command -v pgrep >/dev/null 2>&1; then
+    # pgrep never lists itself; this script's own command line starts with
+    # bash, so the python anchor keeps it out of the count.
+    n=$(pgrep -f '^([^ ]*/)?python[0-9.]* .*(landcover|steps services|harvest_cycling)' 2>/dev/null | wc -l | tr -d '\r\n ')
+  else
+    n=$(powershell -NoProfile -Command "$PS_COUNT" 2>/dev/null | tr -d '\r\n ')
+  fi
   case "$n" in ''|*[!0-9]*) echo 0 ;; *) echo "$n" ;; esac
 }
 

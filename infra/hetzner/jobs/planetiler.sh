@@ -10,6 +10,16 @@
 # (T006: "tools the architecture names but the repo does not pin yet"). A
 # wrapper around a build nobody consumes would only produce a bill.
 #
+# Decision (T324, register row T047-h): KEEP the stub, do not remove the job.
+# Removing it would touch jobs.tsv, cax41/verify.sh and the README for no
+# gain, and the stub costs nothing: spawn.sh planetiler would start a server,
+# exit 3 at once and delete it after one started hour (EUR 0.06). Nothing in
+# the repository consumes a Planetiler output, and architecture section 5.4
+# says to leave the basemap alone, so there is nothing to build. The stub is
+# revisited only if the owner decides to self-host a basemap; until then the
+# row stays closed. The exit 3 is the contract: a caller that spawns it gets
+# a refusal, never an empty artifact.
+#
 # What it would run, once a task decides to self-host a basemap. T006 checked
 # both routes on arm64: the multi-arch image ghcr.io/onthegomap/planetiler
 # (amd64 + arm64) and the architecture-neutral planetiler.jar v0.10.2 on

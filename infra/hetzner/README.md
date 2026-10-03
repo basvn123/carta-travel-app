@@ -160,9 +160,9 @@ outputs, the hard ceiling and the planning estimate per job.
 | valhalla_tiles | archive/inputs/geofabrik | archive/built/valhalla | 6 h | 1 h | real |
 | clip_sweep | archive/caches (layer, embeddings, models) | archive/caches | 12 h | 3 h | real |
 | planetiler | archive/inputs/geofabrik | tiles/basemap | 8 h | 2 h | stub, exit 3 |
-| image_transcode | archive/caches (layer) | img directly; archive/built/derive (report) | 8 h | 7.5 h | real (T049); beaches needs several runs |
+| image_transcode | archive/caches (cache layer; none for a wire layer) | img directly; archive/built/derive (report) | 8 h | 7.5 h | real (T049); cache layers beaches, lakes, mountains and the eight wire layers (T324); beaches needs several runs |
 
-The planetiler stub has nothing to wrap. No Planetiler profile or consumer
+The planetiler stub has nothing to wrap, and T324 decided to keep it as it is (reason in its header). No Planetiler profile or consumer
 exists in the repository, and section 5.4 of the architecture document says to
 leave the basemap alone. Its header holds the command it will run.
 

@@ -152,7 +152,17 @@ inputs() {
   while IFS= read -r p; do [ -n "$p" ] && inc+=(--include "$p"); done < <(expand_includes ${ARGS[@]+"${ARGS[@]}"})
   run rclone copy "r2:$BUCKET/$JOB_INPUTS_PREFIX" "$CARTA_IN" ${inc[@]+"${inc[@]}"} \
     --transfers 16 --checkers 16 --fast-list --stats 60s --stats-one-line || return 1
-  if [ "$DRY" != "1" ] && [ ${#inc[@]} -gt 0 ] && [ -z "$(find "$CARTA_IN" -type f -print -quit)" ]; then
+  # image_transcode over wire layers only (trails, cycling, ...) has no tarball
+  # to mirror: the job reads img/manifest/_sources itself (T324). Any cache
+  # layer among the arguments keeps the check.
+  local need_files=1 a
+  if [ "$JOB" = "image_transcode" ]; then
+    need_files=0
+    for a in ${ARGS[@]+"${ARGS[@]}"}; do
+      case "$a" in beaches|lakes|mountains) need_files=1 ;; esac
+    done
+  fi
+  if [ "$DRY" != "1" ] && [ "$need_files" = "1" ] && [ ${#inc[@]} -gt 0 ] && [ -z "$(find "$CARTA_IN" -type f -print -quit)" ]; then
     echo "worker.sh: the include patterns matched nothing under r2:$BUCKET/$JOB_INPUTS_PREFIX"
     return 1
   fi
