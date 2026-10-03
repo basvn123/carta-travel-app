@@ -14,7 +14,7 @@
     "currencyNote", "eurRate", "emergencyNumber", "itinerary", "accommodationStrategy",
     "logistics", "proTips", "packingNotes", "whatCouldGoWrong", "typeSpecific", "sources",
     "snapshot", "verifyFlags", "verifyFlagCount", "volatilePricing", "wordCount",
-    "dataVintage", "provenance"
+    "dataVintage", "figures", "provenance"
   ],
   "properties": {
     "schemaVersion": { "const": "2.1" },
@@ -260,6 +260,19 @@
     "volatilePricing": { "type": "boolean" },
     "wordCount": { "type": "integer", "minimum": 0 },
     "dataVintage": { "type": "integer", "minimum": 2026, "maximum": 2100 },
+    "figures": {
+      "type": "array", "maxItems": 80,
+      "description": "T146 (spec K3): one row per numeric figure the page shows, saying how the figure is known. The pipeline writes it from the evidence rows and the arithmetic; the model is never asked. sourced: a page the model read gave it, and sourceUrl is that page. derived: computed from other figures here (a total from its rows). estimated: general knowledge, allowed only for the paths in ESTIMATE_OK in generation_gate.py.",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["path", "confidence", "sourceUrl", "checkedAt"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^[A-Za-z]\\w*(?:\\.[A-Za-z]\\w*|\\[\\d+\\])*$", "maxLength": 80 },
+          "confidence": { "enum": ["sourced", "derived", "estimated"] },
+          "sourceUrl": { "anyOf": [{ "type": "string", "pattern": "^https?://", "maxLength": 400 }, { "type": "null" }] },
+          "checkedAt": { "$ref": "#/$defs/date" }
+        }
+      }
+    },
     "provenance": {
       "type": "object", "additionalProperties": false,
       "required": ["batch", "sourceFile", "sourceFormat", "sourceId", "ingestedAt", "synthesized", "model", "promptVersion", "reviewedAt"],

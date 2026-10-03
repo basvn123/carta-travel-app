@@ -183,3 +183,18 @@ The accommodation rule (register row T084-b): a night slept in a strategy entry 
 `alternativeTo`, the rank of the slept-in entry it substitutes for at another budget. A
 tier alternative is exempt only when it says so. Every night but the last names its bed in
 `sleep`. `validate.py` honours both fields and checks a v2.0 record by name as before.
+
+Per-figure confidence (T146, spec K3). A v2.1 record carries `figures`, one row per numeric
+figure: `{path, confidence, sourceUrl, checkedAt}`. `confidence` is `sourced` (a page the
+model read gave it, and `sourceUrl` names it), `derived` (computed from other figures here:
+the week total and the per-day range) or `estimated` (general knowledge, no URL). The list of
+figure paths is `FIGURE_PATTERNS` in `generation_gate.py`: the four budget rows, the total
+and per-day range, `eurRate`, airport transfer minutes, a day's distance, ascent, descent,
+time and spend, a stay's price, the surface split and the three week totals. Identifiers,
+counters and ratings (day, rank, months, tier range, difficulty, wordCount) carry none.
+Only `budget.breakdown.food` and a day's `timeMin` may be estimated (`ESTIMATE_OK`); a hotel
+price, a ticket or day spend, a transfer time, a distance, a climb or an exchange rate may
+not, and pass three withholds one that arrives without a page. A total built on an estimated
+row is itself `estimated`. The pipeline writes `figures` from the evidence rows (it is in
+`DERIVED`, so the model is never asked and cannot label its own work), and the gate rejects a
+record whose rows do not match its figures one to one. The v2.0 records have no `figures`.

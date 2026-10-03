@@ -73,8 +73,33 @@ DERIVED = [
     ("profile", "fitnessLevel"),
     ("typeSpecific", "raw"), ("snapshot",),
     ("verifyFlagCount",), ("volatilePricing",), ("wordCount",),
-    ("dataVintage",), ("provenance",),
+    ("dataVintage",), ("provenance",), ("figures",),
 ]
+
+# T146 (spec K3): the numeric fields that carry a confidence. A figure is a
+# whole number-bearing field, not each bound of a pair: a budget row, a
+# {low, high} range, the surface split and a plain number each get one row in
+# record["figures"]. Left out on purpose, because they are identifiers,
+# counters or ratings and not claims about the world: day, rank, sleepRef,
+# durationDays, tripTypeId, profile.difficulty, bestPeriod months, the tier
+# range, wordCount, dataVintage and verifyFlagCount.
+FIGURE_PATTERNS = [
+    "budget.breakdown.accommodation", "budget.breakdown.food",
+    "budget.breakdown.transport", "budget.breakdown.activities",
+    "budget.totalEur", "budget.perDayEur", "eurRate", "gateways[].transferMin",
+    "itinerary[].dayStats.distanceKm", "itinerary[].dayStats.ascentM",
+    "itinerary[].dayStats.descentM", "itinerary[].dayStats.timeMin",
+    "itinerary[].dayStats.spendEur", "accommodationStrategy[].priceEur",
+    "typeSpecific.surfaceMix", "typeSpecific.distanceKm",
+    "typeSpecific.elevationM", "typeSpecific.verticalM",
+]
+# The pipeline computes these from other figures, so they are never "sourced".
+COMPUTED_FIGURES = ("budget.totalEur", "budget.perDayEur")
+# The only figures that may be "estimated", from general knowledge: a food
+# budget and a riding time are fair estimates; a hotel price, a ticket price,
+# an exchange rate or a measured distance are not.
+ESTIMATE_OK = ("budget.breakdown.food", "itinerary[].dayStats.timeMin")
+CONFIDENCE = ("sourced", "derived", "estimated")
 
 # What Gemini's responseSchema (an OpenAPI 3.0 subset, the dialect the
 # plan-day and parse-booking Edge Functions already use) is given. Anything
@@ -147,6 +172,79 @@ def _pairs(x, path=()):
     elif isinstance(x, list):
         for i, v in enumerate(x):
             yield from _pairs(v, path + (i,))
+
+
+def figure_pattern(path):
+    """itinerary[2].dayStats.timeMin -> itinerary[].dayStats.timeMin"""
+    return re.sub(r"\[\d+\]", "[]", path)
+
+
+def figure_paths(rec):
+    """Every concrete dotted path of a FIGURE_PATTERNS entry that holds a
+    value in this record. A pair with both bounds null is not a figure."""
+    out = []
+
+    def has_value(v):
+        if v is None:
+            return False
+        if isinstance(v, dict):
+            return any(x is not None for x in v.values())
+        if isinstance(v, list):
+            return bool(v)
+        return True
+
+    def walk(node, parts, i, path):
+        if i == len(parts):
+            if has_value(node):
+                out.append(_path(path))
+            return
+        p = parts[i]
+        if p == "[]":
+            for j, item in enumerate(node or []):
+                walk(item, parts, i + 1, path + (j,))
+        elif isinstance(node, dict) and p in node:
+            walk(node[p], parts, i + 1, path + (p,))
+
+    for pat in FIGURE_PATTERNS:
+        parts = [x for seg in pat.split(".") for x in ([seg[:-2], "[]"] if seg.endswith("[]") else [seg])]
+        walk(rec, parts, 0, ())
+    return out
+
+
+def figure_errors(rec):
+    """The K3 rules: every figure has exactly one confidence row, a sourced
+    one names its page, nothing is estimated that may not be, and a total
+    built on an estimate is itself an estimate."""
+    out = []
+    rows = rec.get("figures") or []
+    by_path = {}
+    for r in rows:
+        if r["path"] in by_path:
+            out.append(f"figure-duplicate: figures: {r['path']} is listed twice")
+        by_path[r["path"]] = r
+    want = set(figure_paths(rec))
+    for path in sorted(want - set(by_path)):
+        out.append(f"figure-unlabelled: {path}: holds a value and has no confidence row")
+    for path in sorted(set(by_path) - want):
+        out.append(f"figure-orphan: {path}: a confidence row for a figure the record does not hold")
+    for path, r in by_path.items():
+        pat = figure_pattern(path)
+        conf = r["confidence"]
+        if conf == "sourced" and not r["sourceUrl"]:
+            out.append(f"figure-no-url: {path}: sourced needs the page it came from")
+        if conf != "sourced" and r["sourceUrl"]:
+            out.append(f"figure-url-on-unsourced: {path}: only a sourced figure names a page")
+        if conf == "estimated" and pat not in ESTIMATE_OK and pat not in COMPUTED_FIGURES:
+            out.append(f"figure-estimate-barred: {path}: an estimate is not allowed for this figure")
+        if conf == "sourced" and pat in COMPUTED_FIGURES:
+            out.append(f"figure-computed-sourced: {path}: a computed figure is derived or estimated")
+    rows_conf = [by_path.get(f"budget.breakdown.{k}", {}).get("confidence")
+                 for k in ("accommodation", "food", "transport", "activities")]
+    total = by_path.get("budget.totalEur")
+    if total and total["confidence"] != ("estimated" if "estimated" in rows_conf else "derived"):
+        out.append("figure-total-confidence: budget.totalEur: a total is derived from sourced rows "
+                   "and estimated when any row is")
+    return out
 
 
 def semantic_errors(rec):
@@ -262,6 +360,7 @@ def semantic_errors(rec):
         bad("verify-count", "verifyFlagCount", "differs from len(verifyFlags)")
     if rec["verifyFlags"] and not rec["volatilePricing"]:
         bad("volatile-flag", "volatilePricing", "a record with verify flags is volatile")
+    out += figure_errors(rec)
     return out
 
 
@@ -511,6 +610,12 @@ def survey(master_path):
 
 # ── self-test: every class of malformed answer is rejected ───────────────────
 
+def _fig(rec, path, **change):
+    for f in rec["figures"]:
+        if f["path"] == path:
+            f.update(change)
+
+
 def _mutations():
     """(label, expected code prefix, function that breaks a good record)."""
     def setp(path, value):
@@ -561,6 +666,18 @@ def _mutations():
                                                 {"surface": "gravel", "pct": 30}])),
         ("breakdown off the total", "k5/budget-sum-mismatch",
          setp(["budget", "breakdown", "food", "highEur"], 900)),
+        ("a figure with no confidence row", "figure-unlabelled",
+         lambda r: r["figures"].pop(next(i for i, f in enumerate(r["figures"])
+                                         if f["path"] == "budget.breakdown.food"))),
+        ("a confidence row for a null figure", "figure-orphan",
+         setp(["itinerary", 1, "dayStats", "spendEur"], None) if False else
+         lambda r: r["figures"].append({"path": "itinerary[1].dayStats.spendEur", "confidence": "sourced",
+                                        "sourceUrl": "https://example.org/x", "checkedAt": "2026-10-03"})),
+        ("a sourced figure with no page", "figure-no-url", lambda r: _fig(r, "budget.breakdown.food", sourceUrl=None)),
+        ("an estimated hotel price", "figure-estimate-barred",
+         lambda r: _fig(r, "accommodationStrategy[0].priceEur", confidence="estimated", sourceUrl=None)),
+        ("a derived total over an estimated row", "figure-total-confidence",
+         lambda r: _fig(r, "budget.breakdown.food", confidence="estimated", sourceUrl=None)),
     ]
 
 
@@ -608,7 +725,9 @@ def self_test():
             node = node["properties"][k]
         if path[-1] in node.get("properties", {}):
             fails.append(f"derived field {'.'.join(path)} is still asked of the model")
-    rebuilt = derive({k: v for k, v in good.items() if (k,) not in DERIVED},
+    # figures is DERIVED (the model is never asked) but derive() does not
+    # compute it: the generator writes it from the evidence rows (T146).
+    rebuilt = derive({k: v for k, v in good.items() if (k,) not in DERIVED or k == "figures"},
                      batch=good["provenance"]["batch"], model=good["provenance"]["model"],
                      prompt_version=good["provenance"]["promptVersion"],
                      today=good["provenance"]["ingestedAt"])
