@@ -1,0 +1,137 @@
+name: schema-contract
+
+# The schema contract, frontend to backend (T082). One gate,
+# continent-app/scripts/ci/check-contract.mjs, holds three contracts:
+#
+#   the wire       public/app_data.json, the fare slices, the country
+#                  insights, and the boot index and country files the app
+#                  builds from them, against the required fields in
+#                  contract.mjs;
+#   SCHEMA.md      every top-level meta and destination key, both ways,
+#                  against the "Wire contract" table in docs/SCHEMA.md, and
+#                  the header's schema version against contract.mjs;
+#   the database   every Supabase call site in continent-app/src and
+#                  supabase/functions (tables, columns, select strings, rpc
+#                  names and argument names, Edge Function names, the grants
+#                  the app's own calls need) against the catalogue that
+#                  supabase/schema.sql plus every migration builds here.
+#
+# So a renamed column, a renamed rpc argument, a dropped function, a revoked
+# grant, or a wire field renamed without SCHEMA.md fails this job instead of
+# answering 400 in a traveller's browser or leaving a layer blank on the map.
+#
+# Each half also proves itself: the gate seeds known breaks (8 on the
+# fixture, 3 on the real catalogue, 7 on the split wires here and 8 where the
+# POI shards exist, 9 on the database) and fails if any one is accepted. The last step below then runs the whole
+# gate with one wire break and one database break seeded and requires a
+# non-zero exit, so a green job can never mean the gate stopped failing.
+#
+# The checkout is sparse. boot.json, dest/ and poi/ are generated and live on
+# R2, not in git, so CARTA_CONTRACT_DERIVE_SPLIT builds the boot index and
+# the country files in memory with the app's own splitCatalogue(); the POI
+# shards cannot be rebuilt from the tracked wire and are only checked where
+# they exist (npm run ci on a machine that ran npm run data). Under CI the
+# database half cannot skip: no database is a failure, not a pass.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/schema.sql"
+      - "supabase/functions/**"
+      - "continent-app/src/**"
+      - "continent-app/scripts/ci/contract.mjs"
+      - "continent-app/scripts/ci/check-contract.mjs"
+      - "continent-app/scripts/ci/fixtures/contract-min.json"
+      - "continent-app/public/app_data.json"
+      - "continent-app/public/country_insights.json"
+      - "continent-app/public/fares/**"
+      - "docs/SCHEMA.md"
+      - ".github/workflows/schema-contract.yml"
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/schema.sql"
+      - "supabase/functions/**"
+      - "continent-app/src/**"
+      - "continent-app/scripts/ci/contract.mjs"
+      - "continent-app/scripts/ci/check-contract.mjs"
+      - "continent-app/scripts/ci/fixtures/contract-min.json"
+      - "continent-app/public/app_data.json"
+      - "continent-app/public/country_insights.json"
+      - "continent-app/public/fares/**"
+      - "docs/SCHEMA.md"
+      - ".github/workflows/schema-contract.yml"
+  workflow_dispatch:
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # PostgreSQL 18, as in admin-rpc-security and rls-policies. trust auth,
+    # so the gate connects with no password, as it does against a local
+    # throwaway cluster.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+        ports:
+          - 55437:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: "55437"
+      PGUSER: postgres
+      CARTA_CONTRACT_DERIVE_SPLIT: "1"
+
+    defaults:
+      run:
+        working-directory: continent-app
+
+    steps:
+      # Cone mode also brings the files at the top of every parent folder,
+      # so continent-app/public/app_data.json and country_insights.json come
+      # with public/fares without pulling the 48k generated layer files.
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            docs
+            supabase
+            continent-app/src
+            continent-app/scripts/ci
+            continent-app/public/fares
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # The service container ships the server but not the client, and the
+      # gate shells out to psql to apply the migrations.
+      - name: Install the PostgreSQL client
+        working-directory: .
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Contract gate (wire, SCHEMA.md, database)
+        run: node scripts/ci/check-contract.mjs
+
+      # The gate must FAIL with a contract broken on purpose, one break on
+      # each side. A zero exit here means the gate is attached to nothing.
+      - name: A deliberately broken contract fails the gate
+        run: |
+          for brk in destination-field-renamed db-column-renamed; do
+            if CARTA_CI_SEED_BREAK="$brk" node scripts/ci/check-contract.mjs > "seed-$brk.log" 2>&1; then
+              cat "seed-$brk.log"
+              echo "::error::CARTA_CI_SEED_BREAK=$brk passed the contract gate. The gate is not catching contract breaks."
+              exit 1
+            fi
+            echo "$brk: the gate failed, as it must"
+            grep -m 3 'FAIL' "seed-$brk.log" || true
+          done

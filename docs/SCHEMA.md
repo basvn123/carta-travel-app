@@ -4,6 +4,11 @@ Live master: `meta.schema_version` = 17. The `Schema vN` sections further down
 are the additive changelog of layers (their numbering ran ahead of the meta
 field; treat the sections as history, `meta.schema_version` as the contract).
 
+CI reads this file. The version on the line above and the "Wire contract" table
+at the end are checked against the shipped `public/app_data.json` by
+`continent-app/scripts/ci/check-contract.mjs` (T082), so a renamed, added or
+dropped top-level field fails the build until the table says so.
+
 The pipeline and the React app share one contract. A trip is priced three ways,
 all from real data:
 
@@ -786,3 +791,110 @@ now splits it for the wire at dev/build time:
   budget_level, daily_budget_eur:[lo,hi], best_months, best_time_note, rail{operator,url,note},
   bus{operators,url,note}, driving{side,vignette,tolls,warnings,car_recommended_for,car_not_needed_in},
   must_see:[{name,region,why}], insights:[..], food:[..], events:[..], sources:[..] } } }`
+
+## Wire contract, checked in CI (T082)
+
+This table is the contract for the top level of `public/app_data.json`, and
+`continent-app/scripts/ci/check-contract.mjs` parses it on every run (locally
+in `npm run ci`, and in `.github/workflows/schema-contract.yml`). The payload
+must match it both ways. A key the payload carries and this table does not
+list fails, so a renamed field cannot ship under its new name unnoticed. A
+listed key the payload lacks fails too: a `meta` key must be present, a
+`destination` key marked `every` must be on every record (its value may be
+null), and one marked `some` must be on at least one record. To change the
+wire, change this table in the same commit, and if `meta.schema_version` moves,
+change the header line above and `EXPECTED_SCHEMA_VERSION` in
+`continent-app/scripts/ci/contract.mjs` with it.
+
+Only the top level is pinned; the keys inside a block (`rating.score`,
+`costs.meal_mid_eur`) are described in the sections above and not yet checked.
+`routes`, described in the first block, is not on the wire: the app builds it
+in the browser from the fare slices (`hydrateForOrigin`).
+
+The column after the presence says where this file describes the field.
+"Not yet described" marks a field that ships and is read but has no section
+here yet.
+
+| Key | Block | Presence | Described |
+|---|---|---|---|
+| `schema_version` | meta | required | header line; read on boot |
+| `currency` | meta | required | app_data.json block; read on boot |
+| `start_date` | meta | required | app_data.json block; read on boot |
+| `end_date` | meta | required | app_data.json block; read on boot |
+| `defaults` | meta | required | app_data.json block; read on boot |
+| `baggage_options` | meta | required | app_data.json block; read on boot |
+| `generated_at` | meta | required | app_data.json block |
+| `origins` | meta | required | app_data.json block |
+| `home_city` | meta | required | app_data.json block |
+| `home` | meta | required | app_data.json block |
+| `categories` | meta | required | app_data.json block |
+| `cost_basket` | meta | required | app_data.json block |
+| `cost_validation` | meta | required | app_data.json block |
+| `accommodation_model` | meta | required | app_data.json block |
+| `accommodation_validation` | meta | required | app_data.json block |
+| `car_model` | meta | required | app_data.json block; Schema v14 section 2 |
+| `n_destinations` | meta | required | app_data.json block |
+| `is_mock` | meta | required | app_data.json block |
+| `beauty_model` | meta | required | app_data.json block (`beauty.gems`) |
+| `flight_model` | meta | required | app_data.json block (`fare_model`) |
+| `data_sources` | meta | required | Schema v16 |
+| `crowding_model` | meta | required | Schema v17 |
+| `activities_model` | meta | required | not yet described |
+| `all_origins` | meta | required | not yet described |
+| `climate_model` | meta | required | not yet described |
+| `climate_period` | meta | required | not yet described |
+| `country_context_model` | meta | required | not yet described |
+| `designation_model` | meta | required | not yet described |
+| `fares_model` | meta | required | not yet described |
+| `fares_model_est` | meta | required | not yet described |
+| `fares_model_tp` | meta | required | not yet described |
+| `fares_model_volotea` | meta | required | not yet described |
+| `fares_model_vueling` | meta | required | not yet described |
+| `fares_model_wizz` | meta | required | not yet described |
+| `image_model` | meta | required | not yet described |
+| `member_model` | meta | required | not yet described |
+| `origin_coverage` | meta | required | not yet described |
+| `place_model` | meta | required | not yet described |
+| `rating_model` | meta | required | not yet described |
+| `stay_tiers_available` | meta | required | not yet described |
+| `tourist_premium_model` | meta | required | not yet described |
+| `id` | destination | every | app_data.json block; the record's key |
+| `tier` | destination | every | app_data.json block |
+| `iata` | destination | every | app_data.json block |
+| `city` | destination | every | app_data.json block |
+| `country` | destination | every | app_data.json block |
+| `iso2` | destination | every | app_data.json block |
+| `lat` | destination | every | app_data.json block |
+| `lon` | destination | every | app_data.json block |
+| `categories` | destination | every | app_data.json block |
+| `tags` | destination | every | app_data.json block |
+| `blurb` | destination | every | app_data.json block |
+| `no_ryanair_route` | destination | every | app_data.json block |
+| `anchor_airport` | destination | every | app_data.json block |
+| `costs` | destination | every | app_data.json block |
+| `accommodation` | destination | every | app_data.json block; Stay tiers |
+| `local_transport` | destination | every | app_data.json block |
+| `beauty` | destination | every | app_data.json block |
+| `image` | destination | every | app_data.json block (`hires` stripped on the wire) |
+| `activities` | destination | every | app_data.json block (`items_full` moved to `poi/`) |
+| `rating` | destination | every | Schema v14 section 1 |
+| `transfer` | destination | every | not yet described (minutes and euros one way from the anchor airport) |
+| `climate` | destination | every | not yet described (twelve monthly rows and the best months) |
+| `place` | destination | every | not yet described (place class and visit hours, `apply_place_layer.py`) |
+| `country_rank` | destination | every | not yet described (`country_context_layer.py`) |
+| `country_n` | destination | every | not yet described (`country_context_layer.py`) |
+| `country_percentile` | destination | every | not yet described (`country_context_layer.py`) |
+| `country_badge` | destination | every | not yet described (`country_context_layer.py`) |
+| `class_percentile` | destination | every | not yet described (`country_context_layer.py`) |
+| `city_lat` | destination | some | app_data.json block |
+| `city_lon` | destination | some | app_data.json block |
+| `driving_toll` | destination | some | Schema v14 section 2 |
+| `bathing_water` | destination | some | Schema v16 |
+| `crowding` | destination | some | Schema v17 |
+| `geonames` | destination | some | not yet described (population and settlement, `harvest_geonames.py`) |
+| `designations` | destination | some | not yet described (heritage and award registries, `apply_designations.py`) |
+| `nature` | destination | some | not yet described (nearest protected area, `harvest_protected_areas_osm.py`) |
+| `guide` | destination | some | not yet described (Wikivoyage lead and link, `apply_wikivoyage.py`) |
+| `members` | destination | some | not yet described (towns grouped under this one, `member_layer.py`) |
+| `wikidata` | destination | some | not yet described (QID, sitelinks, heritage flags) |
+| `anchor_estimated` | destination | some | not yet described (`apply_airport_anchors.py`) |
