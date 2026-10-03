@@ -224,7 +224,7 @@
     "connectivity": null,
     "emergency": "Emergency number is 112. In France, 15 reaches SAMU medical dispatch and 18 the fire service, who also handle road accidents.",
     "weather": null,
-    "bookingWindows": null,
+    "bookingWindows": "TGV INOUI bike place: reserve it when you buy your train ticket; sales open 4 months before departure. TER regional trains: no booking needed, the bike travels on your passenger ticket.",
     "money": null,
     "transportRules": null,
     "permits": null,
