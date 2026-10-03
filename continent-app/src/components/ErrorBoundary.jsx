@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from './Button.jsx';
 import { reportClientCrash } from '../planner/edgeFailure.js';
 
 // Signatures browsers use when a dynamically-imported chunk can't be fetched, // almost always a stale bundle after a redeploy. Safari: "Importing a module
@@ -75,12 +76,12 @@ export class ErrorBoundary extends React.Component {
           </p>
           <pre className="crash-detail">{String(error?.message || error)}</pre>
           <div className="crash-actions">
-            <button className="crash-btn primary" onClick={() => window.location.reload()}>
+            <Button variant="primary" onClick={() => window.location.reload()}>
               Reload the app
-            </button>
-            <button className="crash-btn" onClick={() => this.setState({ error: null })}>
+            </Button>
+            <Button onClick={() => this.setState({ error: null })}>
               Try again
-            </button>
+            </Button>
           </div>
         </div>
       </div>

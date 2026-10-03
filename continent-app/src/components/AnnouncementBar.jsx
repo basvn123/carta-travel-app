@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSiteConfig } from '../hooks/useSiteConfig.js';
 import { loadStatus, parseStatus, pickNotice, siteNotice } from '../lib/statusFile.js';
+import { Button } from './Button.jsx';
 import { AlertIcon, CloseIcon, InfoIcon, TicketIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
@@ -97,9 +98,9 @@ export function PassExpiryBanner() {
       {/* Opens the modal under the 'expiring' reason rather than 'browse', so
           the heading names the moment and the funnel can tell an extension
           from a price browse. The banner is still the only prompt. */}
-      <button type="button" className="site-banner-action" onClick={() => openPrices('expiring')}>
+      <Button variant="ghost" size="sm" className="site-banner-action" onClick={() => openPrices('expiring')}>
         {t('pass.extend')}
-      </button>
+      </Button>
       <button type="button" className="site-banner-close" onClick={dismiss} aria-label={t('a11y.dismiss')}>
         <CloseIcon size={13} />
       </button>
