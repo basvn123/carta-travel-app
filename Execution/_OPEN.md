@@ -769,3 +769,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T166-e | T166 | Not measured for filled primaries: cycling route page (#cycle=1150&cc=AT did not open in dev), cycling tour page (shows Reload the app in dev, same at 70cba6f, cause not investigated), account panel, later planner steps, My trips at 1280px | next task | open |  |
 | T166-f | T166 | The destination, trail and layer-page action buttons are bespoke CSS classes, not the shared Button; moving them changes radius and height of whole rows and needs JSX edits, so do it as its own task | next task | open |  |
 | T166-g | T166 | The browser audit that counts filled primaries per view lives in a session scratchpad; add it to scripts/ as a verify script so the one-primary rule is checked | next task | open |  |
+| T163-a | T163 | Day accordion was checked by lint and build only, not looked at in a browser on desktop and phone width; open a trip and a journey page and toggle a day | next task | closed by T163 |  |
+| T163-b | T163 | When the day carousel (T162) is built, its cards must reuse the tday-panel accordion rather than add a second expander | next task | open |  |
