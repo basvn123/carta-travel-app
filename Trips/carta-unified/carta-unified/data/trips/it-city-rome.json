@@ -268,9 +268,9 @@
       "Day trip with exact line, time and fare": "**Ostia Antica** — Metro B to **Piramide**, cross to the adjacent **Roma Porta San Paolo** station, take the **Metromare (ex Roma–Lido) line** toward Cristoforo Colombo, alight at **Ostia Antica**, roughly **25–35 minutes**. The whole journey is **inside the urban fare zone and covered by a €1.50 BIT** or any Roma pass — no separate ticket. The excavations are a 5-minute signed walk over the footbridge."
     },
     "surface": null,
-    "distanceKm": null,
+    "distanceKm": 63,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 520,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

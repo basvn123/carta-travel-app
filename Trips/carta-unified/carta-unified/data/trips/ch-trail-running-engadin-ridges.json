@@ -280,7 +280,7 @@
     "surface": "Approx. 105–115 km and 5,200–5,800 m of ascent; larch forest track, alp meadow, granite blockfield and scree, T1–T3",
     "distanceKm": 105,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 5200,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

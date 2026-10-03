@@ -270,7 +270,7 @@
     "surface": "approx. 105–125 km, 6,500–7,500 m vert; moraine, granite slab, alpine singletrack, forest balcon",
     "distanceKm": 105,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 6500,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

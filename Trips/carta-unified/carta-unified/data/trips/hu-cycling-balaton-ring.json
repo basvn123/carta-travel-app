@@ -253,9 +253,9 @@
       "Trains with a bike (MÁV-START)": "Bikes ride the marked carriage on almost all Balaton regionals and fast trains on a separate **kerékpárjegy**, 500 HUF (~€1.25) for 24 hours and a single journey, with 15% off in the MÁVPlusz app; on InterCity a bike **kerékpárhelyjegy** is compulsory on top, 100–990 HUF depending on route and season, and the quota is small, so book in the app days ahead for summer weekends (2026 tariff). Lines 26 and 29 add summer bike capacity, which makes bailing out of a leg trivial."
     },
     "surface": "North shore ~70% dedicated asphalt path, ~25% shared low-traffic road, ~5% packed limestone at Fenékpuszta. The gaps at Balatonakali, Zánka and Badacsony–Ábrahámhegy put you on the shoulder of **road 71**, narrow and fast — the week's only real hazard. South shore ~95% separated path from Balatonberény to Siófok. The Káli day is ~45% asphalt, ~50% compacted gravel and dolomite farm track, ~5% loose basalt: 35 mm tyres minimum, 40 mm better.",
-    "distanceKm": null,
+    "distanceKm": 308,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2240,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -239,8 +239,8 @@
       "Realistic walking times": "Greek signposts are optimistic and were largely written for local club members. Add **30%**. Gortsia to Petrostrouga is signed 3 h; plan 3.5–4 h. Refuge A to Mytikas and back is signed 5–6 h; plan 7–8 h, more if you queue on the Kaki Skala."
     },
     "surface": null,
-    "distanceKm": null,
-    "elevationM": null,
+    "distanceKm": 120,
+    "elevationM": 2918,
     "verticalM": null,
     "technicalRating": "Olympus is threaded by the **E4 European long-distance path**, marked with the standard **black-on-yellow E4 square** and supported by **red paint blazes and red-white diamond markers** on the national-park network, with numbered wooden signposts at every junction (E4, the Gortsia route, the Prionia route, Louki, Zonaria). Above the tree line the marking becomes cairns and painted dots on rock, which vanish in cloud — the Zonaria traverse and the Skala–Mytikas section are where people get lost. **There are no via ferratas and no fixed cables anywhere on Olympus.**",
     "transitPass": null,

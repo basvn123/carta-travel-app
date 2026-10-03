@@ -241,9 +241,9 @@
       "Bike on public transport": "Slovenske železnice charges €3 per bicycle per journey, paid to the conductor on board; no reservation is possible and space is genuinely limited, so avoid 06:00–08:00 and 14:00–16:00 weekday peaks. The Bohinj railway from Most na Soči is the useful line. Bikes are barred from ICS Pendolino services. Italian regional trains out of Gorizia charge €3.50 for a 24-hour bike ticket."
     },
     "surface": "approximately 62% paved (narrow, chip-sealed, near-empty), 28% white dolomite and forest hardpack, 8% vineyard farm track, 2% short singletrack link at Most na Soči. A 40–45 mm gravel tyre is the correct tool; 32 mm road rubber costs you the two best days.",
-    "distanceKm": null,
-    "elevationM": null,
-    "verticalM": null,
+    "distanceKm": 413,
+    "elevationM": 1114,
+    "verticalM": 7930,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -275,7 +275,7 @@
     "surface": "55–70 km on foot with roughly 2,000 m of cumulative stair climbing",
     "distanceKm": 55,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2000,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

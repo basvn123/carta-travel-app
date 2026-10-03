@@ -274,7 +274,7 @@
     "surface": "330–370 km, roughly 1,100 m cumulative gain; ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
     "distanceKm": 330,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 1100,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

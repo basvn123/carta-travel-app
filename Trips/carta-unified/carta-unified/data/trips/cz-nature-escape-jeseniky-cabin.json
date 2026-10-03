@@ -276,7 +276,7 @@
     "surface": "approx. 75–95 km walking, 3,000–3,600 m cumulative ascent; forest track, ridge path, boardwalk",
     "distanceKm": 75,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 3000,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

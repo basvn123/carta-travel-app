@@ -278,7 +278,7 @@
     "surface": "approx 290 km, roughly 2,100 m cumulative gain; 80% asphalt rail-trail, 20% compacted crushed stone and gravel, gradients almost never above 2%",
     "distanceKm": 290,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2100,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

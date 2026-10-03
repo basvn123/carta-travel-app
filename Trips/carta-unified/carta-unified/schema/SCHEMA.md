@@ -122,6 +122,29 @@ filter on them:
 | `liftNetwork`, `snowReliability` | `Lift network and interconnects`, `Pass tiers by name`, `Piste breakdown`, `snow_reliability` | Winter sports |
 | `windConditions` | `wind_statistics`, `prevailing_wind`, `tidal_awareness`, `water_temp_c` | Water sports |
 
+### The three numeric slots
+
+`typeSpecific.distanceKm`, `elevationM` and `verticalM` are integers or null. They are filled by
+`pipeline/fill_type_specific.py` from the record's own text, and each figure's origin is in
+`data/type_specific_basis.json` (basis `key`, `stated`, `summed`, `derived` or `mentioned`, plus
+the quoted words). A stated range gives its low end ("330 to 370 km" is 330). A slot is null when
+the text does not state the figure; nothing is estimated. No schema path was added for this.
+
+| Type | `distanceKm` | `elevationM` | `verticalM` |
+|---|---|---|---|
+| Cycling, trail running, hiking | km ridden, run or walked over the week | highest point stated or named in a day line | cumulative ascent over the week |
+| Road trips | km driven | highest pass stated or named | not used |
+| Winter sports | km of marked piste, or of groomed Nordic trail, of the main area | top of the lift system | vertical drop of the main area |
+| City trips | km on foot | not used | cumulative ascent, where day lines give it |
+| Cozy towns | km walked | not used | not used |
+| Culinary | km between villages and venues by rail, road or boat | not used | not used |
+| Nature escapes | km walked or cycled | highest named summit or pass | cumulative ascent |
+| Water sports | km sailed or paddled (nautical miles times 1.852) | not used | not used |
+
+`elevationM` with basis `mentioned` is the highest summit or pass height a day line names. It can
+understate the week's true high point, so a chart should prefer `key` and `stated` figures where it
+needs the real maximum.
+
 ## Verification and provenance
 
 | Field | Notes |

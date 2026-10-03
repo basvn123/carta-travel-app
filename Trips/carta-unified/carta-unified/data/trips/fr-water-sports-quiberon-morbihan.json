@@ -278,7 +278,7 @@
       "Who It Suits": "Surfers and sea kayakers comfortable reading a swell forecast and a tide table, who want two contrasting Breton waters in one week"
     },
     "surface": "Côte Sauvage beach and reef breaks along roughly 8 km; Golfe du Morbihan tidal basin approx. 20 km across with currents to 4–5 knots at the Barre du Grand Vezid",
-    "distanceKm": 8,
+    "distanceKm": null,
     "elevationM": null,
     "verticalM": null,
     "technicalRating": null,

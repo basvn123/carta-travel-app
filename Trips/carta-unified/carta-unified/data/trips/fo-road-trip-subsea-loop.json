@@ -260,7 +260,7 @@
       "gpx_ready": true
     },
     "surface": null,
-    "distanceKm": null,
+    "distanceKm": 480,
     "elevationM": null,
     "verticalM": null,
     "technicalRating": null,

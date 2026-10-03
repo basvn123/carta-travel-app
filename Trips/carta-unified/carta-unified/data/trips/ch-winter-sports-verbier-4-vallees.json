@@ -255,8 +255,8 @@
       "Who It Suits": "Advanced and expert skiers and riders wanting guided glacier freeride and steep off-piste, comfortable in variable, ungroomed snow"
     },
     "surface": "4 Vallées network (Verbier, La Tzoumaz, Nendaz, Veysonnaz, Thyon, Siviez); base 820 m at Le Châble, top 3,330 m at Mont-Fort",
-    "distanceKm": 4,
-    "elevationM": null,
+    "distanceKm": null,
+    "elevationM": 3330,
     "verticalM": null,
     "technicalRating": null,
     "transitPass": null,

@@ -264,7 +264,7 @@
     "surface": "approx. 65–75 km, 4,200–4,800 m combined ascent; alpine ridge (white-red-white T2–T3), one secured via-ferrata-style traverse",
     "distanceKm": 65,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 4200,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

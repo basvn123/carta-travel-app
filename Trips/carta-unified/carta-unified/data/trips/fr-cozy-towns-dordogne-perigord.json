@@ -271,7 +271,7 @@
       "Who It Suits": "Slow travellers, food-focused couples, families who like rivers more than motorways"
     },
     "surface": "Under 200 km of driving all week, flat river walks, occasional hilltop climbs",
-    "distanceKm": 200,
+    "distanceKm": null,
     "elevationM": null,
     "verticalM": null,
     "technicalRating": null,

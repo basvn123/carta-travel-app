@@ -277,7 +277,7 @@
     "surface": "Approx. 335 km, +3,000 m cumulative. Asphalt lanes and canal paths, with short sections of compacted vineyard track",
     "distanceKm": 335,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 3000,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -276,7 +276,7 @@
     "surface": "approx. 65–85 km walking, 2,600–3,200 m cumulative ascent; forest track, open pasture, granite ridge path",
     "distanceKm": 65,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2600,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

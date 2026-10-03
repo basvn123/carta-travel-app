@@ -259,9 +259,9 @@
       "Who It Suits": "Families with young or intermediate skiers, ski tourers wanting an uncrowded base, and anyone happier on a small mountain with short queues than a big one with long ones"
     },
     "surface": "Malbun basin, base 1,600 m to Sareis 2,000 m; Steg valley floor 1,300 m; day trips to Pizol (up to 2,222 m) and Brandnertal/Golm, Austria (up to 2,000 m)",
-    "distanceKm": 1600,
+    "distanceKm": null,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 400,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

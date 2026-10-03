@@ -267,7 +267,7 @@
     "surface": "approx 290 km, roughly 1,200 m cumulative gain; around 85% asphalt greenway and small roads, the remainder compacted crushed limestone (sable stabilisé) on levee sections",
     "distanceKm": 290,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 1200,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

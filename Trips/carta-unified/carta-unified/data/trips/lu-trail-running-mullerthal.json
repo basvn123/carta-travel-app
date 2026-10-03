@@ -271,7 +271,7 @@
     "surface": "Approx. 125–135 km and 3,200–3,600 m of ascent; sandstone slab, root, beech leaf-litter, wooden steps and iron rungs, T1–T2 with short T3 passages",
     "distanceKm": 125,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 3200,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

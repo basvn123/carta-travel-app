@@ -274,7 +274,7 @@
       "Who It Suits": "Sailors and windsurfers who want dependable thermal wind, warm water by August, and Alpine scenery without an ocean's currents or tides"
     },
     "surface": "Four freshwater lakes, roughly 25–65 m deep, ringed by limestone peaks to 1,800 m; short drives of 20–45 minutes between them",
-    "distanceKm": 25,
+    "distanceKm": null,
     "elevationM": null,
     "verticalM": null,
     "technicalRating": null,

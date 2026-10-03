@@ -268,7 +268,7 @@
     "surface": "380–430 km, approx 5,500 m cumulative gain; asphalt lanes with roughly 35 km of cobbled sectors (kasseien) split between climbs and flat sections",
     "distanceKm": 380,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 5500,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

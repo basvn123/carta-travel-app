@@ -239,8 +239,8 @@
       "Realistic walking times": "Slovenian signpost hours are calculated for a fit, unladen local and are among the tightest in Europe. Add **30–40%**. Vrata to Kredarica is signed 5–6 h; plan 7–8 h with a pack. Kredarica to the summit and back is signed 3 h; plan 4–5 h if the ridge is busy, because on an August morning you queue at the cables."
     },
     "surface": null,
-    "distanceKm": null,
-    "elevationM": null,
+    "distanceKm": 72,
+    "elevationM": 2864,
     "verticalM": null,
     "technicalRating": "Slovenia uses the **Knafelc blaze** — a red circle with a white centre, painted on rock and tree — plus wooden signposts with the destination and hours. Route numbers appear on the signposts rather than the blazes. TNP paths are graded on signposts as **lahka pot** (easy), **zahtevna pot** (demanding, some cable) and **zelo zahtevna pot** (very demanding, sustained cable and exposure). The Vrata approaches and the summit ridge are *zelo zahtevna*.",
     "transitPass": null,

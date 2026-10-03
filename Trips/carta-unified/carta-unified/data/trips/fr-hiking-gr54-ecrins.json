@@ -258,7 +258,7 @@
     "surface": "approx. 65–75 km, 4,800 m ascent / 4,800 m descent; glacier-fringed valley paths, moraine, one high col near 2,400 m, GR red-and-white balisage",
     "distanceKm": 65,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 4800,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

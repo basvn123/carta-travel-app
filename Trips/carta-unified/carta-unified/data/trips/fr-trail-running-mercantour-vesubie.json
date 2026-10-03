@@ -270,7 +270,7 @@
     "surface": "approx. 110–130 km, 6,000–7,000 m vert; granite slab, larch forest, scree, high lake basins",
     "distanceKm": 110,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 6000,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

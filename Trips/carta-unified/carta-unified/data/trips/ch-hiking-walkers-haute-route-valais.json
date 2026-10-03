@@ -263,7 +263,7 @@
     "surface": "approx. 85–95 km, 6,500–7,200 m combined ascent; high alpine col-crossing, white-red-white T3 throughout, one blue-white-blue pitch on the Europaweg approach",
     "distanceKm": 85,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 6500,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

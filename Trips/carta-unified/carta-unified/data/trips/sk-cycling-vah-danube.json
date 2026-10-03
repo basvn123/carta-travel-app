@@ -253,9 +253,9 @@
       "Trains with bikes (ZSSK)": "ZSSK carries bicycles on services marked with a bike pictogram in the timetable; you buy a separate **cestovný lístok pre bicykel** at a fraction of the passenger fare [VERIFY: current ZSSK bicycle ticket price]. On **IC services a bike-space reservation is compulsory and capacity is small — book it when you book the seat**, not at the station. Regional trains on the Bratislava–Komárno and Bratislava–Štúrovo lines take bikes without reservation but fill on summer weekends."
     },
     "surface": "The **EuroVelo 6 / Danube** strand from Bratislava to Štúrovo is roughly **85% smooth asphalt on the flood dyke, 10% quiet paved lane, 5% short gravel or village cobble** — genuinely flat, genuinely finished, rideable on 28 mm tyres. The **Vážska cyklomagistrála** down the Váh is roughly **50% dedicated asphalt cycleway, 35% quiet secondary road, and 15% unfinished gaps where you share a main road with traffic**. The gaps that matter: **Žilina–Strečno** (short shared sections through the gorge on road I/18, narrow, with trucks — this is the least pleasant hour of the week); **Púchov–Trenčín**, where the completed cycleway is discontinuous and drops you onto road II/507 in places; and **Hlohovec–Sereď**, where the route is signed but partly unsurfaced levee. The Piešťany–Nové Mesto nad Váhom middle section, by contrast, is finished, wide and excellent [VERIFY: current completion status of the Považská cyklotrasa gap sections — new segments open most years].",
-    "distanceKm": null,
+    "distanceKm": 428,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 1030,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

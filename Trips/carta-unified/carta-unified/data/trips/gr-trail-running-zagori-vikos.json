@@ -241,9 +241,9 @@
       "Recovery and heat management": "Day 5 is a true low day (under 8 km, flat). Gorge days start by 07:00 — the east rim shades the floor to about 10:00, then it becomes an oven. Tymfi days start 06:30 to clear the treeless plateau before the 14:00–16:00 Pindus convective build-up. High point 2,497 m (Gamila); no acclimatisation needed, but the refuge night is a useful sleep-high dose."
     },
     "surface": "~45% limestone cobble and rock step, ~20% karst pavement and scree above 1,800 m, ~20% beech and black-pine singletrack with deep leaf litter, ~10% engineered kalderimi flagstone, ~5% asphalt connectors. Bring 4 mm+ lugs and a rock plate — Tymfi karst destroys soft midsoles.",
-    "distanceKm": null,
+    "distanceKm": 80,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 4390,
     "technicalRating": "Gorge floor **3–4** (loose cobble, wet slab, two boulder-hop crossings); Tymfi ascent **3**; Astraka summit ridge **4**, with 20–30 m of easy exposed scrambling below the summit block; village kalderimia **2**, though polished flagstone is genuinely slick when damp. SAC equivalents: gorge T2–T3, Astraka T3.",
     "transitPass": null,
     "hutBooking": null,

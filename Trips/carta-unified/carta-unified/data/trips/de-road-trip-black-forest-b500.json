@@ -266,7 +266,7 @@
     },
     "surface": "approx. 780 km; ridge roads and hairpin descents, gradients to 10%, max altitude 1,241 m",
     "distanceKm": 780,
-    "elevationM": null,
+    "elevationM": 1241,
     "verticalM": null,
     "technicalRating": null,
     "transitPass": null,
