@@ -10,6 +10,9 @@
  *                             { meta, destinations } the app always had, by
  *                             the region store in catalogue.js: all of them
  *                             at once, or by viewport (CATALOGUE_MODE below)
+ *   - /dest/_rank.json        the rank tier (T271): what the default screens
+ *                             rank and price on, so they paint before the
+ *                             shards arrive (firstPaintPromise below)
  * The heavier, rarely-needed data is lazy:
  *   - /poi/{destId}.json      full POI list for one town (Day planner, detail)
  *   - /country_insights.json  per-country travel intel (planners + detail)
@@ -19,9 +22,10 @@ import { faresUrl } from './fareFile.js';
 import { shardName } from './poiShard.js';
 import { DATA_BASE, dataUrl } from './dataHost.js';
 import { createCatalogue } from './catalogue.js';
+import { RANK_PATH } from './bootIndex.js';
 
-function fetchJson(path) {
-  return fetch(dataUrl(path)).then((r) => {
+function fetchJson(path, init) {
+  return fetch(dataUrl(path), init).then((r) => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   });
@@ -46,8 +50,21 @@ bootIndexPromise.catch(() => {});
 
 // One country file, retried once: forty-odd parallel requests make a single
 // dropped one likely enough on a phone that it should not cost the whole map.
+// Shards fetched in the background after a first paint from the rank tier
+// go at low fetch priority (T271), so they queue behind what the screen on
+// show is asking for: the journeys index, the card photographs. Measured on
+// the Destinations screen, at auto priority the 238 shards held the journeys
+// index back by about five seconds on a throttled phone.
+let backgroundShards = false;
 function fetchCountry(cc, hash) {
   const path = `/dest/${encodeURIComponent(cc)}.json?v=${encodeURIComponent(hash || '')}`;
+  const init = backgroundShards ? { priority: 'low' } : undefined;
+  return fetchJson(path, init).catch(() => fetchJson(path, init));
+}
+
+// The rank tier (T271, bootIndex.js), retried once like a shard.
+function fetchRank(hash) {
+  const path = `${RANK_PATH}?v=${encodeURIComponent(hash || '')}`;
   return fetchJson(path).catch(() => fetchJson(path));
 }
 
@@ -70,17 +87,19 @@ export const CATALOGUE_MODE = ENV.VITE_CATALOGUE === 'viewport' ? 'viewport' : '
 export const catalogue = createCatalogue({
   loadBoot: () => bootIndexPromise,
   loadCountry: fetchCountry,
+  loadRank: fetchRank,
 });
 
 /**
  * The full dataset, { meta, destinations }, exactly as app_data.json used to
- * deliver it. In 'all' mode it is started at module-eval time and every
- * consumer shares the same promise. In 'viewport' mode nothing asks for it
- * up front; loadFullCatalogue() starts the same load on demand.
+ * deliver it. Every consumer shares the same promise. In 'all' mode it is
+ * started straight after the first paint (useAppData), or at once when there
+ * is no rank tier to paint from; in 'viewport' mode only when a screen asks.
  */
 let fullPromise = null;
-export function loadFullCatalogue() {
+export function loadFullCatalogue({ background = false } = {}) {
   if (!fullPromise) {
+    backgroundShards = background;
     fullPromise = catalogue.ensureAll().then(() => catalogue.boot()).then((boot) => {
       const core = catalogue.snapshot();
       const missing = boot.d.length - Object.keys(core.destinations).length;
@@ -92,11 +111,23 @@ export function loadFullCatalogue() {
   }
   return fullPromise;
 }
-export const appDataPromise = CATALOGUE_MODE === 'all' ? loadFullCatalogue() : null;
+/**
+ * What the first paint renders from, in 'all' mode (T271). The boot index
+ * and the rank tier (/dest/_rank.json) give every destination a lite record
+ * holding the fields the default screens rank, filter and price on, so the
+ * Destinations and Explore screens paint without waiting for the 238 shards.
+ * The snapshot carries `partial: true` until they are in. Without a usable
+ * rank tier (an older boot index cached by the service worker, a file from
+ * another build, a failed fetch) it is the full catalogue, as before T271.
+ * Started at module-eval time, like the boot index.
+ */
+export const firstPaintPromise = CATALOGUE_MODE === 'all'
+  ? catalogue.ensureRank().then((ok) => (ok ? catalogue.snapshot() : loadFullCatalogue()))
+  : null;
 // Swallow the module-scope rejection so it never surfaces as an unhandled
 // rejection before useAppData attaches its own catch. Consumers still get
 // the real error from their own .then/.catch chains.
-appDataPromise?.catch(() => {});
+firstPaintPromise?.catch(() => {});
 
 // Per-origin fare slices (public/fares/{IATA}.json, written by sync-data.mjs;
 // faresUrl() escapes the handful of codes Windows reserves, see fareFile.js).

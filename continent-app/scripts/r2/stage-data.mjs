@@ -36,11 +36,36 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join } from 'node:path';
 import {
   existsSync, readFileSync, writeFileSync, rmSync, mkdirSync, renameSync,
-  readdirSync, statSync,
+  readdirSync, statSync, cpSync,
 } from 'node:fs';
 import { R2_TIER, normaliseBase } from '../../src/lib/dataHost.js';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
+
+// Windows refuses a directory rename with EPERM (or EBUSY, EACCES) for a few
+// seconds after Vite has written tens of thousands of files into it, though
+// no process holds it open: a scanner or the indexer still has a handle
+// (T059-d). So the move retries the rename with a growing pause, and if the
+// directory is still refused after that, copies it and deletes the source,
+// which works under a scanner's read handle. On Linux the first rename wins.
+const RETRYABLE = new Set(['EPERM', 'EBUSY', 'EACCES', 'ENOTEMPTY']);
+const pause = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+function moveEntry(from, to) {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    try {
+      renameSync(from, to);
+      return;
+    } catch (err) {
+      if (!RETRYABLE.has(err.code)) throw err;
+      console.warn(`[stage-data] rename of ${from} refused (${err.code}), retry ${attempt + 1} of 6`);
+      pause(250 * 2 ** attempt);   // 0.25 s doubling to 8 s, about 16 s in all
+    }
+  }
+  console.warn(`[stage-data] rename of ${from} still refused; copying it instead`);
+  rmSync(to, { recursive: true, force: true });
+  cpSync(from, to, { recursive: true });
+  rmSync(from, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+}
 
 function arg(name, fallback) {
   const i = process.argv.indexOf(name);
@@ -147,7 +172,7 @@ async function main() {
     const from = join(distDir, name);
     if (!existsSync(from)) continue;
     const s = sizeOf(from);
-    renameSync(from, join(outDir, name));
+    moveEntry(from, join(outDir, name));
     entries[name] = s;
     files += s.files;
     bytes += s.bytes;

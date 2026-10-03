@@ -23,6 +23,7 @@ import { BathingWater } from './BathingWater.jsx';
 import { MemberPlaces } from './MemberPlaces.jsx';
 import { AroundHere, FeaturePhoto, summaryOf } from './AroundHere.jsx';
 import RoutesFromHere from './RoutesFromHere.jsx';
+import { WebcamSection } from './WebcamEmbed.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { visitLength } from '../lib/nearby.js';
 import { roleOf } from '../lib/taxonomy.js';
@@ -322,6 +323,13 @@ export function DestinationPage({
   const city = baseCity(destination.city);
   const d = dossier || null;
   const loading = dossier === undefined;
+  // Everything below the badge row waits for the dossier to answer (a file
+  // or a null), and then appears in its final shape. Drawn early from the
+  // record alone, the intro grew from the knownFor line to the dossier's two
+  // sentences and the fact strip gained its best months and bed price, which
+  // pushed the planner buttons and the strip 45 px down on a phone: a layout
+  // shift of 0.30 (T011, T271). Content that appears moves nothing.
+  const settled = !loading;
   const cost = indices?.get?.(destination.id) || null;
   const profileKey = matchProfile(choices?.lifestyle || {});
   const lifestyleLine = t('cost.atLifestyle', {
@@ -356,6 +364,7 @@ export function DestinationPage({
   const links = d?.practical?.links || {};
   const credits = d?.credits || [];
   const when = d?.when || null;
+  const webcams = d?.webcams || [];
   // ROUTES.md R6: measured to the nearest point on the line, in the lab, and
   // named for the path rather than for whichever stage of it passes. Trails
   // left `nearby` with this block: see pipeline/dossier NEARBY_RULES.
@@ -452,6 +461,7 @@ export function DestinationPage({
     tips: tips.length > 0,
     festivals: festivals.length > 0,
     weather: forecast !== null && forecast !== undefined,
+    webcams: webcams.length > 0,
     park: !!(parking && (parking.spots?.length > 0 || parking.park_ride || parking.web)),
     pack: packs.length > 0,
   };
@@ -548,7 +558,7 @@ export function DestinationPage({
             </div>
             {/* What this place is: two or three sentences from our own
                 facts, one opening line after Wikivoyage. Never the article. */}
-            {shortIntro && (
+            {settled && shortIntro && (
               <p className="destp-short">
                 {shortIntro}
                 {guideUrl && (
@@ -557,6 +567,7 @@ export function DestinationPage({
               </p>
             )}
           </div>
+          {settled && (
           <div className="destp-head-actions">
             {/* Into the planners. A page about a place is where the wish to
                 go there forms, so the trip wizard (this country picked) and
@@ -595,10 +606,11 @@ export function DestinationPage({
               <span>{t('explore.openMaps')}</span>
             </a>
           </div>
+          )}
         </div>
 
         {/* Four measured facts, the instrument strip. */}
-        {(destination.place?.visit_h != null || bestMonths || cost?.dayEur != null || bedFrom != null) && (
+        {settled && (destination.place?.visit_h != null || bestMonths || cost?.dayEur != null || bedFrom != null) && (
           <dl className="dfacts">
             {destination.place?.visit_h != null && (
               <div className="dfact"><dt>{t('pdf.factVisit')}</dt><dd className="mono">{Math.round(destination.place.visit_h)} h</dd></div>
@@ -615,6 +627,7 @@ export function DestinationPage({
           </dl>
         )}
 
+        {settled && (
         <div className="destp-grid">
           <div className="destp-col is-main">
             {/* Highlights and the one map, with its layers. */}
@@ -1030,7 +1043,7 @@ export function DestinationPage({
                 open={isOpen('cost')}
                 onToggle={() => toggle('cost')}
               >
-                <CostReceipt cost={cost} t={t} lifestyleLabel={lifestyleLine} onOpenLifestyle={onOpenLifestyle} />
+                <CostReceipt cost={cost} t={t} lang={lang} lifestyleLabel={lifestyleLine} onOpenLifestyle={onOpenLifestyle} />
                 {stayLen?.n >= 2 && (
                   <p className="destp-triptotal">
                     {t('dest.tripTotal', {
@@ -1203,6 +1216,14 @@ export function DestinationPage({
               </Fold>
             )}
 
+            {/* Live webcams from external providers: never stored, always live. */}
+            <WebcamSection
+              webcams={webcams}
+              open={isOpen('webcams')}
+              onToggle={() => toggle('webcams')}
+              t={t}
+            />
+
             {/* What to bring for the month that matters here. */}
             {has.pack && (
               <Fold
@@ -1266,6 +1287,7 @@ export function DestinationPage({
                 the product - do not remove it from those two places as well. */}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

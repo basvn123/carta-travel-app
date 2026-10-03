@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Carta · Europe Travel</title>
+    <title>What a day in Europe costs, place by place | Carta</title>
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -12,23 +13,29 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Carta" />
-    <meta name="description" content="Carta - find affordable European getaways by total trip cost." />
+    <meta name="description" content="Carta prices the bed, food and local transport per person per day in every place it covers across Europe, and says where each figure came from." />
     <link rel="canonical" href="https://www.carta-europetravel.com/" />
     <!-- Social / link-preview cards. Static for the shell; scripts/prerender.mjs
          overwrites these per page once the static HTML emitter lands, and
          src/lib/head.js keeps them in step with client-side navigation.
-         og:image should be replaced by a real 1200x630 card. -->
+         og:image is the 1200x630 site card from scripts/og (public/og/site.png);
+         a page with its own record gets its own card from the same generator. -->
     <meta property="og:site_name" content="Carta" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.carta-europetravel.com/" />
-    <meta property="og:title" content="Carta · Europe Travel" />
-    <meta property="og:description" content="Find affordable European getaways priced by total trip cost — flights, stay and what you actually spend on the ground." />
-    <meta property="og:image" content="https://www.carta-europetravel.com/icon-512.png" />
+    <meta property="og:title" content="What a day in Europe costs, place by place | Carta" />
+    <meta property="og:description" content="Carta prices the bed, food and local transport per person per day in every place it covers across Europe, and says where each figure came from." />
+    <meta property="og:image" content="https://www.carta-europetravel.com/og/site.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A Carta receipt: the bed, the food and the total for one person for one day in a European town." />
     <meta property="og:locale" content="en" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Carta · Europe Travel" />
-    <meta name="twitter:description" content="Find affordable European getaways priced by total trip cost — flights, stay and what you actually spend on the ground." />
-    <meta name="twitter:image" content="https://www.carta-europetravel.com/icon-512.png" />
+    <meta name="twitter:title" content="What a day in Europe costs, place by place | Carta" />
+    <meta name="twitter:description" content="Carta prices the bed, food and local transport per person per day in every place it covers across Europe, and says where each figure came from." />
+    <meta name="twitter:image" content="https://www.carta-europetravel.com/og/site.png" />
+    <meta name="twitter:image:alt" content="A Carta receipt: the bed, the food and the total for one person for one day in a European town." />
     <!-- The boot index gates the country files and so first render; preloading
          lets it download with the HTML instead of waiting for the JS bundle to
          boot. The country files it names are fetched by src/lib/appData.js. -->

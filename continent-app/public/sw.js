@@ -4,7 +4,8 @@
    Strategy (GET on this origin or the data host; anything else passes through):
      • navigations      → network-first, fall back to the cached app shell
      • /boot.json       → stale-while-revalidate (instant repeat opens; see below)
-     • /dest/*.json     → stale-while-revalidate, one cached copy per country
+     • /dest/*.json     → stale-while-revalidate, one cached copy per path (per
+                          region shard, and one of the rank tier)
      • /{layer}/*.json  → network-first: these list per-item files by id, and a
                           stale list names ids the last export deleted
      • /assets/* hashed → cache-first (Vite fingerprints these; safe forever)
@@ -90,11 +91,15 @@ async function cacheFirst(request) {
   return fresh;
 }
 
-// A country file is requested as /dest/<cc>.json?v=<content hash>, so every
-// weekly build adds a new URL. Keep exactly one per country: the entry being
-// written replaces its siblings, and the cached boot index (itself
-// stale-while-revalidate) still names the hashes that are cached, so offline
-// the two halves always match.
+// A shard is requested as /dest/<key>.json?v=<content hash>, so every weekly
+// build adds a new URL. Keep exactly one per path: the entry being written
+// replaces its siblings with the same path and another hash. The key is a
+// region shard since T059 (a small country whole, a big one as grid tiles,
+// "IT_1_41_12"), not a country, and /dest/_rank.json (T271) is one more path
+// under the same rule. The cached boot index (itself stale-while-revalidate)
+// still names the hashes that are cached, so offline the two halves match;
+// the rank tier also carries the boot index's key and is ignored on a
+// mismatch, so a stale pairing costs the fast first paint, never the data.
 async function staleWhileRevalidateOnePerPath(request) {
   const cache = await caches.open(CACHE_VERSION);
   const cached = await cache.match(request);

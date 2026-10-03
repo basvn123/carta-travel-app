@@ -16,7 +16,10 @@
  *     │                                 destination (src/lib/bootIndex.js)
  *     ├─> public/dest/{cc}.json         the rest of each record, one file per
  *     │                                 country, served from the data host
- *     └─> public/poi/{destId}.json      one town's items_full - lazy-fetched
+ *     ├─> public/dest/_rank.json        the rank tier: the fields the default
+ *     │                                 screens rank and price on, pooled
+ *     │                                 (bootIndex.js RANK_FIELDS, T271)
+ *     └─> public/poi/{destId}.json     one town's items_full - lazy-fetched
  *                                       by the Day planner and the destination
  *                                       page, one town at a time
  *
@@ -36,7 +39,9 @@ import { stripDashes } from '../src/lib/format.js';
 import { fareFileBase } from '../src/lib/fareFile.js';
 import { shardName } from '../src/lib/poiShard.js';
 import { destAnchor } from '../src/lib/origins.js';
-import { splitCatalogue, mergeCatalogue } from '../src/lib/bootIndex.js';
+import {
+  splitCatalogue, mergeCatalogue, buildRankTier, decodeRankTier, RANK_PATH, RANK_FIELDS,
+} from '../src/lib/bootIndex.js';
 import { createHash } from 'node:crypto';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
@@ -82,6 +87,11 @@ function sanitizeDeep(o) {
     }
   }
   return o;
+}
+
+if (process.argv.includes('--split-only')) {
+  writeSplit(readFileSync(resolve(publicDir, 'app_data.json'), 'utf-8'));
+  process.exit(0);
 }
 
 if (!existsSync(src)) {
@@ -384,7 +394,12 @@ console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations
 // whole catalogue. Each country file is named in the index with a content
 // hash, which the app sends as ?v= so an edge or browser cache can never
 // pair a new index with an old record.
-{
+//
+// `node scripts/sync-data.mjs --split-only` runs this step alone, from the
+// public/app_data.json already on disk, for a checkout without the master
+// dataset (a worktree).
+function writeSplit(core) {
+  const n = Object.keys(JSON.parse(core).destinations || {}).length;
   const destDir = resolve(publicDir, 'dest');
   rmSync(destDir, { recursive: true, force: true });
   mkdirSync(destDir, { recursive: true });
@@ -396,6 +411,13 @@ console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations
     writeFileSync(resolve(destDir, `${cc}.json`), body);
     destBytes += body.length;
   }
+  // The rank tier (T271, RANK_FIELDS in bootIndex.js): the fields the
+  // default screens rank, filter and price on, so they can paint before the
+  // shards land. Its key is a hash of the boot rows it is aligned with.
+  const rankKey = createHash('sha256').update(JSON.stringify(boot.d)).digest('hex').slice(0, 12);
+  const rankBody = JSON.stringify(buildRankTier(boot, Object.assign({}, ...Object.values(chunks)), rankKey));
+  writeFileSync(resolve(publicDir, RANK_PATH.slice(1)), rankBody);
+  boot.rank = { key: rankKey, hash: createHash('sha256').update(rankBody).digest('hex').slice(0, 12) };
   const bootBody = JSON.stringify(boot);
   writeFileSync(resolve(publicDir, 'boot.json'), bootBody);
 
@@ -419,9 +441,35 @@ console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations
     console.error(`[sync-data] boot index round trip FAILED on ${bad} records; not shipping a lossy split`);
     process.exit(1);
   }
+
+  // The same proof for the rank tier: decoded against this boot index, every
+  // lite record carries exactly the RANK_FIELDS part of its full record.
+  const lite = decodeRankTier(JSON.parse(bootBody), JSON.parse(rankBody));
+  const { core: liteCore } = mergeCatalogue(JSON.parse(bootBody), {}, lite);
+  let rankBad = lite ? 0 : 1;
+  for (const id of wantIds) {
+    const a = want.destinations[id];
+    const b = liteCore.destinations[id];
+    if (!b) { rankBad += 1; continue; }
+    for (const [f, how] of Object.entries(RANK_FIELDS)) {
+      if (!(f in a)) { if (f in b) rankBad += 1; continue; }
+      const full = a[f];
+      const exp = how === true || full == null || typeof full !== 'object' || Array.isArray(full)
+        ? full
+        : Object.fromEntries(Object.entries(full).filter(([k]) => (!how.pick || how.pick.includes(k))
+          && (!how.omit || !how.omit.includes(k))));
+      if (JSON.stringify(exp) !== JSON.stringify(b[f])) rankBad += 1;
+    }
+  }
+  if (rankBad) {
+    console.error(`[sync-data] rank tier check FAILED on ${rankBad} fields; not shipping it`);
+    process.exit(1);
+  }
   console.log(`[sync-data] boot index -> public/boot.json (${n} destinations, ${kb(bootBody)}); `
-    + `detail -> public/dest/ (${Object.keys(chunks).length} country files, ${Math.round(destBytes / 1024)} KB); round trip exact`);
+    + `detail -> public/dest/ (${Object.keys(chunks).length} country files, ${Math.round(destBytes / 1024)} KB); `
+    + `rank tier -> public${RANK_PATH} (${kb(rankBody)}); round trip exact`);
 }
+writeSplit(core);
 
 // One file per destination, so a page that wants the POIs for ONE place does
 // not download 33 MB to read 9 KB of it. There used to be a combined

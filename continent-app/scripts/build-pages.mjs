@@ -15,6 +15,13 @@
  * check-pages-limits.mjs on dist/. A VITE_DATA_BASE already in the environment
  * wins, for a staging data host.
  *
+ * The deploy also gets a top-level 404.html, a copy of index.html made after
+ * the build (T294-a). Without one, Pages answers every unknown path with
+ * index.html and status 200. With it, an unknown path still renders the app,
+ * since the app is one client-rendered URL, but the status is a real 404. It
+ * is made here and not in public/ so that `npm run build` and the dev server
+ * stay as they were.
+ *
  * Exit 0 when the build succeeded and dist/ would deploy; non-zero otherwise.
  *
  * Then, from continent-app/ (T293, T296):
@@ -28,6 +35,7 @@
  *   node scripts/r2/push-data.mjs --live --prune  after production is live
  */
 import { spawnSync } from 'node:child_process';
+import { copyFileSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -48,5 +56,13 @@ function step(label, cmd, args) {
 
 console.log(`[build-pages] data base ${env.VITE_DATA_BASE}`);
 step('npm run build', 'npm', ['run', 'build']);
+// T294-a: a real 404 for unknown paths on the app host.
+const indexHtml = resolve(appRoot, 'dist', 'index.html');
+if (!existsSync(indexHtml)) {
+  console.error('[build-pages] dist/index.html missing after the build');
+  process.exit(1);
+}
+copyFileSync(indexHtml, resolve(appRoot, 'dist', '404.html'));
+console.log('[build-pages] dist/404.html written (copy of index.html)');
 step('check-pages-limits dist', process.execPath, [resolve(appRoot, 'scripts', 'check-pages-limits.mjs'), 'dist']);
 console.log('[build-pages] dist/ is the Pages deploy; dist-data/ is the R2 upload (scripts/r2/push-data.mjs)');

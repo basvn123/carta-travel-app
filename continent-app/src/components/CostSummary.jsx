@@ -1,6 +1,7 @@
 import React from 'react';
 import { BAND_KEY, eurDay } from '../lib/costIndex.js';
 import { BedIcon, DiningIcon } from './Icons.jsx';
+import { accuracyVars } from '../lib/accuracy.js';
 
 /**
  * The cost language for the whole Explore page: a euro figure, a five-step
@@ -73,33 +74,43 @@ function CostRow({ icon: Icon, label, eur, band }) {
  * The footer is not a disclaimer, it is the measurement's provenance, and it
  * is the reason to believe the three numbers above it.
  */
-export function CostReceipt({ cost, t, lifestyleLabel, onOpenLifestyle, compact = false }) {
+export function CostReceipt({ cost, t, lang, lifestyleLabel, onOpenLifestyle, compact = false }) {
   if (!cost || cost.dayEur == null) return null;
   const bandWord = t(BAND_KEY[cost.dayBand]);
 
-  // Each figure states its own provenance. Rolling them into one sentence is
-  // what produced the earlier lie: 234 of the 786 city-measured stay rates
-  // ship without a listing count (Rome is one), and the old wording read that
-  // missing count as "nothing has been measured in this town", which was
-  // exactly backwards.
-  // Only the MEASURED lines earn a sentence. The national-fallback wording
-  // ("Bed price is the national figure, not yet measured in this town." /
-  // "Food prices are the national basket.") told the reader nothing they could
-  // act on and rode along on the majority of places, so the receipt read as a
-  // disclaimer instead of a price. Silence is the honest default: the figures
-  // above still stand, and where a real measurement exists it still says so.
-  const provenance = () => {
-    const stay = cost.stayLevel === 'region' ? t('cost.stayRepaired')
-      : cost.stayLevel !== 'city' ? ''
-      : cost.listings
-        ? t('cost.stayMeasuredN', {
+  // Each figure states its own provenance, and states it at its own level:
+  // a city measurement says so and names the source, a country-level figure
+  // says that instead. The old receipt stayed silent on country figures
+  // ("silence is the honest default") but that hid the difference between the
+  // Ljubljana bed price, measured, and an Albanian one that is a prior, and
+  // made the strong number read as weak as the weak one (T098). Source names
+  // are the ones data_licenses.md credits: Inside Airbnb for the bed, Numbeo
+  // for the food anchors, Eurostat's price level index where a figure is scaled.
+  const monthYear = (iso) => {
+    if (!iso) return '';
+    try {
+      return new Intl.DateTimeFormat(lang || 'en', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+        .format(new Date(`${iso.slice(0, 7)}-15T12:00:00Z`));
+    } catch { return iso.slice(0, 7); }
+  };
+  const bedLine = () => {
+    if (cost.stayEur == null) return '';
+    if (cost.stayLevel === 'region') return t('cost.bedRepaired');
+    if (cost.stayLevel === 'city') {
+      return cost.listings
+        ? t('cost.bedCityN', {
           n: cost.listings.toLocaleString('en-GB'),
           place: cost.source || '',
-          when: cost.captured ? cost.captured.slice(0, 7) : '',
+          when: monthYear(cost.captured),
         })
-        : t('cost.stayMeasured');
-    const food = cost.foodLevel === 'city' ? t('cost.foodMeasured') : '';
-    return `${stay} ${food}`.trim();
+        : t('cost.bedCity');
+    }
+    return String(cost.stayBasis || '').startsWith('airbnb_pli_scaled') ? t('cost.bedScaled') : t('cost.bedCountry');
+  };
+  const foodLine = () => {
+    if (cost.foodEur == null) return '';
+    if (cost.foodLevel === 'city') return t('cost.foodCity');
+    return String(cost.foodBasis || '').startsWith('pli_scaled') ? t('cost.foodScaled') : t('cost.foodCountry');
   };
 
   return (
@@ -125,7 +136,17 @@ export function CostReceipt({ cost, t, lifestyleLabel, onOpenLifestyle, compact 
         </p>
       )}
       {!compact && cost.tierFallback && <p className="cost-source">{t('cost.tierFallback')}</p>}
-      {!compact && <p className="cost-source">{provenance()}</p>}
+      {!compact && bedLine() && <p className="cost-source">{bedLine()}</p>}
+      {!compact && foodLine() && <p className="cost-source">{foodLine()}</p>}
+      {/* The accuracy figure, with its date and method one click away. Food
+          only: the bed figure is not published until the stay hold-out is
+          big enough to quote (src/lib/accuracy.js). */}
+      {!compact && (
+        <details className="cost-accuracy">
+          <summary>{t('cost.accuracy', accuracyVars(lang))}</summary>
+          <p>{t('cost.accuracyMethod', accuracyVars(lang))}</p>
+        </details>
+      )}
     </div>
   );
 }

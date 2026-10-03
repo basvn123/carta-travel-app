@@ -20,6 +20,15 @@
  * has. Running phase 2 first would 404 the old site's links for as long as
  * it stays cached.
  *
+ * Phase 2 also removes what no current R2_TIER entry owns (T296-b): the
+ * sync above only visits entries still in R2_TIER, so the objects of an entry
+ * removed from the list would stay for ever. After the syncs it lists the
+ * top level of r2:<bucket>/<prefix>/ and deletes each name that is not in
+ * R2_TIER (a directory with `rclone purge`, a file with `rclone deletefile`).
+ * With --rclone-dry-run the listing is real, a read, and the deletes carry
+ * --dry-run. Without credentials the plan prints that this step exists and
+ * lists nothing. It refuses to delete anything from an empty listing.
+ *
  * Objects move with rclone, not wrangler, for the reason T045 found: wrangler
  * uploads one object per call and refuses files over 300 MiB, and this tree
  * is ~52,000 files. rclone reads its remote from the environment, so no
@@ -109,6 +118,43 @@ function uploadPlan() {
   return { stage, cmds };
 }
 
+/**
+ * The top-level names in an `rclone lsf` listing (directories end in "/")
+ * that no R2_TIER entry owns. Exported for the test, which feeds it a listing.
+ */
+export function staleEntries(listing, tier = R2_TIER) {
+  const keep = new Set(tier);
+  const out = [];
+  for (const line of String(listing).split(/\r?\n/)) {
+    const raw = line.trim();
+    if (!raw) continue;
+    const dir = raw.endsWith('/');
+    const name = dir ? raw.slice(0, -1) : raw;
+    if (!name || name.includes('/') || keep.has(name)) continue;
+    out.push({ name, dir });
+  }
+  return out;
+}
+
+function stalePlan() {
+  const base = `${remoteName}:${bucket}/${prefix}`;
+  const ls = ['rclone', 'lsf', `${base}/`, '--s3-no-check-bucket'];
+  console.log(`$ ${show(ls)}`);
+  const r = spawnSync(ls[0], ls.slice(1), { encoding: 'utf-8' });
+  if (r.status !== 0) {
+    console.error(`[push-data] listing ${base}/ failed (exit ${r.status}): ${r.stderr || r.error || ''}`);
+    process.exit(r.status || 1);
+  }
+  if (!r.stdout.trim()) {
+    console.error(`[push-data] ${base}/ listed empty; refusing to prune stale prefixes from an empty listing`);
+    process.exit(1);
+  }
+  return staleEntries(r.stdout).map(({ name, dir }) => [
+    'rclone', dir ? 'purge' : 'deletefile', `${base}/${name}`,
+    '--s3-no-check-bucket', ...(RCLONE_DRY ? ['--dry-run'] : []),
+  ]);
+}
+
 function main() {
   const execute = LIVE || RCLONE_DRY;
   if (execute) {
@@ -131,9 +177,18 @@ function main() {
   console.log(`staged for ${stage.data_base} at ${stage.generated_at}: `
     + `${stage.total.files} files, ${mib(stage.total.bytes)} MiB in ${Object.keys(stage.entries).length} entries`);
   for (const c of cmds) (execute ? run(c) : console.log(`  ${show(c)}`));
+  if (PRUNE) {
+    if (execute) {
+      const stale = stalePlan();
+      console.log(`${stale.length} top-level name(s) in ${remoteName}:${bucket}/${prefix}/ are not in R2_TIER`);
+      for (const c of stale) run(c);
+    } else {
+      console.log(`  then: list ${remoteName}:${bucket}/${prefix}/ and delete each top-level name not in R2_TIER`);
+    }
+  }
   if (!execute) {
     console.log(`\nPlan only, nothing sent. ${PRUNE ? 'Phase 2 runs only after the new Pages deploy is live.' : 'Then deploy Pages, then run with --prune.'}`);
   }
 }
 
-main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

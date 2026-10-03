@@ -38,6 +38,24 @@
  * tile around Naples, not all of Italy, and the shard size stays bounded as
  * the catalogue grows instead of growing with the country. shardKey() is
  * the one rule, used by the split, the merge and catalogue.js.
+ *
+ * The rank tier, /dest/_rank.json (T271). The default screens rank the whole
+ * of Europe by price, rating and kind, so before T271 the first paint waited
+ * for every shard. The rank tier is the part of each record those screens
+ * read: the cost inputs (accommodation, costs, local transport, transfer,
+ * tolls), the rating and beauty blocks, the kind and size fields, and what a
+ * card shows on its face. RANK_FIELDS is the list. It is columnar and
+ * pooled: one array of distinct values per field and one row of indexes per
+ * destination, in boot row order, because most of these blocks repeat (90
+ * distinct cost baskets and 257 distinct stay blocks across 3,868 places).
+ *
+ *   { v: 1, key, fields: [...], pools: [[value, ...], ...], rows: [[i, ...], ...] }
+ *
+ * An index of -1 means the record has no such field. `key` is the boot
+ * index's `rank.key`, a hash of the boot rows, so a rank file can never be
+ * paired with a boot index whose rows are in another order. The merge turns a
+ * rank row into a lite record ({ _lite: true, ... }) for every destination
+ * whose shard has not arrived yet; the shard's record replaces it whole.
  */
 
 export const BOOT_VERSION = 1;
@@ -140,6 +158,117 @@ export function chunkList(boot) {
   return Object.entries(boot?.chunks || {});
 }
 
+/** Published path of the rank tier, inside dest/ so it travels with the shards. */
+export const RANK_PATH = '/dest/_rank.json';
+export const RANK_VERSION = 1;
+
+/**
+ * The fields of a record that the default screens read before any shard has
+ * arrived, and how much of each: `true` is the whole value, `{ pick }` keeps
+ * only those keys of an object, `{ omit }` drops those keys. Anything not
+ * listed (the climate table, the POI list, the guide, the members,
+ * the rating components and the rest) arrives with the shard.
+ *
+ * What decides the list: every field useDestinationSearch, composeTrip,
+ * hydrateForOrigin, computeCosts and useExploreCatalog read to filter, price
+ * and order, plus what an Explore or Destinations card prints on its face.
+ * tests/rankTier.test.mjs prices every destination from the lite record and
+ * from the full one and requires the same answer, so a pricing input left
+ * out of this list fails the test, not the traveller.
+ */
+export const RANK_FIELDS = Object.freeze({
+  city: true,
+  country: true,
+  tier: true,
+  iata: true,
+  anchor_airport: true,
+  anchor_estimated: true,
+  no_ryanair_route: true,
+  city_lat: true,
+  city_lon: true,
+  country_rank: true,
+  country_n: true,
+  country_badge: true,
+  tags: true,
+  categories: true,
+  blurb: true,
+  transfer: true,
+  driving_toll: true,
+  costs: true,
+  local_transport: true,
+  place: true,
+  crowding: true,
+  accommodation: true,
+  rating: { omit: ['components'] },
+  beauty: { omit: ['components'] },
+  bathing_water: { omit: ['nearest'] },
+  image: { pick: ['url', 'w', 'h'] },
+  climate: { pick: ['best'] },
+});
+
+function projectField(value, how) {
+  if (how === true || value == null || typeof value !== 'object' || Array.isArray(value)) return value;
+  const out = {};
+  for (const [k, v] of Object.entries(value)) {
+    if (how.pick && !how.pick.includes(k)) continue;
+    if (how.omit && how.omit.includes(k)) continue;
+    out[k] = v;
+  }
+  return out;
+}
+
+/**
+ * The rank tier for a boot index and the records it was split from (the
+ * shard records, keyed by id, without the fields the boot row carries).
+ * `key` is the caller's hash of boot.d (sync-data.mjs uses sha256), stored
+ * in both files.
+ */
+export function buildRankTier(boot, recordsById, key) {
+  const fields = Object.keys(RANK_FIELDS);
+  const pools = fields.map(() => []);
+  const seen = fields.map(() => new Map());
+  const rows = (boot?.d || []).map(([id]) => {
+    const rec = recordsById[id] || {};
+    return fields.map((f, i) => {
+      if (!(f in rec)) return -1;
+      const v = projectField(rec[f], RANK_FIELDS[f]);
+      const s = JSON.stringify(v);
+      let at = seen[i].get(s);
+      if (at === undefined) {
+        at = pools[i].length;
+        pools[i].push(v);
+        seen[i].set(s, at);
+      }
+      return at;
+    });
+  });
+  return { v: RANK_VERSION, key, fields, pools, rows };
+}
+
+/**
+ * The rank tier as one lite record per boot row ({ id: rest }, the same
+ * shape a shard holds, plus `_lite: true`), or null when the file does not
+ * belong to this boot index. Pooled values are shared between records, as
+ * the shard's records are not; nothing in the app writes into a record.
+ */
+export function decodeRankTier(boot, rank) {
+  if (!boot?.rank || !rank || rank.v !== RANK_VERSION || rank.key !== boot.rank.key) return null;
+  if (!Array.isArray(rank.rows) || rank.rows.length !== (boot.d || []).length) return null;
+  const { fields, pools } = rank;
+  if (!Array.isArray(fields) || !Array.isArray(pools)) return null;
+  const out = {};
+  boot.d.forEach(([id], r) => {
+    const row = rank.rows[r];
+    const rec = { _lite: true };
+    for (let i = 0; i < fields.length; i += 1) {
+      const at = row[i];
+      if (at >= 0) rec[fields[i]] = pools[i][at];
+    }
+    out[id] = rec;
+  });
+  return out;
+}
+
 /**
  * Rebuild the core wire from a boot index and its shards
  * ({ "<shard key>": { id: record } }, see shardKey). Returns { meta, destinations, ...top } in
@@ -147,16 +276,23 @@ export function chunkList(boot) {
  * index and a shard from two different builds, briefly, at the edge)
  * is skipped and counted in `missing`, not thrown: one absent town is a
  * smaller failure than no map.
+ *
+ * `lite` (decodeRankTier's output) fills in every row whose shard has not
+ * arrived with its rank record, so the default screens can rank all of
+ * Europe before the detail lands. Those rows are counted in `lite`, not in
+ * `missing`.
  */
-export function mergeCatalogue(boot, chunkMap) {
+export function mergeCatalogue(boot, chunkMap, lite = null) {
   if (!boot || boot.v !== BOOT_VERSION || !Array.isArray(boot.d)) {
     throw new Error('boot index missing or of an unknown version');
   }
   const destinations = {};
   let missing = 0;
+  let liteCount = 0;
   for (const row of boot.d) {
     const [id, lat, lon, cc] = row;
-    const rest = chunkMap?.[shardKey(row, boot.tiles)]?.[id];
+    let rest = chunkMap?.[shardKey(row, boot.tiles)]?.[id];
+    if (!rest && lite?.[id]) { rest = lite[id]; liteCount += 1; }
     if (!rest) { missing += 1; continue; }
     const rec = { id, ...rest };
     if (lat != null) rec.lat = lat;
@@ -164,7 +300,12 @@ export function mergeCatalogue(boot, chunkMap) {
     if (cc != null) rec.iso2 = cc;
     destinations[id] = rec;
   }
-  return { core: { ...(boot.top || {}), meta: boot.meta, destinations }, missing };
+  const core = { ...(boot.top || {}), meta: boot.meta, destinations };
+  // A catalogue holding any lite record says so at the top, where it
+  // survives hydrateForOrigin's copy, so a screen that needs the detail of
+  // every place can wait for the rest (App.jsx).
+  if (liteCount) core.partial = true;
+  return { core, missing, lite: liteCount };
 }
 
 /**

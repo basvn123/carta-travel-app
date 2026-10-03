@@ -1,5 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { appDataPromise, catalogue, CATALOGUE_MODE, fetchFares } from '../lib/appData.js';
+import {
+  useCallback, useEffect, useMemo, useRef, useState,
+} from 'react';
+import {
+  firstPaintPromise, catalogue, CATALOGUE_MODE, fetchFares, loadFullCatalogue,
+} from '../lib/appData.js';
 import { hydrateForOrigin, defaultOrigin, originHome } from '../lib/origins.js';
 import { bestFareWindow, countBookableRoundTrips } from '../lib/runtime_pricing.js';
 import { addDays, todayISO } from '../lib/dates.js';
@@ -29,13 +33,31 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
 
   useEffect(() => {
     // 'all' mode: the download itself starts at module-eval time (see
-    // lib/appData.js); here we only consume the shared promise.
+    // lib/appData.js); here we only consume the shared promise. Since T271
+    // that promise is the rank tier's lite catalogue (`partial: true`) when
+    // there is one: the default screens paint from it, the shards are then
+    // fetched once the page is idle, and `raw` is swapped for the full
+    // catalogue exactly once, when the last shard is in. A screen that needs
+    // one place's detail sooner asks for it through needRecords below.
     // 'viewport' mode (T059): the first paint waits for the countries around
     // the origin (and a place opened from a link) only; every later arrival,
     // from the Explore map's viewport or a screen asking for the rest,
     // replaces `raw` with the larger snapshot.
     let unsubscribe = null;
-    const firstPaint = CATALOGUE_MODE === 'all' ? appDataPromise : catalogue.boot().then((boot) => {
+    let idleHandle = null;
+    const firstPaint = CATALOGUE_MODE === 'all' ? firstPaintPromise.then((j) => {
+      if (!j?.partial) return j;
+      unsubscribe = catalogue.subscribe(() => {
+        if (catalogue.isComplete()) setRaw((prev) => (!prev || prev.partial ? catalogue.snapshot() : prev));
+      });
+      // After the first paint, not before: the shards would otherwise
+      // compete with the card photographs, which are the LCP element.
+      const start = () => { loadFullCatalogue({ background: true }).catch(() => {}); };
+      idleHandle = typeof requestIdleCallback === 'function'
+        ? { idle: requestIdleCallback(start, { timeout: 2000 }) }
+        : { timer: setTimeout(start, 200) };
+      return j;
+    }) : catalogue.boot().then((boot) => {
       const code = init.origin ?? defaultOrigin(boot);
       const home = originHome(boot, code);
       const first = [catalogue.ensureIds(init.selectedId ? [init.selectedId] : [])];
@@ -47,7 +69,8 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     });
     firstPaint
       .then((j) => {
-        setRaw(j);
+        // Never step back from a full catalogue to the lite one it replaced.
+        setRaw((prev) => (prev && !prev.partial ? prev : j));
         const def = j.meta?.defaults;
         const originDefault = init.origin ?? defaultOrigin(j);
         setChoices((prev) => {
@@ -79,10 +102,21 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
         });
       })
       .catch((e) => setError(e.message));
-    return () => unsubscribe?.();
+    return () => {
+      unsubscribe?.();
+      if (idleHandle?.idle != null && typeof cancelIdleCallback === 'function') cancelIdleCallback(idleHandle.idle);
+      if (idleHandle?.timer != null) clearTimeout(idleHandle.timer);
+    };
     // Once per mount: App passes its useState snapshot `init` and the
     // setChoices setter, both stable for the app's life.
   }, [init, setChoices]);
+
+  // One or more places' full records, now (T271): the detail panel and any
+  // screen that opens a place while the catalogue is still partial. The
+  // snapshot then carries those records in full and the rest still lite.
+  const needRecords = useCallback((ids) => catalogue.ensureIds(ids).then(() => {
+    setRaw((prev) => (prev?.partial ? catalogue.snapshot() : prev));
+  }), []);
 
   // The effective origin: the user's choice once known, else the data's default.
   const effectiveOrigin = origin || (raw ? defaultOrigin(raw) : null);
@@ -221,5 +255,5 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     if (end !== returnDate) setReturnDate(end);
   }, [dateBounds, defaultWindow]); // eslint-disable-line react-hooks/exhaustive-deps -- repairs on a data or origin change only: re-running on the dates would undo a deliberate off-calendar pick
 
-  return { data, error, dateBounds };
+  return { data, error, dateBounds, needRecords };
 }

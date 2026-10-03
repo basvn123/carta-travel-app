@@ -34,7 +34,9 @@
  * can drive it with fake fetches and count what a pan costs.
  */
 
-import { chunkList, mergeCatalogue, shardKey } from './bootIndex.js';
+import {
+  chunkList, decodeRankTier, mergeCatalogue, shardKey,
+} from './bootIndex.js';
 
 /** Cell size of the spatial index, in degrees. */
 const CELL = 1;
@@ -122,13 +124,18 @@ export function shardsNear(index, lat, lon, km) {
  *
  *   loadBoot()               -> Promise<boot index>
  *   loadCountry(key, hash)   -> Promise<{ id: record }>
+ *   loadRank(hash)           -> Promise<rank tier> (optional, T271)
  *   coalesceMs               how long arrivals are gathered before
  *                            subscribers hear of them (0 in tests)
  */
-export function createCatalogue({ loadBoot, loadCountry, coalesceMs = 60 }) {
+export function createCatalogue({
+  loadBoot, loadCountry, loadRank = null, coalesceMs = 60,
+}) {
   let boot = null;
   let index = null;
   let hashes = {};
+  let lite = null;              // id -> lite record, once the rank tier is in
+  let rankPromise = null;
   const chunks = {};            // key -> records, once loaded
   const inflight = new Map();   // key -> promise
   const requested = [];         // every key fetched, in order (measurement)
@@ -193,6 +200,27 @@ export function createCatalogue({ loadBoot, loadCountry, coalesceMs = 60 }) {
       (ids || []).map((id) => index.keyOf.get(id)).filter(Boolean),
     )),
 
+    /**
+     * The rank tier (T271, bootIndex.js): resolves true once a lite record
+     * stands in for every destination whose shard has not arrived, false
+     * when there is none to use (no loader, a boot index without one, a
+     * file from another build, or a failed fetch). Fetched once; a failure
+     * is forgotten so a later ask can retry.
+     */
+    ensureRank() {
+      if (!rankPromise) {
+        rankPromise = bootPromise.then((b) => {
+          if (!loadRank || !b?.rank?.hash) return false;
+          return Promise.resolve(loadRank(b.rank.hash)).then((rank) => {
+            lite = decodeRankTier(b, rank);
+            if (lite) announce();
+            return !!lite;
+          });
+        }).catch(() => { rankPromise = null; return false; });
+      }
+      return rankPromise;
+    },
+
     /** True once every shard is in. */
     isComplete: () => !!boot && Object.keys(hashes).every((k) => chunks[k]),
 
@@ -200,12 +228,13 @@ export function createCatalogue({ loadBoot, loadCountry, coalesceMs = 60 }) {
      * Everything loaded so far as { meta, destinations, ...top }, in the
      * master's order, or null before the boot index. The same object is
      * returned until another shard arrives, so it is safe as a React
-     * dependency.
+     * dependency. Once the rank tier is in, a destination whose shard is
+     * not has its lite record, and the snapshot carries `partial: true`.
      */
     snapshot() {
       if (!boot) return null;
       if (cached && cached.version === version) return cached.value;
-      const { core } = mergeCatalogue(boot, chunks);
+      const { core } = mergeCatalogue(boot, chunks, lite);
       cached = { version, value: core };
       return core;
     },

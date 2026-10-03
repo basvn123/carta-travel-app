@@ -177,8 +177,12 @@ try {
       const r = e?.getBoundingClientRect();
       return { signals, text: (root?.innerText || '').length, shown: !sel || !!(r && r.width > 2 && r.height > 2) };
     }, route.body);
-    const destFiles = dataOk.filter((p) => p.startsWith('/dest/')).length;
+    // The rank tier (T271) lives under /dest/ too but is not a shard; every
+    // route still ends up with all the shards (the default build fetches the
+    // rest once the first paint is up).
+    const destFiles = dataOk.filter((p) => p.startsWith('/dest/') && !p.startsWith('/dest/_rank')).length;
     const tag = route.label;
+    if (boot.rank && !dataOk.some((p) => p.startsWith('/dest/_rank.json'))) fail(`${tag}: the rank tier did not come from the data host`);
     if (appShards.length) fail(`${tag}: ${appShards.length} shard request(s) to the app host, e.g. ${appShards[0]}`);
     if (cors.length) fail(`${tag}: CORS error: ${cors[0]}`);
     if (dataBad.length) fail(`${tag}: ${dataBad.length} data host failure(s): ${dataBad.slice(0, 3).join(', ')}`);

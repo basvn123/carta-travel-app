@@ -85,7 +85,7 @@ import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
-import { catalogue, CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
+import { CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
@@ -640,7 +640,9 @@ function TravelApp() {
 
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
-  const { data, error, dateBounds } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin);
+  const {
+    data, error, dateBounds, needRecords,
+  } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin);
 
   // 'viewport' catalogue mode (T059, lib/catalogue.js): only the Explore
   // tab can work from the countries it has on screen, because its map lists
@@ -655,9 +657,23 @@ function TravelApp() {
     if (CATALOGUE_MODE !== 'viewport') return;
     if (activeTab !== 'map' || deepLinked) loadFullCatalogue().catch(() => {});
   }, [activeTab, deepLinked]);
+
+  // The partial catalogue of the default mode (T271, lib/appData.js): every
+  // place has its rank-tier record, enough for the Destinations and Explore
+  // screens to rank, filter, price and draw their cards, and the shards fill
+  // in after the first paint. A session that arrived through a link waits
+  // for the full catalogue, as it always did, because the page it opens can
+  // read any place in full; so does a planner tab, which reads every place.
+  // An opened place fetches its own shard first.
+  const partial = !!data?.partial;
+  const [linkedAtLoad] = useState(deepLinked);
   useEffect(() => {
-    if (CATALOGUE_MODE === 'viewport' && selectedId) catalogue.ensureIds([selectedId]).catch(() => {});
-  }, [selectedId]);
+    if (CATALOGUE_MODE !== 'all' || !partial) return;
+    if (linkedAtLoad || (activeTab !== 'places' && activeTab !== 'map')) loadFullCatalogue().catch(() => {});
+  }, [partial, activeTab, linkedAtLoad]);
+  useEffect(() => {
+    if (selectedId && (CATALOGUE_MODE === 'viewport' || partial)) needRecords([selectedId]).catch(() => {});
+  }, [selectedId, partial, needRecords]);
 
   // Change the departure airport, reprices the whole app from the new origin,
   // and moves the drive-comparison's home to that airport so plane and car both
@@ -820,7 +836,10 @@ function TravelApp() {
     setAccountOpen, setAuthModalOpen,
   });
 
-  const selectedDest = data && selectedId ? data.destinations[selectedId] : null;
+  // A lite record (T271) is not enough for the destination page: it opens
+  // once the place's own shard is in, which the effect above asked for.
+  const selectedRec = data && selectedId ? data.destinations[selectedId] : null;
+  const selectedDest = selectedRec && !selectedRec._lite ? selectedRec : null;
 
   // The Explore page's two price-level indices, computed once per dataset and
   // shared by the grid and the open destination panel.
@@ -845,7 +864,7 @@ function TravelApp() {
     return (
       <SharedTripView
         token={shareToken}
-        destinations={data?.destinations}
+        destinations={partial ? undefined : data?.destinations}
         onDismiss={() => setShareToken(null)}
       />
     );
@@ -897,7 +916,7 @@ function TravelApp() {
     );
   }
 
-  if (!data) {
+  if (!data || (partial && linkedAtLoad)) {
     return (
       <div className="loading-screen">
         <Logo size={56} />
@@ -1085,7 +1104,9 @@ function TravelApp() {
       {visitedTabs.has('trip') && (
         <div className={activeTab === 'trip' ? undefined : 'tab-keep-hidden'}>
           <Suspense fallback={<TabFallback />}>
-            <TripPlannerTab
+            {/* The planners read every place in full, so a tab opened while
+                the catalogue is still partial (T271) waits for the rest. */}
+            {partial ? <TabFallback /> : <TripPlannerTab
               data={data}
               user={user}
               authConfigured={authConfigured}
@@ -1105,14 +1126,14 @@ function TravelApp() {
               onOpenDest={openDetail}
               onOpenCountry={openCountryInPlaces}
               onOpenTrip={openTripPage}
-            />
+            />}
           </Suspense>
         </div>
       )}
       {visitedTabs.has('day') && (
         <div className={activeTab === 'day' ? undefined : 'tab-keep-hidden'}>
           <Suspense fallback={<TabFallback />}>
-            <DayPlannerTab
+            {partial ? <TabFallback /> : <DayPlannerTab
               data={data}
               user={user}
               authConfigured={authConfigured}
@@ -1126,7 +1147,7 @@ function TravelApp() {
               daySeed={pendingDaySeed}
               onDaySeedConsumed={clearPendingDaySeed}
               onOpenTrip={openTripFromDay}
-            />
+            />}
           </Suspense>
         </div>
       )}

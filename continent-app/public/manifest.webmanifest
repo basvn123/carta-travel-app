@@ -7,9 +7,13 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#f5f1e8",
-  "theme_color": "#f5f1e8",
-  "categories": ["travel", "lifestyle", "utilities"],
+  "background_color": "#f8f6f0",
+  "theme_color": "#f8f6f0",
+  "categories": [
+    "travel",
+    "lifestyle",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "/favicon.svg",
@@ -30,13 +34,7 @@
       "purpose": "any"
     },
     {
-      "src": "/icon-maskable.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/icon-512.png",
+      "src": "/icon-maskable-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"

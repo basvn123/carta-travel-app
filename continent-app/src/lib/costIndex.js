@@ -248,6 +248,7 @@ function countryStayMedians(destinations) {
  *   stayBand / foodBand / dayBand    0 (cheapest) to 4
  *   stayLevel / foodLevel            'city' | 'country' | 'region'
  *   listings / captured / source     how many stays were measured, when, where
+ *   stayBasis / foodBasis            the price_source behind each figure (T098)
  */
 export function computeCosts(destinations, choices) {
   const lifestyle = choices?.lifestyle;
@@ -275,6 +276,8 @@ export function computeCosts(destinations, choices) {
       foodBand: bandFor('food', foodEur, scale.food),
       dayBand: bandFor('day', dayEur, scale.day),
       stayLevel: levelOf(a.level, repaired),
+      stayBasis: repaired ? null : (a.price_source || null),
+      foodBasis: d.costs?.price_source || null,
       foodLevel: levelOf(d.costs?.level, false),
       stayTier,
       tierFallback: at.fallback,
