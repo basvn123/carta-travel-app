@@ -38,6 +38,7 @@ import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common as C  # noqa: E402
+import generation_gate as GG  # noqa: E402
 import geocode as G  # noqa: E402
 
 try:
@@ -476,6 +477,26 @@ def validate(dataset, wire=None, verify_urls=False, places=None):
                      f"{t['country']} sits in {C.REGIONS[expected]} but the record is "
                      f"filed under {t.get('region')} (source batch)")
 
+        # --- prose caps (T152, spec D4) ---------------------------------
+        # A generated trip over a cap is an ERROR: the generator's prompt and
+        # gate already refuse it, so one here means something bypassed them.
+        # A trip from the original source batches is a WARNING, one row per
+        # trip with the counts, because rewriting them needs a Gemini pass
+        # (stage 3 of _OPEN-MASTER.md); it still shows in the report.
+        caps = GG.word_cap_errors(t)
+        if caps:
+            blocks = [c for c in caps if c.startswith("word-cap: itinerary")]
+            tips = [c for c in caps if c.startswith("word-cap: proTips")]
+            summ = [c for c in caps if c.startswith("word-cap: summary")]
+            worst = max(int(re.search(r": (\d+) words", c).group(1)) for c in caps)
+            detail = (f"{len(summ)} summary, {len(blocks)} day blocks and {len(tips)} pro tips "
+                      f"over their caps ({GG.SUMMARY_WORDS}, {GG.DAY_WORDS} and {GG.TIP_WORDS} "
+                      f"words); longest {worst}; first: {caps[0]}")
+            if (t.get("provenance") or {}).get("sourceFormat") == "generated":
+                err(tid, "word-cap", detail)
+            else:
+                warn(tid, "word-cap", detail)
+
         fit = t.get("profile", {}).get("fitnessLevel")
         if fit is not None and fit not in C.FITNESS_LEVELS:
             err(tid, "bad-fitness-level", f"{fit!r} not in {C.FITNESS_LEVELS}")
@@ -814,7 +835,7 @@ def self_test(dataset, places, verify_urls):
     b["breakdown"][first_cat]["lowEur"] += 500
     b["breakdown"][first_cat]["highEur"] += 500
     b["perDayEur"]["low"] = (b["perDayEur"].get("low") or 0) + 40
-    bad["summary"] = (bad.get("summary") or "") + " Dinner runs €14, €22 a head."
+    bad["summary"] = "word " * (GG.SUMMARY_WORDS + 1) + (bad.get("summary") or "") + " Dinner runs €14, €22 a head."
     bad.setdefault("typeSpecific", {})["surface"] = "60% paved road, 30% gravel"
     bad["accommodationStrategy"] = list(bad["accommodationStrategy"]) + [
         {"name": "Pension Zzyzx Seeded"}]
@@ -866,6 +887,19 @@ def self_test(dataset, places, verify_urls):
     for code in sorted(expected):
         if code not in on[bad["id"]]:
             failures.append(f"seeded {code} was not reported")
+    # T152: the seeded summary is over its cap. A catalogue trip is warned, a
+    # generated one is an error, and the control must not be caught by it.
+    if "word-cap" not in on[bad["id"]]:
+        failures.append("seeded word-cap was not reported")
+    gen = copy.deepcopy(bad)
+    gen["id"] = control["id"] + "-seeded-generated"
+    gen["title"] = (control.get("title") or "") + " (seeded, generated)"
+    gen["provenance"] = {**(gen.get("provenance") or {}), "sourceFormat": "generated"}
+    levels = {(i.code, i.level) for i in validate({"trips": [gen]}, places=places)}
+    if ("word-cap", "ERROR") not in levels:
+        failures.append("a generated trip over a word cap was not an ERROR")
+    if ("word-cap", "WARNING") not in {(i.code, i.level) for i in issues if i.trip == bad["id"]}:
+        failures.append("a catalogue trip over a word cap was not a WARNING")
     if "hero-missing" not in on[bare["id"]]:
         failures.append("seeded hero-missing was not reported")
     leaked = on[control["id"]] & (set(K5_CODES) | {"hero-url-dead"})

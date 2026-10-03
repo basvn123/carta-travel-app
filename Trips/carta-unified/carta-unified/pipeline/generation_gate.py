@@ -374,6 +374,34 @@ def k5_errors(rec):
                   if i.level == "ERROR" and i.trip == rec.get("id"))
 
 
+# Word caps from carta-trips-enhancement-spec.md D4 (T152). One home: the
+# generator's prompt fills its {{summaryWords}}, {{dayWords}} and {{tipWords}}
+# from these, pipeline/validate.py checks the catalogue against them, and
+# check() below rejects a generated record over them.
+SUMMARY_WORDS, DAY_WORDS, TIP_WORDS = 120, 45, 35
+
+
+def word_cap_errors(rec):
+    """summary at most SUMMARY_WORDS words, each day's morning, afternoon and
+    evening at most DAY_WORDS, each pro tip at most TIP_WORDS. Words are
+    whitespace-separated, the count _words() uses for wordCount. Works on a
+    full record or on pass two's fragment."""
+    out = []
+    n = len((rec.get("summary") or "").split())
+    if n > SUMMARY_WORDS:
+        out.append(f"word-cap: summary: {n} words, cap {SUMMARY_WORDS}")
+    for i, d in enumerate(rec.get("itinerary") or []):
+        for block in ("morning", "afternoon", "evening"):
+            n = len((d.get(block) or "").split())
+            if n > DAY_WORDS:
+                out.append(f"word-cap: itinerary[{i}].{block}: {n} words, cap {DAY_WORDS}")
+    for i, tip in enumerate(rec.get("proTips") or []):
+        n = len((tip or "").split())
+        if n > TIP_WORDS:
+            out.append(f"word-cap: proTips[{i}]: {n} words, cap {TIP_WORDS}")
+    return out
+
+
 def check(rec):
     """Every reason this record may not be written. Empty means admit."""
     if not isinstance(rec, dict):
@@ -382,7 +410,7 @@ def check(rec):
     if errs:
         return errs        # the cross-field rules assume the shape
     errs = semantic_errors(rec)
-    return errs + k5_errors(rec)
+    return errs + word_cap_errors(rec) + k5_errors(rec)
 
 
 # ── admission: write on pass, quarantine on fail ─────────────────────────────
@@ -635,6 +663,12 @@ def _mutations():
         return f
 
     return [
+        ("summary over the word cap", "word-cap: summary",
+         setp(["summary"], "word " * (SUMMARY_WORDS + 1))),
+        ("day block over the word cap", "word-cap: itinerary[1].evening",
+         setp(["itinerary", 1, "evening"], "word " * (DAY_WORDS + 1))),
+        ("pro tip over the word cap", "word-cap: proTips[0]",
+         setp(["proTips", 0], "word " * (TIP_WORDS + 1))),
         ("ascent as a string", "schema/", setp(["itinerary", 3, "dayStats", "ascentM"], "160")),
         ("ascent as a float", "schema/", setp(["itinerary", 3, "dayStats", "ascentM"], 160.5)),
         ("food low as text", "schema/", setp(["budget", "breakdown", "food", "lowEur"], "250")),
