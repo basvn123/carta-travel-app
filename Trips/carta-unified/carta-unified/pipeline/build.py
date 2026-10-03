@@ -19,6 +19,7 @@ from normalize import build_record  # noqa: E402
 
 DEFAULT_RAW = "/root/carta/raw"
 DEFAULT_OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+EXPANSION = os.path.join(DEFAULT_OUT, "expansion")
 
 SOURCES = {
     "western-central": ("9512a811-cartatripsv1", parsers.parse_western),
@@ -74,6 +75,8 @@ def main():
     ap.add_argument("--raw", default=DEFAULT_RAW)
     ap.add_argument("--out", default=DEFAULT_OUT)
     ap.add_argument("--northern", default=NORTHERN_UPLOAD)
+    ap.add_argument("--expansion", default=EXPANSION,
+                    help="reviewed generated trips (expand_catalogue.py promote) joined after the batches")
     args = ap.parse_args()
 
     seen_ids = set()
@@ -93,6 +96,19 @@ def main():
             except Exception as exc:  # noqa: BLE001
                 errors.append(f"{batch} {raw.get('sourceFile')}: {exc}")
         counts[batch] = n
+
+    # T155 (spec D2, register rows T144-b, T145-c, T154-b): the generated
+    # trips that passed the promotion gate live in data/expansion/, one
+    # <id>.json per trip with its sidecars beside it. They join after the
+    # four batches so a rebuild from raw keeps them. load_expansion reads the
+    # record files only, and refuses any record that is not generated, has no
+    # review date or fails the gate; a refused record is a build error.
+    import expand_catalogue  # late: it pulls in the generator and jsonschema
+    generated, gen_errors = expand_catalogue.load_expansion(args.expansion, {t["id"] for t in trips})
+    errors.extend(f"expansion {e}" for e in gen_errors)
+    for t in generated:
+        trips.append(t)
+        counts[t["provenance"]["batch"]] = counts.get(t["provenance"]["batch"], 0) + 1
 
     for t in trips:
         t["coordinates"] = geocode_trip(t)

@@ -1,0 +1,321 @@
+{
+ "format": 1,
+ "batch": "northern-baltics-g1",
+ "regionKey": "northern-baltics",
+ "region": "Northern Europe & Baltics",
+ "wave": 1,
+ "mode": "fill",
+ "plannedAt": "2026-10-03",
+ "catalogueTrips": 253,
+ "maxPerCell": 2,
+ "estimateEur": {
+  "low": 5.0,
+  "high": 9.0,
+  "perTrip": [
+   0.25,
+   0.45
+  ]
+ },
+ "entries": [
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.166
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fi-water-sports",
+    "countryCode": "FI",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Finland, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Finland yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.166
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fo-water-sports",
+    "countryCode": "FO",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Faroe Islands, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Faroe Islands yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.166
+   },
+   "brief": {
+    "key": "northern-baltics-g1-ie-water-sports",
+    "countryCode": "IE",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Ireland, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Ireland yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.166
+   },
+   "brief": {
+    "key": "northern-baltics-g1-lv-water-sports",
+    "countryCode": "LV",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Latvia, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Latvia yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16538
+   },
+   "brief": {
+    "key": "northern-baltics-g1-ee-trail-running",
+    "countryCode": "EE",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Estonia, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Estonia yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16538
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fi-trail-running",
+    "countryCode": "FI",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Finland, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Finland yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16538
+   },
+   "brief": {
+    "key": "northern-baltics-g1-lt-trail-running",
+    "countryCode": "LT",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Lithuania, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Lithuania yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16538
+   },
+   "brief": {
+    "key": "northern-baltics-g1-lv-trail-running",
+    "countryCode": "LV",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Latvia, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Latvia yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-ee-cozy-towns",
+    "countryCode": "EE",
+    "tripTypeSlug": "cozy-towns",
+    "idea": "In Estonia, a seven-day slow week through small towns linked by train, bus or short drives. Carta has no small-town trip in Estonia yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-ee-culinary",
+    "countryCode": "EE",
+    "tripTypeSlug": "culinary",
+    "idea": "In Estonia, a seven-day food and wine week built around markets, producers and tastings. Carta has no food and wine trip in Estonia yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-ee-nature-escape",
+    "countryCode": "EE",
+    "tripTypeSlug": "nature-escape",
+    "idea": "In Estonia, a seven-day cabin or lodge week in protected nature, with walks and quiet days. Carta has no nature trip in Estonia yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-ee-road-trip",
+    "countryCode": "EE",
+    "tripTypeSlug": "road-trip",
+    "idea": "In Estonia, a seven-day scenic road trip with two or three bases. Carta has no road trip in Estonia yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fi-city",
+    "countryCode": "FI",
+    "tripTypeSlug": "city",
+    "idea": "In Finland, a seven-day city week on foot and by public transport, with a day trip or two. Carta has no city trip in Finland yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fi-cozy-towns",
+    "countryCode": "FI",
+    "tripTypeSlug": "cozy-towns",
+    "idea": "In Finland, a seven-day slow week through small towns linked by train, bus or short drives. Carta has no small-town trip in Finland yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fi-culinary",
+    "countryCode": "FI",
+    "tripTypeSlug": "culinary",
+    "idea": "In Finland, a seven-day food and wine week built around markets, producers and tastings. Carta has no food and wine trip in Finland yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fi-cycling",
+    "countryCode": "FI",
+    "tripTypeSlug": "cycling",
+    "idea": "In Finland, a seven-day bike week on a signed route or on loops from one or two bases. Carta has no cycling trip in Finland yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fi-road-trip",
+    "countryCode": "FI",
+    "tripTypeSlug": "road-trip",
+    "idea": "In Finland, a seven-day scenic road trip with two or three bases. Carta has no road trip in Finland yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fo-city",
+    "countryCode": "FO",
+    "tripTypeSlug": "city",
+    "idea": "In Faroe Islands, a seven-day city week on foot and by public transport, with a day trip or two. Carta has no city trip in Faroe Islands yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fo-cozy-towns",
+    "countryCode": "FO",
+    "tripTypeSlug": "cozy-towns",
+    "idea": "In Faroe Islands, a seven-day slow week through small towns linked by train, bus or short drives. Carta has no small-town trip in Faroe Islands yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.16481
+   },
+   "brief": {
+    "key": "northern-baltics-g1-fo-culinary",
+    "countryCode": "FO",
+    "tripTypeSlug": "culinary",
+    "idea": "In Faroe Islands, a seven-day food and wine week built around markets, producers and tastings. Carta has no food and wine trip in Faroe Islands yet, so choose the strongest route the country offers for it.",
+    "batch": "northern-baltics-g1"
+   }
+  }
+ ]
+}

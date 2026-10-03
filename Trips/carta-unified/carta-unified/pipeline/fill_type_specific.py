@@ -380,9 +380,22 @@ def apply_to(t, derived):
     return changed
 
 
+def is_generated(t):
+    """A generated v2.1 trip (T155) has its numerics from the grounded pass
+    with an evidence row each, and typed dayStats this text reader cannot
+    parse. It is never re-derived here."""
+    return (t.get("provenance") or {}).get("sourceFormat") == "generated"
+
+
+def curated(master):
+    return [t for t in master["trips"] if not is_generated(t)]
+
+
 def build(master):
     basis, rows = {}, {}
     for t in master["trips"]:
+        if is_generated(t):
+            continue
         d = derive(t)
         rows[t["id"]] = d
         if d:
@@ -408,7 +421,7 @@ def cmd_report():
     before = counts(master["trips"])
     changed = {s: 0 for s in SLOTS}
     wrong_before = []
-    for t in master["trips"]:
+    for t in curated(master):
         d = rows[t["id"]]
         for s in SLOTS:
             old = t["typeSpecific"].get(s)
@@ -417,7 +430,7 @@ def cmd_report():
                 changed[s] += 1
                 if old is not None:
                     wrong_before.append((t["id"], s, old, new))
-    for t in master["trips"]:
+    for t in curated(master):
         apply_to(t, rows[t["id"]])
     after = counts(master["trips"])
     print("slot, before -> after, per type")
@@ -438,7 +451,7 @@ def cmd_apply():
     master = _read(MASTER)
     basis, rows = build(master)
     n = 0
-    for t in master["trips"]:
+    for t in curated(master):
         ch = apply_to(t, rows[t["id"]])
         if ch:
             n += 1
@@ -464,7 +477,7 @@ def cmd_check():
     master = _read(MASTER)
     basis, rows = build(master)
     bad = 0
-    for t in master["trips"]:
+    for t in curated(master):
         for s in SLOTS:
             v = t["typeSpecific"].get(s)
             lo, hi = BOUNDS[s]
