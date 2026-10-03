@@ -799,3 +799,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T174-c | T174 | 10 of 26 cycling trips have no single whole-route surface split in typeSpecific.surface (by section, by day, or no shares) and only 11 can be read for traffic; add a structured surface split and a traffic-free share per cycling trip in the authoring pass | user | open | with T170-a |
 | T174-d | T174 | Confirm three readings: the word lists in lib/routeFigures.js that place a surface share away from cars or shared with cars, the half-placed gate for drawing the traffic bar, and the trail page Underfoot bar moving from ochre and green to the ink ramp | user | open | |
 | T174-e | T174 | Destinations spec C9 cycling card band (route glyph, 6px surface strip, elevation sparkline behind it) is not built; MixBar and AreaPlot in RouteFigures.jsx are ready for it | next task | open | |
+| T175-a | T175 | The data sheet shows the T151 numbers only after the journey wire is rebuilt (same step as T151-a) | user | open |  |
+| T175-b | T175 | Nature escapes cannot lead with remoteness and last-shop distance because no typeSpecific slot holds them; add the slots to the schema and generator | next task | open |  |
+| T175-c | T175 | Water sports have wind as one text slot and a distance on 3 of 24 trips; wind and swell by month need a structured slot | next task | open |  |
+| T175-d | T175 | Transit score and food-cost index are a text slot and a budget line, not indexes; a real index needs a pipeline definition | next task | open |  |
+| T175-e | T175 | The data sheet text slots print the sources' ** bold markers raw; route them through the page's bold renderer | next task | open |  |
