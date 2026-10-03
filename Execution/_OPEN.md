@@ -787,3 +787,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T170-c | T170 | The effort cut points (CUTS in continent-app/src/lib/weekShape.js) and the timing assumptions (reach the first bed by 22:00, 45 min touchdown to road, 2 h at the airport) are Carta's own reading; confirm or change them | user | open | |
 | T170-d | T170 | On winter and water weeks the condition grouping is a fold above the itinerary while the day cards still read Day 1 to Day 7; once T162 and T163 are merged, label those cards by the condition they need instead | next task | open | after wave 13 merge |
 | T170-e | T170 | WeekPlan.jsx passes parseGateway to tripEnds for pre-T143 wires; remove that argument and the fallback in airportRows when T143-b removes parseGateway | next task | open | with T143-b |
+| T171-a | T171 | Only the first cycling trip was opened in a browser; the dev server crashes the page, so any further visual check needs a build and preview | next task | open |  |
+| T171-b | T171 | Only 81 of 253 hook lines contain a number; a content pass could rewrite hooks as number-led sentences | next task | open |  |
+| T171-c | T171 | Exits cannot match by region because the wire cards carry no region key; add one in build_wire.py if country is too coarse | next task | open |  |
