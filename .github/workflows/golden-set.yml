@@ -1,0 +1,97 @@
+name: golden-set
+
+# The golden set (T153, trips enhancement spec K8): ten trips re-generated on
+# every prompt or model change, the numbers diffed against the last blessed run.
+#
+# Automatic part: `check` hashes the four generator prompts, the Gemini model
+# chain and the golden-set file, and fails when they differ from the stamp in
+# golden/baseline.json. A prompt or model change therefore cannot merge until
+# someone has run the set and blessed the result in the same change. It needs
+# no key and makes no call.
+#
+# Manual part: the live run costs money (about 40 Gemini calls, two of every
+# four grounded), so it is a workflow_dispatch with live=true, or run locally:
+#   python pipeline/golden_set.py run --live
+#   python pipeline/golden_set.py diff <out>/run.json
+#   python pipeline/golden_set.py bless <out>/run.json --note "why"
+# It reads the GEMINI_API_KEY repository secret.
+#
+# Until the first live run is blessed there is no baseline, and `check` is
+# allowed to pass without one. Remove --allow-missing-baseline from the check
+# step in the change that adds golden/baseline.json (register row T153-a).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Trips/carta-unified/carta-unified/pipeline/prompts/**"
+      - "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
+      - "Trips/carta-unified/carta-unified/pipeline/golden_set.py"
+      - "Trips/carta-unified/carta-unified/golden/**"
+      - ".github/workflows/golden-set.yml"
+  pull_request:
+    paths:
+      - "Trips/carta-unified/carta-unified/pipeline/prompts/**"
+      - "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
+      - "Trips/carta-unified/carta-unified/pipeline/golden_set.py"
+      - "Trips/carta-unified/carta-unified/golden/**"
+      - ".github/workflows/golden-set.yml"
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Run the ten trips against Gemini (paid) and diff against the baseline"
+        type: boolean
+        default: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: Trips/carta-unified/carta-unified
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            Trips/carta-unified/carta-unified
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install jsonschema
+      - name: Self-test
+        run: python -X utf8 pipeline/golden_set.py self-test
+      - name: Has anything the baseline depends on changed
+        run: python -X utf8 pipeline/golden_set.py check --allow-missing-baseline
+
+  live:
+    if: github.event_name == 'workflow_dispatch' && inputs.live
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: Trips/carta-unified/carta-unified
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            Trips/carta-unified/carta-unified
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install jsonschema
+      - name: Run the ten trips
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -X utf8 pipeline/golden_set.py run --live --out "$RUNNER_TEMP/golden"
+      - name: Diff against the baseline
+        run: |
+          if [ -f golden/baseline.json ]; then
+            python -X utf8 pipeline/golden_set.py diff "$RUNNER_TEMP/golden/run.json" --json "$RUNNER_TEMP/golden/diff.json"
+          else
+            python -X utf8 pipeline/golden_set.py score "$RUNNER_TEMP/golden/run.json"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: golden-run
+          path: ${{ runner.temp }}/golden/run.json

@@ -1,0 +1,430 @@
+{
+ "format": 1,
+ "about": "Ten trips, one per style, with the curated record's figures as the ground truth. See pipeline/golden_set.py for the format.",
+ "truthSource": "data/trips.master.json at the commit that created this file (253 curated journeys, budgets reviewed in T332)",
+ "tolerances": {
+  "drift": 0.1,
+  "bigMove": 0.3,
+  "systemicMean": 0.05,
+  "systemicAgree": 0.8,
+  "systemicMinTrips": 5,
+  "truth": 0.4,
+  "minComparedTrips": 8
+ },
+ "trips": [
+  {
+   "key": "golden-cycling",
+   "curatedId": "at-cycling-donauradweg-wachau",
+   "style": "cycling",
+   "brief": {
+    "countryCode": "AT",
+    "tripTypeSlug": "cycling",
+    "idea": "The Donauradweg: Passau to Vienna Through the Wachau",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 450,
+      "high": 650
+     },
+     "food": {
+      "low": 250,
+      "high": 350
+     },
+     "transport": {
+      "low": 110,
+      "high": 180
+     },
+     "activities": {
+      "low": 140,
+      "high": 220
+     }
+    },
+    "totalEur": {
+     "low": 950,
+     "high": 1400
+    },
+    "perDayEur": {
+     "low": 136,
+     "high": 200
+    },
+    "durationDays": 7,
+    "budgetTier": "€€",
+    "distanceKm": 330
+   }
+  },
+  {
+   "key": "golden-trail-running",
+   "curatedId": "ch-trail-running-engadin-ridges",
+   "style": "trail-running",
+   "brief": {
+    "countryCode": "CH",
+    "tripTypeSlug": "trail-running",
+    "idea": "Thin Air: The Engadin Ridge Week, based around Pontresina",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 750,
+      "high": 1100
+     },
+     "food": {
+      "low": 400,
+      "high": 600
+     },
+     "transport": {
+      "low": 200,
+      "high": 300
+     },
+     "activities": {
+      "low": 150,
+      "high": 200
+     }
+    },
+    "totalEur": {
+     "low": 1500,
+     "high": 2200
+    },
+    "perDayEur": {
+     "low": 214,
+     "high": 314
+    },
+    "durationDays": 7,
+    "budgetTier": "€€€",
+    "distanceKm": 105
+   }
+  },
+  {
+   "key": "golden-city",
+   "curatedId": "cz-city-brno-modernism",
+   "style": "city",
+   "brief": {
+    "countryCode": "CZ",
+    "tripTypeSlug": "city",
+    "idea": "Brno: Functionalism, Cellars and Café Tables",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 280,
+      "high": 450
+     },
+     "food": {
+      "low": 140,
+      "high": 210
+     },
+     "transport": {
+      "low": 35,
+      "high": 60
+     },
+     "activities": {
+      "low": 80,
+      "high": 130
+     }
+    },
+    "totalEur": {
+     "low": 535,
+     "high": 850
+    },
+    "perDayEur": {
+     "low": 76,
+     "high": 121
+    },
+    "durationDays": 7,
+    "budgetTier": "€"
+   }
+  },
+  {
+   "key": "golden-cozy-towns",
+   "curatedId": "ch-cozy-towns-appenzell",
+   "style": "cozy-towns",
+   "brief": {
+    "countryCode": "CH",
+    "tripTypeSlug": "cozy-towns",
+    "idea": "Painted Houses: An Appenzellerland Week, based around Appenzell",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 700,
+      "high": 980
+     },
+     "food": {
+      "low": 380,
+      "high": 520
+     },
+     "transport": {
+      "low": 140,
+      "high": 210
+     },
+     "activities": {
+      "low": 110,
+      "high": 180
+     }
+    },
+    "totalEur": {
+     "low": 1330,
+     "high": 1890
+    },
+    "perDayEur": {
+     "low": 190,
+     "high": 270
+    },
+    "durationDays": 7,
+    "budgetTier": "€€€"
+   }
+  },
+  {
+   "key": "golden-road-trip",
+   "curatedId": "at-road-trip-grossglockner-tyrol",
+   "style": "road-trip",
+   "brief": {
+    "countryCode": "AT",
+    "tripTypeSlug": "road-trip",
+    "idea": "Grossglockner, Timmelsjoch and the Tyrolean Toll Roads, based around Mayrhofen, Heiligenblut and Sölden",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 560,
+      "high": 800
+     },
+     "food": {
+      "low": 240,
+      "high": 340
+     },
+     "transport": {
+      "low": 280,
+      "high": 400
+     },
+     "activities": {
+      "low": 100,
+      "high": 180
+     }
+    },
+    "totalEur": {
+     "low": 1180,
+     "high": 1720
+    },
+    "perDayEur": {
+     "low": 169,
+     "high": 246
+    },
+    "durationDays": 7,
+    "budgetTier": "€€€",
+    "distanceKm": 1350
+   }
+  },
+  {
+   "key": "golden-hiking",
+   "curatedId": "at-hiking-stubai-hoehenweg",
+   "style": "hiking",
+   "brief": {
+    "countryCode": "AT",
+    "tripTypeSlug": "hiking",
+    "idea": "The Stubai Höhenweg Hut Circuit, based around Neustift im Stubaital",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 450,
+      "high": 600
+     },
+     "food": {
+      "low": 190,
+      "high": 260
+     },
+     "transport": {
+      "low": 100,
+      "high": 150
+     },
+     "activities": {
+      "low": 90,
+      "high": 130
+     }
+    },
+    "totalEur": {
+     "low": 830,
+     "high": 1140
+    },
+    "perDayEur": {
+     "low": 119,
+     "high": 163
+    },
+    "durationDays": 7,
+    "budgetTier": "€€",
+    "distanceKm": 60
+   }
+  },
+  {
+   "key": "golden-culinary",
+   "curatedId": "be-culinary-lambic-trappist",
+   "style": "culinary",
+   "brief": {
+    "countryCode": "BE",
+    "tripTypeSlug": "culinary",
+    "idea": "Lambic, Geuze and the Trappist Table, based around Brussels and Beersel",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 480,
+      "high": 660
+     },
+     "food": {
+      "low": 300,
+      "high": 410
+     },
+     "transport": {
+      "low": 130,
+      "high": 190
+     },
+     "activities": {
+      "low": 190,
+      "high": 290
+     }
+    },
+    "totalEur": {
+     "low": 1100,
+     "high": 1550
+    },
+    "perDayEur": {
+     "low": 157,
+     "high": 221
+    },
+    "durationDays": 7,
+    "budgetTier": "€€"
+   }
+  },
+  {
+   "key": "golden-winter-sports",
+   "curatedId": "at-winter-sports-arlberg-st-anton",
+   "style": "winter-sports",
+   "brief": {
+    "countryCode": "AT",
+    "tripTypeSlug": "winter-sports",
+    "idea": "Ski Arlberg: St. Anton, the Flexenbahn and the Valluga, based around St. Anton am Arlberg",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 750,
+      "high": 1050
+     },
+     "food": {
+      "low": 280,
+      "high": 380
+     },
+     "transport": {
+      "low": 150,
+      "high": 220
+     },
+     "activities": {
+      "low": 470,
+      "high": 700
+     }
+    },
+    "totalEur": {
+     "low": 1650,
+     "high": 2350
+    },
+    "perDayEur": {
+     "low": 236,
+     "high": 336
+    },
+    "durationDays": 7,
+    "budgetTier": "€€€"
+   }
+  },
+  {
+   "key": "golden-nature-escape",
+   "curatedId": "ch-nature-escape-swiss-national-park-engadin",
+   "style": "nature-escape",
+   "brief": {
+    "countryCode": "CH",
+    "tripTypeSlug": "nature-escape",
+    "idea": "Stay on the Path: A Week in the Swiss National Park, based around Zernez",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 480,
+      "high": 640
+     },
+     "food": {
+      "low": 220,
+      "high": 300
+     },
+     "transport": {
+      "low": 140,
+      "high": 190
+     },
+     "activities": {
+      "low": 140,
+      "high": 220
+     }
+    },
+    "totalEur": {
+     "low": 980,
+     "high": 1350
+    },
+    "perDayEur": {
+     "low": 140,
+     "high": 193
+    },
+    "durationDays": 7,
+    "budgetTier": "€€€"
+   }
+  },
+  {
+   "key": "golden-water-sports",
+   "curatedId": "de-water-sports-ruegen-baltic-wind",
+   "style": "water-sports",
+   "brief": {
+    "countryCode": "DE",
+    "tripTypeSlug": "water-sports",
+    "idea": "Rügen and Fehmarn: A Baltic Wind Week, based around Glowe, Rügen",
+    "batch": "golden"
+   },
+   "truth": {
+    "budget": {
+     "accommodation": {
+      "low": 480,
+      "high": 650
+     },
+     "food": {
+      "low": 230,
+      "high": 320
+     },
+     "transport": {
+      "low": 140,
+      "high": 220
+     },
+     "activities": {
+      "low": 130,
+      "high": 210
+     }
+    },
+    "totalEur": {
+     "low": 980,
+     "high": 1400
+    },
+    "perDayEur": {
+     "low": 140,
+     "high": 200
+    },
+    "durationDays": 7,
+    "budgetTier": "€€"
+   }
+  }
+ ]
+}
