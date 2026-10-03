@@ -98,11 +98,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 50.8505,
-    "lon": 4.3488,
-    "precision": "gateway",
-    "matchedPlace": "Brussels",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 50.4269,
+    "lon": 6.0279,
+    "precision": "city",
+    "matchedPlace": "Malmédy",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "moorland",

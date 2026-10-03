@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 38.7251,
-    "lon": -9.1498,
-    "precision": "country",
-    "matchedPlace": "Lisbon",
-    "source": "country capital fallback"
+    "lat": 41.7805,
+    "lon": -8.1973,
+    "precision": "city",
+    "matchedPlace": "Vilarinho das Furnas",
+    "source": "itinerary places (geonames PT dump)"
   },
   "tags": [
     "peneda-geres",

@@ -101,11 +101,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 49.6098,
-    "lon": 6.1327,
-    "precision": "gateway",
-    "matchedPlace": "Luxembourg",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 49.8121,
+    "lon": 6.4185,
+    "precision": "city",
+    "matchedPlace": "Echternach",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "sandstone-gorges",

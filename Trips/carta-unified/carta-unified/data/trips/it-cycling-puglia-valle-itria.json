@@ -99,11 +99,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.8919,
-    "lon": 12.5113,
-    "precision": "country",
-    "matchedPlace": "Rome",
-    "source": "country capital fallback"
+    "lat": 40.7566,
+    "lon": 17.3239,
+    "precision": "city",
+    "matchedPlace": "Locorotondo",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "trulli",

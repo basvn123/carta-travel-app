@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 42.6727,
-    "lon": 21.1669,
-    "precision": "country",
-    "matchedPlace": "Pristina",
-    "source": "country capital fallback"
+    "lat": 42.6591,
+    "lon": 20.2883,
+    "precision": "city",
+    "matchedPlace": "Pejë",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "peaks-of-the-balkans",

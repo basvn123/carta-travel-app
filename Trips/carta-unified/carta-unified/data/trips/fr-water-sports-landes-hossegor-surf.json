@@ -95,11 +95,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 43.4806,
-    "lon": -1.5568,
-    "precision": "gateway",
-    "matchedPlace": "Biarritz",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 43.69,
+    "lon": -1.37,
+    "precision": "city",
+    "matchedPlace": "Hossegor",
+    "source": "itinerary places (geonames FR dump)"
   },
   "tags": [
     "beach-break-surf",

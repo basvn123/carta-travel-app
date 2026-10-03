@@ -100,11 +100,11 @@
   "currency": "Polish złoty (PLN); roughly 4.3 PLN to €1",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 52.2298,
-    "lon": 21.0118,
-    "precision": "country",
-    "matchedPlace": "Warsaw",
-    "source": "country capital fallback"
+    "lat": 49.1479,
+    "lon": 22.4773,
+    "precision": "city",
+    "matchedPlace": "Wetlina",
+    "source": "itinerary places (geonames PL dump)"
   },
   "tags": [
     "cabin",

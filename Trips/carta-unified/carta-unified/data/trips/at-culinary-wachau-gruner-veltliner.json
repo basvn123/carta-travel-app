@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 48.2085,
-    "lon": 16.3721,
-    "precision": "gateway",
-    "matchedPlace": "Vienna",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 48.3958,
+    "lon": 15.5197,
+    "precision": "city",
+    "matchedPlace": "Dürnstein",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "wine",

@@ -97,11 +97,11 @@
   "currency": "CZK",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 49.8347,
-    "lon": 18.282,
-    "precision": "gateway",
-    "matchedPlace": "Ostrava",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 50.0731,
+    "lon": 17.3069,
+    "precision": "city",
+    "matchedPlace": "Karlova Studánka",
+    "source": "itinerary places (geonames CZ dump)"
   },
   "tags": [
     "glacial-cirque",

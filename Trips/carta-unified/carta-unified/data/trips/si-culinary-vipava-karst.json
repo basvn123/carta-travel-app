@@ -97,11 +97,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 46.0511,
-    "lon": 14.5051,
-    "precision": "country",
-    "matchedPlace": "Ljubljana",
-    "source": "country capital fallback"
+    "lat": 45.8233,
+    "lon": 13.8436,
+    "precision": "city",
+    "matchedPlace": "Štanjel",
+    "source": "itinerary places (geonames SI dump)"
   },
   "tags": [
     "teran",

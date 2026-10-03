@@ -97,11 +97,11 @@
   "currency": "CZK",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 50.088,
-    "lon": 14.4208,
-    "precision": "gateway",
-    "matchedPlace": "Prague",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 49.1842,
+    "lon": 15.4527,
+    "precision": "city",
+    "matchedPlace": "Telč",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "unesco-squares",

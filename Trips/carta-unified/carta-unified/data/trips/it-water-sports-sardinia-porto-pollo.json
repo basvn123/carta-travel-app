@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.8919,
-    "lon": 12.5113,
-    "precision": "country",
-    "matchedPlace": "Rome",
-    "source": "country capital fallback"
+    "lat": 41.2386,
+    "lon": 9.1887,
+    "precision": "city",
+    "matchedPlace": "Santa Teresa Gallura",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "windsurfing",

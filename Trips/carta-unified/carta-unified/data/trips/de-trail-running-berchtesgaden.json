@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 52.5244,
-    "lon": 13.4105,
-    "precision": "country",
-    "matchedPlace": "Berlin",
-    "source": "country capital fallback"
+    "lat": 47.6005,
+    "lon": 12.987,
+    "precision": "city",
+    "matchedPlace": "Schönau am Königssee",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "alpine-running",

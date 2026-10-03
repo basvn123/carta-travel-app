@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 44.8683,
-    "lon": 13.8481,
-    "precision": "gateway",
-    "matchedPlace": "Pula",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 45.3367,
+    "lon": 13.8286,
+    "precision": "city",
+    "matchedPlace": "Motovun",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "truffles",

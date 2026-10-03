@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 40.6407,
-    "lon": 22.9349,
-    "precision": "gateway",
-    "matchedPlace": "Thessaloníki",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 39.3335,
+    "lon": 23.1328,
+    "precision": "city",
+    "matchedPlace": "Vyzítsa",
+    "source": "itinerary places (geonames GR dump)"
   },
   "tags": [
     "archontika",

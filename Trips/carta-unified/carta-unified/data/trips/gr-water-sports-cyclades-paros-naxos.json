@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 37.9838,
-    "lon": 23.7278,
-    "precision": "country",
-    "matchedPlace": "Athens",
-    "source": "country capital fallback"
+    "lat": 37.0151,
+    "lon": 25.2475,
+    "precision": "city",
+    "matchedPlace": "New Golden Beach",
+    "source": "itinerary places (geonames GR dump)"
   },
   "tags": [
     "kitesurfing",

@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 43.8486,
-    "lon": 18.3564,
-    "precision": "country",
-    "matchedPlace": "Sarajevo",
-    "source": "country capital fallback"
+    "lat": 44.5608,
+    "lon": 16.0886,
+    "precision": "city",
+    "matchedPlace": "Kulen Vakuf",
+    "source": "itinerary places (geonames BA dump)"
   },
   "tags": [
     "una-river",

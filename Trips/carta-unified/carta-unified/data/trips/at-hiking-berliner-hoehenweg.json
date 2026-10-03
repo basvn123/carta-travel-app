@@ -95,11 +95,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.2627,
-    "lon": 11.3945,
-    "precision": "gateway",
-    "matchedPlace": "Innsbruck",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 47.1667,
+    "lon": 11.8667,
+    "precision": "city",
+    "matchedPlace": "Mayrhofen",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "hut-to-hut",

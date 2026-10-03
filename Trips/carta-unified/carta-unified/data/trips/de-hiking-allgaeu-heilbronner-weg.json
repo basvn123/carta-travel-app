@@ -95,11 +95,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.9837,
-    "lon": 10.1853,
-    "precision": "gateway",
-    "matchedPlace": "Memmingen",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 47.4072,
+    "lon": 10.2794,
+    "precision": "city",
+    "matchedPlace": "Oberstdorf",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "hut-to-hut",

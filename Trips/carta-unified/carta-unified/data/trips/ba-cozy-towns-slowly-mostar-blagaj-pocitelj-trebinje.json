@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 43.8486,
-    "lon": 18.3564,
-    "precision": "country",
-    "matchedPlace": "Sarajevo",
-    "source": "country capital fallback"
+    "lat": 43.3433,
+    "lon": 17.8081,
+    "precision": "city",
+    "matchedPlace": "Mostar",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "herzegovina",

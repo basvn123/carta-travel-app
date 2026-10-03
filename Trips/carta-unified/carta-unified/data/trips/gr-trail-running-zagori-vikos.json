@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 37.9838,
-    "lon": 23.7278,
-    "precision": "country",
-    "matchedPlace": "Athens",
-    "source": "country capital fallback"
+    "lat": 39.9343,
+    "lon": 20.6715,
+    "precision": "city",
+    "matchedPlace": "Arísti",
+    "source": "itinerary places (geonames GR dump)"
   },
   "tags": [
     "trail-running",

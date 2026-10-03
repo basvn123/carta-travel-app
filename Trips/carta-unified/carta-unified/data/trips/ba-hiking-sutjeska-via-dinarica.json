@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 43.8486,
-    "lon": 18.3564,
-    "precision": "gateway",
-    "matchedPlace": "Sarajevo",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 43.3546,
+    "lon": 18.692,
+    "precision": "city",
+    "matchedPlace": "Tjentište",
+    "source": "itinerary places (geonames BA dump)"
   },
   "tags": [
     "sutjeska",

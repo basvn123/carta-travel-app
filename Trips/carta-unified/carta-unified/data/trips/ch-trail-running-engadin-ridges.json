@@ -97,11 +97,11 @@
   "currency": "CHF",
   "emergencyNumber": null,
   "coordinates": {
-    "lat": 47.3667,
-    "lon": 8.55,
-    "precision": "gateway",
-    "matchedPlace": "Zürich",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 46.4955,
+    "lon": 9.9013,
+    "precision": "city",
+    "matchedPlace": "Pontresina",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "high-altitude",

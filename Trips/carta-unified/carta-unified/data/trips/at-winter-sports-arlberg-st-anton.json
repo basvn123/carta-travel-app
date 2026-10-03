@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.2627,
-    "lon": 11.3945,
-    "precision": "gateway",
-    "matchedPlace": "Innsbruck",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 47.1275,
+    "lon": 10.2637,
+    "precision": "city",
+    "matchedPlace": "St Anton am Arlberg",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "off-piste",

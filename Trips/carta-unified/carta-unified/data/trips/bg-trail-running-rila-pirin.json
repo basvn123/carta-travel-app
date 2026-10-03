@@ -97,11 +97,11 @@
   "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
   "emergencyNumber": "112 (mountain rescue PSS: 1470)",
   "coordinates": {
-    "lat": 42.6975,
-    "lon": 23.3241,
-    "precision": "gateway",
-    "matchedPlace": "Sofia",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 42.1057,
+    "lon": 23.02,
+    "precision": "city",
+    "matchedPlace": "Borovets",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "trail-running",

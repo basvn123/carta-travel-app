@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.9965,
-    "lon": 21.4314,
-    "precision": "gateway",
-    "matchedPlace": "Skopje",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 41.6642,
+    "lon": 20.7334,
+    "precision": "city",
+    "matchedPlace": "Mavrovo",
+    "source": "itinerary places (geonames MK dump)"
   },
   "tags": [
     "mavrovo",

@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.3274,
-    "lon": 19.8187,
-    "precision": "country",
-    "matchedPlace": "Tirana",
-    "source": "country capital fallback"
+    "lat": 40.1017,
+    "lon": 19.7447,
+    "precision": "city",
+    "matchedPlace": "Himarë",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "sea-kayaking",

@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 45.8144,
-    "lon": 15.978,
-    "precision": "country",
-    "matchedPlace": "Zagreb",
-    "source": "country capital fallback"
+    "lat": 45.3814,
+    "lon": 13.6294,
+    "precision": "city",
+    "matchedPlace": "Brtonigla",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "parenzana",

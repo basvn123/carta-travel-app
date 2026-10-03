@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 40.4165,
-    "lon": -3.7026,
-    "precision": "country",
-    "matchedPlace": "Madrid",
-    "source": "country capital fallback"
+    "lat": 40.2227,
+    "lon": -5.7501,
+    "precision": "city",
+    "matchedPlace": "Jerte",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "birdwatching",

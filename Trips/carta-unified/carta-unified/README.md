@@ -69,8 +69,8 @@ currently **10,360 checks, 0 failures**.
 |---|---|---|
 | No `connectivity` line | 115 | The W&C batch mostly did not write one. |
 | No `bookingWindows` line | 67 | Same batch, same reason. |
-| Coordinates are a country-capital pin | 61 | No basecamp town resolved against GeoNames' cities>15k extract. |
-| Coordinates sit on the gateway city | 54 | e.g. Bansko resolves to Sofia. Flagged, never silently presented as the trip location. |
+| Coordinates derived from the itinerary, not a basecamp town | 115 | Until T090, 61 were a country-capital pin and 54 sat on the gateway city (Bansko at Sofia), because no basecamp resolved against GeoNames' cities>15k extract. `pipeline/geocode.py` now puts them on the best-supported place the itinerary names (GeoNames cities500 plus the country files); precision `city`, source `itinerary places (...)`. |
+| Coordinates are a capital or gateway pin | 0 | A capital pin is now a validator error (`coordinate-capital-fallback`); a pin whose nearest town is in another country is one too (`coordinate-outside-country`). |
 | Breakdown does not sum to the stated total within 1% | 98 | Now a validator error, not a warning (T084: the old 15% tolerance is gone). 59 are off by more than 40%, mostly Nordic trips written per night while the total is for the week; 28 are within 5%, plain source arithmetic. |
 | No difficulty rating | 21 | The Nordic batch rated only 9 of its 30 records. |
 | No gateway airport | 30 | The Nordic batch names gateways only in prose. |
@@ -104,7 +104,16 @@ python3 pipeline/validate.py          # -> reports/validation-report.md ; exits 
 python3 pipeline/gap_matrix.py        # -> reports/gap-matrix.md
 python3 pipeline/export_sql.py        # -> supabase/migrations/*.sql
 python3 pipeline/verify_roundtrip.py  # every parsed field must exist in its source file
+python3 pipeline/geocode.py           # dry run: re-derive capital and gateway pins; --write applies
 ```
+
+`geocode.py` and the coordinate checks in `validate.py` read GeoNames cities500 from
+`cache/geonames_cities500.txt` (or `--gazetteer` / `CARTA_GAZETTEER`). The shipped pins were
+derived with cities500 followed by the 39 GeoNames country files for the catalogue's countries,
+listed in `CARTA_GAZETTEER` separated by `;` on Windows or `:` elsewhere. Without the country
+files nine trips whose basecamps have under 500 people (Malbun twice, Hrensko, Modrava,
+Hrabusice, Torla, Jahorina, Mavrovo, the Peneda-Geres villages) find no place, and a rebuild
+would put them back on a gateway or capital pin.
 
 or `make all`. Dependencies: `pyyaml`, `geonamescache` (bundled offline GeoNames extract
 — the pipeline makes no network calls).

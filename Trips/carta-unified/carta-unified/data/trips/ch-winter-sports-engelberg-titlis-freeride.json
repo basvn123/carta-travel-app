@@ -95,11 +95,11 @@
   "currency": "CHF",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.3667,
-    "lon": 8.55,
-    "precision": "gateway",
-    "matchedPlace": "Zürich",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 46.8211,
+    "lon": 8.4013,
+    "precision": "city",
+    "matchedPlace": "Engelberg",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "freeride",

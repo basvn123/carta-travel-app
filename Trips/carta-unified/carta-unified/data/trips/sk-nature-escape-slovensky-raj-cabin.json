@@ -97,11 +97,11 @@
   "currency": "Euro (EUR)",
   "emergencyNumber": "112 (mountain rescue HZS: 18 300)",
   "coordinates": {
-    "lat": 48.1482,
-    "lon": 17.1067,
-    "precision": "country",
-    "matchedPlace": "Bratislava",
-    "source": "country capital fallback"
+    "lat": 48.9756,
+    "lon": 20.4087,
+    "precision": "city",
+    "matchedPlace": "Hrabušice",
+    "source": "itinerary places (geonames SK dump)"
   },
   "tags": [
     "gorges",

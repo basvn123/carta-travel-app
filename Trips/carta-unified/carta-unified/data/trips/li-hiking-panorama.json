@@ -97,11 +97,11 @@
   "currency": "CHF",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.1415,
-    "lon": 9.5215,
-    "precision": "country",
-    "matchedPlace": "Vaduz",
-    "source": "country capital fallback"
+    "lat": 47.1014,
+    "lon": 9.6099,
+    "precision": "city",
+    "matchedPlace": "Malbun",
+    "source": "itinerary places (geonames LI dump)"
   },
   "tags": [
     "via-ferrata",

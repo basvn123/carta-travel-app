@@ -97,11 +97,11 @@
   "currency": "CHF",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.3667,
-    "lon": 8.55,
-    "precision": "gateway",
-    "matchedPlace": "Zürich",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 47.331,
+    "lon": 9.41,
+    "precision": "city",
+    "matchedPlace": "Appenzell",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "painted-houses",

@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 40.9234,
-    "lon": 9.498,
-    "precision": "gateway",
-    "matchedPlace": "Olbia",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 40.2762,
+    "lon": 9.4019,
+    "precision": "city",
+    "matchedPlace": "Oliena",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "supramonte",

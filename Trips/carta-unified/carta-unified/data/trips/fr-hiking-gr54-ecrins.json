@@ -95,11 +95,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 45.1787,
-    "lon": 5.7148,
-    "precision": "gateway",
-    "matchedPlace": "Grenoble",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 45.0548,
+    "lon": 6.0337,
+    "precision": "city",
+    "matchedPlace": "Le Bourg-d'Oisans",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "gr-trail",

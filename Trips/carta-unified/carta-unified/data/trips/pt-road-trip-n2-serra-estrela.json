@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.1485,
-    "lon": -8.611,
-    "precision": "gateway",
-    "matchedPlace": "Porto",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 40.4028,
+    "lon": -7.5398,
+    "precision": "city",
+    "matchedPlace": "Manteigas",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "estrada-nacional-2",

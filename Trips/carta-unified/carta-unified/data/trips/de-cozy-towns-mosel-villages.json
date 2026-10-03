@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 50.1155,
-    "lon": 8.6842,
-    "precision": "gateway",
-    "matchedPlace": "Frankfurt am Main",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 49.916,
+    "lon": 7.0766,
+    "precision": "city",
+    "matchedPlace": "Bernkastel-Kues",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "riesling",

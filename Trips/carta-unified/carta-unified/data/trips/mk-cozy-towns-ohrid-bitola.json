@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.9965,
-    "lon": 21.4314,
-    "precision": "country",
-    "matchedPlace": "Skopje",
-    "source": "country capital fallback"
+    "lat": 41.0323,
+    "lon": 21.3355,
+    "precision": "city",
+    "matchedPlace": "Bitola",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "lake-ohrid",

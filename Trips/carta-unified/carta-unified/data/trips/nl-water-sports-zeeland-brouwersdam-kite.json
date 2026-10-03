@@ -99,11 +99,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 52.374,
-    "lon": 4.8897,
-    "precision": "country",
-    "matchedPlace": "Amsterdam",
-    "source": "country capital fallback"
+    "lat": 51.8117,
+    "lon": 3.9347,
+    "precision": "city",
+    "matchedPlace": "Ouddorp",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "kitesurf",

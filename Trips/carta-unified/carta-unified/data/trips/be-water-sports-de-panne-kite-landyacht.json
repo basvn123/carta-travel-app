@@ -96,11 +96,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 50.8505,
-    "lon": 4.3488,
-    "precision": "gateway",
-    "matchedPlace": "Brussels",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 51.0979,
+    "lon": 2.5937,
+    "precision": "city",
+    "matchedPlace": "De Panne",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "kitesurfing",
