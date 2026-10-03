@@ -86,7 +86,7 @@ The mono rule. `--mono` carries machine-readable facts and nothing else: prices,
 
 Body is `--ui` at 14 px, line-height 1.45, colour `--ink`. Fraunces is a variable optical-size face; the display role uses weights 400 to 700 and it is never used for running text.
 
-Fonts load from Google Fonts in `continent-app/index.html` today. T199 self-hosts them.
+Fonts are self-hosted (T199): variable woff2 files for Fraunces, Plus Jakarta Sans and JetBrains Mono, latin and latin-ext only, sit in `continent-app/public/fonts`, are declared by `@font-face` inline in `continent-app/index.html`, and nothing loads from a Google host.
 
 ## Spacing
 
