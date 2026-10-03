@@ -97,11 +97,11 @@
   "currency": "CZK",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 50.088,
-    "lon": 14.4208,
-    "precision": "gateway",
-    "matchedPlace": "Prague",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 49.0241,
+    "lon": 13.4993,
+    "precision": "city",
+    "matchedPlace": "Modrava",
+    "source": "itinerary places (geonames CZ dump)"
   },
   "tags": [
     "peat-bog",

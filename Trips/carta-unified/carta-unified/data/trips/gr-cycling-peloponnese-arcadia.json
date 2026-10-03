@@ -99,11 +99,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 37.9838,
-    "lon": 23.7278,
-    "precision": "country",
-    "matchedPlace": "Athens",
-    "source": "country capital fallback"
+    "lat": 37.5686,
+    "lon": 22.8069,
+    "precision": "city",
+    "matchedPlace": "Náfplio",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "road-cycling",

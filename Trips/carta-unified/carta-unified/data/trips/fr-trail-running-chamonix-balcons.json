@@ -95,11 +95,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 48.8534,
-    "lon": 2.3488,
-    "precision": "country",
-    "matchedPlace": "Paris",
-    "source": "country capital fallback"
+    "lat": 45.9237,
+    "lon": 6.8693,
+    "precision": "city",
+    "matchedPlace": "Chamonix-Mont-Blanc",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "balcon-trails",

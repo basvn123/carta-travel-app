@@ -96,11 +96,11 @@
   "currency": "CHF",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 46.2022,
-    "lon": 6.1457,
-    "precision": "gateway",
-    "matchedPlace": "Geneva",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 46.0254,
+    "lon": 7.4836,
+    "precision": "city",
+    "matchedPlace": "Arolla",
+    "source": "itinerary places (geonames CH dump)"
   },
   "tags": [
     "hut-to-hut",

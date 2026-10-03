@@ -95,11 +95,11 @@
   "currency": "CHF",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 46.2022,
-    "lon": 6.1457,
-    "precision": "gateway",
-    "matchedPlace": "Geneva",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 46.1002,
+    "lon": 7.2265,
+    "precision": "city",
+    "matchedPlace": "Verbier",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "freeride",

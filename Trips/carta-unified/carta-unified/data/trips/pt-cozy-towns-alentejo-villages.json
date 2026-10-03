@@ -99,11 +99,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 38.7251,
-    "lon": -9.1498,
-    "precision": "country",
-    "matchedPlace": "Lisbon",
-    "source": "country capital fallback"
+    "lat": 39.4162,
+    "lon": -7.4568,
+    "precision": "city",
+    "matchedPlace": "Castelo de Vide",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "alentejo",

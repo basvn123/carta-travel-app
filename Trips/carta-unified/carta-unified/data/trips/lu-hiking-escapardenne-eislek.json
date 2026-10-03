@@ -99,11 +99,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 49.6098,
-    "lon": 6.1327,
-    "precision": "gateway",
-    "matchedPlace": "Luxembourg",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 49.9528,
+    "lon": 6.02,
+    "precision": "city",
+    "matchedPlace": "Kautenbach",
+    "source": "itinerary places (geonames LU dump)"
   },
   "tags": [
     "long-distance-trail",

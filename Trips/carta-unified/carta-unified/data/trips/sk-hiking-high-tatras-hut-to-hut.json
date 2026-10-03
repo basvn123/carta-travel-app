@@ -98,11 +98,11 @@
   "currency": "Euro (EUR)",
   "emergencyNumber": "112 (mountain rescue HZS: 18 300)",
   "coordinates": {
-    "lat": 48.1482,
-    "lon": 17.1067,
-    "precision": "country",
-    "matchedPlace": "Bratislava",
-    "source": "country capital fallback"
+    "lat": 49.139,
+    "lon": 20.2203,
+    "precision": "city",
+    "matchedPlace": "Starý Smokovec",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "hut-to-hut",

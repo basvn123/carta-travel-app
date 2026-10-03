@@ -97,11 +97,11 @@
   "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 42.6975,
-    "lon": 23.3241,
-    "precision": "gateway",
-    "matchedPlace": "Sofia",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 43.0981,
+    "lon": 25.6665,
+    "precision": "city",
+    "matchedPlace": "Arbanasi",
+    "source": "itinerary places (geonames BG dump)"
   },
   "tags": [
     "revival-architecture",

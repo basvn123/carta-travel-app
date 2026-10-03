@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 37.9838,
-    "lon": 23.7278,
-    "precision": "country",
-    "matchedPlace": "Athens",
-    "source": "country capital fallback"
+    "lat": 40.1006,
+    "lon": 22.4978,
+    "precision": "city",
+    "matchedPlace": "Litóchoro",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "olympus",

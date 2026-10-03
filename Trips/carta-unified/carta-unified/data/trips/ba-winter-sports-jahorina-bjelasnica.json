@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 43.8486,
-    "lon": 18.3564,
-    "precision": "country",
-    "matchedPlace": "Sarajevo",
-    "source": "country capital fallback"
+    "lat": 43.7383,
+    "lon": 18.5656,
+    "precision": "city",
+    "matchedPlace": "Jahorina",
+    "source": "itinerary places (geonames BA dump)"
   },
   "tags": [
     "bosnia",

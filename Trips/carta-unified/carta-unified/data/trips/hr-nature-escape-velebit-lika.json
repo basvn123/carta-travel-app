@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 44.1158,
-    "lon": 15.2251,
-    "precision": "gateway",
-    "matchedPlace": "Zadar",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 44.296,
+    "lon": 15.4387,
+    "precision": "city",
+    "matchedPlace": "Starigrad",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "velebit",

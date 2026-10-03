@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 46.0511,
-    "lon": 14.5051,
-    "precision": "country",
-    "matchedPlace": "Ljubljana",
-    "source": "country capital fallback"
+    "lat": 46.2722,
+    "lon": 13.9535,
+    "precision": "city",
+    "matchedPlace": "Bohinjska Bistrica",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "triglav",

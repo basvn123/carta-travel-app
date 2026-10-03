@@ -101,11 +101,11 @@
   "currency": "Hungarian forint (HUF)",
   "emergencyNumber": "112 (Balatoni vízirendészet, water police, via 112)",
   "coordinates": {
-    "lat": 47.4984,
-    "lon": 19.0404,
-    "precision": "country",
-    "matchedPlace": "Budapest",
-    "source": "country capital fallback"
+    "lat": 46.9619,
+    "lon": 17.8719,
+    "precision": "city",
+    "matchedPlace": "Balatonfüred",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "sailing",

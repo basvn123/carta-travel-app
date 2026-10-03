@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 44.804,
-    "lon": 20.4651,
-    "precision": "country",
-    "matchedPlace": "Belgrade",
-    "source": "country capital fallback"
+    "lat": 43.3894,
+    "lon": 20.7505,
+    "precision": "city",
+    "matchedPlace": "Jošanička Banja",
+    "source": "itinerary places (geonames RS dump)"
   },
   "tags": [
     "serbia",

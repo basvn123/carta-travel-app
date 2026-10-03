@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.0673,
-    "lon": 15.442,
-    "precision": "gateway",
-    "matchedPlace": "Graz",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 47.5333,
+    "lon": 14.5833,
+    "precision": "city",
+    "matchedPlace": "Johnsbach",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "self-catering",

@@ -265,11 +265,20 @@ def place_candidates(trip):
     for name in MANUAL_PLACES.get(trip.get("id"), []):
         add(name)
     coords = trip.get("coordinates") or {}
-    if coords.get("precision") in ("source", "city"):
+    # A pin derived from the itinerary's named places (geocode.py, T090) is a
+    # town the trip passes through, not a claim about what the week looks
+    # like, so it does not jump the hero queue: it is tried only after the
+    # basecamps and the sub-region, which keeps every hero those already give,
+    # and choosing the photograph stays the hero tasks' job (spec B1, the
+    # activity and not the nearest town).
+    derived = str(coords.get("source") or "").startswith("itinerary places")
+    if coords.get("precision") in ("source", "city") and not derived:
         add(coords.get("matchedPlace"))
     for base in trip.get("basecamps") or []:
         add_split(base)
     add_split(trip.get("subRegion") or "")
+    if derived:
+        add(coords.get("matchedPlace"))
     # The gateway city is last resort ONLY when the schema says the pin is
     # honest; a capital fallback pin stays photograph-less by design.
     if coords.get("precision") == "gateway" and trip.get("gatewayAirport"):

@@ -95,11 +95,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.2627,
-    "lon": 11.3945,
-    "precision": "gateway",
-    "matchedPlace": "Innsbruck",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 47.1167,
+    "lon": 11.3167,
+    "precision": "city",
+    "matchedPlace": "Neustift im Stubaital",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "hut-to-hut",

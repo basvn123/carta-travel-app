@@ -95,11 +95,11 @@
   "currency": "CHF",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.3667,
-    "lon": 8.55,
-    "precision": "gateway",
-    "matchedPlace": "Zürich",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 46.4947,
+    "lon": 7.6733,
+    "precision": "city",
+    "matchedPlace": "Kandersteg",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "via-alpina",

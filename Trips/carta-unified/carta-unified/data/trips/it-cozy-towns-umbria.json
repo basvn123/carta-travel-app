@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.8919,
-    "lon": 12.5113,
-    "precision": "country",
-    "matchedPlace": "Rome",
-    "source": "country capital fallback"
+    "lat": 42.9375,
+    "lon": 12.6149,
+    "precision": "city",
+    "matchedPlace": "Bevagna",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "hill-towns",

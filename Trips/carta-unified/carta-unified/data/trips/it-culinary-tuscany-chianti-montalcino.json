@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.8919,
-    "lon": 12.5113,
-    "precision": "country",
-    "matchedPlace": "Rome",
-    "source": "country capital fallback"
+    "lat": 43.5851,
+    "lon": 11.3171,
+    "precision": "city",
+    "matchedPlace": "Greve in Chianti",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "chianti-classico",

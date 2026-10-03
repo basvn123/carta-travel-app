@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 52.5244,
-    "lon": 13.4105,
-    "precision": "country",
-    "matchedPlace": "Berlin",
-    "source": "country capital fallback"
+    "lat": 49.9508,
+    "lon": 7.1156,
+    "precision": "city",
+    "matchedPlace": "Traben-Trarbach",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "riesling",

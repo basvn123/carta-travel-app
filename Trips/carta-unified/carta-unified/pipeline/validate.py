@@ -11,7 +11,10 @@ the schema contract and the mechanical content checks from the trips
 enhancement spec, section K5: the budget breakdown sums to the stated total,
 perDayEur is total over days, every place the itinerary names geocodes inside
 the trip's country, the accommodation strategy is slept in, surface
-percentages add to 100, and no "€x, €y" comma range survives. The shipped
+percentages add to 100, and no "€x, €y" comma range survives. The trip's
+own coordinate is checked against its stated country too (T090, spec J1): a
+capital-city fallback pin is an error, and with cities500 a pin whose nearest
+town lies in another country is an error. The shipped
 wire (continent-app/public/journeys, built by pipeline/journeys/build_wire.py)
 is the only place a hero photograph exists, so the hero checks read it: every
 journey has a hero, it is at least HERO_MIN_W wide, and, with --check-urls,
@@ -34,6 +37,7 @@ import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common as C  # noqa: E402
+import geocode as G  # noqa: E402
 
 try:
     import geonamescache
@@ -51,7 +55,9 @@ REQUIRED_TOP = ["id", "title", "country", "countryCode", "region", "tripType",
 
 VALID_TIERS = {"€", "€€", "€€€"}
 ID_RE = re.compile(r"^[a-z]{2}-[a-z-]+-[a-z0-9-]+$")
-EUROPE_BBOX = (33.0, 72.5, -32.0, 45.0)  # lat_min, lat_max, lon_min, lon_max
+# lat_min, lat_max, lon_min, lon_max; the south edge takes in Madeira (32.6 N)
+# and the Canaries (27.6 N), which are Portugal and Spain
+EUROPE_BBOX = G.EUROPE_BBOX
 PLACEHOLDER_RE = re.compile(r"\bTBD\b|\bTODO\b|\bXXX\b|\{\{|\bLorem ipsum\b", re.I)
 
 # K5 mechanical checks. The tolerances are for rounding only: a breakdown whose
@@ -88,6 +94,19 @@ SURFACE_SEGMENT_RE = re.compile(r"\*{0,2}Day\s+\d+\*{0,2}|(?<=[a-z\)])\.\s+(?=[A
 # only say where a name is NOT.
 DEFAULT_GAZETTEER = os.path.join(REPO_ROOT, "cache", "geonames_cities500.txt")
 FOREIGN_MIN_POP = 20000       # a namesake abroad must be a real town to count
+
+# Coordinate geocode check (T090). The pin is reverse-geocoded to its nearest
+# populated place in cities500. It is outside the stated country when a town
+# of another country lies within COORD_LOCAL_KM of it and the nearest town of
+# the stated countries is more than COORD_BORDER_KM farther away than that.
+# Where no town at all lies within COORD_LOCAL_KM (Lapland, the high fjell)
+# nearest-town is not evidence of anything, so the check stays silent.
+COORD_LOCAL_KM = 15
+COORD_BORDER_KM = 10
+# A pin this far from every place the itinerary names (outside the gateway
+# city) is reported, as a warning: cities500 does not know most huts and
+# hamlets, and a homonym can be the only name it resolves.
+COORD_FAR_KM = 50
 
 
 def _to_int(v):
@@ -227,11 +246,47 @@ class PlaceIndex:
 
 
 def load_place_index(path):
+    """The namesake index, and with cities500 also the reverse geocoder for the
+    coordinate check (`.gazetteer`, a geocode.Gazetteer). geonamescache alone
+    is too thin to say which country a pin is in, so with it the coordinate
+    check keeps only its capital-fallback half."""
     if path and os.path.isfile(path):
-        return PlaceIndex.from_cities500(path)
+        idx = PlaceIndex.from_cities500(path)
+        idx.gazetteer = G.Gazetteer.from_cities500(path)
+        return idx
     if geonamescache is not None:
-        return PlaceIndex.from_geonamescache()
+        idx = PlaceIndex.from_geonamescache()
+        idx.gazetteer = None
+        return idx
     return None
+
+
+def coordinate_issues(trip, gaz):
+    """[(level, code, detail)] for the trip's own pin against its stated
+    countries, using the cities500 reverse geocoder `gaz`."""
+    out = []
+    coords = trip.get("coordinates") or {}
+    lat, lon = coords.get("lat"), coords.get("lon")
+    if lat is None or lon is None:
+        return out
+    stated = G.stated_countries(trip)
+    near_any = gaz.nearest(lat, lon)
+    near_stated = gaz.nearest(lat, lon, codes=stated)
+    if near_any and near_any[0] <= COORD_LOCAL_KM and near_any[1].cc not in stated:
+        d_stated = near_stated[0] if near_stated else float("inf")
+        if d_stated > near_any[0] + COORD_BORDER_KM:
+            out.append(("ERROR", "coordinate-outside-country",
+                        f"pin {lat},{lon} is {near_any[0]:.0f} km from {near_any[1].name} "
+                        f"({near_any[1].cc}) and {d_stated:.0f} km from the nearest town in "
+                        f"{'/'.join(sorted(stated))}"))
+    named = [r for r in G.itinerary_resolutions(trip, gaz) if not r[2]]
+    if named:
+        d, name = min((G._rad_km(lat, lon, q.lat, q.lon), r[0]) for r in named for q in r[4])
+        if d > COORD_FAR_KM:
+            out.append(("WARNING", "coordinate-far-from-itinerary",
+                        f"pin is {d:.0f} km from the nearest place the itinerary names "
+                        f"({name}); check it is not a homonym"))
+    return out
 
 
 def itinerary_places(trip):
@@ -518,14 +573,20 @@ def validate(dataset, wire=None, verify_urls=False, places=None):
                 err(tid, "coordinates-out-of-range",
                     f"lat/lon {lat},{lon} falls outside the European bounding box")
             elif coords.get("precision") == "country":
-                warn(tid, "approximate-coordinates",
-                     f"pin falls back to the {t['country']} capital, no basecamp town resolved")
+                err(tid, "coordinate-capital-fallback",
+                    f"pin falls back to the {t['country']} capital "
+                    f"({coords.get('matchedPlace')}), no place the itinerary names resolved; "
+                    "run pipeline/geocode.py")
             elif coords.get("precision") == "gateway":
                 warn(tid, "gateway-coordinates",
                      f"pin sits on the gateway city ({coords.get('matchedPlace')}), "
                      "not on the trip's basecamp")
             if coords.get("precision") not in ("source", "city", "gateway", "country"):
                 err(tid, "bad-coordinate-precision", f"{coords.get('precision')!r}")
+            gaz = getattr(places, "gazetteer", None)
+            if gaz is not None and lat is not None and lon is not None:
+                for level, code, detail in coordinate_issues(t, gaz):
+                    (err if level == "ERROR" else warn)(tid, code, detail)
 
         # --- content depth ----------------------------------------------
         if len(t.get("accommodationStrategy") or []) < 2:
@@ -687,11 +748,13 @@ def coverage_stats(trips):
 K5_CODES = ["budget-sum-mismatch", "per-day-mismatch", "comma-range",
             "surface-percent-sum", "accommodation-not-slept",
             "place-outside-country", "comma-range-wire", "hero-below-floor",
-            "hero-missing"]
+            "hero-missing", "coordinate-capital-fallback", "coordinate-outside-country"]
 SEED_DEAD_URL = ("https://upload.wikimedia.org/wikipedia/commons/0/00/"
                  "Carta_trip_validator_seeded_missing_file.jpg")
 # A town far from every trip in the catalogue, and the country it sits in.
 SEED_ABROAD = [("Salamanca", "ES"), ("Uppsala", "SE")]
+# where those towns are, for the seeded wrong pin
+SEED_ABROAD_AT = {"Salamanca": (40.9701, -5.6635), "Uppsala": (59.8586, 17.6389)}
 
 
 def _clean_control(trips, places):
@@ -739,6 +802,10 @@ def self_test(dataset, places, verify_urls):
     if abroad:
         bad["itinerary"] = copy.deepcopy(bad["itinerary"])
         bad["itinerary"][0]["title"] = f"Arrival, then {abroad}"
+        # the pin itself abroad, labelled the way a capital fallback is
+        lat, lon = SEED_ABROAD_AT[abroad]
+        bad["coordinates"] = {"lat": lat, "lon": lon, "precision": "country",
+                              "matchedPlace": abroad, "source": "country capital fallback"}
     bad_rec = copy.deepcopy(bad)
     bad_rec["budget"]["totalNote"] = "€1,200, €1,850 per person"
     bad_rec["hero"] = {"url": SEED_DEAD_URL, "w": 1280, "h": 853}
@@ -759,6 +826,10 @@ def self_test(dataset, places, verify_urls):
     expected = {c for c in K5_CODES if c != "hero-missing"}
     if places is None or not abroad:
         expected.discard("place-outside-country")
+    if not abroad:
+        expected.discard("coordinate-capital-fallback")
+    if getattr(places, "gazetteer", None) is None or not abroad:
+        expected.discard("coordinate-outside-country")
     if verify_urls:
         expected.add("hero-url-dead")
     failures = []
@@ -773,6 +844,7 @@ def self_test(dataset, places, verify_urls):
 
     print(f"SELF-TEST control={control['id']} seeded={len(expected) + 1} checks "
           f"place-check={'on' if 'place-outside-country' in expected else 'off'} "
+          f"coord-check={'on' if 'coordinate-outside-country' in expected else 'off'} "
           f"url-check={'on' if verify_urls else 'off'}")
     for f in failures:
         print(f"SELF-TEST FAIL: {f}")

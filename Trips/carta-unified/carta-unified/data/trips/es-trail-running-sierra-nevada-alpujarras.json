@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 40.4165,
-    "lon": -3.7026,
-    "precision": "country",
-    "matchedPlace": "Madrid",
-    "source": "country capital fallback"
+    "lat": 36.9615,
+    "lon": -3.3586,
+    "precision": "city",
+    "matchedPlace": "Capileira",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "trail-running",

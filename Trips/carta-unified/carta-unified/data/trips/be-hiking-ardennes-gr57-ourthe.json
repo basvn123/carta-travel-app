@@ -95,11 +95,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 50.8505,
-    "lon": 4.3488,
-    "precision": "gateway",
-    "matchedPlace": "Brussels",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 50.1836,
+    "lon": 5.5755,
+    "precision": "city",
+    "matchedPlace": "La Roche-en-Ardenne",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "gr-trail",

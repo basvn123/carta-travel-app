@@ -91,11 +91,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.8919,
-    "lon": 12.5113,
-    "precision": "country",
-    "matchedPlace": "Rome",
-    "source": "country capital fallback"
+    "lat": 46.5504,
+    "lon": 11.8734,
+    "precision": "city",
+    "matchedPlace": "Corvara in Badia",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "dolomites",

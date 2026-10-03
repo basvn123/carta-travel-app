@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 38.7251,
-    "lon": -9.1498,
-    "precision": "country",
-    "matchedPlace": "Lisbon",
-    "source": "country capital fallback"
+    "lat": 41.1906,
+    "lon": -7.545,
+    "precision": "city",
+    "matchedPlace": "Pinhão",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "port",

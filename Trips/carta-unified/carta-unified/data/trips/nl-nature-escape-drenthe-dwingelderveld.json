@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 52.374,
-    "lon": 4.8897,
-    "precision": "country",
-    "matchedPlace": "Amsterdam",
-    "source": "country capital fallback"
+    "lat": 52.7625,
+    "lon": 6.3542,
+    "precision": "city",
+    "matchedPlace": "Ruinen",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "wet-heathland",

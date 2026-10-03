@@ -102,11 +102,11 @@
   "currency": "Moldovan leu (MDL); roughly 19–20 MDL to €1",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.009,
-    "lon": 28.8594,
-    "precision": "country",
-    "matchedPlace": "Chisinau",
-    "source": "country capital fallback"
+    "lat": 47.6911,
+    "lon": 28.9746,
+    "precision": "city",
+    "matchedPlace": "Saharna",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "cabin",

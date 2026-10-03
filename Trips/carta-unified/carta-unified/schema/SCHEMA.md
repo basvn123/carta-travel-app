@@ -28,7 +28,7 @@ TypeScript expression of the same contract; the Supabase migrations in
 | `subRegion` | string \| null | Free text, e.g. `Stubai Alps, Tyrol`. |
 | `basecamps[]` | string[] | Towns the week is run from. |
 | `gatewayAirport` / `gatewayAirportCode` | string \| null | Name plus a conservatively extracted IATA code. |
-| `coordinates` | object \| null | `{lat, lon, precision, matchedPlace, source}`. **`precision` matters**: `source` = stated in the source record · `city` = a named basecamp or sub-region town resolved against GeoNames · `gateway` = only the gateway airport's city resolved, which can be hours from the trip · `country` = capital-city fallback, a map pin rather than a location. |
+| `coordinates` | object \| null | `{lat, lon, precision, matchedPlace, source}`. **`precision` matters**: `source` = stated in the source record; `city` = a named basecamp or sub-region town resolved against GeoNames, or (`source` "itinerary places (geonames ...)", T090) the best-supported place the itinerary names, inside the stated countries, from cities500 and the GeoNames country files; `gateway` = only the gateway airport's city resolved, which can be hours from the trip; `country` = capital-city fallback, a map pin rather than a location, and a validator error since T090. |
 
 ## Classification
 
@@ -140,7 +140,7 @@ filter on them:
 4. `itinerary` always has exactly 7 days numbered 1–7, each with morning and afternoon text.
 5. `bestPeriod.months` is always non-empty and within 1–12.
 6. `countryCode` is always a mapped ISO code, and `countries[0]` is the primary country.
-7. Coordinates, where present, fall inside the European bounding box and declare their precision.
+7. Coordinates, where present, fall inside the European bounding box (27 N to 72.5 N, so Madeira and the Canaries count), declare their precision, are not a capital-city fallback, and, with GeoNames cities500, do not sit beside a town of another country (T090).
 
 `pipeline/validate.py` enforces all seven and reports everything softer as a warning.
 

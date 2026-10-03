@@ -95,11 +95,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 38.7251,
-    "lon": -9.1498,
-    "precision": "country",
-    "matchedPlace": "Lisbon",
-    "source": "country capital fallback"
+    "lat": 37.6667,
+    "lon": -8.6667,
+    "precision": "city",
+    "matchedPlace": "Zambujeira",
+    "source": "itinerary places (geonames PT dump)"
   },
   "tags": [
     "gravel",

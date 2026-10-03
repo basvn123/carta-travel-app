@@ -796,11 +796,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.8505,
-        "lon": 4.3488,
-        "precision": "gateway",
-        "matchedPlace": "Brussels",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.4269,
+        "lon": 6.205,
+        "precision": "city",
+        "matchedPlace": "Butgenbach",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "vennbahn",
@@ -3537,11 +3537,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 37.9838,
-        "lon": 23.7278,
-        "precision": "country",
-        "matchedPlace": "Athens",
-        "source": "country capital fallback"
+        "lat": 37.5686,
+        "lon": 22.8069,
+        "precision": "city",
+        "matchedPlace": "Náfplio",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "road-cycling",
@@ -3816,11 +3816,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 45.8144,
-        "lon": 15.978,
-        "precision": "country",
-        "matchedPlace": "Zagreb",
-        "source": "country capital fallback"
+        "lat": 45.3814,
+        "lon": 13.6294,
+        "precision": "city",
+        "matchedPlace": "Brtonigla",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "parenzana",
@@ -4395,11 +4395,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.8919,
-        "lon": 12.5113,
-        "precision": "country",
-        "matchedPlace": "Rome",
-        "source": "country capital fallback"
+        "lat": 40.7566,
+        "lon": 17.3239,
+        "precision": "city",
+        "matchedPlace": "Locorotondo",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "trulli",
@@ -4676,11 +4676,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 49.6098,
-        "lon": 6.1327,
-        "precision": "gateway",
-        "matchedPlace": "Luxembourg",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.8121,
+        "lon": 6.4185,
+        "precision": "city",
+        "matchedPlace": "Echternach",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "pc-routes",
@@ -5294,11 +5294,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.4412,
-        "lon": 19.2631,
-        "precision": "country",
-        "matchedPlace": "Podgorica",
-        "source": "country capital fallback"
+        "lat": 42.4207,
+        "lon": 18.7682,
+        "precision": "city",
+        "matchedPlace": "Kotor",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "climbing",
@@ -6533,11 +6533,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 38.7251,
-        "lon": -9.1498,
-        "precision": "country",
-        "matchedPlace": "Lisbon",
-        "source": "country capital fallback"
+        "lat": 37.6667,
+        "lon": -8.6667,
+        "precision": "city",
+        "matchedPlace": "Zambujeira",
+        "source": "itinerary places (geonames PT dump)"
       },
       "tags": [
         "gravel",
@@ -7398,11 +7398,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 46.0511,
-        "lon": 14.5051,
-        "precision": "country",
-        "matchedPlace": "Ljubljana",
-        "source": "country capital fallback"
+        "lat": 46.2476,
+        "lon": 13.5791,
+        "precision": "city",
+        "matchedPlace": "Kobarid",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "gravel",
@@ -8287,11 +8287,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.8505,
-        "lon": 4.3488,
-        "precision": "gateway",
-        "matchedPlace": "Brussels",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.4269,
+        "lon": 6.0279,
+        "precision": "city",
+        "matchedPlace": "Malmédy",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "moorland",
@@ -8605,11 +8605,11 @@
       "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
       "emergencyNumber": "112 (mountain rescue PSS: 1470)",
       "coordinates": {
-        "lat": 42.6975,
-        "lon": 23.3241,
-        "precision": "gateway",
-        "matchedPlace": "Sofia",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 42.1057,
+        "lon": 23.02,
+        "precision": "city",
+        "matchedPlace": "Borovets",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "trail-running",
@@ -8901,11 +8901,11 @@
       "currency": "CHF",
       "emergencyNumber": null,
       "coordinates": {
-        "lat": 47.3667,
-        "lon": 8.55,
-        "precision": "gateway",
-        "matchedPlace": "Zürich",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 46.4955,
+        "lon": 9.9013,
+        "precision": "city",
+        "matchedPlace": "Pontresina",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "high-altitude",
@@ -9229,11 +9229,11 @@
       "currency": "CZK",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.088,
-        "lon": 14.4208,
-        "precision": "gateway",
-        "matchedPlace": "Prague",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.7261,
+        "lon": 15.6094,
+        "precision": "city",
+        "matchedPlace": "Špindlerův Mlýn",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "main-ridge",
@@ -9547,11 +9547,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 52.5244,
-        "lon": 13.4105,
-        "precision": "country",
-        "matchedPlace": "Berlin",
-        "source": "country capital fallback"
+        "lat": 47.6005,
+        "lon": 12.987,
+        "precision": "city",
+        "matchedPlace": "Schönau am Königssee",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "alpine-running",
@@ -9855,11 +9855,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 40.4165,
-        "lon": -3.7026,
-        "precision": "country",
-        "matchedPlace": "Madrid",
-        "source": "country capital fallback"
+        "lat": 36.9615,
+        "lon": -3.3586,
+        "precision": "city",
+        "matchedPlace": "Capileira",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "trail-running",
@@ -10415,11 +10415,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.8534,
-        "lon": 2.3488,
-        "precision": "country",
-        "matchedPlace": "Paris",
-        "source": "country capital fallback"
+        "lat": 45.9237,
+        "lon": 6.8693,
+        "precision": "city",
+        "matchedPlace": "Chamonix-Mont-Blanc",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "balcon-trails",
@@ -10735,11 +10735,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.8534,
-        "lon": 2.3488,
-        "precision": "country",
-        "matchedPlace": "Paris",
-        "source": "country capital fallback"
+        "lat": 44.0689,
+        "lon": 7.2558,
+        "precision": "city",
+        "matchedPlace": "Saint-Martin-Vésubie",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "national-park",
@@ -11053,11 +11053,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 37.9838,
-        "lon": 23.7278,
-        "precision": "country",
-        "matchedPlace": "Athens",
-        "source": "country capital fallback"
+        "lat": 39.9343,
+        "lon": 20.6715,
+        "precision": "city",
+        "matchedPlace": "Arísti",
+        "source": "itinerary places (geonames GR dump)"
       },
       "tags": [
         "trail-running",
@@ -11329,11 +11329,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 44.1158,
-        "lon": 15.2251,
-        "precision": "gateway",
-        "matchedPlace": "Zadar",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 44.296,
+        "lon": 15.4387,
+        "precision": "city",
+        "matchedPlace": "Starigrad",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "karst",
@@ -12806,11 +12806,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 49.6098,
-        "lon": 6.1327,
-        "precision": "gateway",
-        "matchedPlace": "Luxembourg",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.8121,
+        "lon": 6.4185,
+        "precision": "city",
+        "matchedPlace": "Echternach",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "sandstone-gorges",
@@ -13433,11 +13433,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.4412,
-        "lon": 19.2631,
-        "precision": "country",
-        "matchedPlace": "Podgorica",
-        "source": "country capital fallback"
+        "lat": 43.1542,
+        "lon": 19.1232,
+        "precision": "city",
+        "matchedPlace": "Žabljak",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "trail-running",
@@ -13991,11 +13991,11 @@
       "currency": "Polish złoty (PLN)",
       "emergencyNumber": "112 (mountain rescue GOPR: 985 or 601 100 300)",
       "coordinates": {
-        "lat": 51.1029,
-        "lon": 17.0301,
-        "precision": "gateway",
-        "matchedPlace": "Wrocław",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.443,
+        "lon": 16.244,
+        "precision": "city",
+        "matchedPlace": "Kudowa-Zdrój",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "trail-running",
@@ -14286,11 +14286,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 38.7251,
-        "lon": -9.1498,
-        "precision": "country",
-        "matchedPlace": "Lisbon",
-        "source": "country capital fallback"
+        "lat": 32.8,
+        "lon": -16.8833,
+        "precision": "city",
+        "matchedPlace": "Santana",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "trail-running",
@@ -14864,11 +14864,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 46.0511,
-        "lon": 14.5051,
-        "precision": "country",
-        "matchedPlace": "Ljubljana",
-        "source": "country capital fallback"
+        "lat": 46.288,
+        "lon": 13.893,
+        "precision": "city",
+        "matchedPlace": "Stara Fužina",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "trail-running",
@@ -23240,11 +23240,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.7994,
-        "lon": 13.044,
-        "precision": "gateway",
-        "matchedPlace": "Salzburg",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.7111,
+        "lon": 13.6189,
+        "precision": "city",
+        "matchedPlace": "Bad Ischl",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "lake-towns",
@@ -23549,11 +23549,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 43.8486,
-        "lon": 18.3564,
-        "precision": "country",
-        "matchedPlace": "Sarajevo",
-        "source": "country capital fallback"
+        "lat": 43.3433,
+        "lon": 17.8081,
+        "precision": "city",
+        "matchedPlace": "Mostar",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "herzegovina",
@@ -24142,11 +24142,11 @@
       "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.6975,
-        "lon": 23.3241,
-        "precision": "gateway",
-        "matchedPlace": "Sofia",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 43.0981,
+        "lon": 25.6665,
+        "precision": "city",
+        "matchedPlace": "Arbanasi",
+        "source": "itinerary places (geonames BG dump)"
       },
       "tags": [
         "revival-architecture",
@@ -24435,11 +24435,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.3667,
-        "lon": 8.55,
-        "precision": "gateway",
-        "matchedPlace": "Zürich",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.331,
+        "lon": 9.41,
+        "precision": "city",
+        "matchedPlace": "Appenzell",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "painted-houses",
@@ -24757,11 +24757,11 @@
       "currency": "CZK",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.088,
-        "lon": 14.4208,
-        "precision": "gateway",
-        "matchedPlace": "Prague",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.1842,
+        "lon": 15.4527,
+        "precision": "city",
+        "matchedPlace": "Telč",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "unesco-squares",
@@ -25068,11 +25068,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.1155,
-        "lon": 8.6842,
-        "precision": "gateway",
-        "matchedPlace": "Frankfurt am Main",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.916,
+        "lon": 7.0766,
+        "precision": "city",
+        "matchedPlace": "Bernkastel-Kues",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "riesling",
@@ -25389,11 +25389,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 49.4542,
-        "lon": 11.0775,
-        "precision": "gateway",
-        "matchedPlace": "Nuremberg",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.3788,
+        "lon": 10.1871,
+        "precision": "city",
+        "matchedPlace": "Rothenburg ob der Tauber",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "medieval-walls",
@@ -26281,11 +26281,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.8534,
-        "lon": 2.3488,
-        "precision": "country",
-        "matchedPlace": "Paris",
-        "source": "country capital fallback"
+        "lat": 48.1667,
+        "lon": 7.2971,
+        "precision": "city",
+        "matchedPlace": "Riquewihr",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "wine-villages",
@@ -26602,11 +26602,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.8534,
-        "lon": 2.3488,
-        "precision": "country",
-        "matchedPlace": "Paris",
-        "source": "country capital fallback"
+        "lat": 44.889,
+        "lon": 1.2166,
+        "precision": "city",
+        "matchedPlace": "Sarlat-la-Canéda",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "bastides",
@@ -26918,11 +26918,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 40.6407,
-        "lon": 22.9349,
-        "precision": "gateway",
-        "matchedPlace": "Thessaloníki",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 39.3335,
+        "lon": 23.1328,
+        "precision": "city",
+        "matchedPlace": "Vyzítsa",
+        "source": "itinerary places (geonames GR dump)"
       },
       "tags": [
         "archontika",
@@ -27509,11 +27509,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.8919,
-        "lon": 12.5113,
-        "precision": "country",
-        "matchedPlace": "Rome",
-        "source": "country capital fallback"
+        "lat": 42.9375,
+        "lon": 12.6149,
+        "precision": "city",
+        "matchedPlace": "Bevagna",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "hill-towns",
@@ -28980,11 +28980,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.9965,
-        "lon": 21.4314,
-        "precision": "country",
-        "matchedPlace": "Skopje",
-        "source": "country capital fallback"
+        "lat": 41.0323,
+        "lon": 21.3355,
+        "precision": "city",
+        "matchedPlace": "Bitola",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "lake-ohrid",
@@ -29876,11 +29876,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 38.7251,
-        "lon": -9.1498,
-        "precision": "country",
-        "matchedPlace": "Lisbon",
-        "source": "country capital fallback"
+        "lat": 39.4162,
+        "lon": -7.4568,
+        "precision": "city",
+        "matchedPlace": "Castelo de Vide",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "alentejo",
@@ -31303,11 +31303,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.2627,
-        "lon": 11.3945,
-        "precision": "gateway",
-        "matchedPlace": "Innsbruck",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.1667,
+        "lon": 11.8667,
+        "precision": "city",
+        "matchedPlace": "Mayrhofen",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "alpine-passes",
@@ -32233,11 +32233,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.3667,
-        "lon": 8.55,
-        "precision": "gateway",
-        "matchedPlace": "Zürich",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 46.7271,
+        "lon": 8.1872,
+        "precision": "city",
+        "matchedPlace": "Meiringen",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "alpine-passes",
@@ -34084,11 +34084,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 37.9838,
-        "lon": 23.7278,
-        "precision": "country",
-        "matchedPlace": "Athens",
-        "source": "country capital fallback"
+        "lat": 36.6661,
+        "lon": 22.3813,
+        "precision": "city",
+        "matchedPlace": "Areópoli",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "road-trip",
@@ -36479,11 +36479,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.4412,
-        "lon": 19.2631,
-        "precision": "country",
-        "matchedPlace": "Podgorica",
-        "source": "country capital fallback"
+        "lat": 43.1542,
+        "lon": 19.1232,
+        "precision": "city",
+        "matchedPlace": "Žabljak",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "road-trip",
@@ -37682,11 +37682,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.1485,
-        "lon": -8.611,
-        "precision": "gateway",
-        "matchedPlace": "Porto",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 40.4028,
+        "lon": -7.5398,
+        "precision": "city",
+        "matchedPlace": "Manteigas",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "estrada-nacional-2",
@@ -38284,11 +38284,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 46.0511,
-        "lon": 14.5051,
-        "precision": "country",
-        "matchedPlace": "Ljubljana",
-        "source": "country capital fallback"
+        "lat": 46.3381,
+        "lon": 13.5525,
+        "precision": "city",
+        "matchedPlace": "Bovec",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "road-trip",
@@ -38568,11 +38568,11 @@
       "currency": "Euro (EUR)",
       "emergencyNumber": "112 (mountain rescue HZS: 18 300)",
       "coordinates": {
-        "lat": 48.1482,
-        "lon": 17.1067,
-        "precision": "country",
-        "matchedPlace": "Bratislava",
-        "source": "country capital fallback"
+        "lat": 49.271,
+        "lon": 20.2624,
+        "precision": "city",
+        "matchedPlace": "Ždiar",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "road-trip",
@@ -38873,11 +38873,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.5078,
-        "lon": 1.5211,
-        "precision": "country",
-        "matchedPlace": "Andorra la Vella",
-        "source": "country capital fallback"
+        "lat": 42.545,
+        "lon": 1.5148,
+        "precision": "city",
+        "matchedPlace": "la Massana",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "comapedrosa",
@@ -39152,11 +39152,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.2627,
-        "lon": 11.3945,
-        "precision": "gateway",
-        "matchedPlace": "Innsbruck",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.1667,
+        "lon": 11.8667,
+        "precision": "city",
+        "matchedPlace": "Mayrhofen",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "hut-to-hut",
@@ -39467,11 +39467,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.2627,
-        "lon": 11.3945,
-        "precision": "gateway",
-        "matchedPlace": "Innsbruck",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.1167,
+        "lon": 11.3167,
+        "precision": "city",
+        "matchedPlace": "Neustift im Stubaital",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "hut-to-hut",
@@ -39775,11 +39775,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 43.8486,
-        "lon": 18.3564,
-        "precision": "gateway",
-        "matchedPlace": "Sarajevo",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 43.3546,
+        "lon": 18.692,
+        "precision": "city",
+        "matchedPlace": "Tjentište",
+        "source": "itinerary places (geonames BA dump)"
       },
       "tags": [
         "sutjeska",
@@ -40053,11 +40053,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.8505,
-        "lon": 4.3488,
-        "precision": "gateway",
-        "matchedPlace": "Brussels",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.1836,
+        "lon": 5.5755,
+        "precision": "city",
+        "matchedPlace": "La Roche-en-Ardenne",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "gr-trail",
@@ -40365,11 +40365,11 @@
       "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
       "emergencyNumber": "112 (mountain rescue PSS: 1470)",
       "coordinates": {
-        "lat": 42.6975,
-        "lon": 23.3241,
-        "precision": "gateway",
-        "matchedPlace": "Sofia",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 41.8361,
+        "lon": 23.4874,
+        "precision": "city",
+        "matchedPlace": "Bansko",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "hut-to-hut",
@@ -40660,11 +40660,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.3667,
-        "lon": 8.55,
-        "precision": "gateway",
-        "matchedPlace": "Zürich",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 46.4947,
+        "lon": 7.6733,
+        "precision": "city",
+        "matchedPlace": "Kandersteg",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "via-alpina",
@@ -40971,11 +40971,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 46.2022,
-        "lon": 6.1457,
-        "precision": "gateway",
-        "matchedPlace": "Geneva",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 46.0254,
+        "lon": 7.4836,
+        "precision": "city",
+        "matchedPlace": "Arolla",
+        "source": "itinerary places (geonames CH dump)"
       },
       "tags": [
         "hut-to-hut",
@@ -41281,11 +41281,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.088,
-        "lon": 14.4208,
-        "precision": "gateway",
-        "matchedPlace": "Prague",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.8744,
+        "lon": 14.2425,
+        "precision": "city",
+        "matchedPlace": "Hřensko",
+        "source": "itinerary places (geonames CZ dump)"
       },
       "tags": [
         "sandstone",
@@ -41595,11 +41595,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.9837,
-        "lon": 10.1853,
-        "precision": "gateway",
-        "matchedPlace": "Memmingen",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.4072,
+        "lon": 10.2794,
+        "precision": "city",
+        "matchedPlace": "Oberstdorf",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "hut-to-hut",
@@ -41899,11 +41899,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.6561,
-        "lon": -0.8773,
-        "precision": "gateway",
-        "matchedPlace": "Zaragoza",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 42.628,
+        "lon": -0.1121,
+        "precision": "city",
+        "matchedPlace": "Torla",
+        "source": "itinerary places (geonames ES dump)"
       },
       "tags": [
         "ordesa",
@@ -42469,11 +42469,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 45.1787,
-        "lon": 5.7148,
-        "precision": "gateway",
-        "matchedPlace": "Grenoble",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 45.0548,
+        "lon": 6.0337,
+        "precision": "city",
+        "matchedPlace": "Le Bourg-d'Oisans",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "gr-trail",
@@ -42771,11 +42771,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 37.9838,
-        "lon": 23.7278,
-        "precision": "country",
-        "matchedPlace": "Athens",
-        "source": "country capital fallback"
+        "lat": 40.1006,
+        "lon": 22.4978,
+        "precision": "city",
+        "matchedPlace": "Litóchoro",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "olympus",
@@ -43047,11 +43047,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.8919,
-        "lon": 12.5113,
-        "precision": "country",
-        "matchedPlace": "Rome",
-        "source": "country capital fallback"
+        "lat": 46.1426,
+        "lon": 12.2156,
+        "precision": "city",
+        "matchedPlace": "Belluno",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "alta-via-1",
@@ -43327,11 +43327,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.1415,
-        "lon": 9.5215,
-        "precision": "country",
-        "matchedPlace": "Vaduz",
-        "source": "country capital fallback"
+        "lat": 47.1014,
+        "lon": 9.6099,
+        "precision": "city",
+        "matchedPlace": "Malbun",
+        "source": "itinerary places (geonames LI dump)"
       },
       "tags": [
         "via-ferrata",
@@ -43640,11 +43640,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 49.6098,
-        "lon": 6.1327,
-        "precision": "gateway",
-        "matchedPlace": "Luxembourg",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.9528,
+        "lon": 6.02,
+        "precision": "city",
+        "matchedPlace": "Kautenbach",
+        "source": "itinerary places (geonames LU dump)"
       },
       "tags": [
         "long-distance-trail",
@@ -45106,11 +45106,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 46.0511,
-        "lon": 14.5051,
-        "precision": "country",
-        "matchedPlace": "Ljubljana",
-        "source": "country capital fallback"
+        "lat": 46.2722,
+        "lon": 13.9535,
+        "precision": "city",
+        "matchedPlace": "Bohinjska Bistrica",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "triglav",
@@ -45387,11 +45387,11 @@
       "currency": "Euro (EUR)",
       "emergencyNumber": "112 (mountain rescue HZS: 18 300)",
       "coordinates": {
-        "lat": 48.1482,
-        "lon": 17.1067,
-        "precision": "country",
-        "matchedPlace": "Bratislava",
-        "source": "country capital fallback"
+        "lat": 49.139,
+        "lon": 20.2203,
+        "precision": "city",
+        "matchedPlace": "Starý Smokovec",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "hut-to-hut",
@@ -45675,11 +45675,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.6727,
-        "lon": 21.1669,
-        "precision": "country",
-        "matchedPlace": "Pristina",
-        "source": "country capital fallback"
+        "lat": 42.6591,
+        "lon": 20.2883,
+        "precision": "city",
+        "matchedPlace": "Pejë",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "peaks-of-the-balkans",
@@ -45959,11 +45959,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.2085,
-        "lon": 16.3721,
-        "precision": "gateway",
-        "matchedPlace": "Vienna",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 48.3958,
+        "lon": 15.5197,
+        "precision": "city",
+        "matchedPlace": "Dürnstein",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "wine",
@@ -47753,11 +47753,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 52.5244,
-        "lon": 13.4105,
-        "precision": "country",
-        "matchedPlace": "Berlin",
-        "source": "country capital fallback"
+        "lat": 49.9508,
+        "lon": 7.1156,
+        "precision": "city",
+        "matchedPlace": "Traben-Trarbach",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "riesling",
@@ -49225,11 +49225,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 44.8683,
-        "lon": 13.8481,
-        "precision": "gateway",
-        "matchedPlace": "Pula",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 45.3367,
+        "lon": 13.8286,
+        "precision": "city",
+        "matchedPlace": "Motovun",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "truffles",
@@ -50101,11 +50101,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.8919,
-        "lon": 12.5113,
-        "precision": "country",
-        "matchedPlace": "Rome",
-        "source": "country capital fallback"
+        "lat": 43.5851,
+        "lon": 11.3171,
+        "precision": "city",
+        "matchedPlace": "Greve in Chianti",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "chianti-classico",
@@ -50694,11 +50694,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 49.6098,
-        "lon": 6.1327,
-        "precision": "gateway",
-        "matchedPlace": "Luxembourg",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.6775,
+        "lon": 6.4402,
+        "precision": "city",
+        "matchedPlace": "Grevenmacher",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "cremant",
@@ -52143,11 +52143,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 38.7251,
-        "lon": -9.1498,
-        "precision": "country",
-        "matchedPlace": "Lisbon",
-        "source": "country capital fallback"
+        "lat": 41.1906,
+        "lon": -7.545,
+        "precision": "city",
+        "matchedPlace": "Pinhão",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "port",
@@ -53024,11 +53024,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 46.0511,
-        "lon": 14.5051,
-        "precision": "country",
-        "matchedPlace": "Ljubljana",
-        "source": "country capital fallback"
+        "lat": 45.8233,
+        "lon": 13.8436,
+        "precision": "city",
+        "matchedPlace": "Štanjel",
+        "source": "itinerary places (geonames SI dump)"
       },
       "tags": [
         "teran",
@@ -53589,11 +53589,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.5078,
-        "lon": 1.5211,
-        "precision": "country",
-        "matchedPlace": "Andorra la Vella",
-        "source": "country capital fallback"
+        "lat": 42.5795,
+        "lon": 1.6536,
+        "precision": "city",
+        "matchedPlace": "El Tarter",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "andorra",
@@ -53870,11 +53870,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.2627,
-        "lon": 11.3945,
-        "precision": "gateway",
-        "matchedPlace": "Innsbruck",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.1275,
+        "lon": 10.2637,
+        "precision": "city",
+        "matchedPlace": "St Anton am Arlberg",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "off-piste",
@@ -54174,11 +54174,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.2627,
-        "lon": 11.3945,
-        "precision": "gateway",
-        "matchedPlace": "Innsbruck",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.4464,
+        "lon": 12.3922,
+        "precision": "city",
+        "matchedPlace": "Kitzbühel",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "snowmaking",
@@ -54476,11 +54476,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 43.8486,
-        "lon": 18.3564,
-        "precision": "country",
-        "matchedPlace": "Sarajevo",
-        "source": "country capital fallback"
+        "lat": 43.7383,
+        "lon": 18.5656,
+        "precision": "city",
+        "matchedPlace": "Jahorina",
+        "source": "itinerary places (geonames BA dump)"
       },
       "tags": [
         "bosnia",
@@ -54755,11 +54755,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.6337,
-        "lon": 5.5675,
-        "precision": "gateway",
-        "matchedPlace": "Liège",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.4269,
+        "lon": 6.0279,
+        "precision": "city",
+        "matchedPlace": "Malmédy",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "cross-country-skiing",
@@ -55058,11 +55058,11 @@
       "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.6975,
-        "lon": 23.3241,
-        "precision": "gateway",
-        "matchedPlace": "Sofia",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 41.8167,
+        "lon": 23.5667,
+        "precision": "city",
+        "matchedPlace": "Dobrinishte",
+        "source": "itinerary places (geonames BG dump)"
       },
       "tags": [
         "skiing",
@@ -55348,11 +55348,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.3667,
-        "lon": 8.55,
-        "precision": "gateway",
-        "matchedPlace": "Zürich",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 46.8211,
+        "lon": 8.4013,
+        "precision": "city",
+        "matchedPlace": "Engelberg",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "freeride",
@@ -55651,11 +55651,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 46.2022,
-        "lon": 6.1457,
-        "precision": "gateway",
-        "matchedPlace": "Geneva",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 46.1002,
+        "lon": 7.2265,
+        "precision": "city",
+        "matchedPlace": "Verbier",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "freeride",
@@ -55954,11 +55954,11 @@
       "currency": "CZK",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.088,
-        "lon": 14.4208,
-        "precision": "gateway",
-        "matchedPlace": "Prague",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.7261,
+        "lon": 15.6094,
+        "precision": "city",
+        "matchedPlace": "Špindlerův Mlýn",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "ski-touring",
@@ -57141,11 +57141,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.8534,
-        "lon": 2.3488,
-        "precision": "country",
-        "matchedPlace": "Paris",
-        "source": "country capital fallback"
+        "lat": 45.9237,
+        "lon": 6.8693,
+        "precision": "city",
+        "matchedPlace": "Chamonix-Mont-Blanc",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "freeride",
@@ -57450,11 +57450,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 45.5663,
-        "lon": 5.9208,
-        "precision": "gateway",
-        "matchedPlace": "Chambéry",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 45.415,
+        "lon": 6.565,
+        "precision": "city",
+        "matchedPlace": "Méribel",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "lift-interconnect",
@@ -57750,11 +57750,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 37.9838,
-        "lon": 23.7278,
-        "precision": "country",
-        "matchedPlace": "Athens",
-        "source": "country capital fallback"
+        "lat": 38.4796,
+        "lon": 22.5835,
+        "precision": "city",
+        "matchedPlace": "Aráchova",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "greece",
@@ -58026,11 +58026,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.8919,
-        "lon": 12.5113,
-        "precision": "country",
-        "matchedPlace": "Rome",
-        "source": "country capital fallback"
+        "lat": 46.5504,
+        "lon": 11.8734,
+        "precision": "city",
+        "matchedPlace": "Corvara in Badia",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "dolomites",
@@ -58307,11 +58307,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.1415,
-        "lon": 9.5215,
-        "precision": "country",
-        "matchedPlace": "Vaduz",
-        "source": "country capital fallback"
+        "lat": 47.1014,
+        "lon": 9.6099,
+        "precision": "city",
+        "matchedPlace": "Malbun",
+        "source": "itinerary places (geonames LI dump)"
       },
       "tags": [
         "small-resort",
@@ -59491,11 +59491,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 44.804,
-        "lon": 20.4651,
-        "precision": "country",
-        "matchedPlace": "Belgrade",
-        "source": "country capital fallback"
+        "lat": 43.3894,
+        "lon": 20.7505,
+        "precision": "city",
+        "matchedPlace": "Jošanička Banja",
+        "source": "itinerary places (geonames RS dump)"
       },
       "tags": [
         "serbia",
@@ -60066,11 +60066,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 46.0511,
-        "lon": 14.5051,
-        "precision": "country",
-        "matchedPlace": "Ljubljana",
-        "source": "country capital fallback"
+        "lat": 46.4569,
+        "lon": 13.7782,
+        "precision": "city",
+        "matchedPlace": "Kranjska Gora",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "slovenia",
@@ -60920,11 +60920,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.0673,
-        "lon": 15.442,
-        "precision": "gateway",
-        "matchedPlace": "Graz",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.5333,
+        "lon": 14.5833,
+        "precision": "city",
+        "matchedPlace": "Johnsbach",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "self-catering",
@@ -61237,11 +61237,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 43.8486,
-        "lon": 18.3564,
-        "precision": "country",
-        "matchedPlace": "Sarajevo",
-        "source": "country capital fallback"
+        "lat": 44.5608,
+        "lon": 16.0886,
+        "precision": "city",
+        "matchedPlace": "Kulen Vakuf",
+        "source": "itinerary places (geonames BA dump)"
       },
       "tags": [
         "una-river",
@@ -62146,11 +62146,11 @@
       "currency": "CHF",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.3667,
-        "lon": 8.55,
-        "precision": "gateway",
-        "matchedPlace": "Zürich",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 46.6986,
+        "lon": 10.0927,
+        "precision": "city",
+        "matchedPlace": "Zernez",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "strict-protection",
@@ -62467,11 +62467,11 @@
       "currency": "CZK",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 49.8347,
-        "lon": 18.282,
-        "precision": "gateway",
-        "matchedPlace": "Ostrava",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 50.0731,
+        "lon": 17.3069,
+        "precision": "city",
+        "matchedPlace": "Karlova Studánka",
+        "source": "itinerary places (geonames CZ dump)"
       },
       "tags": [
         "glacial-cirque",
@@ -62793,11 +62793,11 @@
       "currency": "CZK",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.088,
-        "lon": 14.4208,
-        "precision": "gateway",
-        "matchedPlace": "Prague",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.0241,
+        "lon": 13.4993,
+        "precision": "city",
+        "matchedPlace": "Modrava",
+        "source": "itinerary places (geonames CZ dump)"
       },
       "tags": [
         "peat-bog",
@@ -63123,11 +63123,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.1374,
-        "lon": 11.5755,
-        "precision": "gateway",
-        "matchedPlace": "Munich",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 48.9269,
+        "lon": 13.4653,
+        "precision": "city",
+        "matchedPlace": "Waldhäuser",
+        "source": "itinerary places (geonames DE dump)"
       },
       "tags": [
         "national-park",
@@ -63438,11 +63438,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 40.4165,
-        "lon": -3.7026,
-        "precision": "country",
-        "matchedPlace": "Madrid",
-        "source": "country capital fallback"
+        "lat": 40.2227,
+        "lon": -5.7501,
+        "precision": "city",
+        "matchedPlace": "Jerte",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "birdwatching",
@@ -64320,11 +64320,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.8534,
-        "lon": 2.3488,
-        "precision": "country",
-        "matchedPlace": "Paris",
-        "source": "country capital fallback"
+        "lat": 48.0405,
+        "lon": 7.1393,
+        "precision": "city",
+        "matchedPlace": "Munster",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "marcairie",
@@ -64642,11 +64642,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 44.1158,
-        "lon": 15.2251,
-        "precision": "gateway",
-        "matchedPlace": "Zadar",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 44.296,
+        "lon": 15.4387,
+        "precision": "city",
+        "matchedPlace": "Starigrad",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "velebit",
@@ -64927,11 +64927,11 @@
       "currency": "Hungarian forint (HUF)",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.4984,
-        "lon": 19.0404,
-        "precision": "country",
-        "matchedPlace": "Budapest",
-        "source": "country capital fallback"
+        "lat": 47.5828,
+        "lon": 21.1511,
+        "precision": "city",
+        "matchedPlace": "Hortobágy",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "national-parks",
@@ -65218,11 +65218,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 40.9234,
-        "lon": 9.498,
-        "precision": "gateway",
-        "matchedPlace": "Olbia",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 40.2762,
+        "lon": 9.4019,
+        "precision": "city",
+        "matchedPlace": "Oliena",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "supramonte",
@@ -65503,11 +65503,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 49.6098,
-        "lon": 6.1327,
-        "precision": "gateway",
-        "matchedPlace": "Luxembourg",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 49.9114,
+        "lon": 5.9364,
+        "precision": "city",
+        "matchedPlace": "Esch-sur-Sûre",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "lake-cabin",
@@ -66128,11 +66128,11 @@
       "currency": "Moldovan leu (MDL); roughly 19–20 MDL to €1",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.009,
-        "lon": 28.8594,
-        "precision": "country",
-        "matchedPlace": "Chisinau",
-        "source": "country capital fallback"
+        "lat": 47.6911,
+        "lon": 28.9746,
+        "precision": "city",
+        "matchedPlace": "Saharna",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "cabin",
@@ -66417,11 +66417,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.9965,
-        "lon": 21.4314,
-        "precision": "gateway",
-        "matchedPlace": "Skopje",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 41.6642,
+        "lon": 20.7334,
+        "precision": "city",
+        "matchedPlace": "Mavrovo",
+        "source": "itinerary places (geonames MK dump)"
       },
       "tags": [
         "mavrovo",
@@ -66699,11 +66699,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 52.374,
-        "lon": 4.8897,
-        "precision": "country",
-        "matchedPlace": "Amsterdam",
-        "source": "country capital fallback"
+        "lat": 52.7625,
+        "lon": 6.3542,
+        "precision": "city",
+        "matchedPlace": "Ruinen",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "wet-heathland",
@@ -67019,11 +67019,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 52.374,
-        "lon": 4.8897,
-        "precision": "country",
-        "matchedPlace": "Amsterdam",
-        "source": "country capital fallback"
+        "lat": 52.1,
+        "lon": 5.7722,
+        "precision": "city",
+        "matchedPlace": "Otterlo",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "national-park",
@@ -67342,11 +67342,11 @@
       "currency": "Polish złoty (PLN); roughly 4.3 PLN to €1",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 52.2298,
-        "lon": 21.0118,
-        "precision": "country",
-        "matchedPlace": "Warsaw",
-        "source": "country capital fallback"
+        "lat": 49.1479,
+        "lon": 22.4773,
+        "precision": "city",
+        "matchedPlace": "Wetlina",
+        "source": "itinerary places (geonames PL dump)"
       },
       "tags": [
         "cabin",
@@ -67628,11 +67628,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 38.7251,
-        "lon": -9.1498,
-        "precision": "country",
-        "matchedPlace": "Lisbon",
-        "source": "country capital fallback"
+        "lat": 41.7805,
+        "lon": -8.1973,
+        "precision": "city",
+        "matchedPlace": "Vilarinho das Furnas",
+        "source": "itinerary places (geonames PT dump)"
       },
       "tags": [
         "peneda-geres",
@@ -68207,11 +68207,11 @@
       "currency": "Euro (EUR)",
       "emergencyNumber": "112 (mountain rescue HZS: 18 300)",
       "coordinates": {
-        "lat": 48.1482,
-        "lon": 17.1067,
-        "precision": "country",
-        "matchedPlace": "Bratislava",
-        "source": "country capital fallback"
+        "lat": 48.9756,
+        "lon": 20.4087,
+        "precision": "city",
+        "matchedPlace": "Hrabušice",
+        "source": "itinerary places (geonames SK dump)"
       },
       "tags": [
         "gorges",
@@ -68496,11 +68496,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.3274,
-        "lon": 19.8187,
-        "precision": "country",
-        "matchedPlace": "Tirana",
-        "source": "country capital fallback"
+        "lat": 40.1017,
+        "lon": 19.7447,
+        "precision": "city",
+        "matchedPlace": "Himarë",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "sea-kayaking",
@@ -68779,11 +68779,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 47.7994,
-        "lon": 13.044,
-        "precision": "gateway",
-        "matchedPlace": "Salzburg",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 47.7393,
+        "lon": 13.4467,
+        "precision": "city",
+        "matchedPlace": "Sankt Wolfgang im Salzkammergut",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "sailing",
@@ -69102,11 +69102,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 50.8505,
-        "lon": 4.3488,
-        "precision": "gateway",
-        "matchedPlace": "Brussels",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 51.0979,
+        "lon": 2.5937,
+        "precision": "city",
+        "matchedPlace": "De Panne",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "kitesurfing",
@@ -70049,11 +70049,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 52.5244,
-        "lon": 13.4105,
-        "precision": "country",
-        "matchedPlace": "Berlin",
-        "source": "country capital fallback"
+        "lat": 54.5691,
+        "lon": 13.4655,
+        "precision": "city",
+        "matchedPlace": "Glowe",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "windsurf",
@@ -71282,11 +71282,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 43.4806,
-        "lon": -1.5568,
-        "precision": "gateway",
-        "matchedPlace": "Biarritz",
-        "source": "geonames (geonamescache, cities > 15k)"
+        "lat": 43.69,
+        "lon": -1.37,
+        "precision": "city",
+        "matchedPlace": "Hossegor",
+        "source": "itinerary places (geonames FR dump)"
       },
       "tags": [
         "beach-break-surf",
@@ -71610,11 +71610,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 48.8534,
-        "lon": 2.3488,
-        "precision": "country",
-        "matchedPlace": "Paris",
-        "source": "country capital fallback"
+        "lat": 47.4837,
+        "lon": -3.1199,
+        "precision": "city",
+        "matchedPlace": "Quiberon",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "surf",
@@ -71932,11 +71932,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 37.9838,
-        "lon": 23.7278,
-        "precision": "country",
-        "matchedPlace": "Athens",
-        "source": "country capital fallback"
+        "lat": 37.0151,
+        "lon": 25.2475,
+        "precision": "city",
+        "matchedPlace": "New Golden Beach",
+        "source": "itinerary places (geonames GR dump)"
       },
       "tags": [
         "kitesurfing",
@@ -72501,11 +72501,11 @@
       "currency": "Hungarian forint (HUF)",
       "emergencyNumber": "112 (Balatoni vízirendészet, water police, via 112)",
       "coordinates": {
-        "lat": 47.4984,
-        "lon": 19.0404,
-        "precision": "country",
-        "matchedPlace": "Budapest",
-        "source": "country capital fallback"
+        "lat": 46.9619,
+        "lon": 17.8719,
+        "precision": "city",
+        "matchedPlace": "Balatonfüred",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "sailing",
@@ -72793,11 +72793,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 41.8919,
-        "lon": 12.5113,
-        "precision": "country",
-        "matchedPlace": "Rome",
-        "source": "country capital fallback"
+        "lat": 41.2386,
+        "lon": 9.1887,
+        "precision": "city",
+        "matchedPlace": "Santa Teresa Gallura",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "windsurfing",
@@ -74025,11 +74025,11 @@
       "currency": null,
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 42.4412,
-        "lon": 19.2631,
-        "precision": "country",
-        "matchedPlace": "Podgorica",
-        "source": "country capital fallback"
+        "lat": 42.4207,
+        "lon": 18.7682,
+        "precision": "city",
+        "matchedPlace": "Kotor",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "sea-kayaking",
@@ -74635,11 +74635,11 @@
       "currency": "EUR",
       "emergencyNumber": "112",
       "coordinates": {
-        "lat": 52.374,
-        "lon": 4.8897,
-        "precision": "country",
-        "matchedPlace": "Amsterdam",
-        "source": "country capital fallback"
+        "lat": 51.8117,
+        "lon": 3.9347,
+        "precision": "city",
+        "matchedPlace": "Ouddorp",
+        "source": "itinerary places (geonames cities500)"
       },
       "tags": [
         "kitesurf",

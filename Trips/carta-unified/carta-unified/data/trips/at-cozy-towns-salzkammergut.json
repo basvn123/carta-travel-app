@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.7994,
-    "lon": 13.044,
-    "precision": "gateway",
-    "matchedPlace": "Salzburg",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 47.7111,
+    "lon": 13.6189,
+    "precision": "city",
+    "matchedPlace": "Bad Ischl",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "lake-towns",

@@ -95,11 +95,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 48.8534,
-    "lon": 2.3488,
-    "precision": "country",
-    "matchedPlace": "Paris",
-    "source": "country capital fallback"
+    "lat": 44.0689,
+    "lon": 7.2558,
+    "precision": "city",
+    "matchedPlace": "Saint-Martin-Vésubie",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "national-park",

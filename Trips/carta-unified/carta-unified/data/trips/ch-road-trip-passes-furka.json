@@ -96,11 +96,11 @@
   "currency": "CHF",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.3667,
-    "lon": 8.55,
-    "precision": "gateway",
-    "matchedPlace": "Zürich",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 46.7271,
+    "lon": 8.1872,
+    "precision": "city",
+    "matchedPlace": "Meiringen",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "alpine-passes",

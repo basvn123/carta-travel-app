@@ -89,11 +89,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.6561,
-    "lon": -0.8773,
-    "precision": "gateway",
-    "matchedPlace": "Zaragoza",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 42.628,
+    "lon": -0.1121,
+    "precision": "city",
+    "matchedPlace": "Torla",
+    "source": "itinerary places (geonames ES dump)"
   },
   "tags": [
     "ordesa",

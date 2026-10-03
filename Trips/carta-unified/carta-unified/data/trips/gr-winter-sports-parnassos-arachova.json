@@ -89,11 +89,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 37.9838,
-    "lon": 23.7278,
-    "precision": "country",
-    "matchedPlace": "Athens",
-    "source": "country capital fallback"
+    "lat": 38.4796,
+    "lon": 22.5835,
+    "precision": "city",
+    "matchedPlace": "Aráchova",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "greece",

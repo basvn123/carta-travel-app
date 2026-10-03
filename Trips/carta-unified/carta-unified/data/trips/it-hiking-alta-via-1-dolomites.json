@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 41.8919,
-    "lon": 12.5113,
-    "precision": "country",
-    "matchedPlace": "Rome",
-    "source": "country capital fallback"
+    "lat": 46.1426,
+    "lon": 12.2156,
+    "precision": "city",
+    "matchedPlace": "Belluno",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "alta-via-1",

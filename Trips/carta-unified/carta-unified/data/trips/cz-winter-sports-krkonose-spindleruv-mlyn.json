@@ -95,11 +95,11 @@
   "currency": "CZK",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 50.088,
-    "lon": 14.4208,
-    "precision": "gateway",
-    "matchedPlace": "Prague",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 50.7261,
+    "lon": 15.6094,
+    "precision": "city",
+    "matchedPlace": "Špindlerův Mlýn",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "ski-touring",

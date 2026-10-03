@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 52.5244,
-    "lon": 13.4105,
-    "precision": "country",
-    "matchedPlace": "Berlin",
-    "source": "country capital fallback"
+    "lat": 54.5691,
+    "lon": 13.4655,
+    "precision": "city",
+    "matchedPlace": "Glowe",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "windsurf",

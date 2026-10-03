@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 45.5663,
-    "lon": 5.9208,
-    "precision": "gateway",
-    "matchedPlace": "Chambéry",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 45.415,
+    "lon": 6.565,
+    "precision": "city",
+    "matchedPlace": "Méribel",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "lift-interconnect",

@@ -89,11 +89,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 42.4412,
-    "lon": 19.2631,
-    "precision": "country",
-    "matchedPlace": "Podgorica",
-    "source": "country capital fallback"
+    "lat": 42.4207,
+    "lon": 18.7682,
+    "precision": "city",
+    "matchedPlace": "Kotor",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "sea-kayaking",

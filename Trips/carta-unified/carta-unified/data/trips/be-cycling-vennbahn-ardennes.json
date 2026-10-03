@@ -100,11 +100,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 50.8505,
-    "lon": 4.3488,
-    "precision": "gateway",
-    "matchedPlace": "Brussels",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 50.4269,
+    "lon": 6.205,
+    "precision": "city",
+    "matchedPlace": "Butgenbach",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "vennbahn",

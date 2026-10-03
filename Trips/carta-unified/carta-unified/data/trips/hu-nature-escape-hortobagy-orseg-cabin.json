@@ -99,11 +99,11 @@
   "currency": "Hungarian forint (HUF)",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 47.4984,
-    "lon": 19.0404,
-    "precision": "country",
-    "matchedPlace": "Budapest",
-    "source": "country capital fallback"
+    "lat": 47.5828,
+    "lon": 21.1511,
+    "precision": "city",
+    "matchedPlace": "Hortobágy",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "national-parks",

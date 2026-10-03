@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 52.374,
-    "lon": 4.8897,
-    "precision": "country",
-    "matchedPlace": "Amsterdam",
-    "source": "country capital fallback"
+    "lat": 52.1,
+    "lon": 5.7722,
+    "precision": "city",
+    "matchedPlace": "Otterlo",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "national-park",

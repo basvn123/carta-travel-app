@@ -97,11 +97,11 @@
   "currency": "EUR",
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 49.4542,
-    "lon": 11.0775,
-    "precision": "gateway",
-    "matchedPlace": "Nuremberg",
-    "source": "geonames (geonamescache, cities > 15k)"
+    "lat": 49.3788,
+    "lon": 10.1871,
+    "precision": "city",
+    "matchedPlace": "Rothenburg ob der Tauber",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "medieval-walls",

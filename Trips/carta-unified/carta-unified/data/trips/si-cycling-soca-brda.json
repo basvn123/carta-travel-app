@@ -93,11 +93,11 @@
   "currency": null,
   "emergencyNumber": "112",
   "coordinates": {
-    "lat": 46.0511,
-    "lon": 14.5051,
-    "precision": "country",
-    "matchedPlace": "Ljubljana",
-    "source": "country capital fallback"
+    "lat": 46.2476,
+    "lon": 13.5791,
+    "precision": "city",
+    "matchedPlace": "Kobarid",
+    "source": "itinerary places (geonames cities500)"
   },
   "tags": [
     "gravel",
