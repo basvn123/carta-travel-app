@@ -769,3 +769,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T166-e | T166 | Not measured for filled primaries: cycling route page (#cycle=1150&cc=AT did not open in dev), cycling tour page (shows Reload the app in dev, same at 70cba6f, cause not investigated), account panel, later planner steps, My trips at 1280px | next task | open |  |
 | T166-f | T166 | The destination, trail and layer-page action buttons are bespoke CSS classes, not the shared Button; moving them changes radius and height of whole rows and needs JSX edits, so do it as its own task | next task | open |  |
 | T166-g | T166 | The browser audit that counts filled primaries per view lives in a session scratchpad; add it to scripts/ as a verify script so the one-primary rule is checked | next task | open |  |
+| T171-a | T171 | Only the first cycling trip was opened in a browser; the dev server crashes the page, so any further visual check needs a build and preview | next task | open |  |
+| T171-b | T171 | Only 81 of 253 hook lines contain a number; a content pass could rewrite hooks as number-led sentences | next task | open |  |
+| T171-c | T171 | Exits cannot match by region because the wire cards carry no region key; add one in build_wire.py if country is too coarse | next task | open |  |
