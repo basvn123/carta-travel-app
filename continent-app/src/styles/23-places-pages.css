@@ -1306,23 +1306,23 @@
   width: 100%;
   margin-bottom: 24px;
   padding: 12px 14px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--accent);
   border-radius: 10px;
-  background: var(--bg-card);
+  background: var(--accent);
   font-size: 14px;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--on-fill);
   text-align: left;
 }
-.bpage-base:hover { border-color: var(--accent-soft); }
+.bpage-base:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 .bpage-base small {
   display: block;
   margin-top: 2px;
   font-size: 11.5px;
   font-weight: 400;
-  color: var(--ink-mute);
+  color: var(--on-fill);
 }
-.bpage-base svg { flex: none; color: var(--ink-mute); }
+.bpage-base svg { flex: none; color: var(--on-fill); }
 
 .bpage-sources ul { margin: 0; padding: 0; list-style: none; }
 .bpage-sources li { padding: 5px 0; }
@@ -2194,12 +2194,16 @@
   margin-top: 24px;
   padding: 14px 16px;
   border-radius: 12px;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--accent);
+  color: var(--on-fill);
   font-size: 14px;
   font-weight: 600;
   text-align: left;
 }
+.tpage-cta:hover { background: var(--accent-hover); }
+/* T166: a city-day trail prices the trip, so the GPX download steps down to a bordered secondary. */
+.tpage:has(.tpage-cta) .tpage-primary { background: var(--bg-card); color: var(--ink); border: 1px solid var(--rule); }
+.tpage:has(.tpage-cta) .tpage-primary:hover { filter: none; border-color: var(--ink-soft); background: var(--paper-dim); }
 .tpage-cta-right { display: flex; align-items: center; gap: 10px; }
 .tpage-cta-price {
   font-family: var(--mono);

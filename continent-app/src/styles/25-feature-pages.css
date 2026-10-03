@@ -213,7 +213,7 @@
     color: var(--ink-soft);
     text-align: center;
   }
-  .saved-cat.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+  .saved-cat.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
   .saved-cat.on svg { color: var(--on-fill); }
   .saved-cat.on::before { background: rgba(255, 255, 255, 0.7); }
   .saved-cat.on small { background: rgba(255, 255, 255, 0.22); color: var(--on-fill); }

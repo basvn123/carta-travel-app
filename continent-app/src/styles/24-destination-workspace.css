@@ -4784,7 +4784,7 @@
     text-overflow: ellipsis;
   }
   .side-cat:hover { color: var(--ink); border-color: var(--rule); }
-  .side-cat.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+  .side-cat.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
   .side-cat.on svg { color: var(--on-fill); }
   .side-cat:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -5024,7 +5024,7 @@
     border-radius: 2px;
     background: var(--accent);
   }
-  .places-cat.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+  .places-cat.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
   .places-cat.on svg { color: var(--on-fill); }
   .places-cat.on::before { background: rgba(255, 255, 255, 0.7); }
 
@@ -5375,13 +5375,14 @@
   height: 40px;
   padding: 0 16px;
   border-radius: 10px;
-  background: var(--accent);
-  color: var(--on-fill);
+  background: var(--bg-card);
+  color: var(--ink);
   font-size: 13.5px;
   font-weight: 600;
-  border: none;
+  border: 1px solid var(--rule);
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
 }
-.destp-pdf:hover { filter: brightness(0.94); }
+.destp-pdf:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
 .destp-pdf:disabled { opacity: 0.6; }
 
 /* ── The body: one reading column on phones, main + side on desktop. ── */
