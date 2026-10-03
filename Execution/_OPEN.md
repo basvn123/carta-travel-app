@@ -780,3 +780,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T164-a | T164 | journey.readMore and journey.showLess exist in English only; de, es, fr, it, nl need them | next task | closed by T164 |  |
 | T164-b | T164 | The 60-word rule was applied to the journey page only; destination, trail and other long pages are not audited | next task | open |  |
 | T164-c | T164 | No verify script asserts that no visible block exceeds 60 words; the check was a one-off browser run | next task | open |  |
+| T168-a | T168 | 3,333 of the grid cells are a derived standard kit; D1 must backfill packingNotes as {icon, item, whyThisTrip} for the 153 empty trips and top up the 100 written ones, using the icon keys in PackIcons.jsx | next task | open |  |
+| T168-b | T168 | The 20px pack icons were drawn by hand in one pass and need a design review at full size | user | open |  |
