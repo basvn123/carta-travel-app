@@ -3652,6 +3652,9 @@ export const fr = {
   'journey.sourcesHead': 'À propos de ce plan',
   'journey.vintage': 'Chiffres de planification pour {year}. Chaque prix est indicatif.',
   'journey.vintageChecked': 'Chiffres de planification pour {year}, vérifiés pour la dernière fois en {month}. Chaque prix est indicatif.',
+  'journey.estMark': 'est.',
+  'journey.estAria': 'Estimé d\'après des connaissances générales, pas d\'après une source',
+  'journey.figureFooter': '{sourced} chiffres sur {total} de cette page sont sourcés, {derived} calculés, {estimated} estimés, vérifiés pour la dernière fois en {month}.',
   'journey.coverage': '{trips} voyages dans {countries} pays, en {styles} styles. La couverture est inégale : {thin} pays sur {countries} ont moins de la moitié des styles, un filtre par pays peut donc ne rien renvoyer.',
   'journey.coverageCountry': '{country} compte des voyages dans {n} styles sur {styles}. Les autres styles n\'y sont pas encore écrits.',
 

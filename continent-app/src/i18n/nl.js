@@ -3652,6 +3652,9 @@ export const nl = {
   'journey.sourcesHead': 'Over dit plan',
   'journey.vintage': 'Planningscijfers voor {year}. Elke prijs is indicatief.',
   'journey.vintageChecked': 'Planningscijfers voor {year}, voor het laatst gecontroleerd in {month}. Elke prijs is indicatief.',
+  'journey.estMark': 'gesch.',
+  'journey.estAria': 'Geschat op basis van algemene kennis, niet uit een bron',
+  'journey.figureFooter': '{sourced} van de {total} cijfers op deze pagina hebben een bron, {derived} zijn berekend, {estimated} geschat, voor het laatst gecontroleerd in {month}.',
   'journey.coverage': '{trips} reizen in {countries} landen, in {styles} stijlen. De dekking is ongelijk: {thin} van de {countries} landen hebben minder dan de helft van de stijlen, dus een landfilter kan leeg uitkomen.',
   'journey.coverageCountry': '{country} heeft reizen in {n} van {styles} stijlen. De andere stijlen zijn er nog niet voor geschreven.',
 

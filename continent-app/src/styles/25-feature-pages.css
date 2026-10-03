@@ -1415,6 +1415,18 @@
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
+/* An estimated figure (T146): a small mono mark beside it. Sourced and
+   derived figures carry none; the footer line states the whole split. */
+.jpage-est {
+  margin-left: var(--space-1);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--ink-soft);
+  vertical-align: top;
+  white-space: nowrap;
+}
 .jpage-day-sleep {
   margin: 4px 0 8px;
   font-size: 12.5px;

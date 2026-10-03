@@ -4530,6 +4530,9 @@ export const en = {
   'journey.sourcesHead': 'About this plan',
   'journey.vintage': 'Planning figures for {year}. Every price is indicative.',
   'journey.vintageChecked': 'Planning figures for {year}, last checked {month}. Every price is indicative.',
+  'journey.estMark': 'est',
+  'journey.estAria': 'Estimated from general knowledge, not from a source',
+  'journey.figureFooter': '{sourced} of {total} figures on this page are sourced, {derived} derived, {estimated} estimated, last checked {month}.',
   'journey.coverage': '{trips} trips in {countries} countries, across {styles} styles. Coverage is uneven: {thin} of the {countries} countries have fewer than half of the styles, so a country filter can come back with nothing.',
   'journey.coverageCountry': '{country} has trips in {n} of {styles} styles. The other styles are not written for it yet.',
 

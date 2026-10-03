@@ -3652,6 +3652,9 @@ export const de = {
   'journey.sourcesHead': 'Über diesen Plan',
   'journey.vintage': 'Planungszahlen für {year}. Jeder Preis ist ein Richtwert.',
   'journey.vintageChecked': 'Planungszahlen für {year}, zuletzt geprüft im {month}. Jeder Preis ist ein Richtwert.',
+  'journey.estMark': 'gesch.',
+  'journey.estAria': 'Geschätzt aus allgemeinem Wissen, nicht aus einer Quelle',
+  'journey.figureFooter': '{sourced} von {total} Zahlen auf dieser Seite sind belegt, {derived} berechnet, {estimated} geschätzt, zuletzt geprüft im {month}.',
   'journey.coverage': '{trips} Reisen in {countries} Ländern, in {styles} Stilen. Die Abdeckung ist ungleich: {thin} von {countries} Ländern haben weniger als die Hälfte der Stile, ein Länderfilter kann also ohne Treffer bleiben.',
   'journey.coverageCountry': 'Für {country} gibt es Reisen in {n} von {styles} Stilen. Die übrigen Stile sind dafür noch nicht geschrieben.',
 

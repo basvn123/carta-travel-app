@@ -4,6 +4,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import {
   loadJourney, typeLabel, diffLabel, eurRange, boldSegments, lastCheckedMonth,
   dayStatsLine, packingText, riskText, stayPriceText, minutesText,
+  figureLedger, anyEstimated, dayEstimated, monthLabel,
 } from '../lib/journeys.js';
 import { srcSetFor } from '../lib/heroImage.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
@@ -59,6 +60,17 @@ function Prose({ text, className = 'bpage-prose' }) {
         ? <b key={i}>{seg.text}</b>
         : <React.Fragment key={i}>{seg.text}</React.Fragment>))}
     </p>
+  );
+}
+
+/* The mark on a figure the trip's own ledger calls an estimate (T146, spec
+   K3): small, mono, with the plain-words reason for a screen reader. Sourced
+   and derived figures carry no mark; the footer states the whole split. */
+function EstMark({ t }) {
+  return (
+    <sup className="jpage-est mono" aria-label={t('journey.estAria')} title={t('journey.estAria')}>
+      {t('journey.estMark')}
+    </sup>
   );
 }
 
@@ -123,7 +135,7 @@ function HeroCredit({ hero, t }) {
  * between days. The prose is folded rather than shortened: it is authored
  * copy and every word of it is still on the page, one tap down.
  */
-function Day({ day, t, lang }) {
+function Day({ day, t, lang, est }) {
   const [more, setMore] = React.useState(false);
   const parts = [['morning', day.morning], ['afternoon', day.afternoon], ['evening', day.evening]]
     .filter(([, text]) => text);
@@ -133,7 +145,12 @@ function Day({ day, t, lang }) {
         <span className="jpage-day-n mono">{t('journey.dayN', { n: day.day })}</span>
         <h3>{day.title}</h3>
       </header>
-      {day.dayStats && <p className="jpage-day-stats mono">{dayStatsLine(day.dayStats, lang)}</p>}
+      {day.dayStats && (
+        <p className="jpage-day-stats mono">
+          {dayStatsLine(day.dayStats, lang)}
+          {est && <EstMark t={t} />}
+        </p>
+      )}
       {day.sleep && (
         <p className="jpage-day-sleep">
           <b>{t('journey.night')}</b>
@@ -236,6 +253,8 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
     return () => io.disconnect();
   }, [trip?.id]);
 
+  const ledger = useMemo(() => figureLedger(trip), [trip]);
+
   const facts = useMemo(() => {
     if (!trip) return [];
     const profile = trip.profile || {};
@@ -269,6 +288,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
           value: `${eurRange(budget.totalEur, lang)} ${trip.budgetTierRaw || trip.budgetTier || ''}`.trim(),
           note: t('journey.fBudgetNote'),
           mono: true,
+          est: anyEstimated(ledger, 'budget.totalEur'),
         } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
       {
@@ -277,6 +297,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
         ...(budget.perDayEur ? {
           value: eurRange(budget.perDayEur, lang),
           mono: true,
+          est: anyEstimated(ledger, 'budget.perDayEur'),
         } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
       {
@@ -332,7 +353,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
         mono: true,
       },
     ].filter(Boolean);
-  }, [trip, t, lang]);
+  }, [trip, t, lang, ledger]);
 
   if (trip === undefined) {
     return (
@@ -488,6 +509,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                       ) : (
                         <>
                           {fact.value}
+                          {fact.est && <EstMark t={t} />}
                           {fact.note && <small>{fact.note}</small>}
                         </>
                       )}
@@ -519,6 +541,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                       </span>
                       <span className="jpage-budget-eur mono">
                         {eurRange({ low: row.lowEur, high: row.highEur }, lang)}
+                        {anyEstimated(ledger, `budget.breakdown.${slot}`) && <EstMark t={t} />}
                       </span>
                     </li>
                   );
@@ -528,6 +551,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                     <span className="jpage-budget-label">{t('journey.budgetTotal')}</span>
                     <span className="jpage-budget-eur mono">
                       {eurRange(budget.totalEur, lang)}
+                      {anyEstimated(ledger, 'budget.totalEur') && <EstMark t={t} />}
                     </span>
                   </li>
                 )}
@@ -568,7 +592,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
               onToggle={() => toggle('itin')}
               className="jpage-itin"
             >
-              {trip.itinerary.map((day) => <Day key={day.day} day={day} t={t} lang={lang} />)}
+              {trip.itinerary.map((day, i) => <Day key={day.day} day={day} t={t} lang={lang} est={dayEstimated(ledger, i)} />)}
             </Fold>
           )}
 
@@ -706,8 +730,19 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
 
           <section className="bpage-sources">
             <h2>{t('journey.sourcesHead')}</h2>
+            {ledger && (
+              <p className="bpage-attrib jpage-figures">
+                {t('journey.figureFooter', {
+                  sourced: ledger.sourced,
+                  total: ledger.total,
+                  derived: ledger.derived,
+                  estimated: ledger.estimated,
+                  month: monthLabel(ledger.checkedAt, lang) || lastCheckedMonth(trip, lang) || trip.dataVintage || 2026,
+                })}
+              </p>
+            )}
             <p className="bpage-attrib">
-              {lastCheckedMonth(trip, lang)
+              {lastCheckedMonth(trip, lang) && !ledger
                 ? t('journey.vintageChecked', { year: trip.dataVintage || 2026, month: lastCheckedMonth(trip, lang) })
                 : t('journey.vintage', { year: trip.dataVintage || 2026 })}
             </p>

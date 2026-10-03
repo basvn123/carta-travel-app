@@ -196,7 +196,13 @@ export function boldSegments(text) {
  * falls back to the bare data year rather than printing a guess.
  */
 export function lastCheckedMonth(trip, lang) {
-  const m = /^(\d{4})-(\d{2})/.exec(trip?.provenance?.ingestedAt || '');
+  return monthLabel(trip?.provenance?.ingestedAt, lang);
+}
+
+/** "2026-03-14" -> "March 2026" in the reader's language; null when the
+ *  value is not a usable date. */
+export function monthLabel(iso, lang) {
+  const m = /^(\d{4})-(\d{2})/.exec(iso || '');
   if (!m) return null;
   const month = Number(m[2]);
   if (month < 1 || month > 12) return null;
@@ -206,6 +212,47 @@ export function lastCheckedMonth(trip, lang) {
   } catch {
     return null;
   }
+}
+
+/* ── Per-figure confidence (T146, spec K3) ────────────────────────────────
+   A generated trip carries `figures`: one row per numeric figure, saying
+   whether it is sourced (a page gave it), derived (computed from other
+   figures) or estimated (general knowledge). Only the figures this page
+   shows are counted, so the footer sentence is true of what is on screen:
+   the budget rows, the week total and per-day range, each day's measured
+   line, a stay's price and an airport transfer. A trip without `figures`
+   (all 253 published v2.0 trips) has no ledger, and the page says nothing
+   about it rather than guessing. */
+const SHOWN_FIGURE = /^(?:budget\.(?:breakdown\.(?:accommodation|food|transport|activities)|totalEur|perDayEur)|gateways\[\d+\]\.transferMin|itinerary\[\d+\]\.dayStats\.(?:distanceKm|ascentM|descentM|timeMin|spendEur)|accommodationStrategy\[\d+\]\.priceEur)$/;
+const CONFIDENCE = ['sourced', 'derived', 'estimated'];
+
+export function figureLedger(trip) {
+  if (!Array.isArray(trip?.figures)) return null;
+  const rows = trip.figures.filter((r) => r && SHOWN_FIGURE.test(r.path || '') && CONFIDENCE.includes(r.confidence));
+  if (!rows.length) return null;
+  const count = (c) => rows.filter((r) => r.confidence === c).length;
+  const latest = rows.map((r) => r.checkedAt || '').sort().pop();
+  return {
+    by: new Map(rows.map((r) => [r.path, r.confidence])),
+    total: rows.length,
+    sourced: count('sourced'),
+    derived: count('derived'),
+    estimated: count('estimated'),
+    checkedAt: latest || null,
+  };
+}
+
+/** True when any of the figure paths is an estimate. */
+export function anyEstimated(ledger, ...paths) {
+  return !!ledger && paths.some((p) => ledger.by.get(p) === 'estimated');
+}
+
+/** The estimate marks a day's measured line needs: true when any of its
+ *  shown figures is estimated. */
+export function dayEstimated(ledger, index) {
+  if (!ledger) return false;
+  return ['distanceKm', 'ascentM', 'descentM', 'timeMin', 'spendEur']
+    .some((k) => ledger.by.get(`itinerary[${index}].dayStats.${k}`) === 'estimated');
 }
 
 /**
