@@ -777,3 +777,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T360-a | T360 | The strip's style cell takes the first one or two word tag, and some tags are place names (e.g. "comapedrosa"); 30 of 253 trips show the placeholder Mixed. A curated style word per trip would read better | next task | open | |
 | T163-a | T163 | Day accordion was checked by lint and build only, not looked at in a browser on desktop and phone width; open a trip and a journey page and toggle a day | next task | closed by T163 |  |
 | T163-b | T163 | When the day carousel (T162) is built, its cards must reuse the tday-panel accordion rather than add a second expander | next task | open |  |
+| T164-a | T164 | journey.readMore and journey.showLess exist in English only; de, es, fr, it, nl need them | next task | closed by T164 |  |
+| T164-b | T164 | The 60-word rule was applied to the journey page only; destination, trail and other long pages are not audited | next task | open |  |
+| T164-c | T164 | No verify script asserts that no visible block exceeds 60 words; the check was a one-off browser run | next task | open |  |
