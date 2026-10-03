@@ -272,6 +272,7 @@ WEIGHTS = {"pageviews": 0.35, "sitelinks": 0.25, "osm": 0.20,
 from names import (  # noqa: E402,F401
     COUNTER_RE, SECTION_RE, base_name, slugify, squash,
 )
+from seeds_blind_spots import SEEDS_BLIND  # noqa: E402  (T322, row T113-e)
 
 
 # ---------------------------------------------------------------------------
@@ -1369,7 +1370,7 @@ def build_country(cc, osm_rows, wd_rows, portals, verbose=False,
             tallies[cc] = tally
 
     # Seeds last: they attach to what resolved, or ship unresolved.
-    for seed in SEEDS.get(cc, []):
+    for seed in SEEDS.get(cc, []) + SEEDS_BLIND.get(cc, []):
         key = squash(base_name(seed))
         row = by_key.get(key)
         if row is None:

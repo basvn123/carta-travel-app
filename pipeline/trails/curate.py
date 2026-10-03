@@ -193,6 +193,31 @@ FAMOUS_MIN, TREK_MIN = 8, 4
 # treks. Fame buys a share of the list, not the list, at any size.
 FAMOUS_MAX, TREK_MAX_SLOTS = 120, 60
 
+# The national pass (T322, rows T113-d). OFF by default, so a run without the
+# flag selects exactly what it selected before this constant existed.
+#
+# Why it exists: of the 2,367 registry rows that carry Waymarked evidence,
+# 1,930 are not on the wire. Read against the gates, a route with network iwn
+# or nwn has three ways to fall through that a famous route does not. Past
+# MAX_M it enters only the trek pool, and the trek pool requires `famous`
+# (a wikidata or wikipedia tag, or the country's recall list), so a 100 km
+# national path nobody tagged with an article has NO pool at all and pass 4
+# draws from the day pool only. At or under MAX_M it competes for a region
+# slot against loops, which the loop share fills first and which a linear
+# route can never win. And the trek cap (60) is spent in order of rank, so a
+# country with more famous treks than 60 never reaches the rest (Germany and
+# Great Britain publish 61 routes over 45 km each, which is that cap).
+#
+# A route an official body waymarked as national or international is, by
+# that designation, a route somebody looks for by name. The pass gives such
+# a family head a slot in its own small quota, outside the region quota and
+# the trek cap, and only when the route passed every hard gate (the
+# candidate query: continuity, a real name, 2 km to TREK_MAX_M). It never
+# overrides a hard gate and it does not touch lwn or rwn.
+NATIONAL_NETWORKS = {"iwn", "nwn"}
+NATIONAL_SHARE = 0.04
+NATIONAL_MIN, NATIONAL_MAX = 4, 40
+
 # A walk, not a crumb and not a continent. Below 2 km there is nothing to
 # describe; above 45 km it is a multi-day trek, which needs the fame gate
 # below before it takes a slot from the day walks people actually browse.
@@ -611,6 +636,24 @@ def is_famous(row):
                 or named_famous(row))
 
 
+def is_national(row):
+    """True when the route is signed as a national or international path.
+
+    The network tag is the whole test: iwn or nwn, as OSM writes it and as
+    Waymarked Trails files its INT and NAT groups. A semicolon list counts if
+    any token is national ("nwn;rwn")."""
+    network = (row.get("network") or "").lower()
+    tokens = {t.strip() for t in network.replace(";", ",").split(",")}
+    return bool(tokens & NATIONAL_NETWORKS)
+
+
+def national_quota(target):
+    """Slots the national pass may spend: a share of the country target,
+    floored so a small country still gets the guarantee and capped so a large
+    one does not become a list of nothing but national paths."""
+    return min(NATIONAL_MAX, max(NATIONAL_MIN, int(target * NATIONAL_SHARE)))
+
+
 def band_of(distance_m):
     for key, low, high in BANDS:
         if low <= (distance_m or 0) < high:
@@ -999,7 +1042,7 @@ def listed_fill(rows, picker, quotas, verbose=False):
 
 
 def select_country(rows, target, quotas, loop_target=None, verbose=False,
-                   floor=COUNTRY_FLOOR):
+                   floor=COUNTRY_FLOOR, national=False):
     """The country's list, in the order the wire will carry it.
 
     Order of claims on a slot, strongest first:
@@ -1083,6 +1126,18 @@ def select_country(rows, target, quotas, loop_target=None, verbose=False,
     treks = sorted(trek_pool, key=fame_order)[:trek_quota]
     picker.fill(treks, trek_quota, "famous-trek", cell_caps=(None,),
                 respect_region=False)
+
+    # 1b. The national pass (T322), only when asked for. Family heads signed
+    #     iwn or nwn that passed the hard gates and are not already in, best
+    #     ranked first, a documented article tag ahead of none. Outside the
+    #     region quota and the trek cap on purpose: it is its own guarantee.
+    if national:
+        nat = sorted((r for r in heads if is_national(r)
+                      and r["id"] not in picker.ids),
+                     key=lambda r: (not (r.get("wikidata") or r.get("wikipedia")),
+                                    -r["rank"]))
+        picker.fill(nat, national_quota(target), "national",
+                    cell_caps=(None,), respect_region=False)
 
     # 2. Loops, the shape people actually want, up to their own target, and
     #    round robin across regions so the loop budget is not spent entirely
@@ -1281,6 +1336,12 @@ def main():
                          "nothing but a re-ingest or a splice can change its "
                          "answer, so a second curation run in the same session "
                          "should skip it")
+    ap.add_argument("--national-treks", action="store_true",
+                    help="turn on the national pass: iwn and nwn family "
+                         "heads that passed the hard gates get their own "
+                         "small quota outside the region quota and the trek "
+                         "cap (T322). Run with --dry-run first and compare "
+                         "the per-country counts")
     ap.add_argument("--no-listed", action="store_true",
                     help="skip the l tier: rated rows only")
     ap.add_argument("--dry-run", action="store_true",
@@ -1332,7 +1393,8 @@ def main():
                 quotas = {}
             picked, listed, budget = select_country(
                 rows, target, quotas, floor=floor,
-                loop_target=args.loop_target or None, verbose=args.verbose)
+                loop_target=args.loop_target or None, verbose=args.verbose,
+                national=args.national_treks)
             target = budget["target"]
             if budget["floor_bound"]:
                 floor_bound.append(cc)
