@@ -21,6 +21,8 @@
 import { en } from '../../src/i18n/en.js';
 import { paths, canonicalFor } from '../../src/lib/urlScheme.js';
 import { fmtHours } from '../../src/lib/format.js';
+import { DEFAULT_LIFESTYLE, groundSpendPerPerson } from '../../src/lib/runtime_pricing.js';
+import { cheapestStayMonths } from '../../src/lib/costIndex.js';
 import * as B from '../../src/lib/beachStory.js';
 import * as L from '../../src/lib/lakeStory.js';
 import * as M from '../../src/lib/mountainStory.js';
@@ -399,6 +401,17 @@ export function layerPage(kind, row, ctx) {
 
 // ------------------------------------------------------------ destinations
 
+/** The first licensed gallery photograph of a dossier, with its credit. */
+function destImage(dos, name) {
+  const g = (dos.gallery || []).find((im) => im.licence && (im.thumb || im.url));
+  return g ? {
+    src: g.thumb || g.url, w: g.thumb === g.url ? g.w : null, h: g.thumb === g.url ? g.h : null,
+    alt: clean(g.caption || name), licence: g.licence, licenceUrl: g.licence_url || null,
+    creditText: clean(g.author) || 'Wikimedia Commons',
+    credit: `Photo: ${clean(g.author) || 'Wikimedia Commons'}, ${g.licence}`,
+  } : null;
+}
+
 export function destPage(dos, ctx) {
   const pl = dos.place || {};
   const cc = pl.iso2;
@@ -417,13 +430,7 @@ export function destPage(dos, ctx) {
       : `A day in ${name} costs about ${day} for one person, from ${cost.stayLevel === 'region' ? 'the nearest measured town' : 'national figures'} rather than stays measured in the town.`)
     : null;
   const rankLine = isNum(v.country_rank) && isNum(v.country_n) ? `Rated ${n0(v.country_rank)} of ${n0(v.country_n)} places in ${countryName(cc)}.` : null;
-  const g = (dos.gallery || []).find((im) => im.licence && (im.thumb || im.url));
-  const image = g ? {
-    src: g.thumb || g.url, w: g.thumb === g.url ? g.w : null, h: g.thumb === g.url ? g.h : null,
-    alt: clean(g.caption || name), licence: g.licence, licenceUrl: g.licence_url || null,
-    creditText: clean(g.author) || 'Wikimedia Commons',
-    credit: `Photo: ${clean(g.author) || 'Wikimedia Commons'}, ${g.licence}`,
-  } : null;
+  const image = destImage(dos, name);
   const ar = dos.around || {};
   const trailLinks = (ar.trails || []).filter((x) => ctx.isTrail(x.cc, x.id)).map((x) => ({ name: clean(x.name), path: paths.trail(x.cc, x.id, x.name), meta: `${d1(x.km_len)} km`, metaNum: true }));
   const cycleLinks = (ar.cycling || []).filter((x) => ctx.isCycle(x.cc, x.id)).map((x) => ({ name: clean(x.name || x.ref), path: paths.cycle(x.cc, x.id, x.name || x.ref), meta: isNum(x.km_len) ? `${d1(x.km_len)} km` : '', metaNum: true }));
@@ -468,6 +475,11 @@ export function destPage(dos, ctx) {
     ].filter(Boolean),
     image,
     sections: [
+      // T224: the week receipt is its own page; the destination links to it.
+      cost?.dayEur != null && paths.cost(dos.slug) ? {
+        h2: `What a week in ${name} costs`,
+        links: [{ name: `A week in ${name}, bed and food for one person`, path: paths.cost(dos.slug), meta: `€${n0(weekReceipt(cost, ctx.destRow(dos.id)).total)}`, metaNum: true }],
+      } : null,
       intro && body ? { h2: `About ${name}`, paras: [body] } : null,
       hl.length ? { h2: 'What to see', paras: hl } : null,
       trailLinks.length ? { h2: `Walks near ${name}`, links: linkRows(trailLinks, 6) } : null,
@@ -482,6 +494,287 @@ export function destPage(dos, ctx) {
     boot: `#dest=${encodeURIComponent(dos.id)}`,
     subject,
     lastmod: dos.built_at || null,
+  };
+}
+
+// ------------------------------------------- cost and trip-length pages (T224)
+//
+// Two families, both built from the computeCosts row the destination page
+// leads with (costIndex.js, no choices: the default Lifestyle), so a day, a
+// week and four days of the same town come from one set of figures. Ground
+// costs only: Carta does not price flights (owner decision T272), and every
+// page says so. Every figure carries the provenance words of T098.
+
+export const WEEK = 7;
+/** The trip lengths that get a country page: a long weekend, four days, a week. */
+export const DAY_LENGTHS = Object.freeze([3, 4, 7]);
+/** Day budgets in euros for one person. Fixed, like the CUTS in costIndex.js,
+ *  so a URL such as /portugal/4-days/under-60 keeps its meaning as the
+ *  catalogue grows. Chosen from the catalogue of 2026-10-03: about a tenth of
+ *  the priced places are under 60, a third under 80, four fifths under 100. */
+export const DAY_BANDS = Object.freeze([60, 80, 100]);
+const OTHER_LENGTHS = [3, 4, 10, 14];
+const WORD = { 3: 'three', 4: 'four', 7: 'seven', 10: 'ten', 14: 'fourteen' };
+const EUR2 = new Intl.NumberFormat('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const eur2 = (v) => `€${EUR2.format(v)}`;
+const eur0 = (v) => `€${n0(v)}`;
+const r2 = (v) => Math.round(v * 100) / 100;
+/** A whole-euro figure, with a tilde when the bed in it is not measured in or near the town. */
+const approx = (v, measured) => `${measured ? '' : '~'}${eur0(v)}`;
+
+const monthYear = (iso) => {
+  if (!iso) return null;
+  const d = new Date(`${String(iso).slice(0, 7)}-15T12:00:00Z`);
+  return Number.isNaN(d.getTime()) ? null
+    : new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(d);
+};
+
+/**
+ * Where the bed figure came from, in the receipt's own words (T098,
+ * CostSummary.jsx). A city-level bed names the place its listings come from,
+ * which for a small town is often the nearest city Inside Airbnb covers; when
+ * the wire does not name that place the sentence names only the listings.
+ */
+export function bedSource(cost) {
+  if (!cost || cost.stayEur == null) return null;
+  if (cost.stayLevel === 'region') return t('cost.bedRepaired');
+  if (cost.stayLevel === 'city') {
+    const when = monthYear(cost.captured);
+    if (cost.listings && cost.source && when) {
+      return t('cost.bedCityN', { n: n0(cost.listings), place: clean(cost.source), when });
+    }
+    if (cost.listings) return `Bed: from ${n0(cost.listings)} Inside Airbnb listings${when ? ` captured ${when}` : ''}.`;
+    return t('cost.bedCity');
+  }
+  return String(cost.stayBasis || '').startsWith('airbnb_pli_scaled') ? t('cost.bedScaled') : t('cost.bedCountry');
+}
+
+/** Where the food figure came from (T098). */
+export function foodSource(cost) {
+  if (!cost || cost.foodEur == null) return null;
+  if (cost.foodLevel === 'city') return t('cost.foodCity');
+  return String(cost.foodBasis || '').startsWith('pli_scaled') ? t('cost.foodScaled') : t('cost.foodCountry');
+}
+
+/**
+ * A week for one person as receipt lines: the bed for seven nights, then the
+ * week of eating and drinking out item by item at the default Lifestyle,
+ * through groundSpendPerPerson, the function the trip receipt and the day
+ * planner price from. The total is the sum of the printed lines, so the
+ * receipt always adds up. Null when the place has no day cost.
+ */
+export function weekReceipt(cost, row) {
+  if (!cost || cost.dayEur == null) return null;
+  const ls = DEFAULT_LIFESTYLE;
+  const lines = [{ label: `A bed for the night, ${WEEK} nights at ${eur2(cost.stayEur)}`, eur: r2(cost.stayEur * WEEK) }];
+  const g = row?.costs ? groundSpendPerPerson(row, WEEK, ls) : null;
+  if (g) {
+    const item = (label, n, eur) => { if (n > 0 && eur > 0) lines.push({ label: `${label}, ${n0(n)}`, eur }); };
+    item(t('lifestyle.dinnersOut'), ls.dinners_per_week, g.dinners);
+    item(t('lifestyle.casualMeals'), ls.lunches_per_week, g.lunches);
+    item(t('lifestyle.fastFood'), ls.fastfood_per_week, g.fastfood);
+    item(t('lifestyle.drinksAtBars'), ls.drinks_per_week, g.drinks);
+    item(t('lifestyle.clubNights'), ls.club_nights_per_week, g.clubbing);
+    item('Coffees', (ls.coffees_per_day || 0) * WEEK, g.coffees);
+    item(t('lifestyle.cookAtHome'), ls.self_catered_days_per_week, g.groceries);
+  } else {
+    lines.push({ label: `Eating and drinking out, ${WEEK} days`, eur: r2(cost.foodEur * WEEK) });
+  }
+  const food = r2(lines.slice(1).reduce((a, l) => a + l.eur, 0));
+  const total = r2(lines[0].eur + food);
+  return { lines, bed: lines[0].eur, food, total, perDay: total / WEEK };
+}
+
+const destCrumb = (d) => ({ name: d.name, path: paths.dest(d.slug) });
+const daysName = (cc, e) => (e.band
+  ? `${countryName(cc)} for ${e.days} days under €${e.band} a day`
+  : `${countryName(cc)} for ${e.days} days`);
+
+/** The cost page: what a week in one destination costs one person, as a receipt. */
+export function costPage(dos, ctx) {
+  const pl = dos.place || {};
+  const cc = pl.iso2;
+  const name = clean(pl.name);
+  const cost = ctx.costOf(dos.id);
+  const row = ctx.destRow(dos.id);
+  const self = paths.cost(dos.slug);
+  const week = weekReceipt(cost, row);
+  if (!self || !week) return null;
+  const where = countryName(cc);
+  const bedMeasured = cost.stayLevel === 'city';
+  const foodMeasured = cost.foodLevel === 'city';
+  const a = row?.accommodation || {};
+  const shared = cost.stayLevel !== 'region' && a.entire_home_night_eur > 0;
+  const sleeps = a.typical_capacity || 4;
+  const peers = ctx.pricedOf(cc);
+  const median = peers.length ? peers[peers.length >> 1].week : null;
+  const dearer = peers.filter((d) => d.perDay > week.perDay).length;
+  const curve = bedMeasured && Array.isArray(a.seasonality) && a.seasonality.length === 12 ? a.seasonality : null;
+  const cheapMonths = curve ? (cheapestStayMonths(row) || []).map(monthOf).filter(Boolean) : [];
+  const monthWeek = curve ? curve.map((f, i) => ({ m: MONTH[i], eur: r2(cost.stayEur * f * WEEK) + week.food })) : null;
+  const cheapest = monthWeek ? monthWeek.reduce((x, y) => (y.eur < x.eur ? y : x)) : null;
+
+  const hook = `A week in ${name} costs about ${eur0(week.total)} for one person on the ground: seven nights in a bed and seven days of eating and drinking out.`;
+  const shareLine = shared ? `The bed is one person's share of a whole place that sleeps ${n0(sleeps)}.` : null;
+  const noFlights = 'Flights are not in this figure: Carta does not price them.';
+  const middle = median != null && peers.length >= 5
+    ? `The middle week across ${n0(peers.length)} priced places in ${where} costs ${eur0(median)}.` : null;
+  // The receipt foot shows what one changed input does to the total: the
+  // month where the bed has a measured calendar, four days instead of seven
+  // where it does not.
+  const foot = cheapest && cheapest.eur < week.total - 0.5
+    ? `In ${cheapest.m}, the cheapest month for a bed here, the week comes to about ${eur0(cheapest.eur)}.`
+    : `Four days instead of seven come to about ${eur0(week.perDay * 4)}.`;
+  const near = ctx.cheaperNear(dos.id, cc, pl.lat, pl.lon, week.perDay, 6);
+  const daysHere = ctx.daysOf(cc).filter((e) => !e.band);
+  const image = destImage(dos, name);
+  const estimateWord = bedMeasured && foodMeasured ? 'measured' : 'estimate';
+  return {
+    kind: 'cost',
+    path: self,
+    title: fitTitle(`A week in ${name}`, `${eur0(week.total)} for one person`, where),
+    description: fitDescription([hook, middle, noFlights]),
+    h1: `What a week in ${name} costs`,
+    lead: [hook, [shareLine, noFlights].filter(Boolean).join(' ')],
+    receipt: {
+      head: `${name}, ${WEEK} nights, one person`,
+      lines: week.lines.map((l) => ({ label: l.label, value: eur2(l.eur) })),
+      totalLabel: 'The week, one person',
+      total: eur2(week.total),
+      foot,
+      note: 'Food is priced at the default Lifestyle: five dinners out, four casual meals, two fast meals, seven drinks, one club night (the entry and three cocktails) and two days cooking at home.',
+    },
+    facts: [
+      { label: bedMeasured && foodMeasured ? 'A week for one person' : 'A week for one person, estimated', value: eur0(week.total), num: true },
+      { label: 'A day for one person', value: eur0(week.perDay), num: true },
+      { label: bedMeasured ? 'Bed, a night' : 'Bed, a night, estimated', value: eur0(cost.stayEur), num: true },
+      { label: foodMeasured ? 'Food, a day' : 'Food, a day, estimated', value: eur0(cost.foodEur), num: true },
+      cheapMonths.length ? { label: 'Cheapest months for a bed', value: joinNames(cheapMonths) } : null,
+      peers.length >= 5 ? { label: `Of ${n0(peers.length)} priced places in ${where}, how many cost more`, value: n0(dearer), num: true } : null,
+    ].filter(Boolean),
+    image,
+    sections: [
+      monthWeek ? {
+        h2: 'What the week costs, month by month',
+        links: monthWeek.map((x) => ({ name: x.m, meta: eur0(x.eur), metaNum: true })),
+        note: `The bed follows the Inside Airbnb calendar${cost.source ? ` for ${clean(cost.source)}` : ''}; food stays at the same figure all year.`,
+      } : null,
+      {
+        h2: `What ${joinNames(OTHER_LENGTHS.map(String)).replace(' and ', ' or ')} days in ${name} cost`,
+        facts: OTHER_LENGTHS.map((n) => ({ label: `${n} days`, value: eur0(week.perDay * n), num: true })),
+      },
+      near.length ? { h2: `Where a week costs less near ${name}`, links: near } : null,
+      {
+        h2: `More about ${name} and ${where}`,
+        links: [
+          { name, path: paths.dest(dos.slug) },
+          ...daysHere.map((e) => ({ name: `Where to go in ${where} for ${e.days} days`, path: e.path, meta: `${n0(e.places)} places`, metaNum: true })),
+          { name: where, path: paths.country(cc) },
+        ],
+      },
+    ],
+    coverage: [bedSource(cost), foodSource(cost)].filter(Boolean).join(' '),
+    credits: ['Bed prices from Inside Airbnb', 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled"],
+    crumbs: [home, countryCrumb(cc), destCrumb({ name, slug: dos.slug })],
+    boot: `#dest=${encodeURIComponent(dos.id)}`,
+    measured: bedMeasured || foodMeasured,
+    subject: {
+      '@type': 'TouristDestination',
+      name,
+      url: `https://www.carta-europetravel.com${paths.dest(dos.slug)}`,
+      geo: geo(pl.lat, pl.lon),
+      containedInPlace: { '@type': 'Country', name: where },
+      ...(image ? { image: imageNode(image) } : {}),
+      additionalProperty: [
+        prop('Week cost for one person, bed and food, no flights', Math.round(week.total), 'EUR',
+          estimateWord === 'measured' ? 'measured: bed from Inside Airbnb listings, food from Numbeo' : 'estimate: at least one part is a national or nearby figure'),
+        prop('Day cost for one person, bed and food', Math.round(week.perDay), 'EUR', estimateWord === 'measured' ? 'measured' : 'estimate'),
+      ],
+    },
+    lastmod: dos.built_at || null,
+  };
+}
+
+/**
+ * A country and trip-length page: where one person can go in a country for
+ * `n` days, cheapest first, optionally only the places under a day budget.
+ * Which of these pages exist is decided by daysPlan() in floor.mjs; the
+ * builder is only called for those.
+ */
+export function daysPage(cc, n, band, ctx) {
+  const where = countryName(cc);
+  const all = ctx.pricedOf(cc);
+  const rows = band ? all.filter((d) => d.perDay < band) : all;
+  if (!rows.length) return null;
+  const tot = (d) => d.perDay * n;
+  const first = rows[0];
+  const last = rows[rows.length - 1];
+  const mid = rows[rows.length >> 1];
+  const measured = rows.filter((d) => d.measured).length;
+  const w = WORD[n] || String(n);
+  const h1 = band ? `Where to go in ${where} for ${n} days under €${band} a day` : `Where to go in ${where} for ${n} days`;
+  const lead1 = band
+    ? `${n0(rows.length)} of the ${n0(all.length)} priced places in ${where} cost one person under €${band} a day on the ground, so ${w} days there come to less than ${eur0(band * n)}.`
+    : `${upFirst(w)} days in ${where} cost one person from about ${eur0(tot(first))} in ${first.name} to about ${eur0(tot(last))} in ${last.name} on the ground, across ${n0(rows.length)} priced places.`;
+  const lead2 = `${upFirst(w)} days means ${w} nights in a bed and ${w} days of eating and drinking out. Flights are not included: Carta does not price them.`;
+  // The plain length page lists the best rated places first and a budget page
+  // the cheapest first: they answer "where should I go for four days" and
+  // "where can I afford four days", and with a cap of 100 a cheapest-first
+  // plain page would show the same hundred places as its budget page.
+  const order = band ? rows : [...rows].sort((a, b) => (b.score ?? -1) - (a.score ?? -1) || a.perDay - b.perDay);
+  const shown = order.slice(0, PAGE_SIZE);
+  const trips = ctx.tripsOfLength(cc, n, 12);
+  const weeks = n === WEEK ? ctx.journeysOf(cc).filter((j) => j.durationDays === WEEK).slice(0, 12) : [];
+  const siblings = ctx.daysOf(cc).filter((e) => !(e.days === n && (e.band || null) === (band || null)));
+  const self = paths.days(cc, n, band);
+  const lastmod = rows.map((d) => d.built).filter(Boolean).sort().at(-1) || null;
+  return {
+    kind: 'days',
+    path: self,
+    title: band
+      ? fitTitle(`${where} for ${n} days under €${band} a day`, `${n0(rows.length)} places`, null)
+      : fitTitle(`${where} for ${n} days`, `${n0(rows.length)} places from ${eur0(tot(first))}`, null),
+    description: fitDescription([lead1, lead2]),
+    h1,
+    lead: [lead1, lead2],
+    facts: [
+      { label: 'Places priced', value: n0(rows.length), num: true },
+      { label: `Cheapest ${n} days, ${first.name}`, value: approx(tot(first), first.measured), num: true },
+      { label: `Middle ${n} days, ${mid.name}`, value: approx(tot(mid), mid.measured), num: true },
+      { label: 'Of these, beds priced from listings in or near the town', value: n0(measured), num: true },
+    ],
+    sections: [
+      {
+        h2: band
+          ? (rows.length > shown.length ? `The ${n0(shown.length)} cheapest of ${n0(rows.length)} places` : `The ${n0(rows.length)} places, cheapest first`)
+          : (rows.length > shown.length ? `The ${n0(shown.length)} best rated of ${n0(rows.length)} places` : `The ${n0(rows.length)} places, best rated first`),
+        links: shown.map((d) => ({ name: d.name, path: paths.cost(d.slug), meta: approx(tot(d), d.measured), metaNum: true })),
+      },
+      trips.length ? {
+        h2: `Planned ${n} day trips in ${where}`,
+        links: trips.map((x) => ({ name: joinNames((x.cities || []).map((c) => clean(c.city))), path: paths.trip(x.id), meta: `${x.nights} nights`, metaNum: true })),
+      } : null,
+      weeks.length ? {
+        h2: `Planned weeks in ${where}`,
+        links: weeks.map((j) => ({ name: clean(j.title), path: paths.journey(j.id) })),
+      } : null,
+      {
+        h2: `${where} by length and budget`,
+        links: [
+          ...siblings.map((e) => ({ name: daysName(cc, e), path: e.path, meta: `${n0(e.places)} places`, metaNum: true })),
+          { name: where, path: paths.country(cc) },
+        ],
+      },
+    ],
+    coverage: `${n0(measured)} of these ${n0(rows.length)} bed prices come from Inside Airbnb listings in or near the town; the other ${n0(rows.length - measured)} are country-level figures and carry a tilde. Food is priced from Numbeo, at the town's own rates where it measures them and at country rates elsewhere.`,
+    credits: ['Bed prices from Inside Airbnb', 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled"],
+    crumbs: band ? [home, countryCrumb(cc), { name: `${n} days`, path: paths.days(cc, n) }] : [home, countryCrumb(cc)],
+    boot: null,
+    subject: {
+      '@type': 'ItemList', name: h1, numberOfItems: rows.length,
+      itemListElement: shown.map((d, i) => ({ '@type': 'ListItem', position: i + 1, url: `https://www.carta-europetravel.com${paths.cost(d.slug)}`, name: d.name })),
+    },
+    lastmod,
   };
 }
 
@@ -672,6 +965,15 @@ export function countryPage(cc, ctx) {
       dests.length ? {
         h2: `Places to go in ${where}`,
         links: linkRows([...dests].sort((a, b) => (b.score ?? 0) - (a.score ?? 0)).map((d) => ({ name: d.name, path: paths.dest(d.slug), meta: d.dayEur != null ? `€${n0(d.dayEur)} a day` : '', metaNum: true })), 36),
+      } : null,
+      // T224: the trip-length pages hang off the country, so a crawler at the
+      // country finds them and a reader can go from a day cost to a plan.
+      ctx.daysOf(cc).length ? {
+        h2: `Where to go in ${where} for ${joinNames(DAY_LENGTHS.filter((n) => ctx.daysOf(cc).some((e) => e.days === n)).map(String))} days`,
+        links: ctx.daysOf(cc).map((e) => ({
+          name: e.band ? `${e.days} days under €${e.band} a day` : `${e.days} days, every priced place`,
+          path: e.path, meta: `${n0(e.places)} places`, metaNum: true,
+        })),
       } : null,
       sections.length ? { h2: `Everything in ${where}`, links: sections.map((s) => ({ name: `${SECTION_LABEL[s.section]} in ${where}`, path: paths.section(cc, s.section), meta: n0(s.n), metaNum: true })) } : null,
       ctx.regionsOf(cc).length ? { h2: 'Regions', links: ctx.regionsOf(cc).map((r) => ({ name: r.name, path: paths.region(cc, r.id, r.name) })) } : null,

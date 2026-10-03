@@ -8,16 +8,23 @@
  * for trails and cycling routes, the wire row, because those page models do
  * not render a photograph and the wire's `img` has no licence field.
  *
- * Applies to the six catalogue kinds below. Countries, section lists, NUTS2
- * regions, trips, journeys and tours are containers or composed pages, not
- * catalogue rows, and are not floored.
+ * Applies to the six catalogue kinds below and to the destination cost page
+ * (T224), which carries one more test: at least one of its two figures, the
+ * bed or the food, is measured in or near the town. A week built only from
+ * national figures says the same thing as every other town in its country,
+ * and a few thousand such pages are the near-duplicates the floor exists to
+ * keep out of the index. Countries, section lists, NUTS2 regions, trips,
+ * journeys and tours are containers or composed pages, not catalogue rows,
+ * and are not floored. The country and trip-length pages (T224) have their
+ * own floor, daysPlan() below: a page that would list too few places is not
+ * written at all.
  *
  * listedFloor() does the same count for the listed-only rows (`t: 'l'`), which
  * have no page at all; it answers how many of them would clear the floor if
  * they were given one, from the wire fields the page builders read.
  */
 
-export const FLOORED = Object.freeze(['dest', 'trail', 'cycle', 'beach', 'lake', 'mountain']);
+export const FLOORED = Object.freeze(['dest', 'trail', 'cycle', 'beach', 'lake', 'mountain', 'cost']);
 export const MIN_FACTS = 3;
 
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
@@ -39,7 +46,42 @@ export function pageFloor(page, row) {
     image: page.image ? Boolean(page.image.src && page.image.licence) : wireImageLicensed(row?.img),
     facts: (page.facts || []).length >= MIN_FACTS,
   };
-  return { ...f, ok: f.title && f.coords && f.image && f.facts };
+  if (page.kind === 'cost') f.measured = Boolean(page.measured);
+  return { ...f, ok: f.title && f.coords && f.image && f.facts && f.measured !== false };
+}
+
+/** The fewest places a country and trip-length page may list (T224). */
+export const DAYS_MIN_PLACES = 5;
+/** The largest share of the length page a budget page may list. */
+export const DAYS_MAX_SHARE = 0.8;
+
+/**
+ * Which country and trip-length pages a country gets (T224, docs/SEO.md "up
+ * to 43 countries x 3 lengths x 3 bands, emitted only above the floor").
+ * `perDays` are the day costs of the country's priced places. Every length
+ * gets its page when the country has DAYS_MIN_PLACES priced places. A budget
+ * page is added only when it lists at least that many, leaves out at least a
+ * fifth of the length page, and lists at least DAYS_MIN_PLACES more than the
+ * next lower budget page that exists. A budget that (almost) every place
+ * meets, or that adds a place or two to the one below it, would be a copy of
+ * a page that already exists: Austria under 100 a day was 52 of 53 places.
+ */
+export function daysPlan(perDays, lengths, bands) {
+  const total = perDays.length;
+  if (total < DAYS_MIN_PLACES) return [];
+  const out = [];
+  for (const days of lengths) {
+    out.push({ days, band: null, places: total });
+    let last = 0;
+    for (const band of bands) {
+      const k = perDays.filter((v) => v < band).length;
+      if (k >= DAYS_MIN_PLACES && k <= total * DAYS_MAX_SHARE && k - last >= DAYS_MIN_PLACES) {
+        out.push({ days, band, places: k });
+        last = k;
+      }
+    }
+  }
+  return out;
 }
 
 // The wire fields each layer's page turns into facts (pages.mjs layerPage,

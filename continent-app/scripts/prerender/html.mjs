@@ -106,7 +106,14 @@ const STYLE = `.pr{box-sizing:border-box;max-width:760px;margin:0 auto;padding:v
 .pr-list li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(--space-1) var(--space-4);padding:var(--space-2) 0;border-bottom:1px solid var(--rule-soft)}
 .pr-list .m{color:var(--ink-soft);font-size:14px}
 .pr-pages{display:flex;flex-wrap:wrap;gap:var(--space-4);margin-top:var(--space-4)}
-.pr-credits{margin-top:var(--space-7);font-size:13px;color:var(--ink-soft)}`;
+.pr-credits{margin-top:var(--space-7);font-size:13px;color:var(--ink-soft)}
+.pr-receipt{margin:var(--space-5) 0 var(--space-2);border:1px solid var(--rule-soft);border-radius:10px;background:var(--bg-card);overflow:hidden}
+.pr-receipt table{width:100%;border-collapse:collapse}
+.pr-receipt caption{text-align:left;padding:var(--space-3) var(--space-4);background:var(--paper-dim);font-weight:600}
+.pr-receipt th,.pr-receipt td{padding:var(--space-2) var(--space-4);border-bottom:1px solid var(--rule-soft);text-align:left;font-weight:400;vertical-align:baseline}
+.pr-receipt td{text-align:right;white-space:nowrap}
+.pr-receipt .t th,.pr-receipt .t td{border-top:2px solid var(--ink);border-bottom:0;font-weight:600}
+.pr-receipt-foot{margin:0;padding:var(--space-3) var(--space-4);background:var(--accent-bg);font-size:14px}`;
 
 /** A fact value: numbers in mono, words in the body face. */
 const factValue = (f) => (f.num ? `<span class="n">${esc(f.value)}</span>` : esc(f.value));
@@ -129,6 +136,21 @@ function section(s) {
   if (s.note) parts.push(`<p class="pr-note">${esc(s.note)}</p>`);
   parts.push('</section>');
   return parts.join('');
+}
+
+/**
+ * The receipt (T224, carta-design "The receipt"): a --paper-dim head, one
+ * hairline line per cost component with its figure right aligned in mono, a
+ * 2px ink rule above the sum, and an --accent-bg foot saying what one changed
+ * input does to the total. A table, because it is one: label and figure.
+ */
+function receipt(r) {
+  if (!r?.lines?.length) return '';
+  const rows = r.lines.map((l) => `<tr class="l"><th scope="row">${esc(l.label)}</th><td class="n">${esc(l.value)}</td></tr>`);
+  rows.push(`<tr class="t"><th scope="row">${esc(r.totalLabel)}</th><td class="n">${esc(r.total)}</td></tr>`);
+  return `<div class="pr-receipt"><table><caption>${esc(r.head)}</caption><tbody>${rows.join('')}</tbody></table>`
+    + `${r.foot ? `<p class="pr-receipt-foot">${esc(r.foot)}</p>` : ''}</div>`
+    + `${r.note ? `<p class="pr-note">${esc(r.note)}</p>` : ''}`;
 }
 
 function facts(list) {
@@ -207,6 +229,7 @@ export function renderPage(pg) {
     crumbs,
     `<h1>${esc(pg.h1)}</h1>`,
     ...(pg.lead || []).map((p, i) => `<p${i === 0 ? ' class="pr-lead"' : ''}>${esc(p)}</p>`),
+    receipt(pg.receipt),
     facts(pg.facts),
     hero,
     ...(pg.sections || []).filter((s) => s && (s.links?.length || s.paras?.length || s.facts?.length)).map(section),

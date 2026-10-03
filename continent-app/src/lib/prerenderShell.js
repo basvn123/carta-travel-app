@@ -28,11 +28,12 @@ export const HEAD_CLOSE = '<!--/carta:head-->';
 export const BODY_OPEN = '<!--carta:body-->';
 export const BODY_CLOSE = '<!--/carta:body-->';
 
-/** Page kinds the prerender writes. guide, cost and days are not prerendered:
- *  guides are noindex community pages, cost and days are T224's families. */
+/** Page kinds the prerender writes. Guides are not prerendered: they are
+ *  noindex community pages. cost (a destination's week) and days (a country
+ *  for n days, optionally under a day budget) are T224's two families. */
 export const PRERENDER_KINDS = Object.freeze([
   'country', 'dest', 'section', 'trail', 'cycle', 'tour',
-  'beach', 'lake', 'mountain', 'region', 'trip', 'journey',
+  'beach', 'lake', 'mountain', 'region', 'trip', 'journey', 'cost', 'days',
 ]);
 
 /** Languages that have pages in the bucket. hreflang wave one is English only
@@ -54,6 +55,10 @@ export function prerenderKey(pathname) {
   switch (p.kind) {
     case 'country': return k(cw);
     case 'dest': return k(p.slug);
+    // The cost page sits under its destination's key: en/spain/malaga/cost.html
+    // beside en/spain/malaga.html. A dossier slug never ends in a reserved word.
+    case 'cost': return k(`${p.slug}/cost`);
+    case 'days': return k(p.band ? `${cw}/${p.days}-days/under-${p.band}` : `${cw}/${p.days}-days`);
     // Page n of a list is p{n}: a bare number would be the key of trail or
     // cycling id n, whose key is its id alone.
     case 'section': return k(p.page > 1 ? `${cw}/${p.section}/p${p.page}` : `${cw}/${p.section}`);

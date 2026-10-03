@@ -9,6 +9,7 @@ import {
 } from "../src/lib/prerenderShell.js";
 import { paths, parsePath, legacyHashToPath } from "../src/lib/urlScheme.js";
 import { bootPaths } from "../src/lib/pathBoot.js";
+import { daysPlan, DAYS_MIN_PLACES, pageFloor } from "../scripts/prerender/floor.mjs";
 
 test("every page kind has a key, and the key carries the id and never the slug", () => {
   assert.equal(prerenderKey("/austria"), "en/austria.html");
@@ -26,6 +27,12 @@ test("every page kind has a key, and the key carries the id and never the slug",
   assert.equal(prerenderKey("/austria/regions/at11--burgenland"), "en/austria/regions/at11.html");
   assert.equal(prerenderKey("/trips/at-salzburg-vienna-chain-6d"), "en/trips/at-salzburg-vienna-chain-6d.html");
   assert.equal(prerenderKey("/journeys/ad-hiking-coma-pedrosa-madriu"), "en/journeys/ad-hiking-coma-pedrosa-madriu.html");
+  // T224: the week sits under its destination, the trip-length pages under the country.
+  assert.equal(prerenderKey("/spain/malaga/cost"), "en/spain/malaga/cost.html");
+  assert.equal(prerenderKey("/spain/4-days"), "en/spain/4-days.html");
+  assert.equal(prerenderKey("/spain/4-day"), "en/spain/4-days.html");
+  assert.equal(prerenderKey("/spain/4-days/under-60"), "en/spain/4-days/under-60.html");
+  assert.equal(prerenderKey(paths.days("PT", 7, 80)), "en/portugal/7-days/under-80.html");
 });
 
 test("a list page and a low trail id never share a key", () => {
@@ -43,7 +50,7 @@ test("a legacy hash for a short trail or cycling id lands on its page, not on a 
 });
 
 test("paths with no static page have no key", () => {
-  for (const p of ["/", "/guides/abc", "/spain/malaga/cost", "/spain/4-days", "/nl/spain", "/Spain",
+  for (const p of ["/", "/guides/abc", "/spain/trails/cost", "/spain/4-days/over-60", "/spain/4-days/under-60/x", "/nl/spain", "/Spain",
     "/assets/index.js", "/spain/trails/176172-x/extra", "/nowhere"]) {
     assert.equal(prerenderKey(p), null, p);
   }
@@ -112,6 +119,26 @@ test("noindex is read from the page head only", () => {
   assert.equal(pageIsNoindex(PAGE.replace(BODY_CLOSE, `<meta name="robots" content="noindex">${BODY_CLOSE}`)), false);
 });
 
+test("a trip-length page exists only above the floor and never copies another", () => {
+  const five = [40, 45, 55, 70, 90];
+  assert.deepEqual(daysPlan(five.slice(0, DAYS_MIN_PLACES - 1), [4], [60]), []);
+  // Every place is under 100, so that budget would copy the plain page.
+  assert.deepEqual(daysPlan([40, 45, 55, 70, 75, 95, 99, 120, 130, 140], [4], [60, 80, 100]).map((e) => e.band), [null, 80]);
+  // 60 lists 3 (below the floor), 80 lists 6, 100 adds one place over 80.
+  assert.deepEqual(daysPlan([40, 45, 55, 61, 70, 75, 85, 120, 130, 140], [3, 7], [60, 80, 100]).map((e) => `${e.days}/${e.band}`),
+    ["3/null", "3/80", "7/null", "7/80"]);
+  // A budget nearly every place meets is not a page (Austria: 52 of 53 under 100).
+  assert.deepEqual(daysPlan([...Array(52).fill(90), 120], [4], [100]).map((e) => e.band), [null]);
+});
+
+test("a cost page meets the floor only with a figure measured in or near the town", () => {
+  const page = { kind: "cost", title: "A week in X", h1: "X", subject: { geo: { latitude: 1, longitude: 2 } },
+    image: { src: "a.jpg", licence: "CC BY 4.0" }, facts: [1, 2, 3] };
+  assert.equal(pageFloor({ ...page, measured: true }).ok, true);
+  assert.equal(pageFloor({ ...page, measured: false }).ok, false);
+  assert.equal("measured" in pageFloor({ ...page, kind: "dest" }), false);
+});
+
 function fakeBoot(pathname, meta) {
   const calls = [];
   const loc = { pathname, hash: "", search: "", replace: (u) => calls.push(["replace", u]) };
@@ -123,6 +150,8 @@ function fakeBoot(pathname, meta) {
 test("a destination path opens its destination when the prerendered page names the id", () => {
   assert.deepEqual(fakeBoot("/spain/malaga", "#dest=AGP"), { result: "path-to-hash", calls: [["replaceState", "/#dest=AGP"]] });
   assert.deepEqual(fakeBoot("/austria/achensee", "#dest=gem%3Aachensee").calls, [["replaceState", "/#dest=gem%3Aachensee"]]);
+  // T224: the week page opens the same destination.
+  assert.deepEqual(fakeBoot("/spain/malaga/cost", "#dest=AGP").calls, [["replaceState", "/#dest=AGP"]]);
 });
 
 test("without the tag, or with anything but a #dest= value, a destination path is left alone", () => {

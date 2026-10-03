@@ -38,7 +38,9 @@ export function bootPaths(loc = window.location, hist = window.history, flagOn =
     const path = loc.pathname || '/';
     if (path !== '/') {
       const parsed = parsePath(path);
-      const hash = pathToLegacyHash(parsed) || (parsed?.kind === 'dest' ? prerenderedBoot(doc) : null);
+      // A destination's week page (T224) opens the destination it prices.
+      const hash = pathToLegacyHash(parsed)
+        || (parsed?.kind === 'dest' || parsed?.kind === 'cost' ? prerenderedBoot(doc) : null);
       if (hash && !(loc.hash || '').includes('=')) {
         hist.replaceState(null, '', `/${loc.search || ''}${hash}`);
         return 'path-to-hash';

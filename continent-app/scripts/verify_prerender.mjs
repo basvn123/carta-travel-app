@@ -15,6 +15,11 @@
  * title, the shell's security headers carried over, a stale slug answered
  * with the same page, and every miss handed to the static deploy.
  *
+ * The T224 families: every cost page's receipt adds up (the printed lines sum
+ * to the printed total, to the cent), names no flight, and sits under a
+ * destination page of the same build; every trip-length page lists at least
+ * DAYS_MIN_PLACES places, and no two of them list the same places.
+ *
  * Prints a per-kind table (pages, median bytes, median words a crawler reads
  * without JavaScript, median internal links) and exits non-zero on any failure.
  */
@@ -25,6 +30,7 @@ import {
   prerenderKey, cardKey, spliceShell, routesJson, HEAD_OPEN, HEAD_CLOSE, BODY_OPEN, BODY_CLOSE,
 } from '../src/lib/prerenderShell.js';
 import { parsePath } from '../src/lib/urlScheme.js';
+import { DAYS_MIN_PLACES } from './prerender/floor.mjs';
 
 const APP = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -44,6 +50,29 @@ const between = (s, a, b) => { const i = s.indexOf(a); const j = s.indexOf(b, i)
 const median = (xs) => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.floor(s.length / 2)] : 0; };
 const textOf = (html) => html.replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ')
   .replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/g, ' ').replace(/\s+/g, ' ').trim();
+
+const euros = (s) => Number(String(s).replace(/[^0-9.]/g, ''));
+function checkCost(pg, body) {
+  const lines = [...body.matchAll(/<tr class="l"><th scope="row">[^<]*<\/th><td class="n">([^<]+)<\/td><\/tr>/g)].map((m) => euros(m[1]));
+  const total = /<tr class="t"><th scope="row">[^<]*<\/th><td class="n">([^<]+)<\/td>/.exec(body)?.[1];
+  ok(lines.length >= 2 && total != null, `${pg.key}: cost page without a receipt`);
+  const sum = Math.round(lines.reduce((a, v) => a + v, 0) * 100);
+  ok(total != null && sum === Math.round(euros(total) * 100), `${pg.key}: receipt lines sum to ${sum / 100}, total says ${total}`);
+  ok(/Flights are not/.test(body) && !/flight from|airfare|fare of/i.test(body), `${pg.key}: no-flights sentence missing or a flight priced`);
+  ok(keys.has(pg.key.replace(/\/cost\.html$/, '.html')), `${pg.key}: no destination page beside it`);
+}
+const daysLists = new Map();
+function checkDays(pg, body) {
+  const first = /<ul class="pr-list">([\s\S]*?)<\/ul>/.exec(body)?.[1] || '';
+  const items = [...first.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+  ok(items.length >= DAYS_MIN_PLACES, `${pg.key}: lists ${items.length} places, the floor is ${DAYS_MIN_PLACES}`);
+  ok(items.every((h) => parsePath(h)?.kind === 'cost'), `${pg.key}: the place list links something other than cost pages`);
+  // The same set of places on two budget pages of one length is a copy.
+  const p = parsePath(pg.path);
+  const sig = `${p.cc}|${p.days}|${[...items].sort().join(" ")}`;
+  ok(!daysLists.has(sig), `${pg.key}: lists the same places as ${daysLists.get(sig)}`);
+  daysLists.set(sig, pg.key);
+}
 
 const stats = {};
 const dangling = new Map();
@@ -79,6 +108,8 @@ for (const pg of manifest.pages) {
     if (k && keys.has(k)) internal += 1;
     else if (parsePath(h)) dangling.set(h, pg.key);
   }
+  if (pg.kind === 'cost') checkCost(pg, body);
+  if (pg.kind === 'days') checkDays(pg, body);
   const s = (stats[pg.kind] ||= { n: 0, bytes: [], words: [], links: [] });
   s.n += 1;
   s.bytes.push(Buffer.byteLength(html));
@@ -138,7 +169,7 @@ if (trail) {
   const r4 = await call(trail.path, { env: { PRERENDER: bucket, ASSETS: noCsp } });
   ok(r4.headers.get('x-from') === 'next', 'a shell without a CSP was served from');
 }
-for (const p of ['/spain/trails/999999999-nope', '/guides/abc', '/spain/malaga/cost', '/nl/spain', '/trips/AT.json', '/Spain', '/x']) {
+for (const p of ['/spain/trails/999999999-nope', '/guides/abc', '/spain/no-such-town/cost', '/spain/9-days', '/spain/4-days/under-5', '/nl/spain', '/trips/AT.json', '/Spain', '/x']) {
   const r = await call(p);
   ok(r.headers.get('x-from') === 'next', `Function: ${p} should fall through, got ${r.status}`);
 }

@@ -15,8 +15,8 @@
  *   --out      where pages land. Default: dist-prerender/ (delete it after the
  *              upload; it is about 32,000 files).
  *   --country  only these countries (a quick run); trips and journeys follow.
- *   --only     only these page kinds (country, section, dest, trail, cycle,
- *              tour, beach, lake, mountain, region, trip, journey).
+ *   --only     only these page kinds (country, section, dest, cost, days,
+ *              trail, cycle, tour, beach, lake, mountain, region, trip, journey).
  *   --sample   at most N pages of each kind, for a check run.
  *   --cards    also render each page's share card (scripts/og) to og/<key>.png
  *              and point og:image at it; slow, about 0.7 s a card.
@@ -29,7 +29,9 @@
  *
  * What is prerendered is the rated tier: every row the app rates (t 'r'), the
  * 43 countries, their section lists, the NUTS2 regions, the composed trips
- * and the curated journeys. Listed rows, coast and range regions have no page:
+ * and the curated journeys. T224 adds a cost page per priced destination
+ * (/spain/malaga/cost) and the country and trip-length pages (/spain/4-days,
+ * /spain/4-days/under-60) that floor.mjs daysPlan() lets through. Listed rows, coast and range regions have no page:
  * the page floor (floor.mjs, T205-d) counts them but does not build them, and
  * they are served the app shell with a 404. A rated page that fails the floor
  * is still written, with noindex, and stays out of the sitemap.
@@ -43,7 +45,8 @@ import { computeCosts } from '../../src/lib/costIndex.js';
 import * as C from '../../src/lib/cycleStory.js';
 import { renderPage, clean, ORIGIN } from './html.mjs';
 import * as P from './pages.mjs';
-import { pageFloor, listedFloor, newTally, addToTally } from './floor.mjs';
+import { pageFloor, listedFloor, newTally, addToTally, daysPlan } from './floor.mjs';
+import { haversineKm } from '../../src/lib/runtime_pricing.js';
 import { writeSitemaps } from './sitemap.mjs';
 
 const APP = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -131,20 +134,41 @@ const destRows = {};
 for (const f of list('dest')) if (f.endsWith('.json')) Object.assign(destRows, readJson(`dest/${f}`));
 const costs = computeCosts(destRows, {});
 const dossierFiles = list('dossier').filter((f) => f.endsWith('.json'));
-const dests = new Map(); // id -> { id, slug, name, cc, score, dayEur, measured }
+const dests = new Map(); // id -> { id, slug, name, cc, score, dayEur, measured, lat, lon, built, week, perDay }
 const destByCity = new Map();
 for (const f of dossierFiles) {
   const d = readJson(`dossier/${f}`);
   if (!d?.slug || !d.place?.iso2 || !COUNTRY_SLUGS[d.place.iso2]) continue;
   const cost = costs.get(d.id);
+  // The week receipt (T224) is the figure the cost and trip-length pages use,
+  // so a town's week and its four days come from the same printed lines.
+  const week = P.weekReceipt(cost, destRows[d.id]);
   const row = {
     id: d.id, slug: d.slug, name: clean(d.place.name), cc: d.place.iso2, score: d.verdict?.score ?? null,
     dayEur: cost?.dayEur ?? null, measured: cost?.stayLevel === 'city', file: f,
+    lat: d.place.lat, lon: d.place.lon, built: d.built_at || null,
+    week: week ? week.total : null, perDay: week ? week.perDay : null, hasCost: Boolean(week && paths.cost(d.slug)),
   };
   dests.set(d.id, row);
   destByCity.set(`${row.cc}|${row.name.toLowerCase()}`, row);
   const city = destRows[d.id]?.city;
   if (city) destByCity.set(`${row.cc}|${clean(city).toLowerCase()}`, row);
+}
+
+// Priced places per country, cheapest day first, and the trip-length pages
+// each country gets (T224).
+const pricedBy = new Map();
+const NEAR_KM = 150;
+for (const d of dests.values()) {
+  if (!d.hasCost) continue;
+  if (!pricedBy.has(d.cc)) pricedBy.set(d.cc, []);
+  pricedBy.get(d.cc).push(d);
+}
+for (const rows of pricedBy.values()) rows.sort((a, b) => a.perDay - b.perDay || a.name.localeCompare(b.name));
+const daysBy = new Map();
+for (const [cc, rows] of pricedBy) {
+  daysBy.set(cc, daysPlan(rows.map((d) => d.perDay), P.DAY_LENGTHS, P.DAY_BANDS)
+    .map((e) => ({ ...e, path: paths.days(cc, e.days, e.band) })));
 }
 
 const journeys = list('journeys/journey').filter((f) => f.endsWith('.json')).map((f) => readJson(`journeys/journey/${f}`)).filter(Boolean);
@@ -164,6 +188,27 @@ const ctx = {
   destById: (id) => dests.get(id) || null,
   destByCity: (cc, city) => destByCity.get(`${cc}|${clean(city).toLowerCase()}`) || null,
   costOf: (id) => costs.get(id) || null,
+  destRow: (id) => destRows[id] || null,
+  pricedOf: (cc) => pricedBy.get(cc) || [],
+  daysOf: (cc) => daysBy.get(cc) || [],
+  // Up to n places in the country, within NEAR_KM, whose week is cheaper than perDay, nearest first.
+  cheaperNear: (id, cc, lat, lon, perDay, n) => (pricedBy.get(cc) || [])
+    .filter((d) => d.id !== id && d.perDay < perDay && Number.isFinite(d.lat) && Number.isFinite(lat))
+    .map((d) => ({ d, km: haversineKm(lat, lon, d.lat, d.lon) }))
+    .filter((x) => x.km <= NEAR_KM)
+    .sort((a, b) => a.km - b.km).slice(0, n)
+    .map(({ d, km }) => ({ name: `${d.name}, ${Math.round(km)} km away`, path: paths.cost(d.slug), meta: `${d.measured ? '' : '~'}€${Math.round(d.week).toLocaleString('en-GB')}`, metaNum: true })),
+  // Composed trips of exactly n days, best first, one per set of stops (the
+  // catalogue holds several paces of the same Barcelona week).
+  tripsOfLength: (cc, n, k) => {
+    const seenStops = new Set();
+    return (W.trips[cc]?.rated || []).filter((x) => x.days === n).sort(byScore('score')).filter((x) => {
+      const stops = (x.cities || []).map((c) => c.city).join('|');
+      if (seenStops.has(stops)) return false;
+      seenStops.add(stops);
+      return true;
+    }).slice(0, k);
+  },
   destsOf: (cc) => [...dests.values()].filter((d) => d.cc === cc),
   isLayer: (kind, id) => Boolean(layerIdx[kind]?.has(id)),
   topLayer: (kind, cc, n2, not, n) => (W[{ beach: 'beaches', lake: 'lakes', mountain: 'mountains' }[kind]][cc]?.rated || [])
@@ -280,6 +325,7 @@ function write(page, key) {
 
 for (const cc of COUNTRIES) {
   emit(P.countryPage(cc, ctx));
+  for (const e of ctx.daysOf(cc)) emit(P.daysPage(cc, e.days, e.band, ctx));
   for (const { section, rows } of sectionRows(cc)) {
     const pages = Math.ceil(rows.length / P.PAGE_SIZE);
     for (let p = 1; p <= pages; p += 1) emit(P.sectionPage(cc, section, rows, p, ctx));
@@ -295,10 +341,11 @@ for (const cc of COUNTRIES) {
 for (const r of regions.values()) emit(P.regionPage(r, ctx));
 for (const d of dests.values()) {
   if (!COUNTRIES.includes(d.cc)) continue;
-  if (ONLY && !ONLY.has('dest')) break;
-  if (SAMPLE && (counts.dest || 0) >= SAMPLE) break;
+  if (ONLY && !ONLY.has('dest') && !ONLY.has('cost')) break;
+  if (SAMPLE && (counts.dest || 0) >= SAMPLE && (counts.cost || 0) >= SAMPLE) break;
   const dos = readJson(`dossier/${d.file}`);
   emit(P.destPage(dos, ctx), { type: 'destination', key: d.id });
+  emit(P.costPage(dos, ctx));
 }
 for (const j of journeys) if (!arg('--country', '') || COUNTRIES.includes(j.countryCode)) emit(P.journeyPage(j, ctx));
 

@@ -24,9 +24,10 @@
  * gets no lastmod rather than a made-up date.
  *
  * Layout: an index at /sitemap.xml over one file per page type, so Search
- * Console reports indexation per type: destinations, trails, cycling,
- * beaches, lakes, mountains, trips, journeys, countries (countries, their
- * section lists and the NUTS2 regions) and site (the home page and
+ * Console reports indexation per type: destinations, costs (the T224 week
+ * pages), trails, cycling, beaches, lakes, mountains, trips, journeys,
+ * countries (countries, their section lists, the NUTS2 regions and the T224
+ * trip-length pages) and site (the home page and
  * /about/numbers). A file that would pass 50,000 URLs or 45 MB is split into
  * -2, -3 and so on; today none does.
  */
@@ -42,8 +43,12 @@ export const GROUP_OF = Object.freeze({
   dest: 'destinations', trail: 'trails', cycle: 'cycling', tour: 'cycling',
   beach: 'beaches', lake: 'lakes', mountain: 'mountains', trip: 'trips', journey: 'journeys',
   country: 'countries', section: 'countries', region: 'countries',
+  // T224: the trip-length pages are country pages; the cost pages get their
+  // own file, so Search Console reports their indexation apart from the
+  // destination pages they sit under.
+  days: 'countries', cost: 'costs',
 });
-const GROUP_ORDER = ['site', 'countries', 'destinations', 'trails', 'cycling', 'beaches', 'lakes', 'mountains', 'trips', 'journeys'];
+const GROUP_ORDER = ['site', 'countries', 'destinations', 'costs', 'trails', 'cycling', 'beaches', 'lakes', 'mountains', 'trips', 'journeys'];
 
 /** Pages that are not in the manifest: the home page and the T318 explainer. */
 export function sitePages(coverageDate) {
@@ -136,14 +141,19 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
     const k = (floored[p.kind] ||= { pages: 0, ok: 0, title: 0, coords: 0, image: 0, facts: 0, imageOnlyMiss: 0 });
     k.pages += 1;
     for (const c of ['title', 'coords', 'image', 'facts']) if (p.floor[c]) k[c] += 1;
+    if ('measured' in p.floor) k.measured = (k.measured || 0) + (p.floor.measured ? 1 : 0);
     if (p.floor.ok) k.ok += 1;
     if (!p.floor.image && p.floor.title && p.floor.coords && p.floor.facts) k.imageOnlyMiss += 1;
   }
   const listed = manifest.floor_listed || null;
   const unpaged = listed ? sumOf(listed.rows, 'total') + (listed.regions?.total || 0) : null;
   const unpagedOk = listed ? sumOf(listed.rows, 'ok') : null;
-  const floorLine = `Page floor ${day(manifest.generated_at)}: ${n(sumOf(floored, 'ok'))} of ${n(sumOf(floored, 'pages'))} catalogue pages meet it and are in the sitemap`
+  // The cost pages (T224) are counted on their own clause, so the catalogue
+  // figure keeps the meaning it had in T222's first line.
+  const { cost: costFloor, ...catalogue } = floored;
+  const floorLine = `Page floor ${day(manifest.generated_at)}: ${n(sumOf(catalogue, 'ok'))} of ${n(sumOf(catalogue, 'pages'))} catalogue pages meet it and are in the sitemap`
     + (listed ? `; ${n(unpaged)} listed-only rows and coast or range regions have no page, of which ${n(unpagedOk)} would clear it` : '')
+    + (costFloor ? `; ${n(costFloor.ok)} of ${n(costFloor.pages)} week cost pages have a figure measured in or near the town and are in the sitemap` : '')
     + `; ${n(summary.listed)} URLs in all.`;
   const report = {
     generated_at: manifest.generated_at, floor_line: floorLine, urls: summary.listed, files, floored,
