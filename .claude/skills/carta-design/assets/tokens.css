@@ -1,90 +1,97 @@
-/* Carta design tokens. The only file in the codebase allowed to contain hex values. */
-
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+/* Carta design tokens. A copy of the :root block of continent-app/src/styles.css as of
+   2026-10-03 (T325). styles.css is the source of truth and DESIGN.md is its record; when
+   they disagree with this file, this file is wrong. The app already has these, so do not paste
+   them into it. This file lets a sketch or an email template start from the real values.
+   Fonts are self-hosted in continent-app/public/fonts and declared in index.html; nothing
+   loads from a Google host. */
 
 :root {
-  /* Ink and paper. Cool greys only, never warm. */
-  --ink: #0E1116;
-  --ink-70: #4A525E;
-  --ink-45: #78818F;
-  --paper: #FFFFFF;
-  --panel: #F4F5F7;
-  --line: #E3E6EB;
-  --line-strong: #C7CCD5;
+  /* Palette - warm alabaster canvas, deep slate ink, terracotta accent */
+  --paper:        #f8f6f0;
+  --paper-dim:    #efece2;
+  --ink:          #0f172a;
+  --ink-soft:     #414b5e;
+  --ink-mute:     #7d8393;
+  /* The fill behind an ACTIVE control. One step off --ink, which is body text
+     and reads as pure black when a whole button is painted with it. Still
+     11:1 against --paper, so white labels stay well past AA. */
+  --ink-fill:     #2b3446;
+  --rule:         #ccc7b8;
+  --rule-soft:    #e2ded1;       /* hairlines inside a card, where --rule is too loud */
+  --accent:       #e05a47;       /* terracotta: actions, alerts, the live route */
+  --accent-soft:  #e97f6b;
+  --accent-bg:    #f7dcd4;
+  /* Ratings are a MEASURE, not a warning. On the accent they read as errors
+     ("Rome 9.5" in a saturated red bubble), and they competed with the buttons
+     and route pins that do need to shout. Deep ochre: warm like a seal on a
+     map, and dark enough to pass AA both as a fill (paper text on --rate,
+     5.3:1) and as text (--rate on --rate-bg, 4.7:1; --rate-soft on paper,
+     4.8:1), which the amber a rating chip wants to be does not. */
+  --rate:         #8f5a0c;
+  --rate-soft:    #946313;
+  --rate-bg:      #f6e6cb;
+  --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
+  /* Destructive only, never decoration. Terracotta is the app's action colour
+     and cannot also mean "this erases everything", so deleting an account gets
+     a colour nothing else in the product uses. Both directions clear AA on
+     paper (5.6:1 as text) and as a fill (6.0:1 with white on it). */
+  --danger:       #b3372a;
+  --danger-dark:  #96291e;
+  --status-success: #10b981;     /* indicator-only green: compliance ticks, open-now dots */
+  --bg-card:      #ffffff;
+  --shadow-1:     0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --shadow-2:     0 4px 16px rgba(15, 23, 42, 0.10), 0 12px 32px rgba(15, 23, 42, 0.08);
+  --shadow-card:  0 4px 20px rgba(15, 23, 42, 0.06);
 
-  /* The one saturated colour. Interactive states only. */
-  --signal: #1E3FD6;
-  --signal-dark: #14309F;
-  --signal-wash: #EDF1FE;
+  /* Card taxonomy (PLAN.md C2). KIND is an ink-density ramp, not a rainbow:
+     the hierarchy reads as weight, so it survives greyscale and colour-blind
+     viewing. Values are ink mixed over paper at 100/78/62/45/50%. VERDICT
+     stays on the rating's ochre seal (--rate) - ratings are a measure here,
+     never the terracotta action colour. GEM gets its own quiet teal, the one
+     hue nothing else in the product uses, so "the world hasn't noticed" and
+     "worth the journey" can never be confused. The app is deliberately
+     single-theme (no prefers-color-scheme / data-theme blocks exist), so
+     these live only in this :root like every other token. */
+  --kind-metro:   #0f172a;
+  --kind-city:    #424856;
+  --kind-town:    #686c75;
+  --kind-village: #8f9297;
+  --kind-area:    #84868d;
+  --verdict-3:    var(--rate);       /* filled ribbon */
+  --verdict-2:    var(--rate);       /* outline ribbon */
+  --verdict-1:    var(--ink-mute);   /* text only */
+  --gem-ink:      #2c6e63;
+  --gem-bg:       #d9eae5;
 
-  /* Cheapest option marker. Exactly one per view. */
-  --flag: #FFD54A;
-
-  /* Data only, never chrome. */
-  --up: #0B7A5A;
-  --down: #B3261E;
+  /* Spacing scale (P4.3). The stylesheet grew with hand-tuned px literals and
+     no rhythm, which is why the phone wastes a screen before the first card.
+     New and touched rules take these; nothing is rewritten wholesale. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 22px;
+  --space-6: 30px;
+  --space-7: 40px;
+  --space-8: 56px;
+  /* The floor a finger needs. Icon-only controls get this as a minimum box
+     even where the glyph inside is 15px (WCAG 2.5.5). */
+  --tap: 44px;
 
   /* Type */
-  --font: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --ui:           'Plus Jakarta Sans', 'Inter Tight', system-ui, -apple-system, sans-serif;
+  --mono:         'JetBrains Mono', 'SF Mono', Menlo, monospace;
 
-  /* Radius. Nothing rounder than these. */
-  --radius-control: 6px;
-  --radius-card: 10px;
-
-  /* Spacing */
-  --wrap: 1180px;
-  --gutter: 32px;
-  --section: 96px;
-  --h-control: 44px;
-  --h-control-lg: 52px;
-  --h-control-sm: 38px;
+  /* Layout */
+  --filter-h:     132px;
+  --panel-w:      440px;
+  --bottom-nav-h: 86px;
 }
 
-@media (max-width: 900px) {
-  :root {
-    --gutter: 20px;
-    --section: 64px;
-  }
-}
-
-/* Base */
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font);
-  font-size: 17px;
-  line-height: 1.55;
-  letter-spacing: -0.005em;
-  -webkit-font-smoothing: antialiased;
-}
-
-h1, h2, h3 { margin: 0; font-weight: 600; line-height: 1.05; }
-h1 { font-size: clamp(38px, 5.4vw, 66px); letter-spacing: -0.03em; max-width: 15ch; }
-h2 { font-size: clamp(28px, 3.4vw, 40px); letter-spacing: -0.028em; }
-h3 { font-size: 20px; letter-spacing: -0.02em; line-height: 1.25; }
-
-/* Measured facts: prices, dates, times, airport codes, counts. Never prose. */
-.num {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
-
-.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
-.lede { font-size: 19px; color: var(--ink-70); line-height: 1.5; max-width: 44ch; }
-
-/* Focus is always visible. */
-:focus-visible {
-  outline: 2px solid var(--signal);
-  outline-offset: 2px;
-}
+/* Focus: every interactive element, unless it swaps in a border-color change. */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  * { transition: none !important; animation: none !important; }
 }
