@@ -759,3 +759,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T184-a | T184 | Touch feedback was verified with a forced :active state, not on a real iPhone or Android phone; confirm the press look, the 100 ms feel and the haptic tick on a device | user | open | |
 | T184-b | T184 | Plain divs with a JS click handler and no pointer cursor, role or tabindex get no press feedback and the audit cannot see them; sweep for them and give them a role or a class | next task | open | |
 | T184-c | T184 | Bottom nav, plus button, cost action and guide cards had their own :active compression and now compress twice; drop the duplicate when those rules are next edited | next task | open | |
+| T189-a | T189 | Thirteen non-admin form errors still print err.message directly (AccountPanel, AuthModal, GoogleButton, ResetPasswordScreen); map the known service codes to sentences that say what to do | next task | open | |
+| T189-b | T189 | ReadyTripsStep and the wizard's picked-trip load have no failure state, and state.friendsFailed is defined but unwired because FriendsSpoke mixes action and load errors in one field | next task | open | |
+| T189-c | T189 | SharedTripView folds a network failure into the gone state on purpose (privacy comment in the file); decide whether a retry for a thrown fetch is acceptable | user | open | |
