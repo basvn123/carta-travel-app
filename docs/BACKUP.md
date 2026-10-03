@@ -141,6 +141,45 @@ Restoring the whole dump over a live project would also revert every migration
 applied since the dump was taken, and would drop rows that real users wrote in
 the meantime.
 
+## Restoring the archive dumps from R2 (T288-d)
+
+The weekly script above covers the Supabase `public` schema. The R2 archive
+(`r2:carta/archive/db/`, T045 and T288) also holds a dump of the trailslab
+PostGIS database and a second Supabase dump. Both are encrypted with the
+"Carta backups" key. Two rules apply to every restore of them.
+
+Never run `pg_restore --clean` (or `--clean --if-exists`) against the live
+trailslab database on port 5433. It drops the objects it is about to prove,
+so a bad archive would destroy the source it was meant to protect. The
+restore command in the T045 report does exactly that and must not be copied.
+Restore into a scratch database, or do the streamed read check below.
+
+The streamed read check needs no disk and no database. It proves the key, the
+passphrase and every byte of the object, and it is the check T288 ran:
+
+```
+rclone cat r2:carta/archive/db/trailslab/trailslab-YYYY-MM-DD.dump.gpg \
+  | gpg --decrypt | pg_restore --list | grep -c "TABLE DATA"
+```
+
+To prove a real restore, load the dump into a scratch database on a throwaway
+server, never the live one. For trailslab that server must run the same
+PostGIS image as `tools/trailslab/docker-compose.yml`, on a port that is not
+5433, and `pg_restore` must be version 18 or newer (the dump is custom format
+written by pg_dump 18). T288 estimated about 11 GB of disk for it, so check
+the free space first.
+
+```
+createdb -h 127.0.0.1 -p <scratch port> trailslab_scratch
+rclone cat r2:carta/archive/db/trailslab/trailslab-YYYY-MM-DD.dump.gpg \
+  | gpg --decrypt \
+  | pg_restore -h 127.0.0.1 -p <scratch port> -d trailslab_scratch --no-owner --no-privileges
+```
+
+There is no `--clean` in that command, because the scratch database starts
+empty. Judge it by row counts, then drop the scratch database or remove the
+throwaway container.
+
 ## What is not covered
 
 These scripts dump the `public` schema only. The temporary login role has no
