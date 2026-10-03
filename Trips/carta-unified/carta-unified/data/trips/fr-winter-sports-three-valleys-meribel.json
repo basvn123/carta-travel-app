@@ -261,8 +261,8 @@
       "Who It Suits": "Confident intermediates and advanced skiers who want to actually use the scale of the area, not just one valley"
     },
     "surface": "Les 3 Vallées: approx. 600 km piste; base 1,450 m (Méribel) to 3,230 m (Cime de Caron, Val Thorens)",
-    "distanceKm": 3,
-    "elevationM": null,
+    "distanceKm": 600,
+    "elevationM": 3230,
     "verticalM": null,
     "technicalRating": null,
     "transitPass": null,

@@ -268,7 +268,7 @@
     "surface": "approx. 120–140 km, 5,000–5,800 m vert; granite paving, tundra path, forest track, boardwalk",
     "distanceKm": 120,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 5000,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

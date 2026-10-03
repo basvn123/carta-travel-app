@@ -274,7 +274,7 @@
       "Who It Suits": "Intermediate windsurfers and kiters who want a genuine wind week with a rest-day backup plan, plus paddlers drawn to the chalk coast"
     },
     "surface": "Approx. 230 km transfer drive plus daily sessions of 2–4 water hours; open Baltic coast, sheltered Bodden lagoon, chalk-cliff sea kayaking",
-    "distanceKm": 230,
+    "distanceKm": null,
     "elevationM": null,
     "verticalM": null,
     "technicalRating": null,

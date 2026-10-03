@@ -275,7 +275,7 @@
     "surface": "approx 330 km, roughly 1,900 m cumulative gain; asphalt on the Vltava corridor, crushed limestone and packed sand on the pond dams, short grass and forest-track sections",
     "distanceKm": 330,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 1900,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

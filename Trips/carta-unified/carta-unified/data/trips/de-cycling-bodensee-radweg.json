@@ -276,7 +276,7 @@
     "surface": "Approx. 270 km, +1,300 m cumulative. Asphalt and compacted gravel, almost entirely traffic-free or on marked lanes",
     "distanceKm": 270,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 1300,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

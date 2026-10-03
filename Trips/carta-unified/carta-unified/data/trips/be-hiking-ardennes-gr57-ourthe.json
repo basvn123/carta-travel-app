@@ -262,7 +262,7 @@
     "surface": "approx. 95–115 km, 2,600–3,200 m cumulative ascent; forested valley slopes, riverside path, farm track, waymarked red-and-white GR",
     "distanceKm": 95,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2600,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

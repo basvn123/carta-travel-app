@@ -249,9 +249,9 @@
       "Bike on public transport": "Rodalies de Catalunya suburban trains (line R11 Girona–Figueres–Portbou, RG1 to Blanes) carry bikes free outside weekday peaks in designated spaces. Long-distance AVE and Avant services from Barcelona require the bike to be bagged or boxed within specified dimensions, or booked into a limited bike space on some Euromed services. Sarfa/Moventis coaches to the Costa Brava take bikes in the hold at driver's discretion for a small fee."
     },
     "surface": "approximately 72% paved (excellent chip-seal and asphalt), 24% packed granite sand on the greenways and Gavarres pistes, 4% loose forest gravel on the Els Metges and Madremanya link tracks. A 28–32 mm road setup handles the whole week; 38 mm gravel opens the Gavarres.",
-    "distanceKm": null,
-    "elevationM": null,
-    "verticalM": null,
+    "distanceKm": 654,
+    "elevationM": 1115,
+    "verticalM": 8950,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

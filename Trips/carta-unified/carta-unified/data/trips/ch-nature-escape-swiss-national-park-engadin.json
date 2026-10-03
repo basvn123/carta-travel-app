@@ -273,7 +273,7 @@
     "surface": "approx. 60–70 km walking, 3,000–3,400 m cumulative ascent; marked mountain path throughout, no off-path travel permitted anywhere",
     "distanceKm": 60,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 3000,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

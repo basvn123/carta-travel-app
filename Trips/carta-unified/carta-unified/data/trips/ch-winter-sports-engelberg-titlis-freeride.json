@@ -255,8 +255,8 @@
       "Who It Suits": "Expert skiers and riders wanting guided glacier and big-mountain off-piste, comfortable with long, committing descents and variable exit terrain"
     },
     "surface": "Engelberg-Titlis network plus the Brunni sector; base 1,050 m at Engelberg, top 3,020 m at Titlis",
-    "distanceKm": 1050,
-    "elevationM": null,
+    "distanceKm": null,
+    "elevationM": 3020,
     "verticalM": null,
     "technicalRating": null,
     "transitPass": null,

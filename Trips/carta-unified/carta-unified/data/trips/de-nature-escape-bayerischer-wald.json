@@ -268,7 +268,7 @@
     "surface": "approx. 55–65 km walking, 2,300 m cumulative ascent; forest track, granite ridge path, boardwalk over deadwood, one hut approach with no vehicle access",
     "distanceKm": 55,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2300,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

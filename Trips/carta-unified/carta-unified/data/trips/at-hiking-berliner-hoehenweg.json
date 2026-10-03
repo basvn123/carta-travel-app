@@ -266,7 +266,7 @@
     "surface": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
     "distanceKm": 55,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 5200,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

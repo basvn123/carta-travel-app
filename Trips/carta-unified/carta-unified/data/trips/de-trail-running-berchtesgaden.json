@@ -265,7 +265,7 @@
     "surface": "Approx. 105–115 km and 6,000–6,500 m of ascent; limestone, root, scree and cabled rock, T1–T3",
     "distanceKm": 105,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 6000,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

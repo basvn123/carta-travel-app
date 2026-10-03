@@ -264,7 +264,7 @@
     "surface": "approx. 95–115 km, 5,500–6,500 m vert; limestone ridge (T3), larch singletrack (T1–T2), river gravel",
     "distanceKm": 95,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 5500,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -279,7 +279,7 @@
       "Who It Suits": "Sailors, from confident dinghy handlers to those wanting a crewed keelboat day, who want real tidal water without a long offshore passage"
     },
     "surface": "Coastal sailing grounds between Ostend and Nieuwpoort, roughly 12 nautical miles apart; offshore sandbanks (Stroombank, Trapegeer) within a few miles of the beach",
-    "distanceKm": 12,
+    "distanceKm": null,
     "elevationM": null,
     "verticalM": null,
     "technicalRating": null,

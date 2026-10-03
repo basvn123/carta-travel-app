@@ -262,7 +262,7 @@
     "surface": "approx. 120–135 km, 2,800–3,300 m combined ascent; rolling plateau, river valley, forest track, no exposure",
     "distanceKm": 120,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2800,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -270,7 +270,7 @@
     "surface": "approx. 45–55 km walking and lakeshore paths, under 900 m cumulative ascent; forest track, lakeside gravel path, village lanes",
     "distanceKm": 45,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 900,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

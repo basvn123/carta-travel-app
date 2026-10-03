@@ -272,7 +272,7 @@
     "surface": "approx. 90–120 km by bicycle, under 200 m cumulative ascent; sandy forest track, heathland path, paved park lanes",
     "distanceKm": 90,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 200,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -259,8 +259,8 @@
       "Who It Suits": "Confident off-piste skiers and riders comfortable on variable snow, roped glacier travel and long unmarked descents"
     },
     "surface": "Five linked sectors (Brévent-Flégère, Grands Montets, Le Tour-Balme, Aiguille du Midi/Vallée Blanche); base 1,035 m at Chamonix, top 3,842 m at the Aiguille du Midi",
-    "distanceKm": 1035,
-    "elevationM": null,
+    "distanceKm": null,
+    "elevationM": 3842,
     "verticalM": null,
     "technicalRating": null,
     "transitPass": null,

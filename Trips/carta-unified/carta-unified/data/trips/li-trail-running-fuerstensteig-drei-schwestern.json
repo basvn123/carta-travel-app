@@ -268,7 +268,7 @@
     "surface": "Approx. 95–105 km and 5,500–6,000 m of ascent; Rhine gravel, alp track, limestone ledge and cabled rock, T1–T4",
     "distanceKm": 95,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 5500,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

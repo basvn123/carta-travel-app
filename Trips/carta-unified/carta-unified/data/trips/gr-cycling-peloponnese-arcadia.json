@@ -248,9 +248,9 @@
       "Bike on public transport": "Hellenic Train's Athens–Kiato and Kiato–Aigio Proastiakos services take bikes in designated spaces, but the network does not reach Nafplio, Leonidio or Arcadia — there is no rail option inside this route. KTEL intercity buses will carry a bike in the hold at the driver's discretion for €5–€10, boxed or bagged, and refuse them when the hold is full. The Odontotos rack railway from Diakofto to Kalavryta, 22 km through the Vouraikos gorge, is a spectacular optional day but is not a practical bike-carriage service — treat it as a bike-free excursion, and confirm bike policy directly with Hellenic Train if you intend otherwise."
     },
     "surface": "approximately 68% paved — Greek chip-seal, often coarse, patched, and gravelly on bends — 22% hardpack and forest track in Arcadia, 8% loose gravel on the Parnon and Prodromou approaches, 2% cobbled village lanes. A 30–35 mm tyre on a road bike, or a proper gravel setup, is the sensible choice; 25 mm is punishment.",
-    "distanceKm": null,
-    "elevationM": null,
-    "verticalM": null,
+    "distanceKm": 496,
+    "elevationM": 720,
+    "verticalM": 7780,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

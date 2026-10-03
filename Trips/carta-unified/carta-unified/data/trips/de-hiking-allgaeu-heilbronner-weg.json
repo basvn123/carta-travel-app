@@ -262,7 +262,7 @@
     "surface": "approx. 70–80 km, 4,600–5,200 m combined ascent; limestone ridge, scree, secured ledges (DAV blue/black), alpine meadow",
     "distanceKm": 70,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 4600,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

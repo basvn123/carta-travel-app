@@ -281,7 +281,7 @@
     "surface": "Approx. 285 km, +2,600 m cumulative. Asphalt river paths and rail-trails, with compacted gravel forest tracks in the Mullerthal",
     "distanceKm": 285,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2600,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -262,7 +262,7 @@
     "surface": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
     "distanceKm": 75,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 5800,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

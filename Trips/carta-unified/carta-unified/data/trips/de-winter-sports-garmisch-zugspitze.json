@@ -259,9 +259,9 @@
       "Who It Suits": "Intermediate to advanced skiers who want race-pedigree pistes plus a high-altitude glacier day; families on the gentler Hausberg slopes"
     },
     "surface": "Garmisch-Classic (Kandahar, Hausberg, Kreuzeck, Alpspitze), base 720 m to 2,050 m; Zugspitze glacier, 2,000 m to 2,962 m",
-    "distanceKm": 720,
-    "elevationM": null,
-    "verticalM": null,
+    "distanceKm": null,
+    "elevationM": 2962,
+    "verticalM": 1330,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

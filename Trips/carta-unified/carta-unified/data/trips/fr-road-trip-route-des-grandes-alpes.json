@@ -272,7 +272,7 @@
     },
     "surface": "approx. 775 km; sixteen cols, sustained 7–10% gradients, max altitude 2,764 m",
     "distanceKm": 775,
-    "elevationM": null,
+    "elevationM": 2764,
     "verticalM": null,
     "technicalRating": null,
     "transitPass": null,

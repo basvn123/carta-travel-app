@@ -262,7 +262,7 @@
     "surface": "approx. 60–68 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
     "distanceKm": 60,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 5600,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -253,9 +253,9 @@
       "Trains and buses with a bike": "Moldova's passenger rail network is minimal and not useful for this loop. The practical bail-out is the ***rutieră*** minibus — see below."
     },
     "surface": "**Day 1** Chișinău → Cricova → Strășeni, **40 km / +450 m** — 70% asphalt, 20% concrete slab, 10% clay track. **Day 2** Strășeni → Căpriana → Lozova, **45 km / +700 m** — 40% asphalt, 15% slab, 45% forest and farm track. **Day 3** Lozova → Codru reserve → Hâncu → Nisporeni, **55 km / +850 m** — 50% asphalt, 10% slab, 40% track. **Day 4** Nisporeni → Vărzărești → Bălănești Hill → Călărași, **60 km / +900 m** — 45% asphalt, 15% slab, 40% track. **Day 5** Călărași → Bahmut → Ivancea, **65 km / +750 m** — 60% asphalt, 20% slab, 20% track. **Day 6** Ivancea → Orheiul Vechi loop, **45 km / +550 m** — 40% asphalt, 10% slab, 50% track. **Day 7** Orheiul Vechi → Chișinău, **60 km / +600 m** — 65% asphalt, 15% slab, 20% track.",
-    "distanceKm": null,
+    "distanceKm": 370,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 4800,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -244,9 +244,9 @@
       "Bike on public transport": "Istrian rail is largely irrelevant to this route — the Pula–Divača line does not serve the Parenzana towns usefully and bike space is limited. Regional buses (Autotrans, Arriva) will carry bikes in the hold at driver's discretion for €3–€5, but never on full summer services. Jadrolinija and Venezia Lines coastal catamarans out of Poreč and Rovinj generally refuse full-size bikes; car ferries take them free or for a nominal fee. Plan on van transfers rather than public transport."
     },
     "surface": "approximately 40% compacted limestone hardpack (the Parenzana formation), 45% paved secondary road, 10% loose gravel on unrestored sections between Vižinada and Baldaši, 5% cobbled hilltown setts. Tunnels are unlit — a real front light is mandatory, not optional.",
-    "distanceKm": null,
-    "elevationM": null,
-    "verticalM": null,
+    "distanceKm": 360,
+    "elevationM": 1401,
+    "verticalM": 5460,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

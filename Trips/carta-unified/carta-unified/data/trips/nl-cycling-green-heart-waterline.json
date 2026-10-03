@@ -281,7 +281,7 @@
     "surface": "Approx. 300 km, +600 m cumulative. Asphalt and brick fietspaden, shell paths on the fort perimeters",
     "distanceKm": 300,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 600,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

@@ -269,7 +269,7 @@
     "surface": "approx. 115–135 km, 2,400–3,000 m vert; peat, boardwalk, forest track, rock-and-root river trail",
     "distanceKm": 115,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 2400,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

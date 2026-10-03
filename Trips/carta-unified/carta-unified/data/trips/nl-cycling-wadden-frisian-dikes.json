@@ -280,7 +280,7 @@
     "surface": "Approx. 305 km, +500 m cumulative. Asphalt dike roads, brick village streets, shell and sand paths on Ameland",
     "distanceKm": 305,
     "elevationM": null,
-    "verticalM": null,
+    "verticalM": 500,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

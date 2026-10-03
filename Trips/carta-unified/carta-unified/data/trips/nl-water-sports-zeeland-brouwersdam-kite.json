@@ -276,7 +276,7 @@
       "Who It Suits": "Intermediate-to-advanced kiters and wing foilers who want both forgiving flat water and a real tidal-current environment in one trip"
     },
     "surface": "Daily sessions of 2–4 water hours across three distinct waters: tideless lake, open North Sea coast, and tidal Oosterschelde channel",
-    "distanceKm": 2,
+    "distanceKm": null,
     "elevationM": null,
     "verticalM": null,
     "technicalRating": null,

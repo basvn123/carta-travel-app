@@ -276,7 +276,7 @@
       "Who It Suits": "Intermediate to advanced surfers ready for powerful, sometimes heavy beach-break waves, and beginners committed to lesson time in the gentler spots"
     },
     "surface": "Beach breaks across roughly 12 km of coast between Capbreton and Seignosse; the Gouf de Capbreton canyon offshore",
-    "distanceKm": 12,
+    "distanceKm": null,
     "elevationM": null,
     "verticalM": null,
     "technicalRating": null,
