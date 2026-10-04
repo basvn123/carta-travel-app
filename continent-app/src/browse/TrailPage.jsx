@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { loadTrail } from '../lib/trails.js';
+import { loadTrail, loadTrails } from '../lib/trails.js';
 import {
   haversineKm, stopNameFromRef, trailRating,
   tripGrade, gradeIsDerived, tripRouteType, tripHighlights,
@@ -21,13 +21,17 @@ import {
 } from '../lib/trailExport.js';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { DetailPage } from './DetailSkeleton.jsx';
+import { usePlaceExits } from '../hooks/usePlaceExits.js';
+import {
+  stripCells, previewWords, bboxCentre, TRAIL_LEVEL, TRAIL_EFFORT_LEVEL,
+} from '../lib/detailSkeleton.js';
+import { haversineKm as kmBetween } from '../lib/nearby.js';
 import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import {
-  ArrowLeftIcon, ShareIcon, DownloadIcon, CompassIcon, RouteIcon, BootIcon,
+  DownloadIcon, CompassIcon, RouteIcon, BootIcon, InfoIcon, BulbIcon,
   ClockIcon, MountainIcon, MapPinIcon, CheckIcon, ListDayIcon, CloseIcon,
   ChevronRightIcon, LinkIcon, EyeIcon, SwimIcon, BeachIcon, CastleIcon,
   BedIcon, BottleIcon, LoopIcon, StarIcon, CameraIcon,
@@ -49,6 +53,12 @@ import { FigureFooter } from './HonestFooters.jsx';
  *                           climb, an off-route warning, the screen kept awake
  *   can I take it with me   GPX for hiking apps, KML for Google My Maps, a
  *                           link for anyone (lib/trailExport.js)
+ *
+ * Since T180 the page draws through the shared detail skeleton
+ * (DetailSkeleton.jsx): the route map is its sticky map slot, the elevation
+ * profile its signature slot (T181 makes it the slope-coloured scrubbable
+ * one), the descriptive blocks its collapsed rows. Following still takes the
+ * whole page: the map leaves the column and covers everything under the bar.
  *
  * Loaded lazily so maplibre stays out of the main bundle. The card's
  * simplified line draws at once and the full-resolution geometry from
@@ -110,8 +120,7 @@ function ViewStrip({ images, t }) {
   const [open, setOpen] = useState(null);
   if (!Array.isArray(images) || !images.length) return null;
   return (
-    <section className="tpage-sec">
-      <h2 className="tpage-sec-title">{t('trails.viewsTitle')}</h2>
+    <>
       <div className="tpage-views">
         {images.map((im, i) => (
           <button
@@ -136,8 +145,36 @@ function ViewStrip({ images, t }) {
         ))}
       </div>
       <p className="tpage-credit tpage-views-credit">{t('trails.viewsCredit')}</p>
-    </section>
+    </>
   );
+}
+
+/** The trail grade as a level on the strip's five squares. */
+const trailLevel = (r) => TRAIL_LEVEL[tripGrade(r)] || TRAIL_EFFORT_LEVEL[r?.difficulty] || 0;
+const trailCentre = (r) => bboxCentre(r?.bbox);
+
+/** The nearest catalogue town within 30 km of a trail, for the "cheaper"
+ *  exit: the town you would sleep in. Cached per row, because the exits ask
+ *  for the same forty rows on every render. */
+const NEAR_TOWN_KM = 30;
+const townCache = new WeakMap();
+function nearestTown(row, dests) {
+  if (!row || !dests) return null;
+  if (townCache.has(row)) return townCache.get(row);
+  const c = trailCentre(row);
+  let best = null;
+  let bestKm = NEAR_TOWN_KM;
+  if (c) {
+    for (const [id, d] of Object.entries(dests)) {
+      const lat = d?.city_lat ?? d?.lat;
+      const lon = d?.city_lon ?? d?.lon;
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+      const km = kmBetween(c.lat, c.lon, lat, lon);
+      if (km != null && km < bestKm) { best = id; bestKm = km; }
+    }
+  }
+  townCache.set(row, best);
+  return best;
 }
 
 /**
@@ -213,15 +250,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const [follow, setFollow] = useState(false);
   const [centred, setCentred] = useState(true);
   const [toast, setToast] = useState(null);
-  // The bar repeats the name only once the heading itself has scrolled away
-  // (or while following, when the map covers the heading).
-  const [titleGone, setTitleGone] = useState(false);
   const mapEl = useRef(null);
   const mapRef = useRef(null);
-  const scrollEl = useRef(null);
-  const pageRef = useRef(null);
-  const backRef = useRef(null);
-  const titleEl = useRef(null);
 
   useEffect(() => {
     let live = true;
@@ -229,32 +259,31 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     return () => { live = false; };
   }, [tr.id]);
 
-  // Focus management for the dialog, plus this page's own Escape rule:
+  // This page's own Escape rule, which the skeleton's focus trap calls:
   // following the walk on GPS is a mode inside the page, so the first
   // Escape leaves the mode and only the second closes the page.
   const escapeClose = React.useCallback(() => {
     if (follow) setFollow(false);
     else onClose();
   }, [follow, onClose]);
-  useFocusTrap(pageRef, escapeClose, { initialFocusRef: backRef });
+
+  // Three ways out, from the same country's trails (T180). A city day is a
+  // different kind of page and gets none.
+  const exits = usePlaceExits({
+    me: isCityDay ? null : tr,
+    cc: tr.country || tr.cc,
+    load: loadTrails,
+    centre: trailCentre,
+    level: trailLevel,
+    baseOf: (r) => nearestTown(r, dests),
+    open: (row) => onOpenNeighbour?.('trail', row),
+  });
 
   useEffect(() => {
     if (!toast) return undefined;
     const timer = setTimeout(() => setToast(null), 2600);
     return () => clearTimeout(timer);
   }, [toast]);
-
-  useEffect(() => {
-    const el = titleEl.current;
-    const root = scrollEl.current;
-    if (!el || !root) return undefined;
-    const io = new IntersectionObserver(
-      ([entry]) => setTitleGone(!entry.isIntersecting),
-      { root, threshold: 0 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   const src = detail || tr;
   const pts = useMemo(() => routePoints(src.geometry), [src]);
@@ -508,21 +537,303 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const ascent = detail?.ascent_m ?? tr.ascent_m;
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
 
-  return (
-    <div className={`tpage ${follow ? 'following' : ''}`} role="dialog" aria-modal="true" aria-label={tr.name} ref={pageRef}>
-      <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
-          <ArrowLeftIcon size={15} />
-          <span>{t('trails.back')}</span>
-        </button>
-        <span className={`tpage-bar-title ${titleGone || follow ? 'on' : ''}`}>{tr.name}</span>
-        <FavStar on={fav} onToggle={onFav} />
-        <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
-          <ShareIcon size={15} />
-        </button>
-      </div>
+  // The strip under the hero: the grade, the kind of walk, the length.
+  const cells = stripCells({
+    level: TRAIL_LEVEL[grade] || TRAIL_EFFORT_LEVEL[tr.difficulty] || 0,
+    word: diffKey ? t(diffKey) + (derivedGrade ? ' ~' : '') : '',
+    type: t(kindKey),
+    number: isNum(totalM) ? `${km1(totalM)} km` : '',
+  }, t);
 
-      <div className="tpage-scroll" ref={scrollEl}>
+  // The view image: the first photograph shot on the route, the card's own
+  // picture next, and the nearest town's hero last, captioned as that town
+  // so nobody reads it as a picture of the path.
+  const heroShot = detail?.images?.[0] || (tr.img?.u ? { u: tr.img.u } : null);
+  const heroUrl = heroShot?.u || assoc.photoUrl || null;
+  const heroCredit = heroShot?.author ? (
+    <p className="bpage-credit">
+      <CameraIcon size={12} />
+      <span className="lpage-credit-line">
+        {heroShot.page
+          ? <a href={heroShot.page} target="_blank" rel="noopener noreferrer">{heroShot.author}</a>
+          : <span>{heroShot.author}</span>}
+        {heroShot.license ? `, ${heroShot.license}` : ''}
+      </span>
+    </p>
+  ) : (!heroShot && assoc.photoOf ? (
+    <p className="bpage-credit">
+      <CameraIcon size={12} />
+      <span className="lpage-credit-line">{t('detail.photoNear', { place: assoc.photoOf })}</span>
+    </p>
+  ) : null);
+
+  const why1 = why[0]?.text || '';
+  const hook = why1 || story.points[0]?.text || '';
+  const ref = tr.f?.ref || null;
+  const sfTop = detail?.sf
+    ? Object.entries(detail.sf)
+      .filter(([k, v]) => k !== 'unknown' && Number(v) > 0.05)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([k, v]) => `${Math.round(v * 100)}% ${t(`route.surf${k.charAt(0).toUpperCase()}${k.slice(1)}`).toLowerCase()}`)
+    : [];
+
+  // Slot 6: the collapsed rows (T180). Each is a block that used to sit open
+  // under the facts.
+  const rows = [
+    {
+      key: 'facts',
+      icon: InfoIcon,
+      label: t('detail.factsHead'),
+      summary: factLine,
+      body: (
+        <>
+          <div className="tpage-facts">
+            {isNum(totalM) && <Fact label={t('trails.factDistance')} value={`${km1(totalM)} km`} />}
+            {isNum(src.duration_min) && <Fact label={t(isCityDay ? 'trails.factDay' : 'trails.factTime')} value={`${hoursText(src.duration_min)} h`} />}
+            {isNum(ascent) && <Fact label={t('trails.factAscent')} value={`${Math.round(ascent)} m`} />}
+            {isNum(detail?.descent_m) && <Fact label={t('trails.factDescent')} value={`${Math.round(detail.descent_m)} m`} />}
+            {isNum(detail?.elevation?.ele_max_m) && <Fact label={t('trails.factHigh')} value={`${Math.round(detail.elevation.ele_max_m)} m`} />}
+            {isCityDay && isNum(tr.n_stops) && <Fact label={t('trails.factStops')} value={String(tr.n_stops)} />}
+            {diffKey && (
+              <Fact
+                label={t('trails.factDifficulty')}
+                value={t(diffKey) + (derivedGrade ? ' ~' : '')}
+                title={derivedGrade ? t('trails.gradeDerived') : t('trails.gradeFrom')}
+                word
+              />
+            )}
+            {shapeKey && <Fact label={t('trails.shapeLabel')} value={t(shapeKey)} word />}
+          </div>
+          {/* What the walk goes past and who it suits, as chips rather than
+              as prose. Two rows, and the second one says which claims came
+              off the map and which are ours: "a mapper recorded that dogs are
+              allowed here" and "this looked gentle to us" are not the same
+              promise, and a chip that blurs them is worse than no chip. */}
+          {(highlightCodes.length > 0 || suits.length > 0) && (
+            <div className="tpage-chips">
+              {highlightCodes.map((code) => (
+                <span key={code} className="tpage-chip tpage-chip-hl">
+                  {t(HIGHLIGHT_LABEL[code] || 'trails.hlSummit')}
+                </span>
+              ))}
+              {suits.map((code) => {
+                const est = suitabilityIsDerived(src.f ? src : tr, code);
+                return (
+                  <span
+                    key={code}
+                    className={`tpage-chip tpage-chip-suit${est ? ' est' : ''}`}
+                    title={t(est ? 'trails.suitEstimated' : 'trails.suitTagged')}
+                  >
+                    {t(SUIT_LABEL[code] || code)}
+                    {est ? <i aria-hidden="true">~</i> : null}
+                  </span>
+                );
+              })}
+            </div>
+          )}
+        </>
+      ),
+    },
+    why.length > 0 && {
+      key: 'why',
+      icon: BulbIcon,
+      label: t('trails.whyTitle'),
+      summary: previewWords(why1),
+      body: (
+        <div className="tpage-why">
+          <ul className="tpage-story">
+            {why.map((p) => {
+              const Icon = STORY_ICONS[p.icon] || CheckIcon;
+              return (
+                <li key={p.key}>
+                  <span className="tpage-story-icon"><Icon size={14} /></span>
+                  <span>{p.text}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ),
+    },
+    Array.isArray(detail?.images) && detail.images.length > 0 && {
+      key: 'views',
+      icon: CameraIcon,
+      label: t('trails.viewsTitle'),
+      summary: t('detail.photoCount', { n: detail.images.length }),
+      body: <ViewStrip images={detail.images} t={t} />,
+    },
+    detail?.sf && {
+      key: 'underfoot',
+      icon: BootIcon,
+      label: t('route.surfaceTitle'),
+      summary: sfTop.join(', '),
+      body: <SurfaceBar sf={detail.sf} t={t} />,
+    },
+    Array.isArray(detail?.highlights) && detail.highlights.length > 0 && {
+      key: 'see',
+      icon: EyeIcon,
+      label: t('trails.seeTitle'),
+      summary: previewWords(detail.highlights.slice(0, 3).map((h) => h.name).join(', ')),
+      body: (
+        <ol className="tpage-highlights">
+          {detail.highlights.map((h, i) => (
+            <li key={`${h.name}-${i}`}>
+              <span className="tpage-hl-name">{h.name}</span>
+              <span className="tpage-hl-facts">
+                <span>{t(`trails.kind_${h.kind}`)}</span>
+                {isNum(h.ele_m) && <span>{Math.round(h.ele_m)} m</span>}
+                {isNum(h.along_m) && <span>{t('trails.atKm', { km: km1(h.along_m) })}</span>}
+              </span>
+            </li>
+          ))}
+        </ol>
+      ),
+    },
+    (story.points.length > 0 || story.prose?.length > 0) && {
+      key: 'expect',
+      icon: RouteIcon,
+      label: t('trails.expectTitle'),
+      summary: previewWords(story.points[0]?.text || story.prose?.[0] || ''),
+      body: (
+        <div className="tpage-expect">
+          {/* Same list styling as the why row, its own class: one is the
+              argument for the walk and one is the description of it, and a
+              reader of the DOM (or a harness) has to be able to tell which
+              is which. */}
+          {story.points.length > 0 && (
+            <ul className="tpage-story">
+              {story.points.map((p) => {
+                const Icon = STORY_ICONS[p.icon] || RouteIcon;
+                return (
+                  <li key={p.key}>
+                    <span className="tpage-story-icon"><Icon size={14} /></span>
+                    <span>{p.text}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {story.prose?.length > 0 && (
+            <div className="tpage-prose">
+              {story.prose.map((p, i) => <p key={i}>{p}</p>)}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    detail?.stages?.length > 0 && {
+      key: 'stages',
+      icon: ListDayIcon,
+      label: t('route.stagesTitle'),
+      summary: previewWords(detail.stages.map((st) => st.name).filter(Boolean).slice(0, 3).join(', ')),
+      body: <Stages stages={detail.stages} t={t} onOpenRoute={null} />,
+    },
+    bases.length > 0 && {
+      key: 'bases',
+      icon: BedIcon,
+      label: t('route.basesTitle'),
+      summary: previewWords(bases.map((b) => b.city || b.name).filter(Boolean).join(', ')),
+      body: <Bases bases={bases} t={t} onSelectDest={onSelectDest} />,
+    },
+    Array.isArray(stops) && stops.length > 0 && {
+      key: 'stops',
+      icon: MapPinIcon,
+      label: t('trails.stopsTitle'),
+      summary: previewWords(stops.slice(0, 3).map((st) => stopNameFromRef(st.poi_ref)).join(', ')),
+      body: (
+        <ol className="tpage-stops">
+          {stops.map((st) => (
+            <li key={st.seq}>
+              <span className="tpage-stop-name">{stopNameFromRef(st.poi_ref)}</span>
+              <span className="tpage-stop-facts">
+                {st.dwell_min != null && <span>{t('trails.dwell', { min: st.dwell_min })}</span>}
+                {st.leg_duration_min != null && st.seq > 1 && (
+                  <span>{t(st.leg_mode === 'transit' ? 'trails.legTransit' : 'trails.legWalk', { min: st.leg_duration_min })}</span>
+                )}
+              </span>
+            </li>
+          ))}
+        </ol>
+      ),
+    },
+    family && family.size > 1 && {
+      key: 'family',
+      icon: LoopIcon,
+      label: t('trails.familyPart', { name: family.n || family.k }),
+      summary: t('trails.familyStages', { n: family.size }),
+      body: <p className="tpage-family-n">{t('trails.familyStages', { n: family.size })}</p>,
+    },
+  ].filter(Boolean);
+
+  return (
+    <DetailPage
+      name={tr.name}
+      className={follow ? 'following' : ''}
+      backLabel={t('trails.back')}
+      onClose={onClose}
+      onEscape={escapeClose}
+      fav={fav}
+      onFav={onFav}
+      onShare={onShare}
+      barTitleOn={follow}
+      resetKey={tr.id}
+      toast={toast}
+      hero={{
+        sharedKey: tr.id,
+        cells,
+        media: heroUrl ? (
+          <img
+            className="dsk-hero-img"
+            src={heroUrl}
+            alt={heroShot?.caption || tr.name}
+            loading="eager"
+            decoding="async"
+          />
+        ) : null,
+        credit: heroCredit,
+      }}
+      head={(
+        <div className="tpage-head">
+          <h1 className="tpage-title">
+            {tr.name}
+            {ref && <span className="dsk-ref">{ref}</span>}
+          </h1>
+          <div className="tpage-sub">
+            {place && <span>{[place.city, place.country].filter(Boolean).join(', ')}</span>}
+            {isCityDay && assoc.dest?.rating && (
+              <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
+            )}
+            {!isCityDay && rating && (
+              <RatingBadge rating={rating} size="xs" showGem={false} />
+            )}
+            {!isCityDay && loop && (
+              <span className="tpage-loop">
+                <LoopIcon size={12} />
+                {t('trails.loop')}
+              </span>
+            )}
+          </div>
+          {/* The trailhead is where the day's idea sits; the bbox centre
+              stands in until the geometry has loaded. */}
+          {onAddToDay && (
+            <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: tr.id, cc: tr.country || tr.cc, name: tr.name, lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat), lon: start ? start.lon : (tr.bbox ? (tr.bbox[0] + tr.bbox[2]) / 2 : tr.lon) })}>
+              <SunIcon size={14} />
+              <span>{t('feat.addToDay')}</span>
+            </button>
+          )}
+        </div>
+      )}
+      hook={hook}
+      notFor={(
+        <NotFor lines={notForLines('trail', tr, {
+          reasons: detail?.reasons || tr.reasons,
+          grade,
+          ascent,
+          totalM,
+        })} />
+      )}
+      map={(
         <div className="tpage-hero">
           <div className="tpage-map" ref={mapEl} />
           {follow && (
@@ -568,287 +879,18 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
             </div>
           )}
         </div>
-
-        <div className="tpage-col">
-          <div className="tpage-head">
-            <span className={`places-card-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>
-            <h1 className="tpage-title" ref={titleEl}>{tr.name}</h1>
-            <div className="tpage-sub">
-              {place && <span>{[place.city, place.country].filter(Boolean).join(', ')}</span>}
-              {isCityDay && assoc.dest?.rating && (
-                <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
-              )}
-              {!isCityDay && rating && (
-                <RatingBadge rating={rating} size="xs" showGem={false} />
-              )}
-              {!isCityDay && loop && (
-                <span className="tpage-loop">
-                  <LoopIcon size={12} />
-                  {t('trails.loop')}
-                </span>
-              )}
-            </div>
-            {/* The trailhead is where the day's idea sits; the bbox centre
-                stands in until the geometry has loaded. */}
-            {onAddToDay && (
-              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: tr.id, cc: tr.country || tr.cc, name: tr.name, lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat), lon: start ? start.lon : (tr.bbox ? (tr.bbox[0] + tr.bbox[2]) / 2 : tr.lon) })}>
-                <SunIcon size={14} />
-                <span>{t('feat.addToDay')}</span>
-              </button>
-            )}
-          </div>
-
-          <NotFor lines={notForLines('trail', tr, {
-            reasons: detail?.reasons || tr.reasons,
-            grade,
-            ascent,
-            totalM,
-          })} />
-
-          <div className="tpage-facts">
-            {isNum(totalM) && <Fact label={t('trails.factDistance')} value={`${km1(totalM)} km`} />}
-            {isNum(src.duration_min) && <Fact label={t(isCityDay ? 'trails.factDay' : 'trails.factTime')} value={`${hoursText(src.duration_min)} h`} />}
-            {isNum(ascent) && <Fact label={t('trails.factAscent')} value={`${Math.round(ascent)} m`} />}
-            {isNum(detail?.descent_m) && <Fact label={t('trails.factDescent')} value={`${Math.round(detail.descent_m)} m`} />}
-            {isNum(detail?.elevation?.ele_max_m) && <Fact label={t('trails.factHigh')} value={`${Math.round(detail.elevation.ele_max_m)} m`} />}
-            {isCityDay && isNum(tr.n_stops) && <Fact label={t('trails.factStops')} value={String(tr.n_stops)} />}
-            {diffKey && (
-              <Fact
-                label={t('trails.factDifficulty')}
-                value={t(diffKey) + (derivedGrade ? ' ~' : '')}
-                title={derivedGrade ? t('trails.gradeDerived') : t('trails.gradeFrom')}
-                word
-              />
-            )}
-            {shapeKey && <Fact label={t('trails.shapeLabel')} value={t(shapeKey)} word />}
-          </div>
-
-          {/* What the walk goes past and who it suits, as chips rather than
-              as prose. Two rows, and the second one says which claims came
-              off the map and which are ours: "a mapper recorded that dogs are
-              allowed here" and "this looked gentle to us" are not the same
-              promise, and a chip that blurs them is worse than no chip. */}
-          {(highlightCodes.length > 0 || suits.length > 0) && (
-            <div className="tpage-chips">
-              {highlightCodes.map((code) => (
-                <span key={code} className="tpage-chip tpage-chip-hl">
-                  {t(HIGHLIGHT_LABEL[code] || 'trails.hlSummit')}
-                </span>
-              ))}
-              {suits.map((code) => {
-                const est = suitabilityIsDerived(src.f ? src : tr, code);
-                return (
-                  <span
-                    key={code}
-                    className={`tpage-chip tpage-chip-suit${est ? ' est' : ''}`}
-                    title={t(est ? 'trails.suitEstimated' : 'trails.suitTagged')}
-                  >
-                    {t(SUIT_LABEL[code] || code)}
-                    {est ? <i aria-hidden="true">~</i> : null}
-                  </span>
-                );
-              })}
-            </div>
-          )}
-
-          {/* The path this walk is one stage of.
-              Route families collapse to one slot, which is what stops
-              Bulgaria's list reading as ST701 through ST710, and it also
-              means the PATH itself would otherwise be nameless: the E paths
-              (E1 to E12) are mapped as dozens of national stage relations
-              named after the towns they run between, so a reader would see
-              "Bad Meinberg to Horn" and never learn they were looking at a
-              route that crosses a continent. This is the family's page: the
-              row that took the slot names what it stands for, and links the
-              siblings that are published too. */}
-          {family && family.size > 1 && (
-            <section className="tpage-sec tpage-family">
-              <h2 className="tpage-sec-title">
-                {t('trails.familyPart', { name: family.n || family.k })}
-              </h2>
-              <p className="tpage-family-n">
-                {t('trails.familyStages', { n: family.size })}
-              </p>
-            </section>
-          )}
-
-          {/* Three notes that are claims about the data rather than about the
-              walk, so they read as provenance and not as features. */}
-          {(listed || portal || isDerivedRoute(src) || isDerivedRoute(tr)) && (
-            <div className="tpage-provenance">
-              {listed && <p>{t('trails.listedNote')}</p>}
-              {portal && (
-                <p>
-                  {t('trails.portalVerified', {
-                    source: typeof portal === 'string' ? portal : '',
-                  })}
-                </p>
-              )}
-              {(isDerivedRoute(src) || isDerivedRoute(tr)) && (
-                <p>{t('trails.derivedRouteNote')}</p>
-              )}
-            </div>
-          )}
-
-          {/* The argument for the walk, before the machinery of taking it
-              away. Short on purpose: three to six measured claims, each one
-              checkable against the map, and every word composed through t()
-              from codes rather than shipped as English prose. */}
-          {why.length > 0 && (
-            <section className="tpage-sec tpage-why">
-              <h2 className="tpage-sec-title">{t('trails.whyTitle')}</h2>
-              <ul className="tpage-story">
-                {why.map((p) => {
-                  const Icon = STORY_ICONS[p.icon] || CheckIcon;
-                  return (
-                    <li key={p.key}>
-                      <span className="tpage-story-icon"><Icon size={14} /></span>
-                      <span>{p.text}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          )}
-
-          {/* Everything you can do with the route, in one block under the
-              facts. Taking it into the app you already walk with is the
-              primary action, because that is what this page is for; following
-              it here is a secondary that promises only what a browser tab can
-              deliver. */}
-          {!follow && (
-            <>
-              <button type="button" className="tpage-primary" onClick={onGpx}>
-                <DownloadIcon size={16} />
-                <span>{t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}</span>
-              </button>
-              <div className="tpage-acts">
-                <button type="button" className="tpage-act" onClick={onKml}>
-                  <MapPinIcon size={15} />
-                  <span>{t('trails.kml')}</span>
-                </button>
-                <button type="button" className="tpage-act" onClick={onShare}>
-                  <LinkIcon size={15} />
-                  <span>{t('trails.shareLink')}</span>
-                </button>
-                <button type="button" className="tpage-act tpage-follow" onClick={startFollow}>
-                  <CompassIcon size={15} />
-                  <span>{t('trails.follow')}</span>
-                </button>
-              </div>
-            </>
-          )}
-
-          {!follow && <ViewStrip images={detail?.images} t={t} />}
-
-          {!isCityDay && detail?.elevation && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trails.elevTitle')}</h2>
-              <ElevationChart elevation={detail.elevation} atM={follow && onRoute ? onRoute.m : null} label={t('trails.elevTitle')} maxLabel={t('trails.elevMax')} />
-            </section>
-          )}
-
-          {/* What is underfoot (ROUTES.md R7). The unknown share is shown
-              rather than hidden: nobody having tagged it is not the same
-              claim as the ground being good. */}
-          {!follow && detail?.sf && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('route.surfaceTitle')}</h2>
-              <SurfaceBar sf={detail.sf} t={t} />
-            </section>
-          )}
-
-          {/* A path's own stages, in order. Only a parent has these; a stage
-              gets the path's name instead, which is the same relationship
-              read from the other end. */}
-          {!follow && detail?.stages?.length > 0 && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('route.stagesTitle')}</h2>
-              <Stages stages={detail.stages} t={t} onOpenRoute={null} />
-            </section>
-          )}
-
-          {/* Our own towns along the line, in the order you meet them. */}
-          {!follow && bases.length > 0 && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('route.basesTitle')}</h2>
-              <Bases bases={bases} t={t} onSelectDest={onSelectDest} />
-            </section>
-          )}
-
-          {/* What you actually walk past, in the order you meet it. From the
-              OSM landmarks scenic.py measured against the line, so a name here
-              means the route passes within 250 m of it. */}
-          {!follow && Array.isArray(detail?.highlights) && detail.highlights.length > 0 && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trails.seeTitle')}</h2>
-              <ol className="tpage-highlights">
-                {detail.highlights.map((h, i) => (
-                  <li key={`${h.name}-${i}`}>
-                    <span className="tpage-hl-name">{h.name}</span>
-                    <span className="tpage-hl-facts">
-                      <span>{t(`trails.kind_${h.kind}`)}</span>
-                      {isNum(h.ele_m) && <span>{Math.round(h.ele_m)} m</span>}
-                      {isNum(h.along_m) && <span>{t('trails.atKm', { km: km1(h.along_m) })}</span>}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          )}
-
-          {story.points.length > 0 && (
-            <section className="tpage-sec tpage-expect">
-              <h2 className="tpage-sec-title">{t('trails.expectTitle')}</h2>
-              {/* Same list styling as the why section above, its own class:
-                  one is the argument for the walk and one is the description
-                  of it, and a reader of the DOM (or a harness) has to be able
-                  to tell which is which. */}
-              <ul className="tpage-story">
-                {story.points.map((p) => {
-                  const Icon = STORY_ICONS[p.icon] || RouteIcon;
-                  return (
-                    <li key={p.key}>
-                      <span className="tpage-story-icon"><Icon size={14} /></span>
-                      <span>{p.text}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          )}
-
-          {story.prose && story.prose.length > 0 && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trails.aboutTitle')}</h2>
-              <div className="tpage-prose">
-                {story.prose.map((p, i) => <p key={i}>{p}</p>)}
-              </div>
-            </section>
-          )}
-
-          {Array.isArray(stops) && stops.length > 0 && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trails.stopsTitle')}</h2>
-              <ol className="tpage-stops">
-                {stops.map((s) => (
-                  <li key={s.seq}>
-                    <span className="tpage-stop-name">{stopNameFromRef(s.poi_ref)}</span>
-                    <span className="tpage-stop-facts">
-                      {s.dwell_min != null && <span>{t('trails.dwell', { min: s.dwell_min })}</span>}
-                      {s.leg_duration_min != null && s.seq > 1 && (
-                        <span>{t(s.leg_mode === 'transit' ? 'trails.legTransit' : 'trails.legWalk', { min: s.leg_duration_min })}</span>
-                      )}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          )}
-
+      )}
+      signature={!isCityDay && detail?.elevation ? (
+        <section className="tpage-sec">
+          <h2 className="tpage-sec-title">{t('trails.elevTitle')}</h2>
+          <ElevationChart elevation={detail.elevation} atM={follow && onRoute ? onRoute.m : null} label={t('trails.elevTitle')} maxLabel={t('trails.elevMax')} />
+        </section>
+      ) : null}
+      rows={rows}
+      gettingThere={(
+        <>
           {start && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trails.startTitle')}</h2>
+            <>
               <div className="tpage-start">
                 <span className="tpage-start-coords">
                   {start.lat.toFixed(5)}, {start.lon.toFixed(5)}
@@ -867,9 +909,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
                   <span>{t('trails.startDirections')}</span>
                 </a>
               )}
-            </section>
+            </>
           )}
-
           {isCityDay && assoc.destId && (
             <button type="button" className="tpage-cta" onClick={() => onSelectDest(assoc.destId)}>
               <span>{t('trails.openDest', { city: assoc.dest?.city || '' })}</span>
@@ -881,14 +922,63 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
               </span>
             </button>
           )}
-
-          <NearbyOutdoors
-            row={tr}
-            cc={tr.country}
-            headings={{ peak: 'nb.trail.peak', lake: 'nb.trail.lake', beach: 'nb.trail.beach' }}
-            onOpen={onOpenNeighbour}
-          />
-
+        </>
+      )}
+      takeAway={!follow ? (
+        <>
+          {/* Taking it into the app you already walk with is the primary
+              action, because that is what this page is for; following it
+              here is a secondary that promises only what a browser tab can
+              deliver. */}
+          <button type="button" className="tpage-primary" onClick={onGpx}>
+            <DownloadIcon size={16} />
+            <span>{t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}</span>
+          </button>
+          <div className="tpage-acts">
+            <button type="button" className="tpage-act" onClick={onKml}>
+              <MapPinIcon size={15} />
+              <span>{t('trails.kml')}</span>
+            </button>
+            <button type="button" className="tpage-act" onClick={onShare}>
+              <LinkIcon size={15} />
+              <span>{t('detail.sendLink')}</span>
+            </button>
+            <button type="button" className="tpage-act tpage-follow" onClick={startFollow}>
+              <CompassIcon size={15} />
+              <span>{t('trails.follow')}</span>
+            </button>
+          </div>
+        </>
+      ) : null}
+      exits={exits}
+      nearby={(
+        <NearbyOutdoors
+          row={tr}
+          cc={tr.country}
+          headings={{ peak: 'nb.trail.peak', lake: 'nb.trail.lake', beach: 'nb.trail.beach' }}
+          onOpen={onOpenNeighbour}
+        />
+      )}
+      licenceKeys={['credit.licence.routes']}
+      sources={(
+        <>
+          {/* Three notes that are claims about the data rather than about the
+              walk, so they read as provenance and not as features. */}
+          {(listed || portal || isDerivedRoute(src) || isDerivedRoute(tr)) && (
+            <div className="tpage-provenance">
+              {listed && <p>{t('trails.listedNote')}</p>}
+              {portal && (
+                <p>
+                  {t('trails.portalVerified', {
+                    source: typeof portal === 'string' ? portal : '',
+                  })}
+                </p>
+              )}
+              {(isDerivedRoute(src) || isDerivedRoute(tr)) && (
+                <p>{t('trails.derivedRouteNote')}</p>
+              )}
+            </div>
+          )}
           {/* Length, climb and height are read off the geometry and the
               elevation model. The time is our arithmetic on them, and a
               grade that is not the mapper's own is ours too. */}
@@ -901,12 +991,9 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
             isCityDay && isNum(tr.n_stops) && 'm',
             diffKey && (derivedGrade ? 'c' : 'm'),
           ]} />
-
           <p className="tpage-credit">{detail?.attribution_text || tr.attribution_text}</p>
-        </div>
-      </div>
-
-      {toast && <div className="tpage-toast" role="status">{toast}</div>}
-    </div>
+        </>
+      )}
+    />
   );
 }

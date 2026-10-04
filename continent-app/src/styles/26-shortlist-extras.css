@@ -216,11 +216,9 @@
 .wq-group + .wq-group { margin-top: var(--space-4); }
 .wq-group-label {
   display: block;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-bottom: var(--space-2);
 }
 
@@ -275,11 +273,9 @@
 .wq-done-check { flex: none; display: flex; color: var(--accent); }
 .wq-done-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
 .wq-done-text small {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .wq-done-text b { font-size: 13.5px; font-weight: 550; }
 .wq-done-edit { flex: none; display: flex; color: var(--ink-mute); }
@@ -380,9 +376,9 @@
 .mcard-match {
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--ink);
 }
-.mcard-month { font-weight: 400; color: var(--ink-mute); }
+.mcard-month { font-weight: 400; color: var(--ink-soft); }
 
 .mcard-why { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
 .mcard-why li {
@@ -435,13 +431,17 @@
   font-weight: 600;
   cursor: pointer;
 }
+/* One Add per card in a list of cards is a row action, so it is the
+   secondary face; the step's Next stays its one primary. Added is a pressed
+   toggle: --ink-fill (T193). */
 .mcard-add {
   flex: 1;
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: var(--on-fill);
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink);
 }
-.mcard-add.on { background: var(--accent-bg); color: var(--accent); }
+.mcard-add:hover { border-color: var(--ink-soft); }
+.mcard-add.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
 .mcard-info {
   flex: none;
   border: 1px solid var(--rule);
@@ -731,16 +731,17 @@
   position: absolute; left: 8px; top: 8px;
   padding: 3px 8px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--ink-fill);
   color: var(--on-fill);
-  font-family: var(--mono); font-size: 10px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.05em;
+  font-family: var(--ui); font-size: 12px; font-weight: 600;
 }
 .dayex-card-text { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px; min-width: 0; }
 .dayex-card-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .dayex-card-name b { font-size: 14.5px; line-height: 1.3; }
-/* How far, in the unit the distance deserves. Mono, because it is measured. */
-.dayex-card-dist { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); }
+/* How far, in the unit the distance deserves. The line is a short phrase
+   ("22 km, about 39 min drive"), so it takes the UI face: a number inside
+   words is prose (carta-design mono rule, T193). */
+.dayex-card-dist { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); }
 .dayex-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .dayex-card-fact { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
 .dayex-card-sub { font-size: 11.5px; color: var(--ink-mute); }
@@ -769,7 +770,9 @@
   box-shadow: var(--shadow-1);
 }
 .dayex-add:hover { border-color: var(--accent); color: var(--accent); }
-.dayex-add.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+/* Added is a pressed toggle, so --ink-fill; "Open my day" is the view's one
+   primary (T193). */
+.dayex-add.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
 
 /* ---- the tray ---------------------------------------------------------- */
 /* Phone: a bar above the bottom nav, so the running total of the day and the
@@ -802,17 +805,9 @@
   .dayex-tray-carta, .dayex-tray-open { flex: 1 1 0; }
 }
 .dayex-tray-carta, .dayex-tray-open {
-  height: 40px;
   padding: 0 14px;
-  border-radius: 999px;
-  font: inherit; font-size: 13px; font-weight: 600;
-  cursor: pointer;
   white-space: nowrap;
 }
-.dayex-tray-carta { border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
-.dayex-tray-carta:hover { border-color: var(--ink-soft); }
-.dayex-tray-open { border: 1px solid var(--accent); background: var(--accent); color: var(--on-fill); }
-.dayex-tray-open:disabled { opacity: 0.45; cursor: not-allowed; }
 .dayex-tray-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .dayex-tray-list li {
   display: flex; align-items: center; gap: 10px;
@@ -968,7 +963,6 @@
      cut a chip in half. */
   .dayex-chips { mask-image: linear-gradient(to right, var(--mask-solid) calc(100% - 28px), transparent); padding-right: 28px; }
   .dayex-tray-summary { min-height: var(--tap); display: flex; align-items: center; }
-  .dayex-tray-carta, .dayex-tray-open { height: var(--tap); }
   .dayex-tray-moves button { width: var(--tap); height: var(--tap); }
   /* Map pins keep their size (a 44px dot would hide the map) and grow an
      invisible tap box around them instead; the audit measures that box. */
@@ -991,6 +985,8 @@
   .wready-link, .tday-more, .itin-stop-open, .guide-answered-edit, .tleg-link {
     display: inline-flex; align-items: center; min-height: var(--tap);
   }
+  /* "Edit" is one short word, so the pill also needs the width (T193). */
+  .guide-answered-edit { min-width: var(--tap); justify-content: center; }
   .tpage-back { min-height: var(--tap); }
   .tpage-bar-act { width: var(--tap); height: var(--tap); }
   .tlegs-shift-btn { width: var(--tap); height: var(--tap); }

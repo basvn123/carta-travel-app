@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
+import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import { addDays, todayISO, fmtDate } from '../lib/dates.js';
@@ -233,7 +234,7 @@ function CardSkeletons({ n = 2 }) {
 }
 
 export function ContinueTripCards({
-  plans, destinations, loading, signedIn, authConfigured,
+  plans, destinations, loading, failed = false, onRetry, signedIn, authConfigured,
   onOpenDay, onRequestAuth, onPlanTrip,
 }) {
   const { t } = useI18n();
@@ -265,6 +266,8 @@ export function ContinueTripCards({
         </div>
       ) : loading ? (
         <CardSkeletons />
+      ) : failed ? (
+        <ErrorBlock message={t('state.savedFailed')} onRetry={onRetry} retryLabel={t('layer.retry')} />
       ) : sorted.length === 0 ? (
         <div className="dtempty">
           <p>{t('day.noSavedTrips')}</p>

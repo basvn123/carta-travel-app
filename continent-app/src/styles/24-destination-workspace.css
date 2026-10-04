@@ -2489,11 +2489,9 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 7px;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: .03em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
 .cbrief-group-h .mono { margin-left: auto; font-size: 11px; }
 .cbrief-events { list-style: none; display: grid; gap: 6px; }
@@ -2809,11 +2807,9 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
 .wpicked-name { flex: 1; min-width: 0; font-family: var(--display); font-size: 17px; font-weight: 600; }
 .wpicked-stops { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 4px; }
@@ -4758,14 +4754,14 @@
   }
 
   /* ── Panel furniture. ── */
+  /* A group label, so the UI face in sentence case: an uppercase mono
+     eyebrow spends the measured-fact face on nothing (carta-design, T193). */
   .side-label {
     margin: 0 0 10px;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--ink-mute);
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
   }
   .side-block + .side-block {
     margin-top: 22px;
@@ -4818,8 +4814,8 @@
     font-size: 11.5px;
   }
   .side-panel .kind-rail-chip.on {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--ink-fill);
+    border-color: var(--ink-fill);
     color: var(--on-fill);
   }
   .side-panel .kind-rail-clear {
@@ -5064,7 +5060,7 @@
   .places-sort.on { background: var(--accent); color: var(--on-fill); }
   .places-sort.on .places-sort-dir { color: var(--on-fill); }
   .places-chips { width: 100%; gap: 8px; }
-  .places-filter-btn { flex: 1 1 0; min-width: 0; justify-content: center; height: 42px; }
+  .places-filter-btn { flex: 1 1 0; min-width: 0; justify-content: center; height: var(--tap); }
   .places-chips .country-picker { flex: 1 1 0; min-width: 0; }
   .places-chips .places-country {
     flex: 1 1 0;
@@ -5140,9 +5136,12 @@
     border-radius: 2px;
     background: var(--accent);
   }
+  /* An active kind is a pressed toggle, so --ink-fill, the same as the
+     Destinations tiles above (T166); terracotta is kept for the one action
+     (T193). */
   .explore-toolbar .kind-rail-chip.on {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--ink-fill);
+    border-color: var(--ink-fill);
     color: var(--on-fill);
   }
   .explore-toolbar .kind-rail-chip.on::before { background: rgba(255, 255, 255, 0.7); }
@@ -5150,15 +5149,16 @@
 
   .explore-toolbar .results-search { width: 100%; padding-top: 12px; }
   .explore-search { flex: 1 1 100%; max-width: none; }
-  .explore-search .results-search-input { height: 42px; }
+  .explore-search .results-search-input { height: var(--tap); }
   .explore-toolbar-right { width: 100%; margin-left: 0; padding-top: 10px; gap: 8px; }
   .explore-sort { display: flex; width: 100%; }
   .explore-sort button { flex: 1 1 0; padding: 8px 4px; }
   .results-sort button.on { background: var(--accent); color: var(--on-fill); }
   .explore-chips { width: 100%; gap: 8px; }
-  .explore-filter-btn { flex: 1 1 0; justify-content: center; height: 40px; }
+  .explore-filter-btn { flex: 1 1 0; justify-content: center; height: var(--tap); }
   .explore-chips .lifestyle-btn { flex: 2 1 0; min-width: 0; justify-content: center; }
-  .explore-fav { height: 40px; }
+  .explore-fav { height: var(--tap); }
+  .explore-chips .lifestyle-btn { min-height: var(--tap); }
 
   /* The Explore card is nearly all photograph on the phone too: the body
      folds away and the scrim carries the name, the country, the rating and
@@ -5173,6 +5173,9 @@
   .xcard-overlay-sub { font-size: 10.5px; }
   .xcard-seal { font-size: 9px; padding: 2px 6px; }
   .xcard-star { width: 27px; height: 27px; }
+  /* The star stays a small round mark on the photo, but its tap box is the
+     44px floor: a transparent ring around it takes the touch (T193). */
+  .xcard-star::before { content: ''; position: absolute; inset: -9px; }
 }
 
 /* ============================================================ */

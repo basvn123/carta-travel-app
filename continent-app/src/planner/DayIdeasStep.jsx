@@ -5,6 +5,8 @@ import { cityLabel } from '../lib/placeName.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { haversineKm } from '../lib/runtime_pricing.js';
 import { PoiThumb } from './DayActivityRows.jsx';
+import { Button } from '../components/Button.jsx';
+import { LoadingBlock } from '../components/StateBlocks.jsx';
 import {
   SparkIcon, SearchIcon, CloseIcon, CheckIcon, MapPinIcon, HomeIcon,
   BeachIcon, CastleIcon, MountainIcon, HeartIcon, GlobeIcon, SunIcon,
@@ -228,7 +230,7 @@ export function DayIdeasStep({
   return (
     <div className="day-flow-step">
       <div className="day-flow-panel">
-        <h2 className="day-flow-q">{t('ideas.question')}</h2>
+        <h1 className="day-flow-q">{t('ideas.question')}</h1>
         <p className="day-flow-qsub">{t('ideas.sub')}</p>
 
         {/* The choice comes first. Answering "no" is a real answer, not a
@@ -345,7 +347,7 @@ export function DayIdeasStep({
                               <PoiThumb img={r.img} name={r.name} Glyph={Glyph} />
                               <span className="day-ideas-row-text">
                                 <b>{r.name}</b>
-                                <small>{[r.sub, reach(r.km, t)].filter(Boolean).join(' · ')}</small>
+                                <small>{[r.sub, reach(r.km, t)].filter(Boolean).join(', ')}</small>
                               </span>
                               <span className="day-ideas-row-mark" aria-hidden="true">
                                 {on ? <CheckIcon size={13} /> : '+'}
@@ -360,16 +362,19 @@ export function DayIdeasStep({
               </div>
             )}
 
-            {geoBusy && !groups.length && <p className="day-ideas-note">{t('ideas.searching')}</p>}
+            {/* The address search is a network round trip: list-row
+                skeletons where the hits will land, not a word (T193). */}
+            {geoBusy && !groups.length && <LoadingBlock label={t('ideas.searching')} rows={2} />}
             {nothingFound && <p className="day-ideas-note">{t('ideas.noHits', { q })}</p>}
 
-            <button
+            <Button
+              variant="primary"
               className="day-flow-next"
               onClick={onContinue}
               disabled={!ideas.length}
             >
               {ideas.length === 1 ? t('ideas.continue1') : t('ideas.continueN', { n: ideas.length })}
-            </button>
+            </Button>
           </div>
         )}
       </div>

@@ -34,6 +34,19 @@ const WIRE = 'public/mountains';
 const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
+
+// T180 folded every descriptive block of the five detail pages into a closed
+// row (browse/DetailSkeleton.jsx). A closed row keeps its body in the page,
+// hidden, so counts still see it; text is read the way a reader would get it,
+// by opening the row that holds the selector first.
+async function openRowWith(p, sel) {
+  await p.evaluate((s) => {
+    const el = document.querySelector(s);
+    const row = el && el.closest('.jpage-lrow');
+    if (row && !row.classList.contains('is-open')) row.querySelector('.jpage-lrow-btn').click();
+  }, sel);
+  await p.waitForTimeout(250);
+}
 const errors = [];
 const NOISE = /ERR_FAILED|config is not valid/;
 
@@ -414,26 +427,36 @@ await page.locator('.places-mcard').first().click();
 await page.waitForTimeout(1800);
 check('the mountain page opens', await page.locator('.mpage').isVisible());
 
+// The shared skeleton (T180, spec 5.4): three cells under the hero, a map,
+// and "Getting there" never folded.
+check('the hero strip carries exactly three cells',
+  await page.locator('.dsk-hero .jstrip-cell').count() === 3,
+  `${await page.locator('.dsk-hero .jstrip-cell').count()} cells`);
+check('getting there is on the page and never folded',
+  await page.locator('[data-slot="getting-there"]').isVisible().catch(() => false));
+
 const where = await page.locator('.bpage-where').innerText().catch(() => '');
 check('the page opens with the location', where.trim().length > 1, where.replace(/\n/g, ' '));
 const mapsHref = await page.locator('.bpage-where').getAttribute('href').catch(() => '');
 check('the pin links to a map by coordinate', /google\.com\/maps.*destination=-?\d/.test(mapsHref || ''),
   (mapsHref || '').slice(0, 70));
 
-// The way up, and the fact that it comes BEFORE the photograph. It is the
-// question the reader brought to the page.
+// The way up, and the fact that the reader cannot miss it. Before T180 that
+// meant above the photograph; spec 5.4 puts the view image first on every
+// detail page and makes "Getting there" the slot that is never folded, which
+// is where the way up now sits.
 const way = page.locator('.mpage-way');
 check('the page carries the way up', await way.count() === 1);
 const wayText = await way.innerText().catch(() => '');
 check('the way up is a sentence, not a code', wayText.trim().length > 3,
   wayText.replace(/\n/g, ' ').slice(0, 90));
-const order = await page.evaluate(() => {
+const placed = await page.evaluate(() => {
   const el = document.querySelector('.mpage-way');
-  const gallery = document.querySelector('.bpage-gallery');
-  if (!el || !gallery) return null;
-  return el.compareDocumentPosition(gallery) & Node.DOCUMENT_POSITION_FOLLOWING ? 'before' : 'after';
+  if (!el) return 'missing';
+  if (el.closest('[hidden]')) return 'folded';
+  return el.closest('[data-slot="getting-there"]') ? 'getting there' : 'elsewhere';
 });
-check('the way up sits above the photograph', order !== 'after', String(order));
+check('the way up sits in getting there, never folded', placed === 'getting there', placed);
 
 const shot = await page.locator('.bpage-shot').getAttribute('src').catch(() => '');
 check('the page shows a large photograph', /^https:\/\/upload\.wikimedia\.org/.test(shot || ''));
@@ -452,11 +475,15 @@ const subs = await page.locator('.lpage-subs li').count();
 check('the sub scores are shown separately, not blended',
   subs >= 1 && subs <= 3, `${subs} shown`);
 
+await openRowWith(page, '.bpage-why');
 const why = await page.locator('.bpage-why').innerText().catch(() => '');
 check('the page explains why this mountain', why.length > 40, why.replace(/\n/g, ' ').slice(0, 120));
 check('the explanation is composed prose, not reason codes',
   !/\b(kindPeak|summitFood|viaFerrata|wikiFame|liftsNearby)\b/.test(why));
-const pageText = await page.locator('.bpage-wrap').innerText();
+// .bpage-wrap went with T180; textContent of the skeleton also reads the
+// rows that are still folded, so this and the route-description check below
+// now cover the whole page.
+const pageText = await page.locator('.dsk').textContent();
 check('no untranslated keys leaked into the page', !/mtn\.[a-zA-Z]/.test(pageText));
 
 // Safety. The hazard block is a block, and it sends the reader somewhere
@@ -477,11 +504,15 @@ check('the page never writes a route description',
 
 const bars = await page.locator('.bpage-bars li').count();
 check('the score is broken into its parts', bars >= 4, `${bars} components`);
+await openRowWith(page, '.bpage-facts');
 const facts = await page.locator('.bpage-facts').innerText().catch(() => '');
 check('the measurements list renders', facts.length > 10, facts.replace(/\n/g, ' ').slice(0, 100));
 
 check('no GPX or route export on a mountain page', !/gpx|\bkml\b/i.test(pageText));
-check('no map canvas on a mountain page', await page.locator('.mpage canvas').count() === 0);
+// Reversed by T180: spec 5.4 puts a map on every detail page (a lazy point
+// map, PointMap.jsx), so the check is now that the summit is drawn on one.
+const mtnMap = await page.waitForSelector('.dsk-map canvas', { timeout: 15000 }).catch(() => null);
+check('the summit is drawn on a map', Boolean(mtnMap));
 await page.screenshot({ path: 'shots/mountains-page.png', fullPage: true });
 
 await page.locator('.tpage-back').click();

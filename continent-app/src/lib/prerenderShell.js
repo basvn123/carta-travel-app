@@ -33,7 +33,7 @@ export const BODY_CLOSE = '<!--/carta:body-->';
  *  for n days, optionally under a day budget) are T224's two families. */
 export const PRERENDER_KINDS = Object.freeze([
   'country', 'dest', 'section', 'trail', 'cycle', 'tour',
-  'beach', 'lake', 'mountain', 'region', 'trip', 'journey', 'cost', 'days',
+  'beach', 'lake', 'mountain', 'region', 'trip', 'journey', 'cost', 'days', 'receipt',
 ]);
 
 /** Languages that have pages in the bucket. hreflang wave one is English only
@@ -70,6 +70,7 @@ export function prerenderKey(pathname) {
     case 'mountain': return k(`${cw}/mountains/${p.id.toLowerCase()}`);
     case 'region': return k(`${cw}/regions/${p.id.toLowerCase()}`);
     case 'trip': return k(`trips/${p.id}`);
+    case 'receipt': return k(`trips/${p.id}/receipt`);
     case 'journey': return k(`journeys/${p.id}`);
     default: return null;
   }

@@ -61,6 +61,7 @@ import {
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
+import { Button } from '../components/Button.jsx';
 import { suggestedNights, Flag, CityThumb, StayRow } from './GuidedTripWizardParts.jsx';
 
 const ROUTES_PREVIEW = 14;
@@ -330,8 +331,16 @@ export function GuidedTripWizard({
   // Destinations tab shows, mounted here so "What's there" answers the
   // question in the place that already answers it properly.
   const [tripPageId, setTripPageId] = useState('');
+  // Inline, the wizard IS the Trip planner page, so each step's question is
+  // the page's one h1. As a modal over another page, or while a trip's own
+  // page (which has its h1) is open over it, it steps down to h2 (T193).
+  const StepTitle = inline && !tripPageId ? 'h1' : 'h2';
   const [tripDetail, setTripDetail] = useState(null); // its stops, once loaded
   const [tripLoading, setTripLoading] = useState(false);
+  // The picked trip's detail file failed to arrive (a network failure, not a
+  // retired trip): say so with a retry instead of a skeleton forever (T193).
+  const [tripFailed, setTripFailed] = useState(false);
+  const [tripTry, setTripTry] = useState(0);
   const [tripMissing, setTripMissing] = useState(0);  // stops not in the catalogue
   // What the traveller says the moving about costs, per leg:
   // { [legKey]: { mode, service, eur } }. Carta prices none of it.
@@ -649,9 +658,10 @@ export function GuidedTripWizard({
   // stays become this wizard's stays, so the summary, the route and the
   // hand-over to the planner all work exactly as they do for a built trip.
   useEffect(() => {
-    if (!tripPickId) { setTripDetail(null); setTripMissing(0); return undefined; }
+    if (!tripPickId) { setTripDetail(null); setTripMissing(0); setTripFailed(false); return undefined; }
     let live = true;
     setTripLoading(true);
+    setTripFailed(false);
     loadTrip(tripPickId).then((detail) => {
       if (!live) return;
       setTripLoading(false);
@@ -663,9 +673,13 @@ export function GuidedTripWizard({
       stops.forEach((s) => { nextNights[s.dest] = Math.max(1, s.nights || 1); });
       setNights(nextNights);
       setOrder(stops.map((s) => s.dest));
+    }, () => {
+      if (!live) return;
+      setTripLoading(false);
+      setTripFailed(true);
     });
     return () => { live = false; };
-  }, [tripPickId, destinations]);
+  }, [tripPickId, destinations, tripTry]);
 
   // ---- The trip as dates: one anchor, everything else relative to it ------
   // Nothing below stores a calendar date of its own. Move the start and the
@@ -2070,7 +2084,7 @@ export function GuidedTripWizard({
           {/* ---- Step 2: which countries ---- */}
           {stepName === 'Where' && (
             <>
-              <h2 className="guide-title">{t('wizard.whereTitle')}</h2>
+              <StepTitle className="guide-title">{t('wizard.whereTitle')}</StepTitle>
               <p className="guide-sub">{t('wizard.whereSub')}</p>
 
               {/* The shortlist lives above the tabs, because it belongs to neither
@@ -2310,7 +2324,7 @@ export function GuidedTripWizard({
               not three thousand pixels below the card that chose it. */}
           {stepName === 'Trips' && (
             <>
-              <h2 className="guide-title">{t('wizard.tripsTitle')}</h2>
+              <StepTitle className="guide-title">{t('wizard.tripsTitle')}</StepTitle>
 
               <ReadyTripsStep
                 countries={countries}
@@ -2335,7 +2349,7 @@ export function GuidedTripWizard({
               Carta does not sell any of it. */}
           {stepName === 'Getting' && (
             <>
-              <h2 className="guide-title">{t('wizard.gettingTitle')}</h2>
+              <StepTitle className="guide-title">{t('wizard.gettingTitle')}</StepTitle>
 
               {!tripPick && <p className="guide-empty">{t('ready.noTripYet')}</p>}
 
@@ -2353,6 +2367,10 @@ export function GuidedTripWizard({
                   </div>
 
                   {tripLoading && <LoadingBlock label={t('ready.loadingTrip')} rows={3} />}
+                  {tripFailed && (
+                    <ErrorBlock message={t('state.tripLoadFailed')}
+                      onRetry={() => setTripTry((n) => n + 1)} retryLabel={t('layer.retry')} />
+                  )}
 
                   {tripDetail && (
                     <>
@@ -2401,7 +2419,7 @@ export function GuidedTripWizard({
               and every screen holds one answer. */}
           {stepName === 'Booked' && (
             <>
-              <h2 className="guide-title">{t('wizard.alreadyBooked')}</h2>
+              <StepTitle className="guide-title">{t('wizard.alreadyBooked')}</StepTitle>
 
               {/* The question that shapes the rest of the flow. It is first
                   because every answer below it, and every screen after it,
@@ -2454,7 +2472,7 @@ export function GuidedTripWizard({
 
           {stepName === 'From' && (
             <>
-              <h2 className="guide-title">{t('wizard.originLabel')}</h2>
+              <StepTitle className="guide-title">{t('wizard.originLabel')}</StepTitle>
 
               {/* Where does the trip leave from? A typed address unlocks
                   every airport within 200 km; skipping it keeps the app's
@@ -2610,7 +2628,7 @@ export function GuidedTripWizard({
 
           {stepName === 'When' && (
             <>
-              <h2 className="guide-title">{t('wizard.whenLabel')}</h2>
+              <StepTitle className="guide-title">{t('wizard.whenLabel')}</StepTitle>
 
               {/* Every date control sits on one card: floating single-line
                   inputs across a wide screen read as unrelated fragments, a
@@ -2718,7 +2736,7 @@ export function GuidedTripWizard({
           {/* ---- Step 3, first shape: the cities you already hold ---- */}
           {stepName === 'Stays' && (
             <>
-              <h2 className="guide-title">{t('wizard.staysTitle')}</h2>
+              <StepTitle className="guide-title">{t('wizard.staysTitle')}</StepTitle>
               <p className="guide-sub">{t('wizard.staysSub')}</p>
 
               {stopDates.length > 0 && (
@@ -2799,7 +2817,7 @@ export function GuidedTripWizard({
           {/* ---- Step 3, third shape: pick the cities, Carta routes them ---- */}
           {stepName === 'Stay' && (
             <>
-              <h2 className="guide-title">{t('wizard.stayTitle')}</h2>
+              <StepTitle className="guide-title">{t('wizard.stayTitle')}</StepTitle>
               {/* Building your own is reached from the bottom of the trips
                   list, so the only thing this step owes it is one quiet way
                   back. The two-button mode switch that used to sit here was a
@@ -3220,7 +3238,7 @@ export function GuidedTripWizard({
           {/* ---- Finish (full + landed) ---- */}
           {stepName === 'Finish' && (
             <>
-              <h2 className="guide-title">{t('wizard.finishTitle')}</h2>
+              <StepTitle className="guide-title">{t('wizard.finishTitle')}</StepTitle>
               <p className="guide-sub">{t('wizard.finishSubFull')}</p>
 
               {/* Every trip has to get to the first stop and home from the
@@ -3412,24 +3430,24 @@ export function GuidedTripWizard({
               {/* Step one is the first thing anyone sees now, so there is
                   nothing behind it to go back to. */}
               {step > 1 && (
-                <button className="guide-back" onClick={() => goStep(step - 1)}>{t('wizard.back')}</button>
+                <Button className="guide-back" onClick={() => goStep(step - 1)}>{t('wizard.back')}</Button>
               )}
               {step < steps.length ? (
                 // "Next" says a step happens; it never says which. Naming the
                 // destination is the difference between a form that could go
                 // anywhere and one whose end is in sight.
-                <button className="guide-next" onClick={() => goStep(step + 1)} disabled={!canNext}>
+                <Button variant="primary" className="guide-next" onClick={() => goStep(step + 1)} disabled={!canNext}>
                   {/* The step name as written, not lowercased: German capitalises
                       its nouns and "Weiter: reisen" is a spelling mistake. */}
                   {t('wizard.nextTo', { step: t(STEP_LABEL_KEYS[steps[step]] || 'wizard.stepFinish') })}
-                </button>
+                </Button>
               ) : (
                 // The Finish step's call to action sits in the sticky nav slot
                 // the traveller has used on every step, so a long summary can
                 // never hide the way forward.
-                <button className="guide-next" onClick={finish} disabled={includedIds.length === 0}>
+                <Button variant="primary" className="guide-next" onClick={finish} disabled={includedIds.length === 0}>
                   <SparkIcon size={13} /> {t('wizard.arrangeIt')}
-                </button>
+                </Button>
               )}
             </div>
           </div>

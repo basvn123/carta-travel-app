@@ -960,11 +960,9 @@ button.ai-sched-main:focus-visible {
   right: 9px;
   padding: 3px 8px;
   border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .04em;
-  text-transform: uppercase;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
   background: rgba(255, 255, 255, .92);
   color: var(--ink-soft);
 }
@@ -1102,11 +1100,9 @@ button.ai-sched-main:focus-visible {
   align-items: center;
   gap: 6px;
   margin-bottom: 7px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .1em;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
   color: var(--ink-soft);
 }
 .dtday-chips { display: flex; flex-wrap: wrap; gap: 7px; }
@@ -1249,11 +1245,10 @@ button.ai-sched-main:focus-visible {
    step, common dates on the date step. Same shape both times so "one tap
    shortcut" reads the same. */
 .day-flow-suggest { display: flex; flex-direction: column; gap: 9px; }
-/* The mono overline is the app's section-label device, kept here, but 9.5px of
-   --ink-mute is under AA: same shape, readable weight and ink. */
+/* A section label in the UI face and sentence case. It was an uppercase mono
+   overline, which carta-design bans as a decorative eyebrow (T193). */
 .day-flow-suggest-label {
-  font-family: var(--mono); font-size: 10.5px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.08em;
+  font-family: var(--ui); font-size: 12px; font-weight: 600;
   color: var(--ink-soft);
   text-align: center;
 }
@@ -1390,21 +1385,13 @@ button.ai-sched-main:focus-visible {
   .day-flow-q { font-size: 25px; }
   .day-flow-date { padding-top: 0; }
   .day-flow-date .date-field-inline { max-width: 340px; }
-  .day-flow-next { padding: 12px 24px; }
 }
+/* Each step's one primary is the shared Button (T193); this rule only places
+   it. Its face, height, focus ring and not-yet state come from .btn-primary. */
 .day-flow-next {
   align-self: center;
   min-width: 220px;
-  padding: 14px 26px;
-  border: none;
-  border-radius: 12px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 15px; font-weight: 700;
-  cursor: pointer;
 }
-.day-flow-next:disabled { opacity: 0.45; cursor: not-allowed; }
-.day-flow-next:not(:disabled):hover { box-shadow: 0 3px 14px rgba(200, 80, 30, 0.3); }
 
 /* The fork: chat or by hand. */
 .day-flow-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -1454,8 +1441,7 @@ button.ai-sched-main:focus-visible {
   border-radius: 999px;
   background: var(--accent);
   color: var(--on-fill);
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.06em;
+  font-family: var(--ui); font-size: 12px; font-weight: 600;
   white-space: nowrap;
 }
 /* What each route actually gets you, so the fork is a real comparison

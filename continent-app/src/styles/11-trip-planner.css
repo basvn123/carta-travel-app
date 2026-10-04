@@ -30,6 +30,10 @@
      under a candidate place pin. */
   z-index: 4;
 }
+/* The pin stays 26px to the eye; a transparent ring around it takes a
+   finger at the 44px floor (T193). The marker element is already absolutely
+   placed by maplibre, so the ring sits on it. */
+.trip-pin::before { content: ''; position: absolute; inset: -9px; }
 .trip-pin-shape {
   display: flex;
   align-items: center;
@@ -202,7 +206,7 @@
 }
 .trip-topcard-count {
   margin-left: 8px;
-  color: var(--accent);
+  color: var(--ink-soft);
 }
 
 /* Bottom sheet */
@@ -280,11 +284,9 @@
   min-width: 120px;
 }
 .trip-field-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .trip-dates-arrow {
   color: var(--ink-mute);
@@ -720,24 +722,15 @@
 .trip-launcher-primary:hover { opacity: 0.9; }
 .trip-sheet.sheet-hidden { display: none; }
 
-/* Planned view: the Save / Edit / Replan / Start over actions live in one
-   footer pinned at the BOTTOM of the sheet (mobile and desktop alike):
-   a full-width primary Save/Update on top, the secondary actions - each
-   plainly labelled - in a row beneath it. */
+/* Planned view: the Plan days / Save / Edit / Replan / Start over actions
+   live in one footer pinned at the BOTTOM of the sheet (mobile and desktop
+   alike): the full-width primary on top, the secondaries in a row beneath it.
+   All five are the shared Button (T193), so these rules only place them. */
 .trip-edit-btn, .trip-plan-again-btn, .trip-save-planned-btn, .trip-startover-btn {
-  border-radius: 10px;
-  padding: 9px 14px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 0 14px;
   white-space: nowrap;
 }
-.trip-save-planned-btn { width: 100%; padding: 12px 16px; background: var(--accent); color: var(--on-fill); }
-.trip-save-planned-btn:hover:not(:disabled) { opacity: 0.9; }
-.trip-save-planned-btn:disabled { opacity: 0.6; cursor: default; }
-.trip-edit-btn { background: var(--paper); border: 1px solid var(--rule); color: var(--ink); }
-.trip-edit-btn:hover { border-color: var(--ink-soft); }
-.trip-plan-again-btn, .trip-startover-btn { background: var(--paper); border: 1px solid var(--rule); color: var(--ink-soft); }
-.trip-plan-again-btn:hover { border-color: var(--accent); color: var(--accent); }
+.trip-save-planned-btn { width: 100%; }
 .trip-planned-secondary {
   display: flex;
   gap: 8px;
@@ -875,6 +868,7 @@
 .trip-origin-row { display: flex; }
 .trip-origin-row .origin-picker { position: relative; }
 .trip-startover-btn:hover { border-color: var(--warn-ink); color: var(--warn-ink); }
+.trip-footer-error .state-err-msg { font-size: 13px; }
 .trip-planned-error {
   position: absolute;
   top: 58px; right: 14px;

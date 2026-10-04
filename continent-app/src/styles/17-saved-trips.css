@@ -279,7 +279,7 @@
 }
 .extras-drop-actions { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
 .extras-drop-actions .extras-add-btn { margin-top: 0; background: var(--paper); }
-.extras-drop-hint { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.extras-drop-hint { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); }
 .extras-drop-busy {
   display: flex; align-items: center; gap: 9px;
   font-size: 12.5px; color: var(--ink-soft);

@@ -11,6 +11,8 @@ import { srcSetFor } from '../lib/heroImage.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
 import { safeUrl } from '../lib/format.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
+import { DetailRow, DetailStrip, DetailExits } from './DetailSkeleton.jsx';
+import { previewWords } from '../lib/detailSkeleton.js';
 import { Fold } from './Fold.jsx';
 import { PackGrid } from './PackGrid.jsx';
 import { NotFor } from '../components/NotFor.jsx';
@@ -21,6 +23,8 @@ import { WeekPlan } from './WeekPlan.jsx';
 import { JourneyRoute } from './JourneyRoute.jsx';
 import { bookingOrder, bookingSource } from '../lib/bookingOrder.js';
 import { MonthStrip } from '../components/MonthStrip.jsx';
+import { catalogue } from '../lib/appData.js';
+import { priceRow, MAX_KM } from '../lib/priceMonths.js';
 import { DifficultyMeter, GatewayList } from '../components/FactMeter.jsx';
 import { parseGateway } from '../lib/gateway.js';
 import { railAlternative } from '../lib/railAlternative.js';
@@ -79,50 +83,16 @@ const BLOCK_WORD_LIMIT = 60;
 const wordCount = (text) => String(text || '').trim().split(/\s+/).filter(Boolean).length;
 
 /**
- * A six-word preview of a written block: its first words, markers and the
- * trailing punctuation removed, so a closed row says what is inside without
- * costing a tap. Cut at the first sentence when that is shorter.
- */
-const PREVIEW_TAIL = /^(and|or|but|the|a|an|of|to|in|on|at|for|with|by|from|are|is|was|take|takes|only|between|that|which|as|into)$/i;
-
-function previewWords(text, n = 6) {
-  const plain = String(text || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
-  if (!plain) return '';
-  const sentence = plain.split(/(?<=[.!?;:])\s/)[0];
-  const words = sentence.split(' ').slice(0, n);
-  // A preview that stops on a joining word reads as broken, so drop those.
-  while (words.length > 2 && PREVIEW_TAIL.test(words[words.length - 1].replace(/[.,;:!?]+$/, ''))) words.pop();
-  return words.join(' ').replace(/[\s.,;:!?-]+$/, '');
-}
-
-/**
  * One closed row of Good to know: icon, label and a six-word preview, the
- * full text one tap down. Each row opens on its own.
+ * full text one tap down. Each row opens on its own. The row itself is the
+ * shared DetailRow (T180), which the five detail pages fold with too, and
+ * previewWords moved to lib/detailSkeleton.js with it.
  */
 function LogRow({ id, icon, label, text }) {
-  const Icon = icon;
-  const [open, setOpen] = React.useState(false);
-  const preview = previewWords(text);
   return (
-    <div className={`jpage-lrow ${open ? 'is-open' : ''}`}>
-      <button
-        type="button"
-        className="jpage-lrow-btn"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-controls={`${id}-body`}
-      >
-        <Icon size={20} className="jpage-lrow-icon" />
-        <span className="jpage-lrow-label">{label}</span>
-        {!open && preview && <span className="jpage-lrow-sum">{preview}</span>}
-        <ChevronDownIcon size={13} className="jpage-lrow-chev" />
-      </button>
-      {open && (
-        <div className="jpage-lrow-body" id={`${id}-body`}>
-          <Prose text={text} className="jpage-log-text" />
-        </div>
-      )}
-    </div>
+    <DetailRow id={id} icon={icon} label={label} summary={previewWords(text)}>
+      <Prose text={text} className="jpage-log-text" />
+    </DetailRow>
   );
 }
 
@@ -222,28 +192,7 @@ function journeyStripCells(trip, t, lang) {
 }
 
 function SuitabilityStrip({ trip, t, lang }) {
-  const cells = journeyStripCells(trip, t, lang);
-  return (
-    <div className="jstrip" role="group" aria-label={t('journey.stripAria')}>
-      {cells.map((c) => (
-        <div key={c.key} className="jstrip-cell">
-          {c.key === 'diff' && (
-            <span
-              className="jstrip-squares"
-              role={c.level > 0 ? 'img' : undefined}
-              aria-label={c.level > 0 ? t('journey.diffMeter', { n: c.level }) : undefined}
-              aria-hidden={c.level > 0 ? undefined : true}
-            >
-              {[1, 2, 3, 4, 5].map((i) => (
-                <span key={i} className={`jstrip-sq${i <= c.level ? ' is-on' : ''}`} />
-              ))}
-            </span>
-          )}
-          <span className={`jstrip-word${c.mono ? ' mono' : ''}`}>{c.word}</span>
-        </div>
-      ))}
-    </div>
-  );
+  return <DetailStrip cells={journeyStripCells(trip, t, lang)} label={t('journey.stripAria')} />;
 }
 
 function HeroCredit({ hero, t }) {
@@ -396,6 +345,28 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
     return () => { live = false; };
   }, []);
 
+  // The price row under the weather strip (T103): the stay-price curve of the
+  // nearest destination that has one. undefined while loading, null if none.
+  const [priceDests, setPriceDests] = useState(undefined);
+  useEffect(() => {
+    let live = true;
+    setPriceDests(undefined);
+    const c = trip?.coordinates;
+    if (!trip || !Number.isFinite(c?.lat) || !Number.isFinite(c?.lon)) {
+      if (trip) setPriceDests(null);
+      return undefined;
+    }
+    catalogue.ensureNear(c.lat, c.lon, MAX_KM)
+      .then(() => { if (live) setPriceDests(catalogue.snapshot()?.destinations || null); })
+      .catch(() => { if (live) setPriceDests(null); });
+    return () => { live = false; };
+  }, [trip]);
+  const price = useMemo(() => {
+    if (priceDests === undefined) return undefined;
+    const c = trip?.coordinates;
+    return priceDests ? priceRow(priceDests, c?.lat, c?.lon, trip?.bestPeriod?.months) : null;
+  }, [priceDests, trip]);
+
   const ledger = useMemo(() => figureLedger(trip), [trip]);
   const hook = useMemo(() => hookLine(trip), [trip]);
   const rail = useMemo(() => railAlternative(railFrom, trip), [railFrom, trip]);
@@ -419,8 +390,9 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
       {
         key: 'best',
         label: t('journey.fBest'),
-        ...(best.monthNames?.length ? {
+        ...(best.monthNames?.length || price ? {
           strip: {
+            price,
             good: best.months || [],
             avoid: best.avoidMonths || [],
             info: (best.note || best.avoid) && (
@@ -504,7 +476,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
         mono: true,
       },
     ].filter(Boolean);
-  }, [trip, t, lang, ledger]);
+  }, [trip, t, lang, ledger, price]);
 
   if (trip === undefined) {
     return (
@@ -945,31 +917,22 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
             </button>
           )}
 
-          {exits.length > 0 && (
-            <section className="jpage-exits" aria-labelledby="jpage-exits-h">
-              <h2 id="jpage-exits-h">{t('journey.exitsHead')}</h2>
-              <ul>
-                {exits.map(({ kind, card }) => (
-                  <li key={card.id}>
-                    <button type="button" className="jpage-exit" onClick={() => onOpenJourney?.(card)}>
-                      <span className="jpage-exit-kind">
-                        {kind === 'easier' ? t('journey.exitEasier')
-                          : kind === 'cheaper' ? t('journey.exitCheaper')
-                            : t('journey.exitNearby')}
-                      </span>
-                      <span className="jpage-exit-title">{card.title}</span>
-                      <span className="jpage-exit-meta mono">
-                        {[t('journey.nDays', { n: card.days || 7 }),
-                          card.eur ? eurRange(card.eur, lang) : null,
-                          card.diffLabel ? diffLabel(card.diffLabel, t) : null,
-                        ].filter(Boolean).join(', ')}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          <DetailExits
+            head={t('journey.exitsHead')}
+            headId="jpage-exits-h"
+            exits={exits.map(({ kind, card }) => ({
+              key: card.id,
+              kindLabel: kind === 'easier' ? t('journey.exitEasier')
+                : kind === 'cheaper' ? t('journey.exitCheaper')
+                  : t('journey.exitNearby'),
+              title: card.title,
+              meta: [t('journey.nDays', { n: card.days || 7 }),
+                card.eur ? eurRange(card.eur, lang) : null,
+                card.diffLabel ? diffLabel(card.diffLabel, t) : null,
+              ].filter(Boolean).join(', '),
+              onOpen: () => onOpenJourney?.(card),
+            }))}
+          />
 
           <section className="bpage-sources">
             <h2>{t('journey.sourcesHead')}</h2>

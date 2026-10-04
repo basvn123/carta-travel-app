@@ -122,9 +122,12 @@
 .cal-day:hover:not(.disabled):not(.selected) { background: var(--paper-dim); }
 .cal-day.outside { color: var(--ink-mute); opacity: 0.55; }
 .cal-day.today:not(.selected) { box-shadow: inset 0 0 0 1px var(--rule); }
+/* The picked day is a selection, an active toggle in DESIGN.md's terms, so
+   it takes --ink-fill. In the accent it read as a second primary beside the
+   step's Continue button (T166-d, T193). */
 .cal-day.selected {
-  background: var(--accent);
-  color: var(--paper);
+  background: var(--ink-fill);
+  color: var(--on-fill);
   font-weight: 600;
 }
 /* A day you cannot pick has to LOOK unpickable, not merely faint: at 0.4

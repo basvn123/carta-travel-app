@@ -126,6 +126,8 @@ export const paths = {
     return `${langPrefix(lang)}/${cw(cc)}/regions/${lowerId(id)}${n ? `--${n}` : ''}`;
   },
   trip: (id, lang) => `${langPrefix(lang)}/trips/${id}`,
+  /** T225: the itemised week of a seven-day composed trip. */
+  receipt: (id, lang) => `${langPrefix(lang)}/trips/${id}/receipt`,
   journey: (id, lang) => `${langPrefix(lang)}/journeys/${id}`,
   guide: (id, lang) => `${langPrefix(lang)}/guides/${id}`,
 };
@@ -147,6 +149,7 @@ export function parsePath(pathname) {
 
   const [a, b, c, d] = segs;
   if (a === 'trips' && b && segs.length === 2) return { kind: 'trip', id: b, lang };
+  if (a === 'trips' && b && segs.length === 3 && c === 'receipt') return { kind: 'receipt', id: b, lang };
   if (a === 'journeys' && b && segs.length === 2) return { kind: 'journey', id: b, lang };
   if (a === 'guides' && b && segs.length === 2) return { kind: 'guide', id: b, lang };
 
@@ -204,7 +207,7 @@ export function pathToLegacyHash(parsed) {
     case 'lake': return q({ lake: parsed.id, lc: parsed.cc });
     case 'mountain': return q({ mtn: parsed.id, mc: parsed.cc });
     case 'region': return q({ region: parsed.id });
-    case 'trip': return q({ itin: parsed.id });
+    case 'trip': case 'receipt': return q({ itin: parsed.id });
     case 'guide': return q({ guide: parsed.id });
     default: return null; // dest needs a slug to id table; see docs/SEO.md
   }
@@ -294,6 +297,7 @@ function selfPath(e) {
     case 'region': return paths.region(e.cc, e.id, e.title, e.lang);
     case 'dest': return paths.dest(e.slug, e.lang);
     case 'trip': return paths.trip(e.id, e.lang);
+    case 'receipt': return paths.receipt(e.id, e.lang);
     case 'journey': return paths.journey(e.id, e.lang);
     default: return null;
   }

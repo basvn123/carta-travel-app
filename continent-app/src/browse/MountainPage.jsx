@@ -1,11 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import { mountainKind } from '../lib/footers.js';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { FavStar } from '../components/FavStar.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
+import { usePlaceExits } from '../hooks/usePlaceExits.js';
+import {
+  stripCells, previewWords, pointCentre, MOUNTAIN_LEVEL,
+} from '../lib/detailSkeleton.js';
 import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import {
@@ -14,13 +17,13 @@ import {
   mountainRating, COMPONENT_ORDER, SUB_ORDER,
   difficultyLabel, viewBandLabel, bestMonthsLine, accessLabels,
 } from '../lib/mountainStory.js';
-import { mountainShareUrl } from '../lib/mountains.js';
+import { mountainShareUrl, loadMountains } from '../lib/mountains.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
-  ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
-  CameraIcon, AlertIcon, MountainIcon,
+  MapPinIcon, LinkIcon, ChevronRightIcon,
+  CameraIcon, AlertIcon, MountainIcon, BulbIcon, InfoIcon, StarIcon,
   SunIcon,
 } from '../components/Icons.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
@@ -50,9 +53,11 @@ import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.js
  *   honest             components, so the ranking can be checked rather than
  *                      believed.
  *
- * No maplibre here on purpose, the same call the beach and lake pages make:
- * the page is opened from a list and read on a phone, and a 200 KB map
- * library to draw one pin would be the heaviest thing on it.
+ * Since T180 the page draws through the shared detail skeleton
+ * (DetailSkeleton.jsx). The way up is the page's "Getting there", never
+ * folded; the hazards sit in the alert slot, which never folds either. The
+ * map is a lazy chunk (PointMap.jsx). The season strip holds the signature
+ * slot until T181 draws the horizon silhouette.
  *
  * Nothing on this page is a route description. The pipeline never generates
  * one, this page never asks for one, and the hazard block says to check
@@ -107,6 +112,9 @@ const SRC_KEY = {
   wiki: 'mtn.liftSrcWiki',
 };
 
+/** The way up as a level on the strip's five squares. */
+const mountainLevel = (m) => MOUNTAIN_LEVEL[m?.diff?.k] || 0;
+
 function WayUp({ mountain, t }) {
   const lift = mountain.lift;
   const ride = isLiftServed(mountain);
@@ -145,17 +153,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
-  const scrollEl = useRef(null);
-  const pageRef = useRef(null);
-  const backRef = useRef(null);
-  const titleEl = useRef(null);
-  const [titleGone, setTitleGone] = useState(false);
 
-  // Focus management for the dialog: initial focus, a Tab cycle and focus
-  // restoration, not just Escape. See hooks/useFocusTrap.js.
-  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
-
-  useEffect(() => { setShot(0); scrollEl.current?.scrollTo?.(0, 0); }, [mountain?.id]);
+  useEffect(() => { setShot(0); }, [mountain?.id]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -163,17 +162,16 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     return () => clearTimeout(timer);
   }, [toast]);
 
-  // The bar takes over the name only once the heading has scrolled away, so
-  // the two never sit on screen saying the same thing.
-  useEffect(() => {
-    const el = titleEl.current;
-    const root = scrollEl.current;
-    if (!el || !root) return undefined;
-    const io = new IntersectionObserver(([entry]) => setTitleGone(!entry.isIntersecting),
-      { root, threshold: 0 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [mountain?.id]);
+  // Three ways out, from the same country's mountains (T180).
+  const exits = usePlaceExits({
+    me: mountain,
+    cc: mountain?.cc,
+    load: loadMountains,
+    centre: pointCentre,
+    level: mountainLevel,
+    baseOf: (r) => r?.near?.dest_id || null,
+    open: (row) => onOpenNeighbour?.('peak', row),
+  });
 
   const images = mountain?.images || [];
   const main = images[shot] || images[0] || null;
@@ -269,199 +267,218 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     },
   ].filter(Boolean);
 
-  return (
-    <div className="tpage bpage lpage mpage" role="dialog" aria-modal="true" aria-label={mountain.name} ref={pageRef}>
-      <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
-          <ArrowLeftIcon size={15} />
-          <span>{t('mtn.back')}</span>
-        </button>
-        <span className={`tpage-bar-title ${titleGone ? 'on' : ''}`}>{mountain.name}</span>
-        <FavStar on={fav} onToggle={onFav} />
-        <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
-          <ShareIcon size={15} />
-        </button>
-      </div>
+  const kindKey = `mtn.kindWord${(mountain.kind || 'peak').charAt(0).toUpperCase()}${(mountain.kind || 'peak').slice(1)}`;
+  const kindWord = t(kindKey);
+  const cells = stripCells({
+    level: mountainLevel(mountain),
+    word: difficultyLabel(mountain, t),
+    type: kindWord && kindWord !== kindKey ? kindWord : t('mtn.kindWordPeak'),
+    number: mountain.ele != null ? `${Math.round(mountain.ele).toLocaleString(lang)} m` : '',
+  }, t);
+  const subs = SUB_ORDER.filter((key) => mountain.sub?.[key] != null);
 
-      <div className="tpage-scroll" ref={scrollEl}>
-        <div className="bpage-wrap">
-          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            <MapPinIcon size={15} />
-            <span className="bpage-where-text">
-              {[mountain.range, countryName].filter(Boolean).join(', ')}
-            </span>
-            <span className="bpage-where-coord">
-              {fmtCoord(mountain.lat)}, {fmtCoord(mountain.lon)}
-            </span>
-            <ChevronRightIcon size={14} />
-          </a>
-
-          <div className="bpage-head" ref={titleEl}>
-            <h1 className="bpage-name">
-              <CountryFlag country={mountain.cc} size={15} className="bpage-flag" />
-              {mountain.name}
-            </h1>
-            {mountain.nameLocal && <p className="bpage-local">{mountain.nameLocal}</p>}
-            {onAddToDay && (
-              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon })}>
-                <SunIcon size={14} />
-                <span>{t('feat.addToDay')}</span>
-              </button>
-            )}
-            <div className="bpage-scorerow">
-              <ScoreChip rating={rating} size="lg" />
-              <span className="bpage-band">{t(`mtn.band${rating.tier}`)}</span>
-              {mountain.ele != null && (
-                <span className="mpage-height mono">
-                  {Math.round(mountain.ele).toLocaleString(lang)} m
-                </span>
-              )}
-              {isHiddenGem(mountain) && (
-                <span className="lpage-gem">{t('mtn.hiddenGem')}</span>
-              )}
-            </div>
-          </div>
-
-          <WayUp mountain={mountain} t={t} />
-
-          <NotFor lines={notForLines('mountain', mountain, { word: difficultyLabel(mountain, t) })} />
-
-          {main && (
-            <figure className="bpage-gallery">
-              <LayerPhoto
-                layer="mountains"
-                image={main}
-                hero
-                className="bpage-shot"
-                src={fallbackSrc(main.big || main.u, 960)}
-                srcSet={srcSetFor(main.big || main.u, 1920)}
-                sizes={HERO_SIZES}
-                alt={mountain.name}
-                width={16}
-                height={10}
-                loading="eager"
-                decoding="async"
-              />
-              {images.length > 1 && (
-                <div className="bpage-strip" role="tablist" aria-label={t('mtn.photos')}>
-                  {images.map((img, i) => (
-                    <button
-                      key={img.page || i}
-                      type="button"
-                      role="tab"
-                      aria-selected={i === shot}
-                      className={`bpage-thumb ${i === shot ? 'on' : ''}`}
-                      onClick={() => setShot(i)}
-                    >
-                      <LayerPhoto layer="mountains" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
-                    </button>
-                  ))}
-                </div>
-              )}
-              <ImageCredit image={main} t={t} />
-            </figure>
+  // Slot 6: the collapsed rows (T180).
+  const rows = [
+    (why.length > 0 || subs.length > 0 || mountain.bestFor?.length > 0 || tags.length > 0) && {
+      key: 'why',
+      icon: BulbIcon,
+      label: t('mtn.whyHead'),
+      summary: previewWords(why[0] || headline),
+      body: (
+        <div className="bpage-why">
+          {/* The three sub scores, side by side, because choosing between a
+              beautiful summit you cannot reach and an ordinary one with a
+              cable car is the actual decision and one blended number hides it. */}
+          {subs.length > 0 && (
+            <ul className="lpage-subs">
+              {subs.map((key) => (
+                <li key={key}>
+                  <span className="lpage-sub-n">{Math.round(mountain.sub[key] * 10)}</span>
+                  <span className="lpage-sub-label">{componentLabel(key, t)}</span>
+                </li>
+              ))}
+            </ul>
           )}
-
+          {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
+          {mountain.bestFor?.length > 0 && (
+            <p className="bpage-for">
+              <b>{t('mtn.bestFor')}</b>
+              {' '}
+              {mountain.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
+            </p>
+          )}
           {tags.length > 0 && (
             <ul className="bpage-tags">
               {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
             </ul>
           )}
-
-          {/* The three sub scores, side by side, because choosing between a
-              beautiful summit you cannot reach and an ordinary one with a
-              cable car is the actual decision and one blended number hides it. */}
-          <ul className="lpage-subs">
-            {SUB_ORDER.filter((key) => mountain.sub?.[key] != null).map((key) => (
+        </div>
+      ),
+    },
+    facts.length > 0 && {
+      key: 'facts',
+      icon: InfoIcon,
+      label: t('mtn.factsHead'),
+      summary: previewWords(facts.slice(0, 3).map((f) => f.value).join(', ')),
+      body: (
+        <div className="bpage-facts">
+          <dl>
+            {facts.map((fact) => (
+              <div key={fact.key} className="bpage-fact">
+                <dt>{fact.label}</dt>
+                <dd className={fact.mono ? 'mono' : ''}>
+                  {fact.value}
+                  {fact.note && <small>{fact.note}</small>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ),
+    },
+    COMPONENT_ORDER.some((key) => mountain.comp?.[key] != null) && {
+      key: 'score',
+      icon: StarIcon,
+      label: t('mtn.scoreHead'),
+      summary: previewWords(t('mtn.scoreNote')),
+      body: (
+        <div className="bpage-score">
+          <p className="bpage-note">{t('mtn.scoreNote')}</p>
+          <ul className="bpage-bars">
+            {COMPONENT_ORDER.filter((key) => mountain.comp?.[key] != null).map((key) => (
               <li key={key}>
-                <span className="lpage-sub-n">{Math.round(mountain.sub[key] * 10)}</span>
-                <span className="lpage-sub-label">{componentLabel(key, t)}</span>
+                <span className="bpage-bar-label">{componentLabel(key, t)}</span>
+                <span className="bpage-bar-track" aria-hidden="true">
+                  <span className="bpage-bar-fill" style={{ width: `${Math.round(mountain.comp[key] * 100)}%` }} />
+                </span>
+                <span className="bpage-bar-n">{Math.round(mountain.comp[key] * 100)}</span>
               </li>
             ))}
           </ul>
+        </div>
+      ),
+    },
+    images.length > 1 && {
+      key: 'photos',
+      icon: CameraIcon,
+      label: t('mtn.photos'),
+      summary: t('detail.photoCount', { n: images.length }),
+      body: (
+        <div className="bpage-strip" role="tablist" aria-label={t('mtn.photos')}>
+          {images.map((img, i) => (
+            <button
+              key={img.page || i}
+              type="button"
+              role="tab"
+              aria-selected={i === shot}
+              className={`bpage-thumb ${i === shot ? 'on' : ''}`}
+              onClick={() => setShot(i)}
+            >
+              <LayerPhoto layer="mountains" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      ),
+    },
+  ].filter(Boolean);
 
-          <section className="bpage-why">
-            <h2>{t('mtn.whyHead')}</h2>
-            <p className="bpage-lede">{headline}</p>
-            {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
-            {mountain.bestFor?.length > 0 && (
-              <p className="bpage-for">
-                <b>{t('mtn.bestFor')}</b>
-                {' '}
-                {mountain.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
-              </p>
-            )}
-          </section>
-
-          {hazards.length > 0 && (
-            <section className="lpage-hazards">
-              <h2>
-                <AlertIcon size={15} />
-                {t('mtn.hazardsHead')}
-              </h2>
-              <ul>
-                {hazards.map((h) => <li key={h.code}>{h.line}</li>)}
-              </ul>
-              <p className="mpage-check">{t('mtn.hazardsCheck')}</p>
-            </section>
-          )}
-
-          {hasMonths && (
-            <section className="mpage-season">
-              <h2>{t('mtn.seasonHead')}</h2>
-              <MonthStrip
-                good={monthsGood}
-                avoid={monthsAvoid}
-                info={(
-                  <>
-                    <p>{bestMonthsLine(mountain, t)}</p>
-                    <p>{t('mtn.seasonEstNote')}</p>
-                  </>
-                )}
-              />
-            </section>
-          )}
-
-          {facts.length > 0 && (
-            <section className="bpage-facts">
-              <h2>{t('mtn.factsHead')}</h2>
-              <dl>
-                {facts.map((fact) => (
-                  <div key={fact.key} className="bpage-fact">
-                    <dt>{fact.label}</dt>
-                    <dd className={fact.mono ? 'mono' : ''}>
-                      {fact.value}
-                      {fact.note && <small>{fact.note}</small>}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          )}
-
-          <NearbyOutdoors
-            row={mountain}
-            cc={mountain.cc}
-            headings={{ trail: 'nb.mtn.trail', peak: 'nb.mtn.peak', lake: 'nb.mtn.lake' }}
-            onOpen={onOpenNeighbour}
+  return (
+    <DetailPage
+      name={mountain.name}
+      className="bpage lpage mpage"
+      backLabel={t('mtn.back')}
+      onClose={onClose}
+      fav={fav}
+      onFav={onFav}
+      onShare={onShare}
+      resetKey={mountain.id}
+      toast={toast}
+      hero={{
+        sharedKey: mountain.id,
+        cells,
+        media: main ? (
+          <LayerPhoto
+            layer="mountains"
+            image={main}
+            hero
+            className="dsk-hero-img bpage-shot"
+            src={fallbackSrc(main.big || main.u, 960)}
+            srcSet={srcSetFor(main.big || main.u, 1920)}
+            sizes="100vw"
+            alt={mountain.name}
+            width={16}
+            height={10}
+            loading="eager"
+            decoding="async"
           />
-
-          <section className="bpage-score">
-            <h2>{t('mtn.scoreHead')}</h2>
-            <p className="bpage-note">{t('mtn.scoreNote')}</p>
-            <ul className="bpage-bars">
-              {COMPONENT_ORDER.filter((key) => mountain.comp?.[key] != null).map((key) => (
-                <li key={key}>
-                  <span className="bpage-bar-label">{componentLabel(key, t)}</span>
-                  <span className="bpage-bar-track" aria-hidden="true">
-                    <span className="bpage-bar-fill" style={{ width: `${Math.round(mountain.comp[key] * 100)}%` }} />
-                  </span>
-                  <span className="bpage-bar-n">{Math.round(mountain.comp[key] * 100)}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
+        ) : null,
+        credit: main ? <ImageCredit image={main} t={t} /> : null,
+      }}
+      head={(
+        <>
+          <h1 className="bpage-name">
+            <CountryFlag country={mountain.cc} size={15} className="bpage-flag" />
+            {mountain.name}
+          </h1>
+          {mountain.nameLocal && <p className="bpage-local">{mountain.nameLocal}</p>}
+          <p className="dsk-crumb">{[mountain.range, countryName].filter(Boolean).join(', ')}</p>
+          {onAddToDay && (
+            <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon })}>
+              <SunIcon size={14} />
+              <span>{t('feat.addToDay')}</span>
+            </button>
+          )}
+          <div className="bpage-scorerow">
+            <ScoreChip rating={rating} size="lg" />
+            <span className="bpage-band">{t(`mtn.band${rating.tier}`)}</span>
+            {isHiddenGem(mountain) && (
+              <span className="lpage-gem">{t('mtn.hiddenGem')}</span>
+            )}
+          </div>
+        </>
+      )}
+      hook={headline}
+      notFor={<NotFor lines={notForLines('mountain', mountain, { word: difficultyLabel(mountain, t) })} />}
+      alert={hazards.length > 0 ? (
+        <section className="lpage-hazards">
+          <h2>
+            <AlertIcon size={15} />
+            {t('mtn.hazardsHead')}
+          </h2>
+          <ul>
+            {hazards.map((h) => <li key={h.code}>{h.line}</li>)}
+          </ul>
+          <p className="mpage-check">{t('mtn.hazardsCheck')}</p>
+        </section>
+      ) : null}
+      map={<PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} />}
+      signature={hasMonths ? (
+        <section className="mpage-season">
+          <h2>{t('mtn.seasonHead')}</h2>
+          <MonthStrip
+            good={monthsGood}
+            avoid={monthsAvoid}
+            info={(
+              <>
+                <p>{bestMonthsLine(mountain, t)}</p>
+                <p>{t('mtn.seasonEstNote')}</p>
+              </>
+            )}
+          />
+        </section>
+      ) : null}
+      rows={rows}
+      gettingThere={(
+        <>
+          <WayUp mountain={mountain} t={t} />
+          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+            <MapPinIcon size={15} />
+            <span className="bpage-where-text">{t('detail.directions')}</span>
+            <span className="bpage-where-coord">
+              {fmtCoord(mountain.lat)}, {fmtCoord(mountain.lon)}
+            </span>
+            <ChevronRightIcon size={14} />
+          </a>
           {mountain.near?.dest_id && (
             <button
               type="button"
@@ -475,46 +492,59 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
               <ChevronRightIcon size={15} />
             </button>
           )}
-
-          <section className="bpage-sources">
-            <h2>{t('mtn.sourcesHead')}</h2>
-            <ul>
-              {mountain.wiki && (
-                <li>
-                  <a href={mountain.wiki} target="_blank" rel="noopener noreferrer">
-                    <LinkIcon size={12} />
-                    {t('mtn.onWikipedia')}
-                  </a>
-                </li>
-              )}
-              {mountain.wd && (
-                <li>
-                  <a href={`https://www.wikidata.org/wiki/${mountain.wd}`} target="_blank" rel="noopener noreferrer">
-                    <LinkIcon size={12} />
-                    {t('mtn.onWikidata')}
-                  </a>
-                </li>
-              )}
+        </>
+      )}
+      takeAway={(
+        <button type="button" className="tpage-act" onClick={onShare}>
+          <LinkIcon size={15} />
+          <span>{t('detail.sendLink')}</span>
+        </button>
+      )}
+      exits={exits}
+      nearby={(
+        <NearbyOutdoors
+          row={mountain}
+          cc={mountain.cc}
+          headings={{ trail: 'nb.mtn.trail', peak: 'nb.mtn.peak', lake: 'nb.mtn.lake' }}
+          onOpen={onOpenNeighbour}
+        />
+      )}
+      sources={(
+        <div className="bpage-sources">
+          <ul>
+            {mountain.wiki && (
               <li>
-                <a
-                  href={`https://www.openstreetmap.org/#map=14/${mountain.lat}/${mountain.lon}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <MountainIcon size={12} />
-                  {t('mtn.onOsm')}
+                <a href={mountain.wiki} target="_blank" rel="noopener noreferrer">
+                  <LinkIcon size={12} />
+                  {t('mtn.onWikipedia')}
                 </a>
               </li>
-            </ul>
-            {mountain.credit?.length > 0 && (
-              <p className="bpage-attrib">{mountain.credit.join('. ')}</p>
             )}
-            <FigureFooter kinds={facts.map((f) => mountainKind(f.key, mountain))} />
-          </section>
+            {mountain.wd && (
+              <li>
+                <a href={`https://www.wikidata.org/wiki/${mountain.wd}`} target="_blank" rel="noopener noreferrer">
+                  <LinkIcon size={12} />
+                  {t('mtn.onWikidata')}
+                </a>
+              </li>
+            )}
+            <li>
+              <a
+                href={`https://www.openstreetmap.org/#map=14/${mountain.lat}/${mountain.lon}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MountainIcon size={12} />
+                {t('mtn.onOsm')}
+              </a>
+            </li>
+          </ul>
+          {mountain.credit?.length > 0 && (
+            <p className="bpage-attrib">{mountain.credit.join('. ')}</p>
+          )}
+          <FigureFooter kinds={facts.map((f) => mountainKind(f.key, mountain))} />
         </div>
-      </div>
-
-      {toast && <p className="tpage-toast" role="status">{toast}</p>}
-    </div>
+      )}
+    />
   );
 }

@@ -61,6 +61,19 @@ function checkCost(pg, body) {
   ok(/Flights are not/.test(body) && !/flight from|airfare|fare of/i.test(body), `${pg.key}: no-flights sentence missing or a flight priced`);
   ok(keys.has(pg.key.replace(/\/cost\.html$/, '.html')), `${pg.key}: no destination page beside it`);
 }
+// T225: a receipt page adds up to the cent, prices no flight, and sits under
+// a trip page and links the destination pages it prices.
+function checkReceipt(pg, body) {
+  const lines = [...body.matchAll(/<tr class="l"><th scope="row">[^<]*<\/th><td class="n">([^<]+)<\/td><\/tr>/g)].map((m) => euros(m[1]));
+  const total = /<tr class="t"><th scope="row">[^<]*<\/th><td class="n">([^<]+)<\/td>/.exec(body)?.[1];
+  ok(lines.length >= 4 && total != null, `${pg.key}: receipt page without a receipt`);
+  const sum = Math.round(lines.reduce((a, v) => a + v, 0) * 100);
+  ok(total != null && sum === Math.round(euros(total) * 100), `${pg.key}: receipt lines sum to ${sum / 100}, total says ${total}`);
+  ok(/Flights are not/.test(body) && !/flight from|airfare|fare of/i.test(body), `${pg.key}: no-flights sentence missing or a flight priced`);
+  ok(keys.has(pg.key.replace(/\/receipt\.html$/, '.html')), `${pg.key}: no trip page above it`);
+  const stops = new Set([...body.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).filter((h) => parsePath(h)?.kind === 'dest'));
+  ok(stops.size >= 2, `${pg.key}: links ${stops.size} destination pages, a week has at least two stops`);
+}
 const daysLists = new Map();
 function checkDays(pg, body) {
   const first = /<ul class="pr-list">([\s\S]*?)<\/ul>/.exec(body)?.[1] || '';
@@ -110,6 +123,7 @@ for (const pg of manifest.pages) {
   }
   if (pg.kind === 'cost') checkCost(pg, body);
   if (pg.kind === 'days') checkDays(pg, body);
+  if (pg.kind === 'receipt') checkReceipt(pg, body);
   const s = (stats[pg.kind] ||= { n: 0, bytes: [], words: [], links: [] });
   s.n += 1;
   s.bytes.push(Buffer.byteLength(html));

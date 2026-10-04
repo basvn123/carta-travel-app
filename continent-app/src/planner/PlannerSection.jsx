@@ -20,7 +20,9 @@ export function PlannerSection({ title, sub, aside, className = '', children, ..
     <section className={`guide-section ${className}`.trim()} {...rest}>
       {(title || aside) && (
         <header className="guide-section-head">
-          {title && <h3 className="guide-section-title">{title}</h3>}
+          {/* h2: a section sits straight under its step's question, which
+              is the page's h1 when the wizard is the page (T193). */}
+          {title && <h2 className="guide-section-title">{title}</h2>}
           {aside && <div className="guide-section-aside">{aside}</div>}
         </header>
       )}

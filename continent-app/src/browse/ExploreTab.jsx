@@ -25,6 +25,7 @@ import {
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
+import { LoadingBlock } from '../components/StateBlocks.jsx';
 
 // The map is the ONE thing in this tab that pulls maplibre-gl (~930 KB raw),
 // and the tab opens on the grid. Imported statically it was hoisted into the
@@ -906,7 +907,14 @@ export function ExploreTab({
               list meant never. */}
           {view === 'map' && (
             <div className="xcontent-map">
-              <React.Suspense fallback={<div className="loading-screen"><div className="pulse" /></div>}>
+              {/* While maplibre downloads, the frame the map will fill is
+                  already drawn at its final size: a skeleton, not the app's
+                  full-screen pulse, so nothing jumps when the canvas lands. */}
+              <React.Suspense fallback={(
+                <div className="xmap xmap-skel">
+                  <LoadingBlock label={t('explore.mapLoading')} rows={1} shape="card" />
+                </div>
+              )}>
                 <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
                   onSelect={openWithMember} onViewport={onMapViewport}
                   onNeedDetail={onMapNeedDetail} t={t} />

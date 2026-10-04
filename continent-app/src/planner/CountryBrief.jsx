@@ -188,7 +188,7 @@ function AtAGlance({ brief, tripMonth, lang, t }) {
         {around.length > 0 && (
           <div className="cbrief-fact">
             <dt>{t('brief.gettingAround')}</dt>
-            <dd>{around.map((a) => a.text).join(' · ').replace(/ · /g, ', ')}</dd>
+            <dd>{around.map((a) => a.text).join(', ')}</dd>
           </div>
         )}
         {brief.currency && (
@@ -359,7 +359,7 @@ function ThemeRail({ group, cc, open, t }) {
           meta: group.layer === 'trails'
             ? [r.distance_m != null ? `${Math.round(r.distance_m / 1000)} km` : null,
               r.ascent_m != null ? t('brief.ascent', { m: Math.round(r.ascent_m) }) : null]
-              .filter(Boolean).join(' · ')
+              .filter(Boolean).join(', ')
             : null,
           rating: r.score != null ? { score: r.score, tier: r.tier ?? 0 } : null,
         }));
@@ -378,7 +378,7 @@ function ThemeRail({ group, cc, open, t }) {
   if (loading) {
     return (
       <div className="cbrief-group">
-        <h5 className="cbrief-group-h">{t(group.labelKey)}</h5>
+        <h3 className="cbrief-group-h">{t(group.labelKey)}</h3>
         <RailSkeletons />
       </div>
     );
@@ -386,7 +386,7 @@ function ThemeRail({ group, cc, open, t }) {
   if (error) {
     return (
       <div className="cbrief-group">
-        <h5 className="cbrief-group-h">{t(group.labelKey)}</h5>
+        <h3 className="cbrief-group-h">{t(group.labelKey)}</h3>
         <RailRetry onRetry={retry} t={t} />
       </div>
     );
@@ -398,10 +398,10 @@ function ThemeRail({ group, cc, open, t }) {
   const Icon = GROUP_ICON[group.key] || CompassIcon;
   return (
     <div className="cbrief-group">
-      <h5 className="cbrief-group-h">
+      <h3 className="cbrief-group-h">
         <Icon size={12} /> {t(group.labelKey)}
         <span className="mono">{group.n}</span>
-      </h5>
+      </h3>
       <div className="cbrief-rail">
         {items.map((it) => (
           <div className="cbrief-rail-card is-static" key={it.key}>
@@ -427,7 +427,7 @@ function EventsRow({ events, tripMonth, lang, t }) {
   const name = tripMonth ? monthName(tripMonth, lang) : '';
   return (
     <div className="cbrief-group">
-      <h5 className="cbrief-group-h"><CalendarIcon size={12} /> {t('brief.events')}</h5>
+      <h3 className="cbrief-group-h"><CalendarIcon size={12} /> {t('brief.events')}</h3>
       <ul className="cbrief-events">
         {events.map((e, i) => {
           const mine = Boolean(name) && new RegExp(name, 'i').test(e);

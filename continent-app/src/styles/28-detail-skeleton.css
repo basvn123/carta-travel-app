@@ -1,0 +1,185 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   The shared detail-page skeleton (T180, destinations spec 5.4).
+   browse/DetailSkeleton.jsx draws the trail, cycling, beach, lake and
+   mountain pages through these rules. The strip (.jstrip), the collapsed rows
+   (.jpage-lrow) and the exits (.jpage-exit) keep the journey page's classes,
+   so the two families of page share one set of rules for each.
+
+   One DOM order for every width. On a phone the slots stack in the spec's
+   order, the map fourth. From 900px the page is a 60/40 grid: every slot in
+   the left column, the map alone in the right one, sticky while the left
+   column scrolls past it.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.dsk { padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px)); }
+
+/* ── 1 Hero: the view image full bleed, the strip flush under it ── */
+.dsk-hero { margin: 0; }
+.dsk-hero-media {
+  height: 56vh;
+  min-height: 240px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.dsk-hero-media picture { display: block; height: 100%; }
+.dsk-hero-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The hero also carries .bpage-shot, the name the layer harnesses read;
+     its card radius and 3:2 frame belong to the old gallery, not here. */
+  border-radius: 0;
+  aspect-ratio: auto;
+}
+/* carta-design's strip rule: solid paper, flush with the photo's bottom
+   edge, square where it meets the picture, nothing over the photo. */
+.dsk-strip-band {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.dsk-hero.no-media .dsk-strip-band { border-top: 1px solid var(--rule); }
+.dsk-strip-band .jstrip {
+  max-width: 1180px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 0;
+}
+/* Sentence case: stripCells already capitalises the first letter, and a
+   phrase such as "Steps down from the road" must not become title case. */
+.dsk-strip-band .jstrip-word { text-transform: none; }
+.dsk-hero-credit {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-1) var(--space-4) 0;
+}
+.dsk-hero-credit .bpage-credit,
+.dsk-hero-credit .tpage-credit { margin: 0; }
+
+/* ── The two columns ── */
+.dsk-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-4) 0;
+}
+.dsk-grid > * { min-width: 0; }
+
+/* ── 1 cont.: title, ref chip, breadcrumb ── */
+.dsk-head .bpage-name,
+.dsk-head .tpage-title { margin-top: 0; }
+.dsk-crumb {
+  margin: var(--space-1) 0 0;
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+.dsk-ref {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 1px var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  vertical-align: middle;
+}
+
+/* ── 2 The hook: one sentence, 19px, the soft ink ── */
+.dsk-hook {
+  margin: var(--space-3) 0 0;
+  font-size: 19px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+/* ── 3 Who this is not for, and the one note that never folds ── */
+.dsk-notfor .notfor { margin: var(--space-4) 0; }
+.dsk-alert { margin: var(--space-4) 0; }
+.dsk-alert > * + * { margin-top: var(--space-3); }
+
+/* ── 4 The map ── */
+.dsk-map { margin: var(--space-4) 0; }
+.dsk-map-frame,
+.dsk-map .tpage-hero,
+.dsk-map .cycle-map {
+  position: relative;
+  width: 100%;
+  height: 44vh;
+  min-height: 240px;
+  max-height: 420px;
+  margin: 0;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+/* Following on the trail page: the map leaves the column and takes the page
+   under the bar, exactly as it did before the skeleton. The sticky column
+   would otherwise be the containing block of the absolute map. */
+.tpage.following .dsk-map { position: static; }
+.tpage.following .dsk-map .tpage-hero { border: 0; border-radius: 0; max-height: none; }
+
+/* ── 5 to 10 ── */
+.dsk-signature { margin: var(--space-5) 0; }
+.dsk-rows { margin: var(--space-5) 0; }
+.dsk-sec { margin: var(--space-5) 0; }
+/* Every heading inside a slot speaks in one voice on all five pages (the
+   rule .bpage-wrap section h2 used to give the beach, lake and mountain). */
+.dsk-grid section h2 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.dsk-head .cycle-title h1 { font-family: var(--display); }
+.dsk-note { margin: 0; font-size: 14px; color: var(--ink-soft); }
+.dsk-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.dsk-acts .tpage-primary { margin-top: 0; }
+.dsk-exits { margin: var(--space-5) 0; }
+.dsk-sources { margin: var(--space-5) 0 0; }
+.dsk-sources .credit-fold { font-size: 12.5px; }
+.dsk-sources .credit-fold > summary {
+  padding: var(--space-3) 0;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.dsk-sources .credit-fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dsk-sources .bpage-sources { margin: 0 0 var(--space-3); }
+.dsk-sources .places-credit,
+.dsk-sources .tpage-credit { margin: var(--space-2) 0 0; }
+
+/* ── Desktop: 60/40, the map sticky in the right column ── */
+@media (min-width: 900px) {
+  .dsk-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: var(--space-7);
+    align-items: start;
+    padding-top: var(--space-5);
+  }
+  .dsk-grid > * { grid-column: 1; }
+  /* Thirty rows is more than the left column ever holds; the empty ones are
+     zero high. The span is what lets the map stay stuck for the whole page:
+     a sticky element only sticks inside its own grid area. */
+  .dsk-grid > .dsk-map {
+    grid-column: 2;
+    grid-row: 1 / span 30;
+    position: sticky;
+    top: var(--space-4);
+    margin: 0;
+  }
+  .dsk-map-frame,
+  .dsk-map .tpage-hero,
+  .dsk-map .cycle-map {
+    height: calc(100vh - 52px - 2 * var(--space-4));
+    max-height: 640px;
+  }
+}

@@ -87,7 +87,9 @@ function Rail({ r, onSelect, t }) {
     <section className="xrails-rail" aria-label={r.title}>
       <div className="xrails-head">
         <div className="xrails-headings">
-          <h3 className="xrails-title">{r.title}</h3>
+          {/* h2: the rails sit straight under the page's h1 ("Explore
+              Europe"), and an h3 there skipped a level (T193). */}
+          <h2 className="xrails-title">{r.title}</h2>
           {r.sub && <p className="xrails-sub">{r.sub}</p>}
         </div>
         <button type="button" className="xrails-all" onClick={r.seeAll}>

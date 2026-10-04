@@ -32,6 +32,11 @@ test("every page kind has a key, and the key carries the id and never the slug",
   assert.equal(prerenderKey("/spain/4-days"), "en/spain/4-days.html");
   assert.equal(prerenderKey("/spain/4-day"), "en/spain/4-days.html");
   assert.equal(prerenderKey("/spain/4-days/under-60"), "en/spain/4-days/under-60.html");
+  // T225: the itemised week of a trip sits under the trip.
+  assert.equal(prerenderKey("/trips/at-salzburg-vienna-chain-6d/receipt"), "en/trips/at-salzburg-vienna-chain-6d/receipt.html");
+  assert.equal(prerenderKey(paths.receipt("a-b-chain-7d")), "en/trips/a-b-chain-7d/receipt.html");
+  assert.deepEqual(parsePath("/trips/a-b/receipt"), { kind: "receipt", id: "a-b", lang: "en" });
+  assert.equal(parsePath("/trips/a-b/other"), null);
   assert.equal(prerenderKey(paths.days("PT", 7, 80)), "en/portugal/7-days/under-80.html");
 });
 
@@ -152,6 +157,10 @@ test("a destination path opens its destination when the prerendered page names t
   assert.deepEqual(fakeBoot("/austria/achensee", "#dest=gem%3Aachensee").calls, [["replaceState", "/#dest=gem%3Aachensee"]]);
   // T224: the week page opens the same destination.
   assert.deepEqual(fakeBoot("/spain/malaga/cost", "#dest=AGP").calls, [["replaceState", "/#dest=AGP"]]);
+});
+
+test("a receipt path opens the trip it prices", () => {
+  assert.deepEqual(fakeBoot("/trips/a-b-chain-7d/receipt", null).calls, [["replaceState", "/#itin=a-b-chain-7d"]]);
 });
 
 test("without the tag, or with anything but a #dest= value, a destination path is left alone", () => {

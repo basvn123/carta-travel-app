@@ -1,23 +1,26 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import { BEACH_KIND } from '../lib/footers.js';
-import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
+import { usePlaceExits } from '../hooks/usePlaceExits.js';
+import {
+  stripCells, previewWords, pointCentre, ACCESS_LEVEL,
+} from '../lib/detailSkeleton.js';
 import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import {
   beachHeadline, beachWhy, beachTags, bestForLabel, componentLabel,
   COMPONENT_ORDER, beachRating, componentWeights,
 } from '../lib/beachStory.js';
-import { beachShareUrl } from '../lib/beaches.js';
+import { beachShareUrl, loadBeaches } from '../lib/beaches.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
-  ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
-  CameraIcon,
+  MapPinIcon, LinkIcon, ChevronRightIcon,
+  CameraIcon, BulbIcon, InfoIcon, StarIcon,
   SunIcon,
 } from '../components/Icons.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
@@ -40,11 +43,16 @@ import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.js
  *   honest             weights, so the score can be checked rather than
  *                      believed.
  *
- * No maplibre here on purpose. The page is opened from a list and read on a
- * phone, and a 200 KB map library to draw one pin would be the heaviest thing
- * on it. The pin row and the maps link say where it is; the photographs say
- * what it is.
+ * Since T180 the page draws through the shared detail skeleton
+ * (DetailSkeleton.jsx): hero and strip, hook, who it is not for, the map,
+ * collapsed rows, getting there, taking it with you, three ways out and the
+ * sources. The map is a lazy chunk (PointMap.jsx), so it costs nothing until
+ * a beach is open. The signature slot is empty until T181 adds the beach's
+ * three month strips.
  */
+
+/** The way down as a level: only the access field says anything about it. */
+const beachLevel = (b) => ACCESS_LEVEL[b?.access] || 0;
 
 const fmtCoord = (n) => (Number.isFinite(n) ? n.toFixed(4) : '');
 
@@ -93,17 +101,8 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   // a verdict into an argument.
   const [showParts, setShowParts] = useState(false);
   const [toast, setToast] = useState(null);
-  const scrollEl = useRef(null);
-  const pageRef = useRef(null);
-  const backRef = useRef(null);
-  const titleEl = useRef(null);
-  const [titleGone, setTitleGone] = useState(false);
 
-  // Focus management for the dialog: initial focus, a Tab cycle and focus
-  // restoration, not just Escape. See hooks/useFocusTrap.js.
-  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
-
-  useEffect(() => { setShot(0); scrollEl.current?.scrollTo?.(0, 0); }, [beach?.id]);
+  useEffect(() => { setShot(0); }, [beach?.id]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -111,17 +110,16 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
     return () => clearTimeout(timer);
   }, [toast]);
 
-  // The bar takes over the name only once the heading has scrolled away, so
-  // the two never sit on screen saying the same thing.
-  useEffect(() => {
-    const el = titleEl.current;
-    const root = scrollEl.current;
-    if (!el || !root) return undefined;
-    const io = new IntersectionObserver(([entry]) => setTitleGone(!entry.isIntersecting),
-      { root, threshold: 0 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [beach?.id]);
+  // Three ways out, from the same country's beaches (T180).
+  const exits = usePlaceExits({
+    me: beach,
+    cc: beach?.cc,
+    load: loadBeaches,
+    centre: pointCentre,
+    level: beachLevel,
+    baseOf: (r) => r?.base?.id || null,
+    open: (row) => onOpenNeighbour?.('beach', row),
+  });
 
   const images = beach?.images || [];
   const main = images[shot] || images[0] || null;
@@ -217,194 +215,219 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
     },
   ].filter(Boolean);
 
-  return (
-    <div className="tpage bpage" role="dialog" aria-modal="true" aria-label={beach.name} ref={pageRef}>
-      <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
-          <ArrowLeftIcon size={15} />
-          <span>{t('beach.back')}</span>
-        </button>
-        <span className={`tpage-bar-title ${titleGone ? 'on' : ''}`}>{beach.name}</span>
-        <FavStar on={fav} onToggle={onFav} />
-        <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
-          <ShareIcon size={15} />
-        </button>
-      </div>
+  const surfaceWord = beach.surface
+    ? t(`beach.surfaceWord${beach.surface.charAt(0).toUpperCase()}${beach.surface.slice(1)}`) : '';
+  const cells = stripCells({
+    level: beachLevel(beach),
+    word: beach.access
+      ? t(`beach.access${beach.access.charAt(0).toUpperCase()}${beach.access.slice(1)}`) : '',
+    type: surfaceWord || t('detail.typeBeach'),
+    number: beach.lengthM ? `${beach.lengthM.toLocaleString(lang)} m` : '',
+  }, t);
 
-      <div className="tpage-scroll" ref={scrollEl}>
-        <div className="bpage-wrap">
-          {/* Where it is, first thing on the page, because a beach with no
-              place attached is a photograph rather than a destination. */}
-          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            <MapPinIcon size={15} />
-            <span className="bpage-where-text">
-              {[beach.region, countryName].filter(Boolean).join(', ')}
-            </span>
-            <span className="bpage-where-coord">
-              {fmtCoord(beach.lat)}, {fmtCoord(beach.lon)}
-            </span>
-            <ChevronRightIcon size={14} />
-          </a>
-
-          <div className="bpage-head" ref={titleEl}>
-            <h1 className="bpage-name">
-              <CountryFlag country={beach.cc} size={15} className="bpage-flag" />
-              {beach.name}
-            </h1>
-            {beach.nameLocal && <p className="bpage-local">{beach.nameLocal}</p>}
-            {onAddToDay && (
-              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
-                <SunIcon size={14} />
-                <span>{t('feat.addToDay')}</span>
-              </button>
-            )}
-            <div className="bpage-scorerow">
-              {/* The badge is the door to the breakdown. The weights are
-                  already in the wire's model block and the components are
-                  already on the row, so surfacing them costs nothing and is
-                  the strongest trust move available: a 6.7 nobody can take
-                  apart is just an opinion with a decimal point. */}
-              <button
-                type="button"
-                className="bpage-scorebtn"
-                aria-expanded={showParts}
-                aria-controls="bpage-parts"
-                onClick={() => setShowParts((v) => !v)}
-                title={t(showParts ? 'beach.scoreHide' : 'beach.scoreTap')}
-              >
-                <ScoreChip rating={rating} size="lg" />
-              </button>
-              <span className="bpage-band">{t(`beach.band${rating.tier}`)}</span>
-              <button
-                type="button"
-                className="bpage-scorehint"
-                onClick={() => setShowParts((v) => !v)}
-              >
-                {t(showParts ? 'beach.scoreHide' : 'beach.scoreTap')}
-              </button>
-            </div>
-            {showParts && (
-              <ul className="bpage-parts" id="bpage-parts">
-                {parts.map((part) => (
-                  <li key={part.key}>
-                    <span className="bpage-part-label">{part.label}</span>
-                    <span className="bpage-part-track" aria-hidden="true">
-                      <span
-                        className="bpage-part-fill"
-                        style={{ width: `${part.pct}%` }}
-                      />
-                    </span>
-                    <span className="bpage-part-n">{part.pct}</span>
-                    {part.weight != null && (
-                      <small className="bpage-part-w">
-                        {t('beach.scoreWeight', { pct: part.weight })}
-                      </small>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <NotFor lines={notForLines('beach', beach, {
-            word: beach.surface ? t(`beach.surfaceWord${beach.surface.charAt(0).toUpperCase()}${beach.surface.slice(1)}`) : '',
-          })} />
-
-          {main && (
-            <figure className="bpage-gallery">
-              <LayerPhoto
-                layer="beaches"
-                image={main}
-                hero
-                className="bpage-shot"
-                src={fallbackSrc(main.big || main.u, 960)}
-                srcSet={srcSetFor(main.big || main.u, 1920)}
-                sizes={HERO_SIZES}
-                alt={beach.name}
-                width={16}
-                height={10}
-                loading="eager"
-                decoding="async"
-              />
-              {images.length > 1 && (
-                <div className="bpage-strip" role="tablist" aria-label={t('beach.photos')}>
-                  {images.map((img, i) => (
-                    <button
-                      key={img.page || i}
-                      type="button"
-                      role="tab"
-                      aria-selected={i === shot}
-                      className={`bpage-thumb ${i === shot ? 'on' : ''}`}
-                      onClick={() => setShot(i)}
-                    >
-                      <LayerPhoto layer="beaches" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
-                    </button>
-                  ))}
-                </div>
-              )}
-              <ImageCredit image={main} t={t} />
-            </figure>
+  // Slot 6: the collapsed rows. Each is one block that used to sit open on
+  // the page; the summary is what a closed row says without a tap.
+  const rows = [
+    (why.length > 0 || beach.bestFor?.length > 0 || tags.length > 0) && {
+      key: 'why',
+      icon: BulbIcon,
+      label: t('beach.whyHead'),
+      summary: previewWords(why[0] || headline),
+      body: (
+        <div className="bpage-why">
+          {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
+          {beach.bestFor?.length > 0 && (
+            <p className="bpage-for">
+              <b>{t('beach.bestFor')}</b>
+              {' '}
+              {beach.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
+            </p>
           )}
-
           {tags.length > 0 && (
             <ul className="bpage-tags">
               {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
             </ul>
           )}
+        </div>
+      ),
+    },
+    facts.length > 0 && {
+      key: 'facts',
+      icon: InfoIcon,
+      label: t('beach.factsHead'),
+      summary: previewWords(facts.slice(0, 3).map((f) => f.value).join(', ')),
+      body: (
+        <div className="bpage-facts">
+          <dl>
+            {facts.map((fact) => (
+              <div key={fact.key} className="bpage-fact">
+                <dt>{fact.label}</dt>
+                <dd className={fact.mono ? 'mono' : ''}>
+                  {fact.value}
+                  {fact.note && <small>{fact.note}</small>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ),
+    },
+    parts.length > 0 && {
+      key: 'score',
+      icon: StarIcon,
+      label: t('beach.scoreHead'),
+      summary: previewWords(t('beach.scoreNote')),
+      body: (
+        <div className="bpage-score">
+          <p className="bpage-note">{t('beach.scoreNote')}</p>
+          <ul className="bpage-bars">
+            {parts.map((part) => (
+              <li key={part.key}>
+                <span className="bpage-bar-label">{part.label}</span>
+                <span className="bpage-bar-track" aria-hidden="true">
+                  <span className="bpage-bar-fill" style={{ width: `${part.pct}%` }} />
+                </span>
+                <span className="bpage-bar-n">{part.pct}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ),
+    },
+    images.length > 1 && {
+      key: 'photos',
+      icon: CameraIcon,
+      label: t('beach.photos'),
+      summary: t('detail.photoCount', { n: images.length }),
+      body: (
+        <div className="bpage-strip" role="tablist" aria-label={t('beach.photos')}>
+          {images.map((img, i) => (
+            <button
+              key={img.page || i}
+              type="button"
+              role="tab"
+              aria-selected={i === shot}
+              className={`bpage-thumb ${i === shot ? 'on' : ''}`}
+              onClick={() => setShot(i)}
+            >
+              <LayerPhoto layer="beaches" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      ),
+    },
+  ].filter(Boolean);
 
-          <section className="bpage-why">
-            <h2>{t('beach.whyHead')}</h2>
-            <p className="bpage-lede">{headline}</p>
-            {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
-            {beach.bestFor?.length > 0 && (
-              <p className="bpage-for">
-                <b>{t('beach.bestFor')}</b>
-                {' '}
-                {beach.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
-              </p>
-            )}
-          </section>
-
-          {facts.length > 0 && (
-            <section className="bpage-facts">
-              <h2>{t('beach.factsHead')}</h2>
-              <dl>
-                {facts.map((fact) => (
-                  <div key={fact.key} className="bpage-fact">
-                    <dt>{fact.label}</dt>
-                    <dd className={fact.mono ? 'mono' : ''}>
-                      {fact.value}
-                      {fact.note && <small>{fact.note}</small>}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          )}
-
-          <NearbyOutdoors
-            row={beach}
-            cc={beach.cc}
-            headings={{ trail: 'nb.beach.trail', beach: 'nb.beach.beach', cycle: 'nb.beach.cycle' }}
-            onOpen={onOpenNeighbour}
+  return (
+    <DetailPage
+      name={beach.name}
+      className="bpage"
+      backLabel={t('beach.back')}
+      onClose={onClose}
+      fav={fav}
+      onFav={onFav}
+      onShare={onShare}
+      resetKey={beach.id}
+      toast={toast}
+      hero={{
+        sharedKey: beach.id,
+        cells,
+        media: main ? (
+          <LayerPhoto
+            layer="beaches"
+            image={main}
+            hero
+            className="dsk-hero-img bpage-shot"
+            src={fallbackSrc(main.big || main.u, 960)}
+            srcSet={srcSetFor(main.big || main.u, 1920)}
+            sizes="100vw"
+            alt={beach.name}
+            width={16}
+            height={10}
+            loading="eager"
+            decoding="async"
           />
-
-          <section className="bpage-score">
-            <h2>{t('beach.scoreHead')}</h2>
-            <p className="bpage-note">{t('beach.scoreNote')}</p>
-            <ul className="bpage-bars">
+        ) : null,
+        credit: main ? <ImageCredit image={main} t={t} /> : null,
+      }}
+      head={(
+        <>
+          <h1 className="bpage-name">
+            <CountryFlag country={beach.cc} size={15} className="bpage-flag" />
+            {beach.name}
+          </h1>
+          {beach.nameLocal && <p className="bpage-local">{beach.nameLocal}</p>}
+          <p className="dsk-crumb">{[beach.region, countryName].filter(Boolean).join(', ')}</p>
+          {onAddToDay && (
+            <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
+              <SunIcon size={14} />
+              <span>{t('feat.addToDay')}</span>
+            </button>
+          )}
+          <div className="bpage-scorerow">
+            {/* The badge is the door to the breakdown. The weights are
+                already in the wire's model block and the components are
+                already on the row, so surfacing them costs nothing and is
+                the strongest trust move available: a 6.7 nobody can take
+                apart is just an opinion with a decimal point. */}
+            <button
+              type="button"
+              className="bpage-scorebtn"
+              aria-expanded={showParts}
+              aria-controls="bpage-parts"
+              onClick={() => setShowParts((v) => !v)}
+              title={t(showParts ? 'beach.scoreHide' : 'beach.scoreTap')}
+            >
+              <ScoreChip rating={rating} size="lg" />
+            </button>
+            <span className="bpage-band">{t(`beach.band${rating.tier}`)}</span>
+            <button
+              type="button"
+              className="bpage-scorehint"
+              onClick={() => setShowParts((v) => !v)}
+            >
+              {t(showParts ? 'beach.scoreHide' : 'beach.scoreTap')}
+            </button>
+          </div>
+          {showParts && (
+            <ul className="bpage-parts" id="bpage-parts">
               {parts.map((part) => (
                 <li key={part.key}>
-                  <span className="bpage-bar-label">{part.label}</span>
-                  <span className="bpage-bar-track" aria-hidden="true">
-                    <span className="bpage-bar-fill" style={{ width: `${part.pct}%` }} />
+                  <span className="bpage-part-label">{part.label}</span>
+                  <span className="bpage-part-track" aria-hidden="true">
+                    <span
+                      className="bpage-part-fill"
+                      style={{ width: `${part.pct}%` }}
+                    />
                   </span>
-                  <span className="bpage-bar-n">{part.pct}</span>
+                  <span className="bpage-part-n">{part.pct}</span>
+                  {part.weight != null && (
+                    <small className="bpage-part-w">
+                      {t('beach.scoreWeight', { pct: part.weight })}
+                    </small>
+                  )}
                 </li>
               ))}
             </ul>
-          </section>
-
+          )}
+        </>
+      )}
+      hook={headline}
+      notFor={(
+        <NotFor lines={notForLines('beach', beach, { word: surfaceWord })} />
+      )}
+      map={<PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} />}
+      rows={rows}
+      gettingThere={(
+        <>
+          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+            <MapPinIcon size={15} />
+            <span className="bpage-where-text">{t('detail.directions')}</span>
+            <span className="bpage-where-coord">
+              {fmtCoord(beach.lat)}, {fmtCoord(beach.lon)}
+            </span>
+            <ChevronRightIcon size={14} />
+          </a>
           {beach.base && (
             <button type="button" className="bpage-base" onClick={() => onSelectDest?.(beach.base.id)}>
               <span>
@@ -414,44 +437,57 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
               <ChevronRightIcon size={15} />
             </button>
           )}
-
-          <section className="bpage-sources">
-            <h2>{t('beach.sourcesHead')}</h2>
-            <ul>
-              {beach.wiki && (
-                <li>
-                  <a href={beach.wiki} target="_blank" rel="noopener noreferrer">
-                    <LinkIcon size={12} />
-                    {t('beach.onWikipedia')}
-                  </a>
-                </li>
-              )}
-              {beach.osm && (
-                <li>
-                  <a href={`https://www.openstreetmap.org/${beach.osm}`} target="_blank" rel="noopener noreferrer">
-                    <LinkIcon size={12} />
-                    {t('beach.onOsm')}
-                  </a>
-                </li>
-              )}
-              {beach.wd && (
-                <li>
-                  <a href={`https://www.wikidata.org/wiki/${beach.wd}`} target="_blank" rel="noopener noreferrer">
-                    <LinkIcon size={12} />
-                    {t('beach.onWikidata')}
-                  </a>
-                </li>
-              )}
-            </ul>
-            {beach.credit?.length > 0 && (
-              <p className="bpage-attrib">{beach.credit.join('. ')}</p>
+        </>
+      )}
+      takeAway={(
+        <button type="button" className="tpage-act" onClick={onShare}>
+          <LinkIcon size={15} />
+          <span>{t('detail.sendLink')}</span>
+        </button>
+      )}
+      exits={exits}
+      nearby={(
+        <NearbyOutdoors
+          row={beach}
+          cc={beach.cc}
+          headings={{ trail: 'nb.beach.trail', beach: 'nb.beach.beach', cycle: 'nb.beach.cycle' }}
+          onOpen={onOpenNeighbour}
+        />
+      )}
+      sources={(
+        <div className="bpage-sources">
+          <ul>
+            {beach.wiki && (
+              <li>
+                <a href={beach.wiki} target="_blank" rel="noopener noreferrer">
+                  <LinkIcon size={12} />
+                  {t('beach.onWikipedia')}
+                </a>
+              </li>
             )}
-            <FigureFooter kinds={facts.map((f) => BEACH_KIND[f.key])} />
-          </section>
+            {beach.osm && (
+              <li>
+                <a href={`https://www.openstreetmap.org/${beach.osm}`} target="_blank" rel="noopener noreferrer">
+                  <LinkIcon size={12} />
+                  {t('beach.onOsm')}
+                </a>
+              </li>
+            )}
+            {beach.wd && (
+              <li>
+                <a href={`https://www.wikidata.org/wiki/${beach.wd}`} target="_blank" rel="noopener noreferrer">
+                  <LinkIcon size={12} />
+                  {t('beach.onWikidata')}
+                </a>
+              </li>
+            )}
+          </ul>
+          {beach.credit?.length > 0 && (
+            <p className="bpage-attrib">{beach.credit.join('. ')}</p>
+          )}
+          <FigureFooter kinds={facts.map((f) => BEACH_KIND[f.key])} />
         </div>
-      </div>
-
-      {toast && <p className="tpage-toast" role="status">{toast}</p>}
-    </div>
+      )}
+    />
   );
 }

@@ -411,11 +411,9 @@
 .guide-nights-budget.over, .guide-nights-budget.over b { color: var(--warn-ink); }
 .guide-stay-group { margin-bottom: 14px; }
 .guide-stay-group-title {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
   margin: 10px 0 7px;
 }
 .guide-show-more {
@@ -445,8 +443,9 @@
   /* Two words on one line: at 375 the footer summary beside it was squeezing
      "Start over" onto two, under a control only 12px tall. */
   white-space: nowrap;
+  font-family: var(--ui);
   font-size: 12px;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -529,7 +528,8 @@
   border-top: 1px solid var(--rule);
   flex-shrink: 0;
 }
-.guide-foot-summary { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+/* "2 cities, 6 nights" is a phrase, so the UI face (T193). */
+.guide-foot-summary { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .guide-foot-actions { display: flex; gap: 10px; }
 
 /* ── Running price estimate: its own full-width band under the header, so the
@@ -559,10 +559,8 @@
   flex-direction: column;
   gap: 1px;
   flex: none;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--ink-soft);
 }
 .guide-estimate-heading small {
@@ -577,8 +575,8 @@
   display: inline-block;
   font-family: var(--mono);
   font-size: 22px;
-  font-weight: 700;
-  color: var(--accent);
+  font-weight: 600;
+  color: var(--ink);
   animation: guide-est-bump .55s cubic-bezier(.2, .85, .3, 1);
 }
 .guide-estimate-delta {
@@ -619,11 +617,9 @@
 .guide-estimate-toggle {
   flex: none;
   margin-left: auto;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
   border-bottom: 1px solid var(--rule);
 }
 .guide-estimate-main:hover .guide-estimate-toggle { color: var(--ink); border-color: var(--ink-soft); }
@@ -677,12 +673,15 @@
 }
 .guide-estimate-line b { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
 .guide-estimate-label { display: flex; flex-direction: column; gap: 1px; }
-.guide-estimate-label small { font-size: 10.5px; color: var(--ink-mute); font-family: var(--mono); }
+.guide-estimate-label small { font-size: 12px; color: var(--ink-soft); font-family: var(--ui); }
 .guide-estimate-total { border-top: 1px solid var(--rule); margin-top: 4px; padding-top: 8px; }
-.guide-estimate-total b { color: var(--accent); }
-.guide-back { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--rule); color: var(--ink-soft); font-size: 13px; }
-.guide-back:hover { border-color: var(--ink-soft); }
-.guide-next {
+.guide-estimate-total b { color: var(--ink); }
+/* The wizard footer's Back and Next are the shared Button (T193) and take
+   their face from .btn; these rules still dress the other .guide-back and
+   .guide-next controls inside the steps. */
+.guide-back:not(.btn) { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--rule); color: var(--ink-soft); font-size: 13px; }
+.guide-back:not(.btn):hover { border-color: var(--ink-soft); }
+.guide-next:not(.btn) {
   padding: 10px 22px;
   border-radius: 10px;
   border: 1px solid var(--accent);
@@ -692,12 +691,12 @@
   font-weight: 600;
   transition: opacity .15s;
 }
-.guide-next:hover:not(:disabled) { opacity: 0.9; }
+.guide-next:not(.btn):hover:not(:disabled) { opacity: 0.9; }
 /* A ghosted terracotta button read as a live one someone had dimmed, and on
    the first screen of a step (nothing filled in yet) that is the whole
    footer. Not-yet gets its own flat neutral instead, which is both more
    legible and unmistakably inactive. */
-.guide-next:disabled {
+.guide-next:not(.btn):disabled {
   background: var(--paper-dim);
   border-color: var(--rule);
   color: var(--ink-mute);
@@ -899,9 +898,8 @@
 .itin-leg-text { flex: 1; min-width: 0; font-size: 12px; color: var(--ink); }
 .itin-leg-text small { display: block; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 1px; }
 .itin-leg-change {
-  font-family: var(--mono); font-size: 9.5px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui); font-size: 12px;
+  color: var(--ink-soft);
   border: 1px solid var(--rule);
   border-radius: 999px;
   padding: 3px 9px;
@@ -1022,7 +1020,7 @@
   transition: border-color .15s;
 }
 .itin-day-row-main:hover { border-color: var(--accent); }
-.itin-day-row-num { font-family: var(--mono); font-size: 10.5px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.itin-day-row-num { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
 .itin-day-row-meta { font-size: 12.5px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .itin-day-plan-btn {
   display: inline-flex; align-items: center; gap: 5px;

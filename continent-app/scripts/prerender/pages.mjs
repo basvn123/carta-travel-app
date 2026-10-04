@@ -480,6 +480,7 @@ export function destPage(dos, ctx) {
         h2: `What a week in ${name} costs`,
         links: [{ name: `A week in ${name}, bed and food for one person`, path: paths.cost(dos.slug), meta: `€${n0(weekReceipt(cost, ctx.destRow(dos.id)).total)}`, metaNum: true }],
       } : null,
+      ctx.receiptsOfDest(dos.id).length ? { h2: `Weeks that stop in ${name}`, links: ctx.receiptsOfDest(dos.id).slice(0, 4).map(receiptLink) } : null,
       intro && body ? { h2: `About ${name}`, paras: [body] } : null,
       hl.length ? { h2: 'What to see', paras: hl } : null,
       trailLinks.length ? { h2: `Walks near ${name}`, links: linkRows(trailLinks, 6) } : null,
@@ -487,6 +488,7 @@ export function destPage(dos, ctx) {
       water.length ? { h2: 'Beaches and lakes nearby', links: linkRows(water, 6) } : null,
       peaks.length ? { h2: 'Mountains nearby', links: linkRows(peaks, 4) } : null,
       days.length ? { h2: `Day trips from ${name}`, links: linkRows(days, 8) } : null,
+      (() => { const seen = new Set(days.map((x) => x.path)); const near = ctx.nearPlaces(dos.id, 4).filter((x) => !seen.has(x.path)); return near.length ? { h2: `Other places near ${name}`, links: near } : null; })(),
     ],
     coverage: rankLine,
     credits: (dos.credits || []).map((c) => clean(`${c.name}${c.licence && c.licence !== 'see site' ? `, ${c.licence}` : ''}`)),
@@ -664,6 +666,7 @@ export function costPage(dos, ctx) {
         facts: OTHER_LENGTHS.map((n) => ({ label: `${n} days`, value: eur0(week.perDay * n), num: true })),
       },
       near.length ? { h2: `Where a week costs less near ${name}`, links: near } : null,
+      ctx.receiptsOfDest(dos.id).length ? { h2: `Weeks priced stop by stop through ${name}`, links: ctx.receiptsOfDest(dos.id).slice(0, 4).map(receiptLink) } : null,
       {
         h2: `More about ${name} and ${where}`,
         links: [
@@ -754,6 +757,7 @@ export function daysPage(cc, n, band, ctx) {
         h2: `Planned ${n} day trips in ${where}`,
         links: trips.map((x) => ({ name: joinNames((x.cities || []).map((c) => clean(c.city))), path: paths.trip(x.id), meta: `${x.nights} nights`, metaNum: true })),
       } : null,
+      n === P_RECEIPT_DAYS && ctx.receiptsOf(cc).length ? { h2: `Planned weeks in ${where}, priced stop by stop`, links: ctx.receiptsOf(cc).slice(0, 6).map(receiptLink) } : null,
       weeks.length ? {
         h2: `Planned weeks in ${where}`,
         links: weeks.map((j) => ({ name: clean(j.title), path: paths.journey(j.id) })),
@@ -775,6 +779,134 @@ export function daysPage(cc, n, band, ctx) {
       itemListElement: shown.map((d, i) => ({ '@type': 'ListItem', position: i + 1, url: `https://www.carta-europetravel.com${paths.cost(d.slug)}`, name: d.name })),
     },
     lastmod,
+  };
+}
+
+// ------------------------------------------- week receipts, the editorial format (T225)
+//
+// One repeatable format: a composed seven day trip priced stop by stop as a
+// receipt. It is generated from the records, so every figure is read at build
+// time and carries the provenance words of T098; nothing is typed. It exists
+// to join three page families that otherwise only meet through the country
+// page: the destinations (each stop), the trip it prices and the country.
+// Carta does not price flights (T272), so there is no flight line; the legs
+// line is the catalogue's own estimate of ground transport between the stops,
+// printed with a tilde as every estimate is.
+
+/** The trip length that gets a receipt page: a week. */
+export const RECEIPT_DAYS = 7;
+const P_RECEIPT_DAYS = RECEIPT_DAYS;
+
+/**
+ * The priced plan of one trip, or null when it cannot honestly be a receipt:
+ * not a week, a stop that is not a priced destination, two stops that are the
+ * same place, or nights that do not add up to the trip's own nights. Beds are
+ * the stop's nightly figure times its nights; food is groundSpendPerPerson at
+ * the default Lifestyle for the days spent there (the day of departure is
+ * eaten at the last stop). The total is the sum of the printed lines.
+ */
+export function receiptPlan(trip, ctx) {
+  if (!trip || trip.days !== RECEIPT_DAYS || !Array.isArray(trip.cities) || trip.cities.length < 2) return null;
+  const stops = [];
+  for (const c of trip.cities) {
+    const d = ctx.destByCity(c.cc, c.city);
+    const cost = d && ctx.costOf(d.id);
+    const row = d && ctx.destRow(d.id);
+    if (!d || !cost || cost.dayEur == null || cost.stayEur == null || !row?.costs || !(c.n >= 1)) return null;
+    stops.push({ d, cost, row, n: c.n });
+  }
+  if (new Set(stops.map((s) => s.d.id)).size !== stops.length) return null;
+  if (stops.reduce((a, s) => a + s.n, 0) !== trip.nights) return null;
+  const ls = DEFAULT_LIFESTYLE;
+  const lines = [];
+  stops.forEach((s, i) => {
+    s.days = s.n + (i === stops.length - 1 ? trip.days - trip.nights : 0);
+    s.bed = r2(s.cost.stayEur * s.n);
+    s.food = groundSpendPerPerson(s.row, s.days, ls).total;
+    lines.push({ label: `${s.d.name}, ${s.n} ${s.n === 1 ? 'night' : 'nights'} at ${eur2(s.cost.stayEur)}`, eur: s.bed });
+    lines.push({ label: `${s.d.name}, eating and drinking out, ${s.days} ${s.days === 1 ? 'day' : 'days'}`, eur: s.food });
+  });
+  const legs = trip.cost?.legs_eur > 0 ? r2(trip.cost.legs_eur) : 0;
+  if (legs) lines.push({ label: 'Ground transport between the stops, estimate', eur: legs, est: true });
+  const total = r2(lines.reduce((a, l) => a + l.eur, 0));
+  const measured = stops.some((s) => s.cost.stayLevel === 'city' || s.cost.foodLevel === 'city');
+  const names = stops.map((s) => s.d.name);
+  return { trip, stops, lines, legs, total, perDay: total / RECEIPT_DAYS, measured, names, path: paths.receipt(trip.id) };
+}
+
+/** One receipt as a link row: the stops, and the week's figure. */
+export const receiptLink = (p) => ({
+  name: `${joinNames(p.names)}, a week`, path: p.path, meta: `${p.measured ? '' : '~'}${eur0(p.total)}`, metaNum: true,
+});
+
+/** The receipt page: an itemised week, stop by stop, for one person. */
+export function receiptPage(plan, ctx) {
+  if (!plan) return null;
+  const { trip, stops, lines, total } = plan;
+  const cc = trip.cc;
+  const where = countryName(cc);
+  const countries = [...new Set(stops.map((s) => s.d.cc))];
+  const names = joinNames(plan.names);
+  const bed = r2(stops.reduce((a, s) => a + s.bed, 0));
+  const food = r2(stops.reduce((a, s) => a + s.food, 0));
+  const hook = `A week in ${names} costs about ${eur0(total)} for one person on the ground, itemised below: ${trip.nights} nights in beds and ${trip.days} days of eating and drinking out.`;
+  const noFlights = 'Flights are not in this figure: Carta does not price them.';
+  const staying = stops.filter((s) => s.d.hasCost).map((s) => ({ name: `${s.d.name}, a week there`, path: paths.cost(s.d.slug), meta: `${s.d.measured ? '' : '~'}${eur0(s.d.week)}`, metaNum: true }));
+  const cheapest = [...stops].sort((x, y) => x.cost.dayEur - y.cost.dayEur)[0];
+  const foot = cheapest.d.week != null
+    ? `Staying all seven nights in ${cheapest.d.name}, the cheapest stop for a day, would come to about ${eur0(cheapest.d.week)}.`
+    : `The cheapest stop for a day is ${cheapest.d.name}, at about ${eur0(cheapest.cost.dayEur)}.`;
+  const others = ctx.receiptsOf(cc).filter((p) => p.trip.id !== trip.id).slice(0, 6);
+  const week = ctx.daysOf(cc).filter((e) => e.days === RECEIPT_DAYS && !e.band);
+  const provenance = stops.map((s) => `${s.d.name}. ${[bedSource(s.cost), foodSource(s.cost)].filter(Boolean).join(' ')}`).join(' ');
+  return {
+    kind: 'receipt',
+    path: plan.path,
+    title: fitTitle(`${names} in a week`, `${eur0(total)} itemised`, where),
+    description: fitDescription([hook, noFlights]),
+    h1: `What a week in ${names} costs`,
+    lead: [hook, `${noFlights} The transport line is the catalogue's own estimate, marked with a tilde.`],
+    receipt: {
+      head: `${names}, ${trip.days} days, one person`,
+      lines: lines.map((l) => ({ label: l.label, value: `${l.est ? '~' : ''}${eur2(l.eur)}` })),
+      totalLabel: 'The week, one person',
+      total: eur2(total),
+      foot,
+      note: 'Food is priced at the default Lifestyle: dinners, casual and fast meals, drinks, a club night and days cooking at home, scaled to the days spent in each stop.',
+    },
+    facts: [
+      { label: plan.measured ? 'The week for one person' : 'The week for one person, estimated', value: eur0(total), num: true },
+      { label: 'A day for one person', value: eur0(plan.perDay), num: true },
+      { label: 'Beds, all nights', value: eur0(bed), num: true },
+      { label: 'Food, all days', value: eur0(food), num: true },
+      isNum(trip.km) ? { label: 'Distance between stops', value: `${n0(trip.km)} km`, num: true } : null,
+    ].filter(Boolean),
+    sections: [
+      { h2: 'Where you stay', links: stops.map((s) => ({ name: s.d.name, path: paths.dest(s.d.slug), meta: `${s.n} ${s.n === 1 ? 'night' : 'nights'}`, metaNum: true })) },
+      staying.length ? { h2: 'What a week in each stop costs on its own', links: staying } : null,
+      {
+        h2: 'More about this week',
+        links: [
+          { name: 'The trip, with what you see', path: paths.trip(trip.id) },
+          ...countries.map((c) => ({ name: countryName(c), path: paths.country(c) })),
+          ...week.map((e) => ({ name: `Where to go in ${where} for ${e.days} days`, path: e.path, meta: `${n0(e.places)} places`, metaNum: true })),
+        ],
+      },
+      others.length ? { h2: `More weeks priced in ${where}`, links: others.map(receiptLink) } : null,
+    ],
+    coverage: provenance,
+    credits: ['Bed prices from Inside Airbnb', 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled", 'trip composed by Carta from its own destination catalogue'],
+    crumbs: [home, countryCrumb(cc), sectionCrumb(cc, 'trips'), { name: names, path: paths.trip(trip.id) }],
+    boot: null,
+    noindex: !plan.measured,
+    measured: plan.measured,
+    subject: {
+      '@type': 'TouristTrip', name: `${names}, ${trip.days} days`,
+      itinerary: { '@type': 'ItemList', itemListElement: stops.map((s, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'TouristDestination', name: s.d.name, url: `https://www.carta-europetravel.com${paths.dest(s.d.slug)}` } })) },
+      additionalProperty: [prop('Week cost for one person, beds and food, no flights', Math.round(total), 'EUR',
+        plan.measured ? 'measured: at least one stop has a bed or food figure measured in or near the town' : 'estimate: national or nearby figures only')],
+    },
+    lastmod: ctx.generatedAt('trips', cc),
   };
 }
 
@@ -807,6 +939,7 @@ export function tripPage(trip, ctx) {
       trip.pace ? { label: 'Pace', value: upFirst(trip.pace) } : null,
     ].filter(Boolean),
     sections: [
+      ctx.receiptOfTrip(trip.id) ? { h2: `What this week costs`, links: [receiptLink(ctx.receiptOfTrip(trip.id))] } : null,
       { h2: 'Where you stay', links: cities.filter((c) => c.d).map((c) => ({ name: c.d.name, path: paths.dest(c.d.slug), meta: `${c.n} ${c.n === 1 ? 'night' : 'nights'}`, metaNum: true })) },
       trip.sights?.length ? { h2: 'What you see', paras: [sentence(joinNames(trip.sights.map(clean)))] } : null,
       { h2: `More trips in ${countryName(cc)}`, links: ctx.topTrips(cc, trip.id, 6).map((x) => ({ name: joinNames((x.cities || []).map((c) => clean(c.city))), path: paths.trip(x.id), meta: `${x.days} days`, metaNum: true })) },
@@ -975,6 +1108,7 @@ export function countryPage(cc, ctx) {
           path: e.path, meta: `${n0(e.places)} places`, metaNum: true,
         })),
       } : null,
+      ctx.receiptsOf(cc).length ? { h2: `Weeks in ${where}, priced stop by stop`, links: ctx.receiptsOf(cc).slice(0, 8).map(receiptLink) } : null,
       sections.length ? { h2: `Everything in ${where}`, links: sections.map((s) => ({ name: `${SECTION_LABEL[s.section]} in ${where}`, path: paths.section(cc, s.section), meta: n0(s.n), metaNum: true })) } : null,
       ctx.regionsOf(cc).length ? { h2: 'Regions', links: ctx.regionsOf(cc).map((r) => ({ name: r.name, path: paths.region(cc, r.id, r.name) })) } : null,
       ctx.journeysOf(cc).length ? { h2: `Planned journeys in ${where}`, links: ctx.journeysOf(cc).map((j) => ({ name: clean(j.title), path: paths.journey(j.id), meta: `${j.durationDays} days`, metaNum: true })) } : null,

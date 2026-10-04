@@ -16,7 +16,7 @@
  *              upload; it is about 32,000 files).
  *   --country  only these countries (a quick run); trips and journeys follow.
  *   --only     only these page kinds (country, section, dest, cost, days,
- *              trail, cycle, tour, beach, lake, mountain, region, trip, journey).
+ *              trail, cycle, tour, beach, lake, mountain, region, trip, journey, receipt).
  *   --sample   at most N pages of each kind, for a check run.
  *   --cards    also render each page's share card (scripts/og) to og/<key>.png
  *              and point og:image at it; slow, about 0.7 s a card.
@@ -159,6 +159,9 @@ for (const f of dossierFiles) {
 // each country gets (T224).
 const pricedBy = new Map();
 const NEAR_KM = 150;
+const NEAR_PLACE_KM = 100;
+const destsByCc = new Map();
+for (const d of dests.values()) { if (!destsByCc.has(d.cc)) destsByCc.set(d.cc, []); destsByCc.get(d.cc).push(d); }
 for (const d of dests.values()) {
   if (!d.hasCost) continue;
   if (!pricedBy.has(d.cc)) pricedBy.set(d.cc, []);
@@ -209,6 +212,15 @@ const ctx = {
       return true;
     }).slice(0, k);
   },
+  // The nearest places in the same country within NEAR_PLACE_KM, nearest first (T225).
+  nearPlaces: (id, n) => {
+    const me = dests.get(id);
+    if (!me || !Number.isFinite(me.lat)) return [];
+    return (destsByCc.get(me.cc) || []).filter((d) => d.id !== id && Number.isFinite(d.lat))
+      .map((d) => ({ d, km: haversineKm(me.lat, me.lon, d.lat, d.lon) }))
+      .filter((x) => x.km <= NEAR_PLACE_KM).sort((a, b) => a.km - b.km).slice(0, n)
+      .map(({ d, km }) => ({ name: `${d.name}, ${Math.round(km)} km away`, path: paths.dest(d.slug), meta: d.dayEur != null ? `€${Math.round(d.dayEur)} a day` : '', metaNum: true }));
+  },
   destsOf: (cc) => [...dests.values()].filter((d) => d.cc === cc),
   isLayer: (kind, id) => Boolean(layerIdx[kind]?.has(id)),
   topLayer: (kind, cc, n2, not, n) => (W[{ beach: 'beaches', lake: 'lakes', mountain: 'mountains' }[kind]][cc]?.rated || [])
@@ -240,6 +252,34 @@ const ctx = {
   isRegion: (id) => regions.has(id),
   regionCountry: (id) => regions.get(id)?.region.country,
 };
+
+// Week receipts (T225): every seven day composed trip that prices honestly,
+// one per trip id, best scored first. receiptsOf(cc) lists a country's, a
+// trip filed under two countries is listed under both.
+const receiptByTrip = new Map();
+const receiptsByCc = new Map();
+const receiptsByDest = new Map();
+{
+  const all = Object.values(W.trips).flatMap((w) => w.rated).filter((x) => x.days === P.RECEIPT_DAYS)
+    .sort((a, b) => (b.score ?? -1) - (a.score ?? -1) || String(a.id).localeCompare(String(b.id)));
+  for (const trip of all) {
+    if (receiptByTrip.has(trip.id)) continue;
+    const plan = P.receiptPlan(trip, ctx);
+    if (!plan) continue;
+    receiptByTrip.set(trip.id, plan);
+    for (const cc of new Set([trip.cc, ...plan.stops.map((s) => s.d.cc)])) {
+      if (!receiptsByCc.has(cc)) receiptsByCc.set(cc, []);
+      receiptsByCc.get(cc).push(plan);
+    }
+    for (const s of plan.stops) {
+      if (!receiptsByDest.has(s.d.id)) receiptsByDest.set(s.d.id, []);
+      receiptsByDest.get(s.d.id).push(plan);
+    }
+  }
+}
+ctx.receiptOfTrip = (id) => receiptByTrip.get(id) || null;
+ctx.receiptsOf = (cc) => receiptsByCc.get(cc) || [];
+ctx.receiptsOfDest = (id) => receiptsByDest.get(id) || [];
 
 const sectionCache = new Map();
 function sectionRows(cc) {
@@ -336,7 +376,10 @@ for (const cc of COUNTRIES) {
   for (const [kind, layer] of [['beach', 'beaches'], ['lake', 'lakes'], ['mountain', 'mountains']]) {
     for (const r of W[layer][cc]?.rated || []) emit(P.layerPage(kind, r, ctx), { type: kind, row: r });
   }
-  for (const x of W.trips[cc]?.rated || []) emit(P.tripPage(x, ctx));
+  for (const x of W.trips[cc]?.rated || []) {
+    emit(P.tripPage(x, ctx));
+    if (receiptByTrip.has(x.id)) emit(P.receiptPage(receiptByTrip.get(x.id), ctx));
+  }
 }
 for (const r of regions.values()) emit(P.regionPage(r, ctx));
 for (const d of dests.values()) {

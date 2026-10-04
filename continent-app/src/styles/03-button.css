@@ -26,6 +26,16 @@
 
 .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
 .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+/* Not yet: a dimmed terracotta reads as a live button somebody faded, so a
+   primary that cannot act yet goes flat and neutral instead (the planners'
+   Next and Continue, T193). */
+.btn-primary:disabled,
+.btn-primary[aria-disabled="true"] {
+  opacity: 1;
+  background: var(--paper-dim);
+  border-color: var(--rule);
+  color: var(--ink-soft);
+}
 
 .btn-ghost { background: none; border-color: transparent; color: var(--accent); font-weight: 600; }
 .btn-ghost:hover { background: var(--accent-bg); border-color: transparent; }

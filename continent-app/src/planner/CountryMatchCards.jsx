@@ -53,7 +53,8 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang }) {
         {typeLabel && (
           <p className="mcard-match">
             {typeLabel}
-            {match.bestMonth && <span className="mcard-month"> · {t('quiz.bestIn', { month: monthName(match.bestMonth, lang) })}</span>}
+            {/* A comma, not a middot: carta-design bans dot separators (T193). */}
+            {match.bestMonth && <span className="mcard-month">, {t('quiz.bestIn', { month: monthName(match.bestMonth, lang) })}</span>}
           </p>
         )}
 

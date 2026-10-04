@@ -23,6 +23,19 @@ const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 417
 const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
+
+// T180 folded every descriptive block of the five detail pages into a closed
+// row (browse/DetailSkeleton.jsx). A closed row keeps its body in the page,
+// hidden, so counts still see it; text is read the way a reader would get it,
+// by opening the row that holds the selector first.
+async function openRowWith(p, sel) {
+  await p.evaluate((s) => {
+    const el = document.querySelector(s);
+    const row = el && el.closest('.jpage-lrow');
+    if (row && !row.classList.contains('is-open')) row.querySelector('.jpage-lrow-btn').click();
+  }, sel);
+  await p.waitForTimeout(250);
+}
 const errors = [];
 const NOISE = /ERR_FAILED|config is not valid/;
 
@@ -299,6 +312,14 @@ await page.locator('.places-bcard').first().click();
 await page.waitForTimeout(1800);
 check('the beach page opens', await page.locator('.bpage').isVisible());
 
+// The shared skeleton (T180, spec 5.4): three cells under the hero, a map,
+// and "Getting there" never folded.
+check('the hero strip carries exactly three cells',
+  await page.locator('.dsk-hero .jstrip-cell').count() === 3,
+  `${await page.locator('.dsk-hero .jstrip-cell').count()} cells`);
+check('getting there is on the page and never folded',
+  await page.locator('[data-slot="getting-there"]').isVisible().catch(() => false));
+
 const where = await page.locator('.bpage-where').innerText().catch(() => '');
 check('the page opens with the location', where.trim().length > 1, where.replace(/\n/g, ' '));
 check('the location row carries a pin icon', await page.locator('.bpage-where svg').count() >= 1);
@@ -313,11 +334,14 @@ check('three or four photographs are offered', thumbs >= 2 && thumbs <= 4, `${th
 const credit = await page.locator('.bpage-credit').innerText().catch(() => '');
 check('the photograph carries its author and licence', /cc|public domain/i.test(credit), credit.replace(/\n/g, ' '));
 
+await openRowWith(page, '.bpage-why');
 const why = await page.locator('.bpage-why').innerText().catch(() => '');
 check('the page explains why this beach', why.length > 60, why.replace(/\n/g, ' ').slice(0, 120));
 check('the explanation is composed prose, not reason codes',
   !/\b(waterExcellent|boatOnly|sandColour|nationalPark)\b/.test(why));
-check('no untranslated keys leaked into the page', !/beach\.[a-zA-Z]/.test(await page.locator('.bpage-wrap').innerText()));
+// .bpage-wrap went with T180; textContent of the skeleton also reads the
+// rows that are still folded, so this now covers the whole page.
+check('no untranslated keys leaked into the page', !/beach\.[a-zA-Z]/.test(await page.locator('.dsk').textContent()));
 
 const bars = await page.locator('.bpage-bars li').count();
 check('the score is broken into its parts', bars >= 4, `${bars} components`);
@@ -336,13 +360,19 @@ check('the breakdown shows each component weight', weights >= 4, `${weights} wei
 await scoreBtn.click();
 await page.waitForTimeout(300);
 check('tapping again closes it', await page.locator('.bpage-parts li').count() === 0);
+await openRowWith(page, '.bpage-facts');
 const facts = await page.locator('.bpage-facts').innerText().catch(() => '');
 check('the facts list renders', facts.length > 10, facts.replace(/\n/g, ' ').slice(0, 100));
 
 // The brief: no GPX, no route exports, no elevation profile on a beach.
-const pageText = await page.locator('.bpage').innerText();
+// textContent, so a folded row cannot hide an export (T180).
+const pageText = await page.locator('.dsk').textContent();
 check('no GPX or route export on a beach page', !/gpx|kml|elevation/i.test(pageText));
-check('no map canvas on a beach page', await page.locator('.bpage canvas').count() === 0);
+// Reversed by T180: the brief said no map on a beach page; destinations spec
+// 5.4 puts a map on every detail page (a lazy point map, PointMap.jsx), so the
+// check is now that the beach is drawn on one.
+const beachMap = await page.waitForSelector('.dsk-map canvas', { timeout: 15000 }).catch(() => null);
+check('the beach is drawn on a map', Boolean(beachMap));
 await page.screenshot({ path: 'shots/beaches-page.png', fullPage: true });
 
 await page.locator('.tpage-back').click();

@@ -32,6 +32,19 @@ const WIRE = 'public/lakes';
 const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
+
+// T180 folded every descriptive block of the five detail pages into a closed
+// row (browse/DetailSkeleton.jsx). A closed row keeps its body in the page,
+// hidden, so counts still see it; text is read the way a reader would get it,
+// by opening the row that holds the selector first.
+async function openRowWith(p, sel) {
+  await p.evaluate((s) => {
+    const el = document.querySelector(s);
+    const row = el && el.closest('.jpage-lrow');
+    if (row && !row.classList.contains('is-open')) row.querySelector('.jpage-lrow-btn').click();
+  }, sel);
+  await p.waitForTimeout(250);
+}
 const errors = [];
 // content_overrides is the admin overrides table read by lib/overrides.js,
 // and it does not exist on this Supabase project yet. That is another
@@ -408,14 +421,24 @@ await page.locator('.places-lcard').first().click();
 await page.waitForTimeout(1800);
 check('the lake page opens', await page.locator('.lpage').isVisible());
 
+// The shared skeleton (T180, spec 5.4): three cells under the hero, a map,
+// and "Getting there" never folded.
+check('the hero strip carries exactly three cells',
+  await page.locator('.dsk-hero .jstrip-cell').count() === 3,
+  `${await page.locator('.dsk-hero .jstrip-cell').count()} cells`);
+check('getting there is on the page and never folded',
+  await page.locator('[data-slot="getting-there"]').isVisible().catch(() => false));
+
 const where = await page.locator('.bpage-where').innerText().catch(() => '');
 check('the page opens with the location', where.trim().length > 1, where.replace(/\n/g, ' '));
 const mapsHref = await page.locator('.bpage-where').getAttribute('href').catch(() => '');
 check('the pin links to a map by coordinate', /google\.com\/maps.*destination=-?\d/.test(mapsHref || ''),
   (mapsHref || '').slice(0, 70));
 
-// The verdict, and the fact that it comes BEFORE the photograph. A warning
-// under the gallery is a warning the reader scrolls past.
+// The verdict, and the fact that the reader cannot miss it. Before T180 that
+// meant above the photograph; spec 5.4 puts the view image first on every
+// detail page, so the verdict now sits in the skeleton's alert slot: never
+// folded, right under "who this is not for", before the map and every row.
 const verdict = page.locator('.lpage-swim');
 check('the page carries the swimming verdict', await verdict.count() === 1);
 const verdictText = await verdict.innerText().catch(() => '');
@@ -423,11 +446,14 @@ check('the verdict is a sentence, not a code', verdictText.trim().length > 3,
   verdictText.replace(/\n/g, ' ').slice(0, 90));
 const order = await page.evaluate(() => {
   const swim = document.querySelector('.lpage-swim');
-  const gallery = document.querySelector('.bpage-gallery');
-  if (!swim || !gallery) return null;
-  return swim.compareDocumentPosition(gallery) & Node.DOCUMENT_POSITION_FOLLOWING ? 'before' : 'after';
+  const map = document.querySelector('.dsk-map');
+  const rows = document.querySelector('.dsk-rows');
+  if (!swim || !map || !rows) return 'missing';
+  if (!swim.closest('[data-slot="alert"]') || swim.closest('[hidden]')) return 'folded';
+  const ahead = (other) => swim.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING;
+  return ahead(map) && ahead(rows) ? 'before' : 'after';
 });
-check('the verdict sits above the photograph', order !== 'after', String(order));
+check('the verdict is never folded and comes before the map and the rows', order === 'before', String(order));
 
 const shot = await page.locator('.bpage-shot').getAttribute('src').catch(() => '');
 check('the page shows a large photograph', /^https:\/\/upload\.wikimedia\.org/.test(shot || ''));
@@ -449,11 +475,14 @@ const subs = await page.locator('.lpage-subs li').count();
 check('the sub scores are shown separately, not blended',
   subs === 3 || subs === 2, `${subs} shown`);
 
+await openRowWith(page, '.bpage-why');
 const why = await page.locator('.bpage-why').innerText().catch(() => '');
 check('the page explains why this lake', why.length > 50, why.replace(/\n/g, ' ').slice(0, 120));
 check('the explanation is composed prose, not reason codes',
   !/\b(waterExcellent|swimNo|kindTarn|nationalPark|shoreWalk)\b/.test(why));
-const pageText = await page.locator('.bpage-wrap').innerText();
+// .bpage-wrap went with T180; textContent of the skeleton also reads the
+// rows that are still folded, so this now covers the whole page.
+const pageText = await page.locator('.dsk').textContent();
 check('no untranslated keys leaked into the page', !/lake\.[a-zA-Z]/.test(pageText));
 
 // The season strip, and its estimate label. A modelled temperature presented
@@ -475,11 +504,15 @@ check('hazards, when there are any, are their own block',
 
 const bars = await page.locator('.bpage-bars li').count();
 check('the score is broken into its parts', bars >= 4, `${bars} components`);
+await openRowWith(page, '.bpage-facts');
 const facts = await page.locator('.bpage-facts').innerText().catch(() => '');
 check('the facts list renders', facts.length > 10, facts.replace(/\n/g, ' ').slice(0, 100));
 
 check('no GPX or route export on a lake page', !/gpx|\bkml\b/i.test(pageText));
-check('no map canvas on a lake page', await page.locator('.lpage canvas').count() === 0);
+// Reversed by T180: spec 5.4 puts a map on every detail page (a lazy point
+// map, PointMap.jsx), so the check is now that the lake is drawn on one.
+const lakeMap = await page.waitForSelector('.dsk-map canvas', { timeout: 15000 }).catch(() => null);
+check('the lake is drawn on a map', Boolean(lakeMap));
 await page.screenshot({ path: 'shots/lakes-page.png', fullPage: true });
 
 await page.locator('.tpage-back').click();

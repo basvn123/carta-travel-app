@@ -52,6 +52,19 @@ const offRoute = [line[0][0] + 0.02, line[0][1] + 0.02]; // ~2.5 km away
 
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
+
+// T180 folded every descriptive block of the five detail pages into a closed
+// row (browse/DetailSkeleton.jsx). A closed row keeps its body in the page,
+// hidden, so counts still see it; text is read the way a reader would get it,
+// by opening the row that holds the selector first.
+async function openRowWith(p, sel) {
+  await p.evaluate((s) => {
+    const el = document.querySelector(s);
+    const row = el && el.closest('.jpage-lrow');
+    if (row && !row.classList.contains('is-open')) row.querySelector('.jpage-lrow-btn').click();
+  }, sel);
+  await p.waitForTimeout(250);
+}
 const errors = [];
 // The one 404 these pages produce is Supabase's content_overrides, an
 // OPTIONAL table (migration 018) that is not applied on the live project.
@@ -142,6 +155,7 @@ check('page draws the route on a real map', await page.locator('.tpage-map canva
 check('page names the trail as a heading', (await page.locator('.tpage-title').innerText()).length > 3,
   await page.locator('.tpage-title').innerText());
 
+await openRowWith(page, '.tpage-facts');
 const facts = await page.locator('.tpage-facts').innerText();
 check('facts strip carries the measured numbers', /km/.test(facts) && /\bh\b/.test(facts), facts.replace(/\n/g, ' '));
 
@@ -154,6 +168,7 @@ const notes = await page.locator('.tpage-note').allInnerTexts();
 check('the GPX apps paragraph stays gone', !notes.some((x) => /Komoot/i.test(x)));
 check('the following-works paragraph stays gone', !notes.some((x) => /locks/i.test(x)));
 
+await openRowWith(page, '.tpage-expect');
 const storyLines = await page.locator('.tpage-expect .tpage-story li').count();
 const story = await page.locator('.tpage-expect .tpage-story').innerText();
 check('what to expect explains the route', storyLines >= 3, `${storyLines} lines`);
@@ -195,7 +210,9 @@ check('KML downloads for Google My Maps', /\.kml$/.test(kmlDl.suggestedFilename(
 check('KML carries the drawn line', /<LineString>/.test(kml) && /<coordinates>/.test(kml));
 
 // ── Share link ────────────────────────────────────────────────────────────
-await page.locator('.tpage-act', { hasText: /share/i }).click();
+// T180 renamed the button "Send the link" (spec 5.4: take it with you, send to
+// phone); the bar's share icon keeps the name "Share".
+await page.locator('.tpage-act', { hasText: /send the link/i }).click();
 await page.waitForTimeout(700);
 const copied = await page.evaluate(() => navigator.clipboard.readText().catch(() => ''));
 check('share copies a reopenable link', /#trail=\d+&tc=AL/.test(copied), copied.slice(-40));
@@ -265,6 +282,7 @@ await page.locator('.places-tcard').first().click();
 await page.waitForTimeout(4500);
 const cityStops = await page.locator('.tpage-stops li').count();
 check('city day lists its stops in order', cityStops >= 3, `${cityStops} stops`);
+await openRowWith(page, '.tpage-expect');
 const cityStory = await page.locator('.tpage-expect .tpage-story').innerText().catch(() => '');
 check('city day explanation counts stops and walking', /stops/.test(cityStory) && /km on foot/.test(cityStory),
   cityStory.replace(/\n/g, ' | ').slice(0, 120));
@@ -306,8 +324,20 @@ desk.on('pageerror', (e) => errors.push('desktop pageerror: ' + e.message.split(
 await desk.goto(`${ORIGIN}/#trail=${hike.id}&tc=AL`, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await desk.waitForTimeout(6500);
 check('desktop: shared link opens the page', await desk.locator('.tpage').isVisible().catch(() => false));
-const colW = await desk.locator('.tpage-col').evaluate((el) => el.getBoundingClientRect().width).catch(() => 0);
+// T180 replaced the single 760 px column with spec 5.4's 60/40 grid: the
+// reading column on the left keeps the same bound, and the map sits beside it
+// in a sticky column instead of above it.
+const colW = await desk.locator('.dsk-head').evaluate((el) => el.getBoundingClientRect().width).catch(() => 0);
 check('desktop: the column stays readable', colW > 500 && colW <= 800, `${Math.round(colW)} px`);
+const mapBeside = await desk.evaluate(() => {
+  const head = document.querySelector('.dsk-head');
+  const map = document.querySelector('.dsk-map');
+  if (!head || !map) return null;
+  return { beside: map.getBoundingClientRect().left >= head.getBoundingClientRect().right,
+    sticky: getComputedStyle(map).position };
+});
+check('desktop: the map sits beside the column, sticky',
+  Boolean(mapBeside && mapBeside.beside && mapBeside.sticky === 'sticky'), JSON.stringify(mapBeside));
 await desk.screenshot({ path: 'shots/trail-desktop.png' });
 
 // Following on a wide screen: the HUD is a card in the corner, not a banner.

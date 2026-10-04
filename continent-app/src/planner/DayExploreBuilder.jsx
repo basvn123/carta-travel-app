@@ -3,6 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
+import { Button } from '../components/Button.jsx';
 import { PlannerSection } from './PlannerSection.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { haversineKm } from '../lib/runtime_pricing.js';
@@ -621,12 +622,14 @@ export function DayExploreBuilder({
           {trayLabel}
         </button>
         <div className="dayex-tray-acts">
-          <button className="dayex-tray-carta" onClick={() => onLetCartaPlan(trayRows)}>
+          {/* The tray's two doors are the shared Button: one secondary, one
+              primary, and a primary that cannot act yet goes neutral (T193). */}
+          <Button className="dayex-tray-carta" onClick={() => onLetCartaPlan(trayRows)}>
             {count ? t('dayex.cartaRest') : t('dayex.cartaAll')}
-          </button>
-          <button className="dayex-tray-open" onClick={onStartPlanning} disabled={!count}>
+          </Button>
+          <Button variant="primary" className="dayex-tray-open" onClick={onStartPlanning} disabled={!count}>
             {editing ? t('day.updatePlan') : t('dayex.openMyDay')}
-          </button>
+          </Button>
         </div>
       </div>
 

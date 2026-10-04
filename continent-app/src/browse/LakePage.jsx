@@ -1,25 +1,28 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import { LAKE_KIND } from '../lib/footers.js';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { FavStar } from '../components/FavStar.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
+import { usePlaceExits } from '../hooks/usePlaceExits.js';
+import {
+  stripCells, previewWords, pointCentre, ACCESS_LEVEL,
+} from '../lib/detailSkeleton.js';
 import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import {
   lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeSeason, lakeHazards,
-  bestForLabel, componentLabel, serviceLabel, accessLabel, monthWord,
+  bestForLabel, componentLabel, serviceLabel, accessLabel,
   COMPONENT_ORDER, SUB_ORDER, lakeRating, isHiddenGem,
 } from '../lib/lakeStory.js';
-import { lakeShareUrl } from '../lib/lakes.js';
+import { lakeShareUrl, loadLakes } from '../lib/lakes.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
-  ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
-  CameraIcon, BootIcon, AlertIcon,
+  MapPinIcon, LinkIcon, ChevronRightIcon,
+  CameraIcon, BootIcon, AlertIcon, BulbIcon, InfoIcon, StarIcon,
   SunIcon,
 } from '../components/Icons.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
@@ -47,9 +50,11 @@ import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.js
  *   honest             components, so the ranking can be checked rather than
  *                      believed.
  *
- * No maplibre here on purpose, the same call the beach page makes: the page is
- * opened from a list and read on a phone, and a 200 KB map library to draw one
- * pin would be the heaviest thing on it.
+ * Since T180 the page draws through the shared detail skeleton
+ * (DetailSkeleton.jsx). The swim verdict and the hazards sit in its alert
+ * slot, the one place that never folds, for the reason above. The map is a
+ * lazy chunk (PointMap.jsx). The season strip holds the signature slot until
+ * T181 draws the lake's own figure.
  *
  * The month strip is an ESTIMATE and says so in its own subtitle. There is no
  * free per lake water temperature series for Europe, so the pipeline models it
@@ -93,6 +98,9 @@ function ImageCredit({ image, t }) {
   );
 }
 
+/** The way in as a level: only the access field says anything about it. */
+const lakeLevel = (l) => ACCESS_LEVEL[l?.access] || 0;
+
 /** The warm months as the shared twelve-cell strip. The temperatures are an
  *  estimate and the info panel says so; a month counts as good when its
  *  modelled surface temperature reaches the Lifestyle warm threshold. */
@@ -115,17 +123,8 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
-  const scrollEl = useRef(null);
-  const pageRef = useRef(null);
-  const backRef = useRef(null);
-  const titleEl = useRef(null);
-  const [titleGone, setTitleGone] = useState(false);
 
-  // Focus management for the dialog: initial focus, a Tab cycle and focus
-  // restoration, not just Escape. See hooks/useFocusTrap.js.
-  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
-
-  useEffect(() => { setShot(0); scrollEl.current?.scrollTo?.(0, 0); }, [lake?.id]);
+  useEffect(() => { setShot(0); }, [lake?.id]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -133,17 +132,16 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     return () => clearTimeout(timer);
   }, [toast]);
 
-  // The bar takes over the name only once the heading has scrolled away, so
-  // the two never sit on screen saying the same thing.
-  useEffect(() => {
-    const el = titleEl.current;
-    const root = scrollEl.current;
-    if (!el || !root) return undefined;
-    const io = new IntersectionObserver(([entry]) => setTitleGone(!entry.isIntersecting),
-      { root, threshold: 0 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [lake?.id]);
+  // Three ways out, from the same country's lakes (T180).
+  const exits = usePlaceExits({
+    me: lake,
+    cc: lake?.cc,
+    load: loadLakes,
+    centre: pointCentre,
+    level: lakeLevel,
+    baseOf: (r) => r?.base?.id || null,
+    open: (row) => onOpenNeighbour?.('lake', row),
+  });
 
   const images = lake?.images || [];
   const main = images[shot] || images[0] || null;
@@ -217,130 +215,210 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     },
   ].filter(Boolean);
 
-  return (
-    <div className="tpage bpage lpage" role="dialog" aria-modal="true" aria-label={lake.name} ref={pageRef}>
-      <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
-          <ArrowLeftIcon size={15} />
-          <span>{t('lake.back')}</span>
-        </button>
-        <span className={`tpage-bar-title ${titleGone ? 'on' : ''}`}>{lake.name}</span>
-        <FavStar on={fav} onToggle={onFav} />
-        <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
-          <ShareIcon size={15} />
-        </button>
-      </div>
+  const kindKey = `lake.kindWord${(lake.kind || 'lake').charAt(0).toUpperCase()}${(lake.kind || 'lake').slice(1)}`;
+  const kindWord = t(kindKey);
+  const cells = stripCells({
+    level: lakeLevel(lake),
+    word: accessLabel(lake.access, t),
+    type: kindWord && kindWord !== kindKey ? kindWord : t('lake.kindWordLake'),
+    number: size.areaKm2 ? `${size.areaKm2.toLocaleString(lang)} km2` : '',
+  }, t);
+  const subs = SUB_ORDER.filter((key) => lake.sub?.[key] != null);
 
-      <div className="tpage-scroll" ref={scrollEl}>
-        <div className="bpage-wrap">
-          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            <MapPinIcon size={15} />
-            <span className="bpage-where-text">
-              {[lake.region, countryName].filter(Boolean).join(', ')}
-            </span>
-            <span className="bpage-where-coord">
-              {fmtCoord(lake.lat)}, {fmtCoord(lake.lon)}
-            </span>
-            <ChevronRightIcon size={14} />
-          </a>
-
-          <div className="bpage-head" ref={titleEl}>
-            <h1 className="bpage-name">
-              <CountryFlag country={lake.cc} size={15} className="bpage-flag" />
-              {lake.name}
-            </h1>
-            {lake.nameLocal && <p className="bpage-local">{lake.nameLocal}</p>}
-            {onAddToDay && (
-              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
-                <SunIcon size={14} />
-                <span>{t('feat.addToDay')}</span>
-              </button>
-            )}
-            <div className="bpage-scorerow">
-              <ScoreChip rating={rating} size="lg" />
-              <span className="bpage-band">{t(`lake.band${rating.tier}`)}</span>
-              {isHiddenGem(lake) && (
-                <span className="lpage-gem">{t('lake.hiddenGem')}</span>
-              )}
-            </div>
-          </div>
-
-          {/* The verdict, above the photograph. See the file header. */}
-          <div className={`lpage-swim lpage-swim-${swim.tone}`} role="note">
-            <span className="lpage-swim-word">{swim.label}</span>
-            {swim.source && <span className="lpage-swim-src">{swim.source}</span>}
-            {seasonLine && <span className="lpage-swim-season">{seasonLine}</span>}
-          </div>
-
-          <NotFor lines={notForLines('lake', lake)} />
-
-          {main && (
-            <figure className="bpage-gallery">
-              <LayerPhoto
-                layer="lakes"
-                image={main}
-                hero
-                className="bpage-shot"
-                src={fallbackSrc(main.big || main.u, 960)}
-                srcSet={srcSetFor(main.big || main.u, 1920)}
-                sizes={HERO_SIZES}
-                alt={lake.name}
-                width={16}
-                height={10}
-                loading="eager"
-                decoding="async"
-              />
-              {images.length > 1 && (
-                <div className="bpage-strip" role="tablist" aria-label={t('lake.photos')}>
-                  {images.map((img, i) => (
-                    <button
-                      key={img.page || i}
-                      type="button"
-                      role="tab"
-                      aria-selected={i === shot}
-                      className={`bpage-thumb ${i === shot ? 'on' : ''}`}
-                      onClick={() => setShot(i)}
-                    >
-                      <LayerPhoto layer="lakes" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
-                    </button>
-                  ))}
-                </div>
-              )}
-              <ImageCredit image={main} t={t} />
-            </figure>
+  // Slot 6: the collapsed rows (T180).
+  const rows = [
+    (why.length > 0 || subs.length > 0 || lake.bestFor?.length > 0 || tags.length > 0) && {
+      key: 'why',
+      icon: BulbIcon,
+      label: t('lake.whyHead'),
+      summary: previewWords(why[0] || headline),
+      body: (
+        <div className="bpage-why">
+          {/* The three sub scores, side by side, because choosing between a
+              cold beautiful lake and a warm ordinary one is the actual
+              decision and one blended number hides it. */}
+          {subs.length > 0 && (
+            <ul className="lpage-subs">
+              {subs.map((key) => (
+                <li key={key}>
+                  <span className="lpage-sub-n">{Math.round(lake.sub[key] * 10)}</span>
+                  <span className="lpage-sub-label">{componentLabel(key, t)}</span>
+                </li>
+              ))}
+            </ul>
           )}
-
+          {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
+          {lake.bestFor?.length > 0 && (
+            <p className="bpage-for">
+              <b>{t('lake.bestFor')}</b>
+              {' '}
+              {lake.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
+            </p>
+          )}
           {tags.length > 0 && (
             <ul className="bpage-tags">
               {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
             </ul>
           )}
-
-          {/* The three sub scores, side by side, because choosing between a
-              cold beautiful lake and a warm ordinary one is the actual
-              decision and one blended number hides it. */}
-          <ul className="lpage-subs">
-            {SUB_ORDER.filter((key) => lake.sub?.[key] != null).map((key) => (
-              <li key={key}>
-                <span className="lpage-sub-n">{Math.round(lake.sub[key] * 10)}</span>
-                <span className="lpage-sub-label">{componentLabel(key, t)}</span>
+        </div>
+      ),
+    },
+    facts.length > 0 && {
+      key: 'facts',
+      icon: InfoIcon,
+      label: t('lake.factsHead'),
+      summary: previewWords(facts.slice(0, 3).map((f) => f.value).join(', ')),
+      body: (
+        <div className="bpage-facts">
+          <dl>
+            {facts.map((fact) => (
+              <div key={fact.key} className="bpage-fact">
+                <dt>{fact.label}</dt>
+                <dd className={fact.mono ? 'mono' : ''}>
+                  {fact.value}
+                  {fact.note && <small>{fact.note}</small>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ),
+    },
+    lake.walks?.length > 0 && {
+      key: 'walks',
+      icon: BootIcon,
+      label: t('lake.walksHead'),
+      summary: previewWords(lake.walks.map((w) => w.name).join(', ')),
+      body: (
+        <div className="lpage-walks">
+          <ul>
+            {lake.walks.map((walk) => (
+              <li key={walk.id}>
+                <BootIcon size={13} />
+                <span>{walk.name}</span>
+                {walk.km > 0 && <small className="mono">{walk.km} km</small>}
               </li>
             ))}
           </ul>
+          {lake.nWalks > lake.walks.length && (
+            <p className="bpage-note">
+              {t('lake.walksMore', { n: lake.nWalks - lake.walks.length })}
+            </p>
+          )}
+        </div>
+      ),
+    },
+    COMPONENT_ORDER.some((key) => lake.comp?.[key] != null) && {
+      key: 'score',
+      icon: StarIcon,
+      label: t('lake.scoreHead'),
+      summary: previewWords(t('lake.scoreNote')),
+      body: (
+        <div className="bpage-score">
+          <p className="bpage-note">{t('lake.scoreNote')}</p>
+          <ul className="bpage-bars">
+            {COMPONENT_ORDER.filter((key) => lake.comp?.[key] != null).map((key) => (
+              <li key={key}>
+                <span className="bpage-bar-label">{componentLabel(key, t)}</span>
+                <span className="bpage-bar-track" aria-hidden="true">
+                  <span className="bpage-bar-fill" style={{ width: `${Math.round(lake.comp[key] * 100)}%` }} />
+                </span>
+                <span className="bpage-bar-n">{Math.round(lake.comp[key] * 100)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ),
+    },
+    images.length > 1 && {
+      key: 'photos',
+      icon: CameraIcon,
+      label: t('lake.photos'),
+      summary: t('detail.photoCount', { n: images.length }),
+      body: (
+        <div className="bpage-strip" role="tablist" aria-label={t('lake.photos')}>
+          {images.map((img, i) => (
+            <button
+              key={img.page || i}
+              type="button"
+              role="tab"
+              aria-selected={i === shot}
+              className={`bpage-thumb ${i === shot ? 'on' : ''}`}
+              onClick={() => setShot(i)}
+            >
+              <LayerPhoto layer="lakes" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      ),
+    },
+  ].filter(Boolean);
 
-          <section className="bpage-why">
-            <h2>{t('lake.whyHead')}</h2>
-            <p className="bpage-lede">{headline}</p>
-            {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
-            {lake.bestFor?.length > 0 && (
-              <p className="bpage-for">
-                <b>{t('lake.bestFor')}</b>
-                {' '}
-                {lake.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
-              </p>
+  return (
+    <DetailPage
+      name={lake.name}
+      className="bpage lpage"
+      backLabel={t('lake.back')}
+      onClose={onClose}
+      fav={fav}
+      onFav={onFav}
+      onShare={onShare}
+      resetKey={lake.id}
+      toast={toast}
+      hero={{
+        sharedKey: lake.id,
+        cells,
+        media: main ? (
+          <LayerPhoto
+            layer="lakes"
+            image={main}
+            hero
+            className="dsk-hero-img bpage-shot"
+            src={fallbackSrc(main.big || main.u, 960)}
+            srcSet={srcSetFor(main.big || main.u, 1920)}
+            sizes="100vw"
+            alt={lake.name}
+            width={16}
+            height={10}
+            loading="eager"
+            decoding="async"
+          />
+        ) : null,
+        credit: main ? <ImageCredit image={main} t={t} /> : null,
+      }}
+      head={(
+        <>
+          <h1 className="bpage-name">
+            <CountryFlag country={lake.cc} size={15} className="bpage-flag" />
+            {lake.name}
+          </h1>
+          {lake.nameLocal && <p className="bpage-local">{lake.nameLocal}</p>}
+          <p className="dsk-crumb">{[lake.region, countryName].filter(Boolean).join(', ')}</p>
+          {onAddToDay && (
+            <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
+              <SunIcon size={14} />
+              <span>{t('feat.addToDay')}</span>
+            </button>
+          )}
+          <div className="bpage-scorerow">
+            <ScoreChip rating={rating} size="lg" />
+            <span className="bpage-band">{t(`lake.band${rating.tier}`)}</span>
+            {isHiddenGem(lake) && (
+              <span className="lpage-gem">{t('lake.hiddenGem')}</span>
             )}
-          </section>
-
+          </div>
+        </>
+      )}
+      hook={headline}
+      notFor={<NotFor lines={notForLines('lake', lake)} />}
+      alert={(
+        <>
+          {/* The verdict never folds. See the file header. */}
+          <div className={`lpage-swim lpage-swim-${swim.tone}`} role="note">
+            <span className="lpage-swim-word">{swim.label}</span>
+            {swim.source && <span className="lpage-swim-src">{swim.source}</span>}
+            {seasonLine && <span className="lpage-swim-season">{seasonLine}</span>}
+          </div>
           {hazards.length > 0 && (
             <section className="lpage-hazards">
               <h2>
@@ -352,74 +430,26 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
               </ul>
             </section>
           )}
-
-          {lake.swim?.temps?.length === 12 && (
-            <section className="lpage-season">
-              <h2>{t('lake.seasonHead')}</h2>
-              <SeasonStrip temps={lake.swim.temps} warmC={warmC} seasonLine={seasonLine} t={t} />
-            </section>
-          )}
-
-          {facts.length > 0 && (
-            <section className="bpage-facts">
-              <h2>{t('lake.factsHead')}</h2>
-              <dl>
-                {facts.map((fact) => (
-                  <div key={fact.key} className="bpage-fact">
-                    <dt>{fact.label}</dt>
-                    <dd className={fact.mono ? 'mono' : ''}>
-                      {fact.value}
-                      {fact.note && <small>{fact.note}</small>}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          )}
-
-          {lake.walks?.length > 0 && (
-            <section className="lpage-walks">
-              <h2>{t('lake.walksHead')}</h2>
-              <ul>
-                {lake.walks.map((walk) => (
-                  <li key={walk.id}>
-                    <BootIcon size={13} />
-                    <span>{walk.name}</span>
-                    {walk.km > 0 && <small className="mono">{walk.km} km</small>}
-                  </li>
-                ))}
-              </ul>
-              {lake.nWalks > lake.walks.length && (
-                <p className="bpage-note">
-                  {t('lake.walksMore', { n: lake.nWalks - lake.walks.length })}
-                </p>
-              )}
-            </section>
-          )}
-
-          <NearbyOutdoors
-            row={lake}
-            cc={lake.cc}
-            headings={{ trail: 'nb.lake.trail', peak: 'nb.lake.peak' }}
-            onOpen={onOpenNeighbour}
-          />
-
-          <section className="bpage-score">
-            <h2>{t('lake.scoreHead')}</h2>
-            <p className="bpage-note">{t('lake.scoreNote')}</p>
-            <ul className="bpage-bars">
-              {COMPONENT_ORDER.filter((key) => lake.comp?.[key] != null).map((key) => (
-                <li key={key}>
-                  <span className="bpage-bar-label">{componentLabel(key, t)}</span>
-                  <span className="bpage-bar-track" aria-hidden="true">
-                    <span className="bpage-bar-fill" style={{ width: `${Math.round(lake.comp[key] * 100)}%` }} />
-                  </span>
-                  <span className="bpage-bar-n">{Math.round(lake.comp[key] * 100)}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
+        </>
+      )}
+      map={<PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} />}
+      signature={lake.swim?.temps?.length === 12 ? (
+        <section className="lpage-season">
+          <h2>{t('lake.seasonHead')}</h2>
+          <SeasonStrip temps={lake.swim.temps} warmC={warmC} seasonLine={seasonLine} t={t} />
+        </section>
+      ) : null}
+      rows={rows}
+      gettingThere={(
+        <>
+          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+            <MapPinIcon size={15} />
+            <span className="bpage-where-text">{t('detail.directions')}</span>
+            <span className="bpage-where-coord">
+              {fmtCoord(lake.lat)}, {fmtCoord(lake.lon)}
+            </span>
+            <ChevronRightIcon size={14} />
+          </a>
           {lake.base && (
             <button type="button" className="bpage-base" onClick={() => onSelectDest?.(lake.base.id)}>
               <span>
@@ -429,44 +459,57 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
               <ChevronRightIcon size={15} />
             </button>
           )}
-
-          <section className="bpage-sources">
-            <h2>{t('lake.sourcesHead')}</h2>
-            <ul>
-              {lake.wiki && (
-                <li>
-                  <a href={lake.wiki} target="_blank" rel="noopener noreferrer">
-                    <LinkIcon size={12} />
-                    {t('lake.onWikipedia')}
-                  </a>
-                </li>
-              )}
-              {lake.osm && (
-                <li>
-                  <a href={`https://www.openstreetmap.org/${lake.osm}`} target="_blank" rel="noopener noreferrer">
-                    <LinkIcon size={12} />
-                    {t('lake.onOsm')}
-                  </a>
-                </li>
-              )}
-              {lake.wd && (
-                <li>
-                  <a href={`https://www.wikidata.org/wiki/${lake.wd}`} target="_blank" rel="noopener noreferrer">
-                    <LinkIcon size={12} />
-                    {t('lake.onWikidata')}
-                  </a>
-                </li>
-              )}
-            </ul>
-            {lake.credit?.length > 0 && (
-              <p className="bpage-attrib">{lake.credit.join('. ')}</p>
+        </>
+      )}
+      takeAway={(
+        <button type="button" className="tpage-act" onClick={onShare}>
+          <LinkIcon size={15} />
+          <span>{t('detail.sendLink')}</span>
+        </button>
+      )}
+      exits={exits}
+      nearby={(
+        <NearbyOutdoors
+          row={lake}
+          cc={lake.cc}
+          headings={{ trail: 'nb.lake.trail', peak: 'nb.lake.peak' }}
+          onOpen={onOpenNeighbour}
+        />
+      )}
+      sources={(
+        <div className="bpage-sources">
+          <ul>
+            {lake.wiki && (
+              <li>
+                <a href={lake.wiki} target="_blank" rel="noopener noreferrer">
+                  <LinkIcon size={12} />
+                  {t('lake.onWikipedia')}
+                </a>
+              </li>
             )}
-            <FigureFooter kinds={facts.map((f) => LAKE_KIND[f.key])} />
-          </section>
+            {lake.osm && (
+              <li>
+                <a href={`https://www.openstreetmap.org/${lake.osm}`} target="_blank" rel="noopener noreferrer">
+                  <LinkIcon size={12} />
+                  {t('lake.onOsm')}
+                </a>
+              </li>
+            )}
+            {lake.wd && (
+              <li>
+                <a href={`https://www.wikidata.org/wiki/${lake.wd}`} target="_blank" rel="noopener noreferrer">
+                  <LinkIcon size={12} />
+                  {t('lake.onWikidata')}
+                </a>
+              </li>
+            )}
+          </ul>
+          {lake.credit?.length > 0 && (
+            <p className="bpage-attrib">{lake.credit.join('. ')}</p>
+          )}
+          <FigureFooter kinds={facts.map((f) => LAKE_KIND[f.key])} />
         </div>
-      </div>
-
-      {toast && <p className="tpage-toast" role="status">{toast}</p>}
-    </div>
+      )}
+    />
   );
 }

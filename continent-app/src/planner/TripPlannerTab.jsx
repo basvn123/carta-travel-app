@@ -5,6 +5,8 @@ import { OriginPicker } from '../components/OriginPicker.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { favDestIds } from '../lib/favorites.js';
 import { CountryIntel } from '../components/CountryIntel.jsx';
+import { Button } from '../components/Button.jsx';
+import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
@@ -634,7 +636,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         if (isNarrow) setSheetOpen(false);
       }
     } catch (e) {
-      setSaveError(e?.message || t('trip.saveFailed'));
+      // The service's own text ("JWT expired", a constraint name) is for the
+      // console; the traveller gets what failed and what to do (T193).
+      console.warn('trip save failed', e);
+      setSaveError(t('state.tripSaveFailed'));
     }
   };
 
@@ -659,29 +664,38 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       {/* Arranging the trip settles the cities, the nights and the legs, and
           leaves the days empty. That next step had no door here: the traveller
           had to find the Day planner tab and pick their own trip out of it. */}
+      {/* One primary: planning the days is the step forward when there is
+          a door to it; otherwise saving is. Everything else is the shared
+          secondary Button (T193). */}
       {onPlanDay && tp.stopDetails.length > 0 && (
-        <button
+        <Button
+          variant="primary"
           className="trip-planday-btn"
           onClick={() => onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0 })}
         >
           <SparkIcon size={14} /> {t('trip.planYourDays')}
-        </button>
+        </Button>
       )}
-      <button className="trip-save-planned-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
+      <Button
+        variant={onPlanDay && tp.stopDetails.length > 0 ? 'secondary' : 'primary'}
+        className="trip-save-planned-btn"
+        onClick={handleSave}
+        disabled={tp.saveState === 'saving'}
+      >
         {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
-      </button>
+      </Button>
       <div className="trip-planned-secondary">
-        <button
+        <Button
           className="trip-edit-btn"
           onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}
           title={t('trip.editStopsTitle')}
         >
           {t('trip.editStops')}
-        </button>
+        </Button>
         {tp.stopDetails.length >= 3 && (
-          <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title={t('trip.replanTitle')}>↻ {t('trip.replanRoute')}</button>
+          <Button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title={t('trip.replanTitle')}>↻ {t('trip.replanRoute')}</Button>
         )}
-        <button className="trip-startover-btn" onClick={handleStartOver} title={t('trip.startOverTitle')}>{t('trip.startOver')}</button>
+        <Button className="trip-startover-btn" onClick={handleStartOver} title={t('trip.startOverTitle')}>{t('trip.startOver')}</Button>
       </div>
     </>
   );
@@ -795,6 +809,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               ×
             </button>
           )}
+          {/* The trip's name is an editable field, so the page's one h1
+              carries the same words for assistive tech (T193). */}
+          <h1 className="sr-only">{tp.planLabel || t('trip.planYourTrip')}</h1>
           <input
             className="trip-topcard-name"
             value={tp.planLabel}
@@ -1272,7 +1289,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                       {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
                     </button>
                   </div>
-                  {saveError && <p className="trip-note trip-note-error">{saveError}</p>}
+                  {saveError && <ErrorBlock message={saveError} />}
                   {!authConfigured && <p className="trip-note">{t('trip.noAuthNote')}</p>}
                   {authConfigured && !user && <p className="trip-note">{t('trip.signInNote')}</p>}
                 </div>
@@ -1314,7 +1331,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             every layout, always visible under the itinerary. */}
         {tp.planned && (
           <div className="trip-sheet-footer">
-            {saveError && <p className="trip-note trip-note-error trip-footer-error">{saveError}</p>}
+            {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
             <div className="trip-sheet-footer-row">{plannedActionButtons}</div>
           </div>
         )}

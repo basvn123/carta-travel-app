@@ -4,6 +4,7 @@ import { TripMap } from '../map/TripMap.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
+import { Button } from '../components/Button.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
 import { legTransportOptions } from '../lib/transport.js';
@@ -281,6 +282,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   const [savedPlans, setSavedPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
+  // A failed fetch of the saved trips is a failure, not "you have no trips":
+  // the Continue-a-trip block says so and offers a retry (T193, T189-b).
+  const [plansError, setPlansError] = useState(false);
+  const [plansTry, setPlansTry] = useState(0);
   const [plan, setPlan] = useState(null); // { id, label, stops: [...] }
   const [stopIdx, setStopIdx] = useState(0);
   const [dayIdx, setDayIdx] = useState(0);
@@ -445,14 +450,15 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (SAVED_MOCK) { setSavedPlans(mockTripPlans()); return; }
     if (!userId) { setSavedPlans([]); return; }
     setPlansLoading(true);
+    setPlansError(false);
     // A rejected fetch (offline, or a session whose token no longer verifies)
-    // must not escape as an unhandled rejection: the trip-based plans simply
-    // stay absent, and standalone day plans carry on working from this device.
+    // must not escape as an unhandled rejection. Standalone day plans carry
+    // on working from this device; the trip block says the load failed.
     fetchTripPlans(userId)
       .then(setSavedPlans)
-      .catch(() => setSavedPlans([]))
+      .catch(() => { setSavedPlans([]); setPlansError(true); })
       .finally(() => setPlansLoading(false));
-  }, [userId]);
+  }, [userId, plansTry]);
 
   // Shared open-plan bootstrap: restore assignments + shape-your-day answers,
   // and lead with the wizard when nothing is planned yet.
@@ -3260,6 +3266,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         plans={savedPlans}
         destinations={destinations}
         loading={plansLoading}
+        failed={plansError}
+        onRetry={() => setPlansTry((n) => n + 1)}
         signedIn={Boolean(user) || SAVED_MOCK}
         authConfigured={authConfigured || SAVED_MOCK}
         onOpenDay={openDayFromTrip}
@@ -3381,7 +3389,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                     step: the likely answer sits above the question rather
                     than under it. */}
                 {tripsLeadFirst && <div className="day-flow-lead">{continueTrips}</div>}
-                <h2 className="day-flow-q">{t('day.whereStaying')}</h2>
+                <h1 className="day-flow-q">{t('day.whereStaying')}</h1>
                 {/* The question is short enough to be ambiguous on its own:
                     "where does your day start" could mean the town. The
                     sub-line says it means the door you walk out of, which is
@@ -3502,9 +3510,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                   </div>
                 )}
                 {newStayPoint && (
-                  <button className="day-flow-next" onClick={() => setLandingStep('when')}>
+                  <Button variant="primary" className="day-flow-next" onClick={() => setLandingStep('when')}>
                     {t('day.next')}
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -3514,7 +3522,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           {landingStep === 'when' && (
             <div className="day-flow-step">
               <div className="day-flow-panel">
-                <h2 className="day-flow-q">{t('day.whenVisiting')}</h2>
+                <h1 className="day-flow-q">{t('day.whenVisiting')}</h1>
                 <div className="day-flow-chips day-flow-chips-center">
                   {quickDates.map((q) => (
                     <button
@@ -3546,9 +3554,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                     placeholder={t('day.startDate')}
                   />
                 </div>
-                <button className="day-flow-next" onClick={() => setLandingStep('ideas')} disabled={!newStartDate}>
+                <Button variant="primary" className="day-flow-next" onClick={() => setLandingStep('ideas')} disabled={!newStartDate}>
                   {t('day.next')}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -3574,7 +3582,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           {landingStep === 'how' && (
             <div className="day-flow-step">
               <div className="day-flow-panel day-flow-panel-wide">
-                <h2 className="day-flow-q">{t('day.howToPlan')}</h2>
+                <h1 className="day-flow-q">{t('day.howToPlan')}</h1>
                 {/* Both cards end in the action they perform, and both open
                     with a picture of the shape of that answer: a route line
                     for the bot, the places themselves for the builder. */}
@@ -3662,6 +3670,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           )}
 
           {/* The chat planner: questions, a proposed route, then import. */}
+          {/* The bot and the builder replace the step's question, so each
+              names the view for assistive tech: one h1 per view (T193). */}
+          {landingStep === 'chat' && <h1 className="sr-only">{t('day.useChatbot')}</h1>}
           {landingStep === 'chat' && (
             <CartaChatPlanner
               initialAnswers={chatPresets}
@@ -3695,6 +3706,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               show them anything. The builder leads with the places instead:
               rails of real cards around the stay, a tray that keeps count, and
               Carta one button away at any point, including from an empty tray. */}
+          {landingStep === 'manual' && newStayPoint && <h1 className="sr-only">{t('day.planManually')}</h1>}
           {landingStep === 'manual' && newStayPoint && (
             <DayExploreBuilder
               stay={newStayPoint}

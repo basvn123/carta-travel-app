@@ -209,6 +209,10 @@ export function ReadyTripsStep({
 }) {
   const { t } = useI18n();
   const [rows, setRows] = useState(null);   // null = loading
+  // A dropped connection rejects (lib/publishedJson.js); that is a failure to
+  // say out loud, not an empty shelf and not a skeleton forever (T193).
+  const [failed, setFailed] = useState(false);
+  const [tries, setTries] = useState(0);
   const [anyLength, setAnyLength] = useState(false);
   // How many cards the list is showing. A country pair can offer hundreds of
   // trips and nobody scrolls that; the button says how many are still behind
@@ -227,11 +231,15 @@ export function ReadyTripsStep({
   useEffect(() => {
     let live = true;
     setRows(null);
+    setFailed(false);
     if (!ccKey) { setRows([]); return undefined; }
     setShown(12);
-    loadTripsFor(ccKey.split(',')).then((list) => { if (live) setRows(list || []); });
+    loadTripsFor(ccKey.split(',')).then(
+      (list) => { if (live) setRows(list || []); },
+      () => { if (live) setFailed(true); },
+    );
     return () => { live = false; };
-  }, [ccKey]);
+  }, [ccKey, tries]);
 
   // A trip is offered when it visits at least one country still ticked. Length
   // follows the window from the first step, one day either side, because a
@@ -290,7 +298,11 @@ export function ReadyTripsStep({
         ))}
       </div>
 
-      {rows == null && <LoadingBlock label={t('ready.loading')} rows={3} shape="card" />}
+      {rows == null && !failed && <LoadingBlock label={t('ready.loading')} rows={3} shape="card" />}
+      {failed && (
+        <ErrorBlock message={t('state.tripsFailed')}
+          onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
+      )}
 
       {empty && (
         <div className="wready-empty">
@@ -306,10 +318,11 @@ export function ReadyTripsStep({
 
       {!empty && rows != null && (
         <>
-          <h3 className="wready-title">
+          {/* h2 under the step's h1 (T193). */}
+          <h2 className="wready-title">
             <span>{t('ready.listTitle', { countries: pickedNames.join(', ') })}</span>
             <span className="wready-col-n">{list.length}</span>
-          </h3>
+          </h2>
 
           <div className="wready-grid">
             {list.slice(0, shown).map((trip) => (

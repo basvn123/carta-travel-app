@@ -187,11 +187,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .guide-recap-chip {
   display: inline-flex;
@@ -1984,11 +1982,9 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .guide-summary-fact-label svg { color: var(--accent); flex: none; }
 .guide-summary-fact b { font-size: 13.5px; color: var(--ink); line-height: 1.35; }
@@ -2091,7 +2087,9 @@
   font-family: var(--mono);
   font-size: 10px;
 }
-.wiz-step.done .wiz-step-mark { background: var(--green); color: var(--on-fill); }
+/* Done is chrome, not good news in data, so the ink fill rather than --green
+   (carta-design: green is data, never chrome; T193). */
+.wiz-step.done .wiz-step-mark { background: var(--ink-fill); color: var(--on-fill); }
 .wiz-step.now .wiz-step-mark { background: var(--accent); color: var(--on-fill); }
 .wiz-step-name {
   font-size: 11.5px;
@@ -2128,8 +2126,8 @@
 .wiz-mini-line {
   display: flex; align-items: center; gap: 6px;
   min-height: 24px;
-  font-family: var(--mono);
-  font-size: 11.5px;
+  font-family: var(--ui);
+  font-size: 12px;
   color: var(--ink-soft);
 }
 .wiz-mini-line svg { flex: none; color: var(--ink-mute); }
@@ -2264,33 +2262,11 @@
   font-weight: 600;
   cursor: pointer;
 }
-.trip-planday-btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%;
-  min-height: var(--tap);
-  margin-bottom: 8px;
-  border: 1px solid var(--accent);
-  border-radius: 10px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
+/* The shared Button draws it (T193). Two solid accent buttons stacked read
+   as two primaries: planning the days is the step forward, so it is the
+   primary, and TripPlannerTab hands Save the secondary variant beside it. */
+.trip-planday-btn { width: 100%; }
 .trip-planday-btn svg { flex: none; }
-/* Two solid accent buttons stacked read as two primaries. Planning the days is
-   the step forward; saving is the step that keeps what is already there, so it
-   drops to an outline beneath it. */
-.trip-planday-btn + .trip-save-planned-btn {
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
-}
-.trip-planday-btn + .trip-save-planned-btn:hover:not(:disabled) {
-  border-color: var(--accent);
-  color: var(--accent);
-  opacity: 1;
-}
 
 /* The gate on the Stay step, stated in the footer beside Next. */
 .guide-nights-budget {
@@ -2323,11 +2299,9 @@
   background: var(--paper);
 }
 .guide-answered-label {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .guide-answered-value {
   display: inline-flex;
@@ -2339,11 +2313,9 @@
 }
 .guide-answered-value svg { color: var(--accent); }
 .guide-answered-edit {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: none;
@@ -2480,8 +2452,10 @@
 .cal-inline .cal-day { font-size: 13px; border-radius: 8px; }
 .cal-inline .cal-weekday { padding-bottom: 3px; }
 /* Range: caps at the ends, a connected band between. */
-.cal-day.in-range { background: var(--accent-bg); border-radius: 0; }
-.cal-day.in-range:hover:not(.disabled) { background: var(--accent-bg); }
+/* The nights between two --ink-fill ends: the paper-dim ground, so
+   a range reads as one selection and not as a terracotta alert (T193). */
+.cal-day.in-range { background: var(--paper-dim); border-radius: 0; }
+.cal-day.in-range:hover:not(.disabled) { background: var(--paper-dim); }
 .cal-day.range-start { border-radius: 8px 0 0 8px; }
 .cal-day.range-end { border-radius: 0 8px 8px 0; }
 .cal-day.range-start.range-end { border-radius: 8px; }

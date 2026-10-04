@@ -41,7 +41,7 @@ export const MAX_BYTES = 45 * 1024 * 1024; // the limit is 50 MB; keep headroom
 
 export const GROUP_OF = Object.freeze({
   dest: 'destinations', trail: 'trails', cycle: 'cycling', tour: 'cycling',
-  beach: 'beaches', lake: 'lakes', mountain: 'mountains', trip: 'trips', journey: 'journeys',
+  beach: 'beaches', lake: 'lakes', mountain: 'mountains', trip: 'trips', receipt: 'trips', journey: 'journeys',
   country: 'countries', section: 'countries', region: 'countries',
   // T224: the trip-length pages are country pages; the cost pages get their
   // own file, so Search Console reports their indexation apart from the

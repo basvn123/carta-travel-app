@@ -2003,6 +2003,9 @@
   margin: 0 0 14px;
 }
 .xmap-canvas { width: 100%; height: 100%; }
+/* T193: the map's skeleton fills the frame the canvas will fill. */
+.xmap-skel .state-skel { height: 100%; padding: 0; }
+.xmap-skel .state-skel-item { height: 100%; border-radius: 0; }
 /* T190: the keyboard layer over the WebGL pins (ExploreMap.jsx). One
    transparent button per pin in view, centred on it and sized to it, so the
    house ring lands on the dot. Pointer events pass through to the canvas:
@@ -2082,7 +2085,7 @@
   padding: 2px 6px;
   border-radius: 6px;
 }
-.xrail-country-page:hover { color: var(--rate-soft); background: var(--rate-bg); }
+.xrail-country-page:hover { color: var(--ink); background: var(--paper-dim); }
 
 /* --- search hints and suggestions (PLAN.md B2) --------------------------- */
 .xsearch-hint {
@@ -2557,7 +2560,20 @@
   }
   .xbar .xgrid-count { font-size: 13px; font-weight: 500; color: var(--ink); }
   .xbar .xview-toggle { display: none; }
-  .xbar .xgrid-sort select { height: 36px; }
+  .xbar .xgrid-sort select { height: var(--tap); }
+  /* T193: the 44px tap floor on the phone. Chips and toggles grow; the two
+     small text controls keep their look and take a transparent tap box. */
+  .xchip,
+  .xrail-toggle,
+  .xrail-legend,
+  .xrail-country { min-height: var(--tap); }
+  .xrail-country-page { min-width: var(--tap); min-height: var(--tap); }
+  .xrail-month select { min-height: var(--tap); }
+  .xrails-all { position: relative; }
+  .xrails-all::before { content: ''; position: absolute; inset: -11px -6px; }
+  /* maplibre-gl.css loads after this file (lazily, with the map), so the
+     zoom buttons need the extra class to win. */
+  .xmap .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
 }
 .xview-fab { display: none; }
 @media (max-width: 768px) {
@@ -2579,8 +2595,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    height: 36px;
-    padding: 0 13px;
+    height: var(--tap);
+    padding: 0 14px;
     border: 0;
     border-radius: 999px;
     background: transparent;
@@ -2611,7 +2627,7 @@
     font-size: 10.5px;
   }
   .explore-side .kind-rail-chip:hover { border-color: var(--rule); color: var(--ink); }
-  .explore-side .kind-rail-chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+  .explore-side .kind-rail-chip.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
   .explore-side .kind-rail-icon { width: 16px; height: 16px; }
   .explore-side .kind-rail-clear { grid-column: 1 / -1; }
 }
@@ -2664,7 +2680,9 @@
 .xrail-toggle:hover { border-color: var(--rule); color: var(--ink); }
 .xrail-toggle:active { transform: scale(0.97); }
 .xrail-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.xrail-toggle.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+/* A pressed filter is an active toggle: --ink-fill, not the action colour,
+   so the sheet's own "Show N places" stays its one primary (T193). */
+.xrail-toggle.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
 .xrail-toggle.xrail-gem.on { background: var(--gem-ink); border-color: var(--gem-ink); }
 .xrail-month { margin-top: 10px; }
 .xrail-month select { padding: 5px 8px; border-radius: 8px; }

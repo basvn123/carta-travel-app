@@ -79,7 +79,9 @@
 .chat-bubble.me {
   display: block;
   margin: 7px 0 0 auto;
-  background: var(--accent);
+  /* The traveller's own answer, tappable to change: a filled bubble, but in
+     the ink fill, so the bot's one action keeps the accent (T193). */
+  background: var(--ink-fill);
   color: var(--on-fill);
   border-bottom-right-radius: 5px;
   width: fit-content;
@@ -496,7 +498,7 @@
     position: sticky;
     bottom: 10px;
     z-index: 3;
-    box-shadow: 0 6px 22px rgba(26, 26, 26, 0.26);
+    box-shadow: var(--shadow-2);
   }
 }
 
