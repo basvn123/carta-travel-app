@@ -813,3 +813,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T190-e | T190 | The Lifestyle panel is now a modal dialog for the keyboard on every tab, but off Explore it opens on the left with no scrim and the page behind still takes clicks; design call whether that variant gets a scrim | user | open |  |
 | T190-f | T190 | No screen reader (NVDA, VoiceOver, TalkBack) has been run on the new map pin layer, pin names or Lifestyle dialog; the EN 301 549 audit needs a manual assistive-technology pass | user | open | with T204 |
 | T190-g | T190 | verify_keyboard.mjs is not wired into ci or the launch gate; add it to the T204 performance and accessibility gate | next task | open | with T204 |
+| T103-a | T103 | Only 50 of 253 trips get a price row because only 54 destinations in 13 countries have a measured monthly stay curve with a city point; more curves are data-lane work (owner started) | user | open | |
+| T103-b | T103 | 563 destinations have a seasonality curve but no city_lat/city_lon, so the price row cannot match trips to them; fill the points or match by id | next task | open | |
+| T103-c | T103 | No monthly signal exists for food or local transport, so the price row is stays only; decide whether a seasonal ground cost curve is worth measuring | user | open | |
