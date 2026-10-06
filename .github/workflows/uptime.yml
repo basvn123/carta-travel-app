@@ -25,6 +25,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/monitor
+          fetch-depth: 1
+          lfs: false
       - name: Run the monitor
         env:
           ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}

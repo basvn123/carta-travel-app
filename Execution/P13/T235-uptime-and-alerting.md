@@ -16,6 +16,8 @@ First, HTTP probes listed in scripts/monitor/targets.json: the app (status 200 a
 
 Delivery has two layers. The script exits 1 on any failure, so the scheduled workflow goes red and GitHub emails the repository owner with no account created anywhere. If the secret ALERT_WEBHOOK_URL is set it also POSTs a JSON body with text, failures and checked_at to that URL, which Slack hooks and ntfy accept. Without CARTA_SUPABASE_URL and CARTA_SUPABASE_SERVICE_KEY the pipeline section prints "skip", never "ok", so a missing secret cannot look like a healthy pipeline.
 
+The workflow checks out only scripts/monitor (sparse, depth 1, no LFS), because check.py reads nothing outside its own folder (targets.json is found next to the script), so each run avoids cloning the whole repository.
+
 Why GitHub Actions and not a hosted monitor: I cannot create accounts, and the repo already runs eleven workflows, so the owner needs no new login. Its weak points are that GitHub pauses scheduled workflows after 60 days without repository activity, and that its cron can lag by several minutes. A dedicated probe (UptimeRobot, a Cloudflare health check) is the stronger second layer and is an owner row.
 
 The incident runbook was corrected in sections 1, 2, 4 and 5 where it still said no probe existed or that exit 3 reached nobody.
