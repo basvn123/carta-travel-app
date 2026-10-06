@@ -865,3 +865,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T186-f | T186 | 167 bare figures on the audited screens are set in the sans without tabular-nums; decide per surface which sit in a column and set those in mono or tabular-nums | next task | open |  |
 | T186-g | T186 | 431 runs of --ink-mute on the audited screens sit outside 12 to 14 px (mostly 10 to 11.5 px metadata); raise them to 12 px or move them to --ink-soft, rule by rule | next task | open |  |
 | T186-h | T186 | verify_quality_floor.mjs is not in ci or the launch gate; add it beside verify_keyboard.mjs to the T204 gate (it exits 1 on a floor failure) | next task | open | with T204 |
+| T227-a | T227 | Per-file Wikimedia Commons credit on POI thumbnails: the TASL data ships, nothing renders it; CC BY-SA on a displayed photo owes its own author line | next task | open | |
