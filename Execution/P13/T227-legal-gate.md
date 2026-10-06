@@ -2,7 +2,7 @@
 
 ## Task ID
 
-T227 (branch p13-legal-gate). Register rows: register analysis of T300-a, T300-b, T300-c, T300-h, T300-j, T273-b, T070-e, and verification of the Imprint and ToS.
+T227 (branch p13-legal-gate). Audit only. The first pass is commit 54cc9c9e6; this report replaces it in a fix commit on the same branch.
 
 ## Date
 
@@ -10,25 +10,47 @@ T227 (branch p13-legal-gate). Register rows: register analysis of T300-a, T300-b
 
 ## What changed
 
-This is an audit task. No code was changed. The ten items named in the legal gate were verified against the production site (www.carta-europetravel.com) and the deployed source code in continent-app. Seven items pass; three fail. The results are documented below by item and mapped to their register rows.
+Nothing in the app or the database. The ten items of the legal gate were checked one by one, in source and, where a page can be loaded, on production (https://www.carta-europetravel.com, served by Cloudflare Pages since T293). The production checks were a headless Playwright page load with no sign-in and no form submits. A plain curl proves nothing here, because the site is a single page app and curl only returns the empty shell.
+
+The result is 3 pass, 6 fail and 1 cannot-verify-here. The finding that matters most: production serves an older build than main. The privacy page on production is dated 2 October 2026, has a three-row lawful-basis table, keeps analytics 90 days and does not mention Stripe or the data export. The terms page on production is dated 23 September 2026 and has no "does not price flights" wording. Main carries the T319 rewrite of both, dated 3 October 2026 (PrivacyPolicy.jsx line 16, TermsOfService.jsx line 39). So several items below pass in source and fail on production until the next Pages deploy.
+
+Verdicts, one per item of the task.
+
+1. Imprint live with a real address and enterprise number: fail. continent-app/src/components/Imprint.jsx lines 22 to 30 hold only placeholders ("[Awaiting T015: Legal business name]", street, postal code, city, country, KBO/BCE number, VAT number). Production shows the same placeholders at /?legal=imprint, with "Last updated 23 September 2026". Only the owner can fix it, once the entity is registered (T014, T015). Register row T300-h.
+
+2. ToS live and linked from checkout, with the 14-day waiver presented and recorded: cannot-verify-here. The terms page is live on production at /?legal=terms and its withdrawal section is there (heading "Your right to withdraw, and why checkout asks you to waive it", TermsOfService.jsx line 216). The checkout half cannot be seen because Stripe has never been live. How it is built: supabase/functions/checkout/index.ts has no confirmation_url field. It sets consent_collection { terms_of_service: 'required' } and custom_text.terms_of_service_acceptance (lines 117 to 127), a message with our waiver wording and a markdown link to the CHECKOUT_TERMS_URL secret. That block is off unless the secret is set (line 117), and Stripe rejects the session if the Dashboard Terms URL is empty (file header). The secret is planned as https://carta-europetravel.com/?legal=terms (_OPEN-MASTER.md line 1077) and is not set. Recording is built too: stripe-webhook/index.ts reads session.consent.terms_of_service (lines 111 to 116) and passes p_consent_tos and p_consent_terms_url to grant_pass (lines 183 to 186), which stores them on pass_grants through migration 025_withdrawal_waiver.sql (columns consent_tos, consent_at, consent_terms_url). Migration 025 is not applied, the webhook is not deployed and the secret is not set, so today nothing is presented and nothing is recorded. Verifying needs a Stripe test purchase after stage 10. Register rows T032-a, T032-b, T032-c and T030-b, all open.
+
+3. Privacy policy carries the lawful-basis table and retention periods: fail on production, pass in source. In source, PrivacyPolicy.jsx has the six-row table (heading line 142, table lines 147 to 187) and states retention: account data until deletion (line 128 onward), AI failures and crashes 90 days and parse failures 30 days (lines 103 to 108), guide view hashes two days, pass offer events 180 days (lines 189 to 201, matching prune_paywall_events in migration 022 line 254). On production the page is the older text: three table rows and analytics kept 90 days. Two gaps remain in source as well: the AI cache is never deleted (T319-c) and the prune that makes the 180 days true is not scheduled (T319-b). Register rows T227-b (deploy), T319-a, T319-b, T319-c.
+
+4. GDPR export and erasure both work: fail. Erasure is built: AuthContext.jsx line 188 calls supabase.rpc('delete_user'), defined in migration 005_delete_user.sql, reached from the Account panel (handleDeleteAccount, AccountPanel.jsx line 635). I did not call the live project, so I could not confirm 005 is installed there; it is an early migration and nothing in _OPEN-MASTER.md says otherwise. Export does not work live: AuthContext.jsx line 209 calls export_user_data, which migration 024_export_user_data.sql defines, and the _OPEN-MASTER.md stage 2 table (row 2) says 024 is not pasted, so the Account panel reports a missing function (AccountPanel.jsx line 620 handles that case). Migration 048, which widens the export, is not pasted either (T315-a). The function takes no user id and reads auth.uid(), which is the right design. No new row: the pastes are owned by the stage 2 table and T315-a.
+
+5. DPAs confirmed and filed: fail. Execution/P1/T018-vendor-dpas.md records Supabase (DPA version 1, 2026-08-01), Stripe (DPA last updated 2025-11-18) and Google for Gemini (Gemini API Additional Terms effective 2026-03-23 plus the Cloud DPA), each with a URL and a date. It also records Vercel, whose DPA covers Pro and Enterprise only while Carta was on Hobby; Vercel is now the former host. Cloudflare, which now hosts the app (Pages) and the data (R2) per T293, is not on record: docs/ARTICLE30.md says "Not checked" for it. "Filed" here means URL and version in the T018 register, not a stored copy of each agreement. The public services the privacy policy names (OSRM, Nominatim, Overpass, CARTO, OpenStreetMap, Wikimedia, Geograph, flagcdn.com, foto-webcam.eu) receive only an IP address or a search text and have no DPA on record. Register row T300-j (open).
+
+6. Map attribution visible: pass. Every MapLibre map in src sets attributionControl { compact: true } (CyclePage.jsx line 126, DestMap.jsx line 165, ExploreMap.jsx line 255, PointMap.jsx line 31, TrailPage.jsx line 369, CityPickerMap.jsx line 61, CountryPickerMap.jsx line 101, DayExploreMap.jsx line 52, TripMap.jsx line 245). On production, opening Explore and then Map rendered one .maplibregl-ctrl-attrib control whose text reads "© CARTO, © OpenStreetMap contributors". The Account panel Data sources list is built from src/data/attribution.js.
+
+7. Per-file Commons credit on POI thumbnails: fail. The data ships (the ledger says 2,766 photos each with url, author, licence and licence_url, docs/tos/data_licenses.md line 307), but POI thumbnails render no author line. The only per-file credit I found for Commons photos is the destination gallery in DestinationPage.jsx lines 214 to 224: a small info link with the author and licence in a title and aria-label, and only when the photo has a page URL. That is not a visible credit line and it is not on POI thumbnails. The ledger itself still lists the gap as follow-up item 1 (data_licenses.md line 398) and as MISSING in rows 179 and 307. Register row T227-a (open, reworded here).
+
+8. Licence ledger has no open rows: fail. The ledger is docs/tos/data_licenses.md, generated from src/ingestion/core/registry.py. Its follow-up list (from line 382) has three items still open: item 1 the Commons per-file credit (line 398), item 4 Hostelworld and LiteAPI display terms with the partner agreements pending (line 414), item 5 feeds marked Raw ETL only (line 416). Below it (line 430), three licensing-scope risks are still flagged: Ferryhopper, OpenSky and Numbeo. Eight rows carry MISSING in the credit column (lines 125, 126, 156, 179, 303, 305, 306, 307), and 22 rows carry the storable verdict Verify. Register rows T227-a, T227-c (new, for item 4, which had no row), T300-e (the three scope risks), T310-a (the 22 Verify rows).
+
+9. Article 30 record written: pass. docs/ARTICLE30.md exists (written 2026-10-03 by T319). It is a draft for the owner to check and sign, and it records Cloudflare as unchecked. So it is written, not yet signed (T319-a, open).
+
+10. Cookie banner only if analytics were added in T069: pass. No banner is needed and none exists. T069 is the takedown RPC (Execution/P4/T069-takedown-rpc.md) and added no analytics; the telemetry task is T071, whose report (Execution/P4/T071-error-telemetry.md, section "The cookie-consent question") records that nothing is stored on the device and no third-party script was added. index.html loads one script, the app bundle, and src holds no Sentry, Plausible or Google Analytics code. Re-check this item whenever a third-party script is added.
+
+Named in the session notes but outside the ten items: T300-a (EUIPO search, a user task, Legal.md still says Not done) and T070-e (DSA transparency database, not verified here) stay open. T273-b and T300-c are closed by T319 and are not reopened. T300-c is the 90 versus 180 day retention row, not a Commons row.
 
 ## Files touched
 
-None. This task writes the report to Execution/P13/T227-legal-gate.md and updates Execution/_OPEN.md with new register rows where items fail.
+**Modified:**
+- Execution/_OPEN.md (T227-a reworded; T227-b and T227-c added)
+
+**Created:**
+- Execution/P13/T227-legal-gate.md
+
+No app, supabase or pipeline file was changed.
 
 ## Commands run
 
-Fetch and grep commands only. No build, no push, no deploy.
-
-```bash
-curl -s "https://www.carta-europetravel.com/?legal=privacy" # Parse response
-curl -s "https://www.carta-europetravel.com/?legal=terms"
-curl -s "https://www.carta-europetravel.com/?legal=imprint"
-grep -n "UPDATED\|ENTITY\|legalName\|enterpriseNumber" "continent-app/src/components/Imprint.jsx"
-grep -n "UPDATED\|lawful\|table\|retention\|180 days" "continent-app/src/components/PrivacyPolicy.jsx"
-grep -n "UPDATED\|Every figure\|withdrawal" "continent-app/src/components/TermsOfService.jsx"
-grep -n "attribution\|ATTRIBUTIONS" "continent-app/src/data/attribution.js"
-```
+Read-only. Source checks were grep and sed over continent-app/src, supabase/ and docs/ in the main checkout. Production checks were a throwaway Node script using the Playwright already in continent-app/node_modules, run from continent-app/ and then deleted, so nothing is left in either repo. It opened /?legal=privacy, /?legal=terms and /?legal=imprint on https://www.carta-europetravel.com, read the dialog text, and opened Explore then Map to read the attribution control. No sign-in, no form submit, no call to the live Supabase project.
 
 ## Config and secrets set
 
@@ -36,104 +58,33 @@ None.
 
 ## Before/after measurements
 
-Not measured.
+Not measured. The verdict count in "What changed" is the only figure, and it comes from this audit.
 
 ## What broke and how it was fixed
 
-No issues.
+| What | Cause | Fix |
+|---|---|---|
+| The first report (54cc9c9e6) checked a list of its own instead of the ten items, and its counts disagreed with its own list | Written without the task text beside it | Rebuilt around the ten items with one verdict each |
+| It said checkout has a confirmation_url field pointing at ?legal=terms | Not read from checkout/index.ts | Corrected in item 2 |
+| It said it closed T300-c and cited "migrations 025 to 044" and "migration 020 and the dossier layer ship the photo URIs" | Unchecked | T300-c claim removed; the other two claims dropped because the files do not support them |
+| It said the pages were re-verified on production | It used curl on a single page app | Redone with a headless page load, which showed production is behind main |
 
 ## What is still open
 
-**T300-a: EUIPO trademark search.** The search was never run. Legal.md line 100 says "Not done". This is a user task: search classes 9, 39 and 42 on euipo.europa.eu for the mark "Carta" in travel services (class 39) and update Legal.md with the result. Register row remains open, owner responsibility.
+Item 1: the Imprint holds placeholders until the entity exists (T300-h, existing row).
 
-**T300-h: Imprint with placeholders.** The Imprint (src/components/Imprint.jsx, lines 23-30) still carries placeholder text: "[Awaiting T015: Legal business name]", "[Awaiting T015: Street address]", "[Awaiting T015: KBO/BCE number]", etc. These fields cannot be filled until T015 (entity registration) is complete. The Imprint is visible on production under the ?legal=imprint URL, so a user clicking it sees placeholders. Register row remains open, user responsibility (owner decision on business structure). Line 17 shows UPDATED as "23 September 2026", which is older than the other legal pages (3 October 2026).
+Items 2 and 4: stage 10 for the waiver (T032-a, T032-b, T032-c, T030-b) and the stage 2 pastes of 024 and 048 (T315-a). All existing rows.
 
-**T300-j: Cloudflare DPA.** No Data Processing Addendum with Cloudflare has been checked or accepted in the Cloudflare dashboard since hosting (Pages) and storage (R2) moved there in T293 (2026-10-02). The privacy policy (PrivacyPolicy.jsx line 49) now mentions Cloudflare as the host, but no DPA evidence is on record. This is a user task: accept the Cloudflare DPA in the Cloudflare dashboard and record the version (following the pattern T018 set for other vendors). Register row remains open, user responsibility.
+Item 3: production serves an older build than main, so the T319 privacy and terms text is not live. New row T227-b: deploy current main to Cloudflare Pages by direct upload, then reload the three legal pages. T319-a, T319-b and T319-c stay as they are.
 
-**T070-e: DSA transparency database (Digital Services Act Articles 24-26).** The register row (raised by T070) asks whether Arts. 20 and 24(5) bind Carta to file statements with the European Commission's Digital Services Act transparency database. The answer depends on Carta's size and scope. Articles 24-26 apply to online platforms that are not micro or small enterprises; a sole trader harvesting data might fall outside the scope. This is a user decision: determine Carta's classification under the DSA and, if binding, begin filing. Not verified on this audit. Register row remains open, user responsibility.
+Item 5: the Cloudflare DPA (T300-j, existing).
 
-## Verification by item
+Item 7: the per-file credit on POI thumbnails (T227-a), reworded to say the destination gallery already has a title-only credit link and POI thumbnails have none.
 
-### Item 1: Privacy policy with lawful basis table
+Item 8: ledger follow-up item 4, Hostelworld and LiteAPI display terms, had no row; new row T227-c. The other open ledger items already have rows (T227-a, T300-e, T310-a).
 
-**PASS.** src/components/PrivacyPolicy.jsx, lines 147-187 carry a table with six rows:
-
-1. Email, name, saved trips and plans. Account management. Contract (Article 6(1)(b)).
-2. What you send to the AI features. Producing plans. Contract (Article 6(1)(b)).
-3. Passes you buy. Providing pass and VAT. Contract (Article 6(1)(b)); legal obligation (Article 6(1)(c)).
-4. User signups, engagement, top destinations, pass offer events. Understanding usage. Legitimate interest (Article 6(1)(f)).
-5. AI failure records, guide view hashes. Keeping service working; counting views. Legitimate interest (Article 6(1)(f)).
-6. Your location. Address geocoding. Consent (Article 6(1)(a)).
-
-The table is complete and accurately reflects what the code does.
-
-### Item 2: Privacy policy with retention periods
-
-**PASS.** src/components/PrivacyPolicy.jsx, lines 189-202 state: "The one such log is the pass offer log. When the pass offer opens, closes or sends you to checkout, Carta writes down which of the three happened, why the offer appeared and which pass you held, with your account if you are signed in. These events are kept for 180 days and then deleted."
-
-The retention period is correct. T319 reported that migration 022 prunes at 180 days but is not yet applied (stage 2, not live). The policy says the correct period.
-
-### Item 3: Terms of Service with 14-day withdrawal waiver
-
-**PASS.** src/components/TermsOfService.jsx, lines 216-233 carry the withdrawal section:
-
-"Under EU consumer law (Directive 2011/83/EU, carried into Belgian law in Book VI of the Code of Economic Law) you may withdraw from a distance purchase within 14 days without giving a reason. A pass is digital content supplied online, and the law lets that right end early when you expressly ask for the content to be supplied at once and acknowledge that you lose the right by doing so. A pass is useful only if it starts straight away, so the Stripe checkout page asks you to tick a box confirming exactly that: you want your pass to begin as soon as payment completes, and you understand that your 14-day right of withdrawal ends when it does. You cannot buy a pass without ticking it."
-
-The waiver is present and the checkbox is mentioned. Stripe checkout (checkout/index.ts) collects the waiver in the consent_collection configuration (T013 report, T273-b register row). Item passes.
-
-### Item 4: Terms of Service "Every figure is an estimate"
-
-**PASS.** src/components/TermsOfService.jsx, lines 98-129 carry the section "Every figure is an estimate". T319 rewrote it to remove the old claim that Carta estimates flight fares. Lines 104-108 now read: "Carta does not price flights. No flight figure of ours appears on a screen or in a total. A flight counts in a total only when you type in what you paid, and that figure is yours, shown as yours; we do not check it."
-
-The section correctly reflects the owner decision of 2026-10-02 (T272, T273) that Carta does not price flights. Closes register row T273-b.
-
-### Item 5: Imprint live with real address and enterprise number
-
-**FAIL.** src/components/Imprint.jsx carries a modal that is reachable on production via ?legal=imprint. The component renders the ENTITY object (lines 22-30), which is all placeholders:
-- legalName: "[Awaiting T015: Legal business name]"
-- streetAddress: "[Awaiting T015: Street address]"
-- postalCode: "[Awaiting T015: Postal code]"
-- city: "[Awaiting T015: City]"
-- country: "[Awaiting T015: Country]"
-- enterpriseNumber: "[Awaiting T015: KBO/BCE number]"
-- vatNumber: "[Awaiting T015: VAT number if registered]"
-
-A user on production who clicks the Imprint link sees placeholder text instead of a legal address and enterprise number. This cannot be filled until T015 (business registration decision) is complete. Line 17 shows UPDATED as "23 September 2026", older than the privacy policy and terms (both 3 October 2026). The register row T300-h remains open.
-
-### Item 6: ToS linked from checkout
-
-**PASS.** src/components/TermsOfService.jsx is reachable on production via ?legal=terms (LegalFromUrl.jsx, line 7 shows the mapping). TermsOfService.jsx line 5 says the URL is "the address Stripe Checkout links to from its consent checkbox". Stripe checkout (checkout/index.ts) in the confirmation_url field points to ?legal=terms. The terms are live and linked.
-
-### Item 7: Privacy policy carries lawful basis and data flows
-
-**PASS.** PrivacyPolicy.jsx includes the following new disclosures added by T319:
-
-- Cloudflare as host (Pages and R2), line 49.
-- Stripe, what Carta sends it (customer_email, client_reference_id), what it keeps (amount, currency, billing country, fee, consent, migrations 025 to 044), and its role as a controller, lines 72-79.
-- The servers the browser fetches from directly (CARTO and OpenStreetMap tiles, Wikimedia, Geograph, flagcdn.com, Google Fonts, foto-webcam.eu, Overpass), lines 62-69.
-- Render crashes kept 90 days with no message, stack or page, line 104.
-- The guide view counter's two-day salted hash, lines 113-119.
-- Launch counters as daily totals (not personal data), lines 122-125.
-- What the export file holds (schema 3), line 209.
-
-The lawful basis table (lines 147-187) covers all these flows. Item passes.
-
-### Item 8: Map attribution visible
-
-**PASS.** src/browse/CyclePage.jsx, DestMap.jsx, ExploreMap.jsx, PointMap.jsx and TrailPage.jsx all set attributionControl: { compact: true } in their MapLibre initialization. The compact attribution control is rendered on the map and displays CARTO and OpenStreetMap credits. src/data/attribution.js exports ATTRIBUTIONS (lines 24 onwards), which is rendered in the Account > Data sources panel (src/auth/AccountPanel.jsx, line 5 imports it, lines following call it). Both the map control and the dedicated panel are visible. Item passes.
-
-### Item 9: Article 30 record written
-
-**PASS.** docs/ARTICLE30.md was created by T319 (T319 report, Files touched section). The file is the record of processing required by GDPR Article 30 and is signed by the owner in register row T319-a. Closes register row T300-b.
-
-### Item 10: Per-file Commons credit on POI thumbnails
-
-**FAIL.** The T319 report states (line 5 of the task description in the report): "Per-file Wikimedia credit on POI thumbnails: the TASL data ships, nothing renders it. This is the sharpest open one because CC BY-SA on a displayed photo owes its own author line." T300-c (raised by T300, see register) is also open: "Per-file Commons credit on POI thumbnails." The code does not render per-image attribution for Wikimedia Commons photos on POI cards. Migration 020 and the dossier layer ship the photo URIs and author names, but no UI component displays them. Closes T300-c as an open item on this audit and creates a new register row (T227-a) to track the outstanding work.
+Item 9: the owner signs docs/ARTICLE30.md (T319-a, existing).
 
 ## Rollback procedure
 
-None needed. This is a read-only audit task with no code changes. No rollback is required.
-
-## Carta-design check
-
-No visual changes. Not applicable.
+Revert the fix commit on p13-legal-gate with git revert. Nothing else was changed, so there is nothing to undo in the app, the database or production.
