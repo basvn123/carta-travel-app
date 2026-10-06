@@ -78,9 +78,14 @@ Alert. The heartbeat in run_pipeline.py pings CARTA_HEARTBEAT_URL at start, on s
 external dead-man's switch (Healthchecks.io, weekly period, one day of grace) emails when the success
 ping does not arrive. That covers a run that never started (box off, timer disabled, lock stuck) and a
 run that failed. It is not live yet: the check and the variable are an owner step (T218-b). Two failures
-it does not catch: an R2 publish or archive failure after a good run (exit 3, the heartbeat has already
-said success, T218-c), and a run that succeeds with bad data, which waits for the row-count and drift
-alerts of T081. Until those exist, glance at the Overview pipeline card every Monday evening.
+it does not catch alone: a run that succeeds with bad data. The exit 3 gap is closed: weekly.sh pings
+/fail on any non-zero exit (T324, rehearsed against a local stub by T235). The monitor of T235
+(scripts/monitor/check.py, run every 15 minutes by .github/workflows/uptime.yml) covers the rest once
+CARTA_SUPABASE_URL and CARTA_SUPABASE_SERVICE_KEY are set as repository secrets and migration 041 is
+applied: it reads pipeline_runs and alerts when the last run is older than nine days, failed or
+soft-failed a task, or a layer count fell more than 10 percent against the run before. Separately it
+reads each layer's published index.json on the data host and alerts below a floor. Until the secrets
+are set, the pipeline half reports skip, not ok.
 
 What the traveller sees. Nothing. The site keeps serving last week's data, because the box uploads in
 phase 1 only (add and replace, never delete). A failed week is stale data, not an outage, so it is
@@ -100,7 +105,8 @@ build (stage 5.3 push from a laptop build of the last good master, pulled with
 Alert. The Google Cloud budget email (EUR 50 a month at 50, 90 and 100 percent, live since T259) for
 money. For quota, the Admin model report: a fallback rate climbing above its normal level means the
 primary model's quota is going, and edge errors with code ai_error and upstream 429 or a run of
-global_cap refusals mean the whole chain is spent. There is no push alert on these yet; T235 owns one.
+global_cap refusals mean the whole chain is spent. There is no push alert on these yet. T235's monitor does not read the AI tables (that would need a new
+admin reader and a migration), so this stays a manual look at the Admin model report.
 
 What the traveller sees. When every model in the chain answers 429, plan-day answers global_cap and the
 app says "Carta's shared Carta bot budget for today is fully used. It resets tomorrow; the built-in
@@ -137,8 +143,10 @@ While checkout is broken, set the site notice: "Buying a pass is paused. Nothing
 
 ## 4. R2 or Cloudflare has an incident
 
-Alert. None of Carta's own until T235 adds an uptime probe on the site and on data and cdn hosts.
-Until then: a user report, or www.cloudflarestatus.com. Confirm with `node scripts/r2/verify-data.mjs`.
+Alert. The T235 monitor probes the app, the data host (beaches/index.json must be JSON) and, once
+enabled in scripts/monitor/targets.json, the cdn host, every 15 minutes. A failure turns the scheduled
+GitHub Actions run red, which emails the repository owner, and posts to ALERT_WEBHOOK_URL when that
+secret is set. Also www.cloudflarestatus.com and user reports. Confirm with `node scripts/r2/verify-data.mjs`.
 
 What the traveller sees. With only R2 down, the app opens and the map draws, but destination detail,
 places, dossiers and trails fail to load, and self-hosted photos are missing. With Cloudflare Pages or
@@ -156,8 +164,9 @@ work."). With the whole zone down nothing of Carta's loads, and there is no in-a
 
 ## 5. The Supabase project has a problem
 
-Alert. Supabase emails the owner about usage limits and project pauses; subscribe to status.supabase.com
-for platform incidents (T218-d). The Admin health line names missing tables after a bad paste.
+Alert. The T235 monitor probes https://ntssxktaduxzpsmejwyv.supabase.co/auth/v1/health (401 without
+the anon key still proves the project answers). Supabase also emails the owner about usage limits and
+project pauses; subscribe to status.supabase.com for platform incidents (T218-d). The Admin health line names missing tables after a bad paste.
 
 What the traveller sees. The catalogue, map and destination pages come from static files and keep
 working. Sign-in, saved trips, shared trips, the bot, booking import and checkout fail with their own

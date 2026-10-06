@@ -1,0 +1,25 @@
+{
+  "_about": "Probe list for scripts/monitor/check.py (T235). Edit here, not in the code.",
+  "http": [
+    {"name": "app", "url": "https://www.carta-europetravel.com/", "expect_status": [200], "body_contains": "<div id=\"root\"", "enabled": true},
+    {"name": "data-host", "url": "https://data.carta-europetravel.com/data/beaches/index.json", "expect_status": [200], "json": true, "enabled": true},
+    {"name": "cdn-host", "url": "https://cdn.carta-europetravel.com/", "expect_status": [200, 403, 404], "enabled": false, "_note": "Enable once the cdn custom domain resolves (stage 5). Any HTTP answer proves the zone and the R2 binding are up."},
+    {"name": "supabase-auth", "url": "https://ntssxktaduxzpsmejwyv.supabase.co/auth/v1/health", "expect_status": [200, 401], "apikey_env": "SUPABASE_ANON_KEY", "enabled": true, "_note": "401 without a key still proves the project answers. With SUPABASE_ANON_KEY set it expects 200."}
+  ],
+  "wire_layers": {
+    "_note": "Row count floors for the published wire, read from the data host. Floors are about 80 percent of the figures in Execution/P4/T072-pipeline-health-metrics.md (beaches 2746, lakes 1681, mountains 740, trails 17619, cycling 506).",
+    "base": "https://data.carta-europetravel.com/data",
+    "layers": {
+      "beaches": {"path": "beaches/index.json", "field": "n_beaches", "floor": 2200},
+      "lakes": {"path": "lakes/index.json", "field": "n_lakes", "floor": 1350},
+      "mountains": {"path": "mountains/index.json", "field": "n_mountains", "floor": 590},
+      "trails": {"path": "trails/index.json", "field": "n_trips", "floor": 14000},
+      "cycling": {"path": "cycling/index.json", "field": "n_routes", "floor": 400}
+    }
+  },
+  "pipeline": {
+    "max_age_hours": 216,
+    "max_drop_fraction": 0.10,
+    "_note": "216 h is nine days: a weekly run, a day of grace, and a day for the check cadence."
+  }
+}
