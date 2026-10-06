@@ -1,0 +1,84 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   The derived modules (T182, destinations spec 11.5): which way a beach
+   faces, how you get down to it, how you get up a mountain, and how much
+   path runs along a lake's shore. Each one is the body of a collapsed row in
+   the detail skeleton's slot 6 (browse/DerivedModules.jsx), so the row chrome
+   is the skeleton's and only the inside is drawn here.
+
+   Ink only. The rose's wedge, the slots that are on and the sun glyph are
+   --ink and --ink-soft; what is off is --rule. No accent: the page's one
+   accent is its base-town button.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.dmod { font-size: 14px; line-height: 1.45; color: var(--ink); }
+.dmod p { margin: 0 0 var(--space-2); }
+.dmod p:last-child { margin-bottom: 0; }
+.dmod .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.dmod-lead { font-weight: 600; }
+.dmod-src { font-size: 12px; color: var(--ink-mute); }
+.dmod-empty p { color: var(--ink-soft); }
+
+/* ── Beach orientation: the rose beside the sentences ── */
+.dmod-facing {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+.dmod-facing-glyph {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+.dmod-facing-text { min-width: 0; }
+.dmod-rose { display: block; }
+.dmod-rose-ring { fill: var(--bg-card); stroke: var(--rule); stroke-width: 1.5; }
+.dmod-rose-wedge { fill: var(--ink-soft); }
+.dmod-rose-north { stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; }
+.dmod-rose-hub { fill: var(--ink); }
+.dmod-sun { color: var(--ink-soft); }
+
+/* ── How you get up: four slots, then the same answer in words ── */
+.dmod-slots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+.dmod-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-1);
+  border: 1px solid var(--rule-soft);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.dmod-slot svg { color: var(--rule); }
+.dmod-slot.is-on { color: var(--ink); border-color: var(--rule); }
+.dmod-slot.is-on svg { color: var(--ink); }
+/* A lift on the mountain that is not known to reach the top: drawn, but
+   lighter than a way that does, and the sentence below says why. */
+.dmod-slot.is-part { color: var(--ink-soft); border-style: dashed; border-color: var(--rule); }
+.dmod-slot.is-part svg { color: var(--ink-soft); }
+.dmod-slot.is-primary { border-color: var(--ink); }
+.dmod-lines { margin: 0 0 var(--space-2); padding: 0; list-style: none; }
+.dmod-lines li {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  column-gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.dmod-lines li:first-child { border-top: 0; padding-top: 0; }
+.dmod-lines b { font-weight: 600; }

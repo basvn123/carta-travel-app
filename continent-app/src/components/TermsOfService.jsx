@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 /**
  * The Terms of Service, readable inside the app and reachable by URL
@@ -39,11 +40,16 @@ const UPDATED = '3 October 2026';
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function TermsOfService({ onClose }) {
+  // A dialog for the keyboard and a screen reader too (T186): focus moves in,
+  // Tab stays inside, Escape closes it and focus goes back to the opener.
+  const cardRef = useRef(null);
+  const closeRef = useRef(null);
+  useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef });
   return (
     <div className="auth-overlay" onClick={onClose}>
-      <div className="auth-modal privacy-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="panel-close auth-close" onClick={onClose} aria-label="Close">x</button>
-        <h2 className="auth-title">Terms of service</h2>
+      <div className="auth-modal privacy-modal" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-terms-title" onClick={(e) => e.stopPropagation()}>
+        <button ref={closeRef} className="panel-close auth-close" onClick={onClose} aria-label="Close">x</button>
+        <h2 className="auth-title" id="legal-terms-title">Terms of service</h2>
         <p className="privacy-updated">Last updated {UPDATED}</p>
 
         <div className="privacy-body">

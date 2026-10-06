@@ -221,6 +221,11 @@ function TravelApp() {
   // move between spokes. Friends is the exception, because it is a second
   // door onto the same page: it only closes the page it itself opened.
   const toggleAccount = () => (accountOpen ? setAccountOpen(false) : openAccountAt('home'));
+  // My trips and the account hub cover the whole screen. The tab behind them
+  // is inert while they are open, so Tab, a screen reader and the heading
+  // outline stay inside the page the traveller is looking at (T186). React 18
+  // has no boolean inert, so the attribute is written as an empty string.
+  const behindPanel = savedTripsOpen || accountOpen ? '' : undefined;
   const toggleFriends = () => (accountOpen && accountView === 'friends'
     ? setAccountOpen(false)
     : openAccountAt('friends'));
@@ -992,7 +997,7 @@ function TravelApp() {
           fares. Keep-alive like the planners, so scroll position, the open
           panel and the loaded images survive a tab hop. */}
       {visitedTabs.has('map') && (
-        <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'}>
+        <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
           <div onClick={(e) => e.stopPropagation()}>
             <ExploreTab
               data={data}
@@ -1063,7 +1068,7 @@ function TravelApp() {
           browsable section of their own. Picking a place hands over to the
           map tab, where the detail panel already knows how to price it. */}
       {visitedTabs.has('places') && (
-        <div className={activeTab === 'places' ? undefined : 'tab-keep-hidden'} onClick={(e) => e.stopPropagation()}>
+        <div className={activeTab === 'places' ? undefined : 'tab-keep-hidden'} inert={behindPanel} onClick={(e) => e.stopPropagation()}>
           <DestinationsTab
             data={data}
             pricedAll={pricedAll}
@@ -1103,7 +1108,7 @@ function TravelApp() {
           another tab and back keeps the open plan, picks and scroll intact.
           MapLibre (v4, ResizeObserver) resizes itself when shown again. */}
       {visitedTabs.has('trip') && (
-        <div className={activeTab === 'trip' ? undefined : 'tab-keep-hidden'}>
+        <div className={activeTab === 'trip' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
           <Suspense fallback={<TabFallback />}>
             {/* The planners read every place in full, so a tab opened while
                 the catalogue is still partial (T271) waits for the rest. */}
@@ -1132,7 +1137,7 @@ function TravelApp() {
         </div>
       )}
       {visitedTabs.has('day') && (
-        <div className={activeTab === 'day' ? undefined : 'tab-keep-hidden'}>
+        <div className={activeTab === 'day' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
           <Suspense fallback={<TabFallback />}>
             {partial ? <TabFallback /> : <DayPlannerTab
               data={data}

@@ -606,7 +606,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
             {trip.hero?.url && <HeroCredit hero={trip.hero} t={t} />}
           </figure>
 
-          <Fold
+          <Fold level={2}
             id="sec-why"
             icon={BulbIcon}
             title={t('journey.whyHead')}
@@ -637,7 +637,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
           </Fold>
 
           {facts.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-facts"
               icon={InfoIcon}
               title={t('journey.factsHead')}
@@ -677,7 +677,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
           <JourneyRoute trip={trip} t={t} open={isOpen('route')} onToggle={() => toggle('route')} />
 
           {budget.breakdown && (
-            <Fold
+            <Fold level={2}
               id="sec-budget"
               icon={ReceiptIcon}
               title={t('journey.budgetHead')}
@@ -733,7 +733,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
           )}
 
           {specRows.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-spec"
               icon={CompassIcon}
               title={t('journey.specHead')}
@@ -772,7 +772,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
           <WeekPlan trip={trip} />
 
           {trip.itinerary?.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-itin"
               icon={CalendarIcon}
               title={t('journey.itinHead')}
@@ -786,7 +786,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
           )}
 
           {trip.accommodationStrategy?.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-sleep"
               icon={BedIcon}
               title={t('journey.sleepHead')}
@@ -831,7 +831,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
           )}
 
           {logRows.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-log"
               icon={InfoIcon}
               title={t('journey.logHead')}
@@ -848,7 +848,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
           )}
 
           {trip.proTips?.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-tips"
               icon={BulbIcon}
               title={t('journey.tipsHead')}
@@ -864,7 +864,7 @@ export function JourneyPage({ id, gatewayDest, railFrom = null, onClose, onSelec
             </Fold>
           )}
 
-          <Fold
+          <Fold level={2}
             id="sec-pack"
             icon={BackpackIcon}
             title={t('journey.packHead')}

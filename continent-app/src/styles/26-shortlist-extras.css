@@ -50,11 +50,10 @@
    is a list of wishes and runs long, where a saved trip is a considered few. */
 .slist-group + .slist-group { margin-top: 14px; }
 .slist-group-title {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-bottom: 6px;
 }
 /* A run of related facts is a LIST, so it is divided by hairlines rather
@@ -1015,6 +1014,62 @@
 }
 
 /* Licence names behind a credit line, collapsed (T313). */
-.credit-fold { margin: 6px 0 0; font-size: 11px; color: var(--ink-mute); }
+.credit-fold { margin: 6px 0 0; font-size: 12px; color: var(--ink-mute); }
 .credit-fold > summary { cursor: pointer; min-height: 24px; }
 .credit-fold > p { margin: 4px 0 0; }
+
+/* The quality floor on the remaining surfaces (T186): every control a thumb
+   uses on a phone is at least --tap, measured by
+   scripts/verify_quality_floor.mjs. Destinations' toolbar, the destination,
+   region and five detail pages, My trips, the account hub and the legal
+   dialogs. Where the look should not grow, a transparent ::before carries
+   the tap box instead, as the planner pins and "See all" already do. */
+@media (max-width: 768px) {
+  .places-search input,
+  .places-country,
+  .feat-dayplan,
+  .tpage-act,
+  .cycle-gpx,
+  .bpage-where,
+  .bpage-scorebtn,
+  .bpage-scorehint,
+  .credit-fold > summary,
+  .destp-score,
+  .destp-layer,
+  .destp-subnav button,
+  .destp-subnav-all,
+  .dsec-more,
+  .saved-empty-cta,
+  .bpage-sources a,
+  .account-invite-btn { min-height: var(--tap); }
+  .bpage-sources li { padding: 0; }
+  .credit-fold > summary { display: flex; align-items: center; }
+  .places-locate,
+  .destp-back,
+  .destp-bar-btn,
+  .rgnp-back,
+  .rgnp-share,
+  .auth-close { min-width: var(--tap); min-height: var(--tap); }
+  .mstrip-info { width: var(--tap); height: var(--tap); }
+  .destp-short-src,
+  .dhl-link,
+  .destp-slide-credit { display: inline-flex; align-items: center; min-height: var(--tap); min-width: var(--tap); }
+  /* MapLibre's stylesheet loads after this one, so the map class adds the
+     specificity the zoom buttons need on every map, not only Explore's. */
+  .maplibregl-map .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
+  /* The destination map's pins keep their size and grow a transparent tap
+     box; the marker element itself is MapLibre's to position. */
+  .dmap-pin[role="button"]::before { content: ''; position: absolute; inset: -16px; }
+  /* Credit and source links sit in a line of type; the tap box grows
+     around them without moving a letter. */
+  .bpage-credit a, .lpage-credit-line a { position: relative; }
+  .bpage-credit a::before, .lpage-credit-line a::before {
+    content: ''; position: absolute; inset: -16px -6px;
+  }
+}
+
+/* The mono rule on two fact rows (T186): the figures stay mono, the words
+   beside them are the sans. A note under a journey fact ("per person for the
+   week") and the bike a cycling route suits are sentences, not measures. */
+.bpage-fact dd.mono small,
+.cycle-facts .cycle-facts-bike { font-family: var(--ui); }

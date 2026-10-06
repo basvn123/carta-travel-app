@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 /**
  * The privacy policy, readable inside the app (App Store guideline 5.1.1(i)
@@ -16,11 +17,16 @@ const UPDATED = '3 October 2026';
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function PrivacyPolicy({ onClose }) {
+  // A dialog for the keyboard and a screen reader too (T186): focus moves in,
+  // Tab stays inside, Escape closes it and focus goes back to the opener.
+  const cardRef = useRef(null);
+  const closeRef = useRef(null);
+  useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef });
   return (
     <div className="auth-overlay" onClick={onClose}>
-      <div className="auth-modal privacy-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="panel-close auth-close" onClick={onClose} aria-label="Close">x</button>
-        <h2 className="auth-title">Privacy policy</h2>
+      <div className="auth-modal privacy-modal" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-privacy-title" onClick={(e) => e.stopPropagation()}>
+        <button ref={closeRef} className="panel-close auth-close" onClick={onClose} aria-label="Close">x</button>
+        <h2 className="auth-title" id="legal-privacy-title">Privacy policy</h2>
         <p className="privacy-updated">Last updated {UPDATED}</p>
 
         <div className="privacy-body">

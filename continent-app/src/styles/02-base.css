@@ -84,3 +84,24 @@ input, select {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* The motion floor (T186). DESIGN.md asks every transition and animation for
+   a prefers-reduced-motion branch; 48 rules wrote their own and the rest
+   never did, so the floor is set here once for the whole app. Durations drop
+   to 0.01 ms rather than to none on purpose: an entrance keyframe that ends
+   on its visible state (a drawn route, a sheet sliding in with fill-mode
+   forwards) lands on that end state at once instead of staying on its first
+   frame, and an infinite pulse (the skeleton's breathe, the chat cursor)
+   plays once and stops. Smooth scrolling goes back to a jump. Scripted
+   scrolls ask lib/motion.js, and MapLibre's easeTo and flyTo already jump
+   when the preference is set. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -178,10 +178,9 @@
 /* A place of the traveller's own making, and honest about a centre-fallback
    pin: the badge is the quiet "this one is yours" mark on row and timeline. */
 .day-badge-custom {
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   padding: 2px 6px;
   border-radius: 999px;
   background: var(--accent-bg);
@@ -189,10 +188,9 @@
   white-space: nowrap;
 }
 .day-assigned-kind {
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   color: var(--ink-mute);
 }
 .day-activity-add {
@@ -281,12 +279,10 @@
 .day-phase-head:first-child { margin-top: 2px; }
 .day-phase-label {
   flex: none;
-  font-family: var(--mono);
-  font-size: 10px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
 }
 .day-phase-head::after {
   content: '';
@@ -347,10 +343,9 @@
   margin-left: 6px;
   padding: 1px 6px;
   border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   color: var(--good-ink-soft);
   background: rgba(44, 125, 84, 0.12);
   vertical-align: 2px;
@@ -360,11 +355,9 @@
 .day-tier { margin-bottom: 14px; }
 .day-tier-head {
   display: flex; align-items: center; gap: 6px;
-  font-family: var(--mono);
-  font-size: 10.5px;
+  font-family: var(--ui);
+  font-size: 11px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--ink-soft);
   margin-bottom: 6px;
 }
@@ -437,10 +430,9 @@
   margin-left: 6px;
   padding: 1px 6px;
   border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   color: var(--accent);
   background: var(--accent-bg);
   vertical-align: 2px;
@@ -522,11 +514,9 @@
   white-space: nowrap;
 }
 .shape-field-title {
-  font-family: var(--mono);
-  font-size: 10.5px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--ink-soft);
   margin: 16px 0 8px;
 }
@@ -547,11 +537,10 @@
 .shape-pace.on { border-color: var(--accent); background: var(--accent-bg); }
 .shape-pace-label { font-size: 13px; font-weight: 600; color: var(--ink); }
 .shape-pace-hint {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .shape-lunch {
   display: flex;
@@ -600,11 +589,10 @@
   color: var(--ink);
 }
 .brand .sub {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-top: 4px;
 }
 

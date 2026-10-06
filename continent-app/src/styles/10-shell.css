@@ -86,11 +86,10 @@
   color: var(--ink);
 }
 .app-header-brand .brand-sub {
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-top: 5px;
 }
 .app-header-brand .brand-divider {
@@ -115,12 +114,11 @@
   gap: 7px;
   padding: 8px 14px;
   border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
   white-space: nowrap;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
   transition: color .15s, background .15s;
 }
 .header-nav-item:hover { color: var(--ink); background: var(--paper-dim); }
@@ -339,11 +337,9 @@
   background: var(--accent-bg);
   border: 1px solid var(--rule);
   box-shadow: 0 2px 8px rgba(26, 26, 26, 0.10);
-  font-family: var(--mono);
-  font-size: 10px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--accent);
   cursor: pointer;
   transition: background .15s, box-shadow .15s;
@@ -428,11 +424,10 @@
   min-width: 0;
 }
 .origin-btn-from {
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .origin-btn-label b {
   font-size: 12.5px;
@@ -481,12 +476,10 @@
   top: 0;
   padding: 6px 8px 3px;
   background: var(--paper);
-  font-family: var(--mono);
-  font-size: 9.5px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
 }
 .origin-opt {
   display: flex;
@@ -562,10 +555,9 @@
   border-radius: 9px;
   background: var(--accent);
   color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
   cursor: pointer;
 }
 .origin-drive-search:disabled { opacity: .45; cursor: default; }
@@ -636,10 +628,9 @@
   border-radius: 999px;
   background: var(--accent);
   color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
   cursor: pointer;
 }
 .drive-ask-alt {
@@ -746,7 +737,7 @@
   gap: 5px;
   min-width: 0;
   border-radius: 10px;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
   transition: color .15s, transform .1s;
 }
 .bottom-nav-item:hover { color: var(--ink-soft); }
@@ -768,12 +759,13 @@
 .bottom-nav-icon { flex-shrink: 0; }
 .bottom-nav-label {
   max-width: 100%;
-  font-family: var(--mono);
-  /* Five slots now share the row: 9px with tight tracking keeps the longest
-     labels (Destinations, Bestemmingen) whole inside a 390px viewport. */
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  /* A tab name is a word, not a measured fact, so it is the sans in
+     sentence case (T186; it was uppercase mono). Five slots share the row:
+     10.5px keeps the longest labels (Destinations, Bestemmingen) whole
+     inside a 380px viewport. */
+  font-family: var(--ui);
+  font-size: 10.5px;
+  font-weight: 600;
   /* Never wrap: a wrapped label grows the row and collides with its
      neighbours instead of staying inside its own tab. */
   white-space: nowrap;
@@ -865,7 +857,7 @@
    (Bestemmingen, Destinazioni) start truncating. */
 @media (max-width: 360px) {
   .bottom-nav { padding-left: 6px; padding-right: 6px; }
-  .bottom-nav-label { font-size: 8px; letter-spacing: 0.02em; }
+  .bottom-nav-label { font-size: 10px; }
   .bottom-nav-plus { margin-left: 6px; margin-right: 6px; }
 }
 
@@ -915,3 +907,8 @@
   margin-bottom: 10px;
 }
 
+/* A tab's own h1 (T186) steps aside while a full page with its own h1 is
+   open over it (a detail, journey, trip or region page), so that title is
+   the only h1 in the outline. Sheets and small dialogs title themselves
+   with an h2 and leave it in place. */
+body:has(.tpage[aria-modal="true"], .rgnp[aria-modal="true"]) .tab-h1 { display: none; }

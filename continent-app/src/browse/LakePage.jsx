@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import { LAKE_KIND } from '../lib/footers.js';
-import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
@@ -23,10 +22,13 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, BootIcon, AlertIcon, BulbIcon, InfoIcon, StarIcon,
-  SunIcon,
+  SunIcon, LoopIcon,
 } from '../components/Icons.jsx';
+import { lakeShore, shoreSummary } from '../lib/derivedModules.js';
+import { LakeShore } from './DerivedModules.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
+import { LakeSignature } from './Signature.jsx';
 
 /**
  * The lake page: one published water body, and the argument for going there.
@@ -53,8 +55,9 @@ import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.js
  * Since T180 the page draws through the shared detail skeleton
  * (DetailSkeleton.jsx). The swim verdict and the hazards sit in its alert
  * slot, the one place that never folds, for the reason above. The map is a
- * lazy chunk (PointMap.jsx). The season strip holds the signature slot until
- * T181 draws the lake's own figure.
+ * lazy chunk (PointMap.jsx). The signature slot holds the lake's own figure
+ * (Signature.jsx, T181): the water temperature by month as twelve bars, and
+ * the depth-versus-area wedge.
  *
  * The month strip is an ESTIMATE and says so in its own subtitle. There is no
  * free per lake water temperature series for Europe, so the pipeline models it
@@ -100,24 +103,6 @@ function ImageCredit({ image, t }) {
 
 /** The way in as a level: only the access field says anything about it. */
 const lakeLevel = (l) => ACCESS_LEVEL[l?.access] || 0;
-
-/** The warm months as the shared twelve-cell strip. The temperatures are an
- *  estimate and the info panel says so; a month counts as good when its
- *  modelled surface temperature reaches the Lifestyle warm threshold. */
-function SeasonStrip({ temps, warmC, seasonLine, t }) {
-  const good = temps.map((c, i) => (c >= warmC ? i + 1 : 0)).filter(Boolean);
-  return (
-    <MonthStrip
-      good={good}
-      info={(
-        <>
-          <p>{t('lake.seasonNote')}</p>
-          {seasonLine && <p>{seasonLine}</p>}
-        </>
-      )}
-    />
-  );
-}
 
 export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
@@ -225,6 +210,10 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
   }, t);
   const subs = SUB_ORDER.filter((key) => lake.sub?.[key] != null);
 
+  // The derived module (T182): how much path runs along the water, from the
+  // shore sweep's figure on the wire. Always rendered; an unswept shore says so.
+  const shore = lakeShore(lake);
+
   // Slot 6: the collapsed rows (T180).
   const rows = [
     (why.length > 0 || subs.length > 0 || lake.bestFor?.length > 0 || tags.length > 0) && {
@@ -262,6 +251,13 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
           )}
         </div>
       ),
+    },
+    {
+      key: 'shore',
+      icon: LoopIcon,
+      label: t('derived.shoreHead'),
+      summary: previewWords(shoreSummary(shore, t, lang)),
+      body: <LakeShore shore={shore} t={t} lang={lang} />,
     },
     facts.length > 0 && {
       key: 'facts',
@@ -433,12 +429,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
         </>
       )}
       map={<PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} />}
-      signature={lake.swim?.temps?.length === 12 ? (
-        <section className="lpage-season">
-          <h2>{t('lake.seasonHead')}</h2>
-          <SeasonStrip temps={lake.swim.temps} warmC={warmC} seasonLine={seasonLine} t={t} />
-        </section>
-      ) : null}
+      signature={<LakeSignature lake={lake} warmC={warmC} />}
       rows={rows}
       gettingThere={(
         <>

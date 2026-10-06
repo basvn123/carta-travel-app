@@ -229,8 +229,6 @@
   display: block;
   font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--ink-soft);
   margin-bottom: 6px;
 }
@@ -320,8 +318,6 @@
   gap: 3px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--accent);
 }
 .carta-route-desc { display: block; font-size: 11.5px; line-height: 1.45; color: var(--ink-soft); margin-top: 2px; }
@@ -374,8 +370,8 @@
 .trip-carfrom-row { display: flex; gap: 8px; }
 .trip-carfrom-row .trip-ownflight-input { flex: 1; min-width: 0; }
 .trip-carfrom-btn {
-  font-family: var(--mono); font-size: 10px;
-  text-transform: uppercase; letter-spacing: 0.08em;
+  font-family: var(--ui);
+  font-weight: 600; font-size: 12px;
   color: var(--ink-soft);
   border: 1px solid var(--rule); border-radius: 8px;
   background: none; padding: 6px 10px; cursor: pointer;
@@ -390,18 +386,18 @@
 .trip-carfrom-result:hover { border-color: var(--accent); color: var(--ink); }
 .trip-carfrom-note b { color: var(--ink); }
 .trip-carfrom-change {
-  font-family: var(--mono); font-size: 9.5px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600; font-size: 12px;
+  color: var(--ink-soft);
   border: 1px solid var(--rule); border-radius: 999px;
   background: none; padding: 2px 8px; cursor: pointer;
 }
 .trip-carfrom-change:hover { color: var(--accent); border-color: var(--accent); }
 .trip-ownflight-date { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .trip-ownflight-date > span {
-  font-family: var(--mono); font-size: 9.5px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600; font-size: 12px;
+  color: var(--ink-soft);
 }
 
 /* ── Stay step: rating/price filters + per-night price chip ── */
@@ -412,9 +408,9 @@
 }
 .guide-stay-filter { display: flex; align-items: center; gap: 6px; }
 .guide-stay-filter > span {
-  font-family: var(--mono); font-size: 9.5px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600; font-size: 12px;
+  color: var(--ink-soft);
 }
 .guide-stay-filter select {
   font-size: 12px; color: var(--ink);
@@ -422,9 +418,9 @@
   background: var(--paper); padding: 5px 8px;
 }
 .guide-stay-filter-clear {
-  font-family: var(--mono); font-size: 9.5px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600; font-size: 12px;
+  color: var(--ink-soft);
   border: 1px solid var(--rule); border-radius: 999px;
   background: none; padding: 3px 9px; cursor: pointer;
 }
@@ -517,9 +513,8 @@
    "09:30" needed, and quiet: it orients, it does not command. */
 .ai-sched-time {
   flex: 0 0 74px;
-  font-family: var(--mono); font-size: 9.5px; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui); font-size: 12px; font-weight: 700;
+color: var(--ink-soft);
   padding-top: 1px;
 }
 .ai-sched-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -717,8 +712,7 @@ button.ai-sched-main:focus-visible {
   background: var(--accent-bg);
   color: var(--accent);
   font-size: 10.5px; font-weight: 700;
-  letter-spacing: 0.3px; text-transform: uppercase;
-  margin-bottom: 8px;
+margin-bottom: 8px;
 }
 
 /* Push the plan back at the AI until it is right. */
@@ -1213,11 +1207,10 @@ button.ai-sched-main:focus-visible {
 /* Once chosen, the stay IS the field. */
 .day-flow-chosen-change {
   margin-left: auto;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--paper);

@@ -412,6 +412,19 @@ export function CarIcon({ size = 15, className = '' }) {
   );
 }
 
+/** A cabin hanging from a cable: any lift that carries you up a mountain,
+ *  cable car, gondola, chairlift or rack railway alike (T182, the way-up row). */
+export function GondolaIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Lift">
+      <path d="M3 5.5 21 2.5" />
+      <path d="M12 4v4" />
+      <rect x="6.5" y="8" width="11" height="10.5" rx="2.5" />
+      <path d="M6.5 12.5h11M12 12.5v6" />
+    </Glyph>
+  );
+}
+
 export function AlertIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Warning">

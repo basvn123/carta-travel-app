@@ -481,7 +481,7 @@ export function TripPage({
               its hours and its fare. A trip that cannot show this is a list
               of cities, not an itinerary. */}
           {detail && (
-            <Fold
+            <Fold level={2}
               id="sec-route"
               icon={RouteIcon}
               title={t('trip.secRoute')}
@@ -573,7 +573,7 @@ export function TripPage({
               without a car. Above the day-by-day because it is what decides
               whether the plan below is even possible. */}
           {detail && (
-            <Fold
+            <Fold level={2}
               id="sec-practical"
               icon={CompassIcon}
               title={t('trip.secPractical')}
@@ -587,7 +587,7 @@ export function TripPage({
           {/* Day by day. Each day is a line and a row of chips; its prose and
               its sights fold away underneath rather than being cut. */}
           {detail && (
-            <Fold
+            <Fold level={2}
               id="sec-days"
               icon={CalendarIcon}
               title={t('trip.secDays')}
@@ -605,7 +605,7 @@ export function TripPage({
 
           {/* Days out, for a trip that keeps one bed. */}
           {detail && detail.daytrips.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-outs"
               icon={LoopIcon}
               title={t('trip.outsTitle', { city: detail.stops[0].city })}
@@ -647,7 +647,7 @@ export function TripPage({
 
           {/* What it costs, and for whom. */}
           {detail && (
-            <Fold
+            <Fold level={2}
               id="sec-cost"
               icon={ReceiptIcon}
               title={t('trip.secCost')}
@@ -674,7 +674,7 @@ export function TripPage({
           )}
 
           {why.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-why"
               icon={BulbIcon}
               title={t('trip.secWhy')}
@@ -698,7 +698,7 @@ export function TripPage({
 
           {/* What we checked. The block that makes the rest believable. */}
           {detail && (
-            <Fold
+            <Fold level={2}
               id="sec-checks"
               icon={CheckIcon}
               title={t('trip.secChecks')}
@@ -725,7 +725,7 @@ export function TripPage({
           )}
 
           {detail?.gallery?.length > 0 && (
-            <Fold
+            <Fold level={2}
               id="sec-gallery"
               icon={CameraIcon}
               title={t('trip.secGallery')}

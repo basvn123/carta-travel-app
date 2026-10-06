@@ -1,0 +1,251 @@
+/* ── The signature visuals, one instrument family (T181, destinations spec
+      5.5). browse/Signature.jsx and the SlopeProfile in RouteFigures.jsx.
+
+   The rule that keeps them a family: every one is a twelve-cell month row or
+   one 100%-wide bar, on --paper-dim, its figures in mono, with one hairline
+   axis under it. No section has a hue of its own. The fills are the ink ramp
+   the surface bar uses (25-feature-pages.css, .rsurf-seg): --rule, then
+   --ink-mute, --ink-soft and --ink, so a darker mark always means more of
+   what is measured. The accent appears once, on the trail profile's marker,
+   because that marker is the live point on the route.
+
+   Every scale is fixed in lib/signature.js, never fitted to the one place on
+   screen, so two lakes or two mountains read against the same ruler. ── */
+
+.sig .sig-panel,
+.sig-panel {
+  padding: var(--space-3) var(--space-4);
+  border-radius: 6px;
+  background: var(--paper-dim);
+}
+.sig-row + .sig-row,
+.sig-row-gap { margin-top: var(--space-4); }
+.sig-cap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.sig-cap .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.sig-note {
+  margin: var(--space-2) 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.sig .bpage-note.sig-note { margin-top: var(--space-2); }
+.sig-keys { margin-top: var(--space-2); }
+.sig-cycle .cycle-surface { margin-top: var(--space-3); }
+
+/* The one hairline axis. Month initials sit on the same twelve columns as
+   the cells above; the end figures of a 100% bar are placed at their share
+   of the ruler and slide inside their own width, so 0 sits flush left, the
+   end flush right and a middle mark centred. */
+.sig-axis {
+  margin: 6px 0 0;
+  padding: 4px 0 0;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.sig-axis-months {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  list-style: none;
+  text-align: center;
+}
+.sig-axis-span { position: relative; height: 1.3em; }
+.sig-axis-span > span { position: absolute; top: 4px; white-space: nowrap; }
+
+/* Twelve cells, a bar in each. On the shared scale; at or above the
+   threshold filled, below it an outline; the warmest month darkest, with its
+   figure at the crest. */
+.sig-cells {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  align-items: end;
+  height: 60px;
+  margin: 0;
+  padding: 16px 0 0;
+  list-style: none;
+}
+/* Two classes deep, so the lake's legacy .lpage-months li rule (a column
+   flex the old strip used, kept on the list because the lake harness counts
+   .lpage-months li) cannot reach in and re-centre the bars. */
+.sig-cells .sig-cell {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0;
+  height: 100%;
+}
+.sig-bar {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--ink-mute);
+  border-bottom: 0;
+  border-radius: 2px 2px 0 0;
+}
+.sig-cell.is-on .sig-bar { background: var(--ink-soft); border-color: var(--ink-soft); }
+.sig-cell.is-on.is-peak .sig-bar { background: var(--ink); border-color: var(--ink); }
+.sig-crest {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-bottom: 2px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Nothing measured: the row keeps its place and says so. A dashed outline
+   is an absence, never a reading. */
+.sig-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 var(--space-2);
+  border: 1px dashed var(--rule);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+.sig-empty.is-tall { height: 44px; }
+
+/* One 100%-wide bar: the same frame as .rsurf-bar, on the card white so the
+   part nobody measured reads as blank ground against the panel. */
+.sig .rsurf-bar,
+.sig-span {
+  display: flex;
+  gap: 1px;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+}
+.sig-seg { display: block; height: 100%; }
+.sig-seg.is-base { background: var(--rule); }
+.sig-seg.is-prom { background: var(--ink); }
+.sig .cycle-bars { margin: 0; }
+.sig .cycle-bars .rsurf + .rsurf { margin-top: 0; }
+.sig .mstrip-cells { max-width: none; }
+
+/* Steepness, on the profile, in the key and on the card strip. */
+.rsurf-seg.is-slope0,
+.rsurf-dot.is-slope0,
+.sig-slope.is-slope0 { background: var(--rule); fill: var(--rule); }
+.rsurf-seg.is-slope1,
+.rsurf-dot.is-slope1,
+.sig-slope.is-slope1 { background: var(--ink-mute); fill: var(--ink-mute); }
+.rsurf-seg.is-slope2,
+.rsurf-dot.is-slope2,
+.sig-slope.is-slope2 { background: var(--ink-soft); fill: var(--ink-soft); }
+.sig-slope { stroke: none; }
+.sig-profile-line { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+
+/* The scrubbable profile. The marker is HTML over the stretched SVG so the
+   dot stays round; a sideways drag scrubs, a vertical one still scrolls. */
+.sig-scrub {
+  position: relative;
+  border-radius: 4px;
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+.sig-scrub:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sig-scrub-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1px solid var(--accent);
+  pointer-events: none;
+}
+.sig-scrub-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 3px solid var(--accent);
+  pointer-events: none;
+}
+/* The same point on the map, drawn the same way: an accent ring, so it
+   cannot be taken for the solid start pin beside it. */
+.tpage-scrub-pin {
+  display: block;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 4px solid var(--accent);
+  box-shadow: var(--shadow-1);
+}
+
+/* The lake's wedge, hanging from its surface line. */
+.sig-wedge { display: block; width: 100%; height: 72px; }
+.sig-wedge-fill { fill: var(--ink-soft); stroke: none; }
+.sig-wedge-surface { stroke: var(--ink); stroke-width: 1; }
+
+/* The beach's rosette, laid over the map's bottom-left corner. */
+.sig-mapwrap { position: relative; }
+.sig-rosette {
+  position: absolute;
+  left: var(--space-2);
+  bottom: var(--space-2);
+  z-index: 2;
+  display: flex;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  pointer-events: none;
+}
+.sig-rosette-ring { fill: none; stroke: var(--rule); stroke-width: 1; }
+.sig-rosette-tick { stroke: var(--ink-mute); stroke-width: 1; }
+.sig-rosette-wedge { fill: var(--ink-soft); }
+.sig-rosette-n { font-family: var(--mono); font-size: 7px; fill: var(--ink-soft); }
+
+/* The card strip: 6 px along the bottom of the photograph, on --paper-dim,
+   the same fills as the page's instrument. */
+.places-card-strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  gap: 1px;
+  height: 6px;
+  background: var(--paper-dim);
+  pointer-events: none;
+}
+.places-card-strip > span { display: block; height: 100%; }
+.places-card-strip.is-months > .sig-seg { flex: 1 1 0; }
+.places-card-strip .sig-seg.is-on { background: var(--ink-soft); }
+.places-card-strip .sig-seg.is-on.is-peak { background: var(--ink); }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
 import { GoogleButton } from './GoogleButton.jsx';
@@ -10,6 +11,11 @@ import { useI18n } from '../i18n/index.jsx';
  * ComparePanel overlay+modal pattern so it feels native to the rest of the app.
  */
 export function AuthModal({ onClose, initialMode = 'signin' }) {
+  // A dialog for the keyboard and a screen reader too (T186): focus moves in,
+  // Tab stays inside, Escape closes it and focus goes back to the opener.
+  const cardRef = useRef(null);
+  const closeRef = useRef(null);
+  useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef });
   const { signIn, signUp, sendPasswordReset } = useAuth();
   const { t } = useI18n();
   const [mode, setMode] = useState(initialMode); // signin | signup | forgot
@@ -89,8 +95,8 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
 
   return (
     <div className="auth-overlay" onClick={onClose}>
-      <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="panel-close auth-close" onClick={onClose} aria-label={t('auth.close')}>x</button>
+      <div className="auth-modal" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" onClick={(e) => e.stopPropagation()}>
+        <button ref={closeRef} className="panel-close auth-close" onClick={onClose} aria-label={t('auth.close')}>x</button>
 
         <div className="auth-brand">
           <Logo size={26} />
@@ -116,7 +122,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
           </div>
         )}
 
-        <h2 className="auth-title">{titles[mode]}</h2>
+        <h2 className="auth-title" id="auth-modal-title">{titles[mode]}</h2>
         <p className="auth-sub">{subs[mode]}</p>
 
         {mode !== 'forgot' && !notice && (

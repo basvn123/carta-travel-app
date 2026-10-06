@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPinIcon, ClockIcon } from '../components/Icons.jsx';
 import { safeUrl } from '../lib/format.js';
+import { scrollBehavior } from '../lib/motion.js';
 
 /**
  * The villages inside an area (PLAN.md D7), consuming B1's members[].
@@ -16,7 +17,7 @@ export function MemberPlaces({ members, focusName, t }) {
   React.useEffect(() => {
     if (!focusName || !listRef.current) return;
     const el = listRef.current.querySelector('[data-focus="1"]');
-    el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el?.scrollIntoView({ block: 'center', behavior: scrollBehavior() });
   }, [focusName, members]);
 
   if (!members?.length) return null;

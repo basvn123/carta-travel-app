@@ -470,8 +470,6 @@
   padding: 8px 14px 4px;
   font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--ink-mute);
   background: var(--paper-dim);
 }
@@ -1509,8 +1507,9 @@
 .lpage-swim-unknown { --sw-ink: var(--slate-ink); }
 .lpage-swim-word {
   font-size: 15px;
-  font-weight: 700;
-  color: var(--sw-ink);
+  font-weight: 600;
+  /* Ink, not the indicator colour, which is under 4.5:1 as text (T186). */
+  color: var(--ink);
 }
 .lpage-swim-src { font-size: 12.5px; color: var(--ink-soft); }
 .lpage-swim-season {
@@ -1650,7 +1649,6 @@
 .lpage-months li.warm .lpage-month-c { color: var(--ink); font-weight: 500; }
 .lpage-month-m {
   font-size: 9.5px;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 
@@ -1713,8 +1711,8 @@
 .mpage-way-foot { --way-ink: var(--slate-ink); }
 .mpage-way-word {
   font-size: 15px;
-  font-weight: 700;
-  color: var(--way-ink);
+  font-weight: 600;
+  color: var(--ink);
 }
 /* The lift's own name is a proper noun off the map, so it reads as a name
    rather than as part of the sentence. */
@@ -2808,8 +2806,6 @@
 .tshare-list-title {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 .tshare-row {
@@ -2888,8 +2884,6 @@
 .stview-kicker {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: .07em;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 .stview-title {
@@ -3168,8 +3162,6 @@
 .coplan-title {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 .tshare-vis-opts {
@@ -3544,8 +3536,6 @@
 .tshare-life-title {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 .tshare-life-opts {
@@ -3614,8 +3604,6 @@
   font-family: var(--ui);
   font-size: 9.5px;
   font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 

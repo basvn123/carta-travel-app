@@ -23,7 +23,11 @@ import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
-import { ElevationChart, MixBar, TrafficBar } from './RouteFigures.jsx';
+import {
+  ElevationChart, MixBar, MixKeys, TrafficBar,
+} from './RouteFigures.jsx';
+import { Instrument, Row, EmptyTrack, SpanAxis } from './Signature.jsx';
+import { kmOf, trafficMix } from '../lib/signature.js';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
   ListDayIcon, CheckIcon, InfoIcon, MountainIcon, BulbIcon, BedIcon,
@@ -72,8 +76,8 @@ import {
  * Since T180 a route or tour page draws through the shared detail skeleton
  * (DetailSkeleton.jsx), the same dialog shell as the trail, beach, lake and
  * mountain pages: the line map is its sticky map slot, the surface and
- * traffic block its signature slot (T181 makes it the one 100%-wide
- * instrument), the rest its collapsed rows. The EuroVelo family page below
+ * traffic block its signature slot (since T181 one instrument: the two
+ * 100%-wide bars on one kilometre axis), the rest its collapsed rows. The EuroVelo family page below
  * is a manifest, not a detail page, and keeps its own layout.
  */
 
@@ -578,34 +582,58 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     if (how === 'copied') setToast(t('trip.linkCopied'));
   };
 
+  // The signature (T181, destinations spec C6 and 5.5): the surface bar and
+  // the traffic bar on one 0-to-length axis, each class in kilometres, the
+  // keys under the axis so the two bars sit directly over the ruler they
+  // share. From the same block the sentences below read.
+  const routeM = carta.surface?.total_m;
+  const surfaceMix = surfaceParts(carta.surface, t)
+    ?.map((p) => ({ ...p, value: kmOf(p.share, routeM) })) || null;
+  const trafficSplit = trafficParts(carta.surface);
+  const trafficKm = trafficMix(trafficSplit, t, routeM);
   const surfaceBlock = route && (
-    <section className="cycle-route" data-testid="cycle-route">
-      <h2 className="tpage-sec-title">{t('cycle.safetyTitle')}</h2>
-      {/* The surface and the traffic as bars, from the same block the
-          sentences below read (T174, destinations spec C6). T181 turns this
-          into the one 100%-wide signature instrument. */}
-      {(surfaceParts(carta.surface, t) || trafficParts(carta.surface)) && (
-        <div className="cycle-bars">
-          <MixBar parts={surfaceParts(carta.surface, t)} testId="cycle-surface-bar" />
-          <TrafficBar split={trafficParts(carta.surface)} t={t} testId="cycle-traffic-bar" />
-        </div>
+    <Instrument
+      kind="cycle"
+      className="cycle-route"
+      title={t('sig.cycleHead')}
+      note={(
+        <>
+          <p className="cycle-surface" data-testid="cycle-surface">
+            {surfaceLine(carta.surface, t)}
+          </p>
+          {trafficFreeLine(carta.surface, t) && (
+            <p className="cycle-free">{trafficFreeLine(carta.surface, t)}</p>
+          )}
+          <p className="cycle-safety" data-testid="cycle-safety">
+            {safetyLine(carta.safety, t)}
+          </p>
+          <p className="cycle-safety-note">{t('cycle.safetyHouse')}</p>
+          {agreementLine(carta.agreement, t) && (
+            <p className="cycle-agree" data-testid="cycle-agree">
+              {agreementLine(carta.agreement, t)}
+            </p>
+          )}
+        </>
       )}
-      <p className="cycle-surface" data-testid="cycle-surface">
-        {surfaceLine(carta.surface, t)}
-      </p>
-      {trafficFreeLine(carta.surface, t) && (
-        <p className="cycle-free">{trafficFreeLine(carta.surface, t)}</p>
-      )}
-      <p className="cycle-safety" data-testid="cycle-safety">
-        {safetyLine(carta.safety, t)}
-      </p>
-      <p className="cycle-safety-note">{t('cycle.safetyHouse')}</p>
-      {agreementLine(carta.agreement, t) && (
-        <p className="cycle-agree" data-testid="cycle-agree">
-          {agreementLine(carta.agreement, t)}
-        </p>
-      )}
-    </section>
+    >
+      <div className="cycle-bars">
+        <Row label={t('route.surfaceTitle')}>
+          {surfaceMix
+            ? <MixBar parts={surfaceMix} keys={false} testId="cycle-surface-bar" />
+            : <EmptyTrack text={t('sig.notMeasured')} />}
+        </Row>
+        <Row label={t('cycle.safetyTitle')}>
+          {trafficSplit
+            ? <TrafficBar split={trafficSplit} t={t} totalM={routeM} keys={false} testId="cycle-traffic-bar" />
+            : <EmptyTrack text={t('sig.notMeasured')} />}
+        </Row>
+        {Number.isFinite(routeM) && routeM > 0 && (
+          <SpanAxis marks={['0 km', (routeM / 2000).toFixed(1), `${(routeM / 1000).toFixed(1)} km`]} />
+        )}
+        {surfaceMix && <MixKeys parts={surfaceMix} className="sig-keys" />}
+        {trafficKm && <MixKeys parts={trafficKm} className="sig-keys" />}
+      </div>
+    </Instrument>
   );
 
   // Slot 6: the collapsed rows (T180). A tour's own rows first, then the
@@ -675,7 +703,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             {route.km != null && <span>{`${route.km} km`}</span>}
             {route.asc != null && <span>{`${route.asc} m`}</span>}
             {carta.surface && carta.surface.bike && (
-              <span>{bikeLine(carta.surface.bike, t)}</span>
+              <span className="cycle-facts-bike">{bikeLine(carta.surface.bike, t)}</span>
             )}
           </p>
           {!rated && <p className="cycle-unrated">{listedLine(t)}</p>}

@@ -391,7 +391,7 @@
 .trip-step-btn:disabled { opacity: 0.3; cursor: default; }
 .trip-step-val { text-align: center; min-width: 30px; line-height: 1.05; }
 .trip-step-num { font-family: var(--mono); font-size: 15px; color: var(--ink); display: block; }
-.trip-step-suffix { font-size: 9px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+.trip-step-suffix { font-size: 9px; color: var(--ink-mute); }
 
 .trip-stop-tools { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
 .trip-stop-move, .trip-stop-remove {
@@ -451,10 +451,9 @@
   left: 6px; bottom: 6px;
   background: rgba(26,26,26,0.72);
   color: var(--on-fill);
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   padding: 2px 6px;
   border-radius: 999px;
 }

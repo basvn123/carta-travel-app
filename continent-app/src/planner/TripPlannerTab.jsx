@@ -28,6 +28,7 @@ import { geocodeAddress } from '../lib/geocode.js';
 import { fareProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import { gripKeyHeight, gripValue } from './sheetGripKeys.js';
+import { scrollBehavior } from '../lib/motion.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 // One shared empty catalogue for the moments before data lands. A fresh `{}`
@@ -503,7 +504,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // Selecting a stop (via pin or card) scrolls its card into view.
   useEffect(() => {
     if (selectedStop == null) return;
-    stopRefs.current[selectedStop]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    stopRefs.current[selectedStop]?.scrollIntoView({ behavior: scrollBehavior(), block: 'nearest' });
   }, [selectedStop]);
 
   // Drop the highlight if the selected stop was removed/reordered out of range.

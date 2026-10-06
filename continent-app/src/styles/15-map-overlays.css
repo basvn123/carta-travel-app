@@ -94,12 +94,10 @@
 }
 .cal-weekday {
   text-align: center;
-  font-family: var(--mono);
-  font-size: 10px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
   padding-bottom: 6px;
 }
 
@@ -176,11 +174,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-family: var(--mono);
-  font-size: 9.5px;
+  font-family: var(--ui);
+  font-size: 11px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   padding: 2px 7px;
   border-radius: 3px;
   margin-left: 8px;
@@ -219,12 +215,10 @@
 /* Section title gets a touch more weight so it reads as a real heading
    instead of sitting at the same level as line items. */
 .panel-section .section-title {
-  font-family: var(--mono);
-  font-size: 9.5px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
   margin-bottom: 14px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--rule);
@@ -304,10 +298,9 @@
   border: 1px solid var(--rule);
   background: var(--paper);
   color: var(--ink-soft);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   white-space: nowrap;
 }
 
@@ -428,11 +421,9 @@
   background: none;
   border: 0;
   cursor: pointer;
-  font-family: var(--mono);
-  font-size: 9.5px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--ink-soft);
 }
 .legend-head:hover { color: var(--ink); }
@@ -636,10 +627,9 @@
   color: var(--paper);
 }
 .mode-pill-top {
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
 }
 .mode-pill-val { font-size: 15px; font-weight: 600; }/* --- "Is a car needed here?" advisory --- */
 
@@ -747,10 +737,9 @@
   flex: 1;
   padding: 8px 10px;
   border-radius: 6px;
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
   transition: all .15s;
 }
 .results-share {
@@ -789,10 +778,9 @@
   text-overflow: ellipsis;
 }
 .result-gem {
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   color: var(--ink-mute);
   border: 1px solid var(--rule);
   border-radius: 3px;
@@ -1196,10 +1184,9 @@
 .todo-name { font-size: 13.5px; color: var(--ink); line-height: 1.35; }
 .todo-kind {
   flex: none;
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   color: var(--ink-mute);
   white-space: nowrap;
 }

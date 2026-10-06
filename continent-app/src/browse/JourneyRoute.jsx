@@ -56,7 +56,7 @@ export function JourneyRoute({ trip, open, onToggle, t }) {
     : lead && `${pct(lead.share)} ${lead.label.toLowerCase()}`;
 
   return (
-    <Fold
+    <Fold level={2}
       id="sec-route"
       icon={MountainIcon}
       title={title}

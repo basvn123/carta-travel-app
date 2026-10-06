@@ -14,7 +14,9 @@ import {
   hikeTimeMin, isLoopRoute, basesAlong,
 } from '../lib/trailGeo.js';
 import { SurfaceBar, Stages, Bases } from './RouteParts.jsx';
-import { ElevationChart } from './RouteFigures.jsx';
+import { SlopeProfile } from './RouteFigures.jsx';
+import { pointAlong } from '../lib/signature.js';
+import { Instrument } from './Signature.jsx';
 import {
   trailGpx, trailKml, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
   shareOrDownloadFile, shareTrailLink, stopNamesOf, downloadTextFile,
@@ -56,9 +58,11 @@ import { FigureFooter } from './HonestFooters.jsx';
  *
  * Since T180 the page draws through the shared detail skeleton
  * (DetailSkeleton.jsx): the route map is its sticky map slot, the elevation
- * profile its signature slot (T181 makes it the slope-coloured scrubbable
- * one), the descriptive blocks its collapsed rows. Following still takes the
- * whole page: the map leaves the column and covers everything under the bar.
+ * profile its signature slot, the descriptive blocks its collapsed rows.
+ * The profile is shaded by steepness and scrubbable (T181): dragging along
+ * it puts a marker at the same point on the map, through highlightAt.
+ * Following still takes the whole page: the map leaves the column and
+ * covers everything under the bar.
  *
  * Loaded lazily so maplibre stays out of the main bundle. The card's
  * simplified line draws at once and the full-resolution geometry from
@@ -463,6 +467,33 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       map.easeTo({ center: [fix.lon, fix.lat], zoom: Math.max(map.getZoom(), 14.5), duration: 700 });
     }
   }, [fix, centred]);
+
+  // The point the reader is pointing at on the profile, on the map (T181).
+  // The profile's distances are measured along the full-resolution line the
+  // pipeline sampled; the drawn line is its simplification, so the distance
+  // is scaled onto the drawn line's own length before it is placed. Null
+  // takes the marker away.
+  const profileEnd = detail?.elevation?.profile?.length
+    ? detail.elevation.profile[detail.elevation.profile.length - 1][0] : 0;
+  const highlightAt = useCallback((alongM) => {
+    const map = mapRef.current;
+    if (!map) return;
+    const p = alongM == null || !pts.length
+      ? null
+      : pointAlong(pts, profileEnd > 0 ? alongM * (lineM / profileEnd) : alongM);
+    if (!p) {
+      map._scrubMarker?.remove();
+      map._scrubMarker = null;
+      return;
+    }
+    if (!map._scrubMarker) {
+      const el = document.createElement('span');
+      el.className = 'tpage-scrub-pin';
+      map._scrubMarker = new maplibregl.Marker({ element: el }).setLngLat([p.lon, p.lat]).addTo(map);
+    } else {
+      map._scrubMarker.setLngLat([p.lon, p.lat]);
+    }
+  }, [pts, lineM, profileEnd]);
 
   // Full screen while following: the map is the instrument, the page is not.
   useEffect(() => {
@@ -881,10 +912,26 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         </div>
       )}
       signature={!isCityDay && detail?.elevation ? (
-        <section className="tpage-sec">
-          <h2 className="tpage-sec-title">{t('trails.elevTitle')}</h2>
-          <ElevationChart elevation={detail.elevation} atM={follow && onRoute ? onRoute.m : null} label={t('trails.elevTitle')} maxLabel={t('trails.elevMax')} />
-        </section>
+        <Instrument
+          kind="trail"
+          title={t('sig.trailHead')}
+          note={<p className="sig-note">{t('sig.slopeNote')}</p>}
+        >
+          <SlopeProfile
+            elevation={detail.elevation}
+            atM={follow && onRoute ? onRoute.m : null}
+            onScrub={highlightAt}
+            labels={{
+              row: t('sig.rowEle'),
+              aria: t('sig.scrubAria'),
+              at: (v) => t('sig.eleAt', v),
+              range: (v) => t('sig.eleRange', v),
+              under: t('sig.slopeUnder'),
+              mid: t('sig.slopeMid'),
+              over: t('sig.slopeOver'),
+            }}
+          />
+        </Instrument>
       ) : null}
       rows={rows}
       gettingThere={(

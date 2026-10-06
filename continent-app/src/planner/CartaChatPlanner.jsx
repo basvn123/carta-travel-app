@@ -13,6 +13,7 @@ import { TownPickerStep } from './TownPickerStep.jsx';
 import { RouteBuildingStage } from './RouteBuildingStage.jsx';
 import { AiPlanRoute } from './AiPlanRoute.jsx';
 import { stopPhaseLabels } from './daySchedule.js';
+import { scrollBehavior } from '../lib/motion.js';
 
 /**
  * CartaChatPlanner, the guided conversation that ends in a real day route.
@@ -350,7 +351,7 @@ export function CartaChatPlanner({
   // follows it: without `stages` here the log walked off the bottom of the
   // scroller as soon as the third line arrived.
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    endRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: 'end' });
   }, [stepSafe, phase, result, stages.length]);
 
   const answerLabel = (q, value) => {

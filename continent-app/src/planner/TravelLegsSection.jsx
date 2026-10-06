@@ -10,6 +10,7 @@ import {
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import { PlannerSection } from './PlannerSection.jsx';
+import { scrollBehavior } from '../lib/motion.js';
 
 /**
  * How you get there, how you get between the stops, and how you get home.
@@ -304,7 +305,7 @@ export function TravelLegsSection({
     setOpenKey(key);
     if (typeof document === 'undefined') return;
     requestAnimationFrame(() => {
-      document.getElementById(`leg-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      document.getElementById(`leg-${key}`)?.scrollIntoView({ behavior: scrollBehavior(), block: 'nearest' });
     });
   };
 

@@ -24,10 +24,13 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, AlertIcon, MountainIcon, BulbIcon, InfoIcon, StarIcon,
-  SunIcon,
+  SunIcon, RouteIcon,
 } from '../components/Icons.jsx';
+import { mountainWayUp, wayUpSummary } from '../lib/derivedModules.js';
+import { MountainWayUp } from './DerivedModules.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
+import { MountainSignature } from './Signature.jsx';
 
 /**
  * The mountain page: one published summit, and the argument for going there.
@@ -56,8 +59,9 @@ import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.js
  * Since T180 the page draws through the shared detail skeleton
  * (DetailSkeleton.jsx). The way up is the page's "Getting there", never
  * folded; the hazards sit in the alert slot, which never folds either. The
- * map is a lazy chunk (PointMap.jsx). The season strip holds the signature
- * slot until T181 draws the horizon silhouette.
+ * map is a lazy chunk (PointMap.jsx). The signature slot (Signature.jsx,
+ * T181) holds the height and prominence bar, the horizon row (empty until a
+ * skyline is computed from the DEM) and the season strip.
  *
  * Nothing on this page is a route description. The pipeline never generates
  * one, this page never asks for one, and the hazard block says to check
@@ -277,6 +281,17 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
   }, t);
   const subs = SUB_ORDER.filter((key) => mountain.sub?.[key] != null);
 
+  // The derived module (T182): the four ways up, drive, lift, walk and climb,
+  // each on or off, from the access codes, the lift and the grades on the
+  // wire. The words are the page's own (liftLabel, difficultyLabel).
+  const wayUp = mountainWayUp(mountain);
+  const wayWords = {
+    liftWord: wayUp.liftKind ? liftLabel(mountain, t) : '',
+    gradeWord: difficultyLabel(mountain, t),
+    hardWord: wayUp.hard
+      ? t(`mtn.diff${wayUp.hard.charAt(0).toUpperCase()}${wayUp.hard.slice(1)}`) : '',
+  };
+
   // Slot 6: the collapsed rows (T180).
   const rows = [
     (why.length > 0 || subs.length > 0 || mountain.bestFor?.length > 0 || tags.length > 0) && {
@@ -314,6 +329,13 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
           )}
         </div>
       ),
+    },
+    {
+      key: 'up',
+      icon: RouteIcon,
+      label: t('derived.upHead'),
+      summary: previewWords(wayUpSummary(wayUp, t, wayWords)),
+      body: <MountainWayUp wayUp={wayUp} t={t} lang={lang} words={wayWords} />,
     },
     facts.length > 0 && {
       key: 'facts',
@@ -452,21 +474,23 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
         </section>
       ) : null}
       map={<PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} />}
-      signature={hasMonths ? (
-        <section className="mpage-season">
-          <h2>{t('mtn.seasonHead')}</h2>
-          <MonthStrip
-            good={monthsGood}
-            avoid={monthsAvoid}
-            info={(
-              <>
-                <p>{bestMonthsLine(mountain, t)}</p>
-                <p>{t('mtn.seasonEstNote')}</p>
-              </>
-            )}
-          />
-        </section>
-      ) : null}
+      signature={(
+        <MountainSignature
+          mountain={mountain}
+          season={hasMonths ? (
+            <MonthStrip
+              good={monthsGood}
+              avoid={monthsAvoid}
+              info={(
+                <>
+                  <p>{bestMonthsLine(mountain, t)}</p>
+                  <p>{t('mtn.seasonEstNote')}</p>
+                </>
+              )}
+            />
+          ) : null}
+        />
+      )}
       rows={rows}
       gettingThere={(
         <>

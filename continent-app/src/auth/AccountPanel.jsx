@@ -794,13 +794,16 @@ export function AccountPanel({
       <div className={`panel-header${heading ? '' : ' account-header-bare'}`}>
         <button className="panel-close" onClick={onClose} aria-label={t('account.close')}>x</button>
         {view === 'home' ? (
-          <div className="panel-tag">{t('account.tag')}</div>
+          // One h1 (T186): the overline is the page title unless a heading
+          // under it names the view, then that heading is.
+          heading ? <div className="panel-tag">{t('account.tag')}</div>
+            : <h1 className="panel-tag">{t('account.tag')}</h1>
         ) : (
           <button type="button" className="account-back" onClick={() => setView('home')}>
             <ArrowLeftIcon size={13} /> {t('account.tag')}
           </button>
         )}
-        {heading && <h2 className="panel-city account-heading">{heading}</h2>}
+        {heading && <h1 className="panel-city account-heading">{heading}</h1>}
       </div>
 
       {view === 'home' && (
@@ -1376,7 +1379,7 @@ export function AccountPanel({
           <p className="account-section-hint">{t('account.faqHint')}</p>
           {FAQ_GROUPS.map((group) => (
             <div key={group.labelKey} className="account-faq-group">
-              <h3 className="account-faq-grouplabel">{t(group.labelKey)}</h3>
+              <h2 className="account-faq-grouplabel">{t(group.labelKey)}</h2>
               <div className="account-faq">
                 {group.items.map(([qKey, aKey]) => (
                   <div key={qKey} className={`account-faq-item${openFaq === qKey ? ' open' : ''}`}>

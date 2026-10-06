@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 /**
  * The statutory Imprint page, legally required by EU e-Commerce Directive Art 5
@@ -29,11 +30,16 @@ const ENTITY = {
 };
 
 export function Imprint({ onClose }) {
+  // A dialog for the keyboard and a screen reader too (T186): focus moves in,
+  // Tab stays inside, Escape closes it and focus goes back to the opener.
+  const cardRef = useRef(null);
+  const closeRef = useRef(null);
+  useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef });
   return (
     <div className="auth-overlay" onClick={onClose}>
-      <div className="auth-modal privacy-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="panel-close auth-close" onClick={onClose} aria-label="Close">x</button>
-        <h2 className="auth-title">Imprint</h2>
+      <div className="auth-modal privacy-modal" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-imprint-title" onClick={(e) => e.stopPropagation()}>
+        <button ref={closeRef} className="panel-close auth-close" onClick={onClose} aria-label="Close">x</button>
+        <h2 className="auth-title" id="legal-imprint-title">Imprint</h2>
         <p className="privacy-updated">Last updated {UPDATED}</p>
 
         <div className="privacy-body">

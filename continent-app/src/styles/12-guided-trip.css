@@ -43,11 +43,10 @@
 .guide-steps { display: flex; gap: 6px; flex-wrap: wrap; padding-right: 32px; }
 .guide-step-dot {
   display: flex; align-items: center; gap: 5px;
-  font-size: 11px;
-  font-family: var(--mono);
-  color: var(--ink-mute);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 12px;
+  font-family: var(--ui);
+  font-weight: 600;
+  color: var(--ink-soft);
 }
 .guide-step-dot span {
   display: flex; align-items: center; justify-content: center;
@@ -171,7 +170,7 @@
 .guide-nights button:disabled { opacity: 0.3; cursor: default; }
 .guide-nights-val { font-size: 12px; min-width: 52px; text-align: center; color: var(--ink-soft); }
 .guide-nights-val b { font-family: var(--mono); color: var(--ink); }
-.guide-nights-zero { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+.guide-nights-zero { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); font-weight: 600; }
 
 /* Step 2 - when (exact dates vs flexible) */
 .guide-datemode {
@@ -285,10 +284,9 @@
   border: 1px solid var(--rule);
   background: var(--paper);
   color: var(--ink-soft);
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   white-space: nowrap;
 }
 /* Neutral chip, coloured glyph - the icon reads the tier, not a colour block. */
@@ -368,11 +366,9 @@
   background: var(--accent);
   color: var(--on-fill);
   border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 9px;
+  font-family: var(--ui);
+  font-size: 11px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   white-space: nowrap;
   box-shadow: 0 2px 7px rgba(200, 80, 30, 0.4);
 }
@@ -432,10 +428,9 @@
   border-radius: 999px;
   background: var(--accent);
   color: var(--on-fill);
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   white-space: nowrap;
 }
 .guide-startover {
@@ -465,7 +460,7 @@
 }
 .guide-chip:hover { border-color: var(--ink-soft); }
 .guide-chip.on { border-color: var(--accent); background: var(--accent-bg); }
-.guide-chip-kind { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.04em; }
+.guide-chip-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
 .guide-empty { font-size: 12.5px; color: var(--ink-mute); font-style: italic; }
 
 /* Step 4 - arrange */
@@ -1061,7 +1056,7 @@
 
 .itin-day { padding-top: 14px; }
 .itin-day-head { margin-bottom: 14px; }
-.itin-day-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.08em; }
+.itin-day-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute);}
 .itin-day-city {
   display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
   font-family: var(--display); font-size: 18px; color: var(--ink); margin-top: 2px;
@@ -1085,7 +1080,7 @@
 }
 .itin-visit-main { flex: 1; min-width: 0; }
 .itin-visit-name { display: block; font-size: 14px; color: var(--ink); }
-.itin-visit-kind { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.05em; }
+.itin-visit-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
 
 /* ───────── Guided wizard: imagery + interests ───────── */
 

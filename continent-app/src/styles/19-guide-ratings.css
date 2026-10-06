@@ -50,8 +50,6 @@
 }
 .rating-label {
   font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -62,10 +60,9 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   color: var(--green);
   border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
   border-radius: 3px;
@@ -82,14 +79,15 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   border-radius: 3px;
   padding: 1px 5px 1px 4px;
   white-space: nowrap;
-  color: var(--bw-ink);
+  /* The grade's colour is in the border and the tint; the word is ink, since
+     the indicator colours are under 4.5:1 as text (T186). */
+  color: var(--ink);
   border: 1px solid color-mix(in srgb, var(--bw-ink) 42%, transparent);
   background: color-mix(in srgb, var(--bw-ink) 9%, transparent);
 }
@@ -106,14 +104,13 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   border-radius: 3px;
   padding: 1px 5px 1px 4px;
   white-space: nowrap;
-  color: var(--cr-ink);
+  color: var(--ink);
   border: 1px solid color-mix(in srgb, var(--cr-ink) 42%, transparent);
   background: color-mix(in srgb, var(--cr-ink) 9%, transparent);
 }
@@ -1055,11 +1052,10 @@
 }
 .guide-card-head svg { color: var(--accent); flex: none; }
 .guide-card-head small {
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-left: auto;
 }
 .guide-card-row { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--rule); }
@@ -2011,8 +2007,9 @@
   border-top: 1px solid var(--rule);
 }
 .itin-bd-party-lbl {
-  font-family: var(--mono); font-size: 9.5px;
-  text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600; font-size: 12px;
+color: var(--ink-soft);
 }
 .itin-bd-party .guide-people button { width: var(--tap); height: 30px; }
 .guide-summary-stops { padding: 12px 0 4px; }

@@ -20,6 +20,7 @@ import {
   RAIL_KM, poiRow, waterRow, trailRow, townRow, doRow, eventRow,
   eventOnDate, distanceLine, stepsForRoute, orderFromStay,
 } from './dayExploreRails.js';
+import { scrollBehavior } from '../lib/motion.js';
 
 /**
  * "Build it myself": the guided builder around a stay (D6).
@@ -483,7 +484,7 @@ export function DayExploreBuilder({
   const focusCard = useCallback((key) => {
     setHi(key);
     const el = listRef.current?.querySelector(`[data-key="${CSS.escape(key)}"]`);
-    el?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    el?.scrollIntoView({ behavior: scrollBehavior(), block: 'center', inline: 'center' });
   }, []);
 
   const count = picks.length + townPicks.length;

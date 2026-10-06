@@ -72,6 +72,7 @@ import { JourneysSection } from './JourneysSection.jsx';
 import CreditFold from './CreditFold.jsx';
 import { openShared } from '../lib/sharedElement.js';
 import { CoverageFooter } from './HonestFooters.jsx';
+import { CardStrip } from './CardStrip.jsx';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -461,6 +462,7 @@ const TripCard = React.memo(function TripCard({ card, km, onOpen, t }) {
     <button className="places-tcard" onClick={() => onOpen(card)}>
       <TrailPicture tr={tr} assoc={assoc} />
       <span className="places-card-scrim" aria-hidden="true" />
+      {!isCityDay && <CardStrip kind="trail" row={tr} />}
       {km != null && (
         <span className="places-card-km">{bandChip(km, t)}</span>
       )}
@@ -569,6 +571,7 @@ const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen, t }) {
         ? <CardPhoto url={r.img} />
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
+      <CardStrip kind="cycle" row={r} />
       <span className="places-card-km">
         {`${r.km} km`}
         {r.asc != null ? `, ${r.asc} m` : ''}
@@ -692,6 +695,7 @@ const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t
         ? <CardPhoto url={shot.u} />
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
+      <CardStrip kind="lake" row={lake} />
       {km != null && (
         <span className="places-card-km">{bandChip(km, t)}</span>
       )}
@@ -748,6 +752,7 @@ const MountainCard = React.memo(function MountainCard({ mountain, km, countryNam
         ? <CardPhoto url={shot.u} />
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
+      <CardStrip kind="mountain" row={mountain} />
       {km != null && (
         <span className="places-card-km">{bandChip(km, t)}</span>
       )}
@@ -2772,6 +2777,10 @@ export function DestinationsTab({
 
   return (
     <div className="places-shell">
+      {/* The page's one h1 (T186): the tab has no visible title, so the name
+          is for assistive technology. It steps aside while a dialog (a detail
+          page, a sheet) is open, so that dialog's own h1 is the only one. */}
+      <h1 className="sr-only tab-h1">{t('nav.places')}</h1>
       {/* Desktop-only left panel (CSS hides it under 769px): the categories
           as a card grid under the brand, then everything that narrows or
           orders the list, standing on the page ground with one hairline to

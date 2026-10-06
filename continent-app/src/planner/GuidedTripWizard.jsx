@@ -63,6 +63,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { Button } from '../components/Button.jsx';
 import { suggestedNights, Flag, CityThumb, StayRow } from './GuidedTripWizardParts.jsx';
+import { scrollBehavior } from '../lib/motion.js';
 
 const ROUTES_PREVIEW = 14;
 // Shared empty catalogue for before the data lands: a fresh `{}` per render
@@ -1823,7 +1824,7 @@ export function GuidedTripWizard({
     if (!el || typeof window === 'undefined') return;
     if (!window.matchMedia?.('(max-width: 700px)').matches) return;
     // Wait for the panel's picked-state content to render before scrolling.
-    requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+    requestAnimationFrame(() => el.scrollIntoView({ behavior: scrollBehavior(), block: 'nearest' }));
   };
   useEffect(() => {
     if (stepName === 'Stay' && focusedId) scrollPanelIntoView(citySideRef.current);

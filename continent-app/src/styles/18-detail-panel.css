@@ -46,12 +46,10 @@
 .cintel-label {
   flex: none;
   width: 82px;
-  font-family: var(--mono);
-  font-size: 9.5px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
   padding-top: 3px;
 }
 .cintel-row > div { min-width: 0; flex: 1; }
@@ -565,11 +563,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .day-route-status.auto { color: var(--accent); }
 .day-route-optimize {
@@ -839,11 +836,10 @@
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 10px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .shape-deck-added { color: var(--accent); font-weight: 700; }
 .shape-card {
@@ -877,22 +873,18 @@
   border-radius: 999px;
   background: var(--accent);
   color: var(--on-fill);
-  font-family: var(--mono);
-  font-size: 9.5px;
+  font-family: var(--ui);
+  font-size: 11px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
 }
 .shape-card-stamp {
   position: absolute;
   top: 14px;
   padding: 6px 16px;
   border-radius: 8px;
-  font-family: var(--mono);
+  font-family: var(--ui);
   font-size: 15px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   transform: rotate(-8deg);
   border: 2.5px solid currentColor;
   background: rgba(245, 241, 232, 0.85);
@@ -908,10 +900,9 @@
   line-height: 1.15;
 }
 .shape-card-kind {
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   color: var(--ink-mute);
   margin-top: 3px;
 }
@@ -1181,11 +1172,10 @@
 .guide-city-fact-label {
   flex: none;
   width: 84px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   padding-top: 2px;
 }
 .guide-city-fact-value { flex: 1; min-width: 0; color: var(--ink-soft); }
@@ -1365,11 +1355,9 @@
   border-radius: 999px;
   background: var(--accent-bg);
   color: var(--accent);
-  font-family: var(--mono);
-  font-size: 8.5px;
+  font-family: var(--ui);
+  font-size: 11px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 .day-intel-note { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); }
 .day-intel-add {
@@ -1554,8 +1542,6 @@
   gap: 6px;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 6px;
 }

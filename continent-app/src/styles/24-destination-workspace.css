@@ -175,14 +175,13 @@
 .explore-count .mono, .explore-count b { font-family: var(--mono); }
 .explore-mock {
   margin-left: 10px;
-  font-family: var(--mono);
-  font-size: 10px;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   background: var(--accent-bg);
   color: var(--accent);
   padding: 2px 8px;
   border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
 }
 
 /* ── The grid and its cards. ── */
@@ -557,7 +556,9 @@
   color: rgba(255, 255, 255, 0.9);
 }
 .xcard-preview-cost .cost-total-band { color: rgba(255, 255, 255, 0.65); white-space: nowrap; }
-.xcard-preview-cost .cost-total-band.cheapest { color: var(--green); }
+/* On the ink card the data green is 3.0:1; the cheapest word is paper and
+   weight instead (T186). */
+.xcard-preview-cost .cost-total-band.cheapest { color: var(--paper); font-weight: 600; }
 .xcard-preview-cost .cost-total-eur { font-size: 19px; color: var(--on-fill); }
 @media (prefers-reduced-motion: reduce) {
   .xcard-preview, .xcard-preview > * { animation: none; }
@@ -937,8 +938,6 @@
   display: block;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 .xp-park-name {
@@ -1158,8 +1157,6 @@
   gap: 7px;
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 .trip-slider-label b {
@@ -1632,8 +1629,6 @@
   margin-left: auto;
   font-size: 10.5px;
   color: var(--ink-mute);
-  text-transform: uppercase;
-  letter-spacing: .07em;
 }
 
 /* Days out from a single base. */
@@ -2111,8 +2106,6 @@
 .cbrief-h {
   font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: .04em;
-  text-transform: uppercase;
   color: var(--ink-mute);
   margin-bottom: 8px;
 }
@@ -3362,11 +3355,10 @@
 .dayws-stay-btn { max-width: 100%; }
 .dayws-stay-text { min-width: 0; display: flex; flex-direction: column; }
 .dayws-stay-text small {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   line-height: 1.3;
 }
 .dayws-stay-text b {
@@ -3484,11 +3476,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-bottom: 8px;
 }
 .dayws-tips-intro { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 8px; }
@@ -3860,11 +3851,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-bottom: 8px;
 }
 .dayp-find { padding: 6px 0; }
@@ -4238,11 +4228,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-bottom: 6px;
 }
 .daya-sugg-row {
@@ -4275,11 +4264,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-bottom: 10px;
 }
 .daya-more-btn {
@@ -4990,12 +4978,14 @@
   .app-header-brand .brand-divider { display: none; }
   .header-friends-btn svg { color: var(--accent); }
 
-  /* ── The bottom panel: red tabs, the accent tick marks where you are. ── */
+  /* ── The bottom panel: the accent tick and the accent colour mark where
+     you are. The other tabs are --ink-soft: --accent-soft as text is
+     2.6:1 on the paper, under the 4.5:1 floor (T186). ── */
   .bottom-nav {
     background: var(--paper);
     border-top: 1px solid var(--rule-soft);
   }
-  .bottom-nav-item { color: var(--accent-soft); }
+  .bottom-nav-item { color: var(--ink-soft); }
   .bottom-nav-item:hover { color: var(--accent); }
   .bottom-nav-item.active { color: var(--accent); }
 
@@ -5556,8 +5546,6 @@
   display: flex;
   gap: 8px;
   font-size: 10.5px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
   color: var(--ink-mute);
   margin-top: 2px;
 }
@@ -5591,8 +5579,6 @@
   border-radius: 5px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
   background: var(--paper-dim);
   color: var(--ink-soft);
   border: 1px solid var(--rule-soft);
@@ -5983,8 +5969,10 @@
 }
 .account-shell .account-lang-opt:hover { border-color: var(--rule); color: var(--ink); }
 .account-shell .account-lang-opt.on {
-  border-color: var(--accent);
-  background: var(--accent);
+  /* A picked option is a pressed toggle: --ink-fill, as DESIGN.md says, so
+     the accent stays with the view's one primary action (T186). */
+  border-color: var(--ink-fill);
+  background: var(--ink-fill);
   color: var(--on-fill);
 }
 .account-shell .account-lang-opt.on svg { color: var(--on-fill); }

@@ -3,6 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import {
   SearchIcon, StarIcon, RouteIcon, ClockIcon, CheckIcon,
 } from '../components/Icons.jsx';
+import { scrollBehavior } from '../lib/motion.js';
 
 /**
  * RouteBuildingStage, what the chat planner shows while a day is being built.
@@ -78,7 +79,7 @@ export function RouteBuildingStage({ stages = [], reworking = false }) {
   // its own foot in view rather than sliding out of the scroller.
   const footRef = useRef(null);
   useEffect(() => {
-    footRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    footRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: 'nearest' });
   }, [shown]);
 
   const varsFor = (key) => {

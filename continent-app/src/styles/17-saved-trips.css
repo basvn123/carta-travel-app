@@ -297,10 +297,9 @@
   border-radius: 999px;
   background: var(--accent-bg);
   color: var(--accent);
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
   white-space: nowrap;
 }
 
@@ -1201,8 +1200,6 @@
 .memo-title {
   font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
   color: var(--ink-mute);
 }
 .memo-rating {
@@ -1434,8 +1431,6 @@
   background: rgba(248, 246, 240, 0.24);
   font-size: 8.5px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.92);
 }
 .fav-card-savedon {
@@ -1671,11 +1666,10 @@
   padding: 0 12px 12px;
 }
 .uptrip-crew-cap {
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .uptrip-crew-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .uptrip-crew-chip {
@@ -1974,11 +1968,10 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ink-mute);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 .bt-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
 .bt-dot-accent { background: var(--accent); }

@@ -1383,6 +1383,9 @@ export function SavedTripsPanel({
       </aside>
 
       <div className="panel open account-panel saved-trips-panel">
+      {/* The page's one h1 (T186), for assistive technology: the visible
+          title was dropped on purpose (see the header note below). */}
+      <h1 className="sr-only">{t('nav.myTrips')}</h1>
       <button className="panel-close" onClick={onClose} aria-label={t('saved.close')}>x</button>
 
       <div className="panel-header saved-panel-header">

@@ -21,10 +21,16 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, BulbIcon, InfoIcon, StarIcon,
-  SunIcon,
+  SunIcon, CompassIcon, BootIcon,
 } from '../components/Icons.jsx';
+import {
+  beachFacing, beachWalkIn, facingSummary, walkInSummary,
+} from '../lib/derivedModules.js';
+import { BeachFacing, BeachWalkIn } from './DerivedModules.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
+import { BeachSignature, CompassRosette } from './Signature.jsx';
+import { compassPoint } from '../lib/signature.js';
 
 /**
  * The beach page: one published beach, and the argument for going there.
@@ -47,8 +53,9 @@ import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.js
  * (DetailSkeleton.jsx): hero and strip, hook, who it is not for, the map,
  * collapsed rows, getting there, taking it with you, three ways out and the
  * sources. The map is a lazy chunk (PointMap.jsx), so it costs nothing until
- * a beach is open. The signature slot is empty until T181 adds the beach's
- * three month strips.
+ * a beach is open. The signature slot holds the beach's three month rows
+ * (Signature.jsx, T181), and the map carries a compass rosette for the way
+ * the shore faces.
  */
 
 /** The way down as a level: only the access field says anything about it. */
@@ -225,6 +232,12 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
     number: beach.lengthM ? `${beach.lengthM.toLocaleString(lang)} m` : '',
   }, t);
 
+  // The derived modules (T182): which way the sand faces and how you get
+  // down to it, computed from fields the wire already carries. Both always
+  // render; where the data cannot answer, the row says so.
+  const facing = beachFacing(beach);
+  const walkIn = beachWalkIn(beach);
+
   // Slot 6: the collapsed rows. Each is one block that used to sit open on
   // the page; the summary is what a closed row says without a tap.
   const rows = [
@@ -250,6 +263,20 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
           )}
         </div>
       ),
+    },
+    {
+      key: 'facing',
+      icon: CompassIcon,
+      label: t('derived.facingHead'),
+      summary: previewWords(facingSummary(facing, t)),
+      body: <BeachFacing facing={facing} t={t} />,
+    },
+    {
+      key: 'walkin',
+      icon: BootIcon,
+      label: t('derived.walkinHead'),
+      summary: previewWords(walkInSummary(walkIn, t)),
+      body: <BeachWalkIn walkIn={walkIn} t={t} />,
     },
     facts.length > 0 && {
       key: 'facts',
@@ -416,7 +443,18 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       notFor={(
         <NotFor lines={notForLines('beach', beach, { word: surfaceWord })} />
       )}
-      map={<PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} />}
+      map={(
+        <div className="sig-mapwrap">
+          <PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} />
+          {compassPoint(beach.aspect) && (
+            <CompassRosette
+              deg={beach.aspect}
+              label={t('sig.rosette', { dir: t(`sig.dir${compassPoint(beach.aspect)}`), deg: Math.round(beach.aspect) })}
+            />
+          )}
+        </div>
+      )}
+      signature={<BeachSignature beach={beach} />}
       rows={rows}
       gettingThere={(
         <>

@@ -110,7 +110,8 @@
     text-overflow: ellipsis;
   }
   .side-navrow:hover { color: var(--ink); border-color: var(--rule); }
-  .side-navrow.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+  /* Where you are is a pressed toggle, so --ink-fill like .side-cat.on (T186). */
+  .side-navrow.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
   .side-navrow.on svg { color: var(--on-fill); }
   .side-navrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -1403,8 +1404,6 @@
   display: block;
   font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--ink-mute);
   margin-bottom: 2px;
 }
@@ -1682,8 +1681,6 @@
 .xrail-legend {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--ink-mute);
   padding: 0 0 6px;
 }
@@ -2184,7 +2181,7 @@
 .destp-water-line { font-size: 12.5px; color: var(--ink-soft); margin: 6px 0 0; }
 
 /* highlights: size, plates, groups, significance */
-.destp-hl-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 2px 6px; }
+.destp-hl-group { font-size: 11.5px; font-weight: 700; color: var(--ink-mute); margin: 12px 2px 6px; }
 .destp-hl.is-top { grid-column: span 2; }
 .destp-hl.is-top img, .destp-hl.is-top .destp-hl-plate { min-height: 150px; }
 .destp-hl-plate {
@@ -2199,7 +2196,7 @@
   font-weight: 600;
 }
 .destp-hl-sig { color: var(--rate-soft); font-size: 10px; letter-spacing: 1px; }
-.destp-do-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 2px 6px; }
+.destp-do-group { font-size: 11.5px; font-weight: 700; color: var(--ink-mute); margin: 12px 2px 6px; }
 .destp-do-group .mono { color: var(--rate-soft); }
 
 /* members */
@@ -2821,7 +2818,7 @@
 }
 .dfact:first-child { border-left-width: 1px; border-radius: 10px 0 0 10px; }
 .dfact:last-child { border-radius: 0 10px 10px 0; }
-.dfact dt { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-mute); }
+.dfact dt { font-size: 10.5px; font-weight: 600; color: var(--ink-mute); }
 .dfact dd { margin: 0; font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 720px) {
   .dfacts { grid-template-columns: 1fr 1fr; padding: 0 14px; margin: 6px auto 10px; }
@@ -2868,7 +2865,8 @@
   white-space: nowrap;
 }
 .destp-v2 .destp-subnav button:hover { border-color: var(--rule); color: var(--ink); }
-.destp-subnav-all { color: var(--rate) !important; }
+/* Expand all is an action, not a rating, so it is ink, not ochre (T186). */
+.destp-subnav-all { color: var(--ink) !important; }
 
 /* ── Folding sections ── */
 .destp-v2 .destp-grid { padding: 0 16px 44px; }
@@ -2884,6 +2882,9 @@
   scroll-margin-top: 8px;
 }
 .dsec-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 0 14px 0 0; }
+/* The heading a Fold's toggle sits in when the page passes a level (T186):
+   it takes the toggle's place in the row and adds nothing to the look. */
+.dsec-h { flex: 1; min-width: 0; display: flex; margin: 0; font: inherit; }
 .dsec-toggle {
   flex: 1;
   min-width: 0;
@@ -3005,7 +3006,7 @@
 .dhl.is-focus .dhl-photo { outline: 2px solid var(--accent); outline-offset: 1px; }
 .dhl figcaption { padding: 6px 2px 0; }
 .dhl-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.3; }
-.dhl-sub { display: flex; align-items: center; gap: 8px; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-mute); margin-top: 2px; }
+.dhl-sub { display: flex; align-items: center; gap: 8px; font-size: 10.5px; color: var(--ink-mute); margin-top: 2px; }
 .dhl-link { display: inline-flex; color: var(--ink-mute); margin-left: auto; }
 .dhl-link:hover { color: var(--accent); }
 .dhl-fact {
@@ -3048,7 +3049,7 @@
 .destp-v2 .destp-layer { height: 28px; font-size: 11.5px; }
 
 /* ── Things to do: cards with an evidence meter ── */
-.ddo-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 10px 2px 6px; }
+.ddo-group { font-size: 11.5px; font-weight: 700; color: var(--ink-mute); margin: 10px 2px 6px; }
 .ddo-group:first-child { margin-top: 0; }
 .ddo-group .mono { color: var(--rate-soft); }
 .ddo-grid {
@@ -3088,8 +3089,6 @@
   border-radius: 5px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   background: var(--paper-dim);
   color: var(--ink-soft);
   border: 1px solid var(--rule-soft);
@@ -3319,7 +3318,7 @@
 .dpark-web-line { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink); }
 .dpark-web-line.is-warn { color: var(--danger); font-weight: 600; }
 .dpark-web-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--trail-ink); text-decoration: underline; text-underline-offset: 2px; }
-.dpark-ok { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--trail-ink); }
+.dpark-ok { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; font-size: 10px; font-weight: 700; color: var(--trail-ink); }
 .dpark-search { margin-top: 10px; width: 100%; justify-content: center; }
 .destp-v2 .destp-park-nav a { height: 26px; padding: 0 9px; font-size: 11px; }
 @media (max-width: 380px) {
@@ -3423,8 +3422,6 @@
   margin: 0 0 4px;
   font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
   color: var(--ink-soft);
 }
 .drh-list { list-style: none; margin: 0; padding: 0; }

@@ -43,6 +43,7 @@ import {
   DownloadIcon, ShareIcon, BulbIcon, MedalIcon, RouteIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { scrollBehavior } from '../lib/motion.js';
 
 /**
  * The full-screen destination page, v2: compact by construction.
@@ -187,7 +188,7 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
     const el = scroller.current;
     const slide = el?.querySelector('.destp-slide');
     if (!el || !slide) return;
-    el.scrollBy({ left: dir * (slide.offsetWidth + 6), behavior: 'smooth' });
+    el.scrollBy({ left: dir * (slide.offsetWidth + 6), behavior: scrollBehavior() });
   };
 
   if (!imgs.length) {
@@ -286,7 +287,7 @@ export function DestinationPage({
     setOpen((s) => new Set([...s, id]));
     requestAnimationFrame(() => {
       scrollRef.current?.querySelector?.(`#sec-${id}`)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        ?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
     });
   };
   const showOnMap = (layer) => {
@@ -646,7 +647,7 @@ export function DestinationPage({
           <div className="destp-col is-main">
             {/* Highlights and the one map, with its layers. */}
             {has.highlights && (
-              <Fold
+              <Fold level={3}
                 id="sec-highlights"
                 icon={MapPinIcon}
                 title={t('dest.mapTitle')}
@@ -707,7 +708,7 @@ export function DestinationPage({
                         setHlAll(true);
                         requestAnimationFrame(() => {
                           scrollRef.current?.querySelector?.(`#hl-${i}`)
-                            ?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                            ?.scrollIntoView({ behavior: scrollBehavior(), block: 'nearest', inline: 'center' });
                         });
                       }}
                     />
@@ -758,7 +759,7 @@ export function DestinationPage({
 
             {/* Best things to do: cards, grouped by how many guides agree. */}
             {has.do && (
-              <Fold
+              <Fold level={3}
                 id="sec-do"
                 icon={CompassIcon}
                 title={t('dest.doTitle')}
@@ -855,7 +856,7 @@ export function DestinationPage({
             {/* Around here: the outdoors within 20 km, from every layer the
                 Destinations tab knows, plus the top picks with photographs. */}
             {has.around && (
-              <Fold
+              <Fold level={3}
                 id="sec-around"
                 icon={TreeIcon}
                 title={t('dest.aroundTitle', { city })}
@@ -878,7 +879,7 @@ export function DestinationPage({
                 the line rather than to a bounding box, each named for the
                 path with the stretch that passes named underneath. */}
             {has.routes && (
-              <Fold
+              <Fold level={3}
                 id="sec-routes"
                 icon={RouteIcon}
                 title={t('dest.routesTitle')}
@@ -898,7 +899,7 @@ export function DestinationPage({
             {/* Best trips from here. Each card is a real catalogue place, so
                 clicking one opens ITS page; the map layer shows the same set. */}
             {has.trips && (
-              <Fold
+              <Fold level={3}
                 id="sec-trips"
                 icon={CompassIcon}
                 title={t('dest.tripsTitle')}
@@ -943,7 +944,7 @@ export function DestinationPage({
 
             {/* D7: the villages inside this area, from B1's members. */}
             {has.members && (
-              <Fold
+              <Fold level={3}
                 id="sec-members"
                 icon={MapPinIcon}
                 title={t('dest.membersTitle')}
@@ -959,7 +960,7 @@ export function DestinationPage({
           <div className="destp-col is-side">
             {/* The verdict, with its argument. */}
             {has.rating && (
-              <Fold
+              <Fold level={3}
                 id="sec-rating"
                 icon={StarIcon}
                 title={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}
@@ -996,7 +997,7 @@ export function DestinationPage({
 
             {/* When: the climate strip with crowding and water beside it. */}
             {has.when && (
-              <Fold
+              <Fold level={3}
                 id="sec-when"
                 icon={CalendarIcon}
                 title={t('explore.whenTitle')}
@@ -1015,7 +1016,7 @@ export function DestinationPage({
 
             {/* Where to sleep: neighbourhood prices, tiers, the price curve. */}
             {has.sleep && (
-              <Fold
+              <Fold level={3}
                 id="sec-sleep"
                 icon={BedIcon}
                 title={t('dest.sleepTitle')}
@@ -1029,7 +1030,7 @@ export function DestinationPage({
 
             {/* Getting there and around. */}
             {has.getting && (
-              <Fold
+              <Fold level={3}
                 id="sec-getting"
                 icon={PlaneIcon}
                 title={t('dest.gettingTitle')}
@@ -1067,7 +1068,7 @@ export function DestinationPage({
 
             {/* What a day here costs, at the reader's own lifestyle. */}
             {has.cost && (
-              <Fold
+              <Fold level={3}
                 id="sec-cost"
                 icon={ReceiptIcon}
                 title={t('cost.title')}
@@ -1089,7 +1090,7 @@ export function DestinationPage({
 
             {/* Insider tips: rule codes with evidence behind every sentence. */}
             {has.tips && (
-              <Fold
+              <Fold level={3}
                 id="sec-tips"
                 icon={BulbIcon}
                 title={t('dest.tipsTitle')}
@@ -1108,7 +1109,7 @@ export function DestinationPage({
 
             {/* Festivals, led by when they happen. */}
             {has.festivals && (
-              <Fold
+              <Fold level={3}
                 id="sec-festivals"
                 icon={CalendarIcon}
                 title={t('dest.festivalsTitle')}
@@ -1140,7 +1141,7 @@ export function DestinationPage({
 
             {/* This week, live. Page only; the PDF prints normals instead. */}
             {has.weather && (
-              <Fold
+              <Fold level={3}
                 id="sec-weather"
                 icon={SunIcon}
                 title={t('explore.weatherTitle')}
@@ -1171,7 +1172,7 @@ export function DestinationPage({
             {/* Where to park: OSM spots with deeplinks, the city's own word
                 where the web check has run, and an honest provenance line. */}
             {has.park && (
-              <Fold
+              <Fold level={3}
                 id="sec-park"
                 icon={ParkingIcon}
                 title={t('explore.parkTitle')}
@@ -1258,7 +1259,7 @@ export function DestinationPage({
 
             {/* What to bring for the month that matters here. */}
             {has.pack && (
-              <Fold
+              <Fold level={3}
                 id="sec-pack"
                 icon={BackpackIcon}
                 title={t('explore.packTitle')}
@@ -1286,7 +1287,7 @@ export function DestinationPage({
             )}
 
             {/* Explore further: every handover, honest about being a search. */}
-            <Fold
+            <Fold level={3}
               id="sec-further"
               icon={CompassIcon}
               title={t('explore.furtherTitle', { city })}
