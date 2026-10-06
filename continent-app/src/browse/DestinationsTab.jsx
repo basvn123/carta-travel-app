@@ -73,6 +73,8 @@ import CreditFold from './CreditFold.jsx';
 import { openShared } from '../lib/sharedElement.js';
 import { CoverageFooter } from './HonestFooters.jsx';
 import { CardStrip } from './CardStrip.jsx';
+import { SectionOpening } from './SectionOpening.jsx';
+import { pickIcons, buildRails, photoOf } from '../lib/openingScreen.js';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -2586,6 +2588,112 @@ export function DestinationsTab({
       ? Boolean(cycleRows && (cycleRows.routes.length + cycleRows.listed.length) > 0)
       : (!showCountryIndex && showPriceChrome);
 
+  // ── The section opening screen (spec 5.3, T183) ──────────────────────
+  //
+  // Bands 1 and 2 show only while a section is at rest: nothing typed, no
+  // place searched, no country picked, no chip on. The first filter of any
+  // kind (a rail's "See all" included) folds them away and leaves the grid,
+  // which is Band 3; clearing it brings them back. Trails are the exception
+  // in scope: their wire is one file per country with no Europe-wide ranking
+  // (beaches, lakes, mountains and cycling each ship a top.json), so the
+  // trail bands open on a country, and the country index says why.
+  const facetsOff = (f) => !Object.values(f).some((l) => l?.length);
+  const trailChipsOn = bands.length > 0 || grades.length > 0 || climbs.length > 0
+    || shapes.length > 0 || hls.length > 0 || suits.length > 0 || loopsOnly;
+  const atRest = !q && !query.trim() && !nearPlace;
+  const openingLayer = !atRest ? null
+    : isBeachCat ? (!country && facetsOff(beachFacets) && topBeaches?.length ? 'beach' : null)
+      : isLakeCat ? (!country && facetsOff(lakeFacets) && topLakes?.length ? 'lake' : null)
+        : isMountainCat ? (!country && facetsOff(mtnFacets) && topMountains?.length ? 'mountain' : null)
+          : isCycleCat ? (!country && facetsOff(cycleFacets) && cycleTop?.routes?.length ? 'cycle' : null)
+            : cat === 'trails' ? (country && !trailChipsOn && tripCards?.length ? 'trail' : null)
+              : null;
+
+  const opening = useMemo(() => {
+    if (!openingLayer) return null;
+    const rows = openingLayer === 'beach' ? topBeaches
+      : openingLayer === 'lake' ? topLakes
+        : openingLayer === 'mountain' ? topMountains
+          : openingLayer === 'cycle' ? (cycleTop?.routes || [])
+            : (tripCards || []).map((c) => c.tr).filter((tr) => tr.category !== 'citytrip');
+    return { layer: openingLayer, icons: pickIcons(openingLayer, rows), rails: buildRails(openingLayer, rows) };
+  }, [openingLayer, topBeaches, topLakes, topMountains, cycleTop, tripCards]);
+
+  // A rail's "See all": its saved filter, put on the grid's own chips.
+  const applyRail = (layer, f) => {
+    if (layer === 'beach') setBeachFacets(f);
+    else if (layer === 'lake') setLakeFacets(f);
+    else if (layer === 'mountain') setMtnFacets(f);
+    else if (layer === 'cycle') setCycleFacets(f);
+    else if (layer === 'trail') {
+      setBands(f.bands || []);
+      setHls(f.hls || []);
+      setSuits(f.suits || []);
+      setLoopsOnly(!!f.loopsOnly);
+      setGrades([]);
+      setClimbs([]);
+      setShapes([]);
+    }
+  };
+
+  const openFromBand = (row) => {
+    const layer = opening?.layer;
+    if (layer === 'beach') setPageBeach(row);
+    else if (layer === 'lake') setPageLake(row);
+    else if (layer === 'mountain') setPageMountain(row);
+    else if (layer === 'cycle') openCycleRoute(row);
+    else if (layer === 'trail') {
+      const card = (tripCards || []).find((c) => c.tr.id === row.id);
+      if (card) setPageCard(card);
+    }
+  };
+
+  // One card's words: the name, where it is, and one measured fact in mono.
+  const describeRow = (row) => {
+    const layer = opening?.layer;
+    const km = (v, digits) => `${Number(v).toLocaleString(lang, { maximumFractionDigits: digits })} km`;
+    if (layer === 'trail') {
+      const grade = tripGrade(row);
+      return {
+        name: row.name,
+        where: grade && GRADE_KEY[grade] ? t(GRADE_KEY[grade]) : null,
+        fact: row.distance_m != null ? km(row.distance_m / 1000, 1) : null,
+      };
+    }
+    if (layer === 'cycle') {
+      return { name: routeTitle(row, t), where: countryName(row.cc), fact: row.km != null ? km(row.km, 0) : null };
+    }
+    if (layer === 'mountain') {
+      return {
+        name: row.name,
+        where: [row.range, countryName(row.cc)].filter(Boolean).join(', '),
+        fact: row.ele != null ? `${Math.round(row.ele).toLocaleString(lang)} m` : null,
+      };
+    }
+    if (layer === 'lake') {
+      const a = row.size?.areaKm2;
+      return {
+        name: row.name,
+        where: [row.region, countryName(row.cc)].filter(Boolean).join(', '),
+        fact: a != null ? `${a.toLocaleString(lang, { maximumFractionDigits: a < 10 ? 1 : 0 })} km²` : null,
+      };
+    }
+    return {
+      name: row.name,
+      where: [row.region, countryName(row.cc)].filter(Boolean).join(', '),
+      fact: row.lengthM != null ? `${Math.round(row.lengthM).toLocaleString(lang)} m` : null,
+    };
+  };
+
+  const openingHead = !opening ? null
+    : opening.layer === 'trail'
+      ? t('open.trail.head', { n: opening.icons.length, country: countryName(country) })
+      : t(`open.${opening.layer === 'mountain' ? 'mtn' : opening.layer}.head`, { n: opening.icons.length });
+  const openingSub = !opening ? null
+    : opening.layer === 'trail' ? t('open.trail.sub', { country: countryName(country) })
+      : opening.layer === 'cycle' ? t('open.cycle.sub')
+        : t('open.fameSub');
+
   // ── Desktop chrome ────────────────────────────────────────────────────
   //
   // On a desktop screen this tab's controls leave the toolbar card and take
@@ -2656,7 +2764,13 @@ export function DestinationsTab({
   );
 
   const renderFacetGroups = (only) => facetGroups
-    .filter((g) => (only === 'toolbar' ? g.toolbar !== false : true))
+    // A group outside the short toolbar set still shows while one of its
+    // chips is on (T183): an opening rail's "See all" can switch on a chip
+    // from any group, and a desktop panel that hid it would filter the grid
+    // with nothing on screen saying by what.
+    .filter((g) => (only === 'toolbar'
+      ? g.toolbar !== false || g.options.some((o) => o.on)
+      : true))
     .map((g) => (
     <div key={g.key} className="places-facet-group">
       <p className="places-facet-label">{g.label}</p>
@@ -2775,6 +2889,74 @@ export function DestinationsTab({
     </div>
   );
 
+  // Sorts, the Filters door, the country, the lifestyle line: the row that
+  // decides which rows Band 3 lists. It heads the toolbar, except while a
+  // section's opening bands show (T183): then it moves down to sit on the
+  // grid it filters, so the icons come before any filter (spec 5.3).
+  const toolbarRight = (
+    <div className="places-toolbar-right">
+      {showSorts && sortDefs.length > 0 && (
+        <div className="places-sorts" role="group" aria-label={t('places.sortLabel')}>
+          {renderSortButtons('places-sort')}
+        </div>
+      )}
+
+      <div className="places-chips">
+        {/* The country picker sits immediately to the right of this
+            button on every width, and the sheet used to open with a
+            country dropdown of its own on top of whatever facets the tab
+            had. On a tab with no facets that made Filters a door to a
+            copy of the control beside it. Country now lives in one place
+            (the chip), and Filters only appears when it has facets of
+            its own to offer. */}
+        {facetGroups.length > 0 && (
+        <button
+          type="button"
+          ref={filterBtnRef}
+          className={`places-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
+          onClick={() => setSheetOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={sheetOpen}
+        >
+          <FilterIcon size={14} />
+          <span>{t('filter.filters')}</span>
+          {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
+        </button>
+        )}
+
+        {/* Every tab has a country now, including the three published
+            layers where the only way in used to be typing its name
+            into the search field and hoping the match landed. */}
+        {countryOptions.length > 0 && renderCountry('places-country')}
+        {/* No "priced from" chip any more, on any width: the origin still
+            governs the prices (the map's From picker sets it), but naming
+            it here was one control too many on the browse surface. */}
+        {/* Every price on this tab is a whole trip at the traveller's own
+            stay tier, so the tier it was priced at belongs on screen beside
+            the numbers, and one tap opens the panel that changes it. */}
+        {showPriceChrome && onOpenLifestyle && renderLifestyle('')}
+      </div>
+    </div>
+  );
+
+  /* What this tab narrows by, in the same card and under a hairline,
+      because a chip that changes WHICH rows are listed is the same kind
+      of control as the search field above it. The model is built once
+      (facetGroups) and rendered here and in the sheet. */
+  const facetsRow = (facetGroups.length > 0 || isComposedTrips) ? (
+    <div className="places-facets">
+      {isComposedTrips && (
+        <TripLengthSlider
+          days={itinDays}
+          setDays={setItinDays}
+          n={itinRows ? itinRows.length : 0}
+          t={t}
+        />
+      )}
+      {renderFacetGroups()}
+    </div>
+  ) : null;
+
   return (
     <div className="places-shell">
       {/* The page's one h1 (T186): the tab has no visible title, so the name
@@ -2860,68 +3042,10 @@ export function DestinationsTab({
               from and what they assume: one row, in that order. Filters
               leads because it is the one control that decides WHICH rows are
               listed; the sorts only reorder what it left. */}
-          <div className="places-toolbar-right">
-            {showSorts && sortDefs.length > 0 && (
-              <div className="places-sorts" role="group" aria-label={t('places.sortLabel')}>
-                {renderSortButtons('places-sort')}
-              </div>
-            )}
-
-            <div className="places-chips">
-              {/* The country picker sits immediately to the right of this
-                  button on every width, and the sheet used to open with a
-                  country dropdown of its own on top of whatever facets the tab
-                  had. On a tab with no facets that made Filters a door to a
-                  copy of the control beside it. Country now lives in one place
-                  (the chip), and Filters only appears when it has facets of
-                  its own to offer. */}
-              {facetGroups.length > 0 && (
-              <button
-                type="button"
-                ref={filterBtnRef}
-                className={`places-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
-                onClick={() => setSheetOpen(true)}
-                aria-haspopup="dialog"
-                aria-expanded={sheetOpen}
-              >
-                <FilterIcon size={14} />
-                <span>{t('filter.filters')}</span>
-                {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
-              </button>
-              )}
-
-              {/* Every tab has a country now, including the three published
-                  layers where the only way in used to be typing its name
-                  into the search field and hoping the match landed. */}
-              {countryOptions.length > 0 && renderCountry('places-country')}
-          {/* No "priced from" chip any more, on any width: the origin still
-              governs the prices (the map's From picker sets it), but naming
-              it here was one control too many on the browse surface. */}
-          {/* Every price on this tab is a whole trip at the traveller's own
-              stay tier, so the tier it was priced at belongs on screen beside
-              the numbers, and one tap opens the panel that changes it. */}
-          {showPriceChrome && onOpenLifestyle && renderLifestyle('')}
-            </div>
-          </div>
+          {!opening && toolbarRight}
         </div>
 
-        {/* What this tab narrows by, in the same card and under a hairline,
-            because a chip that changes WHICH rows are listed is the same kind
-            of control as the search field above it. The model is built once
-            (facetGroups) and rendered here and in the sheet. */}
-        {(facetGroups.length > 0 || isComposedTrips) && (
-          <div className="places-facets">
-            {isComposedTrips && (
-              <TripLengthSlider
-                days={itinDays}
-                setDays={setItinDays}
-                n={itinRows ? itinRows.length : 0}
-                t={t}
-              />
-            )}
-            {renderFacetGroups()}
-          </div>
-        )}
+        {!opening && facetsRow}
         </div>
 
         {/* A refused or failed location fix, said once, under the field that
@@ -2964,6 +3088,38 @@ export function DestinationsTab({
           );
         })()}
 
+
+        {/* The section opening screen (T183, spec 5.3): Band 1 and Band 2
+            while the section is at rest, then the filter row that moved out
+            of the toolbar for them, then Band 3, the grid below. */}
+        {opening && (
+          <>
+            <SectionOpening
+              layer={opening.layer}
+              icons={opening.icons}
+              heading={openingHead}
+              sub={openingSub}
+              rails={opening.rails.map((r) => ({
+                key: r.def.key,
+                title: t(r.def.titleKey),
+                n: r.n,
+                rows: r.rows,
+                onSeeAll: () => applyRail(opening.layer, r.def.facets),
+              }))}
+              describe={describeRow}
+              photo={(row) => photoOf(opening.layer, row)}
+              onOpen={openFromBand}
+              t={t}
+            />
+            <h2 className="open-gridhead">{t('open.gridHead')}</h2>
+            {(toolbarRight || facetsRow) && (
+              <div className="places-toolbar places-filterrail">
+                <div className="places-controls">{toolbarRight}</div>
+                {facetsRow}
+              </div>
+            )}
+          </>
+        )}
 
         {/* Beaches. No country index in front of the list: the tab opens on
             the beaches themselves, ranked across Europe, because "show me a
@@ -3516,6 +3672,12 @@ export function DestinationsTab({
           <div className="places-list">
             {showCountryIndex && (
               <>
+                {/* No Europe-wide trail ranking exists to fill an opening
+                    band from (T183): the trail wire is one file per
+                    country. Said plainly, where the bands would be. */}
+                {cat === 'trails' && tripCountries.length > 0 && (
+                  <p className="places-beachhead open-bycountry">{t('open.trail.byCountry')}</p>
+                )}
                 {tripCountries.map((c) => (
                   <CountryCard
                     key={c.cc}

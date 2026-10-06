@@ -24,7 +24,7 @@ const STRIP_SIZES = '(min-width: 769px) 160px, 132px';
 export function TripDayPhotos({ shots }) {
   if (!shots?.length) return null;
   return (
-    <ul className="tday-shots">
+    <ul className="tday-shots" tabIndex={0}>
       {shots.slice(0, MAX_PER_DAY).map((shot) => (
         <li key={shot.url} className="tday-shot">
           <img

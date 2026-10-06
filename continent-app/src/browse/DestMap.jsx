@@ -104,7 +104,7 @@ const DestMap = React.forwardRef(function DestMap({
         if (onPickHighlight) {
           el.style.cursor = 'pointer';
           el.addEventListener('click', (e) => { e.stopPropagation(); onPickHighlight(i); });
-          keyablePin(el, `${i + 1}. ${row.name || ''}`, () => onPickHighlight(i), { map, lngLat: [row.lon, row.lat] });
+          keyablePin(el, `${i + 1} ${row.name || ''}`.trim(), () => onPickHighlight(i), { map, lngLat: [row.lon, row.lat] });
         }
       } else if (active === 'trips') {
         el = makeEl('dmap-pin is-trip', `<span class="dmap-pin-in"><span class="dmap-pin-dot"></span><span class="dmap-pin-name">${esc(row.name)}${row.travel?.minutes ? ` <span class="mono">${Math.round(row.travel.minutes)}m</span>` : ''}</span></span>`);

@@ -4,6 +4,13 @@ import { keyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, declutterPins } from './coords.js';
 
+// A pin's accessible name must contain the text it shows (WCAG 2.5.3), so a
+// numbered pin is named "2 Vienna", not "Vienna" (T231).
+const pinName = (el) => {
+  const shown = (el.textContent || '').trim();
+  return shown && shown !== el.title ? `${shown} ${el.title}` : el.title;
+};
+
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -561,7 +568,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         });
         // A keyboard stop too (T190), named by its title, when someone is
         // listening for the pick.
-        if (onSelectRef.current) keyablePin(el, el.title, () => onSelectRef.current?.(i), { map, lngLat: [p.lon, p.lat] });
+        if (onSelectRef.current) keyablePin(el, pinName(el), () => onSelectRef.current?.(i), { map, lngLat: [p.lon, p.lat] });
         const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
           .setLngLat([p.lon, p.lat])
           .addTo(map);

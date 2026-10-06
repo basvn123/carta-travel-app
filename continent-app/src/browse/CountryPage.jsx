@@ -30,8 +30,7 @@ function median(xs) {
 function MiniCard({ p, onSelect, t }) {
   const kind = kindOf(p);
   return (
-    <button className="railcard" onClick={() => onSelect(p.id)}
-      aria-label={t('explore.openDest', { city: p.city })}>
+    <button className="railcard" onClick={() => onSelect(p.id)}>
       <span className="railcard-media">
         <HeroImage url={p.image} city={p.city} iso2={p.iso2}
           className="railcard-img" maxWidth={330} sizes="180px" ratio={[4, 3]} />

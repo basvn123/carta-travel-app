@@ -29,7 +29,7 @@ export function LifestyleButton({ stayTier, lifestyle, onClick, className = '', 
       onClick={onClick}
       aria-haspopup="dialog"
       title={t('lifestyle.exploreHint')}
-      aria-label={`${t('filter.lifestyle')}: ${bed}, ${vibe}`}
+      aria-label={`${t('filter.lifestyle')} ${bed} ${vibe}`}
     >
       <PiggyIcon size={15} className="lifestyle-btn-icon" />
       {showLabel && <span className="lifestyle-btn-label">{t('filter.lifestyle')}</span>}

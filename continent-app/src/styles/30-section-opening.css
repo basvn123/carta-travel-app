@@ -1,0 +1,190 @@
+/* The section opening screen (spec 5.3, T183): Band 1, the icons, and
+   Band 2, the useful cuts, over the five outdoor sections of Destinations.
+   browse/SectionOpening.jsx draws it.
+
+   Most of the look is borrowed on purpose: the cards are Explore's
+   .railcard and the rails are Explore's .xrails (25-feature-pages.css). This
+   file only adds the grid the icons sit in, the fixed 220 px rail card, the
+   44 px arrows and the dot indicator, all from tokens. carta-design has no
+   written carousel rule yet; row T183-b asks for one. */
+
+.open-bands {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin: var(--space-4) 0 var(--space-6);
+}
+
+/* ── Band 1: the icons ───────────────────────────────────────────────── */
+
+.open-icons-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  /* One line in English at every width down to 380 px, as the spec asks.
+     It is allowed to wrap rather than truncate: the Spanish and French
+     headings are half as long again, and a heading cut off mid-word says
+     less than one on two lines. */
+  text-wrap: balance;
+}
+.open-icons-sub {
+  margin: var(--space-1) 0 0;
+  max-width: 62ch;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* Full bleed: out to the edges of the column, through the padding
+   .places-wrap stands on (24 px, 16 px on a phone). Hairlines between the
+   tiles rather than cards with gaps: a set of related places, divided by
+   rules, the way carta-design asks a list to be. */
+.open-icons-grid {
+  list-style: none;
+  margin: var(--space-3) -24px 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule-soft);
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.open-icons-grid > li { display: flex; min-width: 0; }
+.open-icon.railcard {
+  flex: 1 1 auto;
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.open-icon.railcard:hover { transform: none; box-shadow: none; }
+.open-icon .railcard-img { aspect-ratio: 4 / 3; }
+.open-icon:hover .railcard-img { opacity: 0.92; }
+.open-icon:focus-visible { outline-offset: -2px; }
+.open-icon .railcard-name { font-size: 17px; }
+
+/* ── Band 2: the rails ───────────────────────────────────────────────── */
+
+.open-rails { margin: 0; }
+.open-railcard.railcard {
+  flex: 0 0 200px;
+  height: 220px;
+}
+.open-railcard .railcard-media { flex: none; height: 132px; overflow: hidden; }
+.open-railcard .railcard-img { height: 132px; aspect-ratio: auto; }
+.open-railcard .railcard-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: space-between;
+}
+/* Two lines for a rail card's name: cycle sections carry long ones. */
+.open-railcard .railcard-name {
+  flex: none;
+  max-height: 2.4em;
+  overflow: hidden;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.open-noimg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.railcard-kind .open-where {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.railcard-kind .open-fact {
+  flex: none;
+  margin-left: auto;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.open-railcard .railcard-kind,
+.open-icon .railcard-kind {
+  display: flex;
+  gap: var(--space-2);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.open-strip { scroll-snap-type: x mandatory; }
+.open-strip > .railcard { scroll-snap-align: start; }
+
+/* "See all N" at the tap floor on every width. On hover it keeps the accent
+   and underlines: Explore's lighter hover colour is 2.52:1 on the paper, and
+   a touch screen leaves hover on after the tap. */
+.xrails-all.open-all { min-height: var(--tap); }
+.xrails-all.open-all:hover { color: var(--accent); text-decoration: underline; }
+
+/* The arrows at the tap floor, and quiet at either end of the strip. */
+.xrails-arrow.open-arrow { width: var(--tap); height: var(--tap); }
+.xrails-arrow.open-arrow:disabled {
+  cursor: default;
+  color: var(--rule);
+  border-color: var(--rule-soft);
+}
+
+/* Where the strip is: one dot a page, the current one in ink. */
+.open-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+.open-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+.open-dot.on { background: var(--ink); }
+
+/* Band 3: its heading, in the rails' title style, then the filter row. */
+.open-gridhead {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* Band 3's filter rail, moved under the bands while they show (phone only:
+   on a desktop the filters stand in the left panel and this is hidden with
+   the rest of .places-toolbar). */
+.places-filterrail { margin-top: 0; }
+
+@media (max-width: 768px) {
+  .open-icons-title { font-size: 21px; }
+  .open-icons-grid {
+    margin-left: -16px;
+    margin-right: -16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* Nine tiles in two columns: the first takes the full width, so the grid
+     closes on a whole row. */
+  .open-icons-grid[data-n='9'] > li:first-child,
+  .open-icons-grid[data-n='7'] > li:first-child,
+  .open-icons-grid[data-n='5'] > li:first-child,
+  .open-icons-grid[data-n='3'] > li:first-child { grid-column: 1 / -1; }
+  .open-icons-grid[data-n='9'] > li:first-child .railcard-img,
+  .open-icons-grid[data-n='7'] > li:first-child .railcard-img,
+  .open-icons-grid[data-n='5'] > li:first-child .railcard-img,
+  .open-icons-grid[data-n='3'] > li:first-child .railcard-img { aspect-ratio: 16 / 9; }
+  .open-icon .railcard-name { font-size: 15px; }
+  .open-bands { gap: var(--space-5); }
+}

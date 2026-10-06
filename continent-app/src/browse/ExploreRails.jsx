@@ -48,10 +48,9 @@ export function interleaveByCountry(rows) {
   return out;
 }
 
-function RailCard({ p, onSelect, t }) {
+function RailCard({ p, onSelect }) {
   return (
-    <button className="railcard" onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}
-      aria-label={t('explore.openDest', { city: p.city })}>
+    <button className="railcard" onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}>
       <span className="railcard-media">
         <HeroImage url={p.image} city={p.city} iso2={p.iso2}
           className="railcard-img" maxWidth={500}
