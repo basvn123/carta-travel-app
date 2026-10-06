@@ -16,6 +16,8 @@ The count of 43 was verified by counting the `source:` keys in attribution.js (4
 
 For T204-b, T207 and T208 had both applied the three questions of docs/GTM-ACQUISITION-CONSTRAINT.md (cash EUR 0 against the EUR 0.17 ceiling, no lever needed). T205 had not: its report never cites the ceiling. The test is applied to organic search in the new file, with the same result, and the row is closed. Nothing enforces the test; the file says so.
 
+The runway report is not edited, since a closed report is never updated. The runway is pointed to from this report and from rows T336-a and T336-b instead, and the drafts name its D-21 and D rows.
+
 The draft says nothing about flights and states no figure that is not cited to a file.
 
 ## Files touched
@@ -25,7 +27,6 @@ The draft says nothing about flights and states no figure that is not cited to a
 - Execution/P12/T336-launch-outreach-drafts.md
 
 **Modified:**
-- Execution/P12/T220-launch-runway.md (a three line addendum with a pointer to the drafts; the calendar is unchanged. The orchestrator asked for the link from the runway, which departs from "a report is never updated after it is closed", so it is a labelled addendum only)
 - Execution/_OPEN.md (T204-b and T208-c closed, T336-a and T336-b added)
 
 ## Commands run

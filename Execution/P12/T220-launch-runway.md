@@ -108,7 +108,3 @@ The launch date itself, T207-a, is the owner's, and the runway cannot be run unt
 ## Rollback procedure
 
 Delete Execution/P12/T220-launch-runway.md and the T220 rows from Execution/_OPEN.md, or git revert the single commit on branch p12-launch-runway. No app, pipeline or data file changed.
-
-## Addendum by T336 (pointer only)
-
-The drafts the D-21 and D rows call for (the co-announce question for the L1 to L3 emails and the courtesy note to the credited bodies, row T208-c) are in docs/LAUNCH-OUTREACH-DRAFTS.md. The calendar above is unchanged.
