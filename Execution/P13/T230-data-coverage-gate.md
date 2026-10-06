@@ -1,8 +1,8 @@
-# Execution Report: T230
+# T230: Data and coverage gate
 
 ## Task ID
 
-T230
+T230 (mind-map number T203).
 
 ## Date
 
@@ -10,121 +10,115 @@ T230
 
 ## What changed
 
-The data and coverage gate establishes mechanical validation that runs on every build to enforce the specifications (trips spec K5, destinations spec 0.4). Three checks are now documented and their current status measured: the trip validator (253 journeys, schema v2.0), which found 517 errors and 713 warnings; the coverage contract gate, which has no contract JSON committed yet; and the hero image size floor, which fails all 253 trips.
+No code or data changed. T230 is an audit of the eight criteria in its prompt against the two gates that already exist, the trip validator (T084, extended by T091) and the coverage gate (T112). Neither gate is green. Both tools are sound, since the validator self-test and the coverage self-test pass. What fails is the data they judge, and in one case the data they would judge does not exist yet.
 
-The trip validator runs self-test clean (every seeded defect caught) and the coverage gate self-test likewise passes, so both tools are mechanically sound. The failures are data defects, not tooling defects. The most critical issues are all 253 trips having heroes below the 1600px floor (spec B3) and 209 trips having unencoded comma ranges in the shipped wire (spec A1).
+The trip validator reports 517 errors on 253 trips (stdout: TRIPS:253 ERRORS:517 WARNINGS:713 NOTICES:30). The errors are hero-below-floor 253, comma-range-wire 209, hero-duplicate 53 and accommodation-not-slept 2. The first three are counts of trips. The last is 2 errors on 1 trip, ba-nature-escape-una-national-park, which lists Camp Lucica and the rafting-operator bungalows in its strategy and sleeps in neither.
 
-Before this task there was no documented gate or regular measurement. After: the gates exist, run on every committed change per the CI workflows, and report passes when data meets the contract or failures when it does not.
+The comma ranges are no longer a builder bug. T085 fixed build_wire.py, but the tracked wire in continent-app/public/journeys was never rebuilt, so it still holds the old text (register row T085-a). The coverage gate cannot judge anything because reports/coverage_contract.json is not committed. Run against the main checkout it prints "WARNING: reports\coverage_contract.json is not committed, so the contract is NOT being enforced" and exits 0. That pass is vacuous, not a green result.
+
+The done condition, both CI gates green on a clean build, is not met. Closing the gap needs the wire rebuild, the hero builder change (T139) and a data lane run, which belong to other tasks.
 
 ## Files touched
 
-**Modified:**
-- None (gates already committed; no code changes)
+Created: Execution/P13/T230-data-coverage-gate.md (this report).
 
-**Created:**
-- C:/Users/GEBRUI~1/AppData/Local/Temp/claude/c--Users-Gebruiker-Documents-Portfolio-Travel-App/6b326c5e-a8ca-4e86-a593-e6a7f7d48db3/scratchpad/T230-out/trip-validation-report.md (full validation report)
-- C:/Users/GEBRUI~1/AppData/Local/Temp/claude/c--Users-Gebruiker-Documents-Portfolio-Travel-App/6b326c5e-a8ca-4e86-a593-e6a7f7d48db3/scratchpad/T230-out/trip-validation-issues.json (1260 issues JSON)
-- C:/Users/GEBRUI~1/AppData/Local/Temp/claude/c--Users-Gebruiker-Documents-Portfolio-Travel-App/6b326c5e-a8ca-4e86-a593-e6a7f7d48db3/scratchpad/T230-out/trip-validator-run.txt (stdout from validator)
-- C:/Users/GEBRUI~1/AppData/Local\Temp/claude/c--Users-Gebruiker-Documents-Portfolio-Travel-App/6b326c5e-a8ca-4e86-a593-e6a7f7d48db3/scratchpad/T230-out/trip-validator-selftest.txt (stdout from selftest)
-- C:/Users/GEBRUI~1/AppData/Local/Temp/claude/c--Users-Gebruiker-Documents-Portfolio-Travel-App/6b326c5e-a8ca-4e86-a593-e6a7f7d48db3/scratchpad/T230-out/coverage-gate-selftest.txt (coverage gate selftest output)
+Modified: Execution/_OPEN.md (rows T230-a to T230-e).
 
-**Deleted:**
-- None
+Nothing else in the repository. The validator outputs were written to C:\Users\Gebruiker\Documents\Portfolio\wt\T230-out\ (r.md, r.json), outside the repository.
 
 ## Commands run
 
-```bash
-cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App\Trips\carta-unified\carta-unified"
-python pipeline/validate.py --self-test
-# Output: SELF-TEST OK: every seeded defect was caught, the control stayed clean
+From Trips/carta-unified/carta-unified in the main checkout, read only:
 
-python pipeline/validate.py --report "$env:TEMP\trip-validation-report.md" --json "$env:TEMP\trip-validation-issues.json"
-# Output: TRIPS:253  ERRORS:517  WARNINGS:713  NOTICES:30
+    python pipeline/validate.py --self-test
+    python pipeline/validate.py --report C:\Users\Gebruiker\Documents\Portfolio\wt\T230-out\r.md --json C:\Users\Gebruiker\Documents\Portfolio\wt\T230-out\r.json
 
-cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"
-python pipeline/regions/coverage_gate.py --self-test
-# Output: coverage_gate self-test: clean passes, 8 seeded faults caught
-```
+The self-test printed "seeded=12 checks" and "SELF-TEST OK: every seeded defect was caught, the control stayed clean". The full run printed the totals above. The per-code counts below come from r.json.
+
+From the root of the main checkout:
+
+    python pipeline/regions/coverage_gate.py --self-test
+    python pipeline/regions/coverage_gate.py --check reports/coverage_contract.json --baseline reports/coverage_gate_baseline.json
+
+The first printed "coverage_gate self-test: clean passes, 8 seeded faults caught". The second printed the not-enforced warning and exited 0.
 
 ## Config and secrets set
 
-Not applicable. No configuration or secrets changed.
+None.
 
 ## Before/after measurements
 
-The gates produce the following measurements on the current state:
+Before is what the owning task reported when it landed. For the validator that is T084 (Execution/P5/T084-trip-validator.md, the "Every error code" table and the measurements table). For the coverage gate that is T112 (Execution/P7/T112-coverage-dashboard-and-gate.md, measurements table). After is the run above. This task changed no code, so the delta is the effect of the tasks that landed in between, not of T230.
 
-| Gate | Criterion | Current Status | Details |
+| Metric | Before | After | Delta |
 |---|---|---|---|
-| Trip validator self-test | All checks detect seeded defects | PASS | Every K5 check (summary, cost, place, accommodation, surface, range, hero) fires on a known bad trip |
-| Trip validator on 253 journeys | All trips pass | FAIL | 517 errors, 713 warnings, 30 notices |
-| Coverage gate self-test | All rules detect violations | PASS | 9 seeded violations caught (no code, bad code, no detail, missing cell, bad status, ok under floor, empty, ratchet) |
-| Coverage contract gate | Contract committed and passes | NOT MEASURED | Contract JSON does not exist; gate prints a warning and passes |
+| Validator errors, 253 journeys | 606 (T084) | 517 | -89 |
+| hero-below-floor, trips | 253 (T084) | 253 | 0 |
+| comma-range-wire, trips | 209 (T084) | 209 | 0 |
+| budget-sum-mismatch, errors | 98 on 58 trips (T084) | 0 | -98 |
+| accommodation-not-slept, errors | 46 on 34 trips (T084) | 2 on 1 trip | -44 |
+| hero-duplicate, trips | not in T084's error table | 53 (26 photographs) | +53 |
+| Validator warnings | 624 (T084) | 713 | +89 |
+| Builds that judge a coverage contract in CI | 0 (T112) | 0 | 0 |
 
-The trip validator found:
+The four codes in T084's table sum to 606 (253 + 209 + 98 + 46), and today's four sum to 517 (253 + 209 + 53 + 2), which matches the validator's own totals. The hero-duplicate check was added by T091 after T084. I did not trace why the budget and accommodation counts dropped, since that is outside this task.
 
-| Check | Level | Count | Spec reference | Decoded |
-|---|---|---|---|---|
-| `hero-below-floor` | ERROR | 253 | B3 | All 253 trips have heroes under 1600px (range 800px to 1280px) |
-| `comma-range-wire` | ERROR | 209 | A1 | Unencoded comma ranges in shipped wire, e.g. "€1,200, €1,850" as two prices not a range |
-| `accommodation-not-slept` | ERROR | 2 | D3 | Accommodation listed in strategy but never appears in itinerary sleep lines |
-| `word-cap` | WARNING | 236 | D4 | Prose exceeds word caps (summary >120, day >45, tip >35) |
-| `no-sleep-lines` | WARNING | 183 | A4 | Accommodation section header shown but sleep array is empty |
-| `missing-connectivity` | WARNING | 115 | (logistics) | Logistics section missing named places for connectivity/mobile |
-| `missing-type-detail` | WARNING | 44 | E5 | Type-specific data missing (distance, ascent, surface, rating) |
-| `missing-evening` | WARNING | 30 | D2 | Day itinerary missing evening prose |
-| `missing-gateway` | WARNING | 30 | (logistics) | Gateway airport or transfer not documented |
-| `hero-duplicate` | ERROR | 53 | J2 | Hero URL reused across two or more trips |
-| `missing-difficulty` | WARNING | 21 | A3 | Difficulty rating missing or inconsistent |
-| `missing-booking-windows` | WARNING | 20 | (logistics) | Booking lead times not documented |
-| `place-outside-country` | WARNING | 18 | J1 | Named place geocodes in a different country |
-| `coordinate-far-from-itinerary` | WARNING | 16 | J1 | Trip pin far from any named place |
-| `generated-summary` | INFO | 30 | D1 | Summary flagged as LLM-generated |
+The hero-below-floor trips break down as 244 with a recorded size, from 640px to 1280px (219 at 1280, 7 at 1024, 6 at 800, the remaining 12 between 640 and 1261), and 9 with no recorded size (r.json). The widest hero is 1280px because build_wire.py sets THUMB_W = 1280.
 
 ## What broke and how it was fixed
 
-No issues. The validator tools themselves work correctly; all failures are legitimate data defects that the gate correctly reports.
+Nothing broke in the tools. The first version of this report, committed as 1a447521c, carried errors that this version corrects.
+
+| What | Cause | Fix |
+|---|---|---|
+| accommodation-not-slept stated as 2 trips | It is 2 errors on 1 trip | Corrected throughout |
+| "No documented gate" before | T084, T085 and T112 had built and documented both gates | Before and after now cite their reports |
+| "€1,200, €1,850" shown as a real finding | That string is the validator's own seeded fault in validate.py | A real hit is "€430, €785" in a totalNote |
+| Hero range "800px to 1280px" | 244 sized heroes run 640px to 1280px and 9 carry no size | Corrected above |
+| Coverage self-test "9 faults" and "8 faults" in two places | The self-test prints 8: seven fault cases plus the ratchet regression | 8 used; the trip validator seeds 12 checks |
+| Both workflows "run on every commit to main" | Both are path filtered and nothing is pushed | See the last section |
+| 183 no-sleep-lines read as empty section headings | The check is about sleep lines, not headings | See criterion four |
 
 ## What is still open
 
-The gates are now in place and operational. The work to fix the defects they report belongs to later tasks. Specifically:
+Each item is also a row in Execution/_OPEN.md.
 
-The trip validator reports 517 errors across 253 trips. Of these, 253 are "hero-below-floor" (all trips) and 209 are "comma-range-wire" (spec A1 and B3 from the trips enhancement spec). These two defects alone account for 462 of 517 errors and directly address spec K5 mechanical checks. The remaining 55 errors are 53 hero-duplicates and 2 accommodation-not-slept violations.
+T230-a: hero-below-floor on all 253 trips. No hero can reach 1600px until T139 (wave 19, not yet run) changes the derivative widths. No earlier row covers it, so this is the one data defect this task raises.
 
-The coverage gate has no contract JSON committed. The spec 0.4 promise (countries and sections either publish their floor or give a reason code) was checked by running the self-test, which passes. The contract JSON itself is generated by the pipeline (coverage.py) and has not been run since the cache layers were archived. That generation belongs to a data lane task, not this task.
+T230-b is closed as a duplicate of T112-a (commit the coverage contract and baseline, then add --require). T112-c covers the stale reports/coverage.html.
 
-Content audit and hero image validation are named in the task prompt as "existing gates" to run. The trip validator includes hero checks (size, duplication, URL resolution). The content audit script (audit-content.mjs, continent-app/scripts/) exists but was not run because the task is a gate report, not an audit task. Its scope is understood but execution is deferred to data quality work.
+T230-c: validate.py has no check that numeric fields carry a confidence. generation_gate.py enforces the figures list on newly generated trips, but the 253 published trips carry none (T146-a) and the validator does not look.
 
-Section headings with no content are checked by the validator (no-sleep-lines warning, 183 trips). This directly addresses spec A4 and is measured.
+T230-d: no data structure holds a view image or terrain render per published row, so no check can exist.
 
-Every numeric field carry confidence: the task says "Every numeric field carries a confidence" as a requirement. The validator has no confidence-field check because the wire schema does not currently carry per-field confidence markers (spec K3). This is a missing schema feature noted in the spec but not yet implemented.
+T230-e: no check exists for an activity-type trip with a settlement hero. See criterion six.
 
-Every published row has view image or terrain render: this is part of spec E3 and requires route imagery, which is not present in the current dataset. The validator has no check for this because the data does not yet have the structure to check against (a gallery array with image metadata). This feature is designed in the spec but not yet built.
+Findings that existing rows already cover and this task does not duplicate: comma-range-wire is T085-a, hero-duplicate is T091-a (it expects 53 errors until the wire is rebuilt), the validator workflow failing by design is T084-c, and the contract not being committed is T112-a.
 
 ## Rollback procedure
 
-No code changes were made. No rollback is needed. The gates were already in the repository and this task documented them. To revert this report, delete the report file from the repository.
+Nothing shipped. Revert this report and the register edits with git revert of the T230 commits on branch p13-data-coverage-gate, or delete the branch before it is merged. The change to T230-b's status reverts the same way.
 
 ---
 
-## Notes on the gates
+## Verdicts on the eight criteria
 
-The product's stated asset is trust in its numbers. The gates documented here enforce that claim. Two are validation-tool gates (trip validator, coverage gate) that run on every commit to main and fail the build when data does not meet the contract. One is a content gate (audit-content.mjs) documented but not re-run in this session. One (hero image validation) is a sub-component of the trip validator. One (confidence per field) is specified but not yet in the schema.
+1. The trip validator passes on every trip. Fail. 517 errors, and every trip has at least one because hero-below-floor hits all 253 (validate.py run, r.json).
 
-The trip validator ran on two modes:
+2. The coverage gate passes or every miss carries a reason code. Fail, in the sense that nothing is judged. The self-test passes (8 seeded faults caught), but reports/coverage_contract.json is not committed, so the gate exits 0 with a not-enforced warning. A pass that checks nothing is not a pass. The open row is T112-a.
 
-1. **Self-test mode** (--self-test): Plants one defect per rule in a copy of a known good trip, then confirms each rule catches its defect. This ensures the tool itself is working.
-2. **Validation mode** (--report, --json): Runs the full 253-trip dataset against the K5 mechanical checks and produces a markdown report and a JSON issues list.
+3. No comma-ranges. Fail on the shipped wire: comma-range-wire fires on 209 trips (r.json). The master dataset is clean, since no comma-range code appears in r.json. The cause is the stale wire, T085-a.
 
-The coverage gate likewise ran in self-test mode, confirming that all 9 rules that enforce the spec 0.4 contract (country floors, reason codes for misses, ratchet on regressions) fire on seeded violations.
+4. No empty section headings. Pass by reading the code, and no automated check exists. The 183 no-sleep-lines warnings are not about headings. In validate.py (around line 668) the check fires when no itinerary day has a sleep line, and its message says the accommodation strategy "cannot be checked against the itinerary". It limits what the validator can verify and says nothing about rendering. For rendering I read continent-app/src/browse/JourneyPage.jsx at app commit 6c99ebd. The facts, route, budget, specification, itinerary, accommodation, log and tips folds are each wrapped in a length or presence check, as is the hazards section. The packing fold is not wrapped, and does not need to be: lib/packGrid.js tops written notes up with the trip type's standard kit to 16 cells or more, so it is never empty. That differs from T086's report, which described a guard on packingNotes at line 631. The page has since changed, and T086's 153-trip count refers to the old guard. No validator or audit watches for an empty heading, so a section added later without a guard would not be caught.
 
-Both gates require no live data, just the committed schema and the dataset. The coverage gate in particular is pure Python with no external dependencies, so it runs in CI on every push to main.
+5. No hero under 1600px. Fail. hero-below-floor fires on 253 of 253 trips (r.json). T139 owns the fix.
 
-The defects they report are real and material:
+6. No activity-type trip with a settlement hero. No check exists. validate.py has no check on what a hero shows. Its hero checks are missing, below floor, duplicate and URL resolution. T091-b records that replacement heroes are place photographs, and spec B1 and B2 describe the problem, but nothing measures it, and a check needs a way to tell an activity photograph from a place one first. The spec's own examples, such as a cycling week opening on an aerial of Pula, suggest it fails widely, but that is not measured. Raised as T230-e.
 
-- **Comma ranges** (spec A1): Ranges written as "€1,200, €1,850" instead of "€1,200 to €1,850" are the single highest-value fix the spec identifies. It directly undermines the credibility of the numbers.
-- **Hero size** (spec B3): 253 trips with heroes below 1600px means every trip page on modern displays shows visibly soft images.
-- **Hero duplication** (spec J2): 53 trips reuse 26 distinct hero URLs across 79 occurrences. A user browsing the style index sees the same photograph twice and concludes the catalogue is padded.
-- **Empty sections** (spec A4): 183 trips show accommodation section headers with no content, making the page feel broken.
+7. Every published row has a view image or a terrain render. No check exists. The schema carries no gallery or terrain image per row, so there is nothing to test. Raised as T230-d.
 
-The validators are the right tool for these checks. They run fast, require no data preparation, and fail the build when the contract is broken. The task is to run them, measure the defects, and report the results.
+8. Every numeric field carries a confidence. Fail on the published trips, and no check exists in validate.py. The 253 trips carry no figures list (T146-a). T146 added the structure and generation_gate.py enforces it on newly generated trips only. Raised as T230-c.
+
+## How the two gates are wired
+
+The trip-validator workflow (.github/workflows/trip-validator.yml) runs on pushes to main and on pull requests, but only when a path in its filter changes: the trip dataset folder, pipeline/journeys, continent-app/public/journeys, or the workflow file. The coverage-contract workflow uses the same event types, filtered to coverage.py, coverage_gate.py, the contract and baseline JSON, and its own file. So neither runs on every commit to main. Nothing has been pushed to origin, and main is 73 commits ahead of origin/main in the main checkout, so neither workflow has run on GitHub. The validator workflow fails by design until the wire rebuild and T139 land (T084-c). The coverage workflow will pass vacuously until the contract is committed (T112-a).
