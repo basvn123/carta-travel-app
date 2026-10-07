@@ -958,3 +958,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T179-d | T179 | Beach cards show No data where the wire has no length (288 rows) or orientation (168), lake cards where it has no area (39); filling them is a data-lane run | user | open |  |
 | T179-e | T179 | The card hook is the chip labels read as one line, not the spec's written sentence with a verb or a number; a per-row hook needs a pipeline field or T158's sentence work | next task | open |  |
 | T179-f | T179 | Overlay card rules in 23-places-pages.css and the phone card block in 24-destination-workspace.css are overridden by 37-card-fillings.css for the five sections, not deleted; remove what no card reads any more | next task | open |  |
+| T101-a | T101 | The short version's days are picked by a text score (dayScore in src/lib/tripLength.js), not by an editor; decide whether to curate a shortDays list per trip | user | open |  |
+| T101-b | T101 | No ten-to-fourteen-day long version exists (owner answer of 2026-10-07 is two lengths); T173-d, the long-stay discounts, stays open until one does | user | open |  |
+| T101-c | T101 | The short version scales the transport line by days, which understates getting there; a fixed share per trip type needs authored data | next task | open |  |
+| T101-d | T101 | The cheaper-trip exits, saved trips, PDF export and planner hand-off still read the week; make them follow the chosen length (browse cards follow in T188) | next task | open |  |
+| T101-e | T101 | On the short version the data sheet's surface mix and the where-to-sleep and logistics sections are the whole week's; trim them to the kept days or label them | next task | open |  |
