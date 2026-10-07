@@ -45,11 +45,12 @@ The full table with the one job of each token is in `DESIGN.md`; the ones you wi
 | `--bg-card` | `#ffffff` | Card fill, the only pure white |
 | `--ink` | `#0f172a` | Body text, headings, dark surfaces |
 | `--ink-soft` | `#414b5e` | Secondary text |
-| `--ink-mute` | `#7d8393` | Metadata and placeholders at 12 to 14px, never body |
+| `--ink-mute` | `#646978` | Metadata and placeholders at 12 to 14px, never body (5.07:1 on paper) |
 | `--ink-fill` | `#2b3446` | Fill behind an active control |
 | `--rule`, `--rule-soft` | `#ccc7b8`, `#e2ded1` | Borders and dividers; hairlines inside a card |
-| `--accent` | `#e05a47` | Terracotta: actions, alerts, live route, focus rings |
+| `--accent` | `#ce3823` | Terracotta: actions, alerts, live route, focus rings (4.61:1 as text on paper, 4.98:1 under white) |
 | `--accent-soft`, `--accent-bg` | `#e97f6b`, `#f7dcd4` | Hover borders; tinted callouts |
+| `--accent-hover`, `--accent-press` | `#b7321f`, `#8e3615` | Hover fills of an accent button and a primary cost action |
 | `--rate`, `--rate-soft`, `--rate-bg` | ochre | Ratings as a measure. Never actions |
 | `--green` | `#4a6a3a` | Good news in data. Never chrome, never a button |
 | `--danger`, `--danger-dark` | `#b3372a`, `#96291e` | Destructive actions only |
