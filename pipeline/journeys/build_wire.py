@@ -808,6 +808,8 @@ def main():
             if gws or partial:
                 detail["gateways"] = gws
                 detail["gatewaysPartial"] = partial
+            # T089: snapshot is never read and adds dead weight to the JSON.
+            detail.pop("snapshot", None)
             (OUT / "journey" / f"{t['id']}.json").write_text(
                 json.dumps(detail, ensure_ascii=False), encoding="utf-8")
 
