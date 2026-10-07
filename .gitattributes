@@ -17,3 +17,6 @@ cache/*.geojson    filter=lfs diff=lfs merge=lfs -text
 # Shell scripts must keep LF. core.autocrlf=true would otherwise give them
 # CRLF on checkout, and a shebang with a trailing carriage return does not run.
 *.sh text eol=lf
+
+# impeccable launcher is a POSIX sh script: keep LF on Windows checkouts (T369)
+.claude/skills/impeccable/scripts/impeccable text eol=lf

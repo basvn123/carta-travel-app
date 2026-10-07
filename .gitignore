@@ -202,6 +202,12 @@ data/derived/place_candidates.json
 # Personal Claude Code overrides (the shared skills in .claude/skills/ stay tracked)
 .claude/settings.local.json
 
+# impeccable (T369): the 14.7 MB engine binary stays out of git; the launcher
+# finds it in %USERPROFILE%\.impeccable\bin\<VERSION>\ or downloads it once.
+# .impeccable/ is the skill's per-run working folder (critiques, mocks, config).
+.claude/skills/impeccable/scripts/bin/
+.impeccable/
+
 # Trails Phase 1: full evidence dumps, local analysis only (87-113 MB).
 # The committed registry and report carry the walks and the rollups.
 data/trails/famous_registry_full.json

@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import task_model  # noqa: E402
 import xmind_prompt  # noqa: E402
 import wave_prompts  # noqa: E402
+import design_waves  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "Execution" / "_WAVES.md"
@@ -298,6 +299,7 @@ WAVES = [
   (['T366'], ['p3-owner-housekeeping'], False, 'P3', None,
    'Row T362-e. EXCEPTION to rule 4: run_pipeline.py, only to move the monthly flight_times task to manual cadence (T255-a) and to add --footprint to the lodging task (T311-b); no pipeline run.'),
  ]),
+ *design_waves.WAVES,
  (17, "GATED: stages 2 and 3 pasted (owner)", "_OPEN-MASTER stages 2 and 3 done, with pg_cron and pg_net on.", [
   (["T147"], ["p9-k6-fact-store"], True, "P9", "049",
    "Migration 049 (the facts store T041 designed as 030_facts.sql, rows T300-n and T041-b), self-check notice and down block; build on T327. The owner then creates the vault secrets refresh_facts_url and refresh_facts_key. Gemini only."),
@@ -359,6 +361,8 @@ DATA_LANE = [
 def model_of(t, rows, topics, notes):
     if t in REG:
         return REG[t][0]
+    if t in design_waves.TASKS:
+        return design_waves.TASKS[t][0]
     return task_model.model_for(t, rows, topics, notes)
 
 
@@ -511,7 +515,7 @@ the inputs pulled back from R2 first (see the end of this file).
 
 def main():
     rows, topics, notes = xmind_prompt.order_rows(), xmind_prompt.map_topics(), task_model.map_notes()
-    out = [HOWTO, RULES, "## The waves at a glance\n"]
+    out = [HOWTO, design_waves.HOWTO, RULES, "## The waves at a glance\n"]
     for n, title, gate, wrows in WAVES:
         out.append(f"### Wave {n}: {title}\n\nGate: {gate}\n")
         out.append("| k | Task | Model | Branch | App | Folder | Migration |")
@@ -523,6 +527,8 @@ def main():
             for t in tasks:
                 if t in REG:
                     label.append(f"{t} {REG[t][1]}")
+                elif t in design_waves.TASKS:
+                    label.append(f"{t} {design_waves.TASKS[t][1]}")
                 else:
                     label.append(f"{t} {rows[t]['title']}")
             out.append(f"| {k} | {' then '.join(label)} | {' then '.join(ms)} | {', then '.join(r[1])} | "
@@ -557,6 +563,8 @@ def main():
             for t in tasks:
                 if t in REG:
                     bodies.append(reg_body(t, r[3]))
+                elif t in design_waves.TASKS:
+                    bodies.append(design_waves.body(t))
                 elif t == "T197":
                     bodies.append("# T197b: one shared Button (row T197-d)\nSee the notes above; the original T197 "
                                   "prompt is done and must not be redone.")
@@ -573,6 +581,14 @@ def main():
     out.append("---\n\n# Wave log\n\nThe orchestrator adds one line per wave: date, merged and held sessions with the "
                "reason, new migrations and their paste position, push yes or no.\n\n"
                "- Waves 1 to 5: see the wave log in PARALLEL-WAVES-PLAN.md (all merged 2026-10-02, not pushed).\n")
+    # Keep the lines the orchestrators appended to the log since the last run (T369).
+    if OUT.exists():
+        old = OUT.read_text(encoding="utf-8")
+        if "\n# Wave log\n" in old:
+            kept = [ln for ln in old.split("\n# Wave log\n", 1)[1].splitlines()
+                    if ln.startswith("- ") and not ln.startswith("- Waves 1 to 5:")]
+            if kept:
+                out.append("\n".join(kept) + "\n")
     text = "\n".join(out)
     text = text.replace("\u2014", ", ").replace("\u2013", " to ").replace(" \u00b7 ", ": ")
     OUT.write_text(text, encoding="utf-8")
