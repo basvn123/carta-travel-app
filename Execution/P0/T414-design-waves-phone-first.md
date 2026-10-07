@@ -1,8 +1,8 @@
-# T413: the design waves check the phone first, on emulated devices
+# T414: the design waves check the phone first, on emulated devices
 
 ## Task ID
 
-T413
+T414
 
 ## Date
 
@@ -21,10 +21,10 @@ WebKit was not installed in the Playwright cache (only Chromium). It is now (web
 **Modified:**
 - Execution/_queue/design_waves.py (the phone block, the PHONE line per surface, the device wording in V1, V2, V5 and V6)
 - Execution/_WAVES.md (regenerated)
-- Execution/_OPEN.md (row T413-a)
+- Execution/_OPEN.md (row T414-a)
 
 **Created:**
-- Execution/P0/T413-design-waves-phone-first.md
+- Execution/P0/T414-design-waves-phone-first.md
 
 Outside the repos: the Playwright WebKit browser in %LOCALAPPDATA%\ms-playwright\webkit-2359.
 
@@ -44,7 +44,7 @@ None.
 
 | Measure | Before | After | Source |
 |---|---|---|---|
-| Session prompts with the phone rules | 0 of 43 | 43 of 43 | grep "Phone first (T413)" in _WAVES.md |
+| Session prompts with the phone rules | 0 of 43 | 43 of 43 | grep "Phone first (T414)" in _WAVES.md |
 | Surface headers with an "On a phone" line | 0 of 40 | 40 of 40 | grep in _WAVES.md |
 | Browser engines in the Playwright cache | 1 (Chromium) | 2 (Chromium, WebKit) | %LOCALAPPDATA%\ms-playwright |
 
@@ -54,8 +54,12 @@ Nothing broke.
 
 ## What is still open
 
-Emulation is not a phone. After V6, the owner opens the preview on a real iPhone and a real Android phone (T413-a); each session will also have listed its own real-phone checks in an owner row.
+Emulation is not a phone. After V6, the owner opens the preview on a real iPhone and a real Android phone (T414-a); each session will also have listed its own real-phone checks in an owner row.
 
 ## Rollback procedure
 
-Revert the T413 merge commit on main and regenerate _WAVES.md with `python Execution/_queue/waves_md.py`. WebKit can stay in the cache or be removed with `npx playwright uninstall` (it removes every browser).
+Revert the T414 merge commit on main and regenerate _WAVES.md with `python Execution/_queue/waves_md.py`. WebKit can stay in the cache or be removed with `npx playwright uninstall` (it removes every browser).
+
+## Numbering note
+
+This task first ran as T413, at the same time as another session's T413 (Execution/P11/T413-blocks-c-d-e-live.md, merged at 23:38). It was renumbered to T414 in a follow-up commit, with its report, its register row (now T414-a) and the tags in design_waves.py; the other session's T413 rows are untouched.

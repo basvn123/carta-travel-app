@@ -6570,7 +6570,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -6708,7 +6708,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -6844,7 +6844,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -6980,7 +6980,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -7116,7 +7116,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -7252,7 +7252,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -7388,7 +7388,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -7524,7 +7524,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -7660,7 +7660,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -7796,7 +7796,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -7935,7 +7935,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -7993,7 +7993,7 @@ DELIVER
    - layout rhythm, the type scale (Fraunces display sizes), elevation (the three shadows), iconography;
    - density per mode: Operate for the planners and Explore, Read for trip and detail pages, Persuade for
      the landing page;
-   - the phone (T413): phone first everywhere; the breakpoints and what each adds; safe-area and dvh
+   - the phone (T414): phone first everywhere; the breakpoints and what each adds; safe-area and dvh
      rules for every fixed or sticky bar; the thumb zone and where the one primary action sits on a
      phone; sheets versus pages; gestures as shortcuts only; landscape; the on-screen keyboard; and what
      desktop adds beyond a wider phone (side by side map and list, hover detail, keyboard shortcuts);
@@ -8088,7 +8088,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -8212,7 +8212,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -8336,7 +8336,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -8460,7 +8460,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -8584,7 +8584,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -8708,7 +8708,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -8832,7 +8832,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -8956,7 +8956,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -9080,7 +9080,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -9204,7 +9204,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -9330,7 +9330,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -9454,7 +9454,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -9578,7 +9578,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -9702,7 +9702,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -9826,7 +9826,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -9950,7 +9950,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -10074,7 +10074,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -10198,7 +10198,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -10322,7 +10322,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -10446,7 +10446,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -10572,7 +10572,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -10696,7 +10696,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -10820,7 +10820,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -10944,7 +10944,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -11068,7 +11068,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -11192,7 +11192,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -11316,7 +11316,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -11440,7 +11440,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -11564,7 +11564,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -11688,7 +11688,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -11818,7 +11818,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
@@ -11914,7 +11914,7 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+Phone first (T414). Most travellers dream and choose on a phone and use the planners on the go
 (TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
 the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
 so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
