@@ -657,6 +657,9 @@ def to_card(trip, hero):
         "lat": coords.get("lat"), "lon": coords.get("lon"),
         "prec": coords.get("precision"),
         "gw": trip.get("gatewayAirportCode"),
+        # T089: the first six tags, the same six the trip page shows, so the
+        # list can filter on them without opening each trip.
+        "tags": [str(x) for x in (trip.get("tags") or [])][:6],
         "hero": hero,
     }
 
@@ -808,6 +811,8 @@ def main():
             if gws or partial:
                 detail["gateways"] = gws
                 detail["gatewaysPartial"] = partial
+            # T089: snapshot is never read and adds dead weight to the JSON.
+            detail.pop("snapshot", None)
             (OUT / "journey" / f"{t['id']}.json").write_text(
                 json.dumps(detail, ensure_ascii=False), encoding="utf-8")
 
