@@ -1883,7 +1883,7 @@ TASKS = [
     {
         "key": "flight_times",
         "title": "Departure/arrival times for already-covered origins",
-        "cadence": "monthly",
+        "cadence": "manual",   # retired from the schedule, T366 (T255-a)
         "writes_app_data": True,
         "cmds": [[PY, "pipeline/harvest_flight_times.py", "all", "CRL,BRU"]],
         "note": ("keeps times in sync with refreshed fares for CRL,BRU only. "
@@ -1903,7 +1903,7 @@ TASKS = [
         "cadence": "quarterly",
         "writes_app_data": True,
         "cmds": [
-            [PY, "pipeline/harvest_accommodation.py"],
+            [PY, "pipeline/harvest_accommodation.py", "--footprint"],
             [PY, "pipeline/apply_accommodation_anchors.py"],
             [PY, "pipeline/apply_longtail_granularity.py"],
             [PY, "pipeline/apply_tourist_premium.py"],
