@@ -251,14 +251,14 @@ None of these blocks a wave. Do B4 before 1 November.
     | xargs git reflog expire --expire=now --expire-unreachable=now HEAD
   git gc --prune=now
   ```
-- [ ] **B6. Google Cloud tidy (T259-a).** Rename project
+- [x] **B6. Google Cloud tidy (T259-a).** Rename project
   `gen-lang-client-0445365032` (it holds the Gemini key and the EUR 50 budget)
   to something you will recognise, and delete the empty project `carta-503222`.
   T259-b (how prepaid spend shows in the budget) is read later, in E5.
-- [ ] **B7. Cloudflare data processing addendum (T300-j).** Accept it in the
+- [x] **B7. Cloudflare data processing addendum (T300-j).** Accept it in the
   Cloudflare dashboard and write the version and date into the T018 vendor
   list (tell Claude the version; it records it).
-- [ ] **B8. Status pages (T218-d).** Subscribe your address to
+- [x] **B8. Status pages (T218-d).** Subscribe your address to
   status.supabase.com, www.cloudflarestatus.com and status.stripe.com, and
   check Supabase usage emails reach an inbox you read.
 - [ ] **B9. Support mailbox (T216-a).** Create `support@carta-europetravel.com`
@@ -269,7 +269,7 @@ None of these blocks a wave. Do B4 before 1 November.
 - [ ] **B10. Trademark search (T300-a).** Search "Carta" in classes 9, 39 and 42
   on euipo.europa.eu and give the result to Claude for
   `additional docs/Carta/Plan/Legal/Legal.md`. Before launch.
-- [ ] **B11. The original mind maps (T226-d, T187-d).** Copy `Carta-structured.xmind`
+- [x] **B11. The original mind maps (T226-d, T187-d).** Copy `Carta-structured.xmind`
   and `Carta.xmind` from your Downloads folder into `additional docs/Carta/`,
   beside `Carta-Master-Plan.xmind`. Many prompts cite "your original mind
   map"; without the file those sessions guess.
@@ -284,7 +284,7 @@ None of these blocks a wave. Do B4 before 1 November.
   on Pages has passed with no rollback, delete `carta-travel-app` in Vercel (or
   at least detach both domains). After that, rollback is the previous Pages
   deployment.
-- [ ] **B15. Community accounts (T207-b).** Open the Hacker News, Product Hunt,
+- [x] **B15. Community accounts (T207-b).** Open the Hacker News, Product Hunt,
   Reddit, OSM forum and OSMBC accounts now and use them normally; they must be
   at least 30 days old at launch.
 
