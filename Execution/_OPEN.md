@@ -924,3 +924,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T167-a | T167 | The destination, lake and mountain pages still print their own tips and hazards as lists; the flashcard deck (FlashDeck.jsx) is ready to reuse there | next task | open | |
 | T167-b | T167 | scripts/verify_journeys.mjs only checks that the pro tips fold exists; add a check that three .flash-deck decks render with no card over 35 words | next task | open | |
 | T167-c | T167 | JourneyPage.jsx line 581 renders a Prose paragraph inside a p (validateDOMNesting console warning, present before T167) | next task | open | |
+| T165-a | T165 | The trip page (TripPage.jsx) has no sticky section rail; reuse browse/SectionRail.jsx with its own section ids | next task | open | |
+| T165-b | T165 | The destination page's existing rail (.destp-subnav) is buttons with bordered pills, not the carta-design sticky rail rule (anchors, ink-fill active pill); move it onto SectionRail | next task | open | |
+| T165-c | T165 | The six rail labels in de, es, fr, it and nl are machine translations; a native read is needed | user | open | |
