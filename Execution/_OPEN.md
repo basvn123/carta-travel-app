@@ -973,3 +973,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T101-c | T101 | The short version scales the transport line by days, which understates getting there; a fixed share per trip type needs authored data | next task | open |  |
 | T101-d | T101 | The cheaper-trip exits, saved trips, PDF export and planner hand-off still read the week; make them follow the chosen length (browse cards follow in T188) | next task | open |  |
 | T101-e | T101 | On the short version the data sheet's surface mix and the where-to-sleep and logistics sections are the whole week's; trim them to the kept days or label them | next task | open |  |
+| T188-a | T188 | The composed city routes have a day-count filter but no price, so they have no cost band; a band there needs a priced total per composed trip | next task | open |  |
+| T188-b | T188 | The Trips category's style cards count every trip in a style, not the trips the length and cost filters leave | next task | open |  |
+| T188-c | T188 | The cost band is a third of the library, not a budget the traveller states; decide whether to offer a typed ceiling | user | open |  |
+| T188-d | T188 | Card totals are the authored per-person range and the trip page's receipt is the priced party total; they disagree until the cards read the priced figure (see T099-b) | next task | open |  |
+| T188-e | T188 | formatRange in src/lib/format.js writes the English word to between two figures in every language, so a Spanish card reads 334 to 536 | next task | open |  |
