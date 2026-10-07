@@ -968,3 +968,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T326-b | T326 | Browser-check the admin side of the front door: the report line and Open in Content in the Feedback inbox, and the Content tab opening on the item (behind the admin lock, not reachable headless here) | user | open | after 047 |
 | T326-c | T326 | Send one real report after migration 047 and confirm the row has kind data and the report key; then press Open in Content on it | user | open | after 047 |
 | T326-d | T326 | admin.fbOpenContent, admin.layer.cycle and account.feedbackKind.data exist in English only, like the other admin strings; translate if the admin page ever localises | next task | open |  |
+| T101-a | T101 | The short version's days are picked by a text score (dayScore in src/lib/tripLength.js), not by an editor; decide whether to curate a shortDays list per trip | user | open |  |
+| T101-b | T101 | No ten-to-fourteen-day long version exists (owner answer of 2026-10-07 is two lengths); T173-d, the long-stay discounts, stays open until one does | user | open |  |
+| T101-c | T101 | The short version scales the transport line by days, which understates getting there; a fixed share per trip type needs authored data | next task | open |  |
+| T101-d | T101 | The cheaper-trip exits, saved trips, PDF export and planner hand-off still read the week; make them follow the chosen length (browse cards follow in T188) | next task | open |  |
+| T101-e | T101 | On the short version the data sheet's surface mix and the where-to-sleep and logistics sections are the whole week's; trim them to the kept days or label them | next task | open |  |
