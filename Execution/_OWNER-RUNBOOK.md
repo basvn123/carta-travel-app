@@ -7,6 +7,23 @@ and Part E, written 2026-10-02), the 282 open rows with Owner `user` in
 stays the record of every row, and a task report wins on detail. Every open
 owner row from 4 October appears below under its id, so nothing was dropped.
 
+## Progress (newest first)
+
+- **2026-10-07 evening (T413).** Blocks C and D done, E nearly done. A catalog probe
+  (`Execution/P11/T362-live-migration-probe.sql` and `-2.sql`) showed that 017 to 024,
+  028 to 030 and 032 to 043 were already live, so stage 2 shrank to seven pastes: the owner
+  pasted 025, 026, 045, 046, 047, 048 and 051 after a fresh encrypted dump
+  (`supabase-2026-10-07.dump.gpg`). The build of waves 6 to 16c with the T363 colours is
+  deployed to production, the data uploaded and verified (PASS), the prerender bucket and
+  the quiet status file are live, pg_cron and pg_net are on with the moderation purge
+  scheduled, and plan-day, parse-booking and suggest-city are redeployed. Do NOT run
+  `push-data.mjs --live --prune` until row T413-a is fixed: it would delete
+  `data/status.json`. Left of block E: the cap proofs (E4) and the one-week read (E5,
+  on or after 2026-10-14). Wave 17 can run once T041-a and T081 (answered) are read by
+  its orchestrator; its gate (stages 2 and 3) is met.
+- **2026-10-07 afternoon (T362).** Block A answered and applied; B1 to B4 done or
+  skipped; catch-up waves 16b and 16c ran and merged.
+
 ## How it works
 
 Claude's code work runs in waves (`Execution/_WAVES.md`). A wave runs its
