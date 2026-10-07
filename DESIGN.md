@@ -226,6 +226,14 @@ Buttons: height `--tap`, radius 6 px, sentence case, verb first, one primary per
 
 **Secondary chrome (T360).** The "Get a pass" chip in the desktop bar is transparent with a `--rule` border and 6 px radius. The phone's round plus button is `--bg-card` with a `--rule` border, `999px` radius and a `--tap` or larger target. Neither is `--accent` filled, which leaves the accent for each page's one primary action.
 
+**Rules decided by the owner on 2026-10-07 (T362).** The InfoDot, the day track, flashcards, the sticky section rail, the one Lifestyle control, the cost bar above a receipt, no bento grid, a scrim behind every modal dialog, and the install hint. The full text of each is in the carta-design skill under Components. None adds a token: the cost bar uses the `--kind-*` ink ramp, and the scrim is `--ink` at 28 percent as `.lifestyle-scrim` already draws it.
+
+**Compact controls on a fine pointer (T362).** `--tap` stays the floor on touch. Under `@media (pointer: fine)` a compact control, such as the small Button, may be 32 px high.
+
+**Colours in JavaScript (T362).** Where a colour must live in JavaScript (MapLibre paint properties cannot read a CSS custom property), it lives in one token-mirror module that copies each value from `01-tokens.css` under the token's name, with a comment naming the token. No other JavaScript file holds a hex. The design lint is to check this once the module exists.
+
+**Contrast tokens, change pending (T362, owner decision 2026-10-07).** Three pairs fail the 4.5:1 floor that PRODUCT.md promises: `--ink-mute` on `--paper` (3.51:1), `--accent` as text on `--paper` (3.40:1) and `--on-fill` on `--accent` (3.67:1). The owner chose to darken the tokens. Proposed, same hue, darker: `--ink-mute` `#646978` (5.07:1 on `--paper`, 4.63:1 on `--paper-dim`) and `--accent` `#ce3823` (4.61:1 as text on `--paper`, 4.98:1 under white); `--accent-hover` and `--accent-press` must then step darker too. The values above in the tables stay current until the implementing task changes `01-tokens.css` and this file in one commit, after the owner has seen them on screen.
+
 ## Before you ship
 
 Read the diff and answer these seven questions, from the carta-design skill.

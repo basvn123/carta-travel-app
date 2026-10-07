@@ -59,7 +59,7 @@ when you have typed the command.
 | Wave | Gate | Opened by |
 |---|---|---|
 | 15 (rest), 16 | the previous wave merged | nothing from you; runs now |
-| Catch-up wave | your answers in block A | A, then the sentence in A6 |
+| 16b, 16c (catch-up) | your answers in block A, applied by T362 | done 2026-10-07; say "run waves 16b and 16c" |
 | 17 | stages 2 and 3, pg_cron and pg_net on, T041-a and T081 answered | D, E, A |
 | 18 | stage 7.9: the box runs the weekly pipeline | G |
 | 19 | stage 8.6 for beaches; a Flickr key for T127 | H |
@@ -196,6 +196,11 @@ Design calls that free no session but close rows:
 | T143-d | Add `jsonschema>=4.23` to requirements.txt | Yes | ok (2026-10-07) |
 
 ## A6. Then say
+
+**Done 2026-10-07 by T362** (`Execution/P11/T362-owner-decisions-applied.md`): the rules are in the
+carta-design skill and `DESIGN.md`, 76 rows are closed in `_OPEN.md`, six work rows (T362-a to
+T362-f) are claimed by the catch-up waves 16b and 16c in `_WAVES.md`, and the four permissions are
+applied. The text below is kept as the record of what was asked.
 
 Wait until no wave is running (the last line of the wave log in `_WAVES.md`
 names the last wave, and `git worktree list` shows only the main checkout).

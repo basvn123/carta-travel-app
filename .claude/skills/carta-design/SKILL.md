@@ -106,7 +106,9 @@ through `Intl.NumberFormat` with two decimals, never raw float output.
 ## Layout and spacing
 
 - Spacing: `--space-1` to `--space-8` (4, 8, 12, 16, 22, 30, 40, 56px) for new and touched rules.
-  `--tap` (44px) is the floor for anything interactive, icon-only controls included.
+  `--tap` (44px) is the floor for anything interactive, icon-only controls included. One exception
+  (owner, 2026-10-07): on a fine pointer (`@media (pointer: fine)`) a compact control such as the
+  small Button may be 32px high. On a coarse pointer it is always `--tap`.
 - Radius: 6px on controls, 10 to 12px on cards. `999px` only on real status chips and round icon
   buttons.
 - Borders: `1px solid var(--rule)` on anything a user can type into or click; `var(--rule-soft)` for
@@ -148,6 +150,26 @@ keeps the same background as the other. Never dim the free plan. State limits as
 **Suitability strip.** Under a trip hero, a solid `--paper` band at full opacity, flush with the photo's bottom edge, `--rule` border, square corners where it meets the photo. No alpha, no gradient, no text over the photo. Exactly three cells in fixed order: difficulty (five squares, filled `--ink` up to the level, outlined `--ink-mute` beyond it, never `--rate` or `--accent`, plus the level as a word), style (one or two words from tags), total cost (mono face, with currency). A missing value shows a placeholder word ("Unrated", "Mixed", "Price on request") so every trip shows three cells. One row of three on a phone.
 
 **Secondary chrome.** The desktop "Get a pass" chip and the phone's round plus button are secondaries (transparent or `--bg-card` with a `--rule` border; 6 px radius on the chip, `999px` on the round icon button, 44 px minimum target). The accent is kept for each page's one primary action.
+
+The rules below were decided by the owner on 2026-10-07 and written down by T362.
+
+**InfoDot.** One glossary marker for the whole product. A 6 px filled `--ink-mute` dot set after the term or figure it explains, inside a real `<button>` with a `--tap` box and an aria-label that names the term ("What measured means"). It opens a popover: `--bg-card`, `1px solid var(--rule)`, 10 px radius, `--shadow-2`, at most 280 px wide, the term in `--ui` 600 and one or two sentences in `--ui` 13 px `--ink-soft`. The text comes from the shared glossary, never written per screen. Escape, a second tap or a tap outside closes it, and focus returns to the dot. One dot per term per view, on the first occurrence. Never on a heading, a button label or a price pin, and never an "i" in a circle.
+
+**Day track.** Day by day may run as a horizontal track. One card per day, `scroll-snap-type: x mandatory`, about 85 percent of the width on a phone so the next card shows, three cards across from 1024 px. Above the track, right aligned: the position in `--mono` ("Day 3 of 7") and two secondary buttons, Previous and Next, each `--tap`. Arrow keys move one card when the track has focus. Under the track, position dots: 6 px, `--rule`, the current one `--ink-fill`, hidden from screen readers because the counter says the same. No autoplay, no looping, no momentum tricks. Under `prefers-reduced-motion` the track jumps instead of scrolling smoothly. Every day stays reachable as a link from the page's own list or rail.
+
+**Flashcards.** Advisory sections may run as a deck, one card visible at a time. The card is `--bg-card` with a `1px solid var(--rule)` border and square corners, which marks it as a deck card and not an object card. Under it: Previous and Next as secondary buttons and the position in `--mono` ("2 of 5"). Swiping is a shortcut for those buttons, never the only way, and arrow keys do the same. A "Show all" link turns the deck into a plain list, and printing shows the list. No flip, no 3D, no stacked-card shadows; a transform transition under 300 ms with a reduced-motion branch.
+
+**Sticky section rail.** At most one per page, and only when the page has three or more sections. It sticks below the top chrome once the hero has scrolled away: a `--paper` band, height `--tap`, a `1px solid var(--rule)` bottom border, no shadow. Section links in `--ui` 13 px `--ink-soft`, scrolling sideways on a phone. The section in view is an `--ink-fill` pill with `--on-fill` text and a 6 px radius, never `--accent`. Each link is a real `<a>` to the section's anchor.
+
+**Lifestyle control.** There is one Lifestyle control: the existing Lifestyle panel. A surface that lets the traveller change how they travel opens or embeds that control; it never builds a second slider. Where it is shown as a slider it is stepped, one stop per existing level, each stop labelled with its word, and the figures it drives update in place. One sentence in `--ui` under it states the trade-off in plain words with the figure.
+
+**The cost bar.** A receipt may carry one stacked bar as a summary above its lines, never in place of them. 8 px high, the full width of the receipt, one segment per receipt line in receipt order, in the ink ramp (`--kind-*`), separated by 1 px `--paper` gaps. No `--accent`, no legend, no percentages on the bar: each receipt line already carries its figure. A line marked as an estimate keeps its marker in the receipt; the bar does not repeat it.
+
+**No bento grid.** Detail pages do not use tiles of mixed sizes. Slot 6 of the detail skeleton is the collapsed row list (T164).
+
+**Modal dialogs.** Every modal dialog has a scrim: `--ink` at 28 percent behind it, as `.lifestyle-scrim` draws it, and the page behind takes no clicks. This holds for the Lifestyle dialog on every tab.
+
+**Install hint.** Carta may suggest adding the web app to the home screen in one place only: one line with a secondary button ("Add to home screen") in My trips, shown on a phone browser that is not already running the installed app, after the traveller has saved a trip. Dismissed once, it never returns. Never a modal, never on the first run, never a banner over content.
 
 ## Interaction
 
@@ -193,7 +215,7 @@ transitions under 300ms on transform and opacity only, and every transition and 
 - `prefers-reduced-motion: reduce` respected on every transition.
 - Headings in order, one `h1`, real `<a>` for navigation and real `<button>` for actions.
 - Text contrast at least 4.5:1. `--ink-mute` is for metadata at 12 to 14px, never body copy.
-- Tap targets at least `--tap`.
+- Tap targets at least `--tap` (32px allowed on a fine pointer only, see Layout).
 
 ## Before you ship
 

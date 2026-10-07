@@ -1,5 +1,11 @@
 # Everything that is open, as one plan
 
+> **Superseded for the owner's steps on 2026-10-07 (T362).** Read `Execution/_OWNER-RUNBOOK.md`:
+> it orders every owner step from here into blocks A to K and holds the owner's answers to the
+> decisions in Part E8 and the product decisions table (block A, answered 2026-10-07). The
+> stage commands below stay the detailed reference the runbook points to. `_OPEN.md` stays the
+> record of every row.
+
 Consolidated 2026-10-02 by T300, covering every report from T001 to T297, after
 each one was fact-checked against the repository (the verdicts are in
 `Execution/P0/T300-factcheck-and-open-consolidation.md`). This is now the one
