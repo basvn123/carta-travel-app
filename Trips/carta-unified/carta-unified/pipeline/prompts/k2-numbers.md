@@ -1,4 +1,4 @@
-version: 2
+version: 3
 pass: numbers
 temperature: 0.0
 grounding: true
@@ -22,7 +22,7 @@ Rules:
 5. accommodationStrategy[].priceEur is the price range in euros with priceUnit saying what the unit is (room-night, person-night, bed-night, person-week), from the property's own site or a booking site; priceNote says what the price covers in words only.
 6. typeSpecific.surfaceMix lists surfaces with whole-number percentages adding to 100, or null when the trip type has no surface. typeSpecific.distanceKm, elevationM and verticalM are the week's totals, or null. typeSpecific.bookingTimeline and logistics.bookingWindows say in words how far ahead what must be booked, with the operator's stated lead time where a page gives one.
 7. eurRate is units of the local currency to one euro, as a low and high over the past year, or null when the currency is the euro. currencyNote is words only.
-8. sources.verified lists in one paragraph what you checked and where; sources.confidenceNotes says what you could not confirm.
+8. sources.confidenceNotes says what you could not confirm. Do not write sources.verified: the pipeline writes it from your evidence rows, so the record of what was checked and where is the evidence, one row per figure.
 9. Notes beside a typed number (totalNote, breakdown notes, priceNote, dayStats.note, currencyNote) carry no euro figures and no ranges of their own: the figures are in the typed fields next to them.
 10. Prices in another currency are converted to euros at today's rate and the conversion is said in the evidence basis.
 11. No em dash, en dash or middot anywhere. Dates as YYYY-MM-DD.

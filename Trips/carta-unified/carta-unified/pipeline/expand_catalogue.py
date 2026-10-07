@@ -110,6 +110,7 @@ import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import accuracy as A  # noqa: E402
 import common as C  # noqa: E402
 import gap_matrix as GM  # noqa: E402
 import generate_trip as T  # noqa: E402
@@ -595,9 +596,12 @@ def flag_text(rec, kind, path, quote):
 
 def add_perishable_flags(rec):
     """(record, errors, added). Appends one flag per unflagged perishable,
-    after the evidence rule's and the critic's own flags, and re-derives the
-    two fields that follow from the list. Deterministic: the same record
-    always gets the same flags, so a rerun changes nothing."""
+    after the evidence rule's and the critic's own flags. Deterministic: the
+    same record always gets the same flags, so a rerun changes nothing. The
+    reader's signals (verifyFlagCount, volatilePricing, sources.verified)
+    follow from the figures ledger, not from this list (T093, accuracy.py),
+    so a perishable flag never moves them; apply() is called only so a
+    record that reaches here out of step is put right."""
     out = copy.deepcopy(rec)
     flags = list(out.get("verifyFlags") or [])
     added = 0
@@ -613,8 +617,7 @@ def add_perishable_flags(rec):
     if len(flags) > cap:
         errors.append(f"flag-budget: the trip needs {len(flags)} verify flags and the contract holds {cap}")
     out["verifyFlags"] = flags
-    out["verifyFlagCount"] = len(flags)
-    out["volatilePricing"] = bool(flags)
+    A.apply(out)
     return out, errors, added
 
 
@@ -1116,7 +1119,6 @@ def self_test():
         # dispute is held.
         stripped = copy.deepcopy(rec)
         stripped["verifyFlags"] = stripped["verifyFlags"][:-1]
-        stripped["verifyFlagCount"] -= 1
         if not unflagged(stripped):
             fails.append("a missing perishable flag was not noticed")
         stale = copy.deepcopy(rec)

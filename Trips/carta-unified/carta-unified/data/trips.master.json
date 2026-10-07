@@ -2221,7 +2221,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1409,
       "dataVintage": 2026,
       "provenance": {
@@ -2506,7 +2506,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1344,
       "dataVintage": 2026,
       "provenance": {
@@ -7294,7 +7294,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1385,
       "dataVintage": 2026,
       "provenance": {
@@ -10310,7 +10310,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1554,
       "dataVintage": 2026,
       "provenance": {
@@ -12104,7 +12104,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1606,
       "dataVintage": 2026,
       "provenance": {
@@ -13885,7 +13885,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1573,
       "dataVintage": 2026,
       "provenance": {
@@ -17818,7 +17818,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1540,
       "dataVintage": 2026,
       "provenance": {
@@ -18106,7 +18106,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1461,
       "dataVintage": 2026,
       "provenance": {
@@ -20481,7 +20481,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1449,
       "dataVintage": 2026,
       "provenance": {
@@ -25906,7 +25906,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1371,
       "dataVintage": 2026,
       "provenance": {
@@ -27980,7 +27980,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1506,
       "dataVintage": 2026,
       "provenance": {
@@ -28598,7 +28598,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1516,
       "dataVintage": 2026,
       "provenance": {
@@ -33680,7 +33680,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1470,
       "dataVintage": 2026,
       "provenance": {
@@ -34863,7 +34863,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1575,
       "dataVintage": 2026,
       "provenance": {
@@ -37300,7 +37300,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1551,
       "dataVintage": 2026,
       "provenance": {
@@ -42383,7 +42383,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1545,
       "dataVintage": 2026,
       "provenance": {
@@ -44147,7 +44147,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1628,
       "dataVintage": 2026,
       "provenance": {
@@ -45024,7 +45024,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1559,
       "dataVintage": 2026,
       "provenance": {
@@ -50018,7 +50018,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1482,
       "dataVintage": 2026,
       "provenance": {
@@ -50608,7 +50608,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1518,
       "dataVintage": 2026,
       "provenance": {
@@ -52939,7 +52939,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1429,
       "dataVintage": 2026,
       "provenance": {
@@ -57063,7 +57063,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1613,
       "dataVintage": 2026,
       "provenance": {
@@ -58831,7 +58831,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1439,
       "dataVintage": 2026,
       "provenance": {
@@ -59998,7 +59998,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1425,
       "dataVintage": 2026,
       "provenance": {
@@ -63955,7 +63955,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1610,
       "dataVintage": 2026,
       "provenance": {
@@ -64251,7 +64251,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1543,
       "dataVintage": 2026,
       "provenance": {
@@ -66054,7 +66054,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1540,
       "dataVintage": 2026,
       "provenance": {
@@ -70629,7 +70629,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1551,
       "dataVintage": 2026,
       "provenance": {
@@ -70940,7 +70940,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1889,
       "dataVintage": 2026,
       "provenance": {
@@ -73330,7 +73330,7 @@
       },
       "verifyFlags": [],
       "verifyFlagCount": 0,
-      "volatilePricing": true,
+      "volatilePricing": false,
       "wordCount": 1490,
       "dataVintage": 2026,
       "provenance": {

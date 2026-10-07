@@ -297,7 +297,7 @@
   },
   "verifyFlags": [],
   "verifyFlagCount": 0,
-  "volatilePricing": true,
+  "volatilePricing": false,
   "wordCount": 1889,
   "dataVintage": 2026,
   "provenance": {

@@ -165,6 +165,19 @@ export interface Coordinates {
   source: string;
 }
 
+export type Confidence = 'sourced' | 'derived' | 'estimated';
+
+export interface Figure {
+  /** Dotted path of the figure, e.g. "itinerary[2].dayStats.ascentM". */
+  path: string;
+  confidence: Confidence;
+  /** The page a sourced figure came from; null otherwise. */
+  sourceUrl: string | null;
+  checkedAt: string; // YYYY-MM-DD
+  /** Why a person should look again at this figure (the critic's dispute). */
+  flag?: string | null;
+}
+
 export interface Provenance {
   batch: RegionKey;
   sourceFile: string;
@@ -228,12 +241,24 @@ export interface Trip {
   typeSpecific: TypeSpecific;
   packingNotes: string[];
   whatCouldGoWrong: string[];
+  /**
+   * v2.0: the writer's own account, both nullable (verified on 70 trips,
+   * confidenceNotes on 123). v2.1: verified is written by the pipeline from
+   * `figures` (T093) and confidenceNotes is required text (T154).
+   */
   sources: { verified: string | null; confidenceNotes: string | null };
 
-  /** Inline [VERIFY: …] markers lifted out of the source prose. */
+  /** The pipeline's checklist: v2.0 inline [VERIFY: …] markers lifted out of
+   *  the source prose; v2.1 withheld figures, disputes and perishables. */
   verifyFlags: string[];
+  /** T093: details a reader should check before booking. v2.1: the figures
+   *  rows that are estimated or flagged (not verifyFlags.length); v2.0:
+   *  verifyFlags.length. */
   verifyFlagCount: number;
+  /** T093: one of those details is a price. Never true with a count of 0. */
   volatilePricing: boolean;
+  /** T146, T093: v2.1 only, one row per numeric figure (see SCHEMA.md). */
+  figures?: Figure[];
 
   wordCount: number;
   dataVintage: number;

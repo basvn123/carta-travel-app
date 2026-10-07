@@ -575,8 +575,9 @@ def set_totals(fields):
 # record, minus every key that would tell it what the writer thought: who
 # wrote it and with which prompt (provenance), the writer's own account of
 # what it verified (sources), the flags the writer or the evidence rule
-# raised (verifyFlags and the two keys derived from them) and the empty
-# snapshot. It never sees the k2 prompts or the evidence rows.
+# raised (verifyFlags), the two reader-facing signals the ledger gives
+# (verifyFlagCount, volatilePricing; T093) and the empty snapshot. It never
+# sees the k2 prompts or the evidence rows.
 
 CRITIC_KINDS = ("contradiction", "arithmetic", "terrain", "existence", "stale", "access")
 CRITIC_HIDDEN = ("provenance", "sources", "verifyFlags", "verifyFlagCount", "volatilePricing", "snapshot",
@@ -727,6 +728,14 @@ def apply_critique(fields, rows, critique, chunks):
                for d in disputes if covers(d["path"], r["path"])]
         if hit:
             r["disputes"] = hit
+    # T093 (spec J4): a dispute that covers a figure with a value is written
+    # on the figure's own ledger row as `flag`, so the reader's count
+    # (verifyFlagCount, from accuracy.py) includes it. Highest severity
+    # first, so the one flag a row carries is the worst thing said about it.
+    for f in fields.get("figures") or []:
+        hit = next((d for d in disputes if covers(d["path"], f["path"])), None)
+        if hit:
+            f["flag"] = hit["flag"]
     return fields, disputes, dropped
 
 
@@ -1177,6 +1186,9 @@ def fixture_bodies(example=None):
         for k in ("trigger", "consequence", "whatToDo"):
             w[k] = squeeze(w[k])
     p3 = _project(example, PASS_PATHS[3])
+    for path in G.DERIVED:
+        if len(path) == 2 and path[0] in p3:
+            p3[path[0]].pop(path[1], None)     # sources.verified is the pipeline's (T093)
     p3["evidence"] = []
     chunks = []
     for pattern, _ in FIGURES:
@@ -1364,9 +1376,15 @@ def self_test():
         else:
             with open(res7["path"], encoding="utf-8") as fh:
                 rec7 = json.load(fh)
-            if not any(f.startswith("Disputed itinerary[3].dayStats.ascentM") for f in rec7["verifyFlags"]) \
-                    or rec7["verifyFlagCount"] != len(rec7["verifyFlags"]) or not rec7["volatilePricing"]:
+            if not any(f.startswith("Disputed itinerary[3].dayStats.ascentM") for f in rec7["verifyFlags"]):
                 fails.append("a dispute did not become a verifyFlag")
+            # T093: the disputed climb is flagged on its ledger row and counted
+            # once; it is not a price, so the pricing is not volatile.
+            row7 = next((f for f in rec7["figures"] if f["path"] == "itinerary[3].dayStats.ascentM"), {})
+            if not (row7.get("flag") or "").startswith("Disputed itinerary[3].dayStats.ascentM") \
+                    or rec7["verifyFlagCount"] != 1 or rec7["volatilePricing"]:
+                fails.append("the dispute did not reach the ledger row or the signals: "
+                             f"{rec7['verifyFlagCount']}, {rec7['volatilePricing']}, {row7}")
             prompt = next(c[1] for c in client.calls if c[0] == "critic")
             for hidden in ('"provenance"', '"sources"', '"verifyFlags"', '"evidence"'):
                 if hidden in prompt:

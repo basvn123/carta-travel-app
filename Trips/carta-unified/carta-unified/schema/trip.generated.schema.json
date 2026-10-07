@@ -250,14 +250,14 @@
     "sources": {
       "type": "object", "additionalProperties": false, "required": ["verified", "confidenceNotes"],
       "properties": {
-        "verified": { "$ref": "#/$defs/textOrNull", "maxLength": 800 },
+        "verified": { "$ref": "#/$defs/textOrNull", "maxLength": 800, "description": "T093 (spec J5): the sentence the sourced figures give (how many, against how many pages, read when, on which hosts), written by pipeline/accuracy.py from figures; null when nothing is sourced. The writer is not asked for it." },
         "confidenceNotes": { "$ref": "#/$defs/text", "minLength": 30, "maxLength": 800, "description": "Required (T154, spec K7): what could not be confirmed, in a sentence or more. It is the reviewer's starting point; null or empty fails the gate." }
       }
     },
     "snapshot": { "type": "object", "maxProperties": 0, "description": "The source's own snapshot table; a generated record has none." },
     "verifyFlags": { "type": "array", "maxItems": 40, "uniqueItems": true, "items": { "$ref": "#/$defs/text", "minLength": 5, "maxLength": 200 } },
-    "verifyFlagCount": { "type": "integer", "minimum": 0 },
-    "volatilePricing": { "type": "boolean" },
+    "verifyFlagCount": { "type": "integer", "minimum": 0, "description": "T093 (spec J4): the figures a reader should check before booking, the estimated and the flagged rows of figures. Derived by pipeline/accuracy.py; not the length of verifyFlags, which is the pipeline's own checklist." },
+    "volatilePricing": { "type": "boolean", "description": "T093 (spec J4): true when one of the figures to check is a price. Derived by pipeline/accuracy.py." },
     "wordCount": { "type": "integer", "minimum": 0 },
     "dataVintage": { "type": "integer", "minimum": 2026, "maximum": 2100 },
     "figures": {
@@ -269,7 +269,9 @@
           "path": { "type": "string", "pattern": "^[A-Za-z]\\w*(?:\\.[A-Za-z]\\w*|\\[\\d+\\])*$", "maxLength": 80 },
           "confidence": { "enum": ["sourced", "derived", "estimated"] },
           "sourceUrl": { "anyOf": [{ "type": "string", "pattern": "^https?://", "maxLength": 400 }, { "type": "null" }] },
-          "checkedAt": { "$ref": "#/$defs/date" }
+          "checkedAt": { "$ref": "#/$defs/date" },
+          "flag": { "anyOf": [{ "$ref": "#/$defs/text", "minLength": 5, "maxLength": 200 }, { "type": "null" }],
+                    "description": "T093 (spec J4): why a person should look again at this figure although it has a value, today the critic's dispute. A flagged figure counts in verifyFlagCount like an estimate. Absent or null when there is nothing to say." }
         }
       }
     },

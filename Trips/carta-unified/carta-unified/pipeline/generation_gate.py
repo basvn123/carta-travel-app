@@ -48,6 +48,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import accuracy as A  # noqa: E402
 import common as C  # noqa: E402
 
 try:
@@ -74,6 +75,10 @@ DERIVED = [
     ("typeSpecific", "raw"), ("snapshot",),
     ("verifyFlagCount",), ("volatilePricing",), ("wordCount",),
     ("dataVintage",), ("provenance",), ("figures",),
+    # T093 (spec J4, J5): the three accuracy signals follow from `figures`
+    # (accuracy.py). sources.verified is the sentence the sourced rows give,
+    # so the writer is not asked for it; confidenceNotes stays the writer's.
+    ("sources", "verified"),
 ]
 
 # T146 (spec K3): the numeric fields that carry a confidence. A figure is a
@@ -356,10 +361,10 @@ def semantic_errors(rec):
         if abs(total - 100) > 2:
             bad("surface-mix-sum", "typeSpecific.surfaceMix", f"adds to {total}, not 100")
 
-    if rec["verifyFlagCount"] != len(rec["verifyFlags"]):
-        bad("verify-count", "verifyFlagCount", "differs from len(verifyFlags)")
-    if rec["verifyFlags"] and not rec["volatilePricing"]:
-        bad("volatile-flag", "volatilePricing", "a record with verify flags is volatile")
+    # T093: verifyFlagCount, volatilePricing and sources.verified are what
+    # the ledger gives, nothing else (accuracy.py). verifyFlags is the
+    # pipeline's own checklist and no longer the source of any of them.
+    out += A.inconsistencies(rec)
     out += figure_errors(rec)
     return out
 
@@ -576,7 +581,6 @@ def derive(fields, *, batch, model, prompt_version, today=None):
     cc = rec.get("countryCode")
     total = (rec.get("budget") or {}).get("totalEur") or {}
     gws = rec.get("gateways") or []
-    flags = rec.get("verifyFlags") or []
     rec.update({
         "schemaVersion": SCHEMA_VERSION, "sourceId": None, "slug": rec.get("id"),
         "summaryGenerated": False,
@@ -585,8 +589,7 @@ def derive(fields, *, batch, model, prompt_version, today=None):
         "gatewayAirport": f"{gws[0]['name']} ({gws[0]['code']})" if gws else None,
         "gatewayAirportCode": gws[0]["code"] if gws else None,
         "coordinates": None, "tripType": tname, "tripTypeId": tid, "durationDays": 7,
-        "snapshot": {}, "verifyFlagCount": len(flags), "volatilePricing": bool(flags),
-        "dataVintage": int(today[:4]),
+        "snapshot": {}, "dataVintage": int(today[:4]),
         "provenance": {"batch": batch, "sourceFile": None, "sourceFormat": "generated",
                        "sourceId": None, "ingestedAt": today, "synthesized": True,
                        "model": model, "promptVersion": prompt_version, "reviewedAt": None},
@@ -604,6 +607,9 @@ def derive(fields, *, batch, model, prompt_version, today=None):
     prof = rec.setdefault("profile", {})
     prof["fitnessLevel"] = prof.get("difficultyLabel")
     rec.setdefault("typeSpecific", {})["raw"] = {}
+    # The three accuracy signals, from the figures the generator wrote (T093).
+    # A record that reaches derive() without a ledger gets the legacy rule.
+    A.apply(rec)
     rec["wordCount"] = 0
     rec["wordCount"] = _words({k: v for k, v in rec.items()
                                if k in ("summary", "hook", "itinerary", "accommodationStrategy",
@@ -712,6 +718,12 @@ def _mutations():
          lambda r: _fig(r, "accommodationStrategy[0].priceEur", confidence="estimated", sourceUrl=None)),
         ("a derived total over an estimated row", "figure-total-confidence",
          lambda r: _fig(r, "budget.breakdown.food", confidence="estimated", sourceUrl=None)),
+        # T093: the three signals must be what the ledger gives.
+        ("a count the ledger does not give", "accuracy-count", setp(["verifyFlagCount"], 3)),
+        ("volatile with no price to check", "accuracy-volatile", setp(["volatilePricing"], True)),
+        ("a verified sentence the ledger does not give", "accuracy-verified",
+         setp(["sources", "verified"], "The writer checked every price by hand.")),
+        ("a blank flag on a figure", "accuracy-flag", lambda r: _fig(r, "budget.breakdown.food", flag="     ")),
     ]
 
 

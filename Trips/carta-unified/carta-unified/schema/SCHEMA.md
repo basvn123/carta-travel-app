@@ -104,7 +104,7 @@ spend, vertical metres, water hours) and must be parsed as a string, never as nu
 | `logistics` | `{connectivity, emergency, weather, bookingWindows, money, transportRules, permits, health, gettingThere, other[]}` | Source bullets bucketed onto canonical slots; anything unmapped is kept, with its label, in `other[]`. |
 | `proTips[]` | string[] | 3+ per trip. |
 | `packingNotes[]` / `whatCouldGoWrong[]` | string[] | Present in the W&C batch only. |
-| `sources` | `{verified, confidenceNotes}` | The S&Med and E&SE batches recorded what was web-verified and what was not. |
+| `sources` | `{verified, confidenceNotes}` | On a v2.0 record, the writer's own account: the S&Med and E&SE batches recorded what was web-verified (`verified`, 70 trips) and what was not (`confidenceNotes`, 123 trips); both nullable there. On a v2.1 record `verified` is written by the pipeline from `figures` (T093, below) and `confidenceNotes` is required text of at least 30 characters, the reviewer's starting point (T154). |
 | `snapshot` | `Record<string,string>` | The source's own snapshot table, preserved as key/value. |
 
 ## Type-specific refinements
@@ -149,8 +149,9 @@ needs the real maximum.
 
 | Field | Notes |
 |---|---|
-| `verifyFlags[]` / `verifyFlagCount` | Every inline `[VERIFY: …]` marker lifted out of the prose, deduplicated. These are the volatile fields — prices, pass tariffs, opening hours, refuge dates. |
-| `volatilePricing` | `true` when the record carries verify flags or was tagged volatile at source. |
+| `verifyFlags[]` | The pipeline's own checklist. On a v2.0 record, every inline `[VERIFY: …]` marker lifted out of the prose, deduplicated (prices, pass tariffs, opening hours, refuge dates). On a v2.1 record, what pass three withheld, what the critic disputed and the perishable prices and opening times (T155). The review queue reads it; the page does not. |
+| `verifyFlagCount` | The details a reader should check before booking. On a v2.1 record it is the number of `figures` rows that are `estimated` or carry a `flag`, so it may differ from the length of `verifyFlags` on purpose. On a v2.0 record, with no ledger, it is the number of `verifyFlags`. Written by `pipeline/accuracy.py` (T093). |
+| `volatilePricing` | `true` when one of those details is a price: on a v2.1 record, when a figure to check is a budget row, a total, the per-day range, a stay's price, a day's spend or the exchange rate; on a v2.0 record, when there is at least one verify flag. A trip tagged volatile at source with nothing to check is no longer volatile (the J4 contradiction). Written by `pipeline/accuracy.py` (T093). |
 | `wordCount` | Words in the original source body. |
 | `dataVintage` | `2026` throughout. Prices are indicative planning figures for that year. |
 | `provenance` | `{batch, sourceFile, sourceFormat, sourceId, ingestedAt, synthesized}`. `synthesized` is `false` for all 253 current records: nothing in this dataset was invented by the pipeline. |
@@ -208,7 +209,7 @@ tier alternative is exempt only when it says so. Every night but the last names 
 `sleep`. `validate.py` honours both fields and checks a v2.0 record by name as before.
 
 Per-figure confidence (T146, spec K3). A v2.1 record carries `figures`, one row per numeric
-figure: `{path, confidence, sourceUrl, checkedAt}`. `confidence` is `sourced` (a page the
+figure: `{path, confidence, sourceUrl, checkedAt, flag?}`. `confidence` is `sourced` (a page the
 model read gave it, and `sourceUrl` names it), `derived` (computed from other figures here:
 the week total and the per-day range) or `estimated` (general knowledge, no URL). The list of
 figure paths is `FIGURE_PATTERNS` in `generation_gate.py`: the four budget rows, the total
@@ -221,6 +222,25 @@ not, and pass three withholds one that arrives without a page. A total built on 
 row is itself `estimated`. The pipeline writes `figures` from the evidence rows (it is in
 `DERIVED`, so the model is never asked and cannot label its own work), and the gate rejects a
 record whose rows do not match its figures one to one. The v2.0 records have no `figures`.
+
+The three accuracy signals follow from that ledger and from nothing else (T093, spec J4 and
+J5; owner decision 2026-10-07). A row may carry `flag`, a sentence saying why a person should
+look again at a figure that has a value; today the critic's dispute, written by
+`apply_critique` in `generate_trip.py`. `pipeline/accuracy.py` then derives
+`verifyFlagCount` (the rows that are `estimated` or flagged), `volatilePricing` (one of them
+is a price) and `sources.verified` (a sentence from the sourced rows: "28 of 30 figures
+confirmed against 28 pages read on 2026-10-03: example.org.", or null when nothing is
+sourced). `sources.verified` is therefore in `DERIVED` and the writer is not asked for it;
+the rows themselves, each with its page, are the record of what was confirmed against what.
+The gate rejects a generated record whose three fields differ from what its ledger gives
+(`accuracy-count`, `accuracy-volatile`, `accuracy-verified`, `accuracy-flag`), and
+`validate.py` reports the same on the catalogue as `accuracy-signals`, plus `figure-ledger`
+for the K3 rules on any published trip that carries a ledger. A v2.0 record with no ledger
+follows the legacy rule in `accuracy.legacy()`: its count is its verify flags, volatile means
+at least one, and the writer's `verified` paragraph stands. The page
+(`continent-app/src/lib/journeys.js`, `accuracySignals`) applies the same two rules to the
+figures it shows, so the line "n details in this plan are estimates or still in doubt" and
+the figure footer under it count the same rows.
 
 Prose is capped (T152, spec D4): `summary` at most 120 words, each day's `morning`,
 `afternoon` and `evening` at most 45, each `proTips` entry at most 35. The numbers live in

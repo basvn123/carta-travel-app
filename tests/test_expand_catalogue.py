@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATASET = ROOT / "Trips" / "carta-unified" / "carta-unified"
 sys.path.insert(0, str(DATASET / "pipeline"))
 
+import accuracy as A  # noqa: E402
 import expand_catalogue as X  # noqa: E402
 import fill_type_specific as F  # noqa: E402
 import generate_trip as T  # noqa: E402
@@ -188,7 +189,7 @@ def test_a_dispute_left_out_of_the_flags_holds_the_trip(scratch, example):
     path = Path(scratch.admitted, f"{st['id']}.json")
     rec = json.loads(path.read_text(encoding="utf-8"))
     rec["verifyFlags"] = [f for f in rec["verifyFlags"] if not f.startswith("Disputed")]
-    rec["verifyFlagCount"] = len(rec["verifyFlags"])
+    A.apply(rec)
     path.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
     problems = X.check_batch(plan, scratch)[0]["problems"]
     assert any(p.startswith("critic:") for p in problems)
@@ -206,7 +207,7 @@ def test_stale_prompts_and_a_missing_flag_hold_the_trip(scratch, example):
     assert any("regenerate" in p for p in X.promotion_problems(stale, plan["entries"][0], plan, ctx))
     gap = copy.deepcopy(rec)
     gap["verifyFlags"] = [f for f in gap["verifyFlags"] if not f.startswith("Recheck price at budget")]
-    gap["verifyFlagCount"] = len(gap["verifyFlags"])
+    A.apply(gap)
     assert any(p.startswith("flags:") for p in X.promotion_problems(gap, plan["entries"][0], plan, ctx))
 
 
