@@ -51,7 +51,7 @@ Type is `--ui` for everything except measured facts, which are `--mono` with `fo
 
 Focus is `outline: 2px solid var(--accent); outline-offset: 2px` on `:focus-visible`. The registry's `ring` utilities and any `outline: none` without a replacement go.
 
-Size: every interactive element is at least `var(--tap)` square. Registry buttons at 32 or 36 px high are too small.
+Size: every interactive element is at least `var(--tap)` square. One exception (owner, 2026-10-07, T335-b): under `@media (pointer: fine)` a compact control, such as the small Button, may be 32 px high; on a coarse pointer it is always `--tap`. Registry buttons at 36 px high, or at 32 px on a touch device, are too small.
 
 Motion: transitions on `transform` and `opacity` only, under 300 ms, with a `prefers-reduced-motion: reduce` branch that sets them to `none`.
 
