@@ -11,14 +11,14 @@
   --paper-dim:    #efece2;
   --ink:          #0f172a;
   --ink-soft:     #414b5e;
-  --ink-mute:     #7d8393;
+  --ink-mute:     #646978;       /* 5.07:1 on --paper (T363) */
   /* The fill behind an ACTIVE control. One step off --ink, which is body text
      and reads as pure black when a whole button is painted with it. Still
      11:1 against --paper, so white labels stay well past AA. */
   --ink-fill:     #2b3446;
   --rule:         #ccc7b8;
   --rule-soft:    #e2ded1;       /* hairlines inside a card, where --rule is too loud */
-  --accent:       #e05a47;       /* terracotta: actions, alerts, the live route */
+  --accent:       #ce3823;       /* terracotta: actions, alerts, the live route; 4.61:1 on --paper, 4.98:1 under white (T363) */
   --accent-soft:  #e97f6b;
   --accent-bg:    #f7dcd4;
   /* Ratings are a MEASURE, not a warning. On the accent they read as errors

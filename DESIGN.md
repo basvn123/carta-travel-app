@@ -20,7 +20,7 @@ Warm alabaster ground, deep slate ink, one terracotta accent. The app is single-
 | `--on-fill` | `#ffffff` | Label, icon and stroke colour on any filled surface (an accent button, an ink-fill pill, a pin). Shared by buttons and chips |
 | `--ink` | `#0f172a` | Body text, headings, the fill of a dark surface |
 | `--ink-soft` | `#414b5e` | Secondary text, supporting paragraphs |
-| `--ink-mute` | `#7d8393` | Metadata, captions, placeholders, at 12 to 14 px, never body copy |
+| `--ink-mute` | `#646978` | Metadata, captions, placeholders, at 12 to 14 px, never body copy. 5.07:1 on `--paper`, 4.63:1 on `--paper-dim`, 5.48:1 on `--bg-card` (T363) |
 | `--ink-fill` | `#2b3446` | The fill behind an active control. One step off `--ink` so a painted button does not read as pure black; 11:1 against `--paper` |
 | `--rule` | `#ccc7b8` | Dividers, card borders, input borders |
 | `--rule-soft` | `#e2ded1` | Hairlines inside a card, where `--rule` is too loud |
@@ -29,7 +29,7 @@ Warm alabaster ground, deep slate ink, one terracotta accent. The app is single-
 
 | Token | Value | Only for |
 |---|---|---|
-| `--accent` | `#e05a47` | Terracotta. Actions, alerts, the live route, focus rings. The one saturated colour in normal use |
+| `--accent` | `#ce3823` | Terracotta. Actions, alerts, the live route, focus rings. The one saturated colour in normal use. As text 4.61:1 on `--paper`; `--on-fill` on it 4.98:1 (T363) |
 | `--accent-soft` | `#e97f6b` | Hover and focus borders on inputs; the lighter end of the accent |
 | `--accent-bg` | `#f7dcd4` | Tinted callouts and selected rows on the accent |
 | `--rate` | `#8f5a0c` | Ochre. Ratings as a measure, filled: paper text on `--rate` is 5.3:1. Never for actions |
@@ -115,9 +115,9 @@ Added by T191 so that no hex literal has to live outside `:root`. Every value is
 
 | Token | Value | Only for |
 |---|---|---|
-| `--accent-hover` | `#cf4c3a` | hover fill of an accent button |
-| `--accent-press` | `#b0431a` | hover fill of a primary cost action |
-| `--accent-press-alt` | `#b3491b` | hover fill, stay search |
+| `--accent-hover` | `#b7321f` | hover fill of an accent button |
+| `--accent-press` | `#8e3615` | hover fill of a primary cost action |
+| `--accent-press-alt` | `#923b16` | hover fill, stay search |
 | `--accent-wash` | `#f6ede0` | a warm hover wash |
 | `--accent-wash-alt` | `#fdf6f0` | a faint accent tint behind advice |
 
@@ -232,7 +232,7 @@ Buttons: height `--tap`, radius 6 px, sentence case, verb first, one primary per
 
 **Colours in JavaScript (T362).** Where a colour must live in JavaScript (MapLibre paint properties cannot read a CSS custom property), it lives in one token-mirror module that copies each value from `01-tokens.css` under the token's name, with a comment naming the token. No other JavaScript file holds a hex. The design lint is to check this once the module exists.
 
-**Contrast tokens, change pending (T362, owner decision 2026-10-07).** Three pairs fail the 4.5:1 floor that PRODUCT.md promises: `--ink-mute` on `--paper` (3.51:1), `--accent` as text on `--paper` (3.40:1) and `--on-fill` on `--accent` (3.67:1). The owner chose to darken the tokens. Proposed, same hue, darker: `--ink-mute` `#646978` (5.07:1 on `--paper`, 4.63:1 on `--paper-dim`) and `--accent` `#ce3823` (4.61:1 as text on `--paper`, 4.98:1 under white); `--accent-hover` and `--accent-press` must then step darker too. The values above in the tables stay current until the implementing task changes `01-tokens.css` and this file in one commit, after the owner has seen them on screen.
+**Contrast tokens, darkened (T363, owner decision 2026-10-07 in T362).** Three pairs failed the 4.5:1 floor that PRODUCT.md promises: `--ink-mute` on `--paper` (3.51:1), `--accent` as text on `--paper` (3.40:1) and `--on-fill` on `--accent` (3.67:1). The owner chose to darken the tokens, same hue: `--ink-mute` is `#646978` (5.07:1 on `--paper`, 4.63:1 on `--paper-dim`) and `--accent` is `#ce3823` (4.61:1 as text on `--paper`, 4.98:1 under white). The three hover fills keep the step they had above the old accent: `--accent-hover` `#b7321f` (6.0:1 under white; it keeps the accent's saturation, because at the old hover's lower saturation it would sit 3 Lab units from `--danger`), `--accent-press` `#8e3615` (7.8:1) and `--accent-press-alt` `#923b16` (7.3:1). Two pairs still fall short and are open: `--accent` as text on `--accent-bg` is 3.83:1 (was 2.82:1) and on `--paper-dim` 4.22:1. Lightening `--accent-bg` far enough would make it lighter than `--paper`, so a selected chip would stop reading as selected; the fix is a text step for those rules, not a paler tint (register row T363-a). Ratios are WCAG 2 relative-luminance contrast, (L1 + 0.05) / (L2 + 0.05).
 
 ## Before you ship
 
@@ -246,4 +246,4 @@ Read the diff and answer these seven questions, from the carta-design skill.
 6. Does every headline contain a verb or a number, and is the diff free of em dashes and the banned words?
 7. Remove one thing. There is almost always one decoration that is carrying nothing.
 
-Last synced with `src/styles/01-tokens.css`: 2026-10-03 (T191). No hex literal remains outside the token file; the design lint baseline carries zero `hex-literal` entries.
+Last synced with `src/styles/01-tokens.css`: 2026-10-07 (T363, the contrast tokens; before that 2026-10-03, T191). No hex literal remains outside the token file; the design lint baseline carries zero `hex-literal` entries.
