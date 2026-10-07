@@ -273,13 +273,21 @@ export const adminListContentReports = (status, limit = 50, offset = 0) =>
  * and the reason lands in the audit log. The owner keeps the trip. Every
  * report on the guide still marked new moves to actioned.
  *
- * Returns { ok, changed, visibility, reportsActioned }. changed is false when
- * the plan was already not public; nothing is written then. Refusals:
- * forbidden, slow_down, bad_reason (blank or over 2000 characters),
- * not_found.
+ * Since migration 051 (T365) it names its ground, DSA Article 17(3)(d) and
+ * (e): ground 'illegal' with groundRef the law relied on (3 to 300
+ * characters), or 'terms' with groundRef the item of the content rule in
+ * the Terms ('c1' to 'c7'). It also revokes the guide's share links, and
+ * the guide stays locked until a complaint reverses the decision.
+ *
+ * Returns { ok, changed, visibility, reportsActioned, sharesRevoked }.
+ * changed is false when the plan was already not public; nothing is written
+ * then. Refusals: forbidden, slow_down, bad_reason (blank or over 2000
+ * characters), bad_ground, bad_ground_ref, not_found.
  */
-export const adminUnpublishGuide = (planId, reason) =>
-  call('admin_unpublish_guide', { p_plan_id: planId, p_reason: reason });
+export const adminUnpublishGuide = (planId, reason, ground, groundRef) =>
+  call('admin_unpublish_guide', {
+    p_plan_id: planId, p_reason: reason, p_ground: ground || null, p_ground_ref: groundRef || null,
+  });
 
 /**
  * The decisions around a takedown (migration 039). Since 039 the takedown

@@ -59,6 +59,7 @@ try {
     page.on('pageerror', (e) => fail(`${size.name}: page error ${e.message}`));
     await page.addInitScript(() => {
       localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('carta.fareNoticeSeen', '1');
       localStorage.setItem('carta.welcomeSeen', '1');
       localStorage.setItem('continent.onboardingSeen.v1', '1');

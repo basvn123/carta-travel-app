@@ -17,18 +17,27 @@
  */
 import { supabase } from '../lib/supabaseClient.js';
 
-const OWNER_COLS = [
+const BASE_COLS = [
   'id', 'plan_id', 'plan_label', 'source', 'notice_count', 'facts', 'automated',
   'created_at', 'contest_until', 'complaint_status', 'complaint_note', 'reinstated',
-].join(', ');
+];
+// The ground of the decision (migration 051, T365): 'illegal' with the law
+// relied on, or 'terms' with the item of the content rule in the Terms
+// ('c1' to 'c7'). Null on statements written before 051.
+const OWNER_COLS = [...BASE_COLS, 'ground', 'ground_ref'].join(', ');
 
-/** Every statement about the signed-in user's plans, newest first. */
+/** Every statement about the signed-in user's plans, newest first. Until
+ *  051 is pasted the two ground columns do not exist (Postgres 42703), so
+ *  the read falls back to the columns 039 grants and the notice shows no
+ *  ground, rather than hiding every statement. */
 export async function fetchMyStatements() {
   if (!supabase) return [];
-  const { data, error } = await supabase
+  const read = (cols) => supabase
     .from('moderation_statements')
-    .select(OWNER_COLS)
+    .select(cols)
     .order('created_at', { ascending: false });
+  let { data, error } = await read(OWNER_COLS);
+  if (error && error.code === '42703') ({ data, error } = await read(BASE_COLS.join(', ')));
   if (error) throw error;
   return data || [];
 }

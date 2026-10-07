@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import { BEACH_KIND } from '../lib/footers.js';
@@ -478,10 +479,13 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
         </>
       )}
       takeAway={(
-        <button type="button" className="tpage-act" onClick={onShare}>
-          <LinkIcon size={15} />
-          <span>{t('detail.sendLink')}</span>
-        </button>
+        <>
+          <button type="button" className="tpage-act" onClick={onShare}>
+            <LinkIcon size={15} />
+            <span>{t('detail.sendLink')}</span>
+          </button>
+          <ReportProblem item={{ layer: 'beach', id: beach.id, cc: beach.cc, name: beach.name }} />
+        </>
       )}
       exits={exits}
       nearby={(

@@ -461,7 +461,9 @@
 .guide-chip:hover { border-color: var(--ink-soft); }
 .guide-chip.on { border-color: var(--accent); background: var(--accent-bg); }
 .guide-chip-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
-.guide-empty { font-size: 12.5px; color: var(--ink-mute); font-style: italic; }
+/* An empty state is the content of its box, so it is not metadata grey and
+   not italic (docs/ONBOARDING_AND_EMPTY_STATES.md, the rules). */
+.guide-empty { font-size: 12.5px; color: var(--ink-soft); }
 
 /* Step 4 - arrange */
 .guide-arrange { display: flex; flex-direction: column; gap: 8px; }

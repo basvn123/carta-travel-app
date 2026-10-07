@@ -9,6 +9,7 @@ import { reportGuide } from './guides.js';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@.]+$/;
 const REASON_MIN = 10;
 const REASON_MAX = 4000;
+const NAME_MAX = 200;
 
 /**
  * ReportGuide, the notice form at the foot of a public guide.
@@ -21,30 +22,40 @@ const REASON_MAX = 4000;
  * account is exactly who is likely to see something wrong.
  *
  * SHAPE. Closed, it is one secondary button under the privacy note, so it
- * is always there and never louder than the guide. Open, it asks for the
- * two things the notice needs (what is wrong and why, and an optional email
- * for the decision) and has the view's only filled button. The email is
- * optional on purpose: a notice without contact details is still a notice.
+ * is always there and never louder than the guide. Open, it asks for what
+ * the notice needs (what is wrong and why, an optional email for the
+ * decision, an optional name) and the notifier's confirmation that the
+ * notice is made in good faith (Article 16(2)(d); required by the database
+ * since migration 051, owner decision of 2026-10-07, T068-d). It has the
+ * view's only filled button. The email and the name are optional on
+ * purpose: a notice without contact details is still a notice.
  *
  * ERRORS are the RPC's words turned into one sentence each: too_many (five
  * an hour from one source), not_public (unpublished since it was opened),
- * bad_reason, bad_email. Anything else, including a project where 037 is
- * not applied yet, says it did not send and keeps what was typed.
+ * bad_reason, bad_email, bad_name, good_faith_required. Anything else,
+ * including a project where 051 is not applied yet, says it did not send
+ * and keeps what was typed.
  */
 export function ReportGuide({ planId }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [goodFaith, setGoodFaith] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [sent, setSent] = useState(false);
   const reasonRef = useRef(null);
+  const faithRef = useRef(null);
   const openRef = useRef(null);
   const formId = useId();
   const reasonId = `${formId}-reason`;
   const emailId = `${formId}-email`;
   const emailHintId = `${formId}-email-hint`;
+  const nameId = `${formId}-name`;
+  const nameHintId = `${formId}-name-hint`;
+  const faithId = `${formId}-faith`;
   const errId = `${formId}-err`;
 
   // Opening moves focus into the form, so a keyboard or screen reader user
@@ -65,6 +76,8 @@ export function ReportGuide({ planId }) {
     if (code === 'not_public') return t('guides.reportErrGone');
     if (code === 'bad_reason') return t('guides.reportErrShort');
     if (code === 'bad_email') return t('guides.reportErrEmail');
+    if (code === 'bad_name') return t('guides.reportErrName');
+    if (code === 'good_faith_required') return t('guides.reportErrGoodFaith');
     return t('guides.reportErrGeneric');
   };
 
@@ -73,15 +86,20 @@ export function ReportGuide({ planId }) {
     if (busy) return;
     const r = reason.trim();
     const m = email.trim();
+    const n = name.trim();
     if (r.length < REASON_MIN) { setErr(errFor('bad_reason')); reasonRef.current?.focus(); return; }
     if (m && (m.length > 254 || !EMAIL_RE.test(m))) { setErr(errFor('bad_email')); return; }
+    if (n.length > NAME_MAX) { setErr(errFor('bad_name')); return; }
+    if (!goodFaith) { setErr(errFor('good_faith_required')); faithRef.current?.focus(); return; }
     setBusy(true);
     setErr('');
     try {
-      await reportGuide(planId, r, m || null);
+      await reportGuide(planId, r, m || null, n || null, goodFaith);
       setSent(true);
       setReason('');
       setEmail('');
+      setName('');
+      setGoodFaith(false);
     } catch (x) {
       setErr(errFor(x?.code));
     }
@@ -148,6 +166,33 @@ export function ReportGuide({ planId }) {
         />
         <p className="auth-hint" id={emailHintId}>{t('guides.reportEmailHint')}</p>
       </div>
+      <div className="auth-field">
+        <label className="auth-label" htmlFor={nameId}>{t('guides.reportNameLabel')}</label>
+        <input
+          id={nameId}
+          type="text"
+          autoComplete="name"
+          maxLength={NAME_MAX}
+          aria-invalid={err === errFor('bad_name') ? 'true' : undefined}
+          aria-describedby={nameHintId}
+          value={name}
+          onChange={(e) => { setName(e.target.value); setErr(''); }}
+        />
+        <p className="auth-hint" id={nameHintId}>{t('guides.reportNameHint')}</p>
+      </div>
+      <label className="auth-check" htmlFor={faithId}>
+        <input
+          ref={faithRef}
+          id={faithId}
+          type="checkbox"
+          required
+          checked={goodFaith}
+          aria-invalid={err === errFor('good_faith_required') ? 'true' : undefined}
+          aria-describedby={err ? errId : undefined}
+          onChange={(e) => { setGoodFaith(e.target.checked); setErr(''); }}
+        />
+        <span>{t('guides.reportGoodFaith')}</span>
+      </label>
       {err && <p className="auth-error" id={errId} role="alert">{err}</p>}
       <div className="gld-report-actions">
         <button type="submit" className="auth-submit" disabled={busy}>

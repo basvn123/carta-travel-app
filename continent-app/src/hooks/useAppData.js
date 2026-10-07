@@ -7,6 +7,7 @@ import {
 import { hydrateForOrigin, defaultOrigin, originHome } from '../lib/origins.js';
 import { bestFareWindow, countBookableRoundTrips } from '../lib/runtime_pricing.js';
 import { addDays, todayISO } from '../lib/dates.js';
+import { calendarDefaultWindow, windowFits } from '../lib/firstRun.js';
 
 // 'viewport' mode: the radius around the origin airport whose countries the
 // first paint waits for. 300 km is the origin's own country and, near a
@@ -80,7 +81,9 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
           return {
             ...prev,
             origin: chosenOrigin,
-            group_size: init.group_size ?? def?.group_size ?? prev.group_size,
+            // Two people unless the URL says otherwise (T100). The generated
+            // meta.defaults.group_size is 7 and is deliberately not read here.
+            group_size: init.group_size ?? prev.group_size,
             // Restored dates already drove trip_days (the sync effect in App
             // runs before this fetch resolves); overriding it with the data's
             // default here left "Nights" stuck on the configured default until
@@ -213,6 +216,27 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     return bestFareWindow(data.destinations, defaultNights, dateBounds?.min);
   }, [data, defaultNights, dateBounds, faresSlices, effectiveOrigin]);
 
+  // The dates Carta picks for a visitor who has picked none (T099, from the
+  // design approved in T362): the first Saturday at least four weeks out, for
+  // the default trip length, read off the calendar rather than the frozen
+  // fare window. Carta prices no flights (T272), so the fare table has no
+  // claim on the default any more. The fare window still bounds it: while the
+  // stored fares end before that Saturday's week does, the old fare-derived
+  // window stands in, and so it does when the calendar week books no round
+  // trip at all (the snap below would undo it anyway), so the Destinations
+  // tab's price chips never open on a week with nothing priced.
+  // `defaultDates` is whichever pair was applied, which is how the first-run
+  // receipt tells Carta's dates from the visitor's.
+  const calendarWindow = useMemo(() => calendarDefaultWindow(todayISO(), defaultNights), [defaultNights]);
+  const calendarFits = useMemo(() => {
+    if (!windowFits(calendarWindow, dateBounds)) return false;
+    if (!data || !(defaultWindow?.count > 0)) return true;
+    return countBookableRoundTrips(data.destinations, calendarWindow.start, calendarWindow.end) > 0;
+  }, [calendarWindow, dateBounds, data, defaultWindow]);
+  const defaultDates = useMemo(() => (calendarFits || !defaultWindow
+    ? calendarWindow
+    : { start: defaultWindow.start, end: defaultWindow.end }), [calendarFits, calendarWindow, defaultWindow]);
+
   // Default depart/return when data first loads. A restored URL/stored date
   // wins - unless it is now in the past (before dateBounds.min, which is
   // floored at today), in which case it is bumped forward to a valid day.
@@ -222,17 +246,21 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     // Repair a missing / past depart date.
     let start = departDate;
     if (!start || start < dateBounds.min) {
-      start = (defaultWindow?.start && defaultWindow.start >= dateBounds.min)
-        ? defaultWindow.start
-        : dateBounds.min;
+      start = calendarFits
+        ? calendarWindow.start
+        : (defaultWindow?.start && defaultWindow.start >= dateBounds.min)
+          ? defaultWindow.start
+          : dateBounds.min;
     }
 
     // Repair a missing / inverted return date.
     let end = returnDate;
     if (!end || end <= start) {
-      end = (defaultWindow && start === defaultWindow.start)
-        ? defaultWindow.end
-        : addDays(start, defaultNights);
+      end = calendarFits && start === calendarWindow.start
+        ? calendarWindow.end
+        : (defaultWindow && start === defaultWindow.start)
+          ? defaultWindow.end
+          : addDays(start, defaultNights);
       if (end <= start) end = addDays(start, defaultNights);
       if (end > dateBounds.max) end = dateBounds.max;
     }
@@ -255,5 +283,5 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     if (end !== returnDate) setReturnDate(end);
   }, [dateBounds, defaultWindow]); // eslint-disable-line react-hooks/exhaustive-deps -- repairs on a data or origin change only: re-running on the dates would undo a deliberate off-calendar pick
 
-  return { data, error, dateBounds, needRecords };
+  return { data, error, dateBounds, needRecords, defaultDates };
 }

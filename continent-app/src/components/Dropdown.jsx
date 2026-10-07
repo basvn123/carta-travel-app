@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { searchFold } from '../lib/textSearch.js';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Custom searchable dropdown. Supports single-select (default) or multi-select.
@@ -29,6 +30,7 @@ export function Dropdown({
   className = '',
   disabled = false,
 }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const wrapperRef = useRef(null);
@@ -133,7 +135,7 @@ export function Dropdown({
           )}
           <div className="dropdown-list">
             {filteredOptions.length === 0 ? (
-              <div className="dropdown-empty">No matches</div>
+              <div className="dropdown-empty">{t('dropdown.noMatch')}</div>
             ) : (
               filteredOptions.map((opt) => (
                 <button

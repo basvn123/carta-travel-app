@@ -29,6 +29,7 @@ await page.addInitScript(() => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     localStorage.setItem('carta.welcomeSeen.v1', '1');
   } catch { /* storage unavailable */ }
@@ -248,6 +249,7 @@ await touch.addInitScript(() => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     localStorage.setItem('carta.welcomeSeen.v1', '1');
   } catch { /* storage unavailable */ }
@@ -292,6 +294,7 @@ await tight.addInitScript(() => {
   try {
     localStorage.setItem('continent.lang.v1', 'de');
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     localStorage.setItem('carta.welcomeSeen.v1', '1');
   } catch { /* storage unavailable */ }
@@ -323,6 +326,7 @@ await desk.addInitScript(() => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     localStorage.setItem('carta.welcomeSeen.v1', '1');
   } catch { /* storage unavailable */ }

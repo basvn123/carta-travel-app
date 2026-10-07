@@ -14,6 +14,7 @@ import { loadTrails } from '../lib/trails.js';
 import { loadLakes } from '../lib/lakes.js';
 import { loadMountains } from '../lib/mountains.js';
 import { loadTrips, rankTrips } from '../lib/trips.js';
+import { countryGeo, loadNearest, townsOf } from '../lib/coverageEmpty.js';
 import { loadDossier } from '../lib/dossier.js';
 import { nearbyAirports } from '../lib/wizardTransit.js';
 import { googleFlightsLink } from '../lib/transportLinks.js';
@@ -279,17 +280,74 @@ function TopPlaces({ brief, destinations, onOpenDest, onSeeAll, t }) {
 
 /* ── 3. Best trips ──────────────────────────────────────────────────────── */
 
-function BestTrips({ brief, nights, onOpenTrip, onPlanTrip, open, t }) {
+/**
+ * No trip is composed in this country at all (T367; the coverage module's
+ * planner form, docs/ONBOARDING_AND_EMPTY_STATES.md row 34): the sentence,
+ * then the three composed trips nearest the country across its border.
+ */
+function NoTripsHere({ brief, destinations, onOpenTrip, t, lang }) {
+  const [near, setNear] = React.useState(null);
+  React.useEffect(() => {
+    let live = true;
+    const geo = countryGeo(townsOf(destinations), brief.iso2);
+    loadNearest('itin', brief.iso2, geo).then((r) => { if (live) setNear(r); })
+      .catch(() => { if (live) setNear([]); });
+    return () => { live = false; };
+  }, [brief.iso2, destinations]);
+  const nf = (v) => new Intl.NumberFormat(lang, { maximumFractionDigits: 0 }).format(v);
+  let names = null;
+  try { names = new Intl.DisplayNames([lang], { type: 'region' }); } catch { /* older engines */ }
+  return (
+    <div className="cov-empty cbrief-empty" data-testid="coverage-empty" data-code="itin">
+      <p className="cov-empty-why">{t('brief.noTrips', { country: brief.country })}</p>
+      {near && near.length > 0 && <p className="cov-empty-head">{t('cov.nearestHead')}</p>}
+      {near && near.length > 0 && (
+        <ul className="cov-near">
+          {near.map(({ row, km }) => (
+            <li key={row.id}>
+              <button type="button" className="cov-near-row" onClick={() => onOpenTrip?.(row)}
+                disabled={!onOpenTrip}>
+                <span className="cov-near-name">{(row.cities || []).map((c) => cityLabel(c.city)).join(', ')}</span>
+                <span className="cov-near-meta">
+                  {(names && row.cc ? names.of(row.cc) : row.cc) || ''} <span className="mono">{nf(km)} km</span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function BestTrips({ brief, destinations, nights, onOpenTrip, onPlanTrip, open, t }) {
+  const { lang } = useI18n();
   const load = React.useCallback((cc) => loadTrips(cc), []);
   const { rows, loading, error, retry } = useLayerRows(load, brief.iso2, open);
+  // Trips exist here, only none at this length: offer every length rather
+  // than claim the country has none.
+  const [anyLength, setAnyLength] = React.useState(false);
+  const days = (nights || 6) + 1;
   const ranked = React.useMemo(() => {
     if (!rows?.length) return [];
-    return rankTrips(rows, { days: (nights || 6) + 1 }).slice(0, TOP_TRIPS);
-  }, [rows, nights]);
+    return rankTrips(rows, { days: anyLength ? null : days }).slice(0, TOP_TRIPS);
+  }, [rows, days, anyLength]);
 
   if (loading) return <RailSkeletons n={2} />;
   if (error) return <RailRetry onRetry={retry} t={t} />;
-  if (!ranked.length) return <p className="cbrief-note">{t('brief.noTrips')}</p>;
+  if (!rows?.length) {
+    return <NoTripsHere brief={brief} destinations={destinations} onOpenTrip={onOpenTrip} t={t} lang={lang} />;
+  }
+  if (!ranked.length) {
+    return (
+      <div className="cbrief-note empty-act">
+        <p>{t('brief.noTripsLength', { n: days, country: brief.country })}</p>
+        <button type="button" className="cov-empty-btn" onClick={() => setAnyLength(true)}>
+          {t('ready.showAnyLength')}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <ul className="cbrief-trips">
@@ -575,7 +633,7 @@ function BriefBody({
           open={isOpen('trips')} onToggle={() => toggle('trips')}
         >
           <BestTrips
-            brief={brief} nights={nights} open={isOpen('trips')}
+            brief={brief} destinations={destinations} nights={nights} open={isOpen('trips')}
             onOpenTrip={onOpenTrip} onPlanTrip={onPlanTrip} t={t}
           />
         </Fold>

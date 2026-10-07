@@ -46,6 +46,7 @@ async function measure({ synthetic, throttle }) {
   page.on('console', (m) => { if (m.type() === 'error') console.log('  !! console error:', m.text().slice(0, 200)); });
   await page.addInitScript(() => {
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     window.__lt = [];
     try {
       new PerformanceObserver((list) => {

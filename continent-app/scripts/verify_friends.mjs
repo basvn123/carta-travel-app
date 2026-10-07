@@ -193,6 +193,7 @@ async function stub(page, state) {
 
 const seedSession = (ref, user) => `(() => {
   localStorage.setItem('continent.guestMode.v1', '1');
+  localStorage.setItem('continent.homeSeen.v1', '1');
   localStorage.setItem('carta.friends.lastSeen', ${JSON.stringify(LAST_SEEN)});
   localStorage.setItem('carta.welcomeSeen', '1');
   localStorage.setItem('carta.mapGuideDone', '1');
@@ -212,6 +213,7 @@ const run = async () => {
   const guest = await guestCtx.newPage();
   await guest.addInitScript(`(() => {
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('carta.welcomeSeen', '1');
     localStorage.setItem('carta.mapGuideDone', '1');
   })()`);

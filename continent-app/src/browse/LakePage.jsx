@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import { LAKE_KIND } from '../lib/footers.js';
@@ -453,10 +454,13 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
         </>
       )}
       takeAway={(
-        <button type="button" className="tpage-act" onClick={onShare}>
-          <LinkIcon size={15} />
-          <span>{t('detail.sendLink')}</span>
-        </button>
+        <>
+          <button type="button" className="tpage-act" onClick={onShare}>
+            <LinkIcon size={15} />
+            <span>{t('detail.sendLink')}</span>
+          </button>
+          <ReportProblem item={{ layer: 'lake', id: lake.id, cc: lake.cc, name: lake.name }} />
+        </>
       )}
       exits={exits}
       nearby={(

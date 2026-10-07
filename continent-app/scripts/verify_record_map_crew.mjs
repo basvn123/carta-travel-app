@@ -60,6 +60,7 @@ const openRecord = async (page) => {
   await page.waitForTimeout(900);
 };
 const seed = async (page) => {
+  await page.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await page.goto(BASE);
   await page.evaluate((plans) => {
     localStorage.setItem('carta.dayplans.v1', JSON.stringify(plans));

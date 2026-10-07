@@ -154,6 +154,7 @@ async function stubSupabase(page, state) {
 
 const seedSession = (ref, user) => `(() => {
   localStorage.setItem('continent.guestMode.v1', '1');
+  localStorage.setItem('continent.homeSeen.v1', '1');
   localStorage.setItem('carta.welcomeSeen', '1');
   localStorage.setItem('carta.mapGuideDone', '1');
   localStorage.setItem('sb-${ref}-auth-token', JSON.stringify({
@@ -580,7 +581,7 @@ try {
   ok('the panel returns to the hub');
   await goTo(page, 'Common questions');
   const faqItems = await page.locator('.account-faq-item').count();
-  if (faqItems !== 13) fail(`expected 13 FAQ entries, found ${faqItems}`);
+  if (faqItems !== 14) fail(`expected 14 FAQ entries, found ${faqItems}`);
   const groups = await page.locator('.account-faq-grouplabel').allInnerTexts();
   if (groups.length !== 4) fail(`expected 4 FAQ group headings, found ${groups.length}`);
   if (await page.locator('.account-faq-a').count()) fail('an answer is open before anything was tapped');
@@ -592,6 +593,11 @@ try {
   // The catalogue size is interpolated, so an unresolved placeholder here means
   // the answer is quoting a variable name at the traveller.
   if (/\{\w+\}/.test(answer)) fail(`an unfilled placeholder survived into an answer: "${answer}"`);
+  // The accuracy figure lives in the FAQ and nowhere on a card (T097-c, T368).
+  await page.locator('.account-faq-q', { hasText: 'How accurate are the prices?' }).click();
+  const accA = await page.locator('.account-faq-item.open .account-faq-a').innerText();
+  if (!/within EUR 6 a day for 88% of destinations/.test(accA)) fail(`the accuracy answer lacks the published figure: "${accA}"`);
+  if (/\{\w+\}/.test(accA)) fail(`the accuracy answer has an unfilled placeholder: "${accA}"`);
   // Open a question in a later group: the open row is keyed by its i18n key,
   // and an index-keyed accordion would open two rows at once here.
   await page.locator('.account-faq-group').nth(3).locator('.account-faq-q').first().click();

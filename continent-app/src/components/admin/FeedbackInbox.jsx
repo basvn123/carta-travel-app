@@ -1,13 +1,16 @@
 import { useI18n } from '../../i18n/index.jsx';
 import { fmtDateTime } from './format.js';
 
+// The layers the override console can patch (ContentSection LAYERS).
+const CONTENT_LAYERS = ['beach', 'lake', 'mountain', 'trail', 'cycle'];
+
 // The Feedback tab: the inbox of messages travellers send, triaged by
 // status. Pure render over useFeedbackInbox. onOpenUser switches to Users
 // and opens the sender's account, which is the shell's business, not this
 // view's. It was called ModerationQueue until T068, after the plan's name
 // for it; the DSA notice queue is a separate tab (ContentReports.jsx), see
 // that file for why.
-export function FeedbackInbox({ queue, onOpenUser }) {
+export function FeedbackInbox({ queue, onOpenUser, onOpenContent }) {
   const { t } = useI18n();
   const { feedback, fbFilter, setFbFilter, fbBusy, fbErr, loadFeedback, setFeedbackStatus } = queue;
   return (
@@ -45,6 +48,13 @@ export function FeedbackInbox({ queue, onOpenUser }) {
               <span className="adminpage-when">{fmtDateTime(f.createdAt)}</span>
               <span className={`adminpage-chip status-${f.status}`}>{t(`admin.fb.${f.status}`)}</span>
             </header>
+            {f.context?.report && (
+              <p className="adminpage-fbreport">
+                {[f.context.report.name || f.context.report.id,
+                  t(`report.layer.${f.context.report.layer}`),
+                  t(`report.what.${f.context.report.what}`).toLowerCase()].join(', ')}
+              </p>
+            )}
             <p className="adminpage-fbmsg">{f.message}</p>
             {f.context && (
               <p className="adminpage-fbctx">
@@ -69,6 +79,19 @@ export function FeedbackInbox({ queue, onOpenUser }) {
               {f.status !== 'done' && (
                 <button type="button" className="adminpage-btn" onClick={() => setFeedbackStatus(f.id, 'done')}>
                   {t('admin.fbMarkDone')}
+                </button>
+              )}
+              {onOpenContent && CONTENT_LAYERS.includes(f.context?.report?.layer) && (
+                <button
+                  type="button"
+                  className="adminpage-btn"
+                  onClick={() => onOpenContent({
+                    layer: f.context.report.layer,
+                    country: f.context.report.cc || '',
+                    itemId: String(f.context.report.id),
+                  })}
+                >
+                  {t('admin.fbOpenContent')}
                 </button>
               )}
               {f.userId && (

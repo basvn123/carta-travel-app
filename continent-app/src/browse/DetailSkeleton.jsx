@@ -43,12 +43,16 @@ const PointMap = lazy(() => import('./PointMap.jsx'));
  *                    the page's rows array each, { key, icon, label, summary,
  *                    body }. The bento grid that replaces the list belongs to
  *                    T179, which waits on a carta-design rule.
- *   7  gettingThere  always present, never collapsed
+ *   7  gettingThere  always present, never collapsed; `false` leaves it out,
+ *                    for a page with no place to get to (the honest stub,
+ *                    T367 closing T124-f)
  *   8  takeAway      GPX, a file for another app, a link to send to a phone
  *   9  exits         three computed ways out (easier, cheaper, nearby), then
  *                    the cross-layer neighbours (NearbyOutdoors) as `nearby`
  *  10  sources       collapsed: sources, licences, the figure split and the
- *                    last-checked month, inside the shared CreditFold
+ *                    last-checked month, inside the shared CreditFold;
+ *                    `false` leaves the fold out (the stub says its one
+ *                    credit line in the open instead)
  *
  * Desktop is a 60/40 grid: every slot in the left column, the map alone in
  * the right one, sticky. The grid is one DOM order for both widths, so the
@@ -280,10 +284,12 @@ export function DetailPage({
               </div>
             )}
 
-            <section className="dsk-sec dsk-getting" data-slot="getting-there" aria-labelledby="dsk-getting-h">
-              <h2 id="dsk-getting-h">{t('detail.gettingThere')}</h2>
-              {gettingThere || <p className="dsk-note">{t('detail.gettingThereNone')}</p>}
-            </section>
+            {gettingThere !== false && (
+              <section className="dsk-sec dsk-getting" data-slot="getting-there" aria-labelledby="dsk-getting-h">
+                <h2 id="dsk-getting-h">{t('detail.gettingThere')}</h2>
+                {gettingThere || <p className="dsk-note">{t('detail.gettingThereNone')}</p>}
+              </section>
+            )}
 
             {takeAway && (
               <section className="dsk-sec dsk-take" data-slot="take-away" aria-labelledby="dsk-take-h">
@@ -299,9 +305,11 @@ export function DetailPage({
               </div>
             )}
 
-            <div className="dsk-sources" data-slot="sources">
-              <CreditFold t={t} licenceKeys={licenceKeys}>{sources}</CreditFold>
-            </div>
+            {sources !== false && (
+              <div className="dsk-sources" data-slot="sources">
+                <CreditFold t={t} licenceKeys={licenceKeys}>{sources}</CreditFold>
+              </div>
+            )}
           </div>
         </div>
       </div>

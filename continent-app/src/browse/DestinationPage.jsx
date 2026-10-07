@@ -1,4 +1,5 @@
 import React from 'react';
+import { ReportProblem } from '../components/ReportProblem.jsx';
 import { knownFor } from '../lib/knownFor.js';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { CrowdingBadge, crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
@@ -6,6 +7,7 @@ import { ClimateStrip, MONTHS_SHORT, fmtMonthRanges } from './ClimateStrip.jsx';
 import { claimShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CostReceipt } from '../components/CostSummary.jsx';
+import { FirstRunReceipt } from '../components/FirstRunReceipt.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { safeUrl, eur } from '../lib/format.js';
 import { useDossier, destShareUrl } from '../lib/dossier.js';
@@ -25,6 +27,7 @@ import { BathingWater } from './BathingWater.jsx';
 import { MemberPlaces } from './MemberPlaces.jsx';
 import { AroundHere, FeaturePhoto, summaryOf } from './AroundHere.jsx';
 import RoutesFromHere from './RoutesFromHere.jsx';
+import { NearestLine } from './CoverageEmpty.jsx';
 import { WebcamSection } from './WebcamEmbed.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { visitLength } from '../lib/nearby.js';
@@ -96,6 +99,11 @@ const DO_TYPE_ICON = {
  * is there for the reader who has decided it might be.
  */
 const OPEN_BY_DEFAULT = new Set(['highlights']);
+/** lib/coverageEmpty.js loader layers against the dossier layer names
+ *  onOpenFeature takes (the same names AroundHere rows carry). */
+const DOSSIER_LAYER = {
+  trail: 'trails', cycling: 'cycling', mountain: 'mountains', lake: 'lakes', beach: 'beaches',
+};
 
 const baseCity = (name) => (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 const fmtKm = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
@@ -260,6 +268,9 @@ export function DestinationPage({
   const [doAll, setDoAll] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
   const [pdfBusy, setPdfBusy] = React.useState(false);
+  // True while the first-run receipt's "Set your dates" is the page's one
+  // primary; "Plan a trip here" waits as a secondary until then (T099).
+  const [frrPrimary, setFrrPrimary] = React.useState(false);
   const [open, setOpen] = React.useState(() => new Set(OPEN_BY_DEFAULT));
 
   const dossier = useDossier(destination?.id);
@@ -328,6 +339,7 @@ export function DestinationPage({
   if (!destination) return null;
 
   const city = baseCity(destination.city);
+  const DEST_REPORT = { layer: 'dest', id: destination.id, cc: destination.iso2, name: city };
   const d = dossier || null;
   const loading = dossier === undefined;
   // Everything below the badge row waits for the dossier to answer (a file
@@ -472,6 +484,16 @@ export function DestinationPage({
     park: !!(parking && (parking.spots?.length > 0 || parking.park_ride || parking.web)),
     pack: packs.length > 0,
   };
+  // Three sections keep their heading when they have nothing to show and say
+  // so in one line (T367, docs/ONBOARDING_AND_EMPTY_STATES.md, "The
+  // detail-page rule"), once the dossier has answered: an empty fold is a
+  // fact about the place, a missing one reads as a page that broke. They stay
+  // out of the section rail, which lists what a page HAS.
+  const show = {
+    around: has.around || !!d,
+    routes: has.routes || !!d,
+    getting: has.getting || !!d,
+  };
   const navItems = [
     ['highlights', 'dest.nav.highlights'], ['do', 'dest.nav.do'], ['around', 'dest.nav.around'],
     ['routes', 'dest.routesTitle'],
@@ -588,7 +610,7 @@ export function DestinationPage({
                 go there forms, so the trip wizard (this country picked) and
                 the day flow (staying in this city) open from here. */}
             {onPlanTrip && (
-              <button type="button" className="panel-fav destp-plan-btn" onClick={onPlanTrip}>
+              <button type="button" className={`panel-fav destp-plan-btn${frrPrimary ? ' is-quiet' : ''}`} onClick={onPlanTrip}>
                 <RouteIcon size={15} />
                 <span>{t('dest.planTrip')}</span>
               </button>
@@ -620,6 +642,7 @@ export function DestinationPage({
               <MapPinIcon size={15} />
               <span>{t('explore.openMaps')}</span>
             </a>
+            <ReportProblem item={DEST_REPORT} />
           </div>
           )}
         </div>
@@ -643,7 +666,19 @@ export function DestinationPage({
         )}
 
         {settled && (
-        <div className="destp-grid">
+        <div className="destp-grid has-frr">
+          {/* The first priced total (T099, docs/FIRST_RUN_RESULT.md): on a
+              phone straight under the facts, on a desktop at the head of
+              the right column, beside the folds. */}
+          <div className="destp-frr">
+            <FirstRunReceipt
+              dest={destination}
+              receiptKey={`dest:${destination.id}`}
+              headingLevel={2}
+              onPrimaryChange={setFrrPrimary}
+            />
+            <ReportProblem priceOnly item={DEST_REPORT} />
+          </div>
           <div className="destp-col is-main">
             {/* Highlights and the one map, with its layers. */}
             {has.highlights && (
@@ -855,30 +890,43 @@ export function DestinationPage({
 
             {/* Around here: the outdoors within 20 km, from every layer the
                 Destinations tab knows, plus the top picks with photographs. */}
-            {has.around && (
+            {show.around && (
               <Fold level={3}
                 id="sec-around"
                 icon={TreeIcon}
                 title={t('dest.aroundTitle', { city })}
-                summary={summaryOf(around, t) || t('dest.natureTitle')}
+                summary={has.around ? (summaryOf(around, t) || t('dest.natureTitle')) : ''}
                 open={isOpen('around')}
                 onToggle={() => toggle('around')}
               >
-                <AroundHere
+                {!has.around && (
+                  // pipeline/dossier/build_dossier.py AROUND_KM: the dossier
+                  // looks 20 km out and writes no block when it finds nothing.
+                  <NearestLine
+                    noneKey="dest.aroundNone"
+                    noneVars={{ city, km: 20 }}
+                    layers={['trail', 'cycling', 'mountain', 'lake', 'beach']}
+                    cc={destination.iso2}
+                    from={lat != null && lon != null ? { lat, lon } : null}
+                    radiusKm={20}
+                    onOpen={onOpenFeature ? (l, row) => onOpenFeature(DOSSIER_LAYER[l], { id: row.id, cc: row.cc }) : null}
+                  />
+                )}
+                {has.around && <AroundHere
                   city={city}
                   nearby={nearby}
                   around={around}
                   t={t}
                   onOpenFeature={onOpenFeature}
                   onShowMap={aroundForMap.length || nearbyForMap.length ? showOnMap : null}
-                />
+                />}
               </Fold>
             )}
 
             {/* Routes from here: the paths that PASS this town, measured to
                 the line rather than to a bounding box, each named for the
                 path with the stretch that passes named underneath. */}
-            {has.routes && (
+            {show.routes && (
               <Fold level={3}
                 id="sec-routes"
                 icon={RouteIcon}
@@ -892,7 +940,19 @@ export function DestinationPage({
                 open={isOpen('routes')}
                 onToggle={() => toggle('routes')}
               >
-                <RoutesFromHere routes={routeRows} t={t} onOpen={onOpenFeature} />
+                {has.routes ? <RoutesFromHere routes={routeRows} t={t} onOpen={onOpenFeature} /> : (
+                  // pipeline/trails/attach.py MAX_KM: a route is attached to a
+                  // town when its line comes within 25 km of the centre.
+                  <NearestLine
+                    noneKey="dest.routesNone"
+                    noneVars={{ city, km: 25 }}
+                    layers={['trail', 'cycling']}
+                    cc={destination.iso2}
+                    from={lat != null && lon != null ? { lat, lon } : null}
+                    radiusKm={25}
+                    onOpen={onOpenFeature ? (l, row) => onOpenFeature(DOSSIER_LAYER[l], { id: row.id, cc: row.cc }) : null}
+                  />
+                )}
               </Fold>
             )}
 
@@ -1029,7 +1089,7 @@ export function DestinationPage({
             )}
 
             {/* Getting there and around. */}
-            {has.getting && (
+            {show.getting && (
               <Fold level={3}
                 id="sec-getting"
                 icon={PlaneIcon}
@@ -1043,6 +1103,7 @@ export function DestinationPage({
                 onToggle={() => toggle('getting')}
               >
                 {getting && <GettingThere getting={getting} t={t} />}
+                {!has.getting && <div className="sec-none" data-testid="section-none"><p>{t('dest.gettingNone', { city })}</p></div>}
                 {rhythm && <p className="destp-rhythm">{rhythm}</p>}
                 {bookAhead.length > 0 && (
                   <p className="destp-bookahead">
@@ -1077,6 +1138,7 @@ export function DestinationPage({
                 onToggle={() => toggle('cost')}
               >
                 <CostReceipt cost={cost} t={t} lang={lang} lifestyleLabel={lifestyleLine} onOpenLifestyle={onOpenLifestyle} />
+                <ReportProblem priceOnly item={DEST_REPORT} />
                 {stayLen?.n >= 2 && (
                   <p className="destp-triptotal">
                     {t('dest.tripTotal', {

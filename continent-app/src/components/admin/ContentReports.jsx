@@ -35,6 +35,11 @@ const DISMISS = {
 // Owners' complaints against takedowns sit above the notices, in
 // ModerationComplaints; that file says why they share this tab.
 //
+// Since migration 051 a card also shows the name the notifier gave, if any,
+// and whether they confirmed the notice in good faith (older notices were
+// filed before the form asked). A contact email is cleared the moment the
+// report is decided, so a new report with an email says to reply first.
+//
 // Three states, as the Guides tab: rows, a real empty queue, and a failure,
 // which draws no list.
 export function ContentReports({ queue, onOpenUser, unpublish, complaints, decision }) {
@@ -113,6 +118,15 @@ export function ContentReports({ queue, onOpenUser, unpublish, complaints, decis
                     ? <>{' '}<span className="adminpage-when">{r.contactEmail}</span></>
                     : `, ${t('admin.reportsNoEmail')}`}
                 </p>
+                {(r.reporterName || r.goodFaith !== undefined) && (
+                  <p className="adminpage-muted">
+                    {r.reporterName && <>{t('admin.reportsName', { name: r.reporterName })}{'. '}</>}
+                    {r.goodFaith === true ? t('admin.reportsGoodFaith') : t('admin.reportsNoGoodFaith')}
+                  </p>
+                )}
+                {r.status === 'new' && r.contactEmail && (
+                  <p className="adminpage-muted">{t('admin.reportsEmailCleared')}</p>
+                )}
                 <p className="adminpage-muted">
                   {t('admin.reportsOnGuide')}{' '}
                   <span className="adminpage-when">{r.planTotal}</span>

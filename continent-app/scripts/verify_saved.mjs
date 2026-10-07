@@ -94,6 +94,7 @@ try {
 
   // ---- 1. Fresh device: three tabs up top, invitations instead of dead ends.
   const empty = await browser.newPage({ viewport: { width: 1360, height: 900 } });
+  await empty.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await empty.goto(BASE);
   await enterApp(empty);
   await openSaved(empty);
@@ -130,6 +131,7 @@ try {
   // ---- 2. Seeded day plans: the dates do the filing.
   const full = await browser.newPage({ viewport: { width: 1360, height: 900 } });
   await full.addInitScript((plans) => {
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('carta.savedTripsTab', 'planned');
     localStorage.setItem('carta.dayplans.v1', JSON.stringify(plans));
   }, DAY_PLANS);
@@ -240,7 +242,8 @@ try {
     await toggle.click();
     const facts = await note.locator('.modnote-body').innerText();
     for (const [what, re] of [['what was done', /removed .* from the public guides/i], ['why', /copies a chapter of a published travel book/i],
-      ['what started it', /2 reports from readers/i], ['who decided', /person on the Carta team/i], ['the options', /contest this decision here/i]]) {
+      ['what started it', /2 reports from readers/i], ['who decided', /person on the Carta team/i], ['the options', /contest this decision here/i],
+      ['the ground (051)', /content rule for public guides: Someone else's work/i], ['the lock (051)', /cannot be published again/i]]) {
       if (!re.test(facts)) fail(`the statement does not say ${what}`);
     }
     if (await toggle.getAttribute('aria-expanded') !== 'true' || !(await toggle.getAttribute('aria-controls'))) fail('the toggle is not tied to the statement it opens');

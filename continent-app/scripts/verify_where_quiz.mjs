@@ -34,6 +34,7 @@ async function openWhere(page) {
     try {
       localStorage.setItem('continent.lang.v1', 'en');
       localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('carta.welcomeSeen', '1');
       // A clean draft every run, or the wizard restores a half-answered quiz.
       localStorage.removeItem('carta.plannerDraft.v1');

@@ -42,6 +42,7 @@ for (const { layer, tab, prefix, card } of CASES) {
     try {
       localStorage.setItem('continent.lang.v1', 'en');
       localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     } catch { /* storage unavailable */ }
     // The service worker owns /{layer}/*.json (networkFirst), and its own
@@ -115,6 +116,7 @@ guard: true,
     try {
       localStorage.setItem('continent.lang.v1', 'en');
       localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     } catch { /* storage unavailable */ }
     try {

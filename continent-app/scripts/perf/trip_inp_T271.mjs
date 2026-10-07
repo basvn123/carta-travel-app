@@ -77,6 +77,7 @@ const SEEDS = () => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('carta.welcomeSeen.v1', '1');
   } catch { /* storage unavailable */ }
 };

@@ -13,6 +13,15 @@
  *   middot           a middot separator anywhere in src
  *   banned-word      a carta-design banned word in the English strings
  *   motion-effect    marquee or parallax in a stylesheet or component
+ *   js-hex-literal   a hex colour in JavaScript (T364, owner call on T196-b).
+ *                    MapLibre cannot read a CSS custom property, so a colour
+ *                    that must live in JavaScript lives in ONE token-mirror
+ *                    module, src/map/tokenColors.js. Every other file under
+ *                    src is flagged, except flag and brand artwork (listed in
+ *                    JS_HEX_EXEMPT below). Print exports are in the baseline.
+ *   token-mirror-drift  an entry of TOKEN_COLOURS in that module whose value
+ *                    no longer matches the :root of src/styles/01-tokens.css,
+ *                    or whose token no longer exists there.
  *   font-literal     a font-family (or JSX fontFamily) whose value is not one
  *                    of the three type tokens, var(--display), var(--ui),
  *                    var(--mono), or inherit; and inside :root, a custom
@@ -54,6 +63,11 @@ const bannedRe = new RegExp(`\\b(${BANNED_WORDS.join('|')})\\b`, 'i');
 
 // T198: the only legal values of a font-family declaration outside :root.
 const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono)\s*\))$/;
+// T364: the one file that may hold a hex in JavaScript, and the artwork that
+// is not a design token (flags are country artwork, the Google mark is a brand).
+const MIRROR_FILE = 'src/map/tokenColors.js';
+const JS_HEX_EXEMPT = new Set([MIRROR_FILE, 'src/components/CountryFlag.jsx', 'src/auth/GoogleButton.jsx']);
+const JS_HEX = /(?<![&\w/(])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b/;
 // A :root custom property that names a typeface: a quoted family or a generic family keyword.
 const FACE_VALUE = /\b(serif|sans-serif|monospace|cursive|fantasy|system-ui)\b|['"][^'"]+['"]\s*,/;
 
@@ -92,7 +106,11 @@ function scanFile(abs, rel) {
       const value = ff[1].trim().replace(/\s*!important\s*$/, '').replace(/,\s*$/, '').replace(/^(['"`])(.*)\1$/, '$2').trim();
       if (!FONT_TOKENS.test(value)) add('font-literal', i, value.slice(0, 60));
     }
-    if (!isCss) continue;
+    if (!isCss) {
+      const code = l.replace(/^\s*(\/\/|\*|\/\*).*$/, '');
+      if (!/(^|\/)i18n\//.test(rel) && !JS_HEX_EXEMPT.has(rel) && JS_HEX.test(code)) add('js-hex-literal', i);
+      continue;
+    }
 
     if (/^\s*:root\b[^{]*\{/.test(l) && rootDepth < 0) rootDepth = depth;
     const inRoot = rootDepth >= 0;
@@ -121,10 +139,34 @@ function scanFile(abs, rel) {
   return found;
 }
 
+// T364: every TOKEN_COLOURS entry must equal the token's value in :root.
+function mirrorDrift(root) {
+  const mirror = path.join(root, MIRROR_FILE);
+  const tokens = path.join(root, 'src/styles/01-tokens.css');
+  if (!fs.existsSync(mirror) || !fs.existsSync(tokens)) return [];
+  const msrc = fs.readFileSync(mirror, 'utf8');
+  const block = msrc.match(/export const TOKEN_COLOURS\s*=\s*\{([\s\S]*?)\n\};/);
+  if (!block) return [{ rule: 'token-mirror-drift', file: MIRROR_FILE, line: 1, text: 'TOKEN_COLOURS block not found', detail: 'missing block' }];
+  const css = stripCssComments(fs.readFileSync(tokens, 'utf8'));
+  const rootBlock = css.match(/:root\b[^{]*\{([\s\S]*?)\n\}/);
+  const decl = {};
+  for (const m of (rootBlock ? rootBlock[1] : css).matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) if (!(m[1] in decl)) decl[m[1]] = m[2].trim().toLowerCase();
+  const out = [];
+  const lines = msrc.split('\n');
+  lines.forEach((ln, i) => {
+    const m = ln.match(/^\s*'(--[\w-]+)'\s*:\s*'(#[0-9a-fA-F]{3,8})'/);
+    if (!m || i < msrc.slice(0, block.index).split('\n').length - 1) return;
+    const want = decl[m[1]];
+    if (want !== m[2].toLowerCase()) out.push({ rule: 'token-mirror-drift', file: MIRROR_FILE, line: i + 1, text: ln.trim(), detail: `${m[1]} is ${want || 'absent'} in 01-tokens.css` });
+  });
+  return out;
+}
+
 export function scan(root) {
   const src = fs.existsSync(path.join(root, 'src')) ? path.join(root, 'src') : root;
   const all = [];
   for (const abs of walk(src)) all.push(...scanFile(abs, path.relative(root, abs).split(path.sep).join('/')));
+  all.push(...mirrorDrift(root));
   return all;
 }
 
@@ -149,7 +191,7 @@ function selfTest() {
   const empty = path.join(fx, 'empty-baseline.json');
   const bad = check(path.join(fx, 'bad'), empty);
   const rules = new Set(bad.fresh.map((v) => v.rule));
-  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal'];
+  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift'];
   const missing = want.filter((r) => !rules.has(r));
   const good = check(path.join(fx, 'good'), empty);
   let ok = true;

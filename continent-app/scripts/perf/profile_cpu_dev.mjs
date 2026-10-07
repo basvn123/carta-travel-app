@@ -38,7 +38,7 @@ if (!(await up())) { dev.kill(); throw new Error('dev server never came up'); }
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ serviceWorkers: 'block' });
 const page = await ctx.newPage();
-await page.addInitScript(() => localStorage.setItem('continent.guestMode.v1', '1'));
+await page.addInitScript(() => { localStorage.setItem('continent.guestMode.v1', '1'); localStorage.setItem('continent.homeSeen.v1', '1'); });
 await page.route('**/app_data.json', (route) => route.continue({ url: `http://localhost:${DATA_PORT}/app_data.json` }));
 const cdp = await ctx.newCDPSession(page);
 await cdp.send('Profiler.enable');

@@ -1,0 +1,81 @@
+/* InfoDot (T156) and the number translations (T158). The marker is a 6 px
+   ink-mute dot inside a --tap button; the popover is a card. Spec: the
+   InfoDot rule in carta-design. */
+
+.infodot {
+  display: inline;
+  white-space: nowrap;
+}
+.infodot-btn {
+  /* A 44 px box that adds only 6 px and a gap to the line: the margins pull
+     the box back over its neighbours, so a dot after a word does not open a
+     hole in the line. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  margin: -19px -19px -19px -13px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  vertical-align: middle;
+  border-radius: 6px;
+}
+.infodot-mark {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ink-mute);
+}
+.infodot-btn:hover .infodot-mark,
+.infodot-btn[aria-expanded='true'] .infodot-mark { background: var(--ink-soft); }
+.infodot-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.infodot-pop {
+  position: fixed;
+  z-index: 1000;
+  max-width: 280px;
+  box-sizing: border-box;
+  padding: var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  box-shadow: var(--shadow-2);
+  font-family: var(--ui);
+  text-align: left;
+  white-space: normal;
+}
+.infodot-term {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.infodot-text {
+  margin: var(--space-1) 0 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* A figure's sentence (T158): the number stays where it is, in mono; the
+   meaning sits next to it in sans. It also appears inside a mono cell, so it
+   sets its own face. */
+.numsent {
+  display: block;
+  margin: var(--space-1) 0 0;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 400;
+  font-variant-numeric: normal;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}

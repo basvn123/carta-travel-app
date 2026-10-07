@@ -65,6 +65,7 @@ await page.route('**/functions/v1/plan-day', async (route) => {
   });
 });
 
+await page.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
 await page.goto(URL, { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(2500);
 for (const btn of await page.getByRole('button').all()) {

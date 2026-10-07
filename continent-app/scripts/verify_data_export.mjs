@@ -127,6 +127,7 @@ async function stubSupabase(page, state) {
 
 const seedSession = (ref, user) => `(() => {
   localStorage.setItem('continent.guestMode.v1', '1');
+  localStorage.setItem('continent.homeSeen.v1', '1');
   localStorage.setItem('carta.welcomeSeen', '1');
   localStorage.setItem('carta.mapGuideDone', '1');
   localStorage.setItem('sb-${ref}-auth-token', JSON.stringify({
@@ -138,6 +139,7 @@ const seedSession = (ref, user) => `(() => {
 
 const seedGuest = () => `(() => {
   localStorage.setItem('continent.guestMode.v1', '1');
+  localStorage.setItem('continent.homeSeen.v1', '1');
   localStorage.setItem('carta.welcomeSeen', '1');
   localStorage.setItem('carta.mapGuideDone', '1');
 })()`;

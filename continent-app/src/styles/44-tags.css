@@ -1,0 +1,10 @@
+/* The tag filter of the curated trip list (T089). A third row in the T188
+   filter card, the same toggle buttons (.tl-btn in 43-trip-length.css). A tag
+   is a word, not a figure, so it stays in --ui; only its count is mono. Twelve
+   buttons wrap onto a few lines on a phone and no row scrolls sideways. */
+.tf-tags { max-width: 100%; }
+.tf-tags .tl-btn {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: left;
+}

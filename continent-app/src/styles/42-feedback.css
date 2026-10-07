@@ -1,0 +1,77 @@
+/* The feedback front door (T326): the Report a problem link and its sheet.
+   A secondary action: text in the UI face, never a filled button, never red. */
+.report-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.report-link:hover { color: var(--ink); }
+.report-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.report-link.is-price { font-weight: 400; font-size: 12px; }
+@media (pointer: fine) { .report-link { min-height: 32px; } }
+
+.report-form { display: flex; flex-direction: column; gap: var(--space-2); }
+.report-about { margin: 0; font-size: 14px; color: var(--ink); font-weight: 600; }
+.report-label { font-size: 13px; color: var(--ink-soft); }
+.report-whats { display: flex; flex-direction: column; gap: 0; }
+.report-what {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.report-what input { accent-color: var(--ink-fill); width: 18px; height: 18px; margin: 0; }
+.report-what.on { font-weight: 600; }
+.report-what:focus-within { outline: 2px solid var(--accent); outline-offset: -2px; }
+.report-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+}
+.report-mail { min-height: var(--tap); }
+.report-input::placeholder { color: var(--ink-mute); }
+.report-input:focus { outline: none; border-color: var(--accent); }
+.report-note { margin: 0; font-size: 12px; color: var(--ink-mute); }
+.report-err { margin: 0; font-size: 13px; color: var(--ink); border-left: 2px solid var(--accent); padding-left: var(--space-2); }
+.report-send {
+  min-height: var(--tap);
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--paper);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.report-send:disabled { opacity: 0.5; cursor: default; }
+.report-send:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.report-done { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); font-size: 14px; color: var(--ink); }
+.report-done p { margin: 0; }
+
+/* The admin inbox: the report line. */
+.adminpage-fbreport { margin: 0; font-size: 13px; font-weight: 600; }
+
+/* The sheet opens over a full page (z 240), so its scrim sits above it. */
+.fsheet-scrim:has(> .report-sheet) { z-index: 330; }
+.report-link { white-space: nowrap; }

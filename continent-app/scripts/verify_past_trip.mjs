@@ -84,6 +84,7 @@ const run = async () => {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await ctx.newPage();
   page.on('pageerror', (e) => fail(`page error: ${e.message}`));
+  await page.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await enterApp(page);
   await openSaved(page);
@@ -262,6 +263,7 @@ const run = async () => {
   const mctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   const mpage = await mctx.newPage();
   mpage.on('pageerror', (e) => fail(`page error (mobile): ${e.message}`));
+  await mpage.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await mpage.goto(BASE, { waitUntil: 'domcontentloaded' });
   await enterApp(mpage);
   await openSaved(mpage);

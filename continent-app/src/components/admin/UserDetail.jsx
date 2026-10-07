@@ -7,7 +7,8 @@ import { useMfa } from './useMfa.js';
 
 // One account in full: facts, history, pass, support actions, notes, and
 // deletion. A render over useUserDetail, plus the MFA step-up that ban and
-// delete need (migration 032 refuses both below aal2).
+// delete need (migration 032 refuses both below aal2) and, since migration
+// 051 (owner decision T063-e), a pass change too.
 export function UserDetail({ account }) {
   const { t } = useI18n();
   const mfa = useMfa();
@@ -123,10 +124,11 @@ export function UserDetail({ account }) {
               />
             </div>
           )}
+          <MfaStepUp mfa={mfa} idPrefix="admin-tier" />
           <button
             type="button"
             className="adminpage-btn primary wide"
-            disabled={tierBusy || detailBusy}
+            disabled={tierBusy || detailBusy || !mfa.stepped}
             onClick={applyTier}
           >
             {tierBusy ? t('account.pleaseWait') : t('admin.passApply')}

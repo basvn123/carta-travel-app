@@ -1,0 +1,294 @@
+/* The photo and track upload door and its dialog (T333,
+   community/UploadForm.jsx). Tokens only. The dialog follows carta-design's
+   Modal dialogs rule: --ink at 28 percent behind it, the page takes no
+   clicks, one primary (the send button) in view. */
+
+.upl-open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  margin-top: var(--space-3);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.upl-open:hover { border-color: var(--ink); color: var(--ink); }
+
+.upl-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 260;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--ink) 28%, transparent);
+}
+
+.upl-dialog {
+  width: 100%;
+  max-width: 520px;
+  margin: auto 0;
+  padding: var(--space-5);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-2);
+  font-family: var(--ui);
+  color: var(--ink);
+}
+
+.upl-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.upl-title {
+  margin: 0;
+  padding-top: var(--space-2);
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.upl-x {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.upl-x:hover { border-color: var(--ink); color: var(--ink); }
+
+.upl-lede {
+  margin: 0 0 var(--space-4);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.upl-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.upl-form .upl-lede { margin-bottom: 0; }
+
+.upl-set {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.upl-legend,
+.upl-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.upl-kinds {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.upl-kind {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.upl-kind + .upl-kind { border-left: 1px solid var(--rule); }
+.upl-kind input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.upl-kind.is-on { background: var(--ink-fill); color: var(--on-fill); }
+.upl-kind:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.upl-field { display: flex; flex-direction: column; }
+.upl-file,
+.upl-input {
+  min-height: var(--tap);
+  width: 100%;
+  max-width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 14px;
+  color: var(--ink);
+}
+.upl-file { font-size: 13px; }
+.upl-file::file-selector-button {
+  margin-right: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.upl-file:focus-visible,
+.upl-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.upl-hint {
+  margin: var(--space-2) 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.upl-status {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.upl-status:empty { display: none; }
+.upl-preview {
+  display: block;
+  width: 120px;
+  height: 90px;
+  margin-top: var(--space-2);
+  object-fit: cover;
+  border: 1px solid var(--rule-soft);
+  border-radius: 6px;
+}
+
+/* The three licences are related choices, so hairlines, not cards. */
+.upl-lic {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--rule-soft);
+  cursor: pointer;
+}
+.upl-lic:last-child { border-bottom: 1px solid var(--rule-soft); }
+.upl-lic input,
+.upl-tick input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--ink-fill);
+}
+.upl-lic input:focus-visible,
+.upl-tick input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.upl-lic-text { display: flex; flex-direction: column; gap: 2px; }
+.upl-lic-name { font-size: 14px; font-weight: 600; }
+.upl-lic-sub { font-size: 13px; line-height: 1.4; color: var(--ink-soft); }
+
+.upl-tick {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  font-size: 14px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+.upl-tick-wrap .upl-hint { margin-top: 0; padding-left: 30px; }
+.upl-terms {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding-left: 30px;
+  font-size: 13px;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.upl-terms:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.upl-error {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.upl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.upl-send,
+.upl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  padding: 0 var(--space-5);
+  border-radius: 6px;
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.upl-send { border: 1px solid var(--accent); background: var(--accent); color: var(--on-fill); }
+.upl-send:hover:not(:disabled) { filter: brightness(0.95); }
+.upl-send:disabled { opacity: 0.55; cursor: default; }
+.upl-btn { border: 1px solid var(--rule); background: transparent; color: var(--ink); }
+.upl-btn:hover:not(:disabled) { border-color: var(--ink); }
+.upl-open:focus-visible,
+.upl-x:focus-visible,
+.upl-send:focus-visible,
+.upl-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.upl-done {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.upl-done p { margin: 0; }
+.upl-done svg { flex: none; margin-top: 2px; color: var(--status-success); }
+
+@media (max-width: 480px) {
+  .upl-scrim { padding: var(--space-3); }
+  .upl-dialog { padding: var(--space-4); }
+  .upl-send, .upl-btn { flex: 1 1 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upl-open, .upl-x, .upl-send, .upl-btn, .upl-kind { transition: none; }
+}

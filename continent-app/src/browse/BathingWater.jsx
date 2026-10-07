@@ -1,5 +1,6 @@
 import React from 'react';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
+import { numberSentence } from '../lib/numberSentences.js';
 
 /**
  * Bathing water (PLAN.md D3), on coastal and lake destinations only: the
@@ -21,6 +22,9 @@ export function BathingWater({ water, destination, t }) {
         <p className="destp-water-line">
           {t('dest.waterShare', { pct: water.excellent_pct, n: water.n_sites })}
         </p>
+      )}
+      {water.excellent_pct != null && water.n_sites != null && (
+        <p className="numsent">{numberSentence('bathingWater', water.excellent_pct, { t })}</p>
       )}
       {near?.name && (
         <p className="destp-water-line">

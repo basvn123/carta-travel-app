@@ -7,6 +7,7 @@ import { ExploreTab } from './browse/ExploreTab.jsx';
 import { DestinationPage } from './browse/DestinationPage.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
+import { LandingPage } from './browse/LandingPage.jsx';
 import Logo from './components/Logo.jsx';
 
 // A failed dynamic import is almost always a stale bundle: the client is still
@@ -52,6 +53,7 @@ function TabFallback() {
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { computeCosts } from './lib/costIndex.js';
+import { FirstRunContext } from './lib/firstRunContext.js';
 import { loadInitialState } from './lib/urlState.js';
 import { readFavList, isFav, favDestIds, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
@@ -87,6 +89,7 @@ import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { Button } from './components/Button.jsx';
 import { CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
+import { readFirstVisit, markHomeSeen } from './lib/homeVisit.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
@@ -97,6 +100,13 @@ import { useReach } from './lib/reach.js';
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
 const GUEST_KEY = 'continent.guestMode.v1';
+// A first visit with no link opens on the home page (T194, lib/homeVisit.js).
+// Read here, once, at module load: a component initializer runs twice under
+// StrictMode and the dossier reader strips the hash between the two passes,
+// so a hash link would read as a first visit on the second pass.
+const FIRST_VISIT = (() => {
+  try { return readFirstVisit(window.localStorage, window.location.search, window.location.hash); } catch { return false; }
+})();
 
 // The pass picker used to be mounted here, in the account panel and in the
 // day planner, each opening it on its own terms. It now lives inside
@@ -126,6 +136,9 @@ function TravelApp() {
   } = useAuth();
   // State carried in the URL / localStorage (shareable + survives reload).
   const [init] = useState(() => loadInitialState());
+  // Read once at module load (FIRST_VISIT), marked seen by the effect.
+  const firstVisit = FIRST_VISIT;
+  useEffect(() => { try { markHomeSeen(window.localStorage); } catch { /* blocked */ } }, []);
 
   // Grouped UI state (see usePanelState / useFilterState).
   const {
@@ -291,20 +304,20 @@ function TravelApp() {
 
   // Which top-level section is showing: Destinations (the catalogue +
   // published trips), Map (the browse/search experience), Trip planner, or
-  // Day planner. EVERY visit opens on Destinations, first or fiftieth: there
-  // is no marketing front page in front of the app any more, so the first
-  // thing anybody sees is real places. (The localStorage mirror's remembered
-  // tab is deliberately ignored.)
+  // Day planner. A RETURN visit opens on Destinations, so the thing a
+  // returning traveller sees is real places. A FIRST visit with no link opens
+  // on the home page (`firstVisit`, T194), which is the landing page and
+  // carries a live receipt. (The localStorage mirror's remembered tab is
+  // deliberately ignored.)
   // A query string, though, means the view was shared or reloaded, so it
   // decides which tab opens. The encoder omits `tab` for the map (it is the
   // URL's implicit default), so a link carrying filters but no tab is a map
-  // link. Links from the old front page (`tab=home`) land on Destinations,
-  // which is what replaced it.
+  // link. `tab=home` is the landing page (T209), which is also the home page
+  // (owner decision 2026-10-07); a first visit with no link opens on it (T194).
   const urlTab = typeof window !== 'undefined' && !!window.location.search
-    ? (init.activeTab === 'home' ? 'places'
-      : (['map', 'places', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map'))
+    ? (['home', 'map', 'places', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map')
     : null;
-  const [activeTab, setActiveTab] = useState(urlTab || 'places');
+  const [activeTab, setActiveTab] = useState(urlTab || (firstVisit ? 'home' : 'places'));
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -314,7 +327,7 @@ function TravelApp() {
   const [returnDate, setReturnDate] = useState(init.returnDate ?? null);
 
   const [choices, setChoices] = useState({
-    group_size: init.group_size ?? 7,
+    group_size: init.group_size ?? 2,   // two, stated wherever it applies (T100); data defaults no longer decide it
     trip_days: 7,
     baggage_key: init.baggage_key ?? 'priority_10kg',
     baggage_per_direction_eur: 25,
@@ -341,7 +354,7 @@ function TravelApp() {
 
   // Planner tabs mount on first visit and then stay alive (hidden) so a quick
   // look at another tab never wipes an in-progress plan.
-  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || 'places']));
+  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || (firstVisit ? 'home' : 'places')]));
   useEffect(() => {
     setVisitedTabs((prev) => (prev.has(activeTab) ? prev : new Set([...prev, activeTab])));
   }, [activeTab]);
@@ -464,6 +477,9 @@ function TravelApp() {
   const [pendingTrip, setPendingTrip] = useState(() => readTripFromUrl());
   // One country, handed to the Destinations tab from the planner's brief.
   const [pendingCountry, setPendingCountry] = useState(null);
+  // One category, handed to the Destinations tab from the landing page's
+  // primary action ("Find a town to walk from" opens the walks).
+  const [pendingCategory, setPendingCategory] = useState(null);
   useEffect(() => {
     if (pendingTrip) setActiveTab('places');
   }, [pendingTrip]);
@@ -647,7 +663,7 @@ function TravelApp() {
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
   const {
-    data, error, dateBounds, needRecords,
+    data, error, dateBounds, needRecords, defaultDates,
   } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin);
 
   // 'viewport' catalogue mode (T059, lib/catalogue.js): only the Explore
@@ -675,7 +691,9 @@ function TravelApp() {
   const [linkedAtLoad] = useState(deepLinked);
   useEffect(() => {
     if (CATALOGUE_MODE !== 'all' || !partial) return;
-    if (linkedAtLoad || (activeTab !== 'places' && activeTab !== 'map')) loadFullCatalogue().catch(() => {});
+    // The landing page (T209) prices from the rank tier too, so it is a
+    // default screen in this sense and does not hold the shards up.
+    if (linkedAtLoad || !['places', 'map', 'home'].includes(activeTab)) loadFullCatalogue().catch(() => {});
   }, [partial, activeTab, linkedAtLoad]);
   useEffect(() => {
     if (selectedId && (CATALOGUE_MODE === 'viewport' || partial)) needRecords([selectedId]).catch(() => {});
@@ -715,6 +733,12 @@ function TravelApp() {
   // so this is the one answer that empties the map on purpose.
   const setDriveHome = useCallback((point) => {
     setChoices((prev) => ({ ...prev, drive_home: point || null }));
+  }, []);
+
+  // Where you sleep, set from the trip page's Lifestyle slider (T173). The
+  // same field the Lifestyle panel's tiles write, so the two never disagree.
+  const setStayTier = useCallback((tier) => {
+    setChoices((prev) => ({ ...prev, stay_tier: tier }));
   }, []);
 
   // How much width the scrollbar takes out of a tab panel. The panels
@@ -858,6 +882,14 @@ function TravelApp() {
     [data, choices],
   );
 
+  // What a first-run receipt reads and writes (T099, lib/firstRunContext.js):
+  // given once here, so the destination page and the trip page price the
+  // same trip from the same inputs without a prop chain through each tab.
+  const firstRun = useMemo(() => ({
+    data, choices, setChoices, setOrigin, indices: exploreIndices,
+    departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds,
+  }), [data, choices, setOrigin, exploreIndices, departDate, returnDate, defaultDates, dateBounds]);
+
   if (recoveryMode) {
     return <ResetPasswordScreen />;
   }
@@ -943,6 +975,7 @@ function TravelApp() {
         setAuthModalOpen(true);
       }}
     >
+    <FirstRunContext.Provider value={firstRun}>
     <div className="app" onClick={() => setSelectedId(null)}>
       <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
@@ -1048,18 +1081,36 @@ function TravelApp() {
           has to open over whichever tab asked for it. */}
       {lifestyleOpen && (
         <div onClick={(e) => e.stopPropagation()}>
-          {/* On Explore the panel is a right-hand drawer over a scrim, so the
-              grid it reprices stays visible behind it. Everywhere else it
-              keeps the left-hand position the map layout was built around. */}
-          {activeTab === 'map' && (
-            <div className="lifestyle-scrim" onClick={() => setLifestyleOpen(false)} aria-hidden="true" />
-          )}
+          {/* On Explore the panel is a right-hand drawer, so the grid it
+              reprices stays visible behind it. Everywhere else it keeps the
+              left-hand position the map layout was built around. Every modal
+              dialog has a scrim (owner call, T362; carta-design Components),
+              so the scrim shows on every tab and the page behind takes no
+              clicks. */}
+          <div className="lifestyle-scrim" onClick={() => setLifestyleOpen(false)} aria-hidden="true" />
           <LifestylePanel
             side={activeTab === 'map' ? 'right' : 'left'}
             choices={choices}
             setChoices={setChoices}
             onClose={() => setLifestyleOpen(false)}
             data={data}
+          />
+        </div>
+      )}
+
+      {/* The landing page, which is also the home page (T209): a live
+          receipt for a real town, the proof points and the coverage. Not
+          kept alive like the tabs: it holds nothing worth keeping. */}
+      {activeTab === 'home' && (
+        <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <LandingPage
+            data={data}
+            lifestyle={choices.lifestyle}
+            onStart={() => {
+              setPendingCategory('trails');
+              goToTab('places');
+            }}
+            onOpenDest={openDetail}
           />
         </div>
       )}
@@ -1077,6 +1128,7 @@ function TravelApp() {
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
             onOpenLifestyle={openLifestyle}
+            onChangeStayTier={setStayTier}
             origin={choices.origin}
             onChangeOrigin={setOrigin}
             transportMode={choices.transport_mode || 'plane'}
@@ -1097,6 +1149,8 @@ function TravelApp() {
             onOpenTripInPlanner={openTripInPlanner}
             openCountry={pendingCountry}
             onOpenCountryConsumed={() => setPendingCountry(null)}
+            openCategory={pendingCategory}
+            onOpenCategoryConsumed={() => setPendingCategory(null)}
             isFavorite={isFavorite}
             onToggleFav={toggleFav}
             onAddToDay={openDayForFeature}
@@ -1254,6 +1308,7 @@ function TravelApp() {
               onClose={() => { setGuidesOpen(false); setPendingGuide(''); }}
               destinations={data?.destinations}
               openGuideId={pendingGuide || ''}
+              onPublish={() => { setGuidesOpen(false); setPendingGuide(''); setSavedTripsOpen(true); }}
             />
           </div>
         </Suspense>
@@ -1309,6 +1364,7 @@ function TravelApp() {
         </div>
       )}
     </div>
+    </FirstRunContext.Provider>
     {/* ?legal=terms|privacy|imprint opens the matching text on load; the
         address Stripe Checkout and store forms point at. */}
     <LegalFromUrl />

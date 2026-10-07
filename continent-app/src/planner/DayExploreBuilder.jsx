@@ -573,7 +573,15 @@ export function DayExploreBuilder({
                   ? flat.map((r) => (
                     <PlaceCard key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...cardProps} t={t} />
                   ))
-                  : <p className="trip-note">{t('dayex.noneHere')}</p>}
+                  : (
+                    <div className="trip-note empty-act">
+                      <p>{t('dayex.noneHere')}</p>
+                      <button type="button" className="cov-empty-btn"
+                        onClick={() => { setChip('all'); setQuery(''); }}>
+                        {t('dayex.showAllKinds')}
+                      </button>
+                    </div>
+                  )}
               </div>
             </PlannerSection>
           ) : (

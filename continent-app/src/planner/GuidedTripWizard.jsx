@@ -3185,7 +3185,7 @@ export function GuidedTripWizard({
                       {renderStayGroup(c.country, 'big', 'Cities', c.big)}
                       {renderStayGroup(c.country, 'gems', 'Gems & scenic stays', c.gems)}
                       {!c.big.length && !c.gems.length && (
-                        <p className="guide-empty">No match in {c.country} for “{staySearch}”.</p>
+                        <p className="guide-empty">{t('wizard.noStayMatch', { country: c.country, q: staySearch })}</p>
                       )}
                     </div>
                   ))}

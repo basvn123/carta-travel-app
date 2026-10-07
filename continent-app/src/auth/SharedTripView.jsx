@@ -28,24 +28,28 @@ import { fetchSharedTrip, recordShareOpened } from './tripShares.js';
  */
 export function SharedTripView({ token, onDismiss, destinations }) {
   const { t } = useI18n();
-  const [state, setState] = useState({ loading: true, trip: null });
+  const [state, setState] = useState({ loading: true, trip: null, failed: false });
+  const [tries, setTries] = useState(0);
 
   useEffect(() => {
     let live = true;
+    setState({ loading: true, trip: null, failed: false });
     fetchSharedTrip(token)
       .then((trip) => {
-        if (live) setState({ loading: false, trip });
+        if (live) setState({ loading: false, trip, failed: false });
         // A load that showed something is an open worth recording: it is what
         // earns the OWNER their local_guide milestone. Never awaited, and the
         // screen does not change either way.
         if (trip) recordShareOpened(token);
       })
-      // An unknown, revoked or expired token and a network failure land in the
-      // same place on purpose. Distinguishing them would tell a visitor
-      // something about the owner that the owner did not agree to.
-      .catch(() => { if (live) setState({ loading: false, trip: null }); });
+      // An unknown, revoked or expired token resolves to null and lands in the
+      // "gone" state, so a visitor learns nothing about the owner from it.
+      // Only a fetch that THREW (no connection, a failed call) offers a retry
+      // (owner call, T362): that says something about the visitor's network,
+      // never about the link, so it does not leak what the owner withdrew.
+      .catch(() => { if (live) setState({ loading: false, trip: null, failed: true }); });
     return () => { live = false; };
-  }, [token]);
+  }, [token, tries]);
 
   const trip = state.trip;
   const stops = trip?.stops || [];
@@ -70,6 +74,14 @@ export function SharedTripView({ token, onDismiss, destinations }) {
 
         {state.loading ? (
           <LoadingBlock label={t('share.loading')} rows={3} />
+        ) : state.failed ? (
+          <div className="stview-gone">
+            <ErrorBlock message={t('share.loadFailed')} onRetry={() => setTries((n) => n + 1)}
+              retryLabel={t('layer.retry')} />
+            <button type="button" className="auth-submit" onClick={onDismiss}>
+              {t('share.exploreCta')}
+            </button>
+          </div>
         ) : !trip ? (
           <div className="stview-gone">
             <h2 className="stview-title">{t('share.gone')}</h2>

@@ -115,9 +115,13 @@ export function applyOverrides(layer, list, opts) {
  * Every override carries a status, a review date and the admin's reason. They
  * live in the table beside the patch but travellers never see them: 043
  * grants the public read on layer, item_id and patch only, which is exactly
- * what overridesReady() selects. A stale or overdue patch still applies to
- * travellers until someone reverts it; the lifecycle nags the admin, it never
- * silently changes what the site shows.
+ * what overridesReady() selects. A stale or verified patch still applies to
+ * travellers until someone reverts it, however overdue. A TEMPORARY patch
+ * stops applying 14 days after its review date (migration 051, owner
+ * decision T074-c): the database's read policy no longer returns it, so
+ * overridesReady() never sees it and the pipeline's value shows again. The
+ * row stays in the table and on the review list; saving it with a new date
+ * makes it apply again.
  *
  * The helpers below are the admin page's single reading of those fields, so
  * the grid, the review list and the editor cannot disagree about what counts
@@ -142,6 +146,23 @@ export const MIN_REASON_CHARS = 10;
 export const BACKFILL_REASON = 'Made before review dates existed; no reason was recorded. Write the real one.';
 
 const DAY_MS = 86400000;
+
+/** Days past its review date that a temporary patch keeps applying (051). */
+export const OVERDUE_GRACE_DAYS = 14;
+
+/** When a temporary patch stops (or stopped) reaching travellers, as a Date,
+ *  or null for any other status. Mirrors the read policy of migration 051. */
+export function stopsApplyingAt(row) {
+  if (!row || row.status !== 'temporary' || !row.reviewBy) return null;
+  const t = new Date(row.reviewBy).getTime();
+  return Number.isFinite(t) ? new Date(t + OVERDUE_GRACE_DAYS * DAY_MS) : null;
+}
+
+/** False once a temporary patch is past its review date plus the grace. */
+export function appliesToTravellers(row, now = Date.now()) {
+  const stop = stopsApplyingAt(row);
+  return !stop || stop.getTime() > now;
+}
 
 /** 'YYYY-MM-DD' for a date input, in the admin's own time zone. */
 export function toDateInput(value) {
@@ -256,12 +277,13 @@ let validIdsCache = null;
 
 export async function fetchValidItemIds({ refresh = false } = {}) {
   if (validIdsCache && !refresh) return validIdsCache;
-  const layers = ['beach', 'lake', 'mountain', 'trail'];
+  const layers = ['beach', 'lake', 'mountain', 'trail', 'cycle'];
   const dirs = {
     beach: 'beaches',
     lake: 'lakes',
     mountain: 'mountains',
     trail: 'trails',
+    cycle: 'cycling',
   };
   const getJson = async (url) => {
     const res = await fetch(dataUrl(url));
@@ -272,17 +294,19 @@ export async function fetchValidItemIds({ refresh = false } = {}) {
   const result = {};
   for (const layer of layers) {
     const dir = dirs[layer];
-    const arrayKey = layer === 'trail' ? 'trips' : `${layer}s`;
+    const arrayKey = layer === 'trail' ? 'trips' : layer === 'cycle' ? 'routes' : `${layer}s`;
     try {
       const index = await getJson(`/${dir}/index.json`);
       const countries = (index.countries || [])
-        .filter((c) => c && c.cc)
-        .map((c) => c.cc);
+        .map((c) => (c ? (c.cc || (layer === 'cycle' ? c.country : null)) : null))
+        .filter(Boolean);
       if (countries.length === 0) continue;
       const ids = new Set();
       for (const cc of countries) {
         const data = await getJson(`/${dir}/${cc}.json`);
-        const items = Array.isArray(data[arrayKey]) ? data[arrayKey] : [];
+        const items = [...(Array.isArray(data[arrayKey]) ? data[arrayKey] : [])];
+        // Cycling files keep the unrated listed rows beside the rated routes.
+        if (layer === 'cycle' && Array.isArray(data.listed)) items.push(...data.listed);
         for (const item of items) {
           if (item && item.id) ids.add(String(item.id));
         }

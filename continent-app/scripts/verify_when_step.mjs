@@ -24,6 +24,7 @@ async function toWhenStep(width, height, fakeNow) {
     try {
       localStorage.setItem('continent.lang.v1', 'en');
       localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('carta.welcomeSeen', '1');
     } catch { /* storage unavailable */ }
   });

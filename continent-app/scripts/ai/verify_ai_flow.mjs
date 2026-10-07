@@ -112,6 +112,7 @@ await page.addInitScript(({ plan, ref }) => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     localStorage.setItem('carta.fareNoticeSeen', '1');
     localStorage.setItem('carta.dayplans.v1', JSON.stringify([plan]));

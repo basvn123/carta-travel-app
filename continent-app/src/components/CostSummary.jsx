@@ -55,11 +55,22 @@ export function CostLine({ cost, t }) {
 }
 
 /** One row of the receipt: what it is, the gauge, the figure. */
-function CostRow({ icon: Icon, label, eur, band }) {
+function CostRow({ icon: Icon, label, eur, band, level, t }) {
   if (eur == null) return null;
   return (
     <div className="cost-row">
-      <span className="cost-row-label"><Icon size={13} /> {label}</span>
+      <span className="cost-row-label">
+        <Icon size={13} />
+        <span className="cost-row-text">{label}</span>
+        {/* The compact receipt cannot carry the provenance sentence, so each
+            figure carries one word: measured in the city, or a country-level
+            figure standing in (owner call, T362 on T098-b). */}
+        {level && (
+          <span className="cost-level" title={t(level === 'city' ? 'cost.levelCityTitle' : 'cost.levelCountryTitle')}>
+            {t(level === 'city' ? 'cost.levelCity' : 'cost.levelCountry')}
+          </span>
+        )}
+      </span>
       <CostGauge band={band} />
       <span className="cost-row-eur mono">{eurDay(eur)}</span>
     </div>
@@ -115,8 +126,10 @@ export function CostReceipt({ cost, t, lang, lifestyleLabel, onOpenLifestyle, co
 
   return (
     <div className="cost-receipt">
-      <CostRow icon={BedIcon} label={t('cost.bed')} eur={cost.stayEur} band={cost.stayBand} />
-      <CostRow icon={DiningIcon} label={t('cost.food')} eur={cost.foodEur} band={cost.foodBand} />
+      <CostRow icon={BedIcon} label={t('cost.bed')} eur={cost.stayEur} band={cost.stayBand} t={t}
+        level={compact && cost.stayEur != null ? (cost.stayLevel === 'city' ? 'city' : 'country') : null} />
+      <CostRow icon={DiningIcon} label={t('cost.food')} eur={cost.foodEur} band={cost.foodBand} t={t}
+        level={compact && cost.foodEur != null ? (cost.foodLevel === 'city' ? 'city' : 'country') : null} />
       <div className="cost-total">
         <span className="cost-total-label">{t('cost.dayTotal')}</span>
         <span className={`cost-total-band ${BAND_CLASS[cost.dayBand]}`}>{bandWord}</span>

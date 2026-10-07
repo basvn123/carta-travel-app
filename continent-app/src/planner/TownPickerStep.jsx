@@ -216,7 +216,18 @@ export function TownPickerStep({
               {o.rating?.score != null && <ScoreChip rating={o.rating} size="xs" />}
             </button>
           ))}
-          {!nearbyOptions?.length && <p className="trip-note">{t('chat.townNoNearby')}</p>}
+          {/* Nothing near the stay: the sentence names the three other ways
+              in, and each is a button (T367), not a hint in prose. */}
+          {!nearbyOptions?.length && (
+            <div className="trip-note empty-act">
+              <p>{t('chat.townNoNearby')}</p>
+              {TABS.filter((tb) => tb.key !== 'nearby').map((tb) => (
+                <button key={tb.key} type="button" className="cov-empty-btn" onClick={() => setTab(tb.key)}>
+                  {t(`chat.townGo.${tb.key}`)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -330,7 +341,14 @@ export function TownPickerStep({
                   </button>
                 ))}
               </div>
-            ) : <p className="trip-note">{t('chat.townAiEmpty')}</p>
+            ) : (
+              <div className="trip-note empty-act">
+                <p>{t('chat.townAiEmpty')}</p>
+                <button type="button" className="cov-empty-btn" onClick={() => setTab('map')}>
+                  {t('chat.townGo.map')}
+                </button>
+              </div>
+            )
           )}
         </div>
       )}

@@ -1,0 +1,237 @@
+/* Empty states and honest stubs (T124; extended by T367).
+   Tokens only. Prose on paper: the coverage module is not a card, the stub
+   list is a list. Hairlines on the three nearest rows, one border on the
+   button. Mono carries the measured facts only: the count and the distances,
+   never the place names around them (T124-f). */
+
+.cov-empty {
+  max-width: 560px;
+  padding: var(--space-5) 2px;
+}
+.cov-empty p { margin: 0; }
+/* The count line heads the block: the place in sans, the count in mono. */
+.cov-empty .cov-empty-count {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.cov-empty .cov-empty-why {
+  margin-top: var(--space-2);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.cov-empty .cov-empty-head,
+.cov-empty .cov-empty-far {
+  margin-top: var(--space-4);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.cov-near {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule-soft);
+}
+.cov-near li { border-bottom: 1px solid var(--rule-soft); }
+.cov-near-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-family: var(--ui);
+  font-size: 14px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.cov-near-row:hover .cov-near-name { text-decoration: underline; }
+.cov-near-meta {
+  flex: none;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.cov-empty-btn,
+.stub-more {
+  min-height: var(--tap);
+  margin-top: var(--space-4);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.cov-empty-btn:hover,
+.stub-more:hover { border-color: var(--ink); color: var(--ink); }
+.cov-near-row:focus-visible,
+.cov-empty-btn:focus-visible,
+.stub-more:focus-visible,
+.stub-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Measured facts only, in the mono face. */
+.cov-empty .mono,
+.cov-near-meta .mono,
+.sec-none .mono,
+.stub-row-meta .mono,
+.stub-fact .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A list a chip, a filter or a missing page emptied (T367): the sentence,
+   then the one button (or the few, where the sentence names several ways
+   on) that undoes it. Not the coverage module, which is for WHERE. */
+.empty-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+.empty-act > p {
+  flex: 1 1 100%;
+  margin: 0;
+}
+.empty-act > .cov-empty-btn { margin-top: 0; }
+.cbrief-note.empty-act { color: var(--ink-soft); font-size: 13px; }
+
+/* The one line a detail-page section keeps when it has nothing to show
+   (docs/ONBOARDING_AND_EMPTY_STATES.md, "The detail-page rule"). */
+.sec-none p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.sec-none .sec-none-near { margin-top: var(--space-1); color: var(--ink-soft); }
+/* Inline in its sentence, so it wraps with the words; the vertical padding
+   grows the tap area to --tap without opening up the line. */
+.sec-none-link {
+  display: inline;
+  padding: calc((var(--tap) - 1.45em) / 2) 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.sec-none-link:hover { color: var(--accent); }
+.sec-none-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Explore's empty grid: the sentence is the content, so it leaves the count
+   badge's pill and sits in ink beside its one button. */
+.explore-count .explore-count-badge.is-empty {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.explore-count .explore-empty-clear { margin-top: 0; }
+
+/* The filter sheet's zero line, above the sticky bar. */
+.fsheet-none {
+  flex: none;
+  margin: 0;
+  padding: var(--space-2) var(--space-4) 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+/* The stub page's one credit line, said in the open (T124-f). */
+.stub-credit { margin-top: var(--space-2); }
+
+/* The honest stubs under the walks list. */
+.stub-list { margin-top: var(--space-5); }
+.stub-list p { margin: 0; }
+.stub-list-head {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.stub-list .stub-list-note {
+  margin-top: var(--space-1);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.stub-list ul {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule-soft);
+}
+.stub-list li { border-bottom: 1px solid var(--rule-soft); }
+.stub-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 14px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.stub-row:hover .stub-row-name { text-decoration: underline; }
+.stub-row-meta {
+  flex: none;
+  max-width: 45%;
+  font-size: 12px;
+  color: var(--ink-mute);
+  text-align: right;
+}
+
+/* The stub page. */
+.stub-facts {
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.stub-fact {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 14px;
+}
+.stub-fact dt { color: var(--ink-soft); }
+.stub-fact dd { margin: 0; color: var(--ink); }
+.stub-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+.stub-acts .upl-open { margin-top: 0; }
+.stub-note {
+  margin: var(--space-3) 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}

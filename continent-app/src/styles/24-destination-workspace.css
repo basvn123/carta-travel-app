@@ -5952,7 +5952,6 @@
 
 /* Cards on a beige ground need a beige card and a quieter hairline, and a
    hover that is lighter than the card rather than the same colour as it. */
-.saved-shell .saved-empty-mark { background: var(--paper); }
 .account-shell .account-profile-card,
 .account-shell .account-signin-card,
 .account-shell .account-pass-card,

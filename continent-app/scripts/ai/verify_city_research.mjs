@@ -168,6 +168,7 @@ async function setup(page) {
     });
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     localStorage.setItem('carta.fareNoticeSeen', '1');
     localStorage.setItem('carta.welcomeSeen', '1');

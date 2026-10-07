@@ -136,21 +136,58 @@ export function minutesText(min) {
   return m ? `${h} h ${m} min` : `${h} h`;
 }
 
-/** The mono line under a day title: a v2.0 string as written, or a v2.1
- *  dayStats object as "52 km, +160 m, 3 h to 4 h, €3 to €4, asphalt". */
-export function dayStatsLine(stats, lang) {
-  if (!stats) return '';
-  if (typeof stats === 'string') return stats;
+/* The separators a v2.0 line puts between its parts, kept as written. */
+const LINE_SEP = /(\s\/\s|\s\xB7\s|;\s+|\.\s+)/;
+/* A part that opens with a figure: "38 km", "+470 m", "€40", "~3 h". */
+const FIGURE_START = /^[~+\-−]?\s*[€£]?\d/;
+
+/** The day's measured line in parts, so a page can set the figures in mono
+ *  and the words in sans, and put an estimate mark on the one figure the
+ *  ledger calls an estimate (T162, closing T143-h and T146-f). Each part
+ *  carries the separator that goes before it, so the parts joined are the
+ *  line exactly as written.
+ *
+ *  A v2.1 object gives one part per figure, keyed by its dayStats field, then
+ *  the note. A v2.0 string is split only between its own parts: the run of
+ *  parts that open with a figure ("38 km / 470 m ascent / 70% hardpack, 30%
+ *  paved") stays mono as one part, and from the first part that opens with a
+ *  word ("two unlit tunnels", "Water: cafés at both sites") the rest is the
+ *  note, in sans. No word is changed, only the face it is set in. */
+export function dayStatsParts(stats, lang) {
+  if (!stats) return [];
+  if (typeof stats === 'string') {
+    const bits = stats.split(LINE_SEP);   // text, sep, text, sep, ...
+    let lead = '';
+    let i = 0;
+    while (i < bits.length && FIGURE_START.test(bits[i].trim())) {
+      lead += bits[i] + (i + 1 < bits.length && FIGURE_START.test((bits[i + 2] || '').trim()) ? bits[i + 1] : '');
+      i += 2;
+    }
+    if (!lead) return [{ key: 'note', text: stats, mono: false, sep: '' }];
+    if (i >= bits.length) return [{ key: 'line', text: stats, mono: true, sep: '' }];
+    return [
+      { key: 'line', text: lead, mono: true, sep: '' },
+      { key: 'note', text: bits.slice(i).join(''), mono: false, sep: bits[i - 1] },
+    ];
+  }
   const num = (n) => Number(n).toLocaleString(lang, { maximumFractionDigits: 1 });
   const time = stats.timeMin || {};
-  return [
-    Number.isFinite(stats.distanceKm) ? `${num(stats.distanceKm)} km` : '',
-    Number.isFinite(stats.ascentM) ? `+${num(stats.ascentM)} m` : '',
-    Number.isFinite(stats.descentM) ? `-${num(stats.descentM)} m` : '',
-    formatRange(time.low, time.high, minutesText),
-    eurRange(stats.spendEur, lang),
-    stats.note || '',
-  ].filter(Boolean).join(', ');
+  const parts = [
+    ['distanceKm', Number.isFinite(stats.distanceKm) ? `${num(stats.distanceKm)} km` : ''],
+    ['ascentM', Number.isFinite(stats.ascentM) ? `+${num(stats.ascentM)} m` : ''],
+    ['descentM', Number.isFinite(stats.descentM) ? `-${num(stats.descentM)} m` : ''],
+    ['timeMin', formatRange(time.low, time.high, minutesText)],
+    ['spendEur', eurRange(stats.spendEur, lang)],
+  ].filter(([, text]) => text).map(([key, text]) => ({ key, text, mono: true }));
+  if (stats.note) parts.push({ key: 'note', text: String(stats.note), mono: false });
+  return parts.map((part, i) => ({ ...part, sep: i ? ', ' : '' }));
+}
+
+/** The measured line under a day title as one string: a v2.0 string as
+ *  written, or a v2.1 dayStats object as "52 km, +160 m, 3 h to 4 h, €3 to
+ *  €4, asphalt". */
+export function dayStatsLine(stats, lang) {
+  return dayStatsParts(stats, lang).map((part) => part.sep + part.text).join('');
 }
 
 /** One packing entry: a v2.0 sentence, or v2.1 {item, whyThisTrip}. */
@@ -225,6 +262,15 @@ export function monthLabel(iso, lang) {
    about it rather than guessing. */
 const SHOWN_FIGURE = /^(?:budget\.(?:breakdown\.(?:accommodation|food|transport|activities)|totalEur|perDayEur)|gateways\[\d+\]\.transferMin|itinerary\[\d+\]\.dayStats\.(?:distanceKm|ascentM|descentM|timeMin|spendEur)|accommodationStrategy\[\d+\]\.priceEur)$/;
 const CONFIDENCE = ['sourced', 'derived', 'estimated'];
+/* The figures that are prices (T093). The same list as PRICE_PATTERNS in
+   Trips/carta-unified/carta-unified/pipeline/accuracy.py; keep them equal. */
+const PRICE_FIGURE = /^(?:budget\.(?:breakdown\.(?:accommodation|food|transport|activities)|totalEur|perDayEur)|eurRate|itinerary\[\d+\]\.dayStats\.spendEur|accommodationStrategy\[\d+\]\.priceEur)$/;
+
+/** A figure a reader should look at before booking: an estimate, or a
+ *  figure the ledger flags (the critic's dispute). */
+function needsCheck(row) {
+  return row.confidence === 'estimated' || (typeof row.flag === 'string' && row.flag.trim() !== '');
+}
 
 export function figureLedger(trip) {
   if (!Array.isArray(trip?.figures)) return null;
@@ -232,6 +278,7 @@ export function figureLedger(trip) {
   if (!rows.length) return null;
   const count = (c) => rows.filter((r) => r.confidence === c).length;
   const latest = rows.map((r) => r.checkedAt || '').sort().pop();
+  const checks = rows.filter(needsCheck);
   return {
     by: new Map(rows.map((r) => [r.path, r.confidence])),
     total: rows.length,
@@ -239,7 +286,28 @@ export function figureLedger(trip) {
     derived: count('derived'),
     estimated: count('estimated'),
     checkedAt: latest || null,
+    /* T093: the rows the reader should check, and whether a price is one. */
+    toCheck: checks.length,
+    volatile: checks.some((r) => PRICE_FIGURE.test(r.path)),
   };
+}
+
+/**
+ * The two signals behind the "check before you book" line (T093, spec J4).
+ * One rule, in one place, the same as pipeline/accuracy.py: with a ledger,
+ * the count is the shown figures that are estimated or flagged and volatile
+ * means one of them is a price; without a ledger (a v2.0 trip) the count is
+ * the trip's own verifyFlagCount and volatile means there is at least one.
+ * So the line and the figure footer under it can never disagree: they are
+ * read off the same rows. `from` says which rule applied.
+ */
+export function accuracySignals(trip, ledger) {
+  if (ledger) {
+    return { count: ledger.toCheck, volatile: ledger.volatile, from: 'ledger' };
+  }
+  const n = Number(trip?.verifyFlagCount);
+  const count = Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+  return { count, volatile: count > 0, from: 'record' };
 }
 
 /** True when any of the figure paths is an estimate. */
@@ -250,9 +318,13 @@ export function anyEstimated(ledger, ...paths) {
 /** The estimate marks a day's measured line needs: true when any of its
  *  shown figures is estimated. */
 export function dayEstimated(ledger, index) {
-  if (!ledger) return false;
   return ['distanceKm', 'ascentM', 'descentM', 'timeMin', 'spendEur']
-    .some((k) => ledger.by.get(`itinerary[${index}].dayStats.${k}`) === 'estimated');
+    .some((k) => dayFigureEstimated(ledger, index, k));
+}
+
+/** True when one figure of a day's measured line is an estimate. */
+export function dayFigureEstimated(ledger, index, key) {
+  return !!ledger && ledger.by.get(`itinerary[${index}].dayStats.${key}`) === 'estimated';
 }
 
 /**

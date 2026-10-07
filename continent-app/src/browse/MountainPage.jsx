@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import { mountainKind } from '../lib/footers.js';
@@ -31,6 +32,8 @@ import { MountainWayUp } from './DerivedModules.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
 import { MountainSignature } from './Signature.jsx';
+import { InfoDot } from '../components/InfoDot.jsx';
+import { numberSentence } from '../lib/numberSentences.js';
 
 /**
  * The mountain page: one published summit, and the argument for going there.
@@ -206,15 +209,19 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       .filter((m) => m && !monthsGood.includes(m))
     : [];
 
+  const say = (metric, value) => numberSentence(metric, value, { t, lang });
   const facts = [
     mountain.ele != null && {
       key: 'ele',
+      sentence: say('height', mountain.ele),
       label: t('mtn.factHeight'),
       value: `${Math.round(mountain.ele).toLocaleString(lang)} m`,
       mono: true,
     },
     mountain.prom != null && {
       key: 'prom',
+      term: 'prominence',
+      sentence: say('prominence', mountain.prom),
       label: t('mtn.factProminence'),
       // A computed prominence says so, and a computed one the search window
       // could only bound from below says THAT: "at least 2,312 m" is a
@@ -229,11 +236,13 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     },
     mountain.diff && {
       key: 'diff',
+      sentence: say('difficulty', mountain.diff.k),
       label: t('mtn.factDifficulty'),
       value: difficultyLabel(mountain, t),
     },
     mountain.view && {
       key: 'view',
+      sentence: say('viewArea', mountain.view.km2),
       label: t('mtn.factView'),
       value: [viewBandLabel(mountain, t),
         `${Math.round(mountain.view.km2).toLocaleString(lang)} km2`]
@@ -242,6 +251,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     },
     mountain.isoKm != null && {
       key: 'iso',
+      term: 'isolation',
+      sentence: say('isolation', mountain.isoKm),
       label: t('mtn.factIsolation'),
       value: `${mountain.isoKm.toLocaleString(lang)} km`,
       note: t('mtn.factIsolationNote'),
@@ -347,9 +358,10 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
           <dl>
             {facts.map((fact) => (
               <div key={fact.key} className="bpage-fact">
-                <dt>{fact.label}</dt>
+                <dt>{fact.label}{fact.term && <InfoDot term={fact.term} />}</dt>
                 <dd className={fact.mono ? 'mono' : ''}>
                   {fact.value}
+                  {fact.sentence && <span className="numsent">{fact.sentence}</span>}
                   {fact.note && <small>{fact.note}</small>}
                 </dd>
               </div>
@@ -519,10 +531,13 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
         </>
       )}
       takeAway={(
-        <button type="button" className="tpage-act" onClick={onShare}>
-          <LinkIcon size={15} />
-          <span>{t('detail.sendLink')}</span>
-        </button>
+        <>
+          <button type="button" className="tpage-act" onClick={onShare}>
+            <LinkIcon size={15} />
+            <span>{t('detail.sendLink')}</span>
+          </button>
+          <ReportProblem item={{ layer: 'mountain', id: mountain.id, cc: mountain.cc, name: mountain.name }} />
+        </>
       )}
       exits={exits}
       nearby={(

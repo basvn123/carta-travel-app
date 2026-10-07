@@ -273,7 +273,7 @@ export function DayAddPanel({
                 </button>
               )}
               {searchResults.length === 0 && (
-                <p className="daya-empty">{t('day.poiSearchEmpty', { q: query.trim(), city: city || 'here' })}</p>
+                <p className="daya-empty">{t('day.poiSearchEmpty', { q: query.trim(), city: city || t('day.thisCity') })}</p>
               )}
             </>
           ) : (
@@ -340,7 +340,16 @@ export function DayAddPanel({
                   t={t}
                 />
               ))}
-              {filtered.length === 0 && <p className="daya-empty">{t('dayws.pickNone')}</p>}
+              {filtered.length === 0 && (
+                <div className="daya-empty empty-act">
+                  <p>{t('dayws.pickNone', { city: city || t('day.thisCity') })}</p>
+                  {pick !== 'all' && (
+                    <button type="button" className="cov-empty-btn" onClick={() => { setPick('all'); setShown(PAGE); }}>
+                      {t('empty.showAll')}
+                    </button>
+                  )}
+                </div>
+              )}
               {shown < filtered.length && (
                 <button className="daya-more-btn" onClick={() => setShown((n) => n + PAGE)}>
                   {t('dayws.showMore', { n: Math.min(PAGE, filtered.length - shown) })}

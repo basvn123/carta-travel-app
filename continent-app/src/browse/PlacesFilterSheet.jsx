@@ -195,6 +195,11 @@ export function PlacesFilterSheet({
           {extra}
         </div>
 
+        {/* The one line the apply button cannot say on its own (T367): why
+            the count is zero and what to do about it. */}
+        {resultCount === 0 && (
+          <p className="fsheet-none" role="status">{t('filter.noneLine')}</p>
+        )}
         <div className={`fsheet-foot ${resultCount === 0 ? 'is-empty' : ''}`}>
           <button
             type="button"

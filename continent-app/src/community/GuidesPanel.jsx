@@ -227,7 +227,7 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
   );
 }
 
-export function GuidesPanel({ onClose, destinations, openGuideId }) {
+export function GuidesPanel({ onClose, destinations, openGuideId, onPublish = null }) {
   const { t, lang } = useI18n();
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -321,7 +321,14 @@ export function GuidesPanel({ onClose, destinations, openGuideId }) {
             ) : failed ? (
               <ErrorBlock message={t('state.guidesFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
             ) : guides.length === 0 ? (
-              <p className="frn-empty">{t('guides.empty')}</p>
+              <div className="frn-empty empty-act">
+                <p>{t('guides.empty')}</p>
+                {/* A guide is a saved trip its owner made public, so the way
+                    to write the first one starts in My trips. */}
+                {onPublish && (
+                  <button type="button" className="cov-empty-btn" onClick={onPublish}>{t('guides.publishCta')}</button>
+                )}
+              </div>
             ) : (
               <div className="gld-grid">
                 {guides.map((g) => (

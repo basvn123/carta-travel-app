@@ -58,6 +58,7 @@ try {
 
   await page.addInitScript(({ planId, stops }) => {
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('carta.fareNoticeSeen', '1');
     localStorage.setItem('carta.welcomeSeen', '1');
     localStorage.setItem('continent.onboardingSeen.v1', '1');

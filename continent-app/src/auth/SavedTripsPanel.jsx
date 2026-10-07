@@ -29,6 +29,7 @@ import { FAV_KIND_LABEL, parseFavKey } from '../lib/favorites.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
+import { InstallHint } from './InstallHint.jsx';
 
 // The mini map at the top of Planned trips rides on the same code-split chunk
 // as the big map: opening the panel before the map tab must not stall on
@@ -78,9 +79,10 @@ const MOCK_FRIEND_TRIPS = [
 ];
 
 // One statement of reasons (migration 039) against the first mock plan, so
-// the ?savedmock seam renders the owner's notice and its complaint form.
+// the ?savedmock seam renders the owner's notice and its complaint form; it
+// carries the ground 051 adds (the content rule item c6, someone else's work).
 const MOCK_STATEMENTS = [
-  { id: 1, plan_id: 'mp1', plan_label: 'Lisbon and Porto', source: 'notice', notice_count: 2, facts: 'The guide copies a chapter of a published travel book word for word.', automated: false, created_at: addDaysIso(-3), contest_until: addDaysIso(180), complaint_status: 'none', complaint_note: null, reinstated: false },
+  { id: 1, plan_id: 'mp1', plan_label: 'Lisbon and Porto', source: 'notice', notice_count: 2, facts: 'The guide copies a chapter of a published travel book word for word.', automated: false, created_at: addDaysIso(-3), contest_until: addDaysIso(180), complaint_status: 'none', complaint_note: null, reinstated: false, ground: 'terms', ground_ref: 'c6' },
 ];
 
 const MOCK_PLANS = [
@@ -132,10 +134,12 @@ function SavedSection({ title, sub, count, muted, big, action, children }) {
 }
 
 /** An empty shelf, as an invitation rather than a dashed drop zone. */
-function SavedEmpty({ Icon, text, cta, onCta }) {
+// The round icon mark that used to head this block carried nothing the
+// sentence does not say, so it went (T367, docs/ONBOARDING_AND_EMPTY_STATES.md
+// "Before you ship"); callers may still pass an Icon and it is ignored.
+function SavedEmpty({ text, cta, onCta }) {
   return (
     <div className="saved-empty">
-      <span className="saved-empty-mark"><Icon size={16} /></span>
       <p className="saved-empty-text">{text}</p>
       {cta && onCta && (
         <button className="saved-empty-cta" onClick={onCta}>{cta}</button>
@@ -1399,6 +1403,10 @@ export function SavedTripsPanel({
           {renderTabs('saved-cat')}
         </div>
       </div>
+
+      {/* The one place Carta suggests installing (owner call, T362 on T246-d):
+          after a trip is saved, on a phone browser, once. */}
+      <InstallHint hasSavedTrip={trips.length > 0 || tripPlans.length > 0 || dayPlans.length > 0} />
 
       {tab === 'favorites' && (
         /* ── The shortlist: everything starred anywhere in the app, grouped

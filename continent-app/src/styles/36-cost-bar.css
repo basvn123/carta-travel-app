@@ -1,0 +1,14 @@
+/* The cost bar (T172): a summary above the receipt lines. */
+.costbar { margin: 0 0 var(--space-3); }
+.costbar-track { display: flex; gap: 1px; background: var(--paper); }
+.costbar-seg {
+  flex-basis: 0; min-width: 0; height: var(--tap); padding: 0; border: 0;
+  background: transparent; cursor: pointer; display: flex; align-items: center;
+}
+.costbar-fill { display: block; width: 100%; height: 8px; }
+.costbar-seg[aria-pressed="true"] .costbar-fill { outline: 2px solid var(--ink); outline-offset: 1px; }
+.costbar-seg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.costbar-read { margin: 0; font-size: 13px; color: var(--ink-soft); min-height: 1.45em; }
+.costbar-read small { display: block; color: var(--ink-mute); font-size: 12px; }
+.costbar-read .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+.costbar-read > span:first-child { margin-right: var(--space-1); }

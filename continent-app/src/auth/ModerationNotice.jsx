@@ -4,6 +4,9 @@ import { AlertIcon, CheckIcon } from '../components/Icons.jsx';
 
 const BODY_MIN = 10;
 const BODY_MAX = 4000;
+// The items of the content rule in the Terms of Service (TermsOfService.jsx),
+// the only values the database accepts as a 'terms' ground (migration 051).
+const RULES = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7'];
 
 /**
  * ModerationNotice, the statement of reasons shown to the owner of a guide
@@ -23,7 +26,16 @@ const BODY_MAX = 4000;
  * complaint is still possible, with the view's only filled button.
  *
  * The statement is built from fields, not stored prose, so it reads in the
- * owner's language. The only free text is the moderator's reason and answer.
+ * owner's language. The only free text is the moderator's reason and answer,
+ * and the law a moderator names when the ground is 'illegal'.
+ *
+ * GROUND (migration 051, DSA Article 17(3)(d) and (e)). A statement written
+ * since 051 says whether the guide came down as illegal content (with the
+ * law relied on) or under the content rule in the Terms of Service (with the
+ * item, whose title is translated here). Older statements carry no ground
+ * and the row is left out. LOCK (051): while the decision stands the guide
+ * cannot be published again, so the statement says so until it is
+ * reversed.
  */
 export function ModerationNotice({ statement, contest, onContested }) {
   const { t, lang } = useI18n();
@@ -85,6 +97,12 @@ export function ModerationNotice({ statement, contest, onContested }) {
     setBusy(false);
   };
 
+  const ground = s.ground === 'terms' && RULES.includes(s.ground_ref)
+    ? t('moderation.groundTerms', { rule: t(`moderation.rule.${s.ground_ref}`) })
+    : s.ground === 'illegal' && s.ground_ref
+      ? t('moderation.groundLaw', { law: s.ground_ref })
+      : '';
+
   const n = Number(s.notice_count) || 0;
   const source = s.source === 'notice'
     ? t(n === 1 ? 'moderation.startNotice1' : 'moderation.startNoticeN', { n })
@@ -123,6 +141,12 @@ export function ModerationNotice({ statement, contest, onContested }) {
               <dt>{t('moderation.whyLabel')}</dt>
               <dd className="modnote-quote">{s.facts}</dd>
             </div>
+            {ground && (
+              <div>
+                <dt>{t('moderation.groundLabel')}</dt>
+                <dd>{ground}</dd>
+              </div>
+            )}
             <div>
               <dt>{t('moderation.startLabel')}</dt>
               <dd>{source}</dd>
@@ -135,6 +159,12 @@ export function ModerationNotice({ statement, contest, onContested }) {
               <dt>{t('moderation.whenLabel')}</dt>
               <dd><span className="modnote-date">{fmtDate(s.created_at)}</span></dd>
             </div>
+            {status !== 'reversed' && (
+              <div>
+                <dt>{t('moderation.lockLabel')}</dt>
+                <dd>{t('moderation.lock')}</dd>
+              </div>
+            )}
             {s.complaint_note && (status === 'upheld' || status === 'reversed') && (
               <div>
                 <dt>{t('moderation.answerLabel')}</dt>

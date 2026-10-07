@@ -53,6 +53,7 @@ const ok = (msg) => console.log('  ok:', msg);
 const GUEST = `(() => {
   localStorage.setItem('continent.lang.v1', 'en');
   localStorage.setItem('continent.guestMode.v1', '1');
+  localStorage.setItem('continent.homeSeen.v1', '1');
   localStorage.setItem('carta.welcomeSeen', '1');
   localStorage.setItem('carta.welcomeSeen.v1', '1');
   localStorage.setItem('carta.mapGuideDone', '1');
@@ -204,6 +205,18 @@ const run = async () => {
   if (!/looks incomplete/i.test(await alertBox.innerText())) fail('a bad email is not refused in words');
   if (await emailBox.getAttribute('aria-invalid') !== 'true') fail('a bad email does not mark the field invalid');
   if (!(await reasonBox.inputValue())) fail('a refusal cleared what was typed');
+  // Migration 051 (T068-d): an optional name with a tied label, and the
+  // good-faith tick is required before anything is sent.
+  await emailBox.fill('');
+  const nameBox = page.locator('.gld-report input[autocomplete="name"]');
+  const nameId = await nameBox.getAttribute('id');
+  if (!(await page.locator(`.gld-report label[for="${nameId}"]`).count())) fail('the name field has no label tied to it');
+  const faith = page.locator('.gld-report input[type="checkbox"]');
+  if (await faith.isChecked()) fail('the good-faith tick starts ticked');
+  await page.locator('.gld-report button[type="submit"]').click();
+  if (!/good faith/i.test(await alertBox.innerText())) fail('a notice without the good-faith tick is not refused in words');
+  if (!(await faith.evaluate((el) => el === document.activeElement))) fail('the good-faith refusal did not move focus to the tick');
+  ok('the report form: an optional name with a label, and no notice goes without the good-faith tick');
   // Cancel closes the form and hands focus back to the button that opened it.
   await page.locator('.gld-report .gld-copy', { hasText: /cancel|keep/i }).first().click();
   await page.waitForTimeout(300);
@@ -215,6 +228,9 @@ const run = async () => {
   // email is cleared here: it is optional, and this notice goes without one.
   await page.locator('.gld-report input[type="email"]').fill('');
   await page.locator('.gld-report textarea').fill('This guide copies a chapter of a published book word for word.');
+  await page.locator('.gld-report input[autocomplete="name"]').fill('Ann Reporter');
+  await page.locator('.gld-report input[type="checkbox"]').check();
+  await page.screenshot({ path: `${SHOTS}/guides-report-form.png` });
   await page.locator('.gld-report button[type="submit"]').click();
   await page.locator('.gld-report-done[role="status"]').waitFor({ timeout: 5000 });
   if (!/Report received/i.test(await page.locator('.gld-report-done').innerText())) fail('a sent report says nothing');
@@ -235,6 +251,7 @@ const run = async () => {
     await page.locator('.gld-report-open').scrollIntoViewIfNeeded();
     await page.locator('.gld-report-open').click();
     await page.locator('.gld-report textarea').fill('This guide copies a chapter of a published book word for word.');
+    await page.locator('.gld-report input[type="checkbox"]').check();
     await page.locator('.gld-report button[type="submit"]').click();
   };
   for (let k = 2; k <= 5; k += 1) {

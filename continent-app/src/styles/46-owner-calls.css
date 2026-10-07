@@ -1,0 +1,77 @@
+/* Owner calls of 2026-10-07 (T364 and T368, rows T362-b, T362-c, T362-f).
+   Tokens only: no hex, no gradient, no shadow. */
+
+/* Filters on Explore is a bordered secondary, not a filled primary (T166-c).
+   Explore has no primary of its own, and the phone showed this as its only
+   filled control. Scoped to the Explore filter bar: Destinations keeps its
+   own row. */
+.explore-filterbar .places-filter-btn {
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink);
+}
+.explore-filterbar .places-filter-btn:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+.explore-filterbar .places-filter-btn.has-active { border-color: var(--ink); }
+.explore-filterbar .places-filter-btn .filter-tray-badge { background: var(--ink-fill); color: var(--on-fill); }
+
+/* The scrim behind every modal dialog is --ink at 28 percent (carta-design,
+   Components). It was a literal rgba of the same colour. */
+.lifestyle-scrim { background: color-mix(in srgb, var(--ink) 28%, transparent); }
+
+/* The fine-pointer exception (owner, 2026-10-07; carta-design Layout). On a
+   mouse a compact control may be 32 px, and it may not be less. These are the
+   Explore controls the T193 audit found under 32 px at 1280 px. A touch
+   device keeps --tap through the phone rules above, so this stays off any
+   viewport the phone layout owns. */
+@media (pointer: fine) and (min-width: 769px) {
+  .xrail-country { min-height: 32px; }
+  .xrail-country-page { min-width: 32px; min-height: 32px; }
+  .xrails-all { min-height: 32px; padding: 0 8px; }
+  .xrails-arrow { width: 32px; height: 32px; }
+  .xcard-star, .xcard-info { width: 32px; height: 32px; }
+  .xrail-group-body select { min-height: 32px; }
+  /* The trip planner's compact chips and links. */
+  .guide-recap-chip.is-link { min-height: 32px; box-sizing: border-box; }
+  .wtrip-len { min-width: 32px; min-height: 32px; }
+  .guide-startover, .wready-link { min-height: 32px; display: inline-flex; align-items: center; }
+}
+
+/* The left-hand Lifestyle panel opens over a scrim on every tab now, so it
+   must sit above it (it was z-index 15, under the scrim's 40). */
+.accom-panel.lifestyle-panel { z-index: 41; }
+
+/* The compact receipt on an Explore card says, per figure, whether it was
+   measured in the city or is a country-level one (T098-b, owner call). */
+.cost-row-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.cost-level {
+  flex: none;
+  font-size: 10.5px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* The install hint in My trips (T246-d, owner call): one line, one secondary
+   button, an ordinary row under the tabs. */
+.install-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: var(--space-3) var(--space-4) 0;
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.install-hint-text { margin: 0; font-size: 13.5px; color: var(--ink); min-width: 0; }
+.install-hint-actions { display: flex; align-items: center; gap: var(--space-2); flex: none; }
+.install-hint-x {
+  min-width: var(--tap);
+  min-height: var(--tap);
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  cursor: pointer;
+}
+.install-hint-x:hover { color: var(--ink); }

@@ -29,6 +29,7 @@ import * as M from '../../src/lib/mountainStory.js';
 import * as T from '../../src/lib/trailStory.js';
 import * as C from '../../src/lib/cycleStory.js';
 import { fitTitle, fitDescription, clean } from './html.mjs';
+import * as D from './derived.mjs';
 
 /** The English catalogue as the app's t(): same keys, same {slot} rule. */
 export const t = (key, vars) => {
@@ -420,8 +421,13 @@ export function destPage(dos, ctx) {
   const measured = cost && cost.stayLevel === 'city';
   const v = dos.verdict || {};
   const best = (dos.when?.best || []).map(monthOf).filter(Boolean);
-  const intro = clean(dos.intro?.short || '');
-  const body = clean(dos.intro?.body || '');
+  // T368 (owner call T362 on T205-g): on a page that is not English the
+  // English-only Wikivoyage intro is displaced by sentences derived from the
+  // structured fields (derived.mjs). ctx.lang is unset for the English build.
+  const lang = ctx.lang || 'en';
+  const foreign = lang !== 'en';
+  const intro = foreign ? '' : clean(dos.intro?.short || '');
+  const body = foreign ? '' : clean(dos.intro?.body || '');
   const day = cost?.dayEur != null ? `€${n0(cost.dayEur)}` : null;
   const headNum = measured && day ? `${day} a day` : (isNum(v.score) ? `rated ${d1(v.score)}` : null);
   const costLine = day
@@ -430,6 +436,9 @@ export function destPage(dos, ctx) {
       : `A day in ${name} costs about ${day} for one person, from ${cost.stayLevel === 'region' ? 'the nearest measured town' : 'national figures'} rather than stays measured in the town.`)
     : null;
   const rankLine = isNum(v.country_rank) && isNum(v.country_n) ? `Rated ${n0(v.country_rank)} of ${n0(v.country_n)} places in ${countryName(cc)}.` : null;
+  const derivedLead = foreign ? D.destLead(lang, { name, country: countryName(cc), score: v.score, day }) : null;
+  const derivedRank = foreign && isNum(v.country_rank) && isNum(v.country_n)
+    ? D.destRank(lang, { rank: v.country_rank, n: v.country_n, country: countryName(cc) }) : null;
   const image = destImage(dos, name);
   const ar = dos.around || {};
   const trailLinks = (ar.trails || []).filter((x) => ctx.isTrail(x.cc, x.id)).map((x) => ({ name: clean(x.name), path: paths.trail(x.cc, x.id, x.name), meta: `${d1(x.km_len)} km`, metaNum: true }));
@@ -442,7 +451,7 @@ export function destPage(dos, ctx) {
     .map((x) => ({ name: clean(x.name), path: paths.mountain(x.cc, x.id), meta: `${d1(x.km)} km away`, metaNum: true }));
   const days = (dos.trips || []).map((x) => ({ x, d: x.id ? ctx.destById(x.id) : null })).filter((o) => o.d)
     .map(({ x, d }) => ({ name: d.name, path: paths.dest(d.slug), meta: x.travel?.minutes ? `${fmtHours(x.travel.minutes / 60)} by ${x.travel.mode || 'road'}` : `${n0(x.dist_km)} km`, metaNum: true }));
-  const hl = (dos.highlights || []).slice(0, 8).map((h) => (h.fact ? `${clean(h.name)}: ${sentence(h.fact)}` : sentence(h.name)));
+  const hl = (dos.highlights || []).slice(0, 8).map((h) => (h.fact && !foreign ? `${clean(h.name)}: ${sentence(h.fact)}` : sentence(h.name)));
   const subject = {
     '@type': 'TouristDestination',
     name,
@@ -460,9 +469,9 @@ export function destPage(dos, ctx) {
     kind: 'dest',
     path: paths.dest(dos.slug),
     title: fitTitle(name, headNum, countryName(cc)),
-    description: fitDescription([intro || body, costLine, rankLine]),
+    description: foreign ? fitDescription([...derivedLead, derivedRank]) : fitDescription([intro || body, costLine, rankLine]),
     h1: name,
-    lead: [intro || body, costLine].filter(Boolean),
+    lead: foreign ? derivedLead : [intro || body, costLine].filter(Boolean),
     facts: [
       day ? { label: measured ? 'A day for one person' : 'A day for one person, estimated', value: day, num: true } : null,
       cost?.stayEur != null ? { label: 'Bed, a night', value: `€${n0(cost.stayEur)}`, num: true } : null,
@@ -490,7 +499,7 @@ export function destPage(dos, ctx) {
       days.length ? { h2: `Day trips from ${name}`, links: linkRows(days, 8) } : null,
       (() => { const seen = new Set(days.map((x) => x.path)); const near = ctx.nearPlaces(dos.id, 4).filter((x) => !seen.has(x.path)); return near.length ? { h2: `Other places near ${name}`, links: near } : null; })(),
     ],
-    coverage: rankLine,
+    coverage: foreign ? derivedRank : rankLine,
     credits: (dos.credits || []).map((c) => clean(`${c.name}${c.licence && c.licence !== 'see site' ? `, ${c.licence}` : ''}`)),
     crumbs: [home, countryCrumb(cc)],
     boot: `#dest=${encodeURIComponent(dos.id)}`,
@@ -915,6 +924,8 @@ export function receiptPage(plan, ctx) {
 const joinNames = (names) => (names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`);
 
 export function tripPage(trip, ctx) {
+  const lang = ctx.lang || 'en';
+  const foreign = lang !== 'en';
   const cities = (trip.cities || []).map((c) => ({ ...c, d: ctx.destByCity(c.cc, c.city) }));
   const names = cities.map((c) => clean(c.d?.name || c.city));
   const h1 = `${joinNames(names)}, ${trip.days} days`;
@@ -923,13 +934,14 @@ export function tripPage(trip, ctx) {
   const hook = sentence(`${upFirst(joinNames(nights))}${TRANSPORT[trip.transport] ? `, ${t(TRANSPORT[trip.transport]).toLowerCase()}` : ''}`);
   const cost = trip.cost?.per_day_eur ? sentence(`About €${n0(trip.cost.per_day_eur)} a day for one person for the beds and the ground transport, an estimate from the catalogue`) : null;
   const cc = trip.cc;
+  const derivedTrip = foreign ? D.tripLead(lang, { days: trip.days, nights: trip.nights, names, perDayEur: trip.cost?.per_day_eur }) : null;
   return {
     kind: 'trip',
     path: paths.trip(trip.id),
     title: fitTitle(joinNames(names), `${trip.days} days`, countryName(cc)),
-    description: fitDescription([hook, cost, season.length ? `Best ${monthSpan(season)}.` : '']),
+    description: foreign ? fitDescription(derivedTrip) : fitDescription([hook, cost, season.length ? `Best ${monthSpan(season)}.` : '']),
     h1,
-    lead: [hook, cost].filter(Boolean),
+    lead: foreign ? derivedTrip : [hook, cost].filter(Boolean),
     facts: [
       { label: 'Days', value: `${trip.days} days, ${trip.nights} nights`, num: true },
       isNum(trip.km) ? { label: 'Distance between stops', value: `${n0(trip.km)} km`, num: true } : null,
@@ -957,19 +969,22 @@ export function tripPage(trip, ctx) {
 }
 
 export function journeyPage(j, ctx) {
+  const lang = ctx.lang || 'en';
+  const foreign = lang !== 'en';
   const name = clean(j.title);
   const cc = j.countryCode;
   const months = (j.bestPeriod?.months || []).map(monthOf).filter(Boolean);
   const perDay = j.budget?.perDayEur;
-  const days = (j.itinerary || []).map((d) => `Day ${d.day}: ${sentence(d.title)}`);
+  const days = foreign ? [] : (j.itinerary || []).map((d) => `Day ${d.day}: ${sentence(d.title)}`);
+  const derivedJourney = foreign ? D.journeyLead(lang, { name, days: j.durationDays, country: countryName(cc), perDayEur: perDay?.low }) : null;
   const others = ctx.journeysOfType(j.tripTypeSlug, j.id, 6);
   return {
     kind: 'journey',
     path: paths.journey(j.id),
     title: fitTitle(name, `${j.durationDays} days`, null),
-    description: fitDescription([j.hook, j.summary]),
+    description: foreign ? fitDescription(derivedJourney) : fitDescription([j.hook, j.summary]),
     h1: name,
-    lead: [j.hook, j.summary].filter(Boolean).map(sentence),
+    lead: foreign ? derivedJourney : [j.hook, j.summary].filter(Boolean).map(sentence),
     facts: [
       { label: 'Length', value: `${j.durationDays} days`, num: true },
       j.tripType ? { label: 'Kind of trip', value: clean(j.tripType) } : null,
@@ -991,7 +1006,7 @@ export function journeyPage(j, ctx) {
     crumbs: cc && paths.country(cc) ? [home, countryCrumb(cc)] : [home],
     subject: {
       '@type': 'TouristTrip', name, ...(j.tripType ? { touristType: clean(j.tripType) } : {}),
-      itinerary: { '@type': 'ItemList', itemListElement: (j.itinerary || []).map((d, i) => ({ '@type': 'ListItem', position: i + 1, name: clean(d.title) })) },
+      ...(foreign ? {} : { itinerary: { '@type': 'ItemList', itemListElement: (j.itinerary || []).map((d, i) => ({ '@type': 'ListItem', position: i + 1, name: clean(d.title) })) } }),
     },
     lastmod: j.generated_at || null,
   };

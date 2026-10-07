@@ -578,13 +578,6 @@
   border-radius: 14px;
   background: var(--paper-dim);
 }
-.saved-empty-mark {
-  width: 34px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  background: var(--bg-card);
-  color: var(--accent);
-}
 .saved-empty-text {
   margin: 0;
   font-size: 12.5px;

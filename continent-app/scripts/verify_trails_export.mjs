@@ -263,6 +263,7 @@ try {
   //          the front page (and its footer) is gone.
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1360, height: 900 } });
+  await page.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await page.goto(BASE);
   try {
     await page.getByRole('button', { name: 'Continue without an account' }).click({ timeout: 15000 });

@@ -1,0 +1,334 @@
+/* ==========================================================================
+   The first-run receipt (T099, docs/FIRST_RUN_RESULT.md,
+   components/FirstRunReceipt.jsx). Tokens only, from :root.
+
+   Order on the page: orientation line, input strip, receipt card, the one
+   primary, the flight sentence with its door, the exclusions sentence. The
+   card is the carta-design receipt: --paper-dim header, hairline lines with
+   the figure right aligned in --mono, a 2px --ink rule above the sum, the sum
+   at 34px weight 500, an --accent-bg footer.
+   ========================================================================== */
+
+.frr {
+  max-width: 520px;
+  margin: 0 0 var(--space-5);
+  font-family: var(--ui);
+  color: var(--ink);
+}
+
+.frr .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The only part of the screen that exists because the viewer is new. Prose. */
+.frr-orient {
+  margin: 0 0 var(--space-3);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* ── The input strip: one bordered row, hairlines between the fields ── */
+.frr-strip {
+  display: grid;
+  grid-template-columns: 0.9fr 1.2fr 1fr 1fr;
+  margin: 0 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+}
+.frr-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 6px var(--space-3);
+  border-left: 1px solid var(--rule-soft);
+}
+.frr-cell:first-child { border-left: 0; }
+.frr-cell-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.frr-cell select,
+.frr-cell input {
+  width: 100%;
+  min-width: 0;
+  min-height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+}
+.frr-cell select { font-family: var(--ui); }
+.frr-cell input { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.frr-cell:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.frr-cell select:focus-visible,
+.frr-cell input:focus-visible { outline: none; border-color: var(--accent); }
+
+/* ── The card ── */
+.frr-card {
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.frr-head {
+  padding: var(--space-3) var(--space-4);
+  background: var(--paper-dim);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.frr-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.frr-sub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.frr-lines { margin: 0; padding: 0 var(--space-4); }
+.frr-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.frr-line:first-child { border-top: 0; }
+.frr-line dt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.frr-line dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: right;
+  white-space: nowrap;
+}
+.frr-label { font-size: 14px; font-weight: 600; }
+.frr-prov {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.frr-prov.mono { font-size: 12px; }
+.frr-tilde { color: var(--ink-soft); }
+.frr-est {
+  text-decoration: none;
+  font-family: var(--ui);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.frr-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The sum: a 2px ink rule above, the figure at 34px. */
+.frr-line.frr-sum {
+  border-top: 2px solid var(--ink);
+  align-items: end;
+}
+.frr-sum dd { display: flex; flex-direction: column; align-items: flex-end; }
+.frr-sum-eur {
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+.frr-sum-eur .frr-est { font-size: 12px; }
+.frr-each {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+/* Repricing: the figures fade in place, opacity only, under 300ms. */
+.frr-lines dd { animation: frr-reprice 0.2s ease-out; }
+@keyframes frr-reprice { from { opacity: 0.35; } to { opacity: 1; } }
+
+.frr-foot {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent-bg);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* ── After the card ── */
+.frr-cta {
+  width: 100%;
+  margin: var(--space-3) 0 0;
+}
+.frr-flight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin: var(--space-3) 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.frr-flight > span { flex: 1 1 220px; }
+.frr-notin {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* ── "Your flight": the one sheet that asks the airport ── */
+.frr-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.28);
+}
+.frr-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 12px 12px 0 0;
+  box-shadow: var(--shadow-2);
+  font-family: var(--ui);
+  color: var(--ink);
+}
+@media (min-width: 720px) {
+  .frr-scrim { align-items: center; }
+  .frr-sheet { border-radius: 12px; }
+}
+.frr-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.frr-sheet-head h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 600;
+}
+.frr-sheet-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--ink);
+  cursor: pointer;
+}
+.frr-sheet-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.frr-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+.frr-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.frr-field-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.frr-field input {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 15px;
+}
+.frr-field input.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.frr-field input:focus-visible { outline: none; border-color: var(--accent); }
+.frr-field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.frr-sheet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+}
+.frr-sheet-actions .btn { flex: 1 1 180px; }
+
+/* ── Where the receipt sits ── */
+
+/* Destination page: straight under the facts on a phone; on a desktop at the
+   head of the right column, with the side folds below it and the main
+   column running down the left beside both. */
+.destp-v2 .destp-grid.has-frr .destp-frr { min-width: 0; }
+@media (min-width: 1020px) {
+  .destp-v2 .destp-grid.has-frr { grid-template-rows: auto 1fr; }
+  .destp-v2 .destp-grid.has-frr .destp-frr { grid-column: 2; grid-row: 1; }
+  .destp-v2 .destp-grid.has-frr .destp-col.is-main { grid-column: 1; grid-row: 1 / span 2; }
+  .destp-v2 .destp-grid.has-frr .destp-col.is-side { grid-column: 2; grid-row: 2; }
+}
+
+/* While "Set your dates" is the view's primary, the page's own primary waits
+   as a secondary (FIRST_RUN_RESULT.md, "never a second primary"). */
+.destp-plan-btn.is-quiet {
+  color: var(--ink);
+  border-color: var(--rule);
+  background: var(--bg-card);
+}
+.destp-plan-btn.is-quiet:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+.bpage-base.is-quiet {
+  color: var(--ink);
+  border-color: var(--rule);
+  background: var(--bg-card);
+}
+.bpage-base.is-quiet:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+.bpage-base.is-quiet svg { color: var(--ink-soft); }
+
+/* A narrow column (a phone, or the destination page's 380px side column)
+   takes the strip as two rows: the stay across, the two dates under it, so a
+   date field is never cut. */
+.frr { container-type: inline-size; }
+@container (max-width: 460px) {
+  .frr-strip { grid-template-columns: 1fr 1fr; }
+  .frr-strip .frr-cell:nth-child(-n+2) { border-bottom: 1px solid var(--rule-soft); }
+  .frr-strip .frr-cell:nth-child(3) { border-left: 0; }
+}
+@media (max-width: 420px) {
+  .frr-sum-eur { font-size: 30px; }
+}
+
+/* Found while checking T099 at 380px: the destination page's three action
+   buttons sit in a three-column grid on a phone, and a grid item will not
+   shrink below its label, so "Open in Google Maps" pushed the page 62px
+   sideways. The labels already ellipsize; letting the items shrink is the
+   whole fix. */
+@media (max-width: 720px) {
+  .destp-v2 .destp-head-actions > * { min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frr-lines dd { animation: none; }
+}

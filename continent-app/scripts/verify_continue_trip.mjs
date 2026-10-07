@@ -75,6 +75,7 @@ const STOPS = {
 const seed = async (page, { trips = [], signedIn = false, dayPlans = [] } = {}) => {
   await page.addInitScript(({ ref, si, plans }) => {
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('carta.fareNoticeSeen', '1');
     localStorage.setItem('carta.welcomeSeen', '1');

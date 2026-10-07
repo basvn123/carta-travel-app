@@ -35,8 +35,20 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
  *
  * The legal identity of the provider lives in Imprint.jsx (T015 fills it in),
  * so these terms point there rather than repeating placeholders.
+ *
+ * LEGAL REVIEW PENDING (owner step J4 of Execution/_OWNER-RUNBOOK.md, register
+ * row T365-c). The section "Public guides: the content rule" is a draft
+ * written by T365 on 2026-10-07 from the owner's decision on T070-c: the
+ * terms carry a content rule that a moderator can cite as the contractual
+ * ground of a takedown, apart from the legal ground (DSA Article 17(3)(d)
+ * and (e)). Its seven items are the only values migration 051 accepts as a
+ * 'terms' ground ('c1' to 'c7', in this order); the owner's statement shows
+ * their titles through the moderation.rule.* keys in the six catalogues.
+ * Renumbering or rewording an item here means changing those keys, and
+ * removing one means a migration. Someone qualified should read the section
+ * before the first takedown that cites it; until then it is not reviewed.
  */
-const UPDATED = '3 October 2026';
+const UPDATED = '7 October 2026';
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function TermsOfService({ onClose }) {
@@ -279,6 +291,60 @@ export function TermsOfService({ onClose }) {
             export on.
           </p>
 
+          <h3 id="content-rule">Public guides: the content rule</h3>
+          <p>
+            You can publish a trip to the public guides, where anyone can read
+            it. A published guide is your content and you are responsible for
+            it. It must not contain any of the following. Each item has a
+            number, and if we take a guide down under this rule, the
+            statement we give you names the item.
+          </p>
+          <ol>
+            <li>
+              Other people's personal data: an address, phone number, email
+              address, photograph or private detail of someone who has not
+              agreed to its publication.
+            </li>
+            <li>
+              Advertising and spam: promotion of a business, referral or
+              discount codes, contact details for selling something, or the
+              same guide published again and again.
+            </li>
+            <li>Hate, harassment or threats against a person or a group.</li>
+            <li>Sexual or violent content.</li>
+            <li>
+              Dangerous or misleading content: information you know to be
+              false, or encouragement to break the law or to put yourself or
+              others in danger, such as entering a closed or protected area.
+            </li>
+            <li>
+              Someone else's work: text, photographs or maps copied without the
+              right to publish them.
+            </li>
+            <li>
+              Content that is not a travel guide, or a guide used to send
+              messages to other people.
+            </li>
+          </ol>
+          <p>
+            Content that is illegal is taken down whether or not it is listed
+            above; the statement then names the law we relied on instead of an
+            item.
+          </p>
+          <p>
+            Anyone can report a public guide from the guide itself, with or
+            without an account, and we read every report. If we take a guide
+            down, it leaves the public guides and its share links stop
+            working. The trip stays in your account and nothing in it is
+            deleted. In My trips you get a statement of reasons: what we did,
+            why, on which ground, and how to contest it. You can contest it
+            there, free of charge, for six months, and a person reads and
+            answers every complaint. While the decision stands, the guide
+            cannot be published again; if we reverse it, you can. You can also
+            take the decision to a certified out-of-court dispute settlement
+            body or to a court.
+          </p>
+
           <h3>Availability and changes</h3>
           <p>
             We aim to keep Carta up and improving, and we do not guarantee it
@@ -289,6 +355,70 @@ export function TermsOfService({ onClose }) {
             days' notice by email before a change to these terms takes effect,
             and a pass already running stays under the terms it was bought
             under.
+          </p>
+
+          {/* T333: the licence an upload needs (destinations spec 2.8, rows
+              T206-b and T141). Transferable and sublicensable are the two
+              words a grant usually forgets; the credit promise replaces a
+              moral-rights waiver, which is void in France, Germany, Spain
+              and Italy. The OpenStreetMap paragraph and the indemnity wait
+              on the owner's legal review (step J4, row T333-b). If this
+              section changes, change UPLOAD_TERMS_VERSION in
+              community/uploads.js too. */}
+          <h3>Photos and tracks you share</h3>
+          <p>
+            You may send Carta a photo or a GPS track of a place in the app.
+            A person checks every upload before it appears. If we decline or
+            later remove an upload because we believe it is illegal or breaks
+            these terms, we tell you why and how to ask us to look again.
+          </p>
+          <p>
+            You keep the copyright in what you share. By sending it you give
+            Carta a worldwide, non-exclusive, royalty-free, perpetual and
+            irrevocable licence to store, copy, adapt (crop, resize,
+            re-encode), publish and display it, in the app and wherever Carta
+            appears. Carta may pass this licence on to others (sublicense it),
+            and may transfer it, for example to whoever takes Carta over. We
+            still remove an upload from Carta when you ask, or when you delete
+            your account; the licence is irrevocable so that what was rightly
+            done under it before then stays lawful.
+          </p>
+          <p>
+            We credit you, by the name you give with the upload, wherever
+            Carta shows it, and anyone we pass it on to must credit you the
+            same way. Where the law of your country gives you moral rights, such
+            as the right to be named and to object to a distortion of your
+            work, nothing in these terms asks you to give them up.
+          </p>
+          <p>
+            With each upload you also choose who else may reuse it: Carta
+            only, Creative Commons Attribution 4.0 (CC BY 4.0), or Creative
+            Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0). A Creative
+            Commons licence is one you grant to everyone, and it cannot be
+            withdrawn for copies made while it applied. It comes on top of the
+            licence to Carta above and does not replace it.
+          </p>
+          <p>
+            For a track there is a separate box: OpenStreetMap may use this
+            track under its contributor terms. Neither Creative Commons licence
+            allows that by itself. Leave the box unticked and we do not offer
+            your track to OpenStreetMap.
+          </p>
+          <p>
+            You promise that the upload is your own work or that you have the
+            right to share it on these terms, that anyone who can be
+            recognised in a photo agreed to it, and that it breaks no law. If
+            somebody makes a claim against Carta because one of those promises
+            was not true, you will cover Carta's reasonable cost of that
+            claim, as far as the law allows this to be asked of a consumer.
+          </p>
+          <p>
+            Before an upload leaves your device the app removes the place,
+            camera and date details from a photo, and hides the start and end
+            of a track together with its times and device data. Anyone may
+            report an upload they believe is illegal, by email to the address
+            under Contact or through the report link shown with each published
+            upload.
           </p>
 
           <h3>Liability</h3>

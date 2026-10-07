@@ -1,0 +1,67 @@
+/* The Lifestyle slider under a trip's receipt (T173). The Lifestyle panel's
+   "Where you sleep" answer drawn as a stepped slider: one stop per sleep
+   group, each named under its stop, and one sentence under it that says what
+   the figure at this stop buys. Prose is --ui; the receipt above carries the
+   mono figures. */
+
+.ls-slider {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule-soft);
+}
+.ls-slider-label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+/* A finger gets the full --tap height; a mouse gets the compact 32px the
+   fine-pointer exception allows, which keeps the words close to the track. */
+/* The track runs from the middle of the first word's column to the middle of
+   the last one. The thumb's centre travels from half a thumb in to half a
+   thumb short of the end, which the 9px and 18px terms correct for. */
+.ls-slider-input {
+  display: block;
+  width: calc(100% - 100% / var(--n) + 18px);
+  height: var(--tap);
+  margin: 0 0 0 calc(100% / (2 * var(--n)) - 9px);
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+@media (pointer: fine) {
+  .ls-slider-input { height: 32px; }
+}
+.ls-slider-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* One equal column per stop, the word centred under its stop and clear of
+   the focus ring. A word longer than its column wraps (and hyphenates where
+   the browser knows the language) instead of running into its neighbour. */
+.ls-slider-stops {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--ink-mute);
+}
+.ls-slider-stop {
+  text-align: center;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.ls-slider-stop.on { color: var(--ink); font-weight: 600; }
+
+.ls-slider-say {
+  margin: var(--space-3) 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.ls-slider-note {
+  margin: var(--space-1) 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-mute);
+}

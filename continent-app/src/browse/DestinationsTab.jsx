@@ -4,27 +4,27 @@ import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPicker } from '../components/CountryPicker.jsx';
-import { count, eur } from '../lib/format.js';
+import { count, eur, stripDashes } from '../lib/format.js';
 import { needsCountry } from '../lib/favorites.js';
 import { railOrigin } from '../lib/railAlternative.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { trailPath } from '../lib/trailShape.js';
-import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { srcSetFor } from '../lib/heroImage.js';
 import { HeroPreload } from '../components/LayerPhoto.jsx';
 import { loadTrails, loadListedTrails, loadTrailsIndex } from '../lib/trails.js';
 import {
   loadBeachIndex, loadBeaches, loadListedBeaches, loadTopBeaches,
 } from '../lib/beaches.js';
 import {
-  beachTags, beachRating,
+  beachRating,
   BEACH_FACETS, applyBeachFacets, beachFacetCounts,
 } from '../lib/beachStory.js';
 import {
   loadLakeIndex, loadLakes, loadListedLakes, loadTopLakes,
 } from '../lib/lakes.js';
 import {
-  lakeTags, lakeRating, lakeSwim, isHiddenGem,
+  lakeRating,
   LAKE_FACETS, applyLakeFacets, lakeFacetCounts,
 } from '../lib/lakeStory.js';
 import {
@@ -35,29 +35,26 @@ import {
 } from '../lib/trips.js';
 import { loadCyclingIndex, loadCycling, loadTopCycling } from '../lib/cycling.js';
 import {
-  countryPhrase, whyLines,
+  countryPhrase,
 } from '../lib/cycleStory.js';
 import {
-  cycleRating, routeTitle, paceLine as cyclePaceLine, bikeLine as cycleBikeLine,
+  cycleRating, routeTitle,
   CYCLE_FACET_GROUPS, cycleMatchesFacets, cycleFacetCounts, isLocalNetworkRow,
 } from '../lib/cycleStory.js';
 import {
   tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb,
 } from '../lib/tripStory.js';
 import {
-  mountainTags, mountainRating, isLiftServed, liftLabel,
+  mountainRating, isLiftServed, liftLabel,
   MOUNTAIN_FACETS, applyMountainFacets, mountainFacetCounts, floorNote,
-  difficultyLabel, viewBandLabel,
-  isHiddenGem as isMountainGem,
 } from '../lib/mountainStory.js';
 import {
   associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes,
   DISTANCE_BANDS, tripBand, trailRating,
-  ASCENT_BANDS, tripClimbBand, GRADES, tripGrade, gradeIsDerived,
+  ASCENT_BANDS, tripClimbBand, GRADES, tripGrade,
   ROUTE_TYPES, tripRouteType, HIGHLIGHTS, tripHighlights,
   SUITABILITY, tripSuitability, isListed,
 } from '../lib/trailCards.js';
-import { trailClimbUp } from '../lib/trailStory.js';
 import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode, geoLines } from '../lib/geocode.js';
 import { bandChip, bandBreak, scopeForRows } from '../lib/regions.js';
@@ -72,9 +69,20 @@ import { JourneysSection } from './JourneysSection.jsx';
 import CreditFold from './CreditFold.jsx';
 import { openShared } from '../lib/sharedElement.js';
 import { CoverageFooter } from './HonestFooters.jsx';
+import { CoverageEmpty } from './CoverageEmpty.jsx';
+import { MICROSTATES, countryGeo, pointGeo } from '../lib/coverageEmpty.js';
+import { loadStubs } from '../lib/stubs.js';
 import { CardStrip } from './CardStrip.jsx';
+import {
+  PlaceCard, PlaceCardPhoto, PlaceCardNoPhoto, PlaceCardSkeletons,
+} from './PlaceCard.jsx';
+import {
+  trailFilling, cycleFilling, cycleTourFilling, beachFilling, lakeFilling, mountainFilling,
+  GRADE_KEY,
+} from '../lib/cardFillings.js';
 import { SectionOpening } from './SectionOpening.jsx';
 import { pickIcons, buildRails, photoOf } from '../lib/openingScreen.js';
+import { offeredStayTiers } from '../lib/runtime_pricing.js';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -125,6 +133,7 @@ const PAGE = 36;
 const NEAR_MAX_ROWS = 80;
 
 // Lazy: the page imports maplibre-gl, which stays out of the main bundle.
+const StubPage = lazy(() => import('./StubPage.jsx').then((m) => ({ default: m.StubPage })));
 const TrailPage = lazy(() => import('./TrailPage.jsx').then((m) => ({ default: m.TrailPage })));
 // Lazy for symmetry, not for weight: the beach page carries no map, but it is
 // only ever reached by tapping a card, so it can arrive then.
@@ -151,11 +160,6 @@ const norm = (s) => String(s || '')
   .normalize('NFD')
   .replace(/[̀-ͯ]/g, '')
   .replace(/ł/g, 'l'); // l-with-stroke does not decompose
-
-const hoursText = (min) => {
-  const h = min / 60;
-  return h >= 10 ? String(Math.round(h)) : h.toFixed(1);
-};
 
 // How long the trip is, which is the first thing a traveller knows and the
 // last thing the catalogue could answer. 1 is the drawn one-day city walk from
@@ -385,36 +389,22 @@ const CYCLE_SORTS = [
  */
 const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 
-function CardPhoto({ url, className = 'places-card-img' }) {
-  if (!url) return null;
-  return (
-    <img
-      className={className}
-      src={fallbackSrc(url, 500)}
-      srcSet={srcSetFor(url, 960)}
-      sizes={CARD_SIZES}
-      alt=""
-      width={25}
-      height={12}
-      loading="lazy"
-      decoding="async"
-    />
-  );
-}
+/*
+ * The five sections' cards (T179, spec 5.1). One frame, browse/PlaceCard.jsx,
+ * five fillings, lib/cardFillings.js. What stays here is only what each
+ * section lays on the photograph: its seal, its strip, and the small facts
+ * that belong top left (how far from a searched place, a swimming verdict, a
+ * lift to the top, whose photograph it is).
+ */
 
-function TrailPicture({ tr, assoc }) {
+/** A walk's photograph: its own, the nearest town's (labelled as such), the
+ *  line drawn as itself, or plain paper. */
+function TrailMedia({ tr, assoc }) {
   const shape = useMemo(
     () => (assoc.photoUrl ? null : trailPath(tr.geometry)),
     [assoc.photoUrl, tr.geometry],
   );
-  if (assoc.photoUrl) {
-    return (
-      <>
-        <CardPhoto url={assoc.photoUrl} />
-        {assoc.photoOf && <span className="places-card-photoof">{assoc.photoOf}</span>}
-      </>
-    );
-  }
+  if (assoc.photoUrl) return <PlaceCardPhoto url={assoc.photoUrl} />;
   if (shape) {
     return (
       <span className="places-card-img places-card-shape" aria-hidden="true">
@@ -424,370 +414,158 @@ function TrailPicture({ tr, assoc }) {
       </span>
     );
   }
-  return (
-    <span className="places-card-img places-card-noimg" aria-hidden="true">
-      <RouteIcon size={26} />
-    </span>
-  );
+  return <PlaceCardNoPhoto><RouteIcon size={26} /></PlaceCardNoPhoto>;
 }
 
-// The five published grades as label keys. The card prints the grade rather
-// than validate.py's three-value effort class when there is one, because the
-// grade is what the filter chip says and a card that disagrees with the chip
-// that found it is the bug this replaces.
-const GRADE_KEY = {
-  easy: 'trails.gradeEasy', moderate: 'trails.gradeModerate',
-  hard: 'trails.gradeHard', very_hard: 'trails.gradeVeryHard',
-  alpine: 'trails.gradeAlpine',
-};
-
-// Highlight code to label key. Built from HIGHLIGHTS rather than written out
-// again, so a code added to the model cannot go missing on the card.
-const HIGHLIGHT_KEY = Object.fromEntries(
-  HIGHLIGHTS.map(({ key, labelKey }) => [key, labelKey]));
-
-const TripCard = React.memo(function TripCard({ card, km, onOpen, t }) {
-  const { tr, assoc, kindKey, price } = card;
+const TripCard = React.memo(function TripCard({ card, km, onOpen, t, countryName }) {
+  const { tr, assoc, price } = card;
   const isCityDay = tr.category === 'citytrip';
-  const climbUp = trailClimbUp(tr);
-  const grade = tripGrade(tr);
-  const diffKey = grade ? GRADE_KEY[grade]
-    : tr.difficulty === 'easy' ? 'places.diffEasy'
-      : tr.difficulty === 'moderate' ? 'places.diffModerate'
-        : tr.difficulty === 'hard' ? 'places.diffHard' : null;
-  // Up to two of the things on the line. The single most persuasive thing on
-  // a trail card: "waterfall, castle" is a reason to go on Saturday and
-  // "12.4 km, moderate" is a specification.
-  const highlights = isCityDay ? [] : tripHighlights(tr).slice(0, 2);
-  const listed = isListed(tr);
+  const fill = useMemo(() => trailFilling(card, { t, countryName }), [card, t, countryName]);
+  // The walk's own rating, not the nearest town's: scored within its country
+  // from open signals only (pipeline/trails/rate.py). A city day carries its
+  // town's. A listed row says it is not scored rather than showing a number
+  // it never earned.
+  const rating = isCityDay ? assoc.dest?.rating : trailRating(tr);
+  const seal = rating
+    ? <RatingBadge rating={rating} size="sm" showGem={false} />
+    : (!isCityDay && isListed(tr) ? <span className="places-card-unrated">{t('trails.notScored')}</span> : null);
+  const corner = (km != null || assoc.photoOf) ? (
+    <>
+      {km != null && <span className="places-card-km">{bandChip(km, t)}</span>}
+      {assoc.photoUrl && assoc.photoOf && <span className="places-card-photoof">{assoc.photoOf}</span>}
+    </>
+  ) : null;
+  // Carta does not price flights (T273): a flying row's figure is the stay
+  // and the ground, and its title says the flight is not in it.
+  const foot = isCityDay && price ? (
+    <span className="places-card-price"
+      title={price.mode === 'plane' ? t('places.priceNoFlight') : undefined}>
+      {eur(price.pp)}
+      <small>/pp</small>
+    </span>
+  ) : null;
   return (
-    <button className="places-tcard" onClick={() => onOpen(card)}>
-      <TrailPicture tr={tr} assoc={assoc} />
-      <span className="places-card-scrim" aria-hidden="true" />
-      {!isCityDay && <CardStrip kind="trail" row={tr} />}
-      {km != null && (
-        <span className="places-card-km">{bandChip(km, t)}</span>
-      )}
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{tr.name}</span>
-          <span className="places-card-facts">
-            {tr.distance_m != null && (
-              <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
-            )}
-            {tr.duration_min != null && <span>{hoursText(tr.duration_min)} h</span>}
-            {isCityDay && tr.n_stops != null && <span>{t('trails.stops', { n: tr.n_stops })}</span>}
-            {/* The climb read uphill (T108-d): a line drawn summit to village
-                stores +7 m of ascent and 1,423 m of descent. */}
-            {!isCityDay && climbUp != null && <span>+{Math.round(climbUp)} m</span>}
-          </span>
-          <span className="places-card-kinds">
-            <span className={`places-card-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>
-            {/* Loop is the shape people filter for, so it is said on the card
-                and not only behind the chip that found it. */}
-            {!isCityDay && tr.is_loop && (
-              <span className="places-card-kind places-card-loop">
-                <LoopIcon size={11} />
-                {t('trails.loop')}
-              </span>
-            )}
-            {highlights.map((code) => (
-              <span key={code} className="places-card-kind places-card-hl">
-                {t(HIGHLIGHT_KEY[code] || 'trails.hlSummit')}
-              </span>
-            ))}
-          </span>
-        </span>
-        <span className="places-card-right">
-          {isCityDay && assoc.dest?.rating && (
-            <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
-          )}
-          {/* The walk's own rating, not the nearest town's. Scored within its
-              country from open signals only (pipeline/trails/rate.py). */}
-          {!isCityDay && trailRating(tr) && (
-            <RatingBadge rating={trailRating(tr)} size="xs" showGem={false} />
-          )}
-          {/* A listed row is verified to exist and deliberately not scored.
-              It says so, in place of the number, rather than showing a low
-              one it never earned. */}
-          {listed && (
-            <span className="places-card-unrated">{t('trails.notScored')}</span>
-          )}
-          {!isCityDay && diffKey && (
-            <span className={`places-card-diff${gradeIsDerived(tr) ? ' est' : ''}`}
-              title={gradeIsDerived(tr) ? t('trails.gradeDerived') : undefined}
-            >
-              {t(diffKey)}
-              {gradeIsDerived(tr) ? <i aria-hidden="true">~</i> : null}
-            </span>
-          )}
-          {/* Carta does not price flights (T273): a flying row's figure is
-              the stay and the ground, and its title says the flight is not in
-              it. A driving row's figure includes the drive Carta priced. */}
-          {isCityDay && price && (
-            <span
-              className="places-card-price"
-              title={price.mode === 'plane' ? t('places.priceNoFlight') : undefined}
-            >
-              {eur(price.pp)}
-              <small>/pp</small>
-            </span>
-          )}
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
-      </span>
-    </button>
+    <PlaceCard
+      className="places-tcard"
+      onClick={() => onOpen(card)}
+      media={<TrailMedia tr={tr} assoc={assoc} />}
+      seal={seal}
+      strip={isCityDay ? null : <CardStrip kind="trail" row={tr} />}
+      corner={corner}
+      fill={fill}
+      hookClass="places-card-kinds"
+      foot={foot}
+    />
   );
 });
 
-/**
- * One published beach as a photo card.
- *
- * Different from every other card on this tab, because a beach is chosen for
- * different reasons: no price, no size glyph, no from-line. What it carries
- * instead is where it is (the pin, which is the question a beach photograph
- * always raises), the beauty score, and up to three of the reasons the index
- * scored it that way, so the list can be read as an argument rather than as a
- * gallery.
- */
-/**
- * A cycle route card, on the same photo-card template as a beach, a lake
- * or a peak: the picture, the name over it, where it is, the badge on the
- * right. The two figures a rider asks first (length and climb) take the
- * chip slot the other layers use for distance-from-here, and the evidence
- * line underneath the name is composed from the same reason codes the
- * route page explains in full. A listed row has no score, and says so in
- * the badge slot rather than leaving a gap.
- */
+/** A ranked or listed cycle route. A listed row has no score, and says so in
+ *  the seal's place rather than leaving a gap. */
 const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen, t }) {
   const rating = r.score != null ? cycleRating(r, t) : null;
-  const evidence = (whyLines(r.why, t, 2) || []).map((line) => line.text).join(', ');
+  const fill = useMemo(() => cycleFilling(r, { t, countryName }), [r, t, countryName]);
   return (
-    <button
-      type="button"
+    <PlaceCard
       className={`places-bcard cycle-card${rating ? '' : ' cycle-card-listed'}`}
-      data-testid={rating ? 'cycle-card' : 'cycle-listed-card'}
+      testId={rating ? 'cycle-card' : 'cycle-listed-card'}
       onClick={() => onOpen(r)}
-    >
-      {r.img
-        ? <CardPhoto url={r.img} />
-        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
-      <span className="places-card-scrim" aria-hidden="true" />
-      <CardStrip kind="cycle" row={r} />
-      <span className="places-card-km">
-        {`${r.km} km`}
-        {r.asc != null ? `, ${r.asc} m` : ''}
-      </span>
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{routeTitle(r, t)}</span>
-          {countryName && (
-            <span className="places-bcard-where">
-              <MapPinIcon size={12} />
-              {countryName}
-            </span>
-          )}
-          {evidence && (
-            <span className="places-bcard-tags"><span>{evidence}</span></span>
-          )}
-        </span>
-        <span className="places-card-right">
-          {rating
-            ? <RatingBadge rating={rating} size="xs" showGem={false} />
-            : <span className="cycle-card-unrated">{t('cycle.notScored')}</span>}
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
-      </span>
-    </button>
+      media={r.img ? <PlaceCardPhoto url={r.img} /> : <PlaceCardNoPhoto />}
+      seal={rating
+        ? <RatingBadge rating={rating} size="sm" showGem={false} />
+        : <span className="cycle-card-unrated">{t('cycle.notScored')}</span>}
+      strip={<CardStrip kind="cycle" row={r} />}
+      fill={fill}
+    />
   );
 });
 
-/** A composed tour: days and length in the chip, pace and bike as the
- *  evidence line, the overnight towns as where it is. */
+/** A composed tour: days, length and the day's ride as the values, pace and
+ *  bike as the hook, the overnight towns as where it is. No score exists. */
 const CycleTourCard = React.memo(function CycleTourCard({ tr, countryName, onOpen, t }) {
-  const towns = (tr.towns || []).slice(0, 3).join(', ');
+  const fill = useMemo(() => cycleTourFilling(tr, { t, countryName }), [tr, t, countryName]);
   return (
-    <button
-      type="button"
+    <PlaceCard
       className="places-bcard cycle-tourcard"
-      data-testid="cycle-tourcard"
+      testId="cycle-tourcard"
       onClick={() => onOpen(tr)}
-    >
-      {tr.img
-        ? <CardPhoto url={tr.img} />
-        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
-      <span className="places-card-scrim" aria-hidden="true" />
-      <span className="places-card-km">
-        {t('cycle.days', { n: tr.days })}
-        {`, ${Math.round(tr.km)} km`}
-      </span>
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{tr.title}</span>
-          <span className="places-bcard-where">
-            <MapPinIcon size={12} />
-            {[countryName, towns].filter(Boolean).join(', ')}
-          </span>
-          <span className="places-bcard-tags">
-            <span>{cyclePaceLine(tr.pace, t)}</span>
-            {tr.bike && <span>{cycleBikeLine(tr.bike, t)}</span>}
-          </span>
-        </span>
-        <span className="places-card-right">
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
-      </span>
-    </button>
+      media={tr.img ? <PlaceCardPhoto url={tr.img} /> : <PlaceCardNoPhoto />}
+      fill={fill}
+    />
   );
 });
 
 const BeachCard = React.memo(function BeachCard({ beach, km, countryName, onOpen, t }) {
   const shot = beach.images?.[0];
-  const tags = beachTags(beach, t, km == null ? 3 : 2);
-  const place = [beach.region, countryName].filter(Boolean).join(', ');
+  const fill = useMemo(() => beachFilling(beach, { t, countryName }), [beach, t, countryName]);
   return (
-    <button className="places-bcard" onClick={() => onOpen(beach)}>
-      {shot
-        ? <CardPhoto url={shot.u} />
-        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
-      <span className="places-card-scrim" aria-hidden="true" />
-      {km != null && (
-        <span className="places-card-km">{bandChip(km, t)}</span>
-      )}
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{beach.name}</span>
-          <span className="places-bcard-where">
-            <MapPinIcon size={12} />
-            {place}
-          </span>
-          {tags.length > 0 && (
-            <span className="places-bcard-tags">
-              {tags.map((tag) => <span key={tag.code}>{tag.label}</span>)}
-            </span>
-          )}
-        </span>
-        <span className="places-card-right">
-          <RatingBadge rating={beachRating(beach, t)} size="xs" showGem={false} />
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
-      </span>
-    </button>
+    <PlaceCard
+      className="places-bcard"
+      onClick={() => onOpen(beach)}
+      media={shot ? <PlaceCardPhoto url={shot.u} /> : <PlaceCardNoPhoto />}
+      seal={<RatingBadge rating={beachRating(beach, t)} size="sm" showGem={false} />}
+      corner={km != null ? <span className="places-card-km">{bandChip(km, t)}</span> : null}
+      fill={fill}
+    />
   );
 });
 
 /**
- * One published lake as a photo card.
- *
- * The beach card's shape, with one addition that is not decoration: the
- * swimming verdict rides in the corner, coloured, on every card. A list that
- * promises beautiful water has to say which of it you may get into, and
- * finding out on arrival that Plitvice or Morskie Oko forbids swimming is the
- * failure mode this whole layer was built to avoid. "yes" is the common case
- * and stays quiet; anything else earns the chip.
+ * A lake. The swimming verdict rides on the photograph whenever it is not a
+ * plain yes: a list that promises beautiful water has to say which of it you
+ * may get into, and finding out on arrival that Plitvice forbids swimming is
+ * the failure this layer was built to avoid.
  */
 const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t }) {
   const shot = lake.images?.[0];
-  const tags = lakeTags(lake, t, km == null ? 3 : 2);
-  const place = [lake.region, countryName].filter(Boolean).join(', ');
-  const swim = lakeSwim(lake, t);
-  return (
-    <button className="places-bcard places-lcard" onClick={() => onOpen(lake)}>
-      {shot
-        ? <CardPhoto url={shot.u} />
-        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
-      <span className="places-card-scrim" aria-hidden="true" />
-      <CardStrip kind="lake" row={lake} />
-      {km != null && (
-        <span className="places-card-km">{bandChip(km, t)}</span>
-      )}
+  const fill = useMemo(() => lakeFilling(lake, { t, countryName }), [lake, t, countryName]);
+  const { swim } = fill;
+  const corner = (km != null || swim.rule !== 'yes') ? (
+    <>
+      {km != null && <span className="places-card-km">{bandChip(km, t)}</span>}
       {swim.rule !== 'yes' && (
         <span className={`places-lcard-swim swim-${swim.tone}`}>{swim.label}</span>
       )}
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{lake.name}</span>
-          <span className="places-bcard-where">
-            <MapPinIcon size={12} />
-            {place}
-          </span>
-          {tags.length > 0 && (
-            <span className="places-bcard-tags">
-              {tags.map((tag) => <span key={tag.code}>{tag.label}</span>)}
-              {isHiddenGem(lake) && <span className="tag-gem">{t('lake.hiddenGem')}</span>}
-            </span>
-          )}
-        </span>
-        <span className="places-card-right">
-          <RatingBadge rating={lakeRating(lake, t)} size="xs" showGem={false} />
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
-      </span>
-    </button>
+    </>
+  ) : null;
+  return (
+    <PlaceCard
+      className="places-bcard places-lcard"
+      onClick={() => onOpen(lake)}
+      media={shot ? <PlaceCardPhoto url={shot.u} /> : <PlaceCardNoPhoto />}
+      seal={<RatingBadge rating={lakeRating(lake, t)} size="sm" showGem={false} />}
+      strip={<CardStrip kind="lake" row={lake} />}
+      corner={corner}
+      fill={fill}
+    />
   );
 });
 
 /**
- * One published mountain as a photo card.
- *
- * The beach card's shape with two additions, and neither is decoration. The
- * height rides under the name in mono, because it is the first thing anybody
- * asks about a mountain and it is a measured fact. And a mountain you can
- * ride to the top of says so in the corner, in the same place the lake card
- * puts its swimming verdict, because "can I get up it without walking" is the
- * question that decides whether this is a morning out or an expedition.
+ * A mountain. A mountain you can ride to the top of says so on the
+ * photograph, in the place the lake card puts its swimming verdict, because
+ * "can I get up it without walking" decides whether this is a morning out or
+ * an expedition.
  */
-const MountainCard = React.memo(function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
+const MountainCard = React.memo(function MountainCard({ mountain, km, countryName, onOpen, t }) {
   const shot = mountain.images?.[0];
-  const tags = mountainTags(mountain, t, km == null ? 3 : 2);
-  const place = [mountain.range, countryName].filter(Boolean).join(', ');
+  const fill = useMemo(() => mountainFilling(mountain, { t, countryName }), [mountain, t, countryName]);
   const ride = isLiftServed(mountain);
-  // The two v2 facets a card can carry without crowding: how hard the
-  // easiest way up is, and how big the view is. Both are filterable, and a
-  // filter whose answer is invisible once you stop filtering is a filter
-  // people stop trusting.
-  const hard = difficultyLabel(mountain, t);
-  const view = viewBandLabel(mountain, t);
+  const corner = (km != null || ride) ? (
+    <>
+      {km != null && <span className="places-card-km">{bandChip(km, t)}</span>}
+      {ride && <span className="places-lcard-swim places-mcard-way">{liftLabel(mountain, t)}</span>}
+    </>
+  ) : null;
   return (
-    <button className="places-bcard places-mcard" onClick={() => onOpen(mountain)}>
-      {shot
-        ? <CardPhoto url={shot.u} />
-        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
-      <span className="places-card-scrim" aria-hidden="true" />
-      <CardStrip kind="mountain" row={mountain} />
-      {km != null && (
-        <span className="places-card-km">{bandChip(km, t)}</span>
-      )}
-      {ride && (
-        <span className="places-lcard-swim places-mcard-way">{liftLabel(mountain, t)}</span>
-      )}
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{mountain.name}</span>
-          <span className="places-bcard-where">
-            <MapPinIcon size={12} />
-            {place}
-            {mountain.ele != null && (
-              <span className="places-mcard-ele">
-                {Math.round(mountain.ele).toLocaleString(lang)} m
-              </span>
-            )}
-          </span>
-          {(tags.length > 0 || hard || view) && (
-            <span className="places-bcard-tags">
-              {hard && <span className="places-mcard-diff">{hard}</span>}
-              {view && <span>{view}</span>}
-              {tags.map((tag) => <span key={tag.code}>{tag.label}</span>)}
-              {isMountainGem(mountain) && <span className="tag-gem">{t('mtn.hiddenGem')}</span>}
-            </span>
-          )}
-        </span>
-        <span className="places-card-right">
-          <RatingBadge rating={mountainRating(mountain, t)} size="xs" showGem={false} />
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
-      </span>
-    </button>
+    <PlaceCard
+      className="places-bcard places-mcard"
+      onClick={() => onOpen(mountain)}
+      media={shot ? <PlaceCardPhoto url={shot.u} /> : <PlaceCardNoPhoto />}
+      seal={<RatingBadge rating={mountainRating(mountain, t)} size="sm" showGem={false} />}
+      strip={<CardStrip kind="mountain" row={mountain} />}
+      corner={corner}
+      fill={fill}
+    />
   );
 });
 
@@ -948,10 +726,10 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
  * This says what actually happened and offers the way back, in the tone the
  * geolocation failure already uses: no blame, one button.
  */
-function LayerError({ onRetry, t }) {
+function LayerError({ onRetry, t, msg = 'layer.loadFailed' }) {
   return (
     <div className="places-empty places-loaderr" role="status">
-      <ErrorBlock message={t('layer.loadFailed')} onRetry={onRetry} retryLabel={t('layer.retry')} />
+      <ErrorBlock message={t(msg)} onRetry={onRetry} retryLabel={t('layer.retry')} />
     </div>
   );
 }
@@ -959,6 +737,9 @@ function LayerError({ onRetry, t }) {
 export function DestinationsTab({
   data, pricedAll, availableCountries = [], onSelectDest,
   stayTier = 'home', lifestyle, onOpenLifestyle, origin = null,
+  // Sets the Lifestyle panel's "Where you sleep" answer, for the trip
+  // page's Lifestyle slider (T173).
+  onChangeStayTier = null,
   openTrail = null, onOpenTrailConsumed,
   openBeach = null, onOpenBeachConsumed,
   openLake = null, onOpenLakeConsumed,
@@ -969,6 +750,10 @@ export function DestinationsTab({
   // country brief). Just the filter, in whatever category is showing: no
   // layer to wait for and nothing to open once it lands.
   openCountry = null, onOpenCountryConsumed,
+  // One category (a CATS key), asked for from the landing page (T209): its
+  // primary action opens the walks. The country filter survives, as it does
+  // when the category tabs are pressed.
+  openCategory = null, onOpenCategoryConsumed,
   // The shortlist, as the pair-aware pair App keeps: isFavorite(id, kind)
   // and onToggleFav(id, kind). Every full-screen feature page below wears the
   // same star from them, so a trail is kept exactly the way a city is.
@@ -979,6 +764,7 @@ export function DestinationsTab({
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
   const sentinelRef = useRef(null);
+  const stayTiers = useMemo(() => offeredStayTiers(data?.meta), [data?.meta]);
 
   const [cat, setCat] = useState('trips');           // CATS key
   const [query, setQuery] = useState('');
@@ -1167,6 +953,17 @@ export function DestinationsTab({
     setCountry(openCountry);
     onOpenCountryConsumed?.();
   }, [openCountry, onOpenCountryConsumed]);
+
+  useEffect(() => {
+    if (!openCategory) return;
+    if (CATS.some((c) => c.key === openCategory)) {
+      setCat(openCategory);
+      setQuery('');
+      setJourneyView(null);
+      scrollRef.current?.scrollTo?.(0, 0);
+    }
+    onOpenCategoryConsumed?.();
+  }, [openCategory, onOpenCategoryConsumed]);
 
   // Debounce only the 24.8k-row filter, never the input itself.
   useEffect(() => {
@@ -1455,6 +1252,85 @@ export function DestinationsTab({
       onFav: () => onToggleFav(String(id), kind, cc),
     };
   };
+
+  // The coverage empty-state module (T124 for the seven microstates of
+  // destinations spec 1.6, T367 for every country and every searched place;
+  // docs/ONBOARDING_AND_EMPTY_STATES.md). A list that is empty because of
+  // WHERE it is, with no chip narrowing it, says how many are published,
+  // why, and which three are nearest across the border.
+  //
+  // The country a list is empty for: one whose name the traveller typed (any
+  // country, not only the ones a layer publishes, which is the point:
+  // "monaco" on the lakes tab), else the one picked in the toolbar. A typed
+  // word that names no country names no empty country: the list is empty
+  // because of the word, and saying "Luxembourg, 0 cycling routes" over a
+  // search miss would be false.
+  const typedCc = useMemo(() => {
+    if (q) {
+      if (q.length < 2) return null;
+      const codes = [...availableCountries.map(([cc]) => cc), ...Object.keys(MICROSTATES)];
+      return codes.find((c) => norm(c) === q || norm(countryName(c)).startsWith(q)) || null;
+    }
+    return country || null;
+  }, [country, q, availableCountries, countryName]);
+  // Where each country sits and which countries it borders, from the
+  // catalogue's own towns. Built once per country asked about: the empty
+  // states are rare, the pairwise distance scan is not free.
+  const geoCache = useRef({ towns: null, byCc: new Map() });
+  const geoOf = useCallback((cc) => {
+    if (!cc) return null;
+    const cache = geoCache.current;
+    if (cache.towns !== destIndex) { cache.towns = destIndex; cache.byCc = new Map(); }
+    if (!cache.byCc.has(cc)) cache.byCc.set(cc, countryGeo(destIndex, cc));
+    return cache.byCc.get(cc);
+  }, [destIndex]);
+  const nearGeo = useMemo(
+    () => (nearPlace ? pointGeo(destIndex, nearPlace, nearPlace.iso2 || null) : null),
+    [nearPlace, destIndex],
+  );
+  const countryEmpty = (layer, cc, onOpen = openNeighbour) => (
+    <CoverageEmpty
+      layer={layer}
+      cc={cc}
+      geo={geoOf(cc)}
+      countryName={countryName}
+      onOpen={onOpen}
+      onSeeOther={(c) => { setCat(c); setQuery(''); setCountry(cc); }}
+      onShowAll={() => { setQuery(''); setCountry(''); }}
+    />
+  );
+  const radiusEmpty = (layer, onOpen = openNeighbour) => (
+    <CoverageEmpty
+      layer={layer}
+      cc={nearPlace.iso2 || null}
+      city={nearPlace.name}
+      geo={nearGeo}
+      countryName={countryName}
+      onOpen={onOpen}
+      onShowAll={() => setNearPlace(null)}
+    />
+  );
+  // A list a chip or a filter emptied: say so, and offer the one button that
+  // undoes it. Never the coverage module, which would blame the catalogue.
+  const chipsEmpty = (msgKey, onClear, labelKey = 'empty.clearChips', vars = undefined) => (
+    <div className="places-empty empty-act">
+      <p>{t(msgKey, vars)}</p>
+      <button type="button" className="cov-empty-btn" onClick={onClear}>{t(labelKey)}</button>
+    </div>
+  );
+
+  // The honest stubs of the walks list (T124): famous walks Carta cannot
+  // build, loaded for the country the list is answering for.
+  const [stubs, setStubs] = useState([]);
+  const [stubsAll, setStubsAll] = useState(false);
+  const [pageStub, setPageStub] = useState(null);
+  useEffect(() => {
+    setStubsAll(false);
+    if (cat !== 'trails' || !trailsCountry) { setStubs([]); return undefined; }
+    let live = true;
+    loadStubs(trailsCountry).then((r) => { if (live) setStubs(r); }).catch(() => { if (live) setStubs([]); });
+    return () => { live = false; };
+  }, [cat, trailsCountry]);
 
   const openNeighbour = (layer, row) => {
     setPageCard(null); setPageBeach(null); setPageLake(null);
@@ -2156,7 +2032,9 @@ export function DestinationsTab({
     if (!cycleRows) return null;
     const tours = Math.min(cycleRows.tours.length, visible);
     const routes = Math.min(cycleRows.routes.length, Math.max(0, visible - tours));
-    const listed = Math.max(0, visible - tours - routes);
+    // Capped by what there is: uncapped, an empty listed tier still drew its
+    // heading over nothing, right above the empty state (T367).
+    const listed = Math.min(cycleRows.listed.length, Math.max(0, visible - tours - routes));
     return { tours, routes, listed };
   }, [cycleRows, visible]);
 
@@ -2289,6 +2167,15 @@ export function DestinationsTab({
 
   const showCountryIndex = !q && !country && !nearPlace;
   const showTripRows = isTripCat && !trailsLoading && tripRows && tripRows.length > 0;
+  // Anything the traveller set that narrows the walks list: when it empties
+  // the list, the list says so and offers to clear them, rather than calling
+  // the country empty.
+  const trailFiltersOn = !!q || bands.length > 0 || grades.length > 0 || climbs.length > 0
+    || shapes.length > 0 || hls.length > 0 || suits.length > 0 || loopsOnly;
+  const clearTrailFilters = () => {
+    setQuery(''); setBands([]); setGrades([]); setClimbs([]);
+    setShapes([]); setHls([]); setSuits([]); setLoopsOnly(false);
+  };
   // A geocoded point with no country (an ocean, a border way) has no trails
   // file to read, so the trip categories say so rather than render nothing.
   const nearNoCountry = isTripCat && nearPlace && !nearPlace.iso2;
@@ -3076,7 +2963,9 @@ export function DestinationsTab({
               ? t('scope.daytripHead', { city: nearPlace.name })
               : scope.regionName
                 ? t('scope.farRegionHead', { city: nearPlace.name, region: scope.regionName })
-                : t('scope.farHead', { city: nearPlace.name, km: Math.round(scope.km || 0) });
+                // Floored, so "nothing within 84 km" stays true of a
+                // nearest row 84.6 km out.
+                : t('scope.farHead', { city: nearPlace.name, km: Math.floor(scope.km || 0) });
           return (
             <div className="places-nearhead" data-scope={scope.scope}>
               <span className="places-nearname">{head}</span>
@@ -3127,12 +3016,12 @@ export function DestinationsTab({
             Typing a country's name swaps the capped European ranking for that
             country's full list. */}
         {isBeachCat && (
-          <div className="places-list">
+          <div className="places-list pcard-grid">
             {layerError.beaches && (
-              <LayerError onRetry={() => retryLayer('beaches')} t={t} />
+              <LayerError onRetry={() => retryLayer('beaches')} t={t} msg="beach.loadFailed" />
             )}
 
-            {beachesLoading && <p className="places-empty">{'…'}</p>}
+            {beachesLoading && <PlaceCardSkeletons label={t('card.loading')} />}
 
             {!beachesLoading && beachRows && (
               beachRows.length > 0
@@ -3200,19 +3089,20 @@ export function DestinationsTab({
                     )}
                   </>
                 )
-                : (
-                  <p className="places-empty">
-                    {Object.values(beachFacets).some((l) => l?.length)
-                      ? t('beach.noneChips')
-                      : nearPlace
-                        ? t('beach.noneNear', { city: nearPlace.name })
-                        : t('beach.noneMatch')}
-                  </p>
-                )
+                : Object.values(beachFacets).some((l) => l?.length)
+                  ? chipsEmpty('beach.noneChips', () => setBeachFacets({}))
+                  : nearPlace
+                    ? radiusEmpty('beach')
+                    : typedCc
+                      ? countryEmpty('beach', typedCc)
+                      : <p className="places-empty">{t('beach.noneMatch')}</p>
             )}
 
+            {/* Not loaded yet (the first frame, before the fetch starts): the
+                same skeleton the fetch shows. A failed fetch is LayerError
+                above, never a claim that the layer has not shipped. */}
             {!beachesLoading && !beachRows && !layerError.beaches && (
-              <p className="places-empty">{t('beach.notPublished')}</p>
+              <PlaceCardSkeletons label={t('card.loading')} />
             )}
 
             {visible < (beachRows?.length ?? 0) && (
@@ -3233,12 +3123,12 @@ export function DestinationsTab({
             is not an answer to it. Typing a country's name swaps the capped
             European ranking for that country's full list. */}
         {isLakeCat && (
-          <div className="places-list">
+          <div className="places-list pcard-grid">
             {layerError.lakes && (
-              <LayerError onRetry={() => retryLayer('lakes')} t={t} />
+              <LayerError onRetry={() => retryLayer('lakes')} t={t} msg="lake.loadFailed" />
             )}
 
-            {lakesLoading && <p className="places-empty">{'…'}</p>}
+            {lakesLoading && <PlaceCardSkeletons label={t('card.loading')} />}
 
             {!lakesLoading && lakeRows && (
               lakeRows.length > 0
@@ -3304,21 +3194,17 @@ export function DestinationsTab({
                     )}
                   </>
                 )
-                : (
-                  <p className="places-empty">
-                    {Object.values(lakeFacets).some((l) => l?.length)
-                      ? t('lake.noneChips')
-                      : nearPlace
-                        ? t('lake.noneNear', { city: nearPlace.name })
-                        : absentLakeCountry
-                          ? t('lake.noneCountry', { country: countryName(absentLakeCountry) })
-                          : t('lake.noneMatch')}
-                  </p>
-                )
+                : Object.values(lakeFacets).some((l) => l?.length)
+                  ? chipsEmpty('lake.noneChips', () => setLakeFacets({}))
+                  : nearPlace
+                    ? radiusEmpty('lake')
+                    : (absentLakeCountry || typedCc)
+                      ? countryEmpty('lake', absentLakeCountry || typedCc)
+                      : <p className="places-empty">{t('lake.noneMatch')}</p>
             )}
 
             {!lakesLoading && !lakeRows && !layerError.lakes && (
-              <p className="places-empty">{t('lake.notPublished')}</p>
+              <PlaceCardSkeletons label={t('card.loading')} />
             )}
 
             {visible < (lakeRows?.length ?? 0) && (
@@ -3339,12 +3225,12 @@ export function DestinationsTab({
             a page of flags is not an answer to it. Typing a country's name
             swaps the capped European ranking for that country's full list. */}
         {isMountainCat && (
-          <div className="places-list">
+          <div className="places-list pcard-grid">
             {layerError.mountains && (
-              <LayerError onRetry={() => retryLayer('mountains')} t={t} />
+              <LayerError onRetry={() => retryLayer('mountains')} t={t} msg="mtn.loadFailed" />
             )}
 
-            {mountainsLoading && <p className="places-empty">{'…'}</p>}
+            {mountainsLoading && <PlaceCardSkeletons label={t('card.loading')} />}
 
             {!mountainsLoading && mountainRows && (
               mountainRows.length > 0
@@ -3426,21 +3312,17 @@ export function DestinationsTab({
                     )}
                   </>
                 )
-                : (
-                  <p className="places-empty">
-                    {Object.values(mtnFacets).some((l) => l?.length)
-                      ? t('mtn.noneChips')
-                      : nearPlace
-                        ? t('mtn.noneNear', { city: nearPlace.name })
-                        : absentMountainCountry
-                          ? t('mtn.noneCountry', { country: countryName(absentMountainCountry) })
-                          : t('mtn.noneMatch')}
-                  </p>
-                )
+                : Object.values(mtnFacets).some((l) => l?.length)
+                  ? chipsEmpty('mtn.noneChips', () => setMtnFacets({}))
+                  : nearPlace
+                    ? radiusEmpty('mountain')
+                    : (absentMountainCountry || typedCc)
+                      ? countryEmpty('mountain', absentMountainCountry || typedCc)
+                      : <p className="places-empty">{t('mtn.noneMatch')}</p>
             )}
 
             {!mountainsLoading && !mountainRows && !layerError.mountains && (
-              <p className="places-empty">{t('mtn.notPublished')}</p>
+              <PlaceCardSkeletons label={t('card.loading')} />
             )}
 
             {visible < (mountainRows?.length ?? 0) && (
@@ -3461,12 +3343,12 @@ export function DestinationsTab({
             Listed routes sit under their own heading with no score, which is
             what makes the coverage honest rather than merely large. */}
         {isCycleCat && (
-          <div className="places-list" data-testid="cycle-list">
+          <div className="places-list pcard-grid" data-testid="cycle-list">
             {layerError.cycling && (
               <LayerError onRetry={() => retryLayer('cycling')} t={t} />
             )}
 
-            {cyclingLoading && <p className="places-empty">{'…'}</p>}
+            {cyclingLoading && <PlaceCardSkeletons label={t('card.loading')} />}
 
             {/* EuroVelo families. In OSM a EuroVelo is one relation PER
                 COUNTRY SECTION under a superroute, so without this band the
@@ -3569,7 +3451,13 @@ export function DestinationsTab({
 
                 {!cycleRows.tours.length && !cycleRows.routes.length
                   && !cycleRows.listed.length && !cycleRows.localHidden && (
-                  <p className="places-empty">{t('cycle.emptyCountry')}</p>
+                  Object.values(cycleFacets).some((l) => l?.length)
+                    ? chipsEmpty('cycle.noneChips', () => setCycleFacets({}))
+                    : nearPlace
+                      ? radiusEmpty('cycling')
+                      : typedCc
+                        ? countryEmpty('cycling', typedCc)
+                        : <p className="places-empty">{t('cycle.noneMatch')}</p>
                 )}
 
                 {visible < cycleTotal && (
@@ -3579,7 +3467,7 @@ export function DestinationsTab({
             )}
 
             {!cyclingLoading && !cycleRows && !layerError.cycling && (
-              <p className="places-empty">{t('cycle.emptyCountry')}</p>
+              <PlaceCardSkeletons label={t('card.loading')} />
             )}
 
             {cycleRows && (cycleRows.routes.length > 0
@@ -3603,6 +3491,9 @@ export function DestinationsTab({
             onOpen={(card) => setPageJourney({ id: card.id, gw: card.gw || null })}
             onComposed={() => setJourneyView('composed')}
             countryName={countryName}
+            geoOf={geoOf}
+            onAllCountries={() => { setCountry(''); setQuery(''); }}
+            onClearSearch={() => setQuery('')}
             t={t}
             lang={lang}
           />
@@ -3651,13 +3542,32 @@ export function DestinationsTab({
             )}
 
             {itinRows && itinRows.length === 0 && (
-              <p className="places-empty">
-                {nearPlace
-                  ? t('places.noneNear', { city: nearPlace.name })
+              nearPlace
+                ? radiusEmpty('itin', (layer, row) => setPageItin(row))
+                // A country with no composed trip at all, nothing else set:
+                // the coverage module, not "nothing matches those filters".
+                : (itinCountry && !itinDays && !itinPace && !itinScale && !q)
+                  ? countryEmpty('itin', itinCountry, (layer, row) => setPageItin(row))
                   : itinDays
-                    ? t('trip.emptyDays', { n: itinDays })
-                    : t('trip.emptyAll')}
-              </p>
+                  ? (
+                    <div className="places-empty empty-act">
+                      <p>{t('trip.emptyDays', { n: itinDays })}</p>
+                      {/* The two lengths either side, where anything was
+                          composed at them; a button that led to another
+                          empty list would only move the dead end. */}
+                      {[itinDays - 1, itinDays + 1]
+                        .filter((n) => n >= 2 && rankTrips(itinCountry ? itinCountryRows : itinTop,
+                          { days: n, pace: itinPace, scale: itinScale }).some((tr) => tr.days === n))
+                        .map((n) => (
+                          <button key={n} type="button" className="cov-empty-btn" onClick={() => setItinDays(n)}>
+                            {t('journey.nDays', { n })}
+                          </button>
+                        ))}
+                    </div>
+                  )
+                  : chipsEmpty('trip.emptyAll', () => {
+                    setItinDays(null); setItinPace(null); setItinScale(null); setQuery('');
+                  }, 'empty.clearFilters')
             )}
 
             {itinRows && visible < itinRows.length && (
@@ -3669,7 +3579,7 @@ export function DestinationsTab({
         )}
 
         {isTripCat && !isItinCat && (
-          <div className="places-list">
+          <div className={`places-list${showCountryIndex ? '' : ' pcard-grid'}`}>
             {showCountryIndex && (
               <>
                 {/* No Europe-wide trail ranking exists to fill an opening
@@ -3689,7 +3599,7 @@ export function DestinationsTab({
                   />
                 ))}
                 {trailsIndex && tripCountries.length === 0 && (
-                  <p className="places-empty">{t('places.catEmpty')}</p>
+                  <CoverageEmpty layer="trail" cc="" countryName={countryName} onOpen={openNeighbour} />
                 )}
               </>
             )}
@@ -3698,7 +3608,7 @@ export function DestinationsTab({
               <LayerError onRetry={() => retryLayer('trails')} t={t} />
             )}
 
-            {!showCountryIndex && trailsLoading && !layerError.trails && <p className="places-empty">{'…'}</p>}
+            {!showCountryIndex && trailsLoading && !layerError.trails && <PlaceCardSkeletons label={t('card.loading')} />}
 
             {!showCountryIndex && !trailsLoading && tripRows && (
               tripRows.length > 0
@@ -3707,21 +3617,33 @@ export function DestinationsTab({
                     {bandBreak(tripRows, i) && (
                       <p className="places-bandhead">{t(bandBreak(tripRows, i))}</p>
                     )}
-                    <TripCard card={c} km={km} onOpen={setPageCard} t={t} />
+                    <TripCard card={c} km={km} onOpen={setPageCard} t={t} countryName={countryName} />
                   </React.Fragment>
                 ))
-                : (
-                  <p className="places-empty">
-                    {nearPlace
-                      ? t('places.noneNear', { city: nearPlace.name })
-                      : t('places.trailsEmpty', { country: countryName(trailsCountry || country) })}
-                  </p>
-                )
+                : trailFiltersOn
+                  ? chipsEmpty('places.noneFilters', clearTrailFilters, 'empty.clearFilters')
+                  : cat !== 'trails'
+                    ? (nearPlace
+                      ? chipsEmpty('places.noneNear', () => setNearPlace(null), 'cov.showAll', { city: nearPlace.name })
+                      : (
+                        <div className="places-empty empty-act">
+                          <p>{t('places.cityWalksEmpty', { country: countryName(trailsCountry || country) })}</p>
+                          <button type="button" className="cov-empty-btn"
+                            onClick={() => { setQuery(''); setCountry(''); }}>
+                            {t('cov.showAll')}
+                          </button>
+                        </div>
+                      ))
+                    : nearPlace
+                      ? radiusEmpty('trail')
+                      : countryEmpty('trail', trailsCountry || country)
             )}
 
             {!showCountryIndex && !trailsLoading && !tripRows && nearNoCountry
               && !layerError.trails && (
-              <p className="places-empty">{t('places.noneNear', { city: nearPlace.name })}</p>
+              cat === 'trails'
+                ? radiusEmpty('trail')
+                : chipsEmpty('places.noneNear', () => setNearPlace(null), 'cov.showAll', { city: nearPlace.name })
             )}
 
             {!showCountryIndex && visible < (tripRows?.length ?? 0) && (
@@ -3732,6 +3654,32 @@ export function DestinationsTab({
               <>
                 <p className="places-credit">{t('trails.credit')}</p>
                 <CoverageFooter layer="trail" cc={trailsCountry} countryName={countryName} />
+                {stubs.length > 0 && (
+                  <div className="stub-list" data-testid="stub-list">
+                    <p className="stub-list-head">{t('stub.listHead', { n: fmt(stubs.length) })}</p>
+                    <p className="stub-list-note">{t('stub.listNote')}</p>
+                    <ul>
+                      {(stubsAll ? stubs : stubs.slice(0, 6)).map((st) => (
+                        <li key={st.id}>
+                          <button type="button" className="stub-row" onClick={() => setPageStub(st)}>
+                            <span className="stub-row-name">{stripDashes(st.name)}</span>
+                            <span className="stub-row-meta">
+                              {st.region ? `${st.region}` : ''}
+                              {Number.isFinite(st.km) && (
+                                <span className="mono">{st.region ? ' ' : ''}{fmt(Math.round(st.km))} km</span>
+                              )}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    {!stubsAll && stubs.length > 6 && (
+                      <button type="button" className="stub-more" onClick={() => setStubsAll(true)}>
+                        {t('stub.showAll', { n: fmt(stubs.length) })}
+                      </button>
+                    )}
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -3752,11 +3700,20 @@ export function DestinationsTab({
         </Suspense>
       )}
 
+      {pageStub && (
+        <Suspense fallback={null}>
+          <StubPage stub={pageStub} countryName={countryName} onClose={() => setPageStub(null)} />
+        </Suspense>
+      )}
+
       {pageJourney && (
         <Suspense fallback={null}>
           <JourneyPage
             id={pageJourney.id}
             railFrom={railOrigin(data, origin)}
+            stayTier={stayTier}
+            stayTiers={stayTiers}
+            onChangeStayTier={onChangeStayTier}
             gatewayDest={(() => {
               // The gateway airport code doubles as a catalogue id (BCN,
               // VIE...), which is what lets the page end on a priced CTA.

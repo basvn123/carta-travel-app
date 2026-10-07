@@ -70,6 +70,7 @@ const TRIP_STOPS = [{
 const seed = async (page, { plans = [], signedIn = false } = {}) => {
   await page.addInitScript(({ ref, plans: sp, signedIn: si }) => {
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('carta.fareNoticeSeen', '1');
     localStorage.setItem('carta.welcomeSeen', '1');

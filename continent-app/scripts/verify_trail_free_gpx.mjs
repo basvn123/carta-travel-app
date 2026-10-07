@@ -34,6 +34,7 @@ for (const [vpName, viewport] of [['phone 390', { width: 390, height: 844 }], ['
     try {
       localStorage.setItem('continent.lang.v1', 'en');
       localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('carta.mapGuideDone', '1');
     } catch { /* storage unavailable */ }
     try {

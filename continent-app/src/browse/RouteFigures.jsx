@@ -4,6 +4,8 @@ import {
   slopeRuns, slopeShares, profileAt, trafficMix, kmOf,
 } from '../lib/signature.js';
 import { SpanAxis } from './Signature.jsx';
+import { InfoDot } from '../components/InfoDot.jsx';
+import { glossaryIdIn } from '../lib/glossary.js';
 
 /**
  * The route figures, one family for the trail page, the cycling page and the
@@ -167,12 +169,21 @@ const pct = (v) => `${Math.round(v * 100)}%`;
 export function MixKeys({ parts, className = '' }) {
   const shown = (parts || []).filter((p) => p.share > 0.005);
   if (!shown.length) return null;
+  // One dot per term in a key: the first label that names it carries it.
+  const seen = new Set();
+  const terms = shown.map((p) => {
+    const id = glossaryIdIn(p.label);
+    if (!id || seen.has(id)) return null;
+    seen.add(id);
+    return id;
+  });
   return (
     <ul className={`rsurf-keys ${className}`.trim()}>
-      {shown.map((p) => (
+      {shown.map((p, i) => (
         <li key={p.key}>
           <span className={`rsurf-dot is-${p.tone}`} aria-hidden="true" />
           {p.label}
+          {terms[i] && <InfoDot term={terms[i]} />}
           <span className="mono">{p.value ?? pct(p.share)}</span>
         </li>
       ))}

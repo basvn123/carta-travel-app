@@ -123,12 +123,14 @@ const seedModeration = (state) => {
       id: 'r1', status: 'new', planId: 'plan-g1', planLabel: 'Porto in four days', currentLabel: 'Porto in four days',
       planExists: true, reason: 'This copies a chapter of a published book.', createdAt: '2026-08-18T10:00:00Z',
       reporterHandle: null, contactEmail: 'reporter@example.com', planTotal: 1, sourceTotal: 1,
+      reporterName: 'Ann Reporter', goodFaith: true,
       decidedAt: null, decidedByHandle: null, decisionNote: null, ...owner,
     },
     {
       id: 'r2', status: 'new', planId: 'plan-gone', planLabel: 'Old Rome trip', currentLabel: 'Old Rome trip',
       planExists: true, reason: 'A bad review of a hostel.', createdAt: '2026-08-17T10:00:00Z',
       reporterHandle: 'someone', contactEmail: null, planTotal: 2, sourceTotal: 1,
+      reporterName: null, goodFaith: null,
       decidedAt: null, decidedByHandle: null, decisionNote: null, ...owner,
     },
     {
@@ -692,6 +694,7 @@ async function stubSupabase(page, state, opts = {}) {
 
 const seedSession = (ref, user) => `(() => {
   localStorage.setItem('continent.guestMode.v1', '1');
+  localStorage.setItem('continent.homeSeen.v1', '1');
   localStorage.setItem('carta.welcomeSeen', '1');
   localStorage.setItem('carta.mapGuideDone', '1');
   ${user ? `localStorage.setItem('sb-${ref}-auth-token', JSON.stringify({
@@ -888,18 +891,16 @@ try {
   if ((await page.locator('.adminpage-facts > div').count()) < 8) fail('the detail states fewer than 8 facts');
   ok('an account opens in full');
 
-  // ---- 5. A pass change.
-  console.log('5. pass change');
+  // ---- 5. A pass change waits for the second factor (migration 051, T063-e).
+  // The change itself is made after 7b has stepped the session up.
+  console.log('5. pass change needs MFA');
   await page.locator('.adminpage-seg', { hasText: 'Year' }).click();
   await page.locator('#admin-days').fill('90');
-  await page.locator('.adminpage-btn', { hasText: 'Apply pass change' }).click();
-  await page.waitForTimeout(800);
-  const tc = state.tierCalls[0];
-  if (!tc || tc.p_tier !== 'year' || tc.p_days !== 90) {
-    fail(`admin_set_tier got ${JSON.stringify(tc)}, expected year for 90 days`);
-  }
-  if (!(await page.locator('.adminpage-ok').count())) fail('a completed pass change confirms nothing');
-  ok('the pass change lands as admin_set_tier(year, 90)');
+  const applyBtn = page.locator('.adminpage-btn', { hasText: 'Apply pass change' });
+  if (await applyBtn.isEnabled()) fail('Apply pass change is live on an aal1 session');
+  if (!(await page.locator('.adminpage-mfa').count())) fail('the pass control shows no step-up on an aal1 session');
+  if (state.tierCalls.length) fail('a pass change went out on an aal1 session');
+  ok('a pass change waits for MFA on an aal1 session');
 
   // ---- 6. Quota reset arms first.
   console.log('6. quota reset');
@@ -929,31 +930,43 @@ try {
   // ---- 7b. The MFA step-up in front of ban (T254).
   console.log('7b. MFA step-up');
   const suspendBtn = page.locator('.adminpage-btn', { hasText: /^Suspend$/ });
-  const enrolBtn = page.locator('.adminpage-mfa .adminpage-btn', { hasText: 'Set up an authenticator app' });
+  const banMfa = page.locator('.adminpage-armed .adminpage-mfa');
+  const enrolBtn = banMfa.locator('.adminpage-btn', { hasText: 'Set up an authenticator app' });
   await enrolBtn.waitFor({ timeout: 5000 });
   if (await suspendBtn.isEnabled()) fail('Suspend is live on an aal1 session');
   await enrolBtn.click();
-  const qr = page.locator('.adminpage-mfa-qr');
+  const qr = banMfa.locator('.adminpage-mfa-qr');
   await qr.waitFor({ timeout: 5000 });
   if (state.mfa.enrolCalls.length !== 1) fail(`expected one enrol call, got ${state.mfa.enrolCalls.length}`);
   if (!(await qr.evaluate((img) => img.complete && img.naturalWidth > 0))) fail('the QR code image does not decode');
-  if (!/JBSWY3DPEHPK3PXP/.test(await page.locator('.adminpage-mfa-secret').innerText())) {
+  if (!/JBSWY3DPEHPK3PXP/.test(await banMfa.locator('.adminpage-mfa-secret').innerText())) {
     fail('the TOTP secret is not shown for manual entry');
   }
   const codeField = page.locator('#admin-ban-mfa-code');
   await codeField.fill('12a3');
   if ((await codeField.inputValue()) !== '123') fail('the code field kept a non-digit');
   await codeField.fill('000000');
-  await page.locator('.adminpage-mfa .adminpage-btn', { hasText: 'Verify code' }).click();
-  await page.locator('.adminpage-mfa .adminpage-err', { hasText: 'That code did not work' }).waitFor({ timeout: 5000 });
+  await banMfa.locator('.adminpage-btn', { hasText: 'Verify code' }).click();
+  await banMfa.locator('.adminpage-err', { hasText: 'That code did not work' }).waitFor({ timeout: 5000 });
   if (await suspendBtn.isEnabled()) fail('a wrong code enabled Suspend');
   await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-mfa-enrol.png` });
   await codeField.fill(GOOD_CODE);
-  await page.locator('.adminpage-mfa .adminpage-btn', { hasText: 'Verify code' }).click();
-  await page.locator('.adminpage-mfa').waitFor({ state: 'detached', timeout: 5000 });
+  await banMfa.locator('.adminpage-btn', { hasText: 'Verify code' }).click();
+  await banMfa.waitFor({ state: 'detached', timeout: 5000 });
+  if (await page.locator('.adminpage-mfa').count()) fail('a step-up box stayed on an aal2 session');
   if (!(await suspendBtn.isEnabled())) fail('Suspend stayed disabled after a good code');
   if (!state.mfa.factors.some((f) => f.status === 'verified')) fail('the factor was never verified');
   ok('ban waits for MFA: enrol, a wrong code refused, a right code steps the session up');
+  // 5, continued: on the aal2 session the pass change goes through.
+  if (!(await applyBtn.isEnabled())) fail('Apply pass change stayed disabled on an aal2 session');
+  await applyBtn.click();
+  await page.waitForTimeout(800);
+  const tc = state.tierCalls[0];
+  if (!tc || tc.p_tier !== 'year' || tc.p_days !== 90) {
+    fail(`admin_set_tier got ${JSON.stringify(tc)}, expected year for 90 days`);
+  }
+  if (!(await page.locator('.adminpage-ok').count())) fail('a completed pass change confirms nothing');
+  ok('on aal2 the pass change lands as admin_set_tier(year, 90)');
   await page.locator('#admin-ban-days').fill('7');
   await page.locator('.adminpage-btn', { hasText: /^Suspend$/ }).click();
   await page.waitForTimeout(900);
@@ -1204,13 +1217,30 @@ try {
   if (!(await goBtn.isDisabled())) fail('the send button is enabled with a blank reason');
   await ta.fill('   ');
   if (!(await goBtn.isDisabled())) fail('the send button is enabled with a whitespace reason');
+  // Migration 051: no send without a ground and its reference.
+  await ta.fill('Copies a book');
+  if (!(await goBtn.isDisabled())) fail('the send button is enabled with no ground chosen');
+  if (await page.locator('.adminpage-armed [role="radio"]').count() !== 2) fail('the takedown form does not offer exactly two grounds');
+  await page.locator('.adminpage-armed [role="radio"]', { hasText: 'Breaks the content rule' }).click();
+  if (await page.locator('.adminpage-armed [role="radio"]').count() !== 9) fail('the content rule does not offer its seven items');
+  if (!(await goBtn.isDisabled())) fail('the send button is enabled with no item of the rule chosen');
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-takedown-terms.png` });
+  await page.locator('.adminpage-armed [role="radio"]', { hasText: 'Illegal content' }).click();
+  const law = page.locator('.adminpage-armed input');
+  const lawId = await law.getAttribute('id');
+  if (!(await page.locator(`label[for="${lawId}"]`).count())) fail('the law field has no label tied to it');
+  if (!(await goBtn.isDisabled())) fail('the send button is enabled with no law named');
+  ok('Unpublish: the ground is required, two grounds, seven rule items, a labelled law field');
   await page.locator('.adminpage-armed .adminpage-btn', { hasText: 'Keep it public' }).click();
   if (await page.locator('.adminpage-armed').count()) fail('Cancel left the takedown form open');
   if (state.unpublishCalls.length) fail('a call went out before the form was submitted');
   ok('Unpublish: arms with focus and a label, refuses a blank reason, Cancel closes it with no call');
   // The server's refusals are worded in place and keep the form open.
   await row2().locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).click();
-  for (const [mode, re] of [['not_found', /no longer exists/i], ['slow_down', /too many admin actions/i], ['bad_reason', /write the reason/i]]) {
+  await page.locator('.adminpage-armed [role="radio"]', { hasText: 'Breaks the content rule' }).click();
+  await page.locator('.adminpage-armed [role="radio"]', { hasText: 'work' }).click();
+  for (const [mode, re] of [['not_found', /no longer exists/i], ['slow_down', /too many admin actions/i], ['bad_reason', /write the reason/i],
+    ['bad_ground', /choose the ground/i], ['bad_ground_ref', /name the law/i]]) {
     state.unpublishMode = mode;
     await page.locator('.adminpage-armed textarea').fill('Copies a book');
     await page.locator('.adminpage-armed .adminpage-btn.danger', { hasText: 'Unpublish guide' }).click();
@@ -1224,12 +1254,13 @@ try {
   await page.locator('.adminpage-armed .adminpage-btn.danger', { hasText: 'Unpublish guide' }).click();
   await page.locator('.adminpage-ok', { hasText: 'Guide unpublished' }).waitFor({ timeout: WAIT });
   const lastUnpub = state.unpublishCalls[state.unpublishCalls.length - 1];
-  if (lastUnpub.p_reason !== 'Copies a book' || lastUnpub.p_plan_id !== 'plan-g2') {
-    fail(`the takedown sent ${JSON.stringify(lastUnpub)}, not the trimmed reason for plan-g2`);
+  if (lastUnpub.p_reason !== 'Copies a book' || lastUnpub.p_plan_id !== 'plan-g2'
+      || lastUnpub.p_ground !== 'terms' || lastUnpub.p_ground_ref !== 'c6') {
+    fail(`the takedown sent ${JSON.stringify(lastUnpub)}, not the trimmed reason and terms c6 for plan-g2`);
   }
   await page.waitForTimeout(700);
   if (await page.locator('.adminpage-table tbody tr').count() !== 1) fail('the unpublished guide did not leave the Guides list');
-  ok('Unpublish: sends the trimmed reason, announces it, and the guide leaves the list');
+  ok('Unpublish: sends the trimmed reason and the ground, announces it, and the guide leaves the list');
 
   // Reports: lazy, filtered, worded.
   if (state.reportCalls.length !== 0) fail('Reports loaded before its tab was opened');
@@ -1244,6 +1275,12 @@ try {
   if (await r2c.locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).count()) fail('a non-public guide offers Unpublish from its report');
   if (!(await r1c.locator('a', { hasText: 'Reply to reporter' }).count())) fail('a report with a contact email has no reply link');
   if (await r2c.locator('a', { hasText: 'Reply to reporter' }).count()) fail('a report with no contact email offers a reply link');
+  // Migration 051: the name, the good-faith tick, and the email cleared on decision.
+  const r1t = await r1c.innerText();
+  if (!/Name given: Ann Reporter/.test(r1t) || !/Confirmed in good faith/.test(r1t)) fail('a report does not show the name and the good-faith tick');
+  if (!/cleared when you decide/.test(r1t)) fail('a new report with an email does not say the email is cleared on decision');
+  if (!/before the good-faith confirmation existed/.test(await r2c.innerText())) fail('an older report does not say it predates the tick');
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-reports-051.png` });
   ok('Reports: lazy first load, the New filter, the not-public chip, reply only with a contact email');
   state.reportsFail = true;
   await page.locator('.adminpage-btn', { hasText: 'Refresh' }).first().click();
@@ -1274,6 +1311,8 @@ try {
   // Unpublish from the report card (r1, plan-g1): the report is actioned.
   await r1c.locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).click();
   await r1c.locator('textarea').fill('Copies a chapter of a book.');
+  await r1c.locator('[role="radio"]', { hasText: 'Illegal content' }).click();
+  await r1c.locator('input').fill('Belgian Code of Economic Law, Book XI');
   await r1c.locator('.adminpage-btn.danger', { hasText: 'Unpublish guide' }).click();
   await page.locator('.adminpage-ok', { hasText: 'Reports marked actioned: 1' }).waitFor({ timeout: WAIT });
   await page.waitForTimeout(600);
@@ -1283,6 +1322,10 @@ try {
   if (await page.locator('.adminpage-fb', { hasText: /Decided by @owner/ }).count() < 3) fail('the All filter should show every decided report with who decided');
   if (!/Copies a chapter of a book\./.test(await page.locator('.adminpage-fb', { hasText: 'published book' }).innerText())) {
     fail('a decided report does not carry its reason');
+  }
+  const lastR = state.unpublishCalls[state.unpublishCalls.length - 1];
+  if (lastR.p_ground !== 'illegal' || lastR.p_ground_ref !== 'Belgian Code of Economic Law, Book XI') {
+    fail(`the card takedown sent ${JSON.stringify(lastR)}, not the illegal ground with its law`);
   }
   ok('Reports: unpublishing from a card actions the report; All shows who decided, when and why');
 

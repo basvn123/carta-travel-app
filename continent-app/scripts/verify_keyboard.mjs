@@ -34,6 +34,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function boot(p, q = '') {
+  await p.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await p.goto(`${BASE}/${q}`, { waitUntil: 'commit', timeout: 180000 });
   await p.waitForSelector('.places-ccard, .xcard, .app', { timeout: 120000 });
   await sleep(2500);
@@ -79,7 +80,22 @@ const SURFACES = {
     await p.waitForSelector('.jpage-hook, .jpage', { timeout: 30000 });
     await sleep(2500);
     await openAll(p, FOLDS);
-    return { start: null, max: 400 };
+    // After the walk: the day track (T162) moves one day per arrow key while
+    // it has focus, and keeps the focus on the track while it moves.
+    const after = async (pg, shot) => {
+      const track = pg.locator('.dtrack').first();
+      if (!(await track.count())) return { dayTrack: false };
+      await track.focus(); await pg.keyboard.press('Home'); await sleep(500);
+      const first = (await pg.locator('.dtrack-pos').innerText()).trim();
+      await pg.keyboard.press('ArrowRight'); await sleep(700);
+      await shot('day-track');
+      const now = await pg.evaluate(() => ({
+        pos: document.querySelector('.dtrack-pos')?.textContent.trim() || '',
+        focus: !!document.activeElement?.classList.contains('dtrack'),
+      }));
+      return { dayTrackArrows: now.pos !== first && /\b2\b/.test(now.pos), dayTrackKeepsFocus: now.focus };
+    };
+    return { start: null, max: 400, after };
   },
   'explore-grid': async (p) => { await boot(p, '?tab=map'); await p.waitForSelector('.xcard'); await sleep(1500); return { start: null }; },
   'explore-map': async (p) => {
@@ -186,6 +202,9 @@ const FOCUS_INFO = () => {
   }
   return {
     id: e.dataset.kbId, sig: `${e.tagName.toLowerCase()}${cls ? `.${cls}` : ''}`, label,
+    // A native date or time input takes Tab once per part (day, month, year)
+    // before focus leaves it, so the walk may see it more than once in a row.
+    segmented: e.tagName === 'INPUT' && /^(date|time|datetime-local|month|week)$/.test(e.type),
     role: e.getAttribute('role') || '', x: r.x, y: r.y, w: r.width, h: r.height,
     invisible: !r.width || !r.height || cs.visibility === 'hidden' || Number(cs.opacity) === 0 || offscreen,
     obscured,
@@ -208,13 +227,17 @@ async function ringVisible(p, f, vw, vh) {
 async function walk(p, start, vw, vh, max = MAX) {
   if (start === null) await p.evaluate(() => { document.activeElement?.blur?.(); window.scrollTo(0, 0); });
   else if (start !== 'active') await p.locator(start).locator('visible=true').first().focus();
-  const stops = []; const seen = new Set(); let stuck = false; let bodyHits = 0;
+  const stops = []; const seen = new Set(); let stuck = false; let bodyHits = 0; let repeats = 0;
   for (let i = 0; i < max; i++) {
     await p.keyboard.press('Tab');
     await sleep(60);
     const f = await p.evaluate(FOCUS_INFO);
     if (!f) { if (++bodyHits > 2) break; continue; }
-    if (stops.length && stops[stops.length - 1].id === f.id) { stuck = true; break; }
+    if (stops.length && stops[stops.length - 1].id === f.id) {
+      if (f.segmented && ++repeats <= 4) continue;
+      stuck = true; break;
+    }
+    repeats = 0;
     if (seen.has(f.id)) break; // came round again
     seen.add(f.id);
     f.ring = f.invisible || f.obscured ? false : await ringVisible(p, f, vw, vh);

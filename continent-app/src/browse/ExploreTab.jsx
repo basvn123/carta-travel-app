@@ -19,7 +19,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE } from '../lib/rating.js';
 import {
-  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon,
+  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon, TrainIcon,
   ChevronDownIcon, MapPinIcon, ListDayIcon,
 } from '../components/Icons.jsx';
 import { LifestyleButton } from './LifestyleButton.jsx';
@@ -183,7 +183,16 @@ function packRows(rows) {
  * hovered and the preview open, with no "safe triangle" needed. Persistent:
  * nothing times it out, it closes when the pointer or the focus leaves.
  */
-function CardPreview({ p, t, best, role, countryLine }) {
+/** Door-to-door ground minutes as "3 h 20 min", the same units in all six
+ *  languages. */
+function groundTime(min) {
+  const h = Math.floor(min / 60);
+  const m = Math.round(min % 60);
+  if (h === 0) return `${m} min`;
+  return m === 0 ? `${h} h` : `${h} h ${m} min`;
+}
+
+function CardPreview({ p, t, best, role, countryLine, reachMin }) {
   const stay = visitLength(p);
   const sights = placeSights(p, 3);
   const lead = knownFor(p);
@@ -218,6 +227,14 @@ function CardPreview({ p, t, best, role, countryLine }) {
           <span>{best}</span>
         </p>
       )}
+      {/* How do I get there: shown in the preview only, and only where the
+          traveller's origin has a reach table (owner call, T362 on T193-f). */}
+      {reachMin != null && (
+        <p className="xcard-preview-row">
+          <TrainIcon size={12} />
+          <span>{t('explore.reachFrom', { time: groundTime(reachMin) })}</span>
+        </p>
+      )}
       {p.cost?.dayEur != null && (
         <div className="xcard-preview-cost">
           <CostReceipt cost={p.cost} t={t} compact />
@@ -228,7 +245,7 @@ function CardPreview({ p, t, best, role, countryLine }) {
 }
 
 const ExploreCard = React.memo(function ExploreCard({
-  p, span, ratio, kind, role, selected, fav, onSelect, onToggleFav, t,
+  p, span, ratio, kind, role, selected, fav, onSelect, onToggleFav, t, reachMin,
 }) {
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
   // Two doors to one preview: hover follows the pointer, the info button
@@ -330,7 +347,7 @@ const ExploreCard = React.memo(function ExploreCard({
         <InfoIcon size={15} />
       </button>
       {preview && (
-        <CardPreview p={p} t={t} best={best} role={role} countryLine={countryLine} />
+        <CardPreview p={p} t={t} best={best} role={role} countryLine={countryLine} reachMin={reachMin} />
       )}
     </div>
   );
@@ -926,9 +943,17 @@ export function ExploreTab({
 
             {gridTotal === 0 && (
               <p className="explore-count">
-                <span className="explore-count-badge">
+                <span className="explore-count-badge is-empty">
                   {showFavOnly ? t('results.emptyFav') : t('results.empty')}
                 </span>
+                {/* One button that undoes what emptied the grid: the search
+                    when one is typed, else the filters (T367). */}
+                {!showFavOnly && (
+                  <button type="button" className="cov-empty-btn explore-empty-clear"
+                    onClick={locationQuery ? () => setLocationQuery('') : resetAll}>
+                    {t(locationQuery ? 'results.clearSearch' : 'empty.clearFilters')}
+                  </button>
+                )}
                 {locationQuery && searchHits?.suggestions?.length > 0 && (
                   <span className="xsearch-suggest">
                     {t('explore.didYouMean')}
@@ -955,6 +980,7 @@ export function ExploreTab({
                   onSelect={openWithMember}
                   onToggleFav={onToggleFav}
                   t={t}
+                  reachMin={reachMinutes?.get(p.id) ?? null}
                 />
               ))}
             </div>

@@ -1,0 +1,120 @@
+/* The day track (T162, spec C2): Day by day as one row of day cards, built to
+   the Day track rule in the carta-design skill. Markup in browse/DayTrack.jsx
+   and the Day card in browse/JourneyPage.jsx.
+
+   About 85 percent of the width on a phone, so the next card shows and says
+   there is more; three across from 1024 px. The row snaps to a card start.
+   The track pads itself by 4 px and gives the same back with a negative
+   margin, so the cards line up with the section text and a focus ring on the
+   track or on a control inside a card is not clipped by the scroller. */
+
+.dtrack-wrap { margin: 0 0 var(--space-1); }
+
+/* Above the track, right aligned: the position, then Previous and Next. */
+.dtrack-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+.dtrack-pos {
+  margin-right: var(--space-1);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dtrack-btn { padding: 0 var(--space-3); }
+.dtrack-prev-chev { transform: scaleX(-1); }
+
+.dtrack {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: -4px;
+  padding: 4px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 4px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.dtrack::-webkit-scrollbar { display: none; }
+.dtrack:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dtrack > * {
+  flex: 0 0 85%;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+@media (min-width: 1024px) {
+  .dtrack > * { flex-basis: calc((100% - 2 * var(--space-3)) / 3); }
+}
+
+/* The day card. It overrides the stacked day's top hairline: in the track
+   every day is a bordered object of its own. */
+.dtrack .jpage-day,
+.dtrack .jpage-day:first-of-type {
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.dtrack .jpage-day-head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+/* The day number is a position, not a rating, so it is ink, not ochre. */
+.dtrack .jpage-day-n { color: var(--ink-soft); }
+
+/* The photograph of the day's main feature, when the wire has one. */
+.jpage-day-shot { margin: 0 0 var(--space-2); }
+.jpage-day-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--paper-dim);
+}
+.jpage-day-credit {
+  margin-top: var(--space-1);
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.jpage-day-credit a { color: inherit; }
+
+/* The measured line: the figures stay mono, the words read in sans
+   (dayStatsParts in lib/journeys.js), in --ink-soft so a long note is legible
+   rather than metadata grey. */
+.dtrack .jpage-day-stats { font-size: 12px; }
+.jpage-day-stats .jpage-day-note {
+  font-family: var(--ui);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* Under the track, one dot per day; the current one is filled. */
+.dtrack-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.dtrack-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+.dtrack-dot.is-on { background: var(--ink-fill); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dtrack { scroll-behavior: auto; }
+}

@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { isNum, declutterPins } from '../map/coords.js';
 import { keyablePin, nameMarker } from '../map/pinKeys.js';
+import { TOKEN_COLOURS as TC, tokenColour as token } from '../map/tokenColors.js';
 
 /**
  * The destination page's one map. Four toggleable layers rather than four
@@ -29,15 +30,9 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
 
 // One colour per outdoor layer, shared with the CSS (.dmap-pin.is-<layer>).
 const LAYER_COLOR = {
-  trails: '#3d7a4e', cycling: '#2c6376', mountains: '#6b5b95',
-  lakes: '#2a6f9e', beaches: '#c48a2a', nearby: '#3d7a4e',
+  trails: TC['--trail-pin'], cycling: TC['--swim-ink'], mountains: TC['--mountain-ink'],
+  lakes: TC['--lake-ink'], beaches: TC['--beach-ink'], nearby: TC['--trail-pin'],
 };
-
-function token(name, fallback) {
-  if (typeof document === 'undefined') return fallback;
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  return v || fallback;
-}
 
 function makeEl(className, html) {
   const el = document.createElement('div');
@@ -80,7 +75,7 @@ const DestMap = React.forwardRef(function DestMap({
     declutterRef.current = null;
     pinElsRef.current = [];
 
-    const accent = token('--accent', '#e05a47');
+    const accent = token('--accent');
     const rows = active === 'trips' ? trips
       : active === 'nearby' ? nearby
         : active === 'around' ? around : highlights;

@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl';
 import { keyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, declutterPins } from './coords.js';
+import { tokenColour } from './tokenColors.js';
 
 // A pin's accessible name must contain the text it shows (WCAG 2.5.3), so a
 // numbered pin is named "2 Vienna", not "Vienna" (T231).
@@ -320,7 +321,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         source: 'trip-route',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: {
-          'line-color': '#c8501e',
+          'line-color': tokenColour('--accent'),
           'line-width': 2.5,
           'line-dasharray': [1.5, 1.6],
           'line-opacity': 0.85,
@@ -356,7 +357,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         source: 'trip-ferry',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: {
-          'line-color': '#2b6f9e',
+          'line-color': tokenColour('--water-link'),
           'line-width': 3,
           'line-dasharray': [1, 1.4],
           'line-opacity': 0.9,
@@ -690,13 +691,13 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           id: 'country-fill',
           type: 'fill',
           source: 'country-shapes',
-          paint: { 'fill-color': '#e05a47', 'fill-opacity': 0.2 },
+          paint: { 'fill-color': tokenColour('--accent'), 'fill-opacity': 0.2 },
         }, firstSymbol);
         map.addLayer({
           id: 'country-outline',
           type: 'line',
           source: 'country-shapes',
-          paint: { 'line-color': '#c8501e', 'line-width': 1.1, 'line-opacity': 0.75 },
+          paint: { 'line-color': tokenColour('--accent'), 'line-width': 1.1, 'line-opacity': 0.75 },
         }, firstSymbol);
       }
       const filter = ['in', ['get', 'iso2'], ['literal', codes]];

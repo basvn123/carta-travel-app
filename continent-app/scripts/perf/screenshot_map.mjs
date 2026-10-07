@@ -37,7 +37,7 @@ BASE = `http://localhost:${server.address().port}`;
 try {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.addInitScript(() => { localStorage.setItem('continent.guestMode.v1', '1'); });
+  await page.addInitScript(() => { localStorage.setItem('continent.guestMode.v1', '1'); localStorage.setItem('continent.homeSeen.v1', '1'); });
   await page.goto(`${BASE}/?tab=map`, { waitUntil: 'domcontentloaded' });
   await page.locator('.maplibregl-canvas').waitFor({ timeout: 120000 });
   await page.locator('.result-row').first().waitFor({ timeout: 240000 });

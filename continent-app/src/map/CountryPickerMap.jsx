@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { keepFitted } from './coords.js';
+import { tokenColour as token } from './tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // Label-light and desaturated: this map is a picker, so the countries are the
@@ -24,14 +25,6 @@ const loadCountryShapes = () => {
   }
   return countryShapesPromise;
 };
-
-/** The design tokens this map paints with, read from the document so the map
- *  cannot drift from the rest of the app's palette. */
-function token(name, fallback) {
-  if (typeof window === 'undefined') return fallback;
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  return v || fallback;
-}
 
 /**
  * The map of Europe you pick countries on.
@@ -122,9 +115,9 @@ export function CountryPickerMap({
         promoteId: 'iso2',
       });
 
-      const accent = token('--accent', '#c8501e');
-      const accentBg = token('--accent-bg', '#fdeee7');
-      const rule = token('--rule', '#e2e0dc');
+      const accent = token('--accent');
+      const accentBg = token('--accent-bg');
+      const rule = token('--rule');
 
       map.addLayer({
         id: 'cpm-fill',
@@ -135,7 +128,7 @@ export function CountryPickerMap({
             'case',
             ['boolean', ['feature-state', 'selected'], false], accent,
             ['boolean', ['feature-state', 'hover'], false], accentBg,
-            '#ffffff',
+            token('--bg-card'),
           ],
           'fill-opacity': [
             'case',
@@ -205,8 +198,8 @@ export function CountryPickerMap({
           'text-allow-overlap': false,
         },
         paint: {
-          'text-color': ['case', ['boolean', ['feature-state', 'selected'], false], token('--ink', '#26231f'), token('--ink-mute', '#8a8681')],
-          'text-halo-color': '#ffffff',
+          'text-color': ['case', ['boolean', ['feature-state', 'selected'], false], token('--ink'), token('--ink-mute')],
+          'text-halo-color': token('--bg-card'),
           'text-halo-width': 1.2,
         },
       });

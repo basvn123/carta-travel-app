@@ -1,0 +1,346 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   The one card, five fillings (spec 5.1, T179): browse/PlaceCard.jsx.
+
+   Beaches, lakes, mountains, cycle routes and walks draw through one frame.
+   A 16:9 photograph with rounded top corners only, the ochre rating seal top
+   right and the section's 6 px data strip along its bottom (29-signature.css),
+   then a body on --bg-card: the name in Fraunces 19 px with a mono ref chip,
+   the place in 13 px --ink-mute, the hook on one 15 px line, exactly three
+   measured values in mono 12.5 px, and up to three 20 px icons.
+
+   Every body row has a fixed height, so every card in a grid is the same
+   height whatever it holds, and the skeleton (the same rows, empty) is the
+   card's final size. The grid is uniform: 1 up under 640 px, 2 up to
+   1039 px, 3 up above. No bento: the owner ruled it out on 2026-10-07 (T362).
+
+   The selectors are scoped under .places-list so they outrank the section
+   cards' older overlay rules in 23-places-pages.css and the phone block in
+   24-destination-workspace.css, which this file supersedes for these five
+   cards without editing them.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.places-list.pcard-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+@media (min-width: 640px) {
+  .places-list.pcard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1040px) {
+  .places-list.pcard-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ── The frame ──────────────────────────────────────────────────────────── */
+
+.places-list .pcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: auto;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+}
+.places-list .pcard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The band. Its own clip, so the hover zoom stays inside the photograph and
+   the card itself never moves. */
+.pcard-band {
+  position: relative;
+  display: block;
+  flex: none;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--paper-dim);
+  border-radius: 9px 9px 0 0;
+}
+.places-list .pcard-band .places-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% var(--card-focus, 45%);
+  transition: transform .3s ease;
+}
+@media (hover: hover) {
+  .places-list .pcard:hover .pcard-band .places-card-img { transform: scale(1.05); }
+}
+
+/* Small facts that belong on the picture: distance from a searched place,
+   the swimming verdict, the lift, whose photograph it is. One stack, top
+   left, so they never collide with the seal. */
+.pcard-corner {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  max-width: 62%;
+}
+.pcard-corner > span {
+  position: static;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The rating seal. A pale tier chip is drawn for a paper ground, so on a
+   photograph it gets the card's white behind it. */
+.pcard-seal {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 2;
+  display: flex;
+}
+.pcard-seal .score-chip.rt-0,
+.pcard-seal .score-chip.rt-1 { background: var(--bg-card); }
+.pcard-seal .places-card-unrated,
+.pcard-seal .cycle-card-unrated {
+  padding: 3px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── The body ───────────────────────────────────────────────────────────── */
+
+.pcard-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--space-4);
+}
+
+.pcard-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 26px;
+  min-width: 0;
+}
+.places-list .pcard .pcard-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 26px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-shadow: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pcard-ref {
+  flex: none;
+  max-width: 40%;
+  padding: 1px 6px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 6px;
+  background: var(--paper-dim);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.places-list .pcard .pcard-where {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 18px;
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.places-list .pcard .pcard-where svg { flex: none; opacity: 1; }
+.pcard-where-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The hook: one line, the words the chips used to carry, read as a phrase.
+   The commas are text between the parts, so the parts keep their own
+   classes and the line still reads as words when copied or read aloud. */
+.places-list .pcard .pcard-hook {
+  display: block;
+  height: 22px;
+  margin-top: var(--space-3);
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.places-list .pcard .pcard-hook > span {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: inherit;
+  font-weight: 400;
+  color: inherit;
+  white-space: nowrap;
+}
+
+/* Exactly three measured values, a column each, the figure over its name.
+   The same three columns on every card of a section is what lets a grid be
+   read down. */
+.places-list .pcard .pcard-values {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  height: 36px;
+  margin-top: var(--space-3);
+  overflow: visible;
+  font-family: var(--ui);
+  font-size: inherit;
+  color: inherit;
+}
+.pcard-v {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.pcard-v-n {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pcard-v-l {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pcard-v.is-none .pcard-v-n {
+  font-family: var(--ui);
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+
+/* Up to three icons at 20 px and a 1.5 px stroke, no tile; anything that
+   rides at the end of the row (a hidden gem, a city day's price) sits right. */
+.pcard-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 20px;
+  margin-top: var(--space-3);
+  min-width: 0;
+}
+.pcard-icons {
+  display: flex;
+  flex: 1 1 auto;
+  gap: var(--space-3);
+  min-width: 0;
+  color: var(--ink-soft);
+}
+.places-list .pcard .pcard-icon {
+  display: inline-flex;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+}
+.pcard-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.5px;
+}
+.pcard-icon svg * { vector-effect: non-scaling-stroke; }
+.pcard-gem {
+  flex: none;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--gem-bg);
+  color: var(--gem-ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.places-list .pcard .places-card-price {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-shadow: none;
+}
+.places-list .pcard .places-card-price small {
+  font-size: 11px;
+  color: var(--ink-mute);
+  opacity: 1;
+}
+
+/* ── The skeleton: the card at its final size, on --paper-dim ───────────── */
+
+.places-list .pcard-skel { pointer-events: none; }
+.pcard-skel-bar {
+  display: block;
+  width: 100%;
+  height: 12px;
+  border-radius: 4px;
+  background: var(--paper-dim);
+  animation: state-skel-breathe 1.6s ease-in-out infinite;
+}
+.pcard-skel .pcard-band { animation: state-skel-breathe 1.6s ease-in-out infinite; }
+.pcard-skel-bar.is-title { width: 62%; height: 16px; }
+.pcard-skel-bar.is-where { width: 40%; }
+.pcard-skel-bar.is-hook { width: 82%; height: 14px; margin-top: 4px; }
+.pcard-skel .pcard-values .pcard-skel-bar { height: 30px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .places-list .pcard-band .places-card-img { transition: none; }
+  .places-list .pcard:hover .pcard-band .places-card-img { transform: none; }
+  .pcard-skel-bar,
+  .pcard-skel .pcard-band { animation: none; }
+}

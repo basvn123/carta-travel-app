@@ -93,6 +93,7 @@ async function openCrashing(browser, message) {
     route.fulfill({ status: 204, body: '' });
   });
   page.on('console', () => {}); // the boundary logs the error on purpose
+  await page.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await page.goto(BASE, { waitUntil: 'commit', timeout: 60000 });
   return { page, sent };
 }

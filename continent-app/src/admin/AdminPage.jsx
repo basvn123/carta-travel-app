@@ -80,6 +80,7 @@ export function AdminPage({ onClose }) {
 
   const [unlocked, setUnlocked] = useState(false);
   const [section, setSection] = useState('overview');
+  const [contentFocus, setContentFocus] = useState(null);
 
   // Escape closes the page, the way every other overlay in the app behaves.
   useEffect(() => {
@@ -175,6 +176,7 @@ export function AdminPage({ onClose }) {
                 overrides={content.overrides}
                 onOverridesChanged={async () => { await content.loadOverrides(); loadAudit(25); }}
                 errText={errText}
+                focusRow={contentFocus}
               />
             )}
 
@@ -200,6 +202,7 @@ export function AdminPage({ onClose }) {
               <FeedbackInbox
                 queue={queue}
                 onOpenUser={(id) => { setSection('users'); account.openUser(id); }}
+                onOpenContent={(row) => { setContentFocus({ ...row, n: Date.now() }); setSection('content'); setDetail(null); }}
               />
             )}
 

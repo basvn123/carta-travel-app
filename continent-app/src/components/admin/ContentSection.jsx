@@ -6,6 +6,7 @@ import { dataUrl } from '../../lib/dataHost.js';
 import {
   OVERRIDE_STATUSES, MIN_REASON_CHARS, BACKFILL_REASON, defaultReviewDate, fromDateInput, reviewDateBounds,
   reviewProblem, reviewState, rowsNeedingReview, toDateInput, daysOverdue, fetchValidItemIds, orphanOverrides,
+  stopsApplyingAt, appliesToTravellers,
 } from '../../lib/overrides.js';
 import { fmtDate } from './format.js';
 import { OverrideDiffViewer } from './OverrideDiffViewer.jsx';
@@ -34,6 +35,9 @@ const LAYERS = [
   { key: 'lake', dir: 'lakes', arr: 'lakes', imageKey: 'images' },
   { key: 'mountain', dir: 'mountains', arr: 'mountains', imageKey: 'images' },
   { key: 'trail', dir: 'trails', arr: 'trips', imageKey: 'img' },
+  // Cycling routes (T326, row T284-d): patchable once migration 047 widens the
+  // layer check. Route files carry no lead photograph, so the grid shows none.
+  { key: 'cycle', dir: 'cycling', arr: 'routes', imageKey: 'images' },
 ];
 
 function isJson(res) {
@@ -72,7 +76,7 @@ const REVIEW_ERR = {
   note_required: 'admin.errOverrideReason',
 };
 
-export function ContentSection({ overrides, onOverridesChanged, errText }) {
+export function ContentSection({ overrides, onOverridesChanged, errText, focusRow = null }) {
   const { t } = useI18n();
   const [layerKey, setLayerKey] = useState('beach');
   const [countries, setCountries] = useState([]);
@@ -128,7 +132,7 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
       // The nature indexes name the field `cc` and count with `n`; the trails
       // index names it `country` and counts with `n_trips` (T268-e).
       const list = (raw.countries || [])
-        .map((c) => (c ? { cc: c.cc || c.country, n: c.n ?? c.n_trips } : null))
+        .map((c) => (c ? { cc: c.cc || c.country, n: c.n ?? c.n_trips ?? c.n_routes } : null))
         .filter((c) => c && c.cc && (c.n === undefined || c.n > 0))
         .map((c) => ({ cc: c.cc, n: c.n || 0 }));
       setCountries(list);
@@ -214,6 +218,19 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
       setEditing((cur) => (cur === stub ? found : cur));
     });
   };
+
+  // Open in Content from a feedback report (T326): the inbox hands over the
+  // report's layer, country and item id, and the editor opens on that item
+  // once the layer index has loaded, the same way a review-list row does.
+  const focusDone = React.useRef(null);
+  const ready = countries.length > 0;
+  useEffect(() => {
+    if (!focusRow || !ready || focusDone.current === focusRow) return;
+    focusDone.current = focusRow;
+    openFromReview({ itemId: focusRow.itemId, layer: focusRow.layer, country: focusRow.country, patch: null });
+    // openFromReview only reads its argument and stable setters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusRow, ready]);
 
   const editRow = editing ? rowFor(editLayerKey, editing.id) : null;
   const editLayer = LAYERS.find((l) => l.key === editLayerKey) || layer;
@@ -304,6 +321,14 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
                         {state === 'overdue' && late === 1 && t('admin.reviewLateOne', { date: fmtDate(r.reviewBy) })}
                         {state === 'overdue' && late > 1 && t('admin.reviewLate', { date: fmtDate(r.reviewBy), n: late })}
                       </span>
+                      {/* A temporary patch past its date stops reaching
+                          travellers 14 days later (migration 051). */}
+                      {state === 'overdue' && stopsApplyingAt(r) && (
+                        <span className={`adminpage-reviewdate ${appliesToTravellers(r, now) ? '' : 'overdue'}`}>
+                          {t(appliesToTravellers(r, now) ? 'admin.reviewStopsOn' : 'admin.reviewStopped',
+                            { date: fmtDate(stopsApplyingAt(r).toISOString()) })}
+                        </span>
+                      )}
                     </span>
                   </button>
                 </li>

@@ -1,0 +1,382 @@
+/* The landing page, which is also the home page (T209; browse/LandingPage.jsx).
+
+   One hero that demonstrates instead of describing: the claim on the left,
+   a live receipt for a real town on the right (stacked on a phone, claim,
+   receipt, then the one primary). Under it the three proof points and the
+   coverage, divided by rules, never boxed: lists get hairlines, objects get
+   borders, and the receipt is the only object on the page.
+
+   The receipt follows the carta-design receipt and docs/FIRST_RUN_RESULT.md:
+   a --paper-dim header band, one hairline row per cost with the figure right
+   aligned in mono, a 2px --ink rule above the sum, the --accent-bg footer.
+   Tokens only; no hex, no gradient, no shadow. */
+
+.lp-page {
+  position: absolute;
+  top: var(--filter-h);
+  left: 0; right: 0; bottom: var(--bottom-nav-h);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  background: var(--paper);
+  color: var(--ink);
+}
+.lp-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-4) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── The hero: claim, demonstration, the one primary ─────────────────── */
+
+.lp-hero {
+  display: grid;
+  grid-template-areas: "head" "demo" "act";
+  gap: var(--space-4);
+}
+.lp-head { grid-area: head; min-width: 0; }
+.lp-demo { grid-area: demo; min-width: 0; }
+.lp-act { grid-area: act; }
+
+.lp-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(30px, 7.4vw, 52px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.lp-lede {
+  margin: var(--space-2) 0 0;
+  max-width: 44ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.lp-cta { width: 100%; }
+
+/* The town switch reads as a sentence: "Price a stay in" then the towns.
+   An active town is the active-toggle fill, never the accent. */
+.lp-towns-label {
+  display: block;
+  margin: 0 0 var(--space-1);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.lp-towns-row {
+  display: flex;
+  gap: var(--space-2);
+}
+.lp-town {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.lp-town:hover { border-color: var(--ink-soft); }
+.lp-town[aria-pressed="true"] {
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
+  color: var(--on-fill);
+}
+.lp-town:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The input strip: one bordered row divided by hairlines, a small label over
+   each value, as the search strip is drawn everywhere else. One row of three
+   at every width, the stay a little wider, so the receipt stays above the
+   fold on a phone. */
+.lp-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 2fr);
+  margin-top: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+}
+.lp-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 6px var(--space-2) 4px var(--space-3);
+  cursor: pointer;
+}
+.lp-field + .lp-field { border-left: 1px solid var(--rule-soft); }
+.lp-field-label {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+.lp-field select {
+  width: 100%;
+  min-height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.lp-field select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (min-width: 480px) {
+  .lp-field select { font-size: 15px; }
+}
+
+
+/* ── The receipt ─────────────────────────────────────────────────────── */
+
+.lp-receipt {
+  margin-top: var(--space-2);
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.lp-receipt-head {
+  padding: 10px var(--space-4);
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper-dim);
+}
+.lp-receipt-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.lp-receipt-sub {
+  margin: 2px 0 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.lp-lines { margin: 0; }
+.lp-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  padding: 10px var(--space-4);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.lp-line:last-child { border-bottom: 0; }
+.lp-line dt { min-width: 0; }
+.lp-line-label {
+  display: block;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.lp-line-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.lp-mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.lp-fig {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.lp-sum {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--space-3);
+  padding: 10px var(--space-4);
+  border-top: 2px solid var(--ink);
+}
+.lp-sum-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.lp-sum-fig {
+  font-family: var(--mono);
+  font-size: clamp(24px, 7vw, 34px);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.lp-sum-each {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--ink-soft);
+}
+.lp-receipt-foot {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent-bg);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.lp-note {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.lp-open { margin-top: var(--space-3); }
+
+/* ── Proof points and coverage ───────────────────────────────────────── */
+
+.lp-proof,
+.lp-cov { margin-top: var(--space-8); }
+.lp-h2 {
+  margin: 0 0 var(--space-4);
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.lp-h3 {
+  margin: 0 0 var(--space-1);
+  font-family: var(--ui);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.lp-proof-list {
+  display: grid;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lp-proof-list li {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule);
+}
+.lp-proof-list p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.lp-cov p {
+  max-width: 68ch;
+  margin: 0 0 var(--space-3);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.lp-table-wrap {
+  max-width: 680px;
+  margin: var(--space-4) 0 var(--space-2);
+  overflow-x: auto;
+}
+.lp-cov .lp-cov-key {
+  margin-bottom: var(--space-5);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.lp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.lp-table caption {
+  padding-bottom: var(--space-2);
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--ink-soft);
+}
+.lp-table th,
+.lp-table td {
+  padding: var(--space-2) 6px;
+  border-top: 1px solid var(--rule-soft);
+  text-align: right;
+  vertical-align: baseline;
+}
+.lp-table thead th {
+  border-top: 1px solid var(--rule);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.lp-table th:first-child { padding-left: 0; text-align: left; }
+.lp-table tbody th { font-weight: 400; color: var(--ink); }
+.lp-table td {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.lp-table tbody tr:last-child > * { border-bottom: 1px solid var(--rule); }
+.lp-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lp-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (min-width: 640px) {
+  .lp-table th,
+  .lp-table td { padding: var(--space-2) var(--space-3); }
+}
+
+/* Desktop: the claim and the primary on the left, the receipt beside them. */
+@media (min-width: 769px) {
+  .lp-wrap { padding: var(--space-7) 24px var(--space-8); }
+  .lp-proof-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
+}
+@media (min-width: 900px) {
+  .lp-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "head demo" "act demo";
+    column-gap: var(--space-8);
+    row-gap: var(--space-6);
+    align-items: start;
+  }
+  .lp-head { padding-top: var(--space-6); }
+  .lp-lede { margin-top: var(--space-3); font-size: 18px; }
+  .lp-cta { width: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-town { transition: none; }
+}

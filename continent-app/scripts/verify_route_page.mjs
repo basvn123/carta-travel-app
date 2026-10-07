@@ -92,6 +92,7 @@ const newPage = async (width = 1440, height = 900, dark = false) => {
     try {
       localStorage.setItem('continent.lang.v1', 'en');
       localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
     } catch { /* storage unavailable */ }
   });
   return p;

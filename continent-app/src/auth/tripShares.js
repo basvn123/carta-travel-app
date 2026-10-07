@@ -185,7 +185,11 @@ const MOCK_TRIP = {
  * token was real but has been withdrawn" says more about the owner than they
  * agreed to. Works signed out.
  */
+let mockFails = 0;
 export async function fetchSharedTrip(token) {
+  // ?sharemock=fail throws on the first two calls (dev StrictMode runs the
+  // effect twice) and loads on the retry.
+  if (SHARE_MOCK === 'fail' && mockFails < 2) { mockFails += 1; throw new Error('mock network failure'); }
   if (SHARE_MOCK) return SHARE_MOCK === 'gone' ? null : MOCK_TRIP;
   if (!supabase || !token) return null;
   const { data, error } = await supabase.rpc('get_shared_trip', { share_token: token });

@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { kindOf } from '../lib/taxonomy.js';
 import { thumbAt } from '../lib/heroImage.js';
 import { knownFor } from '../lib/knownFor.js';
+import { TOKEN_COLOURS as TC, MAP_ONLY_COLOURS as MC } from '../map/tokenColors.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -58,10 +59,10 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
 
 const KIND_RADIUS = { metro: 9, city: 7, area: 7, town: 5.5, village: 4.5 };
 const TIER_FILL = ['match', ['get', 'tier'],
-  3, '#8f5a0c', // --rate
-  2, '#c08a2e',
-  1, '#eddbb6',
-  /* 0 */ '#b9b4a5'];
+  3, TC['--rate'],
+  2, MC.tier2,
+  1, MC.tier1,
+  /* 0 */ MC.tier0];
 
 // Where a pin stops being a dot and starts being a card.
 const CARD_FROM = 8;
@@ -269,8 +270,8 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
         id: 'clusters', type: 'circle', source: 'dests',
         filter: ['has', 'point_count'],
         paint: {
-          'circle-color': '#efece2',
-          'circle-stroke-color': '#8f5a0c',
+          'circle-color': TC['--paper-dim'],
+          'circle-stroke-color': TC['--rate'],
           'circle-stroke-width': 1.5,
           'circle-radius': ['step', ['get', 'point_count'], 14, 25, 18, 100, 24],
         },
@@ -283,7 +284,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
           'text-size': 11,
           'text-font': ['Montserrat Medium', 'Open Sans Regular'],
         },
-        paint: { 'text-color': '#0f172a' },
+        paint: { 'text-color': TC['--ink'] },
       });
       map.addLayer({
         id: 'dest-dots', type: 'circle', source: 'dests',
@@ -293,7 +294,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
           'circle-color': TIER_FILL,
           'circle-opacity': 0.92,
           'circle-stroke-width': ['case', ['==', ['get', 'gem'], 1], 2, 1],
-          'circle-stroke-color': ['case', ['==', ['get', 'gem'], 1], '#2c6e63', '#ffffff'],
+          'circle-stroke-color': ['case', ['==', ['get', 'gem'], 1], TC['--gem-ink'], TC['--bg-card']],
         },
       });
 

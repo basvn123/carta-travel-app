@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { ReportProblem } from '../components/ReportProblem.jsx';
 import {
   ArrowLeftIcon, ShareIcon, RouteIcon, LoopIcon, BedIcon, TrainIcon,
   CarIcon, BusIcon, CalendarIcon, MapPinIcon, AlertIcon, CheckIcon,
@@ -9,6 +10,7 @@ import {
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
+import { GlossLine } from '../components/InfoDot.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
@@ -670,6 +672,7 @@ export function TripPage({
                 </li>
               </ul>
               <p className="tpage-credit">{t('trip.costNote')}</p>
+              <ReportProblem priceOnly item={{ layer: 'trip', id: card.id, name: trip.name || card.name || card.id }} />
             </Fold>
           )}
 
@@ -683,7 +686,7 @@ export function TripPage({
               onToggle={() => toggle('why')}
             >
               <ul className="itin-why">
-                {why.map((w) => <li key={w.k}>{w.line}</li>)}
+                {why.map((w) => <li key={w.k}><GlossLine text={w.line} /></li>)}
               </ul>
               {detail?.follows && (
                 <p className="itin-follows">

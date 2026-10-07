@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { ReportProblem } from '../components/ReportProblem.jsx';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useI18n } from '../i18n/index.jsx';
 import { count } from '../lib/format.js';
+import { tokenColour as token } from '../map/tokenColors.js';
 import { DetailPage } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
@@ -28,6 +30,7 @@ import {
 } from './RouteFigures.jsx';
 import { Instrument, Row, EmptyTrack, SpanAxis } from './Signature.jsx';
 import { kmOf, trafficMix } from '../lib/signature.js';
+import { numberSentence } from '../lib/numberSentences.js';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
   ListDayIcon, CheckIcon, InfoIcon, MountainIcon, BulbIcon, BedIcon,
@@ -89,14 +92,6 @@ const MONTHS = ['mtn.monthJan', 'mtn.monthFeb', 'mtn.monthMar', 'mtn.monthApr',
   'mtn.monthMay', 'mtn.monthJun', 'mtn.monthJul', 'mtn.monthAug',
   'mtn.monthSep', 'mtn.monthOct', 'mtn.monthNov', 'mtn.monthDec'];
 
-/** A design token as a concrete colour: MapLibre paint properties cannot read
- *  a CSS variable, and the route should not carry its own private palette. */
-function token(name, fallback) {
-  if (typeof document === 'undefined') return fallback;
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  return v || fallback;
-}
-
 /** The line parts of a GeoJSON geometry, each a list of [lon, lat]. */
 function geometryParts(geometry) {
   if (!geometry) return [];
@@ -131,12 +126,12 @@ function useRouteMap(mapEl, geometry, bbox) {
       map.addSource('cycle', { type: 'geojson', data: empty });
       map.addLayer({
         id: 'cycle-casing', type: 'line', source: 'cycle',
-        paint: { 'line-color': '#ffffff', 'line-width': 7, 'line-opacity': 0.9 },
+        paint: { 'line-color': token('--bg-card'), 'line-width': 7, 'line-opacity': 0.9 },
         layout: { 'line-cap': 'round', 'line-join': 'round' },
       });
       map.addLayer({
         id: 'cycle-line', type: 'line', source: 'cycle',
-        paint: { 'line-color': token('--accent', '#e05a47'), 'line-width': 3.4 },
+        paint: { 'line-color': token('--accent'), 'line-width': 3.4 },
         layout: { 'line-cap': 'round', 'line-join': 'round' },
       });
       map.resize();
@@ -402,7 +397,12 @@ export function CycleFamilyPage({ familyRef, onClose, onOpenRoute }) {
           </div>
         </header>
         {loading && <p className="places-empty">{'…'}</p>}
-        {!loading && !family && <p className="places-empty">{t('cycle.familyGone')}</p>}
+        {!loading && !family && (
+          <div className="places-empty empty-act">
+            <p>{t('cycle.familyGone')}</p>
+            <button type="button" className="cov-empty-btn" onClick={onClose}>{t('empty.cycleRoutes')}</button>
+          </div>
+        )}
         {!loading && family && (
           <>
             {family.ecf_agreement != null && (
@@ -587,6 +587,13 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
   // keys under the axis so the two bars sit directly over the ruler they
   // share. From the same block the sentences below read.
   const routeM = carta.surface?.total_m;
+  // What the two shares mean for the rider (T158). Only where the share was
+  // measured on enough of the line, the same floors the bars use.
+  const sf = carta.surface;
+  const pavedSentence = sf && Number.isFinite(sf.paved_share) && sf.surface_known_share >= 0.25
+    ? numberSentence('pavedShare', sf.paved_share * 100, { t, lang }) : '';
+  const freeSentence = sf && Number.isFinite(sf.traffic_free_share) && sf.highway_known_share >= 0.33
+    ? numberSentence('trafficFree', sf.traffic_free_share * 100, { t, lang }) : '';
   const surfaceMix = surfaceParts(carta.surface, t)
     ?.map((p) => ({ ...p, value: kmOf(p.share, routeM) })) || null;
   const trafficSplit = trafficParts(carta.surface);
@@ -601,9 +608,11 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
           <p className="cycle-surface" data-testid="cycle-surface">
             {surfaceLine(carta.surface, t)}
           </p>
+          {pavedSentence && <p className="numsent" data-testid="cycle-paved-sentence">{pavedSentence}</p>}
           {trafficFreeLine(carta.surface, t) && (
             <p className="cycle-free">{trafficFreeLine(carta.surface, t)}</p>
           )}
+          {freeSentence && <p className="numsent" data-testid="cycle-free-sentence">{freeSentence}</p>}
           <p className="cycle-safety" data-testid="cycle-safety">
             {safetyLine(carta.safety, t)}
           </p>
@@ -804,8 +813,13 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             </span>
           )}
           {loading && <p className="places-empty">{'…'}</p>}
+          {/* A route or tour id that resolves to nothing: a gone page, said
+              as one, with the way back to the list. Not a country claim. */}
           {!loading && !route && !tour && (
-            <p className="places-empty">{t('cycle.emptyCountry')}</p>
+            <div className="places-empty empty-act">
+              <p>{t('cycle.familyGone')}</p>
+              <button type="button" className="cov-empty-btn" onClick={onClose}>{t('empty.cycleRoutes')}</button>
+            </div>
           )}
         </div>
       )}
@@ -848,6 +862,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               <span>{t('detail.sendLink')}</span>
             </button>
           )}
+          {route && <ReportProblem item={{ layer: 'cycle', id: route.id, cc, name: title }} />}
         </>
       )}
       exits={exits}

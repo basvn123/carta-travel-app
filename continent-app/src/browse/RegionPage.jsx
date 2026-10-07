@@ -20,7 +20,8 @@
  * topmost layer must eat the key.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { loadRegion, regionShareUrl } from '../lib/regions.js';
+import { loadRegion, loadRegionIndex, regionShareUrl } from '../lib/regions.js';
+import { nearestRegions } from '../lib/coverageEmpty.js';
 import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
@@ -87,6 +88,17 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
   const [failed, setFailed] = useState(false);
   const [tries, setTries] = useState(0);
   const [copied, setCopied] = useState(false);
+  // A stale id (T367, docs/ONBOARDING_AND_EMPTY_STATES.md row 30): the three
+  // regions whose ids it shares the most of, read from the index only when
+  // the region itself is not found.
+  const [nearIds, setNearIds] = useState([]);
+  useEffect(() => {
+    if (data !== null) { setNearIds([]); return undefined; }
+    let on = true;
+    loadRegionIndex().then((ix) => { if (on) setNearIds(nearestRegions(ix?.regions, id)); })
+      .catch(() => { if (on) setNearIds([]); });
+    return () => { on = false; };
+  }, [data, id]);
 
   // One fetch. Neighbours arrive named inside the region file, so opening
   // a page never pulls the whole region index for six button labels.
@@ -177,6 +189,21 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
           </button>
           <h1>{t('region.notFound')}</h1>
           <p className="rgnp-card-sub">{t('region.notFoundHint')}</p>
+          {nearIds.length > 0 && (
+            <div className="cov-empty" data-testid="region-nearest">
+              <p className="cov-empty-head">{t('region.nearestHead')}</p>
+              <ul className="cov-near">
+                {nearIds.map((r) => (
+                  <li key={r.id}>
+                    <button type="button" className="cov-near-row" onClick={() => onOpenRegion?.(r.id)}>
+                      <span className="cov-near-name">{r.name}</span>
+                      <span className="cov-near-meta"><span className="mono">{r.id}</span></span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     );

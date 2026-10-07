@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReportProblem } from '../components/ReportProblem.jsx';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { loadTrail, loadTrails } from '../lib/trails.js';
@@ -22,6 +23,7 @@ import {
   shareOrDownloadFile, shareTrailLink, stopNamesOf, downloadTextFile,
 } from '../lib/trailExport.js';
 import { eur } from '../lib/format.js';
+import { tokenColour as token } from '../map/tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { DetailPage } from './DetailSkeleton.jsx';
@@ -42,6 +44,7 @@ import {
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { isNum } from '../map/coords.js';
 import { FigureFooter } from './HonestFooters.jsx';
+import { UploadForm } from '../community/UploadForm.jsx';
 
 /**
  * The trail page: a published hike or city day as a page of its own, opened
@@ -77,14 +80,6 @@ const hoursText = (min) => {
   return h >= 10 ? String(Math.round(h)) : h.toFixed(1);
 };
 const km1 = (m) => (m / 1000).toFixed(1).replace(/\.0$/, '');
-
-/** A design token as a concrete colour: MapLibre paint properties cannot read
- *  a CSS variable, and the route should not carry its own private palette. */
-function token(name, fallback) {
-  if (typeof document === 'undefined') return fallback;
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  return v || fallback;
-}
 
 // Code to label key, built from the shared filter model rather than written
 // out again, so a value added to trailCards.js cannot go missing on the page.
@@ -375,19 +370,19 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       map.addSource('trail-done', { type: 'geojson', data: empty });
       map.addLayer({
         id: 'trail-casing', type: 'line', source: 'trail',
-        paint: { 'line-color': '#ffffff', 'line-width': 7, 'line-opacity': 0.9 },
+        paint: { 'line-color': token('--bg-card'), 'line-width': 7, 'line-opacity': 0.9 },
         layout: { 'line-cap': 'round', 'line-join': 'round' },
       });
       map.addLayer({
         id: 'trail-line', type: 'line', source: 'trail',
-        paint: { 'line-color': token('--accent', '#e05a47'), 'line-width': 3.4 },
+        paint: { 'line-color': token('--accent'), 'line-width': 3.4 },
         layout: { 'line-cap': 'round', 'line-join': 'round' },
       });
       // What has been walked drops back to the muted ink, so the route ahead
       // is the only thing still wearing the action colour.
       map.addLayer({
         id: 'trail-done-line', type: 'line', source: 'trail-done',
-        paint: { 'line-color': token('--ink-mute', '#7d8393'), 'line-width': 3.4, 'line-opacity': 0.85 },
+        paint: { 'line-color': token('--ink-mute'), 'line-width': 3.4, 'line-opacity': 0.85 },
         layout: { 'line-cap': 'round', 'line-join': 'round' },
       });
       map.resize();
@@ -995,6 +990,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
               <span>{t('trails.follow')}</span>
             </button>
           </div>
+          <ReportProblem item={{ layer: 'trail', id: tr.id, cc: tr.country || tr.cc, name: tr.name }} />
         </>
       ) : null}
       exits={exits}
@@ -1039,6 +1035,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
             diffKey && (derivedGrade ? 'c' : 'm'),
           ]} />
           <p className="tpage-credit">{detail?.attribution_text || tr.attribution_text}</p>
+          {/* An upload is one more source, so its door sits with the others (T333). */}
+          <UploadForm layer="trail" itemId={tr.id} />
         </>
       )}
     />

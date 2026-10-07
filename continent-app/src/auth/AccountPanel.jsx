@@ -25,6 +25,7 @@ import { FriendsSpoke } from './FriendsSpoke.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
 import { sendFeedback } from '../lib/feedback.js';
+import { accuracyVars } from '../lib/accuracy.js';
 
 // Account hub. The panel is a hub with four spokes rather than one long
 // scroll: the hub answers "who am I, what do I hold, where do I get help",
@@ -67,7 +68,7 @@ const FAQ_GROUPS = [
   {
     labelKey: 'account.faqGroup2',
     items: [['account.faq5Q', 'account.faq5A'], ['account.faq6Q', 'account.faq6A'],
-      ['account.faq7Q', 'account.faq7A']],
+      ['account.faq7Q', 'account.faq7A'], ['account.faq15Q', 'account.faq15A']],
   },
   {
     labelKey: 'account.faqGroup3',
@@ -85,11 +86,15 @@ const FAQ_GROUPS = [
  *  renders elsewhere: the loaded catalogue and lib/pricing.js. A count that
  *  cannot be read yet falls back to the shipped catalogue size rather than
  *  rendering "{n}" at the traveller. */
-function faqVars(destinations) {
+function faqVars(destinations, lang) {
   const n = Array.isArray(destinations)
     ? destinations.length
     : (destinations && typeof destinations === 'object' ? Object.keys(destinations).length : 0);
+  const acc = accuracyVars(lang);
   return {
+    // The published accuracy figure (T097-c: here and nowhere on a card).
+    accPct: acc.pct, accLo: acc.lo, accHi: acc.hi, accEur: acc.eur,
+    accN: acc.n, accCountries: acc.countries, accWhen: acc.when,
     n: (n || 3038).toLocaleString('en-GB'),
     freePlans: TIERS.free.aiPlans,
     tripPlans: TIERS.trip.aiPlans,
@@ -355,7 +360,7 @@ export function AccountPanel({
   // The open question is keyed by its i18n key, not its index: with the
   // answers grouped, an index is only unique within one group.
   const [openFaq, setOpenFaq] = useState(null);
-  const faqFigures = useMemo(() => faqVars(destinations), [destinations]);
+  const faqFigures = useMemo(() => faqVars(destinations, lang), [destinations, lang]);
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackKind, setFeedbackKind] = useState('other');
   const [feedbackBusy, setFeedbackBusy] = useState(false);

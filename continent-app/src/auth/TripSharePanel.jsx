@@ -185,9 +185,13 @@ export function TripSharePanel({
     try {
       await setTripVisibility(tripPlanId, next);
       onVisibility?.(tripPlanId, next);
-    } catch {
+    } catch (e) {
       setVis(before);
-      setError(t('share.visFailed'));
+      // Migration 051's publish gate raises with a stable hint: a guide
+      // taken down and not yet reversed, or an account with no profile.
+      setError(e?.hint === 'moderation_locked' ? t('share.visLocked')
+        : e?.hint === 'profile_required' ? t('share.visNoProfile')
+          : t('share.visFailed'));
     }
   };
 

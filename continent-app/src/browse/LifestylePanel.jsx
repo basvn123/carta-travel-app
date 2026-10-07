@@ -5,7 +5,7 @@ import {
   BackpackIcon, LeafIcon, DiningIcon, CoffeeIcon, MusicIcon, FriendsIcon,
   ChevronDownIcon,
 } from '../components/Icons.jsx';
-import { SLEEP_GROUPS, HOTEL_GRADES, sleepGroupOf } from '../lib/sleepGroups.js';
+import { HOTEL_GRADES, sleepGroupOf, offeredSleepGroups, tierForGroup } from '../lib/sleepGroups.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
@@ -142,9 +142,8 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
 
   // The tiles this dataset can actually offer, each carrying its own offered
   // grades. A group with nothing measured never renders.
-  const sleepTiles = React.useMemo(() => SLEEP_GROUPS
-    .map((g) => ({ ...g, Icon: SLEEP_ICONS[g.key], offered: g.tiers.filter((k) => stayTiers.includes(k)) }))
-    .filter((g) => g.offered.length > 0), [stayTiers]);
+  const sleepTiles = React.useMemo(() => offeredSleepGroups(stayTiers)
+    .map((g) => ({ ...g, Icon: SLEEP_ICONS[g.key] })), [stayTiers]);
 
   const activeGroup = sleepGroupOf(stayTier);
   const hotelTile = sleepTiles.find((g) => g.key === 'hotel');
@@ -157,7 +156,7 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
   // grade most people mean by "a hotel").
   const pickGroup = (g) => {
     if (g.offered.includes(stayTier)) return;
-    setTier(g.offered[0]);
+    setTier(tierForGroup(g, stayTier));
   };
 
   // The steppers open closed: a preset above already answers this for almost

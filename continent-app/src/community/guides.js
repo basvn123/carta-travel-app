@@ -158,12 +158,17 @@ let mockReports = 0;
  * anon, and the Supabase client sends the anon key when there is no
  * session, so nothing here needs to know whether anybody is signed in.
  *
+ * Since migration 051 (T365, Article 16(2)) the notice also carries the
+ * notifier's confirmation that it is made in good faith, which the database
+ * requires, and an optional name.
+ *
  * Resolves on success, throws an Error with `code` set on refusal, like
- * sendFeedback: bad_reason, bad_email, too_many (five an hour from one
- * address or account), not_public (the guide was unpublished, or never was).
- * A transport failure throws the Supabase error as it came.
+ * sendFeedback: bad_reason, bad_email, bad_name, good_faith_required,
+ * too_many (five an hour from one address or account), not_public (the
+ * guide was unpublished, or never was). A transport failure throws the
+ * Supabase error as it came.
  */
-export async function reportGuide(planId, reason, contactEmail = null) {
+export async function reportGuide(planId, reason, contactEmail = null, reporterName = null, goodFaith = false) {
   const refuse = (code) => {
     const err = new Error(code);
     err.code = code;
@@ -171,6 +176,7 @@ export async function reportGuide(planId, reason, contactEmail = null) {
   };
   if (MOCK) {
     await new Promise((r) => { setTimeout(r, 250); });
+    if (goodFaith !== true) throw refuse('good_faith_required');
     mockReports += 1;
     if (mockReports > 5) throw refuse('too_many');
     return { ok: true };
@@ -180,6 +186,8 @@ export async function reportGuide(planId, reason, contactEmail = null) {
     p_plan_id: planId,
     p_reason: reason,
     p_contact_email: contactEmail || null,
+    p_reporter_name: reporterName || null,
+    p_good_faith: goodFaith === true,
   });
   if (error) throw error;
   if (data && data.error) throw refuse(data.error);

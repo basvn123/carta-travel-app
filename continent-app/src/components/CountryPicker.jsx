@@ -78,7 +78,7 @@ export function CountryPicker({ value, options, onChange, className = '', label 
               <span className="origin-opt-city">{allLabel}</span>
             </button>
             {filtered.length === 0 && (
-              <p className="origin-empty">{t('origin.noMatch', { query })}</p>
+              <p className="origin-empty">{t('country.noMatch', { query })}</p>
             )}
             {filtered.map(([cc, name]) => (
               <button

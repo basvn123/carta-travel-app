@@ -52,6 +52,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 1360, height: 900 } });
   await page.addInitScript(() => {
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('carta.fareNoticeSeen', '1');
   });
 

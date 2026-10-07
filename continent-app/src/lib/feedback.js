@@ -13,6 +13,9 @@
  * choose to send.
  */
 import { supabase } from './supabaseClient.js';
+import { reportKey } from './reportKey.js';
+
+export { REPORT_WHATS, reportKey } from './reportKey.js';
 
 export function feedbackContext(extra = {}) {
   if (typeof window === 'undefined') return extra;
@@ -49,4 +52,18 @@ export async function sendFeedback({ message, kind = 'other', email = null, cont
     throw err;
   }
   return data;
+}
+
+/**
+ * Sends one report. The kind is 'data'; until migration 047 is pasted the
+ * database turns an unknown kind into 'other', so nothing is refused.
+ */
+export function sendReport({ item, what, message, email = null }) {
+  const report = reportKey({ ...item, what });
+  return sendFeedback({
+    message,
+    kind: 'data',
+    email,
+    context: feedbackContext({ report }),
+  });
 }
