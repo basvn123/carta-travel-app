@@ -914,3 +914,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T362-f | T362 | Non-English prerendered destination, trip and journey pages: derived sentences replace the English-only Wikivoyage intros (T205-g) | next task | open | T368, wave 16c |
 | T156-a | T156 | Put InfoDot on the remaining spec 4.1 surfaces (trail, beach, lake and cycling pages) where a screen knows which term it shows | next task | open | |
 | T156-b | T156 | Native-speaker read of the German, Spanish, French, Italian and Dutch glossary wording (written for this task, not reviewed) | user | open | |
+| T158-a | T158 | Show the steepest-grade sentence on the trail page by wiring the table into trailStory.js (not named in T158) | next task | open | |
+| T158-b | T158 | Add table entries for swim season, wave height and bathing-water seasons once the wire carries those fields | next task | open | |
+| T158-c | T158 | Owner read of the sentence thresholds and of the German, Spanish, French, Italian and Dutch wording | user | open | |
