@@ -16,14 +16,21 @@
   --paper-dim:    #efece2;
   --ink:          #0f172a;
   --ink-soft:     #414b5e;
-  --ink-mute:     #7d8393;
+  /* Metadata only. Darkened by T363 (owner decision 2026-10-07) from #7d8393,
+     which was 3.51:1 on --paper: now 5.07:1 on --paper, 4.63:1 on
+     --paper-dim, 5.48:1 on --bg-card. */
+  --ink-mute:     #646978;
   /* The fill behind an ACTIVE control. One step off --ink, which is body text
      and reads as pure black when a whole button is painted with it. Still
      11:1 against --paper, so white labels stay well past AA. */
   --ink-fill:     #2b3446;
   --rule:         #ccc7b8;
   --rule-soft:    #e2ded1;       /* hairlines inside a card, where --rule is too loud */
-  --accent:       #e05a47;       /* terracotta: actions, alerts, the live route */
+  /* Terracotta: actions, alerts, the live route, focus rings. Darkened by T363
+     (owner decision 2026-10-07) from #e05a47, same hue: as text 4.61:1 on
+     --paper and 4.98:1 on --bg-card, and --on-fill on it 4.98:1 (was 3.40
+     and 3.67). Text on --accent-bg is 3.83:1, still under AA (T363-a). */
+  --accent:       #ce3823;
   --accent-soft:  #e97f6b;
   --accent-bg:    #f7dcd4;
   /* Ratings are a MEASURE, not a warning. On the accent they read as errors
@@ -143,10 +150,12 @@
   --experience-rule:    #eec7bb;   /* experience type border */
   --danger-bg:          #f6dcd8;   /* poor water fill */
 
-  /* Accent states and tints. */
-  --accent-hover:       #cf4c3a;   /* hover fill of an accent button */
-  --accent-press:       #b0431a;   /* hover fill of a primary cost action */
-  --accent-press-alt:   #b3491b;   /* hover fill, stay search */
+  /* Accent states and tints. T363 stepped the three hover fills darker with
+     --accent, keeping each one's old step: --on-fill on them is 6.0, 7.8 and
+     7.3:1 (was 4.4, 5.7 and 5.4). */
+  --accent-hover:       #b7321f;   /* hover fill of an accent button */
+  --accent-press:       #8e3615;   /* hover fill of a primary cost action */
+  --accent-press-alt:   #923b16;   /* hover fill, stay search */
   --accent-wash:        #f6ede0;   /* a warm hover wash */
   --accent-wash-alt:    #fdf6f0;   /* a faint accent tint behind advice */
 
