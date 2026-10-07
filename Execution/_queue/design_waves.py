@@ -23,7 +23,7 @@ PRODUCTION_DEPLOY = False
 # authority on which session owns which file.
 SURFACES = [
     ("shell", "60", "App shell, navigation and shared components",
-     "every tab at 380 and 1280 px (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its "
+     "every tab on the iphone, android and desktop devices (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its "
      "plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal "
      "and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages "
      "(?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, "
@@ -231,9 +231,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to {SHOTS}\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to {SHOTS}\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -251,10 +267,36 @@ surface's harnesses. A harness assertion that encodes the old design may be upda
 saying why, never deleted."""
 
 
+# How each surface is used on a phone (T413). Every surface is designed phone first;
+# this says what the phone moment is, so the brief and the build plan start there.
+PHONE = {
+    "shell": "the bottom nav, sheets and dialogs are what a phone traveller touches most; one thumb, one hand, "
+             "often outdoors",
+    "landing": "the first visit usually comes from a shared link or a search on a phone; the first screen must "
+               "answer what Carta is and what a day costs without a scroll",
+    "explore": "browsing for ideas on the sofa or the commute; the rails, the map toggle and the card preview "
+               "must work one-handed, and the map must never trap the scroll",
+    "destinations": "scanning many places quickly on a phone; dense cards, a filter sheet within thumb reach",
+    "destination": "deciding on one town, often on a phone; the receipt and the folds must read without "
+                   "pinching or sideways scrolling",
+    "outdoor": "read at home and opened again at the trailhead, on a phone, outdoors, with one bar of signal; "
+               "the key facts and the GPX within the first screen",
+    "trips": "a week read on a phone over several evenings; the day track, flashcards and sticky rail are "
+             "phone patterns first",
+    "tripplanner": "started on a phone as often as on a laptop; every wizard step fits one phone screen with "
+                   "its action in thumb reach, and the on-screen keyboard never hides the field",
+    "dayplanner": "used during the trip, on a phone, standing in the street; the day must read and edit "
+                  "one-handed in sun and with poor signal",
+    "account": "My trips is where a phone traveller comes back to a saved trip; sharing goes through the "
+               "phone's share sheet; the admin page alone may be desktop first",
+}
+
+
 def _surface_head(k):
     key, css, name, opens, files, harness = SURF[k]
     return (f"SURFACE  {name} (key '{key}')\n"
             f"Where to look: {opens}.\n"
+            f"On a phone: {PHONE[key]}.\n"
             f"Main files (OWNERSHIP.md is the authority from V2 on): {files}.\n"
             f"Harnesses (continent-app/scripts/): {harness}.\n"
             f"Your v6 stylesheet from V3 on: src/styles/{css}-v6-{key}.css (created and imported by T380).")
@@ -291,19 +333,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to {SHOTS}\{key}\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to {SHOTS}\{key}\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -346,6 +391,10 @@ DELIVER
    - layout rhythm, the type scale (Fraunces display sizes), elevation (the three shadows), iconography;
    - density per mode: Operate for the planners and Explore, Read for trip and detail pages, Persuade for
      the landing page;
+   - the phone (T413): phone first everywhere; the breakpoints and what each adds; safe-area and dvh
+     rules for every fixed or sticky bar; the thumb zone and where the one primary action sits on a
+     phone; sheets versus pages; gestures as shortcuts only; landscape; the on-screen keyboard; and what
+     desktop adds beyond a wider phone (side by side map and list, hover detail, keyboard shortcuts);
    - the planning journey across surfaces: how a traveller moves from dreaming to a kept trip, and which
      surface owns each step.
 2. Every "Needs a rule" item from the ten briefs, accepted or rejected with a reason, in a table. Accepted
@@ -397,7 +446,7 @@ def _build(task, k, wave):
         refs = ("reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, "
                 "reference/polish.md, reference/clarify.md")
         aim = ("Carry out the V5 list of your brief, then a final pass: long names and empty data, all six "
-               "languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift "
+               "languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift "
                "from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers "
                "your surface), and every string in Carta's voice. Update your surface's harnesses where the "
                "design changed, with a comment per changed assertion.")
@@ -436,7 +485,7 @@ def _consist():
 {COMMON}
 
 WHAT  Plan one holiday the way the research says people do, end to end, on the merged result of V5, at
-380 and 1280 px: land on the home page, browse in Explore and Destinations, open a town, a trail and a
+phone first (the iphone device in WebKit, then the android device, then desktop): land on the home page, browse in Explore and Destinations, open a town, a trail and a
 curated trip, price it with the Lifestyle control, build it in the trip planner, plan two days in the day
 planner, save it, share it, come back to it from My trips. Then fix what breaks the feeling of one product.
 
@@ -449,7 +498,7 @@ RULES  Consistency fixes only: no new features, no new rules. You may edit any f
 Prefer fixing a shared component or a token over patching each surface. Run every harness named in the
 ten surfaces, scripts/verify_keyboard.mjs and scripts/verify_quality_floor.mjs, and say which fail and why.
 
-DONE WHEN  The journey plays through without a broken step at both widths, the inconsistency list is
+DONE WHEN  The journey plays through without a broken step on all three devices, the inconsistency list is
 closed or carried as rows, and build, lint, test, the design lint and the detector pass.
 
 {_report(CONSIST, "P10", "v6-consistency")}"""
@@ -479,13 +528,13 @@ STEPS
    scripts/verify_keyboard.mjs and scripts/verify_quality_floor.mjs against a vite preview of that build, and
    every surface harness. Record pass or fail per script. Delete dist/ and dist-data/ afterwards.
 2. The gallery: {SHOTS}\index.html, a plain page that pairs each V1 "before" screenshot with the latest
-   "after" of the same view and width, surface by surface, with one line under each pair saying what changed.
+   "after" of the same view and device, phones first, surface by surface, with one line under each pair saying what changed.
    It lives outside the repos. Write docs/design-v6/MORNING.md in the root worktree: what changed per
    surface in five lines or fewer, the check results, what is still open, the preview URL and the gallery
    path.
 3. The preview deploy, from the app worktree: `npm run build:pages`, then
    `npx wrangler pages deploy dist --project-name carta-app --branch {PREVIEW_BRANCH} --commit-dirty=true`.
-   Open {PREVIEW_URL} at 380 and 1280 px with the console open: Explore, a destination, a trail, a journey,
+   Open {PREVIEW_URL} on the iphone, android and desktop devices with the console open: Explore, a destination, a trail, a journey,
    the trip planner, the day planner, My trips. If the preview needs data the data host does not have yet
    (an R2 push is the owner's step C3), say exactly which file fails in the report and an owner row; never
    run push-data. Delete dist/ and dist-data/ afterwards.
