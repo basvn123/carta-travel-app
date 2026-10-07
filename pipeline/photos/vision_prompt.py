@@ -134,16 +134,38 @@ def parse_result(text):
     return r
 
 
-def apply_distance_rule(result, distance_m):
+def distance_m(lat1, lon1, lat2, lon2):
+    """Great-circle metres between the image and the feature (T126-b: the
+    caller used to have to supply distance_m and nothing computed it)."""
+    import math
+    r = 6371008.8
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp, dl = p2 - p1, math.radians(lon2 - lon1)
+    a = (math.sin(dp / 2) ** 2
+         + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2)
+    return 2 * r * math.asin(math.sqrt(a))
+
+
+EXEMPT_REJECTS = ("marker_subject", "too_far")
+
+
+def apply_distance_rule(result, distance_m, p18=False):
     """Rule 8, decided in code: an image over 2 km from the feature is
     rejected unless the model reported it as framed 'seen from'. Unknown
-    distance does not reject, and is recorded."""
+    distance does not reject, and is recorded. `p18` is True for a Wikidata
+    P18 image: a person stated it depicts the item, so the two new rejects
+    (marker_subject, too_far) never veto it (owner decision 2026-10-07,
+    T362, T126-b). Other rejects still apply."""
     if result is None:
         return None
     out = dict(result)
     out["distance_known"] = distance_m is not None
-    if (distance_m is not None and distance_m > MAX_DISTANCE_M
-            and not out.get("seen_from") and not out.get("reject")):
+    if p18 and out.get("reject") in EXEMPT_REJECTS:
+        out["reject"] = None
+        out["p18_exempt"] = True
+    elif (distance_m is not None and distance_m > MAX_DISTANCE_M
+            and not out.get("seen_from") and not out.get("reject")
+            and not p18):
         out["reject"] = "too_far"
     if out.get("reject"):
         out["answers_hero"] = 0
@@ -164,6 +186,12 @@ if __name__ == "__main__":
     assert apply_distance_rule(dict(r, seen_from=True), 3000)["reject"] \
         is None
     assert apply_distance_rule(r, None)["distance_known"] is False
+    assert apply_distance_rule(r, 3000, p18=True)["reject"] is None
+    mk = dict(r, reject="marker_subject")
+    assert apply_distance_rule(mk, 10, p18=True)["reject"] is None
+    assert apply_distance_rule(dict(r, reject="blurry"), 10,
+                               p18=True)["reject"] == "blurry"
+    assert 110000 < distance_m(0, 0, 1, 0) < 112000
     assert parse_result("nope") is None
     for s in SECTIONS:
         build_prompt(s, "x")
