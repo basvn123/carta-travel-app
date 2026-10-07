@@ -9,9 +9,10 @@ model comes from the task's MODEL line in the mind map (via
 `Execution/_queue/waves_md.py`. Regenerate this file with
 `python Execution/_queue/waves_md.py` after editing a table there.
 
-The owner's tasks are not here; they are in `Execution/_OPEN-MASTER.md` Part E.
-A wave marked GATED waits for the rollout stage or owner decision in its gate
-line. A session marked GATE inside a ready wave is skipped (and moved to the
+The owner's tasks are not here; since 2026-10-07 they are in `Execution/_OWNER-RUNBOOK.md`
+(blocks A to K, with the owner's answers in block A), which supersedes
+`Execution/_OPEN-MASTER.md` Part E for reading. A wave marked GATED waits for the
+rollout stage or owner decision in its gate line. A session marked GATE inside a ready wave is skipped (and moved to the
 next wave) when its owner decision is still open.
 
 Where things stand at the time of writing: waves 1 to 5 merged; stages 0, 1, 4,
@@ -39,8 +40,10 @@ Part A of `PARALLEL-WAVES-PLAN.md` is the detailed version; this is the short on
    worktrees. If a model hits its usage limit, relaunch after the reset and tell
    it to review the uncommitted work it finds.
 4. For each session: `git log --stat <base>..<branch>` in both repos; every path
-   must fit the row's scope and rule 4; a report must exist. Otherwise hold it and
-   say why in the wave log at the end of this file.
+   must fit the row's scope and rule 4; a report must exist. Then run
+   `powershell -File Execution/_queue/wave_gate.ps1 -Task <TASK> -Branch <branch>`
+   (add `-App` when the row has an app worktree); it must exit 0. Otherwise hold it
+   and say why in the wave log at the end of this file.
 5. Merge in table order with `bash Execution/_queue/merge_branch.sh` (root into
    `main`, then the app into `master`), run `python Execution/_queue/dedupe_open.py`,
    make the root mirror commit (`git add -u continent-app`), then in continent-app
@@ -279,6 +282,39 @@ Gate: Wave 15 merged.
 | 6 | T235 Set up uptime and error alerting | sonnet | p13-uptime-alerting | yes | P13 |  |
 | 7 | T233 Mirror the Mapterhorn terrain PMTiles to your own R2 | sonnet | p13-terrain-mirror | yes | P13 |  |
 
+### Wave 16b: Catch-up after the owner's decisions, part 1
+
+Gate: Wave 16 merged and T362 merged (the owner answered block A of Execution/_OWNER-RUNBOOK.md on 2026-10-07).
+
+| k | Task | Model | Branch | App | Folder | Migration |
+|---|---|---|---|---|---|---|
+| 1 | T156 C7 + 4.1: One InfoDot and one glossary for the whole product then T158 4.2: Translate every number into a sentence a person would say | sonnet then sonnet | p10-c7-infodot-glossary, then p10-numbers-as-sentences | yes | P10 |  |
+| 2 | T162 C2: Day by day becomes a horizontal swipe carousel | opus | p10-c2-day-carousel | yes | P10 |  |
+| 3 | T167 C5: Advisory sections become swipeable flashcards | sonnet | p10-c5-flashcards | yes | P10 |  |
+| 4 | T165 C9: Sticky section rail | sonnet | p10-c9-sticky-rail | yes | P10 |  |
+| 5 | T173 E2 + M6: The lifestyle slider, and the trade-off in words | opus | p10-e2-lifestyle-slider | yes | P10 |  |
+| 6 | T172 E1: Cost breakdown as one stacked bar, not four rows | sonnet | p10-e1-stacked-bar | yes | P10 |  |
+| 7 | T179 5.1 + 5.2: One card with five fillings, and a bento grid | opus | p10-5-1-card-bento | yes | P10 |  |
+| 8 | T099 I1: Ask for the departure airport once, remember it, price the trip then T100 I3: Add a party-size control and stop assuming two people silently | opus then sonnet | p6-i1-first-run, then p6-i3-party-size | yes | P6 |  |
+| 9 | T209 The landing page then T194 The home page | opus then sonnet | p12-landing-page, then p10-home-page | yes | P12 |  |
+| 10 | T363 the contrast tokens the owner chose to darken | opus | p10-contrast-tokens | yes | P10 |  |
+
+### Wave 16c: Catch-up after the owner's decisions, part 2
+
+Gate: Wave 16b merged.
+
+| k | Task | Model | Branch | App | Folder | Migration |
+|---|---|---|---|---|---|---|
+| 1 | T101 I2: Break the seven-day assumption then T188 Cost band and trip length filters | sonnet then sonnet | p6-i2-seven-days, then p10-cost-length-filters | yes | P6 |  |
+| 2 | T124 6.5 + 1.6: Ship the honest stub and the not_applicable empty state then T367 the empty states from the approved onboarding document | sonnet then opus | p7-honest-stub, then p10-empty-states | yes | P7 |  |
+| 3 | T326 the feedback front door | sonnet | p12-feedback-front-door | yes | P12 |  |
+| 4 | T089 A5: Surface tags, basecamps and snapshot, or strip them | haiku | p5-a5-orphan-fields | yes | P5 |  |
+| 5 | T093 J4+J5: Make the three accuracy signals agree | fable | p5-j4-j5-accuracy-signals | yes | P5 |  |
+| 6 | T333 the photo upload path with the legal shape | opus | p8-upload-path | yes | P8 |  |
+| 7 | T364 the owner's small interface calls then T368 the owner's receipt and copy calls | sonnet then sonnet | p10-owner-ui-calls, then p10-owner-copy-calls | yes | P10 |  |
+| 8 | T365 migration 051: the owner's moderation and admin decisions | opus | p4-migration-051 | yes | P4 | 051 |
+| 9 | T366 housekeeping the owner approved | sonnet | p3-owner-housekeeping | no | P3 |  |
+
 ### Wave 17: GATED: stages 2 and 3 pasted (owner)
 
 Gate: _OPEN-MASTER stages 2 and 3 done, with pg_cron and pg_net on.
@@ -366,10 +402,10 @@ Each needs `data/raw` and the trailslab, which the T045-e clean-out removed from
 | 10 | T117 | sonnet | Spain |
 | 11 | T118 | sonnet | UK |
 | 12 | T119 | opus | BE, DE, IT, FI, SE, NL |
-| 13 | T122 | fable | Three entities, peak target (owner decides the target) |
+| 13 | T122 | fable | Three entities, peak target about 5,000 (owner, 2026-10-07) |
 | 14 | T133 | sonnet | Pick the viewpoint from data |
 | 15 | T109 | opus | Beaches and lakes on EEA bathing water |
-| 16 | T125 | sonnet | Sort by fame, cap Germany (owner decides the cap) |
+| 16 | T125 | sonnet | Sort by fame; NO cap in any country, list broadly (owner, 2026-10-07) |
 
 The prompt for any data-lane task: `python Execution/_queue/xmind_prompt.py <TASK>`; add the line 'Data lane: you may run the pipeline for this task only, in the main checkout, after the owner confirms the inputs are pulled; nothing else runs meanwhile.'
 
@@ -5328,6 +5364,1040 @@ Then write the report to Execution/P13/T233-mirror-terrain-tiles.md, following E
   the before and after measurements, and say plainly what is still open.
 ~~~~
 
+## Wave 16b prompts
+
+### Wave 16b, session 1: T156 (sonnet) + T158 (sonnet)
+
+~~~~text
+Carta. Wave 16b, session 1 of 10: T156 then T158. Model: sonnet then sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T156    branch p10-c7-infodot-glossary
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T156-app    branch p10-c7-infodot-glossary
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T156 -Branch p10-c7-infodot-glossary -App
+Two tasks in order: finish T156 on p10-c7-infodot-glossary with its report and commits, then in each worktree run
+`git checkout -b p10-numbers-as-sentences` and do T158 with its own report.
+
+Task number(s): T156, T158. Report folder: Execution/P10/. Ports: Vite 5201, throwaway Postgres 55441.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): the InfoDot rule is in the carta-design skill (Components, InfoDot). Build exactly to it; T158 after T156 in the same worktrees.
+
+THE TASK
+
+# T156: C7 + 4.1: One InfoDot and one glossary for the whole product
+(mind-map number T160; use T156 everywhere: branch, report, register)
+
+Carta. Task T156: C7 + 4.1: One InfoDot and one glossary for the whole product
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md C7, C8, L8; carta-destinations-enhancement-spec.md 4.1.
+Then read the files in this repository that it refers to.
+
+Do this:
+Build one <InfoDot> with a glossary keyed by term, written once and reused everywhere. The surface copy uses the plain word; the precise word lives in the dot. Starting set for trips: hardpack, bora, hut-to-hut, singletrack, EHIC, vignette, TBE. For destinations: singletrack, hardpack, fire road, scree, via ferrata, sac_scale / T1-T6, prominence, isolation, col, massif, hut-to-hut, bothy, refuge, traverse, out-and-back, loop, waymarking, GR, EuroVelo, knooppunt / node network, rail-trail, greenway, traffic-free, gravel bike, bathing water classification, Blue Flag, Secchi depth, blue-green algae, shoulder season, snow line, Natura 2000, GPX, Hs / significant wave height, thermocline.
+
+Why it matters, so you do not lose it in the implementation:
+'Make the text simple, not too many abbreviations and difficult words, you can always add the explanation in information icons' is called out in the spec as the single most useful line in either input document, and the thing the live page most obviously violates. It is a rule for all new content, not a fix for the old.
+
+Done when: One component, one glossary file, used by both sections with no duplicated definitions.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T156-infodot-and-glossary.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+
+---- next task ----
+
+# T158: 4.2: Translate every number into a sentence a person would say
+(mind-map number T162; use T158 everywhere: branch, report, register)
+
+Carta. Task T158: 4.2: Translate every number into a sentence a person would say
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-destinations-enhancement-spec.md 4.2.
+Then read the files in this repository that it refers to.
+
+Do this:
+Keep the number in mono and put the meaning next to it in sans. 'sac_scale T4' becomes 'Hands needed in places. Not for a first mountain day.' 'prominence 2,136 m' becomes 'Rises 2,136 m above the lowest col linking it to anything higher, so it stands alone rather than sitting on a ridge.' '70% hardpack, 30% paved' becomes 'Mostly firm gravel, some tarmac. A gravel bike is ideal, a road bike will struggle.' 'bathing water: excellent, 10 of last 10 seasons' becomes 'Clean every year they have measured it, ten years running.' 'swim season 71 days' becomes 'Warm enough to swim from about 20 June to 30 August.' 'lift-served, 340 m on foot' becomes 'A cable car does most of it. The last 340 m up are on your own legs, about an hour.'
+
+Why it matters, so you do not lose it in the implementation:
+This is the difference between a database and a product. Build it as a translation table so a new field gets a sentence when it is added, not later.
+
+Done when: Every surfaced metric has a plain-language translation in the table.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T158-number-translations.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 2: T162 (opus)
+
+~~~~text
+Carta. Wave 16b, session 2 of 10: T162. Model: opus.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T162    branch p10-c2-day-carousel
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T162-app    branch p10-c2-day-carousel
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T162 -Branch p10-c2-day-carousel -App
+
+Task number(s): T162. Report folder: Execution/P10/. Ports: Vite 5202, throwaway Postgres 55442.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): the Day track rule is in the carta-design skill. T163 (day detail in place) is already merged; keep it working.
+
+THE TASK
+
+# T162: C2: Day by day becomes a horizontal swipe carousel
+(mind-map number T166; use T162 everywhere: branch, report, register)
+
+Carta. Task T162: C2: Day by day becomes a horizontal swipe carousel
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md C2, H2.
+Then read the files in this repository that it refers to.
+
+Do this:
+Today 'Day by day' is seven stacked blocks, each expanding into three more paragraphs, which makes the page enormous. Replace with one card per day in a horizontal track: day number, day title, a photo of that day's main feature, the dayStats line in mono, and the night's accommodation. Swipe to move through the week. Keyboard arrows and visible prev/next for desktop, snap scrolling, and a seven-dot progress indicator so the user always knows where they are in the week.
+
+Why it matters, so you do not lose it in the implementation:
+This is the single change that most affects how the page feels - it is where the page stops being a document.
+
+Done when: The carousel works with keyboard, snap scrolling and a progress indicator, at 380 px and on desktop.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T162-day-carousel.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 3: T167 (sonnet)
+
+~~~~text
+Carta. Wave 16b, session 3 of 10: T167. Model: sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T167    branch p10-c5-flashcards
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T167-app    branch p10-c5-flashcards
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T167 -Branch p10-c5-flashcards -App
+
+Task number(s): T167. Report folder: Execution/P10/. Ports: Vite 5203, throwaway Postgres 55443.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): the Flashcards rule is in the carta-design skill: visible buttons, keyboard, Show all, square corners.
+
+THE TASK
+
+# T167: C5: Advisory sections become swipeable flashcards
+(mind-map number T171; use T167 everywhere: branch, report, register)
+
+Carta. Task T167: C5: Advisory sections become swipeable flashcards
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md C5, H3.
+Then read the files in this repository that it refers to.
+
+Do this:
+Good to know, pro tips and what could go wrong become horizontal decks of small cards, one point per card, each with an icon that signals its category: a warning triangle for a real risk, a coin for money, a cloud for weather, a clock for booking timing. One idea per card, maximum 35 words.
+
+Why it matters, so you do not lose it in the implementation:
+These are the sections users skip and they contain the information most likely to save a trip. A user will swipe through eight cards in fifteen seconds and will not read eight paragraphs in three minutes.
+
+Sequence: Needs T152 (backfilled content).
+
+Done when: Three decks render, capped at 35 words per card.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T167-advisory-flashcards.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 4: T165 (sonnet)
+
+~~~~text
+Carta. Wave 16b, session 4 of 10: T165. Model: sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T165    branch p10-c9-sticky-rail
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T165-app    branch p10-c9-sticky-rail
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T165 -Branch p10-c9-sticky-rail -App
+
+Task number(s): T165. Report folder: Execution/P10/. Ports: Vite 5204, throwaway Postgres 55444.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): the Sticky section rail rule is in the carta-design skill.
+
+THE TASK
+
+# T165: C9: Sticky section rail
+(mind-map number T169; use T165 everywhere: branch, report, register)
+
+Carta. Task T165: C9: Sticky section rail
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md C9, H2; carta-destinations-enhancement-spec.md 5.3.
+Then read the files in this repository that it refers to.
+
+Do this:
+A thin horizontal strip that sticks under the header once the hero leaves the viewport: Why, Costs, Days, Sleep, Know, Pack. Tapping jumps to the section and opens it. The destinations equivalent is a --paper-dim strip with the band names and a count.
+
+Why it matters, so you do not lose it in the implementation:
+This is what makes a 2,000-word plan feel like six short pages rather than one long one.
+
+Done when: The rail sticks, jumps and opens on both sections.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T165-sticky-section-rail.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 5: T173 (opus)
+
+~~~~text
+Carta. Wave 16b, session 5 of 10: T173. Model: opus.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T173    branch p10-e2-lifestyle-slider
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T173-app    branch p10-e2-lifestyle-slider
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T173 -Branch p10-e2-lifestyle-slider -App
+
+Task number(s): T173. Report folder: Execution/P10/. Ports: Vite 5205, throwaway Postgres 55445.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): the Lifestyle control rule: extend the existing Lifestyle panel control, never a second slider.
+
+THE TASK
+
+# T173: E2 + M6: The lifestyle slider, and the trade-off in words
+(mind-map number T177; use T173 everywhere: branch, report, register)
+
+Carta. Task T173: E2 + M6: The lifestyle slider, and the trade-off in words
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md E2, E6, M6, H5.
+Then read the files in this repository that it refers to.
+
+Do this:
+Let the user drag between budget, standard and premium and watch the total and the per-day figure recalculate in real time, with the mono numerals animating. Each trip already carries budget.totalEur.low and .high and budget.perDayEur, so the endpoints exist; the slider interpolates and the breakdown segments move with it. Then M6: say IN WORDS what each position means as it moves - €1,200 for this week means hostel-equivalent beds, cooking some meals and skipping the tasting menu; €1,850 means the opposite.
+
+Why it matters, so you do not lose it in the implementation:
+This turns a static price into the user's own price and is the clearest demonstration of what the product does. And the explanation is the product: the difference between a price and an explanation of a price. E6 extends it - for the cheapest tier show what the low number actually assumes (self-catering, hostel beds, municipal transport, free museum days), and for longer stays apply long-stay accommodation discounts, so the low figure is believable rather than optimistic.
+
+Sequence: Much more valuable after T095 makes the total real.
+
+Done when: The slider moves the real priced total from T095, with a plain-language description at each position.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T173-lifestyle-slider.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 6: T172 (sonnet)
+
+~~~~text
+Carta. Wave 16b, session 6 of 10: T172. Model: sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T172    branch p10-e1-stacked-bar
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T172-app    branch p10-e1-stacked-bar
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T172 -Branch p10-e1-stacked-bar -App
+
+Task number(s): T172. Report folder: Execution/P10/. Ports: Vite 5206, throwaway Postgres 55446.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): keep the receipt as the signature and add the stacked bar only as a summary above it, per 'The cost bar' in the carta-design skill.
+
+THE TASK
+
+# T172: E1: Cost breakdown as one stacked bar, not four rows
+(mind-map number T176; use T172 everywhere: branch, report, register)
+
+Carta. Task T172: E1: Cost breakdown as one stacked bar, not four rows
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md E1, L4, H5.
+Then read the files in this repository that it refers to.
+
+Do this:
+Replace the four label-value rows plus total with a single horizontal stacked bar: accommodation, food, transport, activities, each segment proportional, each tappable for its exact figure and its note.
+
+Why it matters, so you do not lose it in the implementation:
+One bar communicates 'most of this week is beds' instantly; four rows do not. Note the spec explicitly rejects the blueprint's Sankey recommendation here: a Sankey shows flow through multiple stages with splits and merges, and your budget has one source and four flat categories, which is a stacked bar. A Sankey would be four parallel ribbons doing the work of four rectangles, harder to read, harder to make accessible and heavier to render.
+
+Done when: The stacked bar renders and each segment is tappable.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T172-cost-stacked-bar.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 7: T179 (opus)
+
+~~~~text
+Carta. Wave 16b, session 7 of 10: T179. Model: opus.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T179    branch p10-5-1-card-bento
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T179-app    branch p10-5-1-card-bento
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T179 -Branch p10-5-1-card-bento -App
+
+Task number(s): T179. Report folder: Execution/P10/. Ports: Vite 5207, throwaway Postgres 55447.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): NO bento grid. Build the one card with five fillings (5.1); slot 6 of the detail skeleton stays the collapsed row list (T164, T180-a).
+
+THE TASK
+
+# T179: 5.1 + 5.2: One card with five fillings, and a bento grid
+(mind-map number T183; use T179 everywhere: branch, report, register)
+
+Carta. Task T179: 5.1 + 5.2: One card with five fillings, and a bento grid
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-destinations-enhancement-spec.md 5.1, 5.2; carta-design skill.
+Then read the files in this repository that it refers to.
+
+Do this:
+One card: a 16:9 visual band with rounded top corners only, ochre rating seal top right, and a 6 px data strip bottom-left that is the section's signature visual. Then title in Fraunces 19px with a mono ref chip, region subtitle in Plus Jakarta 13px --ink-mute, the hook on one line at 15px, EXACTLY THREE mono values at 12.5px, and up to three 20px 1.5px-stroke icons. Card: --bg-card fill, 1px solid --rule-soft, radius 10px, padding --space-4. Hover scales the IMAGE to 1.05 inside a clipped frame, never the card. Grid: bento, not uniform - first card in view is double-width and double-height carrying the highest-ranked item with a larger hook and a fourth stat, then 3-up on desktop, 2-up on tablet, 1-up under 640 px, lazy images with srcset at 500/960/1280, fixed aspect ratios in CSS, --paper-dim skeletons at final dimensions.
+
+Why it matters, so you do not lose it in the implementation:
+Three mono values, never four: a fixed count is what makes a grid scannable. Use the SHIPPED warm alabaster palette from src/styles.css, not the cool-grey landing palette.
+
+Done when: One card component serves all five sections and the grid is bento at all breakpoints.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T179-destination-card-and-grid.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 8: T099 (opus) + T100 (sonnet)
+
+Models differ: run T099 on opus first (only T099), then T100 on sonnet in the same worktrees.
+
+~~~~text
+Carta. Wave 16b, session 8 of 10: T099 then T100. Model: opus then sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T099    branch p6-i1-first-run
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T099-app    branch p6-i1-first-run
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T099 -Branch p6-i1-first-run -App
+Two tasks in order: finish T099 on p6-i1-first-run with its report and commits, then in each worktree run
+`git checkout -b p6-i3-party-size` and do T100 with its own report.
+
+Task number(s): T099, T100. Report folder: Execution/P6/. Ports: Vite 5208, throwaway Postgres 55448.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): docs/FIRST_RUN_RESULT.md (T211-d) and docs/ONBOARDING_AND_EMPTY_STATES.md (T211-a) are approved, including: Destinations opens on walks, default dates from the calendar (the next week starting on a Saturday at least four weeks out), the airport asked only in the flight door. Carta prices no flights (T272). Row T187-c: build the receipt as designed, receipt.* keys in six catalogues, carta.firstResultSeen, one Set your dates primary; report the time-to-answer figure. T100 after T099 in the same worktrees. Planner lane.
+
+THE TASK
+
+# T099: I1: Ask for the departure airport once, remember it, price the trip
+(mind-map number T095; use T099 everywhere: branch, report, register)
+
+Carta. Task T099: I1: Ask for the departure airport once, remember it, price the trip
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md I1, N1; carta-destinations-enhancement-spec.md Part 13 closing note.
+Then read the files in this repository that it refers to.
+
+Do this:
+Ask for the departure airport once, at the top, remember it across trips and across sessions, and show the real total: flights from the user's airport, cabin bag, transfers, beds, food, local transport, activity hire. Use the existing pricing engine and the existing provenance chain rather than the static budget block.
+
+Why it matters, so you do not lose it in the implementation:
+The number stops being a guide-book estimate and becomes Carta's number. Everything in the visual work gets more valuable once this is true, because the lifestyle slider is then moving a figure the user could actually pay. It also unlocks the single thing no competitor can copy: once the airport is remembered, every Destinations card can carry how far this is from where you fly into and what that leg costs.
+
+Sequence: Needs T086 (correct geolocation). Feeds T183 (destination cards) and T177 (lifestyle slider).
+
+Done when: A trip page shows a priced, itemised total from the remembered airport with provenance on every line.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P6/T099-price-the-trip.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+
+---- next task ----
+
+# T100: I3: Add a party-size control and stop assuming two people silently
+(mind-map number T096; use T100 everywhere: branch, report, register)
+
+Carta. Task T100: I3: Add a party-size control and stop assuming two people silently
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md I3, N1.
+Then read the files in this repository that it refers to.
+
+Do this:
+'€120, €180 double' runs throughout the catalogue. A solo traveller pays close to the double rate for the room, so the real per-person total for a solo week is materially higher than the number shown. Add a party-size control next to the lifestyle slider, defaulting to two, and recalculate.
+
+Why it matters, so you do not lose it in the implementation:
+Solo travel is a large share of hiking, trail running and cycling demand specifically - the exact segments the catalogue is strongest in. Showing them a number that is quietly wrong for them is the worst case for a trust product.
+
+Done when: Party size changes the total, and the assumption is stated wherever it still applies.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P6/T100-party-size.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 9: T209 (opus) + T194 (sonnet)
+
+Models differ: run T209 on opus first (only T209), then T194 on sonnet in the same worktrees.
+
+~~~~text
+Carta. Wave 16b, session 9 of 10: T209 then T194. Model: opus then sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T209    branch p12-landing-page
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T209-app    branch p12-landing-page
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T209 -Branch p12-landing-page -App
+Two tasks in order: finish T209 on p12-landing-page with its report and commits, then in each worktree run
+`git checkout -b p10-home-page` and do T194 with its own report.
+
+Task number(s): T209, T194. Report folder: Execution/P12/. Ports: Vite 5209, throwaway Postgres 55449.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): the home page and the landing page are ONE page. T209 builds it (positioning from PRODUCT.md, hikers lead, the receipt demonstration, honest coverage, one primary action); T194 then makes the app's home that same page, in the same worktrees. It must agree with the approved onboarding document.
+
+THE TASK
+
+# T209: The landing page
+(mind-map number M09; use T209 everywhere: branch, report, register)
+
+Carta. Task T209: The landing page
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: 1.CARTA.md 'The receipt'; carta-design skill.
+Then read the files in this repository that it refers to.
+
+Do this:
+TO DO: NOT YET RESEARCHED. Design and build the landing page: the one-sentence claim from M01, a live demonstration of the receipt rather than a description of it, the three proof points, the honest coverage numbers, and one primary action. Built on the carta-design tokens, not on a template.
+
+Why it matters, so you do not lose it in the implementation:
+The receipt is the product's signature element: every total itemised line by line with nothing rounded to look tidier, because €24.99 is the point and €25 is a different product. A landing page that shows a real receipt for a real destination does more than any amount of copy. Note the design system explicitly bans the generated look: no warm neutrals, no serif, no gradients, no pastel tiles.
+
+Done when: A landing page live on the carta-design tokens with a working demonstration above the fold.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P12/T209-landing-page.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+
+---- next task ----
+
+# T194: The home page
+(mind-map number T347; use T194 everywhere: branch, report, register)
+
+Carta. Task T194: The home page
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: Original mind map, Home Page node; 1.CARTA.md 'The receipt'.
+Then read the files in this repository that it refers to.
+
+Do this:
+From your original mind map. Rebuild the home page around the positioning from M01 and a live demonstration of the receipt, with the honest coverage numbers and one primary action.
+
+Why it matters, so you do not lose it in the implementation:
+Your original map has this as its own node and left it at 'Later'. After P6 it is no longer later: the home page can show a real priced total, which is the whole product in one screen.
+
+Sequence: Shares work with M09 (landing page): decide whether they are the same page.
+
+Done when: A home page that demonstrates rather than describes.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T194-home-page.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16b, session 10: T363 (opus)
+
+~~~~text
+Carta. Wave 16b, session 10 of 10: T363. Model: opus.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T363    branch p10-contrast-tokens
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T363-app    branch p10-contrast-tokens
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T363 -Branch p10-contrast-tokens -App
+
+Task number(s): T363. Report folder: Execution/P10/. Ports: Vite 5210, throwaway Postgres 55450.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): darken the tokens. The proposed values are in DESIGN.md under 'Contrast tokens, change pending': --ink-mute #646978 and --accent #ce3823, with --accent-hover and --accent-press stepped darker; check --accent on --accent-bg too. Change src/styles/01-tokens.css and DESIGN.md in one commit (CLAUDE.md), and the carta-design skill's colour table. Before and after screenshots of Explore, a destination page, a journey page and the trip planner at 380 and 1280 px, saved beside the report. HOLD: the orchestrator merges this session only after the owner has seen the screenshots; raise an owner row asking for that look.
+
+THE TASK
+
+# T363: the contrast tokens the owner chose to darken
+(register rows T362-a; no mind-map prompt exists for it)
+
+WHAT  Read each of these rows in Execution/_OPEN.md: T362-a. For each, read the report of the task
+that raised it (Execution/P*/<raiser>-*.md) in full, then do what the row asks, within the scope in the
+notes above. Mark each row you resolve as Status "closed by T363" in Execution/_OPEN.md (never delete
+rows). If a row needs the owner or a later rollout stage, leave it open and say why.
+
+DONE WHEN  Every listed row is closed, or left open with a written reason; the tests the source reports
+name pass; every screen you touched was checked in the browser at 380px and desktop width.
+
+REPORT  Execution/P10/T363-<short-slug>.md, following Execution/_TEMPLATE.md. Plain prose, short
+sentences, before/after measurements where a number moved, a rollback procedure, what is still open.
+~~~~
+
+## Wave 16c prompts
+
+### Wave 16c, session 1: T101 (sonnet) + T188 (sonnet)
+
+~~~~text
+Carta. Wave 16c, session 1 of 9: T101 then T188. Model: sonnet then sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T101    branch p6-i2-seven-days
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T101-app    branch p6-i2-seven-days
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T101 -Branch p6-i2-seven-days -App
+Two tasks in order: finish T101 on p6-i2-seven-days with its report and commits, then in each worktree run
+`git checkout -b p10-cost-length-filters` and do T188 with its own report.
+
+Task number(s): T101, T188. Report folder: Execution/P6/. Ports: Vite 5201, throwaway Postgres 55441.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): price TWO lengths: every trip also gets a short version (its 3 or 4 best days, with its own total) beside the full week, as spec I2 says. T188 then builds the cost band and trip length filters on it, in the same worktrees. Planner lane.
+
+THE TASK
+
+# T101: I2: Break the seven-day assumption
+(mind-map number T097; use T101 everywhere: branch, report, register)
+
+Carta. Task T101: I2: Break the seven-day assumption
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md I2, N2, L9.
+Then read the files in this repository that it refers to.
+
+Do this:
+Every trip is exactly seven days, all 253 of them. Add trip length as a dimension: at minimum a long-weekend and a ten-to-fourteen-day variant of the cost model, and state the length assumption on the page.
+
+Why it matters, so you do not lose it in the implementation:
+A catalogue where every single week is seven days is a generation artefact, not a travel insight, and it is visible the moment a user compares two trips.
+
+Done when: At least two lengths are priced per trip, or the seven-day assumption is stated explicitly.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P6/T101-trip-lengths.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+
+---- next task ----
+
+# T188: Cost band and trip length filters
+(mind-map number T341; use T188 everywhere: branch, report, register)
+
+Carta. Task T188: Cost band and trip length filters
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: Original mind map, User Interface; carta-trips-enhancement-spec.md I2.
+Then read the files in this repository that it refers to.
+
+Do this:
+From your original mind map. Add cost-band and trip-length filters wherever trips are browsed, composing with the existing filter set.
+
+Why it matters, so you do not lose it in the implementation:
+Trip length only becomes a real filter once P6 breaks the seven-day assumption, which is why it sits after it. Cost band is the filter a budget product should have had first.
+
+Sequence: Needs T097 (trip lengths).
+
+Done when: Both filters work and compose with the existing ones.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P10/T188-cost-and-length-filters.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16c, session 2: T124 (sonnet) + T367 (opus)
+
+Models differ: run T124 on sonnet first (only T124), then T367 on opus in the same worktrees.
+
+~~~~text
+Carta. Wave 16c, session 2 of 9: T124 then T367. Model: sonnet then opus.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T124    branch p7-honest-stub
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T124-app    branch p7-honest-stub
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T124 -Branch p7-honest-stub -App
+Two tasks in order: finish T124 on p7-honest-stub with its report and commits, then in each worktree run
+`git checkout -b p10-empty-states` and do T367 with its own report.
+
+Task number(s): T124, T367. Report folder: Execution/P7/. Ports: Vite 5202, throwaway Postgres 55442.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): docs/ONBOARDING_AND_EMPTY_STATES.md is approved. T124 ships the honest stub and the not_applicable empty state (spec 6.5 and 1.6) with row T111-b; T367 then implements row T211-b (every empty state in the document's tables, the coverage module, the five vanishing detail-page sections) in the same worktrees, reusing what T124 built. Six catalogues.
+
+THE TASK
+
+# T124: 6.5 + 1.6: Ship the honest stub and the not_applicable empty state
+(mind-map number T120; use T124 everywhere: branch, report, register)
+
+Carta. Task T124: 6.5 + 1.6: Ship the honest stub and the not_applicable empty state
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-destinations-enhancement-spec.md 6.5, 1.6, 1.4.
+Then read the files in this repository that it refers to.
+
+Do this:
+For a registry entry that cannot be built: the name, the region, the fame evidence, what is known (length, ascent, season), and a line in the user's own language - 'No open route data exists for this walk yet. Here is where to get the track.' - then one outbound link and an 'upload a GPX' affordance. Separately, for the microstates (Monaco, San Marino, Liechtenstein, Andorra, Faroes, Malta, Moldova), the not_applicable reason code plus a good empty state: name the space, give the action, offer the three nearest alternatives across the border.
+
+Why it matters, so you do not lose it in the implementation:
+A user who searches 'Peaks of the Balkans' and finds a Carta page that knows what it is and says where to get the track is better served than one who finds nothing. Monaco has no lakes and San Marino has one mountain; those are correct numbers, and admitting it well is the fix.
+
+Done when: Stubs render for unbuildable registry entries and microstate empty states are real modules.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P7/T124-honest-stubs-and-empty-states.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+
+---- next task ----
+
+# T367: the empty states from the approved onboarding document
+(register rows T211-b; no mind-map prompt exists for it)
+
+WHAT  Read each of these rows in Execution/_OPEN.md: T211-b. For each, read the report of the task
+that raised it (Execution/P*/<raiser>-*.md) in full, then do what the row asks, within the scope in the
+notes above. Mark each row you resolve as Status "closed by T367" in Execution/_OPEN.md (never delete
+rows). If a row needs the owner or a later rollout stage, leave it open and say why.
+
+DONE WHEN  Every listed row is closed, or left open with a written reason; the tests the source reports
+name pass; every screen you touched was checked in the browser at 380px and desktop width.
+
+REPORT  Execution/P7/T367-<short-slug>.md, following Execution/_TEMPLATE.md. Plain prose, short
+sentences, before/after measurements where a number moved, a rollback procedure, what is still open.
+~~~~
+
+### Wave 16c, session 3: T326 (sonnet)
+
+~~~~text
+Carta. Wave 16c, session 3 of 9: T326. Model: sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T326    branch p12-feedback-front-door
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T326-app    branch p12-feedback-front-door
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T326 -Branch p12-feedback-front-door -App
+
+Task number(s): T326. Report folder: Execution/P12/. Ports: Vite 5203, throwaway Postgres 55443.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): option A in docs/FEEDBACK-LOOP.md, with the link beside the price chips too. Row T219-b: the link on DestinationPage, TrailPage, BeachPage, LakePage, MountainPage and the cycling page and beside the price chips, the form as a sheet, the report key in the feedback context, and the Open in Content button in FeedbackInbox.jsx. It degrades to kind 'other' until migration 047 is pasted.
+
+THE TASK
+
+# T326: the feedback front door
+(register rows T219-b; no mind-map prompt exists for it)
+
+WHAT  Read each of these rows in Execution/_OPEN.md: T219-b. For each, read the report of the task
+that raised it (Execution/P*/<raiser>-*.md) in full, then do what the row asks, within the scope in the
+notes above. Mark each row you resolve as Status "closed by T326" in Execution/_OPEN.md (never delete
+rows). If a row needs the owner or a later rollout stage, leave it open and say why.
+
+DONE WHEN  Every listed row is closed, or left open with a written reason; the tests the source reports
+name pass; every screen you touched was checked in the browser at 380px and desktop width.
+
+REPORT  Execution/P12/T326-<short-slug>.md, following Execution/_TEMPLATE.md. Plain prose, short
+sentences, before/after measurements where a number moved, a rollback procedure, what is still open.
+~~~~
+
+### Wave 16c, session 4: T089 (haiku)
+
+~~~~text
+Carta. Wave 16c, session 4 of 9: T089. Model: haiku.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T089    branch p5-a5-orphan-fields
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T089-app    branch p5-a5-orphan-fields
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T089 -Branch p5-a5-orphan-fields -App
+
+Task number(s): T089. Report folder: Execution/P5/. Ports: Vite 5204, throwaway Postgres 55444.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): surface tags as filters you can scan; strip basecamps and snapshot from the build unless a screen reads them. Journey lane app side.
+
+THE TASK
+
+# T089: A5: Surface tags, basecamps and snapshot, or strip them
+(mind-map number T085; use T089 everywhere: branch, report, register)
+
+Carta. Task T089: A5: Surface tags, basecamps and snapshot, or strip them
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md A5.
+Then read the files in this repository that it refers to.
+
+Do this:
+tags is present on 223 trips, basecamps on 177, snapshot on 153, and none of them appear on the page. Either surface them or strip them from the build. tags in particular is free filtering and free scanability.
+
+Why it matters, so you do not lose it in the implementation:
+Dead weight in the JSON that costs payload and gives nothing. Decide one way; do not leave it.
+
+Done when: Each of the three fields is either rendered or removed from the build.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P5/T089-a5-orphan-fields.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16c, session 5: T093 (fable)
+
+~~~~text
+Carta. Wave 16c, session 5 of 9: T093. Model: fable.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T093    branch p5-j4-j5-accuracy-signals
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T093-app    branch p5-j4-j5-accuracy-signals
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T093 -Branch p5-j4-j5-accuracy-signals -App
+
+Task number(s): T093. Report folder: Execution/P5/. Ports: Vite 5205, throwaway Postgres 55445.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): the K3 confidence model (sourced, derived, estimated per field) is the one source for all three accuracy signals.
+
+THE TASK
+
+# T093: J4+J5: Make the three accuracy signals agree
+(mind-map number T089; use T093 everywhere: branch, report, register)
+
+Carta. Task T093: J4+J5: Make the three accuracy signals agree
+Work only on this task. Do not start the next one.
+
+Read first, before writing anything: carta-trips-enhancement-spec.md J4, J5, K3.
+Then read the files in this repository that it refers to.
+
+Do this:
+verifyFlagCount is 0 on 200 trips, volatilePricing is true on 83, only 70 trips have anything in sources.verified and 123 have confidenceNotes. So a trip can simultaneously claim zero items needing checking and volatile pricing, with no sources recorded. Pick ONE model - the K3 confidence model (sourced / derived / estimated per field) - and make all three fields derive from it.
+
+Why it matters, so you do not lose it in the implementation:
+The footer line the user reads, 'Prices in this plan change often, check them before you book', is driven by a field that does not agree with the other two. For a product whose stated asset is trust in its numbers, contradictory trust signals are worse than none.
+
+Sequence: Sets the data model that P9's generation pipeline writes into.
+
+Done when: All three fields derive from one source of truth and the validator enforces consistency.
+
+Rules: stay inside this task's scope and do not touch files it does not name. Anything visual follows the carta-design skill, which wins over every other design source. Never re-type a file's contents from tool output; edit in place. Measure before and after where the task implies a number.
+
+Then write the report to Execution/P5/T093-j4-accuracy-signals.md, following Execution/_TEMPLATE.md.
+  Write it clean and plain. Ordinary prose, short sentences, minimal markdown: a
+  heading only where a reader needs to jump, a table only where the data is really
+  tabular. No bullet-point walls, no bold scattered mid-sentence, no emoji, no
+  restating the task back to me. Explain how the thing works and why it was built
+  that way, as if briefing the person who has to maintain it in six months. Include
+  the before and after measurements, and say plainly what is still open.
+~~~~
+
+### Wave 16c, session 6: T333 (opus)
+
+~~~~text
+Carta. Wave 16c, session 6 of 9: T333. Model: opus.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T333    branch p8-upload-path
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T333-app    branch p8-upload-path
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T333 -Branch p8-upload-path -App
+
+Task number(s): T333. Report folder: Execution/P8/. Ports: Vite 5206, throwaway Postgres 55446.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+GATE CLOSED. Owner decision 2026-10-07 (T362, Execution/_OWNER-RUNBOOK.md block A): a separate per-upload tick 'OpenStreetMap may use this track under its contributor terms', its wording to be checked against the OSMF waiver template by a lawyer before launch (owner step J4; raise the row). Rows T206-b and T068-h; this is also mind-map task T141's legal shape.
+
+THE TASK
+
+# T333: the photo upload path with the legal shape
+(register rows T206-b, T068-h; no mind-map prompt exists for it)
+
+WHAT  Read each of these rows in Execution/_OPEN.md: T206-b, T068-h. For each, read the report of the task
+that raised it (Execution/P*/<raiser>-*.md) in full, then do what the row asks, within the scope in the
+notes above. Mark each row you resolve as Status "closed by T333" in Execution/_OPEN.md (never delete
+rows). If a row needs the owner or a later rollout stage, leave it open and say why.
+
+DONE WHEN  Every listed row is closed, or left open with a written reason; the tests the source reports
+name pass; every screen you touched was checked in the browser at 380px and desktop width.
+
+REPORT  Execution/P8/T333-<short-slug>.md, following Execution/_TEMPLATE.md. Plain prose, short
+sentences, before/after measurements where a number moved, a rollback procedure, what is still open.
+~~~~
+
+### Wave 16c, session 7: T364 (sonnet) + T368 (sonnet)
+
+~~~~text
+Carta. Wave 16c, session 7 of 9: T364 then T368. Model: sonnet then sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T364    branch p10-owner-ui-calls
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T364-app    branch p10-owner-ui-calls
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T364 -Branch p10-owner-ui-calls -App
+Two tasks in order: finish T364 on p10-owner-ui-calls with its report and commits, then in each worktree run
+`git checkout -b p10-owner-copy-calls` and do T368 with its own report.
+
+Task number(s): T364, T368. Report folder: Execution/P10/. Ports: Vite 5207, throwaway Postgres 55447.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+Rows T362-b (T364) then T362-c and T362-f (T368), in the same worktrees. Every call is decided; build exactly what the row says, under carta-design (the Compact controls and Install hint rules are in the skill).
+
+THE TASK
+
+# T364: the owner's small interface calls
+(register rows T362-b; no mind-map prompt exists for it)
+
+WHAT  Read each of these rows in Execution/_OPEN.md: T362-b. For each, read the report of the task
+that raised it (Execution/P*/<raiser>-*.md) in full, then do what the row asks, within the scope in the
+notes above. Mark each row you resolve as Status "closed by T364" in Execution/_OPEN.md (never delete
+rows). If a row needs the owner or a later rollout stage, leave it open and say why.
+
+DONE WHEN  Every listed row is closed, or left open with a written reason; the tests the source reports
+name pass; every screen you touched was checked in the browser at 380px and desktop width.
+
+REPORT  Execution/P10/T364-<short-slug>.md, following Execution/_TEMPLATE.md. Plain prose, short
+sentences, before/after measurements where a number moved, a rollback procedure, what is still open.
+
+---- next task ----
+
+# T368: the owner's receipt and copy calls
+(register rows T362-c, T362-f; no mind-map prompt exists for it)
+
+WHAT  Read each of these rows in Execution/_OPEN.md: T362-c, T362-f. For each, read the report of the task
+that raised it (Execution/P*/<raiser>-*.md) in full, then do what the row asks, within the scope in the
+notes above. Mark each row you resolve as Status "closed by T368" in Execution/_OPEN.md (never delete
+rows). If a row needs the owner or a later rollout stage, leave it open and say why.
+
+DONE WHEN  Every listed row is closed, or left open with a written reason; the tests the source reports
+name pass; every screen you touched was checked in the browser at 380px and desktop width.
+
+REPORT  Execution/P10/T368-<short-slug>.md, following Execution/_TEMPLATE.md. Plain prose, short
+sentences, before/after measurements where a number moved, a rollback procedure, what is still open.
+~~~~
+
+### Wave 16c, session 8: T365 (opus)
+
+~~~~text
+Carta. Wave 16c, session 8 of 9: T365. Model: opus.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T365    branch p4-migration-051
+App worktree (continent-app): C:\Users\Gebruiker\Documents\Portfolio\wt\T365-app    branch p4-migration-051
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T365 -Branch p4-migration-051 -App
+
+Task number(s): T365. Report folder: Execution/P4/. Ports: Vite 5208, throwaway Postgres 55448.
+New migration allowed: 051. Self-check raise notice and a down block; state its paste position in the report and in an owner row.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+Row T362-d. Migration 051 carries the owner's moderation and admin decisions; 049 is reserved for T147 and 050 for T330. Self-check notice, down block, paste position after 048 in an owner row. The Terms content rule (T070-c) is drafted in TermsOfService.jsx and marked for the owner's legal review (step J4). Never touch an existing migration file.
+
+THE TASK
+
+# T365: migration 051: the owner's moderation and admin decisions
+(register rows T362-d; no mind-map prompt exists for it)
+
+WHAT  Read each of these rows in Execution/_OPEN.md: T362-d. For each, read the report of the task
+that raised it (Execution/P*/<raiser>-*.md) in full, then do what the row asks, within the scope in the
+notes above. Mark each row you resolve as Status "closed by T365" in Execution/_OPEN.md (never delete
+rows). If a row needs the owner or a later rollout stage, leave it open and say why.
+
+DONE WHEN  Every listed row is closed, or left open with a written reason; the tests the source reports
+name pass; every screen you touched was checked in the browser at 380px and desktop width.
+
+REPORT  Execution/P4/T365-<short-slug>.md, following Execution/_TEMPLATE.md. Plain prose, short
+sentences, before/after measurements where a number moved, a rollback procedure, what is still open.
+~~~~
+
+### Wave 16c, session 9: T366 (sonnet)
+
+~~~~text
+Carta. Wave 16c, session 9 of 9: T366. Model: sonnet.
+First read the SESSION RULES at the top of C:\Users\Gebruiker\Documents\Portfolio\Travel App\Execution\_WAVES.md and follow them,
+then CLAUDE.md in your root worktree, and the carta-design skill before any visual change.
+
+WHERE TO WORK
+Root worktree (sparse): C:\Users\Gebruiker\Documents\Portfolio\wt\T366    branch p3-owner-housekeeping
+If it does not exist yet, create it from the main checkout, one at a time:
+  cd "C:\Users\Gebruiker\Documents\Portfolio\Travel App"; powershell -File Execution/_queue/wave_worktree.ps1 -Task T366 -Branch p3-owner-housekeeping
+
+Task number(s): T366. Report folder: Execution/P3/. Ports: Vite 5209, throwaway Postgres 55449.
+New migration allowed: none.
+
+NOTES FOR THIS SESSION (these override the task text below where they disagree)
+Row T362-e. EXCEPTION to rule 4: run_pipeline.py, only to move the monthly flight_times task to manual cadence (T255-a) and to add --footprint to the lodging task (T311-b); no pipeline run.
+
+THE TASK
+
+# T366: housekeeping the owner approved
+(register rows T362-e; no mind-map prompt exists for it)
+
+WHAT  Read each of these rows in Execution/_OPEN.md: T362-e. For each, read the report of the task
+that raised it (Execution/P*/<raiser>-*.md) in full, then do what the row asks, within the scope in the
+notes above. Mark each row you resolve as Status "closed by T366" in Execution/_OPEN.md (never delete
+rows). If a row needs the owner or a later rollout stage, leave it open and say why.
+
+DONE WHEN  Every listed row is closed, or left open with a written reason; the tests the source reports
+name pass; every screen you touched was checked in the browser at 380px and desktop width.
+
+REPORT  Execution/P3/T366-<short-slug>.md, following Execution/_TEMPLATE.md. Plain prose, short
+sentences, before/after measurements where a number moved, a rollback procedure, what is still open.
+~~~~
+
 ## Wave 17 prompts
 
 ### Wave 17, session 1: T147 (opus)
@@ -5398,7 +6468,7 @@ Task number(s): T148. Report folder: Execution/P9/. Ports: Vite 5202, throwaway 
 New migration allowed: none.
 
 NOTES FOR THIS SESSION (these override the task text below where they disagree)
-GATE: owner decided T041-a (recommended 10 Trip, 30 Year). Update only the grounded column; never re-run the 007 insert.
+Decision made: the owner chose 10 on the Trip Pass and 30 on the Year Pass (T041-a, 2026-10-07); the wave gate (stages 2 and 3) still applies. Update only the grounded column and the six pass.featSearchOn strings; never re-run the 007 insert.
 
 THE TASK
 
@@ -5495,7 +6565,7 @@ Task number(s): T081. Report folder: Execution/P4/. Ports: Vite 5204, throwaway 
 New migration allowed: none.
 
 NOTES FOR THIS SESSION (these override the task text below where they disagree)
-GATE: the owner chose the alert channel. Live proof waits for stage 7.9.
+Decision made: alerts go by email to the owner, the same route as the Healthchecks.io heartbeat (T081, 2026-10-07). Live proof waits for stage 7.9.
 
 THE TASK
 

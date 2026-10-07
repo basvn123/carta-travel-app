@@ -39,3 +39,6 @@ pyyaml>=6.0
 # tools/trailslab/review: local-only review API (binds 127.0.0.1)
 fastapi>=0.115
 uvicorn>=0.30
+# Trips/carta-unified generation_gate.py and backfill_modules.py validate trip JSON
+# against the schema (T143-d, owner approved 2026-10-07; pinned in constraints.txt).
+jsonschema>=4.23
