@@ -118,7 +118,11 @@ def test_unread_source_withholds_the_figure(tmp_path, bodies):
     assert rec["itinerary"][0]["dayStats"]["ascentM"] is None
     assert rec["itinerary"][1]["dayStats"]["ascentM"] == 180
     assert any("itinerary[0].dayStats.ascentM" in f for f in rec["verifyFlags"])
-    assert rec["volatilePricing"] is True
+    # T093: a withheld figure is on the pipeline's checklist, not on the
+    # page, so the reader's signals come from the ledger alone: every held
+    # figure is sourced, nothing is estimated or disputed.
+    assert rec["verifyFlagCount"] == 0 and rec["volatilePricing"] is False
+    assert not any(f["path"] == "itinerary[0].dayStats.ascentM" for f in rec["figures"])
     assert res["figures"]["withheld"] == 1
 
 

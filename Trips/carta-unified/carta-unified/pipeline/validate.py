@@ -37,6 +37,7 @@ import urllib.parse
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import accuracy as A  # noqa: E402
 import common as C  # noqa: E402
 import generation_gate as GG  # noqa: E402
 import geocode as G  # noqa: E402
@@ -647,6 +648,18 @@ def validate(dataset, wire=None, verify_urls=False, places=None):
             info(tid, "many-verify-flags",
                  f"{t['verifyFlagCount']} distinct [VERIFY] flags to clear before publishing")
 
+        # --- T093 (spec J4, J5): one model behind the accuracy signals -----
+        # verifyFlagCount, volatilePricing and sources.verified must be what
+        # the trip's own figures ledger gives (accuracy.py), or, on a v2.0
+        # trip with no ledger, what its own verify flags give. A ledgered
+        # trip also meets the K3 rules the gate applies to a generated one
+        # (register row T230-c).
+        for e in A.inconsistencies(t):
+            err(tid, "accuracy-signals", e)
+        if A.ledgered(t):
+            for e in GG.figure_errors(t):
+                err(tid, "figure-ledger", e)
+
         # --- K5: comma ranges ---------------------------------------------
         for m in _comma_range_hits(blob):
             err(tid, "comma-range",
@@ -790,7 +803,7 @@ K5_CODES = ["budget-sum-mismatch", "per-day-mismatch", "comma-range",
             "surface-percent-sum", "accommodation-not-slept",
             "place-outside-country", "comma-range-wire", "hero-below-floor",
             "hero-missing", "coordinate-capital-fallback", "coordinate-outside-country",
-            "hero-duplicate"]
+            "hero-duplicate", "accuracy-signals"]
 SEED_DEAD_URL = ("https://upload.wikimedia.org/wikipedia/commons/0/00/"
                  "Carta_trip_validator_seeded_missing_file.jpg")
 # A town far from every trip in the catalogue, and the country it sits in.
@@ -837,6 +850,8 @@ def self_test(dataset, places, verify_urls):
     b["perDayEur"]["low"] = (b["perDayEur"].get("low") or 0) + 40
     bad["summary"] = "word " * (GG.SUMMARY_WORDS + 1) + (bad.get("summary") or "") + " Dinner runs €14, €22 a head."
     bad.setdefault("typeSpecific", {})["surface"] = "60% paved road, 30% gravel"
+    # T093: volatile pricing with nothing to check, the J4 contradiction
+    bad["verifyFlags"], bad["verifyFlagCount"], bad["volatilePricing"] = [], 0, True
     bad["accommodationStrategy"] = list(bad["accommodationStrategy"]) + [
         {"name": "Pension Zzyzx Seeded"}]
     allowed = allowed_country_codes(control, json.dumps(control, ensure_ascii=False).lower())

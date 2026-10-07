@@ -117,7 +117,11 @@ def test_disputes_become_verify_flags(tmp_path, bodies):
         "Disputed accommodationStrategy[1].name, high existence: Test: no such house is listed in Dürnstein today.",
         "Disputed itinerary[3].dayStats.ascentM, low contradiction: Test: low first in the answer, last in the flags.",
     ]
-    assert rec["verifyFlagCount"] == len(rec["verifyFlags"]) and rec["volatilePricing"] is True
+    # T093: the climb dispute lands on its ledger row and is the one figure
+    # to check; a stay's name is not a figure. Nothing disputed is a price.
+    row = next(f for f in rec["figures"] if f["path"] == "itinerary[3].dayStats.ascentM")
+    assert row["flag"] == disputed[1]
+    assert rec["verifyFlagCount"] == 1 and rec["volatilePricing"] is False
     assert not G.check(rec)
     crit = read(tmp_path / "admitted" / f"{rec['id']}.critique.json")
     assert [d["urlRead"] for d in crit["disputes"]] == [True, False]

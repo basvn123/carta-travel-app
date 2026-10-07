@@ -4,6 +4,7 @@ from __future__ import annotations
 import datetime as _dt
 import re
 
+import accuracy as A
 import common as C
 
 
@@ -332,8 +333,12 @@ def build_record(raw: dict, seen_ids: set):
             "confidenceNotes": C.clean((raw.get("sources") or {}).get("confidenceNotes")),
         },
         "verifyFlags": verify_flags,
+        # T093 (spec J4): a v2.0 record has no figures ledger, so its count
+        # is the number of [VERIFY] markers and volatile means there is at
+        # least one (accuracy.legacy). A "verify" tag at source with no
+        # marker no longer makes a trip volatile: it named nothing to check.
         "verifyFlagCount": len(verify_flags),
-        "volatilePricing": bool(raw.get("verifyVolatile")) or bool(verify_flags),
+        "volatilePricing": bool(verify_flags),
         "wordCount": len(body.split()),
         "dataVintage": raw.get("dataVintage") or 2026,
         "provenance": {
@@ -345,4 +350,4 @@ def build_record(raw: dict, seen_ids: set):
             "synthesized": False,
         },
     }
-    return record
+    return A.apply(record)
