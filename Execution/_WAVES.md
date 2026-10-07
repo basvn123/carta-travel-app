@@ -6570,9 +6570,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -6590,7 +6606,8 @@ surface's harnesses. A harness assertion that encodes the old design may be upda
 saying why, never deleted.
 
 SURFACE  App shell, navigation and shared components (key 'shell')
-Where to look: every tab at 380 and 1280 px (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages (?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, dates, party size, Lifestyle.
+Where to look: every tab on the iphone, android and desktop devices (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages (?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, dates, party size, Lifestyle.
+On a phone: the bottom nav, sheets and dialogs are what a phone traveller touches most; one thumb, one hand, often outdoors.
 Main files (OWNERSHIP.md is the authority from V2 on): src/App.jsx; src/components/: AppHeader, BottomNav, Button, Icons, StateBlocks, Dropdown, DateField, FilterControls, CountryPicker, OriginPicker, AnnouncementBar, MaintenanceGate, ErrorBoundary, InfoDot, Logo, Imprint, PrivacyPolicy, TermsOfService, LegalFromUrl; src/browse/: Fold, SheetShell, LifestyleButton, LifestylePanel; styles 02-base, 03-button, 10-shell, 14-filters-panels, 27-states, 31-infodot, 46-owner-calls.
 Harnesses (continent-app/scripts/): verify_bottom_nav, verify_desktop_shell, verify_top_bar, verify_tab_switching, verify_filter_sheet, verify_lifestyle, verify_focus_trap, verify_keyboard, verify_quality_floor.
 Your v6 stylesheet from V3 on: src/styles/60-v6-shell.css (created and imported by T380).
@@ -6604,19 +6621,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\shell\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\shell\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -6688,9 +6708,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -6709,6 +6745,7 @@ saying why, never deleted.
 
 SURFACE  Landing page and first run (key 'landing')
 Where to look: ?tab=home (the landing page is also the home page, T209 and T194), a first visit with site storage cleared, the first priced result (the first-run receipt), and the first ninety seconds as docs/ONBOARDING_AND_EMPTY_STATES.md designs them.
+On a phone: the first visit usually comes from a shared link or a search on a phone; the first screen must answer what Carta is and what a day costs without a scroll.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/LandingPage.jsx, src/lib/landing.js, src/components/FirstRunReceipt.jsx, src/lib/firstRun.js, src/lib/firstRunContext.js; styles 38-first-run, 39-landing.
 Harnesses (continent-app/scripts/): verify_receipt, verify_trip_landing, verify_prerender.
 Your v6 stylesheet from V3 on: src/styles/61-v6-landing.css (created and imported by T380).
@@ -6720,19 +6757,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\landing\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\landing\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -6804,9 +6844,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -6825,6 +6881,7 @@ saying why, never deleted.
 
 SURFACE  Explore (the map tab) (key 'explore')
 Where to look: ?tab=map: the control bar, the rails, the view toggle to the map, the price pins and the cheapest pin, the filter rail and sheet, a card and its preview with the compact receipt, the tier legend, the Lifestyle control opened from Explore, reach and month filters.
+On a phone: browsing for ideas on the sofa or the commute; the rails, the map toggle and the card preview must work one-handed, and the map must never trap the scroll.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: ExploreTab, ExploreMap, ExploreRails, ExploreFilterRail, TierLegend; src/components/: CostSummary, FareProvenance, FavStar; src/map/pinKeys.js, src/map/tokenColors.js; styles 15-map-overlays, 26-shortlist-extras.
 Harnesses (continent-app/scripts/): verify_explore, verify_map_size_cards, verify_shortlist, verify_fare_provenance, verify_keyboard.
 Your v6 stylesheet from V3 on: src/styles/62-v6-explore.css (created and imported by T380).
@@ -6836,19 +6893,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\explore\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\explore\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -6920,9 +6980,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -6941,6 +7017,7 @@ saying why, never deleted.
 
 SURFACE  Destinations browse (key 'destinations')
 Where to look: ?tab=places: every category of the category rail (towns, walks, beaches, lakes, mountains, cycling, trips), the section opening screens, the one card with five fillings, search including search anywhere, the filter sheet, a country page, a region page (#region=), and the coverage empty states.
+On a phone: scanning many places quickly on a phone; dense cards, a filter sheet within thumb reach.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DestinationsTab, CategoryRail, PlaceCard, CardStrip, SectionOpening, PlacesFilterSheet, FilterChips, CountryPage, RegionPage, StubPage, CoverageEmpty; src/lib/cardFillings.js, src/lib/openingScreen.js; styles 23-places-pages, 30-section-opening, 37-card-fillings, 44-tags, 45-empty-states.
 Harnesses (continent-app/scripts/): verify_places_tab, verify_category_rail, verify_places_search, verify_regions, verify_country_cards, verify_paging.
 Your v6 stylesheet from V3 on: src/styles/63-v6-destinations.css (created and imported by T380).
@@ -6952,19 +7029,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\destinations\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\destinations\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -7036,9 +7116,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7057,6 +7153,7 @@ saying why, never deleted.
 
 SURFACE  Destination (town) page (key 'destination')
 Where to look: #dest=<id> opened from a card: a large city, a small town and a town with routes (Valbona Valley has trails), every fold (around here, getting there, neighbourhoods, climate, crowds, rating, routes from here, nearby outdoors), the receipt, the hero and gallery, the honest footers, and the PDF export.
+On a phone: deciding on one town, often on a phone; the receipt and the folds must read without pinching or sideways scrolling.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DestinationPage, AroundHere, GettingThere, Neighbourhoods, ClimateStrip, CrowdCalendar, RatingBreakdown, RoutesFromHere, NearbyOutdoors, MemberPlaces, DestMap, WebcamEmbed, HonestFooters, CreditFold; src/components/: CountryIntel, HeroImage, GemRating, RatingBadge, CrowdingBadge, MonthStrip; src/lib/destinationPdf.js; styles 18-detail-panel, 19-guide-ratings, 24-destination-workspace.
 Harnesses (continent-app/scripts/): verify_destination_page, verify_routes_block, verify_hero_images, verify_transport_links, verify_stay_tiers.
 Your v6 stylesheet from V3 on: src/styles/64-v6-destination.css (created and imported by T380).
@@ -7068,19 +7165,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\destination\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\destination\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -7152,9 +7252,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7173,6 +7289,7 @@ saying why, never deleted.
 
 SURFACE  Outdoor detail pages (trail, cycling route and tour, beach, lake, mountain) (key 'outdoor')
 Where to look: a trail (#trail=), a cycling route (#cycle=<id>&cc=<cc>) and a cycling tour (#tour=), a beach (#beach=), a lake (#lake=) and a mountain from the Destinations mountains section, each through the shared detail skeleton: hero, map slot, signature figure, derived modules, take it with you (GPX, KML).
+On a phone: read at home and opened again at the trailhead, on a phone, outdoors, with one bar of signal; the key facts and the GPX within the first screen.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DetailSkeleton, TrailPage, CyclePage, BeachPage, LakePage, MountainPage, Signature, DerivedModules, RouteFigures, RouteParts, BathingWater, PointMap; src/components/: WaterQualityBadge, LayerPhoto, KindGlyph; src/lib/detailSkeleton.js, signature.js, derivedModules.js; styles 28-detail-skeleton, 29-signature, 29-derived-modules.
 Harnesses (continent-app/scripts/): verify_trail_page, verify_beaches, verify_lakes, verify_mountains, verify_cycling, verify_route_page, verify_trail_free_gpx, verify_trails.
 Your v6 stylesheet from V3 on: src/styles/65-v6-outdoor.css (created and imported by T380).
@@ -7184,19 +7301,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\outdoor\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\outdoor\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -7268,9 +7388,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7289,6 +7425,7 @@ saying why, never deleted.
 
 SURFACE  Curated trips (the journeys library and the trip page) (key 'trips')
 Where to look: the Trips category in Destinations (the style cards, the trip list with its length and cost filters), and a journey page (#trip=<id>) for a hiking, a cycling, a city and a beach week, with every fold: suitability strip, the shape of the week, the day track and day detail, the booking order, the flashcards, the pack grid, the cost bar and receipt, the Lifestyle slider, the sticky section rail, the three exits.
+On a phone: a week read on a phone over several evenings; the day track, flashcards and sticky rail are phone patterns first.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: JourneysSection, JourneyPage, TripPage, TripPractical, TripDayPhotos, DayTrack, FlashDeck, PackGrid, WeekPlan, BookingOrder, CostBar, LifestyleSlider, SectionRail, TripFilters, LengthPicker, JourneyRoute; src/components/: NotFor, PackIcons; styles 25-feature-pages, 32-day-carousel, 33-flashcards, 34-section-rail, 35-lifestyle-slider, 36-cost-bar, 43-trip-length.
 Harnesses (continent-app/scripts/): verify_journeys, verify_trip_page, verify_trips, verify_pack_grid.
 Your v6 stylesheet from V3 on: src/styles/66-v6-trips.css (created and imported by T380).
@@ -7300,19 +7437,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\trips\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\trips\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -7384,9 +7524,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7405,6 +7561,7 @@ saying why, never deleted.
 
 SURFACE  Trip planner (the multi-city wizard and the planned trip) (key 'tripplanner')
 Where to look: ?tab=trip: every wizard step (origin, where with the quiz, the country picker map and the match cards, when, towns, ready trips, stays, route building), then the planned trip with its map, legs by mode, itinerary, extras, country brief and cheap tips, and the chat planner.
+On a phone: started on a phone as often as on a laptop; every wizard step fits one phone screen with its action in thumb reach, and the on-screen keyboard never hides the field.
 Main files (OWNERSHIP.md is the authority from V2 on): src/planner/: TripPlannerTab, GuidedTripWizard, GuidedTripWizardParts, TownPickerStep, ReadyTripsStep, RouteBuildingStage, TravelLegsSection, TripItinerary, TripExtras, CountryBrief, CountryMatchCards, CheapTipsSection, CartaChatPlanner, WhereQuiz, PlannerSection; src/map/: TripMap, CountryPickerMap, CityPickerMap; styles 11-trip-planner, 12-guided-trip, 21-chat-passes (the chat half).
 Harnesses (continent-app/scripts/): verify_planner_v2, verify_planner_v2_flow, verify_planner_t8, verify_where_quiz, verify_when_step, verify_ready_trips, verify_country_brief, verify_booked_route, verify_handoffs, shoot-planners.mjs.
 Your v6 stylesheet from V3 on: src/styles/67-v6-tripplanner.css (created and imported by T380).
@@ -7416,19 +7573,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\tripplanner\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\tripplanner\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -7500,9 +7660,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7521,6 +7697,7 @@ saying why, never deleted.
 
 SURFACE  Day planner (key 'dayplanner')
 Where to look: ?tab=day: the landing, the guided builder (start point, ideas, steps), the workspace with its map and three tabs, adding and moving an activity, the AI day plan, the expense ledger, magic import, the files panel, and the PDF, ICS and KML exports.
+On a phone: used during the trip, on a phone, standing in the street; the day must read and edit one-handed in sun and with poor signal.
 Main files (OWNERSHIP.md is the authority from V2 on): src/planner/: DayPlannerTab, DayWorkspaceChrome, DayPlanPanel, DayExploreBuilder, DayIdeasStep, DayActivityRows, DayAddPanel, DayFilesPanel, DayTripCards, DayTripTransport, AiDayPlanModal, AiPlanRoute, ExpenseLedger, MagicImportZone; src/map/DayExploreMap.jsx; src/planner/dayPlanPdf.js; styles 13-day-planner, 20-day-planner-flow.
 Harnesses (continent-app/scripts/): verify_day_landing, verify_day_workspace, verify_day_overview, verify_day_ideas, verify_day_steps, verify_day_dates, verify_day_start_point.
 Your v6 stylesheet from V3 on: src/styles/68-v6-dayplanner.css (created and imported by T380).
@@ -7532,19 +7709,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\dayplanner\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\dayplanner\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -7616,9 +7796,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7637,6 +7833,7 @@ saying why, never deleted.
 
 SURFACE  My trips, account, sharing, passes, guides and admin (key 'account')
 Where to look: My trips (bottom nav; ?savedmock for a filled list), a saved trip, sharing and co-planners, a shared trip view, past trips and memories, Account (profile, friends, FAQ, language, data export), sign in and sign up, reset password, the pass modal and paywall (?paymock), community guides and the upload form, the install hint, and the admin page (consistency with the rest only; it is the owner's tool).
+On a phone: My trips is where a phone traveller comes back to a saved trip; sharing goes through the phone's share sheet; the admin page alone may be desktop first.
 Main files (OWNERSHIP.md is the authority from V2 on): src/auth/*.jsx, src/components/PassModal.jsx, src/community/*.jsx, src/admin/AdminPage.jsx, src/components/admin/*.jsx; styles 16-auth, 17-saved-trips, 21-chat-passes (the pass half), 22-account-admin, 40-upload, 42-feedback.
 Harnesses (continent-app/scripts/): verify_saved, verify_account_panel, verify_trip_share, verify_friends, verify_past_trip, verify_paywall, verify_guides, verify_admin_panel.
 Your v6 stylesheet from V3 on: src/styles/69-v6-account.css (created and imported by T380).
@@ -7648,19 +7845,22 @@ STEPS
 1. Setup: impeccable context (above), then read reference/critique.md, reference/audit.md,
    reference/shape.md and reference/operate.md. Pick the surface's mode (Persuade, Operate, Read or
    Experience) and say why.
-2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, at 380 and 1280 px, from a
-   cold start and from a returning visit. Save the "before" screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\account\V1-<view>-<width>.jpg.
+2. Walk the surface as the traveller in TRIP-PLANNING-RESEARCH.md would, on the iphone, android
+   and desktop devices (phone first), from a cold start and from a returning visit. Save the "before"
+   screenshots to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\account\V1-<view>-<device>.jpg.
 3. Inventory. One table row per view, state, button, link, chip, toggle, input, sheet, modal, empty,
    loading and error state, and visual setting on this surface: what it does, where it sits, which file
    draws it, and a verdict (keep, move, merge, remove, rework). Every button is in this table.
 4. Critique, following reference/critique.md: heuristic scores, the priority issues, with evidence from
    the screenshots. Then a short technical audit following reference/audit.md (accessibility, responsive,
-   performance), using the existing harnesses rather than new tooling.
+   performance), using the existing harnesses rather than new tooling, plus the phone checks of the
+   design wave rules (landscape, keyboard, safe areas, dvh, thumb reach) with what fails on which device.
 5. The traveller's job here: what they need to see first, second and third, what is missing, what sits
    in the wrong place, and what sends them to another tab or another site. Cite the research.
 6. PLANNING STEP (planning mode): impeccable shape, following reference/shape.md. Write the plan as three
    numbered lists, one per build wave: V3 structure, information and flow; V4 visual and dynamic (motion,
    imagery, data visualisation, micro-interactions, all within the palette); V5 harden, adapt and polish.
+   Write each item for the phone first and say what changes on desktop.
    Each item: the change, the files, the impeccable command that guides it, and how to check it is done.
    End with a target-state table of every button and control on the surface.
 7. "Needs a rule": every proposal carta-design does not cover today, one line each, with the rule you
@@ -7735,9 +7935,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7777,6 +7993,10 @@ DELIVER
    - layout rhythm, the type scale (Fraunces display sizes), elevation (the three shadows), iconography;
    - density per mode: Operate for the planners and Explore, Read for trip and detail pages, Persuade for
      the landing page;
+   - the phone (T413): phone first everywhere; the breakpoints and what each adds; safe-area and dvh
+     rules for every fixed or sticky bar; the thumb zone and where the one primary action sits on a
+     phone; sheets versus pages; gestures as shortcuts only; landscape; the on-screen keyboard; and what
+     desktop adds beyond a wider phone (side by side map and list, hover detail, keyboard shortcuts);
    - the planning journey across surfaces: how a traveller moves from dreaming to a kept trip, and which
      surface owns each step.
 2. Every "Needs a rule" item from the ten briefs, accepted or rejected with a reason, in a table. Accepted
@@ -7868,9 +8088,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7888,7 +8124,8 @@ surface's harnesses. A harness assertion that encodes the old design may be upda
 saying why, never deleted.
 
 SURFACE  App shell, navigation and shared components (key 'shell')
-Where to look: every tab at 380 and 1280 px (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages (?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, dates, party size, Lifestyle.
+Where to look: every tab on the iphone, android and desktop devices (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages (?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, dates, party size, Lifestyle.
+On a phone: the bottom nav, sheets and dialogs are what a phone traveller touches most; one thumb, one hand, often outdoors.
 Main files (OWNERSHIP.md is the authority from V2 on): src/App.jsx; src/components/: AppHeader, BottomNav, Button, Icons, StateBlocks, Dropdown, DateField, FilterControls, CountryPicker, OriginPicker, AnnouncementBar, MaintenanceGate, ErrorBoundary, InfoDot, Logo, Imprint, PrivacyPolicy, TermsOfService, LegalFromUrl; src/browse/: Fold, SheetShell, LifestyleButton, LifestylePanel; styles 02-base, 03-button, 10-shell, 14-filters-panels, 27-states, 31-infodot, 46-owner-calls.
 Harnesses (continent-app/scripts/): verify_bottom_nav, verify_desktop_shell, verify_top_bar, verify_tab_switching, verify_filter_sheet, verify_lifestyle, verify_focus_trap, verify_keyboard, verify_quality_floor.
 Your v6 stylesheet from V3 on: src/styles/60-v6-shell.css (created and imported by T380).
@@ -7975,9 +8212,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -7996,6 +8249,7 @@ saying why, never deleted.
 
 SURFACE  Landing page and first run (key 'landing')
 Where to look: ?tab=home (the landing page is also the home page, T209 and T194), a first visit with site storage cleared, the first priced result (the first-run receipt), and the first ninety seconds as docs/ONBOARDING_AND_EMPTY_STATES.md designs them.
+On a phone: the first visit usually comes from a shared link or a search on a phone; the first screen must answer what Carta is and what a day costs without a scroll.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/LandingPage.jsx, src/lib/landing.js, src/components/FirstRunReceipt.jsx, src/lib/firstRun.js, src/lib/firstRunContext.js; styles 38-first-run, 39-landing.
 Harnesses (continent-app/scripts/): verify_receipt, verify_trip_landing, verify_prerender.
 Your v6 stylesheet from V3 on: src/styles/61-v6-landing.css (created and imported by T380).
@@ -8082,9 +8336,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8103,6 +8373,7 @@ saying why, never deleted.
 
 SURFACE  Explore (the map tab) (key 'explore')
 Where to look: ?tab=map: the control bar, the rails, the view toggle to the map, the price pins and the cheapest pin, the filter rail and sheet, a card and its preview with the compact receipt, the tier legend, the Lifestyle control opened from Explore, reach and month filters.
+On a phone: browsing for ideas on the sofa or the commute; the rails, the map toggle and the card preview must work one-handed, and the map must never trap the scroll.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: ExploreTab, ExploreMap, ExploreRails, ExploreFilterRail, TierLegend; src/components/: CostSummary, FareProvenance, FavStar; src/map/pinKeys.js, src/map/tokenColors.js; styles 15-map-overlays, 26-shortlist-extras.
 Harnesses (continent-app/scripts/): verify_explore, verify_map_size_cards, verify_shortlist, verify_fare_provenance, verify_keyboard.
 Your v6 stylesheet from V3 on: src/styles/62-v6-explore.css (created and imported by T380).
@@ -8189,9 +8460,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8210,6 +8497,7 @@ saying why, never deleted.
 
 SURFACE  Destinations browse (key 'destinations')
 Where to look: ?tab=places: every category of the category rail (towns, walks, beaches, lakes, mountains, cycling, trips), the section opening screens, the one card with five fillings, search including search anywhere, the filter sheet, a country page, a region page (#region=), and the coverage empty states.
+On a phone: scanning many places quickly on a phone; dense cards, a filter sheet within thumb reach.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DestinationsTab, CategoryRail, PlaceCard, CardStrip, SectionOpening, PlacesFilterSheet, FilterChips, CountryPage, RegionPage, StubPage, CoverageEmpty; src/lib/cardFillings.js, src/lib/openingScreen.js; styles 23-places-pages, 30-section-opening, 37-card-fillings, 44-tags, 45-empty-states.
 Harnesses (continent-app/scripts/): verify_places_tab, verify_category_rail, verify_places_search, verify_regions, verify_country_cards, verify_paging.
 Your v6 stylesheet from V3 on: src/styles/63-v6-destinations.css (created and imported by T380).
@@ -8296,9 +8584,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8317,6 +8621,7 @@ saying why, never deleted.
 
 SURFACE  Destination (town) page (key 'destination')
 Where to look: #dest=<id> opened from a card: a large city, a small town and a town with routes (Valbona Valley has trails), every fold (around here, getting there, neighbourhoods, climate, crowds, rating, routes from here, nearby outdoors), the receipt, the hero and gallery, the honest footers, and the PDF export.
+On a phone: deciding on one town, often on a phone; the receipt and the folds must read without pinching or sideways scrolling.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DestinationPage, AroundHere, GettingThere, Neighbourhoods, ClimateStrip, CrowdCalendar, RatingBreakdown, RoutesFromHere, NearbyOutdoors, MemberPlaces, DestMap, WebcamEmbed, HonestFooters, CreditFold; src/components/: CountryIntel, HeroImage, GemRating, RatingBadge, CrowdingBadge, MonthStrip; src/lib/destinationPdf.js; styles 18-detail-panel, 19-guide-ratings, 24-destination-workspace.
 Harnesses (continent-app/scripts/): verify_destination_page, verify_routes_block, verify_hero_images, verify_transport_links, verify_stay_tiers.
 Your v6 stylesheet from V3 on: src/styles/64-v6-destination.css (created and imported by T380).
@@ -8403,9 +8708,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8424,6 +8745,7 @@ saying why, never deleted.
 
 SURFACE  Outdoor detail pages (trail, cycling route and tour, beach, lake, mountain) (key 'outdoor')
 Where to look: a trail (#trail=), a cycling route (#cycle=<id>&cc=<cc>) and a cycling tour (#tour=), a beach (#beach=), a lake (#lake=) and a mountain from the Destinations mountains section, each through the shared detail skeleton: hero, map slot, signature figure, derived modules, take it with you (GPX, KML).
+On a phone: read at home and opened again at the trailhead, on a phone, outdoors, with one bar of signal; the key facts and the GPX within the first screen.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DetailSkeleton, TrailPage, CyclePage, BeachPage, LakePage, MountainPage, Signature, DerivedModules, RouteFigures, RouteParts, BathingWater, PointMap; src/components/: WaterQualityBadge, LayerPhoto, KindGlyph; src/lib/detailSkeleton.js, signature.js, derivedModules.js; styles 28-detail-skeleton, 29-signature, 29-derived-modules.
 Harnesses (continent-app/scripts/): verify_trail_page, verify_beaches, verify_lakes, verify_mountains, verify_cycling, verify_route_page, verify_trail_free_gpx, verify_trails.
 Your v6 stylesheet from V3 on: src/styles/65-v6-outdoor.css (created and imported by T380).
@@ -8510,9 +8832,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8531,6 +8869,7 @@ saying why, never deleted.
 
 SURFACE  Curated trips (the journeys library and the trip page) (key 'trips')
 Where to look: the Trips category in Destinations (the style cards, the trip list with its length and cost filters), and a journey page (#trip=<id>) for a hiking, a cycling, a city and a beach week, with every fold: suitability strip, the shape of the week, the day track and day detail, the booking order, the flashcards, the pack grid, the cost bar and receipt, the Lifestyle slider, the sticky section rail, the three exits.
+On a phone: a week read on a phone over several evenings; the day track, flashcards and sticky rail are phone patterns first.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: JourneysSection, JourneyPage, TripPage, TripPractical, TripDayPhotos, DayTrack, FlashDeck, PackGrid, WeekPlan, BookingOrder, CostBar, LifestyleSlider, SectionRail, TripFilters, LengthPicker, JourneyRoute; src/components/: NotFor, PackIcons; styles 25-feature-pages, 32-day-carousel, 33-flashcards, 34-section-rail, 35-lifestyle-slider, 36-cost-bar, 43-trip-length.
 Harnesses (continent-app/scripts/): verify_journeys, verify_trip_page, verify_trips, verify_pack_grid.
 Your v6 stylesheet from V3 on: src/styles/66-v6-trips.css (created and imported by T380).
@@ -8617,9 +8956,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8638,6 +8993,7 @@ saying why, never deleted.
 
 SURFACE  Trip planner (the multi-city wizard and the planned trip) (key 'tripplanner')
 Where to look: ?tab=trip: every wizard step (origin, where with the quiz, the country picker map and the match cards, when, towns, ready trips, stays, route building), then the planned trip with its map, legs by mode, itinerary, extras, country brief and cheap tips, and the chat planner.
+On a phone: started on a phone as often as on a laptop; every wizard step fits one phone screen with its action in thumb reach, and the on-screen keyboard never hides the field.
 Main files (OWNERSHIP.md is the authority from V2 on): src/planner/: TripPlannerTab, GuidedTripWizard, GuidedTripWizardParts, TownPickerStep, ReadyTripsStep, RouteBuildingStage, TravelLegsSection, TripItinerary, TripExtras, CountryBrief, CountryMatchCards, CheapTipsSection, CartaChatPlanner, WhereQuiz, PlannerSection; src/map/: TripMap, CountryPickerMap, CityPickerMap; styles 11-trip-planner, 12-guided-trip, 21-chat-passes (the chat half).
 Harnesses (continent-app/scripts/): verify_planner_v2, verify_planner_v2_flow, verify_planner_t8, verify_where_quiz, verify_when_step, verify_ready_trips, verify_country_brief, verify_booked_route, verify_handoffs, shoot-planners.mjs.
 Your v6 stylesheet from V3 on: src/styles/67-v6-tripplanner.css (created and imported by T380).
@@ -8724,9 +9080,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8745,6 +9117,7 @@ saying why, never deleted.
 
 SURFACE  Day planner (key 'dayplanner')
 Where to look: ?tab=day: the landing, the guided builder (start point, ideas, steps), the workspace with its map and three tabs, adding and moving an activity, the AI day plan, the expense ledger, magic import, the files panel, and the PDF, ICS and KML exports.
+On a phone: used during the trip, on a phone, standing in the street; the day must read and edit one-handed in sun and with poor signal.
 Main files (OWNERSHIP.md is the authority from V2 on): src/planner/: DayPlannerTab, DayWorkspaceChrome, DayPlanPanel, DayExploreBuilder, DayIdeasStep, DayActivityRows, DayAddPanel, DayFilesPanel, DayTripCards, DayTripTransport, AiDayPlanModal, AiPlanRoute, ExpenseLedger, MagicImportZone; src/map/DayExploreMap.jsx; src/planner/dayPlanPdf.js; styles 13-day-planner, 20-day-planner-flow.
 Harnesses (continent-app/scripts/): verify_day_landing, verify_day_workspace, verify_day_overview, verify_day_ideas, verify_day_steps, verify_day_dates, verify_day_start_point.
 Your v6 stylesheet from V3 on: src/styles/68-v6-dayplanner.css (created and imported by T380).
@@ -8831,9 +9204,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8852,6 +9241,7 @@ saying why, never deleted.
 
 SURFACE  My trips, account, sharing, passes, guides and admin (key 'account')
 Where to look: My trips (bottom nav; ?savedmock for a filled list), a saved trip, sharing and co-planners, a shared trip view, past trips and memories, Account (profile, friends, FAQ, language, data export), sign in and sign up, reset password, the pass modal and paywall (?paymock), community guides and the upload form, the install hint, and the admin page (consistency with the rest only; it is the owner's tool).
+On a phone: My trips is where a phone traveller comes back to a saved trip; sharing goes through the phone's share sheet; the admin page alone may be desktop first.
 Main files (OWNERSHIP.md is the authority from V2 on): src/auth/*.jsx, src/components/PassModal.jsx, src/community/*.jsx, src/admin/AdminPage.jsx, src/components/admin/*.jsx; styles 16-auth, 17-saved-trips, 21-chat-passes (the pass half), 22-account-admin, 40-upload, 42-feedback.
 Harnesses (continent-app/scripts/): verify_saved, verify_account_panel, verify_trip_share, verify_friends, verify_past_trip, verify_paywall, verify_guides, verify_admin_panel.
 Your v6 stylesheet from V3 on: src/styles/69-v6-account.css (created and imported by T380).
@@ -8940,9 +9330,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -8960,7 +9366,8 @@ surface's harnesses. A harness assertion that encodes the old design may be upda
 saying why, never deleted.
 
 SURFACE  App shell, navigation and shared components (key 'shell')
-Where to look: every tab at 380 and 1280 px (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages (?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, dates, party size, Lifestyle.
+Where to look: every tab on the iphone, android and desktop devices (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages (?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, dates, party size, Lifestyle.
+On a phone: the bottom nav, sheets and dialogs are what a phone traveller touches most; one thumb, one hand, often outdoors.
 Main files (OWNERSHIP.md is the authority from V2 on): src/App.jsx; src/components/: AppHeader, BottomNav, Button, Icons, StateBlocks, Dropdown, DateField, FilterControls, CountryPicker, OriginPicker, AnnouncementBar, MaintenanceGate, ErrorBoundary, InfoDot, Logo, Imprint, PrivacyPolicy, TermsOfService, LegalFromUrl; src/browse/: Fold, SheetShell, LifestyleButton, LifestylePanel; styles 02-base, 03-button, 10-shell, 14-filters-panels, 27-states, 31-infodot, 46-owner-calls.
 Harnesses (continent-app/scripts/): verify_bottom_nav, verify_desktop_shell, verify_top_bar, verify_tab_switching, verify_filter_sheet, verify_lifestyle, verify_focus_trap, verify_keyboard, verify_quality_floor.
 Your v6 stylesheet from V3 on: src/styles/60-v6-shell.css (created and imported by T380).
@@ -9047,9 +9454,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9068,6 +9491,7 @@ saying why, never deleted.
 
 SURFACE  Landing page and first run (key 'landing')
 Where to look: ?tab=home (the landing page is also the home page, T209 and T194), a first visit with site storage cleared, the first priced result (the first-run receipt), and the first ninety seconds as docs/ONBOARDING_AND_EMPTY_STATES.md designs them.
+On a phone: the first visit usually comes from a shared link or a search on a phone; the first screen must answer what Carta is and what a day costs without a scroll.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/LandingPage.jsx, src/lib/landing.js, src/components/FirstRunReceipt.jsx, src/lib/firstRun.js, src/lib/firstRunContext.js; styles 38-first-run, 39-landing.
 Harnesses (continent-app/scripts/): verify_receipt, verify_trip_landing, verify_prerender.
 Your v6 stylesheet from V3 on: src/styles/61-v6-landing.css (created and imported by T380).
@@ -9154,9 +9578,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9175,6 +9615,7 @@ saying why, never deleted.
 
 SURFACE  Explore (the map tab) (key 'explore')
 Where to look: ?tab=map: the control bar, the rails, the view toggle to the map, the price pins and the cheapest pin, the filter rail and sheet, a card and its preview with the compact receipt, the tier legend, the Lifestyle control opened from Explore, reach and month filters.
+On a phone: browsing for ideas on the sofa or the commute; the rails, the map toggle and the card preview must work one-handed, and the map must never trap the scroll.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: ExploreTab, ExploreMap, ExploreRails, ExploreFilterRail, TierLegend; src/components/: CostSummary, FareProvenance, FavStar; src/map/pinKeys.js, src/map/tokenColors.js; styles 15-map-overlays, 26-shortlist-extras.
 Harnesses (continent-app/scripts/): verify_explore, verify_map_size_cards, verify_shortlist, verify_fare_provenance, verify_keyboard.
 Your v6 stylesheet from V3 on: src/styles/62-v6-explore.css (created and imported by T380).
@@ -9261,9 +9702,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9282,6 +9739,7 @@ saying why, never deleted.
 
 SURFACE  Destinations browse (key 'destinations')
 Where to look: ?tab=places: every category of the category rail (towns, walks, beaches, lakes, mountains, cycling, trips), the section opening screens, the one card with five fillings, search including search anywhere, the filter sheet, a country page, a region page (#region=), and the coverage empty states.
+On a phone: scanning many places quickly on a phone; dense cards, a filter sheet within thumb reach.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DestinationsTab, CategoryRail, PlaceCard, CardStrip, SectionOpening, PlacesFilterSheet, FilterChips, CountryPage, RegionPage, StubPage, CoverageEmpty; src/lib/cardFillings.js, src/lib/openingScreen.js; styles 23-places-pages, 30-section-opening, 37-card-fillings, 44-tags, 45-empty-states.
 Harnesses (continent-app/scripts/): verify_places_tab, verify_category_rail, verify_places_search, verify_regions, verify_country_cards, verify_paging.
 Your v6 stylesheet from V3 on: src/styles/63-v6-destinations.css (created and imported by T380).
@@ -9368,9 +9826,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9389,6 +9863,7 @@ saying why, never deleted.
 
 SURFACE  Destination (town) page (key 'destination')
 Where to look: #dest=<id> opened from a card: a large city, a small town and a town with routes (Valbona Valley has trails), every fold (around here, getting there, neighbourhoods, climate, crowds, rating, routes from here, nearby outdoors), the receipt, the hero and gallery, the honest footers, and the PDF export.
+On a phone: deciding on one town, often on a phone; the receipt and the folds must read without pinching or sideways scrolling.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DestinationPage, AroundHere, GettingThere, Neighbourhoods, ClimateStrip, CrowdCalendar, RatingBreakdown, RoutesFromHere, NearbyOutdoors, MemberPlaces, DestMap, WebcamEmbed, HonestFooters, CreditFold; src/components/: CountryIntel, HeroImage, GemRating, RatingBadge, CrowdingBadge, MonthStrip; src/lib/destinationPdf.js; styles 18-detail-panel, 19-guide-ratings, 24-destination-workspace.
 Harnesses (continent-app/scripts/): verify_destination_page, verify_routes_block, verify_hero_images, verify_transport_links, verify_stay_tiers.
 Your v6 stylesheet from V3 on: src/styles/64-v6-destination.css (created and imported by T380).
@@ -9475,9 +9950,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9496,6 +9987,7 @@ saying why, never deleted.
 
 SURFACE  Outdoor detail pages (trail, cycling route and tour, beach, lake, mountain) (key 'outdoor')
 Where to look: a trail (#trail=), a cycling route (#cycle=<id>&cc=<cc>) and a cycling tour (#tour=), a beach (#beach=), a lake (#lake=) and a mountain from the Destinations mountains section, each through the shared detail skeleton: hero, map slot, signature figure, derived modules, take it with you (GPX, KML).
+On a phone: read at home and opened again at the trailhead, on a phone, outdoors, with one bar of signal; the key facts and the GPX within the first screen.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DetailSkeleton, TrailPage, CyclePage, BeachPage, LakePage, MountainPage, Signature, DerivedModules, RouteFigures, RouteParts, BathingWater, PointMap; src/components/: WaterQualityBadge, LayerPhoto, KindGlyph; src/lib/detailSkeleton.js, signature.js, derivedModules.js; styles 28-detail-skeleton, 29-signature, 29-derived-modules.
 Harnesses (continent-app/scripts/): verify_trail_page, verify_beaches, verify_lakes, verify_mountains, verify_cycling, verify_route_page, verify_trail_free_gpx, verify_trails.
 Your v6 stylesheet from V3 on: src/styles/65-v6-outdoor.css (created and imported by T380).
@@ -9582,9 +10074,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9603,6 +10111,7 @@ saying why, never deleted.
 
 SURFACE  Curated trips (the journeys library and the trip page) (key 'trips')
 Where to look: the Trips category in Destinations (the style cards, the trip list with its length and cost filters), and a journey page (#trip=<id>) for a hiking, a cycling, a city and a beach week, with every fold: suitability strip, the shape of the week, the day track and day detail, the booking order, the flashcards, the pack grid, the cost bar and receipt, the Lifestyle slider, the sticky section rail, the three exits.
+On a phone: a week read on a phone over several evenings; the day track, flashcards and sticky rail are phone patterns first.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: JourneysSection, JourneyPage, TripPage, TripPractical, TripDayPhotos, DayTrack, FlashDeck, PackGrid, WeekPlan, BookingOrder, CostBar, LifestyleSlider, SectionRail, TripFilters, LengthPicker, JourneyRoute; src/components/: NotFor, PackIcons; styles 25-feature-pages, 32-day-carousel, 33-flashcards, 34-section-rail, 35-lifestyle-slider, 36-cost-bar, 43-trip-length.
 Harnesses (continent-app/scripts/): verify_journeys, verify_trip_page, verify_trips, verify_pack_grid.
 Your v6 stylesheet from V3 on: src/styles/66-v6-trips.css (created and imported by T380).
@@ -9689,9 +10198,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9710,6 +10235,7 @@ saying why, never deleted.
 
 SURFACE  Trip planner (the multi-city wizard and the planned trip) (key 'tripplanner')
 Where to look: ?tab=trip: every wizard step (origin, where with the quiz, the country picker map and the match cards, when, towns, ready trips, stays, route building), then the planned trip with its map, legs by mode, itinerary, extras, country brief and cheap tips, and the chat planner.
+On a phone: started on a phone as often as on a laptop; every wizard step fits one phone screen with its action in thumb reach, and the on-screen keyboard never hides the field.
 Main files (OWNERSHIP.md is the authority from V2 on): src/planner/: TripPlannerTab, GuidedTripWizard, GuidedTripWizardParts, TownPickerStep, ReadyTripsStep, RouteBuildingStage, TravelLegsSection, TripItinerary, TripExtras, CountryBrief, CountryMatchCards, CheapTipsSection, CartaChatPlanner, WhereQuiz, PlannerSection; src/map/: TripMap, CountryPickerMap, CityPickerMap; styles 11-trip-planner, 12-guided-trip, 21-chat-passes (the chat half).
 Harnesses (continent-app/scripts/): verify_planner_v2, verify_planner_v2_flow, verify_planner_t8, verify_where_quiz, verify_when_step, verify_ready_trips, verify_country_brief, verify_booked_route, verify_handoffs, shoot-planners.mjs.
 Your v6 stylesheet from V3 on: src/styles/67-v6-tripplanner.css (created and imported by T380).
@@ -9796,9 +10322,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9817,6 +10359,7 @@ saying why, never deleted.
 
 SURFACE  Day planner (key 'dayplanner')
 Where to look: ?tab=day: the landing, the guided builder (start point, ideas, steps), the workspace with its map and three tabs, adding and moving an activity, the AI day plan, the expense ledger, magic import, the files panel, and the PDF, ICS and KML exports.
+On a phone: used during the trip, on a phone, standing in the street; the day must read and edit one-handed in sun and with poor signal.
 Main files (OWNERSHIP.md is the authority from V2 on): src/planner/: DayPlannerTab, DayWorkspaceChrome, DayPlanPanel, DayExploreBuilder, DayIdeasStep, DayActivityRows, DayAddPanel, DayFilesPanel, DayTripCards, DayTripTransport, AiDayPlanModal, AiPlanRoute, ExpenseLedger, MagicImportZone; src/map/DayExploreMap.jsx; src/planner/dayPlanPdf.js; styles 13-day-planner, 20-day-planner-flow.
 Harnesses (continent-app/scripts/): verify_day_landing, verify_day_workspace, verify_day_overview, verify_day_ideas, verify_day_steps, verify_day_dates, verify_day_start_point.
 Your v6 stylesheet from V3 on: src/styles/68-v6-dayplanner.css (created and imported by T380).
@@ -9903,9 +10446,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -9924,6 +10483,7 @@ saying why, never deleted.
 
 SURFACE  My trips, account, sharing, passes, guides and admin (key 'account')
 Where to look: My trips (bottom nav; ?savedmock for a filled list), a saved trip, sharing and co-planners, a shared trip view, past trips and memories, Account (profile, friends, FAQ, language, data export), sign in and sign up, reset password, the pass modal and paywall (?paymock), community guides and the upload form, the install hint, and the admin page (consistency with the rest only; it is the owner's tool).
+On a phone: My trips is where a phone traveller comes back to a saved trip; sharing goes through the phone's share sheet; the admin page alone may be desktop first.
 Main files (OWNERSHIP.md is the authority from V2 on): src/auth/*.jsx, src/components/PassModal.jsx, src/community/*.jsx, src/admin/AdminPage.jsx, src/components/admin/*.jsx; styles 16-auth, 17-saved-trips, 21-chat-passes (the pass half), 22-account-admin, 40-upload, 42-feedback.
 Harnesses (continent-app/scripts/): verify_saved, verify_account_panel, verify_trip_share, verify_friends, verify_past_trip, verify_paywall, verify_guides, verify_admin_panel.
 Your v6 stylesheet from V3 on: src/styles/69-v6-account.css (created and imported by T380).
@@ -10012,9 +10572,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10032,12 +10608,13 @@ surface's harnesses. A harness assertion that encodes the old design may be upda
 saying why, never deleted.
 
 SURFACE  App shell, navigation and shared components (key 'shell')
-Where to look: every tab at 380 and 1280 px (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages (?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, dates, party size, Lifestyle.
+Where to look: every tab on the iphone, android and desktop devices (?tab=home, ?tab=map, ?tab=places, ?tab=trip, ?tab=day), the bottom nav and its plan chooser, the desktop left panel and top bar, the Lifestyle dialog from each tab, filter sheets, every modal and its scrim, toasts, the site notice (AnnouncementBar), the error and maintenance screens, the legal pages (?legal=privacy, terms, imprint), and the global settings a traveller can change anywhere: language, origin, dates, party size, Lifestyle.
+On a phone: the bottom nav, sheets and dialogs are what a phone traveller touches most; one thumb, one hand, often outdoors.
 Main files (OWNERSHIP.md is the authority from V2 on): src/App.jsx; src/components/: AppHeader, BottomNav, Button, Icons, StateBlocks, Dropdown, DateField, FilterControls, CountryPicker, OriginPicker, AnnouncementBar, MaintenanceGate, ErrorBoundary, InfoDot, Logo, Imprint, PrivacyPolicy, TermsOfService, LegalFromUrl; src/browse/: Fold, SheetShell, LifestyleButton, LifestylePanel; styles 02-base, 03-button, 10-shell, 14-filters-panels, 27-states, 31-infodot, 46-owner-calls.
 Harnesses (continent-app/scripts/): verify_bottom_nav, verify_desktop_shell, verify_top_bar, verify_tab_switching, verify_filter_sheet, verify_lifestyle, verify_focus_trap, verify_keyboard, verify_quality_floor.
 Your v6 stylesheet from V3 on: src/styles/60-v6-shell.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/shell.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'shell', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10119,9 +10696,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10140,11 +10733,12 @@ saying why, never deleted.
 
 SURFACE  Landing page and first run (key 'landing')
 Where to look: ?tab=home (the landing page is also the home page, T209 and T194), a first visit with site storage cleared, the first priced result (the first-run receipt), and the first ninety seconds as docs/ONBOARDING_AND_EMPTY_STATES.md designs them.
+On a phone: the first visit usually comes from a shared link or a search on a phone; the first screen must answer what Carta is and what a day costs without a scroll.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/LandingPage.jsx, src/lib/landing.js, src/components/FirstRunReceipt.jsx, src/lib/firstRun.js, src/lib/firstRunContext.js; styles 38-first-run, 39-landing.
 Harnesses (continent-app/scripts/): verify_receipt, verify_trip_landing, verify_prerender.
 Your v6 stylesheet from V3 on: src/styles/61-v6-landing.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/landing.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'landing', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10226,9 +10820,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10247,11 +10857,12 @@ saying why, never deleted.
 
 SURFACE  Explore (the map tab) (key 'explore')
 Where to look: ?tab=map: the control bar, the rails, the view toggle to the map, the price pins and the cheapest pin, the filter rail and sheet, a card and its preview with the compact receipt, the tier legend, the Lifestyle control opened from Explore, reach and month filters.
+On a phone: browsing for ideas on the sofa or the commute; the rails, the map toggle and the card preview must work one-handed, and the map must never trap the scroll.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: ExploreTab, ExploreMap, ExploreRails, ExploreFilterRail, TierLegend; src/components/: CostSummary, FareProvenance, FavStar; src/map/pinKeys.js, src/map/tokenColors.js; styles 15-map-overlays, 26-shortlist-extras.
 Harnesses (continent-app/scripts/): verify_explore, verify_map_size_cards, verify_shortlist, verify_fare_provenance, verify_keyboard.
 Your v6 stylesheet from V3 on: src/styles/62-v6-explore.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/explore.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'explore', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10333,9 +10944,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10354,11 +10981,12 @@ saying why, never deleted.
 
 SURFACE  Destinations browse (key 'destinations')
 Where to look: ?tab=places: every category of the category rail (towns, walks, beaches, lakes, mountains, cycling, trips), the section opening screens, the one card with five fillings, search including search anywhere, the filter sheet, a country page, a region page (#region=), and the coverage empty states.
+On a phone: scanning many places quickly on a phone; dense cards, a filter sheet within thumb reach.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DestinationsTab, CategoryRail, PlaceCard, CardStrip, SectionOpening, PlacesFilterSheet, FilterChips, CountryPage, RegionPage, StubPage, CoverageEmpty; src/lib/cardFillings.js, src/lib/openingScreen.js; styles 23-places-pages, 30-section-opening, 37-card-fillings, 44-tags, 45-empty-states.
 Harnesses (continent-app/scripts/): verify_places_tab, verify_category_rail, verify_places_search, verify_regions, verify_country_cards, verify_paging.
 Your v6 stylesheet from V3 on: src/styles/63-v6-destinations.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/destinations.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'destinations', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10440,9 +11068,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10461,11 +11105,12 @@ saying why, never deleted.
 
 SURFACE  Destination (town) page (key 'destination')
 Where to look: #dest=<id> opened from a card: a large city, a small town and a town with routes (Valbona Valley has trails), every fold (around here, getting there, neighbourhoods, climate, crowds, rating, routes from here, nearby outdoors), the receipt, the hero and gallery, the honest footers, and the PDF export.
+On a phone: deciding on one town, often on a phone; the receipt and the folds must read without pinching or sideways scrolling.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DestinationPage, AroundHere, GettingThere, Neighbourhoods, ClimateStrip, CrowdCalendar, RatingBreakdown, RoutesFromHere, NearbyOutdoors, MemberPlaces, DestMap, WebcamEmbed, HonestFooters, CreditFold; src/components/: CountryIntel, HeroImage, GemRating, RatingBadge, CrowdingBadge, MonthStrip; src/lib/destinationPdf.js; styles 18-detail-panel, 19-guide-ratings, 24-destination-workspace.
 Harnesses (continent-app/scripts/): verify_destination_page, verify_routes_block, verify_hero_images, verify_transport_links, verify_stay_tiers.
 Your v6 stylesheet from V3 on: src/styles/64-v6-destination.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/destination.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'destination', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10547,9 +11192,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10568,11 +11229,12 @@ saying why, never deleted.
 
 SURFACE  Outdoor detail pages (trail, cycling route and tour, beach, lake, mountain) (key 'outdoor')
 Where to look: a trail (#trail=), a cycling route (#cycle=<id>&cc=<cc>) and a cycling tour (#tour=), a beach (#beach=), a lake (#lake=) and a mountain from the Destinations mountains section, each through the shared detail skeleton: hero, map slot, signature figure, derived modules, take it with you (GPX, KML).
+On a phone: read at home and opened again at the trailhead, on a phone, outdoors, with one bar of signal; the key facts and the GPX within the first screen.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: DetailSkeleton, TrailPage, CyclePage, BeachPage, LakePage, MountainPage, Signature, DerivedModules, RouteFigures, RouteParts, BathingWater, PointMap; src/components/: WaterQualityBadge, LayerPhoto, KindGlyph; src/lib/detailSkeleton.js, signature.js, derivedModules.js; styles 28-detail-skeleton, 29-signature, 29-derived-modules.
 Harnesses (continent-app/scripts/): verify_trail_page, verify_beaches, verify_lakes, verify_mountains, verify_cycling, verify_route_page, verify_trail_free_gpx, verify_trails.
 Your v6 stylesheet from V3 on: src/styles/65-v6-outdoor.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/outdoor.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'outdoor', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10654,9 +11316,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10675,11 +11353,12 @@ saying why, never deleted.
 
 SURFACE  Curated trips (the journeys library and the trip page) (key 'trips')
 Where to look: the Trips category in Destinations (the style cards, the trip list with its length and cost filters), and a journey page (#trip=<id>) for a hiking, a cycling, a city and a beach week, with every fold: suitability strip, the shape of the week, the day track and day detail, the booking order, the flashcards, the pack grid, the cost bar and receipt, the Lifestyle slider, the sticky section rail, the three exits.
+On a phone: a week read on a phone over several evenings; the day track, flashcards and sticky rail are phone patterns first.
 Main files (OWNERSHIP.md is the authority from V2 on): src/browse/: JourneysSection, JourneyPage, TripPage, TripPractical, TripDayPhotos, DayTrack, FlashDeck, PackGrid, WeekPlan, BookingOrder, CostBar, LifestyleSlider, SectionRail, TripFilters, LengthPicker, JourneyRoute; src/components/: NotFor, PackIcons; styles 25-feature-pages, 32-day-carousel, 33-flashcards, 34-section-rail, 35-lifestyle-slider, 36-cost-bar, 43-trip-length.
 Harnesses (continent-app/scripts/): verify_journeys, verify_trip_page, verify_trips, verify_pack_grid.
 Your v6 stylesheet from V3 on: src/styles/66-v6-trips.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/trips.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'trips', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10761,9 +11440,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10782,11 +11477,12 @@ saying why, never deleted.
 
 SURFACE  Trip planner (the multi-city wizard and the planned trip) (key 'tripplanner')
 Where to look: ?tab=trip: every wizard step (origin, where with the quiz, the country picker map and the match cards, when, towns, ready trips, stays, route building), then the planned trip with its map, legs by mode, itinerary, extras, country brief and cheap tips, and the chat planner.
+On a phone: started on a phone as often as on a laptop; every wizard step fits one phone screen with its action in thumb reach, and the on-screen keyboard never hides the field.
 Main files (OWNERSHIP.md is the authority from V2 on): src/planner/: TripPlannerTab, GuidedTripWizard, GuidedTripWizardParts, TownPickerStep, ReadyTripsStep, RouteBuildingStage, TravelLegsSection, TripItinerary, TripExtras, CountryBrief, CountryMatchCards, CheapTipsSection, CartaChatPlanner, WhereQuiz, PlannerSection; src/map/: TripMap, CountryPickerMap, CityPickerMap; styles 11-trip-planner, 12-guided-trip, 21-chat-passes (the chat half).
 Harnesses (continent-app/scripts/): verify_planner_v2, verify_planner_v2_flow, verify_planner_t8, verify_where_quiz, verify_when_step, verify_ready_trips, verify_country_brief, verify_booked_route, verify_handoffs, shoot-planners.mjs.
 Your v6 stylesheet from V3 on: src/styles/67-v6-tripplanner.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/tripplanner.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'tripplanner', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10868,9 +11564,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10889,11 +11601,12 @@ saying why, never deleted.
 
 SURFACE  Day planner (key 'dayplanner')
 Where to look: ?tab=day: the landing, the guided builder (start point, ideas, steps), the workspace with its map and three tabs, adding and moving an activity, the AI day plan, the expense ledger, magic import, the files panel, and the PDF, ICS and KML exports.
+On a phone: used during the trip, on a phone, standing in the street; the day must read and edit one-handed in sun and with poor signal.
 Main files (OWNERSHIP.md is the authority from V2 on): src/planner/: DayPlannerTab, DayWorkspaceChrome, DayPlanPanel, DayExploreBuilder, DayIdeasStep, DayActivityRows, DayAddPanel, DayFilesPanel, DayTripCards, DayTripTransport, AiDayPlanModal, AiPlanRoute, ExpenseLedger, MagicImportZone; src/map/DayExploreMap.jsx; src/planner/dayPlanPdf.js; styles 13-day-planner, 20-day-planner-flow.
 Harnesses (continent-app/scripts/): verify_day_landing, verify_day_workspace, verify_day_overview, verify_day_ideas, verify_day_steps, verify_day_dates, verify_day_start_point.
 Your v6 stylesheet from V3 on: src/styles/68-v6-dayplanner.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/dayplanner.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'dayplanner', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -10975,9 +11688,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -10996,11 +11725,12 @@ saying why, never deleted.
 
 SURFACE  My trips, account, sharing, passes, guides and admin (key 'account')
 Where to look: My trips (bottom nav; ?savedmock for a filled list), a saved trip, sharing and co-planners, a shared trip view, past trips and memories, Account (profile, friends, FAQ, language, data export), sign in and sign up, reset password, the pass modal and paywall (?paymock), community guides and the upload form, the install hint, and the admin page (consistency with the rest only; it is the owner's tool).
+On a phone: My trips is where a phone traveller comes back to a saved trip; sharing goes through the phone's share sheet; the admin page alone may be desktop first.
 Main files (OWNERSHIP.md is the authority from V2 on): src/auth/*.jsx, src/components/PassModal.jsx, src/community/*.jsx, src/admin/AdminPage.jsx, src/components/admin/*.jsx; styles 16-auth, 17-saved-trips, 21-chat-passes (the pass half), 22-account-admin, 40-upload, 42-feedback.
 Harnesses (continent-app/scripts/): verify_saved, verify_account_panel, verify_trip_share, verify_friends, verify_past_trip, verify_paywall, verify_guides, verify_admin_panel.
 Your v6 stylesheet from V3 on: src/styles/69-v6-account.css (created and imported by T380).
 
-WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, 380 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
+WHAT  Carry out the V5 list of your brief, then a final pass: long names and empty data, all six languages, every phone check of the design wave rules on the iphone and android devices, 360 to 1440 px, touch and mouse, keyboard and screen reader labels, no layout shift from motion, INP and LCP no worse than before (scripts/perf/baseline_vitals.mjs where it covers your surface), and every string in Carta's voice. Update your surface's harnesses where the design changed, with a comment per changed assertion.
 
 READ  docs/design-v6/briefs/account.md (its "Direction check" too), docs/design-v6/DIRECTION.md,
 docs/design-v6/OWNERSHIP.md, the reports of the earlier V waves for 'account', and impeccable's reference/harden.md, reference/adapt.md, reference/audit.md, reference/optimize.md, reference/polish.md, reference/clarify.md.
@@ -11088,9 +11818,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -11108,7 +11854,7 @@ surface's harnesses. A harness assertion that encodes the old design may be upda
 saying why, never deleted.
 
 WHAT  Plan one holiday the way the research says people do, end to end, on the merged result of V5, at
-380 and 1280 px: land on the home page, browse in Explore and Destinations, open a town, a trail and a
+phone first (the iphone device in WebKit, then the android device, then desktop): land on the home page, browse in Explore and Destinations, open a town, a trail and a
 curated trip, price it with the Lifestyle control, build it in the trip planner, plan two days in the day
 planner, save it, share it, come back to it from My trips. Then fix what breaks the feeling of one product.
 
@@ -11121,7 +11867,7 @@ RULES  Consistency fixes only: no new features, no new rules. You may edit any f
 Prefer fixing a shared component or a token over patching each surface. Run every harness named in the
 ten surfaces, scripts/verify_keyboard.mjs and scripts/verify_quality_floor.mjs, and say which fail and why.
 
-DONE WHEN  The journey plays through without a broken step at both widths, the inconsistency list is
+DONE WHEN  The journey plays through without a broken step on all three devices, the inconsistency list is
 closed or carried as rows, and build, lint, test, the design lint and the detector pass.
 
 REPORT  Execution/P10/T411-v6-consistency.md, following Execution/_TEMPLATE.md. Plain prose, short sentences, before and after figures where a number moved (screens touched, controls removed or added, detector findings, harness results), a rollback procedure, and what is still open, each open item also as a register row.
@@ -11168,9 +11914,25 @@ Plan first, in planning mode. Before you edit any file, run the planning step th
 the plan. If your harness offers plan mode, use it for this step. This run is unattended, so do not wait
 for the plan to be approved: commit it, then carry it out.
 
-Look at the real screens. Use Playwright (it is in node_modules) from a scratch script outside the repos,
-at 380x800 and 1280x800. Save the screenshots that show the change as JPEG, quality 80, viewport only (not
-full page), at most eight per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<width>.jpg. That folder is
+Phone first (T413). Most travellers dream and choose on a phone and use the planners on the go
+(TRIP-PLANNING-RESEARCH.md, section 5), so the phone is never the afterthought of a desktop layout. Look at
+the real screens with Playwright (in node_modules; Chromium and WebKit are installed in the Playwright cache,
+so never run `npx playwright install`) from a scratch script outside the repos, on these devices, always
+with the device descriptor so touch, the device pixel ratio and the mobile viewport are on:
+  iphone    WebKit, devices['iPhone 13'] (390x844): the Safari engine
+  android   Chromium, devices['Pixel 5'] (393x851), and once per view at 360x740 with isMobile and
+            hasTouch on: the small Android floor
+  desktop   Chromium, 1280x800, mouse
+On the phones also check, and write in the report what you found: landscape (844x390); tap only, so
+nothing depends on hover; the on-screen keyboard (focus each input and shrink the viewport height by
+40 percent: the field and its submit stay visible and the bottom nav does not ride up over them); the
+safe areas under the notch and the home bar (env(safe-area-inset-*)); full-height layouts on 100dvh, not
+100vh, so a collapsing address bar never hides a bar or a button; the main action within thumb reach on a
+tall phone; tap targets of at least --tap; and a swipe is never the only way to do something. WebKit on
+Windows is close to iOS Safari, not the same: what only a real phone can prove (haptics, the install
+prompt, the real keyboard, scroll momentum) goes into one owner row per session, listed.
+Save the screenshots that show the change as JPEG, quality 80, viewport only (not full page), at most
+ten per session, to C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\<surface>\<wave>-<view>-<iphone|android|desktop>.jpg. That folder is
 outside both repos on purpose: never commit a screenshot. V1 saves the "before" set; every build wave
 saves its "after" set with the same view names so the release can pair them.
 
@@ -11198,13 +11960,13 @@ STEPS
    scripts/verify_keyboard.mjs and scripts/verify_quality_floor.mjs against a vite preview of that build, and
    every surface harness. Record pass or fail per script. Delete dist/ and dist-data/ afterwards.
 2. The gallery: C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\index.html, a plain page that pairs each V1 "before" screenshot with the latest
-   "after" of the same view and width, surface by surface, with one line under each pair saying what changed.
+   "after" of the same view and device, phones first, surface by surface, with one line under each pair saying what changed.
    It lives outside the repos. Write docs/design-v6/MORNING.md in the root worktree: what changed per
    surface in five lines or fewer, the check results, what is still open, the preview URL and the gallery
    path.
 3. The preview deploy, from the app worktree: `npm run build:pages`, then
    `npx wrangler pages deploy dist --project-name carta-app --branch design --commit-dirty=true`.
-   Open https://design.carta-app.pages.dev at 380 and 1280 px with the console open: Explore, a destination, a trail, a journey,
+   Open https://design.carta-app.pages.dev on the iphone, android and desktop devices with the console open: Explore, a destination, a trail, a journey,
    the trip planner, the day planner, My trips. If the preview needs data the data host does not have yet
    (an R2 push is the owner's step C3), say exactly which file fails in the report and an owner row; never
    run push-data. Delete dist/ and dist-data/ afterwards.
