@@ -117,7 +117,15 @@ through `Intl.NumberFormat` with two decimals, never raw float output.
 - Lists get hairlines, objects get borders. Divide a run of related facts with rules; reach for a card
   only when the thing inside is a bounded object: a receipt, a plan, a destination.
 - The content column caps at 1180px. Layout tokens: `--filter-h`, `--panel-w`, `--bottom-nav-h`.
-- Responsive down to 380px with no horizontal scroll.
+- Responsive down to 360px with no horizontal scroll (PRODUCT.md's floor; T380 aligned this line with it).
+  Phone first: below 769px the five-slot bottom nav, sheets for choices and pages for detail; from 769px the
+  header carries the tabs; from 1024px map and list side by side and two-column detail pages.
+- Fraunces at five sizes only: 28/40px page title (phone/desktop), 22/26px section or object name, 19px card
+  name, 16px caption name, 15px receipt head. Body 14px, secondary 13px, metadata 12px, inputs 16px; mono
+  15px in a receipt line, 13px on a card, 11px in a count chip.
+- Elevation once per object: `--shadow-card` on a card or the receipt, `--shadow-2` on a dialog, sheet or
+  popover; sticky bands use a `--rule` border, not a shadow; a border and a shadow are not stacked except on
+  the receipt. Icons 20px, 1.5px stroke, `--ink-soft`, decorative ones `aria-hidden`.
 
 ## Components
 
@@ -172,12 +180,247 @@ The rules below were decided by the owner on 2026-10-07 and written down by T362
 
 **Install hint.** Carta may suggest adding the web app to the home screen in one place only: one line with a secondary button ("Add to home screen") in My trips, shown on a phone browser that is not already running the installed app, after the traveller has saved a trip. Dismissed once, it never returns. Never a modal, never on the first run, never a banner over content.
 
+The rules below were decided by T380 (design direction v6, 2026-10-08) under the owner's delegation of
+2026-10-07, from the "Needs a rule" proposals of the ten surface briefs. The reasoning and the rejected
+proposals are in `docs/design-v6/DIRECTION.md` part 9; the owner may overrule any of them.
+
+**Caption band.** Text never sits on a photograph. On a photo card, a photo hero or a photo toggle the
+caption (name, figure, length, credit) sits in a solid `--paper` or `--bg-card` band flush under the
+photo, as the suitability strip does; no scrim, no gradient, no alpha. The pressed or selected state is
+the band turning `--ink-fill` with `--on-fill` text. On a phone the photograph takes at most a third of
+a choice card's height. One aspect per row (3:2 on browse and library cards). A missing photo is the
+flag-and-name placeholder on `--paper-dim`, never a grey or tinted box. Credits are text.
+
+**Selected state.** One look for "this one is on": a selected chip, segment, tab, tile, rail row or the
+section showing in the navigation is `--ink-fill` with `--on-fill` text and icon; a selected card has a
+`2px solid var(--ink)` border and an ink tick. `--accent` and `--accent-bg` are never a selection colour.
+The active section carries `aria-current="page"`.
+
+**Accent marks.** An accent mark means "this one acts" (the view's one primary, a focus ring) or "this one
+is live" (the live route, the chosen day on a map, the cheapest pin in view, the scrub marker on a
+profile). No accent tick, stripe, dot or tint on a control that is not selected or acting; the Lifestyle
+door, fold count badges, "See all" links and category tiles are secondary chrome in ink.
+
+**Count chip.** A count beside a label, a heading or a navigation item is `--mono` 11 px `--ink` on
+`--paper-dim`, `999px` radius, set after the label, never `--accent`. A state dot (a plan in progress) is
+6 px `--ink-fill` with an aria-label on the item that says what it means. No badge when nothing is new.
+
+**Close control.** Every dismissible surface (dialog, sheet, panel, popover, toast, banner) closes with
+CloseIcon at 16 px inside a `--tap` box, top right (inline right on a toast), transparent ground,
+`--ink-soft` glyph, translated label "Close". No letter x, no "×", no close inside a grey disc.
+
+**Dialog family.** A modal dialog has a 12 px radius, `--shadow-2`, the one scrim (`--ink` at 28
+percent, no blur), the one close control, a focus trap and Escape; it arrives in `--dur-3` and leaves in
+`--dur-2`. A choice of two items opened from the bottom nav is a menu with menu semantics, not a dialog.
+A sheet (a choice on a phone) rises over the same scrim with a grab handle, a `--tap` close and one
+primary, caps at 80 percent of the height in landscape and scrolls inside; a sheet never holds a sheet
+and a page never opens inside one. A popover (a card preview) is `--bg-card`, `1px solid var(--rule)`,
+10 px radius, `--shadow-2`, at most 320 px wide, beside or over the lower half of its card, never over
+the photograph, never an ink fill; it opens on hover after 150 ms, on focus after 400 ms, on Enter or tap
+at once, and closes on Escape.
+
+**Navigation.** Every element that changes the view (a tab, the brand mark, a card that opens a page, a
+breadcrumb or back control) is an `<a href>` with the view's URL; a section change pushes one history
+entry and the browser's Back returns to the previous section; `<button>` is for actions that change
+state. The brand mark and the phone logo link to the landing page on every screen. Every detail page a
+traveller can open has its own URL, a save star and a share control in its page bar (secondary chrome,
+`--tap`); a page that cannot be linked is not shipped. The back control on a page names the list it
+returns to, in the same form on every section. Opened by pointer, focus goes to the page heading
+(tabindex -1, no visible ring); opened from the keyboard, the first control takes it; closing returns
+focus to the opener.
+
+**Settings line.** One compact line on every priced view shows every input its prices depend on: origin,
+dates (or "Any dates"), party, Lifestyle (bed and vibe), language, and "Prices in EUR" as a fixed word.
+Labels `--ui` 13 px `--ink-soft`, values `--ink`, figures such as dates and party size `--mono`. Each part
+is a `--tap` button that opens the control that sets it (OriginPicker, DateField, a Stepper, the
+Lifestyle dialog, the language list). No accent. On a phone it never wraps: it drops parts from the left
+and keeps Lifestyle. A surface's own filters (a budget ceiling, a month, car-free) follow it in the same
+band, in secondary styling.
+
+**Bottom slot.** Transient messages (toasts, the site notice, the pass expiry banner) stack in one slot
+above the bottom nav on a phone and bottom centre on desktop, newest on top, at most three, each with a
+`--tap` close, never over the bottom nav and never over a sheet's primary action.
+
+**Undo, not confirm.** A destructive action on the traveller's own data runs at once and shows a toast in
+the bottom slot with "Undo" as a secondary button for six seconds while the app holds the object: a
+stop, a file, a star, a crew name, a co-planner ask, a day plan, a saved trip. The button that started it
+is `--danger`. An inline confirm is used only where nothing can be held back (deleting an account,
+publishing to the gallery, withdrawing a public link): the row is replaced by one sentence and two
+buttons, the safe one first and focused, Escape keeps; the erasing button is `--danger`, the publishing
+one `--ink-fill`. Never a confirm modal.
+
+**"More" menu.** When a view's footer holds more than two secondary actions, the rest go into one "More"
+button (secondary, `--tap`) that opens a menu with menu semantics; a destructive item in it is `--danger`
+text. A multi-step flow's fixed chrome on a phone (rail, running total, recap, footer) takes at most a
+quarter of the screen together and the footer is one row.
+
+**Cost on cards and pages.** A card or page that offers a place or a trip carries one `--mono` line with
+the day cost per person at the traveller's Lifestyle (or the trip's ground total for the party; "From €N
+a person" with its length on a collection card, from the cheapest member, never an average), read from
+`src/lib/costIndex.js` so it agrees with Explore and the receipt to the cent. It carries its pedigree:
+the tilde and "est." where estimated, the word "national" in `--ui` after a figure that includes a
+country-level stand-in (with the InfoDot on the first occurrence per view), the town named when the
+figure is a nearby town's (within 25 km). No figure when the data is too thin; never a flight; never a
+bookable claim; never a figure stored at save time shown as current. A page shows one per person per day
+figure, read from its one receipt, and every other mention of a day cost on the page is that value.
+
+**Priced list.** At most five rows under a heading with a verb or a number, each a real link, the name in
+`--ui`, the figure in `--mono` with its pedigree word, hairlines between rows, cheapest first, no badge,
+no accent, no highlighted row.
+
+**Budget ceiling.** A stepped select of fixed euro steps per person per day for the ground cost (Any, 40,
+60, 80, 100, 130), labelled "Up to €N a day", never a free slider, never including a flight. It filters;
+it does not re-price.
+
+**Month.** When the traveller has a month (from the settings line's dates or a month select of the twelve
+months plus "Any", in `--ui`), a card may carry one measured month fact in `--ui` with the month in
+`--mono` ("Swim season includes July"); never a forecast, never without a month. The chosen month is
+outlined 2 px `--ink` on every month strip in view.
+
+**Data drawings.** One family in the ink ramp: weight is the scale (filled to the level in `--kind-*` or
+`--ink`, `--ink-soft`, `--ink-mute`, `--rule`; outlined beyond it), the figure always sits beside the
+drawing in `--mono` and the drawing reads the same when removed, no legend (a strip that encodes data on
+a card is explained once per list as a text key at the list head, never by colour alone), and one
+committed item at most in `--accent`. Members: the month strip (twelve cells, best months by weight, the
+chosen month outlined, a word beside it; high, low and rain in `--mono` where the page has them; never
+`--accent`, `--accent-soft` or `--rate`); the thin bar (at most 8 px, full width of its row, segments
+separated by 1 px `--paper`, no figures on the bar: the cost bar, coverage rows, a pass allowance, the
+day strip with stops in `--ink` and legs in `--rule` proportional to minutes); the profile (elevation on a
+km axis with surface and traffic tracks under it, one `--accent` marker shared with the map and moved by
+drag, tap or arrow keys); the gauge (five segments in `--ink`, the cheapest band may be `--green`); the
+five squares; the receipt; and the timetable row (label over value in `--ui` 12 px `--ink-soft` and
+`--mono`, hairlines between cells). A signature panel draws only measured tracks; an unmeasured one is
+named once in the sources. `--climate-good` and `--climate-poor` stay only where they already are.
+
+**Receipt, extended.** On a trip page the trip's own itemised budget is the receipt (cost bar, lines, est
+marks, total a person and for the party, the one Lifestyle control under it); a receipt for a nearby town
+is a labelled second view, never in its place, and never carries its own stay select. A day plan carries
+one per person figure for the day from the same cost index, and a tap opens the compact receipt with its
+cost bar. Where the model gives a range an estimate may show as "~ €80.00 to €95.00 est." in `--mono`,
+never on a measured figure; a total that sums ranges says it sums the midpoints. A single receipt line
+may appear outside a receipt only when it is read live from a receipt on the same page and set exactly
+as the receipt sets it. A receipt card may be the shared element that carries into the page's receipt,
+only when both show the same figures.
+
+**Detail page grammar.** Decision first, then hand-off, then depth. Under the head, one open key facts
+band of four to six measured facts as timetable rows (a missing value shows the strip's placeholder word;
+no card, no colour), then Before you go (not-for and hazard lines as one block under one heading, safety
+first, never folded, never repeated in a row), then one hand-off band holding the page's one primary and
+at most four secondaries in a fixed order (the primary is the file on route pages and the priced trip to
+the base on place pages), then the map and signature, then at most five folded rows, then exits, then
+sources. Folds are sections under a `--rule-soft` hairline with no box and no shadow and `--ink-soft`
+icons; the receipt is the page's one bordered object. Download and report sit in one row of secondary
+buttons before the honest footer, never in the head. From 1024 px the first photograph may sit beside
+the head, and a page with a receipt may run as a plan column and a sticky side column holding the strip
+and the receipt, inside the 1180 px cap. A hero is at most 40 percent of the viewport height on a phone
+and 60 percent on desktop.
+
+**Map and list in sync.** A card or row in focus or under the pointer rings its pin with a 2 px `--ink`
+ring, and a pin in focus or under the pointer outlines its card or row 2 px `--ink`; the committed
+selection (the chosen day, the chosen place, the cheapest pin in view) is the one `--accent` on that map
+and nothing else on it is `--accent`. On a multi-day map stops are numbered by day, the selected day's
+line is `--accent` and every other day `--ink`, beds are `--paper` squares with an `--ink` border, and a
+line that is not the measured path says so in one sentence under the map. On a planning map catalogue
+places are ink (a dot below a zoom threshold, a `--bg-card` label above it), a picked place carries an
+ink tick, and only the live route and its numbered stop pins are `--accent`. Price pins from zoom 7: at
+most 30 DOM labels, name `--ui` 12 px and figure `--mono` 12 px on `--bg-card` with a `--rule` border and
+6 px radius, the cheapest in view `--accent` with `--on-fill`, other pins dots, clusters `--paper-dim`
+with an `--ink-mute` stroke, never `--rate`. Every pin has a 44 px hit box whatever its visual size.
+While a map loads, its box shows the item's own line or point as a static ink drawing from geometry on
+hand, then crossfades to the live map in `--dur-3`.
+
+**Rails and cuts.** A horizontal rail has a heading, "See all N", arrows on a fine pointer, arrow keys when
+focused, the position in `--mono`, position dots hidden from screen readers, scroll-snap, one aspect
+per rail, no autoplay or looping. At most two rails per screen on a phone; further cuts are one row of
+chips applying the same filter. The first rail on a browse page may be a cost cut ("Under €N a day in
+<month>") sorted by day cost with country interleave.
+
+**Filter chips.** One row of removable chips above a filtered list, each named "Remove <filter>",
+`--paper-dim` with `--ink` text and a `--rule` border, ending with "Clear all"; the same component on
+every browse tab. A sticky refine row (at most one per list, under the top chrome once the list starts)
+is a `--paper` band, `--rule` bottom border, `--tap` high, no shadow, holding only Filters, sort, country
+and the active chips. Up to six categories on a phone are a 2 x 3 grid of equal buttons, never a sideways
+strip that hides some. An index card may carry its published count in `--mono` beside the name.
+
+**Day list.** Between two stops one `--mono` line gives minutes and km by the leg's mode; each stop
+carries an arrival time; both are estimates, so the first of each per view carries the tilde, "est." and
+an InfoDot; no hour grid, no end time stated as fact. Days inside one plan are switched with one control,
+"Day N, weekday date" (`--ui`, the date in `--mono`) flanked by Previous and Next secondaries at `--tap`
+with the day track's keyboard behaviour; adding a day lives in a menu. A planning surface puts its ways
+to add in one labelled toolbar row inside the content; nothing floats over the list, and on a phone the
+bottom nav's plus is the only floating control.
+
+**Photo track.** Two or more photographs on a detail page or in a record run as one horizontal track on
+the day track's mechanics (scroll-snap, Previous and Next secondaries, the position in `--mono`, arrow
+keys, no autoplay), labelled by caption, each frame keeping its credit; no tab roles.
+
+**Status, not green.** A positive verdict or a confirmation ("You can swim here", "Profile updated.") is
+`--ink` text with a 6 px `--status-success` dot before it, on paper or `--bg-card`; never a green
+container, never green text, never a green tick on chrome. The amber tokens stay for warnings; `--green`
+stays for good news in data and may mark a "since you saved" drop ("€4.20 less a day than on 3 Oct";
+`--ink` when higher, never `--accent` or `--danger`).
+
+**Small text rules.** A label above a group of controls is `--ui` 12 px weight 600 `--ink-soft`, sentence
+case, no letter-spacing. A toggle may carry one line of metadata under its label in `--ui` 12 px
+`--ink-soft` (`--on-fill` when pressed); the button stays `--tap` and the label stays the accessible name
+with the metadata appended. Difficulty is one five-step scale in one i18n group with no banned word, read
+by every surface. A password meter is three steps in `--kind-village`, `--kind-city`, `--ink` with the
+word beside it. Earned milestones are `--ink`, locked ones `--ink-mute` outline, and "New" is a `--rule`
+outline chip in `--ink`; `--rate` stays for ratings.
+
+**Derived copy stays silent.** A sentence generated from data (a summary, a count, a "one base" claim)
+shows only when the authored text agrees with it; where the data is thin or contradicts the text the
+module shows nothing or the authored words, never "0 of N".
+
+**Comparison table.** Items as columns, one row per attribute, figures in `--mono`, the recommended
+column marked only by the card's existing accent border above it, sticky headers, two columns visible on
+a phone with the table scrolling inside itself.
+
+**Focal card.** On a list of dated plans the first upcoming plan may be drawn one size larger than the rest
+(photo, caption band, countdown, figure, two secondaries) and the rest are rows. One size step; not a
+bento.
+
+**Remembered state.** A view may restore the viewer's last category, country, near place or open folds
+from browser storage as a per-viewer convenience: every read and write in try/catch, the view correct
+without it, folds within one session only, and never opening what the traveller did not.
+
+**Loading.** A region waiting for data holds its final height as a still `--paper-dim` block, no shimmer
+and no spinner, with "Loading" for screen readers only; the header and the bottom nav stay usable while
+a tab loads.
+
 ## Interaction
 
 Focus: `outline: 2px solid var(--accent); outline-offset: 2px` on `:focus-visible`. Inputs may swap the
-outline for `border-color: var(--accent)`; never ship `outline: none` without one of the two. Motion:
-transitions under 300ms on transform and opacity only, and every transition and animation has a
-`prefers-reduced-motion: reduce` branch that sets it to `none`.
+outline for `border-color: var(--accent)`; never ship `outline: none` without one of the two.
+
+Motion (rewritten by T380, design direction v6; the tokens live in `src/styles/01-tokens.css` and
+DESIGN.md). Durations and easings come from the tokens, never from a literal: `--dur-1` 120 ms for
+immediate feedback (a press, a chip, a hover tint), `--dur-2` 200 ms for a routine state change (a fold,
+a figure settling in place, a chip entering, a row sliding to its place, a tab's content arriving),
+`--dur-3` 320 ms for a surface arriving (a sheet, a dialog, a popover, a shared element becoming its
+page, the grid to map crossfade), `--dur-4` 480 ms for one authored movement over distance (the map
+camera, one leg of the route reveal, capped at 900 ms in all); `--ease-out` for arrivals and settles,
+`--ease-in-out` for movement between two on-screen positions. Exits take `--dur-2`. Routine motion
+animates `transform` and `opacity`; a press, hover or selection may also animate `background-color`,
+`border-color` and `color` at `--dur-1`; a reveal may animate `clip-path`, `mask-position` or
+`stroke-dashoffset`. Nothing animates `width`, `height`, `top`, `left`, margins, padding,
+`grid-template-*`, `box-shadow`, `filter` or `backdrop-filter`; `transition: all` is never written; no
+overshoot, bounce or elastic curve. A figure that changes updates in place in tabular mono inside a box
+that keeps its width, with one opacity dip through `settleFigure()` in `src/lib/figureChange.js`; no
+count-up, no scale bump, no sweep. Nothing moves because the page scrolled, nothing loops, and the
+bottom nav never moves. Every transition and animation has a `prefers-reduced-motion: reduce` branch
+that sets it to `none` (the figure still changes, the surface still appears, the route is whole on the
+first frame); scripted motion asks `prefersReducedMotion()` or `durationMs()` in `src/lib/motion.js`.
+
+Phone first. The phone layout is designed first; the small floor is 360 px with no horizontal scroll.
+Every fixed or sticky bar reads `env(safe-area-inset-*)`; full-height layouts use `100dvh`, never
+`100vh`. On a tall phone the one primary sits in the lower half of the screen inside the content, never
+sticky over it and never in the top bar. Gestures are shortcuts: a swipe, drag or long press always has a
+visible button doing the same; `:hover` rules sit inside `@media (hover: hover)`. Inputs are 16 px so iOS
+does not zoom, the submit sits directly under the last field, and the bottom nav hides while an input in
+a sheet or page has focus. `--tap` on a coarse pointer, 32 px only under `pointer: fine`. From 1024 px
+desktop adds side by side map and list, hover detail, keyboard shortcuts on the map layer and two-column
+detail pages; it never removes a phone path.
 
 ## Copy
 
@@ -211,9 +454,10 @@ transitions under 300ms on transform and opacity only, and every transition and 
 
 ## Quality floor
 
-- Responsive down to 380px with no horizontal scroll.
+- Responsive down to 360px with no horizontal scroll (T380 lowered the floor from 380 to match PRODUCT.md).
 - Visible keyboard focus (see Interaction).
 - `prefers-reduced-motion: reduce` respected on every transition.
+- Motion from the tokens only; no literal duration or easing in a v6 stylesheet.
 - Headings in order, one `h1`, real `<a>` for navigation and real `<button>` for actions.
 - Text contrast at least 4.5:1. `--ink-mute` is for metadata at 12 to 14px, never body copy.
 - Tap targets at least `--tap` (32px allowed on a fine pointer only, see Layout).
