@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { eur, fmtHours, safeUrl } from '../lib/format.js';
+import React, { useState, useEffect, useRef } from 'react';
+import { eur, eurExact, fmtHours, safeUrl } from '../lib/format.js';
+import { useSettledFigure } from '../lib/figureChange.js';
+import { CostBar } from '../browse/CostBar.jsx';
 import { TripExtras } from './TripExtras.jsx';
 import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
@@ -115,7 +117,7 @@ export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTra
               title={recommended === m ? t('transfer.cartaPick') : undefined}
             >
               <span className="transfer-mode-lbl"><Icon size={12} /> {t(labelKey)}{recommended === m && <SparkIcon size={9} />}</span>
-              <b>{eur(totals[m])}</b>
+              <b>{eurExact(totals[m])}</b>
             </button>
           );
         })}
@@ -165,7 +167,7 @@ function AnchorTransferLeg({ leg, from, to, onMode }) {
                 title={leg.recommended === m ? t('transfer.cartaPick') : undefined}
               >
                 <span><MIcon size={12} /> {t(meta?.labelKey || m)}{leg.recommended === m && <SparkIcon size={9} />}</span>
-                <b>{`${estPrefix(fareProv(o))}${eur(o.eur_total)}`}</b>
+                <b>{`${estPrefix(fareProv(o))}${eurExact(o.eur_total)}`}</b>
                 <small>~{fmtHours(o.hours)}</small>
               </button>
             );
@@ -211,6 +213,21 @@ const MODE_LABEL_KEY = {
   fly: 'trip.modeFly', ferry: 'trip.modeFerry',
 };
 
+/** What a leg's figure buys, in words (T398, brief V4-6): a fare a person for
+ *  the party on public transport, fuel and tolls for a car. A leg the
+ *  traveller booked says so already, and a flight hop has no figure of
+ *  Carta's, so both return nothing. */
+const LEG_INCL_KEY = { train: 'trip.inclTrain', bus: 'trip.inclBus', ferry: 'trip.inclFerry' };
+function legIncl(leg, t) {
+  const o = leg?.modes?.[leg?.mode];
+  if (!leg || !o || o.own) return '';
+  if (leg.mode === 'car') return t('trip.inclCar');
+  const key = LEG_INCL_KEY[leg.mode];
+  const pp = o.eur_pp ?? leg.ground_eur_per_person;
+  if (!key || !(pp > 0)) return '';
+  return t(key, { pp: `${estPrefix(fareProv(o) || fareProv(leg))}${eurExact(pp)}` });
+}
+
 /** The connector between two consecutive stops in the route view: how you get
  *  from stay to stay, as a first-class part of the itinerary (not a line
  *  buried in the receipt). Tapping it opens the train/bus/car comparison so
@@ -251,9 +268,12 @@ function ItinLeg({ leg, onMode }) {
               // the fare they told us, so it must not pretend to an estimate.
               // Nor to a fare, when they left the price blank: EUR 0.00 there
               // reads as "this hop was free", which is not what they said.
-              ? (leg.ground_total > 0 ? `${t('trip.legBooked')}, ${eur(leg.ground_total)}` : t('trip.legBookedNoPrice'))
-              : `${t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, ${estPrefix(legProv)}${eur(leg.ground_total)}`}
+              ? (leg.ground_total > 0 ? `${t('trip.legBooked')}, ${eurExact(leg.ground_total)}` : t('trip.legBookedNoPrice'))
+              : `${t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, ${estPrefix(legProv)}${eurExact(leg.ground_total)}`}
           </small>
+          {/* What the figure buys is words, so it is set in --ui under the
+              mono facts, not in mono (the mono rule). */}
+          {!chosen?.own && legIncl(leg, t) && <small className="itin-leg-incl">{legIncl(leg, t)}</small>}
         </span>
         <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>
       </button>
@@ -274,7 +294,7 @@ function ItinLeg({ leg, onMode }) {
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
                 <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && !o.own && <SparkIcon size={9} />}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : `${o.own ? '' : estPrefix(fareProv(o))}${eur(o.eur_total)}`}</b>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : `${o.own ? '' : estPrefix(fareProv(o))}${eurExact(o.eur_total)}`}</b>
                 <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             );
@@ -314,7 +334,7 @@ function BreakdownSection({ title, sub, total, children }) {
           {title}
           {sub && <small className="itin-bd-sec-sub">{sub}</small>}
         </span>
-        {total > 0 && pricedRows > 1 && <span className="itin-bd-sec-total">{eur(total)}</span>}
+        {total > 0 && pricedRows > 1 && <span className="itin-bd-sec-total">{eurExact(total)}</span>}
       </header>
       <div className="itin-bd-sec-rows">{children}</div>
     </section>
@@ -459,6 +479,24 @@ export function TripItinerary({
   };
 
   const activeDay = typeof tab === 'number' ? dayPlan.find((d) => d.dayNum === tab) : null;
+  const activeIdx = activeDay ? dayPlan.indexOf(activeDay) : -1;
+  // The day switcher (T398, rule "Day list"): Previous and Next move one day,
+  // as the pills did, and the arrow keys do the same while it has focus.
+  const stepDay = (dir) => {
+    const next = dayPlan[(activeIdx < 0 ? 0 : activeIdx) + dir];
+    if (next) pickDay(next);
+  };
+  const onDayKeys = (e) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); stepDay(-1); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); stepDay(1); }
+  };
+
+  // The receipt's total settles in place when an input moves it (T398, rule
+  // "Figure in place"): one opacity dip, no count-up.
+  const totalRef = useRef(null);
+  const ppRef = useRef(null);
+  useSettledFigure(totalRef, grandTotal);
+  useSettledFigure(ppRef, groupSize > 0 ? grandTotal / groupSize : null);
 
   // The whole trip as a Google Maps driving route (city to city, in order).
   // Route through each city CENTRE, never the raw dest coordinate: for
@@ -485,22 +523,77 @@ export function TripItinerary({
   const wholeTripTotal = transferTotal
     + (carRental?.eur_total || 0) + (vignettes?.eur_total || 0);
 
+  // The cost bar's segments, in receipt order, each the sum of lines the
+  // receipt prints below it (T398, rule "The cost bar").
+  const sumStays = stayCosts.reduce((s, c) => s + (c?.accomTotal || 0), 0);
+  const sumDaily = stayCosts.reduce((s, c) => s + (c?.groundTotal || 0), 0);
+  const sumLegs = legs.reduce((s, l, i) => s + (i < stopDetails.length - 1 && l?.ground_total > 0 ? l.ground_total : 0), 0);
+  const costSegments = [
+    { slot: 'there', label: t('itin.secGetThere'), value: getThereTotal + getHomeTotal },
+    { slot: 'stays', label: t('itin.secSleep'), value: sumStays },
+    { slot: 'daily', label: t('itin.secDaily'), value: sumDaily },
+    { slot: 'legs', label: t('travel.secBetween'), value: sumLegs },
+    { slot: 'whole', label: t('itin.secWholeTrip'), value: wholeTripTotal },
+  ].filter((s) => s.value > 0).map((s) => ({ ...s, weight: s.value, figure: eurExact(s.value) }));
+
+  // The receipt's footer: what one changed input would do (carta-design, the
+  // receipt). One more night at the last stop, read from that stop's own
+  // lines in this receipt, so the figure is the receipt's and nobody else's.
+  const lastIdx = stopDetails.length - 1;
+  const lastStay = lastIdx >= 0 ? stayCosts[lastIdx] : null;
+  const lastNights = lastIdx >= 0 ? stopDetails[lastIdx]?.nights : 0;
+  const oneMoreNight = lastStay && lastNights > 0
+    ? ((lastStay.accomTotal || 0) + (lastStay.groundTotal || 0)) / lastNights : 0;
+
   return (
     <div className="itin">
+      {/* Two views, Overview and Day by day, then one day switcher instead of
+          a pill per day that ran off the screen on a phone (T398, rule "Day
+          list"). Every day stays reachable as a link from Your days. */}
       <div className="itin-tabs">
-        <button className={`itin-tab ${tab === 'overview' ? 'active' : ''}`} onClick={() => { setTab('overview'); }}>
+        <button
+          type="button"
+          className={`itin-tab ${tab === 'overview' ? 'active' : ''}`}
+          aria-pressed={tab === 'overview'}
+          onClick={() => { setTab('overview'); }}
+        >
           {t('itin.overview')}
         </button>
-        {dayPlan.map((d) => (
+        {dayPlan.length > 0 && (
           <button
-            key={d.dayNum}
-            className={`itin-tab ${tab === d.dayNum ? 'active' : ''} ${activeStopIndex === d.stopIndex && tab === d.dayNum ? 'in-city' : ''}`}
-            onClick={() => pickDay(d)}
+            type="button"
+            className={`itin-tab ${activeDay ? 'active' : ''}`}
+            aria-pressed={Boolean(activeDay)}
+            onClick={() => pickDay(activeDay || dayPlan[0])}
           >
-            {t('itin.dayN', { n: d.dayNum })}
+            {t('trip.dayByDay')}
           </button>
-        ))}
+        )}
       </div>
+      {activeDay && (
+        <div className="itin-dayswitch" role="group" aria-label={t('trip.dayByDay')} onKeyDown={onDayKeys}>
+          <button
+            type="button"
+            className="itin-dayswitch-btn"
+            onClick={() => stepDay(-1)}
+            disabled={activeIdx <= 0}
+          >
+            {t('journey.trackPrev')}
+          </button>
+          <span className="itin-dayswitch-now" aria-live="polite">
+            <span className="itin-dayswitch-pos">{t('journey.trackPos', { n: activeIdx + 1, total: dayPlan.length })}</span>
+            <span className="itin-dayswitch-date">{fmtLong(activeDay.date)}</span>
+          </span>
+          <button
+            type="button"
+            className="itin-dayswitch-btn"
+            onClick={() => stepDay(1)}
+            disabled={activeIdx >= dayPlan.length - 1}
+          >
+            {t('journey.trackNext')}
+          </button>
+        </div>
+      )}
 
       {tab === 'overview' ? (
         <div className="itin-overview">
@@ -510,20 +603,31 @@ export function TripItinerary({
           {/* Estimated total, expandable into the same grouped receipt the Map
               tab shows: flights, ground legs, rental, stay per city. */}
           <div className={`itin-breakdown ${breakdownOpen ? 'open' : ''}`}>
+            {/* The receipt's head (T398, brief V4-3): the label in --ui, the
+                party and the sums in --mono to the cent, the figure a person
+                beside the party's. Never Fraunces on a number. */}
             <button
               className="itin-overview-total itin-breakdown-toggle"
               onClick={() => setBreakdownOpen((v) => !v)}
               aria-expanded={breakdownOpen}
             >
-              <span>
+              <span className="itin-total-lbl">
                 {t('itin.estimatedTotal')} <small>{groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
               </span>
-              <strong>{eur(grandTotal)}</strong>
+              <span className="itin-total-figs">
+                <strong ref={totalRef}>{eurExact(grandTotal)}</strong>
+                {groupSize > 1 && (
+                  <small ref={ppRef}>{t('itin.perPersonLine', { price: eurExact(grandTotal / groupSize) })}</small>
+                )}
+              </span>
               <span className={`itin-breakdown-caret ${breakdownOpen ? 'open' : ''}`} aria-hidden="true"><ChevronDownIcon size={14} /></span>
             </button>
 
             {breakdownOpen && (
               <div className="itin-breakdown-body">
+                {/* One stacked bar over the lines, in the ink ramp (rule "The
+                    cost bar"); every figure stays in the lines below. */}
+                <CostBar t={t} segments={costSegments} />
                 {flight && !flight.combinable && !flight.own && !flight.driving && !tripHasCar && (
                   <p className="trip-note">{flightReasonLabel(flight.reason)}</p>
                 )}
@@ -554,7 +658,7 @@ export function TripItinerary({
                             {flight.cost_total ? t('itin.bookedOtherGroup') : t('itin.bookedOtherNoFare')}
                           </small>
                         </span>
-                        <span className="val">{flight.cost_total ? eur(flight.cost_total) : '…'}</span>
+                        <span className="val">{flight.cost_total ? eurExact(flight.cost_total) : '…'}</span>
                       </div>
                     )}
                     {flight?.driving && driveLegs?.out && (
@@ -563,7 +667,7 @@ export function TripItinerary({
                           <CarIcon size={11} /> {t('trip.driveOut', { city: stopDetails[0]?.dest?.city || '' })}
                           <small>{driveLegs.from ? `${driveLegs.from}, ` : ''}{t('trip.driveSub', { km: driveLegs.out.road_km, hours: fmtHours(driveLegs.out.hours) })}</small>
                         </span>
-                        <span className="val">{eur(driveLegs.out.ground_total)}</span>
+                        <span className="val">{eurExact(driveLegs.out.ground_total)}</span>
                       </div>
                     )}
                     {anchorIn && (
@@ -572,7 +676,7 @@ export function TripItinerary({
                           <AnchorInIcon size={11} /> {anchorInCity} → {stopDetails[0]?.dest?.city}
                           <small>{t('itin.legStats', { km: anchorIn.road_km, hours: fmtHours(anchorIn.hours) })}</small>
                         </span>
-                        <span className="val">{`${estPrefix(fareProv(anchorIn))}${eur(anchorIn.ground_total)}`}</span>
+                        <span className="val">{`${estPrefix(fareProv(anchorIn))}${eurExact(anchorIn.ground_total)}`}</span>
                       </div>
                     )}
                   </BreakdownSection>
@@ -599,7 +703,7 @@ export function TripItinerary({
                               <BedIcon size={11} /> {t('itin.secSleep')}
                               <small>{s.nights === 1 ? t('itin.accomOne', { n: s.nights }) : t('itin.accomMany', { n: s.nights })}</small>
                             </span>
-                            <span className="val">{eur(sc.accomTotal)}</span>
+                            <span className="val">{eurExact(sc.accomTotal)}</span>
                           </div>
                         )}
                         {sc && sc.groundTotal > 0 && (
@@ -608,7 +712,7 @@ export function TripItinerary({
                               <ReceiptIcon size={11} /> {t('itin.secDaily')}
                               <small>{t('itin.onGroundSub')}</small>
                             </span>
-                            <span className="val">{eur(sc.groundTotal)}</span>
+                            <span className="val">{eurExact(sc.groundTotal)}</span>
                           </div>
                         )}
                       </BreakdownSection>
@@ -619,12 +723,12 @@ export function TripItinerary({
                             <small>
                               {t(MODE_LABEL_KEY[l.mode])}, {l.modes?.[l.mode]?.own
                                 ? t('trip.legBooked')
-                                : t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}
+                                : [t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) }), legIncl(l, t)].filter(Boolean).join(', ')}
                             </small>
                           </span>
                           <span className="val">{l.modes?.[l.mode]?.own
-                            ? eur(l.ground_total)
-                            : `${estPrefix(fareProv(l.modes?.[l.mode]) || fareProv(l))}${eur(l.ground_total)}`}</span>
+                            ? eurExact(l.ground_total)
+                            : `${estPrefix(fareProv(l.modes?.[l.mode]) || fareProv(l))}${eurExact(l.ground_total)}`}</span>
                         </div>
                       )}
                     </React.Fragment>
@@ -640,7 +744,7 @@ export function TripItinerary({
                           <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}
                           <small>{t('itin.legStats', { km: anchorOut.road_km, hours: fmtHours(anchorOut.hours) })}</small>
                         </span>
-                        <span className="val">{`${estPrefix(fareProv(anchorOut))}${eur(anchorOut.ground_total)}`}</span>
+                        <span className="val">{`${estPrefix(fareProv(anchorOut))}${eurExact(anchorOut.ground_total)}`}</span>
                       </div>
                     )}
                     {flight?.driving && driveLegs?.home && (
@@ -649,7 +753,7 @@ export function TripItinerary({
                           <CarIcon size={11} /> {t('trip.driveHome', { city: stopDetails[stopDetails.length - 1]?.dest?.city || '' })}
                           <small>{t('trip.driveSub', { km: driveLegs.home.road_km, hours: fmtHours(driveLegs.home.hours) })}</small>
                         </span>
-                        <span className="val">{eur(driveLegs.home.ground_total)}</span>
+                        <span className="val">{eurExact(driveLegs.home.ground_total)}</span>
                       </div>
                     )}
                     {flight?.combinable && (
@@ -674,13 +778,13 @@ export function TripItinerary({
                           <PlaneIcon size={11} /> {t('itin.airportTransfers')}
                           <small>{t('itin.transfersSub')}</small>
                         </span>
-                        <span className="val">{eur(flightTransfer ? flightTransfer.ground_total : flight.ground_total)}</span>
+                        <span className="val">{eurExact(flightTransfer ? flightTransfer.ground_total : flight.ground_total)}</span>
                       </div>
                     )}
                     {carRental && (
                       <div className="trip-total-row">
                         <span className="lbl"><CarIcon size={11} /> {t('itin.rentalCar')} <small>{carRental.cars > 1 ? t('itin.rentalSubCars', { days: carRental.days, cars: carRental.cars }) : t('itin.rentalSub', { days: carRental.days })}</small></span>
-                        <span className="val">{eur(carRental.eur_total)}</span>
+                        <span className="val">{eurExact(carRental.eur_total)}</span>
                       </div>
                     )}
                     {vignettes && (
@@ -689,7 +793,7 @@ export function TripItinerary({
                           <CarIcon size={11} /> {t('itin.vignettes')}
                           <small>{t('itin.vignettesSub', { countries: vignettes.items.map((v) => v.iso2).join(', ') })}</small>
                         </span>
-                        <span className="val">{eur(vignettes.eur_total)}</span>
+                        <span className="val">{eurExact(vignettes.eur_total)}</span>
                       </div>
                     )}
                   </BreakdownSection>
@@ -704,10 +808,10 @@ export function TripItinerary({
 
                 <div className="itin-bd-grand">
                   <span className="itin-bd-grand-lbl">{t('itin.estimatedTotal')}</span>
-                  <span className="itin-bd-grand-val">{eur(grandTotal)}</span>
+                  <span className="itin-bd-grand-val">{eurExact(grandTotal)}</span>
                 </div>
                 {groupSize > 1 && (
-                  <div className="itin-bd-pp">{t('itin.perPersonLine', { price: eur(grandTotal / groupSize) })}</div>
+                  <div className="itin-bd-pp">{t('itin.perPersonLine', { price: eurExact(grandTotal / groupSize) })}</div>
                 )}
                 {/* Party size sits under the figure it multiplies. The wizard
                     asks it once on its summary card; changing it afterwards
@@ -724,6 +828,12 @@ export function TripItinerary({
                 )}
                 {flight?.driving && (
                   <p className="itin-bd-foot-note">{t('trip.ownCarNote')}</p>
+                )}
+                {oneMoreNight > 0 && (
+                  <p className="itin-bd-what-if">
+                    {t('trip.oneMoreNight', { city: stopDetails[lastIdx]?.dest?.city || '' })}{' '}
+                    <span className="mono">+{eurExact(oneMoreNight)}</span>
+                  </p>
                 )}
               </div>
             )}
@@ -992,17 +1102,20 @@ export function TripItinerary({
         </div>
       ) : activeDay ? (
         <div className="itin-day">
-          <div
-            className="itin-day-hero"
-            style={activeDay.stop.dest?.image?.url ? { backgroundImage: `url(${activeDay.stop.dest.image.url})` } : undefined}
-          >
-            <div className="itin-day-hero-grad" />
-            <div className="itin-day-head">
-              <div className="itin-day-date">{fmtLong(activeDay.date)}</div>
-              <div className="itin-day-city">
-                {t('itin.stayingIn', { city: activeDay.stop.dest?.city })}
-                <span className="itin-day-of">{t('itin.dayOf', { a: activeDay.dayOfStay, b: activeDay.staysOfCity })}</span>
-              </div>
+          {/* The photograph carries nothing; the day's head sits in the
+              paper band under it (T398, rule "Caption band"). */}
+          {activeDay.stop.dest?.image?.url && (
+            <div
+              className="itin-day-hero"
+              style={{ backgroundImage: `url(${activeDay.stop.dest.image.url})` }}
+              aria-hidden="true"
+            />
+          )}
+          <div className="itin-day-head itin-day-cap">
+            <div className="itin-day-date">{fmtLong(activeDay.date)}</div>
+            <div className="itin-day-city">
+              {t('itin.stayingIn', { city: activeDay.stop.dest?.city })}
+              <span className="itin-day-of">{t('itin.dayOf', { a: activeDay.dayOfStay, b: activeDay.staysOfCity })}</span>
             </div>
           </div>
           {activeDay.activities.length === 0 ? (

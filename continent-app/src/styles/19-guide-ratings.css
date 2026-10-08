@@ -798,16 +798,18 @@
   font-size: 15px;
   color: var(--ink);
 }
-.day-collapse-title svg { color: var(--accent); flex: none; }
+.day-collapse-title svg { color: var(--ink-soft); flex: none; }
 .day-collapse-count {
   min-width: 20px;
   padding: 1px 7px;
   border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  /* The count chip (T398, rule "Count chip"): mono ink on paper-dim, never
+     the accent. */
+  background: var(--paper-dim);
+  color: var(--ink);
   font-family: var(--mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
 }
 .day-collapse-caret {
@@ -823,7 +825,7 @@
   font-size: 17px;
   line-height: 1;
 }
-.day-collapse.open .day-collapse-caret { background: var(--accent-bg); color: var(--accent); }
+.day-collapse.open .day-collapse-caret { background: var(--paper-dim); color: var(--ink); }
 .day-collapse-summary {
   font-size: 12.5px;
   line-height: 1.5;
@@ -1299,25 +1301,16 @@
    placed and sized by the rule above; only the initials need scaling down to
    a 170px card. */
 .hero-blank.guide-ccard-img .hero-blank-mark { font-size: 18px; }
-.guide-ccard:hover { border-color: var(--rule); box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12); }
-.guide-ccard:hover .guide-ccard-img { transform: scale(1.04); }
-.guide-ccard:active { transform: scale(0.99); }
+/* No hover lift and no photo zoom (T398, DIRECTION 2.3: nothing moves for
+   decoration); the hover is a border in 67-v6-tripplanner.css. */
+.guide-ccard:active { transform: scale(0.97); }
 .guide-ccard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-/* Photographs are unpredictable: the scrim is what keeps a country's name
-   readable over a bright sky as reliably as over a dark harbour. */
-.guide-ccard-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.80) 0%, rgba(15, 23, 42, 0.14) 58%, rgba(15, 23, 42, 0) 100%);
-  pointer-events: none;
-}
+/* The caption band under the photograph (T398, rule "Caption band"): the
+   name never sits on the picture, so no scrim is needed. */
 .guide-ccard-overlay {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 10px 12px 11px;
 }
 /* A long name (Bosnia and Herzegovina, North Macedonia) has to wrap rather
    than run off the photograph, and the flag stays on the first line with it. */
@@ -1329,24 +1322,12 @@
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--on-fill);
+  color: var(--ink);
   overflow-wrap: anywhere;
 }
 .guide-ccard-name .guide-flag-img-sm { flex: none; margin-top: 2px; }
-/* Picked: a terracotta ring around the whole card and a tick in the corner,
-   readable at a glance across a grid of 43. */
-.guide-ccard.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
-.guide-ccard-check {
-  position: absolute;
-  top: 8px; right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-fill);
-}
+/* Picked: the selected state (T398), an ink border and an ink tick in the
+   caption band; both in 67-v6-tripplanner.css. */
 /* The map view gets the height the split layout could never give it. Its
    width is capped: run to 1500px and fitting Europe into that letterbox pulls
    Kazakhstan into frame. */
@@ -1365,7 +1346,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .guide-ccard, .guide-ccard-img { transition: none; }
-  .guide-ccard:hover .guide-ccard-img { transform: none; }
+  .guide-ccard:active { transform: none; }
 }
 
 /* ── Trip basics: origin, airports, party, style ────────────────────────
@@ -1832,7 +1813,8 @@
   width: 19px; height: 19px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
-  background: var(--accent);
+  /* An ink tick on a selected card (T398, rule "Selected state"). */
+  background: var(--ink-fill);
   color: var(--on-fill);
 }
 
@@ -2230,13 +2212,11 @@ color: var(--ink-soft);
 }
 
 /* ── T8.4 The star on a favourited ready-made trip ─────────────────────── */
+/* In the caption band under the photograph since T398 (rule "Caption
+   band"), so it needs no dark disc to be read. */
 .wtrip-star {
-  position: absolute;
-  top: 8px; right: 8px;
-  display: flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: rgba(26, 26, 26, 0.55);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px;
   color: var(--rate);
 }
 
@@ -2343,7 +2323,8 @@ color: var(--ink-soft);
 .guide-design-btn-quiet .guide-design-spark,
 .guide-design-btn-quiet svg { color: var(--accent); }
 .guide-design-btn-quiet small { color: var(--ink-mute); }
-.guide-design-btn-quiet.on { background: var(--accent-bg); border-color: var(--accent); }
+.guide-design-btn-quiet.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.guide-design-btn-quiet.on small, .guide-design-btn-quiet.on svg { color: var(--on-fill); }
 
 /* Step 3: what changing the departure airport actually buys, in the space the
    picker used to leave blank. */

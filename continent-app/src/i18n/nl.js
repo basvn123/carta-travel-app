@@ -5223,4 +5223,10 @@ export const nl = {
   "pass.compareLasts": "Hoe lang het geldt",
   "pass.compareDays": "{n} dagen",
   "pass.compareForever": "Zolang het account bestaat",
+  "trip.dayByDay": "Dag voor dag",
+  "trip.inclTrain": "treinkaartje {pp} per persoon",
+  "trip.inclBus": "buskaartje {pp} per persoon",
+  "trip.inclFerry": "veerbootkaartje {pp} per persoon",
+  "trip.inclCar": "brandstof en tol voor de auto",
+  "trip.oneMoreNight": "Een nacht extra in {city}:",
 };

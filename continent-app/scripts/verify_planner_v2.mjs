@@ -49,7 +49,9 @@ await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await page.waitForTimeout(3000);
 const guest = page.getByText(/continue without an account/i).first();
 if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
-await page.locator('button', { hasText: /trip planner/i }).first().click();
+// T398: the header tabs are links since shell V3 (rule "Navigation"), so the
+// Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
+await page.locator('a, button', { hasText: /trip planner/i }).first().click();
 await page.waitForTimeout(2000);
 // No chooser any more: the planner opens on step one.
 await page.waitForTimeout(600);

@@ -35,7 +35,9 @@ async function toWhenStep(width, height, fakeNow) {
   await page.waitForTimeout(3000);
   const guest = page.getByText(/continue without an account/i).first();
   if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
-  const top = page.locator('button', { hasText: /trip planner/i }).first();
+  // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
+  // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
+  const top = page.locator('a, button', { hasText: /trip planner/i }).first();
   if (await top.isVisible().catch(() => false)) await top.click();
   else { await page.locator('.bottom-nav-plus').click(); await page.waitForTimeout(500); await page.locator('.plan-chooser-item').first().click(); }
   await page.waitForTimeout(2000);

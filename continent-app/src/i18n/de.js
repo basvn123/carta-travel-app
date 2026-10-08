@@ -5223,4 +5223,10 @@ export const de = {
   "pass.compareLasts": "Laufzeit",
   "pass.compareDays": "{n} Tage",
   "pass.compareForever": "So lange das Konto besteht",
+  "trip.dayByDay": "Tag für Tag",
+  "trip.inclTrain": "Zugticket {pp} pro Person",
+  "trip.inclBus": "Busticket {pp} pro Person",
+  "trip.inclFerry": "Fährticket {pp} pro Person",
+  "trip.inclCar": "Benzin und Maut fürs Auto",
+  "trip.oneMoreNight": "Eine Nacht mehr in {city}:",
 };

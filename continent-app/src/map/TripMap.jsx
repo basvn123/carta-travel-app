@@ -5,6 +5,38 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, declutterPins } from './coords.js';
 import { tokenColour } from './tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
+import { durationMs } from '../lib/motion.js';
+
+/* The route reveal (T398, DIRECTION 2.3 "Route reveal"): the first part of
+   the lines, `frac` of their total length, in drawing order, so the route
+   can grow from the first stop to the last. Planar degrees are enough to
+   share the time out between the legs; nothing is measured from them. */
+function sliceLines(lines, frac) {
+  const segLen = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const lens = lines.map((c) => c.reduce((s, p, i) => (i ? s + segLen(c[i - 1], p) : 0), 0));
+  const total = lens.reduce((s, l) => s + l, 0);
+  if (!(total > 0) || frac >= 1) return lines;
+  let left = total * Math.max(0, frac);
+  const out = [];
+  for (let k = 0; k < lines.length && left > 0; k += 1) {
+    const c = lines[k];
+    if (lens[k] <= left) { out.push(c); left -= lens[k]; continue; }
+    const part = [c[0]];
+    for (let i = 1; i < c.length; i += 1) {
+      const d = segLen(c[i - 1], c[i]);
+      if (d >= left) {
+        const r = d > 0 ? left / d : 0;
+        part.push([c[i - 1][0] + (c[i][0] - c[i - 1][0]) * r, c[i - 1][1] + (c[i][1] - c[i - 1][1]) * r]);
+        break;
+      }
+      part.push(c[i]);
+      left -= d;
+    }
+    if (part.length >= 2) out.push(part);
+    left = 0;
+  }
+  return out;
+}
 
 // A pin's accessible name must contain the text it shows (WCAG 2.5.3), so a
 // numbered pin is named "2 Vienna", not "Vienna" (T231).
@@ -154,7 +186,7 @@ function routeArrowImage(px = 26) {
  * `cooperativeGestures` makes the wheel scroll the page unless ctrl is held,
  * which is what an embedded map inside a scrolling panel wants.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null, basemap = 'voyager' }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null, basemap = 'voyager', revealRoute = false }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   // Pin titles go through the catalogues (T388: they were English in every
@@ -184,6 +216,12 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   // zoomed in", so the threshold is one step past whatever the map opened at,
   // however wide or tight that was, and never later than `photoZoom`.
   const frameZoomRef = useRef(null);
+  // The route reveal runs once per mount of a map that asks for it
+  // (revealRoute), on the first draw that has a line; later redraws (a mode
+  // change, a travellers change) show the whole line at once.
+  const revealedRef = useRef(false);
+  const revealRafRef = useRef(0);
+  useEffect(() => () => cancelAnimationFrame(revealRafRef.current), []);
 
   // Two stops 80m apart land on the same 26px pin at the zoom a whole day fits
   // into, and the pin drawn last simply covers the one before it: that is how a
@@ -487,12 +525,34 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       const src = map.getSource('trip-route');
       const fsrc = map.getSource('trip-ferry');
       const asFeature = (coords) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords } });
+      // Draw the route lines, revealed once leg by leg where asked: at most
+      // --dur-4 a leg and 900 ms in all; under reduced motion durationMs is 0
+      // and the whole line is drawn at once.
+      const drawRoute = (lines) => {
+        cancelAnimationFrame(revealRafRef.current);
+        const legs = Math.max(1, pts.length - 1);
+        const revealMs = lines.length && revealRoute && !revealedRef.current
+          ? Math.min(900, durationMs('--dur-4') * legs) : 0;
+        if (lines.length && revealRoute) revealedRef.current = true;
+        if (!(revealMs > 0)) {
+          src.setData({ type: 'FeatureCollection', features: lines.map(asFeature) });
+          return;
+        }
+        const t0 = performance.now();
+        const tick = (now) => {
+          const k = Math.min(1, (now - t0) / revealMs);
+          src.setData({ type: 'FeatureCollection', features: sliceLines(lines, k).map(asFeature) });
+          if (k < 1) revealRafRef.current = requestAnimationFrame(tick);
+        };
+        src.setData({ type: 'FeatureCollection', features: [] });
+        revealRafRef.current = requestAnimationFrame(tick);
+      };
       if (src) {
         const segs = showRoute && Array.isArray(routeSegments) ? routeSegments : null;
         if (segs && segs.length) {
           const walk = segs.filter((s) => s.mode !== 'ferry' && s.coordinates?.length >= 2);
           const ferry = segs.filter((s) => s.mode === 'ferry' && s.coordinates?.length >= 2);
-          src.setData({ type: 'FeatureCollection', features: walk.map((s) => asFeature(s.coordinates)) });
+          drawRoute(walk.map((s) => s.coordinates));
           fsrc?.setData({ type: 'FeatureCollection', features: ferry.map((s) => asFeature(s.coordinates)) });
           map.setPaintProperty('trip-route-line', 'line-dasharray', [1, 0]);
           map.setPaintProperty('trip-route-line', 'line-width', 4);
@@ -501,10 +561,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           const line = !showRoute ? null
             : hasReal ? routeGeometry
             : (pts.length >= 2 ? pts.map((p) => [p.lon, p.lat]) : null);
-          src.setData({
-            type: 'FeatureCollection',
-            features: line ? [asFeature(line)] : [],
-          });
+          drawRoute(line ? [line] : []);
           fsrc?.setData({ type: 'FeatureCollection', features: [] });
           map.setPaintProperty('trip-route-line', 'line-dasharray', hasReal ? [1, 0] : [1.5, 1.6]);
           map.setPaintProperty('trip-route-line', 'line-width', hasReal ? 4 : 2.5);
@@ -648,7 +705,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Store so the load handler can invoke the latest closure once ready.
     map._drawTrip = draw;
     if (readyRef.current) draw();
-  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focusKey, focusLat, focusLon, focusZoom, hasPois, fitMaxZoom, fitPadding]);
+  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focusKey, focusLat, focusLon, focusZoom, hasPois, fitMaxZoom, fitPadding, revealRoute]);
 
   // Glide to one place without reframing the route: "how far is this from
   // today's walk?" is answered by moving the camera, not by refitting the

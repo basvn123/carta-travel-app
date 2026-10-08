@@ -237,18 +237,23 @@
   border-radius: 11px;
   cursor: pointer;
   color: var(--ink);
-  transition: border-color .12s, background .12s;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.wq-chip:hover:not(:disabled) { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .wq-chip:hover:not(:disabled) { border-color: var(--ink-soft); }
+}
 .wq-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.wq-chip.on { border-color: var(--accent); background: var(--accent-bg); }
+/* One selected state (T398, rule "Selected state"): ink fill, never the
+   accent tint. */
+.wq-chip.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 .wq-chip:disabled { opacity: .45; cursor: default; }
 .wq-chip-icon { flex: none; display: flex; color: var(--ink-soft); }
-.wq-chip.on .wq-chip-icon { color: var(--accent); }
+.wq-chip.on .wq-chip-icon { color: var(--on-fill); }
 .wq-chip-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.wq-chip-text b { font-size: 13.5px; font-weight: 550; }
-.wq-chip-text small { font-size: 11.5px; color: var(--ink-mute); }
-.wq-chip-check { margin-left: auto; flex: none; display: flex; color: var(--accent); }
+.wq-chip-text b { font-size: 13.5px; font-weight: 600; }
+.wq-chip-text small { font-size: 12px; color: var(--ink-soft); }
+.wq-chip.on .wq-chip-text small { color: var(--on-fill); }
+.wq-chip-check { margin-left: auto; flex: none; display: flex; color: var(--on-fill); }
 
 /* An answered question, collapsed to its answer. It stays a button, so
    changing your mind is one tap rather than a walk back through the quiz. */
@@ -314,61 +319,33 @@
   overflow: hidden;
   background: var(--paper);
 }
-.mcard.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.mcard.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
 /* The button owns the shape and the image fills it absolutely, the same way
    the Destinations cards do it. Letting the <img> carry the ratio does not
    work: HeroImage sets width/height ATTRIBUTES to the ratio (3 and 2), and a
    2px-tall image is what you get, with the country name stranded outside it. */
+/* The photograph and its caption band in one button (T398, rule "Caption
+   band"): the name sits under the picture, never on it. */
 .mcard-pick {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   padding: 0;
   border: none;
-  background: none;
   cursor: pointer;
   width: 100%;
-  aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: var(--paper-dim);
+  background: var(--bg-card);
 }
 .mcard-img {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  flex: none;
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
   object-position: 50% var(--card-focus, 38%);
-}
-.mcard-scrim {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 58%;
-  background: linear-gradient(to top, rgba(0, 0, 0, .58), rgba(0, 0, 0, 0));
-  pointer-events: none;
-}
-.mcard-head {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--on-fill);
-  font-family: var(--display);
-  font-size: 17px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, .45);
-}
-.mcard-check {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  padding: 5px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--on-fill);
 }
 
 .mcard-body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); }
@@ -379,23 +356,6 @@
 }
 .mcard-month { font-weight: 400; color: var(--ink-soft); }
 
-.mcard-why { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
-.mcard-why li {
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  padding-left: 13px;
-  position: relative;
-}
-.mcard-why li::before {
-  content: "";
-  position: absolute;
-  left: 3px;
-  top: 7px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--rule);
-}
 
 .mcard-places { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
 .mcard-place { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
@@ -489,8 +449,10 @@
 }
 .cpm-legend-item { display: inline-flex; align-items: center; gap: 5px; }
 .cpm-legend i { width: 11px; height: 11px; border-radius: 3px; display: block; }
-.cpm-key-sel { background: var(--accent-bg); border: 1.5px solid var(--accent); }
-.cpm-key-rec { border: 1.5px dashed var(--accent); }
+/* The planning map's keys in ink (T398): a picked country is ink, a
+   recommendation a dashed ink line; the accent stays for the live route. */
+.cpm-key-sel { background: var(--kind-village); border: 1.5px solid var(--ink); }
+.cpm-key-rec { border: 1.5px dashed var(--ink-soft); }
 
 /* Touch: a tap opens this instead of a hover tooltip nobody can reach. */
 .cpm-card {
@@ -505,7 +467,7 @@
   border-radius: 12px;
   background: var(--paper);
   border: 1px solid var(--rule);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, .16);
+  box-shadow: var(--shadow-2);
 }
 .cpm-card-img { width: 56px; height: 56px; border-radius: 9px; object-fit: cover; flex: none; }
 .cpm-card-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
@@ -520,8 +482,10 @@
   font-weight: 600;
   cursor: pointer;
 }
-.cpm-card-add { border: 1px solid var(--accent); background: var(--accent); color: var(--on-fill); }
-.cpm-card-add.on { background: var(--accent-bg); color: var(--accent); }
+/* Add is a secondary here: the step's one primary is Next (brief target
+   table); added, it takes the selected state. */
+.cpm-card-add { border: 1px solid var(--rule); background: var(--bg-card); color: var(--ink); }
+.cpm-card-add.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 .cpm-card-info { border: 1px solid var(--rule); background: none; color: var(--ink-soft); font-weight: 500; }
 .cpm-card-close {
   flex: none;
@@ -538,16 +502,13 @@
 
 
 /* The shortlist badge on a hand-picked country card. */
+/* In the caption band under the photograph since T398. */
 .guide-ccard-fav {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .94);
-  font-size: 10.5px;
+  align-self: flex-start;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--ink-soft);
 }
 
 @media (max-width: 768px) {

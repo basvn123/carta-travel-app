@@ -48,7 +48,6 @@
   position: relative;
   inset: auto;
   height: auto;
-  aspect-ratio: 4 / 3;
   border-radius: 0;
 }
 .wiz-ccard-cost {
@@ -267,3 +266,431 @@
 }
 /* Progress is data, not an action: the bar is ink (brief row 31). */
 .trip-wizard-modal .wiz-mini-bar > span { background: var(--ink-fill); }
+
+/* ── V4 (T398): visual and dynamic ──────────────────────────────────────── */
+
+/* One selected state (brief V4-1, rule "Selected state"). A selected card is
+   a 2 px ink border (the 1 px border plus a 1 px inset outline, so nothing
+   reflows) with an ink tick; a selected chip or segment is ink fill with
+   --on-fill text. The accent is left to the view's one primary and the live
+   route. These selectors live in 24-destination-workspace.css, which this
+   surface does not own, so they are overridden here (OWNERSHIP rule 5, row
+   T388-c). */
+.guide-booked-bit:hover { border-color: var(--rule); }
+.guide-booked-bit.on {
+  border-color: var(--ink);
+  outline: 1px solid var(--ink);
+  outline-offset: -2px;
+  background: var(--bg-card);
+}
+.guide-booked-bit.on .guide-booked-icon { color: var(--ink); }
+.wtrip.on { border-color: var(--ink); box-shadow: none; outline: 1px solid var(--ink); outline-offset: -2px; }
+.wtrip-len.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
+.tleg-mode.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); font-weight: 600; }
+.tleg-mode.on svg { color: var(--on-fill); }
+.tleg-mode:hover { border-color: var(--rule); }
+/* The picked country on Trips is a filter chip (rule "Filter chips"): paper
+   dim, ink text, a rule border; no accent fill on hover. */
+.wready-chip.on { border-color: var(--rule); background: var(--paper-dim); color: var(--ink); }
+.wready-chip:hover { background: var(--paper-dim); color: var(--ink); }
+.guide-ccard.on { border-color: var(--ink); box-shadow: none; outline: 1px solid var(--ink); outline-offset: -2px; }
+.guide-ccard.reading { border-color: var(--ink-soft); }
+.guide-ccard.reading .guide-ccard-info { background: var(--ink-fill); color: var(--on-fill); }
+@media (hover: hover) {
+  .guide-booked-bit:hover:not(.on),
+  .tleg-mode:hover:not(.on),
+  .wready-chip:hover { border-color: var(--ink-soft); }
+}
+/* The desktop step rail: done and current steps in ink (progress is data,
+   not an action; T388 did the phone bar). Scoped to the trip wizard because
+   the day planner's flow shares the classes. */
+.trip-wizard-modal .wiz-step.done .wiz-step-btn { border-top-color: var(--ink-mute); }
+.trip-wizard-modal .wiz-step.now .wiz-step-btn { border-top-color: var(--ink); }
+.trip-wizard-modal .wiz-step.now .wiz-step-mark { background: var(--ink); color: var(--on-fill); }
+.trip-wizard-modal .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--ink-soft); }
+@media (hover: hover) {
+  .trip-wizard-modal .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--ink); }
+}
+
+/* Photographs under captions (brief V4-3, rule "Caption band"): nothing sits
+   on a photograph; the name, the length, the star and the tick sit in a
+   paper band flush under it. On a phone the photograph is at most a third of
+   a choice card. */
+.mcard-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+}
+.mcard-check,
+.wtrip-check,
+.guide-ccard-check {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--ink-fill);
+  color: var(--on-fill);
+}
+.wtrip-cap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 20px;
+}
+.wtrip-days {
+  position: static;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--ink-soft);
+  font-family: var(--ui);
+  font-size: 12px;
+}
+.wtrip-days b { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* The country grid card: the photograph keeps its ratio inside the pick
+   button and the caption band follows it in the flow. */
+.guide-ccard-pick {
+  display: flex;
+  flex-direction: column;
+}
+.guide-ccard-pick .guide-ccard-img {
+  position: relative;
+  inset: auto;
+  height: auto;
+  flex: none;
+  aspect-ratio: 4 / 3;
+}
+.guide-ccard-overlay {
+  position: static;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--paper);
+  border-top: 1px solid var(--rule-soft);
+}
+.guide-ccard-name {
+  align-items: center;
+  color: var(--ink);
+  font-size: 16px;
+}
+.wiz-ccard-cost { border-top: none; padding-top: 0; }
+/* The second action stays a round icon button on the photograph's corner
+   (an icon, not text), in card ink instead of a translucent disc. */
+.guide-ccard-info {
+  top: var(--space-2);
+  right: var(--space-2);
+  bottom: auto;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink-soft);
+}
+.guide-ccard-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.guide-ccard-info:hover,
+.guide-ccard-pick:hover ~ .guide-ccard-info { background: var(--bg-card); color: var(--ink-soft); }
+@media (hover: hover) {
+  .guide-ccard:hover:not(.on) { border-color: var(--ink-soft); }
+  .guide-ccard-info:hover,
+  .guide-ccard-pick:hover ~ .guide-ccard-info { background: var(--paper-dim); color: var(--ink); }
+}
+@media (max-width: 768px) {
+  .guide-ccard-name { font-size: 14px; }
+  /* A choice card's photograph is at most a third of the card on a phone. */
+  .mcard-pick .mcard-img { aspect-ratio: 3 / 1; }
+  .wtrip-media { aspect-ratio: 3 / 1; }
+}
+
+/* The match card's reasons as a run of labelled values (brief V4-8): the
+   count in mono, its words under it in --ui; no bullet. */
+.mcard-why {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+.mcard-why-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.mcard-why-n {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.mcard-why-l,
+.mcard-why-text {
+  font-family: var(--ui);
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+.mcard-why-text { flex-basis: 100%; }
+.mcard-why-text .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+
+/* The country brief's months in the ink ramp (brief V4-9, rule "Month
+   strip"): good months filled by weight, the traveller's month outlined
+   2 px ink, the verdict in words in ink. The rules live in
+   24-destination-workspace.css (row T388-c). */
+.cbrief-mo.good { background: var(--kind-town); color: var(--on-fill); }
+.cbrief-mo.mine { box-shadow: none; outline: 2px solid var(--ink); outline-offset: -2px; color: var(--ink); }
+.cbrief-mo.good.mine { color: var(--on-fill); outline-offset: 0; }
+.cbrief-verdict,
+.cbrief-verdict.v-good,
+.cbrief-verdict.v-off { color: var(--ink); }
+
+/* The wizard head in one line on a phone (row T388-i): the step name and
+   "Step x of 7" share a row and the progress bar runs under both, so the
+   head stops spending two lines on one fact. */
+@media (max-width: 768px) {
+  .trip-wizard-modal .guide-head { position: relative; padding-bottom: var(--space-3); }
+  .trip-wizard-modal .guide-head-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .trip-wizard-modal .guide-head-inner > .shape-head-title { flex: 1 1 auto; min-width: 0; }
+  .trip-wizard-modal .wiz-mini {
+    flex: none;
+    width: auto;
+    min-height: var(--tap);
+    margin-top: 0;
+    padding: 0;
+  }
+  .trip-wizard-modal .wiz-mini-line { justify-content: flex-end; min-height: var(--tap); }
+  .trip-wizard-modal .wiz-mini-bar {
+    position: absolute;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-1);
+    margin-top: 0;
+  }
+}
+
+/* Press and selection answer at once (DIRECTION 2.3, "Press and
+   selection"): a choice card or chip scales to 0.97 on press and its fill
+   changes in --dur-1. */
+.guide-booked-bit,
+.wq-chip,
+.wtrip-len,
+.tleg-mode,
+.mcard-add,
+.wtrip-choose,
+.itin-day-plan-btn {
+  transition-property: border-color, background-color, color, transform;
+  transition-duration: var(--dur-1);
+  transition-timing-function: var(--ease-out);
+}
+.guide-booked-bit:active,
+.wq-chip:active:not(:disabled),
+.wtrip-len:active,
+.tleg-mode:active,
+.mcard-add:active,
+.wtrip-choose:active,
+.itin-day-plan-btn:active { transform: scale(0.97); }
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-booked-bit,
+  .wq-chip,
+  .wtrip-len,
+  .tleg-mode,
+  .mcard-add,
+  .wtrip-choose,
+  .itin-day-plan-btn,
+  .guide-datemode button,
+  .guide-ccard,
+  .guide-ccard-img { transition: none; }
+  .guide-booked-bit:active,
+  .wq-chip:active:not(:disabled),
+  .wtrip-len:active,
+  .tleg-mode:active,
+  .mcard-add:active,
+  .wtrip-choose:active,
+  .itin-day-plan-btn:active { transform: none; }
+}
+
+/* The planned receipt as carta-design's receipt (brief V4-3, row T388-j):
+   one bordered object with a --paper-dim head carrying the total, the cost
+   bar over hairline lines with the figure right aligned in --mono 15 px, a
+   2 px ink rule over the sum, and an --accent-bg footer with what one
+   changed input would do. Every figure to the cent. */
+.itin-breakdown {
+  margin-top: 8px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.itin-breakdown .itin-overview-total {
+  min-height: var(--tap);
+  margin-top: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: none;
+  background: var(--paper-dim);
+}
+.itin-total-lbl { display: inline-flex; align-items: baseline; gap: var(--space-2); }
+.itin-total-figs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  margin-left: auto;
+  text-align: right;
+}
+.itin-total-figs strong {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.itin-total-figs small { font-variant-numeric: tabular-nums; }
+.itin-breakdown-body { padding: 0 var(--space-4); }
+.itin-breakdown-body .costbar { margin-top: var(--space-3); }
+.itin-breakdown-body .trip-total-row,
+.itin-breakdown-body .itin-bd-leg { border-bottom: 1px solid var(--rule-soft); }
+.itin-breakdown-body .trip-total-row .val,
+.itin-breakdown-body .itin-bd-leg .val {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.itin-bd-grand { border-top: 2px solid var(--ink); }
+.itin-bd-grand-val { font-size: 17px; }
+.itin-bd-what-if {
+  margin: var(--space-3) calc(-1 * var(--space-4)) 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent-bg);
+  font-family: var(--ui);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.itin-bd-what-if .mono {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (hover: hover) {
+  .itin-breakdown .itin-overview-total:hover .itin-breakdown-caret { color: var(--ink); }
+}
+
+/* The day switcher (brief V4-7 as amended, rule "Day list"): one control,
+   "Day 3 of 8" and the date in --mono, flanked by Previous and Next at --tap;
+   the arrow keys move a day while it has focus. */
+.itin-dayswitch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) 0 0;
+}
+.itin-dayswitch-btn {
+  flex: none;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  transition: border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
+}
+.itin-dayswitch-btn:disabled { opacity: 0.45; cursor: default; }
+.itin-dayswitch-btn:active:not(:disabled) { transform: scale(0.97); }
+@media (hover: hover) {
+  .itin-dayswitch-btn:hover:not(:disabled) { border-color: var(--ink-soft); }
+}
+@media (pointer: fine) {
+  .itin-dayswitch-btn { min-height: 32px; }
+}
+.itin-dayswitch-now {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.itin-dayswitch-pos {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.itin-dayswitch-date {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.itin-day-cap .itin-day-city { font-size: 19px; }
+@media (prefers-reduced-motion: reduce) {
+  .itin-dayswitch-btn { transition: none; }
+  .itin-dayswitch-btn:active:not(:disabled) { transform: none; }
+}
+
+/* The country brief's photograph carries nothing (rule "Caption band"): the
+   flag and name sit in a paper band under it. The rules live in
+   24-destination-workspace.css (row T388-c). */
+.cbrief-hero-name {
+  position: static;
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper);
+  color: var(--ink);
+  text-shadow: none;
+}
+/* The route's flight rows: the plane is a glyph, not an action (rule
+   "Accent marks"); the rule lives in 17-saved-trips.css. */
+.itin-flight-row svg { color: var(--ink-soft); }
+/* Getting there: the picked trip's card and the section glyphs in ink, not
+   accent (rule "Accent marks"; the rules live in 24, row T388-c). */
+.wpicked { border-color: var(--rule); }
+/* What a leg's figure buys, in words under its mono facts (brief V4-6). */
+.itin-leg-text small.itin-leg-incl {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.tlegs-sec .guide-section-title svg { color: var(--ink-soft); }
+
+/* The running estimate to the cent on a phone: the figure a person wraps
+   under the party's figure instead of pushing Details off the band. */
+@media (max-width: 768px) {
+  .guide-estimate-main { gap: var(--space-2); }
+  .guide-estimate-figure {
+    flex: 1 1 0;
+    min-width: 0;
+    flex-wrap: wrap;
+    column-gap: var(--space-2);
+    row-gap: 0;
+  }
+  .guide-estimate-figure b { font-size: 19px; }
+  .guide-estimate-figure .wiz-est-pp { flex-basis: 100%; }
+  .guide-estimate-toggle { flex: none; }
+}

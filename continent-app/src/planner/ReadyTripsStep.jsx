@@ -154,20 +154,24 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip =
 
   return (
     <div className={`wtrip ${chosen ? 'on' : ''}`}>
+      {/* The photograph carries nothing on it (T398, rule "Caption band"):
+          the length, the star and the chosen tick sit in the paper band under
+          it, so the scrim that made them legible is gone too. */}
       <div className="wtrip-media">
         <TripPhoto url={photo} />
-        <span className="wtrip-scrim" aria-hidden="true" />
-        <span className="wtrip-days">
-          <b>{shown.days}</b> {t(shown.days === 1 ? 'trip.dayWord' : 'trip.daysWord')}
-        </span>
-        {chosen && <span className="wtrip-check"><CheckIcon size={12} /></span>}
-        {/* The list already puts starred trips first; without a mark on the
-            card that ordering is invisible and reads as an arbitrary shuffle. */}
-        {starred && !chosen && (
-          <span className="wtrip-star" title={t('ready.starred')}><StarIcon size={12} /></span>
-        )}
       </div>
       <div className="wtrip-body">
+        <div className="wtrip-cap">
+          {/* The list already puts starred trips first; without a mark on the
+              card that ordering is invisible and reads as an arbitrary shuffle. */}
+          {starred && !chosen && (
+            <span className="wtrip-star" title={t('ready.starred')}><StarIcon size={12} /></span>
+          )}
+          <span className="wtrip-days">
+            <b>{shown.days}</b> {t(shown.days === 1 ? 'trip.dayWord' : 'trip.daysWord')}
+          </span>
+          {chosen && <span className="wtrip-check"><CheckIcon size={12} /></span>}
+        </div>
         <p className="wtrip-route">
           {(shown.cities || []).map((c, i) => (
             <React.Fragment key={`${c.city}-${i}`}>
@@ -198,8 +202,11 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip =
                 className={`wtrip-len ${v.id === shown.id ? 'on' : ''}`}
                 onClick={() => setShownId(v.id)}
                 aria-pressed={v.id === shown.id}
+                aria-label={t('ready.lenDays', { n: v.days })}
               >
-                {v.id === shown.id ? t('ready.lenDays', { n: v.days }) : v.days}
+                {/* The caption above says "8 days" for the shown length, so
+                    each chip is the bare number in mono (T398). */}
+                {v.days}
               </button>
             ))}
           </div>

@@ -7,6 +7,30 @@ import { cityLabel } from '../lib/placeName.js';
 import { useI18n } from '../i18n/index.jsx';
 import { monthName } from '../lib/dates.js';
 
+/** A reason that is a count ("1276 rated trails") as a labelled value: the
+ *  figure alone in mono through Intl.NumberFormat ("1,276"), the words under
+ *  it in --ui (T398, brief V4-8). The sentence is translated whole and split
+ *  at the figure, so word order survives every language; a reason with no
+ *  count keeps its sentence. */
+function Reason({ r, t, lang }) {
+  const n = r.vars?.n;
+  if (typeof n !== 'number') return <li className="mcard-why-text">{t(r.key, r.vars)}</li>;
+  let figure;
+  try { figure = new Intl.NumberFormat(lang).format(n); } catch { figure = String(n); }
+  const parts = t(r.key, { ...r.vars, n: '\u0000' }).split('\u0000');
+  // Where the language puts the count first, the words become its label;
+  // otherwise the sentence stays whole with the count in mono inside it.
+  if (parts[0].trim() !== '') {
+    return <li className="mcard-why-text">{parts[0]}<span className="mono">{figure}</span>{parts.slice(1).join('')}</li>;
+  }
+  return (
+    <li className="mcard-why-fact">
+      <span className="mcard-why-n">{figure}</span>
+      <span className="mcard-why-l">{parts.slice(1).join('').trim()}</span>
+    </li>
+  );
+}
+
 /** How many recommendations before the "show more" link. */
 const PAGE = 6;
 
@@ -57,11 +81,13 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang, cost }) {
           sizes="(max-width: 768px) 92vw, 380px"
           ratio={[16, 10]}
         />
-        <span className="mcard-scrim" aria-hidden="true" />
-        {picked && <span className="mcard-check"><CheckIcon size={13} /></span>}
+        {/* The name sits in a paper band under the photograph, never on it
+            (T398, rule "Caption band"); a picked card carries an ink tick
+            there. */}
         <span className="mcard-head">
           <Flag iso2={match.iso2} className="guide-flag-img-sm" />
           <b>{match.country}</b>
+          {picked && <span className="mcard-check"><CheckIcon size={12} /></span>}
         </span>
       </button>
 
@@ -76,10 +102,11 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang, cost }) {
           </p>
         )}
 
-        {/* Every bullet is a number that came from a published file. */}
+        {/* Every reason is a number that came from a published file, set as
+            a run of labelled values, not a bulleted list. */}
         {reasons.length > 0 && (
           <ul className="mcard-why">
-            {reasons.map((r, i) => <li key={i}>{t(r.key, r.vars)}</li>)}
+            {reasons.map((r, i) => <Reason key={i} r={r} t={t} lang={lang} />)}
           </ul>
         )}
 

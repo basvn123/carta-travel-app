@@ -787,7 +787,8 @@ function BriefHeader({ brief, showName = true }) {
         ratio={[16, 9]}
         sizes="(max-width: 768px) 100vw, 420px"
       />
-      <span className="cbrief-hero-scrim" aria-hidden="true" />
+      {/* The flag and name sit in a paper band under the photograph, never
+          on it, so the scrim is gone (T398, rule "Caption band"). */}
       <span className="cbrief-hero-name">
         <Flag iso2={brief.iso2} />
         {showName && brief.country}

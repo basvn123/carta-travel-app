@@ -72,7 +72,9 @@ async function boot(page) {
 }
 
 async function openWizard(page) {
-  const top = page.locator('button', { hasText: /trip planner/i }).first();
+  // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
+  // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
+  const top = page.locator('a, button', { hasText: /trip planner/i }).first();
   if (await top.isVisible().catch(() => false)) await top.click();
   else {
     await page.locator('.bottom-nav-plus').click();
@@ -189,8 +191,11 @@ async function run(width, height) {
   check(`${label}: every photo has a srcSet`, imgs.length > 0 && imgs.every((p) => p.srcset.includes(' ')),
     `${imgs.length} of ${photos.length} are photos`);
   // T388 (brief item 9): a shorter photograph, 16/7, so the route, the cost
-  // and Choose sit in the first screen with it.
-  check(`${label}: the media box is 16/7`, photos.every((p) => Math.abs(p.ratio - 16 / 7) < 0.05),
+  // and Choose sit in the first screen with it. T398 (rule "Caption band": on
+  // a phone the photograph is at most a third of a choice card) made it 3:1
+  // below 769 px, so the expected ratio depends on the width.
+  const wantRatio = width <= 768 ? 3 : 16 / 7;
+  check(`${label}: the media box is ${width <= 768 ? '3/1' : '16/7'}`, photos.every((p) => Math.abs(p.ratio - wantRatio) < 0.05),
     photos.map((p) => p.ratio).slice(0, 4).join(', '));
   // The same photograph arrives at different thumb widths, so compare the file
   // rather than the url: /960px-X.jpg and /500px-X.jpg are one picture.

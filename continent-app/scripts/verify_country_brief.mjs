@@ -67,7 +67,9 @@ async function openHandPicker(page) {
   if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
   const got = page.getByRole('button', { name: /got it/i }).first();
   if (await got.isVisible().catch(() => false)) { await got.click().catch(() => {}); await page.waitForTimeout(400); }
-  const top = page.locator('button', { hasText: /trip planner/i }).first();
+  // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
+  // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
+  const top = page.locator('a, button', { hasText: /trip planner/i }).first();
   if (await top.isVisible().catch(() => false)) await top.click();
   else {
     await page.locator('.bottom-nav-plus').click();
@@ -138,8 +140,12 @@ async function run(name, viewport, expectSheet) {
       fromTop: Math.round(b.top - c.top),
     };
   });
-  check(`${name}: the info button is bottom-right`,
-    !!geom && geom.right < geom.fromLeft && geom.bottom < geom.fromTop,
+  // T398 (rule "Caption band"): the card's name and figure moved into a paper
+  // band under the photograph, so the round info button moved to the
+  // photograph's top-right corner, where it covers no text. Still its own
+  // corner, still away from the flag and the name.
+  check(`${name}: the info button is top-right`,
+    !!geom && geom.right < geom.fromLeft && geom.fromTop < geom.bottom,
     geom ? `right ${geom.right}, bottom ${geom.bottom}, left ${geom.fromLeft}, top ${geom.fromTop}` : 'no geometry');
   // Drawn at 36px on a wide screen; at 768px and under the Q1 phone audit
   // draws the circle at the 44px tap size itself (styles.css, max-width 768).

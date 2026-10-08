@@ -45,7 +45,8 @@ import {
   carAdvice, legTransportOptions, airportTransferOptions, preferredPublicMode,
 } from '../lib/transport.js';
 import { haversineKm, tripDaysBetween, accommodationPerPerson } from '../lib/runtime_pricing.js';
-import { eur } from '../lib/format.js';
+import { eur, eurExact } from '../lib/format.js';
+import { useSettledFigure } from '../lib/figureChange.js';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { duplicateHeroes } from '../lib/heroImage.js';
 import { pickWithDupes } from '../lib/countryCovers.js';
@@ -1578,23 +1579,22 @@ export function GuidedTripWizard({
   }, [travelSpend, travelValues, includedIds, totalNights,
     groupSize, groundLegs, stopCosts, t]);
 
-  // What the last answer did to the total. estBump is a counter used as a React
-  // key on the figure: a new key remounts it, which restarts the CSS bump, so
-  // every step visibly moves the price instead of silently rewriting it. The
-  // delta chip ("+ EUR 96") fades itself out after a couple of seconds.
-  const [estBump, setEstBump] = useState(0);
+  // What the last answer did to the total (T398, rule "Figure in place"): the
+  // figure changes in place and its box dips once through settleFigure (no
+  // remount, no bump, no sweep), and what changed stands beside it in words
+  // ("+€96.00") for three seconds. The first figure is not a change, so it
+  // carries no delta.
   const [estDelta, setEstDelta] = useState(null);
   const prevEstTotal = useRef(null);
+  const estFigRef = useRef(null);
   const estTotal = runningEstimate?.total ?? null;
+  useSettledFigure(estFigRef, estTotal);
   useEffect(() => {
     const prev = prevEstTotal.current;
     prevEstTotal.current = estTotal;
-    if (estTotal == null || estTotal === prev) return undefined;
-    // No previous total means this answer is what put a price on the board, so
-    // the whole figure is the delta.
-    setEstDelta(prev == null ? estTotal : estTotal - prev);
-    setEstBump((n) => n + 1);
-    const id = setTimeout(() => setEstDelta(null), 2400);
+    if (estTotal == null || prev == null || estTotal === prev) return undefined;
+    setEstDelta(estTotal - prev);
+    const id = setTimeout(() => setEstDelta(null), 3000);
     return () => clearTimeout(id);
   }, [estTotal]);
 
@@ -2110,12 +2110,12 @@ export function GuidedTripWizard({
 
         {/* Running price estimate: its own band under the header, the full
             width of the wizard, so the growing total is a part of the screen
-            rather than a chip in a corner. What the last answer cost lands as
-            a delta chip and a bump on the figure; tapping the band opens the
-            line-by-line breakdown in place. */}
+            rather than a chip in a corner. What the last answer cost stands
+            beside the figure in words, and the figure settles in place
+            (T398); tapping the band opens the line-by-line breakdown. Every
+            figure to the cent (carta-design: never round a line). */}
         {runningEstimate && showEstimate && (
           <div className={`guide-estimate-band ${estimateOpen ? 'open' : ''}`}>
-            <span className="guide-estimate-flash" key={`flash-${estBump}`} aria-hidden="true" />
             <button
               className="guide-estimate-main"
               onClick={() => setEstimateOpen((v) => !v)}
@@ -2130,21 +2130,21 @@ export function GuidedTripWizard({
                 {/* An estimate says so in text (PRODUCT.md): the tilde and
                     "est.", and the figure a person beside the party's
                     (T388, brief item 2). */}
-                <b key={`total-${estBump}`}>~{eur(runningEstimate.total)}</b>
+                <b ref={estFigRef}>~{eurExact(runningEstimate.total)}</b>
                 <small className="wiz-est-mark">{t('prov.est')}</small>
                 {runningEstimate.gs > 1 && (
-                  <small className="wiz-est-pp">{t('wizard.estPerPerson', { eur: eur(runningEstimate.perPerson) })}</small>
+                  <small className="wiz-est-pp">{t('wizard.estPerPerson', { eur: eurExact(runningEstimate.perPerson) })}</small>
                 )}
-                {estDelta != null && estDelta !== 0 && (
-                  <span className={`guide-estimate-delta ${estDelta < 0 ? 'down' : 'up'}`} key={`delta-${estBump}`}>
-                    {estDelta < 0 ? '-' : '+'}{eur(Math.abs(estDelta))}
+                {estDelta != null && Math.abs(estDelta) >= 0.005 && (
+                  <span className={`guide-estimate-delta ${estDelta < 0 ? 'down' : 'up'}`} aria-live="polite">
+                    {estDelta < 0 ? '-' : '+'}{eurExact(Math.abs(estDelta))}
                   </span>
                 )}
               </span>
               <span className="guide-estimate-chips">
                 {runningEstimate.lines.map((l) => (
                   <span key={l.key} className="guide-estimate-chip">
-                    {l.label} <b>{eur(l.eur)}</b>
+                    {l.label} <b>{eurExact(l.eur)}</b>
                   </span>
                 ))}
               </span>
@@ -2158,12 +2158,12 @@ export function GuidedTripWizard({
                       {l.label}
                       {l.sub && <small>{l.sub}</small>}
                     </span>
-                    <b>{eur(l.eur)}</b>
+                    <b>{eurExact(l.eur)}</b>
                   </div>
                 ))}
                 <div className="guide-estimate-line guide-estimate-total">
                   <span className="guide-estimate-label">{t('wizard.estTotalSoFar')}</span>
-                  <b>{eur(runningEstimate.total)}</b>
+                  <b>{eurExact(runningEstimate.total)}</b>
                 </div>
               </div>
             )}
@@ -2362,21 +2362,19 @@ export function GuidedTripWizard({
                                     ratio={[4, 3]}
                                     sizes="(max-width: 480px) 46vw, (max-width: 768px) 30vw, 240px"
                                   />
-                                  <span className="guide-ccard-scrim" aria-hidden="true" />
-                                  {on && <span className="guide-ccard-check"><CheckIcon size={12} /></span>}
-                                  {favN > 0 && (
-                                    <span className="guide-ccard-fav">{t('wizard.onShortlist', { n: favN })}</span>
-                                  )}
-                                  {/* Flag and name, and nothing else on the
-                                      photograph. The place count was a number
-                                      nobody choosing a country was reading,
-                                      and what a day costs is a figure the
-                                      brief prints properly, one tap away. */}
+                                  {/* Flag, name, the shortlist count and the
+                                      picked tick sit in a paper band under
+                                      the photograph, never on it (T398, rule
+                                      "Caption band"), so the scrim is gone. */}
                                   <span className="guide-ccard-overlay">
                                     <span className="guide-ccard-name">
                                       <Flag iso2={c.iso2} className="guide-flag-img-sm" />
                                       {c.country}
+                                      {on && <span className="guide-ccard-check"><CheckIcon size={12} /></span>}
                                     </span>
+                                    {favN > 0 && (
+                                      <span className="guide-ccard-fav">{t('wizard.onShortlist', { n: favN })}</span>
+                                    )}
                                   </span>
                                 </button>
                                 {/* What a day there costs a person, under the
@@ -3546,7 +3544,7 @@ export function GuidedTripWizard({
                           {l.mode === 'car' ? <CarIcon size={11} /> : l.mode === 'train' ? <TrainIcon size={11} /> : <RouteIcon size={11} />}
                           <span className="guide-summary-leg-label">{l.label}</span>
                           {l.km != null && <small>{l.km} km</small>}
-                          <b>{l.unpriced ? t('wizard.legUnpriced') : eur(l.eur)}</b>
+                          <b>{l.unpriced ? t('wizard.legUnpriced') : eurExact(l.eur)}</b>
                         </div>
                       ))}
                     </div>
@@ -3560,12 +3558,12 @@ export function GuidedTripWizard({
                             {l.label}
                             {l.sub && <small>{l.sub}</small>}
                           </span>
-                          <b>{eur(l.eur)}</b>
+                          <b>{eurExact(l.eur)}</b>
                         </div>
                       ))}
                       <div className="guide-estimate-line guide-estimate-total">
                         <span className="guide-estimate-label">{t('wizard.summaryTotal')}</span>
-                        <b>{eur(runningEstimate.total)}</b>
+                        <b>{eurExact(runningEstimate.total)}</b>
                       </div>
                     </div>
                   )}

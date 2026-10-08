@@ -794,6 +794,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         selectedIndex={selectedStop}
         routeGeometry={tripRouteOk ? tripRoute.geometry : null}
         routeSegments={tripRouteOk ? tripRoute.segments : null}
+        // The planned trip's route draws itself once, leg by leg, when the
+        // planned view first opens (T398, "Route reveal").
+        revealRoute={Boolean(tp.planned)}
       />
 
       {/* Left panel (desktop) / bottom sheet (mobile) */}

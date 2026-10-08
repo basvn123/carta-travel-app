@@ -326,17 +326,17 @@
   cursor: pointer;
   transition: border-color .15s, box-shadow .15s, opacity .15s;
 }
-.trip-stop.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
+.trip-stop.active { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
 .trip-stop.dragging { opacity: 0.45; }
 .trip-stop-idx {
   display: flex; align-items: center; justify-content: center;
   width: 24px; height: 24px;
   border-radius: 50%;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--paper-dim);
+  color: var(--ink);
   font-family: var(--mono);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   flex-shrink: 0;
   cursor: grab;
 }

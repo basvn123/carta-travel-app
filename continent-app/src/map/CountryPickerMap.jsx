@@ -115,8 +115,13 @@ export function CountryPickerMap({
         promoteId: 'iso2',
       });
 
-      const accent = token('--accent');
-      const accentBg = token('--accent-bg');
+      // A planning map's picks are ink (T398, rule "Map and list in sync": a
+      // picked place is ink and only the live route is accent), the hover a
+      // paper tint, a recommendation a dashed ink line.
+      const ink = token('--ink');
+      const inkFill = token('--ink-fill');
+      const inkSoft = token('--ink-soft');
+      const hoverFill = token('--paper-dim');
       const rule = token('--rule');
 
       map.addLayer({
@@ -126,8 +131,8 @@ export function CountryPickerMap({
         paint: {
           'fill-color': [
             'case',
-            ['boolean', ['feature-state', 'selected'], false], accent,
-            ['boolean', ['feature-state', 'hover'], false], accentBg,
+            ['boolean', ['feature-state', 'selected'], false], inkFill,
+            ['boolean', ['feature-state', 'hover'], false], hoverFill,
             token('--bg-card'),
           ],
           'fill-opacity': [
@@ -145,8 +150,8 @@ export function CountryPickerMap({
         paint: {
           'line-color': [
             'case',
-            ['boolean', ['feature-state', 'selected'], false], accent,
-            ['boolean', ['feature-state', 'recommended'], false], accent,
+            ['boolean', ['feature-state', 'selected'], false], ink,
+            ['boolean', ['feature-state', 'recommended'], false], inkSoft,
             rule,
           ],
           'line-width': [

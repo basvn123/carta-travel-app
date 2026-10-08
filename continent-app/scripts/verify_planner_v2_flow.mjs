@@ -38,7 +38,9 @@ async function openWizard(width, height) {
   if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
   const got = page.getByRole('button', { name: /got it/i }).first();
   if (await got.isVisible().catch(() => false)) { await got.click().catch(() => {}); await page.waitForTimeout(400); }
-  const top = page.locator('button', { hasText: /trip planner/i }).first();
+  // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
+  // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
+  const top = page.locator('a, button', { hasText: /trip planner/i }).first();
   if (await top.isVisible().catch(() => false)) await top.click();
   else {
     await page.locator('.bottom-nav-plus').click();

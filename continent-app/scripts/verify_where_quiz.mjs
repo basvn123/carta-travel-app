@@ -60,7 +60,9 @@ async function openWhere(page) {
   // On a phone the header nav is hidden and the planner is reached through the
   // bottom bar; both controls exist in the DOM, so this has to ask which one
   // is actually on screen.
-  const top = page.locator('button', { hasText: /trip planner/i }).first();
+  // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
+  // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
+  const top = page.locator('a, button', { hasText: /trip planner/i }).first();
   if (await top.isVisible().catch(() => false)) await top.click();
   else {
     await page.locator('.bottom-nav-plus').click();

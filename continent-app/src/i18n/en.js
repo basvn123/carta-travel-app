@@ -6137,4 +6137,10 @@ export const en = {
   "pass.compareLasts": "How long it lasts",
   "pass.compareDays": "{n} days",
   "pass.compareForever": "Life of the account",
+  "trip.dayByDay": "Day by day",
+  "trip.inclTrain": "train fare {pp} a person",
+  "trip.inclBus": "bus fare {pp} a person",
+  "trip.inclFerry": "ferry fare {pp} a person",
+  "trip.inclCar": "fuel and tolls for the car",
+  "trip.oneMoreNight": "One more night in {city}:",
 };
