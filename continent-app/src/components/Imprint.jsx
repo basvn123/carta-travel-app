@@ -1,5 +1,7 @@
 import React, { useRef } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { CloseIcon } from './Icons.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * The statutory Imprint page, legally required by EU e-Commerce Directive Art 5
@@ -35,10 +37,15 @@ export function Imprint({ onClose }) {
   const cardRef = useRef(null);
   const closeRef = useRef(null);
   useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef });
+  const { t } = useI18n();
   return (
-    <div className="auth-overlay" onClick={onClose}>
-      <div className="auth-modal privacy-modal" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-imprint-title" onClick={(e) => e.stopPropagation()}>
-        <button ref={closeRef} className="panel-close auth-close" onClick={onClose} aria-label="Close">x</button>
+    <div className="auth-overlay shell-scrim" onClick={onClose}>
+      <div className="auth-modal privacy-modal shell-dialog" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-imprint-title" onClick={(e) => e.stopPropagation()}>
+        {/* The one close of the dialog family (T391): CloseIcon in a --tap
+            box, its label translated. */}
+        <button ref={closeRef} type="button" className="shell-close" onClick={onClose} aria-label={t('a11y.close')}>
+          <CloseIcon size={16} />
+        </button>
         <h2 className="auth-title" id="legal-imprint-title">Imprint</h2>
         <p className="privacy-updated">Last updated {UPDATED}</p>
 

@@ -76,7 +76,6 @@
   cursor: pointer;
   text-align: left;
 }
-.app-header-brand:hover .brand-name { color: var(--accent); }
 .app-header-brand .brand-name {
   font-family: var(--display);
   font-weight: 600;
@@ -119,10 +118,12 @@
   font-weight: 600;
   white-space: nowrap;
   color: var(--ink-soft);
-  transition: color .15s, background .15s;
+  transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.header-nav-item:hover { color: var(--ink); background: var(--paper-dim); }
-.header-nav-item.active { color: var(--paper); background: var(--ink-fill); }
+@media (hover: hover) {
+  .header-nav-item:hover { color: var(--ink); background: var(--paper-dim); }
+}
+.header-nav-item.active { color: var(--on-fill); background: var(--ink-fill); }
 .header-nav-icon { flex-shrink: 0; }
 
 /* Fitting the row on a narrow desktop window, in two steps rather than one
@@ -296,23 +297,23 @@
   /* Account left this row on mobile: it is the rightmost item of the bottom
      bar now, and the row over the map keeps its width for the filters. */
   .app-header-account .account-avatar-btn { display: none; }
-  /* Passes: a real bordered chip, not bare accent text floating in the bar.
-     Soft terracotta wash inside an accent hairline, with the label in ink so
-     it stays readable (accent on the wash is only 2.8:1). */
+  /* Passes: the same secondary as on desktop (T391; T360 made the desktop
+     chip one): transparent, a --rule border, the 6 px control radius and a
+     --tap target. The accent stays on its glyph only. */
   .app-header-account .header-pricing-btn {
-    height: 38px;
+    height: var(--tap);
     padding: 0 12px;
     gap: 6px;
-    border: 1px solid var(--accent);
-    background: var(--accent-bg);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: transparent;
     box-shadow: none;
     color: var(--ink);
     font-weight: 600;
   }
-  .app-header-account .header-pricing-btn:hover,
   .app-header-account .header-pricing-btn:active {
-    border-color: var(--accent);
-    background: var(--paper);
+    border-color: var(--ink-soft);
+    background: var(--paper-dim);
     color: var(--ink);
   }
   .app-header-account .header-pricing-btn svg { width: 16px; height: 16px; }
@@ -720,12 +721,11 @@
   grid-template-columns: 1fr 1fr auto 1fr 1fr;
   align-items: stretch;
   height: var(--bottom-nav-h);
-  /* Near-opaque panel so map markers don't bleed through the blur. */
   padding: 10px 10px calc(8px + env(safe-area-inset-bottom, 0px));
-  background: rgba(245, 241, 232, 0.985);
-  backdrop-filter: blur(14px) saturate(140%);
+  /* Chrome that recedes (T391, brief V4-1): the page ground, one --rule
+     hairline, no blur and no fourth shadow. */
+  background: var(--paper);
   border-top: 1px solid var(--rule);
-  box-shadow: 0 -3px 16px rgba(26, 26, 26, 0.08);
 }
 
 .bottom-nav-item {
@@ -738,25 +738,15 @@
   min-width: 0;
   border-radius: 10px;
   color: var(--ink-soft);
-  transition: color .15s, transform .1s;
+  transition: color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
-.bottom-nav-item:hover { color: var(--ink-soft); }
-.bottom-nav-item:active { transform: scale(0.95); }
-.bottom-nav-item.active { color: var(--accent); }
-/* Active tab marker: a short accent tick on the bar's top edge, aligned with
-   the border above (the item sits 10px inside the bar's top padding). */
-.bottom-nav-item.active::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 22px;
-  height: 3px;
-  border-radius: 0 0 3px 3px;
-  background: var(--accent);
-}
-.bottom-nav-icon { flex-shrink: 0; }
+.bottom-nav-item:active { transform: scale(0.97); }
+/* The section showing (T391, rule R4): an --ink-fill pill behind its icon,
+   drawn by the sliding marker (60-v6-shell.css), the icon in --on-fill and
+   the label in ink. It was accent text under an accent tick. */
+.bottom-nav-item.active { color: var(--ink); }
+.bottom-nav-icon { flex-shrink: 0; position: relative; z-index: 1; transition: color var(--dur-1) var(--ease-out); }
+.bottom-nav-item.active .bottom-nav-icon { color: var(--on-fill); }
 .bottom-nav-label {
   max-width: 100%;
   /* A tab name is a word, not a measured fact, so it is the sans in
@@ -773,14 +763,15 @@
   text-overflow: ellipsis;
 }
 
-/* The plus: raised over the bar's top edge, a paper ring so it reads as a
-   button floating above the map rather than a pin on it. Rotates to a cross
-   while the chooser is open. */
+/* The plus: a secondary round icon button inside the bar (T391). It used to
+   rise 26 px over the bar's edge, where it covered whatever sat just above
+   the nav (the landing primary at 380 x 800, rows T381-g and T382-c).
+   Rotates to a cross while the chooser is open. */
 .bottom-nav-plus {
-  align-self: start;
-  margin: -26px 10px 0;
-  width: 58px;
-  height: 58px;
+  align-self: center;
+  margin: 0 10px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -790,15 +781,17 @@
   background: var(--bg-card);
   color: var(--ink);
   border: 1px solid var(--rule);
-  box-shadow: var(--shadow-1);
-  transition: transform .2s, box-shadow .15s;
+  transition: transform var(--dur-2) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.bottom-nav-plus:active { transform: scale(0.94); }
+.bottom-nav-plus:active { transform: scale(0.97); }
 .bottom-nav-plus.open { transform: rotate(45deg); }
-/* On the Trip/Day planner tabs the plus is the "you are here" item. */
+/* On the Trip/Day planner tabs the plus is the "you are here" item: the
+   selected state, --ink-fill with an --on-fill glyph (T391, rule R4; it was
+   an accent ring). */
 .bottom-nav-plus.active {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-bg), var(--shadow-1);
+  border-color: var(--ink-fill);
+  background: var(--ink-fill);
+  color: var(--on-fill);
 }
 
 /* The Trip planner / Day planner chooser, anchored above the plus. */
@@ -807,25 +800,32 @@
   inset: 0;
   /* Below the bar (z 50): the plus stays visible and tappable to close. */
   z-index: 49;
-  background: rgba(15, 23, 42, 0.28);
+  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  animation: shell-scrim-in var(--dur-3) var(--ease-out);
 }
+.plan-chooser-backdrop.is-leaving { animation: shell-scrim-out var(--dur-2) var(--ease-in-out) forwards; }
 .plan-chooser {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--bottom-nav-h) + 40px);
+  bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
   transform: translateX(-50%);
   z-index: 51;
   width: min(330px, calc(100vw - 28px));
   background: var(--bg-card);
   border: 1px solid var(--rule);
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: var(--shadow-2);
   overflow: hidden;
-  animation: plan-chooser-in .18s ease-out;
+  animation: plan-chooser-in var(--dur-3) var(--ease-out);
 }
+.plan-chooser.is-leaving { animation: plan-chooser-out var(--dur-2) var(--ease-in-out) forwards; }
 @keyframes plan-chooser-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  from { opacity: 0; transform: translateX(-50%) translateY(var(--space-2)); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes plan-chooser-out {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(var(--space-2)); }
 }
 .plan-chooser-item {
   display: flex;
@@ -837,8 +837,13 @@
   color: var(--ink);
 }
 .plan-chooser-item + .plan-chooser-item { border-top: 1px solid var(--rule-soft); }
-.plan-chooser-item:hover, .plan-chooser-item:active { background: var(--paper); }
-.plan-chooser-icon { color: var(--accent); flex-shrink: 0; }
+.plan-chooser-item { transition: background-color var(--dur-1) var(--ease-out); }
+.plan-chooser-item:active { background: var(--paper-dim); }
+@media (hover: hover) {
+  .plan-chooser-item:hover { background: var(--paper-dim); }
+}
+/* Ink, not accent (T391): neither item is the view's primary. */
+.plan-chooser-icon { color: var(--ink-soft); flex-shrink: 0; }
 .plan-chooser-text {
   display: flex;
   flex-direction: column;
@@ -849,8 +854,10 @@
 .plan-chooser-sub { font-size: 12px; color: var(--ink-mute); }
 
 @media (prefers-reduced-motion: reduce) {
-  .plan-chooser { animation: none; }
-  .bottom-nav-plus, .bottom-nav-item { transition: none; }
+  .plan-chooser, .plan-chooser.is-leaving,
+  .plan-chooser-backdrop, .plan-chooser-backdrop.is-leaving { animation: none; }
+  .bottom-nav-plus, .bottom-nav-item, .bottom-nav-icon, .plan-chooser-item, .header-nav-item { transition: none; }
+  .bottom-nav-item:active, .bottom-nav-plus:active { transform: none; }
 }
 
 /* Narrow phones: a little less type before the longest translated labels

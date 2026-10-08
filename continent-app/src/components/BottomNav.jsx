@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GlobeIcon, CompassIcon, RouteIcon, ListDayIcon, BookmarkIcon, PlusIcon, PersonIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { SectionLink, NavCount, NavDot } from './AppHeader.jsx';
+import { usePresence, useNavMarker } from '../lib/motion.js';
 
 // Bottom navigation, MOBILE only (hidden by CSS on desktop, where the same
 // sections live in the AppHeader). Five slots around a raised central plus:
@@ -19,8 +20,13 @@ export function BottomNav({
   // in progress (the state dot on the plus).
   savedCount = 0, planInProgress = false,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [planOpen, setPlanOpen] = useState(false);
+  // The chooser leaves in --dur-2 rather than vanishing (T391): it stays
+  // mounted, with a leaving class, until its exit has run.
+  const chooser = usePresence(planOpen);
+  const navRef = useRef(null);
+  const markerRef = useRef(null);
 
   // The chooser is a takeover, however small: Escape must close it.
   useEffect(() => {
@@ -35,13 +41,20 @@ export function BottomNav({
   // state: the bar highlights what is actually on screen.
   const overlayOpen = savedOpen || accountOpen;
   const planActive = (activeTab === 'trip' || activeTab === 'day') && !overlayOpen;
+  // The active section is one --ink-fill pill behind its icon, sliding
+  // between the items (T391, rule R5). On a planner tab the plus itself is
+  // the filled item, so the pill has no item to sit behind and hides.
+  const markerKey = accountOpen ? 'account' : savedOpen ? 'saved' : activeTab;
+  useNavMarker(navRef, markerRef, `${markerKey}:${lang}:${savedCount}`, {
+    itemSelector: '.bottom-nav-item.active', fit: 'icon', iconSelector: '.bottom-nav-icon',
+  });
 
   return (
     <>
-      {planOpen && (
+      {chooser.mounted && (
         <>
-          <div className="plan-chooser-backdrop" onClick={() => setPlanOpen(false)} />
-          <div className="plan-chooser" role="dialog" aria-label={t('nav.planNew')}>
+          <div className={`plan-chooser-backdrop${chooser.leaving ? ' is-leaving' : ''}`} onClick={() => setPlanOpen(false)} />
+          <div className={`plan-chooser${chooser.leaving ? ' is-leaving' : ''}`} role="dialog" aria-label={t('nav.planNew')}>
             <SectionLink tab="trip" className="plan-chooser-item" onNavigate={goTab}>
               <RouteIcon size={22} className="plan-chooser-icon" />
               <span className="plan-chooser-text">
@@ -60,7 +73,8 @@ export function BottomNav({
         </>
       )}
 
-      <nav className="bottom-nav" aria-label={t('nav.sectionsLabel')}>
+      <nav className="bottom-nav" ref={navRef} aria-label={t('nav.sectionsLabel')}>
+        <span className="nav-marker" ref={markerRef} aria-hidden="true" />
         <SectionLink
           tab="places"
           className={`bottom-nav-item ${activeTab === 'places' && !overlayOpen ? 'active' : ''}`}

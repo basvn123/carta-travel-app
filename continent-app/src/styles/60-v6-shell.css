@@ -370,3 +370,327 @@
    tint passes; the tint itself goes in V4 (T391, "no tint on the Lifestyle
    door"). */
 .lifestyle-btn .lifestyle-btn-vibe { color: var(--ink); }
+
+/* --------------------------------------------------------------------------
+   V4 (T391): visual and dynamic
+   -------------------------------------------------------------------------- */
+
+/* The chrome recedes (brief V4-1). The phone wordmark is ink like the
+   desktop one (24-destination-workspace.css drew it in the accent), the
+   avatar is a secondary round button rather than an accent disc
+   (16-auth.css), and the Lifestyle door carries no tint and no accent glyph
+   (DIRECTION.md part 9, "no tint on the Lifestyle door"). */
+.app-header-brand .brand-name { color: var(--ink); }
+.header-friends-btn svg { color: var(--ink-soft); }
+.account-avatar-btn { box-shadow: none; }
+.account-avatar {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+}
+.account-avatar-btn.on .account-avatar { border-color: var(--on-fill); }
+.lifestyle-btn {
+  border-color: var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.lifestyle-btn .lifestyle-btn-icon { color: var(--ink-soft); }
+.lifestyle-btn-vibe::before { background: var(--rule); }
+.lifestyle-btn:hover { border-color: var(--rule); background: transparent; color: var(--ink-soft); }
+@media (hover: hover) {
+  .lifestyle-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); color: var(--ink); }
+}
+.lifestyle-btn:active { background: var(--paper-dim); }
+
+/* The active section (rules R4 and R5): one --ink-fill pill per navigation
+   row, placed and slid by useNavMarker() (src/lib/motion.js). The pill is
+   what moves; the active desktop tab takes the same fill, and its words or
+   the phone icon turn --on-fill, only as the pill arrives (the fill and the
+   colour wait out most of the slide), so the words always sit on ink. */
+.header-nav { position: relative; }
+.nav-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: 6px;
+  background: var(--ink-fill);
+  pointer-events: none;
+  opacity: 0;
+}
+.nav-marker[data-on="true"] { opacity: 1; }
+.nav-marker[data-slide="true"] { transition: transform var(--dur-2) var(--ease-in-out); }
+.header-nav-item,
+.bottom-nav-item { z-index: 1; }
+.header-nav-item.active,
+.bottom-nav-item.active .bottom-nav-icon { transition-delay: calc(var(--dur-2) - var(--dur-1)); }
+.header-nav-item.active { background: var(--ink-fill); color: var(--on-fill); }
+.header-nav-item.active .nav-dot { background: var(--on-fill); }
+.bottom-nav-item.active .bottom-nav-label { font-weight: 600; color: var(--ink); }
+/* 24-destination-workspace.css still marks the phone tab in the accent (and
+   turns a hovered one accent); the pill is the mark now, the words are ink. */
+.bottom-nav-item.active { color: var(--ink); }
+.bottom-nav-item:hover { color: var(--ink-soft); }
+.bottom-nav-item.active:hover { color: var(--ink); }
+@media (min-width: 769px) {
+  /* The accent underline goes; the pill is the active state on both widths. */
+  .header-nav-item.active::after { display: none; }
+  .header-nav-item {
+    margin: 0 1px;
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+  .header-nav-item.active { background: var(--ink-fill); color: var(--on-fill); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-marker[data-slide="true"] { transition: none; }
+  .header-nav-item.active,
+  .bottom-nav-item.active .bottom-nav-icon { transition-delay: 0s; }
+}
+
+/* A section change (rule R5): the View Transition crossTab() starts
+   (src/lib/sharedElement.js). The header row and the bottom nav are named
+   only while it runs and do not animate, so they never move; the outgoing
+   tab stays still under the new one, which fades in and rises 8 px. */
+html.tab-vt .top-bar { view-transition-name: shell-top; }
+html.tab-vt .bottom-nav { view-transition-name: shell-nav; }
+html.tab-vt::view-transition-group(shell-top),
+html.tab-vt::view-transition-group(shell-nav),
+html.tab-vt::view-transition-new(shell-top),
+html.tab-vt::view-transition-new(shell-nav),
+html.tab-vt::view-transition-old(root) { animation: none; }
+html.tab-vt::view-transition-old(shell-top),
+html.tab-vt::view-transition-old(shell-nav) { display: none; }
+html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) var(--ease-out); }
+@keyframes shell-tab-in {
+  from { opacity: 0; transform: translateY(var(--space-2)); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.tab-vt::view-transition-new(root) { animation: none; }
+}
+
+/* The dialog family (rules R7 and R10): one scrim, one close, 12 px, the
+   one dialog shadow; arriving in --dur-3, leaving in --dur-2. */
+@keyframes shell-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes shell-scrim-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes shell-dialog-in {
+  from { opacity: 0; transform: translateY(var(--space-2)); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shell-dialog-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(var(--space-2)); }
+}
+@keyframes shell-sheet-in { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes shell-sheet-out { from { transform: none; } to { transform: translateY(100%); } }
+.shell-scrim {
+  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  backdrop-filter: none;
+  animation: shell-scrim-in var(--dur-3) var(--ease-out);
+}
+.shell-dialog {
+  position: relative;
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+  animation: shell-dialog-in var(--dur-3) var(--ease-out);
+}
+.shell-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.shell-close:active { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .shell-close:hover { background: var(--paper-dim); color: var(--ink); }
+}
+.shell-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shell-dialog > .shell-close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+}
+/* The legal texts scroll inside their dialog: the close stays in view. */
+.privacy-modal.shell-dialog > .shell-close {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  margin: 0 0 calc(-1 * var(--tap)) auto;
+  background: var(--paper);
+}
+/* The filter sheets' close takes the same look. */
+.fsheet-close { border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) {
+  .shell-scrim, .shell-dialog { animation: none; }
+  .shell-close { transition: none; }
+}
+
+/* The Lifestyle dialog (brief V4-6): the dialog family, a body that
+   scrolls under a fixed close and foot, and on a phone a bottom sheet over
+   the bar. */
+.accom-panel.lifestyle-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: shell-dialog-in var(--dur-3) var(--ease-out);
+}
+.accom-panel.lifestyle-panel.is-leaving { animation: shell-dialog-out var(--dur-2) var(--ease-in-out) forwards; }
+.lifestyle-scrim.is-leaving { animation: shell-scrim-out var(--dur-2) var(--ease-in-out) forwards; }
+.lifestyle-panel .ls-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.lifestyle-panel .ls-close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 3;
+}
+.lifestyle-panel .panel-header { padding-right: calc(var(--tap) + var(--space-3)); }
+.ls-grab { display: none; }
+.ls-foot {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+}
+.ls-trade {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--ui);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.ls-trade-eur {
+  display: inline-block;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+}
+/* The dialog's one primary: it closes, the prices behind are already set. */
+.ls-done {
+  flex: none;
+  min-height: var(--tap);
+  margin-left: auto;
+  padding: 0 var(--space-5);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
+}
+.ls-done:active { background: var(--accent-press); border-color: var(--accent-press); transform: scale(0.97); }
+@media (hover: hover) {
+  .ls-done:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+}
+.ls-done:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 768px) {
+  /* A sheet: it rises from the bottom over the one scrim, above the bottom
+     nav in z-order so the bar never covers its foot (brief V4-6), with a
+     grab handle whose swipe is a shortcut for the close and Done. */
+  .lifestyle-scrim { top: 0; z-index: 55; }
+  .accom-panel.lifestyle-panel,
+  .accom-panel.lifestyle-panel.from-right {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - var(--space-7));
+    z-index: 56;
+    border: 0;
+    border-top: 1px solid var(--rule);
+    border-radius: 12px 12px 0 0;
+    box-shadow: var(--shadow-2);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    animation: shell-sheet-in var(--dur-3) var(--ease-out);
+  }
+  .accom-panel.lifestyle-panel.is-leaving { animation: shell-sheet-out var(--dur-2) var(--ease-in-out) forwards; }
+  .ls-grab {
+    display: block;
+    flex: none;
+    width: 100%;
+    height: var(--space-5);
+    touch-action: none;
+    cursor: grab;
+  }
+  .ls-grab::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: var(--space-2) auto 0;
+    border-radius: 2px;
+    background: var(--rule);
+  }
+  .lifestyle-panel .ls-close { top: var(--space-1); }
+  .ls-foot {
+    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (max-width: 768px) and (orientation: landscape) {
+  .accom-panel.lifestyle-panel,
+  .accom-panel.lifestyle-panel.from-right { max-height: 80dvh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .accom-panel.lifestyle-panel,
+  .accom-panel.lifestyle-panel.is-leaving,
+  .lifestyle-scrim.is-leaving { animation: none; }
+  .ls-done { transition: none; }
+  .ls-done:active { transform: none; }
+}
+
+/* The bottom slot's messages arrive the way a dialog does (rule R6). */
+.bottom-slot > .confirm-toast,
+.bottom-slot > .site-banner { animation: shell-dialog-in var(--dur-3) var(--ease-out); }
+@media (prefers-reduced-motion: reduce) {
+  .bottom-slot > .confirm-toast,
+  .bottom-slot > .site-banner { animation: none; }
+}
+
+/* FilterChips on both browse tabs (row T384-d, carta-design "Filter
+   chips"): --paper-dim, --ink and a --rule border, CloseIcon for the
+   remove mark. Overrides the ochre chip of 25-feature-pages.css. */
+.xchip {
+  border: 1px solid var(--rule);
+  background: var(--paper-dim);
+  color: var(--ink);
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+.xchip:hover { border-color: var(--rule); }
+@media (hover: hover) {
+  .xchip:hover { border-color: var(--ink-soft); }
+}
+.xchip:active { background: var(--rule-soft); }
+.xchip-x { display: inline-flex; color: var(--ink-soft); opacity: 1; }
+.xchip-clear { border-color: var(--rule); background: transparent; color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) {
+  .xchip { transition: none; }
+}

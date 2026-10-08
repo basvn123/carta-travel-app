@@ -105,8 +105,10 @@ check('sorts stand in the panel', sortN === 3, `${sortN}`);
 await page.locator('.places-side .side-sort').nth(2).click();
 await page.waitForTimeout(400);
 const sortBg = await bg(page, '.places-side .side-sort.on');
-// The accent is #ce3823 since T363 darkened it for contrast (was #e05a47).
-check('active sort wears the accent', sortBg === 'rgb(206, 56, 35)', sortBg);
+// T391: the selected sort is --ink-fill (#2b3446) since the V3 destinations
+// build applied carta-design's "Selected state" (the accent is never a
+// selection colour); this asserted the accent #ce3823 before.
+check('active sort wears the ink fill', sortBg === 'rgb(43, 52, 70)', sortBg);
 
 // The column search still answers: typing offers suggestions under the field.
 await page.locator('.places-searchrow .places-search input').fill('Gent');
@@ -122,7 +124,9 @@ await page.locator('.header-nav-item', { hasText: /explore/i }).first().click();
 await page.waitForTimeout(2500);
 check('explore side panel renders', await page.locator('.explore-side').isVisible());
 check('explore toolbar folded away', await page.locator('.explore-toolbar').isHidden());
-check('kind tiles in the panel', await page.locator('.explore-side .kind-rail-chip').count() >= 9);
+// T391: Explore v5 (T383) draws the trip types as the rail's toggles
+// (.xrail-toggle) in its side panel; the old kind-rail chips are gone.
+check('kind tiles in the panel', await page.locator('.explore-side .xrail-toggle').count() >= 9);
 check('explore search in the header',
   await page.locator('.header-search-slot .results-search-input').isVisible());
 
@@ -158,8 +162,11 @@ check('phone: the brand stands in the bar',
   await phone.locator('.app-header-brand .brand-name').isVisible().catch(() => false));
 check('phone: no card chrome on the toolbar',
   (await bg(phone, '.places-toolbar')) === 'rgba(0, 0, 0, 0)');
-check('phone: category row scrolls sideways', await phone.locator('.places-cats').evaluate(
-  (el) => el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).display === 'flex'));
+// T391: up to six categories on a phone are a 2 x 3 grid of equal buttons,
+// never a sideways strip that hides some (carta-design "Filter chips", built
+// by the V3 destinations session); this asserted the sideways row before.
+check('phone: categories are a grid with every tile on screen', await phone.locator('.places-cats').evaluate(
+  (el) => getComputedStyle(el).display === 'grid' && el.scrollWidth <= el.clientWidth + 1));
 check('phone: no origin chip', await phone.locator('.places-toolbar .origin-btn').count() === 0);
 // The opposite is the rule now: an index card may carry its published count
 // (DIRECTION.md, destinations N7), and the Trips index shows "26 trips" on
@@ -167,19 +174,34 @@ check('phone: no origin chip', await phone.locator('.places-toolbar .origin-btn'
 // (T381, register row T370-a).
 check('phone: a count line on an index card carries its number',
   (await phone.locator('.places-ccard .places-card-sub').allInnerTexts()).every((x) => /\d/.test(x)));
-const tickH = await phone.locator('.places-cat').first()
-  .evaluate((el) => getComputedStyle(el, '::before').height).catch(() => '');
-check('phone: category tiles carry the accent tick', tickH === '2px', tickH);
-const navColor = await phone.locator('.bottom-nav-item.active').first()
-  .evaluate((el) => getComputedStyle(el).color).catch(() => '');
-// The accent is #ce3823 since T363 (was #e05a47); the tab's accent state
-// itself is V4's to change (shell brief V4-1, rule R4).
-check('phone: the active bottom tab wears the accent', navColor === 'rgb(206, 56, 35)', navColor);
+// T391: the accent tick on every category tile is gone (rule R11, "Accent
+// marks": an accent mark means "this one acts"); this asserted a 2 px tick.
+const tickContent = await phone.locator('.places-cat').first()
+  .evaluate((el) => getComputedStyle(el, '::before').content).catch(() => '');
+check('phone: category tiles carry no accent tick', tickContent === 'none' || tickContent === 'normal', tickContent);
+// T391 (shell V4, rule R4): the active bottom tab is an --ink-fill pill
+// behind its icon (the sliding .nav-marker), the icon in --on-fill and the
+// label in ink; it was accent text under an accent tick, which this asserted.
+const navState = await phone.locator('.bottom-nav').evaluate((nav) => {
+  const item = nav.querySelector('.bottom-nav-item.active');
+  const mk = nav.querySelector('.nav-marker');
+  if (!item || !mk) return null;
+  return {
+    marker: getComputedStyle(mk).backgroundColor,
+    on: mk.dataset.on,
+    label: getComputedStyle(item.querySelector('.bottom-nav-label')).color,
+  };
+}).catch(() => null);
+check('phone: the active bottom tab wears the ink pill',
+  !!navState && navState.on === 'true' && navState.marker === 'rgb(43, 52, 70)' && navState.label !== 'rgb(206, 56, 35)',
+  JSON.stringify(navState));
 await phone.screenshot({ path: 'shots/mobile-destinations.png' });
 const phoneNav = phone.locator('.bottom-nav-item', { hasText: /explore/i }).first();
 await phoneNav.click();
 await phone.waitForTimeout(2500);
-check('phone: explore toolbar stays inline', await phone.locator('.explore-toolbar').isVisible());
+// T391: Explore v5 (T383) replaced the toolbar with its input row
+// (.xinputs) under the title bar; this asserted the old .explore-toolbar.
+check('phone: explore input row stays inline', await phone.locator('.xinputs').first().isVisible());
 const pCard = phone.locator('.xcard').first();
 check('phone: explore card body is on screen', await pCard.locator('.xcard-body').isVisible().catch(() => false));
 check('phone: explore card has no photo overlay', await pCard.locator('.xcard-overlay').count() === 0);

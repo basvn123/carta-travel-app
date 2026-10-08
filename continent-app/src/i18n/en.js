@@ -55,7 +55,7 @@ export const en = {
   'nav.map': 'Map',
   'nav.trip': 'Trip planner',
   'nav.day': 'Day planner',
-  'nav.saved': 'Saved trips',
+  'nav.saved': 'My trips',
   'nav.brandTitle': 'Carta: back to the home page',
   // Mobile bottom bar: three items around a central plus that opens the
   // Trip planner / Day planner chooser.
@@ -6095,4 +6095,10 @@ export const en = {
   "itin.costTotal": "Total for {n} people",
   "itin.costDay": "A day for {n} people, the total over {d} days",
   "itin.trackAria": "The days of the trip, one card each. The arrow keys move one day.",
+  // T391 (shell V4): the Lifestyle dialog's foot.
+  "lifestyle.done": "Done",
+  "lifestyle.tradeLessIn": "{alt} instead: {eur} less a night per person in {town}.",
+  "lifestyle.tradeMoreIn": "{alt} instead: {eur} more a night per person in {town}.",
+  "lifestyle.tradeLessMedian": "{alt} instead: {eur} less a night per person, the median over {n} places.",
+  "lifestyle.tradeMoreMedian": "{alt} instead: {eur} more a night per person, the median over {n} places.",
 };

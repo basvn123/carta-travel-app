@@ -5,6 +5,9 @@ import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/Anno
 import { SettingsLine, SettingsContext } from './components/SettingsLine.jsx';
 import { LoadingBlock } from './components/StateBlocks.jsx';
 import { CloseIcon } from './components/Icons.jsx';
+import { crossTab } from './lib/sharedElement.js';
+import { usePresence } from './lib/motion.js';
+import { readJourneyFromUrl } from './lib/journeys.js';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
 import { DestinationPage } from './browse/DestinationPage.jsx';
@@ -158,6 +161,9 @@ function TravelApp() {
     authModalMode, setAuthModalMode, accountOpen, setAccountOpen,
     savedTripsOpen, setSavedTripsOpen, lifestyleOpen, setLifestyleOpen,
   } = usePanelState();
+  // The Lifestyle dialog leaves in --dur-2 instead of vanishing (T391): it
+  // stays mounted with a leaving class until its exit has run.
+  const lifestyleSheet = usePresence(lifestyleOpen);
   const {
     priceMode, setPriceMode, countryFilter, setCountryFilter,
     tripKinds, setTripKinds, ratingRange, setRatingRange, gemOnly, setGemOnly,
@@ -273,15 +279,26 @@ function TravelApp() {
   // section at boot from a shared link: they must not add an entry the
   // traveller never asked for.
   const activeTabRef = useRef(null);
+  //
+  // A real section change by the traveller moves (T391, rule R5): the new
+  // tab fades in and rises 8 px through crossTab() in lib/sharedElement.js,
+  // while the header and the bar stay put. A boot door (`replace`) and a
+  // press on the section already showing change nothing on screen, so they
+  // commit at once.
   const goToTab = useCallback((key, opts = {}) => {
-    setSavedTripsOpen(false);
-    setAccountOpen(false);
-    setLifestyleOpen(false);
-    if (!opts.replace && activeTabRef.current && key !== activeTabRef.current) {
+    const from = activeTabRef.current;
+    const commit = () => {
+      setSavedTripsOpen(false);
+      setAccountOpen(false);
+      setLifestyleOpen(false);
+      setActiveTab(key);
+    };
+    if (!opts.replace && from && key !== from) {
       try { window.history.pushState({ cartaTab: key }, '', tabHref(key)); } catch { /* sandboxed */ }
     }
     activeTabRef.current = key;
-    setActiveTab(key);
+    if (opts.replace || !from || key === from) commit();
+    else crossTab(commit);
   }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen]);
   // My trips is the fifth door in the same row, so it clears the same things.
   const toggleSaved = () => {
@@ -508,6 +525,20 @@ function TravelApp() {
     if (pendingTrip) goToTab('places', { replace: true });
   }, [pendingTrip, goToTab]);
 
+  // A shared JOURNEY link (#journey=<id>, a week from the journeys library;
+  // T387 wrote the reader in lib/journeys.js, T391 the shell's half). The
+  // week opens inside the Trips category of Destinations, where
+  // JourneysSection takes the pending id once on mount, so the shell only has
+  // to land there: Destinations, on Trips, through the same boot door as the
+  // other shared links.
+  const [bootJourney] = useState(() => readJourneyFromUrl());
+  useEffect(() => {
+    if (!bootJourney) return;
+    setPendingCategory('trips');
+    goToTab('places', { replace: true });
+    // Once, at boot: the id is read once and never changes.
+  }, [bootJourney, goToTab]);
+
   // A published itinerary handed to the trip planner, where every stop, night
   // and date stays editable. It goes in through the same door a shared trip
   // uses, so the planner needs no new code path for it.
@@ -612,6 +643,10 @@ function TravelApp() {
     else if (layer === 'mountains' || layer === 'mountain') setPendingMountain({ id: String(ref.id), cc: ref.cc });
     else if (layer === 'cycling' || layer === 'cycle') setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
     else if (layer === 'trips' || layer === 'trip') setPendingTrip({ id: String(ref.id) });
+    // A starred journey (T390-c): the shell lands on the Trips category, the
+    // journeys library. Opening the week itself needs a door JourneysSection
+    // reads after mount, which is trips' and destinations' half (row T391-a).
+    else if (layer === 'journey' || layer === 'journeys') setPendingCategory('trips');
     else return;
     goToTab('places');
   }, [goToTab]);
@@ -716,7 +751,7 @@ function TravelApp() {
   // The deep-link states are read once at load, so this is decided once.
   const deepLinked = !!(pendingFriend || pendingGuide || shareToken || sharedTripRaw
     || pendingTrail || pendingDest || pendingBeach || pendingLake || pendingMountain
-    || pendingCycle || pendingRegion || pendingTrip);
+    || pendingCycle || pendingRegion || pendingTrip || bootJourney);
   useEffect(() => {
     if (CATALOGUE_MODE !== 'viewport') return;
     if (activeTab !== 'map' || deepLinked) loadFullCatalogue().catch(() => {});
@@ -1086,9 +1121,20 @@ function TravelApp() {
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}
       {sharedTrip && (
-        <div className="guide-overlay" onClick={() => setSharedTrip(null)}>
-          <div className="guide-modal share-trip-modal" onClick={(e) => e.stopPropagation()}>
-            <h2 className="guide-title">{t('share.tripTitle')}</h2>
+        <div className="guide-overlay shell-scrim" onClick={() => setSharedTrip(null)}>
+          {/* One of the dialog family (T391): the one scrim, 12 px, the one
+              close, and dialog semantics with its title as its name. */}
+          <div
+            className="guide-modal share-trip-modal shell-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="share-trip-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button type="button" className="shell-close" onClick={() => setSharedTrip(null)} aria-label={t('a11y.close')}>
+              <CloseIcon size={16} />
+            </button>
+            <h2 className="guide-title" id="share-trip-title">{t('share.tripTitle')}</h2>
             <p className="share-trip-name">
               <b>{sharedTrip.label || t('share.aTrip')}</b>
               {', '}
@@ -1170,7 +1216,7 @@ function TravelApp() {
       {/* Lifestyle lives outside the tab blocks: where you sleep and how you
           eat price the map, the catalogue and the planners alike, so the panel
           has to open over whichever tab asked for it. */}
-      {lifestyleOpen && (
+      {lifestyleSheet.mounted && (
         <div onClick={(e) => e.stopPropagation()}>
           {/* On Explore the panel is a right-hand drawer, so the grid it
               reprices stays visible behind it. Everywhere else it keeps the
@@ -1178,13 +1224,17 @@ function TravelApp() {
               dialog has a scrim (owner call, T362; carta-design Components),
               so the scrim shows on every tab and the page behind takes no
               clicks. */}
-          <div className="lifestyle-scrim" onClick={() => setLifestyleOpen(false)} aria-hidden="true" />
+          <div className={`lifestyle-scrim${lifestyleSheet.leaving ? ' is-leaving' : ''}`} onClick={() => setLifestyleOpen(false)} aria-hidden="true" />
+          {/* The trade-off sentence at its foot prices the open destination
+              page when there is one (T391), else the catalogue's median. */}
           <LifestylePanel
             side={activeTab === 'map' ? 'right' : 'left'}
             choices={choices}
             setChoices={setChoices}
             onClose={() => setLifestyleOpen(false)}
             data={data}
+            destination={selectedDest || null}
+            leaving={lifestyleSheet.leaving}
           />
         </div>
       )}
@@ -1369,7 +1419,15 @@ function TravelApp() {
               handleLoadTrip(trip);
               goToTab('map'); // the loaded trip opens as a map detail panel
             }}
-            onOpenAuth={() => { setSavedTripsOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
+            /* Signing in from My trips keeps My trips open behind the modal
+               (T390-b), so the traveller is back on the shelf, not on the
+               tab under it, once they are in. */
+            onOpenAuth={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
+            /* The day cost of every saved place and plan, from the same
+               computeCosts() map Explore's cards print from (T390-a), and
+               friends' trips as one line pointing at Friends. */
+            costs={exploreIndices}
+            onOpenFriends={() => openAccountAt('friends')}
             /* An empty shelf offers the tab that fills it, so "nothing here
                yet" comes with somewhere to go. */
             onGoToTab={goToTab}
@@ -1419,6 +1477,9 @@ function TravelApp() {
             onOpenGuides={openGuides}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
+            /* For the read-only trip settings rows (T390-g, for T400). */
+            origin={choices.origin}
+            groupSize={choices.group_size}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
           />
         </div>

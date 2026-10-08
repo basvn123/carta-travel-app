@@ -49,7 +49,7 @@ export const fr = {
   'nav.map': 'Carte',
   'nav.trip': 'Planificateur de voyage',
   'nav.day': 'Planificateur de journée',
-  'nav.saved': 'Voyages enregistrés',
+  'nav.saved': 'Mes voyages',
   'nav.brandTitle': 'Carta : retour à l\'accueil',
   'nav.explore': 'Explorer',
   'nav.myTrips': 'Mes voyages',
@@ -5181,4 +5181,10 @@ export const fr = {
   "itin.costTotal": "Total pour {n} personnes",
   "itin.costDay": "Une journée pour {n} personnes, le total sur {d} jours",
   "itin.trackAria": "Les jours du voyage, une carte par jour. Les flèches avancent d'un jour.",
+  // T391 (shell V4): the Lifestyle dialog's foot.
+  "lifestyle.done": "Terminé",
+  "lifestyle.tradeLessIn": "{alt} à la place : {eur} de moins par nuit et par personne à {town}.",
+  "lifestyle.tradeMoreIn": "{alt} à la place : {eur} de plus par nuit et par personne à {town}.",
+  "lifestyle.tradeLessMedian": "{alt} à la place : {eur} de moins par nuit et par personne, la médiane sur {n} lieux.",
+  "lifestyle.tradeMoreMedian": "{alt} à la place : {eur} de plus par nuit et par personne, la médiane sur {n} lieux.",
 };

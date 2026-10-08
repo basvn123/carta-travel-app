@@ -261,9 +261,23 @@ const only = (s, key) => ['places', 'explore', 'trip', 'day'].every((k) => s[k] 
   await page.locator('.lifestyle-btn:visible').first().click();
   await page.waitForTimeout(900);
   check('phone: Lifestyle opens', await read().then((s) => s.lifestyle));
+  // T391 (shell V4, brief V4-6): on a phone Lifestyle is a bottom sheet over
+  // the bar, so the bar never covers its foot, and like every modal dialog
+  // the page behind (the bar included) takes no tap while it is up. This
+  // used to tap Destinations through it; now the sheet's Done closes it and
+  // the tab is pressed after, which is what a traveller does.
+  const navCovered = await page.evaluate(() => {
+    const n = document.querySelector('.bottom-nav-item');
+    const r = n.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return !n.contains(hit);
+  });
+  check('phone: the Lifestyle sheet stands over the bar', navCovered);
+  await page.locator('.ls-done').click();
+  await page.waitForTimeout(600);
   await item(0);
   await page.waitForTimeout(2000);
-  check('phone: Lifestyle closes on tapping Destinations',
+  check('phone: Lifestyle closes, then Destinations opens',
     await read().then((s) => !s.lifestyle && only(s, 'places')));
 
   await page.locator('.bottom-nav-plus').click();

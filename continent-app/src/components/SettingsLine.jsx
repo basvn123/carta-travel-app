@@ -2,6 +2,7 @@ import React, {
   createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState,
 } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { useSettledFigure } from '../lib/figureChange.js';
 import { OriginPicker } from './OriginPicker.jsx';
 import { DateField } from './DateField.jsx';
 import { Stepper } from './FilterControls.jsx';
@@ -109,6 +110,11 @@ function SettingsPop({ id, label, anchorRef, onClose, children }) {
 /** One part: a label over (or before) its value, one button. */
 function Part({ name, label, value, display, mono, onClick, expanded, popId, partRef, hasPopup = 'dialog' }) {
   const { t } = useI18n();
+  // A value that changes settles in place (T391, DIRECTION.md 2.3): one dip
+  // of its opacity, the box keeping its width; nothing moves that did not
+  // change, and nothing at all under reduced motion.
+  const valueRef = useRef(null);
+  useSettledFigure(valueRef, value);
   return (
     <button
       type="button"
@@ -121,7 +127,7 @@ function Part({ name, label, value, display, mono, onClick, expanded, popId, par
       aria-label={t('settings.changeAria', { label, value })}
     >
       <span className="settings-part-label" aria-hidden="true">{label}</span>
-      <span className={`settings-part-value${mono ? ' is-mono' : ''}`} aria-hidden="true">{display ?? value}</span>
+      <span ref={valueRef} className={`settings-part-value${mono ? ' is-mono' : ''}`} aria-hidden="true">{display ?? value}</span>
     </button>
   );
 }

@@ -240,7 +240,12 @@ export function persistState(state) {
   for (const key of OWN_KEYS) merged.delete(key);
   for (const [k, v] of own) merged.set(k, v);
   const ms = merged.toString();
-  const url = ms ? `${window.location.pathname}?${ms}` : window.location.pathname;
+  // A journey's address is its hash (#journey=<id>, lib/journeys.js): the
+  // week stays open across a reload, so this writer keeps that one hash
+  // rather than dropping it (T391, row T387-a). Every other hash is read once
+  // at startup and is meant to go.
+  const hash = /(?:^#|&)journey=/.test(window.location.hash || '') ? window.location.hash : '';
+  const url = (ms ? `${window.location.pathname}?${ms}` : window.location.pathname) + hash;
   try { window.history.replaceState(null, '', url); } catch { /* ignore */ }
   try { window.localStorage.setItem(STORAGE_KEY, qs); } catch { /* ignore */ }
 }

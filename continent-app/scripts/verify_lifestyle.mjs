@@ -75,20 +75,23 @@ try {
   await page.waitForTimeout(700);
 
   // ---- The door, on Explore ----
-  const exploreBtn = page.locator('.explore-side .lifestyle-btn');
-  if (!(await exploreBtn.count())) fail('Explore side panel has no lifestyle door');
-  const bed = await exploreBtn.locator('.lifestyle-btn-bed').innerText();
-  const vibe = await exploreBtn.locator('.lifestyle-btn-vibe').innerText();
-  console.log('explore door reads:', JSON.stringify(`${bed} / ${vibe}`));
-  if (!/Entire place/i.test(bed)) fail(`door shows "${bed}", expected the entire-place default`);
-  if (!/Easygoing/i.test(vibe)) fail(`door shows "${vibe}", expected the Easygoing default`);
-  // The door has to be louder than the page it sits on: the accent tint is
-  // the whole point of this pass, so a neutral ground here is a regression.
+  // T391: Explore v5 (T383) no longer draws a door in its side panel; its
+  // input row carries the LifestyleButton and the settings line under the
+  // header carries the Lifestyle part (T381). Either counts, the first
+  // visible one is used, and it must state both answers. This used to look
+  // for '.explore-side .lifestyle-btn' only.
+  const exploreBtn = page.locator('.explore-shell .lifestyle-btn:visible, .settings-part-lifestyle:visible').first();
+  if (!(await exploreBtn.count())) fail('Explore has no lifestyle door');
+  const doorText = (await exploreBtn.innerText()).replace(/\s+/g, ' ');
+  console.log('explore door reads:', JSON.stringify(doorText));
+  if (!/Entire place/i.test(doorText)) fail(`door shows "${doorText}", expected the entire-place default`);
+  if (!/Easygoing/i.test(doorText)) fail(`door shows "${doorText}", expected the Easygoing default`);
+  // T391 (shell V4; DIRECTION.md part 9, "no tint on the Lifestyle door";
+  // carta-design "Accent marks"): the door is secondary chrome in ink, so
+  // its ground must NOT be the accent tint. This asserted the tint before.
   const tint = await exploreBtn.evaluate((el) => getComputedStyle(el).backgroundColor);
-  const accentBg = await page.evaluate(() =>
-    getComputedStyle(document.documentElement).getPropertyValue('--accent-bg').trim());
-  console.log('door background:', tint, '| --accent-bg:', accentBg);
-  if (!/247,\s*220,\s*212/.test(tint)) fail(`door is not accent-tinted (${tint})`);
+  console.log('door background:', tint);
+  if (/247,\s*220,\s*212/.test(tint)) fail(`door is still accent-tinted (${tint})`);
 
   await exploreBtn.click();
   await page.waitForTimeout(700);
@@ -148,9 +151,11 @@ try {
   const custom = await page.locator('.lifestyle-panel .ls-note').last().innerText();
   console.log('custom note:', JSON.stringify(custom));
 
-  await page.locator('.panel-close').first().click();
-  await page.waitForTimeout(500);
-  const doorVibe = await exploreBtn.locator('.lifestyle-btn-vibe').innerText();
+  // T391: the panel's close is the shared close (.ls-close, CloseIcon in a
+  // --tap box); it was '.panel-close' with a letter x.
+  await page.locator('.lifestyle-panel .ls-close').first().click();
+  await page.waitForTimeout(700);
+  const doorVibe = (await exploreBtn.innerText()).replace(/\s+/g, ' ');
   if (!/Custom/i.test(doorVibe)) fail(`door reads "${doorVibe}" after hand-tuning, expected Custom`);
 
   // ---- The same door on Destinations ----
@@ -197,10 +202,12 @@ try {
   await phone.waitForTimeout(2600);
   await dismiss(phone);
   await phone.waitForTimeout(700);
-  const phoneBtn = phone.locator('.explore-chips .lifestyle-btn');
-  if (!(await phoneBtn.count())) fail('phone toolbar has no lifestyle door');
+  // T391: Explore v5's phone row and the settings line both carry a door
+  // (see the desktop note above); this looked for '.explore-chips' before.
+  const phoneBtn = phone.locator('.settings-part-lifestyle:visible, .explore-shell .lifestyle-btn:visible').first();
+  if (!(await phoneBtn.count())) fail('phone has no lifestyle door');
   // The word "Lifestyle" stands down on a phone so the answer gets the room.
-  const labelShown = await phoneBtn.locator('.lifestyle-btn-label')
+  const labelShown = await phoneBtn.locator('.lifestyle-btn-label, .settings-part-label').first()
     .evaluate((el) => getComputedStyle(el).display).catch(() => 'none');
   if (labelShown !== 'none') fail('the phone door still spends width on the word "Lifestyle"');
   await phoneBtn.click();

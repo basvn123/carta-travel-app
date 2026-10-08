@@ -49,7 +49,7 @@ export const nl = {
   'nav.map': 'Kaart',
   'nav.trip': 'Reisplanner',
   'nav.day': 'Dagplanner',
-  'nav.saved': 'Opgeslagen reizen',
+  'nav.saved': 'Mijn reizen',
   'nav.brandTitle': 'Carta: terug naar de startpagina',
   'nav.explore': 'Ontdek',
   'nav.myTrips': 'Mijn reizen',
@@ -5181,4 +5181,10 @@ export const nl = {
   "itin.costTotal": "Totaal voor {n} personen",
   "itin.costDay": "Een dag voor {n} personen, het totaal over {d} dagen",
   "itin.trackAria": "De dagen van de reis, één kaart per dag. De pijltjestoetsen gaan een dag verder.",
+  // T391 (shell V4): the Lifestyle dialog's foot.
+  "lifestyle.done": "Klaar",
+  "lifestyle.tradeLessIn": "{alt} in plaats daarvan: {eur} minder per nacht per persoon in {town}.",
+  "lifestyle.tradeMoreIn": "{alt} in plaats daarvan: {eur} meer per nacht per persoon in {town}.",
+  "lifestyle.tradeLessMedian": "{alt} in plaats daarvan: {eur} minder per nacht per persoon, de mediaan over {n} plaatsen.",
+  "lifestyle.tradeMoreMedian": "{alt} in plaats daarvan: {eur} meer per nacht per persoon, de mediaan over {n} plaatsen.",
 };

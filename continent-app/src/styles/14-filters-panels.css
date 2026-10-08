@@ -84,7 +84,7 @@
     border-radius: 0 0 14px 14px;
     border-top: none;
     box-shadow: 0 16px 34px rgba(26, 26, 26, 0.16);
-    animation: filter-tray-in .18s cubic-bezier(0.2, 0.9, 0.3, 1);
+    animation: filter-tray-in var(--dur-3) var(--ease-out);
   }/* Three labelled groups on a fixed grid (Budget | Quality over Where), not a
      flex wrap that re-orders itself at every window width. The panel is the
      surface, so the group cards drop their own chrome and lean on captions
@@ -264,7 +264,9 @@
   color: var(--ink);
   white-space: nowrap;
   box-shadow: 0 1px 2px rgba(26, 26, 26, 0.12), 0 2px 6px rgba(26, 26, 26, 0.06);
-  transition: transform .14s cubic-bezier(.2,.9,.3,1.2), box-shadow .14s, background .14s, color .14s, border-color .14s;
+  /* T391: the overshoot curve is retired (DIRECTION.md 2.1) and a shadow is
+     never animated; transform settles and the colours answer in --dur-1. */
+  transition: transform var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
   user-select: none;
 }
 
@@ -356,7 +358,7 @@
   z-index: 15;
   overflow-y: auto;
   transform: translateX(100%);
-  transition: transform .3s cubic-bezier(0.2, 0.9, 0.3, 1);
+  transition: transform var(--dur-3) var(--ease-out);
   box-shadow: var(--shadow-2);
 }
 .panel.open { transform: translateX(0); }
@@ -583,7 +585,7 @@
   color: var(--ink-soft);
   border-bottom: 2px solid transparent;
   transform: translateY(1px);
-  transition: color .15s, border-color .15s;
+  transition: color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 .tab:hover { color: var(--ink-soft); }
 .tab.active {
@@ -1224,7 +1226,7 @@
   color: var(--ink-soft);
   cursor: pointer;
   line-height: 1.4;
-  transition: all .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .mini-toggle:hover { border-color: var(--ink); color: var(--ink); }
 .mini-toggle.on {
@@ -1422,8 +1424,10 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.44);
-  animation: fsheet-scrim-in .2s ease-out;
+  /* The one scrim (T391, carta-design "Dialog family"): --ink at 28 percent,
+     no blur; it was 44 percent. */
+  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  animation: fsheet-scrim-in var(--dur-3) var(--ease-out);
 }
 
 .fsheet {
@@ -1433,10 +1437,11 @@
   max-width: 560px;
   max-height: 92dvh;
   background: var(--paper);
-  border-radius: 20px 20px 0 0;
-  box-shadow: 0 -8px 40px rgba(15, 23, 42, 0.22);
-  transition: transform .22s cubic-bezier(0.2, 0.9, 0.3, 1);
-  animation: fsheet-in .26s cubic-bezier(0.2, 0.9, 0.3, 1);
+  /* One radius and one shadow for the dialog family (T391). */
+  border-radius: 12px 12px 0 0;
+  box-shadow: var(--shadow-2);
+  transition: transform var(--dur-3) var(--ease-out);
+  animation: fsheet-in var(--dur-3) var(--ease-out);
   overflow: hidden;
 }
 
@@ -1461,9 +1466,10 @@
   width: auto;             /* the hook sets width/top/left/max-height inline */
   max-width: none;
   border: 1px solid var(--rule);
-  border-radius: 14px;
-  box-shadow: 0 18px 48px -22px rgba(15, 23, 42, 0.45), 0 2px 6px rgba(15, 23, 42, 0.06);
-  animation: fsheet-pop .16s ease-out;
+  /* A popover (T391): 10 px, --shadow-2, arriving in --dur-3. */
+  border-radius: 10px;
+  box-shadow: var(--shadow-2);
+  animation: fsheet-pop var(--dur-3) var(--ease-out);
 }
 @keyframes fsheet-pop {
   from { opacity: 0; transform: translateY(-6px); }
@@ -1517,7 +1523,7 @@
   margin-right: -8px;    /* optical: the glyph lines up with the body edge */
   border-radius: 50%;
   color: var(--ink-soft);
-  transition: background .15s, color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .fsheet-close:hover { background: var(--paper-dim); color: var(--ink); }
 
@@ -1786,7 +1792,7 @@
   gap: 32px;
   align-items: start;
   z-index: 18;
-  animation: slide-down 0.18s cubic-bezier(0.2, 0.9, 0.3, 1);
+  animation: slide-down var(--dur-3) var(--ease-out);
 }
 .more-panel.with-detail {
   right: var(--panel-w);
@@ -1854,7 +1860,7 @@
   border-radius: 999px;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: all .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
   margin-top: 8px;
 }
 .more-close:hover { border-color: var(--ink); color: var(--ink); }
@@ -2024,7 +2030,7 @@
   color: var(--ink-soft);
   cursor: pointer;
   line-height: 1.4;
-  transition: all .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
   font-weight: 600;
 }
 .mini-toggle:hover { border-color: var(--ink); color: var(--ink); }
@@ -2310,7 +2316,7 @@
   left: 0; right: 0; bottom: 0;
   z-index: 40;
   background: rgba(15, 23, 42, 0.28);
-  animation: lifestyle-scrim-in .16s ease-out;
+  animation: lifestyle-scrim-in var(--dur-3) var(--ease-out);
 }
 @keyframes lifestyle-scrim-in { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .lifestyle-scrim { animation: none; } }
@@ -2410,9 +2416,9 @@
   line-height: 1.25;
   text-align: center;
   color: var(--ink-soft);
-  transition: color .15s, background .15s, border-color .15s;
+  transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.ls-tile svg { flex: none; color: var(--ink-mute); transition: color .15s; }
+.ls-tile svg { flex: none; color: var(--ink-mute); transition: color var(--dur-1) var(--ease-out); }
 .ls-tile span {
   max-width: 100%;
   overflow: hidden;
@@ -2420,9 +2426,11 @@
 }
 .ls-tile:hover { color: var(--ink); border-color: var(--rule); }
 .ls-tile:hover svg { color: var(--ink-soft); }
+/* Selected is --ink-fill (T391, carta-design "Selected state"); the accent
+   is never a selection colour. */
 .ls-tile.on {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
   color: var(--on-fill);
 }
 .ls-tile.on svg { color: var(--on-fill); }
@@ -2438,9 +2446,9 @@
   gap: 6px;
   margin-top: 8px;
   padding: 9px 11px;
-  border: 1px solid var(--accent-soft);
+  border: 1px solid var(--rule-soft);
   border-radius: 10px;
-  background: var(--accent-bg);
+  background: var(--paper-dim);
 }
 .ls-grades-label {
   margin-right: 2px;
@@ -2452,16 +2460,16 @@
   padding: 5px 11px;
   border: 1px solid transparent;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--bg-card);
   font-family: inherit;
   font-size: 11.5px;
   font-weight: 600;
   color: var(--ink-soft);
   white-space: nowrap;
-  transition: background .15s, color .15s, border-color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.ls-grade:hover { color: var(--ink); border-color: var(--accent-soft); }
-.ls-grade.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+.ls-grade:hover { color: var(--ink); border-color: var(--rule); }
+.ls-grade.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
 .ls-grade:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* The honest small print, in sans and in one line. */
@@ -2488,11 +2496,11 @@
   font-size: 12.5px;
   font-weight: 600;
   color: var(--ink-soft);
-  transition: color .15s, border-color .15s;
+  transition: color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 .ls-tune-btn:hover { color: var(--ink); border-color: var(--rule); }
 .ls-tune-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.ls-tune-btn .ls-tune-chev { flex: none; color: var(--ink-mute); transition: transform .15s; }
+.ls-tune-btn .ls-tune-chev { flex: none; color: var(--ink-mute); transition: transform var(--dur-2) var(--ease-out); }
 .ls-tune-btn.open { color: var(--ink); }
 .ls-tune-btn.open .ls-tune-chev { transform: rotate(180deg); }
 @media (prefers-reduced-motion: reduce) {
@@ -2617,7 +2625,7 @@
   background: var(--paper);
   cursor: pointer;
   font-family: inherit;
-  transition: all .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .star-btn:hover { border-color: var(--ink-soft); }
 .star-btn.on {
@@ -2656,7 +2664,8 @@
   padding: 14px 16px;
   background: var(--paper-dim);
   border-radius: 6px;
-  border-left: 3px solid var(--accent);
+  /* T391: the accent side stripe went (rule "Accent marks": an accent mark
+     means "this one acts"); the tinted box alone sets the note apart. */
 }
 
 .accom-preview {

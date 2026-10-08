@@ -209,6 +209,9 @@ export function pathToLegacyHash(parsed) {
     case 'region': return q({ region: parsed.id });
     case 'trip': case 'receipt': return q({ itin: parsed.id });
     case 'guide': return q({ guide: parsed.id });
+    // A week from the journeys library (T387 reads #journey=; T391 maps the
+    // path to it, so /journeys/<id> opens the week).
+    case 'journey': return q({ journey: parsed.id });
     default: return null; // dest needs a slug to id table; see docs/SEO.md
   }
 }

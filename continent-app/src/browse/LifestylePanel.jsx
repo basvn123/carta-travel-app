@@ -3,11 +3,13 @@ import { DEFAULT_LIFESTYLE, offeredStayTiers } from '../lib/runtime_pricing.js';
 import {
   BedIcon, BunkIcon, HomeIcon, HotelIcon,
   BackpackIcon, LeafIcon, DiningIcon, CoffeeIcon, MusicIcon, FriendsIcon,
-  ChevronDownIcon,
+  ChevronDownIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { HOTEL_GRADES, sleepGroupOf, offeredSleepGroups, tierForGroup } from '../lib/sleepGroups.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { computeCosts, eurDay } from '../lib/costIndex.js';
+import { useSettledFigure } from '../lib/figureChange.js';
 
 /**
  * Lifestyle settings panel.
@@ -19,8 +21,12 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
  * covers almost everybody and six steppers on open was most of the panel.
  *
  * Tiles borrow the Destinations category card exactly: a quiet --paper-dim
- * tile until it is on, then the full accent. That is the one way "selected"
- * reads on the browse tabs, and the panel is the same product.
+ * tile until it is on, then --ink-fill (T391, carta-design "Selected state";
+ * it was the full accent, which is never a selection colour).
+ *
+ * Its foot is the instrument (T391, brief V4-6): one sentence that says what
+ * the next way to sleep would change, with the figure, computed from the same
+ * computeCosts() map the cards print from, and the dialog's one primary.
  *
  * The stay tier is the same `choices.stay_tier` the filter bar carries, so
  * every priced surface (map labels, receipt, compare, trip planner) follows
@@ -115,7 +121,79 @@ export function matchProfile(ls) {
   return null;
 }
 
-export function LifestylePanel({ choices, setChoices, onClose, data, side = 'left' }) {
+/** The median of a list of numbers, or null for an empty list. */
+function median(xs) {
+  if (!xs.length) return null;
+  const a = [...xs].sort((x, y) => x - y);
+  const m = a.length >> 1;
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+}
+
+/**
+ * The trade-off the panel's foot states (carta-design "Lifestyle control":
+ * one sentence with the figure). The alternative is the next cheaper way to
+ * sleep this dataset offers, or the next dearer one when the traveller is
+ * already on the cheapest. For an open destination the figure is that
+ * town's own bed at the two tiers; otherwise it is the median of the same
+ * difference over every place where both tiers were measured for itself
+ * (no tier that fell back to the entire place, no bed borrowed from the
+ * country). Per person per night, through eurDay() like the cards. Null
+ * when the data cannot carry a sentence.
+ */
+function useTradeOff(data, choices, sleepTiles, destination) {
+  const stayTier = choices.stay_tier || 'home';
+  const groupSize = choices.group_size;
+  const group = sleepGroupOf(stayTier);
+  const idx = sleepTiles.findIndex((g) => g.key === group);
+  const alt = idx < 0 ? null : (sleepTiles[idx - 1] || sleepTiles[idx + 1] || null);
+  const altTier = alt ? tierForGroup(alt, stayTier) : null;
+  const destId = destination?.id || null;
+  return React.useMemo(() => {
+    if (!alt || !altTier || !data?.destinations) return null;
+    const pick = destId && data.destinations[destId]
+      ? { [destId]: data.destinations[destId] }
+      : data.destinations;
+    const base = { stay_tier: stayTier, group_size: groupSize };
+    const cur = computeCosts(pick, base);
+    const nxt = computeCosts(pick, { ...base, stay_tier: altTier });
+    const deltas = [];
+    for (const [id, a] of cur) {
+      const b = nxt.get(id);
+      if (!b || a.stayEur == null || b.stayEur == null) continue;
+      if (a.tierFallback || b.tierFallback) continue;
+      if (a.stayLevel !== 'city' || b.stayLevel !== 'city') continue;
+      deltas.push(b.stayEur - a.stayEur);
+    }
+    const d = destId ? (deltas[0] ?? null) : median(deltas);
+    if (d == null || Math.round(Math.abs(d)) < 1) return null;
+    return {
+      labelKey: alt.labelKey,
+      eur: eurDay(Math.abs(d)),
+      less: d < 0,
+      town: destId ? (destination.city || '') : '',
+      n: deltas.length,
+    };
+  }, [alt, altTier, data, destId, destination, stayTier, groupSize]);
+}
+
+/** The foot's sentence, the figure cut back in so it sits in mono. */
+function TradeOff({ trade }) {
+  const { t, lang } = useI18n();
+  const figRef = React.useRef(null);
+  useSettledFigure(figRef, trade ? `${trade.labelKey}${trade.eur}${trade.less}` : '');
+  if (!trade) return null;
+  const SLOT = '\u0001';
+  const key = `lifestyle.trade${trade.less ? 'Less' : 'More'}${trade.town ? 'In' : 'Median'}`;
+  const n = new Intl.NumberFormat(lang || 'en').format(trade.n);
+  const [before, after = ''] = t(key, { alt: t(trade.labelKey), eur: SLOT, town: trade.town, n }).split(SLOT);
+  return (
+    <p className="ls-trade" aria-live="polite">
+      {before}<span className="ls-trade-eur" ref={figRef}>{trade.eur}</span>{after}
+    </p>
+  );
+}
+
+export function LifestylePanel({ choices, setChoices, onClose, data, side = 'left', destination = null, leaving = false }) {
   const { t } = useI18n();
   // A dialog for the keyboard: focus moves in to the close button on open,
   // Tab cycles inside, Escape closes, and focus goes back to the Lifestyle
@@ -165,16 +243,56 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
 
   const maxFor = (key) => PERIOD_FIELDS.find((f) => f.key === key).max[cadence];
 
+  const trade = useTradeOff(data, choices, sleepTiles, destination);
+
+  // On a phone the panel is a bottom sheet; its grab handle swipes it down,
+  // a shortcut for the close and Done buttons, never the only way (T391).
+  const drag = React.useRef({ id: null, y0: 0 });
+  const onGrabDown = (e) => {
+    if (e.pointerType === 'mouse') return;
+    drag.current = { id: e.pointerId, y0: e.clientY };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const onGrabMove = (e) => {
+    if (drag.current.id !== e.pointerId || !panelRef.current) return;
+    const dy = Math.max(0, e.clientY - drag.current.y0);
+    panelRef.current.style.transition = 'none';
+    panelRef.current.style.transform = `translateY(${dy}px)`;
+  };
+  const onGrabUp = (e) => {
+    if (drag.current.id !== e.pointerId) return;
+    const dy = Math.max(0, e.clientY - drag.current.y0);
+    drag.current = { id: null, y0: 0 };
+    if (panelRef.current) {
+      panelRef.current.style.transition = '';
+      panelRef.current.style.transform = '';
+    }
+    if (dy > 90) onClose();
+  };
+
   return (
     <div
       ref={panelRef}
-      className={`accom-panel lifestyle-panel open${side === 'right' ? ' from-right' : ''}`}
+      className={`accom-panel lifestyle-panel open${side === 'right' ? ' from-right' : ''}${leaving ? ' is-leaving' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="lifestyle-title"
     >
-      <button ref={closeRef} className="panel-close" onClick={onClose} aria-label={t('lifestyle.close')}>x</button>
+      <span
+        className="ls-grab"
+        aria-hidden="true"
+        onPointerDown={onGrabDown}
+        onPointerMove={onGrabMove}
+        onPointerUp={onGrabUp}
+        onPointerCancel={onGrabUp}
+      />
+      <button ref={closeRef} type="button" className="shell-close ls-close" onClick={onClose} aria-label={t('lifestyle.close')}>
+        <CloseIcon size={16} />
+      </button>
 
+      {/* The choices scroll; the grab handle, the close and the foot stay
+          where the thumb and the eye left them (T391). */}
+      <div className="ls-body">
       <div className="panel-header">
         <div className="panel-tag">{t('lifestyle.tag')}</div>
         <h2 className="panel-city" id="lifestyle-title">{t('lifestyle.title')}</h2>
@@ -277,6 +395,15 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
               onChange={(v) => setLs({ club_nights_per_week: v })} min={0} max={maxFor('club_nights_per_week')} />
           </div>
         )}
+      </div>
+      </div>
+
+      {/* The instrument's foot: what the next way to sleep would change,
+          then the one primary. Sticky, so it stays in view while the
+          choices above it scroll. */}
+      <div className="ls-foot">
+        <TradeOff trade={trade} />
+        <button type="button" className="ls-done" onClick={onClose}>{t('lifestyle.done')}</button>
       </div>
     </div>
   );

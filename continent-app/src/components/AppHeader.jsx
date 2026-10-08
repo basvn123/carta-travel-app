@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { useNavMarker } from '../lib/motion.js';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
@@ -121,7 +122,13 @@ export function AppHeader({
   savedCount = 0, planInProgress = false,
   children,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const navRef = useRef(null);
+  const markerRef = useRef(null);
+  const activeKey = savedOpen && !accountOpen ? 'saved' : (accountOpen ? '' : activeTab);
+  useNavMarker(navRef, markerRef, `${activeKey}:${lang}:${savedCount}:${planInProgress}`, {
+    itemSelector: '.header-nav-item.active',
+  });
   // The pass chip is chrome, not a gate, so it goes straight to the price
   // table. A caller may still override where it points; nothing does today.
   const paywall = usePaywall();
@@ -148,7 +155,8 @@ export function AppHeader({
           A page laid over a tab (My trips, Account) takes the active state
           away from it: the bar marks what is actually on screen, which is the
           same rule BottomNav follows. */}
-      <nav className="header-nav" aria-label={t('nav.sectionsLabel')}>
+      <nav className="header-nav" ref={navRef} aria-label={t('nav.sectionsLabel')}>
+        <span className="nav-marker" ref={markerRef} aria-hidden="true" />
         {NAV_ITEMS.map(({ key, labelKey, Icon }) => {
           const on = activeTab === key && !savedOpen && !accountOpen;
           return (
