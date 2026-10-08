@@ -495,6 +495,7 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/auth/InstallHint.jsx` | account | renders |
 | `src/auth/ModerationNotice.jsx` | account | renders |
 | `src/auth/PastTripForm.jsx` | account | renders |
+| `src/auth/PasswordField.jsx` | account | renders |
 | `src/auth/ResetPasswordScreen.jsx` | account | renders |
 | `src/auth/SavedTripsPanel.jsx` | account | renders |
 | `src/auth/SharedTripView.jsx` | account | renders |
