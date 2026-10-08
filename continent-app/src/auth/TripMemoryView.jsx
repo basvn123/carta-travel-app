@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   StarIcon, PersonIcon, BedIcon, MapPinIcon, TrainIcon, BusIcon, CarIcon, FerryIcon,
   BikeIcon, BootIcon, PencilIcon,
@@ -9,6 +9,14 @@ import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { crewLabel } from './tripCrew.js';
 import { SPEND_CATS, spendSummary, spendPerPerson } from './pastTripMemory.js';
+import { CostBar } from '../browse/CostBar.jsx';
+import { DayTrack } from '../browse/DayTrack.jsx';
+
+// The shared CostBar and DayTrack read their words from the journey page's
+// keys; the record speaks its own, so each gets a t that swaps those keys for
+// this surface's and passes every other key through (T400).
+const BAR_KEYS = { 'journey.barLabel': 'saved.pastBarLabel', 'journey.barHint': 'saved.pastBarHint' };
+const TRACK_KEYS = { 'journey.trackPos': 'saved.pastPhotoPos' };
 
 /**
  * TripMemoryView, a logged trip read back.
@@ -41,6 +49,8 @@ function Leg({ mode, t }) {
 
 export function TripMemoryView({ memory, onEdit }) {
   const { t, lang } = useI18n();
+  const barT = useMemo(() => (k, p) => t(BAR_KEYS[k] || k, p), [t]);
+  const trackT = useMemo(() => (k, p) => t(TRACK_KEYS[k] || k, p), [t]);
   if (!memory) return null;
 
   const places = memory.places || [];
@@ -59,19 +69,37 @@ export function TripMemoryView({ memory, onEdit }) {
   const heads = adults + children;
   const spend = spendSummary(memory);
   const perHead = spendPerPerson(memory);
+  const money = (n) => (spend.currency === 'EUR' ? eur(n) : `${n.toFixed(2)} ${spend.currency}`);
+  // The cost bar (carta-design "The cost bar", brief V4-4): one segment per
+  // receipt line, in receipt order, sized by the amount, in the ink ramp. It
+  // sits above the lines and never replaces them; the lines keep every figure.
+  const barSegments = SPEND_CATS.filter((c) => spend.byCat[c] > 0).map((c) => ({
+    slot: c,
+    weight: spend.byCat[c],
+    label: t(`saved.pastSpend_${c}`),
+    figure: money(spend.byCat[c]),
+  }));
+  const frame = (p) => (
+    <figure className="memo-photo" key={p.id}>
+      <img src={p.src} alt={p.caption || ''} loading="lazy" />
+      {p.caption && <figcaption>{p.caption}</figcaption>}
+    </figure>
+  );
 
   return (
     <div className="memo">
-      {photos.length > 0 && (
-        <div className="memo-photos">
-          {photos.map((p) => (
-            <figure className="memo-photo" key={p.id}>
-              <img src={p.src} alt={p.caption || ''} loading="lazy" />
-              {p.caption && <figcaption>{p.caption}</figcaption>}
-            </figure>
-          ))}
+      {/* Two or more photographs run as one track on the day track's
+          mechanics (carta-design "Photo track", brief V4-5): Previous, Next,
+          "Photo 2 of 5" in mono, arrow keys, snap, no autoplay. One stays a
+          single figure. */}
+      {photos.length > 1 && (
+        <div className="memo-photos is-track">
+          <DayTrack label={t('saved.pastPhotosLabel')} t={trackT}>
+            {photos.map(frame)}
+          </DayTrack>
         </div>
       )}
+      {photos.length === 1 && <div className="memo-photos">{frame(photos[0])}</div>}
 
       {(memory.rating != null || memory.story?.trim()) && (
         <div className="memo-block">
@@ -145,10 +173,11 @@ export function TripMemoryView({ memory, onEdit }) {
         <div className="memo-block">
           <span className="memo-title">{t('saved.pastCost')}</span>
           <div className="memo-receipt">
+            <CostBar t={barT} segments={barSegments} />
             {SPEND_CATS.filter((c) => spend.byCat[c]).map((c) => (
               <div className="memo-recline" key={c}>
                 <span>{t(`saved.pastSpend_${c}`)}</span>
-                <b>{spend.currency === 'EUR' ? eur(spend.byCat[c]) : `${spend.byCat[c].toFixed(2)} ${spend.currency}`}</b>
+                <b>{money(spend.byCat[c])}</b>
               </div>
             ))}
             <div className="memo-recline is-total">

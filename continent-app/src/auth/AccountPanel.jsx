@@ -27,6 +27,57 @@ import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
 import { sendFeedback } from '../lib/feedback.js';
 import { accuracyVars } from '../lib/accuracy.js';
+import { useSettledFigure } from '../lib/figureChange.js';
+
+/**
+ * What the pass holds today, as figures and one thin bar (T400, brief V4-9).
+ *
+ * The status sentence is translated whole and its numbers cut back in, so
+ * they sit in mono while the words stay in the UI face. Under it, an 8 px bar
+ * in the ink ramp fills to the plans left over the period's cap (carta-design
+ * "Data drawings", the thin bar): the figure is always beside it, so the bar
+ * reads the same if removed. No tick, no green: a balance is not good news.
+ * A balance that changes (a plan spent in another tab) settles in place.
+ */
+const FIG_A = '\u0001';
+const FIG_B = '\u0002';
+function PassBalance({ entitlement, t }) {
+  const ref = useRef(null);
+  const left = Number(entitlement.plansLeft) || 0;
+  const cap = Number(entitlement.plansCap) || 0;
+  const free = entitlement.tier === 'free';
+  const days = daysLeft(entitlement.expiresAt) ?? 0;
+  useSettledFigure(ref, `${left}/${cap}/${days}`);
+  const text = free
+    ? t('pass.statusFree', { left: FIG_A, cap: FIG_B })
+    : t(days === 1 ? 'pass.statusPaid1' : 'pass.statusPaid', { days: FIG_A, left: FIG_B });
+  const a = free ? left : days;
+  const b = free ? cap : left;
+  const share = cap > 0 ? Math.max(0, Math.min(1, left / cap)) : 0;
+  // The sentence cut at its two figure slots, kept in order.
+  const parts = [];
+  let buf = '';
+  for (const ch of String(text)) {
+    if (ch === FIG_A || ch === FIG_B) { parts.push(buf, ch); buf = ''; } else buf += ch;
+  }
+  parts.push(buf);
+  return (
+    <>
+      <span className="account-pass-status" ref={ref}>
+        {parts.map((seg, i) => {
+          if (seg === FIG_A) return <span key={i} className="account-pass-fig">{a}</span>;
+          if (seg === FIG_B) return <span key={i} className="account-pass-fig">{b}</span>;
+          return seg;
+        })}
+      </span>
+      {cap > 0 && (
+        <span className="account-pass-bar" aria-hidden="true">
+          <span className="account-pass-bar-fill" style={{ transform: `scaleX(${share})` }} />
+        </span>
+      )}
+    </>
+  );
+}
 
 // Account hub. The panel is a hub with four spokes rather than one long
 // scroll: the hub answers "who am I, what do I hold, where do I get help",
@@ -854,14 +905,7 @@ export function AccountPanel({
                 <div className="account-pass-head">
                   <b className="account-pass-tier">{t(tier.labelKey)}</b>
                   {entitlement.known ? (
-                    <span className="account-pass-status">
-                      {entitlement.tier === 'free'
-                        ? t('pass.statusFree', { left: entitlement.plansLeft, cap: entitlement.plansCap })
-                        : t((daysLeft(entitlement.expiresAt) ?? 0) === 1 ? 'pass.statusPaid1' : 'pass.statusPaid', {
-                          days: daysLeft(entitlement.expiresAt) ?? 0,
-                          left: entitlement.plansLeft,
-                        })}
-                    </span>
+                    <PassBalance entitlement={entitlement} t={t} />
                   ) : (
                     <span className="account-pass-status is-loading" aria-hidden="true" />
                   )}

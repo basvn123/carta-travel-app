@@ -183,6 +183,47 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
           })}
         </div>
 
+        {/* The three plans side by side, one row per allowance (carta-design
+            "Comparison table", T400, brief V4-6): plans as columns, figures in
+            mono from TIERS, the header row sticky, and on a phone the table
+            scrolls sideways inside itself with two plans in view. The
+            recommended plan is marked only by its card's border above. */}
+        <div className="pass-compare-wrap" role="region" aria-label={t('pass.compareTitle')} tabIndex={0}>
+          <table className="pass-compare">
+            <caption className="sr-only">{t('pass.compareTitle')}</caption>
+            <thead>
+              <tr>
+                <td />
+                {TIER_ORDER.map((id) => <th key={id} scope="col">{t(TIERS[id].labelKey)}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">{t('pass.comparePrice')}</th>
+                {TIER_ORDER.map((id) => <td key={id} className="is-fig">{formatPrice(TIERS[id].priceCents, locale)}</td>)}
+              </tr>
+              <tr>
+                <th scope="row">{t('pass.comparePlans')}</th>
+                {TIER_ORDER.map((id) => <td key={id} className="is-fig">{TIERS[id].aiPlans}</td>)}
+              </tr>
+              <tr>
+                <th scope="row">{t('pass.compareSearches')}</th>
+                {TIER_ORDER.map((id) => <td key={id} className="is-fig">{TIERS[id].grounded}</td>)}
+              </tr>
+              <tr>
+                <th scope="row">{t('pass.compareLasts')}</th>
+                {TIER_ORDER.map((id) => (
+                  <td key={id} className={TIERS[id].periodDays ? 'is-fig' : ''}>
+                    {TIERS[id].periodDays
+                      ? t('pass.compareDays', { n: TIERS[id].periodDays })
+                      : t('pass.compareForever')}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
         {failCode && (
           <p className="ai-plan-note ai-plan-note-warn">{t(FAIL_KEY[failCode] || 'pass.errGeneric')}</p>
         )}

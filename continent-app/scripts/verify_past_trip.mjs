@@ -204,7 +204,10 @@ const run = async () => {
   else {
     const text = await cards.first().innerText();
     if (!/Salzburg/.test(text)) fail(`saved card does not name its cities: ${text}`);
-    if (!/Visited/.test(text)) fail(`saved card is not marked visited: ${text}`);
+    // The small "Visited" label went with the caption band (T400): the card
+    // sits on the Visited tab and carries its dates in mono, so the check
+    // asks for the dates.
+    if (!(await cards.first().locator('.uptrip-dates').count())) fail(`saved card carries no dates: ${text}`);
     else ok(`card reads: ${text.replace(/\n/g, ' | ')}`);
   }
   // The cover is an img element inside .uptrip-photo (ShotPhoto), not a
@@ -221,13 +224,20 @@ const run = async () => {
   else ok('record map is there');
 
   // ── The card carries what was entered, and opens the trip back up ──
-  const footer = page.locator('.saved-card-footer').first();
-  const footerText = await footer.innerText().catch(() => '');
+  // T400 (row T390-f): the summary reads in the card's caption band; the
+  // footer button that repeated the card's own tap went, so the card opens it.
+  const summary = page.locator('.uptrip-card.is-visited .uptrip-summary').first();
+  const footerText = await summary.innerText().catch(() => '');
   if (!/8\/10/.test(footerText) || !/640/.test(footerText)) {
-    fail(`card footer does not summarise the memory: "${footerText}"`);
-  } else ok(`card footer reads: ${footerText.replace(/\n/g, ' ')}`);
-  await footer.click();
+    fail(`card does not summarise the memory: "${footerText}"`);
+  } else ok(`card summary reads: ${footerText.replace(/\n/g, ' ')}`);
+  await page.locator('.uptrip-card.is-visited .uptrip-open').first().click();
   await page.locator('.memo').waitFor({ timeout: 5000 });
+  // The receipt carries the cost bar above its lines (T400, brief V4-4).
+  const segs = await page.locator('.memo .costbar-seg').count();
+  const lines = await page.locator('.memo .memo-recline:not(.is-total):not(.is-each)').count();
+  if (segs < 2 || segs !== lines) fail(`cost bar has ${segs} segments for ${lines} receipt lines`);
+  else ok(`cost bar: ${segs} segments, one per receipt line`);
   const memo = await page.locator('.memo').innerText();
   for (const [what, re] of [
     ['the story', /schnitzel/i],

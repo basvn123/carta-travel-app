@@ -152,14 +152,17 @@ try {
   await full.waitForTimeout(700);
   await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-planned-full.png` });
 
-  // The card menu still opens, and Remove still asks first.
+  // The card menu still opens. Remove runs at once and offers Undo in the
+  // bottom slot for six seconds (T400: carta-design "Undo, not confirm"
+  // replaced the inline Keep or Remove this step used to assert).
   await full.locator('.saved-card .saved-card-more').first().click();
   await full.locator('.saved-card-pop').waitFor({ timeout: 4000 });
   await full.locator('.saved-card-pop-item.danger').click();
-  await full.locator('.saved-card-confirm').waitFor({ timeout: 4000 });
+  await full.locator('.undo-toast').waitFor({ timeout: 4000 });
+  if (await full.locator('.saved-card .saved-card-title').count()) fail('Remove left the day plan on the list');
   await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-confirm.png` });
-  await full.locator('.saved-card-confirm-keep').click();
-  if ((await full.locator('.saved-card .saved-card-title').count()) !== 1) fail('"Keep" did not put the card back');
+  await full.locator('.undo-toast-undo').click();
+  if ((await full.locator('.saved-card .saved-card-title').count()) !== 1) fail('"Undo" did not put the card back');
 
   // Visited tab: the finished Bruges day plan became a journey card, and the
   // ledger adds it up: 1 European country out of the whole flag catalogue.
@@ -221,16 +224,25 @@ try {
   await mock.goto(`${BASE}/?savedmock`);
   await enterApp(mock);
   await openSaved(mock);
+  // T400 (brief V4-2): the seam holds two trips ahead; the next one is the
+  // focal card and the later one a row, so the checks read the focal card.
   const upCards = await mock.locator('.uptrip-card:not(.is-foreign)').count();
-  if (upCards !== 1) fail(`expected 1 upcoming trip card, got ${upCards}`);
-  const upTitle = await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-title').innerText();
-  const upSub = await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-sub').innerText().catch(() => '');
+  if (upCards !== 2) fail(`expected 2 upcoming trip cards, got ${upCards}`);
+  if ((await mock.locator('.uptrip-card.is-focal').count()) !== 1) fail('the next trip is not the one focal card');
+  if ((await mock.locator('.uptrip-card.is-row').count()) !== 1) fail('the later trip is not drawn as a row');
+  const upTitle = await mock.locator('.uptrip-card.is-focal .uptrip-title').innerText();
+  const upSub = await mock.locator('.uptrip-card.is-focal .uptrip-sub').innerText().catch(() => '');
   if (!/Portugal/.test(upTitle)) fail(`upcoming card should headline the country, got "${upTitle}"`);
   if (!/Lisbon.*Porto/.test(upSub)) fail(`upcoming card cities line unexpected: "${upSub}"`);
-  const chip = await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-when').innerText();
-  if (!/In \d+ days/.test(chip)) fail(`countdown chip unexpected: "${chip}"`);
-  if (!(await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-flag').count())) fail('upcoming card is missing its corner flag badge');
-  if (!(await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-datelabel').count())) fail('upcoming card is missing its Dates label');
+  const chip = await mock.locator('.uptrip-card.is-focal .uptrip-when').innerText();
+  if (!/In \d+ days/.test(chip)) fail(`countdown unexpected: "${chip}"`);
+  if (!(await mock.locator('.uptrip-card.is-focal .uptrip-flag').count())) fail('upcoming card is missing its corner flag badge');
+  // The "Dates" label went with the caption band (T400): the dates read in
+  // mono beside the countdown, so the check asks for the dates themselves.
+  if (!(await mock.locator('.uptrip-card.is-focal .uptrip-dates').count())) fail('upcoming card is missing its dates');
+  // Caption band (T400, brief V4-1): no words on any photograph.
+  const onPhoto = await mock.locator('.uptrip-photo, .fav-card-photo').evaluateAll((els) => els.filter((e) => e.innerText.trim()).length);
+  if (onPhoto) fail(`${onPhoto} photograph(s) still carry text`);
   await mock.waitForTimeout(900);
   await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-planned.png` });
 
@@ -343,11 +355,13 @@ try {
   if ((await mock.locator('.fav-card-savedon').count()) !== 3) fail('favorite cards are missing their saved dates');
   await mock.waitForTimeout(600);
   await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-favorites.png` });
-  // Letting a favorite go still asks first, in place.
+  // Letting a favorite go runs at once and Undo brings it back (T400:
+  // carta-design "Undo, not confirm" replaced the in-place Keep or Remove).
   await mock.locator('.fav-card-mark').first().click();
-  await mock.locator('.fav-card-ask').waitFor({ timeout: 4000 });
-  await mock.locator('.saved-card-confirm-keep').first().click();
-  if ((await mock.locator('.fav-card').count()) !== 3) fail('"Keep" removed the favorite anyway');
+  await mock.locator('.undo-toast').waitFor({ timeout: 4000 });
+  if ((await mock.locator('.fav-card').count()) !== 2) fail('the bookmark did not let the favorite go');
+  await mock.locator('.undo-toast-undo').click();
+  if ((await mock.locator('.fav-card').count()) !== 3) fail('"Undo" did not bring the favorite back');
 
   // Mock seam, mobile width, all three tabs, no sideways scroll.
   const mockMob = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });

@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore, loadTripExtras, persistTripExtras } from '../planner/dayPlanStore.js';
-import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon, LinkIcon, PersonIcon, ExpandIcon, ShrinkIcon } from '../components/Icons.jsx';
+import { MapPinIcon, RouteIcon, ListDayIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon, LinkIcon, PersonIcon, ExpandIcon, ShrinkIcon, CloseIcon } from '../components/Icons.jsx';
 import { PastTripForm } from './PastTripForm.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import {
@@ -29,6 +29,7 @@ import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
 import { FAV_KIND_LABEL, parseFavKey } from '../lib/favorites.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
+import { useSettledFigure } from '../lib/figureChange.js';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { InstallHint } from './InstallHint.jsx';
 
@@ -91,6 +92,9 @@ const MOCK_PLANS = [
   { id: 'mp2', label: 'Autumn in Flanders', cities: ['Bruges'], countries: ['Belgium'], start_date: addDaysIso(-40), end_date: addDaysIso(-35), destination_ids: ['gem:bruges'] },
   { id: 'mp3', label: null, cities: ['Salzburg'], countries: ['Austria'], start_date: addDaysIso(-11), end_date: addDaysIso(-9), destination_ids: ['SZG'] },
   { id: 'mp4', label: null, cities: ['Munich'], countries: ['Germany'], start_date: addDaysIso(-9), end_date: addDaysIso(-7), destination_ids: ['MUC'] },
+  // A second trip ahead, so the seam draws the focal card AND a row (T400,
+  // brief V4-2): the first upcoming plan is the focal card, every later one a row.
+  { id: 'mp5', label: null, cities: ['Ljubljana'], countries: ['Slovenia'], start_date: addDaysIso(75), end_date: addDaysIso(79), destination_ids: [] },
 ];
 
 function daysUntil(dateStr, todayIso) {
@@ -155,9 +159,31 @@ function SavedEmpty({ text, cta, onCta, secondary = false }) {
   );
 }
 
+/**
+ * The Undo toast (carta-design "Undo, not confirm" and "Bottom slot", T400).
+ * It is portalled into the shell's one bottom slot, so it stacks above the
+ * bottom nav with every other transient message instead of pinning itself to
+ * the window; where the slot is missing (a harness mounting the panel alone)
+ * it renders in place. "Undo" is a secondary; the close ends the hold at once.
+ */
+function UndoToast({ label, onUndo, onClose }) {
+  const { t } = useI18n();
+  const node = (
+    <div className="undo-toast" role="status">
+      <span className="undo-toast-text">{t('saved.undoRemoved', { name: label })}</span>
+      <button type="button" className="undo-toast-undo" onClick={onUndo}>{t('saved.undo')}</button>
+      <button type="button" className="undo-toast-close" onClick={onClose} aria-label={t('a11y.close')} title={t('a11y.close')}>
+        <CloseIcon size={16} />
+      </button>
+    </div>
+  );
+  const slot = typeof document !== 'undefined' ? document.querySelector('.bottom-slot') : null;
+  return slot ? createPortal(node, slot) : node;
+}
+
 /** The shared "more" affordance: one quiet button, a popover with the card's
- *  secondary actions, and Remove always last, gated behind the caller's
- *  confirm-in-place state so a destructive tap never fires on the first try. */
+ *  secondary actions, and Remove always last, in --danger. Remove runs at once
+ *  and the panel offers Undo for six seconds (T400). */
 function CardMenu({ actions = [], onAskRemove, removeLabel }) {
   const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -219,19 +245,6 @@ function CardMenu({ actions = [], onAskRemove, removeLabel }) {
   );
 }
 
-/** In-place removal question: the card becomes the dialog, the safe answer
- *  nearest the tap. Shared by every card shape in the panel. */
-function ConfirmRow({ name, onKeep, onRemove, label }) {
-  const { t } = useI18n();
-  return (
-    <div className="saved-card saved-card-confirm" role="alertdialog" aria-label={label}>
-      <span className="saved-card-confirm-text">{t('saved.confirmRemove', { name })}</span>
-      <button className="saved-card-confirm-keep" onClick={onKeep}>{t('saved.keep')}</button>
-      <button className="saved-card-confirm-go" onClick={onRemove}>{t('saved.remove')}</button>
-    </div>
-  );
-}
-
 /**
  * What a day costs one person at the traveller's Lifestyle, for a saved place
  * or plan (carta-design "Cost on cards", brief V3-3, T390).
@@ -246,20 +259,35 @@ function ConfirmRow({ name, onKeep, onRemove, label }) {
  * the town) carries the word "national". No costs map, or no figure for any
  * of the ids, renders nothing rather than a placeholder that pretends.
  */
+// A sentence is translated whole and its figure cut back in, so the figure
+// can sit in mono while the words around it stay in the UI face.
+const SLOT = '\u0001';
+// How long a removal is held behind its Undo toast (carta-design "Undo, not
+// confirm": six seconds).
+const UNDO_MS = 6000;
+function splitSlot(text) {
+  const [before, after = ''] = String(text).split(SLOT);
+  return [before, after];
+}
+
 function SavedCost({ costs, ids }) {
   const { t } = useI18n();
-  if (!costs || !ids?.length) return null;
-  const rows = orderedUnique(ids).map((id) => costs.get(id)).filter((c) => c && c.dayEur != null);
-  if (!rows.length) return null;
-  const pick = rows.reduce((a, b) => (b.dayEur < a.dayEur ? b : a));
+  const eurRef = useRef(null);
+  const rows = (costs && ids?.length)
+    ? orderedUnique(ids).map((id) => costs.get(id)).filter((c) => c && c.dayEur != null)
+    : [];
+  const pick = rows.length ? rows.reduce((a, b) => (b.dayEur < a.dayEur ? b : a)) : null;
+  const shown = pick ? eurDay(pick.dayEur) : '';
+  // A Lifestyle change re-prices the card where it stands: the figure
+  // changes at once and dips once in --dur-2 so the eye sees it moved
+  // (T400, DIRECTION.md 2.3 "A figure updates in place"); never a count-up.
+  useSettledFigure(eurRef, shown);
+  if (!pick) return null;
   const national = pick.stayLevel !== 'city' || pick.foodLevel !== 'city';
-  // The sentence is translated whole and the figure is cut back in, so it
-  // can sit in mono while the words around it stay in the UI face.
-  const SLOT = '\u0001';
-  const [before, after = ''] = t(rows.length > 1 ? 'saved.costFromDay' : 'saved.costDay', { eur: SLOT }).split(SLOT);
+  const [before, after] = splitSlot(t(rows.length > 1 ? 'saved.costFromDay' : 'saved.costDay', { eur: SLOT }));
   return (
     <span className="saved-cost">
-      {before}<span className="saved-cost-eur">{eurDay(pick.dayEur)}</span>{after}
+      {before}<span className="saved-cost-eur" ref={eurRef}>{shown}</span>{after}
       {national && <>{' '}<span className="saved-cost-level">{t('saved.costNational')}</span></>}
     </span>
   );
@@ -267,13 +295,11 @@ function SavedCost({ costs, ids }) {
 
 /** Compact bordered row: the day-plan card, and any saved thing that needs a
  *  small footprint. Unchanged anatomy from the previous panel. */
+// Removal runs at once and the panel offers Undo in the bottom slot for six
+// seconds (carta-design "Undo, not confirm", T400, row T390-e): a day plan, a
+// trip plan, a saved place and a star are all held by the app until the toast
+// ends, so the inline Keep or Remove these cards used to ask is gone.
 function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, figure = null, onOpen, openTitle, actions = [], onDelete, deleteLabel, footer }) {
-  const [confirming, setConfirming] = useState(false);
-
-  if (confirming) {
-    return <ConfirmRow name={title} label={deleteLabel} onKeep={() => setConfirming(false)} onRemove={onDelete} />;
-  }
-
   return (
     <div className={`saved-card${footer ? ' has-footer' : ''}`}>
       <div className="saved-card-row">
@@ -285,7 +311,7 @@ function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, figure = nu
             {figure}
           </span>
         </button>
-        <CardMenu actions={actions} onAskRemove={() => setConfirming(true)} removeLabel={deleteLabel} />
+        <CardMenu actions={actions} onAskRemove={onDelete} removeLabel={deleteLabel} />
       </div>
       {footer && (
         <button className="saved-card-footer" onClick={footer.onClick} title={footer.title}>
@@ -299,11 +325,15 @@ function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, figure = nu
 
 /** A favorite: one saved place, photo first, its country flag worn in the
  *  corner and the day it was kept in the caption. The bookmark mark is the
- *  saved state itself, so tapping it is how a favorite is let go (with the
- *  same in-place confirmation as everywhere else). */
+ *  saved state itself, so tapping it is how a favorite is let go (at once,
+ *  with Undo in the bottom slot).
+ *
+ *  Nothing sits on the photograph (carta-design "Caption band", T400, brief
+ *  V4-1): the name, the figure, the dates and when it was kept sit in a solid
+ *  band flush under it, and the bookmark sits in that band. The flag stays on
+ *  the photo because it is a picture, on its own solid chip. */
 function FavCard({ trip, img, dates, kind, savedOn, figure = null, onOpen, openTitle, onDelete, deleteLabel }) {
   const { t } = useI18n();
-  const [confirming, setConfirming] = useState(false);
   // The corner flag already names the country; the text line only steps in
   // for a country the flag catalogue does not cover.
   const hasFlag = !!(trip.country && COUNTRY_ISO2[trip.country]);
@@ -313,13 +343,12 @@ function FavCard({ trip, img, dates, kind, savedOn, figure = null, onOpen, openT
       <button className="fav-card-open" onClick={onOpen} title={openTitle}>
         <span className={`fav-card-photo${img ? '' : ' is-fallback'}`} aria-hidden="true">
           {img ? <ShotPhoto url={img} className="fav-card-img" /> : <MapPinIcon size={22} />}
+          {hasFlag && (
+            <span className="fav-card-flag">
+              <CountryFlag country={trip.country} size={13} />
+            </span>
+          )}
         </span>
-        <span className="fav-card-shade" aria-hidden="true" />
-        {hasFlag && (
-          <span className="fav-card-flag" aria-hidden="true">
-            <CountryFlag country={trip.country} size={13} />
-          </span>
-        )}
         <span className="fav-card-text">
           <span className="fav-card-city">{trip.city}</span>
           {figure}
@@ -339,21 +368,12 @@ function FavCard({ trip, img, dates, kind, savedOn, figure = null, onOpen, openT
       </button>
       <button
         className="fav-card-mark"
-        onClick={() => setConfirming(true)}
+        onClick={onDelete}
         aria-label={deleteLabel}
         title={deleteLabel}
       >
-        <BookmarkIcon size={13} />
+        <BookmarkIcon size={16} />
       </button>
-      {confirming && (
-        <div className="fav-card-ask" role="alertdialog" aria-label={deleteLabel}>
-          <span className="fav-card-ask-text">{t('saved.confirmRemove', { name: trip.city })}</span>
-          <div className="fav-card-ask-row">
-            <button className="saved-card-confirm-keep" onClick={() => setConfirming(false)}>{t('saved.keep')}</button>
-            <button className="saved-card-confirm-go" onClick={onDelete}>{t('saved.remove')}</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -555,45 +575,58 @@ function CrewBar({ crew, friends, onAdd, onRemove }) {
   );
 }
 
-/** The big journey card, shared by Planned and Visited: full-width photo, the
- *  country as the headline, its flag as a corner badge, dates under a small
- *  label, and one mark in the other corner saying which state it is in, a
- *  calendar for a commitment, a check for a memory. */
-function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dates, visited, foreign, figure = null, share = null, onOpen, openTitle, actions, onDelete, deleteLabel, footer, crew }) {
+/** How far off a trip is, in words with the number in mono ("In 21 days",
+ *  "Departs today", "Underway now"). `when` is { key, n } from whenParts. */
+function WhenText({ when, className = 'uptrip-when' }) {
   const { t } = useI18n();
-  const [confirming, setConfirming] = useState(false);
+  if (!when) return null;
+  if (when.n == null) return <span className={className}>{t(when.key)}</span>;
+  const [before, after] = splitSlot(t(when.key, { n: SLOT }));
+  return (
+    <span className={className}>
+      {before}<span className="uptrip-when-n">{when.n}</span>{after}
+    </span>
+  );
+}
 
-  if (confirming) {
-    return <ConfirmRow name={title} label={deleteLabel} onKeep={() => setConfirming(false)} onRemove={onDelete} />;
-  }
+/** The journey card, shared by Planned and Visited, in three sizes
+ *  (carta-design "Focal card", T400, brief V4-2): `focal` for the next trip,
+ *  one size larger; `row` for every later plan, a thumbnail and a line; and
+ *  the plain card for the record.
+ *
+ *  Nothing sits on the photograph (carta-design "Caption band", brief V4-1).
+ *  The name, the places, the countdown, the dates and the figure sit in a
+ *  solid band flush under it, and the card menu sits in that band. The flag
+ *  stays on the photo on its own solid chip, because it is a picture. The
+ *  countdown chip that rode on the photo, the two gradients and the state
+ *  mark (a calendar or a tick repeating the tab) went with the move. */
+function JourneyCard({ title, sub, img, when = null, countries = [], dates, visited, foreign, variant = 'card', figure = null, summary = '', share = null, onOpen, openTitle, actions, onDelete, deleteLabel, footer, crew }) {
+  const { t } = useI18n();
+  const isRow = variant === 'row';
 
   return (
-    <div className={`uptrip-card${visited ? ' is-visited' : ''}${foreign ? ' is-foreign' : ''}`}>
+    <div className={`uptrip-card is-${variant}${visited ? ' is-visited' : ''}${foreign ? ' is-foreign' : ''}`}>
       <div className="uptrip-visual">
         <button className="uptrip-open" onClick={onOpen} title={openTitle}>
           <span className={`uptrip-photo${img ? '' : ' is-fallback'}`} aria-hidden="true">
-            {img ? <ShotPhoto url={img} className="uptrip-img" /> : <RouteIcon size={26} />}
+            {img ? <ShotPhoto url={img} className="uptrip-img" /> : <RouteIcon size={isRow ? 18 : 26} />}
+            {!isRow && countries.length > 0 && (
+              <span className="uptrip-flag">
+                <CountryFlagStack countries={countries} size={15} />
+              </span>
+            )}
           </span>
-          <span className="uptrip-shade" aria-hidden="true" />
-          {whenChip && <span className="uptrip-when">{whenChip}</span>}
-          {countries.length > 0 && (
-            <span className="uptrip-flag" aria-hidden="true">
-              <CountryFlagStack countries={countries} size={15} />
-            </span>
-          )}
           <span className="uptrip-text">
             <span className="uptrip-title">{title}</span>
             {sub && <span className="uptrip-sub">{sub}</span>}
-            {dates && (
+            {(when || dates) && (
               <span className="uptrip-dateblock">
-                {dateLabel && <span className="uptrip-datelabel">{dateLabel}</span>}
-                <span className="uptrip-dates">{dates}</span>
+                <WhenText when={when} />
+                {dates && <span className="uptrip-dates">{dates}</span>}
               </span>
             )}
             {figure}
-          </span>
-          <span className="uptrip-state" aria-hidden="true">
-            {visited ? <CheckIcon size={13} /> : <CalendarIcon size={13} />}
+            {summary && <span className="uptrip-summary">{summary}</span>}
           </span>
         </button>
         {/* A card you do not own has nothing in this menu: no edits, and
@@ -603,7 +636,7 @@ function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dat
           <div className="uptrip-menu">
             <CardMenu
               actions={actions}
-              onAskRemove={onDelete ? () => setConfirming(true) : null}
+              onAskRemove={onDelete || null}
               removeLabel={deleteLabel}
             />
           </div>
@@ -903,6 +936,43 @@ export function SavedTripsPanel({
   // covers the screen the moment the tab opens hides the record it belongs to.
   const [mapFull, setMapFull] = useState(false);
 
+  // ── Undo, not confirm (carta-design, T400, row T390-e). A removal hides the
+  // thing at once and holds it for six seconds behind one toast in the shell's
+  // bottom slot; only when the toast ends (or the next removal starts, or the
+  // page closes) does `commit` run the real delete. "Undo" just drops the
+  // hold, so nothing has to be written back. A star is the exception: it is
+  // let go at once through the shared store, and Undo stars it again. ──
+  const [undo, setUndo] = useState(null); // { key, label } for the toast
+  const undoRef = useRef(null);           // { key, commit, restore, timer }
+  const flushUndo = useCallback(() => {
+    const u = undoRef.current;
+    if (!u) return;
+    undoRef.current = null;
+    window.clearTimeout(u.timer);
+    setUndo(null);
+    u.commit?.();
+  }, []);
+  const removeWithUndo = useCallback(({ key, label, commit, restore }) => {
+    flushUndo();
+    const timer = window.setTimeout(flushUndo, UNDO_MS);
+    undoRef.current = { key, commit, restore, timer };
+    setUndo({ key, label });
+  }, [flushUndo]);
+  const undoRemoval = () => {
+    const u = undoRef.current;
+    if (!u) return;
+    undoRef.current = null;
+    window.clearTimeout(u.timer);
+    setUndo(null);
+    u.restore?.();
+  };
+  // Leaving the page, or the whole tab, finishes the removal it held.
+  useEffect(() => {
+    window.addEventListener('pagehide', flushUndo);
+    return () => { window.removeEventListener('pagehide', flushUndo); flushUndo(); };
+  }, [flushUndo]);
+  const heldKey = undo?.key || '';
+
   useEffect(() => {
     // The mock seam seeds both lists, so a guest running it must not have them
     // wiped: SAVED_MOCK stands in for exactly the account this effect needs.
@@ -1013,22 +1083,26 @@ export function SavedTripsPanel({
   const fmtStamp = (s) => (s ? fmtDateYear(String(s).slice(0, 10)) : '');
 
   // ── Temporal classification: the dates decide, nobody files anything. ──
-  const upcomingPlans = useMemo(() => tripPlans
+  // What is on show: the lists without the one removal the undo toast holds.
+  const shownPlans = useMemo(() => tripPlans.filter((p) => `plan:${p.id}` !== heldKey), [tripPlans, heldKey]);
+  const shownDayPlans = useMemo(() => dayPlans.filter((sp) => `day:${sp.id}` !== heldKey), [dayPlans, heldKey]);
+  const shownTrips = useMemo(() => trips.filter((x) => `fav:${x.id}` !== heldKey), [trips, heldKey]);
+  const upcomingPlans = useMemo(() => shownPlans
     .filter((p) => !p.end_date || p.end_date >= todayIso)
     .sort((a, b) => (a.start_date || '9999') < (b.start_date || '9999') ? -1 : 1),
-  [tripPlans, todayIso]);
-  const pastPlans = useMemo(() => tripPlans
+  [shownPlans, todayIso]);
+  const pastPlans = useMemo(() => shownPlans
     .filter((p) => p.end_date && p.end_date < todayIso)
     .sort((a, b) => (a.end_date < b.end_date ? 1 : -1)),
-  [tripPlans, todayIso]);
-  const upcomingDayPlans = useMemo(() => dayPlans
+  [shownPlans, todayIso]);
+  const upcomingDayPlans = useMemo(() => shownDayPlans
     .filter((sp) => { const end = dayPlanEndDate(sp); return !end || end >= todayIso; })
     .sort((a, b) => ((a.startDate || '9999') < (b.startDate || '9999') ? -1 : 1)),
-  [dayPlans, todayIso]);
-  const pastDayPlans = useMemo(() => dayPlans
+  [shownDayPlans, todayIso]);
+  const pastDayPlans = useMemo(() => shownDayPlans
     .filter((sp) => { const end = dayPlanEndDate(sp); return end && end < todayIso; })
     .sort((a, b) => (dayPlanEndDate(a) < dayPlanEndDate(b) ? 1 : -1)),
-  [dayPlans, todayIso]);
+  [shownDayPlans, todayIso]);
 
   // The trip's own words, keyed by plan id, for every finished trip on show.
   // A trip with a memory was told by hand; one without was lived through the
@@ -1227,12 +1301,14 @@ export function SavedTripsPanel({
     onSelectStop: (i) => { setMapFull(false); visitedItems[i]?.open(); },
   };
 
-  const whenLabel = (start, end) => {
-    if (!start) return t('saved.noDatesYet');
+  // How far off a trip is, as { key, n } so WhenText can set the number in
+  // mono. On the day it says "Departs today", while it runs "Underway now".
+  const whenParts = (start, end) => {
+    if (!start) return { key: 'saved.noDatesYet' };
     const n = daysUntil(start, todayIso);
-    if (n < 0) return (!end || end >= todayIso) ? t('saved.underway') : '';
-    if (n === 0) return t('saved.departsToday');
-    return t(n === 1 ? 'saved.inDays1' : 'saved.inDaysN', { n });
+    if (n < 0) return (!end || end >= todayIso) ? { key: 'saved.underway' } : null;
+    if (n === 0) return { key: 'saved.departsToday' };
+    return { key: n === 1 ? 'saved.inDays1' : 'saved.inDaysN', n };
   };
 
   const planTitle = (p) => {
@@ -1433,7 +1509,13 @@ export function SavedTripsPanel({
   };
   const dropShortlisted = (row) => {
     const parsed = parseFavKey(row.key);
-    if (parsed) onToggleFav?.(parsed.id, parsed.kind, parsed.cc);
+    if (!parsed) return;
+    onToggleFav?.(parsed.id, parsed.kind, parsed.cc);
+    removeWithUndo({
+      key: `star:${row.key}`,
+      label: row.name || row.id,
+      restore: () => onToggleFav?.(parsed.id, parsed.kind, parsed.cc),
+    });
   };
 
   // Planned first: the next trip is what a traveller comes back for, then the
@@ -1441,7 +1523,7 @@ export function SavedTripsPanel({
   // Planned, and now the order says so too).
   const TABS = [
     { key: 'planned', Icon: CalendarIcon, labelKey: 'saved.tabPlanned', n: plannedCount },
-    { key: 'favorites', Icon: BookmarkIcon, labelKey: 'saved.tabFavorites', n: (authed && !loading ? trips.length : 0) + shortlist.count },
+    { key: 'favorites', Icon: BookmarkIcon, labelKey: 'saved.tabFavorites', n: (authed && !loading ? shownTrips.length : 0) + shortlist.count },
     { key: 'visited', Icon: CheckIcon, labelKey: 'saved.tabVisited', n: pastCount },
   ];
   const renderTabs = (cls) => TABS.map(({ key, Icon, labelKey, n }) => (
@@ -1556,7 +1638,7 @@ export function SavedTripsPanel({
             <LoadingBlock label={t('saved.loading')} rows={3} />
           ) : error ? (
             <ErrorBlock message={t('state.savedFailed')} onRetry={loadTrips} retryLabel={t('layer.retry')} />
-          ) : trips.length === 0 ? (
+          ) : shownTrips.length === 0 ? (
             <SavedEmpty
               Icon={MapPinIcon}
               text={t('saved.destinationsEmpty')}
@@ -1568,7 +1650,7 @@ export function SavedTripsPanel({
             />
           ) : (
             <div className="fav-grid">
-              {trips.map((trip) => (
+              {shownTrips.map((trip) => (
                 <FavCard
                   key={trip.id}
                   trip={trip}
@@ -1579,7 +1661,11 @@ export function SavedTripsPanel({
                   figure={<SavedCost costs={costs} ids={[trip.destination_id]} />}
                   onOpen={() => onLoadTrip(trip)}
                   openTitle={t('saved.openDestination')}
-                  onDelete={() => handleDelete(trip.id)}
+                  onDelete={() => removeWithUndo({
+                    key: `fav:${trip.id}`,
+                    label: trip.city,
+                    commit: () => handleDelete(trip.id),
+                  })}
                   deleteLabel={t('saved.removeItem', { name: trip.city })}
                 />
               ))}
@@ -1609,18 +1695,20 @@ export function SavedTripsPanel({
               />
             ) : (
               <div className="saved-card-stack">
-                {upcomingPlans.map((p) => {
+                {upcomingPlans.map((p, i) => {
                   const plannedDays = countPlannedDays(p.id);
                   const parts = journeyParts(p);
                   return (
                     <div className="saved-record-row" key={p.id}>
                     <JourneyCard
+                      /* The next trip is the page's focal card, one size up;
+                         every later plan is a row (brief V4-2). */
+                      variant={i === 0 ? 'focal' : 'row'}
                       title={parts.title}
                       sub={parts.sub}
                       countries={parts.countries}
                       img={resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries })}
-                      whenChip={whenLabel(p.start_date, p.end_date)}
-                      dateLabel={t('saved.datesLabel')}
+                      when={whenParts(p.start_date, p.end_date)}
                       dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
                       figure={<SavedCost costs={costs} ids={p.destination_ids || []} />}
                       share={shareFor(p.id)}
@@ -1634,7 +1722,11 @@ export function SavedTripsPanel({
                          delete: the delete policy stays owner-only (migration
                          020), so offering Remove here would offer a button
                          that quietly does nothing. */
-                      onDelete={p.coplan ? null : () => handleDeleteTripPlan(p.id)}
+                      onDelete={p.coplan ? null : () => removeWithUndo({
+                        key: `plan:${p.id}`,
+                        label: parts.title,
+                        commit: () => handleDeleteTripPlan(p.id),
+                      })}
                       deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
                       crew={p.coplan ? (
                         <div className="uptrip-coplan">
@@ -1695,7 +1787,6 @@ export function SavedTripsPanel({
                           cities: ft.cities || [],
                           countries: ft.countries || [],
                         })}
-                        dateLabel={t('saved.datesLabel')}
                         dates={ft.startDate ? `${fmtDate(ft.startDate)} → ${fmtDateYear(ft.endDate)}` : ''}
                         onOpen={() => setOpenFriendTrip(showing ? '' : ft.tripPlanId)}
                         openTitle={t('friends.openTheirTrip')}
@@ -1744,7 +1835,11 @@ export function SavedTripsPanel({
                       figure={<SavedCost costs={costs} ids={(sp.stops || []).map((s) => s.destinationId)} />}
                       onOpen={() => onOpenDayPlan && onOpenDayPlan(sp.id)}
                       openTitle={t('saved.openDayPlan')}
-                      onDelete={() => setDayPlans(deleteStandalonePlan(sp.id))}
+                      onDelete={() => removeWithUndo({
+                        key: `day:${sp.id}`,
+                        label: sp.label || t('saved.fallbackDayPlan'),
+                        commit: () => setDayPlans(deleteStandalonePlan(sp.id)),
+                      })}
                       deleteLabel={t('saved.removeItem', { name: sp.label || t('saved.fallbackDayPlan') })}
                     />
                   );
@@ -1891,19 +1986,16 @@ export function SavedTripsPanel({
                           // the one picture of this trip that was actually there.
                           img={coverPhoto(mem)
                             || resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries })}
-                          dateLabel={t('saved.visitedLabel')}
                           dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
                           onOpen={mem
                             ? () => setOpenMemory(showing ? '' : p.id)
                             : () => onLoadTripPlan && onLoadTripPlan(p.id)}
                           openTitle={mem ? t('saved.pastSeeTrip') : t('saved.openTripPlan')}
+                          /* "Edit this trip" lives in the memory view, under
+                             what it edits; the menu's copy of it went (row
+                             T390-f). A trip with no memory has nothing to
+                             edit there, so the menu keeps the planner door. */
                           actions={[
-                            mem && {
-                              key: 'memory',
-                              label: t('saved.pastEditTrip'),
-                              icon: <PencilIcon size={14} />,
-                              onClick: () => openPastForm(editableFromPlan(p, mem)),
-                            },
                             {
                               key: 'edit',
                               label: mem ? t('saved.openTripPlanner') : t('saved.edit'),
@@ -1913,12 +2005,15 @@ export function SavedTripsPanel({
                           ].filter(Boolean)}
                           share={shareFor(p.id)}
                           crew={crewBarFor(p.id)}
-                          footer={mem ? {
-                            label: memoryLine(mem),
-                            title: t('saved.pastSeeTrip'),
-                            onClick: () => setOpenMemory(showing ? '' : p.id),
-                          } : null}
-                          onDelete={() => handleDeleteTripPlan(p.id)}
+                          /* The memory's summary reads in the caption band;
+                             it used to be a footer button that did what a
+                             tap on the card does (row T390-f). */
+                          summary={mem ? memoryLine(mem) : ''}
+                          onDelete={() => removeWithUndo({
+                            key: `plan:${p.id}`,
+                            label: parts.title,
+                            commit: () => handleDeleteTripPlan(p.id),
+                          })}
                           deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
                         />
                         {showing && mem && (
@@ -1945,29 +2040,23 @@ export function SavedTripsPanel({
                           cities: dayPlanCities(sp),
                           countries: parts.countries,
                         })}
-                        dateLabel={t('saved.visitedLabel')}
                         dates={sp.startDate ? `${fmtDate(sp.startDate)} → ${fmtDateYear(dayPlanEndDate(sp))}` : ''}
                         onOpen={mem
                           ? () => setOpenMemory(showing ? '' : sp.id)
                           : () => onOpenDayPlan && onOpenDayPlan(sp.id)}
                         openTitle={mem ? t('saved.pastSeeTrip') : t('saved.openDayPlan')}
-                        actions={mem ? [{
-                          key: 'memory',
-                          label: t('saved.pastEditTrip'),
-                          icon: <PencilIcon size={14} />,
-                          onClick: () => openPastForm(editableFromDayPlan(sp, mem)),
-                        }] : []}
+                        actions={[]}
                         crew={crewBarFor(sp.id)}
-                        footer={mem ? {
-                          label: memoryLine(mem),
-                          title: t('saved.pastSeeTrip'),
-                          onClick: () => setOpenMemory(showing ? '' : sp.id),
-                        } : null}
-                        onDelete={() => {
-                          clearMemory(sp.id);
-                          setMemTick((n) => n + 1);
-                          setDayPlans(deleteStandalonePlan(sp.id));
-                        }}
+                        summary={mem ? memoryLine(mem) : ''}
+                        onDelete={() => removeWithUndo({
+                          key: `day:${sp.id}`,
+                          label: parts.title,
+                          commit: () => {
+                            clearMemory(sp.id);
+                            setMemTick((n) => n + 1);
+                            setDayPlans(deleteStandalonePlan(sp.id));
+                          },
+                        })}
                         deleteLabel={t('saved.removeItem', { name: sp.label || t('saved.fallbackDayPlan') })}
                       />
                       {showing && mem && (
@@ -1980,6 +2069,9 @@ export function SavedTripsPanel({
             )}
           </SavedSection>
         </>
+      )}
+      {undo && (
+        <UndoToast key={undo.key} label={undo.label} onUndo={undoRemoval} onClose={flushUndo} />
       )}
       </div>
     </div>

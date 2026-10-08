@@ -282,7 +282,6 @@
 .cheap-tip-generic-toggle { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; background: none; border: 0; padding: 0; }
 .cheap-tip {
   border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
   border-radius: 8px;
   background: var(--paper);
   padding: 8px 10px;

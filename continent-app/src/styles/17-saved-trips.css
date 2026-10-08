@@ -50,58 +50,15 @@
   border: 1px solid var(--rule);
   border-radius: 14px;
   background: var(--bg-card);
-  transition: border-color .15s, box-shadow .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.saved-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
+.saved-card:hover { border-color: var(--ink-soft); }
 .saved-card-row {
   display: flex;
   align-items: center;
   gap: 4px;
   padding-right: 6px;
 }
-/* Asking first: the card becomes the question, in place, with the safe
-   choice sitting closest to where the tap came from. */
-.saved-card-confirm {
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 10px 10px 14px;
-  border-color: var(--accent);
-  background: var(--accent-bg);
-}
-.saved-card-confirm-text {
-  flex: 1;
-  min-width: 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.saved-card-confirm-keep,
-.saved-card-confirm-go {
-  flex: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.saved-card-confirm-keep {
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-}
-.saved-card-confirm-keep:hover { border-color: var(--ink-soft); color: var(--ink); }
-/* Erasing looks like erasing (T390, brief V3-5): --danger, never the
-   accent, which means "this one acts" everywhere else on the page. */
-.saved-card-confirm-go {
-  border: 1px solid var(--danger);
-  background: var(--danger);
-  color: var(--on-fill);
-}
-.saved-card-confirm-go:hover { opacity: 0.9; }
 /* The whole row opens the trip. No chevron, no competing buttons: one target
    the width of the card, with the tools folded into the menu beside it. */
 .saved-card-main {
@@ -158,7 +115,7 @@
   background: none;
   color: var(--ink-mute);
   cursor: pointer;
-  transition: background .15s, color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .saved-card-more:hover { background: var(--paper-dim); color: var(--ink); }
 .saved-card-pop {
@@ -242,7 +199,7 @@
   text-decoration: none; /* the Google Maps action is an <a>, keep it button-like */
   border-top: 1px dashed var(--rule);
   cursor: pointer;
-  transition: background .15s, color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .itin-export-item:first-child { border-top: none; }
 .itin-export-item svg { color: var(--accent); flex: none; }
@@ -268,7 +225,7 @@
   border: 1.5px dashed var(--rule);
   border-radius: 12px;
   background: var(--paper-dim);
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 .extras-dropzone.over { border-color: var(--accent); background: var(--accent-bg); }
 .extras-drop-lead {
@@ -509,7 +466,7 @@
   color: var(--ink-soft);
   cursor: pointer;
   text-align: left;
-  transition: background .15s, color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .saved-card-footer:hover { background: var(--accent-bg); color: var(--accent); }
 .saved-card-footer-go { font-size: 15px; line-height: 1; color: var(--ink-mute); }
@@ -598,7 +555,7 @@
   font-weight: 600;
   color: var(--paper);
   cursor: pointer;
-  transition: background .15s, border-color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 .saved-empty-cta:hover { background: var(--accent); border-color: var(--accent); }
 
@@ -736,7 +693,7 @@
   font-weight: 600;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 .saved-add-past svg { color: var(--ink-mute); }
 .saved-add-past:hover { border-color: var(--ink); color: var(--ink); }
@@ -1005,7 +962,7 @@
   margin-left: auto;
   flex: none;
   color: var(--ink-mute);
-  transition: transform .15s;
+  transition: transform var(--dur-1) var(--ease-out);
 }
 .pasttrip-fold-sum + .pasttrip-fold-chev { margin-left: 6px; }
 .pasttrip-fold.is-open .pasttrip-fold-chev { transform: rotate(180deg); }
@@ -1030,7 +987,7 @@
   background: var(--paper);
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, background .15s, color .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .pasttrip-mode:hover { border-color: var(--ink-soft); color: var(--ink); }
 .pasttrip-mode.on {
@@ -1144,7 +1101,7 @@
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: background .15s, border-color .15s, color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .pasttrip-cancel {
   border: 1px solid var(--rule);
@@ -1328,20 +1285,30 @@
   .pasttrip-cancel { transition: none; }
 }
 
-/* Favorites: a photo grid, because a wishlist is looked at, not audited. */
-.fav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Favorites: a photo grid, because a wishlist is looked at, not audited.
+
+   Caption band (carta-design, T400, brief V4-1): the photograph shows the
+   place and nothing sits on it. The name, the figure, the dates and when it
+   was kept sit in a solid band flush under the photo; the bookmark sits in
+   that band at the tap floor. The legibility gradient that carried white
+   text over the photo is gone, and so is the photo zoom on hover (a
+   decorative hover, DIRECTION.md 2.3). Pressed, the band turns --ink-fill. */
+.fav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
 .fav-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--rule);
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
   background: var(--bg-card);
+  transition: border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
 .fav-card-open {
-  position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   width: 100%;
-  aspect-ratio: 4 / 5;
   padding: 0;
   border: none;
   background: none;
@@ -1349,250 +1316,209 @@
   cursor: pointer;
 }
 .fav-card-photo {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
   background-color: var(--paper-dim);
-  transition: transform .35s ease;
 }
-.fav-card-open:hover .fav-card-photo { transform: scale(1.04); }
 .fav-card-photo.is-fallback {
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--ink-mute);
 }
-/* Legibility shade under the caption, dark enough to carry white text even
-   over the paper-dim fallback tile. */
-.fav-card-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 42%, rgba(15, 23, 42, 0.78) 100%);
-}
-/* The country flag as a corner badge, on its own paper chip so it reads over
-   any photo. */
+/* The country flag as a corner badge, a picture on its own solid chip. */
 .fav-card-flag {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: var(--space-2);
+  right: var(--space-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 6px;
-  border-radius: 8px;
-  background: rgba(248, 246, 240, 0.92);
+  padding: 4px 5px;
+  border-radius: 6px;
+  background: var(--paper);
 }
 .fav-card-flag .country-flag { display: block; border-radius: 2px; }
 .fav-card-text {
-  position: absolute;
-  left: 12px;
-  right: 44px;
-  bottom: 10px;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
+  padding: var(--space-2) calc(var(--tap) + var(--space-1)) var(--space-3) var(--space-3);
+  border-top: 1px solid var(--rule-soft);
+  background: var(--bg-card);
+  color: var(--ink);
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .fav-card-city {
   font-family: var(--display);
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: var(--on-fill);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: inherit;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.fav-card-sub { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.fav-card-sub { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); min-width: 0; }
 .fav-card-country {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  color: var(--ink-soft);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.fav-card-dates { flex: none; font-family: var(--mono); font-size: 10px; color: rgba(255, 255, 255, 0.75); }
-/* When and as what it was kept: the trip-kind tag plus the saved date. */
+.fav-card-dates {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+/* When and as what it was kept: the trip-kind word plus the saved date. */
 .fav-card-kept {
   display: flex;
-  flex-wrap: wrap; /* the saved date drops to its own line on narrow cards */
-  align-items: center;
-  gap: 3px 6px;
-  margin-top: 3px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
   min-width: 0;
 }
-.fav-card-kind {
-  flex: none;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(248, 246, 240, 0.24);
-  font-size: 8.5px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-}
+.fav-card-kind { flex: none; font-size: 12px; font-weight: 600; color: var(--ink-soft); }
 .fav-card-savedon {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  color: var(--ink-mute);
 }
-/* The bookmark IS the saved state: tapping it is how a favorite is let go. */
+/* The bookmark IS the saved state: tapping it lets the favorite go, at once,
+   with Undo in the bottom slot. It sits in the band's corner at --tap. */
 .fav-card-mark {
   position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
+  right: 0;
+  bottom: 0;
+  width: var(--tap);
+  height: var(--tap);
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.45);
-  color: var(--on-fill);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
   cursor: pointer;
-  transition: background .15s;
+  transition: color var(--dur-1) var(--ease-out);
 }
-.fav-card-mark:hover { background: var(--accent); }
-.fav-card-ask {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px;
-  background: rgba(248, 246, 240, 0.94);
-  text-align: center;
-}
-.fav-card-ask-text { font-size: 12.5px; font-weight: 600; color: var(--ink); }
-.fav-card-ask-row { display: flex; gap: 8px; }
+.fav-card-mark svg { fill: currentColor; }
+.fav-card-mark:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
-/* Upcoming trips: the heaviest object in the panel, photo full-bleed, the
-   countdown worn as a chip, tools tucked into the usual corner menu. */
+/* Upcoming trips and the record (JourneyCard): the photograph on top (beside
+   the band from 769 px), every word in the band under it, the card menu in
+   the band's corner. Three sizes: the focal next trip, the plain record
+   card, and the row every later plan becomes. The card does not clip, so the
+   menu's popover can hang out of it; the photo and the action strip round
+   their own corners instead. */
 .uptrip-card {
+  position: relative;
   border: 1px solid var(--rule);
-  border-radius: 14px;
-  overflow: hidden;
+  border-radius: 12px;
   background: var(--bg-card);
-  transition: border-color .15s, box-shadow .15s;
+  transition: border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
-.uptrip-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
 .uptrip-visual { position: relative; }
 .uptrip-open {
-  position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 178px;
   padding: 0;
   border: none;
+  border-radius: 11px 11px 0 0;
+  overflow: hidden;
   background: none;
   text-align: left;
   cursor: pointer;
-  overflow: hidden;
 }
+.uptrip-card > .uptrip-visual:last-child .uptrip-open { border-radius: 11px; }
+.uptrip-card > .uptrip-actions:last-child,
+.uptrip-card > .uptrip-crew:last-child { border-radius: 0 0 11px 11px; overflow: hidden; }
 .uptrip-photo {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
+  position: relative;
+  display: block;
+  flex: none;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
   background-color: var(--paper-dim);
-  transition: transform .35s ease;
 }
-.uptrip-open:hover .uptrip-photo { transform: scale(1.03); }
 .uptrip-photo.is-fallback {
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--ink-mute);
 }
-.uptrip-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.10) 0%, rgba(15, 23, 42, 0) 35%, rgba(15, 23, 42, 0.78) 100%);
-}
-.uptrip-when {
-  position: absolute;
-  top: 10px;
-  left: 44px; /* clears the corner menu button */
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(248, 246, 240, 0.92);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink);
-}
-/* The country flag as a corner badge, on its own paper chip. */
+/* The country flag as a corner badge, a picture on its own solid chip. */
 .uptrip-flag {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: var(--space-2);
+  right: var(--space-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 7px;
-  border-radius: 9px;
-  background: rgba(248, 246, 240, 0.92);
+  padding: 4px 5px;
+  border-radius: 6px;
+  background: var(--paper);
 }
 .uptrip-flag .country-flag { display: block; border-radius: 2px; }
 .uptrip-text {
-  position: absolute;
-  left: 14px;
-  right: 54px;
-  bottom: 12px;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--space-3) calc(var(--tap) + var(--space-2)) var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  color: var(--ink);
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .uptrip-title {
   font-family: var(--display);
-  font-size: 23px;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--on-fill);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: inherit;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .uptrip-sub {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.88);
+  font-size: 13px;
+  color: var(--ink-soft);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .uptrip-dateblock {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  margin-top: 4px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-3);
+  margin-top: 2px;
 }
-.uptrip-datelabel { font-size: 10px; color: rgba(255, 255, 255, 0.68); }
-.uptrip-dates { font-family: var(--mono); font-size: 11px; color: rgba(255, 255, 255, 0.92); }
-/* The state mark: a calendar for a commitment, a check for a memory. */
-.uptrip-state {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(248, 246, 240, 0.92);
-  color: var(--ink);
+.uptrip-when { font-size: 13px; font-weight: 600; color: inherit; }
+.uptrip-when-n { font-family: var(--mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+.uptrip-dates { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+.uptrip-summary { font-size: 12px; color: var(--ink-soft); }
+/* The card menu in the band's corner, at the tap floor, no fill of its own. */
+.uptrip-menu { position: absolute; right: 0; bottom: 0; }
+.uptrip-menu .saved-card-more {
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-soft);
 }
-.uptrip-card.is-visited .uptrip-state { background: var(--ink); color: var(--paper); }
-.uptrip-menu { position: absolute; top: 6px; left: 6px; }
-.uptrip-menu .saved-card-more { background: rgba(248, 246, 240, 0.85); color: var(--ink-soft); }
-.uptrip-menu .saved-card-more:hover { background: var(--paper); color: var(--ink); }
-/* The menu popover hangs from the left corner here, not the right. */
-.uptrip-menu .saved-card-pop { left: 0; right: auto; }
 
 /* ─── Who came, on the face of a finished trip. A quiet strip under the
    photograph: initials for the people already on it, the names in a line, and
@@ -1648,7 +1574,7 @@
   background: var(--paper);
   color: var(--ink-soft);
   cursor: pointer;
-  transition: background .15s, color .15s, border-color .15s, transform .15s;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
 .uptrip-crew-add:hover {
   background: var(--accent-bg);
@@ -1681,7 +1607,7 @@
   font-size: 12px;
   color: var(--ink);
   cursor: pointer;
-  transition: background .15s, border-color .15s, color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .uptrip-crew-chip:hover { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
 .uptrip-crew-typerow { display: flex; gap: 6px; }
@@ -1708,7 +1634,7 @@
   font-weight: 600;
   color: var(--paper);
   cursor: pointer;
-  transition: background .15s, border-color .15s, opacity .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), opacity var(--dur-1) var(--ease-out);
 }
 .uptrip-crew-save:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
 .uptrip-crew-save:disabled { opacity: 0.45; cursor: default; }
@@ -1737,7 +1663,7 @@
   line-height: 1;
   color: var(--ink-mute);
   cursor: pointer;
-  transition: background .15s, color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .uptrip-crew-drop:hover { background: var(--rule); color: var(--ink); }
 
@@ -1761,7 +1687,7 @@
   background: rgba(248, 246, 240, 0.94);
   color: var(--ink);
   cursor: pointer;
-  transition: background .15s, color .15s, border-color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 .saved-map-expand:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .savedmap-full {
@@ -1819,7 +1745,7 @@
   font-weight: 600;
   color: var(--paper);
   cursor: pointer;
-  transition: background .15s, border-color .15s;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 .savedmap-full-close:hover { background: var(--accent); border-color: var(--accent); }
 /* MapLibre parks its zoom stack top-right, which is exactly where Close sits.
@@ -1843,17 +1769,28 @@
 /* Desktop: the roomier sheet lets the imagery breathe. */
 @media (min-width: 881px) {
   .saved-map { height: 360px; }
-  .uptrip-open { height: 208px; }
-  .fav-grid { gap: 12px; }
-  .uptrip-title { font-size: 25px; }
+  .fav-grid { gap: var(--space-3); }
   .saved-section.is-big .saved-section-title { font-size: 23px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fav-card-photo,
-  .uptrip-photo { transition: none; }
-  .fav-card-open:hover .fav-card-photo,
-  .uptrip-open:hover .uptrip-photo { transform: none; }
+  .fav-card,
+  .fav-card-text,
+  .fav-card-mark,
+  .uptrip-card,
+  .uptrip-text,
+  .saved-card,
+  .saved-card-more,
+  .saved-card-footer,
+  .saved-empty-cta,
+  .uptrip-crew-add,
+  .uptrip-crew-chip,
+  .uptrip-crew-save,
+  .uptrip-crew-drop,
+  .saved-map-expand,
+  .savedmap-full-close,
+  .itin-export-item,
+  .extras-dropzone { transition: none; }
 }
 
 /* Day planner: save state, top-right of the plan header card. */

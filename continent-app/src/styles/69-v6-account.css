@@ -77,9 +77,9 @@ h2.saved-section-title { margin: 0; }
 }
 
 /* 3. The figure on a saved card: the day cost at the traveller's Lifestyle,
-   in mono, with the pedigree word in the UI face after it. On the photo cards
-   (favourites, journeys) it inherits the caption's colour until V4 moves the
-   caption into a solid band under the photograph. */
+   in mono, with the pedigree word in the UI face after it. V4 (T400) moved
+   the photo cards' captions into a solid band, so the figure keeps its own
+   ink there too (the inherit rules that carried it over the photo went). */
 .saved-cost {
   display: block;
   margin-top: var(--space-1);
@@ -98,12 +98,6 @@ h2.saved-section-title { margin: 0; }
   font-weight: 400;
   color: var(--ink-mute);
 }
-.fav-card-text .saved-cost,
-.fav-card-text .saved-cost-eur,
-.fav-card-text .saved-cost-level,
-.uptrip-text .saved-cost,
-.uptrip-text .saved-cost-eur,
-.uptrip-text .saved-cost-level { color: inherit; }
 
 /* 4. Share on the card, beside "Plan its days". One row under the card,
    the footer taking the width and Share a secondary at the tap floor. */
@@ -319,4 +313,272 @@ h2.saved-section-title { margin: 0; }
   .saved-shell .saved-empty-cta.is-secondary,
   .pasttrip-details,
   .auth-modal .auth-submit { transition: none; }
+}
+
+/* ── V4 (T400): visual and dynamic ───────────────────────────────────────
+   Plan: docs/design-v6/plans/V4-account.md. The photo cards' caption band was
+   changed in place in 17-saved-trips.css (this surface's file); what follows
+   is new. Motion from the tokens only, each rule with its reduced-motion
+   branch at the end of this section. */
+
+/* 1 and 2. The caption band's pressed state: the band turns --ink-fill with
+   --on-fill text, so a press reads in greyscale (carta-design "Caption
+   band"). The shared touch feedback (02-base.css) adds its shade and scale. */
+.fav-card-open:active .fav-card-text,
+.uptrip-open:active .uptrip-text,
+.uptrip-card.is-row .uptrip-open:active {
+  background: var(--ink-fill);
+  color: var(--on-fill);
+}
+.fav-card-open:active :is(.fav-card-country, .fav-card-dates, .fav-card-kind, .fav-card-savedon, .saved-cost, .saved-cost-eur, .saved-cost-level),
+.uptrip-open:active :is(.uptrip-sub, .uptrip-dates, .uptrip-summary, .saved-cost, .saved-cost-eur, .saved-cost-level) {
+  color: var(--on-fill);
+}
+@media (hover: hover) {
+  .fav-card:hover,
+  .uptrip-card:hover { border-color: var(--ink-soft); }
+  .fav-card-mark:hover { color: var(--ink-soft); }
+  .uptrip-menu .saved-card-more:hover { background: var(--paper-dim); color: var(--ink); }
+}
+
+/* 2. The focal card: the next trip, one size up (carta-design "Focal
+   card"). Its name is a section-size name (22 / 26 px), its countdown number
+   a step larger in mono. From 769 px the photograph sits beside the band. */
+/* On a phone the focal photograph is 2:1, so the name, the countdown and
+   both actions fit the first screen of a 390 x 664 iPhone even with the
+   install hint above (3:2 put the actions 43 px below it). */
+@media (max-width: 768px) {
+  .uptrip-card.is-focal .uptrip-photo { aspect-ratio: 2 / 1; }
+}
+.uptrip-card.is-focal .uptrip-title { font-size: 22px; }
+.uptrip-card.is-focal .uptrip-when { font-size: 14px; }
+.uptrip-card.is-focal .uptrip-when-n { font-size: 15px; }
+@media (min-width: 769px) {
+  .uptrip-card.is-focal .uptrip-title { font-size: 26px; }
+  .uptrip-card:is(.is-focal, .is-card) .uptrip-open { flex-direction: row; }
+  .uptrip-card:is(.is-focal, .is-card) .uptrip-photo { flex: 0 0 44%; align-self: stretch; }
+  .uptrip-card:is(.is-focal, .is-card) .uptrip-text { justify-content: center; }
+}
+/* Every later plan is a row: a 1:1 thumbnail, the name at caption size, the
+   countdown, the dates and the figure on one band, the menu at its end. */
+.uptrip-card.is-row .uptrip-open {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) calc(var(--tap) + var(--space-2)) var(--space-2) var(--space-3);
+  background: var(--bg-card);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.uptrip-card.is-row .uptrip-photo {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+}
+.uptrip-card.is-row .uptrip-text { padding: 0; background: transparent; }
+.uptrip-card.is-row .uptrip-title { font-size: 16px; }
+.uptrip-card.is-row .uptrip-menu { top: 0; display: flex; align-items: center; }
+
+/* 3. The Undo toast in the shell's bottom slot (carta-design "Undo, not
+   confirm"): one line, the Undo secondary, the house close. It arrives like
+   a surface (8 px rise, --dur-3) and leaves at once when it is done. */
+.undo-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 14px;
+  box-shadow: var(--shadow-2);
+  animation: acc-rise var(--dur-3) var(--ease-out) backwards;
+}
+.undo-toast-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.undo-toast-undo {
+  flex: none;
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.undo-toast-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.undo-toast button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) {
+  .undo-toast-undo:hover { border-color: var(--ink); }
+}
+/* From 769 px My trips and Account are pages at z-index 56 (25-feature-
+   pages.css), above the shell's bottom slot at 40, so a toast in the slot
+   would sit under the page that raised it. While this surface's Undo toast
+   is in the slot, the slot rises above the page; every other time the
+   shell's own stacking stands (register row T400-c asks shell for the
+   general fix). */
+@media (min-width: 769px) {
+  .bottom-slot:has(> .undo-toast) { z-index: 57; }
+}
+@keyframes acc-rise {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+/* 4. The record's receipt carries the cost bar above its lines. */
+.memo-receipt .costbar { margin-bottom: var(--space-2); }
+
+/* 5. The memory's photographs as a track: one aspect for every frame (3:2),
+   the caption under each in the metadata size. The track mechanics and
+   their reduced-motion jump are the shared DayTrack's. */
+.memo-photos.is-track { display: block; }
+.memo-photos.is-track .memo-photo img { aspect-ratio: 3 / 2; border-radius: 6px; }
+.memo-photos .memo-photo figcaption { font-size: 12px; }
+
+/* 6. The plans compared: plans as columns, one row per allowance, figures in
+   mono, the header row and the row labels sticky; on a phone the table
+   scrolls sideways inside itself with two plans in view. */
+.pass-compare-wrap {
+  margin: var(--space-4) 0 var(--space-2);
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.pass-compare-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pass-compare {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--ui);
+  font-size: 13px;
+  color: var(--ink);
+}
+.pass-compare th,
+.pass-compare td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--rule-soft);
+  text-align: left;
+  vertical-align: baseline;
+}
+.pass-compare tbody tr:last-child th,
+.pass-compare tbody tr:last-child td { border-bottom: none; }
+.pass-compare thead th,
+.pass-compare thead td {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--paper);
+  border-bottom-color: var(--rule);
+  font-weight: 600;
+}
+.pass-compare tbody th {
+  position: sticky;
+  left: 0;
+  background: var(--bg-card);
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.pass-compare thead td { left: 0; z-index: 2; }
+.pass-compare td.is-fig {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (max-width: 720px) {
+  .pass-compare th,
+  .pass-compare td { padding: var(--space-2); }
+  .pass-compare tbody th,
+  .pass-compare thead td { min-width: 84px; }
+  .pass-compare thead th,
+  .pass-compare tbody td { min-width: 80px; }
+}
+/* The modal's motion from the tokens: the card rises 8 px over the scrim in
+   --dur-3; the plan cards neither stagger in nor lift on hover (a decorative
+   hover lift, and box-shadow is not animated). */
+.pass-overlay { animation: acc-fade var(--dur-3) var(--ease-out) backwards; }
+.pass-card { animation: acc-rise var(--dur-3) var(--ease-out) backwards; }
+.pass-tier {
+  animation: none;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.pass-tier:hover { transform: none; box-shadow: none; }
+@keyframes acc-fade {
+  from { opacity: 0; }
+}
+
+/* 7. A copied link says so in place, as a status: a 6 px success dot and
+   ink words (carta-design "Status, not green"). */
+.tshare-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-success);
+}
+.tshare-copy.is-copied { color: var(--ink); border-color: var(--ink); }
+/* A tab's content arrives: it fades in and rises 8 px in --dur-2; the
+   outgoing tab does not move (DIRECTION.md 2.3, "Tab change"). */
+.saved-trips-panel > .saved-section,
+.saved-trips-panel > .saved-map-section {
+  animation: acc-rise var(--dur-2) var(--ease-out) backwards;
+}
+
+/* 9. The pass balance: the figures in mono, an 8 px thin bar under them in
+   the ink ramp, filled to the plans left and outlined beyond. */
+.account-pass-fig {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.account-pass-bar {
+  display: block;
+  flex: 1 0 100%;
+  height: 8px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--bg-card);
+}
+.account-pass-bar-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--kind-city);
+  transform-origin: left center;
+}
+
+/* The tip stripe in 16-auth.css went (carta-design "Accent marks": no accent
+   stripe on a thing that is not selected or acting); 16 was changed in
+   place. */
+
+@media (prefers-reduced-motion: reduce) {
+  .uptrip-card.is-row .uptrip-open,
+  .undo-toast-undo,
+  .pass-tier { transition: none; }
+  .undo-toast,
+  .pass-overlay,
+  .pass-card,
+  .saved-trips-panel > .saved-section,
+  .saved-trips-panel > .saved-map-section { animation: none; }
 }

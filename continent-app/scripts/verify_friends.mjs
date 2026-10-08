@@ -633,7 +633,9 @@ const run = async () => {
   ok('it opens straight onto the friends page, not the account hub');
 
   // Opening My trips must close the account panel, and the other way round.
-  await dp.locator('.header-nav-item').filter({ hasText: /^Saved trips$/ }).first().click();
+  // The desktop header names the page "My trips" since shell V3 (row T390-b);
+  // either name is accepted so the step outlives the rename (T400).
+  await dp.locator('.header-nav-item').filter({ hasText: /^(Saved trips|My trips)$/ }).first().click();
   await dp.waitForTimeout(500);
   if (await dp.locator(ACCOUNT_PANEL).count()) fail('opening My trips left the account panel open');
   else ok('opening My trips closes the account panel');

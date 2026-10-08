@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { LinkIcon, CheckIcon, TrashIcon, PersonIcon } from '../components/Icons.jsx';
+import { LinkIcon, TrashIcon, PersonIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
@@ -227,7 +227,8 @@ export function TripSharePanel({
   // the next copy has nothing to report.
   useEffect(() => {
     if (!copied) return undefined;
-    const id = setTimeout(() => setCopied(''), 2500);
+    // Two seconds, then the button reads "Copy link" again (brief V4-7).
+    const id = setTimeout(() => setCopied(''), 2000);
     return () => clearTimeout(id);
   }, [copied]);
 
@@ -349,10 +350,16 @@ export function TripSharePanel({
               </span>
               <button
                 type="button"
-                className="tshare-copy"
+                className={`tshare-copy${copied === l.token ? ' is-copied' : ''}`}
                 onClick={() => copy(l.token)}
+                aria-live="polite"
               >
-                {copied === l.token ? <CheckIcon size={13} /> : <LinkIcon size={13} />}
+                {/* "Copied" in place, as a status: ink words after a 6 px
+                    success dot, never a green tick (carta-design "Status,
+                    not green", T400). */}
+                {copied === l.token
+                  ? <span className="tshare-dot" aria-hidden="true" />
+                  : <LinkIcon size={13} />}
                 {copied === l.token ? t('share.copied') : t('share.copy')}
               </button>
               <button
