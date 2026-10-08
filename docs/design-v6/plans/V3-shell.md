@@ -1,0 +1,49 @@
+# V3 plan: app shell, navigation and shared components (T381)
+
+Written by T381 (design wave V3, 2026-10-08) before the first app edit, as the planning step of the wave prompt. It carries out part 6 "V3" of `docs/design-v6/briefs/shell.md` under the house rules in `docs/design-v6/DIRECTION.md` part 9 and the carta-design skill. App paths are `src/...` in the app repo.
+
+## Shape (impeccable shape, run unattended)
+
+Impeccable `context --target continent-app/src/App.jsx` ran from the root worktree and loaded PRODUCT.md and DESIGN.md. Shape's discovery interview was not held: the run is unattended and the owner told every session to proceed without asking (2026-10-07). The brief below marks its assumptions instead, as shape allows when no answer mechanism exists.
+
+Job and audience. One budget traveller planning one holiday, on a phone first and a laptop second, moving between dreaming (landing, Explore, Destinations), budgeting (a destination page), planning (the two planners) and keeping (My trips). Mode: Operate. The shell's job is to carry them between those places and to show the inputs every figure depends on.
+
+Outcome and proof. The traveller always sees what the prices on screen are computed from and can change it in one tap, always knows which section they are in, can go back with the phone's Back button, and can open any section in a new tab. Proof: every priced tab shows the settings line; every section door is an `<a href>`; Back after Destinations then Explore returns to Destinations; a loading planner never covers the bar.
+
+Selected direction. Refinement inside the incumbent world (paper and ink, one terracotta accent, Fraunces, Plus Jakarta Sans, JetBrains Mono for measured facts). The settings line is a timetable row: labels in `--ui` 13 px `--ink-soft`, values in `--ink`, figures in `--mono`, no accent, no tint. Nothing new competes with each page's one primary.
+
+Scope and boundaries. Only files OWNERSHIP.md gives to shell, plus `src/styles/60-v6-shell.css`, the shell i18n prefixes and the shell harnesses. No tab content is redesigned. The visual pass (chrome recedes, one scrim, one close everywhere, motion) is V4 (T391); focus traps, strings, tap targets and phone edges are V5 (T401). Items that touch another surface's file are hand-offs written as register rows.
+
+States and ranges. Six languages (German and French labels run about 30 percent longer than English); 360 px phone floor to 1280 px desktop; landscape 844 x 390; a guest and a signed-in traveller; origin set or unset; dates Carta picked or the traveller's own; party 1 to 10.
+
+Assumptions taken without asking (impeccable would ask). The five-slot phone bar and its plus stay. The landing page stays the first-visit home. The settings line sits in its own band under the header on both widths rather than in the desktop header row: the header row at 1280 px already holds the brand, five tabs, Explore's portalled search, the pass chip and the avatar, so the line would not fit there on one row. The day planner gets no settings line, because none of its figures read the global inputs (it keeps its own day settings; `src/planner/DayPlannerTab.jsx` reads no `choices`); the landing page gets none, because its own People, Nights and Stay are what it demonstrates (wiring them to the global state is T382's hand-off, register row T370-d).
+
+## Changes in order
+
+1. Harness baseline (register row T370-a). Build the unchanged app, serve it with `vite preview` on 5201, run the nine shell harnesses and record the results. Update every assertion that encodes the old design (a "General" category, seven tiles, the pre-T363 accent, `.mobile-seg-btn`, the accent pass chip, Destinations' header search) with a comment saying why. Files: `scripts/verify_desktop_shell.mjs`, `verify_filter_sheet.mjs`, `verify_top_bar.mjs`, `verify_tab_switching.mjs`, `verify_lifestyle.mjs`.
+
+2. One name per section and a way home (brief V3-1, rule R1). The desktop tab reads "My trips" like the phone (`nav.myTrips`); the brand mark goes to the landing page (`tab=home`) on every screen; its title says so (`nav.brandTitle`). Files: `src/components/AppHeader.jsx`, `src/App.jsx`, six catalogues.
+
+3. Navigation as links with history (brief V3-2, rule R9). Every section door in the header and the bottom nav is an `<a href="?tab=...">` built from the current query, with `aria-current="page"` on the section showing; a plain click still goes through `goToTab` (preventDefault), so a middle click opens a new tab. `goToTab` pushes one history entry when the section changes; a `popstate` handler restores the tab and closes My trips, Account, Lifestyle and an open destination page. My trips and Account stay toggles and announce `aria-current` while open instead of `aria-pressed`. The two "Sections" landmarks are translated (`nav.sectionsLabel`). Files: `src/components/AppHeader.jsx`, `src/components/BottomNav.jsx`, `src/App.jsx`, `src/lib/urlState.js` (one small `tabHref()` export), six catalogues.
+
+4. One door for every tab change (brief V3-5). The six deep-link effects (trail, beach, lake, mountain, cycle, trip) call `goToTab(key, { replace: true })` instead of `setActiveTab`, so a shared link clears the pages over the tab and does not add a history entry at boot. File: `src/App.jsx`.
+
+5. The settings line (brief V3-3, rule R2, register row T380-e). New `src/components/SettingsLine.jsx`: a `SettingsContext` that App fills once (origin, dates and Carta's default pair, party, stay tier, Lifestyle, the Lifestyle opener, language), a `useSettings()` hook and a `useTravelMonth()` hook (the month of the traveller's own departure date, null while the dates are Carta's), and the `SettingsLine` component. Parts: origin (the existing OriginPicker in a new `variant="settings"`), dates (a popover with the two DateFields, the night count in mono and "Use Carta's dates"), party (a popover with the shared `Stepper` from FilterControls), Lifestyle (opens the Lifestyle dialog), language (a popover listing the six languages), and "Prices in EUR" as text. Placement: one band under the header in `.top-bar`, on Explore and Destinations with every part, on the Trip planner with Lifestyle, language and currency (the planner keeps its own origin, dates and party), and nowhere on the landing page or the Day planner. On a phone it never wraps: container queries drop parts from the left (origin, then dates) and keep Lifestyle. A surface may add its own filters after the parts through `children` or the portal slot `#settings-line-slot`. Files: `src/components/SettingsLine.jsx` (new, OWNERSHIP.md row in the same commit), `src/App.jsx`, `src/components/OriginPicker.jsx`, `src/styles/60-v6-shell.css`, six catalogues (`settings.*`).
+
+6. Lifestyle on every priced tab (brief V3-4). Through the settings line the Lifestyle door is on Explore, Destinations (every category, priced or not) and the Trip planner. `onOpenLifestyle` is passed to both planner tabs for their owners to place (T388, T389); neither tab reads it yet. File: `src/App.jsx`.
+
+7. Loading inside the tab (brief V3-6). `TabFallback` becomes a still `LoadingBlock` placed in the tab region between the top bar and the bottom nav, so the header and the bar stay usable while a planner chunk or the full catalogue loads. Files: `src/App.jsx`, `src/styles/60-v6-shell.css`.
+
+8. One bottom slot (brief V3-7, rule R6). New `BottomSlot` in `src/components/AnnouncementBar.jsx`: one fixed stack above the bottom nav on a phone (bottom centre on desktop) holding the site notice, the pass expiry banner and the email-confirmed toast, newest on top, never over the nav. The toast's close becomes CloseIcon in a `--tap` box and its tick glyph is hidden from screen readers; the banners' closes get the `--tap` box. Files: `src/components/AnnouncementBar.jsx`, `src/App.jsx`, `src/styles/60-v6-shell.css`.
+
+9. The plan chooser's copy and the plan-in-progress dot (brief V3-8, rule R3). `nav.planTripSub` reads "Route, stops and ground costs" in six languages (register row T370-e). The plus carries a 6 px `--ink-fill` dot with an aria-label when a trip draft with stops exists (`loadTripDraft()`); the desktop Trip planner tab carries the same dot. Files: `src/components/BottomNav.jsx`, `src/components/AppHeader.jsx`, `src/App.jsx`, six catalogues.
+
+10. My trips count (brief V3-9, rule R3). A count chip (`--mono` 11 px `--ink` on `--paper-dim`, 999 px) after "My trips" on both widths when the shortlist is not empty. Files: `src/components/AppHeader.jsx`, `src/components/BottomNav.jsx`, `src/styles/60-v6-shell.css`.
+
+11. Retire dead state (brief V3-10). Remove `onChangeOrigin`, `transportMode`, `driveHome` and `onChangeDriveHome` from the Destinations props (DestinationsTab reads none of them). Car mode stays the owner's call (register row T370-c, still open). File: `src/App.jsx`.
+
+12. Two h1 on `?tab=places` (register row T380-g). Find whose the second h1 is with the quality-floor harness; fix it if it is the chrome's, otherwise hand it to destinations.
+
+## Checks
+
+`npm run lint` 0 errors; `npm test`; `node scripts/ci/design-lint.mjs` 0 new violations; `node scripts/check_ownership.mjs <root>/docs/design-v6/OWNERSHIP.md`; a build served by `vite preview` on 5201 and the nine shell harnesses (verify_bottom_nav, verify_desktop_shell, verify_top_bar, verify_tab_switching, verify_filter_sheet, verify_lifestyle, verify_focus_trap, verify_keyboard 20 of 20, verify_quality_floor); a Playwright walk of every tab on iPhone 13 (WebKit), Pixel 5 and 360 x 740 (Chromium) and 1280 x 800 desktop, with landscape, the on-screen keyboard, safe areas, dvh and tap targets; the impeccable detector over every changed file; the six i18n files parsed; the after screenshots saved outside both repos; carta-design's seven questions in the report.
