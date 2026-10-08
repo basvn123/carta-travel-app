@@ -16,7 +16,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const logicPath = resolve(here, '../../../supabase/functions/plan-day/logic.mjs');
 const {
   cleanText, haversineKm, sanitizeCandidates, sanitizeAiStops, twoOptOrder,
-  scheduleDay, cacheKeyInput, modelChain, shouldFallOver, DEFAULT_MODEL_CHAIN,
+  scheduleDay, cacheKeyInput, modelChain, shouldFallOver, attemptTimeoutMs, DEFAULT_MODEL_CHAIN,
   CACHE_KEY_VERSION, selectCandidates, dayCentroid,
 } = await import(pathToFileURL(logicPath).href);
 
@@ -428,6 +428,16 @@ check('fallover: 404 retired model advances', shouldFallOver(404));
 check('fallover: 503 high demand advances', shouldFallOver(503));
 check('fallover: 400 bad request stops the chain', !shouldFallOver(400));
 check('fallover: 403 bad key stops the chain', !shouldFallOver(403));
+
+// T415: one time budget for the whole chain. The first model gets 40 s, later
+// ones 25 s, never more than what is left, and nothing under 8 s.
+check('budget: first model gets 40 s', attemptTimeoutMs(0, 0) === 40_000);
+check('budget: a later model gets 25 s', attemptTimeoutMs(1, 40_000) === 25_000);
+check('budget: never more than what is left', attemptTimeoutMs(2, 65_000) === 15_000);
+check('budget: too little left stops the chain', attemptTimeoutMs(3, 75_000) === 0);
+check('budget: a slow first model still leaves room for one more',
+  attemptTimeoutMs(1, 40_000) >= 8_000);
+check('budget: negative elapsed counts as zero', attemptTimeoutMs(0, -5) === 40_000);
 
 if (failures) {
   console.error(`\n${failures} test(s) failed`);

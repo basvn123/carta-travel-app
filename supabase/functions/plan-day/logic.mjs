@@ -522,6 +522,31 @@ export function shouldFallOver(status) {
 }
 
 /**
+ * How long one model in the chain may take, in milliseconds, or 0 when the
+ * request has no time left for another attempt (T415).
+ *
+ * The first model is a thinking model, and with live search on it can take
+ * longer than a traveller will wait; until T415 a single 45 s timeout ended
+ * the whole request with ai_timeout, though the lite models behind it answer
+ * a day in a few seconds. Now the whole request has one budget, the first
+ * model gets the larger share of it, and a timeout falls over to the next
+ * model like a 429 does, as long as enough of the budget is left for that
+ * model to finish. Supabase allows an Edge Function 150 s of wall clock, so
+ * 80 s keeps well inside it with the cache, quota and logging work around it.
+ */
+export const AI_TIME_BUDGET_MS = 80_000;
+export const AI_FIRST_ATTEMPT_MS = 40_000;
+export const AI_LATER_ATTEMPT_MS = 25_000;
+export const AI_MIN_ATTEMPT_MS = 8_000;
+
+export function attemptTimeoutMs(index, elapsedMs, budgetMs = AI_TIME_BUDGET_MS) {
+  const left = budgetMs - Math.max(0, elapsedMs || 0);
+  if (left < AI_MIN_ATTEMPT_MS) return 0;
+  const cap = index === 0 ? AI_FIRST_ATTEMPT_MS : AI_LATER_ATTEMPT_MS;
+  return Math.min(cap, left);
+}
+
+/**
  * The cache key version, carried in the key itself and logged beside every
  * lookup so a hit rate can be attributed to the key that produced it. Bump it
  * whenever the key or the payload shape changes; see the comment on `v` in
