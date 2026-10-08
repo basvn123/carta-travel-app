@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl';
 import { nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, keepFitted } from './coords.js';
+import { useI18n } from '../i18n/index.jsx';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -43,6 +44,11 @@ const PLANE_SVG = '<svg viewBox="0 0 24 24" width="12" height="12" fill="current
 export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
+  // The pins are built in an effect, so the translated words come from a ref
+  // (T388: "Fly here" was English in every language).
+  const { t } = useI18n();
+  const tRef = useRef(t);
+  tRef.current = t;
   const readyRef = useRef(false);
   const pinsRef = useRef(new Map()); // id -> { marker, el, label }
   const onToggleRef = useRef(onToggle);
@@ -97,7 +103,10 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
         // arrival city, so the traveller sees exactly where they land.
         const fly = document.createElement('span');
         fly.className = 'citypick-fly';
-        fly.innerHTML = PLANE_SVG + '<span>Fly here</span>';
+        fly.innerHTML = PLANE_SVG;
+        const flyText = document.createElement('span');
+        flyText.textContent = tRef.current('wizard.flyHere');
+        fly.append(flyText);
         el.append(fly, icon, label, meta);
         el.addEventListener('click', (e) => {
           e.stopPropagation();

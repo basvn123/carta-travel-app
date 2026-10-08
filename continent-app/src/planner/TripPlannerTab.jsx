@@ -85,6 +85,78 @@ const ModeIcon = ({ mode, size = 13 }) => {
 };
 
 /**
+ * The planned view's "More" menu (carta-design "More" menu rule, T388): the
+ * footer keeps Plan your days and Save trip, and every further action sits
+ * behind one secondary button with menu semantics. Escape and a click outside
+ * close it and focus returns to the button; the arrow keys move between the
+ * items. A destructive item is drawn in --danger text and keeps its confirm.
+ */
+function MoreMenu({ items }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+  const btnRef = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const first = wrapRef.current?.querySelector('[role="menuitem"]');
+    first?.focus();
+    const onDown = (e) => { if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        setOpen(false);
+        btnRef.current?.focus();
+        return;
+      }
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      const list = [...(wrapRef.current?.querySelectorAll('[role="menuitem"]') || [])];
+      if (!list.length) return;
+      e.preventDefault();
+      const i = list.indexOf(document.activeElement);
+      const next = e.key === 'ArrowDown' ? (i + 1) % list.length : (i - 1 + list.length) % list.length;
+      list[next].focus();
+    };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('keydown', onKey, true);
+    };
+  }, [open]);
+  const shown = items.filter(Boolean);
+  if (!shown.length) return null;
+  return (
+    <div className="trip-more" ref={wrapRef}>
+      <Button
+        ref={btnRef}
+        className="trip-more-btn"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {t('trip.moreActions')}
+      </Button>
+      {open && (
+        <div className="trip-more-menu" role="menu" aria-label={t('trip.moreActionsAria')}>
+          {shown.map((it) => (
+            <button
+              key={it.key}
+              type="button"
+              role="menuitem"
+              className={`trip-more-item ${it.danger ? 'is-danger' : ''} ${it.className || ''}`}
+              title={it.title}
+              onClick={() => { setOpen(false); it.onClick(); }}
+            >
+              {it.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
  * Anchor-city connection legs ("fly into Bergamo, then get to Como"), real
  * journeys that belong in the receipt next to the flights they bracket.
  *
@@ -332,10 +404,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const [awaitingDates, setAwaitingDates] = useState(false);
   const [dragIdx, setDragIdx] = useState(null);
   const [wizardOpen, setWizardOpen] = useState(false);
-  // Mobile only: the planner opens from a clean "Plan your trip" launcher rather
-  // than dumping the whole bottom sheet on screen at once. Inert on desktop,
-  // where the sheet is a permanent left column (see isNarrow below).
-  const [sheetOpen, setSheetOpen] = useState(false);
+  // The phone launcher card that used to sit over the map until "Plan your
+  // trip" was tapped is gone (T388): its button opened a fresh wizard over a
+  // trip that already had stops. A trip with stops now always shows its sheet,
+  // and the grip lowers it to reveal the map.
   // Remembered panel height (px). null = auto (content height).
   const [sheetHeight, setSheetHeight] = useState(() => {
     if (typeof window === 'undefined') return null;
@@ -413,7 +485,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     tp.setPlanned(true);
     setWizardOpen(false);
     setSelectedStop(null);
-    setSheetOpen(true);
   };
 
   const handleStartOver = () => {
@@ -421,19 +492,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     tp.clearPlan();
     setSelectedStop(null);
     setSaveError('');
-    if (isNarrow) setSheetOpen(false);
   };
 
-  // Leave the planned overview without touching the trip: drop back to the
-  // standard planner (the launcher on mobile, the map on desktop). Nothing is
-  // saved, deleted or edited, it's just an escape hatch off this screen.
-  const handleExitOverview = () => {
-    tp.clearPlan();
-    tp.setPlanned(false);
-    setSelectedStop(null);
-    setSaveError('');
-    if (isNarrow) setSheetOpen(false);
-  };
+  // The planned overview had a close cross in its top card that called
+  // clearPlan() and emptied an unsaved trip with one tap (row T377-e). Closing
+  // without clearing would only have led to the editor, which is what Edit
+  // stops does, so the cross is gone and Start over (with its confirm) is the
+  // one way to clear a trip (T388).
 
   // A trip plan chosen from the Saved-trips overview: load it and switch
   // straight to its planned view, or, for { id, edit: true }, into the
@@ -445,7 +510,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     tp.loadPlan(planId).then(() => {
       tp.setPlanned(!editMode);
       setSelectedStop(null);
-      setSheetOpen(true);
     }).catch(() => {
       // A failed fetch used to leave the tab silently stuck; surface it instead.
       setSaveError(t('trip.openFailed'));
@@ -488,7 +552,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       tp.setPlanned(!!d.tripStart);
       setAwaitingDates(!d.tripStart);
       setSelectedStop(null);
-      setSheetOpen(true);
     }
     onSharedTripConsumed && onSharedTripConsumed();
   }, [openSharedTrip]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off: tp is a fresh object every render, and a re-run before App clears the trip would load it twice
@@ -634,7 +697,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         // planner's start page (the trip itself is safe under Saved trips).
         tp.clearPlan();
         setSelectedStop(null);
-        if (isNarrow) setSheetOpen(false);
       }
     } catch (e) {
       // The service's own text ("JWT expired", a constraint name) is for the
@@ -658,8 +720,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     return Array.isArray(picks) && picks.length > 0;
   };
 
-  // Planned-view actions, pinned at the BOTTOM of the sheet on every layout:
-  // one primary Save/Update, then the plainly-labelled secondary actions.
+  // Planned-view actions, pinned at the BOTTOM of the sheet on every layout,
+  // in ONE row (T388, brief item 7): the primary, Save trip as the secondary,
+  // and everything else behind "More" (Edit stops, Replan route, Start over).
   const plannedActionButtons = (
     <>
       {/* Arranging the trip settles the cities, the nights and the legs, and
@@ -685,19 +748,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       >
         {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
       </Button>
-      <div className="trip-planned-secondary">
-        <Button
-          className="trip-edit-btn"
-          onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}
-          title={t('trip.editStopsTitle')}
-        >
-          {t('trip.editStops')}
-        </Button>
-        {tp.stopDetails.length >= 3 && (
-          <Button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title={t('trip.replanTitle')}>↻ {t('trip.replanRoute')}</Button>
-        )}
-        <Button className="trip-startover-btn" onClick={handleStartOver} title={t('trip.startOverTitle')}>{t('trip.startOver')}</Button>
-      </div>
+      <MoreMenu
+        items={[
+          { key: 'edit', className: 'trip-edit-btn', label: t('trip.editStops'), title: t('trip.editStopsTitle'), onClick: () => tp.setPlanned(false) },
+          tp.stopDetails.length >= 3 && { key: 'replan', className: 'trip-plan-again-btn', label: t('trip.replanRoute'), title: t('trip.replanTitle'), onClick: () => tp.optimizeRoute() },
+          { key: 'over', className: 'trip-startover-btn', label: t('trip.startOver'), title: t('trip.startOverTitle'), danger: true, onClick: handleStartOver },
+        ]}
+      />
     </>
   );
 
@@ -732,31 +789,16 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     <div className="trip-planner-screen">
       <TripMap
         stops={mapStops}
-        padBottom={isNarrow ? (sheetOpen ? sheetH : 96) : 48}
+        padBottom={isNarrow ? sheetH : 48}
         onSelectStop={setSelectedStop}
         selectedIndex={selectedStop}
         routeGeometry={tripRouteOk ? tripRoute.geometry : null}
         routeSegments={tripRouteOk ? tripRoute.segments : null}
       />
 
-      {/* Mobile: a clean launcher card over the map until the traveller chooses
-          to start. Trips are built through the guide, so "Plan your trip" opens
-          the wizard straight away. Never shown on desktop (isNarrow) or once a
-          plan exists. */}
-      {isNarrow && !sheetOpen && !tp.planned && (
-        <div className="trip-launcher" onClick={(e) => e.stopPropagation()}>
-          <div className="trip-launcher-card">
-            <div className="trip-launcher-spark"><SparkIcon size={20} /></div>
-            <h2 className="trip-launcher-title">{t('trip.planYourTrip')}</h2>
-            <p className="trip-launcher-sub">{t('trip.launcherSub')}</p>
-            <button className="trip-launcher-primary" onClick={() => setWizardOpen(true)}>{t('trip.planYourTrip')}</button>
-          </div>
-        </div>
-      )}
-
       {/* Left panel (desktop) / bottom sheet (mobile) */}
       <div
-        className={`trip-sheet ${dragging ? 'dragging' : ''} ${isNarrow && !sheetOpen && !tp.planned ? 'sheet-hidden' : ''}`}
+        className={`trip-sheet ${dragging ? 'dragging' : ''}`}
         ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
         style={isNarrow && sheetHeight != null ? { height: sheetHeight } : undefined}
@@ -800,16 +842,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           onPointerCancel={isNarrow ? onGripUp : undefined}
           style={isNarrow ? { touchAction: 'none' } : undefined}
         >
-          {tp.planned && (
-            <button
-              className="trip-topcard-close"
-              onClick={handleExitOverview}
-              aria-label={t('trip.closeOverviewAria')}
-              title={t('trip.closeOverviewTitle')}
-            >
-              ×
-            </button>
-          )}
           {/* The trip's name is an editable field, so the page's one h1
               carries the same words for assistive tech (T193). */}
           <h1 className="sr-only">{tp.planLabel || t('trip.planYourTrip')}</h1>
@@ -876,12 +908,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 stopIndex: day.stopIndex,
                 dayIndex: day.dayOfStay - 1,
               }) : null}
-            />
-            <CheapTipsSection
-              stopDetails={tp.stopDetails}
-              tripStart={tp.tripStart}
-              transportPref={tp.transportPref}
-              groupSize={tp.groupSize}
             />
             </>
           ) : hasTrip ? (
@@ -1299,31 +1325,27 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           )}
 
           </>
-          ) : (
-          <button className="trip-guide-cta" onClick={() => setWizardOpen(true)}>
-            <span className="trip-guide-spark"><SparkIcon size={15} /></span>
-            <span className="trip-guide-cta-text">
-              <b>{t('trip.guideCta')}</b>
-              <small>{t('trip.guideCtaSub')}</small>
-            </span>
-            <span className="trip-guide-arrow">→</span>
-          </button>
-          )}
+          ) : null}
+          {/* The guide call to action that stood here could never render: an
+              empty planner returns the inline wizard above (T388 removed it). */}
 
-          {/* Deep country intel for every country on the route. Sits outside the
-              planned/edit branches so the briefing shows on both the overview tab
-              and the edit-stops view; the stop-count guard hides it pre-trip. */}
-          {countryInsights && tp.stopDetails.length > 0 && (() => {
+          {/* Know before you go: the country intel and the money tips as ONE
+              fold, closed until asked for (T388, brief item 6). Outside the
+              planned/edit branches so it shows on both; the stop-count guard
+              hides it pre-trip. */}
+          {tp.stopDetails.length > 0 && (() => {
             const tripCountries = [...new Set(tp.stopDetails.map((s) => s.dest?.country).filter(Boolean))];
-            const withIntel = tripCountries.filter((c) => countryInsights[c]);
-            if (!withIntel.length) return null;
+            const withIntel = countryInsights ? tripCountries.filter((c) => countryInsights[c]) : [];
             return (
-              <div className="trip-block">
-                <div className="trip-block-title">{t('trip.knowTitle')}</div>
-                {withIntel.map((c) => (
+              <CheapTipsSection
+                stopDetails={tp.stopDetails}
+                tripStart={tp.tripStart}
+                transportPref={tp.transportPref}
+                groupSize={tp.groupSize}
+                intel={withIntel.map((c) => (
                   <CountryIntel key={c} country={c} rec={countryInsights[c]} />
                 ))}
-              </div>
+              />
             );
           })()}
         </div>

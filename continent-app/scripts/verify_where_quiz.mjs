@@ -155,8 +155,19 @@ async function answerQuiz(page, { types, spend, around, distance, pace, avoid = 
   const numberless = whyTexts.filter((x) => !/\d/.test(x));
   check('every reason carries a number', numberless.length === 0, numberless.slice(0, 3).join(' | '));
 
-  const cardText = await page.locator('.mcards').innerText();
-  check('no prices on the recommendations', !/[€$£]/.test(cardText));
+  // T388 (rule "Cost on cards", DIRECTION.md part 9): a card that offers a
+  // place carries one day-cost line from the cost index. What this check
+  // guards is unchanged, no fare on a country card: every euro on the cards
+  // sits in that day-cost line, and nowhere else.
+  const cardText = await page.locator('.mcards').evaluate((el) => {
+    const c = el.cloneNode(true);
+    c.querySelectorAll('.wiz-cost-line').forEach((n) => n.remove());
+    return c.innerText;
+  });
+  check('no fare on the recommendations, only the day cost', !/[€$£]/.test(cardText));
+  const costLines = await page.locator('.mcards .wiz-cost-line').allInnerTexts();
+  check('the day cost is a day per person', costLines.length > 0 && costLines.every((x) => /€\s?\d+/.test(x) && /a day/i.test(x)),
+    costLines.slice(0, 2).join(' | '));
   check('cards show places with ratings', await page.locator('.mcard-place .score-chip').count() >= 3,
     String(await page.locator('.mcard-place .score-chip').count()));
 
@@ -173,7 +184,12 @@ async function answerQuiz(page, { types, spend, around, distance, pace, avoid = 
   await page.waitForTimeout(600);
   check('the grid renders country cards', await page.locator('.guide-ccard').count() >= 20,
     String(await page.locator('.guide-ccard').count()));
-  check('the grid carries no prices', !/[€$£]/.test(await page.locator('.guide-cgrid').innerText()));
+  // Same guard as above for the grid (T388): euros only in the day-cost band.
+  check('the grid carries no fare, only the day cost', !/[€$£]/.test(await page.locator('.guide-cgrid').evaluate((el) => {
+    const c = el.cloneNode(true);
+    c.querySelectorAll('.wiz-cost-line').forEach((n) => n.remove());
+    return c.innerText;
+  })));
 
   await page.locator('.guide-where-view button', { hasText: /^map$/i }).click();
   await page.waitForTimeout(3500);

@@ -88,6 +88,16 @@ const DEFAULT_STATE = {
     flexMonth: '',
     flexNights: 7,
     quiz: {},           // the Where quiz answers (T2)
+    // T388 (row T377-e): the answers that decide which step a stored step
+    // number means and what is on it. Without them a reload restored "step 5"
+    // onto a different step list and an empty city picker.
+    booked: { travel: false, stays: false },
+    nights: {},         // { [destId]: nights }
+    order: [],          // picked city ids, pick order
+    travelValues: {},   // { [legKey]: { mode, service, eur } }, the traveller's own
+    arrivalId: '',      // where booked travel puts them down
+    pace: 'balanced',   // 'relaxed' | 'balanced' | 'packed'
+    stayStyle: 'multi', // 'multi' | 'single'
   },
 };
 

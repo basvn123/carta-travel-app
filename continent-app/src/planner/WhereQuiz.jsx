@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   TRIP_TYPES, TRIP_GROUPS, MAX_TRIP_TYPES, SPEND_CHOICES,
 } from '../lib/countryMatch.js';
@@ -154,6 +154,42 @@ export function WhereQuiz({ answers, onAnswer, monthLabel }) {
   // `typesDone` is what remembers that they did.
   const typesDone = Boolean(answers.typesDone) && editing !== 'types';
 
+  // Once the five questions are answered they fold into ONE line with one
+  // Edit (T388, brief item 8), so the recommendations start on the first
+  // screen after the last answer instead of under five answered rows and the
+  // optional sixth question. Edit opens every question again, the optional
+  // "avoid" one with them.
+  const [showAll, setShowAll] = useState(false);
+  const allAnswered = typesDone && types.size > 0 && Boolean(answers.spend && answers.around
+    && answers.distance && answers.pace) && !editing;
+  if (allAnswered && !showAll) {
+    const parts = [
+      ...[...types].map(typeLabel),
+      t(`quiz.spend.${answers.spend}`),
+      t(`quiz.around.${answers.around}`),
+      t(`quiz.distance.${answers.distance}`),
+      t(`quiz.pace.${answers.pace}`),
+      ...[...avoid].map((k) => t('quiz.avoiding', { what: t(`quiz.avoid.${k}`) })),
+    ];
+    return (
+      <div className="wq wq-folded">
+        <div className="wq-summary">
+          <span className="wq-done-check" aria-hidden="true"><CheckIcon size={12} /></span>
+          <p className="wq-summary-text">
+            <small>{t('quiz.yourAnswers')}</small>
+            <b>{parts.join(', ')}</b>
+          </p>
+          <button type="button" className="wq-summary-edit" onClick={() => setShowAll(true)}>
+            <PencilIcon size={13} /> {t('quiz.editAnswers')}
+          </button>
+        </div>
+        {monthLabel && (
+          <p className="wq-month">{t('quiz.usingMonth', { month: monthLabel })}</p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="wq">
       <Question
@@ -264,6 +300,12 @@ export function WhereQuiz({ answers, onAnswer, monthLabel }) {
             multi
           />
         </PlannerSection>
+      )}
+
+      {allAnswered && showAll && (
+        <button type="button" className="wq-next" onClick={() => setShowAll(false)}>
+          {t('quiz.done')}
+        </button>
       )}
 
       {/* The month is not a question. It was answered on the When step and is

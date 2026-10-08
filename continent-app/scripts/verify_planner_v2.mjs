@@ -82,6 +82,23 @@ const chips = await page.locator('.guide-airport-chip').allInnerTexts();
 check('airports within 200 km listed', chips.length >= 3, `${chips.length}: ${chips.slice(0, 3).join(' | ')}`);
 check('chips carry distances', chips.every((c) => /\d+\s*km/.test(c)));
 
+// T388 (brief item 4): the party is asked here now, with the origin, so every
+// estimate after this step prices the real party. These checks moved from the
+// Finish card, which shows the party as a fact with a Change button instead.
+const partyCard = page.locator('.wiz-party');
+check('From asks who is going', await partyCard.isVisible().catch(() => false));
+check('children stay folded until asked for', await partyCard.locator('.guide-kids-add').isVisible().catch(() => false));
+await partyCard.locator('.wiz-party-stepper').first().locator('button').nth(1).click();   // 2 -> 3 adults
+await page.waitForTimeout(300);
+await partyCard.locator('.guide-kids-add').click();
+await page.waitForTimeout(300);
+check('the children stepper unfolds', (await partyCard.locator('.wiz-party-stepper').count()) === 2);
+await partyCard.locator('.wiz-party-stepper').nth(1).locator('button').nth(1).click();  // +1 child
+await page.waitForTimeout(300);
+check('the children note is honest', /full travellers/i.test(await partyCard.innerText()));
+const stepperBox = await partyCard.locator('.wiz-party-stepper button').first().boundingBox();
+check('the party steppers are a real target', (stepperBox?.height || 0) >= 32, String(stepperBox?.height));
+
 await nextStep();
 
 // ── Step 3: When. A 7-night window. ──
@@ -110,15 +127,19 @@ await page.waitForTimeout(1200);
 check('the Where step opens on the quiz', await page.locator('.wq').isVisible());
 await page.locator('.guide-wtabs [role="tab"]').nth(1).click();
 await page.waitForTimeout(700);
-const estCount = await page.locator('.guide-ccard-n').count();
-check('country cards carry a places line', estCount >= 10, String(estCount));
-const cardLine = await page.locator('.guide-ccard-n').first().innerText();
-check('the line is what the country holds', /places/i.test(cardLine.trim()), cardLine);
+// T388 (rule "Cost on cards"): the places line is gone; a country card now
+// carries what a day there costs a person, under the photograph. The two
+// checks that asked for the places line ask for the day cost instead.
+const estCount = await page.locator('.wiz-ccard-cost').count();
+check('country cards carry a day cost line', estCount >= 10, String(estCount));
+const cardLine = await page.locator('.wiz-ccard-cost').first().innerText();
+check('the line is a day per person in euros', /€\s?\d+/.test(cardLine) && /day/i.test(cardLine), cardLine);
 check('no transit badge survives on a card', await page.locator('.guide-ccard-badges').count() === 0);
 check('no city count on the cards', !/\d+ cities/i.test(await page.locator('.guide-cgrid').innerText()));
 check('the country search box is gone', await page.locator('.guide-where-col input.guide-search').count() === 0);
 const recapTxt = await page.locator('.guide-recap').innerText().catch(() => '');
-check('recap carries origin + party', /ghent/i.test(recapTxt) && /2 travellers/i.test(recapTxt), recapTxt.replace(/\s+/g, ' ').slice(0, 90));
+// Three adults and a child were set on From (T388), so the party reads 4.
+check('recap carries origin + party', /ghent/i.test(recapTxt) && /4 travellers/i.test(recapTxt), recapTxt.replace(/\s+/g, ' ').slice(0, 90));
 check('recap no longer names a travel style', !/budget|standard|comfort/i.test(recapTxt), recapTxt.replace(/\s+/g, ' ').slice(0, 90));
 await page.screenshot({ path: 'shots/planner-v2-where.png' });
 await page.locator('.guide-ccard', { hasText: 'France' }).first().locator('.guide-ccard-pick').click();
@@ -127,7 +148,9 @@ await page.locator('.guide-next').click();
 await page.waitForTimeout(2500);
 
 // ── Step 5: build your own, where the curated templates live ──
-await page.locator('.wmode-btn').nth(1).click();
+// The old two-button mode switch (.wmode-btn) is gone; the way into the
+// city picker is the "Build your own route" card at the end of the list.
+await page.locator('.wready-own-card').first().click();
 await page.waitForTimeout(2000);
 
 check('step 5 becomes Stay', /sleep|stay/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
@@ -144,31 +167,24 @@ if (tplCount > 0) {
 }
 check('estimate includes daily spending', /food & fun/i.test(await page.locator('.guide-estimate-band').innerText().catch(() => '')));
 
-// ── Step 6: Finish, and the planned overview ──
+// ── Step 6: Getting there, then Finish, and the planned overview ──
+// Getting there sits between Stay and Finish on every path since the steps
+// were split; T388 made it build its legs from the stops on the
+// build-your-own path too (row T377-e), which is what this run checks.
+await page.locator('.guide-next').click();
+await page.waitForTimeout(2000);
+check('build-your-own reaches Getting there with legs', await page.locator('.tlegs').isVisible().catch(() => false));
+check('no "no trip chosen" on the build-your-own path', !(await page.locator('.guide-empty', { hasText: /no trip chosen/i }).isVisible().catch(() => false)));
 await page.locator('.guide-next').click();
 await page.waitForTimeout(2000);
 check('reaches the Finish step', /last touches/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
-check('the finish step asks how you get there', await page.locator('.tlegs').isVisible().catch(() => false));
 
-// T1: party size is asked here now, on the card that shows the price it
-// multiplies, and the children stepper stays folded until asked for.
+// T388: the party is a fact on the Finish card with a way back to From,
+// not a stepper (it is asked on From, checked above).
 const party = page.locator('.guide-summary-party');
-check('the summary card carries the travellers stepper', await party.isVisible().catch(() => false));
-check('children stay folded until asked for', await page.locator('.guide-kids-add').isVisible().catch(() => false));
-const readEst = async () => {
-  const m = (await page.locator('.guide-estimate-band').innerText().catch(() => '')).match(/([\d.,]+)/g);
-  return m ? m[m.length - 1] : '';
-};
-const estBefore = await readEst();
-await party.locator('.guide-people button').nth(1).click();   // 2 -> 3 adults
-await page.waitForTimeout(900);
-check('adding a traveller moves the estimate', (await readEst()) !== estBefore, `${estBefore} -> ${await readEst()}`);
-await page.locator('.guide-kids-add').click();
-await page.waitForTimeout(400);
-check('the children stepper unfolds', await page.locator('.guide-summary-kids').isVisible().catch(() => false));
-await page.locator('.guide-summary-kids .guide-people button').nth(1).click();  // +1 child
-await page.waitForTimeout(500);
-check('the children note is honest', /full travellers/i.test(await party.innerText()));
+check('the summary card states the party', /4\s+travellers/i.test(await party.innerText().catch(() => '')), await party.innerText().catch(() => ''));
+check('the party has a way back to From', await party.locator('.guide-answered-edit').isVisible().catch(() => false));
+check('the estimate says it is one', /~/.test(await page.locator('.guide-estimate-band').innerText().catch(() => '')) && /est\./i.test(await page.locator('.guide-estimate-band').innerText().catch(() => '')));
 await page.screenshot({ path: 'shots/planner-v2-finish.png' });
 const arrange = page.locator('.guide-next', { hasText: /arrange/i }).last();
 if (await arrange.isVisible().catch(() => false)) {
@@ -182,7 +198,7 @@ if (await arrange.isVisible().catch(() => false)) {
 const draft = await page.evaluate(() => JSON.parse(localStorage.getItem('carta.plannerDraft.v1') || 'null'));
 check('store: origin is Ghent', draft?.origin?.name?.toLowerCase().includes('ghent'), draft?.origin?.name);
 check('store: nearby airports saved', (draft?.nearbyAirports?.length || 0) >= 3, String(draft?.nearbyAirports?.length));
-check('store: travelers saved from the Finish stepper', draft?.travelers?.adults === 3 && draft?.travelers?.children === 1, JSON.stringify(draft?.travelers));
+check('store: travelers saved from the From stepper', draft?.travelers?.adults === 3 && draft?.travelers?.children === 1, JSON.stringify(draft?.travelers));
 check('store: style follows the app, unasked', Boolean(draft?.travelers?.lifestyle), JSON.stringify(draft?.travelers?.lifestyle));
 check('store: dates saved', draft?.travelDates?.durationNights === 7, JSON.stringify(draft?.travelDates));
 // Nothing has been said about transport yet, and Carta invents none.

@@ -15,7 +15,11 @@
  *      combineTripLegs to work at all), ranked by distance + beauty.
  */
 
-import { haversineKm, cityCoords, planeReachIndex, airportLastLeg } from './runtime_pricing.js';
+import {
+  haversineKm, cityCoords, planeReachIndex, airportLastLeg,
+  accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE,
+} from './runtime_pricing.js';
+import { preferredPublicMode } from './transport.js';
 import { round2 } from './math.js';
 
 
@@ -477,4 +481,44 @@ export function suggestNextStops(fromDest, allDests, arriveDate, {
     return rankB - rankA;
   });
   return out.slice(0, limit);
+}
+
+/**
+ * One stop's stay and daily cost for the whole party: the ONE function the
+ * wizard's running estimate and the planned view's receipt both price a stop
+ * with (T388, row T377-g). Before it the wizard halved a two-night quote and
+ * priced the days at the travel style while the planner quoted the real
+ * nights and priced the days at the app default, so one trip read EUR 586 on
+ * the last wizard step and EUR 771 on the next screen.
+ *
+ *   accom       accommodationPerPerson's row (null for a 0-night stop)
+ *   ground      groundSpendPerPerson's row (meals, drinks, groceries, local)
+ *   accomTotal  the bed for everyone, all nights
+ *   groundTotal the days for everyone, all nights
+ *   total       the two added up
+ */
+export function stopStayCost(dest, nights, arriveDate, { groupSize = 1, stayTier = 'home', lifestyle = null } = {}) {
+  if (!dest) return null;
+  const gs = Math.max(1, groupSize || 1);
+  const n = Math.max(0, nights || 0);
+  // A 0-night pass-through stop books nothing; without this gate the
+  // accommodation model still charges its cleaning and service fee.
+  const accom = n > 0 ? accommodationPerPerson(dest, n, arriveDate || null, null, gs, stayTier) : null;
+  const ground = groundSpendPerPerson(dest, n, lifestyle || DEFAULT_LIFESTYLE);
+  const accomTotal = round2((accom ? accom.total : 0) * gs);
+  const groundTotal = round2((ground ? ground.total : 0) * gs);
+  return { accom, ground, accomTotal, groundTotal, total: round2(accomTotal + groundTotal) };
+}
+
+/**
+ * The mode Carta picks for a stop-to-stop leg nobody has chosen yet, shared by
+ * the wizard's estimate and the planner (T388): the car when the trip drives,
+ * trains and buses when the traveller asked for public transport, and the leg
+ * engine's own recommendation otherwise. `opts` is legTransportOptions' row.
+ */
+export function pickLegMode(opts, { transportPref = 'auto', hasCar = false } = {}) {
+  if (!opts || !opts.modes) return null;
+  if (hasCar) return 'car';
+  if (transportPref === 'public') return preferredPublicMode(opts) || 'bus';
+  return opts.recommended || null;
 }

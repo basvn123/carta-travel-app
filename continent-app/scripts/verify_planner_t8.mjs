@@ -291,8 +291,15 @@ try {
   check('T8.6 the arranged trip offers "Plan your days"', await planDay.count() === 1,
     String(await planDay.count()));
   if (await planDay.count()) {
-    check('T8.6 it reads as the primary next step, above Save',
-      (await planDay.boundingBox()).y < (await page.locator('.trip-save-planned-btn').boundingBox()).y);
+    // T388 (brief item 7): the planned footer is ONE row, so "above Save"
+    // became "first in the row, and the one primary": Plan your days sits
+    // left of Save trip, and only it carries the primary class.
+    const pdBox = await planDay.boundingBox();
+    const svBox = await page.locator('.trip-save-planned-btn').boundingBox();
+    check('T8.6 it reads as the primary next step, first in the footer row',
+      pdBox.x < svBox.x && Math.abs(pdBox.y - svBox.y) < 8
+      && (await planDay.getAttribute('class')).includes('btn-primary')
+      && !(await page.locator('.trip-save-planned-btn').getAttribute('class')).includes('btn-primary'));
     await page.screenshot({ path: 'shots/t8-planday.png' });
     await planDay.click();
     await page.waitForTimeout(2500);

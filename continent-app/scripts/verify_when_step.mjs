@@ -39,7 +39,13 @@ async function toWhenStep(width, height, fakeNow) {
   if (await top.isVisible().catch(() => false)) await top.click();
   else { await page.locator('.bottom-nav-plus').click(); await page.waitForTimeout(500); await page.locator('.plan-chooser-item').first().click(); }
   await page.waitForTimeout(2000);
-  await page.waitForTimeout(1000);   // dates live on Trip basics, which is step one
+  // The basics are three steps now (Booked, From, When), so the calendar is
+  // two Next presses in; the old run waited for it on step one and timed out
+  // (T388 baseline, row T377-a). From has no gate: Next is always enabled.
+  for (let i = 0; i < 2; i += 1) {
+    await page.locator('.guide-next').first().click().catch(() => {});
+    await page.waitForTimeout(900);
+  }
   return page;
 }
 
@@ -70,7 +76,7 @@ async function enabledDays(page) {
 // ── Desktop, real clock ──
 {
   const page = await toWhenStep(1440, 1000);
-  check('lands on the basics step', /set up your trip/i.test(await page.locator('.guide-title').first().innerText()));
+  check('lands on the When step', /when are you going/i.test(await page.locator('.guide-title').first().innerText()));
   const days = await enabledDays(page);
   const today = iso(new Date());
   check('calendar offers days', days.length > 0, String(days.length));

@@ -10,16 +10,33 @@ import { monthName } from '../lib/dates.js';
 /** How many recommendations before the "show more" link. */
 const PAGE = 6;
 
+/** "From €43 a day a person": the sentence translated whole, the figure alone
+ *  in mono, so word order survives every language. */
+export function DayCostLine({ cost, t, className = '' }) {
+  if (!cost) return null;
+  const parts = t('match.fromDay', { eur: '\u0000' }).split('\u0000');
+  return (
+    <p className={`wiz-cost-line ${className}`}>
+      {parts[0]}
+      <span className="mono">{cost.minText}</span>
+      {parts.slice(1).join('')}
+      {cost.national && <> {t('match.national')}</>}
+    </p>
+  );
+}
+
 /**
  * One recommended country.
  *
- * No price anywhere on this card, on purpose. A country card used to carry a
- * flight fare, which moved every time the dates moved and said nothing about
- * the country (see the note at the top of lib/countryBrief.js). What it
- * carries instead is why it is being recommended, in the traveller's own
- * terms: the trip type they asked for, and the measured facts behind it.
+ * A country card used to carry a flight fare, which moved every time the
+ * dates moved and said nothing about the country (see the note at the top of
+ * lib/countryBrief.js), and then no price at all. Since T388 it carries the
+ * figure the traveller weighs first (rule "Cost on cards"): what a day there
+ * costs a person at their Lifestyle, from the cheapest town, read from the
+ * same cost index Explore prices with. Never a flight. Then why it is being
+ * recommended, in the traveller's own terms.
  */
-function MatchCard({ match, picked, onToggle, onBrief, t, lang }) {
+function MatchCard({ match, picked, onToggle, onBrief, t, lang, cost }) {
   const reasons = match.reasons || [];
   const typeLabel = match.topType ? t(`quiz.type.${match.topType}`) : '';
   return (
@@ -49,6 +66,7 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang }) {
       </button>
 
       <div className="mcard-body">
+        <DayCostLine cost={cost} t={t} />
         {/* The match line: what they asked for, and when it is at its best. */}
         {typeLabel && (
           <p className="mcard-match">
@@ -113,7 +131,7 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang }) {
  * that scrolls forever is a search result, and the point of the quiz was not
  * to produce one.
  */
-export function CountryMatchCards({ matches, picked, onToggle, onBrief }) {
+export function CountryMatchCards({ matches, picked, onToggle, onBrief, costs = null }) {
   const { t, lang } = useI18n();
   const [shown, setShown] = useState(PAGE);
   if (!matches.length) return null;
@@ -129,6 +147,7 @@ export function CountryMatchCards({ matches, picked, onToggle, onBrief }) {
             onBrief={onBrief}
             t={t}
             lang={lang}
+            cost={costs?.get(m.country) || null}
           />
         ))}
       </div>

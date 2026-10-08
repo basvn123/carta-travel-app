@@ -38,14 +38,18 @@ function ownTravelHow(flight, t) {
   return who ? `${how}, ${who}` : how;
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
+/** "Fri 18 Sep" in the interface language (T388: the month and weekday
+ *  names were English in every language). The document language follows the
+ *  chosen UI language (PRODUCT.md), so it is the locale to format with. */
+const LONG_FMT = new Map();
 function fmtLong(iso) {
   if (!iso) return '';
   const [y, m, d] = iso.split('-').map(Number);
-  const wd = WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
-  return `${wd} ${String(d).padStart(2, '0')} ${MONTHS[m - 1]}`;
+  const loc = (typeof document !== 'undefined' && document.documentElement.lang) || 'en-GB';
+  if (!LONG_FMT.has(loc)) {
+    LONG_FMT.set(loc, new Intl.DateTimeFormat(loc, { weekday: 'short', day: '2-digit', month: 'short', timeZone: 'UTC' }));
+  }
+  return LONG_FMT.get(loc).format(new Date(Date.UTC(y, m - 1, d)));
 }
 
 /** "Fri 18 Sep, 19:45-21:45", the date plus the priced flight's local dep/arr
@@ -351,6 +355,7 @@ export function TripItinerary({
   const [tab, setTab] = useState('overview');
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
   const [shareState, setShareState] = useState('');
 
   // Bookings / notes / packing list, keyed by the plan id (or the draft id
@@ -499,98 +504,9 @@ export function TripItinerary({
 
       {tab === 'overview' ? (
         <div className="itin-overview">
-          {/* The journey starts with a flight - show it as part of the route,
-              not only as a cost line in the breakdown. */}
-          {flight?.combinable && (
-            <>
-              <div className="itin-flight-row">
-                <PlaneIcon size={12} />
-                <span>{t('itin.fly')} <b>{flight.origin} → {flight.into_anchor}</b></span>
-                <small>{fmtLong(stopDetails[0]?.arriveDate)}</small>
-              </div>
-              <GroundLinkNote iata={flight.origin} dir="to" />
-              <GroundLinkNote iata={flight.into_anchor} dir="from" />
-            </>
-          )}
-          {flight?.own && (
-            <div className="itin-flight-row">
-              <OwnTravelIcon mode={flight.mode} size={12} />
-              <span>
-                {t('itin.ownTravelIn')} <b>{ownTravelHow(flight, t)}</b>
-              </span>
-              <small>{fmtLong(flight.out_date || stopDetails[0]?.arriveDate)}</small>
-            </div>
-          )}
-          {anchorIn && (
-            <AnchorTransferLeg
-              leg={anchorIn}
-              from={anchorInCity}
-              to={stopDetails[0]?.dest?.city}
-              onMode={setTransferMode ? (m) => setTransferMode(m, 'in') : null}
-            />
-          )}
-          {flight?.driving && (
-            <ItinDriveRow leg={driveLegs?.out} labelKey="trip.driveOut" city={stopDetails[0]?.dest?.city || ''} from={driveLegs?.from} />
-          )}
-          {stopDetails.map((s, i) => (
-            <React.Fragment key={i}>
-              <button
-                className={`itin-stop ${activeStopIndex === i ? 'active' : ''}`}
-                onClick={() => onSelectStop?.(i)}
-              >
-                <span className="itin-stop-idx">{i + 1}</span>
-                <span
-                  className="itin-stop-thumb"
-                  style={s.dest?.image?.url ? { backgroundImage: `url(${s.dest.image.url})` } : undefined}
-                >
-                  {!s.dest?.image?.url && <span className="itin-stop-thumb-fallback">{s.dest?.city?.slice(0, 1) || '?'}</span>}
-                </span>
-                <span className="itin-stop-main">
-                  <span className="itin-stop-city">{s.dest?.city || t('itin.unknown')}, {s.dest?.country}</span>
-                  <span className="itin-stop-sub">
-                    {fmtLong(s.arriveDate)} → {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? t('itin.nightOne') : t('itin.nightMany')}
-                  </span>
-                </span>
-              </button>
-              {/* How you get to the NEXT stay: the leg is part of the route,
-                  with its mode changeable in place. */}
-              {i < stopDetails.length - 1 && (
-                <ItinLeg leg={legs[i]} onMode={setLegMode ? (m) => setLegMode(i, m) : null} />
-              )}
-            </React.Fragment>
-          ))}
-          {flight?.driving && (
-            <ItinDriveRow leg={driveLegs?.home} labelKey="trip.driveHome" city={stopDetails[stopDetails.length - 1]?.dest?.city || ''} />
-          )}
-
-          {anchorOut && (
-            <AnchorTransferLeg
-              leg={anchorOut}
-              from={stopDetails[stopDetails.length - 1]?.dest?.city}
-              to={anchorOutCity}
-              onMode={setTransferMode ? (m) => setTransferMode(m, 'out') : null}
-            />
-          )}
-          {flight?.combinable && (
-            <>
-              <GroundLinkNote iata={flight.out_anchor} dir="to" />
-              <div className="itin-flight-row">
-                <PlaneIcon size={12} />
-                <span>{t('itin.flyHome')} <b>{flight.out_anchor} → {flight.origin}</b></span>
-                <small>{fmtLong(stopDetails[stopDetails.length - 1]?.departDate)}</small>
-              </div>
-            </>
-          )}
-          {flight?.own && (
-            <div className="itin-flight-row">
-              <OwnTravelIcon mode={flight.mode} size={12} />
-              <span>
-                {t('itin.ownTravelHome')} <b>{ownTravelHow(flight, t)}</b>
-              </span>
-              <small>{fmtLong(flight.ret_date || stopDetails[stopDetails.length - 1]?.departDate)}</small>
-            </div>
-          )}
-
+          {/* The total comes first (T388, brief item 6): a money-first
+              traveller looks for what the trip costs before the route, so
+              the receipt sits under the top card and the route under it. */}
           {/* Estimated total, expandable into the same grouped receipt the Map
               tab shows: flights, ground legs, rental, stay per city. */}
           <div className={`itin-breakdown ${breakdownOpen ? 'open' : ''}`}>
@@ -813,6 +729,98 @@ export function TripItinerary({
             )}
           </div>
 
+          {/* The journey starts with a flight - show it as part of the route,
+              not only as a cost line in the breakdown. */}
+          {flight?.combinable && (
+            <>
+              <div className="itin-flight-row">
+                <PlaneIcon size={12} />
+                <span>{t('itin.fly')} <b>{flight.origin} → {flight.into_anchor}</b></span>
+                <small>{fmtLong(stopDetails[0]?.arriveDate)}</small>
+              </div>
+              <GroundLinkNote iata={flight.origin} dir="to" />
+              <GroundLinkNote iata={flight.into_anchor} dir="from" />
+            </>
+          )}
+          {flight?.own && (
+            <div className="itin-flight-row">
+              <OwnTravelIcon mode={flight.mode} size={12} />
+              <span>
+                {t('itin.ownTravelIn')} <b>{ownTravelHow(flight, t)}</b>
+              </span>
+              <small>{fmtLong(flight.out_date || stopDetails[0]?.arriveDate)}</small>
+            </div>
+          )}
+          {anchorIn && (
+            <AnchorTransferLeg
+              leg={anchorIn}
+              from={anchorInCity}
+              to={stopDetails[0]?.dest?.city}
+              onMode={setTransferMode ? (m) => setTransferMode(m, 'in') : null}
+            />
+          )}
+          {flight?.driving && (
+            <ItinDriveRow leg={driveLegs?.out} labelKey="trip.driveOut" city={stopDetails[0]?.dest?.city || ''} from={driveLegs?.from} />
+          )}
+          {stopDetails.map((s, i) => (
+            <React.Fragment key={i}>
+              <button
+                className={`itin-stop ${activeStopIndex === i ? 'active' : ''}`}
+                onClick={() => onSelectStop?.(i)}
+              >
+                <span className="itin-stop-idx">{i + 1}</span>
+                <span
+                  className="itin-stop-thumb"
+                  style={s.dest?.image?.url ? { backgroundImage: `url(${s.dest.image.url})` } : undefined}
+                >
+                  {!s.dest?.image?.url && <span className="itin-stop-thumb-fallback">{s.dest?.city?.slice(0, 1) || '?'}</span>}
+                </span>
+                <span className="itin-stop-main">
+                  <span className="itin-stop-city">{s.dest?.city || t('itin.unknown')}, {s.dest?.country}</span>
+                  <span className="itin-stop-sub">
+                    {fmtLong(s.arriveDate)} → {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? t('itin.nightOne') : t('itin.nightMany')}
+                  </span>
+                </span>
+              </button>
+              {/* How you get to the NEXT stay: the leg is part of the route,
+                  with its mode changeable in place. */}
+              {i < stopDetails.length - 1 && (
+                <ItinLeg leg={legs[i]} onMode={setLegMode ? (m) => setLegMode(i, m) : null} />
+              )}
+            </React.Fragment>
+          ))}
+          {flight?.driving && (
+            <ItinDriveRow leg={driveLegs?.home} labelKey="trip.driveHome" city={stopDetails[stopDetails.length - 1]?.dest?.city || ''} />
+          )}
+
+          {anchorOut && (
+            <AnchorTransferLeg
+              leg={anchorOut}
+              from={stopDetails[stopDetails.length - 1]?.dest?.city}
+              to={anchorOutCity}
+              onMode={setTransferMode ? (m) => setTransferMode(m, 'out') : null}
+            />
+          )}
+          {flight?.combinable && (
+            <>
+              <GroundLinkNote iata={flight.out_anchor} dir="to" />
+              <div className="itin-flight-row">
+                <PlaneIcon size={12} />
+                <span>{t('itin.flyHome')} <b>{flight.out_anchor} → {flight.origin}</b></span>
+                <small>{fmtLong(stopDetails[stopDetails.length - 1]?.departDate)}</small>
+              </div>
+            </>
+          )}
+          {flight?.own && (
+            <div className="itin-flight-row">
+              <OwnTravelIcon mode={flight.mode} size={12} />
+              <span>
+                {t('itin.ownTravelHome')} <b>{ownTravelHow(flight, t)}</b>
+              </span>
+              <small>{fmtLong(flight.ret_date || stopDetails[stopDetails.length - 1]?.departDate)}</small>
+            </div>
+          )}
+
           {/* Every day, one tap from its plan - and one more into the Day
               planner to properly shape it. */}
           <div className="itin-days-list">
@@ -865,8 +873,23 @@ export function TripItinerary({
             })}
           </div>
 
-          {/* Bookings, notes and the packing list: the trip's life admin,
-              saved with the plan (and synced to the account when signed in). */}
+          {/* Bookings, notes, the packing list and the spend book: the trip's
+              life admin, saved with the plan (and synced to the account when
+              signed in). One fold, closed until asked for (T388, brief item
+              6): it used to stand open between the days and the exports and
+              made the sheet 2,546 px tall at 380. */}
+          <div className={`trip-block trip-admin ${adminOpen ? 'open' : ''}`}>
+            <h2 className="trip-fold-h">
+              <button className="day-collapse-head" onClick={() => setAdminOpen((v) => !v)} aria-expanded={adminOpen}>
+                <span className="day-collapse-headline">
+                  <span className="day-collapse-title">{t('trip.adminTitle')}</span>
+                  <span className={`day-collapse-caret ${adminOpen ? 'open' : ''}`} aria-hidden="true"><ChevronDownIcon size={14} /></span>
+                </span>
+                {!adminOpen && <span className="day-collapse-summary">{t('trip.adminSummary')}</span>}
+              </button>
+            </h2>
+          {adminOpen && (
+          <>
           <TripExtras
             rows={bookingRows}
             extras={extras}
@@ -886,6 +909,9 @@ export function TripItinerary({
           {/* Who paid for what, in any currency, and who owes whom: the
               group's shared-spend book, on the same save/sync rails. */}
           <ExpenseLedger extras={extras} onChange={saveExtras} groupSize={groupSize} />
+          </>
+          )}
+          </div>
 
           {/* Take the trip with you: share it, keep a PDF copy, or open the
               route straight in Google Maps. The Maps link is built from city

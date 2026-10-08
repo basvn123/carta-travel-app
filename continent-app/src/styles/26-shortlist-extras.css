@@ -1001,7 +1001,6 @@
   .itin-overview-total, .itin-export-toggle,
   .extras-add-btn, .extras-input, .exp-sharer-chip,
   .trip-topcard-name, .trip-save-planned-btn, .trip-edit-btn, .trip-startover-btn { min-height: var(--tap); }
-  .trip-topcard-close { width: var(--tap); height: var(--tap); }
   /* MapLibre's own stylesheet loads after this one; the extra class wins. */
   .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-in,
   .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-out { width: var(--tap); height: var(--tap); }

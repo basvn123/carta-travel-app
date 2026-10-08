@@ -9,7 +9,7 @@ import {
   cityTier, cityCompanions, designStays,
 } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
-import { gemScore } from '../lib/trip_planner_pricing.js';
+import { gemScore, stopStayCost, pickLegMode } from '../lib/trip_planner_pricing.js';
 import { monthOptions } from '../lib/wizardFlights.js';
 import {
   TRAVEL_STYLES, STYLE_BY_KEY, styleLifestyle, nearbyAirports,
@@ -34,7 +34,9 @@ import { loadLakeIndex } from '../lib/lakes.js';
 import { loadMountainIndex } from '../lib/mountains.js';
 import { loadCyclingIndex } from '../lib/cycling.js';
 import { WhereQuiz } from './WhereQuiz.jsx';
-import { CountryMatchCards } from './CountryMatchCards.jsx';
+import { CountryMatchCards, DayCostLine } from './CountryMatchCards.jsx';
+import { Stepper } from '../components/FilterControls.jsx';
+import { computeCosts, eurDay } from '../lib/costIndex.js';
 import { PlannerSection } from './PlannerSection.jsx';
 import { planRoute, routeOrder } from '../lib/cartaRoute.js';
 import { loadTrip } from '../lib/trips.js';
@@ -42,9 +44,9 @@ import { tripHeadline } from '../lib/tripStory.js';
 import {
   carAdvice, legTransportOptions, airportTransferOptions, preferredPublicMode,
 } from '../lib/transport.js';
-import { haversineKm, tripDaysBetween, accommodationPerPerson, groundSpendPerPerson } from '../lib/runtime_pricing.js';
+import { haversineKm, tripDaysBetween, accommodationPerPerson } from '../lib/runtime_pricing.js';
 import { eur } from '../lib/format.js';
-import { cityLabel } from '../lib/placeName.js';
+import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { duplicateHeroes } from '../lib/heroImage.js';
 import { pickWithDupes } from '../lib/countryCovers.js';
 import { favDestIds } from '../lib/favorites.js';
@@ -246,15 +248,20 @@ export function GuidedTripWizard({
   // What the traveller already holds. Answered first, on the same screen as
   // the dates and the party, because it decides what the rest of the flow
   // bothers to ask.
-  const [booked, setBooked] = useState({ travel: false, stays: false });
+  // The saved draft, read once. plannerStore has already applied the v1->v2
+  // migration and the staleness rules, so whatever it hands back here is
+  // safe to reopen on. Read before `booked`, because the booked answers decide
+  // the step list and a restored step number means nothing without them
+  // (T388, row T377-e).
+  const savedDraft = useRef(plannerStore.getState().wizard || {}).current;
+  const [booked, setBooked] = useState(() => ({
+    travel: Boolean(savedDraft.booked?.travel),
+    stays: Boolean(savedDraft.booked?.stays),
+  }));
   const toggleBooked = (key) => setBooked((prev) => ({ ...prev, [key]: !prev[key] }));
   // Picking "nothing yet" is not a third flag, it is the other two turned off.
   const clearBooked = () => setBooked({ travel: false, stays: false });
   const bookedNothing = !booked.travel && !booked.stays;
-  // The saved draft, read once. plannerStore has already applied the v1->v2
-  // migration and the staleness rules, so whatever it hands back here is
-  // safe to reopen on.
-  const savedDraft = useRef(plannerStore.getState().wizard || {}).current;
   // The dates were already written to the store; nothing ever read them back.
   const savedDates = useRef(plannerStore.getState().travelDates || {}).current;
   const [step, setStep] = useState(() => savedDraft.step || 1);
@@ -345,7 +352,9 @@ export function GuidedTripWizard({
   const [tripMissing, setTripMissing] = useState(0);  // stops not in the catalogue
   // What the traveller says the moving about costs, per leg:
   // { [legKey]: { mode, service, eur } }. Carta prices none of it.
-  const [travelValues, setTravelValues] = useState({});
+  const [travelValues, setTravelValues] = useState(() => (
+    savedDraft.travelValues && typeof savedDraft.travelValues === 'object' ? savedDraft.travelValues : {}
+  ));
   // The published trip this plan IS, when there is one. Everything downstream
   // reads this rather than (buildMode, tripPick) so the two can never disagree.
   const readyTrip = buildMode === 'ready' ? tripPick : null;
@@ -366,15 +375,21 @@ export function GuidedTripWizard({
   // How the Where step shows the catalogue. Photo cards first: a country reads
   // faster from a picture of it than from its outline on a basemap.
   const [whereView, setWhereView] = useState('list'); // 'list' | 'map'
-  const [nights, setNights] = useState({});      // { [id]: nights }
-  const [order, setOrder] = useState([]);        // included city ids, pick order
+  // Restored from the draft (T388): a reload on Stay used to bring the step
+  // back with no cities in it.
+  const [nights, setNights] = useState(() => (
+    savedDraft.nights && typeof savedDraft.nights === 'object' ? savedDraft.nights : {}
+  ));      // { [id]: nights }
+  const [order, setOrder] = useState(() => (
+    Array.isArray(savedDraft.order) ? savedDraft.order : []
+  ));        // included city ids, pick order
   const [staySearch, setStaySearch] = useState('');
   // Narrowing filters for the (long) city list: a minimum traveller rating and
   // a per-night stay budget for the whole group. 0 = filter off.
   const [stayMinRating, setStayMinRating] = useState(0);
   const [stayMaxNightly, setStayMaxNightly] = useState(0);
   const [stayView, setStayView] = useState('map'); // 'map' | 'list'
-  const [stayStyle, setStayStyle] = useState('multi'); // 'multi' | 'single'
+  const [stayStyle, setStayStyle] = useState(() => (savedDraft.stayStyle === 'single' ? 'single' : 'multi')); // 'multi' | 'single'
   // Re-opens the (answered, folded) stay-style question for editing.
   const [stayStyleOpen, setStayStyleOpen] = useState(false);
   const [focusedId, setFocusedId] = useState(''); // city briefed next to the map
@@ -402,11 +417,11 @@ export function GuidedTripWizard({
     || TRAVEL_STYLES.find((st) => st.stayTier === stayTier)?.key
     || 'standard'
   ));
-  const [pace, setPace] = useState('balanced');
+  const [pace, setPace] = useState(() => savedDraft.pace || 'balanced');
 
   // ---- Travel already booked: where does the trip start on the ground? ----
   const [arrivalQuery, setArrivalQuery] = useState('');
-  const [arrivalId, setArrivalId] = useState('');
+  const [arrivalId, setArrivalId] = useState(() => savedDraft.arrivalId || '');
 
   // ---- Stays already booked: the cities they hold, typed in ----
   const [stayQuery, setStayQuery] = useState('');
@@ -838,14 +853,17 @@ export function GuidedTripWizard({
         });
         if (!mode) continue;
         if (next === prev) next = { ...prev };
-        next[leg.key] = { ...next[leg.key], mode };
+        // Marked as Carta's guess (T388): the draft and the recap only repeat
+        // back what the traveller said, and a guess is not that.
+        next[leg.key] = { ...next[leg.key], mode, guessed: true };
       }
       return next;
     });
   }, [gettingLegs]); // eslint-disable-line react-hooks/exhaustive-deps -- runs per new leg set only: re-running on quiz or drivingThere would refill a mode the traveller just cleared
 
   const setTravelLeg = (key, patch) => {
-    setTravelValues((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
+    // Anything the traveller sets on a leg makes it their answer (T388).
+    setTravelValues((prev) => ({ ...prev, [key]: { ...prev[key], ...patch, guessed: false } }));
   };
   const travelSpend = travelTotal(travelValues);
 
@@ -1298,6 +1316,9 @@ export function GuidedTripWizard({
       carHome: ownCarChosen ? originPlace : null,
       legModes,
       ownLegs,
+      // The lifestyle the estimate priced the days at, so the receipt prices
+      // the same days (T388, row T377-g).
+      lifestyle: dailyLifestyle,
       label,
       stops,
     });
@@ -1402,7 +1423,13 @@ export function GuidedTripWizard({
         legs.push({ label: t('wizard.legSea', { a: a.city, b: b.city }), eur: 0, km: null, mode: null, unpriced: true, legIndex: i });
         continue;
       }
-      const key = ownCarChosen ? 'car' : (preferredPublicMode(opts) || opts.recommended);
+      // The mode the traveller set on Getting there wins; otherwise Carta's
+      // pick by the planner's own rule (pickLegMode, T388), so the leg here
+      // and the leg in the planned receipt are the same leg at the same price.
+      const chosenMode = travelValues[`leg${i}`]?.mode;
+      const key = chosenMode && opts.modes?.[chosenMode]
+        ? chosenMode
+        : pickLegMode(opts, { transportPref: ownCarChosen ? 'owncar' : 'auto', hasCar: ownCarChosen });
       const m = opts.modes[key];
       if (!m) continue;
       legs.push({ label: t('wizard.legBetween', { a: a.city, b: b.city }), eur: m.eur_total, km: opts.road_km, mode: key, hours: m.hours, legIndex: i });
@@ -1412,7 +1439,81 @@ export function GuidedTripWizard({
     const total = legs.reduce((s, l) => s + (l.eur || 0), 0);
     return { legs, total };
   }, [includedIds, orderedIncludedIds, destinations, anchorDest, anchorId,
-    ownCarChosen, groupSize, countryInsights, data, t]);
+    ownCarChosen, groupSize, countryInsights, data, t, travelValues]);
+
+  // The daily lifestyle the estimate prices the days at, handed to the
+  // planner with the trip so its receipt prices the same days (T388).
+  const dailyLifestyle = useMemo(
+    () => styleLifestyle(travelStyle, lifestyle || data?.meta?.defaults?.lifestyle),
+    [travelStyle, lifestyle, data],
+  );
+  // Each stop's bed and days for the whole party, through the one function the
+  // planned receipt also uses (stopStayCost, T388, row T377-g).
+  const stopCosts = useMemo(() => stopDates.map((s) => {
+    const d = destinations[s.id];
+    return d && s.nights > 0
+      ? stopStayCost(d, s.nights, s.arrive || null, { groupSize, stayTier: effectiveStayTier, lifestyle: dailyLifestyle })
+      : null;
+  }), [stopDates, destinations, groupSize, effectiveStayTier, dailyLifestyle]);
+
+  // ---- The price from the first place (T388, rule "Cost on cards") --------
+  // Every town's day per person at the traveller's Lifestyle, from the cost
+  // index Explore prices its cards with, so a country here and a town there
+  // never disagree. A country card says "from" the cheapest town (never an
+  // average); the brief gives the range.
+  const dayCosts = useMemo(
+    () => computeCosts(destinations, { lifestyle: dailyLifestyle, stay_tier: effectiveStayTier, group_size: groupSize }),
+    [destinations, dailyLifestyle, effectiveStayTier, groupSize],
+  );
+  const countryDayCost = useMemo(() => {
+    const out = new Map();
+    for (const [id, row] of dayCosts) {
+      if (row.dayEur == null) continue;
+      const country = destinations[id]?.country;
+      if (!country) continue;
+      const cur = out.get(country);
+      const national = row.stayLevel !== 'city' || row.foodLevel !== 'city';
+      if (!cur) { out.set(country, { min: row.dayEur, max: row.dayEur, national }); continue; }
+      if (row.dayEur < cur.min) { cur.min = row.dayEur; cur.national = national; }
+      if (row.dayEur > cur.max) cur.max = row.dayEur;
+    }
+    for (const c of out.values()) {
+      c.minText = eurDay(c.min);
+      c.maxText = eurDay(c.max);
+      // Whole euros, as Explore's cards print a day; equal once rounded is
+      // one figure, not a range.
+      if (c.minText === c.maxText) c.max = c.min;
+    }
+    return out;
+  }, [dayCosts, destinations]);
+  // A ready-made trip's beds and days for the party, stop by stop through
+  // stopStayCost, the receipt's own function. null when a stop is missing.
+  const cityIndex = useMemo(() => {
+    const m = new Map();
+    for (const [id, d] of Object.entries(destinations)) {
+      if (!d?.city) continue;
+      m.set(`${String(d.iso2 || '').toUpperCase()}|${cityKeyName(cityLabel(d.city)).toLowerCase()}`, id);
+    }
+    return m;
+  }, [destinations]);
+  const priceTrip = useCallback((cities) => {
+    if (!cities?.length) return null;
+    let cursor = 0;
+    let total = 0;
+    for (const c of cities) {
+      const id = cityIndex.get(`${String(c.cc || '').toUpperCase()}|${cityKeyName(cityLabel(c.city)).toLowerCase()}`);
+      const d = id ? destinations[id] : null;
+      const n = Math.max(1, c.n || 1);
+      if (!d) return null;
+      const row = stopStayCost(d, n, tripStartDate ? addDays(tripStartDate, cursor) : null, {
+        groupSize, stayTier: effectiveStayTier, lifestyle: dailyLifestyle,
+      });
+      if (!row || !(row.accomTotal > 0)) return null;
+      total += row.total;
+      cursor += n;
+    }
+    return Math.round(total * 100) / 100;
+  }, [cityIndex, destinations, tripStartDate, groupSize, effectiveStayTier, dailyLifestyle]);
 
   // ---- Running price estimate, alive on every step ----------------------
   // Every choice that adds cost adds a line the moment it's made (flight,
@@ -1430,39 +1531,26 @@ export function GuidedTripWizard({
     if (travelSpend > 0) {
       lines.push({ key: 'travel', label: t('wizard.estTravel'), eur: travelSpend, sub: t('wizard.estYouEntered') });
     }
-    if (includedIds.length > 0) {
-      let stayTotal = 0;
-      let priced = 0;
-      for (const id of includedIds) {
-        const d = destinations[id];
-        const n = d ? nightlyFor(id, d) : null;
-        if (n != null) { stayTotal += n * (nights[id] || 0); priced += 1; }
-      }
-      if (priced > 0) {
+    // Beds and days, stop by stop, from stopStayCost: the same function and
+    // the same inputs (dates, party, tier, lifestyle) the planned receipt
+    // prices with, so the figure does not change at the hand-over (T388).
+    const priced = stopCosts.filter(Boolean);
+    if (priced.length > 0) {
+      const stayTotal = priced.reduce((sum, c) => sum + c.accomTotal, 0);
+      if (stayTotal > 0) {
         lines.push({
           key: 'stays',
-          label: `Stays, ${totalNights} ${totalNights === 1 ? 'night' : 'nights'} in ${includedIds.length} ${includedIds.length === 1 ? 'city' : 'cities'}`,
+          label: t(totalNights === 1 ? 'wizard.estStaysOne' : 'wizard.estStaysMany', { nights: totalNights }),
           eur: stayTotal,
-          sub: 'whole group, from real market anchors',
+          sub: t('wizard.estStaysSub'),
         });
       }
-    }
-    if (includedIds.length > 0) {
-      // What the days themselves cost at the chosen style: the same cost
-      // basket the map's lifestyle panel prices from, per stop, whole party.
-      const dailyLs = styleLifestyle(travelStyle, lifestyle || data?.meta?.defaults?.lifestyle);
-      let daily = 0;
-      let dailyOk = false;
-      for (const id of includedIds) {
-        const d = destinations[id];
-        const g = d && (nights[id] || 0) > 0 ? groundSpendPerPerson(d, nights[id], dailyLs) : null;
-        if (g && g.total > 0) { daily += g.total; dailyOk = true; }
-      }
-      if (dailyOk) {
+      const daily = priced.reduce((sum, c) => sum + c.groundTotal, 0);
+      if (daily > 0) {
         lines.push({
           key: 'daily',
           label: t('wizard.estDaily'),
-          eur: Math.round(daily * gs),
+          eur: daily,
           sub: t('wizard.estDailySub'),
         });
       }
@@ -1485,10 +1573,10 @@ export function GuidedTripWizard({
       }
     }
     if (!lines.length) return null;
-    const total = lines.reduce((s, l) => s + l.eur, 0);
-    return { lines, total, gs };
-  }, [travelSpend, travelValues, includedIds, nights, totalNights, destinations,
-    groupSize, groundLegs, travelStyle, data, lifestyle, nightlyFor, t]);
+    const total = Math.round(lines.reduce((s, l) => s + l.eur, 0) * 100) / 100;
+    return { lines, total, gs, perPerson: Math.round((total / gs) * 100) / 100 };
+  }, [travelSpend, travelValues, includedIds, totalNights,
+    groupSize, groundLegs, stopCosts, t]);
 
   // What the last answer did to the total. estBump is a counter used as a React
   // key on the figure: a new key remounts it, which restarts the CSS bump, so
@@ -1710,6 +1798,8 @@ export function GuidedTripWizard({
     recapChips.push({
       Icon: PersonIcon,
       text: `${groupSize} ${groupSize === 1 ? t('wizard.travellerOne') : t('wizard.travellerMany')}`,
+      // Asked on From now (T388), so the chip goes back there.
+      to: stepNo('From'),
     });
     if (selectedCountries.length) {
       recapChips.push({
@@ -1729,7 +1819,7 @@ export function GuidedTripWizard({
     }
     // How they get there is their own answer now, so the recap repeats it back
     // rather than naming an airport Carta chose.
-    if (travelValues.out?.mode) {
+    if (travelValues.out?.mode && !travelValues.out?.guessed) {
       recapChips.push({
         Icon: travelValues.out.mode === 'car' ? CarIcon : RouteIcon,
         text: t(TRAVEL_MODE_LABEL[travelValues.out.mode]),
@@ -1774,12 +1864,22 @@ export function GuidedTripWizard({
         flexMonth,
         flexNights,
         quiz,
+        // Everything else that decides which step a number means and what is
+        // on it (T388, row T377-e): a reload lands on the same named step
+        // with the same answers.
+        booked,
+        nights,
+        order,
+        travelValues,
+        arrivalId,
+        pace,
+        stayStyle,
       },
       selectedDestination: [...countries][0] || null,
       // How they told us they are getting there, and what they said it cost.
       // Carta no longer shops for a fare, so there is no cheapest or fastest
       // to claim and the store carries neither.
-      selectedTransit: travelValues.out?.mode
+      selectedTransit: travelValues.out?.mode && !travelValues.out?.guessed
         ? {
           type: travelValues.out.mode === 'car' ? 'drive' : travelValues.out.mode,
           providerOrRoute: (travelValues.out.service || '').trim() || null,
@@ -1803,7 +1903,8 @@ export function GuidedTripWizard({
     if (stayStyle === 'single') plannerStore.setItineraryType('single');
   }, [originPlace, nearAirports, dateMode, startDate, endDate, windowNights, flexNights,
     flexMonth, adults, kids, travelStyle, countries, travelValues, includedIds, nights,
-    stayStyle, step, buildMode, tripPick?.id, quiz, destinations, nightlyFor]);
+    stayStyle, step, buildMode, tripPick?.id, quiz, destinations, nightlyFor,
+    booked, order, arrivalId, pace]);
 
   // A new step starts at its own top. Without this the body keeps the previous
   // step's scroll offset, so a long screen can open halfway down its own
@@ -1905,6 +2006,12 @@ export function GuidedTripWizard({
   // an anchor set before the trip exists. It appears from the third step on,
   // which on every path is Trips, Stay or Stays.
   const showEstimate = stepName !== 'Where' && !BASICS_STEPS.includes(stepName);
+  // Nights of the window a picked ready-made trip leaves unplanned, said in
+  // words in the footer (T388, brief item 5). Counted once the trip's stops
+  // have loaded, from the same nights the estimate prices.
+  const pickFreeNights = stepName === 'Trips' && tripPick && tripDetail
+    && windowNights > 0 && totalNights > 0 && totalNights < windowNights
+    ? windowNights - totalNights : 0;
 
   // ---------------------------------------------------------------- render --
   // The step rail is the wizard's orientation, and there is no opening
@@ -2020,7 +2127,14 @@ export function GuidedTripWizard({
                 <small>{runningEstimate.gs} {t(runningEstimate.gs === 1 ? 'wizard.travellerOne' : 'wizard.travellerMany')}</small>
               </span>
               <span className="guide-estimate-figure">
-                <b key={`total-${estBump}`}>{eur(runningEstimate.total)}</b>
+                {/* An estimate says so in text (PRODUCT.md): the tilde and
+                    "est.", and the figure a person beside the party's
+                    (T388, brief item 2). */}
+                <b key={`total-${estBump}`}>~{eur(runningEstimate.total)}</b>
+                <small className="wiz-est-mark">{t('prov.est')}</small>
+                {runningEstimate.gs > 1 && (
+                  <small className="wiz-est-pp">{t('wizard.estPerPerson', { eur: eur(runningEstimate.perPerson) })}</small>
+                )}
                 {estDelta != null && estDelta !== 0 && (
                   <span className={`guide-estimate-delta ${estDelta < 0 ? 'down' : 'up'}`} key={`delta-${estBump}`}>
                     {estDelta < 0 ? '-' : '+'}{eur(Math.abs(estDelta))}
@@ -2056,8 +2170,12 @@ export function GuidedTripWizard({
           </div>
         )}
 
-        {/* What Carta is planning around - the running recap of every answer. */}
-        {recapChips.length > 0 && (
+        {/* What Carta is planning around - the running recap of every answer.
+            Fixed chrome on a desktop; on a phone it scrolls with the step
+            (rendered at the top of the body below), so the fixed chrome is
+            the head, the running total and the one-row footer only (T388,
+            rule "More" menu: at most a quarter of the screen). */}
+        {recapChips.length > 0 && isDesktop && (
           <div className="guide-recap">
             <div className="guide-recap-inner">
               <span className="guide-recap-label"><CheckIcon size={10} /> {t('wizard.planningAround')}</span>
@@ -2079,6 +2197,26 @@ export function GuidedTripWizard({
         )}
 
         <div className="guide-body" ref={bodyRef}>
+         {recapChips.length > 0 && !isDesktop && (
+          <div className="guide-recap wiz-recap-inbody">
+            <div className="guide-recap-inner">
+              <span className="guide-recap-label"><CheckIcon size={10} /> {t('wizard.planningAround')}</span>
+              {recapChips.map((c, i) => (c.to ? (
+                <button
+                  type="button"
+                  className="guide-recap-chip is-link"
+                  key={i}
+                  onClick={() => goStep(c.to)}
+                  title={t('wizard.recapEdit', { step: t(STEP_LABEL_KEYS[steps[c.to - 1]]) })}
+                >
+                  <c.Icon size={10} /> {c.text}
+                </button>
+              ) : (
+                <span className="guide-recap-chip" key={i}><c.Icon size={10} /> {c.text}</span>
+              )))}
+            </div>
+          </div>
+         )}
          {/* Keyed on the step so each screen remounts and replays its entrance
              animation rather than silently swapping content in place. */}
          <div className="guide-canvas" key={`${stepName}-${step}`}>
@@ -2143,6 +2281,7 @@ export function GuidedTripWizard({
                       {countryMatches.length > 0 && (
                         <PlannerSection title={t('quiz.recommended')} className="wq-results">
                           <CountryMatchCards
+                            costs={countryDayCost}
                             matches={countryMatches}
                             picked={countries}
                             onToggle={toggleCountry}
@@ -2165,8 +2304,8 @@ export function GuidedTripWizard({
                   ) : (
                     <div role="tabpanel" id="wpanel-hand" aria-labelledby="wtab-hand">
                       <div className="guide-datemode guide-stay-view guide-where-view">
-                        <button className={whereView === 'list' ? 'on' : ''} onClick={() => setWhereView('list')}>{t('wizard.grid')}</button>
-                        <button className={whereView === 'map' ? 'on' : ''} onClick={() => setWhereView('map')}>{t('wizard.map')}</button>
+                        <button className={whereView === 'list' ? 'on' : ''} aria-pressed={whereView === 'list'} onClick={() => setWhereView('list')}>{t('wizard.grid')}</button>
+                        <button className={whereView === 'map' ? 'on' : ''} aria-pressed={whereView === 'map'} onClick={() => setWhereView('map')}>{t('wizard.map')}</button>
                       </div>
 
                       {/* The countries the traveller has already starred
@@ -2240,6 +2379,9 @@ export function GuidedTripWizard({
                                     </span>
                                   </span>
                                 </button>
+                                {/* What a day there costs a person, under the
+                                    photograph, never on it (T388). */}
+                                <DayCostLine cost={countryDayCost.get(c.country)} t={t} className="wiz-ccard-cost" />
                                 {/* The second action on a card that is
                                     otherwise one big selection target: a round
                                     "i" in the corner, out of the way of the
@@ -2283,6 +2425,7 @@ export function GuidedTripWizard({
                     which used to push the whole step down the page. */}
                 {openBrief && (
                   <CountryBrief
+                    dayCost={countryDayCost.get(openBrief.country) || null}
                     brief={openBrief}
                     picked={countries.has(openBrief.country)}
                     onToggle={toggleCountry}
@@ -2335,6 +2478,8 @@ export function GuidedTripWizard({
                 favorites={favorites}
                 selectedId={tripPick?.id || pendingTripPickId}
                 onPick={pickReadyTrip}
+                priceTrip={priceTrip}
+                party={groupSize}
                 onRestorePick={restoreTripPick}
                 onToggleCountry={toggleCountry}
                 onOpenTrip={(trip) => setTripPageId(trip.id)}
@@ -2352,10 +2497,15 @@ export function GuidedTripWizard({
             <>
               <StepTitle className="guide-title">{t('wizard.gettingTitle')}</StepTitle>
 
-              {!tripPick && <p className="guide-empty">{t('ready.noTripYet')}</p>}
+              {/* Getting there works on every path (T388, row T377-e): its
+                  legs come from the stops and the dates, which a built route
+                  and booked beds have as surely as a ready-made trip. Only a
+                  ready-made trip adds its own head with "Pick another". */}
+              {!tripPick && !stopDates.length && <p className="guide-empty">{t('ready.noTripYet')}</p>}
 
-              {tripPick && (
+              {(tripPick || stopDates.length > 0) && (
                 <div className="wpicked" ref={tripPickRef}>
+                  {tripPick && (
                   <div className="wpicked-head">
                     <span className="wpicked-label"><CheckIcon size={12} /> {t('ready.yourTrip')}</span>
                     <b className="wpicked-name">{tripHeadline(tripPick, t)}</b>
@@ -2366,14 +2516,15 @@ export function GuidedTripWizard({
                       {t('ready.pickAnother')}
                     </button>
                   </div>
+                  )}
 
-                  {tripLoading && <LoadingBlock label={t('ready.loadingTrip')} rows={3} />}
-                  {tripFailed && (
+                  {tripPick && tripLoading && <LoadingBlock label={t('ready.loadingTrip')} rows={3} />}
+                  {tripPick && tripFailed && (
                     <ErrorBlock message={t('state.tripLoadFailed')}
                       onRetry={() => setTripTry((n) => n + 1)} retryLabel={t('layer.retry')} />
                   )}
 
-                  {tripDetail && (
+                  {(tripPick ? tripDetail : stopDates.length > 0) && (
                     <>
                       <div className="wpicked-stops">
                         {stopDates.map((s, i) => destinations[s.id] && (
@@ -2386,7 +2537,7 @@ export function GuidedTripWizard({
                           </div>
                         ))}
                       </div>
-                      {tripMissing > 0 && (
+                      {tripPick && tripMissing > 0 && (
                         <p className="guide-empty">{t('ready.stopsMissing', { n: tripMissing })}</p>
                       )}
                       <TravelLegsSection
@@ -2546,6 +2697,51 @@ export function GuidedTripWizard({
                 )}
               </div>
 
+
+              {/* Who is going, asked with where from (T388, brief item 4):
+                  the party multiplies every figure the wizard shows after
+                  this, so it is answered before the first price, not on the
+                  last screen. */}
+              <div className="guide-card wiz-party">
+                <div className="guide-card-head"><PersonIcon size={14} /> {t('wizard.partyTitle')}</div>
+                <div className="wiz-party-row">
+                  <span className="wiz-party-label" id="wiz-party-adults">{t('wizard.summaryTravellers')}</span>
+                  {/* The shared Stepper (FilterControls), not a private one
+                      (shell's hand-off to T388 in OWNERSHIP.md). */}
+                  <div className="wiz-party-stepper">
+                    <Stepper
+                      value={adults}
+                      min={1}
+                      max={20}
+                      onChange={setAdults}
+                      ariaLabel={t('wizard.summaryTravellers')}
+                      decLabel={t('trip.fewer')}
+                      incLabel={t('trip.more')}
+                    />
+                  </div>
+                </div>
+                {kidsOpen || kids > 0 ? (
+                  <div className="wiz-party-row">
+                    <span className="wiz-party-label" id="wiz-party-kids">{t('wizard.children')}</span>
+                    <div className="wiz-party-stepper">
+                      <Stepper
+                        value={kids}
+                        min={0}
+                        max={10}
+                        onChange={setKids}
+                        ariaLabel={t('wizard.children')}
+                        decLabel={t('trip.fewer')}
+                        incLabel={t('trip.more')}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <button type="button" className="guide-kids-add" onClick={() => setKidsOpen(true)}>
+                    {t('wizard.addChildren')}
+                  </button>
+                )}
+                {kids > 0 && <p className="guide-note guide-kids-note">{t('wizard.childrenNote')}</p>}
+              </div>
 
               {/* Travel booked: the one thing Carta then needs is where it
                   puts you down, and how, because that decides the transfer
@@ -3005,8 +3201,8 @@ export function GuidedTripWizard({
                   type="search"
                   value={staySearch}
                   onChange={(e) => setStaySearch(e.target.value)}
-                  placeholder="Search any city or town…"
-                  aria-label="Search cities"
+                  placeholder={t('wizard.searchAnyCity')}
+                  aria-label={t('wizard.searchCities')}
                 />
                 {/* Narrow the pool before falling in love: minimum rating and a
                     nightly stay budget, with the per-night price on every row.
@@ -3182,8 +3378,8 @@ export function GuidedTripWizard({
                   {stayCountries.map((c) => (
                     <div key={c.country} className="guide-country-block">
                       <div className="guide-block-head"><Flag iso2={c.iso2} className="guide-flag-img-sm" /> {c.country}</div>
-                      {renderStayGroup(c.country, 'big', 'Cities', c.big)}
-                      {renderStayGroup(c.country, 'gems', 'Gems & scenic stays', c.gems)}
+                      {renderStayGroup(c.country, 'big', t('wizard.groupCities'), c.big)}
+                      {renderStayGroup(c.country, 'gems', t('wizard.groupGems'), c.gems)}
                       {!c.big.length && !c.gems.length && (
                         <p className="guide-empty">{t('wizard.noStayMatch', { country: c.country, q: staySearch })}</p>
                       )}
@@ -3191,7 +3387,7 @@ export function GuidedTripWizard({
                   ))}
                   {elsewhereMatches.length > 0 && (
                     <div className="guide-country-block">
-                      <div className="guide-block-head">Beyond your countries</div>
+                      <div className="guide-block-head">{t('wizard.groupBeyond')}</div>
                       <div className="guide-city-list">
                         {elsewhereMatches.map(({ id, dest }) => (
                           <StayRow
@@ -3215,7 +3411,7 @@ export function GuidedTripWizard({
               {/* Selected summary while in map view, so nights stay adjustable. */}
               {stayView === 'map' && !q && includedIds.length > 0 && (
                 <div className="guide-stay-group">
-                  <div className="guide-stay-group-title">Your stops</div>
+                  <div className="guide-stay-group-title">{t('wizard.groupYourStops')}</div>
                   <div className="guide-city-list">
                     {includedIds.map((id) => destinations[id] && (
                       <StayRow
@@ -3296,32 +3492,23 @@ export function GuidedTripWizard({
                   </div>
 
                   <div className="guide-summary-facts">
-                    {/* The one fact on this card that is also a control.
-                        Party size multiplies every figure below it, so it is
-                        adjusted here, against a visible price, rather than
-                        guessed at four steps earlier. */}
+                    {/* The party is asked on From now (T388, brief item 4),
+                        so every estimate before this one priced the real
+                        party. Here it is a fact with the way back to it. */}
                     <div className="guide-summary-fact guide-summary-party">
                       <span className="guide-summary-fact-label"><PersonIcon size={10} /> {t('wizard.summaryTravellers')}</span>
-                      <div className="guide-people">
-                        <button type="button" onClick={() => setAdults(Math.max(1, adults - 1))} disabled={adults <= 1} aria-label={t('trip.fewer')}>-</button>
-                        <span>{adults}</span>
-                        <button type="button" onClick={() => setAdults(Math.min(20, adults + 1))} disabled={adults >= 20} aria-label={t('trip.more')}>+</button>
-                      </div>
-                      {kidsOpen || kids > 0 ? (
-                        <div className="guide-summary-kids">
-                          <span className="trip-field-label">{t('wizard.children')}</span>
-                          <div className="guide-people">
-                            <button type="button" onClick={() => setKids(Math.max(0, kids - 1))} disabled={kids <= 0} aria-label={t('trip.fewer')}>-</button>
-                            <span>{kids}</span>
-                            <button type="button" onClick={() => setKids(Math.min(10, kids + 1))} disabled={kids >= 10} aria-label={t('trip.more')}>+</button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button type="button" className="guide-kids-add" onClick={() => setKidsOpen(true)}>
-                          + {t('wizard.children')}
+                      <b>
+                        <span className="mono">{groupSize}</span> {groupSize === 1 ? t('wizard.travellerOne') : t('wizard.travellerMany')}
+                      </b>
+                      {steps.indexOf('From') >= 0 && (
+                        <button
+                          type="button"
+                          className="guide-answered-edit"
+                          onClick={() => goStep(steps.indexOf('From') + 1)}
+                        >
+                          {t('wizard.change')}
                         </button>
                       )}
-                      {kids > 0 && <p className="guide-note guide-kids-note">{t('wizard.childrenNote')}</p>}
                     </div>
                     <div className="guide-summary-fact">
                       <span className="guide-summary-fact-label"><CalendarIcon size={10} /> {t('wizard.summaryDates')}</span>
@@ -3399,23 +3586,36 @@ export function GuidedTripWizard({
         <div className="guide-foot">
           <div className="guide-foot-inner">
             <div className="guide-foot-summary">
-              {hasProgress && (
+              {/* On a phone Start over lives in the steps sheet, so the
+                  footer is one row (T388, rule "More" menu: the wizard's
+                  fixed chrome); the desktop footer keeps it here. */}
+              {hasProgress && isDesktop && (
                 <button className="guide-startover" onClick={startOver} title={t('wizard.startOverTitle')}>
-                  &#8634; {t('wizard.startOver')}
+                  {t('wizard.startOver')}
                 </button>
               )}
               {/* The gate on this step, stated where the decision is made. */}
               {stepName === 'Trips' && tripPick ? (
                 // The chosen trip, in the footer that is already on screen,
                 // instead of a panel that used to open three thousand pixels
-                // below the card that opened it.
-                <span className="guide-nights-budget done">
-                  <CheckIcon size={11} />
-                  {t('ready.footPicked', {
-                    route: (tripPick.cities || tripPick.stops || [])
-                      .map((c) => cityLabel(c.city)).join(' → '),
-                    days: tripPick.days,
-                  })}
+                // below the card that opened it. When the trip is shorter
+                // than the window the footer says how many nights are left
+                // free, in words (T388, brief item 5).
+                <span className={`guide-nights-budget ${pickFreeNights > 0 ? '' : 'done'}`}>
+                  {pickFreeNights > 0 ? (
+                    t(pickFreeNights === 1 ? 'ready.footFreeOne' : 'ready.footFreeMany', {
+                      n: windowNights - pickFreeNights, of: windowNights, free: pickFreeNights,
+                    })
+                  ) : (
+                    <>
+                      <CheckIcon size={11} />
+                      {t('ready.footPicked', {
+                        route: (tripPick.cities || tripPick.stops || [])
+                          .map((c) => cityLabel(c.city)).join(', '),
+                        days: tripPick.days,
+                      })}
+                    </>
+                  )}
                 </span>
               ) : stepName === 'Stay' && windowNights > 0 ? (
                 <span className={`guide-nights-budget ${totalNights > windowNights ? 'over' : ''} ${totalNights === windowNights ? 'done' : ''}`}>
@@ -3485,6 +3685,18 @@ export function GuidedTripWizard({
               );
             })}
           </ol>
+          {/* Start over moved here from the phone footer (T388), which keeps
+              the footer to one row. It still confirms before it clears. */}
+          {hasProgress && (
+            <button
+              type="button"
+              className="guide-startover wiz-sheet-startover"
+              onClick={() => { setStepsOpen(false); startOver(); }}
+              title={t('wizard.startOverTitle')}
+            >
+              {t('wizard.startOver')}
+            </button>
+          )}
         </SheetShell>
       )}
 

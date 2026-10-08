@@ -7,6 +7,7 @@ import { isFav } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
+import { eur } from '../lib/format.js';
 import { RouteIcon, CheckIcon, SparkIcon, StarIcon } from '../components/Icons.jsx';
 
 /**
@@ -136,7 +137,7 @@ function tripPhotos(trips, destinations) {
  * one swaps which trip the card IS, so the buttons below always act on what
  * the card is currently showing.
  */
-function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t }) {
+function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip = null, party = 2 }) {
   // Which variant the card is showing. It starts on the one groupTripVariants
   // preselected (nearest the window) and only moves when the traveller says so.
   const [shownId, setShownId] = useState(trip.id);
@@ -145,6 +146,11 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t }) {
   // The group is rebuilt whenever the countries or the window change, so the
   // preselection can move under a card that is still mounted.
   useEffect(() => { setShownId(trip.id); }, [trip.id]);
+  // The trip's beds and days for the party, priced stop by stop through the
+  // same function the planned receipt uses (T388, rule "Cost on cards"), so
+  // picking the card does not change the figure. No figure when a stop is not
+  // in the catalogue or has no price: a partial sum would read as cheap.
+  const cost = useMemo(() => (priceTrip ? priceTrip(shown.cities || []) : null), [priceTrip, shown]);
 
   return (
     <div className={`wtrip ${chosen ? 'on' : ''}`}>
@@ -173,6 +179,15 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t }) {
             </React.Fragment>
           ))}
         </p>
+
+        {cost != null && cost > 0 && (() => {
+          const parts = t(party === 1 ? 'ready.costLineOne' : 'ready.costLineMany', { eur: '\u0000', n: party }).split('\u0000');
+          return (
+            <p className="wiz-cost-line wtrip-total">
+              {parts[0]}<span className="mono">~{eur(cost)}</span>{parts.slice(1).join('')}
+            </p>
+          );
+        })()}
 
         {variants.length > 1 && (
           <div className="wtrip-lens" role="group" aria-label={t('ready.lengthsLabel')}>
@@ -205,7 +220,7 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t }) {
 
 export function ReadyTripsStep({
   countries, allCountries, windowNights, selectedId, onPick, onToggleCountry, onBuildOwn,
-  onRestorePick, onOpenTrip, destinations = null, favorites = null,
+  onRestorePick, onOpenTrip, destinations = null, favorites = null, priceTrip = null, party = 2,
 }) {
   const { t } = useI18n();
   const [rows, setRows] = useState(null);   // null = loading
@@ -335,6 +350,8 @@ export function ReadyTripsStep({
                 onPick={onPick}
                 onOpen={onOpenTrip}
                 t={t}
+                priceTrip={priceTrip}
+                party={party}
               />
             ))}
           </div>

@@ -999,9 +999,8 @@
 }
 .guide-recap-inner { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
 .guide-foot-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-/* The width switch is a layout change, not an animation; only the gutter
-   eases so stepping between a form and a map step doesn't jolt. */
-.trip-wizard-modal .guide-canvas { transition: max-width .18s ease; }
+/* The width switch is a layout change, not an animation (T388, impeccable
+   detect: nothing animates a layout property). */
 
 /* Wide screens: the canvas max-width does the holding-off-the-edge work, so
    the shell itself only needs comfortable gutters. */
@@ -2142,7 +2141,6 @@ color: var(--ink-soft);
   height: 100%;
   border-radius: 2px;
   background: var(--accent);
-  transition: width .2s ease;
 }
 
 /* The list behind that line, in a SheetShell. Every row is a full tap target;
@@ -2175,7 +2173,10 @@ color: var(--ink-soft);
 .guide-recap-chip.is-link {
   border: none;
   cursor: pointer;
-  font: inherit;
+  /* font-family only (T388, row T377-j): `font: inherit` threw away the
+     chip's own size, so the linked chip rendered larger than its
+     neighbours and ran off the edge at 380 px. */
+  font-family: inherit;
   min-height: 26px;
 }
 .guide-recap-chip.is-link:hover { color: var(--accent); border-color: var(--accent); }

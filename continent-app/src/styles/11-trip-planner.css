@@ -161,28 +161,6 @@
   padding: 6px 20px 12px;
   border-bottom: 1px solid var(--rule);
 }
-.trip-topcard-close {
-  position: absolute;
-  top: 4px;
-  right: 12px;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink-soft);
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.trip-topcard-close:hover {
-  background: var(--rule);
-  color: var(--ink);
-}
 .trip-topcard-name {
   display: block;
   width: 100%;
@@ -229,9 +207,9 @@
   border-radius: 18px 18px 0 0;
   box-shadow: 0 -6px 28px rgba(26,26,26,0.14);
   z-index: 7;
-  transition: height .28s cubic-bezier(0.4, 0, 0.2, 1);
+  /* No height transition (T388, impeccable detect: layout animation); the
+     sheet settles at its new height on the next frame, as the drag does. */
 }
-.trip-sheet.dragging { transition: none; }
 /* Generous, draggable hit-area around the grip (the trip header card below it
    drags too - see TripPlannerTab - so the whole top of the sheet is a handle) */
 .trip-sheet-grip-hit {
@@ -247,9 +225,14 @@
   border-radius: 2px;
   background: var(--rule);
   margin: 0 auto;
-  transition: background .15s, width .15s;
+  transition: background-color var(--dur-1) var(--ease-out);
 }
-.trip-sheet-grip-hit:hover .trip-sheet-grip { background: var(--ink-mute); width: 52px; }
+@media (hover: hover) {
+  .trip-sheet-grip-hit:hover .trip-sheet-grip { background: var(--ink-mute); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trip-sheet-grip { transition: none; }
+}
 .trip-sheet-scroll {
   flex: 1 1 auto;
   min-height: 0;
@@ -635,106 +618,14 @@
   .trip-topcard { padding-top: 16px; }
 }
 
-/* ───────── Guided trip: CTA in the sheet ───────── */
 
-.trip-guide-cta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  text-align: left;
-  padding: 12px 14px;
-  margin-top: 8px;
-  border-radius: 14px;
-  border: 1px solid var(--accent);
-  background: linear-gradient(100deg, var(--accent-bg), var(--paper));
-  transition: transform .15s, box-shadow .15s;
-}
-.trip-guide-cta:hover { transform: translateY(-1px); box-shadow: var(--shadow-1); }
-.trip-guide-spark {
-  display: flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 15px;
-}
-.trip-guide-cta-text { flex: 1; min-width: 0; }
-.trip-guide-cta-text b { display: block; font-family: var(--display); font-size: 15px; color: var(--ink); }
-.trip-guide-cta-text small { display: block; color: var(--ink-soft); font-size: 11.5px; margin-top: 1px; }
-.trip-guide-arrow { color: var(--accent); font-size: 18px; flex-shrink: 0; }
-
-/* ───────── Trip planner: mobile launcher (before the sheet is raised) ───────── */
-.trip-launcher {
-  position: absolute;
-  left: 0; right: 0; bottom: 0; top: 0;
-  z-index: 8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 20px calc(24px + var(--bottom-nav-h));
-  pointer-events: none;   /* let the map pan around the card */
-}
-.trip-launcher-card {
-  pointer-events: auto;
-  width: min(100%, 420px);
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(26, 26, 26, 0.18);
-  padding: 28px 24px 22px;
-  text-align: center;
-}
-.trip-launcher-spark {
-  width: 48px; height: 48px;
-  margin: 0 auto 14px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-fill);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-}
-.trip-launcher-title {
-  font-family: var(--display);
-  font-size: 23px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.trip-launcher-sub {
-  font-size: 13px;
-  color: var(--ink-soft);
-  line-height: 1.55;
-  margin: 8px 0 20px;
-}
-.trip-launcher-primary {
-  display: block;
-  width: 100%;
-  padding: 13px;
-  border-radius: 12px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 15px;
-  font-weight: 600;
-  border: 1px solid var(--accent);
-  transition: opacity .15s;
-}
-.trip-launcher-primary:hover { opacity: 0.9; }
-.trip-sheet.sheet-hidden { display: none; }
-
-/* Planned view: the Plan days / Save / Edit / Replan / Start over actions
-   live in one footer pinned at the BOTTOM of the sheet (mobile and desktop
-   alike): the full-width primary on top, the secondaries in a row beneath it.
-   All five are the shared Button (T193), so these rules only place them. */
-.trip-edit-btn, .trip-plan-again-btn, .trip-save-planned-btn, .trip-startover-btn {
+/* Planned view: Plan your days, Save trip and More in ONE row pinned at the
+   bottom of the sheet (T388, brief item 7); Edit stops, Replan route and
+   Start over are items of the More menu (67-v6-tripplanner.css). */
+.trip-save-planned-btn, .trip-planday-btn {
   padding: 0 14px;
   white-space: nowrap;
 }
-.trip-save-planned-btn { width: 100%; }
-.trip-planned-secondary {
-  display: flex;
-  gap: 8px;
-}
-.trip-planned-secondary > button { flex: 1 1 0; min-width: 0; }
 
 /* Day planner: base-city + day-trip transport recommendation. */
 .daytrip-base .trip-block-title { display: flex; align-items: center; gap: 6px; }
@@ -859,14 +750,13 @@
 }
 .trip-sheet-footer-row {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: var(--space-2);
 }
 .trip-footer-error { margin: 0 0 8px; }
 
 .trip-origin-row { display: flex; }
 .trip-origin-row .origin-picker { position: relative; }
-.trip-startover-btn:hover { border-color: var(--warn-ink); color: var(--warn-ink); }
 .trip-footer-error .state-err-msg { font-size: 13px; }
 .trip-planned-error {
   position: absolute;

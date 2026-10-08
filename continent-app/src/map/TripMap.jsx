@@ -4,6 +4,7 @@ import { keyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, declutterPins } from './coords.js';
 import { tokenColour } from './tokenColors.js';
+import { useI18n } from '../i18n/index.jsx';
 
 // A pin's accessible name must contain the text it shows (WCAG 2.5.3), so a
 // numbered pin is named "2 Vienna", not "Vienna" (T231).
@@ -156,6 +157,11 @@ function routeArrowImage(px = 26) {
 export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null, basemap = 'voyager' }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
+  // Pin titles go through the catalogues (T388: they were English in every
+  // language). The markers are built inside effects, so they read t from a ref.
+  const { t } = useI18n();
+  const tRef = useRef(t);
+  tRef.current = t;
   const markersRef = useRef([]);
   const poiMarkersRef = useRef([]);
   const lastFrameKeyRef = useRef(null);
@@ -529,7 +535,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         const el = document.createElement('div');
         const withPhoto = !!(p.plain && p.img);
         el.className = `trip-pin${p.stay ? ' trip-pin-stay' : ''}${p.plain ? ' trip-pin-plain' : ''}${withPhoto ? ' has-photo' : ''}`;
-        el.title = p.stay ? 'Your stay' : (p.city || `Stop ${no}`);
+        el.title = p.stay ? tRef.current('trip.pinStay') : (p.city || tRef.current('trip.pinStop', { n: no }));
         const shape = document.createElement('span');
         shape.className = 'trip-pin-shape';
         if (p.plain) {
@@ -737,13 +743,13 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         const star = document.createElement('span');
         star.className = 'dem-pin-star';
         star.innerHTML = POI_STAR_ICON;
-        star.title = 'A true must-see';
+        star.title = tRef.current('trip.pinMust');
         el.append(star);
       }
       // An AI discovery is a status pin too: it lives outside the catalogue,
       // so there is nothing behind it to add to the plan.
       if (p.discovery) {
-        el.title = `${p.label} (a Carta bot find)`;
+        el.title = tRef.current('trip.pinBotFind', { place: p.label });
         poiMarkersRef.current.push({
           marker: new maplibregl.Marker({ element: el, anchor: 'center' })
             .setLngLat([p.lon, p.lat])
@@ -762,10 +768,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         add.className = 'trip-poi-pin-add';
         add.innerHTML = POI_PLUS_ICON;
         el.append(add);
-        el.title = `Add ${p.label} to this day`;
+        el.title = tRef.current('trip.pinAdd', { place: p.label });
         el.addEventListener('click', (e) => { e.stopPropagation(); onPoiClickRef.current?.(p.id); });
       } else {
-        el.title = `${p.label} is already in your plan`;
+        el.title = tRef.current('trip.pinInPlan', { place: p.label });
       }
       poiMarkersRef.current.push({
         marker: new maplibregl.Marker({ element: el, anchor: 'center' })

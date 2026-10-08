@@ -145,19 +145,22 @@ try {
   const picked = await page.locator('.guide-picked-chip').count();
   check('picked countries show as chips', picked >= 2, `${picked} chips`);
 
-  // Step 3: the fork.
+  // Step 5: the trips. T388 updated these checks (row T377-a): the two-button
+  // fork (.wmode-btn) and the two columns were replaced by ONE list in T5,
+  // with "Build your own route" as a card at its end, so the checks ask for
+  // the list and that card instead of the fork and the split.
   await page.locator('.guide-next').click();
   await page.waitForTimeout(2500);
-  check('the build-mode fork renders', await page.locator('.wmode-btn').count() === 2);
-  check('ready-made is the default', /on/.test(await page.locator('.wmode-btn').first().getAttribute('class') || ''));
-  check('the step rail names the trips step', /trips/i.test(await page.locator('.guide-step.on, .guide-steps').first().innerText().catch(() => '')) || true);
-
-  const cols = await page.locator('.wready-col').count();
-  check('the screen splits in two', cols === 2, `${cols} columns`);
-  const heads = (await page.locator('.wready-col-title').allInnerTexts()).join(' | ');
-  check('one column crosses countries, one stays in one', /across/i.test(heads) && /inside one country/i.test(heads), heads);
+  await page.locator('.wtrip').first().waitFor({ timeout: 20000 }).catch(() => {});
+  check('the trips list renders with the build-your-own way out', await page.locator('.wready-own-card').count() === 1);
+  check('ready-made is the default', await page.locator('.wtrip').count() > 0);
+  const heads = (await page.locator('.wready-title').allInnerTexts()).join(' | ');
+  check('one list, headed by the countries', /austria|czechia/i.test(heads), heads);
   const cards = await page.locator('.wtrip').count();
   check('published trips are offered', cards > 0, `${cards} trips`);
+  // T388 (rule "Cost on cards"): a trip card carries its beds and days.
+  check('trip cards carry a cost line', await page.locator('.wtrip .wtrip-total').count() > 0,
+    await page.locator('.wtrip .wtrip-total').first().innerText().catch(() => ''));
   await page.screenshot({ path: 'shots/planner2-trips.png', fullPage: true });
 
   // Unticking a country changes the suggestions.
@@ -184,7 +187,11 @@ try {
   const first = page.locator('.wtrip').first();
   await first.waitFor({ timeout: 20000 }).catch(() => {});
   if (await first.count()) {
-    await first.click();
+    // Choosing is the card's Choose button, and the stops and legs are on
+    // Getting there, the next step (they used to open under the card).
+    await first.locator('.wtrip-choose').click();
+    await page.waitForTimeout(1500);
+    await page.locator('.guide-next').click();
     await page.waitForTimeout(2500);
     check('the chosen trip is confirmed', await page.locator('.wpicked').isVisible());
     check('its stops are listed with nights', await page.locator('.wpicked .guide-final-stop').count() > 0,
@@ -211,7 +218,10 @@ try {
     const dateAfter = await page.locator('.tleg-date').first().innerText().catch(() => '');
     check('moving the trip moves every leg', dateBefore !== dateAfter, `${dateBefore} -> ${dateAfter}`);
 
-    // What you paid feeds the total.
+    // What you paid feeds the total. The field opens from "Add what you paid"
+    // (it used to stand open; T388 updated the walk, row T377-a).
+    const addPaid = page.locator('.tleg').first().locator('.tleg-addpaid');
+    if (await addPaid.count()) await addPaid.click();
     await page.locator('.tleg-input').first().fill('180');
     await page.waitForTimeout(500);
     const total = await page.locator('.tlegs-total').innerText();
@@ -229,9 +239,12 @@ try {
   }
 
   // Build-your-own: the same countries, the algorithm doing the routing.
+  // Back twice (Finish, Getting there) to the list, then its last card.
   await page.locator('.guide-foot-actions .guide-back').click();
   await page.waitForTimeout(1200);
-  const customBtn = page.locator('.wmode-btn').nth(1);
+  await page.locator('.guide-foot-actions .guide-back').click();
+  await page.waitForTimeout(1500);
+  const customBtn = page.locator('.wready-own-card').first();
   if (await customBtn.count()) {
     await customBtn.click();
     await page.waitForTimeout(2000);
@@ -261,12 +274,15 @@ try {
           check('the nights can be shared out by the algorithm', true);
         }
       }
-      // And the built route gets the same getting-there section on Finish.
+      // And the built route gets the same getting-there section, on Getting
+      // there (T388, row T377-e: it said "No trip chosen yet" on this path).
       await page.locator('.guide-next').click();
       await page.waitForTimeout(1800);
       check('a built route also asks how you get there', await page.locator('.tlegs').isVisible().catch(() => false));
       const legs2 = await page.locator('.tleg').count();
       check('one leg per hop, plus out and home', legs2 >= 3, `${legs2} legs`);
+      await page.locator('.guide-next').click();
+      await page.waitForTimeout(1500);
     } else {
       check('the city picker offers cities to add', false, `${nCity} steppers`);
     }
@@ -283,6 +299,19 @@ try {
     await arrange.click();
     await page.waitForTimeout(3500);
     check('the trip reaches the planner', await page.locator('.trip-sheet').isVisible().catch(() => false));
+    // The receipt is the first thing under the top card since T388 and its
+    // lines open from the total, so the walk opens it before reading.
+    const toggle = page.locator('.itin-breakdown-toggle').first();
+    if (await toggle.count() && (await toggle.getAttribute('aria-expanded')) !== 'true') {
+      // The first planned view may raise the pass offer over the sheet;
+      // Escape closes it before the receipt is opened.
+      await toggle.click({ timeout: 5000 }).catch(async () => {
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(600);
+        await toggle.click({ timeout: 5000 }).catch(() => {});
+      });
+      await page.waitForTimeout(400);
+    }
     const sheet = await page.locator('.trip-sheet').innerText().catch(() => '');
     check('the planner names the way there they chose', /getting there/i.test(sheet), sheet.slice(0, 90));
     check('the planner carries their figure, not a fare', /180/.test(sheet), sheet.slice(0, 160));

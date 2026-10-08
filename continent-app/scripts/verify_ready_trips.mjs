@@ -152,6 +152,14 @@ async function run(width, height) {
     check(`${label}: gone, ${what}`, await page.locator(sel).count() === 0);
   }
 
+  // ---- what T388 put back, and how ----------------------------------------
+  // T5 removed a price per day from the card; T388 (rule "Cost on cards")
+  // adds the trip's beds and days for the party as one line in its own
+  // class, so the check above still proves the per-day price is gone.
+  const totals = await page.locator('.wtrip .wtrip-total').allInnerTexts();
+  check(`${label}: trip cards carry their beds and days, as an estimate`,
+    totals.length > 0 && totals.every((x) => /~€[\d,.]+/.test(x) && /est\./.test(x)), totals.slice(0, 2).join(' | '));
+
   // ---- what T5 put there ------------------------------------------------
   check(`${label}: one grid`, await page.locator('.wready-grid').count() === 1);
   const title = (await page.locator('.wready-title').first().textContent() || '').trim();
@@ -180,7 +188,9 @@ async function run(width, height) {
   const imgs = photos.filter((p) => p.tag === 'IMG');
   check(`${label}: every photo has a srcSet`, imgs.length > 0 && imgs.every((p) => p.srcset.includes(' ')),
     `${imgs.length} of ${photos.length} are photos`);
-  check(`${label}: the media box is 16/10`, photos.every((p) => Math.abs(p.ratio - 1.6) < 0.05),
+  // T388 (brief item 9): a shorter photograph, 16/7, so the route, the cost
+  // and Choose sit in the first screen with it.
+  check(`${label}: the media box is 16/7`, photos.every((p) => Math.abs(p.ratio - 16 / 7) < 0.05),
     photos.map((p) => p.ratio).slice(0, 4).join(', '));
   // The same photograph arrives at different thumb widths, so compare the file
   // rather than the url: /960px-X.jpg and /500px-X.jpg are one picture.
@@ -222,7 +232,10 @@ async function run(width, height) {
   check(`${label}: choosing marks the card`, await page.locator('.wtrip.on').count() === 1);
   check(`${label}: no panel opens under the list`, await page.locator('.wpicked').count() === 0);
   const foot = (await page.locator('.guide-foot-summary').first().textContent() || '').trim();
-  check(`${label}: the footer says what was chosen`, /days . Next: getting there/.test(foot),
+  // T388 (brief item 5): the footer names the chosen trip without middots,
+  // or, when the trip is shorter than the window, says how many nights are
+  // planned and how many are free.
+  check(`${label}: the footer says what was chosen`, /\d+ days$/.test(foot) || /nights planned\./.test(foot),
     foot.slice(0, 70));
 
   // ---- "What's there" opens the real page --------------------------------

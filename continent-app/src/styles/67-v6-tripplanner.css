@@ -14,3 +14,256 @@
    animation with a prefers-reduced-motion branch; carta-design and
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
+
+/* ── V3 (T388): structure, information and flow ─────────────────────────── */
+
+/* The price on every choice card (rule "Cost on cards", brief item 3): one
+   line in --ui with the figure alone in --mono, from the cost index Explore
+   prices with. Used on the match cards, the country grid, the brief's glance
+   and the ready-made trip cards. */
+.wiz-cost-line {
+  margin: 0;
+  font-family: var(--ui);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+.wiz-cost-line .mono {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* The country grid: the figure sits in a paper band under the photograph,
+   never on it. The card stops being a fixed 4:3 box so the band has a row
+   of its own; the photograph keeps its 4:3 on the pick button. */
+.guide-ccard {
+  aspect-ratio: auto;
+  display: flex;
+  flex-direction: column;
+}
+.guide-ccard-pick {
+  position: relative;
+  inset: auto;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
+}
+.wiz-ccard-cost {
+  padding: var(--space-2) var(--space-3);
+  background: var(--paper);
+  border-top: 1px solid var(--rule-soft);
+}
+
+/* Ready-made trip cards that read as a choice (brief item 9): a shorter
+   photograph, the cost line under the route, and Choose as a secondary, so
+   the step's one accent fill is Next. The chosen card is ink, never accent. */
+.wtrip-media { aspect-ratio: 16 / 7; }
+.wtrip-total { margin: 0; }
+.wtrip-choose {
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink);
+}
+.wtrip.on { border-color: var(--ink); box-shadow: none; outline: 1px solid var(--ink); outline-offset: -2px; }
+.wtrip.on .wtrip-choose {
+  border-color: var(--ink-fill);
+  background: var(--ink-fill);
+  color: var(--on-fill);
+}
+@media (hover: hover) {
+  .wtrip-choose:hover { border-color: var(--ink-soft); }
+}
+
+/* The running estimate says it is one (brief item 2): "est." after the
+   figure in --ui, and the figure a person beside the party's. */
+.wiz-est-mark {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.wiz-est-pp {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+/* Who is going, asked on From (brief item 4), with the shared Stepper. */
+.wiz-party { display: flex; flex-direction: column; gap: var(--space-2); }
+.wiz-party-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.wiz-party-label { font-family: var(--ui); font-size: 14px; color: var(--ink); }
+.wiz-party-stepper { flex: none; }
+/* "Add children" is a secondary button in words (--ui), not a mono accent
+   link: mono is for measured facts, the accent for the step's one primary. */
+.wiz-party .guide-kids-add {
+  align-self: flex-start;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 14px;
+}
+@media (pointer: fine) {
+  .wiz-party .guide-kids-add { min-height: 32px; }
+}
+
+/* The answered quiz as one line (brief item 8). */
+.wq-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.wq-summary .wq-done-check { flex: none; margin-top: 2px; }
+.wq-summary-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wq-summary-text small { font-size: 12px; color: var(--ink-soft); }
+.wq-summary-text b { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.wq-summary-edit {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 13px;
+}
+@media (pointer: fine) {
+  .wq-summary-edit { min-height: 32px; }
+}
+
+/* The planned view's footer is one row (brief item 7): Plan your days, Save
+   trip and More. More opens a menu with menu semantics; Start over in it is
+   --danger text and still confirms. */
+.trip-sheet-footer-row > .trip-planday-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trip-sheet-footer-row > .trip-save-planned-btn { flex: none; }
+.trip-sheet-footer-row > .trip-save-planned-btn:only-of-type { flex: 1 1 auto; }
+.trip-more { position: relative; flex: none; }
+.trip-more-btn { min-width: var(--tap); padding: 0 var(--space-3); }
+.trip-more-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--space-2));
+  z-index: 20;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-1) 0;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  box-shadow: var(--shadow-2);
+  animation: wiz-more-in var(--dur-2) var(--ease-out);
+}
+.trip-more-item {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+.trip-more-item.is-danger { color: var(--danger); }
+.trip-more-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (hover: hover) {
+  .trip-more-item:hover { background: var(--paper-dim); }
+}
+@keyframes wiz-more-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trip-more-menu { animation: none; }
+}
+
+/* The planned view's folds: Know before you go and the trip's admin, each
+   an h2 that is only a button (brief item 6). */
+.trip-fold-h { margin: 0; font: inherit; }
+.trip-fold-h .day-collapse-head { width: 100%; }
+.day-collapse-caret.open svg { transform: rotate(180deg); }
+.cheap-tip-sub { margin-top: var(--space-4); }
+.cheap-tip-sub-title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* The wizard on a phone (rule "More" menu: a multi-step flow's fixed chrome
+   takes at most a quarter of the screen and the footer is one row). Start
+   over lives in the steps sheet; the status line shares the row with Back
+   and Next and wraps to two short lines inside it. */
+@media (max-width: 768px) {
+  .trip-wizard-modal .guide-foot-inner { flex-wrap: nowrap; gap: var(--space-2); }
+  .trip-wizard-modal .guide-foot-summary {
+    flex: 1 1 0;
+    min-width: 0;
+    max-height: 34px;
+    overflow: hidden;
+    line-height: 1.4;
+  }
+  .trip-wizard-modal .guide-foot-actions { flex: none; gap: var(--space-2); }
+  .trip-wizard-modal .guide-foot-actions .guide-next { flex: none; }
+  .trip-wizard-modal .guide-foot-actions .guide-back { padding: 0 var(--space-3); }
+}
+.wiz-sheet-startover {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  margin: var(--space-3) 0 0;
+  padding: 0 var(--space-4);
+  border-top: 1px solid var(--rule-soft);
+  color: var(--danger);
+}
+
+/* The wizard's fixed chrome on a phone: the head, the running total and the
+   one-row footer, nothing else (the recap scrolls with the step). Tighter
+   padding so the three stay within a quarter of an 800 px screen. */
+@media (max-width: 768px) {
+  .trip-wizard-modal .guide-head { padding: var(--space-2) var(--space-4) var(--space-2); }
+  .trip-wizard-modal .wiz-mini { margin-top: var(--space-1); }
+  .trip-wizard-modal .wiz-mini-bar { margin-top: var(--space-1); }
+  .trip-wizard-modal .guide-estimate-main { padding: var(--space-2) var(--space-4); }
+  .trip-wizard-modal .guide-foot { padding-top: var(--space-2); }
+  .trip-wizard-modal.wiz-inline .guide-foot { padding-bottom: var(--space-2); }
+  .wiz-recap-inbody {
+    margin: calc(-1 * 18px) calc(-1 * 18px) var(--space-4);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+}
+/* Progress is data, not an action: the bar is ink (brief row 31). */
+.trip-wizard-modal .wiz-mini-bar > span { background: var(--ink-fill); }

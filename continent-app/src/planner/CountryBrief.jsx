@@ -143,11 +143,26 @@ function monthVerdict(bestMonths, month) {
   return near(month) ? 'ok' : 'off';
 }
 
-/** The budget as a word. A euro figure belongs in Costs, at the bottom, where
- *  it can say what it measured; up here it would be a number with no basis. */
+/** The budget as a word, only where the country's towns give no figure. Since
+ *  T388 the glance prints the day cost range itself (rule "Cost on cards"):
+ *  the cheapest and the dearest town's day per person at the traveller's
+ *  Lifestyle, from the same cost index Explore prices with. */
 const BUDGET_WORD = { budget: 'brief.budgetLow', mid: 'brief.budgetMid', high: 'brief.budgetHigh' };
 
-function AtAGlance({ brief, tripMonth, lang, t }) {
+/** Splits a translated sentence around its figure so the figure alone is set
+ *  in mono and the words keep their own order in every language. */
+function withFigure(t, key, vars, figure) {
+  const parts = t(key, { ...vars, eur: '\u0000' }).split('\u0000');
+  return (
+    <>
+      {parts[0]}
+      <span className="mono">{figure}</span>
+      {parts.slice(1).join('')}
+    </>
+  );
+}
+
+function AtAGlance({ brief, tripMonth, lang, t, dayCost = null }) {
   const verdict = monthVerdict(brief.bestMonths, tripMonth);
   const around = [];
   if (brief.rail?.operator) around.push({ Icon: RouteIcon, text: brief.rail.operator });
@@ -204,7 +219,26 @@ function AtAGlance({ brief, tripMonth, lang, t }) {
             <dd>{brief.languages.join(', ')}</dd>
           </div>
         )}
-        {budgetKey && (
+        {dayCost ? (
+          <div className="cbrief-fact">
+            <dt>{t('brief.budget')}</dt>
+            <dd className="wiz-cost-line">
+              {dayCost.min === dayCost.max
+                ? withFigure(t, 'brief.dayCostOne', {}, dayCost.minText)
+                : (() => {
+                  const parts = t('brief.dayCostRange', { min: '\u0000', max: '\u0001' }).split('\u0000').flatMap((p) => p.split('\u0001'));
+                  return (
+                    <>
+                      {parts[0]}<span className="mono">{dayCost.minText}</span>
+                      {parts[1]}<span className="mono">{dayCost.maxText}</span>
+                      {parts.slice(2).join('')}
+                    </>
+                  );
+                })()}
+              {dayCost.national && <> {t('match.national')}</>}
+            </dd>
+          </div>
+        ) : budgetKey && (
           <div className="cbrief-fact">
             <dt>{t('brief.budget')}</dt>
             <dd>{t(budgetKey)}</dd>
@@ -568,7 +602,7 @@ function GettingThere({ brief, meta, origin, open, startDate = '', endDate = '',
 
 function BriefBody({
   brief, destinations, meta, origin, tripMonth, nights, startDate, endDate, quizTypes,
-  favorites, onOpenDest, onSeeAll, onOpenTrip, onPlanTrip,
+  favorites, onOpenDest, onSeeAll, onOpenTrip, onPlanTrip, dayCost = null,
 }) {
   const { t, lang } = useI18n();
   const { isOpen, toggle } = useFolds(['glance', 'places', 'trips'], brief.iso2);
@@ -612,7 +646,7 @@ function BriefBody({
         id="cb-glance" icon={CompassIcon} title={t('brief.atAGlance')}
         open={isOpen('glance')} onToggle={() => toggle('glance')}
       >
-        <AtAGlance brief={brief} tripMonth={tripMonth} lang={lang} t={t} />
+        <AtAGlance brief={brief} tripMonth={tripMonth} lang={lang} t={t} dayCost={dayCost} />
       </Fold>
 
       {brief.visit.length > 0 && (
@@ -783,7 +817,7 @@ export function CountryBrief({
   tripMonth = null, nights = null, quizTypes = null, favorites = null,
   startDate = '', endDate = '',
   onOpenDest = null, onSeeAll = null, onOpenTrip = null, onPlanTrip = null,
-  anchorRef = null,
+  anchorRef = null, dayCost = null,
 }) {
   const { t } = useI18n();
   const wide = useWideScreen();
@@ -805,6 +839,7 @@ export function CountryBrief({
       onSeeAll={onSeeAll}
       onOpenTrip={onOpenTrip}
       onPlanTrip={onPlanTrip}
+      dayCost={dayCost}
     />
   );
 

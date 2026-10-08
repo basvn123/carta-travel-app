@@ -1,10 +1,10 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
-  tripDaysBetween, accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE, haversineKm,
+  tripDaysBetween, DEFAULT_LIFESTYLE, haversineKm,
   drivingEstimate,
 } from '../lib/runtime_pricing.js';
-import { combineTripLegs, suggestNextStops, unpricedFlight, ownFlightTransfers } from '../lib/trip_planner_pricing.js';
-import { legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm, preferredPublicMode } from '../lib/transport.js';
+import { combineTripLegs, suggestNextStops, unpricedFlight, ownFlightTransfers, stopStayCost, pickLegMode } from '../lib/trip_planner_pricing.js';
+import { legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm } from '../lib/transport.js';
 import { originHome } from '../lib/origins.js';
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
@@ -126,6 +126,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const [planLabel, setPlanLabel] = useState(draft?.planLabel || '');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
   const [planned, setPlanned] = useState(draft?.planned || false); // true = show the day-by-day itinerary view
+  // How the days are priced: the daily lifestyle the wizard estimated with,
+  // handed over with the trip so the receipt prices the same days (T388, row
+  // T377-g). null = the app default, as before, for trips that never came
+  // through the wizard.
+  const [lifestyle, setLifestyle] = useState(draft?.lifestyle || null);
 
   // Keep the draft stored while planning; drop it once it's empty. Saved plans
   // carry their planId so the next visit knows not to restore them (see
@@ -138,11 +143,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier,
+      stayTier, lifestyle,
     });
   }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier]);
+      stayTier, lifestyle]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
   // trip start yet still carries its nights so the UI can show "2 nights".
@@ -282,13 +287,15 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setPlanId(null);
     setPlanLabel('');
     setPlanned(false);
+    setLifestyle(null);
   }, [setTransferMode]);
 
   // Load a whole itinerary the guided wizard just assembled: a start date, an
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs, lifestyle: wizardLifestyle }) => {
+    setLifestyle(wizardLifestyle || null);
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -475,14 +482,9 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       // this leg actually offers (reordering the trip can retire one).
       let mode = modes[legModes[i]] ? legModes[i] : null;
       if (!mode && ownEntry) mode = own.mode;
-      if (!mode) {
-        if (tripHasCar) mode = 'car';
-        else if (transportPref === 'public') {
-          // Train vs bus: the same country-profile-aware pick the leg engine
-          // recommends (rail-quality bonus and all), restricted to public modes.
-          mode = preferredPublicMode(opts) || 'bus';
-        } else mode = opts.recommended;
-      }
+      // Nobody chose: Carta's pick, by the rule the wizard's estimate uses
+      // too (pickLegMode, T388), so the two screens price the same leg.
+      if (!mode) mode = pickLegMode(opts, { transportPref, hasCar: tripHasCar });
       const chosen = modes[mode] || modes[opts.recommended] || ownEntry;
       out.push({
         ...opts,
@@ -700,19 +702,14 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     };
   }, [legs, stopDetails, transportPref, carModel, groupSize]);
 
-  // Accommodation + on-the-ground spend per stop (default lifestyle, the full
-  // sliders live in the Map tab's Lifestyle panel; a trip spanning several
-  // destinations isn't the place to re-tune per-stop dining habits in v1).
-  const stayCosts = useMemo(() => stopDetails.map((s) => {
-    if (!s.dest) return null;
-    // A 0-night pass-through stop books nothing, without this gate the
-    // accommodation model still charges its cleaning + service fee.
-    const accom = s.nights > 0 ? accommodationPerPerson(s.dest, s.nights, s.arriveDate, null, groupSize, stayTier) : null;
-    const ground = groundSpendPerPerson(s.dest, s.nights, DEFAULT_LIFESTYLE);
-    const accomTotal = round2((accom ? accom.total : 0) * groupSize);
-    const groundTotal = round2((ground ? ground.total : 0) * groupSize);
-    return { accom, ground, accomTotal, groundTotal, total: round2(accomTotal + groundTotal) };
-  }), [stopDetails, groupSize, stayTier]);
+  // Accommodation + on-the-ground spend per stop, through stopStayCost: the
+  // same function the wizard's running estimate prices a stop with, at the
+  // lifestyle it handed over (T388, row T377-g).
+  const stayCosts = useMemo(() => stopDetails.map((s) => (
+    s.dest
+      ? stopStayCost(s.dest, s.nights, s.arriveDate, { groupSize, stayTier, lifestyle: lifestyle || DEFAULT_LIFESTYLE })
+      : null
+  )), [stopDetails, groupSize, stayTier, lifestyle]);
 
   const grandTotal = useMemo(() => {
     let total = 0;
