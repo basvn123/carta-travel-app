@@ -44,7 +44,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   cleanText, sanitizeCandidates, selectCandidates, dayCentroid, sanitizeAiStops,
-  scheduleDay, cacheKeyInput, modelChain, shouldFallOver, CACHE_KEY_VERSION,
+  scheduleDay, cacheKeyInput, modelChain, shouldFallOver, attemptTimeoutMs, CACHE_KEY_VERSION,
 } from './logic.mjs';
 import { consume, logCapRejection, logModelEvent, refund } from '../_shared/passes.mjs';
 
@@ -484,7 +484,13 @@ Deno.serve(async (req) => {
   let aiText = '';
   let usedModel = '';
   let lastStatus = 0;
-  for (const model of CHAIN) {
+  let timedOut = false;
+  const aiStart = Date.now();
+  for (const [i, model] of CHAIN.entries()) {
+    // One time budget for the whole chain (T415): a slow first model falls
+    // over to a faster one instead of ending the request.
+    const attemptMs = attemptTimeoutMs(i, Date.now() - aiStart);
+    if (!attemptMs) break;
     let resp: Response;
     try {
       resp = await fetch(
@@ -506,14 +512,15 @@ Deno.serve(async (req) => {
               responseSchema: RESPONSE_SCHEMA,
             },
           }),
-          signal: AbortSignal.timeout(45_000),
+          signal: AbortSignal.timeout(attemptMs),
         },
       );
     } catch {
-      // A timeout is not a budget problem, and walking the rest of the chain
-      // could hold the traveller for minutes. Give up while it still feels
-      // like a failed request rather than a hung app.
-      return await failed(504, { code: 'ai_timeout' });
+      // A timeout or a dropped connection on this model. The next model gets
+      // what is left of the budget; attemptTimeoutMs stops the chain once too
+      // little is left, so the traveller is never held for minutes.
+      timedOut = true;
+      continue;
     }
     if (!resp.ok) {
       lastStatus = resp.status;
@@ -531,6 +538,8 @@ Deno.serve(async (req) => {
   // for the traveller is exactly the "come back tomorrow" case the quota copy
   // already describes, so say that rather than "hiccup".
   if (!usedModel) {
+    // Out of time with no model answering: the same ai_timeout as before.
+    if (timedOut && lastStatus !== 429) return await failed(504, { code: 'ai_timeout' });
     return lastStatus === 429
       ? await failed(429, { code: 'global_cap' })
       : await failed(502, { code: 'ai_error', status: lastStatus });
