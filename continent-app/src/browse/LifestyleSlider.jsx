@@ -1,5 +1,6 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
-import { sayKey } from '../lib/lifestyleSlider.js';
+import React, { useId, useRef } from 'react';
+import { useSettledFigure } from '../lib/figureChange.js';
+import { sayKey, eurCents } from '../lib/lifestyleSlider.js';
 
 /**
  * The Lifestyle panel's "Where you sleep" answer, drawn as a stepped slider
@@ -18,7 +19,7 @@ export function LifestyleSlider({ stops, index, onPick, figures, t, lang }) {
   const n = stops.length;
   const stop = stops[index] || stops[0];
   const word = t(stop.labelKey);
-  const eur = (v) => `€${Math.round(v).toLocaleString(lang)}`;
+  const eur = (v) => eurCents(v, lang);
   return (
     <div className="ls-slider" style={{ '--n': n }}>
       <label className="ls-slider-label" htmlFor={id}>{t('lifestyle.stay')}</label>
@@ -55,36 +56,19 @@ export function LifestyleSlider({ stops, index, onPick, figures, t, lang }) {
   );
 }
 
-const reduceMotion = () => typeof window !== 'undefined'
-  && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-
 /**
- * A receipt figure that runs to its new value in 240 ms when the slider
- * moves, so the eye sees which lines moved and by how much. Under
- * prefers-reduced-motion it changes in one step.
+ * A receipt figure that changes in place when the slider or the length moves
+ * (T397, row T380-b; DIRECTION part 2.3). The new figure shows at once, set
+ * to the cent through Intl.NumberFormat in tabular mono, and its box dips
+ * once in opacity through useSettledFigure() so the eye sees which lines
+ * moved. No count-up: the old 240 ms run showed the traveller a string of
+ * wrong figures on the way to the right one, and rounded each of them.
+ * Under prefers-reduced-motion the figure simply changes.
  */
-export function MovingEur({ value, lang }) {
-  const [shown, setShown] = useState(value);
-  const shownRef = useRef(value);
-  useEffect(() => {
-    const from = shownRef.current;
-    if (value == null || from == null || from === value || reduceMotion()) {
-      shownRef.current = value;
-      setShown(value);
-      return undefined;
-    }
-    let raf = 0;
-    const t0 = performance.now();
-    const step = (now) => {
-      const k = Math.min(1, (now - t0) / 240);
-      const v = from + (value - from) * (1 - (1 - k) ** 3);
-      shownRef.current = v;
-      setShown(v);
-      if (k < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [value]);
-  if (shown == null) return null;
-  return <>{`€${Math.round(shown).toLocaleString(lang)}`}</>;
+export function SettledEur({ value, lang }) {
+  const ref = useRef(null);
+  const text = value == null ? '' : eurCents(value, lang);
+  useSettledFigure(ref, text);
+  if (value == null) return null;
+  return <span ref={ref} className="ls-fig">{text}</span>;
 }

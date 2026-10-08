@@ -4007,6 +4007,8 @@ export const de = {
   'journey.weekRest': '{n} Ruhetage',
   'journey.weekEffortAria': 'Anstrengung, Tag für Tag',
   'journey.weekDayAria': 'Tag {n}: {level}',
+  'journey.weekPickAria': 'Einen Tag für die Tagesleiste wählen',
+  'journey.weekPickDay': 'Tag {n} zeigen',
   'journey.weekUnmeasured': 'nicht gemessen',
   'journey.weekLevel0': 'Ruhe',
   'journey.weekLevel1': 'Leicht',

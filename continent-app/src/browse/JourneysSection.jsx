@@ -13,9 +13,10 @@ import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 import {
   loadJourneyIndex, loadJourneyType, loadAllJourneyCards, typeLabel, diffLabel, monthsShort,
-  coverageFacts, eurRange, styleFromPrice, takePendingJourney,
+  coverageFacts, eurRange, styleFromPrice, takePendingJourney, splitAround,
 } from '../lib/journeys.js';
 import { cardTotal, readTripLength, writeTripLength } from '../lib/tripLength.js';
+import { openShared } from '../lib/sharedElement.js';
 import {
   bandCounts, costEdges, filterByBand, filterByMonth, monthCounts as countMonths, sortCards,
 } from '../lib/tripFilters.js';
@@ -59,6 +60,13 @@ const norm = (s) => String(s || '')
 
 const eur0 = (n, lang) => `€${Math.round(n).toLocaleString(lang)}`;
 
+/** A sentence with its euro figure in mono and its words in sans (T397,
+ *  the mono rule): "From [€255] a person, 7 days". */
+function FigLine({ t, k, vars, fig }) {
+  const [pre, figure, post] = splitAround(t, k, vars, fig);
+  return <>{pre}<span className="mono">{figure}</span>{post}</>;
+}
+
 /** A photograph, or the flag-and-name placeholder on paper-dim. */
 function CardPhoto({ hero, cc, name }) {
   return (
@@ -93,9 +101,9 @@ function StyleCard({ type, n, from, onPick, t, lang }) {
       <CardPhoto hero={type.hero} name={name} />
       <span className="jcap-band">
         <span className="jcap-name jstyle-name">{name}</span>
-        <span className="jcap-fig mono">
+        <span className="jcap-fig">
           {from
-            ? t('journey.fromPrice', { eur: eur0(from.low, lang), n: from.days })
+            ? <FigLine t={t} k="journey.fromPrice" vars={{ eur: eur0(from.low, lang), n: from.days }} fig="eur" />
             : t('journey.fromNone')}
         </span>
         <span className="jcap-meta">
@@ -118,7 +126,14 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
   const days = at?.days || card.days;
   const total = at ? eurRange({ low: at.low, high: at.high }, lang) : '';
   return (
-    <button type="button" className="jcard jcap-card" onClick={() => onOpen(card)}>
+    <button
+      type="button"
+      className="jcard jcap-card"
+      // The card's photograph grows into the page's hero (rule "List to
+      // detail", T397); without View Transitions or under reduced motion
+      // the page opens as it always did.
+      onClick={(e) => openShared(e.currentTarget, card.id, () => onOpen(card))}
+    >
       <CardPhoto hero={card.hero} cc={card.cc} name={card.title} />
       <span className="jcap-band">
         <span className="jcap-name jcard-title">{card.title}</span>
@@ -127,7 +142,7 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
           <span>{[card.country, card.sub].filter(Boolean).join(', ')}</span>
         </span>
         {total && (
-          <span className="jcap-fig mono">{t('journey.rangePp', { range: total })}</span>
+          <span className="jcap-fig"><FigLine t={t} k="journey.rangePp" vars={{ range: total }} fig="range" /></span>
         )}
         <span className="jcap-meta">
           {[t('journey.nDays', { n: days }), diff, months].filter(Boolean).join(', ')}

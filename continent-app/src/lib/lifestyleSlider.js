@@ -79,3 +79,11 @@ export function sayKey(stopKey) {
     hotel: 'journey.lsSayHotel',
   }[stopKey] || 'journey.lsSayHome';
 }
+
+/** A euro figure with two decimals, the receipt's one format (T397,
+ *  PRODUCT.md: Intl.NumberFormat, two decimals, never rounded for show). */
+export function eurCents(value, lang) {
+  return new Intl.NumberFormat(lang, {
+    style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2,
+  }).format(value);
+}

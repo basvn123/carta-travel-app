@@ -4922,6 +4922,8 @@ export const en = {
   'journey.weekRest': '{n} rest days',
   'journey.weekEffortAria': 'Effort, day by day',
   'journey.weekDayAria': 'Day {n}: {level}',
+  'journey.weekPickAria': 'Pick a day to show on the day track',
+  'journey.weekPickDay': 'Show day {n}',
   'journey.weekUnmeasured': 'not measured',
   'journey.weekLevel0': 'Rest',
   'journey.weekLevel1': 'Light',

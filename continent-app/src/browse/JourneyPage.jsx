@@ -4,11 +4,13 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import {
   loadJourney, typeLabel, diffLabel, eurRange, boldSegments, lastCheckedMonth,
-  dayStatsParts, riskText, stayPriceText, minutesText,
+  dayStatsParts, figureRuns, splitAround, riskText, stayPriceText, minutesText,
   figureLedger, anyEstimated, dayFigureEstimated, monthLabel, accuracySignals,
   hookLine, humanDetail, loadAllJourneyCards, journeyExits, journeyHash, journeyShareUrl,
 } from '../lib/journeys.js';
 import { srcSetFor } from '../lib/heroImage.js';
+import { scrollBehavior } from '../lib/motion.js';
+import { claimShared } from '../lib/sharedElement.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
 import { safeUrl } from '../lib/format.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
@@ -42,9 +44,9 @@ import { nearestPricedDest } from '../lib/firstRun.js';
 import { FirstRunReceipt } from '../components/FirstRunReceipt.jsx';
 import { useFolds } from './useFolds.js';
 import { SectionRail } from './SectionRail.jsx';
-import { LifestyleSlider, MovingEur } from './LifestyleSlider.jsx';
+import { LifestyleSlider, SettledEur } from './LifestyleSlider.jsx';
 import { offeredSleepGroups, tierForGroup } from '../lib/sleepGroups.js';
-import { stopIndexFor, stopShare, tripFigures } from '../lib/lifestyleSlider.js';
+import { stopIndexFor, stopShare, tripFigures, eurCents } from '../lib/lifestyleSlider.js';
 import { SHORT, readTripLength, tripLengths, writeTripLength } from '../lib/tripLength.js';
 import {
   ArrowLeftIcon, MapPinIcon, ChevronRightIcon, CameraIcon, AlertIcon,
@@ -202,11 +204,15 @@ function journeyStripCells(trip, t, lang) {
     if (w && w.split(/\s+/).length <= 2) { style = w; break; }
   }
   const range = trip.budget?.totalEur ? eurRange(trip.budget.totalEur, lang) : '';
-  const cost = range ? t('journey.stripCostPp', { range }) : '';
+  // The range in mono, "a person" in sans (T397, the mono rule).
+  const [pre, fig, post] = range ? splitAround(t, 'journey.stripCostPp', { range }, 'range') : [];
+  const cost = range
+    ? <>{pre}<span className="mono">{fig}</span>{post}</>
+    : '';
   return [
     { key: 'diff', level, word },
     { key: 'style', word: style || t('journey.stripMixed') },
-    { key: 'cost', word: cost || t('journey.stripPrice'), mono: Boolean(cost) },
+    { key: 'cost', word: cost || t('journey.stripPrice') },
   ];
 }
 
@@ -231,6 +237,18 @@ function HeroCredit({ hero, t }) {
       </span>
     </p>
   );
+}
+
+/**
+ * The first of the week's good months still ahead (this month counts), as
+ * 1 to 12, or null. Seeds the town receipt's dates (T397, row T387-c; the
+ * prop is FirstRunReceipt's, added by T392 for landing).
+ */
+function nextGoodMonth(months) {
+  const list = (months || []).map(Number).filter((m) => m >= 1 && m <= 12).sort((a, b) => a - b);
+  if (!list.length) return null;
+  const now = new Date().getMonth() + 1;
+  return list.find((m) => m >= now) ?? list[0];
 }
 
 /* The photograph of the day's main feature, when the wire carries one as
@@ -296,8 +314,14 @@ function Day({ day, index, night, t, lang, ledger }) {
           {stats.map((part) => (
             <React.Fragment key={part.key}>
               {part.sep}
-              <span className={part.mono ? 'mono' : 'jpage-day-note'}>
-                {part.text}
+              <span className={part.mono ? 'jpage-day-figs' : 'jpage-day-note'}>
+                {/* Figures in mono, the words between them in sans (T397,
+                    brief V4.4): "1,300 m" is a measure, "ascent" is a word. */}
+                {part.mono
+                  ? figureRuns(part.text).map((run, r) => (run.mono
+                    ? <span key={r} className="mono">{run.text}</span>
+                    : <React.Fragment key={r}>{run.text}</React.Fragment>))
+                  : part.text}
                 {part.mono && dayFigureEstimated(ledger, index, part.key) && <EstMark t={t} />}
               </span>
             </React.Fragment>
@@ -534,7 +558,12 @@ export function JourneyPage({
   // version, a run of the best three or four days with its own total. The
   // length is remembered per viewer and shared with the browse filter.
   const [length, setLength] = useState(readTripLength);
-  const pickLength = (next) => { setLength(next); writeTripLength(next); };
+  // The card's photograph grows into this hero (rule "List to detail",
+  // lib/sharedElement.js; JourneysSection starts it). A no-op unless a card
+  // opened this page inside a view transition.
+  const claimHero = useCallback((el) => claimShared(el, id), [id]);
+  const [swaps, setSwaps] = useState(0);
+  const pickLength = (next) => { setLength(next); writeTripLength(next); setSwaps((n) => n + 1); };
   const lengths = useMemo(() => (tripReady ? tripLengths(tripReady) : null), [tripReady]);
   const isShort = length === SHORT && !!lengths && lengths.short.days < lengths.week.days;
   const view = lengths ? (isShort ? lengths.short : lengths.week) : null;
@@ -561,6 +590,35 @@ export function JourneyPage({
 
   // The three readings of the week (T170), placed in the groups below.
   const shape = useMemo(() => weekShape(viewTrip), [viewTrip]);
+
+  // The day in view on the day track is the selected day of the whole week
+  // (T397, brief V4.1): the week shape's bar and the climb profile's marker
+  // follow it, and a day number under the week shape brings that day onto
+  // the track. DayTrack is the shell's and has no onSelect yet (register
+  // row), so its position is read from its own dots, which it keeps on the
+  // card in view, and a pick scrolls the track the way its buttons do.
+  const [daysNode, setDaysNode] = useState(null);
+  const [selIdx, setSelIdx] = useState(0);
+  useEffect(() => {
+    if (!daysNode) return undefined;
+    const read = () => {
+      const dots = [...daysNode.querySelectorAll('.dtrack-dot')];
+      const i = dots.findIndex((d) => d.classList.contains('is-on'));
+      if (i >= 0) setSelIdx(i);
+    };
+    read();
+    const watch = new MutationObserver(read);
+    watch.observe(daysNode, { subtree: true, attributes: true, attributeFilter: ['class'] });
+    return () => watch.disconnect();
+  }, [daysNode]);
+  const selDay = viewTrip?.itinerary?.[selIdx]?.day ?? null;
+  const pickDay = useCallback((dayNo) => {
+    const card = daysNode?.querySelector(`#jday-${dayNo}`);
+    const track = card?.parentElement;
+    if (!card || !track) return;
+    const first = track.children[0]?.offsetLeft || 0;
+    track.scrollTo({ left: card.offsetLeft - first, behavior: scrollBehavior() });
+  }, [daysNode]);
   const ends = useMemo(() => tripEnds(viewTrip, parseGateway), [viewTrip]);
   const plan = useMemo(() => weatherPlan(viewTrip), [viewTrip]);
   const conditions = CONDITION_TYPES.has(viewTrip?.tripTypeSlug) && !!plan?.groups;
@@ -786,7 +844,7 @@ export function JourneyPage({
   const sumText = fromSummary ? hook.rest : trip.summary;
   const party = Math.max(1, Number(firstRun?.choices?.group_size) || 1);
   const totalPp = figs?.total != null ? figs.total : null;
-  const eurExact = (n) => new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+  const eurExact = (n) => eurCents(n, lang);
   const partyFigure = party > 1 && budget.totalEur
     ? (totalPp != null
       ? eurExact(totalPp * party)
@@ -819,6 +877,7 @@ export function JourneyPage({
             {trip.hero?.url && (
               <img
                 className="bpage-shot jpage-shot"
+                ref={claimHero}
                 src={trip.hero.url}
                 srcSet={srcSetFor(trip.hero.url, 1280)}
                 sizes="(max-width: 900px) 96vw, 720px"
@@ -967,7 +1026,7 @@ export function JourneyPage({
                           </span>
                           <span className="jpage-budget-eur mono">
                             {figs?.rows[slot] != null
-                              ? <MovingEur value={figs.rows[slot]} lang={lang} />
+                              ? <SettledEur value={figs.rows[slot]} lang={lang} />
                               : eurRange({ low: row.lowEur, high: row.highEur }, lang)}
                             {anyEstimated(ledger, `budget.breakdown.${slot}`) && <EstMark t={t} />}
                           </span>
@@ -979,7 +1038,7 @@ export function JourneyPage({
                         <span className="jpage-budget-label">{t('journey.budgetTotalPp')}</span>
                         <span className="jpage-budget-eur mono">
                           {totalPp != null
-                            ? <MovingEur value={totalPp} lang={lang} />
+                            ? <SettledEur value={totalPp} lang={lang} />
                             : eurRange(budget.totalEur, lang)}
                           {anyEstimated(ledger, 'budget.totalEur') && <EstMark t={t} />}
                         </span>
@@ -1062,6 +1121,8 @@ export function JourneyPage({
                         receiptKey={`journey:${trip.id}`}
                         headingLevel={3}
                         nights={Math.max(1, viewDays - 1)}
+                        hideStay
+                        seedMonth={nextGoodMonth(trip.bestPeriod?.months)}
                         onPrimaryChange={setFrrPrimary}
                       />
                     </div>
@@ -1108,13 +1169,17 @@ export function JourneyPage({
                 onToggle={() => toggle('itin')}
                 className="jpage-itin"
               >
-                <WeekShapeBlock shape={shape} />
+                <WeekShapeBlock shape={shape} sel={daysNode ? selDay : null} onPick={daysNode ? pickDay : null} />
                 {/* The climb day by day and, on a ride, the surface and
                     traffic (T174): drawn with the trail pages' components. */}
-                <JourneyRoute trip={viewTrip} t={t} />
+                <JourneyRoute trip={viewTrip} t={t} sel={daysNode ? selDay : null} />
                 <WeatherBlock plan={plan} conditions={conditions} show={weatherShows} />
-                <div className="jblock jpage-days" id="jb-days">
+                <div className="jblock jpage-days" id="jb-days" ref={setDaysNode}>
                   <h3 className="jblock-h">{t('journey.itinHead')}</h3>
+                  {/* A new length is a new set of days: the track is mounted
+                      afresh (on Day 1) and fades in over --dur-2, so the
+                      change is seen, not only read (T397, brief V4.5). */}
+                  <div key={swaps} className={swaps ? 'jpage-days-swap' : undefined}>
                   <DayTrack label={t('journey.trackAria')} t={t}>
                     {viewTrip.itinerary.map((day, k) => (
                       <Day
@@ -1128,6 +1193,7 @@ export function JourneyPage({
                       />
                     ))}
                   </DayTrack>
+                  </div>
                 </div>
               </Fold>
             )}

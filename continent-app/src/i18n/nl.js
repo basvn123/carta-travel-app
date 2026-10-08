@@ -4007,6 +4007,8 @@ export const nl = {
   'journey.weekRest': '{n} rustdagen',
   'journey.weekEffortAria': 'Inspanning, dag per dag',
   'journey.weekDayAria': 'Dag {n}: {level}',
+  'journey.weekPickAria': 'Kies een dag om in de dagenstrook te tonen',
+  'journey.weekPickDay': 'Dag {n} tonen',
   'journey.weekUnmeasured': 'niet gemeten',
   'journey.weekLevel0': 'Rust',
   'journey.weekLevel1': 'Licht',

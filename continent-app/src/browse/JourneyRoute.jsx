@@ -35,7 +35,10 @@ function reliefSentences(relief, t) {
   return out.join(' ');
 }
 
-export function JourneyRoute({ trip, t }) {
+// sel is the day number in view on the day track (T397, brief V4.1): one
+// --accent marker slides to its column of the climb profile, the profile's
+// scrub marker of rule "Data drawings", shared with the track.
+export function JourneyRoute({ trip, t, sel = null }) {
   const relief = useMemo(() => weekRelief(trip), [trip]);
   const mix = useMemo(
     () => (SURFACE_TYPES.has(trip?.tripTypeSlug) ? surfaceMix(trip?.typeSpecific?.surface) : null),
@@ -45,6 +48,7 @@ export function JourneyRoute({ trip, t }) {
   if (!relief.show && !mix) return null;
   // Below one half placed, a bar would be mostly a question mark.
   const showTraffic = traffic && traffic.known >= 0.5;
+  const selCol = relief.show && sel != null ? relief.days.findIndex((d) => d.day === sel) : -1;
 
   const title = relief.show
     ? t(mix ? 'journey.routeHeadRide' : 'journey.routeHeadClimb')
@@ -55,7 +59,12 @@ export function JourneyRoute({ trip, t }) {
       {relief.show && (
         <>
           <p className="bpage-prose">{reliefSentences(relief, t)}</p>
-          <WeekProfile relief={relief} t={t} />
+          <div className="jroute-prof" style={{ '--jroute-n': relief.days.length }}>
+            <WeekProfile relief={relief} t={t} />
+            {selCol >= 0 && (
+              <span className="jroute-sel" style={{ '--jroute-i': selCol }} aria-hidden="true" />
+            )}
+          </div>
           <p className="bpage-note">{t('journey.reliefNote')}</p>
         </>
       )}

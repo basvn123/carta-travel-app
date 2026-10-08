@@ -26,7 +26,9 @@
   width: calc(100% - 100% / var(--n) + 18px);
   height: var(--tap);
   margin: 0 0 0 calc(100% / (2 * var(--n)) - 9px);
-  accent-color: var(--accent);
+  /* The filled track and thumb are the selected-state ink (T397, rule
+     "Selected state"); the accent stays for the focus ring. */
+  accent-color: var(--ink-fill);
   cursor: pointer;
 }
 @media (pointer: fine) {

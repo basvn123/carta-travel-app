@@ -4007,6 +4007,8 @@ export const it = {
   'journey.weekRest': '{n} giorni di riposo',
   'journey.weekEffortAria': 'Fatica, giorno per giorno',
   'journey.weekDayAria': 'Giorno {n}: {level}',
+  'journey.weekPickAria': 'Scegli un giorno da mostrare nella striscia dei giorni',
+  'journey.weekPickDay': 'Mostra il giorno {n}',
   'journey.weekUnmeasured': 'non misurato',
   'journey.weekLevel0': 'Riposo',
   'journey.weekLevel1': 'Leggero',

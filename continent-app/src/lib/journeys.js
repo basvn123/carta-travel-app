@@ -193,6 +193,44 @@ export function dayStatsParts(stats, lang) {
   return parts.map((part, i) => ({ ...part, sep: i ? ', ' : '' }));
 }
 
+// A figure with its unit: a sign or euro mark, the number, an optional range
+// to a second number, and a unit of measure. Not preceded by a letter, so a
+// grade such as "T2" stays a word.
+const FIGURE_RUN = /(?<![\p{L}\d])[+\-−€~]?\d[\d.,]*(?:\s?(?:-|–|to)\s?€?\d[\d.,]*)?(?:\s?(?:km|m|h|min|%)(?![\p{L}]))?/gu;
+
+/**
+ * A translated sentence split around one of its figures, so the figure can
+ * be set in mono and the words in sans without building the sentence by
+ * concatenation (T397, the mono rule): [before, figure, after], with the
+ * catalogue's own word order kept.
+ */
+export function splitAround(t, key, vars, figKey) {
+  const MARK = '';
+  const text = t(key, { ...vars, [figKey]: MARK });
+  const at = text.indexOf(MARK);
+  if (at < 0) return [text, '', ''];
+  return [text.slice(0, at), String(vars[figKey]), text.slice(at + MARK.length)];
+}
+
+/**
+ * The figures of a measured line apart from its words (T397, brief V4.4,
+ * the mono rule): "12 km, 1,300 m ascent" becomes [12 km](mono) ", "
+ * [1,300 m](mono) " ascent". Returns [{ text, mono }] in order; the text
+ * joined back is the input.
+ */
+export function figureRuns(text) {
+  const s = String(text || '');
+  const out = [];
+  let at = 0;
+  for (const m of s.matchAll(FIGURE_RUN)) {
+    if (m.index > at) out.push({ text: s.slice(at, m.index), mono: false });
+    out.push({ text: m[0], mono: true });
+    at = m.index + m[0].length;
+  }
+  if (at < s.length) out.push({ text: s.slice(at), mono: false });
+  return out;
+}
+
 /** The measured line under a day title as one string: a v2.0 string as
  *  written, or a v2.1 dayStats object as "52 km, +160 m, 3 h to 4 h, €3 to
  *  €4, asphalt". */

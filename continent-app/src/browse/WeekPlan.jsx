@@ -64,7 +64,11 @@ function shapeSummary(shape, t) {
   return parts.join(' ');
 }
 
-function WeekStrip({ shape, t }) {
+// sel is the day number in view on the day track and onPick brings a day
+// onto the track (T397, brief V4.1): the week shape and the track select
+// together. The selected day's bar is the one --accent item in the drawing
+// (rule "Data drawings": one committed item at most in --accent).
+function WeekStrip({ shape, t, sel = null, onPick = null }) {
   const n = shape.days.length;
   const { bases } = shape;
   const unit = shape.days.find((d) => d.unit)?.unit;
@@ -77,7 +81,7 @@ function WeekStrip({ shape, t }) {
           {shape.days.map((d) => (
             <li
               key={d.day}
-              className={`jweek-col lv-${d.level == null ? 'x' : d.level}`}
+              className={`jweek-col lv-${d.level == null ? 'x' : d.level}${d.day === sel ? ' is-on' : ''}`}
               title={`${t('journey.dayN', { n: d.day })}: ${d.title}`}
             >
               <span className="jweek-bar" aria-hidden="true" />
@@ -92,9 +96,26 @@ function WeekStrip({ shape, t }) {
           ))}
         </ol>
       )}
-      <div className="jweek-days mono" aria-hidden="true">
-        {shape.days.map((d) => <span key={d.day}>{d.day}</span>)}
-      </div>
+      {onPick ? (
+        <div className="jweek-days jweek-picks" role="group" aria-label={t('journey.weekPickAria')}>
+          {shape.days.map((d) => (
+            <button
+              key={d.day}
+              type="button"
+              className={`jweek-pick mono${d.day === sel ? ' is-on' : ''}`}
+              aria-pressed={d.day === sel}
+              aria-label={t('journey.weekPickDay', { n: d.day })}
+              onClick={() => onPick(d.day)}
+            >
+              {d.day}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="jweek-days mono" aria-hidden="true">
+          {shape.days.map((d) => <span key={d.day}>{d.day}</span>)}
+        </div>
+      )}
       {bases.runs.length > 0 && (
         <ol className="jweek-beds" aria-label={t('journey.weekBedsAria')}>
           {bases.runs.map((r, i) => {
@@ -311,7 +332,7 @@ function WeatherBody({ plan, t }) {
 }
 
 /** How the week runs: the sentence and the strip. Null when nothing shows. */
-export function WeekShapeBlock({ shape }) {
+export function WeekShapeBlock({ shape, sel = null, onPick = null }) {
   const { t } = useI18n();
   if (!shape?.show) return null;
   const summary = shapeSummary(shape, t);
@@ -319,7 +340,7 @@ export function WeekShapeBlock({ shape }) {
     <div className="jblock jpage-shape" id="jb-shape">
       <h3 className="jblock-h">{t('journey.weekHead')}</h3>
       {summary && <p className="jweek-sum">{summary}</p>}
-      <WeekStrip shape={shape} t={t} />
+      <WeekStrip shape={shape} t={t} sel={sel} onPick={onPick} />
     </div>
   );
 }
