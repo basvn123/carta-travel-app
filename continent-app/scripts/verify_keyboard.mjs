@@ -112,7 +112,10 @@ const SURFACES = {
   lifestyle: async (p) => {
     await boot(p, '?tab=map');
     await p.waitForSelector('.xcard');
-    await vis(p, '.lifestyle-btn').click();
+    // T393 (V4): Explore no longer draws its own Lifestyle door; the one
+    // door on this tab is the shell's settings line part (T381). Selector
+    // moved, the case is unchanged.
+    await vis(p, '.settings-part-lifestyle, .lifestyle-btn').click();
     await sleep(1500);
     await openAll(p, FOLDS);
     // After the walk: Escape closes the panel and hands focus back to the
@@ -121,7 +124,7 @@ const SURFACES = {
       await pg.keyboard.press('Escape'); await sleep(600);
       return {
         escapeCloses: (await pg.locator('.lifestyle-panel').count()) === 0,
-        focusReturns: await pg.evaluate(() => !!document.activeElement?.closest('.lifestyle-btn')),
+        focusReturns: await pg.evaluate(() => !!document.activeElement?.closest('.lifestyle-btn, .settings-part-lifestyle')),
       };
     };
     return { start: 'active', after };

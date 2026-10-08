@@ -2,6 +2,7 @@ import React from 'react';
 import { BAND_KEY, eurDay } from '../lib/costIndex.js';
 import { BedIcon, DiningIcon } from './Icons.jsx';
 import { accuracyVars } from '../lib/accuracy.js';
+import { useSettledFigure } from '../lib/figureChange.js';
 
 /**
  * The cost language for the whole Explore page: a euro figure, a five-step
@@ -13,8 +14,8 @@ import { accuracyVars } from '../lib/accuracy.js';
  * is Portugal against Switzerland without either of them having to be named.
  *
  * Colour is used as data, not decoration: the cheapest band is green because
- * cheapest is the one thing this product exists to point at, the priciest is
- * the accent, and the three bands in between are ink. A five-colour ramp would
+ * cheapest is the one thing this product exists to point at, and every other
+ * band is ink (V4, explore N7: the accent means an action, never a price). A five-colour ramp would
  * turn a measurement into a mood.
  */
 
@@ -57,6 +58,11 @@ function isNational(cost) {
  * button, and a button cannot hold a button.
  */
 export function CostLine({ cost, t, gauge = true, figure = true }) {
+  // V4 (T393): when the Lifestyle changes, the figure changes in place and
+  // settles with one opacity dip (house rule "Figure in place"); a card that
+  // mounts with its figure does not dip.
+  const eurRef = React.useRef(null);
+  useSettledFigure(eurRef, figure ? cost?.dayEur : null);
   if (!cost || cost.dayEur == null) return null;
   if (!figure) {
     return gauge
@@ -71,7 +77,7 @@ export function CostLine({ cost, t, gauge = true, figure = true }) {
       title={t('cost.dayTitle', { bed: eurDay(cost.stayEur), food: eurDay(cost.foodEur) })}
       aria-label={t(national ? 'cost.dayAriaNational' : 'cost.dayAria', { eur: eurDay(cost.dayEur), band: bandWord })}
     >
-      <span className="xcard-cost-eur mono">{eurDay(cost.dayEur)}</span>
+      <span className="xcard-cost-eur mono" ref={eurRef}>{eurDay(cost.dayEur)}</span>
       <span className="xcard-cost-unit">{t('cost.perDay')}</span>
       {national && <span className="xcard-cost-level">{t('cost.national')}</span>}
       {gauge && <CostGauge band={cost.dayBand} />}
@@ -149,8 +155,20 @@ export function CostReceipt({ cost, t, lang, lifestyleLabel, onOpenLifestyle, co
     return String(cost.foodBasis || '').startsWith('pli_scaled') ? t('cost.foodScaled') : t('cost.foodCountry');
   };
 
+  // The compact receipt's cost bar (house rule "The cost bar", V4 T393): one
+  // segment per line in receipt order, in the ink ramp, 8 px, no figures on
+  // the bar; the lines below carry them. Drawn only when both lines are.
+  const bar = compact && cost.stayEur != null && cost.foodEur != null
+    && cost.stayEur + cost.foodEur > 0;
+
   return (
     <div className="cost-receipt">
+      {bar && (
+        <span className="xcost-bar" aria-hidden="true">
+          <span className="xcost-bar-seg" style={{ flexGrow: cost.stayEur }} />
+          <span className="xcost-bar-seg" style={{ flexGrow: cost.foodEur }} />
+        </span>
+      )}
       <CostRow icon={BedIcon} label={t('cost.bed')} eur={cost.stayEur} band={cost.stayBand} t={t}
         level={compact && cost.stayEur != null ? (cost.stayLevel === 'city' ? 'city' : 'country') : null} />
       <CostRow icon={DiningIcon} label={t('cost.food')} eur={cost.foodEur} band={cost.foodBand} t={t}

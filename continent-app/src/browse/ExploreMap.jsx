@@ -81,6 +81,12 @@ const TIER_FILL = ['match', ['get', 'tier'],
 const CARD_FROM = 8;
 // Where the keyboard layer's pins start drawing as price labels.
 const LABEL_FROM = 7;
+// The price label's box, estimated for collision (12 px --ui name, 12 px
+// --mono figure, the gap and the padding; see 62-v6-explore.css).
+const LABEL_CHAR_W = 6.6;
+const LABEL_EUR_W = 38;
+const LABEL_PAD_W = 18;
+const LABEL_H = 22;
 // Above this the source draws individual pins, so a filter expression is
 // the whole story; below it the clusters carry counts that must be true.
 const CLUSTER_TO = 6;
@@ -123,6 +129,11 @@ export function ExploreMap({
   const tRef = useRef(t);
   tRef.current = t;
   const [zoom, setZoom] = React.useState(3.7);
+  // V4 (T393): the canvas crossfades in over --dur-3 once its style has
+  // drawn (house motion table, "Grid to map switch"), from the still
+  // --paper-dim frame the skeleton held, instead of popping in half drawn.
+  // A style that never loads still shows its frame after four seconds.
+  const [ready, setReady] = React.useState(false);
 
   // The whole catalogue, serialised once. `all` is the unfiltered set; when
   // a caller does not pass one, the current rows stand in and the map
@@ -318,6 +329,9 @@ export function ExploreMap({
     // A verify seam: scripts/verify_map_size_cards.mjs moves the camera to an
     // exact zoom through it (a wheel gesture lands wherever it lands).
     containerRef.current._cartaMap = map;
+    const showCanvas = () => setReady(true);
+    map.once('load', showCanvas);
+    const readyTimer = setTimeout(showCanvas, 4000);
 
     map.on('load', () => {
       map.addSource('dests', {
@@ -409,6 +423,11 @@ export function ExploreMap({
         }
       });
       map.on('zoomend', () => {
+        // V4 (T393): the labels answer the zoom as soon as it ends, not after
+        // the tiles settle ('idle' can take seconds on a slow line), so a
+        // zoom out past the threshold turns the price labels back into dots
+        // at once.
+        setZoom(map.getZoom());
         // Zooming back out turns an open card back into the plain map.
         if (map.getZoom() < CARD_FROM && cardRef.current) closePop();
         // ...and, if the filters moved while we were in close, rebuilds the
@@ -433,6 +452,7 @@ export function ExploreMap({
       readyRef.current = true;
     });
     return () => {
+      clearTimeout(readyTimer);
       popupRef.current?.remove();
       map.remove();
       mapRef.current = null;
@@ -477,6 +497,27 @@ export function ExploreMap({
       if (!k.cluster && k.eur != null && (!best || k.eur < best.eur)) best = k;
     }
     cheapestKey = best?.key ?? null;
+  }
+  // V4 (T393, row T383-c): labels never sit on each other. They are placed
+  // in priority order, the cheapest first, then the better-rated; a label
+  // that would overlap one already placed stays a dot (still a keyboard
+  // stop, with its name and cost in its accessible name). The box is an
+  // estimate from the text length, which is all a pin knows before it draws.
+  const dotOnly = new Set();
+  if (labelled) {
+    const placed = [];
+    const order = kpins.filter((k) => !k.cluster).sort((a, b) => (
+      Number(b.key === cheapestKey) - Number(a.key === cheapestKey))
+      || (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1)));
+    for (const k of order) {
+      const w = String(k.city || '').length * LABEL_CHAR_W + (k.eur != null ? LABEL_EUR_W : 0) + LABEL_PAD_W;
+      const box = { l: k.x - w / 2, r: k.x + w / 2, t: k.y - LABEL_H / 2, b: k.y + LABEL_H / 2 };
+      if (placed.some((o) => box.l < o.r && o.l < box.r && box.t < o.b && o.t < box.b)) {
+        dotOnly.add(k.key);
+      } else {
+        placed.push(box);
+      }
+    }
   }
   const kpinFocus = (k) => {
     lastKpinRef.current = k.key;
@@ -555,12 +596,12 @@ export function ExploreMap({
   useEffect(() => { applyFilter(); }, [applyFilter]);
 
   return (
-    <div className="xmap" role="region" aria-label={t('explore.mapAria')}>
+    <div className={`xmap${ready ? ' is-ready' : ''}`} role="region" aria-label={t('explore.mapAria')}>
       <div ref={containerRef} className="xmap-canvas" />
       {kpins.length > 0 && (
         <div className="xmap-kpins" role="group" aria-label={t('explore.mapPinsAria')}>
           {kpins.map((k) => {
-            const label = labelled && !k.cluster;
+            const label = labelled && !k.cluster && !dotOnly.has(k.key);
             const cls = `xmap-kpin${k.cluster ? ' is-cluster' : ''}${label ? ' is-label' : ''}`
               + `${k.key === cheapestKey ? ' is-cheapest' : ''}${!k.cluster && k.id === ringId ? ' is-ringed' : ''}`;
             return (

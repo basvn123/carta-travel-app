@@ -2879,6 +2879,7 @@ export const fr = {
   "explore.stayHalfDay": "Une demi-journée suffit ici",
   "explore.stayOneDay": "Vaut une journée entière",
   "explore.stayNights": "Vaut environ {n} jours",
+  "explore.bestMonths": "Idéal en {months}",
   "cost.title": "Ce que coûte une journée ici",
   "cost.bed": "Un lit pour la nuit",
   "cost.food": "Manger et boire dehors",
@@ -4421,6 +4422,7 @@ export const fr = {
   "rail.quiet": "Calme en haute saison",
   "rail.quietSub": "Lieux notés qui restent calmes quand tout se remplit ailleurs",
   "rail.seeAll": "Voir les {n}",
+  "rail.position": "{from} à {to} sur {n}",
   "filter.bestOf": "Le meilleur de son pays",
 
   // Tier legend (PLAN.md C8)

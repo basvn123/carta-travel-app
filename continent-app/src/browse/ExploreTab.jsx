@@ -22,9 +22,12 @@ import {
   ChevronDownIcon, ChevronRightIcon, MapPinIcon, ListDayIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { count as fmtCount } from '../lib/format.js';
-import { LifestyleButton } from './LifestyleButton.jsx';
+import { useTravelMonth } from '../components/SettingsLine.jsx';
+import { useSettledFigure } from '../lib/figureChange.js';
+import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
+import { MonthStrip } from '../components/MonthStrip.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 
 // The map is the ONE thing in this tab that pulls maplibre-gl (~930 KB raw),
@@ -72,8 +75,8 @@ const DETAIL_FROM = 6;
  * Hovering a card opens a preview with the things the card cannot fit. It
  * follows WCAG 1.4.13, so it is dismissible with Escape, survives the
  * pointer travelling into it, and opens on keyboard focus as well as hover.
- * It never opens on touch, where hover does not exist and the tap already
- * opens the full page.
+ * On touch the card's info control opens it (V3), and since V4 it is a
+ * paper popover beside or under the card, never over its photograph.
  */
 
 const PAGE = 48;
@@ -130,17 +133,17 @@ const LEGACY_CHEAP = 70;
 const CARD_SIZES = '(max-width: 768px) 46vw, (max-width: 1180px) 45vw, 560px';
 
 /**
- * C4: kind picks the card's span on the 12-column grid, so the page has a
- * visible rhythm before anything is read - the grid IS the legend. Metros
- * and anything worth the journey take half a row with a wide photograph,
- * landscapes letterbox, cities sit 3-up, towns and villages 4-up square.
+ * C4 drew the grid as a mosaic, kind picking the span. V4 (T393): one card
+ * size and one photograph shape, 3:2 (DIRECTION part 3, "one aspect per
+ * row"), four across at 1280 px, so a desktop screen holds eight priced
+ * cards instead of two. Two sizes were tried first (metros and the top tier
+ * at a third of the row): the rating sort leads with exactly those places,
+ * so the first screen was all large cards and held three figures. The kind
+ * word on line 2 still says what size a place is. The phone two-up crops to
+ * 16:10 in 62-v6-explore.css. packRows stays, so a later size can come back.
  */
 function spanFor(p) {
-  const kind = kindOf(p);
-  if (kind === 'area') return { span: 6, ratio: [21, 9], kind };
-  if (kind === 'metro' || p.rating?.tier === 3) return { span: 6, ratio: [16, 10], kind };
-  if (kind === 'city') return { span: 4, ratio: [4, 3], kind };
-  return { span: 3, ratio: [1, 1], kind };
+  return { span: 3, ratio: [3, 2], kind: kindOf(p) };
 }
 
 /**
@@ -183,21 +186,6 @@ function packRows(rows) {
   return out;
 }
 
-/**
- * The hover preview: what the card cannot fit, over the whole card. It
- * repeats the name and rating that the real card body carries underneath
- * (that body is fully covered once the preview spans the card), then adds
- * what a glance at the grid cannot show: where the place ranks in its
- * country, what you do with it, the season, the sights, how long the place
- * is worth, and the same bed/food receipt the destination page uses, so a
- * reader who has read one can read the other.
- *
- * WCAG 1.4.13 has three requirements for content shown on hover and this
- * meets all three. Dismissible: Escape closes it without moving the pointer.
- * Hoverable: it is a child of the card, so travelling into it keeps the card
- * hovered and the preview open, with no "safe triangle" needed. Persistent:
- * nothing times it out, it closes when the pointer or the focus leaves.
- */
 /** Door-to-door ground minutes as "3 h 20 min", the same units in all six
  *  languages. */
 function groundTime(min) {
@@ -207,51 +195,99 @@ function groundTime(min) {
   return m === 0 ? `${h} h` : `${h} h ${m} min`;
 }
 
-function CardPreview({ p, t, best, role, countryLine, reachMin }) {
+// The popover's width cap and its gap to the card (house rule "Dialog
+// family": a popover is at most 320 px wide, beside or under its card).
+const POP_W = 320;
+const POP_GAP = 8;
+
+/**
+ * Where the popover goes: beside the card when the scrolling column has
+ * room on the right (then the left), else under the card, shifted so it
+ * stays inside the column. Never over the card's photograph (explore N6).
+ */
+function placePopover(card) {
+  const col = card.closest('.explore-tab') || document.documentElement;
+  const b = col.getBoundingClientRect();
+  const r = card.getBoundingClientRect();
+  const w = Math.min(POP_W, b.width - 32);
+  if (b.right - r.right >= w + POP_GAP + 8) return { side: 'right', dx: 0, w };
+  if (r.left - b.left >= w + POP_GAP + 8) return { side: 'left', dx: 0, w };
+  const minX = b.left + 16 - r.left;
+  const maxX = b.right - 16 - w - r.left;
+  return { side: 'below', dx: Math.round(Math.max(minX, Math.min(0, maxX))), w };
+}
+
+/**
+ * The preview: what the card cannot fit, in a paper popover beside the card
+ * (V4, T393, explore N6). It used to be an ink panel over the whole card
+ * that repeated the name and score and hid the photograph; the card now
+ * stays whole and the popover adds only what it cannot show: where the
+ * place ranks in its country, what you do with it, what it is known for,
+ * the season as a twelve-month strip (the chosen month outlined), the
+ * sights, one length-of-stay line, the reach line, and the compact receipt
+ * with its cost bar, the same bed and food the destination page shows.
+ *
+ * WCAG 1.4.13: dismissible (Escape), hoverable (a child of the card, and a
+ * transparent bridge spans the gap so the pointer can travel into it),
+ * persistent (nothing times it out).
+ */
+function CardPreview({ id, p, t, best, role, countryLine, reachMin, month, place, reveal = false }) {
+  // Opened by the info control (a tap on a phone), the popover under the
+  // card is brought into view if it opened below the fold.
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (reveal) ref.current?.scrollIntoView?.({ block: 'nearest', behavior: scrollBehavior() });
+  }, [reveal]);
   const stay = visitLength(p);
   const sights = placeSights(p, 3);
   const lead = knownFor(p);
+  const good = p.climate?.best || [];
   return (
-    <div className="xcard-preview" role="tooltip">
-      <div className="xcard-preview-head">
-        <span className="xcard-preview-name">{p.city}</span>
-        <ScoreChip rating={p.rating} size="xs" />
-      </div>
-      <p className="xcard-preview-sub">
-        <CountryFlag country={p.iso2} size={11} />
-        <span>{p.country}</span>
-        {role && <span className="xcard-preview-role">{t(role.labelKey)}</span>}
-      </p>
-      {countryLine && <p className="xcard-preview-rank">{countryLine}</p>}
-      {lead && <p className="xcard-preview-lead">{lead}</p>}
+    <div
+      id={id}
+      ref={ref}
+      className={`xcard-preview xpop xpop--${place.side}`}
+      role="tooltip"
+      style={{ '--xpop-dx': `${place.dx}px`, '--xpop-w': `${place.w}px` }}
+    >
+      {(countryLine || role) && (
+        <p className="xpop-rank">
+          {countryLine && <span>{countryLine}</span>}
+          {role && <span className="xpop-role">{t(`role.short.${role.key}`)}</span>}
+        </p>
+      )}
+      {lead && <p className="xpop-lead">{lead}</p>}
+      {good.length > 0 && (
+        <div className="xpop-months">
+          <p className="xpop-row">
+            <CalendarIcon size={12} />
+            <span>{t('explore.bestMonths', { months: best })}</span>
+          </p>
+          <MonthStrip good={good} className={`xpop-strip${month ? ` xpop-m${month}` : ''}`} />
+        </div>
+      )}
       {sights.length > 0 && (
-        <p className="xcard-preview-row">
+        <p className="xpop-row">
           <CameraIcon size={12} />
           <span>{sights.join(', ')}</span>
         </p>
       )}
       {stay && (
-        <p className="xcard-preview-row">
+        <p className="xpop-row">
           <ClockIcon size={12} />
           <span>{t(stay.key, { n: stay.n })}</span>
-        </p>
-      )}
-      {best && (
-        <p className="xcard-preview-row">
-          <CalendarIcon size={12} />
-          <span>{best}</span>
         </p>
       )}
       {/* How do I get there: shown in the preview only, and only where the
           traveller's origin has a reach table (owner call, T362 on T193-f). */}
       {reachMin != null && (
-        <p className="xcard-preview-row">
+        <p className="xpop-row">
           <TrainIcon size={12} />
           <span>{t('explore.reachFrom', { time: groundTime(reachMin) })}</span>
         </p>
       )}
       {p.cost?.dayEur != null && (
-        <div className="xcard-preview-cost">
+        <div className="xpop-cost">
           <CostReceipt cost={p.cost} t={t} compact />
         </div>
       )}
@@ -259,30 +295,57 @@ function CardPreview({ p, t, best, role, countryLine, reachMin }) {
   );
 }
 
+// The popover's delays (house rule "Dialog family"): a pointer that rests
+// 150 ms, a focus that rests 400 ms (so a Tab walk through the grid does not
+// strobe), the info control at once.
+const HOVER_MS = 150;
+const FOCUS_MS = 400;
+
 const ExploreCard = React.memo(function ExploreCard({
   p, span, ratio, kind, role, selected, fav, onSelect, onToggleFav, t, reachMin,
-  linked = false, onLink = null,
+  linked = false, onLink = null, seal = true, month = null,
 }) {
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
-  // Two doors to one preview: hover follows the pointer, the info button
-  // pins it open until it is clicked again (WCAG 1.4.13 as before).
-  const [hovered, setHovered] = React.useState(false);
-  const [pinned, setPinned] = React.useState(false);
-  const preview = hovered || pinned;
+  // One popover, three doors: hover, focus, and the info control, which
+  // pins it until it is pressed again, Escape, or a tap elsewhere.
+  const [open, setOpen] = React.useState(null);
+  const [place, setPlace] = React.useState(null);
+  const cardRef = React.useRef(null);
+  const timer = React.useRef(0);
+  const popId = `xpop-${p.id}`;
+  const preview = open != null;
+
+  const later = (how, ms) => {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setOpen((o) => (o === 'pin' ? o : how)), ms);
+  };
+  const drop = (how) => {
+    clearTimeout(timer.current);
+    setOpen((o) => (o === how ? null : o));
+  };
+  React.useEffect(() => () => clearTimeout(timer.current), []);
+
+  // Placed before paint, so the popover never flashes on the wrong side.
+  React.useLayoutEffect(() => {
+    setPlace(preview && cardRef.current ? placePopover(cardRef.current) : null);
+  }, [preview]);
 
   React.useEffect(() => {
     if (!preview) return undefined;
-    const onKey = (e) => {
-      if (e.key === 'Escape') { setHovered(false); setPinned(false); }
+    const onKey = (e) => { if (e.key === 'Escape') { clearTimeout(timer.current); setOpen(null); } };
+    const onDown = (e) => {
+      if (cardRef.current && !cardRef.current.contains(e.target)) setOpen(null);
     };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onDown);
+    };
   }, [preview]);
 
-  const onEnter = (e) => { if (e.pointerType === 'mouse') setHovered(true); };
-
   // The country half of the verdict, only where it is earned. It lives in
-  // the preview now: on the card it was a fifth fact fighting four others.
+  // the preview: on the card it was a fifth fact fighting four others.
   const rank = p.country_rank;
   const countryLine = rank === 1
     ? t('card.topOf', { country: p.country })
@@ -290,33 +353,36 @@ const ExploreCard = React.memo(function ExploreCard({
 
   return (
     <div
+      ref={cardRef}
       className={`xcard xcard--${kind} ${selected ? 'selected' : ''} ${preview ? 'previewing' : ''} ${linked ? 'is-linked' : ''}`}
       style={{ '--xspan': span }}
       data-id={p.id}
-      onPointerEnter={(e) => { onEnter(e); onLink?.(p.id); }}
-      onPointerLeave={() => { setHovered(false); onLink?.(null); }}
+      onPointerEnter={(e) => { if (e.pointerType === 'mouse') later('hover', HOVER_MS); onLink?.(p.id); }}
+      onPointerLeave={() => { drop('hover'); onLink?.(null); }}
     >
       <button
         className="xcard-hit"
         onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}
-        onFocus={() => { setHovered(true); onLink?.(p.id); }}
-        onBlur={() => { setHovered(false); onLink?.(null); }}
+        onFocus={() => { later('focus', FOCUS_MS); onLink?.(p.id); }}
+        onBlur={() => { drop('focus'); onLink?.(null); }}
         aria-label={t('explore.openDest', { city: p.city })}
+        aria-describedby={preview && place ? popId : undefined}
       >
         {/* The photograph, and on it only what is earned: the verdict seal
-            for tier 2 and up (a label everything wears carries no
-            information), the gem chip in its own teal, the star. */}
+            for tier 2 and up (V4: not on a grid already filtered to a tier,
+            where every card would wear it), the gem chip in its own teal,
+            the star. */}
         <span className="xcard-media">
           <HeroImage
             url={p.image}
             city={p.city}
             iso2={p.iso2}
             className="xcard-img"
-            maxWidth={span >= 6 ? 960 : 500}
+            maxWidth={span >= 4 ? 960 : 500}
             sizes={CARD_SIZES}
             ratio={ratio}
           />
-          {(p.rating?.tier ?? 0) >= 2 && (
+          {seal && (p.rating?.tier ?? 0) >= 2 && (
             <span className={`xcard-seal ${tierClass(p.rating)} ${p.rating.tier === 3 ? 'xcard-seal--filled' : 'xcard-seal--outline'}`}>
               {p.rating.label}
             </span>
@@ -360,15 +426,16 @@ const ExploreCard = React.memo(function ExploreCard({
       </button>
       <button
         className="xcard-info"
-        onClick={() => setPinned((v) => !v)}
+        onClick={() => { clearTimeout(timer.current); setOpen((o) => (o === 'pin' ? null : 'pin')); }}
         aria-expanded={preview}
         aria-label={t('explore.moreInfo')}
         title={t('explore.moreInfo')}
       >
         <InfoIcon size={15} />
       </button>
-      {preview && (
-        <CardPreview p={p} t={t} best={best} role={role} countryLine={countryLine} reachMin={reachMin} />
+      {preview && place && (
+        <CardPreview id={popId} p={p} t={t} best={best} role={role} countryLine={countryLine}
+          reachMin={reachMin} month={month} place={place} reveal={open === 'pin'} />
       )}
     </div>
   );
@@ -393,7 +460,7 @@ export function ExploreTab({
   selectedId, onSelect,
   indices,
   isMock = false,
-  choices, onOpenLifestyle, onOpenGuides,
+  onOpenGuides,
 }) {
   const { t } = useI18n();
   const [visible, setVisible] = React.useState(PAGE);
@@ -425,6 +492,24 @@ export function ExploreTab({
     };
   });
   const patchXf = React.useCallback((delta) => setXf((v) => ({ ...v, ...delta })), []);
+  // V4 (T393): the list follows a filter change as a deferred value, so the
+  // control answers at once and the grid dims for as long as the new list
+  // takes (house motion table: opacity, --dur-2, never a spinner).
+  const dxf = React.useDeferredValue(xf);
+  const pending = dxf !== xf;
+  // The month select defaults to the month of the traveller's own dates
+  // (the settings line, T381; row T383-a): on arrival unless the link
+  // carries a month, and again whenever the dates move to another month.
+  // A month set by hand, or a month chip removed, stays as the traveller
+  // left it until the dates change.
+  const travelMonth = useTravelMonth();
+  const seenMonth = React.useRef(
+    new URLSearchParams(window.location.search).get('xm') ? travelMonth : null);
+  React.useEffect(() => {
+    if (travelMonth === seenMonth.current) return;
+    seenMonth.current = travelMonth;
+    if (travelMonth) patchXf({ month: travelMonth });
+  }, [travelMonth, patchXf]);
   // C7: grid or map. The bbox narrows the count only WHILE the map is the
   // view - an invisible filter surviving the switch back would make the
   // grid quietly lie about what it holds.
@@ -516,17 +601,17 @@ export function ExploreTab({
   // is up, the part of it inside the viewport), so it can never disagree
   // with what renders.
   const taxRows = React.useMemo(() => rows.filter((p) => {
-    if (xf.kinds.length && !xf.kinds.includes(kindOf(p))) return false;
-    if (xf.verdicts.length && !xf.verdicts.includes(String(p.rating?.tier ?? 0))) return false;
-    if (xf.roles.length && !xf.roles.includes(roleFor(p).key)) return false;
-    if (xf.month && !(p.climate?.best || []).includes(xf.month)) return false;
-    if (xf.nocar && !noCarOk(p)) return false;
-    if (xf.budget && !underOk(xf.budget)(p)) return false;
-    if (xf.quiet && !quietOk(p)) return false;
-    if (xf.badged && !p.country_badge) return false;
-    if (xf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
+    if (dxf.kinds.length && !dxf.kinds.includes(kindOf(p))) return false;
+    if (dxf.verdicts.length && !dxf.verdicts.includes(String(p.rating?.tier ?? 0))) return false;
+    if (dxf.roles.length && !dxf.roles.includes(roleFor(p).key)) return false;
+    if (dxf.month && !(p.climate?.best || []).includes(dxf.month)) return false;
+    if (dxf.nocar && !noCarOk(p)) return false;
+    if (dxf.budget && !underOk(dxf.budget)(p)) return false;
+    if (dxf.quiet && !quietOk(p)) return false;
+    if (dxf.badged && !p.country_badge) return false;
+    if (dxf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
     return true;
-  }), [rows, xf, roleFor]);
+  }), [rows, dxf, roleFor]);
 
   // C7: what the map's viewport holds, counted live while the map is shown.
   const shownRows = React.useMemo(() => {
@@ -869,21 +954,6 @@ export function ExploreTab({
     />
   );
 
-  // One shared component, so this door looks the same here, on Destinations
-  // and in the account hub. Every euro figure in the grid below comes out of
-  // it, which is why it is the input row's first cell. It is secondary chrome
-  // (no accent tint, house rule "Accent marks"); 62-v6-explore.css sets that.
-  // When the shell's settings line (T381) carries Lifestyle above every
-  // priced tab, this cell goes (register row T383-a).
-  const renderLifestyle = (cls) => (
-    <LifestyleButton
-      stayTier={choices?.stay_tier}
-      lifestyle={choices?.lifestyle}
-      onClick={onOpenLifestyle}
-      className={cls}
-    />
-  );
-
   const anyActive = chips.length > 0;
   const TitleTag = isActive ? 'h1' : 'div';
 
@@ -893,19 +963,28 @@ export function ExploreTab({
   const countText = view === 'map'
     ? t('explore.countMap', { n: fmtCount(gridTotal) })
     : t(gridTotal === 1 ? 'explore.countOne' : 'explore.count', { n: fmtCount(gridTotal) });
+  // V4 (T393): a count that changes settles in place (house rule "Figure in
+  // place", settleFigure in lib/figureChange.js): one opacity dip, the box
+  // keeps its width, nothing counts up; none under reduced motion.
+  const countRef = React.useRef(null);
+  useSettledFigure(countRef, countText);
+  // The verdict seal says what a tier means; on a grid already filtered to
+  // tiers every card would wear it, so it carries nothing there.
+  const sealOn = dxf.verdicts.length === 0;
 
   // The input row (brief V3-3, house rules "Settings line", "Budget ceiling"
   // and "Month"): every input the figures and the list depend on, visible
-  // without opening anything, in the traveller's order: how they travel (the
-  // Lifestyle door), what they can spend, when, without a car, and what they
-  // kept. Each shows its current value in words. The ceiling's steps are
+  // without opening anything, in the traveller's order: what they can spend,
+  // when, without a car, and what they kept. How they travel (Lifestyle) is
+  // the shell's settings line right above (T381); V4 (T393) removed this
+  // row's own Lifestyle door, a second door to the one dialog (rows T381-b,
+  // T383-a). Each shows its current value in words. The ceiling's steps are
   // fixed; an old link's €70 (xp=e) shows as its own step.
   const budgetSteps = xf.budget && !BUDGET_STEPS.includes(xf.budget)
     ? [...BUDGET_STEPS, xf.budget].sort((x, y) => x - y)
     : BUDGET_STEPS;
   const inputRow = (
     <div className="xinputs" role="group" aria-label={t('explore.inputsAria')}>
-      {onOpenLifestyle && renderLifestyle('xinputs-life')}
       <span className={`xinput xinput--select ${xf.budget ? 'is-set' : ''}`.trim()}>
         <select
           value={xf.budget ?? ''}
@@ -1013,7 +1092,7 @@ export function ExploreTab({
             <TitleTag className="xbar-title">
               <span className="xbar-title-text">{t('explore.title')}</span>
               {' '}
-              <span className="xbar-count mono">{countText}</span>
+              <span className="xbar-count mono" ref={countRef}>{countText}</span>
             </TitleTag>
             {isMock && <span className="explore-mock">Mock data</span>}
           </div>
@@ -1146,7 +1225,7 @@ export function ExploreTab({
               </div>
             )}
 
-            <div className="explore-grid explore-grid--mosaic">
+            <div className={`explore-grid explore-grid--mosaic${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
               {packed.map(({ p, span, ratio, kind }) => (
                 <ExploreCard
                   key={p.id}
@@ -1163,6 +1242,8 @@ export function ExploreTab({
                   reachMin={reachMinutes?.get(p.id) ?? null}
                   linked={view === 'map' && p.id === pinLinkId}
                   onLink={view === 'map' ? setCardLinkId : null}
+                  seal={sealOn}
+                  month={dxf.month}
                 />
               ))}
             </div>

@@ -89,10 +89,16 @@ try {
   // control that changes nothing is worse than no control at all.
   // The control renders twice since desktop chrome v4 (toolbar card for the
   // phone, side panel for desktop); exactly one may be on screen at a time.
-  check('one Lifestyle control on screen', await page.locator('.explore-shell .lifestyle-btn:visible').count() === 1);
+  // V4 (T393, rows T381-b and T383-a): the one Lifestyle door on Explore is
+  // the shell's settings line above the tab (T381); Explore's own input-row
+  // door was a second door to the same dialog and is gone. The check now
+  // reads the settings line's part and asserts Explore draws none of its own.
+  check('one Lifestyle control on screen',
+    await page.locator('.settings-part-lifestyle:visible').count() === 1
+    && await page.locator('.explore-shell .lifestyle-btn:visible').count() === 0);
   const priceText = () => page.locator('.xcard-cost-eur:visible').allInnerTexts();
   const beforeLs = (await priceText()).slice(0, 8).join(' ');
-  await page.locator('.explore-shell .lifestyle-btn:visible').first().click();
+  await page.locator('.settings-part-lifestyle:visible').first().click();
   await page.waitForTimeout(800);
   check('Lifestyle opens as a right-hand drawer', await page.locator('.accom-panel.from-right').count() === 1);
   check('the grid behind it stays reachable through a scrim', await page.locator('.lifestyle-scrim').count() === 1);
@@ -109,6 +115,21 @@ try {
   await page.waitForTimeout(350);
   const previewOpen = await page.locator('.xcard-preview').count() === 1;
   check('hovering a card explains it', previewOpen);
+  // V4 (T393, explore N6): the preview is a paper popover beside or under
+  // its card, never over the photograph, and carries the month strip and
+  // the receipt's cost bar.
+  if (previewOpen) {
+    const pop = await page.evaluate(() => {
+      const p = document.querySelector('.xcard-preview');
+      const m = p.closest('.xcard').querySelector('.xcard-media').getBoundingClientRect();
+      const r = p.getBoundingClientRect();
+      const ox = Math.max(0, Math.min(r.right, m.right) - Math.max(r.left, m.left));
+      const oy = Math.max(0, Math.min(r.bottom, m.bottom) - Math.max(r.top, m.top));
+      return { overlap: ox * oy, w: r.width, strip: !!p.querySelector('.mstrip'), bar: !!p.querySelector('.xcost-bar') };
+    });
+    check('the preview never covers the photograph', pop.overlap === 0 && pop.w <= 321, JSON.stringify(pop));
+    check('the preview carries the month strip and the cost bar', pop.strip && pop.bar);
+  }
   if (previewOpen) await page.screenshot({ path: 'shots/explore-hover.png' });
   await page.keyboard.press('Escape');
   await page.waitForTimeout(250);

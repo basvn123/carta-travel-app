@@ -2879,6 +2879,7 @@ export const de = {
   "explore.stayHalfDay": "Ein halber Tag reicht hier",
   "explore.stayOneDay": "Einen ganzen Tag wert",
   "explore.stayNights": "Etwa {n} Tage wert",
+  "explore.bestMonths": "Am besten {months}",
   "cost.title": "Was ein Tag hier kostet",
   "cost.bed": "Ein Bett für die Nacht",
   "cost.food": "Auswärts essen und trinken",
@@ -4421,6 +4422,7 @@ export const de = {
   "rail.quiet": "Ruhig in der Hochsaison",
   "rail.quietSub": "Bewertete Orte, die ruhig bleiben, wenn sich alles andere füllt",
   "rail.seeAll": "Alle {n} zeigen",
+  "rail.position": "{from} bis {to} von {n}",
   "filter.bestOf": "Das Beste seines Landes",
 
   // Tier legend (PLAN.md C8)

@@ -2879,6 +2879,7 @@ export const nl = {
   "explore.stayHalfDay": "Een halve dag is hier genoeg",
   "explore.stayOneDay": "Een hele dag waard",
   "explore.stayNights": "Ongeveer {n} dagen waard",
+  "explore.bestMonths": "Best in {months}",
   "cost.title": "Wat een dag hier kost",
   "cost.bed": "Een bed voor de nacht",
   "cost.food": "Buiten eten en drinken",
@@ -4421,6 +4422,7 @@ export const nl = {
   "rail.quiet": "Rustig in het hoogseizoen",
   "rail.quietSub": "Beoordeelde plekken die rustig blijven als de rest volloopt",
   "rail.seeAll": "Alle {n} bekijken",
+  "rail.position": "{from} tot {to} van {n}",
   "filter.bestOf": "Het beste van zijn land",
 
   // Tier legend (PLAN.md C8)

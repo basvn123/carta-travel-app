@@ -1,10 +1,11 @@
 import React from 'react';
 import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
-import { ScoreChip, tierClass } from '../components/RatingBadge.jsx';
+import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ChevronRightIcon } from '../components/Icons.jsx';
 import { Fold } from './Fold.jsx';
+import { scrollBehavior } from '../lib/motion.js';
 import { CostLine } from '../components/CostSummary.jsx';
 
 /**
@@ -58,13 +59,13 @@ export function interleaveByCountry(rows) {
 function RailCard({ p, onSelect, t }) {
   return (
     <button className="railcard" onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}>
+      {/* V4 (T393): the photograph only, at the grid's 3:2 (one aspect per
+          row), and no seal: the rail's title already says how it was
+          chosen, and the score chip below carries the rating. */}
       <span className="railcard-media">
         <HeroImage url={p.image} city={p.city} iso2={p.iso2}
           className="railcard-img" maxWidth={500}
-          sizes="200px" ratio={[4, 3]} />
-        {(p.rating?.tier ?? 0) >= 2 && (
-          <span className={`railcard-seal ${tierClass(p.rating)}`} />
-        )}
+          sizes="200px" ratio={[3, 2]} />
       </span>
       <span className="railcard-body">
         <span className="railcard-head">
@@ -83,12 +84,56 @@ function RailCard({ p, onSelect, t }) {
 
 function Rail({ r, onSelect, t }) {
   const stripRef = React.useRef(null);
+  const shown = r.rows.slice(0, CAP);
+  // V4 (T393, house rule "Rails and cuts"): the head says where the strip
+  // is ("1 to 4 of 12", in --mono), read from the scroll position, so a
+  // reader who cannot see the edge of the strip knows how much is left.
+  const [pos, setPos] = React.useState({ from: 1, to: Math.min(shown.length, 4) });
+  const measure = React.useCallback(() => {
+    const el = stripRef.current;
+    const cards = el ? [...el.children] : [];
+    if (!cards.length) return;
+    const box = el.getBoundingClientRect();
+    let from = 0;
+    let to = 0;
+    cards.forEach((c, i) => {
+      const r2 = c.getBoundingClientRect();
+      const inside = r2.left >= box.left - 2 && r2.right <= box.right + 2;
+      if (inside && !from) from = i + 1;
+      if (inside) to = i + 1;
+    });
+    if (!from) { from = 1; to = 1; }
+    setPos((p) => (p.from === from && p.to === to ? p : { from, to }));
+  }, []);
+  React.useEffect(() => {
+    const el = stripRef.current;
+    if (!el) return undefined;
+    measure();
+    el.addEventListener('scroll', measure, { passive: true });
+    window.addEventListener('resize', measure);
+    return () => {
+      el.removeEventListener('scroll', measure);
+      window.removeEventListener('resize', measure);
+    };
+  }, [measure, shown.length]);
+  const posText = t('rail.position', { from: pos.from, to: pos.to, n: shown.length });
   const page = (dir) => {
     const el = stripRef.current;
     if (!el) return;
-    const reduce = typeof window.matchMedia === 'function'
-      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' });
+    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: scrollBehavior() });
+  };
+  // Left and Right move the focus card to card inside the strip; the
+  // browser brings the focused card into view.
+  const onKey = (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const cards = [...(stripRef.current?.children || [])];
+    const i = cards.indexOf(e.target);
+    if (i < 0) return;
+    const next = cards[i + (e.key === 'ArrowRight' ? 1 : -1)];
+    if (!next) return;
+    e.preventDefault();
+    next.focus({ preventScroll: true });
+    next.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: scrollBehavior() });
   };
   return (
     <section className="xrails-rail" aria-label={r.title}>
@@ -102,22 +147,29 @@ function Rail({ r, onSelect, t }) {
         <button type="button" className="xrails-all" onClick={r.seeAll}>
           {t('rail.seeAll', { n: r.rows.length })}
         </button>
+        <span className="xrails-pos mono">{posText}</span>
         <span className="xrails-nav">
           <button type="button" className="xrails-arrow xrails-arrow--prev"
-            onClick={() => page(-1)} aria-label={t('explore.railPrev')}>
+            onClick={() => page(-1)} aria-label={t('explore.railPrev')} disabled={pos.from <= 1}>
             <ChevronRightIcon size={15} />
           </button>
           <button type="button" className="xrails-arrow"
-            onClick={() => page(1)} aria-label={t('explore.railNext')}>
+            onClick={() => page(1)} aria-label={t('explore.railNext')} disabled={pos.to >= shown.length}>
             <ChevronRightIcon size={15} />
           </button>
         </span>
       </div>
-      <div className="xrails-strip" ref={stripRef}>
-        {r.rows.slice(0, CAP).map((p) => (
+      {/* The keys move the focus between the card buttons inside; the strip
+          itself is not a control. */}
+      <div className="xrails-strip" ref={stripRef} onKeyDown={onKey}>
+        {shown.map((p) => (
           <RailCard key={p.id} p={p} onSelect={onSelect} t={t} />
         ))}
       </div>
+      {/* On a phone the position sits under the strip instead, so the head
+          keeps its one line of subtitle and the first card stays high; CSS
+          shows one of the two, so each is read once. */}
+      <span className="xrails-pos xrails-pos--foot mono">{posText}</span>
     </section>
   );
 }
