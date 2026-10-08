@@ -1,0 +1,16 @@
+/* ==========================================================================
+   v6: the landing page and the first run (surface key 'landing')
+
+   Created empty by T380 (design wave V2). Every rule the build waves T382, T392 and T402
+   write for this surface goes here, and nowhere else. This file is imported
+   last in src/styles.css, after 46-owner-calls.css, so a rule here overrides
+   an older rule in a file this surface does not own without editing that
+   file. When a rule here replaces an old one in a file this surface DOES own
+   (see docs/design-v6/OWNERSHIP.md), delete the old rule in the same commit;
+   never leave two copies.
+
+   Rules: tokens only (no hex, no font name, no literal duration or easing:
+   --dur-1 to --dur-4, --ease-out, --ease-in-out); every transition and
+   animation with a prefers-reduced-motion branch; carta-design and
+   DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
+   ========================================================================== */

@@ -45,3 +45,16 @@
 @import './styles/44-tags.css';
 @import './styles/45-empty-states.css';
 @import './styles/46-owner-calls.css';
+/* v6 design wave stylesheets (T380). One per surface, imported last so a
+   build session overrides an older rule from its own file. Keep this order;
+   it is the surface order of docs/design-v6/OWNERSHIP.md. */
+@import './styles/60-v6-shell.css';
+@import './styles/61-v6-landing.css';
+@import './styles/62-v6-explore.css';
+@import './styles/63-v6-destinations.css';
+@import './styles/64-v6-destination.css';
+@import './styles/65-v6-outdoor.css';
+@import './styles/66-v6-trips.css';
+@import './styles/67-v6-tripplanner.css';
+@import './styles/68-v6-dayplanner.css';
+@import './styles/69-v6-account.css';

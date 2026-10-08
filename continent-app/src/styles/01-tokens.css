@@ -181,4 +181,21 @@
   --filter-h:     132px;
   --panel-w:      440px;
   --bottom-nav-h: 86px;
+
+  /* Motion (T380, design direction v6, docs/design-v6/DIRECTION.md part 2).
+     Four durations and two easings; every transition and animation a build
+     wave writes reads these, and JavaScript reads them through durationMs()
+     in src/lib/motion.js. --dur-1 is immediate feedback (a press, a chip),
+     --dur-2 a routine state change (a fold, a figure settling in place),
+     --dur-3 a surface arriving (a sheet, a dialog, a shared element),
+     --dur-4 one authored movement over distance (the map camera, one leg of
+     the route reveal; the whole reveal is capped at 900 ms). Exits take
+     --dur-2 with --ease-in-out. No overshoot or elastic curve exists. The
+     reduced-motion floor in 02-base.css still zeroes all of them. */
+  --dur-1:        120ms;
+  --dur-2:        200ms;
+  --dur-3:        320ms;
+  --dur-4:        480ms;
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
 }
