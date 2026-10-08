@@ -14,3 +14,213 @@
    animation with a prefers-reduced-motion branch; carta-design and
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
+
+/* ── T386 (V3): decision first, then hand-off, then depth ─────────────────
+   The detail page grammar of carta-design: head, key facts band, Before you
+   go, the hand-off band, map, signature, at most five rows, exits, sources.
+   Every rule is scoped to .dsk-page, the outdoor skeleton, so the journey
+   page that shares .jstrip, .jpage-lrow and .jpage-exit keeps its look. */
+
+/* The key facts band: timetable rows, label over value, hairlines between,
+   no card and no colour. Two cells across on a phone, three from 560 px. */
+.dsk-page .dsk-keyfacts { margin: var(--space-4) 0 0; }
+.dsk-page .dsk-kf-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--rule-soft);
+}
+@media (min-width: 560px) {
+  .dsk-page .dsk-kf-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.dsk-page .dsk-kf {
+  min-width: 0;
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.dsk-page .dsk-kf-label {
+  margin: 0;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.dsk-page .dsk-kf-value {
+  margin: 2px 0 0;
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.dsk-page .dsk-kf-value.mono {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.dsk-page .dsk-kf.is-missing .dsk-kf-value {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+.dsk-page .dsk-kf-note {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+/* The lake's swim verdict leads the band in its own words. */
+.dsk-page .dsk-keyfacts > .lpage-swim { margin: 0 0 var(--space-3); }
+
+/* Before you go: one block, one heading, the hazards first. The hazard list
+   keeps the amber note DESIGN.md gives warnings; the block's heading is its
+   one heading, and the list carries its old words as a label. */
+.dsk-page .dsk-before { margin: var(--space-5) 0 0; }
+.dsk-page .dsk-before .dsk-alert,
+.dsk-page .dsk-before .dsk-notfor .notfor { margin: 0; }
+.dsk-page .dsk-before .dsk-alert + .dsk-notfor { margin-top: var(--space-3); }
+
+/* The hand-off band: the one primary, then Getting there and Take it with
+   you, stacked on a phone and side by side from 900 px. */
+.dsk-page .dsk-handoff { margin: var(--space-5) 0 0; }
+.dsk-page .dsk-primary-row { margin: 0 0 var(--space-4); }
+.dsk-page .dsk-primary,
+.dsk-page .dsk-primary.bpage-base,
+.dsk-page .dsk-primary.tpage-cta {
+  width: 100%;
+  min-height: var(--tap);
+  margin: 0;
+  border-radius: 6px;
+}
+.dsk-page .dsk-primary.tpage-primary,
+.dsk-page .dsk-primary.cycle-gpx {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: auto;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 15px;
+  font-weight: 600;
+}
+@media (min-width: 700px) {
+  .dsk-page .dsk-primary { max-width: 420px; }
+}
+@media (hover: hover) {
+  .dsk-page .dsk-primary.tpage-primary:hover,
+  .dsk-page .dsk-primary.cycle-gpx:hover {
+    filter: none;
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+}
+.dsk-page .dsk-handoff-cols { display: grid; gap: var(--space-5); }
+@media (min-width: 900px) {
+  .dsk-page .dsk-handoff-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+}
+.dsk-page .dsk-handoff .dsk-sec { margin: 0; }
+
+/* Getting there names a town before any coordinate. */
+.dsk-page .dsk-get-town {
+  margin: 0 0 var(--space-2);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.dsk-page .dsk-getting .tpage-act-wide { margin-top: 0; }
+.dsk-page .dsk-getting .tpage-start { margin: var(--space-2) 0 0; }
+.dsk-page .dsk-getting .tpage-start-coords { font-size: 12px; color: var(--ink-mute); }
+.dsk-page .dsk-getting .bpage-where { margin-bottom: 0; }
+.dsk-page .dsk-get-stop { margin-top: var(--space-2); font-size: 13px; }
+.dsk-page .dsk-get-stations { margin-top: var(--space-3); }
+.dsk-page .dsk-stations { margin: var(--space-1) 0 0; padding: 0; list-style: none; }
+.dsk-page .dsk-stations li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 13px;
+  color: var(--ink);
+}
+.dsk-page .dsk-station-km {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+/* Take it with you: the secondaries in one wrapping row, every one --tap
+   high and 6 px round, the day plan door in the same look. */
+.dsk-page .dsk-take .tpage-acts { margin: 0; gap: var(--space-2); }
+.dsk-page .dsk-take .tpage-act,
+.dsk-page .dsk-take .feat-dayplan,
+.dsk-page .dsk-take .tpage-primary {
+  height: auto;
+  min-height: var(--tap);
+  margin: 0;
+  border-radius: 6px;
+}
+.dsk-page .dsk-take .tpage-primary {
+  display: inline-flex;
+  width: auto;
+  padding: 0 var(--space-4);
+  font-size: 13.5px;
+}
+.dsk-page .dsk-getting .tpage-act,
+.dsk-page .dsk-getting .bpage-where { min-height: var(--tap); border-radius: 6px; }
+
+/* The rows: a preview wraps to two lines instead of an ellipsis that cuts a
+   word, and the sub heads inside a grouped row read as labels. */
+.dsk-page .jpage-lrow-sum {
+  display: -webkit-box;
+  white-space: normal;
+  text-overflow: clip;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.35;
+}
+.dsk-page .dsk-sub {
+  margin: var(--space-4) 0 var(--space-2);
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.dsk-page .jpage-lrow-body > .dsk-sub:first-child,
+.dsk-page .jpage-lrow-body > :first-child > .dsk-sub:first-child { margin-top: 0; }
+.dsk-page .dsk-part + .dsk-part,
+.dsk-page .tpage-part + .tpage-part { margin-top: var(--space-2); }
+
+/* A stage that cannot open is a plain line in the stage layout. */
+.dsk-page .rstage.is-static { cursor: default; color: var(--ink); }
+
+/* The beach's water class on the EU's four-step scale, filled by weight. */
+.dsk-page .sig-squares { display: inline-flex; gap: 3px; margin-top: var(--space-1); }
+.dsk-page .sig-sq {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--ink-mute);
+  background: transparent;
+}
+.dsk-page .sig-sq.is-on { border-color: var(--ink); background: var(--ink); }
+
+/* The Loop chip is a descriptor, not an action, so it leaves the accent
+   (carta-design "Accent marks"; brief V4-9 brought forward because the
+   accent on --accent-bg failed the 4.5:1 floor at 3.83:1). Ink outline. */
+.dsk-page .tpage-loop {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12px;
+}

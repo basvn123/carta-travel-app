@@ -30,10 +30,11 @@ import {
  * their own so the list (which ships in the main chunk) does not carry the
  * page figures.
  *
- * Where the data does not hold a reading, the row stays and says so (an
- * EmptyTrack), so the beach's three rows keep their places on the month
- * axis until the sea record exists, and a reader can see what is missing
- * rather than wonder whether it was forgotten.
+ * Where the data does not hold a reading for a row the instrument always
+ * carries (the lake's water, the mountain's height), the row says so in an
+ * EmptyTrack. A whole track Carta has never measured is not drawn at all
+ * (T386, carta-design "A signature panel draws only measured tracks"): the
+ * page names it once in its sources instead.
  */
 
 /** The twelve month initials and names in the reader's language. */
@@ -210,34 +211,41 @@ export function CompassRosette({ deg, label }) {
 
 /* ── The three place pages ─────────────────────────────────────────────── */
 
+/** The four EU bathing water classes, worst first, as levels on the scale. */
+const WATER_LEVEL = { Poor: 1, Sufficient: 2, Good: 3, Excellent: 4 };
+
 /**
- * The beach's three month rows on one axis (destinations spec D7): sea
- * temperature, wave height, crowds. Reading down one column answers "what
- * is August like here". None of the three is in the beach wire yet (no
- * Copernicus sea or wave record, and crowding is annual and per region),
- * so every row shows its empty track and the note says so plainly. When a
- * row's twelve values arrive, it takes a MonthBars like the lake's.
+ * The beach: what Carta measures, and nothing it does not (T386, carta-design
+ * "A signature panel draws only measured tracks").
+ *
+ * The figure is the official bathing water class on the EU's own four-step
+ * scale, filled by weight up to the class with the word and the sampling
+ * site beside it. The month rows destinations spec D7 asked for (sea
+ * temperature, waves, crowds) are in no beach record yet, so they are not
+ * drawn as empty tracks any more: the page names them once in its sources
+ * (detail.beachUnmeasured). When a month record arrives, it takes a
+ * MonthBars like the lake's. A beach with no class has no panel.
  */
 export function BeachSignature({ beach }) {
   const { t } = useI18n();
-  if (!beach) return null;
-  const rows = [
-    { key: 'sea', label: t('sig.rowSea') },
-    { key: 'waves', label: t('sig.rowWaves') },
-    { key: 'crowds', label: t('sig.rowCrowds') },
-  ];
+  const cls = beach?.water?.class;
+  const level = WATER_LEVEL[cls] || 0;
+  if (!level) return null;
+  const word = t(`beach.water${cls}`);
   return (
-    <Instrument
-      kind="beach"
-      title={t('sig.beachHead')}
-      note={<p className="sig-note">{t('sig.beachNote')}</p>}
-    >
-      {rows.map((r) => (
-        <Row key={r.key} label={r.label}>
-          <EmptyTrack text={t('sig.notMeasured')} />
-        </Row>
-      ))}
-      <MonthAxis />
+    <Instrument kind="beach" title={t('detail.beachWaterHead')}>
+      <Row label={t('beach.factWater')} figure={word}>
+        <span
+          className="sig-squares"
+          role="img"
+          aria-label={t('detail.waterScaleAria', { word, n: level })}
+        >
+          {[1, 2, 3, 4].map((i) => (
+            <span key={i} className={`sig-sq${i <= level ? ' is-on' : ''}`} />
+          ))}
+        </span>
+      </Row>
+      {beach.water.site && <p className="sig-note">{t('detail.waterSite', { site: beach.water.site })}</p>}
     </Instrument>
   );
 }
@@ -297,8 +305,7 @@ export function LakeSignature({ lake, warmC = 18 }) {
 
 /**
  * The mountain: its height on the shared 0 to 5,000 m ruler with the
- * prominence solid (spec F6), the horizon row (spec F4, not computed yet,
- * so an empty track), and the existing season strip as the month row.
+ * prominence solid (spec F6) and the existing season strip as the month row.
  */
 export function MountainSignature({ mountain, season = null }) {
   const { t } = useI18n();
@@ -317,9 +324,8 @@ export function MountainSignature({ mountain, season = null }) {
           ? <AltitudeBar ele={mountain.ele} prom={mountain.prom} label={t('sig.altAria', { ele, prom })} />
           : <EmptyTrack text={t('sig.notMeasured')} />}
       </Row>
-      <Row label={t('sig.rowHorizon')} className="sig-row-gap">
-        <EmptyTrack text={t('sig.notComputed')} tall />
-      </Row>
+      {/* The horizon row (spec F4) left the panel in T386: no skyline is
+          computed yet, and a signature draws only measured tracks. */}
       {season && (
         <Row label={t('mtn.seasonHead')} className="sig-row-gap">
           {season}

@@ -7,7 +7,7 @@ import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, pointCentre, ACCESS_LEVEL,
+  stripCells, previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
 } from '../lib/detailSkeleton.js';
 import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
@@ -22,8 +22,8 @@ import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   MapPinIcon, LinkIcon, ChevronRightIcon,
-  CameraIcon, BootIcon, AlertIcon, BulbIcon, InfoIcon, StarIcon,
-  SunIcon, LoopIcon,
+  CameraIcon, BootIcon, BulbIcon, InfoIcon, StarIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
 import { lakeShore, shoreSummary } from '../lib/derivedModules.js';
 import { LakeShore } from './DerivedModules.jsx';
@@ -155,7 +155,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     size.areaKm2 && {
       key: 'area',
       label: t('lake.factArea'),
-      value: `${size.areaKm2.toLocaleString(lang)} km2`,
+      value: `${size.areaKm2.toLocaleString(lang)} km²`,
       mono: true,
     },
     size.depthM && {
@@ -207,58 +207,95 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     level: lakeLevel(lake),
     word: accessLabel(lake.access, t),
     type: kindWord && kindWord !== kindKey ? kindWord : t('lake.kindWordLake'),
-    number: size.areaKm2 ? `${size.areaKm2.toLocaleString(lang)} km2` : '',
+    number: size.areaKm2 ? `${size.areaKm2.toLocaleString(lang)} km²` : '',
   }, t);
   const subs = SUB_ORDER.filter((key) => lake.sub?.[key] != null);
 
   // The derived module (T182): how much path runs along the water, from the
-  // shore sweep's figure on the wire. Always rendered; an unswept shore says so.
+  // shore sweep's figure on the wire. Always rendered inside About this lake;
+  // an unswept shore says so.
   const shore = lakeShore(lake);
 
-  // Slot 6: the collapsed rows (T180).
+  // The key facts band (T386). The swim verdict leads it in its own words,
+  // never folded and never a cell among others (see the file header); the
+  // cells carry the size, the warmest month's modelled water and the EU
+  // bathing class. The peak temperature is a model, so it says "est.".
+  const peakC = lake.swim?.season?.peak;
+  const keyFacts = keyFactCells([
+    { key: 'area', label: t('lake.factArea'), value: size.areaKm2 ? `${size.areaKm2.toLocaleString(lang)} km²` : '', mono: true },
+    { key: 'depth', label: t('lake.factDepth'), value: size.depthM ? `${size.depthM.toLocaleString(lang)} m` : '', mono: true },
+    Number.isFinite(peakC) && { key: 'peak', label: t('detail.factWaterPeak'), value: `~${Math.round(peakC)} °C`, mono: true, note: t('prov.est') },
+    lake.water && { key: 'water', label: t('lake.factWater'), value: t(`lake.water${lake.water.class}`) },
+    size.elevM != null && { key: 'elev', label: t('lake.factElevation'), value: `${size.elevM.toLocaleString(lang)} m`, mono: true, fallback: true },
+  ], t);
+
+  // The rows (T386): at most five. About this lake holds the argument, the
+  // shore and the walks; then every measurement, the score and the photographs.
+  const aboutTexts = [...why, shoreSummary(shore, t, lang)];
   const rows = [
-    (why.length > 0 || subs.length > 0 || lake.bestFor?.length > 0 || tags.length > 0) && {
-      key: 'why',
-      icon: BulbIcon,
-      label: t('lake.whyHead'),
-      summary: previewWords(why[0] || headline),
-      body: (
-        <div className="bpage-why">
-          {/* The three sub scores, side by side, because choosing between a
-              cold beautiful lake and a warm ordinary one is the actual
-              decision and one blended number hides it. */}
-          {subs.length > 0 && (
-            <ul className="lpage-subs">
-              {subs.map((key) => (
-                <li key={key}>
-                  <span className="lpage-sub-n">{Math.round(lake.sub[key] * 10)}</span>
-                  <span className="lpage-sub-label">{componentLabel(key, t)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
-          {lake.bestFor?.length > 0 && (
-            <p className="bpage-for">
-              <b>{t('lake.bestFor')}</b>
-              {' '}
-              {lake.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
-            </p>
-          )}
-          {tags.length > 0 && (
-            <ul className="bpage-tags">
-              {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
-            </ul>
-          )}
-        </div>
-      ),
-    },
     {
-      key: 'shore',
-      icon: LoopIcon,
-      label: t('derived.shoreHead'),
-      summary: previewWords(shoreSummary(shore, t, lang)),
-      body: <LakeShore shore={shore} t={t} lang={lang} />,
+      key: 'about',
+      icon: BulbIcon,
+      label: t('detail.aboutLake'),
+      summary: previewNotHook(aboutTexts, headline),
+      body: (
+        <>
+          {(why.length > 0 || subs.length > 0 || lake.bestFor?.length > 0 || tags.length > 0) && (
+            <div className="bpage-why">
+              <h3 className="dsk-sub">{t('lake.whyHead')}</h3>
+              {/* The three sub scores, side by side, because choosing between a
+                  cold beautiful lake and a warm ordinary one is the actual
+                  decision and one blended number hides it. */}
+              {subs.length > 0 && (
+                <ul className="lpage-subs">
+                  {subs.map((key) => (
+                    <li key={key}>
+                      <span className="lpage-sub-n">{Math.round(lake.sub[key] * 10)}</span>
+                      <span className="lpage-sub-label">{componentLabel(key, t)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
+              {lake.bestFor?.length > 0 && (
+                <p className="bpage-for">
+                  <b>{t('lake.bestFor')}</b>
+                  {' '}
+                  {lake.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
+                </p>
+              )}
+              {tags.length > 0 && (
+                <ul className="bpage-tags">
+                  {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
+                </ul>
+              )}
+            </div>
+          )}
+          <div className="dsk-part">
+            <h3 className="dsk-sub">{t('derived.shoreHead')}</h3>
+            <LakeShore shore={shore} t={t} lang={lang} />
+          </div>
+          {lake.walks?.length > 0 && (
+            <div className="lpage-walks">
+              <h3 className="dsk-sub">{t('lake.walksHead')}</h3>
+              <ul>
+                {lake.walks.map((walk) => (
+                  <li key={walk.id}>
+                    <BootIcon size={13} />
+                    <span>{walk.name}</span>
+                    {walk.km > 0 && <small className="mono">{walk.km} km</small>}
+                  </li>
+                ))}
+              </ul>
+              {lake.nWalks > lake.walks.length && (
+                <p className="bpage-note">
+                  {t('lake.walksMore', { n: lake.nWalks - lake.walks.length })}
+                </p>
+              )}
+            </div>
+          )}
+        </>
+      ),
     },
     facts.length > 0 && {
       key: 'facts',
@@ -278,30 +315,6 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
               </div>
             ))}
           </dl>
-        </div>
-      ),
-    },
-    lake.walks?.length > 0 && {
-      key: 'walks',
-      icon: BootIcon,
-      label: t('lake.walksHead'),
-      summary: previewWords(lake.walks.map((w) => w.name).join(', ')),
-      body: (
-        <div className="lpage-walks">
-          <ul>
-            {lake.walks.map((walk) => (
-              <li key={walk.id}>
-                <BootIcon size={13} />
-                <span>{walk.name}</span>
-                {walk.km > 0 && <small className="mono">{walk.km} km</small>}
-              </li>
-            ))}
-          </ul>
-          {lake.nWalks > lake.walks.length && (
-            <p className="bpage-note">
-              {t('lake.walksMore', { n: lake.nWalks - lake.walks.length })}
-            </p>
-          )}
         </div>
       ),
     },
@@ -391,12 +404,6 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
           </h1>
           {lake.nameLocal && <p className="bpage-local">{lake.nameLocal}</p>}
           <p className="dsk-crumb">{[lake.region, countryName].filter(Boolean).join(', ')}</p>
-          {onAddToDay && (
-            <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
-              <SunIcon size={14} />
-              <span>{t('feat.addToDay')}</span>
-            </button>
-          )}
           <div className="bpage-scorerow">
             <ScoreChip rating={rating} size="lg" />
             <span className="bpage-band">{t(`lake.band${rating.tier}`)}</span>
@@ -407,33 +414,42 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
         </>
       )}
       hook={headline}
-      notFor={<NotFor lines={notForLines('lake', lake)} />}
-      alert={(
-        <>
-          {/* The verdict never folds. See the file header. */}
-          <div className={`lpage-swim lpage-swim-${swim.tone}`} role="note">
-            <span className="lpage-swim-word">{swim.label}</span>
-            {swim.source && <span className="lpage-swim-src">{swim.source}</span>}
-            {seasonLine && <span className="lpage-swim-season">{seasonLine}</span>}
-          </div>
-          {hazards.length > 0 && (
-            <section className="lpage-hazards">
-              <h2>
-                <AlertIcon size={15} />
-                {t('lake.hazardsHead')}
-              </h2>
-              <ul>
-                {hazards.map((h) => <li key={h.code}>{h.line}</li>)}
-              </ul>
-            </section>
-          )}
-        </>
+      keyFactsLead={(
+        /* The verdict never folds. See the file header. */
+        <div className={`lpage-swim lpage-swim-${swim.tone}`} role="note">
+          <span className="lpage-swim-word">{swim.label}</span>
+          {swim.source && <span className="lpage-swim-src">{swim.source}</span>}
+          {seasonLine && <span className="lpage-swim-season">{seasonLine}</span>}
+        </div>
       )}
+      keyFacts={keyFacts}
+      notFor={<NotFor lines={notForLines('lake', lake, { shownHazards: hazards.map((h) => h.code) })} />}
+      alert={hazards.length > 0 ? (
+        /* The block's own heading ("Before you go") names it, so the list
+           carries its words as a label rather than a second heading. */
+        <div className="lpage-hazards" role="note" aria-label={t('lake.hazardsHead')}>
+          <ul>
+            {hazards.map((h) => <li key={h.code}>{h.line}</li>)}
+          </ul>
+        </div>
+      ) : null}
+      primary={lake.base ? (
+        <button type="button" className="bpage-base dsk-primary" onClick={() => onSelectDest?.(lake.base.id)}>
+          <span>
+            {t('lake.basedOn', { city: lake.base.city })}
+            <small>{t('lake.basedKm', { km: Math.round(lake.base.km) })}</small>
+          </span>
+          <ChevronRightIcon size={15} />
+        </button>
+      ) : null}
       map={<PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} />}
       signature={<LakeSignature lake={lake} warmC={warmC} />}
       rows={rows}
       gettingThere={(
         <>
+          {lake.base && (
+            <p className="dsk-get-town">{t('detail.townKm', { km: Math.round(lake.base.km), place: lake.base.city })}</p>
+          )}
           <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
             <MapPinIcon size={15} />
             <span className="bpage-where-text">{t('detail.directions')}</span>
@@ -442,26 +458,15 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
             </span>
             <ChevronRightIcon size={14} />
           </a>
-          {lake.base && (
-            <button type="button" className="bpage-base" onClick={() => onSelectDest?.(lake.base.id)}>
-              <span>
-                {t('lake.basedOn', { city: lake.base.city })}
-                <small>{t('lake.basedKm', { km: Math.round(lake.base.km) })}</small>
-              </span>
-              <ChevronRightIcon size={15} />
-            </button>
-          )}
+          <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>
         </>
       )}
-      takeAway={(
-        <>
-          <button type="button" className="tpage-act" onClick={onShare}>
-            <LinkIcon size={15} />
-            <span>{t('detail.sendLink')}</span>
-          </button>
-          <ReportProblem item={{ layer: 'lake', id: lake.id, cc: lake.cc, name: lake.name }} />
-        </>
-      )}
+      takeAway={onAddToDay ? (
+        <button type="button" className="tpage-act feat-dayplan" onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
+          <SunIcon size={15} />
+          <span>{t('feat.addToDay')}</span>
+        </button>
+      ) : null}
       exits={exits}
       nearby={(
         <NearbyOutdoors
@@ -503,6 +508,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
             <p className="bpage-attrib">{lake.credit.join('. ')}</p>
           )}
           <FigureFooter kinds={facts.map((f) => LAKE_KIND[f.key])} />
+          <ReportProblem item={{ layer: 'lake', id: lake.id, cc: lake.cc, name: lake.name }} />
         </div>
       )}
     />

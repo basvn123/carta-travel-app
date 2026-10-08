@@ -132,19 +132,40 @@ const RULES = {
 };
 
 /**
+ * The hazard each not-for line restates (T386, carta-design "Before you go":
+ * never repeated). The lake and mountain pages show their hazard list in the
+ * same block as these lines, so a line whose hazard is already listed there
+ * gives its place to the next rule rather than saying the same thing twice.
+ */
+export const HAZARD_OF_LINE = {
+  'notfor.mtnGlacier': ['glacier', 'crevasse'],
+  'notfor.mtnExposure': ['exposure'],
+  'notfor.mtnAltitude': ['altitude'],
+  'notfor.mtnLightning': ['lightning'],
+  'notfor.lakeCold': ['cold_shock'],
+  'notfor.lakeAlgae': ['algal_bloom'],
+  'notfor.lakeDam': ['dam_release'],
+  'notfor.lakeCurrent': ['currents'],
+};
+
+/**
  * The lines for one place, as { key, params } objects, at most two, never
  * empty for a known kind. `entity` is the place's own record (or the small
  * object each rule list above documents); `ctx` carries anything that needs
  * the i18n function (a translated word) or a value the page derives itself.
+ * `ctx.shownHazards` lists the hazard codes the page already shows beside
+ * these lines; a line that restates one of them is skipped.
  */
 export function notForLines(kind, entity, ctx = {}) {
   const rules = RULES[kind];
   if (!rules || !entity) return [];
+  const shown = new Set(Array.isArray(ctx.shownHazards) ? ctx.shownHazards : []);
   const out = [];
   for (const rule of rules) {
     if (out.length >= MAX_LINES) break;
     let hit = null;
     try { hit = rule(entity, ctx); } catch { hit = null; }
+    if (hit && (HAZARD_OF_LINE[hit.key] || []).some((code) => shown.has(code))) hit = null;
     if (hit) out.push(hit);
   }
   return out.length ? out : [FALLBACK];

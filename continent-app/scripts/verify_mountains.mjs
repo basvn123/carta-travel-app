@@ -491,7 +491,14 @@ check('no untranslated keys leaked into the page', !/mtn\.[a-zA-Z]/.test(pageTex
 // that knows today's conditions.
 const hazards = await page.locator('.lpage-hazards li').count();
 if (hazards > 0) {
-  check('hazards are their own block', (await page.locator('.lpage-hazards h2').count()) === 1,
+  // T386 (design wave V3) merged the hazards and the not-for lines into one
+  // Before you go block under one heading (carta-design "Detail page
+  // grammar"); the hazard list keeps its amber block and the block's h2 is
+  // its heading now, so the check reads that block's one h2.
+  check('hazards are their own block', await page.evaluate(() => {
+    const block = document.querySelector('.lpage-hazards')?.closest('[data-slot="beforego"]');
+    return Boolean(block) && block.querySelectorAll('h2').length === 1;
+  }),
     `${hazards} hazards`);
   const checkLine = await page.locator('.mpage-check').innerText().catch(() => '');
   check('the hazard block says to check locally', /check|forecast|local/i.test(checkLine),

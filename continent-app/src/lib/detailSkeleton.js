@@ -34,6 +34,62 @@ export function previewWords(text, n = 6) {
   return words.join(' ').replace(/[\s.,;:!?-]+$/, '');
 }
 
+/**
+ * The preview of the first text whose preview is not the hook's (T386).
+ * The hook already says its sentence under the title, so a closed row that
+ * repeats it spends its one line on nothing; it previews the next sentence
+ * instead, or nothing when every candidate is the hook.
+ */
+export function previewNotHook(texts, hook, n = 6) {
+  const hookPreview = previewWords(hook, n);
+  for (const text of texts || []) {
+    const p = previewWords(text, n);
+    if (p && p !== hookPreview) return p;
+  }
+  return '';
+}
+
+/* ── The key facts band (T386, carta-design "Detail page grammar") ─────── */
+
+/** The band holds four to six facts: fewer says too little, more is a table. */
+export const KEY_FACTS_MIN = 4;
+export const KEY_FACTS_MAX = 6;
+
+/**
+ * The cells of the key facts band, in the page's own order. Each fact is
+ * { key, label, value, mono }; a fact with no value keeps its cell and shows
+ * the strip's placeholder word, so the band never claims a figure it lacks,
+ * and the band is padded to four cells only from facts the page offered
+ * (`fallback` facts, shown as placeholders) and cut at six. A page with no
+ * fact at all gets no band.
+ */
+export function keyFactCells(facts, t) {
+  const list = (facts || []).filter((f) => f && f.key && f.label);
+  if (!list.some((f) => f.value != null && f.value !== '')) return [];
+  const filled = list.filter((f) => f.value != null && f.value !== '' && !f.fallback);
+  const spare = list.filter((f) => !filled.includes(f));
+  const out = filled.slice(0, KEY_FACTS_MAX);
+  for (const f of spare) {
+    if (out.length >= KEY_FACTS_MIN) break;
+    out.push(f);
+  }
+  // Back into the page's order, so a padded cell does not jump to the end.
+  const order = new Map(list.map((f, i) => [f.key, i]));
+  return out
+    .sort((a, b) => order.get(a.key) - order.get(b.key))
+    .map((f) => {
+      const has = f.value != null && f.value !== '';
+      return {
+        key: f.key,
+        label: f.label,
+        value: has ? String(f.value) : t('detail.stripUnmeasured'),
+        mono: has && Boolean(f.mono),
+        note: has && f.note ? String(f.note) : null,
+        missing: !has,
+      };
+    });
+}
+
 /** The first letter in upper case, the rest as written. */
 export const capFirst = (s) => {
   const str = String(s || '');

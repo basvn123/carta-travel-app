@@ -7,7 +7,7 @@ import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, pointCentre, ACCESS_LEVEL,
+  stripCells, previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
 } from '../lib/detailSkeleton.js';
 import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
@@ -22,7 +22,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, BulbIcon, InfoIcon, StarIcon,
-  SunIcon, CompassIcon, BootIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
 import {
   beachFacing, beachWalkIn, facingSummary, walkInSummary,
@@ -102,12 +102,9 @@ function ImageCredit({ image, t }) {
 export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
-  // The score badge opens the breakdown. Closed by default: most readers
-  // want the number, and the ones who want to argue with it are exactly the
-  // ones who will tap it. The bars stay on the page below either way; what
-  // this adds is the weight beside each one, which is what turns "6.7" from
-  // a verdict into an argument.
-  const [showParts, setShowParts] = useState(false);
+  // The score breakdown has one door since T386: the "How the score is
+  // built" row, which carries each part's weight beside its bar. The chip in
+  // the head is a measure, not a button.
   const [toast, setToast] = useState(null);
 
   useEffect(() => { setShot(0); }, [beach?.id]);
@@ -235,49 +232,66 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
 
   // The derived modules (T182): which way the sand faces and how you get
   // down to it, computed from fields the wire already carries. Both always
-  // render; where the data cannot answer, the row says so.
+  // render inside About this beach; where the data cannot answer, the block
+  // says so.
   const facing = beachFacing(beach);
   const walkIn = beachWalkIn(beach);
+  const point = compassPoint(beach.aspect);
 
-  // Slot 6: the collapsed rows. Each is one block that used to sit open on
-  // the page; the summary is what a closed row says without a tap.
+  // The key facts band (T386): what a family decides on. The EU bathing
+  // water class with its sampling site, the way in where it is mapped, a
+  // lifeguard where one is mapped (never a "no": an unmapped lifeguard is not
+  // an absent one), the ground underfoot, the length and which way it faces.
+  const capWord = (s) => (s ? s.charAt(0).toLocaleUpperCase(lang) + s.slice(1) : '');
+  const keyFacts = keyFactCells([
+    { key: 'water', label: t('beach.factWater'), value: beach.water ? t(`beach.water${beach.water.class}`) : '', note: beach.water?.site || null },
+    beach.access && { key: 'access', label: t('beach.factAccess'), value: t(`beach.access${beach.access.charAt(0).toUpperCase()}${beach.access.slice(1)}`) },
+    beach.lifeguard && { key: 'lifeguard', label: t('beach.factLifeguard'), value: t('beach.yes') },
+    { key: 'surface', label: t('beach.factSurface'), value: surfaceWord },
+    { key: 'length', label: t('beach.factLength'), value: beach.lengthM ? `${beach.lengthM.toLocaleString(lang)} m` : '', mono: true },
+    point && { key: 'faces', label: t('derived.facingHead'), value: capWord(t(`sig.dir${point}`)), note: `${Math.round(beach.aspect)}°` },
+  ], t);
+
+  // The rows (T386): at most five. About this beach holds the argument and
+  // the two derived blocks; then every measurement, the score with its
+  // weights (the one door to the breakdown), and the photographs.
+  const aboutTexts = [...why, facingSummary(facing, t), walkInSummary(walkIn, t)];
   const rows = [
-    (why.length > 0 || beach.bestFor?.length > 0 || tags.length > 0) && {
-      key: 'why',
+    {
+      key: 'about',
       icon: BulbIcon,
-      label: t('beach.whyHead'),
-      summary: previewWords(why[0] || headline),
+      label: t('detail.aboutBeach'),
+      summary: previewNotHook(aboutTexts, headline),
       body: (
-        <div className="bpage-why">
-          {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
-          {beach.bestFor?.length > 0 && (
-            <p className="bpage-for">
-              <b>{t('beach.bestFor')}</b>
-              {' '}
-              {beach.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
-            </p>
+        <>
+          {(why.length > 0 || beach.bestFor?.length > 0 || tags.length > 0) && (
+            <div className="bpage-why">
+              <h3 className="dsk-sub">{t('beach.whyHead')}</h3>
+              {why.length > 0 && <p className="bpage-prose">{why.join(' ')}</p>}
+              {beach.bestFor?.length > 0 && (
+                <p className="bpage-for">
+                  <b>{t('beach.bestFor')}</b>
+                  {' '}
+                  {beach.bestFor.map((code) => bestForLabel(code, t)).join(', ')}
+                </p>
+              )}
+              {tags.length > 0 && (
+                <ul className="bpage-tags">
+                  {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
+                </ul>
+              )}
+            </div>
           )}
-          {tags.length > 0 && (
-            <ul className="bpage-tags">
-              {tags.map((tag) => <li key={tag.code}>{tag.label}</li>)}
-            </ul>
-          )}
-        </div>
+          <div className="dsk-part">
+            <h3 className="dsk-sub">{t('derived.facingHead')}</h3>
+            <BeachFacing facing={facing} t={t} />
+          </div>
+          <div className="dsk-part">
+            <h3 className="dsk-sub">{t('derived.walkinHead')}</h3>
+            <BeachWalkIn walkIn={walkIn} t={t} />
+          </div>
+        </>
       ),
-    },
-    {
-      key: 'facing',
-      icon: CompassIcon,
-      label: t('derived.facingHead'),
-      summary: previewWords(facingSummary(facing, t)),
-      body: <BeachFacing facing={facing} t={t} />,
-    },
-    {
-      key: 'walkin',
-      icon: BootIcon,
-      label: t('derived.walkinHead'),
-      summary: previewWords(walkInSummary(walkIn, t)),
-      body: <BeachWalkIn walkIn={walkIn} t={t} />,
     },
     facts.length > 0 && {
       key: 'facts',
@@ -316,6 +330,11 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
                   <span className="bpage-bar-fill" style={{ width: `${part.pct}%` }} />
                 </span>
                 <span className="bpage-bar-n">{part.pct}</span>
+                {part.weight != null && (
+                  <small className="bpage-part-w">
+                    {t('beach.scoreWeight', { pct: part.weight })}
+                  </small>
+                )}
               </li>
             ))}
           </ul>
@@ -386,71 +405,33 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
           </h1>
           {beach.nameLocal && <p className="bpage-local">{beach.nameLocal}</p>}
           <p className="dsk-crumb">{[beach.region, countryName].filter(Boolean).join(', ')}</p>
-          {onAddToDay && (
-            <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
-              <SunIcon size={14} />
-              <span>{t('feat.addToDay')}</span>
-            </button>
-          )}
           <div className="bpage-scorerow">
-            {/* The badge is the door to the breakdown. The weights are
-                already in the wire's model block and the components are
-                already on the row, so surfacing them costs nothing and is
-                the strongest trust move available: a 6.7 nobody can take
-                apart is just an opinion with a decimal point. */}
-            <button
-              type="button"
-              className="bpage-scorebtn"
-              aria-expanded={showParts}
-              aria-controls="bpage-parts"
-              onClick={() => setShowParts((v) => !v)}
-              title={t(showParts ? 'beach.scoreHide' : 'beach.scoreTap')}
-            >
-              <ScoreChip rating={rating} size="lg" />
-            </button>
+            <ScoreChip rating={rating} size="lg" />
             <span className="bpage-band">{t(`beach.band${rating.tier}`)}</span>
-            <button
-              type="button"
-              className="bpage-scorehint"
-              onClick={() => setShowParts((v) => !v)}
-            >
-              {t(showParts ? 'beach.scoreHide' : 'beach.scoreTap')}
-            </button>
           </div>
-          {showParts && (
-            <ul className="bpage-parts" id="bpage-parts">
-              {parts.map((part) => (
-                <li key={part.key}>
-                  <span className="bpage-part-label">{part.label}</span>
-                  <span className="bpage-part-track" aria-hidden="true">
-                    <span
-                      className="bpage-part-fill"
-                      style={{ width: `${part.pct}%` }}
-                    />
-                  </span>
-                  <span className="bpage-part-n">{part.pct}</span>
-                  {part.weight != null && (
-                    <small className="bpage-part-w">
-                      {t('beach.scoreWeight', { pct: part.weight })}
-                    </small>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
         </>
       )}
       hook={headline}
+      keyFacts={keyFacts}
       notFor={(
         <NotFor lines={notForLines('beach', beach, { word: surfaceWord })} />
       )}
+      primary={beach.base ? (
+        <button type="button" className="bpage-base dsk-primary" onClick={() => onSelectDest?.(beach.base.id)}>
+          <span>
+            {t('beach.basedOn', { city: beach.base.city })}
+            <small>{t('beach.basedKm', { km: Math.round(beach.base.km) })}</small>
+          </span>
+          <ChevronRightIcon size={15} />
+        </button>
+      ) : null}
       map={(
         <div className="sig-mapwrap">
           <PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} />
-          {compassPoint(beach.aspect) && (
+          {point && (
             <CompassRosette
               deg={beach.aspect}
-              label={t('sig.rosette', { dir: t(`sig.dir${compassPoint(beach.aspect)}`), deg: Math.round(beach.aspect) })}
+              label={t('sig.rosette', { dir: t(`sig.dir${point}`), deg: Math.round(beach.aspect) })}
             />
           )}
         </div>
@@ -459,6 +440,9 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       rows={rows}
       gettingThere={(
         <>
+          {beach.base && (
+            <p className="dsk-get-town">{t('detail.townKm', { km: Math.round(beach.base.km), place: beach.base.city })}</p>
+          )}
           <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
             <MapPinIcon size={15} />
             <span className="bpage-where-text">{t('detail.directions')}</span>
@@ -467,26 +451,15 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
             </span>
             <ChevronRightIcon size={14} />
           </a>
-          {beach.base && (
-            <button type="button" className="bpage-base" onClick={() => onSelectDest?.(beach.base.id)}>
-              <span>
-                {t('beach.basedOn', { city: beach.base.city })}
-                <small>{t('beach.basedKm', { km: Math.round(beach.base.km) })}</small>
-              </span>
-              <ChevronRightIcon size={15} />
-            </button>
-          )}
+          <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>
         </>
       )}
-      takeAway={(
-        <>
-          <button type="button" className="tpage-act" onClick={onShare}>
-            <LinkIcon size={15} />
-            <span>{t('detail.sendLink')}</span>
-          </button>
-          <ReportProblem item={{ layer: 'beach', id: beach.id, cc: beach.cc, name: beach.name }} />
-        </>
-      )}
+      takeAway={onAddToDay ? (
+        <button type="button" className="tpage-act feat-dayplan" onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
+          <SunIcon size={15} />
+          <span>{t('feat.addToDay')}</span>
+        </button>
+      ) : null}
       exits={exits}
       nearby={(
         <NearbyOutdoors
@@ -527,7 +500,11 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
           {beach.credit?.length > 0 && (
             <p className="bpage-attrib">{beach.credit.join('. ')}</p>
           )}
+          {/* What Carta does not measure for a beach, said once (T386): the
+              signature no longer draws three empty month tracks. */}
+          <p className="bpage-note dsk-unmeasured">{t('detail.beachUnmeasured')}</p>
           <FigureFooter kinds={facts.map((f) => BEACH_KIND[f.key])} />
+          <ReportProblem item={{ layer: 'beach', id: beach.id, cc: beach.cc, name: beach.name }} />
         </div>
       )}
     />

@@ -114,6 +114,87 @@ ${trksegs}
 </gpx>`;
 }
 
+/* ── GPX for a cycle route or a cycle tour (T386) ─────────────────────── */
+
+const RAD = Math.PI / 180;
+const stepM = (a, b) => {
+  const dLat = (b[1] - a[1]) * RAD;
+  const dLon = (b[0] - a[0]) * RAD;
+  const h = Math.sin(dLat / 2) ** 2
+    + Math.cos(a[1] * RAD) * Math.cos(b[1] * RAD) * Math.sin(dLon / 2) ** 2;
+  return 2 * 6371000 * Math.asin(Math.min(1, Math.sqrt(h)));
+};
+
+/**
+ * A tour's line cut into one point list per stage. Each stage carries
+ * start_m and end_m along the tour, measured on the full line the pipeline
+ * composed; the line on the wire is a simplification, so its own length is
+ * scaled onto the stages' total before it is cut. A stage keeps the point
+ * where the previous one ended, so the day files join without a gap.
+ */
+export function splitTourByStages(geometry, stages) {
+  const pts = segments(geometry).flat();
+  const list = (stages || []).filter((s) => isNum(s?.start_m) && isNum(s?.end_m) && s.end_m > s.start_m);
+  if (pts.length < 2 || !list.length) return [];
+  const along = [0];
+  for (let i = 1; i < pts.length; i += 1) along.push(along[i - 1] + stepM(pts[i - 1], pts[i]));
+  const lineM = along[along.length - 1];
+  const totalM = Math.max(...list.map((s) => s.end_m));
+  const scale = lineM > 0 && totalM > 0 ? totalM / lineM : 1;
+  return list.map((s) => {
+    const day = [];
+    for (let i = 0; i < pts.length; i += 1) {
+      const m = along[i] * scale;
+      if (m >= s.start_m && m <= s.end_m) day.push(pts[i]);
+      else if (m > s.end_m) { day.push(pts[i]); break; }
+      else if (i + 1 < pts.length && along[i + 1] * scale > s.start_m) day.push(pts[i]);
+    }
+    return { stage: s, points: day.length > 1 ? day : [] };
+  });
+}
+
+/**
+ * A cycle route or tour as GPX 1.1. `tracks` is a list of { name, lines }
+ * where lines are coordinate lists; a route passes one track, a tour one per
+ * day. The credit travels inside the file (ODbL, and the EuroVelo credit
+ * where it applies), the same promise the route GPX has always made.
+ */
+export function cycleGpx({ name, tracks, credit = {}, link = null }) {
+  const trks = (tracks || [])
+    .map((tr) => ({ ...tr, lines: (tr.lines || []).filter((l) => Array.isArray(l) && l.length > 1) }))
+    .filter((tr) => tr.lines.length)
+    .map((tr) => {
+      const segs = tr.lines.map((line) => `   <trkseg>${line
+        .filter((pt) => isNum(pt[0]) && isNum(pt[1]))
+        .map((pt) => `<trkpt lat="${pt[1].toFixed(6)}" lon="${pt[0].toFixed(6)}"/>`).join('')}</trkseg>`).join('\n');
+      return `  <trk>
+    <name>${xmlEsc(tr.name)}</name>
+    <type>cycling</type>
+${segs}
+  </trk>`;
+    });
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Carta" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>${xmlEsc(name)}</name>
+    ${credit.author ? `<desc>${xmlEsc(credit.author)}</desc>` : ''}
+    ${link ? `<link href="${xmlEsc(link)}"><text>Carta</text></link>` : ''}
+    <copyright author="${xmlEsc(credit.author || 'OpenStreetMap contributors')}">${credit.licenseUrl ? `<license>${xmlEsc(credit.licenseUrl)}</license>` : ''}</copyright>
+  </metadata>
+${trks.join('\n')}
+</gpx>`;
+}
+
+/** A file name for a cycle route or tour, the trail rule applied. */
+export function cycleFileBase(name, id) {
+  return trailFileBase({ name: name || 'route', id });
+}
+
+/** The line parts of a cycle geometry, for callers that write a route GPX. */
+export function lineParts(geometry) {
+  return segments(geometry);
+}
+
 /* ── KML, for Google My Maps ──────────────────────────────────────────── */
 
 // The same two formatters TrailPage.jsx prints its facts strip with.

@@ -206,6 +206,26 @@ export const tripGrade = (tr) => tr?.f?.g ?? null;
 export const gradeIsDerived = (tr) => (tr?.f?.gs ?? null) === 'derived';
 
 /**
+ * Waymarked and the walking season, as the key facts band reads them (T386).
+ * `f.way` is true only where a mapper tagged the route as signposted, so a
+ * trail without it makes no waymark claim either way (null, not false).
+ * `f.se` is { from, to, n, est } with three-letter month codes; it becomes
+ * month numbers 1 to 12 and keeps its estimate flag, so the page can say
+ * "est." beside a season the climatology modelled.
+ */
+const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+export const trailWaymarked = (tr) => (tr?.f?.way === true ? true : null);
+export function trailSeason(tr) {
+  const se = tr?.f?.se;
+  if (!se) return null;
+  const from = MONTH_CODES.indexOf(String(se.from || '').toLowerCase()) + 1;
+  const to = MONTH_CODES.indexOf(String(se.to || '').toLowerCase()) + 1;
+  if (!from || !to) return null;
+  const n = Number.isFinite(se.n) ? se.n : null;
+  return { from, to, allYear: n != null && n >= 12, est: se.est === true };
+}
+
+/**
  * Route shape: where the walk leaves you at the end of it.
  *
  * Out-and-back is separated from loop here even though both end where they

@@ -152,8 +152,20 @@ export function whyLines(reasons, t, max = 4) {
  * known_share is the honest half of this. A route where a tenth of the ways
  * carry a surface tag does not get to claim a paved percentage, so the
  * sentence says the surface is not recorded instead of inventing one.
+ *
+ * The bike field is the other half (T386, row T375-b). It names the bike the
+ * ROUGHEST stretch needs, and the strip and the Not for you line read it. A
+ * route that is 97% paved with one gravel stretch is not "paved throughout"
+ * to a rider on 25 mm tyres, so when the bike field asks for a gravel or a
+ * mountain bike the sentence gives the paved share and says the roughest
+ * stretch needs that bike, and the three claims on the page say one thing.
  */
 const SURFACE_MIN_KNOWN = 0.25;
+
+/** True when the route's worst stretch needs more than a road or touring bike. */
+export function needsRoughBike(bike) {
+  return bike === 'gravel' || bike === 'mtb';
+}
 
 export function surfaceLine(surface, t) {
   if (!surface) return null;
@@ -162,7 +174,8 @@ export function surfaceLine(surface, t) {
   if (paved === null || (known !== null && known < SURFACE_MIN_KNOWN)) {
     return t('cycle.surfaceUnknown');
   }
-  if (paved >= 95) return t('cycle.surfaceAllPaved');
+  if (paved >= 95 && !needsRoughBike(surface.bike)) return t('cycle.surfaceAllPaved');
+  if (paved >= 95) return t('cycle.surfacePavedRough', { pct: paved });
   if (paved >= 70) return t('cycle.surfaceMostlyPaved', { pct: paved });
   if (paved >= 35) return t('cycle.surfaceMixed', { pct: paved });
   return t('cycle.surfaceMostlyUnpaved', { pct: 100 - paved });

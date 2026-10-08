@@ -42,28 +42,39 @@ export function SurfaceBar({ sf, t }) {
  * Only a parent has these. A stage instead gets the line above it, naming
  * the path it belongs to, which is the same relationship read from the other
  * end (R6 names a row for its path; this names a path's pieces).
+ *
+ * A stage is a button only when it can open something (T386): the page
+ * passes onOpenRoute, the stage has an id, and canOpen says the id is in a
+ * list the page can open. Anything else is a plain line in the same layout,
+ * so no disabled button ships.
  */
-export function Stages({ stages, t, onOpenRoute }) {
+export function Stages({ stages, t, onOpenRoute, canOpen = () => true }) {
   const rows = (stages || []).filter((s) => s && (s.id || s.osm));
   if (!rows.length) return null;
   return (
     <ol className="rstages" data-testid="route-stages">
-      {rows.map((s) => (
-        <li key={s.osm || s.id}>
-          <button
-            type="button"
-            className="rstage"
-            onClick={() => onOpenRoute?.(s.id)}
-            disabled={!onOpenRoute || !s.id}
-          >
+      {rows.map((s) => {
+        const inner = (
+          <>
             <span className="rstage-n mono">{s.i}</span>
             <span className="rstage-name">{s.name || t('route.stageN', { n: s.i })}</span>
-            {s.id ? <ChevronRightIcon size={12} /> : (
-              <span className="rstage-off">{t('route.stageNotPublished')}</span>
+            {!s.id && <span className="rstage-off">{t('route.stageNotPublished')}</span>}
+          </>
+        );
+        const opens = Boolean(onOpenRoute && s.id && canOpen(s.id));
+        return (
+          <li key={s.osm || s.id}>
+            {opens ? (
+              <button type="button" className="rstage" onClick={() => onOpenRoute(s.id)}>
+                {inner}
+                <ChevronRightIcon size={12} />
+              </button>
+            ) : (
+              <span className="rstage is-static">{inner}</span>
             )}
-          </button>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ol>
   );
 }

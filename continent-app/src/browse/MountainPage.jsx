@@ -8,7 +8,7 @@ import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, pointCentre, MOUNTAIN_LEVEL,
+  stripCells, previewWords, previewNotHook, keyFactCells, pointCentre, MOUNTAIN_LEVEL,
 } from '../lib/detailSkeleton.js';
 import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
@@ -24,11 +24,9 @@ import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   MapPinIcon, LinkIcon, ChevronRightIcon,
-  CameraIcon, AlertIcon, MountainIcon, BulbIcon, InfoIcon, StarIcon,
-  SunIcon, RouteIcon,
+  CameraIcon, MountainIcon, BulbIcon, InfoIcon, StarIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
-import { mountainWayUp, wayUpSummary } from '../lib/derivedModules.js';
-import { MountainWayUp } from './DerivedModules.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
 import { MountainSignature } from './Signature.jsx';
@@ -245,7 +243,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       sentence: say('viewArea', mountain.view.km2),
       label: t('mtn.factView'),
       value: [viewBandLabel(mountain, t),
-        `${Math.round(mountain.view.km2).toLocaleString(lang)} km2`]
+        `${Math.round(mountain.view.km2).toLocaleString(lang)} km²`]
         .filter(Boolean).join(', '),
       note: t('mtn.factViewNote'),
     },
@@ -292,24 +290,50 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
   }, t);
   const subs = SUB_ORDER.filter((key) => mountain.sub?.[key] != null);
 
-  // The derived module (T182): the four ways up, drive, lift, walk and climb,
-  // each on or off, from the access codes, the lift and the grades on the
-  // wire. The words are the page's own (liftLabel, difficultyLabel).
-  const wayUp = mountainWayUp(mountain);
-  const wayWords = {
-    liftWord: wayUp.liftKind ? liftLabel(mountain, t) : '',
-    gradeWord: difficultyLabel(mountain, t),
-    hardWord: wayUp.hard
-      ? t(`mtn.diff${wayUp.hard.charAt(0).toUpperCase()}${wayUp.hard.slice(1)}`) : '',
-  };
+  // The key facts band (T386): height, prominence, the way up in a word and
+  // the season. The way up's long form stays in Getting there (WayUp), the
+  // one place it is told; the "How you get up" row went with T386.
+  const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  let monthShort = (code) => code;
+  try {
+    const fmt = new Intl.DateTimeFormat(lang, { month: 'short' });
+    monthShort = (code) => {
+      const i = MONTH_CODES.indexOf(String(code || '').toLowerCase());
+      return i < 0 ? '' : fmt.format(new Date(Date.UTC(2026, i, 15)));
+    };
+  } catch { /* older engines keep the code */ }
+  const season = mountain.season;
+  const seasonValue = !season ? ''
+    : season.n >= 12 ? t('detail.seasonAllYear')
+      : (monthShort(season.from) && monthShort(season.to)
+        ? t('detail.monthRange', { from: monthShort(season.from), to: monthShort(season.to) }) : '');
+  const keyFacts = keyFactCells([
+    { key: 'ele', label: t('mtn.factHeight'), value: mountain.ele != null ? `${Math.round(mountain.ele).toLocaleString(lang)} m` : '', mono: true },
+    mountain.prom != null && {
+      key: 'prom',
+      label: t('mtn.factProminence'),
+      value: `${mountain.promSrc === 'dem_min' ? '≥ ' : ''}${Math.round(mountain.prom).toLocaleString(lang)} m`,
+      mono: true,
+    },
+    { key: 'way', label: t('detail.factWayUp'), value: isLiftServed(mountain) ? liftLabel(mountain, t) : difficultyLabel(mountain, t) },
+    seasonValue && {
+      key: 'season',
+      label: t('detail.factSeason'),
+      value: seasonValue,
+      mono: season.n < 12,
+      note: season.months ? t('prov.est') : null,
+    },
+    mountain.isoKm != null && { key: 'iso', label: t('mtn.factIsolation'), value: `${mountain.isoKm.toLocaleString(lang)} km`, mono: true, fallback: true },
+  ], t);
 
-  // Slot 6: the collapsed rows (T180).
+  // The rows (T386): at most five. Why, every measurement, the score and
+  // the photographs.
   const rows = [
     (why.length > 0 || subs.length > 0 || mountain.bestFor?.length > 0 || tags.length > 0) && {
       key: 'why',
       icon: BulbIcon,
       label: t('mtn.whyHead'),
-      summary: previewWords(why[0] || headline),
+      summary: previewNotHook(why, headline),
       body: (
         <div className="bpage-why">
           {/* The three sub scores, side by side, because choosing between a
@@ -340,13 +364,6 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
           )}
         </div>
       ),
-    },
-    {
-      key: 'up',
-      icon: RouteIcon,
-      label: t('derived.upHead'),
-      summary: previewWords(wayUpSummary(wayUp, t, wayWords)),
-      body: <MountainWayUp wayUp={wayUp} t={t} lang={lang} words={wayWords} />,
     },
     facts.length > 0 && {
       key: 'facts',
@@ -416,6 +433,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     },
   ].filter(Boolean);
 
+  const hasTransit = (mountain.acc || []).includes('transit');
+
   return (
     <DetailPage
       name={mountain.name}
@@ -456,12 +475,6 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
           </h1>
           {mountain.nameLocal && <p className="bpage-local">{mountain.nameLocal}</p>}
           <p className="dsk-crumb">{[mountain.range, countryName].filter(Boolean).join(', ')}</p>
-          {onAddToDay && (
-            <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon })}>
-              <SunIcon size={14} />
-              <span>{t('feat.addToDay')}</span>
-            </button>
-          )}
           <div className="bpage-scorerow">
             <ScoreChip rating={rating} size="lg" />
             <span className="bpage-band">{t(`mtn.band${rating.tier}`)}</span>
@@ -472,18 +485,30 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
         </>
       )}
       hook={headline}
-      notFor={<NotFor lines={notForLines('mountain', mountain, { word: difficultyLabel(mountain, t) })} />}
+      keyFacts={keyFacts}
+      notFor={<NotFor lines={notForLines('mountain', mountain, { word: difficultyLabel(mountain, t), shownHazards: hazards.map((h) => h.code) })} />}
       alert={hazards.length > 0 ? (
-        <section className="lpage-hazards">
-          <h2>
-            <AlertIcon size={15} />
-            {t('mtn.hazardsHead')}
-          </h2>
+        /* The block's own heading ("Before you go") names it, so the list
+           carries its words as a label rather than a second heading. */
+        <div className="lpage-hazards" role="note" aria-label={t('mtn.hazardsHead')}>
           <ul>
             {hazards.map((h) => <li key={h.code}>{h.line}</li>)}
           </ul>
           <p className="mpage-check">{t('mtn.hazardsCheck')}</p>
-        </section>
+        </div>
+      ) : null}
+      primary={mountain.near?.dest_id ? (
+        <button
+          type="button"
+          className="bpage-base dsk-primary"
+          onClick={() => onSelectDest?.(mountain.near.dest_id)}
+        >
+          <span>
+            {t('mtn.basedOn', { city: mountain.near.city })}
+            <small>{t('mtn.basedKm', { km: Math.round(mountain.near.km) })}</small>
+          </span>
+          <ChevronRightIcon size={15} />
+        </button>
       ) : null}
       map={<PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} />}
       signature={(
@@ -506,6 +531,9 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       rows={rows}
       gettingThere={(
         <>
+          {mountain.near?.city && (
+            <p className="dsk-get-town">{t('detail.townKm', { km: Math.round(mountain.near.km), place: mountain.near.city })}</p>
+          )}
           <WayUp mountain={mountain} t={t} />
           <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
             <MapPinIcon size={15} />
@@ -515,30 +543,15 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
             </span>
             <ChevronRightIcon size={14} />
           </a>
-          {mountain.near?.dest_id && (
-            <button
-              type="button"
-              className="bpage-base"
-              onClick={() => onSelectDest?.(mountain.near.dest_id)}
-            >
-              <span>
-                {t('mtn.basedOn', { city: mountain.near.city })}
-                <small>{t('mtn.basedKm', { km: Math.round(mountain.near.km) })}</small>
-              </span>
-              <ChevronRightIcon size={15} />
-            </button>
-          )}
+          {!hasTransit && <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>}
         </>
       )}
-      takeAway={(
-        <>
-          <button type="button" className="tpage-act" onClick={onShare}>
-            <LinkIcon size={15} />
-            <span>{t('detail.sendLink')}</span>
-          </button>
-          <ReportProblem item={{ layer: 'mountain', id: mountain.id, cc: mountain.cc, name: mountain.name }} />
-        </>
-      )}
+      takeAway={onAddToDay ? (
+        <button type="button" className="tpage-act feat-dayplan" onClick={() => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon })}>
+          <SunIcon size={15} />
+          <span>{t('feat.addToDay')}</span>
+        </button>
+      ) : null}
       exits={exits}
       nearby={(
         <NearbyOutdoors
@@ -582,6 +595,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
             <p className="bpage-attrib">{mountain.credit.join('. ')}</p>
           )}
           <FigureFooter kinds={facts.map((f) => mountainKind(f.key, mountain))} />
+          <ReportProblem item={{ layer: 'mountain', id: mountain.id, cc: mountain.cc, name: mountain.name }} />
         </div>
       )}
     />

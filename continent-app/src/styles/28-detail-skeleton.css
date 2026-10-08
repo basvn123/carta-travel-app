@@ -5,8 +5,9 @@
    (.jpage-lrow) and the exits (.jpage-exit) keep the journey page's classes,
    so the two families of page share one set of rules for each.
 
-   One DOM order for every width. On a phone the slots stack in the spec's
-   order, the map fourth. From 900px the page is a 60/40 grid: every slot in
+   One DOM order for every width. On a phone the slots stack in the order
+   DetailSkeleton.jsx documents (T386: the map after the hand-off band).
+   From 900px the page is a 60/40 grid: every slot in
    the left column, the map alone in the right one, sticky while the left
    column scrolls past it.
    ══════════════════════════════════════════════════════════════════════════ */
@@ -179,7 +180,7 @@
   .dsk-map-frame,
   .dsk-map .tpage-hero,
   .dsk-map .cycle-map {
-    height: calc(100vh - 52px - 2 * var(--space-4));
+    height: calc(100dvh - 52px - 2 * var(--space-4));
     max-height: 640px;
   }
 }

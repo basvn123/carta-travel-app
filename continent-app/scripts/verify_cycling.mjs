@@ -519,6 +519,26 @@ if (!WIRE_ONLY) {
         check(`${label}: the tour page lists its stages`,
           await page.locator('[data-testid=cycle-stage]').count() > 0,
           `${await page.locator('[data-testid=cycle-stage]').count()} stages`);
+        // T386 (design wave V3): a tour has a GPX of its own, one track per
+        // day, as the page's one primary. The share sheet is taken away so
+        // the file downloads, and the track count must equal the stages.
+        const gpxBtn = page.locator('[data-testid=cycle-gpx]');
+        check(`${label}: the tour offers its GPX`, await gpxBtn.count() === 1);
+        if (await gpxBtn.count()) {
+          await page.evaluate(() => {
+            try { Object.defineProperty(navigator, 'canShare', { value: undefined, configurable: true }); } catch { /* read-only */ }
+          });
+          const dl = await Promise.all([
+            page.waitForEvent('download', { timeout: 15000 }),
+            gpxBtn.click(),
+          ]).then(([d]) => d).catch(() => null);
+          const gpxText = dl ? readFileSync(await dl.path(), 'utf8') : '';
+          const tracks = (gpxText.match(/<trk>/g) || []).length;
+          const days = await page.locator('[data-testid=cycle-stage]').count();
+          check(`${label}: the tour GPX has one track per day`, tracks > 0 && tracks === days,
+            `${tracks} tracks, ${days} days`);
+          check(`${label}: the tour GPX carries its credit`, /OpenStreetMap|ODbL/i.test(gpxText));
+        }
       } else if (nRoutes) {
         await routeCards.first().click();
         await page.waitForTimeout(1200);

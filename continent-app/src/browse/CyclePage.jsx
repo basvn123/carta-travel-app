@@ -8,9 +8,12 @@ import { tokenColour as token } from '../map/tokenColors.js';
 import { DetailPage } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, bboxCentre, cycleLevel, LEVEL_WORD_KEY,
+  stripCells, previewWords, previewNotHook, keyFactCells, bboxCentre, cycleLevel, LEVEL_WORD_KEY,
 } from '../lib/detailSkeleton.js';
-import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
+import {
+  trailheadDirectionsUrl, shareTrailLink, cycleGpx, cycleFileBase, lineParts,
+  splitTourByStages, shareOrDownloadFile,
+} from '../lib/trailExport.js';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { loadCycling } from '../lib/cycling.js';
 import { loadCycleFamily, loadCycleRoute, loadCycleTour, gpxCredit }
@@ -18,7 +21,7 @@ import { loadCycleFamily, loadCycleRoute, loadCycleTour, gpxCredit }
 import {
   agreementLine, bailoutLine, bikeLine, countryPhrase, cycleRating, listedLine,
   overnightLine, paceLine, routeTitle, safetyLine, seasonLine, stageLine,
-  surfaceLine, trafficFreeLine, whyLines,
+  surfaceLine, trafficFreeLine, whyLines, needsRoughBike,
 } from '../lib/cycleStory.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { NotFor } from '../components/NotFor.jsx';
@@ -33,8 +36,8 @@ import { kmOf, trafficMix } from '../lib/signature.js';
 import { numberSentence } from '../lib/numberSentences.js';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
-  ListDayIcon, CheckIcon, InfoIcon, MountainIcon, BulbIcon, BedIcon,
-  LinkIcon, RouteIcon,
+  ListDayIcon, CheckIcon, InfoIcon, BulbIcon,
+  RouteIcon, DownloadIcon,
 } from '../components/Icons.jsx';
 
 /**
@@ -263,42 +266,39 @@ function Towns({ services, t }) {
   );
 }
 
-/** Build a GPX with the credit inside the file, and hand it to the browser. */
-function downloadGpx(route, name) {
-  const credit = gpxCredit(route);
-  const parts = geometryParts(route.osm && route.osm.geometry);
-  if (!parts.length) return;
-  const esc = (s) => String(s || '').replace(/[<>&]/g,
-    (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
-  const segs = parts.map((part) => (
-    `  <trkseg>\n${part
-      .map(([lon, lat]) => `   <trkpt lat="${lat}" lon="${lon}"/>`)
-      .join('\n')}\n  </trkseg>`
-  )).join('\n');
-  const gpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Carta" xmlns="http://www.topografix.com/GPX/1/1">
- <metadata>
-  <name>${esc(name)}</name>
-  <desc>${esc(credit.author)}</desc>
-  <copyright author="${esc(credit.author)}">
-   ${credit.licenseUrl ? `<license>${esc(credit.licenseUrl)}</license>` : ''}
-  </copyright>
- </metadata>
- <trk>
-  <name>${esc(name)}</name>
-  <desc>${esc(credit.author)}</desc>
-${segs}
- </trk>
-</gpx>`;
-  const blob = new Blob([gpx], { type: 'application/gpx+xml' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${(name || 'route').replace(/[^\w-]+/g, '_')}.gpx`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+/**
+ * The route as GPX, the credit inside the file (ODbL travels with a database
+ * extract). One track, one segment per line part. Null when the route has
+ * no line to write.
+ */
+function routeGpxText(route, name, link) {
+  const parts = lineParts(route?.osm?.geometry);
+  if (!parts.length) return null;
+  return cycleGpx({ name, tracks: [{ name, lines: parts }], credit: gpxCredit(route), link });
+}
+
+/**
+ * A tour as GPX with one track per day (T386), cut from the tour line at each
+ * stage's start_m and end_m, so a hiking or cycling app shows Day 1, Day 2
+ * and so on as separate tracks. The credit is the first route's, where the
+ * licence lives, or the OpenStreetMap default.
+ */
+function tourGpxText(tour, route, t, link) {
+  const days = splitTourByStages(tour?.geometry, tour?.stages);
+  if (!days.length || days.some((d) => !d.points.length)) return null;
+  return cycleGpx({
+    name: tour.title,
+    tracks: days.map(({ stage, points }) => ({
+      name: t('detail.dayTrack', {
+        n: stage.d,
+        from: stage.from?.name || '',
+        to: stage.to?.name || '',
+      }),
+      lines: [points],
+    })),
+    credit: gpxCredit(route),
+    link,
+  });
 }
 
 function Photos({ images }) {
@@ -567,10 +567,24 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
   const heroShot = images[0] || null;
   const start = lineStart(geometry);
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
-  const stations = (carta.services || [])
-    .filter((s) => s && s.name && s.station)
-    .sort((a, b) => (a.at_m || 0) - (b.at_m || 0))
-    .map((s) => s.name);
+  // Stations with their km along the line (T386): a route reads its service
+  // towns, a tour its day ends, which is where a rider joins or leaves it.
+  const stations = tour
+    ? (tour.stages || []).flatMap((s) => [
+      s.d === 1 && s.from?.station ? { name: s.from.station_name || s.from.name, km: (s.start_m || 0) / 1000 } : null,
+      s.to?.station ? { name: s.to.station_name || s.to.name, km: (s.end_m || 0) / 1000 } : null,
+    ]).filter((s) => s && s.name)
+    : (carta.services || [])
+      .filter((s) => s && s.name && s.station)
+      .sort((a, b) => (a.at_m || 0) - (b.at_m || 0))
+      .map((s) => ({ name: s.name, km: (s.at_m || 0) / 1000 }));
+  // Where the line starts, as a place: a tour's first overnight town, or a
+  // route's first service town within 3 km of its start.
+  const firstTown = tour
+    ? (tour.stages?.[0]?.from?.name || null)
+    : ((carta.services || [])
+      .filter((s) => s && s.name && Number.isFinite(s.at_m) && s.at_m <= 3000)
+      .sort((a, b) => a.at_m - b.at_m)[0]?.name || null);
 
   const shareUrl = typeof window === 'undefined' ? '' : (() => {
     const { origin, pathname } = window.location;
@@ -582,15 +596,31 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     if (how === 'copied') setToast(t('trip.linkCopied'));
   };
 
+  // The file is the page's one primary (T386): a route's line, or a tour
+  // with one track per day. Through the share sheet on a phone that can take
+  // files, so it lands in the rider's own app, a download elsewhere.
+  const gpxText = tour ? tourGpxText(tour, route, t, shareUrl) : (route ? routeGpxText(route, title, shareUrl) : null);
+  const onGpx = async () => {
+    if (!gpxText) return;
+    const how = await shareOrDownloadFile(cycleFileBase(title, tour ? tour.slug : route?.id), gpxText, 'gpx', title);
+    if (how !== 'shared') setToast(t('trails.savedGpx'));
+  };
+
   // The signature (T181, destinations spec C6 and 5.5): the surface bar and
   // the traffic bar on one 0-to-length axis, each class in kilometres, the
   // keys under the axis so the two bars sit directly over the ruler they
-  // share. From the same block the sentences below read.
+  // share. From the same block the sentences below read. Since T386 the
+  // elevation profile leads the instrument, so the climb a rider opened the
+  // page for is not one tap down in a folded row.
   const routeM = carta.surface?.total_m;
   // What the two shares mean for the rider (T158). Only where the share was
-  // measured on enough of the line, the same floors the bars use.
+  // measured on enough of the line, the same floors the bars use. The paved
+  // sentence says nothing when the bike field asks for a gravel or mountain
+  // bike: "a road bike is fine" beside "Not for you on a road bike" was the
+  // contradiction of row T375-b.
   const sf = carta.surface;
   const pavedSentence = sf && Number.isFinite(sf.paved_share) && sf.surface_known_share >= 0.25
+    && !needsRoughBike(sf.bike)
     ? numberSentence('pavedShare', sf.paved_share * 100, { t, lang }) : '';
   const freeSentence = sf && Number.isFinite(sf.traffic_free_share) && sf.highway_known_share >= 0.33
     ? numberSentence('trafficFree', sf.traffic_free_share * 100, { t, lang }) : '';
@@ -598,6 +628,8 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     ?.map((p) => ({ ...p, value: kmOf(p.share, routeM) })) || null;
   const trafficSplit = trafficParts(carta.surface);
   const trafficKm = trafficMix(trafficSplit, t, routeM);
+  const hasElev = Boolean(carta.elevation && Array.isArray(carta.elevation.profile)
+    && carta.elevation.profile.length > 1);
   const surfaceBlock = route && (
     <Instrument
       kind="cycle"
@@ -625,6 +657,12 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         </>
       )}
     >
+      {hasElev && (
+        <Row label={t('cycle.elevTitle')} figure={route?.asc != null ? t('detail.climbSummary', { m: route.asc }) : null}>
+          <ElevationChart elevation={carta.elevation} label={t('cycle.elevTitle')} maxLabel={t('cycle.elevMax')}
+            className="cycle-elev" testId="cycle-elev" />
+        </Row>
+      )}
       <div className="cycle-bars">
         <Row label={t('route.surfaceTitle')}>
           {surfaceMix
@@ -645,10 +683,80 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     </Instrument>
   );
 
-  // Slot 6: the collapsed rows (T180). A tour's own rows first, then the
-  // route's: a tour opened on its own still shows its first route's profile
-  // and towns, as it did before the skeleton.
+  // The key facts band (T386): a route's length, climb, bike and paved
+  // share; a tour's days, length, climb and bike. The bike is the field the
+  // strip and the Not for you line read, so the three agree.
+  const pavedPct = sf && Number.isFinite(sf.paved_share) && sf.surface_known_share >= 0.25
+    ? Math.round(sf.paved_share * 100) : null;
+  const bikeWord = BIKE_TYPE[bike] ? t(BIKE_TYPE[bike]) : '';
+  const keyFacts = keyFactCells(tour ? [
+    { key: 'days', label: t('detail.factDays'), value: tour.days != null ? String(tour.days) : '', mono: true },
+    { key: 'km', label: t('trails.factDistance'), value: Number.isFinite(tour.km) ? `${Math.round(tour.km).toLocaleString(lang)} km` : '', mono: true },
+    { key: 'asc', label: t('trails.factAscent'), value: tour.asc != null ? `${Math.round(tour.asc).toLocaleString(lang)} m` : '', mono: true },
+    { key: 'bike', label: t('detail.factBike'), value: bikeWord ? bikeWord.charAt(0).toLocaleUpperCase(lang) + bikeWord.slice(1) : '' },
+  ] : [
+    { key: 'km', label: t('trails.factDistance'), value: route?.km != null ? `${route.km} km` : '', mono: true },
+    { key: 'asc', label: t('trails.factAscent'), value: route?.asc != null ? `${route.asc} m` : '', mono: true },
+    { key: 'bike', label: t('detail.factBike'), value: bikeWord ? bikeWord.charAt(0).toLocaleUpperCase(lang) + bikeWord.slice(1) : '' },
+    { key: 'paved', label: t('detail.factPaved'), value: pavedPct != null ? `${pavedPct}%` : '', mono: true },
+  ], t);
+
+  const hook = tour ? paceLine(tour.pace, t) : (why[0]?.text || null);
+
+  // The rows (T386): at most five. A tour's route (its days and the towns
+  // along it) comes first, then what we checked, why, the measurements and
+  // the photographs. The elevation profile left the rows for the signature.
+  const hasTowns = Array.isArray(carta.services) && carta.services.length > 0;
   const rows = [
+    tour && (tour.stages?.length > 0 || hasTowns) && {
+      key: 'stages',
+      icon: ListDayIcon,
+      label: t('cycle.stagesTitle'),
+      summary: previewWords(stageLine(tour.stages?.[0] || {}, t) || ''),
+      body: (
+        <>
+          <Stages stages={tour.stages} t={t} />
+          {hasTowns && (
+            <>
+              <h3 className="dsk-sub">{t('cycle.townsTitle')}</h3>
+              <Towns services={carta.services} t={t} />
+            </>
+          )}
+        </>
+      ),
+    },
+    tour && tour.checks && {
+      key: 'checks',
+      icon: CheckIcon,
+      label: t('cycle.checksTitle'),
+      summary: previewWords(t('cycle.checksNote')),
+      body: (
+        <div className="cycle-checks" data-testid="cycle-checks">
+          <p>{t('cycle.checksNote')}</p>
+          <ul>
+            {(tour.checks.passed || []).map((c) => <li key={c}>{c}</li>)}
+          </ul>
+        </div>
+      ),
+    },
+    why.length > 0 && {
+      key: 'why',
+      icon: BulbIcon,
+      label: t('cycle.whyTitle'),
+      summary: previewNotHook(why.map((w) => w.text), hook),
+      body: (
+        <ul className="cycle-why" data-testid="cycle-why">
+          {why.map((line) => <li key={line.text}>{line.text}</li>)}
+        </ul>
+      ),
+    },
+    !tour && hasTowns && {
+      key: 'towns',
+      icon: TrainIcon,
+      label: t('cycle.townsTitle'),
+      summary: previewWords(carta.services.filter((s) => s && s.name).slice(0, 3).map((s) => s.name).join(', ')),
+      body: <Towns services={carta.services} t={t} />,
+    },
     tour && {
       key: 'tour-facts',
       icon: ClockIcon,
@@ -679,27 +787,6 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         </div>
       ),
     },
-    tour && tour.stages?.length > 0 && {
-      key: 'stages',
-      icon: ListDayIcon,
-      label: t('cycle.stagesTitle'),
-      summary: previewWords(stageLine(tour.stages[0], t) || ''),
-      body: <Stages stages={tour.stages} t={t} />,
-    },
-    tour && tour.checks && {
-      key: 'checks',
-      icon: CheckIcon,
-      label: t('cycle.checksTitle'),
-      summary: previewWords(t('cycle.checksNote')),
-      body: (
-        <div className="cycle-checks" data-testid="cycle-checks">
-          <p>{t('cycle.checksNote')}</p>
-          <ul>
-            {(tour.checks.passed || []).map((c) => <li key={c}>{c}</li>)}
-          </ul>
-        </div>
-      ),
-    },
     route && !tour && {
       key: 'route-facts',
       icon: InfoIcon,
@@ -718,35 +805,6 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
           {!rated && <p className="cycle-unrated">{listedLine(t)}</p>}
         </>
       ),
-    },
-    carta.elevation && Array.isArray(carta.elevation.profile)
-      && carta.elevation.profile.length > 1 && {
-      key: 'elev',
-      icon: MountainIcon,
-      label: t('cycle.elevTitle'),
-      summary: route?.asc != null ? t('detail.climbSummary', { m: route.asc }) : '',
-      body: (
-        <ElevationChart elevation={carta.elevation} label={t('cycle.elevTitle')} maxLabel={t('cycle.elevMax')}
-          className="cycle-elev" testId="cycle-elev" />
-      ),
-    },
-    why.length > 0 && {
-      key: 'why',
-      icon: BulbIcon,
-      label: t('cycle.whyTitle'),
-      summary: previewWords(why[0].text),
-      body: (
-        <ul className="cycle-why" data-testid="cycle-why">
-          {why.map((line) => <li key={line.text}>{line.text}</li>)}
-        </ul>
-      ),
-    },
-    Array.isArray(carta.services) && carta.services.length > 0 && {
-      key: 'towns',
-      icon: BedIcon,
-      label: t('cycle.townsTitle'),
-      summary: previewWords(carta.services.filter((s) => s && s.name).slice(0, 3).map((s) => s.name).join(', ')),
-      body: <Towns services={carta.services} t={t} />,
     },
     images.length > 1 && {
       key: 'photos',
@@ -774,7 +832,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
       name={title}
       className="cycle-dpage"
       testId="cycle-page"
-      backLabel={t('trails.back')}
+      backLabel={t('detail.backCycle')}
       onClose={onClose}
       fav={fav}
       onFav={onFav}
@@ -823,48 +881,51 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
           )}
         </div>
       )}
-      hook={tour ? paceLine(tour.pace, t) : (why[0]?.text || null)}
+      hook={hook}
+      keyFacts={keyFacts}
       notFor={(route || tour) ? <NotFor lines={notForLinesFor} /> : null}
+      primary={gpxText ? (
+        <button type="button" className="cycle-gpx tpage-primary dsk-primary" data-testid="cycle-gpx" onClick={onGpx}>
+          <DownloadIcon size={16} />
+          <span>{t('cycle.gpx')}</span>
+        </button>
+      ) : null}
       map={(
         <div ref={mapEl} className="cycle-map" data-testid="cycle-map"
           role="img" aria-label={t('cycle.mapLabel')} />
       )}
       signature={surfaceBlock || null}
       rows={rows}
-      gettingThere={(start || stations.length > 0) ? (
+      gettingThere={(route || tour) ? (
         <>
+          {firstTown && <p className="dsk-get-town">{t('detail.startAt', { place: firstTown })}</p>}
           {dirUrl && (
             <a className="tpage-act tpage-act-wide" href={dirUrl} target="_blank" rel="noopener noreferrer">
               <RouteIcon size={15} />
               <span>{t('trails.startDirections')}</span>
             </a>
           )}
-          {stations.length > 0 && (
-            <p className="dsk-note">
-              <TrainIcon size={13} />
-              {' '}
-              {t('detail.stationsOnRoute', { list: stations.slice(0, 4).join(', ') })}
-            </p>
+          {stations.length > 0 ? (
+            <div className="dsk-get-stations">
+              <p className="dsk-note">
+                <TrainIcon size={13} />
+                {' '}
+                {t('detail.stationsHead')}
+              </p>
+              <ul className="dsk-stations">
+                {stations.slice(0, 6).map((s) => (
+                  <li key={`${s.name}-${s.km}`}>
+                    <span className="dsk-station-name">{s.name}</span>
+                    <span className="dsk-station-km mono">{t('cycle.atKm', { km: Math.round(s.km) })}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>
           )}
         </>
       ) : null}
-      takeAway={(
-        <>
-          {route && !tour && (
-            <button type="button" className="cycle-gpx" data-testid="cycle-gpx"
-              onClick={() => downloadGpx(route, title)}>
-              {t('cycle.gpx')}
-            </button>
-          )}
-          {shareUrl && (
-            <button type="button" className="tpage-act" onClick={onShare}>
-              <LinkIcon size={15} />
-              <span>{t('detail.sendLink')}</span>
-            </button>
-          )}
-          {route && <ReportProblem item={{ layer: 'cycle', id: route.id, cc, name: title }} />}
-        </>
-      )}
       exits={exits}
       nearby={wireRow ? (
         <NearbyOutdoors
@@ -901,6 +962,8 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               {(route.osm && route.osm.attribution) || t('cycle.sourceNote')}
             </p>
           )}
+          {/* A report is about the data, so it sits with the sources (T386). */}
+          {route && <ReportProblem item={{ layer: 'cycle', id: route.id, cc, name: title }} />}
         </>
       )}
     />

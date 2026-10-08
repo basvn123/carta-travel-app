@@ -5,6 +5,7 @@ import { FavStar } from '../components/FavStar.jsx';
 import { ArrowLeftIcon, ShareIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { claimShared } from '../lib/sharedElement.js';
 import CreditFold from './CreditFold.jsx';
+import { KeyFacts } from './KeyFacts.jsx';
 
 const PointMap = lazy(() => import('./PointMap.jsx'));
 
@@ -16,43 +17,37 @@ const PointMap = lazy(() => import('./PointMap.jsx'));
  * its own content and hands it over in named slots; this file owns the shell,
  * the order and the layout, and nothing about any one section.
  *
- * The order, top to bottom, which is also the phone's order:
+ * The order is decision first, then hand-off, then depth (T386, design wave
+ * V3; carta-design "Detail page grammar"). Top to bottom, which is also the
+ * phone's order and the keyboard's:
  *
- *   1  hero          the view image full bleed at 56vh, the three-cell strip
- *                    flush under it (difficulty, type, headline number), the
- *                    photo credit. carta-design's strip rule wins over the
- *                    spec's "semi-transparent strip over the photo": the
- *                    strip is solid paper and no text sits on the picture.
- *                    The title, ref chip and breadcrumb follow in `head`.
- *   2  hook          one sentence with a verb or a number
- *   3  notFor        who this is not for (T159), plain dim paper
- *      alert         the one exception to "everything else folds": a safety
- *                    note that must not be one tap away (the lake's swim
- *                    verdict, a hazard list). Empty on most pages.
- *   4  map           sticky in the right-hand column on a desktop, under the
- *                    hook on a phone. The 3D toggle (top right) and "Fly the
- *                    route" come with the terrain and flyover work and are not
- *                    drawn yet; the map's own zoom control holds that corner.
- *   5  signature     the section's own figure, full width of the left column.
- *                    T181 fills this slot with the five signature visuals;
- *                    until then each page passes the nearest figure it has.
- *   6  rows          collapsed rows, an icon at 20px with no tile, a label
- *                    and a six-word summary, all closed on arrival. T164's
- *                    Good to know rows, generalised (DetailRow below). This is
- *                    where T182's derived modules plug in: one more entry in
- *                    the page's rows array each, { key, icon, label, summary,
- *                    body }. The bento grid that replaces the list belongs to
- *                    T179, which waits on a carta-design rule.
- *   7  gettingThere  always present, never collapsed; `false` leaves it out,
- *                    for a page with no place to get to (the honest stub,
- *                    T367 closing T124-f)
- *   8  takeAway      GPX, a file for another app, a link to send to a phone
- *   9  exits         three computed ways out (easier, cheaper, nearby), then
- *                    the cross-layer neighbours (NearbyOutdoors) as `nearby`
- *  10  sources       collapsed: sources, licences, the figure split and the
- *                    last-checked month, inside the shared CreditFold;
- *                    `false` leaves the fold out (the stub says its one
- *                    credit line in the open instead)
+ *   1  hero          the view image, the three-cell strip flush under it
+ *                    (difficulty, type, headline number), the photo credit.
+ *                    The strip is solid paper; no text sits on the picture.
+ *   2  head          title, ref chip, place, rating (the page's own markup)
+ *      hook          one sentence with a verb or a number
+ *   3  keyFacts      the key facts band (KeyFacts.jsx): four to six measured
+ *                    facts, open, label over value, from keyFactCells
+ *   4  Before you go the hazard lines (`alert`), safety first, then who this
+ *                    is not for (`notFor`, T159) under one heading, never
+ *                    folded. A not-for line that restates a hazard listed
+ *                    here is dropped by lib/notFor.js (shownHazards).
+ *   5  hand-off      the page's one primary (`primary`: the file on a route
+ *                    page, the priced trip to the base on a place page), then
+ *                    Getting there (`gettingThere`, a town before any
+ *                    coordinate; `false` leaves it out, for the honest stub)
+ *                    and Take it with you (`takeAway`, the secondaries) side
+ *                    by side from 900 px. The page bar's share icon is the
+ *                    one share door; Report a problem sits in the sources.
+ *   6  map           sticky in the right-hand column on a desktop, after the
+ *                    hand-off on a phone
+ *   7  signature     the section's own figure (T181), measured tracks only
+ *   8  rows          at most five folded rows (DetailRow below), each an icon,
+ *                    a label and a preview that never repeats the hook
+ *   9  exits         three computed ways out, then NearbyOutdoors as `nearby`
+ *  10  sources       collapsed: sources, licences, the figure split, the
+ *                    report and upload doors, inside the shared CreditFold;
+ *                    `false` leaves the fold out
  *
  * Desktop is a 60/40 grid: every slot in the left column, the map alone in
  * the right one, sticky. The grid is one DOM order for both widths, so the
@@ -180,8 +175,11 @@ export function DetailPage({
   hero = null,
   head = null,
   hook = null,
+  keyFacts = null,
+  keyFactsLead = null,
   notFor = null,
   alert = null,
+  primary = null,
   map = null,
   signature = null,
   rows = [],
@@ -266,9 +264,35 @@ export function DetailPage({
 
             {hook && <p className="dsk-hook" data-slot="hook">{hook}</p>}
 
-            {notFor && <div className="dsk-notfor" data-slot="notfor">{notFor}</div>}
+            <KeyFacts cells={keyFacts} lead={keyFactsLead} />
 
-            {alert && <div className="dsk-alert" data-slot="alert">{alert}</div>}
+            {(alert || notFor) && (
+              <section className="dsk-before" data-slot="beforego" aria-labelledby="dsk-before-h">
+                <h2 id="dsk-before-h">{t('detail.beforeGo')}</h2>
+                {alert && <div className="dsk-alert" data-slot="alert">{alert}</div>}
+                {notFor && <div className="dsk-notfor" data-slot="notfor">{notFor}</div>}
+              </section>
+            )}
+
+            {(primary || gettingThere !== false || takeAway) && (
+              <div className="dsk-handoff" data-slot="handoff">
+                {primary && <div className="dsk-primary-row">{primary}</div>}
+                <div className="dsk-handoff-cols">
+                  {gettingThere !== false && (
+                    <section className="dsk-sec dsk-getting" data-slot="getting-there" aria-labelledby="dsk-getting-h">
+                      <h2 id="dsk-getting-h">{t('detail.gettingThere')}</h2>
+                      {gettingThere || <p className="dsk-note">{t('detail.gettingThereNone')}</p>}
+                    </section>
+                  )}
+                  {takeAway && (
+                    <section className="dsk-sec dsk-take" data-slot="take-away" aria-labelledby="dsk-take-h">
+                      <h2 id="dsk-take-h">{t('detail.takeAway')}</h2>
+                      <div className="dsk-acts">{takeAway}</div>
+                    </section>
+                  )}
+                </div>
+              </div>
+            )}
 
             {map && <div className="dsk-map" data-slot="map">{map}</div>}
 
@@ -282,20 +306,6 @@ export function DetailPage({
                   </DetailRow>
                 ))}
               </div>
-            )}
-
-            {gettingThere !== false && (
-              <section className="dsk-sec dsk-getting" data-slot="getting-there" aria-labelledby="dsk-getting-h">
-                <h2 id="dsk-getting-h">{t('detail.gettingThere')}</h2>
-                {gettingThere || <p className="dsk-note">{t('detail.gettingThereNone')}</p>}
-              </section>
-            )}
-
-            {takeAway && (
-              <section className="dsk-sec dsk-take" data-slot="take-away" aria-labelledby="dsk-take-h">
-                <h2 id="dsk-take-h">{t('detail.takeAway')}</h2>
-                <div className="dsk-acts">{takeAway}</div>
-              </section>
             )}
 
             {(exits.length > 0 || nearby) && (

@@ -450,7 +450,10 @@ const order = await page.evaluate(() => {
   const map = document.querySelector('.dsk-map');
   const rows = document.querySelector('.dsk-rows');
   if (!swim || !map || !rows) return 'missing';
-  if (!swim.closest('[data-slot="alert"]') || swim.closest('[hidden]')) return 'folded';
+  // T386 (design wave V3) moved the verdict from the alert slot to the head
+  // of the key facts band (carta-design "Detail page grammar"): still never
+  // folded and still before the map and every row, only higher up.
+  if (!swim.closest('[data-slot="keyfacts"]') || swim.closest('[hidden]')) return 'folded';
   const ahead = (other) => swim.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING;
   return ahead(map) && ahead(rows) ? 'before' : 'after';
 });
@@ -500,8 +503,15 @@ if (months > 0) {
 }
 
 const hazards = await page.locator('.lpage-hazards li').count();
+// T386 merged the hazard list and the not-for lines into one Before you go
+// block under one heading (carta-design "Detail page grammar"); the list kept
+// its own amber block but its heading became the block's one h2, so the check
+// is that the hazards sit in that block and the block has exactly one h2.
 check('hazards, when there are any, are their own block',
-  hazards === 0 || (await page.locator('.lpage-hazards h2').count()) === 1, `${hazards} hazards`);
+  hazards === 0 || (await page.evaluate(() => {
+    const block = document.querySelector('.lpage-hazards')?.closest('[data-slot="beforego"]');
+    return Boolean(block) && block.querySelectorAll('h2').length === 1;
+  })), `${hazards} hazards`);
 
 const bars = await page.locator('.bpage-bars li').count();
 check('the score is broken into its parts', bars >= 4, `${bars} components`);

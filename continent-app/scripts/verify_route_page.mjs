@@ -107,13 +107,25 @@ if (subjects.surf) {
   const bar = page.locator('[data-testid="route-surface"]');
   check('the surface bar renders', await bar.count() === 1);
   if (await bar.count()) {
-    const widths = await page.locator('.rsurf-seg').evaluateAll(
+    // Scoped to the surface bar: the slope profile draws .rsurf-seg too, and
+    // since T386 the surface bar sits in the same signature panel, so a
+    // page-wide locator summed nine bars (900%).
+    const widths = await page.locator('[data-testid="route-surface"] .rsurf-seg').evaluateAll(
       (els) => els.map((e) => parseFloat(e.style.width) || 0));
     const sum = widths.reduce((a, b) => a + b, 0);
     check('its segments cover the route', Math.abs(sum - 100) <= 2, `${sum.toFixed(0)}%`);
-    const keys = (await page.locator('.rsurf-keys').textContent()) || '';
+    // Two key lists carry .rsurf-keys since T181 (the slope profile's own
+    // keys are .rsurf-keys.sig-keys), and the bare locator failed in strict
+    // mode before it ever read a key (found by T386's baseline run). The
+    // surface bar's own keys are read inside its wrapper.
+    const keys = (await page.locator('[data-testid="route-surface"] .rsurf-keys').first().textContent()) || '';
     check('the unmapped share is shown, not hidden', /not mapped/i.test(keys), keys.slice(0, 80));
-    const painted = await page.locator('.rsurf-seg').evaluateAll((els) => els.every((e) => {
+    // The unknown share is drawn as the bar's own ground on purpose (MixBar
+    // in RouteFigures.jsx: "an absence of a reading never looks like one more
+    // surface"), so it is the one segment left unpainted; the check reads
+    // the measured segments (updated by T386, whose baseline run reached
+    // this line for the first time since the strict-mode failure above).
+    const painted = await page.locator('[data-testid="route-surface"] .rsurf-seg:not(.is-unknown)').evaluateAll((els) => els.every((e) => {
       const bg = getComputedStyle(e).backgroundImage + getComputedStyle(e).backgroundColor;
       return bg && !/rgba\(0, 0, 0, 0\)$/.test(getComputedStyle(e).backgroundColor)
         || /gradient/.test(getComputedStyle(e).backgroundImage);

@@ -347,20 +347,20 @@ check('no untranslated keys leaked into the page', !/beach\.[a-zA-Z]/.test(await
 const bars = await page.locator('.bpage-bars li').count();
 check('the score is broken into its parts', bars >= 4, `${bars} components`);
 
-// The score badge is a door. Tapping it shows the same components WITH their
-// weights, which is what makes a 6.7 something a reader can argue with rather
-// than a verdict handed down.
-const scoreBtn = page.locator('.bpage-scorebtn');
-check('the score badge is tappable', await scoreBtn.count() === 1);
-await scoreBtn.click();
-await page.waitForTimeout(400);
-const parts = await page.locator('.bpage-parts li').count();
-check('tapping the score opens the breakdown', parts >= 4, `${parts} rows`);
-const weights = await page.locator('.bpage-part-w').count();
+// The breakdown WITH its weights is what makes a 6.7 something a reader can
+// argue with rather than a verdict handed down. Until T386 the score badge in
+// the head was a second door to it (a chip button and a "See how this score
+// is made up" link); design wave V3 removed both duplicates, so the "How the
+// score is built" row is the one door and carries each component's weight.
+// The checks now prove the badge is no longer a button and that the row
+// shows the weights.
+check('the score badge is a measure, not a second door',
+  await page.locator('.bpage-scorebtn, .bpage-scorehint').count() === 0);
+await openRowWith(page, '.bpage-bars');
+const parts = await page.locator('.bpage-bars li').count();
+check('the score row opens the breakdown', parts >= 4, `${parts} rows`);
+const weights = await page.locator('.bpage-bars .bpage-part-w').count();
 check('the breakdown shows each component weight', weights >= 4, `${weights} weights`);
-await scoreBtn.click();
-await page.waitForTimeout(300);
-check('tapping again closes it', await page.locator('.bpage-parts li').count() === 0);
 await openRowWith(page, '.bpage-facts');
 const facts = await page.locator('.bpage-facts').innerText().catch(() => '');
 check('the facts list renders', facts.length > 10, facts.replace(/\n/g, ' ').slice(0, 100));

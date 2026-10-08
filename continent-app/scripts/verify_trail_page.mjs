@@ -212,8 +212,13 @@ check('KML carries the drawn line', /<LineString>/.test(kml) && /<coordinates>/.
 
 // ── Share link ────────────────────────────────────────────────────────────
 // T180 renamed the button "Send the link" (spec 5.4: take it with you, send to
-// phone); the bar's share icon keeps the name "Share".
-await page.locator('.tpage-act', { hasText: /send the link/i }).click();
+// phone); the bar's share icon keeps the name "Share". T386 (design wave V3)
+// removed "Send the link" from the hand-off band: the page bar's share icon
+// is the one share door (carta-design "Detail page grammar"), so the check
+// presses that icon and still proves the copied link reopens the trail.
+check('the band carries no second share door',
+  await page.locator('.tpage-act', { hasText: /send the link/i }).count() === 0);
+await page.locator('.tpage-bar-act:not(.fav-star)').click();
 await page.waitForTimeout(700);
 const copied = await page.evaluate(() => navigator.clipboard.readText().catch(() => ''));
 check('share copies a reopenable link', /#trail=\d+&tc=AL/.test(copied), copied.slice(-40));
