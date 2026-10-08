@@ -168,7 +168,20 @@ await page.waitForTimeout(1600);
 check('mountains category carries the country picker',
   await page.locator('.places-country:visible').count() === 1);
 // The layer's own chips: the two ways up lead, and each carries its count.
-const mtnChips = await page.locator('.places-facets .places-class').allInnerTexts();
+// T384 (brief V3-1): only the short group (how to reach the top) stays
+// inline; the difficulty and kind groups moved to the Filters sheet, so the
+// chips are read from the row and the sheet together, and the sheet must
+// hold more groups than the row.
+const mtnInline = await page.locator('.places-facets .places-class').allInnerTexts();
+await page.locator('.places-filter-btn:visible').first().click();
+await page.waitForTimeout(600);
+const mtnSheet = await page.locator('.fsheet-places .fchip').allInnerTexts();
+const mtnSheetGroups = await page.locator('.fsheet-places .fsheet-field').count();
+await page.keyboard.press('Escape');
+await page.waitForTimeout(400);
+check('the mountain sheet holds every group the row leaves out',
+  mtnSheetGroups > 1 && mtnInline.length < mtnSheet.length, `${mtnInline.length} inline, ${mtnSheet.length} in ${mtnSheetGroups} sheet groups`);
+const mtnChips = [...mtnInline, ...mtnSheet];
 check('mountain chips offer the ways up and the kinds',
   mtnChips.length >= 5 && /walk/i.test(mtnChips.join(' ')) && /climb/i.test(mtnChips.join(' ')),
   mtnChips.join(' | ').split(String.fromCharCode(10)).join(' '));

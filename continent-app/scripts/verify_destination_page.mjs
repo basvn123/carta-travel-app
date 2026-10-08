@@ -29,7 +29,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync, statSync } from 'node:fs';
 
-const PORT = 4207;
+// T385: CARTA_PORT points the harness at a preview a session already runs,
+// so parallel sessions never test each other's build on a shared port.
+const PORT = Number(process.env.CARTA_PORT) || 4207;
 const BASE = `http://127.0.0.1:${PORT}/`;
 mkdirSync('shots', { recursive: true });
 
@@ -86,18 +88,25 @@ check('city heading says Valbona', /valbona/i.test(await page.locator('.destp-ci
 const galleryN = await page.locator('.destp-slide').count();
 check('gallery has 5+ photographs', galleryN >= 5, `${galleryN} slides`);
 check('short intro renders from our facts', /valbona/i.test(await page.locator('.destp-short').textContent().catch(() => '')));
-check('fact strip renders', await page.locator('.dfacts .dfact').count() >= 2);
+// T385: the strip keeps only the two cost facts (the sights hours joined the
+// visit line, the best months the month block), and a gem may lack a bed
+// price, so one fact is the floor now, not two.
+check('fact strip renders', await page.locator('.dfacts .dfact').count() >= 1);
 check('score sits in the head', await page.locator('.destp-score .score-chip').count() === 1);
 
 await page.waitForTimeout(2500); // dossier sections + lazy map
 const foldsN = await page.locator('.dsec').count();
 check('folding sections render', foldsN >= 8, `${foldsN} folds`);
 check('a closed section carries its summary', await page.locator('.dsec:not(.is-open) .dsec-summary').count() > 0);
-check('highlights open by default', await page.locator('#sec-highlights.is-open').count() === 1);
+// T385: the month block, the traveller's second question, is the one fold
+// open by default; the map sits below walk and ride and opens on demand.
+check('month block open by default', await page.locator('#sec-when.is-open').count() === 1);
+// T385: the map no longer opens by default, so these two run after Expand all.
+await expandAll(page);
+await page.waitForTimeout(2500); // the lazy map chunk and its first frame
 check('map mounts', await page.locator('.dmap .maplibregl-canvas, .dmap canvas').count() > 0);
 check('layer toggle shows within-20-km or trips', await page.locator('.destp-layer', { hasText: /20 km|day trips/i }).count() > 0);
 
-await expandAll(page);
 for (const [label, sel] of [
   ['highlight tiles', '.dhl'],
   ['numbered tile badges', '.dhl-n'],
@@ -224,11 +233,18 @@ const covers = await phone.evaluate(() => {
   return r.width >= window.innerWidth - 1 && r.height >= window.innerHeight - 1;
 });
 check('phone page covers the viewport', covers);
+// T385: the map fold is closed by default now (the month block opens), so
+// open it for this check and close it again before the height check.
+const hlToggle = phone.locator('#sec-highlights .dsec-toggle');
+await hlToggle.click();
+await phone.waitForTimeout(1500);
 const stripSwipes = await phone.evaluate(() => {
   const s = document.querySelector('.dhl-strip');
   return s ? s.scrollWidth > s.clientWidth + 20 : false;
 });
 check('phone highlight tiles swipe sideways', stripSwipes);
+await hlToggle.click();
+await phone.waitForTimeout(600);
 const phoneScroll = await phone.evaluate(() => document.querySelector('.destp-scroll')?.scrollHeight || 0);
 check('phone page is compact (default state under 6,500 px)', phoneScroll < 6500, `${phoneScroll}px`);
 await phone.screenshot({ path: 'shots/destp-phone.png' });

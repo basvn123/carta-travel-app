@@ -13,8 +13,15 @@
 //   nothing lost  opening every fold restores every block the flat page had:
 //               the route list, the legs, the cost receipt, the reasons, the
 //               checks and the gallery.
-//   days        each day is a one-line header plus chips; the prose is behind
-//               "More about this day" and is still there when opened.
+//   head        (T387) the photograph carries no text, no scrim and no
+//               credit pill; the name sits in a caption band under it, and
+//               no dot separator is left on the page.
+//   days        each day is a one-line header plus chips, one card per day in
+//               the shared day track (T387); the prose is behind "More about
+//               this day", not mounted while closed, and back when opened.
+//   cost        (T387) the cost fold is a receipt: every estimated figure
+//               carries the tilde and "est.", no line is a flight, and the
+//               fact row's day figure is the receipt's day line.
 //   photos      each day carries a photo strip, every picture of it loaded,
 //               every one is captioned, and each goes through srcset rather
 //               than a bare src.
@@ -91,6 +98,24 @@ for (const id of ['why', 'checks', 'gallery']) {
 check('a closed fold still carries its summary',
   await page.locator('.tpage .dsec:not(.is-open) .dsec-summary').count() > 0);
 
+// The head (T387, brief V3.11 and the caption band rule): the old hero wrote
+// the themes, the title, the countries and the score over a gradient scrim on
+// the photograph. These assertions are new, for the new head: nothing is
+// written on the photo, and the title is the h1 in the band under it.
+const photoText = await page.locator('.itin-photohero').innerText().catch(() => 'missing');
+check('no text on the photograph', photoText.trim() === '', JSON.stringify(photoText.slice(0, 40)));
+check('no scrim over the photograph',
+  await page.locator('.itin-photohero-scrim, .itin-photohero-text').count() === 0);
+check('the caption band sits flush under the photo', await page.evaluate(() => {
+  const photo = document.querySelector('.itin-photohero');
+  const band = photo && photo.nextElementSibling;
+  if (!band || !band.classList.contains('itin-capband')) return false;
+  return Math.abs(band.getBoundingClientRect().top - photo.getBoundingClientRect().bottom) <= 1;
+}));
+check('the page title is the h1 in the band',
+  await page.locator('.itin-capband h1').count() === 1);
+check('no dot separators left on the page', await page.locator('.tpage .itin-dot').count() === 0);
+
 // The map must not cost a WebGL context while the fold above it is closed.
 await page.locator('#sec-route .dsec-toggle').click();
 await page.waitForTimeout(600);
@@ -103,6 +128,11 @@ check('maplibre mounts when the route is opened', await page.locator('#sec-route
 // Days: header, chips, photos, folded prose.
 const days = await page.locator('.tday').count();
 check('every day renders', days >= 4, `${days} days`);
+// New with T387: the days run in the shared day track (DayTrack.jsx), one
+// card per day, as on the journey page.
+check('the days run in the day track',
+  await page.locator('#sec-days .dtrack > .tday').count() === days,
+  `${await page.locator('#sec-days .dtrack > .tday').count()} of ${days} in the track`);
 check('a day has a one-line header', await page.locator('.tday .tday-title').count() === days);
 check('days carry fact chips', await page.locator('.tday-chips .tday-chip').count() > 0);
 
@@ -120,7 +150,11 @@ const genericCap = await page.evaluate(() => Array.from(document.querySelectorAl
   .filter((tx) => !tx || /^day \d/i.test(tx)).length);
 check('no generic day captions', genericCap === 0, `${genericCap}`);
 
-// The prose is folded, not deleted.
+// The prose is folded, not deleted. Before T387 these two checks failed:
+// TripPage kept every day's .tday-prose mounted inside a CSS-collapsed panel
+// (visibility hidden, a 0fr grid row), so the count was never 0. The page now
+// mounts the prose only while its disclosure is open; the selectors are
+// unchanged.
 const moreBtns = await page.locator('.tday-more').count();
 check('days offer "More about this day"', moreBtns > 0, `${moreBtns}`);
 check('day prose is closed by default', await page.locator('.tday-prose').count() === 0);
@@ -157,6 +191,7 @@ await page.waitForTimeout(800);
 for (const [label, sel] of [
   ['the route list', '#sec-route .itin-stop'],
   ['the legs', '#sec-route .itin-leg'],
+  // Same selector after T387: the receipt keeps .itin-cost and its li lines.
   ['the cost receipt', '#sec-cost .itin-cost li'],
   ['the reasons', '#sec-why .itin-why li'],
   ['the checks', '#sec-checks .itin-check-pass'],
@@ -166,6 +201,26 @@ for (const [label, sel] of [
   check(`${label} survived the restructure`, n > 0, `${n}`);
 }
 
+// The receipt (T387, brief row C10): every figure that is an estimate says so
+// with the tilde and "est." in words, no line is a flight, and the fact row's
+// day figure is the receipt's own day line (one day figure per page).
+const receiptFigs = await page.locator('#sec-cost .itin-cost li b').allInnerTexts();
+const unmarked = receiptFigs.filter((tx) => !/^~ .+ est\.$/.test(tx.trim()));
+check('every receipt figure carries the tilde and "est."', receiptFigs.length > 0 && unmarked.length === 0,
+  unmarked.slice(0, 3).join(' | ') || `${receiptFigs.length} figures`);
+const receiptText = await page.locator('#sec-cost .itin-receipt').innerText().catch(() => '');
+check('no flight in the receipt', receiptText !== '' && !/flight|fly|plane/i.test(receiptText));
+check('the receipt has a total over a 2px rule',
+  await page.locator('#sec-cost .itin-cost-sum').count() === 1);
+const dayLine = (await page.locator('#sec-cost .itin-cost-day b').innerText().catch(() => '')).trim();
+const factDay = await page.evaluate(() => {
+  const vals = Array.from(document.querySelectorAll('.itin-facts .tpage-fact-val'));
+  const hit = vals.find((el) => /~/.test(el.textContent));
+  return hit ? hit.textContent.trim() : '';
+});
+check('the fact row reads the day line of the receipt', dayLine !== '' && dayLine === factDay,
+  `${factDay} vs ${dayLine}`);
+
 await page.waitForTimeout(2000);
 const broken = await page.evaluate(() => Array.from(document.querySelectorAll('.tpage img'))
   .filter((im) => im.complete && im.naturalWidth === 0 && !im.hidden)
@@ -173,8 +228,10 @@ const broken = await page.evaluate(() => Array.from(document.querySelectorAll('.
 check('no broken images', broken.length === 0, broken.slice(0, 3).join(' '));
 
 // House rule: no em dashes, no en dashes, no middot or bullet separators.
+// The four characters are written as escapes (T387) so this file holds none
+// of them itself; the set is the same as before.
 const pageText = await page.locator('.tpage').innerText();
-const banned = [...new Set([...pageText].filter((c) => '—–·•'.includes(c)))];
+const banned = [...new Set([...pageText].filter((c) => '\u2014\u2013\u00b7\u2022'.includes(c)))];
 check('no em dash, en dash, middot or bullet', banned.length === 0,
   banned.map((c) => 'U+' + c.charCodeAt(0).toString(16)).join(' '));
 
@@ -221,8 +278,10 @@ if (await style.count()) {
     check('journey page opens', await jp.locator('.jpage').isVisible());
     const jfolds = await jp.locator('.jpage .dsec').count();
     check('the journey page is built from folds', jfolds >= 5, `${jfolds} folds`);
+    // T387 (trips brief V3.6): the week at a glance is the first block of
+    // the Fit group (#sec-fit) now, which opens on arrival.
     check('the week at a glance opens on arrival',
-      await jp.locator('#sec-facts.is-open').count() === 1);
+      await jp.locator('#sec-fit.is-open').count() === 1);
     check('the day-by-day opens on arrival',
       await jp.locator('#sec-itin.is-open').count() === 1);
     check('the data sheet is closed on arrival',

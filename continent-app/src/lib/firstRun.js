@@ -223,6 +223,39 @@ export function receiptFooter(dest, receipt, opts = {}, { datesOwn = false, meta
   return options.sort((a, b) => a.total - b.total)[0];
 }
 
+/**
+ * What a receipt measured, in one word, so its orientation sentence and the
+ * landing page's town toggles say the same thing the provenance rows say
+ * (T382, register row T371-b): 'all' when the bed and the food are both this
+ * town's own, 'bed' or 'food' when only one is, 'none' when national figures
+ * (or the country median standing in for a broken harvest) price both.
+ * A typed fare is the traveller's own and does not count either way.
+ */
+export function receiptMix(receipt) {
+  if (!receipt) return null;
+  const stay = receipt.lines?.find((l) => l.key === 'stay');
+  const ground = receipt.lines?.find((l) => l.key === 'ground');
+  const bed = stay?.level === 'city';
+  const food = ground?.level === 'city';
+  if (bed && food) return 'all';
+  if (bed) return 'bed';
+  if (food) return 'food';
+  return 'none';
+}
+
+/**
+ * True when this town measures the stay tier asked for, so a select can say
+ * "not measured here" beside a tier that would only fall back (T382). The
+ * entire place is the receipt's base figure and is never labelled: where it
+ * is national, the receipt's own row already says so.
+ */
+export function tierMeasured(dest, opts, tier) {
+  if (!tier || tier === 'home') return true;
+  const r = priceReceipt(dest, { ...opts, stayTier: tier });
+  const stay = r?.lines.find((l) => l.key === 'stay');
+  return !!(stay && !stay.tierFallback && stay.tier === tier);
+}
+
 function haversineKm(lat1, lon1, lat2, lon2) {
   const p = Math.PI / 180;
   const a = Math.sin(((lat2 - lat1) * p) / 2) ** 2

@@ -44,7 +44,14 @@ export function fmtMonthRanges(nums) {
     .join(', ');
 }
 
-export function ClimateStrip({ climate }) {
+/**
+ * `month` (1 to 12) outlines the traveller's month, the month the receipt
+ * prices (carta-design "Month": the chosen month outlined 2 px --ink on every
+ * strip in view). `figures` prints each month's night low and rain under its
+ * initial, so a phone or a keyboard reads every month without a hover
+ * (T385, brief V3-4); the hover tip is kept only where `figures` is off.
+ */
+export function ClimateStrip({ climate, month = null, figures = false }) {
   const { t } = useI18n();
   const [hoverI, setHoverI] = React.useState(null);
   const months = climate.m || [];
@@ -69,13 +76,20 @@ export function ClimateStrip({ climate }) {
       {bestLabel && (
         <p className="climate-best">{t('bestTime.climateBest', { months: bestLabel })}</p>
       )}
-      <div className="climate-chart">
+      {figures && <p className="climate-key">{t('dest.climateKey')}</p>}
+      <div className={`climate-chart ${figures ? 'has-figures' : ''}`} role={figures ? 'list' : undefined}>
         {months.map((m, i) => (
           <div
             key={i}
-            className={`climate-col ${best.has(i + 1) ? 'is-best' : ''}`}
-            onMouseEnter={() => setHoverI(i)}
-            onMouseLeave={() => setHoverI(null)}
+            className={`climate-col ${best.has(i + 1) ? 'is-best' : ''} ${month === i + 1 ? 'is-chosen' : ''}`}
+            onMouseEnter={figures ? undefined : () => setHoverI(i)}
+            onMouseLeave={figures ? undefined : () => setHoverI(null)}
+            role={figures ? 'listitem' : undefined}
+            aria-label={figures ? `${MONTHS_SHORT[i]}: ${t('bestTime.climateTip', {
+              hi: m[T_HIGH] == null ? '?' : Math.round(m[T_HIGH]),
+              lo: m[T_LOW] == null ? '?' : Math.round(m[T_LOW]),
+              precip: m[PRECIP] == null ? '?' : Math.round(m[PRECIP]),
+            })}` : undefined}
           >
             <div className="climate-temp">{m[T_HIGH] == null ? '' : `${Math.round(m[T_HIGH])}°`}</div>
             <div className="climate-bar-track">
@@ -85,7 +99,13 @@ export function ClimateStrip({ climate }) {
               />
             </div>
             <div className="climate-name">{MONTHS_INITIAL[i]}</div>
-            {hoverI === i && (
+            {figures && (
+              <>
+                <div className="climate-lo" aria-hidden="true">{m[T_LOW] == null ? '' : `${Math.round(m[T_LOW])}°`}</div>
+                <div className="climate-rain" aria-hidden="true">{m[PRECIP] == null ? '' : Math.round(m[PRECIP])}</div>
+              </>
+            )}
+            {!figures && hoverI === i && (
               <div className="climate-tip">
                 <b>{MONTHS_SHORT[i]}</b>{' '}
                 {t('bestTime.climateTip', {

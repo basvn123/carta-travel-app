@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
   defaultStart, pickDemoTowns, priceReceipt, catalogueFacts, coverageRows, DEMO_TOWNS,
+  cheapestToWalk, receiptOpts,
 } from '../src/lib/landing.js';
 import { DEFAULT_LIFESTYLE } from '../src/lib/runtime_pricing.js';
 import { priceReceipt as firstRunReceipt } from '../src/lib/firstRun.js';
@@ -125,7 +126,41 @@ test('the demo towns come in order, skip a missing one, and never come up empty'
 
 test('catalogue facts count measured beds and food, and read the place count from meta', () => {
   const f = catalogueFacts({ AAA: measured, BBB: national }, { n_destinations: 2 });
-  assert.deepEqual(f, { places: 2, countries: 2, bedsMeasured: 1, foodMeasured: 1 });
+  // T382 added asOf (the catalogue's date, for the instrument line); null without meta.generated_at.
+  assert.deepEqual(f, { places: 2, countries: 2, bedsMeasured: 1, foodMeasured: 1, asOf: null });
+  assert.equal(catalogueFacts({}, { generated_at: '2026-06-07T13:21:17+00:00' }).asOf, '2026-06-07');
+});
+
+test('the priced list ranks towns to walk from by the cost index day figure, at most five (T382)', () => {
+  const dests = {};
+  const idx = new Map();
+  const add = (id, dayEur, cats, levels = ['city', 'city']) => {
+    dests[id] = { id, city: id, categories: cats };
+    idx.set(id, { dayEur, stayLevel: levels[0], foodLevel: levels[1] });
+  };
+  add('A', 60, ['hiking']);
+  add('B', 40, ['hiking'], ['country', 'city']);
+  add('C', 30, ['city']);               // not a town to walk from
+  add('D', 50, ['hiking', 'alps']);
+  add('E', 45, ['hiking'], ['city', 'country']);
+  add('F', 70, ['hiking']);
+  add('G', 80, ['hiking']);
+  add('H', null, ['hiking']);           // no figure, never listed
+  const out = cheapestToWalk(dests, idx);
+  assert.deepEqual(out.map((r) => r.id), ['B', 'E', 'D', 'A', 'F']);
+  assert.deepEqual(out.map((r) => r.est), [true, true, false, false, false]);
+  assert.equal(out[0].dayEur, idx.get('B').dayEur);
+  assert.deepEqual(cheapestToWalk(dests, null), []);
+  assert.equal(cheapestToWalk(dests, idx, 2).length, 2);
+});
+
+test('the landing receipt takes the cost row the first-run receipt takes (T382)', () => {
+  const o = receiptOpts(input({ costRow: { stayLevel: 'region', stayEur: 30 } }));
+  assert.equal(o.costRow.stayEur, 30);
+  assert.equal(o.to, '2026-11-14');
+  const plain = priceReceipt(measured, input());
+  const fr = firstRunReceipt(measured, receiptOpts(input()));
+  assert.equal(plain.total, fr.total);
 });
 
 test('coverage rows sum published and listed and leave not-applicable regions out', () => {

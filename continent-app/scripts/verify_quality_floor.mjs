@@ -631,11 +631,14 @@ async function exploreFlow(browser, vp) {
 // Each step opens itself and returns false when the surface did not render.
 const FOLDS = 'button.dsec-toggle[aria-expanded="false"], button.tday-more[aria-expanded="false"], button.jpage-lrow-btn[aria-expanded="false"]';
 const visible = (page, sel) => page.locator(sel).locator('visible=true').first();
+// T387: the Trips category (the Destinations tab's default) draws its style
+// cards as .jstyle-card caption-band cards, no longer .places-ccard, so the
+// two waits below accept either.
 const PAGES = {
-  'dest-list': async (page) => { await open(page, ''); await page.locator('.places-ccard').first().waitFor({ timeout: 120000 }); await page.waitForTimeout(1500); },
+  'dest-list': async (page) => { await open(page, ''); await page.locator('.places-ccard, .jstyle-card').first().waitFor({ timeout: 120000 }); await page.waitForTimeout(1500); },
   'dest-trails': async (page) => {
     await open(page, '');
-    await page.locator('.places-ccard').first().waitFor({ timeout: 120000 });
+    await page.locator('.places-ccard, .jstyle-card').first().waitFor({ timeout: 120000 });
     await visible(page, '.side-cat:has-text("Trails"), .places-cat:has-text("Trails")').click();
     await page.waitForTimeout(3000);
   },
@@ -674,7 +677,7 @@ const PAGES = {
   },
   account: async (page) => {
     await open(page, '');
-    await page.locator('.places-ccard').first().waitFor({ timeout: 120000 });
+    await page.locator('.places-ccard, .jstyle-card').first().waitFor({ timeout: 120000 });
     await visible(page, '.account-avatar-btn, .bottom-nav-item:has-text("Account")').click();
     await page.waitForTimeout(1500);
   },

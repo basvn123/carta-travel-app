@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   pickIcons, buildRails, railMatches, photoOf, cycleRouteKey, OPENING_RAILS,
-  ICON_MAX, ICON_MIN, RAIL_MIN, RAIL_CAP,
+  ICON_MAX, ICON_MIN, RAIL_MIN, RAIL_CAP, RAIL_MAX,
 } from '../src/lib/openingScreen.js';
 
 const pic = (u) => [{ u }];
@@ -23,7 +23,9 @@ test('Band 1 ranks by acclaim and takes at most two per country', () => {
   assert.ok(!icons.some((r) => r.id === 'c'), 'a third Italian beach is skipped');
 });
 
-test('Band 1 never uses a row without its own photograph, and snaps to six or nine', () => {
+// T384 (brief V3-5): Band 1 is six icons now, so ICON_MAX and ICON_MIN are
+// both six and "snaps to six or nine" reads "caps at six".
+test('Band 1 never uses a row without its own photograph, and caps at six', () => {
   const rows = Array.from({ length: 8 }, (_, i) => beach(`p${i}`, `C${i}`, 1 - i / 10));
   rows.push({ ...beach('nophoto', 'XX', 2), images: [] });
   const icons = pickIcons('beach', rows);
@@ -91,8 +93,19 @@ test('a Europe-wide rail takes each country in turn', () => {
 
 test('every rail title names an intent key, and no rail promises flights or crowds', () => {
   for (const [layer, defs] of Object.entries(OPENING_RAILS)) {
-    assert.ok(defs.length >= 4 && defs.length <= 6, layer);
+    // T384 added the 5 to 20 km rail in front of the six trail rails; the
+    // seventh definition is allowed because buildRails stops at RAIL_MAX.
+    assert.ok(defs.length >= 4 && defs.length <= RAIL_MAX + 1, layer);
     for (const d of defs) assert.match(d.titleKey, /^open\.[a-z]+\.rail[A-Z]/);
     assert.ok(!defs.some((d) => /airport|august|quiet/i.test(d.key)));
   }
+});
+
+test('the first trail rail is the 5 to 20 km walk, over the half and day bands', () => {
+  const first = OPENING_RAILS.trail[0];
+  assert.equal(first.key, 'day');
+  assert.deepEqual(first.facets.bands, ['half', 'day']);
+  const walk = (id, m) => ({ id, name: `Walk ${id}`, country: 'AT', category: 'hike', distance_m: m, rating: 7 });
+  const rows = [walk(1, 4000), walk(2, 6000), walk(3, 12000), walk(4, 19000), walk(5, 9000), walk(6, 25000)];
+  assert.equal(railMatches('trail', rows, first.facets).length, 4);
 });

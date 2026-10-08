@@ -58,6 +58,16 @@ test('a walk: length first (the harness parses it), time, climb uphill; loop and
   assert.deepEqual(fill.hook.map((h) => h.cls), ['places-card-kind', 'places-card-diff est', 'places-card-hl', 'places-card-hl']);
 });
 
+test('a waymarked walk says so right after its kind, and the hook stays at four', () => {
+  const tr = {
+    name: 'Sentiero', category: 'hike', country: 'IT', distance_m: 12400, duration_min: 250,
+    ascent_m: 800, f: { g: 'hard', gs: 'tagged', hl: ['summit', 'waterfall'], way: true },
+  };
+  const fill = trailFilling({ tr, assoc: { dest: null }, kindKey: 'trails.hike' }, { t, countryName: () => 'Italy' });
+  assertCard(fill);
+  assert.deepEqual(fill.hook.map((h) => h.cls), ['places-card-kind', 'places-card-way', 'places-card-diff', 'places-card-hl']);
+});
+
 test('a city day trades the climb for its stops', () => {
   const tr = { name: 'Old town', category: 'citytrip', distance_m: 5200, duration_min: 180, n_stops: 7 };
   const fill = trailFilling({ tr, assoc: {}, kindKey: 'trails.cityDay' }, { t });

@@ -17,10 +17,11 @@
  * What this file adds is only what the landing page needs and the first-run
  * receipt does not: the three demo towns, the default stay, a footer that
  * names an input this page has (the stay or the nights, never the dates,
- * which the landing page does not ask), and the coverage counts. The
- * receipt's markup stays the landing page's own because FirstRunReceipt
- * carries its own primary ("Set your dates") and the flight door, and the
- * landing page has one primary of its own (register row T209-a).
+ * which the landing page does not ask), the coverage counts and the priced
+ * list of towns to walk from. Since T382 both pages draw the receipt through
+ * components/ReceiptCard.jsx (register row T209-a); FirstRunReceipt keeps
+ * its own primary ("Set your dates") and the flight door, and the landing
+ * page keeps one primary of its own.
  *
  * Carta prices no flight (owner decision 2026-10-02, T272, T273); no fare
  * table is read here and no fare is passed in.
@@ -74,17 +75,29 @@ export function todayIso(now = new Date()) {
   return now.toISOString().slice(0, 10);
 }
 
-/** The first-run receipt for one town and the landing page's inputs. */
-function price(dest, { people, nights, tier, start, lifestyle, model }) {
-  if (!dest || !start) return null;
-  return firstRunReceipt(dest, {
+/** The receipt options firstRun.js reads, for the landing page's inputs.
+ *  Since T382 the inputs are the app's shared choices (people, stay tier,
+ *  the shared dates), and `costRow` is the town's cost index row, the one
+ *  the first-run receipt passes too, so a broken harvest is repaired the
+ *  same way on both pages and the two receipts agree to the cent. */
+export function receiptOpts({ people, nights, tier, start, lifestyle, model, costRow }) {
+  if (!start) return null;
+  return {
     from: start,
     to: addDays(start, nights),
     people,
     stayTier: tier,
     lifestyle,
     accommodationModel: model,
-  });
+    costRow: costRow || null,
+  };
+}
+
+/** The first-run receipt for one town and the landing page's inputs. */
+function price(dest, input) {
+  const opts = receiptOpts(input);
+  if (!dest || !opts) return null;
+  return firstRunReceipt(dest, opts);
 }
 
 /** The towns to offer: DEMO_TOWNS that exist and price, else the measured
@@ -116,10 +129,8 @@ export function priceReceipt(dest, input) {
   if (!r) return null;
   const stay = r.lines.find((l) => l.key === 'stay');
   const ground = r.lines.find((l) => l.key === 'ground');
-  let alt = receiptFooter(dest, r, {
-    from: r.from, to: r.to, people: input.people, stayTier: input.tier,
-    lifestyle: input.lifestyle, accommodationModel: input.model,
-  }, { datesOwn: false, meta: { stay_tiers_available: DEMO_TIERS.filter((k) => k !== 'home') } });
+  let alt = receiptFooter(dest, r, receiptOpts(input),
+    { datesOwn: false, meta: { stay_tiers_available: DEMO_TIERS.filter((k) => k !== 'home') } });
   if (alt?.kind !== 'tier') {
     const altNights = input.nights === 4 ? 7 : 4;
     const n = price(dest, { ...input, nights: altNights });
@@ -150,7 +161,38 @@ export function catalogueFacts(destinations, meta) {
     if (d?.costs?.level === 'city') foodMeasured += 1;
   }
   const places = meta?.n_destinations || rows.length;
-  return { places, countries: countries.size, bedsMeasured, foodMeasured };
+  // The catalogue's own date, for the instrument line under the title
+  // (T382): the day the pipeline wrote this catalogue, never today.
+  const asOf = typeof meta?.generated_at === 'string' ? meta.generated_at.slice(0, 10) : null;
+  return { places, countries: countries.size, bedsMeasured, foodMeasured, asOf };
+}
+
+/** The catalogue category a town to walk from carries (the launch speaks to
+ *  hikers first, T203). */
+export const WALK_CATEGORY = 'hiking';
+export const CHEAPEST_N = 5;
+
+/**
+ * The priced list for the undecided (T382, rule R1 of DIRECTION.md part 9):
+ * the towns to walk from with the lowest day cost per person, cheapest
+ * first, read from the cost index the Explore cards render
+ * (lib/costIndex.js computeCosts, handed down as FirstRunContext.indices),
+ * so each figure is the Explore card's figure for the same inputs. Returns
+ * [{ id, dest, dayEur, est }] with at most `n` rows; `est` is true when a
+ * national figure (or the country median) stands in for the bed or the food.
+ * Ties fall back to the id so the order never flickers between renders.
+ */
+export function cheapestToWalk(destinations, indices, n = CHEAPEST_N) {
+  if (!destinations || !indices?.get) return [];
+  const rows = [];
+  for (const [id, d] of Object.entries(destinations)) {
+    if (!d || !Array.isArray(d.categories) || !d.categories.includes(WALK_CATEGORY)) continue;
+    const c = indices.get(id);
+    if (!c || !(c.dayEur > 0)) continue;
+    rows.push({ id, dest: d, dayEur: c.dayEur, est: c.stayLevel !== 'city' || c.foodLevel !== 'city' });
+  }
+  rows.sort((a, b) => (a.dayEur - b.dayEur) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  return rows.slice(0, n);
 }
 
 /** The layers the coverage table lists, in the order the page shows them. */

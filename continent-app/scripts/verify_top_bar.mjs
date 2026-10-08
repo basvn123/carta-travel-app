@@ -154,8 +154,25 @@ const rightEdge = async (page, sel) => {
     await page.locator('.header-pricing-label-short').isVisible().catch(() => false));
   check('the long pricing label is hidden here',
     !(await page.locator('.header-pricing-label').isVisible().catch(() => false)));
-  check('the pass chip wears the accent',
-    (await page.locator('.header-pricing-btn').evaluate((el) => getComputedStyle(el).backgroundColor)) === 'rgb(224, 90, 71)');
+  // This used to assert an accent fill, rgb(224, 90, 71). T360 (owner call on
+  // T166-a) made the chip a secondary: no fill, a --rule border, the accent
+  // only on its glyph, so the accent stays for each page's one primary
+  // (24-destination-workspace.css). Updated to that design, reading the
+  // tokens rather than a hard-coded colour (T381 harness baseline, T370-a).
+  check('the pass chip is a secondary with the accent on its glyph only',
+    await page.locator('.header-pricing-btn').evaluate((el) => {
+      const probe = document.createElement('i');
+      probe.style.cssText = 'position:absolute;color:var(--accent);border:1px solid var(--rule)';
+      document.body.appendChild(probe);
+      const want = getComputedStyle(probe);
+      const cs = getComputedStyle(el);
+      const svg = el.querySelector('svg');
+      const ok = cs.backgroundColor === 'rgba(0, 0, 0, 0)'
+        && cs.borderTopColor === want.borderTopColor
+        && (!svg || getComputedStyle(svg).color === want.color);
+      probe.remove();
+      return ok;
+    }));
   check('the active tab carries the underline',
     (await page.locator('.header-nav-item.active').evaluate((el) => getComputedStyle(el, '::after').height)) === '3px');
 

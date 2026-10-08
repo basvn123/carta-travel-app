@@ -3,6 +3,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   calendarDefaultWindow, windowFits, priceReceipt, receiptFooter, nearestPricedDest,
+  receiptMix, tierMeasured,
 } from "../src/lib/firstRun.js";
 
 const dest = {
@@ -113,4 +114,27 @@ test("a solo traveller in a private room pays for the whole double room (T100)",
   // Same room, same price: one head pays what two would have shared.
   assert.equal(stay(solo), stay(pair));
   assert.ok(solo.each > pair.each);
+});
+
+test("the receipt's mix names what is measured, line by line (T382, T371-b)", () => {
+  const level = (acc, food) => ({
+    ...dest,
+    accommodation: { ...dest.accommodation, level: acc },
+    costs: { ...dest.costs, level: food },
+  });
+  assert.equal(receiptMix(priceReceipt(level("city", "city"), opts)), "all");
+  assert.equal(receiptMix(priceReceipt(level("city", "country"), opts)), "bed");
+  assert.equal(receiptMix(priceReceipt(level("country", "city"), opts)), "food");
+  assert.equal(receiptMix(priceReceipt(level("country", "country"), opts)), "none");
+  assert.equal(receiptMix(null), null);
+});
+
+test("a tier the town does not measure is said to be not measured; the entire place never is (T382)", () => {
+  const measuredTown = { ...dest, accommodation: { ...dest.accommodation, level: "city" } };
+  assert.equal(tierMeasured(measuredTown, opts, "home"), true);
+  assert.equal(tierMeasured(measuredTown, opts, "dorm"), true);
+  assert.equal(tierMeasured(measuredTown, opts, "hotel4"), false);
+  const bare = { ...dest, accommodation: { ...dest.accommodation, tiers: undefined } };
+  assert.equal(tierMeasured(bare, opts, "dorm"), false);
+  assert.equal(tierMeasured(bare, opts, "home"), true);
 });

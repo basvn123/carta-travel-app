@@ -99,6 +99,37 @@ export function bookingOrder(text) {
   return { steps, notes };
 }
 
+/**
+ * The first day of the month the week is read for (T387, brief V3.12): the
+ * first of the trip's best months that starts after this month, this year or
+ * next. Null when the trip names no best month.
+ */
+export function travelStart(bestMonths, today = new Date()) {
+  const months = (bestMonths || []).filter((m) => m >= 1 && m <= 12).sort((a, b) => a - b);
+  if (!months.length) return null;
+  const y = today.getFullYear();
+  const now = today.getMonth() + 1;
+  const next = months.find((m) => m > now);
+  return next ? new Date(y, next - 1, 1) : new Date(y + 1, months[0] - 1, 1);
+}
+
+/**
+ * The latest date a step should be booked by for a week starting on `start`:
+ * the start minus the SHORTER end of its lead range ("6-12 mo" before July
+ * is January). Steps with no measured lead (as soon as it opens, months,
+ * weeks, on the day) and leads under a week have no date. Returns
+ * { date, late } where late means the date has already passed, or null.
+ */
+export function dueBy(lead, start, today = new Date()) {
+  if (!lead || !start || lead.kind !== 'range') return null;
+  const n = Math.min(lead.lo, lead.hi);
+  if (lead.unit === 'd' && n < 7) return null;
+  const date = new Date(start.getTime());
+  if (lead.unit === 'm') date.setMonth(date.getMonth() - n);
+  else date.setDate(date.getDate() - n * UNIT_DAYS[lead.unit]);
+  return { date, late: date < today };
+}
+
 function hashId(s) {
   let h = 5381;
   for (let i = 0; i < s.length; i += 1) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;

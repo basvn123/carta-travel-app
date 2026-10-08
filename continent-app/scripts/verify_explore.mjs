@@ -141,7 +141,30 @@ try {
     await page.locator('.xbar .xview-toggle button').count() === 2
     && await page.locator('.xbar .xgrid-sort select').isVisible());
   check('no second results header mid-page', await page.locator('.xgrid-head').count() === 0);
-  check('the rail groups are folds', await page.locator('.explore-side details.xrail-group').count() === 5);
+  // T383 (V3): six folds, not five. The trip styles left their own tile
+  // grid and became the rail's first group, so they make chips and reset
+  // with the other filters (brief V3-7).
+  check('the rail groups are folds', await page.locator('.explore-side details.xrail-group').count() === 6);
+  // T383 (V3): the control bar states the count of what the view holds, in
+  // mono, from the same list the grid renders (brief V3-1).
+  const countLine = (await page.locator('.xbar .xbar-count').innerText().catch(() => '')).trim();
+  check('the control bar states the count', /^[\d,.\s\u00a0\u202f]+ places?$/.test(countLine), countLine);
+  // T383 (V3): the input row carries Lifestyle, the budget ceiling, the
+  // month, No car needed and the shortlist, each showing its value.
+  check('the input row shows the inputs the figures depend on',
+    await page.locator('.xinputs select').count() === 2
+    && await page.locator('.xinputs .xinput--toggle').count() === 2);
+  // T383 (V3): every rail card carries the day cost (brief V3-5).
+  const railCards = await page.locator('.railcard').count();
+  const railPriced = await page.locator('.railcard .xcard-cost-eur').count();
+  check('every rail card shows a euro-a-day figure', railCards > 0 && railCards === railPriced,
+    `${railPriced} of ${railCards}`);
+  // T383 (V3): the tier key counts the same rows as the rails, so its top
+  // tier equals the top-tier rail's N (they disagreed, 48 against 41).
+  const keyTop = (await page.locator('.tierlegend-row.rt-3 .tierlegend-count span').first().innerText().catch(() => '')).trim();
+  const topRail = await page.locator('.xrails-title', { hasText: /highest-rated/ }).first().innerText().catch(() => '');
+  check('the tier key and the top rail count the same places', keyTop !== '' && topRail.includes(` ${keyTop} `),
+    `key ${keyTop}, rail "${topRail}"`);
   check('the first two folds open, the rest closed',
     await page.locator('.explore-side details.xrail-group[open]').count() === 2);
   check('at most three collections lead the page', await page.locator('.xrails-rail').count() <= 3);
@@ -161,10 +184,17 @@ try {
     await page.locator('.xrails-more .xrails-more-chip').count() >= 3);
   await doorFold.locator('.dsec-toggle').click();
   await page.waitForTimeout(400);
+  // T383 (V3): six parts, not five. The day cost moved to the card's first
+  // line beside the score and the gauge stayed on the second, so the cost is
+  // two .xcard-cost spans (the figure, the gauge) where it was one.
   const bodyFacts = await page.locator('.xcard').first().locator('.xcard-name, .score-chip, .xcard-country, .xcard-kindword, .xcard-cost').count();
-  check('the card body carries its four facts', bodyFacts === 5, `${bodyFacts} parts`);
+  check('the card body carries its four facts', bodyFacts === 6, `${bodyFacts} parts`);
   check('the season pill left the photo', await page.locator('.xcard-best').count() === 0);
   const countBefore = await nonVillage();
+  // T383 (V3): "Size of place" (was "Kind of place") starts closed, so the
+  // fold is opened before its Village toggle is pressed.
+  await page.locator('.explore-side .xrail-legend', { hasText: /Size of place/ }).click();
+  await page.waitForTimeout(300);
   await page.locator('.explore-side .xrail-toggle', { hasText: /^Village$/ }).first().click();
   await page.waitForTimeout(700);
   const countAfter = await nonVillage();

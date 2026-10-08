@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
-import { AnnouncementBar, PassExpiryBanner } from './components/AnnouncementBar.jsx';
+import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/AnnouncementBar.jsx';
+import { SettingsLine, SettingsContext } from './components/SettingsLine.jsx';
+import { LoadingBlock } from './components/StateBlocks.jsx';
+import { CloseIcon } from './components/Icons.jsx';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
 import { DestinationPage } from './browse/DestinationPage.jsx';
@@ -47,14 +50,23 @@ const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx')
 // base, and every traveller would otherwise pay for its bytes.
 const AdminPage = lazyWithReload(() => import('./admin/AdminPage.jsx').then((m) => ({ default: m.AdminPage })));
 
-// A quiet placeholder while a lazy chunk downloads (fast; usually one frame).
+// A quiet placeholder while a lazy chunk downloads or the full catalogue
+// arrives. It sits in the tab's own region, between the top bar and the
+// bottom nav, so both stay usable while it shows (T381; carta-design
+// "Loading"): it used to cover the whole window at z-index 100, which left no
+// way to change tab until the chunk landed.
 function TabFallback() {
-  return <div className="loading-screen"><div className="pulse" /></div>;
+  const { t } = useI18n();
+  return (
+    <div className="tab-fallback">
+      <LoadingBlock label={t('state.loading')} rows={3} shape="card" />
+    </div>
+  );
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { computeCosts } from './lib/costIndex.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
-import { loadInitialState } from './lib/urlState.js';
+import { loadInitialState, tabHref, tabFromSearch } from './lib/urlState.js';
 import { readFavList, isFav, favDestIds, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
@@ -254,10 +266,21 @@ function TravelApp() {
   //
   // Stable: the handovers further down take it as a dependency, and every
   // setter it closes over is a useState setter.
-  const goToTab = useCallback((key) => {
+  //
+  // A section change also writes one history entry (T381, the navigation
+  // rule), so the browser's and the phone's Back return to the previous
+  // section instead of leaving Carta. `replace` is for the doors that open a
+  // section at boot from a shared link: they must not add an entry the
+  // traveller never asked for.
+  const activeTabRef = useRef(null);
+  const goToTab = useCallback((key, opts = {}) => {
     setSavedTripsOpen(false);
     setAccountOpen(false);
     setLifestyleOpen(false);
+    if (!opts.replace && activeTabRef.current && key !== activeTabRef.current) {
+      try { window.history.pushState({ cartaTab: key }, '', tabHref(key)); } catch { /* sandboxed */ }
+    }
+    activeTabRef.current = key;
     setActiveTab(key);
   }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen]);
   // My trips is the fifth door in the same row, so it clears the same things.
@@ -318,6 +341,7 @@ function TravelApp() {
     ? (['home', 'map', 'places', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map')
     : null;
   const [activeTab, setActiveTab] = useState(urlTab || (firstVisit ? 'home' : 'places'));
+  if (activeTabRef.current === null) activeTabRef.current = activeTab;
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -418,8 +442,8 @@ function TravelApp() {
   // opening someone else's trail.
   const [pendingTrail, setPendingTrail] = useState(() => readTrailFromUrl());
   useEffect(() => {
-    if (pendingTrail) setActiveTab('places');
-  }, [pendingTrail]);
+    if (pendingTrail) goToTab('places', { replace: true });
+  }, [pendingTrail, goToTab]);
 
   // A single DESTINATION shared as a link (#dest=gem:valbona, see
   // lib/dossier.js): read once at startup, then the full-screen destination
@@ -438,21 +462,21 @@ function TravelApp() {
   // recipient's own dates, origin and lifestyle exactly where they were.
   const [pendingBeach, setPendingBeach] = useState(() => readBeachFromUrl());
   useEffect(() => {
-    if (pendingBeach) setActiveTab('places');
-  }, [pendingBeach]);
+    if (pendingBeach) goToTab('places', { replace: true });
+  }, [pendingBeach, goToTab]);
 
   // And a single LAKE (#lake=si-lake-bled-Q207302&lc=SI, see lib/lakes.js).
   // Same hash, same reasons.
   const [pendingLake, setPendingLake] = useState(() => readLakeFromUrl());
   useEffect(() => {
-    if (pendingLake) setActiveTab('places');
-  }, [pendingLake]);
+    if (pendingLake) goToTab('places', { replace: true });
+  }, [pendingLake, goToTab]);
 
   // And a single MOUNTAIN (#mtn=ch-matterhorn-Q1090&mc=CH, lib/mountains.js).
   const [pendingMountain, setPendingMountain] = useState(() => readMountainFromUrl());
   useEffect(() => {
-    if (pendingMountain) setActiveTab('places');
-  }, [pendingMountain]);
+    if (pendingMountain) goToTab('places', { replace: true });
+  }, [pendingMountain, goToTab]);
 
   // And a single CYCLE ROUTE or TOUR (#cycle=63478&cc=GB, #tour=slug, see
   // lib/cycling.js). The reader has existed since the layer shipped and was
@@ -461,8 +485,8 @@ function TravelApp() {
   // page needs: cycling is the largest layer on those pages.
   const [pendingCycle, setPendingCycle] = useState(() => readCycleFromUrl());
   useEffect(() => {
-    if (pendingCycle) setActiveTab('places');
-  }, [pendingCycle]);
+    if (pendingCycle) goToTab('places', { replace: true });
+  }, [pendingCycle, goToTab]);
 
   // A shared REGION link (#region=COAST:ES-LUZ-CADIZ, see lib/regions.js).
   // Not a tab: the region page is a hoisted overlay like DestinationPage,
@@ -481,8 +505,8 @@ function TravelApp() {
   // primary action ("Find a town to walk from" opens the walks).
   const [pendingCategory, setPendingCategory] = useState(null);
   useEffect(() => {
-    if (pendingTrip) setActiveTab('places');
-  }, [pendingTrip]);
+    if (pendingTrip) goToTab('places', { replace: true });
+  }, [pendingTrip, goToTab]);
 
   // A published itinerary handed to the trip planner, where every stop, night
   // and date stays editable. It goes in through the same door a shared trip
@@ -655,6 +679,24 @@ function TravelApp() {
     return () => window.removeEventListener('keydown', onKey);
   }, [sharedTrip, guidesOpen, accountOpen, savedTripsOpen, selectedId, setAccountOpen, setSavedTripsOpen]);
 
+  // Back and Forward (T381, the navigation rule). goToTab writes one history
+  // entry per section change; stepping through them restores that section and
+  // closes whatever page stood over the tab, the same clearing goToTab does,
+  // so the bar never marks one section while another shows.
+  useEffect(() => {
+    const onPop = () => {
+      const key = tabFromSearch(window.location.search);
+      setSavedTripsOpen(false);
+      setAccountOpen(false);
+      setLifestyleOpen(false);
+      setSelectedId(null);
+      activeTabRef.current = key;
+      setActiveTab(key);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen]);
+
   // Stable so every Explore card's memo survives parent re-renders.
   const openDetail = useCallback((id) => {
     setSelectedId(id);
@@ -728,12 +770,11 @@ function TravelApp() {
     goToTab('day');
   }, [goToTab]);
 
-  // The town a road trip sets off from ({ name, lat, lon } from the geocoder,
-  // or null to ask again). Without it the engine cannot cost a drive at all,
-  // so this is the one answer that empties the map on purpose.
-  const setDriveHome = useCallback((point) => {
-    setChoices((prev) => ({ ...prev, drive_home: point || null }));
-  }, []);
+  // The drive start's setter went with the Destinations props that carried
+  // it and that nothing read (T381, brief V3-10). choices.drive_home stays:
+  // the URL key `dh` still restores it, and whether car trips come back
+  // through the settings line or the path is removed is the owner's call
+  // (register row T370-c).
 
   // Where you sleep, set from the trip page's Lifestyle slider (T173). The
   // same field the Lifestyle panel's tiles write, so the two never disagree.
@@ -890,6 +931,53 @@ function TravelApp() {
     departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds,
   }), [data, choices, setOrigin, exploreIndices, departDate, returnDate, defaultDates, dateBounds]);
 
+  // The settings line's values (T381, components/SettingsLine.jsx): every
+  // global input a price depends on, given once so any surface can show or
+  // read them. The dates count as the traveller's own only when they differ
+  // from the pair Carta picked, which is also when there is a travel month.
+  const setParty = useCallback((n) => {
+    setChoices((prev) => ({ ...prev, group_size: Math.max(1, Math.round(n)) }));
+  }, []);
+  const ownDates = !!(departDate && returnDate && defaultDates
+    && (departDate !== defaultDates.start || returnDate !== defaultDates.end));
+  const settings = useMemo(() => ({
+    data,
+    origin: choices.origin,
+    setOrigin,
+    departDate, returnDate, setDepartDate, setReturnDate,
+    defaultDates, dateBounds,
+    ownDates,
+    travelMonth: ownDates ? Number(String(departDate).slice(5, 7)) || null : null,
+    party: choices.group_size,
+    setParty,
+    stayTier: choices.stay_tier || 'home',
+    lifestyle: choices.lifestyle,
+    openLifestyle,
+  }), [data, choices.origin, setOrigin, departDate, returnDate, defaultDates, dateBounds,
+    ownDates, choices.group_size, setParty, choices.stay_tier, choices.lifestyle, openLifestyle]);
+
+  // Which parts of the settings line each tab shows. Explore and Destinations
+  // price from every input. The Trip planner keeps its own origin, dates and
+  // party, so the line there carries only what it reads from the shell. The
+  // landing page demonstrates its own inputs, and nothing in the Day planner
+  // reads these, so neither shows a line. Hidden under My trips and Account,
+  // which are pages of their own.
+  const settingsParts = savedTripsOpen || accountOpen ? null
+    : activeTab === 'map' || activeTab === 'places' ? undefined
+      : activeTab === 'trip' ? ['lifestyle', 'language', 'currency']
+        : null;
+
+  // The two nav badges (carta-design, count chip): the shortlist's size after
+  // My trips, and a dot on the planner door while an unsaved trip plan with
+  // stops is on this device. Re-read when the traveller moves between
+  // sections, which is when the planner has just written its draft.
+  const savedCount = favorites.size;
+  const planInProgress = useMemo(() => {
+    const d = loadTripDraft();
+    return !!(d && !d.planId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- a localStorage read, refreshed on a section change and when a page over the tab closes
+  }, [activeTab, savedTripsOpen, accountOpen]);
+
   if (recoveryMode) {
     return <ResetPasswordScreen />;
   }
@@ -976,6 +1064,7 @@ function TravelApp() {
       }}
     >
     <FirstRunContext.Provider value={firstRun}>
+    <SettingsContext.Provider value={settings}>
     <div className="app" onClick={() => setSelectedId(null)}>
       <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
@@ -984,13 +1073,15 @@ function TravelApp() {
           accountOpen={accountOpen}
           onOpenFriends={toggleFriends}
           friendsOpen={accountOpen && accountView === 'friends'}
-          onBrandClick={() => goToTab('places')}
+          onBrandClick={goToTab}
           activeTab={activeTab}
           onChangeTab={goToTab}
           savedOpen={savedTripsOpen}
           onToggleSaved={toggleSaved}
+          savedCount={savedCount}
+          planInProgress={planInProgress}
         />
-
+        {settingsParts !== null && <SettingsLine parts={settingsParts} slot />}
       </div>
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}
@@ -1130,10 +1221,6 @@ function TravelApp() {
             onOpenLifestyle={openLifestyle}
             onChangeStayTier={setStayTier}
             origin={choices.origin}
-            onChangeOrigin={setOrigin}
-            transportMode={choices.transport_mode || 'plane'}
-            driveHome={choices.drive_home}
-            onChangeDriveHome={setDriveHome}
             openTrail={pendingTrail}
             onOpenTrailConsumed={() => setPendingTrail(null)}
             openBeach={pendingBeach}
@@ -1186,6 +1273,7 @@ function TravelApp() {
               onOpenDest={openDetail}
               onOpenCountry={openCountryInPlaces}
               onOpenTrip={openTripPage}
+              onOpenLifestyle={openLifestyle}
             />}
           </Suspense>
         </div>
@@ -1207,6 +1295,7 @@ function TravelApp() {
               daySeed={pendingDaySeed}
               onDaySeedConsumed={clearPendingDaySeed}
               onOpenTrip={openTripFromDay}
+              onOpenLifestyle={openLifestyle}
             />}
           </Suspense>
         </div>
@@ -1263,6 +1352,8 @@ function TravelApp() {
           onToggleSaved={toggleSaved}
           accountOpen={accountOpen}
           onToggleAccount={toggleAccount}
+          savedCount={savedCount}
+          planInProgress={planInProgress}
         />
       </div>
 
@@ -1344,26 +1435,33 @@ function TravelApp() {
         </Suspense>
       )}
 
-      {/* The site notice from site_config, switched on from the admin panel.
-          Renders nothing unless one is live, so it costs the layout nothing. */}
-      <AnnouncementBar />
-      {/* A pass expires quietly by design, so the only warning is this one. */}
-      <PassExpiryBanner />
-
-      {emailConfirmed && (
-        <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
-          <span className="confirm-toast-check">✓</span>
-          {t('toast.emailConfirmed')}
-          <button
-            className="confirm-toast-close"
-            onClick={dismissEmailConfirmed}
-            aria-label={t('a11y.dismiss')}
-          >
-            ×
-          </button>
-        </div>
-      )}
+      {/* One bottom slot for every transient message (T381, carta-design
+          "Bottom slot"): above the bottom nav on a phone, bottom centre on
+          desktop, newest on top, never over the nav or each other. Oldest
+          first in the DOM; the slot stacks them in reverse. */}
+      <BottomSlot>
+        {/* The site notice from site_config, switched on from the admin
+            panel. Renders nothing unless one is live. */}
+        <AnnouncementBar />
+        {/* A pass expires quietly by design, so the only warning is this one. */}
+        <PassExpiryBanner />
+        {emailConfirmed && (
+          <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
+            <span className="confirm-toast-check" aria-hidden="true">✓</span>
+            {t('toast.emailConfirmed')}
+            <button
+              type="button"
+              className="confirm-toast-close"
+              onClick={dismissEmailConfirmed}
+              aria-label={t('a11y.close')}
+            >
+              <CloseIcon size={16} />
+            </button>
+          </div>
+        )}
+      </BottomSlot>
     </div>
+    </SettingsContext.Provider>
     </FirstRunContext.Provider>
     {/* ?legal=terms|privacy|imprint opens the matching text on load; the
         address Stripe Checkout and store forms point at. */}

@@ -46,12 +46,25 @@ if (await explore.isVisible().catch(() => false)) {
 }
 
 // ── Open the sheet from the header pill ──
-const trigger = page.locator('.mobile-seg > .mobile-seg-btn');
+// The header pill (.mobile-seg) is gone: phone Explore opens the same sheet
+// from its Filters button, the one Destinations uses (T381 harness
+// baseline, register row T370-a).
+const trigger = page.locator('.explore-filterbar .places-filter-btn').first();
 await trigger.click();
 await page.waitForTimeout(600);
 
 const sheet = page.locator('.fsheet');
 check('sheet renders', await sheet.isVisible());
+// The field-by-field checks below (steppers, dropdowns, chip sets, the 8pt
+// field rhythm, the country menu, the UNESCO chip, the trigger's count) were
+// written for the FilterControls sheet. Since Explore v5 the phone Explore
+// sheet holds Explore's own rail (.xrail) instead, so those checks run only
+// when the sheet still carries FilterControls fields and are reported as
+// skipped otherwise (T381 harness baseline, register row T370-a). The sheet's
+// architecture checks (modal, scrim, grab, sticky foot, 44px, Escape, scrim
+// tap, drag) still run on whatever sheet the trigger opens.
+const legacy = await page.locator('.fsheet .fsheet-field').count() > 0;
+const skip = (label) => check(`${label} (skipped: no FilterControls fields in this sheet)`, true);
 check('it is a modal dialog', await sheet.getAttribute('role') === 'dialog'
   && await sheet.getAttribute('aria-modal') === 'true');
 check('scrim covers the screen', await page.locator('.fsheet-scrim').isVisible());
@@ -89,6 +102,7 @@ check('primary action carries the live count', /\d/.test(applyText) && /show/i.t
 check('clear all is present', await page.locator('.fsheet-clear').isVisible());
 
 // ── Component swaps ──
+if (legacy) {
 const dropdowns = await page.locator('.fsheet .dropdown-trigger').count();
 check('only the country list is still a dropdown', dropdowns === 1, `${dropdowns} dropdowns`);
 check('steppers replaced the number fields',
@@ -104,13 +118,17 @@ check('price slider draws the distribution',
 check('the sheet does not repeat the category rail',
   await page.locator('.fsheet', { hasText: /trip style/i }).count() === 0
   && await page.locator('.fsheet .fchip', { hasText: /^Nightlife$/ }).count() === 0);
+} else skip('component swaps');
 
 // ── Touch targets: everything interactive in the sheet clears 44px ──
 const small = await page.evaluate(() => {
   const out = [];
   const sheetEl = document.querySelector('.fsheet');
   for (const el of sheetEl.querySelectorAll('button, [role="radio"], input, select')) {
-    const r = el.getBoundingClientRect();
+    // A checkbox inside its label is hit through the whole label row, so
+    // the row is the target (T381: the Explore rail's toggles are such rows).
+    const hit = el.matches('input') && el.closest('label') ? el.closest('label') : el;
+    const r = hit.getBoundingClientRect();
     if (r.width === 0 && r.height === 0) continue;          // not rendered
     if (getComputedStyle(el).position === 'absolute') continue; // slider thumbs, measured below
     if (r.height < 43.5) out.push(`${el.className || el.tagName}:${Math.round(r.height)}`);
@@ -118,6 +136,7 @@ const small = await page.evaluate(() => {
   return out;
 });
 check('every control is at least 44px tall', small.length === 0, small.join(', '));
+if (legacy) {
 const thumb = await page.evaluate(() => {
   const el = document.querySelector('.fsheet .dual-range-input');
   if (!el) return 0;
@@ -134,8 +153,10 @@ const thumb = await page.evaluate(() => {
   return 0;
 });
 check('slider thumbs clear the 24px target minimum', thumb >= 24, `${thumb}px`);
+} else skip('slider thumbs');
 
 // ── 8pt rhythm: the spacings that carry the hierarchy ──
+if (legacy) {
 const rhythm = await page.evaluate(() => {
   const cs = (sel, prop) => {
     const el = document.querySelector(sel);
@@ -171,6 +192,7 @@ const contrast = await page.evaluate(() => {
   return (hi + 0.05) / (lo + 0.05);
 });
 check('labels pass 4.5:1', contrast >= 4.5, `${contrast.toFixed(2)}:1`);
+} else skip('8pt rhythm and label contrast');
 
 // ── Scroll length: the complaint that started this rework. Every control is
 //    still reachable, but the dropdown stack became chips and steppers. ──
@@ -201,6 +223,7 @@ await page.waitForTimeout(400);
 await page.screenshot({ path: 'shots/filter-sheet-bottom.png' });
 
 // The one dropdown left has to work inside a scrolling sheet.
+if (legacy) {
 await page.locator('.fsheet .dropdown-trigger').click();
 await page.waitForTimeout(400);
 const menu = page.locator('.fsheet .dropdown-menu');
@@ -223,15 +246,19 @@ check('the count reacts to a filter', before !== after, `${before.split('\n')[0]
 check('an active filter is marked in the accent',
   await page.locator('.fsheet .fchip.on.narrow').count() >= 1);
 await page.screenshot({ path: 'shots/filter-sheet-active.png' });
+} else skip('country menu and live count');
 
 // ── Keyboard + dismissal ──
 await page.keyboard.press('Escape');
 await page.waitForTimeout(400);
 check('Escape closes the sheet', await page.locator('.fsheet').count() === 0);
+// The trigger is Explore's Filters button now, not the header pill.
 check('the trigger keeps focus after closing',
-  await page.evaluate(() => !!document.activeElement?.closest('.mobile-seg')));
-check('the active filter shows on the trigger',
-  await page.locator('.mobile-seg-count').isVisible());
+  await page.evaluate(() => !!document.activeElement?.closest('.places-filter-btn')));
+if (legacy) {
+  check('the active filter shows on the trigger',
+    await page.locator('.mobile-seg-count').isVisible());
+} else skip('active filter on the trigger');
 
 // Reopen, then dismiss by tapping the scrim.
 await trigger.click();
@@ -261,7 +288,7 @@ if (await touchExplore.isVisible().catch(() => false)) {
   await touchExplore.tap();
   await touch.waitForTimeout(1500);
 }
-await touch.locator('.mobile-seg > .mobile-seg-btn').tap();
+await touch.locator('.explore-filterbar .places-filter-btn').first().tap();
 await touch.waitForTimeout(600);
 check('sheet opens on a tap', await touch.locator('.fsheet').isVisible());
 const head = await touch.locator('.fsheet-head').boundingBox();
@@ -306,7 +333,7 @@ if (await tightExplore.isVisible().catch(() => false)) {
   await tightExplore.click();
   await tight.waitForTimeout(1500);
 }
-await tight.locator('.mobile-seg > .mobile-seg-btn').click();
+await tight.locator('.explore-filterbar .places-filter-btn').first().click();
 await tight.waitForTimeout(700);
 check('empty result flips the primary action',
   await tight.locator('.fsheet-apply.is-empty').isVisible());
@@ -341,6 +368,15 @@ try {
     await exploreTab.click();
     await desk.waitForTimeout(1500);
   }
+  // Explore v5 replaced the desktop filter rows and tray with its own control
+  // bar; the checks below run only while that older bar is on screen, and the
+  // one promise that still holds everywhere, no sheet on desktop, always runs
+  // (T381 harness baseline, register row T370-a).
+  if (await desk.locator('.filter-rows').count() === 0) {
+    check('desktop never mounts the sheet', await desk.locator('.fsheet').count() === 0);
+    skip('desktop filter rows and tray (Explore v5 control bar)');
+    throw null;
+  }
   check('desktop still shows the filter rows', await desk.locator('.filter-rows').isVisible());
   await desk.locator('.filter-tray-btn').click({ timeout: 8000 });
   await desk.waitForTimeout(400);
@@ -350,7 +386,7 @@ try {
     await desk.locator('.filter-tray .dual-range-hist').count() === 1);
   await desk.screenshot({ path: 'shots/filter-sheet-desktop.png' });
 } catch (e) {
-  check('desktop pass ran', false, String(e).split('\n')[0]);
+  if (e !== null) check('desktop pass ran', false,String(e).split('\n')[0]);
 }
 
 // ── Report ──

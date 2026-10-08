@@ -187,6 +187,26 @@ export function seedQuery(seed) {
   return q.toString();
 }
 
+/**
+ * The address of one section (T381, the navigation rule): the current query
+ * with `tab` swapped, so a link opened in a new tab or copied keeps the
+ * traveller's dates, party and filters. Explore ('map') is the URL's implicit
+ * default, but its link still names it: a link with no query at all opens on
+ * the visit's default section instead (App.jsx), so `tab=map` is spelled out
+ * and persistState drops it again once the app is running.
+ */
+export function tabHref(key, search = (typeof window !== 'undefined' ? window.location.search : '')) {
+  const q = new URLSearchParams(search);
+  q.set('tab', key);
+  return `?${q.toString()}`;
+}
+
+/** The section a query names, in the same terms App reads at load. */
+export function tabFromSearch(search) {
+  const tab = new URLSearchParams(search).get('tab');
+  return ['home', 'map', 'places', 'trip', 'day'].includes(tab) ? tab : 'map';
+}
+
 /** Best-effort: read URL first, then fall back to the localStorage mirror. */
 export function loadInitialState() {
   if (typeof window === 'undefined') return {};

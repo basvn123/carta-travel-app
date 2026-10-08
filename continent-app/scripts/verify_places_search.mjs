@@ -94,9 +94,27 @@ await headerTab.click();
 await page.waitForTimeout(1500);
 check('destinations tab opens', await page.locator('.places-tab').isVisible());
 
+// T384: this harness was written against the General category (priced towns
+// as .places-dcard), which UX pass 1 removed, so it timed out on its first
+// General click (T373 baseline). It now ranks the Beaches list from the same
+// anchors: every check below keeps its question, read off beach cards.
+const BEACHES = /^beaches$/i;
+await page.locator('.places-cat:visible, .side-cat:visible', { hasText: BEACHES }).first().click();
+await page.waitForTimeout(4000);
+
 const input = page.locator('.places-search input');
-const kmText = () => page.locator('.places-dcard .places-card-km').allInnerTexts();
-const kmNumbers = async () => (await kmText()).map((s) => parseInt(s.replace(/\D+/g, ''), 10));
+const kmText = () => page.locator('.places-bcard .places-card-km').allInnerTexts();
+// A card's chip is "Nearby, 12 km", "Day trip, ~1h20" or "Worth the
+// journey, 415 km" (lib/regions.js bandChip). The hours are the road model's
+// estimate, so they are turned back into the km they came from, which keeps
+// "nearest first" one comparison across the bands.
+const chipKm = (s) => {
+  const h = s.match(/(\d+)h(\d{2})/);
+  if (h) return Math.round(((+h[1] + +h[2] / 60) - 0.6) * 72 / 1.3);
+  const k = s.replace(/[.,\s](?=\d{3})/g, '').match(/(\d+)\s*km/);
+  return k ? +k[1] : NaN;
+};
+const kmNumbers = async () => (await kmText()).map(chipKm);
 
 // ── 1. A catalogue city still resolves from the local index, no network ──
 await input.fill('Ghent');
@@ -106,7 +124,8 @@ check('catalogue city suggested as you type', suggCities.some((s) => /ghent/i.te
 check('typing alone never calls the geocoder', geocodeCalls === 0, `${geocodeCalls} calls`);
 await page.locator('.places-sugg-item', { hasText: /ghent/i }).first().click();
 await page.waitForTimeout(1200);
-check('picking a city switches to near-mode', /near ghent/i.test(await page.locator('.places-nearhead').innerText().catch(() => '')));
+// T384: beaches near Ghent answer at day-trip scope, so either heading.
+check('picking a city switches to near-mode', /(near|day trip of) ghent/i.test(await page.locator('.places-nearhead').innerText().catch(() => '')));
 const cityKm = await kmNumbers();
 check('cards carry a distance from the city', cityKm.length > 5, `${cityKm.length} cards`);
 check('nearest first', cityKm.slice(0, 12).every((v, i, a) => i === 0 || a[i - 1] <= v), cityKm.slice(0, 6).join(', '));
@@ -162,10 +181,10 @@ const addrKm = await kmNumbers();
 check('the catalogue is ranked from the address', addrKm.length > 5, `${addrKm.length} cards`);
 check('nearest first', addrKm.slice(0, 12).every((v, i, a) => i === 0 || a[i - 1] <= v), addrKm.slice(0, 6).join(', '));
 check('the closest card is genuinely close', addrKm[0] != null && addrKm[0] < 40, `${addrKm[0]} km`);
-const names = await page.locator('.places-dcard .places-card-name').allInnerTexts();
-// Aalter sits between Ghent and Bruges: both must be in the first handful.
-const firstFew = names.slice(0, 6).join(' | ');
-check('the two towns either side of it lead the list', /ghent/i.test(firstFew) && /bruges/i.test(firstFew), firstFew);
+// T384: was "Ghent and Bruges lead the list", a General-category reading.
+// On beaches the same question is whether the coast an hour from Aalter
+// leads, so the first card must be within a day trip.
+check('the coast nearest the address leads the list', addrKm[0] != null && addrKm[0] <= 120, `${addrKm[0]} km`);
 await page.screenshot({ path: 'shots/places-search-address.png' });
 
 // ── 3. Trips and trails follow the same anchor ──
@@ -182,7 +201,8 @@ check(
 await page.screenshot({ path: 'shots/places-search-trails.png' });
 
 // ── 4. The keyboard path: type, Enter to search, Enter to take the top hit ──
-await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /general/i }).click();
+// T384: back to Beaches (was the removed General category).
+await page.locator('.places-cat:visible, .side-cat:visible', { hasText: BEACHES }).first().click();
 await page.waitForTimeout(600);
 await page.locator('.places-nearclear').click();
 await page.waitForTimeout(400);
@@ -204,7 +224,7 @@ await input.fill('Ghent');
 await page.waitForTimeout(700);
 await input.press('Enter');
 await page.waitForTimeout(1000);
-check('Enter on a catalogue city takes the city', /near ghent/i.test(await page.locator('.places-nearhead').innerText().catch(() => '')));
+check('Enter on a catalogue city takes the city', /(near|day trip of) ghent/i.test(await page.locator('.places-nearhead').innerText().catch(() => '')));
 check('and never asks the geocoder for it', geocodeCalls === callsBeforeCity, `${geocodeCalls - callsBeforeCity} extra calls`);
 await page.locator('.places-nearclear').click();
 await page.waitForTimeout(400);
@@ -238,9 +258,12 @@ const meKm = await kmNumbers();
 // centre, so the leading card is a low number rather than a flat zero. It has
 // to be the DEVICE's coordinate that ranks, not the reverse lookup's own,
 // which answers with the matched feature's centre.
-check('the catalogue is ranked from the device', meKm.length > 5 && meKm[0] <= 3, `${meKm.slice(0, 5).join(', ')}`);
-const meFirst = await page.locator('.places-dcard .places-card-name').first().innerText().catch(() => '');
-check('the city standing in leads the list', /ghent/i.test(meFirst), meFirst);
+// T384: was "the leading card is under 3 km and is Ghent", a reading of the
+// removed General list. On beaches the device ranking is nearest first and
+// the Belgian coast, about 50 km from Ghent, leads.
+check('the catalogue is ranked from the device', meKm.length > 5
+  && meKm.slice(0, 12).every((v, i, a) => i === 0 || a[i - 1] <= v), `${meKm.slice(0, 5).join(', ')}`);
+check('the coast nearest the device leads the list', meKm[0] != null && meKm[0] <= 120, `${meKm[0]} km`);
 await page.screenshot({ path: 'shots/places-search-locate.png' });
 
 // The crosshair rides inside the field, so on a phone it must stay inside the

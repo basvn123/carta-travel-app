@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react';
-import { Fold } from './Fold.jsx';
 import { WeekProfile, MixBar, TrafficBar } from './RouteFigures.jsx';
 import {
   weekRelief, surfaceMix, trafficSplit, SURFACE_TYPES,
 } from '../lib/routeFigures.js';
 import { count } from '../lib/format.js';
-import { MountainIcon } from '../components/Icons.jsx';
 
 /**
  * The route figures of a written week (T174, trips spec E3 and E4): the
@@ -17,9 +15,10 @@ import { MountainIcon } from '../components/Icons.jsx';
  * (RouteFigures.jsx), read by lib/routeFigures.js from the trip as written.
  * Renders nothing on any other style, or when the week states too little to
  * draw: the data sheet keeps the authored surface sentence either way.
+ *
+ * T387 (v6 trips brief, V3.6): a block of the page's The week group under an
+ * h3, no longer a fold of its own; its inner headings are h4.
  */
-
-const pct = (v) => `${Math.round(v * 100)}%`;
 
 function reliefSentences(relief, t) {
   const { days, top } = relief;
@@ -36,7 +35,7 @@ function reliefSentences(relief, t) {
   return out.join(' ');
 }
 
-export function JourneyRoute({ trip, open, onToggle, t }) {
+export function JourneyRoute({ trip, t }) {
   const relief = useMemo(() => weekRelief(trip), [trip]);
   const mix = useMemo(
     () => (SURFACE_TYPES.has(trip?.tripTypeSlug) ? surfaceMix(trip?.typeSpecific?.surface) : null),
@@ -50,21 +49,9 @@ export function JourneyRoute({ trip, open, onToggle, t }) {
   const title = relief.show
     ? t(mix ? 'journey.routeHeadRide' : 'journey.routeHeadClimb')
     : t('journey.routeHeadSurface');
-  const lead = mix?.find((s) => s.tone !== 'unknown');
-  const summary = relief.show
-    ? t('journey.reliefSummary', { up: count(relief.up) })
-    : lead && `${pct(lead.share)} ${lead.label.toLowerCase()}`;
-
   return (
-    <Fold level={2}
-      id="sec-route"
-      icon={MountainIcon}
-      title={title}
-      summary={summary}
-      open={open}
-      onToggle={onToggle}
-      className="jpage-route"
-    >
+    <div className="jblock jpage-route" id="jb-route">
+      <h3 className="jblock-h">{title}</h3>
       {relief.show && (
         <>
           <p className="bpage-prose">{reliefSentences(relief, t)}</p>
@@ -74,7 +61,7 @@ export function JourneyRoute({ trip, open, onToggle, t }) {
       )}
       {mix && (
         <>
-          <h3 className="jroute-h">{t('route.surfaceTitle')}</h3>
+          <h4 className="jroute-h">{t('route.surfaceTitle')}</h4>
           <MixBar
             testId="journey-surface"
             parts={mix.map((s) => ({
@@ -82,14 +69,14 @@ export function JourneyRoute({ trip, open, onToggle, t }) {
               label: s.label || t('journey.surfNotSplit'),
             }))}
           />
-          <h3 className="jroute-h">
+          <h4 className="jroute-h">
             {t('journey.trafficHead')}
             {showTraffic && (
               <sup className="jpage-est mono" aria-label={t('journey.trafficEstAria')} title={t('journey.trafficEstAria')}>
                 {t('journey.estMark')}
               </sup>
             )}
-          </h3>
+          </h4>
           {showTraffic ? (
             <TrafficBar split={traffic} t={t} testId="journey-traffic" />
           ) : (
@@ -98,6 +85,6 @@ export function JourneyRoute({ trip, open, onToggle, t }) {
           <p className="bpage-note">{t('journey.trafficNote')}</p>
         </>
       )}
-    </Fold>
+    </div>
   );
 }

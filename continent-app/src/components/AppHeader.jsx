@@ -2,6 +2,7 @@ import React from 'react';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
+import { tabHref } from '../lib/urlState.js';
 import {
   PersonIcon, CompassIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon,
   TicketIcon, FriendsIcon,
@@ -17,6 +18,65 @@ const NAV_ITEMS = [
   { key: 'day', labelKey: 'nav.day', Icon: ListDayIcon },
 ];
 
+/**
+ * One door into a section, as a real link (T381, the navigation rule): the
+ * href is the section's own address, so a middle click opens it in a new tab
+ * and a long press copies it; a plain click stays in the app and goes through
+ * the one door, goToTab, which also writes the history entry. The address is
+ * re-read from the bar whenever the link is about to be used, because the
+ * query moves under it (useUrlSync rewrites it 300 ms after every change).
+ */
+export function SectionLink({ tab, onNavigate, className, current, title, children, ...rest }) {
+  const refresh = (e) => { e.currentTarget.setAttribute('href', tabHref(tab)); };
+  const onClick = (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    onNavigate(tab);
+  };
+  return (
+    <a
+      href={tabHref(tab)}
+      className={className}
+      aria-current={current ? 'page' : undefined}
+      title={title}
+      onClick={onClick}
+      onPointerDown={refresh}
+      onFocus={refresh}
+      onContextMenu={refresh}
+      {...rest}
+    >
+      {children}
+    </a>
+  );
+}
+
+/**
+ * The count chip and the state dot (carta-design, count chip). The chip is
+ * the shortlist's size in mono; the dot says a plan is in progress. Both are
+ * drawn for the eye only: the words ride along for screen readers, so the
+ * item's name stays its label followed by one plain sentence.
+ */
+export function NavCount({ n }) {
+  const { t } = useI18n();
+  if (!n) return null;
+  return (
+    <>
+      <span className="nav-count" aria-hidden="true">{n}</span>
+      <span className="sr-only">{`, ${t('nav.myTripsCount', { n })}`}</span>
+    </>
+  );
+}
+export function NavDot({ on }) {
+  const { t } = useI18n();
+  if (!on) return null;
+  return (
+    <>
+      <span className="nav-dot" aria-hidden="true" />
+      <span className="sr-only">{`, ${t('nav.planInProgress')}`}</span>
+    </>
+  );
+}
+
 function AccountButton({ user, onOpenAccount, accountOpen }) {
   const { t } = useI18n();
   const fullName = user?.user_metadata?.full_name?.trim();
@@ -26,8 +86,9 @@ function AccountButton({ user, onOpenAccount, accountOpen }) {
   // its only door, both ways.
   return (
     <button
+      type="button"
       className={`account-avatar-btn${accountOpen ? ' on' : ''}`}
-      aria-pressed={accountOpen}
+      aria-current={accountOpen ? 'page' : undefined}
       onClick={onOpenAccount}
       title={user ? (fullName || user.email) : t('header.accountTitle')}
     >
@@ -41,8 +102,8 @@ function AccountButton({ user, onOpenAccount, accountOpen }) {
 
 // Always-mounted top panel: brand + section tabs on the left, the Map tab's
 // filters in the middle, and account access on the right, a single row, not
-// a separate header stacked above the filter bar. The brand mark is a
-// shortcut back to Destinations, where every visit starts. The tabs are
+// a separate header stacked above the filter bar. The brand mark is a link
+// to the landing page, the app's home (T381, rule R1). The tabs are
 // desktop-only; on mobile they collapse (CSS) and BottomNav takes over as the
 // Destinations/Explore/Trip planner/Day planner switch. `children` is the
 // FilterBar, injected only on the Explore tab.
@@ -55,6 +116,9 @@ export function AppHeader({
   onBrandClick,
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
+  // The shortlist's size for the count chip after My trips, and whether a
+  // trip plan is in progress (the state dot on the Trip planner tab).
+  savedCount = 0, planInProgress = false,
   children,
 }) {
   const { t } = useI18n();
@@ -64,44 +128,57 @@ export function AppHeader({
   const seePricing = onSeePricing || paywall.openPrices;
   return (
     <div className={`app-header ${children ? 'has-filters' : ''}`}>
-      <button
+      <SectionLink
+        tab="home"
         className="app-header-brand"
-        onClick={onBrandClick}
+        onNavigate={onBrandClick}
+        current={activeTab === 'home' && !savedOpen && !accountOpen}
         title={t('nav.brandTitle')}
+        aria-label={t('nav.brandTitle')}
       >
         <Logo size={46} className="brand-mark" />
-        <div className="brand-text">
+        <span className="brand-text">
           <span className="brand-name">Carta</span>
           <span className="brand-sub">{t('brand.sub')}</span>
-        </div>
-        <div className="brand-divider" aria-hidden="true" />
-      </button>
+        </span>
+        <span className="brand-divider" aria-hidden="true" />
+      </SectionLink>
 
       {/* Desktop-only section switch (BottomNav covers this below 768px).
           A page laid over a tab (My trips, Account) takes the active state
           away from it: the bar marks what is actually on screen, which is the
           same rule BottomNav follows. */}
-      <nav className="header-nav" aria-label="Sections">
-        {NAV_ITEMS.map(({ key, labelKey, Icon }) => (
-          <button
-            key={key}
-            className={`header-nav-item ${activeTab === key && !savedOpen && !accountOpen ? 'active' : ''}`}
-            aria-current={activeTab === key && !savedOpen && !accountOpen ? 'page' : undefined}
-            onClick={() => onChangeTab(key)}
-            title={t(labelKey)}
-          >
-            <Icon size={15} className="header-nav-icon" />
-            <span className="header-nav-label">{t(labelKey)}</span>
-          </button>
-        ))}
+      <nav className="header-nav" aria-label={t('nav.sectionsLabel')}>
+        {NAV_ITEMS.map(({ key, labelKey, Icon }) => {
+          const on = activeTab === key && !savedOpen && !accountOpen;
+          return (
+            <SectionLink
+              key={key}
+              tab={key}
+              className={`header-nav-item ${on ? 'active' : ''}`}
+              current={on}
+              onNavigate={onChangeTab}
+              title={t(labelKey)}
+            >
+              <Icon size={15} className="header-nav-icon" />
+              <span className="header-nav-label">{t(labelKey)}</span>
+              {key === 'trip' && <NavDot on={planInProgress} />}
+            </SectionLink>
+          );
+        })}
+        {/* My trips is a page laid over the tab, not a section of its own:
+            a toggle, so a button, announcing aria-current while it is the
+            page on screen. One name for it on both widths (T381). */}
         <button
+          type="button"
           className={`header-nav-item ${savedOpen && !accountOpen ? 'active' : ''}`}
-          aria-pressed={savedOpen}
+          aria-current={savedOpen && !accountOpen ? 'page' : undefined}
           onClick={onToggleSaved}
-          title={t('nav.saved')}
+          title={t('nav.myTrips')}
         >
           <BookmarkIcon size={15} className="header-nav-icon" />
-          <span className="header-nav-label">{t('nav.saved')}</span>
+          <span className="header-nav-label">{t('nav.myTrips')}</span>
+          <NavCount n={savedCount} />
         </button>
       </nav>
 

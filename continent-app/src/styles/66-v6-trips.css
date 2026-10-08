@@ -14,3 +14,710 @@
    animation with a prefers-reduced-motion branch; carta-design and
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
+
+/* ==========================================================================
+   T387, design wave V3: structure, information and flow
+   ========================================================================== */
+
+/* ── The library: style cards and trip cards with a caption band ──────────
+   Rule "Caption band": the photograph carries no text and no scrim; the
+   name, the figure and the length sit on a solid band flush under it. The
+   old .jstyle-card, .jcard and .jsec rules in 25-feature-pages.css moved
+   here and were deleted there in the same commit. */
+
+.jsec-coverage {
+  grid-column: 1 / -1;
+  margin: 0 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.jcap-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.jcap-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) {
+  .jcap-card:hover { border-color: var(--rule); }
+}
+.jcap-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  background: var(--paper-dim);
+}
+.jcap-noimg {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.jcap-band {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  background: var(--bg-card);
+}
+.jcap-name {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.jstyle-card .jcap-name { font-size: 19px; }
+.jcap-fig {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.jcap-where,
+.jcap-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+.jcap-count { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+/* Two abreast on a phone (DIRECTION part 3): 3:2 leaves the half-width
+   card too short to read, so the phone grid takes 16:10. */
+@media (max-width: 639px) {
+  .places-list.jsec { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-2); }
+}
+@media (max-width: 768px) {
+  .jcap-photo { aspect-ratio: 16 / 10; }
+  .jcap-band { padding: var(--space-2); }
+  .jstyle-card .jcap-name { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jcap-card { transition: none; }
+}
+
+/* The composer's door: a plain bordered row, no icon tile (never-do 1). */
+.jcomposed-card {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .jcomposed-card:hover { border-color: var(--ink-mute); }
+}
+.jcomposed-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jcomposed-text { flex: 1; min-width: 0; }
+.jcomposed-title {
+  display: block;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+}
+.jcomposed-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  .jcomposed-card { transition: none; }
+}
+
+/* Still blocks at the final size while the library loads (rule "Loading"). */
+.jskel {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+.jskel-card {
+  display: grid;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  overflow: hidden;
+}
+.jskel-photo {
+  display: block;
+  aspect-ratio: 3 / 2;
+  background: var(--paper-dim);
+}
+.jskel-line {
+  display: block;
+  height: 12px;
+  margin: 0 var(--space-3);
+  border-radius: 6px;
+  background: var(--paper-dim);
+}
+.jskel-line.is-short { width: 45%; }
+.jpage-skel { display: grid; gap: var(--space-3); }
+.jpage-skel .jskel-line { margin: 0; }
+.jpage-skel .jskel-line.is-title { height: 28px; width: 70%; }
+
+/* ── One style's list: the head, the one filter row, the chips ──────────── */
+
+.jsec-head { grid-column: 1 / -1; margin: 0 2px; }
+.jsec-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-2) 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.jsec-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) {
+  .jsec-back:hover span { text-decoration: underline; }
+}
+.jsec-back-solo { margin-top: var(--space-3); }
+.jsec-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-1) 0 0;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 769px) {
+  .jsec-title { font-size: 26px; }
+}
+/* Count chip (rule "Count chip"). */
+.jsec-n {
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.tf-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 2px;
+}
+.tf-open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.tf-open:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) {
+  .tf-open:hover { border-color: var(--ink-mute); }
+}
+.tf-count {
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-size: 11px;
+  color: var(--ink);
+}
+.tf-note {
+  grid-column: 1 / -1;
+  margin: 0 2px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.tf-month-note {
+  margin: var(--space-1) 0 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.tf-chips { grid-column: 1 / -1; }
+/* Filter chips on this list (rule "Filter chips"): paper-dim, ink, a rule
+   border; the shared .xchip rules elsewhere are Explore's. */
+.tf-chips .xchips { margin: 0 2px; }
+.tf-chips .xchip {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  background: var(--paper-dim);
+  color: var(--ink);
+}
+.tf-chips .xchip-clear { background: transparent; }
+@media (pointer: fine) {
+  .tf-open, .tf-chips .xchip, .jsec-back { min-height: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tf-open { transition: none; }
+}
+
+/* ── The journey page: the head in the traveller's order ─────────────────── */
+
+.jpage-bar-acts {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+.jpage-copied {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.jpage .bpage-head { margin-bottom: var(--space-3); }
+.jpage-hero { margin-bottom: var(--space-3); }
+.jpage .jpage-hook { margin: var(--space-3) 0; }
+.jpage-loc {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: var(--space-3) 0 var(--space-4);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.jpage-loc-pin { color: var(--ink-soft); flex: none; }
+.jpage-loc-coord { font-size: 12px; color: var(--ink-soft); }
+.jpage-loc-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--ink);
+  text-decoration: underline;
+}
+.jpage-loc-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (pointer: fine) {
+  .jpage-loc-link { min-height: 32px; }
+}
+/* A hero is at most 40 percent of the viewport on a phone and 60 on a
+   desktop, so the strip and its price are on the first screen. */
+.jpage .jpage-shot { max-height: 40dvh; width: 100%; object-fit: cover; }
+@media (min-width: 769px) {
+  .jpage .jpage-shot { max-height: 60dvh; }
+}
+
+/* The length control: one two-segment control on the list and the page. */
+.tl-seg {
+  display: inline-flex;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.tl-seg .tl-btn {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 0;
+  font-size: 14px;
+  font-family: var(--ui);
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.tl-seg .tl-btn + .tl-btn { border-left: 1px solid var(--rule); }
+.jpage .tl-pick { margin: 0 0 var(--space-3); }
+.jpage .tl-note { margin-top: var(--space-2); font-size: 12px; }
+@media (pointer: fine) {
+  .tl-seg .tl-btn { min-height: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tl-seg .tl-btn { transition: none; }
+}
+
+/* ── The seven groups ─────────────────────────────────────────────────────
+   Each group is an h2 Fold; inside it the parts are blocks under an h3 in
+   --ui, never nested folds or cards. */
+
+.jblock { margin-top: var(--space-5); }
+.jblock:first-child { margin-top: 0; }
+.jblock-h {
+  margin: 0 0 var(--space-2);
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.jpage-facts { margin: 0; }
+
+/* The trip's own receipt (rule "Receipt, extended"). The Cost group's fold
+   already draws the one box on this page, so the receipt inside it adds no
+   second border (no card inside a fold). */
+.jrcpt { padding: 0; }
+.jpage-budget-party .jpage-budget-label { color: var(--ink-soft); }
+.jpage-budget-party .jpage-budget-eur { font-size: 13px; }
+.jpage-town {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule-soft);
+}
+.jpage-town-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+.jpage-town-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jpage-town-btn svg { transition: transform var(--dur-2) var(--ease-out); }
+.jpage-town-btn svg.is-open { transform: rotate(180deg); }
+.jpage-town-body { margin-top: var(--space-3); }
+@media (pointer: fine) {
+  .jpage-town-btn { min-height: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jpage-town-btn svg { transition: none; }
+}
+
+/* Booking order: whole rows at --tap, the due month under the clause. */
+.jpage-book-list label { min-height: var(--tap); }
+.jpage-book-due {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.jpage-book-count { font-family: var(--ui); }
+
+/* "More about this day" reaches the tap floor. */
+.jpage .tday-more { min-height: var(--tap); }
+@media (pointer: fine) {
+  .jpage .tday-more { min-height: 32px; }
+}
+
+/* ── Desktop: a plan column and a sticky cost column (rule R8) ──────────── */
+@media (min-width: 1024px) {
+  .jpage .jpage-wrap {
+    max-width: 1180px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--panel-w);
+    column-gap: var(--space-7);
+    row-gap: 0;
+    align-items: start;
+  }
+  .jpage .jpage-wrap > * { grid-column: 1; }
+  .jpage .jpage-body { display: contents; }
+  .jpage .jpage-body > * { grid-column: 1; }
+  .jpage .jpage-body > .jpage-side {
+    grid-column: 2;
+    grid-row: 1 / span 60;
+    position: sticky;
+    top: var(--space-4);
+    max-height: calc(100dvh - 120px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* ── T387, brief item V3.11: one grammar for the two trip pages ───────────
+   The composed route page (browse/TripPage.jsx, #itin=<id>) takes the
+   journey page's grammar: a caption band under the photograph and no text on
+   it, the days in the shared day track, the cost fold as a receipt.
+
+   Every rule here overrides a rule in src/styles/24-destination-workspace.css
+   (owned by another surface), which stays untouched; the old selectors are
+   listed in the T387 report so a register row can retire them. Tokens only:
+   no hex, no font name, no literal duration. */
+
+/* The head. The photograph carries nothing: the old scrim, text block and
+   credit pill are no longer rendered, and the band under the photo holds the
+   name, the countries, the themes and the credit on solid paper, flush with
+   the photo's bottom edge (the caption band rule). */
+.itin-capband {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.itin-capband-in {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-4) 18px var(--space-3);
+}
+.itin-capband-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+@media (min-width: 769px) {
+  .itin-capband-title { font-size: 40px; }
+}
+.itin-capband-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  font-family: var(--ui);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+/* The score is a rating, so it is ochre and mono, beside the countries. */
+.itin-capband-score {
+  margin-left: var(--space-2);
+  padding: 2px var(--space-2);
+  border-radius: 6px;
+  background: var(--rate-bg);
+  color: var(--rate);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.itin-capband-themes {
+  margin: var(--space-1) 0 0;
+  font-family: var(--ui);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.itin-capband-credit {
+  margin: var(--space-1) 0 0;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-mute);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 720px) {
+  .itin-capband-in { padding: var(--space-3) var(--space-4); }
+}
+
+/* The fact row: a long estimate ("~ €58.08 est.") may wrap rather than clip. */
+.itin-facts .tpage-fact-val { white-space: normal; }
+
+/* The one primary. A control radius, the hover fill is the accent's own
+   hover token, and the hover sits behind a hover-capable pointer. */
+.itin-page .itin-use {
+  min-height: var(--tap);
+  border-radius: 6px;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.itin-page .itin-use:hover { background: var(--accent); }
+@media (hover: hover) {
+  .itin-page .itin-use:hover { background: var(--accent-hover); }
+}
+.itin-page .itin-use:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* "Link copied" is a confirmation: ink text after a status dot, never green
+   text (the Status, not green rule). */
+.itin-page .itin-copied {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink);
+}
+.itin-page .itin-copied::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-success);
+}
+
+/* The route: the dot separators are gone from the markup (commas now), and
+   the leg's fare sits in mono with its tilde and "est." in words. */
+.itin-page .itin-stop-meta { gap: var(--space-1); }
+.itin-page .itin-leg { flex-wrap: wrap; }
+.itin-leg-fig {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.itin-page .itin-day-leg { flex-wrap: wrap; }
+.itin-page .itin-day-leg .itin-leg-fig { margin-left: auto; }
+
+/* The days, in the shared day track (styles/32-day-carousel.css draws the
+   track, the bar and the dots). Each day is a bordered card like the
+   journey page's day; the trip page's 33 px number gutter is gone, because
+   the day number now lives in the heading and the counter above the track. */
+.dtrack .tday,
+.dtrack .tday:first-child {
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.dtrack .tday-head { display: block; }
+.dtrack .tday-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.dtrack .tday-chips,
+.dtrack .tday-shots,
+.dtrack .tday-more,
+.dtrack .itin-sights,
+.dtrack .itin-day-leg,
+.dtrack .itin-day-note { margin-left: 0; }
+.dtrack .tday-chip { white-space: normal; }
+
+/* The day's photographs: two 3:2 frames across the card, not a sideways
+   scroller inside a sideways track. */
+.dtrack .tday-shots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: 0;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+.dtrack .tday-shot { width: auto; min-width: 0; }
+.dtrack .tday-shot-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: 6px;
+  background: var(--paper-dim);
+}
+.dtrack .tday-shot-cap { font-size: 12px; color: var(--ink-mute); }
+
+/* "More about this day": a full tap target, ink on hover only where hover
+   exists, the chevron turning on the motion tokens. */
+.itin-page .tday-more {
+  min-height: var(--tap);
+  margin-top: var(--space-1);
+  padding: 0;
+  font-family: var(--ui);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.itin-page .tday-more:hover { color: var(--ink-soft); }
+@media (hover: hover) {
+  .itin-page .tday-more:hover { color: var(--ink); }
+}
+.itin-page .tday-more-chev { transition: transform var(--dur-2) var(--ease-out); }
+.itin-page .tday-prose { padding: var(--space-1) 0 var(--space-2); }
+
+/* The cost fold as a receipt: a paper-dim head with the route, one hairline
+   line per cost with the figure right aligned in mono, a 2px ink rule above
+   the total, the day line under it. */
+.itin-receipt {
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.itin-receipt-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--paper-dim);
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.itin-receipt-route { min-width: 0; }
+.itin-receipt-days {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.itin-receipt .itin-cost { padding: 0 var(--space-4); }
+.itin-receipt .itin-cost li {
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  font-family: var(--ui);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.itin-receipt .itin-cost li > span { min-width: 0; }
+.itin-receipt .itin-cost li b {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--ink);
+}
+.itin-receipt .itin-cost-sum {
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink);
+  font-weight: 600;
+}
+.itin-receipt .itin-cost-day { border-bottom: none; }
+.itin-receipt .itin-cost-day b { color: var(--ink-soft); }
+
+@media (prefers-reduced-motion: reduce) {
+  .itin-page .itin-use { transition: none; }
+  .itin-page .tday-more-chev { transition: none; }
+}
+
+/* The photo credit link under the hero reaches the tap floor (it was a 13 px
+   inline link, the one phone target under 44 px the quality floor found). */
+.jpage .bpage-credit a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+}
+@media (pointer: fine) {
+  .jpage .bpage-credit a { min-height: 32px; }
+}

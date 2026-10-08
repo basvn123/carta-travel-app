@@ -14,7 +14,7 @@ import { GlossLine } from '../components/InfoDot.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
-import { eur } from '../lib/format.js';
+import { eur, eurExact } from '../lib/format.js';
 import { loadTrip, tripShareUrl } from '../lib/trips.js';
 import { creditFor } from '../lib/imageCredit.js';
 import { Fold } from './Fold.jsx';
@@ -24,11 +24,12 @@ import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useFolds } from './useFolds.js';
 import { TripPractical } from './TripPractical.jsx';
 import { TripDayPhotos } from './TripDayPhotos.jsx';
+import { DayTrack } from './DayTrack.jsx';
 import { dayShots } from './dayShots.js';
 import { claimShared } from '../lib/sharedElement.js';
 import {
   tripHeadline, transportLabel, seasonLabel, tripWhy, tripWarnings,
-  dayTitle, legLine, themeLabel, cardThumb, countryNames,
+  dayTitle, themeLabel, cardThumb, countryNames,
 } from '../lib/tripStory.js';
 
 /**
@@ -57,6 +58,12 @@ import {
  * away with their prose intact. A day is a one-line header plus chips for the
  * facts, and its paragraph moves behind "More about this day" rather than
  * being cut.
+ *
+ * One grammar with the journey page (T387, brief item V3.11): the head is the
+ * photograph with a caption band under it and never text on it, the days run
+ * in the shared day track (DayTrack.jsx), and the cost fold is a receipt
+ * whose estimated lines carry the tilde and "est." in words. Carta does not
+ * price flights, so no line of the receipt is ever a flight.
  *
  * The map is lazy twice over: maplibre is a large dependency, and the fold's
  * body does not mount while closed, so opening a trip costs no WebGL context
@@ -166,15 +173,117 @@ function Sight({ poi, t }) {
   );
 }
 
+/* ── Legs and their figures ────────────────────────────────────────────
+
+   A leg's fare is an estimate from per-country fare levels, never a ticket
+   price, so wherever it prints it carries the tilde and "est." in words, set
+   the same way in the route, in a day and in the receipt. Carta does not
+   price flights: a leg whose mode is a flight never prints a figure and never
+   reaches a total. */
+
+const FLIGHT_MODES = new Set(['fly', 'flight', 'plane', 'air']);
+const isFlightLeg = (leg) => FLIGHT_MODES.has(String(leg?.mode || '').toLowerCase());
+
+/** "3 h 13" or "45 min", the same clock the day chips use. */
+function legTime(leg, t) {
+  const minutes = Number(leg.minutes) || 0;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h ? t('trip.legHm', { h, m: String(m).padStart(2, '0') }) : t('trip.legM', { m });
+}
+
+/** The mode as a word ("Train"), or nothing when the vocabulary has none. */
+function modeWord(mode, t) {
+  const m = String(mode || '');
+  if (!m) return '';
+  const key = `trip.mode${m.charAt(0).toUpperCase()}${m.slice(1)}`;
+  const word = t(key);
+  return word === key ? '' : word;
+}
+
+/** "~ €38.46 est." when the figure is an estimate, "€38.46" when it is not. */
+function costFig(n, est, t) {
+  const money = eurExact(n);
+  return est ? t('itin.estFig', { eur: money }) : money;
+}
+
+/** One leg as words: mode, time and distance. The fare sits beside it. */
+function legWords(leg, t) {
+  const mode = modeWord(leg.mode, t);
+  const km = Number.isFinite(leg.km) ? Math.round(leg.km) : null;
+  if (mode && km != null) return t('itin.legRoute', { mode, time: legTime(leg, t), km });
+  return [mode, legTime(leg, t), km != null ? `${km} km` : ''].filter(Boolean).join(', ');
+}
+
 /**
- * One day: a header you can read in a glance, the concrete facts as chips, the
- * photographs of where it goes, and the prose folded underneath.
+ * The trip's own receipt, from the wire's cost block and its legs.
+ *
+ * The stay is one line; each ground leg is its own line with its fare to the
+ * cent, because a receipt that folds the legs into one rounded figure cannot
+ * be checked against the route above it. When a leg carries no fare the
+ * wire's legs total stands in as one line. The total is the sum of the lines
+ * on screen, and the day figure is that total over the trip's days, labelled
+ * as such: a figure for the whole party, not for one person.
+ */
+function tripReceipt(detail, t) {
+  const cost = detail.cost || {};
+  const group = Number.isFinite(cost.group) && cost.group > 0 ? cost.group : 2;
+  const anyEst = cost.est !== false;
+  const lines = [];
+  if (Number.isFinite(cost.stay_eur)) {
+    lines.push({
+      k: 'stay',
+      label: t('trip.costStay', { n: detail.nights }),
+      eur: cost.stay_eur,
+      est: anyEst,
+    });
+  }
+  const allLegs = detail.legs || [];
+  const legs = allLegs.filter((leg) => !isFlightLeg(leg));
+  const priced = legs.length > 0 && legs.every((leg) => Number.isFinite(leg.eur));
+  const flights = allLegs.some(isFlightLeg);
+  if (priced) {
+    allLegs.forEach((leg, i) => {
+      if (isFlightLeg(leg)) return;
+      const from = detail.stops[i]?.city;
+      const to = detail.stops[i + 1]?.city || detail.stops[0]?.city;
+      const route = from && to ? t('itin.fromTo', { a: from, b: to }) : '';
+      const mode = modeWord(leg.mode, t);
+      lines.push({
+        k: `leg-${i}`,
+        label: [mode, route].filter(Boolean).join(', ') || t('trip.costTravel'),
+        eur: leg.eur,
+        est: leg.est !== false,
+      });
+    });
+  } else if (!flights && Number.isFinite(cost.legs_eur) && cost.legs_eur > 0) {
+    // The wire's legs total includes no flight only when no leg is a flight.
+    lines.push({ k: 'legs', label: t('trip.costTravel'), eur: cost.legs_eur, est: anyEst });
+  }
+  if (!lines.length) return null;
+  const total = lines.reduce((sum, l) => sum + l.eur, 0);
+  const days = Number(detail.days) || 0;
+  return {
+    lines,
+    group,
+    est: lines.some((l) => l.est),
+    total,
+    perDay: days > 0 ? total / days : null,
+    days,
+  };
+}
+
+/**
+ * One day, as a card in the day track: a header you can read in a glance,
+ * the concrete facts as chips, the photographs of where it goes, and the
+ * prose folded underneath.
  *
  * The header is the day number, the town and a headline of at most eight
  * words. The chips carry what a reader actually plans around: how far and how
  * long the move is, how many nights they are staying, what the day's main
  * sight is. Everything the page said before is still here; the paragraph is
- * behind one disclosure instead of in front of it.
+ * behind one disclosure instead of in front of it, and it is not mounted
+ * until the disclosure opens (the contract verify_trip_page.mjs checks).
  */
 function DayCard({ day, detail, t }) {
   const [more, setMore] = React.useState(false);
@@ -193,11 +302,8 @@ function DayCard({ day, detail, t }) {
   // this row is composed, rounded up or guessed.
   const chips = [];
   if (leg) {
-    const h = Math.floor(leg.minutes / 60);
-    const m = leg.minutes % 60;
-    const time = h ? t('trip.legHm', { h, m: String(m).padStart(2, '0') }) : t('trip.legM', { m });
     const key = leg.mode === 'car' ? 'trip.dayChipDrive' : 'trip.dayChipTrain';
-    chips.push({ k: 'time', icon: ClockIcon, text: t(key, { time }) });
+    chips.push({ k: 'time', icon: ClockIcon, text: t(key, { time: legTime(leg, t) }) });
     if (Number.isFinite(leg.km)) {
       chips.push({ k: 'km', icon: RouteIcon, text: t('trip.dayChipKm', { km: Math.round(leg.km) }) });
     }
@@ -216,14 +322,13 @@ function DayCard({ day, detail, t }) {
     });
   }
 
-  const prose = items.length > 0 || (items.length === 0 && day.kind === 'depart');
+  const prose = items.length > 0 || Boolean(leg) || day.kind === 'depart';
 
   return (
-    <li className={`itin-day tday is-${day.kind}`}>
-      <div className="tday-head">
-        <span className="itin-day-no">{day.d}</span>
-        <span className="tday-title">{dayTitle(day, detail, t)}</span>
-      </div>
+    <article className={`tday is-${day.kind}`}>
+      <header className="tday-head">
+        <h3 className="tday-title">{dayTitle(day, detail, t)}</h3>
+      </header>
 
       {chips.length > 0 && (
         <ul className="tday-chips">
@@ -250,13 +355,18 @@ function DayCard({ day, detail, t }) {
             <ChevronDownIcon size={13} className={more ? 'tday-more-chev is-open' : 'tday-more-chev'} />
             <span>{t('trip.moreAboutDay')}</span>
           </button>
-          <div id={panelId} className={more ? 'tday-panel is-open' : 'tday-panel'}>
-            <div className="tday-panel-in">
+          {/* Closed, the panel is empty: the prose mounts when the reader asks
+              for it, so a closed day holds no hidden copy and no hidden links. */}
+          <div id={panelId} className="tday-body">
+            {more && (
               <div className="tday-prose">
                 {leg && (
                   <p className="itin-day-leg">
                     <ClockIcon size={12} />
-                    {legLine(leg, t)}
+                    <span>{legWords(leg, t)}</span>
+                    {!isFlightLeg(leg) && Number.isFinite(leg.eur) && (
+                      <span className="itin-leg-fig mono">{costFig(leg.eur, leg.est !== false, t)}</span>
+                    )}
                   </p>
                 )}
                 {items.length > 0 && (
@@ -268,11 +378,11 @@ function DayCard({ day, detail, t }) {
                   <p className="itin-day-note">{t('trip.departNote', { city: stop.city })}</p>
                 )}
               </div>
-            </div>
+            )}
           </div>
         </>
       )}
-    </li>
+    </article>
   );
 }
 
@@ -368,6 +478,17 @@ export function TripPage({
   const routeSummary = detail
     ? detail.stops.map((s) => s.city).join(' - ')
     : null;
+  // The receipt is the page's one source for a day figure: the fact row and
+  // the cost fold's summary both read its day line, so the page never shows
+  // two different figures for the same day. Until the detail lands, the card's
+  // own rounded figure stands in, marked as an estimate the same way.
+  const receipt = detail ? tripReceipt(detail, t) : null;
+  let perDayText = null;
+  if (receipt && Number.isFinite(receipt.perDay)) {
+    perDayText = costFig(receipt.perDay, receipt.est, t);
+  } else if (!detail && Number.isFinite(card.cost?.per_day_eur)) {
+    perDayText = t('itin.estFig', { eur: eur(card.cost.per_day_eur) });
+  }
 
   return (
     <div className="tpage itin-page" role="dialog" aria-modal="true"
@@ -388,10 +509,12 @@ export function TripPage({
       </div>
 
       <div className="tpage-scroll">
-        {/* The photograph leads. A map of two dots and a dashed line is a poor
-            advertisement for a fortnight, and it says nothing the card did
-            not; it moves down to The route, where the reader has a question
-            for it. */}
+        {/* The photograph leads, and nothing is written on it (the caption
+            band rule, T380): the name, the countries, the themes and the
+            credit sit in a solid band flush under the photo, no scrim and no
+            gradient. A map of two dots and a dashed line is a poor
+            advertisement for a fortnight; it moves down to The route, where
+            the reader has a question for it. */}
         <div className="itin-photohero">
           {hero ? (
             <img
@@ -405,33 +528,35 @@ export function TripPage({
           ) : (
             <span className="itin-photohero-img itin-photohero-none" aria-hidden="true" />
           )}
-          <span className="itin-photohero-scrim" aria-hidden="true" />
-          <div className="itin-photohero-text">
-            {themes.length > 0 && (
-              <div className="itin-themes">
-                {themes.slice(0, 4).map((th) => (
-                  <span key={th} className="itin-theme">{th}</span>
-                ))}
-              </div>
-            )}
-            <h1 className="itin-photohero-title">
+        </div>
+        <div className="itin-capband">
+          <div className="itin-capband-in">
+            <h1 className="itin-capband-title">
               {ready ? tripHeadline(trip, t) : t('trip.loading')}
             </h1>
-            <div className="itin-photohero-sub">
-              {(trip.countries || []).map((cc) => (
-                <span key={cc} className="itin-country">
-                  <CountryFlag country={cc} size={12} />
-                  {names[cc] || cc}
-                </span>
-              ))}
-              {trip.score != null && (
-                <span className="itin-photohero-score">{trip.score.toFixed(1)}</span>
-              )}
-            </div>
+            {((trip.countries || []).length > 0 || trip.score != null) && (
+              <p className="itin-capband-sub">
+                {(trip.countries || []).map((cc, i) => (
+                  <React.Fragment key={cc}>
+                    {i > 0 && ', '}
+                    <span className="itin-country">
+                      <CountryFlag country={cc} size={12} />
+                      {names[cc] || cc}
+                    </span>
+                  </React.Fragment>
+                ))}
+                {trip.score != null && (
+                  <span className="itin-capband-score mono">{trip.score.toFixed(1)}</span>
+                )}
+              </p>
+            )}
+            {themes.length > 0 && (
+              <p className="itin-capband-themes">{themes.slice(0, 4).join(', ')}</p>
+            )}
+            {hero?.credit && (
+              <p className="itin-capband-credit">{hero.credit}</p>
+            )}
           </div>
-          {hero?.credit && (
-            <span className="itin-photohero-credit">{hero.credit}</span>
-          )}
         </div>
 
         <div className="tpage-col">
@@ -457,8 +582,8 @@ export function TripPage({
             <Fact icon={Shape} value={(trip.cities || trip.stops || []).length}
               label={t('trip.factStops')} />
             <Fact icon={Mode} value={transportLabel(trip, t)} label={t('trip.factGetting')} word />
-            {trip.cost && (
-              <Fact icon={ReceiptIcon} value={eur(trip.cost.per_day_eur)}
+            {perDayText && (
+              <Fact icon={ReceiptIcon} value={perDayText}
                 label={t('trip.factPerDay')} />
             )}
             {season && <Fact icon={SunIcon} value={season} label={t('trip.factSeason')} word />}
@@ -521,15 +646,15 @@ export function TripPage({
                           </span>
                           <span className="itin-stop-meta">
                             <CountryFlag country={s.iso2} size={10} />
-                            {names[s.iso2] || s.iso2}
-                            <span className="itin-dot" aria-hidden="true" />
-                            {t(s.nights === 1 ? 'trip.nightCountOne' : 'trip.nightCountMany', { n: s.nights })}
-                            {s.walk_km ? (
-                              <>
-                                <span className="itin-dot" aria-hidden="true" />
-                                {t('trip.walkRadius', { km: s.walk_km })}
-                              </>
-                            ) : null}
+                            {/* Commas, not dots: dot and bullet separators
+                                are banned (brief row V17). */}
+                            <span>
+                              {[
+                                names[s.iso2] || s.iso2,
+                                t(s.nights === 1 ? 'trip.nightCountOne' : 'trip.nightCountMany', { n: s.nights }),
+                                s.walk_km ? t('trip.walkRadius', { km: s.walk_km }) : '',
+                              ].filter(Boolean).join(', ')}
+                            </span>
                           </span>
                         </span>
                       </button>
@@ -557,11 +682,21 @@ export function TripPage({
                     {detail.legs[i] && (
                       <li className="itin-leg">
                         {React.createElement(MODE_ICON[detail.legs[i].mode] || TrainIcon, { size: 13 })}
-                        <span>{legLine(detail.legs[i], t)}</span>
+                        <span>{legWords(detail.legs[i], t)}</span>
                         {detail.legs[i].home && (
                           <span className="itin-leg-home">{t('trip.legHome')}</span>
                         )}
-                        <span className="itin-est">{t('trip.estimate')}</span>
+                        {/* The fare is an estimate, so it carries the tilde
+                            and "est." in words, set as the receipt sets it.
+                            A flight leg prints no figure: Carta does not
+                            price flights. */}
+                        {!isFlightLeg(detail.legs[i]) && Number.isFinite(detail.legs[i].eur) ? (
+                          <span className="itin-est itin-leg-fig mono">
+                            {costFig(detail.legs[i].eur, detail.legs[i].est !== false, t)}
+                          </span>
+                        ) : (
+                          <span className="itin-est">{t('trip.estimate')}</span>
+                        )}
                       </li>
                     )}
                   </React.Fragment>
@@ -586,8 +721,11 @@ export function TripPage({
             </Fold>
           )}
 
-          {/* Day by day. Each day is a line and a row of chips; its prose and
-              its sights fold away underneath rather than being cut. */}
+          {/* Day by day, in the shared day track (DayTrack.jsx, the journey
+              page's grammar): one card per day, Previous and Next with the
+              position above, the dots under. Each card is a line and a row of
+              chips with the day's photographs; its prose and its sights stay
+              behind "More about this day", closed until asked for. */}
           {detail && (
             <Fold level={2}
               id="sec-days"
@@ -596,12 +734,13 @@ export function TripPage({
               summary={t('trip.nDays', { n: detail.days })}
               open={isOpen('days')}
               onToggle={() => toggle('days')}
+              className="itin-days-sec"
             >
-              <ol className="itin-days">
+              <DayTrack label={t('itin.trackAria')} t={t}>
                 {detail.plan.map((day) => (
                   <DayCard key={day.d} day={day} detail={detail} t={t} />
                 ))}
-              </ol>
+              </DayTrack>
             </Fold>
           )}
 
@@ -630,9 +769,12 @@ export function TripPage({
                         </div>
                         <div className="itin-out-meta">
                           <Icon size={12} />
-                          <span>{t('trip.outTime', { min: d.minutes, km: d.km })}</span>
-                          <span className="itin-dot" aria-hidden="true" />
-                          <span>{t('trip.outOnSite', { h: d.on_site_h })}</span>
+                          <span>
+                            {[
+                              t('trip.outTime', { min: d.minutes, km: d.km }),
+                              t('trip.outOnSite', { h: d.on_site_h }),
+                            ].join(', ')}
+                          </span>
                         </div>
                         <ul className="itin-out-sights">
                           {d.highlights.map((h) => (
@@ -647,30 +789,48 @@ export function TripPage({
             </Fold>
           )}
 
-          {/* What it costs, and for whom. */}
+          {/* What it costs, and for whom, as a receipt: one hairline line per
+              cost with the figure right aligned in mono, a 2px ink rule above
+              the total, and the day figure under it named for what it is (the
+              total over the days, for the whole party). Every estimated line
+              says so in words with the tilde. No line is ever a flight. */}
           {detail && (
             <Fold level={2}
               id="sec-cost"
               icon={ReceiptIcon}
               title={t('trip.secCost')}
-              summary={eur(detail.cost.per_day_eur)}
+              summary={perDayText || undefined}
               open={isOpen('cost')}
               onToggle={() => toggle('cost')}
             >
-              <ul className="itin-cost">
-                <li>
-                  <span>{t('trip.costStay', { n: detail.nights })}</span>
-                  <b>{eur(detail.cost.stay_eur)}</b>
-                </li>
-                <li>
-                  <span>{t('trip.costTravel')}</span>
-                  <b>{eur(detail.cost.legs_eur)}</b>
-                </li>
-                <li className="itin-cost-sum">
-                  <span>{t('trip.costPerDay')}</span>
-                  <b>{eur(detail.cost.per_day_eur)}</b>
-                </li>
-              </ul>
+              {receipt && (
+                <div className="itin-receipt">
+                  <p className="itin-receipt-head">
+                    <span className="itin-receipt-route">
+                      {detail.stops.map((s) => s.city).join(', ')}
+                    </span>
+                    <span className="itin-receipt-days mono">{t('trip.nDays', { n: receipt.days })}</span>
+                  </p>
+                  <ul className="itin-cost">
+                    {receipt.lines.map((line) => (
+                      <li key={line.k}>
+                        <span>{line.label}</span>
+                        <b className="mono">{costFig(line.eur, line.est, t)}</b>
+                      </li>
+                    ))}
+                    <li className="itin-cost-sum">
+                      <span>{t('itin.costTotal', { n: receipt.group })}</span>
+                      <b className="mono">{costFig(receipt.total, receipt.est, t)}</b>
+                    </li>
+                    {Number.isFinite(receipt.perDay) && (
+                      <li className="itin-cost-day">
+                        <span>{t('itin.costDay', { n: receipt.group, d: receipt.days })}</span>
+                        <b className="mono">{perDayText}</b>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
               <p className="tpage-credit">{t('trip.costNote')}</p>
               <ReportProblem priceOnly item={{ layer: 'trip', id: card.id, name: trip.name || card.name || card.id }} />
             </Fold>

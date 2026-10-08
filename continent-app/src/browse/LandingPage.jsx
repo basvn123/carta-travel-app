@@ -1,13 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button } from '../components/Button.jsx';
+import { ReceiptCard, ReceiptFigure } from '../components/ReceiptCard.jsx';
 import { count, eurExact } from '../lib/format.js';
 import { activeLocale } from '../lib/localeState.js';
 import { addDays } from '../lib/dates.js';
 import { loadCoverage } from '../lib/regions.js';
+import { offeredStayTiers, tripDaysBetween } from '../lib/runtime_pricing.js';
+import { useFirstRun } from '../lib/firstRunContext.js';
+import { receiptMix, tierMeasured } from '../lib/firstRun.js';
 import {
-  pickDemoTowns, priceReceipt, defaultStart, todayIso, catalogueFacts, coverageRows,
-  DEMO_TIERS, DEMO_PEOPLE, DEMO_NIGHTS, DEMO_DEFAULTS,
+  pickDemoTowns, priceReceipt, receiptOpts, defaultStart, todayIso, catalogueFacts, coverageRows,
+  cheapestToWalk, DEMO_PEOPLE, DEMO_NIGHTS, DEMO_DEFAULTS,
 } from '../lib/landing.js';
 
 /**
@@ -17,16 +21,20 @@ import {
  * It demonstrates rather than describes. Above the fold sits a real receipt
  * for a real town, priced from the catalogue the app already loaded, and its
  * three inputs reprice it in place: the product in one screen. Under it, the
- * three proof points and the coverage, every count read from the data
- * (meta, the destination records, public/coverage.json), never typed.
+ * one primary, the priced list for a visitor with no town in mind, the three
+ * proof points and the coverage, every count read from the data (meta, the
+ * destination records, public/coverage.json), never typed.
+ *
+ * Since T382 (design wave V3) the three inputs are the app's own shared
+ * choices, read and written through FirstRunContext the way the first-run
+ * receipt does it: the party, the stay tier and the trip dates (nights move
+ * the shared return date from the shared arrival). So the next screen prices
+ * the same party in the same bed, and the destination page's receipt shows
+ * the same total to the cent. The receipt card itself is
+ * components/ReceiptCard.jsx, shared with the first-run receipt.
  *
  * One primary action: find a town to walk from, which opens Destinations on
  * its walks. Everything else is a field or a secondary.
- *
- * The receipt follows docs/FIRST_RUN_RESULT.md (lines in trip order, the
- * provenance in plain words under each figure, a 2 px ink rule above the sum,
- * the accent-tinted footer naming one changed input, the flight sentence and
- * the exclusions under the card). The arithmetic is lib/landing.js.
  *
  * Props
  *   data        { meta, destinations }, partial or full (the rank tier holds
@@ -52,33 +60,84 @@ const fmtMonth = (iso) => {
   } catch { return iso.slice(0, 7); }
 };
 
-/** A figure, with its tilde when it is an estimate. The tilde is backed by
- *  words for a screen reader, never by the mark alone. */
-function Figure({ eur, est, t }) {
-  return (
-    <>
-      {est && <span aria-hidden="true">~ </span>}
-      {eurExact(eur)}
-      {est && <span className="sr-only">{`, ${t('prov.estTitle')}`}</span>}
-    </>
-  );
-}
+/** The words for receiptMix(): what a town's receipt measured. */
+const MIX_KEY = {
+  all: 'receipt.mixAll', bed: 'receipt.mixBed', food: 'receipt.mixFood', none: 'receipt.mixNone',
+};
+const MAX_PARTY = 12;
 
 export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
   const { t, lang } = useI18n();
+  const ctx = useFirstRun();
   const towns = useMemo(() => pickDemoTowns(data?.destinations), [data]);
   const [townId, setTownId] = useState(null);
-  const [people, setPeople] = useState(DEMO_DEFAULTS.people);
-  const [nights, setNights] = useState(DEMO_DEFAULTS.nights);
-  const [tier, setTier] = useState(DEMO_DEFAULTS.tier);
-  const [start] = useState(() => defaultStart(todayIso()));
   const town = towns.find((d) => d.id === townId) || towns[0] || null;
 
-  const receipt = useMemo(() => (town ? priceReceipt(town, {
-    people, nights, tier, start, lifestyle, model: data?.meta?.accommodation_model,
-  }) : null), [town, people, nights, tier, start, lifestyle, data]);
+  // The inputs. Inside the app shell they are the shared choices; outside it
+  // (a harness without the provider) the page keeps its own, as it did
+  // before T382, so it still renders.
+  const [local, setLocal] = useState(DEMO_DEFAULTS);
+  const [fallbackStart] = useState(() => defaultStart(todayIso()));
+  const choices = ctx?.choices || null;
+  const defaults = ctx?.defaultDates || null;
+  const people = ctx ? (choices?.group_size || DEMO_DEFAULTS.people) : local.people;
+  const tier = ctx ? (choices?.stay_tier || 'home') : local.tier;
+  const start = (ctx && (ctx.departDate || defaults?.start)) || fallbackStart;
+  const sharedEnd = ctx ? (ctx.returnDate || defaults?.end) : null;
+  const nights = sharedEnd && start && sharedEnd > start
+    ? Math.max(1, tripDaysBetween(start, sharedEnd))
+    : (ctx ? DEMO_DEFAULTS.nights : local.nights);
+  const datesOwn = !!(defaults && start && (start !== defaults.start || addDays(start, nights) !== defaults.end));
+  const model = ctx ? choices?.accommodation_model : data?.meta?.accommodation_model;
+  const indices = ctx?.indices || null;
+
+  const setPeople = (n) => {
+    if (!Number.isFinite(n) || n < 1) return;
+    const v = Math.min(MAX_PARTY, Math.round(n));
+    if (ctx) ctx.setChoices((prev) => ({ ...prev, group_size: v }));
+    else setLocal((p) => ({ ...p, people: v }));
+  };
+  const setTier = (k) => {
+    if (ctx) ctx.setChoices((prev) => ({ ...prev, stay_tier: k }));
+    else setLocal((p) => ({ ...p, tier: k }));
+  };
+  const setNights = (n) => {
+    if (!Number.isFinite(n) || n < 1) return;
+    if (ctx) {
+      // The length moves the shared return date; the arrival stays where it
+      // is (Carta's default Saturday until the visitor sets their own).
+      if (!ctx.departDate) ctx.setDepartDate(start);
+      ctx.setReturnDate(addDays(start, n));
+    } else setLocal((p) => ({ ...p, nights: n }));
+  };
+
+  // Everything the receipt reads, for one town. The first-run receipt passes
+  // the same values, so the two receipts agree to the cent.
+  const input = useMemo(
+    () => ({ people, nights, tier, start, lifestyle, model }),
+    [people, nights, tier, start, lifestyle, model],
+  );
+  const inputFor = React.useCallback(
+    (d) => ({ ...input, costRow: d ? indices?.get?.(d.id) || null : null }),
+    [input, indices],
+  );
+  const receipt = useMemo(() => (town ? priceReceipt(town, inputFor(town)) : null), [town, inputFor]);
+  // What each demo town's receipt measures at these inputs, for the line
+  // under its toggle (rule R7): read from the receipt, never typed per town.
+  const mixes = useMemo(
+    () => Object.fromEntries(towns.map((d) => [d.id, receiptMix(priceReceipt(d, inputFor(d)))])),
+    [towns, inputFor],
+  );
+  const tiers = useMemo(() => offeredStayTiers(data?.meta), [data]);
+  const measuredTier = useMemo(() => {
+    const opts = town ? receiptOpts(inputFor(town)) : null;
+    return Object.fromEntries(tiers.map((k) => [k, !town || !opts || tierMeasured(town, opts, k)]));
+  }, [town, tiers, inputFor]);
 
   const facts = useMemo(() => catalogueFacts(data?.destinations, data?.meta), [data]);
+  // The priced list for the undecided (rule R1): the Explore cards' own day
+  // figures, so it re-ranks when the party or the stay changes.
+  const walk = useMemo(() => cheapestToWalk(data?.destinations, indices), [data, indices]);
 
   // The layer counts come from the coverage file, the same one the region
   // pages and /about/numbers read. Below the fold, so it loads after paint;
@@ -99,18 +158,19 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
   const tierWord = (k) => t(`stay.${k || 'home'}`);
   const tierInline = (k) => (lang === 'de' ? tierWord(k) : tierWord(k).toLowerCase());
 
-  const stayRows = () => {
+  // The stay line's provenance: the tier is already in the strip above, so
+  // the line names it only when it stands in for the tier asked for.
+  const stayProv = () => {
     const s = receipt.stay;
-    const word = s.tierFallback
-      ? t('receipt.stayFallback', { asked: tierInline(s.tierAsked), tier: tierInline(s.tier) })
-      : tierWord(s.tier);
     const why = s.level === 'region' ? t('cost.stayRepaired')
       : s.level === 'city'
         ? (s.listings && s.place
           ? t('cost.stayMeasuredN', { n: count(s.listings), place: s.place, when: fmtMonth(s.captured) })
           : t('cost.stayMeasured'))
         : t('cost.stayNational');
-    return [word, why];
+    return s.tierFallback
+      ? [t('receipt.stayFallback', { asked: tierInline(s.tierAsked), tier: tierInline(s.tier) }), why]
+      : [why];
   };
   const altLine = () => {
     const a = receipt?.alt;
@@ -122,14 +182,21 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
   };
 
   const end = start ? addDays(start, nights) : null;
-  const sub = start && end
-    ? t('receipt.sub', {
-      from: fmtDay(start, start.slice(0, 4) !== end.slice(0, 4)),
-      to: fmtDay(end, true),
-      nights: nightsWord(nights),
-      people: peopleWord(people),
-    })
-    : '';
+  const subVars = start && end ? {
+    from: fmtDay(start, start.slice(0, 4) !== end.slice(0, 4)),
+    to: fmtDay(end, true),
+    nights: nightsWord(nights),
+    people: peopleWord(people),
+  } : null;
+  const sub = subVars ? t('receipt.sub', subVars) : '';
+  // While the dates are Carta's, one short note under the primary says so and
+  // where to change them (the old orientation note, cut to what it must say).
+  const datesPicked = !!ctx && !datesOwn;
+
+  const peopleOptions = ctx
+    ? Array.from({ length: Math.max(MAX_PARTY, people) }, (_, i) => i + 1)
+    : DEMO_PEOPLE;
+  const nightsOptions = DEMO_NIGHTS.includes(nights) ? DEMO_NIGHTS : [...DEMO_NIGHTS, nights].sort((a, b) => a - b);
 
   const rest = Math.max(0, facts.places - facts.bedsMeasured);
   const layerLabel = {
@@ -146,7 +213,14 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
         <section className="lp-hero" aria-labelledby="lp-title">
           <div className="lp-head">
             <h1 id="lp-title" className="lp-title">{t('landing.title', { n: count(facts.places) })}</h1>
-            <p className="lp-lede">{t('landing.lede')}</p>
+            {/* The running instrument (brief V3-9): the coverage in one line,
+                read from the catalogue, with the catalogue's own date. */}
+            <p className="lp-instrument">
+              {t(facts.asOf ? 'landing.instrument' : 'landing.instrumentNoDate', {
+                m: count(facts.bedsMeasured), n: count(facts.places), f: count(facts.foodMeasured),
+                date: facts.asOf ? fmtDay(facts.asOf, true) : '',
+              })}
+            </p>
           </div>
 
           {town && receipt && (
@@ -162,85 +236,116 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
                       aria-pressed={d.id === town.id}
                       onClick={() => setTownId(d.id)}
                     >
-                      {d.city}
+                      <span className="lp-town-name">{d.city}</span>
+                      {mixes[d.id] && <span className="lp-town-meta">{t(MIX_KEY[mixes[d.id]])}</span>}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="lp-strip">
+              <div className="lp-strip" role="group" aria-label={t('receipt.stripAria')}>
                 <label className="lp-field lp-field-people">
                   <span className="lp-field-label">{t('landing.people')}</span>
                   <select value={people} onChange={(e) => setPeople(Number(e.target.value))}>
-                    {DEMO_PEOPLE.map((n) => <option key={n} value={n}>{n}</option>)}
+                    {peopleOptions.map((n) => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </label>
                 <label className="lp-field lp-field-nights">
                   <span className="lp-field-label">{t('landing.nights')}</span>
                   <select value={nights} onChange={(e) => setNights(Number(e.target.value))}>
-                    {DEMO_NIGHTS.map((n) => <option key={n} value={n}>{n}</option>)}
+                    {nightsOptions.map((n) => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </label>
                 <label className="lp-field lp-field-stay">
                   <span className="lp-field-label">{t('receipt.stripStay')}</span>
                   <select value={tier} onChange={(e) => setTier(e.target.value)}>
-                    {DEMO_TIERS.map((k) => <option key={k} value={k}>{tierWord(k)}</option>)}
+                    {tiers.map((k) => (
+                      <option key={k} value={k}>
+                        {measuredTier[k] ? tierWord(k) : t('receipt.tierNotHere', { tier: tierWord(k) })}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
 
-              <section className="lp-receipt" aria-labelledby="lp-receipt-title">
-                <header className="lp-receipt-head">
-                  <h2 id="lp-receipt-title" className="lp-receipt-title">{town.city}</h2>
-                  <p className="lp-receipt-sub">{sub}</p>
-                </header>
-                <dl className="lp-lines">
-                  <div className="lp-line">
-                    <dt>
-                      <span className="lp-line-label">{t('receipt.stay', { nights: nightsWord(nights) })}</span>
-                      {stayRows().map((row) => <span key={row} className="lp-line-sub">{row}</span>)}
-                    </dt>
-                    <dd className="lp-fig"><Figure eur={receipt.stay.eur} est={receipt.stay.est} t={t} /></dd>
-                  </div>
-                  <div className="lp-line">
-                    <dt>
-                      <span className="lp-line-label">{t('receipt.ground')}</span>
-                      <span className="lp-line-sub lp-mono">
-                        {t(receipt.ground.days === 1 ? 'receipt.groundMathOne' : 'receipt.groundMath',
-                          { days: receipt.ground.days, people: receipt.people, eur: eurExact(receipt.ground.perDay) })}
-                      </span>
-                      <span className="lp-line-sub">
-                        {receipt.ground.level === 'city' ? t('cost.foodMeasured') : t('receipt.groundNational')}
-                      </span>
-                    </dt>
-                    <dd className="lp-fig"><Figure eur={receipt.ground.eur} est={receipt.ground.est} t={t} /></dd>
-                  </div>
-                </dl>
-                <div className="lp-sum" aria-live="polite">
-                  <span className="lp-sum-label">{t('receipt.total', { people: peopleWord(people) })}</span>
-                  <span className="lp-sum-fig"><Figure eur={receipt.total} est={receipt.est} t={t} /></span>
-                  {receipt.each != null && (
-                    <span className="lp-sum-each">
-                      {t('receipt.each', { eur: `${receipt.est ? '~ ' : ''}${eurExact(receipt.each)}` })}
-                    </span>
-                  )}
-                </div>
-                {altLine() && <p className="lp-receipt-foot">{altLine()}</p>}
-              </section>
-
-              <p className="lp-note lp-orient">{t('landing.orient')}</p>
-              <p className="lp-note">{t('landing.noFlight')}</p>
-              <p className="lp-note">{t('landing.notIn')}</p>
-              {onOpenDest && (
-                <Button className="lp-open" onClick={() => onOpenDest(town.id)}>
-                  {t('landing.openTown', { city: town.city })}
-                </Button>
-              )}
+              <div className="lp-receipt">
+                <ReceiptCard
+                  titleId="lp-receipt-title"
+                  title={town.city}
+                  sub={sub}
+                  action={onOpenDest ? (
+                    <Button className="lp-open" onClick={() => onOpenDest(town.id)}>
+                      {t('landing.openTown', { city: town.city })}
+                    </Button>
+                  ) : null}
+                  lines={[
+                    {
+                      key: 'stay',
+                      label: t('receipt.stay', { nights: nightsWord(nights) }),
+                      prov: stayProv(),
+                      eur: receipt.stay.eur,
+                      est: receipt.stay.est,
+                    },
+                    {
+                      key: 'ground',
+                      label: t('receipt.ground'),
+                      prov: [
+                        {
+                          mono: t(receipt.ground.days === 1 ? 'receipt.groundMathOne' : 'receipt.groundMath',
+                            { days: receipt.ground.days, people: receipt.people, eur: eurExact(receipt.ground.perDay) }),
+                          text: receipt.ground.level === 'city' ? t('cost.foodMeasured') : t('receipt.groundNational'),
+                        },
+                      ],
+                      eur: receipt.ground.eur,
+                      est: receipt.ground.est,
+                    },
+                  ]}
+                  sumLabel={t('receipt.total', { people: peopleWord(people) })}
+                  total={receipt.total}
+                  est={receipt.est}
+                  each={receipt.each}
+                  eachText={(eur) => t('receipt.each', { eur })}
+                  foot={[altLine()]}
+                  t={t}
+                />
+              </div>
             </div>
           )}
 
-          <div className="lp-act">
-            <Button variant="primary" className="lp-cta" onClick={onStart}>{t('landing.cta')}</Button>
+          <div className="lp-side">
+            <div className="lp-act">
+              <Button variant="primary" className="lp-cta" onClick={onStart}>{t('landing.cta')}</Button>
+            </div>
+            {town && receipt && (
+              <div className="lp-notes">
+                {datesPicked && <p className="lp-note">{t('landing.datesPicked')}</p>}
+                <p className="lp-note">{t('receipt.flightNone')}</p>
+                <p className="lp-note">{t('receipt.notIn')}</p>
+              </div>
+            )}
+
+            {walk.length > 0 && onOpenDest && (
+              <section className="lp-walk" aria-labelledby="lp-walk-title">
+                <h2 id="lp-walk-title" className="lp-walk-title">{t('landing.walkTitle')}</h2>
+                <p className="lp-walk-sub">{t('landing.walkSub')}</p>
+                <ol className="lp-walk-list">
+                  {walk.map((r) => (
+                    <li key={r.id}>
+                      <button type="button" className="lp-walk-row" data-id={r.id} onClick={() => onOpenDest(r.id)}>
+                        <span className="lp-walk-name">
+                          <span className="lp-walk-city">{r.dest.city || r.dest.name}</span>
+                          {r.dest.country && <span className="lp-walk-country">{r.dest.country}</span>}
+                        </span>
+                        <span className="lp-walk-fig mono" data-eur={r.dayEur}>
+                          <ReceiptFigure eur={r.dayEur} est={r.est} t={t} />
+                          {r.est && <span className="lp-walk-word">{` ${t('landing.walkNational')}`}</span>}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
           </div>
         </section>
 

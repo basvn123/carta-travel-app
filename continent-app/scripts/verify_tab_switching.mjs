@@ -1,5 +1,5 @@
 // Headless verify for the section switch: Destinations | Explore | Trip
-// planner | Day planner | Saved trips in the desktop header, and the five-slot
+// planner | Day planner | My trips in the desktop header, and the five-slot
 // bottom bar on a phone.
 //
 //   node scripts/verify_tab_switching.mjs [url]     (default http://localhost:$CARTA_PORT or 4173)
@@ -98,12 +98,19 @@ const only = (s, key) => ['places', 'explore', 'trip', 'day'].every((k) => s[k] 
 
   const boot = await read();
   check('the app opens on Destinations', only(boot, 'places'), JSON.stringify(boot).slice(0, 120));
-  check('the header search field is portalled in on the first paint',
-    boot.slotInputs === 1, String(boot.slotInputs));
+  // Destinations carries its search in its own toolbar now, so the header
+  // slot is empty on the first paint; only Explore portals a field into it
+  // on desktop (T381 harness baseline, register row T370-a; this used to
+  // expect Destinations' field in the slot).
+  check('the header search slot is empty on Destinations',
+    boot.slotInputs === 0, String(boot.slotInputs));
+
+  // "Saved trips" became "My trips" on desktop too, the one name the phone
+  // already used (T381, rule R1).
 
   const labels = await page.locator('.header-nav-item').evaluateAll((els) => els.map((e) => e.title));
   check('header lists the five sections',
-    labels.join('|') === 'Destinations|Explore|Trip planner|Day planner|Saved trips', labels.join('|'));
+    labels.join('|') === 'Destinations|Explore|Trip planner|Day planner|My trips', labels.join('|'));
 
   // 1 + 3: every section, reached from every other section.
   for (const [from] of TABS) {
@@ -135,11 +142,27 @@ const only = (s, key) => ['places', 'explore', 'trip', 'day'].every((k) => s[k] 
     check(`account page closes on switching to ${to}`, !s.account && only(s, body), JSON.stringify(s).slice(0, 150));
   }
 
+  // 7 (T381, the navigation rule): the section doors are links, and Back
+  // returns to the section before, with the bar following it.
+  check('the section doors are links with an address',
+    await page.locator('.header-nav-item[title="Explore"]').evaluate((el) => el.tagName === 'A' && /tab=map/.test(el.getAttribute('href') || '')));
+  await nav('Destinations');
+  await page.waitForTimeout(1800);
+  await nav('Explore');
+  await page.waitForTimeout(1800);
+  await page.goBack();
+  await page.waitForTimeout(2200);
+  check('Back after Destinations then Explore returns to Destinations',
+    await read().then((s) => only(s, 'places') && s.hdrActive === 'Destinations'));
+  await page.goForward();
+  await page.waitForTimeout(2200);
+  check('Forward goes to Explore again', await read().then((s) => only(s, 'explore') && s.hdrActive === 'Explore'));
+
   // 2: My trips must not survive one either.
-  await nav('Saved trips');
+  await nav('My trips');
   await page.waitForTimeout(1200);
   check('My trips opens and takes the active state',
-    await read().then((s) => s.saved && s.hdrActive === 'Saved trips'));
+    await read().then((s) => s.saved && s.hdrActive === 'My trips'));
   await nav('Explore');
   await page.waitForTimeout(2200);
   check('My trips closes on switching to Explore',
@@ -152,9 +175,9 @@ const only = (s, key) => ['places', 'explore', 'trip', 'day'].every((k) => s[k] 
   await page.waitForTimeout(900);
   check('a second press on the avatar closes the account page',
     await read().then((s) => !s.account && !s.avatarOn));
-  await nav('Saved trips');
+  await nav('My trips');
   await page.waitForTimeout(1000);
-  await nav('Saved trips');
+  await nav('My trips');
   await page.waitForTimeout(1000);
   check('a second press on My trips closes it', await read().then((s) => !s.saved));
 
@@ -174,11 +197,16 @@ const only = (s, key) => ['places', 'explore', 'trip', 'day'].every((k) => s[k] 
   // 6: keep-alive and the bar's gutter.
   await nav('Destinations');
   await page.waitForTimeout(2200);
+  // The scroll target is what the tab can actually scroll to: the page is
+  // shorter than 800 px of overflow at some data states (T381: this used to
+  // assume 800 was always reachable).
   await page.locator('.places-tab').evaluate((el) => { el.scrollTop = 800; });
   await page.waitForTimeout(400);
   const onPlaces = await read();
-  check('Destinations portals one search field into the header',
-    onPlaces.slotInputs === 1, String(onPlaces.slotInputs));
+  const scrolledTo = onPlaces.placesScroll;
+  check('Destinations scrolls', scrolledTo > 0, String(scrolledTo));
+  check('Destinations portals no search field into the header',
+    onPlaces.slotInputs === 0, String(onPlaces.slotInputs));
   check('the bar reserves a real scrollbar gutter', /^\d+px$/.test(onPlaces.sbw), onPlaces.sbw);
   // The gutter used to be written as 0 before the data landed and only
   // corrected itself on the first tab switch, so the Passes chip overhung the
@@ -194,8 +222,13 @@ const only = (s, key) => ['places', 'explore', 'trip', 'day'].every((k) => s[k] 
   await nav('Destinations');
   await page.waitForTimeout(2200);
   const back = await read();
-  check('scroll position survives the hop', back.placesScroll === 800, String(back.placesScroll));
-  check('the search field comes back exactly once', back.slotInputs === 1, String(back.slotInputs));
+  check('scroll position survives the hop', back.placesScroll === scrolledTo, `${scrolledTo} -> ${back.placesScroll}`);
+  check('the header slot stays empty on Destinations', back.slotInputs === 0, String(back.slotInputs));
+  // Explore is the tab that portals its search: exactly one field, every time.
+  await nav('Explore');
+  await page.waitForTimeout(2200);
+  check('Explore portals one search field into the header',
+    await read().then((s) => s.slotInputs === 1));
 
   await page.close();
 }

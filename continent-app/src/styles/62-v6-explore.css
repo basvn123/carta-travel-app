@@ -14,3 +14,407 @@
    animation with a prefers-reduced-motion branch; carta-design and
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
+
+/* ==========================================================================
+   V3 (T383): structure, information and flow. Plan:
+   docs/design-v6/plans/V3-explore.md in the root repo. Every rule is scoped
+   under .explore-shell so it wins over the older Explore rules in
+   24-destination-workspace.css, 25-feature-pages.css and 46-owner-calls.css
+   (files this surface does not own) without editing them.
+   ========================================================================== */
+
+/* --- 1. The count line --------------------------------------------------
+   The h1 carries the page title and, under it, the count of what the view
+   holds in --mono. On a phone the title is read but not drawn and the count
+   is the visible line, sharing its row with the sort. */
+.explore-shell .xbar-title-text { display: block; }
+.explore-shell .xbar-count {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+@media (max-width: 768px) {
+  .explore-shell .xbar {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-2);
+    padding-bottom: 0;
+  }
+  .explore-shell .xbar-title {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+  }
+  .explore-shell .xbar-title-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .explore-shell .xbar-count { margin: 0; color: var(--ink); }
+  .explore-shell .xbar-tools { margin-left: auto; flex-wrap: nowrap; }
+}
+
+/* --- 3. The input row ----------------------------------------------------
+   Lifestyle, the budget ceiling, the month, No car needed and the
+   shortlist, in the traveller's order, each showing its value. Secondary
+   chrome: --bg-card, a --rule border, 6 px radius, no accent anywhere
+   (house rules "Settings line" and "Accent marks"). On a phone it is one
+   band that scrolls sideways and never wraps; from 769 px it wraps. */
+.explore-shell .xinputs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.explore-shell .xinputs::-webkit-scrollbar { display: none; }
+@media (min-width: 769px) {
+  .explore-shell .xinputs { flex-wrap: wrap; overflow: visible; }
+}
+.explore-shell .xinput {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+/* A select wrapper draws nothing itself: the select is the bordered box,
+   so the whole --tap box opens it. */
+.explore-shell .xinput--select { padding: 0; border: 0; background: transparent; }
+.explore-shell .xinput select {
+  appearance: none;
+  min-height: var(--tap);
+  padding: 0 calc(var(--space-3) + 18px) 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.explore-shell .xinput-chev {
+  position: absolute;
+  right: var(--space-2);
+  pointer-events: none;
+  color: var(--ink-mute);
+}
+/* A set select reads in ink; an unset one ("Any budget") stays soft. */
+.explore-shell .xinput.is-set { color: var(--ink); }
+.explore-shell .xinput.is-set select { border-color: var(--ink-soft); }
+/* A pressed toggle is the house selected state. */
+.explore-shell .xinput--toggle.on {
+  border-color: var(--ink-fill);
+  background: var(--ink-fill);
+  color: var(--on-fill);
+}
+.explore-shell .xinput:focus-visible,
+.explore-shell .xinput select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) {
+  .explore-shell .xinput:hover { border-color: var(--ink-soft); color: var(--ink); }
+  .explore-shell .xinput select:hover { border-color: var(--ink-soft); }
+  .explore-shell .xinput--toggle.on:hover { color: var(--on-fill); }
+}
+/* The shortlist's count is the house count chip. */
+.explore-shell .xinput-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+/* The Lifestyle door, in the row: secondary chrome like the rest of it. */
+.explore-shell .xinputs .lifestyle-btn {
+  flex: none;
+  height: auto;
+  min-height: var(--tap);
+  max-width: none;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.explore-shell .xinputs .lifestyle-btn .lifestyle-btn-icon { color: var(--ink-soft); }
+.explore-shell .xinputs .lifestyle-btn-vibe { color: var(--ink-soft); }
+.explore-shell .xinputs .lifestyle-btn-vibe::before { background: var(--rule); }
+@media (hover: hover) {
+  .explore-shell .xinputs .lifestyle-btn:hover { border-color: var(--ink-soft); background: var(--bg-card); color: var(--ink); }
+}
+@media (pointer: fine) and (min-width: 769px) {
+  /* The compact control a fine pointer may have (carta-design, Layout). */
+  .explore-shell .xinput,
+  .explore-shell .xinputs .lifestyle-btn { min-height: 36px; }
+  .explore-shell .xinput select { min-height: 36px; }
+}
+@media (pointer: coarse) {
+  /* 16 px, so iOS does not zoom the page when a select opens. */
+  .explore-shell .xinput select { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xinput { transition: none; }
+}
+
+/* --- 4. The phone's top row: search and Filters side by side ------------ */
+@media (max-width: 768px) {
+  .explore-shell .explore-filterbar.xtop {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-2);
+  }
+  .explore-shell .xtop .explore-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+  }
+  .explore-shell .xtop .explore-search .results-search-input { height: var(--tap); font-size: 16px; }
+  .explore-shell .xtop .places-filter-btn {
+    flex: none;
+    width: auto;
+    height: var(--tap);
+    padding: 0 var(--space-3);
+  }
+}
+/* The search clear is the house close control: CloseIcon in a --tap box. */
+.explore-shell .explore-search .results-search-clear {
+  right: 0;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-soft);
+}
+@media (pointer: fine) and (min-width: 769px) {
+  .explore-shell .explore-search .results-search-clear,
+  .header-search-slot .explore-search .results-search-clear {
+    right: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ink-soft);
+  }
+}
+
+/* --- 5 and 8. The price on the card, with its pedigree word -------------
+   Line 1: name, score, then the day cost; line 2: where, what size, and the
+   gauge. On a two-up phone card and in the split list the figure takes its
+   own line under the name. */
+.explore-shell .xcard-head { flex-wrap: wrap; row-gap: 2px; }
+/* The name keeps at least about half the line; when the name, the score
+   and the figure cannot share it, the figure wraps under them. */
+.explore-shell .xcard-head .xcard-name { flex: 1 1 auto; min-width: 55%; }
+.explore-shell .xcard-price { display: inline-flex; flex: none; margin-left: 0; min-width: 0; }
+.explore-shell .xcard-price .xcard-cost { gap: var(--space-1); flex-wrap: nowrap; margin-left: 0; }
+.explore-shell .xcard-price .xcard-cost-eur { font-family: var(--mono); font-size: 13px; }
+.explore-shell .xcard-cost-level {
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+.explore-shell .xcard-meta .xcard-cost--gauge { flex: none; flex-basis: auto; margin-left: auto; }
+/* The label box was a fixed 62 px for two lines; the figure may now wrap to
+   a line of its own, so the box grows with it instead of clipping it. */
+.explore-shell .explore-grid--mosaic .xcard-body { height: auto; min-height: 62px; padding-block: var(--space-2); }
+@media (max-width: 619px) {
+  .explore-shell .xcard-price { flex-basis: 100%; margin-left: 0; }
+}
+@media (max-width: 768px) {
+  /* The body grew a line (the figure), so it no longer has a fixed height. */
+  .explore-shell .explore-grid--mosaic .xcard-body { height: auto; padding: var(--space-2); gap: 2px; }
+  /* "a day" is back on the phone card: the figure now leads the card, and
+     a bare "€87" beside a score reads as a second score. */
+  .explore-shell .explore-grid--mosaic .xcard-price .xcard-cost-unit { display: inline; }
+  .explore-shell .explore-grid--mosaic .xcard-meta .xcard-cost--gauge { margin-left: auto; }
+}
+.explore-shell .xcontent--split .xcard-price { flex-basis: 100%; margin-left: 0; }
+
+/* On a phone "See all N" holds the title's row instead of taking a row of
+   its own, so the first priced card sits higher (brief V3-4). */
+@media (max-width: 768px) {
+  .explore-shell .xrails-head { flex-wrap: nowrap; align-items: flex-start; }
+  .explore-shell .xrails-head .xrails-all { align-self: flex-start; }
+}
+
+/* Rail cards carry the day cost too. */
+.explore-shell .railcard-body .xcard-cost { gap: var(--space-1); margin: 2px 0 0; flex-wrap: wrap; }
+.explore-shell .railcard-body .xcard-cost-eur { font-family: var(--mono); font-size: 13px; }
+.explore-shell .railcard-body .cost-gauge { margin-left: auto; }
+
+/* On touch the info control is the door to the preview and its compact
+   receipt (there is no hover there): a --tap box under the star, its disc
+   drawn inside. */
+@media (pointer: coarse) {
+  .explore-shell .xcard-info {
+    display: inline-flex;
+    top: 40px;
+    right: 0;
+    width: var(--tap);
+    height: var(--tap);
+    background: transparent;
+    color: var(--ink-soft);
+  }
+  .explore-shell .xcard-info::before {
+    content: '';
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--paper);
+  }
+  .explore-shell .xcard-info svg { position: relative; }
+}
+
+/* --- 7. Trip styles, as the rail's first group ---------------------------- */
+.explore-shell .xrail-styles .xrail-toggle { gap: var(--space-1); }
+.explore-shell .xrail-style-icon { flex: none; }
+
+/* --- 10. Map and list in sync (house rule): ink, never the accent -------- */
+.explore-shell .xcard.is-linked { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (max-width: 768px) {
+  /* The map takes the phone's height under the chrome, to the nav. */
+  .explore-shell .xcontent-map .xmap {
+    height: calc(100dvh - var(--bottom-nav-h) - 236px);
+    min-height: 320px;
+  }
+}
+
+/* --- 9. Price pins from zoom 7, and the one cheapest pin ------------------ */
+.explore-shell .xmap-kpin.is-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  width: auto;
+  height: auto;
+  padding: 2px 6px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+}
+/* Every pin has a 44 px hit box whatever its drawn size. */
+.explore-shell .xmap-kpin.is-label::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--tap);
+  height: var(--tap);
+  transform: translate(-50%, -50%);
+}
+.explore-shell .xmap-kpin-label { display: inline-flex; align-items: baseline; gap: var(--space-2); }
+.explore-shell .xmap-kpin-eur { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+.explore-shell .xmap-kpin.is-cheapest {
+  z-index: 2;
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-fill);
+}
+.explore-shell .xmap-kpin.is-ringed { z-index: 3; outline: 2px solid var(--ink); outline-offset: 2px; }
+.explore-shell .xmap-kpin.is-label:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The day cost in the name tip and the pin card. */
+.xmap-pop-eur,
+.xmap-card-eur-line { font-size: 12px; color: var(--ink-soft); }
+.xmap-pop-eur .mono,
+.xmap-card-eur-line .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+.xmap-card-eur { margin: 2px 0 0; }
+
+/* --- 11. Empty states that name the cause -------------------------------- */
+.explore-shell .xempty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+.explore-shell .xempty-line { margin: 0; font-size: 14px; line-height: 1.45; color: var(--ink); }
+.explore-shell .xempty-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.explore-shell .xempty-all {
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* --- 12. "Score key", a word instead of a bare "?" ----------------------- */
+.explore-shell .tierlegend-pip--word {
+  width: auto;
+  height: auto;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+}
+@media (pointer: fine) and (min-width: 769px) {
+  .explore-shell .tierlegend-pip--word { min-height: 32px; }
+}
+.explore-shell .tierlegend-x { color: var(--ink-soft); }
+.explore-shell .cpage-banner svg,
+.explore-shell .xrail-country-page svg { flex: none; vertical-align: middle; }
+
+/* --- 13. The floating List/Map switch never covers the last card --------- */
+@media (max-width: 768px) {
+  .explore-shell .explore-wrap {
+    padding-bottom: calc(var(--tap) + var(--space-7) + env(safe-area-inset-bottom, 0px));
+  }
+}

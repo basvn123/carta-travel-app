@@ -8,7 +8,9 @@ import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { accommodationPerPerson, buildAccommodationLink } from '../src/lib/runtime_pricing.js';
 
-const PORT = 4192; // 4190 is on the fetch spec's blocked-port list
+// T385: CARTA_PORT points the harness at a preview a session already runs,
+// so parallel sessions never test each other's build on a shared port.
+const PORT = Number(process.env.CARTA_PORT) || 4192; // 4190 is on the fetch spec's blocked-port list
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });

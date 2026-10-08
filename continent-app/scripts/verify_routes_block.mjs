@@ -29,7 +29,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync, existsSync, readdirSync } from 'node:fs';
 
-const PORT = 4208;
+// T385: CARTA_PORT points the harness at a preview a session already runs,
+// so parallel sessions never test each other's build on a shared port.
+const PORT = Number(process.env.CARTA_PORT) || 4208;
 const BASE = `http://127.0.0.1:${PORT}/`;
 mkdirSync('shots', { recursive: true });
 
@@ -212,8 +214,11 @@ if (without.length) {
     await all.click();
     await page.waitForTimeout(700);
   }
-  check('no block where there is nothing to show',
-    await page.locator('#sec-routes').count() === 0, empty.id);
+  // T367 keeps the fold with one empty line, and T385 merged Around into it
+  // ("Walk and ride from here"), so the fold may hold the 20 km inventory.
+  // What must never render is a route row where nothing is attached.
+  check('no route rows where there is nothing to show',
+    await page.locator('#sec-routes .drh-row').count() === 0, empty.id);
 }
 
 check('no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));

@@ -72,7 +72,9 @@ export function summaryOf(around, t) {
   if (!around?.counts) return '';
   return LAYER_ORDER
     .filter((l) => around.counts[l])
-    .map((l) => t(`dest.layerN.${l}`, { n: around.counts[l] }))
+    // One is singular ("1 lake", not "1 lakes"): the catalogues carry a
+    // separate key for it rather than a plural engine (T385).
+    .map((l) => (around.counts[l] === 1 ? t(`dest.layerN1.${l}`) : t(`dest.layerN.${l}`, { n: around.counts[l] })))
     .join(', ');
 }
 

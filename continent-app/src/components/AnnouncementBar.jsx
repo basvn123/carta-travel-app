@@ -18,6 +18,19 @@ import { TIERS, daysLeft } from '../lib/pricing.js';
 // When both are live the status file wins; the bar never stacks two lines.
 const SEEN_KEY = 'carta.banner.dismissed.v1';
 
+/**
+ * The one bottom slot (T381; carta-design "Bottom slot"): every transient
+ * message, the site notice, the pass expiry banner and the app's toasts,
+ * stacks here instead of each pinning itself to the bottom of the window,
+ * where three of them used to land on the same spot and the phone toast sat
+ * on the bottom nav. Above the nav on a phone, bottom centre on desktop,
+ * newest on top (children come oldest first; the slot reverses them), never
+ * over the nav. An empty slot draws nothing and takes no clicks.
+ */
+export function BottomSlot({ children }) {
+  return <div className="bottom-slot">{children}</div>;
+}
+
 export function AnnouncementBar() {
   const { config } = useSiteConfig();
   const { t, lang } = useI18n();
@@ -46,8 +59,8 @@ export function AnnouncementBar() {
     <div className={`site-banner${warn ? ' warn' : ''}`} role="status" data-source={notice.source}>
       {warn ? <AlertIcon size={15} /> : <InfoIcon size={15} />}
       <span className="site-banner-text">{text}</span>
-      <button type="button" className="site-banner-close" onClick={dismiss} aria-label={t('a11y.dismiss')}>
-        <CloseIcon size={13} />
+      <button type="button" className="site-banner-close" onClick={dismiss} aria-label={t('a11y.close')}>
+        <CloseIcon size={16} />
       </button>
     </div>
   );
@@ -101,8 +114,8 @@ export function PassExpiryBanner() {
       <Button variant="ghost" size="sm" className="site-banner-action" onClick={() => openPrices('expiring')}>
         {t('pass.extend')}
       </Button>
-      <button type="button" className="site-banner-close" onClick={dismiss} aria-label={t('a11y.dismiss')}>
-        <CloseIcon size={13} />
+      <button type="button" className="site-banner-close" onClick={dismiss} aria-label={t('a11y.close')}>
+        <CloseIcon size={16} />
       </button>
     </div>
   );

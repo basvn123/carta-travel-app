@@ -59,6 +59,49 @@ export function filterByBand(cards, { length, band, edges }) {
   return cards.filter((c) => bandOf(totalMid(c, length), edges) === band);
 }
 
+/** The cards whose best months include `month` (1 to 12). No month means
+ *  every card; a card that names no months never passes a month (T387, rule
+ *  "Month": a month filter reads the item's best months, never a forecast). */
+export function filterByMonth(cards, month) {
+  if (!month) return cards;
+  return (cards || []).filter((c) => Array.isArray(c.months) && c.months.includes(month));
+}
+
+/** How many of the cards each month would keep, 1 to 12. */
+export function monthCounts(cards) {
+  const out = {};
+  for (let m = 1; m <= 12; m += 1) out[m] = 0;
+  for (const c of cards || []) {
+    for (const m of new Set(c.months || [])) if (out[m] != null) out[m] += 1;
+  }
+  return out;
+}
+
+export const SORTS = ['written', 'cost', 'az'];
+
+/** The list in one of three orders: as the library writes it, cheapest
+ *  first at the length the list is read at (cards with no total last), or A
+ *  to Z by title in the app language. Never mutates the input. */
+export function sortCards(cards, sort, length, lang = 'en') {
+  if (!Array.isArray(cards) || sort === 'written' || !sort) return cards;
+  const out = cards.slice();
+  if (sort === 'cost') {
+    const at = (c) => totalMid(c, length);
+    out.sort((a, b) => {
+      const x = at(a);
+      const y = at(b);
+      if (x == null && y == null) return 0;
+      if (x == null) return 1;
+      if (y == null) return -1;
+      return x - y;
+    });
+  } else if (sort === 'az') {
+    const coll = new Intl.Collator(lang, { sensitivity: 'base' });
+    out.sort((a, b) => coll.compare(a.title || '', b.title || ''));
+  }
+  return out;
+}
+
 /** How many of the cards fall in each band, for the chips. */
 export function bandCounts(cards, { length, edges }) {
   const out = { low: 0, mid: 0, high: 0 };

@@ -154,11 +154,19 @@ try {
   if (!/Custom/i.test(doorVibe)) fail(`door reads "${doorVibe}" after hand-tuning, expected Custom`);
 
   // ---- The same door on Destinations ----
-  await page.getByRole('button', { name: 'Destinations' }).first().click();
+  // The section doors are links since T381 (the navigation rule), so the
+  // door is found by its link role; it used to be a button.
+  await page.getByRole('link', { name: 'Destinations', exact: true }).first().click();
   await page.waitForTimeout(1600);
-  const placesBtn = page.locator('.side-panel .lifestyle-btn:visible');
-  if (!(await placesBtn.count())) fail('Destinations side panel has no lifestyle door');
-  const placesBed = await placesBtn.locator('.lifestyle-btn-bed').innerText();
+  // Since T381 the settings line under the header carries the Lifestyle door
+  // on every Destinations category, priced or not (brief V3-4); the side
+  // panel's own door shows only on a priced category. Either one counts, and
+  // the first visible one must state the tier just set. This used to require
+  // the side panel's door, which the default category (the trip library)
+  // does not draw.
+  const placesBtn = page.locator('.side-panel .lifestyle-btn:visible, .settings-part-lifestyle:visible').first();
+  if (!(await placesBtn.count())) fail('Destinations has no lifestyle door');
+  const placesBed = await placesBtn.locator('.lifestyle-btn-bed, .settings-part-value').first().innerText();
   console.log('destinations door reads:', JSON.stringify(placesBed));
   if (!/5-star hotel/i.test(placesBed)) fail(`Destinations door shows "${placesBed}", not the tier just set`);
   await page.screenshot({ path: `${SHOTS}/lifestyle-door-destinations.png` });

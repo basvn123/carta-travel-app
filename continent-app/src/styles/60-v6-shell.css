@@ -14,3 +14,359 @@
    animation with a prefers-reduced-motion branch; carta-design and
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   V3 (T381): structure, information and flow
+   -------------------------------------------------------------------------- */
+
+/* Section doors are links now (the navigation rule). An anchor brings an
+   underline with it; the doors keep the look they had as buttons, and their
+   colours stay with their own class rules (10-shell.css and the desktop and
+   phone chrome in 24-destination-workspace.css). */
+.app-header-brand,
+.header-nav-item,
+.bottom-nav-item,
+.plan-chooser-item { text-decoration: none; }
+.app-header-brand { color: var(--ink); min-height: var(--tap); }
+
+/* The count chip (carta-design "Count chip"): the shortlist's size after
+   My trips, mono on paper-dim, never the accent. */
+.nav-count {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 var(--space-1);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.bottom-nav-item .nav-count {
+  position: absolute;
+  top: 0;
+  left: calc(50% + var(--space-2));
+}
+
+/* The state dot: a plan in progress, 6 px ink fill. On the raised plus it
+   sits on the ring's edge with a card-white border so it reads on the ring. */
+.nav-dot {
+  display: inline-block;
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ink-fill);
+}
+.header-nav-item.active .nav-dot { background: var(--paper); }
+.bottom-nav-plus { position: relative; }
+.bottom-nav-plus .nav-dot {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  box-sizing: content-box;
+  border: 2px solid var(--bg-card);
+}
+
+/* The settings line (carta-design "Settings line"): one band under the
+   header on Explore, Destinations and the Trip planner. A timetable row:
+   label then value, hairlines between the parts, no accent, no tint. */
+.settings-line {
+  container-type: inline-size;
+  container-name: settings;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 var(--space-5);
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--ui);
+}
+.settings-line-parts {
+  display: flex;
+  align-items: stretch;
+  flex: 0 1 auto;
+  min-width: 0;
+  /* The phone faces below drop parts before anything overflows; this is the
+     last guard in a long translation. Popovers are fixed, so it never clips
+     one. */
+  overflow: hidden;
+}
+.settings-line-parts > * + * { border-left: 1px solid var(--rule-soft); }
+.settings-slot,
+.settings-line .origin-picker.is-settings {
+  display: flex;
+  flex: none;
+}
+.settings-part {
+  display: inline-flex;
+  align-self: stretch;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.settings-part-label { font-size: 13px; color: var(--ink-soft); }
+.settings-part-value { font-size: 13px; font-weight: 500; color: var(--ink); }
+.settings-origin-city { margin-right: var(--space-1); }
+.settings-part-lifestyle .settings-part-value { display: inline-flex; gap: var(--space-2); }
+.settings-vibe { color: var(--ink-soft); font-weight: 400; }
+.settings-line .is-mono,
+.settings-pop .is-mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.settings-part[aria-expanded="true"] { background: var(--paper-dim); }
+@media (hover: hover) {
+  .settings-part:hover { background: var(--paper-dim); }
+}
+.settings-part:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.settings-currency {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: 0 var(--space-3);
+  font-size: 13px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.settings-line-extra {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.settings-line-extra:empty { display: none; }
+
+/* Phone faces. The line never wraps: it drops what a phone can spare, from
+   the left, and keeps Lifestyle. */
+@container settings (max-width: 760px) {
+  .settings-origin-city,
+  .settings-part-lifestyle .settings-part-label,
+  .settings-part-language .settings-part-label,
+  .settings-part-dates .settings-part-label { display: none; }
+}
+@container settings (max-width: 560px) {
+  .settings-currency,
+  .settings-vibe { display: none; }
+}
+@container settings (max-width: 440px) {
+  .settings-line .origin-picker.is-settings { display: none; }
+  .settings-line-parts > .settings-slot-dates { border-left: 0; }
+}
+@container settings (max-width: 360px) {
+  .settings-slot-dates { display: none; }
+  .settings-line-parts > .settings-slot-party { border-left: 0; }
+}
+@media (max-width: 768px) {
+  .settings-line { padding: 0 var(--space-2); }
+}
+
+/* The popovers under the parts: fixed under the top bar and lined up with
+   their part from SettingsLine.jsx. The origin list is OriginPicker's own
+   popover, moved under the bar the same way; origin is always the first
+   part, so it starts at the band's gutter. */
+.settings-pop,
+.settings-line .origin-picker.is-settings .origin-pop {
+  position: fixed;
+  top: calc(var(--filter-h) + var(--space-1));
+  z-index: 60;
+  max-height: calc(100dvh - var(--filter-h) - var(--bottom-nav-h) - var(--space-5));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  box-shadow: var(--shadow-2);
+  animation: settings-pop-in var(--dur-3) var(--ease-out);
+}
+.settings-pop {
+  width: max-content;
+  min-width: 220px;
+  max-width: calc(100vw - 2 * var(--space-4));
+  padding: var(--space-3);
+}
+.settings-line .origin-picker.is-settings .origin-pop {
+  left: var(--space-4);
+  right: auto;
+  width: min(340px, calc(100vw - 2 * var(--space-4)));
+}
+@keyframes settings-pop-in {
+  from { opacity: 0; transform: translateY(var(--space-1)); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-pop,
+  .settings-line .origin-picker.is-settings .origin-pop { animation: none; }
+  .settings-part { transition: none; }
+}
+.settings-ends {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.settings-end {
+  display: inline-flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: var(--tap);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.settings-end-label { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+/* The selected state (carta-design "Selected state"): ink fill. */
+.settings-end.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.settings-end.on .settings-end-label { color: var(--on-fill); }
+.settings-note {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.settings-text-btn {
+  min-height: var(--tap);
+  margin-top: var(--space-2);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.settings-langs {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.settings-lang {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.settings-lang .is-mono { font-size: 12px; color: var(--ink-soft); }
+@media (hover: hover) {
+  .settings-lang:hover:not(.on),
+  .settings-text-btn:hover { background: var(--paper-dim); }
+}
+.settings-lang.on { background: var(--ink-fill); color: var(--on-fill); }
+.settings-lang.on .is-mono { color: var(--on-fill); }
+@media (prefers-reduced-motion: reduce) {
+  .settings-end,
+  .settings-lang { transition: none; }
+}
+
+/* Loading inside the tab (carta-design "Loading"): a still paper-dim block
+   in the tab's own region, under the top bar and above the bottom nav, so
+   both stay usable while a planner chunk or the full catalogue arrives. */
+.tab-fallback {
+  position: absolute;
+  top: var(--filter-h);
+  left: 0;
+  right: 0;
+  bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
+  padding: var(--space-4);
+  background: var(--paper);
+}
+.tab-fallback .state-skel {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.tab-fallback .state-skel-item { animation: none; }
+
+/* The bottom slot (carta-design "Bottom slot"): every transient message in
+   one stack above the bottom nav (phone) or bottom centre (desktop), newest
+   on top, never over the nav, under every sheet and dialog. The messages
+   used to pin themselves to the window one by one; inside the slot they
+   flow. */
+.bottom-slot {
+  position: fixed;
+  left: 50%;
+  /* The nav grows by the home-bar inset (10-shell.css pads it), so the slot
+     clears that too. */
+  bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+  z-index: 40;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: var(--space-2);
+  width: max-content;
+  max-width: calc(100vw - 2 * var(--space-4));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.bottom-slot:empty { display: none; }
+.bottom-slot > * { pointer-events: auto; }
+.bottom-slot > .site-banner,
+.bottom-slot > .confirm-toast {
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  max-width: 100%;
+}
+@media (min-width: 769px) {
+  .bottom-slot { bottom: var(--space-5); }
+}
+.confirm-toast-close,
+.site-banner-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  margin: calc(-1 * var(--space-3)) calc(-1 * var(--space-2)) calc(-1 * var(--space-3)) 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* The Lifestyle door's vibe word was --accent on --accent-bg, 3.83:1, under
+   the 4.5:1 floor (verify_quality_floor, three Explore views). Ink on the
+   tint passes; the tint itself goes in V4 (T391, "no tint on the Lifestyle
+   door"). */
+.lifestyle-btn .lifestyle-btn-vibe { color: var(--ink); }

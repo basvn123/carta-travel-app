@@ -5,6 +5,7 @@ import { ScoreChip, tierClass } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ChevronRightIcon } from '../components/Icons.jsx';
 import { Fold } from './Fold.jsx';
+import { CostLine } from '../components/CostSummary.jsx';
 
 /**
  * Editorial rails (PLAN.md C5): the first screen stops being a rating sort.
@@ -25,6 +26,12 @@ import { Fold } from './Fold.jsx';
  *
  * Rails render from data already in memory: no fetch, no skeleton state,
  * everything visible at rest.
+ *
+ * V3 (T383): every rail card carries the day cost (house rule "Cost on
+ * cards"): a price tool's first screen showed no price, because rail cards
+ * had a name, a score and a country only. The first strip is now the cost
+ * cut ExploreTab builds ("Under €N a day in <month>"), then the top tier,
+ * then the gems; the month rail became a door.
  */
 
 const CAP = 12;
@@ -48,7 +55,7 @@ export function interleaveByCountry(rows) {
   return out;
 }
 
-function RailCard({ p, onSelect }) {
+function RailCard({ p, onSelect, t }) {
   return (
     <button className="railcard" onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}>
       <span className="railcard-media">
@@ -68,6 +75,7 @@ function RailCard({ p, onSelect }) {
           <CountryFlag country={p.iso2} size={10} />
           <span>{p.country}</span>
         </span>
+        <CostLine cost={p.cost} t={t} />
       </span>
     </button>
   );

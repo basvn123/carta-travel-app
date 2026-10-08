@@ -1,19 +1,12 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Fold } from './Fold.jsx';
-import { useFolds } from './useFolds.js';
 import { GatewayList } from '../components/FactMeter.jsx';
-import { parseGateway } from '../lib/gateway.js';
 import { minutesText, boldSegments } from '../lib/journeys.js';
-import {
-  weekShape, tripEnds, weatherPlan, CONDITION_TYPES,
-  LAND_TO_ROAD_MIN, AIRPORT_BEFORE_MIN, LATE_ARRIVAL,
-} from '../lib/weekShape.js';
-import { RouteIcon, LuggageIcon, RainIcon } from '../components/Icons.jsx';
+import { LAND_TO_ROAD_MIN, AIRPORT_BEFORE_MIN, LATE_ARRIVAL } from '../lib/weekShape.js';
 
 /**
  * Three modules a traveller plans around and the written days do not show at
- * a glance (T170, spec M2, M3, M5). They sit above the day by day:
+ * a glance (T170, spec M2, M3, M5):
  *
  *   How the week runs   one strip: where you sleep each night, where you
  *                       change beds, and how hard each day is
@@ -25,8 +18,14 @@ import { RouteIcon, LuggageIcon, RainIcon } from '../components/Icons.jsx';
  *
  * Everything comes from src/lib/weekShape.js, which reads the trip as written
  * and returns null where the trip does not say. This file only lays it out.
- * The folds keep their own open set (the page's set is the page's), reset per
- * trip the same way.
+ *
+ * T387 (v6 trips brief, V3.6) took the three out of their own folds: the
+ * journey page now has seven groups, and these are blocks inside two of
+ * them (the strip and the weather in The week, arrive and leave in Getting
+ * there), each under an h3. The page decides where each block goes; this
+ * file draws them. Rule "Derived copy stays silent" (V3.8): the weather
+ * block renders only when at least one day has a fallback, and no "0 of N"
+ * count is ever shown.
  */
 
 const hhmm = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
@@ -261,7 +260,7 @@ function WeatherBody({ plan, t }) {
     <>
       {plan.groups && (
         <div className="jwx-groups">
-          <h3>{t('journey.wxGroupsHead')}</h3>
+          <h4>{t('journey.wxGroupsHead')}</h4>
           <p className="jwx-hint">
             {t('journey.wxGroupsHint', { first: plan.groups.travel[0].day, last: plan.groups.travel[1].day })}
           </p>
@@ -285,7 +284,7 @@ function WeatherBody({ plan, t }) {
           </dl>
         </div>
       )}
-      <h3 className="jwx-sub">{t('journey.wxDaysHead')}</h3>
+      <h4 className="jwx-sub">{t('journey.wxDaysHead')}</h4>
       <ol className="jwx-days">
         {plan.days.map((d) => (
           <li key={d.day} className={d.fallback || d.swap ? '' : 'is-empty'}>
@@ -311,65 +310,39 @@ function WeatherBody({ plan, t }) {
   );
 }
 
-export function WeekPlan({ trip }) {
+/** How the week runs: the sentence and the strip. Null when nothing shows. */
+export function WeekShapeBlock({ shape }) {
   const { t } = useI18n();
-  const shape = useMemo(() => weekShape(trip), [trip]);
-  const ends = useMemo(() => tripEnds(trip, parseGateway), [trip]);
-  const plan = useMemo(() => weatherPlan(trip), [trip]);
-  const conditions = CONDITION_TYPES.has(trip?.tripTypeSlug) && !!plan?.groups;
-  // The strip is a glance and opens on arrival; on a winter or water week the
-  // forecast plan is how the days are read, so it opens too.
-  const { isOpen, toggle } = useFolds(conditions ? ['shape', 'weather'] : ['shape'], trip?.id);
-
-  if (!trip?.itinerary?.length) return null;
-  const summary = shape.show ? shapeSummary(shape, t) : '';
-
+  if (!shape?.show) return null;
+  const summary = shapeSummary(shape, t);
   return (
-    <>
-      {shape.show && (
-        <Fold
-          id="sec-shape"
-          icon={RouteIcon}
-          title={t('journey.weekHead')}
-          summary={summary}
-          open={isOpen('shape')}
-          onToggle={() => toggle('shape')}
-          className="jpage-shape"
-        >
-          {summary && <p className="jweek-sum">{summary}</p>}
-          <WeekStrip shape={shape} t={t} />
-        </Fold>
-      )}
+    <div className="jblock jpage-shape" id="jb-shape">
+      <h3 className="jblock-h">{t('journey.weekHead')}</h3>
+      {summary && <p className="jweek-sum">{summary}</p>}
+      <WeekStrip shape={shape} t={t} />
+    </div>
+  );
+}
 
-      {ends && (
-        <Fold
-          id="sec-ends"
-          icon={LuggageIcon}
-          title={t('journey.endsHead')}
-          summary={ends.arrive.landBy && ends.arrive.timed
-            ? t('journey.endsSummary', { time: ends.arrive.landBy, code: ends.arrive.timed.code })
-            : ends.airports.map((a) => a.code).join(', ')}
-          open={isOpen('ends')}
-          onToggle={() => toggle('ends')}
-          className="jpage-ends"
-        >
-          <EndsBody ends={ends} t={t} />
-        </Fold>
-      )}
+/** Arrive and leave, open (it is how the traveller gets there). */
+export function EndsBlock({ ends }) {
+  const { t } = useI18n();
+  if (!ends) return null;
+  return (
+    <div className="jblock jpage-ends" id="jb-ends">
+      <EndsBody ends={ends} t={t} />
+    </div>
+  );
+}
 
-      {plan?.show && (
-        <Fold
-          id="sec-weather"
-          icon={RainIcon}
-          title={t(conditions ? 'journey.wxHeadConditions' : 'journey.wxHead')}
-          summary={t('journey.wxSummary', { n: plan.covered, m: plan.days.length })}
-          open={isOpen('weather')}
-          onToggle={() => toggle('weather')}
-          className="jpage-weather"
-        >
-          <WeatherBody plan={plan} t={t} />
-        </Fold>
-      )}
-    </>
+/** If the weather turns. Null unless a day carries a fallback. */
+export function WeatherBlock({ plan, conditions, show }) {
+  const { t } = useI18n();
+  if (!show) return null;
+  return (
+    <div className="jblock jpage-weather" id="jb-weather">
+      <h3 className="jblock-h">{t(conditions ? 'journey.wxHeadConditions' : 'journey.wxHead')}</h3>
+      <WeatherBody plan={plan} t={t} />
+    </div>
   );
 }

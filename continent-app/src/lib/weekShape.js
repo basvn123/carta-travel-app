@@ -107,12 +107,28 @@ function placeBasecamps(itinerary, camps) {
   return nights.map((i) => strip(camps[i]));
 }
 
+/* A bed a day title can end at that is not a town: a hut, a refuge, a gite.
+   Titles are short ("Neustift to Starkenburger Hütte"), so a hit is a strong
+   sign the night is spent there. */
+export const BED_IN_TITLE = /\b(?:hut|huts|h(?:ü|ue|u)tte|refuge|refugio|rifugio|cabane|capanna|bothy|albergue|g(?:î|i)te|chata|schutzhaus)\b/i;
+
+/** True when a day title names a bed (BED_IN_TITLE) that is not the base. */
+export function otherBedInTitles(itinerary, baseLine) {
+  const label = fold(baseLabel(baseLine));
+  return (itinerary || []).some((d) => {
+    const title = strip(d?.title);
+    return BED_IN_TITLE.test(title) && !(label && fold(title).includes(label));
+  });
+}
+
 /**
  * The bases, night by night.
  *   source 'sleep'      every night is written on the day ("sleep")
  *   source 'one'        one basecamp: the whole week from one bed
  *   source 'placed'     several basecamps, placed on nights from the prose
  *   source 'listed'     several basecamps that could not be placed: listed only
+ *   source 'unsure'     one basecamp, but a day title ends at another bed:
+ *                       no claim is made (T387)
  *   source null         nothing recorded
  * `exit` is the last night when it is an airport night or no night at all;
  * it belongs to the leaving module, not to the strip.
@@ -137,6 +153,16 @@ export function weekBases(trip) {
     out.nights = lines;
     out.source = 'sleep';
   } else if (camps.length === 1) {
+    // One basecamp and no sleep lines. The claim "one base all week" is made
+    // only when no day's title ends the day at another bed (a hut circuit
+    // listed with its valley town as the basecamp said "One base all week"
+    // over seven hut nights). When a title names another bed the module
+    // stays silent (rule "Derived copy stays silent", T387).
+    if (otherBedInTitles(it, camps[0])) {
+      out.source = 'unsure';
+      out.moves = null;
+      return out;
+    }
     out.nights = it.map(() => strip(camps[0]));
     out.source = 'one';
   } else if (camps.length > 1) {

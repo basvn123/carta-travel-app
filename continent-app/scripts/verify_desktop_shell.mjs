@@ -46,7 +46,11 @@ const barBg = await bg(page, '.top-bar');
 check('top bar sits on the page ground', barBg === 'rgb(248, 246, 240)', barBg);
 check('a header tab is active', await page.locator('.header-nav-item.active').count() === 1);
 const passBg = await bg(page, '.header-pricing-btn');
-check('Get a pass wears the accent', passBg === 'rgb(224, 90, 71)', passBg);
+// Since T360 the pass chip is secondary chrome (carta-design "Secondary
+// chrome"): transparent or paper with a --rule border, never the accent,
+// which belongs to each page's one primary (T381, register row T370-a).
+check('Get a pass is secondary chrome, not the accent',
+  !['rgb(224, 90, 71)', 'rgb(206, 56, 35)'].includes(passBg), passBg);
 const passLabel = (await page.locator('.header-pricing-btn').innerText().catch(() => '')).trim();
 check('pass button says Get a pass', /get a pass/i.test(passLabel), passLabel);
 check('friends label folded to the icon',
@@ -67,19 +71,29 @@ check('it sits under the bar and over the results',
 check('side panel renders', await page.locator('.places-side').isVisible());
 check('toolbar card folded away', await page.locator('.places-toolbar').isHidden());
 // Seven since Cycling joined General/Trips/Trails/Beaches/Lakes/Mountains.
+// Six since General was retired (T381 harness baseline, register row
+// T370-a): Trips, Trails, Beaches, Lakes, Mountains and Cycling.
 const sideCats = await page.locator('.places-side .side-cat').count();
-check('every category has a tile in the panel', sideCats === 7, `${sideCats}`);
+check('every category has a tile in the panel', sideCats === 6, `${sideCats}`);
 check('origin picker off this page', await page.locator('.places-tab .origin-btn').count() === 0
   || await page.locator('.places-tab .origin-btn').first().isHidden());
-check('lifestyle stays in the panel', await page.locator('.places-side .lifestyle-btn').isVisible());
+// The Lifestyle door left the side panel (it only ever showed on the retired
+// General category) and lives in the shell's settings line under the bar
+// on every Destinations category (T381, brief V3-3 and V3-4).
+check('lifestyle door on the settings line',
+  await page.locator('.settings-line .settings-part-lifestyle').isVisible());
 check('country dropdown in the panel', await page.locator('.places-side .side-country').isVisible());
 
-// Selected category = full accent tile.
+// Selected category = full accent tile. Since T380 the house selected state
+// is --ink-fill (#2b3446), never the accent (carta-design "Selected state"),
+// and the tiles already wear it, so the assertion checks the ink fill
+// (T381, register row T370-a).
 await page.locator('.places-side .side-cat', { hasText: /trails/i }).first().click();
 await page.waitForTimeout(1200);
 const onBg = await bg(page, '.places-side .side-cat.on');
-check('selected tile wears the full accent', onBg === 'rgb(224, 90, 71)', onBg);
-await page.locator('.places-side .side-cat', { hasText: /general/i }).first().click();
+check('selected tile wears the ink fill', onBg === 'rgb(43, 52, 70)', onBg);
+// It stays on Trails: General, the category this used to return to, is
+// retired, and Trails is a category with a country index for the sorts.
 await page.waitForTimeout(800);
 
 // Sorts live in the panel and switch on the accent. They only exist past the
@@ -91,7 +105,8 @@ check('sorts stand in the panel', sortN === 3, `${sortN}`);
 await page.locator('.places-side .side-sort').nth(2).click();
 await page.waitForTimeout(400);
 const sortBg = await bg(page, '.places-side .side-sort.on');
-check('active sort wears the accent', sortBg === 'rgb(224, 90, 71)', sortBg);
+// The accent is #ce3823 since T363 darkened it for contrast (was #e05a47).
+check('active sort wears the accent', sortBg === 'rgb(206, 56, 35)', sortBg);
 
 // The column search still answers: typing offers suggestions under the field.
 await page.locator('.places-searchrow .places-search input').fill('Gent');
@@ -146,14 +161,20 @@ check('phone: no card chrome on the toolbar',
 check('phone: category row scrolls sideways', await phone.locator('.places-cats').evaluate(
   (el) => el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).display === 'flex'));
 check('phone: no origin chip', await phone.locator('.places-toolbar .origin-btn').count() === 0);
-check('phone: no count line on country cards',
-  await phone.locator('.places-ccard .places-card-sub').count() === 0);
+// The opposite is the rule now: an index card may carry its published count
+// (DIRECTION.md, destinations N7), and the Trips index shows "26 trips" on
+// each style card. What still holds is that a count line is a count
+// (T381, register row T370-a).
+check('phone: a count line on an index card carries its number',
+  (await phone.locator('.places-ccard .places-card-sub').allInnerTexts()).every((x) => /\d/.test(x)));
 const tickH = await phone.locator('.places-cat').first()
   .evaluate((el) => getComputedStyle(el, '::before').height).catch(() => '');
 check('phone: category tiles carry the accent tick', tickH === '2px', tickH);
 const navColor = await phone.locator('.bottom-nav-item.active').first()
   .evaluate((el) => getComputedStyle(el).color).catch(() => '');
-check('phone: the active bottom tab wears the accent', navColor === 'rgb(224, 90, 71)', navColor);
+// The accent is #ce3823 since T363 (was #e05a47); the tab's accent state
+// itself is V4's to change (shell brief V4-1, rule R4).
+check('phone: the active bottom tab wears the accent', navColor === 'rgb(206, 56, 35)', navColor);
 await phone.screenshot({ path: 'shots/mobile-destinations.png' });
 const phoneNav = phone.locator('.bottom-nav-item', { hasText: /explore/i }).first();
 await phoneNav.click();

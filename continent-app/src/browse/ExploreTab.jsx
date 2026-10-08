@@ -4,7 +4,7 @@ import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { ScoreChip, tierClass } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { fmtMonthRanges } from './ClimateStrip.jsx';
+import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail } from './ExploreFilterRail.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
@@ -12,7 +12,6 @@ import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { TierLegend } from './TierLegend.jsx';
 import { CountryPage } from './CountryPage.jsx';
 import { FilterChips } from './FilterChips.jsx';
-import { CategoryRail } from './CategoryRail.jsx';
 import { kindOf, roleOf, buildNearbyIndex } from '../lib/taxonomy.js';
 import { loadSearchIndex, querySearchIndex } from '../lib/searchIndex.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -20,8 +19,9 @@ import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE } from '../lib/rating.js';
 import {
   FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon, TrainIcon,
-  ChevronDownIcon, MapPinIcon, ListDayIcon,
+  ChevronDownIcon, ChevronRightIcon, MapPinIcon, ListDayIcon, CloseIcon,
 } from '../components/Icons.jsx';
+import { count as fmtCount } from '../lib/format.js';
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -78,6 +78,15 @@ const DETAIL_FROM = 6;
 
 const PAGE = 48;
 
+// One predicate each, shared by the C5 rails and the C6 filters, so a
+// rail's "See all" always lands on a grid showing the same list. Module
+// scope: they read only the row.
+const noCarOk = (p) => !p.local_transport?.car_needed
+  && (p.local_transport?.transit_quality === 'good'
+    || p.local_transport?.transit_quality === 'excellent');
+const underOk = (eur) => (p) => p.cost?.dayEur != null && p.cost.dayEur <= eur;
+const quietOk = (p) => p.crowding?.tier === 1;
+
 // Inline star, consistent with the app's SVG-only icon rule.
 function Star({ filled }) {
   return (
@@ -108,6 +117,12 @@ const SORTS = [
   { key: 'name', labelKey: 'sort.az' },
   { key: 'country', labelKey: 'sort.country' },
 ];
+
+// The budget ceiling's steps, euros per person per day for the ground cost
+// (house rule "Budget ceiling", explore N2). It filters; it never re-prices.
+const BUDGET_STEPS = [40, 60, 80, 100, 130];
+// An old link's "Under €70 a day" toggle (xp=e) lands on this ceiling.
+const LEGACY_CHEAP = 70;
 
 // How wide the grid draws a card, so the browser can pick a thumbnail instead
 // of downloading Wikimedia's 960px rendering for a 300px slot. The widths in
@@ -246,6 +261,7 @@ function CardPreview({ p, t, best, role, countryLine, reachMin }) {
 
 const ExploreCard = React.memo(function ExploreCard({
   p, span, ratio, kind, role, selected, fav, onSelect, onToggleFav, t, reachMin,
+  linked = false, onLink = null,
 }) {
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
   // Two doors to one preview: hover follows the pointer, the info button
@@ -274,16 +290,17 @@ const ExploreCard = React.memo(function ExploreCard({
 
   return (
     <div
-      className={`xcard xcard--${kind} ${selected ? 'selected' : ''} ${preview ? 'previewing' : ''}`}
+      className={`xcard xcard--${kind} ${selected ? 'selected' : ''} ${preview ? 'previewing' : ''} ${linked ? 'is-linked' : ''}`}
       style={{ '--xspan': span }}
-      onPointerEnter={onEnter}
-      onPointerLeave={() => setHovered(false)}
+      data-id={p.id}
+      onPointerEnter={(e) => { onEnter(e); onLink?.(p.id); }}
+      onPointerLeave={() => { setHovered(false); onLink?.(null); }}
     >
       <button
         className="xcard-hit"
         onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}
-        onFocus={() => setHovered(true)}
-        onBlur={() => setHovered(false)}
+        onFocus={() => { setHovered(true); onLink?.(p.id); }}
+        onBlur={() => { setHovered(false); onLink?.(null); }}
         aria-label={t('explore.openDest', { city: p.city })}
       >
         {/* The photograph, and on it only what is earned: the verdict seal
@@ -309,12 +326,16 @@ const ExploreCard = React.memo(function ExploreCard({
           )}
         </span>
 
-        {/* Four facts, two lines. The name and the score share the first;
-            the country, the kind and the euros a day share the second. */}
+        {/* Four facts, two lines. V3 (T383): the price leads. The name,
+            the score and the euros a day share the first line (the figure
+            wraps under the name on a two-up phone card); the country, the
+            kind and the five-step gauge share the second. A figure with a
+            national stand-in says "national" after its unit. */}
         <span className="xcard-body">
           <span className="xcard-head">
             <span className="xcard-name">{p.city}</span>
             <ScoreChip rating={p.rating} size="sm" />
+            <span className="xcard-price"><CostLine cost={p.cost} t={t} gauge={false} /></span>
           </span>
           <span className="xcard-meta">
             <span className="xcard-place">
@@ -325,7 +346,7 @@ const ExploreCard = React.memo(function ExploreCard({
                 <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
               )}
             </span>
-            <CostLine cost={p.cost} t={t} />
+            <CostLine cost={p.cost} t={t} figure={false} />
           </span>
         </span>
       </button>
@@ -376,11 +397,21 @@ export function ExploreTab({
 }) {
   const { t } = useI18n();
   const [visible, setVisible] = React.useState(PAGE);
+  // Map and list in sync (house rule, explore N5): the card under the
+  // pointer or in focus rings its pin; the pin under the pointer or in focus
+  // outlines its card. Two ids, one per direction, so neither echoes back.
+  const [cardLinkId, setCardLinkId] = React.useState(null);
+  const [pinLinkId, setPinLinkId] = React.useState(null);
   // C6: the taxonomy filters live here and in the URL, nowhere else. One
   // object, so a chip row, the rail and the query string cannot drift.
   const [xf, setXf] = React.useState(() => {
     const q = new URLSearchParams(window.location.search);
     const list = (k) => (q.get(k) ? q.get(k).split(',').filter(Boolean) : []);
+    // The budget ceiling (xb). A link from before V3 carries xp=e, the old
+    // fixed "Under €70 a day" toggle; it lands on a €70 ceiling.
+    const xb = Number(q.get('xb'));
+    const budget = Number.isFinite(xb) && xb > 0 ? xb
+      : (q.get('xp')?.includes('e') ? LEGACY_CHEAP : null);
     return {
       kinds: list('xk'),
       verdicts: list('xv'),
@@ -388,7 +419,7 @@ export function ExploreTab({
       month: q.get('xm') ? Number(q.get('xm')) : null,
       nocar: q.get('xp')?.includes('c') || false,
       badged: q.get('xp')?.includes('b') || false,
-      cheap: q.get('xp')?.includes('e') || false,
+      budget,
       quiet: q.get('xp')?.includes('q') || false,
       sea: q.get('xp')?.includes('s') || false,
     };
@@ -454,7 +485,7 @@ export function ExploreTab({
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
-  const { rows, availableCountries } = useExploreCatalog({
+  const { rows, availableCountries, indices: costIndex } = useExploreCatalog({
     data, locationQuery, countryFilter, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
@@ -480,14 +511,6 @@ export function ExploreTab({
     [nearby],
   );
 
-  // One predicate each, shared by the C5 rails and the C6 filters, so a
-  // rail's "See all" always lands on a grid showing the same list.
-  const noCarOk = (p) => !p.local_transport?.car_needed
-    && (p.local_transport?.transit_quality === 'good'
-      || p.local_transport?.transit_quality === 'excellent');
-  const cheapOk = (p) => p.cost?.dayEur != null && p.cost.dayEur <= 70;
-  const quietOk = (p) => p.crowding?.tier === 1;
-
   // C6: the taxonomy filters, applied after the catalog hook's own. The
   // count shown in the control bar is THIS list's length (or, while the map
   // is up, the part of it inside the viewport), so it can never disagree
@@ -498,7 +521,7 @@ export function ExploreTab({
     if (xf.roles.length && !xf.roles.includes(roleFor(p).key)) return false;
     if (xf.month && !(p.climate?.best || []).includes(xf.month)) return false;
     if (xf.nocar && !noCarOk(p)) return false;
-    if (xf.cheap && !cheapOk(p)) return false;
+    if (xf.budget && !underOk(xf.budget)(p)) return false;
     if (xf.quiet && !quietOk(p)) return false;
     if (xf.badged && !p.country_badge) return false;
     if (xf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
@@ -554,7 +577,8 @@ export function ExploreTab({
     setOrDrop('xv', xf.verdicts.join(','));
     setOrDrop('xr', xf.roles.join(','));
     setOrDrop('xm', xf.month || '');
-    const flags = `${xf.nocar ? 'c' : ''}${xf.cheap ? 'e' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}${xf.badged ? 'b' : ''}`;
+    setOrDrop('xb', xf.budget || '');
+    const flags = `${xf.nocar ? 'c' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}${xf.badged ? 'b' : ''}`;
     setOrDrop('xp', flags);
     setOrDrop('xg', gemOnly ? '1' : '');
     setOrDrop('xu', unescoOnly ? '1' : '');
@@ -576,6 +600,35 @@ export function ExploreTab({
   React.useEffect(() => { setVisible(PAGE); }, [bbox, view]);
 
   const gridTotal = view === 'map' ? shownRows.length : taxRows.length;
+
+  // A pin under the pointer or in focus outlines its card and brings it into
+  // view, unless the reader moved the list in the last second: the list is
+  // theirs while they scroll it (house rule "Map and list in sync").
+  const listScrolledAt = React.useRef(0);
+  const selfScrollUntil = React.useRef(0);
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return undefined;
+    const onScroll = () => {
+      if (Date.now() > selfScrollUntil.current) listScrolledAt.current = Date.now();
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+  const onPinLink = React.useCallback((id) => {
+    // While the list scrolls a card into view the sticky map can shift under
+    // a still pointer, which reads as leaving the pin; that is not the reader
+    // letting go, so the outline stays.
+    if (!id && Date.now() < selfScrollUntil.current) return;
+    setPinLinkId(id);
+    if (!id || Date.now() - listScrolledAt.current < 1000) return;
+    const card = scrollRef.current?.querySelector(`.xcontent-main .xcard[data-id="${CSS.escape(id)}"]`);
+    if (!card) return;
+    const reduce = typeof window.matchMedia === 'function'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    selfScrollUntil.current = Date.now() + 800;
+    card.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+  }, []);
   // The phone's Filters door. It used to be a bare <details> fold here while
   // Destinations opened a proper sheet from a Filters button, so the same
   // control looked and behaved differently on two tabs of the same app. The
@@ -603,20 +656,24 @@ export function ExploreTab({
     setBigOnly(false);
     setTopPick(null);
     setReachHours(null);
-    setXf({ kinds: [], verdicts: [], roles: [], month: null,
-      nocar: false, cheap: false, quiet: false, sea: false, badged: false });
+    setTripKinds([]);
+    setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null,
+      nocar: false, quiet: false, sea: false, badged: false });
   };
 
   // C6: one chip per active filter, each removing exactly itself.
   const chips = React.useMemo(() => {
     const list = [];
     const drop = (delta) => () => patchXf(delta);
+    // Trip styles first: they are the first group of the rail (V3, T383),
+    // and before V3 they made no chip at all.
+    for (const k of tripKinds) list.push({ key: `s:${k}`, label: t(`kind.${k}`), remove: () => setTripKinds(tripKinds.filter((x) => x !== k)) });
+    if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: xf.budget }), remove: drop({ budget: null }) });
     for (const k of xf.kinds) list.push({ key: `k:${k}`, label: t(`pkind.${k}`), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
     for (const v of xf.verdicts) list.push({ key: `v:${v}`, label: t(`rating.tier${v}`), remove: drop({ verdicts: xf.verdicts.filter((x) => x !== v) }) });
     for (const r of xf.roles) list.push({ key: `r:${r}`, label: t(`role.short.${r}`), remove: drop({ roles: xf.roles.filter((x) => x !== r) }) });
     if (xf.month) list.push({ key: 'month', label: t('filter.goodIn') + ' ' + fmtMonthRanges([xf.month]), remove: drop({ month: null }) });
     if (xf.nocar) list.push({ key: 'nocar', label: t('filter.noCar'), remove: drop({ nocar: false }) });
-    if (xf.cheap) list.push({ key: 'cheap', label: t('filter.underDay', { eur: 70 }), remove: drop({ cheap: false }) });
     if (xf.quiet) list.push({ key: 'quiet', label: t('filter.notCrowded'), remove: drop({ quiet: false }) });
     if (xf.sea) list.push({ key: 'sea', label: t('filter.nearSea'), remove: drop({ sea: false }) });
     if (xf.badged) list.push({ key: 'badged', label: t('filter.bestOf'), remove: drop({ badged: false }) });
@@ -628,7 +685,22 @@ export function ExploreTab({
     }
     if (reachAvailable && reachHours != null) list.push({ key: 'reach', label: t('filter.reachHours', { n: reachHours }), remove: () => setReachHours(null) });
     return list;
-  }, [xf, gemOnly, unescoOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setGemOnly, setUnescoOnly, setCountryFilter, setReachHours]);
+  }, [xf, tripKinds, gemOnly, unescoOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setCountryFilter, setReachHours]);
+
+  // The filter set last, so an empty grid can name it and offer to remove
+  // just that one (brief V3-11). A chip key that was not there a render ago
+  // is the newest; a restored URL has no order, so its last chip stands in.
+  const prevChipKeys = React.useRef(null);
+  const [lastChipKey, setLastChipKey] = React.useState(null);
+  React.useEffect(() => {
+    const keys = chips.map((c) => c.key);
+    const prev = prevChipKeys.current;
+    prevChipKeys.current = new Set(keys);
+    if (!prev) return;
+    const added = keys.filter((k) => !prev.has(k));
+    if (added.length) setLastChipKey(added[added.length - 1]);
+  }, [chips]);
+  const lastChip = chips.find((c) => c.key === lastChipKey) || chips[chips.length - 1] || null;
 
   const favSet = favorites || new Set();
 
@@ -666,7 +738,7 @@ export function ExploreTab({
           onClick={() => setLocationQuery('')}
           aria-label={t('results.clearSearch')}
         >
-          ×
+          <CloseIcon size={16} />
         </button>
       )}
     </div>
@@ -682,7 +754,7 @@ export function ExploreTab({
     && tripKinds.length === 0 && !showFavOnly && view === 'grid';
   const rails = React.useMemo(() => {
     if (!railsIdle) return [];
-    const month = new Date().getMonth() + 1;
+    const month = xf.month || new Date().getMonth() + 1;
     const bestOf = new Map();
     for (const p of rows) {
       if (!p.country_badge) continue;
@@ -696,12 +768,41 @@ export function ExploreTab({
       bestOf: interleaveByCountry([...bestOf.values()]),
       villages: rows.filter((p) => kindOf(p) === 'village' && (p.rating?.tier ?? 0) >= 1),
       nocar: interleaveByCountry(rows.filter(noCarOk)),
-      cheap: interleaveByCountry(rows.filter(cheapOk)),
       quiet: interleaveByCountry(rows.filter(quietOk)),
     };
+    // V3 (T383): the page leads with cost (house rule "Rails and cuts",
+    // explore N8). Well-rated places (tier 1 and up) whose best months
+    // include this month, under a ceiling: the traveller's own once the
+    // input row sets one (the grid then answers instead of the rails, so in
+    // practice the cheapest third of the catalogue), rounded up to the next
+    // five euros so the title reads as a round figure. Sorted by day cost.
+    // The rail strip shows at most two places per country among its twelve,
+    // so it still rises left to right without opening on one country.
+    const priced = rows.filter((p) => p.cost?.dayEur != null).map((p) => p.cost.dayEur).sort((a, b) => a - b);
+    const third = priced.length ? priced[Math.floor((priced.length - 1) / 3)] : null;
+    const ceiling = xf.budget || (third != null ? Math.ceil(third / 5) * 5 : null);
+    const costCut = ceiling == null ? [] : rows
+      .filter((p) => (p.rating?.tier ?? 0) >= 1
+        && (p.climate?.best || []).includes(month)
+        && underOk(ceiling)(p))
+      .sort((a, b) => a.cost.dayEur - b.cost.dayEur);
+    const perCountry = new Map();
+    const costLead = [];
+    const costRest = [];
+    for (const p of costCut) {
+      const n = perCountry.get(p.country) || 0;
+      if (costLead.length < 12 && n < 2) { costLead.push(p); perCountry.set(p.country, n + 1); }
+      else costRest.push(p);
+    }
     // Each rail carries a title that names the list and a subtitle that says
     // how it was chosen: "The 41" was a number with no referent (P4.2).
     return [
+      { key: 'cost',
+        title: t('rail.cost', { eur: ceiling ?? '', month: fmtMonthRanges([month]) }),
+        sub: t('rail.costSub'),
+        short: t('rail.costShort', { eur: ceiling ?? '' }),
+        rows: [...costLead, ...costRest],
+        seeAll: () => { patchXf({ budget: ceiling, month }); setSortKey('cost'); } },
       { key: 'the43', title: t('rail.top', { n: q.the43.length }), sub: t('rail.topSub'),
         short: t('rail.topShort'), rows: q.the43,
         seeAll: () => patchXf({ verdicts: ['3'] }) },
@@ -715,12 +816,10 @@ export function ExploreTab({
         seeAll: () => patchXf({ kinds: ['village'], verdicts: ['1', '2', '3'] }) },
       { key: 'nocar', title: t('rail.nocar'), sub: t('rail.nocarSub'), rows: q.nocar,
         seeAll: () => patchXf({ nocar: true }) },
-      { key: 'cheap', title: t('rail.cheap'), sub: t('rail.cheapSub'), rows: q.cheap,
-        seeAll: () => patchXf({ cheap: true }) },
       { key: 'quiet', title: t('rail.quiet'), sub: t('rail.quietSub'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
     ];
-  }, [railsIdle, rows, t, patchXf, setGemOnly]);
+  }, [railsIdle, rows, xf.month, xf.budget, t, patchXf, setGemOnly, setSortKey]);
 
   // The control bar's three instruments. The count is a measured figure,
   // so it is grouped the way the reader's locale groups thousands.
@@ -765,13 +864,17 @@ export function ExploreTab({
       availableCountries={availableCountries}
       reachHours={reachHours} setReachHours={setReachHours}
       reachAvailable={reachAvailable}
+      tripKinds={tripKinds} setTripKinds={setTripKinds}
       onOpenCountry={setCountryPage}
     />
   );
 
   // One shared component, so this door looks the same here, on Destinations
-  // and in the account hub. The tint is the accent's, not the page's, because
-  // every euro figure in the grid below comes out of it.
+  // and in the account hub. Every euro figure in the grid below comes out of
+  // it, which is why it is the input row's first cell. It is secondary chrome
+  // (no accent tint, house rule "Accent marks"); 62-v6-explore.css sets that.
+  // When the shell's settings line (T381) carries Lifestyle above every
+  // priced tab, this cell goes (register row T383-a).
   const renderLifestyle = (cls) => (
     <LifestyleButton
       stayTier={choices?.stay_tier}
@@ -781,33 +884,86 @@ export function ExploreTab({
     />
   );
 
-  const renderFav = (cls) => (
-    <button
-      className={`fav-filter explore-fav ${cls} ${showFavOnly ? 'on' : ''}`.trim()}
-      onClick={() => setShowFavOnly(!showFavOnly)}
-      title={t('results.showShortlist')}
-      aria-pressed={showFavOnly}
-    >
-      <Star filled={showFavOnly} />
-      <span>{favSet.size}</span>
-    </button>
-  );
-
   const anyActive = chips.length > 0;
+  const TitleTag = isActive ? 'h1' : 'div';
+
+  // The count the control bar states (brief V3-1): what the view holds, from
+  // the same list the grid renders, grouped the way the reader's locale
+  // groups thousands. On the map it is what the viewport holds.
+  const countText = view === 'map'
+    ? t('explore.countMap', { n: fmtCount(gridTotal) })
+    : t(gridTotal === 1 ? 'explore.countOne' : 'explore.count', { n: fmtCount(gridTotal) });
+
+  // The input row (brief V3-3, house rules "Settings line", "Budget ceiling"
+  // and "Month"): every input the figures and the list depend on, visible
+  // without opening anything, in the traveller's order: how they travel (the
+  // Lifestyle door), what they can spend, when, without a car, and what they
+  // kept. Each shows its current value in words. The ceiling's steps are
+  // fixed; an old link's €70 (xp=e) shows as its own step.
+  const budgetSteps = xf.budget && !BUDGET_STEPS.includes(xf.budget)
+    ? [...BUDGET_STEPS, xf.budget].sort((x, y) => x - y)
+    : BUDGET_STEPS;
+  const inputRow = (
+    <div className="xinputs" role="group" aria-label={t('explore.inputsAria')}>
+      {onOpenLifestyle && renderLifestyle('xinputs-life')}
+      <span className={`xinput xinput--select ${xf.budget ? 'is-set' : ''}`.trim()}>
+        <select
+          value={xf.budget ?? ''}
+          aria-label={t('explore.budgetLabel')}
+          onChange={(e) => patchXf({ budget: e.target.value ? Number(e.target.value) : null })}
+        >
+          <option value="">{t('explore.budgetAny')}</option>
+          {budgetSteps.map((n) => (
+            <option key={n} value={n}>{t('explore.budgetUpTo', { eur: n })}</option>
+          ))}
+        </select>
+        <ChevronDownIcon size={14} className="xinput-chev" />
+      </span>
+      <span className={`xinput xinput--select ${xf.month ? 'is-set' : ''}`.trim()}>
+        <select
+          value={xf.month || ''}
+          aria-label={t('filter.goodIn')}
+          onChange={(e) => patchXf({ month: e.target.value ? Number(e.target.value) : null })}
+        >
+          <option value="">{t('filter.anyMonth')}</option>
+          {MONTHS_SHORT.map((m, i) => (
+            <option key={m} value={i + 1}>{t('explore.goodInMonth', { month: m })}</option>
+          ))}
+        </select>
+        <ChevronDownIcon size={14} className="xinput-chev" />
+      </span>
+      <button
+        type="button"
+        className={`xinput xinput--toggle ${xf.nocar ? 'on' : ''}`.trim()}
+        aria-pressed={xf.nocar}
+        onClick={() => patchXf({ nocar: !xf.nocar })}
+      >
+        {t('filter.noCar')}
+      </button>
+      <button
+        type="button"
+        className={`xinput xinput--toggle xinput--fav ${showFavOnly ? 'on' : ''}`.trim()}
+        aria-pressed={showFavOnly}
+        aria-label={t('explore.shortlistAria', { n: favSet.size })}
+        onClick={() => setShowFavOnly(!showFavOnly)}
+      >
+        <Star filled={showFavOnly} />
+        <span>{t('explore.shortlist')}</span>
+        <span className="xinput-n mono">{favSet.size}</span>
+      </button>
+    </div>
+  );
 
   return (
     <div className="explore-shell">
       {headerSlot && createPortal(searchField, headerSlot)}
 
-      {/* Desktop-only left panel (CSS hides it under 769px): the trip kinds
-          as a tile grid, then the filter rail in folds, then Lifestyle and
-          the shortlist, with one hairline to the panel's right. The phone
-          keeps the toolbar card below instead. */}
+      {/* Desktop-only left panel (CSS hides it under 769px): the filter
+          rail in folds, trip styles first, with one hairline to the panel's
+          right. V3 (T383): the trip-style tiles became the rail's first
+          group, and Lifestyle and the shortlist moved into the input row
+          over the grid, where the figures they change are. */}
       <aside className="side-panel explore-side" aria-label={t('filter.filters')}>
-        <div className="side-block">
-          <p className="side-label">{t('explore.sideKinds')}</p>
-          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
-        </div>
         <div className="side-block">
           <p className="side-label">
             <span>{t('explore.sideRefine')}</span>
@@ -818,34 +974,18 @@ export function ExploreTab({
             )}
           </p>
           {filterRail}
-          <div className="side-group side-actions">
-            {onOpenLifestyle && renderLifestyle('side-lifestyle')}
-            {renderFav('side-fav')}
-          </div>
         </div>
       </aside>
 
       <div className="explore-tab" ref={scrollRef}>
       <div className="explore-wrap">
-        {/* Phone only (CSS hides it from 769px): the kind tiles, the search
-            field, Lifestyle and the shortlist in one banded toolbar. */}
-        <div className="explore-toolbar">
-          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
-          {/* Inline on a phone; on desktop the same field has portalled into
-              the app header and this renders nothing. */}
+        {/* Phone only (CSS hides it from 769px): search and the Filters
+            door share one row (brief V3-4). The trip styles live in the
+            sheet now, and Lifestyle and the shortlist in the input row. */}
+        <div className="explore-filterbar xtop">
+          {/* On desktop the same field has portalled into the app header
+              and this renders nothing. */}
           {!headerSlot && searchField}
-
-          <div className="explore-toolbar-right">
-            <div className="explore-chips">
-              {onOpenLifestyle && renderLifestyle('')}
-              {renderFav('')}
-            </div>
-          </div>
-        </div>
-
-        {/* Phone only (CSS hides it from 769px): the same Filters button
-            Destinations uses, opening the same sheet shell. */}
-        <div className="explore-filterbar">
           <button
             type="button"
             ref={filterBtnRef}
@@ -860,13 +1000,21 @@ export function ExploreTab({
           </button>
         </div>
 
-        {/* The control bar: what this page is, how many places it holds
-            right now, and the two ways to rearrange them. One row, over the
-            feed it rules. On a phone the grid/map switch floats above the
-            bottom nav instead (.xview-fab), where a thumb can reach it. */}
+        {/* The control bar: what this page is and how many places it holds
+            right now (the count, V3), and the two ways to rearrange them.
+            On a phone the title is read but not drawn, so the count is the
+            visible line, sharing its row with the sort; the grid/map switch
+            floats above the bottom nav instead (.xview-fab). */}
         <div className="xbar">
           <div className="xbar-lead">
-            <h1 className="xbar-title">{t('explore.title')}</h1>
+            {/* The page's one h1, only while this tab is the one showing:
+                the tab stays mounted under Destinations, and its h1 made a
+                second one there (row T380-g). Hidden, it is a plain div. */}
+            <TitleTag className="xbar-title">
+              <span className="xbar-title-text">{t('explore.title')}</span>
+              {' '}
+              <span className="xbar-count mono">{countText}</span>
+            </TitleTag>
             {isMock && <span className="explore-mock">Mock data</span>}
           </div>
           <div className="xbar-tools">
@@ -875,12 +1023,14 @@ export function ExploreTab({
           </div>
         </div>
 
+        {inputRow}
+
         {/* C6: active filters as removable chips, right under the bar. */}
         <FilterChips t={t} chips={chips} onClearAll={resetAll} />
 
-        {/* C8: the tiers, their live counts, and the five glyphs - the
-            system stated where it is used, folding to a "?" once read. */}
-        <TierLegend data={data} />
+        {/* C8: the tiers and their live counts, folding to "Score key" once
+            read. V3: counted over the same rows as the grid and the rails. */}
+        <TierLegend data={data} rows={rows} />
 
         {/* The one community surface on a browse tab: a real count of what
             people have published, and one door. Absent entirely when
@@ -892,7 +1042,8 @@ export function ExploreTab({
             {t('cpage.open', {
               country: (availableCountries.find(([c]) => c === countryFilter[0]) || [])[1]
                 || countryFilter[0],
-            })} {'→'}
+            })}
+            <ChevronRightIcon size={15} />
           </button>
         )}
 
@@ -934,7 +1085,8 @@ export function ExploreTab({
               )}>
                 <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
                   onSelect={openWithMember} onViewport={onMapViewport}
-                  onNeedDetail={onMapNeedDetail} t={t} />
+                  onNeedDetail={onMapNeedDetail} t={t}
+                  ringId={cardLinkId} onPinLink={onPinLink} costs={costIndex} />
               </React.Suspense>
             </div>
           )}
@@ -942,18 +1094,46 @@ export function ExploreTab({
             {railsIdle && <ExploreRails rails={rails} onSelect={openWithMember} t={t} />}
 
             {gridTotal === 0 && (
-              <p className="explore-count">
-                <span className="explore-count-badge is-empty">
-                  {showFavOnly ? t('results.emptyFav') : t('results.empty')}
+              <div className="explore-count xempty" role="status">
+                {/* V3 (T383, brief V3-11): an empty grid names what emptied
+                    it and offers the one action that changes the result:
+                    the search when one is typed, else the filter set last
+                    ("Remove ..."), with "Clear all" beside it once two or
+                    more are on. An empty shortlist offers the way back. */}
+                <p className="xempty-line">
+                  {showFavOnly
+                    ? t('results.emptyFav')
+                    : locationQuery
+                      ? t('explore.emptySearch', { q: locationQuery })
+                      : lastChip
+                        ? t('explore.emptyCause', { filter: lastChip.label })
+                        : t('results.empty')}
+                </p>
+                <span className="xempty-actions">
+                  {showFavOnly ? (
+                    <button type="button" className="cov-empty-btn explore-empty-clear"
+                      onClick={() => setShowFavOnly(false)}>
+                      {t('explore.showAll')}
+                    </button>
+                  ) : locationQuery ? (
+                    <button type="button" className="cov-empty-btn explore-empty-clear"
+                      onClick={() => setLocationQuery('')}>
+                      {t('results.clearSearch')}
+                    </button>
+                  ) : lastChip ? (
+                    <>
+                      <button type="button" className="cov-empty-btn explore-empty-clear"
+                        onClick={lastChip.remove}>
+                        {t('explore.removeFilter', { filter: lastChip.label })}
+                      </button>
+                      {chips.length > 1 && (
+                        <button type="button" className="xempty-all" onClick={resetAll}>
+                          {t('filter.clearAll')}
+                        </button>
+                      )}
+                    </>
+                  ) : null}
                 </span>
-                {/* One button that undoes what emptied the grid: the search
-                    when one is typed, else the filters (T367). */}
-                {!showFavOnly && (
-                  <button type="button" className="cov-empty-btn explore-empty-clear"
-                    onClick={locationQuery ? () => setLocationQuery('') : resetAll}>
-                    {t(locationQuery ? 'results.clearSearch' : 'empty.clearFilters')}
-                  </button>
-                )}
                 {locationQuery && searchHits?.suggestions?.length > 0 && (
                   <span className="xsearch-suggest">
                     {t('explore.didYouMean')}
@@ -963,7 +1143,7 @@ export function ExploreTab({
                     ))}
                   </span>
                 )}
-              </p>
+              </div>
             )}
 
             <div className="explore-grid explore-grid--mosaic">
@@ -981,6 +1161,8 @@ export function ExploreTab({
                   onToggleFav={onToggleFav}
                   t={t}
                   reachMin={reachMinutes?.get(p.id) ?? null}
+                  linked={view === 'map' && p.id === pinLinkId}
+                  onLink={view === 'map' ? setCardLinkId : null}
                 />
               ))}
             </div>

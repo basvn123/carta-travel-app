@@ -19,6 +19,11 @@ import { ChevronRightIcon, RouteIcon } from '../components/Icons.jsx';
  * `describe(row)` returns { name, where, fact } for one wire row: the name
  * in the display face, where it is in the sans, and at most one measured
  * fact in mono.
+ *
+ * `maxRails` (T384, rule N4): a phone draws at most two rails; the further
+ * cuts become one row of chips that apply the same saved filter as the
+ * rail's "See all", so no cut is lost and the opening stops being a scroll
+ * of six carousels. Desktop passes null and keeps every rail.
  */
 
 // What a Band 1 photo is drawn at: half the phone, a third of the column.
@@ -172,7 +177,10 @@ function Rail({ rail, describe, photo, onOpen, t }) {
 
 export function SectionOpening({
   layer, icons, heading, sub, rails, describe, photo, onOpen, t,
+  maxRails = null, count = (n) => String(n),
 }) {
+  const shown = maxRails == null ? rails : rails.slice(0, maxRails);
+  const cuts = maxRails == null ? [] : rails.slice(maxRails);
   return (
     <div className="open-bands" data-layer={layer}>
       {icons.length > 0 && (
@@ -197,9 +205,9 @@ export function SectionOpening({
           </ul>
         </section>
       )}
-      {rails.length > 0 && (
-        <div className="xrails open-rails" data-rails={rails.length}>
-          {rails.map((rail) => (
+      {shown.length > 0 && (
+        <div className="xrails open-rails" data-rails={shown.length}>
+          {shown.map((rail) => (
             <Rail
               key={rail.key}
               rail={rail}
@@ -209,6 +217,20 @@ export function SectionOpening({
               t={t}
             />
           ))}
+        </div>
+      )}
+      {cuts.length > 0 && (
+        <div className="open-cuts">
+          <p className="open-cuts-label" id={`open-cuts-${layer}`}>{t('open.moreCuts')}</p>
+          <div className="open-cuts-row" role="group" aria-labelledby={`open-cuts-${layer}`}>
+            {cuts.map((rail) => (
+              <button key={rail.key} type="button" className="open-cut" onClick={rail.onSeeAll}
+                data-rail={rail.key}>
+                <span>{rail.title}</span>
+                <span className="open-cut-n">{count(rail.n)}</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import {
   priceReceipt, receiptFooter, readFirstResultSeen, markFirstResultSeen, readOwnFare, writeOwnFare,
+  receiptMix, tierMeasured,
 } from '../lib/firstRun.js';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import { eurExact } from '../lib/format.js';
@@ -12,6 +13,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { OriginPicker } from './OriginPicker.jsx';
 import { Button } from './Button.jsx';
 import { CloseIcon } from './Icons.jsx';
+import { ReceiptCard } from './ReceiptCard.jsx';
 
 /**
  * The first-run receipt (T099), built to docs/FIRST_RUN_RESULT.md as the owner
@@ -32,6 +34,10 @@ import { CloseIcon } from './Icons.jsx';
  */
 
 const LOCALES = { en: 'en-GB' };
+// The orientation sentence for each receiptMix() word (T382, T371-b).
+const ORIENT_KEY = {
+  all: 'receipt.orientAll', bed: 'receipt.orientBed', food: 'receipt.orientFood', none: 'receipt.orientNone',
+};
 const MAX_PARTY = 12;
 
 function dateText(iso, lang, withYear) {
@@ -49,23 +55,6 @@ function monthYear(iso, lang) {
     return new Intl.DateTimeFormat(LOCALES[lang] || lang || 'en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
       .format(new Date(`${String(iso).slice(0, 7)}-15T12:00:00Z`));
   } catch { return String(iso).slice(0, 7); }
-}
-
-/** A figure, with the tilde and the est. tag when it stands in for a
- *  measurement. The tag carries its meaning as text, never colour alone. */
-function Figure({ eur, est, t }) {
-  return (
-    <>
-      {est && <span className="frr-tilde" aria-hidden="true">~ </span>}
-      {eurExact(eur)}
-      {est && (
-        <abbr className="frr-est" title={t('prov.estTitle')}>
-          <span aria-hidden="true">{` ${t('prov.est')}`}</span>
-          <span className="frr-sr">{` ${t('prov.estTitle')}`}</span>
-        </abbr>
-      )}
-    </>
-  );
 }
 
 /** "Your flight": where the airport is asked, once (FIRST_RUN_RESULT.md,
@@ -244,7 +233,6 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
 
   if (!ctx || !receipt) return null;
 
-  const H = headingLevel === 3 ? 'h3' : 'h2';
   const city = dest.city || dest.name || '';
   const peopleText = receipt.people === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: receipt.people });
   const nightsText = receipt.nights === 1 ? t('receipt.oneNight') : t('receipt.nNights', { n: receipt.nights });
@@ -329,8 +317,8 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
     // ground
     const math = t(line.days === 1 ? 'receipt.groundMathOne' : 'receipt.groundMath',
       { days: line.days, people: receipt.people, eur: eurExact(line.perDay) });
-    if (!firstRun) return [{ mono: math }, line.level === 'city' ? t('receipt.measured') : t('receipt.national')];
-    return [{ mono: math }, line.level === 'city' ? t('cost.foodMeasured') : t('receipt.groundNational')];
+    if (!firstRun) return [{ mono: math, text: line.level === 'city' ? t('receipt.measured') : t('receipt.national') }];
+    return [{ mono: math, text: line.level === 'city' ? t('cost.foodMeasured') : t('receipt.groundNational') }];
   };
   const labelOf = (line) => (line.key === 'flight' ? t('receipt.yourFlight')
     : line.key === 'stay' ? t('receipt.stay', { nights: nightsText })
@@ -344,6 +332,14 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
     : null;
 
   const tiers = offeredStayTiers(ctx.data?.meta);
+  // A tier this town does not measure says so in the option (T382): the
+  // fallback still works, but the select no longer offers it silently.
+  const tierText = (tier) => (tierMeasured(dest, opts, tier)
+    ? tierWord(tier)
+    : t('receipt.tierNotHere', { tier: tierWord(tier) }));
+  // The orientation names what is measured here, the way the lines below do
+  // (register row T371-b): never "own rates" over a national food basket.
+  const mix = receiptMix(receipt);
   const peopleOptions = Array.from({ length: MAX_PARTY }, (_, i) => i + 1);
   // Private rooms and hotel rooms are priced as double rooms (stayTierNightly),
   // so an odd party pays for a spare bed. Said in words where it applies.
@@ -359,7 +355,7 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
         <p className="frr-orient">
           {datesOwn
             ? t('receipt.orientOwn', { people: peopleText, from: fromText, to: toText })
-            : t('receipt.orientDefault', { people: peopleText, nights: nightsText, city })}
+            : t(ORIENT_KEY[mix] || 'receipt.orientNone', { people: peopleText, nights: nightsText, city })}
         </p>
       )}
 
@@ -377,7 +373,7 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
         <label className="frr-cell">
           <span className="frr-cell-label">{t('receipt.stripStay')}</span>
           <select value={choices?.stay_tier || 'home'} onChange={(e) => setTier(e.target.value)}>
-            {tiers.map((tier) => <option key={tier} value={tier}>{tierWord(tier)}</option>)}
+            {tiers.map((tier) => <option key={tier} value={tier}>{tierText(tier)}</option>)}
           </select>
         </label>
         <label className="frr-cell">
@@ -406,46 +402,26 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
         </label>
       </div>
 
-      <div className="frr-card" ref={cardRef}>
-        <header className="frr-head">
-          <H className="frr-title" id={`${uid}-h`}>
-            {originCity ? t('receipt.titleFrom', { city, originCity }) : t('receipt.title', { city })}
-          </H>
-          <p className="frr-sub mono">
-            {t('receipt.sub', { from: fromText, to: toText, nights: nightsText, people: peopleText })}
-          </p>
-        </header>
-        <dl className="frr-lines" key={receipt.total}>
-          {receipt.lines.map((line) => (
-            <div className="frr-line" key={line.key}>
-              <dt>
-                <span className="frr-label">{labelOf(line)}</span>
-                {provOf(line).map((p, i) => (
-                  typeof p === 'string'
-                    ? <span className="frr-prov" key={i}>{p}</span>
-                    : <span className="frr-prov mono" key={i}>{p.mono}</span>
-                ))}
-              </dt>
-              <dd className="mono"><Figure eur={line.eur} est={line.est} t={t} /></dd>
-            </div>
-          ))}
-          <div className="frr-line frr-sum">
-            <dt><span className="frr-label">{t('receipt.total', { people: peopleText })}</span></dt>
-            <dd className="mono">
-              <span className="frr-sum-eur"><Figure eur={receipt.total} est={receipt.est} t={t} /></span>
-              {receipt.people > 1 && (
-                <span className="frr-each">{t('receipt.each', { eur: eurExact(receipt.each) })}</span>
-              )}
-            </dd>
-          </div>
-        </dl>
-        {roomNote && (
-          <p className="frr-foot">
-            {t(roomsBooked === 1 ? 'receipt.roomNoteOne' : 'receipt.roomNote', { people: peopleText, rooms: roomsBooked })}
-          </p>
-        )}
-        {footerText && <p className="frr-foot">{footerText}</p>}
-      </div>
+      <ReceiptCard
+        titleId={`${uid}-h`}
+        headingLevel={headingLevel}
+        title={originCity ? t('receipt.titleFrom', { city, originCity }) : t('receipt.title', { city })}
+        sub={t('receipt.sub', { from: fromText, to: toText, nights: nightsText, people: peopleText })}
+        lines={receipt.lines.map((line) => ({
+          key: line.key, label: labelOf(line), prov: provOf(line), eur: line.eur, est: line.est,
+        }))}
+        sumLabel={t('receipt.total', { people: peopleText })}
+        total={receipt.total}
+        est={receipt.est}
+        each={receipt.people > 1 ? receipt.each : null}
+        eachText={(eur) => t('receipt.each', { eur })}
+        foot={[
+          roomNote ? t(roomsBooked === 1 ? 'receipt.roomNoteOne' : 'receipt.roomNote', { people: peopleText, rooms: roomsBooked }) : null,
+          footerText,
+        ]}
+        cardRef={cardRef}
+        t={t}
+      />
 
       {showsPrimary && (
         <Button variant="primary" className="frr-cta" onClick={focusDates}>{t('receipt.setDates')}</Button>
@@ -457,7 +433,7 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
         </p>
       ) : (
         <p className="frr-flight">
-          <span>{t('trip.flightNotPriced')}</span>
+          <span>{t('receipt.flightNone')}</span>
           <Button variant="secondary" onClick={() => setSheetOpen(true)}>{t('trip.addOwnFare')}</Button>
         </p>
       )}

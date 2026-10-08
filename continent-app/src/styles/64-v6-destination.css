@@ -14,3 +14,126 @@
    animation with a prefers-reduced-motion branch; carta-design and
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   T385 (V3): structure, information and flow
+   -------------------------------------------------------------------------- */
+
+/* The traveller's order (brief V3-2). On a phone the DOM order is the page:
+   receipt, cost, month, getting there, then walk and ride and the rest.
+   From 1020 px the receipt, then the lead folds (cost, month, getting there),
+   then the remaining side folds run down the right column, and the main
+   column starts at walk and ride. The extra height of a long main column
+   goes to the last row, so the side never spreads out. */
+@media (min-width: 1020px) {
+  .destp-v2 .destp-grid.has-frr { grid-template-rows: auto auto 1fr; }
+  .destp-v2 .destp-grid.has-frr .destp-frr { grid-column: 2; grid-row: 1; }
+  .destp-v2 .destp-grid.has-frr .destp-col.is-lead { grid-column: 2; grid-row: 2; }
+  .destp-v2 .destp-grid.has-frr .destp-col.is-main { grid-column: 1; grid-row: 1 / span 3; }
+  .destp-v2 .destp-grid.has-frr .destp-col.is-side { grid-column: 2; grid-row: 3; align-self: start; }
+}
+.destp-col.is-lead { min-width: 0; }
+
+/* The shared section rail jumps a fold's heading to just under itself. */
+.destp .dsec { scroll-margin-top: var(--tap); }
+
+/* One action row of three (brief V3-3). "Plan a day here" is a secondary
+   wherever it sits; the old adjacency rule only styled it while it followed
+   "Plan a trip here". */
+.destp-v2 .destp-head-actions .destp-plan-btn.is-day {
+  color: var(--ink);
+  border-color: var(--rule);
+  background: var(--bg-card);
+}
+@media (hover: hover) {
+  .destp-v2 .destp-head-actions .destp-plan-btn.is-day:hover {
+    border-color: var(--ink-soft);
+    background: var(--paper-dim);
+  }
+}
+/* Phone: the primary across the row, the two secondaries under it, and no
+   label cut off in any of the six languages (they wrap instead). */
+@media (max-width: 720px) {
+  .destp-v2 .destp-head-actions { grid-template-columns: 1fr 1fr; }
+  .destp-v2 .destp-head-actions > .destp-plan-btn:not(.is-day) { grid-column: 1 / -1; }
+  .destp-v2 .destp-head-actions .panel-fav span {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    text-align: center;
+  }
+}
+
+/* The page-end utility row (carta-design "Detail page grammar"): download
+   and report as secondaries before the honest footer. */
+.destp-utility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  max-width: 1180px;
+  margin: var(--space-6) auto 0;
+  padding: 0 var(--space-4);
+}
+.destp-utility .destp-pdf { min-height: var(--tap); flex: 0 1 auto; }
+
+/* Open in Google Maps now belongs to the map it opens. */
+.destp-maps-link { margin-top: var(--space-3); flex: 0 0 auto; }
+
+/* A heading inside a fold (the 20 km inventory under the routes, this week's
+   forecast in the month block): ui, one step below the fold's title. */
+.destp-subhead {
+  margin: var(--space-4) 0 var(--space-2);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.destp-week { margin-top: var(--space-2); }
+
+/* The month block (brief V3-4): every month's figures as text, no hover.
+   The daytime high stays above the bar; the night low and the rain sit
+   under the initial, in mono. The traveller's month is outlined 2 px ink
+   (carta-design "Month"). Colours of the bars stay until V4-5. */
+.climate-key {
+  margin: 0 0 var(--space-2);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.climate-chart.has-figures { height: 140px; gap: 3px; }
+.climate-chart.has-figures .climate-col { cursor: auto; padding-bottom: 2px; border-radius: 6px; }
+.climate-chart.has-figures .climate-temp,
+.climate-lo,
+.climate-rain {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.climate-chart.has-figures .climate-temp { color: var(--ink); font-weight: 600; }
+.climate-lo { color: var(--ink-soft); }
+.climate-rain { color: var(--ink-mute); }
+.climate-col.is-chosen { outline: 2px solid var(--ink); outline-offset: 1px; }
+
+/* Safe areas (DIRECTION.md part 7). index.html sets viewport-fit=cover, so
+   the full-screen page keeps its bar out from under the notch and its
+   content out from under the rounded corners in landscape. The bar keeps
+   its 52 px of content height and grows by the inset. */
+.destp-v2 .destp-bar {
+  box-sizing: content-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: max(var(--space-2), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--space-2), env(safe-area-inset-right, 0px));
+}
+.destp-v2 .destp-scroll {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* A long fold title wraps instead of pushing the chevron past the edge:
+   "Was ein Tag mit deinem Lifestyle kostet" ran 2 px wide at 360 px (T385
+   phone check, German). The summary still ellipsises beside a short title. */
+.destp .dsec-title { white-space: normal; min-width: 0; overflow-wrap: break-word; }

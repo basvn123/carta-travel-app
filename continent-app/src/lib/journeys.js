@@ -24,16 +24,26 @@ function isJson(res) {
   return res.ok && (res.headers.get('content-type') || '').includes('json');
 }
 
+/* A file that is not there (the SPA index served in its place, or a 404)
+   resolves null: the page says the trip is gone. A fetch that failed (no
+   connection, a 5xx) rejects, so the page can say the load failed and offer
+   a retry instead of claiming the trip does not exist (T387, row T376-g). */
 function loadJson(url) {
   return fetch(dataUrl(url))
-    .then((r) => (isJson(r) ? r.json() : null))
-    .catch(() => null);
+    .then((r) => {
+      if (isJson(r)) return r.json();
+      if (r.status >= 500) throw new Error(`journeys: ${r.status}`);
+      return null;
+    });
 }
 
 const cache = new Map();
 
+/* A rejected load leaves the cache, so a retry fetches again. */
 function cached(url) {
-  if (!cache.has(url)) cache.set(url, loadJson(url));
+  if (!cache.has(url)) {
+    cache.set(url, loadJson(url).catch((err) => { cache.delete(url); throw err; }));
+  }
   return cache.get(url);
 }
 
@@ -369,6 +379,7 @@ function sentences(text) {
   return out;
 }
 
+const ORPHAN = /^(?:it|its|this|these|that|those|they|their|there|he|she|is not|are not|isn't|aren't)\b/i;
 const NUMBER_WORD = /\b(?:one|two|three|four|five|six|seven|eight|nine|ten|twelve|twenty|thirty|forty|fifty|hundred|thousand)\b/i;
 const MAX_LINE = 190;
 
@@ -391,7 +402,10 @@ export function hookLine(trip) {
     if (key === 'summary' && trip?.summaryGenerated) continue;
     const list = sentences(trip?.[key]);
     if (!list.length) continue;
-    const fits = (s) => s.length >= 40 && s.length <= MAX_LINE;
+    // A sentence that leans on the one before it ("It is not...", "These
+    // huts...") reads as an orphan on its own, so it never leads (rule
+    // "Derived copy stays silent").
+    const fits = (s) => s.length >= 40 && s.length <= MAX_LINE && !ORPHAN.test(s);
     const pick = list.find((s) => fits(s) && (/\d/.test(s) || NUMBER_WORD.test(s))) || list.find(fits) || list[0];
     const rest = list.filter((s) => s !== pick).join(' ');
     return { line: clip(pick), source: key, rest };
@@ -420,15 +434,74 @@ export function humanDetail(trip) {
   return out.length > 260 ? list[0] : out;
 }
 
-/** Every card of every style, once, from the index. Resolves [] when absent. */
+/** Every card of every style, once, from the index. Resolves [] when absent
+ *  or when the library cannot load: the callers use it for the cost edges,
+ *  the from-prices and the exits, which are left out rather than failed. */
 export function loadAllJourneyCards() {
   return loadJourneyIndex().then((ix) => {
     if (!ix) return [];
     return Promise.all(ix.types.map((tp) => loadJourneyType(tp.slug)
-      .then((rows) => (rows || []).map((r) => ({ ...r, type: tp.slug })))))
+      .then((rows) => (rows || []).map((r) => ({ ...r, type: tp.slug })))
+      .catch(() => [])))
       .then((lists) => lists.flat());
-  });
+  }).catch(() => []);
 }
+
+/**
+ * The from-price of one style (T387, rule "Cost on cards": "From €N a
+ * person" with the length it is priced at, from the cheapest member, never
+ * an average). `total` is the cardTotal function from tripLength.js, passed
+ * in so this file keeps no import cycle. Returns { low, days } for the
+ * cheapest card's low end at that length, or null when no card carries a
+ * total.
+ */
+export function styleFromPrice(cards, length, total) {
+  let best = null;
+  for (const c of cards || []) {
+    const at = total(c, length);
+    const low = Number.isFinite(at?.low) ? at.low : at?.high;
+    if (!Number.isFinite(low)) continue;
+    if (!best || low < best.low) best = { low, days: at.days };
+  }
+  return best;
+}
+
+/* ── The week's address (T387, rule "Navigation") ─────────────────────────
+   A journey page opens on #journey=<id>, the same hash pattern a shared
+   composed route uses (#itin=). The hash is read once at startup, before
+   the URL writer's first replaceState drops it. */
+
+const JOURNEY_HASH = /(?:^#|&)journey=([a-z]{2}-[a-z0-9-]{3,90})(?:&|$)/;
+let journeyReadResult;
+
+/** The journey id a link opened the app on, or null. Read once. */
+export function readJourneyFromUrl() {
+  if (journeyReadResult !== undefined) return journeyReadResult;
+  if (typeof window === 'undefined') return null;
+  const m = JOURNEY_HASH.exec(window.location.hash || '');
+  journeyReadResult = m && ID_RE.test(m[1]) ? m[1] : null;
+  return journeyReadResult;
+}
+
+/** Hand the pending id over once; later mounts see null. */
+export function takePendingJourney() {
+  const id = readJourneyFromUrl();
+  journeyReadResult = null;
+  return id;
+}
+
+/** The hash that addresses one journey. */
+export const journeyHash = (id) => `#journey=${encodeURIComponent(id)}`;
+
+/** The link that reopens one journey, for the share sheet. */
+export function journeyShareUrl(id) {
+  if (typeof window === 'undefined' || !id) return '';
+  const { origin, pathname } = window.location;
+  return `${origin}${pathname}${journeyHash(id)}`;
+}
+
+// Read at import, before useUrlSync's first replaceState drops the hash.
+if (typeof window !== 'undefined') readJourneyFromUrl();
 
 const mid = (c) => (c?.eur ? (c.eur.low + c.eur.high) / 2 : null);
 

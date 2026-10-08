@@ -1,19 +1,34 @@
-// Headless check of two Explore-map additions, in the built app.
+// Headless check of two Explore-map behaviours, in the built app.
 //
-//   1. The size toggle, right of the From picker: one click drops the towns,
-//      villages and areas and leaves the cities, on the map AND in the ranked
-//      list (they are one filtered set, so a map-only filter would make the
-//      count lie). It survives a reload, and Reset clears it.
-//   2. Cards that open themselves. Zoomed in past the threshold, the best-rated
-//      few destinations on screen show their photo card without being hovered,
-//      and zooming back out closes them again.
+// T383 (design wave V3, 2026-10-08) updated every section of this harness.
+// It was written for the map-era Explore (a From picker and a size pill in a
+// .map-toolrow, a ranked .result-row list, photo cards that opened by
+// themselves at zoom 9), none of which has rendered since Explore v5; on the
+// V3 baseline it stopped at its first locator. Each section keeps the
+// behaviour it guarded and reads it off today's controls, with a comment on
+// what changed:
+//
+//   1. Size: one control drops the towns, villages and areas and keeps the
+//      cities and metropolises, in the list AND on the map (one filtered set,
+//      so the count cannot lie). It is the "Size of place" group of the filter
+//      rail now (was the size pill beside the From picker). It survives a
+//      reload, and Clear all clears it.
+//   2. Pins that say something once you are zoomed in: from zoom 7 the pins
+//      are price labels (name and day cost) and exactly one, the cheapest in
+//      view, is emphasised (house rule "Price pins", explore N4). Before V3
+//      this checked photo cards opening by themselves at zoom 9.
+//   3. ...and go back to dots and clusters when you zoom out.
+//   4. Phone: the inputs fit the screen without sideways page scroll and keep
+//      a 44 px target (was: the From and size pills in the control row).
 //
 // Run from inside continent-app/:  node scripts/verify_map_size_cards.mjs
+// The port is CARTA_PORT when set (a wave session's own preview), else 4199;
+// an already running server on that port is used as it is.
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4199;
+const PORT = Number(process.env.CARTA_PORT || 4199);
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -35,20 +50,22 @@ const fail = (msg) => { failed += 1; console.error('  FAIL:', msg); };
 const pass = (msg) => console.log('  ok:', msg);
 
 const seed = () => {
+  localStorage.setItem('continent.lang.v1', 'en');
   localStorage.setItem('continent.guestMode.v1', '1');
   localStorage.setItem('continent.homeSeen.v1', '1');
   localStorage.setItem('carta.fareNoticeSeen', '1');
   localStorage.setItem('carta.welcomeSeen', '1');
+  localStorage.setItem('carta.welcomeSeen.v1', '1');
   localStorage.setItem('continent.onboardingSeen.v1', '1');
-  localStorage.setItem('carta.mapGuideDone', '1');
-  localStorage.setItem('continent.mapGuideDismissed.v1', '1');
 };
 
+// T383: the count is the control bar's mono line ("3,855 places", "12 in
+// view"); it was .results-head .results-count.
 const counted = async (page) =>
-  Number((await page.locator('.results-head .results-count').first().innerText()).replace(/\D/g, ''));
+  Number((await page.locator('.xbar .xbar-count').first().innerText()).replace(/\D/g, ''));
 
 // The shell never scrolls sideways; if it does, something inside it grew wider
-// than the viewport (a card placed off the edge would do it).
+// than the viewport (a label placed off the edge would do it).
 const scrollX = (page) => page.evaluate(() =>
   Math.round(window.scrollX || document.documentElement.scrollLeft || 0));
 
@@ -60,179 +77,141 @@ try {
   page.on('pageerror', (e) => fail(`page error: ${e.message}`));
   await page.addInitScript(seed);
 
-  console.log('loading the Explore map...');
-  await page.goto(`${BASE}/?tab=map&o=CRL&d=2026-08-04&r=2026-08-08`);
-  await page.locator('.map-toolrow .origin-btn').waitFor({ timeout: 90000 });
-  await page.locator('.result-row').first().waitFor({ timeout: 90000 });
+  console.log('loading Explore on the map...');
+  await page.goto(`${BASE}/?tab=map&xw=map`);
+  await page.locator('.xcontent-map .maplibregl-canvas').waitFor({ timeout: 90000 });
+  await page.locator('.xcontent-main .xcard').first().waitFor({ timeout: 90000 });
+  await page.waitForTimeout(1500);
 
-  console.log('\n1. The size toggle sits beside the From picker');
-  const toggle = page.locator('.map-toolrow .size-toggle');
-  if (!(await toggle.count())) fail('no size toggle in the map control row');
-  else pass('the toggle is in the control row');
-  const geo = await page.evaluate(() => {
-    const r = (s) => { const e = document.querySelector(s); if (!e) return null; const b = e.getBoundingClientRect(); return { left: Math.round(b.left), right: Math.round(b.right), top: Math.round(b.top), h: Math.round(b.height) }; };
-    return { from: r('.map-toolrow .origin-btn'), size: r('.map-toolrow .size-toggle') };
-  });
-  if (!geo.size || !geo.from) fail('the control row did not render both controls');
-  else {
-    if (geo.size.left < geo.from.right) fail(`the toggle (x ${geo.size.left}) is not right of the picker (ends ${geo.from.right})`);
-    else pass(`the toggle follows the picker at x=${geo.size.left}`);
-    if (Math.abs(geo.size.top - geo.from.top) > 4) fail('the two controls are out of line');
-    else pass('it is level with the picker');
-    if (geo.size.h < 44) fail(`the toggle is only ${geo.size.h}px tall`);
-    else pass(`the toggle stands ${geo.size.h}px tall`);
-  }
-
-  console.log('\n2. It drops everything smaller than a city');
+  console.log('\n1. Size of place narrows the list and the map together');
+  // T383: the size control is the rail's "Size of place" group (closed by
+  // default), not a pill beside the From picker; it is opened first.
+  const sizeFold = page.locator('.explore-side details.xrail-group', { has: page.locator('.xrail-legend', { hasText: /Size of place/ }) });
+  if (!(await sizeFold.count())) fail('no "Size of place" group in the filter rail');
+  else pass('the size control is in the filter rail');
+  await sizeFold.locator('.xrail-legend').click();
+  await page.waitForTimeout(300);
   const allCount = await counted(page);
-  if (await toggle.getAttribute('aria-pressed') !== 'false') fail('the toggle starts pressed');
-  else pass(`it starts off, showing all ${allCount} places`);
-  await toggle.click();
-  await page.waitForTimeout(1200);
+  for (const word of [/^Metropolis$/, /^City$/]) {
+    await sizeFold.locator('.xrail-toggle', { hasText: word }).click();
+    await page.waitForTimeout(500);
+  }
+  await page.waitForTimeout(800);
   const bigCount = await counted(page);
   if (!(bigCount > 0 && bigCount < allCount)) fail(`the count went ${allCount} -> ${bigCount}`);
-  else pass(`cities only: ${allCount} -> ${bigCount} destinations`);
-  if (await toggle.getAttribute('aria-pressed') !== 'true') fail('aria-pressed did not follow the state');
-  else pass('aria-pressed says it is on');
-  // Two labels live in the pill (long for desktop, short for phones); read the
-  // one this width actually shows.
-  const label = await toggle.locator('.size-toggle-value').innerText();
-  if (/all/i.test(label)) fail(`the pill still reads "${label}"`);
-  else pass(`the pill reads "${label}"`);
-  // The list is the only countable proof, but the map has to agree: every row
-  // left standing must be a city, not a village that only the map dropped.
-  const rows = await page.locator('.result-row').count();
-  if (!rows) fail('the ranked list emptied');
-  else pass(`the ranked list narrowed with it (${rows} rows on screen)`);
+  else pass(`cities and metropolises only: ${allCount} -> ${bigCount} in view`);
+  const pressed = await sizeFold.locator('.xrail-toggle[aria-pressed="true"]').count();
+  if (pressed !== 2) fail(`${pressed} size toggles say they are on`);
+  else pass('aria-pressed follows the state');
+  // The list is the countable proof, and every row left must be a city or a
+  // metropolis, not a village only the map dropped.
+  const kinds = await page.locator('.xcontent-main .xcard .xcard-kindword').allInnerTexts();
+  const small = kinds.filter((k) => !/^(city|metropolis)$/i.test(k.trim()));
+  if (!kinds.length) fail('the list emptied');
+  else if (small.length) fail(`${small.length} smaller places stayed in the list`);
+  else pass(`the list narrowed with it (${kinds.length} cards, all cities or metropolises)`);
   await page.screenshot({ path: `${SHOTS}/map-size-cities.png` });
 
-  console.log('\n3. The answer survives a reload, and Reset clears it');
+  console.log('\n2. The answer survives a reload, and Clear all clears it');
   await page.waitForTimeout(900);          // let the URL mirror catch up
-  if (!/[?&]big=1/.test(page.url())) fail(`the URL does not carry it: ${page.url().slice(-60)}`);
-  else pass('the URL carries big=1');
+  // T383: the URL key is xk (the taxonomy filters), not big=1.
+  if (!/[?&]xk=[^&]*metro/.test(page.url()) || !/[?&]xk=[^&]*city/.test(page.url())) fail(`the URL does not carry it: ${page.url().slice(-80)}`);
+  else pass('the URL carries xk');
   await page.reload();
-  await page.locator('.map-toolrow .size-toggle').waitFor({ timeout: 90000 });
+  await page.locator('.xcontent-main .xcard').first().waitFor({ timeout: 90000 });
   await page.waitForTimeout(1500);
-  if (await page.locator('.map-toolrow .size-toggle').getAttribute('aria-pressed') !== 'true') {
-    fail('the toggle forgot itself across a reload');
-  } else pass('it is still on after a reload');
-  // The toggle deliberately does NOT put a badge on Filters (it is a map
-  // control, lit up in plain sight), so Reset only appears once something in
-  // the tray is on. Turn one on, then reset: the size toggle must go too.
-  await page.locator('.filter-tray-btn').click();
-  await page.locator('.filter-highlights .pill-toggle', { hasText: 'UNESCO' }).click();
-  await page.waitForTimeout(800);
-  if (await page.locator('.filter-tray-badge').innerText() !== '1') {
-    fail('the Filters badge counted the size toggle as well as UNESCO');
-  } else pass('the badge counts the tray only, not the map control');
-  await page.locator('.reset-filters-btn').click();
+  const chips = await page.locator('.xchip').allInnerTexts();
+  if (!chips.some((c) => /City/.test(c)) || !chips.some((c) => /Metropolis/.test(c))) fail(`the filter forgot itself across a reload (chips: ${chips.join(' | ')})`);
+  else pass('it is still on after a reload, as two chips');
+  // T383: "Clear all" sits in the rail head and at the end of the chip row
+  // (was the tray's Reset); the size filter must go with it.
+  await page.locator('.explore-side .side-clear').click();
   await page.waitForTimeout(1200);
-  if (await page.locator('.map-toolrow .size-toggle').getAttribute('aria-pressed') !== 'false') {
-    fail('Reset left the map narrowed to cities');
-  } else pass('Reset put the villages back');
-  await page.keyboard.press('Escape');
-  await page.waitForTimeout(600);
+  if (await page.locator('.explore-side .xrail-toggle[aria-pressed="true"]').count()) fail('Clear all left a toggle on');
+  else pass('Clear all put the villages back');
 
-  console.log('\n4. Cards open themselves once you are zoomed in');
-  // A wheel gesture lands wherever it lands, and these thresholds are exact,
-  // so drive the view through the verify seam MapView leaves on its container.
+  console.log('\n3. Price pins once you are zoomed in');
+  // A wheel gesture lands wherever it lands, and the threshold is exact, so
+  // drive the view through the verify seam ExploreMap leaves on its container.
   const zoomTo = async (z) => {
     const ok = await page.evaluate((zoom) => {
-      const el = document.querySelector('.map-wrap > div');
+      const el = document.querySelector('.xmap-canvas');
       const map = el?._cartaMap;
       if (!map) return false;
       map.jumpTo({ center: [12.34, 45.44], zoom });   // Venice and its neighbours
       return true;
     }, z);
     if (!ok) fail('the map verify seam (_cartaMap) is missing');
-    await page.waitForTimeout(1800);
+    await page.waitForTimeout(2500);
   };
-  await zoomTo(9);
-  let cards = await page.locator('.map-tip-auto').count();
-  if (!cards) fail('no cards opened at zoom 9');
-  else pass(`${cards} cards opened without a hover`);
-  if (cards > 4) fail(`${cards} cards is more than the cap`);
+  await zoomTo(8);
+  const labels = page.locator('.xmap-kpin.is-label');
+  const nLabels = await labels.count();
+  if (!nLabels) fail('no price labels at zoom 8');
+  else pass(`${nLabels} pins are labels`);
+  if (nLabels > 30) fail(`${nLabels} labels is more than the cap of 30`);
   else pass('the cap holds');
-  const hasPhoto = await page.locator('.map-tip-auto .tip-img').count();
-  const hasCity = await page.locator('.map-tip-auto .tip-city').count();
-  if (!hasCity) fail('the cards carry no destination name');
-  else pass(`the cards carry the name (${hasCity}) and a photo (${hasPhoto})`);
+  const figures = await page.locator('.xmap-kpin.is-label .xmap-kpin-eur').allInnerTexts();
+  if (figures.length !== nLabels || figures.some((f) => !/^€\d+$/.test(f.trim()))) fail(`labels without a day cost: ${nLabels - figures.length}`);
+  else pass('every label carries a mono day cost');
+  const cheapest = page.locator('.xmap-kpin.is-cheapest');
+  if ((await cheapest.count()) !== 1) fail(`${await cheapest.count()} pins are emphasised, not one`);
+  else {
+    const fig = Number((await cheapest.locator('.xmap-kpin-eur').innerText()).replace(/\D/g, ''));
+    const min = Math.min(...figures.map((f) => Number(f.replace(/\D/g, ''))));
+    if (fig !== min) fail(`the emphasised pin is €${fig}, the cheapest label is €${min}`);
+    else pass(`exactly one pin is emphasised, the cheapest (€${fig})`);
+  }
   const offEdge = await page.evaluate(() => {
-    const w = document.documentElement.clientWidth;
-    return [...document.querySelectorAll('.map-tip-auto')]
+    const m = document.querySelector('.xmap').getBoundingClientRect();
+    return [...document.querySelectorAll('.xmap-kpin.is-label')]
       .map((e) => e.getBoundingClientRect())
-      .filter((r) => r.left < 0 || r.right > w).length;
+      .filter((r) => r.right < m.left || r.left > m.right).length;
   });
-  if (offEdge) fail(`${offEdge} cards hang off the viewport edge`);
-  else pass('every card is fully on screen');
+  if (offEdge) fail(`${offEdge} labels sit outside the map`);
+  else pass('every label is on the map');
   const sx = await scrollX(page);
   if (sx) fail(`the shell scrolled ${sx}px sideways`);
   else pass('the shell did not scroll sideways');
-  // A card that covers the legend or the From picker hides a control to show a
-  // suggestion, which is the wrong way round.
-  const covered = await page.evaluate(() => {
-    const hit = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-    const cards = [...document.querySelectorAll('.map-tip-auto')].map((e) => e.getBoundingClientRect());
-    const out = [];
-    for (const sel of ['.map-toolrow', '.map-legend']) {
-      const node = document.querySelector(sel);
-      if (!node) continue;
-      const b = node.getBoundingClientRect();
-      if (cards.some((c) => hit(c, b))) out.push(sel);
-    }
-    return out;
-  });
-  if (covered.length) fail(`cards cover the map's own controls: ${covered.join(', ')}`);
-  else pass('the cards keep off the legend and the control row');
-  await page.screenshot({ path: `${SHOTS}/map-cards-zoomed.png` });
+  await page.screenshot({ path: `${SHOTS}/map-price-pins.png` });
 
-  console.log('\n5. ...and close themselves when you zoom back out');
+  console.log('\n4. ...and back to dots and clusters when you zoom out');
   await zoomTo(5);
-  cards = await page.locator('.map-tip-auto').count();
-  if (cards) fail(`${cards} cards are still on the map at zoom 5`);
-  else pass('every card closed');
-  await page.screenshot({ path: `${SHOTS}/map-cards-out.png` });
+  const left = await page.locator('.xmap-kpin.is-label').count();
+  if (left) fail(`${left} labels are still on the map at zoom 5`);
+  else pass('every label went back to a dot or a cluster');
   await ctx.close();
 
-  console.log('\n6. Phone: the control row carries both pills');
+  console.log('\n5. Phone: the inputs fit and keep their target');
+  // T383: the phone row is the input row (Lifestyle, budget, month, car-free,
+  // shortlist), one band that scrolls sideways inside itself; it was the
+  // From and size pills.
   const phone = await browser.newContext({
     viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2,
   });
   const p2 = await phone.newPage();
   p2.on('pageerror', (e) => fail(`page error (phone): ${e.message}`));
   await p2.addInitScript(seed);
-  await p2.goto(`${BASE}/?tab=map&o=CRL&d=2026-08-04&r=2026-08-08`);
-  await p2.locator('.map-toolrow .size-toggle').waitFor({ timeout: 90000 });
+  await p2.goto(`${BASE}/?tab=map`);
+  await p2.locator('.xinputs').waitFor({ timeout: 90000 });
   await p2.waitForTimeout(1500);
   const row = await p2.evaluate(() => {
-    const r = (s) => { const e = document.querySelector(s); if (!e) return null; const b = e.getBoundingClientRect(); return { left: Math.round(b.left), right: Math.round(b.right), h: Math.round(b.height) }; };
+    const items = [...document.querySelectorAll('.xinputs > *')].map((e) => Math.round(e.getBoundingClientRect().height));
     return {
-      from: r('.map-toolrow .origin-btn'),
-      size: r('.map-toolrow .size-toggle'),
-      w: document.documentElement.clientWidth,
+      items,
       overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     };
   });
-  if (row.size.right > row.w) fail(`the toggle runs ${row.size.right - row.w}px off a ${row.w}px screen`);
-  else pass(`both pills fit (${row.from.left}..${row.size.right} of ${row.w}px)`);
   if (row.overflow > 0) fail(`the page scrolls ${row.overflow}px sideways on a phone`);
-  else pass('no horizontal overflow at 390px');
-  if (row.size.h < 44) fail(`the toggle is ${row.size.h}px tall, under the 44px target`);
-  else pass(`the toggle keeps a ${row.size.h}px target`);
-  // The pill carries two labels and hides one per width. Read what a phone
-  // actually shows: a caption with no value under it is a pill saying nothing.
-  const phoneLabel = (await p2.evaluate(() => {
-    const el = document.querySelector('.map-toolrow .size-toggle');
-    return [...el.querySelectorAll('b')]
-      .filter((b) => b.offsetParent !== null).map((b) => b.textContent).join('|');
-  })).trim();
-  if (!phoneLabel) fail('the phone pill shows its caption with no value under it');
-  else pass(`the phone pill reads "${phoneLabel}"`);
-  await p2.locator('.map-toolrow .size-toggle').tap();
+  else pass('no horizontal page overflow at 390px');
+  const short = row.items.filter((h) => h < 44);
+  if (short.length) fail(`${short.length} inputs are under the 44px target (${row.items.join(', ')})`);
+  else pass(`every input keeps a 44px target (${row.items.length} inputs)`);
+  const budget = p2.locator('.xinputs select').first();
+  await budget.selectOption('60');
   await p2.waitForTimeout(1200);
-  if (await p2.locator('.map-toolrow .size-toggle').getAttribute('aria-pressed') !== 'true') {
-    fail('a tap did not switch it');
-  } else pass('a tap switches it');
+  if (!/[?&]xb=60/.test(p2.url())) fail('the budget ceiling did not reach the URL');
+  else pass('the budget ceiling filters and rides the URL (xb=60)');
   await p2.screenshot({ path: `${SHOTS}/map-size-phone.png` });
 
   await browser.close();

@@ -28,6 +28,9 @@ export function OriginPicker({
   // surfaces that show prices next to it (the Destinations tab) say what the
   // origin is actually doing there, "priced from".
   fromLabel = null,
+  // 'pill' (the map's and the planners' trigger) or 'settings' (a part of the
+  // shell's settings line, T381: label and value, the IATA code in mono).
+  variant = 'pill',
 }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
@@ -96,8 +99,32 @@ export function OriginPicker({
     ? (driveHome?.name || t('origin.pickTown'))
     : (origin ? originLabel(data, origin) : t('origin.pickAirport'));
 
+  const settingsFace = variant === 'settings' && !isCar;
+  const originCity = origin ? (data?.meta?.origins?.[origin]?.city || data?.meta?.origins?.[origin]?.name || '') : '';
+
   return (
-    <div className={`origin-picker ${isCar ? 'is-drive' : ''}`} ref={rootRef}>
+    <div className={`origin-picker ${isCar ? 'is-drive' : ''}${settingsFace ? ' is-settings' : ''}`} ref={rootRef}>
+      {settingsFace ? (
+        <button
+          type="button"
+          className="settings-part settings-part-origin"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-haspopup="listbox"
+          aria-label={t('settings.changeAria', { label: t('settings.from'), value: label })}
+          title={t('origin.btnTitle')}
+        >
+          <span className="settings-part-label" aria-hidden="true">{t('settings.from')}</span>
+          <span className="settings-part-value" aria-hidden="true">
+            {origin ? (
+              <>
+                {originCity && <span className="settings-origin-city">{originCity}</span>}
+                <span className="is-mono">{origin}</span>
+              </>
+            ) : t('settings.pickAirport')}
+          </span>
+        </button>
+      ) : (
       <button
         className={`origin-btn ${isCar && !driveHome ? 'needs-answer' : ''}`}
         onClick={() => setOpen((v) => !v)}
@@ -115,6 +142,7 @@ export function OriginPicker({
         </span>
         <span className="origin-btn-caret" aria-hidden="true">▾</span>
       </button>
+      )}
 
       {open && isCar && (
         <div className="origin-pop origin-pop-drive">

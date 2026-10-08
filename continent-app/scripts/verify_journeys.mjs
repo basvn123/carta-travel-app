@@ -136,6 +136,13 @@ try {
     await page.locator('.trip-slider:visible').count() === 0);
   check('no price chrome on the library',
     await page.locator('.lifestyle-btn:visible').count() === 0);
+  // T387 (rule "Cost on cards"): every style card carries its from-price, a
+  // euro figure a person, in the caption band under the photograph.
+  await page.waitForTimeout(1500);
+  check('every style card carries a from-price',
+    await page.locator('.jstyle-card .jcap-fig', { hasText: '€' }).count() === nStyles);
+  check('no text sits on a card photograph',
+    await page.locator('.jstyle-card .places-card-scrim, .jstyle-card .places-card-overlay').count() === 0);
   await page.screenshot({ path: 'shots/journeys-home.png', fullPage: false });
 
   // ── One style's list ──
@@ -149,6 +156,12 @@ try {
   check('trip cards render', nCards >= 5, `${nCards} cards`);
   check('every trip card shows a photograph',
     await page.locator('.jcard .places-card-img').count() === nCards);
+  // T387 (brief V3.3): one filter row instead of three stacked groups. The
+  // first card's top is reported, not gated: the tab chrome above the list
+  // (search, country, category tiles) belongs to the Destinations surface.
+  const firstTop = await jcards.first().evaluate((el) => Math.round(el.getBoundingClientRect().top));
+  check('the trip list has one filter row', await page.locator('.tf-bar').count() === 1,
+    `first card at ${firstTop} px`);
   await page.screenshot({ path: 'shots/journeys-type.png', fullPage: false });
 
   // ── The journey page ──
@@ -163,6 +176,18 @@ try {
     await page.locator('.jpage-budget-rows li').count() >= 3);
   check('seven days render', await page.locator('.jpage-day').count() === 7,
     `${await page.locator('.jpage-day').count()} days`);
+  // T387 (brief V3.6): eighteen sections became seven groups. Where to sleep
+  // and Prepare (which holds the pro tips) are closed on arrival now, so the
+  // walk opens them before counting, as a reader would.
+  check('the page has seven groups at most, each an h2',
+    await page.locator('.jpage .dsec > .dsec-head > h2').count() >= 5);
+  check('the trip receipt carries the Lifestyle slider or its total',
+    await page.locator('#sec-budget .jpage-budget-total').count() === 1);
+  check('the page has its own address',
+    /^#journey=/.test(await page.evaluate(() => window.location.hash)));
+  await page.locator('#sec-sleep .dsec-toggle').click().catch(() => {});
+  await page.locator('#sec-prep .dsec-toggle').click().catch(() => {});
+  await page.waitForTimeout(500);
   check('where to sleep renders', await page.locator('.jpage-stay').count() >= 1);
   check('pro tips render', await page.locator('.jpage-tips').count() >= 1);
   await page.screenshot({ path: 'shots/journeys-page.png', fullPage: false });

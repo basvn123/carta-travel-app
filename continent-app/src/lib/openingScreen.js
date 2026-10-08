@@ -2,8 +2,9 @@
  * The section opening screen (spec 5.3, T183): what the five outdoor sections
  * of the Destinations tab show before anybody has searched or filtered.
  *
- * Band 1, the icons: six or nine named places with their own photograph,
- * picked from the rows the section already loaded. Band 2, the useful cuts:
+ * Band 1, the icons: six named places with their own photograph, picked
+ * from the rows the section already loaded (nine until T384: the opening
+ * ran to 18,479 to 19,593 px on a 380 px phone, brief V3-5). Band 2, the useful cuts:
  * rails, each one a saved filter over the SAME facet model the filter sheet
  * uses, so "See all" opens the grid with exactly that filter on and the
  * count on the rail is the count the grid shows. Band 3 is the grid that was
@@ -35,7 +36,8 @@ import {
   tripBand, tripHighlights, tripSuitability, isListed,
 } from './trailCards.js';
 
-export const ICON_MAX = 9;
+// Six, one size: the band ends without a ragged row at two and three across.
+export const ICON_MAX = 6;
 export const ICON_MIN = 6;
 // Below this the band is not drawn at all: "The 2 highest-rated walks" is
 // not a showcase, it is the coverage gap the band exists to expose, and the
@@ -94,9 +96,9 @@ export function cycleRouteKey(row) {
  * nine stages of one long-distance path cannot fill a country's band; and per
  * route for cycling, see cycleRouteKey).
  *
- * The count is snapped to six or nine, the two sizes the grid lays out
- * without a ragged last row; between three and five it is shown as it is, and
- * under three the band is not drawn. Ties on the rank fall to the score.
+ * The count is six when six exist; between three and five it is shown as it
+ * is, and under three the band is not drawn. Ties on the rank fall to the
+ * score.
  */
 export function pickIcons(layer, rows) {
   const pool = (rows || []).filter((r) => photoOf(layer, r) && isNamed(layer, r)
@@ -170,8 +172,11 @@ export const OPENING_RAILS = {
     { key: 'loop', titleKey: 'open.cycle.railLoop', facets: { shape: ['loop'] } },
   ],
   // The trail chips are separate state in DestinationsTab (bands, hls,
-  // suits, loopsOnly); the keys here are those names.
+  // suits, loopsOnly); the keys here are those names. The first rail is the
+  // walk most people look for, 5 to 20 km (T384, brief V3-12): the half and
+  // day bands together, worded to the bands that exist.
   trail: [
+    { key: 'day', titleKey: 'open.trail.railDay', facets: { bands: ['half', 'day'] } },
     { key: 'loop', titleKey: 'open.trail.railLoop', facets: { loopsOnly: true } },
     { key: 'waterfall', titleKey: 'open.trail.railWaterfall', facets: { hls: ['waterfall'] } },
     { key: 'summit', titleKey: 'open.trail.railSummit', facets: { hls: ['summit'] } },
@@ -234,7 +239,9 @@ export function railOrder(layer, rows) {
 }
 
 /**
- * The rails a section shows: every defined rail with at least RAIL_MIN rows
+ * The rails a section shows, in the order above, whose first entry is the
+ * section's leading need (a phone draws the first two as rails and the rest
+ * as cut chips, SectionOpening and rule N4): every defined rail with at least RAIL_MIN rows
  * behind it, at most RAIL_MAX of them. Returns { def, n, rows } where n is
  * the full count (what "See all" opens) and rows the capped, ordered strip.
  * A rail under the minimum is dropped rather than shown thin; the opening

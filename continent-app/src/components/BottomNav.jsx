@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GlobeIcon, CompassIcon, RouteIcon, ListDayIcon, BookmarkIcon, PlusIcon, PersonIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { SectionLink, NavCount, NavDot } from './AppHeader.jsx';
 
 // Bottom navigation, MOBILE only (hidden by CSS on desktop, where the same
 // sections live in the AppHeader). Five slots around a raised central plus:
@@ -8,11 +9,15 @@ import { useI18n } from '../i18n/index.jsx';
 // Explore (the map), the plus that opens the Trip planner / Day planner
 // chooser, My trips (the saved-trips panel) and Account (the account panel,
 // which left the top bar on mobile so the row over the map keeps its width
-// for the filters).
+// for the filters). The section doors are links (T381, the navigation rule);
+// My trips and Account are pages laid over a tab, so they stay toggles.
 export function BottomNav({
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
   accountOpen, onToggleAccount,
+  // The shortlist's size (count chip on My trips) and whether a trip plan is
+  // in progress (the state dot on the plus).
+  savedCount = 0, planInProgress = false,
 }) {
   const { t } = useI18n();
   const [planOpen, setPlanOpen] = useState(false);
@@ -37,68 +42,78 @@ export function BottomNav({
         <>
           <div className="plan-chooser-backdrop" onClick={() => setPlanOpen(false)} />
           <div className="plan-chooser" role="dialog" aria-label={t('nav.planNew')}>
-            <button className="plan-chooser-item" onClick={() => goTab('trip')}>
+            <SectionLink tab="trip" className="plan-chooser-item" onNavigate={goTab}>
               <RouteIcon size={22} className="plan-chooser-icon" />
               <span className="plan-chooser-text">
                 <span className="plan-chooser-title">{t('nav.trip')}</span>
                 <span className="plan-chooser-sub">{t('nav.planTripSub')}</span>
               </span>
-            </button>
-            <button className="plan-chooser-item" onClick={() => goTab('day')}>
+            </SectionLink>
+            <SectionLink tab="day" className="plan-chooser-item" onNavigate={goTab}>
               <ListDayIcon size={22} className="plan-chooser-icon" />
               <span className="plan-chooser-text">
                 <span className="plan-chooser-title">{t('nav.day')}</span>
                 <span className="plan-chooser-sub">{t('nav.planDaySub')}</span>
               </span>
-            </button>
+            </SectionLink>
           </div>
         </>
       )}
 
-      <nav className="bottom-nav" aria-label="Sections">
-        <button
+      <nav className="bottom-nav" aria-label={t('nav.sectionsLabel')}>
+        <SectionLink
+          tab="places"
           className={`bottom-nav-item ${activeTab === 'places' && !overlayOpen ? 'active' : ''}`}
-          aria-current={activeTab === 'places' && !overlayOpen ? 'page' : undefined}
-          onClick={() => goTab('places')}
+          current={activeTab === 'places' && !overlayOpen}
+          onNavigate={goTab}
           title={t('nav.places')}
         >
           <GlobeIcon size={22} className="bottom-nav-icon" />
           <span className="bottom-nav-label">{t('nav.places')}</span>
-        </button>
+        </SectionLink>
 
-        <button
+        <SectionLink
+          tab="map"
           className={`bottom-nav-item ${activeTab === 'map' && !overlayOpen ? 'active' : ''}`}
-          aria-current={activeTab === 'map' && !overlayOpen ? 'page' : undefined}
-          onClick={() => goTab('map')}
+          current={activeTab === 'map' && !overlayOpen}
+          onNavigate={goTab}
           title={t('nav.explore')}
         >
           <CompassIcon size={22} className="bottom-nav-icon" />
           <span className="bottom-nav-label">{t('nav.explore')}</span>
-        </button>
+        </SectionLink>
 
+        {/* The plus opens a chooser, an action, so it stays a button. It
+            announces aria-current while a planner is the page on screen. */}
         <button
+          type="button"
           className={`bottom-nav-plus ${planOpen ? 'open' : ''} ${planActive ? 'active' : ''}`}
           aria-expanded={planOpen}
-          aria-label={t('nav.planNew')}
+          aria-current={planActive ? 'page' : undefined}
           title={t('nav.planNew')}
           onClick={() => setPlanOpen((v) => !v)}
         >
           <PlusIcon size={24} className="bottom-nav-plus-icon" />
+          <span className="sr-only">{t('nav.planNew')}</span>
+          <NavDot on={planInProgress} />
         </button>
 
         <button
+          type="button"
           className={`bottom-nav-item ${savedOpen ? 'active' : ''}`}
-          aria-pressed={savedOpen}
+          aria-current={savedOpen && !accountOpen ? 'page' : undefined}
           onClick={() => { setPlanOpen(false); onToggleSaved(); }}
-          title={t('nav.saved')}
+          title={t('nav.myTrips')}
         >
           <BookmarkIcon size={22} className="bottom-nav-icon" />
           <span className="bottom-nav-label">{t('nav.myTrips')}</span>
+          <NavCount n={savedCount} />
         </button>
 
         <button
+          type="button"
           className={`bottom-nav-item ${accountOpen ? 'active' : ''}`}
-          aria-pressed={accountOpen}
+          aria-current={accountOpen ? 'page' : undefined}
           onClick={() => { setPlanOpen(false); onToggleAccount(); }}
           title={t('header.accountTitle')}
         >

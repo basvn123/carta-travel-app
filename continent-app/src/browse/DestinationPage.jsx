@@ -1,8 +1,7 @@
 import React from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { knownFor } from '../lib/knownFor.js';
-import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
-import { CrowdingBadge, crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
+import { crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { ClimateStrip, MONTHS_SHORT, fmtMonthRanges } from './ClimateStrip.jsx';
 import { claimShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -36,6 +35,8 @@ import { KindGlyph } from '../components/KindGlyph.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchDestPois } from '../lib/appData.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { useFirstRun } from '../lib/firstRunContext.js';
+import { SectionRail } from './SectionRail.jsx';
 import {
   TreeIcon, PersonIcon, CalendarIcon, MapPinIcon,
   ParkingIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
@@ -43,7 +44,7 @@ import {
   ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon,
   BackpackIcon, ReceiptIcon, CheckIcon, BedIcon, InfoIcon, StarIcon,
   ChevronRightIcon, MusicIcon, SparkIcon, LinkIcon,
-  DownloadIcon, ShareIcon, BulbIcon, MedalIcon, RouteIcon,
+  DownloadIcon, BulbIcon, MedalIcon, RouteIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { scrollBehavior } from '../lib/motion.js';
@@ -93,12 +94,14 @@ const DO_TYPE_ICON = {
 };
 
 /**
- * Only the first section opens itself (P4.4). Six open folds made the page a
- * wall a reader had to scroll past rather than a page they could steer: the
- * verdict and the map answer "is this place for me", and every other section
- * is there for the reader who has decided it might be.
+ * Only one section opens itself (P4.4). Six open folds made the page a wall a
+ * reader had to scroll past rather than a page they could steer. Since T385
+ * it is the month block, the traveller's second question after the cost the
+ * receipt already answers; the map used to open first, but it now sits below
+ * walk and ride, and an open map below the fold holds a WebGL context for a
+ * view nobody has scrolled to.
  */
-const OPEN_BY_DEFAULT = new Set(['highlights']);
+const OPEN_BY_DEFAULT = new Set(['when']);
 /** lib/coverageEmpty.js loader layers against the dossier layer names
  *  onOpenFeature takes (the same names AroundHere rows carry). */
 const DOSSIER_LAYER = {
@@ -106,6 +109,47 @@ const DOSSIER_LAYER = {
 };
 
 const baseCity = (name) => (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+
+/**
+ * Remembered folds (carta-design "Remembered state", T385): the folds a
+ * traveller opened on a destination come back when they return to it in the
+ * same session, never across sessions. sessionStorage, every read and write
+ * in try/catch; without storage the page simply opens on its defaults.
+ */
+const FOLD_STORE = 'carta.destFolds.v1';
+function readFolds(id) {
+  if (!id) return null;
+  try {
+    const all = JSON.parse(sessionStorage.getItem(FOLD_STORE) || '{}');
+    return Array.isArray(all[id]) ? new Set(all[id]) : null;
+  } catch { return null; }
+}
+function writeFolds(id, set) {
+  if (!id) return;
+  try {
+    const all = JSON.parse(sessionStorage.getItem(FOLD_STORE) || '{}');
+    all[id] = [...set];
+    sessionStorage.setItem(FOLD_STORE, JSON.stringify(all));
+  } catch { /* storage unavailable: the defaults still hold */ }
+}
+
+/** The shared rail reads its items in a layout effect, so it needs a stable
+ *  array; the page builds its list after the early return, where a hook
+ *  cannot run, so the list travels as a string and is parsed once per change. */
+function DestRail({ spec, ...rest }) {
+  const items = React.useMemo(() => JSON.parse(spec), [spec]);
+  return <SectionRail items={items} {...rest} />;
+}
+
+/** The arrive month (1 to 12) of the dates the receipt prices: the
+ *  traveller's own once they set them, Carta's default pair until then. The
+ *  shell's settings line (T381) writes the same dates. */
+function monthOf(iso) {
+  const m = /^\d{4}-(\d{2})/.exec(iso || '');
+  const n = m ? Number(m[1]) : NaN;
+  return n >= 1 && n <= 12 ? n : null;
+}
+const CROWD_KEY = ['crowd.quiet', 'crowd.moderate', 'crowd.busy', 'crowd.crowded'];
 const fmtKm = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
 /** Highlight photographs ship at 960px; the tiles want 500. Same file, one
  *  path segment, and Commons serves both. */
@@ -184,6 +228,9 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
   const [failed, setFailed] = React.useState(() => new Set());
   const imgs = (gallery?.length ? gallery : (fallbackUrl ? [{ url: fallbackUrl }] : []))
     .filter((g) => !failed.has(g.url));
+  // A caption that is the record's own name ("Rome (Fiumicino)") names the
+  // town, not its airport (T385, brief V3-10); any other caption is kept.
+  const capOf = (cap) => (cap && baseCity(cap) === city ? city : (cap || ''));
 
   const onScroll = (e) => {
     const el = e.currentTarget;
@@ -214,12 +261,12 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
             <img
               ref={i === 0 ? claimRef : undefined}
               src={g.url}
-              alt={g.caption || ''}
+              alt={capOf(g.caption)}
               loading={i === 0 ? 'eager' : 'lazy'}
               fetchpriority={i === 0 ? 'high' : undefined}
               onError={() => setFailed((s) => new Set([...s, g.url]))}
             />
-            {g.caption && <figcaption className="destp-slide-cap">{g.caption}</figcaption>}
+            {g.caption && <figcaption className="destp-slide-cap">{capOf(g.caption)}</figcaption>}
             {safeUrl(g.page) && (
               <a
                 className="destp-slide-credit"
@@ -271,7 +318,18 @@ export function DestinationPage({
   // True while the first-run receipt's "Set your dates" is the page's one
   // primary; "Plan a trip here" waits as a secondary until then (T099).
   const [frrPrimary, setFrrPrimary] = React.useState(false);
-  const [open, setOpen] = React.useState(() => new Set(OPEN_BY_DEFAULT));
+  const [open, setOpen] = React.useState(() => readFolds(destination?.id) || new Set(OPEN_BY_DEFAULT));
+  // Expand all stays in force while the dossier arrives: folds that appear
+  // after the click open too, and the label stays true (T385, brief V3-7).
+  const [expanding, setExpanding] = React.useState(false);
+  const headRef = React.useRef(null);
+  const firstRun = useFirstRun();
+  const tripMonth = monthOf(firstRun?.departDate || firstRun?.defaultDates?.start || null);
+  // The receipt names the town, never the airport the record is keyed by.
+  const receiptDest = React.useMemo(
+    () => (destination ? { ...destination, city: baseCity(destination.city) } : null),
+    [destination],
+  );
 
   const dossier = useDossier(destination?.id);
   // D7: a member search lands here with ?dm=<name>; that member is the
@@ -283,12 +341,22 @@ export function DestinationPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-reads ?dm= from the address bar, which is not React state, each time the page changes destination
   }, [destination?.id]);
 
-  const isOpen = (id) => open.has(id);
-  const toggle = (id) => setOpen((s) => {
-    const n = new Set(s);
-    if (n.has(id)) n.delete(id); else n.add(id);
-    return n;
-  });
+  // While Expand all is in force every fold reads as open, including the ones
+  // the dossier adds after the click. Closing one ends the mode and keeps the
+  // rest open. `allIds` is declared further down; these run at click time.
+  const isOpen = (id) => expanding || open.has(id);
+  const toggle = (id) => {
+    if (expanding) {
+      setExpanding(false);
+      setOpen(new Set(allIds.filter((x) => x !== id)));
+      return;
+    }
+    setOpen((s) => {
+      const n = new Set(s);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+  };
   const setAllOpen = (ids, value) => setOpen((s) => {
     const n = new Set(s);
     ids.forEach((id) => { if (value) n.add(id); else n.delete(id); });
@@ -313,9 +381,15 @@ export function DestinationPage({
     setHlAll(false);
     setDoAll(false);
     setCopied(false);
-    setOpen(new Set(OPEN_BY_DEFAULT));
+    setExpanding(false);
+    setOpen(readFolds(destination?.id) || new Set(OPEN_BY_DEFAULT));
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [destination?.id]);
+
+  React.useEffect(() => {
+    writeFolds(destination?.id, open);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- writes on a fold change only: a destination change restores its own set first, and that restore is the next change
+  }, [open]);
 
   // Escape closes it, capture phase, so the app-level stack never double-fires,
   // and the same hook gives the dialog the focus management its aria-modal
@@ -357,7 +431,9 @@ export function DestinationPage({
   });
   const kf = knownFor(destination);
   const cheapMonths = cheapestStayMonths(destination);
-  const month = packMonth(destination);
+  // Pack for the month the receipt prices (the traveller's arrive month); the
+  // next good month only when no dates exist at all.
+  const month = tripMonth || packMonth(destination);
   const packs = packingList(destination, month);
 
   const intro = d?.intro;
@@ -464,44 +540,88 @@ export function DestinationPage({
   const DO_LIMIT = 5;
   let doShown = 0;
 
+  const hasAround = !!(around || nearbyRows.length);
+  const hasRoutes = (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0
+    || !!routeRows.node_network?.km;
+  const weatherOn = forecast !== null && forecast !== undefined;
+  const crowdOn = crowdBadgeWorthShowing(destination);
   const has = {
     highlights: highlights.length > 0 || !loading,
     do: doItems.length > 0,
-    around: !!(around || nearbyRows.length),
-    routes: (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0
-      || !!routeRows.node_network?.km,
+    // Walk and ride from here: the routes that pass the town and the outdoors
+    // within 20 km, one fold (T385, brief V3-6).
+    routes: hasRoutes || hasAround,
     trips: trips.length > 0,
     members: members?.length > 0,
     rating: verdict?.score != null,
-    when: !!destination.climate?.m,
+    // The month block: climate, cheap-bed months, crowds, bathing water and
+    // this week's forecast, one fold (T385, brief V3-4).
+    when: !!destination.climate?.m || weatherOn || crowdOn || !!water?.rating,
     sleep: !!(sleep?.neighbourhoods?.length > 0 || sleep?.tiers || sleep?.seasonality),
     getting: !!(getting || rhythm || bookAhead.length > 0 || pairs.length > 0),
     cost: cost?.dayEur != null,
     tips: tips.length > 0,
     festivals: festivals.length > 0,
-    weather: forecast !== null && forecast !== undefined,
     webcams: webcams.length > 0,
     park: !!(parking && (parking.spots?.length > 0 || parking.park_ride || parking.web)),
     pack: packs.length > 0,
   };
-  // Three sections keep their heading when they have nothing to show and say
+  // Two sections keep their heading when they have nothing to show and say
   // so in one line (T367, docs/ONBOARDING_AND_EMPTY_STATES.md, "The
   // detail-page rule"), once the dossier has answered: an empty fold is a
   // fact about the place, a missing one reads as a page that broke. They stay
   // out of the section rail, which lists what a page HAS.
   const show = {
-    around: has.around || !!d,
     routes: has.routes || !!d,
     getting: has.getting || !!d,
   };
-  const navItems = [
-    ['highlights', 'dest.nav.highlights'], ['do', 'dest.nav.do'], ['around', 'dest.nav.around'],
-    ['routes', 'dest.routesTitle'],
-    ['trips', 'dest.nav.trips'], ['when', 'dest.nav.when'], ['sleep', 'dest.nav.sleep'],
-    ['cost', 'dest.nav.cost'], ['park', 'dest.nav.park'],
-  ].filter(([id]) => has[id]);
-  const allIds = Object.keys(has).filter((k) => has[k]).concat(['further']);
-  const allOpen = allIds.every((id) => open.has(id));
+  // The rail, in page order (the traveller's order: cost, month, getting
+  // there, what is there), only the sections the page has.
+  const railSpec = JSON.stringify([
+    ['cost', 'dest.nav.cost'], ['when', 'dest.nav.when'], ['getting', 'dest.nav.getting'],
+    ['routes', 'dest.nav.walkRide'], ['do', 'dest.nav.do'], ['highlights', 'dest.nav.highlights'],
+    ['trips', 'dest.nav.trips'], ['rating', 'dest.nav.verdict'], ['sleep', 'dest.nav.sleep'],
+    ['park', 'dest.nav.park'],
+  ].filter(([id]) => has[id]).map(([id, key]) => ({ id: `sec-${id}`, key: id, label: t(key) })));
+  // Expand all opens every fold on the page, the empty ones included.
+  const allIds = Object.keys(has).filter((k) => has[k] || show[k]).concat(['further']);
+  const allOpen = expanding || allIds.every((id) => open.has(id));
+  const expandAll = () => {
+    if (allOpen) {
+      setExpanding(false);
+      setAllOpen(allIds, false);
+    } else {
+      setExpanding(true);
+      setAllOpen(allIds, true);
+    }
+  };
+
+  // Closed summaries that answer their question.
+  const crowdWord = crowdOn ? t(CROWD_KEY[destination.crowding.tier] || 'crowd.moderate').toLowerCase() : '';
+  const whenSummary = bestMonths
+    ? (crowdWord ? t('dest.whenSummaryCrowd', { months: bestMonths, crowd: crowdWord }) : t('dest.whenSummary', { months: bestMonths }))
+    : (weatherOn && forecast[0]?.hi != null ? t('dest.weatherSummary', { hi: Math.round(forecast[0].hi) }) : crowdWord);
+  // Getting there answers "can I do this without a car" first.
+  const gettingSummary = getting?.transit
+    ? [t(`dest.transit.${getting.transit}`), getting.car_needed != null ? t(getting.car_needed ? 'dest.carYes' : 'dest.carNo') : '']
+      .filter(Boolean).join(' ')
+    : getting?.airport
+      ? (getting.transfer_min != null
+        ? t('dest.flyToWithTransfer', { iata: getting.airport, n: getting.transfer_min, mode: t(`mode.${getting.transfer_mode || 'train'}`) })
+        : t('dest.flyTo', { iata: getting.airport }))
+      : '';
+  const walkSummary = [
+    [
+      routeRows.hiking?.length && `${routeRows.hiking.length} ${t('dest.routesHiking').toLowerCase()}`,
+      routeRows.cycling?.length && `${routeRows.cycling.length} ${t('dest.routesCycling').toLowerCase()}`,
+    ].filter(Boolean).join(', '),
+    hasAround ? summaryOf(around, t) : '',
+  ].filter(Boolean).join('; ');
+  const festMonths = fmtMonthRanges([...new Set(festivals.flatMap((f) => f.months || []))]);
+  const visitLine = stayLen && destination.place?.visit_h != null
+    ? t('dest.visitWithSights', { visit: t(stayLen.key, { n: stayLen.n }), n: Math.round(destination.place.visit_h) })
+    : stayLen ? t(stayLen.key, { n: stayLen.n })
+      : destination.place?.visit_h != null ? t('dest.visitHours', { n: Math.round(destination.place.visit_h) }) : '';
 
   const parkSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`parking ${city}`)}`;
   const webPark = parking?.web || null;
@@ -521,6 +641,14 @@ export function DestinationPage({
         </button>
         <span className="destp-bar-name">{city}</span>
         <div className="destp-bar-actions">
+          {/* Expand all sits in the bar, always in reach (T385): the shared
+              SectionRail has no slot for it (register row T385). Its class
+              stays destp-subnav-all, which the harnesses look for. */}
+          {settled && (
+            <button type="button" className="destp-bar-btn destp-subnav-all" onClick={expandAll}>
+              {allOpen ? t('dest.collapseAll') : t('dest.expandAll')}
+            </button>
+          )}
           <button type="button" className="destp-bar-btn" onClick={share}>
             {copied ? t('dest.linkCopied') : t('dest.share')}
           </button>
@@ -530,26 +658,17 @@ export function DestinationPage({
         </div>
       </div>
 
-      {/* The section rail: tap a name, the section opens and scrolls up. */}
-      <nav className="destp-subnav" aria-label={t('dest.subnavAria')}>
-        <div className="destp-subnav-scroll">
-          {navItems.map(([id, key]) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => jumpTo(id)}
-              // Chrome left a half-visible pill under "Expand all" when Tab
-              // reached it; bring it fully into the strip (T190).
-              onFocus={(e) => e.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })}
-            >{t(key)}</button>
-          ))}
-        </div>
-        <button type="button" className="destp-subnav-all" onClick={() => setAllOpen(allIds, !allOpen)}>
-          {allOpen ? t('dest.collapseAll') : t('dest.expandAll')}
-        </button>
-      </nav>
-
       <div className="destp-scroll" ref={scrollRef} onScroll={onScroll}>
+        {/* The shared section rail (T165-b): anchors, the ink-fill pill on
+            the section in view, shown once the head has scrolled away. */}
+        <DestRail
+          spec={railSpec}
+          scrollRef={scrollRef}
+          heroRef={headRef}
+          ready={`${destination.id}:${settled}`}
+          ariaLabel={t('dest.subnavAria')}
+          onJump={(key) => setOpen((o) => new Set([...o, key]))}
+        />
         <GalleryStrip
           gallery={d?.gallery}
           city={city}
@@ -558,7 +677,7 @@ export function DestinationPage({
           destId={destination.id}
         />
 
-        <div className="destp-head">
+        <div className="destp-head" ref={headRef}>
           <div className="destp-head-main">
             <div className="destp-title-row">
               <h2 className="destp-city">{city}</h2>
@@ -583,14 +702,9 @@ export function DestinationPage({
                   {t('dest.unesco')}
                 </span>
               )}
-              {crowdBadgeWorthShowing(destination) && (
-                <CrowdingBadge crowding={destination.crowding} t={t} size="lg" />
-              )}
-              {swimRelevant(destination) && (
-                <WaterQualityBadge bathing={destination.bathing_water} t={t} size="lg" />
-              )}
-              {stayLen && (
-                <span className="destp-visit"><ClockIcon size={12} />{t(stayLen.key, { n: stayLen.n })}</span>
+              {/* The crowd and water badges moved into the month block (T385). */}
+              {visitLine && (
+                <span className="destp-visit"><ClockIcon size={12} />{visitLine}</span>
               )}
             </div>
             {/* What this place is: two or three sentences from our own
@@ -609,22 +723,15 @@ export function DestinationPage({
             {/* Into the planners. A page about a place is where the wish to
                 go there forms, so the trip wizard (this country picked) and
                 the day flow (staying in this city) open from here. */}
+            {/* One row of three (T385, brief V3-3): the primary, Shortlist,
+                Plan a day. Share lives in the bar; the PDF and Report a
+                problem sit before the footer; Google Maps in the map fold. */}
             {onPlanTrip && (
               <button type="button" className={`panel-fav destp-plan-btn${frrPrimary ? ' is-quiet' : ''}`} onClick={onPlanTrip}>
                 <RouteIcon size={15} />
                 <span>{t('dest.planTrip')}</span>
               </button>
             )}
-            {onPlanDay && (
-              <button type="button" className="panel-fav destp-plan-btn" onClick={onPlanDay}>
-                <SunIcon size={15} />
-                <span>{t('dest.planDay')}</span>
-              </button>
-            )}
-            <button type="button" className="destp-pdf" onClick={exportPdf} disabled={pdfBusy || loading || !d}>
-              <DownloadIcon size={15} />
-              <span>{pdfBusy ? t('dest.pdfBuilding') : t('dest.pdf')}</span>
-            </button>
             {onToggleFavorite && (
               <button className={`panel-fav ${isFavorite ? 'on' : ''}`} onClick={onToggleFavorite}
                 aria-label={isFavorite ? t('detail.removeShortlist') : t('detail.addShortlist')}>
@@ -634,30 +741,25 @@ export function DestinationPage({
                 <span>{isFavorite ? t('detail.shortlisted') : t('detail.shortlist')}</span>
               </button>
             )}
-            <button type="button" className="panel-fav destp-share-btn" onClick={share}>
-              <ShareIcon size={15} />
-              <span>{copied ? t('dest.linkCopied') : t('dest.share')}</span>
-            </button>
-            <a className="panel-fav" href={mapsSearchUrl(lat, lon)} target="_blank" rel="noreferrer">
-              <MapPinIcon size={15} />
-              <span>{t('explore.openMaps')}</span>
-            </a>
-            <ReportProblem item={DEST_REPORT} />
+            {onPlanDay && (
+              <button type="button" className="panel-fav destp-plan-btn is-day" onClick={onPlanDay}>
+                <SunIcon size={15} />
+                <span>{t('dest.planDay')}</span>
+              </button>
+            )}
           </div>
           )}
         </div>
 
-        {/* Four measured facts, the instrument strip. */}
-        {settled && (destination.place?.visit_h != null || bestMonths || cost?.dayEur != null || bedFrom != null) && (
+        {/* The cost facts. The sights hours joined the visit line and the
+            best months the month block (T385). "A day" is the cost index at
+            the traveller's Lifestyle; the receipt below prices its own stay
+            tier. Which of the two the page shows is the owner's call (register
+            row T374-d), so both stay, and each label names its basis. */}
+        {settled && (cost?.dayEur != null || bedFrom != null) && (
           <dl className="dfacts">
-            {destination.place?.visit_h != null && (
-              <div className="dfact"><dt>{t('pdf.factVisit')}</dt><dd className="mono">{Math.round(destination.place.visit_h)} h</dd></div>
-            )}
-            {bestMonths && (
-              <div className="dfact"><dt>{t('pdf.factBest')}</dt><dd className="mono">{bestMonths}</dd></div>
-            )}
             {cost?.dayEur != null && (
-              <div className="dfact"><dt>{t('pdf.factDay')}</dt><dd className="mono">{eur(cost.dayEur)}</dd></div>
+              <div className="dfact"><dt>{t('dest.factDayAt')}</dt><dd className="mono">{eur(cost.dayEur)}</dd></div>
             )}
             {bedFrom != null && (
               <div className="dfact"><dt>{t('dest.factSleep')}</dt><dd className="mono">{eur(bedFrom)}</dd></div>
@@ -672,20 +774,264 @@ export function DestinationPage({
               the right column, beside the folds. */}
           <div className="destp-frr">
             <FirstRunReceipt
-              dest={destination}
+              dest={receiptDest}
               receiptKey={`dest:${destination.id}`}
               headingLevel={2}
               onPrimaryChange={setFrrPrimary}
             />
             <ReportProblem priceOnly item={DEST_REPORT} />
           </div>
+          {/* The traveller's first three questions, in order: what a day
+              costs, is it good in my month, can I get there without a car.
+              First on a phone; on a desktop under the receipt at the head
+              of the side column (T385, brief V3-2). */}
+          <div className="destp-col is-lead">
+            {/* What a day here costs at the reader's own Lifestyle: the cost
+                index basis, kept beside the receipt and named for its basis
+                while the owner decides which basis the page shows (T374-d).
+                The rounded trip total and the second price report button went
+                (T385): the receipt above is the trip total, unrounded, and
+                carries the one report button. */}
+            {has.cost && (
+              <Fold level={3}
+                id="sec-cost"
+                icon={ReceiptIcon}
+                title={t('dest.costTitleAt')}
+                summary={t('dest.costSummary', { eur: Math.round(cost.dayEur) })}
+                open={isOpen('cost')}
+                onToggle={() => toggle('cost')}
+              >
+                <CostReceipt cost={cost} t={t} lang={lang} lifestyleLabel={lifestyleLine} onOpenLifestyle={onOpenLifestyle} />
+              </Fold>
+            )}
+
+            {/* The month block (T385, brief V3-4): is it good in my month.
+                Climate with every month's figures readable without a hover,
+                the traveller's month outlined, the cheap-bed months, the crowd
+                tier with its year, the bathing water and this week's forecast. */}
+            {has.when && (
+              <Fold level={3}
+                id="sec-when"
+                icon={CalendarIcon}
+                title={t('dest.whenTitle')}
+                summary={whenSummary}
+                open={isOpen('when')}
+                onToggle={() => toggle('when')}
+              >
+                {destination.climate?.m && <ClimateStrip climate={destination.climate} month={tripMonth} figures />}
+                {cheapMonths && (
+                  <p className="xp-when-fact">{t('explore.whenCheapStay', { months: fmtMonthRanges(cheapMonths) })}</p>
+                )}
+                <CrowdCalendar destination={destination} t={t} />
+                <BathingWater water={water} destination={destination} t={t} />
+                {weatherOn && forecast.length > 0 && (
+                  <div className="destp-week">
+                    <h4 className="destp-subhead">{t('dest.weekTitle')}</h4>
+                    <div className="xp-weather">
+                      {forecast.map((day) => {
+                        const Glyph = WEATHER_GLYPH[day.kind] || CloudIcon;
+                        return (
+                          <div key={day.date} className="xp-wday" title={day.date}>
+                            <span className="xp-wday-name">{fmtDay(day.date)}</span>
+                            <Glyph size={17} className="xp-wday-icon" />
+                            <span className="xp-wday-hi">{day.hi != null ? `${Math.round(day.hi)}°` : ''}</span>
+                            <span className="xp-wday-lo">{day.lo != null ? `${Math.round(day.lo)}°` : ''}</span>
+                            {day.rainPct != null && day.rainPct >= 30 && (
+                              <span className="xp-wday-rain mono">{`${day.rainPct}%`}</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="xp-source">{t('explore.weatherCredit')}</p>
+                  </div>
+                )}
+              </Fold>
+            )}
+
+            {/* Getting there and around. */}
+            {show.getting && (
+              <Fold level={3}
+                id="sec-getting"
+                icon={PlaneIcon}
+                title={t('dest.gettingTitle')}
+                summary={gettingSummary}
+                open={isOpen('getting')}
+                onToggle={() => toggle('getting')}
+              >
+                {getting && <GettingThere getting={getting} t={t} />}
+                {!has.getting && <div className="sec-none" data-testid="section-none"><p>{t('dest.gettingNone', { city })}</p></div>}
+                {rhythm && <p className="destp-rhythm">{rhythm}</p>}
+                {bookAhead.length > 0 && (
+                  <p className="destp-bookahead">
+                    <span className="destp-bookahead-mark" aria-hidden="true">!</span>
+                    {t('dest.bookAhead', { names: bookAhead.join(', ') })}
+                  </p>
+                )}
+                {pairs.length > 0 && (
+                  <div className="destp-pairs">
+                    <span className="destp-pairs-label">{t('dest.pairsWith')}</span>
+                    {pairs.map((pr) => (
+                      <button key={pr.id} type="button" className="destp-pair"
+                        onClick={() => onSelect?.(pr.id)}>
+                        <KindGlyph kind={pr.kind} size={10} label={t(`pkind.${pr.kind}`)} />
+                        <span>{pr.name}</span>
+                        <span className="mono">{pr.km} km</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </Fold>
+            )}
+
+          </div>
+
           <div className="destp-col is-main">
+            {/* Walk and ride from here (T385, brief V3-6): the routes that PASS
+                this town, measured to the line (ROUTES.md R6), then the
+                outdoors within 20 km from every layer the Destinations tab
+                knows. One fold, one empty line when there is neither. */}
+            {show.routes && (
+              <Fold level={3}
+                id="sec-routes"
+                icon={RouteIcon}
+                title={t('dest.walkRideTitle')}
+                summary={walkSummary}
+                open={isOpen('routes')}
+                onToggle={() => toggle('routes')}
+              >
+                {hasRoutes && <RoutesFromHere routes={routeRows} t={t} onOpen={onOpenFeature} />}
+                {hasAround && (
+                  <div className="destp-around">
+                    {hasRoutes && <h4 className="destp-subhead">{t('dest.aroundTitle', { city })}</h4>}
+                    <AroundHere
+                      city={city}
+                      nearby={nearby}
+                      around={around}
+                      t={t}
+                      onOpenFeature={onOpenFeature}
+                      onShowMap={aroundForMap.length || nearbyForMap.length ? showOnMap : null}
+                    />
+                  </div>
+                )}
+                {!hasRoutes && !hasAround && (
+                  // pipeline/trails/attach.py MAX_KM (25 km to the line) and
+                  // pipeline/dossier/build_dossier.py AROUND_KM (20 km).
+                  <NearestLine
+                    noneKey="dest.walkRideNone"
+                    noneVars={{ city }}
+                    layers={['trail', 'cycling', 'mountain', 'lake', 'beach']}
+                    cc={destination.iso2}
+                    from={lat != null && lon != null ? { lat, lon } : null}
+                    radiusKm={25}
+                    onOpen={onOpenFeature ? (l, row) => onOpenFeature(DOSSIER_LAYER[l], { id: row.id, cc: row.cc }) : null}
+                  />
+                )}
+              </Fold>
+            )}
+
+            {/* Best things to do: cards, grouped by how many guides agree. */}
+            {has.do && (
+              <Fold level={3}
+                id="sec-do"
+                icon={CompassIcon}
+                title={t('dest.doTitle')}
+                summary={t('dest.doSummary', { n: doItems.length })}
+                open={isOpen('do')}
+                onToggle={() => toggle('do')}
+              >
+                {doBuckets.map(([bkey, items]) => {
+                  const visible = items.filter(() => {
+                    if (doAll) return true;
+                    doShown += 1;
+                    return doShown <= DO_LIMIT;
+                  });
+                  if (!visible.length) return null;
+                  return (
+                    <React.Fragment key={bkey || 'all'}>
+                      {bkey && <p className="ddo-group">{t(bkey)} <span className="mono">{items.length}</span></p>}
+                      <ul className="ddo-grid">
+                        {visible.map((item) => {
+                          const TypeIcon = DO_TYPE_ICON[item.type] || CompassIcon;
+                          const ev = item.evidence;
+                          const evPct = ev?.n_sources != null
+                            ? (ev.method === 'open' ? Math.min(100, ev.n_sources * 25) : Math.round((ev.n_sources / Math.max(ev.of || 1, 1)) * 100))
+                            : null;
+                          const href = item.link && safeUrl(item.link) ? activityLink(safeUrl(item.link), 'dest-do') : null;
+                          // The POI behind this item, where the shard has a
+                          // photograph of it. Where it does not, the type
+                          // glyph fills the frame: a missing thumbnail
+                          // leaves a hole, which reads as a broken page.
+                          const photo = doPhotos(item.name);
+                          const body = (
+                            <>
+                              <span className={`ddo-photo ${photo ? '' : 'is-blank'}`} aria-hidden="true">
+                                {photo
+                                  ? <img src={thumb500(photo)} alt="" loading="lazy" />
+                                  : <TypeIcon size={17} />}
+                              </span>
+                              <span className={`ddo-type is-${item.type}`}><TypeIcon size={11} />{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
+                              <span className="ddo-name">{item.name}</span>
+                              {item.detail && <span className="ddo-detail">{item.detail}</span>}
+                              <span className="ddo-foot">
+                                {item.season?.length > 0 && (
+                                  <span className="ddo-season mono">{item.season.map((m) => MONTHS_SHORT[m - 1]).join(', ')}</span>
+                                )}
+                                {ev?.n_sources != null && (
+                                  <span className={`ddo-ev ${ev.method === 'open' ? 'is-open' : ''}`} title={(ev.sources || ev.urls || []).join(', ')}>
+                                    <span className="ddo-ev-bar" aria-hidden="true"><span style={{ width: `${Math.max(8, evPct)}%` }} /></span>
+                                    <span>
+                                      {ev.method === 'open'
+                                        ? (ev.curated ? t('dest.evidenceCurated') : t('dest.evidenceOpen', { n: ev.n_sources }))
+                                        : t('dest.evidence', { n: ev.n_sources, of: ev.of })}
+                                    </span>
+                                  </span>
+                                )}
+                                {(href || (item.ref && onOpenFeature)) && <ChevronRightIcon size={13} className="ddo-go" />}
+                              </span>
+                            </>
+                          );
+                          if (href) {
+                            return (
+                              <li key={item.name}><a className="ddo" href={href} target="_blank" rel="noreferrer">{body}</a></li>
+                            );
+                          }
+                          if (item.ref && onOpenFeature) {
+                            return (
+                              <li key={item.name}><button type="button" className="ddo" onClick={() => onOpenFeature(item.ref.layer, item.ref)}>{body}</button></li>
+                            );
+                          }
+                          return <li key={item.name}><span className="ddo is-static">{body}</span></li>;
+                        })}
+                      </ul>
+                    </React.Fragment>
+                  );
+                })}
+                {doItems.length > DO_LIMIT && (
+                  <button type="button" className="dsec-more" onClick={() => setDoAll((v) => !v)}>
+                    {doAll ? t('dest.showLess') : t('dest.showAll', { n: doItems.length })}
+                  </button>
+                )}
+                {(links.getyourguide || links.viator) && (
+                  <div className="destp-book-row">
+                    {links.getyourguide && (
+                      <a className="xp-further-btn" href={activityLink(links.getyourguide, 'dest-book')} target="_blank" rel="noreferrer noopener">{t('dest.bookGyg')}</a>
+                    )}
+                    {links.viator && (
+                      <a className="xp-further-btn" href={activityLink(links.viator, 'dest-book')} target="_blank" rel="noreferrer noopener">{t('dest.bookViator')}</a>
+                    )}
+                  </div>
+                )}
+                <p className="xp-source">{t('dest.bookNote')}</p>
+              </Fold>
+            )}
+
             {/* Highlights and the one map, with its layers. */}
             {has.highlights && (
               <Fold level={3}
                 id="sec-highlights"
                 icon={MapPinIcon}
-                title={t('dest.mapTitle')}
+                title={t('dest.mapTitleV')}
                 summary={highlights.length ? t('dest.hlSummary', { n: highlights.length }) : ''}
                 open={isOpen('highlights')}
                 onToggle={() => toggle('highlights')}
@@ -788,171 +1134,13 @@ export function DestinationPage({
                       {hlAll ? t('dest.showLess') : t('dest.showAll', { n: highlights.length })}
                     </button>
                   )}
+                  {lat != null && lon != null && (
+                    <a className="xp-further-btn destp-maps-link" href={mapsSearchUrl(lat, lon)} target="_blank" rel="noreferrer">
+                      <MapPinIcon size={15} />
+                      <span>{t('explore.openMaps')}</span>
+                    </a>
+                  )}
                 </div>
-              </Fold>
-            )}
-
-            {/* Best things to do: cards, grouped by how many guides agree. */}
-            {has.do && (
-              <Fold level={3}
-                id="sec-do"
-                icon={CompassIcon}
-                title={t('dest.doTitle')}
-                summary={t('dest.doSummary', { n: doItems.length })}
-                open={isOpen('do')}
-                onToggle={() => toggle('do')}
-              >
-                {doBuckets.map(([bkey, items]) => {
-                  const visible = items.filter(() => {
-                    if (doAll) return true;
-                    doShown += 1;
-                    return doShown <= DO_LIMIT;
-                  });
-                  if (!visible.length) return null;
-                  return (
-                    <React.Fragment key={bkey || 'all'}>
-                      {bkey && <p className="ddo-group">{t(bkey)} <span className="mono">{items.length}</span></p>}
-                      <ul className="ddo-grid">
-                        {visible.map((item) => {
-                          const TypeIcon = DO_TYPE_ICON[item.type] || CompassIcon;
-                          const ev = item.evidence;
-                          const evPct = ev?.n_sources != null
-                            ? (ev.method === 'open' ? Math.min(100, ev.n_sources * 25) : Math.round((ev.n_sources / Math.max(ev.of || 1, 1)) * 100))
-                            : null;
-                          const href = item.link && safeUrl(item.link) ? activityLink(safeUrl(item.link), 'dest-do') : null;
-                          // The POI behind this item, where the shard has a
-                          // photograph of it. Where it does not, the type
-                          // glyph fills the frame: a missing thumbnail
-                          // leaves a hole, which reads as a broken page.
-                          const photo = doPhotos(item.name);
-                          const body = (
-                            <>
-                              <span className={`ddo-photo ${photo ? '' : 'is-blank'}`} aria-hidden="true">
-                                {photo
-                                  ? <img src={thumb500(photo)} alt="" loading="lazy" />
-                                  : <TypeIcon size={17} />}
-                              </span>
-                              <span className={`ddo-type is-${item.type}`}><TypeIcon size={11} />{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
-                              <span className="ddo-name">{item.name}</span>
-                              {item.detail && <span className="ddo-detail">{item.detail}</span>}
-                              <span className="ddo-foot">
-                                {item.season?.length > 0 && (
-                                  <span className="ddo-season mono">{item.season.map((m) => MONTHS_SHORT[m - 1]).join(', ')}</span>
-                                )}
-                                {ev?.n_sources != null && (
-                                  <span className={`ddo-ev ${ev.method === 'open' ? 'is-open' : ''}`} title={(ev.sources || ev.urls || []).join(', ')}>
-                                    <span className="ddo-ev-bar" aria-hidden="true"><span style={{ width: `${Math.max(8, evPct)}%` }} /></span>
-                                    <span>
-                                      {ev.method === 'open'
-                                        ? (ev.curated ? t('dest.evidenceCurated') : t('dest.evidenceOpen', { n: ev.n_sources }))
-                                        : t('dest.evidence', { n: ev.n_sources, of: ev.of })}
-                                    </span>
-                                  </span>
-                                )}
-                                {(href || (item.ref && onOpenFeature)) && <ChevronRightIcon size={13} className="ddo-go" />}
-                              </span>
-                            </>
-                          );
-                          if (href) {
-                            return (
-                              <li key={item.name}><a className="ddo" href={href} target="_blank" rel="noreferrer">{body}</a></li>
-                            );
-                          }
-                          if (item.ref && onOpenFeature) {
-                            return (
-                              <li key={item.name}><button type="button" className="ddo" onClick={() => onOpenFeature(item.ref.layer, item.ref)}>{body}</button></li>
-                            );
-                          }
-                          return <li key={item.name}><span className="ddo is-static">{body}</span></li>;
-                        })}
-                      </ul>
-                    </React.Fragment>
-                  );
-                })}
-                {doItems.length > DO_LIMIT && (
-                  <button type="button" className="dsec-more" onClick={() => setDoAll((v) => !v)}>
-                    {doAll ? t('dest.showLess') : t('dest.showAll', { n: doItems.length })}
-                  </button>
-                )}
-                {(links.getyourguide || links.viator) && (
-                  <div className="destp-book-row">
-                    {links.getyourguide && (
-                      <a className="xp-further-btn" href={activityLink(links.getyourguide, 'dest-book')} target="_blank" rel="noreferrer noopener">{t('dest.bookGyg')}</a>
-                    )}
-                    {links.viator && (
-                      <a className="xp-further-btn" href={activityLink(links.viator, 'dest-book')} target="_blank" rel="noreferrer noopener">{t('dest.bookViator')}</a>
-                    )}
-                  </div>
-                )}
-                <p className="xp-source">{t('dest.bookNote')}</p>
-              </Fold>
-            )}
-
-            {/* Around here: the outdoors within 20 km, from every layer the
-                Destinations tab knows, plus the top picks with photographs. */}
-            {show.around && (
-              <Fold level={3}
-                id="sec-around"
-                icon={TreeIcon}
-                title={t('dest.aroundTitle', { city })}
-                summary={has.around ? (summaryOf(around, t) || t('dest.natureTitle')) : ''}
-                open={isOpen('around')}
-                onToggle={() => toggle('around')}
-              >
-                {!has.around && (
-                  // pipeline/dossier/build_dossier.py AROUND_KM: the dossier
-                  // looks 20 km out and writes no block when it finds nothing.
-                  <NearestLine
-                    noneKey="dest.aroundNone"
-                    noneVars={{ city, km: 20 }}
-                    layers={['trail', 'cycling', 'mountain', 'lake', 'beach']}
-                    cc={destination.iso2}
-                    from={lat != null && lon != null ? { lat, lon } : null}
-                    radiusKm={20}
-                    onOpen={onOpenFeature ? (l, row) => onOpenFeature(DOSSIER_LAYER[l], { id: row.id, cc: row.cc }) : null}
-                  />
-                )}
-                {has.around && <AroundHere
-                  city={city}
-                  nearby={nearby}
-                  around={around}
-                  t={t}
-                  onOpenFeature={onOpenFeature}
-                  onShowMap={aroundForMap.length || nearbyForMap.length ? showOnMap : null}
-                />}
-              </Fold>
-            )}
-
-            {/* Routes from here: the paths that PASS this town, measured to
-                the line rather than to a bounding box, each named for the
-                path with the stretch that passes named underneath. */}
-            {show.routes && (
-              <Fold level={3}
-                id="sec-routes"
-                icon={RouteIcon}
-                title={t('dest.routesTitle')}
-                summary={[
-                  routeRows.hiking?.length
-                    && `${routeRows.hiking.length} ${t('dest.routesHiking').toLowerCase()}`,
-                  routeRows.cycling?.length
-                    && `${routeRows.cycling.length} ${t('dest.routesCycling').toLowerCase()}`,
-                ].filter(Boolean).join(', ')}
-                open={isOpen('routes')}
-                onToggle={() => toggle('routes')}
-              >
-                {has.routes ? <RoutesFromHere routes={routeRows} t={t} onOpen={onOpenFeature} /> : (
-                  // pipeline/trails/attach.py MAX_KM: a route is attached to a
-                  // town when its line comes within 25 km of the centre.
-                  <NearestLine
-                    noneKey="dest.routesNone"
-                    noneVars={{ city, km: 25 }}
-                    layers={['trail', 'cycling']}
-                    cc={destination.iso2}
-                    from={lat != null && lon != null ? { lat, lon } : null}
-                    radiusKm={25}
-                    onOpen={onOpenFeature ? (l, row) => onOpenFeature(DOSSIER_LAYER[l], { id: row.id, cc: row.cc }) : null}
-                  />
-                )}
               </Fold>
             )}
 
@@ -1007,8 +1195,8 @@ export function DestinationPage({
               <Fold level={3}
                 id="sec-members"
                 icon={MapPinIcon}
-                title={t('dest.membersTitle')}
-                summary={t('dest.membersSummary', { n: members.length })}
+                title={members.length === 1 ? t('dest.membersTitle1') : t('dest.membersTitleN', { n: members.length })}
+                summary={members.slice(0, 3).map((m) => m.name).filter(Boolean).join(', ')}
                 open={isOpen('members')}
                 onToggle={() => toggle('members')}
               >
@@ -1055,25 +1243,6 @@ export function DestinationPage({
               </Fold>
             )}
 
-            {/* When: the climate strip with crowding and water beside it. */}
-            {has.when && (
-              <Fold level={3}
-                id="sec-when"
-                icon={CalendarIcon}
-                title={t('explore.whenTitle')}
-                summary={bestMonths ? t('dest.whenSummary', { months: bestMonths }) : ''}
-                open={isOpen('when')}
-                onToggle={() => toggle('when')}
-              >
-                <ClimateStrip climate={destination.climate} />
-                {cheapMonths && (
-                  <p className="xp-when-fact">{t('explore.whenCheapStay', { months: fmtMonthRanges(cheapMonths) })}</p>
-                )}
-                <CrowdCalendar destination={destination} t={t} />
-                <BathingWater water={water} destination={destination} t={t} />
-              </Fold>
-            )}
-
             {/* Where to sleep: neighbourhood prices, tiers, the price curve. */}
             {has.sleep && (
               <Fold level={3}
@@ -1088,74 +1257,12 @@ export function DestinationPage({
               </Fold>
             )}
 
-            {/* Getting there and around. */}
-            {show.getting && (
-              <Fold level={3}
-                id="sec-getting"
-                icon={PlaneIcon}
-                title={t('dest.gettingTitle')}
-                summary={getting?.airport
-                  ? (getting.transfer_min != null
-                    ? t('dest.flyToWithTransfer', { iata: getting.airport, n: getting.transfer_min, mode: t(`mode.${getting.transfer_mode || 'train'}`) })
-                    : t('dest.flyTo', { iata: getting.airport }))
-                  : (getting?.transit ? t(`dest.transit.${getting.transit}`) : '')}
-                open={isOpen('getting')}
-                onToggle={() => toggle('getting')}
-              >
-                {getting && <GettingThere getting={getting} t={t} />}
-                {!has.getting && <div className="sec-none" data-testid="section-none"><p>{t('dest.gettingNone', { city })}</p></div>}
-                {rhythm && <p className="destp-rhythm">{rhythm}</p>}
-                {bookAhead.length > 0 && (
-                  <p className="destp-bookahead">
-                    <span className="destp-bookahead-mark" aria-hidden="true">!</span>
-                    {t('dest.bookAhead', { names: bookAhead.join(', ') })}
-                  </p>
-                )}
-                {pairs.length > 0 && (
-                  <div className="destp-pairs">
-                    <span className="destp-pairs-label">{t('dest.pairsWith')}</span>
-                    {pairs.map((pr) => (
-                      <button key={pr.id} type="button" className="destp-pair"
-                        onClick={() => onSelect?.(pr.id)}>
-                        <KindGlyph kind={pr.kind} size={10} label={t(`pkind.${pr.kind}`)} />
-                        <span>{pr.name}</span>
-                        <span className="mono">{pr.km} km</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </Fold>
-            )}
-
-            {/* What a day here costs, at the reader's own lifestyle. */}
-            {has.cost && (
-              <Fold level={3}
-                id="sec-cost"
-                icon={ReceiptIcon}
-                title={t('cost.title')}
-                summary={t('dest.costSummary', { eur: Math.round(cost.dayEur) })}
-                open={isOpen('cost')}
-                onToggle={() => toggle('cost')}
-              >
-                <CostReceipt cost={cost} t={t} lang={lang} lifestyleLabel={lifestyleLine} onOpenLifestyle={onOpenLifestyle} />
-                <ReportProblem priceOnly item={DEST_REPORT} />
-                {stayLen?.n >= 2 && (
-                  <p className="destp-triptotal">
-                    {t('dest.tripTotal', {
-                      eur: new Intl.NumberFormat('en-GB').format(Math.round(cost.dayEur * stayLen.n)),
-                      n: stayLen.n,
-                    })}
-                  </p>
-                )}
-              </Fold>
-            )}
-
             {/* Insider tips: rule codes with evidence behind every sentence. */}
             {has.tips && (
               <Fold level={3}
                 id="sec-tips"
                 icon={BulbIcon}
-                title={t('dest.tipsTitle')}
+                title={t('dest.tipsTitleV')}
                 summary={t('dest.tipsSummary', { n: tips.length })}
                 open={isOpen('tips')}
                 onToggle={() => toggle('tips')}
@@ -1174,8 +1281,8 @@ export function DestinationPage({
               <Fold level={3}
                 id="sec-festivals"
                 icon={CalendarIcon}
-                title={t('dest.festivalsTitle')}
-                summary={t('dest.festSummary', { n: festivals.length })}
+                title={festivals.length === 1 ? t('dest.festTitle1') : t('dest.festTitleN', { n: festivals.length })}
+                summary={festMonths}
                 open={isOpen('festivals')}
                 onToggle={() => toggle('festivals')}
               >
@@ -1198,36 +1305,6 @@ export function DestinationPage({
                     </li>
                   ))}
                 </ul>
-              </Fold>
-            )}
-
-            {/* This week, live. Page only; the PDF prints normals instead. */}
-            {has.weather && (
-              <Fold level={3}
-                id="sec-weather"
-                icon={SunIcon}
-                title={t('explore.weatherTitle')}
-                summary={forecast[0]?.hi != null ? t('dest.weatherSummary', { hi: Math.round(forecast[0].hi) }) : ''}
-                open={isOpen('weather')}
-                onToggle={() => toggle('weather')}
-              >
-                <div className="xp-weather">
-                  {forecast.map((day) => {
-                    const Glyph = WEATHER_GLYPH[day.kind] || CloudIcon;
-                    return (
-                      <div key={day.date} className="xp-wday" title={day.date}>
-                        <span className="xp-wday-name">{fmtDay(day.date)}</span>
-                        <Glyph size={17} className="xp-wday-icon" />
-                        <span className="xp-wday-hi">{day.hi != null ? `${Math.round(day.hi)}°` : ''}</span>
-                        <span className="xp-wday-lo">{day.lo != null ? `${Math.round(day.lo)}°` : ''}</span>
-                        {day.rainPct != null && day.rainPct >= 30 && (
-                          <span className="xp-wday-rain mono">{`${day.rainPct}%`}</span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-                <p className="xp-source">{t('explore.weatherCredit')}</p>
               </Fold>
             )}
 
@@ -1325,12 +1402,12 @@ export function DestinationPage({
                 id="sec-pack"
                 icon={BackpackIcon}
                 title={t('explore.packTitle')}
-                summary={destination.climate ? t('explore.packFor', { month: MONTHS_SHORT[month - 1] }) : ''}
+                summary={destination.climate || tripMonth ? t('dest.packSummary', { month: MONTHS_SHORT[month - 1] }) : ''}
                 open={isOpen('pack')}
                 onToggle={() => toggle('pack')}
               >
                 <p className="xp-pack-for">
-                  {destination.climate
+                  {destination.climate || tripMonth
                     ? t('explore.packFor', { month: MONTHS_SHORT[month - 1] })
                     : t('explore.packGeneric')}
                 </p>
@@ -1384,9 +1461,23 @@ export function DestinationPage({
         </div>
         )}
 
-        {/* The four facts in the strip above. Hours here are a rule of thumb,
-            the best months are counted from the climate record, and both
-            money figures are indicative, so they are estimates. */}
+        {/* The page-end utility row (carta-design "Detail page grammar"):
+            download and report, secondary, before the honest footer and
+            never in the head (T385, brief V3-3). */}
+        {settled && (
+          <div className="destp-utility">
+            <button type="button" className="destp-pdf" onClick={exportPdf} disabled={pdfBusy || loading || !d}>
+              <DownloadIcon size={15} />
+              <span>{pdfBusy ? t('dest.pdfBuilding') : t('dest.pdf')}</span>
+            </button>
+            <ReportProblem item={DEST_REPORT} />
+          </div>
+        )}
+
+        {/* The four facts the page states as figures: the sights hours (in
+            the visit line, a rule of thumb), the best months (counted from
+            the climate record), and the two cost facts (indicative, so
+            estimates). The receipt's lines carry their own provenance. */}
         {settled && (
           <FigureFooter kinds={[
             destination.place?.visit_h != null && 'e',

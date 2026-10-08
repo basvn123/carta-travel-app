@@ -2,16 +2,15 @@ import React from 'react';
 import { KindGlyph } from '../components/KindGlyph.jsx';
 import { KINDS } from '../lib/taxonomy.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { MONTHS_SHORT } from './ClimateStrip.jsx';
-import { ChevronDownIcon } from '../components/Icons.jsx';
+import { ChevronDownIcon, ChevronRightIcon } from '../components/Icons.jsx';
+import { CategoryRail } from './CategoryRail.jsx';
 
 /**
  * The Explore filter rail (PLAN.md C6): every filter reachable without a
  * modal. Five groups - kind (the same glyphs the cards wear), verdict, role,
  * practical, country - on desktop in the left panel and inside a plain fold
- * on a phone. The old modal sheet is gone: a sheet that hides the controls
- * also hides what the list is currently showing, and the result count can
- * only be trusted when the knobs that produce it are on screen.
+ * inside the shared Filters sheet on a phone, whose primary button carries
+ * the live count.
  *
  * v5: each group is a fold. Five groups open at once ran the panel past
  * the bottom of every laptop screen, and the country list, thirty-nine
@@ -19,6 +18,13 @@ import { ChevronDownIcon } from '../components/Icons.jsx';
  * The first two groups open by default; the others open on demand, and a
  * group with something active says how many on its summary row, so a
  * closed fold never hides a filter that is narrowing the list.
+ *
+ * V3 (T383): the trip styles join as the first group, so they live where
+ * every other filter lives; "Kind of place" is renamed "Size of place" (it
+ * offered "City" beside the trip style "City") and starts closed. The
+ * month, "No car needed" and the budget ceiling left the Practical group for
+ * the input row above the grid (house rule "Settings line", explore N1), and
+ * the fixed "Under 70 a day" toggle is gone: the ceiling replaces it.
  *
  * State contract: `xf` is one flat object owned by ExploreTab (and mirrored
  * into the URL there); this component only renders it and calls `patch`.
@@ -59,13 +65,20 @@ export function ExploreFilterRail({
   unescoOnly, setUnescoOnly,
   countryFilter, setCountryFilter, availableCountries,
   reachHours, setReachHours, reachAvailable,
+  tripKinds, setTripKinds,
   onOpenCountry,
 }) {
-  const practicalN = [xf.nocar, xf.cheap, xf.quiet, xf.sea, unescoOnly, !!xf.month,
+  const practicalN = [xf.quiet, xf.sea, unescoOnly,
     reachAvailable && reachHours != null].filter(Boolean).length;
   return (
     <div className="xrail">
-      <Group label={t('filter.kind')} n={xf.kinds.length} open>
+      {setTripKinds && (
+        <Group label={t('filter.tripType')} n={tripKinds.length} open>
+          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
+        </Group>
+      )}
+
+      <Group label={t('filter.size')} n={xf.kinds.length}>
         <div className="xrail-toggles">
           {KINDS.map((k) => (
             <button
@@ -124,14 +137,6 @@ export function ExploreFilterRail({
 
       <Group label={t('filter.practical')} n={practicalN}>
         <div className="xrail-toggles">
-          <button type="button" className={`xrail-toggle ${xf.nocar ? 'on' : ''}`}
-            aria-pressed={xf.nocar} onClick={() => patch({ nocar: !xf.nocar })}>
-            {t('filter.noCar')}
-          </button>
-          <button type="button" className={`xrail-toggle ${xf.cheap ? 'on' : ''}`}
-            aria-pressed={xf.cheap} onClick={() => patch({ cheap: !xf.cheap })}>
-            {t('filter.underDay', { eur: 70 })}
-          </button>
           <button type="button" className={`xrail-toggle ${xf.quiet ? 'on' : ''}`}
             aria-pressed={xf.quiet} onClick={() => patch({ quiet: !xf.quiet })}>
             {t('filter.notCrowded')}
@@ -145,18 +150,6 @@ export function ExploreFilterRail({
             UNESCO
           </button>
         </div>
-        <label className="xrail-month">
-          <span>{t('filter.goodIn')}</span>
-          <select
-            value={xf.month || ''}
-            onChange={(e) => patch({ month: e.target.value ? Number(e.target.value) : null })}
-          >
-            <option value="">{t('filter.anyMonth')}</option>
-            {MONTHS_SHORT.map((m, i) => (
-              <option key={m} value={i + 1}>{m}</option>
-            ))}
-          </select>
-        </label>
         {reachAvailable && (
           <label className="xrail-month">
             <span>{t('filter.reach')}</span>
@@ -189,7 +182,9 @@ export function ExploreFilterRail({
               {onOpenCountry && (
                 <button className="xrail-country-page" onClick={() => onOpenCountry(iso2)}
                   aria-label={t('cpage.open', { country: name })}
-                  title={t('cpage.open', { country: name })}>{'→'}</button>
+                  title={t('cpage.open', { country: name })}>
+                  <ChevronRightIcon size={15} />
+                </button>
               )}
             </span>
           ))}

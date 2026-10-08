@@ -98,12 +98,14 @@
   .places-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .places-cat:hover { color: var(--ink); }
+/* The selected category is the house selected state (T384, rule N9 and
+   shell R8): ink fill, never the accent tint, which is spent on actions. */
 .places-cat.on {
-  background: var(--accent-bg);
-  border-color: var(--accent-soft);
-  color: var(--ink);
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
+  color: var(--on-fill);
 }
-.places-cat.on svg { color: var(--accent); }
+.places-cat.on svg { color: var(--on-fill); }
 
 /* Size rail: which places are on screen, by how big they are.
    The glyph sits in a real circle because the four sizes are a set you scan
@@ -154,14 +156,23 @@
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
-.places-class:hover:not(:disabled) { color: var(--ink); border-color: var(--rule); }
-.places-class:hover:not(:disabled) .places-class-dot { background: var(--rule-soft); }
-.places-class.on {
-  border-color: var(--accent-soft);
-  color: var(--ink);
+/* Hover only where there is a pointer that hovers, and never over a chip
+   that is on (T384): a tap on a phone left the hover's ink text on the ink
+   fill, which read as a blank chip. */
+@media (hover: hover) {
+  .places-class:hover:not(:disabled):not(.on) { color: var(--ink); border-color: var(--rule); }
+  .places-class:hover:not(:disabled):not(.on) .places-class-dot { background: var(--rule-soft); }
 }
-.places-class.on .places-class-dot { background: var(--accent-bg); color: var(--accent); }
-.places-class.on .places-class-n { color: var(--ink-soft); }
+/* A chip that is on wears the house selected state (T384, shell R8): ink
+   fill, on-fill text. It was an accent-soft ring with an accent-tinted dot,
+   which spent the action colour on a selection. */
+.places-class.on {
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
+  color: var(--on-fill);
+}
+.places-class.on .places-class-dot { background: transparent; color: var(--on-fill); }
+.places-class.on .places-class-n { color: var(--on-fill); }
 .places-class:disabled { opacity: .4; }
 .places-class:focus-visible {
   outline: 2px solid var(--accent);
@@ -257,7 +268,9 @@
 }
 /* Filters is the one primary door in the row, the way to everything else
    that can narrow the list, so it carries the accent fill. Everything beside
-   it stays a neutral pill. */
+   it stays a neutral pill. Destinations' own look is in 63-v6-destinations.css
+   (T384); this base rule also dresses Explore's phone Filters door, which
+   46-owner-calls.css recolours. */
 .places-filter-btn {
   display: inline-flex;
   align-items: center;
@@ -3700,7 +3713,9 @@
   100% { box-shadow: 0 0 0 15px rgba(143, 90, 12, 0); }
 }
 .fbadge-fresh .fbadge-medal {
-  animation: fbadge-pop .5s cubic-bezier(.2, 1.4, .4, 1), fbadge-halo .9s ease-out .15s;
+  /* T384: the elastic curve (impeccable detector, bounce-easing) is the
+     house arrival curve now; DIRECTION.md part 2.1 retires overshoot. */
+  animation: fbadge-pop .5s var(--ease-out), fbadge-halo .9s ease-out .15s;
 }
 
 .fbadge-about {

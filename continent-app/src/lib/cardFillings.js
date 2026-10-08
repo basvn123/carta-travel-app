@@ -140,7 +140,13 @@ export function trailFilling(card, { t, countryName = () => null }) {
       est: gradeIsDerived(tr),
     });
   }
-  for (const code of highlights.slice(0, 2)) {
+  // Waymarked or not, when the wire knows (f.way), right after the kind
+  // (T384, brief V3-11): a walker choosing a town to walk from asks whether
+  // the path is signed before what it passes. It takes one highlight's
+  // place, so the hook never grows past four words.
+  const waymarked = !isCityDay && tr.f?.way === true;
+  if (waymarked) hook.splice(1, 0, { text: t('trails.cardWaymarked'), cls: 'places-card-way' });
+  for (const code of highlights.slice(0, waymarked ? 1 : 2)) {
     hook.push({ text: t(HL_LABEL[code] || 'trails.hlSummit'), cls: 'places-card-hl' });
   }
   const climb = trailClimbUp(tr);

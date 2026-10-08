@@ -34,22 +34,47 @@ export function CostGauge({ band, size = 'sm' }) {
 }
 
 /**
+ * True when the day figure leans on a country-level stand-in: the bed or the
+ * food was not measured in the town (a national figure, or a country median
+ * repairing a broken harvest). The card then says so in one word (house rule
+ * "Pedigree word", DIRECTION.md part 9, explore N3), never only by colour.
+ */
+function isNational(cost) {
+  if (!cost || cost.dayEur == null) return false;
+  return cost.stayLevel !== 'city' || cost.foodLevel !== 'city';
+}
+
+/**
  * The card foot: what a day here costs one person, and the gauge that says
  * whether that is cheap. One line, one number, no decimals the data cannot
  * support.
+ *
+ * V3 (T383): the figure leads and the gauge follows it, and a figure that
+ * includes a national stand-in carries the word "national" after its unit.
+ * `gauge={false}` draws the figure alone (the card's first line), and
+ * `figure={false}` draws the gauge alone (the line under it). The word's
+ * InfoDot cannot sit here: the line is inside the card's open-the-place
+ * button, and a button cannot hold a button.
  */
-export function CostLine({ cost, t }) {
+export function CostLine({ cost, t, gauge = true, figure = true }) {
   if (!cost || cost.dayEur == null) return null;
+  if (!figure) {
+    return gauge
+      ? <span className="xcard-cost xcard-cost--gauge"><CostGauge band={cost.dayBand} /></span>
+      : null;
+  }
   const bandWord = t(BAND_KEY[cost.dayBand]);
+  const national = isNational(cost);
   return (
     <span
       className="xcard-cost"
       title={t('cost.dayTitle', { bed: eurDay(cost.stayEur), food: eurDay(cost.foodEur) })}
-      aria-label={t('cost.dayAria', { eur: eurDay(cost.dayEur), band: bandWord })}
+      aria-label={t(national ? 'cost.dayAriaNational' : 'cost.dayAria', { eur: eurDay(cost.dayEur), band: bandWord })}
     >
-      <CostGauge band={cost.dayBand} />
       <span className="xcard-cost-eur mono">{eurDay(cost.dayEur)}</span>
       <span className="xcard-cost-unit">{t('cost.perDay')}</span>
+      {national && <span className="xcard-cost-level">{t('cost.national')}</span>}
+      {gauge && <CostGauge band={cost.dayBand} />}
     </span>
   );
 }

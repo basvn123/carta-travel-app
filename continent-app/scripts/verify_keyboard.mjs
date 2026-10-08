@@ -65,7 +65,10 @@ const FOLDS = 'button.dsec-toggle[aria-expanded="false"], button.tday-more[aria-
 // Each surface opens itself and says where the walk starts: null starts at
 // the top of the document, a selector starts on that element.
 const SURFACES = {
-  destinations: async (p) => { await boot(p); await p.waitForSelector('.places-ccard'); return { start: null }; },
+  // T387: the Trips category (Destinations' default) draws its style cards as
+  // .jstyle-card caption-band cards now, no longer .places-ccard; either
+  // card means the tab has rendered.
+  destinations: async (p) => { await boot(p); await p.waitForSelector('.places-ccard, .jstyle-card'); return { start: null }; },
   'destinations-trails': async (p) => {
     await boot(p);
     await vis(p, '.side-cat:has-text("Trails"), .places-cat:has-text("Trails")').click();

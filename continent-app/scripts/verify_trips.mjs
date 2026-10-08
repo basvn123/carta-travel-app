@@ -246,19 +246,21 @@ try {
   check('the hero photograph actually loads', heroOk);
   check('the route is drawn on a map', await page.locator('.maplibregl-canvas').count() > 0);
   check('the page lists the route', await page.locator('.itin-route .itin-stop').count() >= 1);
-  check('the page lists the days', await page.locator('.itin-days .itin-day').count() >= 2);
+  // T387 (trips brief V3.11): the composed page's days run in the shared day
+  // track as .tday cards, the journey page's grammar; .itin-day is retired.
+  check('the page lists the days', await page.locator('#sec-days .tday').count() >= 2);
   check('the page shows what it costs', await page.locator('.itin-cost').isVisible());
   check('the page shows what was checked', await page.locator('.itin-checks').isVisible());
   check('the page offers the planner', await page.locator('.itin-use').isVisible());
 
   const factDays = await page.locator('.itin-facts .tpage-fact-val').first().innerText();
-  const dayRows = await page.locator('.itin-days .itin-day').count();
+  const dayRows = await page.locator('#sec-days .tday').count();   // T387: the day track
   check('every claimed day has a row', String(dayRows) === factDays.trim(),
     `claims ${factDays.trim()}, lists ${dayRows}`);
 
   // The named sights now sit behind each day's "more about the day" toggle
   // (the day leads with its photo strip), so open the first before looking.
-  const more = page.locator('.itin-day .tday-more').first();
+  const more = page.locator('#sec-days .tday .tday-more').first();   // T387: the day track
   if (await more.count()) { await more.click(); await page.waitForTimeout(600); }
   // The sight photographs are lazy, so one below the fold never starts until
   // it is scrolled to; bring the first into view, as a reader would.

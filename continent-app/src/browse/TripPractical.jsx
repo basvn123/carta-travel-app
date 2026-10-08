@@ -2,7 +2,7 @@ import React from 'react';
 import { loadDossier } from '../lib/dossier.js';
 import { eur } from '../lib/format.js';
 import {
-  ParkingIcon, CarIcon, BedIcon, ChevronRightIcon,
+  ParkingIcon, CarIcon, BedIcon, ChevronRightIcon, TrainIcon, BusIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
@@ -41,6 +41,10 @@ import { PlaneIcon } from '../components/TransportIcons.jsx';
  * researched parking advice takes that slot: pedestrian zones and summer road
  * closures, from the town's own transport page.
  */
+
+// The move between two stops carries its own mode's icon: a train leg drawn
+// with a car told a rail traveller the trip expects them to drive.
+const LEG_ICON = { car: CarIcon, train: TrainIcon, rail: TrainIcon, bus: BusIcon };
 
 const fmtDist = (m) => (m < 950 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(1)} km`);
 
@@ -186,11 +190,14 @@ export function TripPractical({ detail, t }) {
       if (!from || !to) return null;
       const h = Math.floor((leg.minutes || 0) / 60);
       const m = (leg.minutes || 0) % 60;
-      const time = leg.minutes ? (h ? t('trip.legHm', { h, m }) : t('trip.legM', { m })) : null;
+      // Minutes padded as the day chips pad them ("3 h 05", not "3 h 5").
+      const time = leg.minutes
+        ? (h ? t('trip.legHm', { h, m: String(m).padStart(2, '0') }) : t('trip.legM', { m }))
+        : null;
       return (
         <Row
           key={`leg-${i}`}
-          icon={CarIcon}
+          icon={LEG_ICON[leg.mode] || CarIcon}
           label={t('trip.practicalDriveLeg', { from: from.city, to: to.city })}
           note={time}
           value={`${Math.round(leg.km)} km`}

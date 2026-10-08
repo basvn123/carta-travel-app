@@ -14,3 +14,384 @@
    animation with a prefers-reduced-motion branch; carta-design and
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
+
+/* ==========================================================================
+   T384 (V3): structure, information and flow. Part 1, the rules this
+   surface owned inside 24-destination-workspace.css, moved here and deleted
+   there in the same commit (OWNERSHIP.md rule 5, row T373-j). Moved as they
+   were except where a comment says what changed and why. The rules that
+   share a selector with Explore (.places-shell, .explore-shell) and the
+   composed-trips block (TRIPS-LAYER) stay in 24 for now.
+   ========================================================================== */
+
+@media (min-width: 769px) {
+  /* The toolbar card folds away: its controls stand in the side panel and
+     the search field heads the column it searches. */
+  .places-toolbar { display: none; }
+
+  /* Destinations asks its question in its own column: one field, first
+     thing under the top bar, directly over the results it filters, at the
+     width of a place name rather than the width of the page. */
+  .places-searchrow {
+    display: flex;
+    margin: 0 0 16px;
+  }
+  .places-searchrow .places-search {
+    flex: 1 1 auto;
+    max-width: 520px;
+    min-width: 0;
+  }
+  .places-searchrow .places-search input {
+    height: 42px;
+    border-radius: 999px;
+    border-color: var(--rule);
+  }
+  /* T384: the focus ring was an --accent-bg box-shadow (a shadow literal,
+     and a tint that carta-design keeps off selection); an input swaps its
+     outline for an --accent border instead (carta-design, Interaction). */
+  .places-searchrow .places-search input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--paper);
+  }
+
+  /* Sorts as a stack of rows; the active one is the house selected state
+     (T384: it was --accent, which DIRECTION.md part 9 keeps for actions),
+     and its direction arrow rides the right edge. */
+  .side-sorts { display: flex; flex-direction: column; gap: 6px; }
+  .side-sort {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-align: left;
+    transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out),
+      border-color var(--dur-1) var(--ease-out);
+  }
+  .side-sort:hover { color: var(--ink); border-color: var(--rule); }
+  .side-sort.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+  .side-sort.on .places-sort-dir { color: var(--on-fill); }
+  .side-sort:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* The country, full width of the panel. The picker's wrapper (.country-
+     picker) is what the flex/box layout actually sees, not the button
+     .side-country still classes, so it has to carry the same width too. */
+  .side-country { width: 100%; max-width: none; border-radius: 10px; }
+  .side-group .country-picker { display: flex; width: 100%; }
+  .side-group .country-picker-pop { left: 0; right: 0; width: auto; }
+
+  /* Facet chips: the toolbar's own chips, stacked, never on white. A chip
+     that is on is the selected state (T384: it was --accent with rgba
+     whites over it). */
+  .side-facets { gap: 10px; }
+  .side-facets .places-classes { margin-top: 0; gap: 6px; }
+  .side-panel .places-class { background: var(--paper-dim); }
+  .side-panel .places-class.on {
+    background: var(--ink-fill);
+    border-color: var(--ink-fill);
+    color: var(--on-fill);
+  }
+  .side-panel .places-class.on .places-class-dot { background: transparent; color: var(--on-fill); }
+  .side-panel .places-class.on .places-class-n { color: var(--on-fill); }
+  .side-facets .trip-slider { flex: 1 1 100%; max-width: none; }
+
+  /* No pure white on these pages. */
+  .places-tab .places-search input,
+  .places-tab .places-country,
+  .side-panel .places-country { background: var(--paper-dim); }
+  .places-tab .places-sugg, .header-search-slot .places-sugg { background: var(--paper); }
+}
+
+@media (min-width: 769px) and (prefers-reduced-motion: reduce) {
+  .side-sort { transition: none; }
+}
+
+@media (max-width: 768px) {
+  /* The toolbar card becomes bands on the ground. */
+  .places-wrap { padding-top: 8px; }
+  .places-toolbar {
+    padding: 0 0 12px;
+    border: none;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    gap: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  /* Six categories as a 2 x 3 grid of equal buttons (T384, rule N9). It was
+     one sideways strip of 78 px tiles with an accent tick over each: at
+     380 px only four of six showed, nothing said the row scrolled, and the
+     tick carried nothing (shell R11). Every category is on screen at 360 px
+     now, at --tap or taller, and the selected one is ink. */
+  .places-cats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+    overflow: visible;
+    padding: 2px 0 var(--space-3);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .places-cat {
+    min-width: 0;
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-1);
+    gap: var(--space-1);
+    border: 1px solid var(--rule-soft);
+    border-radius: 6px;
+    background: var(--paper-dim);
+    font-size: 12px;
+    transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out),
+      border-color var(--dur-1) var(--ease-out);
+  }
+  .places-cat.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+  .places-cat.on svg { color: var(--on-fill); }
+
+  .places-controls { padding-top: 12px; gap: 10px; }
+  .places-search input {
+    height: 42px;
+    border-radius: 999px;
+    border-color: var(--rule);
+    background: var(--paper-dim);
+    /* The locate button is --tap wide on a phone (26-shortlist-extras.css),
+       so the text stops before it rather than 2 px under it (T384, found by
+       verify_places_search once it ran past its old General step). */
+    padding-right: calc(var(--tap) + var(--space-1));
+  }
+  /* Filters and the country as one compact row, the lifestyle door under
+     them; the sorts, when a list is open, as a full-width segmented band
+     whose active segment is the base rule's ink fill (T384: the accent
+     override that sat here is gone). */
+  .places-toolbar-right { gap: 8px; }
+  .places-sorts { display: flex; width: 100%; }
+  .places-sort { flex: 1 1 0; justify-content: center; min-height: var(--tap); }
+  .places-chips { width: 100%; gap: 8px; }
+  .places-chips .places-filter-btn { flex: 1 1 0; min-width: 0; justify-content: center; }
+  .places-chips .country-picker { flex: 1 1 0; min-width: 0; }
+  .places-chips .places-country {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    height: 42px;
+    background: var(--paper-dim);
+  }
+  .places-chips .lifestyle-btn { flex: 1 1 100%; justify-content: center; }
+
+  /* Cards, two abreast. */
+  .places-list { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .places-dcard, .places-ccard, .places-tcard, .places-bcard {
+    aspect-ratio: 16 / 11;
+    border-radius: 12px;
+  }
+  /* A composed itinerary carries a route, chips and a cost line: half a
+     column cannot hold that, so it keeps the full row. */
+  .places-icard { grid-column: 1 / -1; }
+  .places-card-overlay {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 8px 10px;
+  }
+  .places-card-name { font-size: 14.5px; }
+  .places-card-sub { font-size: 10.5px; margin-top: 1px; }
+  .places-card-right { flex-direction: row; align-items: center; gap: 6px; }
+  .places-card-chev { display: none; }
+  .places-card-price { font-size: 12.5px; }
+  /* Reason chips need more width than half a column gives; the layer pages
+     still carry them in full. */
+  .places-bcard-tags { display: none; }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .places-cat { transition: none; }
+}
+
+/* ==========================================================================
+   T384 (V3). Part 2, new rules.
+   ========================================================================== */
+
+/* Filters on this tab is a secondary (T384, the brief's target table and
+   shell R11): a door to more chips is not the view's one action, and the
+   accent pill's hover put white on --accent-soft at about 2.6:1.
+   Transparent, a --rule border, 6 px, --tap high, the count in the house
+   count chip. Scoped to the toolbar so Explore's copy of the class keeps the
+   look 46-owner-calls.css gives it. */
+.places-toolbar .places-filter-btn {
+  min-height: var(--tap);
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-size: 13px;
+  color: var(--ink);
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .places-toolbar .places-filter-btn:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+}
+.places-toolbar .places-filter-btn.has-active { border-color: var(--ink); }
+.places-toolbar .places-filter-btn .filter-tray-badge,
+.places-count-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The desktop panel's door to every facet group (T384, brief V3-1): one
+   secondary row under the short set, opening the same sheet the phone
+   opens. Desktop-only by construction: it renders inside .side-panel. */
+.side-allfilters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.side-allfilters span:first-of-type { flex: 1; }
+.side-allfilters svg { color: var(--ink-soft); }
+@media (hover: hover) {
+  .side-allfilters:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+}
+.side-allfilters:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The active filter chips above the list (T384, rule N6): shell's
+   FilterChips draws them. Their shared look in 25-feature-pages.css is an
+   ochre ground, which carta-design keeps for ratings, so on this tab they
+   take the rule's own form until shell restyles the component (register
+   row): --paper-dim, --ink text, a --rule border, --tap high on touch. */
+.places-wrap > .xchips { margin: var(--space-3) 0; gap: var(--space-2); }
+.places-wrap > .xchips .xchip {
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 13px;
+}
+.places-wrap > .xchips .xchip-clear { background: transparent; color: var(--ink-soft); }
+@media (hover: hover) {
+  .places-wrap > .xchips .xchip:hover { border-color: var(--ink-soft); }
+}
+@media (pointer: coarse) {
+  .places-wrap > .xchips .xchip { min-height: var(--tap); }
+}
+
+/* Band 2's further cuts on a phone (T384, rule N4): after two rails, one
+   row of secondary chips that apply the same saved filter as "See all".
+   The label is a group label, the count a count chip. */
+.open-cuts { margin: var(--space-4) 0 var(--space-6); }
+.open-cuts-label {
+  margin: 0 0 var(--space-2);
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.open-cuts-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.open-cut {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  max-width: 100%;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .open-cut:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+}
+.open-cut:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.open-cut-n {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* The Trails country index (T384, brief V3-10). The published count beside
+   the name in mono as a count chip (rule N7), solid so it reads on any
+   photograph until V4 moves the caption under it; a country with no cover
+   shows its flag on --paper-dim, never two letters of its name. */
+.places-card-count {
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.places-ccard-noimg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dim);
+}
+.places-nearme { grid-column: 1 / -1; margin: 0 0 var(--space-2); }
+.places-nearme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.places-nearme-btn svg { color: var(--ink-soft); }
+@media (hover: hover) {
+  .places-nearme-btn:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+}
+.places-nearme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .places-toolbar .places-filter-btn,
+  .side-allfilters,
+  .open-cut,
+  .places-nearme-btn { transition: none; }
+}

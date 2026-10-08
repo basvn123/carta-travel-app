@@ -1,6 +1,7 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { SheetShell } from './SheetShell.jsx';
+import { CloseIcon } from '../components/Icons.jsx';
 
 /**
  * The system, explained on the page itself (PLAN.md C8).
@@ -21,11 +22,17 @@ import { SheetShell } from './SheetShell.jsx';
  * "?" affordance that brings it back. "How the score works" expands the
  * one-paragraph method inline - the same claim RatingBreakdown makes on
  * every destination page, so the two can be read against each other.
+ *
+ * V3 (T383): the counts come from `rows`, the same deduplicated list the
+ * grid and the rails count, so the key's "Worth the journey" figure is the
+ * top rail's N (it counted the raw catalogue, 48 against the rail's 41). The
+ * folded state is the words "Score key", not a bare "?", and the dismiss is
+ * the house close control (CloseIcon), not a typed "x".
  */
 
 const SEEN_KEY = 'carta.tierLegendDismissed.v1';
 
-export function TierLegend({ data }) {
+export function TierLegend({ data, rows }) {
   const { t } = useI18n();
   const [dismissed, setDismissed] = React.useState(() => {
     try { return localStorage.getItem(SEEN_KEY) === '1'; } catch { return false; }
@@ -37,12 +44,12 @@ export function TierLegend({ data }) {
   const cuts = model.tier_cutoffs || {};
   const counts = React.useMemo(() => {
     const c = { 3: 0, 2: 0, 1: 0, 0: 0, gem: 0 };
-    for (const d of Object.values(data?.destinations || {})) {
+    for (const d of rows || Object.values(data?.destinations || {})) {
       c[d.rating?.tier ?? 0] += 1;
       if (d.rating?.hidden_gem) c.gem += 1;
     }
     return c;
-  }, [data]);
+  }, [data, rows]);
 
   const set = (v) => {
     setDismissed(v);
@@ -51,8 +58,8 @@ export function TierLegend({ data }) {
 
   if (dismissed) {
     return (
-      <button className="tierlegend-pip" onClick={() => set(false)}
-        aria-label={t('legend.show')} title={t('legend.show')}>?</button>
+      <button type="button" className="tierlegend-pip tierlegend-pip--word" onClick={() => set(false)}
+        aria-label={t('legend.show')}>{t('explore.scoreKey')}</button>
     );
   }
 
@@ -86,7 +93,9 @@ export function TierLegend({ data }) {
             {t('legend.how')}
           </button>
           <button className="tierlegend-x" onClick={() => set(true)}
-            aria-label={t('legend.dismiss')} title={t('legend.dismiss')}>×</button>
+            aria-label={t('legend.dismiss')} title={t('legend.dismiss')}>
+            <CloseIcon size={16} />
+          </button>
         </span>
       </div>
       {why && (

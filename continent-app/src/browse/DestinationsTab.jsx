@@ -9,6 +9,7 @@ import { needsCountry } from '../lib/favorites.js';
 import { railOrigin } from '../lib/railAlternative.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
+import { FilterChips } from './FilterChips.jsx';
 import { trailPath } from '../lib/trailShape.js';
 import { srcSetFor } from '../lib/heroImage.js';
 import { HeroPreload } from '../components/LayerPhoto.jsx';
@@ -57,6 +58,7 @@ import {
 } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode, geoLines } from '../lib/geocode.js';
+import { rankPlaces } from '../lib/placeSearch.js';
 import { bandChip, bandBreak, scopeForRows } from '../lib/regions.js';
 import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
@@ -131,6 +133,46 @@ import { offeredStayTiers } from '../lib/runtime_pricing.js';
 
 const PAGE = 36;
 const NEAR_MAX_ROWS = 80;
+
+/**
+ * Remembered browse state (T384, brief V3-8, rule N10): the category, the
+ * country and the near place of the last visit, per viewer, in this
+ * browser. A convenience and nothing more: every read and write is in a
+ * try/catch (a private window, blocked storage or a thumbnail capture can
+ * all throw or come back empty), anything malformed is ignored, and the tab
+ * is correct without it. A link that names a category, a country or a place
+ * still wins, because those arrive through their own effects after this.
+ */
+const MEMORY_KEY = 'carta.places.v1';
+function readMemory() {
+  try {
+    const raw = window.localStorage.getItem(MEMORY_KEY);
+    const m = raw ? JSON.parse(raw) : null;
+    if (!m || typeof m !== 'object') return null;
+    const near = m.near && typeof m.near === 'object'
+      && typeof m.near.name === 'string'
+      && Number.isFinite(m.near.lat) && Number.isFinite(m.near.lon)
+      ? {
+        id: typeof m.near.id === 'string' ? m.near.id : null,
+        name: m.near.name,
+        sub: typeof m.near.sub === 'string' ? m.near.sub : '',
+        iso2: typeof m.near.iso2 === 'string' && /^[A-Z]{2}$/.test(m.near.iso2) ? m.near.iso2 : null,
+        lat: m.near.lat,
+        lon: m.near.lon,
+      }
+      : null;
+    return {
+      cat: typeof m.cat === 'string' ? m.cat : null,
+      country: typeof m.country === 'string' && /^[A-Z]{2}$/.test(m.country) ? m.country : '',
+      near,
+    };
+  } catch {
+    return null;
+  }
+}
+function writeMemory(m) {
+  try { window.localStorage.setItem(MEMORY_KEY, JSON.stringify(m)); } catch { /* storage refused: nothing to keep */ }
+}
 
 // Lazy: the page imports maplibre-gl, which stays out of the main bundle.
 const StubPage = lazy(() => import('./StubPage.jsx').then((m) => ({ default: m.StubPage })));
@@ -571,23 +613,32 @@ const MountainCard = React.memo(function MountainCard({ mountain, km, countryNam
 
 /** One country as a photo card: its best-rated place as the cover, the flag
  *  small beside the name. Real photography, never a stretched flag. */
-const CountryCard = React.memo(function CountryCard({ cc, name, sub = null, img, onPick, onAskCover = null }) {
+const CountryCard = React.memo(function CountryCard({ cc, name, sub = null, n = null, img, onPick, onAskCover = null }) {
   useEffect(() => {
     if (!img && onAskCover) onAskCover(cc);
   }, [img, onAskCover, cc]);
   return (
     <button className="places-ccard" onClick={() => onPick(cc)}>
       {/* A 2.6:1 strip. CARD_SIZES carries the widths it is really drawn at;
-          the ladder runs to 960 so a retina screen can still climb. */}
-      <HeroImage
-        url={img}
-        city={name}
-        iso2={cc}
-        className="places-card-img"
-        maxWidth={960}
-        sizes={CARD_SIZES}
-        ratio={[26, 10]}
-      />
+          the ladder runs to 960 so a retina screen can still climb. Without a
+          cover the card shows its flag on paper-dim (T384, brief V3-10):
+          HeroImage's fallback is two letters of the name, which put "AU"
+          beside Austria and "BU" beside Bulgaria and read as wrong codes. */}
+      {img ? (
+        <HeroImage
+          url={img}
+          city={name}
+          iso2={cc}
+          className="places-card-img"
+          maxWidth={960}
+          sizes={CARD_SIZES}
+          ratio={[26, 10]}
+        />
+      ) : (
+        <span className="places-card-img places-ccard-noimg" aria-hidden="true">
+          <CountryFlag country={cc} size={28} />
+        </span>
+      )}
       <span className="places-card-scrim" aria-hidden="true" />
       <span className="places-card-overlay">
         <span className="places-card-main">
@@ -595,9 +646,10 @@ const CountryCard = React.memo(function CountryCard({ cc, name, sub = null, img,
             <CountryFlag country={cc} size={13} className="places-card-flag" />
             {name}
           </span>
-          {/* No count line: "21 places" answered a question nobody browsing
-              a wall of countries was asking, and the cleaner card reads
-              better. The name and the photograph are the whole message. */}
+          {/* The published count beside the name, in mono (T384, rule N7):
+              on an index of countries it answers "where will I find the
+              most", which the name and the photograph cannot. */}
+          {n != null && <span className="places-card-count">{n}</span>}
           {sub && <span className="places-card-sub"><span>{sub}</span></span>}
         </span>
         <span className="places-card-right">
@@ -766,14 +818,21 @@ export function DestinationsTab({
   const sentinelRef = useRef(null);
   const stayTiers = useMemo(() => offeredStayTiers(data?.meta), [data?.meta]);
 
-  const [cat, setCat] = useState('trips');           // CATS key
+  // Read once per mount, before the first state is set (see readMemory).
+  const memory = useRef(undefined);
+  if (memory.current === undefined) memory.current = readMemory();
+  const [cat, setCat] = useState(() => (
+    CATS.some((c) => c.key === memory.current?.cat) ? memory.current.cat : 'trips'));  // CATS key
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [country, setCountry] = useState('');        // ISO2 or '' for all
+  const [country, setCountry] = useState(() => memory.current?.country || '');   // ISO2 or '' for all
   // The point everything is measured from in near-mode. A catalogue city or
   // any geocoded location, so it carries a name and coordinates rather than a
   // destination id: { id|null, name, sub, iso2|null, lat, lon }.
-  const [nearPlace, setNearPlace] = useState(null);
+  const [nearPlace, setNearPlace] = useState(() => memory.current?.near || null);
+  useEffect(() => {
+    writeMemory({ cat, country, near: nearPlace });
+  }, [cat, country, nearPlace]);
   const [sort, setSort] = useState({ key: 'rating', dir: -1 });
   // Trails filter their own way: by how long the walk is, and by whether it
   // ends where it started. Kept out of `classes` because they filter a
@@ -925,6 +984,11 @@ export function DestinationsTab({
   const [sheetOpen, setSheetOpen] = useState(false);
   // The Filters sheet hangs off this button on a pointer screen.
   const filterBtnRef = useRef(null);
+  // Which door opened the sheet (T384): the toolbar's Filters hangs it off
+  // the button; the desktop panel's "All filters" sits low in a tall column,
+  // where a hanging panel would run off the screen, so it opens the sheet
+  // centred, the way the shared filter sheet stands on a wide screen.
+  const [sheetFrom, setSheetFrom] = useState('toolbar');
 
   useEffect(() => {
     if (layerError.trails) return undefined;
@@ -1031,7 +1095,17 @@ export function DestinationsTab({
     const map = new Map(availableCountries);
     let dn = null;
     try { dn = new Intl.DisplayNames([lang], { type: 'region' }); } catch { /* older engines */ }
-    return (cc) => map.get(cc) || (dn ? dn.of(cc) : cc) || cc;
+    // A shared #tour= link carries no country, and Intl.DisplayNames.of
+    // throws a RangeError on an empty or malformed code, which took the
+    // whole app down (row T375-a). No code names no country; a code the
+    // engine refuses is shown as itself.
+    return (cc) => {
+      if (!cc) return '';
+      const hit = map.get(cc);
+      if (hit) return hit;
+      if (!dn) return cc;
+      try { return dn.of(cc) || cc; } catch { return cc; }
+    };
   }, [availableCountries, lang]);
 
   // City suggestions for the near-search, deduped so London's four gateway
@@ -1106,17 +1180,9 @@ export function DestinationsTab({
 
   const q = useMemo(() => norm(debouncedQuery), [debouncedQuery]);
 
-  const suggestions = useMemo(() => {
-    if (!q) return [];
-    const starts = [], includes = [];
-    for (const d of destIndex) {
-      const c = norm(d.city);
-      if (c.startsWith(q)) starts.push(d);
-      else if (c.includes(q)) includes.push(d);
-      if (starts.length >= 6) break;
-    }
-    return [...starts, ...includes].slice(0, 6);
-  }, [q, destIndex]);
+  // Exact name, then prefix, then word start, then inside a word (T384,
+  // brief V3-7; lib/placeSearch.js says why and what it cannot find).
+  const suggestions = useMemo(() => rankPlaces(destIndex, q, 6), [q, destIndex]);
 
   const term = query.trim();
   // Nominatim's own floor is 3 characters; below it the row would promise a
@@ -2239,6 +2305,7 @@ export function DestinationsTab({
       out.push({
         key: 'pace',
         label: t('trip.askPace'),
+        toolbar: true,
         onToggle: (k) => setItinPace((cur) => (cur === k ? null : k)),
         options: TRIP_PACES.map(({ key, labelKey }) => {
           const n = itinFacets.pace.get(key) || 0;
@@ -2249,6 +2316,7 @@ export function DestinationsTab({
       out.push({
         key: 'scale',
         label: t('trip.askScale'),
+        toolbar: true,
         onToggle: (k) => setItinScale((cur) => (cur === k ? null : k)),
         options: TRIP_SCALES.map(({ key, labelKey }) => {
           const n = itinFacets.scale.get(key) || 0;
@@ -2295,6 +2363,9 @@ export function DestinationsTab({
       out.push({
         key: 'length',
         label: t('trails.lengthLabel'),
+        // The one walk group inline: how long have I got is the first
+        // question (T384, brief V3-1); the other five live in the sheet.
+        toolbar: true,
         onToggle: (k) => (k === 'loop' ? setLoopsOnly((v) => !v) : toggleBand(k)),
         options: lengthOpts,
       });
@@ -2465,6 +2536,23 @@ export function DestinationsTab({
     setItinScale(null);
   };
 
+  // Every filter that is on, as one removable chip (T384, brief V3-2, rule
+  // N6), drawn by shell's FilterChips, the component Explore uses. The
+  // country is a chip because it narrows the list like any other; the near
+  // place is not, because its own heading already carries its Clear, and two
+  // buttons that undo one thing are one too many.
+  const activeChips = [];
+  if (country) {
+    activeChips.push({ key: `cc-${country}`, label: countryName(country), remove: () => setCountry('') });
+  }
+  for (const g of facetGroups) {
+    for (const o of g.options) {
+      if (o.on) activeChips.push({ key: `${g.key}-${o.key}`, label: o.label, remove: () => g.onToggle(o.key) });
+    }
+  }
+  // Clear all puts the section back at rest, which is where its opening is.
+  const clearAllChips = () => { resetAll(); setQuery(''); setNearPlace(null); };
+
   // Which sorts this tab has, and whether there is a list for them to order.
   const sortDefs = cat === 'trails' ? TRAIL_SORTS
     : isCycleCat ? CYCLE_SORTS
@@ -2595,11 +2683,14 @@ export function DestinationsTab({
 
   // The same controls drawn twice, phone toolbar and desktop side panel:
   // one renderer each, so the two can never drift apart.
+  // Toggle buttons in a labelled group, one keyboard model on both widths
+  // (T384, brief V3-3): they carried role="tab" with no arrow keys and no
+  // tabpanel, which promised a screen reader a widget that was not there.
   const renderCats = (cls) => CATS.map(({ key, Icon, labelKey }) => (
     <button
       key={key}
-      role="tab"
-      aria-selected={cat === key}
+      type="button"
+      aria-pressed={cat === key}
       className={`${cls} ${cat === key ? 'on' : ''}`}
       onClick={() => switchCat(key)}
     >
@@ -2655,8 +2746,14 @@ export function DestinationsTab({
     // chips is on (T183): an opening rail's "See all" can switch on a chip
     // from any group, and a desktop panel that hid it would filter the grid
     // with nothing on screen saying by what.
+    // The short set (T384, brief V3-1): only a group flagged `toolbar` shows
+    // inline, on the phone toolbar and the desktop panel alike; every other
+    // group lives in the Filters sheet. It used to be `toolbar !== false`
+    // on the panel and every group on the phone, so a phone listed thirty
+    // chips above the first lake and a desktop could not reach eight of the
+    // nine beach groups at all.
     .filter((g) => (only === 'toolbar'
-      ? g.toolbar !== false || g.options.some((o) => o.on)
+      ? g.toolbar === true || g.options.some((o) => o.on)
       : true))
     .map((g) => (
     <div key={g.key} className="places-facet-group">
@@ -2801,7 +2898,7 @@ export function DestinationsTab({
           type="button"
           ref={filterBtnRef}
           className={`places-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
-          onClick={() => setSheetOpen(true)}
+          onClick={() => { setSheetFrom('toolbar'); setSheetOpen(true); }}
           aria-haspopup="dialog"
           aria-expanded={sheetOpen}
         >
@@ -2830,7 +2927,8 @@ export function DestinationsTab({
       because a chip that changes WHICH rows are listed is the same kind
       of control as the search field above it. The model is built once
       (facetGroups) and rendered here and in the sheet. */
-  const facetsRow = (facetGroups.length > 0 || isComposedTrips) ? (
+  const hasInlineGroups = facetGroups.some((g) => g.toolbar === true || g.options.some((o) => o.on));
+  const facetsRow = (hasInlineGroups || isComposedTrips) ? (
     <div className="places-facets">
       {isComposedTrips && (
         <TripLengthSlider
@@ -2840,7 +2938,7 @@ export function DestinationsTab({
           t={t}
         />
       )}
-      {renderFacetGroups()}
+      {renderFacetGroups('toolbar')}
     </div>
   ) : null;
 
@@ -2854,14 +2952,18 @@ export function DestinationsTab({
           as a card grid under the brand, then everything that narrows or
           orders the list, standing on the page ground with one hairline to
           its right. The phone keeps the toolbar card below instead. */}
-      <aside className="side-panel places-side" aria-label={t('filter.filters')}>
+      <aside className="side-panel places-side" aria-label={t('places.sideAria')}>
         <div className="side-block">
-          <p className="side-label">{t('side.categories')}</p>
-          <div className="side-cats" role="tablist">{renderCats('side-cat')}</div>
+          {/* "Browse", not "Filter categories" (T384, brief V3-4): picking
+              beaches over lakes is choosing what to look at, not narrowing
+              a list. The words are this tab's own keys; the shared side.*
+              keys stay as they are for Explore and My trips. */}
+          <p className="side-label" id="places-side-cats">{t('places.sideBrowse')}</p>
+          <div className="side-cats" role="group" aria-labelledby="places-side-cats">{renderCats('side-cat')}</div>
         </div>
         <div className="side-block">
           <p className="side-label">
-            {t('side.refine')}
+            {t('places.sideRefine')}
             {activeFilters > 0 && (
               <button type="button" className="side-clear" onClick={resetAll}>
                 {t('filter.reset')}
@@ -2893,6 +2995,25 @@ export function DestinationsTab({
               {renderFacetGroups('toolbar')}
             </div>
           )}
+          {/* The door to the long set (T384, brief V3-1): the panel shows the
+              one short group inline and every other group behind this one
+              secondary button, the same sheet the phone opens. Before it,
+              eight of the nine beach groups had no door on a desktop. */}
+          {facetGroups.length > 0 && (
+            <div className="side-group">
+              <button
+                type="button"
+                className="side-allfilters"
+                onClick={() => { setSheetFrom('side'); setSheetOpen(true); }}
+                aria-haspopup="dialog"
+                aria-expanded={sheetOpen}
+              >
+                <FilterIcon size={14} />
+                <span>{t('places.allFilters')}</span>
+                {activeFilters > 0 && <span className="places-count-chip">{fmt(activeFilters)}</span>}
+              </button>
+            </div>
+          )}
           {/* No "Lifestyle" caption above it: the button says the word
               itself, and a heading that repeats its own button is text the
               reader has to skip. */}
@@ -2917,7 +3038,7 @@ export function DestinationsTab({
             Filters door, then whatever chips this tab narrows by. Read apart
             they looked like five unrelated widgets sharing a background. */}
         <div className="places-toolbar">
-        <div className="places-cats" role="tablist">
+        <div className="places-cats" role="group" aria-label={t('places.sideBrowse')}>
           {renderCats('places-cat')}
         </div>
 
@@ -2999,6 +3120,8 @@ export function DestinationsTab({
               photo={(row) => photoOf(opening.layer, row)}
               onOpen={openFromBand}
               t={t}
+              maxRails={isDesktop ? null : 2}
+              count={fmt}
             />
             <h2 className="open-gridhead">{t('open.gridHead')}</h2>
             {(toolbarRight || facetsRow) && (
@@ -3008,6 +3131,10 @@ export function DestinationsTab({
               </div>
             )}
           </>
+        )}
+
+        {!opening && activeChips.length > 0 && (
+          <FilterChips t={t} chips={activeChips} onClearAll={clearAllChips} />
         )}
 
         {/* Beaches. No country index in front of the list: the tab opens on
@@ -3588,11 +3715,24 @@ export function DestinationsTab({
                 {cat === 'trails' && tripCountries.length > 0 && (
                   <p className="places-beachhead open-bycountry">{t('open.trail.byCountry')}</p>
                 )}
+                {/* A way in without a country (T384, brief V3-10): the
+                    locate the search field already has, said in words where
+                    the walker is choosing. */}
+                {cat === 'trails' && tripCountries.length > 0 && canLocate && (
+                  <div className="places-nearme">
+                    <button type="button" className="places-nearme-btn" onClick={useMyLocation}
+                      disabled={locBusy} aria-busy={locBusy || undefined}>
+                      <CrosshairIcon size={16} />
+                      <span>{t('places.walksNearMe')}</span>
+                    </button>
+                  </div>
+                )}
                 {tripCountries.map((c) => (
                   <CountryCard
                     key={c.cc}
                     cc={c.cc}
                     name={c.name}
+                    n={cat === 'trails' ? fmt(c.n) : null}
                     img={wireCovers[c.cc] || null}
                     onAskCover={askCover}
                     onPick={setCountry}
@@ -3829,7 +3969,7 @@ export function DestinationsTab({
       {sheetOpen && (
         <PlacesFilterSheet
           onClose={() => setSheetOpen(false)}
-          anchorRef={filterBtnRef}
+          anchorRef={sheetFrom === 'side' ? null : filterBtnRef}
           groups={facetGroups}
           country={country}
           setCountry={(cc) => { setCountry(cc); setNearPlace(null); }}

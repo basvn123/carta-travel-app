@@ -20,60 +20,39 @@ const KIND_ICONS = {
 };
 
 /**
- * The trip-kind categories as a horizontally scrollable chip rail directly
- * under the header, on the Map tab only. The same multi-select state the
- * filter tray/sheet edits (tripKinds), surfaced where a first-time visitor
- * can see it: wanting "a beach" or "mountains" is the most common way into
- * the catalogue, and it used to take two taps into a closed tray to say so.
+ * The trip styles (city, beach, nature and six more), multi-select, writing
+ * the same `tripKinds` state the catalogue hook filters on.
+ *
+ * V3 (T383): they used to be a strip of tiles of their own, above the filter
+ * rail on desktop and at the top of the phone toolbar, outside the filter
+ * state: no chip, no count on the Filters button, and "Clear all" left them
+ * set. They are now the first group of the filter rail, drawn as the rail's
+ * own toggles, so they reach the phone through the Filters sheet, make chips
+ * like every other filter and reset with the rest. The selected state is the
+ * rail toggle's (--ink-fill), never an accent.
  */
 export function CategoryRail({ tripKinds, setTripKinds }) {
   const { t } = useI18n();
-  const scrollRef = React.useRef(null);
-
   const toggle = (key) => setTripKinds(
     tripKinds.includes(key) ? tripKinds.filter((k) => k !== key) : [...tripKinds, key]);
-
-  // Keep an active chip visible: if a restored URL pre-selects a kind that
-  // sits off the right edge on a phone, scroll it into view once on mount.
-  React.useEffect(() => {
-    const el = scrollRef.current?.querySelector('.kind-rail-chip.on');
-    if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, []);
-
   return (
-    <div className="kind-rail">
-      <div
-        className="kind-rail-scroll"
-        ref={scrollRef}
-        role="group"
-        aria-label={t('filter.tripType')}
-      >
-        {TRIP_KINDS.map((k) => {
-          const Icon = KIND_ICONS[k.key];
-          const on = tripKinds.includes(k.key);
-          return (
-            <button
-              key={k.key}
-              type="button"
-              className={`kind-rail-chip ${on ? 'on' : ''}`}
-              onClick={() => toggle(k.key)}
-              aria-pressed={on}
-            >
-              {Icon && <Icon size={18} className="kind-rail-icon" />}
-              <span>{t(`kind.${k.key}`)}</span>
-            </button>
-          );
-        })}
-        {tripKinds.length > 0 && (
+    <div className="xrail-toggles xrail-styles" role="group" aria-label={t('filter.tripType')}>
+      {TRIP_KINDS.map((k) => {
+        const Icon = KIND_ICONS[k.key];
+        const on = tripKinds.includes(k.key);
+        return (
           <button
+            key={k.key}
             type="button"
-            className="kind-rail-chip kind-rail-clear"
-            onClick={() => setTripKinds([])}
+            className={`xrail-toggle ${on ? 'on' : ''}`}
+            onClick={() => toggle(k.key)}
+            aria-pressed={on}
           >
-            {t('filter.reset')}
+            {Icon && <Icon size={14} className="xrail-style-icon" />}
+            <span>{t(`kind.${k.key}`)}</span>
           </button>
-        )}
-      </div>
+        );
+      })}
     </div>
   );
 }

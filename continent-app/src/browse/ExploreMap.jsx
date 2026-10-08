@@ -4,7 +4,8 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { kindOf } from '../lib/taxonomy.js';
 import { thumbAt } from '../lib/heroImage.js';
 import { knownFor } from '../lib/knownFor.js';
-import { TOKEN_COLOURS as TC, MAP_ONLY_COLOURS as MC } from '../map/tokenColors.js';
+import { TOKEN_COLOURS as TC, MAP_ONLY_COLOURS as MC, tokenColour } from '../map/tokenColors.js';
+import { eurDay } from '../lib/costIndex.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -55,6 +56,18 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
  * holds at most KPIN_CAP stops, the best-rated in view, in reading order:
  * a keyboard walk through 300 dots helps nobody, and zooming in (or the list
  * beside the map on a desktop) reaches the rest.
+ *
+ * V3 (T383): the map answers "where can I afford". From zoom 7 the pins of
+ * the keyboard layer (at most 30) are drawn as price labels, the name in
+ * --ui and the day cost in --mono on --bg-card, and the one cheapest pin in
+ * view is the map's one --accent (house rules "Price pins" and "Map and
+ * list in sync", explore N4 and N5); the cheapest is always in the set.
+ * Every other pin stays a dot. Tips, pin cards and the pins' accessible
+ * names add the day cost. Clusters are stroked --ink-mute, not the rating's
+ * ochre, since a cluster is a count, not a score. `ringId` (a card under
+ * the pointer or in focus in the list) rings its pin 2 px --ink, and
+ * `onPinLink(id)` tells the list which pin is under the pointer or in focus
+ * so it can outline that card.
  */
 
 const KIND_RADIUS = { metro: 9, city: 7, area: 7, town: 5.5, village: 4.5 };
@@ -66,6 +79,8 @@ const TIER_FILL = ['match', ['get', 'tier'],
 
 // Where a pin stops being a dot and starts being a card.
 const CARD_FROM = 8;
+// Where the keyboard layer's pins start drawing as price labels.
+const LABEL_FROM = 7;
 // Above this the source draws individual pins, so a filter expression is
 // the whole story; below it the clusters carry counts that must be true.
 const CLUSTER_TO = 6;
@@ -79,7 +94,10 @@ const CLUSTER_R = (n) => (n >= 100 ? 24 : n >= 25 ? 18 : 14);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNeedDetail, t }) {
+export function ExploreMap({
+  rows, all, pins = null, onSelect, onViewport, onNeedDetail, t, ringId = null, onPinLink = null,
+  costs = null,
+}) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const readyRef = useRef(false);
@@ -90,12 +108,34 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
   onViewportRef.current = onViewport;
   const onNeedDetailRef = useRef(onNeedDetail);
   onNeedDetailRef.current = onNeedDetail;
+  // Tell the list only when the linked pin changes, not on every mouse move.
+  const linkedRef = useRef(null);
+  const onPinLinkRef = useRef(null);
+  onPinLinkRef.current = (id) => {
+    if (linkedRef.current === id) return;
+    linkedRef.current = id;
+    onPinLink?.(id);
+  };
+  const ringRef = useRef(ringId);
+  ringRef.current = ringId;
+  // The popups are HTML strings built in memoised helpers; they read the
+  // translator through a ref so a language switch reaches them.
+  const tRef = useRef(t);
+  tRef.current = t;
+  const [zoom, setZoom] = React.useState(3.7);
 
   // The whole catalogue, serialised once. `all` is the unfiltered set; when
   // a caller does not pass one, the current rows stand in and the map
   // behaves exactly as it did before.
   const source = all || rows;
   const geojson = React.useMemo(() => {
+    // The day cost at the traveller's Lifestyle, from the same cost index
+    // the cards read (`costs`, destId to cost row); -1 when there is none,
+    // because a null property does not survive into a maplibre feature.
+    const dayOf = (p) => {
+      const eur = (costs?.get(p.id) || p.cost)?.dayEur;
+      return eur != null ? Math.round(eur) : -1;
+    };
     const loaded = (p) => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [p.city_lon ?? p.lon, p.city_lat ?? p.lat] },
@@ -109,6 +149,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
         r: KIND_RADIUS[kindOf(p)] || 5.5,
         img: p.image?.url || p.image || '',
         lead: knownFor(p) || '',
+        eur: dayOf(p),
         ld: 1,
       },
     });
@@ -126,12 +167,12 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
           geometry: { type: 'Point', coordinates: [b.lon, b.lat] },
           properties: {
             id: b.id, city: '', country: '', tier: b.band, score: null,
-            gem: b.hiddenGem ? 1 : 0, r: 5.5, img: '', lead: '', ld: 0,
+            gem: b.hiddenGem ? 1 : 0, r: 5.5, img: '', lead: '', eur: -1, ld: 0,
           },
         };
       }),
     };
-  }, [source, pins]);
+  }, [source, pins, costs]);
   // The map's load handler seeds its source from the payload current at load
   // time, not the one current when the map was created: the catalogue can
   // grow in between, and the setData effect below skips until the map is ready.
@@ -169,18 +210,24 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
       }
       return popupRef.current.addTo(map);
     };
+    // The day cost as the cards print it ("€87 a day"); -1 is "no figure".
+    const eurHtml = (eur, cls) => (eur != null && eur >= 0
+      ? `<span class="${cls}"><span class="mono">${esc(eurDay(eur))}</span> ${esc(tRef.current('cost.perDay'))}</span>`
+      : '');
     const showTip = (map, f) => {
-      const { city, country, score, tier, ld } = f.properties;
+      const { city, country, score, tier, ld, eur } = f.properties;
       // No record yet: ask for its country; the tip shows once it lands.
       if (ld === 0) { onNeedDetailRef.current?.(f.properties.id); return; }
       const html = `<div class="xmap-pop"><strong>${esc(city)}</strong>`
         + (score != null ? `<span class="xmap-pop-score rt-${tier}">${Number(score).toFixed(1)}</span>` : '')
-        + `<br><span class="xmap-pop-sub">${esc(country)}</span></div>`;
+        + `<br><span class="xmap-pop-sub">${esc(country)}</span>`
+        + (eur >= 0 ? `<br>${eurHtml(eur, 'xmap-pop-eur')}` : '')
+        + '</div>';
       cardRef.current = null;
       popup(map).setLngLat(f.geometry.coordinates).setHTML(html);
     };
     const showCard = (map, f) => {
-      const { id, city, country, score, tier, img, lead } = f.properties;
+      const { id, city, country, score, tier, img, lead, eur } = f.properties;
       const thumb = img ? thumbAt(img, 250) : '';
       const html = `<button type="button" class="xmap-card-hit" data-id="${esc(id)}">`
         + '<div class="xmap-card">'
@@ -190,6 +237,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
         + (score != null ? `<span class="xmap-card-score rt-${tier}">${Number(score).toFixed(1)}</span>` : '')
         + '</div>'
         + `<p class="xmap-card-sub">${esc(country)}</p>`
+        + (eur >= 0 ? `<p class="xmap-card-eur">${eurHtml(eur, 'xmap-card-eur-line')}</p>` : '')
         + (lead ? `<p class="xmap-card-lead">${esc(lead)}</p>` : '')
         + '</div></div></button>';
       cardRef.current = id;
@@ -236,13 +284,23 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
         key, cluster, lngLat, x: pt.x, y: pt.y,
         id: pr.id, clusterId: pr.cluster_id, n: pr.point_count || 0,
         city: pr.city, country: pr.country, score: pr.score, tier: pr.tier ?? 0,
+        eur: !cluster && pr.eur != null && pr.eur >= 0 ? pr.eur : null,
         r: cluster ? CLUSTER_R(pr.point_count || 0) : (pr.r || 5.5),
         feature: { geometry: { coordinates: lngLat }, properties: pr },
       });
     }
     out.sort((a, b) => (Number(b.cluster) - Number(a.cluster))
       || (a.cluster ? b.n - a.n : (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1))));
-    return out.slice(0, KPIN_CAP).sort((a, b) => (
+    // The cheapest place in view always gets a stop (and so, from zoom 7, a
+    // label): it is the one pin the map emphasises, so it cannot be left a
+    // bare dot because thirty better-rated places outranked it.
+    const set = out.slice(0, KPIN_CAP);
+    let cheapest = null;
+    for (const k of out) {
+      if (!k.cluster && k.eur != null && (!cheapest || k.eur < cheapest.eur)) cheapest = k;
+    }
+    if (cheapest && !set.includes(cheapest)) set[set.length - 1] = cheapest;
+    return set.sort((a, b) => (
       Math.floor(a.y / KPIN_ROW) - Math.floor(b.y / KPIN_ROW)) || (a.x - b.x));
   }, []);
 
@@ -257,6 +315,9 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     mapRef.current = map;
+    // A verify seam: scripts/verify_map_size_cards.mjs moves the camera to an
+    // exact zoom through it (a wheel gesture lands wherever it lands).
+    containerRef.current._cartaMap = map;
 
     map.on('load', () => {
       map.addSource('dests', {
@@ -271,7 +332,9 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
         filter: ['has', 'point_count'],
         paint: {
           'circle-color': TC['--paper-dim'],
-          'circle-stroke-color': TC['--rate'],
+          // A cluster is a count, not a score: ink, never the rating's ochre
+          // (explore N4). --ink-mute is read live (tokenColors.js).
+          'circle-stroke-color': tokenColour('--ink-mute'),
           'circle-stroke-width': 1.5,
           'circle-radius': ['step', ['get', 'point_count'], 14, 25, 18, 100, 24],
         },
@@ -297,6 +360,19 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
           'circle-stroke-color': ['case', ['==', ['get', 'gem'], 1], TC['--gem-ink'], TC['--bg-card']],
         },
       });
+      // The list-to-map ring: the pin of the card under the pointer or in
+      // focus, 2 px --ink, never the accent (explore N5).
+      map.addLayer({
+        id: 'dest-ring', type: 'circle', source: 'dests',
+        filter: ['==', ['get', 'id'], ringRef.current || ''],
+        paint: {
+          'circle-radius': ['+', ['get', 'r'], 4],
+          'circle-color': TC['--ink'],
+          'circle-opacity': 0,
+          'circle-stroke-width': 2,
+          'circle-stroke-color': TC['--ink'],
+        },
+      });
 
       map.on('click', 'clusters', async (e) => {
         const f = map.queryRenderedFeatures(e.point, { layers: ['clusters'] })[0];
@@ -316,6 +392,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
       map.on('mouseenter', 'dest-dots', () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'dest-dots', () => {
         map.getCanvas().style.cursor = '';
+        onPinLinkRef.current?.(null);
         // The card is hoverable (WCAG 1.4.13): travelling into it to read
         // the line or click it must not dismiss it, so only the plain name
         // tip closes on leaving the pin.
@@ -324,6 +401,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
       map.on('mousemove', 'dest-dots', (e) => {
         const f = e.features?.[0];
         if (!f) return;
+        if (f.properties.ld !== 0) onPinLinkRef.current?.(f.properties.id);
         if (map.getZoom() >= CARD_FROM && f.properties.ld !== 0) {
           if (cardRef.current !== f.properties.id) showCard(map, f);
         } else {
@@ -351,7 +429,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
           el.style.top = `${pt.y}px`;
         }
       });
-      map.on('idle', () => setKpins(collectKpins(map)));
+      map.on('idle', () => { setKpins(collectKpins(map)); setZoom(map.getZoom()); });
       readyRef.current = true;
     });
     return () => {
@@ -374,13 +452,35 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
     if (!a || a === document.body) mapRef.current?.getCanvas().focus({ preventScroll: true });
   }, [kpins]);
 
+  // The ring follows the card the reader is on in the list.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (readyRef.current && map?.getLayer('dest-ring')) {
+      map.setFilter('dest-ring', ['==', ['get', 'id'], ringId || '']);
+    }
+  }, [ringId]);
+
   const kpinLabel = (k) => {
     if (k.cluster) return t('explore.clusterAria', { n: k.n });
-    if (k.score == null) return [k.city, k.country].filter(Boolean).join(', ');
-    return t('explore.pinAria', { city: k.city, country: k.country, score: Number(k.score).toFixed(1) });
+    const cost = k.eur != null ? t('explore.pinCost', { eur: eurDay(k.eur) }) : '';
+    if (k.score == null) return [k.city, k.country, cost].filter(Boolean).join(', ');
+    const base = t('explore.pinAria', { city: k.city, country: k.country, score: Number(k.score).toFixed(1) });
+    return cost ? `${base}, ${cost}` : base;
   };
+  // From zoom 7 the place pins are price labels, and the cheapest of them
+  // is the one emphasised pin in view.
+  const labelled = zoom >= LABEL_FROM;
+  let cheapestKey = null;
+  if (labelled) {
+    let best = null;
+    for (const k of kpins) {
+      if (!k.cluster && k.eur != null && (!best || k.eur < best.eur)) best = k;
+    }
+    cheapestKey = best?.key ?? null;
+  }
   const kpinFocus = (k) => {
     lastKpinRef.current = k.key;
+    if (!k.cluster) onPinLinkRef.current?.(k.id);
     const map = mapRef.current;
     if (!map || k.cluster) return;
     if (map.getZoom() >= CARD_FROM) showCard(map, k.feature);
@@ -390,6 +490,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
     // Focus moving to a real element clears the memory; a blur with no
     // target is the button being removed under focus (see the effect above).
     if (e.relatedTarget) lastKpinRef.current = null;
+    onPinLinkRef.current?.(null);
     closePop();
   };
   const kpinActivate = async (k) => {
@@ -458,20 +559,42 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
       <div ref={containerRef} className="xmap-canvas" />
       {kpins.length > 0 && (
         <div className="xmap-kpins" role="group" aria-label={t('explore.mapPinsAria')}>
-          {kpins.map((k) => (
-            <button
-              key={k.key}
-              type="button"
-              ref={(el) => { if (el) kpinElsRef.current.set(k.key, el); else kpinElsRef.current.delete(k.key); }}
-              className={`xmap-kpin${k.cluster ? ' is-cluster' : ''}`}
-              style={{ left: k.x, top: k.y, '--kpin-d': `${Math.round(k.r * 2 + 4)}px` }}
-              aria-label={kpinLabel(k)}
-              onFocus={() => kpinFocus(k)}
-              onBlur={kpinBlur}
-              onKeyDown={(e) => { if (e.key === 'Escape' && popupRef.current) { e.stopPropagation(); closePop(); } }}
-              onClick={() => kpinActivate(k)}
-            />
-          ))}
+          {kpins.map((k) => {
+            const label = labelled && !k.cluster;
+            const cls = `xmap-kpin${k.cluster ? ' is-cluster' : ''}${label ? ' is-label' : ''}`
+              + `${k.key === cheapestKey ? ' is-cheapest' : ''}${!k.cluster && k.id === ringId ? ' is-ringed' : ''}`;
+            return (
+              <button
+                key={k.key}
+                type="button"
+                ref={(el) => { if (el) kpinElsRef.current.set(k.key, el); else kpinElsRef.current.delete(k.key); }}
+                className={cls}
+                style={{ left: k.x, top: k.y, '--kpin-d': `${Math.round(k.r * 2 + 4)}px` }}
+                aria-label={kpinLabel(k)}
+                onFocus={() => kpinFocus(k)}
+                onBlur={kpinBlur}
+                onPointerEnter={label ? () => kpinFocus(k) : undefined}
+                onPointerLeave={label ? (e) => {
+                  // Travelling into the pin's own card keeps the link and the
+                  // card (WCAG 1.4.13: hoverable); anywhere else drops both.
+                  if (e.relatedTarget?.closest?.('.maplibregl-popup')) return;
+                  onPinLinkRef.current?.(null);
+                  if (!cardRef.current) closePop();
+                } : undefined}
+                onKeyDown={(e) => { if (e.key === 'Escape' && popupRef.current) { e.stopPropagation(); closePop(); } }}
+                onClick={() => kpinActivate(k)}
+              >
+                {/* The label is drawn for the eye; the button's name above
+                    already says the same, so the label is hidden from it. */}
+                {label && (
+                  <span className="xmap-kpin-label" aria-hidden="true">
+                    <span className="xmap-kpin-name">{k.city}</span>
+                    {k.eur != null && <span className="xmap-kpin-eur mono">{eurDay(k.eur)}</span>}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

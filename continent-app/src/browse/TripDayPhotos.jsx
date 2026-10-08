@@ -16,15 +16,21 @@ import { MAX_PER_DAY } from './dayShots.js';
  * strip rather than the viewport, and intrinsic width/height so the row does
  * not reflow as each picture lands. A bare <img src> here would re-introduce
  * exactly the overdraw CardPhoto exists to have fixed.
+ *
+ * Inside the day track (T387) the strip is a two-column grid of 3:2 frames in
+ * the day card rather than a sideways scroller: a scroller inside a card that
+ * itself scrolls sideways fights the track for every swipe. So the list is no
+ * longer a scroll region and takes no tab stop of its own.
  */
 
-// The strip is a scrolling row of ~132px tiles on a phone and ~160 on desktop.
-const STRIP_SIZES = '(min-width: 769px) 160px, 132px';
+// Two frames across a day card: the card is about 85 percent of a phone's
+// width, and a third of the page column from 1024 px.
+const STRIP_SIZES = '(min-width: 1024px) 120px, 40vw';
 
 export function TripDayPhotos({ shots }) {
   if (!shots?.length) return null;
   return (
-    <ul className="tday-shots" tabIndex={0}>
+    <ul className="tday-shots">
       {shots.slice(0, MAX_PER_DAY).map((shot) => (
         <li key={shot.url} className="tday-shot">
           <img
@@ -33,8 +39,8 @@ export function TripDayPhotos({ shots }) {
             srcSet={srcSetFor(shot.url, 500)}
             sizes={STRIP_SIZES}
             alt=""
-            width={4}
-            height={3}
+            width={3}
+            height={2}
             loading="lazy"
             decoding="async"
           />
