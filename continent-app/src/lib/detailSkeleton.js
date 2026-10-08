@@ -229,3 +229,13 @@ export function pointCentre(row) {
   return row && Number.isFinite(row.lat) && Number.isFinite(row.lon)
     ? { lat: row.lat, lon: row.lon } : null;
 }
+
+/** Mark a maplibre map's container live once the map has drawn (T396): the
+ *  canvas then crossfades in over the ink sketch under it (DetailSkeleton.jsx
+ *  MapSketch, the .is-live rule in 65-v6-outdoor.css). */
+export function markMapLive(map) {
+  if (!map) return;
+  const on = () => map.getContainer?.()?.classList.add('is-live');
+  if (map.loaded?.()) on();
+  else map.once('load', on);
+}

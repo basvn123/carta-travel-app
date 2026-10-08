@@ -23,7 +23,7 @@ export function KeyFacts({ cells, lead = null }) {
   const hasCells = Array.isArray(cells) && cells.length > 0;
   if (!hasCells && !lead) return null;
   return (
-    <section className="dsk-keyfacts" data-slot="keyfacts" aria-label={t('detail.keyFacts')}>
+    <section className="dsk-keyfacts" id="dsk-sec-facts" data-slot="keyfacts" aria-label={t('detail.keyFacts')}>
       {lead}
       {hasCells && (
       <dl className="dsk-kf-list">

@@ -242,9 +242,17 @@ export function TrafficBar({ split, t, testId = 'route-traffic', totalM = null, 
  * It is a slider to assistive technology and to the keyboard: arrows move a
  * fiftieth of the walk, Page Up and Page Down a fifth, Home and End to the
  * ends. On a phone a sideways drag scrubs and a vertical one still scrolls.
+ *
+ * The map answers back (T396, rule N11): `markM` is { m } set by the page
+ * when the traveller taps the line on the map, in the profile's own metres;
+ * the marker and the readout move there without calling onScrub again (the
+ * page has already placed its map pin). `plain` draws the profile as one ink
+ * area with no slope shading and no slope key, for the cycle route, whose
+ * figure is the climb, not the gradient bands of a walk.
  */
 export function SlopeProfile({
   elevation, atM = null, onScrub = null, labels, testId = 'trail-slope',
+  markM = null, plain = false,
 }) {
   const profile = elevation?.profile;
   const [at, setAt] = React.useState(null);
@@ -270,14 +278,22 @@ export function SlopeProfile({
       const poly = [[seg[0][0], H], ...seg, [seg[seg.length - 1][0], H]];
       return { key: `${r.from}-${r.cls}`, cls: r.cls, points: pts(poly) };
     });
-    const line = pts(profile.map(([d, e]) => [x(d), y(e)]));
-    return { H, dMax, eMin, eMax, span, runs, line };
+    const xy = profile.map(([d, e]) => [x(d), y(e)]);
+    const line = pts(xy);
+    const area = pts([[xy[0][0], H], ...xy, [xy[xy.length - 1][0], H]]);
+    return { H, dMax, eMin, eMax, span, runs, line, area };
   }, [profile, elevation]);
 
   const report = React.useCallback((v) => {
     setAt(v);
     onScrub?.(v);
   }, [onScrub]);
+
+  const dMaxOf = geo ? geo.dMax : 0;
+  React.useEffect(() => {
+    if (!markM || !Number.isFinite(markM.m) || !dMaxOf) return;
+    setAt(Math.max(0, Math.min(dMaxOf, markM.m)));
+  }, [markM, dMaxOf]);
 
   if (!geo) return null;
   const { H, dMax, eMin, eMax, span } = geo;
@@ -339,7 +355,9 @@ export function SlopeProfile({
         onKeyDown={onKey}
       >
         <svg viewBox={`0 0 ${W} ${H}`} className="tpage-elev-svg sig-profile" aria-hidden="true" preserveAspectRatio="none">
-          {geo.runs.map((r) => (
+          {plain ? (
+            <polygon points={geo.area} className="sig-plain-area" />
+          ) : geo.runs.map((r) => (
             <polygon key={r.key} points={r.points} className={`sig-slope is-slope${r.cls}`} />
           ))}
           <polyline points={geo.line} className="sig-profile-line" vectorEffect="non-scaling-stroke" />
@@ -356,7 +374,7 @@ export function SlopeProfile({
         )}
       </div>
       <SpanAxis marks={['0 km', km(dMax / 2), `${km(dMax)} km`]} />
-      {slopeParts && (
+      {slopeParts && !plain && (
         <MixKeys parts={slopeParts.map((p) => ({ ...p, label: labels[p.key], value: kmOf(p.share, dMax) }))} className="sig-keys" />
       )}
     </div>

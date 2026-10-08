@@ -224,3 +224,243 @@
   color: var(--ink-soft);
   font-size: 12px;
 }
+
+/* ── T396 (V4): visual and dynamic ────────────────────────────────────────
+   Motion from the tokens only (--dur-1 to --dur-3, --ease-out,
+   --ease-in-out), transform, opacity and colour, every rule with a
+   reduced-motion branch. Still scoped to .dsk-page, so the journey page
+   that shares the row and exit classes keeps its look. */
+
+/* One type scale (brief V4-7, DIRECTION part 5): the title of all six
+   pages 28 px on a phone and 40 px from 769 px; the slot heads 22 and 26 px
+   (28-detail-skeleton.css); the hook 16 px under them. */
+.dsk-page .dsk-head .tpage-title,
+.dsk-page .dsk-head .bpage-name,
+.dsk-page .dsk-head .cycle-title h1 {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+@media (min-width: 769px) {
+  .dsk-page .dsk-head .tpage-title,
+  .dsk-page .dsk-head .bpage-name,
+  .dsk-page .dsk-head .cycle-title h1 { font-size: 40px; line-height: 1.1; }
+  .dsk-page .dsk-grid section h2 { font-size: 26px; }
+}
+
+/* A jump from the section rail lands the slot just under the rail. */
+.dsk-page #dsk-sec-facts,
+.dsk-page #dsk-sec-getting,
+.dsk-page #dsk-sec-map,
+.dsk-page #dsk-sec-details,
+.dsk-page #dsk-sec-nearby { scroll-margin-top: calc(var(--tap) + var(--space-2)); }
+
+/* The map's ink sketch (rule N8): under the canvas, the item's own line or
+   point in ink on paper-dim, the name in the corner. The canvas is clear
+   until maplibre has drawn (.is-live), then crossfades in over --dur-3. */
+.dsk-page .dsk-sketch {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background: var(--paper-dim);
+  pointer-events: none;
+}
+.dsk-page .dsk-sketch-svg { width: 100%; height: 100%; overflow: visible; }
+.dsk-page .dsk-sketch-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dsk-page .dsk-sketch-ring { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+.dsk-page .dsk-sketch-dot { fill: var(--ink); }
+.dsk-page .dsk-sketch-name {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-2);
+  max-width: calc(100% - 2 * var(--space-3));
+  overflow: hidden;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dsk-page .dsk-map .maplibregl-canvas {
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+.dsk-page .dsk-map .is-live .maplibregl-canvas { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .dsk-page .dsk-map .maplibregl-canvas { transition: none; }
+}
+
+/* The photo track (rule N7): one row, snapping to a frame, Previous and
+   Next above it with the position in mono. Each frame is a 3:2 photograph
+   with a solid band under it for the km marker and the credit. */
+.dsk-page .dsk-ptrack-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+.dsk-page .dsk-ptrack-pos {
+  margin-right: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.dsk-page .dsk-ptrack-btn { min-height: var(--tap); padding: 0 var(--space-3); }
+.dsk-page .dsk-ptrack-prev { transform: scaleX(-1); }
+.dsk-page .dsk-ptrack {
+  display: flex;
+  gap: var(--space-3);
+  margin: -4px;
+  padding: 4px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 4px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.dsk-page .dsk-ptrack::-webkit-scrollbar { display: none; }
+.dsk-page .dsk-ptrack:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dsk-page .dsk-ptrack-frame {
+  flex: 0 0 85%;
+  min-width: 0;
+  margin: 0;
+  scroll-snap-align: start;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+@media (min-width: 900px) {
+  .dsk-page .dsk-ptrack-frame { flex-basis: 70%; }
+}
+.dsk-page .dsk-ptrack-media { aspect-ratio: 3 / 2; background: var(--paper-dim); }
+.dsk-page .dsk-ptrack-media img,
+.dsk-page .dsk-ptrack-media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+}
+.dsk-page .dsk-ptrack-cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.dsk-page .dsk-ptrack-at {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.dsk-page .dsk-ptrack-credit .bpage-credit { margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .dsk-page .dsk-ptrack { scroll-behavior: auto; }
+}
+
+/* The key facts band as an instrument (brief V4-5): every value on one
+   line box, so a word and a mono figure share a baseline across the row. */
+.dsk-page .dsk-kf-value { line-height: 22px; }
+.dsk-page .dsk-kf-note { line-height: 16px; }
+
+/* Rows (brief V4-6): the chevron turns over --dur-2, the open body fades in,
+   a fine pointer gets a paper-dim tint at once. */
+.dsk-page .jpage-lrow-chev { transition: transform var(--dur-2) var(--ease-out); }
+.dsk-page .jpage-lrow.is-open .jpage-lrow-body:not([hidden]) {
+  animation: dsk-row-in var(--dur-2) var(--ease-out);
+}
+@keyframes dsk-row-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (hover: hover) {
+  .dsk-page .jpage-lrow-btn,
+  .dsk-page .jpage-exit,
+  .dsk-page .dsk-take .tpage-act,
+  .dsk-page .dsk-getting .tpage-act {
+    transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+  }
+  .dsk-page .jpage-lrow-btn:hover,
+  .dsk-page .jpage-exit:hover { background: var(--paper-dim); }
+  .dsk-page .dsk-take .tpage-act:hover,
+  .dsk-page .dsk-getting .tpage-act:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+  /* An exit is navigation, not an action: an ink underline, not the accent. */
+  .dsk-page .jpage-exit:hover .jpage-exit-title {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+/* The primary answers the press with the press shade (plan item 11). */
+.dsk-page .dsk-primary.tpage-primary:active,
+.dsk-page .dsk-primary.cycle-gpx:active {
+  background: var(--accent-press);
+  border-color: var(--accent-press);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dsk-page .jpage-lrow-chev { transition: none; }
+  .dsk-page .jpage-lrow.is-open .jpage-lrow-body:not([hidden]) { animation: none; }
+  .dsk-page .jpage-lrow-btn,
+  .dsk-page .jpage-exit,
+  .dsk-page .dsk-take .tpage-act,
+  .dsk-page .dsk-getting .tpage-act,
+  .dsk-page .dsk-primary.tpage-primary:active,
+  .dsk-page .dsk-primary.cycle-gpx:active { transition: none; }
+}
+
+/* Highlight chips in ink (brief V4-9): a descriptor, not an action, so the
+   accent stays on the primary, the live line, the marker and focus. */
+.dsk-page .tpage-chip-hl {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+}
+
+/* Status, not green (brief V4-10, rule N6): a positive verdict is ink words
+   after a 6 px --status-success dot on the card ground; the warning tones
+   keep their tints, the hazard list its amber note. */
+.dsk-page .lpage-swim-ok,
+.dsk-page .mpage-way-ride {
+  border-color: var(--rule-soft);
+  background: var(--bg-card);
+}
+.dsk-page .lpage-swim-ok .lpage-swim-word::before,
+.dsk-page .mpage-way-ride .mpage-way-word::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--space-2);
+  border-radius: 999px;
+  background: var(--status-success);
+  vertical-align: middle;
+}
+
+/* The cycle route's plain profile (plan item 3): one ink-ramp area under
+   the ink line, the accent left to the scrub marker alone; and air between
+   its km axis and the surface track under it. */
+.dsk-page .sig-plain-area { fill: var(--rule); stroke: none; }
+.dsk-page [data-testid="cycle-elev"] { margin-bottom: var(--space-4); }

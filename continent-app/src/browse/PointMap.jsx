@@ -19,7 +19,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
  */
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
-export default function PointMap({ lat, lon, label, zoom = 11 }) {
+export default function PointMap({ lat, lon, label, zoom = 11, children = null }) {
   const el = useRef(null);
   useEffect(() => {
     if (!el.current || !Number.isFinite(lat) || !Number.isFinite(lon)) return undefined;
@@ -41,12 +41,18 @@ export default function PointMap({ lat, lon, label, zoom = 11 }) {
     // The frame can still be settling its size when the map is built (the
     // maplibre stylesheet arrives with this chunk), so measure again and put
     // the place back in the middle once the style has loaded.
-    map.on('load', () => { map.resize(); map.jumpTo({ center: [lon, lat], zoom }); });
+    // Live from here on: the canvas crossfades in over the ink sketch the
+    // page passed as children (DetailSkeleton.jsx MapSketch, T396).
+    map.on('load', () => {
+      map.resize();
+      map.jumpTo({ center: [lon, lat], zoom });
+      map.getContainer().classList.add('is-live');
+    });
     // The marker is decoration with nothing behind it: keep it out of the
     // accessibility tree rather than reading "Map marker" (T190).
     pin.setAttribute('aria-hidden', 'true');
     pin.removeAttribute('aria-label');
     return () => map.remove();
   }, [lat, lon, zoom]);
-  return <div ref={el} className="dsk-map-frame" role="region" aria-label={label} />;
+  return <div ref={el} className="dsk-map-frame" role="region" aria-label={label}>{children}</div>;
 }

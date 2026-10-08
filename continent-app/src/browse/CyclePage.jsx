@@ -5,10 +5,13 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useI18n } from '../i18n/index.jsx';
 import { count } from '../lib/format.js';
 import { tokenColour as token } from '../map/tokenColors.js';
-import { DetailPage } from './DetailSkeleton.jsx';
+import { DetailPage, MapSketch } from './DetailSkeleton.jsx';
+import { routePoints, routeLength, nearestOnRoute } from '../lib/trailGeo.js';
+import { pointAlong } from '../lib/signature.js';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
   stripCells, previewWords, previewNotHook, keyFactCells, bboxCentre, cycleLevel, LEVEL_WORD_KEY,
+  markMapLive,
 } from '../lib/detailSkeleton.js';
 import {
   trailheadDirectionsUrl, shareTrailLink, cycleGpx, cycleFileBase, lineParts,
@@ -29,7 +32,7 @@ import { notForLines } from '../lib/notFor.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import {
-  ElevationChart, MixBar, MixKeys, TrafficBar,
+  SlopeProfile, MixBar, MixKeys, TrafficBar,
 } from './RouteFigures.jsx';
 import { Instrument, Row, EmptyTrack, SpanAxis } from './Signature.jsx';
 import { kmOf, trafficMix } from '../lib/signature.js';
@@ -111,8 +114,11 @@ const finitePair = ([x, y]) => Number.isFinite(x) && Number.isFinite(y);
  * A NaN anywhere in a coordinate crashes maplibre outright, so every part is
  * filtered before it reaches the source.
  */
-function useRouteMap(mapEl, geometry, bbox) {
+function useRouteMap(mapEl, geometry, bbox, onPick = null) {
   const mapRef = useRef(null);
+  // The page's tap handler, read at tap time so the map is built once.
+  const pickRef = useRef(onPick);
+  pickRef.current = onPick;
 
   useEffect(() => {
     if (mapRef.current || !mapEl.current) return undefined;
@@ -124,6 +130,10 @@ function useRouteMap(mapEl, geometry, bbox) {
       attributionControl: { compact: true },
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    // The ink sketch under the canvas until the map has drawn, and a tap on
+    // the line that moves the profile's marker (T396, rules N8 and N11).
+    markMapLive(map);
+    map.on('click', (e) => pickRef.current?.(e, map));
     map.on('load', () => {
       const empty = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: [] } };
       map.addSource('cycle', { type: 'geojson', data: empty });
@@ -195,6 +205,8 @@ function useRouteMap(mapEl, geometry, bbox) {
     map._draw = draw;
     if (map._cycleReady) draw();
   }, [geometry, bbox]);
+
+  return mapRef;
 }
 
 /**
@@ -527,7 +539,46 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     || (route && route.osm && route.osm.geometry) || null;
   const bbox = (tour && tour.bbox) || (route && route.bbox) || null;
   const mapEl = useRef(null);
-  useRouteMap(mapEl, geometry, bbox);
+  // The profile and the map share one marker (T396, rule N11), as on the
+  // trail page: the profile's metres are scaled onto the drawn line's own
+  // length, which is a simplification of the line the profile was sampled on.
+  const linePts = useMemo(() => routePoints(geometry), [geometry]);
+  const lineM = useMemo(() => routeLength(linePts), [linePts]);
+  const profEnd = route?.carta?.elevation?.profile?.length
+    ? route.carta.elevation.profile[route.carta.elevation.profile.length - 1][0] : 0;
+  const [markM, setMarkM] = useState(null);
+  const scrubTo = useRef(null);
+  const mapRef = useRouteMap(mapEl, geometry, bbox, (e, map) => {
+    if (!linePts.length || !profEnd) return;
+    const hit = nearestOnRoute(linePts, e.lngLat.lat, e.lngLat.lng);
+    if (!hit) return;
+    const px = map.project([hit.lon, hit.lat]);
+    if (Math.hypot(px.x - e.point.x, px.y - e.point.y) > 24) return;
+    const along = lineM > 0 ? hit.m * (profEnd / lineM) : hit.m;
+    setMarkM({ m: along });
+    scrubTo.current?.(along);
+  });
+  const highlightAt = React.useCallback((alongM) => {
+    const map = mapRef.current;
+    if (!map) return;
+    const p = alongM == null || !linePts.length
+      ? null
+      : pointAlong(linePts, profEnd > 0 ? alongM * (lineM / profEnd) : alongM);
+    if (!p) {
+      map._scrubMarker?.remove();
+      map._scrubMarker = null;
+      return;
+    }
+    if (!map._scrubMarker) {
+      const el = document.createElement('span');
+      el.className = 'tpage-scrub-pin';
+      map._scrubMarker = new maplibregl.Marker({ element: el }).setLngLat([p.lon, p.lat]).addTo(map);
+    } else {
+      map._scrubMarker.setLngLat([p.lon, p.lat]);
+    }
+  }, [mapRef, linePts, lineM, profEnd]);
+  scrubTo.current = highlightAt;
+  const sketchLines = useMemo(() => geometryParts(geometry), [geometry]);
 
   const why = useMemo(() => whyLines(carta.reasons, t), [carta.reasons, t]);
   const rated = Boolean(route && route.t === 'r');
@@ -659,8 +710,24 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     >
       {hasElev && (
         <Row label={t('cycle.elevTitle')} figure={route?.asc != null ? t('detail.climbSummary', { m: route.asc }) : null}>
-          <ElevationChart elevation={carta.elevation} label={t('cycle.elevTitle')} maxLabel={t('cycle.elevMax')}
-            className="cycle-elev" testId="cycle-elev" />
+          {/* Scrubbable since T396 (rule N11): the marker is the one
+              accent in the figure and the map's pin follows it. Plain, one
+              ink area: the rider's figure is the climb. */}
+          <SlopeProfile
+            elevation={carta.elevation}
+            plain
+            onScrub={highlightAt}
+            markM={markM}
+            testId="cycle-elev"
+            labels={{
+              // The Row above already names the figure; the readout
+              // line carries only the figure itself.
+              row: '',
+              aria: t('sig.scrubAria'),
+              at: (v) => t('sig.eleAt', v),
+              range: (v) => t('sig.eleRange', v),
+            }}
+          />
         </Row>
       )}
       <div className="cycle-bars">
@@ -892,7 +959,10 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
       ) : null}
       map={(
         <div ref={mapEl} className="cycle-map" data-testid="cycle-map"
-          role="img" aria-label={t('cycle.mapLabel')} />
+          role="img" aria-label={t('cycle.mapLabel')}>
+          {/* The line in ink while maplibre loads (T396). */}
+          <MapSketch lines={sketchLines} label={title} />
+        </div>
       )}
       signature={surfaceBlock || null}
       rows={rows}

@@ -461,10 +461,17 @@ check('the way up sits in getting there, never folded', placed === 'getting ther
 
 const shot = await page.locator('.bpage-shot').getAttribute('src').catch(() => '');
 check('the page shows a large photograph', /^https:\/\/upload\.wikimedia\.org/.test(shot || ''));
-const thumbs = await page.locator('.bpage-thumb').count();
+// T396 (design wave V4): the 64 px tab thumbnails became one photo track
+// (carta-design "Photo track", rule N7), every photograph a frame with its
+// credit and no tab roles, so the count reads the frames and a check below
+// proves no role=tab is left.
+const thumbs = await page.locator('.dsk-ptrack-frame').count();
+check('the photographs carry no tab roles', await page.locator('.dsk-page [role="tab"], .dsk-page [role="tablist"]').count() === 0);
 check('the page offers a gallery rather than one picture',
   thumbs === 0 || (thumbs >= 2 && thumbs <= 6), `${thumbs} photographs`);
-const credit = await page.locator('.bpage-credit').innerText().catch(() => '');
+// T396: every frame of the photo track carries its own credit now, so the
+// header photograph's credit is read where it sits, under the hero.
+const credit = await page.locator('.dsk-hero-credit .bpage-credit').innerText().catch(() => '');
 check('the photograph carries its author and licence', /cc|public domain/i.test(credit),
   credit.replace(/\n/g, ' '));
 

@@ -14,13 +14,20 @@
 
 .dsk { padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px)); }
 
-/* ── 1 Hero: the view image full bleed, the strip flush under it ── */
+/* ── 1 Hero: the view image full bleed, the strip flush under it ──
+   At most 40 percent of the viewport on a phone and 60 on a desktop
+   (DIRECTION part 3, T396), so the head and the key facts are on the first
+   screen. dvh, so a collapsing address bar never changes what fits; the
+   200 px floor yields to the cap in landscape. */
 .dsk-hero { margin: 0; }
 .dsk-hero-media {
-  height: 56vh;
-  min-height: 240px;
+  height: 40dvh;
+  min-height: min(200px, 40dvh);
   overflow: hidden;
   background: var(--paper-dim);
+}
+@media (min-width: 900px) {
+  .dsk-hero-media { height: 56dvh; }
 }
 .dsk-hero-media picture { display: block; height: 100%; }
 .dsk-hero-img {
@@ -86,11 +93,13 @@
   vertical-align: middle;
 }
 
-/* ── 2 The hook: one sentence, 19px, the soft ink ── */
+/* ── 2 The hook: one sentence, 16px, the soft ink ──
+   A step under the 22 px section heads and over the 14 px body (T396,
+   DIRECTION part 5): at 19 px it outranked the heads under it. */
 .dsk-hook {
   margin: var(--space-3) 0 0;
-  font-size: 19px;
-  line-height: 1.4;
+  font-size: 16px;
+  line-height: 1.45;
   color: var(--ink-soft);
 }
 
@@ -127,10 +136,12 @@
 .dsk-sec { margin: var(--space-5) 0; }
 /* Every heading inside a slot speaks in one voice on all five pages (the
    rule .bpage-wrap section h2 used to give the beach, lake and mountain). */
+/* T396: the section-name size of DIRECTION part 5, 22 px on a phone and
+   26 px from 769 px, so every head outranks the hook. */
 .dsk-grid section h2 {
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-3);
   font-family: var(--display);
-  font-size: 16px;
+  font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--ink);

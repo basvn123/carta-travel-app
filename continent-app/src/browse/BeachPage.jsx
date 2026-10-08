@@ -4,7 +4,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { FigureFooter } from './HonestFooters.jsx';
 import { BEACH_KIND } from '../lib/footers.js';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
+import { DetailPage, PlaceMap, PhotoTrack } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
   stripCells, previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
@@ -29,7 +29,10 @@ import {
 } from '../lib/derivedModules.js';
 import { BeachFacing, BeachWalkIn } from './DerivedModules.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
-import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
+import { LayerPhoto, HERO_SIZES } from '../components/LayerPhoto.jsx';
+
+// A frame of the photo track: most of the column on a phone (T396).
+const TRACK_SIZES = '(min-width: 900px) 440px, 85vw';
 import { BeachSignature, CompassRosette } from './Signature.jsx';
 import { compassPoint } from '../lib/signature.js';
 
@@ -101,13 +104,10 @@ function ImageCredit({ image, t }) {
 
 export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
-  const [shot, setShot] = useState(0);
   // The score breakdown has one door since T386: the "How the score is
   // built" row, which carries each part's weight beside its bar. The chip in
   // the head is a measure, not a button.
   const [toast, setToast] = useState(null);
-
-  useEffect(() => { setShot(0); }, [beach?.id]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -127,7 +127,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   });
 
   const images = beach?.images || [];
-  const main = images[shot] || images[0] || null;
+  const main = images[0] || null;
   const why = useMemo(() => (beach ? beachWhy(beach, t) : []), [beach, t]);
   const tags = useMemo(() => (beach ? beachTags(beach, t, 4) : []), [beach, t]);
   const rating = useMemo(() => (beach ? beachRating(beach, t) : null), [beach, t]);
@@ -347,20 +347,18 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       label: t('beach.photos'),
       summary: t('detail.photoCount', { n: images.length }),
       body: (
-        <div className="bpage-strip" role="tablist" aria-label={t('beach.photos')}>
-          {images.map((img, i) => (
-            <button
-              key={img.page || i}
-              type="button"
-              role="tab"
-              aria-selected={i === shot}
-              className={`bpage-thumb ${i === shot ? 'on' : ''}`}
-              onClick={() => setShot(i)}
-            >
-              <LayerPhoto layer="beaches" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
-            </button>
-          ))}
-        </div>
+        /* One photo track since T396 (carta-design "Photo track"): every
+           photograph at a readable size with its credit under it, Previous
+           and Next, no tab roles. The header keeps the first photograph. */
+        <PhotoTrack
+          testId="beach-photos"
+          label={t('beach.photos')}
+          frames={images.map((img, i) => ({
+            key: img.page || img.u || i,
+            media: <LayerPhoto layer="beaches" image={img} src={img.u} sizes={TRACK_SIZES} alt="" loading="lazy" />,
+            credit: <ImageCredit image={img} t={t} />,
+          }))}
+        />
       ),
     },
   ].filter(Boolean);
@@ -427,7 +425,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       ) : null}
       map={(
         <div className="sig-mapwrap">
-          <PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} />
+          <PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} name={beach.name} />
           {point && (
             <CompassRosette
               deg={beach.aspect}

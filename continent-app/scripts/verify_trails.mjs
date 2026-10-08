@@ -247,10 +247,12 @@ check('the following-works paragraph is gone',
   && !/It stops when the phone locks/i.test(body));
 
 // Views strip and highlights.
-const views = await page.locator('.tpage-view').count();
+// T396 (design wave V4): the views are one photo track; each frame carries
+// its km marker in the band under the photograph, not on it.
+const views = await page.locator('.dsk-ptrack-frame').count();
 check('views along the way render', views > 0, `${views} photographs`);
 if (views > 1) {
-  const ats = await page.locator('.tpage-view-at').allInnerTexts();
+  const ats = await page.locator('.dsk-ptrack-at').allInnerTexts();
   check('view photographs say where on the route they were taken',
     ats.length > 0, ats.slice(0, 3).join(', '));
 }

@@ -27,10 +27,10 @@ import { eur } from '../lib/format.js';
 import { tokenColour as token } from '../map/tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage } from './DetailSkeleton.jsx';
+import { DetailPage, MapSketch, PhotoTrack } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, previewNotHook, keyFactCells, bboxCentre,
+  stripCells, previewWords, previewNotHook, keyFactCells, bboxCentre, markMapLive,
   TRAIL_LEVEL, TRAIL_EFFORT_LEVEL,
 } from '../lib/detailSkeleton.js';
 import { haversineKm as kmBetween } from '../lib/nearby.js';
@@ -118,34 +118,23 @@ const STORY_ICONS = {
  * ride on the frame itself and the whole strip carries the source line.
  */
 function ViewStrip({ images, t }) {
-  const [open, setOpen] = useState(null);
+  // Since T396 one photo track (carta-design "Photo track"): every frame
+  // shows its km marker and its credit in the band under it, so nothing
+  // hides behind a tap and no text sits on a photograph.
   if (!Array.isArray(images) || !images.length) return null;
   return (
     <>
-      <div className="tpage-views">
-        {images.map((im, i) => (
-          <button
-            type="button"
-            key={im.u}
-            className="tpage-view"
-            onClick={() => setOpen(open === i ? null : i)}
-            aria-expanded={open === i}
-          >
-            <img src={im.u} alt={im.caption || im.title || ''} loading="lazy" />
-            {isNum(im.along_m) && (
-              <span className="tpage-view-at">
-                {t('trails.viewAt', { km: km1(im.along_m) })}
-              </span>
-            )}
-            {open === i && (
-              <span className="tpage-view-credit">
-                {[im.author, im.license].filter(Boolean).join(', ')}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-      <p className="tpage-credit tpage-views-credit">{t('trails.viewsCredit')}</p>
+      <PhotoTrack
+        testId="trail-views"
+        label={t('trails.viewsTitle')}
+        frames={images.map((im) => ({
+          key: im.u,
+          media: <img src={im.u} alt={im.caption || im.title || ''} loading="lazy" decoding="async" />,
+          at: isNum(im.along_m) ? t('trails.viewAt', { km: km1(im.along_m) }) : null,
+          credit: [im.author, im.license].filter(Boolean).join(', ') || null,
+        }))}
+      />
+      <p className="tpage-credit tpage-views-credit">{t('detail.photosCredit')}</p>
     </>
   );
 }
@@ -306,6 +295,13 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
 
   const src = detail || tr;
   const pts = useMemo(() => routePoints(src.geometry), [src]);
+  // The map's ink sketch reads the card's own simplified line, so it is on
+  // the first frame, before the detail file or the tiles (T396).
+  const sketchLines = useMemo(() => {
+    const g = tr.geometry || detail?.geometry;
+    if (!g || !Array.isArray(g.coordinates)) return null;
+    return g.type === 'LineString' ? [g.coordinates] : g.coordinates;
+  }, [tr.geometry, detail?.geometry]);
   // Bases along the route (ROUTES.md R7). Computed from the full-resolution
   // geometry once the detail file lands, because the card's 90 m placeholder
   // line would put a town on the wrong side of a valley.
@@ -384,6 +380,11 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       attributionControl: { compact: true },
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    // The ink sketch under the canvas until the map has drawn (T396).
+    markMapLive(map);
+    // A tap on the line moves the profile's marker there (T396, rule N11):
+    // the nearest point of the line, if the tap was within 24 px of it.
+    map.on('click', (e) => mapPickRef.current?.(e, map));
     map.on('load', () => {
       const empty = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: [] } };
       map.addSource('trail', { type: 'geojson', data: empty });
@@ -517,6 +518,22 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     const timer = setTimeout(() => map.resize(), 60);
     return () => clearTimeout(timer);
   }, [follow]);
+
+  // The other direction (T396): a tap on the line, in the line's metres,
+  // scaled onto the profile's own length, moves the profile's marker and
+  // puts the scrub pin on the map where the profile will say it is.
+  const [markM, setMarkM] = useState(null);
+  const mapPickRef = useRef(null);
+  mapPickRef.current = (e, map) => {
+    if (!pts.length || !profileEnd || follow) return;
+    const hit = nearestOnRoute(pts, e.lngLat.lat, e.lngLat.lng);
+    if (!hit) return;
+    const px = map.project([hit.lon, hit.lat]);
+    if (Math.hypot(px.x - e.point.x, px.y - e.point.y) > 24) return;
+    const along = lineM > 0 ? hit.m * (profileEnd / lineM) : hit.m;
+    setMarkM({ m: along });
+    highlightAt(along);
+  };
 
   const startFollow = () => { setCentred(true); setFollow(true); };
 
@@ -923,7 +940,11 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       )}
       map={(
         <div className="tpage-hero">
-          <div className="tpage-map" ref={mapEl} />
+          <div className="tpage-map" ref={mapEl}>
+            {/* The card's simplified line in ink while maplibre loads; the
+                canvas crossfades over it (T396). */}
+            <MapSketch lines={sketchLines} label={tr.name} />
+          </div>
           {follow && (
             <div className="tpage-hud">
               <button type="button" className="tpage-hud-close" onClick={() => setFollow(false)} aria-label={t('trails.stopFollow')}>
@@ -979,6 +1000,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
               elevation={detail.elevation}
               atM={follow && onRoute ? onRoute.m : null}
               onScrub={highlightAt}
+              markM={markM}
               labels={{
                 row: t('sig.rowEle'),
                 aria: t('sig.scrubAria'),
