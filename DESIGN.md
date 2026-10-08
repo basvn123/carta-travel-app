@@ -212,11 +212,28 @@ The scale is for new and touched rules; the stylesheet still carries older px li
 
 Radius in shipped CSS is 6 px on controls and 10 to 12 px on cards, with `999px` only on real status chips and round icon buttons. Borders are `1px solid var(--rule)` on anything a user can type into or click and `var(--rule-soft)` for hairlines inside an object. Lists get hairlines, objects get borders. The content column caps at 1180 px.
 
+Breakpoints (T380, design direction v6): the small floor is 360 px with no horizontal scroll; below 769 px is the phone (bottom nav, sheets, one column); from 769 px the header carries the tabs; from 1024 px map and list sit side by side and a detail page may run two columns. The display scale, elevation and icon rules are in the carta-design skill under Layout and spacing.
+
+## Motion
+
+Added by T380 (design direction v6, `docs/design-v6/DIRECTION.md` part 2). Every transition and animation reads these; JavaScript reads them through `durationMs()` in `src/lib/motion.js`.
+
+| Token | Value | Only for |
+|---|---|---|
+| `--dur-1` | `120ms` | Immediate feedback: a press, a chip toggling, a hover tint |
+| `--dur-2` | `200ms` | A routine state change: a fold, a figure settling in place, a chip entering, a row sliding to its place, a tab's content arriving; every exit |
+| `--dur-3` | `320ms` | A surface arriving: a sheet, a dialog, a popover, a shared element becoming its page, the grid to map crossfade |
+| `--dur-4` | `480ms` | One authored movement over distance: the map camera, one leg of the route reveal (the whole reveal is capped at 900 ms) |
+| `--ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Arrivals and settles |
+| `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Movement between two on-screen positions: a reorder, the active marker sliding, a scrub marker |
+
+No overshoot, bounce or elastic curve exists. The reduced-motion floor in `src/styles/02-base.css` still zeroes every duration, and every rule carries its own `prefers-reduced-motion: reduce` branch as well.
+
 ## Interaction
 
 Focus: `outline: 2px solid var(--accent); outline-offset: 2px` on `:focus-visible`. Inputs may swap the outline for `border-color: var(--accent)` but never ship `outline: none` without one of the two.
 
-Motion: transitions under 300 ms on transform and opacity only, and every transition and animation has a `prefers-reduced-motion: reduce` branch that sets it to `none`.
+Motion (T380 relaxed the earlier "under 300 ms, transform and opacity only" line): durations and easings from the Motion tokens, never a literal. Routine motion animates `transform` and `opacity`; a press, hover or selection may also animate `background-color`, `border-color` and `color` at `--dur-1`; a reveal may animate `clip-path`, `mask-position` or `stroke-dashoffset`. Nothing animates `width`, `height`, `top`, `left`, margins, padding, `grid-template-*`, `box-shadow`, `filter` or `backdrop-filter`; `transition: all` is never written. A figure that changes updates in place in tabular mono with one opacity dip (`settleFigure()` in `src/lib/figureChange.js`), never a count-up. Nothing moves because the page scrolled. Every transition and animation has a `prefers-reduced-motion: reduce` branch that sets it to `none`. The full motion rule, including what moves and what never moves, is in the carta-design skill under Interaction.
 
 Buttons: height `--tap`, radius 6 px, sentence case, verb first, one primary per view. Primary is `--accent` filled with white text; an active toggle is `--ink-fill` with white text; secondary is transparent with a `--rule` border.
 
@@ -232,6 +249,8 @@ Buttons: height `--tap`, radius 6 px, sentence case, verb first, one primary per
 
 **Colours in JavaScript (T362).** Where a colour must live in JavaScript (MapLibre paint properties cannot read a CSS custom property), it lives in one token-mirror module that copies each value from `01-tokens.css` under the token's name, with a comment naming the token. No other JavaScript file holds a hex. The module is `src/map/tokenColors.js` (T364). The design lint checks it: rule `js-hex-literal` flags a hex in any other JavaScript file (flag and brand artwork excepted; the print exports and PDF colours sit in the lint baseline until they are migrated), and rule `token-mirror-drift` fails when a mirrored value no longer matches `01-tokens.css`. `--accent` and `--ink-mute` are not mirrored, because T363 changes them; they are read live. Map-only colours with no token (the three lower Explore tier steps) are listed apart in the same module.
 
+**Rules decided by T380 (design direction v6, 2026-10-08, under the owner's delegation of 2026-10-07).** From the 96 "Needs a rule" proposals of the ten surface briefs, 94 were accepted (6 as amended) and 2 rejected; the table with every decision and reason is `docs/design-v6/DIRECTION.md` part 9. The accepted rules, in full in the carta-design skill under Components and Interaction: the caption band (text never on a photograph), the one selected state (`--ink-fill`; `--accent-bg` is never a selection), accent marks only on what acts or is live, the count chip (`--mono` 11 px on `--paper-dim`), the one close control, the dialog family (dialog, sheet, popover), navigation as links with history and addressable detail pages, the settings line, the bottom slot, undo instead of confirm, the "More" menu, cost on cards and pages from one cost index, the priced list, the budget ceiling, the month, the data drawings family (month strip, thin bar, profile, gauge, squares, receipt, timetable row), the receipt extended (trip receipt, day receipt, ranges, a live fragment, a receipt as shared element), the detail page grammar (key facts band, before you go, hand-off band, five rows, hairline folds, utility row, two columns from 1024 px), map and list in sync, rails and cuts, filter chips and the refine row, the day list and day switcher, the photo track, status not green, the small text rules, derived copy that stays silent, the comparison table, the focal card, remembered state and the still loading block. None adds a colour token; the motion tokens above are the only new tokens.
+
 **Contrast tokens, darkened (T363, owner decision 2026-10-07 in T362).** Three pairs failed the 4.5:1 floor that PRODUCT.md promises: `--ink-mute` on `--paper` (3.51:1), `--accent` as text on `--paper` (3.40:1) and `--on-fill` on `--accent` (3.67:1). The owner chose to darken the tokens, same hue: `--ink-mute` is `#646978` (5.07:1 on `--paper`, 4.63:1 on `--paper-dim`) and `--accent` is `#ce3823` (4.61:1 as text on `--paper`, 4.98:1 under white). The three hover fills keep the step they had above the old accent: `--accent-hover` `#b7321f` (6.0:1 under white; it keeps the accent's saturation, because at the old hover's lower saturation it would sit 3 Lab units from `--danger`), `--accent-press` `#8e3615` (7.8:1) and `--accent-press-alt` `#923b16` (7.3:1). Two pairs still fall short and are open: `--accent` as text on `--accent-bg` is 3.83:1 (was 2.82:1) and on `--paper-dim` 4.22:1. Lightening `--accent-bg` far enough would make it lighter than `--paper`, so a selected chip would stop reading as selected; the fix is a text step for those rules, not a paler tint (register row T363-a). Ratios are WCAG 2 relative-luminance contrast, (L1 + 0.05) / (L2 + 0.05).
 
 ## Before you ship
@@ -246,4 +265,4 @@ Read the diff and answer these seven questions, from the carta-design skill.
 6. Does every headline contain a verb or a number, and is the diff free of em dashes and the banned words?
 7. Remove one thing. There is almost always one decoration that is carrying nothing.
 
-Last synced with `src/styles/01-tokens.css`: 2026-10-07 (T363, the contrast tokens; before that 2026-10-03, T191). No hex literal remains outside the token file; the design lint baseline carries zero `hex-literal` entries.
+Last synced with `src/styles/01-tokens.css`: 2026-10-08 (T380, the six motion tokens; before that 2026-10-07, T363, the contrast tokens, and 2026-10-03, T191). No hex literal remains outside the token file; the design lint baseline carries zero `hex-literal` entries.
