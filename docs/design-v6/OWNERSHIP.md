@@ -287,7 +287,7 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/lib/nearby.js` | destination | logic |
 | `src/lib/weather.js` | destination | logic |
 
-### outdoor (43 files)
+### outdoor (44 files)
 
 | File | Surface | Kind |
 |---|---|---|
@@ -296,6 +296,7 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/browse/CyclePage.jsx` | outdoor | renders |
 | `src/browse/DerivedModules.jsx` | outdoor | renders |
 | `src/browse/DetailSkeleton.jsx` | outdoor | renders |
+| `src/browse/KeyFacts.jsx` | outdoor | renders |
 | `src/browse/LakePage.jsx` | outdoor | renders |
 | `src/browse/MountainPage.jsx` | outdoor | renders |
 | `src/browse/NearbyOutdoors.jsx` | outdoor | renders |
