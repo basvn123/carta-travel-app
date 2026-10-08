@@ -16,9 +16,14 @@ import { vevent, esc, fold, downloadIcs } from '../lib/icsExport.js';
 // "before" it starts; clamp to the last minute of the day instead.
 const clampMin = (m) => Math.min(m, 23 * 60 + 59);
 
-/** Build and download the ICS; false when no day has any picks yet. */
+/** Build and download the ICS; false when no day has any picks yet.
+ *  T389: every word goes through ctx.t (six languages, as the PDF and the KML
+ *  do), and the day starts at the plan's own start time (ctx.startMin, the
+ *  one the chat or the AI modal set) instead of a fixed 09:30. */
 export function openDayPlanIcs(ctx) {
   const { stop, stops, assignments, plan, visitFactor, itemsForStop } = ctx;
+  const t = ctx.t || ((k) => k);
+  const startMin = Number.isFinite(ctx.startMin) ? ctx.startMin : undefined;
   if (!stop) return false;
 
   const stamp = Date.now();
@@ -43,10 +48,11 @@ export function openDayPlanIcs(ctx) {
           return estimateWalkMinutes(haversineKm(a.lat, a.lon, b.lat, b.lon));
         },
         dwellMin: (it) => dwellMinutes(poiKind(it), visitFactor),
+        ...(startMin != null ? { startMin } : {}),
       });
       dayItems.forEach((it, i) => {
         const row = sched.rows[i];
-        const descBits = [poiKind(it) || 'Place'];
+        const descBits = [poiKind(it) || t('dayws.pdfPlace')];
         if (it.desc) descBits.push(String(it.desc).slice(0, 180));
         events.push(vevent({
           uid: `${stamp}-day-${si}-${di}-${i}@carta`,
@@ -56,7 +62,7 @@ export function openDayPlanIcs(ctx) {
           endTime: fmtClock(clampMin(Math.max(row.departMin, row.arriveMin + 5))),
           summary: it.name,
           location: [it.name, cityName].filter(Boolean).join(', '),
-          description: `${descBits.join('. ')}. Planned with Carta.`,
+          description: `${descBits.join('. ')}. ${t('dayws.icsPlanned')}`,
         }));
       });
       if (sched.lunch) {
@@ -66,14 +72,14 @@ export function openDayPlanIcs(ctx) {
           startTime: fmtClock(clampMin(sched.lunch.startMin)),
           endDate: date,
           endTime: fmtClock(clampMin(sched.lunch.endMin)),
-          summary: cityName ? `Lunch in ${cityName}` : 'Lunch',
+          summary: cityName ? t('dayws.icsLunchIn', { city: cityName }) : t('dayws.icsLunch'),
         }));
       }
     });
   });
   if (!events.length) return false;
 
-  const label = plan?.label || stop.dest?.city || 'My day plans';
+  const label = plan?.label || stop.dest?.city || t('dayws.kmlFallback');
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',

@@ -12,7 +12,8 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  height: calc(100vh - var(--header-h, 64px) - 92px);
+  /* T389: dvh, so a collapsing address bar never hides the chat's input. */
+  height: calc(100dvh - var(--header-h, 64px) - 92px);
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
@@ -441,7 +442,7 @@
   }
   .day-flow-chip { width: 100%; justify-content: center; }
   .chat-flow {
-    height: calc(100vh - var(--header-h, 56px) - 40px);
+    height: calc(100dvh - var(--header-h, 56px) - 40px);
     padding: 14px 14px 12px;
     border-radius: 16px;
   }

@@ -20,12 +20,15 @@ import { googleMapsDirUrl } from '../lib/routing.js';
  * @param {function} ctx.itemsForStop   (stop) => { items } the coordinate-bearing POI list
  * @param {function} ctx.estimateWalkMinutes (km) => minutes
  * @param {function} ctx.fmtDur         (minutes) => human duration string
+ * @param {function} ctx.t              the i18n lookup: every word in the booklet is translated (T389)
+ * @param {string}   ctx.lang           the UI language, for the document's lang attribute
  */
 export function openDayPlanPdf(ctx) {
   const {
     stop, stops, assignments, plan, days, visitFactor,
-    itemsForStop, estimateWalkMinutes, fmtDur,
+    itemsForStop, estimateWalkMinutes, fmtDur, lang = 'en',
   } = ctx;
+  const t = ctx.t || ((k) => k);
   if (!stop) return;
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -37,16 +40,13 @@ export function openDayPlanPdf(ctx) {
   const blurb = (it, city) => {
     const d = (it.desc || '').trim();
     if (d) return /[.!?]$/.test(d) ? d : `${d}.`;
-    const kind = (poiKind(it) || 'place').toLowerCase();
-    const article = /^[aeiou]/.test(kind) ? 'An' : 'A';
-    let s = `${article} ${kind} in ${city}`;
-    if (it.heritage) s += ', on the cultural-heritage register';
-    return `${s}.`;
+    const kind = poiKind(it) || t('dayws.pdfPlace');
+    return t(it.heritage ? 'dayws.pdfBlurbHeritage' : 'dayws.pdfBlurb', { kind, city });
   };
   const accolade = (it) => {
-    if (isMustSee(it)) return "One of the city's essential sights.";
-    if ((it.rate ?? 0) >= 2) return 'A well-loved stop, worth the time.';
-    if (it.active) return 'A good pick for an active, outdoors stretch.';
+    if (isMustSee(it)) return t('dayws.pdfAccMust');
+    if ((it.rate ?? 0) >= 2) return t('dayws.pdfAccLoved');
+    if (it.active) return t('dayws.pdfAccActive');
     return '';
   };
   // Pin the exact coordinates: a "<sight>, <city>" name search geocodes and
@@ -62,7 +62,7 @@ export function openDayPlanPdf(ctx) {
   let plannedDays = 0;
   const cityBlocks = stops.map((s, si) => {
     const { items } = itemsForStop(s);
-    const cityName = s.dest?.city || 'This city';
+    const cityName = s.dest?.city || t('day.thisCity');
     // Day numbers continue across the whole trip (city 2 doesn't restart at 1).
     const cityDayOffset = stops.slice(0, si).reduce((n, x) => n + x.nights, 0);
     const cityDays = Array.from({ length: s.nights }, (_, i) => addDays(s.arrive_date, i));
@@ -85,9 +85,9 @@ export function openDayPlanPdf(ctx) {
       }
       const dayDwell = dayItems.reduce((n, it) => n + dwellMinutes(poiKind(it), visitFactor), 0);
       const meta = [
-        `${dayItems.length} ${dayItems.length === 1 ? 'stop' : 'stops'}`,
-        dayKm > 0.05 ? `~${dayKm.toFixed(1)} km, ~${estimateWalkMinutes(dayKm)} min on foot` : '',
-        dayDwell > 0 ? `~${fmtDur(dayDwell)} at the sights` : '',
+        t(dayItems.length === 1 ? 'dayws.pdfStopsOne' : 'dayws.pdfStopsMany', { n: dayItems.length }),
+        dayKm > 0.05 ? t('dayws.pdfDayWalk', { km: dayKm.toFixed(1), n: estimateWalkMinutes(dayKm) }) : '',
+        dayDwell > 0 ? t('dayws.pdfDayDwell', { dur: fmtDur(dayDwell) }) : '',
       ].filter(Boolean).join(', ');
 
       const rows = dayItems.map((it, i) => {
@@ -95,13 +95,13 @@ export function openDayPlanPdf(ctx) {
         let walk = '';
         if (next && it.lat != null && it.lon != null && next.lat != null && next.lon != null) {
           const km = haversineKm(it.lat, it.lon, next.lat, next.lon);
-          if (km != null) walk = `<div class="walk">&darr;&ensp;~${estimateWalkMinutes(km)} min walk, ${km.toFixed(1)} km</div>`;
+          if (km != null) walk = `<div class="walk">${esc(t('dayws.pdfLegWalk', { n: estimateWalkMinutes(km), km: km.toFixed(1) }))}</div>`;
         }
         const acc = accolade(it);
         const purl = placeUrl(it);
         const links = [
-          purl ? `<a href="${purl}">Open in Maps</a>` : '',
-          safeUrl(it.wiki) ? `<a href="${esc(safeUrl(it.wiki))}">Read more</a>` : '',
+          purl ? `<a href="${purl}">${esc(t('dayws.pdfOpenMaps'))}</a>` : '',
+          safeUrl(it.wiki) ? `<a href="${esc(safeUrl(it.wiki))}">${esc(t('dayws.pdfReadMore'))}</a>` : '',
         ].filter(Boolean).join('');
         return `<li class="stop">
             <div class="stop-row">
@@ -110,8 +110,8 @@ export function openDayPlanPdf(ctx) {
                 <div class="stop-head">
                   <span class="stop-name">${esc(it.name)}</span>
                   ${poiKind(it) ? `<span class="tag">${esc(poiKind(it))}</span>` : ''}
-                  ${isMustSee(it) ? '<span class="chip must">Must see</span>' : ''}
-                  ${it.heritage ? '<span class="chip heritage">Heritage</span>' : ''}
+                  ${isMustSee(it) ? `<span class="chip must">${esc(t('day.mustSee'))}</span>` : ''}
+                  ${it.heritage ? `<span class="chip heritage">${esc(t('dayws.pdfHeritage'))}</span>` : ''}
                 </div>
                 <p class="blurb">${esc(blurb(it, cityName))}${acc ? ` <span class="accolade">${esc(acc)}</span>` : ''}</p>
                 ${links ? `<div class="stop-links">${links}</div>` : ''}
@@ -123,11 +123,11 @@ export function openDayPlanPdf(ctx) {
 
       return `<section class="day">
           <div class="day-head">
-            <div class="day-title">Day ${cityDayOffset + di + 1}<span class="date">${esc(fmtDateFull(date, true))}</span></div>
+            <div class="day-title">${esc(t('itin.dayN', { n: cityDayOffset + di + 1 }))}<span class="date">${esc(fmtDateFull(date, true))}</span></div>
             <div class="day-meta">${meta}</div>
           </div>
           <ol>${rows}</ol>
-          ${gurl ? `<div class="day-route"><a href="${gurl}">Open the whole day in Google Maps &rarr;</a></div>` : ''}
+          ${gurl ? `<div class="day-route"><a href="${gurl}">${esc(t('dayws.pdfWholeDay'))}</a></div>` : ''}
         </section>`;
     }).filter(Boolean).join('');
     if (!daySections) return '';
@@ -138,7 +138,7 @@ export function openDayPlanPdf(ctx) {
   }).filter(Boolean).join('');
   if (!totalPlaces) return;
 
-  const title = plan.label || stop.dest?.city || 'Your day plan';
+  const title = plan.label || stop.dest?.city || t('dayws.pdfTitleFallback');
   const citiesWithPlans = stops.filter((s, si) => {
     const { items } = itemsForStop(s);
     return Array.from({ length: s.nights }).some((_, di) => (
@@ -146,14 +146,14 @@ export function openDayPlanPdf(ctx) {
     ));
   }).length;
   const subParts = [
-    days[0] ? `From ${esc(fmtDateFull(stops[0]?.arrive_date || days[0], true))}` : '',
-    `${plannedDays} planned ${plannedDays === 1 ? 'day' : 'days'}`,
-    `${totalPlaces} ${totalPlaces === 1 ? 'place' : 'places'}`,
-    citiesWithPlans > 1 ? `${citiesWithPlans} cities` : '',
+    days[0] ? esc(t('dayws.pdfFrom', { date: fmtDateFull(stops[0]?.arrive_date || days[0], true) })) : '',
+    esc(t(plannedDays === 1 ? 'dayws.pdfDaysOne' : 'dayws.pdfDaysMany', { n: plannedDays })),
+    esc(t(totalPlaces === 1 ? 'dayws.pdfPlacesOne' : 'dayws.pdfPlacesMany', { n: totalPlaces })),
+    citiesWithPlans > 1 ? esc(t('dayws.pdfCities', { n: citiesWithPlans })) : '',
   ].filter(Boolean).join(', ');
 
-  const html = `<!doctype html><html><head><meta charset="utf-8">
-      <title>${esc(title)}, day plan</title>
+  const html = `<!doctype html><html lang="${esc(lang)}"><head><meta charset="utf-8">
+      <title>${esc(t('dayws.pdfDocTitle', { title }))}</title>
       <style>
         :root {
           --paper:#f5f1e8; --paper-dim:#ebe6d8; --ink:#1a1a1a; --ink-soft:#4a4a48;
@@ -211,10 +211,10 @@ export function openDayPlanPdf(ctx) {
         <div class="kicker">Carta, Europe Travel</div>
         <h1>${esc(title)}</h1>
         <div class="cover-sub">${subParts}</div>
-        <p class="cover-note">Your day-by-day plan, in walking order. Every place has a short note on what it is, a link to open it in Google Maps, and each day closes with a link to the whole route. Walking times are straight-line estimates.</p>
+        <p class="cover-note">${esc(t('dayws.pdfNote'))}</p>
       </header>
       ${cityBlocks}
-      <footer><span>Planned with Carta, Europe Travel</span><span>carta.travel</span></footer>
+      <footer><span>${esc(t('dayws.pdfFooter'))}</span><span>carta-europetravel.com</span></footer>
       </body></html>`;
 
   const w = window.open('', '_blank');

@@ -16,7 +16,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4193;
+// CARTA_PORT (T389): a parallel session may hold the default port with its own
+// preview, so a run can name its own server instead of testing someone else's.
+const PORT = Number(process.env.CARTA_PORT) || 4193;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 const PROJECT_REF = 'ntssxktaduxzpsmejwyv';
@@ -137,7 +139,11 @@ const seed = async (page, { plans = [], signedIn = false, geo = 'grant' } = {}) 
 
 const openStep1 = async (page) => {
   await page.goto(`${BASE}/?tab=day&o=CRL`);
-  await page.locator('.day-flow-search input').waitFor({ timeout: 120000 });
+  // T389 (brief V3-5): with day plans on the device the landing leads with
+  // them and "Plan a new day"; the stay question is one tap behind it.
+  await page.locator('.day-flow-search input, .day-flow-newday').first().waitFor({ timeout: 120000 });
+  if (await page.locator('.day-flow-newday').count()) await page.locator('.day-flow-newday').click();
+  await page.locator('.day-flow-search input').waitFor({ timeout: 30000 });
   await page.waitForTimeout(900);
 };
 

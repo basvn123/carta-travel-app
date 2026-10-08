@@ -17,7 +17,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4193;
+// CARTA_PORT (T389): a parallel session may hold the default port with its own
+// preview, so a run can name its own server instead of testing someone else's.
+const PORT = Number(process.env.CARTA_PORT) || 4193;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -78,7 +80,10 @@ try {
   console.log('loading app...');
   await page.goto(`${BASE}/?tab=day&o=CRL`);
 
-  const card = page.locator('.trip-saved-main', { hasText: 'Salzburg day' }).first();
+  // T389 (row T378-f): the saved day-plan cards are DayTripCards' .dtcard
+  // buttons now; .trip-saved-main went with the old list and left this
+  // harness waiting on a selector that never appears.
+  const card = page.locator('button.dtcard', { hasText: 'Salzburg day' }).first();
   await card.waitFor({ timeout: 90000 });
   console.log('opening the seeded plan...');
   await card.click();
@@ -156,29 +161,35 @@ try {
     fail(`the plan list still carries times or distances: "${listText.slice(0, 120)}"`);
   } else pass('the plan list carries no legs, distances or clock times');
 
-  console.log('\n3. Two controls above the list');
-  const roundBtns = page.locator('.dayp-bar .dayp-round');
-  if (await roundBtns.count() !== 2) fail(`expected 2 controls above the list, got ${await roundBtns.count()}`);
-  else pass('two controls: add and share');
-  if (await page.locator('.dayp-menu').count() !== 0) fail('a menu is open before anything was clicked');
-  await roundBtns.first().click();
-  const addItems = page.locator('.dayp-menu .dayp-menu-item');
+  // T389 (brief V3-4, carta-design "Day list"): the two icon circles became a
+  // toolbar of two labelled buttons, Add and Share, and each opens the shared
+  // sheet (SheetShell: anchored on a pointer screen, a bottom sheet on a
+  // phone) instead of a dropdown that ran under the bottom nav. The Add sheet
+  // now also holds the Carta bot's asks, so the old bot section (7) checks
+  // them there. The assertions below follow the new controls.
+  console.log('\n3. One toolbar above the list: Add and Share');
+  const toolBtns = page.locator('.dayp-bar .dayp-tool');
+  if (await toolBtns.count() !== 2) fail(`expected 2 controls above the list, got ${await toolBtns.count()}`);
+  else pass(`two labelled controls: ${(await toolBtns.allInnerTexts()).map((s) => s.trim()).join(' | ')}`);
+  if (await page.locator('.dayp-sheet').count() !== 0) fail('a sheet is open before anything was clicked');
+  await toolBtns.first().click();
+  const addItems = page.locator('.dayp-sheet .dayp-menu-item');
   const nAdd = await addItems.count();
-  if (nAdd < 2) fail(`the add menu holds ${nAdd} items`);
-  else pass(`add menu: ${(await addItems.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
+  if (nAdd < 2) fail(`the add sheet holds ${nAdd} items`);
+  else pass(`add sheet: ${(await addItems.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
   await page.keyboard.press('Escape');
-  if (await page.locator('.dayp-menu').count() !== 0) fail('Escape did not close the add menu');
-  else pass('Escape closes the add menu');
+  if (await page.locator('.dayp-sheet').count() !== 0) fail('Escape did not close the add sheet');
+  else pass('Escape closes the add sheet');
 
-  await roundBtns.nth(1).click();
-  const shareItems = page.locator('.dayp-menu-end .dayp-menu-item');
+  await toolBtns.nth(1).click();
+  const shareItems = page.locator('.dayp-sheet .dayp-menu-item');
   const nShare = await shareItems.count();
   if (nShare !== 5) fail(`expected 5 share items, got ${nShare}`);
-  else pass(`share menu: ${(await shareItems.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
+  else pass(`share sheet: ${(await shareItems.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
   await page.screenshot({ path: `${SHOTS}/day-ws-share-menu.png` });
-  await page.locator('.trip-topcard').click();
-  if (await page.locator('.dayp-menu').count() !== 0) fail('outside click did not close the share menu');
-  else pass('outside click closes the share menu');
+  await page.locator('.dayp-sheet .fsheet-close').click();
+  if (await page.locator('.dayp-sheet').count() !== 0) fail('the close control did not close the share sheet');
+  else pass('the close control closes the share sheet');
 
   console.log('\n4. Rows and pins stay in sync');
   await rows.nth(1).hover();
@@ -258,20 +269,26 @@ try {
   else pass('the group note persists with the plan');
   await page.screenshot({ path: `${SHOTS}/day-ws-files.png` });
 
-  console.log('\n7. The Carta bot offers predefined asks');
+  // T389 (rule N3): no floating bot over the map any more; its asks live in
+  // the toolbar's Add sheet under "Ask Carta", and "Reorder the route" is
+  // offered there once (it was in both menus before).
+  console.log('\n7. Carta\'s predefined asks sit in the Add sheet');
   await tabs.nth(0).click();
-  const fab = page.locator('.dayws-bot-fab');
-  if (await fab.count() !== 1) fail('no Carta bot button over the map');
-  else {
-    await fab.click();
-    const items = page.locator('.dayws-bot-item');
+  if (await page.locator('.dayws-bot-fab').count() !== 0) fail('the floating Carta bot is still over the map');
+  else pass('no floating bot over the map');
+  {
+    await page.locator('.dayp-bar .dayp-tool').first().click();
+    const items = page.locator('.dayp-sheet .dayp-menu-item');
     const n = await items.count();
-    if (n < 4) fail(`the bot offers only ${n} asks`);
-    else pass(`bot asks: ${(await items.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
+    if (n < 6) fail(`the Add sheet offers only ${n} items`);
+    else pass(`Add sheet asks: ${(await items.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
+    const labels = (await items.allInnerTexts()).map((s) => s.split('\n')[0].trim().toLowerCase());
+    if (new Set(labels).size !== labels.length) fail(`an action is offered twice: ${labels.join(' | ')}`);
+    else pass('every action is offered once');
     await page.screenshot({ path: `${SHOTS}/day-ws-bot.png` });
-    // "Put the stops in walking order" must run here, not open a dialog.
-    const reorder = items.filter({ hasText: /walking order/i }).first();
-    if (await reorder.count() === 0) fail('the bot cannot reorder the route');
+    // "Reorder the route" must run here, not open a dialog.
+    const reorder = items.filter({ hasText: /reorder/i }).first();
+    if (await reorder.count() === 0) fail('the Add sheet cannot reorder the route');
     else {
       await reorder.click();
       await page.waitForTimeout(700);

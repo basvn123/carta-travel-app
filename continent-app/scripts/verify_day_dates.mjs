@@ -20,7 +20,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4194;
+// CARTA_PORT (T389): a parallel session may hold the default port with its own
+// preview, so a run can name its own server instead of testing someone else's.
+const PORT = Number(process.env.CARTA_PORT) || 4194;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 const PROJECT_REF = 'ntssxktaduxzpsmejwyv';

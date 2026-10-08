@@ -14,7 +14,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4193;
+// CARTA_PORT (T389): a parallel session may hold the default port with its own
+// preview, so a run can name its own server instead of testing someone else's.
+const PORT = Number(process.env.CARTA_PORT) || 4193;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -105,7 +107,10 @@ try {
   await page.goto(`${BASE}/?tab=day&o=CRL`);
 
   // Open the seeded plan from the day-planner landing list.
-  const card = page.locator('.trip-saved-main', { hasText: 'Salzburg day' }).first();
+  // T389 (row T378-f): the saved day-plan cards are DayTripCards' .dtcard
+  // buttons now; .trip-saved-main went with the old list and left this
+  // harness waiting on a selector that never appears.
+  const card = page.locator('button.dtcard', { hasText: 'Salzburg day' }).first();
   await card.waitFor({ timeout: 90000 });
   console.log('opening the seeded plan...');
   await card.click();
@@ -204,7 +209,10 @@ try {
   if (/\bkm\b|\d+\s*min/.test(timelineText)) fail('the route list still carries leg distances');
   else pass('no leg distances in the route list');
   const statText = await page.locator('.day-topcard-stats').innerText();
-  if (!/km/.test(statText)) fail(`the header strip lost the walking total: "${statText}"`);
+  // T389: the walking total is in steps since the D5 rebuild ("3,000 steps on
+  // foot"), so the old /km/ test failed on a correct header; it now accepts
+  // either unit.
+  if (!/km|steps/i.test(statText)) fail(`the header strip lost the walking total: "${statText}"`);
   else pass(`the day's numbers live once, in the header: "${statText.replace(/\s+/g, ' ').trim()}"`);
 
   // No title is visually clipped. textContent is always the full name even

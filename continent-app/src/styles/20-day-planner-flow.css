@@ -494,7 +494,8 @@
    at eight so a long day never feels slow to arrive. */
 @media (prefers-reduced-motion: no-preference) {
   .ai-sched-stop {
-    animation: ai-sched-in 320ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    /* T389: the overshoot curve went (DIRECTION.md 2.1: no overshoot). */
+    animation: ai-sched-in var(--dur-3) var(--ease-out) both;
   }
   .ai-sched-stop:nth-child(2) { animation-delay: 45ms; }
   .ai-sched-stop:nth-child(3) { animation-delay: 90ms; }
@@ -780,21 +781,10 @@ margin-bottom: 8px;
   padding-bottom: 2px;
   border-bottom: 1px solid var(--rule);
 }
-/* The help button rides the title line, where the wizard keeps its close. */
+/* T389: the help circle left the title line; "How this works" is now a text
+   button under the question (.day-flow-howto in 68-v6-dayplanner.css). */
 .day-flow-top .shape-head-title { padding-right: 0; }
-.day-flow-top .day-flow-help { margin-left: auto; }
 .day-flow-top .wiz-steps { margin-top: 8px; }
-.day-flow-help {
-  flex: 0 0 auto;
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  border: 1px solid var(--rule);
-  background: transparent;
-  color: var(--ink-soft);
-  display: inline-flex; align-items: center; justify-content: center;
-  cursor: pointer;
-}
-.day-flow-help:hover { border-color: var(--accent); color: var(--accent); }
 .day-flow-help-card {
   border: 1px solid var(--rule);
   border-radius: 12px;
@@ -802,7 +792,6 @@ margin-bottom: 8px;
   padding: 14px 16px;
   margin-bottom: 20px;
 }
-.day-flow-help-card b { font-size: 13px; color: var(--ink); }
 .day-flow-help-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; margin: 6px 0 10px; }
 .day-flow-help-close {
   border: 1px solid var(--rule); border-radius: 8px;
@@ -1028,20 +1017,26 @@ margin-bottom: 8px;
 .dtsignin-text { flex: 1 1 auto; min-width: 0; }
 .dtsignin-text b { display: block; font-size: 14px; }
 .dtsignin-text p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
+/* T389 (brief V3-6): "Sign in" and "Plan a trip" are secondaries. Sign in was
+   the only filled control on the day planner's first screen, so the page's
+   answer to "what do I do here" was to sign in rather than to say where the
+   day starts. */
 .dtsignin-btn,
 .dtempty-btn {
   flex: none;
   padding: 10px 16px;
-  min-height: 40px;
-  border: none;
-  border-radius: 10px;
-  background: var(--accent);
-  color: var(--on-fill);
+  min-height: var(--tap);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
-.dtsignin-btn:hover, .dtempty-btn:hover { filter: brightness(1.05); }
+@media (hover: hover) {
+  .dtsignin-btn:hover, .dtempty-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+}
 .dtempty { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .dtempty p { margin: 0; font-size: 13px; color: var(--ink-soft); }
 
@@ -1402,9 +1397,17 @@ margin-bottom: 8px;
   background: var(--paper);
   text-align: left;
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  transition: border-color var(--dur-1) var(--ease-out);
 }
-.day-flow-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: var(--accent); }
+/* T389: no lift and no accent on hover. The two cards are equal weight
+   (carta-design plan cards), so hovering one must not make it look like the
+   recommended one; the ink border says "this is the one under the pointer". */
+@media (hover: hover) {
+  .day-flow-card:hover { border-color: var(--ink); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .day-flow-card { transition: none; }
+}
 /* A card-sized button with no visible focus ring is unreachable by keyboard in
    practice: you cannot tell which of the two you are about to press. */
 .day-flow-card:focus-visible {
@@ -1453,7 +1456,7 @@ margin-bottom: 8px;
   color: var(--ink-soft);
   text-align: left;
 }
-.day-flow-card-points li svg { flex: 0 0 auto; margin-top: 2px; color: var(--accent); }
+.day-flow-card-points li svg { flex: 0 0 auto; margin-top: 2px; color: var(--ink-soft); }
 /* The action every card ends in, so the fork is two buttons and not one button
    beside a leaflet. Only the recommended card fills its action: two saturated
    blocks side by side made the screen shout twice and said neither was the
@@ -1473,11 +1476,6 @@ margin-bottom: 8px;
   transition: border-color 0.12s ease, color 0.12s ease;
 }
 .day-flow-card:hover .day-flow-card-go { border-color: var(--ink); }
-.day-flow-card.primary .day-flow-card-go {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-fill);
-}
 /* A picture of the difference, above the words for it. Carta's route is a
    line that visits places; building it yourself is the places themselves. The
    two previews are the same height and the same width, so what changes
@@ -1492,7 +1490,6 @@ margin-bottom: 8px;
   display: flex;
 }
 .day-flow-card-prev svg { width: 100%; height: 100%; display: block; }
-.day-flow-card.primary .day-flow-card-prev { border-color: var(--accent-soft); background: var(--paper); }
 /* The three-thumb collage: real photos of real places near the stay, so the
    manual card shows what browsing would actually put in front of you. */
 .day-flow-card-thumbs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; width: 100%; }
@@ -1501,9 +1498,10 @@ margin-bottom: 8px;
   min-height: 0;
 }
 .day-flow-card { border-width: 1.5px; }
-.day-flow-card.primary { border-color: var(--accent); background: var(--accent-bg); }
-.day-flow-card.primary .day-flow-card-ico { background: var(--accent); color: var(--on-fill); }
-.day-flow-card.primary b { color: var(--accent); }
+/* T389 (brief V3-6): the fork's cards are equal weight. The recommended one is
+   marked by its accent border and the Recommended badge only, with the same
+   ground, title, icon and action as the other (carta-design plan cards). */
+.day-flow-card.primary { border-color: var(--accent); }
 
 /* ───────── Step 3: anything already in mind ───────── */
 
@@ -1529,12 +1527,19 @@ margin-bottom: 8px;
   background: var(--paper);
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.12s ease, background 0.12s ease, transform 0.12s ease;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.day-ideas-choice-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
-.day-ideas-choice-btn.on { border-color: var(--accent); background: var(--accent-bg); }
+/* T389: the chosen answer is the house selected state (a 2px ink border, no
+   --accent-bg ground): the accent title on --accent-bg read at 3.83:1
+   (verify_quality_floor.mjs), and a hover no longer lifts the card. */
+@media (hover: hover) {
+  .day-ideas-choice-btn:hover { border-color: var(--ink-soft); }
+}
+.day-ideas-choice-btn.on { border: 2px solid var(--ink); padding: 15.5px 17.5px; }
+@media (prefers-reduced-motion: reduce) {
+  .day-ideas-choice-btn { transition: none; }
+}
 .day-ideas-choice-btn b { font-size: 15px; color: var(--ink); }
-.day-ideas-choice-btn.on b { color: var(--accent); }
 .day-ideas-choice-btn small { font-size: 12.5px; color: var(--ink-soft); line-height: 1.45; }
 .day-ideas-choice-ico {
   display: inline-flex; align-items: center; justify-content: center;
@@ -1544,7 +1549,7 @@ margin-bottom: 8px;
   background: var(--paper-dim);
   color: var(--ink);
 }
-.day-ideas-choice-btn.on .day-ideas-choice-ico { background: var(--accent); color: var(--on-fill); }
+.day-ideas-choice-btn.on .day-ideas-choice-ico { background: var(--ink-fill); color: var(--on-fill); }
 
 .day-ideas-body { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
 
@@ -1557,8 +1562,9 @@ margin-bottom: 8px;
   align-items: center;
   gap: 10px;
   padding: 8px 8px 8px 10px;
+  /* T389: the 3px accent stripe went (carta-design accent marks: no stripe on
+     an inert control). */
   border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
   border-radius: 10px;
   background: var(--paper);
 }

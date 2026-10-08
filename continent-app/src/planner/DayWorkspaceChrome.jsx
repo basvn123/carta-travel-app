@@ -6,6 +6,7 @@ import { CountryIntel } from '../components/CountryIntel.jsx';
 import {
   BedIcon, BulbIcon, SearchIcon, SparkIcon, RouteIcon, ListDayIcon,
   TicketIcon, PlusIcon, StarIcon, MountainIcon, InfoIcon, CloseIcon,
+  ChevronRightIcon, ChevronDownIcon,
 } from '../components/Icons.jsx';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
 
@@ -201,47 +202,80 @@ export function DayTipsPanel({
   );
 }
 
-/** The Carta bot, as a button that already knows what it can be asked. */
-export function CartaBotFab({ dayNumber, hasPlan, onPick }) {
+/**
+ * The day switcher (carta-design "Day list", rule N7; T389).
+ *
+ * Inside one plan the days are switched with one control: "Day 2, Thu 15 Oct"
+ * with Previous and Next beside it, walking through every day of the plan in
+ * order, across cities. It replaced a row of "Day N" chips and a second row
+ * of city chips that together took two bands of a phone screen above the
+ * first stop. Adding a day or a city is rarer, so both live in one "More"
+ * menu at the end of the row (carta-design "More" menu).
+ *
+ * The arrow keys move a day while the switcher has focus, as on the day track.
+ */
+export function DaySwitcher({
+  index, total, label, date, onPrev, onNext, moreItems = [],
+}) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
-  const prompts = BOT_PROMPTS.filter((p) => !p.needsPlan || hasPlan);
-
+  const onKey = (e) => {
+    if (e.key === 'ArrowLeft' && index > 0) { e.preventDefault(); onPrev(); }
+    if (e.key === 'ArrowRight' && index < total - 1) { e.preventDefault(); onNext(); }
+  };
   return (
-    <div className={`dayws-bot${open ? ' open' : ''}`} ref={ref}>
-      {open && (
-        <div className="dayws-bot-menu" role="menu">
-          <div className="dayws-bot-head">
-            <span className="dayws-bot-avatar" aria-hidden="true"><SparkIcon size={13} /></span>
-            <span>
-              <b>{t('dayws.botTitle')}</b>
-              <small>{t('dayws.botSub', { n: dayNumber })}</small>
-            </span>
-          </div>
-          {prompts.map(({ key, labelKey, subKey, Icon }) => (
-            <button
-              key={key}
-              className="dayws-bot-item"
-              role="menuitem"
-              onClick={() => { setOpen(false); onPick(key); }}
-            >
-              <Icon size={14} />
-              <span><b>{t(labelKey)}</b><small>{t(subKey)}</small></span>
-            </button>
-          ))}
+    <div className="day-sw" role="group" aria-label={t('dayws.daySwitchAria')} onKeyDown={onKey}>
+      <button
+        type="button"
+        className="day-sw-btn day-sw-prev"
+        onClick={onPrev}
+        disabled={index <= 0}
+        aria-label={t('dayws.dayPrev')}
+        title={t('dayws.dayPrev')}
+      ><ChevronRightIcon size={16} /></button>
+      <span className="day-sw-label" aria-live="polite">
+        <span className="day-sw-day">{label}</span>
+        {date && <span className="day-sw-date">{date}</span>}
+      </span>
+      <button
+        type="button"
+        className="day-sw-btn day-sw-next"
+        onClick={onNext}
+        disabled={index >= total - 1}
+        aria-label={t('dayws.dayNext')}
+        title={t('dayws.dayNext')}
+      ><ChevronRightIcon size={16} /></button>
+      {moreItems.length > 0 && (
+        <div className="day-sw-more" ref={ref}>
+          <button
+            type="button"
+            className="day-sw-morebtn"
+            onClick={() => setOpen((v) => !v)}
+            aria-haspopup="menu"
+            aria-expanded={open}
+          >
+            <span>{t('dayws.more')}</span>
+            <ChevronDownIcon size={14} />
+          </button>
+          {open && (
+            <div className="dayp-menu day-sw-menu" role="menu">
+              {moreItems.map((m) => (
+                <button
+                  key={m.key}
+                  type="button"
+                  role="menuitem"
+                  className="dayp-menu-item"
+                  onClick={() => { setOpen(false); m.onSelect(); }}
+                >
+                  <PlusIcon size={14} />
+                  <span><b>{m.label}</b></span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
-      <button
-        className="dayws-bot-fab"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        title={t('dayws.botTitle')}
-      >
-        <SparkIcon size={18} />
-        <span className="dayws-bot-fab-label">{t('dayws.botShort')}</span>
-      </button>
     </div>
   );
 }

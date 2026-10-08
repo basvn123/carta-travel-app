@@ -9,7 +9,8 @@ import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { haversineKm } from '../lib/runtime_pricing.js';
 import { cityLabel } from '../lib/placeName.js';
 import { fmtDate } from '../lib/dates.js';
-import { formatSteps, kmToSteps } from '../lib/steps.js';
+import { formatSteps, kmToSteps, stepsToKm } from '../lib/steps.js';
+import { fmtDur } from './dayFormat.js';
 import { loadBeaches } from '../lib/beaches.js';
 import { loadLakes } from '../lib/lakes.js';
 import { loadTrails } from '../lib/trails.js';
@@ -18,7 +19,8 @@ import { tripCentre } from '../lib/trailCards.js';
 import { bandChip } from '../lib/regions.js';
 import {
   RAIL_KM, poiRow, waterRow, trailRow, townRow, doRow, eventRow,
-  eventOnDate, distanceLine, stepsForRoute, orderFromStay,
+  eventOnDate, stepsForRoute, orderFromStay,
+  LOCAL_KM, townReach, reachLine, TOWN_VISIT_MIN, PLACE_VISIT_MIN, DAY_FIT_MIN,
 } from './dayExploreRails.js';
 import { scrollBehavior } from '../lib/motion.js';
 
@@ -91,7 +93,9 @@ function useNearViewport(fn) {
 
 /** One place, as a card: photo, name, rating, how far, and one tap to add. */
 function PlaceCard({ row, picked, onToggle, onOpen, highlighted, onHover, t }) {
-  const dist = distanceLine(row.km, t);
+  // A town further than a walk says how you get there without a car first
+  // ("about 46 min by train"), not how far a car would drive (T389).
+  const dist = reachLine(row, t);
   return (
     <div
       className={`dayex-card${highlighted ? ' is-hi' : ''}`}
@@ -189,8 +193,8 @@ export function DayExploreBuilder({
   ideas = [], shortlistPoints = [],
   picks, onTogglePick, onMovePick, townPicks, onToggleTown,
   onStartPlanning, onLetCartaPlan, onChangeStay, onOpenDest, onOpenFeature,
-  editing = false,
 }) {
+
   const { t } = useI18n();
   const [chip, setChip] = useState('all');
   const [view, setView] = useState('list');
@@ -302,7 +306,11 @@ export function DayExploreBuilder({
     .filter((tn) => tn.id !== stayTownId)
     .map(townRow)
     .sort((a, b) => (b.score - a.score) || (a.km - b.km))
-    .slice(0, 18), [exploreTowns, stayTownId]);
+    .slice(0, 18)
+    .map((r) => {
+      const tn = exploreTowns.find((x) => x.id === r.add.town);
+      return (r.km ?? 0) >= LOCAL_KM ? { ...r, reach: townReach(homeTown?.dest, tn?.dest) } : r;
+    }), [exploreTowns, stayTownId, homeTown]);
 
   /**
    * The ideas from step 3, as cards.
@@ -444,6 +452,21 @@ export function DayExploreBuilder({
     [stay, trayRows],
   );
 
+  // Towns in the tray are rides, not walks (brief V3-7): each one counts its
+  // minutes there and back by the mode its card states, and never adds to the
+  // step count, which is why "2 places, about 0 steps" could print before.
+  const townRide = useCallback((id) => {
+    const row = townRows.find((r) => r.add?.town === id);
+    if (row) return row.reach?.min ? row.reach.min : 0;
+    const tn = exploreTowns.find((x) => x.id === id);
+    if (!tn || (tn.km ?? 0) < LOCAL_KM) return 0;
+    return townReach(homeTown?.dest, tn.dest)?.min || 0;
+  }, [townRows, exploreTowns, homeTown]);
+  const rideRoundMin = useMemo(
+    () => townPicks.reduce((n, s) => n + 2 * townRide(s.destinationId), 0),
+    [townPicks, townRide],
+  );
+
   const toggle = useCallback((row) => {
     if (row.add?.town) onToggleTown(row.add.town);
     else if (row.add) onTogglePick(row.add);
@@ -488,9 +511,23 @@ export function DayExploreBuilder({
   }, []);
 
   const count = picks.length + townPicks.length;
+  const placesPart = picks.length
+    ? t(picks.length === 1 ? 'dayex.trayOne' : 'dayex.trayMany', { n: picks.length, steps: formatSteps(steps) })
+    : '';
+  const nTowns = townPicks.length;
+  const townsPart = !nTowns ? '' : rideRoundMin
+    ? t(nTowns === 1 ? 'dayex.trayTownOne' : 'dayex.trayTownMany', { n: nTowns, time: fmtDur(rideRoundMin) })
+    : t(nTowns === 1 ? 'dayex.trayTownBareOne' : 'dayex.trayTownBareMany', { n: nTowns });
   const trayLabel = count === 0
     ? t('dayex.trayEmpty')
-    : t(count === 1 ? 'dayex.trayOne' : 'dayex.trayMany', { n: count, steps: formatSteps(steps) });
+    : placesPart && townsPart ? t('dayex.trayJoin', { a: placesPart, b: townsPart }) : (placesPart || townsPart);
+  // Whether the picks still fit one day: the rides there and back, a half day
+  // in each town, an hour at each place and the walking between them. Past
+  // nine hours the tray says so in one sentence rather than letting a day
+  // that cannot be done look like a plan.
+  const walkMin = Math.round((stepsToKm(steps) / 4.6) * 60);
+  const dayMin = rideRoundMin + nTowns * TOWN_VISIT_MIN + picks.length * PLACE_VISIT_MIN + walkMin;
+  const tooLong = count > 0 && dayMin > DAY_FIT_MIN;
 
   return (
     <div className={`dayex${view === 'map' ? ' dayex-mapview' : ''}`}>
@@ -589,10 +626,15 @@ export function DayExploreBuilder({
               {ideaRows.length > 0 && (
                 <Rail title={t('dayex.railIdeas')} sub={t('dayex.railIdeasSub')} rows={ideaRows} {...cardProps} />
               )}
+              {/* The rails run from the door outwards (brief V3-7): what is on
+                  that day, then what you walk to (sights, walks and nature,
+                  things to do, food, your shortlist), and only then the beaches,
+                  lakes and towns that need a ride. A Rome hotel used to open on
+                  "Beaches and lakes" and "Towns worth the trip". */}
+              {eventRows.length > 0 && (
+                <Rail title={t('dayex.railOnThisDay')} rows={eventRows} {...cardProps} />
+              )}
               <Rail title={t('dayex.railSights')} rows={sightRows} {...cardProps} />
-              <div ref={waterRef}>
-                <Rail title={t('dayex.railWater')} rows={water || []} loading={!!loading.water} {...cardProps} />
-              </div>
               <div ref={trailRef}>
                 <Rail title={t('dayex.railNature')} rows={natureRows} loading={!!loading.trail} {...cardProps} />
               </div>
@@ -603,10 +645,10 @@ export function DayExploreBuilder({
               {shortRows.length > 0 && (
                 <Rail title={t('dayex.railShortlist')} rows={shortRows} {...cardProps} />
               )}
+              <div ref={waterRef}>
+                <Rail title={t('dayex.railWater')} rows={water || []} loading={!!loading.water} {...cardProps} />
+              </div>
               <Rail title={t('dayex.railTowns')} rows={townRows} {...cardProps} />
-              {eventRows.length > 0 && (
-                <Rail title={t('dayex.railOnThisDay')} rows={eventRows} {...cardProps} />
-              )}
             </>
           )}
         </div>
@@ -627,9 +669,14 @@ export function DayExploreBuilder({
           anything is picked, because "I have had enough of choosing" is a
           normal thing to feel halfway down a list of beaches. */}
       <div className="dayex-tray">
-        <button className="dayex-tray-summary" onClick={() => setTrayOpen((v) => !v)} aria-expanded={trayOpen}>
-          {trayLabel}
-        </button>
+        <div className="dayex-tray-state">
+          <button className="dayex-tray-summary" onClick={() => setTrayOpen((v) => !v)} aria-expanded={trayOpen}>
+            {trayLabel}
+          </button>
+          {tooLong && (
+            <p className="dayex-tray-fit" role="status">{t('dayex.trayTooLong', { time: fmtDur(dayMin) })}</p>
+          )}
+        </div>
         <div className="dayex-tray-acts">
           {/* The tray's two doors are the shared Button: one secondary, one
               primary, and a primary that cannot act yet goes neutral (T193). */}
@@ -637,7 +684,8 @@ export function DayExploreBuilder({
             {count ? t('dayex.cartaRest') : t('dayex.cartaAll')}
           </Button>
           <Button variant="primary" className="dayex-tray-open" onClick={onStartPlanning} disabled={!count}>
-            {editing ? t('day.updatePlan') : t('dayex.openMyDay')}
+            {t('dayex.openMyDay')}
+
           </Button>
         </div>
       </div>
@@ -680,7 +728,7 @@ export function DayExploreBuilder({
           )}
           <div className="dayex-detail-head">
             {detail.rating?.score != null && <ScoreChip rating={detail.rating} size="sm" />}
-            {distanceLine(detail.km, t) && <span className="dayex-detail-dist">{distanceLine(detail.km, t)}</span>}
+            {reachLine(detail, t) && <span className="dayex-detail-dist">{reachLine(detail, t)}</span>}
           </div>
           {detail.desc && <p className="dayex-detail-desc">{detail.desc}</p>}
           <div className="dayex-detail-acts">

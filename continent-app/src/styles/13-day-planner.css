@@ -366,9 +366,8 @@
   font-weight: 400;
   color: var(--ink-mute);
 }
-/* Must-sees stand out: accent edge + slightly stronger name. */
-.day-tier-must .day-activity-row { border-left: 3px solid var(--accent); }
-.day-tier-must .day-assigned-name { font-weight: 600; }
+/* T389: the .day-tier-must rules went; nothing renders that class any more
+   (the detector's side-tab finding on this file). */
 
 /* Rich rows: the outer keeps the card chrome, the inner button does the layout
    so the wiki ⓘ can sit beside it without nesting buttons. */

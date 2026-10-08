@@ -16,7 +16,9 @@ import { chromium } from 'playwright';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4193;
+// CARTA_PORT (T389): a parallel session may hold the default port with its own
+// preview, so a run can name its own server instead of testing someone else's.
+const PORT = Number(process.env.CARTA_PORT) || 4193;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -125,7 +127,10 @@ try {
     // 2. Saved work sits in the question column, close under the card, not a
     //    screen below the map.
     const gapInfo = await page.evaluate(() => {
-      const panel = document.querySelector('.day-flow-panel');
+      // T389: "How this works" became a text button under the question
+      // (.day-flow-howto), so the question block ends below that link; the
+      // gap is measured from there, not from the card above it.
+      const panel = document.querySelector('.day-flow-howto') || document.querySelector('.day-flow-panel');
       const saved = document.querySelector('.day-flow-saved');
       const forms = document.querySelector('.day-flow-forms');
       const map = document.querySelector('.day-flow-mappanel');
@@ -288,10 +293,15 @@ try {
       };
       const gos = [...document.querySelectorAll('.day-flow-card-go')];
       const tag = document.querySelector('.day-flow-card-tag');
+      const cards = [...document.querySelectorAll('.day-flow-card')];
       return {
         gos: gos.length,
         filled: gos.filter(solid).length,
         tagSize: tag ? parseFloat(getComputedStyle(tag).fontSize) : 0,
+        // T389: the two cards keep the same ground; only the recommended one's
+        // border is the accent.
+        grounds: new Set(cards.map((c) => getComputedStyle(c).backgroundColor)).size,
+        accentBorders: cards.filter((c) => getComputedStyle(c).borderTopColor === 'rgb(206, 56, 35)').length,
       };
     });
     // D7: the fork is a comparison, so the two cards have to be big enough
@@ -320,7 +330,14 @@ try {
     else ok('both fork cards carry a preview');
 
     if (fork.gos !== 2) fail(`${size.name}: expected 2 fork actions, got ${fork.gos}`);
-    if (fork.filled !== 1) fail(`${size.name}: ${fork.filled} filled fork actions, expected exactly 1`);
+    // T389 (brief V3-6, carta-design plan cards): the fork's cards are equal
+    // weight. The old assertion wanted exactly one filled action (the
+    // recommended card's); now neither action is filled, both cards share one
+    // ground, and the recommended card is marked by its accent border and
+    // badge only.
+    if (fork.filled !== 0) fail(`${size.name}: ${fork.filled} filled fork actions, expected none (equal cards)`);
+    if (fork.grounds !== 1) fail(`${size.name}: the fork cards have ${fork.grounds} different grounds`);
+    if (fork.accentBorders !== 1) fail(`${size.name}: ${fork.accentBorders} fork cards wear the accent border, expected 1`);
     if (fork.tagSize < 10.5) fail(`${size.name}: "Recommended" badge at ${fork.tagSize}px`);
     else ok(`fork: ${fork.filled}/2 filled, badge ${fork.tagSize}px`);
     await page.screenshot({ path: `${SHOTS}/day-how-${size.name}.png` });
@@ -384,15 +401,27 @@ try {
     await page.screenshot({ path: `${SHOTS}/day-builder-${size.name}.png` });
     await page.locator('.dayex-tray-open').click();
     await page.locator('.trip-newtrip-btn').first().click({ timeout: 30000 });
+    // T389 (brief V3-5): with a plan on the device the landing leads with the
+    // plans and "Plan a new day"; the stay question follows on that tap. The
+    // old assertion wanted the question straight away.
+    const returning = await page.evaluate(() => ({
+      plans: document.querySelectorAll('.day-flow-returning button.dtcard').length,
+      newDay: !!document.querySelector('.day-flow-newday'),
+      stranded: !!document.querySelector('.dayex') && !document.querySelector('.dayex-head'),
+    }));
+    if (returning.stranded) fail(`${size.name}: back from a plan lands on the stayless builder`);
+    else if (!returning.plans || !returning.newDay) fail(`${size.name}: back from a plan shows ${returning.plans} plan card(s) and no "Plan a new day"`);
+    else {
+      ok(`back from a plan: ${returning.plans} saved plan(s) lead, "Plan a new day" offered`);
+      await page.locator('.day-flow-newday').click();
+    }
     const back = await page.evaluate(() => ({
       count: document.querySelector('.day-flow-top .shape-head-step')?.textContent.trim() || '',
       question: !!document.querySelector('.day-flow-search'),
-      saved: document.querySelectorAll('.day-flow-saved .trip-saved-item').length,
-      stranded: !!document.querySelector('.dayex') && !document.querySelector('.dayex-head'),
+      saved: document.querySelectorAll('.day-flow-saved button.dtcard').length,
     }));
-    if (back.stranded) fail(`${size.name}: back from a plan lands on the stayless builder`);
-    else if (!/step\s*1\s+of/i.test(back.count) || !back.question) fail(`${size.name}: back from a plan lands on "${back.count}", no stay question`);
-    else ok(`back from a plan: ${back.count}, ${back.saved} saved plan(s) listed`);
+    if (!/step\s*1\s+of/i.test(back.count) || !back.question) fail(`${size.name}: "Plan a new day" lands on "${back.count}", no stay question`);
+    else ok(`plan a new day: ${back.count}, ${back.saved} saved plan(s) listed under it`);
 
     await ctx.close();
   }

@@ -24,7 +24,9 @@
  */
 
 import { haversineKm } from '../lib/runtime_pricing.js';
+import { legTransportOptions } from '../lib/transport.js';
 import { poiCategory, poiScore, poiRating, isMustSee, poiKind } from './dayDraft.js';
+import { fmtDur } from './dayFormat.js';
 // The trails layer scores WITHIN a country and ships a bare number; this is
 // the one place that turns it into the { score, tier } a rating chip reads,
 // so a trail chip is the same shade of confidence here as on the trails tab.
@@ -67,6 +69,56 @@ export function distanceLine(km, t) {
   const mins = Math.max(5, Math.round((km / DRIVE_KMH) * 60));
   return t('dayex.driveKm', { km: Math.round(km), n: mins });
 }
+
+/** Closer than this, a town is a walk or a short hop from the stay and its
+ *  card keeps the plain distance line; the planner's day-trip block uses the
+ *  same 8 km cut-off before it offers any mode at all. */
+export const LOCAL_KM = 8;
+
+/**
+ * How a town is reached from the stay's own town, for a traveller without a
+ * car first (T389, brief V3-7: "on foot or not").
+ *
+ * The same transport model the day-trip block and the trip planner price legs
+ * with: a train where the model offers one and the town's own transit is not
+ * marked poor (the pipeline knows Lake Como's shore has no rail), else the
+ * bus, else the car. Minutes are the model's estimate, which the card says
+ * with "about". Null when the model has nothing (a sea crossing, no coords).
+ */
+export function townReach(fromDest, toDest) {
+  if (!fromDest || !toDest) return null;
+  let o = null;
+  try { o = legTransportOptions(fromDest, toDest, 1); } catch { return null; }
+  if (!o || !o.modes) return null;
+  const poorEnd = toDest.local_transport?.transit_quality === 'poor';
+  const mins = (m) => (m && Number.isFinite(m.hours) && m.hours > 0 ? Math.round(m.hours * 60) : null);
+  const train = poorEnd ? null : mins(o.modes.train);
+  if (train) return { mode: 'train', min: train };
+  const bus = mins(o.modes.bus);
+  if (bus) return { mode: 'bus', min: bus };
+  const car = mins(o.modes.car);
+  if (car) return { mode: 'car', min: car };
+  return null;
+}
+
+/** The reach line under a card's name: how you get there when the row knows
+ *  (a town further than LOCAL_KM), otherwise the distance line. */
+export function reachLine(row, t) {
+  if (row?.reach?.min) {
+    const key = row.reach.mode === 'train' ? 'dayex.reachTrain'
+      : row.reach.mode === 'bus' ? 'dayex.reachBus' : 'dayex.reachCar';
+    return t(key, { time: fmtDur(row.reach.min) });
+  }
+  return distanceLine(row?.km, t);
+}
+
+/** Minutes a picked town or place holds in the tray's one-day estimate. A
+ *  town is a half day out; a single sight about an hour. These are the
+ *  assumptions behind "more than one day holds", named so they can be read. */
+export const TOWN_VISIT_MIN = 180;
+export const PLACE_VISIT_MIN = 60;
+/** Past this, the picks are more than one day: 09:30 to 18:30. */
+export const DAY_FIT_MIN = 9 * 60;
 
 /** Steps for a day that visits these rows from the stay, in this order. The
  *  tray states it so the pick list is a day and not a wish list. */

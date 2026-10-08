@@ -349,12 +349,14 @@ function CardMenu({ onDelete }) {
  * shallower 4:3 photo, because these are single days rather than trips and
  * should not out-shout the trips above them.
  */
-export function DayPlanCards({ plans, destinations, onOpen, onDelete }) {
+export function DayPlanCards({ plans, destinations, onOpen, onDelete, hideTitle = false }) {
   const { t } = useI18n();
   if (!plans.length) return null;
   return (
     <div className="day-landing-section dtsection">
-      <div className="trip-block-title">{t('day.yourDayPlans')}</div>
+      {/* On a returning visit the list IS the view, and its h1 already says
+          "Your day plans" (T389), so the block title would say it twice. */}
+      {!hideTitle && <div className="trip-block-title">{t('day.yourDayPlans')}</div>}
       <div className="dtcards small">
         {plans.map((sp) => {
           const dest = destinations[sp.stops?.[0]?.destinationId];

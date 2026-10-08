@@ -8,7 +8,6 @@ import { Button } from '../components/Button.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
 import { legTransportOptions } from '../lib/transport.js';
-import { eur, safeUrl } from '../lib/format.js';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { fetchDestPoiMap } from '../lib/appData.js';
 import { fetchTripPlans, fetchTripPlanWithStops } from '../auth/tripPlanStorage.js';
@@ -21,7 +20,7 @@ import { findCitytrip, resolveCitytripStops, loadTrail } from '../lib/citytrips.
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { addDays, todayISO, laterISO, useToday, fmtDate as fmtDateFull } from '../lib/dates.js';
 import {
-  draftDays, tieredActivities, optimizeOrder, pickerDeck, poiCategory, poiMapCat,
+  draftDays, optimizeOrder, pickerDeck, poiCategory, poiMapCat,
   walkableIdxSet, feasibilityLimits, isMustSee, dwellMinutes, VISIT_PACES,
   farWorthySights, scenicSuggestions, MAX_POI_KM_FROM_CITY, poiScore, poiKind,
   poiRating, isTransportInfraPoi, isCommercialNoisePoi, duplicatePoiIndices,
@@ -54,7 +53,7 @@ import { DayPlanPanel } from './DayPlanPanel.jsx';
 import { DayAddPanel } from './DayAddPanel.jsx';
 import { DayFilesPanel } from './DayFilesPanel.jsx';
 import {
-  DayStayBar, DayTipsPanel, CartaBotFab, DayTabsRail, BOT_PROMPTS,
+  DayStayBar, DayTipsPanel, DaySwitcher, DayTabsRail, BOT_PROMPTS,
 } from './DayWorkspaceChrome.jsx';
 import {
   loadStandalonePlans, persistStandalonePlans, deleteStandalonePlan,
@@ -68,13 +67,15 @@ import {
   loadDiscovered, saveDiscovered, removeDiscovered, subscribeDiscovered, isStale,
 } from './discoveredStore.js';
 import { researchCity } from '../lib/cityResearch.js';
+import { scrollBehavior } from '../lib/motion.js';
 import {
   SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon,
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
-  PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
+  SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
+
   ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon, ChevronRightIcon,
   UploadIcon, CrosshairIcon, TownIcon,
-  ArrowLeftIcon,
+  ArrowLeftIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import {
   ContinueTripCards, DayPlanCards, hasImminentTrip,
@@ -103,10 +104,6 @@ const MAP_RATINGS = [
   { key: 'must', labelKey: 'day.mapQualityMust' },
 ];
 
-// Beyond this, a bot plan's own walking total is not a day anyone walked: it
-// came from a plan saved before the server enforced a walking budget. Well
-// clear of the 40 km ceiling the chat profile allows a keen hiker to ask for.
-const AI_MAX_TRUSTED_WALK_KM = 45;
 // The one empty day, shared, so a day with nothing assigned does not hand the
 // scenic and suggestion memos a new array on every render (T192).
 const NO_ASSIGNED = Object.freeze([]);
@@ -117,19 +114,6 @@ const NO_ASSIGNED = Object.freeze([]);
 // the car park, the other the water), and tight enough that it cannot snap
 // onto a different landmark in a dense old town.
 const SHORTLIST_SNAP_KM = 1.2;
-
-/** A place's own description, trimmed to a timeline-sized sentence or two on a
- *  word boundary (never mid-word, never mid-sentence if a full stop is near
- *  the limit), so every stop can carry context without the card ballooning. */
-function shortDesc(text, limit = 165) {
-  const s = (text || '').trim();
-  if (s.length <= limit) return s;
-  const cut = s.slice(0, limit);
-  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
-  if (stop > limit * 0.55) return cut.slice(0, stop + 1);
-  const space = cut.lastIndexOf(' ');
-  return `${cut.slice(0, space > 0 ? space : limit).replace(/[,;:]$/, '')}...`;
-}
 
 
 const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
@@ -289,9 +273,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const [plan, setPlan] = useState(null); // { id, label, stops: [...] }
   const [stopIdx, setStopIdx] = useState(0);
   const [dayIdx, setDayIdx] = useState(0);
-  // Bumped whenever we want the "Add to your trip" tiers to snap shut (e.g.
-  // after adding a fresh day) so the browse shelves don't bury the day's plan.
-  const [tiersCollapseKey, setTiersCollapseKey] = useState(0);
   const [assignments, setAssignments] = useState({}); // { [stopIdx]: { [dayIdx]: [activityIdx,...] } }
   // Carta-plan answers (null until asked) + whether the inline plan panel
   // (the "Shape day N" questions in the rail) is open.
@@ -397,7 +378,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // Europe (no country filter), days per city, a start date, and optionally
   // the address where the traveller is staying.
   const [newStops, setNewStops] = useState([]); // [{ destinationId, days }]
-  const [newCountry, setNewCountry] = useState(''); // country chosen before its cities
   // Live, so a tab left open overnight does not keep offering yesterday as
   // "today" (useToday re-checks at midnight and when the tab is shown again).
   const today = useToday();
@@ -419,6 +399,11 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // Each is { key, name, lat, lon, destId?, poiIdx?, kind, cat, timeOfDay }.
   const [ideas, setIdeas] = useState([]);
   const [howToOpen, setHowToOpen] = useState(false);
+  // A returning visit opens on the plans this device holds (brief V3-5); the
+  // stay question follows once the traveller asks for a new day.
+  const [askNewDay, setAskNewDay] = useState(false);
+  // Coming back from a plan, the plans lead again.
+  useEffect(() => { if (plan) setAskNewDay(false); }, [plan]);
   // "Add another city" picker inside an open standalone plan.
   const [addCityId, setAddCityId] = useState('');
   // Free-text sight search across the city's FULL catalogue, including
@@ -427,14 +412,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // "Save this day trip to Saved trips" feedback for trip-based plans.
   const [daySaveState, setDaySaveState] = useState('idle');
   const [saveToast, setSaveToast] = useState('');
-  const [savedInfo, setSavedInfo] = useState(false);
   // Landing explore map: which pin categories are shown (towns by default so
   // the map never opens overloaded), which pin is briefed in the side panel,
   // and which sights/beaches are picked alongside the towns in `newStops`.
   const [selPois, setSelPois] = useState([]); // [{ key, destId, idx }]
-  // When set, the explore/build screen is EDITING this existing plan (reached
-  // via "Change places on the map") rather than composing a brand-new one.
-  const [editingPlanId, setEditingPlanId] = useState(null);
   const searchStay = async () => {
     if (staySearching || stayQuery.trim().length < 3) return;
     setStaySearching(true);
@@ -466,7 +447,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     setStopIdx(0);
     setDayIdx(0);
     setDaySaveState('idle');
-    setEditingPlanId(null);
     const a = loadAssignments(planId);
     setAssignments(a);
     const p = loadPrefs(planId);
@@ -571,7 +551,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       if (!live) return;
       if (stay) {
         setPlan(null);
-        setEditingPlanId(null);
         setStayQuery('');
         setStayResults(null);
         setNewStayWindow(null);
@@ -650,10 +629,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       if (sp.stops[stopIdx]) sp.stops[stopIdx].days += 1;
       return sp;
     });
-    // Jump to the fresh day and collapse the browse shelves, so the traveller
-    // lands on that day's (empty) plan instead of a wall of open suggestions.
+    // Jump to the fresh day, so the traveller lands on that day's (empty) plan.
     setDayIdx(days.length);
-    setTiersCollapseKey((k) => k + 1);
   };
 
   // Multi-city: append another city to this day trip. Its picks live under
@@ -840,9 +817,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     // was loaded; before actFull arrives the pass can't dedupe anything.
     if (hadFull) repairedRef.current.add(pid);
   }, [assignments, stops, itemsForStop, plan?.id]);
-
-  // Must-see / recommended / more / active tiers for the current stop's list.
-  const tiers = useMemo(() => tieredActivities(activities.items, activities.walkable), [activities]);
 
   // ---- The big map's pickable pins ----
   // Every genuinely worthwhile place in town sits on the day map from the
@@ -1255,12 +1229,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     setAiOpen(false);
   };
 
-  const dismissAi = () => {
-    const saved = { ...(prefs || {}), aiPlans: prunedAiPlans('day') };
-    setPrefs(saved);
-    persistPrefs(plan?.id, saved);
-  };
-
   // Every AI failure path lands here: the deterministic built-in draft, fed
   // with the same answers, so the button always ends in a planned day.
   const fallbackAi = (answers) => {
@@ -1296,34 +1264,12 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       }))
   ), [aiPlan]);
 
-  // The AI's one-line reason per catalogue stop, keyed by the same item index
-  // the day's assignments speak. The bot's schedule is NOT a second list any
-  // more: importing a plan lays its stops into the one timeline, and this is
-  // how each row keeps the sentence that explained why it is there.
-  const aiWhyByIdx = useMemo(() => {
-    const m = {};
-    (aiPlan?.stops || []).forEach((s) => {
-      if (s.external || !s.why) return;
-      const idx = Number(s.id);
-      if (Number.isInteger(idx)) m[idx] = s.why;
-    });
-    return m;
-  }, [aiPlan]);
-
   // Discoveries live outside the catalogue, so they can never become timeline
   // rows. They stay listed once, under the plan, next to their map pins.
   const aiDiscoveries = useMemo(
     () => (aiPlan?.stops || []).filter((s) => s.external && s.name),
     [aiPlan],
   );
-
-  // Plans imported before the server learned to hold a walking budget carry
-  // totals like "89.4 km on foot, done around 11:32" (the clock used to wrap
-  // at midnight, so an impossible day read as a pleasant morning). They are
-  // saved on the device and would keep saying it forever, so a total no one
-  // could walk means the line is not shown at all. The day itself, its stops
-  // and its own timeline totals, is unaffected.
-  const aiTotalsTrustworthy = (aiPlan?.totals?.walkKm ?? 0) <= AI_MAX_TRUSTED_WALK_KM;
 
   const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || NO_ASSIGNED;
   const assignedItems = dayAssignedIdx.map((i) => activities.items[i]).filter(Boolean);
@@ -1974,12 +1920,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     () => (routeMode === 'auto' ? scenicSuggestions(dayAssignedIdx, activities.items) : []),
     [dayAssignedIdx, activities, routeMode],
   );
-  const addScenic = (sug) => {
-    const current = [...dayAssignedIdx];
-    current.splice(sug.afterPos + 1, 0, sug.idx);
-    commitDay(current);
-  };
-
   /* ---- Tab 2: what else could go in today ---- */
 
   // The browsable catalogue: a deep deck (not the 48 the map paints) so the
@@ -2084,14 +2024,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     window.setTimeout(() => setSaveToast(''), 3500);
   };
 
-  // "In Saved trips" tap: save first if this is a trip-based plan that isn't
-  // stored yet, then open a confirmation popup that also offers a way back to
-  // the day-planner start page (the plan is safe under Saved trips).
-  const handleSavedTripsClick = () => {
-    if (!plan.standalone && daySaveState !== 'saved') saveToSavedTrips();
-    setSavedInfo(true);
-  };
-
   // A clean, printable booklet of every planned day across the whole trip.
   // Opens the browser's print dialog, where "Save as PDF" produces the
   // shareable file, no libraries, no external services, and it wears the
@@ -2101,7 +2033,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (!paywall.require('export')) return;
     openDayPlanPdf({
       stop, stops, assignments, plan, days, visitFactor,
-      itemsForStop, estimateWalkMinutes, fmtDur,
+      itemsForStop, estimateWalkMinutes, fmtDur, t, lang,
     });
   };
 
@@ -2110,7 +2042,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // steps because mymaps.google.com is not a path most travellers know.
   const downloadKmlFile = () => {
     if (!paywall.require('export')) return;
-    const ok = openDayPlanKml({ stop, stops, assignments, plan, visitFactor, itemsForStop });
+    const ok = openDayPlanKml({ stop, stops, assignments, plan, visitFactor, itemsForStop, t });
     if (ok) {
       setSaveToast(t('export.myMapsHint'));
       window.setTimeout(() => setSaveToast(''), 9000);
@@ -2121,9 +2053,14 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // timeline shows, so the plan lands in Google/Apple/Outlook calendars.
   const downloadIcsFile = () => {
     if (!paywall.require('export')) return;
-    const ok = openDayPlanIcs({ stop, stops, assignments, plan, visitFactor, itemsForStop });
+    const ok = openDayPlanIcs({
+      stop, stops, assignments, plan, visitFactor, itemsForStop, t,
+      startMin: Number.isFinite(prefs?.dayStartMin) ? prefs.dayStartMin : DAY_START_MIN,
+    });
     if (ok) {
-      setSaveToast(t('export.calendarHint'));
+      // The day planner's own words: the trip's hint spoke of "every flight
+      // and stay", which a day plan has neither of (brief M9).
+      setSaveToast(t('dayws.icsHint'));
       window.setTimeout(() => setSaveToast(''), 6000);
     }
   };
@@ -2361,6 +2298,27 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const [stayCursor, setStayCursor] = useState(-1);
   const stayResultRefs = useRef([]);
   useEffect(() => { setStayCursor(-1); }, [stayResults]);
+
+  // The on-screen keyboard (T414 phone checks): when it opens, the viewport
+  // shrinks and the field could end up under the bottom nav. While the stay
+  // field has focus, a resize brings the field and its Find button back to
+  // the middle of what is left of the screen.
+  const keepStayInView = useRef(null);
+  const onStayFocus = (e) => {
+    const box = e.currentTarget.closest('.day-flow-search');
+    const go = () => box?.scrollIntoView({ block: 'center', behavior: scrollBehavior() });
+    keepStayInView.current = go;
+    window.visualViewport?.addEventListener('resize', go);
+    window.addEventListener('resize', go);
+  };
+  const onStayBlur = () => {
+    const go = keepStayInView.current;
+    if (!go) return;
+    window.visualViewport?.removeEventListener('resize', go);
+    window.removeEventListener('resize', go);
+    keepStayInView.current = null;
+  };
+  useEffect(() => onStayBlur, []);
 
   const onStayKeyDown = (e) => {
     const n = stayResults?.length || 0;
@@ -2683,20 +2641,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     window.scrollTo(0, 0);
   }, [landingStep]);
 
-  const cancelEditOnMap = () => {
-    const id = editingPlanId;
-    setEditingPlanId(null);
-    setNewStops([]);
-    setNewCountry('');
-    setStayQuery('');
-    setStayResults(null);
-    setNewStayPoint(null);
-    setNewStayWindow(null);
-    setSelPois([]);
-    const sp = standalonePlans.find((p) => p.id === id);
-    if (sp) openStandalone(sp);
-  };
-
   // Start planning from the explore picks. Towns each get their days; picked
   // beaches/sights/activities land pre-assigned on day 1 of their town (they
   // are already specific, so no wizard for them). Towns picked without
@@ -2754,58 +2698,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     }
     if (!stops.length) return;
 
-    // Editing an existing plan: keep its id and, crucially, its day-by-day
-    // arrangement. Assignments are re-keyed from destination id (stable) to the
-    // new stop order, so adding, removing or reordering towns never scrambles
-    // the picks already laid into days.
-    if (editingPlanId) {
-      const prev = standalonePlans.find((p) => p.id === editingPlanId);
-      const prevAssign = loadAssignments(editingPlanId) || {};
-      const byDest = {};
-      (prev?.stops || []).forEach((s, i) => { if (prevAssign[i]) byDest[s.destinationId] = prevAssign[i]; });
-      const remapped = {};
-      stops.forEach((s, i) => { if (byDest[s.destinationId]) remapped[i] = byDest[s.destinationId]; });
-      // Newly picked places land on day 1 of their town, appended to whatever
-      // is already arranged there rather than replacing it.
-      if (selPois.length) {
-        const bySi = {};
-        selPois.forEach((p) => {
-          const si = stops.findIndex((s) => s.destinationId === p.destId);
-          if (si >= 0) (bySi[si] = bySi[si] || []).push(p.idx);
-        });
-        Object.entries(bySi).forEach(([si, idxs]) => {
-          const s = stops[Number(si)];
-          const items = (destinations[s.destinationId]?.activities?.items_full?.length
-            ? destinations[s.destinationId].activities.items_full
-            : actFull?.[s.destinationId]) || [];
-          const day0 = remapped[si]?.[0] || [];
-          const fresh = idxs.filter((x) => !day0.includes(x));
-          remapped[si] = { ...(remapped[si] || {}), 0: optimizeOrder([...day0, ...fresh], items, newStayPoint) };
-        });
-      }
-      const updated = {
-        ...prev,
-        stayPoint: newStayPoint,
-        startDate: newStartDate || prev?.startDate || todayISO(),
-        stops,
-        label: stops.map((s) => destinations[s.destinationId]?.city).filter(Boolean).join(' + ') || prev?.label || 'Day plan',
-      };
-      const next = standalonePlans.map((p) => (p.id === editingPlanId ? updated : p));
-      setStandalonePlans(next);
-      persistStandalonePlans(next);
-      persistAssignments(editingPlanId, remapped);
-      setEditingPlanId(null);
-      setNewStops([]);
-      setNewCountry('');
-      setStayQuery('');
-      setStayResults(null);
-      setNewStayPoint(null);
-      setNewStayWindow(null);
-      setSelPois([]);
-      openStandalone(updated);
-      return;
-    }
-
     const sp = {
       id: `local:${Date.now()}`,
       label: stops.map((s) => destinations[s.destinationId]?.city).filter(Boolean).join(' + ') || 'Day plan',
@@ -2835,7 +2727,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     setStandalonePlans(next);
     persistStandalonePlans(next);
     setNewStops([]);
-    setNewCountry('');
     setStayQuery('');
     setStayResults(null);
     setNewStayPoint(null);
@@ -3261,6 +3152,18 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     // A trip you are on, or one that starts this week, leads: it goes above
     // the search rather than under it.
     const tripsLeadFirst = Boolean(user) && authConfigured && hasImminentTrip(savedPlans);
+    // Someone who already has day plans on this device came back for one of
+    // them far more often than to type a new address, so their plans lead and
+    // the question waits behind "Plan a new day" (impeccable onboard: the
+    // returning traveller skips what they already did). A running trip still
+    // leads as before, and a cold start still opens on the question.
+    const returning = landingStep === 'stay' && standalonePlans.length > 0
+      && !tripsLeadFirst && !askNewDay && !newStayPoint;
+    // The rail and "Step N of 4" belong to the four questions. After the fork
+    // (the chat, the builder) they said "Step 4 of 4" over a screen that is no
+    // longer a question; a back link says where the way back goes instead.
+    const inQuestions = FORM_STEPS.has(landingStep) && !returning;
+    const pastFork = landingStep === 'chat' || landingStep === 'manual';
     const continueTrips = (
       <ContinueTripCards
         plans={savedPlans}
@@ -3283,13 +3186,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         <div className={`day-flow${landingStep === 'manual' ? ' day-flow-manual' : ''}${
           FORM_STEPS.has(landingStep) ? ' day-flow-split-host' : ''
         }${landingStep === 'how' ? ' day-flow-wide' : ''}`}>
-          {editingPlanId && (
-            <div className="day-edit-banner">
-              <span><PencilIcon size={13} /> {t('day.editBanner')}</span>
-              <button className="day-edit-cancel" onClick={cancelEditOnMap}>{t('day.cancel')}</button>
-            </div>
-          )}
-
           {/* One decision per screen. The step rail doubles as back navigation
               (a completed step is tappable); everything explanatory hides
               behind the help button so the screen itself stays a question.
@@ -3302,21 +3198,13 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               planners that ask the same kind of question should not answer in
               two different visual languages, and the pills this replaced said
               nothing about what was still coming. */}
+          {inQuestions && (
           <div className="day-flow-top">
             <div className="shape-head-title">
               {t(FLOW[flowIdx].labelKey)}
               <span className="shape-head-step">
                 {t('day.stepXofN', { x: flowIdx + 1, n: FLOW.length })}
               </span>
-              <button
-                className="day-flow-help"
-                onClick={() => setHowToOpen((v) => !v)}
-                aria-expanded={howToOpen}
-                aria-label={t('day.howItWorks')}
-                title={t('day.howItWorks')}
-              >
-                <InfoIcon size={16} />
-              </button>
             </div>
             <ol className="wiz-steps" aria-label={t('day.progressAria')}>
               {FLOW.map((s, i) => {
@@ -3340,11 +3228,13 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               })}
             </ol>
           </div>
-          {howToOpen && (
-            <div className="day-flow-help-card">
-              <b>{t('day.howItWorks')}</b>
-              <p>{editingPlanId ? t('day.editLead') : t('day.landingLead')}</p>
-              <button className="day-flow-help-close" onClick={() => setHowToOpen(false)}>{t('common.gotIt')}</button>
+          )}
+          {pastFork && (
+            <div className="day-flow-backrow">
+              <button type="button" className="day-flow-backlink" onClick={() => setLandingStep('how')}>
+                <ArrowLeftIcon size={14} />
+                <span>{t('day.backToQuestions')}</span>
+              </button>
             </div>
           )}
 
@@ -3381,8 +3271,28 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             );
           })()}
 
+          {/* A returning visit: the plans first, one primary to start another. */}
+          {returning && (
+            <div className="day-flow-step">
+              <div className="day-flow-panel day-flow-returning">
+                <h1 className="day-flow-q">{t('day.yourDayPlans')}</h1>
+                <p className="day-flow-qsub">{t('day.returningSub')}</p>
+                <DayPlanCards
+                  plans={standalonePlans}
+                  destinations={destinations}
+                  onOpen={openStandalone}
+                  onDelete={deleteStandalone}
+                  hideTitle
+                />
+                <Button variant="primary" className="day-flow-next day-flow-newday" onClick={() => setAskNewDay(true)}>
+                  {t('day.planNewDay')}
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* STEP 1, where are you staying */}
-          {landingStep === 'stay' && (
+          {landingStep === 'stay' && !returning && (
             <div className="day-flow-step">
               <div className="day-flow-panel">
                 {/* When a trip is running or starts this week, it leads the
@@ -3418,6 +3328,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                     value={stayQuery}
                     onChange={(e) => setStayQuery(e.target.value)}
                     onKeyDown={onStayKeyDown}
+                    onFocus={onStayFocus}
+                    onBlur={onStayBlur}
                     placeholder={t('day.stayPlaceholder')}
                     aria-label={t('day.stayAria')}
                     role="combobox"
@@ -3652,15 +3564,39 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               the step panel). Offering a search box first to somebody who
               is in Bruges on day two of a saved trip asks them to type what
               the app already knows. */}
+          {/* "How this works" sits under the question it explains, as a text
+              button, instead of a 44 px circle in the rail that outweighed the
+              step label beside it. */}
+          {inQuestions && (
+            <div className="day-flow-howto">
+              <button
+                type="button"
+                className="day-flow-howlink"
+                onClick={() => setHowToOpen((v) => !v)}
+                aria-expanded={howToOpen}
+              >
+                {t('day.howItWorks')}
+              </button>
+              {howToOpen && (
+                <div className="day-flow-help-card">
+                  <p>{t('day.landingLead')}</p>
+                  <button className="day-flow-help-close" onClick={() => setHowToOpen(false)}>{t('common.gotIt')}</button>
+                </div>
+              )}
+            </div>
+          )}
+
           {landingStep === 'stay' && (
             <div className="day-flow-saved">
               {!tripsLeadFirst && continueTrips}
-              <DayPlanCards
-                plans={standalonePlans}
-                destinations={destinations}
-                onOpen={openStandalone}
-                onDelete={deleteStandalone}
-              />
+              {!returning && (
+                <DayPlanCards
+                  plans={standalonePlans}
+                  destinations={destinations}
+                  onOpen={openStandalone}
+                  onDelete={deleteStandalone}
+                />
+              )}
               {!authConfigured && <p className="trip-note">{t('day.noAuthNote')}</p>}
             </div>
           )}
@@ -3728,7 +3664,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               onChangeStay={() => setLandingStep('stay')}
               onOpenDest={onOpenDest}
               onOpenFeature={onOpenFeature}
-              editing={!!editingPlanId}
             />
           )}
 
@@ -3741,26 +3676,30 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const stayLabel = plan.stayPoint?.shortLabel || plan.stayPoint?.label || '';
   const walksHere = scenicWalksFor(stop?.dest?.city || '');
   const dayNumber = dayOffset + dayIdx + 1;
+  // Every day of the plan in order, across its cities, for the one day
+  // switcher (carta-design "Day list"). Its position is the day number - 1.
+  const planDays = stops.flatMap((s, si) => Array.from({ length: s.nights }, (_, di) => ({ si, di })));
+  const goToPlanDay = (k) => {
+    const d = planDays[k];
+    if (!d) return;
+    setStopIdx(d.si);
+    setDayIdx(d.di);
+  };
+  // "Add a day" and "Add a city" are rarer than switching, so they sit in one
+  // More menu beside the switcher instead of as chips in their own rows.
+  const dayMoreItems = plan.standalone && stop ? [
+    { key: 'day', label: t('dayws.addDayMenu'), onSelect: addStandaloneDay },
+    { key: 'city', label: t('dayws.addCityMenu'), onSelect: () => setCityAddOpen(true) },
+  ] : [];
+  // The prompts the floating Carta bot used to carry, minus the two the Add
+  // menu already offers under its own label ("Ask Carta to plan it" and
+  // "Reorder the route"): one control per action.
+  const toolbarPrompts = BOT_PROMPTS.filter((p) => p.key !== 'plan' && p.key !== 'reorder'
+    && (!p.needsPlan || assignedItems.length > 0));
 
   return (
     <div className="trip-planner-screen day-ws">
       {saveToast && <div className="trip-save-toast" role="status">{saveToast}</div>}
-      {savedInfo && (
-        <div className="day-saved-overlay" role="dialog" aria-modal="true" onClick={() => setSavedInfo(false)}>
-          <div className="day-saved-card" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="day-saved-close"
-              onClick={() => { setSavedInfo(false); setPlan(null); }}
-              aria-label={t('dayws.backToPlans')}
-              title={t('dayws.backToPlans')}
-            >×</button>
-            <div className="day-saved-badge"><BookmarkIcon size={20} /></div>
-            <h3>{t('dayws.savedTitle')}</h3>
-            <p>{t('dayws.savedBody')}</p>
-            <button className="day-saved-done" onClick={() => setSavedInfo(false)}>{t('dayws.savedKeep')}</button>
-          </div>
-        </div>
-      )}
       {aiOpen && stop && (
         <AiDayPlanModal
           city={stop.dest?.city || ''}
@@ -3925,12 +3864,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         )}
       </div>
 
-      <CartaBotFab
-        dayNumber={dayNumber}
-        hasPlan={assignedItems.length > 0}
-        onPick={runBotPrompt}
-      />
-
       <div
         className={`trip-sheet ${sheetDragging ? 'dragging' : ''}`}
         ref={sheetRef}
@@ -3975,13 +3908,17 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           onPointerCancel={isNarrow ? onSheetGripUp : undefined}
           style={isNarrow ? { touchAction: 'none' } : undefined}
         >
+          {/* The view's one h1 names the plan; the visible name below is the
+              same words, so the h1 is for assistive tech only (T389). */}
+          <h1 className="sr-only">{plan.label || t('dayws.untitled')}</h1>
           <div className="day-topcard-row">
-            <div>
+            <div className="day-topcard-head">
               <div className="trip-topcard-name">{plan.label || t('dayws.untitled')}</div>
-              <div className="trip-topcard-sub">
-                {stop?.dest?.city || t('dayws.noStops')}
-                {days[dayIdx] ? `, ${fmtDate(days[dayIdx])}` : ''}
-              </div>
+              {/* The city is said once: in the plan's name when it carries it,
+                  otherwise here. The date moved into the day switcher. */}
+              {stop?.dest?.city && !(plan.label || '').includes(stop.dest.city) && (
+                <div className="trip-topcard-sub">{stop.dest.city}</div>
+              )}
               {/* A day cut out of a trip keeps its way back to that trip: the
                   cities and nights it was cut from live in the Trip tab, and
                   the traveller who arrived from "Plan your days" is one tap
@@ -4000,21 +3937,34 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             {/* Always-visible save state: standalone plans (and their picks)
                 persist on this device automatically; trip-based plans get an
                 explicit one-tap save into Saved trips. */}
-            {plan.standalone ? (
-              <span className="day-save-btn saved" title={t('dayws.autoSavedTitle')}>
-                ✓ {t('dayws.saved')}
+            {/* The save state is a status word, not a chip that looks like a
+                button (brief S21). A trip-based day keeps its Save button
+                until it is saved, then says so the same way. */}
+            {plan.standalone || daySaveState === 'saved' ? (
+              <span className="day-save-status" title={t('dayws.autoSavedTitle')}>
+                {t('dayws.saved')}
               </span>
             ) : (
               <button
-                className={`day-save-btn ${daySaveState === 'saved' ? 'saved' : ''}`}
+                className="day-save-btn"
                 onClick={saveToSavedTrips}
-                disabled={daySaveState === 'saved'}
                 title={t('dayws.saveTitle')}
               >
-                <BookmarkIcon size={12} /> {daySaveState === 'saved' ? `${t('dayws.saved')} ✓` : t('dayws.saveDay')}
+                <BookmarkIcon size={12} /> {t('dayws.saveDay')}
               </button>
             )}
           </div>
+          {stop && planDays.length > 0 && (
+            <DaySwitcher
+              index={dayNumber - 1}
+              total={planDays.length}
+              label={t('itin.dayN', { n: dayNumber })}
+              date={days[dayIdx] ? fmtDateFull(days[dayIdx], true) : ''}
+              onPrev={() => goToPlanDay(dayNumber - 2)}
+              onNext={() => goToPlanDay(dayNumber)}
+              moreItems={dayMoreItems}
+            />
+          )}
           {/* The day's honest numbers, always in view above the scroll: how
               many stops, how far on foot, when you are roughly done. */}
           {assignedItems.length > 0 && (
@@ -4036,9 +3986,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           )}
         </div>
 
-        {/* Which city, which day. Above the tabs because it scopes all three
-            of them: the plan, what you could add, and the paperwork. */}
-        {stop && (
+        {/* Which city. Shown only when the plan has two or more (brief V3-3):
+            a single-city plan says its city in the head already. The days are
+            switched by the one switcher above. */}
+        {stop && (stops.length > 1 || cityAddOpen) && (
           <div className="dayws-daybar">
             {stops.length > 1 && (
               <div className="day-chip-row day-strip-cities">
@@ -4054,31 +4005,12 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                       <button
                         className="day-city-chip-del"
                         onClick={() => removeStandaloneCity(i)}
-                        aria-label={t('day.removeX', { name: s.dest?.city || 'city' })}
+                        aria-label={t('day.removeX', { name: s.dest?.city || t('day.unknown') })}
                         title={t('day.remove')}
-                      >×</button>
+                      ><CloseIcon size={12} /></button>
                     )}
                   </span>
                 ))}
-                {plan.standalone && (
-                  <button
-                    className={`day-chip day-chip-add${cityAddOpen ? ' active' : ''}`}
-                    onClick={() => setCityAddOpen((v) => !v)}
-                    aria-expanded={cityAddOpen}
-                  >+ {t('dayws.addCity')}</button>
-                )}
-              </div>
-            )}
-            {plan.standalone && stops.length === 1 && (
-              <div className="day-chip-row day-strip-cities">
-                <span className="day-chip day-city-chip active">
-                  <span className="day-city-chip-main">{stop.dest?.city || t('day.unknown')}</span>
-                </span>
-                <button
-                  className={`day-chip day-chip-add${cityAddOpen ? ' active' : ''}`}
-                  onClick={() => setCityAddOpen((v) => !v)}
-                  aria-expanded={cityAddOpen}
-                >+ {t('dayws.addCity')}</button>
               </div>
             )}
             {cityAddOpen && plan.standalone && (
@@ -4095,26 +4027,14 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                   onClick={() => { addStandaloneCity(); setCityAddOpen(false); }}
                   disabled={!addCityId}
                 >{t('dayws.cityAdd')}</button>
+                <button
+                  type="button"
+                  className="dayws-city-cancel"
+                  onClick={() => { setCityAddOpen(false); setAddCityId(''); }}
+                  aria-label={t('shape.close')}
+                ><CloseIcon size={14} /></button>
               </div>
             )}
-            <div className="day-chip-row">
-              {/* Day numbers run through the WHOLE trip: if Makarska ends on
-                  day 2, Sibenik starts on day 3, not back at day 1. */}
-              {days.map((d, i) => (
-                <button
-                  key={i}
-                  className={`day-chip ${i === dayIdx ? 'active' : ''}`}
-                  onClick={() => setDayIdx(i)}
-                >
-                  {t('itin.dayN', { n: dayOffset + i + 1 })}
-                </button>
-              ))}
-              {plan.standalone && (
-                <button className="day-chip day-chip-add" onClick={addStandaloneDay} title={t('dayws.addDayTitle')}>
-                  + {t('dayws.addDay')}
-                </button>
-              )}
-            </div>
           </div>
         )}
 
@@ -4140,6 +4060,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               onOptimize={optimizeNow}
               onAskCarta={() => { setBotPreset(null); setAiOpen(true); }}
               canOptimize={routeMode === 'manual'}
+              botPrompts={toolbarPrompts}
+              onBotPrompt={runBotPrompt}
               gmapsUrl={gmapsUrl}
               onShare={shareDay}
               shareState={shareState}
