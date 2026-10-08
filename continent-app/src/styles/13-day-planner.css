@@ -117,7 +117,7 @@
   transition: border-color .15s, color .15s, background .15s;
 }
 .day-chip:hover { border-color: var(--ink-soft); }
-.day-chip.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+.day-chip.active { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 
 .day-assigned-list, .day-activity-list {
   display: flex;
@@ -137,7 +137,7 @@
 }
 .day-activity-row { transition: border-color .15s, background .15s; }
 .day-activity-row:hover { border-color: var(--ink-soft); }
-.day-activity-row.added { border-color: var(--accent); background: var(--accent-bg); }
+.day-activity-row.added { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
 .day-assigned-idx {
   display: flex; align-items: center; justify-content: center;
   width: 22px; height: 22px;
@@ -183,8 +183,8 @@
   font-size: 11px;
   padding: 2px 6px;
   border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--amber-bg);
+  color: var(--amber-ink);
   white-space: nowrap;
 }
 .day-assigned-kind {
@@ -409,7 +409,7 @@
   border-radius: 8px;
   background-size: cover;
   background-position: center;
-  background-color: var(--accent-bg);
+  background-color: var(--paper-dim);
   object-fit: cover;
 }
 /* No photo? The thumbnail still says what kind of place this is: a category
@@ -533,7 +533,7 @@
   transition: border-color .15s, background .15s;
 }
 .shape-pace:hover { border-color: var(--ink-soft); }
-.shape-pace.on { border-color: var(--accent); background: var(--accent-bg); }
+.shape-pace.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
 .shape-pace-label { font-size: 13px; font-weight: 600; color: var(--ink); }
 .shape-pace-hint {
   font-family: var(--ui);

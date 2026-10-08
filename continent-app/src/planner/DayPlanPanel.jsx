@@ -1,13 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { PoiThumb } from './DayActivityRows.jsx';
 import { isMustSee, poiKind, poiMapCat } from './dayDraft.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
   PlusIcon, ShareIcon, MapPinIcon, DownloadIcon, RouteIcon, CalendarIcon,
-  SparkIcon, StarIcon, MountainIcon, CheckIcon, ChevronDownIcon,
+  SparkIcon, StarIcon, MountainIcon, CheckIcon, ChevronDownIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
+import { durationMs } from '../lib/motion.js';
+import { useSettledFigure } from '../lib/figureChange.js';
 
 /** Close a popover on outside click and on Escape. */
 export function useDismiss(open, close) {
@@ -29,11 +31,12 @@ export function useDismiss(open, close) {
 /** One stop of today's walk. Everything that is not the place itself was cut:
  *  no clock, no leg distance, no explanation of how you get there. The order
  *  is the information, and the map above draws the rest. */
-function RouteStop({ item, n, last, flash, onMoveUp, onMoveDown, onRemove, rowRef, onHoverChange, t }) {
+function RouteStop({ item, n, last, flash, onMoveUp, onMoveDown, onRemove, rowRef, rowKey, onHoverChange, t }) {
   return (
     <li
       className={`dayr-row${flash ? ' flash' : ''}${last ? ' last' : ''}`}
       ref={rowRef}
+      data-key={rowKey}
       onMouseEnter={onHoverChange ? () => onHoverChange(true) : undefined}
       onMouseLeave={onHoverChange ? () => onHoverChange(false) : undefined}
     >
@@ -67,12 +70,120 @@ function RouteStop({ item, n, last, flash, onMoveUp, onMoveDown, onRemove, rowRe
         </span>
       </span>
       <span className="dayr-tools">
-        <button className="dayr-tool" onClick={onMoveUp} disabled={n === 1} aria-label={t('dayws.moveUp')} title={t('dayws.moveUp')}>↑</button>
-        <button className="dayr-tool" onClick={onMoveDown} disabled={last} aria-label={t('dayws.moveDown')} title={t('dayws.moveDown')}>↓</button>
-        <button className="dayr-tool dayr-tool-del" onClick={onRemove} aria-label={t('dayws.removeStop')} title={t('dayws.removeStop')}>×</button>
+        {/* T399: drawn icons from the one set, not the Unicode arrows and
+            the multiplication sign (design direction v6, part 5). Up is the
+            down chevron turned. */}
+        <button className="dayr-tool" onClick={onMoveUp} disabled={n === 1} aria-label={t('dayws.moveUp')} title={t('dayws.moveUp')}>
+          <ChevronDownIcon size={16} className="dayr-tool-up" />
+        </button>
+        <button className="dayr-tool" onClick={onMoveDown} disabled={last} aria-label={t('dayws.moveDown')} title={t('dayws.moveDown')}>
+          <ChevronDownIcon size={16} />
+        </button>
+        <button className="dayr-tool dayr-tool-del" onClick={onRemove} aria-label={t('dayws.removeStop')} title={t('dayws.removeStop')}>
+          <CloseIcon size={14} />
+        </button>
       </span>
     </li>
   );
+}
+
+/**
+ * The day strip (T399, carta-design "Data drawings", rule N4): one thin bar,
+ * one segment per stop in ink and one per stretch between stops in rule,
+ * each as wide as its minutes in the day's schedule (the same model that
+ * prints "done ~14:00" in the head). It carries no figure, no legend and no
+ * accent; the rows and the figures line carry the numbers, so it is hidden
+ * from screen readers. The stop the traveller is looking at (under the
+ * pointer, or tapped on the map) is outlined.
+ *
+ * `schedule` is buildDaySchedule()'s result plus `startMin`, the minute the
+ * day leaves the door. Segments run from there to `endMin`, so their minutes
+ * add up to the finish time the head prints.
+ */
+function daySegments(schedule) {
+  const rows = schedule?.rows || [];
+  if (!rows.length) return [];
+  const segs = [];
+  let t = Number.isFinite(schedule.startMin) ? Math.min(schedule.startMin, rows[0].arriveMin) : rows[0].arriveMin;
+  rows.forEach((r, i) => {
+    if (r.arriveMin > t) segs.push({ kind: 'gap', min: r.arriveMin - t });
+    segs.push({ kind: 'stop', i, min: Math.max(1, r.departMin - r.arriveMin) });
+    t = r.departMin;
+  });
+  if (Number.isFinite(schedule.endMin) && schedule.endMin > t) segs.push({ kind: 'gap', min: schedule.endMin - t });
+  return segs;
+}
+
+function DayStrip({ schedule, focusIdx }) {
+  const segs = daySegments(schedule);
+  if (segs.length < 2) return null;
+  return (
+    <div className="dayp-strip" aria-hidden="true">
+      {segs.map((s, k) => (
+        <span
+          key={k}
+          className={`dayp-strip-seg ${s.kind}${s.kind === 'stop' && s.i === focusIdx ? ' on' : ''}`}
+          style={{ flexGrow: s.min }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** A line of the day's figures that settles in place when they change: one
+ *  opacity dip through the shared primitive, no count-up (design direction
+ *  v6, part 2.3). `value` is the string of figures it shows. */
+export function SettledLine({ className, value, children }) {
+  const ref = useRef(null);
+  useSettledFigure(ref, value);
+  return <div className={className} ref={ref}>{children}</div>;
+}
+
+/** A stable key per stop, so React keeps a row's element when it moves and
+ *  the reorder can slide it (a key holding the index remounts the row). */
+function stopKeys(items) {
+  const seen = new Map();
+  return items.map((it) => {
+    const base = String(it.id ?? it.name ?? '');
+    const n = seen.get(base) || 0;
+    seen.set(base, n + 1);
+    return n ? `${base}#${n}` : base;
+  });
+}
+
+/**
+ * Slide rows to their new place after a reorder (FLIP, design direction v6
+ * part 2.3: a moved row slides in --dur-2 with --ease-in-out and the others
+ * shift the same way). Reads each row's top before the paint, plays the
+ * difference back to zero through the Web Animations API, and does nothing
+ * under reduced motion, where durationMs() returns 0 and the rows jump.
+ */
+function useRowSlide(listRef, keys) {
+  const tops = useRef(new Map());
+  const sig = keys.join('|');
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const rows = [...list.children];
+    const next = new Map();
+    rows.forEach((el) => { next.set(el.dataset.key, el.getBoundingClientRect().top); });
+    const prev = tops.current;
+    tops.current = next;
+    if (!prev.size) return;
+    const dur = durationMs('--dur-2');
+    if (!dur) return;
+    let ease = '';
+    try { ease = getComputedStyle(document.documentElement).getPropertyValue('--ease-in-out').trim(); } catch { /* no DOM */ }
+    rows.forEach((el) => {
+      const before = prev.get(el.dataset.key);
+      const now = next.get(el.dataset.key);
+      if (before == null || now == null || Math.abs(before - now) < 1 || typeof el.animate !== 'function') return;
+      el.animate(
+        [{ transform: `translateY(${before - now}px)` }, { transform: 'translateY(0)' }],
+        { duration: dur, easing: ease || 'ease-in-out' },
+      );
+    });
+  }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps -- value key: the order of the stops is the only change that should slide
 }
 
 /**
@@ -94,12 +205,16 @@ export function DayPlanPanel({
   botPrompts = [], onBotPrompt,
   gmapsUrl, onShare, shareState, onPdf, onKml, onIcs,
   citytrip, onUseCitytrip, walksBlock, discoveries = [], aiSummary = '',
+  schedule = null, focusIdx = null,
 }) {
   const { t, lang } = useI18n();
   const [addOpen, setAddOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const addBtnRef = useRef(null);
   const shareBtnRef = useRef(null);
+  const listRef = useRef(null);
+  const keys = stopKeys(items);
+  useRowSlide(listRef, keys);
 
   if (items.length === 0) {
     return (
@@ -248,10 +363,13 @@ export function DayPlanPanel({
 
       {aiSummary && <p className="dayp-summary">{aiSummary}</p>}
 
-      <ol className="dayr-list">
+      <DayStrip schedule={schedule} focusIdx={focusIdx} />
+
+      <ol className="dayr-list" ref={listRef}>
         {items.map((it, i) => (
           <RouteStop
-            key={`${it.id || it.name}-${i}`}
+            key={keys[i]}
+            rowKey={keys[i]}
             item={it}
             n={i + 1}
             last={i === items.length - 1}

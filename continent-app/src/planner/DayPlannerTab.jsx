@@ -49,7 +49,7 @@ import { searchFold } from '../lib/textSearch.js';
 import { useShortlistPoints, resolveFeatureRow } from '../hooks/useFavoriteItems.js';
 import { PoiThumb } from './DayActivityRows.jsx';
 import { DayIdeasStep } from './DayIdeasStep.jsx';
-import { DayPlanPanel } from './DayPlanPanel.jsx';
+import { DayPlanPanel, SettledLine } from './DayPlanPanel.jsx';
 import { DayAddPanel } from './DayAddPanel.jsx';
 import { DayFilesPanel } from './DayFilesPanel.jsx';
 import {
@@ -3968,21 +3968,21 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           {/* The day's honest numbers, always in view above the scroll: how
               many stops, how far on foot, when you are roughly done. */}
           {assignedItems.length > 0 && (
-            <div className="day-topcard-stats">
+            /* T399: the pipes went for spacing (brief V4-3), and the line
+               settles in place when a stop is added, moved or removed
+               (design direction v6, part 2.3). */
+            <SettledLine
+              className="day-topcard-stats"
+              value={`${assignedItems.length}|${legsAlign && routeOk ? route.km : ''}|${schedule ? schedule.endMin : ''}`}
+            >
               <span>{t('day.statStops', { n: assignedItems.length })}</span>
               {legsAlign && routeOk && (
-                <>
-                  <span className="day-stat-sep" aria-hidden="true" />
-                  <span>{t('day.statSteps', { n: formatSteps(kmToSteps(route.km), lang) })}</span>
-                </>
+                <span>{t('day.statSteps', { n: formatSteps(kmToSteps(route.km), lang) })}</span>
               )}
               {schedule && (
-                <>
-                  <span className="day-stat-sep" aria-hidden="true" />
-                  <span>{t('day.statDone', { time: fmtClockLoose(schedule.endMin) })}</span>
-                </>
+                <span>{t('day.statDone', { time: fmtClockLoose(schedule.endMin) })}</span>
               )}
-            </div>
+            </SettledLine>
           )}
         </div>
 
@@ -4073,6 +4073,11 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               walksBlock={pinnedWalksBlock}
               discoveries={aiDiscoveries}
               aiSummary={aiPlan?.summary || ''}
+              schedule={schedule ? {
+                ...schedule,
+                startMin: Number.isFinite(prefs?.dayStartMin) ? prefs.dayStartMin : DAY_START_MIN,
+              } : null}
+              focusIdx={focusRow}
             />
           )}
 
@@ -4145,7 +4150,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           )}
 
           <div className="trip-block dayws-back">
-            <button className="trip-newtrip-btn" onClick={() => setPlan(null)}>← {t('dayws.backToPlans')}</button>
+            <button className="trip-newtrip-btn" onClick={() => setPlan(null)}><ArrowLeftIcon size={15} /> {t('dayws.backToPlans')}</button>
           </div>
         </div>
       </div>

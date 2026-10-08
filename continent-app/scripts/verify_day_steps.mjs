@@ -68,7 +68,10 @@ await page.route('**/functions/v1/plan-day', async (route) => {
 await page.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
 await page.goto(URL, { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(2500);
-for (const btn of await page.getByRole('button').all()) {
+// T399: the header tabs became real links in the shell's V3 pass (carta-design
+// "Navigation": a tab is an <a href> with the view's URL), so the tab is
+// looked for among links as well as buttons.
+for (const btn of [...await page.getByRole('link').all(), ...await page.getByRole('button').all()]) {
   const label = (await btn.innerText().catch(() => '')).trim();
   if (/day planner/i.test(label) && (await btn.isVisible().catch(() => false))) { await btn.click(); break; }
 }

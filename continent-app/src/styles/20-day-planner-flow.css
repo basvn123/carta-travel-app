@@ -31,12 +31,12 @@
   color: var(--ink-soft);
 }
 .trip-poi-pin-add svg { width: 10px; height: 10px; }
-.trip-poi-pin:hover .trip-poi-pin-add { background: var(--good-ink); color: var(--on-fill); }
+.trip-poi-pin:hover .trip-poi-pin-add { background: var(--ink-fill); color: var(--on-fill); }
 /* "Show selected" pins: already in the plan, drawn as quiet checked status
    (no + affordance, no pointer), so they can't be double-added. */
 .trip-poi-pin.sel {
   opacity: 0.92;
-  outline: 2px solid var(--good-ink);
+  outline: 2px solid var(--ink);
   outline-offset: -1px;
   cursor: default;
 }
@@ -248,8 +248,8 @@
   cursor: pointer;
   transition: border-color 0.14s, background 0.14s, color 0.14s;
 }
-.carta-plan-chip:hover { border-color: var(--accent); color: var(--ink); }
-.carta-plan-chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
+.carta-plan-chip:hover { border-color: var(--ink); color: var(--ink); }
+.carta-plan-chip.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 .carta-plan-moods .day-guide-mood { font-size: 12px; }
 
 /* The which-part-of-town answer: honest options built from the data, each
@@ -274,7 +274,7 @@
   transition: border-color 0.14s, background 0.14s;
 }
 .carta-area:hover { border-color: var(--accent); }
-.carta-area.on { border-color: var(--accent); background: var(--accent-bg); }
+.carta-area.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
 .carta-area-text b { display: block; font-size: 12.5px; color: var(--ink); }
 .carta-area-text small { display: block; font-size: 11px; color: var(--ink-mute); margin-top: 1px; }
 .carta-area-count {
@@ -383,7 +383,7 @@
   border: 1px solid var(--rule); border-radius: 8px;
   background: none; padding: 6px 9px; cursor: pointer;
 }
-.trip-carfrom-result:hover { border-color: var(--accent); color: var(--ink); }
+.trip-carfrom-result:hover { border-color: var(--ink); color: var(--ink); }
 .trip-carfrom-note b { color: var(--ink); }
 .trip-carfrom-change {
   font-family: var(--ui);
@@ -392,7 +392,7 @@
   border: 1px solid var(--rule); border-radius: 999px;
   background: none; padding: 2px 8px; cursor: pointer;
 }
-.trip-carfrom-change:hover { color: var(--accent); border-color: var(--accent); }
+.trip-carfrom-change:hover { color: var(--ink); border-color: var(--ink); }
 .trip-ownflight-date { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .trip-ownflight-date > span {
   font-family: var(--ui);
@@ -424,7 +424,7 @@
   border: 1px solid var(--rule); border-radius: 999px;
   background: none; padding: 3px 9px; cursor: pointer;
 }
-.guide-stay-filter-clear:hover { color: var(--accent); border-color: var(--accent); }
+.guide-stay-filter-clear:hover { color: var(--ink); border-color: var(--ink); }
 .guide-stay-price {
   font-family: var(--mono); font-size: 9.5px;
   color: var(--ink-soft);
@@ -568,7 +568,7 @@ button.ai-sched-main { cursor: pointer; }
   display: flex; align-items: center; justify-content: center;
   padding: 0 4px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--ink-fill);
   color: var(--on-fill);
   font-family: var(--mono); font-size: 10px; font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -578,8 +578,8 @@ button.ai-sched-main { cursor: pointer; }
 /* Selected: the row and its pin are one thing, so picking either says so on
    both. Kept to a tint and a rule, no lift, this is a list of places and not
    a stack of cards. */
-.ai-sched-stop.on { background: var(--accent-bg); }
-.ai-sched-stop.on .ai-sched-body b { color: var(--accent); }
+.ai-sched-stop.on { background: var(--bg-card); outline: 2px solid var(--ink); outline-offset: -2px; }
+.ai-sched-stop.on .ai-sched-body b { color: var(--ink); }
 .ai-sched-stop {
   border-radius: 8px;
   padding-left: 6px; padding-right: 6px;
@@ -710,9 +710,9 @@ button.ai-sched-main:focus-visible {
   display: inline-block;
   padding: 3px 9px;
   border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-size: 10.5px; font-weight: 700;
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-size: 10.5px; font-weight: 600;
 margin-bottom: 8px;
 }
 
@@ -884,9 +884,17 @@ margin-bottom: 8px;
   overflow: hidden;
   background: var(--bg-card);
   cursor: pointer;
-  transition: border-color .15s ease, box-shadow .15s ease;
+  transition: border-color var(--dur-1) var(--ease-out);
 }
-.dtcard:hover { border-color: var(--accent); box-shadow: var(--shadow-1); }
+.dtcard:hover { border-color: var(--ink); }
+/* T399 (carta-design caption band): pressed, the band turns --ink-fill, so
+   the press reads in greyscale too. */
+.dtcard .dtcard-body { transition: background-color var(--dur-1) var(--ease-out); }
+.dtcard:active .dtcard-body { background: var(--ink-fill); }
+.dtcard:active .dtcard-body :is(.dtcard-title, .dtcard-dates, .dtcard-stop, .dtcard-stop small, .dtcard-go) { color: var(--on-fill); }
+@media (prefers-reduced-motion: reduce) {
+  .dtcard, .dtcard .dtcard-body { transition: none; }
+}
 /* A trip you can no longer travel is still worth reopening, so it is dimmed
    rather than hidden, and it comes back to full strength on hover: muted is a
    ranking signal, not a disabled state. */
@@ -899,11 +907,10 @@ margin-bottom: 8px;
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 3 / 2;
   overflow: hidden;
   background: var(--paper-dim);
 }
-.dtcard-photo.ratio43 { aspect-ratio: 4 / 3; }
 .dtcard-img {
   position: absolute;
   inset: 0;
@@ -913,23 +920,14 @@ margin-bottom: 8px;
   object-fit: cover;
   object-position: 50% var(--card-focus, 38%);
 }
-.dtcard-scrim {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 62%;
-  background: linear-gradient(to top, rgba(0, 0, 0, .62), rgba(0, 0, 0, 0));
-  pointer-events: none;
-}
+/* T399: the name moved off the photograph into the band under it (caption
+   band rule), Fraunces at the caption size; the gradient scrim went. */
 .dtcard-title {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 10px;
-  color: var(--on-fill);
+  color: var(--ink);
   font-family: var(--display);
-  font-size: 17px;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.25;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, .45);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -949,7 +947,7 @@ margin-bottom: 8px;
   background: rgba(255, 255, 255, .92);
   color: var(--ink-soft);
 }
-.dtcard-badge.now { background: var(--accent); color: var(--on-fill); }
+.dtcard-badge.now { background: var(--ink-fill); color: var(--on-fill); }
 .dtcard-badge.past { background: rgba(255, 255, 255, .8); color: var(--ink-mute); }
 .dtcard-body {
   display: flex;
@@ -976,7 +974,7 @@ margin-bottom: 8px;
 .dtcard-stop b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dtcard-stop small { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 .dtcard-stop.more { color: var(--ink-mute); font-size: 11.5px; }
-.dtcard-arrow { color: var(--ink-mute); font-size: 11px; }
+.dtcard-arrow { flex: none; color: var(--ink-mute); }
 .dtcard-go {
   display: inline-flex;
   align-items: center;
@@ -984,7 +982,7 @@ margin-bottom: 8px;
   margin-top: 2px;
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--ink);
 }
 
 /* Two grey cards while the trips load, so the section holds its height
@@ -1011,8 +1009,8 @@ margin-bottom: 8px;
   flex: none;
   padding: 9px;
   border-radius: 12px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: transparent;
+  color: var(--ink-soft);
 }
 .dtsignin-text { flex: 1 1 auto; min-width: 0; }
 .dtsignin-text b { display: block; font-size: 14px; }
@@ -1052,7 +1050,7 @@ margin-bottom: 8px;
   color: var(--ink-soft);
   cursor: pointer;
 }
-.dtmenu-btn:hover { color: var(--accent); }
+.dtmenu-btn:hover { color: var(--ink); }
 .dtmenu-pop {
   position: absolute;
   top: calc(100% + 5px);
@@ -1079,7 +1077,7 @@ margin-bottom: 8px;
   cursor: pointer;
 }
 .dtmenu-item:hover { background: var(--paper-dim); }
-.dtmenu-item.danger { color: var(--accent); }
+.dtmenu-item.danger { color: var(--danger); }
 
 /* "Which day?": every day of the trip, grouped under its stop. Picking one
    answers the stay question and the date question at once. */
@@ -1107,7 +1105,7 @@ margin-bottom: 8px;
   text-align: left;
   cursor: pointer;
 }
-.dtday-chip:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.dtday-chip:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
 .dtday-chip b { font-size: 13px; font-weight: 600; }
 .dtday-chip small {
   font-family: var(--mono);
@@ -1197,7 +1195,7 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: border-color .15s, color .15s;
 }
-.day-flow-dest-change:hover { border-color: var(--accent); color: var(--accent); }
+.day-flow-dest-change:hover { border-color: var(--ink); color: var(--ink); }
 
 /* Once chosen, the stay IS the field. */
 .day-flow-chosen-change {
@@ -1212,7 +1210,7 @@ margin-bottom: 8px;
   padding: 4px 10px;
   cursor: pointer;
 }
-.day-flow-chosen-change:hover { color: var(--accent); border-color: var(--accent); }.day-picks-status {
+.day-flow-chosen-change:hover { color: var(--ink); border-color: var(--ink); }.day-picks-status {
   margin-left: auto;
   font-family: var(--mono);
   font-size: 10px;
@@ -1253,10 +1251,10 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
 }
-.day-flow-chip:hover { border-color: var(--accent); color: var(--accent); }
-.day-flow-chip.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+.day-flow-chip:hover { border-color: var(--ink); color: var(--ink); }
+.day-flow-chip.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); font-weight: 600; }
 .day-flow-chip small { font-size: 11px; color: var(--ink-mute); }
-.day-flow-chip.on small { color: var(--accent); }
+.day-flow-chip.on small { color: var(--on-fill); }
 
 /* The question's own sub-line. Quieter than the question and closer to it
    than to the field, so it reads as part of what is being asked rather than
@@ -1316,7 +1314,7 @@ margin-bottom: 8px;
    it arrived by mouse or by keyboard. */
 .day-stay-hit.on,
 .day-stay-hit:focus-visible { background: var(--paper-dim); outline: none; }
-.day-stay-hit.on .day-stay-hit-ico { background: var(--accent-bg); color: var(--accent); }
+.day-stay-hit.on .day-stay-hit-ico { background: var(--ink-fill); color: var(--on-fill); }
 
 .day-flow-search { display: flex; gap: 8px; }
 .day-flow-search .day-stay-input {
@@ -1329,10 +1327,10 @@ margin-bottom: 8px;
 .day-flow-chosen {
   display: flex; align-items: center; gap: 9px;
   padding: 13px 15px;
-  border: 1px solid var(--accent);
+  border: 2px solid var(--ink);
   border-radius: 12px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--bg-card);
+  color: var(--ink);
   font-size: 14px; font-weight: 600;
 }
 .day-flow-chosen .day-stay-chosen-label { flex: 1 1 auto; }
@@ -1599,7 +1597,7 @@ margin-bottom: 8px;
   transition: background 0.12s ease, color 0.12s ease;
 }
 .day-ideas-when-btn:hover { color: var(--ink); }
-.day-ideas-when-btn.on { background: var(--paper); color: var(--accent); font-weight: 600; box-shadow: var(--shadow-1); }
+.day-ideas-when-btn.on { background: var(--ink-fill); color: var(--on-fill); font-weight: 600; }
 
 .day-ideas-search { position: relative; display: flex; align-items: center; }
 .day-ideas-search-ico { position: absolute; left: 12px; color: var(--ink-mute); pointer-events: none; }
@@ -1647,7 +1645,7 @@ margin-bottom: 8px;
   transition: background 0.12s ease, border-color 0.12s ease;
 }
 .day-ideas-row:hover { background: var(--paper-dim); }
-.day-ideas-row.on { border-color: var(--accent); background: var(--accent-bg); }
+.day-ideas-row.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
 .day-ideas-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .day-ideas-row-text b {
   font-size: 13.5px; font-weight: 500; color: var(--ink);
@@ -1663,7 +1661,7 @@ margin-bottom: 8px;
   color: var(--ink-soft);
   font-size: 15px; line-height: 1;
 }
-.day-ideas-row.on .day-ideas-row-mark { background: var(--accent); color: var(--on-fill); }
+.day-ideas-row.on .day-ideas-row-mark { background: var(--ink-fill); color: var(--on-fill); }
 .day-ideas-note { margin: 0; font-size: 12.5px; color: var(--ink-soft); text-align: center; }
 
 /* A phone gets the two choices stacked and full width: side by side they

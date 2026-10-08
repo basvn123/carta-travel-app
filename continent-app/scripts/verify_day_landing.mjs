@@ -364,7 +364,10 @@ try {
       };
     });
     if (!/\d/.test(tray.summary)) fail(`${size.name}: tray does not count the pick: "${tray.summary}"`);
-    else if (!/step/i.test(tray.summary)) fail(`${size.name}: tray states no step estimate: "${tray.summary}"`);
+    // T399: since T389 (brief V3-7) a town in the tray counts as a ride with
+    // its minutes there and back, never as steps, and which card comes first
+    // depends on the day's rails; either estimate is the tray doing its job.
+    else if (!/step|there and back/i.test(tray.summary)) fail(`${size.name}: tray states no step or ride estimate: "${tray.summary}"`);
     else ok(`tray: "${tray.summary}"`);
     // The step count is half of what the tray label says, so it may not be
     // the half that gets elided on a narrow screen.

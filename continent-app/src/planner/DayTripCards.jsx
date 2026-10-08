@@ -91,7 +91,7 @@ function StopChips({ stops, max = 3 }) {
     <div className="dtcard-stops">
       {shown.map((st, i) => (
         <React.Fragment key={i}>
-          {i > 0 && <span className="dtcard-arrow" aria-hidden="true">→</span>}
+          {i > 0 && <ChevronRightIcon size={11} className="dtcard-arrow" />}
           <span className="dtcard-stop">
             {st.country && <CountryFlag country={st.country} size={11} />}
             <b>{cityLabel(st.city)}</b>
@@ -137,13 +137,12 @@ function TripCard({ plan, destinations, onPick }) {
           className="dtcard-img"
           maxWidth={960}
           sizes="(max-width: 768px) 82vw, 320px"
-          ratio={[16, 9]}
+          ratio={[3, 2]}
         />
-        <span className="dtcard-scrim" aria-hidden="true" />
         <StatusBadge status={status} />
-        <span className="dtcard-title">{label}</span>
       </span>
       <span className="dtcard-body">
+        <span className="dtcard-title">{label}</span>
         {dateRange(plan) && <span className="dtcard-dates">{dateRange(plan)}</span>}
         {stops.length > 0 && <StopChips stops={stops} />}
         <span className="dtcard-go">
@@ -365,7 +364,7 @@ export function DayPlanCards({ plans, destinations, onOpen, onDelete, hideTitle 
           return (
             <div className="dtcard-wrap" key={sp.id}>
               <button type="button" className="dtcard" onClick={() => onOpen(sp)}>
-                <span className="dtcard-photo ratio43">
+                <span className="dtcard-photo">
                   <HeroImage
                     url={dest?.image?.url}
                     city={dest?.city || label}
@@ -373,12 +372,11 @@ export function DayPlanCards({ plans, destinations, onOpen, onDelete, hideTitle 
                     className="dtcard-img"
                     maxWidth={960}
                     sizes="(max-width: 768px) 82vw, 320px"
-                    ratio={[4, 3]}
+                    ratio={[3, 2]}
                   />
-                  <span className="dtcard-scrim" aria-hidden="true" />
-                  <span className="dtcard-title">{label}</span>
                 </span>
                 <span className="dtcard-body">
+                  <span className="dtcard-title">{label}</span>
                   <span className="dtcard-dates">
                     {fmtDate(sp.startDate)}
                     {days > 1 ? t('day.nDaysSuffix', { n: days }) : ''}

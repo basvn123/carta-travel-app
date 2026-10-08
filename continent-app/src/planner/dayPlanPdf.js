@@ -8,6 +8,46 @@ import { poiKind, isMustSee, dwellMinutes } from './dayDraft.js';
 import { safeUrl } from '../lib/format.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
 
+// The tokens the booklet is drawn with, read from the live :root so the print
+// can never drift from the app (T399, brief V4-7): the palette and the three
+// type tokens, no hex and no face named in this file.
+const PRINT_TOKENS = [
+  '--paper', '--paper-dim', '--bg-card', '--ink', '--ink-soft', '--ink-mute',
+  '--rule', '--rule-soft', '--accent', '--on-fill', '--display', '--ui', '--mono',
+];
+
+function tokenRoot() {
+  try {
+    const cs = getComputedStyle(document.documentElement);
+    return PRINT_TOKENS
+      .map((k) => [k, cs.getPropertyValue(k).trim()])
+      .filter(([, v]) => v)
+      .map(([k, v]) => `${k}:${v};`)
+      .join(' ');
+  } catch {
+    return '';
+  }
+}
+
+/** The app's own @font-face rules (the three self-hosted faces), with their
+ *  /fonts/ URLs made absolute so the print window, which has no base of its
+ *  own, loads the same files. */
+function fontFaces() {
+  const out = [];
+  try {
+    for (const sheet of document.styleSheets) {
+      let rules;
+      try { rules = sheet.cssRules; } catch { continue; }
+      for (const r of rules || []) {
+        if (typeof CSSFontFaceRule !== 'undefined' && r instanceof CSSFontFaceRule) {
+          out.push(r.cssText.replace(/url\((['"]?)\//g, `url($1${window.location.origin}/`));
+        }
+      }
+    }
+  } catch { /* no DOM: the booklet falls back to the system faces */ }
+  return out.join('\n');
+}
+
 /**
  * Build the booklet HTML for the whole trip and open it in a print window.
  * @param {object} ctx
@@ -155,52 +195,48 @@ export function openDayPlanPdf(ctx) {
   const html = `<!doctype html><html lang="${esc(lang)}"><head><meta charset="utf-8">
       <title>${esc(t('dayws.pdfDocTitle', { title }))}</title>
       <style>
-        :root {
-          --paper:#f5f1e8; --paper-dim:#ebe6d8; --ink:#1a1a1a; --ink-soft:#4a4a48;
-          --ink-mute:#8a8780; --rule:#c4bea9; --accent:#c8501e; --accent-bg:#f3d9c8;
-          --display:'Fraunces','Iowan Old Style',Georgia,'Times New Roman',serif;
-          --ui:'Inter Tight',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-        }
+        ${fontFaces()}
+        :root { ${tokenRoot()} }
         * { box-sizing:border-box; margin:0; padding:0; }
         html { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
         body { font-family:var(--ui); color:var(--ink); background:var(--paper); padding:48px 54px; line-height:1.5; }
         a { color:inherit; }
 
         .cover { border-bottom:2px solid var(--ink); padding-bottom:20px; }
-        .kicker { font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:var(--accent); font-weight:600; }
-        h1 { font-family:var(--display); font-size:38px; font-weight:600; line-height:1.05; letter-spacing:-.01em; margin-top:11px; }
+        .brand { font-size:12px; color:var(--ink-mute); font-weight:600; }
+        h1 { font-family:var(--display); font-size:40px; font-weight:600; line-height:1.05; letter-spacing:-.01em; margin-top:11px; }
         .cover-sub { font-size:12.5px; color:var(--ink-soft); margin-top:11px; }
         .cover-note { font-size:11px; color:var(--ink-mute); margin-top:14px; max-width:560px; line-height:1.55; }
 
-        .city-head { font-family:var(--display); font-size:25px; font-weight:600; margin:40px 0 2px; }
-        .city-head span { font-family:var(--ui); font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.14em; color:var(--ink-mute); margin-left:12px; vertical-align:middle; }
+        .city-head { font-family:var(--display); font-size:26px; font-weight:600; margin:40px 0 2px; }
+        .city-head span { font-family:var(--ui); font-size:12px; font-weight:500; color:var(--ink-mute); margin-left:12px; vertical-align:middle; }
 
         .day { margin-top:28px; page-break-inside:auto; }
         .day-head { display:flex; align-items:baseline; justify-content:space-between; gap:14px; border-bottom:1.5px solid var(--rule); padding-bottom:8px; margin-bottom:6px; }
         .day-title { font-family:var(--display); font-size:19px; font-weight:600; }
-        .day-title .date { font-family:var(--ui); font-size:11.5px; font-weight:400; color:var(--ink-mute); margin-left:12px; letter-spacing:.02em; }
-        .day-meta { font-size:10px; color:var(--ink-mute); text-transform:uppercase; letter-spacing:.09em; white-space:nowrap; }
+        .day-title .date { font-family:var(--mono); font-size:12px; font-weight:400; color:var(--ink-mute); margin-left:12px; font-variant-numeric:tabular-nums; }
+        .day-meta { font-family:var(--mono); font-size:11px; color:var(--ink-soft); white-space:nowrap; font-variant-numeric:tabular-nums; }
 
         ol { list-style:none; }
-        li.stop { padding:11px 0; break-inside:avoid; border-bottom:1px solid rgba(196,190,169,.45); }
+        li.stop { padding:11px 0; break-inside:avoid; border-bottom:1px solid var(--rule-soft); }
         li.stop:last-child { border-bottom:none; }
         .stop-row { display:flex; gap:14px; }
-        .num { flex:none; width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--paper); font-family:var(--ui); font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+        .num { flex:none; width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--paper); font-family:var(--mono); font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; margin-top:1px; }
         .stop-body { flex:1; min-width:0; }
         .stop-head { display:flex; align-items:baseline; flex-wrap:wrap; gap:2px 0; }
-        .stop-name { font-family:var(--display); font-size:15.5px; font-weight:600; }
-        .tag { font-size:9px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink-mute); margin-left:9px; }
-        .chip { font-size:8.5px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; padding:2px 7px; border-radius:3px; margin-left:7px; }
-        .chip.must { background:var(--accent-bg); color:var(--accent); }
+        .stop-name { font-family:var(--display); font-size:16px; font-weight:600; }
+        .tag { font-size:11px; color:var(--ink-mute); margin-left:9px; }
+        .chip { font-size:10px; font-weight:600; padding:2px 7px; border-radius:6px; margin-left:7px; }
+        .chip.must { background:var(--bg-card); color:var(--ink); border:1px solid var(--ink); }
         .chip.heritage { background:var(--paper-dim); color:var(--ink-soft); border:1px solid var(--rule); }
         .blurb { font-size:11.5px; color:var(--ink-soft); line-height:1.55; margin-top:4px; max-width:580px; }
-        .accolade { color:var(--accent); }
-        .stop-links { margin-top:6px; font-size:10.5px; }
-        .stop-links a { color:var(--accent); text-decoration:none; font-weight:500; margin-right:16px; }
-        .walk { font-size:10px; color:var(--ink-mute); padding:6px 0 1px 40px; letter-spacing:.02em; }
+        .accolade { color:var(--ink); font-weight:600; }
+        .stop-links { margin-top:6px; font-size:11px; }
+        .stop-links a { color:var(--ink-soft); text-decoration:underline; text-underline-offset:2px; font-weight:500; margin-right:16px; }
+        .walk { font-family:var(--mono); font-size:10.5px; color:var(--ink-mute); padding:6px 0 1px 40px; font-variant-numeric:tabular-nums; }
 
         .day-route { margin-top:13px; }
-        .day-route a { display:inline-block; font-family:var(--ui); font-size:11px; font-weight:600; color:var(--paper); background:var(--accent); padding:8px 15px; border-radius:6px; text-decoration:none; letter-spacing:.02em; }
+        .day-route a { display:inline-block; font-family:var(--ui); font-size:12px; font-weight:600; color:var(--on-fill); background:var(--accent); padding:8px 15px; border-radius:6px; text-decoration:none; }
 
         footer { margin-top:44px; padding-top:12px; border-top:1px solid var(--rule); font-size:10px; color:var(--ink-mute); display:flex; justify-content:space-between; gap:12px; }
 
@@ -208,7 +244,7 @@ export function openDayPlanPdf(ctx) {
         @media print { body { padding:0; background:var(--paper); } .day-route a { border:1px solid var(--accent); } }
       </style></head><body>
       <header class="cover">
-        <div class="kicker">Carta, Europe Travel</div>
+        <div class="brand">Carta, Europe Travel</div>
         <h1>${esc(title)}</h1>
         <div class="cover-sub">${subParts}</div>
         <p class="cover-note">${esc(t('dayws.pdfNote'))}</p>
