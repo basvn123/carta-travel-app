@@ -115,6 +115,7 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/components/PrivacyPolicy.jsx` | shell | renders |
 | `src/components/RatingBadge.jsx` | shell | renders |
 | `src/components/ReportProblem.jsx` | shell | renders |
+| `src/components/SettingsLine.jsx` | shell | renders |
 | `src/components/StateBlocks.jsx` | shell | renders |
 | `src/components/TermsOfService.jsx` | shell | renders |
 | `src/components/TransportIcons.jsx` | shell | renders |
