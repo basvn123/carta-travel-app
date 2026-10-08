@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button } from '../components/Button.jsx';
-import { ReceiptCard, ReceiptFigure } from '../components/ReceiptCard.jsx';
+import {
+  ReceiptCard, ReceiptFigure, ReceiptLine, ReceiptSum, useSettleChanged,
+} from '../components/ReceiptCard.jsx';
 import { count, eurExact } from '../lib/format.js';
 import { activeLocale } from '../lib/localeState.js';
 import { addDays } from '../lib/dates.js';
@@ -35,6 +37,16 @@ import {
  *
  * One primary action: find a town to walk from, which opens Destinations on
  * its walks. Everything else is a field or a secondary.
+ *
+ * Since T392 (design wave V4) the page answers its inputs in place: the
+ * receipt carries the cost bar, every figure that changes settles through
+ * settleFigure() (the priced list's too), the per-person line is the
+ * per-person-per-day figure the title promises, each proof point carries a
+ * live line of the receipt above it (rule R8), the coverage rows carry a
+ * thin bar (rule R4), and the hero keeps a receipt-shaped still block while
+ * no demo town can be priced yet. The running instrument line moved under
+ * the primary (DIRECTION.md part 6 order; part 7, shorten what sits above
+ * the primary).
  *
  * Props
  *   data        { meta, destinations }, partial or full (the rank tier holds
@@ -134,10 +146,18 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
     return Object.fromEntries(tiers.map((k) => [k, !town || !opts || tierMeasured(town, opts, k)]));
   }, [town, tiers, inputFor]);
 
+  // The figure the title promises: what a day costs one person, from this
+  // receipt (the total over the party and the nights, to the cent).
+  const perDay = receipt && people > 0 && nights > 0
+    ? Math.round((receipt.total / people / nights) * 100) / 100
+    : null;
+
   const facts = useMemo(() => catalogueFacts(data?.destinations, data?.meta), [data]);
   // The priced list for the undecided (rule R1): the Explore cards' own day
   // figures, so it re-ranks when the party or the stay changes.
   const walk = useMemo(() => cheapestToWalk(data?.destinations, indices), [data, indices]);
+  const walkRef = useRef(null);
+  useSettleChanged(walkRef, walk.map((r) => `${r.id}:${r.dayEur}`).join('|'));
 
   // The layer counts come from the coverage file, the same one the region
   // pages and /about/numbers read. Below the fold, so it loads after paint;
@@ -181,6 +201,32 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
       : t('landing.altNights', { nights: nightsWord(a.nights), eur });
   };
 
+  // The receipt's lines, built once: the card draws them and the proof
+  // points borrow one each (rule R8, read live, set the same way).
+  const lines = receipt ? [
+    {
+      key: 'stay',
+      label: t('receipt.stay', { nights: nightsWord(nights) }),
+      prov: stayProv(),
+      eur: receipt.stay.eur,
+      est: receipt.stay.est,
+    },
+    {
+      key: 'ground',
+      label: t('receipt.ground'),
+      prov: [
+        {
+          mono: t(receipt.ground.days === 1 ? 'receipt.groundMathOne' : 'receipt.groundMath',
+            { days: receipt.ground.days, people: receipt.people, eur: eurExact(receipt.ground.perDay) }),
+          text: receipt.ground.level === 'city' ? t('cost.foodMeasured') : t('receipt.groundNational'),
+        },
+      ],
+      eur: receipt.ground.eur,
+      est: receipt.ground.est,
+    },
+  ] : [];
+  const sumLabel = t('receipt.total', { people: peopleWord(people) });
+
   const end = start ? addDays(start, nights) : null;
   const subVars = start && end ? {
     from: fmtDay(start, start.slice(0, 4) !== end.slice(0, 4)),
@@ -198,6 +244,25 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
     : DEMO_PEOPLE;
   const nightsOptions = DEMO_NIGHTS.includes(nights) ? DEMO_NIGHTS : [...DEMO_NIGHTS, nights].sort((a, b) => a - b);
 
+  // One live line of the receipt above under each proof point (rule R8):
+  // the stay line names its source; the sum shows that a total holding an
+  // estimate is one (or one sentence when this town has none); the food
+  // line is the figure every screen prices from the same function.
+  const specimen = (i) => {
+    if (!receipt || !town) return null;
+    const wrap = (child) => <dl className="frr-lines lp-spec" data-spec={i}>{child}</dl>;
+    if (i === 1) {
+      const line = lines.find((l) => l.key === 'stay');
+      return line ? wrap(<ReceiptLine line={line} t={t} />) : null;
+    }
+    if (i === 2) {
+      if (!receipt.est) return <p className="lp-spec-none" data-spec={i}>{t('landing.specNoEst', { city: town.city })}</p>;
+      return wrap(<ReceiptSum sumLabel={sumLabel} total={receipt.total} est={receipt.est} live={false} t={t} />);
+    }
+    const line = lines.find((l) => l.key === 'ground');
+    return line ? wrap(<ReceiptLine line={line} t={t} />) : null;
+  };
+
   const rest = Math.max(0, facts.places - facts.bedsMeasured);
   const layerLabel = {
     trail: t('landing.layerTrail'),
@@ -213,16 +278,19 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
         <section className="lp-hero" aria-labelledby="lp-title">
           <div className="lp-head">
             <h1 id="lp-title" className="lp-title">{t('landing.title', { n: count(facts.places) })}</h1>
-            {/* The running instrument (brief V3-9): the coverage in one line,
-                read from the catalogue, with the catalogue's own date. */}
-            <p className="lp-instrument">
-              {t(facts.asOf ? 'landing.instrument' : 'landing.instrumentNoDate', {
-                m: count(facts.bedsMeasured), n: count(facts.places), f: count(facts.foodMeasured),
-                date: facts.asOf ? fmtDay(facts.asOf, true) : '',
-              })}
-            </p>
           </div>
 
+          {!(town && receipt) && (
+            // Receipt-shaped and still while no demo town prices yet (brief
+            // V4-9): the strip and the card keep their place, so the primary
+            // under them does not move when the figures arrive.
+            <div className="lp-demo lp-skel" aria-busy="true">
+              <span className="frr-sr">{t('state.loading')}</span>
+              <div className="lp-skel-towns" aria-hidden="true" />
+              <div className="lp-skel-strip" aria-hidden="true" />
+              <div className="lp-skel-card" aria-hidden="true" />
+            </div>
+          )}
           {town && receipt && (
             <div className="lp-demo">
               <div className="lp-towns" role="group" aria-labelledby="lp-towns-label">
@@ -278,33 +346,13 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
                       {t('landing.openTown', { city: town.city })}
                     </Button>
                   ) : null}
-                  lines={[
-                    {
-                      key: 'stay',
-                      label: t('receipt.stay', { nights: nightsWord(nights) }),
-                      prov: stayProv(),
-                      eur: receipt.stay.eur,
-                      est: receipt.stay.est,
-                    },
-                    {
-                      key: 'ground',
-                      label: t('receipt.ground'),
-                      prov: [
-                        {
-                          mono: t(receipt.ground.days === 1 ? 'receipt.groundMathOne' : 'receipt.groundMath',
-                            { days: receipt.ground.days, people: receipt.people, eur: eurExact(receipt.ground.perDay) }),
-                          text: receipt.ground.level === 'city' ? t('cost.foodMeasured') : t('receipt.groundNational'),
-                        },
-                      ],
-                      eur: receipt.ground.eur,
-                      est: receipt.ground.est,
-                    },
-                  ]}
-                  sumLabel={t('receipt.total', { people: peopleWord(people) })}
+                  lines={lines}
+                  sumLabel={sumLabel}
                   total={receipt.total}
                   est={receipt.est}
-                  each={receipt.each}
-                  eachText={(eur) => t('receipt.each', { eur })}
+                  each={perDay}
+                  eachText={(eur) => t('landing.eachDay', { eur })}
+                  bar
                   foot={[altLine()]}
                   t={t}
                 />
@@ -316,6 +364,15 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
             <div className="lp-act">
               <Button variant="primary" className="lp-cta" onClick={onStart}>{t('landing.cta')}</Button>
             </div>
+            {/* The running instrument (brief V3-9): the coverage in one line,
+                read from the catalogue, with the catalogue's own date. Under the
+                primary since T392 (DIRECTION.md part 6 order). */}
+            <p className="lp-instrument">
+              {t(facts.asOf ? 'landing.instrument' : 'landing.instrumentNoDate', {
+                m: count(facts.bedsMeasured), n: count(facts.places), f: count(facts.foodMeasured),
+                date: facts.asOf ? fmtDay(facts.asOf, true) : '',
+              })}
+            </p>
             {town && receipt && (
               <div className="lp-notes">
                 {datesPicked && <p className="lp-note">{t('landing.datesPicked')}</p>}
@@ -328,7 +385,7 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
               <section className="lp-walk" aria-labelledby="lp-walk-title">
                 <h2 id="lp-walk-title" className="lp-walk-title">{t('landing.walkTitle')}</h2>
                 <p className="lp-walk-sub">{t('landing.walkSub')}</p>
-                <ol className="lp-walk-list">
+                <ol className="lp-walk-list" ref={walkRef}>
                   {walk.map((r) => (
                     <li key={r.id}>
                       <button type="button" className="lp-walk-row" data-id={r.id} onClick={() => onOpenDest(r.id)}>
@@ -336,7 +393,7 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
                           <span className="lp-walk-city">{r.dest.city || r.dest.name}</span>
                           {r.dest.country && <span className="lp-walk-country">{r.dest.country}</span>}
                         </span>
-                        <span className="lp-walk-fig mono" data-eur={r.dayEur}>
+                        <span className="lp-walk-fig mono" data-eur={r.dayEur} data-key={r.id}>
                           <ReceiptFigure eur={r.dayEur} est={r.est} t={t} />
                           {r.est && <span className="lp-walk-word">{` ${t('landing.walkNational')}`}</span>}
                         </span>
@@ -356,6 +413,7 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
               <li key={i}>
                 <h3 className="lp-h3">{t(`landing.proof${i}Title`)}</h3>
                 <p>{t(`landing.proof${i}`)}</p>
+                {specimen(i)}
               </li>
             ))}
           </ul>
@@ -389,7 +447,18 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
                       <th scope="row">{layerLabel[r.key]}</th>
                       <td>{count(r.published)}</td>
                       <td>{count(r.listed)}</td>
-                      <td>{t('landing.covOf', { n: count(r.empty), of: count(r.applies) })}</td>
+                      <td>
+                        {t('landing.covOf', { n: count(r.empty), of: count(r.applies) })}
+                        {r.applies > 0 && (
+                          // The thin bar (rule R4): regions with at least one
+                          // row against the regions where the layer applies;
+                          // the cell says the same in words.
+                          <span className="lp-covbar" aria-hidden="true" data-with={r.applies - r.empty} data-of={r.applies}>
+                            <span className="lp-covbar-with" style={{ flexGrow: r.applies - r.empty }} />
+                            <span className="lp-covbar-none" style={{ flexGrow: r.empty }} />
+                          </span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

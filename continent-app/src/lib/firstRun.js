@@ -53,6 +53,31 @@ export function calendarDefaultWindow(todayIso, nights = 7) {
   return { start, end: addDays(start, n) };
 }
 
+/**
+ * Carta's default window moved into a month (T392, register row T387-c): a
+ * trip page that knows the trip's good month asks the first-run receipt to
+ * price that month while the visitor has not chosen dates. The arrival is the
+ * first Saturday on or after the 1st of the next occurrence of `month` (1 to
+ * 12) that is not before the default window's start; the length stays the
+ * default window's. Returns the default window unchanged for no month.
+ * @param {{start: string, end: string}|null} defaults
+ * @param {number|null} month
+ */
+export function seededWindow(defaults, month) {
+  if (!defaults?.start || !defaults?.end) return defaults || null;
+  const m = Math.round(Number(month));
+  if (!(m >= 1 && m <= 12)) return defaults;
+  const nights = Math.max(1, Math.round((Date.parse(`${defaults.end}T00:00:00Z`) - Date.parse(`${defaults.start}T00:00:00Z`)) / 86400000));
+  const mm = String(m).padStart(2, '0');
+  const saturdayFrom = (iso) => addDays(iso, (SATURDAY - new Date(`${iso}T00:00:00Z`).getUTCDay() + 7) % 7);
+  const year = Number(defaults.start.slice(0, 4));
+  const first = `${year}-${mm}-01`;
+  let start = saturdayFrom(first < defaults.start ? defaults.start : first);
+  // No Saturday of that month is left this year: the same month a year on.
+  if (start.slice(5, 7) !== mm) start = saturdayFrom(`${year + 1}-${mm}-01`);
+  return { start, end: addDays(start, nights) };
+}
+
 /** True when the window fits inside [min, max]; an open bound always fits. */
 export function windowFits(win, bounds) {
   if (!win) return false;

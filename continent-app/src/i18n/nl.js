@@ -14,6 +14,8 @@ export const nl = {
   "landing.walkTitle": "Waar een wandeldag het minst kost",
   "landing.walkSub": "Per persoon per dag, bed en eten, voor je groep en verblijf. De reis erheen zit er niet in.",
   "landing.walkNational": "nationaal",
+  "landing.eachDay": "{eur} per persoon per dag",
+  "landing.specNoEst": "Elke regel van de bon voor {city} hierboven is gemeten, dus geen enkele draagt een tilde.",
   "landing.cta": "Vind een plaats om vanuit te wandelen",
   "landing.townsLabel": "Prijs een verblijf in",
   "landing.people": "Personen",

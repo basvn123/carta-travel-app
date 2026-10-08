@@ -14,6 +14,8 @@ export const fr = {
   "landing.walkTitle": "Où une journée de marche coûte le moins",
   "landing.walkSub": "Par personne et par jour, lit et repas, pour votre groupe et votre hébergement. Le trajet aller n'est pas compris.",
   "landing.walkNational": "national",
+  "landing.eachDay": "{eur} par personne et par jour",
+  "landing.specNoEst": "Chaque ligne du reçu de {city} ci-dessus est mesurée, donc aucune ne porte de tilde.",
   "landing.cta": "Trouver une ville d'où marcher",
   "landing.townsLabel": "Chiffrer un séjour à",
   "landing.people": "Personnes",

@@ -19,6 +19,8 @@ export const en = {
   "landing.walkTitle": "Where a walking day costs least",
   "landing.walkSub": "Per person per day, bed and food, for your party and stay. Getting there is not included.",
   "landing.walkNational": "national",
+  "landing.eachDay": "{eur} a person a day",
+  "landing.specNoEst": "Every line of the {city} receipt above is measured, so none carries a tilde.",
   "landing.cta": "Find a town to walk from",
   "landing.townsLabel": "Price a stay in",
   "landing.people": "People",

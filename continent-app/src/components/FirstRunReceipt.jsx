@@ -4,7 +4,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import {
   priceReceipt, receiptFooter, readFirstResultSeen, markFirstResultSeen, readOwnFare, writeOwnFare,
-  receiptMix, tierMeasured,
+  receiptMix, tierMeasured, seededWindow, windowFits,
 } from '../lib/firstRun.js';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import { eurExact } from '../lib/format.js';
@@ -168,8 +168,20 @@ function FlightSheet({ fare, origin, data, setOrigin, from, to, people, onSave, 
  *                 date. The Leave date is then read-only, because the length
  *                 is chosen on the page and a second control would price a
  *                 third length.
+ *   hideStay      true drops the Stay cell (T392, register row T387-c): a
+ *                 nearby town's receipt on a trip page never carries its own
+ *                 stay select (carta-design, "Receipt, extended"); the
+ *                 shared stay tier still prices it
+ *   seedMonth     1 to 12 (T392, T387-c): while the visitor has not chosen
+ *                 dates, Carta's default window moves into that month
+ *                 (seededWindow in lib/firstRun.js), and the receipt still
+ *                 treats those dates as Carta's. Ignored when the window
+ *                 would fall past the planning horizon.
  */
-export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryChange = null, nights: fixedNights = null }) {
+export function FirstRunReceipt({
+  dest, receiptKey, headingLevel = 2, onPrimaryChange = null, nights: fixedNights = null,
+  hideStay = false, seedMonth = null,
+}) {
   const { t, lang } = useI18n();
   const ctx = useFirstRun();
   const today = useToday();
@@ -184,7 +196,9 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
   React.useEffect(() => { setFare(readOwnFare(receiptKey)); }, [receiptKey]);
 
   const choices = ctx?.choices;
-  const defaults = ctx?.defaultDates || null;
+  const baseDefaults = ctx?.defaultDates || null;
+  const seeded = seedMonth ? seededWindow(baseDefaults, seedMonth) : null;
+  const defaults = seeded && windowFits(seeded, ctx?.dateBounds) ? seeded : baseDefaults;
   const from = ctx?.departDate || defaults?.start || null;
   const to = fixedNights && from ? addDays(from, fixedNights) : (ctx?.returnDate || defaults?.end || null);
   const datesOwn = fixedNights
@@ -361,7 +375,7 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
 
       {/* The search strip: one bordered row, a small label over each value.
           The party size defaults to two; no airport cell, the airport belongs to the flight door. */}
-      <div className="frr-strip" role="group" aria-label={t('receipt.stripAria')}>
+      <div className={`frr-strip${hideStay ? ' is-no-stay' : ''}`} role="group" aria-label={t('receipt.stripAria')}>
         <label className="frr-cell">
           <span className="frr-cell-label">{t('receipt.stripPeople')}</span>
           <select value={receipt.people} onChange={(e) => setPeople(Number(e.target.value))}>
@@ -370,12 +384,14 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
             ))}
           </select>
         </label>
-        <label className="frr-cell">
-          <span className="frr-cell-label">{t('receipt.stripStay')}</span>
-          <select value={choices?.stay_tier || 'home'} onChange={(e) => setTier(e.target.value)}>
-            {tiers.map((tier) => <option key={tier} value={tier}>{tierText(tier)}</option>)}
-          </select>
-        </label>
+        {!hideStay && (
+          <label className="frr-cell">
+            <span className="frr-cell-label">{t('receipt.stripStay')}</span>
+            <select value={choices?.stay_tier || 'home'} onChange={(e) => setTier(e.target.value)}>
+              {tiers.map((tier) => <option key={tier} value={tier}>{tierText(tier)}</option>)}
+            </select>
+          </label>
+        )}
         <label className="frr-cell">
           <span className="frr-cell-label">{t('receipt.stripArrive')}</span>
           <input
@@ -420,6 +436,7 @@ export function FirstRunReceipt({ dest, receiptKey, headingLevel = 2, onPrimaryC
           footerText,
         ]}
         cardRef={cardRef}
+        bar
         t={t}
       />
 

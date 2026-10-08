@@ -14,6 +14,8 @@ export const es = {
   "landing.walkTitle": "Dónde un día de caminata cuesta menos",
   "landing.walkSub": "Por persona y día, cama y comida, para tu grupo y alojamiento. El viaje hasta allí no está incluido.",
   "landing.walkNational": "nacional",
+  "landing.eachDay": "{eur} por persona y día",
+  "landing.specNoEst": "Todas las líneas del recibo de {city} de arriba están medidas, así que ninguna lleva tilde.",
   "landing.cta": "Busca un pueblo desde el que caminar",
   "landing.townsLabel": "Calcula una estancia en",
   "landing.people": "Personas",

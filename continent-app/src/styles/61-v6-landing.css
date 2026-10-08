@@ -23,11 +23,12 @@
    band (landing R5 rejected): the content above the primary was shortened
    instead. DOM order is that order at every width (WCAG 1.3.2, 2.4.3). */
 
-/* The running instrument: the coverage in one line under the title, read
-   from the catalogue with its date (brief V3-9). Prose, so --ui. */
+/* The running instrument: the coverage in one line, read from the
+   catalogue with its date (brief V3-9). Prose, so --ui. Under the primary
+   since T392 (DIRECTION.md part 6 order), capped at a reading measure. */
 .lp-instrument {
-  margin: var(--space-2) 0 0;
-  max-width: 62ch;
+  margin: var(--space-3) 0 0;
+  max-width: 36em;
   font-size: 13px;
   line-height: 1.45;
   color: var(--ink-soft);
@@ -70,7 +71,6 @@
 @media (max-width: 899px) {
   .lp-wrap { padding-top: var(--space-3); }
   .lp-hero { gap: var(--space-2); }
-  .lp-instrument { margin-top: var(--space-1); }
   .lp-strip { margin-top: var(--space-2); }
   .lp-towns-label { font-size: 12px; }
   .lp-receipt .frr-head { padding: var(--space-2) var(--space-4); }
@@ -173,6 +173,127 @@
   .lp-walk { margin-top: var(--space-6); }
 }
 
+/* ── T392 (V4): visual and dynamic ─────────────────────────────────────
+   The page answers its inputs in place. Figures settle through
+   settleFigure() (lib/figureChange.js, scripted, so no keyframe here); the
+   rules below place the cost bar, the proof specimens, the coverage bars,
+   the receipt-shaped still block and the press, hover and focus states. */
+
+/* The phone fold (register row T382-b; DIRECTION.md part 7, shorten what
+   sits above the primary): below 769px the "Price a stay in" label is read
+   by screen readers only; it stays the town group's accessible name. */
+@media (max-width: 768px) {
+  .lp-towns-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* The priced list's heading is a section name: 22px on a phone, 26px from
+   769px (DIRECTION.md part 5). */
+@media (min-width: 769px) {
+  .lp-walk-title { font-size: 26px; }
+}
+
+/* The cost bar (carta-design "The cost bar"): the shell's CostBar, drawn by
+   ReceiptCard between the head and the lines, inset like the lines. Its own
+   look is 36-cost-bar.css; only its place is set here. */
+.frr-bar { padding: var(--space-3) var(--space-4) 0; }
+.frr-bar .costbar { margin-bottom: 0; }
+/* On the white card the 1px gaps between the segments show the card
+   itself; the --paper band the track draws on a paper page would read as a
+   grey box around the 44px hit area here. */
+.frr-bar .costbar-track { background: transparent; }
+.frr-bar .costbar-read { margin-top: var(--space-1); font-size: 12px; }
+@media (max-width: 899px) {
+  .lp-receipt .frr-bar { padding-top: var(--space-1); }
+  .lp-receipt .frr-bar .costbar-read { margin-top: 0; }
+}
+
+/* Proof specimens (rule R8): one receipt line under a proof point, set
+   exactly as the receipt sets it (the .frr-line rules), with no card, no
+   emphasis; a hairline above it separates it from the claim. */
+.lp-spec {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.lp-spec .frr-line:first-child { border-top: 0; }
+.lp-spec .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.lp-proof-list .lp-spec-none {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule-soft);
+  font-size: 13px;
+}
+
+/* Coverage bars (rule R4): one thin bar under the "Regions with none"
+   figure, regions with at least one row in --ink-soft, regions with none
+   in --rule, 1px --paper between them; the figure beside it says the
+   same, so the bar is hidden from screen readers. */
+.lp-covbar {
+  display: flex;
+  gap: 1px;
+  width: 100%;
+  min-width: 64px;
+  height: 6px;
+  margin-top: var(--space-1);
+  background: var(--paper);
+}
+.lp-covbar-with { background: var(--ink-soft); }
+.lp-covbar-none { background: var(--rule); }
+
+/* The receipt-shaped still block (brief V4-9; DIRECTION.md part 2.3,
+   Loading): the towns row, the strip and the card at their final heights in
+   --paper-dim, no shimmer, no spinner. */
+.lp-skel-towns,
+.lp-skel-strip,
+.lp-skel-card {
+  border-radius: 6px;
+  background: var(--paper-dim);
+}
+.lp-skel-towns { height: var(--tap); }
+.lp-skel-strip { height: 60px; margin-top: var(--space-2); }
+.lp-skel-card { height: 340px; margin-top: var(--space-2); border-radius: 10px; }
+@media (min-width: 769px) {
+  .lp-skel-towns { margin-top: var(--space-5); }
+  .lp-skel-strip { margin-top: var(--space-3); }
+}
+
+/* Press, hover and focus on the strip (brief V4-8). The press is the shared
+   touch feedback (02-base.css) on the label; hover tints the cell under a
+   pointer that can hover; a focused select rings its whole cell, as the
+   first-run strip does. */
+.lp-field { transition: background-color var(--dur-1) var(--ease-out); }
+@media (hover: hover) {
+  .lp-field:hover { background: var(--paper-dim); }
+}
+.lp-field:first-child { border-radius: 6px 0 0 6px; }
+.lp-field:last-child { border-radius: 0 6px 6px 0; }
+.lp-field:focus-within { outline: 2px solid var(--accent); outline-offset: -2px; }
+/* The cell carries the ring; the select's own ring is drawn clear, so it
+   still shows in forced colours. */
+.lp-field select:focus-visible { outline: 2px solid transparent; }
+
+/* The first-run strip without its Stay cell (FirstRunReceipt hideStay,
+   T387-c): three cells across, and in a narrow column the party across the
+   top with the two dates under it. */
+.frr-strip.is-no-stay { grid-template-columns: 0.9fr 1fr 1fr; }
+@container (max-width: 460px) {
+  .frr-strip.is-no-stay { grid-template-columns: 1fr 1fr; }
+  .frr-strip.is-no-stay .frr-cell:first-child { grid-column: 1 / -1; border-bottom: 1px solid var(--rule-soft); }
+  .frr-strip.is-no-stay .frr-cell:nth-child(2) { border-left: 0; border-bottom: 0; }
+  .frr-strip.is-no-stay .frr-cell:nth-child(3) { border-left: 1px solid var(--rule-soft); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .lp-walk-row { transition: none; }
+  .lp-walk-row,
+  .lp-field { transition: none; }
 }

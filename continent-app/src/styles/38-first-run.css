@@ -6,7 +6,8 @@
    primary, the flight sentence with its door, the exclusions sentence. The
    card is the carta-design receipt: --paper-dim header, hairline lines with
    the figure right aligned in --mono, a 2px --ink rule above the sum, the sum
-   at 34px weight 500, an --accent-bg footer.
+   at 34px weight 500 (30px under 420px, on both receipts), an --accent-bg
+   footer. The head's place name is the type scale's receipt head, 15px (T392).
 
    Since T382 the card is components/ReceiptCard.jsx and the landing page
    draws it too, so the .frr-card rules below are the one receipt card for
@@ -107,7 +108,7 @@
 .frr-title {
   margin: 0;
   font-family: var(--display);
-  font-size: 22px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
   color: var(--ink);
@@ -184,9 +185,9 @@
   color: var(--ink-soft);
 }
 
-/* Repricing: the figures fade in place, opacity only, under 300ms. */
-.frr-lines dd { animation: frr-reprice 0.2s ease-out; }
-@keyframes frr-reprice { from { opacity: 0.35; } to { opacity: 1; } }
+/* Repricing: since T392 each figure that changed settles in place through
+   settleFigure() (lib/figureChange.js, called from ReceiptCard), so this
+   sheet carries no keyframe of its own and no literal duration. */
 
 .frr-foot {
   margin: 0;
@@ -353,6 +354,3 @@
   .destp-v2 .destp-head-actions > * { min-width: 0; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .frr-lines dd { animation: none; }
-}

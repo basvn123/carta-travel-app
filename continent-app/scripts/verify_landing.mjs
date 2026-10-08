@@ -29,6 +29,23 @@
  *   return     a second visit opens Destinations, not the landing page
  *   coverage   the coverage table renders or is cleanly absent
  *
+ * Added by T392 (design wave V4, docs/design-v6/plans/V4-landing.md):
+ *   perday     the per-person line is the total over the party and the nights
+ *   bar        the cost bar has one segment per receipt line, in order, each
+ *              segment's share of the track equal to its line's share
+ *   settle     a reprice runs one opacity animation on the sum (settleFigure),
+ *              and none under prefers-reduced-motion
+ *   spec       each proof specimen's figure is the receipt's figure for the
+ *              same line (rule R8), or the one sentence when nothing is
+ *              estimated
+ *   type       every Fraunces size on the page is on the scale (15, 22, 26,
+ *              28, 40 px)
+ *   covbar     each coverage bar's filled share equals its row's regions
+ *              with rows over the regions where the layer applies
+ *   fold-ios   INFO only: the fold in the visible viewport of an iPhone 13
+ *              (390 x 664, WebKit's bars subtracted). Reported, not failed:
+ *              no rule-backed lever left closes it (T392 report, T382-b).
+ *
  * It does not start a server. Serve the app first (never `npm run dev`, whose
  * predev rewrites public/):
  *   npx vite --port 5202 --strictPort
@@ -121,7 +138,9 @@ async function run(vp) {
     const hs = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(vp.key, 'hscroll', hs <= 0, `${hs} px`);
 
-    const r = await receiptState(page, '.lp-page');
+    // T392: scoped to .lp-receipt, because the proof specimens below the
+    // fold carry receipt lines of their own inside .lp-page.
+    const r = await receiptState(page, '.lp-receipt');
     const sum = r.lines.reduce((s, l) => s + cents(l.eur), 0);
     check(vp.key, 'sum', sum === cents(r.total), `${r.lines.map((l) => l.eur).join(' + ')} = ${r.total}`);
     const anyEst = r.lines.some((l) => l.est);
@@ -129,14 +148,43 @@ async function run(vp) {
       && r.lines.every((l) => l.est === l.tilde);
     check(vp.key, 'est', estOk, `total est ${r.totalEst}, each "${r.each}"`);
 
+    // T392: the per-person line is the per-person-per-day figure.
+    const perday = await page.evaluate(() => {
+      const each = document.querySelector('.lp-receipt .frr-each')?.textContent || '';
+      const people = Number(document.querySelector('.lp-field-people select')?.value);
+      const nights = Number(document.querySelector('.lp-field-nights select')?.value);
+      const total = Number(document.querySelector('.lp-receipt .frr-sum-eur')?.dataset.eur);
+      const shown = Number((each.match(/[\d,.]+\.\d\d/) || [''])[0].replace(/,/g, ''));
+      return { each, want: Math.round((total / people / nights) * 100) / 100, shown };
+    });
+    check(vp.key, 'perday', Math.round(perday.shown * 100) === Math.round(perday.want * 100) && /a person a day/.test(perday.each),
+      `"${perday.each}" (want ${perday.want})`);
+
+    // T392: the cost bar, one segment per line, in order and in proportion.
+    const bar = await page.evaluate(() => {
+      const segs = [...document.querySelectorAll('.lp-receipt .costbar-seg')];
+      const lines = [...document.querySelectorAll('.lp-receipt .frr-line:not(.frr-sum)')];
+      const track = document.querySelector('.lp-receipt .costbar-track')?.getBoundingClientRect().width || 0;
+      const eur = lines.map((l) => Number(l.querySelector('dd')?.dataset.eur));
+      const sum = eur.reduce((a, b) => a + b, 0);
+      const gaps = Math.max(0, segs.length - 1);
+      return {
+        n: segs.length, lines: lines.length,
+        order: segs.length === lines.length && segs.every((s, i) => s.getAttribute('aria-label').startsWith(`${lines[i].querySelector('.frr-label').textContent}, `)),
+        off: segs.map((s, i) => Math.abs(s.getBoundingClientRect().width - (track - gaps) * eur[i] / sum)),
+      };
+    });
+    check(vp.key, 'bar', bar.n === bar.lines && bar.order && bar.off.every((d) => d <= 1.5),
+      `${bar.n} segments for ${bar.lines} lines, in order ${bar.order}, widths off by ${bar.off.map((d) => d.toFixed(1)).join(', ')} px`);
+
     // Each demo town: its metadata line against its own receipt.
     const towns = await page.locator('.lp-page .lp-town').count();
     const townRows = [];
     for (let i = 0; i < towns; i += 1) {
       const btn = page.locator('.lp-page .lp-town').nth(i);
-      const before = (await receiptState(page, '.lp-page')).total;
+      const before = (await receiptState(page, '.lp-receipt')).total;
       await btn.click();
-      const s = i === 0 ? await receiptState(page, '.lp-page') : await waitForSettle(page, '.lp-page', before);
+      const s = i === 0 ? await receiptState(page, '.lp-receipt') : await waitForSettle(page, '.lp-receipt', before);
       const name = (await btn.locator('.lp-town-name').textContent()).trim();
       const meta = (await btn.locator('.lp-town-meta').textContent()).trim();
       const estN = s.lines.filter((l) => l.est).length;
@@ -159,6 +207,50 @@ async function run(vp) {
     } else {
       check(vp.key, 'tiers', true, 'Chamonix not in this catalogue; skipped');
     }
+
+    // T392: a reprice settles the sum through one Web Animation.
+    {
+      const sel = page.locator('.lp-page .lp-field-nights select');
+      const was = await sel.inputValue();
+      await sel.selectOption(was === '4' ? '5' : '4');
+      const anims = await page.waitForFunction(() => {
+        const el = document.querySelector('.lp-receipt .frr-sum-eur');
+        return el && el.getAnimations().length > 0 ? el.getAnimations().length : null;
+      }, null, { timeout: 2000 }).then((h) => h.jsonValue()).catch(() => 0);
+      const keyframes = await page.evaluate(() => [...document.styleSheets].flatMap((sh) => {
+        try { return [...sh.cssRules]; } catch { return []; }
+      }).filter((r) => r.type === CSSRule.KEYFRAMES_RULE && /frr|lp-/.test(r.name)).length);
+      await sel.selectOption(was);
+      await page.waitForTimeout(300);
+      check(vp.key, 'settle', anims > 0 && keyframes === 0, `${anims} animation on the sum after a reprice, ${keyframes} receipt keyframes in the sheets`);
+    }
+
+    // T392: the proof specimens are the receipt's own figures.
+    const spec = await page.evaluate(() => {
+      const fig = (sel) => document.querySelector(sel)?.dataset.eur || null;
+      const sp = (i) => document.querySelector(`.lp-proof [data-spec="${i}"]`);
+      const s1 = sp(1)?.querySelector('dd')?.dataset.eur || null;
+      const s2el = sp(2);
+      const s2 = s2el?.querySelector('.frr-sum-eur')?.dataset.eur || (s2el?.matches('p') ? 'none' : null);
+      const s3 = sp(3)?.querySelector('dd')?.dataset.eur || null;
+      return {
+        s1, s2, s3,
+        stay: fig('.lp-receipt [data-line="stay"] dd'),
+        food: fig('.lp-receipt [data-line="ground"] dd'),
+        total: fig('.lp-receipt .frr-sum-eur'),
+        est: !!document.querySelector('.lp-receipt .frr-sum-eur .frr-est'),
+        live: !!sp(2)?.querySelector('[aria-live]'),
+      };
+    });
+    check(vp.key, 'spec', spec.s1 === spec.stay && spec.s3 === spec.food
+      && (spec.est ? spec.s2 === spec.total : spec.s2 === 'none') && !spec.live,
+      `stay ${spec.s1}/${spec.stay}, sum ${spec.s2}/${spec.total}, food ${spec.s3}/${spec.food}`);
+
+    // T392: Fraunces only at the scale's sizes.
+    const sizes = await page.evaluate(() => [...new Set([...document.querySelectorAll('.lp-page *')]
+      .filter((e) => e.childElementCount === 0 && e.textContent.trim() && /Fraunces/.test(getComputedStyle(e).fontFamily))
+      .map((e) => parseFloat(getComputedStyle(e).fontSize)))].sort((a, b) => a - b));
+    check(vp.key, 'type', sizes.every((v) => [15, 22, 26, 28, 40].includes(v)), `Fraunces at ${sizes.join(', ')} px`);
 
     // The instrument line quotes the coverage section.
     const nums = await page.evaluate(() => {
@@ -189,7 +281,7 @@ async function run(vp) {
       const w2 = await walkFigs();
       check(vp.key, 'walk', w2.length > 0 && w2.length <= 5 && w2.every((v, i) => i === 0 || w2[i - 1] <= v),
         `after one person in a dorm bed: ${w2.map((v) => v.toFixed(2)).join(', ')}`);
-      const land = await receiptState(page, '.lp-page');
+      const land = await receiptState(page, '.lp-receipt');
       await page.locator('.lp-page .lp-open').first().click();
       await page.locator('.frr .frr-sum-eur').first().waitFor({ state: 'visible', timeout: 60000 });
       const dest = await receiptState(page, '.frr');
@@ -208,6 +300,16 @@ async function run(vp) {
     await back.waitForTimeout(3000);
     const table = await back.locator('.lp-table').count();
     check(vp.key, 'coverage', true, table ? 'table rendered' : 'table absent (file not loaded); sentences stand');
+    if (table) {
+      // T392: each bar's filled share is its row's regions with rows.
+      const cb = await back.evaluate(() => [...document.querySelectorAll('.lp-covbar')].map((b) => {
+        const w = Number(b.dataset.with); const of = Number(b.dataset.of);
+        const full = b.getBoundingClientRect().width - 1;
+        const got = b.querySelector('.lp-covbar-with').getBoundingClientRect().width;
+        return { w, of, off: Math.abs(got - (full * w) / of) };
+      }));
+      check(vp.key, 'covbar', cb.length > 0 && cb.every((r) => r.off <= 1.5), `${cb.length} bars, off by at most ${Math.max(0, ...cb.map((r) => r.off)).toFixed(1)} px`);
+    }
     await back.close();
 
     // Return visit: the same browser, no link, opens Destinations.
@@ -227,9 +329,61 @@ async function run(vp) {
   }
 }
 
+// T392 (register row T387-c): seededWindow, the pure date rule behind
+// FirstRunReceipt's seedMonth prop, checked without a browser. It lives here
+// rather than in tests/ because this session's scope is the surface's files
+// and its harnesses.
+{
+  const { seededWindow } = await import('../src/lib/firstRun.js');
+  const d = { start: '2026-11-07', end: '2026-11-14' };
+  const cases = [
+    [d, null, d], [d, 11, d],
+    [d, 12, { start: '2026-12-05', end: '2026-12-12' }],
+    [d, 6, { start: '2027-06-05', end: '2027-06-12' }],
+    [{ start: '2026-11-30', end: '2026-12-03' }, 11, { start: '2027-11-06', end: '2027-11-09' }],
+  ];
+  const bad = cases.filter(([w, m, want]) => JSON.stringify(seededWindow(w, m)) !== JSON.stringify(want));
+  check('logic', 'seedMonth', bad.length === 0, `${cases.length - bad.length} of ${cases.length} windows as expected`);
+}
+
 for (const vp of VIEWPORTS) {
   // One browser at a time: the laptop this runs on is short of RAM.
   await run(vp);
+}
+
+// T392: reduced motion keeps the figure and drops the dip.
+if (!argv.vp || String(argv.vp).split(',').includes('mobile')) {
+  const browser = await chromium.launch();
+  try {
+    const context = await browser.newContext({ viewport: { width: 380, height: 800 }, reducedMotion: 'reduce', locale: 'en-GB' });
+    const page = await context.newPage();
+    await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: WAIT });
+    await page.locator('.lp-page .frr-sum-eur').first().waitFor({ state: 'visible', timeout: WAIT });
+    const before = (await receiptState(page, '.lp-receipt')).total;
+    await page.locator('.lp-page .lp-field-nights select').selectOption('4');
+    const after = await waitForSettle(page, '.lp-receipt', before);
+    const anims = await page.evaluate(() => document.querySelector('.lp-receipt .frr-sum-eur').getAnimations().length);
+    check('reduced', 'settle', after.total !== before && anims === 0, `total ${before} to ${after.total}, ${anims} animations`);
+
+    // INFO: the visible viewport of an iPhone 13 (WebKit's bars subtracted).
+    // A fresh visit, so the defaults (two people, seven nights) are priced.
+    const phone = await browser.newContext({
+      viewport: { width: 390, height: 664 }, isMobile: true, hasTouch: true, deviceScaleFactor: 3, locale: 'en-GB',
+    });
+    const ip = await phone.newPage();
+    await ip.goto(BASE, { waitUntil: 'domcontentloaded', timeout: WAIT });
+    await ip.locator('.lp-page .frr-sum-eur').first().waitFor({ state: 'visible', timeout: WAIT });
+    const f = await ip.evaluate(() => {
+      const nav = document.querySelector('.bottom-nav')?.getBoundingClientRect();
+      const b = (s) => Math.round(document.querySelector(s)?.getBoundingClientRect().bottom || 0);
+      return { nav: Math.round(nav?.top || 0), sum: b('.lp-receipt .frr-sum'), cta: b('.lp-page .lp-cta') };
+    });
+    console.log(`INFO  iphone  fold-ios   sum bottom ${f.sum}, primary bottom ${f.cta}, nav top ${f.nav} (390 x 664)`);
+  } catch (e) {
+    check('reduced', 'run', false, String(e.message || e).split('\n')[0]);
+  } finally {
+    await browser.close();
+  }
 }
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length} of ${results.length} checks passed`);

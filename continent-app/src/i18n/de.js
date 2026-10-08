@@ -14,6 +14,8 @@ export const de = {
   "landing.walkTitle": "Wo ein Wandertag am wenigsten kostet",
   "landing.walkSub": "Pro Person und Tag, Bett und Essen, für deine Gruppe und Unterkunft. Die Anreise ist nicht enthalten.",
   "landing.walkNational": "national",
+  "landing.eachDay": "{eur} pro Person und Tag",
+  "landing.specNoEst": "Jede Zeile der Rechnung für {city} oben ist gemessen, darum trägt keine eine Tilde.",
   "landing.cta": "Einen Ort zum Wandern finden",
   "landing.townsLabel": "Preis für einen Aufenthalt in",
   "landing.people": "Personen",
