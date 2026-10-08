@@ -194,12 +194,13 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/lib/urlState.js` | shell | logic |
 | `src/map/coords.js` | shell | logic |
 
-### landing (8 files)
+### landing (9 files)
 
 | File | Surface | Kind |
 |---|---|---|
 | `src/browse/LandingPage.jsx` | landing | renders |
 | `src/components/FirstRunReceipt.jsx` | landing | renders |
+| `src/components/ReceiptCard.jsx` | landing | renders |
 | `src/styles/38-first-run.css` | landing | style |
 | `src/styles/39-landing.css` | landing | style |
 | `src/styles/61-v6-landing.css` | landing | style |
