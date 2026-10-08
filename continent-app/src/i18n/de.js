@@ -5000,7 +5000,7 @@ export const de = {
   "dest.costTitleAt": "Was ein Tag mit deinem Lifestyle kostet",
   "dest.visitWithSights": "{visit}, etwa {n} h Sehenswürdigkeiten",
   "dest.packSummary": "Für eine Reise im {month}",
-  "dest.climateKey": "Über jedem Monat das Tageshoch; darunter das Nachttief und der Regen in mm.",
+  "dest.climateKey": "Höhere, dunklere Balken sind die angenehmeren Monate. Über jedem Monat das Tageshoch; darunter das Nachttief und der Regen in mm.",
   // T387 (design wave V3, trips)
   "journey.fromPrice": "Ab {eur} pro Person, {n} Tage",
   "journey.fromNone": "Noch kein Budget geschrieben",

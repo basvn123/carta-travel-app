@@ -5000,7 +5000,7 @@ export const nl = {
   "dest.costTitleAt": "Wat een dag kost met jouw lifestyle",
   "dest.visitWithSights": "{visit}, ongeveer {n} u bezienswaardigheden",
   "dest.packSummary": "Voor een trip in {month}",
-  "dest.climateKey": "Boven elke maand de dagtemperatuur; eronder de nachttemperatuur en regen in mm.",
+  "dest.climateKey": "Hogere, donkere balken zijn de aangenamere maanden. Boven elke maand de dagtemperatuur; eronder de nachttemperatuur en regen in mm.",
   // T387 (design wave V3, trips)
   "journey.fromPrice": "Vanaf {eur} per persoon, {n} dagen",
   "journey.fromNone": "Nog geen budget geschreven",

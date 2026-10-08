@@ -117,7 +117,9 @@ for (const [label, sel] of [
   ['around-here pictures', '.dar-photo'],
   ['day trip cards', '.dtrip'],
   ['day trip photos', '.dtrip-photo'],
-  ['insider tips', '.destp-tip-list li'],
+  // T395: the tips run on the shared flashcard deck (carta-design
+  // "Flashcards"), so the old bullet list is gone; the deck's cards count.
+  ['insider tips', '.destp-tips .flash-card'],
   ['explore further links', '.destp-further .xp-further-btn'],
   ['photo credit links', '.destp-slide-credit'],
 ]) {
@@ -176,7 +178,9 @@ await page.waitForTimeout(500);
 check('Escape closes the page', !(await destp.isVisible().catch(() => false)));
 
 // Opening from the Explore grid covers the screen too.
-await page.locator('button:has-text("Explore"):visible').first().click().catch(() => {});
+// T395: the header tabs are real links since the shell's V3 pass
+// (carta-design "Navigation"), so the Explore tab is an <a>, not a <button>.
+await page.locator(':is(a, button):has-text("Explore"):visible').first().click().catch(() => {});
 await page.waitForTimeout(2600);
 await page.locator('.explore-card, .xcard, .explore-grid button').first().click().catch(() => {});
 await page.waitForTimeout(2600);

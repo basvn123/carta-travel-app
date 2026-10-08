@@ -42,12 +42,15 @@ import {
   ParkingIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
   RainIcon, DrizzleIcon, SnowIcon, StormIcon, ClockIcon, CompassIcon,
   ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon,
-  BackpackIcon, ReceiptIcon, CheckIcon, BedIcon, InfoIcon, StarIcon,
+  BackpackIcon, ReceiptIcon, CheckIcon, BedIcon, StarIcon,
   ChevronRightIcon, MusicIcon, SparkIcon, LinkIcon,
-  DownloadIcon, BulbIcon, MedalIcon, RouteIcon,
+  DownloadIcon, BulbIcon, MedalIcon, RouteIcon, AlertIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { scrollBehavior } from '../lib/motion.js';
+import { useSettledFigure } from '../lib/figureChange.js';
+import { FlashDeck } from './FlashDeck.jsx';
+import { cardCategory } from '../lib/flashcards.js';
 
 /**
  * The full-screen destination page, v2: compact by construction.
@@ -220,6 +223,7 @@ function tipText(tip, t) {
 }
 
 function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
+  const { t } = useI18n();
   // The first photograph takes the card photograph's name (G2), so the card's
   // picture grows into this one instead of the page appearing from nothing.
   const claimRef = React.useCallback((el) => claimShared(el, destId), [destId]);
@@ -255,7 +259,20 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
   }
   return (
     <div className="destp-gallery">
-      <div className="destp-gallery-track" ref={scroller} onScroll={onScroll}>
+      {/* A photo track (carta-design "Photo track"): the arrow keys move it
+          when it has focus, like the Previous and Next buttons. */}
+      <div
+        className="destp-gallery-track"
+        ref={scroller}
+        onScroll={onScroll}
+        tabIndex={imgs.length > 1 ? 0 : undefined}
+        aria-label={imgs.length > 1 ? city : undefined}
+        role={imgs.length > 1 ? 'group' : undefined}
+        onKeyDown={imgs.length > 1 ? (e) => {
+          if (e.key === 'ArrowRight') { e.preventDefault(); nudge(1); }
+          else if (e.key === 'ArrowLeft') { e.preventDefault(); nudge(-1); }
+        } : undefined}
+      >
         {imgs.map((g, i) => (
           <figure className="destp-slide" key={g.url}>
             <img
@@ -266,19 +283,25 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
               fetchpriority={i === 0 ? 'high' : undefined}
               onError={() => setFailed((s) => new Set([...s, g.url]))}
             />
-            {g.caption && <figcaption className="destp-slide-cap">{capOf(g.caption)}</figcaption>}
-            {safeUrl(g.page) && (
-              <a
-                className="destp-slide-credit"
-                href={safeUrl(g.page)}
-                target="_blank"
-                rel="noreferrer"
-                title={[g.author, g.licence].filter(Boolean).join(', ')}
-                aria-label={[g.author, g.licence].filter(Boolean).join(', ') || 'Photo credit'}
-              >
-                <InfoIcon size={12} />
-              </a>
-            )}
+            {/* The caption band (carta-design "Caption band", T395): a solid
+                paper band flush under the photograph, never text on it. The
+                place, the position in mono and the credit as text. */}
+            <figcaption className="destp-slide-band">
+              <span className="destp-slide-cap">{capOf(g.caption)}</span>
+              {imgs.length > 1 && (
+                <span className="destp-slide-pos mono">{t('journey.deckPos', { n: i + 1, total: imgs.length })}</span>
+              )}
+              {safeUrl(g.page) && (g.author || g.licence) && (
+                <a
+                  className="destp-slide-credit"
+                  href={safeUrl(g.page)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {[g.author, g.licence].filter(Boolean).join(', ')}
+                </a>
+              )}
+            </figcaption>
           </figure>
         ))}
       </div>
@@ -290,7 +313,6 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
           <button type="button" className="destp-gallery-arrow is-next" onClick={() => nudge(1)} aria-label="Next photo" disabled={idx >= imgs.length - 1}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
           </button>
-          <span className="destp-gallery-count mono">{idx + 1}/{imgs.length}</span>
         </>
       )}
     </div>
@@ -310,7 +332,10 @@ export function DestinationPage({
   const mapRef = React.useRef(null);
   const [stuck, setStuck] = React.useState(false);
   const [mapLayer, setMapLayer] = React.useState('highlights');
+  // The committed highlight (a click or tap on a tile or its pin) and the one
+  // under the pointer or in focus: carta-design "Map and list in sync" (T395).
   const [hlFocus, setHlFocus] = React.useState(null);
+  const [hlHover, setHlHover] = React.useState(null);
   const [hlAll, setHlAll] = React.useState(false);
   const [doAll, setDoAll] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
@@ -378,6 +403,7 @@ export function DestinationPage({
     setStuck(false);
     setMapLayer('highlights');
     setHlFocus(null);
+    setHlHover(null);
     setHlAll(false);
     setDoAll(false);
     setCopied(false);
@@ -409,6 +435,12 @@ export function DestinationPage({
   // Photographs for "Best things to do". Must sit above the early return:
   // hooks cannot run conditionally.
   const doPhotos = useDoPhotos(destination?.id);
+  // The day figure updates in place when the Lifestyle reprices it: one
+  // opacity dip, no count-up (carta-design "Motion", T395). Keyed by the
+  // formatted figure, and reset by the destination so a new page never dips.
+  const dayFigRef = React.useRef(null);
+  const dayFig = indices?.get?.(destination?.id)?.dayEur;
+  useSettledFigure(dayFigRef, dayFig == null ? '' : `${destination?.id}:${eur(dayFig)}`);
 
   if (!destination) return null;
 
@@ -759,12 +791,21 @@ export function DestinationPage({
         {settled && (cost?.dayEur != null || bedFrom != null) && (
           <dl className="dfacts">
             {cost?.dayEur != null && (
-              <div className="dfact"><dt>{t('dest.factDayAt')}</dt><dd className="mono">{eur(cost.dayEur)}</dd></div>
+              <div className="dfact"><dt>{t('dest.factDayAt')}</dt><dd className="mono" ref={dayFigRef}>{eur(cost.dayEur)}</dd></div>
             )}
             {bedFrom != null && (
               <div className="dfact"><dt>{t('dest.factSleep')}</dt><dd className="mono">{eur(bedFrom)}</dd></div>
             )}
           </dl>
+        )}
+
+        {/* While the dossier answers, one still block holds the place of the
+            receipt and the folds (carta-design "Loading", T395): no shimmer,
+            no spinner, "Loading" for screen readers only. */}
+        {!settled && (
+          <div className="destp-wait" aria-busy="true">
+            <span className="sr-only">{t('state.loading')}</span>
+          </div>
         )}
 
         {settled && (
@@ -864,7 +905,7 @@ export function DestinationPage({
                 {rhythm && <p className="destp-rhythm">{rhythm}</p>}
                 {bookAhead.length > 0 && (
                   <p className="destp-bookahead">
-                    <span className="destp-bookahead-mark" aria-hidden="true">!</span>
+                    <AlertIcon size={15} className="destp-bookahead-icon" />
                     {t('dest.bookAhead', { names: bookAhead.join(', ') })}
                   </p>
                 )}
@@ -1081,6 +1122,8 @@ export function DestinationPage({
                       around={aroundForMap}
                       active={effectiveLayer}
                       focus={hlFocus}
+                      hover={hlHover}
+                      onHoverHighlight={setHlHover}
                       height={undefined}
                       onPickTrip={(row) => onSelect?.(row.id)}
                       onPickFeature={(layer, row) => onOpenFeature?.(layer, row)}
@@ -1098,17 +1141,20 @@ export function DestinationPage({
                     <div className={`dhl-strip ${hlAll ? 'is-all' : ''}`}>
                       {(hlAll ? highlights : highlights.slice(0, 8)).map((h, i) => (
                         <figure
-                          className={`dhl ${hlFocus === i ? 'is-focus' : ''}`}
+                          className={`dhl ${hlFocus === i ? 'is-focus' : ''} ${hlHover === i ? 'is-hover' : ''}`}
                           key={h.id}
                           id={`hl-${i}`}
-                          onMouseEnter={() => setHlFocus(i)}
-                          onFocus={() => setHlFocus(i)}
+                          onMouseEnter={() => setHlHover(i)}
+                          onMouseLeave={() => setHlHover((cur) => (cur === i ? null : cur))}
+                          onFocus={() => setHlHover(i)}
+                          onBlur={() => setHlHover((cur) => (cur === i ? null : cur))}
                         >
                           <button
                             type="button"
                             className="dhl-pic"
                             onClick={() => { setHlFocus(i); setMapLayer('highlights'); }}
                             aria-label={h.name}
+                            aria-pressed={hlFocus === i}
                           >
                             <FeaturePhoto src={thumb500(h.image?.url)} lat={h.lat} lon={h.lon} className="dhl-photo" />
                             <span className="dhl-n mono">{i + 1}</span>
@@ -1268,11 +1314,20 @@ export function DestinationPage({
                 onToggle={() => toggle('tips')}
                 className="dsec-tips"
               >
-                <ul className="destp-tip-list">
-                  {tips.map((tip) => (
-                    <li key={tip.code}>{tipText(tip, t)}</li>
-                  ))}
-                </ul>
+                {/* One tip at a time on the shared deck (carta-design
+                    "Flashcards", T395): Previous, Next, the arrow keys and
+                    Show all; printing shows the list. */}
+                <div className="destp-tips">
+                  <FlashDeck
+                    id="dest-tips-deck"
+                    label={t('dest.tipsTitleV')}
+                    t={t}
+                    cards={tips.map((tip) => {
+                      const text = tipText(tip, t);
+                      return { key: tip.code, text, category: cardCategory(text, 'tip') };
+                    })}
+                  />
+                </div>
               </Fold>
             )}
 

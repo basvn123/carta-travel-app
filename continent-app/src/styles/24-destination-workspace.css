@@ -3926,22 +3926,7 @@
   .destp-slide { width: 100%; }
   .destp-slide img { width: 100%; max-width: none; }
 }
-.destp-slide-credit {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.45);
-  color: var(--on-fill);
-  font-size: 12px;
-  text-decoration: none;
-}
-.destp-slide-credit:hover { background: rgba(15, 23, 42, 0.7); }
+/* The credit is text in the caption band now (T395): see 64-v6-destination.css. */
 .destp-gallery-arrow {
   position: absolute;
   top: 50%;
@@ -3962,16 +3947,6 @@
 .destp-gallery-arrow.is-next { right: 12px; }
 .destp-gallery-arrow:disabled { opacity: 0.35; }
 @media (max-width: 720px) { .destp-gallery-arrow { display: none; } }
-.destp-gallery-count {
-  position: absolute;
-  left: 12px;
-  bottom: 10px;
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.72);
-  color: var(--on-fill);
-  font-size: 11px;
-}
 
 /* ── The head: name, country, lead, badges on the left; the PDF button
       and the two quieter actions on the right. ── */
@@ -4100,7 +4075,8 @@
   width: 17px;
   height: 17px;
   border-radius: 50%;
-  background: var(--accent);
+  /* Ink at rest; the committed highlight is the one accent (T395). */
+  background: var(--ink-fill);
   color: var(--on-fill);
   font-size: 10px;
   font-weight: 600;
@@ -4114,7 +4090,7 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--ink-soft);
   border: 2px solid var(--paper);
   flex: none;
   margin-left: 3px;
@@ -4291,27 +4267,8 @@
 .destp-trip-sub { display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
 .destp-trip-why { color: var(--ink-soft); }
 
-/* Insider tips: the ochre card, because a tip is a measured finding here,
-   not an alert. */
-.destp-tips { background: var(--rate-bg); border-color: var(--rate-soft); }
-.destp-tip-list { list-style: none; margin: 0; padding: 0; }
-.destp-tip-list li {
-  position: relative;
-  padding: 5px 0 5px 16px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--ink);
-}
-.destp-tip-list li::before {
-  content: '';
-  position: absolute;
-  left: 2px;
-  top: 12px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--rate);
-}
+/* Insider tips run on the shared flashcard deck since T395 (33-flashcards.css);
+   the ochre card and the bullet list rules went with the list. */
 
 /* Nearby nature rows. */
 .destp-nature { list-style: none; margin: 0; padding: 0; }
@@ -4403,20 +4360,20 @@
   .destp-pdf { flex: 1; justify-content: center; }
 }
 
-/* UNESCO chip in the destination head: ochre, because a designation is a
-   measured standing, not an action or a warning. */
+/* UNESCO chip in the destination head: ink on paper-dim, a status chip.
+   Ochre is kept for ratings (carta-design "Ochre is a measure"; T395 moved
+   it off this designation). */
 .destp-unesco {
   display: inline-flex;
   align-items: center;
   height: 24px;
   padding: 0 10px;
   border-radius: 999px;
-  background: var(--rate-bg);
-  border: 1px solid var(--rate-soft);
-  color: var(--rate);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 /* Evidence lines in "best things to do". The web sweep earns the ochre of a
@@ -4468,9 +4425,9 @@
   width: 68px;
   text-align: center;
   font-size: 11px;
-  font-weight: 700;
-  color: var(--rate);
-  background: var(--rate-bg);
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper-dim);
   border-radius: 6px;
   padding: 4px 6px;
   height: fit-content;

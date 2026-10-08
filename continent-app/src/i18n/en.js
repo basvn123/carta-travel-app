@@ -5914,7 +5914,7 @@ export const en = {
   "dest.costTitleAt": "What a day costs at your Lifestyle",
   "dest.visitWithSights": "{visit}, about {n} h of sights",
   "dest.packSummary": "For a trip in {month}",
-  "dest.climateKey": "Daytime high above each month; night low and rain in mm below.",
+  "dest.climateKey": "Taller, darker bars are the more comfortable months. Daytime high above each month; night low and rain in mm below.",
   // T387 (design wave V3, trips)
   "journey.fromPrice": "From {eur} a person, {n} days",
   "journey.fromNone": "No written budget yet",

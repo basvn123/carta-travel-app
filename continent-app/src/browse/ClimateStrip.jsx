@@ -50,6 +50,12 @@ export function fmtMonthRanges(nums) {
  * strip in view). `figures` prints each month's night low and rain under its
  * initial, so a phone or a keyboard reads every month without a hover
  * (T385, brief V3-4); the hover tip is kept only where `figures` is off.
+ *
+ * With `figures` the strip is drawn as data in the ink ramp (carta-design
+ * "Data drawings", the month strip; T395, brief V4-5): comfort is the bar's
+ * height and its ink weight, the best months a bold initial beside the
+ * "Best weather" words, no hue and no legend; the key line above says what
+ * the shade means, so the strip reads the same in greyscale.
  */
 export function ClimateStrip({ climate, month = null, figures = false }) {
   const { t } = useI18n();
@@ -118,6 +124,7 @@ export function ClimateStrip({ climate, month = null, figures = false }) {
           </div>
         ))}
       </div>
+      {!figures && (
       <div className="bt-legend climate-legend">
         {legend.map((l) => (
           <span key={l.tier} className="bt-legend-item">
@@ -125,6 +132,7 @@ export function ClimateStrip({ climate, month = null, figures = false }) {
           </span>
         ))}
       </div>
+      )}
     </>
   );
 }
