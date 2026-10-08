@@ -1,0 +1,47 @@
+# V4 plan: Destinations browse (T394)
+
+Written by T394 in design wave V4, 2026-10-08, before any app file changed. It carries out the V4 list of `docs/design-v6/briefs/destinations.md` part 6 under `docs/design-v6/DIRECTION.md` (parts 2 to 4 and the rule table) and the file map of `docs/design-v6/OWNERSHIP.md`. Edits stay inside the files OWNERSHIP.md gives to `destinations`, `src/styles/63-v6-destinations.css`, the six i18n catalogues under this surface's prefixes and the surface harnesses.
+
+## Critique of the V3 result (impeccable critique, run on the merged state)
+
+Method: dual-agent. Assessment A (design review) read the source and twelve screenshots of the built app (iPhone 13 WebKit, Pixel 5, desktop 1280; Lakes opening, Beaches list, Trails index, Mountains filter sheet); Assessment B ran the detector. Neither saw the other's output. No browser overlay: the machine had about 2 GB free and five sessions running, so no live server was started for it.
+
+Design health 26 of 40 (Acceptable). Specificity: the words and the data are Carta's own (the settings line, the count chips, headings that state their method); the picture grammar is generic (scrims, a hover zoom, a floating seal). Detector: 0 findings over the nine browse JSX files and the five stylesheets. Grep over the five stylesheets: 5 `gradient` (2 scrims, 1 radial ground, 2 mask lines), about 20 transitions with a literal duration, 0 `transition: all`, 0 `100vh`, about 52 `:hover` rules outside `@media (hover: hover)` (all in the older files).
+
+Priority issues it found, and where this plan answers them:
+
+- P1, text, chips and gradients on photographs on three of four card types (country card, place card corner facts and seal, composed trip card): items 1 and 2.
+- P1, motion not from the tokens and the wrong things moving (hover zoom on a photo that is no shared element, a skeleton that loops, a literal 60 ms press, no shared element from the place cards, counts that change without a settle): items 5 to 8.
+- P1, the 6 px card strip has no key and no chosen month: items 9 and 10.
+- P2, the phone's first screen spent on chrome (80 px category tiles with a 16 px icon): item 4.
+- P2, dead options in the sheet look live, a grab handle on the desktop dialog: item 7.
+- P2, accent and radius drift ("See all" in accent, an accent walk line on a radial ground): items 1 and 3.
+
+## Choices taken where impeccable would have asked
+
+The run is unattended (owner instruction 2026-10-07). Refinement, never a new direction: palette, type, the one card and the three bands stay. The rating seal stays a chip but moves off the photograph into the card's head row (caption band rule: nothing on the photograph). The icon and rail cards do not gain a seal (brief V4-2 asked for one): it would be a chip on a photograph again; they gain the label under their one figure instead. The 6 px strip stays on the photograph's bottom edge (it is a drawing, not text) and is explained once per list.
+
+## The changes, in order
+
+1. Caption band on the country cards and the composed trip cards (brief V4-1, rule "Caption band"). CountryCard becomes a photograph (3:2 crop of the old cover) with a solid `--bg-card` band under it holding the flag, the name in Fraunces 16 px, the mono count chip and the chevron; pressed, the band turns `--ink-fill`. ItinCard's name and score move from the photograph into the body. The two `linear-gradient` scrims, the radial ground of the walk drawing and the rgba "photo of" ground are deleted from `23-places-pages.css`; the walk drawing becomes an `--ink` line on `--paper-dim` (accent is for what is live). Files: DestinationsTab.jsx, 23-places-pages.css, 63-v6-destinations.css. Check: `grep gradient` over the surface's five stylesheets returns only the mask at 23-places-pages.css.
+2. Nothing on a place card's photograph but the strip. The seal moves into the head row, right aligned; the corner facts (distance band, a swimming verdict that is not a plain yes, a lift, whose photograph it is) lead the hook line in the body, keeping their classes for the harnesses. Files: PlaceCard.jsx, DestinationsTab.jsx, 37-card-fillings.css, 63. Check: verify_places_tab, verify_places_search (both read `.places-card-km`).
+3. One card family (brief V4-2) and the column (V4-3). Rail and icon cards set their one figure in mono with its label under it ("145 km²", "Area"), reading the card value keys that already exist. Band 1 sits inside the column (no negative margins). "See all N" in ink, underlined on hover (accent marks rule). A place line that repeats the country ("Montenegro, Montenegro") says it once. Files: SectionOpening.jsx, DestinationsTab.jsx (describeRow), cardFillings.js, 30-section-opening.css.
+4. The phone's category grid at `--tap`: the 2 x 3 grid stays, each button one row with a 20 px icon before the label, about half the height it has now. Files: DestinationsTab.jsx (icon size), 63.
+5. Motion from the tokens (DIRECTION.md 2.3, brief V4-4). A category switch: the new section's bands and list fade in and rise 8 px in `--dur-2`. Active filter chips enter with opacity and scale from 0.9 in `--dur-1`. Press: cards and controls answer in `--dur-1` (the pressed caption band in ink). The photo hover zoom on place, country and trip cards goes, and so does the box-shadow transition on the trip card. Every rule with a reduced-motion branch. Files: 37-card-fillings.css, 23-places-pages.css, 63.
+6. List to detail (brief V4-5). PlaceCard and the opening's rail and icon cards open through `openShared` with the key the page already claims (`DetailSkeleton` claims beach, lake, mountain, trail and cycle ids), so the photograph grows into the page header in `--dur-3`; reduced motion and a missing API open the page as before. Files: DestinationsTab.jsx, SectionOpening.jsx.
+7. The filter sheet arrives and leaves (DIRECTION.md 2.3, sheets): it rises from the bottom on a phone and fades and rises 8 px on desktop in `--dur-3` `--ease-out`, the scrim fading with it; it leaves in `--dur-2`; no grab handle on desktop; a disabled option reads as dead. Files: PlacesFilterSheet.jsx, 63.
+8. Figures update in place: the sheet's "Show N", the Filters and All filters count chips and the cut counts settle through `useSettledFigure` (one opacity dip in `--dur-2`, no count-up). Loading: the place card skeleton stops breathing (a still `--paper-dim` block, carta-design "Loading"), and the composed trips' bare ellipsis becomes the card skeletons. Files: PlacesFilterSheet.jsx, DestinationsTab.jsx, SectionOpening.jsx, PlaceCard.jsx, 37-card-fillings.css.
+9. The strip explained once (brief V4-6, rule N8): one line in `--ui` 12 px `--ink-soft` at the head of each list whose cards carry a strip (walks: slope mix; cycling: paved share; lakes: warm months; mountains: height and prominence). Files: DestinationsTab.jsx, six catalogues.
+10. The month on lake cards (brief V4-8, rule "Month"). When the settings line holds the traveller's own dates (`useTravelMonth()`), each lake card carries one line from the wire's estimated water temperatures: "Warm enough to swim in July" or "Water under 18 °C in July", the month in mono, and the chosen month is outlined 2 px `--ink` on the lake strip. Nothing without a month. Files: DestinationsTab.jsx, PlaceCard.jsx, CardStrip.jsx, 37-card-fillings.css, six catalogues.
+11. The sticky refine row (brief V4-9, rule N3): on a phone, once Band 3 starts, the row with Filters and the country sticks under the top chrome as a `--paper` band with a `--rule` bottom border and no shadow; the facet chips scroll with the list. Files: DestinationsTab.jsx, 63.
+12. Row T384-g, decided: the phone keeps 36 cards a page (verify_paging holds it, and the sticky refine row keeps the filters in reach through the list), so the 8,000 px opening target is retired for this wave; the bands are what V3 shortened.
+
+## Not built in V4, and why
+
+- Brief V4-7, the cost line on outdoor cards (rule "Cost on cards"): the tab receives no cost map; App.jsx (shell) computes the one `computeCosts` map Explore prints, and a second map computed in the tab would be a second path to the same figure, which DIRECTION.md part 8 calls a bug. It also needs a nearest priced town within 25 km per row. Register row for shell (pass the map) and V5.
+- Row T384-f, the TRIPS-LAYER rules in `24-destination-workspace.css`: the wave's gate allows only destinations' own files, the i18n catalogues, harnesses and 63; moving the rules means deleting them from 24, a file of the destination surface. The trip card is restyled from 63 meanwhile; the row stays open.
+- Row T384-b, the coverage line: still waits on the owner's wording (T373-e).
+
+## Checks
+
+The six surface harnesses on the built app before (baseline today: verify_places_tab 40 of 40, verify_paging 7 of 7, verify_places_search 41 of 41, verify_country_cards 24 of 28 with the 4 failures on Explore's guide cards, verify_category_rail times out on Explore's filter bar, verify_regions run last on its own preview) and after; `scripts/verify_keyboard.mjs` 20 of 20 and `scripts/verify_quality_floor.mjs`; `npm test`; `npm run lint` 0 errors; `node scripts/ci/design-lint.mjs` 0 new; the build; `impeccable detect --json` over every changed file; the six catalogues parsed; the phone checks (iPhone 13 WebKit, Pixel 5, 360 x 740, landscape, keyboard, tap targets, safe areas, reduced motion) and at most ten JPEG screenshots named `V4-<view>-<device>.jpg` in `design-v6-shots/destinations/`.
