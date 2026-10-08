@@ -1,0 +1,40 @@
+# V4 plan: Destination (town) page
+
+T395, design wave V4, 2026-10-08. Surface key `destination`. Written in planning mode before the first app edit, from `docs/design-v6/briefs/destination.md` (part 6, V4 list, and its Direction check), `docs/design-v6/DIRECTION.md` parts 2 to 7 and 9, `docs/design-v6/OWNERSHIP.md`, the T385 report and the carta-design skill. Committed first, then carried out; the report (`Execution/P10/T395-v6-v4-destination.md`) says what was done and what stayed open.
+
+## Critique of the V3 result (impeccable critique, run unattended)
+
+Two isolated sub-agents ran on the merged V3 state: Assessment A (design review from the source and eight screenshots of the dev server at port 5205: Rome, Valbona Valley, Zungoli on iPhone 13, Pixel 5 and 1280 x 800) and Assessment B (the detector and the design lint). A finished before B was read.
+
+Design health 24 of 40 (V1 brief: 26 of 40 on a different emphasis; this score weighs the visual rules). Detector: 7 `side-tab` findings, all in `18-detail-panel.css` on day planner and guide rules (`.day-intel`, `.day-walk` and others) that sit in this surface's file but belong to other surfaces' views; no finding in any JSX file or in 64-v6. Design lint: 194 violations, all baselined, 0 new.
+
+Priority issues the critique found, and what this plan does with each:
+
+1. [P1] The month strip is drawn in green, `--climate-good`, `--accent-soft` and `--climate-poor`, with a four-dot legend and a green ring on the best months (carta-design "Data drawings" breaks). Item 4.
+2. [P1] Every fold is a rounded, shadowed card; the tips fold is ochre filled (carta-design "Detail page grammar"). Item 1.
+3. [P1] Accent spent on things that do not act: fold icons, fold title hover, every numbered highlight badge, the town dot on the map, link hovers. Items 1, 3, 9.
+4. [P1] Map and tiles link one way, hover never clears, and the focus look is accent, the same as the focus ring. Item 3.
+5. [P1] Figures do not settle in place; no cost bar above the receipt. Item 2 for this surface's figures; the receipt is `FirstRunReceipt.jsx` (landing's), so its settle, cost bar and InfoDot are a register row.
+6. [P2] Text on the photographs: caption pills, the count and the credit disc sit on the photo. Item 5.
+7. [P2] Motion literals: the chevron `.18s ease`, the map camera `450`, fold bodies pop. Items 1 and 3.
+8. [P2] Ochre and hue tints outside ratings: UNESCO chip, festival month chip, do-type chips, season, evidence meter, book-ahead "!". Item 6.
+
+Choices made where impeccable would ask (owner's proceed instruction, 2026-10-07): refinement, never a new direction. The palette, the three faces and the receipt stay. The hero-beside-head layout (brief V4-6, DIRECTION part 3) is not built: the first price (the fact strip's day figure) is already above the fold at 1280 x 800 (pre-city-top-desktop: 556 px), the three-photo strip is the page's most visual band, and swapping it for one photo would make the page less visual, not more. The caption band and the text credits from the same item are built.
+
+## Changes, in order
+
+1. Folds under hairlines (brief V4-1, carta-design "Detail page grammar"). In 64-v6, scoped to `.destp`: no box, no radius, no shadow, a `--rule-soft` hairline on top; fold icons `--ink-soft`; title hover goes to ink, not accent, inside `@media (hover: hover)`; the tips fold loses its ochre fill; the chevron turns in `--dur-2` `--ease-out`; an opening fold body fades and rises 4 px in `--dur-2` with a reduced-motion branch. Fold titles move to the 19 px row-name size of the type scale (the folds are the page's collapsed row list). Fold.jsx (shell's) is not touched. Done when: one bordered object (the receipt) and no `--shadow-1` on a fold.
+2. Fact strip as a timetable row, and its figure settles (V4-3 for this surface's figures). `.dfacts` loses its card: label over value, `--ui` 12 px `--ink-soft` label, `--mono` tabular value, hairlines between cells. The day figure runs `useSettledFigure()` when the Lifestyle changes it, in a box that keeps its width. Files: DestinationPage.jsx, 64-v6.
+3. Map and tiles in sync both ways (V4-4, "Map and list in sync"). Hover or focus on a tile rings its pin 2 px `--ink`; hover or focus on a pin outlines its tile 2 px `--ink`; a click or tap on either commits the selection, which is the one `--accent` on the map (the pin's number badge), and the camera eases to it with `durationMs('--dur-4')`. Every other badge is `--ink-fill`, the town dot ink, trip dots ink. The fit-bounds duration reads the token. Files: DestMap.jsx, DestinationPage.jsx, 24-destination-workspace.css (the pin rules this surface owns, edited in place), 64-v6.
+4. The month strip drawn as data (V4-5, "Data drawings" month strip). Comfort as weight in the ink ramp (`--ink`, `--kind-town`, `--kind-village`, `--rule`), the best months by a bold initial and the existing "Best weather" word, no ring, no hover filter, no legend; the key line says what the shade means. The chosen month keeps its 2 px `--ink` outline. Files: ClimateStrip.jsx (only this page renders it), 64-v6, `dest.climateKey` in six catalogues. Done when: the strip reads the same in greyscale.
+5. Photographs with a caption band (V4-6 in part, "Caption band", "Photo track"). Each slide gets a solid `--paper` band flush under the photo: the caption, the position in `--mono` ("1 of 8"), and the credit as text (author, licence) linked to the Commons file. No pill, count or disc on the photo. The arrows stay as controls. Files: DestinationPage.jsx (GalleryStrip), 64-v6.
+6. One data family for the small marks (brief visual settings V5, "Ochre is a measure"). Evidence meter in the ink ramp; do-type chips, the season line, the festival month chip and the UNESCO chip in ink on `--paper-dim`; "Book ahead" loses the "!" disc for the AlertIcon in `--ink-soft` on the amber note. Ochre stays on the score, the verdict word, the rank and the rating fold. Files: DestinationPage.jsx, 24-destination-workspace.css (UNESCO and festival rules, in place), 64-v6.
+7. Insider tips as a flashcard deck (V4-8, "Flashcards"), through the shared FlashDeck (no change to it): Previous, Next, the position, arrow keys, Show all, the list on print. Files: DestinationPage.jsx; the harness assertion on `.destp-tip-list li` is updated with a comment.
+8. A still loading block (V4-9, "Loading"): while the dossier loads, a `--paper-dim` block of a fixed height holds the place of the receipt and folds, with "Loading" for screen readers only. Files: DestinationPage.jsx, 64-v6.
+9. Press, hover and selected states. Hover tints sit in `@media (hover: hover)`, link hovers go to ink with an underline instead of accent, the do-card hover shadow (a decorative lift) goes. The global touch feedback in 02-base.css already answers a press within 60 ms and is kept.
+
+Not in this wave, as register rows: the receipt's settle, cost bar and InfoDots (FirstRunReceipt.jsx, landing's); the fold icon size (14 px set in Fold.jsx, shell's; the rule is 20 px); the outdoor layer hues on the map (`LAYER_COLOR`, shared tokens with the outdoor pages); the side-tab findings in 18-detail-panel.css (rules of the day planner and guide views).
+
+## Checks
+
+Six i18n catalogues parse; `npm run lint` 0 errors; `npm test`; `node scripts/ci/design-lint.mjs` 0 new; `node scripts/check_ownership.mjs`; `npm run build`, then delete dist/ and dist-data/; `impeccable detect --json` over every changed file. Harnesses on a preview at 5205: verify_destination_page, verify_routes_block, verify_stay_tiers, verify_transport_links, verify_hero_images, verify_keyboard (20 of 20), verify_quality_floor. Phone walk with device descriptors (iPhone 13 WebKit, Pixel 5, 360 x 740, desktop 1280 x 800, landscape), tap only, keyboard at 60 percent height, safe areas, tap targets, greyscale check of the month strip. After screenshots to `design-v6-shots/destination/V4-*` with the V3 view names. Measured before and after: folds with a box shadow, accent marks on the map at rest, colours in the month strip, text elements on photographs, detector findings, harness results.
