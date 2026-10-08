@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import {
-  ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, DownloadIcon, EyeIcon,
-  EyeOffIcon, FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
-  PersonIcon, QuestionIcon, PiggyIcon, ShareIcon, ShieldIcon, SignOutIcon, SparkIcon,
+  ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, DownloadIcon,
+  FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
+  PersonIcon, QuestionIcon, PiggyIcon, ShareIcon, ShieldIcon, SignOutIcon,
   TrashIcon,
 } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
@@ -22,6 +22,7 @@ import {
   fetchMyProfile, saveMyProfile, normaliseHandle, handleProblem, HANDLE_MAX,
 } from './profiles.js';
 import { FriendsSpoke } from './FriendsSpoke.jsx';
+import { PasswordField } from './PasswordField.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
 import { sendFeedback } from '../lib/feedback.js';
@@ -155,56 +156,8 @@ function FieldLabel({ htmlFor, children, mark }) {
   );
 }
 
-/**
- * Password input with a reveal toggle, and the one place a password field's
- * error is allowed to appear: directly under the field it belongs to.
- *
- * Typing a long passphrase blind on a phone is how people end up locked out of
- * accounts they still own, hence the reveal. `error` and `hint` are wired
- * through aria-describedby rather than left as loose text, so a screen reader
- * hears "current password, invalid, that current password isn't right" instead
- * of a sentence stranded somewhere below the button.
- */
-function PasswordField({
-  id, label, value, onChange, autoComplete, placeholder, required = false, error = '', hint = null,
-  mark = null,
-}) {
-  const { t } = useI18n();
-  const [shown, setShown] = useState(false);
-  const errorId = `${id}-error`;
-  const hintId = `${id}-hint`;
-  const describedBy = [error ? errorId : null, hint ? hintId : null].filter(Boolean).join(' ');
-  return (
-    <div className={`auth-field${error ? ' has-error' : ''}${mark ? ' has-mark' : ''}`}>
-      <label className="auth-label" htmlFor={id}>{label}</label>
-      <div className="pw-input-wrap">
-        <input
-          id={id}
-          type={shown ? 'text' : 'password'}
-          autoComplete={autoComplete}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          required={required}
-          aria-invalid={error ? 'true' : undefined}
-          aria-describedby={describedBy || undefined}
-        />
-        {mark}
-        <button
-          type="button"
-          className="pw-reveal"
-          onClick={() => setShown((s) => !s)}
-          aria-pressed={shown}
-          aria-label={t(shown ? 'account.hidePassword' : 'account.showPassword')}
-        >
-          {shown ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
-        </button>
-      </div>
-      {error && <p className="auth-field-error" id={errorId} role="alert">{error}</p>}
-      {hint && <div className="auth-field-hint" id={hintId}>{hint}</div>}
-    </div>
-  );
-}
+// PasswordField moved to ./PasswordField.jsx (T390) so the sign-in modal and
+// the reset screen share the account's field, reveal toggle included.
 
 /**
  * What the new password still needs, ticked off as it is typed.
@@ -412,7 +365,7 @@ export function AccountPanel({
 
   // Signing out while on the profile spoke leaves a form for nobody.
   useEffect(() => {
-    if (!user && (view === 'profile' || view === 'friends')) setView('home');
+    if (!user && ['profile', 'security', 'yourdata', 'friends'].includes(view)) setView('home');
   }, [user, view]);
 
   const emailChanged = email.trim().toLowerCase() !== storedEmail.toLowerCase();
@@ -727,8 +680,6 @@ export function AccountPanel({
   };
 
   const tier = TIERS[entitlement.tier] || TIERS.free;
-  const upgrade = TIERS.trip;
-  const locale = { en: 'en-GB', nl: 'nl-NL', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT' }[lang] || 'en-GB';
 
   // The hub used to title itself with your own name, and then the card
   // directly under it said the same name again with the email beneath. Two
@@ -736,6 +687,8 @@ export function AccountPanel({
   // down from the row carrying Passes. The card is the better of the two, so
   // signed in the hub goes straight to it. Every spoke keeps its title.
   const heading = view === 'profile' ? t('account.profileDetails')
+    : view === 'security' ? t('account.menuSecurity')
+    : view === 'yourdata' ? t('account.dataTitle')
     : view === 'friends' ? t('friends.title')
     : view === 'faq' ? t('account.menuFaq')
     : view === 'feedback' ? t('account.feedbackTitle')
@@ -750,6 +703,10 @@ export function AccountPanel({
   const NAV = [
     { key: 'home', group: 'account', view: 'home', Icon: HomeIcon, label: t('account.menuOverview'), go: () => setView('home') },
     user && { key: 'profile', group: 'account', view: 'profile', Icon: PersonIcon, label: t('account.profileDetails'), go: () => setView('profile') },
+    // The old Profile spoke held five jobs and two accent primaries; it is
+    // three spokes now, one primary each (T390, brief V3-8).
+    user && { key: 'security', group: 'account', view: 'security', Icon: LockIcon, label: t('account.menuSecurity'), go: () => setView('security') },
+    user && { key: 'yourdata', group: 'account', view: 'yourdata', Icon: DownloadIcon, label: t('account.dataTitle'), go: () => setView('yourdata') },
     user && { key: 'friends', group: 'account', view: 'friends', Icon: FriendsIcon, label: t('friends.title'), go: () => setView('friends') },
     user && isAdmin && { key: 'admin', group: 'account', Icon: LockIcon, label: t('account.menuAdmin'), go: () => { onClose?.(); onOpenAdmin?.(); } },
     { key: 'feedback', group: 'help', view: 'feedback', Icon: FeedbackIcon, label: t('account.menuFeedback'), go: () => setView('feedback') },
@@ -797,7 +754,9 @@ export function AccountPanel({
           out of sight the moment anybody scrolled and the panel had no visible
           way out at the bottom, which is where the delete section is. */}
       <div className={`panel-header${heading ? '' : ' account-header-bare'}`}>
-        <button className="panel-close" onClick={onClose} aria-label={t('account.close')}>x</button>
+        {/* No close cross (T390, brief V3-1): it was hidden at every width by
+            `.account-panel .panel-close`, a letter x nobody could see. The
+            header's account door, the bottom nav and Escape close the page. */}
         {view === 'home' ? (
           // One h1 (T186): the overline is the page title unless a heading
           // under it names the view, then that heading is.
@@ -835,77 +794,18 @@ export function AccountPanel({
             ) : null}
           </div>
 
-          {/* What they hold today. A pass is a finite thing that runs out, so
-              this states the expiry rather than a status word: "Trip Pass"
-              alone tells somebody nothing about whether it still works. Below
-              it, what the next pass would add, in the same plain numbers the
-              pricing table uses. */}
-          {user && (
-            <div className="panel-section">
-              <div className="section-title section-title-iconed"><SparkIcon size={12} /> {t('pass.sectionTitle')}</div>
-              <div className="account-pass-card">
-                <div className="account-pass-head">
-                  <b className="account-pass-tier">{t(tier.labelKey)}</b>
-                  {entitlement.known && (
-                    <span className="account-pass-status">
-                      {entitlement.tier === 'free'
-                        ? t('pass.statusFree', { left: entitlement.plansLeft, cap: entitlement.plansCap })
-                        : t('pass.statusPaid', {
-                          days: daysLeft(entitlement.expiresAt) ?? 0,
-                          left: entitlement.plansLeft,
-                        })}
-                    </span>
-                  )}
-                </div>
+          {/* The hub in the traveller's order (T390, brief V3-7): who you are,
+              then the settings every figure in Carta is priced from, then the
+              language, then the pass, then the invitation and help. The pass
+              card and the invite used to fill the first two screens, so the
+              account read as a sales page before it read as your settings.
 
-                {canUpgrade(entitlement.tier) && (
-                  <div className="account-pass-upsell">
-                    <div className="account-pass-upsell-title">
-                      {t('account.passAdds', { name: t(upgrade.labelKey) })}
-                    </div>
-                    <ul className="account-pass-feats">
-                      <li className="account-pass-feat">
-                        <CheckIcon size={13} />{t('pass.featPlansPaid', { n: upgrade.aiPlans })}
-                      </li>
-                      <li className="account-pass-feat">
-                        <CheckIcon size={13} />{t('pass.featSearchOn', { n: upgrade.grounded })}
-                      </li>
-                      <li className="account-pass-feat">
-                        <CheckIcon size={13} />{t('pass.featOneOff')}
-                      </li>
-                    </ul>
-                    <div className="account-pass-price">
-                      {formatPrice(upgrade.priceCents, locale)} <span>{t('pass.perTrip')}</span>
-                    </div>
-                    <button className="auth-submit account-pass-cta" onClick={paywall.openPrices}>
-                      {t(entitlement.tier === 'free' ? 'pass.seePasses' : 'pass.extend')}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Word of mouth is the whole marketing budget. The banner earns its
-              tint by being the one thing here that is an invitation rather
-              than plumbing. */}
-          <div className="panel-section">
-            <div className="account-invite">
-              <b className="account-invite-title">{t('account.inviteTitle')}</b>
-              <p className="account-invite-body">{t('account.inviteBody')}</p>
-              <button type="button" className="account-invite-btn" onClick={handleShare}>
-                {shareCopied ? <CheckIcon size={15} /> : <ShareIcon size={15} />}
-                {shareCopied ? t('account.inviteCopied') : t('account.inviteBtn')}
-              </button>
-            </div>
-          </div>
-
-          {/* How this person travels, the setting behind every euro figure
-              the app prints. It used to be reachable only from the two browse
-              tabs, which made it read like a filter; it is a preference, and
-              preferences live here too. Works signed out. */}
+              How this person travels, the setting behind every euro figure
+              the app prints. It is a preference, and preferences live here.
+              Works signed out. */}
           {onOpenLifestyle && (
             <div className="panel-section">
+              <h2 className="account-group-label">{t('account.tripSettings')}</h2>
               <div className="account-menu">
                 <MenuRow
                   icon={<PiggyIcon size={17} />}
@@ -921,7 +821,7 @@ export function AccountPanel({
               once-per-person action, so it lives with the other settings
               instead of spending header width. Works signed out. */}
           <div className="panel-section">
-            <div className="section-title">{t('account.language')}</div>
+            <h2 className="account-group-label">{t('account.language')}</h2>
             <div className="account-lang-grid" role="listbox" aria-label={t('account.language')}>
               {languages.map((l) => (
                 <button
@@ -939,6 +839,70 @@ export function AccountPanel({
               ))}
             </div>
           </div>
+
+          {/* What they hold today, as one status line and one door to the
+              passes (brief V3-10). A pass is a finite thing that runs out, so
+              the line states the balance and the expiry rather than a status
+              word. What a pass adds is the pass modal's job, in the same plain
+              numbers, so the hub no longer repeats a price list with ticks.
+              Until the balance is known the line holds its place as a still
+              block (carta-design "Loading"), so the button does not jump. */}
+          {user && (
+            <div className="panel-section">
+              <h2 className="account-group-label">{t('pass.sectionTitle')}</h2>
+              <div className="account-pass-card">
+                <div className="account-pass-head">
+                  <b className="account-pass-tier">{t(tier.labelKey)}</b>
+                  {entitlement.known ? (
+                    <span className="account-pass-status">
+                      {entitlement.tier === 'free'
+                        ? t('pass.statusFree', { left: entitlement.plansLeft, cap: entitlement.plansCap })
+                        : t((daysLeft(entitlement.expiresAt) ?? 0) === 1 ? 'pass.statusPaid1' : 'pass.statusPaid', {
+                          days: daysLeft(entitlement.expiresAt) ?? 0,
+                          left: entitlement.plansLeft,
+                        })}
+                    </span>
+                  ) : (
+                    <span className="account-pass-status is-loading" aria-hidden="true" />
+                  )}
+                  {!entitlement.known && <span className="sr-only">{t('account.passLoading')}</span>}
+                </div>
+                {canUpgrade(entitlement.tier) && (
+                  <button className="auth-submit account-pass-cta" onClick={paywall.openPrices}>
+                    {t(entitlement.tier === 'free' ? 'pass.seePasses' : 'pass.extend')}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Word of mouth is the whole marketing budget, so the invitation
+              stays, after the traveller's own settings rather than before. */}
+          <div className="panel-section">
+            <div className="account-invite">
+              <b className="account-invite-title">{t('account.inviteTitle')}</b>
+              <p className="account-invite-body">{t('account.inviteBody')}</p>
+              <button type="button" className="account-invite-btn" onClick={handleShare}>
+                {shareCopied ? <CheckIcon size={15} /> : <ShareIcon size={15} />}
+                {shareCopied ? t('account.inviteCopied') : t('account.inviteBtn')}
+              </button>
+            </div>
+          </div>
+
+          {/* The account's own spokes on a phone (brief V3-7, V3-8). On a
+              phone Friends had no door here, only a 38 px icon in the top
+              bar, and the security and data spokes are new. The desktop rail
+              carries the same rows, so this block folds away there with the
+              help menu below. */}
+          {user && (
+            <div className="panel-section account-help-section">
+              <div className="account-menu account-menu-help">
+                <MenuRow icon={<FriendsIcon size={17} />} label={t('friends.title')} onClick={() => setView('friends')} />
+                <MenuRow icon={<LockIcon size={17} />} label={t('account.menuSecurity')} onClick={() => setView('security')} />
+                <MenuRow icon={<DownloadIcon size={17} />} label={t('account.dataTitle')} onClick={() => setView('yourdata')} />
+              </div>
+            </div>
+          )}
 
           {/* Help, in the order people need it: say something, look something
               up, read the fine print. All three work signed out. */}
@@ -1100,6 +1064,14 @@ export function AccountPanel({
             </form>
           </div>
 
+        </>
+      )}
+
+      {/* Sign-in and security: the password, other devices, signing out. Its
+          own spoke since T390 (brief V3-8), so Update password is this page's
+          one primary rather than the second accent under Save changes. */}
+      {view === 'security' && user && (
+        <>
           <div className="panel-section">
             <div className="section-title section-title-iconed">
               <LockIcon size={12} /> {t('account.securityTitle')}
@@ -1243,6 +1215,12 @@ export function AccountPanel({
             </button>
           </div>
 
+        </>
+      )}
+
+      {/* Your data: a copy of everything, and deleting the account. */}
+      {view === 'yourdata' && user && (
+        <>
           {/* Your data sits above the danger zone, not inside it. Taking a
               copy of your own trips is an ordinary thing to want, and the two
               halves of the same right read better adjacent than merged: this

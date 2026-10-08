@@ -233,19 +233,26 @@ try {
   // two apart.
   const menuLabels = await page.locator('.account-nav:visible').allInnerTexts();
   const menuRows = menuLabels.length;
-  for (const label of ['Send feedback', 'Common questions', 'Privacy', 'Data sources']) {
+  // "Data sources" is "Where the numbers come from" since T390 (brief V3-8):
+  // the old name clashed with the "Your data" spoke.
+  for (const label of ['Send feedback', 'Common questions', 'Privacy', 'Where the numbers come from']) {
     if (!menuLabels.some((l) => l.includes(label))) fail(`the panel has no "${label}" row`);
   }
-  if (await page.locator('.account-menu-row').filter({ hasText: 'Friends' }).count()) {
-    fail('Friends is back in the account hub, competing with its header door');
+  // Reversed by T390 (brief V3-7): on a phone Friends had no door on the hub,
+  // only a 38 px icon in the top bar, so the hub now carries a Friends row in
+  // the phone-only block (hidden on desktop, where the rail has the row).
+  if (!(await page.locator('.account-menu-row').filter({ hasText: 'Friends' }).count())) {
+    fail('the account hub has no Friends row for the phone');
   }
   const rowBox = await page.locator('.account-nav:visible').first().boundingBox();
   if (!rowBox || rowBox.height < 34) fail(`navigation rows are ${rowBox?.height}px tall`);
-  // Two colours on this page, beige and terracotta: the page you are on wears
-  // the full accent, exactly as a selected filter does on Destinations.
+  // The page you are on wears the house selected state, --ink-fill
+  // rgb(43, 52, 70) (carta-design "Selected state"). Updated by T390 (row
+  // T379-f): this line asserted the pre-T363 accent rgb(224, 90, 71), which
+  // the stylesheet no longer has; accent is never a selection colour now.
   const railOn = await page.locator('.account-side .side-navrow.on').first()
     .evaluate((el) => getComputedStyle(el).backgroundColor).catch(() => '');
-  if (railOn !== 'rgb(224, 90, 71)') fail(`the current page in the panel is ${railOn}, not the accent`);
+  if (railOn !== 'rgb(43, 52, 70)') fail(`the current page in the panel is ${railOn}, not --ink-fill`);
   if (await page.locator('#acct-name').count()) fail('the profile form leaks onto the hub');
   ok(`hub: profile card (SO), invite banner, ${menuRows} menu rows at ${Math.round(rowBox.height)}px`);
 
@@ -259,18 +266,19 @@ try {
   }
   ok('share falls back to copying the link, and says so');
 
-  // ---- 2. The pass card lives on the hub and sells something.
+  // ---- 2. The pass card lives on the hub: the balance and one door.
+  // T390 (brief V3-10): the hub's pass card is one status line and "See
+  // passes"; the feature ticks and the price moved out, because the pass
+  // modal states them in the same plain numbers and the hub is the
+  // traveller's settings first. This block asserted three ticks and a price.
   console.log('2. pass');
   const passCard = page.locator('.account-pass-card');
   if (!(await passCard.count())) fail('no pass card on the hub');
   const passText = await passCard.innerText();
   if (!/2 of 3/.test(passText)) fail(`pass card does not state the live balance: ${passText}`);
-  const feats = await page.locator('.account-pass-feat').count();
-  if (feats < 3) fail(`pass card lists only ${feats} things the next tier adds`);
-  if (!/€\s?6[.,]99/.test(await page.locator('.account-pass-price').innerText())) {
-    fail('pass card does not carry the Trip Pass price');
-  }
-  ok(`pass card: balance, ${feats} benefits, price`);
+  if (await page.locator('.account-pass-feat').count()) fail('the hub repeats the pass feature list');
+  if (!(await passCard.locator('.account-pass-cta').count())) fail('the pass card has no door to the passes');
+  ok('pass card: balance and one door to the passes');
   await page.screenshot({ path: `${SHOTS}/account-hub.png` });
 
   // ---- 3. Profile spoke: identity stated once, editable, saves.
@@ -392,7 +400,9 @@ try {
   }
 
   // ---- 4 & 5. Password: the whole production contract, field by field.
+  // The password lives on its own spoke since T390 (brief V3-8).
   console.log('4. password security');
+  await goTo(page, 'Sign-in and security');
   const current = page.locator('#acct-current-pw');
   const next = page.locator('#acct-new-pw');
   const confirm = page.locator('#acct-confirm-pw');
@@ -526,23 +536,30 @@ try {
 
   // ---- 7. Sign out clear of deletion; deletion red, confirmed, gated.
   console.log('6. layout and deletion');
-  const order = await page.locator('.account-panel .panel-section .section-title').allInnerTexts();
-  console.log('   profile sections:', order.map((s) => s.trim()).join(' / '));
-  const idx = (re) => order.findIndex((s) => re.test(s));
-  const [profile, pw, session, danger] = [
-    idx(/profile/i), idx(/security/i), idx(/session/i), idx(/danger/i),
-  ];
-  if ([profile, pw, session, danger].some((i) => i < 0)) fail(`a section is missing: ${order.join(' | ')}`);
-  if (!(profile < pw && pw < session && session < danger)) {
-    fail(`sections are out of order: ${order.join(' | ')}`);
+  // T390 (brief V3-8) split the old Profile spoke in three: Profile, Sign-in
+  // and security (password, session), Your data (download, delete). Sign out
+  // and delete now sit on different pages, which is a wider gap than the
+  // 60 px this block measured on one page; each spoke's order is checked.
+  const sections = async () => (await page.locator('.account-panel .panel-section .section-title').allInnerTexts())
+    .map((s) => s.trim());
+  const secOrder = await sections();
+  console.log('   security sections:', secOrder.join(' / '));
+  const si = (re) => secOrder.findIndex((s) => re.test(s));
+  if (si(/security/i) < 0 || si(/session/i) < 0 || si(/security/i) > si(/session/i)) {
+    fail(`the security spoke is missing a section or out of order: ${secOrder.join(' | ')}`);
   }
+  if (secOrder.some((s) => /danger/i.test(s))) fail('deletion shares a page with sign out');
   const signOutBox = await page.locator('.account-signout').boundingBox();
-  const deleteBox = await page.locator('.account-delete-arm').boundingBox();
   if (signOutBox.height < 44) fail(`sign out is ${signOutBox.height}px tall`);
-  if (deleteBox.y - (signOutBox.y + signOutBox.height) < 60) {
-    fail('sign out and delete are still close enough to mis-tap');
+  await goTo(page, 'Your data');
+  const dataOrder = await sections();
+  console.log('   data sections:', dataOrder.join(' / '));
+  const di = (re) => dataOrder.findIndex((s) => re.test(s));
+  if (di(/your data/i) < 0 || di(/danger/i) < 0 || di(/your data/i) > di(/danger/i)) {
+    fail(`the data spoke is missing a section or out of order: ${dataOrder.join(' | ')}`);
   }
-  ok(`sign out sits ${Math.round(deleteBox.y - signOutBox.y - signOutBox.height)}px clear of the delete button`);
+  if (await page.locator('.account-signout').count()) fail('sign out shares a page with deletion');
+  ok('sign out and delete live on two different spokes');
 
   const dangerColor = await page.locator('.account-delete-arm').evaluate((el) => getComputedStyle(el).color);
   if (!/^rgb\(1[6-9]\d,\s*\d+,\s*\d+\)/.test(dangerColor)) fail(`the delete button is not red: ${dangerColor}`);
@@ -609,6 +626,11 @@ try {
   for (const figure of ['€6.99', '€14.99', '60', '40', '300', '120']) {
     if (!passA.includes(figure)) fail(`the pass answer never names ${figure}: "${passA}"`);
   }
+  // The free allowance is two plans for the life of the account (TIERS.free,
+  // src/lib/pricing.js; migration 021), never "a month" (row T379-e, T390).
+  if (/a month/i.test(passA) || !/life of the account/i.test(passA)) {
+    fail(`the pass answer misstates the free allowance: "${passA}"`);
+  }
   // Carta stopped pricing flights; an answer that still sells fares is a lie
   // about the product, which is the failure this FAQ exists to avoid.
   const allAnswers = (await page.locator('.account-faq-q').allInnerTexts()).join(' ');
@@ -623,7 +645,7 @@ try {
   //          credit are answered here now that the front page is gone, so an
   //          empty list is a compliance problem, not a cosmetic one.
   await goHome(page);
-  await goTo(page, 'Data sources');
+  await goTo(page, 'Where the numbers come from'); // renamed from "Data sources" by T390
   const creditLines = await page.locator('.account-credits li').allInnerTexts();
   if (creditLines.length < 10) fail(`data sources spoke lists ${creditLines.length} credits`);
   if (!creditLines.some((l) => /OpenStreetMap/.test(l))) fail('credits never name OpenStreetMap');
@@ -635,7 +657,9 @@ try {
   await goTo(page, 'Send feedback');
   const feedbackBox = page.locator('#acct-feedback');
   await feedbackBox.waitFor({ timeout: 5000 });
-  const sendBtn = page.locator('button', { hasText: 'Send by email' });
+  // "Send", not "Send by email" (T390, brief V3-13): the message is written
+  // to the inbox; email is only the fallback when that fails.
+  const sendBtn = page.locator('.account-panel button', { hasText: /^Send$/ });
   if (!(await sendBtn.isDisabled())) fail('the send button is live with an empty message');
   await feedbackBox.fill('The Porto bus fare looked too low for August.');
   if (await sendBtn.isDisabled()) fail('the send button stayed off after typing a message');
@@ -674,6 +698,8 @@ try {
   await pageG.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(pageG);
   await goToProfile(pageG);
+  // The password route is on the security spoke since T390 (brief V3-8).
+  await goTo(pageG, 'Sign-in and security');
   if (await pageG.locator('#acct-current-pw').count()) fail('a Google account is asked for a password it does not have');
   if (!/Google/.test(await pageG.locator('.account-section-hint').first().innerText())) {
     fail('the password section does not explain why there is no form');
@@ -683,6 +709,7 @@ try {
   await pageG.waitForTimeout(600);
   if (state.recoverCalls <= before) fail('the set-a-password link sent no mail');
   ok('the password form is replaced by the set-a-password route');
+  await goTo(pageG, 'Your data');
   await pageG.locator('.account-delete-arm').click();
   const delEmail = pageG.locator('#acct-delete-email');
   if (!(await delEmail.count())) fail('a Google account can delete itself with no confirmation at all');

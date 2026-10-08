@@ -142,6 +142,11 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
   const [label, setLabel] = useState(() => initial?.label || '');
   const [mem, setMem] = useState(() => ({ ...emptyMemory(), ...(initial?.memory || {}) }));
   const [open, setOpen] = useState('where');
+  // Two steps (T390, brief V3-6): where and when first, which is all a trip
+  // in the record needs, then the six folds of detail behind one "Add
+  // details" button. Editing a trip that was already written up opens with
+  // the details showing, since that is usually why it was opened.
+  const [details, setDetails] = useState(() => !!initial?.id);
   const [geo, setGeo] = useState({ busy: false, hit: null, miss: false });
   const [photoNote, setPhotoNote] = useState('');
   const [highlight, setHighlight] = useState('');
@@ -469,7 +474,16 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
         />
       </div>
 
+      {!details && (
+        <button type="button" className="pasttrip-details" onClick={() => setDetails(true)} aria-expanded={false}>
+          <PlusIcon size={13} />
+          <span>{t('saved.pastAddDetails')}</span>
+          <span className="pasttrip-details-sub">{t('saved.pastAddDetailsSub')}</span>
+        </button>
+      )}
+
       {/* ── Everything else, folded until it is wanted ── */}
+      {details && (
       <div className="pasttrip-folds">
         <Fold
           icon={<PersonIcon size={13} />}
@@ -795,8 +809,9 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
           <p className="pasttrip-note">{photoNote || t('saved.pastPhotoNote', { n: MAX_PHOTOS })}</p>
         </Fold>
       </div>
+      )}
 
-      {error && <p className="pasttrip-error">{error}</p>}
+      {error && <p className="pasttrip-error" role="alert">{error}</p>}
 
       <div className="pasttrip-actions">
         <button className="pasttrip-cancel" onClick={onCancel} disabled={busy}>

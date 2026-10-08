@@ -3,6 +3,8 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
 import { GoogleButton } from './GoogleButton.jsx';
+import { PasswordField } from './PasswordField.jsx';
+import { CloseIcon } from '../components/Icons.jsx';
 import { MIN_PASSWORD_LENGTH } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -96,7 +98,9 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
   return (
     <div className="auth-overlay" onClick={onClose}>
       <div className="auth-modal" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" onClick={(e) => e.stopPropagation()}>
-        <button ref={closeRef} className="panel-close auth-close" onClick={onClose} aria-label={t('auth.close')}>x</button>
+        <button ref={closeRef} className="panel-close auth-close" onClick={onClose} aria-label={t('auth.close')}>
+          <CloseIcon size={16} />
+        </button>
 
         <div className="auth-brand">
           <Logo size={26} />
@@ -167,30 +171,27 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
               />
             </label>
 
+            {/* The account's own password field (T390, brief V3-11): a
+                reveal toggle, and no placeholder of eight dots, which read as
+                a field already filled in. */}
             {mode !== 'forgot' && (
-              <label className="auth-field">
-                <span className="auth-label">{t('auth.password')}</span>
-                <input
-                  type="password"
-                  autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                />
-              </label>
+              <PasswordField
+                id="auth-password"
+                label={t('auth.password')}
+                value={password}
+                onChange={setPassword}
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              />
             )}
 
             {mode === 'signup' && (
-              <label className="auth-field">
-                <span className="auth-label">{t('auth.confirmPassword')}</span>
-                <input
-                  type="password"
-                  autoComplete="new-password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                />
-              </label>
+              <PasswordField
+                id="auth-password-confirm"
+                label={t('auth.confirmPassword')}
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                autoComplete="new-password"
+              />
             )}
 
             {mode === 'signin' && (
@@ -203,8 +204,10 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
               </button>
             )}
 
-            {error && <div className="auth-error">{error}</div>}
+            {error && <div className="auth-error" role="alert">{error}</div>}
 
+            {/* The modal's one primary, in the accent like every other
+                submit on the account surface (69-v6-account.css). */}
             <button type="submit" className="auth-submit" disabled={loading}>
               {loading
                 ? t('auth.pleaseWait')

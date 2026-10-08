@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { LinkIcon, CheckIcon, TrashIcon, PersonIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
@@ -174,11 +174,29 @@ export function TripSharePanel({
   // Thirty days by default rather than forever: a link handed out for one
   // conversation should not outlive it, and nobody comes back to tidy up.
   const [days, setDays] = useState(DEFAULT_SHARE_DAYS);
+  // The two answers that cannot be held back and undone later ask once, in
+  // place (carta-design "Undo, not confirm", the confirm half): publishing to
+  // the public guides, and withdrawing a link somebody may already hold.
+  const [askPublic, setAskPublic] = useState(false);
+  const [askRevoke, setAskRevoke] = useState('');
+  const keepPublicRef = useRef(null);
+  const keepRevokeRef = useRef(null);
+  // The safe answer takes focus, so Enter or a second tap never publishes or
+  // withdraws by accident, and Escape keeps things as they are.
+  useEffect(() => { if (askPublic) keepPublicRef.current?.focus(); }, [askPublic]);
+  useEffect(() => { if (askRevoke) keepRevokeRef.current?.focus(); }, [askRevoke]);
+  const onAskKey = (e, keep) => {
+    if (e.key !== 'Escape') return;
+    e.stopPropagation();
+    keep();
+  };
 
   const subKey = (VIS_OPTS.find((o) => o.key === vis) || VIS_OPTS[0]).subKey;
 
-  const pickVisibility = async (next) => {
+  const pickVisibility = async (next, confirmed = false) => {
     if (next === vis) return;
+    if (next === 'public' && !confirmed) { setAskPublic(true); return; }
+    setAskPublic(false);
     const before = vis;
     setVis(next); // optimistic: the control must not lag the tap
     setError('');
@@ -251,6 +269,7 @@ export function TripSharePanel({
   };
 
   const withdraw = async (token) => {
+    setAskRevoke('');
     setError('');
     try {
       await revokeTripShare(token);
@@ -260,29 +279,13 @@ export function TripSharePanel({
     }
   };
 
+  // The panel reads in the order a traveller hands a plan on (T390, brief
+  // V3-4): make a link (what it shows, how long it works, Make a link), the
+  // links that already work, then who may edit it, then who sees it inside
+  // Carta. Visibility used to open the panel, so the first thing a traveller
+  // who only wanted a link met was a three-way publishing choice.
   return (
     <div className="tshare">
-      <div className="tshare-vis">
-        <span className="tshare-vis-title">{t('share.visTitle')}</span>
-        <div className="tshare-vis-opts" role="radiogroup" aria-label={t('share.visTitle')}>
-          {VIS_OPTS.map((o) => (
-            <button
-              key={o.key}
-              type="button"
-              role="radio"
-              aria-checked={vis === o.key}
-              className={`tshare-vis-opt${vis === o.key ? ' on' : ''}`}
-              onClick={() => pickVisibility(o.key)}
-            >
-              {t(o.labelKey)}
-            </button>
-          ))}
-        </div>
-        <p className="tshare-vis-sub">{t(subKey)}</p>
-      </div>
-
-      {canInvite && <CoplannerBlock userId={userId} tripPlanId={tripPlanId} t={t} />}
-
       <p className="tshare-lede">{t('share.lede')}</p>
 
       <div className="tshare-scopes" role="radiogroup" aria-label={t('share.scopeLabel')}>
@@ -355,16 +358,75 @@ export function TripSharePanel({
               <button
                 type="button"
                 className="tshare-revoke"
-                onClick={() => withdraw(l.token)}
+                onClick={() => setAskRevoke(l.token)}
                 aria-label={t('share.revoke')}
                 title={t('share.revoke')}
               >
                 <TrashIcon size={13} />
               </button>
+              {askRevoke === l.token && (
+                <div
+                  className="tshare-ask"
+                  role="group"
+                  aria-label={t('share.revoke')}
+                  onKeyDown={(e) => onAskKey(e, () => setAskRevoke(''))}
+                >
+                  <p className="tshare-ask-text">{t('share.revokeAsk')}</p>
+                  <div className="tshare-ask-row">
+                    <button type="button" className="tshare-ask-keep" ref={keepRevokeRef} onClick={() => setAskRevoke('')}>
+                      {t('share.revokeKeep')}
+                    </button>
+                    <button type="button" className="tshare-ask-danger" onClick={() => withdraw(l.token)}>
+                      {t('share.revokeGo')}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
       )}
+
+      {canInvite && <CoplannerBlock userId={userId} tripPlanId={tripPlanId} t={t} />}
+
+      <div className="tshare-vis">
+        <span className="tshare-vis-title">{t('share.visTitle')}</span>
+        <div className="tshare-vis-opts" role="radiogroup" aria-label={t('share.visTitle')}>
+          {VIS_OPTS.map((o) => (
+            <button
+              key={o.key}
+              type="button"
+              role="radio"
+              aria-checked={vis === o.key}
+              className={`tshare-vis-opt${vis === o.key ? ' on' : ''}`}
+              onClick={() => pickVisibility(o.key)}
+            >
+              {t(o.labelKey)}
+            </button>
+          ))}
+        </div>
+        {askPublic ? (
+          <div
+            className="tshare-ask"
+            role="group"
+            aria-label={t('guides.publish')}
+            onKeyDown={(e) => onAskKey(e, () => setAskPublic(false))}
+          >
+            <p className="tshare-ask-text">{t('share.publicAsk')}</p>
+            <p className="tshare-vis-sub">{t('guides.publishSub')}</p>
+            <div className="tshare-ask-row">
+              <button type="button" className="tshare-ask-keep" ref={keepPublicRef} onClick={() => setAskPublic(false)}>
+                {t('share.publicKeep')}
+              </button>
+              <button type="button" className="tshare-ask-publish" onClick={() => pickVisibility('public', true)}>
+                {t('share.publicGo')}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="tshare-vis-sub">{t(subKey)}</p>
+        )}
+      </div>
     </div>
   );
 }

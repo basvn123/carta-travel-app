@@ -11,7 +11,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4191;
+// CARTA_PORT points the check at a server already running (T390: the design
+// waves run one Vite per worktree); without it the old fixed port stands.
+const PORT = Number(process.env.CARTA_PORT) || 4191;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -90,7 +92,10 @@ const run = async () => {
   await openSaved(page);
   await openVisited(page);
 
-  const addBtn = page.locator('.saved-add-past');
+  // One way in at a time (T390, brief V3-6): while the record is empty the
+  // heading's button waits and the empty state's invitation is the entry.
+  const addBtn = page.locator('.saved-add-past:visible, .saved-empty-cta:visible')
+    .filter({ hasText: /past trip/i }).first();
   if (!await addBtn.count()) fail('no "Add a past trip" button on the Visited tab');
   await addBtn.click();
   const form = page.locator('.pasttrip-form');
@@ -118,6 +123,12 @@ const run = async () => {
   else ok(`dates read back as "${note}"`);
 
   // ── Everything a trip is, past where and when ──
+  // The detail folds sit behind "Add details" since T390 (brief V3-6): where
+  // and when is step one and a trip can be saved after it.
+  if (await form.locator('.pasttrip-fold-head').count()) fail('the detail folds show before "Add details" is pressed');
+  else ok('step one is where and when only');
+  await form.locator('.pasttrip-details').click();
+  await page.waitForTimeout(150);
   const openFold = async (title) => {
     await form.locator('.pasttrip-fold-head').filter({ hasText: title }).first().click();
     await page.waitForTimeout(150);
@@ -196,7 +207,10 @@ const run = async () => {
     if (!/Visited/.test(text)) fail(`saved card is not marked visited: ${text}`);
     else ok(`card reads: ${text.replace(/\n/g, ' | ')}`);
   }
-  const cardPhoto = await page.locator('.uptrip-photo').first().getAttribute('style');
+  // The cover is an img element inside .uptrip-photo (ShotPhoto), not a
+  // background-image on the span any more; this read the span's style
+  // attribute and failed on every run since that change (found by T390).
+  const cardPhoto = await page.locator('.uptrip-photo img').first().getAttribute('src').catch(() => '');
   if (!/data:image\/jpeg/.test(cardPhoto || '')) fail('the card did not take your own photo as its cover');
   else ok('the card wears your photograph');
 
@@ -268,7 +282,8 @@ const run = async () => {
   await enterApp(mpage);
   await openSaved(mpage);
   await openVisited(mpage);
-  await mpage.locator('.saved-add-past').click();
+  // An empty record's one entry is the empty state's invitation (T390).
+  await mpage.locator('.saved-add-past:visible, .saved-empty-cta:visible').filter({ hasText: /past trip/i }).first().click();
   await mpage.locator('.pasttrip-form').waitFor({ timeout: 5000 });
   await mpage.waitForTimeout(300);
   const overflow = await mpage.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

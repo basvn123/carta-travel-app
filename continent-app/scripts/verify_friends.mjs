@@ -43,7 +43,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4195;
+// CARTA_PORT points the check at a server already running (T390: the design
+// waves run one Vite per worktree); without it the old fixed port stands.
+const PORT = Number(process.env.CARTA_PORT) || 4195;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -462,7 +464,9 @@ const run = async () => {
     .filter({ hasText: /^(Saved trips|My trips)$/ }).locator('visible=true').first();
   await trips.click({ timeout: 20000 });
   await page.locator('.saved-trips-panel').waitFor({ timeout: 12000 });
-  await page.locator('.saved-tab:visible').nth(1).click();
+  // By label, not by index: T390 put Planned first (brief V3-2), so the
+  // second tab is Favorites now.
+  await page.locator('.saved-tab:visible').filter({ hasText: /planned/i }).first().click();
   await page.waitForTimeout(600);
 
   const panel = await page.locator('.saved-trips-panel').innerText();
@@ -573,12 +577,12 @@ const run = async () => {
     .filter({ hasText: /^(Saved trips|My trips)$/ }).locator('visible=true').first();
   await myTrips.click({ timeout: 60000 });
   await op.locator('.saved-trips-panel').waitFor({ timeout: 15000 });
-  await op.locator('.saved-tab:visible').nth(1).click();
+  await op.locator('.saved-tab:visible').filter({ hasText: /planned/i }).first().click();
   await op.locator('.uptrip-card').first().waitFor({ timeout: 15000 });
-  // Open the share panel through its card menu, the way a person would.
-  await op.locator('.uptrip-menu button').first().click();
-  await op.locator('.card-menu-item, .cardmenu-item, [role="menuitem"]')
-    .filter({ hasText: /share/i }).first().click({ timeout: 10000 });
+  // Open the share panel through the card's own Share button, the way a
+  // person would. T390 (brief V3-4) moved Share out of the card menu onto
+  // the card; the menu no longer lists it.
+  await op.locator('.uptrip-share').first().click({ timeout: 10000 });
   await op.locator('.tshare-coplan').waitFor({ timeout: 15000 });
 
   const co2 = await op.locator('.tshare-coplan').innerText();

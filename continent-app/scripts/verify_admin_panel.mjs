@@ -1754,8 +1754,12 @@ try {
   // said eight (T042-d). Asserted by name so the next door to arrive says
   // which one it is rather than only changing a count.
   const doors = (await page2.locator('.account-nav:visible').allInnerTexts()).map((x) => x.trim().split(String.fromCharCode(10))[0].trim());
-  const wantDoors = ['Overview', 'Profile details', 'Friends', 'Send feedback', 'Common questions',
-    'Privacy policy', 'Terms of service', 'Imprint', 'Data sources', 'Lifestyle'];
+  // T390 (brief V3-8) split the Profile spoke into Profile details, Sign-in
+  // and security and Your data, and renamed Data sources "Where the numbers
+  // come from" (it clashed with Your data): twelve doors now.
+  const wantDoors = ['Overview', 'Profile details', 'Sign-in and security', 'Your data', 'Friends',
+    'Send feedback', 'Common questions', 'Privacy policy', 'Terms of service', 'Imprint',
+    'Where the numbers come from', 'Lifestyle'];
   const missingDoors = wantDoors.filter((d) => !doors.includes(d));
   const extraDoors = doors.filter((d) => !wantDoors.includes(d));
   if (missingDoors.length || extraDoors.length) {

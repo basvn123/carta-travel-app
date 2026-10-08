@@ -5,7 +5,7 @@ import {
   TIERS, TIER_ORDER, PAID_TIERS, formatPrice, yearPassTripsEquivalent, daysLeft,
 } from '../lib/pricing.js';
 import { startCheckout } from '../lib/checkout.js';
-import { SparkIcon, CheckIcon } from './Icons.jsx';
+import { SparkIcon, CheckIcon, CloseIcon } from './Icons.jsx';
 import { TermsOfService } from './TermsOfService.jsx';
 
 /**
@@ -86,7 +86,10 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
   return (
     <div className="day-saved-overlay pass-overlay" role="dialog" aria-modal="true" onClick={onClose}>
       <div className="day-saved-card pass-card" ref={cardRef} onClick={(e) => e.stopPropagation()}>
-        <button className="day-saved-close" ref={closeRef} onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>×</button>
+        {/* The house close control (CloseIcon, never a "×" glyph). */}
+        <button className="day-saved-close pass-close" ref={closeRef} onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>
+          <CloseIcon size={16} />
+        </button>
 
         <div className="ai-plan-head">
           <span className="ai-plan-badge"><SparkIcon size={15} /></span>
@@ -95,7 +98,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
         <p className="ai-plan-lead">{t(leadKey)}</p>
 
         {current !== 'free' && left != null && (
-          <p className="pass-current">{t('pass.current', { name: t(TIERS[current].labelKey), days: left })}</p>
+          <p className="pass-current">{t(left === 1 ? 'pass.current1' : 'pass.current', { name: t(TIERS[current].labelKey), days: left })}</p>
         )}
 
         {/* The withdrawal waiver, stated BEFORE the buy buttons.
@@ -126,30 +129,36 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
               <div key={id} className={`pass-tier ${tier.featured ? 'featured' : ''} ${isCurrent ? 'current' : ''}`}>
                 {tier.featured && <span className="pass-flag">{t('pass.recommended')}</span>}
                 <h4>{t(tier.labelKey)}</h4>
+                {/* A price is a measured figure: mono, through Intl, two
+                    decimals, the free plan included ("€0.00", not "€0"), so
+                    the three prices line up as one column of money (T390,
+                    brief V3-10). */}
                 <div className="pass-price">
-                  {tier.priceCents === 0
-                    ? t('pass.freePrice')
-                    : formatPrice(tier.priceCents, locale)}
+                  <span className="pass-price-eur">{formatPrice(tier.priceCents, locale)}</span>
                   <small>
                     {id === 'trip' ? t('pass.perTrip') : id === 'year' ? t('pass.perYear') : ''}
                   </small>
                 </div>
                 <p className="pass-blurb">{t(tier.blurbKey)}</p>
                 <ul className="pass-features">
+                  {/* Limits as plain numbers and a period (carta-design "Plan
+                      cards"): "60 Carta bot day plans in 30 days", never
+                      "Unlimited (fair use 60)", which made the traveller
+                      decode a ceiling out of a claim (T390, brief V3-10). */}
                   <li>
                     <CheckIcon size={11} />
                     {id === 'free'
                       ? t('pass.featPlansFree', { n: tier.aiPlans })
-                      : t('pass.featPlansPaid', { n: tier.aiPlans })}
+                      : t(tier.periodDays === 30 ? 'pass.featPlans30' : 'pass.featPlansYear', { n: tier.aiPlans })}
                   </li>
                   <li>
                     <CheckIcon size={11} />
                     {tier.grounded > 0
-                      ? t('pass.featSearchOn', { n: tier.grounded })
+                      ? t('pass.featSearchN', { n: tier.grounded })
                       : t('pass.featSearchOff')}
                   </li>
                   {id === 'year' && (
-                    <li><CheckIcon size={11} /> {t('pass.featValue', { n: yearPassTripsEquivalent() })}</li>
+                    <li><CheckIcon size={11} /> {t('pass.featValueLess', { n: yearPassTripsEquivalent() })}</li>
                   )}
                   {buyable && <li><CheckIcon size={11} /> {t('pass.featOneOff')}</li>}
                 </ul>
@@ -158,6 +167,9 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
                     className={`pass-buy ${tier.featured ? 'guide-next' : 'pass-buy-quiet'}`}
                     disabled={!!busy}
                     onClick={() => buy(id)}
+                    // Two buttons both read "Get this pass"; a screen reader
+                    // hears which pass each one buys.
+                    aria-label={t('pass.buyNamed', { name: t(tier.labelKey) })}
                   >
                     {busy === id ? t('pass.opening') : t('pass.buy')}
                   </button>

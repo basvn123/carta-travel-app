@@ -23,6 +23,7 @@ import { FriendTripPanel } from './FriendTripPanel.jsx';
 import { fetchFriendLinks, listFriendTrips } from './friends.js';
 import { kindsForDest } from '../lib/trip_kinds.js';
 import { eur } from '../lib/format.js';
+import { eurDay } from '../lib/costIndex.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
 import { FAV_KIND_LABEL, parseFavKey } from '../lib/favorites.js';
@@ -118,12 +119,16 @@ function orderedUnique(list) {
  *  for the one heading that names each tab's main list. `action` is the one
  *  thing you can do to the shelf itself, kept on the heading line. */
 function SavedSection({ title, sub, count, muted, big, action, children }) {
+  // The count is the house count chip (carta-design "Count chip"): mono, ink
+  // on --paper-dim, never the accent, and no chip at all when the shelf is
+  // empty. It used to fill with the accent when the shelf held something,
+  // which spent the page's one action colour on a number (T390, brief V3-2).
   return (
     <div className={`panel-section saved-section${muted ? ' is-muted' : ''}${big ? ' is-big' : ''}`}>
       <div className="saved-section-head">
-        <span className="saved-section-title">{title}</span>
-        {count != null && (
-          <span className={`saved-section-count${count > 0 ? ' on' : ''}`}>{count}</span>
+        <h2 className="saved-section-title">{title}</h2>
+        {count != null && count > 0 && (
+          <span className="saved-section-count">{count}</span>
         )}
         {action && <span className="saved-section-action">{action}</span>}
       </div>
@@ -137,12 +142,14 @@ function SavedSection({ title, sub, count, muted, big, action, children }) {
 // The round icon mark that used to head this block carried nothing the
 // sentence does not say, so it went (T367, docs/ONBOARDING_AND_EMPTY_STATES.md
 // "Before you ship"); callers may still pass an Icon and it is ignored.
-function SavedEmpty({ text, cta, onCta }) {
+// `secondary` draws the invitation's button as a secondary: one primary per
+// tab (T390, brief V3-2), so a second empty shelf on the same tab asks quietly.
+function SavedEmpty({ text, cta, onCta, secondary = false }) {
   return (
     <div className="saved-empty">
       <p className="saved-empty-text">{text}</p>
       {cta && onCta && (
-        <button className="saved-empty-cta" onClick={onCta}>{cta}</button>
+        <button className={`saved-empty-cta${secondary ? ' is-secondary' : ''}`} onClick={onCta}>{cta}</button>
       )}
     </div>
   );
@@ -225,9 +232,42 @@ function ConfirmRow({ name, onKeep, onRemove, label }) {
   );
 }
 
+/**
+ * What a day costs one person at the traveller's Lifestyle, for a saved place
+ * or plan (carta-design "Cost on cards", brief V3-3, T390).
+ *
+ * The figure comes from the same computeCosts() map Explore's cards print
+ * from (App computes it once and hands it down as `costs`), and it is set
+ * with the same eurDay() formatter, so a place reads the same euro here as on
+ * its Explore card. It is the figure for the traveller's inputs NOW, never a
+ * price stored at save time (no such price exists, row T379-c). A plan with
+ * several towns says "From" its cheapest town. A figure that leans on a
+ * country-level stand-in (the bed or the food measured for the country, not
+ * the town) carries the word "national". No costs map, or no figure for any
+ * of the ids, renders nothing rather than a placeholder that pretends.
+ */
+function SavedCost({ costs, ids }) {
+  const { t } = useI18n();
+  if (!costs || !ids?.length) return null;
+  const rows = orderedUnique(ids).map((id) => costs.get(id)).filter((c) => c && c.dayEur != null);
+  if (!rows.length) return null;
+  const pick = rows.reduce((a, b) => (b.dayEur < a.dayEur ? b : a));
+  const national = pick.stayLevel !== 'city' || pick.foodLevel !== 'city';
+  // The sentence is translated whole and the figure is cut back in, so it
+  // can sit in mono while the words around it stay in the UI face.
+  const SLOT = '\u0001';
+  const [before, after = ''] = t(rows.length > 1 ? 'saved.costFromDay' : 'saved.costDay', { eur: SLOT }).split(SLOT);
+  return (
+    <span className="saved-cost">
+      {before}<span className="saved-cost-eur">{eurDay(pick.dayEur)}</span>{after}
+      {national && <>{' '}<span className="saved-cost-level">{t('saved.costNational')}</span></>}
+    </span>
+  );
+}
+
 /** Compact bordered row: the day-plan card, and any saved thing that needs a
  *  small footprint. Unchanged anatomy from the previous panel. */
-function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, onOpen, openTitle, actions = [], onDelete, deleteLabel, footer }) {
+function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, figure = null, onOpen, openTitle, actions = [], onDelete, deleteLabel, footer }) {
   const [confirming, setConfirming] = useState(false);
 
   if (confirming) {
@@ -242,6 +282,7 @@ function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, onOpen, ope
           <span className="saved-card-text">
             <span className="saved-card-title">{title}</span>
             {meta && <span className="saved-card-meta">{meta}</span>}
+            {figure}
           </span>
         </button>
         <CardMenu actions={actions} onAskRemove={() => setConfirming(true)} removeLabel={deleteLabel} />
@@ -260,7 +301,7 @@ function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, onOpen, ope
  *  corner and the day it was kept in the caption. The bookmark mark is the
  *  saved state itself, so tapping it is how a favorite is let go (with the
  *  same in-place confirmation as everywhere else). */
-function FavCard({ trip, img, dates, kind, savedOn, onOpen, openTitle, onDelete, deleteLabel }) {
+function FavCard({ trip, img, dates, kind, savedOn, figure = null, onOpen, openTitle, onDelete, deleteLabel }) {
   const { t } = useI18n();
   const [confirming, setConfirming] = useState(false);
   // The corner flag already names the country; the text line only steps in
@@ -281,6 +322,7 @@ function FavCard({ trip, img, dates, kind, savedOn, onOpen, openTitle, onDelete,
         )}
         <span className="fav-card-text">
           <span className="fav-card-city">{trip.city}</span>
+          {figure}
           {(!hasFlag && trip.country) || dates ? (
             <span className="fav-card-sub">
               {!hasFlag && trip.country && <span className="fav-card-country">{trip.country}</span>}
@@ -322,7 +364,7 @@ function FavCard({ trip, img, dates, kind, savedOn, onOpen, openTitle, onDelete,
  * Every picture here used to be a background-image on a span, which means the
  * browser cannot pick a size, cannot lazy-load it and cannot reserve the box:
  * each card downloaded one arbitrary width and reflowed when it landed. This
- * is the CardPhoto pattern from the Destinations tab instead - a real <img>
+ * is the CardPhoto pattern from the Destinations tab instead - a real img element
  * with a srcSet, a sizes hint and intrinsic dimensions as the ASPECT (CSS
  * sizes the element; the pair only reserves the space).
  *
@@ -356,7 +398,7 @@ function ShotPhoto({ url, className, alt = '' }) {
  * handful of considered saves. Same star as the page it came from, so
  * un-starring here and un-starring there are visibly the same act.
  */
-function ShortlistRow({ row, onOpen, onRemove, removeLabel, missingLabel }) {
+function ShortlistRow({ row, figure = null, onOpen, onRemove, removeLabel, missingLabel }) {
   return (
     <div className={`slist-row${row.missing ? ' is-missing' : ''}`}>
       <button
@@ -375,6 +417,7 @@ function ShortlistRow({ row, onOpen, onRemove, removeLabel, missingLabel }) {
             {row.missing ? missingLabel : (row.name || (row.pending ? '…' : row.id))}
           </span>
           {row.sub && !row.missing && <span className="slist-sub">{row.sub}</span>}
+          {!row.missing && figure}
         </span>
         {row.cc && <span className="slist-flag" aria-hidden="true"><CountryFlag country={row.cc} size={13} /></span>}
       </button>
@@ -516,7 +559,8 @@ function CrewBar({ crew, friends, onAdd, onRemove }) {
  *  country as the headline, its flag as a corner badge, dates under a small
  *  label, and one mark in the other corner saying which state it is in, a
  *  calendar for a commitment, a check for a memory. */
-function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dates, visited, foreign, onOpen, openTitle, actions, onDelete, deleteLabel, footer, crew }) {
+function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dates, visited, foreign, figure = null, share = null, onOpen, openTitle, actions, onDelete, deleteLabel, footer, crew }) {
+  const { t } = useI18n();
   const [confirming, setConfirming] = useState(false);
 
   if (confirming) {
@@ -546,6 +590,7 @@ function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dat
                 <span className="uptrip-dates">{dates}</span>
               </span>
             )}
+            {figure}
           </span>
           <span className="uptrip-state" aria-hidden="true">
             {visited ? <CheckIcon size={13} /> : <CalendarIcon size={13} />}
@@ -565,11 +610,29 @@ function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dat
         )}
       </div>
       {crew}
-      {footer && (
-        <button className="saved-card-footer" onClick={footer.onClick} title={footer.title}>
-          <span>{footer.label}</span>
-          <span className="saved-card-footer-go" aria-hidden="true">›</span>
-        </button>
+      {/* Share as a visible secondary on the card (T390, brief V3-4): it was
+          the second item of a 32 px menu on the photograph, which is where a
+          traveller handing a plan to the people coming along never looked. */}
+      {(share || footer) && (
+        <div className="uptrip-actions">
+          {footer && (
+            <button className="saved-card-footer" onClick={footer.onClick} title={footer.title}>
+              <span>{footer.label}</span>
+              <span className="saved-card-footer-go" aria-hidden="true">›</span>
+            </button>
+          )}
+          {share && (
+            <button
+              type="button"
+              className="uptrip-share"
+              onClick={share.onClick}
+              aria-expanded={share.open}
+            >
+              <LinkIcon size={14} />
+              <span>{t('saved.shareTrip')}</span>
+            </button>
+          )}
+        </div>
       )}
     </div>
   );
@@ -695,12 +758,22 @@ function TravelLedger({ visitedCountries, visitedCities }) {
 // Visited is the record that finished trips file themselves into, with the
 // country and city ledger on top.
 export function SavedTripsPanel({
-  data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab,
+  // onClose is still passed by App; the page closes from the nav and Escape.
+  data, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab,
   // The shortlist: the star anyone can tap on any page, guest or not. It is a
   // different store from `saved_trips` below, which is the account's own
   // destination saves, so the Favorites tab shows both and says which is
   // which rather than pretending one list exists.
   favorites = null, onToggleFav = null, onOpenFeature = null, onOpenDest = null,
+  // The cost map App computes once with computeCosts(data.destinations,
+  // choices), the one Explore prints from, so every saved card can say what a
+  // day costs at the traveller's Lifestyle (brief V3-3). Optional: without it
+  // the cards carry no figure, which is the state before App passes it.
+  costs = null,
+  // Opens Account at Friends. When App passes it, friends' trips leave
+  // Planned for one line that points there (brief V3-9); without it the shelf
+  // stays here, so nothing a friend showed you becomes unreachable.
+  onOpenFriends = null,
 }) {
   const { user, configured } = useAuth();
   const { t, lang } = useI18n();
@@ -716,7 +789,14 @@ export function SavedTripsPanel({
       return ['favorites', 'planned', 'visited'].includes(stored) ? stored : 'planned';
     } catch { return 'planned'; }
   });
+  // Whether the traveller chose a tab in this visit. The remembered tab is a
+  // convenience, but a returning traveller with a trip ahead comes back for
+  // that trip (PRODUCT.md's returning audience), so once an upcoming plan is
+  // known the page opens on Planned unless a tab was picked in this visit
+  // (T390, brief V3-2). It used to reopen on whatever was last looked at.
+  const pickedRef = useRef(false);
   const pickTab = (v) => {
+    pickedRef.current = true;
     setTab(v);
     try { localStorage.setItem('carta.savedTripsTab', v); } catch { /* private mode */ }
   };
@@ -1232,13 +1312,12 @@ export function SavedTripsPanel({
     />
   );
 
-  // "Share this trip" as a card menu action. Only for a saved trip plan, and
-  // only when signed in: the token hangs off trip_plans, so there is nothing
-  // for a guest's device-local trip to reference.
-  const shareAction = (planId) => (user ? {
-    key: 'share',
-    label: t('share.menu'),
-    icon: <LinkIcon size={14} />,
+  // "Share this trip", a visible button on the card (it used to be a menu
+  // item). Only for a saved trip plan, and only when signed in: the token
+  // hangs off trip_plans, so a guest's device-local trip has nothing to
+  // reference.
+  const shareFor = (planId) => (user ? {
+    open: openShare === planId,
     onClick: () => setOpenShare((cur) => (cur === planId ? '' : planId)),
   } : null);
 
@@ -1308,6 +1387,11 @@ export function SavedTripsPanel({
   const plannedCount = upcomingPlans.length + upcomingDayPlans.length;
   const pastCount = pastPlans.length + pastDayPlans.length;
 
+  // See pickedRef above: land on Planned once a trip ahead is known.
+  useEffect(() => {
+    if (!pickedRef.current && plannedCount > 0 && tab !== 'planned') setTab('planned');
+  }, [plannedCount]); // eslint-disable-line react-hooks/exhaustive-deps -- runs when the plans arrive; `tab` is read, not watched, so a later pick is never undone
+
   // Both kinds of past trip interleave into one record, newest first.
   const pastRecord = useMemo(() => {
     const rows = [
@@ -1352,9 +1436,12 @@ export function SavedTripsPanel({
     if (parsed) onToggleFav?.(parsed.id, parsed.kind, parsed.cc);
   };
 
+  // Planned first: the next trip is what a traveller comes back for, then the
+  // shortlist, then the record (T390, brief V3-2; the default tab was already
+  // Planned, and now the order says so too).
   const TABS = [
-    { key: 'favorites', Icon: BookmarkIcon, labelKey: 'saved.tabFavorites', n: (authed && !loading ? trips.length : 0) + shortlist.count },
     { key: 'planned', Icon: CalendarIcon, labelKey: 'saved.tabPlanned', n: plannedCount },
+    { key: 'favorites', Icon: BookmarkIcon, labelKey: 'saved.tabFavorites', n: (authed && !loading ? trips.length : 0) + shortlist.count },
     { key: 'visited', Icon: CheckIcon, labelKey: 'saved.tabVisited', n: pastCount },
   ];
   const renderTabs = (cls) => TABS.map(({ key, Icon, labelKey, n }) => (
@@ -1379,7 +1466,9 @@ export function SavedTripsPanel({
           The phone keeps the tile row inside the header below. */}
       <aside className="side-panel saved-side" aria-label={t('saved.title')}>
         <div className="side-block">
-          <p className="side-label">{t('saved.title')}</p>
+          {/* The rail's own "Saved trips" label went (T390): the page's
+              visible h1 says "My trips", and a second name for the same page
+              one column over was the inconsistency the brief counted. */}
           <div className="side-cats" role="tablist" aria-label={t('saved.title')}>
             {renderTabs('side-cat')}
           </div>
@@ -1387,18 +1476,15 @@ export function SavedTripsPanel({
       </aside>
 
       <div className="panel open account-panel saved-trips-panel">
-      {/* The page's one h1 (T186), for assistive technology: the visible
-          title was dropped on purpose (see the header note below). */}
-      <h1 className="sr-only">{t('nav.myTrips')}</h1>
-      <button className="panel-close" onClick={onClose} aria-label={t('saved.close')}>x</button>
-
       <div className="panel-header saved-panel-header">
-        {/* No overline and no serif title. You arrive here from a bottom-bar
-            slot already labelled My trips, so the two lines only repeated it
-            and pushed the tabs down past the Passes row. The tablist keeps
-            the title as its accessible name. Three states of travelling, one
-            mutually exclusive choice: the shortlist of wishes, the calendar
-            of commitments, the record. */}
+        {/* The page's one h1 (T186), visible again (T390, brief V3-1): a page
+            with an address names itself, and "My trips" on both widths is the
+            one name for it. No overline and no close cross: the bottom nav and
+            the header leave this page, Escape still does, and the letter x
+            here was a second, unlabelled way out. Three states of travelling
+            follow, one mutually exclusive choice: the calendar of
+            commitments, the shortlist of wishes, the record. */}
+        <h1 className="saved-title">{t('saved.title')}</h1>
         <div className="saved-tabs" role="tablist" aria-label={t('saved.title')}>
           {renderTabs('saved-cat')}
         </div>
@@ -1442,6 +1528,7 @@ export function SavedTripsPanel({
                     <ShortlistRow
                       key={row.key}
                       row={row}
+                      figure={row.kind === 'dest' ? <SavedCost costs={costs} ids={[row.id]} /> : null}
                       onOpen={() => openShortlisted(row)}
                       onRemove={() => dropShortlisted(row)}
                       removeLabel={t('fav.remove')}
@@ -1474,7 +1561,10 @@ export function SavedTripsPanel({
               Icon={MapPinIcon}
               text={t('saved.destinationsEmpty')}
               cta={t('saved.browseMap')}
-              onCta={() => onGoToTab && onGoToTab('map')}
+              /* Both "Browse the map" doors go to Destinations (T390, brief
+                 V3-2); this one used to open Explore while its twin above
+                 opened Destinations under the same label. */
+              onCta={() => onGoToTab && onGoToTab('places')}
             />
           ) : (
             <div className="fav-grid">
@@ -1486,6 +1576,7 @@ export function SavedTripsPanel({
                   dates={trip.depart_date ? `${fmtDate(trip.depart_date)} → ${fmtDate(trip.return_date)}` : ''}
                   kind={(() => { const k = kindsForDest(destinations[trip.destination_id]?.categories)[0]; return k ? t(`kind.${k.key}`) : ''; })()}
                   savedOn={fmtStamp(trip.created_at)}
+                  figure={<SavedCost costs={costs} ids={[trip.destination_id]} />}
                   onOpen={() => onLoadTrip(trip)}
                   openTitle={t('saved.openDestination')}
                   onDelete={() => handleDelete(trip.id)}
@@ -1531,14 +1622,14 @@ export function SavedTripsPanel({
                       whenChip={whenLabel(p.start_date, p.end_date)}
                       dateLabel={t('saved.datesLabel')}
                       dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
+                      figure={<SavedCost costs={costs} ids={p.destination_ids || []} />}
+                      share={shareFor(p.id)}
                       onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
                       openTitle={t('saved.openTripPlan')}
-                      actions={[{
-                        key: 'edit',
-                        label: t('saved.edit'),
-                        icon: <PencilIcon size={14} />,
-                        onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
-                      }, shareAction(p.id)].filter(Boolean)}
+                      /* No "Edit" here any more: tapping the card opens the
+                         plan in the planner, which is where it is edited
+                         (T390, brief V3-2). Share has its own button below. */
+                      actions={[]}
                       /* A trip you co-plan is one you may edit and may not
                          delete: the delete policy stays owner-only (migration
                          020), so offering Remove here would offer a button
@@ -1572,7 +1663,17 @@ export function SavedTripsPanel({
                  and only the ones they set to 'friends'. Absent entirely when
                  nobody has shared anything, rather than an empty shelf that
                  says the feature exists. ── */}
-          {friendTrips.length > 0 && (
+          {friendTrips.length > 0 && onOpenFriends && (
+            <div className="panel-section saved-section saved-friends-line">
+              <p className="saved-section-sub">
+                {t(friendTrips.length === 1 ? 'saved.friendsShared1' : 'saved.friendsSharedN', { n: friendTrips.length })}
+              </p>
+              <button type="button" className="saved-friends-open" onClick={onOpenFriends}>
+                {t('saved.friendsOpen')}
+              </button>
+            </div>
+          )}
+          {friendTrips.length > 0 && !onOpenFriends && (
             <SavedSection
               title={t('friends.theirTrips')}
               sub={t('friends.theirTripsSub')}
@@ -1618,6 +1719,7 @@ export function SavedTripsPanel({
                 Icon={ListDayIcon}
                 text={t('saved.dayPlansEmpty')}
                 cta={t('saved.openDayPlanner')}
+                secondary
                 onCta={() => onGoToTab && onGoToTab('day')}
               />
             ) : (
@@ -1639,6 +1741,7 @@ export function SavedTripsPanel({
                       visualKind={photo ? 'photo' : 'icon'}
                       title={sp.label || t('saved.dayPlanFallbackTitle')}
                       meta={dayPlanMeta(sp)}
+                      figure={<SavedCost costs={costs} ids={(sp.stops || []).map((s) => s.destinationId)} />}
                       onOpen={() => onOpenDayPlan && onOpenDayPlan(sp.id)}
                       openTitle={t('saved.openDayPlan')}
                       onDelete={() => setDayPlans(deleteStandalonePlan(sp.id))}
@@ -1731,7 +1834,10 @@ export function SavedTripsPanel({
             title={t('saved.travelRecord')}
             count={pastCount}
             big
-            action={(
+            /* One way in at a time (brief V3-6): while the record is empty its
+               invitation below is the entry, so the heading's button waits
+               until there is a record to add to. */
+            action={pastCount === 0 && !pastOpen ? null : (
               <button
                 className={`saved-add-past${pastOpen ? ' is-open' : ''}`}
                 onClick={() => (pastOpen ? (setPastOpen(false), setPastEdit(null)) : openPastForm(null))}
@@ -1804,8 +1910,8 @@ export function SavedTripsPanel({
                               icon: <RouteIcon size={14} />,
                               onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
                             },
-                            shareAction(p.id),
                           ].filter(Boolean)}
+                          share={shareFor(p.id)}
                           crew={crewBarFor(p.id)}
                           footer={mem ? {
                             label: memoryLine(mem),

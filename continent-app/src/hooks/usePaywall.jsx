@@ -241,11 +241,16 @@ export function PaywallProvider({ children, onSignIn }) {
     close();
   }, [reason, close, entitlement.tier]);
 
+  // `signIn` is App's own door (the onSignIn it hands this provider), passed
+  // on so a surface with no prop chain to App, the upload dialog on a trail
+  // page, can offer "Sign in" instead of a dead end (T390, brief V3-12). It is
+  // the same door, not a second one: App still owns the sign-in sheet.
+  const signIn = useCallback(() => { onSignIn?.(); }, [onSignIn]);
   const value = useMemo(() => ({
     paid, signedIn, entitlement, reason,
-    require, nudge, openPrices, close,
+    require, nudge, openPrices, close, signIn,
     tier: entitlement.tier,
-  }), [paid, signedIn, entitlement, reason, require, nudge, openPrices, close]);
+  }), [paid, signedIn, entitlement, reason, require, nudge, openPrices, close, signIn]);
 
   return (
     <PaywallContext.Provider value={value}>

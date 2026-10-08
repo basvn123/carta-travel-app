@@ -131,16 +131,22 @@ export function formatPrice(cents, locale = 'en-GB', currency = 'EUR') {
 }
 
 /**
- * The Year Pass pitch, as a multiple of the Trip Pass, rounded the way the
- * copy says it. Computed rather than hardcoded so the claim in the UI cannot
- * drift away from the prices next to it, which is exactly how a pricing page
- * ends up lying by accident.
+ * The Year Pass pitch: the smallest whole number of Trip Passes that costs
+ * MORE than one Year Pass, for the line "Costs less than {n} Trip Passes".
+ * Computed rather than hardcoded so the claim in the UI cannot drift away
+ * from the prices next to it, which is exactly how a pricing page ends up
+ * lying by accident.
+ *
+ * It did lie once: this returned floor(year / trip), 2 for 1499 / 699, under
+ * the copy "Costs the same as 2 Trip Passes", when two Trip Passes are
+ * EUR 13.98 and the Year Pass EUR 14.99 (register row T379-e). floor + 1 is
+ * strictly greater than year / trip, so "less than" holds for any prices.
  */
 export function yearPassTripsEquivalent() {
   const trip = TIERS.trip.priceCents;
   const year = TIERS.year.priceCents;
   if (!trip) return 0;
-  return Math.floor(year / trip);
+  return Math.floor(year / trip) + 1;
 }
 
 /** True once a tier is worth showing an upgrade prompt for. */

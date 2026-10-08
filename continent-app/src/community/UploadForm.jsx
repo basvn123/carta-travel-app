@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../i18n/index.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { CheckIcon, CloseIcon, UploadIcon } from '../components/Icons.jsx';
 import { PRIVACY_RADIUS_M } from '../lib/gpxPrivacy.js';
@@ -38,6 +39,7 @@ const LIC_KEYS = {
 export function UploadForm({ layer, itemId, initialKind = 'photo', openKey = 'upload.open' }) {
   const { t, lang } = useI18n();
   const { user } = useAuth();
+  const { signIn } = usePaywall();
   const signedIn = UPLOAD_MOCK || !!user;
   const [open, setOpen] = useState(false);
   const [kind, setKind] = useState(initialKind);
@@ -169,8 +171,15 @@ export function UploadForm({ layer, itemId, initialKind = 'photo', openKey = 'up
       return (
         <>
           <p className="upl-lede">{t('upload.signedOut')}</p>
+          {/* A way forward, not only a way out (T390, brief V3-12): sign in
+              is the one primary here, through App's own sign-in door. */}
           <div className="upl-actions">
             <button type="button" className="upl-btn" onClick={close}>{t('upload.close')}</button>
+            {signIn && (
+              <button type="button" className="upl-send" onClick={() => { close(); signIn(); }}>
+                {t('upload.signIn')}
+              </button>
+            )}
           </div>
         </>
       );

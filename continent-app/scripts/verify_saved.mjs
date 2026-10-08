@@ -77,7 +77,9 @@ const openSaved = async (page) => {
   await page.waitForTimeout(600);
 };
 
-const TAB_INDEX = { favorites: 0, planned: 1, visited: 2 };
+// T390 (brief V3-2) put Planned first: the next trip is what a returning
+// traveller comes back for. The order was Favorites, Planned, Visited.
+const TAB_INDEX = { planned: 0, favorites: 1, visited: 2 };
 // The three tabs are drawn twice from one renderer (browse chrome v4): a tile
 // row inside the header on a phone, a column in the left panel on desktop,
 // with CSS showing one arrangement or the other. :visible picks whichever
@@ -100,12 +102,15 @@ try {
   await openSaved(empty);
   const tabs = await tabButtons(empty).count();
   if (tabs !== 3) fail(`expected 3 tabs, got ${tabs}`);
-  // Desktop: the tabs stand in the left panel, and the selected one wears the
-  // full accent rather than the dark segment fill this page used to carry.
+  // Desktop: the tabs stand in the left panel. The selected one is the house
+  // selected state, --ink-fill rgb(43, 52, 70) (carta-design "Selected state",
+  // DIRECTION.md rule account 6). Updated by T390 (row T379-f): this line used
+  // to assert the pre-T363 accent rgb(224, 90, 71), a value the stylesheet no
+  // longer has, and accent is never a selection colour now.
   if (!(await empty.locator('.saved-side').isVisible())) fail('no left panel on desktop My trips');
   const onBg = await empty.locator('.saved-side .side-cat.on').first()
     .evaluate((el) => getComputedStyle(el).backgroundColor).catch(() => '');
-  if (onBg !== 'rgb(224, 90, 71)') fail(`the selected tab is ${onBg}, not the accent`);
+  if (onBg !== 'rgb(43, 52, 70)') fail(`the selected tab is ${onBg}, not --ink-fill`);
   const dashed = await empty.evaluate(() => [...document.querySelectorAll('.saved-empty')]
     .map((el) => getComputedStyle(el).borderStyle).filter((s) => s.includes('dashed')).length);
   if (dashed) fail(`${dashed} empty state(s) still drawn with a dashed border`);

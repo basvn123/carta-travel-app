@@ -6,6 +6,7 @@ import { loadMountains } from '../lib/mountains.js';
 import { loadTrails } from '../lib/trails.js';
 import { loadCycling } from '../lib/cycling.js';
 import { loadTrip } from '../lib/trips.js';
+import { loadJourney } from '../lib/journeys.js';
 
 /**
  * useFavoriteItems, the shortlist with its names and photographs back on.
@@ -85,6 +86,29 @@ function normalise(kind, row, id, cc) {
 }
 
 /**
+ * A journey (one week from the library) in the shortlist's row shape: its
+ * title, its country, the hero photograph and the week's length as the second
+ * line. The journey file carries `hero.url` rather than an images array, so it
+ * gets its own small reader instead of a special case inside normalise().
+ * Added by T390 for the trips surface (row T387-b).
+ */
+function normaliseJourney(row, id) {
+  if (!row) return null;
+  return {
+    kind: 'journey',
+    id: String(id),
+    cc: row.countryCode || '',
+    name: row.title || '',
+    sub: row.country || '',
+    lat: row.coordinates?.lat ?? null,
+    lon: row.coordinates?.lon ?? null,
+    score: null,
+    img: cleanImg(row.hero?.url || null),
+    missing: false,
+  };
+}
+
+/**
  * One feature row by kind, country and id, in the same normalised shape the
  * shortlist rows come back in. For the day planner's ?feat= hand-off link,
  * which carries only those three and needs a name and a point.
@@ -135,8 +159,10 @@ export function useFavoriteItems(favorites, destinations) {
     // Group the country-scoped kinds so one file answers many favourites.
     const byFile = new Map(); // `${kind}:${cc}` -> [item]
     const trips = [];
+    const journeys = [];
     for (const it of todo) {
       if (it.kind === 'trip') { trips.push(it); continue; }
+      if (it.kind === 'journey') { journeys.push(it); continue; }
       const k = `${it.kind}:${it.cc}`;
       if (!byFile.has(k)) byFile.set(k, []);
       byFile.get(k).push(it);
@@ -166,6 +192,13 @@ export function useFavoriteItems(favorites, destinations) {
       ]]).catch(() => [[
         it.key, { kind: 'trip', id: it.id, cc: '', name: '', sub: '', img: null, missing: true },
       ]]));
+    }
+
+    for (const it of journeys) {
+      const gone = { kind: 'journey', id: it.id, cc: '', name: '', sub: '', img: null, missing: true };
+      jobs.push(loadJourney(it.id)
+        .then((row) => [[it.key, normaliseJourney(row, it.id) || gone]])
+        .catch(() => [[it.key, gone]]));
     }
 
     Promise.all(jobs).then((batches) => {
@@ -229,7 +262,7 @@ export function useShortlistPoints(favorites) {
   return useMemo(() => {
     const out = [];
     for (const { kind, rows } of sections) {
-      if (kind === 'dest' || kind === 'trip') continue;
+      if (kind === 'dest' || kind === 'trip' || kind === 'journey') continue;
       for (const r of rows) {
         if (r.missing || r.pending) continue;
         if (!Number.isFinite(r.lat) || !Number.isFinite(r.lon)) continue;

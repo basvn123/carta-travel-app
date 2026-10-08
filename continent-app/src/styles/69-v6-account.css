@@ -14,3 +14,309 @@
    animation with a prefers-reduced-motion branch; carta-design and
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
+
+/* ── V3 (T390): structure, information and flow ───────────────────────────
+   Plan: docs/design-v6/plans/V3-account.md. Rules here override files this
+   surface does not own (23, 24, 25, 21's pass half); rules in files it does
+   own (16, 17, 22, 40, 42) were changed in place instead. */
+
+/* 1. One title. "My trips" is the page's visible h1, set at the house page
+   title size (DIRECTION.md part 5: 28 px phone, 40 px desktop). */
+.saved-title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+@media (min-width: 769px) {
+  .saved-title { font-size: 40px; margin-bottom: var(--space-4); }
+}
+/* The shelf titles are h2 elements now (one h1, headings in order). */
+h2.saved-section-title { margin: 0; }
+/* The tab's main shelf is a section name under the page title: 22 / 26 px. */
+.saved-section.is-big .saved-section-title { font-size: 22px; font-weight: 600; }
+@media (min-width: 881px) {
+  .saved-section.is-big .saved-section-title { font-size: 26px; }
+}
+
+/* 2. Selected state and counts. The selected tab is --ink-fill and nothing
+   else marks it (carta-design "Selected state"): the accent bar every phone
+   tile wore above its icon goes. Counts are the house count chip, the same
+   on a selected tile as on any other. */
+.saved-cat::before { content: none; }
+.saved-cat small,
+.saved-side .side-cat small,
+.saved-cat.on small,
+.saved-side .side-cat.on small {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: var(--paper-dim);
+  border-radius: 999px;
+}
+
+/* One primary per tab: a second empty shelf's invitation is a secondary. */
+.saved-shell .saved-empty-cta.is-secondary {
+  min-height: var(--tap);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+}
+@media (hover: hover) {
+  .saved-shell .saved-empty-cta.is-secondary:hover {
+    border-color: var(--ink);
+    background: transparent;
+    color: var(--ink);
+  }
+}
+
+/* 3. The figure on a saved card: the day cost at the traveller's Lifestyle,
+   in mono, with the pedigree word in the UI face after it. On the photo cards
+   (favourites, journeys) it inherits the caption's colour until V4 moves the
+   caption into a solid band under the photograph. */
+.saved-cost {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.saved-cost-eur {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.saved-cost-level {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+.fav-card-text .saved-cost,
+.fav-card-text .saved-cost-eur,
+.fav-card-text .saved-cost-level,
+.uptrip-text .saved-cost,
+.uptrip-text .saved-cost-eur,
+.uptrip-text .saved-cost-level { color: inherit; }
+
+/* 4. Share on the card, beside "Plan its days". One row under the card,
+   the footer taking the width and Share a secondary at the tap floor. */
+.uptrip-actions {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--rule);
+}
+.uptrip-actions .saved-card-footer {
+  flex: 1 1 auto;
+  min-height: var(--tap);
+  border-top: none;
+  border-radius: 0;
+}
+.uptrip-share {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: none;
+  border-left: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.uptrip-share[aria-expanded="true"] { background: var(--ink-fill); color: var(--on-fill); }
+@media (hover: hover) {
+  .uptrip-share:hover { background: var(--paper-dim); }
+  .uptrip-share[aria-expanded="true"]:hover { background: var(--ink-fill); }
+}
+.uptrip-share:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* The share panel's two asks: publishing to the gallery and withdrawing a
+   link, each one sentence and two buttons, the safe one first (carta-design
+   "Undo, not confirm", the confirm half). */
+.tshare-row { flex-wrap: wrap; }
+.tshare-ask {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+}
+.tshare-ask-text { margin: 0; font-size: 13px; font-weight: 600; color: var(--ink); }
+.tshare-ask-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tshare-ask-keep,
+.tshare-ask-danger,
+.tshare-ask-publish {
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border-radius: 6px;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tshare-ask-keep { border: 1px solid var(--rule); background: transparent; color: var(--ink); }
+.tshare-ask-danger { border: 1px solid var(--danger); background: var(--danger); color: var(--on-fill); }
+.tshare-ask-publish { border: 1px solid var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
+.tshare-ask button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The visibility block closes the panel now, under a hairline. */
+.tshare > .tshare-vis {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule-soft);
+}
+
+/* 9. Friends' trips as one line pointing at Friends (when App passes the
+   door; until then the shelf stays). */
+.saved-friends-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.saved-friends-line .saved-section-sub { margin: 0; }
+.saved-friends-open {
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/* 6. The past-trip form's second step behind one secondary. */
+.pasttrip-details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.pasttrip-details-sub {
+  flex-basis: 100%;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+@media (hover: hover) {
+  .pasttrip-details:hover { border-color: var(--ink); }
+}
+
+/* 7. The account hub. A label above a group of controls is --ui 12 px 600
+   --ink-soft, sentence case, no tracking (carta-design "Small text rules"). */
+.account-group-label {
+  margin: 0 0 var(--space-2);
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-soft);
+}
+/* A setting's current value reads as information, not as an action: ink-soft,
+   never the accent (carta-design "Accent marks"). */
+.account-shell .account-menu-value { color: var(--ink-soft); }
+/* The pass card is one status line and one door. */
+.account-pass-card .account-pass-cta { width: 100%; margin-top: var(--space-3); min-height: var(--tap); }
+/* Until the balance is known the line holds its place (carta-design
+   "Loading": a still --paper-dim block, no shimmer). */
+.account-pass-status.is-loading {
+  display: inline-block;
+  width: 9em;
+  height: 1.2em;
+  border-radius: 4px;
+  background: var(--paper-dim);
+}
+
+/* 10. Passes. Prices are measured figures: mono, tabular, the free plan
+   included, so the three line up as one column of money. */
+.pass-price .pass-price-eur {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.pass-price small { font-family: var(--ui); }
+.pass-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  color: var(--ink-soft);
+}
+/* On a phone the recommended plan comes first, so its button is inside the
+   first screen; the cards keep equal weight and their own order on wider
+   screens. */
+@media (max-width: 720px) {
+  .pass-tier.featured { order: -1; margin-top: var(--space-2); }
+}
+
+/* 11. One sign-in door: the modal's submit is its one primary, in the accent
+   like every submit on the account surface; its tabs reach the tap floor.
+   "Continue with Google" and the gate's "Create an account" stay secondary. */
+.auth-modal .auth-submit:not(.auth-google):not(.auth-submit-ghost) {
+  min-height: var(--tap);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-fill);
+}
+@media (hover: hover) {
+  .auth-modal .auth-submit:not(.auth-google):not(.auth-submit-ghost):hover:not(:disabled) { background: var(--accent-hover); }
+}
+.auth-modal .auth-tabs button { min-height: var(--tap); }
+.auth-modal .auth-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  color: var(--ink-soft);
+}
+
+/* Two My trips controls the quality floor counts under the tap floor on a
+   phone: the card's "More actions" and the moderation notice's toggle. The
+   rest of the brief's touch-target list is V5 (T410). */
+@media (pointer: coarse) {
+  .saved-card-more { min-width: var(--tap); min-height: var(--tap); }
+  .modnote-toggle { min-height: var(--tap); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uptrip-share,
+  .saved-shell .saved-empty-cta.is-secondary,
+  .pasttrip-details,
+  .auth-modal .auth-submit { transition: none; }
+}

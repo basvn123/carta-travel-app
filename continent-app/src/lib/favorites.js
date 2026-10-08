@@ -30,7 +30,9 @@
 
 /** Every kind that can be shortlisted, in the order the Favorites tab groups
  *  them. `dest` leads because it is the priced catalogue and the oldest. */
-export const FAV_KINDS = ['dest', 'trip', 'trail', 'beach', 'lake', 'mountain', 'cycle'];
+// `journey` (T390, row T387-b): a week from the journeys library, starred from
+// its page. Addressed by its id alone, like a trip (one file per journey).
+export const FAV_KINDS = ['dest', 'trip', 'journey', 'trail', 'beach', 'lake', 'mountain', 'cycle'];
 
 const KIND_SET = new Set(FAV_KINDS);
 
@@ -57,6 +59,8 @@ export const needsCountry = (kind) => COUNTRY_KINDS.has(kind);
 export const FAV_KIND_LABEL = {
   dest: 'fav.kindDest',
   trip: 'fav.kindTrip',
+  // The account surface's key: `fav.*` is the trips surface's prefix.
+  journey: 'saved.favKindJourney',
   trail: 'fav.kindTrail',
   beach: 'fav.kindBeach',
   lake: 'fav.kindLake',

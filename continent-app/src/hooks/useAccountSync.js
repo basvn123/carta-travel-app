@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { saveTrip, fetchUserSettings, saveUserSettings } from '../auth/tripStorage.js';
 import { clampRatingRange, rangeFromMinTier } from '../lib/rating.js';
 import { readFavList, writeFavList } from '../lib/favorites.js';
+import { useI18n } from '../i18n/index.jsx';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
  *  account: pulls saved settings once right after login (never when a shared
@@ -27,6 +28,10 @@ export function useAccountSync({
   returnDate, setReturnDate,
   setAccountOpen, setAuthModalOpen,
 }) {
+  // The app language rides in the same settings blob (T390, row T379-d), so a
+  // traveller who chose Nederlands on the phone reads Nederlands on the laptop
+  // too. Origin, party, stay tier and Lifestyle already sync inside `choices`.
+  const { lang, setLang, languages } = useI18n();
   // The account id we've already pulled settings for (keyed by id, not a bare
   // boolean, so a second sign-in in the same page session re-hydrates for the
   // new account instead of being short-circuited by the first pull).
@@ -88,6 +93,8 @@ export function useAccountSync({
       if (settings.unescoOnly != null) setUnescoOnly(settings.unescoOnly);
       if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
       if (settings.sortKey) setSortKey(settings.sortKey);
+      // Only a language the app ships; anything else keeps this device's.
+      if (settings.lang && languages.some((l) => l.code === settings.lang)) setLang(settings.lang);
       // The shortlist MERGES rather than replaces. Every other setting here
       // is a single current value, so the account's copy can simply win; a
       // shortlist is an accumulating list, and letting the account's copy win
@@ -102,7 +109,7 @@ export function useAccountSync({
     // The setters are App's useState setters, stable for the page's life, so
     // listing them never re-runs the pull; appliedForRef guards it regardless.
   }, [user, cameFromUrl, hasLocalOrigin, setChoices, setPriceMode, setCountryFilter, setTripKinds,
-    setRatingRange, setGemOnly, setUnescoOnly, setTopBeachOnly, setSortKey, setFavorites]);
+    setRatingRange, setGemOnly, setUnescoOnly, setTopBeachOnly, setSortKey, setFavorites, languages, setLang]);
 
   // Keep the signed-in user's settings synced (debounced) so they carry over
   // to their next visit/device. Gated on hydratedRef so it never runs before
@@ -111,7 +118,7 @@ export function useAccountSync({
     if (!user || !hydratedRef.current) return;
     const t = setTimeout(() => {
       saveUserSettings(user.id, {
-        choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey,
+        choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, lang,
         // The shortlist rides in the same settings blob rather than a table
         // of its own: it is small, it is per-user, and user_settings already
         // syncs on this debounce, so this needs no migration (several are
@@ -127,7 +134,7 @@ export function useAccountSync({
       }).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
-  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites]);
+  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites, lang]);
 
   const handleSaveTrip = useCallback(async (destination) => {
     if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }

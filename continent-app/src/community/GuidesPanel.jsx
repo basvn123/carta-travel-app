@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import {
-  PersonIcon, LinkIcon, CheckIcon, ChevronDownIcon, MapPinIcon,
+  PersonIcon, LinkIcon, CheckIcon, ChevronDownIcon, MapPinIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { CountryFlag, CountryFlagStack } from '../components/CountryFlag.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
@@ -78,21 +78,27 @@ function GuideCard({ guide, img, onOpen, t, lang }) {
 function GuideView({ planId, destinations, onBack, t, lang }) {
   const [state, setState] = useState({ loading: true, guide: null });
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
+  const [tries, setTries] = useState(0);
 
   useEffect(() => {
     let live = true;
+    setState({ loading: true, guide: null, failed: false });
     getGuide(planId)
       .then((guide) => {
         if (!live) return;
-        setState({ loading: false, guide });
+        setState({ loading: false, guide, failed: false });
         // The read is reported only after a successful load, and never for
         // your own guide (the RPC checks that itself), so the author's badge
         // means somebody actually opened it.
         if (guide) reportGuideOpened(planId);
       })
-      .catch(() => { if (live) setState({ loading: false, guide: null }); });
+      // A failed read is not a guide that was taken down (T390, brief V3-12):
+      // it used to land on "not published any more", which told somebody on a
+      // train in a tunnel that the guide was gone.
+      .catch(() => { if (live) setState({ loading: false, guide: null, failed: true }); });
     return () => { live = false; };
-  }, [planId]);
+  }, [planId, tries]);
 
   useEffect(() => {
     if (!copied) return undefined;
@@ -110,10 +116,15 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
   const copyLink = async () => {
     const url = buildGuideUrl(planId);
     if (!url) return;
+    setCopyFailed(false);
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-    } catch { /* a refused clipboard is not worth an error banner */ }
+    } catch {
+      // Said in one line under the button, so a refused clipboard does not
+      // look like a copied link.
+      setCopyFailed(true);
+    }
   };
 
   if (state.loading) return <div className="panel-section"><LoadingBlock label={t('saved.loading')} rows={3} /></div>;
@@ -123,7 +134,11 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
         <button type="button" className="gld-back" onClick={onBack}>
           <ChevronDownIcon size={14} className="gld-back-chev" /> {t('guides.back')}
         </button>
-        <p className="account-section-hint">{t('guides.gone')}</p>
+        {state.failed ? (
+          <ErrorBlock message={t('guides.loadFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
+        ) : (
+          <p className="account-section-hint">{t('guides.gone')}</p>
+        )}
       </div>
     );
   }
@@ -153,6 +168,7 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
           {copied ? <CheckIcon size={13} /> : <LinkIcon size={13} />}
           {copied ? t('share.copied') : t('guides.copyLink')}
         </button>
+        {copyFailed && <p className="auth-error" role="alert">{t('share.copyFailed')}</p>}
       </div>
 
       {points.length > 0 && (
@@ -269,7 +285,9 @@ export function GuidesPanel({ onClose, destinations, openGuideId, onPublish = nu
       {/* Same chrome as the account and My trips slide-overs, deliberately:
           a third bespoke shell would be a third thing to keep in step. */}
       <div className="panel-header">
-        <button className="panel-close" onClick={onClose} aria-label={t('guides.close')}>x</button>
+        <button className="panel-close" onClick={onClose} aria-label={t('guides.close')}>
+          <CloseIcon size={16} />
+        </button>
         <div className="panel-tag">{t('guides.tag')}</div>
         <h2 className="panel-city account-heading">{t('guides.title')}</h2>
       </div>
