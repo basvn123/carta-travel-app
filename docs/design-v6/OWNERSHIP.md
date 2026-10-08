@@ -229,7 +229,7 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/lib/rating.js` | explore | logic |
 | `src/lib/searchIndex.js` | explore | logic |
 
-### destinations (21 files)
+### destinations (22 files)
 
 | File | Surface | Kind |
 |---|---|---|
@@ -252,6 +252,7 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/lib/footers.js` | destinations | logic |
 | `src/lib/geocode.js` | destinations | logic |
 | `src/lib/openingScreen.js` | destinations | logic |
+| `src/lib/placeSearch.js` | destinations | logic |
 | `src/lib/regions.js` | destinations | logic |
 | `src/lib/stubs.js` | destinations | logic |
 
