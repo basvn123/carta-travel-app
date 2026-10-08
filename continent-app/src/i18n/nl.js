@@ -5191,4 +5191,10 @@ export const nl = {
   "lifestyle.tradeMoreIn": "{alt} in plaats daarvan: {eur} meer per nacht per persoon in {town}.",
   "lifestyle.tradeLessMedian": "{alt} in plaats daarvan: {eur} minder per nacht per persoon, de mediaan over {n} plaatsen.",
   "lifestyle.tradeMoreMedian": "{alt} in plaats daarvan: {eur} meer per nacht per persoon, de mediaan over {n} plaatsen.",
+  "places.monthSwim": "Warm genoeg om te zwemmen in {month}",
+  "places.monthCold": "Water onder {c} °C in {month}",
+  "places.stripTrail": "De balk onder elke foto is de helling van de wandeling: het lichtst onder 10 procent, donkerder van 10 tot 15 procent, het donkerst boven 15 procent.",
+  "places.stripCycle": "De balk onder elke foto is de ondergrond van de route: donker voor verhard, lichter voor onverhard.",
+  "places.stripLake": "De balk onder elke foto is het jaar, januari tot december: een maand is gevuld als het water op {c} °C of meer wordt geschat, de warmste maand het donkerst.",
+  "places.stripMtn": "De balk onder elke foto is de hoogte op een meetlat van 5.000 m: het donkere deel is de prominentie, de klim vanaf het hoogste zadel naar een hogere top.",
 };

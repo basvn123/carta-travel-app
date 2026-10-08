@@ -5191,4 +5191,10 @@ export const it = {
   "lifestyle.tradeMoreIn": "{alt} invece: {eur} in più a notte a persona a {town}.",
   "lifestyle.tradeLessMedian": "{alt} invece: {eur} in meno a notte a persona, la mediana su {n} luoghi.",
   "lifestyle.tradeMoreMedian": "{alt} invece: {eur} in più a notte a persona, la mediana su {n} luoghi.",
+  "places.monthSwim": "Abbastanza calda per nuotare a {month}",
+  "places.monthCold": "Acqua sotto i {c} °C a {month}",
+  "places.stripTrail": "La barra sotto ogni foto è la pendenza del percorso: più chiara sotto il 10 per cento, più scura dal 10 al 15 per cento, la più scura oltre il 15 per cento.",
+  "places.stripCycle": "La barra sotto ogni foto è il fondo del percorso: scuro se asfaltato, più chiaro se sterrato.",
+  "places.stripLake": "La barra sotto ogni foto è l'anno, da gennaio a dicembre: un mese è pieno quando l'acqua è stimata a {c} °C o più, il mese più caldo il più scuro.",
+  "places.stripMtn": "La barra sotto ogni foto è l'altezza su un righello di 5.000 m: la parte scura è la prominenza, la salita dal colle più alto a una cima più alta.",
 };

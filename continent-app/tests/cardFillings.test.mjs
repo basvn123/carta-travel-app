@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   pickValues, trailFilling, cycleFilling, cycleTourFilling, beachFilling, lakeFilling,
-  mountainFilling, VALUE_COUNT, ICON_MAX,
+  mountainFilling, VALUE_COUNT, ICON_MAX, placeLine,
 } from '../src/lib/cardFillings.js';
 
 // A catalogue stand-in: returns the key, with any params appended, so a test
@@ -149,4 +149,13 @@ test('a walk whose name already carries its ref gets no second chip', () => {
     f: { ref: '9/1' } };
   const fill = trailFilling({ tr, assoc: {}, kindKey: 'trails.hike' }, { t });
   assert.equal(fill.ref, null);
+});
+
+test('a place line says each part once (T394)', () => {
+  assert.equal(placeLine('Montenegro', 'Montenegro'), 'Montenegro');
+  assert.equal(placeLine('Lombardy', 'Italy'), 'Lombardy, Italy');
+  assert.equal(placeLine(null, 'Italy', ''), 'Italy');
+  assert.equal(placeLine('valais', 'Valais', 'Switzerland'), 'valais, Switzerland');
+  const lake = lakeFilling({ name: 'Bay of Kotor', region: 'Montenegro', size: {} }, { t, countryName: 'Montenegro' });
+  assert.equal(lake.where, 'Montenegro');
 });

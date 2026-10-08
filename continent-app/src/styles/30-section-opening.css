@@ -39,13 +39,15 @@
   color: var(--ink-soft);
 }
 
-/* Full bleed: out to the edges of the column, through the padding
-   .places-wrap stands on (24 px, 16 px on a phone). Hairlines between the
-   tiles rather than cards with gaps: a set of related places, divided by
-   rules, the way carta-design asks a list to be. */
+/* Inside the column (T394, brief V4-3): the grid starts and ends where the
+   heading over it does, on the 16 px gutter on a phone and the column edge
+   on a desktop; it used to bleed through the padding .places-wrap stands on
+   to the side panel's border. Hairlines between the tiles rather than cards
+   with gaps: a set of related places, divided by rules, the way carta-design
+   asks a list to be. */
 .open-icons-grid {
   list-style: none;
-  margin: var(--space-3) -24px 0;
+  margin: var(--space-3) 0 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -64,7 +66,6 @@
 }
 .open-icon.railcard:hover { transform: none; box-shadow: none; }
 .open-icon .railcard-img { aspect-ratio: 4 / 3; }
-.open-icon:hover .railcard-img { opacity: 0.92; }
 .open-icon:focus-visible { outline-offset: -2px; }
 .open-icon .railcard-name { font-size: 17px; }
 
@@ -106,12 +107,28 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* The one figure, in mono, with its name under it in the sans (T394, brief
+   V4-2): the grid card's value column in small, so the opening's cards and
+   the grid's read as one family. */
 .railcard-kind .open-fact {
   flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   margin-left: auto;
+  text-align: right;
+}
+.open-fact-n {
   font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
+  color: var(--ink);
+}
+.open-fact-l {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-mute);
 }
 .open-railcard .railcard-kind,
 .open-icon .railcard-kind {
@@ -124,11 +141,13 @@
 .open-strip { scroll-snap-type: x mandatory; }
 .open-strip > .railcard { scroll-snap-align: start; }
 
-/* "See all N" at the tap floor on every width. On hover it keeps the accent
-   and underlines: Explore's lighter hover colour is 2.52:1 on the paper, and
-   a touch screen leaves hover on after the tap. */
-.xrails-all.open-all { min-height: var(--tap); }
-.xrails-all.open-all:hover { color: var(--accent); text-decoration: underline; }
+/* "See all N" at the tap floor on every width, in ink (T394, carta-design
+   "Accent marks": a "See all" link is secondary chrome, not an action in
+   accent). On a hover screen it underlines; a touch screen keeps no hover. */
+.xrails-all.open-all { min-height: var(--tap); color: var(--ink); }
+@media (hover: hover) {
+  .xrails-all.open-all:hover { color: var(--ink); text-decoration: underline; }
+}
 
 /* The arrows at the tap floor, and quiet at either end of the strip. */
 .xrails-arrow.open-arrow { width: var(--tap); height: var(--tap); }
@@ -170,11 +189,7 @@
 
 @media (max-width: 768px) {
   .open-icons-title { font-size: 21px; }
-  .open-icons-grid {
-    margin-left: -16px;
-    margin-right: -16px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  .open-icons-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* Nine tiles in two columns: the first takes the full width, so the grid
      closes on a whole row. */
   .open-icons-grid[data-n='9'] > li:first-child,

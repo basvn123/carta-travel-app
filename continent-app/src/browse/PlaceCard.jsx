@@ -5,6 +5,7 @@ import {
   LeafIcon, SwimIcon, BootIcon, GondolaIcon, DiningIcon,
 } from '../components/Icons.jsx';
 import { thumbAt, isResizable } from '../lib/heroImage.js';
+import { openShared } from '../lib/sharedElement.js';
 
 /*
  * PlaceCard, the one card (spec 5.1, T179).
@@ -12,14 +13,17 @@ import { thumbAt, isResizable } from '../lib/heroImage.js';
  * Beaches, lakes, mountains, cycle routes and walks all draw through this
  * frame; lib/cardFillings.js decides what goes in it. Top to bottom:
  *
- *   the band   a 16:9 photograph, rounded top corners only, clipped so the
- *              hover zoom stays inside it; the ochre rating seal top right,
- *              the section's 6 px data strip along the bottom (CardStrip),
- *              and any small facts that belong on the picture top left
- *              (distance from a searched place, a swimming verdict, a lift)
- *   the body   the name in Fraunces with a mono ref chip, the place line,
- *              the hook on one line, exactly three measured values, and up
- *              to three 20 px icons
+ *   the band   a 16:9 photograph, rounded top corners only, and the
+ *              section's 6 px data strip along its bottom edge (CardStrip).
+ *              Nothing else sits on the photograph (T394, carta-design
+ *              "Caption band"): the seal and the small facts that used to
+ *              ride its corners are in the body now.
+ *   the body   the name in Fraunces with a mono ref chip and the ochre
+ *              rating seal at the end of the same row, the place line, the
+ *              hook on one line led by the small facts (distance from a
+ *              searched place, a swimming verdict, a lift, whose photograph
+ *              it is), exactly three measured values, an optional month
+ *              line, and up to three 20 px icons
  *
  * The outer element keeps each section's old class (.places-bcard,
  * .places-lcard, .places-mcard, .places-tcard, the cycle test ids) and the
@@ -97,40 +101,57 @@ const GLYPH = {
  * @param className  the section's own card class, kept for the harnesses
  * @param testId     data-testid, where a harness reads one
  * @param media      the photograph (PlaceCardPhoto) or a drawn stand-in
- * @param seal       the rating chip, or the "not scored" word
+ * @param seal       the rating chip, or the "not scored" word, at the end of
+ *                   the name row
  * @param strip      the 6 px data strip (CardStrip), or null
- * @param corner     small facts laid on the photograph, top left
+ * @param lead       small facts that lead the hook line, each
+ *                   { key, text, cls }: the classes stay what the harnesses
+ *                   read (.places-card-km, .places-lcard-swim, ...)
  * @param fill       a filling from lib/cardFillings.js
  * @param hookClass  the class the hook's wrapper keeps for the harnesses
+ * @param note       the month line (rule "Month"): undefined draws no row,
+ *                   null an empty row of the same height, so every card in
+ *                   a grid keeps one height while a month is set
  * @param foot       anything that rides at the end of the icon row
+ * @param sharedKey  the key the opened page claims its header photograph
+ *                   with (DetailSkeleton's hero.sharedKey); when given, the
+ *                   card's photograph grows into the page (lib/sharedElement)
  */
 export const PlaceCard = React.memo(function PlaceCard({
   className = '', testId, onClick, media, seal = null, strip = null,
-  corner = null, fill, hookClass = 'places-bcard-tags', foot = null,
+  lead = null, fill, hookClass = 'places-bcard-tags', foot = null, note,
+  sharedKey = null,
 }) {
   const { title, ref, where, hook = [], values = [], icons = [], gem = null } = fill;
+  const parts = [
+    ...(lead || []).filter((l) => l && l.text).map((l) => ({ ...l, lead: true })),
+    ...hook,
+  ];
+  const open = sharedKey == null
+    ? onClick
+    : (e) => openShared(e.currentTarget, sharedKey, () => onClick?.(e));
   return (
-    <button type="button" className={`pcard ${className}`} data-testid={testId} onClick={onClick}>
+    <button type="button" className={`pcard ${className}`} data-testid={testId} onClick={open}>
       <span className="pcard-band">
         {media}
-        {corner && <span className="pcard-corner">{corner}</span>}
-        {seal && <span className="pcard-seal">{seal}</span>}
         {strip}
       </span>
       <span className="pcard-body">
         <span className="pcard-head">
           <span className="places-card-name pcard-title">{title}</span>
           {ref && <span className="pcard-ref">{ref}</span>}
+          {seal && <span className="pcard-seal">{seal}</span>}
         </span>
         <span className="pcard-where places-bcard-where">
           {where && <MapPinIcon size={13} />}
           {where && <span className="pcard-where-text">{where}</span>}
         </span>
         <span className={`pcard-hook ${hookClass}`}>
-          {hook.map((h, i) => (
-            <React.Fragment key={i}>
+          {parts.map((h, i) => (
+            <React.Fragment key={h.key || i}>
               {i > 0 ? ', ' : null}
-              <span className={h.cls || undefined} title={h.title}>
+              <span className={[h.cls, h.lead ? 'pcard-lead' : null].filter(Boolean).join(' ') || undefined}
+                title={h.title}>
                 {h.text}
                 {h.est ? <i aria-hidden="true">~</i> : null}
               </span>
@@ -145,6 +166,7 @@ export const PlaceCard = React.memo(function PlaceCard({
             </span>
           ))}
         </span>
+        {note !== undefined && <span className="pcard-note">{note}</span>}
         <span className="pcard-foot">
           <span className="pcard-icons">
             {icons.map((ic) => {
@@ -169,7 +191,8 @@ export const PlaceCard = React.memo(function PlaceCard({
 /**
  * The loading state of a card grid: cards at their final size on
  * --paper-dim, never a spinner and never three dots. Built from the card's
- * own rows, so nothing moves when the real cards replace them.
+ * own rows, so nothing moves when the real cards replace them. Still, not
+ * breathing (T394, carta-design "Loading": no shimmer, nothing loops).
  */
 export function PlaceCardSkeletons({ n = 6, label }) {
   return (

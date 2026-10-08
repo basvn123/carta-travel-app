@@ -5,6 +5,8 @@ import { CloseIcon } from '../components/Icons.jsx';
 import { count } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useAnchoredSheet } from './sheetAnchor.js';
+import { durationMs } from '../lib/motion.js';
+import { useSettledFigure } from '../lib/figureChange.js';
 
 /**
  * The Destinations filters, in the shape Explore already uses: one modal
@@ -28,7 +30,7 @@ import { useAnchoredSheet } from './sheetAnchor.js';
  * class names, so every filter sheet is one surface with different contents.
  */
 export function PlacesFilterSheet({
-  onClose,
+  onClose: closeNow,
   anchorRef,
   groups = [],
   country, setCountry, countryOptions = [],
@@ -44,6 +46,33 @@ export function PlacesFilterSheet({
   // Hangs off the Filters button on a pointer screen, stays a bottom sheet on
   // a phone. See sheetAnchor.js.
   const anchor = useAnchoredSheet(anchorRef);
+
+  // The sheet leaves the way it came, faster (T394, DIRECTION.md 2.3: a
+  // surface arrives in --dur-3 and leaves in --dur-2). The parent unmounts
+  // it only once the exit has run; durationMs() is 0 under reduced motion,
+  // so then it goes at once. Every door out (the cross, the scrim, Escape,
+  // the apply button, a swipe) comes through here.
+  // The parent's callback is read through a ref so this one stays stable:
+  // the parent passes a fresh arrow on every render, and the focus trap
+  // below re-ran on each of them, sending focus back to the cross after
+  // every chip toggle.
+  const [closing, setClosing] = React.useState(false);
+  const closeTimer = React.useRef(0);
+  const closeNowRef = React.useRef(closeNow);
+  closeNowRef.current = closeNow;
+  const onClose = React.useCallback(() => {
+    if (closeTimer.current) return;
+    const ms = durationMs('--dur-2');
+    if (!ms) { closeNowRef.current(); return; }
+    setClosing(true);
+    closeTimer.current = window.setTimeout(() => { closeTimer.current = 0; closeNowRef.current(); }, ms);
+  }, []);
+  React.useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
+  // "Show N places" changes as chips are toggled; the figure settles in
+  // place with one opacity dip rather than jumping (figureChange.js).
+  const countRef = React.useRef(null);
+  useSettledFigure(countRef, resultCount);
 
   // Focus trap + Escape, the same contract the Explore sheet keeps.
   React.useEffect(() => {
@@ -103,12 +132,12 @@ export function PlacesFilterSheet({
 
   return createPortal(
     <div
-      className={`fsheet-scrim${anchor ? ' is-anchored' : ''}`}
+      className={`fsheet-scrim${anchor ? ' is-anchored' : ''}${closing ? ' is-closing' : ''}`}
       ref={sheetRef}
       onMouseDown={(e) => { if (e.target === sheetRef.current) onClose(); }}
     >
       <div
-        className={`fsheet fsheet-explore fsheet-places${anchor ? ' is-anchored' : ''}`}
+        className={`fsheet fsheet-explore fsheet-places${anchor ? ' is-anchored' : ''}${closing ? ' is-closing' : ''}`}
         ref={panelRef}
         style={anchor || undefined}
         role="dialog"
@@ -219,7 +248,7 @@ export function PlacesFilterSheet({
             ) : (
               <span className="fsheet-apply-main">
                 {countHalves[0]}
-                <span className="fsheet-apply-count">{count(resultCount)}</span>
+                <span className="fsheet-apply-count" ref={countRef}>{count(resultCount)}</span>
                 {countHalves[1]}
               </span>
             )}

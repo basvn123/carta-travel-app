@@ -6105,4 +6105,10 @@ export const en = {
   "lifestyle.tradeMoreIn": "{alt} instead: {eur} more a night per person in {town}.",
   "lifestyle.tradeLessMedian": "{alt} instead: {eur} less a night per person, the median over {n} places.",
   "lifestyle.tradeMoreMedian": "{alt} instead: {eur} more a night per person, the median over {n} places.",
+  "places.monthSwim": "Warm enough to swim in {month}",
+  "places.monthCold": "Water under {c} °C in {month}",
+  "places.stripTrail": "The bar under each photo is the walk's slope: palest under 10 percent, darker from 10 to 15 percent, darkest above 15 percent.",
+  "places.stripCycle": "The bar under each photo is the route's surface: dark for paved, lighter for unpaved.",
+  "places.stripLake": "The bar under each photo is the year, January to December: a month is filled when the water is estimated at {c} °C or more, the warmest month darkest.",
+  "places.stripMtn": "The bar under each photo is the height on a 5,000 m ruler: the dark part is the prominence, the climb above the highest col to a higher summit.",
 };

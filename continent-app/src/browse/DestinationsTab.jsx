@@ -70,6 +70,9 @@ import { LifestyleButton } from './LifestyleButton.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
 import CreditFold from './CreditFold.jsx';
 import { openShared } from '../lib/sharedElement.js';
+import { useSettledFigure } from '../lib/figureChange.js';
+import { useTravelMonth } from '../components/SettingsLine.jsx';
+import { monthName } from '../lib/dates.js';
 import { CoverageFooter } from './HonestFooters.jsx';
 import { CoverageEmpty } from './CoverageEmpty.jsx';
 import { MICROSTATES, countryGeo, pointGeo } from '../lib/coverageEmpty.js';
@@ -80,7 +83,7 @@ import {
 } from './PlaceCard.jsx';
 import {
   trailFilling, cycleFilling, cycleTourFilling, beachFilling, lakeFilling, mountainFilling,
-  GRADE_KEY,
+  GRADE_KEY, placeLine,
 } from '../lib/cardFillings.js';
 import { SectionOpening } from './SectionOpening.jsx';
 import { pickIcons, buildRails, photoOf } from '../lib/openingScreen.js';
@@ -434,9 +437,10 @@ const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 /*
  * The five sections' cards (T179, spec 5.1). One frame, browse/PlaceCard.jsx,
  * five fillings, lib/cardFillings.js. What stays here is only what each
- * section lays on the photograph: its seal, its strip, and the small facts
- * that belong top left (how far from a searched place, a swimming verdict, a
- * lift to the top, whose photograph it is).
+ * section adds to the frame: its seal, its strip, and the small facts that
+ * lead the hook line (how far from a searched place, a swimming verdict, a
+ * lift to the top, whose photograph it is). Since T394 none of them sits on
+ * the photograph but the strip.
  */
 
 /** A walk's photograph: its own, the nearest town's (labelled as such), the
@@ -471,12 +475,12 @@ const TripCard = React.memo(function TripCard({ card, km, onOpen, t, countryName
   const seal = rating
     ? <RatingBadge rating={rating} size="sm" showGem={false} />
     : (!isCityDay && isListed(tr) ? <span className="places-card-unrated">{t('trails.notScored')}</span> : null);
-  const corner = (km != null || assoc.photoOf) ? (
-    <>
-      {km != null && <span className="places-card-km">{bandChip(km, t)}</span>}
-      {assoc.photoUrl && assoc.photoOf && <span className="places-card-photoof">{assoc.photoOf}</span>}
-    </>
-  ) : null;
+  // The small facts lead the hook line in the body (T394): nothing but the
+  // strip sits on the photograph any more.
+  const lead = [
+    km != null ? { key: 'km', cls: 'places-card-km', text: bandChip(km, t) } : null,
+    assoc.photoUrl && assoc.photoOf ? { key: 'photoof', cls: 'places-card-photoof', text: assoc.photoOf } : null,
+  ];
   // Carta does not price flights (T273): a flying row's figure is the stay
   // and the ground, and its title says the flight is not in it.
   const foot = isCityDay && price ? (
@@ -490,10 +494,11 @@ const TripCard = React.memo(function TripCard({ card, km, onOpen, t, countryName
     <PlaceCard
       className="places-tcard"
       onClick={() => onOpen(card)}
+      sharedKey={isCityDay ? null : tr.id}
       media={<TrailMedia tr={tr} assoc={assoc} />}
       seal={seal}
       strip={isCityDay ? null : <CardStrip kind="trail" row={tr} />}
-      corner={corner}
+      lead={lead}
       fill={fill}
       hookClass="places-card-kinds"
       foot={foot}
@@ -511,6 +516,7 @@ const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen, t }) {
       className={`places-bcard cycle-card${rating ? '' : ' cycle-card-listed'}`}
       testId={rating ? 'cycle-card' : 'cycle-listed-card'}
       onClick={() => onOpen(r)}
+      sharedKey={r.id}
       media={r.img ? <PlaceCardPhoto url={r.img} /> : <PlaceCardNoPhoto />}
       seal={rating
         ? <RatingBadge rating={rating} size="sm" showGem={false} />
@@ -530,6 +536,7 @@ const CycleTourCard = React.memo(function CycleTourCard({ tr, countryName, onOpe
       className="places-bcard cycle-tourcard"
       testId="cycle-tourcard"
       onClick={() => onOpen(tr)}
+      sharedKey={tr.slug}
       media={tr.img ? <PlaceCardPhoto url={tr.img} /> : <PlaceCardNoPhoto />}
       fill={fill}
     />
@@ -543,48 +550,80 @@ const BeachCard = React.memo(function BeachCard({ beach, km, countryName, onOpen
     <PlaceCard
       className="places-bcard"
       onClick={() => onOpen(beach)}
+      sharedKey={beach.id}
       media={shot ? <PlaceCardPhoto url={shot.u} /> : <PlaceCardNoPhoto />}
       seal={<RatingBadge rating={beachRating(beach, t)} size="sm" showGem={false} />}
-      corner={km != null ? <span className="places-card-km">{bandChip(km, t)}</span> : null}
+      lead={km != null ? [{ key: 'km', cls: 'places-card-km', text: bandChip(km, t) }] : null}
       fill={fill}
     />
   );
 });
 
 /**
- * A lake. The swimming verdict rides on the photograph whenever it is not a
+ * A lake. The swimming verdict leads the card's hook whenever it is not a
  * plain yes: a list that promises beautiful water has to say which of it you
  * may get into, and finding out on arrival that Plitvice forbids swimming is
  * the failure this layer was built to avoid.
  */
-const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t }) {
+/** A count that settles in place when it changes (DIRECTION.md 2.3, the
+ *  figure-in-place moment): one opacity dip through figureChange.js, no
+ *  count-up, nothing under reduced motion. */
+function SettledCount({ value, className, children }) {
+  const ref = useRef(null);
+  useSettledFigure(ref, value);
+  return <span ref={ref} className={className}>{children}</span>;
+}
+
+/**
+ * The month on a lake card (T394, carta-design "Month"): one fact from the
+ * wire's monthly water temperatures (an estimate from the climate record,
+ * so its title says so), shown only when the traveller has a month of their
+ * own on the settings line. The month is a measured fact, in mono.
+ */
+function LakeMonthFact({ lake, month, warmC, t, lang }) {
+  const temps = lake.swim?.temps;
+  const v = Array.isArray(temps) && temps.length === 12 ? Number(temps[month - 1]) : NaN;
+  if (!Number.isFinite(v)) return null;
+  const warm = v >= warmC;
+  const [a, b = ''] = (warm
+    ? t('places.monthSwim')
+    : t('places.monthCold', { c: Math.round(warmC) })).split('{month}');
+  return (
+    <span className={`pcard-month ${warm ? 'is-warm' : 'is-cold'}`} title={t('card.estimate')}>
+      {a}<span className="pcard-month-m">{monthName(month, lang)}</span>{b}
+    </span>
+  );
+}
+
+const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t, month = null, warmC = 18, lang }) {
   const shot = lake.images?.[0];
   const fill = useMemo(() => lakeFilling(lake, { t, countryName }), [lake, t, countryName]);
   const { swim } = fill;
-  const corner = (km != null || swim.rule !== 'yes') ? (
-    <>
-      {km != null && <span className="places-card-km">{bandChip(km, t)}</span>}
-      {swim.rule !== 'yes' && (
-        <span className={`places-lcard-swim swim-${swim.tone}`}>{swim.label}</span>
-      )}
-    </>
-  ) : null;
+  // The swimming verdict leads the hook whenever it is not a plain yes, the
+  // distance before it in near mode (T394: off the photograph, into the
+  // body, keeping the classes verify_lakes reads).
+  const lead = [
+    km != null ? { key: 'km', cls: 'places-card-km', text: bandChip(km, t) } : null,
+    swim.rule !== 'yes' ? { key: 'swim', cls: `places-lcard-swim swim-${swim.tone}`, text: swim.label } : null,
+  ];
   return (
     <PlaceCard
       className="places-bcard places-lcard"
       onClick={() => onOpen(lake)}
+      sharedKey={lake.id}
       media={shot ? <PlaceCardPhoto url={shot.u} /> : <PlaceCardNoPhoto />}
       seal={<RatingBadge rating={lakeRating(lake, t)} size="sm" showGem={false} />}
-      strip={<CardStrip kind="lake" row={lake} />}
-      corner={corner}
+      strip={<CardStrip kind="lake" row={lake} warmC={warmC} month={month} />}
+      lead={lead}
+      note={month ? <LakeMonthFact lake={lake} month={month} warmC={warmC} t={t} lang={lang} /> : undefined}
       fill={fill}
     />
   );
 });
 
 /**
- * A mountain. A mountain you can ride to the top of says so on the
- * photograph, in the place the lake card puts its swimming verdict, because
+ * A mountain. A mountain you can ride to the top of says so first in the
+ * hook, in the place the lake card puts its swimming verdict, because
  * "can I get up it without walking" decides whether this is a morning out or
  * an expedition.
  */
@@ -592,69 +631,70 @@ const MountainCard = React.memo(function MountainCard({ mountain, km, countryNam
   const shot = mountain.images?.[0];
   const fill = useMemo(() => mountainFilling(mountain, { t, countryName }), [mountain, t, countryName]);
   const ride = isLiftServed(mountain);
-  const corner = (km != null || ride) ? (
-    <>
-      {km != null && <span className="places-card-km">{bandChip(km, t)}</span>}
-      {ride && <span className="places-lcard-swim places-mcard-way">{liftLabel(mountain, t)}</span>}
-    </>
-  ) : null;
+  const lead = [
+    km != null ? { key: 'km', cls: 'places-card-km', text: bandChip(km, t) } : null,
+    ride ? { key: 'lift', cls: 'places-lcard-swim places-mcard-way', text: liftLabel(mountain, t) } : null,
+  ];
   return (
     <PlaceCard
       className="places-bcard places-mcard"
       onClick={() => onOpen(mountain)}
+      sharedKey={mountain.id}
       media={shot ? <PlaceCardPhoto url={shot.u} /> : <PlaceCardNoPhoto />}
       seal={<RatingBadge rating={mountainRating(mountain, t)} size="sm" showGem={false} />}
       strip={<CardStrip kind="mountain" row={mountain} />}
-      corner={corner}
+      lead={lead}
       fill={fill}
     />
   );
 });
 
 /** One country as a photo card: its best-rated place as the cover, the flag
- *  small beside the name. Real photography, never a stretched flag. */
+ *  small beside the name. Real photography, never a stretched flag.
+ *
+ *  The caption sits in a solid band under the photograph (T394, carta-design
+ *  "Caption band", rule N5): the name and the count used to lie on the
+ *  picture over a gradient scrim, and their contrast changed with every
+ *  photograph (a moth over Belgium, snow over Bulgaria). Pressed, the band
+ *  turns ink. */
 const CountryCard = React.memo(function CountryCard({ cc, name, sub = null, n = null, img, onPick, onAskCover = null }) {
   useEffect(() => {
     if (!img && onAskCover) onAskCover(cc);
   }, [img, onAskCover, cc]);
   return (
-    <button className="places-ccard" onClick={() => onPick(cc)}>
-      {/* A 2.6:1 strip. CARD_SIZES carries the widths it is really drawn at;
-          the ladder runs to 960 so a retina screen can still climb. Without a
-          cover the card shows its flag on paper-dim (T384, brief V3-10):
-          HeroImage's fallback is two letters of the name, which put "AU"
-          beside Austria and "BU" beside Bulgaria and read as wrong codes. */}
-      {img ? (
-        <HeroImage
-          url={img}
-          city={name}
-          iso2={cc}
-          className="places-card-img"
-          maxWidth={960}
-          sizes={CARD_SIZES}
-          ratio={[26, 10]}
-        />
-      ) : (
-        <span className="places-card-img places-ccard-noimg" aria-hidden="true">
-          <CountryFlag country={cc} size={28} />
-        </span>
-      )}
-      <span className="places-card-scrim" aria-hidden="true" />
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">
-            <CountryFlag country={cc} size={13} className="places-card-flag" />
-            {name}
+    <button className="places-ccard is-captioned" onClick={() => onPick(cc)}>
+      {/* A 3:1 photograph over the band. CARD_SIZES carries the widths it is
+          really drawn at; the ladder runs to 960 so a retina screen can
+          still climb. Without a cover the card shows its flag on paper-dim
+          (T384, brief V3-10), never two letters of the name. */}
+      <span className="places-ccard-media">
+        {img ? (
+          <HeroImage
+            url={img}
+            city={name}
+            iso2={cc}
+            className="places-card-img"
+            maxWidth={960}
+            sizes={CARD_SIZES}
+            ratio={[3, 1]}
+          />
+        ) : (
+          <span className="places-card-img places-ccard-noimg" aria-hidden="true">
+            <CountryFlag country={cc} size={28} />
           </span>
-          {/* The published count beside the name, in mono (T384, rule N7):
-              on an index of countries it answers "where will I find the
-              most", which the name and the photograph cannot. */}
-          {n != null && <span className="places-card-count">{n}</span>}
+        )}
+      </span>
+      <span className="places-ccard-band">
+        <CountryFlag country={cc} size={13} className="places-card-flag" />
+        <span className="places-card-main">
+          <span className="places-card-name">{name}</span>
           {sub && <span className="places-card-sub"><span>{sub}</span></span>}
         </span>
-        <span className="places-card-right">
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
+        {/* The published count beside the name, in mono (T384, rule N7):
+            on an index of countries it answers "where will I find the
+            most", which the name and the photograph cannot. */}
+        {n != null && <span className="places-card-count">{n}</span>}
+        <ChevronRightIcon size={15} className="places-card-chev" />
       </span>
     </button>
   );
@@ -708,7 +748,17 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
               <RouteIcon size={26} />
             </span>
           )}
-        <span className="places-card-scrim" aria-hidden="true" />
+      </span>
+
+      {/* The name and the score in the body, under the photograph (T394,
+          caption band): they lay on the picture over a scrim before. */}
+      <span className="itin-card-body">
+        <span className="itin-card-head">
+          <span className="itin-card-name">{tripHeadline(tr, t)}</span>
+          {Number.isFinite(tr.score) && (
+            <span className="itin-card-score">{tr.score.toFixed(1)}</span>
+          )}
+        </span>
         <span className="itin-card-badges">
           <span className="itin-card-days">
             <b>{tr.days}</b> {t(tr.days === 1 ? 'trip.dayWord' : 'trip.daysWord')}
@@ -718,15 +768,6 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
             <span className="itin-card-near">{bandChip(km, t)}</span>
           )}
         </span>
-        <span className="itin-card-head">
-          <span className="itin-card-name">{tripHeadline(tr, t)}</span>
-          {Number.isFinite(tr.score) && (
-            <span className="itin-card-score">{tr.score.toFixed(1)}</span>
-          )}
-        </span>
-      </span>
-
-      <span className="itin-card-body">
         <span className="itin-card-route">
           {(tr.cities || []).map((c, i) => (
             <React.Fragment key={`${c.city}-${i}`}>
@@ -814,6 +855,9 @@ export function DestinationsTab({
   onAddToDay = null,
 }) {
   const { t, lang } = useI18n();
+  // The traveller's own month from the settings line, or null while the
+  // dates are Carta's pair (T381): lake cards say one month fact only then.
+  const travelMonth = useTravelMonth();
   const scrollRef = useRef(null);
   const sentinelRef = useRef(null);
   const stayTiers = useMemo(() => offeredStayTiers(data?.meta), [data?.meta]);
@@ -2232,6 +2276,15 @@ export function DestinationsTab({
   const fmt = (n) => n.toLocaleString(lang);
 
   const showCountryIndex = !q && !country && !nearPlace;
+  // The one line that keys the cards' 6 px strip, for the sections whose
+  // cards carry one (CardStrip.jsx); none on the Trails country index, where
+  // no card has a strip, and none on an empty list.
+  const stripKey = rowCount === 0 ? null
+    : cat === 'trails' ? (showCountryIndex ? null : t('places.stripTrail'))
+      : isCycleCat ? t('places.stripCycle')
+        : isLakeCat ? t('places.stripLake', { c: Math.round(lakeIndex?.model?.warm_c ?? 18) })
+          : isMountainCat ? t('places.stripMtn')
+            : null;
   const showTripRows = isTripCat && !trailsLoading && tripRows && tripRows.length > 0;
   // Anything the traveller set that narrows the walks list: when it empties
   // the list, the list says so and offers to clear them, rather than calling
@@ -2623,7 +2676,10 @@ export function DestinationsTab({
     }
   };
 
-  // One card's words: the name, where it is, and one measured fact in mono.
+  // One card's words: the name, where it is, and one measured fact in mono
+  // with its label under it (T394, brief V4-2: the opening's cards read as
+  // the same family as the grid's, whose every figure carries its name).
+  // The labels are the grid cards' own value keys.
   const describeRow = (row) => {
     const layer = opening?.layer;
     const km = (v, digits) => `${Number(v).toLocaleString(lang, { maximumFractionDigits: digits })} km`;
@@ -2633,30 +2689,39 @@ export function DestinationsTab({
         name: row.name,
         where: grade && GRADE_KEY[grade] ? t(GRADE_KEY[grade]) : null,
         fact: row.distance_m != null ? km(row.distance_m / 1000, 1) : null,
+        factLabel: t('card.vLength'),
       };
     }
     if (layer === 'cycle') {
-      return { name: routeTitle(row, t), where: countryName(row.cc), fact: row.km != null ? km(row.km, 0) : null };
+      return {
+        name: routeTitle(row, t),
+        where: countryName(row.cc),
+        fact: row.km != null ? km(row.km, 0) : null,
+        factLabel: t('card.vLength'),
+      };
     }
     if (layer === 'mountain') {
       return {
         name: row.name,
-        where: [row.range, countryName(row.cc)].filter(Boolean).join(', '),
+        where: placeLine(row.range, countryName(row.cc)),
         fact: row.ele != null ? `${Math.round(row.ele).toLocaleString(lang)} m` : null,
+        factLabel: t('card.vHeight'),
       };
     }
     if (layer === 'lake') {
       const a = row.size?.areaKm2;
       return {
         name: row.name,
-        where: [row.region, countryName(row.cc)].filter(Boolean).join(', '),
+        where: placeLine(row.region, countryName(row.cc)),
         fact: a != null ? `${a.toLocaleString(lang, { maximumFractionDigits: a < 10 ? 1 : 0 })} km²` : null,
+        factLabel: t('card.vArea'),
       };
     }
     return {
       name: row.name,
-      where: [row.region, countryName(row.cc)].filter(Boolean).join(', '),
+      where: placeLine(row.region, countryName(row.cc)),
       fact: row.lengthM != null ? `${Math.round(row.lengthM).toLocaleString(lang)} m` : null,
+      factLabel: t('card.vLength'),
     };
   };
 
@@ -2694,7 +2759,7 @@ export function DestinationsTab({
       className={`${cls} ${cat === key ? 'on' : ''}`}
       onClick={() => switchCat(key)}
     >
-      <Icon size={16} />
+      <Icon size={20} />
       <span>{t(labelKey)}</span>
     </button>
   ));
@@ -2904,7 +2969,7 @@ export function DestinationsTab({
         >
           <FilterIcon size={14} />
           <span>{t('filter.filters')}</span>
-          {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
+          {activeFilters > 0 && <SettledCount className="filter-tray-badge" value={activeFilters}>{activeFilters}</SettledCount>}
         </button>
         )}
 
@@ -3010,7 +3075,7 @@ export function DestinationsTab({
               >
                 <FilterIcon size={14} />
                 <span>{t('places.allFilters')}</span>
-                {activeFilters > 0 && <span className="places-count-chip">{fmt(activeFilters)}</span>}
+                {activeFilters > 0 && <SettledCount className="places-count-chip" value={activeFilters}>{fmt(activeFilters)}</SettledCount>}
               </button>
             </div>
           )}
@@ -3119,14 +3184,23 @@ export function DestinationsTab({
               describe={describeRow}
               photo={(row) => photoOf(opening.layer, row)}
               onOpen={openFromBand}
+              sharedKey={(row) => row.id}
               t={t}
               maxRails={isDesktop ? null : 2}
               count={fmt}
             />
             <h2 className="open-gridhead">{t('open.gridHead')}</h2>
-            {(toolbarRight || facetsRow) && (
-              <div className="places-toolbar places-filterrail">
+            {/* The refine row (T394, brief V4-9, rule N3): Filters, the
+                sorts and the country, apart from the facet chips so that on
+                a phone it alone sticks under the top chrome once Band 3
+                starts, and the chips scroll away with the list. */}
+            {toolbarRight && (
+              <div className="places-toolbar places-filterrail places-refine">
                 <div className="places-controls">{toolbarRight}</div>
+              </div>
+            )}
+            {facetsRow && (
+              <div className="places-toolbar places-filterrail places-filterrail-facets">
                 {facetsRow}
               </div>
             )}
@@ -3136,6 +3210,12 @@ export function DestinationsTab({
         {!opening && activeChips.length > 0 && (
           <FilterChips t={t} chips={activeChips} onClearAll={clearAllChips} />
         )}
+
+        {/* The strip explained once, at the head of the list (T394, brief
+            V4-6, rule N8): the 6 px bar under each photograph is a drawing,
+            and a drawing on a card is keyed in words at the list head,
+            never by colour alone. */}
+        {stripKey && <p className="places-stripkey">{stripKey}</p>}
 
         {/* Beaches. No country index in front of the list: the tab opens on
             the beaches themselves, ranked across Europe, because "show me a
@@ -3280,6 +3360,9 @@ export function DestinationsTab({
                           countryName={countryName(b.cc)}
                           onOpen={setPageLake}
                           t={t}
+                          month={travelMonth}
+                          warmC={lakeIndex?.model?.warm_c ?? 18}
+                          lang={lang}
                         />
                       </React.Fragment>
                     ))}
@@ -3650,8 +3733,9 @@ export function DestinationsTab({
 
             {/* itinRows === null is this list's loading state, which is also
                 exactly where a failed fetch leaves it: without the guard the
-                dots spun forever on a dropped connection. */}
-            {itinRows === null && !layerError.trips && <p className="places-empty">{'\u2026'}</p>}
+                dots spun forever on a dropped connection. Still blocks of a
+                card's size, not an ellipsis (T394, carta-design "Loading"). */}
+            {itinRows === null && !layerError.trips && <PlaceCardSkeletons n={3} label={t('card.loading')} />}
 
             {itinRows && itinRows.length > 0 && (
               <>

@@ -84,6 +84,22 @@ export function pickValues(candidates, t) {
 const cell = (key, label, value, cls = '') => ({ key, label, value, cls });
 
 /** Kilometres as the trail card always printed them: one decimal, no ".0". */
+/**
+ * A place line from its parts, each said once (T394): the wire names some
+ * regions after their country ("Montenegro, Montenegro" on the Bay of
+ * Kotor), and a line that repeats itself reads as a bug.
+ */
+export function placeLine(...parts) {
+  const out = [];
+  for (const p of parts) {
+    const v = typeof p === 'string' ? p.trim() : p;
+    if (!v) continue;
+    if (out.some((o) => String(o).toLowerCase() === String(v).toLowerCase())) continue;
+    out.push(v);
+  }
+  return out.join(', ');
+}
+
 export const kmText = (m) => (num(m) == null ? null : `${dec(m / 1000)} km`);
 
 /** Walking time: one decimal under ten hours, whole hours above. */
@@ -163,7 +179,7 @@ export function trailFilling(card, { t, countryName = () => null }) {
     if (TRAIL_ICON[code]) icons.push({ code: TRAIL_ICON[code], label: t(HL_LABEL[code]) });
   }
   const place = trailPlace(tr, null, assoc.dest, countryName);
-  const where = place ? [place.city, place.country].filter(Boolean).join(', ') : '';
+  const where = place ? placeLine(place.city, place.country) : '';
   return {
     title: tr.name,
     // The ref chip only when the name does not already carry it ("Mount
@@ -230,7 +246,7 @@ export function cycleTourFilling(tr, { t, countryName = '' }) {
   return {
     title: tr.title,
     ref: null,
-    where: [countryName, towns].filter(Boolean).join(', '),
+    where: placeLine(countryName, towns),
     hook: hookOf([paceLine(tr.pace, t)]),
     values,
     icons: [],
@@ -275,7 +291,7 @@ export function beachFilling(beach, { t, countryName = '' }) {
   return {
     title: beach.name,
     ref: null,
-    where: [beach.region, countryName].filter(Boolean).join(', '),
+    where: placeLine(beach.region, countryName),
     hook: hookOf(beachTags(beach, t, HOOK_MAX).map((tag) => tag.label)),
     values,
     icons: icons.slice(0, ICON_MAX),
@@ -313,7 +329,7 @@ export function lakeFilling(lake, { t, countryName = '' }) {
   return {
     title: lake.name,
     ref: null,
-    where: [lake.region, countryName].filter(Boolean).join(', '),
+    where: placeLine(lake.region, countryName),
     hook: hookOf(lakeTags(lake, t, HOOK_MAX).map((tag) => tag.label)),
     values,
     icons: icons.slice(0, ICON_MAX),
@@ -339,7 +355,8 @@ export function mountainFilling(mountain, { t, countryName = '' }) {
   ], t);
   // The grade as its word, with the tilde the trail card uses when it was
   // read off the terrain rather than tagged; the lift is left out of the
-  // hook because the photograph already says it.
+  // hook's tags because the card leads its hook with it (T394; it rode the
+  // photograph before).
   const est = !!mountain.diff?.est;
   const grade = difficultyLabel(est ? { ...mountain, diff: { ...mountain.diff, est: false } } : mountain, t);
   const hook = [
@@ -361,7 +378,7 @@ export function mountainFilling(mountain, { t, countryName = '' }) {
   return {
     title: mountain.name,
     ref: null,
-    where: [mountain.range, countryName].filter(Boolean).join(', '),
+    where: placeLine(mountain.range, countryName),
     hook,
     values,
     icons: icons.slice(0, ICON_MAX),

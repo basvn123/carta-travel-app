@@ -193,15 +193,8 @@
   /* A composed itinerary carries a route, chips and a cost line: half a
      column cannot hold that, so it keeps the full row. */
   .places-icard { grid-column: 1 / -1; }
-  .places-card-overlay {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
-    padding: 8px 10px;
-  }
   .places-card-name { font-size: 14.5px; }
   .places-card-sub { font-size: 10.5px; margin-top: 1px; }
-  .places-card-right { flex-direction: row; align-items: center; gap: 6px; }
   .places-card-chev { display: none; }
   .places-card-price { font-size: 12.5px; }
   /* Reason chips need more width than half a column gives; the layer pages
@@ -394,4 +387,325 @@
   .side-allfilters,
   .open-cut,
   .places-nearme-btn { transition: none; }
+}
+
+/* ==========================================================================
+   T394 (V4): visual and dynamic. Photographs carry no text, motion comes
+   from the tokens and only answers the traveller, data drawings are keyed.
+   docs/design-v6/plans/V4-destinations.md has the list in order.
+   ========================================================================== */
+
+/* -- 1. Caption band on the country cards (rule N5) ----------------------- */
+
+/* The photograph, then a solid band under it with the flag, the name, the
+   count and the chevron. The scrim and the white text are gone. The card
+   keeps its class (.places-ccard) for the harnesses and the keyboard floor. */
+.places-ccard.is-captioned {
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: auto;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.places-ccard-media {
+  position: relative;
+  display: block;
+  flex: none;
+  aspect-ratio: 3 / 1;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.places-ccard-band {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-card);
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.places-ccard-band .places-card-flag { flex: none; margin: 0; }
+.places-ccard-band .places-card-main { flex: 1 1 auto; min-width: 0; }
+.places-ccard-band .places-card-name {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.places-ccard-band .places-card-count { align-self: center; margin-top: 0; }
+.places-ccard-band .places-card-chev { display: block; flex: none; color: var(--ink-soft); }
+/* Pressed, the band turns ink (carta-design "Caption band"), at once. */
+.places-ccard.is-captioned:active .places-ccard-band { background: var(--ink-fill); }
+.places-ccard.is-captioned:active .places-card-name,
+.places-ccard.is-captioned:active .places-card-chev { color: var(--on-fill); }
+@media (hover: hover) {
+  .places-ccard.is-captioned:hover { border-color: var(--rule); }
+}
+@media (max-width: 768px) {
+  /* Two abreast on a phone: the 16:11 tile rule of T384 no longer applies
+     to a captioned card, whose photograph keeps 3:2. */
+  .places-ccard.is-captioned { aspect-ratio: auto; border-radius: 10px; }
+  .places-ccard.is-captioned .places-ccard-media { aspect-ratio: 3 / 2; }
+  .places-ccard-band { padding: var(--space-2); gap: var(--space-1); }
+  .places-ccard-band .places-card-name { font-size: 15px; }
+  .places-ccard-band .places-card-chev { display: none; }
+}
+
+/* The composed trip card: its name, score and day chips moved from the
+   photograph into the body (DestinationsTab.jsx ItinCard). Its older rules
+   live in 24-destination-workspace.css (row T384-f); these override them
+   from here until they move. No hover zoom, no shadow transition. */
+.places-icard { transition: border-color var(--dur-1) var(--ease-out); }
+@media (hover: hover) {
+  .places-icard:hover { box-shadow: none; }
+  .places-icard:hover .places-card-img { transform: none; }
+}
+.places-icard .itin-card-head {
+  position: static;
+  margin: 0 0 var(--space-2);
+}
+.places-icard .itin-card-name { color: var(--ink); font-size: 16px; }
+.places-icard .itin-card-badges {
+  position: static;
+  margin: 0 0 var(--space-2);
+}
+.places-icard .itin-card-days,
+.places-icard .itin-card-near {
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+  color: var(--ink);
+}
+.places-icard .itin-card-body { transition: background-color var(--dur-1) var(--ease-out); }
+.places-icard:active .itin-card-body { background: var(--paper-dim); }
+
+/* -- 2. Nothing on a place card's photograph but the strip ---------------- */
+
+/* The small facts lead the hook line (PlaceCard.jsx `lead`). Their old chip
+   rules drew them on the photograph; in the body they are words. */
+.places-list .pcard .pcard-hook > .pcard-lead { position: static; }
+.places-list .pcard .pcard-hook > .places-card-km {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.places-list .pcard .pcard-hook > .places-lcard-swim { font-weight: 600; }
+.places-list .pcard .pcard-hook > .places-card-photoof { color: var(--ink-soft); }
+
+/* The month line (rule "Month"): one fact in the sans, the month in mono,
+   a fixed height so every card of a grid stays one height. */
+.pcard-note {
+  display: block;
+  height: 18px;
+  margin-top: var(--space-2);
+  font-family: var(--ui);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pcard-month-m {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.pcard-month.is-warm::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--space-1);
+  vertical-align: 1px;
+  border-radius: 50%;
+  background: var(--status-success);
+}
+/* The chosen month on the lake strip, outlined in ink (rule "Month"). */
+.places-card-strip .sig-seg.is-chosen {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--ink);
+  outline-offset: 0;
+}
+
+/* Pressed, the card's body turns ink, at once (carta-design "Caption band":
+   the pressed state of a photo card is the band in ink). The photograph does
+   not move. */
+.places-list .pcard { transition: border-color var(--dur-1) var(--ease-out); }
+.places-list .pcard .pcard-body { transition: background-color var(--dur-1) var(--ease-out); }
+.places-list .pcard:active .pcard-body { background: var(--ink-fill); }
+.places-list .pcard:active .pcard-title,
+.places-list .pcard:active .pcard-where,
+.places-list .pcard:active .pcard-hook,
+.places-list .pcard:active .pcard-v-n,
+.places-list .pcard:active .pcard-v-l,
+.places-list .pcard:active .pcard-note,
+.places-list .pcard:active .pcard-month-m,
+.places-list .pcard:active .pcard-icons { color: var(--on-fill); }
+@media (hover: hover) {
+  .places-list .pcard:not(.pcard-skel):hover { border-color: var(--rule); }
+}
+
+/* The strip key at the list head (rule N8). */
+.places-stripkey {
+  margin: var(--space-2) 0 var(--space-3);
+  max-width: 72ch;
+  font-family: var(--ui);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* -- 3. The opening's cards ------------------------------------------------ */
+
+/* A rail or icon card pressed: its caption band turns ink, at once. */
+.open-bands .railcard .railcard-body { transition: background-color var(--dur-1) var(--ease-out); }
+.open-bands .railcard:active .railcard-body { background: var(--ink-fill); }
+.open-bands .railcard:active .railcard-name,
+.open-bands .railcard:active .railcard-kind,
+.open-bands .railcard:active .open-fact-n,
+.open-bands .railcard:active .open-fact-l { color: var(--on-fill); }
+
+/* -- 4. The phone's category grid at --tap --------------------------------- */
+
+@media (max-width: 768px) {
+  /* One row each, the 20 px icon before the label: the 2 x 3 grid of T384
+     at about half its height, so the list starts a band higher. */
+  .places-cat {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--tap);
+    padding: 0 var(--space-2);
+    font-size: 13px;
+  }
+  .places-cat svg { flex: none; }
+}
+
+/* -- 5. Motion from the tokens (DIRECTION.md 2.3) -------------------------- */
+
+/* A section's content arriving: when the category changes, the opening and
+   the list are new elements, and they fade in and rise 8 px in --dur-2.
+   Paging and filtering keep the same elements, so they never replay it. */
+@keyframes v6-dest-arrive {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.places-wrap > .open-bands,
+.places-wrap > .places-list {
+  animation: v6-dest-arrive var(--dur-2) var(--ease-out) both;
+}
+
+/* An active filter chip entering its row: opacity and scale from 0.9 in
+   --dur-1. */
+@keyframes v6-dest-chip-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+.places-wrap > .xchips .xchip {
+  animation: v6-dest-chip-in var(--dur-1) var(--ease-out) both;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+
+/* Press on the tab's own controls: scale 0.97 in --dur-1 (the touch
+   feedback rule); a card never scales, its band answers instead. */
+.places-cat:active,
+.open-cut:active,
+.side-allfilters:active,
+.places-nearme-btn:active,
+.places-toolbar .places-filter-btn:active {
+  transform: scale(0.97);
+}
+
+/* -- 7. The filter sheet arrives and leaves --------------------------------- */
+
+/* Phone: it rises from the bottom in --dur-3 over the scrim, which fades
+   with it; it leaves in --dur-2. Desktop: it fades and rises 8 px. The
+   shared .fsheet keyframes in 14-filters-panels.css run on literals; these
+   take this tab's sheet onto the tokens. */
+@keyframes v6-dest-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes v6-dest-sheet-down { from { transform: none; } to { transform: translateY(100%); } }
+@keyframes v6-dest-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes v6-dest-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes v6-dest-pop-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes v6-dest-pop-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(8px); } }
+
+.fsheet-scrim:has(> .fsheet-places) { animation: v6-dest-fade-in var(--dur-3) var(--ease-out) both; }
+.fsheet-scrim.is-anchored:has(> .fsheet-places) { animation: none; }
+.fsheet-scrim.is-closing { animation: v6-dest-fade-out var(--dur-2) var(--ease-in-out) both; }
+.fsheet.fsheet-places { animation: v6-dest-sheet-up var(--dur-3) var(--ease-out) both; }
+.fsheet.fsheet-places.is-closing { animation: v6-dest-sheet-down var(--dur-2) var(--ease-in-out) both; }
+.fsheet.fsheet-places.is-anchored { animation: v6-dest-pop-in var(--dur-3) var(--ease-out) both; }
+.fsheet.fsheet-places.is-anchored.is-closing { animation: v6-dest-pop-out var(--dur-2) var(--ease-in-out) both; }
+@media (min-width: 769px) {
+  .fsheet.fsheet-places { animation-name: v6-dest-pop-in; }
+  .fsheet.fsheet-places.is-closing { animation-name: v6-dest-pop-out; }
+  /* A centred dialog on a pointer screen is not dragged: no handle. */
+  .fsheet.fsheet-places .fsheet-grab { display: none; }
+}
+
+/* A dead option reads as dead: a zero count cannot be picked, so it does
+   not look like one that can. */
+.fsheet-places .fchip:disabled {
+  border-color: var(--rule-soft);
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: default;
+}
+.fsheet-places .fchip:disabled .fchip-n { color: var(--ink-mute); }
+
+/* -- 8. Figures in place ---------------------------------------------------- */
+
+/* The counts that settle (useSettledFigure) keep their box: tabular mono,
+   so a dip never shifts the row. */
+.fsheet-places .fsheet-apply-count,
+.open-cut-n,
+.places-count-chip,
+.places-toolbar .places-filter-btn .filter-tray-badge {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* -- 11. The sticky refine row (rule N3) ------------------------------------ */
+
+@media (max-width: 768px) {
+  /* Once Band 3 starts, Filters, the sorts and the country stick under the
+     top chrome, at the top of the tab's scroll box: a --paper band, a
+     --rule bottom border, no shadow. The facet chips under it scroll with
+     the list. */
+  .places-wrap > .places-refine {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    margin: 0 -16px;
+    padding: var(--space-2) 16px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  .places-wrap > .places-refine .places-controls { padding-top: 0; }
+  .places-wrap > .places-filterrail-facets { border-bottom: none; padding-bottom: var(--space-2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .places-ccard-band,
+  .places-icard,
+  .places-icard .itin-card-body,
+  .places-list .pcard,
+  .places-list .pcard .pcard-body,
+  .open-bands .railcard .railcard-body,
+  .places-wrap > .xchips .xchip { transition: none; }
+  .places-wrap > .open-bands,
+  .places-wrap > .places-list,
+  .places-wrap > .xchips .xchip,
+  .fsheet-scrim:has(> .fsheet-places),
+  .fsheet-scrim.is-closing,
+  .fsheet.fsheet-places,
+  .fsheet.fsheet-places.is-closing,
+  .fsheet.fsheet-places.is-anchored,
+  .fsheet.fsheet-places.is-anchored.is-closing { animation: none; }
+  .places-cat:active,
+  .open-cut:active,
+  .side-allfilters:active,
+  .places-nearme-btn:active,
+  .places-toolbar .places-filter-btn:active { transform: none; }
 }

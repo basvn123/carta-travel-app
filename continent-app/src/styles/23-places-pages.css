@@ -73,7 +73,9 @@
   font-size: 10.5px;
   font-weight: 600;
   color: var(--ink-soft);
-  transition: color .15s, background .15s, border-color .15s;
+  /* A selection answers at once (T394): colour only, in --dur-1. */
+  transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out);
 }
 .places-cat span {
   max-width: 100%;
@@ -97,7 +99,9 @@
 @media (max-width: 560px) {
   .places-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-.places-cat:hover { color: var(--ink); }
+@media (hover: hover) {
+  .places-cat:hover { color: var(--ink); }
+}
 /* The selected category is the house selected state (T384, rule N9 and
    shell R8): ink fill, never the accent tint, which is spent on actions. */
 .places-cat.on {
@@ -569,12 +573,10 @@
   object-fit: cover;
   object-position: 50% var(--card-focus, 38%);
   display: block;
-  transition: transform .3s ease;
 }
+/* No hover zoom (T394): a photograph that is not a shared element does not
+   move (docs/design-v6/DIRECTION.md 2.3, "what never moves"). */
 .places-bcard .places-card-img { --card-focus: 48%; }
-.places-dcard:hover .places-card-img,
-.places-ccard:hover .places-card-img,
-.places-tcard:hover .places-card-img { transform: scale(1.03); }
 .places-card-noimg {
   display: flex;
   align-items: center;
@@ -585,13 +587,14 @@
 
 /* The walk drawn as itself, for the third of the wire that ships without a
    photograph and has no town close enough to borrow one from. A drawing, not
-   a fake photograph: paper ground, one accent line, no chrome. */
+   a fake photograph: a flat --paper-dim ground and one ink line (T394: the
+   radial ground was a gradient, and the accent line said "live" about a
+   walk nobody had picked). */
 .places-card-shape {
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    radial-gradient(circle at 30% 20%, var(--paper) 0%, var(--paper-dim) 70%);
+  background: var(--paper-dim);
 }
 .places-card-shape svg {
   width: 100%;
@@ -599,83 +602,27 @@
 }
 .places-card-shape path {
   fill: none;
-  stroke: var(--accent);
+  stroke: var(--ink-soft);
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
-  opacity: .85;
 }
 
 /* When the picture is the nearest town's rather than the walk's own, the
-   card says so. Unlabelled it would be a claim about the path. */
-.places-card-photoof {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-  padding: 3px 8px;
-  border-radius: 6px;
-  background: rgba(26, 26, 26, 0.55);
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--on-fill);
-  white-space: nowrap;
-  max-width: 55%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* The veil the overlay text sits on. Both stops moved with the 3:2 frame: the
-   old ramp was a straight fade over the top 62 per cent of a 150px strip, and
-   on a 240px card that same fade greyed out half the photograph. This one is
-   DARKER where the text actually is, the bottom quarter, and clears by the
-   halfway line, so the card gains contrast under the name and loses the haze
-   over the sky. */
-.places-card-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top,
-    rgba(26, 26, 26, 0.82) 0%,
-    rgba(26, 26, 26, 0.62) 18%,
-    rgba(26, 26, 26, 0.20) 34%,
-    rgba(26, 26, 26, 0) 48%);
-  pointer-events: none;
-}
-/* A country card carries one name and one count, so its veil can stop sooner
-   still. */
-.places-ccard .places-card-scrim {
-  background: linear-gradient(to top,
-    rgba(26, 26, 26, 0.80) 0%,
-    rgba(26, 26, 26, 0.52) 15%,
-    rgba(26, 26, 26, 0.12) 30%,
-    rgba(26, 26, 26, 0) 42%);
-}
+   card says so. Unlabelled it would be a claim about the path. Since T394
+   the label is a part of the card's hook line, in the body (PlaceCard.jsx),
+   and the scrims that lay under text on a photograph are gone: the country
+   cards carry their caption in a band under the photo (63-v6-destinations.css). */
 
-/* The small flag sits beside the country name on the cover photo. */
+/* The small flag sits beside the country name in the caption band. */
 .places-card-flag {
   display: inline-block;
   vertical-align: -1px;
   margin-right: 8px;
   border-radius: 2px;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 
-.places-card-overlay {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  padding: 10px 12px;
-  /* The overlay is absolutely positioned, so nothing was ever stopping it
-     growing past the top of its own card: a trail card is 109px at phone
-     width and the overlay reached 177px, which is how the name ended up
-     sitting above the picture it belongs to. Bounding it to the card makes
-     the card the authority on its own height, and what will not fit is
-     clipped at the top, away from the name on the bottom row. */
-  max-height: 100%;
-  overflow: hidden;
-}
 .places-card-main { flex: 1; min-width: 0; }
 .places-card-name {
   display: block;
@@ -683,19 +630,21 @@
   font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--on-fill);
+  color: var(--ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0 1px 2px rgba(26, 26, 26, 0.4);
 }
+/* T394: the names and the figures sit in a band on paper now, never on a
+   photograph, so they are ink; the white and the text shadow went with the
+   scrim. */
 .places-card-sub {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-top: 3px;
   font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--ink-soft);
 }
 /* One row of measured figures, never two. "16.4 km 7.8 h +985 m" wrapping to
    a second line was the other half of the overflow, and a ragged second line
@@ -708,7 +657,7 @@
   margin-top: 3px;
   font-family: var(--mono);
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
   overflow: hidden;
 }
@@ -725,13 +674,6 @@
   white-space: nowrap;
 }
 .places-card-kind.city { background: rgba(200, 80, 30, 0.55); }
-.places-card-right {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 5px;
-}
 .places-card-price {
   font-family: var(--mono);
   font-size: 13px;
@@ -753,15 +695,10 @@
   white-space: nowrap;
 }
 .places-card-chev { color: rgba(255, 255, 255, 0.8); flex-shrink: 0; }
+/* How far a card is from a searched place: the first part of the card's
+   hook line since T394 (it was a chip on the photograph). */
 .places-card-km {
-  position: absolute;
-  top: 10px; right: 12px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: rgba(26, 26, 26, 0.55);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--on-fill);
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 
@@ -874,10 +811,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .places-cat, .places-sort, .places-card-img { transition: none; }
-  .places-dcard:hover .places-card-img,
-  .places-ccard:hover .places-card-img,
-  .places-tcard:hover .places-card-img { transform: none; }
+  .places-cat, .places-sort { transition: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1402,21 +1336,22 @@
    colour to the product.
    ══════════════════════════════════════════════════════════════════════════ */
 
+/* T394: the verdict leads the card's hook line in the body instead of
+   riding the photograph's corner. It is words in ink, weight 600, after a
+   6 px dot in its tone, so the colour is never the only carrier. */
 .places-lcard-swim {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-weight: 600;
   white-space: nowrap;
-  color: var(--on-fill);
-  /* Opaque, not a blur. backdrop-filter would make every card in a long
-     scrolling list a containing block for its own descendants and cost a
-     compositor layer each, for a chip that is already legible on a scrim. */
+  color: var(--ink);
+}
+.places-lcard-swim::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 var(--space-1) 0 0;
+  vertical-align: 1px;
+  border-radius: 50%;
   background: var(--sw-ink);
 }
 .places-lcard-swim.swim-stop { --sw-ink: var(--warn-vivid); }

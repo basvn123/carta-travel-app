@@ -13,8 +13,12 @@ import {
  *   mountain  the altitude bar, prominence solid
  * A beach card has none until the sea record exists. Each returns null
  * when its row carries no reading, so a card never shows an empty strip.
+ *
+ * `month` (1 to 12, T394): the traveller's own month from the settings line.
+ * The lake strip outlines that month's cell in ink (carta-design "Month":
+ * the chosen month is outlined on every month strip in view).
  */
-export function CardStrip({ kind, row, warmC = 18 }) {
+export function CardStrip({ kind, row, warmC = 18, month = null }) {
   if (!row) return null;
   if (kind === 'mountain') {
     const alt = altitudeParts(row.ele, row.prom);
@@ -32,7 +36,8 @@ export function CardStrip({ kind, row, warmC = 18 }) {
     return (
       <span className="places-card-strip is-months" aria-hidden="true">
         {cells.map((c) => (
-          <span key={c.n} className={`sig-seg ${c.on ? 'is-on' : ''} ${c.on && c.peak ? 'is-peak' : ''}`.trim()} />
+          <span key={c.n}
+            className={`sig-seg ${c.on ? 'is-on' : ''} ${c.on && c.peak ? 'is-peak' : ''} ${c.n === month ? 'is-chosen' : ''}`.replace(/\s+/g, ' ').trim()} />
         ))}
       </span>
     );

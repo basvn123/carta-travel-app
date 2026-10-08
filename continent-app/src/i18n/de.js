@@ -5191,4 +5191,10 @@ export const de = {
   "lifestyle.tradeMoreIn": "{alt} stattdessen: {eur} mehr pro Nacht und Person in {town}.",
   "lifestyle.tradeLessMedian": "{alt} stattdessen: {eur} weniger pro Nacht und Person, der Median über {n} Orte.",
   "lifestyle.tradeMoreMedian": "{alt} stattdessen: {eur} mehr pro Nacht und Person, der Median über {n} Orte.",
+  "places.monthSwim": "Warm genug zum Baden im {month}",
+  "places.monthCold": "Wasser unter {c} °C im {month}",
+  "places.stripTrail": "Der Balken unter jedem Foto zeigt die Steigung der Wanderung: am hellsten unter 10 Prozent, dunkler von 10 bis 15 Prozent, am dunkelsten über 15 Prozent.",
+  "places.stripCycle": "Der Balken unter jedem Foto zeigt den Belag der Route: dunkel für befestigt, heller für unbefestigt.",
+  "places.stripLake": "Der Balken unter jedem Foto ist das Jahr, Januar bis Dezember: Ein Monat ist gefüllt, wenn das Wasser auf {c} °C oder mehr geschätzt wird, der wärmste Monat am dunkelsten.",
+  "places.stripMtn": "Der Balken unter jedem Foto ist die Höhe auf einem Maßstab bis 5.000 m: Der dunkle Teil ist die Schartenhöhe, der Anstieg über den höchsten Sattel zu einem höheren Gipfel.",
 };

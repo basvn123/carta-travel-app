@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { scrollBehavior } from '../lib/motion.js';
+import { openShared } from '../lib/sharedElement.js';
+import { useSettledFigure } from '../lib/figureChange.js';
 import { ChevronRightIcon, RouteIcon } from '../components/Icons.jsx';
 
 /**
@@ -24,6 +26,12 @@ import { ChevronRightIcon, RouteIcon } from '../components/Icons.jsx';
  * cuts become one row of chips that apply the same saved filter as the
  * rail's "See all", so no cut is lost and the opening stops being a scroll
  * of six carousels. Desktop passes null and keeps every rail.
+ *
+ * T394 (V4): each card's one figure carries its label under it, as the grid
+ * cards' values do (`describe` returns `factLabel`); `sharedKey(row)` names
+ * the key the opened page claims its header photograph with, so the card's
+ * photograph grows into the page (lib/sharedElement.js); and a cut's count
+ * settles in place when a filter elsewhere changes it.
  */
 
 // What a Band 1 photo is drawn at: half the phone, a third of the column.
@@ -53,13 +61,18 @@ function Photo({ url, sizes, eager = false }) {
   );
 }
 
-function Card({ row, describe, photo, onOpen, sizes, eager, className }) {
+function Card({ row, describe, photo, onOpen, sizes, eager, className, sharedKey }) {
   const d = describe(row);
+  const key = sharedKey ? sharedKey(row) : null;
+  const open = (e) => {
+    if (key == null) { onOpen(row); return; }
+    openShared(e.currentTarget, key, () => onOpen(row));
+  };
   return (
     <button
       type="button"
       className={`railcard ${className}`}
-      onClick={() => onOpen(row)}
+      onClick={open}
     >
       <span className="railcard-media">
         <Photo url={photo(row)} sizes={sizes} eager={eager} />
@@ -68,7 +81,12 @@ function Card({ row, describe, photo, onOpen, sizes, eager, className }) {
         <span className="railcard-name">{d.name}</span>
         <span className="railcard-kind">
           {d.where && <span className="open-where">{d.where}</span>}
-          {d.fact && <span className="open-fact">{d.fact}</span>}
+          {d.fact && (
+            <span className="open-fact">
+              <span className="open-fact-n">{d.fact}</span>
+              {d.factLabel && <span className="open-fact-l">{d.factLabel}</span>}
+            </span>
+          )}
         </span>
       </span>
     </button>
@@ -116,7 +134,7 @@ function useStripPosition(ref) {
   return pos;
 }
 
-function Rail({ rail, describe, photo, onOpen, t }) {
+function Rail({ rail, describe, photo, onOpen, t, sharedKey }) {
   const stripRef = useRef(null);
   const pos = useStripPosition(stripRef);
   const page = (dir) => {
@@ -159,6 +177,7 @@ function Rail({ rail, describe, photo, onOpen, t }) {
             onOpen={onOpen}
             sizes={RAIL_SIZES}
             className="open-railcard"
+            sharedKey={sharedKey}
           />
         ))}
       </div>
@@ -175,9 +194,21 @@ function Rail({ rail, describe, photo, onOpen, t }) {
   );
 }
 
+/** A cut chip: its count settles in place when it changes (DIRECTION.md 2.3). */
+function Cut({ rail, count }) {
+  const nRef = useRef(null);
+  useSettledFigure(nRef, rail.n);
+  return (
+    <button type="button" className="open-cut" onClick={rail.onSeeAll} data-rail={rail.key}>
+      <span>{rail.title}</span>
+      <span className="open-cut-n" ref={nRef}>{count(rail.n)}</span>
+    </button>
+  );
+}
+
 export function SectionOpening({
   layer, icons, heading, sub, rails, describe, photo, onOpen, t,
-  maxRails = null, count = (n) => String(n),
+  maxRails = null, count = (n) => String(n), sharedKey = null,
 }) {
   const shown = maxRails == null ? rails : rails.slice(0, maxRails);
   const cuts = maxRails == null ? [] : rails.slice(maxRails);
@@ -199,6 +230,7 @@ export function SectionOpening({
                   sizes={ICON_SIZES}
                   eager={i < 3}
                   className="open-icon"
+                  sharedKey={sharedKey}
                 />
               </li>
             ))}
@@ -215,6 +247,7 @@ export function SectionOpening({
               photo={photo}
               onOpen={onOpen}
               t={t}
+              sharedKey={sharedKey}
             />
           ))}
         </div>
@@ -223,13 +256,7 @@ export function SectionOpening({
         <div className="open-cuts">
           <p className="open-cuts-label" id={`open-cuts-${layer}`}>{t('open.moreCuts')}</p>
           <div className="open-cuts-row" role="group" aria-labelledby={`open-cuts-${layer}`}>
-            {cuts.map((rail) => (
-              <button key={rail.key} type="button" className="open-cut" onClick={rail.onSeeAll}
-                data-rail={rail.key}>
-                <span>{rail.title}</span>
-                <span className="open-cut-n">{count(rail.n)}</span>
-              </button>
-            ))}
+            {cuts.map((rail) => <Cut key={rail.key} rail={rail} count={count} />)}
           </div>
         </div>
       )}
