@@ -16,6 +16,8 @@ export const fr = {
   "landing.walkNational": "national",
   "landing.eachDay": "{eur} par personne et par jour",
   "landing.specNoEst": "Chaque ligne du reçu de {city} ci-dessus est mesurée, donc aucune ne porte de tilde.",
+  "landing.noDemo": "Aucun reçu d'exemple ne peut être calculé pour le moment. Trouvez une ville d'où marcher et ouvrez sa page pour en voir un vrai.",
+  "landing.titleNoCount": "Ce que coûte une journée, par personne",
   "landing.cta": "Trouver une ville d'où marcher",
   "landing.townsLabel": "Chiffrer un séjour à",
   "landing.people": "Personnes",

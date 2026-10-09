@@ -16,6 +16,8 @@ export const nl = {
   "landing.walkNational": "nationaal",
   "landing.eachDay": "{eur} per persoon per dag",
   "landing.specNoEst": "Elke regel van de bon voor {city} hierboven is gemeten, dus geen enkele draagt een tilde.",
+  "landing.noDemo": "Er is nu geen voorbeeldbon te berekenen. Vind een plaats om vanuit te wandelen en open de pagina voor een echte bon.",
+  "landing.titleNoCount": "Wat een dag kost, per persoon",
   "landing.cta": "Vind een plaats om vanuit te wandelen",
   "landing.townsLabel": "Prijs een verblijf in",
   "landing.people": "Personen",

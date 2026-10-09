@@ -21,6 +21,8 @@ export const en = {
   "landing.walkNational": "national",
   "landing.eachDay": "{eur} a person a day",
   "landing.specNoEst": "Every line of the {city} receipt above is measured, so none carries a tilde.",
+  "landing.noDemo": "No sample receipt can be priced right now. Find a town to walk from and open its page for a real one.",
+  "landing.titleNoCount": "What a day costs, per person",
   "landing.cta": "Find a town to walk from",
   "landing.townsLabel": "Price a stay in",
   "landing.people": "People",

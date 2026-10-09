@@ -46,6 +46,21 @@
  *              (390 x 664, WebKit's bars subtracted). Reported, not failed:
  *              no rule-backed lever left closes it (T392 report, T382-b).
  *
+ * Added by T402 (design wave V5, docs/design-v6/plans/V5-landing.md):
+ *   taps       every control on the page and in the receipts measures at least
+ *              44 by 44 px (the cost bar's segments: 44 high, their width
+ *              follows the data and is the shell's component)
+ *   lazy       a first visit that does not scroll makes no request for
+ *              coverage.json, and the table appears once the section is
+ *              scrolled to
+ *   covfail    with coverage.json refused the page keeps its sentences, shows
+ *              no table and holds no empty block
+ *   lang       at 360 x 740 in en, de, es, fr, it and nl: no sideways scroll
+ *              and no text cut with an ellipsis on the page
+ *   edge       the pure functions answer empty, partial and odd inputs with
+ *              a value, never a throw (no demo town, no counts, no coverage,
+ *              one person, 14 nights, a tier fallback)
+ *
  * It does not start a server. Serve the app first (never `npm run dev`, whose
  * predev rewrites public/):
  *   npx vite --port 5202 --strictPort
@@ -137,6 +152,14 @@ async function run(vp) {
     check(vp.key, 'primary', primaries === 1, `${primaries} visible`);
     const hs = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(vp.key, 'hscroll', hs <= 0, `${hs} px`);
+
+    // T402 (V5-1): every control is a 44 by 44 target. The strip's selects
+    // fill their whole cell, so the cell is the hit area.
+    const small = await page.evaluate(() => [...document.querySelectorAll('.lp-page a, .lp-page button, .lp-page select, .lp-page input')]
+      .filter((e) => e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden' && !e.closest('.frr-sr'))
+      .map((e) => { const r = e.getBoundingClientRect(); return { c: (e.className || e.tagName).toString().slice(0, 28), w: Math.round(r.width), h: Math.round(r.height), seg: e.classList.contains('costbar-seg') }; })
+      .filter((x) => x.h < 44 || (!x.seg && x.w < 44)));
+    check(vp.key, 'taps', small.length === 0, small.length ? small.map((x) => `${x.c} ${x.w}x${x.h}`).join('; ') : 'every control at least 44 x 44');
 
     // T392: scoped to .lp-receipt, because the proof specimens below the
     // fold carry receipt lines of their own inside .lp-page.
@@ -293,14 +316,23 @@ async function run(vp) {
       check(vp.key, 'carry', true, 'Porto not in this catalogue; skipped');
     }
 
-    // The coverage table, from the home page again.
+    // The coverage table, from the home page again. T402 (V5-4): it loads
+    // when the section nears the viewport, so the page is first left alone
+    // (no request for coverage.json), then scrolled to the section. The old
+    // check waited 3 s and counted the table, which assumed the eager load.
+    const covReqs = [];
     const back = await context.newPage();
+    back.on('request', (rq) => { if (/coverage\.json/.test(rq.url())) covReqs.push(rq.url()); });
     await back.goto(`${BASE}?tab=home`, { waitUntil: 'domcontentloaded', timeout: WAIT });
     await back.locator('.lp-page .frr-sum-eur').first().waitFor({ state: 'visible', timeout: WAIT });
     await back.waitForTimeout(3000);
+    check(vp.key, 'lazy', covReqs.length === 0, `${covReqs.length} requests for coverage.json before any scroll`);
+    await back.locator('.lp-cov').scrollIntoViewIfNeeded();
+    await back.locator('.lp-table').first().waitFor({ state: 'attached', timeout: 15000 }).catch(() => {});
     const table = await back.locator('.lp-table').count();
-    check(vp.key, 'coverage', true, table ? 'table rendered' : 'table absent (file not loaded); sentences stand');
+    check(vp.key, 'coverage', true, table ? 'table rendered after scrolling to it' : 'table absent (file not loaded); sentences stand');
     if (table) {
+      check(vp.key, 'lazy', covReqs.length >= 1, `${covReqs.length} request(s) once the section was reached`);
       // T392: each bar's filled share is its row's regions with rows.
       const cb = await back.evaluate(() => [...document.querySelectorAll('.lp-covbar')].map((b) => {
         const w = Number(b.dataset.with); const of = Number(b.dataset.of);
@@ -311,6 +343,26 @@ async function run(vp) {
       check(vp.key, 'covbar', cb.length > 0 && cb.every((r) => r.off <= 1.5), `${cb.length} bars, off by at most ${Math.max(0, ...cb.map((r) => r.off)).toFixed(1)} px`);
     }
     await back.close();
+
+    // T402 (V5-3): coverage that fails. The file is refused; the sentences
+    // stand, there is no table and no empty block is left where it would be.
+    const bad = await context.newPage();
+    const badErrors = [];
+    bad.on('pageerror', (e) => badErrors.push(String(e.message || e)));
+    await bad.route('**/coverage.json*', (r) => r.abort());
+    await bad.goto(`${BASE}?tab=home`, { waitUntil: 'domcontentloaded', timeout: WAIT });
+    await bad.locator('.lp-page .frr-sum-eur').first().waitFor({ state: 'visible', timeout: WAIT });
+    await bad.locator('.lp-cov').scrollIntoViewIfNeeded();
+    await bad.waitForTimeout(2500);
+    const failed = await bad.evaluate(() => ({
+      table: document.querySelectorAll('.lp-table').length,
+      hold: document.querySelectorAll('.lp-table-hold').length,
+      key: document.querySelectorAll('.lp-cov-key').length,
+      paras: document.querySelectorAll('.lp-cov > p').length,
+    }));
+    check(vp.key, 'covfail', failed.table === 0 && failed.hold === 0 && failed.key === 0 && failed.paras >= 3 && badErrors.length === 0,
+      `table ${failed.table}, held block ${failed.hold}, ${failed.paras} sentences, ${badErrors.length} errors`);
+    await bad.close();
 
     // Return visit: the same browser, no link, opens Destinations.
     const again = await context.newPage();
@@ -346,9 +398,85 @@ async function run(vp) {
   check('logic', 'seedMonth', bad.length === 0, `${cases.length - bad.length} of ${cases.length} windows as expected`);
 }
 
+// T402 (V5-3): edge cases on the pure functions. They live here rather than
+// in tests/landing.test.mjs because this session's scope is the surface's
+// files and its harnesses (the same call T392 made for seedMonth).
+{
+  const L = await import('../src/lib/landing.js');
+  const town = {
+    id: 'T', city: 'Testville', country: 'Nowhere', iso2: 'NW', categories: ['hiking'],
+    costs: { meal_mid_eur: 20, meal_cheap_eur: 10, fastfood_eur: 6, drink_out_eur: 3, cocktail_eur: 8, coffee_eur: 2, grocery_day_eur: 9, club_entry_eur: 8, level: 'city' },
+    accommodation: { per_person_night_eur: 30, cleaning_per_person_eur: 10, entire_home_night_eur: 90, typical_capacity: 3, level: 'city', n_listings: 120, captured: '2026-06-27', source_place: 'Testville', source_km: 1 },
+  };
+  const start = '2026-11-07';
+  const cases = {
+    'no demo town': () => L.pickDemoTowns({}).length === 0 && L.pickDemoTowns(undefined).length === 0 && L.pickDemoTowns({ X: { id: 'X' } }).length === 0,
+    'a town that prices stands in': () => L.pickDemoTowns({ T: town }).length === 1,
+    'no counts': () => { const f = L.catalogueFacts(undefined, undefined); return f.places === 0 && f.bedsMeasured === 0 && f.asOf === null; },
+    'partial catalogue': () => { const f = L.catalogueFacts({ T: town, U: { id: 'U' } }, { n_destinations: 5 }); return f.places === 5 && f.bedsMeasured === 1 && f.foodMeasured === 1; },
+    'no priced list': () => L.cheapestToWalk(undefined, undefined).length === 0 && L.cheapestToWalk({ T: town }, new Map()).length === 0,
+    'coverage that fails': () => [null, undefined, {}, { regions: null }, { regions: {} }, { regions: { A: { trail: { status: 'na' } } } }, 'x', 7].every((c) => L.coverageRows(c) === null),
+    'no receipt': () => L.priceReceipt(null, { ...L.DEMO_DEFAULTS, start }) === null && L.priceReceipt(town, { ...L.DEMO_DEFAULTS, start: null }) === null,
+    'one person': () => { const r = L.priceReceipt(town, { ...L.DEMO_DEFAULTS, people: 1, start }); return r && r.each === null && r.total > 0; },
+    '14 nights': () => { const r = L.priceReceipt(town, { ...L.DEMO_DEFAULTS, nights: 14, start }); return r && r.nights === 14 && r.alt && r.alt.kind === 'nights'; },
+    'a tier fallback': () => { const r = L.priceReceipt(town, { ...L.DEMO_DEFAULTS, tier: 'dorm', start }); return r && r.stay.tierFallback === true && r.stay.tierAsked === 'dorm'; },
+  };
+  for (const [name, fn] of Object.entries(cases)) {
+    let ok = false;
+    let detail = '';
+    try { ok = !!fn(); } catch (e) { detail = String(e.message || e).split('\n')[0]; }
+    check('logic', 'edge', ok, `${name}${detail ? `: ${detail}` : ''}`);
+  }
+}
+
 for (const vp of VIEWPORTS) {
   // One browser at a time: the laptop this runs on is short of RAM.
   await run(vp);
+}
+
+// T402 (V5-2): the small Android floor in every language. 360 x 740 with
+// touch, English first. Nothing scrolls sideways and no text on the page is
+// cut with an ellipsis (a long name wraps instead). The fold is reported,
+// not failed: longer labels in de, es, fr and nl wrap onto more lines, so the
+// total sits lower (T402 report).
+if (!argv.vp || String(argv.vp).split(',').includes('mobile')) {
+  const browser = await chromium.launch();
+  try {
+    for (const lang of ['en', 'de', 'es', 'fr', 'it', 'nl']) {
+      const context = await browser.newContext({
+        viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, locale: 'en-GB',
+      });
+      await context.addInitScript((l) => { try { localStorage.setItem('continent.lang.v1', l); } catch { /* storage may be blocked */ } }, lang);
+      const page = await context.newPage();
+      await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: WAIT });
+      await page.locator('.lp-page .frr-sum-eur').first().waitFor({ state: 'visible', timeout: WAIT });
+      await page.waitForTimeout(1500);
+      const m = await page.evaluate(() => {
+        const vis = (e) => e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden';
+        const cut = [...document.querySelectorAll('.lp-page *')]
+          .filter((e) => vis(e) && getComputedStyle(e).textOverflow === 'ellipsis' && e.scrollWidth > e.clientWidth)
+          .map((e) => (e.textContent || '').trim().slice(0, 24));
+        const nav = document.querySelector('.bottom-nav');
+        const navTop = nav && nav.getBoundingClientRect().height ? nav.getBoundingClientRect().top : innerHeight;
+        const scroller = document.querySelector('.lp-page');
+        return {
+          hs: document.documentElement.scrollWidth - innerWidth,
+          page: scroller.scrollWidth - scroller.clientWidth,
+          cut,
+          navTop: Math.round(navTop),
+          cta: Math.round(document.querySelector('.lp-cta')?.getBoundingClientRect().bottom || 0),
+        };
+      });
+      check(`lang-${lang}`, 'overflow', m.hs <= 0 && m.page <= 0 && m.cut.length === 0,
+        `page ${m.hs} px, scroller ${m.page} px, ${m.cut.length} cut texts ${m.cut.join(' | ')}`);
+      console.log(`INFO  lang-${lang} fold       primary bottom ${m.cta}, nav top ${m.navTop} (360 x 740)`);
+      await context.close();
+    }
+  } catch (e) {
+    check('lang', 'run', false, String(e.message || e).split('\n')[0]);
+  } finally {
+    await browser.close();
+  }
 }
 
 // T392: reduced motion keeps the figure and drops the dip.

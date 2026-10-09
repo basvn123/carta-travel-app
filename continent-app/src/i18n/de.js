@@ -16,6 +16,8 @@ export const de = {
   "landing.walkNational": "national",
   "landing.eachDay": "{eur} pro Person und Tag",
   "landing.specNoEst": "Jede Zeile der Rechnung für {city} oben ist gemessen, darum trägt keine eine Tilde.",
+  "landing.noDemo": "Gerade lässt sich keine Beispielrechnung erstellen. Such einen Ort zum Wandern und öffne seine Seite für eine echte.",
+  "landing.titleNoCount": "Was ein Tag kostet, pro Person",
   "landing.cta": "Einen Ort zum Wandern finden",
   "landing.townsLabel": "Preis für einen Aufenthalt in",
   "landing.people": "Personen",

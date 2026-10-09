@@ -48,6 +48,12 @@ import {
  * the primary (DIRECTION.md part 6 order; part 7, shorten what sits above
  * the primary).
  *
+ * Since T402 (design wave V5) the page is hardened: coverage.json is read
+ * only when the coverage section nears the viewport, a catalogue in hand
+ * with no priceable demo town gives one sentence instead of the loading
+ * block, a catalogue with no count gives a title without a number, and the
+ * strip's selects fill their cells so the whole cell is the touch target.
+ *
  * Props
  *   data        { meta, destinations }, partial or full (the rank tier holds
  *               every field the receipt reads)
@@ -160,16 +166,45 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
   useSettleChanged(walkRef, walk.map((r) => `${r.id}:${r.dayEur}`).join('|'));
 
   // The layer counts come from the coverage file, the same one the region
-  // pages and /about/numbers read. Below the fold, so it loads after paint;
-  // when it fails the table is left out and the sentences above it stand.
+  // pages and /about/numbers read. It is read only when the coverage section
+  // nears the viewport (T402, V5-4): a first visit that never scrolls makes
+  // no request for it. Where IntersectionObserver is missing it loads at
+  // once. When it fails the table is left out and the sentences above it
+  // stand; while it loads, the table's place is held so the section below
+  // does not jump.
   const [cov, setCov] = useState(null);
+  const [covState, setCovState] = useState('idle');
+  const covRef = useRef(null);
   useEffect(() => {
+    if (covState !== 'idle') return undefined;
+    const node = covRef.current;
+    let stop = () => {};
+    const go = () => {
+      stop();
+      setCovState('loading');
+    };
+    if (node && typeof IntersectionObserver === 'function') {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) go();
+      }, { rootMargin: '600px 0px' });
+      io.observe(node);
+      stop = () => io.disconnect();
+    } else go();
+    return stop;
+  }, [covState]);
+  useEffect(() => {
+    if (covState !== 'loading') return undefined;
     let live = true;
     loadCoverage()
-      .then((raw) => { if (live) setCov(coverageRows(raw)); })
-      .catch(() => {});
+      .then((raw) => {
+        if (!live) return;
+        const rows = coverageRows(raw);
+        setCov(rows);
+        setCovState(rows ? 'done' : 'failed');
+      })
+      .catch(() => { if (live) setCovState('failed'); });
     return () => { live = false; };
-  }, []);
+  }, [covState]);
 
   // The words are the first-run receipt's own keys (T099), so the landing
   // page and a destination page's first result read the same.
@@ -264,6 +299,10 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
   };
 
   const rest = Math.max(0, facts.places - facts.bedsMeasured);
+  // The catalogue is in hand but no demo town prices (a partial or broken
+  // catalogue): one sentence in the receipt's place, never the loading block
+  // for ever (T402, V5-3).
+  const loaded = Object.keys(data?.destinations || {}).length > 0;
   const layerLabel = {
     trail: t('landing.layerTrail'),
     cycling: t('landing.layerCycling'),
@@ -277,10 +316,15 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
       <div className="lp-wrap">
         <section className="lp-hero" aria-labelledby="lp-title">
           <div className="lp-head">
-            <h1 id="lp-title" className="lp-title">{t('landing.title', { n: count(facts.places) })}</h1>
+            <h1 id="lp-title" className="lp-title">
+              {facts.places > 0 ? t('landing.title', { n: count(facts.places) }) : t('landing.titleNoCount')}
+            </h1>
           </div>
 
-          {!(town && receipt) && (
+          {!(town && receipt) && loaded && (
+            <p className="lp-note lp-nodemo" data-state="nodemo">{t('landing.noDemo')}</p>
+          )}
+          {!(town && receipt) && !loaded && (
             // Receipt-shaped and still while no demo town prices yet (brief
             // V4-9): the strip and the card keep their place, so the primary
             // under them does not move when the figures arrive.
@@ -419,7 +463,7 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
           </ul>
         </section>
 
-        <section className="lp-cov" aria-labelledby="lp-cov-title">
+        <section className="lp-cov" aria-labelledby="lp-cov-title" ref={covRef}>
           <h2 id="lp-cov-title" className="lp-h2">{t('landing.covTitle')}</h2>
           <p>
             {t('landing.covPlaces', {
@@ -427,6 +471,7 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
             })}
           </p>
           <p>{t('landing.covFood', { f: count(facts.foodMeasured) })}</p>
+          {covState === 'loading' && <div className="lp-table-wrap lp-table-hold" aria-hidden="true" />}
           {cov && (
             <div className="lp-table-wrap">
               <table className="lp-table">

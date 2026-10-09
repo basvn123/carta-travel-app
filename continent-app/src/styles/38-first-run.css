@@ -47,11 +47,9 @@
 .frr-cell {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 2px;
   min-width: 0;
-  min-height: var(--tap);
-  padding: 6px var(--space-3);
   border-left: 1px solid var(--rule-soft);
 }
 .frr-cell:first-child { border-left: 0; }
@@ -63,19 +61,10 @@
   line-height: 1.3;
   color: var(--ink-soft);
 }
-.frr-cell select,
-.frr-cell input {
-  width: 100%;
-  min-width: 0;
-  min-height: 28px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  font-size: 14px;
-}
 .frr-cell select { font-family: var(--ui); }
 .frr-cell input { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+/* The cell's box, its select or date input (which fill it, so the whole cell
+   is the touch target) and its ring are in 61-v6-landing.css (T402). */
 .frr-cell:focus-within {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
@@ -229,7 +218,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.28);
+  background: color-mix(in srgb, var(--ink) 28%, transparent);
 }
 .frr-sheet {
   width: 100%;
