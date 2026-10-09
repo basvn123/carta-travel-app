@@ -392,3 +392,104 @@
   border-radius: 12px;
   background: var(--paper-dim);
 }
+
+/* ==========================================================================
+   T405 (V5): harden, adapt and polish
+   ========================================================================== */
+
+/* 1. Tap targets. On a touch screen every control on this page is --tap
+   (44 px) tall and wide; on a fine pointer the 28 to 32 px sizes stay. The
+   receipt's selects and dates are landing's component, sized here for this
+   page only. A link inside a sentence keeps its line and grows its hit area
+   with padding, not its type. */
+@media (pointer: coarse) {
+  .destp-back,
+  .destp .destp-close,
+  .destp-bar-btn,
+  .destp-gallery-arrow,
+  .destp .dhl-link,
+  .destp-notice-x { min-width: var(--tap); min-height: var(--tap); }
+  .destp-gallery-arrow { width: var(--tap); height: var(--tap); }
+  .destp .dhl-link { display: inline-flex; align-items: center; justify-content: center; }
+  .destp-park-nav a,
+  .destp .dpark-web-link,
+  .destp .dpark-search { min-height: var(--tap); }
+  .destp-park-nav a { padding: 0 var(--space-3); }
+  .destp .dpark-web-link { display: inline-flex; align-items: center; gap: var(--space-1); }
+  .destp-pair,
+  .destp .dar-tab,
+  .destp .dar-map,
+  .destp .xp-further-btn { min-height: var(--tap); }
+  .destp .dar-tab, .destp .dar-map { display: inline-flex; align-items: center; }
+  .destp .destp-fest-name a { display: inline-flex; align-items: center; min-height: var(--tap); }
+  .destp .maplibregl-ctrl-attrib-button { width: var(--tap); height: var(--tap); }
+  .destp .frr-cell select,
+  .destp .frr-cell input,
+  .destp .frr select,
+  .destp .frr input { min-height: var(--tap); box-sizing: border-box; }
+  .destp .frr-cell select,
+  .destp .frr select { padding-block: 0; }
+}
+
+/* 2. Dynamic viewport. The gallery height follows the visible screen, not
+   the largest one, so a collapsing address bar never moves the head. On a
+   phone held sideways the gallery is a 40 percent strip and the page, not the
+   photo, takes the rest. */
+.destp-v2 .destp-gallery { height: clamp(240px, 38dvh, 430px); }
+@media (orientation: landscape) and (max-height: 520px) {
+  .destp-v2 .destp-gallery { height: 40dvh; min-height: 0; }
+}
+
+/* 3. The status line for a failed PDF or a blocked clipboard: one line under
+   the bar, ink on --paper-dim, the link itself selectable. */
+.destp-notice {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--paper-dim);
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.destp-notice-url { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; user-select: all; }
+.destp-notice-x {
+  margin-left: auto;
+  padding: 0 var(--space-2);
+  min-height: 32px;
+  background: none;
+  border: 0;
+  color: var(--ink-soft);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+@media (hover: hover) { .destp-notice-x:hover { color: var(--ink); } }
+
+/* 4. Long names and long languages. A place name or a German compound
+   wraps; it never pushes the bar or a row sideways. */
+.destp-city, .destp-bar-name { overflow-wrap: anywhere; hyphens: auto; }
+.destp-hood { min-width: 0; }
+.destp-hood-name { min-width: 0; overflow-wrap: anywhere; }
+.destp-sleep-tiers { flex-wrap: wrap; }
+
+/* 5. A swipe is never the only way (T405). The layer tabs of "Around here"
+   scrolled sideways on a phone and hid the last tab; they wrap to a second
+   row instead, so every tab is on screen and one tap away. */
+.destp .dar-tabs { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; }
+@media (pointer: coarse) {
+  .destp .destp-member-link { display: inline-flex; align-items: center; min-height: var(--tap); }
+}
+
+/* The credit never shrinks below a tap target: in a narrow slide (a phone held
+   sideways) the caption gives way first, the credit keeps up to half the band. */
+@media (pointer: coarse) {
+  .destp-v2 .destp-slide-credit { flex: 0 0 auto; min-width: var(--tap); max-width: 50%; justify-content: flex-end; }
+  .destp-v2 .destp-slide-cap { flex: 1 1 0; }
+}

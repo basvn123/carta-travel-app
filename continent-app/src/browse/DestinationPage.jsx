@@ -8,7 +8,7 @@ import { HeroImage } from '../components/HeroImage.jsx';
 import { CostReceipt } from '../components/CostSummary.jsx';
 import { FirstRunReceipt } from '../components/FirstRunReceipt.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
-import { safeUrl, eur } from '../lib/format.js';
+import { safeUrl, eur, eurExact } from '../lib/format.js';
 import { useDossier, destShareUrl } from '../lib/dossier.js';
 import { activityLink } from '../lib/activityAffiliates.js';
 import { mapsSearchUrl } from '../lib/destInfo.js';
@@ -295,6 +295,7 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
                 <a
                   className="destp-slide-credit"
                   href={safeUrl(g.page)}
+                  title={[g.author, g.licence].filter(Boolean).join(', ')}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -307,10 +308,10 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId }) {
       </div>
       {imgs.length > 1 && (
         <>
-          <button type="button" className="destp-gallery-arrow is-prev" onClick={() => nudge(-1)} aria-label="Previous photo" disabled={idx === 0}>
+          <button type="button" className="destp-gallery-arrow is-prev" onClick={() => nudge(-1)} aria-label={t('dest.photoPrev')} disabled={idx === 0}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
           </button>
-          <button type="button" className="destp-gallery-arrow is-next" onClick={() => nudge(1)} aria-label="Next photo" disabled={idx >= imgs.length - 1}>
+          <button type="button" className="destp-gallery-arrow is-next" onClick={() => nudge(1)} aria-label={t('dest.photoNext')} disabled={idx >= imgs.length - 1}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
           </button>
         </>
@@ -340,6 +341,9 @@ export function DestinationPage({
   const [doAll, setDoAll] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
   const [pdfBusy, setPdfBusy] = React.useState(false);
+  // One-line status for a failed PDF or a blocked clipboard (T405): what
+  // happened and what to do, in a polite live region.
+  const [notice, setNotice] = React.useState(null);
   // True while the first-run receipt's "Set your dates" is the page's one
   // primary; "Plan a trip here" waits as a secondary until then (T099).
   const [frrPrimary, setFrrPrimary] = React.useState(false);
@@ -407,6 +411,7 @@ export function DestinationPage({
     setHlAll(false);
     setDoAll(false);
     setCopied(false);
+    setNotice(null);
     setExpanding(false);
     setOpen(readFolds(destination?.id) || new Set(OPEN_BY_DEFAULT));
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
@@ -423,8 +428,18 @@ export function DestinationPage({
   const backRef = React.useRef(null);
   const skipEscape = React.useCallback(
     () => !!pageRef.current?.querySelector('.dropdown-menu'), []);
+  // Where focus lands on open (carta-design rule 10, T405): on a mouse the
+  // place name, which takes focus with no ring (a script focus after a click
+  // is never :focus-visible); on a phone the back arrow, the thumb's exit.
+  const titleRef = React.useRef(null);
+  const openFocusRef = React.useRef(null);
+  React.useLayoutEffect(() => {
+    let fine = false;
+    try { fine = window.matchMedia('(pointer: fine)').matches; } catch { /* keep the back arrow */ }
+    openFocusRef.current = fine && titleRef.current ? titleRef.current : backRef.current;
+  }, [destination?.id]);
   useFocusTrap(pageRef, onClose, {
-    initialFocusRef: backRef,
+    initialFocusRef: openFocusRef,
     skipEscapeWhen: skipEscape,
     enabled: !!destination,
   });
@@ -514,17 +529,25 @@ export function DestinationPage({
     const url = destShareUrl(destination.id);
     try {
       if (navigator.share) { await navigator.share({ title: city, url }); return; }
-    } catch { /* fall through to the clipboard */ }
+    } catch (e) {
+      // A dismissed share sheet is an answer, not a failure: copy nothing.
+      if (e?.name === 'AbortError') return;
+    }
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
-    } catch { /* no clipboard access; the button did its best */ }
+    } catch {
+      // The clipboard is blocked (an embedded view, a denied permission): show
+      // the link itself so the traveller can copy it by hand.
+      setNotice({ key: 'dest.shareBlocked', url });
+    }
   };
 
   const exportPdf = async () => {
     if (pdfBusy || !d) return;
     if (!paywall.require('export')) return;
+    setNotice(null);
     setPdfBusy(true);
     try {
       const { downloadDestinationPdf } = await import('../lib/destinationPdf.js');
@@ -535,6 +558,7 @@ export function DestinationPage({
       });
     } catch (e) {
       console.error('pdf export failed', e);
+      setNotice({ key: 'dest.pdfFailed' });
     } finally {
       setPdfBusy(false);
     }
@@ -690,6 +714,14 @@ export function DestinationPage({
         </div>
       </div>
 
+      {notice && (
+        <p className="destp-notice" role="status">
+          {t(notice.key)}
+          {notice.url && <> <span className="destp-notice-url">{notice.url}</span></>}
+          <button type="button" className="destp-notice-x" onClick={() => setNotice(null)}>{t('dest.noticeDismiss')}</button>
+        </p>
+      )}
+
       <div className="destp-scroll" ref={scrollRef} onScroll={onScroll}>
         {/* The shared section rail (T165-b): anchors, the ink-fill pill on
             the section in view, shown once the head has scrolled away. */}
@@ -712,7 +744,7 @@ export function DestinationPage({
         <div className="destp-head" ref={headRef}>
           <div className="destp-head-main">
             <div className="destp-title-row">
-              <h2 className="destp-city">{city}</h2>
+              <h1 className="destp-city" ref={titleRef} tabIndex={-1}>{city}</h1>
               {verdict?.score != null && (
                 <button type="button" className="destp-score" onClick={() => jumpTo('rating')} title={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}>
                   <ScoreChip rating={verdict} size="lg" />
@@ -834,7 +866,7 @@ export function DestinationPage({
                 (T385): the receipt above is the trip total, unrounded, and
                 carries the one report button. */}
             {has.cost && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-cost"
                 icon={ReceiptIcon}
                 title={t('dest.costTitleAt')}
@@ -851,7 +883,7 @@ export function DestinationPage({
                 the traveller's month outlined, the cheap-bed months, the crowd
                 tier with its year, the bathing water and this week's forecast. */}
             {has.when && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-when"
                 icon={CalendarIcon}
                 title={t('dest.whenTitle')}
@@ -867,7 +899,7 @@ export function DestinationPage({
                 <BathingWater water={water} destination={destination} t={t} />
                 {weatherOn && forecast.length > 0 && (
                   <div className="destp-week">
-                    <h4 className="destp-subhead">{t('dest.weekTitle')}</h4>
+                    <h3 className="destp-subhead">{t('dest.weekTitle')}</h3>
                     <div className="xp-weather">
                       {forecast.map((day) => {
                         const Glyph = WEATHER_GLYPH[day.kind] || CloudIcon;
@@ -892,7 +924,7 @@ export function DestinationPage({
 
             {/* Getting there and around. */}
             {show.getting && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-getting"
                 icon={PlaneIcon}
                 title={t('dest.gettingTitle')}
@@ -933,7 +965,7 @@ export function DestinationPage({
                 outdoors within 20 km from every layer the Destinations tab
                 knows. One fold, one empty line when there is neither. */}
             {show.routes && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-routes"
                 icon={RouteIcon}
                 title={t('dest.walkRideTitle')}
@@ -944,7 +976,7 @@ export function DestinationPage({
                 {hasRoutes && <RoutesFromHere routes={routeRows} t={t} onOpen={onOpenFeature} />}
                 {hasAround && (
                   <div className="destp-around">
-                    {hasRoutes && <h4 className="destp-subhead">{t('dest.aroundTitle', { city })}</h4>}
+                    {hasRoutes && <h3 className="destp-subhead">{t('dest.aroundTitle', { city })}</h3>}
                     <AroundHere
                       city={city}
                       nearby={nearby}
@@ -973,7 +1005,7 @@ export function DestinationPage({
 
             {/* Best things to do: cards, grouped by how many guides agree. */}
             {has.do && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-do"
                 icon={CompassIcon}
                 title={t('dest.doTitle')}
@@ -1069,7 +1101,7 @@ export function DestinationPage({
 
             {/* Highlights and the one map, with its layers. */}
             {has.highlights && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-highlights"
                 icon={MapPinIcon}
                 title={t('dest.mapTitleV')}
@@ -1193,7 +1225,7 @@ export function DestinationPage({
             {/* Best trips from here. Each card is a real catalogue place, so
                 clicking one opens ITS page; the map layer shows the same set. */}
             {has.trips && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-trips"
                 icon={CompassIcon}
                 title={t('dest.tripsTitle')}
@@ -1238,7 +1270,7 @@ export function DestinationPage({
 
             {/* D7: the villages inside this area, from B1's members. */}
             {has.members && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-members"
                 icon={MapPinIcon}
                 title={members.length === 1 ? t('dest.membersTitle1') : t('dest.membersTitleN', { n: members.length })}
@@ -1254,7 +1286,7 @@ export function DestinationPage({
           <div className="destp-col is-side">
             {/* The verdict, with its argument. */}
             {has.rating && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-rating"
                 icon={StarIcon}
                 title={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}
@@ -1291,11 +1323,11 @@ export function DestinationPage({
 
             {/* Where to sleep: neighbourhood prices, tiers, the price curve. */}
             {has.sleep && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-sleep"
                 icon={BedIcon}
                 title={t('dest.sleepTitle')}
-                summary={bedFrom != null ? t('dest.sleepSummary', { eur: Math.round(bedFrom) }) : ''}
+                summary={bedFrom != null ? t('dest.sleepSummary', { eur: eurExact(bedFrom) }) : ''}
                 open={isOpen('sleep')}
                 onToggle={() => toggle('sleep')}
               >
@@ -1305,7 +1337,7 @@ export function DestinationPage({
 
             {/* Insider tips: rule codes with evidence behind every sentence. */}
             {has.tips && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-tips"
                 icon={BulbIcon}
                 title={t('dest.tipsTitleV')}
@@ -1333,7 +1365,7 @@ export function DestinationPage({
 
             {/* Festivals, led by when they happen. */}
             {has.festivals && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-festivals"
                 icon={CalendarIcon}
                 title={festivals.length === 1 ? t('dest.festTitle1') : t('dest.festTitleN', { n: festivals.length })}
@@ -1366,7 +1398,7 @@ export function DestinationPage({
             {/* Where to park: OSM spots with deeplinks, the city's own word
                 where the web check has run, and an honest provenance line. */}
             {has.park && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-park"
                 icon={ParkingIcon}
                 title={t('explore.parkTitle')}
@@ -1453,7 +1485,7 @@ export function DestinationPage({
 
             {/* What to bring for the month that matters here. */}
             {has.pack && (
-              <Fold level={3}
+              <Fold level={2}
                 id="sec-pack"
                 icon={BackpackIcon}
                 title={t('explore.packTitle')}
@@ -1481,7 +1513,7 @@ export function DestinationPage({
             )}
 
             {/* Explore further: every handover, honest about being a search. */}
-            <Fold level={3}
+            <Fold level={2}
               id="sec-further"
               icon={CompassIcon}
               title={t('explore.furtherTitle', { city })}

@@ -82,7 +82,7 @@ function NodeNetwork({ nn, t }) {
   if (!nn?.km) return null;
   return (
     <div className="drh-nodenet" data-testid="route-nodenet">
-      <h4 className="drh-head"><BikeIcon size={14} /> {t('route.nodeNetTitle')}</h4>
+      <h3 className="drh-head"><BikeIcon size={14} /> {t('route.nodeNetTitle')}</h3>
       <p className="drh-nn-line">
         {t('route.nodeNetLine', { km: nn.km, radius: nn.radius_km, n: nn.junctions })}
       </p>
@@ -107,7 +107,7 @@ export default function RoutesFromHere({ routes, t, onOpen }) {
     <div className="drh">
       {groups.map(([key, label, Icon]) => (
         <div className="drh-group" key={key}>
-          <h4 className="drh-head"><Icon size={14} /> {t(label)}</h4>
+          <h3 className="drh-head"><Icon size={14} /> {t(label)}</h3>
           <ul className="drh-list">
             {routes[key].map((row) => (
               <Row key={`${key}|${row.id}`} row={row} t={t} onOpen={onOpen} />

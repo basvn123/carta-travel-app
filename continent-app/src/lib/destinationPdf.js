@@ -36,9 +36,31 @@ const MONTH_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'Jul
 
 // Ink and tint, from the app's :root. White paper: a printed alabaster ground
 // is a wasted ink cartridge.
-const C = {
+// T405: the palette is read from the live tokens of src/styles/01-tokens.css
+// (T363-b: the PDF carried the pre-T363 accent and mute colours). The literal
+// object below is only the fallback for a token that cannot be read, such as
+// a value that is not a six-digit hex.
+const C_FALLBACK = {
   ink: '#0f172a', soft: '#414b5e', mute: '#7d8393', rule: '#e2ded1', ruleStrong: '#ccc7b8',
   accent: '#e05a47', rate: '#8f5a0c', rateBg: '#f6e6cb', dim: '#efece2', green: '#4a6a3a',
+};
+const tok = (name, fallback) => {
+  try {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback;
+  } catch { return fallback; }
+};
+const C = {
+  ink: tok('--ink', C_FALLBACK.ink),
+  soft: tok('--ink-soft', C_FALLBACK.soft),
+  mute: tok('--ink-mute', C_FALLBACK.mute),
+  rule: tok('--rule-soft', C_FALLBACK.rule),
+  ruleStrong: tok('--rule', C_FALLBACK.ruleStrong),
+  accent: tok('--accent', C_FALLBACK.accent),
+  rate: tok('--rate', C_FALLBACK.rate),
+  rateBg: tok('--rate-bg', C_FALLBACK.rateBg),
+  dim: tok('--paper-dim', C_FALLBACK.dim),
+  green: C_FALLBACK.green,
 };
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 
@@ -102,6 +124,8 @@ export async function downloadDestinationPdf({
   const getting = d.practical?.getting_there || {};
   const unesco = (d.place?.designations || []).some((g) => g.kind === 'unesco_whc');
   const eurFmt = (n) => (Number.isFinite(n) ? `EUR ${Math.round(n).toLocaleString('en-GB')}` : '');
+  // Receipt-like lines (tiers, neighbourhood nights) print to the cent, as the page does (T405).
+  const eurCents = (n) => (Number.isFinite(n) ? `EUR ${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '');
   const kmFmt = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
   const monthList = (ms) => (ms || []).map((m) => MONTHS[m - 1]).join(', ');
   const T = (key, vars) => clean(t(key, vars));
@@ -264,44 +288,139 @@ export async function downloadDestinationPdf({
     keyValue(glance);
   }
 
-  // ------------------------------------------------------------ must-sees
-  const hl = [...(d.highlights || [])].sort((a, b) => (b.rank_score || 0) - (a.rank_score || 0));
-  if (hl.length) {
-    h2(T('pdf.mustSee'));
-    const colW = (W - 6) / 2;
-    const measure = (h) => {
-      const nameL = wrap(h.name, 10, colW - 8, SANS, 'bold');
-      const factL = h.fact ? wrap(h.fact, 8.5, colW - 8) : [];
-      return nameL.length * lh(10) + lh(7.5) + factL.length * lh(8.5) + 2.5;
-    };
-    const draw = (h, i, x) => {
-      font(MONO, 'bold', 8, C.accent);
-      doc.text(String(i + 1), x, y + 0.6, { baseline: 'top' });
-      const nameL = wrap(h.name, 10, colW - 8, SANS, 'bold');
-      font(SANS, 'bold', 10, C.ink);
-      doc.text(nameL, x + 7, y, { baseline: 'top' });
-      let yy = y + nameL.length * lh(10);
-      font(MONO, 'normal', 7.5, C.mute);
-      doc.text([h.kind, h.dist_km != null ? kmFmt(h.dist_km) : ''].filter(Boolean).join('   '), x + 7, yy, { baseline: 'top' });
-      yy += lh(7.5);
-      if (h.fact) {
-        const factL = wrap(h.fact, 8.5, colW - 8);
-        font(SANS, 'normal', 8.5, C.soft);
-        doc.text(factL, x + 7, yy, { baseline: 'top' });
-        yy += factL.length * lh(8.5);
-      }
-      if (h.wikipedia) doc.link(x, y, colW, yy - y, { url: h.wikipedia });
-    };
-    for (let i = 0; i < hl.length; i += 2) {
-      const a = hl[i];
-      const b = hl[i + 1];
-      const rowH = Math.max(measure(a), b ? measure(b) : 0);
-      ensure(rowH);
-      draw(a, i, M);
-      if (b) draw(b, i + 1, M + colW + 6);
-      y += rowH;
+  // ------------------------------------------------------------ costs
+  if (cost?.dayEur != null) {
+    h2(T('cost.title'));
+    const rows = [[T('cost.bed'), eurFmt(cost.stayEur)], [T('cost.food'), eurFmt(cost.foodEur)]];
+    for (const [k, v] of rows) {
+      ensure(7);
+      font(SANS, 'normal', 9.5, C.ink);
+      doc.text(k, M, y, { baseline: 'top' });
+      font(MONO, 'normal', 9.5, C.ink);
+      doc.text(v, M + 100, y, { baseline: 'top', align: 'right' });
+      y += lh(9.5) + 1;
+      doc.setDrawColor(...hex(C.rule)); doc.setLineWidth(0.2); doc.line(M, y, M + 100, y);
+      y += 1;
     }
-    y += 1;
+    ensure(10);
+    doc.setDrawColor(...hex(C.ink)); doc.setLineWidth(0.5); doc.line(M, y, M + 100, y);
+    y += 2;
+    font(SANS, 'bold', 10.5, C.ink);
+    doc.text(T('cost.dayTotal'), M, y, { baseline: 'top' });
+    font(MONO, 'bold', 12, C.ink);
+    doc.text(eurFmt(cost.dayEur), M + 100, y - 0.5, { baseline: 'top', align: 'right' });
+    y += lh(12) + 1;
+    if (stayDays >= 2) {
+      font(SANS, 'normal', 9.5, C.rate);
+      doc.text(T('pdf.budget', { n: stayDays, eur: Math.round(cost.dayEur * stayDays).toLocaleString('en-GB') }), M, y, { baseline: 'top' });
+      y += lh(9.5) + 1;
+    }
+    para(`${clean(lifestyleLabel || '')} ${T('pdf.costNote')}`, { size: 8, color: C.mute, after: 2 });
+  }
+
+  // ------------------------------------------------------------ when to go
+  const normals = d.when?.normals;
+  if (normals?.length === 12) {
+    h2(T('explore.whenTitle'));
+    const best = new Set(d.when.best || []);
+    const colW = W / 12;
+    ensure(26);
+    normals.forEach((m, i) => {
+      const x = M + i * colW;
+      if (best.has(i + 1)) {
+        doc.setFillColor(...hex(C.rateBg));
+        doc.roundedRect(x + 0.4, y, colW - 0.8, 21, 1.2, 1.2, 'F');
+      }
+      font(MONO, 'normal', 7, C.mute);
+      doc.text(MONTHS[i], x + colW / 2, y + 2, { baseline: 'top', align: 'center' });
+      font(MONO, 'bold', 9, C.ink);
+      doc.text(`${Math.round(m[0])}°`, x + colW / 2, y + 6.5, { baseline: 'top', align: 'center' });
+      font(MONO, 'normal', 7.5, C.soft);
+      doc.text(`${Math.round(m[1])}°`, x + colW / 2, y + 11.5, { baseline: 'top', align: 'center' });
+      if (m[2] != null) {
+        font(MONO, 'normal', 6.5, C.mute);
+        doc.text(`${Math.round(m[2])}`, x + colW / 2, y + 16, { baseline: 'top', align: 'center' });
+      }
+    });
+    y += 23;
+    para(`${T('pdf.monthsNote')} ${T('pdf.rainNote')}${d.when.best?.length ? ` ${T('pdf.bestMonths', { months: monthList(d.when.best) })}` : ''}`, { size: 8, color: C.mute, after: 2 });
+    if (d.when.crowding?.label) para(`${T('pdf.crowding')}: ${d.when.crowding.label} (Eurostat ${d.when.crowding.year || ''}).`, { size: 9, color: C.soft, after: 2 });
+  }
+
+  // ------------------------------------------------------------ routes
+  // ROUTES.md R6: the same rows the page shows, from the same key, measured
+  // to the nearest point on the line and named for the path.
+  const routes = d.routes || {};
+  if ((routes.hiking?.length || 0) + (routes.cycling?.length || 0) > 0) {
+    h2(T('dest.routesTitle'));
+    for (const [key, label] of [['hiking', 'dest.routesHiking'],
+      ['cycling', 'dest.routesCycling']]) {
+      const rows = routes[key] || [];
+      if (!rows.length) continue;
+      h3(T(label));
+      for (const r of rows) {
+        const bits = [];
+        if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
+        const up = trailClimbUp(r);
+        if (up != null) bits.push(`${Math.round(up)} m up`);
+        if (r.car_free) bits.push(T('dest.routesCarFree'));
+        ensure(lh(9) + 1.5);
+        font(SANS, 'normal', 9, C.ink);
+        doc.text(doc.splitTextToSize(clean(r.name), W - 62)[0], M, y, { baseline: 'top' });
+        font(MONO, 'normal', 7.5, C.mute);
+        doc.text(bits.join('  '), M + W - 60, y + 0.4, { baseline: 'top' });
+        font(MONO, 'bold', 8, C.soft);
+        doc.text(`${kmFmt(r.km)} ${T(`dir.${r.dir}`)}`, PAGE_W - M, y + 0.3,
+          { baseline: 'top', align: 'right' });
+        y += lh(9) + 1.2;
+        if (r.stage?.name) {
+          ensure(lh(7.5) + 1);
+          font(SANS, 'italic', 7.5, C.mute);
+          doc.text(doc.splitTextToSize(
+            clean(T('dest.routesStretch', { name: r.stage.name })), W - 62)[0],
+          M + 3, y, { baseline: 'top' });
+          y += lh(7.5) + 0.8;
+        }
+      }
+      y += 1.5;
+    }
+    font(SANS, 'normal', 7.5, C.mute);
+    const note = doc.splitTextToSize(clean(T('dest.routesCoverage')), W);
+    ensure(note.length * lh(7.5));
+    doc.text(note, M, y, { baseline: 'top' });
+    y += note.length * lh(7.5) + 2;
+  }
+
+  // ------------------------------------------------------------ around
+  const around = d.around;
+  const LAYERS = ['trails', 'cycling', 'mountains', 'lakes', 'beaches'];
+  if (around && LAYERS.some((l) => around[l]?.length)) {
+    h2(T('pdf.around', { km: around.radius_km || 20 }));
+    for (const layer of LAYERS) {
+      const rows = around[layer] || [];
+      if (!rows.length) continue;
+      h3(`${T(`dest.layerKind.${layer}`)}   ${around.counts?.[layer] || rows.length}`);
+      for (const r of rows.slice(0, 6)) {
+        const bits = [];
+        if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
+        // Same reading as AroundHere: the climb uphill, the grade's label.
+        const up = trailClimbUp(r);
+        if (up != null) bits.push(`${Math.round(up)} m up`);
+        if (r.elev_m != null) bits.push(`${Math.round(r.elev_m)} m`);
+        const gradeKey = gradeLabelKey(r);
+        if (gradeKey) bits.push(T(gradeKey));
+        if (r.water) bits.push(r.water);
+        ensure(lh(9) + 1.5);
+        font(SANS, 'normal', 9, C.ink);
+        doc.text(doc.splitTextToSize(clean(r.name), W - 62)[0], M, y, { baseline: 'top' });
+        font(MONO, 'normal', 7.5, C.mute);
+        doc.text(bits.join('  '), M + W - 60, y + 0.4, { baseline: 'top' });
+        font(MONO, 'bold', 8, C.soft);
+        doc.text(`${kmFmt(r.km)} ${r.bearing || ''}${r.score != null ? `   ${r.score.toFixed(1)}` : ''}`, PAGE_W - M, y + 0.3, { baseline: 'top', align: 'right' });
+        y += lh(9) + 1.2;
+      }
+      y += 1.5;
+    }
   }
 
   // ------------------------------------------------------------ things to do
@@ -353,80 +472,44 @@ export async function downloadDestinationPdf({
     }
   }
 
-  // ------------------------------------------------------------ around
-  const around = d.around;
-  const LAYERS = ['trails', 'cycling', 'mountains', 'lakes', 'beaches'];
-  if (around && LAYERS.some((l) => around[l]?.length)) {
-    h2(T('pdf.around', { km: around.radius_km || 20 }));
-    for (const layer of LAYERS) {
-      const rows = around[layer] || [];
-      if (!rows.length) continue;
-      h3(`${T(`dest.layerKind.${layer}`)}   ${around.counts?.[layer] || rows.length}`);
-      for (const r of rows.slice(0, 6)) {
-        const bits = [];
-        if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
-        // Same reading as AroundHere: the climb uphill, the grade's label.
-        const up = trailClimbUp(r);
-        if (up != null) bits.push(`${Math.round(up)} m up`);
-        if (r.elev_m != null) bits.push(`${Math.round(r.elev_m)} m`);
-        const gradeKey = gradeLabelKey(r);
-        if (gradeKey) bits.push(T(gradeKey));
-        if (r.water) bits.push(r.water);
-        ensure(lh(9) + 1.5);
-        font(SANS, 'normal', 9, C.ink);
-        doc.text(doc.splitTextToSize(clean(r.name), W - 62)[0], M, y, { baseline: 'top' });
-        font(MONO, 'normal', 7.5, C.mute);
-        doc.text(bits.join('  '), M + W - 60, y + 0.4, { baseline: 'top' });
-        font(MONO, 'bold', 8, C.soft);
-        doc.text(`${kmFmt(r.km)} ${r.bearing || ''}${r.score != null ? `   ${r.score.toFixed(1)}` : ''}`, PAGE_W - M, y + 0.3, { baseline: 'top', align: 'right' });
-        y += lh(9) + 1.2;
+  // ------------------------------------------------------------ must-sees
+  const hl = [...(d.highlights || [])].sort((a, b) => (b.rank_score || 0) - (a.rank_score || 0));
+  if (hl.length) {
+    h2(T('pdf.mustSee'));
+    const colW = (W - 6) / 2;
+    const measure = (h) => {
+      const nameL = wrap(h.name, 10, colW - 8, SANS, 'bold');
+      const factL = h.fact ? wrap(h.fact, 8.5, colW - 8) : [];
+      return nameL.length * lh(10) + lh(7.5) + factL.length * lh(8.5) + 2.5;
+    };
+    const draw = (h, i, x) => {
+      font(MONO, 'bold', 8, C.accent);
+      doc.text(String(i + 1), x, y + 0.6, { baseline: 'top' });
+      const nameL = wrap(h.name, 10, colW - 8, SANS, 'bold');
+      font(SANS, 'bold', 10, C.ink);
+      doc.text(nameL, x + 7, y, { baseline: 'top' });
+      let yy = y + nameL.length * lh(10);
+      font(MONO, 'normal', 7.5, C.mute);
+      doc.text([h.kind, h.dist_km != null ? kmFmt(h.dist_km) : ''].filter(Boolean).join('   '), x + 7, yy, { baseline: 'top' });
+      yy += lh(7.5);
+      if (h.fact) {
+        const factL = wrap(h.fact, 8.5, colW - 8);
+        font(SANS, 'normal', 8.5, C.soft);
+        doc.text(factL, x + 7, yy, { baseline: 'top' });
+        yy += factL.length * lh(8.5);
       }
-      y += 1.5;
+      if (h.wikipedia) doc.link(x, y, colW, yy - y, { url: h.wikipedia });
+    };
+    for (let i = 0; i < hl.length; i += 2) {
+      const a = hl[i];
+      const b = hl[i + 1];
+      const rowH = Math.max(measure(a), b ? measure(b) : 0);
+      ensure(rowH);
+      draw(a, i, M);
+      if (b) draw(b, i + 1, M + colW + 6);
+      y += rowH;
     }
-  }
-
-  // ------------------------------------------------------------ routes
-  // ROUTES.md R6: the same rows the page shows, from the same key, measured
-  // to the nearest point on the line and named for the path.
-  const routes = d.routes || {};
-  if ((routes.hiking?.length || 0) + (routes.cycling?.length || 0) > 0) {
-    h2(T('dest.routesTitle'));
-    for (const [key, label] of [['hiking', 'dest.routesHiking'],
-      ['cycling', 'dest.routesCycling']]) {
-      const rows = routes[key] || [];
-      if (!rows.length) continue;
-      h3(T(label));
-      for (const r of rows) {
-        const bits = [];
-        if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
-        const up = trailClimbUp(r);
-        if (up != null) bits.push(`${Math.round(up)} m up`);
-        if (r.car_free) bits.push(T('dest.routesCarFree'));
-        ensure(lh(9) + 1.5);
-        font(SANS, 'normal', 9, C.ink);
-        doc.text(doc.splitTextToSize(clean(r.name), W - 62)[0], M, y, { baseline: 'top' });
-        font(MONO, 'normal', 7.5, C.mute);
-        doc.text(bits.join('  '), M + W - 60, y + 0.4, { baseline: 'top' });
-        font(MONO, 'bold', 8, C.soft);
-        doc.text(`${kmFmt(r.km)} ${T(`dir.${r.dir}`)}`, PAGE_W - M, y + 0.3,
-          { baseline: 'top', align: 'right' });
-        y += lh(9) + 1.2;
-        if (r.stage?.name) {
-          ensure(lh(7.5) + 1);
-          font(SANS, 'italic', 7.5, C.mute);
-          doc.text(doc.splitTextToSize(
-            clean(T('dest.routesStretch', { name: r.stage.name })), W - 62)[0],
-          M + 3, y, { baseline: 'top' });
-          y += lh(7.5) + 0.8;
-        }
-      }
-      y += 1.5;
-    }
-    font(SANS, 'normal', 7.5, C.mute);
-    const note = doc.splitTextToSize(clean(T('dest.routesCoverage')), W);
-    ensure(note.length * lh(7.5));
-    doc.text(note, M, y, { baseline: 'top' });
-    y += note.length * lh(7.5) + 2;
+    y += 1;
   }
 
   // ------------------------------------------------------------ trips
@@ -462,35 +545,6 @@ export async function downloadDestinationPdf({
     }
   }
 
-  // ------------------------------------------------------------ when to go
-  const normals = d.when?.normals;
-  if (normals?.length === 12) {
-    h2(T('explore.whenTitle'));
-    const best = new Set(d.when.best || []);
-    const colW = W / 12;
-    ensure(26);
-    normals.forEach((m, i) => {
-      const x = M + i * colW;
-      if (best.has(i + 1)) {
-        doc.setFillColor(...hex(C.rateBg));
-        doc.roundedRect(x + 0.4, y, colW - 0.8, 21, 1.2, 1.2, 'F');
-      }
-      font(MONO, 'normal', 7, C.mute);
-      doc.text(MONTHS[i], x + colW / 2, y + 2, { baseline: 'top', align: 'center' });
-      font(MONO, 'bold', 9, C.ink);
-      doc.text(`${Math.round(m[0])}°`, x + colW / 2, y + 6.5, { baseline: 'top', align: 'center' });
-      font(MONO, 'normal', 7.5, C.soft);
-      doc.text(`${Math.round(m[1])}°`, x + colW / 2, y + 11.5, { baseline: 'top', align: 'center' });
-      if (m[2] != null) {
-        font(MONO, 'normal', 6.5, C.mute);
-        doc.text(`${Math.round(m[2])}`, x + colW / 2, y + 16, { baseline: 'top', align: 'center' });
-      }
-    });
-    y += 23;
-    para(`${T('pdf.monthsNote')} ${T('pdf.rainNote')}${d.when.best?.length ? ` ${T('pdf.bestMonths', { months: monthList(d.when.best) })}` : ''}`, { size: 8, color: C.mute, after: 2 });
-    if (d.when.crowding?.label) para(`${T('pdf.crowding')}: ${d.when.crowding.label} (Eurostat ${d.when.crowding.year || ''}).`, { size: 9, color: C.soft, after: 2 });
-  }
-
   // ------------------------------------------------------------ sleep
   const sleep = d.sleep;
   if (sleep && (sleep.tiers || sleep.neighbourhoods?.length || sleep.seasonality)) {
@@ -501,7 +555,7 @@ export async function downloadDestinationPdf({
       ['dest.tierHotel', tiers.hotel_night_eur], ['pdf.hotel4', tiers.hotel4_night_eur],
     ].filter(([, v]) => v != null);
     if (tierRows.length) {
-      keyValue(tierRows.map(([k, v]) => [T(k, { eur: Math.round(v) }).replace(/\s*(EUR|€)\s*\d[\d.,]*/i, '').replace(/^\w/, (c) => c.toUpperCase()), eurFmt(v)]), { labelW: 60 });
+      keyValue(tierRows.map(([k, v]) => [T(k, { eur: '' }).replace(/\s*(EUR|€)\s*\d[\d.,]*/i, '').trim().replace(/^\w/, (c) => c.toUpperCase()), eurCents(v)]), { labelW: 60 });
     }
     if (sleep.neighbourhoods?.length) {
       h3(T('pdf.neighbourhoods'));
@@ -515,7 +569,7 @@ export async function downloadDestinationPdf({
           font(SANS, 'normal', 9, C.ink);
           doc.text(doc.splitTextToSize(clean(n.name), colW - 22)[0], x, y, { baseline: 'top' });
           font(MONO, 'bold', 8.5, C.ink);
-          doc.text(n.night_eur != null ? eurFmt(n.night_eur) : '', x + colW, y + 0.3, { baseline: 'top', align: 'right' });
+          doc.text(n.night_eur != null ? eurCents(n.night_eur) : '', x + colW, y + 0.3, { baseline: 'top', align: 'right' });
         });
         y += lh(9) + 1.2;
       }
@@ -525,61 +579,6 @@ export async function downloadDestinationPdf({
       const sMin = Math.min(...sleep.seasonality);
       const cheap = sleep.seasonality.indexOf(sMin);
       if (cheap >= 0) para(T('dest.cheapestMonth', { month: MONTH_LONG[cheap] }) + '.', { size: 9, color: C.soft });
-    }
-  }
-
-  // ------------------------------------------------------------ costs
-  if (cost?.dayEur != null) {
-    h2(T('cost.title'));
-    const rows = [[T('cost.bed'), eurFmt(cost.stayEur)], [T('cost.food'), eurFmt(cost.foodEur)]];
-    for (const [k, v] of rows) {
-      ensure(7);
-      font(SANS, 'normal', 9.5, C.ink);
-      doc.text(k, M, y, { baseline: 'top' });
-      font(MONO, 'normal', 9.5, C.ink);
-      doc.text(v, M + 100, y, { baseline: 'top', align: 'right' });
-      y += lh(9.5) + 1;
-      doc.setDrawColor(...hex(C.rule)); doc.setLineWidth(0.2); doc.line(M, y, M + 100, y);
-      y += 1;
-    }
-    ensure(10);
-    doc.setDrawColor(...hex(C.ink)); doc.setLineWidth(0.5); doc.line(M, y, M + 100, y);
-    y += 2;
-    font(SANS, 'bold', 10.5, C.ink);
-    doc.text(T('cost.dayTotal'), M, y, { baseline: 'top' });
-    font(MONO, 'bold', 12, C.ink);
-    doc.text(eurFmt(cost.dayEur), M + 100, y - 0.5, { baseline: 'top', align: 'right' });
-    y += lh(12) + 1;
-    if (stayDays >= 2) {
-      font(SANS, 'normal', 9.5, C.rate);
-      doc.text(T('pdf.budget', { n: stayDays, eur: Math.round(cost.dayEur * stayDays).toLocaleString('en-GB') }), M, y, { baseline: 'top' });
-      y += lh(9.5) + 1;
-    }
-    para(`${clean(lifestyleLabel || '')} ${T('pdf.costNote')}`, { size: 8, color: C.mute, after: 2 });
-  }
-
-  // ------------------------------------------------------------ festivals
-  const fests = d.festivals || [];
-  if (fests.length) {
-    h2(T('dest.festivalsTitle'));
-    for (const f of fests) {
-      const whatL = f.what ? wrap(f.what, 8.8, W - 32) : [];
-      const h = Math.max(lh(9.5) + whatL.length * lh(8.8), lh(9.5)) + 2.5;
-      ensure(h);
-      font(MONO, 'bold', 8, f.months?.length ? C.rate : C.mute);
-      doc.text(f.months?.length ? monthList(f.months) : T('pdf.dateVaries'), M, y + 0.5, { baseline: 'top' });
-      font(SANS, 'bold', 9.5, C.ink);
-      doc.text(clean(f.name), M + 30, y, { baseline: 'top' });
-      let yy = y + lh(9.5);
-      if (whatL.length) {
-        font(SANS, 'normal', 8.8, C.soft);
-        doc.text(whatL, M + 30, yy, { baseline: 'top' });
-        yy += whatL.length * lh(8.8);
-      }
-      if (f.url) doc.link(M + 30, y, W - 30, yy - y, { url: f.url });
-      y = yy + 1.6;
-      rule();
-      y += 1.2;
     }
   }
 
@@ -609,6 +608,31 @@ export async function downloadDestinationPdf({
       yy += ls.length * lh(9.5) + 1.4;
     });
     y += h + 3;
+  }
+
+  // ------------------------------------------------------------ festivals
+  const fests = d.festivals || [];
+  if (fests.length) {
+    h2(T('dest.festivalsTitle'));
+    for (const f of fests) {
+      const whatL = f.what ? wrap(f.what, 8.8, W - 32) : [];
+      const h = Math.max(lh(9.5) + whatL.length * lh(8.8), lh(9.5)) + 2.5;
+      ensure(h);
+      font(MONO, 'bold', 8, f.months?.length ? C.rate : C.mute);
+      doc.text(f.months?.length ? monthList(f.months) : T('pdf.dateVaries'), M, y + 0.5, { baseline: 'top' });
+      font(SANS, 'bold', 9.5, C.ink);
+      doc.text(clean(f.name), M + 30, y, { baseline: 'top' });
+      let yy = y + lh(9.5);
+      if (whatL.length) {
+        font(SANS, 'normal', 8.8, C.soft);
+        doc.text(whatL, M + 30, yy, { baseline: 'top' });
+        yy += whatL.length * lh(8.8);
+      }
+      if (f.url) doc.link(M + 30, y, W - 30, yy - y, { url: f.url });
+      y = yy + 1.6;
+      rule();
+      y += 1.2;
+    }
   }
 
   // ------------------------------------------------------------ parking

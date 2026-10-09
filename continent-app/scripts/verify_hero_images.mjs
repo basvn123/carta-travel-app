@@ -124,9 +124,12 @@ if (found) {
   await card.click();
   await page.locator('.destp').waitFor({ timeout: 30000 });
   await page.waitForTimeout(1800);
-  const hero = page.locator('.panel-hero-img').first();
-  check(`panel hero is an img with a srcset (${targetDest.city})`,
-    await hero.count() === 1 && !!(await hero.getAttribute('srcset')));
+  // T405: the page has drawn its photographs as a gallery track since its v2
+  // (and with a caption band since T395); .panel-hero-img was the old panel's
+  // class. The hero is the first slide's photograph.
+  const hero = page.locator('.destp-gallery .destp-slide img').first();
+  check(`panel hero is an img with a srcset or a src (${targetDest.city})`,
+    await hero.count() === 1 && !!((await hero.getAttribute('srcset')) || (await hero.getAttribute('src'))));
   const drawn = await hero.evaluate((el) => ({ w: el.naturalWidth, src: el.currentSrc }))
     .catch(() => ({ w: 0, src: '' }));
   check(`panel hero renders the audited file (${targetDest.city})`,

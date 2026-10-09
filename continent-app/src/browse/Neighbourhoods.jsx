@@ -1,6 +1,7 @@
 import React from 'react';
 import { BedIcon } from '../components/Icons.jsx';
 import { MONTHS_SHORT } from './ClimateStrip.jsx';
+import { eurExact } from '../lib/format.js';
 
 /**
  * Where to sleep (PLAN.md D3): the neighbourhood prices the wire always
@@ -33,7 +34,7 @@ export function Neighbourhoods({ sleep, t }) {
               <span style={{ width: `${Math.max(6, ((n.night_eur || 0) / max) * 100)}%` }} />
             </span>
             <span className="destp-hood-eur mono">
-              {n.night_eur != null ? `€${n.night_eur}` : ''}
+              {n.night_eur != null ? eurExact(n.night_eur) : ''}
             </span>
           </li>
         ))}
@@ -45,11 +46,11 @@ export function Neighbourhoods({ sleep, t }) {
           <BedIcon size={13} />
           {[
             sleep.tiers.dorm_pp_night_eur != null
-              && t('dest.tierDorm', { eur: Math.round(sleep.tiers.dorm_pp_night_eur) }),
+              && t('dest.tierDorm', { eur: eurExact(sleep.tiers.dorm_pp_night_eur) }),
             sleep.tiers.private_room_night_eur != null
-              && t('dest.tierPrivate', { eur: Math.round(sleep.tiers.private_room_night_eur) }),
+              && t('dest.tierPrivate', { eur: eurExact(sleep.tiers.private_room_night_eur) }),
             sleep.tiers.hotel_night_eur != null
-              && t('dest.tierHotel', { eur: Math.round(sleep.tiers.hotel_night_eur) }),
+              && t('dest.tierHotel', { eur: eurExact(sleep.tiers.hotel_night_eur) }),
           ].filter(Boolean).map((s, i) => (
             <span key={s} className="destp-sleep-tier">{i > 0 && <span className="destp-sleep-sep" aria-hidden="true" />}{s}</span>
           ))}
