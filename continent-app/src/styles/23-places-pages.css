@@ -77,12 +77,9 @@
   transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out),
     border-color var(--dur-1) var(--ease-out);
 }
-.places-cat span {
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+/* T404: a long label (Radfahren, Wandelroutes) wraps at 360 px instead of
+   losing letters to an ellipsis; 63-v6-destinations.css sets the wrap. */
+.places-cat span { max-width: 100%; }
 /* Six categories, not five. At 390px the labels are 59px apart and
    "Mountains" lost its last two letters to the ellipsis, so the rail tightens
    on a narrow phone rather than scrolling: a brand new category nobody knows
@@ -135,7 +132,7 @@
   flex: 0 0 auto;
   padding: 5px 12px 5px 5px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--bg-card);
   font-size: 12px;
   font-weight: 600;
@@ -364,7 +361,7 @@
   max-width: 190px;
   padding: 0 10px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--paper-dim);
   font-size: 12.5px;
   font-weight: 600;

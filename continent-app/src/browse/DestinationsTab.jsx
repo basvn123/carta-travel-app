@@ -1429,6 +1429,11 @@ export function DestinationsTab({
     </div>
   );
 
+  // A list the typed words emptied (no chip, no country, no place set): the
+  // same module as a chip-emptied list, with the one button that undoes it
+  // (brief V5-5: every empty path is one of the two modules).
+  const queryEmpty = (msgKey) => chipsEmpty(msgKey, () => setQuery(''), 'empty.clearSearch');
+
   // The honest stubs of the walks list (T124): famous walks Carta cannot
   // build, loaded for the country the list is answering for.
   const [stubs, setStubs] = useState([]);
@@ -3302,7 +3307,7 @@ export function DestinationsTab({
                     ? radiusEmpty('beach')
                     : typedCc
                       ? countryEmpty('beach', typedCc)
-                      : <p className="places-empty">{t('beach.noneMatch')}</p>
+                      : queryEmpty('beach.noneMatch')
             )}
 
             {/* Not loaded yet (the first frame, before the fetch starts): the
@@ -3410,7 +3415,7 @@ export function DestinationsTab({
                     ? radiusEmpty('lake')
                     : (absentLakeCountry || typedCc)
                       ? countryEmpty('lake', absentLakeCountry || typedCc)
-                      : <p className="places-empty">{t('lake.noneMatch')}</p>
+                      : queryEmpty('lake.noneMatch')
             )}
 
             {!lakesLoading && !lakeRows && !layerError.lakes && (
@@ -3528,7 +3533,7 @@ export function DestinationsTab({
                     ? radiusEmpty('mountain')
                     : (absentMountainCountry || typedCc)
                       ? countryEmpty('mountain', absentMountainCountry || typedCc)
-                      : <p className="places-empty">{t('mtn.noneMatch')}</p>
+                      : queryEmpty('mtn.noneMatch')
             )}
 
             {!mountainsLoading && !mountainRows && !layerError.mountains && (
@@ -3555,7 +3560,7 @@ export function DestinationsTab({
         {isCycleCat && (
           <div className="places-list pcard-grid" data-testid="cycle-list">
             {layerError.cycling && (
-              <LayerError onRetry={() => retryLayer('cycling')} t={t} />
+              <LayerError onRetry={() => retryLayer('cycling')} t={t} msg="cycle.loadFailed" />
             )}
 
             {cyclingLoading && <PlaceCardSkeletons label={t('card.loading')} />}
@@ -3667,7 +3672,7 @@ export function DestinationsTab({
                       ? radiusEmpty('cycling')
                       : typedCc
                         ? countryEmpty('cycling', typedCc)
-                        : <p className="places-empty">{t('cycle.noneMatch')}</p>
+                        : queryEmpty('cycle.noneMatch')
                 )}
 
                 {visible < cycleTotal && (
@@ -3728,7 +3733,7 @@ export function DestinationsTab({
         {isItinCat && (
           <div className="places-list">
             {layerError.trips && (
-              <LayerError onRetry={() => retryLayer('trips')} t={t} />
+              <LayerError onRetry={() => retryLayer('trips')} t={t} msg="trip.loadFailed" />
             )}
 
             {/* itinRows === null is this list's loading state, which is also
@@ -3829,7 +3834,7 @@ export function DestinationsTab({
             )}
 
             {!showCountryIndex && layerError.trails && (
-              <LayerError onRetry={() => retryLayer('trails')} t={t} />
+              <LayerError onRetry={() => retryLayer('trails')} t={t} msg="trails.loadFailed" />
             )}
 
             {!showCountryIndex && trailsLoading && !layerError.trails && <PlaceCardSkeletons label={t('card.loading')} />}

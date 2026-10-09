@@ -38,7 +38,7 @@ import { ChevronRightIcon, RouteIcon } from '../components/Icons.jsx';
 const ICON_SIZES = '(max-width: 768px) 50vw, min(30vw, 380px)';
 const RAIL_SIZES = '200px';
 
-function Photo({ url, sizes, eager = false }) {
+function Photo({ url, sizes, eager = false, first = false }) {
   if (!url) {
     return (
       <span className="railcard-img open-noimg" aria-hidden="true">
@@ -56,12 +56,13 @@ function Photo({ url, sizes, eager = false }) {
       width={4}
       height={3}
       loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={first ? 'high' : undefined}
       decoding="async"
     />
   );
 }
 
-function Card({ row, describe, photo, onOpen, sizes, eager, className, sharedKey }) {
+function Card({ row, describe, photo, onOpen, sizes, eager, first, className, sharedKey }) {
   const d = describe(row);
   const key = sharedKey ? sharedKey(row) : null;
   const open = (e) => {
@@ -75,7 +76,7 @@ function Card({ row, describe, photo, onOpen, sizes, eager, className, sharedKey
       onClick={open}
     >
       <span className="railcard-media">
-        <Photo url={photo(row)} sizes={sizes} eager={eager} />
+        <Photo url={photo(row)} sizes={sizes} eager={eager} first={first} />
       </span>
       <span className="railcard-body">
         <span className="railcard-name">{d.name}</span>
@@ -99,7 +100,7 @@ function Card({ row, describe, photo, onOpen, sizes, eager, className, sharedKey
  * reached, even when the last page is a partial one.
  */
 function useStripPosition(ref) {
-  const [pos, setPos] = useState({ pages: 1, page: 0, atStart: true, atEnd: true });
+  const [pos, setPos] = useState({ pages: 1, page: 0, atStart: true, atEnd: true, first: 1, last: 1, total: 0 });
   const measure = useCallback(() => {
     const el = ref.current;
     if (!el) return;
@@ -108,10 +109,24 @@ function useStripPosition(ref) {
     const pages = Math.max(1, Math.ceil(el.scrollWidth / w - 0.05));
     const atEnd = el.scrollLeft >= max - 2;
     const page = atEnd ? pages - 1 : Math.min(pages - 1, Math.round(el.scrollLeft / w));
+    // Which cards are whole in view, for the mono position (rule Rails).
+    const kids = Array.from(el.children);
+    const left = el.scrollLeft;
+    let first = 0;
+    let last = 0;
+    kids.forEach((k, i) => {
+      const inView = k.offsetLeft - el.offsetLeft >= left - 2
+        && k.offsetLeft - el.offsetLeft + k.offsetWidth <= left + w + 2;
+      if (inView) { if (!first) first = i + 1; last = i + 1; }
+    });
+    if (!first) { first = 1; last = 1; }
+    const total = kids.length;
+    const atStart = el.scrollLeft <= 2;
     setPos((cur) => (cur.pages === pages && cur.page === page
-      && cur.atStart === (el.scrollLeft <= 2) && cur.atEnd === atEnd
+      && cur.atStart === atStart && cur.atEnd === atEnd
+      && cur.first === first && cur.last === last && cur.total === total
       ? cur
-      : { pages, page, atStart: el.scrollLeft <= 2, atEnd }));
+      : { pages, page, atStart, atEnd, first, last, total }));
   }, [ref]);
   useEffect(() => {
     const el = ref.current;
@@ -137,6 +152,21 @@ function useStripPosition(ref) {
 function Rail({ rail, describe, photo, onOpen, t, sharedKey }) {
   const stripRef = useRef(null);
   const pos = useStripPosition(stripRef);
+  // Arrow keys on a focused card move to its neighbour and bring it into
+  // view (rule Rails; the day track's pattern). Tab still walks every card,
+  // so the arrows are a shortcut and never the only way.
+  const onKeyDown = (e) => {
+    const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (!dir || e.altKey || e.ctrlKey || e.metaKey) return;
+    const cards = Array.from(stripRef.current?.querySelectorAll('.railcard') || []);
+    const at = cards.indexOf(document.activeElement);
+    if (at < 0) return;
+    const next = cards[at + dir];
+    if (!next) return;
+    e.preventDefault();
+    next.focus({ preventScroll: true });
+    next.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: scrollBehavior() });
+  };
   const page = (dir) => {
     const el = stripRef.current;
     if (!el) return;
@@ -167,7 +197,8 @@ function Rail({ rail, describe, photo, onOpen, t, sharedKey }) {
           </button>
         </span>
       </div>
-      <div className="xrails-strip open-strip" ref={stripRef}>
+      <div className="xrails-strip open-strip" ref={stripRef} role="group"
+        aria-label={t('open.railLabel', { name: rail.title })} onKeyDown={onKeyDown}>
         {rail.rows.map((row) => (
           <Card
             key={row.id}
@@ -184,10 +215,15 @@ function Rail({ rail, describe, photo, onOpen, t, sharedKey }) {
       {/* Where the strip is, not a control: the arrows and a swipe move it,
           so the dots are hidden from assistive technology. */}
       {pos.pages > 1 && (
-        <span className="open-dots" aria-hidden="true">
-          {Array.from({ length: Math.min(pos.pages, 8) }, (_, i) => (
-            <span key={i} className={`open-dot ${i === Math.min(pos.page, 7) ? 'on' : ''}`} />
-          ))}
+        <span className="open-pos" aria-hidden="true">
+          <span className="open-dots">
+            {Array.from({ length: Math.min(pos.pages, 8) }, (_, i) => (
+              <span key={i} className={`open-dot ${i === Math.min(pos.page, 7) ? 'on' : ''}`} />
+            ))}
+          </span>
+          <span className="open-pos-n">
+            {t('open.railPos', { from: pos.first, to: pos.last, n: pos.total })}
+          </span>
         </span>
       )}
     </section>
@@ -229,6 +265,7 @@ export function SectionOpening({
                   onOpen={onOpen}
                   sizes={ICON_SIZES}
                   eager={i < 3}
+                  first={i === 0}
                   className="open-icon"
                   sharedKey={sharedKey}
                 />

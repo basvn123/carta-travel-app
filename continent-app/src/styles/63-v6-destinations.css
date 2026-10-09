@@ -709,3 +709,102 @@
   .places-nearme-btn:active,
   .places-toolbar .places-filter-btn:active { transform: none; }
 }
+
+/* ==========================================================================
+   T404 (V5): harden, adapt and polish. Controls at the tap floor, words in
+   the sans and numbers in the mono, a rail you can walk with the keys, long
+   German and Dutch labels that wrap instead of spilling, and every empty and
+   slow path in the house voice. docs/design-v6/plans/V5-destinations.md has
+   the list in order.
+   ========================================================================== */
+
+/* -- 1. Control rules (brief V5-1, rows T384-l and T394-i) ------------------ */
+
+/* Facet chips are filters, not status chips, so they take the control radius
+   (23-places-pages.css sets 6 px) and the target floor: 32 px on a fine
+   pointer, --tap on a coarse one (the sheet's chips already are). */
+.places-class { min-height: 32px; }
+.places-class-n { font-size: 11px; }
+@media (pointer: coarse) {
+  .places-class { min-height: var(--tap); }
+  /* The country picker and the locate crosshair, in landscape too (the
+     26-shortlist-extras floor only covers max-width: 768px). */
+  .places-country,
+  .country-picker .places-country { min-height: var(--tap); }
+  .places-locate { min-width: var(--tap); min-height: var(--tap); width: var(--tap); height: var(--tap); }
+  .side-sort,
+  .places-sort { min-height: var(--tap); }
+}
+
+/* A card value that is a word (Sand, W, Excellent) is not a measurement, so
+   it sets in the sans; the numbers keep the mono (carta-design "Mono"). */
+.pcard-v-n.is-word {
+  font-family: var(--ui);
+  font-weight: 600;
+}
+
+/* -- 3. Rails you can walk with the keys (rule Rails) ----------------------- */
+
+/* The dots and the mono position share one line under the strip. The dots
+   stay hidden from assistive technology (they are aria-hidden with it). */
+.open-pos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+.open-pos .open-dots { margin-top: 0; justify-content: flex-start; }
+.open-pos-n {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+/* The focused card shows the 2 px ring on the card, not on the strip. */
+.open-bands .railcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* -- 5. Long words (brief V5-3): German and Dutch at 360 px ---------------- */
+
+.places-cat > span,
+.side-cat > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  line-height: 1.15;
+  text-align: center;
+}
+.open-cut > span:first-child { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+.places-class { max-width: 100%; }
+.places-class > span:not(.places-class-dot):not(.places-class-n) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.open-icons-title,
+.open-gridhead,
+.xrails-title,
+.railcard-name,
+.pcard-title { overflow-wrap: anywhere; hyphens: auto; }
+.country-picker-label { min-width: 0; }
+
+/* -- 7. Empty, error and slow states (brief V5-5) --------------------------- */
+
+/* A skeleton still on screen after five seconds says so, once, over the
+   whole grid row; it never replaces the skeleton. */
+.places-slow {
+  grid-column: 1 / -1;
+  margin: 0 0 var(--space-2);
+  font-family: var(--ui);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+/* The one button of an emptied list is a control at the tap floor. */
+.places-empty .cov-empty-btn { min-height: var(--tap); }
+@media (max-width: 768px) {
+  /* Two lines where a German or Dutch label needs them; the button grows
+     past --tap rather than clip the word. */
+  .places-cat { height: auto; padding-block: var(--space-1); }
+}

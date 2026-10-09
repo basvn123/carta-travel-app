@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MapPinIcon, LoopIcon, MountainIcon, LakeIcon, BeachIcon, TreeIcon, CastleIcon,
   CameraIcon, VillageIcon, HomeIcon, TrainIcon, ShieldIcon, SunIcon, CoffeeIcon,
@@ -6,6 +6,7 @@ import {
 } from '../components/Icons.jsx';
 import { thumbAt, isResizable } from '../lib/heroImage.js';
 import { openShared } from '../lib/sharedElement.js';
+import { useI18n } from '../i18n/index.jsx';
 
 /*
  * PlaceCard, the one card (spec 5.1, T179).
@@ -161,7 +162,7 @@ export const PlaceCard = React.memo(function PlaceCard({
         <span className="pcard-values places-card-facts">
           {values.map((v) => (
             <span key={v.key} className={`pcard-v${v.none ? ' is-none' : ''}`}>
-              <span className={`pcard-v-n${v.cls ? ` ${v.cls}` : ''}`} title={v.none ? undefined : v.title}>{v.value}</span>
+              <span className={`pcard-v-n${v.cls ? ` ${v.cls}` : ''}${/\d/.test(String(v.value)) ? '' : ' is-word'}`} title={v.none ? undefined : v.title}>{v.value}</span>
               <span className="pcard-v-l" title={v.label}>{v.label}</span>
             </span>
           ))}
@@ -194,10 +195,22 @@ export const PlaceCard = React.memo(function PlaceCard({
  * own rows, so nothing moves when the real cards replace them. Still, not
  * breathing (T394, carta-design "Loading": no shimmer, nothing loops).
  */
+// A skeleton still on screen after this long gets one line that says so
+// (brief V5-5): a slow layer is not a failed one, and the traveller should
+// not have to guess which.
+const SLOW_AFTER_MS = 5000;
+
 export function PlaceCardSkeletons({ n = 6, label }) {
+  const { t } = useI18n();
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const id = setTimeout(() => setSlow(true), SLOW_AFTER_MS);
+    return () => clearTimeout(id);
+  }, []);
   return (
     <>
-      <span className="sr-only" role="status">{label}</span>
+      <span className="sr-only" role="status">{slow ? t('layer.slow') : label}</span>
+      {slow && <p className="places-slow" aria-hidden="true">{t('layer.slow')}</p>}
       {Array.from({ length: n }, (_, i) => (
         <span className="pcard pcard-skel" aria-hidden="true" key={i}>
           <span className="pcard-band" />

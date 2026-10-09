@@ -321,6 +321,36 @@ check('trips index carries no intro paragraph', await desk.locator('.places-intr
 check('the curated library draws no Lifestyle pill',
   await desk.locator('.places-side .lifestyle-btn:visible').count() === 0);
 
+// ── T404 (V5): rails you can walk with the keys, and an emptied list that
+// always offers its way back ─────────────────────────────────────────────
+await desk.locator('.side-cat', { hasText: /^lakes$/i }).click();
+await desk.waitForTimeout(2500);
+const railStrip = desk.locator('.open-strip').first();
+check('V5: a rail strip is a named group',
+  !!(await railStrip.getAttribute('aria-label').catch(() => null)));
+const railCards = railStrip.locator('.railcard');
+if (await railCards.count() > 1) {
+  await railCards.nth(0).focus();
+  await desk.keyboard.press('ArrowRight');
+  const movedTo = await desk.evaluate(() => [...document.querySelectorAll('.open-strip')][0]
+    ? [...document.querySelectorAll('.open-strip')][0].querySelectorAll('.railcard').length
+      && [...document.querySelectorAll('.open-strip')][0].querySelectorAll('.railcard')[1] === document.activeElement
+    : false);
+  check('V5: ArrowRight moves focus to the next card', movedTo === true);
+}
+const posText = await desk.locator('.open-pos-n').first().innerText().catch(() => '');
+check('V5: a rail says where it is, in the mono', /\d/.test(posText), posText);
+await desk.locator('.side-cat', { hasText: /^beaches$/i }).click();
+await desk.waitForTimeout(2000);
+await desk.locator('.places-searchrow .places-search input').fill('zzqxjv');
+await desk.waitForTimeout(1500);
+check('V5: a search that matches nothing offers Clear search',
+  await desk.locator('.places-empty .cov-empty-btn:visible').count() >= 1);
+await desk.locator('.places-empty .cov-empty-btn:visible').first().click().catch(() => {});
+await desk.waitForTimeout(800);
+check('V5: Clear search empties the field',
+  (await desk.locator('.places-searchrow .places-search input').inputValue()) === '');
+
 await desk.close();
 
 await browser.close();
