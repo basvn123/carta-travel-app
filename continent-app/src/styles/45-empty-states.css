@@ -52,7 +52,9 @@
   text-align: left;
   cursor: pointer;
 }
-.cov-near-row:hover .cov-near-name { text-decoration: underline; }
+@media (hover: hover) {
+  .cov-near-row:hover .cov-near-name { text-decoration: underline; }
+}
 .cov-near-meta {
   flex: none;
   font-family: var(--ui);
@@ -73,8 +75,10 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.cov-empty-btn:hover,
-.stub-more:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .cov-empty-btn:hover,
+  .stub-more:hover { border-color: var(--ink); color: var(--ink); }
+}
 .cov-near-row:focus-visible,
 .cov-empty-btn:focus-visible,
 .stub-more:focus-visible,
@@ -131,7 +135,9 @@
   text-underline-offset: 3px;
   cursor: pointer;
 }
-.sec-none-link:hover { color: var(--accent); }
+@media (hover: hover) {
+  .sec-none-link:hover { color: var(--accent); }
+}
 .sec-none-link:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -198,7 +204,9 @@
   text-align: left;
   cursor: pointer;
 }
-.stub-row:hover .stub-row-name { text-decoration: underline; }
+@media (hover: hover) {
+  .stub-row:hover .stub-row-name { text-decoration: underline; }
+}
 .stub-row-meta {
   flex: none;
   max-width: 45%;

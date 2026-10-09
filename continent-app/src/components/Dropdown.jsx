@@ -22,8 +22,8 @@ export function Dropdown({
   value,
   onChange,
   options,
-  placeholder = 'Select…',
-  searchPlaceholder = 'Search…',
+  placeholder,
+  searchPlaceholder,
   searchThreshold = 8,
   multiple = false,
   multiLabel,
@@ -48,7 +48,7 @@ export function Dropdown({
         ? null
         : (multiLabel
             ? multiLabel(selectedValues)
-            : `${selectedValues.length} selected`))
+            : t('dropdown.nSelected', { n: selectedValues.length })))
     : (selected ? selected.label : null);
 
   const handlePick = (v) => {
@@ -115,7 +115,7 @@ export function Dropdown({
         <span className="dropdown-label">
           {triggerLabel != null
             ? triggerLabel
-            : <span className="dropdown-placeholder">{placeholder}</span>}
+            : <span className="dropdown-placeholder">{placeholder ?? t('dropdown.select')}</span>}
         </span>
         <span className="dropdown-chev">{open ? '▴' : '▾'}</span>
       </button>
@@ -127,7 +127,7 @@ export function Dropdown({
               <input
                 ref={inputRef}
                 type="text"
-                placeholder={searchPlaceholder}
+                placeholder={searchPlaceholder ?? t('dropdown.search')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />

@@ -10,7 +10,9 @@
   background: var(--bg-card);
   color: var(--ink);
 }
-.explore-filterbar .places-filter-btn:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .explore-filterbar .places-filter-btn:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+}
 .explore-filterbar .places-filter-btn.has-active { border-color: var(--ink); }
 .explore-filterbar .places-filter-btn .filter-tray-badge { background: var(--ink-fill); color: var(--on-fill); }
 
@@ -74,4 +76,6 @@
   font: inherit;
   cursor: pointer;
 }
-.install-hint-x:hover { color: var(--ink); }
+@media (hover: hover) {
+  .install-hint-x:hover { color: var(--ink); }
+}

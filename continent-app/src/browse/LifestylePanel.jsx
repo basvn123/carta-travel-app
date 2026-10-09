@@ -10,6 +10,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { computeCosts, eurDay } from '../lib/costIndex.js';
 import { useSettledFigure } from '../lib/figureChange.js';
+import { Stepper as CountStepper } from '../components/FilterControls.jsx';
 
 /**
  * Lifestyle settings panel.
@@ -409,23 +410,33 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
   );
 }
 
+// One count: its name, then the shared Stepper from FilterControls (T401, row
+// T381-c), so the Lifestyle counts have the same two 44 px buttons as the
+// people and nights counts elsewhere.
 function Stepper({ label, value, onChange, min, max, hint }) {
   const { t } = useI18n();
   // Values can be fractional right after a week -> day cadence switch
-  // (0.4 dinners/day); the first tap lands back on a whole number.
-  const dec = () => onChange(Math.max(min, Math.ceil(value) - 1));
-  const inc = () => onChange(Math.min(max, Math.floor(value) + 1));
+  // (0.4 dinners/day); the first tap lands back on a whole number. The shared
+  // Stepper moves by one, so a step up or down is mapped to the next whole
+  // number in that direction.
+  const step = (next) => onChange(next > value
+    ? Math.min(max, Math.floor(value) + 1)
+    : Math.max(min, Math.ceil(value) - 1));
   return (
     <div className="stepper">
       <div className="stepper-label">
         {label}
         {hint && <small className="stepper-hint">{hint}</small>}
       </div>
-      <div className="stepper-controls">
-        <button onClick={dec} disabled={value <= min} aria-label={t('lifestyle.decrease', { label })}>-</button>
-        <span className="stepper-value" aria-live="polite">{value}</span>
-        <button onClick={inc} disabled={value >= max} aria-label={t('lifestyle.increase', { label })}>+</button>
-      </div>
+      <CountStepper
+        value={value}
+        min={min}
+        max={max}
+        onChange={step}
+        ariaLabel={label}
+        decLabel={t('lifestyle.decrease', { label })}
+        incLabel={t('lifestyle.increase', { label })}
+      />
     </div>
   );
 }

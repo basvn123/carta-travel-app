@@ -78,6 +78,14 @@ const interpolate = (msg, vars) => (vars
 
 const I18nContext = createContext(null);
 
+/** Translate without the provider: for the crash screen, which sits above it.
+ *  Uses the language stored on the device when its catalogue was loaded this
+ *  session, and English otherwise, so it never waits on a download. */
+export function tOutsideProvider(key, vars) {
+  const catalog = CATALOGS[initialLang()] || en;
+  return interpolate(catalog[key] ?? en[key] ?? key, vars);
+}
+
 export function I18nProvider({ children }) {
   const [lang, setLangState] = useState(initialLang);
   // Bumped when a catalog finishes downloading, so the tree re-renders with

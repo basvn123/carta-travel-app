@@ -3,6 +3,7 @@
    of TransportIcons.jsx (plane/car).
    ───────────────────────────────────────────────────────────────────────── */
 import React from 'react';
+import { useI18n } from '../i18n/index.jsx';
 
 export function CalendarIcon({ size = 18, className = '' }) {
   return (
@@ -334,7 +335,13 @@ export function GlobeIcon({ size = 20, className = '' }) {
 
 /* ─── Country-intel glyphs: line icons, 1.5 stroke (one weight for the whole set, T391), inherit currentColor ─── */
 
+// The label is the English name and also the key: glyph.<slug> in the six
+// catalogues carries the translation, and the English name stands in for a
+// glyph a catalogue has not named yet (T401).
 function Glyph({ size, className, label, children }) {
+  const { t } = useI18n();
+  const key = `glyph.${String(label).toLowerCase().replace(/[^a-z]+/g, '_')}`;
+  const named = t(key);
   return (
     <svg
       width={size}
@@ -347,7 +354,7 @@ function Glyph({ size, className, label, children }) {
       strokeLinejoin="round"
       className={className}
       role="img"
-      aria-label={label}
+      aria-label={named === key ? label : named}
     >
       {children}
     </svg>

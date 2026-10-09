@@ -6,7 +6,8 @@ import { SettingsLine, SettingsContext } from './components/SettingsLine.jsx';
 import { LoadingBlock } from './components/StateBlocks.jsx';
 import { CloseIcon } from './components/Icons.jsx';
 import { crossTab } from './lib/sharedElement.js';
-import { usePresence } from './lib/motion.js';
+import { usePresence, useDialogExit } from './lib/motion.js';
+import { useFocusTrap } from './hooks/useFocusTrap.js';
 import { readJourneyFromUrl } from './lib/journeys.js';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
@@ -108,6 +109,7 @@ import { readFirstVisit, markHomeSeen } from './lib/homeVisit.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
+import { useKeyboardOpen } from './hooks/useKeyboardOpen.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
@@ -430,6 +432,11 @@ function TravelApp() {
   const [sharedTripRaw] = useState(() => readTripShareFromUrl());
   const [sharedTrip, setSharedTrip] = useState(null);
   const [pendingSharedTrip, setPendingSharedTrip] = useState(null);
+  // The offer is a dialog (T401): focus moves in, Tab stays inside, Escape
+  // closes it, and every way out leaves in --dur-2.
+  const shareOfferRef = useRef(null);
+  const shareExit = useDialogExit(() => setSharedTrip(null));
+  useFocusTrap(shareOfferRef, shareExit.close, { enabled: !!sharedTrip });
 
   // The hand-offs INTO the planners from a destination or feature page, and
   // their shareable forms (`?tab=trip&cc=BE`, `?tab=day&dest=BRU`,
@@ -913,6 +920,8 @@ function TravelApp() {
 
   // Keep the URL + localStorage in sync so the view is shareable and survives a
   // reload (debounced; runs only once data has loaded). See useUrlSync.
+  // The bottom nav steps aside while a text field has focus on a phone (T401).
+  useKeyboardOpen();
   useUrlSync(!!data, {
     departDate, returnDate, choices, priceMode, countryFilter,
     tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
@@ -1121,17 +1130,18 @@ function TravelApp() {
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}
       {sharedTrip && (
-        <div className="guide-overlay shell-scrim" onClick={() => setSharedTrip(null)}>
+        <div className={`guide-overlay shell-scrim${shareExit.leaving ? ' is-leaving' : ''}`} onClick={shareExit.close}>
           {/* One of the dialog family (T391): the one scrim, 12 px, the one
               close, and dialog semantics with its title as its name. */}
           <div
-            className="guide-modal share-trip-modal shell-dialog"
+            className={`guide-modal share-trip-modal shell-dialog${shareExit.leaving ? ' is-leaving' : ''}`}
+            ref={shareOfferRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="share-trip-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <button type="button" className="shell-close" onClick={() => setSharedTrip(null)} aria-label={t('a11y.close')}>
+            <button type="button" className="shell-close" onClick={shareExit.close} aria-label={t('a11y.close')}>
               <CloseIcon size={16} />
             </button>
             <h2 className="guide-title" id="share-trip-title">{t('share.tripTitle')}</h2>
@@ -1155,7 +1165,7 @@ function TravelApp() {
               >
                 {t('share.open')}
               </button>
-              <button className="share-trip-dismiss" onClick={() => setSharedTrip(null)}>
+              <button className="share-trip-dismiss" onClick={shareExit.close}>
                 {t('share.dismiss')}
               </button>
             </div>

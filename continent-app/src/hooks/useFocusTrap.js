@@ -25,8 +25,25 @@
  *
  * `skipEscapeWhen` lets a page keep a child popover's own Escape: return true
  * and this hook leaves the key alone for that press.
+ *
+ * A pointer open does not draw a focus ring (T401, row T396-e): the control
+ * focus moves to is marked `data-focus-quiet`, which 60-v6-shell.css reads,
+ * and the mark comes off at the first key press, so a keyboard walk sees the
+ * ring from then on.
  */
 import { useEffect, useRef } from 'react';
+
+// How the last input arrived. Script focus after a mouse or touch open shows
+// :focus-visible in Chromium when nothing was focused before, which put a ring
+// on the Back control of every detail page.
+let lastInput = 'keyboard';
+if (typeof document !== 'undefined') {
+  document.addEventListener('keydown', () => {
+    lastInput = 'keyboard';
+    document.querySelectorAll('[data-focus-quiet]').forEach((el) => el.removeAttribute('data-focus-quiet'));
+  }, true);
+  document.addEventListener('pointerdown', () => { lastInput = 'pointer'; }, true);
+}
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), '
   + 'select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
@@ -76,13 +93,17 @@ export function useFocusTrap(panelRef, onClose, options = {}) {
     // of them with `display: none` at any given width. So try the ref, then
     // check whether it actually took focus, and fall back to the first
     // element in the panel that will.
+    const quiet = (el) => { if (lastInput === 'pointer') el.setAttribute('data-focus-quiet', ''); };
     const focusFirst = () => {
       const named = initialFocusRef?.current;
+      if (named) quiet(named);
       named?.focus?.();
       if (named && document.activeElement === named) return;
       for (const el of tabbable(panelRef.current)) {
+        quiet(el);
         el.focus();
         if (document.activeElement === el) return;
+        el.removeAttribute('data-focus-quiet');
       }
     };
     focusFirst();

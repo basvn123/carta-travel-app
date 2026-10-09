@@ -10,7 +10,8 @@
  * Saved > Maps, with far more information than any share link can carry.
  *
  * Composers take plain data (no component helpers), so both planners can use
- * them: tripKml() for the multi-city itinerary, dayPlanKml() for planned days.
+ * them: tripKml() for the multi-city itinerary and buildKml() for the day planner's
+ * own composer (planner/dayPlanKml.js).
  */
 
 const xmlEsc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
@@ -96,30 +97,6 @@ const searchUrl = (name, city) => (
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([name, city].filter(Boolean).join(', '))}`
 );
 
-// Sights link by exact coordinates: a "<sight>, <city>" name search geocodes
-// and lands on "can't find this place" for obscure or local-language names.
-// Cities keep the name form (city names geocode reliably and open the richer
-// city page).
-const pinUrl = (lat, lon) => (
-  `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lon}`
-);
-
-// The description panel My Maps shows when a pin is tapped: photo, what the
-// place is, how long to plan for it, and the outbound links.
-function placeHtml({ img, headline, desc, dayLine, wiki, mapsUrl }) {
-  const parts = [];
-  if (img) parts.push(`<img src="${xmlEsc(img)}" width="320"/><br/>`);
-  if (headline) parts.push(`<b>${xmlEsc(headline)}</b><br/>`);
-  if (desc) parts.push(`${xmlEsc(desc)}<br/>`);
-  if (dayLine) parts.push(`<i>${xmlEsc(dayLine)}</i><br/>`);
-  const links = [
-    mapsUrl ? `<a href="${xmlEsc(mapsUrl)}">Open in Google Maps</a>` : '',
-    wiki ? `<a href="${xmlEsc(wiki)}">Wikipedia</a>` : '',
-  ].filter(Boolean).join(', ');
-  if (links) parts.push(links);
-  return parts.join('\n');
-}
-
 /**
  * The multi-city trip as KML: one folder with every city stop in visiting
  * order (dates, nights, photo, that stay's day-by-day highlights), plus the
@@ -161,63 +138,5 @@ export function tripKml({ label, stopDetails = [], dayPlan = [], fmtDate = (d) =
     description: 'Planned with Carta. Import at mymaps.google.com to see every stop with dates, nights and day plans.',
     styles: [{ id: 'trip', color: dayColor(0) }],
     folders: [{ name: 'Trip stops', placemarks, paths }],
-  });
-}
-
-/**
- * Planned days as KML: a folder per day, each place a pin carrying its photo,
- * description, visit-time estimate and links; the day's walking route (real
- * OSRM geometry when available, else pin-to-pin) drawn as a coloured line.
- *
- * days: [{
- *   label,                     e.g. 'Day 3, Como (Mon 04 Aug)'
- *   city,
- *   stay: { lat, lon, label } | null,
- *   items: [{ name, lat, lon, kind, desc, wiki, img, dwellMin, mustSee }],
- *   routeCoords: [[lon,lat], ...] | null,
- * }]
- */
-export function dayPlanKml({ label, days = [] }) {
-  const styles = days.map((_, i) => ({ id: `day${i}`, color: dayColor(i) }));
-  styles.push({ id: 'stay', color: 'ff222222' });
-  const folders = days.map((day, di) => {
-    const placemarks = (day.items || []).filter((it) => Number.isFinite(it.lat) && Number.isFinite(it.lon)).map((it, i) => ({
-      name: `${i + 1}. ${it.name}`,
-      lat: it.lat, lon: it.lon, styleId: `day${di}`,
-      html: placeHtml({
-        img: it.img,
-        headline: [
-          it.kind,
-          it.dwellMin ? `plan ~${it.dwellMin} min` : '',
-          it.mustSee ? 'essential sight' : '',
-        ].filter(Boolean).join(', '),
-        desc: it.desc,
-        dayLine: day.label,
-        wiki: it.wiki,
-        mapsUrl: pinUrl(it.lat, it.lon),
-      }),
-    }));
-    if (day.stay?.lat != null) {
-      placemarks.unshift({
-        name: `Your stay${day.stay.label ? ` - ${day.stay.label}` : ''}`,
-        lat: day.stay.lat, lon: day.stay.lon, styleId: 'stay',
-        html: `<b>${xmlEsc(day.label)}</b><br/>Where you start and end the day.`,
-      });
-    }
-    const coords = day.routeCoords && day.routeCoords.length >= 2
-      ? day.routeCoords
-      : (day.items || []).filter((it) => Number.isFinite(it.lat) && Number.isFinite(it.lon)).map((it) => [it.lon, it.lat]);
-    const paths = [{
-      name: `${day.label} - walking route`,
-      coords,
-      styleId: `day${di}`,
-    }];
-    return { name: day.label, placemarks, paths };
-  });
-  return buildKml({
-    name: label || 'My day plans',
-    description: 'Planned with Carta. Each day is a folder: pins in walking order with notes, photos and visit times.',
-    styles,
-    folders,
   });
 }

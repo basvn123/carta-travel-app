@@ -100,6 +100,49 @@ const contradictory = await page.evaluate(
   () => document.querySelectorAll('svg[aria-hidden="true"][role="img"]').length);
 check('no svg is both aria-hidden and role="img"', contradictory === 0, String(contradictory));
 
+// 8. T401 (shell V5): the dialogs the shell draws keep the same promise. The
+// plan chooser on a phone is a modal dialog of two links: focus moves into it,
+// Tab and Shift+Tab stay inside, Escape closes it, and it announces aria-modal.
+// A minimum is asserted (two items) so an empty chooser cannot pass vacuously.
+{
+  const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, serviceWorkers: 'block' });
+  await phone.addInitScript(() => { try {
+    localStorage.setItem('continent.lang.v1', 'en'); localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1'); localStorage.setItem('carta.welcomeSeen.v1', '1');
+    localStorage.setItem('carta.welcomeSeen', '1'); localStorage.setItem('carta.onboardSeen', '1');
+  } catch { /* none */ } });
+  const pp = await phone.newPage();
+  await pp.goto(BASE + '/?tab=places', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await pp.locator('.bottom-nav-plus').waitFor({ state: 'visible', timeout: 30000 });
+  await pp.locator('.bottom-nav-plus').tap();
+  await pp.waitForTimeout(500);
+  const items = await pp.locator('.plan-chooser .plan-chooser-item').count();
+  check('plan chooser holds its two items', items === 2, String(items));
+  check('plan chooser is a modal dialog',
+    (await pp.locator('.plan-chooser').getAttribute('aria-modal')) === 'true');
+  check('focus moves into the plan chooser',
+    await pp.evaluate(() => !!document.activeElement?.closest('.plan-chooser')));
+  for (let i = 0; i < 12; i++) await pp.keyboard.press('Tab');
+  check('Tab stays inside the plan chooser (12 presses)',
+    await pp.evaluate(() => !!document.activeElement?.closest('.plan-chooser')));
+  for (let i = 0; i < 6; i++) await pp.keyboard.press('Shift+Tab');
+  check('Shift+Tab stays inside the plan chooser',
+    await pp.evaluate(() => !!document.activeElement?.closest('.plan-chooser')));
+  await pp.keyboard.press('Escape');
+  await pp.waitForTimeout(500);
+  check('Escape closes the plan chooser', (await pp.locator('.plan-chooser').count()) === 0);
+  // A pointer open draws no focus ring on the control focus moved to (T396-e);
+  // the first key press brings the ring back.
+  await pp.locator('.bottom-nav-plus').tap();
+  await pp.waitForTimeout(400);
+  check('a pointer open marks the focused control quiet',
+    await pp.evaluate(() => document.activeElement?.hasAttribute('data-focus-quiet') ?? false));
+  await pp.keyboard.press('Shift');
+  check('a key press lifts the quiet mark',
+    await pp.evaluate(() => !document.activeElement?.hasAttribute('data-focus-quiet')));
+  await phone.close();
+}
+
 await browser.close();
 if (srv) srv.kill();
 

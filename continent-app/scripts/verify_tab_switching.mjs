@@ -184,7 +184,10 @@ const only = (s, key) => ['places', 'explore', 'trip', 'day'].every((k) => s[k] 
   // 2 + 5: the Lifestyle drawer, on the tab whose scrim used to cover the bar.
   await nav('Explore');
   await page.waitForTimeout(2000);
-  await page.locator('.lifestyle-btn:visible').first().click();
+  // T401: Explore's own Lifestyle button is gone (explore V3 and V4 left the
+  // settings line as the one door), so the door is the first visible one: the
+  // settings line's Lifestyle part, or the older button where a tab still draws it.
+  await page.locator('.settings-part-lifestyle:visible, .lifestyle-btn:visible').first().click();
   await page.waitForTimeout(900);
   check('Lifestyle opens on Explore', await read().then((s) => s.lifestyle));
   const swallowed = await page.locator('.header-nav-item[title="Trip planner"]')
@@ -258,7 +261,8 @@ const only = (s, key) => ['places', 'explore', 'trip', 'day'].every((k) => s[k] 
 
   await item(1);
   await page.waitForTimeout(2000);
-  await page.locator('.lifestyle-btn:visible').first().click();
+  // T401: the settings line's Lifestyle part is the door (Explore's own button is gone).
+  await page.locator('.settings-part-lifestyle:visible, .lifestyle-btn:visible').first().click();
   await page.waitForTimeout(900);
   check('phone: Lifestyle opens', await read().then((s) => s.lifestyle));
   // T391 (shell V4, brief V4-6): on a phone Lifestyle is a bottom sheet over

@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { useDialogExit } from '../lib/motion.js';
 import { CloseIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -23,14 +24,15 @@ export function PrivacyPolicy({ onClose }) {
   // Tab stays inside, Escape closes it and focus goes back to the opener.
   const cardRef = useRef(null);
   const closeRef = useRef(null);
-  useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef });
+  const exit = useDialogExit(onClose);
+  useFocusTrap(cardRef, exit.close, { initialFocusRef: closeRef });
   const { t } = useI18n();
   return (
-    <div className="auth-overlay shell-scrim" onClick={onClose}>
-      <div className="auth-modal privacy-modal shell-dialog" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-privacy-title" onClick={(e) => e.stopPropagation()}>
+    <div className={`auth-overlay shell-scrim${exit.leaving ? ' is-leaving' : ''}`} onClick={exit.close}>
+      <div className={`auth-modal privacy-modal shell-dialog${exit.leaving ? ' is-leaving' : ''}`} ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-privacy-title" onClick={(e) => e.stopPropagation()}>
         {/* The one close of the dialog family (T391): CloseIcon in a --tap
             box, its label translated. */}
-        <button ref={closeRef} type="button" className="shell-close" onClick={onClose} aria-label={t('a11y.close')}>
+        <button ref={closeRef} type="button" className="shell-close" onClick={exit.close} aria-label={t('a11y.close')}>
           <CloseIcon size={16} />
         </button>
         <h2 className="auth-title" id="legal-privacy-title">Privacy policy</h2>

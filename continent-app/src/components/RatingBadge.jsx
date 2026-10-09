@@ -1,5 +1,6 @@
 import React from 'react';
 import { GemIcon } from './GemRating.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Traveller rating (schema v14 dest.rating), the one visual language for
@@ -21,10 +22,11 @@ export function tierClass(rating) {
  * at card size without reading the seal on the photo.
  */
 export function ScoreChip({ rating, size = 'sm' }) {
+  const { t } = useI18n();
   if (!rating || rating.score == null) return null;
   const label = rating.label
     ? `${rating.score}/10 - ${rating.label}`
-    : `Rated ${rating.score}/10`;
+    : t('common.rated', { n: rating.score });
   const tier = rating.tier ?? 0;
   const mark = rating.hidden_gem ? 'gem' : tier;
   return (
@@ -38,10 +40,11 @@ export function ScoreChip({ rating, size = 'sm' }) {
 }
 
 export function HiddenGemTag({ size = 'sm' }) {
+  const { t } = useI18n();
   return (
-    <span className={`hidden-gem-tag ${size}`} title="Highly rated, still under the radar">
+    <span className={`hidden-gem-tag ${size}`} title={t('common.hiddenGemTip')}>
       <GemIcon filled size={size === 'lg' ? 11 : 9} />
-      Hidden gem
+      {t('common.hiddenGem')}
     </span>
   );
 }

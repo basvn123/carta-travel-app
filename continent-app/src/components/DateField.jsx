@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 /**
  * Custom calendar date field, matches the editorial paper/ink/rust palette.
@@ -20,11 +22,22 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
  *                     end a click sets
  */
 
-const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
+// Month and weekday names come from Intl in the active language, so the
+// calendar speaks the language of the rest of the app (T401), and the week
+// starts on Monday as it does everywhere Carta's travellers live. 4 January
+// 2021 was a Monday.
+function calendarNames(bcp47) {
+  const long = new Intl.DateTimeFormat(bcp47, { month: 'long' });
+  const short = new Intl.DateTimeFormat(bcp47, { month: 'short' });
+  const day = new Intl.DateTimeFormat(bcp47, { weekday: 'short' });
+  const clean = (s) => s.replace(/\.$/, '');
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  return {
+    MONTHS: Array.from({ length: 12 }, (_, m) => cap(long.format(new Date(2021, m, 15)))),
+    SHORT: Array.from({ length: 12 }, (_, m) => cap(clean(short.format(new Date(2021, m, 15))))),
+    WEEKDAYS: Array.from({ length: 7 }, (_, i) => cap(clean(day.format(new Date(2021, 0, 4 + i)))).slice(0, 2)),
+  };
+}
 
 function parseISO(s) {
   if (!s) return null;
@@ -42,7 +55,7 @@ function toISO(y, m, d) {
 // rather than paying a whole empty week of height for it. Side-by-side panes
 // keep the full six rows so the two months stay the same height.
 function buildGrid(year, month, trim) {
-  const firstWeekday = new Date(year, month, 1).getDay();
+  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7; // Monday first
   const start = new Date(year, month, 1 - firstWeekday);
   const cells = [];
   for (let i = 0; i < 42; i++) {
@@ -58,13 +71,20 @@ function buildGrid(year, month, trim) {
 }
 
 export function DateField({
-  value, onChange, min, max, placeholder = 'Select…',
+  value, onChange, min, max, placeholder,
   inline = false, panes = 1, rangeStart = null, rangeEnd = null,
 }) {
+  const { t, lang, languages } = useI18n();
+  const bcp47 = (languages.find((l) => l.code === lang) || languages[0]).bcp47;
+  const { MONTHS, SHORT, WEEKDAYS } = useMemo(() => calendarNames(bcp47), [bcp47]);
   // Inline calendars are never "closed": the whole point is that the dates are
   // choosable without opening anything.
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef(null);
+  const calRef = useRef(null);
+  // The popup is a dialog: focus moves in, Tab stays inside, Escape closes it
+  // and focus returns to the trigger (T401). Inline calendars are page content.
+  useFocusTrap(calRef, () => setOpen(false), { enabled: open && !inline });
 
   const sel = parseISO(value);
   const todayISO = useMemo(() => {
@@ -90,19 +110,14 @@ export function DateField({
     if (base) setView((v) => (v.y === base.y && v.m === base.m ? v : { y: base.y, m: base.m }));
   }, [inline, rangeStart, value]);
 
-  // Close on outside click / Escape, same convention as Dropdown.
+  // Close on outside click; Escape belongs to the focus trap above.
   useEffect(() => {
     if (!open) return;
     const onClickOutside = (e) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) setOpen(false);
     };
-    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('mousedown', onClickOutside);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onClickOutside);
-      document.removeEventListener('keydown', onKey);
-    };
+    return () => document.removeEventListener('mousedown', onClickOutside);
   }, [open]);
 
   // Two months side by side is the point on a laptop and a trap on a phone,
@@ -207,8 +222,8 @@ export function DateField({
   };
 
   const label = sel
-    ? `${String(sel.d).padStart(2, '0')} ${MONTHS[sel.m].slice(0, 3)} ${sel.y}`
-    : placeholder;
+    ? `${String(sel.d).padStart(2, '0')} ${SHORT[sel.m]} ${sel.y}`
+    : (placeholder ?? t('date.pick'));
 
   const pick = (cell) => {
     const iso = toISO(cell.y, cell.m, cell.d);
@@ -244,7 +259,9 @@ export function DateField({
     <div
       className={inline ? `cal cal-inline cal-panes-${paneCount}` : 'cal'}
       role={inline ? undefined : 'dialog'}
-      aria-label="Choose date"
+      aria-modal={inline ? undefined : 'true'}
+      aria-label={t('date.choose')}
+      ref={inline ? undefined : calRef}
     >
       <div className="cal-head">
         <button
@@ -252,7 +269,7 @@ export function DateField({
           className="cal-nav"
           onClick={() => shiftMonth(-1)}
           disabled={prevDisabled}
-          aria-label="Previous month"
+          aria-label={t('date.prevMonth')}
         >
           ‹
         </button>
@@ -265,7 +282,7 @@ export function DateField({
           className="cal-nav"
           onClick={() => shiftMonth(1)}
           disabled={nextDisabled}
-          aria-label="Next month"
+          aria-label={t('date.nextMonth')}
         >
           ›
         </button>

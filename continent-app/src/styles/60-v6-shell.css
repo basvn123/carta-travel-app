@@ -327,13 +327,16 @@
   /* The nav grows by the home-bar inset (10-shell.css pads it), so the slot
      clears that too. */
   bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
-  z-index: 40;
+  /* Above the My trips and Account pages (z 56) so a message is never hidden
+     behind them (row T400-c), under every dialog and sheet: the Lifestyle
+     scrim and panel are 58 and 59 below, the filter sheets 60 (T401). */
+  z-index: 57;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
   gap: var(--space-2);
   width: max-content;
-  max-width: calc(100vw - 2 * var(--space-4));
+  max-width: calc(100vw - 2 * var(--space-4) - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
   transform: translateX(-50%);
   pointer-events: none;
 }
@@ -397,6 +400,8 @@
 }
 .lifestyle-btn .lifestyle-btn-icon { color: var(--ink-soft); }
 .lifestyle-btn-vibe::before { background: var(--rule); }
+/* Not wrapped: it cancels the accent hover that 24-destination-workspace.css
+   still draws without a hover guard, on a touch screen too. */
 .lifestyle-btn:hover { border-color: var(--rule); background: transparent; color: var(--ink-soft); }
 @media (hover: hover) {
   .lifestyle-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); color: var(--ink); }
@@ -431,6 +436,7 @@
 /* 24-destination-workspace.css still marks the phone tab in the accent (and
    turns a hovered one accent); the pill is the mark now, the words are ink. */
 .bottom-nav-item.active { color: var(--ink); }
+/* Not wrapped, for the same reason: they cancel the unguarded accent hover. */
 .bottom-nav-item:hover { color: var(--ink-soft); }
 .bottom-nav-item.active:hover { color: var(--ink); }
 @media (min-width: 769px) {
@@ -612,7 +618,7 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   /* A sheet: it rises from the bottom over the one scrim, above the bottom
      nav in z-order so the bar never covers its foot (brief V4-6), with a
      grab handle whose swipe is a shortcut for the close and Done. */
-  .lifestyle-scrim { top: 0; z-index: 55; }
+  .lifestyle-scrim { top: 0; }
   .accom-panel.lifestyle-panel,
   .accom-panel.lifestyle-panel.from-right {
     position: fixed;
@@ -623,7 +629,6 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
     width: 100%;
     max-width: none;
     max-height: calc(100dvh - var(--space-7));
-    z-index: 56;
     border: 0;
     border-top: 1px solid var(--rule);
     border-radius: 12px 12px 0 0;
@@ -693,4 +698,127 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
 .xchip-clear { border-color: var(--rule); background: transparent; color: var(--ink-soft); }
 @media (prefers-reduced-motion: reduce) {
   .xchip { transition: none; }
+}
+
+/* --------------------------------------------------------------------------
+   V5 (T401): harden, adapt and polish
+   -------------------------------------------------------------------------- */
+
+/* Dialogs leave before they unmount (row T391-e): useDialogExit() in
+   src/lib/motion.js sets .is-leaving for --dur-2, then closes. The scrim fades
+   and the dialog drops 8 px, or on a phone the sheet goes back down. */
+.shell-scrim.is-leaving,
+.fsheet-scrim.is-leaving { animation: shell-scrim-out var(--dur-2) var(--ease-in-out) forwards; }
+.shell-dialog.is-leaving,
+.fsheet.is-leaving { animation: shell-dialog-out var(--dur-2) var(--ease-in-out) forwards; }
+@media (max-width: 768px) {
+  .fsheet.is-leaving { animation-name: shell-sheet-out; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shell-scrim.is-leaving,
+  .fsheet-scrim.is-leaving,
+  .shell-dialog.is-leaving,
+  .fsheet.is-leaving { animation: none; }
+}
+
+/* The Lifestyle dialog stands over the bottom slot on every width (row
+   T400-c); 46-owner-calls.css gave the desktop drawer z 41. */
+.lifestyle-scrim { z-index: 58; }
+.accom-panel.lifestyle-panel,
+.accom-panel.lifestyle-panel.from-right { z-index: 59; }
+
+/* A pointer open does not draw a focus ring on the control focus moved to
+   (row T396-e). useFocusTrap() marks it, and the mark comes off at the first
+   key press, so a keyboard walk sees the ring. */
+html [data-focus-quiet]:focus,
+html [data-focus-quiet]:focus-visible { outline-color: transparent; }
+
+/* The crash and maintenance screens are the same block (brief V5-6): one
+   sentence and the way out, in the dialog family's 12 px. */
+.crash-card { border-radius: 12px; }
+.crash-title { margin: 0 0 var(--space-3); }
+.maintenance-card .state-err {
+  align-items: center;
+  text-align: center;
+  padding: 0;
+}
+.maintenance-card .state-err-msg {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.maintenance-card .state-err-actions { justify-content: center; }
+
+/* Tap targets (brief V5-3): the header's controls are --tap on a coarse
+   pointer at any width, and stay compact under a mouse (pointer: fine keeps
+   the 32 to 38 px they had). Row T381-d. */
+@media (pointer: coarse) {
+  .header-nav-item,
+  .header-pricing-btn,
+  .header-friends-btn,
+  .account-avatar-btn,
+  .account-signin-btn { min-height: var(--tap); }
+  .account-avatar-btn,
+  .header-friends-btn { min-width: var(--tap); }
+}
+
+/* Safe areas (brief V5-4). The header takes the top and side insets, the bar
+   the side insets (the home-bar inset is in 10-shell.css), so a notch or a
+   rounded landscape corner never clips a tab. */
+.top-bar {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: max(var(--sbw, 0px), env(safe-area-inset-right, 0px));
+}
+.bottom-nav {
+  padding-left: max(10px, env(safe-area-inset-left, 0px));
+  padding-right: max(10px, env(safe-area-inset-right, 0px));
+}
+@media (max-width: 360px) {
+  .bottom-nav {
+    padding-left: max(2px, env(safe-area-inset-left, 0px));
+    padding-right: max(2px, env(safe-area-inset-right, 0px));
+  }
+  /* Room for the longest label (Dutch "Bestemmingen") at 360 px: the labels
+     shrink before they truncate. */
+  .bottom-nav-plus { margin-left: 2px; margin-right: 2px; }
+}
+
+/* The on-screen keyboard (row T390-d, DIRECTION.md part 7): while a text
+   field has focus on a phone, useKeyboardOpen() sets .kbd-open, the bar steps
+   aside and every layout that follows --bottom-nav-h gives the room back. */
+html.kbd-open { --bottom-nav-h: 0px; }
+html.kbd-open .bottom-nav { display: none; }
+
+/* A short landscape screen (844 x 390 on a phone): one compact header row, so
+   the header and the settings line leave the page more than a quarter of the
+   height (row T381-d). The controls keep --tap through the rule above. */
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .app-header { padding-top: var(--space-1); padding-bottom: var(--space-1); }
+  .app-header-account { height: calc(var(--tap) + var(--space-1)); min-height: calc(var(--tap) + var(--space-1)); }
+}
+
+/* The Lifestyle counts use the shared Stepper (row T381-c): name on the left,
+   the two buttons on the right. */
+.lifestyle-food .fstepper { flex: none; }
+/* The week and day switch is a selection: ink fill, never the accent (rule
+   R8; the tiles went in V4, this segment was missed). */
+.ls-tune .lifestyle-cadence button.seg-on { background: var(--ink-fill); color: var(--on-fill); }
+
+/* Text entry on a phone is 16 px (DIRECTION.md part 7): iOS Safari zooms the
+   page when a field under 16 px takes focus, and the zoom does not undo
+   itself. Checkboxes, radios and range handles have no text and keep their
+   size. A field may still be larger than this. */
+@media (max-width: 768px) and (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="color"]):not([type="file"]),
+  textarea,
+  select { font-size: max(16px, 1em); }
+}
+
+/* A narrow cost bar segment (a 39 px share of the bar) gets a 44 px hit box
+   on a coarse pointer without changing its width, so the bar stays
+   proportional to the figures: the box reaches 3 px into each gap. */
+@media (pointer: coarse) {
+  .costbar-seg { position: relative; }
+  .costbar-seg::after { content: ''; position: absolute; top: 0; bottom: 0; left: -3px; right: -3px; }
 }

@@ -43,7 +43,9 @@
 @media (pointer: coarse) {
   .srail a { min-height: var(--tap); }
 }
-.srail a:hover { color: var(--ink); }
+@media (hover: hover) {
+  .srail a:hover { color: var(--ink); }
+}
 .srail a.is-active { background: var(--ink-fill); color: var(--on-fill); }
 .srail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 

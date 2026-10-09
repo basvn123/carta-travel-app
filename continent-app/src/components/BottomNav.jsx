@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { GlobeIcon, CompassIcon, RouteIcon, ListDayIcon, BookmarkIcon, PlusIcon, PersonIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { SectionLink, NavCount, NavDot } from './AppHeader.jsx';
 import { usePresence, useNavMarker } from '../lib/motion.js';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 // Bottom navigation, MOBILE only (hidden by CSS on desktop, where the same
 // sections live in the AppHeader). Five slots around a raised central plus:
@@ -27,14 +28,13 @@ export function BottomNav({
   const chooser = usePresence(planOpen);
   const navRef = useRef(null);
   const markerRef = useRef(null);
+  const chooserRef = useRef(null);
 
-  // The chooser is a takeover, however small: Escape must close it.
-  useEffect(() => {
-    if (!planOpen) return;
-    const onKey = (e) => { if (e.key === 'Escape') setPlanOpen(false); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [planOpen]);
+  // The chooser is a takeover, however small (T401): focus moves into it, Tab
+  // stays inside, Escape closes it and focus goes back to the plus. It stays a
+  // dialog of two links, not a menu: both items navigate, and a menu role
+  // would promise arrow-key behaviour links do not have.
+  useFocusTrap(chooserRef, () => setPlanOpen(false), { enabled: planOpen });
 
   const goTab = (key) => { setPlanOpen(false); onChangeTab(key); };
   // A slide-over (saved trips, account) on top of a tab claims the active
@@ -54,7 +54,7 @@ export function BottomNav({
       {chooser.mounted && (
         <>
           <div className={`plan-chooser-backdrop${chooser.leaving ? ' is-leaving' : ''}`} onClick={() => setPlanOpen(false)} />
-          <div className={`plan-chooser${chooser.leaving ? ' is-leaving' : ''}`} role="dialog" aria-label={t('nav.planNew')}>
+          <div className={`plan-chooser${chooser.leaving ? ' is-leaving' : ''}`} role="dialog" aria-modal="true" aria-label={t('nav.planNew')} ref={chooserRef}>
             <SectionLink tab="trip" className="plan-chooser-item" onNavigate={goTab}>
               <RouteIcon size={22} className="plan-chooser-icon" />
               <span className="plan-chooser-text">

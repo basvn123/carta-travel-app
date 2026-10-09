@@ -3,7 +3,7 @@ import { useSiteConfig } from '../hooks/useSiteConfig.js';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { useI18n } from '../i18n/index.jsx';
 import Logo from './Logo.jsx';
-import { Button } from './Button.jsx';
+import { ErrorBlock } from './StateBlocks.jsx';
 
 // Closing the doors, from the admin panel, without a deploy.
 //
@@ -39,12 +39,13 @@ export function MaintenanceGate({ children }) {
       <div className="maintenance-card">
         <Logo />
         <h1 className="maintenance-title">{t('maintenance.title')}</h1>
-        <p className="maintenance-body">
-          {(typeof m.message === 'string' && m.message.trim()) || t('maintenance.body')}
-        </p>
-        <Button onClick={() => window.location.reload()}>
-          {t('maintenance.retry')}
-        </Button>
+        <ErrorBlock
+          className="maintenance-block"
+          message={(typeof m.message === 'string' && m.message.trim()) || t('maintenance.body')}
+          onRetry={() => window.location.reload()}
+          retryLabel={t('maintenance.retry')}
+          retryVariant="primary"
+        />
       </div>
     </div>
   );

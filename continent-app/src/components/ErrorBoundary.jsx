@@ -1,5 +1,7 @@
 import React from 'react';
 import { Button } from './Button.jsx';
+import { ErrorBlock } from './StateBlocks.jsx';
+import { tOutsideProvider as tr } from '../i18n/index.jsx';
 import { reportClientCrash } from '../planner/edgeFailure.js';
 
 // Signatures browsers use when a dynamically-imported chunk can't be fetched, // almost always a stale bundle after a redeploy. Safari: "Importing a module
@@ -15,8 +17,10 @@ function isChunkLoadError(error) {
 /**
  * Top-level crash guard. A render error anywhere below here would otherwise
  * blank the whole app (React unmounts the tree on an uncaught error); instead
- * we catch it, show a recoverable panel, and surface the actual message so it
- * can be reported. "Try again" re-mounts the subtree; "Reload" does a hard
+ * we catch it and show a recoverable panel: one sentence that says what
+ * happened and what to do, in the language stored on the device. The raw
+ * error text goes to the console above and nowhere else (T401); the traveller
+ * never reads a stack. "Try again" re-mounts the subtree; "Reload" does a hard
  * refresh (which also picks up a newer build if the crash was a stale bundle).
  */
 export class ErrorBoundary extends React.Component {
@@ -67,22 +71,19 @@ export class ErrorBoundary extends React.Component {
       return <div className="loading-screen"><div className="pulse" /></div>;
     }
     return (
-      <div className="crash-screen" role="alert">
+      <div className="crash-screen">
         <div className="crash-card">
-          <h1 className="crash-title">Something went wrong</h1>
-          <p className="crash-lead">
-            The app hit an unexpected error. Your trips are saved on this device, so a
-            reload usually fixes it.
-          </p>
-          <pre className="crash-detail">{String(error?.message || error)}</pre>
-          <div className="crash-actions">
-            <Button variant="primary" onClick={() => window.location.reload()}>
-              Reload the app
+          <h1 className="crash-title">{tr('crash.title')}</h1>
+          <ErrorBlock
+            message={tr('crash.message')}
+            onRetry={() => window.location.reload()}
+            retryLabel={tr('crash.reload')}
+            retryVariant="primary"
+          >
+            <Button size="sm" onClick={() => this.setState({ error: null })}>
+              {tr('crash.retry')}
             </Button>
-            <Button onClick={() => this.setState({ error: null })}>
-              Try again
-            </Button>
-          </div>
+          </ErrorBlock>
         </div>
       </div>
     );

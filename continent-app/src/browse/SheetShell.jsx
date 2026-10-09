@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { CloseIcon } from '../components/Icons.jsx';
 import { useAnchoredSheet } from './sheetAnchor.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { useDialogExit } from '../lib/motion.js';
 
 /**
  * The sheet, as one shell (P4.2).
@@ -13,6 +15,10 @@ import { useI18n } from '../i18n/index.jsx';
  * panel off its trigger on a pointer screen. This is that scaffold, with
  * nothing of the filters in it, so a new sheet is a title and a body rather
  * than a fourth transcription of the contract.
+ *
+ * The focus trap is the shared useFocusTrap (T401); the hand-written copy
+ * re-ran on every parent render and pulled focus back to the close button.
+ * Every way out goes through useDialogExit, so the sheet leaves in --dur-2.
  *
  * The filter sheets are not ported onto it here: they carry drag state and
  * footer actions of their own, and rewriting three working surfaces to add
@@ -27,33 +33,10 @@ export function SheetShell({
   const panelRef = React.useRef(null);
   const closeRef = React.useRef(null);
   const anchor = useAnchoredSheet(anchorRef, width);
-
-  React.useEffect(() => {
-    const opener = document.activeElement;
-    closeRef.current?.focus();
-    const onKey = (e) => {
-      if (e.key === 'Escape') {
-        // Capture phase and stopPropagation, so a sheet opened over another
-        // overlay closes itself rather than the whole stack.
-        e.stopPropagation();
-        onClose();
-        return;
-      }
-      if (e.key !== 'Tab') return;
-      const items = panelRef.current?.querySelectorAll(
-        'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])');
-      if (!items || items.length === 0) return;
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    };
-    document.addEventListener('keydown', onKey, true);
-    return () => {
-      document.removeEventListener('keydown', onKey, true);
-      if (opener instanceof HTMLElement) opener.focus();
-    };
-  }, [onClose]);
+  const exit = useDialogExit(onClose);
+  // Escape is bound on the capture phase and stops propagation, so a sheet
+  // opened over another overlay closes itself rather than the whole stack.
+  useFocusTrap(panelRef, exit.close, { initialFocusRef: closeRef });
 
   // Swipe-down dismiss on touch, from the grab handle.
   const drag = React.useRef({ id: null, y0: 0 });
@@ -78,17 +61,17 @@ export function SheetShell({
       panelRef.current.style.transition = '';
       panelRef.current.style.transform = '';
     }
-    if (dy > 90) onClose();
+    if (dy > 90) exit.close();
   };
 
   return createPortal(
     <div
-      className={`fsheet-scrim${anchor ? ' is-anchored' : ''}`}
+      className={`fsheet-scrim${anchor ? ' is-anchored' : ''}${exit.leaving ? ' is-leaving' : ''}`}
       ref={scrimRef}
-      onMouseDown={(e) => { if (e.target === scrimRef.current) onClose(); }}
+      onMouseDown={(e) => { if (e.target === scrimRef.current) exit.close(); }}
     >
       <div
-        className={`fsheet ${className}${anchor ? ' is-anchored' : ''}`}
+        className={`fsheet ${className}${anchor ? ' is-anchored' : ''}${exit.leaving ? ' is-leaving' : ''}`}
         ref={panelRef}
         style={anchor || undefined}
         role="dialog"
@@ -108,7 +91,7 @@ export function SheetShell({
             <button
               type="button"
               className="fsheet-close"
-              onClick={onClose}
+              onClick={exit.close}
               ref={closeRef}
               aria-label={closeLabel || t('legend.closeMethod')}
             >

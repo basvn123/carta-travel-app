@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 /**
  * The reduced-motion question, asked in one place (T186).
@@ -78,6 +78,38 @@ export function usePresence(open, token = '--dur-2') {
     return () => clearTimeout(id);
   }, [open, token]);
   return { mounted: mounted || open, leaving: !open && leaving };
+}
+
+/**
+ * A dialog whose open state lives in its caller leaves before it goes (T401,
+ * row T391-e). The dialog calls close() for every way out (the close, the
+ * scrim, Escape through its focus trap); close() sets `leaving` so the
+ * dialog's own class can run its --dur-2 exit, then calls the caller's
+ * onClose. Under reduced motion it calls onClose at once. A second call while
+ * leaving is ignored.
+ *
+ *   const exit = useDialogExit(onClose);
+ *   useFocusTrap(ref, exit.close);
+ *   <div className={`shell-scrim${exit.leaving ? ' is-leaving' : ''}`} onClick={exit.close}>
+ */
+export function useDialogExit(onClose, token = '--dur-2') {
+  const [leaving, setLeaving] = useState(false);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  const timer = useRef(0);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const close = useCallback(() => {
+    if (timer.current) return;
+    const ms = durationMs(token);
+    if (!ms) { closeRef.current?.(); return; }
+    setLeaving(true);
+    timer.current = setTimeout(() => {
+      timer.current = 0;
+      closeRef.current?.();
+      setLeaving(false);
+    }, ms);
+  }, [token]);
+  return { leaving, close };
 }
 
 /**

@@ -35,13 +35,20 @@ export function LoadingBlock({ label, rows = 3, shape = 'row', className = '' })
  * @param {string} message   what failed and what to do, already translated
  * @param {() => void} onRetry  omit when a retry cannot help
  * @param {string} retryLabel  already translated
+ * @param {'primary'|'secondary'} retryVariant  primary only when the block is the whole screen
+ * @param {React.ReactNode} children  a second action, set beside the retry (T401)
  */
-export function ErrorBlock({ message, onRetry, retryLabel, className = '' }) {
+export function ErrorBlock({ message, onRetry, retryLabel, retryVariant = 'secondary', className = '', children }) {
   return (
     <div className={`state-err${className ? ` ${className}` : ''}`} role="alert">
       <p className="state-err-msg">{message}</p>
-      {onRetry && (
-        <Button size="sm" onClick={onRetry}>{retryLabel}</Button>
+      {(onRetry || children) && (
+        <div className="state-err-actions">
+          {onRetry && (
+            <Button size="sm" variant={retryVariant} onClick={onRetry}>{retryLabel}</Button>
+          )}
+          {children}
+        </div>
       )}
     </div>
   );

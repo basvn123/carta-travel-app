@@ -23,8 +23,13 @@ import { clampIndex, trackIndex, trackKey, trackLeft } from '../lib/dayTrack.js'
  *
  * Under reduced motion the buttons and keys jump instead of gliding
  * (lib/motion.js scrollBehavior, and scroll-behavior auto in the CSS).
+ *
+ * T401 (row T397-b): `onSelect(i)` reports the current day whenever it
+ * changes, by scroll, key, button or focus, and `index` moves the track to a
+ * day from outside, so a page that picks a day does not have to watch the
+ * dots or scroll the row itself.
  */
-export function DayTrack({ label, children, t }) {
+export function DayTrack({ label, children, t, index: wantedIndex, onSelect }) {
   const cards = React.Children.toArray(children);
   const n = cards.length;
   const trackId = useId();
@@ -34,6 +39,8 @@ export function DayTrack({ label, children, t }) {
   const targetRef = useRef(null);   // the left a button or key is gliding to
   const settleRef = useRef(0);
   const frameRef = useRef(0);
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
 
   const measure = useCallback(() => {
     const el = trackRef.current;
@@ -49,6 +56,7 @@ export function DayTrack({ label, children, t }) {
   const select = useCallback((i) => {
     indexRef.current = i;
     setIndex(i);
+    onSelectRef.current?.(i);
   }, []);
 
   const go = useCallback((i) => {
@@ -82,6 +90,11 @@ export function DayTrack({ label, children, t }) {
     });
   }, [measure, select]);
 
+  // An index from outside moves the track (row T397-b).
+  useEffect(() => {
+    if (wantedIndex != null && wantedIndex !== indexRef.current) go(wantedIndex);
+  }, [wantedIndex, go]);
+
   useEffect(() => () => {
     window.clearTimeout(settleRef.current);
     if (frameRef.current) window.cancelAnimationFrame(frameRef.current);
@@ -108,11 +121,24 @@ export function DayTrack({ label, children, t }) {
   };
 
   if (!n) return null;
+  // "Day 3 of 7": the words in the interface face, only the figures in mono
+  // (row T397-c). The template is split at its placeholders, so the
+  // order of words and figures follows each language.
+  const runs = t('journey.trackPos')
+    .split(/(\{n\}|\{total\})/)
+    .filter(Boolean)
+    .map((part) => {
+      if (part === '{n}') return { mono: true, text: String(index + 1) };
+      if (part === '{total}') return { mono: true, text: String(n) };
+      return { mono: false, text: part };
+    });
   return (
     <div className="dtrack-wrap">
       <div className="dtrack-bar">
-        <span className="dtrack-pos mono" aria-live="polite">
-          {t('journey.trackPos', { n: index + 1, total: n })}
+        <span className="dtrack-pos" aria-live="polite">
+          {runs.map((r, k) => (r.mono
+            ? <span key={k} className="is-mono">{r.text}</span>
+            : <React.Fragment key={k}>{r.text}</React.Fragment>))}
         </span>
         <Button
           className="dtrack-btn"
