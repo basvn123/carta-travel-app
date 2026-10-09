@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
@@ -296,8 +297,36 @@ function DayPhoto({ photo, title, t }) {
  * rather than shortened: it is authored copy and every word of it is still on
  * the page, one tap down, opening inside the card (T163).
  */
+/**
+ * Open what is folded while the page prints (brief V5.5). A fold's body and a
+ * day's prose mount only while open, so a printed page would otherwise carry
+ * only the sections the reader happened to open. `beforeprint` opens them
+ * synchronously (flushSync, so the print layout sees them), `afterprint` puts
+ * the reader's own state back.
+ */
+function usePrintOpen(openAll, restore) {
+  const keep = useRef(null);
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const before = () => { keep.current = openAll(); };
+    const after = () => { if (keep.current !== null) restore(keep.current); keep.current = null; };
+    window.addEventListener('beforeprint', before);
+    window.addEventListener('afterprint', after);
+    return () => {
+      window.removeEventListener('beforeprint', before);
+      window.removeEventListener('afterprint', after);
+    };
+  }, [openAll, restore]);
+}
+
 function Day({ day, index, night, t, lang, ledger }) {
   const [more, setMore] = React.useState(false);
+  const openForPrint = useCallback(() => {
+    const was = more;
+    flushSync(() => setMore(true));
+    return was;
+  }, [more]);
+  usePrintOpen(openForPrint, setMore);
   const panelId = React.useId();
   const parts = [['morning', day.morning], ['afternoon', day.afternoon], ['evening', day.evening]]
     .filter(([, text]) => text);
@@ -343,6 +372,7 @@ function Day({ day, index, night, t, lang, ledger }) {
             onClick={() => setMore((v) => !v)}
             aria-expanded={more}
             aria-controls={panelId}
+            aria-label={t('journey.moreAboutDayN', { n: day.day })}
           >
             <ChevronDownIcon size={13} className={more ? 'tday-more-chev is-open' : 'tday-more-chev'} />
             <span>{t('journey.moreAboutDay')}</span>
@@ -437,7 +467,13 @@ export function JourneyPage({
   // undefined = loading, null = not published, 'failed' = the load failed.
   const [trip, setTrip] = useState(undefined);
   const [tries, setTries] = useState(0);
-  const { isOpen, toggle, setOpen } = useFolds(OPEN_BY_DEFAULT, id);
+  const { isOpen, toggle, setOpen, open } = useFolds(OPEN_BY_DEFAULT, id);
+  const openFoldsForPrint = useCallback(() => {
+    const was = open;
+    flushSync(() => setOpen(new Set(['fit', 'budget', 'ends', 'itin', 'sleep', 'prep'])));
+    return was;
+  }, [open, setOpen]);
+  usePrintOpen(openFoldsForPrint, setOpen);
   const scrollEl = useRef(null);
   const pageRef = useRef(null);
   const backRef = useRef(null);
@@ -463,6 +499,7 @@ export function JourneyPage({
   // page; a jump to another week replaces it. The app's boot reader and the
   // URL writer are the shell's (register rows); this keeps the page's half.
   const pushed = useRef(false);
+  const afterPop = useRef(null);
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const url = `${window.location.pathname}${window.location.search}${journeyHash(id)}`;
@@ -480,6 +517,9 @@ export function JourneyPage({
       if (!pushed.current) return;
       pushed.current = false;
       onClose();
+      const go = afterPop.current;
+      afterPop.current = null;
+      if (go) go();
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -492,6 +532,16 @@ export function JourneyPage({
     }
     onClose();
   }, [onClose]);
+  // Leaving for another surface ("See day prices in <town>") goes back through
+  // the entry the page pushed first, then runs the exit, so no stale entry is
+  // left and one later Back press does what it says (row T387-g, brief V5.3).
+  const leaveTo = useCallback((go) => {
+    if (pushed.current) {
+      afterPop.current = go;
+      try { window.history.back(); return; } catch { afterPop.current = null; }
+    }
+    go();
+  }, []);
 
   // Focus management for the dialog: initial focus, a Tab cycle and focus
   // restoration, not just Escape. See hooks/useFocusTrap.js.
@@ -1292,7 +1342,7 @@ export function JourneyPage({
               <button
                 type="button"
                 className={`bpage-base${frrPrimary ? ' is-quiet' : ''}`}
-                onClick={() => onSelectDest?.(gatewayDest.id)}
+                onClick={() => leaveTo(() => onSelectDest?.(gatewayDest.id))}
               >
                 <span>{t('journey.ctaPricesIn', { city: gatewayDest.city })}</span>
                 <ChevronRightIcon size={15} />

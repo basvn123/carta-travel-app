@@ -4002,6 +4002,8 @@ export const nl = {
   'journey.weekDayAria': 'Dag {n}: {level}',
   'journey.weekPickAria': 'Kies een dag om in de dagenstrook te tonen',
   'journey.weekPickDay': 'Dag {n} tonen',
+  'journey.moreAboutDay': 'Meer over deze dag',
+  'journey.moreAboutDayN': 'Meer over dag {n}',
   'journey.weekUnmeasured': 'niet gemeten',
   'journey.weekLevel0': 'Rust',
   'journey.weekLevel1': 'Licht',

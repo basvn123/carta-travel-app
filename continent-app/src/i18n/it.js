@@ -4002,6 +4002,8 @@ export const it = {
   'journey.weekDayAria': 'Giorno {n}: {level}',
   'journey.weekPickAria': 'Scegli un giorno da mostrare nella striscia dei giorni',
   'journey.weekPickDay': 'Mostra il giorno {n}',
+  'journey.moreAboutDay': 'Altro su questo giorno',
+  'journey.moreAboutDayN': 'Altro sul giorno {n}',
   'journey.weekUnmeasured': 'non misurato',
   'journey.weekLevel0': 'Riposo',
   'journey.weekLevel1': 'Leggero',

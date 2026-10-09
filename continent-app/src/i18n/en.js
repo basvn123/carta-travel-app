@@ -4917,6 +4917,7 @@ export const en = {
   'journey.weekDayAria': 'Day {n}: {level}',
   'journey.weekPickAria': 'Pick a day to show on the day track',
   'journey.weekPickDay': 'Show day {n}',
+  'journey.moreAboutDayN': 'More about day {n}',
   'journey.weekUnmeasured': 'not measured',
   'journey.weekLevel0': 'Rest',
   'journey.weekLevel1': 'Light',

@@ -131,7 +131,7 @@ function WeekStrip({ shape, t, sel = null, onPick = null }) {
                 title={where}
               >
                 <span className="jweek-bed-name" aria-hidden="true">{r.label}</span>
-                <span className="sr-only">{where}</span>
+                <span className="sr-only jweek-bed-where">{where}</span>
               </li>
             );
           })}

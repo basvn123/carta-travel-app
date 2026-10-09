@@ -837,3 +837,147 @@
   .jcap-card:active { transform: none; }
   .jpage-days-swap { animation: none; }
 }
+
+/* ==========================================================================
+   T407, design wave V5: harden, adapt and polish
+   ========================================================================== */
+
+/* ── The page bar on a phone (brief V5.4): the back label and the title share
+   the bar, so a long label (German "Wandern und alpine Trekkings") no longer
+   squeezes the title to "And...". The label wraps to two lines and takes at
+   most 46 percent; the title takes the rest on up to two lines before it is
+   cut. ───────────────────────────────────────────────────────────────────── */
+@media (max-width: 599px) {
+  .jpage .tpage-back {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 46%;
+    height: auto;
+    min-height: var(--tap);
+    padding-block: var(--space-1);
+  }
+  .jpage .tpage-back span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
+  .jpage .tpage-bar-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: normal;
+    font-size: 13px;
+    line-height: 1.2;
+    text-align: left;
+  }
+}
+
+/* ── The bed chips on a phone (brief V5.4): a one-night chip is one column
+   wide (about 40 px), so its name read "La..." and "R...". On a phone the
+   beds list one under another with the night and the place in full, the
+   text the chip already carries for a screen reader. ──────────────────── */
+@media (max-width: 599px) {
+  .jpage .jweek-beds {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .jpage .jweek-bed {
+    min-height: 32px;
+    padding-block: var(--space-1);
+  }
+  .jpage .jweek-bed:not(.is-out) .jweek-bed-name { display: none; }
+  .jpage .jweek-bed .jweek-bed-where {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    font-size: 12.5px;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+}
+
+/* ── The photo credit wraps instead of overrunning its box ─────────────── */
+.jpage .lpage-credit-line {
+  white-space: normal;
+  text-overflow: clip;
+}
+
+/* ── Print (brief V5.5): the page prints as the plan. The page is a fixed
+   full-height dialog over the app, so print lifts it out of that and lets it
+   run down the paper; the bar, the rail, the arrows, the length control, the
+   Lifestyle input and the exits are controls with nothing to do on paper.
+   JourneyPage opens every fold and every day's prose on `beforeprint`. ──── */
+@media print {
+  /* Every ancestor of the page runs down the paper (no fixed height, no
+     clipping, no transform), and its siblings along the way are not printed. */
+  html:has(.jpage),
+  body:has(.jpage),
+  :has(.jpage) {
+    position: static;
+    display: block;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    transform: none;
+    contain: none;
+  }
+  :has(.jpage) > :not(:has(.jpage)):not(.jpage) { display: none; }
+  .jpage {
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .jpage .tpage-scroll {
+    height: auto;
+    overflow: visible;
+  }
+  .jpage .tpage-bar,
+  .jpage .srail,
+  .jpage .jpage-bar-acts,
+  .jpage .dtrack-bar,
+  .jpage .dtrack-dots,
+  .jpage .tl-seg,
+  .jpage .ls-slider-input,
+  .jpage .jweek-picks,
+  .jpage .jpage-exits,
+  .jpage .bpage-base,
+  .jpage .report-link,
+  .jpage .dsec-chev,
+  .jpage .tday-more { display: none; }
+  .jpage .dtrack {
+    display: block;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .jpage .dtrack > * {
+    margin-bottom: var(--space-3);
+    break-inside: avoid;
+  }
+  .jpage .jpage-day,
+  .jpage .jpage-book-list li,
+  .jpage .jpage-budget-rows li { break-inside: avoid; }
+  .jpage .dsec-head,
+  .jpage h2,
+  .jpage h3,
+  .jpage h4 { break-after: avoid; }
+  .jpage .jpage-hero img {
+    max-height: 7cm;
+    object-fit: cover;
+  }
+  .jpage .tday-panel { grid-template-rows: 1fr; }
+  .jpage * { animation: none; transition: none; }
+}

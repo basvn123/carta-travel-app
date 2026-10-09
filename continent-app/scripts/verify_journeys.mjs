@@ -190,6 +190,30 @@ try {
   await page.waitForTimeout(500);
   check('where to sleep renders', await page.locator('.jpage-stay').count() >= 1);
   check('pro tips render', await page.locator('.jpage-tips').count() >= 1);
+  // T407 (brief V5.1 to V5.3, V5.5): hardening checks, added with the V5
+  // pass. The booking row is the tap target (the 22 px checkbox sits inside
+  // it), the day disclosure carries its day in its name so seven buttons do
+  // not share one name, and the print layout drops the controls and lets the
+  // days run down the paper. These are new assertions; none replaces an old one.
+  const bookH = await page.locator('.jpage-book-list label').evaluateAll(
+    (els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
+  check('every booking row is at least 44 px high', bookH.length > 0 && Math.min(...bookH) >= 44,
+    `${bookH.length} rows, shortest ${Math.min(...bookH)} px`);
+  const moreNames = await page.locator('.jpage .tday-more').evaluateAll(
+    (els) => els.map((e) => e.getAttribute('aria-label') || e.textContent.trim()));
+  check('the day disclosures have distinct names',
+    moreNames.length >= 5 && new Set(moreNames).size === moreNames.length,
+    `${new Set(moreNames).size} of ${moreNames.length}`);
+  await page.emulateMedia({ media: 'print' });
+  const printed = await page.evaluate(() => {
+    const d = (sel) => { const e = document.querySelector(sel); return e ? getComputedStyle(e).display : 'missing'; };
+    return { bar: d('.jpage .tpage-bar'), rail: d('.jpage .srail'), track: d('.jpage .dtrack'),
+      pos: getComputedStyle(document.querySelector('.jpage')).position };
+  });
+  await page.emulateMedia({ media: 'screen' });
+  check('print drops the bar and the rail and stacks the days',
+    printed.bar === 'none' && printed.rail === 'none' && printed.track === 'block',
+    JSON.stringify(printed));
   await page.screenshot({ path: 'shots/journeys-page.png', fullPage: false });
   await page.screenshot({ path: 'shots/journeys-page-full.png', fullPage: true });
 
@@ -221,6 +245,40 @@ try {
 } catch (e) {
   errors.push('script: ' + String(e && e.message ? e.message : e).split('\n')[0]);
   check('the phone pass finished without throwing', false);
+}
+
+// ── The exit pass (T407, brief V5.3, row T387-g) ─────────────────────────
+// Leaving through "See day prices in <town>" goes back through the history
+// entry the page pushed before it runs the exit, so no #journey= address is
+// left behind.
+try {
+  const ex = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await seed(ex);
+  await ex.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await ex.waitForTimeout(3000);
+  await ex.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
+  await ex.waitForTimeout(1200);
+  await ex.locator('.places-cat', { hasText: /^trips$/i }).click();
+  await ex.waitForTimeout(2000);
+  await ex.locator('.jstyle-card').first().click();
+  await ex.waitForTimeout(1500);
+  await ex.locator('.jcard').first().click();
+  await ex.waitForTimeout(2500);
+  const cta = ex.locator('.jpage .bpage-base');
+  if (await cta.count()) {
+    await cta.first().scrollIntoViewIfNeeded();
+    await cta.first().click();
+    await ex.waitForTimeout(1500);
+    check('leaving through the town exit leaves no journey address behind',
+      !/journey=/.test(await ex.evaluate(() => window.location.hash))
+      && (await ex.locator('.jpage').count()) === 0);
+  } else {
+    check('the first trip offers a town exit to test', false, 'no .bpage-base on the first card');
+  }
+  await ex.close();
+} catch (e) {
+  errors.push('script: ' + String(e && e.message ? e.message : e).split('\n')[0]);
+  check('the exit pass finished without throwing', false);
 }
 
 // ── The desktop pass ─────────────────────────────────────────────────────

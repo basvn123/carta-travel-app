@@ -4002,6 +4002,8 @@ export const de = {
   'journey.weekDayAria': 'Tag {n}: {level}',
   'journey.weekPickAria': 'Einen Tag für die Tagesleiste wählen',
   'journey.weekPickDay': 'Tag {n} zeigen',
+  'journey.moreAboutDay': 'Mehr zu diesem Tag',
+  'journey.moreAboutDayN': 'Mehr zu Tag {n}',
   'journey.weekUnmeasured': 'nicht gemessen',
   'journey.weekLevel0': 'Ruhe',
   'journey.weekLevel1': 'Leicht',
