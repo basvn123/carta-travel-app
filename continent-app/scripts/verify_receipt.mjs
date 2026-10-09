@@ -10,7 +10,7 @@ import { mkdirSync } from 'node:fs';
 
 // NOTE: not 4190, that port is on the fetch spec's blocked-port list
 // (ManageSieve) and node's fetch refuses to health-check it.
-const PORT = 4191;
+const PORT = Number(process.env.CARTA_PORT) || 4191; // T408: reuse a server on any port
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -67,17 +67,28 @@ try {
   if (!links.some((s) => /Flibco/.test(s))) fail('CRL Flibco note missing');
   if (!links.some((s) => /Milano Centrale/.test(s))) fail('BGY airport-coach note missing');
 
+  // T408 (row T382-g): a pass nudge can open over the planned view and
+  // intercept clicks; Escape closes it, as a traveller would.
+  if (await page.locator('.pass-overlay').count()) {
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(500);
+  }
   // Open the breakdown: the Bag check panel speaks the priority tier as
   // Ryanair's actual 10 kg trolley rule plus the gate fee warning.
   await page.locator('.itin-breakdown-toggle').click();
-  await page.locator('.bag-check').waitFor({ timeout: 30000 });
-  const bag = await page.locator('.bag-check').innerText();
-  console.log('bag check:', JSON.stringify(bag));
-  if (!/10 kg trolley/.test(bag)) fail('bag allowance line missing');
-  if (!/at the gate/i.test(bag)) fail('gate fee warning missing');
-  await page.locator('.bag-check').scrollIntoViewIfNeeded();
+  // T408: the Bag check panel was retired with the flight pricing (Carta
+  // prices no flights; owner decision 2026-10-02), so its three assertions
+  // (10 kg trolley line, gate fee warning) are kept below as comments and
+  // the receipt is checked by its own breakdown instead.
+  await page.locator('.itin-breakdown').first().waitFor({ timeout: 30000 });
+  // const bag = await page.locator('.bag-check').innerText();
+  // if (!/10 kg trolley/.test(bag)) fail('bag allowance line missing');
+  // if (!/at the gate/i.test(bag)) fail('gate fee warning missing');
   await page.screenshot({ path: `${SHOTS}/receipt.png` });
 
+  // T408: the ledger lives in the closed "Bookings, notes and spend" fold
+  // since T388, so open it first.
+  await page.locator('.trip-admin .day-collapse-head').click();
   // The expense ledger: add a PLN dinner paid by traveller 1, split with
   // both; the settle-up line should say traveller 2 pays about EUR 6.90.
   await page.locator('.exp-ledger').scrollIntoViewIfNeeded();

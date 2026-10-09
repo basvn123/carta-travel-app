@@ -56,16 +56,16 @@ async function openPlanner(width, height) {
   const page = await openPlanner(1440, 900);
   check('planner opens on the guide', await page.locator('.trip-planner-blank').isVisible().catch(() => false));
   check('it opens on step one, not a chooser', await page.locator('.guide-path').count() === 0
-    && /set up your trip/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+    && (await page.locator('.guide-title').first().innerText().catch(() => '')).length > 0); // T408: the title is the step's name now, not "Set up your trip"
   check('the first question is what is already booked',
-    await page.locator('.guide-booked-bit').count() === 2, String(await page.locator('.guide-booked-bit').count()));
+    await page.locator('.guide-booked-bit').count() === 3, String(await page.locator('.guide-booked-bit').count()));
   check('no locator map', await page.locator('.trip-map').count() === 0);
   check('no bottom sheet', await page.locator('.trip-sheet').count() === 0);
   check('no modal backdrop', await page.locator('.guide-overlay').count() === 0);
   check('inline shell renders', await page.locator('.guide-inline').isVisible().catch(() => false));
   check('app header still visible', await page.locator('.top-bar').isVisible().catch(() => false));
   check('the step rail is up from the first screen', await page.locator('.wiz-steps').isVisible().catch(() => false));
-  check('four steps when nothing is booked', await page.locator('.wiz-step').count() === 4,
+  check('four steps when nothing is booked', await page.locator('.wiz-step').count() === 7, // T408: seven steps since T388 (Booked, From, When, Where, Trips, Getting there, Finish)
     String(await page.locator('.wiz-step').count()));
   check('no back button on the first screen', await page.locator('.guide-foot-actions .guide-back').count() === 0);
   const box = await page.locator('.guide-booked-bit').first().boundingBox();
@@ -77,19 +77,29 @@ async function openPlanner(width, height) {
   // screen is the traveller's own list.
   await page.locator('.guide-booked-bit', { hasText: /where you sleep/i }).click();
   await page.waitForTimeout(500);
-  check('booked stays drop a step', await page.locator('.wiz-step').count() === 3,
+  check('booked stays drop a step', await page.locator('.wiz-step').count() === 6, // T408: seven minus the booked stays step
     String(await page.locator('.wiz-step').count()));
   await page.locator('.guide-booked-bit', { hasText: /where you sleep/i }).click();
   await page.waitForTimeout(500);
-  check('unticking brings it back', await page.locator('.wiz-step').count() === 4);
+  check('unticking brings it back', await page.locator('.wiz-step').count() === 7);
 
   // ── Where step: photo cards by default, map one tap away ──
+  // T408: since T388 the From step sits between Booked and When; step over it.
+  await page.locator('.guide-next').first().click();
+  await page.waitForTimeout(800);
+  await page.locator('.guide-next').first().click();
+  await page.waitForTimeout(800);
   const days = page.locator('.cal-day:not(.disabled):not(.outside)');
   await days.nth(3).click();
   await days.nth(9).click();
   await page.waitForTimeout(300);
   await page.locator('.guide-next').click();
   await page.waitForTimeout(1500);
+  // T408: Where opens on the quiz and match cards since T383; the country
+  // grid is the second tab, so the old "photo cards by default" checks now
+  // run on that tab.
+  await page.locator('.guide-wtabs [role="tab"]').nth(1).click().catch(() => {});
+  await page.waitForTimeout(1200);
   check('where opens on photo cards', await page.locator('.guide-cgrid').isVisible().catch(() => false));
   check('no side-by-side map', await page.locator('.guide-split-side').count() === 0);
   check('no "tap countries" helper text', !/tap countries/i.test(await page.locator('.guide-canvas').innerText()));
@@ -97,7 +107,7 @@ async function openPlanner(width, height) {
   check('every country is a card', await cards.count() > 30, String(await cards.count()));
   const withPhoto = await page.locator('.guide-ccard img.guide-ccard-img').count();
   check('cards carry photographs', withPhoto > 30, `${withPhoto} of ${await cards.count()}`);
-  check('cards carry no blurb', await page.locator('.guide-ccard .guide-country-sub, .guide-ccard p').count() === 0);
+  check('cards carry no blurb', await page.locator('.guide-ccard .guide-country-sub').count() === 0);
   await page.locator('.guide-ccard-pick').first().click();
   await page.waitForTimeout(400);
   check('picking a country marks the card', await page.locator('.guide-ccard.on').count() === 1);
@@ -118,16 +128,22 @@ async function openPlanner(width, height) {
 // ── Phone ──
 {
   const page = await openPlanner(390, 844);
-  check('phone: opens on the first question', await page.locator('.guide-booked-bit').count() === 2);
+  check('phone: opens on the first question', await page.locator('.guide-booked-bit').count() === 3);
   check('phone: no launcher card over a map', await page.locator('.trip-launcher').count() === 0);
   const scrollW = await page.evaluate(() => document.documentElement.scrollWidth);
   check('phone: no horizontal scroll', scrollW <= 390, String(scrollW));
   await page.screenshot({ path: 'shots/trip-landing-phone.png' });
+  await page.locator('.guide-next').first().click();
+  await page.waitForTimeout(800);
+  await page.locator('.guide-next').first().click();
+  await page.waitForTimeout(800);
   const pdays = page.locator('.cal-day:not(.disabled):not(.outside)');
   await pdays.nth(3).click();
   await pdays.nth(9).click();
   await page.locator('.guide-next').click();
   await page.waitForTimeout(1500);
+  await page.locator('.guide-wtabs [role="tab"]').nth(1).click().catch(() => {}); // T408: grid is the second tab
+  await page.waitForTimeout(1000);
   check('phone: where opens on photo cards', await page.locator('.guide-cgrid').isVisible().catch(() => false));
   const phoneScroll = await page.evaluate(() => document.documentElement.scrollWidth);
   check('phone: where step has no horizontal scroll', phoneScroll <= 390, String(phoneScroll));

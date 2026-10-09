@@ -296,7 +296,7 @@ export function CountryPickerMap({
       {/* Touch: the country you tapped, with its photo and the two things you
           can do with it. A hover tooltip would never be reachable here. */}
       {tapped && (
-        <div className="cpm-card" role="dialog" aria-label={tapped.country}>
+        <div className="cpm-card" role="region" aria-label={tapped.country}>
           {covers?.get(tapped.country) && (
             <img className="cpm-card-img" src={covers.get(tapped.country)} alt="" />
           )}

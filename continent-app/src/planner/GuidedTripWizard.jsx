@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DateField } from '../components/DateField.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
@@ -1164,6 +1165,11 @@ export function GuidedTripWizard({
     if (hasProgress && !window.confirm(t('wizard.confirmDiscard'))) return;
     onCancel();
   };
+  // The modal mount is a dialog: focus moves in, Tab stays inside, Escape
+  // closes through the capture-phase stack and focus returns to the opener
+  // (T408, brief V5-1). The inline mount is the page itself and takes none.
+  const modalRef = useRef(null);
+  useFocusTrap(modalRef, handleCancel, { enabled: !inline });
   const startOver = () => {
     if (!window.confirm(t('wizard.confirmStartOver'))) return;
     setStep(1);
@@ -2024,6 +2030,8 @@ export function GuidedTripWizard({
       onClick={inline ? undefined : handleCancel}
     >
       <div
+        ref={modalRef}
+        {...(inline ? {} : { role: 'dialog', 'aria-modal': 'true', 'aria-label': t('wizard.planYourTrip') })}
         className={`guide-modal trip-wizard-modal wiz-${layout} ${inline ? 'wiz-inline' : ''} ${stepName === 'When' ? 'wiz-when' : ''} ${stepName === 'Stays' ? 'wiz-top' : ''} ${stepDir === 'back' ? 'wiz-back' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >

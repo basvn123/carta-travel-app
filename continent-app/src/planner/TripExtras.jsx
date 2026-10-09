@@ -51,6 +51,7 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
             className="extras-label-input"
             value={b.label || ''}
             placeholder={t('extras.customPlaceholder')}
+            aria-label={t('extras.customPlaceholder')}
             onChange={(e) => onPatch({ label: e.target.value })}
           />
         ) : (
@@ -62,7 +63,8 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
           <span className="extras-est">{t('extras.est', { price: eur(row.estimate) })}</span>
         )}
         {onRemove && (
-          <button className="extras-remove" onClick={onRemove} title={t('extras.removeTitle')}>×</button>
+          <button className="extras-remove" onClick={onRemove} title={t('extras.removeTitle')}
+ aria-label={t('extras.removeTitle')}>×</button>
         )}
       </label>
       <div className="extras-fields">
@@ -70,6 +72,7 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
           className="extras-input"
           value={b.ref || ''}
           placeholder={t('extras.refPlaceholder')}
+          aria-label={t('extras.refPlaceholder')}
           onChange={(e) => onPatch({ ref: e.target.value })}
         />
         <input
@@ -77,6 +80,7 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
           inputMode="decimal"
           value={b.price ?? ''}
           placeholder={t('extras.pricePlaceholder')}
+          aria-label={t('extras.pricePlaceholder')}
           onChange={(e) => onPatch({ price: e.target.value })}
         />
         <div className="extras-url-wrap">
@@ -84,6 +88,7 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
             className="extras-input extras-url"
             value={b.url || ''}
             placeholder={t('extras.linkPlaceholder')}
+            aria-label={t('extras.linkPlaceholder')}
             onChange={(e) => onPatch({ url: e.target.value })}
           />
           {link && (
@@ -130,7 +135,8 @@ function InboxItem({ item, days, onRoute, onDiscard, t }) {
           ? `+ ${t('itin.dayN', { n: item.day })}`
           : t('extras.inboxAdd')}
       />
-      <button className="extras-remove" onClick={onDiscard} title={t('extras.removeTitle')}>×</button>
+      <button className="extras-remove" onClick={onDiscard} title={t('extras.removeTitle')}
+ aria-label={t('extras.removeTitle')}>×</button>
     </div>
   );
 }
@@ -258,6 +264,7 @@ export function TripExtras({ rows, extras, onChange, days = [], importContext = 
           className="extras-notes"
           value={extras.notes}
           placeholder={t('extras.notesPlaceholder')}
+          aria-label={t('extras.notesPlaceholder')}
           rows={3}
           onChange={(e) => onChange({ ...extras, notes: e.target.value })}
         />
@@ -283,6 +290,7 @@ export function TripExtras({ rows, extras, onChange, days = [], importContext = 
               className="extras-remove"
               onClick={(e) => { e.preventDefault(); setChecklist(extras.checklist.filter((c) => c.id !== item.id)); }}
               title={t('extras.removeTitle')}
+ aria-label={t('extras.removeTitle')}
             >
               ×
             </button>
@@ -296,6 +304,7 @@ export function TripExtras({ rows, extras, onChange, days = [], importContext = 
             className="extras-input"
             value={newItem}
             placeholder={t('extras.checkPlaceholder')}
+            aria-label={t('extras.checkPlaceholder')}
             onChange={(e) => setNewItem(e.target.value)}
           />
           <button type="submit" className="extras-add-btn" disabled={!newItem.trim()}>{t('extras.checkAdd')}</button>

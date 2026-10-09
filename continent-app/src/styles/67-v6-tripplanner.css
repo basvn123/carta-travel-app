@@ -694,3 +694,55 @@
   .guide-estimate-figure .wiz-est-pp { flex-basis: 100%; }
   .guide-estimate-toggle { flex: none; }
 }
+
+/* ------------------------------------------------------------------ V5 --
+   Harden and polish (T408). */
+
+/* Modal wizard: the one scrim (--ink at 28 percent, no blur), a close cross
+   that reaches --tap, and a visible focus border on the trip's name. */
+.guide-overlay.trip-wizard-overlay {
+  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  backdrop-filter: none;
+}
+.guide-overlay.trip-wizard-overlay .guide-close {
+  min-width: var(--tap);
+  min-height: var(--tap);
+}
+.trip-topcard-name:focus-visible {
+  outline-color: transparent;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 2px;
+  border-radius: 0;
+}
+
+/* Steppers, crosses and move buttons reach --tap on a coarse pointer. */
+@media (pointer: coarse) {
+  .guide-people button,
+  .guide-kids-add,
+  .trip-more-btn,
+  .tleg-addpaid,
+  .itin-dayswitch-btn {
+    min-width: var(--tap);
+    min-height: var(--tap);
+  }
+}
+
+/* German and Dutch step names, chips and footer buttons wrap at 360 px. */
+.wiz-step, .wq-chip, .guide-foot button, .guide-recap > * {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+@media (max-width: 400px) {
+  .guide-foot { gap: var(--space-2); flex-wrap: wrap; }
+  .guide-recap { flex-wrap: wrap; max-width: 100%; }
+}
+
+/* A selected card's 1 px inside outline (the ink selected state) overrode the
+   focus ring, so a keyboard user on the chosen card saw no focus (the
+   verify_keyboard "Nothing yet" finding, T402). The ring wins when focused. */
+.guide-booked-bit.on:focus-visible,
+.wtrip.on:focus-visible,
+.wq-chip.on:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
