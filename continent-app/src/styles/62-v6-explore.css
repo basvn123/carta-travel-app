@@ -737,3 +737,108 @@
 @media (min-width: 769px) and (max-width: 1180px) {
   .explore-shell .xcontent--split .explore-grid--mosaic { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* =========================================================================
+   V5 (T403): harden, adapt and polish
+   ========================================================================= */
+
+/* --- 1. Tap targets that are the size they claim -------------------------
+   On touch the card star is a --tap box in the card's corner with its disc
+   drawn inside, the construction the info control already has; the control
+   used to be a 27 px disc with an invisible ring around it. "See all" gets
+   a real --tap box too, pulled back with negative margin so the rail head
+   keeps its height. A mouse keeps 32 px (the owner's fine-pointer floor). */
+@media (pointer: coarse) {
+  .explore-shell .xcard-star {
+    top: 0;
+    right: 0;
+    width: var(--tap);
+    height: var(--tap);
+    background: transparent;
+    box-shadow: none;
+  }
+  .explore-shell .xcard-star::before {
+    content: '';
+    position: absolute;
+    inset: auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: var(--shadow-1);
+  }
+  .explore-shell .xcard-star svg { position: relative; }
+  .explore-shell .xcard-info { top: var(--tap); }
+  .explore-shell .xrails-all {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding: 0 var(--space-2);
+    margin-block: calc((22px - var(--tap)) / 2);
+    margin-inline-end: calc(-1 * var(--space-2));
+  }
+  .explore-shell .xrails-all::before { content: none; }
+}
+
+/* --- 4. Names are whole ---------------------------------------------------
+   A name wraps to a second line before it ends in an ellipsis; the clamp at
+   two lines keeps a card's height bounded. The country gives up its
+   ellipsis the same way, and on a two-up phone card it shares the place
+   line with the swim badge instead of leaving it to the flag. */
+.explore-shell .xcard-head .xcard-name,
+.explore-shell .railcard-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+.explore-shell .railcard-head { align-items: flex-start; }
+.explore-shell .explore-grid--mosaic .xcard-place { flex-wrap: wrap; white-space: normal; row-gap: 2px; }
+.explore-shell .explore-grid--mosaic .xcard-country {
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 899px) {
+  .explore-shell .explore-grid--mosaic .xcard-place:has(.water-badge) .xcard-country { display: inline; }
+}
+
+/* --- 5. The map did not load -------------------------------------------- */
+.explore-shell .xmap-failed {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  text-align: center;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+.explore-shell .xmap-failed p { margin: 0; max-width: 28ch; }
+.explore-shell .xmap-failed-back {
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-weight: 600;
+  cursor: pointer;
+}
+.explore-shell .xmap-failed-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* --- 9. The map frame follows the dynamic viewport -----------------------
+   vh ignores a collapsing address bar; dvh does not (design wave rules,
+   phone first). */
+.explore-shell .xmap { height: min(72dvh, 760px); }
+@media (min-width: 769px) {
+  .explore-shell .xcontent-map .xmap { height: 64dvh; }
+}

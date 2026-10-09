@@ -4442,6 +4442,8 @@ export const fr = {
   "explore.viewAria": "Vue grille ou carte",
   "explore.mapAria": "Destinations sur la carte",
   "explore.mapLoading": "La carte se dessine",
+  "explore.mapFailed": "La carte ne s'est pas chargée. La liste fonctionne toujours.",
+  "explore.mapBack": "Retour à la liste",
   "explore.mapPinsAria": "Lieux visibles",
   "explore.pinAria": "{city}, {country}, note {score} sur 10",
   "explore.clusterAria": "{n} lieux ici, zoomer",

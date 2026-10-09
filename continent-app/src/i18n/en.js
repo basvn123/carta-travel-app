@@ -5359,6 +5359,8 @@ export const en = {
   "explore.viewAria": "Grid or map view",
   "explore.mapAria": "Destinations on the map",
   "explore.mapLoading": "Drawing the map",
+  "explore.mapFailed": "The map did not load. The list still works.",
+  "explore.mapBack": "Back to the list",
   "explore.mapPinsAria": "Places in view",
   "explore.pinAria": "{city}, {country}, scores {score} out of 10",
   "explore.clusterAria": "{n} places here, zoom in",

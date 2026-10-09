@@ -4442,6 +4442,8 @@ export const de = {
   "explore.viewAria": "Raster- oder Kartenansicht",
   "explore.mapAria": "Ziele auf der Karte",
   "explore.mapLoading": "Die Karte wird gezeichnet",
+  "explore.mapFailed": "Die Karte wurde nicht geladen. Die Liste funktioniert weiter.",
+  "explore.mapBack": "Zurück zur Liste",
   "explore.mapPinsAria": "Orte im Kartenausschnitt",
   "explore.pinAria": "{city}, {country}, Bewertung {score} von 10",
   "explore.clusterAria": "{n} Orte hier, hineinzoomen",

@@ -255,15 +255,22 @@ try {
   // scrolling a wall. Only the first section opens itself.
   check('the page arrives folded', await panel.locator('.dsec.is-open').count() === 1,
     `${await panel.locator('.dsec.is-open').count()} open`);
-  check('the section that opens is the first one',
-    await panel.locator('.dsec').first().evaluate((el) => el.classList.contains('is-open')));
+  // V5 (T403, row T393-a): the destination page now opens "When to go" (the
+  // second fold) so the month answer is on the first screen; the check
+  // follows the page, it does not demand the old first fold.
+  check('the section that opens is the when-to-go one',
+    await panel.locator('.dsec').nth(1).evaluate((el) => el.classList.contains('is-open')));
   // The titles are readable while everything is shut: a fold a reader
   // cannot judge from its head is a fold they have to open to skip.
   const foldedText = await panel.innerText();
   check('page has when-to-go', /when to go/i.test(foldedText));
   check('page has explore-further', /explore .* further/i.test(foldedText));
   await page.waitForTimeout(2500);
-  check('page pins the place on a real map', await panel.locator('.dmap canvas').count() >= 1);
+  // V5 (T403, row T393-a): the map lives in the highlights fold, which
+  // arrives shut; open it, then look for the canvas.
+  await panel.locator('.dsec').filter({ hasText: /highlights on the/i }).first().locator('button').first().click();
+  await page.waitForTimeout(4000);
+  check('page pins the place on a real map', await panel.locator('canvas').count() >= 1);
   // Open the costs fold for the receipt checks below.
   await panel.locator('#sec-cost .dsec-toggle').click();
   await page.waitForTimeout(1200);

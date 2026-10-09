@@ -4442,6 +4442,8 @@ export const nl = {
   "explore.viewAria": "Raster- of kaartweergave",
   "explore.mapAria": "Bestemmingen op de kaart",
   "explore.mapLoading": "De kaart wordt getekend",
+  "explore.mapFailed": "De kaart is niet geladen. De lijst werkt nog steeds.",
+  "explore.mapBack": "Terug naar de lijst",
   "explore.mapPinsAria": "Plekken in beeld",
   "explore.pinAria": "{city}, {country}, score {score} van 10",
   "explore.clusterAria": "{n} plekken hier, inzoomen",

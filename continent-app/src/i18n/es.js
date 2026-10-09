@@ -4442,6 +4442,8 @@ export const es = {
   "explore.viewAria": "Vista de cuadrícula o mapa",
   "explore.mapAria": "Destinos en el mapa",
   "explore.mapLoading": "Dibujando el mapa",
+  "explore.mapFailed": "El mapa no se ha cargado. La lista sigue funcionando.",
+  "explore.mapBack": "Volver a la lista",
   "explore.mapPinsAria": "Lugares a la vista",
   "explore.pinAria": "{city}, {country}, puntuación {score} de 10",
   "explore.clusterAria": "{n} lugares aquí, acercar",

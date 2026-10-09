@@ -1165,7 +1165,8 @@ export function ExploreTab({
                 <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
                   onSelect={openWithMember} onViewport={onMapViewport}
                   onNeedDetail={onMapNeedDetail} t={t}
-                  ringId={cardLinkId} onPinLink={onPinLink} costs={costIndex} />
+                  ringId={cardLinkId} onPinLink={onPinLink} costs={costIndex}
+                  onBack={() => setView('grid')} />
               </React.Suspense>
             </div>
           )}

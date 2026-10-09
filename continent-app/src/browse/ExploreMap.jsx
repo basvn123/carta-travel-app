@@ -83,10 +83,33 @@ const CARD_FROM = 8;
 const LABEL_FROM = 7;
 // The price label's box, estimated for collision (12 px --ui name, 12 px
 // --mono figure, the gap and the padding; see 62-v6-explore.css).
+// V5 (T403, row T393-g): the text is measured in the label's own fonts; the
+// per-character width is only the fallback where a canvas is not available.
 const LABEL_CHAR_W = 6.6;
-const LABEL_EUR_W = 38;
-const LABEL_PAD_W = 18;
 const LABEL_H = 22;
+// Padding 2 x 6, border 2 x 1, and the gap between the name and the figure.
+const LABEL_BOX_W = 14;
+const LABEL_GAP_W = 8;
+// How long the basemap style may take before the frame says the map failed.
+const STYLE_WAIT_MS = 12000;
+let measureCtx = null;
+let measureFonts = null;
+function textWidth(text, mono) {
+  try {
+    if (!measureCtx) measureCtx = document.createElement('canvas').getContext('2d');
+    if (!measureFonts) {
+      const cs = getComputedStyle(document.documentElement);
+      measureFonts = {
+        ui: cs.getPropertyValue('--ui').trim() || 'sans-serif',
+        mono: cs.getPropertyValue('--mono').trim() || 'monospace',
+      };
+    }
+    measureCtx.font = mono ? `12px ${measureFonts.mono}` : `500 12px ${measureFonts.ui}`;
+    const w = measureCtx.measureText(text).width;
+    if (w > 0) return w;
+  } catch { /* fall through to the estimate */ }
+  return text.length * (mono ? 7.2 : LABEL_CHAR_W);
+}
 // Above this the source draws individual pins, so a filter expression is
 // the whole story; below it the clusters carry counts that must be true.
 const CLUSTER_TO = 6;
@@ -102,7 +125,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
 
 export function ExploreMap({
   rows, all, pins = null, onSelect, onViewport, onNeedDetail, t, ringId = null, onPinLink = null,
-  costs = null,
+  costs = null, onBack = null,
 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
@@ -134,6 +157,9 @@ export function ExploreMap({
   // --paper-dim frame the skeleton held, instead of popping in half drawn.
   // A style that never loads still shows its frame after four seconds.
   const [ready, setReady] = React.useState(false);
+  // V5 (T403, brief V5-5): the basemap style never arrived, so the frame
+  // says so and offers the list instead of staying blank.
+  const [failed, setFailed] = React.useState(false);
 
   // The whole catalogue, serialised once. `all` is the unfiltered set; when
   // a caller does not pass one, the current rows stand in and the map
@@ -332,6 +358,14 @@ export function ExploreMap({
     const showCanvas = () => setReady(true);
     map.once('load', showCanvas);
     const readyTimer = setTimeout(showCanvas, 4000);
+    // Tile and glyph errors after the style has arrived are not a failed
+    // map (the pins are drawn from our own data); a style that never
+    // arrives is.
+    let styleSeen = false;
+    map.on('styledata', () => { styleSeen = true; });
+    const fail = () => { if (!styleSeen) setFailed(true); };
+    map.on('error', fail);
+    const styleTimer = setTimeout(fail, STYLE_WAIT_MS);
 
     map.on('load', () => {
       map.addSource('dests', {
@@ -453,6 +487,7 @@ export function ExploreMap({
     });
     return () => {
       clearTimeout(readyTimer);
+      clearTimeout(styleTimer);
       popupRef.current?.remove();
       map.remove();
       mapRef.current = null;
@@ -510,7 +545,9 @@ export function ExploreMap({
       Number(b.key === cheapestKey) - Number(a.key === cheapestKey))
       || (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1)));
     for (const k of order) {
-      const w = String(k.city || '').length * LABEL_CHAR_W + (k.eur != null ? LABEL_EUR_W : 0) + LABEL_PAD_W;
+      const name = String(k.city || '');
+      const w = LABEL_BOX_W + textWidth(name, false)
+        + (k.eur != null ? LABEL_GAP_W + textWidth(eurDay(k.eur), true) : 0);
       const box = { l: k.x - w / 2, r: k.x + w / 2, t: k.y - LABEL_H / 2, b: k.y + LABEL_H / 2 };
       if (placed.some((o) => box.l < o.r && o.l < box.r && box.t < o.b && o.t < box.b)) {
         dotOnly.add(k.key);
@@ -598,7 +635,15 @@ export function ExploreMap({
   return (
     <div className={`xmap${ready ? ' is-ready' : ''}`} role="region" aria-label={t('explore.mapAria')}>
       <div ref={containerRef} className="xmap-canvas" />
-      {kpins.length > 0 && (
+      {failed && (
+        <div className="xmap-failed" role="status">
+          <p>{t('explore.mapFailed')}</p>
+          {onBack && (
+            <button type="button" className="xmap-failed-back" onClick={onBack}>{t('explore.mapBack')}</button>
+          )}
+        </div>
+      )}
+      {!failed && kpins.length > 0 && (
         <div className="xmap-kpins" role="group" aria-label={t('explore.mapPinsAria')}>
           {kpins.map((k) => {
             const label = labelled && !k.cluster && !dotOnly.has(k.key);

@@ -4442,6 +4442,8 @@ export const it = {
   "explore.viewAria": "Vista griglia o mappa",
   "explore.mapAria": "Destinazioni sulla mappa",
   "explore.mapLoading": "Disegno della mappa",
+  "explore.mapFailed": "La mappa non si è caricata. L'elenco funziona ancora.",
+  "explore.mapBack": "Torna all'elenco",
   "explore.mapPinsAria": "Luoghi visibili",
   "explore.pinAria": "{city}, {country}, punteggio {score} su 10",
   "explore.clusterAria": "{n} luoghi qui, ingrandisci",
