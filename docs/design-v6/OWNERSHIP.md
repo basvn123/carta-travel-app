@@ -484,7 +484,7 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/planner/edgeFailure.js` | dayplanner | logic |
 | `src/planner/sheetGripKeys.js` | dayplanner | logic |
 
-### account (103 files)
+### account (105 files)
 
 | File | Surface | Kind |
 |---|---|---|
@@ -547,6 +547,8 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/styles/69-v6-account.css` | account | style |
 | `src/auth/achievements.js` | account | logic |
 | `src/auth/admin.js` | account | logic |
+| `src/auth/authErrors.js` | account | logic |
+| `src/auth/radioKeys.js` | account | logic |
 | `src/auth/coplanners.js` | account | logic |
 | `src/auth/dayPlanCloud.js` | account | logic |
 | `src/auth/foreignTrip.js` | account | logic |
