@@ -1,11 +1,11 @@
 {
  "note": "Counts of known design-lint violations by rule|file|line text. Regenerate with --update-baseline after fixing some; never to admit new ones.",
- "total": 148,
+ "total": 150,
  "byRule": {
   "em-dash": 9,
   "middot": 5,
   "banned-word": 11,
-  "js-hex-literal": 13,
+  "js-hex-literal": 15,
   "font-literal": 1,
   "shadow-literal": 89,
   "outline-none": 10,
@@ -27,6 +27,8 @@
   "banned-word|src/i18n/en.js|\"match.type.family\": \"{n} easy bases for a family\",": 1,
   "banned-word|src/i18n/en.js|\"chat.compSolo\": \"Just me\",": 1,
   "banned-word|src/i18n/en.js|\"chat.stepsEasy\": \"Easy\",": 1,
+  "js-hex-literal|src/lib/destinationPdf.js|ink: '#0f172a', soft: '#414b5e', mute: '#7d8393', rule: '#e2ded1', ruleStrong: '#ccc7b8',": 1,
+  "js-hex-literal|src/lib/destinationPdf.js|accent: '#e05a47', rate: '#8f5a0c', rateBg: '#f6e6cb', dim: '#efece2', green: '#4a6a3a',": 1,
   "middot|src/lib/destinationPdf.js|const clean = (s) => stripDashes(String(s ?? '')).replace(/\\s*[·•]\\s*/g, ', ').replace(/\\s+/g, ' ').trim();": 1,
   "js-hex-literal|src/lib/destinationPdf.js|font(MONO, 'bold', 7, '#ffffff');": 1,
   "em-dash|src/lib/e2eSeams.js|* guessed the word — a shareable paywall bypass — and `?provmock` could make": 1,
