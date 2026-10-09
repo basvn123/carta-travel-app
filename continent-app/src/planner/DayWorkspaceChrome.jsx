@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useDismiss } from './DayPlanPanel.jsx';
 import { isMustSee } from './dayDraft.js';
@@ -9,6 +9,7 @@ import {
   ChevronRightIcon, ChevronDownIcon,
 } from '../components/Icons.jsx';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 /**
  * The predefined things a traveller asks Carta about a day. A blank chat box
@@ -109,6 +110,10 @@ export function DayTipsPanel({
   const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
+  // T409 (brief V5-2): the tips panel is a dialog, so Tab stays inside it and
+  // focus goes back to its button on the way out. The trap owns Escape.
+  const panelRef = useRef(null);
+  useFocusTrap(panelRef, () => setOpen(false), { enabled: open });
   const count = (intel ? intel.areas.length : 0) + walks.length + (countryRec ? 1 : 0);
   if (!count) return null;
 
@@ -125,7 +130,7 @@ export function DayTipsPanel({
       </button>
 
       {open && (
-        <div className="dayws-tips-panel" role="dialog" aria-label={t('dayws.tipsTitle')}>
+        <div className="dayws-tips-panel" role="dialog" aria-label={t('dayws.tipsTitle')} ref={panelRef}>
           <div className="dayws-tips-head">
             <h3>{t('dayws.tipsTitle')}</h3>
             <button className="dayws-tips-close" onClick={() => setOpen(false)} aria-label={t('shape.close')}>
@@ -290,13 +295,30 @@ const TABS = [
  *  what am I doing, what else could I do, where is the paperwork. */
 export function DayTabsRail({ tab, onTab, counts = {} }) {
   const { t } = useI18n();
+  // T409 (brief V5-2): the tab pattern. One tab is in the Tab order, the arrow
+  // keys, Home and End move between the three, and each tab names its panel.
+  const onKey = (e) => {
+    const at = TABS.findIndex((x) => x.key === tab);
+    let to = -1;
+    if (e.key === 'ArrowRight') to = (at + 1) % TABS.length;
+    else if (e.key === 'ArrowLeft') to = (at + TABS.length - 1) % TABS.length;
+    else if (e.key === 'Home') to = 0;
+    else if (e.key === 'End') to = TABS.length - 1;
+    if (to < 0) return;
+    e.preventDefault();
+    onTab(TABS[to].key);
+    document.getElementById(`dayws-tab-${TABS[to].key}`)?.focus();
+  };
   return (
-    <div className="dayws-tabs" role="tablist" aria-label={t('dayws.tabsAria')}>
+    <div className="dayws-tabs" role="tablist" aria-label={t('dayws.tabsAria')} onKeyDown={onKey}>
       {TABS.map(({ key, labelKey, Icon }) => (
         <button
           key={key}
+          id={`dayws-tab-${key}`}
           role="tab"
           aria-selected={tab === key}
+          aria-controls={`dayws-panel-${key}`}
+          tabIndex={tab === key ? 0 : -1}
           className={`dayws-tab${tab === key ? ' on' : ''}`}
           onClick={() => onTab(key)}
         >

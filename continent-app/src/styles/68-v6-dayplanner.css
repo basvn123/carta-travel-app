@@ -1813,3 +1813,123 @@
   .day-ws .dayf { animation: none; }
   :is(.day-ws, .dem-map) .dem-pin { transition: none; }
 }
+
+/* ==========================================================================
+   V5 (T409): harden, adapt and polish. docs/design-v6/plans/V5-dayplanner.md
+   ========================================================================== */
+
+/* ---- Tap targets (brief V5-1) ----
+   On a coarse pointer every control on the surface is at least --tap (44 px)
+   in both directions; a fine pointer keeps the compact sizes. Map pins already
+   carry their 44 px hit box (a ::before ring, 11-trip-planner.css and
+   26-shortlist-extras.css), so they are not touched here. */
+@media (pointer: coarse) {
+  .dayws-tab { min-height: var(--tap); }
+  /* The 44 px tabs cost 7 px; the head card above them gives 4 back (its bottom padding, 8 to 4)
+     so the first stop stays near 420 px and two stops fit above the bottom bar at 360 x 640. */
+  .day-ws .trip-topcard { padding-bottom: 4px; }
+  .dayws-tips-btn,
+  .dayws-stay-btn,
+  .dayws-stay-find,
+  .dayws-stay-clear,
+  .dayws-tips-close,
+  .dayws-city-cancel { min-height: var(--tap); min-width: var(--tap); }
+  .day-ws .trip-newtrip-btn { min-height: var(--tap); }
+  .dayr-tool { width: var(--tap); height: var(--tap); }
+  .dayr-tools { gap: 0; }
+  .day-map-chip,
+  .daya-mode,
+  .daya-ready-use,
+  .dayf-browse,
+  .dayf-act,
+  .day-undo-btn { min-height: var(--tap); }
+  .dayf-act { min-width: var(--tap); }
+  .dayws-tip-add { min-width: var(--tap); min-height: var(--tap); }
+  .dtmenu-btn { min-width: var(--tap); min-height: var(--tap); }
+  .dtmenu-item { min-height: var(--tap); }
+  /* CountryIntel is tripplanner's; only its head inside this surface's tips dialog is lifted. */
+  .dayws-tips-panel .cintel-head { min-height: var(--tap); }
+  .dem-map .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
+}
+
+/* ---- Undo toast (rule N6, brief V5-3) ----
+   Sits above the bottom bar and its safe area, takes touches (the shared
+   save toast does not), and holds one Undo button at --tap. */
+.day-undo {
+  position: fixed;
+  left: 50%;
+  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 61;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: max-content;
+  max-width: min(92vw, 440px);
+  padding: 0 var(--space-1) 0 var(--space-4);
+  background: var(--ink-fill);
+  color: var(--on-fill);
+  border-radius: 999px;
+  box-shadow: var(--shadow-2);
+  font: 600 13px/1.3 var(--ui);
+  animation: day-undo-in var(--dur-2) var(--ease-out);
+}
+.day-undo-text { min-width: 0; padding: var(--space-2) 0; overflow-wrap: anywhere; }
+.day-undo-btn {
+  flex: none;
+  min-height: 36px;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--on-fill);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.day-undo-btn:hover { background: color-mix(in srgb, var(--on-fill) 14%, transparent); }
+.day-undo-btn:focus-visible { outline: 2px solid var(--on-fill); outline-offset: 2px; }
+@keyframes day-undo-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .day-undo { animation: none; }
+}
+
+/* ---- The builder's map could not load its style (brief V5-6) ---- */
+.dem-map-fail {
+  position: absolute;
+  inset: auto var(--space-3) var(--space-3);
+  z-index: 3;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  color: var(--ink);
+  font: 500 13px/1.4 var(--ui);
+}
+
+/* ---- Long names (brief V5-5) ----
+   The stay's name keeps one line and its ellipsis; when the button has
+   keyboard focus the whole name shows, so it can always be read in full. */
+.dayws-stay-btn:focus-visible .dayws-stay-text b {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+/* Words that cannot break (German compounds, a long town name) wrap inside
+   their box instead of pushing the sheet wider. */
+.dayr-name,
+.dayr-kind,
+.day-topcard-stats,
+.dayws-tip-name,
+.dayws-tip-note,
+.daya-card-name,
+.day-flow-card h2,
+.day-flow-card p,
+.dtcard-name { overflow-wrap: anywhere; hyphens: auto; }

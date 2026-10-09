@@ -49,7 +49,7 @@ import { searchFold } from '../lib/textSearch.js';
 import { useShortlistPoints, resolveFeatureRow } from '../hooks/useFavoriteItems.js';
 import { PoiThumb } from './DayActivityRows.jsx';
 import { DayIdeasStep } from './DayIdeasStep.jsx';
-import { DayPlanPanel, SettledLine } from './DayPlanPanel.jsx';
+import { DayPlanPanel, SettledLine, useUndo, UndoToast } from './DayPlanPanel.jsx';
 import { DayAddPanel } from './DayAddPanel.jsx';
 import { DayFilesPanel } from './DayFilesPanel.jsx';
 import {
@@ -412,6 +412,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // "Save this day trip to Saved trips" feedback for trip-based plans.
   const [daySaveState, setDaySaveState] = useState('idle');
   const [saveToast, setSaveToast] = useState('');
+  // Undo instead of confirm (rule N6, T409): a stop or a plan goes at once and
+  // comes back with one tap for six seconds.
+  const { pending: undoPending, offer: offerUndo, undo: doUndo } = useUndo();
+  const [hiddenPlanIds, setHiddenPlanIds] = useState(() => new Set());
   // Landing explore map: which pin categories are shown (towns by default so
   // the map never opens overloaded), which pin is briefed in the side panel,
   // and which sights/beaches are picked alongside the towns in `newStops`.
@@ -476,7 +480,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       cursor = addDays(cursor, nights);
       return { destination_id: st.destinationId, arrive_date: arrive, depart_date: cursor };
     });
-    setPlan({ id: TRIP_DRAFT_PLAN_ID, label: draft.planLabel || 'Your trip', tripDraft: true, stops });
+    setPlan({ id: TRIP_DRAFT_PLAN_ID, label: draft.planLabel || t('ready.yourTrip'), tripDraft: true, stops });
     bootPlan(TRIP_DRAFT_PLAN_ID);
   };
 
@@ -605,7 +609,11 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   };
 
   const deleteStandalone = (id) => {
-    setStandalonePlans(deleteStandalonePlan(id));
+    const unhide = () => setHiddenPlanIds((s) => { const n = new Set(s); n.delete(id); return n; });
+    setHiddenPlanIds((s) => new Set(s).add(id));
+    // The plan only disappears from the list now; the real delete (its picks,
+    // its files) runs when the six seconds are up, so Undo loses nothing.
+    offerUndo(t('dayws.planDeleted'), unhide, () => { setStandalonePlans(deleteStandalonePlan(id)); unhide(); });
   };
 
   // Update the open standalone plan's stored stops and refresh the view.
@@ -1480,7 +1488,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // and the note stay with the name.
   const pinnedWalksBlock = stop && dayWalks.length > 0 ? (
     <div className="day-plan-walks">
-      <div className="day-scenic-title"><MountainIcon size={11} /> Today's walk</div>
+      <div className="day-scenic-title"><MountainIcon size={11} /> {t('dayws.todaysWalk')}</div>
       {dayWalks.map((name) => {
         const w = scenicWalksFor(stop.dest?.city || '').find((x) => x.name === name);
         const frac = walkLenOf(name);
@@ -1501,7 +1509,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                 </small>
               )}
               {w && (
-                <span className="day-walk-len" role="group" aria-label="How long should this walk be?">
+                <span className="day-walk-len" role="group" aria-label={t('dayws.walkLenAria')}>
                   {WALK_LENGTHS.map((o) => (
                     <button
                       key={o.key}
@@ -1520,9 +1528,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             <button
               className="trip-stop-remove"
               onClick={() => toggleWalk(name)}
-              aria-label="Remove this walk from today"
-              title="Remove"
-            >×</button>
+              aria-label={t('dayws.removeWalk')}
+              title={t('day.remove')}
+            ><CloseIcon size={12} /></button>
           </div>
         );
       })}
@@ -1673,6 +1681,24 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       const next = [...current, itemIdx];
       commitDay(routeMode === 'auto' ? optimizeOrder(next, activities.items, stayAnchor) : next);
     }
+  };
+
+  // Remove a stop and offer the way back (rule N6). Undo puts the whole day's
+  // list back as it was, in its order.
+  const removeStopWithUndo = (pos) => {
+    const planId = plan?.id;
+    const s = stopIdx;
+    const d = dayIdx;
+    const before = assignments[s]?.[d] || [];
+    const name = assignedItems[pos]?.name || '';
+    toggleActivity(dayAssignedIdx[pos]);
+    offerUndo(t('dayws.stopRemoved', { name }), () => {
+      setAssignments((cur) => {
+        const next = { ...cur, [s]: { ...(cur[s] || {}), [d]: before } };
+        persistAssignments(planId, next);
+        return next;
+      });
+    });
   };
 
   // Manual override of the auto-optimized order: switches to manual mode so
@@ -2008,7 +2034,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     const newId = `local:${Date.now()}`;
     const sp = {
       id: newId,
-      label: plan.label || stops.map((s) => s.dest?.city).filter(Boolean).join(' + ') || 'Day plan',
+      label: plan.label || stops.map((s) => s.dest?.city).filter(Boolean).join(' + ') || t('day.dayPlanFallback'),
       startDate: stops[0]?.arrive_date || todayISO(),
       stayCityId: plan.stayCityId || '',
       stayPoint: plan.stayPoint || null,
@@ -2700,7 +2726,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
     const sp = {
       id: `local:${Date.now()}`,
-      label: stops.map((s) => destinations[s.destinationId]?.city).filter(Boolean).join(' + ') || 'Day plan',
+      label: stops.map((s) => destinations[s.destinationId]?.city).filter(Boolean).join(' + ') || t('day.dayPlanFallback'),
       startDate: newStartDate || todayISO(),
       stayPoint: newStayPoint,
       stops,
@@ -3278,7 +3304,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                 <h1 className="day-flow-q">{t('day.yourDayPlans')}</h1>
                 <p className="day-flow-qsub">{t('day.returningSub')}</p>
                 <DayPlanCards
-                  plans={standalonePlans}
+                  plans={standalonePlans.filter((sp) => !hiddenPlanIds.has(sp.id))}
                   destinations={destinations}
                   onOpen={openStandalone}
                   onDelete={deleteStandalone}
@@ -3591,7 +3617,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               {!tripsLeadFirst && continueTrips}
               {!returning && (
                 <DayPlanCards
-                  plans={standalonePlans}
+                  plans={standalonePlans.filter((sp) => !hiddenPlanIds.has(sp.id))}
                   destinations={destinations}
                   onOpen={openStandalone}
                   onDelete={deleteStandalone}
@@ -3668,6 +3694,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           )}
 
         </div>
+        <UndoToast pending={undoPending} onUndo={doUndo} />
       </div>
     );
   }
@@ -3700,6 +3727,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   return (
     <div className="trip-planner-screen day-ws">
       {saveToast && <div className="trip-save-toast" role="status">{saveToast}</div>}
+      <UndoToast pending={undoPending} onUndo={doUndo} />
       {aiOpen && stop && (
         <AiDayPlanModal
           city={stop.dest?.city || ''}
@@ -4044,7 +4072,12 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           counts={{ plan: assignedItems.length }}
         />
 
-        <div className="trip-sheet-scroll">
+        <div
+          className="trip-sheet-scroll"
+          role="tabpanel"
+          id={`dayws-panel-${wsTab}`}
+          aria-labelledby={`dayws-tab-${wsTab}`}
+        >
           {wsTab === 'plan' && (
             <DayPlanPanel
               items={assignedItems}
@@ -4052,7 +4085,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               city={stop?.dest?.city || ''}
               onMoveUp={(i) => moveAssigned(i, -1)}
               onMoveDown={(i) => moveAssigned(i, 1)}
-              onRemove={(i) => toggleActivity(dayAssignedIdx[i])}
+              onRemove={removeStopWithUndo}
               rowRefs={rowRefs}
               flashIdx={flashRow?.idx ?? null}
               onHoverRow={setHoverRow}

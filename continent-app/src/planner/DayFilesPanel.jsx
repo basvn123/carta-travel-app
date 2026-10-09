@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useUndo, UndoToast } from './DayPlanPanel.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import {
   UploadIcon, DownloadIcon, TrashIcon, TicketIcon, ReceiptIcon, CameraIcon,
@@ -96,10 +97,20 @@ export function DayFilesPanel({ planId, notes, onNotes, importBlock }) {
     window.setTimeout(() => URL.revokeObjectURL(url), 30000);
   };
 
-  const drop = async (f) => {
-    await deleteFile(f.id);
-    await refresh();
+  // Undo instead of confirm (rule N6, T409): the row leaves the list at once;
+  // the file itself is deleted when the six seconds end, so Undo loses nothing.
+  const [hiddenIds, setHiddenIds] = useState(() => new Set());
+  const { pending, offer, undo } = useUndo();
+  const drop = (f) => {
+    const unhide = () => setHiddenIds((s) => { const n = new Set(s); n.delete(f.id); return n; });
+    setHiddenIds((s) => new Set(s).add(f.id));
+    offer(t('dayws.fileDeleted'), unhide, async () => {
+      await deleteFile(f.id);
+      await refresh();
+      unhide();
+    });
   };
+  const shown = files.filter((f) => !hiddenIds.has(f.id));
 
   return (
     <div className="dayf">
@@ -135,9 +146,9 @@ export function DayFilesPanel({ planId, notes, onNotes, importBlock }) {
 
         {problem && <p className="dayf-problem">{problem}</p>}
 
-        {files.length > 0 && (
+        {shown.length > 0 && (
           <ul className="dayf-list">
-            {files.map((f) => (
+            {shown.map((f) => (
               <li className="dayf-row" key={f.id}>
                 <span className="dayf-glyph" aria-hidden="true">
                   <FileShot id={f.id} type={f.type} />
@@ -161,6 +172,7 @@ export function DayFilesPanel({ planId, notes, onNotes, importBlock }) {
         <p className="dayf-note">
           <LockIcon size={11} /> {t('dayws.filesPrivate')}
         </p>
+        <UndoToast pending={pending} onUndo={undo} />
       </section>
 
       <section className="dayf-block">

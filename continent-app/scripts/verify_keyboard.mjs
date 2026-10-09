@@ -165,6 +165,56 @@ const SURFACES = {
   },
   'trip-planner': async (p) => { await boot(p, '?tab=trip'); await sleep(2500); return { start: null }; },
   'day-planner': async (p) => { await boot(p, '?tab=day'); await sleep(2500); return { start: null }; },
+  // T409 (design wave V5, brief V5-2): the day workspace's tab, menu and dialog
+  // patterns. Opens a seeded Salzburg plan, then drives the keys the patterns
+  // promise. A `false` in the returned object fails the case.
+  'day-workspace': async (p) => {
+    await p.addInitScript(() => {
+      for (const [k, v] of [['continent.guestMode.v1', '1'], ['carta.fareNoticeSeen', '1'], ['carta.welcomeSeen', '1'], ['continent.onboardingSeen.v1', '1']]) localStorage.setItem(k, v);
+      localStorage.setItem('carta.dayplans.v1', JSON.stringify([{ id: 'local:verify', label: 'Salzburg day', startDate: '2026-10-14', stops: [{ destinationId: 'SZG', days: 2 }] }]));
+      localStorage.setItem('carta.dayplan.local:verify', JSON.stringify({ 0: { 0: [2, 11, 1, 4] } }));
+      localStorage.setItem('carta.dayprefs.local:verify', JSON.stringify({ routeMode: 'manual' }));
+    });
+    await boot(p, '?tab=day&o=CRL');
+    await p.locator('button.dtcard').first().click({ timeout: 120000 });
+    await p.locator('.dayws-tabs').waitFor({ timeout: 60000 });
+    for (let i = 0; i < 200; i++) { if (await p.locator('.dayr-row').count() >= 4) break; await sleep(250); }
+    await sleep(1200);
+    const after = async (pg) => {
+      const out = {};
+      const attr = (sel, a) => pg.locator(sel).first().getAttribute(a);
+      out.oneTabStop = (await pg.locator('[role=tab][tabindex="0"]').count()) === 1;
+      await pg.locator('#dayws-tab-plan').focus();
+      await pg.keyboard.press('ArrowRight'); await sleep(500);
+      out.arrowMovesTab = await pg.evaluate(() => document.activeElement?.id === 'dayws-tab-add' && document.activeElement.getAttribute('aria-selected') === 'true');
+      out.tabNamesItsPanel = (await attr('#dayws-tab-add', 'aria-controls')) === (await attr('[role=tabpanel]', 'id'))
+        && (await attr('[role=tabpanel]', 'aria-labelledby')) === 'dayws-tab-add';
+      await pg.keyboard.press('Home'); await sleep(400);
+      out.homeGoesFirst = await pg.evaluate(() => document.activeElement?.id === 'dayws-tab-plan');
+      const more = pg.locator('.day-sw-morebtn:visible').first();
+      if (await more.count()) {
+        await more.focus(); await pg.keyboard.press('Enter'); await sleep(300);
+        out.menuTakesFocus = await pg.evaluate(() => document.activeElement?.getAttribute('role') === 'menuitem');
+        await pg.keyboard.press('Escape'); await sleep(300);
+        out.menuEscapeReturnsFocus = await pg.evaluate(() => document.activeElement?.classList.contains('day-sw-morebtn'));
+      }
+      const tips = pg.locator('.dayws-tips-btn:visible').first();
+      if (await tips.count()) {
+        await tips.focus(); await pg.keyboard.press('Enter'); await sleep(400);
+        out.tipsTakesFocus = await pg.evaluate(() => !!document.activeElement?.closest('.dayws-tips-panel'));
+        for (let i = 0; i < 30; i++) await pg.keyboard.press('Tab');
+        out.tipsTrapsTab = await pg.evaluate(() => !!document.activeElement?.closest('.dayws-tips-panel'));
+        await pg.keyboard.press('Escape'); await sleep(300);
+        out.tipsEscapeReturnsFocus = await pg.evaluate(() => document.activeElement?.classList.contains('dayws-tips-btn'));
+      }
+      return out;
+    };
+    // allowCovered: at 380 px the workspace map and its focusable pins sit under
+    // the bottom sheet, so the Tab walk reports them covered. That is the map's
+    // (tripplanner's TripMap) geometry and a known row (T409-e); this case checks
+    // the tab, menu and dialog patterns only, so it does not fail on it.
+    return { start: null, after, allowCovered: true };
+  },
 };
 
 // What a mouse can click that a keyboard cannot reach: a pointer cursor on an
@@ -330,6 +380,7 @@ for (const w of WIDTHS) {
       row.noRing = wk.stops.filter((s) => !s.ring && !s.invisible && !s.obscured).map((s) => `${s.sig} "${s.label}"`);
       row.obscured = wk.stops.filter((s) => s.obscured).map((s) => `${s.sig} "${s.label}"`);
       row.invisible = wk.stops.filter((s) => s.invisible).map((s) => `${s.sig} "${s.label}"`);
+      row.allowCovered = !!how.allowCovered;
       row.order = wk.stops.map((s) => `${s.obscured ? '[covered] ' : s.ring ? '' : '[no ring] '}${s.sig} "${s.label}"`);
       row.pinStopsInWalk = wk.stops.filter((s) => /xmap-kpin|dmap-pin/.test(s.sig)).length;
       const shot = (tag) => p.screenshot({ path: path.join(OUT, `${name}-${w}-${tag}.png`) });
@@ -341,7 +392,7 @@ for (const w of WIDTHS) {
     }
     row.pageErrors = errors;
     const bad = !!row.error || row.stuck || (row.noRing?.length || 0) > 0 || (row.invisible?.length || 0) > 0
-      || (row.obscured?.length || 0) > 0
+      || (!row.allowCovered && (row.obscured?.length || 0) > 0)
       || (row.extra && Object.values(row.extra).some((v) => v === false))
       || (row.pointerOnly?.length || 0) > 0
       || (row.map && (!row.map.canvasFocusable || !row.map.arrowsPan || !row.map.pinStops

@@ -4,6 +4,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { useDismiss } from './DayPlanPanel.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import { addDays, todayISO, fmtDate } from '../lib/dates.js';
 import { MoreIcon, TrashIcon, RouteIcon, ChevronRightIcon } from '../components/Icons.jsx';
@@ -304,18 +305,9 @@ export function ContinueTripCards({
 function CardMenu({ onDelete }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-  React.useEffect(() => {
-    if (!open) return undefined;
-    const onDoc = (e) => { if (!ref.current?.contains(e.target)) setOpen(false); };
-    const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); setOpen(false); } };
-    document.addEventListener('mousedown', onDoc);
-    document.addEventListener('keydown', onKey, true);
-    return () => {
-      document.removeEventListener('mousedown', onDoc);
-      document.removeEventListener('keydown', onKey, true);
-    };
-  }, [open]);
+  // T409 (brief V5-2): the shared popover hook, so focus enters the menu,
+  // the arrows walk it and Escape hands focus back to the button.
+  const ref = useDismiss(open, () => setOpen(false));
   return (
     <div className="dtmenu" ref={ref}>
       <button

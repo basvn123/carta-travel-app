@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useI18n } from '../i18n/index.jsx';
 import maplibregl from 'maplibre-gl';
 import { keyablePin, clearKeyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -30,6 +31,11 @@ const STAR_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><p
  * `onFocus(id)`
  */
 export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFocused, flyTo }) {
+  const { t } = useI18n();
+  const stayFallback = t('day.yourStay');
+  // T409 (brief V5-6): when the base map's style never arrives the builder
+  // keeps its list and says so in one line, instead of an empty grey box.
+  const [failed, setFailed] = useState(false);
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const readyRef = useRef(false);
@@ -53,6 +59,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('load', () => { readyRef.current = true; mapRef.current._build?.(); });
+    map.on('error', () => { if (!readyRef.current) setFailed(true); });
     // Better-rated places win the right to keep their name when pins collide.
     const stopDeclutter = declutterPins(map, () => (
       [...pinsRef.current.values()].map(({ el, m }) => ({
@@ -86,7 +93,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     // Nominatim display name), so it goes in via textContent, never innerHTML.
     const nameEl = document.createElement('span');
     nameEl.className = 'dem-stay-name';
-    nameEl.textContent = stay.label || 'Your stay';
+    nameEl.textContent = stay.label || stayFallback;
     el.appendChild(nameEl);
     el.insertAdjacentHTML('beforeend',
       '<span class="dem-stay-pin"><span class="dem-stay-pulse"></span>'
@@ -123,10 +130,10 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     const el = stayElRef.current;
     if (!el) return;
     el.classList.toggle('dem-stay-clickable', !!onStayClick);
-    if (onStayClick) keyablePin(el, stay?.label || 'Your stay', () => onStayClickRef.current?.());
+    if (onStayClick) keyablePin(el, stay?.label || stayFallback, () => onStayClickRef.current?.());
     else clearKeyablePin(el);
     el.classList.toggle('focused', !!stayFocused);
-  }, [onStayClick, stayFocused, stay?.lat, stay?.lon, stay?.label]);
+  }, [onStayClick, stayFocused, stay?.lat, stay?.lon, stay?.label, stayFallback]);
 
   // Rebuild pins when the visible marker set changes (filters, radius).
   const markerKey = markers.map((m) => m.id).join(';');
@@ -222,5 +229,9 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
   };
   useEffect(sync, [markers]);
 
-  return <div className="cpm dem-map" ref={containerRef} />;
+  return (
+    <div className="cpm dem-map" ref={containerRef}>
+      {failed && <p className="dem-map-fail" role="status">{t('day.mapFailed')}</p>}
+    </div>
+  );
 }

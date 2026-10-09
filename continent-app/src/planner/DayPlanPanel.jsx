@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { PoiThumb } from './DayActivityRows.jsx';
 import { isMustSee, poiKind, poiMapCat } from './dayDraft.js';
@@ -11,13 +11,45 @@ import { formatSteps, kmToSteps } from '../lib/steps.js';
 import { durationMs } from '../lib/motion.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 
-/** Close a popover on outside click and on Escape. */
+/**
+ * Close a popover on outside click and on Escape.
+ *
+ * T409 (brief V5-2): when the popover holds a role="menu", focus moves to its
+ * first item as it opens, ArrowDown, ArrowUp, Home and End walk the items, and
+ * Escape hands focus back to the button that opened it, so a keyboard or a
+ * screen reader never loses its place.
+ */
 export function useDismiss(open, close) {
   const ref = useRef(null);
+  // Focus enters the menu once, as it opens (callers pass a fresh close
+  // function every render, so this must not hang off the main effect).
+  useEffect(() => {
+    if (!open) return;
+    ref.current?.querySelector('[role="menu"] [role="menuitem"]:not(:disabled)')?.focus();
+  }, [open]);
   useEffect(() => {
     if (!open) return undefined;
+    const root = ref.current;
+    const items = () => [...(root?.querySelectorAll('[role="menu"] [role="menuitem"]:not(:disabled)') || [])];
     const onDown = (e) => { if (!ref.current?.contains(e.target)) close(); };
-    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        const had = root?.contains(document.activeElement);
+        close();
+        if (had) root.querySelector('button[aria-expanded]')?.focus();
+        return;
+      }
+      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key) || !root?.contains(document.activeElement)) return;
+      const list = items();
+      if (!list.length) return;
+      e.preventDefault();
+      const at = list.indexOf(document.activeElement);
+      let to = 0;
+      if (e.key === 'ArrowDown') to = (at + 1) % list.length;
+      else if (e.key === 'ArrowUp') to = (at <= 0 ? list.length : at) - 1;
+      else if (e.key === 'End') to = list.length - 1;
+      list[to].focus();
+    };
     document.addEventListener('mousedown', onDown);
     document.addEventListener('keydown', onKey);
     return () => {
@@ -406,6 +438,71 @@ export function DayPlanPanel({
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * Undo instead of confirm (carta-design rule N6, T409).
+ *
+ * A destructive action on the traveller's own data runs at once and offers
+ * "Undo" for six seconds. Two shapes are supported:
+ *
+ *   offer(label, onUndo)            the change is already made; Undo puts it back.
+ *   offer(label, onUndo, onCommit)  the change is only hidden; onCommit does the
+ *                                   real, irreversible work when the six seconds
+ *                                   end, when a second action starts, or when the
+ *                                   panel unmounts, so nothing is ever left half
+ *                                   deleted.
+ */
+const UNDO_MS = 6000;
+
+export function useUndo() {
+  const [pending, setPending] = useState(null);
+  const ref = useRef(null);
+  const timer = useRef(0);
+
+  const settle = useCallback(() => {
+    window.clearTimeout(timer.current);
+    const cur = ref.current;
+    ref.current = null;
+    setPending(null);
+    if (cur?.onCommit) cur.onCommit();
+  }, []);
+
+  const offer = useCallback((label, onUndo, onCommit) => {
+    settle();
+    ref.current = { label, onUndo, onCommit };
+    setPending({ label });
+    timer.current = window.setTimeout(settle, UNDO_MS);
+  }, [settle]);
+
+  const undo = useCallback(() => {
+    window.clearTimeout(timer.current);
+    const cur = ref.current;
+    ref.current = null;
+    setPending(null);
+    cur?.onUndo?.();
+  }, []);
+
+  // A panel that closes inside the window still honours the delete.
+  useEffect(() => () => {
+    window.clearTimeout(timer.current);
+    const cur = ref.current;
+    ref.current = null;
+    if (cur?.onCommit) cur.onCommit();
+  }, []);
+
+  return { pending, offer, undo, settle };
+}
+
+export function UndoToast({ pending, onUndo }) {
+  const { t } = useI18n();
+  if (!pending) return null;
+  return (
+    <div className="day-undo" role="status">
+      <span className="day-undo-text">{pending.label}</span>
+      <button type="button" className="day-undo-btn" onClick={onUndo}>{t('dayws.undo')}</button>
     </div>
   );
 }
