@@ -427,7 +427,7 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
             </Person>
           </div>
         )}
-        {error && <div className="auth-error">{error}</div>}
+        {error && <div className="auth-error" role="alert">{error}</div>}
         {notice && <div className="auth-notice auth-notice-inline">{notice}</div>}
 
         {loading ? (

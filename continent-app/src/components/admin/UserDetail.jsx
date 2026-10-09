@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { TIERS } from '../../lib/pricing.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { ArrowLeftIcon } from '../Icons.jsx';
@@ -12,6 +13,10 @@ import { useMfa } from './useMfa.js';
 export function UserDetail({ account }) {
   const { t } = useI18n();
   const mfa = useMfa();
+  // Emailing a reset reaches a real person, so it arms first, like the quota
+  // reset above it (T410, brief V5-8). Opening another account disarms it.
+  const [resetArmed, setResetArmed] = useState(false);
+  useEffect(() => { setResetArmed(false); }, [account.detail?.id]);
   const {
     detail, setDetail, detailBusy,
     tierPick, setTierPick, tierDays, setTierDays, tierBusy, applyTier,
@@ -139,8 +144,9 @@ export function UserDetail({ account }) {
             <button type="button" className="adminpage-btn" disabled={quotaBusy} onClick={resetQuota}>
               {quotaBusy ? t('account.pleaseWait') : quotaArmed ? t('admin.quotaConfirm') : t('admin.quotaReset')}
             </button>
-            <button type="button" className="adminpage-btn" disabled={resetBusy || !detail.email} onClick={sendReset}>
-              {resetBusy ? t('account.pleaseWait') : t('admin.sendReset')}
+            <button type="button" className="adminpage-btn" disabled={resetBusy || !detail.email}
+              onClick={() => { if (!resetArmed) { setResetArmed(true); return; } setResetArmed(false); sendReset(); }}>
+              {resetBusy ? t('account.pleaseWait') : resetArmed ? t('admin.sendResetConfirm', { email: detail.email }) : t('admin.sendReset')}
             </button>
             {!detail.bannedUntil ? (
               !banArmed ? (

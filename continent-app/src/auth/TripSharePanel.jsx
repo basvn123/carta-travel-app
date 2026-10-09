@@ -8,6 +8,7 @@ import {
 } from './tripShares.js';
 import { setTripVisibility, fetchFriendLinks } from './friends.js';
 import { listTripCoplanners, inviteCoplanner, removeCoplanner } from './coplanners.js';
+import { onRadioKeys } from './radioKeys.js';
 
 /**
  * TripSharePanel, handing one saved trip to somebody as a read-only link.
@@ -154,7 +155,7 @@ function CoplannerBlock({ userId, tripPlanId, t }) {
         <p className="tshare-never">{t(friends.length ? 'coplan.allAsked' : 'coplan.needFriend')}</p>
       )}
 
-      {error && <div className="auth-error">{error}</div>}
+      {error && <div className="auth-error" role="alert">{error}</div>}
     </div>
   );
 }
@@ -289,7 +290,7 @@ export function TripSharePanel({
     <div className="tshare">
       <p className="tshare-lede">{t('share.lede')}</p>
 
-      <div className="tshare-scopes" role="radiogroup" aria-label={t('share.scopeLabel')}>
+      <div className="tshare-scopes" role="radiogroup" aria-label={t('share.scopeLabel')} onKeyDown={onRadioKeys}>
         {[
           { key: 'itinerary', title: t('share.scopeItinerary'), sub: t('share.scopeItinerarySub') },
           { key: 'memory', title: t('share.scopeMemory'), sub: t('share.scopeMemorySub') },
@@ -299,6 +300,7 @@ export function TripSharePanel({
             type="button"
             role="radio"
             aria-checked={scope === s.key}
+            tabIndex={scope === s.key ? 0 : -1}
             className={`tshare-scope${scope === s.key ? ' on' : ''}`}
             onClick={() => setScope(s.key)}
           >
@@ -310,13 +312,14 @@ export function TripSharePanel({
 
       <div className="tshare-life">
         <span className="tshare-life-title">{t('share.lifeTitle')}</span>
-        <div className="tshare-life-opts" role="radiogroup" aria-label={t('share.lifeTitle')}>
+        <div className="tshare-life-opts" role="radiogroup" aria-label={t('share.lifeTitle')} onKeyDown={onRadioKeys}>
           {SHARE_DURATIONS.map((d) => (
             <button
               key={String(d)}
               type="button"
               role="radio"
               aria-checked={days === d}
+              tabIndex={days === d ? 0 : -1}
               className={`tshare-life-opt${days === d ? ' on' : ''}`}
               onClick={() => setDays(d)}
             >
@@ -333,7 +336,7 @@ export function TripSharePanel({
         {busy ? t('share.making') : t('share.make')}
       </button>
 
-      {error && <div className="auth-error">{error}</div>}
+      {error && <div className="auth-error" role="alert">{error}</div>}
 
       {!loading && links.length > 0 && (
         <div className="tshare-list">
@@ -398,13 +401,14 @@ export function TripSharePanel({
 
       <div className="tshare-vis">
         <span className="tshare-vis-title">{t('share.visTitle')}</span>
-        <div className="tshare-vis-opts" role="radiogroup" aria-label={t('share.visTitle')}>
+        <div className="tshare-vis-opts" role="radiogroup" aria-label={t('share.visTitle')} data-arrow-select="false" onKeyDown={onRadioKeys}>
           {VIS_OPTS.map((o) => (
             <button
               key={o.key}
               type="button"
               role="radio"
               aria-checked={vis === o.key}
+              tabIndex={vis === o.key ? 0 : -1}
               className={`tshare-vis-opt${vis === o.key ? ' on' : ''}`}
               onClick={() => pickVisibility(o.key)}
             >

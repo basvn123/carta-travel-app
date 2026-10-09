@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Logo from '../components/Logo.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { MapPinIcon, CalendarIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { activeLocale } from '../lib/localeState.js';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import { foreignMemory } from './foreignTrip.js';
 import { ForeignTripPins } from './FriendTripPanel.jsx';
 import { fetchSharedTrip, recordShareOpened } from './tripShares.js';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 /**
  * SharedTripView, somebody else's trip, opened from a link.
@@ -30,6 +32,9 @@ export function SharedTripView({ token, onDismiss, destinations }) {
   const { t } = useI18n();
   const [state, setState] = useState({ loading: true, trip: null, failed: false });
   const [tries, setTries] = useState(0);
+  // A takeover is a dialog: Escape closes it and Tab stays inside it (T410, V5-4).
+  const viewRef = useRef(null);
+  useFocusTrap(viewRef, onDismiss);
 
   useEffect(() => {
     let live = true;
@@ -58,7 +63,7 @@ export function SharedTripView({ token, onDismiss, destinations }) {
   const fmt = (iso) => {
     if (!iso) return '';
     try {
-      return new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' }).format(new Date(iso));
+      return new Intl.DateTimeFormat(activeLocale(), { day: 'numeric', month: 'short' }).format(new Date(iso));
     } catch { return iso; }
   };
   const first = stops[0]?.arrive_date;
@@ -66,7 +71,7 @@ export function SharedTripView({ token, onDismiss, destinations }) {
 
   return (
     <div className="auth-overlay auth-overlay-solid stview-overlay">
-      <div className="stview">
+      <div className="stview" ref={viewRef} role="dialog" aria-modal="true" aria-label={t('share.viewTitle')}>
         <div className="stview-brand">
           <Logo size={26} />
           <span className="stview-brand-name">Carta</span>
@@ -84,7 +89,7 @@ export function SharedTripView({ token, onDismiss, destinations }) {
           </div>
         ) : !trip ? (
           <div className="stview-gone">
-            <h2 className="stview-title">{t('share.gone')}</h2>
+            <h1 className="stview-title">{t('share.gone')}</h1>
             <p className="stview-sub">{t('share.goneSub')}</p>
             <button type="button" className="auth-submit" onClick={onDismiss}>
               {t('share.exploreCta')}
@@ -93,13 +98,13 @@ export function SharedTripView({ token, onDismiss, destinations }) {
         ) : (
           <>
             <span className="stview-kicker">{t('share.viewTitle')}</span>
-            <h2 className="stview-title">
+            <h1 className="stview-title">
               {trip.label || stops.map((s) => s.city).filter(Boolean).join(', ')}
-            </h2>
+            </h1>
             {first && (
               <p className="stview-dates">
                 <CalendarIcon size={13} />
-                <span>{fmt(first)} to {fmt(last)}</span>
+                <span>{t('share.dateRange', { start: fmt(first), end: fmt(last) })}</span>
               </p>
             )}
 
@@ -114,7 +119,7 @@ export function SharedTripView({ token, onDismiss, destinations }) {
                     </span>
                     <span className="stview-stop-city">{s.city}</span>
                     {s.arrive_date && (
-                      <span className="stview-stop-dates">{fmt(s.arrive_date)} to {fmt(s.depart_date)}</span>
+                      <span className="stview-stop-dates">{t('share.dateRange', { start: fmt(s.arrive_date), end: fmt(s.depart_date) })}</span>
                     )}
                   </li>
                 ))}

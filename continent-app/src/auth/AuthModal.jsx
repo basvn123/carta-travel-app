@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
+import { authErrorText } from './authErrors.js';
 import { GoogleButton } from './GoogleButton.jsx';
 import { PasswordField } from './PasswordField.jsx';
 import { CloseIcon } from '../components/Icons.jsx';
@@ -50,7 +51,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
         await sendPasswordReset(email);
         setNotice(t('auth.noticeResetSent', { email }));
       } catch (err) {
-        setError(err.message || t('auth.errGeneric'));
+        setError(authErrorText(err, t, 'auth.errGeneric'));
       } finally {
         setLoading(false);
       }
@@ -78,7 +79,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
         onClose();
       }
     } catch (err) {
-      setError(err.message || t('auth.errGeneric'));
+      setError(authErrorText(err, t, 'auth.errGeneric'));
     } finally {
       setLoading(false);
     }

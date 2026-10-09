@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { MapPinIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { activeLocale } from '../lib/localeState.js';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import { foreignMemory, foreignTripPoints } from './foreignTrip.js';
@@ -95,7 +96,7 @@ export function FriendTripPanel({ planId, destinations }) {
   const fmt = (iso) => {
     if (!iso) return '';
     try {
-      return new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' }).format(new Date(iso));
+      return new Intl.DateTimeFormat(activeLocale(), { day: 'numeric', month: 'short' }).format(new Date(iso));
     } catch { return iso; }
   };
 
@@ -111,7 +112,7 @@ export function FriendTripPanel({ planId, destinations }) {
               </span>
               <span className="stview-stop-city">{s.city}</span>
               {s.arrive_date && (
-                <span className="stview-stop-dates">{fmt(s.arrive_date)} to {fmt(s.depart_date)}</span>
+                <span className="stview-stop-dates">{t('share.dateRange', { start: fmt(s.arrive_date), end: fmt(s.depart_date) })}</span>
               )}
             </li>
           ))}

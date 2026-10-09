@@ -914,7 +914,11 @@ try {
 
   // ---- 7. Support toolkit.
   console.log('7. support toolkit');
+  // Changed by T410 (brief V5-8): emailing a reset reaches a real person, so
+  // it arms on the first press ("Send it to zoe@example.com?") and sends on
+  // the second, like the quota reset above it. This line used to send at once.
   await page.locator('.adminpage-btn', { hasText: 'Email a password reset' }).click();
+  await page.locator('.adminpage-btn', { hasText: 'Send it to zoe@example.com' }).click();
   await page.waitForTimeout(900);
   if (!state.recoverCalls.some((c) => c.email === 'zoe@example.com')) {
     fail('the reset mail never reached the recover endpoint');
@@ -1016,6 +1020,10 @@ try {
   await page.locator('.adminpage-search input').waitFor({ timeout: WAIT });
   if (!state.deleted.has(USERS[0].id)) fail('the right confirmation never deleted');
   if (state.mfa.refused.length) fail(`an RPC saw a token below aal2: ${state.mfa.refused.join(', ')}`);
+  // T410: the list refreshes after the delete returns, so wait for the empty
+  // line instead of counting it the instant the search box is back; on a slow
+  // server the count raced the refresh and failed one run in three.
+  await page.locator('.adminpage-muted', { hasText: 'No accounts match' }).waitFor({ timeout: WAIT }).catch(() => {});
   if (!(await page.locator('.adminpage-muted', { hasText: 'No accounts match' }).count())) {
     fail('the deleted account still matches its own search');
   }
@@ -1559,7 +1567,11 @@ try {
 
   // 8g below needs the Como row due; the revert's save reloads the list.
   state.overrides.find((o) => o.itemId === 'it-lake-como-Q15523').reviewBy = '2026-01-01T12:00:00Z';
+  // Changed by T410 (brief V5-8): a revert throws the stored edit away, so it
+  // arms in place first (a sentence, "Keep my edit" and the danger button) and
+  // only the second "Revert to the pipeline" press clears the override.
   await page.locator('.adminpage-btn', { hasText: 'Revert to the pipeline' }).click();
+  await page.locator('.adminpage-editoractions .adminpage-btn.danger', { hasText: 'Revert to the pipeline' }).click();
   await page.waitForTimeout(1000);
   const rev = state.ovSetCalls[state.ovSetCalls.length - 1];
   if (!rev || Object.keys(rev.p_patch || {}).length !== 0) {

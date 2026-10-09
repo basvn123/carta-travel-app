@@ -4458,27 +4458,16 @@
    the full accent in both, everywhere, and nothing stands on pure white.
    ========================================================================== */
 
-/* No pure white on these two pages either. Every card in here reads
-   --bg-card; redefining it once at the root of each page repaints the lot,
-   rather than fifteen scattered rules drifting one at a time. */
-.saved-shell, .account-shell { --bg-card: var(--paper-dim); }
+/* (The --bg-card redefinition for .saved-shell and .account-shell moved to
+   69-v6-account.css in T410, OWNERSHIP rule 5.) */
 
 /* The shells wrap each page. On a phone they are invisible and the panel
    keeps its own full-bleed layout; on desktop they become the two-column
    frame. Same contract as .places-shell and .explore-shell. */
 .saved-shell, .account-shell { display: contents; }
 
-/* Labels set like the filter panel's, so a heading means the same thing on
-   every page: mono, 10px, 0.14em. The colour stays --ink-soft, which is the
-   contrast fix this panel already carries and 8.1:1 rather than 3.4:1. */
-.saved-shell .section-title,
-.account-shell .section-title,
-.account-shell .panel-tag,
-.account-shell .auth-label,
-.account-shell .account-back {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-}
+/* (The 10 px tracked labels of My trips and Account went in T410: brief V5-2,
+   DIRECTION rule 12. Their one rule is in 69-v6-account.css.) */
 
 /* The one filled action on these pages wears the accent, the way Get a pass
    does in the bar. Scoped to the two shells: the same class is the ink button

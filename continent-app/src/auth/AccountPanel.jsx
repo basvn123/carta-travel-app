@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
+import { authErrorText } from './authErrors.js';
+import { onRadioKeys } from './radioKeys.js';
 import {
   ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, DownloadIcon,
   FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
@@ -473,7 +475,7 @@ export function AccountPanel({
         ? t('account.emailPending', { email: nextEmail })
         : t('account.profileSaved'));
     } catch (err) {
-      setProfileError(err.message || t('account.errGeneric'));
+      setProfileError(authErrorText(err, t, 'account.errGeneric'));
     } finally {
       setProfileBusy(false);
     }
@@ -551,7 +553,7 @@ export function AccountPanel({
       setConfirmPassword('');
       setSignOutOthers(false);
     } catch (err) {
-      setPwError(err.message || t('account.errGeneric'));
+      setPwError(authErrorText(err, t, 'account.errGeneric'));
     } finally {
       setPwLoading(false);
     }
@@ -571,7 +573,7 @@ export function AccountPanel({
       setForgotArmed(false);
       setPwNotice(t('account.resetSent', { email: storedEmail }));
     } catch (err) {
-      setPwError(err.message || t('account.errGeneric'));
+      setPwError(authErrorText(err, t, 'account.errGeneric'));
     } finally {
       setPwLoading(false);
     }
@@ -628,7 +630,7 @@ export function AccountPanel({
     } catch (err) {
       // Most likely export_user_data() is not installed yet. Say so rather
       // than failing silently on a compliance path.
-      setExportError(err.message || t('account.errGeneric'));
+      setExportError(authErrorText(err, t, 'account.errGeneric'));
     } finally {
       setExportBusy(false);
     }
@@ -668,7 +670,7 @@ export function AccountPanel({
     } catch (err) {
       // Most likely the delete_user() RPC isn't installed yet; keep the user
       // informed rather than failing silently on a compliance-critical path.
-      setDeleteError(err.message || t('account.errGeneric'));
+      setDeleteError(authErrorText(err, t, 'account.errGeneric'));
       setDeleteBusy(false);
     }
   };
@@ -873,7 +875,7 @@ export function AccountPanel({
               instead of spending header width. Works signed out. */}
           <div className="panel-section">
             <h2 className="account-group-label">{t('account.language')}</h2>
-            <div className="account-lang-grid" role="listbox" aria-label={t('account.language')}>
+            <div className="account-lang-grid" role="listbox" aria-label={t('account.language')} data-arrow-select="false" onKeyDown={onRadioKeys}>
               {languages.map((l) => (
                 <button
                   key={l.code}
@@ -881,6 +883,7 @@ export function AccountPanel({
                   className={`account-lang-opt ${l.code === lang ? 'on' : ''}`}
                   onClick={() => setLang(l.code)}
                   role="option"
+                  tabIndex={l.code === lang ? 0 : -1}
                   aria-selected={l.code === lang}
                 >
                   <CountryFlag country={l.flag} size={15} />
@@ -1100,7 +1103,7 @@ export function AccountPanel({
                 />
                 {emailChanged && <div className="auth-hint">{t('account.emailChangeHint')}</div>}
               </div>
-              {profileError && <div className="auth-error">{profileError}</div>}
+              {profileError && <div className="auth-error" role="alert">{profileError}</div>}
               {profileNotice && <div className="auth-notice auth-notice-inline">{profileNotice}</div>}
               <button type="submit" className="auth-submit" disabled={!profileDirty || profileBusy}>
                 {profileBusy ? t('account.pleaseWait') : t('account.saveProfile')}
@@ -1217,7 +1220,7 @@ export function AccountPanel({
                   />
                   <span>{t('account.signOutOthers')}</span>
                 </label>
-                {pwError && <div className="auth-error">{pwError}</div>}
+                {pwError && <div className="auth-error" role="alert">{pwError}</div>}
                 {/* Disabled until the form could actually succeed, and while it
                     is in flight, which is the half that stops a second submit
                     re-authenticating against a session already being replaced. */}
@@ -1233,7 +1236,7 @@ export function AccountPanel({
             ) : (
               <>
                 <p className="account-section-hint">{t('account.noPasswordHint')}</p>
-                {pwError && <div className="auth-error">{pwError}</div>}
+                {pwError && <div className="auth-error" role="alert">{pwError}</div>}
                 <button
                   className="book-btn secondary account-wide-btn"
                   onClick={handleSendReset}
@@ -1324,7 +1327,7 @@ export function AccountPanel({
                     />
                   </div>
                 )}
-                {exportError && <div className="auth-error">{exportError}</div>}
+                {exportError && <div className="auth-error" role="alert">{exportError}</div>}
                 <div className="account-delete-actions">
                   <button className="book-btn secondary" onClick={disarmExport}>
                     {t('account.exportCancel')}
@@ -1375,7 +1378,7 @@ export function AccountPanel({
                       />
                     </div>
                   )}
-                  {deleteError && <div className="auth-error">{deleteError}</div>}
+                  {deleteError && <div className="auth-error" role="alert">{deleteError}</div>}
                   <div className="account-delete-actions">
                     <button className="book-btn secondary" onClick={disarmDelete}>
                       {t('account.deleteKeep')}
@@ -1472,13 +1475,14 @@ export function AccountPanel({
               <p className="account-section-hint">{t('account.feedbackHint')}</p>
               {/* What kind of message this is, so the inbox can be triaged
                   without reading every one of them first. */}
-              <div className="admin-tone" role="radiogroup" aria-label={t('account.feedbackKind')}>
+              <div className="admin-tone" role="radiogroup" aria-label={t('account.feedbackKind')} onKeyDown={onRadioKeys}>
                 {['bug', 'idea', 'other'].map((k) => (
                   <button
                     key={k}
                     type="button"
                     role="radio"
                     aria-checked={feedbackKind === k}
+                    tabIndex={feedbackKind === k ? 0 : -1}
                     className={`admin-tone-opt ${feedbackKind === k ? 'on' : ''}`}
                     onClick={() => setFeedbackKind(k)}
                   >
@@ -1498,7 +1502,7 @@ export function AccountPanel({
                   placeholder={t('account.feedbackPlaceholder')}
                 />
               </div>
-              {feedbackErr && <p className="auth-error">{feedbackErr}</p>}
+              {feedbackErr && <p className="auth-error" role="alert">{feedbackErr}</p>}
               <button
                 className="auth-submit account-wide-btn"
                 disabled={!feedbackText.trim() || feedbackBusy}

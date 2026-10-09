@@ -19,7 +19,9 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.upl-open:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .upl-open:hover { border-color: var(--ink); color: var(--ink); }
+}
 
 .upl-scrim {
   position: fixed;
@@ -74,7 +76,9 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.upl-x:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .upl-x:hover { border-color: var(--ink); color: var(--ink); }
+}
 
 .upl-lede {
   margin: 0 0 var(--space-4);
@@ -263,10 +267,14 @@
   cursor: pointer;
 }
 .upl-send { border: 1px solid var(--accent); background: var(--accent); color: var(--on-fill); }
-.upl-send:hover:not(:disabled) { filter: brightness(0.95); }
+@media (hover: hover) {
+  .upl-send:hover:not(:disabled) { filter: brightness(0.95); }
+}
 .upl-send:disabled { opacity: 0.55; cursor: default; }
 .upl-btn { border: 1px solid var(--rule); background: transparent; color: var(--ink); }
-.upl-btn:hover:not(:disabled) { border-color: var(--ink); }
+@media (hover: hover) {
+  .upl-btn:hover:not(:disabled) { border-color: var(--ink); }
+}
 .upl-open:focus-visible,
 .upl-x:focus-visible,
 .upl-send:focus-visible,

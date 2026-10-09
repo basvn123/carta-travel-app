@@ -469,18 +469,22 @@ const run = async () => {
   await page.locator('.saved-tab:visible').filter({ hasText: /planned/i }).first().click();
   await page.waitForTimeout(600);
 
+  // Changed by T410 (the shell's T401 now passes onOpenFriends from App, the
+  // brief's V3-9): My trips no longer stands friend trip cards on the Planned
+  // tab, it carries ONE line that points at Friends, and the trip opens read
+  // only there. This block asserted the old cards (From your friends, a card
+  // with no menu); it now asserts the line, that no friend card stands on
+  // the tab, and then opens the same trip from the Friends page.
   const panel = await page.locator('.saved-trips-panel').innerText();
-  if (!/From your friends/i.test(panel)) fail('no friends shelf on the Planned tab');
-  else if (!/Two weeks in Portugal/.test(panel)) fail('the friend trip card did not render');
-  else if (!/Sofie Vermeulen/.test(panel)) fail('the friend trip card does not say who is showing it');
-  else ok('a friend trip card renders, naming who is showing it');
+  if (!/A friend showed you a trip|Friends showed you \d+ trips/i.test(panel)) fail('Planned has no line pointing at Friends');
+  else ok('Planned carries one line pointing at Friends');
+  if (await page.locator('.saved-trips-panel .saved-record-row').filter({ hasText: 'Two weeks in Portugal' }).count() > 0) {
+    fail('a friend trip card still stands on My trips, with a menu that could offer Remove');
+  } else ok('no friend trip card stands on My trips, so no Remove and no edits there');
 
-  const friendCard = page.locator('.saved-record-row').filter({ hasText: 'Two weeks in Portugal' }).first();
-  if (await friendCard.locator('.uptrip-menu').count() > 0) {
-    fail('a friend trip card offers a card menu, which would include Remove');
-  } else ok('a friend trip card has no menu, so no Remove and no edits');
-
-  await friendCard.locator('.uptrip-open').click();
+  await page.locator('.saved-trips-panel button').filter({ hasText: /See them in Friends/i }).first().click();
+  await page.locator('.frn-trip-row').first().waitFor({ timeout: 20000 });
+  await page.locator('.frn-trip-row').filter({ hasText: 'Two weeks in Portugal' }).first().click();
   await page.locator('.ftrip').waitFor({ timeout: 10000 });
   await page.waitForTimeout(500);
   const open = await page.locator('.ftrip').innerText();
@@ -591,6 +595,10 @@ const run = async () => {
   } else ok('the co-planner block states what it hands over, and what it does not');
   // Only friends. Sofie was accepted earlier in this run's fixture, Ana is an
   // accepted friend; Jonas is only an outgoing request and must not appear.
+  // T410: the friends the picker lists arrive from a second request after the
+  // block draws, so wait for the first option before reading the list; on a
+  // slow server the read used to race it and see an empty picker.
+  await op.locator('.coplan-pick option').nth(1).waitFor({ state: 'attached', timeout: 20000 }).catch(() => {});
   const picks = await op.locator('.coplan-pick option').allInnerTexts();
   if (picks.some((p) => /Jonas/.test(p))) {
     fail(`the picker offers somebody who is not a friend: ${JSON.stringify(picks)}`);

@@ -649,7 +649,6 @@
   cursor: pointer;
   transition: border-color .15s, color .15s;
 }
-.pass-buy-quiet:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
 .pass-buy-quiet:disabled { opacity: 0.4; cursor: default; }
 .pass-buy-placeholder {
   font-size: 11.5px;
@@ -722,7 +721,6 @@
   color: var(--ink);
   border: 1px solid var(--rule);
 }
-.auth-submit-quiet:hover:not(:disabled) { background: var(--paper-dim); border-color: var(--ink); }
 .auth-submit-quiet:disabled { opacity: 1; color: var(--ink-mute); border-color: var(--rule-soft); }
 
 /* A field's verdict, at the end of its own label line. The profile form asks
@@ -786,7 +784,6 @@
   cursor: pointer;
   transition: border-color .15s, color .15s, background .15s;
 }
-.account-avatar-edit:hover { border-color: var(--ink-soft); color: var(--ink); background: var(--paper-dim); }
 .account-avatar-picker {
   display: flex;
   flex-wrap: wrap;
@@ -809,7 +806,6 @@
   cursor: pointer;
   transition: border-color .15s, background .15s;
 }
-.account-avatar-opt:hover { border-color: var(--ink-soft); }
 .account-avatar-opt.on { border-color: var(--accent); background: var(--accent-bg); }
 
 .auth-hint {
@@ -837,7 +833,6 @@
   color: var(--ink-soft);
   transition: color .15s, background .15s;
 }
-.pw-reveal:hover { color: var(--ink); background: var(--paper-dim); }
 
 .pw-gauge { display: flex; flex-direction: column; gap: 8px; margin-top: -4px; }
 .pw-strength { display: flex; align-items: center; gap: 10px; }
@@ -931,7 +926,6 @@
   height: 16px;
   cursor: pointer;
 }
-.auth-check:hover { color: var(--ink); }
 
 /* The success banner. Dismissible, because it outlives the moment it reports:
    without the close it is still sitting there the next time the panel opens. */
@@ -965,7 +959,6 @@
   cursor: pointer;
   transition: background .15s;
 }
-.auth-banner-x:hover { background: color-mix(in srgb, var(--green) 14%, var(--paper)); }
 
 /* Forgot your password, as a step rather than a trapdoor. Pressing the link
    used to mail a reset immediately; this says which address it is going to
@@ -1068,7 +1061,6 @@
   border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--paper));
   min-height: 44px;
 }
-.account-delete-arm:hover { background: var(--paper); border-color: var(--danger); color: var(--danger-dark); }
 .account-delete-actions .book-btn { flex: 1; justify-content: center; min-height: 44px; }
 
 @media (max-width: 520px) {

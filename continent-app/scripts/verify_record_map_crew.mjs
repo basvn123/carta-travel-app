@@ -9,7 +9,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4191;
+// T410: CARTA_PORT points the check at a server that is already up (the other
+// harnesses read it too); the default is the port it has always started.
+const PORT = Number(process.env.CARTA_PORT) || 4191;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });

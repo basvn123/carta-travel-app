@@ -22,9 +22,11 @@
   font-weight: 600;
   font-size: 12px;
   color: var(--ink-soft);
-  transition: color .15s, background .15s;
+  transition: color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.account-back:hover { color: var(--ink); background: var(--paper-dim); }
+@media (hover: hover) {
+  .account-back:hover { color: var(--ink); background: var(--paper-dim); }
+}
 .account-back svg { color: currentColor; }
 
 /* The monogram disc. Initials, not a photo: there is no image storage behind
@@ -73,9 +75,11 @@
   border-radius: 10px;
   background: var(--bg-card);
   text-align: left;
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.account-profile-card:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+@media (hover: hover) {
+  .account-profile-card:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+}
 .account-profile-meta {
   flex: 1;
   min-width: 0;
@@ -145,9 +149,11 @@
   font-size: 13.5px;
   font-weight: 500;
   color: var(--ink);
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.account-invite-btn:hover { border-color: var(--accent); }
+@media (hover: hover) {
+  .account-invite-btn:hover { border-color: var(--accent); }
+}
 .account-invite-btn svg { color: var(--accent); }
 
 /* The help menu: one bounded object, rows divided by hairlines, every row a
@@ -166,10 +172,12 @@
   min-height: 52px;
   padding: 0 16px;
   text-align: left;
-  transition: background .15s;
+  transition: background var(--dur-1) var(--ease-out);
 }
 .account-menu-row + .account-menu-row { border-top: 1px solid var(--rule-soft); }
-.account-menu-row:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .account-menu-row:hover { background: var(--paper-dim); }
+}
 .account-menu-icon { flex: none; display: flex; color: var(--ink-soft); }
 .account-menu-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--ink); }
 
@@ -198,9 +206,11 @@
   font-weight: 600;
   line-height: 1.4;
   color: var(--ink);
-  transition: color .15s;
+  transition: color var(--dur-1) var(--ease-out);
 }
-.account-faq-q:hover { color: var(--accent); }
+@media (hover: hover) {
+  .account-faq-q:hover { color: var(--accent); }
+}
 .account-faq-chev { flex: none; color: var(--ink-mute); transition: transform .15s; }
 .account-faq-item.open .account-faq-chev { transform: rotate(180deg); }
 .account-faq-a {
@@ -242,9 +252,11 @@
   font-size: 14px;
   line-height: 1.5;
   color: var(--ink);
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.account-feedback-input:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .account-feedback-input:hover { border-color: var(--ink-soft); }
+}
 .account-feedback-input:focus {
   outline: none;
   border-color: var(--accent);
@@ -307,13 +319,15 @@
   font-size: 13px;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.admin-tone-opt:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .admin-tone-opt:hover { border-color: var(--ink-soft); }
+}
 .admin-tone-opt.on {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-bg);
+  border-color: var(--ink-fill);
+  color: var(--on-fill);
+  background: var(--ink-fill);
 }
 
 .admin-search {
@@ -327,7 +341,7 @@
   background: var(--paper);
   color: var(--ink-mute);
   margin-bottom: 6px;
-  transition: border-color .15s;
+  transition: border-color var(--dur-1) var(--ease-out);
 }
 .admin-search:focus-within { border-color: var(--accent); }
 .admin-search input {
@@ -356,9 +370,11 @@
   font-family: var(--ui);
   text-align: left;
   cursor: pointer;
-  transition: background .15s;
+  transition: background var(--dur-1) var(--ease-out);
 }
-.admin-user-row:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .admin-user-row:hover { background: var(--paper-dim); }
+}
 .admin-user-ava {
   flex: none;
   width: 34px;
@@ -424,9 +440,11 @@
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.admin-btn-secondary:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+@media (hover: hover) {
+  .admin-btn-secondary:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+}
 .admin-btn-secondary:disabled { opacity: .55; cursor: default; }
 
 .admin-back { margin-bottom: 14px; }
@@ -498,7 +516,9 @@
   color: var(--danger);
   cursor: pointer;
 }
-.admin-danger-arm:hover { color: var(--danger-dark); }
+@media (hover: hover) {
+  .admin-danger-arm:hover { color: var(--danger-dark); }
+}
 .admin-danger-actions { display: flex; gap: 10px; margin-top: 12px; }
 .admin-danger-actions .admin-btn-secondary { margin-top: 0; }
 
@@ -562,9 +582,11 @@
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.admin-csv-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+@media (hover: hover) {
+  .admin-csv-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+}
 .admin-csv-btn:disabled { opacity: .55; cursor: default; }
 
 .admin-flag-row {
@@ -598,12 +620,12 @@
   font-size: 11px;
   color: var(--ink-mute);
   cursor: pointer;
-  transition: border-color .15s, color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
 .admin-flag-toggle.on {
-  border-color: var(--green);
-  color: var(--green);
-  background: none;
+  border-color: var(--ink-fill);
+  color: var(--on-fill);
+  background: var(--ink-fill);
 }
 .admin-flag-del {
   flex: none;
@@ -617,7 +639,9 @@
   color: var(--ink-mute);
   cursor: pointer;
 }
-.admin-flag-del:hover { color: var(--danger); background: var(--paper-dim); }
+@media (hover: hover) {
+  .admin-flag-del:hover { color: var(--danger); background: var(--paper-dim); }
+}
 .admin-flag-add {
   display: flex;
   gap: 8px;
@@ -650,7 +674,9 @@
   border-radius: 10px;
 }
 .admin-ban-go { color: var(--danger); border-color: var(--danger); }
-.admin-ban-go:hover { background: none; border-color: var(--danger-dark); color: var(--danger-dark); }
+@media (hover: hover) {
+  .admin-ban-go:hover { background: none; border-color: var(--danger-dark); color: var(--danger-dark); }
+}
 .admin-note-input { margin-bottom: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -707,10 +733,12 @@
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: background .15s, color .15s;
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.adminpage-navbtn:hover { background: var(--paper-dim); color: var(--ink); }
-.adminpage-navbtn.on { background: var(--accent-bg); color: var(--accent); }
+@media (hover: hover) {
+  .adminpage-navbtn:hover { background: var(--paper-dim); color: var(--ink); }
+}
+.adminpage-navbtn.on { background: var(--ink-fill); color: var(--on-fill); }
 .adminpage-close {
   flex: none;
   width: 44px;
@@ -723,7 +751,9 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.adminpage-close:hover { border-color: var(--ink-soft); color: var(--ink); }
+@media (hover: hover) {
+  .adminpage-close:hover { border-color: var(--ink-soft); color: var(--ink); }
+}
 
 .adminpage-body {
   flex: 1;
@@ -774,7 +804,9 @@
   color: var(--danger);
   cursor: pointer;
 }
-.adminpage-retry:hover { color: var(--danger-dark); border-color: var(--danger-dark); }
+@media (hover: hover) {
+  .adminpage-retry:hover { color: var(--danger-dark); border-color: var(--danger-dark); }
+}
 .adminpage-headrow {
   display: flex;
   align-items: center;
@@ -790,15 +822,14 @@
   gap: 9px;
   padding: 11px 13px;
   margin: 0 0 18px;
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--rate);
+  border: 1px solid var(--amber);
   border-radius: 10px;
-  background: var(--bg-card);
+  background: var(--amber-bg);
   font-size: 13px;
   color: var(--ink);
   line-height: 1.5;
 }
-.adminpage-warn > svg { flex: none; color: var(--rate); margin-top: 1px; }
+.adminpage-warn > svg { flex: none; color: var(--amber-ink); margin-top: 1px; }
 
 .adminpage-tiles {
   display: grid;
@@ -835,7 +866,7 @@
   border-radius: 10px;
   background: var(--bg-card);
   color: var(--ink-mute);
-  transition: border-color .15s;
+  transition: border-color var(--dur-1) var(--ease-out);
 }
 .adminpage-search:focus-within { border-color: var(--accent); }
 .adminpage-search input {
@@ -876,7 +907,9 @@
 }
 .adminpage-table tbody tr:last-child td { border-bottom: none; }
 .adminpage-table tbody tr { cursor: pointer; transition: background .12s; }
-.adminpage-table tbody tr:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .adminpage-table tbody tr:hover { background: var(--paper-dim); }
+}
 .adminpage-table .mono {
   font-family: var(--mono);
   font-size: 12px;
@@ -899,7 +932,9 @@
    panel on a row click and carries a pointer cursor and a hover fill to say
    so; the AI usage rollup only reports, so it must not offer either. */
 .adminpage-table-static tbody tr { cursor: default; }
-.adminpage-table-static tbody tr:hover { background: transparent; }
+@media (hover: hover) {
+  .adminpage-table-static tbody tr:hover { background: transparent; }
+}
 /* The margin section's month selector. Two buttons and the month between
    them, wrapping on a narrow window rather than scrolling sideways. The month
    itself is mono because it is a measured field value, not prose. */
@@ -973,9 +1008,9 @@
   margin-left: 6px;
   min-width: 18px;
   padding: 0 5px;
-  border-radius: 9px;
-  background: var(--accent);
-  color: var(--bg-card);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink);
   font-family: var(--mono);
   font-size: 11.5px;
   line-height: 18px;
@@ -1061,21 +1096,29 @@
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, background .15s, color .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.adminpage-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+@media (hover: hover) {
+  .adminpage-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+}
 .adminpage-btn:disabled { opacity: .5; cursor: default; }
 .adminpage-btn.primary {
   background: var(--ink);
   border-color: var(--ink);
   color: var(--paper);
 }
-.adminpage-btn.primary:hover { background: var(--ink-soft); border-color: var(--ink-soft); color: var(--paper); }
+@media (hover: hover) {
+  .adminpage-btn.primary:hover { background: var(--ink-soft); border-color: var(--ink-soft); color: var(--paper); }
+}
 .adminpage-btn.wide { width: 100%; margin-top: 12px; }
 .adminpage-btn.danger { color: var(--danger); border-color: var(--danger); }
-.adminpage-btn.danger:hover { color: var(--danger-dark); border-color: var(--danger-dark); }
+@media (hover: hover) {
+  .adminpage-btn.danger:hover { color: var(--danger-dark); border-color: var(--danger-dark); }
+}
 .adminpage-btn.danger.solid { background: var(--danger); border-color: var(--danger); color: var(--on-fill); }
-.adminpage-btn.danger.solid:hover { background: var(--danger-dark); color: var(--on-fill); }
+@media (hover: hover) {
+  .adminpage-btn.danger.solid:hover { background: var(--danger-dark); color: var(--on-fill); }
+}
 
 .adminpage-cols {
   display: grid;
@@ -1105,7 +1148,9 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.adminpage-back:hover { color: var(--accent); }
+@media (hover: hover) {
+  .adminpage-back:hover { color: var(--accent); }
+}
 .adminpage-detail-head {
   display: flex;
   align-items: center;
@@ -1175,10 +1220,12 @@
   font-size: 13.5px;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.adminpage-seg:hover { border-color: var(--ink-soft); }
-.adminpage-seg.on { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+@media (hover: hover) {
+  .adminpage-seg:hover { border-color: var(--ink-soft); }
+}
+.adminpage-seg.on { border-color: var(--ink-fill); color: var(--on-fill); background: var(--ink-fill); }
 
 .adminpage-inline { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .adminpage-inline label { font-size: 13px; color: var(--ink-soft); }
@@ -1270,9 +1317,9 @@
   font-size: 12px;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, color .15s;
+  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.adminpage-switch.on { border-color: var(--green); color: var(--green); }
+.adminpage-switch.on { border-color: var(--ink-fill); color: var(--on-fill); background: var(--ink-fill); }
 .adminpage-flagdel {
   flex: none;
   width: 32px;
@@ -1285,7 +1332,9 @@
   color: var(--ink-mute);
   cursor: pointer;
 }
-.adminpage-flagdel:hover { color: var(--danger); background: var(--paper-dim); }
+@media (hover: hover) {
+  .adminpage-flagdel:hover { color: var(--danger); background: var(--paper-dim); }
+}
 
 /* The lock, before anything else renders. */
 .adminpage-locked { align-items: center; justify-content: center; }
@@ -1472,9 +1521,9 @@
   color: var(--ink-mute);
   overflow-wrap: anywhere;
 }
-.adminpage-chip.kind-bug { border-color: var(--danger); color: var(--danger); }
-.adminpage-chip.kind-idea { border-color: var(--green); color: var(--green); }
-.adminpage-chip.status-new { border-color: var(--accent); color: var(--accent); }
+.adminpage-chip.kind-bug { border-color: var(--ink); color: var(--ink); }
+.adminpage-chip.kind-idea { border-color: var(--rule); color: var(--ink-soft); }
+.adminpage-chip.status-new { border-color: var(--ink); color: var(--ink); }
 .adminpage-chip.status-done { color: var(--ink-mute); }
 .adminpage-maint { margin-top: 18px; }
 
@@ -1531,9 +1580,11 @@
   text-align: left;
   cursor: pointer;
   overflow: hidden;
-  transition: border-color .15s;
+  transition: border-color var(--dur-1) var(--ease-out);
 }
-.adminpage-card2:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .adminpage-card2:hover { border-color: var(--ink-soft); }
+}
 .adminpage-card2.edited { border-color: var(--accent); }
 .adminpage-card2.hiddenitem { opacity: .5; }
 .adminpage-thumb {
@@ -1595,7 +1646,7 @@
   justify-content: center;
   padding: 40px 20px;
   overflow-y: auto;
-  background: rgba(15, 23, 42, .45);
+  background: color-mix(in srgb, var(--ink) 28%, transparent);
 }
 .adminpage-editorbox {
   width: min(560px, 100%);
@@ -1738,7 +1789,9 @@
 }
 .adminpage-reviewrow.overdue { border-left-color: var(--danger); }
 .adminpage-reviewrow.stale { border-left-color: var(--ink-soft); }
-.adminpage-reviewrow:hover { background: var(--paper); }
+@media (hover: hover) {
+  .adminpage-reviewrow:hover { background: var(--paper); }
+}
 .adminpage-reviewrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .adminpage-reviewwhat { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 220px; }
 .adminpage-reviewwhat b { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
@@ -1765,7 +1818,7 @@
 .adminpage-reviewdate.overdue { color: var(--danger); }
 .adminpage-chip.status-verified { border-color: var(--green); color: var(--green); }
 .adminpage-chip.status-stale { border-color: var(--ink-soft); color: var(--ink); }
-.adminpage-orphans { background: rgba(220, 38, 38, 0.04); }
+.adminpage-orphans { background: color-mix(in srgb, var(--danger) 4%, var(--paper)); }
 .adminpage-reviewrow.orphan { border-left-color: var(--danger); }
 .adminpage-count.overdue { color: var(--danger); }
 .adminpage-card2.overdue { border-color: var(--danger); }
@@ -1855,15 +1908,14 @@
   padding: 12px 14px;
   background: var(--bg-card);
   border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
   border-radius: 10px;
   box-shadow: var(--shadow-1);
   font-size: 13.5px;
   color: var(--ink);
 }
 .site-banner > svg { flex: none; color: var(--accent); }
-.site-banner.warn { border-left-color: var(--rate); }
-.site-banner.warn > svg { color: var(--rate); }
+.site-banner.warn { border-color: var(--amber); background: var(--amber-bg); }
+.site-banner.warn > svg { color: var(--amber-ink); }
 .site-banner-text { flex: 1; min-width: 0; }
 .site-banner-close {
   flex: none;
@@ -1879,7 +1931,9 @@
   color: var(--ink-mute);
   cursor: pointer;
 }
-.site-banner-close:hover { color: var(--ink); background: var(--paper-dim); }
+@media (hover: hover) {
+  .site-banner-close:hover { color: var(--ink); background: var(--paper-dim); }
+}
 /* The expiry banner's one action: a ghost Button, quiet by design because it
    reaches somebody who has already paid. Layout only; the look is .btn-ghost. */
 .site-banner-action { flex: none; }
@@ -1925,6 +1979,8 @@
   border-color: var(--rule);
   background: var(--bg-card);
 }
-.day-citytrip-hero:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .day-citytrip-hero:hover { background: var(--paper-dim); }
+}
 .day-citytrip-hero .day-ai-hero-ico { color: var(--ink-soft); }
 

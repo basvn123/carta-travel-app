@@ -22,9 +22,11 @@
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.01em;
-  transition: background .15s, border-color .15s;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.account-signin-btn:hover { background: var(--accent); border-color: var(--accent); }
+@media (hover: hover) {
+  .account-signin-btn:hover { background: var(--accent); border-color: var(--accent); }
+}
 
 .account-avatar-btn {
   display: inline-flex;
@@ -36,9 +38,11 @@
   background: var(--paper);
   font-family: inherit;
   box-shadow: var(--shadow-1);
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.account-avatar-btn:hover { border-color: var(--ink); background: var(--paper-dim); }
+@media (hover: hover) {
+  .account-avatar-btn:hover { border-color: var(--ink); background: var(--paper-dim); }
+}
 /* On the account page. The bar has to say so: the section tabs give up their
    underline while a page stands over them, and nothing else in the row would
    otherwise mark where you are. */
@@ -84,10 +88,12 @@
   color: var(--ink-soft);
   box-shadow: var(--shadow-1);
   cursor: pointer;
-  transition: border-color .15s, background .15s, color .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .header-pricing-btn svg { color: var(--accent); flex-shrink: 0; }
-.header-pricing-btn:hover { border-color: var(--ink); background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .header-pricing-btn:hover { border-color: var(--ink); background: var(--paper-dim); color: var(--ink); }
+}
 /* Short "Passes" wording is the mobile chip's label; desktop keeps the full
    "See pricing". The narrowest phones fall back to the glyph alone, still on
    a 44px target. */
@@ -116,8 +122,8 @@
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: rgba(26, 26, 26, 0.36);
-  backdrop-filter: blur(2px);
+  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  backdrop-filter: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,9 +213,11 @@
   background: var(--paper);
   font-size: 14px;
   color: var(--ink);
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.auth-field input:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .auth-field input:hover { border-color: var(--ink-soft); }
+}
 .auth-field input:focus {
   outline: none;
   border-color: var(--accent);
@@ -226,9 +234,11 @@
   font-size: 13.5px;
   font-weight: 500;
   letter-spacing: 0.01em;
-  transition: background .15s;
+  transition: background var(--dur-1) var(--ease-out);
 }
-.auth-submit:hover:not(:disabled) { background: var(--accent); }
+@media (hover: hover) {
+  .auth-submit:hover:not(:disabled) { background: var(--accent); }
+}
 .auth-submit:disabled { opacity: 0.55; cursor: default; }
 
 /* "Continue with Google" + the or-divider under it. */
@@ -242,7 +252,9 @@
   color: var(--ink);
   border: 1px solid var(--rule);
 }
-.auth-google:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .auth-google:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+}
 .auth-divider {
   display: flex;
   align-items: center;
@@ -260,7 +272,7 @@
 
 /* Privacy policy modal + entry-gate link. */
 .auth-gate-privacy { display: block; margin: 14px auto 0; font-size: 11px; color: var(--ink-mute); }
-.privacy-modal { max-height: 84vh; overflow-y: auto; }
+.privacy-modal { max-height: 84dvh; overflow-y: auto; }
 .privacy-updated { font-size: 11px; color: var(--ink-mute); margin: -6px 0 12px; }
 .privacy-body { font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); text-align: left; }
 .privacy-body h3 { font-size: 12px; color: var(--ink); margin: 14px 0 4px; }
@@ -306,7 +318,9 @@
 /* Account deletion (danger zone). */
 .account-delete-actions { display: flex; gap: 8px; margin-top: 12px; }
 .account-delete-btn { background: var(--danger); border-color: var(--danger); color: var(--on-fill); }
-.account-delete-btn:hover:not(:disabled) { background: var(--danger-dark); }
+@media (hover: hover) {
+  .account-delete-btn:hover:not(:disabled) { background: var(--danger-dark); }
+}
 .account-delete-btn:disabled { opacity: 0.6; cursor: default; }
 
 .auth-link {
@@ -316,9 +330,11 @@
   text-underline-offset: 2px;
   text-align: left;
   width: fit-content;
-  transition: color .15s;
+  transition: color var(--dur-1) var(--ease-out);
 }
-.auth-link:hover { color: var(--accent); }
+@media (hover: hover) {
+  .auth-link:hover { color: var(--accent); }
+}
 .auth-forgot { align-self: flex-end; margin-top: -6px; }
 .auth-back { align-self: center; margin-top: 2px; }
 
@@ -377,9 +393,11 @@
   color: var(--ink);
   border: 1px solid var(--rule);
 }
-.auth-submit-ghost:hover:not(:disabled) {
-  background: var(--paper-dim);
-  color: var(--ink);
+@media (hover: hover) {
+  .auth-submit-ghost:hover:not(:disabled) {
+    background: var(--paper-dim);
+    color: var(--ink);
+  }
 }
 .auth-gate-guest {
   align-self: center;
@@ -403,7 +421,7 @@
   color: var(--paper);
   font-size: 13px;
   box-shadow: var(--shadow-2);
-  animation: confirm-toast-in .25s ease-out;
+  animation: confirm-toast-in var(--dur-2) var(--ease-out);
 }
 .confirm-toast-check {
   color: var(--green);
@@ -416,7 +434,9 @@
   line-height: 1;
   margin-left: 4px;
 }
-.confirm-toast-close:hover { opacity: 1; }
+@media (hover: hover) {
+  .confirm-toast-close:hover { opacity: 1; }
+}
 @keyframes confirm-toast-in {
   from { opacity: 0; transform: translateX(-50%) translateY(8px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }

@@ -15,7 +15,9 @@
   text-underline-offset: 3px;
   cursor: pointer;
 }
-.report-link:hover { color: var(--ink); }
+@media (hover: hover) {
+  .report-link:hover { color: var(--ink); }
+}
 .report-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .report-link.is-price { font-weight: 400; font-size: 12px; }
 @media (pointer: fine) { .report-link { min-height: 32px; } }

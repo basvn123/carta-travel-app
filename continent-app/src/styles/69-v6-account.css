@@ -350,6 +350,12 @@ h2.saved-section-title { margin: 0; }
 @media (max-width: 768px) {
   .uptrip-card.is-focal .uptrip-photo { aspect-ratio: 2 / 1; }
 }
+/* V5 (T410): after the shell's V5 header the actions ended 7 px below the
+   664 px iPhone screen. On a short phone the photograph gives up a quarter of
+   its height (5:2) so the actions stay inside the first screen. */
+@media (max-width: 768px) and (max-height: 700px) {
+  .uptrip-card.is-focal .uptrip-photo { aspect-ratio: 5 / 2; }
+}
 .uptrip-card.is-focal .uptrip-title { font-size: 22px; }
 .uptrip-card.is-focal .uptrip-when { font-size: 14px; }
 .uptrip-card.is-focal .uptrip-when-n { font-size: 15px; }
@@ -521,7 +527,9 @@ h2.saved-section-title { margin: 0; }
   animation: none;
   transition: border-color var(--dur-1) var(--ease-out);
 }
-.pass-tier:hover { transform: none; box-shadow: none; }
+@media (hover: hover) {
+  .pass-tier:hover { transform: none; box-shadow: none; }
+}
 @keyframes acc-fade {
   from { opacity: 0; }
 }
@@ -581,4 +589,192 @@ h2.saved-section-title { margin: 0; }
   .pass-card,
   .saved-trips-panel > .saved-section,
   .saved-trips-panel > .saved-map-section { animation: none; }
+}
+
+/* ── V5 (T410): harden, adapt and polish ──────────────────────────────────
+   Target-state of the brief's V5 list (docs/design-v6/plans/V5-account.md).
+   Every rule reads a token. */
+
+/* 1. Touch targets. On a coarse pointer every control of this surface reaches
+   --tap (44 px) on its short side. A fine pointer keeps its 32 px rows. The
+   list is the touch census of the V4 result: the account spokes' back button,
+   the Friends actions, the password reveal and the text links, the sign-in
+   submit and fields, the feedback kind pills, the guides' chips, back and copy,
+   and the three small controls on the Visited tab. */
+@media (pointer: coarse) {
+  .account-back,
+  .frn-me-copy,
+  .frn-me-share,
+  .frn-about-btn,
+  .account-avatar-edit,
+  .account-invite-btn,
+  .admin-tone-opt,
+  .gld-chip,
+  .gld-back,
+  .gld-copy,
+  .saved-add-past,
+  .saved-map-expand,
+  .uptrip-crew-add,
+  .uptrip-crew-drop,
+  .auth-submit,
+  .auth-field input,
+  .acct-input,
+  .account-panel input[type="text"],
+  .account-panel input[type="email"],
+  .account-panel input[type="password"] { min-height: var(--tap); }
+  .frn-about-btn,
+  .saved-map-expand,
+  .uptrip-crew-add,
+  .uptrip-crew-drop,
+  .pw-reveal { min-width: var(--tap); }
+  .frn-about-btn,
+  .saved-map-expand,
+  .uptrip-crew-add { width: var(--tap); height: var(--tap); }
+  .pw-reveal { width: var(--tap); height: var(--tap); right: 0; }
+  .auth-link,
+  .account-panel .auth-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+  }
+  .account-back { padding-inline: 10px 14px; }
+  /* The past-trip form: the place and chip removers and the night steppers. */
+  .pasttrip-place-x,
+  .pasttrip-chip-x,
+  .pasttrip-stepper button { width: var(--tap); height: var(--tap); }
+  .pasttrip-input,
+  .pasttrip-select,
+  .pasttrip-cancel,
+  .pasttrip-save { min-height: var(--tap); }
+}
+
+/* Admin: the sparkbars print their busiest and latest figures under the
+   drawing, in mono (brief V5-8). */
+.adminpage-sparkfig {
+  margin: var(--space-1) 0 0;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* No pure white on My trips and Account. Every card in here reads --bg-card;
+   redefining it once at the root of each page repaints the lot. Kept by
+   decision in T410 (row T400-g): the pages have always read on the paper
+   ground, and the caption bands sit one step under it. Moved here from
+   24-destination-workspace.css under OWNERSHIP rule 5. */
+.saved-shell, .account-shell { --bg-card: var(--paper-dim); }
+
+/* The install hint's dismiss is the house close glyph, not a letter x. */
+.install-hint-x { display: inline-flex; align-items: center; justify-content: center; }
+
+/* 2. Scrims and full-height layouts (brief V5-2, V5-6).
+   Every scrim behind a modal of this surface is --ink at 28 percent with no
+   blur (the pass modal's came from the day planner's rule at 42 percent). The
+   sign-in modal and the shared trip scroll inside their overlay and keep clear
+   of the notch and the home bar, so the on-screen keyboard never hides the
+   submit and a collapsing address bar never hides a button. */
+.pass-overlay { background: color-mix(in srgb, var(--ink) 28%, transparent); backdrop-filter: none; }
+.auth-overlay {
+  align-items: flex-start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: max(var(--space-5), env(safe-area-inset-top));
+  padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
+  padding-left: max(var(--space-5), env(safe-area-inset-left));
+  padding-right: max(var(--space-5), env(safe-area-inset-right));
+}
+.auth-overlay > .auth-modal { margin: auto; }
+.stview-overlay {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  overscroll-behavior: contain;
+}
+.auth-modal { max-height: none; }
+
+/* Section labels (DIRECTION rule 12, brief V5-2). A label above a group of
+   controls is the UI face at 12 px, weight 600, --ink-soft, sentence case, no
+   tracking. It replaces the 10 px 0.14em labels these two pages inherited
+   from the filter panel (24-destination-workspace.css, rule moved here under
+   OWNERSHIP rule 5). */
+.saved-shell .section-title,
+.account-shell .section-title,
+.account-shell .panel-tag,
+.account-shell .auth-label,
+.account-shell .account-back {
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* The sign-in modal's close is a quiet outlined circle, not the dark disc the
+   photo headers use (.panel-close is built for a photograph). */
+.auth-modal .auth-close {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+@media (hover: hover) {
+  .auth-modal .auth-close:hover { background: var(--paper-dim); color: var(--ink); border-color: var(--ink-soft); }
+}
+
+/* 3. Long names (brief V5-6). A trip or plan name wraps to two lines before
+   it is cut, so "Two weeks in Portugal and Spain with a stop in Lisbon" is
+   still readable on a 360 px phone; a longer one ends in an ellipsis. */
+.saved-card-title,
+.uptrip-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* 4. The keyboard (brief V5-6, DIRECTION part 7). When a phone's keyboard
+   leaves the sign-in modal about 440 px, the modal drops its lede, and its submit sticks to the foot of the visible area so the field and
+   its submit are never both out of reach. The past-trip form keeps Cancel and
+   Save in a sticky bar at the foot of the panel, which already ends above the
+   bottom nav (and at the screen's foot once the shell hides the nav). */
+@media (max-height: 560px) {
+  .auth-modal { padding: var(--space-4); }
+  .auth-modal .auth-sub { display: none; }
+  .auth-modal .auth-submit { position: sticky; bottom: var(--space-2); z-index: 2; }
+  .auth-overlay { scroll-padding-bottom: calc(var(--tap) + var(--space-6)); }
+}
+@media (max-width: 768px) {
+  .pasttrip-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    padding: var(--space-2) 0;
+    background: var(--paper);
+    border-top: 1px solid var(--rule-soft);
+  }
+  /* A focused field scrolls clear of that bar, not under it. */
+  .saved-trips-panel { scroll-padding-bottom: calc(var(--tap) + var(--space-5)); }
+}
+
+/* 5. The pass half of 21-chat-passes.css, hardened (T410, OWNERSHIP rule 5).
+   The hover rules moved here from 21 and sit inside (hover: hover); the
+   transitions read the duration tokens; the pass card is sized in dvh. */
+.pass-tier { transition: border-color var(--dur-1) var(--ease-out); }
+.pass-buy-quiet,
+.account-avatar-edit,
+.account-avatar-opt,
+.pw-reveal,
+.pw-strength-seg,
+.auth-banner-x { transition-duration: var(--dur-1); transition-timing-function: var(--ease-out); }
+@media (hover: hover) {
+  .pass-buy-quiet:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .auth-submit-quiet:hover:not(:disabled) { background: var(--paper-dim); border-color: var(--ink); }
+  .account-avatar-edit:hover { border-color: var(--ink-soft); color: var(--ink); background: var(--paper-dim); }
+  .account-avatar-opt:hover { border-color: var(--ink-soft); }
+  .pw-reveal:hover { color: var(--ink); background: var(--paper-dim); }
+  .auth-check:hover { color: var(--ink); }
+  .auth-banner-x:hover { background: color-mix(in srgb, var(--green) 14%, var(--paper)); }
+  .account-delete-arm:hover { background: var(--paper); border-color: var(--danger); color: var(--danger-dark); }
+}
+@media (max-width: 720px) {
+  .pass-card { margin: 2dvh auto; max-height: 92dvh; }
 }

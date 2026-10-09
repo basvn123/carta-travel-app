@@ -52,7 +52,9 @@
   background: var(--bg-card);
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.saved-card:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .saved-card:hover { border-color: var(--ink-soft); }
+}
 .saved-card-row {
   display: flex;
   align-items: center;
@@ -117,7 +119,9 @@
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.saved-card-more:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .saved-card-more:hover { background: var(--paper-dim); color: var(--ink); }
+}
 .saved-card-pop {
   position: absolute;
   top: calc(100% + 4px);
@@ -147,11 +151,15 @@
   text-align: left;
   cursor: pointer;
 }
-.saved-card-pop-item:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .saved-card-pop-item:hover { background: var(--paper-dim); color: var(--ink); }
+}
 .saved-card-pop-item svg { flex: none; color: var(--ink-mute); }
 .saved-card-pop-item.danger { color: var(--danger); }
 .saved-card-pop-item.danger svg { color: var(--danger); }
-.saved-card-pop-item.danger:hover { background: var(--paper-dim); color: var(--danger-dark); }
+@media (hover: hover) {
+  .saved-card-pop-item.danger:hover { background: var(--paper-dim); color: var(--danger-dark); }
+}
 
 /* Share / download actions under the trip overview: one toggle, collapsed by
    default, opening into a clean vertical list instead of up to six equal-width
@@ -203,7 +211,9 @@
 }
 .itin-export-item:first-child { border-top: none; }
 .itin-export-item svg { color: var(--accent); flex: none; }
-.itin-export-item:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .itin-export-item:hover { background: var(--paper-dim); color: var(--ink); }
+}
 .itin-export-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 2px 0; text-align: center; }
 
 /* Bookings / notes / packing list on the planned itinerary. One rhythm:
@@ -298,7 +308,9 @@
   border-color: var(--accent-soft);
   white-space: nowrap;
 }
-.extras-inbox-day .dropdown-trigger:hover { background: var(--accent-bg); border-color: var(--accent); }
+@media (hover: hover) {
+  .extras-inbox-day .dropdown-trigger:hover { background: var(--accent-bg); border-color: var(--accent); }
+}
 
 /* Imported activities pinned onto a day row in the days list. */
 .itin-day-extras { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 0 6px 10px; }
@@ -316,8 +328,10 @@
   border: none; background: none; cursor: pointer;
   color: var(--ink-mute); font-size: 13px; line-height: 1; padding: 0 2px;
 }
-.itin-day-extra button:hover { color: var(--accent); }
-.extras-row { padding: 8px 0 10px; border-bottom: 1px solid rgba(196, 190, 169, 0.45); }
+@media (hover: hover) {
+  .itin-day-extra button:hover { color: var(--accent); }
+}
+.extras-row { padding: 8px 0 10px; border-bottom: 1px solid var(--rule-soft); }
 .extras-row-head { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
 .extras-row-head input[type='checkbox'] { accent-color: var(--accent); flex: none; }
 .extras-label { flex: 1; min-width: 0; font-weight: 600; color: var(--ink); }
@@ -327,7 +341,9 @@
   flex: none; border: none; background: none; color: var(--ink-mute);
   font-size: 16px; line-height: 1; padding: 0 4px; cursor: pointer;
 }
-.extras-remove:hover { color: var(--accent); }
+@media (hover: hover) {
+  .extras-remove:hover { color: var(--accent); }
+}
 /* Two fixed rows per booking: code beside the paid amount, then the link on
    its own full line. The old flex-wrap laid the three fields out differently
    per card depending on how long each value happened to be. */
@@ -361,7 +377,9 @@
   border: 1px solid var(--rule); border-radius: 8px; background: transparent;
   color: var(--ink-soft); cursor: pointer;
 }
-.extras-add-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--ink-mute); }
+@media (hover: hover) {
+  .extras-add-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--ink-mute); }
+}
 .extras-add-btn:disabled { opacity: 0.4; cursor: default; }
 .extras-notes {
   width: 100%; resize: vertical; padding: 8px 10px; font-size: 12.5px; line-height: 1.5;
@@ -372,7 +390,7 @@
 .extras-notes::placeholder { color: var(--ink-mute); }
 .extras-check-row {
   display: flex; align-items: center; gap: 8px; padding: 5px 0;
-  border-bottom: 1px solid rgba(196, 190, 169, 0.35); font-size: 13px; cursor: pointer;
+  border-bottom: 1px solid var(--rule-soft); font-size: 13px; cursor: pointer;
 }
 .extras-check-row input[type='checkbox'] { accent-color: var(--accent); flex: none; }
 .extras-check-text { flex: 1; min-width: 0; }
@@ -468,9 +486,13 @@
   text-align: left;
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.saved-card-footer:hover { background: var(--accent-bg); color: var(--accent); }
+@media (hover: hover) {
+  .saved-card-footer:hover { background: var(--accent-bg); color: var(--accent); }
+}
 .saved-card-footer-go { font-size: 15px; line-height: 1; color: var(--ink-mute); }
-.saved-card-footer:hover .saved-card-footer-go { color: var(--accent); }
+@media (hover: hover) {
+  .saved-card-footer:hover .saved-card-footer-go { color: var(--accent); }
+}
 /* Desktop: breathing space between sections and larger cards. The width that
    used to live here (min(560px, 46vw), a docked column) is gone: the panel
    takes the whole screen from 769px up, see the block further down. */
@@ -557,7 +579,9 @@
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.saved-empty-cta:hover { background: var(--accent); border-color: var(--accent); }
+@media (hover: hover) {
+  .saved-empty-cta:hover { background: var(--accent); border-color: var(--accent); }
+}
 
 /* ─── Saved trips v2: two states of travelling under one roof. Favorites is
    the shortlist (photo-led, aspirational), Planned trips is the calendar
@@ -590,7 +614,7 @@
   color: var(--ink-soft);
   opacity: 1;
 }
-.saved-tabs button.seg-on small { background: rgba(255, 255, 255, 0.18); color: var(--paper); }
+.saved-tabs button.seg-on small { background: color-mix(in srgb, var(--on-fill) 18%, transparent); color: var(--paper); }
 
 /* The record's map: every city of every finished trip, pinned, over the
    countries those trips painted. Same embed contract as the AI route preview:
@@ -696,8 +720,12 @@
   transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 .saved-add-past svg { color: var(--ink-mute); }
-.saved-add-past:hover { border-color: var(--ink); color: var(--ink); }
-.saved-add-past:hover svg { color: var(--ink); }
+@media (hover: hover) {
+  .saved-add-past:hover { border-color: var(--ink); color: var(--ink); }
+}
+@media (hover: hover) {
+  .saved-add-past:hover svg { color: var(--ink); }
+}
 .saved-add-past.is-open {
   border-color: var(--accent);
   background: var(--accent-bg);
@@ -768,7 +796,9 @@
   color: var(--ink-mute);
   cursor: pointer;
 }
-.pasttrip-place-x:hover { background: var(--accent-bg); color: var(--accent); }
+@media (hover: hover) {
+  .pasttrip-place-x:hover { background: var(--accent-bg); color: var(--accent); }
+}
 
 .pasttrip-stepper {
   display: inline-flex;
@@ -789,7 +819,9 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.pasttrip-stepper button:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .pasttrip-stepper button:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+}
 .pasttrip-stepper button:disabled { opacity: .35; cursor: default; }
 .pasttrip-stepper-val {
   min-width: 20px;
@@ -883,7 +915,9 @@
   cursor: pointer;
 }
 .pasttrip-result:last-child { border-bottom: none; }
-.pasttrip-result:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .pasttrip-result:hover { background: var(--paper-dim); }
+}
 .pasttrip-result svg { flex: none; color: var(--ink-mute); }
 .pasttrip-result-city { font-weight: 600; }
 .pasttrip-result-country {
@@ -912,7 +946,9 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.pasttrip-ghost:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .pasttrip-ghost:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+}
 .pasttrip-ghost:disabled { opacity: .45; cursor: default; }
 .pasttrip-ghost.is-icon { padding: 6px 8px; }
 
@@ -989,7 +1025,9 @@
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.pasttrip-mode:hover { border-color: var(--ink-soft); color: var(--ink); }
+@media (hover: hover) {
+  .pasttrip-mode:hover { border-color: var(--ink-soft); color: var(--ink); }
+}
 .pasttrip-mode.on {
   border-color: var(--ink);
   background: var(--ink);
@@ -1034,7 +1072,9 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.pasttrip-rate:hover { border-color: var(--rate); color: var(--rate); }
+@media (hover: hover) {
+  .pasttrip-rate:hover { border-color: var(--rate); color: var(--rate); }
+}
 .pasttrip-rate.on {
   border-color: var(--rate);
   background: var(--rate);
@@ -1072,11 +1112,13 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgba(15, 23, 42, .58);
+  background: color-mix(in srgb, var(--ink) 58%, transparent);
   color: var(--on-fill);
   cursor: pointer;
 }
-.pasttrip-photo-btn:hover { background: rgba(15, 23, 42, .8); }
+@media (hover: hover) {
+  .pasttrip-photo-btn:hover { background: color-mix(in srgb, var(--ink) 80%, transparent); }
+}
 .pasttrip-photo.is-cover .pasttrip-photo-btn:first-child { background: var(--accent); }
 .pasttrip-photo-cap {
   width: 100%;
@@ -1108,16 +1150,22 @@
   background: transparent;
   color: var(--ink-soft);
 }
-.pasttrip-cancel:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .pasttrip-cancel:hover { border-color: var(--ink); color: var(--ink); }
+}
 .pasttrip-save {
   border: 1px solid var(--ink);
   background: var(--ink);
   color: var(--paper);
 }
-.pasttrip-save:hover { background: var(--ink-soft); border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .pasttrip-save:hover { background: var(--ink-soft); border-color: var(--ink-soft); }
+}
 .pasttrip-save:disabled,
 .pasttrip-cancel:disabled { opacity: .45; cursor: default; }
-.pasttrip-save:disabled:hover { background: var(--ink); border-color: var(--ink); }
+@media (hover: hover) {
+  .pasttrip-save:disabled:hover { background: var(--ink); border-color: var(--ink); }
+}
 
 /* ── A logged trip, read back under its own card ── */
 .memo {
@@ -1275,7 +1323,9 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.memo-edit:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .memo-edit:hover { border-color: var(--ink); color: var(--ink); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .pasttrip-fold-chev,
@@ -1576,10 +1626,12 @@
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
-.uptrip-crew-add:hover {
-  background: var(--accent-bg);
-  border-color: var(--accent);
-  color: var(--accent);
+@media (hover: hover) {
+  .uptrip-crew-add:hover {
+    background: var(--accent-bg);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
 }
 .uptrip-crew.is-open .uptrip-crew-add { transform: rotate(45deg); }
 .uptrip-crew-pop {
@@ -1609,7 +1661,9 @@
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.uptrip-crew-chip:hover { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .uptrip-crew-chip:hover { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+}
 .uptrip-crew-typerow { display: flex; gap: 6px; }
 .uptrip-crew-input {
   flex: 1;
@@ -1636,7 +1690,9 @@
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), opacity var(--dur-1) var(--ease-out);
 }
-.uptrip-crew-save:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
+@media (hover: hover) {
+  .uptrip-crew-save:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
+}
 .uptrip-crew-save:disabled { opacity: 0.45; cursor: default; }
 .uptrip-crew-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .uptrip-crew-item {
@@ -1665,7 +1721,9 @@
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.uptrip-crew-drop:hover { background: var(--rule); color: var(--ink); }
+@media (hover: hover) {
+  .uptrip-crew-drop:hover { background: var(--rule); color: var(--ink); }
+}
 
 /* ─── The record's map at device size. Expanding is the only way to zoom in
    far enough to find one town, so the small frame carries a corner control and
@@ -1684,12 +1742,14 @@
   justify-content: center;
   border: 1px solid var(--rule);
   border-radius: 9px;
-  background: rgba(248, 246, 240, 0.94);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
   color: var(--ink);
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.saved-map-expand:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+@media (hover: hover) {
+  .saved-map-expand:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+}
 .savedmap-full {
   position: fixed;
   inset: 0;
@@ -1721,7 +1781,7 @@
   white-space: nowrap;
   padding: 7px 13px;
   border-radius: 999px;
-  background: rgba(248, 246, 240, 0.94);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
   font-family: var(--display);
   font-size: 16px;
   color: var(--ink);
@@ -1747,7 +1807,9 @@
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.savedmap-full-close:hover { background: var(--accent); border-color: var(--accent); }
+@media (hover: hover) {
+  .savedmap-full-close:hover { background: var(--accent); border-color: var(--accent); }
+}
 /* MapLibre parks its zoom stack top-right, which is exactly where Close sits.
    Drop the stack below the bar rather than move Close: the way out of a
    full-screen layer belongs in the corner people already reach for. */
@@ -1816,8 +1878,10 @@
   cursor: pointer;
   white-space: nowrap;
 }
-.day-save-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-.day-save-btn.saved, .day-save-btn:disabled { color: var(--good-ink-soft); border-color: rgba(44, 125, 84, 0.4); cursor: default; }
+@media (hover: hover) {
+  .day-save-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+}
+.day-save-btn.saved, .day-save-btn:disabled { color: var(--good-ink-soft); border-color: color-mix(in srgb, var(--good-ink-soft) 40%, transparent); cursor: default; }
 
 /* Itinerary overview: the arrival/return flight rows around the stops list. */
 .itin-flight-row {
@@ -1846,7 +1910,9 @@
 .itin-transfer-main:disabled { cursor: default; }
 .itin-transfer-main small { margin-left: auto; }
 .itin-transfer-main .itin-leg-change { flex: none; margin-left: 8px; }
-.itin-transfer-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
+@media (hover: hover) {
+  .itin-transfer-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
+}
 .itin-transfer-modes { padding: 6px 0 2px; }
 
 /* Home<->first/last-stop drive rows (own-car trips): title stacked over the
@@ -1953,10 +2019,11 @@
 .climate-bar {
   width: 100%;
   border-radius: 4px 4px 2px 2px;
-  transition: filter 0.12s;
 }
 .climate-col.is-best .climate-bar { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px currentColor; }
-.climate-col:hover .climate-bar { filter: brightness(1.08); }
+@media (hover: hover) {
+  .climate-col:hover .climate-bar { filter: brightness(1.08); }
+}
 .climate-great { background: var(--leaf-ink); color: var(--leaf-ink); }
 .climate-good  { background: var(--climate-good); color: var(--climate-good); }
 .climate-mixed { background: var(--accent-soft); color: var(--accent-soft); }
@@ -1985,7 +2052,7 @@
   white-space: nowrap;
   z-index: 5;
   pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-2);
 }
 .climate-tip b { font-weight: 700; }
 

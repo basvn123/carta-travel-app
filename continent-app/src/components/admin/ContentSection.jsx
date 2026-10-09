@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { adminSetOverride } from '../../auth/admin.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { SearchIcon } from '../Icons.jsx';
+import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { dataUrl } from '../../lib/dataHost.js';
 import {
   OVERRIDE_STATUSES, MIN_REASON_CHARS, BACKFILL_REASON, defaultReviewDate, fromDateInput, reviewDateBounds,
@@ -76,6 +77,18 @@ const REVIEW_ERR = {
   note_required: 'admin.errOverrideReason',
 };
 
+/** The item editor is a modal: it names itself, hides the page behind it from a
+ *  screen reader, answers Escape and keeps Tab inside (T410, brief V5-4). */
+function EditorDialog({ label, onClose, children }) {
+  const ref = useRef(null);
+  useFocusTrap(ref, onClose);
+  return (
+    <div className="adminpage-editor" role="dialog" aria-modal="true" aria-label={label} ref={ref}>
+      {children}
+    </div>
+  );
+}
+
 export function ContentSection({ overrides, onOverridesChanged, errText, focusRow = null }) {
   const { t } = useI18n();
   const [layerKey, setLayerKey] = useState('beach');
@@ -89,6 +102,9 @@ export function ContentSection({ overrides, onOverridesChanged, errText, focusRo
   // with it because the review list opens overrides from any layer without
   // switching the grid.
   const [editing, setEditing] = useState(null);
+  // Reverting throws the edit away, so it arms in place first (T410, V5-8).
+  const [revertArmed, setRevertArmed] = useState(false);
+  useEffect(() => { setRevertArmed(false); }, [editing]);
   const [editLayerKey, setEditLayerKey] = useState('beach');
   // The wire file the item came from (public/<layer>/<CC>.json). Saved on the
   // override row (migration 045) so the review and orphan lists can load the
@@ -489,7 +505,7 @@ export function ContentSection({ overrides, onOverridesChanged, errText, focusRo
       )}
 
       {editing && (
-        <div className="adminpage-editor" role="dialog" aria-label={t('admin.editTitle')}>
+        <EditorDialog label={t('admin.editTitle')} onClose={() => setEditing(null)}>
           <div className="adminpage-editorbox">
             <h3 className="adminpage-h3">{t('admin.editTitle')}</h3>
             <p className="adminpage-editorname">
@@ -617,21 +633,35 @@ export function ContentSection({ overrides, onOverridesChanged, errText, focusRo
 
             {saveErr && <p className="adminpage-err">{saveErr}</p>}
 
-            <div className="adminpage-row adminpage-editoractions">
-              <button type="button" className="adminpage-btn" onClick={() => setEditing(null)}>
-                {t('admin.editCancel')}
-              </button>
-              {editRow && (
-                <button type="button" className="adminpage-btn danger" disabled={saveBusy} onClick={() => save(true)}>
-                  {t('admin.editRevert')}
+            {revertArmed ? (
+              <>
+                <p className="adminpage-muted" role="alert">{t('admin.editRevertAsk')}</p>
+                <div className="adminpage-row adminpage-editoractions">
+                  <button type="button" className="adminpage-btn" autoFocus onClick={() => setRevertArmed(false)}>
+                    {t('admin.editRevertKeep')}
+                  </button>
+                  <button type="button" className="adminpage-btn danger solid" disabled={saveBusy} onClick={() => save(true)}>
+                    {t('admin.editRevert')}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="adminpage-row adminpage-editoractions">
+                <button type="button" className="adminpage-btn" onClick={() => setEditing(null)}>
+                  {t('admin.editCancel')}
                 </button>
-              )}
-              <button type="button" className="adminpage-btn primary" disabled={saveBusy} onClick={() => save(false)}>
-                {saveBusy ? t('account.pleaseWait') : t('admin.editSave')}
-              </button>
-            </div>
+                {editRow && (
+                  <button type="button" className="adminpage-btn danger" disabled={saveBusy} onClick={() => setRevertArmed(true)}>
+                    {t('admin.editRevert')}
+                  </button>
+                )}
+                <button type="button" className="adminpage-btn primary" disabled={saveBusy} onClick={() => save(false)}>
+                  {saveBusy ? t('account.pleaseWait') : t('admin.editSave')}
+                </button>
+              </div>
+            )}
           </div>
-        </div>
+        </EditorDialog>
       )}
     </>
   );

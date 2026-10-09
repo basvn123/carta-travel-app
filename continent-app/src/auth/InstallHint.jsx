@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button } from '../components/Button.jsx';
+import { CloseIcon } from '../components/Icons.jsx';
 
 /**
  * The install hint (owner call T362 on T246-d; carta-design, Components).
@@ -90,7 +91,7 @@ export function InstallHint({ hasSavedTrip }) {
       <p className="install-hint-text">{showHow ? t('install.ios') : t('install.hint')}</p>
       <div className="install-hint-actions">
         {!showHow && <Button size="sm" onClick={add}>{t('install.add')}</Button>}
-        <button type="button" className="install-hint-x" onClick={dismiss} aria-label={t('install.dismiss')}>x</button>
+        <button type="button" className="install-hint-x" onClick={dismiss} aria-label={t('install.dismiss')}><CloseIcon size={16} /></button>
       </div>
     </div>
   );

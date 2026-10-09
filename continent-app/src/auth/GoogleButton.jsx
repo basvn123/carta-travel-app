@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
+import { authErrorText } from './authErrors.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // The four-colour G, inline so no external asset is fetched.
@@ -35,14 +36,14 @@ export function GoogleButton() {
           try {
             await signInWithGoogle();
           } catch (err) {
-            setError(err.message || t('auth.errGeneric'));
+            setError(authErrorText(err, t, 'auth.errGeneric'));
             setBusy(false);
           }
         }}
       >
         <GoogleG /> {t('auth.continueWithGoogle')}
       </button>
-      {error && <div className="auth-error">{error}</div>}
+      {error && <div className="auth-error" role="alert">{error}</div>}
     </>
   );
 }

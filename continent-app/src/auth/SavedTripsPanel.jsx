@@ -25,6 +25,8 @@ import { kindsForDest } from '../lib/trip_kinds.js';
 import { eur } from '../lib/format.js';
 import { eurDay } from '../lib/costIndex.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { activeLocale } from '../lib/localeState.js';
 import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
 import { FAV_KIND_LABEL, parseFavKey } from '../lib/favorites.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
@@ -168,10 +170,19 @@ function SavedEmpty({ text, cta, onCta, secondary = false }) {
  */
 function UndoToast({ label, onUndo, onClose }) {
   const { t } = useI18n();
+  const undoBtn = useRef(null);
+  // After a removal the card (and the menu that held focus) is gone, so focus
+  // would fall back to the page. Hand it to Undo, the one control the keyboard
+  // user needs next (row T400-d). Only when focus is lost: a pointer user's
+  // focus ring does not show on a programmatic focus.
+  useEffect(() => {
+    const a = document.activeElement;
+    if (!a || a === document.body || !document.contains(a)) undoBtn.current?.focus({ preventScroll: true });
+  }, []);
   const node = (
     <div className="undo-toast" role="status">
       <span className="undo-toast-text">{t('saved.undoRemoved', { name: label })}</span>
-      <button type="button" className="undo-toast-undo" onClick={onUndo}>{t('saved.undo')}</button>
+      <button type="button" ref={undoBtn} className="undo-toast-undo" onClick={onUndo}>{t('saved.undo')}</button>
       <button type="button" className="undo-toast-close" onClick={onClose} aria-label={t('a11y.close')} title={t('a11y.close')}>
         <CloseIcon size={16} />
       </button>
@@ -181,6 +192,19 @@ function UndoToast({ label, onUndo, onClose }) {
   return slot ? createPortal(node, slot) : node;
 }
 
+/** The record map at device size, as a real modal: it names itself, tells a
+ *  screen reader that the page behind is out of reach, and keeps Tab inside
+ *  (T410, brief V5-4). Escape stays with the panel's capture listener. */
+function RecordMapDialog({ title, onClose, children }) {
+  const ref = useRef(null);
+  useFocusTrap(ref, onClose);
+  return (
+    <div className="savedmap-full" role="dialog" aria-modal="true" aria-label={title} ref={ref}>
+      {children}
+    </div>
+  );
+}
+
 /** The shared "more" affordance: one quiet button, a popover with the card's
  *  secondary actions, and Remove always last, in --danger. Remove runs at once
  *  and the panel offers Undo for six seconds (T400). */
@@ -188,18 +212,44 @@ function CardMenu({ actions = [], onAskRemove, removeLabel }) {
   const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const moreRef = useRef(null);
+
+  // The menu is a menu: opening it moves focus to its first item, Arrow keys,
+  // Home and End walk it, Escape closes it and gives focus back to the button
+  // (T410, brief V5-4).
+  useEffect(() => {
+    if (menuOpen) menuRef.current?.querySelector('[role="menuitem"]')?.focus();
+  }, [menuOpen]);
+  const onMenuKey = (e) => {
+    const items = [...(menuRef.current?.querySelectorAll('[role="menuitem"]') || [])];
+    if (!items.length) return;
+    const at = items.indexOf(document.activeElement);
+    let next = null;
+    if (e.key === 'ArrowDown') next = items[(at + 1) % items.length];
+    else if (e.key === 'ArrowUp') next = items[(at - 1 + items.length) % items.length];
+    else if (e.key === 'Home') next = items[0];
+    else if (e.key === 'End') next = items[items.length - 1];
+    if (next) { e.preventDefault(); next.focus(); }
+  };
 
   useEffect(() => {
     if (!menuOpen) return undefined;
     const onDocDown = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
     };
-    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    // Capture phase, and it stops the key: App keeps its own Escape stack on
+    // window, so one press would close the menu AND the page behind it.
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      setMenuOpen(false);
+      moreRef.current?.focus();
+    };
     document.addEventListener('mousedown', onDocDown);
-    document.addEventListener('keydown', onKey);
+    document.addEventListener('keydown', onKey, true);
     return () => {
       document.removeEventListener('mousedown', onDocDown);
-      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('keydown', onKey, true);
     };
   }, [menuOpen]);
 
@@ -207,6 +257,7 @@ function CardMenu({ actions = [], onAskRemove, removeLabel }) {
     <div className="saved-card-menu" ref={menuRef}>
       <button
         className="saved-card-more"
+        ref={moreRef}
         onClick={() => setMenuOpen((v) => !v)}
         aria-label={t('saved.actions')}
         aria-haspopup="menu"
@@ -216,7 +267,7 @@ function CardMenu({ actions = [], onAskRemove, removeLabel }) {
         <MoreIcon size={16} />
       </button>
       {menuOpen && (
-        <div className="saved-card-pop" role="menu">
+        <div className="saved-card-pop" role="menu" onKeyDown={onMenuKey}>
           {actions.map((a) => (
             <button
               key={a.key}
@@ -563,7 +614,7 @@ function CrewBar({ crew, friends, onAdd, onRemove }) {
                     aria-label={t('saved.crewRemove', { name: c.name.trim() })}
                     title={t('saved.crewRemove', { name: c.name.trim() })}
                   >
-                    x
+                    <CloseIcon size={12} />
                   </button>
                 </span>
               ) : null))}
@@ -863,7 +914,7 @@ export function SavedTripsPanel({
     setError('');
     fetchSavedTrips(user.id)
       .then(setTrips)
-      .catch((e) => setError(e.message || t('saved.errLoad')))
+      .catch(() => setError(t('saved.errLoad')))
       .finally(() => setLoading(false));
   };
 
@@ -875,7 +926,7 @@ export function SavedTripsPanel({
       .catch((e) => {
         console.error('trip plans failed to load', e);
         setTripPlans([]);
-        setTripPlansError(e.message || t('saved.errLoad'));
+        setTripPlansError(t('saved.errLoad'));
       })
       .finally(() => setTripPlansLoading(false));
   };
@@ -1058,8 +1109,8 @@ export function SavedTripsPanel({
       setMemTick((n) => n + 1);
       setPastOpen(false);
       setPastEdit(null);
-    } catch (e) {
-      setPastError(e.message || t('saved.pastSaveFailed'));
+    } catch {
+      setPastError(t('saved.pastSaveFailed'));
     } finally {
       setPastBusy(false);
     }
@@ -1077,8 +1128,8 @@ export function SavedTripsPanel({
     }
   };
 
-  const fmtDate = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
-  const fmtDateYear = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+  const fmtDate = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
+  const fmtDateYear = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) : '';
   // Supabase timestamps come with a time part; trim to the calendar day.
   const fmtStamp = (s) => (s ? fmtDateYear(String(s).slice(0, 10)) : '');
 
@@ -1384,7 +1435,14 @@ export function SavedTripsPanel({
         if (namedCrew(cur).length >= MAX_CREW) return;
         writeCrewFor(planId, [...cur, member]);
       }}
-      onRemove={(i) => writeCrewFor(planId, crewFor(planId).filter((_, j) => j !== i))}
+      onRemove={(i) => {
+        // The house undo rule (row T400-e): the name goes at once, Undo writes
+        // the whole list back so every index an expense points at returns.
+        const before = crewFor(planId);
+        const name = before[i]?.name?.trim() || '';
+        writeCrewFor(planId, before.filter((_, j) => j !== i));
+        removeWithUndo({ key: `crew:${planId}:${before[i]?.id}`, label: name, restore: () => writeCrewFor(planId, before) });
+      }}
     />
   );
 
@@ -1886,7 +1944,7 @@ export function SavedTripsPanel({
               here it also drops cooperativeGestures, because a map that owns
               the whole device should answer a pinch directly. ── */}
           {mapFull && pastCount > 0 && createPortal(
-            <div className="savedmap-full" role="dialog" aria-label={t('saved.mapFullTitle')}>
+            <RecordMapDialog title={t('saved.mapFullTitle')} onClose={() => setMapFull(false)}>
               <div className="savedmap-full-map">
                 <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
                   <SavedTripMap
@@ -1908,7 +1966,7 @@ export function SavedTripsPanel({
                   <span>{t('saved.mapShrink')}</span>
                 </button>
               </div>
-            </div>,
+            </RecordMapDialog>,
             document.body,
           )}
 
@@ -1959,7 +2017,7 @@ export function SavedTripsPanel({
               />
             )}
             {tripPlansError && !pastOpen ? (
-              <div className="auth-error">{tripPlansError}</div>
+              <div className="auth-error" role="alert">{tripPlansError}</div>
             ) : pastCount === 0 && !pastOpen ? (
               <SavedEmpty
                 Icon={CheckIcon}

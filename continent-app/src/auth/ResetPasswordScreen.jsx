@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
+import { authErrorText } from './authErrors.js';
 import { MIN_PASSWORD_LENGTH } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
 import { PasswordField } from './PasswordField.jsx';
@@ -33,7 +34,7 @@ export function ResetPasswordScreen() {
       await updatePassword(password);
       setDone(true);
     } catch (err) {
-      setError(err.message || t('auth.errGeneric'));
+      setError(authErrorText(err, t, 'auth.errGeneric'));
     } finally {
       setLoading(false);
     }
