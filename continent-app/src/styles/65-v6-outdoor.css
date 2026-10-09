@@ -464,3 +464,50 @@
    its km axis and the surface track under it. */
 .dsk-page .sig-plain-area { fill: var(--rule); stroke: none; }
 .dsk-page [data-testid="cycle-elev"] { margin-bottom: var(--space-4); }
+
+/* ── T406 (V5): harden, adapt and polish ──────────────────────────────────
+   Long names and German or Dutch compounds wrap instead of pushing the page
+   wide; a mark on a figure has its reason on the page; the map's attribution
+   toggle is reachable by a finger. No new colour, type or motion. */
+
+/* A long title, a ref chip or a compound word breaks where it must, and a
+   title that wraps balances its lines (no single word on the last one). */
+.dsk-page .dsk-head .tpage-title,
+.dsk-page .dsk-head .bpage-name,
+.dsk-page .dsk-head .cycle-title h1 {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  text-wrap: balance;
+}
+.dsk-page .dsk-ref { max-width: 100%; overflow-wrap: anywhere; }
+.dsk-page .jstrip-word,
+.dsk-page .dsk-kf-value,
+.dsk-page .dsk-kf-label,
+.dsk-page .jpage-exit-title,
+.dsk-page .jpage-lrow-label {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.dsk-page .dsk-hook { overflow-wrap: break-word; text-wrap: pretty; }
+
+/* The reason for a mark under the key facts band ("~ Estimated from the
+   elevation model"), set as metadata, not as a note in a box. */
+.dsk-page .dsk-kf-foot {
+  margin: var(--space-2) 0 0;
+  font-family: var(--ui);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-mute);
+}
+
+/* The map's attribution toggle is 24 px; on a coarse pointer its hit box
+   grows to --tap around it without moving the icon (the zoom buttons
+   already take --tap in 26-shortlist-extras.css). */
+@media (pointer: coarse) {
+  .dsk-page .maplibregl-ctrl-attrib-button { position: relative; }
+  .dsk-page .maplibregl-ctrl-attrib-button::before {
+    content: '';
+    position: absolute;
+    inset: calc((24px - var(--tap)) / 2);
+  }
+}

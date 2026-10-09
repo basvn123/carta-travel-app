@@ -16,9 +16,12 @@ import { useI18n } from '../i18n/index.jsx';
  * A cell may carry `note`, one short line under the value (the bathing water
  * site, "est." on a modelled season), set as metadata. `lead` is one verdict
  * that leads the band in its own words (the lake's swim verdict, which can
- * hurt somebody and so is never a cell among others).
+ * hurt somebody and so is never a cell among others). `foot` is one visible
+ * line under the band for a mark the cells carry (the trail's "~" on a grade
+ * estimated from the elevation model), so the reason is on the page and not
+ * only in a `title` that touch cannot reach (T406).
  */
-export function KeyFacts({ cells, lead = null }) {
+export function KeyFacts({ cells, lead = null, foot = null }) {
   const { t } = useI18n();
   const hasCells = Array.isArray(cells) && cells.length > 0;
   if (!hasCells && !lead) return null;
@@ -38,6 +41,7 @@ export function KeyFacts({ cells, lead = null }) {
         ))}
       </dl>
       )}
+      {foot ? <p className="dsk-kf-foot">{foot}</p> : null}
     </section>
   );
 }

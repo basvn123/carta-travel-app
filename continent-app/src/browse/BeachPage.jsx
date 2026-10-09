@@ -80,24 +80,29 @@ function ImageCredit({ image, t }) {
   return (
     <p className="bpage-credit">
       <CameraIcon size={12} />
-      {by && (
-        <a href={image.page} target="_blank" rel="noopener noreferrer">
-          {by}
-        </a>
-      )}
-      {by && lic && ', '}
-      {lic && (image.licUrl
-        ? (
-          <a href={image.licUrl} target="_blank" rel="noopener noreferrer">
-            {lic}
+      {/* One flex item, not three: .bpage-credit is a flex row with a gap, so a
+          bare ", " between the author and the licence would take the gap on
+          both sides (T396-g). The lake and mountain pages do the same. */}
+      <span className="lpage-credit-line">
+        {by && (
+          <a href={image.page} target="_blank" rel="noopener noreferrer">
+            {by}
           </a>
-        )
-        : <span>{lic}</span>)}
-      {!by && (
-        <a href={image.page} target="_blank" rel="noopener noreferrer">
-          {t('beach.photos')}
-        </a>
-      )}
+        )}
+        {by && lic ? ', ' : ''}
+        {lic && (image.licUrl
+          ? (
+            <a href={image.licUrl} target="_blank" rel="noopener noreferrer">
+              {lic}
+            </a>
+          )
+          : <span>{lic}</span>)}
+        {!by && (
+          <a href={image.page} target="_blank" rel="noopener noreferrer">
+            {t('beach.photos')}
+          </a>
+        )}
+      </span>
     </p>
   );
 }
@@ -423,7 +428,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
           <ChevronRightIcon size={15} />
         </button>
       ) : null}
-      map={(
+      map={Number.isFinite(beach.lat) && Number.isFinite(beach.lon) ? (
         <div className="sig-mapwrap">
           <PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} name={beach.name} />
           {point && (
@@ -433,7 +438,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
             />
           )}
         </div>
-      )}
+      ) : null}
       signature={<BeachSignature beach={beach} />}
       rows={rows}
       gettingThere={(

@@ -575,6 +575,50 @@ check('desktop opens the lake page',
 await desk.screenshot({ path: 'shots/lakes-page-desktop.png', fullPage: true });
 await desk.close();
 
+
+// T406 (design wave V5, brief V5-1): the edge fixtures of the lake page. One
+// record is served with its point removed and one with a 100 character
+// name, each opened by its share link at 360 px: no point means no map slot (so
+// no empty box and no rail link to it), and a long name wraps inside the
+// column without a horizontal scroll. Service workers are blocked so the
+// changed record reaches the page. The loaders in src/lib already drop a
+// record without a finite point, so the first fixture passes when no page
+// opens, and checks the empty box if one ever does.
+{
+  const edge = async (label, mutate, assert, { optional = false } = {}) => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
+    const p = await ctx.newPage();
+    await seed(p);
+    await p.route('**/lakes/*.json', async (route) => {
+      const res = await route.fetch();
+      const body = await res.json();
+      const list = Array.isArray(body) ? body : (Object.values(body).find(Array.isArray) || []);
+      for (const row of list) if (row && row.id === 'at-attersee-Q698516') mutate(row);
+      await route.fulfill({ response: res, json: body });
+    });
+    try {
+      await p.goto(URL + '#lake=at-attersee-Q698516&lc=AT', { waitUntil: 'domcontentloaded', timeout: 60000 });
+      const opened = await p.waitForSelector('.dsk-page h1', { timeout: optional ? 20000 : 60000 }).then(() => true, () => false);
+      if (!opened && optional) { check(label, true, 'the loader drops it, so no page opens'); await ctx.close(); return; }
+      await p.waitForTimeout(1500);
+      await assert(p, label);
+    } catch (e) {
+      check(label, false, String(e.message).split(String.fromCharCode(10))[0]);
+    }
+    await ctx.close();
+  };
+  await edge('lake: a record with no point never opens with an empty map box', (r) => { r.lat = null; r.lon = null; }, async (p, label) => {
+    check(label, await p.locator('.dsk-page .dsk-map').count() === 0);
+  }, { optional: true });
+  await edge('lake: a 100 character name wraps inside the column', (r) => { r.name = 'Donaudampfschifffahrtsgesellschaftskapitaensmuetze und Grossglocknerhochalpenstrasse Nationalpark'; }, async (p, label) => {
+    const over = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    const h1 = await p.evaluate(() => { const e = document.querySelector('.dsk-page h1'); const r = e.getBoundingClientRect(); return [r.left, r.right, e.textContent]; });
+    // The title must really be the long one, or the check below is vacuous
+    // (a service worker once served the page without the changed record).
+    check(label, /Donaudampf/.test(h1[2]) && over <= 0 && h1[0] >= 0 && h1[1] <= 360, `overflow ${over} px, title ${Math.round(h1[0])} to ${Math.round(h1[1])}`);
+  });
+}
+
 } catch (e) {
   // A thrown locator timeout must not swallow the checks that already ran:
   // "which of these passed" is the whole output of this script.

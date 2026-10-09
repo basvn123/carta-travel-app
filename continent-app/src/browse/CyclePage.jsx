@@ -37,6 +37,7 @@ import {
 import { Instrument, Row, EmptyTrack, SpanAxis } from './Signature.jsx';
 import { kmOf, trafficMix } from '../lib/signature.js';
 import { numberSentence } from '../lib/numberSentences.js';
+import { srcSetFor } from '../lib/heroImage.js';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
   ListDayIcon, CheckIcon, InfoIcon, BulbIcon,
@@ -408,7 +409,7 @@ export function CycleFamilyPage({ familyRef, onClose, onOpenRoute }) {
             )}
           </div>
         </header>
-        {loading && <p className="places-empty">{'…'}</p>}
+        {loading && <p className="places-empty" role="status">{t('state.loading')}</p>}
         {!loading && !family && (
           <div className="places-empty empty-act">
             <p>{t('cycle.familyGone')}</p>
@@ -909,8 +910,22 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
       hero={{
         sharedKey: tourSlug || routeId,
         cells,
+        // T406: the hero is the page's largest picture, so it takes the 1280 px
+        // thumbnail the wire carries as `thumb` (about 0.4 MB), not `url`, the
+        // original file (15.4 MB for route 1150), and a srcset over Wikimedia's
+        // renderable widths so a small phone fetches less. A URL it cannot
+        // resize keeps its one src.
         media: heroShot ? (
-          <img className="dsk-hero-img" src={heroShot.url || heroShot.thumb} alt={heroShot.title || title} loading="eager" decoding="async" />
+          <img
+            className="dsk-hero-img"
+            src={heroShot.thumb || heroShot.url}
+            srcSet={srcSetFor(heroShot.thumb || heroShot.url, 1280)}
+            sizes={srcSetFor(heroShot.thumb || heroShot.url, 1280) ? '100vw' : undefined}
+            alt={heroShot.title || title}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
         ) : null,
         credit: heroShot && (heroShot.author || heroShot.license) ? (
           <p className="bpage-credit">
@@ -937,7 +952,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               <RatingBadge rating={rating} size="lg" showGem={false} />
             </span>
           )}
-          {loading && <p className="places-empty">{'…'}</p>}
+          {loading && <p className="places-empty" role="status">{t('state.loading')}</p>}
           {/* A route or tour id that resolves to nothing: a gone page, said
               as one, with the way back to the list. Not a country claim. */}
           {!loading && !route && !tour && (

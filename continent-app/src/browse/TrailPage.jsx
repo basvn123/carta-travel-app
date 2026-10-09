@@ -47,6 +47,7 @@ import { RatingBadge } from '../components/RatingBadge.jsx';
 import { isNum } from '../map/coords.js';
 import { FigureFooter } from './HonestFooters.jsx';
 import { UploadForm } from '../community/UploadForm.jsx';
+import { srcSetFor } from '../lib/heroImage.js';
 
 /**
  * The trail page: a published hike or city day as a page of its own, opened
@@ -894,12 +895,18 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       hero={{
         sharedKey: tr.id,
         cells,
+        // T406: a srcset over Wikimedia's renderable widths, capped at the 1280 px
+        // the wire ships, so no phone fetches more than before and a small one
+        // fetches less. A URL it cannot resize keeps its one src.
         media: heroUrl ? (
           <img
             className="dsk-hero-img"
             src={heroUrl}
+            srcSet={srcSetFor(heroUrl, 1280)}
+            sizes={srcSetFor(heroUrl, 1280) ? '100vw' : undefined}
             alt={heroShot?.caption || tr.name}
             loading="eager"
+            fetchPriority="high"
             decoding="async"
           />
         ) : null,
@@ -930,6 +937,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       )}
       hook={hook}
       keyFacts={keyFacts}
+      keyFactsFoot={diffKey && derivedGrade ? `~ ${t('trails.gradeDerived')}` : null}
       notFor={(
         <NotFor lines={notForLines('trail', tr, {
           reasons: detail?.reasons || tr.reasons,

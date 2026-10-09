@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  SunIcon, CarIcon, GondolaIcon, BootIcon, MountainIcon,
-} from '../components/Icons.jsx';
+import { SunIcon } from '../components/Icons.jsx';
 import { pointWord, kmFigure } from '../lib/derivedModules.js';
 
 /**
@@ -93,85 +91,10 @@ export function BeachWalkIn({ walkIn, t }) {
   );
 }
 
-/* ── Mountain, how you get up (10.3) ── */
-
-const SLOT_ICON = { drive: CarIcon, lift: GondolaIcon, walk: BootIcon, climb: MountainIcon };
-
-/**
- * One line per way up, in slot order. `liftWord` and `gradeWord` come from
- * mountainStory.js (liftLabel, difficultyLabel), `hardWord` is the harder
- * grade's word, so the sentences use the same words as the rest of the page.
- */
-function wayLines(wayUp, t, { liftWord, gradeWord, hardWord }, lang) {
-  const state = Object.fromEntries(wayUp.slots.map((s) => [s.key, s.state]));
-  const lines = [];
-  lines.push({ key: 'drive', text: t(state.drive === 'on' ? 'derived.upDriveOn' : 'derived.upDriveOff') });
-  if (state.lift === 'on') {
-    lines.push({
-      key: 'lift',
-      text: [liftWord, wayUp.liftName].filter(Boolean).join(', '),
-      figure: wayUp.liftM != null
-        ? t('derived.upLiftM', { m: wayUp.liftM.toLocaleString(lang) }) : '',
-    });
-  } else {
-    lines.push({ key: 'lift', text: t(state.lift === 'part' ? 'derived.upLiftPart' : 'derived.upLiftOff') });
-  }
-  if (!wayUp.graded) {
-    lines.push({ key: 'walk', text: t('derived.upUngraded') });
-  } else if (state.walk === 'on') {
-    lines.push({ key: 'walk', text: t('derived.upWalkOn', { grade: gradeWord }) });
-  } else {
-    lines.push({ key: 'walk', text: t('derived.upWalkOff') });
-  }
-  if (wayUp.graded) {
-    if (state.walk === 'off' && state.climb === 'on') {
-      lines.push({ key: 'climb', text: t('derived.upClimbEasiest', { grade: gradeWord }) });
-    } else if (wayUp.hard) {
-      lines.push({ key: 'climb', text: t('derived.upClimbHard', { grade: hardWord }) });
-    } else {
-      lines.push({ key: 'climb', text: t('derived.upClimbOff') });
-    }
-  }
-  return lines;
-}
-
-export function MountainWayUp({ wayUp, t, lang, words }) {
-  const lines = wayLines(wayUp, t, words, lang);
-  return (
-    <div className="dmod dmod-up">
-      {/* The four slots are the picture; the sentences under them carry the
-          same answer in words, so the grid is hidden from screen readers
-          rather than read twice. */}
-      <ul className="dmod-slots" aria-hidden="true">
-        {wayUp.slots.map(({ key, state }) => {
-          const Icon = SLOT_ICON[key];
-          return (
-            <li key={key} className={`dmod-slot is-${state}${wayUp.primary === key ? ' is-primary' : ''}`}>
-              <Icon size={20} />
-              <span>{t(`derived.slot${cap(key)}`)}</span>
-            </li>
-          );
-        })}
-      </ul>
-      <ul className="dmod-lines">
-        {lines.map((line) => (
-          <li key={line.key}>
-            <b>{t(`derived.slot${cap(line.key)}`)}</b>
-            <span>
-              {line.text}
-              {line.figure && line.text ? '. ' : ''}
-              {line.figure}
-            </span>
-          </li>
-        ))}
-      </ul>
-      {wayUp.slots.some((s) => s.key === 'lift' && s.state === 'on') && (
-        <p className="dmod-src">{t('derived.upNoClimb')}</p>
-      )}
-      <p className="dmod-src">{t('derived.upSrc')}</p>
-    </div>
-  );
-}
+/* The four-slot "how you get up" picture went in T406: since T386 the mountain
+   page states the way up in its own block (MountainPage.jsx WayUp).
+   lib/derivedModules.js mountainWayUp and wayUpSummary stay, tested, for the
+   coverage count of the T182 report. */
 
 /* ── Lake shore walkability (9.5) ── */
 

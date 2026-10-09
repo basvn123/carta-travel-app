@@ -385,6 +385,7 @@ export function DetailPage({
   hook = null,
   keyFacts = null,
   keyFactsLead = null,
+  keyFactsFoot = null,
   notFor = null,
   alert = null,
   primary = null,
@@ -495,7 +496,7 @@ export function DetailPage({
 
             {hook && <p className="dsk-hook" data-slot="hook">{hook}</p>}
 
-            <KeyFacts cells={keyFacts} lead={keyFactsLead} />
+            <KeyFacts cells={keyFacts} lead={keyFactsLead} foot={keyFactsFoot} />
 
             {(alert || notFor) && (
               <section className="dsk-before" data-slot="beforego" aria-labelledby="dsk-before-h">

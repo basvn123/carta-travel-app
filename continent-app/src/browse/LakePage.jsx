@@ -440,7 +440,9 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
           <ChevronRightIcon size={15} />
         </button>
       ) : null}
-      map={<PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} name={lake.name} />}
+      map={Number.isFinite(lake.lat) && Number.isFinite(lake.lon)
+        ? <PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} name={lake.name} />
+        : null}
       signature={<LakeSignature lake={lake} warmC={warmC} />}
       rows={rows}
       gettingThere={(

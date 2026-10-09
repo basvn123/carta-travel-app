@@ -30,15 +30,17 @@
  * T182 report runs the same code the page runs.
  */
 
+import { compassPoint as signatureCompass } from './signature.js';
+
 /* ── Beach orientation (8.4) ───────────────────────────────────────────── */
 
-/** The eight compass points, clockwise from north. */
-export const COMPASS = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
-
-/** A bearing in degrees as one of the eight points. 22.5 either side. */
+/** A bearing in degrees as one of the eight points, in lower case ('n' to
+ *  'nw'; undefined when the bearing is not a number). The maths lives once, in
+ *  signature.js compassPoint (T406); this only sets the case the derived
+ *  modules' keys use. 22.5 degrees either side. */
 export function compassPoint(deg) {
-  const d = ((Number(deg) % 360) + 360) % 360;
-  return COMPASS[Math.round(d / 45) % 8];
+  const word = signatureCompass(deg);
+  return word ? word.toLowerCase() : undefined;
 }
 
 /**

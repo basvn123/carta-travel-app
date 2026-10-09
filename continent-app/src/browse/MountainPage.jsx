@@ -508,7 +508,9 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
           <ChevronRightIcon size={15} />
         </button>
       ) : null}
-      map={<PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} name={mountain.name} />}
+      map={Number.isFinite(mountain.lat) && Number.isFinite(mountain.lon)
+        ? <PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} name={mountain.name} />
+        : null}
       signature={(
         <MountainSignature
           mountain={mountain}
