@@ -217,3 +217,9 @@ data/reports/trails_coverage_full.json
 carta-backups/
 *.dump.gpg
 *.dump.gpg.sha256
+
+# Guided search embedding cache (pipeline/guided_search_layer.py, T439): 6 MB
+# of gte-small vectors keyed by document hash. Derived: a cold rebuild embeds
+# the catalogue in about four minutes on the laptop CPU. Contents only, per
+# the convention above.
+cache/guided/*

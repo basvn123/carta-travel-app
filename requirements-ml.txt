@@ -1,0 +1,10 @@
+# Laptop-only machine-learning dependencies for Manual pipeline layers.
+# Not installed on the Linux orchestrator: nothing scheduled needs them, and
+# torch alone is a multi-gigabyte install.
+#
+#   python -m pip install --user -r requirements-ml.txt -c constraints.txt
+#
+# pipeline/guided_search_layer.py (T439): vibe scores from thenlper/gte-small
+# (MIT licence), run on the CPU. Pulls in torch, transformers and tokenizers;
+# numpy and scikit-learn stay at the constraints.txt pins.
+sentence-transformers==3.3.1
