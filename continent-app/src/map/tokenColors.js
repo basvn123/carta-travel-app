@@ -14,6 +14,8 @@
  * (the destination PDF builds its fallback palette from this table instead
  * of a stale literal copy). They are still read live through tokenColour().
  *
+ * T438: the action teal became umber brown; ratings and gems joined it.
+ *
  * T421 (Lagoon): legacy names in 01-tokens.css now alias roles through var();
  * each value here is the end of that chain, and the lint follows it.
  */
@@ -21,14 +23,14 @@ export const TOKEN_COLOURS = {
   '--ink': '#1f2a33',
   '--ink-soft': '#44515c',
   '--ink-mute': '#5c6873',
-  '--accent': '#0b7480',
+  '--accent': '#8c5a2b',
   '--rule-soft': '#e9eae7',
-  '--rate-bg': '#f6e6cb',
+  '--rate-bg': '#efeeea',
   '--green': '#4a6a3a',
   '--paper-dim': '#efeeea',
   '--rule': '#dcdfdd',
-  '--accent-bg': '#dff0f1',
-  '--rate': '#8f5a0c',
+  '--accent-bg': '#f6e7d3',
+  '--rate': '#744820',
   '--bg-card': '#ffffff',
   '--on-fill': '#ffffff',
   '--trail-pin': '#3d7a4e',
@@ -37,18 +39,20 @@ export const TOKEN_COLOURS = {
   '--water-link': '#2b6f9e',
   '--beach-ink': '#c48a2a',
   '--mountain-ink': '#6b5b95',
-  '--gem-ink': '#7a4a6f',
+  '--gem-ink': '#744820',
 };
 
 /**
  * Map-only colours that have no CSS token yet: the three lower steps of the
- * Explore tier ramp (step 3 is --rate). They are not checked against
- * 01-tokens.css; whether they become tokens is an open design call (T364-b).
+ * Explore tier ramp (step 3 is --rate). T438 moved them off the ochre ramp
+ * onto ink shades (--neutral-600, the --kind-village grey, --neutral-300) so
+ * no pin reads as the brown action colour; T441 redraws the pins as ink dots
+ * and retires the ramp (T364-b).
  */
 export const MAP_ONLY_COLOURS = {
-  tier2: '#c08a2e',
-  tier1: '#eddbb6',
-  tier0: '#b9b4a5',
+  tier2: '#5c6873',
+  tier1: '#959a9c',
+  tier0: '#c5cac8',
 };
 
 /**

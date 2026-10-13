@@ -1,6 +1,6 @@
 /**
  * The quality-floor audit (T193, brought into the repo by T186). It drives the
- * app headless at 380 by 800 (touch, phone user agent) and 1280 by 850 through
+ * app headless at 390 by 844 (touch, phone user agent) and 1440 by 900 through
  * Explore, the trip planner, the day planner, the Destinations tab, the
  * journey and itinerary pages, the destination and region pages, the five
  * detail pages (trail, cycling, beach, lake, mountain), My trips, the account
@@ -51,8 +51,9 @@ const argv = Object.fromEntries(process.argv.slice(2).map((a) => { const m = a.m
 const BASE = `http://127.0.0.1:${argv.port || 5206}/`;
 const OUT = path.join(argv.out || path.resolve('quality-floor-audit'), LABEL);
 const VIEWPORTS = [
-  { key: 'mobile', width: 380, height: 800, mobile: true },
-  { key: 'desktop', width: 1280, height: 850, mobile: false },
+  // T438: the sizes the 1.2 migration reviews at (iPhone 13, a 1440 desktop).
+  { key: 'mobile', width: 390, height: 844, mobile: true },
+  { key: 'desktop', width: 1440, height: 900, mobile: false },
 ].filter((v) => !argv.vp || argv.vp.split(',').includes(v.key));
 const FLOWS = ['explore', 'trip', 'day', 'pages', 'detail'].filter((f) => !argv.only || argv.only.split(',').includes(f));
 
@@ -129,7 +130,18 @@ async function audit(page, vp, flow, name) {
       if (!/^color\(srgb/.test(s)) return n;
       return [n[0] * 255, n[1] * 255, n[2] * 255, ...(n.length > 3 ? [n[3]] : [])].map((v, i) => (i < 3 ? Math.round(v) : v));
     };
-    const ACC = ['224,90,71', '207,76,58', '176,67,26', '179,73,27'];
+    // The action colour and the metadata grey, read from the live tokens
+    // (T438): the old terracotta and --ink-mute literals had gone stale twice.
+    const probe = (v) => {
+      const d = document.createElement('div');
+      d.style.color = `var(${v})`;
+      document.body.appendChild(d);
+      const c = rgb(getComputedStyle(d).color).slice(0, 3).join(',');
+      d.remove();
+      return c;
+    };
+    const ACC = ['--action', '--action-hover', '--action-press'].map(probe);
+    const MUTE = probe('--text-3');
     const primaries = targets.filter((el) => !chrome(el)).filter((el) => {
       const c = rgb(getComputedStyle(el).backgroundColor);
       return c.length >= 3 && (c[3] === undefined || c[3] > 0.5) && ACC.includes(c.slice(0, 3).join(','));
@@ -183,10 +195,10 @@ async function audit(page, vp, flow, name) {
           // The three pairs that are token decisions (T193-b): --ink-mute as
           // text, --accent (or its hover) as text, white on an --accent fill.
           const f = fg.slice(0, 3).join(','); const b = bg.join(',');
-          const token = f === '125,131,147' || ACC.includes(f) || (f === '255,255,255' && ACC.includes(b));
+          const token = f === MUTE || ACC.includes(f) || (f === '255,255,255' && ACC.includes(b));
           contrast.push(`[${token ? 'token' : 'usage'}] ${cls(el)} ${ratio.toFixed(2)} rgb(${f}) on rgb(${b}) "${own.slice(0, 24)}"`);
         }
-        if (fg.slice(0, 3).join(',') === '125,131,147') {
+        if (fg.slice(0, 3).join(',') === MUTE) {
           const size = parseFloat(cs.fontSize);
           if (size < 11.5 || size > 14.5) inkMute.push(`${cls(el)} ${size}px "${own.slice(0, 24)}"`);
         }

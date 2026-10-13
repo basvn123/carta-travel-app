@@ -11,7 +11,7 @@
  * Variants (DESIGN.md, Interaction)
  *   primary    the one action of a view: --action fill
  *   secondary  the default: --surface with a --border edge
- *   quiet      an offer inside a bar or a row: teal text, no fill ("ghost" is an alias)
+ *   quiet      an offer inside a bar or a row: brown text, no fill ("ghost" is an alias)
  *   danger     erases something, nothing else: --danger fill
  * Sizes
  *   md  at least --tap high (default)

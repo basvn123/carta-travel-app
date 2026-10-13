@@ -4270,7 +4270,7 @@
   border: 1px solid var(--rule-soft);
 }
 .destp-do-type.is-trail { background: var(--trail-bg); color: var(--trail-ink); border-color: var(--trail-rule); }
-.destp-do-type.is-festival { background: var(--rate-bg); color: var(--rate); border-color: var(--rate-soft); }
+.destp-do-type.is-festival { background: var(--rate-bg); color: var(--rate); border-color: var(--border); }
 .destp-do-type.is-swim { background: var(--swim-bg); color: var(--swim-ink); border-color: var(--swim-rule); }
 .destp-do-main { min-width: 0; }
 .destp-do-name { font-size: 13.5px; font-weight: 600; color: var(--ink); }

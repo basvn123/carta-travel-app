@@ -105,7 +105,8 @@ export function beachSpec(row) {
   const len = why(row, 'length')?.m;
   if (len) rows.push({ label: 'Length', value: `${NUM.format(len)} m`, note: 'Measured on the coastline' });
   const prot = why(row, 'reserve')?.name || why(row, 'natura2000')?.name || why(row, 'nationalPark')?.name;
-  if (rows.length < 3 && prot) rows.push({ label: 'Protected', value: 'Yes', note: prot, font: 'ui' });
+  // A long reserve name would be cut on the card; the alt text keeps it (T438).
+  if (rows.length < 3 && prot) rows.push({ label: 'Protected', value: 'Yes', note: prot.length > 34 ? 'Inside a protected area' : prot, font: 'ui' });
   if (!rows.length) return null;
   return {
     type: 'beach',
@@ -114,7 +115,7 @@ export function beachSpec(row) {
     subtitle: countryName(row.cc),
     panel: { head: 'What is measured', rows: rows.slice(0, 3), total: score(row) },
     strip: null,
-    alt: `${row.name}, ${countryName(row.cc)}: ${rows.map((r) => `${r.label.toLowerCase()} ${r.value}`).join(', ')}.`,
+    alt: `${row.name}, ${countryName(row.cc)}: ${rows.map((r) => `${r.label.toLowerCase()} ${r.value}`).join(', ')}${prot ? `, in ${prot}` : ''}.`,
   };
 }
 
@@ -200,12 +201,13 @@ export function trailSpec(t) {
 }
 
 /** The card for the home page and for any page that cannot carry its own. */
-export function siteSpec({ places, countries }, sample) {
+export function siteSpec(_counts, sample) {
   const spec = {
     type: 'site',
     kind: 'Carta',
     title: 'What a day costs, place by place',
-    subtitle: `Bed, food and local transport per person in ${NUM.format(places)} places across ${countries} countries. Every figure says where it came from.`,
+    // No catalogue counts and no method line on the card (owner, 2026-10-13, T438).
+    subtitle: 'Bed, food and local transport for one person, priced town by town across Europe.',
     panel: null,
     strip: null,
     alt: 'Carta prices the ground for every place in Europe it covers: the bed, food and local transport, per person per day.',

@@ -101,7 +101,7 @@ export function BottomNav({
         {/* The plus opens a chooser, an action, so it stays a button. It
             announces aria-current while a planner is the page on screen. */}
         {/* A kit IconButton on the surface tone (T426): white, one --border
-            edge, never a teal or tinted disc at rest (T360, T422-c). The
+            edge, never a brown or tinted disc at rest (T360, T422-c). The
             dot is drawn inside the glyph, so its words ride in the label. */}
         <IconButton
           tone="surface"

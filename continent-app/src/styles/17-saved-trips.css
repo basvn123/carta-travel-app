@@ -1748,7 +1748,7 @@
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .saved-map-expand:hover { background: var(--lagoon-900); border-color: var(--lagoon-900); color: var(--paper); }
+  .saved-map-expand:hover { background: var(--surface-hover); border-color: var(--neutral-300); color: var(--text); }
 }
 .savedmap-full {
   position: fixed;

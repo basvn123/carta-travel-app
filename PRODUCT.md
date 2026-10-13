@@ -12,11 +12,11 @@ web. One web app (Vite + React, installable as a PWA) is also packaged for the A
 
 ## What Carta is
 
-Carta is a price transparency tool for budget travel in Europe: for people who start from "what can I afford", it says what a day costs, per person, in 3,868 places across 43 countries, and labels every figure for where it came from.
+Carta is a price transparency tool for budget travel in Europe: for people who start from "what can I afford", it says what a day costs, per person, in every place in its catalogue, and marks every estimate as one.
 
-Every travel product shows a price. Carta shows the price and its pedigree. A bed and a day of eating out are priced at the town's own rates where they were measured there, and the receipt says so in words: measured from this many stays, captured on this date, or the national figure standing in because the town has not been measured yet. The same figures carry through unchanged from the Explore card to the destination receipt, the multi-city planner and the hour-by-hour day planner, so no two screens can disagree about what dinner costs. Around the towns sit walking routes, beaches, lakes, summits and cycling routes, each with a page, and where a region is thin or empty the page says so rather than showing a blank grid. Carta takes no booking and no commission on travel; it prices, plans and hands the traveller to the operator. (Positioning from T201, in full in `Execution/P12/T201-positioning.md`. The counts are the 2026-10-02 measurement; read `meta` for today's.)
+Every travel product shows a price. Carta shows what the whole day costs, honestly. A bed and a day of eating out are priced at the town's own rates where they were measured there; a figure that stands in for a town not yet measured carries the estimate mark (`~€87 est.`). The method stays in the data, not on the page (owner decision 2026-10-13, T438: no method sentences, no catalogue counts, no coverage notes as page furniture). The same figures carry through unchanged from the Explore card to the destination receipt, the multi-city planner and the hour-by-hour day planner, so no two screens can disagree about what dinner costs. Around the towns sit walking routes, beaches, lakes, summits and cycling routes, each with a page, and where a region is empty the page says so in one line rather than showing a blank grid. Carta takes no booking and no commission on travel; it prices, plans and hands the traveller to the operator. (Positioning from T201, in full in `Execution/P12/T201-positioning.md`. The counts are the 2026-10-02 measurement; read `meta` for today's.)
 
-A price transparency tool for budget travel in Europe. Carta prices the ground for every destination in the catalogue: the bed, food and local transport, per person per day. It does not price flights. A traveller who has a fare types in what they paid, and only then does the full-trip total include the flight, as their own figure. Carta then plans the trip city by city and each day hour by hour, and it says plainly which numbers are measured and which are estimates.
+A price transparency tool for budget travel in Europe. Carta prices the ground for every destination in the catalogue: the bed, food and local transport, per person per day. It does not price flights. A traveller who has a fare types in what they paid, and only then does the full-trip total include the flight, as their own figure. Carta then plans the trip city by city and each day hour by hour, and it marks the figures that are estimates.
 
 The catalogue is master data in `app_data/app_data.json` and grows with every ingest (3,868 destinations in 43 countries on 2026-10-01; do not copy that figure into UI, read `meta` instead). The app is Vite + React in `continent-app/`, served as static JSON from a CDN. Nothing on the map is live-searched; everything is precomputed by the pipeline and cached.
 
@@ -56,9 +56,9 @@ Carta should sound like an instrument, not a brochure. Reference world: rail tim
 
 Plain, specific, verb first. Every headline carries a verb the traveller recognises or a number. "What the whole trip actually costs" works; "Everything the price tag usually hides" could sit on any product and so does not.
 
-Prefer the figure to the claim. "Bed prices measured in N of M destinations, refreshed 2 hours ago" beats any adjective because it sounds like software that is running.
+Say less (owner, 2026-10-13). Every sentence on a page earns its place for the traveller. A figure they need beats a claim; a method note, a coverage statement or a catalogue count ("3,855 places") is not page furniture.
 
-Honest about coverage, in its own voice. Four carriers and estimated food costs are facts to state, not weaknesses to bury. When the AI is off, the app says it is off. Carta has no testimonials; data freshness is the proof it has.
+Honest, in its own voice. An estimate is marked as one; Carta does not price flights; when the AI is off, the app says it is off. Carta has no testimonials.
 
 Sentence case everywhere. No terminal punctuation on labels, buttons or headings; helper text and body copy take full stops. Contractions are fine. Active voice. A button that says "Save trip" produces "Trip saved."
 
@@ -70,11 +70,11 @@ Banned words: seamless, unlock, effortless, elevate, leverage, empower, curated,
 
 ## Visual brand commitment
 
-Decided by the owner on 2026-10-13 (T419), after two rounds of invented visual worlds were refused: Carta looks like a top-tier travel app, measured against Airbnb, Polarsteps and Wanderlog. Photography leads, the feel is warm and inviting, and the craft bar is theirs. Carta's own mark on that familiar structure is the price line with its source under every photo. The chosen rendition is "Lagoon" (deep lagoon teal for actions and selection, sun yellow for best value, blue-grey ink, white surfaces on a warm light grey); its direction contract is in `continent-app/.impeccable/surfaces/continent-app.md`, and its tokens land in DESIGN.md from T420. The voice above (plain, specific, honest about coverage) is unchanged; only the look moves from instrument to inviting.
+Decided by the owner on 2026-10-13 (T419), after two rounds of invented visual worlds were refused: Carta looks like a top-tier travel app, measured against Airbnb, Polarsteps and Wanderlog. Photography leads, the feel is warm and inviting, and the craft bar is theirs. Carta's own mark on that familiar structure is the honest price line under every photo. The chosen rendition is "Lagoon" (white surfaces on a warm light grey, blue-grey ink, sun yellow for best value); on 2026-10-13 its teal became one warm brown, so the app has two base colours, the ink and the brown (T438); its direction contract is in `continent-app/.impeccable/surfaces/continent-app.md`, and its tokens land in DESIGN.md from T420. The voice above (plain, specific, short) is unchanged; only the look moves from instrument to inviting.
 
 ## Positioning
 
-Every travel product shows a price; Carta shows the price and its pedigree (T201, `Execution/P12/T201-positioning.md`). Each neighbouring category beats Carta on one axis and none can say the second half: route and trail products (Komoot, AllTrails) do not price the town the walk starts from; journey planners (Rome2Rio, Omio) price the leg but not the stay; flight discovery (Skyscanner, Google Flights) does not know what a bed and a day cost; itinerary planners (Wanderlog, TripIt) start from whatever the user types in (T202).
+Every travel product shows a price; Carta shows what the whole day costs, honestly (T201, `Execution/P12/T201-positioning.md`; restated 2026-10-13 when the method left the page, T438). Each neighbouring category beats Carta on one axis and none can say the second half: route and trail products (Komoot, AllTrails) do not price the town the walk starts from; journey planners (Rome2Rio, Omio) price the leg but not the stay; flight discovery (Skyscanner, Google Flights) does not know what a bed and a day cost; itinerary planners (Wanderlog, TripIt) start from whatever the user types in (T202).
 
 ## Operating Context
 

@@ -1,6 +1,6 @@
 ---
 name: Carta
-description: A calm travel app for budget Europe where photos sell the place and one price line with its source tells the truth under every photo.
+description: A calm travel app for budget Europe where photos sell the place and one honest price line sits under every photo, in two base colours, blue-grey ink and one warm brown.
 colors:
   neutral-0: "#ffffff"
   neutral-25: "#fbfbfa"
@@ -21,6 +21,14 @@ colors:
   lagoon-700: "#0a6670"
   lagoon-800: "#08575f"
   lagoon-900: "#07454b"
+  umber-50: "#faf6f1"
+  umber-100: "#f6e7d3"
+  umber-200: "#e7d3bc"
+  umber-300: "#d4b48f"
+  umber-500: "#a8733f"
+  umber-600: "#8c5a2b"
+  umber-700: "#744820"
+  umber-800: "#5a3716"
   sun-100: "#fdf1d8"
   sun-400: "#f2b33d"
   sun-800: "#7a5000"
@@ -33,23 +41,24 @@ colors:
   text-3: "#5c6873"
   border: "#dcdfdd"
   border-soft: "#e9eae7"
-  action: "#0b7480"
-  action-hover: "#0a6670"
-  action-press: "#08575f"
+  action: "#8c5a2b"
+  action-hover: "#744820"
+  action-press: "#5a3716"
   action-text: "#ffffff"
-  action-tint: "#dff0f1"
-  select-bg: "#dff0f1"
-  select-ink: "#0a6670"
-  select-border: "#0b7480"
-  focus: "#0b7480"
+  action-tint: "#f6e7d3"
+  select-bg: "#f6e7d3"
+  select-ink: "#744820"
+  select-border: "#8c5a2b"
+  focus: "#8c5a2b"
   best: "#f2b33d"
-  best-bg: "#fdf1d8"
-  best-ink: "#7a5000"
-  rate: "#8f5a0c"
-  rate-soft: "#946313"
-  rate-bg: "#f6e6cb"
-  gem-ink: "#7a4a6f"
-  gem-bg: "#f3e8f0"
+  best-bg: "#fdefc0"
+  best-ink: "#1f2a33"
+  rate: "#744820"
+  rate-soft: "#5c6873"
+  rate-bg: "#efeeea"
+  gem-ink: "#744820"
+  gem-bg: "#efeeea"
+  amber-ink: "#a8400f"
   green: "#4a6a3a"
   good-ink: "#16794f"
   trail-bg: "#e8f0e6"
@@ -255,21 +264,22 @@ The source of truth is the `:root` block of `continent-app/src/styles/01-tokens.
 
 ## Overview
 
-**Creative North Star: "Lagoon"**
+**Creative North Star: "Lagoon", in brown**
 
-Carta is a travel app you want to open: photos sell the place, and one calm price line with its source tells the truth under every photo. The look is "Lagoon" (T419, owner decision 2026-10-13): the category standard of Airbnb, Polarsteps and Wanderlog, executed at their craft level rather than reinvented. White surfaces sit on a warm light grey; ink is a blue-grey that is never black; one deep lagoon teal carries every action and every selection; sun yellow marks best value and nothing else; one friendly typeface, Figtree, sets everything, figures included, with tabular numerals.
+Carta is a travel app you want to open: photos sell the place, and one calm price line sits under every photo, marked as an estimate where it is one. The look is "Lagoon" (T419, owner decision 2026-10-13): the category standard of Airbnb, Polarsteps and Wanderlog, executed at their craft level rather than reinvented. White surfaces sit on a warm light grey; ink is a blue-grey that is never black; one warm brown (umber) carries every action and every selection, so the app has two base colours, the ink and the brown (owner decision 2026-10-13, T438, which replaced the lagoon teal); sun yellow marks best value and nothing else; one friendly typeface, Figtree, sets everything, figures included, with tabular numerals.
 
-The density is a working app, not a brochure. Explore and Destinations default to compact rows, about ten to a phone screen, each a small rounded photo, a name, a rating and a price line such as "€49 a day" with its source word. Large photo tiles appear on rails and the home page, where inspiration leads. Depth is quiet: objects at rest carry a hairline border, and only what floats (a sheet, a popover, a control over a photograph) takes a soft ink shadow.
+The density is a working app, not a brochure. A filtered or searched list on Explore and Destinations is compact rows, about ten to a phone screen, each a small rounded photo, a name, the Score and a price line such as "€49 a day". Sections (rails) and the home page use large photo tiles, where inspiration leads. Pages say less: no catalogue counts, no method or coverage sentences beside a figure (owner, 2026-10-13). Depth is quiet: objects at rest carry a hairline border, and only what floats (a sheet, a popover, a control over a photograph) takes a soft ink shadow.
 
 The world refuses two things, both confirmed by the owner in the direction contract (`continent-app/.impeccable/surfaces/continent-app.md`): the brochure hero with text laid over a photograph, and the dark instrument look of black slabs and dark selected states.
 
 **Key Characteristics:**
 - Photography leads; text never sits on a photograph.
-- One teal for everything that acts or is selected, as a light tint plus teal text, never a dark slab.
-- Every colour outside the neutrals and teal has exactly one job.
+- Two base colours: blue-grey ink and one brown for everything that acts or is selected, as a light tint plus brown text, never a dark slab.
+- A rating is the Score: a brown star and an ink figure, never a filled chip.
+- Every colour outside the neutrals and the brown has exactly one job.
 - One typeface, tabular figures everywhere, so prices line up and settle in place.
 - Borders at rest, shadows only on what floats.
-- Every control is 44 px on touch, with a 2 px teal focus ring.
+- Every control is 44 px on touch, with a 2 px brown focus ring.
 
 T425 rewrote the carta-design skill for Lagoon (closes register row T419-c): this file holds the values, the skill holds the judgement on top of them. If the two ever disagree on a value, the stylesheet ships, this file records it, and the skill is the one to fix.
 
@@ -281,7 +291,7 @@ For the owner fine-tuning by hand. Change a value in one place and every screen 
 
 | What you want to change | File | What is in it |
 |---|---|---|
-| A colour, a font size, a radius, a shadow, a spacing step, a motion speed | `src/styles/01-tokens.css` | The `:root` block, in three layers: primitives (raw scales such as `--lagoon-600`), roles (what a value is for, such as `--action`), and the scales (`--text-*`, `--radius-*`, `--elev-*`, `--space-*`, `--dur-*`). Change a role to repoint one job; change a primitive to shift every role that reads it. The legacy names at the bottom are aliases; do not edit them, edit the role they point to. |
+| A colour, a font size, a radius, a shadow, a spacing step, a motion speed | `src/styles/01-tokens.css` | The `:root` block, in three layers: primitives (raw scales such as `--umber-600`), roles (what a value is for, such as `--action`), and the scales (`--text-*`, `--radius-*`, `--elev-*`, `--space-*`, `--dur-*`). Change a role to repoint one job; change a primitive to shift every role that reads it. The legacy names at the bottom are aliases; do not edit them, edit the role they point to. |
 | Page defaults: body text, focus ring, press feedback, reduced motion | `src/styles/02-base.css` | The reset, the body face and tabular figures, text selection colour, the touch press shade, the focus floor and the motion floor. |
 | Buttons | `src/styles/03-button.css` | Every variant and size of the shared Button. |
 | Icon buttons, chips, segmented controls, tabs, cards, fields, icons, prices | `src/styles/04-ui.css` | One block per component, in that order, with a reduced-motion block at the end. |
@@ -292,36 +302,37 @@ For the owner fine-tuning by hand. Change a value in one place and every screen 
 
 **Checks after a change.** Run these from `continent-app/`:
 
-1. `node scripts/ci/token-contrast.mjs` checks every text and fill pair the product uses (29 pairs) against the 4.5:1 floor. It must report 0 under the floor.
+1. `node scripts/ci/token-contrast.mjs` checks every text and fill pair the product uses (31) against the 4.5:1 floor, the non-text marks (focus ring, selected edge, rating star, switch track) against 3:1, and the colour distance that keeps warning, best value and quiet tints apart from the brown (T438). It must report 0 under the floor.
 2. `node scripts/ci/design-lint.mjs` flags hex colours outside `:root`, gradients, shadow and font literals, removed outlines, em dashes, middots, banned words, and the migration rules (legacy token names, px font sizes and radii, euro literals). It must report no new violations in the files you touched; the baseline is not a place to add them.
 3. If you changed a colour that a map or a PDF draws, update the token mirror `src/map/tokenColors.js` to the same value under the same token name. MapLibre cannot read a CSS custom property, so this file is the one JavaScript copy, and the design lint's `token-mirror-drift` rule fails when it disagrees with `01-tokens.css`.
 4. Update this file in the same commit (CLAUDE.md): the frontmatter value and any prose that names the token, plus the sync line under History.
 
 ## Colors
 
-A warm light grey ground under white surfaces and blue-grey ink, with one teal for action and selection and four single-job accents.
+A warm light grey ground under white surfaces, and two base colours: blue-grey ink and one warm brown for action and selection, plus a few single-job accents.
 
-Tokens come in three layers. **Primitives** (`--neutral-*`, `--lagoon-*`, `--sun-*`, values in the frontmatter) are the raw scales, and components never read them. **Roles** say what a value is for, and every new or touched rule reads a role. **Legacy names** are every name the stylesheet used before T421, each an alias of a role, so the whole app re-skinned from the token file alone. The app is single-theme: there are no `prefers-color-scheme` or `data-theme` blocks. Ratios are WCAG 2 contrast, and `scripts/ci/token-contrast.mjs` checks every pair the product uses (29 pairs, all at 4.5:1 or more).
+Tokens come in three layers. **Primitives** (`--neutral-*`, `--umber-*`, `--sun-*`, and the retired `--lagoon-*`, values in the frontmatter) are the raw scales, and components never read them. **Roles** say what a value is for, and every new or touched rule reads a role. **Legacy names** are every name the stylesheet used before T421, each an alias of a role, so the whole app re-skinned from the token file alone. The app is single-theme: there are no `prefers-color-scheme` or `data-theme` blocks. Ratios are WCAG 2 contrast, and `scripts/ci/token-contrast.mjs` checks every pair the product uses (31 text pairs at 4.5:1, 7 marks at 3:1, 6 colour distances).
 
 ### Primary
 
-- **Lagoon Teal** (`--action`, resolves to `--lagoon-600`): the one primary button of a view, links, the live route, focus rings (`--focus`). White on it 5.5:1; as text 5.5:1 on a card. It is one step darker than the decision card's `#0e7c86`, so teal text clears AA on its own tint (4.67:1, the pair that failed at 3.8:1 in the T418 baseline).
-- **Deep Lagoon** (`--action-hover`, `--action-press`, resolving to `--lagoon-700`, `--lagoon-800`): hover and press fills of `--action`, never a resting colour.
-- **Lagoon Mist** (`--action-tint`, resolves to `--lagoon-100`): a light teal ground behind teal text (4.7:1), such as the hover of a quiet button.
-- **The selected state** (`--select-bg`, `--select-ink`, `--select-border`, resolving to `--lagoon-100`, `--lagoon-700`, `--lagoon-600`): tint, teal label (5.7:1), teal edge. The one way anything shows it is chosen.
+- **Umber** (`--action`, resolves to `--umber-600` `#8c5a2b`): the one primary button of a view, links, the live route, focus rings (`--focus`). White on it 5.8:1; as text 5.8:1 on a card, 5.3:1 on the page. It replaced the lagoon teal on 2026-10-13 (T438, owner decision: two base colours).
+- **Deep Umber** (`--action-hover`, `--action-press`, resolving to `--umber-700`, `--umber-800`): hover and press fills of `--action`, never a resting colour.
+- **Umber Mist** (`--action-tint`, resolves to `--umber-100` `#f6e7d3`): a light brown ground behind brown text (4.8:1), such as the hover of a quiet button. It sits 9.9 delta E from the sunken grey, so a selected item never looks like a quiet band.
+- **The selected state** (`--select-bg`, `--select-ink`, `--select-border`, resolving to `--umber-100`, `--umber-700`, `--umber-600`): tint, brown label (6.4:1), brown edge. The one way anything shows it is chosen.
 
 ### Secondary
 
-- **Sun Yellow** (`--best`, `--best-bg`, `--best-ink`, resolving to `--sun-400`, `--sun-100`, `--sun-800`): best value only. A marker or fill with `--text` on it (7.9:1), or `--best-ink` as text (7.1:1). Yellow itself is never text.
+- **Sun Yellow** (`--best`, `--best-bg`, `--best-ink`, resolving to `--sun-400`, `#fdefc0`, `--text`): best value only. A marker or fill with `--text` on it (7.9:1). Best value as text is ink beside the marker (T438: the old dark yellow text sat on top of the brown). Yellow itself is never text.
 
 ### Tertiary
 
 These are measures and semantics, each with one job.
 
-- **Ochre** (`--rate`, `--rate-soft`, `--rate-bg`): ratings as a measure. `--rate` as a fill takes white text (5.8:1); `--rate-soft` is ochre as text on the page (4.8:1); `--rate-bg` is the ground of a rating chip, with `--rate` on it at 4.7:1. Never for actions. The star colour is roadmap item 1.8.
-- **Plum** (`--gem-ink`, `--gem-bg`): hidden gems and nothing else (5.8:1). Moved off teal in T421 so a gem never reads as a button.
+- **The rating star** (`--rate`, resolves to `--umber-700`): the star of the Score (T437), 7.8:1 on a card. A rating is never a filled chip, so the star cannot read as a button. `--rate-soft` (`--text-3`) and `--rate-bg` (`--surface-sunken`) became neutral in T438, so the old ochre tints (tips bands, festival tags, the travel-day number) no longer look selected.
+- **The gem mark** (`--gem-ink`, `--gem-bg`, resolving to `--umber-700`, `--surface-sunken`): a small diamond and the words "Hidden gem", 6.7:1. Plum retired in T438.
+- **Rust** (`--amber-ink` and its siblings, `#a8400f`): warning text, 6.2:1 on a card. Retuned from amber in T438 so a warning never reads as the brown.
 - **Moss** (`--green`): good news in data, always with a word. Never chrome, never a button. The positive status chip is `--text` on `--surface-sunken` with a 6 px `--status-success` dot (owner, 2026-10-13: status, not green).
-- **Brick** (`--danger`, `--danger-dark`, `--danger-bg`): destructive actions only. Now that the action is teal, red means one thing: this erases something.
+- **Brick** (`--danger`, `--danger-dark`, `--danger-bg`): destructive actions only. Red means one thing: this erases something.
 - **Signal Green** (`--status-success`): indicator dots and ticks. Never text.
 
 ### Neutral
@@ -342,9 +353,9 @@ These are measures and semantics, each with one job.
 
 ### Legacy names (aliases, retiring)
 
-`--paper` is `--surface-page`, `--paper-dim` is `--surface-sunken`, `--bg-card` is `--surface`, `--on-fill` is `--action-text`, `--ink` is `--text`, `--ink-soft` is `--text-2`, `--ink-mute` is `--text-3`, `--rule` is `--border`, `--rule-soft` is `--border-soft`, `--accent` is `--action`, `--accent-bg` is `--action-tint`, `--accent-hover` is `--action-hover`, `--accent-press` and `--accent-press-alt` are `--action-press`, `--accent-soft` is `--lagoon-300`, `--accent-wash` and `--wash` are `--lagoon-50`, `--accent-wash-alt` is `#f4f9f9`, `--paper-hover` is `--surface-hover`, `--paper-lift` is `--neutral-25`, `--shadow-1` and `--shadow-card` are `--elev-1`, `--shadow-2` is `--elev-2`, and `--display`, `--mono` and `--font` resolve to `--ui`.
+`--paper` is `--surface-page`, `--paper-dim` is `--surface-sunken`, `--bg-card` is `--surface`, `--on-fill` is `--action-text`, `--ink` is `--text`, `--ink-soft` is `--text-2`, `--ink-mute` is `--text-3`, `--rule` is `--border`, `--rule-soft` is `--border-soft`, `--accent` is `--action`, `--accent-bg` is `--action-tint`, `--accent-hover` is `--action-hover`, `--accent-press` and `--accent-press-alt` are `--action-press`, `--accent-soft` is `--umber-300`, `--accent-wash`, `--accent-wash-alt` and `--wash` are `--umber-50`, `--paper-hover` is `--surface-hover`, `--paper-lift` is `--neutral-25`, `--shadow-1` and `--shadow-card` are `--elev-1`, `--shadow-2` is `--elev-2`, and `--display`, `--mono` and `--font` resolve to `--ui`.
 
-`--ink-fill` is `--lagoon-800`: the deep teal fill under white labels (8.3:1) that older surfaces still use as their selected state. T422 built the kit on the `--select-*` tint; the migration moves the remaining surfaces onto the kit, and `--ink-fill` retires with them. New code never uses it. Data drawings (bars, strips, pins, month cells) and toasts keep `--ink`.
+`--ink-fill` is `--umber-800`: the deep brown fill under white labels (10.7:1) that older surfaces still use as their selected state. T422 built the kit on the `--select-*` tint; the migration moves the remaining surfaces onto the kit, and `--ink-fill` retires with them. New code never uses it. Data drawings (bars, strips, pins, month cells) and toasts keep `--ink`.
 
 ### Domain colours
 
@@ -397,10 +408,10 @@ Unchanged by T421, from T191. Single-purpose indicator and tint colours for one 
 | `--warn-ink` | `#b3402a` | over budget, no fare, cautions |
 | `--warn-vivid` | `#cc4433` | poor water and swim-stop indicator |
 | `--amber` | `#c68a12` | sufficient water, hazard rules, amber indicator |
-| `--amber-ink` | `#8a5a18` | warning note text |
-| `--amber-ink-alt` | `#8a5f0d` | amber text beside the ochre family |
-| `--amber-ink-deep` | `#855a0a` | deepest amber text |
-| `--amber-warm` | `#b3690f` | warm amber text |
+| `--amber-ink` | `#a8400f` | warning note text (rust since T438) |
+| `--amber-ink-alt` | `#a8400f` | warning text beside the rating family |
+| `--amber-ink-deep` | `#9c3d12` | deepest warning text |
+| `--amber-warm` | `#a8400f` | warm warning text (was 4.25:1, under the floor) |
 | `--beach-ink` | `#c48a2a` | beach pin name |
 | `--amber-bg` | `#fdf3e2` | warning note fill |
 | `--amber-bg-alt` | `#fcf2dd` | a second warning tint |
@@ -442,11 +453,11 @@ Place kind is an ink-density ramp, not a rainbow: `--text` mixed over `--surface
 
 ### Named Rules
 
-**The One Teal Rule.** Teal means it acts or it is selected. Nothing decorative, no rating, no gem and no status is ever teal.
+**The Two Colours Rule.** Ink carries the text and the drawings; brown means it acts, is live or is selected. Nothing decorative and no status is ever brown; the rating star and the gem diamond are the two small marks it lends out.
 
-**The One Job Rule.** Ochre is a rating, plum a hidden gem, sun yellow best value, red destruction. A colour borrowed for a second job stops meaning the first.
+**The One Job Rule.** Sun yellow is best value, red destruction, rust a warning. A colour borrowed for a second job stops meaning the first.
 
-**The No Slab Rule.** A selected state is the light teal tint with a teal label and a mark (a tick, an underline, a lifted thumb). Never a dark fill, so the app never reads as black.
+**The No Slab Rule.** A selected state is the light brown tint with a brown label and a mark (a tick, an underline, a lifted thumb). Never a dark fill, so the app never reads as black.
 
 ## Typography
 
@@ -538,7 +549,7 @@ Calm and solid: a 10 px corner, a 600 weight label, and a fill only when the but
 - **Shape:** gently rounded (`--radius-control`, 10 px), at least `--tap` high, `--space-5` side padding, `--text-body` at 600, an 8 px gap to an icon.
 - **Primary:** `--action` fill, `--action-text` label. The one action of a view; one per view.
 - **Secondary (the default):** `--surface` with a `--border` edge, `--text` label. Every action that is not the one.
-- **Quiet** (`ghost` is an alias): no fill, teal label; an offer inside a bar or a row.
+- **Quiet** (`ghost` is an alias): no fill, brown label; an offer inside a bar or a row.
 - **Danger:** `--danger` fill, white label. Erases something, nothing else.
 - **Hover / Press:** primary darkens to `--action-hover`, then `--action-press` while pressed; secondary shifts to `--surface-hover` with a `--neutral-300` edge; quiet takes the `--action-tint` ground; danger darkens to `--danger-dark`.
 - **Sizes:** `md` (default, `--tap` high) and `sm` (inline in a bar: 32 px on a fine pointer, `--tap` on touch, `--text-label`, `--space-3` padding). `block` fills the container width.
@@ -591,7 +602,7 @@ One anatomy for every object Carta lists (a place, a trail, a beach, a trip, a s
 - **Corner Style:** softly rounded (`--radius-card`, 16 px).
 - **Background:** `--surface` with `--text`.
 - **Shadow Strategy:** none at rest; a card is a bordered object (see Elevation & Depth).
-- **Border:** `1px solid var(--border)`; hover on an interactive card shifts to `--neutral-300`; selected takes a `--select-border` edge and a 1 px inset outline of the same teal.
+- **Border:** `1px solid var(--border)`; hover on an interactive card shifts to `--neutral-300`; selected takes a `--select-border` edge and a 1 px inset outline of the same brown.
 - **Row layout (the default):** a 72 px photo with `--radius-control` corners at the start, then title (`--text-lead` at 600, one line, ellipsis), meta (`--text-label` in `--text-3`) and the figures line (price at `--text-body` 600, then rating). Padding 8 px, 12 px on the right.
 - **Tile layout:** a 4:3 photo on top clipped to the card's corners, then the body with 12 px top and 16 px side padding; actions float in the photo's top right corner as photo-tone icon buttons.
 - **Opening:** the whole card opens its page through one real link or button on the title, stretched over the card; actions such as the save heart sit above the stretch as their own controls. No nested interactive elements. Focus draws the ring around the whole card.
@@ -628,7 +639,7 @@ Every euro the traveller reads goes through one formatter, `src/lib/money.js` (`
 
 ### Navigation
 
-The phone has a white bottom tab bar (`--bottom-nav-h`) with the active icon and label in teal; from 769 px the header carries the tabs. Navigation between pages is links with history and addressable detail pages, never in-page tabs (T380).
+The phone has a white bottom tab bar (`--bottom-nav-h`) with the active icon and label in brown; from 769 px the header carries the tabs. Navigation between pages is links with history and addressable detail pages, never in-page tabs (T380).
 
 ### Motion
 
@@ -647,7 +658,7 @@ No overshoot, bounce or elastic curve exists. Durations and easings come from th
 
 ### Interaction
 
-Focus: `outline: 2px solid var(--focus); outline-offset: 2px` on `:focus-visible` (the focus floor in `02-base.css` still names it `--accent`, the same teal). Teal, so focus never reads as an error. The browser's own surfaces take the palette too: text selection is `--select-bg`, the caret and native checkboxes and radios are `--action`, scrollbars are `--neutral-300`. Inputs may add `border-color: var(--action)` to the ring but never ship `outline: none` without a replacement.
+Focus: `outline: 2px solid var(--focus); outline-offset: 2px` on `:focus-visible` (the focus floor in `02-base.css` reads it since T426). Brown, so focus never reads as an error. The browser's own surfaces take the palette too: text selection is `--select-bg`, the caret and native checkboxes and radios are `--action`, scrollbars are `--neutral-300`. Inputs may add `border-color: var(--action)` to the ring but never ship `outline: none` without a replacement.
 
 ### Product rules for components
 
@@ -655,7 +666,7 @@ These are owner decisions about specific surfaces. They still hold; where a valu
 
 **Suitability strip (T360, accepted on owner instruction 2026-10-03).** A strip under a trip hero is a solid `--surface-page` band at full opacity, flush against the bottom edge of the hero, with a `--border` edge and square corners where it meets the photo. No alpha, no gradient, no text over the photograph. It holds exactly three cells in fixed order: difficulty, style, total cost. Difficulty is five small squares, filled `--text` up to the level and outlined `--text-3` beyond it (never `--rate` or `--action`), plus the level as a word. Style is one or two words from the trip's tags. Total cost is a `<Money>` in tabular figures (it was the mono face before T421). A missing value shows a placeholder word ("Unrated", "Mixed", "Price on request") so every trip shows three cells. It stays one row of three on a phone. Built as `.jstrip` in `src/styles/25-feature-pages.css`; no new token.
 
-**Secondary chrome (T360).** The "Get a pass" chip in the desktop bar is transparent with a `--border` edge and `--radius-sm` corners. The phone's round plus button is `--surface` with a `--border` edge, pill corners and a `--tap` or larger target (the IconButton `surface` tone). Neither is `--action` filled, which leaves the teal fill for each page's one primary action.
+**Secondary chrome (T360).** The "Get a pass" chip in the desktop bar is transparent with a `--border` edge and `--radius-sm` corners. The phone's round plus button is `--surface` with a `--border` edge, pill corners and a `--tap` or larger target (the IconButton `surface` tone). Neither is `--action` filled, which leaves the brown fill for each page's one primary action.
 
 **Rules decided by the owner on 2026-10-07 (T362).** The InfoDot, the day track, flashcards, the sticky section rail, the one Lifestyle control, the cost bar above a receipt, no bento grid, a scrim behind every modal dialog, and the install hint. The full text of each is in the carta-design skill under Components. None adds a token: the cost bar uses the `--kind-*` ink ramp, and the scrim is `--ink` at 28 per cent as `.lifestyle-scrim` draws it.
 
@@ -677,8 +688,9 @@ These are owner decisions about specific surfaces. They still hold; where a valu
 
 ### Don't:
 - **Don't** paint a selected state as a dark fill; the dark slab is the look Lagoon refused.
-- **Don't** use teal for anything that does not act or is not selected, or ochre, plum, sun yellow or red outside their one job.
-- **Don't** set sun yellow as text; use `--best-ink`.
+- **Don't** use brown for anything that does not act, is not live or is not selected (beyond the rating star and the gem diamond), or sun yellow, rust or red outside their one job.
+- **Don't** fill a rating chip, show a catalogue count as page furniture, or put a method or coverage sentence beside a figure.
+- **Don't** set sun yellow as text; best value as text is ink beside the marker.
 - **Don't** add a gradient, a second typeface, a monospaced face for figures, or a hex outside `01-tokens.css` and the token mirror.
 - **Don't** set functional text under 11 px, or a figure or rating under 12 px.
 - **Don't** give one object both a border and a shadow.
@@ -691,11 +703,11 @@ These are owner decisions about specific surfaces. They still hold; where a valu
 Read the diff and answer these seven questions, from the carta-design skill.
 
 1. Any hex value outside `src/styles/01-tokens.css`? (`node scripts/ci/design-lint.mjs` checks this.)
-2. Any gradient, any colour not in this file, any saturated hue beside `--action` outside its one job (sun for best value, plum for gems, ochre for ratings, red for destruction)?
-3. Is ochre used for anything but a rating, plum for anything but a gem, sun yellow for anything but best value, `--danger` for anything but destruction?
+2. Any gradient, any colour not in this file, any saturated hue beside `--action` outside its one job (sun for best value, rust for warnings, red for destruction)?
+3. Is brown used only for what acts, is live or is selected (plus the rating star and the gem diamond), sun yellow only for best value, `--danger` only for destruction?
 4. Is any rating under 12 px, any functional text under 11 px, or any column of figures without tabular numerals?
 5. More than one primary button in a view?
-6. Does every headline contain a verb or a number, and is the diff free of em dashes and the banned words?
+6. Does every headline contain a verb or a number (or name a browse section), is there no catalogue count or method line that could go, and is the diff free of em dashes and the banned words?
 7. Remove one thing. There is almost always one decoration that is carrying nothing.
 
 ## History
@@ -706,6 +718,8 @@ Retired decisions, kept so the record reads in order. None of these is a rule an
 
 **The terracotta world (T198 to T420).** Cream paper, Fraunces display, Plus Jakarta Sans text and JetBrains Mono figures, with a terracotta accent. T421 replaced it with Lagoon. The "Accent states and tints" table this file carried until 2026-10-13 (`--accent-hover` `#b7321f`, `--accent-press` `#8e3615`, `--accent-press-alt` `#923b16`, `--accent-wash` `#f6ede0`, `--accent-wash-alt` `#fdf6f0`) and the old values of `--wash` (`#f6f3ee`), `--paper-hover` (`#efe9db`) and `--paper-lift` (`#fdfbf5`) were that world's; those names are now aliases, listed under Colors.
 
+**Lagoon teal (T421 to T437).** One deep lagoon teal (`--lagoon-600` `#0b7480`) carried every action and selection, ratings were filled ochre chips (`#8f5a0c`), gems plum (`#7a4a6f`), warnings amber (`#8a5a18`). On 2026-10-13 the owner asked for two base colours (T438): the teal became umber, ratings became the Score (T437), gems joined the brown, warnings turned rust. The `--lagoon-*` primitives stay defined until no rule reads them.
+
 **Selection as a dark fill (T380 to T422).** The one selected state was `--ink-fill`, first a slate slab, then deep teal under white labels in T421. T422 moved the kit onto the `--select-*` tint; older surfaces keep `--ink-fill` until the migration reaches them.
 
-**Last synced with `src/styles/01-tokens.css`:** 2026-10-13 (T421 to T424, Lagoon: primitives, roles, legacy aliases, Figtree, the type, radius, elevation and layer scales; the kit in `03-button.css` and `04-ui.css`; the money formatter; the style guide; restructured into the DESIGN.md format with frontmatter). Before that 2026-10-08 (T380, the six motion tokens), 2026-10-07 (T363) and 2026-10-03 (T191).
+**Last synced with `src/styles/01-tokens.css`:** 2026-10-13 (T438: the umber ramp, the roles on it, rate, gem, best and warning retuned; before that T421 to T424, Lagoon: primitives, roles, legacy aliases, Figtree, the type, radius, elevation and layer scales; the kit in `03-button.css` and `04-ui.css`; the money formatter; the style guide; restructured into the DESIGN.md format with frontmatter). Before that 2026-10-08 (T380, the six motion tokens), 2026-10-07 (T363) and 2026-10-03 (T191).
