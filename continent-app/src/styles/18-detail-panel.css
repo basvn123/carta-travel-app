@@ -218,7 +218,7 @@
 @media (hover: hover) {
   .trip-leg-links a:hover { text-decoration: underline; }
 }
-.trip-leg-disclaimer { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); margin: 4px 0 0; }
+.trip-leg-disclaimer { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); margin: 4px 0 0; }
 
 /* Trip planner: "take it cheaper" savings block */
 .trip-savings { border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; background: var(--paper-lift); }
@@ -883,7 +883,7 @@
   font-weight: 700;
   transform: rotate(-8deg);
   border: 2.5px solid currentColor;
-  background: rgba(245, 241, 232, 0.85);
+  background: rgba(246, 245, 242, 0.85);
 }
 .shape-card-stamp.add { right: 14px; color: var(--leaf-ink); }
 .shape-card-stamp.skip { left: 14px; color: var(--warn-ink); transform: rotate(8deg); }
@@ -1228,7 +1228,7 @@
 }
 .day-stay-search:focus-within {
   border-color: var(--ink-soft);
-  box-shadow: 0 0 0 3px rgba(200, 80, 30, 0.10);
+  box-shadow: 0 0 0 3px rgba(11, 116, 128, 0.10);
 }
 .day-stay-input {
   flex: 1;
@@ -1337,7 +1337,7 @@
 .day-carta-reshape svg { color: var(--accent); }
 
 /* A leg that demands over an hour on foot gets an honest warning. */
-.day-timeline-longwalk { color: var(--warn-ink); font-size: 9.5px; }
+.day-timeline-longwalk { color: var(--warn-ink); font-size: var(--text-micro); }
 
 
 
@@ -1349,7 +1349,7 @@
   margin-top: 10px;
   padding: 9px 15px;
   border-radius: 999px;
-  background: var(--ink);
+  background: var(--ink-fill);
   color: var(--paper);
   font-size: 12.5px;
   font-weight: 600;
@@ -1537,7 +1537,7 @@
 .crash-lead { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.5; }
 .crash-detail {
   font-family: var(--mono); font-size: 12px; color: var(--accent);
-  background: rgba(200, 80, 30, 0.08); border-radius: 8px;
+  background: rgba(11, 116, 128, 0.08); border-radius: 8px;
   padding: 10px 12px; margin: 0 0 18px;
   white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto;
 }

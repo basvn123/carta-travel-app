@@ -406,9 +406,9 @@
   /* Translucent + blurred rather than solid paper: the map keeps reading as
      one continuous surface underneath instead of being punched out by an
      opaque cream rectangle, and the sea no longer meets a hard edge. */
-  background: rgba(245, 241, 232, 0.82);
+  background: rgba(246, 245, 242, 0.82);
   backdrop-filter: blur(10px) saturate(140%);
-  border: 1px solid rgba(196, 190, 169, 0.6);
+  border: 1px solid rgba(197, 202, 200, 0.6);
   border-radius: 10px;
   box-shadow: 0 1px 2px rgba(26, 26, 26, 0.06), 0 8px 22px rgba(26, 26, 26, 0.10);
   overflow: hidden;
@@ -417,7 +417,7 @@
 /* Reading the fine print is a deliberate act: settle to near-opaque on hover
    so the descriptions never fight the tiles behind them. */
 @media (hover: hover) {
-  .map-legend:hover { background: rgba(245, 241, 232, 0.96); }
+  .map-legend:hover { background: rgba(246, 245, 242, 0.96); }
 }
 .map-legend.is-collapsed { width: auto; }
 
@@ -477,7 +477,7 @@
   background: var(--paper);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: var(--text-micro);
   font-style: normal;
 }
 .legend-pill i { font-style: normal; }
@@ -554,7 +554,7 @@
 @media (hover: hover) {
   .map-tip-auto .tip-card:hover {
     border-color: var(--ink-mute);
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14), 0 16px 40px rgba(15, 23, 42, 0.10);
+    box-shadow: 0 6px 18px rgba(31, 42, 51, 0.14), 0 16px 40px rgba(31, 42, 51, 0.10);
   }
 }
 
@@ -638,8 +638,8 @@
 }
 .mode-pill:disabled { opacity: .45; cursor: default; }
 .mode-pill.on {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
   color: var(--paper);
 }
 .mode-pill-top {
@@ -845,7 +845,7 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.result-price small { font-size: 9px; color: var(--ink-mute); margin-left: 1px; }
+.result-price small { font-size: var(--text-micro); color: var(--ink-mute); margin-left: 1px; }
 .result-price.is-deal { color: var(--accent); font-weight: 600; }
 .result-star.on { color: var(--accent); }/* ─── Unreachable-via-Ryanair section ───
    A clearly separated, quieter block beneath the priced list. */
@@ -1038,7 +1038,7 @@
     to bottom,
     rgba(26, 26, 26, 0.42) 0%,
     rgba(26, 26, 26, 0.10) 26%,
-    rgba(245, 241, 232, 0) 62%,
+    rgba(246, 245, 242, 0) 62%,
     var(--paper) 100%
   );
 }
@@ -1295,7 +1295,7 @@
   gap: 3px;
   margin-top: 2px;
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   letter-spacing: 0.04em;
   color: var(--ink-mute);
 }

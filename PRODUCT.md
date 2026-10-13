@@ -40,7 +40,7 @@ The map shows every destination pinned with its total for the traveller's inputs
 
 Prices change meaning with the inputs, so the inputs are always visible and the figures update in place. Numbers must line up in columns and must not jitter when they change. A figure is never rounded to look tidier, with one owner-decided exception (2026-10-13): where many places are compared at once (cards, pins, lists, filters) the day figure is shown in whole euros, and every receipt, total and ledger shows cents.
 
-Density is a feature. The traveller wants to see forty prices on one phone screen and still tell them apart. Whitespace is spent on separating groups, not on making a card feel generous.
+Density is a feature. The traveller wants to see forty prices on one phone screen and still tell them apart. Whitespace is spent on separating groups, not on making a card feel generous. Owner decision 2026-10-13 (T421): Explore and Destinations open as compact rows with a small photo, so about ten places fit one phone screen; large photo cards are for rails and the home page, where inspiration leads.
 
 ## The one rule the numbers follow
 

@@ -1378,5 +1378,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T419-a | T419 | Decide whether measured figures keep a separate mono face (PRODUCT.md Numbers) or use the Lagoon sans with tabular figures | user | closed by T420 | before T420 |
 | T419-b | T419 | impeccable doctor reports PRODUCT.md as an older schema and offers init (interview adding Positioning, Operating Context, Evidence on Hand, Product Principles); decide whether to run it | user | closed by T420 |  |
 | T419-c | T419 | DESIGN.md and the carta-design skill still describe cream, Fraunces and terracotta; T424 rewrites both from the built Lagoon system | next task | open | after T423 |
-| T420-a | T420 | PRODUCT.md says density is a feature (forty prices on one phone screen, whitespace only between groups) while Lagoon leads with large photo cards; decide where the dense view lives (map, a compact list toggle) before T421 sets card sizes | user | open | before T421 |
+| T420-a | T420 | PRODUCT.md says density is a feature (forty prices on one phone screen, whitespace only between groups) while Lagoon leads with large photo cards; decide where the dense view lives (map, a compact list toggle) before T421 sets card sizes | user | closed by T421 | before T421 |
 | T420-b | T420 | Planned task numbers moved up one (tokens T421, kit T422, money T423, style guide T424, docs and lint T425, migration T426 onward); T418-c's "T421 Field" is T422 and T419-c's "T424" is T425 | next task | open |  |
+| T421-a | T421 | Selection is still a deep teal fill (--ink-fill); the T422 kit moves every chip, tab and segment onto the --select-* tint | next task | open |  |
+| T421-b | T421 | Destination PDF (destinationPdf.js TTFs), share cards (scripts/og/render.mjs) and the numbers explainer (scripts/explainer/numbers.mjs) still use the old fonts and colours | next task | open |  |
+| T421-c | T421 | Brand mark (header compass, favicon, app icons) still has the old red needle and ink; regenerate in Lagoon via scripts/og | user | open |  |
+| T421-d | T421 | verify_quality_floor.mjs type checks assume Fraunces and JetBrains Mono (serif size, prose in mono, bare figures); rewrite for one family | next task | open |  |
+| T421-e | T421 | 316 detector hits for functional text at 10 to 10.5 px remain; the migration moves those rules onto the type scale | next task | open | after T422 |
+| T421-f | T421 | Owner looks at every tab on a phone after the Lagoon re-skin (plan checkpoint) | user | open |  |

@@ -76,13 +76,13 @@
 .trip-pin-push {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 2px 3px rgba(15, 23, 42, 0.32));
+  filter: drop-shadow(0 2px 3px rgba(31, 42, 51, 0.32));
 }
 /* The lifted-off-a-cluster shadow belongs to the pin's SHAPE, which for a
    pushpin is a transparent box: a box-shadow on it draws a grey rectangle
    floating next to the pin. It goes on the glyph instead. */
 .trip-pin-plain.nudged .trip-pin-shape { box-shadow: none; }
-.trip-pin-plain.nudged .trip-pin-push { filter: drop-shadow(0 3px 5px rgba(15, 23, 42, 0.42)); }
+.trip-pin-plain.nudged .trip-pin-push { filter: drop-shadow(0 3px 5px rgba(31, 42, 51, 0.42)); }
 .trip-pin-head { fill: var(--accent); }
 .trip-pin-dot { fill: var(--on-fill); opacity: 0.34; }
 .trip-pin-needle { fill: var(--ink-soft); }
@@ -107,7 +107,7 @@
   border-radius: 50%;
   border: 2px solid var(--paper);
   background: var(--paper-dim) center / cover no-repeat;
-  box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(15, 23, 42, 0.32);
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(31, 42, 51, 0.32);
   transform: translateY(6px) scale(0.55);
   transform-origin: 50% 100%;
 }
@@ -124,7 +124,7 @@
   color: var(--ink);
   white-space: nowrap;
   transform: translate(-50%, -3px);
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 2px 6px rgba(31, 42, 51, 0.16);
 }
 .pins-photo .trip-pin-plain.has-photo .trip-pin-photo {
   opacity: 1;
@@ -376,7 +376,7 @@
 .trip-step-btn:disabled { opacity: 0.3; cursor: default; }
 .trip-step-val { text-align: center; min-width: 30px; line-height: 1.05; }
 .trip-step-num { font-family: var(--mono); font-size: 15px; color: var(--ink); display: block; }
-.trip-step-suffix { font-size: 9px; color: var(--ink-mute); }
+.trip-step-suffix { font-size: var(--text-micro); color: var(--ink-mute); }
 
 .trip-stop-tools { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
 .trip-stop-move, .trip-stop-remove {
@@ -482,7 +482,7 @@
   padding: 0 20px;
   border-radius: 10px;
   border: 1px solid var(--ink);
-  background: var(--ink);
+  background: var(--ink-fill);
   color: var(--paper);
   font-size: 13px;
   font-weight: 500;
@@ -695,7 +695,7 @@
   .daytrip-mode-btn:hover { border-color: var(--accent); }
 }
 .daytrip-mode-btn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.daytrip-pick-note { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); }/* "Fly to a nearby airport instead" alternatives (no direct fare). */
+.daytrip-pick-note { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); }/* "Fly to a nearby airport instead" alternatives (no direct fare). */
 
 
 /* First-visit "Ryanair fares only" notice. */
@@ -748,7 +748,7 @@
 .cost-group-links .booking-note { flex: 1 0 100%; margin: 0; }
 .trip-leg-links .booking-note { flex: 1 0 100%; margin: 0; }/* The hover card's freshness line (built in plain DOM by MapView). */
 
-.tip-price .prov-from { margin-right: 2px; font-size: 9px; align-self: baseline; }
+.tip-price .prov-from { margin-right: 2px; font-size: var(--text-micro); align-self: baseline; }
 
 /* "Open this shared trip?" dialog (a trip arriving via a share link). */
 .share-trip-modal { max-width: 420px; padding: 26px 26px 22px; }
@@ -794,7 +794,7 @@
   max-width: 300px;
   padding: 8px 12px;
   border-radius: 10px;
-  background: rgba(245,241,232,0.97);
+  background: rgba(246, 245, 242,0.97);
   border: 1px solid var(--warn-ink);
   color: var(--warn-ink);
   font-size: 12px;

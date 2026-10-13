@@ -92,7 +92,7 @@
 }
 .saved-card-icon.is-flag { background: none; overflow: visible; }
 /* Country flag tiles on saved trip cards */
-.country-flag { border-radius: 3px; box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.12); display: block; }
+.country-flag { border-radius: 3px; box-shadow: 0 0 0 1px rgba(31, 42, 51, 0.12); display: block; }
 .country-flag-stack { display: flex; align-items: center; justify-content: center; }
 /* Two or three countries: overlap the flags like a fanned hand */
 .country-flag-stack.n2 .country-flag + .country-flag,
@@ -571,7 +571,7 @@
   padding: 8px 16px;
   border: 1px solid var(--ink);
   border-radius: 6px;
-  background: var(--ink);
+  background: var(--ink-fill);
   font-family: var(--ui);
   font-size: 12.5px;
   font-weight: 600;
@@ -1029,8 +1029,8 @@
   .pasttrip-mode:hover { border-color: var(--ink-soft); color: var(--ink); }
 }
 .pasttrip-mode.on {
-  border-color: var(--ink);
-  background: var(--ink);
+  border-color: var(--ink-fill);
+  background: var(--ink-fill);
   color: var(--paper);
 }
 
@@ -1155,7 +1155,7 @@
 }
 .pasttrip-save {
   border: 1px solid var(--ink);
-  background: var(--ink);
+  background: var(--ink-fill);
   color: var(--paper);
 }
 @media (hover: hover) {
@@ -1164,7 +1164,7 @@
 .pasttrip-save:disabled,
 .pasttrip-cancel:disabled { opacity: .45; cursor: default; }
 @media (hover: hover) {
-  .pasttrip-save:disabled:hover { background: var(--ink); border-color: var(--ink); }
+  .pasttrip-save:disabled:hover { background: var(--lagoon-900); border-color: var(--lagoon-900); }
 }
 
 /* ── A logged trip, read back under its own card ── */
@@ -1596,7 +1596,7 @@
   border: 1.5px solid var(--bg-card);
   background: var(--paper-dim);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   letter-spacing: 0.02em;
   color: var(--ink-soft);
 }
@@ -1682,7 +1682,7 @@
   padding: 8px 15px;
   border: 1px solid var(--ink);
   border-radius: 9px;
-  background: var(--ink);
+  background: var(--ink-fill);
   font-family: var(--ui);
   font-size: 12.5px;
   font-weight: 600;
@@ -1748,7 +1748,7 @@
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .saved-map-expand:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .saved-map-expand:hover { background: var(--lagoon-900); border-color: var(--lagoon-900); color: var(--paper); }
 }
 .savedmap-full {
   position: fixed;
@@ -1799,7 +1799,7 @@
   padding: 8px 14px;
   border: 1px solid var(--ink);
   border-radius: 999px;
-  background: var(--ink);
+  background: var(--ink-fill);
   font-family: var(--ui);
   font-size: 12.5px;
   font-weight: 600;
