@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { GlobeIcon, CompassIcon, RouteIcon, ListDayIcon, BookmarkIcon, PlusIcon, PersonIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { SectionLink, NavCount, NavDot } from './AppHeader.jsx';
+import { SectionLink, NavCount } from './AppHeader.jsx';
+import { IconButton } from './ui/index.js';
 import { usePresence, useNavMarker } from '../lib/motion.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
@@ -41,7 +42,7 @@ export function BottomNav({
   // state: the bar highlights what is actually on screen.
   const overlayOpen = savedOpen || accountOpen;
   const planActive = (activeTab === 'trip' || activeTab === 'day') && !overlayOpen;
-  // The active section is one --ink-fill pill behind its icon, sliding
+  // The active section is one --select-bg pill behind its icon, sliding
   // between the items (T391, rule R5). On a planner tab the plus itself is
   // the filled item, so the pill has no item to sit behind and hides.
   const markerKey = accountOpen ? 'account' : savedOpen ? 'saved' : activeTab;
@@ -99,18 +100,20 @@ export function BottomNav({
 
         {/* The plus opens a chooser, an action, so it stays a button. It
             announces aria-current while a planner is the page on screen. */}
-        <button
-          type="button"
-          className={`bottom-nav-plus ${planOpen ? 'open' : ''} ${planActive ? 'active' : ''}`}
+        {/* A kit IconButton on the surface tone (T426): white, one --border
+            edge, never a teal or tinted disc at rest (T360, T422-c). The
+            dot is drawn inside the glyph, so its words ride in the label. */}
+        <IconButton
+          tone="surface"
+          className={`bottom-nav-plus${planOpen ? ' open' : ''}${planActive ? ' active' : ''}`}
           aria-expanded={planOpen}
           aria-current={planActive ? 'page' : undefined}
-          title={t('nav.planNew')}
+          label={planInProgress ? `${t('nav.planNew')}, ${t('nav.planInProgress')}` : t('nav.planNew')}
           onClick={() => setPlanOpen((v) => !v)}
         >
           <PlusIcon size={24} className="bottom-nav-plus-icon" />
-          <span className="sr-only">{t('nav.planNew')}</span>
-          <NavDot on={planInProgress} />
-        </button>
+          {planInProgress && <span className="nav-dot" />}
+        </IconButton>
 
         <button
           type="button"

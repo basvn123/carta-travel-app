@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { CloseIcon } from '../components/Icons.jsx';
+import { IconButton } from '../components/ui/index.js';
 import { useAnchoredSheet } from './sheetAnchor.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
@@ -88,15 +89,14 @@ export function SheetShell({
           <span className="fsheet-grab" aria-hidden="true" />
           <div className="fsheet-head-row">
             <h2 className="fsheet-title" id={labelId}>{title}</h2>
-            <button
-              type="button"
+            <IconButton
               className="fsheet-close"
               onClick={exit.close}
               ref={closeRef}
-              aria-label={closeLabel || t('legend.closeMethod')}
+              label={closeLabel || t('legend.closeMethod')}
             >
               <CloseIcon size={16} />
-            </button>
+            </IconButton>
           </div>
         </div>
         <div className="fsheet-body">{children}</div>

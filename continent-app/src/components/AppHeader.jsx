@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useNavMarker } from '../lib/motion.js';
 import Logo from './Logo.jsx';
+import { Button } from './ui/index.js';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { tabHref } from '../lib/urlState.js';
@@ -193,20 +194,22 @@ export function AppHeader({
       {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
-        {/* Passes entry: the "Get a pass" chip everywhere now, filled on
-            desktop where it is the bar's one call to action. The language
+        {/* Passes entry: "Get a pass", a kit secondary on every width (T426;
+            secondary chrome is never filled in teal). The language
             picker left this row for the Account panel: switching languages is
             rare, the row over the map is not the place to spend width on it. */}
         {seePricing && (
-          <button
-            className="header-pricing-btn"
+          <Button
+            variant="secondary"
+            size="sm"
+            className="shell-pass-btn"
+            iconStart={<TicketIcon size={16} />}
             onClick={seePricing}
             title={t('header.seePricing')}
+            aria-label={t('header.passes')}
           >
-            <TicketIcon size={14} />
-            <span className="header-pricing-label">{t('header.seePricing')}</span>
-            <span className="header-pricing-label-short">{t('header.passes')}</span>
-          </button>
+            {t('header.passes')}
+          </Button>
         )}
         {/* Desktop only (CSS hides it below 769px), and Explore's alone:
             that tab portals its search field in here. Destinations used to
@@ -220,15 +223,18 @@ export function AppHeader({
             change. It lives in this group rather than with the section tabs
             because those collapse on a phone and this must not. */}
         {onOpenFriends && user && (
-          <button
-            className={`header-friends-btn${friendsOpen ? ' on' : ''}`}
+          <Button
+            variant="secondary"
+            size="sm"
+            className="shell-friends-btn"
+            iconStart={<FriendsIcon size={16} />}
             onClick={onOpenFriends}
-            aria-pressed={friendsOpen}
+            aria-pressed={!!friendsOpen}
+            aria-label={t('friends.title')}
             title={t('friends.title')}
           >
-            <FriendsIcon size={15} />
-            <span className="header-friends-label">{t('friends.title')}</span>
-          </button>
+            {t('friends.title')}
+          </Button>
         )}
         <AccountButton user={user} onOpenAccount={onOpenAccount} accountOpen={accountOpen} />
       </div>

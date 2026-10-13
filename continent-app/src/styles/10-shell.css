@@ -33,8 +33,8 @@
      measured against makes (Wanderlog, Relive, Skyscanner all separate the
      bar from the page), and enough contrast to read as a bar without
      turning into a slab. */
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--rule-soft);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
   /* This row does not scroll, but the panels under it do. Reserving their
      scrollbar's gutter here keeps the bar's content area the same width as
      theirs, so the right-hand gutter matches the left one on screen instead
@@ -79,18 +79,18 @@
   text-align: left;
 }
 .app-header-brand .brand-name {
-  font-family: var(--display);
+  font-family: var(--font);
   font-weight: 600;
-  font-size: 26px;
+  font-size: var(--text-headline);
   letter-spacing: -0.02em;
   line-height: 1;
-  color: var(--ink);
+  color: var(--text);
 }
 .app-header-brand .brand-sub {
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
-  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  color: var(--text-2);
   margin-top: 5px;
 }
 .app-header-brand .brand-divider {
@@ -114,16 +114,16 @@
   align-items: center;
   gap: 7px;
   padding: 8px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   white-space: nowrap;
-  color: var(--ink-soft);
+  color: var(--text-2);
   transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .header-nav-item:hover { color: var(--ink); background: var(--paper-dim); }
+  .header-nav-item:hover { color: var(--text); background: var(--surface-sunken); }
 }
 .header-nav-item.active { color: var(--select-ink); background: var(--select-bg); }
 .header-nav-icon { flex-shrink: 0; }
@@ -219,14 +219,14 @@
   gap: 4px;
   min-width: 0;
   padding: 7px 5px;
-  border-radius: 9px;
-  border: 1px solid var(--rule-soft);
-  background: var(--paper);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-soft);
+  background: var(--surface);
   font-family: var(--ui);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 600;
-  color: var(--ink-soft);
-  transition: color .15s, background .15s, border-color .15s;
+  color: var(--text-2);
+  transition: color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 /* The label rides whatever column width is left: ellipsis rather than a
    wrap, so every card in the grid stays exactly the same height. */
@@ -237,7 +237,7 @@
   text-overflow: ellipsis;
 }
 @media (hover: hover) {
-  .kind-rail-chip:hover { color: var(--ink); border-color: var(--ink-mute); }
+  .kind-rail-chip:hover { color: var(--text); border-color: var(--text-3); }
 }
 .kind-rail-chip.on {
   color: var(--select-ink);
@@ -253,7 +253,7 @@
   min-width: 0;
   border-style: dashed;
   background: none;
-  color: var(--ink-mute);
+  color: var(--text-3);
 }
 @media (hover: hover) {
   .kind-rail-clear:hover { color: var(--danger); background: none; }
@@ -269,7 +269,7 @@
 }
 @media (max-width: 560px) {
   .kind-rail-scroll { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
-  .kind-rail-chip { padding: 6px 4px; font-size: 10.5px; }
+  .kind-rail-chip { padding: 6px 4px; font-size: var(--text-micro); }
 }
 
 @media (max-width: 768px) {
@@ -310,17 +310,17 @@
     height: var(--tap);
     padding: 0 12px;
     gap: 6px;
-    border: 1px solid var(--rule);
-    border-radius: 6px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
     background: transparent;
     box-shadow: none;
-    color: var(--ink);
+    color: var(--text);
     font-weight: 600;
   }
   .app-header-account .header-pricing-btn:active {
-    border-color: var(--ink-soft);
-    background: var(--paper-dim);
-    color: var(--ink);
+    border-color: var(--text-2);
+    background: var(--surface-sunken);
+    color: var(--text);
   }
   .app-header-account .header-pricing-btn svg { width: 16px; height: 16px; }
   .header-pricing-label { display: none; }
@@ -340,23 +340,23 @@
   align-items: center;
   gap: 6px;
   padding: 5px 11px;
-  border-radius: 999px;
-  background: var(--accent-bg);
-  border: 1px solid var(--rule);
-  box-shadow: var(--shadow-1);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 0;
+  box-shadow: var(--elev-1);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
-  color: var(--accent);
+  color: var(--action);
   cursor: pointer;
-  transition: background .15s, box-shadow .15s;
+  transition: background-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .map-guide-toggle:hover { background: var(--accent-wash); box-shadow: var(--shadow-2); }
+  .map-guide-toggle:hover { background: var(--action-tint); }
 }
 .map-guide-caret {
   font-size: var(--text-micro);
-  transition: transform .18s;
+  transition: transform var(--dur-2) var(--ease-out);
 }
 .map-guide.open .map-guide-caret { transform: rotate(180deg); }
 
@@ -365,27 +365,27 @@
   width: 280px;
   max-width: min(280px, calc(100vw - 32px));
   padding: 13px 15px 12px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  box-shadow: var(--shadow-2);
+  background: var(--surface);
+  border-radius: var(--radius-control);
+  box-shadow: var(--elev-2);
 }
 .map-guide-text {
   margin: 0;
-  font-size: 12.5px;
+  font-size: var(--text-caption);
   line-height: 1.5;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 .map-guide-dismiss {
   margin-top: 11px;
   padding: 5px 12px;
-  border-radius: 8px;
-  background: var(--ink-fill);
-  color: var(--paper);
-  font-size: 11.5px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-micro);
   font-weight: 600;
   cursor: pointer;
-  transition: opacity .15s;
+  transition: opacity var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
   .map-guide-dismiss:hover { opacity: 0.85; }
@@ -418,17 +418,17 @@
   gap: 7px;
   max-width: 200px;
   padding: 6px 10px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  color: var(--text-2);
   cursor: pointer;
-  transition: background .15s, border-color .15s, color .15s;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .origin-btn:hover { background: var(--paper-hover); color: var(--ink); }
+  .origin-btn:hover { background: var(--surface-hover); color: var(--text); }
 }
-.origin-btn > svg { color: var(--accent); flex: none; }
+.origin-btn > svg { color: var(--action); flex: none; }
 .origin-btn-label {
   display: flex;
   flex-direction: column;
@@ -439,19 +439,19 @@
 .origin-btn-from {
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
-  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  color: var(--text-2);
 }
 .origin-btn-label b {
-  font-size: 12.5px;
+  font-size: var(--text-caption);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
   max-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.origin-btn-caret { font-size: var(--text-micro); color: var(--ink-mute); flex: none; }
+.origin-btn-caret { font-size: var(--text-micro); color: var(--text-3); flex: none; }
 
 .origin-pop {
   position: absolute;
@@ -463,42 +463,41 @@
   display: flex;
   flex-direction: column;
   padding: 10px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  box-shadow: var(--shadow-2);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-2);
   z-index: 60;
 }
 .origin-search {
   width: 100%;
   padding: 9px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 9px;
-  background: var(--paper-dim);
-  font-family: var(--ui);
-  font-size: 13px;
-  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  font-family: var(--font);
+  font-size: var(--text-lead);
+  color: var(--text);
 }
-/* The focus mark is a border swap to ink, thickened to 2 px by an inset
+/* The focus mark is a border swap to teal (T426), thickened to 2 px by an inset
    outline (T401): the field never loses its indicator. */
 .origin-search:focus {
-  border-color: var(--ink);
-  outline: 1px solid var(--ink);
+  border-color: var(--action);
+  outline: 1px solid var(--action);
   outline-offset: -1px;
-  background: var(--paper);
+  background: var(--surface);
 }
 .origin-list { margin-top: 8px; overflow-y: auto; }
-.origin-empty { padding: 14px 6px; font-size: 12.5px; color: var(--ink-soft); }
+.origin-empty { padding: 14px 6px; font-size: var(--text-caption); color: var(--text-2); }
 .origin-group + .origin-group { margin-top: 4px; }
 .origin-group-head {
   position: sticky;
   top: 0;
   padding: 6px 8px 3px;
-  background: var(--paper);
+  background: var(--surface);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 .origin-opt {
   display: flex;
@@ -507,27 +506,27 @@
   gap: 10px;
   width: 100%;
   padding: 8px 10px;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
-  color: var(--ink-soft);
-  transition: background .12s, color .12s;
+  color: var(--text-2);
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .origin-opt:hover { background: var(--paper-dim); color: var(--ink); }
+  .origin-opt:hover { background: var(--surface-sunken); color: var(--text); }
 }
-.origin-opt.on { background: var(--accent-bg); color: var(--accent); }
-.origin-opt-city { font-size: 13px; font-weight: 500; }
+.origin-opt.on { background: var(--select-bg); color: var(--select-ink); }
+.origin-opt-city { font-size: var(--text-label); font-weight: 500; }
 .origin-opt-code {
-  font-family: var(--mono);
-  font-size: 10.5px;
+  font-family: var(--font);
+  font-size: var(--text-micro);
   letter-spacing: 0.04em;
-  color: var(--ink-mute);
+  color: var(--text-3);
   flex: none;
 }
-.origin-opt.on .origin-opt-code { color: var(--accent); }
+.origin-opt.on .origin-opt-code { color: var(--select-ink); }
 
 /* ── The picker as a map control (see .map-toolrow) ──────────────────────
    On the map it is not a header pill any more: it is the control that decides
@@ -537,34 +536,34 @@
   max-width: 300px;
   gap: 10px;
   padding: 9px 14px 9px 12px;
-  background: var(--paper);
-  box-shadow: var(--shadow-1);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
 }
 .map-toolrow .origin-btn-from { font-size: var(--text-micro); }
-.map-toolrow .origin-btn-caret { font-size: 11px; }
+.map-toolrow .origin-btn-caret { font-size: var(--text-micro); }
 .map-toolrow .origin-btn-label { gap: 2px; }
-.map-toolrow .origin-btn-label b { font-size: 14px; max-width: 220px; }
+.map-toolrow .origin-btn-label b { font-size: var(--text-body); max-width: 220px; }
 .map-toolrow .origin-pop { left: 0; right: auto; }
 
 /* Drive mode: the pill states which question it is asking, and glows while
    that question is the reason the map is empty. */
-.origin-btn-icon { display: inline-flex; flex: none; color: var(--accent); }
+.origin-btn-icon { display: inline-flex; flex: none; color: var(--action); }
 .origin-btn.needs-answer {
-  border-color: var(--accent);
-  background: var(--accent-bg);
+  border-color: var(--action);
+  background: var(--action-tint);
 }
-.origin-btn.needs-answer .origin-btn-label b { color: var(--accent); }
+.origin-btn.needs-answer .origin-btn-label b { color: var(--action); }
 .origin-pop-drive { width: 340px; max-width: min(340px, calc(100vw - 24px)); }
 .origin-drive-ask {
-  font-family: var(--display);
-  font-size: 16px;
-  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--text-lead);
+  color: var(--text);
   margin-bottom: 3px;
 }
 .origin-drive-note {
-  font-size: 11.5px;
+  font-size: var(--text-micro);
   line-height: 1.5;
-  color: var(--ink-mute);
+  color: var(--text-3);
   margin-bottom: 10px;
 }
 .origin-drive-row { display: flex; gap: 6px; }
@@ -572,13 +571,13 @@
 .origin-drive-search {
   flex: none;
   padding: 0 12px;
-  border: 1px solid var(--accent);
-  border-radius: 9px;
-  background: var(--accent);
-  color: var(--paper);
+  border: 1px solid var(--action);
+  border-radius: var(--radius-control);
+  background: var(--action);
+  color: var(--action-text);
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   cursor: pointer;
 }
 .origin-drive-search:disabled { opacity: .45; cursor: default; }
@@ -588,23 +587,23 @@
   justify-content: flex-start;
   gap: 8px;
 }
-.origin-drive-opt > svg { color: var(--ink-mute); flex: none; }
-.origin-drive-opt-label { font-size: 12.5px; line-height: 1.4; }
+.origin-drive-opt > svg { color: var(--text-3); flex: none; }
+.origin-drive-opt-label { font-size: var(--text-caption); line-height: 1.4; }
 .origin-drive-picked {
   margin-top: 10px;
   padding-top: 9px;
-  border-top: 1px solid var(--rule);
-  font-size: 11.5px;
-  color: var(--ink-mute);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-micro);
+  color: var(--text-3);
 }
 .origin-drive-clear {
   margin-left: 6px;
   padding: 0;
   border: none;
   background: none;
-  color: var(--accent);
+  color: var(--action);
   font-family: var(--ui);
-  font-size: 11.5px;
+  font-size: var(--text-micro);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -622,18 +621,17 @@
   width: 340px;
   max-width: calc(100vw - 24px);
   padding: 16px 18px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  box-shadow: var(--shadow-2);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-2);
 }
 .app.list-collapsed .drive-ask { left: 0; }
-.drive-ask-title { font-family: var(--display); font-size: 17px; color: var(--ink); }
+.drive-ask-title { font-family: var(--font); font-size: var(--text-lead); color: var(--text); }
 .drive-ask-body {
   margin-top: 6px;
-  font-size: 12.5px;
+  font-size: var(--text-caption);
   line-height: 1.55;
-  color: var(--ink-mute);
+  color: var(--text-3);
 }
 .drive-ask-actions {
   display: flex;
@@ -645,27 +643,27 @@
 .drive-ask-btn {
   padding: 9px 15px;
   white-space: nowrap;
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--paper);
+  border: 1px solid var(--action);
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  color: var(--action-text);
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   cursor: pointer;
 }
 .drive-ask-alt {
   padding: 0;
   border: none;
   background: none;
-  color: var(--ink-soft);
+  color: var(--text-2);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   text-decoration: underline;
   cursor: pointer;
 }
 @media (hover: hover) {
-  .drive-ask-alt:hover { color: var(--ink); }
+  .drive-ask-alt:hover { color: var(--text); }
 }
 
 @media (max-width: 880px) {
@@ -681,13 +679,13 @@
   /* Phones: the strip is the only chrome over the map, so the picker keeps its
      label but drops back to pill size next to the Destinations tab. */
   .map-toolrow .origin-btn { padding: 7px 11px; gap: 7px; }
-  .map-toolrow .origin-btn-label b { font-size: 12.5px; max-width: 120px; }
+  .map-toolrow .origin-btn-label b { font-size: var(--text-caption); max-width: 120px; }
   .map-toolrow .origin-btn-from { display: block; font-size: var(--text-micro); }
   /* Phones: the strip carries two pills now, so the size toggle drops to the
      picker's size, keeps its caption and swaps to the short label. Both stay
      well over the 44px target. */
   .size-toggle { padding: 7px 11px; gap: 7px; }
-  .size-toggle-label b { font-size: 12.5px; }
+  .size-toggle-label b { font-size: var(--text-caption); }
   .size-toggle-cap { font-size: var(--text-micro); }
   /* Scoped to .size-toggle so these beat the base rules, which sit further
      down the file at the same one-class specificity and would otherwise win. */
@@ -746,8 +744,8 @@
   padding: 10px 10px calc(8px + env(safe-area-inset-bottom, 0px));
   /* Chrome that recedes (T391, brief V4-1): the page ground, one --rule
      hairline, no blur and no fourth shadow. */
-  background: var(--paper);
-  border-top: 1px solid var(--rule);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
 }
 
 .bottom-nav-item {
@@ -758,15 +756,15 @@
   justify-content: center;
   gap: 5px;
   min-width: 0;
-  border-radius: 10px;
-  color: var(--ink-soft);
+  border-radius: var(--radius-control);
+  color: var(--text-2);
   transition: color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
 .bottom-nav-item:active { transform: scale(0.97); }
-/* The section showing (T391, rule R4): an --ink-fill pill behind its icon,
-   drawn by the sliding marker (60-v6-shell.css), the icon in --on-fill and
-   the label in ink. It was accent text under an accent tick. */
-.bottom-nav-item.active { color: var(--ink); }
+/* The section showing (T391, rule R4): a --select-bg pill behind its icon,
+   drawn by the sliding marker (60-v6-shell.css), the icon and label in
+   --select-ink. */
+.bottom-nav-item.active { color: var(--text); }
 .bottom-nav-icon { flex-shrink: 0; position: relative; z-index: 1; transition: color var(--dur-1) var(--ease-out); }
 .bottom-nav-item.active .bottom-nav-icon { color: var(--select-ink); }
 .bottom-nav-label {
@@ -776,7 +774,7 @@
      10.5px keeps the longest labels (Destinations, Bestemmingen) whole
      inside a 380px viewport. */
   font-family: var(--ui);
-  font-size: 10.5px;
+  font-size: var(--text-micro);
   font-weight: 600;
   /* Never wrap: a wrapped label grows the row and collides with its
      neighbours instead of staying inside its own tab. */
@@ -792,24 +790,18 @@
 .bottom-nav-plus {
   align-self: center;
   margin: 0 10px;
+  /* The kit IconButton, surface tone (T426): a white disc with one --border
+     edge (T360, owner call on T166-a; closes T422-c). Teal is left for the
+     page's one primary action. Only the box grows past the kit's --tap. */
   width: 52px;
   height: 52px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* A secondary round icon button (T360, owner call on T166-a): the accent
-     is left for the page's one primary action. */
-  background: var(--bg-card);
-  color: var(--ink);
-  border: 1px solid var(--rule);
+  color: var(--text);
   transition: transform var(--dur-2) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 .bottom-nav-plus:active { transform: scale(0.97); }
 .bottom-nav-plus.open { transform: rotate(45deg); }
 /* On the Trip/Day planner tabs the plus is the "you are here" item: the
-   selected state, --ink-fill with an --on-fill glyph (T391, rule R4; it was
-   an accent ring). */
+   selected state, the --select tint with the teal glyph (T391, rule R4). */
 .bottom-nav-plus.active {
   border-color: var(--select-border);
   background: var(--select-bg);
@@ -822,7 +814,7 @@
   inset: 0;
   /* Below the bar (z 50): the plus stays visible and tappable to close. */
   z-index: 49;
-  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  background: color-mix(in srgb, var(--text) 28%, transparent);
   animation: shell-scrim-in var(--dur-3) var(--ease-out);
 }
 .plan-chooser-backdrop.is-leaving { animation: shell-scrim-out var(--dur-2) var(--ease-in-out) forwards; }
@@ -833,10 +825,9 @@
   transform: translateX(-50%);
   z-index: 51;
   width: min(330px, calc(100vw - 28px));
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  box-shadow: var(--shadow-2);
+  background: var(--surface);
+  border-radius: var(--radius-control);
+  box-shadow: var(--elev-2);
   overflow: hidden;
   animation: plan-chooser-in var(--dur-3) var(--ease-out);
 }
@@ -856,24 +847,24 @@
   width: 100%;
   padding: 15px 18px;
   text-align: left;
-  color: var(--ink);
+  color: var(--text);
 }
-.plan-chooser-item + .plan-chooser-item { border-top: 1px solid var(--rule-soft); }
+.plan-chooser-item + .plan-chooser-item { border-top: 1px solid var(--border-soft); }
 .plan-chooser-item { transition: background-color var(--dur-1) var(--ease-out); }
-.plan-chooser-item:active { background: var(--paper-dim); }
+.plan-chooser-item:active { background: var(--surface-sunken); }
 @media (hover: hover) {
-  .plan-chooser-item:hover { background: var(--paper-dim); }
+  .plan-chooser-item:hover { background: var(--surface-sunken); }
 }
 /* Ink, not accent (T391): neither item is the view's primary. */
-.plan-chooser-icon { color: var(--ink-soft); flex-shrink: 0; }
+.plan-chooser-icon { color: var(--text-2); flex-shrink: 0; }
 .plan-chooser-text {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
-.plan-chooser-title { font-size: 14px; font-weight: 600; }
-.plan-chooser-sub { font-size: 12px; color: var(--ink-mute); }
+.plan-chooser-title { font-size: var(--text-body); font-weight: 600; }
+.plan-chooser-sub { font-size: var(--text-caption); color: var(--text-3); }
 
 @media (prefers-reduced-motion: reduce) {
   .plan-chooser, .plan-chooser.is-leaving,
@@ -911,7 +902,7 @@
   padding: 7px 18px;
   background: rgba(246, 245, 242, 0.85);
   backdrop-filter: blur(12px) saturate(140%);
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid var(--border);
 }
 
 /* ───────── Tab panels (Trip planner / Day planner placeholders) ───────── */
@@ -927,12 +918,12 @@
   margin: 64px auto;
   padding: 0 24px;
   text-align: center;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 .tab-panel-placeholder-inner .section-title {
-  font-family: var(--display);
-  font-size: 22px;
-  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--text-title);
+  color: var(--text);
   margin-bottom: 10px;
 }
 
