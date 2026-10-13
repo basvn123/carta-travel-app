@@ -1,5 +1,6 @@
 import React from 'react';
 import { BANDS, SORTS } from '../lib/tripFilters.js';
+import { formatMoney } from '../lib/money.js';
 import { SHORT, WEEK } from '../lib/tripLength.js';
 import { tagLabel } from '../lib/tripTags.js';
 import { FilterIcon } from '../components/Icons.jsx';
@@ -25,9 +26,7 @@ import { FilterChips } from './FilterChips.jsx';
  * shows and the total the cost band tests, and Clear all leaves it alone.
  */
 
-const eurFmt = (lang) => (n) => new Intl.NumberFormat(lang, {
-  style: 'currency', currency: 'EUR', maximumFractionDigits: 0,
-}).format(n);
+const eurFmt = (lang) => (n) => formatMoney(n, { precision: 'whole', locale: lang });
 
 /** The two-segment length control, shared by the list and the trip page. */
 export function LengthSegments({ value, onChange, shortLabel, weekLabel, label, className = '' }) {

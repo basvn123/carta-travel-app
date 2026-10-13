@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { eur } from '../lib/format.js';
+import { eurExact } from '../lib/format.js';
 import { EUR_RATES, CURRENCIES } from '../lib/currency.js';
 import { useI18n } from '../i18n/index.jsx';
 import { readCrew, writeCrew } from '../auth/tripCrew.js';
@@ -21,7 +21,7 @@ import { ReceiptIcon, CloseIcon } from '../components/Icons.jsx';
 // and two copies of a rate table is one copy too many.
 
 const fmtAmount = (amount, currency) => (currency === 'EUR'
-  ? eur(amount)
+  ? eurExact(amount)
   : `${amount.toFixed(2)} ${currency}`);
 
 export function ExpenseLedger({ extras, onChange, groupSize }) {
@@ -252,11 +252,11 @@ export function ExpenseLedger({ extras, onChange, groupSize }) {
 
       {expenses.length > 0 && (
         <div className="exp-balances">
-          <div className="exp-total">{t('extras.expTotal', { total: eur(totalEur) })}</div>
+          <div className="exp-total">{t('extras.expTotal', { total: eurExact(totalEur) })}</div>
           {n > 1 && (settlements.length > 0 ? (
             settlements.map((s, i) => (
               <div className="exp-settle" key={i}>
-                {t('extras.expSettle', { from: people[s.from], to: people[s.to], amount: eur(s.amt) })}
+                {t('extras.expSettle', { from: people[s.from], to: people[s.to], amount: eurExact(s.amt) })}
               </div>
             ))
           ) : (

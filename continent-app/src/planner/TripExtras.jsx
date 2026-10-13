@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { eur, safeUrl } from '../lib/format.js';
+import { safeUrl, eurExact } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { LinkIcon, SparkIcon, ClockIcon, CloseIcon } from '../components/Icons.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
@@ -33,8 +33,8 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
   const delta = hasPrice && row.estimate != null ? price - row.estimate : null;
   const deltaText = delta == null ? ''
     : Math.abs(delta) < 1 ? t('extras.onEstimate')
-      : delta < 0 ? t('extras.under', { amount: eur(Math.abs(delta)) })
-        : t('extras.over', { amount: eur(delta) });
+      : delta < 0 ? t('extras.under', { amount: eurExact(Math.abs(delta)) })
+        : t('extras.over', { amount: eurExact(delta) });
   const link = safeUrl(b.url);
 
   return (
@@ -60,7 +60,7 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
         {/* Which rows the import touched, so nothing changes silently. */}
         {b.ai && <span className="extras-ai-badge"><SparkIcon size={9} /> {t('extras.autoFilled')}</span>}
         {row.estimate != null && (
-          <span className="extras-est">{t('extras.est', { price: eur(row.estimate) })}</span>
+          <span className="extras-est">{t('extras.est', { price: eurExact(row.estimate) })}</span>
         )}
         {onRemove && (
           <button className="extras-remove" onClick={onRemove} title={t('extras.removeTitle')}
@@ -107,7 +107,7 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
 function InboxItem({ item, days, onRoute, onDiscard, t }) {
   const metaBits = [
     item.city,
-    item.eur != null ? eur(item.eur) : null,
+    item.eur != null ? eurExact(item.eur) : null,
     item.durationMin != null ? `~${item.durationMin} min` : null,
   ].filter(Boolean);
   return (

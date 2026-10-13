@@ -270,6 +270,11 @@
 /* ---- Icon --------------------------------------------------------------- */
 .icon { display: inline-flex; flex: none; line-height: 0; }
 
+/* ---- Money (T423) ------------------------------------------------------ */
+.money { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.money-est { font-size: 0.85em; font-weight: 500; color: var(--text-3); }
+.money.is-missing { color: var(--text-3); font-weight: 500; }
+
 /* ---- Reduced motion ----------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .icon-btn, .ui-chip-filter, .ui-chip-choice, .seg-item, .ui-tab, .ui-tab::after, .card,

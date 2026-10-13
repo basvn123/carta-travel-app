@@ -22,6 +22,7 @@
  * Pure functions only, so the node tests can import it without a JSX loader.
  */
 import { sleepGroupOf } from './sleepGroups.js';
+import { formatMoney } from './money.js';
 
 export const BUDGET_SLOTS = ['accommodation', 'food', 'transport', 'activities'];
 
@@ -83,7 +84,5 @@ export function sayKey(stopKey) {
 /** A euro figure with two decimals, the receipt's one format (T397,
  *  PRODUCT.md: Intl.NumberFormat, two decimals, never rounded for show). */
 export function eurCents(value, lang) {
-  return new Intl.NumberFormat(lang, {
-    style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2,
-  }).format(value);
+  return formatMoney(value, { precision: 'cents', locale: lang });
 }

@@ -230,7 +230,7 @@ export function LandingPage({ data, lifestyle, onStart, onOpenDest }) {
   const altLine = () => {
     const a = receipt?.alt;
     if (!a) return null;
-    const eur = `${a.est ? '~ ' : ''}${eurExact(a.total)}`;
+    const eur = `${a.est ? '~' : ''}${eurExact(a.total)}`;
     return a.kind === 'tier'
       ? t('landing.altTier', { tier: tierWord(a.tier), eur })
       : t('landing.altNights', { nights: nightsWord(a.nights), eur });

@@ -54,7 +54,7 @@ import { CostBar } from '../browse/CostBar.jsx';
 export function ReceiptFigure({ eur, est, t }) {
   return (
     <>
-      {est && <span className="frr-tilde" aria-hidden="true">~ </span>}
+      {est && <span className="frr-tilde" aria-hidden="true">~</span>}
       {eurExact(eur)}
       {est && (
         <abbr className="frr-est" title={t('prov.estTitle')}>
@@ -100,7 +100,7 @@ export function ReceiptSum({ sumLabel, total, est, each = null, eachText, live =
       <dd className="mono" aria-live={live ? 'polite' : undefined}>
         <span className="frr-sum-eur" data-eur={total} data-key="sum"><ReceiptFigure eur={total} est={est} t={t} /></span>
         {each != null && eachText && (
-          <span className="frr-each">{eachText(`${est ? '~ ' : ''}${eurExact(each)}`)}</span>
+          <span className="frr-each">{eachText(`${est ? '~' : ''}${eurExact(each)}`)}</span>
         )}
       </dd>
     </div>
@@ -141,7 +141,7 @@ export function ReceiptCard({
       slot: l.key,
       label: l.label,
       weight: l.eur,
-      figure: `${l.est ? '~ ' : ''}${eurExact(l.eur)}`,
+      figure: `${l.est ? '~' : ''}${eurExact(l.eur)}`,
     }))
     : [];
   return (

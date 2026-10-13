@@ -46,6 +46,7 @@ import { placeSights } from '../lib/placeStory.js';
 import { knownFor } from '../lib/knownFor.js';
 import { catalogue, CATALOGUE_MODE, loadFullCatalogue } from '../lib/appData.js';
 import { decodeBootIndex } from '../lib/bootIndex.js';
+import { formatMoney } from '../lib/money.js';
 
 // 'viewport' catalogue mode (T059): the zoom from which the map fetches the
 // countries on screen. Below it the map draws clusters, which the boot pins
@@ -754,7 +755,7 @@ export function ExploreTab({
     // Trip styles first: they are the first group of the rail (V3, T383),
     // and before V3 they made no chip at all.
     for (const k of tripKinds) list.push({ key: `s:${k}`, label: t(`kind.${k}`), remove: () => setTripKinds(tripKinds.filter((x) => x !== k)) });
-    if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: xf.budget }), remove: drop({ budget: null }) });
+    if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget) }), remove: drop({ budget: null }) });
     for (const k of xf.kinds) list.push({ key: `k:${k}`, label: t(`pkind.${k}`), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
     for (const v of xf.verdicts) list.push({ key: `v:${v}`, label: t(`rating.tier${v}`), remove: drop({ verdicts: xf.verdicts.filter((x) => x !== v) }) });
     for (const r of xf.roles) list.push({ key: `r:${r}`, label: t(`role.short.${r}`), remove: drop({ roles: xf.roles.filter((x) => x !== r) }) });
@@ -884,9 +885,9 @@ export function ExploreTab({
     // how it was chosen: "The 41" was a number with no referent (P4.2).
     return [
       { key: 'cost',
-        title: t('rail.cost', { eur: ceiling ?? '', month: fmtMonthRanges([month]) }),
+        title: t('rail.cost', { eur: ceiling != null ? formatMoney(ceiling) : '', month: fmtMonthRanges([month]) }),
         sub: t('rail.costSub'),
-        short: t('rail.costShort', { eur: ceiling ?? '' }),
+        short: t('rail.costShort', { eur: ceiling != null ? formatMoney(ceiling) : '' }),
         rows: [...costLead, ...costRest],
         seeAll: () => { patchXf({ budget: ceiling, month }); setSortKey('cost'); } },
       { key: 'the43', title: t('rail.top', { n: q.the43.length }), sub: t('rail.topSub'),
@@ -994,7 +995,7 @@ export function ExploreTab({
         >
           <option value="">{t('explore.budgetAny')}</option>
           {budgetSteps.map((n) => (
-            <option key={n} value={n}>{t('explore.budgetUpTo', { eur: n })}</option>
+            <option key={n} value={n}>{t('explore.budgetUpTo', { eur: formatMoney(n) })}</option>
           ))}
         </select>
         <ChevronDownIcon size={14} className="xinput-chev" />

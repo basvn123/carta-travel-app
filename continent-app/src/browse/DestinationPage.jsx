@@ -220,6 +220,7 @@ function tipText(tip, t) {
   if (args.from_m) args.from = MONTHS_SHORT[args.from_m - 1];
   if (args.to_m) args.to = MONTHS_SHORT[args.to_m - 1];
   if (args.month) args.month = MONTHS_SHORT[args.month - 1];
+  if (args.rental_eur != null) args.rental_eur = eur(args.rental_eur);
   return t(`tip.${tip.code}`, args);
 }
 
@@ -871,7 +872,7 @@ export function DestinationPage({
                 id="sec-cost"
                 icon={ReceiptIcon}
                 title={t('dest.costTitleAt')}
-                summary={t('dest.costSummary', { eur: Math.round(cost.dayEur) })}
+                summary={t('dest.costSummary', { eur: eur(cost.dayEur) })}
                 open={isOpen('cost')}
                 onToggle={() => toggle('cost')}
               >

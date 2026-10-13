@@ -5,7 +5,7 @@ import {
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { eur } from '../lib/format.js';
+import { eurExact } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { crewLabel } from './tripCrew.js';
 import { SPEND_CATS, spendSummary, spendPerPerson } from './pastTripMemory.js';
@@ -69,7 +69,7 @@ export function TripMemoryView({ memory, onEdit }) {
   const heads = adults + children;
   const spend = spendSummary(memory);
   const perHead = spendPerPerson(memory);
-  const money = (n) => (spend.currency === 'EUR' ? eur(n) : `${n.toFixed(2)} ${spend.currency}`);
+  const money = (n) => (spend.currency === 'EUR' ? eurExact(n) : `${n.toFixed(2)} ${spend.currency}`);
   // The cost bar (carta-design "The cost bar", brief V4-4): one segment per
   // receipt line, in receipt order, sized by the amount, in the ink ramp. It
   // sits above the lines and never replaces them; the lines keep every figure.
@@ -182,12 +182,12 @@ export function TripMemoryView({ memory, onEdit }) {
             ))}
             <div className="memo-recline is-total">
               <span>{t('saved.pastTotal')}</span>
-              <b>{eur(spend.total)}</b>
+              <b>{eurExact(spend.total)}</b>
             </div>
             {heads > 1 && perHead != null && (
               <div className="memo-recline is-each">
                 <span>{t('saved.pastPerPersonLabel')}</span>
-                <b>{eur(perHead)}</b>
+                <b>{eurExact(perHead)}</b>
               </div>
             )}
           </div>

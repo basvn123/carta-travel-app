@@ -1,6 +1,7 @@
 import React from 'react';
 import { CarIcon, TrainIcon, BusIcon, FerryIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { formatMoney } from '../lib/money.js';
 
 /**
  * Getting there and around (PLAN.md D3): the transit verdict in words
@@ -72,7 +73,7 @@ export function GettingThere({ getting, t }) {
           <span>
             {getting.car_needed ? t('dest.carYes') : t('dest.carNo')}
             {getting.car_needed && getting.rental_eur_day != null
-              ? ` ${t('dest.carRental', { eur: getting.rental_eur_day })}` : ''}
+              ? ` ${t('dest.carRental', { eur: formatMoney(getting.rental_eur_day) })}` : ''}
           </span>
         </p>
       )}

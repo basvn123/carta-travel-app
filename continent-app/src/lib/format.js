@@ -1,12 +1,13 @@
 // Shared display formatting used across the panels/list/map.
 
 import { activeLocale } from './localeState.js';
+import { formatMoney } from './money.js';
 
-/** Rounded euro amount, e.g. "€1,234" (grouping follows the app language).
- *  Returns '-' for null/undefined or any non-finite value, so a single upstream
- *  NaN can't leak "€NaN" into the UI/PDF. */
+/** Whole euros for comparison contexts (cards, pins, lists), e.g. "€1,234" or
+ *  "1.234 €": the one formatter in money.js, so the symbol sits where the
+ *  reader's language puts it (T423). '-' for a non-finite value. */
 export function eur(n) {
-  return Number.isFinite(n) ? `€${Math.round(n).toLocaleString(activeLocale())}` : '-';
+  return formatMoney(n, { precision: 'whole' });
 }
 
 /** Grouped whole number in the app language, e.g. "1,570". Bare
@@ -20,11 +21,7 @@ export function count(n) {
  *  rather than eur(): rounding a €24.99 fare to €25 quietly turns the product's
  *  whole claim ("this is the real stored fare") into an estimate. */
 export function eurExact(n) {
-  return Number.isFinite(n)
-    ? new Intl.NumberFormat(activeLocale(), {
-      style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2,
-    }).format(n)
-    : '-';
+  return formatMoney(n, { precision: 'cents' });
 }
 
 /** Decimal hours in human units: 0.17 -> "10 min", 2.5 -> "2 h 30 min".
@@ -68,10 +65,15 @@ export function stripDashes(s) {
  *  figure; returns '' when neither end is a number. Journey budgets, per-day
  *  figures and every {low, high} pair on the trip page come through this, so
  *  the join can never drift or be stripped back to a comma. */
+/* The range word in each UI language (T423: it was English "to" everywhere,
+   so German read "40 € to 60 €"). */
+const RANGE_WORD = { en: 'to', nl: 'tot', de: 'bis', fr: 'à', es: 'a', it: 'a' };
+
 export function formatRange(low, high, fmt = String) {
   const lo = Number.isFinite(low);
   const hi = Number.isFinite(high);
-  if (lo && hi && low !== high) return `${fmt(low)} to ${fmt(high)}`;
+  const word = RANGE_WORD[String(activeLocale()).slice(0, 2)] || 'to';
+  if (lo && hi && low !== high) return `${fmt(low)} ${word} ${fmt(high)}`;
   if (lo) return fmt(low);
   if (hi) return fmt(high);
   return '';

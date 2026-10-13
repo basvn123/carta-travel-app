@@ -59,6 +59,7 @@
  * realistic margin is much higher; this floor is about the worst case, and
  * any future cap raise should redo this arithmetic first.
  */
+import { formatMoney } from './money.js';
 
 /** Tier ids in display order. Mirrors public.plan_tiers.rank. */
 export const TIER_ORDER = ['free', 'trip', 'year'];
@@ -119,15 +120,11 @@ export const PRICE_TEST_ALTERNATIVES = { trip: [499, 599, 799] };
 export const PAID_TIERS = ['trip', 'year'];
 
 /** Money, in the traveller's active locale. Cents in, "EUR 6.99" style out. */
-export function formatPrice(cents, locale = 'en-GB', currency = 'EUR') {
-  if (!Number.isFinite(cents)) return '';
-  try {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency', currency, minimumFractionDigits: 2,
-    }).format(cents / 100);
-  } catch {
-    return `${currency} ${(cents / 100).toFixed(2)}`;
-  }
+export function formatPrice(cents, locale) {
+  // Pass prices are a receipt: cents, in the reader's language (T423). With no
+  // locale the app language is used, which fixes the Account panel printing
+  // en-GB whatever the language was.
+  return formatMoney(cents / 100, { precision: 'cents', locale, missing: '' });
 }
 
 /**

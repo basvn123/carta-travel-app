@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { formatMoney } from '../lib/money.js';
 
 /*
  * What these cards are really drawn at. They sit in .places-list, the same
@@ -58,7 +59,7 @@ const norm = (s) => String(s || '')
   .replace(/[̀-ͯ]/g, '')
   .replace(/ł/g, 'l');
 
-const eur0 = (n, lang) => `€${Math.round(n).toLocaleString(lang)}`;
+const eur0 = (n, lang) => formatMoney(n, { precision: 'whole', locale: lang });
 
 /** A sentence with its euro figure in mono and its words in sans (T397,
  *  the mono rule): "From [€255] a person, 7 days". */

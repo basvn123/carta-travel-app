@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { legLinks, TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { fmtDate, addDays } from '../lib/dates.js';
-import { eur } from '../lib/format.js';
+import { eurExact } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
   TrainIcon, BusIcon, CarIcon, FerryIcon, CalendarIcon, InfoIcon, CheckIcon,
@@ -231,7 +231,7 @@ function LegRow({ leg, value, onChange, adults, open, onToggle, t }) {
           ) : Icon && (
             <span className="tleg-tag"><Icon size={11} /> {t(TRAVEL_MODE_LABEL[mode])}</span>
           )}
-          {paid > 0 && <span className="tleg-tag is-paid">{eur(paid)}</span>}
+          {paid > 0 && <span className="tleg-tag is-paid">{eurExact(paid)}</span>}
           <ChevronDownIcon size={14} className="tleg-chev" />
         </span>
       </button>
@@ -365,7 +365,7 @@ export function TravelLegsSection({
 
       <div className="tlegs-foot">
         <span className="tlegs-total-label"><InfoIcon size={11} /> {t('travel.totalLabel')}</span>
-        <b className="tlegs-total">{total > 0 ? eur(total) : t('travel.nothingYet')}</b>
+        <b className="tlegs-total">{total > 0 ? eurExact(total) : t('travel.nothingYet')}</b>
       </div>
     </div>
   );
@@ -407,14 +407,14 @@ export function TravelLegsSummary({ legs, values, onEdit }) {
               {leg.booked
                 ? <span className="tsum-mode"><CheckIcon size={11} /> {t('travel.booked')}</span>
                 : Icon && <span className="tsum-mode"><Icon size={12} /> {t(TRAVEL_MODE_LABEL[v.mode])}</span>}
-              <span className="tsum-eur">{paid > 0 ? eur(paid) : ''}</span>
+              <span className="tsum-eur">{paid > 0 ? eurExact(paid) : ''}</span>
             </div>
           );
         })}
       </div>
       <div className="tlegs-foot">
         <span className="tlegs-total-label">{t('travel.totalLabel')}</span>
-        <b className="tlegs-total">{total > 0 ? eur(total) : t('travel.nothingYet')}</b>
+        <b className="tlegs-total">{total > 0 ? eurExact(total) : t('travel.nothingYet')}</b>
       </div>
     </PlannerSection>
   );

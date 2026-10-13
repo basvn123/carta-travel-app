@@ -1036,7 +1036,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
           <span>{t('trails.openDest', { city: assoc.dest?.city || '' })}</span>
           <span className="tpage-cta-right">
             {price?.pp != null && (
-              <span className="tpage-cta-price">{t('places.fromPrice', { price: eur(price.pp) })}/pp</span>
+              <span className="tpage-cta-price">{t('places.fromPrice', { price: eur(price.pp) })} {t('money.perPerson')}</span>
             )}
             <ChevronRightIcon size={15} />
           </span>

@@ -16,6 +16,7 @@
 
 import { dataUrl } from './dataHost.js';
 import { formatRange } from './format.js';
+import { formatMoney } from './money.js';
 
 const SLUG_RE = /^[a-z-]{3,30}$/;
 const ID_RE = /^[a-z]{2}-[a-z0-9-]{3,90}$/;
@@ -126,7 +127,7 @@ export function monthsShort(months, lang) {
  *  written. */
 export function eurRange(pair, lang) {
   if (!pair) return '';
-  return formatRange(pair.low, pair.high, (n) => `€${Math.round(n).toLocaleString(lang)}`);
+  return formatRange(pair.low, pair.high, (n) => formatMoney(n, { precision: 'whole', locale: lang }));
 }
 
 /* ── Schema v2.1 typed fields ─────────────────────────────────────────────
