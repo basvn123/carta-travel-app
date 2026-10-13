@@ -1415,3 +1415,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T438-c | T438 | --lagoon-* primitives are still defined but unread; delete them with their DESIGN.md frontmatter and design.json entries once later tasks confirm no reads | next task | open | after T443 |
 | T438-d | T438 | Owner looks at the brown on a phone; the umber values in 01-tokens.css are the hand-tuning point (then run token-contrast.mjs and update DESIGN.md) | user | open |  |
 | T438-e | T438 | Explore map dots are still coloured by tier with the top tier in the brown rating colour; T441 redraws them as ink dots | next task | open | T441 |
+| T439-a | T439 | Native review of the 20 vibe labels and 40 area names T439 wrote in nl, de, fr, es and it (data in public/search/guided.json, written in VIBES and AREAS of pipeline/guided_search_layer.py) | user | open |  |
+| T439-b | T439 | pipeline/guided_search_layer.py is Manual and laptop-only; run it after every catalogue ingest or new places have no vibe in search (consider a reminder in run_pipeline.py) | next task | open |  |
+| T439-c | T439 | Golden set 49 of 72: equally strong matches are ordered by rating; T442 may break the tie by fame and must measure against the same golden set without editing it | next task | open | T442 |

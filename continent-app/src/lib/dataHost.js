@@ -47,6 +47,8 @@ export const R2_TIER = Object.freeze([
   'coverage.json',
   'poi_credits.json',
   'search_index.json',
+  // T439: the guided search's precomputed areas, distances and vibes.
+  'search',
 ]);
 
 const TIER_SET = new Set(R2_TIER);
