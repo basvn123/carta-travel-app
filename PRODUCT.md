@@ -1,8 +1,14 @@
 # Carta, the product in one page
 
+<!-- impeccable:product-schema 1 -->
+
 Read this before DESIGN.md and before any task that touches a screen, a string or a number the traveller sees. It is the durable product truth: who Carta is for, what they are doing when they use it, how it speaks and what it owes them. CLAUDE.md points here so every session starts from the same facts instead of guessing them.
 
 DESIGN.md holds the tokens. This file holds the reasons the tokens look the way they do.
+
+## Platform
+
+web. One web app (Vite + React, installable as a PWA) is also packaged for the App Store and Play Store as a wrapper of the same app (owner decisions 2026-10-02 and 2026-10-13), so there is one design language, the web's.
 
 ## What Carta is
 
@@ -32,7 +38,7 @@ Comparing dense pricing matrices. The central act is reading many prices at once
 
 The map shows every destination pinned with its total for the traveller's inputs. The receipt itemises one total line by line. The planner prices every leg of a multi-city route by mode. The day planner builds a clock-based day from the POI catalogue. Each is a table of measured numbers first and a picture second.
 
-Prices change meaning with the inputs, so the inputs are always visible and the figures update in place. Numbers must line up in columns and must not jitter when they change. A figure is never rounded to look tidier.
+Prices change meaning with the inputs, so the inputs are always visible and the figures update in place. Numbers must line up in columns and must not jitter when they change. A figure is never rounded to look tidier, with one owner-decided exception (2026-10-13): where many places are compared at once (cards, pins, lists, filters) the day figure is shown in whole euros, and every receipt, total and ledger shows cents.
 
 Density is a feature. The traveller wants to see forty prices on one phone screen and still tell them apart. Whitespace is spent on separating groups, not on making a card feel generous.
 
@@ -66,6 +72,24 @@ Banned words: seamless, unlock, effortless, elevate, leverage, empower, curated,
 
 Decided by the owner on 2026-10-13 (T419), after two rounds of invented visual worlds were refused: Carta looks like a top-tier travel app, measured against Airbnb, Polarsteps and Wanderlog. Photography leads, the feel is warm and inviting, and the craft bar is theirs. Carta's own mark on that familiar structure is the price line with its source under every photo. The chosen rendition is "Lagoon" (deep lagoon teal for actions and selection, sun yellow for best value, blue-grey ink, white surfaces on a warm light grey); its direction contract is in `continent-app/.impeccable/surfaces/continent-app.md`, and its tokens land in DESIGN.md from T420. The voice above (plain, specific, honest about coverage) is unchanged; only the look moves from instrument to inviting.
 
+## Positioning
+
+Every travel product shows a price; Carta shows the price and its pedigree (T201, `Execution/P12/T201-positioning.md`). Each neighbouring category beats Carta on one axis and none can say the second half: route and trail products (Komoot, AllTrails) do not price the town the walk starts from; journey planners (Rome2Rio, Omio) price the leg but not the stay; flight discovery (Skyscanner, Google Flights) does not know what a bed and a day cost; itinerary planners (Wanderlog, TripIt) start from whatever the user types in (T202).
+
+## Operating Context
+
+A traveller plans at home or on the move, mostly on a phone: browsing places by what a day costs, saving a few, comparing them on the map, then turning one into a multi-city trip and its days. Their inputs (dates, people, lifestyle, origin) stay visible and change the figures in place. Carta hands them to operators for booking and warns that prices may have changed. Acquisition is organic search on honest item and coverage pages; at about €0.17 of allowable spend per visitor no paid channel fits (`docs/GTM-ACQUISITION-CONSTRAINT.md`). Launch is set for 4 May 2027 (`Roadmap/Carta roadmap.md`).
+
+Success in the first year, as the owner states it (2026-10-13): travellers buy Trip Passes, visitors arrive from search, and travellers trust the figures enough to save trips and come back. The admin Overview is where these are read (`docs/LAUNCH-METRICS.md`); visitors and priced-trip completions have no instrument yet.
+
+## Evidence on Hand
+
+Real: the catalogue (`app_data/app_data.json`, read `meta` for counts), per-region coverage (`continent-app/public/coverage.json`), licensed photography with credits (`docs/tos/data_licenses.md`), the provenance sentences on every receipt, share cards from `continent-app/scripts/og`. Absent, and never to be fabricated: testimonials, user counts, press, partner logos, live flight fares.
+
+## Product Principles
+
+Carta prices and plans; it never sells. No booking, no commission on travel, no flight pricing: it hands the traveller to the operator (owner-confirmed 2026-10-13).
+
 ## Accessibility constraints
 
 These are not optional and are not announced in the UI.
@@ -82,7 +106,7 @@ Motion. `prefers-reduced-motion: reduce` is honoured on every transition and ani
 
 Language. The document language follows the chosen UI language. Strings are never built by concatenation; they go through the i18n keys so word order survives translation.
 
-Numbers. Prices are formatted through `Intl.NumberFormat` with two decimals, set in `--mono` with `font-variant-numeric: tabular-nums`, never raw float output.
+Numbers. Prices are formatted through one money formatter on `Intl.NumberFormat` in the reader's locale, whole euros in comparison contexts and cents on receipts, set in the interface typeface with `font-variant-numeric: tabular-nums`, never raw float output. A separate monospaced face for figures is retired (owner decision 2026-10-13, T420); an estimate is written `~€87 est.`.
 
 Single theme. The app is deliberately light-only: there are no `prefers-color-scheme` or `data-theme` blocks, and `theme-color` is `--paper`. Do not add a dark mode as a side effect of another task.
 
@@ -98,4 +122,4 @@ Single theme. The app is deliberately light-only: there are no `prefers-color-sc
 | Fare model | `docs/ESTIMATION.md` |
 | Licences and credits | `docs/tos/data_licenses.md` |
 
-Last reviewed: 2026-10-01 (T195).
+Last reviewed: 2026-10-13 (T420, impeccable init on the legacy file; earlier 2026-10-01, T195).
