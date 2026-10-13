@@ -130,8 +130,8 @@
    it takes --ink-fill. In the accent it read as a second primary beside the
    step's Continue button (T166-d, T193). */
 .cal-day.selected {
-  background: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  color: var(--select-ink);
   font-weight: 600;
 }
 /* A day you cannot pick has to LOOK unpickable, not merely faint: at 0.4
@@ -638,9 +638,9 @@
 }
 .mode-pill:disabled { opacity: .45; cursor: default; }
 .mode-pill.on {
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
-  color: var(--paper);
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
 }
 .mode-pill-top {
   font-family: var(--ui);
@@ -729,7 +729,7 @@
 @media (hover: hover) {
   .results-search-clear:hover { background: var(--ink-mute); color: var(--paper); }
 }
-.results-sort button.on { background: var(--ink-fill); color: var(--paper); }
+.results-sort button.on { background: var(--select-bg); color: var(--select-ink); }
 
 .fav-filter {
   display: inline-flex;
@@ -885,9 +885,9 @@
 }
 .panel-fav:disabled { opacity: 0.6; cursor: default; }
 .panel-fav.on {
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
 }/* ═══════════════════════════════════════════════════════════════════════
    Compare modal
    ═══════════════════════════════════════════════════════════════════════ */

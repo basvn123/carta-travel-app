@@ -87,7 +87,7 @@
 @media (hover: hover) {
   .guide-country:hover { border-color: var(--ink-soft); }
 }
-.guide-country.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
+.guide-country.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
 .guide-flag { font-size: 22px; line-height: 1; }
 .guide-flag-img {
   width: 30px; height: 22px;
@@ -143,7 +143,7 @@
   border-radius: 12px;
   transition: border-color .15s, background .15s;
 }
-.guide-city.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
+.guide-city.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
 .guide-city-info { flex: 1; min-width: 0; }
 .guide-city-name {
   display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
@@ -199,7 +199,7 @@
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 /* A segment that is on is the selected state (T398): ink fill. */
-.guide-datemode button.on { background: var(--ink-fill); color: var(--on-fill); }
+.guide-datemode button.on { background: var(--select-bg); color: var(--select-ink); }
 /* Stay-style toggle: labels are uneven lengths ("Change stays as we go" vs
    "One home base"), so an even 50/50 split wraps the longer one mid-text.
    Size each button to its own content instead, wrapping the whole pill to a
@@ -348,10 +348,10 @@
 /* A picked city on the planning map is ink, the selected state (T398); only
    the live route is accent. */
 .citypick-pin.on {
-  background: var(--ink-fill); border-color: var(--ink-fill);
+  background: var(--select-bg); border-color: var(--select-border);
 }
 .citypick-pin.on .citypick-name,
-.citypick-pin.on .citypick-ic { color: var(--on-fill); }
+.citypick-pin.on .citypick-ic { color: var(--select-ink); }
 .citypick-pin.on .citypick-meta { color: var(--on-fill); background: rgba(255, 255, 255, 0.22); }
 /* Arrival city ("fly into ..."): a bigger, cleaner sign so the traveller
    instantly sees where they land. The "Fly here" flag floats above the pill. */
@@ -478,8 +478,8 @@
 @media (hover: hover) {
   .guide-chip:hover { border-color: var(--ink-soft); }
 }
-.guide-chip.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
-.guide-chip.on .guide-chip-kind { color: var(--on-fill); }
+.guide-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.guide-chip.on .guide-chip-kind { color: var(--select-ink); }
 .guide-chip-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
 /* An empty state is the content of its box, so it is not metadata grey and
    not italic (docs/ONBOARDING_AND_EMPTY_STATES.md, the rules). */
@@ -828,7 +828,7 @@
 @media (hover: hover) {
   .itin-tab:hover { color: var(--ink); }
 }
-.itin-tab.active { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
+.itin-tab.active { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
 @media (pointer: fine) {
   .itin-tab { min-height: 32px; }
 }
@@ -859,7 +859,7 @@
 }
 /* The stop in focus takes the selected state (T398); the accent numbers on
    the map are the live route and stay there. */
-.itin-stop.active .itin-stop-idx { background: var(--ink-fill); color: var(--on-fill); }
+.itin-stop.active .itin-stop-idx { background: var(--select-bg); color: var(--select-ink); }
 .itin-stop-main { flex: 1; min-width: 0; }
 .itin-stop-city { display: block; font-family: var(--display); font-size: 15.5px; color: var(--ink); }
 .itin-stop-sub { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); margin-top: 1px; }
@@ -1153,7 +1153,7 @@
 @media (hover: hover) {
   .guide-interest:hover { border-color: var(--ink-soft); }
 }
-.guide-interest.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
+.guide-interest.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
 .guide-interest-check {
   position: absolute; top: 7px; right: 7px;
   width: 16px; height: 16px;

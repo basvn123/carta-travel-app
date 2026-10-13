@@ -240,8 +240,8 @@
 }
 .settings-end-label { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
 /* The selected state (carta-design "Selected state"): ink fill. */
-.settings-end.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
-.settings-end.on .settings-end-label { color: var(--on-fill); }
+.settings-end.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.settings-end.on .settings-end-label { color: var(--select-ink); }
 .settings-note {
   margin: var(--space-2) 0 0;
   font-size: 13px;
@@ -290,8 +290,8 @@
   .settings-lang:hover:not(.on),
   .settings-text-btn:hover { background: var(--paper-dim); }
 }
-.settings-lang.on { background: var(--ink-fill); color: var(--on-fill); }
-.settings-lang.on .is-mono { color: var(--on-fill); }
+.settings-lang.on { background: var(--select-bg); color: var(--select-ink); }
+.settings-lang.on .is-mono { color: var(--select-ink); }
 @media (prefers-reduced-motion: reduce) {
   .settings-end,
   .settings-lang { transition: none; }
@@ -422,7 +422,7 @@
   left: 0;
   z-index: 0;
   border-radius: 6px;
-  background: var(--ink-fill);
+  background: var(--select-bg);
   pointer-events: none;
   opacity: 0;
 }
@@ -432,12 +432,12 @@
 .bottom-nav-item { z-index: 1; }
 .header-nav-item.active,
 .bottom-nav-item.active .bottom-nav-icon { transition-delay: calc(var(--dur-2) - var(--dur-1)); }
-.header-nav-item.active { background: var(--ink-fill); color: var(--on-fill); }
+.header-nav-item.active { background: var(--select-bg); color: var(--select-ink); }
 .header-nav-item.active .nav-dot { background: var(--on-fill); }
-.bottom-nav-item.active .bottom-nav-label { font-weight: 600; color: var(--ink); }
+.bottom-nav-item.active .bottom-nav-label { font-weight: 600; color: var(--select-ink); }
 /* 24-destination-workspace.css still marks the phone tab in the accent (and
    turns a hovered one accent); the pill is the mark now, the words are ink. */
-.bottom-nav-item.active { color: var(--ink); }
+.bottom-nav-item.active { color: var(--select-ink); }
 /* Not wrapped, for the same reason: they cancel the unguarded accent hover. */
 @media (hover: hover) {
   .bottom-nav-item:hover { color: var(--ink-soft); }
@@ -453,7 +453,7 @@
     padding: 8px 10px;
     border-radius: 6px;
   }
-  .header-nav-item.active { background: var(--ink-fill); color: var(--on-fill); }
+  .header-nav-item.active { background: var(--select-bg); color: var(--select-ink); }
 }
 @media (prefers-reduced-motion: reduce) {
   .nav-marker[data-slide="true"] { transition: none; }
@@ -811,7 +811,7 @@ html.kbd-open .bottom-nav { display: none; }
 .lifestyle-food .fstepper { flex: none; }
 /* The week and day switch is a selection: ink fill, never the accent (rule
    R8; the tiles went in V4, this segment was missed). */
-.ls-tune .lifestyle-cadence button.seg-on { background: var(--ink-fill); color: var(--on-fill); }
+.ls-tune .lifestyle-cadence button.seg-on { background: var(--select-bg); color: var(--select-ink); }
 
 /* Text entry on a phone is 16 px (DIRECTION.md part 7): iOS Safari zooms the
    page when a field under 16 px takes focus, and the zoom does not undo

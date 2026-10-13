@@ -111,8 +111,8 @@
   }
   .side-navrow:hover { color: var(--ink); border-color: var(--rule); }
   /* Where you are is a pressed toggle, so --ink-fill like .side-cat.on (T186). */
-  .side-navrow.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
-  .side-navrow.on svg { color: var(--on-fill); }
+  .side-navrow.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+  .side-navrow.on svg { color: var(--select-ink); }
   .side-navrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* My trips: three states of travelling, one under the other. The browse
@@ -214,8 +214,8 @@
     color: var(--ink-soft);
     text-align: center;
   }
-  .saved-cat.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
-  .saved-cat.on svg { color: var(--on-fill); }
+  .saved-cat.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+  .saved-cat.on svg { color: var(--select-ink); }
   .saved-cat.on::before { background: rgba(255, 255, 255, 0.7); }
   .saved-cat.on small { background: rgba(255, 255, 255, 0.22); color: var(--on-fill); }
   .saved-cat:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -584,8 +584,8 @@
 }
 .gld-chip.on {
   border-color: transparent;
-  background: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  color: var(--select-ink);
 }
 @media (prefers-reduced-motion: reduce) {
   .gld-card, .gld-chip, .gld-strip-btn { transition: none; }
@@ -1602,9 +1602,9 @@
   .xrail-toggle:hover { border-color: var(--rule); }
 }
 .xrail-toggle.on {
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
 }
 .xrail-toggle.on .kind-glyph rect,
 .xrail-toggle.on .kind-glyph circle,
@@ -1898,7 +1898,7 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.xview-toggle button.on { background: var(--ink-fill); color: var(--on-fill); }
+.xview-toggle button.on { background: var(--select-bg); color: var(--select-ink); }
 .xmap {
   position: relative;
   height: min(72vh, 760px);
@@ -2238,7 +2238,7 @@
 @media (hover: hover) {
   .xbar .xview-toggle button:hover { color: var(--ink); }
 }
-.xbar .xview-toggle button.on { background: var(--ink-fill); color: var(--on-fill); }
+.xbar .xview-toggle button.on { background: var(--select-bg); color: var(--select-ink); }
 .xbar .xview-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .xbar .xgrid-sort { margin-left: 0; gap: 8px; color: var(--ink-mute); }
@@ -2556,7 +2556,7 @@
     font-size: 10.5px;
   }
   .explore-side .kind-rail-chip:hover { border-color: var(--rule); color: var(--ink); }
-  .explore-side .kind-rail-chip.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+  .explore-side .kind-rail-chip.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
   .explore-side .kind-rail-icon { width: 16px; height: 16px; }
   .explore-side .kind-rail-clear { grid-column: 1 / -1; }
 }
@@ -2613,7 +2613,7 @@
 .xrail-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* A pressed filter is an active toggle: --ink-fill, not the action colour,
    so the sheet's own "Show N places" stays its one primary (T193). */
-.xrail-toggle.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.xrail-toggle.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .xrail-toggle.xrail-gem.on { background: var(--gem-ink); border-color: var(--gem-ink); }
 .xrail-month { margin-top: 10px; }
 .xrail-month select { padding: 5px 8px; border-radius: 8px; }
@@ -3094,8 +3094,8 @@
   color: var(--ink-soft);
 }
 .dar-tab .mono { font-size: 10.5px; color: var(--ink-mute); }
-.dar-tab.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--paper); }
-.dar-tab.on .mono { color: var(--paper); opacity: 0.75; }
+.dar-tab.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.dar-tab.on .mono { color: var(--select-ink); opacity: 0.75; }
 .dar-note { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: var(--ink-mute); margin: 8px 0 4px; }
 .dar-map {
   height: 26px;
@@ -3876,9 +3876,9 @@
   color: transparent;
 }
 .jpage-book-list input:checked + .jpage-book-box {
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
 }
 .jpage-book-list input:focus-visible + .jpage-book-box { outline: 2px solid var(--accent); outline-offset: 2px; }
 .jpage-book-lead {
@@ -3934,7 +3934,7 @@
   border: 1px solid var(--ink-mute);
   background: transparent;
 }
-.jstrip-sq.is-on { background: var(--ink); border-color: var(--ink); }
+.jstrip-sq.is-on { background: var(--ink); border-color: var(--select-border); }
 .jstrip-word { min-width: 0; overflow-wrap: anywhere; text-transform: capitalize; }
 .jstrip-word.mono { font-family: var(--mono); font-weight: 500; text-transform: none; }
 @media (max-width: 480px) {

@@ -325,9 +325,9 @@
   .admin-tone-opt:hover { border-color: var(--ink-soft); }
 }
 .admin-tone-opt.on {
-  border-color: var(--ink-fill);
-  color: var(--on-fill);
-  background: var(--ink-fill);
+  border-color: var(--select-border);
+  color: var(--select-ink);
+  background: var(--select-bg);
 }
 
 .admin-search {
@@ -623,9 +623,9 @@
   transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
 .admin-flag-toggle.on {
-  border-color: var(--ink-fill);
-  color: var(--on-fill);
-  background: var(--ink-fill);
+  border-color: var(--select-border);
+  color: var(--select-ink);
+  background: var(--select-bg);
 }
 .admin-flag-del {
   flex: none;
@@ -738,7 +738,7 @@
 @media (hover: hover) {
   .adminpage-navbtn:hover { background: var(--paper-dim); color: var(--ink); }
 }
-.adminpage-navbtn.on { background: var(--ink-fill); color: var(--on-fill); }
+.adminpage-navbtn.on { background: var(--select-bg); color: var(--select-ink); }
 .adminpage-close {
   flex: none;
   width: 44px;
@@ -1103,8 +1103,8 @@
 }
 .adminpage-btn:disabled { opacity: .5; cursor: default; }
 .adminpage-btn.primary {
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
+  background: var(--action);
+  border-color: var(--action);
   color: var(--paper);
 }
 @media (hover: hover) {
@@ -1225,7 +1225,7 @@
 @media (hover: hover) {
   .adminpage-seg:hover { border-color: var(--ink-soft); }
 }
-.adminpage-seg.on { border-color: var(--ink-fill); color: var(--on-fill); background: var(--ink-fill); }
+.adminpage-seg.on { border-color: var(--select-border); color: var(--select-ink); background: var(--select-bg); }
 
 .adminpage-inline { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .adminpage-inline label { font-size: 13px; color: var(--ink-soft); }
@@ -1319,7 +1319,7 @@
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.adminpage-switch.on { border-color: var(--ink-fill); color: var(--on-fill); background: var(--ink-fill); }
+.adminpage-switch.on { border-color: var(--select-border); color: var(--select-ink); background: var(--select-bg); }
 .adminpage-flagdel {
   flex: none;
   width: 32px;

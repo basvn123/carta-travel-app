@@ -136,7 +136,7 @@
   opacity: 0;
   cursor: pointer;
 }
-.upl-kind.is-on { background: var(--ink-fill); color: var(--on-fill); }
+.upl-kind.is-on { background: var(--select-bg); color: var(--select-ink); }
 .upl-kind:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .upl-field { display: flex; flex-direction: column; }

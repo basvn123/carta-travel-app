@@ -138,7 +138,7 @@
   height: 30px;
   padding: 0 12px;
   border-radius: 8px;
-  background: var(--ink-fill);
+  background: var(--action);
   color: var(--on-fill);
   font-size: 12.5px;
   font-weight: 600;
@@ -274,7 +274,7 @@
 @media (hover: hover) {
   .dayws-tip-add:hover { border-color: var(--ink); color: var(--ink); }
 }
-.dayws-tip-add.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.dayws-tip-add.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .dayws-tip-row.added .dayws-tip-name { color: var(--ink-soft); }
 
 /* The pin filters live in the same overlay column, so they can never land on
@@ -332,7 +332,7 @@
 @media (hover: hover) {
   .dayws-tab:hover { color: var(--ink); }
 }
-.dayws-tab.on { color: var(--on-fill); background: var(--ink-fill); border-bottom-color: var(--ink-fill); }
+.dayws-tab.on { color: var(--select-ink); background: var(--select-bg); border-bottom-color: var(--ink-fill); }
 .dayws-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .dayws-tab-count {
   font-family: var(--mono);
@@ -375,17 +375,17 @@
   .dayp-round:hover { border-color: var(--ink-soft); color: var(--ink); }
 }
 .dayp-round:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.dayp-round.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.dayp-round.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 /* Deep slate, not terracotta. On this screen the accent is spoken for: the
    Carta button floats over the map in it, and a second filled terracotta
    circle a thumb away would make neither of them the answer. */
 .dayp-round-primary {
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
+  background: var(--action);
+  border-color: var(--action);
   color: var(--on-fill);
 }
 @media (hover: hover) {
-  .dayp-round-primary:hover { background: var(--lagoon-900); border-color: var(--lagoon-900); color: var(--on-fill); }
+  .dayp-round-primary:hover { background: var(--action-hover); border-color: var(--action-hover); color: var(--on-fill); }
 }
 
 .dayp-menu {
@@ -794,7 +794,7 @@
 @media (hover: hover) {
   .daya-pick:hover { border-color: var(--ink-soft); color: var(--ink); }
 }
-.daya-pick.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.daya-pick.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .daya-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* A browsable place: the photo earns its space, and the sentence beside it
@@ -1074,13 +1074,13 @@
   height: 38px;
   padding: 0 16px;
   border-radius: 10px;
-  background: var(--ink-fill);
+  background: var(--action);
   color: var(--on-fill);
   font-size: 13px;
   font-weight: 600;
 }
 @media (hover: hover) {
-  .dayf-browse:hover { background: var(--lagoon-900); }
+  .dayf-browse:hover { background: var(--action-hover); }
 }
 .dayf-browse:disabled { opacity: 0.55; cursor: default; }
 
@@ -1294,7 +1294,7 @@
   font: inherit; font-size: 12.5px; font-weight: 600;
   color: var(--ink-soft);
 }
-.dayex-view button.on { background: var(--ink-fill); color: var(--on-fill); }
+.dayex-view button.on { background: var(--select-bg); color: var(--select-ink); }
 
 /* Phone leads with the list; the map is a view you ask for. */
 .dayex-body { display: block; }
@@ -1408,7 +1408,7 @@
 }
 /* Added is a pressed toggle, so --ink-fill; "Open my day" is the view's one
    primary (T193). */
-.dayex-add.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.dayex-add.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 
 /* ---- the tray ---------------------------------------------------------- */
 /* Phone: a bar above the bottom nav, so the running total of the day and the
@@ -1660,7 +1660,7 @@
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out);
 }
-.day-sw-morebtn[aria-expanded="true"] { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.day-sw-morebtn[aria-expanded="true"] { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 @media (hover: hover) {
   .day-sw-morebtn:hover { border-color: var(--ink-soft); }
 }
@@ -1720,8 +1720,8 @@
 }
 .dayp-tool svg { flex: none; color: var(--ink-soft); }
 .dayp-tool .dayp-tool-caret { color: var(--ink-mute); }
-.dayp-tool.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
-.dayp-tool.on svg, .dayp-tool.on .dayp-tool-caret { color: var(--on-fill); }
+.dayp-tool.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.dayp-tool.on svg, .dayp-tool.on .dayp-tool-caret { color: var(--select-ink); }
 .dayp-tool:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (hover: hover) {
   .dayp-tool:hover:not(.on) { border-color: var(--ink-soft); }
@@ -1784,7 +1784,7 @@
 .dayp-strip-seg { flex-basis: 0; min-width: 2px; }
 .dayp-strip-seg.stop { background: var(--ink); }
 .dayp-strip-seg.gap { background: var(--rule); }
-.dayp-strip-seg.on { outline: 2px solid var(--ink); outline-offset: 1px; }
+.dayp-strip-seg.on { outline: 2px solid var(--select-border); outline-offset: 1px; }
 
 /* A tab's content arrives: it fades and rises 8 px in --dur-2; the outgoing
    tab does not move (design direction v6, part 2.3). */
@@ -1854,9 +1854,9 @@
   :is(.day-ws, .dayex) .guide-chip:hover { border-color: var(--ink); }
 }
 :is(.day-ws, .dayex) .guide-chip.on {
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
 }
 :is(.day-ws, .dayex) .guide-chip.on .guide-chip-kind { color: var(--on-fill); }
 

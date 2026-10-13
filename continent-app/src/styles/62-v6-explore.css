@@ -133,9 +133,9 @@
 .explore-shell .xinput.is-set select { border-color: var(--ink-soft); }
 /* A pressed toggle is the house selected state. */
 .explore-shell .xinput--toggle.on {
-  border-color: var(--ink-fill);
-  background: var(--ink-fill);
-  color: var(--on-fill);
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
 }
 .explore-shell .xinput:focus-visible,
 .explore-shell .xinput select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -459,7 +459,7 @@
 .explore-shell .xcard-hit:focus-visible { border-radius: 12px; }
 /* A selected card is the house selected card: a 2 px ink edge, never the
    accent (carta-design, "Selected state"). */
-.explore-shell .xcard.selected { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -1px; }
+.explore-shell .xcard.selected { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -1px; }
 /* The card with its popover open sits above its neighbours. */
 .explore-shell .xcard.previewing { z-index: 6; }
 
@@ -628,10 +628,10 @@
   font-variant-numeric: tabular-nums;
 }
 /* The info control while its popover is open is the selected state. */
-.explore-shell .xcard.previewing .xcard-info { background: var(--ink-fill); color: var(--on-fill); }
+.explore-shell .xcard.previewing .xcard-info { background: var(--select-bg); color: var(--select-ink); }
 @media (pointer: coarse) {
   .explore-shell .xcard.previewing .xcard-info { background: transparent; }
-  .explore-shell .xcard.previewing .xcard-info::before { background: var(--ink-fill); }
+  .explore-shell .xcard.previewing .xcard-info::before { background: var(--select-bg); }
 }
 
 /* --- 4. State that answers at once, and nothing decorative moving ------- */

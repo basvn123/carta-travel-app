@@ -571,7 +571,7 @@
   padding: 8px 16px;
   border: 1px solid var(--ink);
   border-radius: 6px;
-  background: var(--ink-fill);
+  background: var(--action);
   font-family: var(--ui);
   font-size: 12.5px;
   font-weight: 600;
@@ -1029,9 +1029,9 @@
   .pasttrip-mode:hover { border-color: var(--ink-soft); color: var(--ink); }
 }
 .pasttrip-mode.on {
-  border-color: var(--ink-fill);
-  background: var(--ink-fill);
-  color: var(--paper);
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
 }
 
 .pasttrip-stay { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
@@ -1155,7 +1155,7 @@
 }
 .pasttrip-save {
   border: 1px solid var(--ink);
-  background: var(--ink-fill);
+  background: var(--action);
   color: var(--paper);
 }
 @media (hover: hover) {
@@ -1164,7 +1164,7 @@
 .pasttrip-save:disabled,
 .pasttrip-cancel:disabled { opacity: .45; cursor: default; }
 @media (hover: hover) {
-  .pasttrip-save:disabled:hover { background: var(--lagoon-900); border-color: var(--lagoon-900); }
+  .pasttrip-save:disabled:hover { background: var(--action-hover); border-color: var(--action-hover); }
 }
 
 /* ── A logged trip, read back under its own card ── */
@@ -1682,7 +1682,7 @@
   padding: 8px 15px;
   border: 1px solid var(--ink);
   border-radius: 9px;
-  background: var(--ink-fill);
+  background: var(--action);
   font-family: var(--ui);
   font-size: 12.5px;
   font-weight: 600;

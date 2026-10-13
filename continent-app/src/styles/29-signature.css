@@ -104,7 +104,7 @@
   border-radius: 2px 2px 0 0;
 }
 .sig-cell.is-on .sig-bar { background: var(--ink-soft); border-color: var(--ink-soft); }
-.sig-cell.is-on.is-peak .sig-bar { background: var(--ink); border-color: var(--ink); }
+.sig-cell.is-on.is-peak .sig-bar { background: var(--ink); border-color: var(--select-border); }
 .sig-crest {
   position: absolute;
   bottom: 100%;
