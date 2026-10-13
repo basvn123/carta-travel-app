@@ -13,7 +13,9 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const APP_ROOT = path.resolve(HERE, '..', '..');
-const CSS = path.join(APP_ROOT, 'src', 'styles.css');
+// T191 moved :root into src/styles/01-tokens.css (styles.css only imports the
+// domain files); T421 made the old names aliases, so values follow var() chains.
+const CSS = path.join(APP_ROOT, 'src', 'styles', '01-tokens.css');
 
 function rootBlock(css) {
   const start = css.indexOf(':root');
@@ -36,9 +38,16 @@ export function readTokens() {
 
 const TOKENS = readTokens();
 
+/** A token's value with var(--x) aliases followed to the end of the chain. */
+function resolved(name) {
+  let v = TOKENS[name];
+  for (let hops = 0; v && /^var\(--[\w-]+\)$/.test(v) && hops < 8; hops += 1) v = TOKENS[v.slice(6, -1)];
+  return v;
+}
+
 /** A colour token as a hex string; throws rather than draw with a guess. */
 export function colour(name) {
-  const v = TOKENS[name];
+  const v = resolved(name);
   if (!v || !/^#[0-9a-f]{6}$/i.test(v)) throw new Error(`token --${name} is not a hex colour in :root (${v})`);
   return v.toLowerCase();
 }
@@ -52,7 +61,7 @@ export function mix(a, b, share) {
 }
 
 const family = (name) => {
-  const first = (TOKENS[name] || '').split(',')[0].replace(/['"]/g, '').trim();
+  const first = (resolved(name) || '').split(',')[0].replace(/['"]/g, '').trim();
   if (!first) throw new Error(`token --${name} missing`);
   return first;
 };
@@ -70,6 +79,9 @@ export const C = {
   rate: colour('rate'),
   rateBg: colour('rate-bg'),
   green: colour('green'),
+  lagoon200: colour('lagoon-200'),
+  lagoon300: colour('lagoon-300'),
+  onFill: colour('on-fill'),
 };
 C.good = mix(C.green, C.card, 0.16); // the MonthStrip's good cell: green 16% on the card
 

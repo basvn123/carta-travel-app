@@ -297,7 +297,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms.
 
 **"More" menu.** More than two secondary actions in a footer: the rest go into one "More" button with menu semantics; a destructive item in it is `--danger` text. A multi-step flow's fixed chrome on a phone takes at most a quarter of the screen together, and its footer is one row.
 
-**Status, not green.** A positive verdict or confirmation ("You can swim here", "Profile updated.") is `--text` with a 6 px `--status-success` dot before it; never a green container, never green text in a sentence. `--green` stays for good news in data and may mark a "since you saved" drop ("{price} less a day than on 3 Oct"; `--text` when higher). The kit's positive status chip is a short data label with its word, not a sentence.
+**Status, not green.** A positive verdict or confirmation ("You can swim here", "Profile updated.") is `--text` with a 6 px `--status-success` dot before it; never a green container, never green text in a sentence. `--green` stays for good news in data and may mark a "since you saved" drop ("{price} less a day than on 3 Oct"; `--text` when higher). The kit's positive status chip follows the same rule (owner, 2026-10-13): `--text` on `--surface-sunken` with the dot, a short label with its word.
 
 **Small text.** A label above a group of controls is 12 px weight 600 `--text-2`, sentence case, no letter-spacing. A toggle may carry one line of 12 px metadata under its label. Difficulty is one five-step scale in one i18n group. Earned milestones are `--text`, locked ones `--text-3` outline, "New" is a `--border` outline chip.
 

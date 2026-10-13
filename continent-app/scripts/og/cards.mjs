@@ -24,14 +24,17 @@ export const FORMATS = {
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const INITIALS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
-/** The compass mark, in the 32 unit box the favicon and Logo.jsx share. */
-export function markShapes() {
+/** The compass mark, in the 32 unit box the favicon and Logo.jsx share. On a
+ *  light ground (Lagoon, T425): an ink ring and a teal north needle. Icons pass
+ *  their own colours for the white mark on a teal tile. */
+export function markShapes(p = {}) {
+  const k = { ring: C.ink, inner: C.rule, north: C.accent, south: C.ink, pivot: C.card, pivotEdge: C.ink, ...p };
   return [
-    `<circle cx="16" cy="16" r="13" fill="none" stroke="${C.ink}" stroke-width="1.5"/>`,
-    `<circle cx="16" cy="16" r="9.5" fill="none" stroke="${C.rule}" stroke-width="1"/>`,
-    `<path d="M16 5.5 L19 16 L16 13.2 L13 16 Z" fill="${C.accent}"/>`,
-    `<path d="M16 26.5 L13 16 L16 18.8 L19 16 Z" fill="${C.ink}"/>`,
-    `<circle cx="16" cy="16" r="1.4" fill="${C.paper}" stroke="${C.ink}" stroke-width="1"/>`,
+    `<circle cx="16" cy="16" r="13" fill="none" stroke="${k.ring}" stroke-width="1.5"/>`,
+    `<circle cx="16" cy="16" r="9.5" fill="none" stroke="${k.inner}" stroke-width="1"/>`,
+    `<path d="M16 5.5 L19 16 L16 13.2 L13 16 Z" fill="${k.north}"/>`,
+    `<path d="M16 26.5 L13 16 L16 18.8 L19 16 Z" fill="${k.south}"/>`,
+    `<circle cx="16" cy="16" r="1.4" fill="${k.pivot}" stroke="${k.pivotEdge}" stroke-width="1"/>`,
   ].join('');
 }
 
