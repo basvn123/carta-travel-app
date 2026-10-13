@@ -1530,72 +1530,7 @@
 
 /* --- the filter rail ---------------------------------------------------- */
 .xrail { display: flex; flex-direction: column; gap: 14px; }
-.xrail-group { border: 0; margin: 0; padding: 0; min-width: 0; }
-.xrail-legend {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink-mute);
-  padding: 0 0 6px;
-}
-.xrail-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
-.xrail-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font: inherit;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  background: var(--bg-card);
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .xrail-toggle:hover { border-color: var(--rule); }
-}
-.xrail-toggle.on {
-  background: var(--select-bg);
-  border-color: var(--select-border);
-  color: var(--select-ink);
-}
-.xrail-toggle.on .kind-glyph rect,
-.xrail-toggle.on .kind-glyph circle,
-.xrail-toggle.on .kind-glyph polygon { fill: var(--on-fill); }
-.xrail-toggle.xrail-gem.on { background: var(--gem-ink); border-color: var(--gem-ink); }
-.xrail-month {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
-.xrail-month select {
-  font: inherit;
-  color: var(--ink);
-  background: var(--bg-card);
-  border: 1px solid var(--rule-soft);
-  border-radius: 8px;
-  padding: 4px 6px;
-}
-.xrail-countries {
-  max-height: 200px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-right: 4px;
-}
-.xrail-country {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  padding: 3px 2px;
-  cursor: pointer;
-}
+
 .xrail-count {
   font-family: var(--mono);
   font-size: 13px;
@@ -1836,35 +1771,6 @@
 .cpage-facts { color: var(--ink-soft); font-size: 14px; margin: 0 0 18px; max-width: 78ch; }
 .cpage-body { display: flex; flex-direction: column; gap: 20px; }
 .cpage-h { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0 0 8px; }
-.cpage-banner {
-  display: block;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--rate-soft);
-  background: var(--rate-bg);
-  border: 0;
-  border-radius: 10px;
-  padding: 9px 14px;
-  margin: 0 0 12px;
-  cursor: pointer;
-  text-align: left;
-}
-.xrail-country-row { display: flex; align-items: center; gap: 4px; }
-.xrail-country-row .xrail-country { flex: 1; }
-.xrail-country-page {
-  font: inherit;
-  font-size: 13px;
-  color: var(--ink-mute);
-  background: none;
-  border: 0;
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-@media (hover: hover) {
-  .xrail-country-page:hover { color: var(--ink); background: var(--paper-dim); }
-}
 
 /* --- search hints and suggestions (PLAN.md B2) --------------------------- */
 .xsearch-hint {
@@ -1877,17 +1783,6 @@
   display: inline-block;
 }
 .xsearch-suggest { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; }
-.xsearch-suggest-btn {
-  font: inherit;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--rate-soft);
-  background: var(--bg-card);
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  padding: 3px 10px;
-  cursor: pointer;
-}
 
 /* ==========================================================================
    Destination page rebuild (PLAN.md D1-D7): the decision sequence, the
@@ -2236,12 +2131,7 @@
   .xbar .xgrid-sort select { height: var(--tap); }
   /* T193: the 44px tap floor on the phone. Chips and toggles grow; the two
      small text controls keep their look and take a transparent tap box. */
-  .xchip,
-  .xrail-toggle,
-  .xrail-legend,
-  .xrail-country { min-height: var(--tap); }
-  .xrail-country-page { min-width: var(--tap); min-height: var(--tap); }
-  .xrail-month select { min-height: var(--tap); }
+  .xchip { min-height: var(--tap); }
   .xrails-all { position: relative; }
   .xrails-all::before { content: ''; position: absolute; inset: -11px -6px; }
   /* maplibre-gl.css loads after this file (lazily, with the map), so the
@@ -2305,72 +2195,12 @@
   .explore-side .kind-rail-clear { grid-column: 1 / -1; }
 }
 .xrail { gap: 0; }
-.xrail-group { border-top: 1px solid var(--rule-soft); }
-.xrail-group:first-child { border-top: 0; }
-.xrail-legend {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 0;
-  list-style: none;
-  cursor: pointer;
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--ink);
-  user-select: none;
-}
-.xrail-legend::-webkit-details-marker { display: none; }
-.xrail-legend:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-.xrail-legend-text { flex: 1 1 auto; }
-.xrail-legend-n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 6px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.xrail-legend-chev { flex: none; color: var(--ink-mute); transition: transform .2s ease; }
-.xrail-group[open] > .xrail-legend .xrail-legend-chev { transform: rotate(180deg); }
-.xrail-group-body { padding: 0 0 14px; }
-.xrail-toggles { gap: 6px; }
-.xrail-toggle {
-  padding: 6px 11px;
-  border-color: var(--rule-soft);
-  background: var(--bg-card);
-  font-weight: 500;
-  transition: background .12s, border-color .12s, color .12s, transform .12s;
-}
-@media (hover: hover) {
-  .xrail-toggle:hover { border-color: var(--rule); color: var(--ink); }
-}
-.xrail-toggle:active { transform: scale(0.97); }
-.xrail-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 /* A pressed filter is an active toggle: --ink-fill, not the action colour,
    so the sheet's own "Show N places" stays its one primary (T193). */
-.xrail-toggle.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-.xrail-toggle.xrail-gem.on { background: var(--gem-ink); border-color: var(--gem-ink); }
-.xrail-month { margin-top: 10px; }
-.xrail-month select { padding: 5px 8px; border-radius: 8px; }
-.xrail-countries { max-height: 240px; gap: 1px; }
-.xrail-country { padding: 5px 6px; border-radius: 6px; }
-@media (hover: hover) {
-  .xrail-country:hover { background: var(--paper-dim); }
-}
-.xrail-country input { width: 14px; height: 14px; margin: 0; accent-color: var(--accent); }
+
 @media (prefers-reduced-motion: reduce) {
-  .xrail-legend-chev,
-.xrail-toggle,
-.railcard,
+  .railcard,
 .xbar .xview-toggle button { transition: none; }
   .railcard:hover { transform: none; }
 }

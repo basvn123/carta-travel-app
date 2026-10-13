@@ -12,7 +12,6 @@
 
 .filter-row-primary { align-items: stretch; }/* Trigger + reset, pushed to the trailing edge of the primary row. */
 
-
 .filter-tray-btn {
   display: inline-flex;
   align-items: center;
@@ -131,7 +130,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }/* Section heading over each cluster of tray fields. */
 
-
 .filter {
   display: flex;
   flex-direction: column;
@@ -140,7 +138,6 @@
   min-width: 0;
 }/* Rules between categories are obsolete now the group cards carry their own
    borders; the elements stay in the markup for the mobile grid's sake. */
-
 
 .filter-label {
   font-family: var(--ui);
@@ -253,7 +250,6 @@
    Structure: <marker-root> contains <price-pill> + <pin-dot>
    marker-root is positioned by MapLibre (anchor: bottom);
    we keep it width:auto so children determine size. */
-
 
 .price-pill {
   display: inline-block;
@@ -1630,7 +1626,6 @@
   color: var(--ink-mute);
 }/* Label left, control right, one line: the counts do not deserve two rows. */
 
-
 /* ── Chips: every option visible, one tap to switch, wrapping across the
       horizontal axis instead of stacking dropdowns down the vertical one.
       Ink fill means "this is my trip"; terracotta means "this is hiding
@@ -1756,8 +1751,6 @@
 
 /* Secondary, full-width action inside a section (lifestyle). */
 
-
-
 /* Country picker: the one control the markdown leaves as a dropdown, because
    43 countries is a real list. It just has to be a 44px field like the rest. */
 .fsheet .dropdown { width: 100%; }
@@ -1815,13 +1808,6 @@
 }
 @media (hover: hover) {
   .fsheet-apply:hover { background: var(--accent-hover); }
-}
-.fsheet-apply-main { display: inline-flex; align-items: baseline; }
-.fsheet-apply-count {
-  margin: 0 5px;
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
 }
 /* Nothing matches: the primary action is no longer "show me", it is "undo
    what you just did", so the button steps back and Clear all takes the lead. */
@@ -2792,5 +2778,4 @@
    ─ Append these to the bottom of styles.css (or merge into the relevant
    ─ sections). They override earlier rules where needed.
    ═══════════════════════════════════════════════════════════════════════ */
-
 

@@ -63,120 +63,14 @@
    chrome: --bg-card, a --rule border, 6 px radius, no accent anywhere
    (house rules "Settings line" and "Accent marks"). On a phone it is one
    band that scrolls sideways and never wraps; from 769 px it wraps. */
-.explore-shell .xinputs {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0 0 var(--space-3);
-  padding: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.explore-shell .xinputs::-webkit-scrollbar { display: none; }
-@media (min-width: 769px) {
-  .explore-shell .xinputs { flex-wrap: wrap; overflow: visible; }
-}
-.explore-shell .xinput {
-  position: relative;
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink-soft);
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out),
-    border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
+
 /* A select wrapper draws nothing itself: the select is the bordered box,
    so the whole --tap box opens it. */
-.explore-shell .xinput--select { padding: 0; border: 0; background: transparent; }
-.explore-shell .xinput select {
-  appearance: none;
-  min-height: var(--tap);
-  padding: 0 calc(var(--space-3) + 18px) 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-.explore-shell .xinput-chev {
-  position: absolute;
-  right: var(--space-2);
-  pointer-events: none;
-  color: var(--ink-mute);
-}
 /* A set select reads in ink; an unset one ("Any budget") stays soft. */
-.explore-shell .xinput.is-set { color: var(--ink); }
-.explore-shell .xinput.is-set select { border-color: var(--ink-soft); }
 /* A pressed toggle is the house selected state. */
-.explore-shell .xinput--toggle.on {
-  border-color: var(--select-border);
-  background: var(--select-bg);
-  color: var(--select-ink);
-}
-.explore-shell .xinput:focus-visible,
-.explore-shell .xinput select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (hover: hover) {
-  .explore-shell .xinput:hover { border-color: var(--ink-soft); color: var(--ink); }
-  .explore-shell .xinput select:hover { border-color: var(--ink-soft); }
-  .explore-shell .xinput--toggle.on:hover { color: var(--on-fill); }
-}
+
 /* The shortlist's count is the house count chip. */
-.explore-shell .xinput-n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 18px;
-  padding: 0 6px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
 /* The Lifestyle door, in the row: secondary chrome like the rest of it. */
-.explore-shell .xinputs .lifestyle-btn {
-  flex: none;
-  height: auto;
-  min-height: var(--tap);
-  max-width: none;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink-soft);
-  font-size: 13px;
-}
-.explore-shell .xinputs .lifestyle-btn .lifestyle-btn-icon { color: var(--ink-soft); }
-.explore-shell .xinputs .lifestyle-btn-vibe { color: var(--ink-soft); }
-.explore-shell .xinputs .lifestyle-btn-vibe::before { background: var(--rule); }
-@media (hover: hover) {
-  .explore-shell .xinputs .lifestyle-btn:hover { border-color: var(--ink-soft); background: var(--bg-card); color: var(--ink); }
-}
-@media (pointer: fine) and (min-width: 769px) {
-  /* The compact control a fine pointer may have (carta-design, Layout). */
-  .explore-shell .xinput,
-  .explore-shell .xinputs .lifestyle-btn { min-height: 36px; }
-  .explore-shell .xinput select { min-height: 36px; }
-}
-@media (pointer: coarse) {
-  /* 16 px, so iOS does not zoom the page when a select opens. */
-  .explore-shell .xinput select { font-size: 16px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .explore-shell .xinput { transition: none; }
-}
 
 /* --- 4. The phone's top row: search and Filters side by side ------------ */
 @media (max-width: 768px) {
@@ -256,8 +150,6 @@
    drawn inside. */
 
 /* --- 7. Trip styles, as the rail's first group ---------------------------- */
-.explore-shell .xrail-styles .xrail-toggle { gap: var(--space-1); }
-.explore-shell .xrail-style-icon { flex: none; }
 
 /* --- 10. Map and list in sync (house rule): ink, never the accent -------- */
 @media (max-width: 768px) {
@@ -325,24 +217,8 @@
 }
 .explore-shell .xempty-line { margin: 0; font-size: 14px; line-height: 1.45; color: var(--ink); }
 .explore-shell .xempty-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
-.explore-shell .xempty-all {
-  min-height: var(--tap);
-  padding: 0 var(--space-2);
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
 
 /* --- 12. "Score key", a word instead of a bare "?" ----------------------- */
-
-.explore-shell .cpage-banner svg,
-.explore-shell .xrail-country-page svg { flex: none; vertical-align: middle; }
 
 /* --- 13. The floating List/Map switch never covers the last card --------- */
 @media (max-width: 768px) {
@@ -523,7 +399,6 @@
 .explore-shell .cost-gauge.cheapest .cost-seg.on { background: var(--green); }
 .explore-shell .cost-gauge.dearest .cost-seg.on { background: var(--ink); }
 /* Counts beside a label are the house count chip. */
-.explore-shell .xrail-legend-n,
 .explore-shell .places-filter-btn .filter-tray-badge {
   background: var(--paper-dim);
   color: var(--ink);
@@ -908,3 +783,110 @@
 @media (min-width: 769px) {
   .explore-shell .side-panel.explore-side { padding-left: var(--space-6); }
 }
+
+/* ==========================================================================
+   T440: the filter rail on the kit. Sections under a 12 px heading, tiles
+   for trip types, labelled selects, one rating choice row, switches for
+   every on/off filter, and three quiet folds for the long lists.
+   ========================================================================== */
+.xrail { display: flex; flex-direction: column; gap: var(--space-5); }
+.xrail-clear { align-self: flex-end; margin: 0 0 calc(-1 * var(--space-3)); }
+.xrail-sec { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.xrail-h {
+  margin: 0;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+/* Compact tiles in the rail: the icon beside the word, two across, so nine
+   trip types take five short rows (the panel and the phone sheet share it). */
+.xrail-tiles .ui-tile {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-6) var(--space-2) var(--space-3);
+}
+.xrail-tiles .ui-tile-icon svg { width: 20px; height: 20px; }
+.xrail-tiles .ui-tile-label { text-align: left; }
+.xrail-tiles .ui-tile-tick { top: 50%; margin-top: -7px; right: var(--space-2); }
+/* The desktop side panel is narrow (about 216 px of content): there the
+   tiles stand the icon over the word again, 56 px high, and a word never
+   breaks. The phone sheet keeps the row tiles above. */
+.explore-side .xrail-tiles .ui-tile {
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-1);
+}
+.explore-side .xrail-tiles .ui-tile-label { text-align: center; white-space: nowrap; overflow-wrap: normal; }
+.explore-side .xrail-tiles .ui-tile-tick { top: var(--space-1); margin-top: 0; right: var(--space-1); }
+.xrail-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+.xrail-pair .field-label,
+.xrail-sec > .field .field-label {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.xrail-rating { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.xrail-switches { gap: 0; }
+.xrail-switches .xrail-h { margin-bottom: var(--space-1); }
+.xrail-fold { border-top: 1px solid var(--border-soft); }
+.xrail-fold-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  cursor: pointer;
+  list-style: none;
+}
+.xrail-fold-head::-webkit-details-marker { display: none; }
+.xrail-fold-head .xrail-h { flex: 1 1 auto; }
+.xrail-fold-chev {
+  flex: none;
+  color: var(--text-3);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.xrail-fold[open] .xrail-fold-chev { transform: rotate(180deg); }
+.xrail-fold-head:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.xrail-fold-body { padding: 0 0 var(--space-4); }
+.xrail-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.xrail-country-find { margin-bottom: var(--space-2); }
+.xrail-countries {
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.xrail-country-row { display: flex; align-items: center; gap: var(--space-1); }
+.xrail-country {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 36px;
+  font-size: var(--text-body);
+  color: var(--text);
+  cursor: pointer;
+}
+.xrail-country input { width: 18px; height: 18px; margin: 0; accent-color: var(--action); }
+@media (pointer: coarse) {
+  .xrail-country { min-height: var(--tap); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xrail-fold-chev { transition: none; }
+}
+/* The phone's Filters door and the country page link. */
+.explore-shell .xfilters-btn { flex: none; }
+.explore-shell .xfilters-n { margin-left: var(--space-1); }
+.explore-shell .xcountry-link { margin: 0 0 var(--space-3); }

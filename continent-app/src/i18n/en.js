@@ -6252,4 +6252,13 @@ export const en = {
   "rail.beachSeason": "Beach towns in season",
   "rail.shortlist": "Your shortlist",
   "explore.allPlaces": "All places",
+  // Explore filter rail (T440).
+  "filter.ratingAtLeast": "{band} and up",
+  "filter.ratingAny": "Any",
+  "filter.budget": "Budget a day",
+  "filter.month": "Month",
+  "filter.shortlistOnly": "Only my shortlist",
+  "filter.goodToKnow": "Good to know",
+  "filter.countrySearch": "Find a country",
+  "filter.showPlaces": "Show places",
 };

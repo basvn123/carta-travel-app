@@ -634,8 +634,8 @@ async function exploreFlow(browser, vp) {
     await shot('04-map');
     if (vp.mobile) {
       await open(page, '?tab=map');
-      await page.locator('.places-filter-btn:visible').first().waitFor({ timeout: 120000 });
-      await page.locator('.places-filter-btn:visible').first().click();
+      await page.locator('.xfilters-btn:visible').first().waitFor({ timeout: 120000 });
+      await page.locator('.xfilters-btn:visible').first().click();
       await page.waitForTimeout(900);
       await shot('05-filters');
     }

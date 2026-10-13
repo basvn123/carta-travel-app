@@ -6,7 +6,7 @@ import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
-import { ExploreFilterRail } from './ExploreFilterRail.jsx';
+import { ExploreFilterRail, minVerdict } from './ExploreFilterRail.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { CountryPage } from './CountryPage.jsx';
@@ -38,7 +38,7 @@ const ExploreMap = React.lazy(
   () => import('./ExploreMap.jsx').then((m) => ({ default: m.ExploreMap })),
 );
 import { CostReceipt } from '../components/CostSummary.jsx';
-import { Segmented } from '../components/ui/index.js';
+import { Button, Chip, Segmented } from '../components/ui/index.js';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
 import { visitLength } from '../lib/nearby.js';
@@ -90,17 +90,6 @@ const noCarOk = (p) => !p.local_transport?.car_needed
     || p.local_transport?.transit_quality === 'excellent');
 const underOk = (eur) => (p) => p.cost?.dayEur != null && p.cost.dayEur <= eur;
 const quietOk = (p) => p.crowding?.tier === 1;
-
-// Inline star, consistent with the app's SVG-only icon rule.
-function Star({ filled }) {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"
-      fill={filled ? 'currentColor' : 'none'}
-      stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
-      <polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.3 21 12 17.3 5.7 21 7.2 14 2 9.3 8.9 8.6" />
-    </svg>
-  );
-}
 
 // Four tiles: the grid view, beside the pin that means the map.
 function GridIcon({ size = 14 }) {
@@ -668,7 +657,11 @@ export function ExploreTab({
     for (const k of tripKinds) list.push({ key: `s:${k}`, label: t(`kind.${k}`), remove: () => setTripKinds(tripKinds.filter((x) => x !== k)) });
     if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget) }), remove: drop({ budget: null }) });
     for (const k of xf.kinds) list.push({ key: `k:${k}`, label: t(`pkind.${k}`), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
-    for (const v of xf.verdicts) list.push({ key: `v:${v}`, label: t(`rating.tier${v}`), remove: drop({ verdicts: xf.verdicts.filter((x) => x !== v) }) });
+    // One chip for the rating, "Excellent and up" (T440): the rail asks for
+    // a band and every band above it.
+    if (xf.verdicts.length) {
+      list.push({ key: 'rating', label: t('filter.ratingAtLeast', { band: t(`score.band${minVerdict(xf.verdicts)}`) }), remove: drop({ verdicts: [] }) });
+    }
     for (const r of xf.roles) list.push({ key: `r:${r}`, label: t(`role.short.${r}`), remove: drop({ roles: xf.roles.filter((x) => x !== r) }) });
     if (xf.month) list.push({ key: 'month', label: t('filter.goodIn') + ' ' + fmtMonthRanges([xf.month]), remove: drop({ month: null }) });
     if (xf.nocar) list.push({ key: 'nocar', label: t('filter.noCar'), remove: drop({ nocar: false }) });
@@ -679,15 +672,16 @@ export function ExploreTab({
       const v = guided?.vibes?.find((x) => x.id === xf.vibe);
       list.push({ key: 'vibe', label: v ? (v.label[lang] || v.label.en) : xf.vibe, remove: drop({ vibe: null }) });
     }
-    if (gemOnly) list.push({ key: 'gem', label: t('legend.gem'), remove: () => setGemOnly(false) });
-    if (unescoOnly) list.push({ key: 'unesco', label: 'UNESCO', remove: () => setUnescoOnly(false) });
+    if (gemOnly) list.push({ key: 'gem', label: t('rail.gems'), remove: () => setGemOnly(false) });
+    if (unescoOnly) list.push({ key: 'unesco', label: t('dest.unesco'), remove: () => setUnescoOnly(false) });
+    if (showFavOnly) list.push({ key: 'fav', label: t('filter.shortlistOnly'), remove: () => setShowFavOnly(false) });
     for (const iso2 of countryFilter) {
       const name = (availableCountries.find(([c]) => c === iso2) || [])[1] || iso2;
       list.push({ key: `c:${iso2}`, label: name, remove: () => setCountryFilter(countryFilter.filter((x) => x !== iso2)) });
     }
     if (reachAvailable && reachHours != null) list.push({ key: 'reach', label: t('filter.reachHours', { n: reachHours }), remove: () => setReachHours(null) });
     return list;
-  }, [xf, tripKinds, gemOnly, unescoOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setCountryFilter, setReachHours, guided, lang]);
+  }, [xf, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, guided, lang]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago
@@ -873,11 +867,20 @@ export function ExploreTab({
     </div>
   );
 
+  // The budget steps the rail offers; an old link's 70 euro step (xp=e) shows as its
+  // own step (T440 moved the budget into the rail with the month).
+  const budgetSteps = xf.budget && !BUDGET_STEPS.includes(xf.budget)
+    ? [...BUDGET_STEPS, xf.budget].sort((x, y) => x - y)
+    : BUDGET_STEPS;
+
   const filterRail = (
     <ExploreFilterRail
       t={t}
+      lang={lang}
       xf={xf}
       patch={patchXf}
+      budgetSteps={budgetSteps}
+      showFavOnly={showFavOnly} setShowFavOnly={setShowFavOnly}
       gemOnly={gemOnly} setGemOnly={setGemOnly}
       unescoOnly={unescoOnly} setUnescoOnly={setUnescoOnly}
       countryFilter={countryFilter} setCountryFilter={setCountryFilter}
@@ -893,67 +896,6 @@ export function ExploreTab({
   const TitleTag = isActive && !pageOver ? 'h1' : 'div';
 
 
-  // The input row (brief V3-3, house rules "Settings line", "Budget ceiling"
-  // and "Month"): every input the figures and the list depend on, visible
-  // without opening anything, in the traveller's order: what they can spend,
-  // when, without a car, and what they kept. How they travel (Lifestyle) is
-  // the shell's settings line right above (T381); V4 (T393) removed this
-  // row's own Lifestyle door, a second door to the one dialog (rows T381-b,
-  // T383-a). Each shows its current value in words. The ceiling's steps are
-  // fixed; an old link's €70 (xp=e) shows as its own step.
-  const budgetSteps = xf.budget && !BUDGET_STEPS.includes(xf.budget)
-    ? [...BUDGET_STEPS, xf.budget].sort((x, y) => x - y)
-    : BUDGET_STEPS;
-  const inputRow = (
-    <div className="xinputs" role="group" aria-label={t('explore.inputsAria')}>
-      <span className={`xinput xinput--select ${xf.budget ? 'is-set' : ''}`.trim()}>
-        <select
-          value={xf.budget ?? ''}
-          aria-label={t('explore.budgetLabel')}
-          onChange={(e) => patchXf({ budget: e.target.value ? Number(e.target.value) : null })}
-        >
-          <option value="">{t('explore.budgetAny')}</option>
-          {budgetSteps.map((n) => (
-            <option key={n} value={n}>{t('explore.budgetUpTo', { eur: formatMoney(n) })}</option>
-          ))}
-        </select>
-        <ChevronDownIcon size={14} className="xinput-chev" />
-      </span>
-      <span className={`xinput xinput--select ${xf.month ? 'is-set' : ''}`.trim()}>
-        <select
-          value={xf.month || ''}
-          aria-label={t('filter.goodIn')}
-          onChange={(e) => patchXf({ month: e.target.value ? Number(e.target.value) : null })}
-        >
-          <option value="">{t('filter.anyMonth')}</option>
-          {MONTHS_SHORT.map((m, i) => (
-            <option key={m} value={i + 1}>{t('explore.goodInMonth', { month: m })}</option>
-          ))}
-        </select>
-        <ChevronDownIcon size={14} className="xinput-chev" />
-      </span>
-      <button
-        type="button"
-        className={`xinput xinput--toggle ${xf.nocar ? 'on' : ''}`.trim()}
-        aria-pressed={xf.nocar}
-        onClick={() => patchXf({ nocar: !xf.nocar })}
-      >
-        {t('filter.noCar')}
-      </button>
-      <button
-        type="button"
-        className={`xinput xinput--toggle xinput--fav ${showFavOnly ? 'on' : ''}`.trim()}
-        aria-pressed={showFavOnly}
-        aria-label={t('explore.shortlistAria', { n: favSet.size })}
-        onClick={() => setShowFavOnly(!showFavOnly)}
-      >
-        <Star filled={showFavOnly} />
-        <span>{t('explore.shortlist')}</span>
-        <span className="xinput-n mono">{favSet.size}</span>
-      </button>
-    </div>
-  );
-
   return (
     <div className="explore-shell">
       {headerSlot && createPortal(searchField, headerSlot)}
@@ -965,14 +907,13 @@ export function ExploreTab({
           over the grid, where the figures they change are. */}
       <aside className="side-panel explore-side" aria-label={t('filter.filters')}>
         <div className="side-block">
-          <p className="side-label">
-            <span>{t('explore.sideRefine')}</span>
-            {anyActive && (
-              <button type="button" className="side-clear" onClick={resetAll}>
-                {t('filter.clearAll')}
-              </button>
-            )}
-          </p>
+          {/* No "Refine" eyebrow (T440); "Clear all" appears once anything
+              narrows the list. */}
+          {anyActive && (
+            <Button variant="quiet" size="sm" className="xrail-clear" onClick={resetAll}>
+              {t('filter.clearAll')}
+            </Button>
+          )}
           {filterRail}
         </div>
       </aside>
@@ -986,18 +927,18 @@ export function ExploreTab({
           {/* On desktop the same field has portalled into the app header
               and this renders nothing. */}
           {!headerSlot && searchField}
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             ref={filterBtnRef}
-            className={`places-filter-btn ${anyActive ? 'has-active' : ''}`}
+            className="xfilters-btn"
+            iconStart={<FilterIcon size={18} />}
             onClick={() => setSheetOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={sheetOpen}
           >
-            <FilterIcon size={14} />
-            <span>{t('filter.filters')}</span>
-            {chips.length > 0 && <span className="filter-tray-badge">{chips.length}</span>}
-          </button>
+            {t('filter.filters')}
+            {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
+          </Button>
         </div>
 
         {/* The control bar: what this page is and how many places it holds
@@ -1021,7 +962,6 @@ export function ExploreTab({
           </div>
         </div>
 
-        {inputRow}
 
         {/* C6: active filters as removable chips, right under the bar. */}
         <FilterChips t={t} chips={chips} onClearAll={resetAll} />
@@ -1032,13 +972,14 @@ export function ExploreTab({
         <GuidesStrip onOpen={onOpenGuides} />
 
         {countryFilter.length === 1 && (
-          <button className="cpage-banner" onClick={() => setCountryPage(countryFilter[0])}>
+          <Button variant="quiet" size="sm" className="xcountry-link"
+            iconEnd={<ChevronRightIcon size={16} />}
+            onClick={() => setCountryPage(countryFilter[0])}>
             {t('cpage.open', {
               country: (availableCountries.find(([c]) => c === countryFilter[0]) || [])[1]
                 || countryFilter[0],
             })}
-            <ChevronRightIcon size={15} />
-          </button>
+          </Button>
         )}
 
         {/* B2: a member village resolves to its parent, and says so. */}
@@ -1112,25 +1053,22 @@ export function ExploreTab({
                 </p>
                 <span className="xempty-actions">
                   {showFavOnly ? (
-                    <button type="button" className="cov-empty-btn explore-empty-clear"
-                      onClick={() => setShowFavOnly(false)}>
+                    <Button variant="secondary" onClick={() => setShowFavOnly(false)}>
                       {t('explore.showAll')}
-                    </button>
+                    </Button>
                   ) : locationQuery ? (
-                    <button type="button" className="cov-empty-btn explore-empty-clear"
-                      onClick={() => setLocationQuery('')}>
+                    <Button variant="secondary" onClick={() => setLocationQuery('')}>
                       {t('results.clearSearch')}
-                    </button>
+                    </Button>
                   ) : lastChip ? (
                     <>
-                      <button type="button" className="cov-empty-btn explore-empty-clear"
-                        onClick={lastChip.remove}>
+                      <Button variant="secondary" onClick={lastChip.remove}>
                         {t('explore.removeFilter', { filter: lastChip.label })}
-                      </button>
+                      </Button>
                       {chips.length > 1 && (
-                        <button type="button" className="xempty-all" onClick={resetAll}>
+                        <Button variant="quiet" onClick={resetAll}>
                           {t('filter.clearAll')}
-                        </button>
+                        </Button>
                       )}
                     </>
                   ) : null}
@@ -1139,8 +1077,8 @@ export function ExploreTab({
                   <span className="xsearch-suggest">
                     {t('explore.didYouMean')}
                     {searchHits.suggestions.map((sug) => (
-                      <button key={sug} className="xsearch-suggest-btn"
-                        onClick={() => setLocationQuery(sug)}>{sug}</button>
+                      <Button key={sug} variant="quiet" size="sm"
+                        onClick={() => setLocationQuery(sug)}>{sug}</Button>
                     ))}
                   </span>
                 )}

@@ -5545,4 +5545,13 @@ export const de = {
   "rail.beachSeason": "Badeorte in der Saison",
   "rail.shortlist": "Deine Merkliste",
   "explore.allPlaces": "Alle Orte",
+  // Explore filter rail (T440).
+  "filter.ratingAtLeast": "{band} und besser",
+  "filter.ratingAny": "Alle",
+  "filter.budget": "Budget pro Tag",
+  "filter.month": "Monat",
+  "filter.shortlistOnly": "Nur meine Merkliste",
+  "filter.goodToKnow": "Gut zu wissen",
+  "filter.countrySearch": "Land suchen",
+  "filter.showPlaces": "Orte anzeigen",
 };
