@@ -1370,8 +1370,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T412-d | T412 | 10 V1 screenshots have no same-named later shot, so the gallery shows them alone; save an after-set with the same view names in the next design wave if the owner wants them paired | next task | open |  |
 | T412-e | T412 | regions (4213), route_page and trip_page (4209) hard-code stale-server ports and needed temporary copies in the release run; same fix as T411-l (CARTA_PORT), listed so the release run is not repeated by hand | next task | open |  |
 | T417-a | T417 | Approve or correct the design system plan in Roadmap/1.2-design-system-plan.md before T418 starts | user | closed by T418 | before T418 |
-| T417-b | T417 | impeccable context resolves to continent-app/ and cannot see the root PRODUCT.md and DESIGN.md; make it load them before the direction round | next task | open | before T419 |
+| T417-b | T417 | impeccable context resolves to continent-app/ and cannot see the root PRODUCT.md and DESIGN.md; make it load them before the direction round | next task | closed by T419 | before T419 |
 | T417-c | T417 | Choose the one estimate notation (five in use today) from the T418 audit so formatMoney enforces one form | next task | closed by T418 | before T422 |
 | T418-a | T418 | Trip planner When step says "Carta will pick the cheapest departure with real stored budget fares", contradicting the 2026-10-02 decision that Carta does not price flights; fix the copy | next task | open |  |
 | T418-b | T418 | verify_quality_floor.mjs misses accent text on --accent-bg (3.8:1, 144 detector hits); make it resolve tinted grounds before using it as a contrast gate | next task | open |  |
 | T418-c | T418 | Five inputs named only by a placeholder (AiDayPlanModal 343, CartaChatPlanner 569, SavedTripsPanel 594, PastTripForm 520, Dropdown 127); the T421 Field requires a label, migration closes them | next task | open | after T421 |
+| T419-a | T419 | Decide whether measured figures keep a separate mono face (PRODUCT.md Numbers) or use the Lagoon sans with tabular figures | user | open | before T420 |
+| T419-b | T419 | impeccable doctor reports PRODUCT.md as an older schema and offers init (interview adding Positioning, Operating Context, Evidence on Hand, Product Principles); decide whether to run it | user | open |  |
+| T419-c | T419 | DESIGN.md and the carta-design skill still describe cream, Fraunces and terracotta; T424 rewrites both from the built Lagoon system | next task | open | after T423 |
