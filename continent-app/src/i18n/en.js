@@ -1127,7 +1127,6 @@ export const en = {
   "legend.noFlight": "No flight",
   "legend.noFlightDesc": "Drivable, but no low-cost airport near it. Switch to Travel by car to price it",
   "legend.show": "Show the legend",
-  "legend.title": "Legend",
   "legend.unreachable": "Unreachable",
   "legend.unreachableDesc": "No budget flight and too far to drive",
 
@@ -1877,8 +1876,6 @@ export const en = {
 
   // ── The Destinations tab: catalogue + published trips ────────────────
   "places.title": "Destinations",
-  "places.metaDests": "{n} priced places across {c} countries",
-  "places.metaTrails": "{n} published trips across {c} countries",
   "places.segDests": "Destinations",
   "places.segTrails": "Trips and trails",
   "places.searchDest": "Search any city, town or address",
@@ -1932,7 +1929,6 @@ export const en = {
   "region.notFoundHint": "The link may be old.",
   "region.share": "Copy link",
   "region.shareDone": "Link copied",
-  "places.tripsCount": "{n} trips",
   "places.diffEasy": "Gentle",
   "places.diffModerate": "Moderate",
   "places.diffHard": "Demanding",
@@ -1953,7 +1949,6 @@ export const en = {
   "places.sortAZ": "A-Z",
   "places.pricedFrom": "Priced from",
   "places.priceNoFlight": "Per person: the stay, food and getting around. Flights are not included.",
-  "places.placesCount": "{n} places",
   "places.fromPrice": "from {price}",
   "trails.coastalDay": "Coastal day",
   "trails.cultureDay": "Culture day",
@@ -2393,7 +2388,6 @@ export const en = {
 
   // Explore tab v2: the grid, the indices, the destination panel
   'explore.sortAria': 'Sort the destinations',
-  'explore.moreInfo': 'About this place',
   'side.account': 'Account',
   'side.help': 'Help',
   'account.menuOverview': 'Overview',
@@ -3776,8 +3770,6 @@ export const en = {
   'trip.timedLabel': 'Worth timing',
   'trip.galleryTitle': 'What it looks like',
   'trip.galleryCredit': 'Photographs from Wikimedia Commons, licence checked per file.',
-  'trip.countryHead': '{n} trips in {country}, best first',
-  'trip.europeHead': 'Showing {n} trips, the best of every country',
   'trip.credit': 'Composed and checked from the catalogue, Wikivoyage and OpenStreetMap. Prices are estimates for two people sharing.',
   'trip.alsoDays': 'also {days} days',
   'trip.oneDay': '1 day',
@@ -5005,8 +4997,6 @@ export const en = {
   'journey.trafficEstAria': 'Estimated from the words of the surface split',
   'journey.trafficUnstated': 'The plan does not say how much of the route is shared with cars.',
   'journey.trafficNote': 'Estimated from the surface split: paths, tracks and greenways count as away from cars, roads and lanes as shared, and a share that names only its surface stays not stated.',
-  'journey.homeLede': '{n} week-long trips, written and checked by hand. Pick a style.',
-  'journey.nTrips': '{n} trips',
   'journey.oneTrip': '1 trip',
   'journey.nDays': '{n} days',
   'journey.itinSummaryShort': '{n} of {all} days',
@@ -5329,37 +5319,18 @@ export const en = {
   "filter.anyMonth": "Any month",
   "filter.activeAria": "Active filters",
   "filter.removeChip": "Remove {name}",
-  "explore.countLine": "{n} destinations",
 
   // Explore rails (PLAN.md C5). Every title says what the list IS, and the
   // subtitle says how it was chosen: "The 41" told a reader nothing (P4.2).
-  "rail.top": "The {n} highest-rated places in Europe",
-  "rail.topSub": "Everything the rating model scores as worth the journey, its top tier",
-  "rail.topShort": "Highest rated",
   "rail.gems": "Hidden gems",
-  "rail.gemsSub": "Rated highly, but far less famous than the score suggests",
-  "rail.bestOf": "The best of every country",
-  "rail.bestOfSub": "The single highest-rated destination in each country, one each",
-  "rail.villages": "Villages worth the drive",
-  "rail.villagesSub": "Villages the model rates worth a visit or better",
-  "rail.now": "Great right now",
-  "rail.nowSub": "Places whose best months include {month}",
   "rail.nocar": "Go without a car",
-  "rail.nocarSub": "Reachable and walkable without hiring a car",
-  "rail.cheap": "Under €70 a day",
-  "rail.cheapSub": "Bed, food and local transport come in under €70 a day",
   "rail.quiet": "Quiet in high season",
-  "rail.quietSub": "Rated places that stay uncrowded when everywhere else fills up",
   "rail.seeAll": "See all {n}",
-  "rail.position": "{from} to {to} of {n}",
   "filter.bestOf": "Best of its country",
 
   // Tier legend (PLAN.md C8)
   "legend.aria": "What the ratings mean",
-  "legend.dismiss": "Hide the legend",
-  "legend.how": "How the score works",
   "legend.closeMethod": "Close",
-  "legend.cutCount": "{cut}+, {n} places",
 
   // Explore map view (PLAN.md C7)
   "explore.viewGrid": "Grid",
@@ -5439,7 +5410,6 @@ export const en = {
   "explore.sideKinds": "Trip style",
   "explore.sideRefine": "Refine",
   "explore.moreRails": "More ways in",
-  "explore.moreRailsSummary": "{n} more lists",
   "explore.viewList": "List",
   "explore.railPrev": "Scroll back",
   "explore.railNext": "Scroll forward",
@@ -5901,9 +5871,6 @@ export const en = {
   "receipt.sheetPaid": "What you paid for {people}, in euros",
   "receipt.sheetSave": "Add it to the total",
   // V3 Explore (T383): count, input row, cost rail, pedigree word, empty states
-  "explore.count": "{n} places",
-  "explore.countOne": "{n} place",
-  "explore.countMap": "{n} in view",
   "explore.inputsAria": "What the prices and the list depend on",
   "explore.budgetLabel": "Budget ceiling, per person per day, bed and food",
   "explore.budgetAny": "Any budget",
@@ -5911,7 +5878,6 @@ export const en = {
   "explore.goodInMonth": "Good in {month}",
   "explore.shortlist": "Shortlist",
   "explore.shortlistAria": "Show only your shortlist, {n} saved",
-  "explore.scoreKey": "Score key",
   "explore.emptySearch": "No place matches \"{q}\".",
   "explore.emptyCause": "No place fits once {filter} is added.",
   "explore.removeFilter": "Remove {filter}",
@@ -5919,7 +5885,6 @@ export const en = {
   "explore.pinCost": "{eur} a day",
   "filter.size": "Size of place",
   "rail.cost": "Under {eur} a day in {month}",
-  "rail.costSub": "Bed and food for one, cheapest first, all in season",
   "rail.costShort": "Under {eur} a day",
   "cost.national": "national",
   "cost.dayAriaNational": "{eur} a day per person, {band}, with a national figure standing in",
@@ -6279,4 +6244,12 @@ export const en = {
   "score.band2": "Excellent",
   "score.band3": "Exceptional",
   "score.aria": "Rated {n} out of 10",
+  // Explore sections (T427).
+  "rail.seeAllPlain": "See all",
+  "rail.bestIn": "Best in {month}",
+  "rail.topRated": "Top rated in Europe",
+  "rail.hiking": "Hiking bases",
+  "rail.beachSeason": "Beach towns in season",
+  "rail.shortlist": "Your shortlist",
+  "explore.allPlaces": "All places",
 };

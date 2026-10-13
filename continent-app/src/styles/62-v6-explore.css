@@ -28,17 +28,6 @@
    holds in --mono. On a phone the title is read but not drawn and the count
    is the visible line, sharing its row with the sort. */
 .explore-shell .xbar-title-text { display: block; }
-.explore-shell .xbar-count {
-  display: block;
-  margin-top: var(--space-1);
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
-  line-height: 1.3;
-  color: var(--ink-soft);
-}
 @media (max-width: 768px) {
   .explore-shell .xbar {
     flex-wrap: nowrap;
@@ -65,7 +54,6 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .explore-shell .xbar-count { margin: 0; color: var(--ink); }
   .explore-shell .xbar-tools { margin-left: auto; flex-wrap: nowrap; }
 }
 
@@ -240,35 +228,16 @@
    Line 1: name, score, then the day cost; line 2: where, what size, and the
    gauge. On a two-up phone card and in the split list the figure takes its
    own line under the name. */
-.explore-shell .xcard-head { flex-wrap: wrap; row-gap: 2px; }
 /* The name keeps at least about half the line; when the name, the score
    and the figure cannot share it, the figure wraps under them. */
-.explore-shell .xcard-head .xcard-name { flex: 1 1 auto; min-width: 55%; }
-.explore-shell .xcard-price { display: inline-flex; flex: none; margin-left: 0; min-width: 0; }
-.explore-shell .xcard-price .xcard-cost { gap: var(--space-1); flex-wrap: nowrap; margin-left: 0; }
-.explore-shell .xcard-price .xcard-cost-eur { font-family: var(--mono); font-size: 13px; }
 .explore-shell .xcard-cost-level {
   font-family: var(--ui);
   font-size: 12px;
   font-weight: 400;
   color: var(--ink-mute);
 }
-.explore-shell .xcard-meta .xcard-cost--gauge { flex: none; flex-basis: auto; margin-left: auto; }
 /* The label box was a fixed 62 px for two lines; the figure may now wrap to
    a line of its own, so the box grows with it instead of clipping it. */
-.explore-shell .explore-grid--mosaic .xcard-body { height: auto; min-height: 62px; padding-block: var(--space-2); }
-@media (max-width: 619px) {
-  .explore-shell .xcard-price { flex-basis: 100%; margin-left: 0; }
-}
-@media (max-width: 768px) {
-  /* The body grew a line (the figure), so it no longer has a fixed height. */
-  .explore-shell .explore-grid--mosaic .xcard-body { height: auto; padding: var(--space-2); gap: 2px; }
-  /* "a day" is back on the phone card: the figure now leads the card, and
-     a bare "€87" beside a score reads as a second score. */
-  .explore-shell .explore-grid--mosaic .xcard-price .xcard-cost-unit { display: inline; }
-  .explore-shell .explore-grid--mosaic .xcard-meta .xcard-cost--gauge { margin-left: auto; }
-}
-.explore-shell .xcontent--split .xcard-price { flex-basis: 100%; margin-left: 0; }
 
 /* On a phone "See all N" holds the title's row instead of taking a row of
    its own, so the first priced card sits higher (brief V3-4). */
@@ -285,33 +254,12 @@
 /* On touch the info control is the door to the preview and its compact
    receipt (there is no hover there): a --tap box under the star, its disc
    drawn inside. */
-@media (pointer: coarse) {
-  .explore-shell .xcard-info {
-    display: inline-flex;
-    top: 40px;
-    right: 0;
-    width: var(--tap);
-    height: var(--tap);
-    background: transparent;
-    color: var(--ink-soft);
-  }
-  .explore-shell .xcard-info::before {
-    content: '';
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--paper);
-  }
-  .explore-shell .xcard-info svg { position: relative; }
-}
 
 /* --- 7. Trip styles, as the rail's first group ---------------------------- */
 .explore-shell .xrail-styles .xrail-toggle { gap: var(--space-1); }
 .explore-shell .xrail-style-icon { flex: none; }
 
 /* --- 10. Map and list in sync (house rule): ink, never the accent -------- */
-.explore-shell .xcard.is-linked { outline: 2px solid var(--ink); outline-offset: 2px; }
 @media (max-width: 768px) {
   /* The map takes the phone's height under the chrome, to the nav. */
   .explore-shell .xcontent-map .xmap {
@@ -392,23 +340,7 @@
 }
 
 /* --- 12. "Score key", a word instead of a bare "?" ----------------------- */
-.explore-shell .tierlegend-pip--word {
-  width: auto;
-  height: auto;
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--ink-soft);
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 500;
-}
-@media (pointer: fine) and (min-width: 769px) {
-  .explore-shell .tierlegend-pip--word { min-height: 32px; }
-}
-.explore-shell .tierlegend-x { color: var(--ink-soft); }
+
 .explore-shell .cpage-banner svg,
 .explore-shell .xrail-country-page svg { flex: none; vertical-align: middle; }
 
@@ -434,48 +366,20 @@
    animates its shadow on hover (DIRECTION part 2.3: nothing decorative
    moves); a pointer over it darkens its border in --dur-1. One elevation:
    the hairline border, no shadow (carta-design, "Cards in general"). */
-.explore-shell .explore-grid--mosaic .xcard .xcard-media { aspect-ratio: 3 / 2; }
-@media (max-width: 768px) {
-  .explore-shell .explore-grid--mosaic .xcard .xcard-media { aspect-ratio: 16 / 10; }
-}
-.explore-shell .explore-grid--mosaic { gap: var(--space-4); }
-.explore-shell .xcard {
-  overflow: visible;
-  border: 1px solid var(--rule-soft);
-  border-radius: 12px;
-  box-shadow: none;
-  transform: none;
-  transition: border-color var(--dur-1) var(--ease-out);
-}
-.explore-shell .xcard .xcard-media { overflow: hidden; border-radius: 11px 11px 0 0; }
-.explore-shell .xcard .xcard-img { transition: none; }
-@media (hover: hover) {
-  .explore-shell .xcard:hover,
-  .explore-shell .xcard:hover .xcard-img { transform: none; box-shadow: none; }
-}
-@media (hover: hover) {
-  .explore-shell .xcard:hover { border-color: var(--ink-mute); }
-}
-.explore-shell .xcard-hit:focus-visible { border-radius: 12px; }
+
 /* A selected card is the house selected card: a 2 px ink edge, never the
    accent (carta-design, "Selected state"). */
-.explore-shell .xcard.selected { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -1px; }
 /* The card with its popover open sits above its neighbours. */
-.explore-shell .xcard.previewing { z-index: 6; }
 
 /* The type scale (DIRECTION part 5): a card name is Fraunces 19 px, a
    section (a rail) 22 px on a phone and 26 px from 769 px, the page title
    40 px on desktop (the phone draws the count, not the title). */
-.explore-shell .xcard .xcard-name,
-.explore-shell .explore-grid--mosaic .xcard--metro .xcard-name,
-.explore-shell .explore-grid--mosaic .xcard--area .xcard-name,
 .explore-shell .railcard-name { font-size: 19px; line-height: 1.2; letter-spacing: 0; }
 .explore-shell .xrails-title { font-size: 22px; line-height: 1.2; letter-spacing: 0; }
 @media (min-width: 769px) {
   .explore-shell .xrails-title { font-size: 26px; }
   .explore-shell .xbar-title-text { font-size: 40px; line-height: 1.1; letter-spacing: 0; }
 }
-.explore-shell .xcard-kindword { font-weight: 400; letter-spacing: 0; }
 
 /* --- 2. The preview as a popover (explore N6, "Dialog family") ----------
    Beside the card (right, else left) or under it, placed in ExploreTab.jsx
@@ -628,33 +532,14 @@
   font-variant-numeric: tabular-nums;
 }
 /* The info control while its popover is open is the selected state. */
-.explore-shell .xcard.previewing .xcard-info { background: var(--select-bg); color: var(--select-ink); }
-@media (pointer: coarse) {
-  .explore-shell .xcard.previewing .xcard-info { background: transparent; }
-  .explore-shell .xcard.previewing .xcard-info::before { background: var(--select-bg); }
-}
 
 /* --- 4. State that answers at once, and nothing decorative moving ------- */
-.explore-shell .xcard-star,
-.explore-shell .xcard-info { transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out); }
-@media (hover: hover) {
-  .explore-shell .xcard-star:hover,
-  .explore-shell .xcard-info:hover { transform: none; }
-}
-@media (hover: hover) {
-  .explore-shell .xcard-star:hover,
-  .explore-shell .xcard-info:hover { color: var(--ink); }
-}
-.explore-shell .xbar .xview-toggle button,
-.explore-shell .xrails-more-chip,
-.explore-shell .xrails-arrow {
+
+.explore-shell .xbar .xview-toggle button {
   transition: background-color var(--dur-1) var(--ease-out),
     border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.explore-shell .xrails-arrow:disabled { opacity: 0.4; cursor: default; }
 /* The grid dims while a filter change is pending; it never spins. */
-.explore-shell .explore-grid--mosaic { transition: opacity var(--dur-2) var(--ease-out); }
-.explore-shell .explore-grid--mosaic.is-pending { opacity: 0.6; }
 /* The map frame holds --paper-dim and the canvas crossfades in once drawn. */
 .explore-shell .xmap { background: var(--paper-dim); }
 .explore-shell .xmap .xmap-canvas { opacity: 0; transition: opacity var(--dur-3) var(--ease-out); }
@@ -671,20 +556,7 @@
 }
 
 /* --- 6 and 7. Rails: position, snap, one photograph shape, no lift ------- */
-.explore-shell .xrails-pos {
-  flex: none;
-  align-self: center;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-mute);
-  white-space: nowrap;
-}
-.explore-shell .xrails-pos--foot { display: none; }
-@media (max-width: 768px) {
-  .explore-shell .xrails-head .xrails-pos { display: none; }
-  .explore-shell .xrails-pos--foot { display: block; margin: 2px 2px 0; text-align: right; }
-}
+
 .explore-shell .railcard {
   scroll-snap-align: start;
   border: 1px solid var(--rule-soft);
@@ -715,16 +587,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .explore-shell .xcard,
   .explore-shell .railcard,
-  .explore-shell .xchip,
-  .explore-shell .xcard-star,
-  .explore-shell .xcard-info,
-  .explore-shell .xbar .xview-toggle button,
-  .explore-shell .xrails-more-chip,
-  .explore-shell .xrails-arrow,
-  .explore-shell .explore-grid--mosaic,
-  .explore-shell .xmap .xmap-canvas { transition: none; }
+.explore-shell .xchip,
+.explore-shell .xbar .xview-toggle button,
+.explore-shell .xmap .xmap-canvas { transition: none; }
   .explore-shell .xcard-preview.xpop,
   .explore-shell .xchip,
   .explore-shell .xmap-kpin.is-cheapest { animation: none; }
@@ -732,17 +598,6 @@
 
 /* A card whose overflow is visible (so its popover can sit beside it) would
    size its grid track to its content; the tracks hold their share instead. */
-.explore-shell .explore-grid--mosaic { grid-template-columns: repeat(12, minmax(0, 1fr)); }
-.explore-shell .explore-grid--mosaic .xcard { min-width: 0; }
-@media (max-width: 899px) {
-  .explore-shell .explore-grid--mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (min-width: 769px) {
-  .explore-shell .xcontent--split .explore-grid--mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (min-width: 769px) and (max-width: 1180px) {
-  .explore-shell .xcontent--split .explore-grid--mosaic { grid-template-columns: minmax(0, 1fr); }
-}
 
 /* =========================================================================
    V5 (T403): harden, adapt and polish
@@ -755,26 +610,6 @@
    a real --tap box too, pulled back with negative margin so the rail head
    keeps its height. A mouse keeps 32 px (the owner's fine-pointer floor). */
 @media (pointer: coarse) {
-  .explore-shell .xcard-star {
-    top: 0;
-    right: 0;
-    width: var(--tap);
-    height: var(--tap);
-    background: transparent;
-    box-shadow: none;
-  }
-  .explore-shell .xcard-star::before {
-    content: '';
-    position: absolute;
-    inset: auto;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--paper);
-    box-shadow: var(--shadow-1);
-  }
-  .explore-shell .xcard-star svg { position: relative; }
-  .explore-shell .xcard-info { top: var(--tap); }
   .explore-shell .xrails-all {
     display: inline-flex;
     align-items: center;
@@ -791,7 +626,6 @@
    two lines keeps a card's height bounded. The country gives up its
    ellipsis the same way, and on a two-up phone card it shares the place
    line with the swim badge instead of leaving it to the flag. */
-.explore-shell .xcard-head .xcard-name,
 .explore-shell .railcard-name {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -802,15 +636,6 @@
   overflow-wrap: anywhere;
 }
 .explore-shell .railcard-head { align-items: flex-start; }
-.explore-shell .explore-grid--mosaic .xcard-place { flex-wrap: wrap; white-space: normal; row-gap: 2px; }
-.explore-shell .explore-grid--mosaic .xcard-country {
-  overflow: visible;
-  text-overflow: clip;
-  overflow-wrap: anywhere;
-}
-@media (max-width: 899px) {
-  .explore-shell .explore-grid--mosaic .xcard-place:has(.water-badge) .xcard-country { display: inline; }
-}
 
 /* --- 5. The map did not load -------------------------------------------- */
 .explore-shell .xmap-failed {
@@ -852,7 +677,234 @@
 /* T411: the cut chips reach the tap floor on touch wherever they are drawn
    (the quality floor measured 34 px), and the country page's facts stand
    apart by the gap, not by middots (row T404-d). */
-@media (pointer: coarse) {
-  .xrails-more-chip { min-height: var(--tap); }
-}
+
 .cpage-facts { display: flex; flex-wrap: wrap; column-gap: var(--space-4); row-gap: var(--space-1); }
+
+/* ==========================================================================
+   T427 (roadmap 1.2, the owner's Explore review of 2026-10-13): full width,
+   sections as photo rails, every list as compact rows, no counts. Roles and
+   scales only. The old card, legend and rail rules were deleted from 24, 25,
+   46 and this file in the same commit.
+   ========================================================================== */
+
+/* --- Full width: one gutter from the header to the content ------------- */
+.explore-shell .explore-wrap {
+  max-width: none;
+  margin: 0;
+  padding: var(--space-5) var(--space-6) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+}
+@media (max-width: 768px) {
+  .explore-shell .explore-wrap {
+    padding: var(--space-2) var(--space-4) calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* --- The top band: the title, the list/map switch, the sort ------------ */
+.explore-shell .xbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-4);
+}
+.explore-shell .xbar-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.explore-shell .xbar-tools { display: flex; align-items: center; gap: var(--space-3); }
+@media (max-width: 768px) {
+  /* On a phone the switch floats above the bottom nav (T441 redraws it),
+     and the title is read but not drawn: the search leads the screen. */
+  .explore-shell .xview-seg { display: none; }
+  .explore-shell .xbar-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .explore-shell .xbar { justify-content: flex-end; margin-bottom: var(--space-3); }
+}
+
+/* --- Sections ------------------------------------------------------------ */
+.explore-shell .xrails {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin: var(--space-2) 0 var(--space-7);
+}
+.explore-shell .xrails-rail { min-width: 0; }
+.explore-shell .xrails-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+}
+.explore-shell .xrails-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.explore-shell .xrails-nav { display: none; gap: var(--space-2); }
+@media (hover: hover) and (pointer: fine) {
+  .explore-shell .xrails-nav { display: inline-flex; }
+}
+.explore-shell .xrails-arrow--prev svg { transform: scaleX(-1); }
+/* Tiles size from the section's own width: about 1.3 on a phone, so the
+   next one shows, and five and a bit on a wide desktop. */
+.explore-shell .xrails-strip {
+  --tile-gap: var(--space-4);
+  --tile-w: 78%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--tile-w);
+  gap: var(--tile-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0;
+  padding-bottom: var(--space-1);
+  scrollbar-width: none;
+}
+.explore-shell .xrails-strip::-webkit-scrollbar { display: none; }
+@container (min-width: 560px) {
+  .explore-shell .xrails-strip { --tile-w: calc((100% - 2 * var(--tile-gap)) / 2.4); }
+}
+@container (min-width: 860px) {
+  .explore-shell .xrails-strip { --tile-w: calc((100% - 3 * var(--tile-gap)) / 3.4); }
+}
+@container (min-width: 1080px) {
+  .explore-shell .xrails-strip { --tile-w: calc((100% - 4 * var(--tile-gap)) / 4.4); }
+}
+@container (min-width: 1320px) {
+  .explore-shell .xrails-strip { --tile-w: calc((100% - 5 * var(--tile-gap)) / 5.4); }
+}
+.explore-shell .xtile { scroll-snap-align: start; min-width: 0; }
+.explore-shell .xtile .card-title { font-size: var(--text-lead); }
+.explore-shell .xtile-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  color: var(--text-2);
+}
+.explore-shell .xrails-doors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* --- The list: compact rows -------------------------------------------- */
+.explore-shell .xlist-title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.explore-shell .xrows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+  gap: 0 var(--space-6);
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+.explore-shell .xrows.is-pending { opacity: 0.55; }
+.explore-shell .xrow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.explore-shell .xrow-hit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--space-3) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .explore-shell .xrow:hover { background: var(--surface); }
+}
+.explore-shell .xrow-media {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.explore-shell .xrow-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.explore-shell .xrow-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.explore-shell .xrow-line1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.explore-shell .xrow-name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.explore-shell .xrow-line2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.explore-shell .xrow-save { flex: none; margin-right: var(--space-1); }
+/* The price line: the figure in the one family, tabular, then its unit. */
+.explore-shell .xprice { font-size: var(--text-body); color: var(--text); }
+.explore-shell .xprice .money { font-weight: 600; }
+.explore-shell .xprice-unit { color: var(--text-2); }
+/* Selected is the brown edge; a card the map is pointing at rings in ink
+   (house rule "Map and list in sync"). */
+.explore-shell .xrow.is-selected { outline: 2px solid var(--select-border); outline-offset: -2px; background: var(--surface); }
+.explore-shell .xrow.is-linked { outline: 2px solid var(--text); outline-offset: -2px; }
+.explore-shell .xrow.previewing { z-index: 5; }
+.explore-shell .xrow-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xrows, .explore-shell .xrow { transition: none; }
+}
+
+/* The side panel's content starts on the same gutter as the header. */
+@media (min-width: 769px) {
+  .explore-shell .side-panel.explore-side { padding-left: var(--space-6); }
+}

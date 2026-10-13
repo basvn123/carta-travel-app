@@ -1,3 +1,7 @@
+// T427 (2026-10-13): the contract follows the owner's Explore review: rows
+// for every list, photo tiles in the sections, no count, no tier legend, no
+// rail subtitles, the estimate mark on stand-in figures only.
+//
 // Headless verify for the Explore tab v3: the map is gone, the grid answers
 // with a euro-a-day figure (the two 0-10 "cheapness" indices are retired, see
 // lib/costIndex.js), one Filters sheet serves every width, and the
@@ -49,40 +53,48 @@ try {
 
   check('explore grid renders', await page.locator('.explore-tab').isVisible());
   check('no map canvas anywhere on Explore', await page.locator('.maplibregl-canvas').count() === 0);
-  const cards = await page.locator('.xcard').count();
+  const cards = await page.locator('.xrow').count();
   check('a real page of cards', cards >= 24, `${cards} cards`);
-  const withImg = await page.locator('.xcard img.xcard-img').count();
+  const withImg = await page.locator('.xrow img.xrow-img').count();
   check('cards carry photos', withImg >= cards * 0.8, `${withImg}/${cards}`);
   // The 640px thumb splice must resolve to real bytes, not a 404 tile.
   const imgOk = await page.waitForFunction(() => {
-    const el = document.querySelector('.xcard img.xcard-img');
+    const el = document.querySelector('.xrow img.xrow-img');
     return !!el && el.complete && el.naturalWidth > 0;
   }, null, { timeout: 12000 }).then(() => true).catch(() => false);
   check('spliced card thumb actually loads', imgOk);
   // The retired 0-10 meters must be gone, and every card must carry the euro
   // figure that replaced them (lib/costIndex.js explains the swap in full).
   check('the 0-10 cheapness meters are gone', await page.locator('.xcard-ix').count() === 0);
-  const costCount = await page.locator('.xcard-cost').count();
+  const costCount = await page.locator('.xrow .xprice').count();
   check('every card shows a euro-a-day figure', costCount >= cards - 2, `${costCount}/${cards}`);
-  const litSegs = await page.locator('.xcard-cost .cost-gauge .cost-seg.on').count();
-  check('the cost gauge fills', litSegs >= cards, `${litSegs} lit segments`);
-  const cardText = await page.locator('.xcard').first().innerText();
+  // T427: the five-bar gauge repeated the figure; it is gone from the card.
+  check('the cost gauge left the card', await page.locator('.xrow .cost-gauge').count() === 0);
+  const cardText = await page.locator('.xrow').first().innerText();
   check('the card names a price in euros', /€\d/.test(cardText), cardText.replace(/\n/g, ' | ').slice(0, 90));
 
-  // T279-a: Carta prices no flight, so no Explore card may read as one. No
-  // tilde before a figure, no est. chip, no "not a live quote" title.
-  const allCardText = (await page.locator('.xcard').allInnerTexts()).join('\n');
-  const cardTitles = await page.locator('.xcard [title]').evaluateAll((els) => els.map((e) => e.title).join('\n'));
-  check('no Explore card carries a tilde fare or an est. tag',
-    !/~\s*€|\best\.(\s|$)/i.test(allCardText) && !/not a live quote/i.test(cardTitles));
+  // T427 (owner decision 2026-10-13): a stand-in figure carries the estimate
+  // mark, the tilde joined to the figure and the word after it, and nothing
+  // else says where it came from. Carta still prices no flight (T279-a): no
+  // "not a live quote" title anywhere on a card.
+  const prices = await page.locator('.xrow .xprice').allInnerTexts();
+  const cardTitles = await page.locator('.xrow [title]').evaluateAll((els) => els.map((e) => e.title).join('\n'));
+  check('every tilde on a card comes with the estimate word',
+    prices.every((p) => !p.includes('~') || /est\./.test(p)) && !/not a live quote/i.test(cardTitles),
+    prices.slice(0, 3).join(' | '));
+  check('no card says national or names a source',
+    !(await page.locator('.xrow').allInnerTexts()).some((s) => /\bnational\b/i.test(s)));
 
   // The srcset must offer widths Wikimedia actually renders. An unlisted
   // width answers 400, which is exactly how this breaks silently.
-  const srcset = await page.locator('.xcard img.xcard-img').first().getAttribute('srcset');
+  // T427: a 72 px row photo needs one width (250), so it may carry a plain
+  // src and no srcset; either way only renderable widths may appear.
+  const img0 = page.locator('.xrow img.xrow-img').first();
+  const srcset = (await img0.getAttribute('srcset')) || (await img0.getAttribute('src'));
   const widths = (srcset || '').match(/(\d+)px-/g) || [];
   const legalW = ['250px-', '330px-', '500px-', '960px-', '1280px-', '1920px-'];
   check('card srcset uses renderable Wikimedia widths',
-    widths.length >= 2 && widths.every((w) => legalW.includes(w)),
+    widths.length >= 1 && widths.every((w) => legalW.includes(w)),
     srcset ? widths.join(' ') : 'no srcset');
 
   // The Lifestyle control has to be present AND has to move the prices: a
@@ -96,7 +108,7 @@ try {
   check('one Lifestyle control on screen',
     await page.locator('.settings-part-lifestyle:visible').count() === 1
     && await page.locator('.explore-shell .lifestyle-btn:visible').count() === 0);
-  const priceText = () => page.locator('.xcard-cost-eur:visible').allInnerTexts();
+  const priceText = () => page.locator('.xrow .xprice .money:visible').allInnerTexts();
   const beforeLs = (await priceText()).slice(0, 8).join(' ');
   await page.locator('.settings-part-lifestyle:visible').first().click();
   await page.waitForTimeout(800);
@@ -111,7 +123,7 @@ try {
   check('changing Lifestyle reprices the grid', beforeLs !== afterLs, `${beforeLs} -> ${afterLs}`);
 
   // The hover explanation, and WCAG 1.4.13's dismissible requirement.
-  await page.locator('.xcard').first().hover();
+  await page.locator('.xrow').first().hover();
   await page.waitForTimeout(350);
   const previewOpen = await page.locator('.xcard-preview').count() === 1;
   check('hovering a card explains it', previewOpen);
@@ -121,7 +133,7 @@ try {
   if (previewOpen) {
     const pop = await page.evaluate(() => {
       const p = document.querySelector('.xcard-preview');
-      const m = p.closest('.xcard').querySelector('.xcard-media').getBoundingClientRect();
+      const m = p.closest('.xrow').querySelector('.xrow-media').getBoundingClientRect();
       const r = p.getBoundingClientRect();
       const ox = Math.max(0, Math.min(r.right, m.right) - Math.max(r.left, m.left));
       const oy = Math.max(0, Math.min(r.bottom, m.bottom) - Math.max(r.top, m.top));
@@ -154,75 +166,60 @@ try {
   // The bar carries no count any more, and the tier legend counts the whole
   // catalogue, so "narrows live" is read off the cards: how many of the
   // cards on screen are not a village.
-  const nonVillage = async () => (await page.locator('.xcard .xcard-kindword').allInnerTexts())
-    .filter((s) => !/^village$/i.test(s.trim())).length;
+  // T427: the row carries no kind word, so "narrows live" is read off the
+  // first names on the list, which change when the filter lands.
+  const firstNames = async () => (await page.locator('.xrow .xrow-name').allInnerTexts()).slice(0, 12).join('|');
   check('the control bar heads the feed', await page.locator('.xbar .xbar-title').isVisible());
-  check('the tier legend carries the tier counts', await page.locator('.tierlegend-count').count() >= 3);
-  check('grid/map switch and sort share the bar',
-    await page.locator('.xbar .xview-toggle button').count() === 2
+  check('the title stands alone (no count beside it)',
+    (await page.locator('.xbar .xbar-title').innerText()).trim() === 'Explore Europe'
+    && await page.locator('.xbar-count').count() === 0);
+  check('no tier legend', await page.locator('.tierlegend, .tierlegend-row').count() === 0);
+  check('list/map switch and sort share the bar',
+    await page.locator('.xbar .xview-seg [role="radio"]').count() === 2
     && await page.locator('.xbar .xgrid-sort select').isVisible());
   check('no second results header mid-page', await page.locator('.xgrid-head').count() === 0);
   // T383 (V3): six folds, not five. The trip styles left their own tile
   // grid and became the rail's first group, so they make chips and reset
   // with the other filters (brief V3-7).
   check('the rail groups are folds', await page.locator('.explore-side details.xrail-group').count() === 6);
-  // T383 (V3): the control bar states the count of what the view holds, in
-  // mono, from the same list the grid renders (brief V3-1).
-  const countLine = (await page.locator('.xbar .xbar-count').innerText().catch(() => '')).trim();
-  check('the control bar states the count', /^[\d,.\s\u00a0\u202f]+ places?$/.test(countLine), countLine);
   // T383 (V3): the input row carries Lifestyle, the budget ceiling, the
   // month, No car needed and the shortlist, each showing its value.
   check('the input row shows the inputs the figures depend on',
     await page.locator('.xinputs select').count() === 2
     && await page.locator('.xinputs .xinput--toggle').count() === 2);
-  // T383 (V3): every rail card carries the day cost (brief V3-5).
-  const railCards = await page.locator('.railcard').count();
-  const railPriced = await page.locator('.railcard .xcard-cost-eur').count();
-  check('every rail card shows a euro-a-day figure', railCards > 0 && railCards === railPriced,
+  // Every section tile carries the day cost (brief V3-5), on the kit Card.
+  const railCards = await page.locator('.xtile').count();
+  const railPriced = await page.locator('.xtile .xprice').count();
+  check('every section tile shows a euro-a-day figure', railCards > 0 && railCards === railPriced,
     `${railPriced} of ${railCards}`);
-  // T383 (V3): the tier key counts the same rows as the rails, so its top
-  // tier equals the top-tier rail's N (they disagreed, 48 against 41).
-  const keyTop = (await page.locator('.tierlegend-row.rt-3 .tierlegend-count span').first().innerText().catch(() => '')).trim();
-  const topRail = await page.locator('.xrails-title', { hasText: /highest-rated/ }).first().innerText().catch(() => '');
-  check('the tier key and the top rail count the same places', keyTop !== '' && topRail.includes(` ${keyTop} `),
-    `key ${keyTop}, rail "${topRail}"`);
+  check('"See all" carries no count',
+    (await page.locator('.xrails-all').allInnerTexts()).every((s) => !/\d/.test(s)));
   check('the first two folds open, the rest closed',
     await page.locator('.explore-side details.xrail-group[open]').count() === 2);
-  check('at most three collections lead the page', await page.locator('.xrails-rail').count() <= 3);
-  // Every rail says what its list IS and how it was chosen: "The 41" named
-  // a number with no referent (P4.2).
-  const railTitle = await page.locator('.xrails-title').first().innerText();
-  check('the first rail title explains itself', railTitle.trim().length > 12 && !/^The \d+$/.test(railTitle.trim()), railTitle);
-  check('every rail carries a subtitle',
-    await page.locator('.xrails-sub').count() === await page.locator('.xrails-rail').count());
-  // The doors fold now (P4.4), so they are behind their own summary.
-  const doorFold = page.locator('#sec-morerails');
-  check('the other collections fold behind one summary', await doorFold.count() === 1
-    && !(await doorFold.evaluate((el) => el.classList.contains('is-open'))));
-  await doorFold.locator('.dsec-toggle').click();
-  await page.waitForTimeout(500);
-  check('the other collections are one row of doors',
-    await page.locator('.xrails-more .xrails-more-chip').count() >= 3);
-  await doorFold.locator('.dsec-toggle').click();
-  await page.waitForTimeout(400);
-  // T383 (V3): six parts, not five. The day cost moved to the card's first
-  // line beside the score and the gauge stayed on the second, so the cost is
-  // two .xcard-cost spans (the figure, the gauge) where it was one.
-  const bodyFacts = await page.locator('.xcard').first().locator('.xcard-name, .score-chip, .xcard-country, .xcard-kindword, .xcard-cost').count();
-  check('the card body carries its four facts', bodyFacts === 6, `${bodyFacts} parts`);
-  check('the season pill left the photo', await page.locator('.xcard-best').count() === 0);
-  const countBefore = await nonVillage();
+  // T427: four sections on a desktop, then one row of buttons; no subtitle
+  // and no position figure on any of them.
+  check('at most four sections lead the page', await page.locator('.xrails-rail').count() <= 4);
+  check('no section carries a subtitle or a position',
+    await page.locator('.xrails-sub, .xrails-pos').count() === 0);
+  check('the other sections are one row of buttons',
+    await page.locator('.xrails-doors button').count() >= 1);
+  // A row: the name, the Score, the country, the price; nothing on the photo.
+  const bodyFacts = await page.locator('.xrow').first().locator('.xrow-name, .score-chip, .xrow-country, .xprice').count();
+  check('the row carries its four facts', bodyFacts === 4, `${bodyFacts} parts`);
+  check('nothing sits on the row photograph',
+    await page.locator('.xrow').first().locator('.xrow-media > :not(img)').count() === 0);
+  const countBefore = await firstNames();
   // T383 (V3): "Size of place" (was "Kind of place") starts closed, so the
   // fold is opened before its Village toggle is pressed.
   await page.locator('.explore-side .xrail-legend', { hasText: /Size of place/ }).click();
   await page.waitForTimeout(300);
   await page.locator('.explore-side .xrail-toggle', { hasText: /^Village$/ }).first().click();
   await page.waitForTimeout(700);
-  const countAfter = await nonVillage();
+  const countAfter = await firstNames();
   check('the open fold says how many are active',
     (await page.locator('.explore-side .xrail-legend-n').first().innerText()).trim() === '1');
-  check('a rail toggle narrows the grid live', countBefore > 0 && countAfter === 0,
-    `non-village cards ${countBefore} -> ${countAfter}`);
+  check('a rail toggle narrows the grid live', countBefore !== '' && countAfter !== countBefore,
+    `${countBefore.slice(0, 40)} -> ${countAfter.slice(0, 40)}`);
   check('the active filter shows as a chip', await page.locator('.xchip', { hasText: /Village/ }).count() === 1);
   check('the filter landed in the URL', page.url().includes('xk=village'));
   await page.screenshot({ path: 'shots/explore-filters-desktop.png' });
@@ -233,21 +230,21 @@ try {
 
   // C7 in v5: on a desktop the map stands beside the grid, not in its place,
   // and the bar's count follows the viewport.
-  await page.locator('.xbar .xview-toggle button').nth(1).click();
+  await page.locator('.xbar .xview-seg [role="radio"]').nth(1).click();
   await page.waitForTimeout(4000);
   check('map view splits the feed', await page.locator('.xcontent--split').count() === 1);
   check('the map canvas is up', await page.locator('.xcontent-map .maplibregl-canvas').count() === 1);
-  check('the grid stays beside the map', await page.locator('.xcontent--split .explore-grid .xcard').first().isVisible());
+  check('the list stays beside the map', await page.locator('.xcontent--split .xrows .xrow').first().isVisible());
   check('the collections step aside for the map', await page.locator('.xrails-rail').count() === 0);
   await page.screenshot({ path: 'shots/explore-desktop-map.png' });
-  await page.locator('.xbar .xview-toggle button').first().click();
+  await page.locator('.xbar .xview-seg [role="radio"]').first().click();
   await page.waitForTimeout(600);
   check('back to the grid, the map is gone', await page.locator('.maplibregl-canvas').count() === 0);
 
   // ── Open a destination: it is the full-screen page now. The deep contract
   // (gallery, highlights, PDF, parking deeplinks) lives in
   // scripts/verify_destination_page.mjs; this pass only proves the door. ──
-  await page.locator('.xcard-hit').first().click();
+  await page.locator('.xrow-hit').first().click();
   await page.waitForTimeout(2500);
   const panel = page.locator('.destp');
   check('destination page opens', await panel.isVisible());
@@ -300,9 +297,9 @@ try {
     await page.waitForTimeout(1800);
   }
   check('phone grid renders', await page.locator('.explore-tab').isVisible());
-  const cards = await page.locator('.xcard').count();
+  const cards = await page.locator('.xrow').count();
   check('phone shows cards', cards >= 12, `${cards} cards`);
-  const gridBox = await page.locator('.explore-grid').boundingBox();
+  const gridBox = await page.locator('.xrows').boundingBox();
   check('no horizontal scroll', gridBox && gridBox.width <= 390, `grid ${Math.round(gridBox?.width || 0)}px`);
 
   // On a phone the filter rail sits behind the same Filters button
@@ -314,16 +311,16 @@ try {
   check('phone: the button opens the same rail in a sheet', await page.locator('.fsheet-explore .xrail').isVisible());
   check('phone: the sheet is a labelled dialog', await page.locator('.fsheet-explore[role="dialog"][aria-modal="true"]').count() === 1);
   check('phone: grid/map switch floats above the nav', await page.locator('.xview-fab').isVisible()
-    && await page.locator('.xbar .xview-toggle').isHidden());
-  check('phone: cards run two abreast', await page.locator('.explore-grid').evaluate(
-    (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 2));
+    && await page.locator('.xbar .xview-seg').isHidden());
+  check('phone: one compact row per line', await page.locator('.xrows').evaluate(
+    (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 1));
   await page.screenshot({ path: 'shots/explore-filters-phone.png' });
   await page.keyboard.press('Escape');
   await page.waitForTimeout(500);
   check('phone: Escape closes the sheet', await page.locator('.fsheet-explore').count() === 0);
   await page.screenshot({ path: 'shots/explore-phone.png' });
 
-  await page.locator('.xcard-hit').first().click();
+  await page.locator('.xrow-hit').first().click();
   await page.waitForTimeout(2000);
   check('phone destination page opens', await page.locator('.destp').isVisible());
   // Full bleed, back arrow as the exit; the rest of the contract lives in

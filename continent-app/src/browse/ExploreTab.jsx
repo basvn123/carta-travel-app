@@ -1,7 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
-import { ScoreChip, tierClass } from '../components/RatingBadge.jsx';
+import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
@@ -9,7 +9,6 @@ import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail } from './ExploreFilterRail.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
-import { TierLegend } from './TierLegend.jsx';
 import { CountryPage } from './CountryPage.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { kindOf, roleOf, buildNearbyIndex } from '../lib/taxonomy.js';
@@ -18,12 +17,10 @@ import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE } from '../lib/rating.js';
 import {
-  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon, TrainIcon,
+  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, TrainIcon,
   ChevronDownIcon, ChevronRightIcon, MapPinIcon, ListDayIcon, CloseIcon,
 } from '../components/Icons.jsx';
-import { count as fmtCount } from '../lib/format.js';
 import { useTravelMonth } from '../components/SettingsLine.jsx';
-import { useSettledFigure } from '../lib/figureChange.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -40,7 +37,10 @@ import { LoadingBlock } from '../components/StateBlocks.jsx';
 const ExploreMap = React.lazy(
   () => import('./ExploreMap.jsx').then((m) => ({ default: m.ExploreMap })),
 );
-import { CostLine, CostReceipt } from '../components/CostSummary.jsx';
+import { CostReceipt } from '../components/CostSummary.jsx';
+import { Segmented } from '../components/ui/index.js';
+import { DayPrice, SaveButton } from './ExploreCards.jsx';
+import { useGuidedData, vibeOf } from '../lib/guidedData.js';
 import { visitLength } from '../lib/nearby.js';
 import { placeSights } from '../lib/placeStory.js';
 import { knownFor } from '../lib/knownFor.js';
@@ -128,64 +128,12 @@ const BUDGET_STEPS = [40, 60, 80, 100, 130];
 // An old link's "Under €70 a day" toggle (xp=e) lands on this ceiling.
 const LEGACY_CHEAP = 70;
 
-// How wide the grid draws a card, so the browser can pick a thumbnail instead
-// of downloading Wikimedia's 960px rendering for a 300px slot. The widths in
-// the srcset are a fixed list Wikimedia will actually render (heroImage.js).
-const CARD_SIZES = '(max-width: 768px) 46vw, (max-width: 1180px) 45vw, 560px';
+// A row's photograph is a 72 px square (T427, compact rows for every list):
+// Wikimedia's 250 px thumbnail covers it at twice the pixel density. Only the
+// widths in heroImage.js WIKI_WIDTHS render (300 came back broken).
+const ROW_SIZES = '72px';
+const ROW_MAX = 250;
 
-/**
- * C4 drew the grid as a mosaic, kind picking the span. V4 (T393): one card
- * size and one photograph shape, 3:2 (DIRECTION part 3, "one aspect per
- * row"), four across at 1280 px, so a desktop screen holds eight priced
- * cards instead of two. Two sizes were tried first (metros and the top tier
- * at a third of the row): the rating sort leads with exactly those places,
- * so the first screen was all large cards and held three figures. The kind
- * word on line 2 still says what size a place is. The phone two-up crops to
- * 16:10 in 62-v6-explore.css. packRows stays, so a later size can come back.
- */
-function spanFor(p) {
-  return { span: 3, ratio: [3, 2], kind: kindOf(p) };
-}
-
-/**
- * Fill each 12-column row exactly. Greedy with a small look-ahead: a card
- * that fits is placed in order; when the next card would overflow, the
- * packer pulls forward the nearest upcoming card that closes the row, and
- * when nothing can, the row's last card widens to absorb the slack - no
- * ragged rows, near-stable ordering.
- */
-function packRows(rows) {
-  const items = rows.map((p) => ({ p, ...spanFor(p) }));
-  const WINDOW = 12; // how far ahead a card may be pulled; keeps sort readable
-  const out = [];
-  let used = 0;
-  while (items.length) {
-    const remainder = 12 - used;
-    // prefer, in order: the next card if it fits; else the nearest upcoming
-    // card that fits the remainder (exact closers first)
-    let idx = -1;
-    const win = Math.min(items.length, WINDOW);
-    for (let i = 0; i < win && idx === -1; i++) {
-      if (items[i].span === remainder) idx = i;
-    }
-    if (idx === -1) {
-      for (let i = 0; i < win && idx === -1; i++) {
-        if (items[i].span <= remainder) idx = i;
-      }
-    }
-    if (idx === -1) {
-      // nothing in the window fits: widen the row's last card to close it
-      if (out.length) out[out.length - 1].span += remainder;
-      used = 0;
-      continue;
-    }
-    const [it] = items.splice(idx, 1);
-    out.push(it);
-    used = (used + it.span) % 12;
-  }
-  if (used > 0 && out.length) out[out.length - 1].span += 12 - used;
-  return out;
-}
 
 /** Door-to-door ground minutes as "3 h 20 min", the same units in all six
  *  languages. */
@@ -303,8 +251,8 @@ const HOVER_MS = 150;
 const FOCUS_MS = 400;
 
 const ExploreCard = React.memo(function ExploreCard({
-  p, span, ratio, kind, role, selected, fav, onSelect, onToggleFav, t, reachMin,
-  linked = false, onLink = null, seal = true, month = null,
+  p, role, selected, fav, onSelect, onToggleFav, t, reachMin,
+  linked = false, onLink = null, month = null,
 }) {
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
   // One popover, three doors: hover, focus, and the info control, which
@@ -355,85 +303,51 @@ const ExploreCard = React.memo(function ExploreCard({
   return (
     <div
       ref={cardRef}
-      className={`xcard xcard--${kind} ${selected ? 'selected' : ''} ${preview ? 'previewing' : ''} ${linked ? 'is-linked' : ''}`}
-      style={{ '--xspan': span }}
+      className={`xrow${selected ? ' is-selected' : ''}${preview ? ' previewing' : ''}${linked ? ' is-linked' : ''}`}
       data-id={p.id}
       onPointerEnter={(e) => { if (e.pointerType === 'mouse') later('hover', HOVER_MS); onLink?.(p.id); }}
       onPointerLeave={() => { drop('hover'); onLink?.(null); }}
     >
       <button
-        className="xcard-hit"
+        type="button"
+        className="xrow-hit"
         onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}
         onFocus={() => { later('focus', FOCUS_MS); onLink?.(p.id); }}
         onBlur={() => { drop('focus'); onLink?.(null); }}
         aria-label={t('explore.openDest', { city: p.city })}
         aria-describedby={preview && place ? popId : undefined}
       >
-        {/* The photograph, and on it only what is earned: the verdict seal
-            for tier 2 and up (V4: not on a grid already filtered to a tier,
-            where every card would wear it), the gem chip in its own teal,
-            the star. */}
-        <span className="xcard-media">
+        {/* T427: a compact row, the owner's call for every list (a 72 px
+            photograph, then the name and the Score, the country, the
+            price). Nothing sits on the photograph. */}
+        <span className="xrow-media">
           <HeroImage
             url={p.image}
             city={p.city}
             iso2={p.iso2}
-            className="xcard-img"
-            maxWidth={span >= 4 ? 960 : 500}
-            sizes={CARD_SIZES}
-            ratio={ratio}
+            className="xrow-img"
+            maxWidth={ROW_MAX}
+            sizes={ROW_SIZES}
+            ratio={[1, 1]}
           />
-          {seal && (p.rating?.tier ?? 0) >= 2 && (
-            <span className={`xcard-seal ${tierClass(p.rating)} ${p.rating.tier === 3 ? 'xcard-seal--filled' : 'xcard-seal--outline'}`}>
-              {t(`score.band${p.rating.tier}`)}
-            </span>
-          )}
-          {p.rating?.hidden_gem && (
-            <span className="xcard-gem">{t('legend.gem')}</span>
-          )}
         </span>
-
-        {/* Four facts, two lines. V3 (T383): the price leads. The name,
-            the score and the euros a day share the first line (the figure
-            wraps under the name on a two-up phone card); the country, the
-            kind and the five-step gauge share the second. A figure with a
-            national stand-in says "national" after its unit. */}
-        <span className="xcard-body">
-          <span className="xcard-head">
-            <span className="xcard-name">{p.city}</span>
+        <span className="xrow-body">
+          <span className="xrow-line1">
+            <span className="xrow-name">{p.city}</span>
             <ScoreChip rating={p.rating} size="sm" />
-            <span className="xcard-price"><CostLine cost={p.cost} t={t} gauge={false} /></span>
           </span>
-          <span className="xcard-meta">
-            <span className="xcard-place">
-              <CountryFlag country={p.iso2} size={11} />
-              <span className="xcard-country">{p.country}</span>
-              <span className="xcard-kindword">{t(`pkind.${kind}`)}</span>
-              {swimRelevant(p) && (
-                <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
-              )}
-            </span>
-            <CostLine cost={p.cost} t={t} figure={false} />
+          <span className="xrow-line2">
+            <CountryFlag country={p.iso2} size={12} />
+            <span className="xrow-country">{p.country}</span>
+            {p.rating?.hidden_gem && <HiddenGemTag />}
+            {swimRelevant(p) && (
+              <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
+            )}
           </span>
+          <DayPrice cost={p.cost} t={t} />
         </span>
       </button>
-      <button
-        className={`xcard-star ${fav ? 'on' : ''}`}
-        onClick={() => onToggleFav(p.id)}
-        aria-label={fav ? t('results.removeShortlist') : t('results.addShortlist')}
-        title={fav ? t('results.removeShortlist') : t('results.addShortlist')}
-      >
-        <Star filled={fav} />
-      </button>
-      <button
-        className="xcard-info"
-        onClick={() => { clearTimeout(timer.current); setOpen((o) => (o === 'pin' ? null : 'pin')); }}
-        aria-expanded={preview}
-        aria-label={t('explore.moreInfo')}
-        title={t('explore.moreInfo')}
-      >
-        <InfoIcon size={15} />
-      </button>
+      <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} className="xrow-save" />
       {preview && place && (
         <CardPreview id={popId} p={p} t={t} best={best} role={role} countryLine={countryLine}
           reachMin={reachMin} month={month} place={place} reveal={open === 'pin'} />
@@ -464,7 +378,10 @@ export function ExploreTab({
   isMock = false,
   onOpenGuides,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  // The guided search data (T439): vibes, areas and distances. Loaded on
+  // idle; the hiking and beach rails and the vibe filter read it.
+  const guided = useGuidedData(isActive);
   const [visible, setVisible] = React.useState(PAGE);
   // Map and list in sync (house rule, explore N5): the card under the
   // pointer or in focus rings its pin; the pin under the pointer or in focus
@@ -491,6 +408,8 @@ export function ExploreTab({
       budget,
       quiet: q.get('xp')?.includes('q') || false,
       sea: q.get('xp')?.includes('s') || false,
+      // A vibe from the guided search data (T427): "hiking", "beach", ...
+      vibe: q.get('xe') || null,
     };
   });
   const patchXf = React.useCallback((delta) => setXf((v) => ({ ...v, ...delta })), []);
@@ -499,19 +418,11 @@ export function ExploreTab({
   // takes (house motion table: opacity, --dur-2, never a spinner).
   const dxf = React.useDeferredValue(xf);
   const pending = dxf !== xf;
-  // The month select defaults to the month of the traveller's own dates
-  // (the settings line, T381; row T383-a): on arrival unless the link
-  // carries a month, and again whenever the dates move to another month.
-  // A month set by hand, or a month chip removed, stays as the traveller
-  // left it until the dates change.
+  // The traveller's own dates name a month, and that month feeds the rails
+  // ("Best in October"). It is no longer written into the month filter
+  // (T427, reversing T383-a): the auto-filled month made a filter chip, and
+  // a chip hid every rail the moment a traveller set dates.
   const travelMonth = useTravelMonth();
-  const seenMonth = React.useRef(
-    new URLSearchParams(window.location.search).get('xm') ? travelMonth : null);
-  React.useEffect(() => {
-    if (travelMonth === seenMonth.current) return;
-    seenMonth.current = travelMonth;
-    if (travelMonth) patchXf({ month: travelMonth });
-  }, [travelMonth, patchXf]);
   // C7: grid or map. The bbox narrows the count only WHILE the map is the
   // view - an invisible filter surviving the switch back would make the
   // grid quietly lie about what it holds.
@@ -612,8 +523,11 @@ export function ExploreTab({
     if (dxf.quiet && !quietOk(p)) return false;
     if (dxf.badged && !p.country_badge) return false;
     if (dxf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
+    // A vibe holds only once the guided data has landed; until then the list
+    // waits empty rather than showing places that may not match.
+    if (dxf.vibe && vibeOf(guided, p.id, dxf.vibe) < 80) return false;
     return true;
-  }), [rows, dxf, roleFor]);
+  }), [rows, dxf, roleFor, guided]);
 
   // C7: what the map's viewport holds, counted live while the map is shown.
   const shownRows = React.useMemo(() => {
@@ -626,15 +540,11 @@ export function ExploreTab({
     });
   }, [taxRows, view, bbox]);
 
-  // The grid beside the map lists what the map shows, in a plain two-up so
-  // the column stays readable at half width; the full-width grid keeps the
-  // packed mosaic.
-  const packed = React.useMemo(() => {
-    if (view === 'map') {
-      return shownRows.slice(0, visible).map((p) => ({ p, span: 1, ratio: [4, 3], kind: kindOf(p) }));
-    }
-    return packRows(taxRows.slice(0, visible));
-  }, [taxRows, shownRows, view, visible]);
+  // One list shape everywhere (T427): compact rows, beside the map too.
+  const listed = React.useMemo(
+    () => (view === 'map' ? shownRows : taxRows).slice(0, visible),
+    [taxRows, shownRows, view, visible],
+  );
 
   // C6: the filter state is the URL, so a filtered view is shareable and
   // the back button means what it says. First, the App-owned filters are
@@ -667,6 +577,7 @@ export function ExploreTab({
     setOrDrop('xb', xf.budget || '');
     const flags = `${xf.nocar ? 'c' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}${xf.badged ? 'b' : ''}`;
     setOrDrop('xp', flags);
+    setOrDrop('xe', xf.vibe || '');
     setOrDrop('xg', gemOnly ? '1' : '');
     setOrDrop('xu', unescoOnly ? '1' : '');
     setOrDrop('xc', countryFilter.join(','));
@@ -745,7 +656,7 @@ export function ExploreTab({
     setReachHours(null);
     setTripKinds([]);
     setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null,
-      nocar: false, quiet: false, sea: false, badged: false });
+      nocar: false, quiet: false, sea: false, badged: false, vibe: null });
   };
 
   // C6: one chip per active filter, each removing exactly itself.
@@ -764,6 +675,10 @@ export function ExploreTab({
     if (xf.quiet) list.push({ key: 'quiet', label: t('filter.notCrowded'), remove: drop({ quiet: false }) });
     if (xf.sea) list.push({ key: 'sea', label: t('filter.nearSea'), remove: drop({ sea: false }) });
     if (xf.badged) list.push({ key: 'badged', label: t('filter.bestOf'), remove: drop({ badged: false }) });
+    if (xf.vibe) {
+      const v = guided?.vibes?.find((x) => x.id === xf.vibe);
+      list.push({ key: 'vibe', label: v ? (v.label[lang] || v.label.en) : xf.vibe, remove: drop({ vibe: null }) });
+    }
     if (gemOnly) list.push({ key: 'gem', label: t('legend.gem'), remove: () => setGemOnly(false) });
     if (unescoOnly) list.push({ key: 'unesco', label: 'UNESCO', remove: () => setUnescoOnly(false) });
     for (const iso2 of countryFilter) {
@@ -772,7 +687,7 @@ export function ExploreTab({
     }
     if (reachAvailable && reachHours != null) list.push({ key: 'reach', label: t('filter.reachHours', { n: reachHours }), remove: () => setReachHours(null) });
     return list;
-  }, [xf, tripKinds, gemOnly, unescoOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setCountryFilter, setReachHours]);
+  }, [xf, tripKinds, gemOnly, unescoOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setCountryFilter, setReachHours, guided, lang]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago
@@ -841,21 +756,22 @@ export function ExploreTab({
     && tripKinds.length === 0 && !showFavOnly && view === 'grid';
   const rails = React.useMemo(() => {
     if (!railsIdle) return [];
-    const month = xf.month || new Date().getMonth() + 1;
-    const bestOf = new Map();
-    for (const p of rows) {
-      if (!p.country_badge) continue;
-      const cur = bestOf.get(p.country);
-      if (!cur || (p.country_rank || 99) < (cur.country_rank || 99)) bestOf.set(p.country, p);
-    }
+    // The month the rails speak about: one set by hand, else the month of
+    // the traveller's dates, else this month (T427).
+    const month = xf.month || travelMonth || new Date().getMonth() + 1;
+    const monthName = new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, month - 1, 15));
+    const inSeason = (p) => (p.climate?.best || []).includes(month);
+    const byRating = (a, b) => (b.rating?.score || 0) - (a.rating?.score || 0);
     const q = {
-      the43: rows.filter((p) => p.rating?.tier === 3),
+      top: rows.filter((p) => p.rating?.tier === 3),
       gems: interleaveByCountry(rows.filter((p) => p.rating?.hidden_gem)),
-      now: interleaveByCountry(rows.filter((p) => (p.climate?.best || []).includes(month))),
-      bestOf: interleaveByCountry([...bestOf.values()]),
-      villages: rows.filter((p) => kindOf(p) === 'village' && (p.rating?.tier ?? 0) >= 1),
+      now: interleaveByCountry(rows.filter((p) => inSeason(p) && (p.rating?.tier ?? 0) >= 2).sort(byRating)),
+      hiking: guided ? interleaveByCountry(rows.filter((p) => vibeOf(guided, p.id, 'hiking') >= 80).sort(byRating)) : [],
+      beach: guided ? interleaveByCountry(rows.filter((p) => inSeason(p) && vibeOf(guided, p.id, 'beach') >= 80).sort(byRating)) : [],
       nocar: interleaveByCountry(rows.filter(noCarOk)),
-      quiet: interleaveByCountry(rows.filter(quietOk)),
+      // Quiet in high season says something only in June to September.
+      quiet: month >= 6 && month <= 9 ? interleaveByCountry(rows.filter(quietOk)) : [],
+      saved: favorites && favorites.size ? rows.filter((p) => favorites.has(p.id)) : [],
     };
     // V3 (T383): the page leads with cost (house rule "Rails and cuts",
     // explore N8). Well-rated places (tier 1 and up) whose best months
@@ -881,32 +797,33 @@ export function ExploreTab({
       if (costLead.length < 12 && n < 2) { costLead.push(p); perCountry.set(p.country, n + 1); }
       else costRest.push(p);
     }
-    // Each rail carries a title that names the list and a subtitle that says
-    // how it was chosen: "The 41" was a number with no referent (P4.2).
+    // The sections (T427): a question each, no subtitle, no count. The
+    // traveller's shortlist leads when it holds anything.
     return [
+      { key: 'saved', title: t('rail.shortlist'), rows: q.saved,
+        seeAll: () => setShowFavOnly(true) },
+      { key: 'now', title: t('rail.bestIn', { month: monthName }), short: t('rail.bestIn', { month: monthName }),
+        rows: q.now, seeAll: () => { patchXf({ month, verdicts: ['2', '3'] }); } },
       { key: 'cost',
-        title: t('rail.cost', { eur: ceiling != null ? formatMoney(ceiling) : '', month: fmtMonthRanges([month]) }),
-        sub: t('rail.costSub'),
+        title: t('rail.cost', { eur: ceiling != null ? formatMoney(ceiling) : '', month: monthName }),
         short: t('rail.costShort', { eur: ceiling != null ? formatMoney(ceiling) : '' }),
         rows: [...costLead, ...costRest],
         seeAll: () => { patchXf({ budget: ceiling, month }); setSortKey('cost'); } },
-      { key: 'the43', title: t('rail.top', { n: q.the43.length }), sub: t('rail.topSub'),
-        short: t('rail.topShort'), rows: q.the43,
+      { key: 'top', title: t('rail.topRated'), short: t('rail.topRated'), rows: q.top,
         seeAll: () => patchXf({ verdicts: ['3'] }) },
-      { key: 'gems', title: t('rail.gems'), sub: t('rail.gemsSub'), rows: q.gems,
+      { key: 'hiking', title: t('rail.hiking'), short: t('rail.hiking'), rows: q.hiking,
+        seeAll: () => patchXf({ vibe: 'hiking' }) },
+      { key: 'beach', title: t('rail.beachSeason'), short: t('rail.beachSeason'), rows: q.beach,
+        seeAll: () => patchXf({ vibe: 'beach', month }) },
+      { key: 'gems', title: t('rail.gems'), short: t('rail.gems'), rows: q.gems,
         seeAll: () => setGemOnly(true) },
-      { key: 'now', title: t('rail.now'), sub: t('rail.nowSub', { month: fmtMonthRanges([month]) }), rows: q.now,
-        seeAll: () => patchXf({ month }) },
-      { key: 'bestOf', title: t('rail.bestOf'), sub: t('rail.bestOfSub'), rows: q.bestOf,
-        seeAll: () => patchXf({ badged: true }) },
-      { key: 'villages', title: t('rail.villages'), sub: t('rail.villagesSub'), rows: q.villages,
-        seeAll: () => patchXf({ kinds: ['village'], verdicts: ['1', '2', '3'] }) },
-      { key: 'nocar', title: t('rail.nocar'), sub: t('rail.nocarSub'), rows: q.nocar,
+      { key: 'nocar', title: t('rail.nocar'), short: t('rail.nocar'), rows: q.nocar,
         seeAll: () => patchXf({ nocar: true }) },
-      { key: 'quiet', title: t('rail.quiet'), sub: t('rail.quietSub'), rows: q.quiet,
+      { key: 'quiet', title: t('rail.quiet'), short: t('rail.quiet'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
     ];
-  }, [railsIdle, rows, xf.month, xf.budget, t, patchXf, setGemOnly, setSortKey]);
+  }, [railsIdle, rows, xf.month, xf.budget, travelMonth, lang, guided, favorites, t, patchXf,
+    setGemOnly, setSortKey, setShowFavOnly]);
 
   // The control bar's three instruments. The count is a measured figure,
   // so it is grouped the way the reader's locale groups thousands.
@@ -923,6 +840,22 @@ export function ExploreTab({
         <ChevronDownIcon size={14} className="xgrid-sort-chev" />
       </span>
     </label>
+  );
+
+  // The desktop switch is the kit Segmented (T427). The phone's floating
+  // switch below is redrawn with the map in T441.
+  const viewSwitch = (
+    <Segmented
+      size="sm"
+      label={t('explore.viewAria')}
+      value={view}
+      onChange={setView}
+      className="xview-seg"
+      options={[
+        { value: 'grid', label: t('explore.viewList'), icon: <ListDayIcon size={15} /> },
+        { value: 'map', label: t('explore.viewMap'), icon: <MapPinIcon size={15} /> },
+      ]}
+    />
   );
 
   const viewToggle = (cls) => (
@@ -959,20 +892,6 @@ export function ExploreTab({
   const anyActive = chips.length > 0;
   const TitleTag = isActive && !pageOver ? 'h1' : 'div';
 
-  // The count the control bar states (brief V3-1): what the view holds, from
-  // the same list the grid renders, grouped the way the reader's locale
-  // groups thousands. On the map it is what the viewport holds.
-  const countText = view === 'map'
-    ? t('explore.countMap', { n: fmtCount(gridTotal) })
-    : t(gridTotal === 1 ? 'explore.countOne' : 'explore.count', { n: fmtCount(gridTotal) });
-  // V4 (T393): a count that changes settles in place (house rule "Figure in
-  // place", settleFigure in lib/figureChange.js): one opacity dip, the box
-  // keeps its width, nothing counts up; none under reduced motion.
-  const countRef = React.useRef(null);
-  useSettledFigure(countRef, countText);
-  // The verdict seal says what a tier means; on a grid already filtered to
-  // tiers every card would wear it, so it carries nothing there.
-  const sealOn = dxf.verdicts.length === 0;
 
   // The input row (brief V3-3, house rules "Settings line", "Budget ceiling"
   // and "Month"): every input the figures and the list depend on, visible
@@ -1091,15 +1010,13 @@ export function ExploreTab({
             {/* The page's one h1, only while this tab is the one showing:
                 the tab stays mounted under Destinations, and its h1 made a
                 second one there (row T380-g). Hidden, it is a plain div. */}
-            <TitleTag className="xbar-title">
-              <span className="xbar-title-text">{t('explore.title')}</span>
-              {' '}
-              <span className="xbar-count mono" ref={countRef}>{countText}</span>
-            </TitleTag>
+            {/* No count beside the title (owner, 2026-10-13): the list is
+                the answer, and an empty one says so in words. */}
+            <TitleTag className="xbar-title">{t('explore.title')}</TitleTag>
             {isMock && <span className="explore-mock">Mock data</span>}
           </div>
           <div className="xbar-tools">
-            {viewToggle('')}
+            {viewSwitch}
             {sortSelect}
           </div>
         </div>
@@ -1108,10 +1025,6 @@ export function ExploreTab({
 
         {/* C6: active filters as removable chips, right under the bar. */}
         <FilterChips t={t} chips={chips} onClearAll={resetAll} />
-
-        {/* C8: the tiers and their live counts, folding to "Score key" once
-            read. V3: counted over the same rows as the grid and the rails. */}
-        <TierLegend data={data} rows={rows} />
 
         {/* The one community surface on a browse tab: a real count of what
             people have published, and one door. Absent entirely when
@@ -1173,7 +1086,13 @@ export function ExploreTab({
             </div>
           )}
           <div className="xcontent-main">
-            {railsIdle && <ExploreRails rails={rails} onSelect={openWithMember} t={t} />}
+            {railsIdle && (
+              <ExploreRails rails={rails} onSelect={openWithMember} t={t}
+                favorites={favSet} onToggleFav={onToggleFav} lead={isDesktop ? 4 : 3} />
+            )}
+            {railsIdle && listed.length > 0 && (
+              <h2 className="xlist-title">{t('explore.allPlaces')}</h2>
+            )}
 
             {gridTotal === 0 && (
               <div className="explore-count xempty" role="status">
@@ -1228,14 +1147,11 @@ export function ExploreTab({
               </div>
             )}
 
-            <div className={`explore-grid explore-grid--mosaic${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
-              {packed.map(({ p, span, ratio, kind }) => (
+            <div className={`xrows${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
+              {listed.map((p) => (
                 <ExploreCard
                   key={p.id}
                   p={p}
-                  span={span}
-                  ratio={ratio}
-                  kind={kind}
                   role={roleFor(p)}
                   selected={p.id === selectedId}
                   fav={favSet.has(p.id)}
@@ -1245,7 +1161,6 @@ export function ExploreTab({
                   reachMin={reachMinutes?.get(p.id) ?? null}
                   linked={view === 'map' && p.id === pinLinkId}
                   onLink={view === 'map' ? setCardLinkId : null}
-                  seal={sealOn}
                   month={dxf.month}
                 />
               ))}

@@ -35,7 +35,7 @@ async function boot(viewport) {
   await page.waitForTimeout(1800);
   await page.screenshot({ path: `shots/${OUT}-explore-desktop-2.png` });
   // hover preview on the first grid card
-  const card = page.locator('.explore-grid .xcard').first();
+  const card = page.locator('.xrows .xrow').first();
   if (await card.isVisible().catch(() => false)) {
     await card.hover();
     await page.waitForTimeout(700);

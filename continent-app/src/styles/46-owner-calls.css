@@ -29,8 +29,6 @@
   .xrail-country { min-height: 32px; }
   .xrail-country-page { min-width: 32px; min-height: 32px; }
   .xrails-all { min-height: 32px; padding: 0 8px; }
-  .xrails-arrow { width: 32px; height: 32px; }
-  .xcard-star, .xcard-info { width: 32px; height: 32px; }
   .xrail-group-body select { min-height: 32px; }
   /* The trip planner's compact chips and links. */
   .guide-recap-chip.is-link { min-height: 32px; box-sizing: border-box; }

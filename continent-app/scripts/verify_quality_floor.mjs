@@ -107,6 +107,12 @@ async function audit(page, vp, flow, name) {
       .filter(vis).filter(onScreen).filter((el) => !el.closest('.maplibregl-ctrl-attrib'));
     const tapRect = (el) => {
       const lab = el.matches('input[type="checkbox"], input[type="radio"]') ? el.closest('label') : null;
+      // The kit Card's opener stretches over the whole card with an ::after
+      // at inset 0 (T422), so its tap box is the card's (T427).
+      if (el.matches('.card.is-interactive .card-open')) {
+        const after = getComputedStyle(el, '::after');
+        if (after.content !== 'none' && after.position === 'absolute') return el.closest('.card').getBoundingClientRect();
+      }
       const r = (lab || el).getBoundingClientRect();
       const ps = getComputedStyle(el, '::before');
       if (ps.content === 'none' || ps.position !== 'absolute') return r;
@@ -612,15 +618,16 @@ async function exploreFlow(browser, vp) {
   const shot = (name) => audit(page, vp, 'explore', name);
   try {
     await open(page, '?tab=map');
-    await page.locator('.xcard, .railcard').first().waitFor({ timeout: 120000 });
+    // T427: rows for every list, kit Card tiles in the sections.
+    await page.locator('.xrow, .xtile').first().waitFor({ timeout: 120000 });
     await page.waitForTimeout(2500);
     await shot('01-idle');
     await open(page, '?tab=map&xk=village');
-    await page.locator('.xcard').first().waitFor({ timeout: 120000 });
+    await page.locator('.xrow').first().waitFor({ timeout: 120000 });
     await page.waitForTimeout(1500);
     await shot('02-filtered');
-    const info = page.locator('.xcard-info:visible').first();
-    if (await info.count()) { await info.click(); await page.waitForTimeout(700); await shot('03-preview'); await page.keyboard.press('Escape'); }
+    // The preview opens on hover (T427 removed the info button from the photo).
+    if (!vp.mobile) { await page.locator('.xrow').first().hover(); await page.waitForTimeout(700); await shot('03-preview'); await page.keyboard.press('Escape'); }
     await open(page, '?tab=map&xw=map');
     await page.locator('.maplibregl-canvas').first().waitFor({ timeout: 120000 }).catch(() => {});
     await page.waitForTimeout(4000);
@@ -669,8 +676,8 @@ const PAGES = {
   },
   destination: async (page) => {
     await open(page, '?tab=map');
-    await page.locator('.xcard').first().waitFor({ timeout: 120000 });
-    await visible(page, '.xcard-hit').click();
+    await page.locator('.xrow').first().waitFor({ timeout: 120000 });
+    await visible(page, '.xrow-hit').click();
     await page.locator('.destp-grid').first().waitFor({ timeout: 60000 });
     await page.waitForTimeout(3000);
   },
