@@ -2,6 +2,10 @@
 // and that they filter. Self-hosts `vite preview` on 4198 unless argv[2]
 // provides a URL. Run from continent-app/:  node scripts/verify_category_rail.mjs
 //
+// T440 (2026-10-13): the trip styles are kit Tiles at the top of the rail,
+// and the counts they used to move are gone (owner: no counts), so a filter
+// "bites" when the first names on the list change.
+//
 // T383 (design wave V3, 2026-10-08) updated every check in this harness.
 // It was written for the trip styles as a strip of tiles of their own (at the
 // top of the phone toolbar, two abreast above the filter rail on desktop),
@@ -62,10 +66,10 @@ const seed = (page) => page.addInitScript(() => {
 await ensureServer();
 const browser = await chromium.launch();
 
-// The trip styles are the rail's first group; its legend reads "Trip style".
-const styleGroup = (page, scope) => page.locator(`${scope} details.xrail-group`, {
-  has: page.locator('.xrail-styles'),
-}).first();
+// The trip styles are the rail's first section: kit Tiles (T440).
+const styleGroup = (page, scope) => page.locator(`${scope} .xrail-tiles`).first();
+// No counts on the page any more: a filter bites when the list's first names change.
+const firstNames = async (page) => (await page.locator('.xrow .xrow-name').allInnerTexts()).slice(0, 10).join('|');
 
 // ── Phone pass ──────────────────────────────────────────────────────────────
 {
@@ -83,61 +87,42 @@ const styleGroup = (page, scope) => page.locator(`${scope} details.xrail-group`,
   await page.locator('.xrow').first().waitFor({ timeout: 90000 });
   await page.waitForTimeout(1500);
 
-  // T383: the phone's top row is search and Filters only; the styles left it
-  // (they held a full row of the first screen).
   check('phone: no trip-style strip in the top row',
-    await page.locator('.explore-filterbar .xrail-styles, .explore-toolbar .kind-rail').count() === 0);
-
+    await page.locator('.explore-filterbar .xrail-tiles, .explore-toolbar .kind-rail').count() === 0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   check('phone: no horizontal page overflow', overflow <= 0, `delta=${overflow}px`);
 
-  // The sheet's primary action carries the live count, so it is the cheapest
-  // honest read of "did the filter bite".
   const openSheet = async () => {
-    // The button is the shared .places-filter-btn (it was .explore-filter-btn).
-    await page.locator('.explore-filterbar .places-filter-btn').first().click();
+    await page.locator('.explore-filterbar .xfilters-btn').first().click();
     await page.locator('.fsheet-explore').waitFor({ timeout: 15000 });
     await page.waitForTimeout(500);
   };
-  const closeSheet = async () => {
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(500);
-  };
-  const sheetCount = async () => Number(((await page.locator('.fsheet-apply').innerText())
-    .match(/[\d.,]{2,}/) || ['0'])[0].replace(/[.,]/g, ''));
-
+  const before = await firstNames(page);
   await openSheet();
   const group = styleGroup(page, '.fsheet-explore');
-  check("phone: the styles are the sheet's first group",
-    await page.locator('.fsheet-explore details.xrail-group').first().locator('.xrail-styles').count() === 1);
-  check('phone: the style group starts open', (await group.getAttribute('open')) !== null);
-  const chipCount = await group.locator('.xrail-toggle').count();
-  check('phone: nine trip styles', chipCount === 9, `found ${chipCount}`);
-  // T383: the house tap target (--tap, 44 px) on a coarse pointer, up from
-  // the 36 px the tiles held.
-  const chipBox = await group.locator('.xrail-toggle').first().boundingBox();
-  check('phone: style toggle height >= 44px', !!chipBox && chipBox.height >= 43.5, `h=${chipBox?.height}`);
+  check("phone: the styles are the sheet's first section",
+    await page.locator('.fsheet-explore .xrail-sec').first().locator('.xrail-tiles').count() === 1);
+  const tileCount = await group.locator('.ui-tile').count();
+  check('phone: nine trip styles', tileCount === 9, `found ${tileCount}`);
+  const tileBox = await group.locator('.ui-tile').first().boundingBox();
+  check('phone: style tile height >= 44px', !!tileBox && tileBox.height >= 43.5, `h=${tileBox?.height}`);
+  check('phone: the apply button names no count',
+    !/\d/.test(await page.locator('.fsheet-apply').innerText()));
   await page.screenshot({ path: 'shots/category-rail-phone-off.png' });
-  const before = await sheetCount();
 
-  // Toggle Beach and confirm the filter bites: the toggle turns on, the shared
-  // state moves (the URL carries it), and the count drops.
-  const beach = group.locator('.xrail-toggle', { hasText: 'Beach' }).first();
+  const beach = group.locator('.ui-tile', { hasText: 'Beach' }).first();
   await beach.click();
   await page.waitForTimeout(1500);
   check('phone: Beach reports pressed', (await beach.getAttribute('aria-pressed')) === 'true');
   check('phone: the choice reaches shared state', /[?&]tk=beach/.test(page.url()), page.url().slice(-40));
-  const after = await sheetCount();
-  check('phone: the style narrows the board', after > 0 && after < before, `${before} -> ${after}`);
-  await closeSheet();
-  // T383: the opposite of the old check. The styles are in the sheet now, so
-  // the Filters badge counts them like everything else it holds.
-  const badge = await page.locator('.explore-filterbar .places-filter-btn .filter-tray-badge')
-    .textContent().catch(() => null);
-  check('phone: the Filters badge counts the style', badge === '1', `badge=${badge}`);
-  // T383: a removable chip under the control bar replaces the strip's own
-  // clear chip, and removing it resets the style.
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(800);
+  const after = await firstNames(page);
+  check('phone: the style narrows the list', after !== '' && after !== before, `${before.slice(0, 30)} -> ${after.slice(0, 30)}`);
+  // The Filters door counts the traveller's own active filters.
+  const badge = await page.locator('.explore-filterbar .xfilters-btn .xfilters-n').textContent().catch(() => null);
+  check('phone: the Filters button counts the style', badge === '1', `badge=${badge}`);
   const chip = page.locator('.xchip:not(.xchip-clear)', { hasText: 'Beach' });
   check('phone: the style shows as a chip', await chip.count() === 1);
   await page.screenshot({ path: 'shots/category-rail-phone-on.png' });
@@ -162,33 +147,26 @@ const styleGroup = (page, scope) => page.locator(`${scope} details.xrail-group`,
   await page.locator('.xrow').first().waitFor({ timeout: 90000 });
   await page.waitForTimeout(1500);
 
-  // T383: the styles are the left panel's first fold (were a tile grid two
-  // abreast above the rail), never in the top bar.
   const group = styleGroup(page, '.explore-side');
-  check("desktop: the styles are the panel's first group",
-    await page.locator('.explore-side details.xrail-group').first().locator('.xrail-styles').count() === 1);
-  check('desktop: not in the top bar', await page.locator('.top-bar .xrail-styles').count() === 0);
-  check('desktop: nine trip styles', await group.locator('.xrail-toggle').count() === 9);
+  check("desktop: the styles are the panel's first section",
+    await page.locator('.explore-side .xrail-sec').first().locator('.xrail-tiles').count() === 1);
+  check('desktop: not in the top bar', await page.locator('.top-bar .xrail-tiles').count() === 0);
+  check('desktop: nine trip styles', await group.locator('.ui-tile').count() === 9);
   check("desktop: the phone's top row stays folded", await page.locator('.explore-filterbar').isHidden());
   check('desktop: the search rides in the header',
     await page.locator('.header-search-slot .results-search-input').isVisible().catch(() => false));
 
-  const count = async () => Number((await page.locator('.xbar .xbar-count').innerText()).replace(/\D/g, ''));
-  const before = await count();
-  await group.locator('.xrail-toggle', { hasText: 'Beach' }).first().click();
+  // Scroll the rails away so the list's first names are the filtered list's.
+  const before = await firstNames(page);
+  await group.locator('.ui-tile', { hasText: 'Beach' }).first().click();
   await page.waitForTimeout(1200);
-  const after = await count();
-  check('desktop: the style narrows the count', after > 0 && after < before, `${before} -> ${after}`);
-  await page.locator('.explore-side .side-clear').click();
+  const after = await firstNames(page);
+  check('desktop: the style narrows the list', after !== '' && after !== before, `${before.slice(0, 30)} -> ${after.slice(0, 30)}`);
+  await page.locator('.explore-side .xrail-clear').click();
   await page.waitForTimeout(1000);
-  check('desktop: Clear all resets the style', await group.locator('.xrail-toggle.on').count() === 0);
+  check('desktop: Clear all resets the style', await group.locator('.ui-tile.is-selected').count() === 0);
 
   await page.screenshot({ path: 'shots/category-rail-desktop.png' });
-
-  // The Best time leg is gone: it walked the tabbed DetailPanel, and that
-  // component is imported nowhere any more (the Explore hand-off opens the
-  // ExplorePanel, whose when-to-go section verify_explore.mjs covers).
-
   check('desktop: no console errors', errors.length === 0, errors.slice(0, 3).join(' | '));
   await page.close();
 }

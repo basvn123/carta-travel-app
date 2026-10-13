@@ -1418,7 +1418,10 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T439-a | T439 | Native review of the 20 vibe labels and 40 area names T439 wrote in nl, de, fr, es and it (data in public/search/guided.json, written in VIBES and AREAS of pipeline/guided_search_layer.py) | user | open |  |
 | T439-b | T439 | pipeline/guided_search_layer.py is Manual and laptop-only; run it after every catalogue ingest or new places have no vibe in search (consider a reminder in run_pipeline.py) | next task | open |  |
 | T439-c | T439 | Golden set 49 of 72: equally strong matches are ordered by rating; T442 may break the tie by fame and must measure against the same golden set without editing it | next task | open | T442 |
-| T427-a | T427 | Explore input row (budget, month, no car, shortlist) and the filter rail keep their old controls and the tab's last 14 raw buttons; T440 moves them onto the kit and into the rail | next task | open | T440 |
+| T427-a | T427 | Explore input row (budget, month, no car, shortlist) and the filter rail keep their old controls and the tab's last 14 raw buttons; T440 moves them onto the kit and into the rail | next task | closed by T440 | T440 |
 | T427-b | T427 | A Recently viewed section on Explore needs a write point where a destination is opened (DestinationPage, outside Explore) | next task | open |  |
 | T427-c | T427 | The Explore hover preview still shows CostSummary's compact receipt with its source words; T429 cleans the shared receipt | next task | open | T429 |
 | T427-d | T427 | GuidesStrip on Explore states a count (N guides published by travellers); remove with the T443 count sweep | next task | open | T443 |
+| T440-a | T440 | scripts/verify_filter_sheet.mjs is an older Explore sheet harness superseded by verify_explore; it still looks for facet chips Explore no longer has; retire or rewrite with the Destinations migration | next task | open | T428 |
+| T440-b | T440 | Journey page cost-bar segment is a 41 x 44 px phone target (quality floor, pages flow); predates T440, belongs to the trips migration | next task | open | T431 |
+| T440-c | T440 | Explore keeps 4 raw buttons: the row opener (hover preview), the search clear (T442) and the floating List/Map switch (T441) | next task | open | T441, T442 |

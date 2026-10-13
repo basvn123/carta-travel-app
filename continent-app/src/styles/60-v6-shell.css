@@ -831,3 +831,38 @@ html.kbd-open .bottom-nav { display: none; }
   .app-header { padding-left: var(--space-6); padding-right: var(--space-6); }
   .settings-line { padding-left: var(--space-6); padding-right: var(--space-6); }
 }
+
+/* The settings line as a booking bar (T440, the owner's review: the same
+   style as the rest, spread across the width). From 769 px origin, dates,
+   people and Lifestyle are equal segments, label over value, hairlines
+   between them; language and Prices in EUR sit compact at the end. A phone
+   keeps the one-line face that drops parts from the left. */
+@media (min-width: 769px) {
+  .settings-line-parts { flex: 1 1 auto; }
+  .settings-line-parts > .settings-slot { flex: 1 1 0; min-width: 0; }
+  .settings-line-parts > .settings-slot-language { flex: 0 0 auto; }
+  .settings-line-parts > .settings-slot .origin-picker.is-settings { flex: 1 1 auto; min-width: 0; }
+  .settings-line .settings-part {
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    min-height: 52px;
+    padding: var(--space-2) var(--space-4);
+    border-radius: 0;
+    text-align: left;
+  }
+  .settings-line .settings-part-label { font-size: var(--text-caption); line-height: var(--leading-ui); }
+  .settings-line .settings-part-value {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: var(--text-body);
+    font-weight: 600;
+    line-height: var(--leading-ui);
+    text-overflow: ellipsis;
+  }
+  .settings-line-parts > .settings-slot:first-child .settings-part { padding-left: 0; }
+  .settings-currency { flex: none; padding: 0 0 0 var(--space-4); }
+}

@@ -5545,4 +5545,13 @@ export const it = {
   "rail.beachSeason": "Località di mare in stagione",
   "rail.shortlist": "I tuoi preferiti",
   "explore.allPlaces": "Tutti i luoghi",
+  // Explore filter rail (T440).
+  "filter.ratingAtLeast": "{band} e oltre",
+  "filter.ratingAny": "Tutte",
+  "filter.budget": "Budget al giorno",
+  "filter.month": "Mese",
+  "filter.shortlistOnly": "Solo i miei preferiti",
+  "filter.goodToKnow": "Buono a sapersi",
+  "filter.countrySearch": "Cerca un paese",
+  "filter.showPlaces": "Mostra i luoghi",
 };

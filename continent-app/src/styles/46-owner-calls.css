@@ -26,10 +26,7 @@
    device keeps --tap through the phone rules above, so this stays off any
    viewport the phone layout owns. */
 @media (pointer: fine) and (min-width: 769px) {
-  .xrail-country { min-height: 32px; }
-  .xrail-country-page { min-width: 32px; min-height: 32px; }
   .xrails-all { min-height: 32px; padding: 0 8px; }
-  .xrail-group-body select { min-height: 32px; }
   /* The trip planner's compact chips and links. */
   .guide-recap-chip.is-link { min-height: 32px; box-sizing: border-box; }
   .wtrip-len { min-width: 32px; min-height: 32px; }

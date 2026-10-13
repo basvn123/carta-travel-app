@@ -178,15 +178,15 @@ try {
     await page.locator('.xbar .xview-seg [role="radio"]').count() === 2
     && await page.locator('.xbar .xgrid-sort select').isVisible());
   check('no second results header mid-page', await page.locator('.xgrid-head').count() === 0);
-  // T383 (V3): six folds, not five. The trip styles left their own tile
-  // grid and became the rail's first group, so they make chips and reset
-  // with the other filters (brief V3-7).
-  check('the rail groups are folds', await page.locator('.explore-side details.xrail-group').count() === 6);
-  // T383 (V3): the input row carries Lifestyle, the budget ceiling, the
-  // month, No car needed and the shortlist, each showing its value.
-  check('the input row shows the inputs the figures depend on',
-    await page.locator('.xinputs select').count() === 2
-    && await page.locator('.xinputs .xinput--toggle').count() === 2);
+  // T440: the rail is built from the kit: trip-type tiles, the budget and
+  // the month as labelled selects (moved in from the row above the list),
+  // one rating choice row, switches, and three quiet folds that start closed.
+  check('the rail carries tiles, selects, a rating row and switches',
+    await page.locator('.explore-side .xrail-tiles .ui-tile').count() === 9
+    && await page.locator('.explore-side .xrail-pair select').count() === 2
+    && await page.locator('.explore-side .xrail-rating [role="radio"]').count() === 4
+    && await page.locator('.explore-side .xrail-switches [role="switch"]').count() >= 6);
+  check('no input row above the list any more', await page.locator('.xinputs').count() === 0);
   // Every section tile carries the day cost (brief V3-5), on the kit Card.
   const railCards = await page.locator('.xtile').count();
   const railPriced = await page.locator('.xtile .xprice').count();
@@ -194,8 +194,9 @@ try {
     `${railPriced} of ${railCards}`);
   check('"See all" carries no count',
     (await page.locator('.xrails-all').allInnerTexts()).every((s) => !/\d/.test(s)));
-  check('the first two folds open, the rest closed',
-    await page.locator('.explore-side details.xrail-group[open]').count() === 2);
+  check('the three long lists start folded',
+    await page.locator('.explore-side details.xrail-fold').count() === 3
+    && await page.locator('.explore-side details.xrail-fold[open]').count() === 0);
   // T427: four sections on a desktop, then one row of buttons; no subtitle
   // and no position figure on any of them.
   check('at most four sections lead the page', await page.locator('.xrails-rail').count() <= 4);
@@ -209,15 +210,15 @@ try {
   check('nothing sits on the row photograph',
     await page.locator('.xrow').first().locator('.xrow-media > :not(img)').count() === 0);
   const countBefore = await firstNames();
-  // T383 (V3): "Size of place" (was "Kind of place") starts closed, so the
-  // fold is opened before its Village toggle is pressed.
-  await page.locator('.explore-side .xrail-legend', { hasText: /Size of place/ }).click();
+  // "Size of place" starts closed, so the fold is opened before its Village
+  // chip is pressed.
+  await page.locator('.explore-side .xrail-fold-head', { hasText: /Size of place/ }).click();
   await page.waitForTimeout(300);
-  await page.locator('.explore-side .xrail-toggle', { hasText: /^Village$/ }).first().click();
+  await page.locator('.explore-side .xrail-fold .ui-chip', { hasText: /^Village$/ }).first().click();
   await page.waitForTimeout(700);
   const countAfter = await firstNames();
-  check('the open fold says how many are active',
-    (await page.locator('.explore-side .xrail-legend-n').first().innerText()).trim() === '1');
+  check('the fold says how many are active',
+    (await page.locator('.explore-side .xrail-fold-head .ui-chip-count').first().innerText()).trim() === '1');
   check('a rail toggle narrows the grid live', countBefore !== '' && countAfter !== countBefore,
     `${countBefore.slice(0, 40)} -> ${countAfter.slice(0, 40)}`);
   check('the active filter shows as a chip', await page.locator('.xchip', { hasText: /Village/ }).count() === 1);
@@ -305,8 +306,8 @@ try {
   // On a phone the filter rail sits behind the same Filters button
   // Destinations uses, and opens as the shared sheet (the desktop rail is
   // always on screen, so this is the one place a sheet is right).
-  check('phone: the Filters button is on the bar', await page.locator('.explore-filterbar .places-filter-btn').isVisible());
-  await page.locator('.explore-filterbar .places-filter-btn').click();
+  check('phone: the Filters button is on the bar', await page.locator('.explore-filterbar .xfilters-btn').isVisible());
+  await page.locator('.explore-filterbar .xfilters-btn').click();
   await page.waitForTimeout(700);
   check('phone: the button opens the same rail in a sheet', await page.locator('.fsheet-explore .xrail').isVisible());
   check('phone: the sheet is a labelled dialog', await page.locator('.fsheet-explore[role="dialog"][aria-modal="true"]').count() === 1);

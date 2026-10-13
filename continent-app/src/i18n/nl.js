@@ -5545,4 +5545,13 @@ export const nl = {
   "rail.beachSeason": "Badplaatsen in het seizoen",
   "rail.shortlist": "Jouw bewaarde plekken",
   "explore.allPlaces": "Alle plekken",
+  // Explore filter rail (T440).
+  "filter.ratingAtLeast": "{band} en hoger",
+  "filter.ratingAny": "Alle",
+  "filter.budget": "Budget per dag",
+  "filter.month": "Maand",
+  "filter.shortlistOnly": "Alleen mijn bewaarde",
+  "filter.goodToKnow": "Goed om te weten",
+  "filter.countrySearch": "Zoek een land",
+  "filter.showPlaces": "Toon plekken",
 };

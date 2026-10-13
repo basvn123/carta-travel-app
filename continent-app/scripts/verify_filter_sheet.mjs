@@ -97,7 +97,9 @@ const sheetBox = await sheet.boundingBox();
 check('action bar is visible without scrolling', !!footBox
   && footBox.y + footBox.height <= sheetBox.y + sheetBox.height + 1);
 const applyText = await page.locator('.fsheet-apply').innerText();
-check('primary action carries the live count', /\d/.test(applyText) && /show/i.test(applyText),
+// T440 (owner, 2026-10-13): no catalogue counts as page furniture; the
+// primary says what it does, and an empty result still says so in words.
+check('primary action names no count', !/\d/.test(applyText) && /show/i.test(applyText),
   applyText.replace(/\n/g, ' '));
 check('clear all is present', await page.locator('.fsheet-clear').isVisible());
 
@@ -242,7 +244,7 @@ const before = await page.locator('.fsheet-apply').innerText();
 await page.locator('.fsheet .fchip', { hasText: 'UNESCO' }).click();
 await page.waitForTimeout(1200);
 const after = await page.locator('.fsheet-apply').innerText();
-check('the count reacts to a filter', before !== after, `${before.split('\n')[0]} -> ${after.split('\n')[0]}`);
+check('the primary keeps its words as a filter changes', before === after && !/\d/.test(after), `${before.split('\n')[0]} -> ${after.split('\n')[0]}`);
 check('an active filter is marked in the accent',
   await page.locator('.fsheet .fchip.on.narrow').count() >= 1);
 await page.screenshot({ path: 'shots/filter-sheet-active.png' });

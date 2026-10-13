@@ -6,7 +6,7 @@ import { count } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useAnchoredSheet } from './sheetAnchor.js';
 import { durationMs } from '../lib/motion.js';
-import { useSettledFigure } from '../lib/figureChange.js';
+import { Button } from '../components/ui/index.js';
 
 /**
  * The Destinations filters, in the shape Explore already uses: one modal
@@ -69,11 +69,6 @@ export function PlacesFilterSheet({
   }, []);
   React.useEffect(() => () => window.clearTimeout(closeTimer.current), []);
 
-  // "Show N places" changes as chips are toggled; the figure settles in
-  // place with one opacity dip rather than jumping (figureChange.js).
-  const countRef = React.useRef(null);
-  useSettledFigure(countRef, resultCount);
-
   // Focus trap + Escape, the same contract the Explore sheet keeps.
   React.useEffect(() => {
     const opener = document.activeElement;
@@ -128,7 +123,6 @@ export function PlacesFilterSheet({
     if (dy > 90) onClose();
   };
 
-  const countHalves = (resultCount === 1 ? t('filter.showOne') : t('filter.showN')).split('{n}');
 
   return createPortal(
     <div
@@ -230,29 +224,16 @@ export function PlacesFilterSheet({
           <p className="fsheet-none" role="status">{t('filter.noneLine')}</p>
         )}
         <div className={`fsheet-foot ${resultCount === 0 ? 'is-empty' : ''}`}>
-          <button
-            type="button"
-            className="fsheet-clear"
-            onClick={resetAll}
-            disabled={activeFilters === 0}
-          >
+          {/* T440: kit buttons, and no count on the apply button (owner,
+              2026-10-13: no catalogue counts as page furniture). An empty
+              result still says so in words. */}
+          <Button variant="secondary" className="fsheet-clear" onClick={resetAll}
+            disabled={activeFilters === 0}>
             {t('filter.clearAll')}
-          </button>
-          <button
-            type="button"
-            className={`fsheet-apply ${resultCount === 0 ? 'is-empty' : ''}`}
-            onClick={onClose}
-          >
-            {resultCount === 0 ? (
-              <span className="fsheet-apply-main">{t('filter.showNone')}</span>
-            ) : (
-              <span className="fsheet-apply-main">
-                {countHalves[0]}
-                <span className="fsheet-apply-count" ref={countRef}>{count(resultCount)}</span>
-                {countHalves[1]}
-              </span>
-            )}
-          </button>
+          </Button>
+          <Button variant="primary" className={`fsheet-apply${resultCount === 0 ? ' is-empty' : ''}`} onClick={onClose}>
+            {resultCount === 0 ? t('filter.showNone') : t('filter.showPlaces')}
+          </Button>
         </div>
       </div>
     </div>,

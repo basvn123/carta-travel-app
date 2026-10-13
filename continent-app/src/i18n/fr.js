@@ -5545,4 +5545,13 @@ export const fr = {
   "rail.beachSeason": "Stations balnéaires de saison",
   "rail.shortlist": "Votre sélection",
   "explore.allPlaces": "Tous les lieux",
+  // Explore filter rail (T440).
+  "filter.ratingAtLeast": "{band} et plus",
+  "filter.ratingAny": "Toutes",
+  "filter.budget": "Budget par jour",
+  "filter.month": "Mois",
+  "filter.shortlistOnly": "Seulement ma sélection",
+  "filter.goodToKnow": "Bon à savoir",
+  "filter.countrySearch": "Chercher un pays",
+  "filter.showPlaces": "Voir les lieux",
 };
