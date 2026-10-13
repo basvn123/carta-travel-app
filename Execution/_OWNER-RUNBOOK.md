@@ -13,6 +13,8 @@ owner row from 4 October appears below under its id, so nothing was dropped.
   pushed) and the build is on the preview https://design.carta-app.pages.dev.
   Your steps for them are the new block L: ship it (L1), housekeeping (L2), the
   decisions (L3), one real-phone pass (L4) and the translation review (L5).
+  Later the same day the V6 build was deployed to production (deploy d573ebf2);
+  L1.1 turned out not to be needed.
 - **2026-10-07 evening (T413).** Blocks C and D done, E nearly done. A catalog probe
   (`Execution/P11/T362-live-migration-probe.sql` and `-2.sql`) showed that 017 to 024,
   028 to 030 and 032 to 043 were already live, so stage 2 shrank to seven pastes: the owner
@@ -759,18 +761,24 @@ below is one or more rows in `_OPEN.md`; the row wins on detail.
 
 ## L1. Ship it (about 1 hour, in this order)
 
-- [ ] **L1.1 Data push (T412-b).** From `continent-app/`, with the Cloudflare and
-  `RCLONE_CONFIG_R2_*` variables exported: `node scripts/r2/push-data.mjs --live`
-  (phase 1 only). Check: `curl -sI https://data.carta-europetravel.com/data/trails/stubs/AL.json`
-  answers 200, then spot check two other country stubs. Do NOT add `--prune`
-  until T413-a is fixed: it would delete `data/status.json`.
+- [x] **L1.1 Data push (T412-b): not needed.** Checked 2026-10-13: the 404 on
+  `data/trails/stubs/AL.json` is the designed answer, not missing data. No country
+  has a stub file (AL, GB, FR, IT, ES, DE, AT, CH and NO all answer 404), because
+  `pipeline/trails/export_stubs.py` has never run, and `src/lib/stubs.js` reads a
+  404 as "no stubs". The stubs appear only after a data-lane run of that script
+  and then a push. The R2 rclone keys were not on the laptop, so no push ran.
 - [ ] **L1.2 Look at the preview once more** on a phone and a laptop: Explore, a
   town, a trail, a journey, both planners, My trips.
-- [ ] **L1.3 Deploy production (T412-a, block C steps C3 and C4).**
-  `npm run build:pages`, then
-  `npx wrangler pages deploy dist --project-name carta-app --branch main`,
-  then the C4 checks. Merging or pushing to `main` deploys nothing: production
-  is a direct upload (T293). Delete `dist/` and `dist-data/` afterwards.
+- [x] **L1.3 Deploy production (T412-a): done 2026-10-13.** Built from the main
+  checkout at master 5f92632 with `VITE_E2E_SEAMS` empty (no test seams shipped),
+  `npm run build:pages` (94 files, PASS), then
+  `npx wrangler pages deploy dist --project-name carta-app --branch main`
+  (deploy d573ebf2). Checked: www.carta-europetravel.com and carta-app.pages.dev
+  serve the new bundle index-Dxu_mPph.js, the root and `/about/numbers` answer
+  200, an unknown path 404, HSTS, CSP and X-Frame-Options are present.
+  `dist/` and `dist-data/` deleted. Merging or pushing to `main` deploys
+  nothing: production is a direct upload (T293). Still yours: the C4 checks only
+  a person can do (share card previews, a real phone).
 - [ ] **L1.4 Push (optional).** `git push origin main`, so GitHub and a future
   box clone see the design waves.
 - Known after the deploy: the destination forecast stays blocked until
