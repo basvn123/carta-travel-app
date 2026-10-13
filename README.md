@@ -58,11 +58,12 @@ see [SCHEMA.md](docs/SCHEMA.md)).
 │   └── notebooks/          The original v1 notebook pipeline (schema v7 era)
 │
 ├── cache/                  Harvest caches (LFS-tracked; secrets gitignored)
-├── docs/                   Product + engineering docs (1.CARTA.md overview,
-│                           2.SIGNIFICANCE.md, SCHEMA.md, ESTIMATION.md,
-│                           TRAILS.md + TRAILS_DATA_QUALITY.md (the trails
-│                           quality contract),
-│                           PRICEMAP_CHUNKS.md, plans, ToS/license ledger)
+├── docs/                   All documentation; start at docs/README.md
+│                           (data reference in docs/ itself, plus product/,
+│                           operations/, legal/, launch/, design-v6/, tos/
+│                           and archive/ for finished plans)
+├── Next steps carta/       Manual steps, the to-do list and the log of every
+│                           task (1-manual-steps, 2-to-do, 3-waves)
 ├── logs/                   Pipeline logs + run state (gitignored)
 └── supabase/               SQL schema + migrations (RLS on every table)
 ```

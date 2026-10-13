@@ -126,4 +126,4 @@ echo
 echo "Wrote $TARGET ($SIZE bytes)"
 echo "Checksum in $TARGET.sha256"
 echo
-echo "NOT DONE YET: copy both files off this laptop (see docs/BACKUP.md)."
+echo "NOT DONE YET: copy both files off this laptop (see docs/operations/BACKUP.md)."

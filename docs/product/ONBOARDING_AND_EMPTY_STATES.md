@@ -1,6 +1,6 @@
 # The first ninety seconds, and every empty state
 
-Design document, task T211 (mind-map M11). Status: awaiting owner approval. No code ships from this document until the owner says so. It is written under the carta-design skill, PRODUCT.md and DESIGN.md, and where it disagrees with those, those win. Its sibling is `docs/FIRST_RUN_RESULT.md` (T187, revised by T211), which designs the moment the first priced total appears; this page designs the ninety seconds before it and every screen that has nothing to show.
+Design document, task T211 (mind-map M11). Status: awaiting owner approval. No code ships from this document until the owner says so. It is written under the carta-design skill, PRODUCT.md and DESIGN.md, and where it disagrees with those, those win. Its sibling is `docs/product/FIRST_RUN_RESULT.md` (T187, revised by T211), which designs the moment the first priced total appears; this page designs the ninety seconds before it and every screen that has nothing to show.
 
 Two facts set the frame. Carta does not price flights (owner decision of 2026-10-02, T272; the last Carta flight figure left the screens in T273). The departure airport is therefore no longer the hinge the mind map assumed; what makes a number personal today is the group size, the stay style and the lifestyle, and the only flight figure in a total is one the traveller typed. And the launch speaks to hikers first (T203, confirmed in T275): the first screen says its first sentence to someone who travels to a town to walk from it.
 
@@ -36,7 +36,7 @@ What the visitor is not shown on this page in the first run: the rating system, 
 
 ### Second 40 to 90: the first priced total
 
-"Price a week here" opens the first-run result designed in `docs/FIRST_RUN_RESULT.md`: the receipt for 7 nights and the default group, every line a ground cost with its provenance row, the sum in mono, the footer showing what one changed input does, the orientation line saying the defaults were Carta's, and one primary, "Set your dates". The receipt reaches the visitor without a question asked. That is the done condition of the mind map ("reaches a priced result without a dead end"), met in two taps.
+"Price a week here" opens the first-run result designed in `docs/product/FIRST_RUN_RESULT.md`: the receipt for 7 nights and the default group, every line a ground cost with its provenance row, the sum in mono, the footer showing what one changed input does, the orientation line saying the defaults were Carta's, and one primary, "Set your dates". The receipt reaches the visitor without a question asked. That is the done condition of the mind map ("reaches a priced result without a dead end"), met in two taps.
 
 Under the receipt sits the flight door. One sentence, "Carta does not price flights, so none is in this total. Add what you paid and it counts.", and one secondary button, "Add your fare". It is the existing `trip.flightNotPriced` sentence and the existing `trip.addOwnFare` button, already in six catalogues since T273, moved to the receipt the visitor meets first.
 
@@ -278,4 +278,4 @@ No hex anywhere; every colour is a token. No gradient, no shadow on the module, 
 
 ## The approval
 
-The owner approves this page, and in doing so decides three things it depends on: that the Destinations tab opens on walks instead of journey styles (Part 1, second 0 to 10); that the default dates come from the calendar and not from the fare window; and that the flight door on the first receipt is the only place the airport is asked. T099 builds the first-run path and `docs/FIRST_RUN_RESULT.md`; the empty states are a separate implementation task (register row T211-b) that reads this page's tables.
+The owner approves this page, and in doing so decides three things it depends on: that the Destinations tab opens on walks instead of journey styles (Part 1, second 0 to 10); that the default dates come from the calendar and not from the fare window; and that the flight door on the first receipt is the only place the airport is asked. T099 builds the first-run path and `docs/product/FIRST_RUN_RESULT.md`; the empty states are a separate implementation task (register row T211-b) that reads this page's tables.

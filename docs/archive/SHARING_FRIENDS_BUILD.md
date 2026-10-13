@@ -1,6 +1,6 @@
 # Sharing and friends: step by step build plan
 
-Companion to `docs/SHARING_FRIENDS_PLAN.md`, which is the research. This is
+Companion to `docs/archive/SHARING_FRIENDS_PLAN.md`, which is the research. This is
 the running order: 18 steps, each one a single Claude Code session, each one
 committable and verifiable on its own.
 
@@ -89,7 +89,7 @@ Jonas" subline, and `crewInitials(crew)` for an avatar stack.
 a scratch node script, and nothing else in the app has changed.
 
 ```
-Read docs/SHARING_FRIENDS_BUILD.md and docs/SHARING_FRIENDS_PLAN.md first.
+Read docs/archive/SHARING_FRIENDS_BUILD.md and docs/archive/SHARING_FRIENDS_PLAN.md first.
 
 Implement Step 1.1 only: create src/auth/tripCrew.js, the canonical model for
 the people on a trip.
@@ -122,7 +122,7 @@ derive it for back compat).
 an old trip saved before this step still shows its companions.
 
 ```
-Implement Step 1.2 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 1.2 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Move the companion rows in continent-app/src/auth/PastTripForm.jsx (lines ~498
 to 517, saved at ~316) onto the crew model from src/auth/tripCrew.js.
@@ -158,7 +158,7 @@ also keeps the panel clear of the middot ban that its sublines are under.
 Visited, and `TripMemoryView` shows the same names.
 
 ```
-Implement Step 1.3 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 1.3 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Show the trip crew on the cards in continent-app/src/auth/SavedTripsPanel.jsx
 and in TripMemoryView.jsx (line ~132 already joins a companion list, point it
@@ -188,7 +188,7 @@ the ledger, and existing ledgers with recorded expenses still balance
 correctly (the indices must not shift).
 
 ```
-Implement Step 1.4 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 1.4 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Point continent-app/src/planner/ExpenseLedger.jsx at readCrew/writeCrew from
 src/auth/tripCrew.js instead of its own extras.people string array.
@@ -273,8 +273,8 @@ and `select * from get_shared_trip('<token>')` returns a trip with no expense
 rows in it.
 
 ```
-Implement Step 2.1 only, per docs/SHARING_FRIENDS_BUILD.md and section 3
-Stage 1 of docs/SHARING_FRIENDS_PLAN.md.
+Implement Step 2.1 only, per docs/archive/SHARING_FRIENDS_BUILD.md and section 3
+Stage 1 of docs/archive/SHARING_FRIENDS_PLAN.md.
 
 Write supabase/migrations/009_trip_shares.sql. Do NOT run supabase db push,
 the live project is ntssxktaduxzpsmejwyv and migrations there are applied by
@@ -304,7 +304,7 @@ component at the top of that file, put it there).
 it listed, and revoke it.
 
 ```
-Implement Step 2.2 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 2.2 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Create continent-app/src/auth/tripShares.js (create, list, revoke against the
 trip_shares table) and add a "Share this trip" entry to the CardMenu popover
@@ -333,7 +333,7 @@ ignore hashes that carry Supabase auth params.
 the trip and offers no edit controls.
 
 ```
-Implement Step 2.3 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 2.3 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Teach continent-app/src/App.jsx to open a #shared=<token> link, alongside the
 existing #trip= reader at line ~226. Read src/lib/shareLink.js first: match
@@ -406,8 +406,8 @@ Table level select stays self only for now; Phase 4 widens it to accepted
 friends.
 
 ```
-Implement Step 3.1 only, per docs/SHARING_FRIENDS_BUILD.md and section 3
-Stage 0 of docs/SHARING_FRIENDS_PLAN.md.
+Implement Step 3.1 only, per docs/archive/SHARING_FRIENDS_BUILD.md and section 3
+Stage 0 of docs/archive/SHARING_FRIENDS_PLAN.md.
 
 Write supabase/migrations/010_profiles.sql. Do NOT run supabase db push, write
 the file and tell me to paste it into the SQL editor.
@@ -435,7 +435,7 @@ regex as the check constraint, and report a taken handle without revealing
 who took it.
 
 ```
-Implement Step 3.2 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 3.2 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Create continent-app/src/auth/profiles.js and add a handle field to the
 profile spoke of AccountPanel.jsx (view === 'profile', line ~501, which
@@ -536,8 +536,8 @@ it is evaluated once per statement instead of once per row.
 ledger and base64 photos.
 
 ```
-Implement Step 4.1 only, per docs/SHARING_FRIENDS_BUILD.md and section 3
-Stage 3 of docs/SHARING_FRIENDS_PLAN.md, which has the SQL sketch.
+Implement Step 4.1 only, per docs/archive/SHARING_FRIENDS_BUILD.md and section 3
+Stage 3 of docs/archive/SHARING_FRIENDS_PLAN.md, which has the SQL sketch.
 
 Write supabase/migrations/011_friends.sql. Do NOT run supabase db push.
 
@@ -582,7 +582,7 @@ through the back door. A name tells you about the journey; a link tells you
 about somebody's social graph.
 
 ```
-Implement Step 4.2 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 4.2 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 RPCs for friend request, respond, unfriend and list, plus
 get_friend_trip(plan_id) which returns a projected payload: stops, day picks,
@@ -612,7 +612,7 @@ list, and unfriend. Note the existing `.account-avatar` class is already
 taken by the header, so pick another name.
 
 ```
-Implement Step 4.3 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 4.3 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Add a 'friends' spoke to continent-app/src/auth/AccountPanel.jsx. The panel is
 a hub with a view switch (line ~152) and a MenuRow list (line ~495); follow
@@ -639,7 +639,7 @@ name still works and still stores, which is the point of the model: an
 unlinked person renders identically to a linked one.
 
 ```
-Implement Step 4.4 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 4.4 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Let a crew member link to a real account: userId in src/auth/tripCrew.js stops
 being always null, and the companion rows in PastTripForm.jsx become "choose a
@@ -662,7 +662,7 @@ through `get_friend_trip`. Plus a visibility control on your own trip cards,
 defaulting to private.
 
 ```
-Implement Step 4.5 only, per docs/SHARING_FRIENDS_BUILD.md.
+Implement Step 4.5 only, per docs/archive/SHARING_FRIENDS_BUILD.md.
 
 Add a friends' trips shelf to SavedTripsPanel.jsx using the existing
 SavedSection component at the top of that file. Read through get_friend_trip,

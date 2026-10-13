@@ -204,7 +204,7 @@ Alle open `next task`-rijen die geen wave of data-lane-stap hebben. Samengevoegd
 - T100-a: geen groepsgrootte naast de Lifestyle-slider op de reispagina.
 - T100-b: groepsgrootte wordt niet onthouden tussen sessies; beslissen.
 - T100-c: correctie op het T100-rapport (cijfer was voor 5 personen, niet 2).
-- T194-d: `docs/ONBOARDING_AND_EMPTY_STATES.md` gelijk trekken met de homepage-keuze.
+- T194-d: `docs/product/ONBOARDING_AND_EMPTY_STATES.md` gelijk trekken met de homepage-keuze.
 
 ### Design: Explore
 
@@ -525,6 +525,7 @@ Alle open `next task`-rijen die geen wave of data-lane-stap hebben. Samengevoegd
 
 ### Docs
 
+- Docs-opruiming 2026-10-13: commentaar in `continent-app/` (ongeveer 45 plekken, onder meer `firstRun.js`, `urlScheme.js`, de prerender-scripts en de zes i18n-bestanden) noemt nog de oude paden zoals `docs/SEO.md` en `docs/FIRST_RUN_RESULT.md`. Bijwerken naar de nieuwe mappen uit `docs/README.md`, in een app-sessie na T412. Migraties niet aanraken.
 - T082-b: RLS-test past `schema.sql` niet toe.
 - T082-c: SCHEMA.md-contracttabel aanvullen.
 - T082-d: contract ook op tweede niveau.

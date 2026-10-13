@@ -122,7 +122,7 @@ first, and a share whose first screen is a signup wall does not get opened.
 
 ### Stage 2: people on a trip (the Saved trips and Travel record ask)
 
-> **Superseded.** `docs/SHARING_FRIENDS_BUILD.md` builds this without the
+> **Superseded.** `docs/archive/SHARING_FRIENDS_BUILD.md` builds this without the
 > table below. `extras.people` already exists, already syncs, and already
 > works for guests, so upgrading that array is cheaper and covers more people.
 > The table is kept here as the reasoning that led there.

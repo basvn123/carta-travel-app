@@ -10,7 +10,7 @@ Two things that meet the same visitor in the same first minute.
 
 The landing page is the home page (T209, T194; owner decision 2026-10-07 in T362). It opens for a first visit with no link (`src/lib/homeVisit.js`, `readFirstVisit`) and at `?tab=home`. It is drawn by `src/browse/LandingPage.jsx` with its arithmetic in `src/lib/landing.js` and its styles in `src/styles/39-landing.css`. Above the fold it shows a real receipt for one of three demo towns (Edinburgh, Chamonix, Porto: `DEMO_TOWNS` in `src/lib/landing.js`) with three inputs that reprice it in place. Below the fold: three proof points and the coverage section.
 
-The first-run receipt is the first itemised total a visitor meets on a destination page or a trip page (T099, `docs/FIRST_RUN_RESULT.md`). It is drawn by `src/components/FirstRunReceipt.jsx`, priced by `src/lib/firstRun.js`, fed by `src/lib/firstRunContext.js`, styled by `src/styles/38-first-run.css`. It carries a four-cell input strip (people, stay, arrive, leave), the receipt card, the one primary "Set your dates" while the dates are Carta's, the flight door with its sheet, and the exclusions sentence. The pages that host it (DestinationPage, JourneyPage) belong to other surfaces; this surface owns the component, not where it sits.
+The first-run receipt is the first itemised total a visitor meets on a destination page or a trip page (T099, `docs/product/FIRST_RUN_RESULT.md`). It is drawn by `src/components/FirstRunReceipt.jsx`, priced by `src/lib/firstRun.js`, fed by `src/lib/firstRunContext.js`, styled by `src/styles/38-first-run.css`. It carries a four-cell input strip (people, stay, arrive, leave), the receipt card, the one primary "Set your dates" while the dates are Carta's, the flight door with its sheet, and the exclusions sentence. The pages that host it (DestinationPage, JourneyPage) belong to other surfaces; this surface owns the component, not where it sits.
 
 ## Part 1. Setup and mode
 
@@ -242,7 +242,7 @@ Assumption, marked: the shared trip dates are the right home for the landing pag
 
 12. A harness for this surface. `scripts/verify_landing.mjs` at 380x800 and 1280x800: a cleared-storage first visit opens the landing page; one visible `h1`; one primary; no horizontal scroll; the receipt lines sum to the total to the cent; inputs carry to the destination page; the phone fold check from item 5; a return visit opens Destinations; the coverage table renders or is cleanly absent. It waits for `.lp-sum-fig` rather than a fixed delay, so a slow dev server does not fail it. Files: `scripts/verify_landing.mjs` (new). Command: `$impeccable audit`. Done when: it passes on the V3 branch.
 
-13. Reconcile the onboarding document (register row T194-d). `docs/ONBOARDING_AND_EMPTY_STATES.md` Part 1 still says the app opens on Destinations; rewrite the first ninety seconds around the home page as built. Root repo file. Command: `$impeccable document`. Done when: the document describes the first visit, the return visit and the home page as the app does them.
+13. Reconcile the onboarding document (register row T194-d). `docs/product/ONBOARDING_AND_EMPTY_STATES.md` Part 1 still says the app opens on Destinations; rewrite the first ninety seconds around the home page as built. Root repo file. Command: `$impeccable document`. Done when: the document describes the first visit, the return visit and the home page as the app does them.
 
 Not in V3: any change to which visits open on the landing page, the brand mark or a nav entry. Those wait for the owner (register row T194-a). The demo towns stay as they are until the owner answers register row T209-e.
 
@@ -311,7 +311,7 @@ App repo: `src/browse/LandingPage.jsx`, `src/lib/landing.js`, `src/components/Fi
 
 Shared files this surface needs a change in, which OWNERSHIP.md must assign or route: `src/lib/glossary.js` and the glossary keys in the six catalogues (entries for measured, estimate and national figure, so the InfoDot can explain them; register row T099-e), `src/lib/sharedElement.js` (V4 item 5, if R3 is accepted), `src/browse/CostBar.jsx` (reused as is; a change only if it cannot take two segments).
 
-Root repo: `docs/ONBOARDING_AND_EMPTY_STATES.md` (V3 item 13), and `docs/FIRST_RUN_RESULT.md` only if T380 or the owner changes the receipt's line labels (register row T099-d).
+Root repo: `docs/product/ONBOARDING_AND_EMPTY_STATES.md` (V3 item 13), and `docs/product/FIRST_RUN_RESULT.md` only if T380 or the owner changes the receipt's line labels (register row T099-d).
 
 Not touched by this surface: `src/App.jsx` and `src/lib/homeVisit.js` (which visits open where is the owner's call, T194-a), the pages that host the first-run receipt (`src/browse/DestinationPage.jsx`, `src/browse/JourneyPage.jsx`), the top bar and bottom nav.
 

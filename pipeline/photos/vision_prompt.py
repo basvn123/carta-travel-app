@@ -2,7 +2,7 @@
 
 Tier: Library
 
-The brief lives in docs/IMAGE_BRIEF.md; this module is that document
+The brief lives in docs/product/IMAGE_BRIEF.md; this module is that document
 turned into text for a vision model, plus the one rule the model must not
 be trusted with (distance). Change both together and bump PROMPT_VERSION.
 
@@ -25,7 +25,7 @@ MAX_DISTANCE_M = 2000
 SECTIONS = ("mountain", "trail", "cycling", "beach", "lake")
 
 # What the hero and the gallery answer, per section. Mirrors the table in
-# docs/IMAGE_BRIEF.md.
+# docs/product/IMAGE_BRIEF.md.
 HERO = {
     "mountain": "what you see FROM the summit",
     "trail": "the best viewpoint on the route, looking outward",

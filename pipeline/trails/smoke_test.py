@@ -255,7 +255,7 @@ def r1_hierarchy_check(conn):
 
 
 # ---------------------------------------------------------------------------
-# The famous fixtures (CARTA_TRAILS_BUILD_BRIEF.md, definition of done #2)
+# The famous fixtures (docs/archive/CARTA_TRAILS_BUILD_BRIEF.md, definition of done #2)
 # ---------------------------------------------------------------------------
 
 # The walks a region is embarrassed to be missing, as a standing test. This

@@ -87,13 +87,13 @@ tier only), the daily totals tables, `pipeline_runs` (041), `site_config` (014).
 - The export reads `auth.uid()` and takes no user id, so it cannot be pointed at another account (T020); it is gated by re-authentication in the app.
 - Passwords are handled by Supabase Auth; card data never reaches Carta (Stripe Checkout).
 - Pseudonymisation where a person must be told apart without being identified: salted hashes for reporters (037) and guide readers (045).
-- Encrypted database dumps kept off the laptop (T004, `docs/BACKUP.md`).
+- Encrypted database dumps kept off the laptop (T004, `docs/operations/BACKUP.md`).
 
 ## 6. Breach procedure
 
 Notify the Belgian authority within 72 hours of becoming aware of a breach that
 risks people's rights (Art. 33), and the affected people without undue delay
-when the risk is high (Art. 34). `docs/INCIDENT_RUNBOOK.md` is the operational
+when the risk is high (Art. 34). `docs/operations/INCIDENT_RUNBOOK.md` is the operational
 runbook.
 
 ## 7. What T022's draft got wrong

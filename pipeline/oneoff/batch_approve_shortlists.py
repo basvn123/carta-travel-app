@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
 
 API = "http://127.0.0.1:8011/api"
 NOTE = ("batch approval of the staged seed shortlists, directed by the "
-        "owner on 2026-08-13 (see docs/TRAILS_EXPANSION_PLAN.md)")
+        "owner on 2026-08-13 (see docs/archive/TRAILS_EXPANSION_PLAN.md)")
 COUNTRIES = ("CH", "NO", "AT", "FR")
 
 

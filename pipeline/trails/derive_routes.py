@@ -43,7 +43,7 @@ How the clustering works, and why it is conservative:
               the work: a branching blob of city pavement comes back as a
               dozen segments and is dropped, the same way a broken relation is.
 
-Phase 2 of CARTA_TRAILS_BUILD_BRIEF.md turned this from a rescue for five
+Phase 2 of docs/archive/CARTA_TRAILS_BUILD_BRIEF.md turned this from a rescue for five
 countries into the way every country's way-only walks arrive. Two passes were
 added ahead of the original two, and they are the ones that recover a famous
 trail mapped as named ways and no relation:

@@ -1,7 +1,7 @@
 # Support inbox and canned answers
 
 Owner: Bas, the only person who reads and answers. Written by T216, 2026-10-02.
-Companions: docs/REFUND_SOP.md (how a refund is done) and docs/INCIDENT_RUNBOOK.md (what to do when something
+Companions: docs/operations/REFUND_SOP.md (how a refund is done) and docs/operations/INCIDENT_RUNBOOK.md (what to do when something
 is down). This page is the front door to both: where a message arrives, how fast it is answered, and what to say.
 
 ## The address
@@ -45,7 +45,7 @@ the customer.
 
 ### 1. Refund request
 
-Decide first, with the table in docs/REFUND_SOP.md. Never answer before looking the sale up.
+Decide first, with the table in docs/operations/REFUND_SOP.md. Never answer before looking the sale up.
 
 Refund granted:
 
@@ -97,7 +97,7 @@ The figure was wrong in our data (a bug, a mismatch, a wrong place):
 > fixed in the next update]. If you booked because of that figure and it cost you, write back with the
 > details and we will work out what is fair. Bas
 
-If a wrong price leads to a request for money, it is a goodwill case under docs/REFUND_SOP.md, not a case in the
+If a wrong price leads to a request for money, it is a goodwill case under docs/operations/REFUND_SOP.md, not a case in the
 table; the owner decides and prefers extra pass days to money. Log every wrong-data finding as a task, so the
 fault is fixed once rather than answered each time.
 
@@ -110,7 +110,7 @@ fault is fixed once rather than answered each time.
 > I will do it for you within seven days. Bas
 
 If they cannot sign in: confirm the request came from the address on the account, delete the user in the
-Supabase dashboard, and answer once it is done. If they also asked for a refund, finish docs/REFUND_SOP.md first
+Supabase dashboard, and answer once it is done. If they also asked for a refund, finish docs/operations/REFUND_SOP.md first
 and save the sale lookup query result before deleting, because deleting a user also deletes their pass_grants
 rows (open item T217-d).
 
@@ -135,7 +135,7 @@ follows within seven days, then take the time to read it twice.
 
 ## What the inbox is not
 
-It is not the incident channel. A site that is down is handled with docs/INCIDENT_RUNBOOK.md, and readers who
+It is not the incident channel. A site that is down is handled with docs/operations/INCIDENT_RUNBOOK.md, and readers who
 report it are thanked, not asked for more detail. It is not the feedback inbox in the admin panel either: that
 holds messages sent from inside the app, and the admin FeedbackInbox already offers a reply link from there.
 Both end up with the same owner, so a repeated message in both is answered once.

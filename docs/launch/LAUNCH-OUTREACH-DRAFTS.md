@@ -112,7 +112,7 @@ The soft launch group excludes these partners (Execution/P12/T220-launch-runway.
 
 ## The channel test, closing T204-b
 
-Register row T204-b asked that T205, T207 and T208 test every channel against the ceiling in docs/GTM-ACQUISITION-CONSTRAINT.md, using its three questions: cost per visitor with its source, the comparison with about EUR 0.17, and a lever if above. The ceiling is EUR 6.85 contribution per purchase at an assumed 2.5% purchase rate (docs/GTM-ACQUISITION-CONSTRAINT.md, from CARTA_UNIT_ECONOMICS.md section 5).
+Register row T204-b asked that T205, T207 and T208 test every channel against the ceiling in docs/launch/GTM-ACQUISITION-CONSTRAINT.md, using its three questions: cost per visitor with its source, the comparison with about EUR 0.17, and a lever if above. The ceiling is EUR 6.85 contribution per purchase at an assumed 2.5% purchase rate (docs/launch/GTM-ACQUISITION-CONSTRAINT.md, from CARTA_UNIT_ECONOMICS.md section 5).
 
 Result of reading the three reports:
 
@@ -122,7 +122,7 @@ Result of reading the three reports:
 | Execution/P12/T208-press-and-partnerships.md | weeklyOSM, OSM forum, EuroVelo news, Via Transilvanica, startup press, UK walking titles, data.europa.eu | Yes, in "The constraint applied". Cash EUR 0. Sponsored slots and fees ruled out | Passes. No hours figure given because none exists in any file |
 | Execution/P12/T205-programmatic-seo.md | Organic search, by page type | Not stated. A search of the report for the ceiling, the constraint document or "0.17" finds nothing | Gap, closed here below |
 
-Organic search, tested here. Cost per visitor in cash: EUR 0, because the source states that organic is the only channel that works at this ceiling (CARTA_UNIT_ECONOMICS.md section 5, repeated in docs/GTM-ACQUISITION-CONSTRAINT.md). That is below EUR 0.17. The cost is engineering time on T221, T222 and T239, which the constraint document names as the work that replaces paid traffic. The third question is not triggered. The lag from sitemap submission to indexing is unmeasured (T220-e), so no visitor figure is claimed.
+Organic search, tested here. Cost per visitor in cash: EUR 0, because the source states that organic is the only channel that works at this ceiling (CARTA_UNIT_ECONOMICS.md section 5, repeated in docs/launch/GTM-ACQUISITION-CONSTRAINT.md). That is below EUR 0.17. The cost is engineering time on T221, T222 and T239, which the constraint document names as the work that replaces paid traffic. The third question is not triggered. The lag from sitemap submission to indexing is unmeasured (T220-e), so no visitor figure is claimed.
 
 The two drafts in this file. The courtesy notes and the co-announce question cost EUR 0 in cash and the time to fill and send each note; no hours figure is given because none is measured anywhere. They are not a visitor channel: no visitors are expected from them and none is counted.
 

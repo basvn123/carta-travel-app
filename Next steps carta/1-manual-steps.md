@@ -265,7 +265,7 @@ Geeft vrij: wave 18 en de zware datalane (F8). Ongeveer EUR 6.60 per maand, een 
   git status --short
   ```
 
-- [ ] **G12. Oefen de noodprocedures** uit `docs/INCIDENT_RUNBOOK.md`: secties 2, 3 en 5 (Gemini-key leeg op een branch-project, een mislukte webhook in Stripe testmodus, Supabase plat) en sectie 1 op de box (een weekrun afbreken). Heeft de heartbeat uit G3 nodig. <sub>(T235-e)</sub>
+- [ ] **G12. Oefen de noodprocedures** uit `docs/operations/INCIDENT_RUNBOOK.md`: secties 2, 3 en 5 (Gemini-key leeg op een branch-project, een mislukte webhook in Stripe testmodus, Supabase plat) en sectie 1 op de box (een weekrun afbreken). Heeft de heartbeat uit G3 nodig. <sub>(T235-e)</sub>
 
 Zeg daarna: "Stage 7.9 done; run wave 18 and move the heavy data lane to the box."
 
@@ -340,7 +340,7 @@ Geeft vrij: wave 20 (stage 10).
 - [ ] **J3. Boekhouding en een kostenregister (T016).** `infra_ledger` (migratie 031) is de databasehelft. <sub>(T043-b)</sub>
 - [ ] **J4. Juridische review** door iemand bevoegd, in één ronde:
   - de Article 16(m)-indeling (digitale inhoud, geen dienst) in de Terms;
-  - de privacy-tekst van T319 in `PrivacyPolicy.jsx`, de Terms-sectie "Every figure is an estimate" en `account.exportHint`; bevestig dat de Supabase-regio EU is en teken `docs/ARTICLE30.md`;
+  - de privacy-tekst van T319 in `PrivacyPolicy.jsx`, de Terms-sectie "Every figure is an estimate" en `account.exportHint`; bevestig dat de Supabase-regio EU is en teken `docs/legal/ARTICLE30.md`;
   - de OpenStreetMap-tick en de Terms-sectie "Photos and tracks you share" tegen de OSMF waiver template;
   - de content rule "Public guides" (c1 tot c7), de good-faith tekst op het meldformulier en de Terms-datum 7 oktober 2026.
   <sub>(T032-e, T319-a, T333-b, T206-c, T365-c)</sub>
@@ -353,7 +353,7 @@ Geeft vrij: wave 20 (stage 10).
   supabase functions deploy checkout --project-ref ntssxktaduxzpsmejwyv
   supabase functions deploy stripe-webhook --no-verify-jwt --project-ref ntssxktaduxzpsmejwyv
   ```
-- [ ] **J9. Testaankopen.** De tien stappen van `supabase/functions/checkout/test_purchase_e2e.md` op twee nieuwe accounts, nooit het owner-account. Gelukt als de Stripe-pagina Carta's waiver-tick toont, `pass_grants` consent accepted met tijdstip toont, en een Duits en een Belgisch adres allebei `amount_total` 699 en `amount_tax` 121 geven. Volg één refund letterlijk volgens `docs/REFUND_SOP.md`. Kijk dat Stripe webhook-foutmails in een gelezen inbox aankomen. Schakel dan naar live keys. <sub>(T031-a, T032-c, T033-d, T217-a, T218-d)</sub>
+- [ ] **J9. Testaankopen.** De tien stappen van `supabase/functions/checkout/test_purchase_e2e.md` op twee nieuwe accounts, nooit het owner-account. Gelukt als de Stripe-pagina Carta's waiver-tick toont, `pass_grants` consent accepted met tijdstip toont, en een Duits en een Belgisch adres allebei `amount_total` 699 en `amount_tax` 121 geven. Volg één refund letterlijk volgens `docs/operations/REFUND_SOP.md`. Kijk dat Stripe webhook-foutmails in een gelezen inbox aankomen. Schakel dan naar live keys. <sub>(T031-a, T032-c, T033-d, T217-a, T218-d)</sub>
 - [ ] **J10. De eerste maand.** Zet de echte facturen in `admin_set_infra_cost` met source `actual` en lees de reconciliation-regel. <sub>(T043-c)</sub>
 - [ ] **J11. Store-apps.** Apple Developer Program, een Google Play developer account als bedrijf (na J1), een manier om iOS te bouwen vanaf Windows; daarna de signing key, het assetlinks-bestand en de App Store Connect-upload. Dan starten T247 en T248, Android eerst. <sub>(T272-b, T212-f)</sub>
 
@@ -388,13 +388,13 @@ Geeft vrij: wave 21.
 
 - [ ] **K1.** Kies launchdag D (dinsdag tot donderdag), minstens 42 dagen vooruit, en geef hem aan Claude voor het register en de runway. Je community-accounts zijn 30 dagen oud op 2026-11-06. <sub>(T220-a)</sub>
 - [ ] **K2. Uiterlijk D-21.** De soft-launch lijst van 15 mensen in een privébestand buiten de repo (5 onbekenden die ook de testers van K3 zijn, 5 wandelaars, 5 waarschijnlijke pass-kopers). Keur de uitnodigingstekst (met de zin dat een pass terugbetaalbaar is) en de pass marks goed. <sub>(T220-b, T220-d)</sub>
-- [ ] **K3. De vijf-personentest** uit `docs/FIRST_RUN_RESULT.md`, met mensen die Carta nooit zagen; noteer de time-to-answer. Bevestig of wijzig daarbij de demosteden van de landing (Edinburgh, Chamonix, Porto; standaard Edinburgh, entire place, 2 personen, 7 nachten). <sub>(T187-b, T209-e)</sub>
+- [ ] **K3. De vijf-personentest** uit `docs/product/FIRST_RUN_RESULT.md`, met mensen die Carta nooit zagen; noteer de time-to-answer. Bevestig of wijzig daarbij de demosteden van de landing (Edinburgh, Chamonix, Porto; standaard Edinburgh, entire place, 2 personen, 7 nachten). <sub>(T187-b, T209-e)</sub>
 - [ ] **K4.** Prijs 40 tot 50 bestemmingen met de hand in `tools/benchmark/samples/hotels.csv` met een menuprijs-steekproef (T095); Claude draait dan de benchmark opnieuw. <sub>(T096-a)</sub>
 - [ ] **K5. Moedertaallezers** voor de strings in de, es, fr, it en nl. Laat ze per taal de lijsten uit deze verslagen nalezen (elk verslag noemt de keys). <sub>(T156-b, T158-c, T165-c, T179-a, T180-j, T181-j, T182-e, T183-l, T193-g, T381-f, T382-e, T383-h, T384-j, T385-e, T386-b, T387-e, T388-b, T389-c, T390-k, T391-c, T392-f, T393-e, T394-e, T395-e, T396-a, T397-f, T398-b, T400-i, T401-a, T402-e, T403-c, T404-a, T405-d, T407-a, T409-a, T410-b, T411-n)</sub>
 - [ ] **K6.** Eén schermlezer-ronde met NVDA, VoiceOver en TalkBack op de kaartpins, de pin-namen en de Lifestyle-dialoog; beslis daarna of axe in de gate komt. <sub>(T190-f, T231-f)</sub>
 - [ ] **K7. Uiterlijk D-15.** De gates legal, payments, perf en uptime gehaald (T227, T228, T231, T235) en Supabase op Pro (T232). Zo niet, dan schuift D op. <sub>(T220-c)</sub>
 - [ ] **K8. Op D-14.** Lees opnieuw de regels van elke subreddit, elke Facebook-groep en de inzendpagina's van de media, en noteer datum en regel. <sub>(T207-e, T206-e, T208-b)</sub>
-- [ ] **K9. Outreach.** Keur de courtesy note en de co-announce tekst in `docs/LAUNCH-OUTREACH-DRAFTS.md` goed, vul de placeholders in en stuur met de hand. Beslis wie een note krijgt (CARTO, OpenTripMap, Open-Meteo, Exchange Rate API) en lees eerst de gebruiksvoorwaarden van UNESCO. <sub>(T336-a, T336-b)</sub>
+- [ ] **K9. Outreach.** Keur de courtesy note en de co-announce tekst in `docs/launch/LAUNCH-OUTREACH-DRAFTS.md` goed, vul de placeholders in en stuur met de hand. Beslis wie een note krijgt (CARTO, OpenTripMap, Open-Meteo, Exchange Rate API) en lees eerst de gebruiksvoorwaarden van UNESCO. <sub>(T336-a, T336-b)</sub>
 - [ ] **K10. Go of no-go, dan launch (T236).** Zeg daarna: "launched; run wave 21". <sub>(T207-a)</sub>
 - [ ] **K11. Na de launch.** Core Web Vitals uit het veld na een maand verkeer; de eerste geïndexeerde datum en de datum van de eerste sitemap in het T239-sheet. <sub>(T200-g, T222-f)</sub>
 

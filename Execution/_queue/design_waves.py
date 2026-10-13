@@ -36,7 +36,7 @@ SURFACES = [
      "verify_lifestyle, verify_focus_trap, verify_keyboard, verify_quality_floor"),
     ("landing", "61", "Landing page and first run",
      "?tab=home (the landing page is also the home page, T209 and T194), a first visit with site storage cleared, "
-     "the first priced result (the first-run receipt), and the first ninety seconds as docs/ONBOARDING_AND_EMPTY_STATES.md "
+     "the first priced result (the first-run receipt), and the first ninety seconds as docs/product/ONBOARDING_AND_EMPTY_STATES.md "
      "designs them",
      "src/browse/LandingPage.jsx, src/lib/landing.js, src/components/FirstRunReceipt.jsx, src/lib/firstRun.js, "
      "src/lib/firstRunContext.js; styles 38-first-run, 39-landing",

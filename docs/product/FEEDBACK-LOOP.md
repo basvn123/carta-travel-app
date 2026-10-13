@@ -1,7 +1,7 @@
 # The feedback loop: from "this is wrong" to fixed
 
 Decision written by T219, 2026-10-02. Status: recommendation, pending the owner (register row T219-a).
-Companions: docs/SUPPORT.md (the mailbox and the canned answers) and the admin page's Feedback and
+Companions: docs/operations/SUPPORT.md (the mailbox and the canned answers) and the admin page's Feedback and
 Content tabs, which this document connects.
 
 ## The question
@@ -54,7 +54,7 @@ hand-edited figure under a provenance chip that says "observed on" would be a li
 prices flights (T272) and the remaining figures are estimates or frozen snapshots. The fix is in the
 estimation or lifestyle pipeline, or in the chip's wording, so a price report is a pipeline task. The
 report needs the item id, which figure (route, stay, day cost) and what the traveller paid or saw. The
-canned answer in docs/SUPPORT.md section 2 already says what to reply.
+canned answer in docs/operations/SUPPORT.md section 2 already says what to reply.
 
 A missing trail, beach, lake or mountain. There is no item id, because there is no item. The report
 needs the place name, the country and ideally a link to the thing (an OSM relation, a Wikipedia page, a
