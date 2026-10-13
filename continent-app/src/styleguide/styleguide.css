@@ -1,0 +1,103 @@
+/* The style guide page (T424). Loaded only with src/styleguide/StyleGuide.jsx,
+   so none of it ships in the app's first paint. Roles and scales only. */
+html:has(.sg), html:has(.sg) body, html:has(.sg) #root { height: auto; overflow: visible; }
+.sg { min-height: 100vh; background: var(--surface-page); color: var(--text); }
+.sg-top {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  background: var(--surface); border-bottom: 1px solid var(--border);
+}
+.sg-top-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  max-width: 1180px; margin: 0 auto; padding: var(--space-3) var(--gutter);
+}
+.sg-brand { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-title); font-weight: 700; letter-spacing: -0.02em; }
+.sg-mark { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-pill); background: var(--select-bg); color: var(--select-ink); }
+
+.sg-layout { display: grid; grid-template-columns: 1fr; max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter) var(--space-8); }
+.sg-nav {
+  display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none;
+  padding: var(--space-3) 0; margin: 0 calc(var(--gutter) * -1); padding-left: var(--gutter); padding-right: var(--gutter);
+  position: sticky; top: 57px; z-index: var(--z-sticky); background: var(--surface-page);
+}
+.sg-nav a {
+  flex: none; display: inline-flex; align-items: center; min-height: 32px; padding: 0 var(--space-3);
+  border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface);
+  color: var(--text-2); font-size: var(--text-label); font-weight: 500; text-decoration: none;
+}
+.sg-nav a:hover { color: var(--text); border-color: var(--neutral-300); }
+.sg-nav a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (min-width: 1024px) {
+  .sg-layout { grid-template-columns: 200px 1fr; gap: var(--space-7); }
+  .sg-nav {
+    flex-direction: column; gap: 2px; align-self: start; position: sticky; top: 80px;
+    margin: 0; padding: var(--space-6) 0 0; background: none;
+  }
+  .sg-nav a { border: 0; background: none; border-radius: var(--radius-control); min-height: 36px; font-size: var(--text-body); }
+  .sg-nav a:hover { background: var(--surface-hover); }
+}
+.sg-main { min-width: 0; }
+.sg-hero { padding: var(--space-6) 0 var(--space-4); max-width: var(--measure); }
+.sg-hero h1 { font-size: var(--text-headline); font-weight: 700; letter-spacing: -0.02em; line-height: var(--leading-tight); }
+.sg-hero p { margin-top: var(--space-3); color: var(--text-2); font-size: var(--text-lead); line-height: var(--leading-body); }
+
+.sg-section { padding: var(--space-7) 0 var(--space-4); border-top: 1px solid var(--border); scroll-margin-top: 110px; }
+.sg-section:first-of-type { border-top: 0; }
+.sg-section h2 { font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; }
+.sg-section > h3 { margin: var(--space-6) 0 var(--space-3); font-size: var(--text-lead); font-weight: 600; }
+.sg-lead { margin-top: var(--space-2); max-width: var(--measure); color: var(--text-2); line-height: var(--leading-body); }
+.sg-section > .sg-demo, .sg-section > .ui-chip-group, .sg-section > .ui-tabs, .sg-section > .sg-rows,
+.sg-section > .sg-tiles, .sg-section > .sg-fields, .sg-section > .sg-table, .sg-section > .sg-swatches { margin-top: var(--space-5); }
+.sg-demo { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.sg-use { display: grid; gap: var(--space-1); margin-top: var(--space-4); max-width: var(--measure); font-size: var(--text-label); line-height: var(--leading-ui); }
+.sg-use div { display: grid; grid-template-columns: 64px 1fr; gap: var(--space-3); }
+.sg-use dt { color: var(--text-3); font-weight: 600; }
+.sg-use dd { color: var(--text-2); }
+.sg code { font-family: var(--font); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+
+.sg-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-3); }
+.sg-swatch { display: flex; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.sg-chip { flex: none; width: 48px; height: 48px; border-radius: var(--radius-control); outline: 1px solid var(--border-soft); outline-offset: -1px; }
+.sg-swatch-body { display: grid; gap: 2px; font-size: var(--text-label); min-width: 0; }
+.sg-hex { color: var(--text-3); font-size: var(--text-caption); }
+.sg-swatch-body p { color: var(--text-2); }
+.sg-swatch-body .sg-no { color: var(--text-3); }
+.sg-pairs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); }
+.sg-pair { display: grid; gap: 2px; padding: var(--space-4); border-radius: var(--radius-card); outline: 1px solid var(--border-soft); outline-offset: -1px; font-size: var(--text-caption); }
+.sg-pair b { font-size: var(--text-title); }
+.sg-ramp { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--space-2); }
+.sg-ramp-cell { display: grid; gap: 2px; font-size: var(--text-caption); }
+.sg-ramp-cell span { height: 40px; border-radius: var(--radius-sm); outline: 1px solid var(--border-soft); outline-offset: -1px; }
+.sg-ramp-cell small { color: var(--text-3); font-size: var(--text-micro); }
+
+.sg-type { margin-top: var(--space-5); display: grid; }
+.sg-type-row { display: grid; grid-template-columns: 1fr; gap: var(--space-2); padding: var(--space-4) 0; border-bottom: 1px solid var(--border-soft); }
+@media (min-width: 769px) { .sg-type-row { grid-template-columns: 220px 1fr; align-items: baseline; } }
+.sg-type-meta { display: grid; gap: 2px; font-size: var(--text-label); }
+.sg-type-meta small { color: var(--text-3); font-size: var(--text-caption); }
+.sg-type-sample { line-height: var(--leading-tight); letter-spacing: -0.01em; overflow-wrap: anywhere; }
+
+.sg-space { margin-top: var(--space-5); display: grid; gap: var(--space-2); }
+.sg-space-row { display: grid; grid-template-columns: 96px 1fr; align-items: center; }
+.sg-space-row span { height: 12px; border-radius: 2px; background: var(--lagoon-300); }
+.sg-shapes { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-top: var(--space-5); }
+.sg-shape { display: grid; justify-items: start; gap: var(--space-1); font-size: var(--text-caption); }
+.sg-shape span { width: 96px; height: 64px; background: var(--surface); border: 1px solid var(--border); }
+.sg-shape span.sg-elev { border: 0; border-radius: var(--radius-card); }
+.sg-shape small { color: var(--text-3); }
+
+.sg-rows { display: grid; gap: var(--space-2); max-width: 560px; }
+.sg-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-4); }
+.sg-unit { color: var(--text-3); font-weight: 400; font-size: var(--text-label); }
+.sg-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-5); max-width: 760px; }
+
+.sg-icon-sizes { display: flex; gap: var(--space-6); margin-top: var(--space-5); align-items: end; }
+.sg-icon-sizes span { display: grid; justify-items: center; gap: var(--space-1); }
+.sg-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: var(--space-2); margin-top: var(--space-5); }
+.sg-icon { display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-2); border: 1px solid var(--border-soft); border-radius: var(--radius-control); background: var(--surface); color: var(--text); }
+.sg-icon small { font-size: var(--text-micro); color: var(--text-3); text-align: center; overflow-wrap: anywhere; }
+
+.sg-table { width: 100%; max-width: 760px; border-collapse: collapse; font-size: var(--text-body); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
+.sg-table th { text-align: left; padding: var(--space-3) var(--space-4); font-size: var(--text-caption); font-weight: 600; color: var(--text-3); background: var(--surface-sunken); }
+.sg-table td { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-soft); }
+.sg-table td:nth-child(2) { font-weight: 600; }
+.sg-rules { margin-top: var(--space-4); display: grid; gap: var(--space-2); padding-left: var(--space-5); max-width: var(--measure); line-height: var(--leading-body); color: var(--text-2); }

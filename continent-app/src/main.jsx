@@ -1,7 +1,8 @@
 import './lib/pathBoot.js';
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
+import { I18nProvider } from './i18n/index.jsx';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
 import { installAffiliateClickCounter } from './lib/launchEvents.js';
 import { installTouchFeedback } from './lib/touchFeedback.js';
@@ -13,10 +14,19 @@ import './styles.css';
 installAffiliateClickCounter();
 installTouchFeedback();
 
+// ?styleguide opens the design system page (T424, roadmap 1.2) instead of the
+// app: lazy, with its own stylesheet, so the app's first paint carries none of it.
+const StyleGuide = lazy(() => import('./styleguide/StyleGuide.jsx'));
+const showStyleGuide = new URLSearchParams(window.location.search).has('styleguide');
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <App />
+      {showStyleGuide ? (
+        <I18nProvider>
+          <Suspense fallback={null}><StyleGuide /></Suspense>
+        </I18nProvider>
+      ) : <App />}
     </ErrorBoundary>
   </React.StrictMode>
 );

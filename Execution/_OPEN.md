@@ -1393,3 +1393,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T423-b | T423 | Nine i18n keys lost their euro sign but have no caller (filter.perDirection, detail.eachLocalRate, detail.perNightApprox, detail.perDayApprox, detail.perTwoDirections, detail.rentalMetaMany/One, detail.viaGround, dest.tripTotal); delete in a dead-string pass | next task | open |  |
 | T423-c | T423 | journey.fltBetween, brief.dayCostRange and match.budget still join figures with a literal word (match.budget spells out euros); move to formatMoneyRange in their tab migrations | next task | open |  |
 | T423-d | T423 | design-lint money-literal rule (euro in JSX or i18n, toFixed on a price, retired helper calls) lands in T425; then retire the formatMoney aliases call site by call site | next task | open | before T426 |
+| T424-a | T424 | Owner approves the style guide (?styleguide) on a phone and on desktop; closes the design half of roadmap 1.2 | user | open |  |
+| T424-b | T424 | The existing RatingBadge renders a 10 px label inside its chip; it becomes the kit's Score in the migration | next task | open |  |
+| T424-c | T424 | Style guide prose is English reference text, not i18n (kit labels and prices on it do switch language); translate only if the page is ever shown to travellers | next task | open |  |
