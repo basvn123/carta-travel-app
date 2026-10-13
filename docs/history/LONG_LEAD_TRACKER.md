@@ -1,5 +1,7 @@
 # Long-lead tracker
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Everything whose clock belongs to someone else. **Start all of these in week 1.**
 Nothing here costs more than an hour to start, and each one lands weeks or months later.
 

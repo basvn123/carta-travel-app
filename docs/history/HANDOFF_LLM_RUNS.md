@@ -1,5 +1,7 @@
 # Brief for Claude Cowork: run the intro rewrite and the parking web check
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 You are finishing a piece of pipeline work in the Carta travel app repo.
 Two Python scripts are written and tested. They call the Gemini API with the
 project's `GEMINI_API_KEY`, they spend real money, and someone has to run

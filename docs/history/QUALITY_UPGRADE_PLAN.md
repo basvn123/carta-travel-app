@@ -1,5 +1,7 @@
 # Carta quality upgrade plan (open-data playbook, 2026-08-11)
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Mapping of the "Carta Data Playbook" research document onto what the pipeline
 already ships, and the concrete work plan. The catalogue today: 1,570
 destinations, 134,657 POIs (items_full), all open-data sourced.

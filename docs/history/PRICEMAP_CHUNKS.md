@@ -1,5 +1,7 @@
 # Price-map expansion: independent chunk prompts
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Source blueprint: the compass research doc ("Building a Price-Based Travel Discovery Map of Europe").
 Give each Claude Code session TWO things: the SHARED PREAMBLE below, then ONE chunk prompt, plus the compass markdown attached.
 

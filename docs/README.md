@@ -2,6 +2,23 @@
 
 Alle documentatie van Carta, per onderwerp. Wat er nog moet gebeuren staat niet hier maar in `Next steps carta/`: `1-manual-steps.md` (jouw stappen), `2-to-do.md` (Claude) en `3-waves.md` (alles wat gedaan is).
 
+## Huidig of geschiedenis
+
+Eén regel: **huidig** is wat nu klopt en bijgewerkt wordt; **geschiedenis** is afgerond en verandert nooit meer. Twijfel je bij een bestand, kijk dan in deze tabel.
+
+| Waar | Soort | Wat het is |
+|---|---|---|
+| `Next steps carta/1-manual-steps.md`, `2-to-do.md` | Huidig | Wat jij en Claude nog moeten doen |
+| `Next steps carta/3-waves.md` | Geschiedenis, groeit aan | Elke uitgevoerde taak in twee zinnen; na elke wave komen er regels bij |
+| `README.md`, `CLAUDE.md`, `PRODUCT.md`, `DESIGN.md` (root) | Huidig | Opbouw, werkregels, product, designtokens |
+| `docs/` en de mappen `product/`, `operations/`, `legal/`, `launch/`, `design-v6/`, `tos/` | Huidig | Hoe Carta nu werkt en wat nu geldt |
+| `docs/history/` | Geschiedenis | Afgeronde plannen en oude versies; elk bestand begint met een banner |
+| `Execution/_OPEN.md`, `_ORDER.md`, `_TEMPLATE.md`, `_queue/` | Huidig | Het register, de takenlijst, het rapportsjabloon en de scripts |
+| `Execution/P0/` tot `Execution/P15/` | Geschiedenis | Het rapport van elke taak, nooit aangepast (zie `Execution/README.md`) |
+| `additional docs/Carta/` | Huidig | Het masterplan: `Carta-Master-Plan.xmind` (de scripts lezen dit) en de businessplannen in `Plan/` |
+| `archive/` | Geschiedenis | Oude code die vervangen is |
+| `data/reports/`, `reports/` | Gegenereerd | Uitvoer van de pipeline; wordt overschreven bij een nieuwe run |
+
 ## In de root van de repo
 
 | Bestand | Waarvoor |
@@ -79,26 +96,29 @@ De technische naslag. Deze bestanden blijven bewust direct in `docs/`, omdat scr
 | [launch/LAUNCH-OUTREACH-DRAFTS.md](launch/LAUNCH-OUTREACH-DRAFTS.md) | Concepten voor lanceerberichten |
 | [launch/GTM-ACQUISITION-CONSTRAINT.md](launch/GTM-ACQUISITION-CONSTRAINT.md) | De groeibeperking: hoe Carta gebruikers vindt |
 
-## Archief (`docs/archive/`)
+## Geschiedenis (`docs/history/`)
 
 Afgeronde plannen en promptpakketten. Ze blijven bewaard omdat code-commentaar en oude rapporten ernaar verwijzen (bijvoorbeeld "PLAN.md B1"), maar er wordt niet meer aan gewerkt.
 
 | Bestand | Wat het was |
 |---|---|
-| [archive/PLAN.md](archive/PLAN.md) | Het plan voor de Explore-herbouw en rating_v4 (fases A tot E) |
-| [archive/CHANGELOG-explore-v4.md](archive/CHANGELOG-explore-v4.md) | Werklog van die herbouw |
-| [archive/CARTA_TRAILS_BUILD_BRIEF.md](archive/CARTA_TRAILS_BUILD_BRIEF.md) | De bouwbrief voor de wandellaag |
-| [archive/CARTA_CLAUDE_CODE_PROMPTS.md](archive/CARTA_CLAUDE_CODE_PROMPTS.md) | Een oud promptpakket voor Claude Code |
-| [archive/PRODUCT_ROADMAP.md](archive/PRODUCT_ROADMAP.md) | De roadmap van september, vervangen door `Next steps carta/` |
-| [archive/CATEGORY_UI_PLAN.md](archive/CATEGORY_UI_PLAN.md) | Plan voor de categorieschermen |
-| [archive/CYCLING_RESUME.md](archive/CYCLING_RESUME.md) | Overdracht van de fietslaag |
-| [archive/PRICEMAP_CHUNKS.md](archive/PRICEMAP_CHUNKS.md) | De prompts voor de uitbreiding van de prijskaart |
-| [archive/QUALITY_UPGRADE_PLAN.md](archive/QUALITY_UPGRADE_PLAN.md) | Het kwaliteitsplan met open data van augustus |
-| [archive/SHARING_FRIENDS_PLAN.md](archive/SHARING_FRIENDS_PLAN.md) | Onderzoek naar delen en vrienden |
-| [archive/SHARING_FRIENDS_BUILD.md](archive/SHARING_FRIENDS_BUILD.md) | Het bouwplan voor delen en vrienden |
-| [archive/TRAILS_EXPANSION_PLAN.md](archive/TRAILS_EXPANSION_PLAN.md) | Het uitbreidingsplan voor wandelroutes |
-| [archive/trails-daytrips-setup-prompts.md](archive/trails-daytrips-setup-prompts.md) | Opstartprompts voor wandelen en dagtrips |
-| [archive/HANDOFF_LLM_RUNS.md](archive/HANDOFF_LLM_RUNS.md) | Overdracht van twee Gemini-runs (afgerond op 2026-09-16) |
+| [history/PLAN.md](history/PLAN.md) | Het plan voor de Explore-herbouw en rating_v4 (fases A tot E) |
+| [history/CHANGELOG-explore-v4.md](history/CHANGELOG-explore-v4.md) | Werklog van die herbouw |
+| [history/CARTA_TRAILS_BUILD_BRIEF.md](history/CARTA_TRAILS_BUILD_BRIEF.md) | De bouwbrief voor de wandellaag |
+| [history/CARTA_CLAUDE_CODE_PROMPTS.md](history/CARTA_CLAUDE_CODE_PROMPTS.md) | Een oud promptpakket voor Claude Code |
+| [history/PRODUCT_ROADMAP.md](history/PRODUCT_ROADMAP.md) | De roadmap van september, vervangen door `Next steps carta/` |
+| [history/CATEGORY_UI_PLAN.md](history/CATEGORY_UI_PLAN.md) | Plan voor de categorieschermen |
+| [history/CYCLING_RESUME.md](history/CYCLING_RESUME.md) | Overdracht van de fietslaag |
+| [history/PRICEMAP_CHUNKS.md](history/PRICEMAP_CHUNKS.md) | De prompts voor de uitbreiding van de prijskaart |
+| [history/QUALITY_UPGRADE_PLAN.md](history/QUALITY_UPGRADE_PLAN.md) | Het kwaliteitsplan met open data van augustus |
+| [history/SHARING_FRIENDS_PLAN.md](history/SHARING_FRIENDS_PLAN.md) | Onderzoek naar delen en vrienden |
+| [history/SHARING_FRIENDS_BUILD.md](history/SHARING_FRIENDS_BUILD.md) | Het bouwplan voor delen en vrienden |
+| [history/TRAILS_EXPANSION_PLAN.md](history/TRAILS_EXPANSION_PLAN.md) | Het uitbreidingsplan voor wandelroutes |
+| [history/trails-daytrips-setup-prompts.md](history/trails-daytrips-setup-prompts.md) | Opstartprompts voor wandelen en dagtrips |
+| [history/HANDOFF_LLM_RUNS.md](history/HANDOFF_LLM_RUNS.md) | Overdracht van twee Gemini-runs (afgerond op 2026-09-16) |
+| [history/carta-destinations-enhancement-spec-v1.md](history/carta-destinations-enhancement-spec-v1.md) | Eerste versie van de Destinations-spec (versie 2 staat in `additional docs/Carta/Plan/Data Quality/`) |
+| [history/LONG_LEAD_TRACKER.md](history/LONG_LEAD_TRACKER.md) | De oude tracker van langlopende contacten, nu in `1-manual-steps.md` |
+| [history/TEMPLATE-v0.md](history/TEMPLATE-v0.md) | Het eerste rapportsjabloon, vervangen door `Execution/_TEMPLATE.md` |
 
 ## Verplaatst op 2026-10-13
 
@@ -106,12 +126,14 @@ Oude rapporten noemen nog de oude paden. Zo vind je ze terug:
 
 | Oud pad | Nieuw pad |
 |---|---|
-| `PLAN.md`, `CARTA_CLAUDE_CODE_PROMPTS.md`, `CARTA_TRAILS_BUILD_BRIEF.md`, `CHANGELOG-explore-v4.md` | `docs/archive/` |
+| `PLAN.md`, `CARTA_CLAUDE_CODE_PROMPTS.md`, `CARTA_TRAILS_BUILD_BRIEF.md`, `CHANGELOG-explore-v4.md` | `docs/history/` |
 | `ROUTES.md` | `docs/ROUTES.md` |
 | `1.CARTA.md` (oude kopie) | `docs/1.CARTA.md` |
 | `docs/FIRST_RUN_RESULT.md`, `ONBOARDING_AND_EMPTY_STATES.md`, `FEEDBACK-LOOP.md`, `IMAGE_BRIEF.md`, `COMPONENT_ROLES.md` | `docs/product/` |
 | `docs/BACKUP.md`, `INCIDENT_RUNBOOK.md`, `REFUND_SOP.md`, `SUPPORT.md` | `docs/operations/` |
 | `docs/ARTICLE30.md` | `docs/legal/` |
 | `docs/SEO.md`, `LAUNCH-METRICS.md`, `LAUNCH-OUTREACH-DRAFTS.md`, `GTM-ACQUISITION-CONSTRAINT.md` | `docs/launch/` |
-| De andere plannen uit `docs/` | `docs/archive/` |
+| De andere plannen uit `docs/` | `docs/history/` |
+| `Claude outputs/` | Verwijderd: alles was een kopie uit `additional docs/Carta/`, behalve de eerste Destinations-spec (nu `docs/history/`) |
+| `additional docs/Carta/Execution/_LONG_LEAD_TRACKER.md`, `_TEMPLATE.md` | `docs/history/LONG_LEAD_TRACKER.md`, `docs/history/TEMPLATE-v0.md` |
 | `PARALLEL-WAVES-PLAN.md`, `Execution/_WAVES.md`, `_OWNER-RUNBOOK.md`, `_OPEN-MASTER.md`, `P2/P3/P9 _OPEN-*.md` | Verwijderd, vervangen door `Next steps carta/` (oude versies in de git-geschiedenis) |

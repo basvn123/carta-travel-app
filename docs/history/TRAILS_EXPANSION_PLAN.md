@@ -1,5 +1,7 @@
 # Trails expansion plan (2026-08-12)
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 The gap list from comparing the trails/daytrips stack against the open-data
 research playbook. The architecture verdict was: ~90% implemented, with two
 deliberate divergences to KEEP (the local lab + produced-work-only export is

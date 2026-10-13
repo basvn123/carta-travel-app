@@ -1,5 +1,7 @@
 # Cycling layer: what is published, and what the next session picks up
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Written 2026-08-30, updated 2026-08-31. Read `docs/CYCLING.md` first for how the layer works; this
 is the state of the build and the ordered list of what is left.
 

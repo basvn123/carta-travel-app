@@ -1,5 +1,7 @@
 # Carta — Claude Code prompt pack
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Prompts for the UX/content items not yet implemented. Written to be pasted into
 Claude Code one at a time, in the repo root (`continent-app/`).
 

@@ -1,5 +1,7 @@
 # Trails + daytrips vertical: setup prompts
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Source: research doc "Building a Europe-Wide Travel App on Free/Open Data" (validated 2026-08-06).
 Each prompt below is meant to be pasted into a fresh Claude Code session from the repo root.
 Dependency order: 1 -> 2 -> (3, 5, 6, 7 in any order) -> 4 -> 8 -> 13 -> 9 -> 10 -> 11 -> 12.

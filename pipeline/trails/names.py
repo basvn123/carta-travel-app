@@ -16,7 +16,7 @@ re-exporting squash/base_name because coverage_report already imports them
 from there, and a module that has been imported from for a whole phase should
 not change its surface just to move a function.
 
-Phase 2 of docs/archive/CARTA_TRAILS_BUILD_BRIEF.md needs the section markers in the
+Phase 2 of docs/history/CARTA_TRAILS_BUILD_BRIEF.md needs the section markers in the
 chainer, which is what forced the extraction: the brief's rule 2 is "normalised
 name, section markers stripped", and that list of markers must be the same list
 the registry counted ways with, or the chainer and the report disagree about

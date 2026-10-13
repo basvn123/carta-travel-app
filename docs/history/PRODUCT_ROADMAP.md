@@ -1,5 +1,7 @@
 # Carta product roadmap
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 What is actually left to build before Carta is a product rather than a project,
 in the order the dependencies demand. Written 2026-09-19 against the repo as it
 stands on `trails-photos-and-card-overlay`.

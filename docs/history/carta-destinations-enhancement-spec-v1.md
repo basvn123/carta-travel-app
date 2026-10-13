@@ -1,5 +1,7 @@
 # Carta, Destinations enhancement spec
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Scope: the five non-trip categories in the Destinations tab, **Trails, Cycling, Beaches, Lakes, Mountains**. The Trips category is covered by `carta-trips-enhancement-spec.md` and is not repeated here, but every rule in that document that is about *how a page behaves* (progressive disclosure, flashcards, icon grid, info dots, one primary button, mono for measured facts, honesty about coverage) is assumed to apply here too and is only restated where a section needs it differently.
 
 What I checked: the built wire in `continent-app/dist/{trails,cycling,beaches,lakes,mountains}/*.json` across every country file, the five browse pages (`BeachPage`, `LakePage`, `MountainPage`, `CyclePage`, `TrailPage`) and their story libs, the category switch in `DestinationsTab.jsx`, and the design system in `.claude/skills/carta-design`. Then a web research pass per section on data sources and on what the best products in each field actually show.

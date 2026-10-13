@@ -1,5 +1,7 @@
 # T### · <task title>
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 **Phase:** P<n> · **Date:** YYYY-MM-DD · **Branch:** `t###-<slug>`
 **Source read:** `Plan/<doc>.md` §<section>
 

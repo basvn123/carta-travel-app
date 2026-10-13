@@ -1607,7 +1607,7 @@ TASKS = [
             [PY, "pipeline/score_significance.py", "apply"],
             [PY, "pipeline/apply_rating_layer.py"],
         ],
-        "note": ("the 2026-08 open-signal rate engine (docs/archive/QUALITY_UPGRADE_PLAN.md): "
+        "note": ("the 2026-08 open-signal rate engine (docs/history/QUALITY_UPGRADE_PLAN.md): "
                  "pageviews + Wikidata sitelinks/heritage + Wikivoyage See/Do "
                  "listings -> composite score -> local-quota rate 0-3. All "
                  "harvests resumable + cache-only; score_significance apply "

@@ -257,7 +257,7 @@ is how the catalogue grew wide and shallow in the first place.
 
 ## 10. Phase 1 as built (2026-09-17)
 
-Phase 1 of `docs/archive/CARTA_TRAILS_BUILD_BRIEF.md` is implemented and running:
+Phase 1 of `docs/history/CARTA_TRAILS_BUILD_BRIEF.md` is implemented and running:
 
 - `pipeline/trails/famous_registry.py` -> `data/trails/famous_registry.json`
 - `pipeline/trails/coverage_report.py` -> `data/reports/trails_coverage.json`

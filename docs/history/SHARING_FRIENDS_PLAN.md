@@ -1,5 +1,7 @@
 # Sharing, trip people and friends
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Research note, 2026-08-19. What it would take to (a) share a trip with
 someone, (b) record who you took a trip with, and (c) add friends and see
 their trips. Written against the code as it stands on `map-transport-glyphs`.
@@ -122,7 +124,7 @@ first, and a share whose first screen is a signup wall does not get opened.
 
 ### Stage 2: people on a trip (the Saved trips and Travel record ask)
 
-> **Superseded.** `docs/archive/SHARING_FRIENDS_BUILD.md` builds this without the
+> **Superseded.** `docs/history/SHARING_FRIENDS_BUILD.md` builds this without the
 > table below. `extras.people` already exists, already syncs, and already
 > works for guests, so upgrading that array is cheaper and covers more people.
 > The table is kept here as the reasoning that led there.

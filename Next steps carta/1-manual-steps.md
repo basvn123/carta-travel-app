@@ -400,6 +400,16 @@ Geeft vrij: wave 21.
 
 ---
 
+## Langlopende contacten (start ze vroeg)
+
+Deze contacten liggen op de klok van iemand anders: het versturen kost minder dan een uur, het antwoord duurt weken. Ze komen uit de oude long-lead tracker (nu `docs/history/LONG_LEAD_TRACKER.md`), die sinds 2026-09-28 overal "not started" zei. De advocaat, de boekhouder, Hostelworld en LiteAPI, Google Play en EUIPO staan al in blok 5 en blok 10.
+
+- [ ] (controleren) **L1. Culture Routes Society** (Turkije, ontgrendelt de hele Turkse sectie). Bepaal eerst wat je terug aanbiedt.
+- [ ] (controleren) **L2. Tasuleasa Social** (Via Transilvanica).
+- [ ] (controleren) **L3. Via Dinarica-programma, HPS (Via Adriatica) en Greek NECCA.**
+- [ ] (controleren) **L4. Omio en Flix.** De concepten staan in `docs/tos/omio_outreach.md` en `docs/tos/flix_outreach.md`.
+- [ ] (controleren) **L6. Belgische vervoerders: SNCB, De Lijn, STIB, TEC.** Hun voorwaarden sluiten open rijen in het licentieregister.
+
 ## Beslissingen die nog van jou zijn
 
 Geen ervan blokkeert een blok hierboven. Eén regel aan Claude per beslissing is genoeg; het verslag achter de rij heeft de opties.

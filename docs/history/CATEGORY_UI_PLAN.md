@@ -1,5 +1,7 @@
 # Category UI plan: wiring the natural-features wire into the Destinations tab
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Status: ready to apply. Written 2026-08-17 against `continent-app/public/features/`
 generated at `2026-08-17T16:34:06Z` (5,472 features, tiers 1 and 2).
 

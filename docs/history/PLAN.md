@@ -1,3 +1,5 @@
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 <!-- Carta engineering plan. Generated for handoff to Claude Code. -->
 
 # Carta — Explore rebuild & rating_v4

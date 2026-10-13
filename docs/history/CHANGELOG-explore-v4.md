@@ -1,5 +1,7 @@
 # explore-v4 changelog
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Working log for the Explore rebuild and rating_v4 (PLAN.md). One entry per
 phase: steps completed, measured numbers, decisions taken along the way.
 

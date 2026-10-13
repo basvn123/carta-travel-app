@@ -1,5 +1,7 @@
 # Carta trails — build brief for Claude Code
 
+> **Geschiedenis.** Dit document is afgerond en wordt niet meer bijgewerkt. Wat nu geldt: `docs/README.md`; wat nog moet: `Next steps carta/`.
+
 Written 2026-09-17. Everything here was measured against the published wire
 (`trails-export.zip`, 17,670 detail rows, wire stamped 2026-09-13), the live
 site, and the source in `pipeline/trails/`. Companion documents:
