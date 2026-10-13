@@ -62,6 +62,10 @@ No em dashes and no en dashes, anywhere, ever: a comma, a colon or two sentences
 
 Banned words: seamless, unlock, effortless, elevate, leverage, empower, curated, simply, just, easy.
 
+## Visual brand commitment
+
+Decided by the owner on 2026-10-13 (T419), after two rounds of invented visual worlds were refused: Carta looks like a top-tier travel app, measured against Airbnb, Polarsteps and Wanderlog. Photography leads, the feel is warm and inviting, and the craft bar is theirs. Carta's own mark on that familiar structure is the price line with its source under every photo. The chosen rendition is "Lagoon" (deep lagoon teal for actions and selection, sun yellow for best value, blue-grey ink, white surfaces on a warm light grey); its direction contract is in `continent-app/.impeccable/surfaces/continent-app.md`, and its tokens land in DESIGN.md from T420. The voice above (plain, specific, honest about coverage) is unchanged; only the look moves from instrument to inviting.
+
 ## Accessibility constraints
 
 These are not optional and are not announced in the UI.
