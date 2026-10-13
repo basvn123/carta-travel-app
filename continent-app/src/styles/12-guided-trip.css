@@ -39,7 +39,9 @@
   font-size: 20px; line-height: 1;
   color: var(--ink-mute);
 }
-.guide-close:hover { color: var(--accent); }
+@media (hover: hover) {
+  .guide-close:hover { color: var(--accent); }
+}
 .guide-steps { display: flex; gap: 6px; flex-wrap: wrap; padding-right: 32px; }
 .guide-step-dot {
   display: flex; align-items: center; gap: 5px;
@@ -82,7 +84,9 @@
   text-align: left;
   transition: border-color .15s, background .15s;
 }
-.guide-country:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .guide-country:hover { border-color: var(--ink-soft); }
+}
 .guide-country.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
 .guide-flag { font-size: 22px; line-height: 1; }
 .guide-flag-img {
@@ -166,7 +170,9 @@
   color: var(--ink);
   display: flex; align-items: center; justify-content: center;
 }
-.guide-nights button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .guide-nights button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+}
 .guide-nights button:disabled { opacity: 0.3; cursor: default; }
 .guide-nights-val { font-size: 12px; min-width: 52px; text-align: center; color: var(--ink-soft); }
 .guide-nights-val b { font-family: var(--mono); color: var(--ink); }
@@ -270,7 +276,9 @@
   cursor: pointer;
   text-align: left;
 }
-.guide-design-btn:hover { opacity: 0.93; }
+@media (hover: hover) {
+  .guide-design-btn:hover { opacity: 0.93; }
+}
 .guide-design-spark {
   display: flex; align-items: center; justify-content: center;
   flex: none;
@@ -316,7 +324,9 @@
   cursor: pointer;
   transition: border-color .12s, background .12s, transform .12s, box-shadow .12s;
 }
-.citypick-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); box-shadow: 0 2px 8px rgba(26, 26, 26, 0.22); }
+@media (hover: hover) {
+  .citypick-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); box-shadow: 0 2px 8px rgba(26, 26, 26, 0.22); }
+}
 /* The tier icon - not the pill colour - carries "what kind of stop" this is. */
 .citypick-ic { display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .citypick-pin.tier-top .citypick-ic { color: var(--accent); }
@@ -424,7 +434,9 @@
   color: var(--ink-soft);
   width: 100%;
 }
-.guide-show-more:hover { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .guide-show-more:hover { border-color: var(--accent); color: var(--accent); }
+}
 .guide-anchor-badge {
   display: inline-flex; align-items: center; gap: 3px;
   padding: 2px 7px;
@@ -447,7 +459,9 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.guide-startover:hover { color: var(--warn-ink); }
+@media (hover: hover) {
+  .guide-startover:hover { color: var(--warn-ink); }
+}
 
 /* Step 3 - activity chips */
 .guide-chips { display: flex; flex-wrap: wrap; gap: 7px; }
@@ -461,7 +475,9 @@
   color: var(--ink);
   transition: border-color .15s, background .15s;
 }
-.guide-chip:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .guide-chip:hover { border-color: var(--ink-soft); }
+}
 .guide-chip.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 .guide-chip.on .guide-chip-kind { color: var(--on-fill); }
 .guide-chip-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
@@ -497,7 +513,9 @@
 .guide-arrange-sub { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); margin-top: 1px; }
 .guide-arrange-tools { display: flex; flex-direction: column; gap: 2px; }
 .guide-arrange-tools button { width: 22px; height: 18px; color: var(--ink-mute); font-size: 12px; }
-.guide-arrange-tools button:hover:not(:disabled) { color: var(--ink); }
+@media (hover: hover) {
+  .guide-arrange-tools button:hover:not(:disabled) { color: var(--ink); }
+}
 .guide-arrange-tools button:disabled { opacity: 0.25; cursor: default; }
 .guide-start {
   display: flex; align-items: flex-end; justify-content: space-between; gap: 14px;
@@ -624,7 +642,9 @@
   color: var(--ink-soft);
   border-bottom: 1px solid var(--rule);
 }
-.guide-estimate-main:hover .guide-estimate-toggle { color: var(--ink); border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .guide-estimate-main:hover .guide-estimate-toggle { color: var(--ink); border-color: var(--ink-soft); }
+}
 .guide-estimate-detail {
   padding: 4px 18px 14px;
   animation: guide-est-open var(--dur-2) var(--ease-out);
@@ -654,7 +674,9 @@
    their face from .btn; these rules still dress the other .guide-back and
    .guide-next controls inside the steps. */
 .guide-back:not(.btn) { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--rule); color: var(--ink-soft); font-size: 13px; }
-.guide-back:not(.btn):hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .guide-back:not(.btn):hover { border-color: var(--ink-soft); }
+}
 .guide-next:not(.btn) {
   padding: 10px 22px;
   border-radius: 10px;
@@ -665,7 +687,9 @@
   font-weight: 600;
   transition: opacity .15s;
 }
-.guide-next:not(.btn):hover:not(:disabled) { opacity: 0.9; }
+@media (hover: hover) {
+  .guide-next:not(.btn):hover:not(:disabled) { opacity: 0.9; }
+}
 /* A ghosted terracotta button read as a live one someone had dimmed, and on
    the first screen of a step (nothing filled in yet) that is the whole
    footer. Not-yet gets its own flat neutral instead, which is both more
@@ -713,13 +737,17 @@
   font-size: 14px; font-weight: 600;
   border: 1px solid var(--accent);
 }
-.trip-plan-prompt-yes:hover { opacity: 0.9; }
+@media (hover: hover) {
+  .trip-plan-prompt-yes:hover { opacity: 0.9; }
+}
 .trip-plan-prompt-no {
   padding: 12px; border-radius: 10px;
   border: 1px solid var(--rule);
   color: var(--ink-soft); font-size: 13.5px;
 }
-.trip-plan-prompt-no:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .trip-plan-prompt-no:hover { border-color: var(--ink-soft); }
+}
 
 /* ── Day planner: "In Saved trips" confirmation popup ── */
 .day-saved-overlay {
@@ -751,7 +779,9 @@
   font-size: 22px; line-height: 1;
   cursor: pointer;
 }
-.day-saved-close:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .day-saved-close:hover { background: var(--paper-dim); color: var(--ink); }
+}
 .day-saved-badge {
   width: 46px; height: 46px;
   margin: 0 auto 14px;
@@ -767,7 +797,9 @@
   border: 1px solid var(--rule);
   color: var(--ink-soft); font-size: 13.5px;
 }
-.day-saved-done:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .day-saved-done:hover { border-color: var(--ink-soft); }
+}
 
 /* ───────── Guided trip: itinerary day view ───────── */
 .itin { padding-top: 4px; }
@@ -813,7 +845,9 @@
   border-radius: 12px;
   transition: border-color .15s;
 }
-.itin-stop:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .itin-stop:hover { border-color: var(--ink-soft); }
+}
 .itin-stop.active { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
 .itin-stop-idx {
   display: flex; align-items: center; justify-content: center;
@@ -896,7 +930,9 @@
   padding: 3px 9px;
   transition: color .15s, border-color .15s;
 }
-.itin-leg-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
+@media (hover: hover) {
+  .itin-leg-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
+}
 .itin-leg-modes {
   display: flex; gap: 6px;
   padding: 0 10px 10px 14px;
@@ -1114,7 +1150,9 @@
   background: var(--paper);
   transition: border-color .15s, background .15s;
 }
-.guide-interest:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .guide-interest:hover { border-color: var(--ink-soft); }
+}
 .guide-interest.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
 .guide-interest-check {
   position: absolute; top: 7px; right: 7px;

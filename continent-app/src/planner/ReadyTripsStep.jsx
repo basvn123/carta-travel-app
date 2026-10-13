@@ -8,7 +8,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { eur } from '../lib/format.js';
-import { RouteIcon, CheckIcon, SparkIcon, StarIcon } from '../components/Icons.jsx';
+import { RouteIcon, CheckIcon, SparkIcon, StarIcon, CloseIcon } from '../components/Icons.jsx';
 
 /**
  * The ready-made half of the planner: published itineraries that were composed
@@ -315,7 +315,7 @@ export function ReadyTripsStep({
           >
             <CountryFlag country={c.iso2} size={12} />
             {c.country}
-            <span className="wready-chip-x" aria-hidden="true">&times;</span>
+            <span className="wready-chip-x" aria-hidden="true"><CloseIcon size={12} /></span>
           </button>
         ))}
       </div>

@@ -276,7 +276,9 @@
    route. These selectors live in 24-destination-workspace.css, which this
    surface does not own, so they are overridden here (OWNERSHIP rule 5, row
    T388-c). */
-.guide-booked-bit:hover { border-color: var(--rule); }
+@media (hover: hover) {
+  .guide-booked-bit:hover { border-color: var(--rule); }
+}
 .guide-booked-bit.on {
   border-color: var(--ink);
   outline: 1px solid var(--ink);
@@ -288,11 +290,15 @@
 .wtrip-len.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 .tleg-mode.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); font-weight: 600; }
 .tleg-mode.on svg { color: var(--on-fill); }
-.tleg-mode:hover { border-color: var(--rule); }
+@media (hover: hover) {
+  .tleg-mode:hover { border-color: var(--rule); }
+}
 /* The picked country on Trips is a filter chip (rule "Filter chips"): paper
    dim, ink text, a rule border; no accent fill on hover. */
 .wready-chip.on { border-color: var(--rule); background: var(--paper-dim); color: var(--ink); }
-.wready-chip:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .wready-chip:hover { background: var(--paper-dim); color: var(--ink); }
+}
 .guide-ccard.on { border-color: var(--ink); box-shadow: none; outline: 1px solid var(--ink); outline-offset: -2px; }
 .guide-ccard.reading { border-color: var(--ink-soft); }
 .guide-ccard.reading .guide-ccard-info { background: var(--ink-fill); color: var(--on-fill); }
@@ -307,7 +313,9 @@
 .trip-wizard-modal .wiz-step.done .wiz-step-btn { border-top-color: var(--ink-mute); }
 .trip-wizard-modal .wiz-step.now .wiz-step-btn { border-top-color: var(--ink); }
 .trip-wizard-modal .wiz-step.now .wiz-step-mark { background: var(--ink); color: var(--on-fill); }
-.trip-wizard-modal .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--ink-soft); }
+@media (hover: hover) {
+  .trip-wizard-modal .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--ink-soft); }
+}
 @media (hover: hover) {
   .trip-wizard-modal .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--ink); }
 }
@@ -400,8 +408,10 @@
   color: var(--ink-soft);
 }
 .guide-ccard-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.guide-ccard-info:hover,
-.guide-ccard-pick:hover ~ .guide-ccard-info { background: var(--bg-card); color: var(--ink-soft); }
+@media (hover: hover) {
+  .guide-ccard-info:hover,
+  .guide-ccard-pick:hover ~ .guide-ccard-info { background: var(--bg-card); color: var(--ink-soft); }
+}
 @media (hover: hover) {
   .guide-ccard:hover:not(.on) { border-color: var(--ink-soft); }
   .guide-ccard-info:hover,

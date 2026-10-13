@@ -1,4 +1,5 @@
 import { useI18n } from '../../i18n/index.jsx';
+import { CloseIcon } from '../../components/Icons.jsx';
 
 // The Site tab: maintenance mode, the public notice, and the feature flags,
 // each saved to site_config through admin_set_config. Pure render over
@@ -120,7 +121,7 @@ export function ConfigManager({ config }) {
                     setFlagsSaved(false);
                   }}
                 >
-                  x
+                  <CloseIcon size={16} />
                 </button>
               </div>
             ))}

@@ -23,6 +23,7 @@ import {
   LOCAL_KM, townReach, reachLine, TOWN_VISIT_MIN, PLACE_VISIT_MIN, DAY_FIT_MIN,
 } from './dayExploreRails.js';
 import { scrollBehavior } from '../lib/motion.js';
+import { CloseIcon } from '../components/Icons.jsx';
 
 /**
  * "Build it myself": the guided builder around a stay (D6).
@@ -570,7 +571,7 @@ export function DayExploreBuilder({
             aria-label={t('day.exploreSearchAria')}
           />
           {query && (
-            <button className="dayex-search-clear" onClick={() => setQuery('')} aria-label={t('day.clearSearch')}>×</button>
+            <button className="dayex-search-clear" onClick={() => setQuery('')} aria-label={t('day.clearSearch')}><CloseIcon size={16} /></button>
           )}
         </div>
       )}
@@ -702,7 +703,7 @@ export function DayExploreBuilder({
                   <span className="dayex-tray-moves">
                     <button onClick={() => onMovePick(r.key, -1)} disabled={i === 0} aria-label={t('dayex.moveUp')}>↑</button>
                     <button onClick={() => onMovePick(r.key, 1)} disabled={i === trayRows.length - 1} aria-label={t('dayex.moveDown')}>↓</button>
-                    <button onClick={() => toggle(r)} aria-label={t('dayex.removeFromDay', { name: r.name })}>×</button>
+                    <button onClick={() => toggle(r)} aria-label={t('dayex.removeFromDay', { name: r.name })}><CloseIcon size={16} /></button>
                   </span>
                 </li>
               ))}
@@ -710,7 +711,7 @@ export function DayExploreBuilder({
                 <li key={s.destinationId}>
                   <span className="dayex-tray-name">{destinations[s.destinationId]?.city || ''}</span>
                   <span className="dayex-tray-moves">
-                    <button onClick={() => onToggleTown(s.destinationId)} aria-label={t('day.remove')}>×</button>
+                    <button onClick={() => onToggleTown(s.destinationId)} aria-label={t('day.remove')}><CloseIcon size={16} /></button>
                   </span>
                 </li>
               ))}

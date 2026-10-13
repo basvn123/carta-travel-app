@@ -940,4 +940,5 @@
    open over it (a detail, journey, trip or region page), so that title is
    the only h1 in the outline. Sheets and small dialogs title themselves
    with an h2 and leave it in place. */
-body:has(.tpage[aria-modal="true"], .rgnp[aria-modal="true"]) .tab-h1 { display: none; }
+body:has(.tpage[aria-modal="true"], .rgnp[aria-modal="true"], .destp[aria-modal="true"]) .tab-h1,
+[inert] .tab-h1 { display: none; }

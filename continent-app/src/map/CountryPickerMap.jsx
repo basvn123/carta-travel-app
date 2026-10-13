@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { keepFitted } from './coords.js';
 import { tokenColour as token } from './tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
+import { CloseIcon } from '../components/Icons.jsx';
 
 // Label-light and desaturated: this map is a picker, so the countries are the
 // content and the basemap is background. Positron with no labels leaves the
@@ -317,7 +318,7 @@ export function CountryPickerMap({
               )}
             </div>
           </div>
-          <button className="cpm-card-close" onClick={() => setTapped(null)} aria-label={t('wizard.close')}>×</button>
+          <button className="cpm-card-close" onClick={() => setTapped(null)} aria-label={t('wizard.close')}><CloseIcon size={16} /></button>
         </div>
       )}
     </div>

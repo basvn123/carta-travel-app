@@ -24,7 +24,7 @@ import { useI18n } from '../i18n/index.jsx';
 import {
   CheckIcon, PlusIcon, BedIcon, DiningIcon, CalendarIcon, InfoIcon, MapPinIcon,
   CompassIcon, SuitcaseIcon, HeartIcon, RouteIcon, CastleIcon, MusicIcon,
-  BeachIcon, BootIcon, LakeIcon, MountainIcon, CarIcon, TicketIcon, ReceiptIcon,
+  BeachIcon, BootIcon, LakeIcon, MountainIcon, CarIcon, TicketIcon, ReceiptIcon, CloseIcon,
 } from '../components/Icons.jsx';
 
 /**
@@ -878,7 +878,7 @@ export function CountryBrief({
       <div className="cbrief-body">
         <div className="cbrief-hero-wrap">
           <BriefHeader brief={brief} />
-          <button className="cbrief-close" onClick={onClose} aria-label={t('wizard.close')}>×</button>
+          <button className="cbrief-close" onClick={onClose} aria-label={t('wizard.close')}><CloseIcon size={16} /></button>
         </div>
         {body}
       </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { LockIcon } from '../components/Icons.jsx';
+import { LockIcon, CloseIcon } from '../components/Icons.jsx';
 import { ContentSection } from '../components/admin/ContentSection.jsx';
 import { AdminLock } from '../components/admin/AdminLock.jsx';
 import { MissingTables } from '../components/admin/MissingTables.jsx';
@@ -148,7 +148,7 @@ export function AdminPage({ onClose }) {
           ))}
         </nav>
         <button type="button" className="adminpage-close" onClick={onClose} aria-label={t('account.close')}>
-          x
+          <CloseIcon size={16} />
         </button>
       </header>
 

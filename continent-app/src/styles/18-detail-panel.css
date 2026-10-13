@@ -24,7 +24,9 @@
   font-family: var(--ui);
   text-align: left;
 }
-.cintel-head:hover { background: var(--paper); }
+@media (hover: hover) {
+  .cintel-head:hover { background: var(--paper); }
+}
 .cintel-flag { width: 24px; height: auto; border-radius: 3px; box-shadow: var(--shadow-1); flex: none; }
 .cintel-country { font-weight: 600; font-size: 14px; color: var(--ink); }
 .cintel-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
@@ -77,7 +79,9 @@
 .cintel-line-warn { color: var(--ink); }
 .cintel-line-warn .cintel-ico { color: var(--accent); }
 .cintel-link { color: var(--accent); text-decoration: none; font-weight: 600; }
-.cintel-link:hover { text-decoration: underline; }
+@media (hover: hover) {
+  .cintel-link:hover { text-decoration: underline; }
+}
 .cintel-sights { display: flex; flex-direction: column; gap: 6px; }
 .cintel-sight { font-size: 12.5px; line-height: 1.45; }
 .cintel-sight-name { font-weight: 600; color: var(--ink); }
@@ -134,7 +138,9 @@
   text-align: left;
   cursor: pointer;
 }
-.trip-leg-main:hover { color: var(--ink-soft); }
+@media (hover: hover) {
+  .trip-leg-main:hover { color: var(--ink-soft); }
+}
 .trip-leg-caret { float: right; }
 .trip-leg-detail { padding: 4px 8px 10px; }
 .trip-leg-modes { display: flex; gap: 6px; margin-bottom: 6px; }
@@ -209,7 +215,9 @@
 .transfer-mode.on { border-color: var(--accent); background: var(--accent-bg); color: var(--ink); }
 .trip-leg-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0; }
 .trip-leg-links a { font-size: 11.5px; color: var(--accent); font-weight: 600; text-decoration: none; }
-.trip-leg-links a:hover { text-decoration: underline; }
+@media (hover: hover) {
+  .trip-leg-links a:hover { text-decoration: underline; }
+}
 .trip-leg-disclaimer { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); margin: 4px 0 0; }
 
 /* Trip planner: "take it cheaper" savings block */
@@ -239,20 +247,20 @@
   font-weight: 600;
   cursor: pointer;
 }
-.trip-saving-row button:hover { background: var(--accent-bg); }
+@media (hover: hover) {
+  .trip-saving-row button:hover { background: var(--accent-bg); }
+}
 
 /* Guided wizard: travel step (car advice + transport/pace tiles) */
 .guide-subtitle { font-family: var(--display); font-size: 17px; margin: 18px 0 10px; color: var(--ink); }
 .guide-car-advice {
+  /* One border, no side stripe (T411: the detector's side-tab finding). */
   border: 1px solid var(--rule);
-  border-left: 3px solid var(--ink-mute);
   border-radius: 10px;
   background: var(--bg-card);
   padding: 10px 12px;
   margin-bottom: 14px;
 }
-.guide-car-advice.yes { border-left-color: var(--accent); background: var(--accent-wash-alt); }
-.guide-car-advice.maybe { border-left-color: var(--accent-soft); }
 .guide-car-advice-head { font-weight: 700; font-size: 13.5px; color: var(--ink); margin-bottom: 4px; }
 .guide-car-advice p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin: 3px 0; }
 .guide-car-note { color: var(--ink); }
@@ -286,7 +294,9 @@
   color: var(--accent);
   text-decoration: none;
 }
-.day-gmaps-link:hover { text-decoration: underline; }
+@media (hover: hover) {
+  .day-gmaps-link:hover { text-decoration: underline; }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════
    2026-07 polish pass: icon-led sections, grouped cost breakdown, guided
@@ -372,7 +382,9 @@
   cursor: pointer;
   transition: border-color .15s, background .15s;
 }
-.stay-tier-chip:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .stay-tier-chip:hover { border-color: var(--ink-soft); }
+}
 .stay-tier-chip.on { border-color: var(--accent); background: var(--accent-bg); }
 .stay-tier-chip b {
   font-family: var(--mono);
@@ -410,54 +422,28 @@
   border-color: var(--accent);
   color: var(--paper);
 }
-.cost-action.is-primary:hover { background: var(--accent-press); border-color: var(--accent-press); }
+@media (hover: hover) {
+  .cost-action.is-primary:hover { background: var(--accent-press); border-color: var(--accent-press); }
+}
 
 .cost-action.is-secondary {
   background: none;
   border-color: var(--rule);
   color: var(--ink-soft);
 }
-.cost-action.is-secondary:hover { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .cost-action.is-secondary:hover { border-color: var(--accent); color: var(--accent); }
+}
 
 .cost-action.is-action {
   background: var(--paper-dim);
   border-color: var(--rule);
   color: var(--ink);
 }
-.cost-action.is-action:hover { border-color: var(--ink); background: var(--paper); }
+@media (hover: hover) {
+  .cost-action.is-action:hover { border-color: var(--ink); background: var(--paper); }
+}
 
-/* ─── Cautions inside a cost group (no flight on these dates, a vignette you
-   have to buy before you drive). Amber and icon-led: these cost money or stop
-   the trip if they're read as decoration. ─── */
-.cost-warning {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  margin: 10px 0;
-  padding: 10px 12px;
-  border: 1px solid rgba(217, 131, 36, 0.45);
-  border-left-width: 3px;
-  border-radius: 8px;
-  background: rgba(217, 131, 36, 0.09);
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ink);
-}
-.cost-warning svg {
-  flex: none;
-  margin-top: 1px;
-  color: var(--amber-warm);
-}
-.cost-info-btn:hover, .cost-info-btn.open { color: var(--accent); background: var(--accent-bg); }
-.cost-info-pop {
-  margin: 0;
-  padding: 8px 14px;
-  border-top: 1px solid var(--rule);
-  background: var(--paper-dim);
-  font-size: 11.5px;
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
 .cost-local-rates-row {
   display: flex;
   align-items: center;
@@ -468,13 +454,6 @@
 .cost-local-rates-label {
   font-size: 11px;
   color: var(--ink-mute);
-}
-.cost-local-rates-row .cost-info-pop {
-  flex-basis: 100%;
-  margin: 4px 0 0;
-  padding: 6px 0 0;
-  border-top: none;
-  background: none;
 }
 .cost-local-rates {
   margin: 8px 0 0;
@@ -581,7 +560,9 @@
   font-weight: 600;
   transition: background .15s, color .15s;
 }
-.day-route-optimize:hover { background: var(--accent-bg); }
+@media (hover: hover) {
+  .day-route-optimize:hover { background: var(--accent-bg); }
+}
 .day-timeline-num {
   display: flex;
   align-items: center;
@@ -630,13 +611,17 @@
   cursor: pointer;
   transition: border-color .15s, background .15s, color .15s;
 }
-.day-action-btn:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .day-action-btn:hover { border-color: var(--ink-soft); }
+}
 .day-action-btn.day-action-primary {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--on-fill);
 }
-.day-action-btn.day-action-primary:hover { opacity: 0.92; }
+@media (hover: hover) {
+  .day-action-btn.day-action-primary:hover { opacity: 0.92; }
+}
 .day-action-btn svg { flex: none; }
 
 /* One export menu instead of a row of six buttons: the popover holds PDF,
@@ -674,7 +659,9 @@
   cursor: pointer;
   transition: background .12s;
 }
-.day-export-item:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .day-export-item:hover { background: var(--paper-dim); }
+}
 .day-export-item svg { flex: none; color: var(--ink-soft); }
 
 /* The day's numbers in the plan header, above the scroll so they never leave
@@ -690,12 +677,13 @@
   font-variant-numeric: tabular-nums;
   color: var(--ink-soft);
 }
-.day-stat-sep { width: 1px; height: 11px; background: var(--rule); }
 
 /* Timeline row <-> map pin sync: hovering a card lifts its pin on the map;
    tapping a pin scrolls to its card and rings it once. */
 .day-timeline-row .day-assigned-row { transition: border-color .15s, box-shadow .15s; }
-.day-timeline-row:hover .day-assigned-row { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .day-timeline-row:hover .day-assigned-row { border-color: var(--ink-soft); }
+}
 .day-timeline-row.map-focus .day-assigned-row {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-bg);
@@ -718,7 +706,9 @@
   font-size: 14px;
   color: var(--ink-mute);
 }
-.day-city-chip-del:hover { color: var(--accent); }
+@media (hover: hover) {
+  .day-city-chip-del:hover { color: var(--accent); }
+}
 
 /* Collapsible activity tiers: the header is now a full-width toggle. */
 .day-tier-head {
@@ -728,7 +718,9 @@
   padding: 8px 2px;
   border-radius: 8px;
 }
-.day-tier-head:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .day-tier-head:hover { background: var(--paper-dim); }
+}
 .day-tier-caret {
   margin-left: auto;
   font-family: var(--mono);
@@ -770,7 +762,9 @@
   text-decoration: none;
   font-size: 11.5px;
 }
-.day-activity-detail a:hover { text-decoration: underline; }
+@media (hover: hover) {
+  .day-activity-detail a:hover { text-decoration: underline; }
+}
 /* The info panel opens on the place's photo, bigger than the row thumbnail,
    so "what is this?" is answered visually first. */
 .day-detail-photo {
@@ -801,7 +795,9 @@
   background: var(--paper);
   transition: border-color .15s, background .15s, transform .15s;
 }
-.shape-style:hover { border-color: var(--accent); transform: translateY(-1px); }
+@media (hover: hover) {
+  .shape-style:hover { border-color: var(--accent); transform: translateY(-1px); }
+}
 .shape-style.on { border-color: var(--accent); background: var(--accent-bg); }
 .shape-style-icon {
   display: flex;
@@ -948,13 +944,17 @@
   background: var(--paper);
   color: var(--ink-soft);
 }
-.shape-deck-btn.skip:hover { border-color: var(--warn-ink); color: var(--warn-ink); }
+@media (hover: hover) {
+  .shape-deck-btn.skip:hover { border-color: var(--warn-ink); color: var(--warn-ink); }
+}
 .shape-deck-btn.add {
   border: 1px solid var(--accent);
   background: var(--accent);
   color: var(--on-fill);
 }
-.shape-deck-btn.add:hover { opacity: 0.92; }
+@media (hover: hover) {
+  .shape-deck-btn.add:hover { opacity: 0.92; }
+}
 .shape-deck-hint {
   margin: 10px 0 0;
   text-align: center;
@@ -988,7 +988,9 @@
   cursor: pointer; transition: border-color .14s, background .14s, color .14s;
 }
 .shape-cat-chip svg { color: var(--ink-mute); flex: none; }
-.shape-cat-chip:hover { border-color: var(--accent); color: var(--ink); }
+@media (hover: hover) {
+  .shape-cat-chip:hover { border-color: var(--accent); color: var(--ink); }
+}
 .shape-cat-chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
 .shape-cat-chip.on svg { color: var(--on-fill); }
 .shape-cat-count {
@@ -1011,7 +1013,9 @@
   background: var(--paper);
   transition: border-color .14s, background .14s, transform .1s;
 }
-.shape-pick-row:hover { border-color: var(--accent); transform: translateY(-1px); }
+@media (hover: hover) {
+  .shape-pick-row:hover { border-color: var(--accent); transform: translateY(-1px); }
+}
 .shape-pick-row.on { border-color: var(--accent); background: var(--accent-bg); }
 .shape-pick-item.open .shape-pick-row { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
 .shape-pick-body {
@@ -1048,10 +1052,15 @@
   border: 1px solid var(--rule); background: var(--paper); color: var(--ink-mute);
   cursor: pointer; transition: border-color .14s, background .14s, color .14s;
 }
-.shape-pick-info:hover, .shape-pick-info.on { border-color: var(--accent); color: var(--accent); }
+.shape-pick-info.on { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .shape-pick-info:hover { border-color: var(--accent); color: var(--accent); }
+}
 .shape-pick-info.on { background: var(--accent-bg); }
 .shape-pick-toggle { font-size: 17px; line-height: 1; }
-.shape-pick-row:hover .shape-pick-toggle { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .shape-pick-row:hover .shape-pick-toggle { border-color: var(--accent); color: var(--accent); }
+}
 .shape-pick-toggle.on { background: var(--accent); border-color: var(--accent); color: var(--on-fill); }
 .shape-pick-desc {
   padding: 9px 12px 11px; border: 1px solid var(--rule); border-top: none;
@@ -1153,7 +1162,10 @@
   color: var(--ink-mute);
   flex: none;
 }
-.guide-city-info-btn:hover, .guide-city-info-btn.open { color: var(--accent); background: var(--accent-bg); }
+.guide-city-info-btn.open { color: var(--accent); background: var(--accent-bg); }
+@media (hover: hover) {
+  .guide-city-info-btn:hover { color: var(--accent); background: var(--accent-bg); }
+}
 .guide-city-facts {
   margin: 7px 0 4px;
   border: 1px solid var(--rule);
@@ -1241,7 +1253,9 @@
   letter-spacing: 0.01em;
   cursor: pointer;
 }
-.day-stay-search .trip-add-btn:hover:not(:disabled) { background: var(--accent-press-alt); }
+@media (hover: hover) {
+  .day-stay-search .trip-add-btn:hover:not(:disabled) { background: var(--accent-press-alt); }
+}
 /* Before three characters are typed the button is disabled, and it used to
    render paper text on a --rule fill: two close values that left "Find"
    barely legible. A disabled control still has to be readable, so it sits on
@@ -1264,13 +1278,14 @@
   background: var(--paper);
 }
 .day-stay-result + .day-stay-result { border-top: 1px solid var(--rule); }
-.day-stay-result:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .day-stay-result:hover { background: var(--paper-dim); color: var(--ink); }
+}
 .day-stay-chosen {
   display: flex;
   align-items: center;
   gap: 8px;
   border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
   border-radius: 8px;
   background: var(--paper);
   padding: 8px 6px 8px 12px;
@@ -1302,7 +1317,9 @@
   cursor: pointer;
   transition: border-color .15s, color .15s;
 }
-.day-changeplaces-btn:hover { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .day-changeplaces-btn:hover { border-color: var(--accent); color: var(--accent); }
+}
 .day-changeplaces-btn svg { color: var(--accent); }
 /* Two ways back to the map: adjust by hand, or with Carta's guide open. */
 .day-stay-actions { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -1314,109 +1331,15 @@
   border: 1px dashed var(--rule);
   color: var(--ink-soft);
 }
-.day-carta-reshape:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+@media (hover: hover) {
+  .day-carta-reshape:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+}
 .day-carta-reshape svg { color: var(--accent); }
 
 /* A leg that demands over an hour on foot gets an honest warning. */
 .day-timeline-longwalk { color: var(--warn-ink); font-size: 9.5px; }
 
-/* -- Carta's local intel: hand-curated area guide with one-tap adds -- */
-.day-intel {
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
-  border-radius: 10px;
-  padding: 11px 13px;
-  background: rgba(200, 80, 30, 0.03);
-}
-.day-intel .trip-block-title { display: flex; align-items: center; gap: 6px; }
-.day-intel .trip-block-title svg { color: var(--accent); }
-.day-intel-intro { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); margin: 2px 0 10px; }
-.day-intel-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px 0;
-  border-top: 1px solid var(--rule);
-}
-.day-intel-row.added .day-intel-name { color: var(--good-ink); }
-.day-intel-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.day-intel-name {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 2px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.day-intel-tag {
-  margin-left: 6px;
-  padding: 1px 7px;
-  border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-family: var(--ui);
-  font-size: 11px;
-  font-weight: 700;
-}
-.day-intel-note { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); }
-.day-intel-add {
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  font-size: 15px;
-  cursor: pointer;
-  color: var(--accent);
-}
-.day-intel-add:hover { border-color: var(--accent); }
-.day-intel-row.added .day-intel-add { background: var(--good-ink); border-color: var(--good-ink); color: var(--on-fill); }
-.day-intel-tip {
-  display: flex;
-  gap: 6px;
-  align-items: baseline;
-  margin: 9px 0 0;
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.day-intel-tip svg { flex: none; color: var(--accent); position: relative; top: 1px; }
 
-/* Edit-mode banner on the explore/build screen when changing an existing plan */
-.day-edit-banner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  padding: 9px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
-  background: var(--accent-bg);
-}
-.day-edit-banner > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 12px;
-  color: var(--ink);
-}
-.day-edit-banner svg { color: var(--accent); flex-shrink: 0; }
-.day-edit-cancel {
-  flex-shrink: 0;
-  padding: 5px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.day-edit-cancel:hover { border-color: var(--accent); color: var(--accent); }
 
 /* "Let Carta plan this city" (replaces the ambiguous Shape-my-day chip) */
 .day-carta-btn {
@@ -1433,7 +1356,9 @@
   cursor: pointer;
   transition: opacity .15s;
 }
-.day-carta-btn:hover { opacity: 0.85; }
+@media (hover: hover) {
+  .day-carta-btn:hover { opacity: 0.85; }
+}
 .day-carta-btn svg { color: var(--accent-bg); }
 
 /* Timeline rows now carry an ⓘ; the expanded detail spans the full row */
@@ -1442,8 +1367,6 @@
 
 /* Things-to-do tiers: Recommended gets its own accent, must-see rows pop */
 .day-tier-worth .day-tier-badge { color: var(--accent); }
-.day-tier-must .day-tier-head { font-weight: 700; }
-.day-tier-must .day-activity-row .day-assigned-name { font-weight: 600; }
 
 /* Shape-day wizard: feasibility step groups */
 .shape-feas-group { margin-bottom: 14px; }
@@ -1468,7 +1391,9 @@
   text-align: center;
   transition: border-color .15s, background .15s;
 }
-.day-custom-add:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
+@media (hover: hover) {
+  .day-custom-add:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
+}
 .day-custom-add:disabled { color: var(--ink-mute); border-color: var(--rule); cursor: default; }
 
 /* ── Import ideas drawer: extracted activities awaiting a day ── */
@@ -1492,7 +1417,9 @@
   white-space: nowrap;
   transition: background .15s, border-color .15s;
 }
-.day-idea-add:hover:not(:disabled) { background: var(--accent-bg); border-color: var(--accent); }
+@media (hover: hover) {
+  .day-idea-add:hover:not(:disabled) { background: var(--accent-bg); border-color: var(--accent); }
+}
 .day-idea-add:disabled { color: var(--ink-mute); border-color: var(--rule); cursor: default; }
 
 /* The link row inside the dropzone: a URL is a document too. */
@@ -1555,37 +1482,19 @@
   text-align: left;
   border-radius: 8px;
 }
-.day-scenic-row:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .day-scenic-row:hover { background: var(--paper-dim); }
+}
 .day-scenic-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .day-scenic-text b { font-size: 12.5px; color: var(--ink); }
 .day-scenic-text small { font-size: 11px; color: var(--ink-soft); }
 
-/* Researched "most beautiful walk" cards per city */
-.day-walk {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
-  border-radius: 8px;
-  background: var(--paper);
-  padding: 10px 12px;
-}
-.day-walk + .day-walk { margin-top: 8px; }
-.day-walk b { font-size: 13px; color: var(--ink); }
-.day-walk small { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); }
-/* Walk cards became addable: text left, the +/✓ pin button right. */
-.day-walk { flex-direction: row; align-items: center; gap: 10px; }
-.day-walk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.day-walk-add { flex: none; }
-.day-walk.added { border-color: var(--accent); }
 
 /* A walk pinned onto the day, shown with the plan itself. */
 .day-plan-walks { margin-top: 10px; }
 .day-plan-walk {
   display: flex; align-items: flex-start; gap: 10px;
   border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
   border-radius: 8px;
   background: var(--paper);
   padding: 9px 10px;

@@ -29,6 +29,7 @@ import { stripDashes } from './format.js';
 import { activityLink } from './activityAffiliates.js';
 import { destShareUrl } from './dossier.js';
 import { trailClimbUp, gradeLabelKey } from './trailStory.js';
+import { TOKEN_COLOURS as T } from '../map/tokenColors.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -39,10 +40,12 @@ const MONTH_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'Jul
 // T405: the palette is read from the live tokens of src/styles/01-tokens.css
 // (T363-b: the PDF carried the pre-T363 accent and mute colours). The literal
 // object below is only the fallback for a token that cannot be read, such as
-// a value that is not a six-digit hex.
+// a value that is not a six-digit hex. T411: the fallback comes from the
+// token mirror (src/map/tokenColors.js, checked against 01-tokens.css by the
+// design lint), not from a literal copy that had drifted.
 const C_FALLBACK = {
-  ink: '#0f172a', soft: '#414b5e', mute: '#7d8393', rule: '#e2ded1', ruleStrong: '#ccc7b8',
-  accent: '#e05a47', rate: '#8f5a0c', rateBg: '#f6e6cb', dim: '#efece2', green: '#4a6a3a',
+  ink: T['--ink'], soft: T['--ink-soft'], mute: T['--ink-mute'], rule: T['--rule-soft'], ruleStrong: T['--rule'],
+  accent: T['--accent'], rate: T['--rate'], rateBg: T['--rate-bg'], dim: T['--paper-dim'], green: T['--green'],
 };
 const tok = (name, fallback) => {
   try {

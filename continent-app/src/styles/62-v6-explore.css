@@ -449,8 +449,10 @@
 }
 .explore-shell .xcard .xcard-media { overflow: hidden; border-radius: 11px 11px 0 0; }
 .explore-shell .xcard .xcard-img { transition: none; }
-.explore-shell .xcard:hover,
-.explore-shell .xcard:hover .xcard-img { transform: none; box-shadow: none; }
+@media (hover: hover) {
+  .explore-shell .xcard:hover,
+  .explore-shell .xcard:hover .xcard-img { transform: none; box-shadow: none; }
+}
 @media (hover: hover) {
   .explore-shell .xcard:hover { border-color: var(--ink-mute); }
 }
@@ -635,8 +637,10 @@
 /* --- 4. State that answers at once, and nothing decorative moving ------- */
 .explore-shell .xcard-star,
 .explore-shell .xcard-info { transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out); }
-.explore-shell .xcard-star:hover,
-.explore-shell .xcard-info:hover { transform: none; }
+@media (hover: hover) {
+  .explore-shell .xcard-star:hover,
+  .explore-shell .xcard-info:hover { transform: none; }
+}
 @media (hover: hover) {
   .explore-shell .xcard-star:hover,
   .explore-shell .xcard-info:hover { color: var(--ink); }
@@ -690,7 +694,9 @@
   transform: none;
   transition: border-color var(--dur-1) var(--ease-out);
 }
-.explore-shell .railcard:hover { transform: none; box-shadow: none; }
+@media (hover: hover) {
+  .explore-shell .railcard:hover { transform: none; box-shadow: none; }
+}
 @media (hover: hover) {
   .explore-shell .railcard:hover { border-color: var(--ink-mute); }
 }
@@ -842,3 +848,11 @@
 @media (min-width: 769px) {
   .explore-shell .xcontent-map .xmap { height: 64dvh; }
 }
+
+/* T411: the cut chips reach the tap floor on touch wherever they are drawn
+   (the quality floor measured 34 px), and the country page's facts stand
+   apart by the gap, not by middots (row T404-d). */
+@media (pointer: coarse) {
+  .xrails-more-chip { min-height: var(--tap); }
+}
+.cpage-facts { display: flex; flex-wrap: wrap; column-gap: var(--space-4); row-gap: var(--space-1); }

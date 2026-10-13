@@ -5,7 +5,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { safeUrl } from '../lib/format.js';
 import {
   SearchIcon, PlusIcon, CheckIcon, StarIcon, SparkIcon, RouteIcon,
-  MapPinIcon, MountainIcon, InfoIcon,
+  MapPinIcon, MountainIcon, InfoIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
 
@@ -245,7 +245,7 @@ export function DayAddPanel({
               aria-label={t('day.poiSearchAria')}
             />
             {query.trim().length > 0 && (
-              <button className="daya-search-clear" onClick={() => onQuery('')} aria-label={t('day.clearSearch')}>×</button>
+              <button className="daya-search-clear" onClick={() => onQuery('')} aria-label={t('day.clearSearch')}><CloseIcon size={16} /></button>
             )}
           </div>
 

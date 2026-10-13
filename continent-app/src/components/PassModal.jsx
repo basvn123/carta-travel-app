@@ -92,7 +92,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
         </button>
 
         <div className="ai-plan-head">
-          <span className="ai-plan-badge"><SparkIcon size={15} /></span>
+          <span className="ai-plan-badge" aria-hidden="true"><SparkIcon size={20} /></span>
           <h3>{t(headingKey)}</h3>
         </div>
         <p className="ai-plan-lead">{t(leadKey)}</p>

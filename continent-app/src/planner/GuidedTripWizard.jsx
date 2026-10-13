@@ -60,7 +60,7 @@ import { SheetShell } from '../browse/SheetShell.jsx';
 import {
   SparkIcon, CheckIcon, AlertIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, InfoIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
-  CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon, ChevronRightIcon,
+  CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon, ChevronRightIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -2039,7 +2039,7 @@ export function GuidedTripWizard({
             wizard wears - current step name, "step X of N", thin segments. */}
         {showHead && (
         <div className="guide-head">
-          {!inline && <button className="guide-close" onClick={handleCancel} aria-label={t('wizard.close')}>×</button>}
+          {!inline && <button className="guide-close" onClick={handleCancel} aria-label={t('wizard.close')}><CloseIcon size={16} /></button>}
           <div className="guide-head-inner">
             {steps.length > 0 ? (
               <>
@@ -2246,10 +2246,11 @@ export function GuidedTripWizard({
                       className="guide-picked-chip"
                       onClick={() => toggleCountry(c.country)}
                       title={t('ready.dropCountry', { country: c.country })}
+                      aria-label={t('ready.dropCountry', { country: c.country })}
                     >
                       <Flag iso2={c.iso2} className="guide-flag-img-sm" />
                       {c.country}
-                      <span className="guide-picked-x" aria-hidden="true">&times;</span>
+                      <span className="guide-picked-x" aria-hidden="true"><CloseIcon size={12} /></span>
                     </button>
                   ))}
                   <button className="guide-stay-filter-clear" onClick={() => setCountries(new Set())}>
@@ -2971,7 +2972,7 @@ export function GuidedTripWizard({
                             onClick={() => setCityNights(row.id, 0)}
                             aria-label={t('wizard.removeStop', { city: cityLabel(dest.city) })}
                             title={t('wizard.removeStop', { city: cityLabel(dest.city) })}
-                          >×</button>
+                          ><CloseIcon size={16} /></button>
                         </div>
                       </li>
                     );

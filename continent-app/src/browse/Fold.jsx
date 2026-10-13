@@ -38,7 +38,7 @@ export function Fold({
             aria-expanded={open}
             aria-controls={`${id}-body`}
           >
-            {Icon && <Icon size={14} className="dsec-icon" />}
+            {Icon && <Icon size={20} className="dsec-icon" />}
             <span className="dsec-title">{title}</span>
             {!open && summary && <span className="dsec-summary">{summary}</span>}
             <ChevronDownIcon size={14} className="dsec-chev" />

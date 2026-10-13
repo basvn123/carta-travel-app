@@ -37,7 +37,9 @@
   font-size: 20px; line-height: 1;
   cursor: pointer;
 }
-.chat-back:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .chat-back:hover { border-color: var(--ink); color: var(--ink); }
+}
 .chat-head-title {
   flex: 1 1 auto;
   display: inline-flex; align-items: center; gap: 7px;
@@ -64,7 +66,9 @@
   border: 2px solid var(--paper);
   background-clip: padding-box;
 }
-.chat-body::-webkit-scrollbar-thumb:hover { background: var(--ink-mute); }
+@media (hover: hover) {
+  .chat-body::-webkit-scrollbar-thumb:hover { background: var(--ink-mute); }
+}
 .chat-turn { margin-bottom: 18px; }
 .chat-bubble {
   display: inline-block;
@@ -204,9 +208,11 @@
   color: var(--ink);
   font-size: 14px;
   cursor: pointer;
-  transition: border-color 0.12s ease, background 0.12s ease, transform 0.12s ease;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
-.chat-opt:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .chat-opt:hover { border-color: var(--ink); color: var(--ink); }
+}
 .chat-opt.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); font-weight: 600; }
 .chat-opt-text { display: flex; flex-direction: column; gap: 1px; text-align: left; }
 .chat-opt-text b { font-size: 14px; font-weight: 600; }
@@ -274,10 +280,14 @@
   font-size: 12.5px; font-weight: 600;
   cursor: pointer;
 }
-.chat-town-tab:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .chat-town-tab:hover { border-color: var(--ink); color: var(--ink); }
+}
 .chat-town-tab.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 .chat-town-tab:disabled { opacity: .5; cursor: default; }
-.chat-town-tab:disabled:hover { border-color: var(--rule); color: var(--ink-soft); }
+@media (hover: hover) {
+  .chat-town-tab:disabled:hover { border-color: var(--rule); color: var(--ink-soft); }
+}
 .chat-town-note { margin-top: 8px; }
 .chat-town-resolve { margin-top: 10px; }
 .chat-town-resolve .chat-opt { margin-top: 8px; }
@@ -337,7 +347,9 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.chat-bubble-edit:hover .chat-bubble-edit-hint { opacity: 1; }
+@media (hover: hover) {
+  .chat-bubble-edit:hover .chat-bubble-edit-hint { opacity: 1; }
+}
 .chat-bubble-edit:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -372,10 +384,12 @@
   font-size: 14px;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.12s ease, background 0.12s ease;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 .chat-toggle .chat-opt-text { flex: 1 1 auto; }
-.chat-toggle:hover { border-color: var(--ink); }
+@media (hover: hover) {
+  .chat-toggle:hover { border-color: var(--ink); }
+}
 .chat-toggle.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 
 .chat-weather-note {
@@ -416,7 +430,9 @@
   font-size: 15px; font-weight: 700;
   cursor: pointer;
 }
-.chat-import:hover { box-shadow: 0 3px 14px rgba(200, 80, 30, 0.32); }
+@media (hover: hover) {
+  .chat-import:hover { box-shadow: 0 3px 14px rgba(200, 80, 30, 0.32); }
+}
 
 @media (max-width: 768px) {
   .day-flow { padding: 14px 14px 30px; }
@@ -569,7 +585,9 @@
 }
 .pass-tier:nth-child(2) { animation-delay: .07s; }
 .pass-tier:nth-child(3) { animation-delay: .14s; }
-.pass-tier:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+@media (hover: hover) {
+  .pass-tier:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+}
 
 @keyframes pass-tier-rise { from { opacity: 0; transform: translateY(12px); } }
 
@@ -631,7 +649,7 @@
   line-height: 1.4;
   color: var(--ink-soft);
 }
-.pass-features svg { margin-top: 2px; color: var(--accent); }
+.pass-features svg { margin-top: 2px; color: var(--ink-soft); }
 
 /* Buttons sit on a shared baseline however uneven the feature lists are. */
 .pass-tier .pass-buy, .pass-buy-placeholder { margin-top: auto; }
@@ -640,14 +658,14 @@
    two identical primaries would say neither is the answer. */
 .pass-buy-quiet {
   padding: 10px 22px;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--rule);
   background: var(--paper);
   color: var(--ink);
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color .15s, color .15s;
+  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .pass-buy-quiet:disabled { opacity: 0.4; cursor: default; }
 .pass-buy-placeholder {
@@ -1007,34 +1025,8 @@
   color: var(--ink-soft);
   text-align: right;
 }
-.account-pass-upsell {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--rule-soft);
-}
-.account-pass-upsell-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  margin-bottom: 10px;
-}
-.account-pass-feats { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-.account-pass-feat {
-  display: flex;
-  gap: 8px;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-.account-pass-feat svg { flex: none; margin-top: 2px; color: var(--green); }
-.account-pass-price {
-  font-family: var(--mono);
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  margin: 12px 0 10px;
-}
-.account-pass-price span { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); margin-left: 4px; }
+/* The hub's pass upsell rules went with the upsell (T411, row T390-h); its
+   button is still drawn. */
 .account-pass-cta { width: 100%; margin-top: 0; }
 
 /* ─── Danger zone: the only red in the app, and it earns it ─── */

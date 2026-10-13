@@ -570,7 +570,7 @@
 .saved-empty-cta {
   padding: 8px 16px;
   border: 1px solid var(--ink);
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--ink);
   font-family: var(--ui);
   font-size: 12.5px;
@@ -1869,7 +1869,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: 6px;
   border: 1px solid var(--rule);
   background: var(--paper);
   font-size: 11.5px;

@@ -104,7 +104,9 @@ check('a legacy bare-id shortlist migrates to dest: keys',
 
 // ── 4 + 5: the Favorites tab shows them, grouped, and can drop one ────────
 await openTab(legacy, /saved trips|my trips/i);
-const favTab = legacy.locator('.saved-tab:visible', { hasText: /favorites/i }).first();
+// T411: the My trips tab is named Shortlist, the word Explore and the pages
+// use, no longer Favorites; the old name stays in the pattern for old builds.
+const favTab = legacy.locator('.saved-tab:visible', { hasText: /shortlist|favorites/i }).first();
 if (await favTab.count()) { await favTab.click(); await legacy.waitForTimeout(2000); }
 
 const groups = legacy.locator('.slist-group');

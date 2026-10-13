@@ -45,6 +45,7 @@ import {
   BackpackIcon, ReceiptIcon, CheckIcon, BedIcon, StarIcon,
   ChevronRightIcon, MusicIcon, SparkIcon, LinkIcon,
   DownloadIcon, BulbIcon, MedalIcon, RouteIcon, AlertIcon,
+  ArrowLeftIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { scrollBehavior } from '../lib/motion.js';
@@ -692,8 +693,8 @@ export function DestinationPage({
       aria-label={city}
     >
       <div className={`destp-bar ${stuck ? 'is-stuck' : ''}`}>
-        <button className="destp-back" onClick={onClose} aria-label={t('detail.close')} ref={backRef}>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5m6-7l-7 7 7 7" /></svg>
+        <button className="destp-back" onClick={onClose} aria-label={t('glyph.back')} ref={backRef}>
+          <ArrowLeftIcon size={20} />
         </button>
         <span className="destp-bar-name">{city}</span>
         <div className="destp-bar-actions">
@@ -709,7 +710,7 @@ export function DestinationPage({
             {copied ? t('dest.linkCopied') : t('dest.share')}
           </button>
           <button className="panel-close destp-close" onClick={onClose} aria-label={t('detail.close')}>
-            <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M5 5l14 14M19 5L5 19" /></svg>
+            <CloseIcon size={16} />
           </button>
         </div>
       </div>

@@ -16,8 +16,12 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 .trip-poi-pin .dem-pin-lbl { color: var(--ink-soft); }
-.trip-poi-pin:hover { border-color: var(--rule); }
-.trip-poi-pin:hover .dem-pin-lbl { color: var(--ink); }
+@media (hover: hover) {
+  .trip-poi-pin:hover { border-color: var(--rule); }
+}
+@media (hover: hover) {
+  .trip-poi-pin:hover .dem-pin-lbl { color: var(--ink); }
+}
 .trip-poi-pin-add {
   flex: 0 0 auto;
   display: inline-flex;
@@ -31,7 +35,9 @@
   color: var(--ink-soft);
 }
 .trip-poi-pin-add svg { width: 10px; height: 10px; }
-.trip-poi-pin:hover .trip-poi-pin-add { background: var(--ink-fill); color: var(--on-fill); }
+@media (hover: hover) {
+  .trip-poi-pin:hover .trip-poi-pin-add { background: var(--ink-fill); color: var(--on-fill); }
+}
 /* "Show selected" pins: already in the plan, drawn as quiet checked status
    (no + affordance, no pointer), so they can't be double-added. */
 .trip-poi-pin.sel {
@@ -110,7 +116,9 @@
   transition: border-color .14s, background .14s, color .14s;
 }
 .day-map-chip svg { color: var(--ink-mute); flex: none; }
-.day-map-chip:hover:not(:disabled) { border-color: var(--ink-soft); color: var(--ink); }
+@media (hover: hover) {
+  .day-map-chip:hover:not(:disabled) { border-color: var(--ink-soft); color: var(--ink); }
+}
 /* Deep slate, not the terracotta accent: an active filter is a state, not an
    alert, and the map pins must stay the loudest thing on the canvas. */
 .day-map-chip.on {
@@ -217,7 +225,9 @@
   cursor: pointer;
   padding: 2px 6px;
 }
-.carta-plan-close:hover { color: var(--ink); }
+@media (hover: hover) {
+  .carta-plan-close:hover { color: var(--ink); }
+}
 .carta-plan-lead {
   font-size: 11.5px;
   line-height: 1.5;
@@ -248,7 +258,9 @@
   cursor: pointer;
   transition: border-color 0.14s, background 0.14s, color 0.14s;
 }
-.carta-plan-chip:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .carta-plan-chip:hover { border-color: var(--ink); color: var(--ink); }
+}
 .carta-plan-chip.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 .carta-plan-moods .day-guide-mood { font-size: 12px; }
 
@@ -273,7 +285,9 @@
   cursor: pointer;
   transition: border-color 0.14s, background 0.14s;
 }
-.carta-area:hover { border-color: var(--accent); }
+@media (hover: hover) {
+  .carta-area:hover { border-color: var(--accent); }
+}
 .carta-area.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
 .carta-area-text b { display: block; font-size: 12.5px; color: var(--ink); }
 .carta-area-text small { display: block; font-size: 11px; color: var(--ink-mute); margin-top: 1px; }
@@ -383,7 +397,9 @@
   border: 1px solid var(--rule); border-radius: 8px;
   background: none; padding: 6px 9px; cursor: pointer;
 }
-.trip-carfrom-result:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .trip-carfrom-result:hover { border-color: var(--ink); color: var(--ink); }
+}
 .trip-carfrom-note b { color: var(--ink); }
 .trip-carfrom-change {
   font-family: var(--ui);
@@ -392,7 +408,9 @@
   border: 1px solid var(--rule); border-radius: 999px;
   background: none; padding: 2px 8px; cursor: pointer;
 }
-.trip-carfrom-change:hover { color: var(--ink); border-color: var(--ink); }
+@media (hover: hover) {
+  .trip-carfrom-change:hover { color: var(--ink); border-color: var(--ink); }
+}
 .trip-ownflight-date { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .trip-ownflight-date > span {
   font-family: var(--ui);
@@ -424,7 +442,9 @@
   border: 1px solid var(--rule); border-radius: 999px;
   background: none; padding: 3px 9px; cursor: pointer;
 }
-.guide-stay-filter-clear:hover { color: var(--ink); border-color: var(--ink); }
+@media (hover: hover) {
+  .guide-stay-filter-clear:hover { color: var(--ink); border-color: var(--ink); }
+}
 .guide-stay-price {
   font-family: var(--mono); font-size: 9.5px;
   color: var(--ink-soft);
@@ -452,11 +472,10 @@
 }
 .ai-plan-head h3 { font-family: var(--display); font-size: 17px; font-weight: 600; color: var(--ink); }
 .ai-plan-badge {
+  /* A plain --ink-soft icon, no tile (never-do 1, accent marks; T411, row
+     T399-d): the AI day plan and the pass dialogs head the same way. */
   flex: 0 0 auto;
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-fill);
+  color: var(--ink-soft);
   display: inline-flex; align-items: center; justify-content: center;
 }
 .ai-plan-lead { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin: 4px 0 12px; }
@@ -647,7 +666,9 @@ button.ai-sched-main:focus-visible {
 
 /* AI discovery pins on the day map: violet spark, clearly not a catalogue pin. */
 .dem-pin.ai-disc { --cat: var(--ai-violet); border-style: dashed; border-color: var(--ai-violet); cursor: default; }
-.dem-pin.ai-disc:hover { transform: none; }
+@media (hover: hover) {
+  .dem-pin.ai-disc:hover { transform: none; }
+}
 
 @media (max-width: 768px) {
   .ai-plan-overlay { padding: 10px; }
@@ -675,7 +696,9 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-.day-ai-hero:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
+@media (hover: hover) {
+  .day-ai-hero:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
+}
 .day-ai-hero-ico {
   flex: 0 0 auto;
   width: 36px; height: 36px;
@@ -886,7 +909,9 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out);
 }
-.dtcard:hover { border-color: var(--ink); }
+@media (hover: hover) {
+  .dtcard:hover { border-color: var(--ink); }
+}
 /* T399 (carta-design caption band): pressed, the band turns --ink-fill, so
    the press reads in greyscale too. */
 .dtcard .dtcard-body { transition: background-color var(--dur-1) var(--ease-out); }
@@ -899,7 +924,9 @@ margin-bottom: 8px;
    rather than hidden, and it comes back to full strength on hover: muted is a
    ranking signal, not a disabled state. */
 .dtcard.past { opacity: .62; }
-.dtcard.past:hover { opacity: 1; }
+@media (hover: hover) {
+  .dtcard.past:hover { opacity: 1; }
+}
 /* The photo wrapper owns the ratio and the image fills it absolutely, for the
    same reason .mcard-pick does: HeroImage writes the ratio into the width and
    height ATTRIBUTES, so a 16x9 image left to size itself is 9px tall. */
@@ -1050,7 +1077,9 @@ margin-bottom: 8px;
   color: var(--ink-soft);
   cursor: pointer;
 }
-.dtmenu-btn:hover { color: var(--ink); }
+@media (hover: hover) {
+  .dtmenu-btn:hover { color: var(--ink); }
+}
 .dtmenu-pop {
   position: absolute;
   top: calc(100% + 5px);
@@ -1076,7 +1105,9 @@ margin-bottom: 8px;
   text-align: left;
   cursor: pointer;
 }
-.dtmenu-item:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .dtmenu-item:hover { background: var(--paper-dim); }
+}
 .dtmenu-item.danger { color: var(--danger); }
 
 /* "Which day?": every day of the trip, grouped under its stop. Picking one
@@ -1105,7 +1136,9 @@ margin-bottom: 8px;
   text-align: left;
   cursor: pointer;
 }
-.dtday-chip:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .dtday-chip:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+}
 .dtday-chip b { font-size: 13px; font-weight: 600; }
 .dtday-chip small {
   font-family: var(--mono);
@@ -1195,7 +1228,9 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: border-color .15s, color .15s;
 }
-.day-flow-dest-change:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .day-flow-dest-change:hover { border-color: var(--ink); color: var(--ink); }
+}
 
 /* Once chosen, the stay IS the field. */
 .day-flow-chosen-change {
@@ -1210,7 +1245,9 @@ margin-bottom: 8px;
   padding: 4px 10px;
   cursor: pointer;
 }
-.day-flow-chosen-change:hover { color: var(--ink); border-color: var(--ink); }.day-picks-status {
+@media (hover: hover) {
+  .day-flow-chosen-change:hover { color: var(--ink); border-color: var(--ink); }
+}.day-picks-status {
   margin-left: auto;
   font-family: var(--mono);
   font-size: 10px;
@@ -1251,7 +1288,9 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
 }
-.day-flow-chip:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .day-flow-chip:hover { border-color: var(--ink); color: var(--ink); }
+}
 .day-flow-chip.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); font-weight: 600; }
 .day-flow-chip small { font-size: 11px; color: var(--ink-mute); }
 .day-flow-chip.on small { color: var(--on-fill); }
@@ -1473,7 +1512,9 @@ margin-bottom: 8px;
   font-size: 12.5px; font-weight: 600;
   transition: border-color 0.12s ease, color 0.12s ease;
 }
-.day-flow-card:hover .day-flow-card-go { border-color: var(--ink); }
+@media (hover: hover) {
+  .day-flow-card:hover .day-flow-card-go { border-color: var(--ink); }
+}
 /* A picture of the difference, above the words for it. Carta's route is a
    line that visits places; building it yourself is the places themselves. The
    two previews are the same height and the same width, so what changes
@@ -1580,7 +1621,9 @@ margin-bottom: 8px;
   background: transparent; color: var(--ink-mute);
   cursor: pointer;
 }
-.day-ideas-chip-x:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .day-ideas-chip-x:hover { background: var(--paper-dim); color: var(--ink); }
+}
 
 /* Morning / Afternoon / Evening / Any, as a segmented control. Optional by
    design: "Any" is the default and carries no opinion, so the traveller only
@@ -1596,7 +1639,9 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease;
 }
-.day-ideas-when-btn:hover { color: var(--ink); }
+@media (hover: hover) {
+  .day-ideas-when-btn:hover { color: var(--ink); }
+}
 .day-ideas-when-btn.on { background: var(--ink-fill); color: var(--on-fill); font-weight: 600; }
 
 .day-ideas-search { position: relative; display: flex; align-items: center; }
@@ -1620,7 +1665,9 @@ margin-bottom: 8px;
   background: transparent; color: var(--ink-mute);
   cursor: pointer;
 }
-.day-ideas-clear:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .day-ideas-clear:hover { background: var(--paper-dim); color: var(--ink); }
+}
 
 .day-ideas-results { display: flex; flex-direction: column; gap: 14px; }
 .day-ideas-group { display: flex; flex-direction: column; gap: 6px; }
@@ -1644,7 +1691,9 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease;
 }
-.day-ideas-row:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .day-ideas-row:hover { background: var(--paper-dim); }
+}
 .day-ideas-row.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
 .day-ideas-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .day-ideas-row-text b {

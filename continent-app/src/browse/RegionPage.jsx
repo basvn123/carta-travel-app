@@ -25,6 +25,7 @@ import { nearestRegions } from '../lib/coverageEmpty.js';
 import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { ArrowLeftIcon } from '../components/Icons.jsx';
 
 const KIND_KEY = {
   coast: 'region.kind.coast',
@@ -148,8 +149,8 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
         aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
           <button className="rgnp-back" onClick={onClose}
-            aria-label={t('detail.close')} ref={backRef}>
-            {'←'}
+            aria-label={t('glyph.back')} ref={backRef}>
+            <ArrowLeftIcon size={20} />
           </button>
           <ErrorBlock message={t('layer.loadFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
         </div>
@@ -166,8 +167,8 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
         aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
           <button className="rgnp-back" onClick={onClose}
-            aria-label={t('detail.close')} ref={backRef}>
-            {'←'}
+            aria-label={t('glyph.back')} ref={backRef}>
+            <ArrowLeftIcon size={20} />
           </button>
           <LoadingBlock label={t('region.loading')} rows={4} />
         </div>
@@ -184,8 +185,8 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
         aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
           <button className="rgnp-back" onClick={onClose}
-            aria-label={t('detail.close')} ref={backRef}>
-            {'←'}
+            aria-label={t('glyph.back')} ref={backRef}>
+            <ArrowLeftIcon size={20} />
           </button>
           <h1>{t('region.notFound')}</h1>
           <p className="rgnp-card-sub">{t('region.notFoundHint')}</p>
@@ -215,8 +216,8 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
       aria-label={t('region.kind.nuts2')} ref={pageRef}>
       <div className="rgnp-inner">
         <button className="rgnp-back" onClick={onClose}
-          aria-label={t('detail.close')} ref={backRef}>
-          {'←'}
+          aria-label={t('glyph.back')} ref={backRef}>
+          <ArrowLeftIcon size={20} />
         </button>
         {region && (
           <>

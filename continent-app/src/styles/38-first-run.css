@@ -312,13 +312,17 @@
   border-color: var(--rule);
   background: var(--bg-card);
 }
-.destp-plan-btn.is-quiet:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+@media (hover: hover) {
+  .destp-plan-btn.is-quiet:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+}
 .bpage-base.is-quiet {
   color: var(--ink);
   border-color: var(--rule);
   background: var(--bg-card);
 }
-.bpage-base.is-quiet:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+@media (hover: hover) {
+  .bpage-base.is-quiet:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+}
 .bpage-base.is-quiet svg { color: var(--ink-soft); }
 
 /* A narrow column (a phone, or the destination page's 380px side column)

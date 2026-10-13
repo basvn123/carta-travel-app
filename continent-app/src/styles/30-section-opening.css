@@ -64,7 +64,9 @@
   border-radius: 0;
   box-shadow: none;
 }
-.open-icon.railcard:hover { transform: none; box-shadow: none; }
+@media (hover: hover) {
+  .open-icon.railcard:hover { transform: none; box-shadow: none; }
+}
 .open-icon .railcard-img { aspect-ratio: 4 / 3; }
 .open-icon:focus-visible { outline-offset: -2px; }
 .open-icon .railcard-name { font-size: 17px; }

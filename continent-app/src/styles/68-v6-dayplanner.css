@@ -74,8 +74,10 @@
   text-align: left;
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.dayws-stay-btn:hover:not(:disabled),
-.dayws-tips-btn:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .dayws-stay-btn:hover:not(:disabled),
+  .dayws-tips-btn:hover { border-color: var(--ink-soft); }
+}
 .dayws-stay-btn:focus-visible,
 .dayws-tips-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .dayws-stay-btn svg,
@@ -151,7 +153,9 @@
   line-height: 1.4;
   color: var(--ink-soft);
 }
-.dayws-stay-result:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .dayws-stay-result:hover { background: var(--paper-dim); color: var(--ink); }
+}
 .dayws-stay-none { margin-top: 8px; font-size: 12.5px; color: var(--ink-mute); }
 .dayws-stay-clear {
   margin-top: 8px;
@@ -160,7 +164,9 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.dayws-stay-clear:hover { color: var(--danger); }
+@media (hover: hover) {
+  .dayws-stay-clear:hover { color: var(--danger); }
+}
 .dayws-stay-panel .daytrip-transport { margin-top: 12px; }
 
 .dayws-tips { position: relative; flex: none; }
@@ -198,7 +204,9 @@
   border-radius: 8px;
   color: var(--ink-mute);
 }
-.dayws-tips-close:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .dayws-tips-close:hover { background: var(--paper-dim); color: var(--ink); }
+}
 .dayws-tips-body { overflow-y: auto; padding: 4px 14px 14px; }
 .dayws-tips-sec { padding-top: 12px; }
 .dayws-tips-sec + .dayws-tips-sec { margin-top: 12px; border-top: 1px solid var(--rule-soft); }
@@ -263,7 +271,9 @@
   font-size: 15px;
   line-height: 1;
 }
-.dayws-tip-add:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .dayws-tip-add:hover { border-color: var(--ink); color: var(--ink); }
+}
 .dayws-tip-add.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
 .dayws-tip-row.added .dayws-tip-name { color: var(--ink-soft); }
 
@@ -319,7 +329,9 @@
   transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 .dayws-tab svg { flex: none; }
-.dayws-tab:hover { color: var(--ink); }
+@media (hover: hover) {
+  .dayws-tab:hover { color: var(--ink); }
+}
 .dayws-tab.on { color: var(--on-fill); background: var(--ink-fill); border-bottom-color: var(--ink-fill); }
 .dayws-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .dayws-tab-count {
@@ -359,7 +371,9 @@
   color: var(--ink-soft);
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.dayp-round:hover { border-color: var(--ink-soft); color: var(--ink); }
+@media (hover: hover) {
+  .dayp-round:hover { border-color: var(--ink-soft); color: var(--ink); }
+}
 .dayp-round:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .dayp-round.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
 /* Deep slate, not terracotta. On this screen the accent is spoken for: the
@@ -370,7 +384,9 @@
   border-color: var(--ink-fill);
   color: var(--on-fill);
 }
-.dayp-round-primary:hover { background: var(--ink); border-color: var(--ink); color: var(--on-fill); }
+@media (hover: hover) {
+  .dayp-round-primary:hover { background: var(--ink); border-color: var(--ink); color: var(--on-fill); }
+}
 
 .dayp-menu {
   position: absolute;
@@ -396,7 +412,9 @@
   color: var(--ink);
   text-decoration: none;
 }
-.dayp-menu-item:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .dayp-menu-item:hover { background: var(--paper-dim); }
+}
 .dayp-menu-item svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
 .dayp-menu-item b { display: block; font-size: 13.5px; font-weight: 600; }
 .dayp-menu-item small { display: block; font-size: 11.5px; line-height: 1.4; color: var(--ink-mute); }
@@ -487,8 +505,10 @@
   color: var(--ink-mute);
 }
 .dayr-tools { flex: none; display: flex; gap: 2px; opacity: 0.55; transition: opacity var(--dur-1) var(--ease-out); }
-.dayr-row:hover .dayr-tools,
 .dayr-row:focus-within .dayr-tools { opacity: 1; }
+@media (hover: hover) {
+  .dayr-row:hover .dayr-tools { opacity: 1; }
+}
 .dayr-tool {
   width: 26px; height: 26px;
   display: inline-flex;
@@ -500,9 +520,13 @@
   line-height: 1;
 }
 .dayr-tool-up { transform: rotate(180deg); }
-.dayr-tool:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .dayr-tool:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+}
 .dayr-tool:disabled { opacity: 0.3; cursor: default; }
-.dayr-tool-del:hover { color: var(--danger); }
+@media (hover: hover) {
+  .dayr-tool-del:hover { color: var(--danger); }
+}
 /* The pin was tapped: ring its row once so the two agree. */
 .dayr-row {
   border-radius: 12px;
@@ -560,19 +584,23 @@
   gap: 7px;
   height: 44px;
   padding: 0 18px;
-  border-radius: 12px;
+  border-radius: 6px;
   background: var(--accent);
   color: var(--on-fill);
   font-size: 14px;
   font-weight: 600;
 }
-.dayp-cta:hover { background: var(--accent-hover); }
+@media (hover: hover) {
+  .dayp-cta:hover { background: var(--accent-hover); }
+}
 .dayp-cta-ghost {
   background: transparent;
   border: 1px solid var(--rule);
   color: var(--ink);
 }
-.dayp-cta-ghost:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .dayp-cta-ghost:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+}
 .dayp-ready {
   display: flex;
   align-items: center;
@@ -585,7 +613,9 @@
   background: var(--bg-card);
   text-align: left;
 }
-.dayp-ready:hover { border-color: var(--ink); }
+@media (hover: hover) {
+  .dayp-ready:hover { border-color: var(--ink); }
+}
 .dayp-ready-ico {
   display: flex;
   flex: none;
@@ -709,7 +739,9 @@
   border-radius: 12px;
   text-align: left;
 }
-.daya-ask:hover { border-color: var(--ink); }
+@media (hover: hover) {
+  .daya-ask:hover { border-color: var(--ink); }
+}
 .daya-ask svg { flex: none; color: var(--ink-soft); }
 .daya-ask b { display: block; font-size: 13.5px; font-weight: 600; }
 .daya-ask small { display: block; font-size: 11.5px; color: var(--ink-mute); }
@@ -735,7 +767,9 @@
   font-size: 17px;
   line-height: 1;
 }
-.daya-search-clear:hover { background: var(--paper-dim); color: var(--ink); }
+@media (hover: hover) {
+  .daya-search-clear:hover { background: var(--paper-dim); color: var(--ink); }
+}
 
 .daya-picks {
   display: flex;
@@ -757,7 +791,9 @@
   white-space: nowrap;
   transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.daya-pick:hover { border-color: var(--ink-soft); color: var(--ink); }
+@media (hover: hover) {
+  .daya-pick:hover { border-color: var(--ink-soft); color: var(--ink); }
+}
 .daya-pick.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
 .daya-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -848,7 +884,9 @@
   color: var(--ink-mute);
   text-decoration: none;
 }
-.daya-more:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+@media (hover: hover) {
+  .daya-more:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+}
 /* Outlined, not filled: a scrolling list of twelve solid terracotta pills
    turns the accent into wallpaper. It fills on hover, where it is the one
    button being aimed at. */
@@ -865,13 +903,17 @@
   font-size: 12.5px;
   font-weight: 600;
 }
-.daya-add:hover { border-color: var(--ink); }
+@media (hover: hover) {
+  .daya-add:hover { border-color: var(--ink); }
+}
 .daya-add.on {
   background: transparent;
   border-color: var(--rule);
   color: var(--ink-soft);
 }
-.daya-add.on:hover { border-color: var(--danger); color: var(--danger); }
+@media (hover: hover) {
+  .daya-add.on:hover { border-color: var(--danger); color: var(--danger); }
+}
 .daya-add:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 .daya-custom-add {
@@ -888,7 +930,9 @@
   font-weight: 600;
   margin-bottom: 10px;
 }
-.daya-custom-add:hover { border-color: var(--ink); }
+@media (hover: hover) {
+  .daya-custom-add:hover { border-color: var(--ink); }
+}
 .daya-custom-add:disabled { opacity: 0.6; cursor: default; }
 
 .daya-sugg {
@@ -931,7 +975,9 @@
   border: 1px solid var(--rule);
   color: var(--ink-soft);
 }
-.daya-sugg-row:hover .daya-sugg-add { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .daya-sugg-row:hover .daya-sugg-add { border-color: var(--ink); color: var(--ink); }
+}
 
 .daya-far { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
 .daya-far-title {
@@ -955,7 +1001,9 @@
   color: var(--ink-soft);
   margin-bottom: 10px;
 }
-.daya-more-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+@media (hover: hover) {
+  .daya-more-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+}
 .daya-tip {
   display: flex;
   gap: 7px;
@@ -1031,7 +1079,9 @@
   font-size: 13px;
   font-weight: 600;
 }
-.dayf-browse:hover { background: var(--ink); }
+@media (hover: hover) {
+  .dayf-browse:hover { background: var(--ink); }
+}
 .dayf-browse:disabled { opacity: 0.55; cursor: default; }
 
 .dayf-list { list-style: none; margin-top: 12px; }
@@ -1086,8 +1136,12 @@
   border-radius: 9px;
   color: var(--ink-mute);
 }
-.dayf-act:hover { background: var(--paper-dim); color: var(--ink); }
-.dayf-act-del:hover { color: var(--danger); }
+@media (hover: hover) {
+  .dayf-act:hover { background: var(--paper-dim); color: var(--ink); }
+}
+@media (hover: hover) {
+  .dayf-act-del:hover { color: var(--danger); }
+}
 
 .dayf-notes {
   width: 100%;
@@ -1187,7 +1241,10 @@
   display: inline-flex; align-items: center; justify-content: center;
 }
 .dayex-search-btn { width: 36px; padding: 0; }
-.dayex-search-btn:hover, .dayex-change:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .dayex-search-btn:hover,
+  .dayex-change:hover { border-color: var(--ink-soft); }
+}
 .dayex-searchrow { position: relative; }
 .dayex-search-input {
   width: 100%;
@@ -1346,7 +1403,9 @@
   display: inline-flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-1);
 }
-.dayex-add:hover { border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .dayex-add:hover { border-color: var(--ink); color: var(--ink); }
+}
 /* Added is a pressed toggle, so --ink-fill; "Open my day" is the view's one
    primary (T193). */
 .dayex-add.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
@@ -1754,7 +1813,9 @@
 :is(.day-ws, .dem-map) .dem-pin.is-dot .dem-pin-ico { background: var(--ink); color: var(--on-fill); }
 :is(.day-ws, .dem-map) .dem-pin .dem-pin-chk { background: var(--ink-fill); color: var(--on-fill); }
 :is(.day-ws, .dem-map) .dem-pin .dem-pin-star { color: var(--ink); }
-:is(.day-ws, .dem-map) .dem-pin:hover { transform: none; box-shadow: var(--shadow-1); border-color: var(--ink); }
+@media (hover: hover) {
+  :is(.day-ws, .dem-map) .dem-pin:hover { transform: none; box-shadow: var(--shadow-1); border-color: var(--ink); }
+}
 /* Picked: the ink tick and an ink border. In focus (a card or row under the
    pointer, or a tapped pin): a 2 px ink ring. */
 :is(.day-ws, .dem-map) .dem-pin.on { border-color: var(--ink); box-shadow: var(--shadow-1); }
@@ -1770,7 +1831,9 @@
    no pulse (nothing loops). */
 .dem-map .dem-stay-body { fill: var(--ink-fill); }
 .dem-map .dem-stay-pulse { display: none; animation: none; }
-.dem-map .dem-stay.dem-stay-clickable:hover .dem-stay-pin { transform: none; }
+@media (hover: hover) {
+  .dem-map .dem-stay.dem-stay-clickable:hover .dem-stay-pin { transform: none; }
+}
 .dem-map .dem-stay.focused .dem-stay-pin { filter: drop-shadow(0 0 3px var(--ink)); }
 .dem-map .dem-stay-name {
   font-family: var(--ui);
@@ -1787,7 +1850,9 @@
 /* The builder's filter chips and the workspace's map chips: the selected
    chip is --ink-fill (carta-design selected state). guide-chip lives in
    12-guided-trip.css and its kind colours in 19-guide-ratings.css. */
-:is(.day-ws, .dayex) .guide-chip:hover { border-color: var(--ink); }
+@media (hover: hover) {
+  :is(.day-ws, .dayex) .guide-chip:hover { border-color: var(--ink); }
+}
 :is(.day-ws, .dayex) .guide-chip.on {
   background: var(--ink-fill);
   border-color: var(--ink-fill);
@@ -1889,7 +1954,9 @@
   text-underline-offset: 3px;
   cursor: pointer;
 }
-.day-undo-btn:hover { background: color-mix(in srgb, var(--on-fill) 14%, transparent); }
+@media (hover: hover) {
+  .day-undo-btn:hover { background: color-mix(in srgb, var(--on-fill) 14%, transparent); }
+}
 .day-undo-btn:focus-visible { outline: 2px solid var(--on-fill); outline-offset: 2px; }
 @keyframes day-undo-in {
   from { opacity: 0; transform: translateX(-50%) translateY(6px); }
@@ -1933,3 +2000,22 @@
 .day-flow-card h2,
 .day-flow-card p,
 .dtcard-name { overflow-wrap: anywhere; hyphens: auto; }
+
+/* T411, the V6 consistency pass. On a touch screen the day's save and the
+   way back to the trip reach --tap, and every planning map pin carries a
+   44 px hit box whatever its drawn size (DIRECTION.md part 7). The pin's
+   box is a pseudo-element, so the marker MapLibre positions keeps its own
+   position and transform. */
+@media (pointer: coarse) {
+  .day-save-btn,
+  .day-topcard-trip { min-height: var(--tap); }
+  :is(.day-ws, .dem-map) .dem-pin::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--tap);
+    height: var(--tap);
+    transform: translate(-50%, -50%);
+  }
+}

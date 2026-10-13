@@ -8,7 +8,7 @@ import { AiPlanRoute } from './AiPlanRoute.jsx';
 import { useToday, addDays, laterISO } from '../lib/dates.js';
 import {
   SparkIcon, CastleIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon,
-  CheckIcon, CalendarIcon, PersonIcon, TicketIcon,
+  CheckIcon, CalendarIcon, PersonIcon, TicketIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
 
@@ -158,9 +158,9 @@ export function AiDayPlanModal({
   return (
     <div className="day-saved-overlay ai-plan-overlay" role="dialog" aria-modal="true" onClick={onClose}>
       <div className="day-saved-card ai-plan-card" ref={cardRef} onClick={(e) => e.stopPropagation()}>
-        <button className="day-saved-close" ref={closeRef} onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>×</button>
+        <button className="day-saved-close" ref={closeRef} onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}><CloseIcon size={16} /></button>
         <div className="ai-plan-head">
-          <span className="ai-plan-badge"><SparkIcon size={15} /></span>
+          <span className="ai-plan-badge" aria-hidden="true"><SparkIcon size={20} /></span>
           <h3>{t('ai.title', { n: dayNumber, city })}</h3>
         </div>
 

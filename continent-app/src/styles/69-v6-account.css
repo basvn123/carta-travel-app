@@ -50,6 +50,7 @@ h2.saved-section-title { margin: 0; }
 .saved-cat small,
 .saved-side .side-cat small,
 .saved-cat.on small,
+.saved-tabs button.seg-on small,
 .saved-side .side-cat.on small {
   font-family: var(--mono);
   font-size: 11px;
@@ -707,16 +708,8 @@ h2.saved-section-title { margin: 0; }
   text-transform: none;
 }
 
-/* The sign-in modal's close is a quiet outlined circle, not the dark disc the
-   photo headers use (.panel-close is built for a photograph). */
-.auth-modal .auth-close {
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-}
-@media (hover: hover) {
-  .auth-modal .auth-close:hover { background: var(--paper-dim); color: var(--ink); border-color: var(--ink-soft); }
-}
+/* The sign-in modal's close is the house close control, drawn by the shared
+   .panel-close rule in 60-v6-shell.css since T411 (no outlined circle). */
 
 /* 3. Long names (brief V5-6). A trip or plan name wraps to two lines before
    it is cut, so "Two weeks in Portugal and Spain with a stop in Lisbon" is

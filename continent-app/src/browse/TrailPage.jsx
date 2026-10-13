@@ -906,7 +906,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
             sizes={srcSetFor(heroUrl, 1280) ? '100vw' : undefined}
             alt={heroShot?.caption || tr.name}
             loading="eager"
-            fetchPriority="high"
+            fetchpriority="high"
             decoding="async"
           />
         ) : null,

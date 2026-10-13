@@ -158,9 +158,10 @@
 .destp .dsec-head { padding-right: 0; }
 .destp .dsec-toggle { padding: var(--space-3) 0; min-height: var(--tap); }
 .destp .dsec-body { padding: 0 0 var(--space-5); }
-.destp .dsec-icon { color: var(--ink-soft); }
 .destp .dsec-title { font-size: 19px; line-height: 1.25; }
-.destp .dsec-toggle:hover .dsec-title { color: inherit; }
+@media (hover: hover) {
+  .destp .dsec-toggle:hover .dsec-title { color: inherit; }
+}
 @media (hover: hover) {
   .destp .dsec-toggle:hover .dsec-title {
     text-decoration: underline;
@@ -177,7 +178,6 @@
 }
 /* The tips fold is not a rating, so it loses the ochre fill. */
 .destp .dsec-tips { background: none; border-color: var(--rule-soft); }
-.destp .dsec-tips .dsec-icon { color: var(--ink-soft); }
 /* A fold that opens answers at once: the chevron turns and the body fades
    and rises 4 px in --dur-2 (DIRECTION.md 2.3, a routine state change). */
 .destp .dsec-chev { transition: transform var(--dur-2) var(--ease-out); }
@@ -257,7 +257,9 @@
 .climate-chart.has-figures .climate-bar.climate-mixed { background: var(--kind-village); color: var(--kind-village); }
 .climate-chart.has-figures .climate-bar.climate-poor { background: var(--rule); color: var(--rule); }
 .climate-chart.has-figures .climate-col.is-best .climate-bar { box-shadow: none; }
-.climate-chart.has-figures .climate-col:hover .climate-bar { filter: none; }
+@media (hover: hover) {
+  .climate-chart.has-figures .climate-col:hover .climate-bar { filter: none; }
+}
 .climate-chart.has-figures .climate-col.is-best .climate-name { color: var(--ink); font-weight: 600; }
 
 /* 5. The caption band (carta-design "Caption band", "Photo track"): text
@@ -370,10 +372,16 @@
 /* 9. Hover answers at once and only on a hover pointer; a hover goes to
    ink, never to the accent, and nothing lifts. The press itself is the
    global touch feedback in 02-base.css. */
-.destp .ddo:not(.is-static):hover { box-shadow: none; }
-.destp .ddo:not(.is-static):hover .ddo-name { color: inherit; }
-.destp .destp-short-src:hover,
-.destp .dhl-link:hover { color: inherit; }
+@media (hover: hover) {
+  .destp .ddo:not(.is-static):hover { box-shadow: none; }
+}
+@media (hover: hover) {
+  .destp .ddo:not(.is-static):hover .ddo-name { color: inherit; }
+}
+@media (hover: hover) {
+  .destp .destp-short-src:hover,
+  .destp .dhl-link:hover { color: inherit; }
+}
 .destp .ddo { transition: border-color var(--dur-1) var(--ease-out); }
 @media (hover: hover) {
   .destp .ddo:not(.is-static):hover { border-color: var(--ink-soft); }

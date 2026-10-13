@@ -3634,7 +3634,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           {/* The chat planner: questions, a proposed route, then import. */}
           {/* The bot and the builder replace the step's question, so each
               names the view for assistive tech: one h1 per view (T193). */}
-          {landingStep === 'chat' && <h1 className="sr-only">{t('day.useChatbot')}</h1>}
+          {landingStep === 'chat' && <h1 className="sr-only tab-h1">{t('day.useChatbot')}</h1>}
           {landingStep === 'chat' && (
             <CartaChatPlanner
               initialAnswers={chatPresets}
@@ -3668,7 +3668,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               show them anything. The builder leads with the places instead:
               rails of real cards around the stay, a tray that keeps count, and
               Carta one button away at any point, including from an empty tray. */}
-          {landingStep === 'manual' && newStayPoint && <h1 className="sr-only">{t('day.planManually')}</h1>}
+          {landingStep === 'manual' && newStayPoint && <h1 className="sr-only tab-h1">{t('day.planManually')}</h1>}
           {landingStep === 'manual' && newStayPoint && (
             <DayExploreBuilder
               stay={newStayPoint}
@@ -3938,7 +3938,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         >
           {/* The view's one h1 names the plan; the visible name below is the
               same words, so the h1 is for assistive tech only (T389). */}
-          <h1 className="sr-only">{plan.label || t('dayws.untitled')}</h1>
+          <h1 className="sr-only tab-h1">{plan.label || t('dayws.untitled')}</h1>
           <div className="day-topcard-row">
             <div className="day-topcard-head">
               <div className="trip-topcard-name">{plan.label || t('dayws.untitled')}</div>
@@ -4174,7 +4174,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                       >
                         + {t('day.importAddHere', { n: dayNumber })}
                       </button>
-                      <button className="trip-stop-remove" onClick={() => discardIdea(idea)} aria-label={t('extras.removeTitle')} title={t('extras.removeTitle')}>×</button>
+                      <button className="trip-stop-remove" onClick={() => discardIdea(idea)} aria-label={t('extras.removeTitle')} title={t('extras.removeTitle')}><CloseIcon size={16} /></button>
                     </div>
                   ))}
                 </>

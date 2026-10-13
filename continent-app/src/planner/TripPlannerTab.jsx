@@ -20,7 +20,7 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon, CloseIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
@@ -847,7 +847,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         >
           {/* The trip's name is an editable field, so the page's one h1
               carries the same words for assistive tech (T193). */}
-          <h1 className="sr-only">{tp.planLabel || t('trip.planYourTrip')}</h1>
+          <h1 className="sr-only tab-h1">{tp.planLabel || t('trip.planYourTrip')}</h1>
           <input
             className="trip-topcard-name"
             value={tp.planLabel}
@@ -1020,7 +1020,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                           <div className="trip-stop-tools" onClick={(e) => e.stopPropagation()}>
                             {i > 0 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, -1)} aria-label={t('trip.moveUp')} title={t('trip.moveUp')}>↑</button>}
                             {i < tp.stopDetails.length - 1 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, 1)} aria-label={t('trip.moveDown')} title={t('trip.moveDown')}>↓</button>}
-                            <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label={t('trip.removeStopAria')} title={t('trip.remove')}>×</button>
+                            <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label={t('trip.removeStopAria')} title={t('trip.remove')}><CloseIcon size={16} /></button>
                           </div>
                         </div>
                         {/* Full width of the row (not squeezed into the narrow

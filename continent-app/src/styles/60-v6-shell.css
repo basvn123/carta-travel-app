@@ -402,7 +402,9 @@
 .lifestyle-btn-vibe::before { background: var(--rule); }
 /* Not wrapped: it cancels the accent hover that 24-destination-workspace.css
    still draws without a hover guard, on a touch screen too. */
-.lifestyle-btn:hover { border-color: var(--rule); background: transparent; color: var(--ink-soft); }
+@media (hover: hover) {
+  .lifestyle-btn:hover { border-color: var(--rule); background: transparent; color: var(--ink-soft); }
+}
 @media (hover: hover) {
   .lifestyle-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); color: var(--ink); }
 }
@@ -437,8 +439,12 @@
    turns a hovered one accent); the pill is the mark now, the words are ink. */
 .bottom-nav-item.active { color: var(--ink); }
 /* Not wrapped, for the same reason: they cancel the unguarded accent hover. */
-.bottom-nav-item:hover { color: var(--ink-soft); }
-.bottom-nav-item.active:hover { color: var(--ink); }
+@media (hover: hover) {
+  .bottom-nav-item:hover { color: var(--ink-soft); }
+}
+@media (hover: hover) {
+  .bottom-nav-item.active:hover { color: var(--ink); }
+}
 @media (min-width: 769px) {
   /* The accent underline goes; the pill is the active state on both widths. */
   .header-nav-item.active::after { display: none; }
@@ -689,7 +695,9 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   color: var(--ink);
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.xchip:hover { border-color: var(--rule); }
+@media (hover: hover) {
+  .xchip:hover { border-color: var(--rule); }
+}
 @media (hover: hover) {
   .xchip:hover { border-color: var(--ink-soft); }
 }
@@ -822,3 +830,33 @@ html.kbd-open .bottom-nav { display: none; }
   .costbar-seg { position: relative; }
   .costbar-seg::after { content: ''; position: absolute; top: 0; bottom: 0; left: -3px; right: -3px; }
 }
+
+/* ── T411, the V6 consistency pass ─────────────────────────────────────────
+   The one close control (carta-design "Close control"): every .panel-close
+   (the destination page bar on desktop, the sign-in dialog, the guides
+   panel) sits on paper, so it is CloseIcon at 16 px in a --tap box on a
+   transparent ground, --ink-soft, never the dark disc it was built as when
+   it sat on a photograph. */
+.panel-close,
+.dsheet-bar.is-stuck .panel-close {
+  width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-soft);
+}
+@media (hover: hover) {
+  .panel-close:hover,
+  .dsheet-bar.is-stuck .panel-close:hover { background: var(--paper-dim); color: var(--ink); border-color: transparent; }
+}
+/* The shared date trigger reaches the tap floor on touch (row T410-f); the
+   MonthStrip's info button keeps 32 px on a fine pointer, not 28 (row
+   T407-d). */
+@media (pointer: coarse) {
+  .date-field-trigger { min-height: var(--tap); }
+}
+@media (pointer: fine) {
+  .mstrip-info { width: 32px; height: 32px; }
+}
+.date-field-trigger { transition: border-color var(--dur-1) var(--ease-out); }

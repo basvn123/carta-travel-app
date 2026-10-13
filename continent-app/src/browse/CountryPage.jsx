@@ -1,5 +1,6 @@
 import React from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
+import { ArrowLeftIcon } from '../components/Icons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip, tierClass } from '../components/RatingBadge.jsx';
 import { KindGlyph } from '../components/KindGlyph.jsx';
@@ -101,17 +102,19 @@ export function CountryPage({ iso2, rows, onClose, onSelect }) {
     <div className="cpage" role="dialog" aria-label={country}>
       <div className="cpage-top">
         <button className="cpage-back" onClick={onClose} aria-label={t('cpage.back')}>
-          ←
+          <ArrowLeftIcon size={20} />
         </button>
         <CountryFlag country={iso2} size={20} />
         <h2 className="cpage-name">{country}</h2>
       </div>
 
+      {/* The facts stand as separate spans spaced by the gap, never joined
+          by a middot (carta-design copy rules; T411, row T404-d). */}
       <p className="cpage-facts">
-        {t('cpage.holds', { n: mine.length, country })}
-        {day != null && <> · {t('cpage.day', { eur: Math.round(day) })}</>}
-        {goodMonths.length > 0 && <> · {t('cpage.when', { months: fmtMonthRanges(goodMonths) })}</>}
-        {' · '}{t(carKey)}
+        <span>{t('cpage.holds', { n: mine.length, country })}</span>
+        {day != null && <span>{t('cpage.day', { eur: Math.round(day) })}</span>}
+        {goodMonths.length > 0 && <span>{t('cpage.when', { months: fmtMonthRanges(goodMonths) })}</span>}
+        <span>{t(carKey)}</span>
       </p>
 
       <div className="cpage-body">

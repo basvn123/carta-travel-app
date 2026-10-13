@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { eur, safeUrl } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
-import { LinkIcon, SparkIcon, ClockIcon } from '../components/Icons.jsx';
+import { LinkIcon, SparkIcon, ClockIcon, CloseIcon } from '../components/Icons.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { MagicImportZone } from './MagicImportZone.jsx';
 import { applyParsedBookings, toInboxItems } from './bookingImport.js';
@@ -64,7 +64,7 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
         )}
         {onRemove && (
           <button className="extras-remove" onClick={onRemove} title={t('extras.removeTitle')}
- aria-label={t('extras.removeTitle')}>×</button>
+ aria-label={t('extras.removeTitle')}><CloseIcon size={16} /></button>
         )}
       </label>
       <div className="extras-fields">
@@ -136,7 +136,7 @@ function InboxItem({ item, days, onRoute, onDiscard, t }) {
           : t('extras.inboxAdd')}
       />
       <button className="extras-remove" onClick={onDiscard} title={t('extras.removeTitle')}
- aria-label={t('extras.removeTitle')}>×</button>
+ aria-label={t('extras.removeTitle')}><CloseIcon size={16} /></button>
     </div>
   );
 }
@@ -292,7 +292,7 @@ export function TripExtras({ rows, extras, onChange, days = [], importContext = 
               title={t('extras.removeTitle')}
  aria-label={t('extras.removeTitle')}
             >
-              ×
+              <CloseIcon size={16} />
             </button>
           </label>
         ))}

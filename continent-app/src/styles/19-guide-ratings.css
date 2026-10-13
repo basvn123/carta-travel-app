@@ -149,7 +149,9 @@
   background: var(--paper);
   cursor: pointer;
 }
-.guide-path:hover { border-color: var(--accent); }
+@media (hover: hover) {
+  .guide-path:hover { border-color: var(--accent); }
+}
 .guide-path-icon {
   flex: none;
   width: 38px;
@@ -219,7 +221,9 @@
   background: var(--paper);
   cursor: pointer;
 }
-.guide-country-suggest:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .guide-country-suggest:hover { border-color: var(--ink-soft); }
+}
 .guide-country-suggest.on { border-color: var(--accent); background: var(--accent-bg); }
 .guide-country-suggest-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .guide-country-suggest-text b { font-size: 13px; }
@@ -331,7 +335,9 @@
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12);
   white-space: nowrap;
 }
-.fpm-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .fpm-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); }
+}
 .fpm-pin.on { background: var(--accent); border-color: var(--accent); color: var(--paper); z-index: 2; }
 /* The city you actually fly into is always labelled - every pin names its
    airport city, not just the selected one. */
@@ -498,7 +504,9 @@
 /* The traveller's stay: a pulsing home dot that cannot be missed */
 .dem-stay { display: flex; flex-direction: column; align-items: center; pointer-events: none; position: relative; }
 .dem-stay.dem-stay-clickable { pointer-events: auto; cursor: pointer; }
-.dem-stay.dem-stay-clickable:hover .dem-stay-pin { transform: scale(1.08); }
+@media (hover: hover) {
+  .dem-stay.dem-stay-clickable:hover .dem-stay-pin { transform: scale(1.08); }
+}
 .dem-stay-pin {
   position: relative;
   display: block;
@@ -594,7 +602,9 @@
   line-height: 1.2;
   text-align: left;
 }
-.dem-pin:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 4px 14px rgba(0, 0, 0, 0.16); z-index: 2; }
+@media (hover: hover) {
+  .dem-pin:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 4px 14px rgba(0, 0, 0, 0.16); z-index: 2; }
+}
 
 /* ── Decluttered states (set by declutterPins) ───────────────────────────
    Where pins would overlap, the lower-priority one gives up its name, then
@@ -615,13 +625,24 @@
 .dem-pin.is-dot .dem-pin-ico { width: 13px; height: 13px; }
 .dem-pin.is-dot .dem-pin-ico svg { width: 8px; height: 8px; }
 /* Hover wins over any demotion: reach for a dot and it becomes a pin again. */
-.dem-pin.is-tight:hover, .dem-pin.is-dot:hover { z-index: 6; padding: 2px 9px 2px 2px; gap: 5px; }
-.dem-pin.is-tight:hover .dem-pin-lbl,
-.dem-pin.is-dot:hover .dem-pin-lbl { display: inline; }
-.dem-pin.is-dot:hover .dem-pin-rate,
-.dem-pin.is-dot:hover .dem-pin-star { display: inline-flex; }
-.dem-pin.is-dot:hover .dem-pin-ico { width: 19px; height: 19px; }
-.dem-pin.is-dot:hover .dem-pin-ico svg { width: 12px; height: 12px; }
+@media (hover: hover) {
+  .dem-pin.is-tight:hover,
+  .dem-pin.is-dot:hover { z-index: 6; padding: 2px 9px 2px 2px; gap: 5px; }
+}
+@media (hover: hover) {
+  .dem-pin.is-tight:hover .dem-pin-lbl,
+  .dem-pin.is-dot:hover .dem-pin-lbl { display: inline; }
+}
+@media (hover: hover) {
+  .dem-pin.is-dot:hover .dem-pin-rate,
+  .dem-pin.is-dot:hover .dem-pin-star { display: inline-flex; }
+}
+@media (hover: hover) {
+  .dem-pin.is-dot:hover .dem-pin-ico { width: 19px; height: 19px; }
+}
+@media (hover: hover) {
+  .dem-pin.is-dot:hover .dem-pin-ico svg { width: 12px; height: 12px; }
+}
 .dem-pin.cat-town { --cat: var(--slate-pin); }
 .dem-pin.cat-beach { --cat: var(--water-pin); }
 .dem-pin.cat-sight { --cat: var(--accent); }
@@ -781,9 +802,13 @@
   cursor: pointer;
   transition: background .15s;
 }
-.day-collapse-head:hover { background: var(--paper-dim); }
+@media (hover: hover) {
+  .day-collapse-head:hover { background: var(--paper-dim); }
+}
 .day-collapse.open .day-collapse-head { border-bottom: 1px solid var(--rule); }
-.day-collapse.open .day-collapse-head:hover { background: none; }
+@media (hover: hover) {
+  .day-collapse.open .day-collapse-head:hover { background: none; }
+}
 .day-collapse-headline {
   display: flex;
   align-items: center;
@@ -850,7 +875,9 @@
   background: var(--paper-dim);
 }
 .day-nested .day-collapse-head { padding: 11px 13px; }
-.day-nested .day-collapse-head:hover { background: rgba(26, 26, 26, 0.03); }
+@media (hover: hover) {
+  .day-nested .day-collapse-head:hover { background: rgba(26, 26, 26, 0.03); }
+}
 .day-nested .day-collapse-title { font-size: 13.5px; }
 .day-nested .day-collapse-body { padding: 12px 13px 13px; background: var(--paper); }
 
@@ -870,8 +897,10 @@
   cursor: pointer;
   transition: border-color .15s, color .15s;
 }
-.day-route-info-btn:hover,
 .day-route-info-btn.open { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .day-route-info-btn:hover { border-color: var(--accent); color: var(--accent); }
+}
 .day-route-info-btn svg { flex: none; }
 .day-route-info-note {
   margin: -2px 0 12px;
@@ -909,7 +938,6 @@
 }
 .day-tier .day-activity-list { padding: 10px; gap: 8px; }
 .day-tier .day-activity-row { border-radius: 12px; }
-.day-tier-must .day-activity-row { border-left-width: 3px; }
 /* One padding for the whole card, and a thumbnail that isn't crowding the
    title. The row used to run 8px on the left and 4px on the right, which read
    as a list that had been squeezed rather than composed. */
@@ -918,7 +946,9 @@
 /* Pickable rows: larger imagery, clearer hover, softer chrome. */
 .day-thumb { width: 46px; height: 46px; border-radius: 10px; }
 .day-activity-row { transition: border-color .15s, background .15s, box-shadow .15s; }
-.day-activity-row:hover { box-shadow: 0 2px 10px rgba(26, 26, 26, 0.08); }
+@media (hover: hover) {
+  .day-activity-row:hover { box-shadow: 0 2px 10px rgba(26, 26, 26, 0.08); }
+}
 .day-assigned-name { font-size: 14px; }
 
 /* Today's plan timeline: stops joined by a hairline so the day reads as one
@@ -1097,9 +1127,11 @@
   box-shadow: 0 2px 8px rgba(26, 26, 26, 0.04);
   transition: border-color .14s, box-shadow .14s, transform .1s;
 }
-.trip-wizard-modal .guide-path:hover {
-  border-color: var(--accent);
-  box-shadow: 0 8px 20px rgba(26, 26, 26, 0.09);
+@media (hover: hover) {
+  .trip-wizard-modal .guide-path:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 20px rgba(26, 26, 26, 0.09);
+  }
 }
 /* Tactile confirmation on tap: the whole card is the target, so pressing it
    dips it, the way a physical button gives under a finger. */
@@ -1118,7 +1150,9 @@
   color: var(--ink-mute);
   transition: transform .14s, color .14s;
 }
-.trip-wizard-modal .guide-path:hover .guide-path-chev { color: var(--accent); transform: translateX(2px); }
+@media (hover: hover) {
+  .trip-wizard-modal .guide-path:hover .guide-path-chev { color: var(--accent); transform: translateX(2px); }
+}
 /* Only when the deck can lay out as a real multi-column grid does the roomy
    vertical card earn its space. */
 @media (min-width: 720px) {
@@ -1190,9 +1224,11 @@
 }
 /* The tint reads as the card being picked up, so it belongs to hover, not to
    the resting state. */
-.trip-wizard-modal.wiz-inline .guide-path:hover {
-  border-color: var(--accent);
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10);
+@media (hover: hover) {
+  .trip-wizard-modal.wiz-inline .guide-path:hover {
+    border-color: var(--accent);
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10);
+  }
 }
 .trip-wizard-modal.wiz-inline .guide-path:focus-visible {
   outline: 2px solid var(--accent);
@@ -1209,18 +1245,22 @@
   background: var(--paper);
   transition: background .14s, border-color .14s, color .14s, transform .14s;
 }
-.trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-chev {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-fill);
-  transform: translateX(2px);
+@media (hover: hover) {
+  .trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-chev {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-fill);
+    transform: translateX(2px);
+  }
 }
 .trip-wizard-modal.wiz-inline .guide-path-icon {
   background: var(--accent-bg);
   color: var(--accent);
   transition: transform .14s;
 }
-.trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-icon { transform: translateY(-1px); }
+@media (hover: hover) {
+  .trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-icon { transform: translateY(-1px); }
+}
 
 /* The deck is dealt: each card arrives just after the one before it. One
    entrance on one screen, not an effect on every section. */
@@ -1397,7 +1437,9 @@
   color: inherit;
   text-decoration: none;
 }
-.guide-explore-card:hover { border-color: var(--rule); }
+@media (hover: hover) {
+  .guide-explore-card:hover { border-color: var(--rule); }
+}
 .guide-explore-icon { display: inline-flex; color: var(--ink-mute); flex: none; }
 .guide-explore-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .guide-explore-text b { font-size: 13px; font-weight: 600; }
@@ -1426,7 +1468,9 @@
   color: var(--ink-soft);
   transition: border-color .14s, color .14s;
 }
-.guide-lifestyle-link:hover { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .guide-lifestyle-link:hover { border-color: var(--accent); color: var(--accent); }
+}
 .guide-lifestyle-link svg { color: var(--accent); }
 .guide-style-cards {
   display: grid;
@@ -1450,7 +1494,9 @@
   background: var(--paper);
   transition: border-color .14s, box-shadow .14s;
 }
-.guide-style-card:hover { border-color: var(--accent-soft); }
+@media (hover: hover) {
+  .guide-style-card:hover { border-color: var(--accent-soft); }
+}
 .guide-style-card.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .guide-style-card b { font-size: 14px; }
 .guide-style-card small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.4; }
@@ -1476,7 +1522,9 @@
   background: var(--bg-card);
   transition: border-color .14s, box-shadow .14s, transform .1s;
 }
-.guide-template:hover { border-color: var(--accent); box-shadow: var(--shadow-1); transform: translateY(-1px); }
+@media (hover: hover) {
+  .guide-template:hover { border-color: var(--accent); box-shadow: var(--shadow-1); transform: translateY(-1px); }
+}
 .guide-template-name { font-family: var(--display); font-size: 14px; }
 .guide-template-route { display: flex; flex-wrap: wrap; gap: 3px 6px; font-size: 12px; }
 .guide-template-stop small { font-family: var(--mono); font-size: 10px; color: var(--accent); margin-left: 2px; }
@@ -1496,7 +1544,7 @@
 .guide-split-main { min-width: 0; }
 .guide-split-side { min-width: 0; position: sticky; top: 0; }
 .guide-split-side .cpm {
-  height: clamp(420px, calc(100vh - 300px), 760px);
+  height: clamp(420px, calc(100dvh - 300px), 760px);
   margin-bottom: 0;
 }
 @media (max-width: 1000px) {
@@ -1694,7 +1742,9 @@
   color: var(--ink-soft);
   transition: border-color .15s, color .15s;
 }
-.booked-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+  .booked-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+}
 
 /* Every control on this screen is the same height, so the row reads as one
    object; the shared dropdown's 24px filter-bar size does not belong here. */
@@ -1788,7 +1838,9 @@
   cursor: pointer;
   transition: border-color .14s, box-shadow .14s, transform .14s;
 }
-.guide-mode-card:hover { border-color: var(--ink-soft); transform: translateY(-1px); }
+@media (hover: hover) {
+  .guide-mode-card:hover { border-color: var(--ink-soft); transform: translateY(-1px); }
+}
 .guide-mode-card.on {
   border-color: var(--accent);
   box-shadow: inset 0 0 0 2px var(--accent), 0 6px 16px rgba(26, 26, 26, 0.08);
@@ -1839,18 +1891,18 @@
      subtraction differs per step because the question above the map does. */
   .trip-wizard-modal .guide-flight-wrap .fpm-map,
   .trip-wizard-modal .guide-flight-side {
-    height: clamp(340px, calc(100vh - 570px), 640px);
+    height: clamp(340px, calc(100dvh - 570px), 640px);
     max-height: none;
   }
   .trip-wizard-modal .guide-stay-wrap .citypick-map,
   .trip-wizard-modal .guide-city-side {
-    height: clamp(340px, calc(100vh - 545px), 640px);
+    height: clamp(340px, calc(100dvh - 545px), 640px);
     max-height: none;
   }
   /* Getting home asks nothing above the map, so it gets the whole page. */
   .trip-wizard-modal .guide-flight-wrap-home .fpm-map,
   .trip-wizard-modal .guide-flight-wrap-home .guide-flight-side {
-    height: clamp(400px, calc(100vh - 330px), 720px);
+    height: clamp(400px, calc(100dvh - 330px), 720px);
   }
   .trip-wizard-modal .guide-flight-side,
   .trip-wizard-modal .guide-city-side {
@@ -1888,7 +1940,9 @@
   cursor: pointer;
   transition: border-color .14s, background .14s;
 }
-.guide-side-idle-row:hover { border-color: var(--accent); background: var(--accent-bg); }
+@media (hover: hover) {
+  .guide-side-idle-row:hover { border-color: var(--accent); background: var(--accent-bg); }
+}
 .guide-side-idle-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 .guide-side-idle-text b { font-size: 13px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
 .guide-side-idle-flag { width: 16px; height: 12px; flex: none; }
@@ -2053,8 +2107,10 @@ color: var(--ink-soft);
   cursor: default;
   transition: border-color .16s, color .16s;
 }
-.wiz-step.done .wiz-step-btn { cursor: pointer; border-top-color: var(--accent-soft); }
-.wiz-step.now .wiz-step-btn { border-top-color: var(--accent); }
+/* The step rail marks progress in ink (selected state; T411, row T399-c),
+   for the trip wizard and the day planner that borrows it. */
+.wiz-step.done .wiz-step-btn { cursor: pointer; border-top-color: var(--ink-mute); }
+.wiz-step.now .wiz-step-btn { border-top-color: var(--ink); }
 .wiz-step-mark {
   flex: none;
   display: flex; align-items: center; justify-content: center;
@@ -2068,7 +2124,7 @@ color: var(--ink-soft);
 /* Done is chrome, not good news in data, so the ink fill rather than --green
    (carta-design: green is data, never chrome; T193). */
 .wiz-step.done .wiz-step-mark { background: var(--ink-fill); color: var(--on-fill); }
-.wiz-step.now .wiz-step-mark { background: var(--accent); color: var(--on-fill); }
+.wiz-step.now .wiz-step-mark { background: var(--ink-fill); color: var(--on-fill); }
 .wiz-step-name {
   font-size: 11.5px;
   color: var(--ink-mute);
@@ -2078,7 +2134,9 @@ color: var(--ink-soft);
 }
 .wiz-step.now .wiz-step-name { color: var(--ink); font-weight: 600; }
 .wiz-step.done .wiz-step-name { color: var(--ink-soft); }
-.wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--accent); }
+@media (hover: hover) {
+  .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--ink); }
+}
 /* Phones: the rail keeps the marks and drops the names it has no room for.
    Kept for the DAY planner's rail, which has four steps and fits. The trip
    wizard has seven and renders .wiz-mini instead (below). */
@@ -2161,7 +2219,9 @@ color: var(--ink-soft);
   font-family: inherit;
   min-height: 26px;
 }
-.guide-recap-chip.is-link:hover { color: var(--accent); border-color: var(--accent); }
+@media (hover: hover) {
+  .guide-recap-chip.is-link:hover { color: var(--accent); border-color: var(--accent); }
+}
 .guide-recap-chip.is-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 /* On a phone every chip is also a tap target, so it gets the room to be one. */
 @media (max-width: 768px) {
@@ -2300,7 +2360,9 @@ color: var(--ink-soft);
   padding: 3px 9px;
   cursor: pointer;
 }
-.guide-answered-edit:hover { color: var(--accent); border-color: var(--accent); }
+@media (hover: hover) {
+  .guide-answered-edit:hover { color: var(--accent); border-color: var(--accent); }
+}
 
 .guide-inline-field { display: flex; align-items: center; gap: 10px; flex: none; }
 .guide-inline-field .trip-field-label { margin: 0; white-space: nowrap; }
@@ -2319,7 +2381,9 @@ color: var(--ink-soft);
   border: 1px solid var(--rule);
   box-shadow: none;
 }
-.guide-design-btn-quiet:hover { border-color: var(--accent); }
+@media (hover: hover) {
+  .guide-design-btn-quiet:hover { border-color: var(--accent); }
+}
 .guide-design-btn-quiet .guide-design-spark,
 .guide-design-btn-quiet svg { color: var(--accent); }
 .guide-design-btn-quiet small { color: var(--ink-mute); }
@@ -2346,7 +2410,9 @@ color: var(--ink-soft);
    Zoomed out, name pills collide with each other and with the basemap's own
    labels. Each map drops the widest part of its pin below a zoom threshold
    and brings it back on hover, on selection, and as you zoom in. */
-.fpm-pin:hover { z-index: 4; }
+@media (hover: hover) {
+  .fpm-pin:hover { z-index: 4; }
+}
 
 /* Collision demotion (declutterPins): a crowded pill first drops its city
    name, keeping the price, then collapses to a bare dot. Nothing vanishes,
@@ -2366,11 +2432,26 @@ color: var(--ink-soft);
   border-radius: 50%;
   background: var(--accent);
 }
-.fpm-pin.is-tight:hover, .fpm-pin.is-dot:hover { z-index: 6; gap: 4px; padding: 3px 8px; }
-.fpm-pin.is-tight:hover .fpm-city, .fpm-pin.is-dot:hover .fpm-city { display: inline; }
-.fpm-pin.is-dot:hover .fpm-price, .fpm-pin.is-dot:hover svg { display: inline; }
-.fpm-pin.is-dot:hover::before { display: none; }
-.citypick-pin:hover, .citypick-pin.focused, .citypick-pin.sel { z-index: 4; }
+@media (hover: hover) {
+  .fpm-pin.is-tight:hover,
+  .fpm-pin.is-dot:hover { z-index: 6; gap: 4px; padding: 3px 8px; }
+}
+@media (hover: hover) {
+  .fpm-pin.is-tight:hover .fpm-city,
+  .fpm-pin.is-dot:hover .fpm-city { display: inline; }
+}
+@media (hover: hover) {
+  .fpm-pin.is-dot:hover .fpm-price,
+  .fpm-pin.is-dot:hover svg { display: inline; }
+}
+@media (hover: hover) {
+  .fpm-pin.is-dot:hover::before { display: none; }
+}
+.citypick-pin.focused,
+.citypick-pin.sel { z-index: 4; }
+@media (hover: hover) {
+  .citypick-pin:hover { z-index: 4; }
+}
 
 /* ── Inline range calendar ───────────────────────────────────────────────
    In the page, two months at a time, with the chosen span shaded as one
@@ -2434,7 +2515,9 @@ color: var(--ink-soft);
 /* The nights between two --ink-fill ends: the paper-dim ground, so
    a range reads as one selection and not as a terracotta alert (T193). */
 .cal-day.in-range { background: var(--paper-dim); border-radius: 0; }
-.cal-day.in-range:hover:not(.disabled) { background: var(--paper-dim); }
+@media (hover: hover) {
+  .cal-day.in-range:hover:not(.disabled) { background: var(--paper-dim); }
+}
 .cal-day.range-start { border-radius: 8px 0 0 8px; }
 .cal-day.range-end { border-radius: 0 8px 8px 0; }
 .cal-day.range-start.range-end { border-radius: 8px; }

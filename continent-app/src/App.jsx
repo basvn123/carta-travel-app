@@ -1182,6 +1182,10 @@ function TravelApp() {
             <ExploreTab
               data={data}
               isActive={activeTab === 'map'}
+              /* A page standing over the tab (a destination, My trips,
+                 Account) owns the one h1 (T411, rows T410-c and the quality
+                 floor's two-h1 screens). */
+              pageOver={!!selectedDest || savedTripsOpen || accountOpen}
               locationQuery={locationQuery}
               setLocationQuery={setLocationQuery}
               countryFilter={countryFilter}

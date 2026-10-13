@@ -16,7 +16,7 @@ import { groundLinkFor } from '../lib/groundLinks.js';
 import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 
@@ -973,7 +973,7 @@ export function TripItinerary({
                             })}
                             aria-label={t('extras.removeTitle')}
                             title={t('extras.removeTitle')}
-                          >×</button>
+                          ><CloseIcon size={16} /></button>
                         </span>
                       ))}
                     </div>

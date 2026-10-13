@@ -9,12 +9,19 @@
  * No other JavaScript file may hold a hex colour (the lint's js-hex-literal
  * rule), except the flag and brand artwork and the print exports it lists.
  *
- * --accent and --ink-mute are deliberately not mirrored: they are the two
- * contrast tokens the owner has asked to see darkened (T363), so they are only
- * ever read live, through tokenColour(), and cannot drift here.
+ * --accent and --ink-mute were held out while T363 darkened them; T363 is
+ * done, so T411 mirrors them with the other colours the print exports read
+ * (the destination PDF builds its fallback palette from this table instead
+ * of a stale literal copy). They are still read live through tokenColour().
  */
 export const TOKEN_COLOURS = {
   '--ink': '#0f172a',
+  '--ink-soft': '#414b5e',
+  '--ink-mute': '#646978',
+  '--accent': '#ce3823',
+  '--rule-soft': '#e2ded1',
+  '--rate-bg': '#f6e6cb',
+  '--green': '#4a6a3a',
   '--paper-dim': '#efece2',
   '--rule': '#ccc7b8',
   '--accent-bg': '#f7dcd4',

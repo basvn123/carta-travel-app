@@ -444,6 +444,7 @@ const ExploreCard = React.memo(function ExploreCard({
 export function ExploreTab({
   data,
   isActive = true,
+  pageOver = false,
   locationQuery, setLocationQuery,
   countryFilter, setCountryFilter,
   tripKinds, setTripKinds,
@@ -955,7 +956,7 @@ export function ExploreTab({
   );
 
   const anyActive = chips.length > 0;
-  const TitleTag = isActive ? 'h1' : 'div';
+  const TitleTag = isActive && !pageOver ? 'h1' : 'div';
 
   // The count the control bar states (brief V3-1): what the view holds, from
   // the same list the grid renders, grouped the way the reader's locale

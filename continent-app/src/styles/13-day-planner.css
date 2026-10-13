@@ -42,7 +42,6 @@
   .day-landing-wide .day-landing-title,
   .day-landing-wide .day-landing-lead,
   .day-landing-wide .day-landing-section,
-  .day-landing-wide .day-edit-banner,
   .day-landing-wide .day-build-top,
   .day-landing-wide .day-stay-results,
   .day-landing-wide .day-build-cities,
@@ -87,7 +86,9 @@
   font-weight: 600;
   text-decoration: none;
 }
-.day-gmaps-link:hover { filter: brightness(1.05); }
+@media (hover: hover) {
+  .day-gmaps-link:hover { filter: brightness(1.05); }
+}
 .day-saved-sub {
   font-family: var(--mono);
   font-size: 10.5px;
@@ -97,7 +98,9 @@
   font-weight: 400;
 }
 .day-chip-add { border-style: dashed; color: var(--accent); }
-.day-chip-add:hover { border-color: var(--accent); }
+@media (hover: hover) {
+  .day-chip-add:hover { border-color: var(--accent); }
+}
 
 .day-chip-row {
   display: flex;
@@ -111,12 +114,15 @@
   padding: 7px 14px;
   border-radius: 999px;
   border: 1px solid var(--rule);
-  font-family: var(--mono);
-  font-size: 11px;
+  /* Town names are words: --ui, not the mono of measured facts (T411). */
+  font-family: var(--ui);
+  font-size: 12px;
   color: var(--ink-soft);
-  transition: border-color .15s, color .15s, background .15s;
+  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.day-chip:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .day-chip:hover { border-color: var(--ink-soft); }
+}
 .day-chip.active { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
 
 .day-assigned-list, .day-activity-list {
@@ -136,7 +142,9 @@
   background: var(--paper);
 }
 .day-activity-row { transition: border-color .15s, background .15s; }
-.day-activity-row:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .day-activity-row:hover { border-color: var(--ink-soft); }
+}
 .day-activity-row.added { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
 .day-assigned-idx {
   display: flex; align-items: center; justify-content: center;
@@ -330,7 +338,9 @@
 }
 .day-timeline-ride svg { flex: none; }
 .day-timeline-ride-dir { color: var(--accent); font-weight: 700; text-decoration: none; }
-.day-timeline-ride-dir:hover { text-decoration: underline; }
+@media (hover: hover) {
+  .day-timeline-ride-dir:hover { text-decoration: underline; }
+}
 .day-timeline-ride-note {
   flex-basis: 100%;
   font-size: 9.5px;
@@ -396,7 +406,9 @@
   color: var(--ink-mute);
   text-decoration: none;
 }
-.day-activity-info:hover { color: var(--accent); }
+@media (hover: hover) {
+  .day-activity-info:hover { color: var(--accent); }
+}
 
 /* Thumbnails (activity rows + timeline). */
 .day-thumb {
@@ -447,7 +459,9 @@
   font-size: 12.5px;
   cursor: pointer;
 }
-.day-more-btn:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .day-more-btn:hover { border-color: var(--ink-soft); }
+}
 
 /* Lunch row in the timeline. */
 .day-timeline-lunch .day-assigned-row {
@@ -532,7 +546,9 @@
   cursor: pointer;
   transition: border-color .15s, background .15s;
 }
-.shape-pace:hover { border-color: var(--ink-soft); }
+@media (hover: hover) {
+  .shape-pace:hover { border-color: var(--ink-soft); }
+}
 .shape-pace.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
 .shape-pace-label { font-size: 13px; font-weight: 600; color: var(--ink); }
 .shape-pace-hint {
@@ -560,7 +576,9 @@
   text-decoration: underline;
   cursor: pointer;
 }
-.shape-skip:hover { color: var(--ink); }
+@media (hover: hover) {
+  .shape-skip:hover { color: var(--ink); }
+}
 
 .brand {
   display: flex;

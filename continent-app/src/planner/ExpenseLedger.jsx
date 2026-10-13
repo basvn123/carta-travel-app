@@ -5,7 +5,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { readCrew, writeCrew } from '../auth/tripCrew.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { fetchFriendLinks } from '../auth/friends.js';
-import { ReceiptIcon } from '../components/Icons.jsx';
+import { ReceiptIcon, CloseIcon } from '../components/Icons.jsx';
 
 /**
  * ExpenseLedger, the group's shared-spend book for a planned trip.
@@ -194,7 +194,7 @@ export function ExpenseLedger({ extras, onChange, groupSize }) {
               </small>
             </span>
             <span className="exp-row-amt">{fmtAmount(x.amount, x.currency)}</span>
-            <button className="extras-remove" onClick={() => removeExpense(x.id)} title={t('extras.removeTitle')}>×</button>
+            <button className="extras-remove" onClick={() => removeExpense(x.id)} title={t('extras.removeTitle')} aria-label={t('extras.removeTitle')}><CloseIcon size={16} /></button>
           </div>
         );
       })}

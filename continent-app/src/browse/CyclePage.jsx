@@ -923,7 +923,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             sizes={srcSetFor(heroShot.thumb || heroShot.url, 1280) ? '100vw' : undefined}
             alt={heroShot.title || title}
             loading="eager"
-            fetchPriority="high"
+            fetchpriority="high"
             decoding="async"
           />
         ) : null,
