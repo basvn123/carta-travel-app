@@ -18,6 +18,18 @@ body {
   background: var(--paper);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* T421 (Lagoon): one family for prose and figures, so every number lines
+     up in columns and settles in place without a separate mono face. */
+  font-variant-numeric: tabular-nums;
+  caret-color: var(--action);
+  accent-color: var(--action);
+  scrollbar-color: var(--neutral-300) transparent;
+}
+
+/* The browser's own surfaces carry the palette too (T421). */
+::selection {
+  background: var(--select-bg);
+  color: var(--text);
 }
 
 button {

@@ -18,10 +18,10 @@
   align-items: center;
   flex: none;
 }
-/* Heavier top padding optically centres the digits: JetBrains Mono sits high
-   in a line-height:1 box, which otherwise leaves a gap under the number. */
-.score-chip.xs { font-size: 9.5px; padding: 3px 5px 2px; gap: 3px; border-radius: 999px; }
-.score-chip.sm { font-size: 11.5px; padding: 4px 7px 3px; gap: 4px; border-radius: 999px; }
+/* Heavier top padding optically centres the digits in a line-height:1 box.
+   Rating figures stay at 12 px or more (T421, the T418 floor). */
+.score-chip.xs { font-size: var(--text-caption); padding: 3px 6px 2px; gap: 3px; border-radius: 999px; }
+.score-chip.sm { font-size: var(--text-caption); padding: 4px 7px 3px; gap: 4px; border-radius: 999px; }
 .score-chip.lg { font-size: 15px; padding: 6px 10px 4px; gap: 5px; border-radius: 999px; }
 .score-chip.rt-3 { background: var(--rate); color: var(--paper); }
 .score-chip.rt-2 { background: var(--rate-bg); color: var(--rate); }
@@ -361,7 +361,7 @@
 }
 .fpm-origin-name {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: var(--text-micro);
   font-weight: 700;
   color: var(--ink);
   background: var(--paper);
@@ -537,7 +537,7 @@
   order: -1;
   margin-bottom: 3px;
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   font-weight: 700;
   color: var(--accent);
   background: var(--paper);
@@ -665,7 +665,7 @@
   padding: 1px 5px;
   border-radius: 999px;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: var(--text-micro);
   font-weight: 700;
 }
 .dem-pin-rate.rt-3 { background: var(--rate); color: var(--paper); }
@@ -697,7 +697,7 @@
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.08);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: var(--text-micro);
   font-weight: 700;
 }
 .guide-chip.on .dem-chip-count { background: rgba(255, 255, 255, 0.25); }.guide-city-side-photo-empty { color: var(--ink-mute); }
@@ -1227,7 +1227,7 @@
 @media (hover: hover) {
   .trip-wizard-modal.wiz-inline .guide-path:hover {
     border-color: var(--accent);
-    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10);
+    box-shadow: 0 10px 28px rgba(31, 42, 51, 0.10);
   }
 }
 .trip-wizard-modal.wiz-inline .guide-path:focus-visible {

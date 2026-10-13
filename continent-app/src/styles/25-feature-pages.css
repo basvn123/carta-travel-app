@@ -208,7 +208,7 @@
     border-radius: 999px;
     background: var(--paper);
     font-family: var(--mono);
-    font-size: 9.5px;
+    font-size: var(--text-micro);
     line-height: 1.7;
     font-variant-numeric: tabular-nums;
     color: var(--ink-soft);
@@ -2238,7 +2238,7 @@
 @media (hover: hover) {
   .xbar .xview-toggle button:hover { color: var(--ink); }
 }
-.xbar .xview-toggle button.on { background: var(--ink); color: var(--on-fill); }
+.xbar .xview-toggle button.on { background: var(--ink-fill); color: var(--on-fill); }
 .xbar .xview-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .xbar .xgrid-sort { margin-left: 0; gap: 8px; color: var(--ink-mute); }
@@ -2669,7 +2669,7 @@
   max-width: 70%;
   padding: 3px 9px;
   border-radius: 6px;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(31, 42, 51, 0.55);
   color: var(--on-fill);
   font-size: 11.5px;
   font-weight: 600;
@@ -2935,7 +2935,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 1px 3px rgba(31, 42, 51, 0.3);
 }
 .dhl-heritage {
   position: absolute;
@@ -3239,7 +3239,7 @@
   transform: translateX(-50%);
   background: var(--ink-fill);
   border: 3px solid var(--paper);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 1px 3px rgba(31, 42, 51, 0.3);
 }
 .rb-me.rt-2, .rb-me.rt-3 { background: var(--rate); }
 .rb-ticks { position: relative; height: 16px; margin-top: 6px; }
@@ -3876,8 +3876,8 @@
   color: transparent;
 }
 .jpage-book-list input:checked + .jpage-book-box {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
   color: var(--on-fill);
 }
 .jpage-book-list input:focus-visible + .jpage-book-box { outline: 2px solid var(--accent); outline-offset: 2px; }

@@ -62,7 +62,7 @@ const BANNED_WORDS = ['seamless', 'seamlessly', 'unlock', 'effortless', 'effortl
 const bannedRe = new RegExp(`\\b(${BANNED_WORDS.join('|')})\\b`, 'i');
 
 // T198: the only legal values of a font-family declaration outside :root.
-const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono)\s*\))$/;
+const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono|font)\s*\))$/;  // --font: T421 Lagoon
 // T364: the one file that may hold a hex in JavaScript, and the artwork that
 // is not a design token (flags are country artwork, the Google mark is a brand).
 const MIRROR_FILE = 'src/map/tokenColors.js';
@@ -156,7 +156,9 @@ function mirrorDrift(root) {
   lines.forEach((ln, i) => {
     const m = ln.match(/^\s*'(--[\w-]+)'\s*:\s*'(#[0-9a-fA-F]{3,8})'/);
     if (!m || i < msrc.slice(0, block.index).split('\n').length - 1) return;
-    const want = decl[m[1]];
+    // T421: legacy names alias roles (var(--x)), so follow the chain to its value.
+    let want = decl[m[1]];
+    for (let hops = 0; want && /^var\(--[\w-]+\)$/.test(want) && hops < 8; hops++) want = decl[want.slice(4, -1)];
     if (want !== m[2].toLowerCase()) out.push({ rule: 'token-mirror-drift', file: MIRROR_FILE, line: i + 1, text: ln.trim(), detail: `${m[1]} is ${want || 'absent'} in 01-tokens.css` });
   });
   return out;

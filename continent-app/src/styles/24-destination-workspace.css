@@ -206,7 +206,7 @@
 }
 @media (hover: hover) {
   .xcard:hover {
-    box-shadow: var(--shadow-card), 0 16px 32px rgba(15, 23, 42, 0.16);
+    box-shadow: var(--shadow-card), 0 16px 32px rgba(31, 42, 51, 0.16);
     border-color: var(--rule);
     transform: translateY(-3px) scale(1.015);
     z-index: 2;
@@ -273,7 +273,7 @@
   padding: 3px 8px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.93);
-  font-size: 10px;
+  font-size: var(--text-micro);
   font-weight: 600;
   letter-spacing: 0.01em;
   color: var(--ink-soft);
@@ -290,7 +290,7 @@
   gap: 5px;
   padding: 3px 9px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.62);
+  background: rgba(31, 42, 51, 0.62);
   color: var(--on-fill);
   font-family: var(--mono);
   font-size: 10.5px;
@@ -702,7 +702,7 @@
   border-radius: 50%;
   background: var(--ink-soft);
   border: 2px solid var(--paper);
-  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 0 0 1px rgba(31, 42, 51, 0.2);
 }
 
 /* ── Panel: what else is within a day's reach. Every row opens a real
@@ -929,7 +929,7 @@
 .xp-wday-icon { color: var(--ink-soft); }
 .xp-wday-hi { font-family: var(--mono); font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .xp-wday-lo { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
-.xp-wday-rain { font-size: 9.5px; color: var(--rain-ink); font-family: var(--mono); }
+.xp-wday-rain { font-size: var(--text-micro); color: var(--rain-ink); font-family: var(--mono); }
 .xp-source {
   margin: 9px 0 0;
   font-size: 10.5px;
@@ -981,7 +981,7 @@
   height: 30px;
   padding: 0 12px;
   border-radius: 999px;
-  background: var(--ink);
+  background: var(--ink-fill);
   color: var(--paper);
   font-size: 12px;
   font-weight: 600;
@@ -1271,7 +1271,7 @@
   gap: 4px;
   padding: 3px 9px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, .72);
+  background: rgba(31, 42, 51, .72);
   color: var(--on-fill);
   font-size: 11.5px;
 }
@@ -1279,7 +1279,7 @@
 .itin-card-near {
   padding: 3px 9px;
   border-radius: 999px;
-  background: rgba(248, 246, 240, .92);
+  background: rgba(246, 245, 242, .92);
   color: var(--ink-soft);
   font-size: 10.5px;
   font-weight: 600;
@@ -1396,7 +1396,7 @@
 .itin-photohero-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.10) 58%);
+  background: linear-gradient(to top, rgba(31, 42, 51, 0.82) 0%, rgba(31, 42, 51, 0.10) 58%);
   pointer-events: none;
 }
 /* Aligned to .tpage-col, not to the viewport: the title sat hard against the
@@ -1448,7 +1448,7 @@
   max-width: 45%;
   padding: 2px 8px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(31, 42, 51, 0.5);
   color: rgba(255, 255, 255, 0.85);
   font-size: 10px;
   overflow: hidden;
@@ -2009,7 +2009,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.52);
+  background: rgba(31, 42, 51, 0.52);
   color: rgba(255, 255, 255, 0.95);
   line-height: 1;
   transition: background .15s, color .15s;
@@ -2028,7 +2028,7 @@
 @media (hover: hover) {
   .guide-ccard-info:hover,
   .guide-ccard-pick:hover ~ .guide-ccard-info {
-    background: rgba(15, 23, 42, 0.86);
+    background: rgba(31, 42, 51, 0.86);
     color: var(--on-fill);
   }
 }
@@ -2057,7 +2057,7 @@
   font-weight: 600;
 }
 @media (hover: hover) {
-  .guide-picked-chip:hover { background: var(--ink); }
+  .guide-picked-chip:hover { background: var(--lagoon-900); }
 }
 .guide-picked-x { font-size: 14px; line-height: 1; opacity: .7; }
 
@@ -2122,7 +2122,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.52);
+  background: rgba(31, 42, 51, 0.52);
   font-size: 19px;
   line-height: 1;
   color: var(--on-fill);
@@ -2137,7 +2137,7 @@
   transform: translate(-50%, -50%);
 }
 @media (hover: hover) {
-  .cbrief-close:hover { background: rgba(15, 23, 42, 0.82); }
+  .cbrief-close:hover { background: rgba(31, 42, 51, 0.82); }
 }
 .cbrief-close:focus-visible { outline: 2px solid var(--on-fill); outline-offset: 1px; }
 .cbrief-body { overflow-y: auto; overscroll-behavior: contain; }
@@ -2319,7 +2319,7 @@
   position: absolute;
   inset: auto 0 0 0;
   height: 62%;
-  background: linear-gradient(to top, rgba(15, 23, 42, .74), rgba(15, 23, 42, 0));
+  background: linear-gradient(to top, rgba(31, 42, 51, .74), rgba(31, 42, 51, 0));
   pointer-events: none;
 }
 .cbrief-hero-name {
@@ -2335,7 +2335,7 @@
   font-size: 19px;
   font-weight: 600;
   line-height: 1.15;
-  text-shadow: 0 1px 3px rgba(15, 23, 42, .5);
+  text-shadow: 0 1px 3px rgba(31, 42, 51, .5);
 }
 
 /* The folds. The .dsec grammar, with the brief's own padding so a 420px
@@ -2356,7 +2356,7 @@
   border-radius: 5px;
   background: var(--paper-dim);
   color: var(--ink-mute);
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   font-weight: 600;
   line-height: 1;
   text-align: center;
@@ -2731,14 +2731,14 @@
 .wtrip-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0) 46%);
+  background: linear-gradient(to top, rgba(31, 42, 51, 0.45) 0%, rgba(31, 42, 51, 0) 46%);
 }
 .wtrip-days {
   position: absolute;
   top: 8px; left: 8px;
   padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.66);
+  background: rgba(31, 42, 51, 0.66);
   color: var(--on-fill);
   font-size: 11px;
 }
@@ -3414,7 +3414,7 @@
   flex-direction: column;
   gap: 2px;
   padding: 36px 12px 11px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.74) 82%);
+  background: linear-gradient(180deg, rgba(31, 42, 51, 0) 0%, rgba(31, 42, 51, 0.74) 82%);
 }
 .xcard-overlay-top {
   display: flex;
@@ -3461,7 +3461,7 @@
   justify-content: center;
   width: 30px; height: 30px;
   border-radius: 50%;
-  background: rgba(248, 246, 240, 0.92);
+  background: rgba(246, 245, 242, 0.92);
   color: var(--ink-soft);
   transition: transform .15s, color .15s;
 }
@@ -3877,7 +3877,7 @@
   .xcard-overlay { display: flex; padding: 26px 9px 9px; }
   .xcard-overlay-name { font-size: 13.5px; }
   .xcard-overlay-sub { font-size: 10.5px; }
-  .xcard-seal { font-size: 9px; padding: 2px 6px; }
+  .xcard-seal { font-size: var(--text-micro); padding: 2px 6px; }
   .xcard-star { width: 27px; height: 27px; }
   /* The star stays a small round mark on the photo, but its tap box is the
      44px floor: a transparent ring around it takes the touch (T193). */
@@ -4239,7 +4239,7 @@
   border-radius: 50%;
   background: var(--accent);
   color: var(--on-fill);
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   margin-right: 6px;
   vertical-align: 1px;
 }
@@ -4262,7 +4262,7 @@
 }
 .destp-hl-link { position: absolute; inset: 0 0 auto 0; aspect-ratio: 16 / 10; border-radius: 10px; }
 @media (hover: hover) {
-  .destp-hl-link:hover { background: rgba(15, 23, 42, 0.05); }
+  .destp-hl-link:hover { background: rgba(31, 42, 51, 0.05); }
 }
 
 /* Things to do. */

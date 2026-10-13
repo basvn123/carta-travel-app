@@ -13,18 +13,21 @@
  * done, so T411 mirrors them with the other colours the print exports read
  * (the destination PDF builds its fallback palette from this table instead
  * of a stale literal copy). They are still read live through tokenColour().
+ *
+ * T421 (Lagoon): legacy names in 01-tokens.css now alias roles through var();
+ * each value here is the end of that chain, and the lint follows it.
  */
 export const TOKEN_COLOURS = {
-  '--ink': '#0f172a',
-  '--ink-soft': '#414b5e',
-  '--ink-mute': '#646978',
-  '--accent': '#ce3823',
-  '--rule-soft': '#e2ded1',
+  '--ink': '#1f2a33',
+  '--ink-soft': '#44515c',
+  '--ink-mute': '#5c6873',
+  '--accent': '#0b7480',
+  '--rule-soft': '#e9eae7',
   '--rate-bg': '#f6e6cb',
   '--green': '#4a6a3a',
-  '--paper-dim': '#efece2',
-  '--rule': '#ccc7b8',
-  '--accent-bg': '#f7dcd4',
+  '--paper-dim': '#efeeea',
+  '--rule': '#dcdfdd',
+  '--accent-bg': '#dff0f1',
   '--rate': '#8f5a0c',
   '--bg-card': '#ffffff',
   '--on-fill': '#ffffff',
@@ -34,7 +37,7 @@ export const TOKEN_COLOURS = {
   '--water-link': '#2b6f9e',
   '--beach-ink': '#c48a2a',
   '--mountain-ink': '#6b5b95',
-  '--gem-ink': '#2c6e63',
+  '--gem-ink': '#7a4a6f',
 };
 
 /**

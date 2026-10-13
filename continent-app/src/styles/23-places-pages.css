@@ -86,7 +86,7 @@
    about must not be the one that starts off screen. */
 @media (max-width: 430px) {
   .places-cats { gap: 4px; }
-  .places-cat { padding: 7px 0 6px; font-size: 9.5px; }
+  .places-cat { padding: 7px 0 6px; font-size: var(--text-micro); }
 }
 /* A phone cannot hold six legible columns (at 390px that is a 58px card,
    narrower than the word "Mountains"), so the rail drops to three and takes a
@@ -406,7 +406,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.country-picker .origin-btn-caret { font-size: 9px; }
+.country-picker .origin-btn-caret { font-size: var(--text-micro); }
 /* Left-anchored, unlike origin's right-anchored pop: the country pill sits
    left of the toolbar, not at its right edge. Desktop/tablet only - the
    phone breakpoint below pins .origin-pop (which this also is) to the
@@ -682,7 +682,7 @@
   color: var(--on-fill);
   white-space: nowrap;
 }
-.places-card-kind.city { background: rgba(200, 80, 30, 0.55); }
+.places-card-kind.city { background: rgba(11, 116, 128, 0.55); }
 .places-card-price {
   font-family: var(--mono);
   font-size: 13px;
@@ -1625,7 +1625,7 @@
 }
 .lpage-months li.warm .lpage-month-c { color: var(--ink); font-weight: 500; }
 .lpage-month-m {
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
 }
 
@@ -1851,7 +1851,7 @@
   border-radius: 50%;
   background: var(--accent);
   border: 2.5px solid var(--on-fill);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 1px 3px rgba(31, 42, 51, 0.35);
 }
 /* The walker's own position. MapLibre rewrites a marker element's inline
    transform every frame, so anything animated lives on the inner dot. */
@@ -1864,13 +1864,13 @@
   border-radius: 50%;
   background: var(--ink);
   border: 3px solid var(--on-fill);
-  box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.35);
+  box-shadow: 0 0 0 0 rgba(31, 42, 51, 0.35);
   animation: tpage-me-pulse 2s ease-out infinite;
 }
 @keyframes tpage-me-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.30); }
-  70% { box-shadow: 0 0 0 12px rgba(15, 23, 42, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(31, 42, 51, 0.30); }
+  70% { box-shadow: 0 0 0 12px rgba(31, 42, 51, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(31, 42, 51, 0); }
 }
 
 /* ── Following: the map takes the page, the HUD reports on it ── */
@@ -2588,7 +2588,7 @@
   white-space: nowrap;
   padding-left: 0;
   padding-right: 15px;
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   letter-spacing: 0.06em;
 }
 .dest-panel .panel-city { font-size: 33px; }
@@ -3185,7 +3185,7 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.tshare-vis-opt.on { background: var(--ink); color: var(--paper); }
+.tshare-vis-opt.on { background: var(--ink-fill); color: var(--paper); }
 .tshare-vis-sub,
 .coplan-sub {
   margin: 0;
@@ -3468,8 +3468,8 @@
   .header-friends-btn:hover { border-color: var(--ink); color: var(--ink); }
 }
 .header-friends-btn.on {
-  border-color: var(--ink);
-  background: var(--ink);
+  border-color: var(--ink-fill);
+  background: var(--ink-fill);
   color: var(--paper);
 }
 
@@ -3574,7 +3574,7 @@
   cursor: pointer;
   white-space: nowrap;
 }
-.tshare-life-opt.on { background: var(--ink); color: var(--paper); }
+.tshare-life-opt.on { background: var(--ink-fill); color: var(--paper); }
 
 /* ── Your record, next to what friends have shown you ───────────────────────
    A list with hairlines, not cards: these are rows of one comparable fact,
@@ -3621,7 +3621,7 @@
 }
 .fledger-row.is-legend .fledger-num {
   font-family: var(--ui);
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   font-weight: 600;
   color: var(--ink-mute);
 }

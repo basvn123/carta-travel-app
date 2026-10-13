@@ -1103,8 +1103,8 @@
 }
 .adminpage-btn:disabled { opacity: .5; cursor: default; }
 .adminpage-btn.primary {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
   color: var(--paper);
 }
 @media (hover: hover) {
@@ -1746,7 +1746,7 @@
 }
 .diffcell-image code {
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   overflow-wrap: anywhere;
 }

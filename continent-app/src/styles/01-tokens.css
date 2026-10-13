@@ -1,6 +1,20 @@
 /* ==========================================================================
-   Carta, Europe Travel
-   Editorial / cartographic aesthetic
+   Carta, Europe Travel: design tokens, "Lagoon" (T421, owner choice T419)
+
+   A top-tier travel app in the manner of Airbnb, Polarsteps and Wanderlog:
+   photography first, white surfaces on a warm light grey, blue-grey ink that
+   is never black, one deep lagoon teal for actions and selection, sun yellow
+   for best value only, one friendly typeface (Figtree) for everything,
+   figures included, with tabular numerals.
+
+   Three layers, read top to bottom:
+     1. Primitives  the raw scales. Components never read these.
+     2. Roles       what a value is for. New and touched rules read these.
+     3. Legacy      every name the stylesheet used before T421, aliased to a
+                    role, so the whole app re-skins from this file alone. The
+                    migration (T426 onward) retires them file by file.
+   Ratios beside a pair are WCAG 2 contrast; scripts/ci/token-contrast.mjs
+   checks every pair the product uses as text or fill.
 
    Write STANDARD properties only; the build (Lightning CSS, targets in
    vite.config.js) generates vendor prefixes. Hand-writing a -webkit- twin
@@ -11,91 +25,183 @@
    ========================================================================== */
 
 :root {
-  /* Palette - warm alabaster canvas, deep slate ink, terracotta accent */
-  --paper:        #f8f6f0;
-  --paper-dim:    #efece2;
-  --ink:          #0f172a;
-  --ink-soft:     #414b5e;
-  /* Metadata only. Darkened by T363 (owner decision 2026-10-07) from #7d8393,
-     which was 3.51:1 on --paper: now 5.07:1 on --paper, 4.63:1 on
-     --paper-dim, 5.48:1 on --bg-card. */
-  --ink-mute:     #646978;
-  /* The fill behind an ACTIVE control. One step off --ink, which is body text
-     and reads as pure black when a whole button is painted with it. Still
-     11:1 against --paper, so white labels stay well past AA. */
-  --ink-fill:     #2b3446;
-  --rule:         #ccc7b8;
-  --rule-soft:    #e2ded1;       /* hairlines inside a card, where --rule is too loud */
-  /* Terracotta: actions, alerts, the live route, focus rings. Darkened by T363
-     (owner decision 2026-10-07) from #e05a47, same hue: as text 4.61:1 on
-     --paper and 4.98:1 on --bg-card, and --on-fill on it 4.98:1 (was 3.40
-     and 3.67). Text on --accent-bg is 3.83:1, still under AA (T363-a). */
-  --accent:       #ce3823;
-  --accent-soft:  #e97f6b;
-  --accent-bg:    #f7dcd4;
-  /* Ratings are a MEASURE, not a warning. On the accent they read as errors
-     ("Rome 9.5" in a saturated red bubble), and they competed with the buttons
-     and route pins that do need to shout. Deep ochre: warm like a seal on a
-     map, and dark enough to pass AA both as a fill (paper text on --rate,
-     5.3:1) and as text (--rate on --rate-bg, 4.7:1; --rate-soft on paper,
-     4.8:1), which the amber a rating chip wants to be does not. */
-  --rate:         #8f5a0c;
-  --rate-soft:    #946313;
-  --rate-bg:      #f6e6cb;
-  --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
-  /* Destructive only, never decoration. Terracotta is the app's action colour
-     and cannot also mean "this erases everything", so deleting an account gets
-     a colour nothing else in the product uses. Both directions clear AA on
-     paper (5.6:1 as text) and as a fill (6.0:1 with white on it). */
-  --danger:       #b3372a;
-  --danger-dark:  #96291e;
-  --status-success: #10b981;     /* indicator-only green: compliance ticks, open-now dots */
-  --bg-card:      #ffffff;
-  --shadow-1:     0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
-  --shadow-2:     0 4px 16px rgba(15, 23, 42, 0.10), 0 12px 32px rgba(15, 23, 42, 0.08);
-  --shadow-card:  0 4px 20px rgba(15, 23, 42, 0.06);
+  /* ---- 1. Primitives ---------------------------------------------------- */
 
-  /* Card taxonomy (PLAN.md C2). KIND is an ink-density ramp, not a rainbow:
-     the hierarchy reads as weight, so it survives greyscale and colour-blind
-     viewing. Values are ink mixed over paper at 100/78/62/45/50%. VERDICT
-     stays on the rating's ochre seal (--rate) - ratings are a measure here,
-     never the terracotta action colour. GEM gets its own quiet teal, the one
-     hue nothing else in the product uses, so "the world hasn't noticed" and
-     "worth the journey" can never be confused. The app is deliberately
-     single-theme (no prefers-color-scheme / data-theme blocks exist), so
-     these live only in this :root like every other token. */
-  --kind-metro:   #0f172a;
-  --kind-city:    #424856;
-  --kind-town:    #686c75;
-  --kind-village: #8f9297;
-  --kind-area:    #84868d;
-  --verdict-3:    var(--rate);       /* filled ribbon */
-  --verdict-2:    var(--rate);       /* outline ribbon */
-  --verdict-1:    var(--ink-mute);   /* text only */
-  --gem-ink:      #2c6e63;
-  --gem-bg:       #d9eae5;
+  /* Neutrals: a warm light grey family, ink a blue-grey (never #000). */
+  --neutral-0:    #ffffff;
+  --neutral-25:   #fbfbfa;
+  --neutral-50:   #f6f5f2;
+  --neutral-100:  #efeeea;
+  --neutral-150:  #e9eae7;
+  --neutral-200:  #dcdfdd;
+  --neutral-300:  #c5cac8;
+  --neutral-600:  #5c6873;
+  --neutral-700:  #44515c;
+  --neutral-800:  #2e3a44;
+  --neutral-900:  #1f2a33;
 
-  /* Spacing scale (P4.3). The stylesheet grew with hand-tuned px literals and
-     no rhythm, which is why the phone wastes a screen before the first card.
-     New and touched rules take these; nothing is rewritten wholesale. */
+  /* Lagoon teal. 600 is the action colour, chosen one step darker than the
+     T419 card (#0e7c86) so teal text clears AA on its own tint. */
+  --lagoon-50:    #eef7f7;
+  --lagoon-100:   #dff0f1;
+  --lagoon-200:   #bfe0e2;
+  --lagoon-300:   #8cc6ca;
+  --lagoon-600:   #0b7480;
+  --lagoon-700:   #0a6670;
+  --lagoon-800:   #08575f;
+  --lagoon-900:   #07454b;
+
+  /* Sun yellow: best value, as a fill or a marker. Never text. */
+  --sun-400:      #f2b33d;
+  --sun-100:      #fdf1d8;
+  --sun-800:      #7a5000;
+
+  /* ---- 2. Roles ---------------------------------------------------------- */
+
+  --surface-page:    var(--neutral-50);   /* the ground behind everything */
+  --surface:         var(--neutral-0);    /* cards, sheets, bars */
+  --surface-sunken:  var(--neutral-100);  /* input fills, quiet bands */
+  --surface-hover:   #eeede9;             /* hover on a quiet surface */
+  --text:            var(--neutral-900);  /* 13.4:1 on --surface-page */
+  --text-2:          var(--neutral-700);  /* 7.5:1 on --surface-page */
+  --text-3:          var(--neutral-600);  /* metadata, 5.2:1 on --surface-page, 4.9:1 on --surface-sunken */
+  --border:          var(--neutral-200);
+  --border-soft:     var(--neutral-150);
+
+  --action:          var(--lagoon-600);   /* primary buttons, links, focus; white on it 5.5:1 */
+  --action-hover:    var(--lagoon-700);
+  --action-press:    var(--lagoon-800);
+  --action-text:     var(--neutral-0);    /* label on an --action fill */
+  --action-tint:     var(--lagoon-100);   /* --action as text on it 4.7:1 */
+
+  /* The one selected state: a light tint, teal text, a teal edge. Never a
+     dark slab. T422 moves every chip, tab and segment onto it; until then
+     the legacy --ink-fill below carries selection as a deep teal fill. */
+  --select-bg:       var(--lagoon-100);
+  --select-ink:      var(--lagoon-700);   /* 5.7:1 on --select-bg */
+  --select-border:   var(--lagoon-600);
+
+  --focus:           var(--lagoon-600);
+  --best:            var(--sun-400);      /* best value marker; --text on it 7.9:1 */
+  --best-bg:         var(--sun-100);
+  --best-ink:        var(--sun-800);      /* best value as text, 7.1:1 on --surface */
+
+  /* ---- Scales ------------------------------------------------------------ */
+
+  /* Type: one family, figures tabular. Eight steps; nothing functional under
+     11 px, no figure or rating under 12 px. */
+  --ui:              'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font:            var(--ui);         /* the name new rules use */
+  --text-micro:      11px;
+  --text-caption:    12px;
+  --text-label:      13px;
+  --text-body:       14px;
+  --text-lead:       16px;
+  --text-title:      20px;
+  --text-headline:   28px;
+  --text-display:    40px;
+  --leading-tight:   1.2;
+  --leading-ui:      1.35;
+  --leading-body:    1.5;
+  --measure:         68ch;
+
+  /* Corners: controls, cards and photos, sheets, pills and round icons. */
+  --radius-sm:       6px;
+  --radius-control:  10px;
+  --radius-card:     16px;
+  --radius-sheet:    20px;
+  --radius-pill:     999px;
+
+  /* Elevation: declared once per object, a border or a shadow, never both. */
+  --elev-1:          0 1px 2px rgba(31, 42, 51, 0.06), 0 2px 8px rgba(31, 42, 51, 0.05);
+  --elev-2:          0 4px 12px rgba(31, 42, 51, 0.10), 0 12px 28px rgba(31, 42, 51, 0.08);
+  --elev-3:          0 12px 32px rgba(31, 42, 51, 0.16), 0 2px 6px rgba(31, 42, 51, 0.08);
+
+  /* Layers, low to high. */
+  --z-base:          0;
+  --z-sticky:        10;
+  --z-map-ui:        20;
+  --z-nav:           30;
+  --z-overlay:       40;
+  --z-sheet:         50;
+  --z-modal:         60;
+  --z-toast:         70;
+
+  /* Spacing on a 4 px grid. --space-5 and --space-6 moved onto the grid
+     (were 22 and 30 px). */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --space-5: 22px;
-  --space-6: 30px;
+  --space-5: 24px;
+  --space-6: 32px;
   --space-7: 40px;
   --space-8: 56px;
+  --gutter:  16px;
   /* The floor a finger needs. Icon-only controls get this as a minimum box
      even where the glyph inside is 15px (WCAG 2.5.5). */
   --tap: 44px;
 
-  /* On-fill ink. Text, icons and strokes painted on a filled or photographic
-     surface (an --accent button, an --ink-fill pill, a map pin). Pure white, the
-     same value as --bg-card, kept as its own token so a card fill and a label
-     colour can diverge later without a search. Buttons and chips take their
-     label colour from here. */
-  --on-fill:      #ffffff;
+  /* ---- 3. Legacy names, aliased (retired by the migration) -------------- */
+
+  --paper:        var(--surface-page);
+  --paper-dim:    var(--surface-sunken);
+  --bg-card:      var(--surface);
+  --on-fill:      var(--action-text);
+  --ink:          var(--text);
+  --ink-soft:     var(--text-2);
+  --ink-mute:     var(--text-3);
+  /* Selection before T422: a deep teal fill under white labels (8.3:1),
+     replacing the slate slab that made the app read as black. */
+  --ink-fill:     var(--lagoon-800);
+  --rule:         var(--border);
+  --rule-soft:    var(--border-soft);
+  --accent:       var(--action);
+  --accent-soft:  var(--lagoon-300);
+  --accent-bg:    var(--action-tint);
+  --accent-hover:     var(--action-hover);
+  --accent-press:     var(--action-press);
+  --accent-press-alt: var(--action-press);
+  --accent-wash:      var(--lagoon-50);
+  --accent-wash-alt:  #f4f9f9;
+  --paper-hover:  var(--surface-hover);
+  --paper-lift:   var(--neutral-25);
+  --wash:         var(--lagoon-50);
+  --shadow-1:     var(--elev-1);
+  --shadow-2:     var(--elev-2);
+  --shadow-card:  var(--elev-1);
+  --display:      var(--font);
+  --mono:         var(--font);     /* figures use the one family, tabular (PRODUCT.md, T420) */
+
+  /* Ratings are a MEASURE, not a warning or an action: deep ochre, as before.
+     Paper text on --rate 5.3:1; --rate on --rate-bg 4.7:1; --rate-soft on
+     paper 4.8:1. The star colour itself is roadmap item 1.8. */
+  --rate:         #8f5a0c;
+  --rate-soft:    #946313;
+  --rate-bg:      #f6e6cb;
+  --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
+  /* Destructive only, never decoration. Now that the action is teal, red
+     means one thing: this erases something. */
+  --danger:       #b3372a;
+  --danger-dark:  #96291e;
+  --status-success: #10b981;     /* indicator-only green: compliance ticks, open-now dots */
+
+  /* Card taxonomy. KIND is an ink-density ramp, not a rainbow: ink mixed over
+     the page at 100/78/62/45/50%, so the hierarchy survives greyscale. */
+  --kind-metro:   #1f2a33;
+  --kind-city:    #4f575d;
+  --kind-town:    #71777c;
+  --kind-village: #959a9c;
+  --kind-area:    #8b9093;
+  --verdict-3:    var(--rate);       /* filled ribbon */
+  --verdict-2:    var(--rate);       /* outline ribbon */
+  --verdict-1:    var(--ink-mute);   /* text only */
+  /* Hidden gems: plum, because teal is now the action colour and a gem must
+     never read as a button. --gem-ink on --gem-bg 5.8:1. */
+  --gem-ink:      #7a4a6f;
+  --gem-bg:       #f3e8f0;
+
+  /* ---- Domain colours (T191): one feature each, never general purpose --- */
 
   /* Good, nature and trail greens. Indicators and small text, never fills for actions. */
   --good-ink:           #16794f;   /* text-safe green for open-now, verified and good-deal text */
@@ -150,15 +256,6 @@
   --experience-rule:    #eec7bb;   /* experience type border */
   --danger-bg:          #f6dcd8;   /* poor water fill */
 
-  /* Accent states and tints. T363 stepped the three hover fills darker with
-     --accent, keeping each one's old step: --on-fill on them is 6.0, 7.8 and
-     7.3:1 (was 4.4, 5.7 and 5.4). */
-  --accent-hover:       #b7321f;   /* hover fill of an accent button */
-  --accent-press:       #8e3615;   /* hover fill of a primary cost action */
-  --accent-press-alt:   #923b16;   /* hover fill, stay search */
-  --accent-wash:        #f6ede0;   /* a warm hover wash */
-  --accent-wash-alt:    #fdf6f0;   /* a faint accent tint behind advice */
-
   /* Violet, slate and surface tints. Single-use domain colours. */
   --ai-violet:          #5b3fa8;   /* AI-planned stops */
   --ai-violet-bg:       #eee7fb;   /* AI chip fill */
@@ -167,15 +264,7 @@
   --slate-pin:          #5b6472;   /* town pin */
   --crowd-mid:          #6b7280;   /* moderate crowd indicator */
   --slate-mute:         #6f7688;   /* map popup subtitle */
-  --wash:               #f6f3ee;   /* a faint wash for a current tier */
-  --paper-hover:        #efe9db;   /* hover fill on paper */
-  --paper-lift:         #fdfbf5;   /* a card ground one step off paper */
-  --mask-solid:         #000;   /* the opaque stop of a mask-image gradient */
-
-  /* Type */
-  --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
-  --ui:           'Plus Jakarta Sans', 'Inter Tight', system-ui, -apple-system, sans-serif;
-  --mono:         'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  --mask-solid:         #000;      /* the opaque stop of a mask-image gradient */
 
   /* Layout */
   --filter-h:     132px;
@@ -183,13 +272,10 @@
   --bottom-nav-h: 86px;
 
   /* Motion (T380, design direction v6, docs/design-v6/DIRECTION.md part 2).
-     Four durations and two easings; every transition and animation a build
-     wave writes reads these, and JavaScript reads them through durationMs()
-     in src/lib/motion.js. --dur-1 is immediate feedback (a press, a chip),
-     --dur-2 a routine state change (a fold, a figure settling in place),
-     --dur-3 a surface arriving (a sheet, a dialog, a shared element),
-     --dur-4 one authored movement over distance (the map camera, one leg of
-     the route reveal; the whole reveal is capped at 900 ms). Exits take
+     Four durations and two easings; every transition and animation reads
+     these, and JavaScript reads them through durationMs() in src/lib/motion.js.
+     --dur-1 immediate feedback, --dur-2 a routine state change, --dur-3 a
+     surface arriving, --dur-4 one authored movement over distance. Exits take
      --dur-2 with --ease-in-out. No overshoot or elastic curve exists. The
      reduced-motion floor in 02-base.css still zeroes all of them. */
   --dur-1:        120ms;

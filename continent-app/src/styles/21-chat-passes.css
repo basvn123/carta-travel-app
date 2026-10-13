@@ -431,7 +431,7 @@
   cursor: pointer;
 }
 @media (hover: hover) {
-  .chat-import:hover { box-shadow: 0 3px 14px rgba(200, 80, 30, 0.32); }
+  .chat-import:hover { box-shadow: 0 3px 14px rgba(11, 116, 128, 0.32); }
 }
 
 @media (max-width: 768px) {
