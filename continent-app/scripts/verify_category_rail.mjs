@@ -80,7 +80,7 @@ const styleGroup = (page, scope) => page.locator(`${scope} details.xrail-group`,
   });
   await seed(page);
   await page.goto(`${BASE}/?tab=map`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-  await page.locator('.xcard').first().waitFor({ timeout: 90000 });
+  await page.locator('.xrow').first().waitFor({ timeout: 90000 });
   await page.waitForTimeout(1500);
 
   // T383: the phone's top row is search and Filters only; the styles left it
@@ -159,7 +159,7 @@ const styleGroup = (page, scope) => page.locator(`${scope} details.xrail-group`,
   });
   await seed(page);
   await page.goto(`${BASE}/?tab=map`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-  await page.locator('.xcard').first().waitFor({ timeout: 90000 });
+  await page.locator('.xrow').first().waitFor({ timeout: 90000 });
   await page.waitForTimeout(1500);
 
   // T383: the styles are the left panel's first fold (were a tile grid two

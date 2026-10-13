@@ -1,45 +1,31 @@
 import React from 'react';
-import { openShared } from '../lib/sharedElement.js';
-import { HeroImage } from '../components/HeroImage.jsx';
-import { ScoreChip } from '../components/RatingBadge.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ChevronRightIcon } from '../components/Icons.jsx';
-import { Fold } from './Fold.jsx';
+import { Button, IconButton } from '../components/ui/index.js';
 import { scrollBehavior } from '../lib/motion.js';
-import { CostLine } from '../components/CostSummary.jsx';
+import { PlaceTile } from './ExploreCards.jsx';
 
 /**
- * Editorial rails (PLAN.md C5): the first screen stops being a rating sort.
+ * Explore's sections (T427, after the owner's review of 2026-10-13).
  *
- * A flat sort put 23 Italian entries in the first 60 cards. Each rail is a
- * query against fields the wire already carries, capped at 12 cards, with a
- * "See all N" that opens the grid with the SAME filter applied as chips -
- * the rail and the filter can never describe different lists, because the
- * rail's query IS the filter's predicate, passed in by ExploreTab.
+ * Each rail is a question a traveller asks ("Best in October", "Hiking
+ * bases") answered by a strip of photo tiles, capped at 12, and a "See all"
+ * that opens the list with the SAME filter applied, so the rail and the list
+ * can never describe different places: the rail's query is the filter's
+ * predicate, passed in by ExploreTab.
  *
- * v5: three strips, not eight. Eight stacked carousels pushed the grid two
- * screens down and read as one long carousel with different titles. The
- * first three (the top tier, the gems, the month) are strips; every rail
- * after that is one chip in a row of doors, each opening the grid with the
- * rail's filter applied, so nothing is lost and the grid arrives on the
- * first screen. On a pointer screen each strip gets a pair of arrows, since
- * a horizontal scroller with no scrollbar gives a mouse no way in.
- *
- * Rails render from data already in memory: no fetch, no skeleton state,
- * everything visible at rest.
- *
- * V3 (T383): every rail card carries the day cost (house rule "Cost on
- * cards"): a price tool's first screen showed no price, because rail cards
- * had a name, a score and a country only. The first strip is now the cost
- * cut ExploreTab builds ("Under €N a day in <month>"), then the top tier,
- * then the gems; the month rail became a door.
+ * Calm by subtraction: no subtitle explaining how a rail was chosen, no
+ * position figure, no count in "See all" (owner: say less). Four strips on a
+ * desktop and three on a phone (eight stacked carousels pushed the list two
+ * screens down in v4); every further rail is one button in a single row that
+ * opens its list. On a pointer screen each strip has a pair of arrows, since
+ * a scroller with no scrollbar gives a mouse no way in; the arrow keys move
+ * between the tiles.
  */
 
 const CAP = 12;
-const LEAD = 3;
 
 // Round-robin by country, so a rail of 292 gems does not open on ten
-// Italian rows: take each country's best in turn until the cap.
+// Italian tiles: take each country's best in turn until the cap.
 export function interleaveByCountry(rows) {
   const byCountry = new Map();
   for (const p of rows) {
@@ -56,54 +42,16 @@ export function interleaveByCountry(rows) {
   return out;
 }
 
-function RailCard({ p, onSelect, t }) {
-  return (
-    <button className="railcard" onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}>
-      {/* V4 (T393): the photograph only, at the grid's 3:2 (one aspect per
-          row), and no seal: the rail's title already says how it was
-          chosen, and the score chip below carries the rating. */}
-      <span className="railcard-media">
-        <HeroImage url={p.image} city={p.city} iso2={p.iso2}
-          className="railcard-img" maxWidth={500}
-          sizes="200px" ratio={[3, 2]} />
-      </span>
-      <span className="railcard-body">
-        <span className="railcard-head">
-          <span className="railcard-name">{p.city}</span>
-          <ScoreChip rating={p.rating} size="xs" />
-        </span>
-        <span className="railcard-kind">
-          <CountryFlag country={p.iso2} size={10} />
-          <span>{p.country}</span>
-        </span>
-        <CostLine cost={p.cost} t={t} />
-      </span>
-    </button>
-  );
-}
-
-function Rail({ r, onSelect, t }) {
+function Rail({ r, onSelect, favorites, onToggleFav, t }) {
   const stripRef = React.useRef(null);
   const shown = r.rows.slice(0, CAP);
-  // V4 (T393, house rule "Rails and cuts"): the head says where the strip
-  // is ("1 to 4 of 12", in --mono), read from the scroll position, so a
-  // reader who cannot see the edge of the strip knows how much is left.
-  const [pos, setPos] = React.useState({ from: 1, to: Math.min(shown.length, 4) });
+  const [edge, setEdge] = React.useState({ start: true, end: shown.length <= 1 });
   const measure = React.useCallback(() => {
     const el = stripRef.current;
-    const cards = el ? [...el.children] : [];
-    if (!cards.length) return;
-    const box = el.getBoundingClientRect();
-    let from = 0;
-    let to = 0;
-    cards.forEach((c, i) => {
-      const r2 = c.getBoundingClientRect();
-      const inside = r2.left >= box.left - 2 && r2.right <= box.right + 2;
-      if (inside && !from) from = i + 1;
-      if (inside) to = i + 1;
-    });
-    if (!from) { from = 1; to = 1; }
-    setPos((p) => (p.from === from && p.to === to ? p : { from, to }));
+    if (!el) return;
+    const start = el.scrollLeft <= 2;
+    const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
+    setEdge((e) => (e.start === start && e.end === end ? e : { start, end }));
   }, []);
   React.useEffect(() => {
     const el = stripRef.current;
@@ -116,96 +64,70 @@ function Rail({ r, onSelect, t }) {
       window.removeEventListener('resize', measure);
     };
   }, [measure, shown.length]);
-  const posText = t('rail.position', { from: pos.from, to: pos.to, n: shown.length });
   const page = (dir) => {
     const el = stripRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: scrollBehavior() });
+    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: scrollBehavior() });
   };
-  // Left and Right move the focus card to card inside the strip; the
-  // browser brings the focused card into view.
+  // Left and Right move the focus tile to tile inside the strip; the browser
+  // brings the focused tile into view.
   const onKey = (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    const cards = [...(stripRef.current?.children || [])];
-    const i = cards.indexOf(e.target);
+    const hits = [...(stripRef.current?.querySelectorAll('.card-open') || [])];
+    const i = hits.indexOf(e.target);
     if (i < 0) return;
-    const next = cards[i + (e.key === 'ArrowRight' ? 1 : -1)];
+    const next = hits[i + (e.key === 'ArrowRight' ? 1 : -1)];
     if (!next) return;
     e.preventDefault();
     next.focus({ preventScroll: true });
     next.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: scrollBehavior() });
   };
   return (
-    <section className="xrails-rail" aria-label={r.title}>
+    <section className="xrails-rail" aria-labelledby={`xrail-${r.key}`}>
       <div className="xrails-head">
-        <div className="xrails-headings">
-          {/* h2: the rails sit straight under the page's h1 ("Explore
-              Europe"), and an h3 there skipped a level (T193). */}
-          <h2 className="xrails-title">{r.title}</h2>
-          {r.sub && <p className="xrails-sub">{r.sub}</p>}
-        </div>
-        <button type="button" className="xrails-all" onClick={r.seeAll}>
-          {t('rail.seeAll', { n: r.rows.length })}
-        </button>
-        <span className="xrails-pos mono">{posText}</span>
+        {/* h2: the rails sit straight under the page's h1 (T193). */}
+        <h2 className="xrails-title" id={`xrail-${r.key}`}>{r.title}</h2>
+        <Button variant="quiet" size="sm" className="xrails-all" onClick={r.seeAll}>
+          {t('rail.seeAllPlain')}
+        </Button>
         <span className="xrails-nav">
-          <button type="button" className="xrails-arrow xrails-arrow--prev"
-            onClick={() => page(-1)} aria-label={t('explore.railPrev')} disabled={pos.from <= 1}>
-            <ChevronRightIcon size={15} />
-          </button>
-          <button type="button" className="xrails-arrow"
-            onClick={() => page(1)} aria-label={t('explore.railNext')} disabled={pos.to >= shown.length}>
-            <ChevronRightIcon size={15} />
-          </button>
+          <IconButton tone="surface" label={t('explore.railPrev')} onClick={() => page(-1)}
+            disabled={edge.start} className="xrails-arrow xrails-arrow--prev">
+            <ChevronRightIcon size={16} />
+          </IconButton>
+          <IconButton tone="surface" label={t('explore.railNext')} onClick={() => page(1)}
+            disabled={edge.end} className="xrails-arrow">
+            <ChevronRightIcon size={16} />
+          </IconButton>
         </span>
       </div>
-      {/* The keys move the focus between the card buttons inside; the strip
-          itself is not a control. */}
       <div className="xrails-strip" ref={stripRef} onKeyDown={onKey}>
         {shown.map((p) => (
-          <RailCard key={p.id} p={p} onSelect={onSelect} t={t} />
+          <PlaceTile key={p.id} p={p} onSelect={onSelect} t={t}
+            fav={favorites?.has(p.id)} onToggleFav={onToggleFav} />
         ))}
       </div>
-      {/* On a phone the position sits under the strip instead, so the head
-          keeps its one line of subtitle and the first card stays high; CSS
-          shows one of the two, so each is read once. */}
-      <span className="xrails-pos xrails-pos--foot mono">{posText}</span>
     </section>
   );
 }
 
-export function ExploreRails({ rails, onSelect, t, lead = LEAD }) {
+export function ExploreRails({ rails, onSelect, favorites, onToggleFav, t, lead = 4 }) {
   const visible = rails.filter((r) => r.rows.length >= 4);
+  if (!visible.length) return null;
   const strips = visible.slice(0, lead);
   const doors = visible.slice(lead);
-  // P4.4: the doors fold like every other section in the app, same
-  // component, same chevron, same animation.
-  const [openDoors, setOpenDoors] = React.useState(false);
-  if (!visible.length) return null;
   return (
     <div className="xrails">
-      {strips.map((r) => <Rail key={r.key} r={r} onSelect={onSelect} t={t} />)}
+      {strips.map((r) => (
+        <Rail key={r.key} r={r} onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t} />
+      ))}
       {doors.length > 0 && (
-        <Fold
-          id="sec-morerails"
-          title={t('explore.moreRails')}
-          summary={t('explore.moreRailsSummary', { n: doors.length })}
-          open={openDoors}
-          onToggle={() => setOpenDoors((v) => !v)}
-          className="xrails-more-fold"
-        >
-          <div className="xrails-more" role="group" aria-label={t('explore.moreRails')}>
-            {/* A door is a chip: it takes the rail's short label, never the
-                full self-explaining title, which is a sentence. */}
-            {doors.map((r) => (
-              <button key={r.key} type="button" className="xrails-more-chip" onClick={r.seeAll}
-                title={r.sub || undefined}>
-                <span>{r.short || r.title}</span>
-                <span className="xrails-more-n">{r.rows.length}</span>
-              </button>
-            ))}
-          </div>
-        </Fold>
+        <nav className="xrails-doors" aria-label={t('explore.moreRails')}>
+          {doors.map((r) => (
+            <Button key={r.key} variant="secondary" size="sm" onClick={r.seeAll}>
+              {r.short || r.title}
+            </Button>
+          ))}
+        </nav>
       )}
     </div>
   );

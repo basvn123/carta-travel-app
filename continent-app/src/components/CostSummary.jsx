@@ -40,7 +40,7 @@ export function CostGauge({ band, size = 'sm' }) {
  * repairing a broken harvest). The card then says so in one word (house rule
  * "Pedigree word", DIRECTION.md part 9, explore N3), never only by colour.
  */
-function isNational(cost) {
+export function isNational(cost) {
   if (!cost || cost.dayEur == null) return false;
   return cost.stayLevel !== 'city' || cost.foodLevel !== 'city';
 }

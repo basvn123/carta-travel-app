@@ -1409,7 +1409,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T426-e | T426 | Owner checks the migrated shell on a phone against the 1.3a sketch once it exists (no sketch yet; T426 followed carta-design) | user | open |  |
 | T437-a | T437 | Native review of the four Score strings T437 wrote in nl, de, fr, es and it (score.band1 to score.band3, score.aria) | user | open |  |
 | T437-b | T437 | The rating breakdown band strip and legend, and non-rating uses of --rate-bg and --rate-soft (tips tint, festival tags, travel-day number, password strength), still read the ochre tints; T438 repoints them with the brown palette | next task | closed by T438 | T438 |
-| T437-c | T437 | rating.tier1 to rating.tier3 and meta.rating_model.tier_labels still feed the tier legend and the How good filter; T427 removes the legend and T440 the filter wording | next task | open |  |
+| T437-c | T437 | rating.tier1 to rating.tier3 and meta.rating_model.tier_labels still feed the tier legend and the How good filter; T427 removes the legend and T440 the filter wording | next task | closed by T427 |  |
 | T438-a | T438 | Share cards render in a monospace fallback (no Figtree file in the card renderer, part of T421-b) and their example panel still carries a provenance note (Measured from N stays); fix both in the share-card task | next task | open |  |
 | T438-b | T438 | verify_quality_floor.mjs metadata-grey check is live again: 132 texts outside 12 to 14 px and 8 bare figures on Explore and the trip planner; the per-surface migrations take them | next task | open |  |
 | T438-c | T438 | --lagoon-* primitives are still defined but unread; delete them with their DESIGN.md frontmatter and design.json entries once later tasks confirm no reads | next task | open | after T443 |
@@ -1418,3 +1418,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T439-a | T439 | Native review of the 20 vibe labels and 40 area names T439 wrote in nl, de, fr, es and it (data in public/search/guided.json, written in VIBES and AREAS of pipeline/guided_search_layer.py) | user | open |  |
 | T439-b | T439 | pipeline/guided_search_layer.py is Manual and laptop-only; run it after every catalogue ingest or new places have no vibe in search (consider a reminder in run_pipeline.py) | next task | open |  |
 | T439-c | T439 | Golden set 49 of 72: equally strong matches are ordered by rating; T442 may break the tie by fame and must measure against the same golden set without editing it | next task | open | T442 |
+| T427-a | T427 | Explore input row (budget, month, no car, shortlist) and the filter rail keep their old controls and the tab's last 14 raw buttons; T440 moves them onto the kit and into the rail | next task | open | T440 |
+| T427-b | T427 | A Recently viewed section on Explore needs a write point where a destination is opened (DestinationPage, outside Explore) | next task | open |  |
+| T427-c | T427 | The Explore hover preview still shows CostSummary's compact receipt with its source words; T429 cleans the shared receipt | next task | open | T429 |
+| T427-d | T427 | GuidesStrip on Explore states a count (N guides published by travellers); remove with the T443 count sweep | next task | open | T443 |

@@ -824,3 +824,10 @@ html.kbd-open .bottom-nav { display: none; }
   .shell-friends-btn { min-width: 32px; padding: 0 var(--space-2); }
   .shell-friends-btn .btn-label { display: none; }
 }
+
+/* One gutter on every tab (T427): the header, the settings line and the
+   content start and end on the same line from 769 px. */
+@media (min-width: 769px) {
+  .app-header { padding-left: var(--space-6); padding-right: var(--space-6); }
+  .settings-line { padding-left: var(--space-6); padding-right: var(--space-6); }
+}

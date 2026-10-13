@@ -403,6 +403,9 @@ def build():
             continue
         cats = set(d.get("categories") or []) | set(d.get("tags") or [])
         coastal = bool(cats & {"coast", "beach", "island", "islands"})
+        # A city has trail ends around it (urban walks, long-distance routes
+        # passing through), which does not make it a hiking base (T427).
+        urban = "city" in cats or ((dests[did].get("place") or {}).get("class") in ("metro", "city"))
         f = {}
         for vid, v in VIBES.items():
             tagged = bool(cats & v["cats"])
@@ -412,7 +415,7 @@ def build():
                 dist = rows[did]["nb"].get(rule[0])
                 close = dist is not None and dist <= rule[1]
                 if close and len(rule) > 2:  # a minimum count within the radius
-                    close = rows[did]["_trails8"] >= rule[2]
+                    close = rows[did]["_trails8"] >= rule[2] and not urban
             if rule:
                 # A tag with the thing close by is proof; a tag far from it
                 # (an inland city tagged "beach") or the thing alone is less.
