@@ -129,10 +129,10 @@ h2.saved-section-title { margin: 0; }
   color: var(--ink);
   cursor: pointer;
 }
-.uptrip-share[aria-expanded="true"] { background: var(--ink-fill); color: var(--on-fill); }
+.uptrip-share[aria-expanded="true"] { background: var(--select-bg); color: var(--select-ink); }
 @media (hover: hover) {
   .uptrip-share:hover { background: var(--paper-dim); }
-  .uptrip-share[aria-expanded="true"]:hover { background: var(--ink-fill); }
+  .uptrip-share[aria-expanded="true"]:hover { background: var(--select-bg); }
 }
 .uptrip-share:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
@@ -166,7 +166,7 @@ h2.saved-section-title { margin: 0; }
 }
 .tshare-ask-keep { border: 1px solid var(--rule); background: transparent; color: var(--ink); }
 .tshare-ask-danger { border: 1px solid var(--danger); background: var(--danger); color: var(--on-fill); }
-.tshare-ask-publish { border: 1px solid var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
+.tshare-ask-publish { border: 1px solid var(--ink-fill); background: var(--action); color: var(--on-fill); }
 .tshare-ask button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* The visibility block closes the panel now, under a hairline. */
 .tshare > .tshare-vis {
@@ -328,8 +328,8 @@ h2.saved-section-title { margin: 0; }
 .fav-card-open:active .fav-card-text,
 .uptrip-open:active .uptrip-text,
 .uptrip-card.is-row .uptrip-open:active {
-  background: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  color: var(--select-ink);
 }
 .fav-card-open:active :is(.fav-card-country, .fav-card-dates, .fav-card-kind, .fav-card-savedon, .saved-cost, .saved-cost-eur, .saved-cost-level),
 .uptrip-open:active :is(.uptrip-sub, .uptrip-dates, .uptrip-summary, .saved-cost, .saved-cost-eur, .saved-cost-level) {

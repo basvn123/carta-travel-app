@@ -117,7 +117,7 @@
   border-radius: 50%;
   background: var(--rule);
 }
-.dtrack-dot.is-on { background: var(--ink-fill); }
+.dtrack-dot.is-on { background: var(--select-bg); }
 
 @media (prefers-reduced-motion: reduce) {
   .dtrack { scroll-behavior: auto; }

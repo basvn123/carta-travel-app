@@ -1,0 +1,277 @@
+/* The component kit (T422, roadmap 1.2): IconButton, Chip, Segmented, Tabs,
+   Card, Field and Icon. Styles for src/components/ui/. Roles and scales only
+   (01-tokens.css). One selected state everywhere: the --select-* tint with a
+   teal label, plus a mark (a tick, an underline, a lifted thumb), never a dark
+   fill. Motion is --dur-1 colour changes and --dur-2 transform; every
+   transition has a reduced-motion branch at the end of the file. */
+
+/* ---- IconButton --------------------------------------------------------- */
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.icon-btn-glyph { display: inline-flex; }
+@media (hover: hover) {
+  .icon-btn:hover { background: var(--surface-hover); color: var(--text); }
+}
+.icon-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.icon-btn-surface { background: var(--surface); border-color: var(--border); color: var(--text); }
+.icon-btn-photo { background: var(--surface); color: var(--text); box-shadow: var(--elev-1); }
+.icon-btn.is-pressed { background: var(--select-bg); color: var(--select-ink); }
+.icon-btn:disabled { color: var(--text-3); cursor: not-allowed; }
+
+/* ---- Chip --------------------------------------------------------------- */
+.ui-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-family: var(--font);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+.ui-chip-filter,
+.ui-chip-choice {
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+@media (pointer: coarse) {
+  .ui-chip-filter, .ui-chip-choice { min-height: var(--tap); }
+}
+@media (hover: hover) {
+  .ui-chip-filter:hover, .ui-chip-choice:hover { border-color: var(--neutral-300); }
+}
+.ui-chip-filter:focus-visible,
+.ui-chip-choice:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ui-chip.is-selected {
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
+  font-weight: 600;
+}
+.ui-chip-tick { flex: none; margin-left: -2px; }
+.ui-chip-icon { display: inline-flex; color: var(--text-2); }
+.ui-chip:disabled { color: var(--text-3); background: var(--surface-sunken); cursor: not-allowed; }
+.ui-chip-group { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.ui-chip-count {
+  min-width: 20px;
+  height: 20px;
+  justify-content: center;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+.ui-chip-status {
+  height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+.ui-chip-tone-neutral { background: var(--surface-sunken); color: var(--text-2); }
+.ui-chip-tone-best { background: var(--best); color: var(--text); }
+.ui-chip-tone-gem { background: var(--gem-bg); color: var(--gem-ink); }
+.ui-chip-tone-rate { background: var(--rate-bg); color: var(--rate); }
+.ui-chip-tone-positive { background: var(--trail-bg); color: var(--good-ink); }
+.ui-chip-tone-danger { background: var(--danger-bg); color: var(--danger); }
+
+/* ---- Segmented ---------------------------------------------------------- */
+.seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.seg-block { display: flex; width: 100%; }
+.seg-block .seg-item { flex: 1; }
+.seg-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-2);
+  font-family: var(--font);
+  font-size: var(--text-label);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.seg-sm .seg-item { min-height: 30px; padding: 0 var(--space-3); }
+@media (pointer: coarse) {
+  .seg-item, .seg-sm .seg-item { min-height: 40px; }
+}
+@media (hover: hover) {
+  .seg-item:hover:not(.is-selected) { color: var(--text); }
+}
+.seg-item.is-selected { background: var(--surface); color: var(--text); box-shadow: var(--elev-1); }
+.seg-item:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.seg-item:disabled { color: var(--text-3); cursor: not-allowed; }
+.seg-icon { display: inline-flex; }
+
+/* ---- Tabs --------------------------------------------------------------- */
+.ui-tabs {
+  display: flex;
+  gap: var(--space-5);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ui-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font-family: var(--font);
+  font-size: var(--text-body);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease-out);
+}
+.ui-tab::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--action);
+  transform: scaleX(0);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) {
+  .ui-tab:hover { color: var(--text); }
+}
+.ui-tab.is-selected { color: var(--text); }
+.ui-tab.is-selected::after { transform: scaleX(1); }
+.ui-tab:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.ui-tab-count { color: var(--text-3); font-weight: 500; }
+
+/* ---- Card --------------------------------------------------------------- */
+.card {
+  position: relative;
+  display: flex;
+  gap: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.card-row { align-items: center; padding: var(--space-2); padding-right: var(--space-3); }
+.card-row .card-media { width: 72px; height: 72px; }
+.card-tile { flex-direction: column; gap: 0; overflow: hidden; }
+.card-tile .card-media { aspect-ratio: 4 / 3; border-radius: 0; }
+.card-tile .card-body { padding: var(--space-3) var(--space-4) var(--space-4); }
+.card-media {
+  flex: none;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.card-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.card-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.card-title {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-open { color: inherit; text-decoration: none; background: none; border: 0; padding: 0; font: inherit; text-align: left; cursor: pointer; }
+.card.is-interactive .card-open::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.card-open:focus-visible { outline: 2px solid transparent; } /* the card draws the ring; forced colours still show this one */
+.card.is-interactive:has(.card-open:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (hover: hover) {
+  .card.is-interactive:hover { border-color: var(--neutral-300); }
+}
+.card.is-selected { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
+.card-meta { color: var(--text-3); font-size: var(--text-label); }
+.card-figures { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); margin-top: 2px; }
+.card-price { font-size: var(--text-body); font-weight: 600; }
+.card-actions { position: relative; z-index: 1; display: flex; align-items: center; gap: var(--space-1); flex: none; }
+.card-tile .card-actions { position: absolute; top: var(--space-2); right: var(--space-2); }
+
+/* ---- Field -------------------------------------------------------------- */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-size: var(--text-label); font-weight: 600; color: var(--text); }
+.field-control input,
+.field-control select,
+.field-control textarea {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-lead);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.field-control textarea { min-height: 96px; padding: var(--space-3); line-height: var(--leading-body); resize: vertical; }
+.field-control select { appearance: none; padding-right: var(--space-7); background-image: none; }
+.field-select { position: relative; }
+.field-select::after {
+  content: '';
+  position: absolute;
+  right: 16px; top: 50%;
+  width: 8px; height: 8px;
+  border-right: 1.5px solid var(--text-2);
+  border-bottom: 1.5px solid var(--text-2);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+.field-control :is(input, select, textarea)::placeholder { color: var(--text-3); }
+@media (hover: hover) {
+  .field-control :is(input, select, textarea):hover { border-color: var(--neutral-300); }
+}
+.field-control :is(input, select, textarea):focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--action); }
+.field-control :is(input, select, textarea):disabled { background: var(--surface-sunken); color: var(--text-3); }
+.field-hint { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
+.field.has-error .field-control :is(input, select, textarea) { border-color: var(--danger); }
+.field-error { margin: 0; font-size: var(--text-caption); color: var(--danger); font-weight: 600; }
+
+/* ---- Icon --------------------------------------------------------------- */
+.icon { display: inline-flex; flex: none; line-height: 0; }
+
+/* ---- Reduced motion ----------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .icon-btn, .ui-chip-filter, .ui-chip-choice, .seg-item, .ui-tab, .ui-tab::after, .card,
+  .field-control :is(input, select, textarea) { transition: none; }
+}

@@ -2051,13 +2051,13 @@
   /* A picked country is a selection: ink fill (T411, selected state). */
   border: 1px solid var(--ink-fill);
   border-radius: 999px;
-  background: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  color: var(--select-ink);
   font-size: 12.5px;
   font-weight: 600;
 }
 @media (hover: hover) {
-  .guide-picked-chip:hover { background: var(--lagoon-900); }
+  .guide-picked-chip:hover { background: var(--select-bg); }
 }
 .guide-picked-x { font-size: 14px; line-height: 1; opacity: .7; }
 
@@ -3653,8 +3653,8 @@
     text-overflow: ellipsis;
   }
   .side-cat:hover { color: var(--ink); border-color: var(--rule); }
-  .side-cat.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
-  .side-cat.on svg { color: var(--on-fill); }
+  .side-cat.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+  .side-cat.on svg { color: var(--select-ink); }
   .side-cat:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* Explore's trip kinds wear the same tiles in the panel. */
@@ -3666,9 +3666,9 @@
     font-size: 11.5px;
   }
   .side-panel .kind-rail-chip.on {
-    background: var(--ink-fill);
-    border-color: var(--ink-fill);
-    color: var(--on-fill);
+    background: var(--select-bg);
+    border-color: var(--select-border);
+    color: var(--select-ink);
   }
   .side-panel .kind-rail-clear {
     grid-column: 1 / -1;
@@ -3846,9 +3846,9 @@
      Destinations tiles above (T166); terracotta is kept for the one action
      (T193). */
   .explore-toolbar .kind-rail-chip.on {
-    background: var(--ink-fill);
-    border-color: var(--ink-fill);
-    color: var(--on-fill);
+    background: var(--select-bg);
+    border-color: var(--select-border);
+    color: var(--select-ink);
   }
   .explore-toolbar .kind-rail-chip.on::before { background: rgba(255, 255, 255, 0.7); }
   .explore-toolbar .kind-rail-clear::before { display: none; }
@@ -4135,8 +4135,8 @@
   gap: 6px;
 }
 .destp-layer .mono { font-size: 10.5px; color: var(--ink-mute); }
-.destp-layer.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--paper); }
-.destp-layer.on .mono { color: var(--paper); opacity: 0.75; }
+.destp-layer.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.destp-layer.on .mono { color: var(--select-ink); opacity: 0.75; }
 
 .dmap { border-radius: 10px; overflow: hidden; }
 
@@ -4659,10 +4659,10 @@
 .account-shell .account-lang-opt.on {
   /* A picked option is a pressed toggle: --ink-fill, as DESIGN.md says, so
      the accent stays with the view's one primary action (T186). */
-  border-color: var(--ink-fill);
-  background: var(--ink-fill);
-  color: var(--on-fill);
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
 }
-.account-shell .account-lang-opt.on svg { color: var(--on-fill); }
+.account-shell .account-lang-opt.on svg { color: var(--select-ink); }
 .account-shell .account-lang-opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 

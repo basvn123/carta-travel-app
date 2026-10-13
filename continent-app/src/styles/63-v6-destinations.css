@@ -76,8 +76,8 @@
       border-color var(--dur-1) var(--ease-out);
   }
   .side-sort:hover { color: var(--ink); border-color: var(--rule); }
-  .side-sort.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
-  .side-sort.on .places-sort-dir { color: var(--on-fill); }
+  .side-sort.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+  .side-sort.on .places-sort-dir { color: var(--select-ink); }
   .side-sort:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* The country, full width of the panel. The picker's wrapper (.country-
@@ -94,12 +94,12 @@
   .side-facets .places-classes { margin-top: 0; gap: 6px; }
   .side-panel .places-class { background: var(--paper-dim); }
   .side-panel .places-class.on {
-    background: var(--ink-fill);
-    border-color: var(--ink-fill);
-    color: var(--on-fill);
+    background: var(--select-bg);
+    border-color: var(--select-border);
+    color: var(--select-ink);
   }
   .side-panel .places-class.on .places-class-dot { background: transparent; color: var(--on-fill); }
-  .side-panel .places-class.on .places-class-n { color: var(--on-fill); }
+  .side-panel .places-class.on .places-class-n { color: var(--select-ink); }
   .side-facets .trip-slider { flex: 1 1 100%; max-width: none; }
 
   /* No pure white on these pages. */
@@ -151,8 +151,8 @@
     transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out),
       border-color var(--dur-1) var(--ease-out);
   }
-  .places-cat.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
-  .places-cat.on svg { color: var(--on-fill); }
+  .places-cat.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+  .places-cat.on svg { color: var(--select-ink); }
 
   .places-controls { padding-top: 12px; gap: 10px; }
   .places-search input {
@@ -436,7 +436,7 @@
 .places-ccard-band .places-card-count { align-self: center; margin-top: 0; }
 .places-ccard-band .places-card-chev { display: block; flex: none; color: var(--ink-soft); }
 /* Pressed, the band turns ink (carta-design "Caption band"), at once. */
-.places-ccard.is-captioned:active .places-ccard-band { background: var(--ink-fill); }
+.places-ccard.is-captioned:active .places-ccard-band { background: var(--select-bg); }
 .places-ccard.is-captioned:active .places-card-name,
 .places-ccard.is-captioned:active .places-card-chev { color: var(--on-fill); }
 @media (hover: hover) {
@@ -524,7 +524,7 @@
 .places-card-strip .sig-seg.is-chosen {
   position: relative;
   z-index: 1;
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--select-border);
   outline-offset: 0;
 }
 
@@ -533,7 +533,7 @@
    not move. */
 .places-list .pcard { transition: border-color var(--dur-1) var(--ease-out); }
 .places-list .pcard .pcard-body { transition: background-color var(--dur-1) var(--ease-out); }
-.places-list .pcard:active .pcard-body { background: var(--ink-fill); }
+.places-list .pcard:active .pcard-body { background: var(--select-bg); }
 .places-list .pcard:active .pcard-title,
 .places-list .pcard:active .pcard-where,
 .places-list .pcard:active .pcard-hook,
@@ -560,7 +560,7 @@
 
 /* A rail or icon card pressed: its caption band turns ink, at once. */
 .open-bands .railcard .railcard-body { transition: background-color var(--dur-1) var(--ease-out); }
-.open-bands .railcard:active .railcard-body { background: var(--ink-fill); }
+.open-bands .railcard:active .railcard-body { background: var(--select-bg); }
 .open-bands .railcard:active .railcard-name,
 .open-bands .railcard:active .railcard-kind,
 .open-bands .railcard:active .open-fact-n,

@@ -82,9 +82,9 @@
   .lp-town:hover { border-color: var(--ink-soft); }
 }
 .lp-town[aria-pressed="true"] {
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
-  color: var(--on-fill);
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
 }
 .lp-town:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 

@@ -6,7 +6,7 @@
   background: transparent; cursor: pointer; display: flex; align-items: center;
 }
 .costbar-fill { display: block; width: 100%; height: 8px; }
-.costbar-seg[aria-pressed="true"] .costbar-fill { outline: 2px solid var(--ink); outline-offset: 1px; }
+.costbar-seg[aria-pressed="true"] .costbar-fill { outline: 2px solid var(--select-border); outline-offset: 1px; }
 .costbar-seg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .costbar-read { margin: 0; font-size: 13px; color: var(--ink-soft); min-height: 1.45em; }
 .costbar-read small { display: block; color: var(--ink-mute); font-size: 12px; }

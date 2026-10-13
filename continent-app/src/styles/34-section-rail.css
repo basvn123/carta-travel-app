@@ -46,7 +46,7 @@
 @media (hover: hover) {
   .srail a:hover { color: var(--ink); }
 }
-.srail a.is-active { background: var(--ink-fill); color: var(--on-fill); }
+.srail a.is-active { background: var(--select-bg); color: var(--select-ink); }
 .srail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* A jump lands the section's heading just under the rail, not behind it. */

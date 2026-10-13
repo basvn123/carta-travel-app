@@ -125,7 +125,7 @@
 @media (hover: hover) {
   .header-nav-item:hover { color: var(--ink); background: var(--paper-dim); }
 }
-.header-nav-item.active { color: var(--on-fill); background: var(--ink-fill); }
+.header-nav-item.active { color: var(--select-ink); background: var(--select-bg); }
 .header-nav-icon { flex-shrink: 0; }
 
 /* Fitting the row on a narrow desktop window, in two steps rather than one
@@ -240,9 +240,9 @@
   .kind-rail-chip:hover { color: var(--ink); border-color: var(--ink-mute); }
 }
 .kind-rail-chip.on {
-  color: var(--paper);
-  background: var(--ink-fill);
-  border-color: var(--ink-fill);
+  color: var(--select-ink);
+  background: var(--select-bg);
+  border-color: var(--select-border);
 }
 .kind-rail-icon { flex-shrink: 0; opacity: .85; }
 .kind-rail-chip.on .kind-rail-icon { opacity: 1; }
@@ -768,7 +768,7 @@
    the label in ink. It was accent text under an accent tick. */
 .bottom-nav-item.active { color: var(--ink); }
 .bottom-nav-icon { flex-shrink: 0; position: relative; z-index: 1; transition: color var(--dur-1) var(--ease-out); }
-.bottom-nav-item.active .bottom-nav-icon { color: var(--on-fill); }
+.bottom-nav-item.active .bottom-nav-icon { color: var(--select-ink); }
 .bottom-nav-label {
   max-width: 100%;
   /* A tab name is a word, not a measured fact, so it is the sans in
@@ -811,9 +811,9 @@
    selected state, --ink-fill with an --on-fill glyph (T391, rule R4; it was
    an accent ring). */
 .bottom-nav-plus.active {
-  border-color: var(--ink-fill);
-  background: var(--ink-fill);
-  color: var(--on-fill);
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
 }
 
 /* The Trip planner / Day planner chooser, anchored above the plus. */

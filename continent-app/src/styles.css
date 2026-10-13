@@ -8,6 +8,7 @@
 @import './styles/01-tokens.css';
 @import './styles/02-base.css';
 @import './styles/03-button.css';
+@import './styles/04-ui.css';
 @import './styles/10-shell.css';
 @import './styles/11-trip-planner.css';
 @import './styles/12-guided-trip.css';

@@ -213,7 +213,7 @@
   border: 1px solid var(--ink-mute);
   background: transparent;
 }
-.dsk-page .sig-sq.is-on { border-color: var(--ink); background: var(--ink); }
+.dsk-page .sig-sq.is-on { border-color: var(--select-border); background: var(--ink); }
 
 /* The Loop chip is a descriptor, not an action, so it leaves the accent
    (carta-design "Accent marks"; brief V4-9 brought forward because the

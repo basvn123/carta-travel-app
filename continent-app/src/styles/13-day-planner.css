@@ -123,7 +123,7 @@
 @media (hover: hover) {
   .day-chip:hover { border-color: var(--ink-soft); }
 }
-.day-chip.active { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
+.day-chip.active { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
 
 .day-assigned-list, .day-activity-list {
   display: flex;
@@ -145,7 +145,7 @@
 @media (hover: hover) {
   .day-activity-row:hover { border-color: var(--ink-soft); }
 }
-.day-activity-row.added { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
+.day-activity-row.added { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
 .day-assigned-idx {
   display: flex; align-items: center; justify-content: center;
   width: 22px; height: 22px;
@@ -549,7 +549,7 @@
 @media (hover: hover) {
   .shape-pace:hover { border-color: var(--ink-soft); }
 }
-.shape-pace.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; background: var(--bg-card); }
+.shape-pace.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
 .shape-pace-label { font-size: 13px; font-weight: 600; color: var(--ink); }
 .shape-pace-hint {
   font-family: var(--ui);

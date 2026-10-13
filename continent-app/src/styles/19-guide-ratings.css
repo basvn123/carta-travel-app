@@ -2124,7 +2124,7 @@ color: var(--ink-soft);
 /* Done is chrome, not good news in data, so the ink fill rather than --green
    (carta-design: green is data, never chrome; T193). */
 .wiz-step.done .wiz-step-mark { background: var(--ink-fill); color: var(--on-fill); }
-.wiz-step.now .wiz-step-mark { background: var(--ink-fill); color: var(--on-fill); }
+.wiz-step.now .wiz-step-mark { background: var(--select-bg); color: var(--select-ink); }
 .wiz-step-name {
   font-size: 11.5px;
   color: var(--ink-mute);
@@ -2387,8 +2387,8 @@ color: var(--ink-soft);
 .guide-design-btn-quiet .guide-design-spark,
 .guide-design-btn-quiet svg { color: var(--accent); }
 .guide-design-btn-quiet small { color: var(--ink-mute); }
-.guide-design-btn-quiet.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
-.guide-design-btn-quiet.on small, .guide-design-btn-quiet.on svg { color: var(--on-fill); }
+.guide-design-btn-quiet.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.guide-design-btn-quiet.on small, .guide-design-btn-quiet.on svg { color: var(--select-ink); }
 
 /* Step 3: what changing the departure airport actually buys, in the space the
    picker used to leave blank. */

@@ -66,11 +66,11 @@
   background: var(--bg-card);
   color: var(--ink);
 }
-.wtrip.on { border-color: var(--ink); box-shadow: none; outline: 1px solid var(--ink); outline-offset: -2px; }
+.wtrip.on { border-color: var(--select-border); box-shadow: none; outline: 1px solid var(--select-border); outline-offset: -2px; }
 .wtrip.on .wtrip-choose {
-  border-color: var(--ink-fill);
-  background: var(--ink-fill);
-  color: var(--on-fill);
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
 }
 @media (hover: hover) {
   .wtrip-choose:hover { border-color: var(--ink-soft); }
@@ -280,16 +280,16 @@
   .guide-booked-bit:hover { border-color: var(--rule); }
 }
 .guide-booked-bit.on {
-  border-color: var(--ink);
-  outline: 1px solid var(--ink);
+  border-color: var(--select-border);
+  outline: 1px solid var(--select-border);
   outline-offset: -2px;
   background: var(--bg-card);
 }
 .guide-booked-bit.on .guide-booked-icon { color: var(--ink); }
-.wtrip.on { border-color: var(--ink); box-shadow: none; outline: 1px solid var(--ink); outline-offset: -2px; }
-.wtrip-len.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
-.tleg-mode.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); font-weight: 600; }
-.tleg-mode.on svg { color: var(--on-fill); }
+.wtrip.on { border-color: var(--select-border); box-shadow: none; outline: 1px solid var(--select-border); outline-offset: -2px; }
+.wtrip-len.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.tleg-mode.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); font-weight: 600; }
+.tleg-mode.on svg { color: var(--select-ink); }
 @media (hover: hover) {
   .tleg-mode:hover { border-color: var(--rule); }
 }
@@ -299,9 +299,9 @@
 @media (hover: hover) {
   .wready-chip:hover { background: var(--paper-dim); color: var(--ink); }
 }
-.guide-ccard.on { border-color: var(--ink); box-shadow: none; outline: 1px solid var(--ink); outline-offset: -2px; }
+.guide-ccard.on { border-color: var(--select-border); box-shadow: none; outline: 1px solid var(--select-border); outline-offset: -2px; }
 .guide-ccard.reading { border-color: var(--ink-soft); }
-.guide-ccard.reading .guide-ccard-info { background: var(--ink-fill); color: var(--on-fill); }
+.guide-ccard.reading .guide-ccard-info { background: var(--select-bg); color: var(--select-ink); }
 @media (hover: hover) {
   .guide-booked-bit:hover:not(.on),
   .tleg-mode:hover:not(.on),

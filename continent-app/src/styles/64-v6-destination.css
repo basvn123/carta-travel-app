@@ -115,7 +115,7 @@
 .climate-chart.has-figures .climate-temp { color: var(--ink); font-weight: 600; }
 .climate-lo { color: var(--ink-soft); }
 .climate-rain { color: var(--ink-mute); }
-.climate-col.is-chosen { outline: 2px solid var(--ink); outline-offset: 1px; }
+.climate-col.is-chosen { outline: 2px solid var(--select-border); outline-offset: 1px; }
 
 /* Safe areas (DIRECTION.md part 7). index.html sets viewport-fit=cover, so
    the full-screen page keeps its bar out from under the notch and its

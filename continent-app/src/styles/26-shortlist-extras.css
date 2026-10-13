@@ -256,10 +256,10 @@
 .wq-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* One selected state (T398, rule "Selected state"): ink fill, never the
    accent tint. */
-.wq-chip.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
+.wq-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
 .wq-chip:disabled { opacity: .45; cursor: default; }
 .wq-chip-icon { flex: none; display: flex; color: var(--ink-soft); }
-.wq-chip.on .wq-chip-icon { color: var(--on-fill); }
+.wq-chip.on .wq-chip-icon { color: var(--select-ink); }
 .wq-chip-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .wq-chip-text b { font-size: 13.5px; font-weight: 600; }
 .wq-chip-text small { font-size: 12px; color: var(--ink-soft); }
@@ -332,7 +332,7 @@
   overflow: hidden;
   background: var(--paper);
 }
-.mcard.on { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
+.mcard.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
 /* The button owns the shape and the image fills it absolutely, the same way
    the Destinations cards do it. Letting the <img> carry the ratio does not
    work: HeroImage sets width/height ATTRIBUTES to the ratio (3 and 2), and a
@@ -415,7 +415,7 @@
 @media (hover: hover) {
   .mcard-add:hover { border-color: var(--ink-soft); }
 }
-.mcard-add.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-fill); }
+.mcard-add.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .mcard-info {
   flex: none;
   border: 1px solid var(--rule);
@@ -504,7 +504,7 @@
 /* Add is a secondary here: the step's one primary is Next (brief target
    table); added, it takes the selected state. */
 .cpm-card-add { border: 1px solid var(--rule); background: var(--bg-card); color: var(--ink); }
-.cpm-card-add.on { border-color: var(--ink-fill); background: var(--ink-fill); color: var(--on-fill); }
+.cpm-card-add.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
 .cpm-card-info { border: 1px solid var(--rule); background: none; color: var(--ink-soft); font-weight: 500; }
 .cpm-card-close {
   flex: none;
