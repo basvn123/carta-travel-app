@@ -1,41 +1,70 @@
 import React from 'react';
-import { GemIcon } from './GemRating.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
- * Traveller rating (schema v14 dest.rating), the one visual language for
- * "how strong is this destination":
+ * The Score (T437, the kit's rating; replaces the filled ochre chip).
  *
- *   score  0-10 chip, colour-coded by tier (the tier shows only as colour;
- *          no separate diamond glyphs, the number is the rating)
- *   hidden_gem  a separate "Hidden gem" tag, highly rated, hardly famous
+ * A drawn star and the figure in ink, tabular, on no fill: the form a
+ * traveller already reads from every travel app, and one that can never be
+ * mistaken for a button. The tier shows in the star itself: filled from the
+ * second tier up, outlined below it, so the band reads without a word. Where
+ * a page has room (the destination head, a preview), `band` adds the band's
+ * word through i18n, never the English label the data carries.
+ *
+ *   <ScoreChip rating={dest.rating} size="sm" />        cards and rows
+ *   <ScoreChip rating={dest.rating} size="lg" band />   a page head
+ *
+ * The exports and props of the old chip are kept (ScoreChip, RatingBadge,
+ * HiddenGemTag, tierClass), so its twenty-odd callers did not change. Beach,
+ * lake and mountain scores pass through the same component; only
+ * destinations ask for the band word, because only their tiers map onto it.
  */
 
 export function tierClass(rating) {
   return `rt-${rating?.tier ?? 0}`;
 }
 
-/**
- * The score, as a rating rather than a dot. The chip carries the tier's own
- * mark (the same filled/outline/pale vocabulary the legend teaches, and the
- * gem's teal where one is awarded) beside the number, so the tier is legible
- * at card size without reading the seal on the photo.
- */
-export function ScoreChip({ rating, size = 'sm' }) {
+/** The i18n key for a destination tier's band word, or null below tier 1. */
+export function bandKey(tier) {
+  return tier >= 1 && tier <= 3 ? `score.band${tier}` : null;
+}
+
+function Star({ filled }) {
+  return (
+    <svg className="score-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M12 3.4l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.8l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8L12 3.4z"
+        fill={filled ? 'currentColor' : 'none'}
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function ScoreChip({ rating, size = 'sm', band = false }) {
   const { t } = useI18n();
   if (!rating || rating.score == null) return null;
-  const label = rating.label
-    ? `${rating.score}/10 - ${rating.label}`
-    : t('common.rated', { n: rating.score });
   const tier = rating.tier ?? 0;
-  const mark = rating.hidden_gem ? 'gem' : tier;
+  const key = band ? bandKey(tier) : null;
+  const word = key ? t(key) : '';
+  const figure = Number(rating.score).toFixed(1);
+  const aria = word ? `${t('score.aria', { n: figure })}, ${word}` : t('score.aria', { n: figure });
   return (
-    <span className={`score-chip ${tierClass(rating)} ${size}`} title={label} aria-label={label}>
-      {(tier > 0 || rating.hidden_gem) && (
-        <span className={`score-chip-mark tl-${mark}`} aria-hidden="true" />
-      )}
-      <span className="score-chip-n">{rating.score.toFixed(1)}</span>
+    <span className={`score-chip ${tierClass(rating)} ${size}`} role="img" aria-label={aria} title={aria}>
+      <Star filled={tier >= 2} />
+      <span className="score-chip-n" aria-hidden="true">{figure}</span>
+      {word && <span className="score-chip-band" aria-hidden="true">{word}</span>}
     </span>
+  );
+}
+
+function Diamond() {
+  return (
+    <svg className="gem-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 3l8 9-8 9-8-9z" fill="currentColor" />
+    </svg>
   );
 }
 
@@ -43,21 +72,18 @@ export function HiddenGemTag({ size = 'sm' }) {
   const { t } = useI18n();
   return (
     <span className={`hidden-gem-tag ${size}`} title={t('common.hiddenGemTip')}>
-      <GemIcon filled size={size === 'lg' ? 11 : 9} />
+      <Diamond />
       {t('common.hiddenGem')}
     </span>
   );
 }
 
-/** Compact inline badge: score chip (+ optional gem tag). */
+/** The Score, optionally with its band word and the hidden-gem mark. */
 export function RatingBadge({ rating, size = 'sm', showGem = true, showLabel = false }) {
   if (!rating || rating.score == null) return null;
   return (
     <span className={`rating-badge ${size}`}>
-      <ScoreChip rating={rating} size={size} />
-      {showLabel && rating.label && (
-        <span className={`rating-label ${tierClass(rating)}`}>{rating.label}</span>
-      )}
+      <ScoreChip rating={rating} size={size} band={showLabel} />
       {showGem && rating.hidden_gem && <HiddenGemTag size={size} />}
     </span>
   );

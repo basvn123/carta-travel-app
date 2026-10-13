@@ -605,13 +605,6 @@
   font-size: 12.5px;
   padding: 2px 6px;
 }
-.tip-score.rt-3 { background: var(--rate); color: var(--paper); }
-.tip-score.rt-2 { background: var(--rate-bg); color: var(--rate); }
-.tip-score.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
-.tip-score.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
-.tip-rlabel.rt-3 { color: var(--rate); }
-.tip-rlabel.rt-2 { color: var(--rate-soft); }
-.tip-rlabel.rt-1, .tip-rlabel.rt-0 { color: var(--ink-mute); }
 
 /* --- Plane/Car comparison toggle (detail panel) --- */
 .mode-toggle {

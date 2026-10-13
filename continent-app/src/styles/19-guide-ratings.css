@@ -2,76 +2,51 @@
    Part of the modular stylesheet (T191). Load order is set by styles.css and
    must not change: the cascade depends on it. */
 
-/* ─── Traveller rating (schema v14): score chip + tier diamonds + gem tag ───
-   One visual language for destination quality. Tiers follow the Michelin
-   Green Guide idiom (3 = worth the journey, 2 = worth a detour, 1 = worth a
-   visit); colour stays inside the paper/rust palette - the accent is earned
-   by the top tier only, so a three-diamond place reads instantly. */
-.rating-badge { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+/* ─── The Score (T437): a drawn star and the figure in ink, on no fill ───
+   One visual language for "how strong is this place", shared by every
+   card, row, pin and page. The star carries the tier (filled from the
+   second tier up, outlined below), the figure stays ink so a rating never
+   reads as a button or an alarm, and the band word is opt-in. Figures stay
+   at 12 px or more (the T418 floor). */
+.rating-badge { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; }
 .score-chip {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  border-radius: 4px;
-  line-height: 1;
   display: inline-flex;
   align-items: center;
   flex: none;
-}
-/* Heavier top padding optically centres the digits in a line-height:1 box.
-   Rating figures stay at 12 px or more (T421, the T418 floor). */
-.score-chip.xs { font-size: var(--text-caption); padding: 3px 6px 2px; gap: 3px; border-radius: 999px; }
-.score-chip.sm { font-size: var(--text-caption); padding: 4px 7px 3px; gap: 4px; border-radius: 999px; }
-.score-chip.lg { font-size: 15px; padding: 6px 10px 4px; gap: 5px; border-radius: 999px; }
-.score-chip.rt-3 { background: var(--rate); color: var(--paper); }
-.score-chip.rt-2 { background: var(--rate-bg); color: var(--rate); }
-.score-chip.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
-.score-chip.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
-.score-chip-n { display: inline-block; }
-/* The tier's own mark, the same one the legend teaches: filled for the top
-   tier, ringed for a detour, pale for a visit, teal for a gem. Inside a
-   filled chip it inverts to the chip's paper, since ochre on ochre is a
-   hole rather than a mark. */
-.score-chip-mark {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  flex: none;
-  background: currentColor;
-}
-.score-chip.lg .score-chip-mark { width: 6px; height: 6px; }
-.score-chip .score-chip-mark.tl-2 { background: var(--rate); }
-.score-chip .score-chip-mark.tl-1 { background: var(--rate-soft); }
-.score-chip .score-chip-mark.tl-gem { background: var(--gem-ink); }
-.score-chip.rt-3 .score-chip-mark { background: var(--paper); }
-.score-chip.rt-3 .score-chip-mark.tl-gem {
-  background: var(--gem-bg);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
-}
-.rating-label {
-  font-size: 10.5px;
+  gap: var(--space-1);
+  color: var(--text);
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
   font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
 }
-.rating-label.rt-3 { color: var(--rate); }
-.rating-label.rt-2 { color: var(--rate-soft); }
-.rating-label.rt-1, .rating-label.rt-0 { color: var(--ink-mute); }
+.score-chip.xs,
+.score-chip.sm { font-size: var(--text-caption); }
+.score-chip.lg { font-size: var(--text-lead); gap: 6px; }
+.score-star { width: 1.05em; height: 1.05em; flex: none; color: var(--rate); }
+.score-chip.rt-0 .score-star { color: var(--text-3); }
+.score-chip-n { display: inline-block; }
+.score-chip-band {
+  margin-left: var(--space-1);
+  font-weight: 500;
+  color: var(--text-2);
+}
+.score-chip.lg .score-chip-band { font-size: var(--text-body); }
 .hidden-gem-tag {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 11px;
-  color: var(--green);
-  border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
-  border-radius: 3px;
-  padding: 1px 5px;
-  white-space: nowrap;
+  gap: var(--space-1);
   flex-shrink: 0;
+  font-family: var(--font);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--gem-ink);
+  white-space: nowrap;
 }
-.hidden-gem-tag.lg { font-size: 10px; padding: 2px 7px; }
-.hidden-gem-tag .gem { color: var(--green); }
+.hidden-gem-tag.lg { font-size: var(--text-label); }
+.gem-mark { width: 0.85em; height: 0.85em; flex: none; }
 
 /* Bathing-water quality pill (dest.bathing_water, EEA WISE). Same mono/uppercase
    language as the hidden-gem tag; colour carries the Directive class. */
@@ -659,19 +634,21 @@
 
 /* Towns wear their 0-10 traveller rating on the pin (tier colours match the
    ScoreChip language); must-see places wear a star. Guidance at a glance. */
+/* A pin wears its score in ink on the surface (T437), never a tier fill;
+   12 px, the floor for a rating. */
 .dem-pin-rate {
   flex: 0 0 auto;
   margin-left: -3px;
-  padding: 1px 5px;
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: var(--text-micro);
-  font-weight: 700;
+  padding: 0 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
 }
-.dem-pin-rate.rt-3 { background: var(--rate); color: var(--paper); }
-.dem-pin-rate.rt-2 { background: var(--rate-bg); color: var(--rate); }
-.dem-pin-rate.rt-1 { background: var(--paper-dim); color: var(--ink-soft); }
-.dem-pin-rate.rt-0 { background: var(--paper-dim); color: var(--ink-mute); }
 .dem-pin-star {
   flex: 0 0 auto;
   display: inline-flex;

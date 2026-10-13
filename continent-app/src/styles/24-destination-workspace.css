@@ -484,15 +484,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* rt-0/rt-1 chips are tuned for a paper background (transparent or pale
-   fill, a muted ink border); on the preview's dark scrim that reads as
-   nearly invisible, so they get a legible dark-theme fill here. */
-.xcard-preview-head .score-chip.rt-0,
-.xcard-preview-head .score-chip.rt-1 {
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--on-fill);
-  border-color: rgba(255, 255, 255, 0.32);
-}
 .xcard-preview-sub {
   display: flex;
   align-items: center;
@@ -3431,14 +3422,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-/* Low-tier score chips assume a light card; on the scrim they get the same
-   translucent treatment the hover preview already uses. */
-.xcard-overlay-top .score-chip.rt-0,
-.xcard-overlay-top .score-chip.rt-1 {
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--on-fill);
-  border-color: rgba(255, 255, 255, 0.32);
 }
 .xcard-overlay-sub {
   display: flex;

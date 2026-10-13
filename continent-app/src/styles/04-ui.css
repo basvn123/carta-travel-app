@@ -282,3 +282,108 @@
   .icon-btn, .ui-chip-filter, .ui-chip-choice, .seg-item, .ui-tab, .ui-tab::after, .card,
   .field-control :is(input, select, textarea) { transition: none; }
 }
+
+/* ---- Switch (T437) ------------------------------------------------------ */
+/* The whole row is the control. Off is an outlined track with a dark thumb
+   (3:1 against the surface without a fill); on is the action colour with a
+   white thumb moved across, so position carries the state too. */
+.ui-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 32px;
+  padding: var(--space-1) 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+@media (pointer: coarse) {
+  .ui-switch { min-height: var(--tap); }
+}
+.ui-switch-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ui-switch-label { font-size: var(--text-body); line-height: var(--leading-ui); }
+.ui-switch-hint { font-size: var(--text-caption); color: var(--text-3); line-height: var(--leading-ui); }
+.ui-switch-track {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 24px;
+  border: 1.5px solid var(--text-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.ui-switch-thumb {
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  width: 13px;
+  height: 13px;
+  margin-top: -6.5px;
+  border-radius: var(--radius-pill);
+  background: var(--text-3);
+  transition: transform var(--dur-2) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+.ui-switch.is-on .ui-switch-track { border-color: var(--action); background: var(--action); }
+.ui-switch.is-on .ui-switch-thumb { background: var(--action-text); transform: translateX(16px) scale(1.25); }
+@media (hover: hover) {
+  .ui-switch:hover:not(:disabled) .ui-switch-track { border-color: var(--text-2); }
+  .ui-switch.is-on:hover:not(:disabled) .ui-switch-track { border-color: var(--action-hover); background: var(--action-hover); }
+}
+.ui-switch:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.ui-switch:disabled { color: var(--text-3); cursor: not-allowed; }
+.ui-switch:disabled .ui-switch-track { border-color: var(--border); background: var(--surface-sunken); }
+.ui-switch:disabled .ui-switch-thumb { background: var(--border); }
+
+/* ---- Tile (T437) -------------------------------------------------------- */
+/* An icon over its word, in an even grid. Selected is the one selected
+   state plus a tick in the corner. */
+.ui-tile-group {
+  display: grid;
+  grid-template-columns: repeat(var(--tile-cols, 2), minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.ui-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 72px;
+  padding: var(--space-3) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.ui-tile-icon { display: inline-flex; color: var(--text-2); }
+.ui-tile-icon svg { width: 24px; height: 24px; }
+.ui-tile-label {
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.ui-tile-tick { position: absolute; top: 6px; right: 6px; }
+@media (hover: hover) {
+  .ui-tile:hover:not(.is-selected) { border-color: var(--neutral-300); background: var(--surface-hover); }
+}
+.ui-tile.is-selected { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.ui-tile.is-selected .ui-tile-icon { color: var(--select-ink); }
+.ui-tile.is-selected .ui-tile-label { font-weight: 600; }
+.ui-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ui-tile:disabled { color: var(--text-3); cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-switch-track, .ui-switch-thumb, .ui-tile { transition: none; }
+}

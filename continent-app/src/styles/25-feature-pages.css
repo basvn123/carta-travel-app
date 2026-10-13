@@ -2696,7 +2696,6 @@
 @media (hover: hover) {
   .destp-score:hover { border-color: var(--rule); background: var(--bg-card); }
 }
-.destp-score-label { font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--rate); }
 .destp-v2 .destp-country { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .destp-rank { font-size: 12px; font-weight: 700; color: var(--rate); }
 .destp-short {
@@ -3209,18 +3208,8 @@
 
 /* ── Rating v2: the scale in bands, the parts in tiles ── */
 .rb-head { display: flex; align-items: center; gap: 12px; margin: 2px 0 12px; }
-.rb-score {
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 1;
-  padding: 8px 10px 6px;
-  border-radius: 10px;
-  letter-spacing: -0.02em;
-}
-.rb-score.rt-3 { background: var(--rate); color: var(--paper); }
-.rb-score.rt-2 { background: var(--rate-bg); color: var(--rate); }
-.rb-score.rt-1 { background: var(--paper-dim); color: var(--ink-soft); }
-.rb-score.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
+/* The head score is the kit Score at lg (T437), one size up here. */
+.rb-head .score-chip { font-size: var(--text-title); }
 .rb-head-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .rb-label { font-family: var(--display); font-size: 18px; font-weight: 600; color: var(--ink); line-height: 1.15; }
 .rb-country { font-size: 12px; font-weight: 600; color: var(--rate); }
@@ -3237,11 +3226,10 @@
   height: 18px;
   border-radius: 50%;
   transform: translateX(-50%);
-  background: var(--ink-fill);
-  border: 3px solid var(--paper);
-  box-shadow: 0 1px 3px rgba(31, 42, 51, 0.3);
+  background: var(--text);
+  border: 3px solid var(--surface);
+  box-shadow: var(--elev-1);
 }
-.rb-me.rt-2, .rb-me.rt-3 { background: var(--rate); }
 .rb-ticks { position: relative; height: 16px; margin-top: 6px; }
 .rb-legend { display: flex; gap: 4px 12px; flex-wrap: wrap; font-size: 10.5px; color: var(--ink-mute); margin-top: 2px; }
 .rb-leg { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
@@ -3796,8 +3784,10 @@
   background: var(--paper-dim);
   color: var(--ink-soft);
 }
-.xmap-card-score.rt-3 { background: var(--rate); color: var(--paper); }
-.xmap-card-score.rt-2 { background: var(--rate-bg); color: var(--rate); }
+/* The map card score is the Score drawn as a string (T437): ink, a star. */
+.xmap-card-score { display: inline-flex; align-items: center; gap: var(--space-1); background: none; color: var(--text); }
+.xmap-card-score svg { width: 1.05em; height: 1.05em; color: var(--rate); }
+.xmap-card-score.rt-0 svg { color: var(--text-3); }
 /* The popup IS the card: maplibre own padding would box it twice. */
 .xmap .maplibregl-popup-content { padding: 0; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-2); }
 .xmap .maplibregl-popup-close-button { display: none; }

@@ -385,7 +385,7 @@ const ExploreCard = React.memo(function ExploreCard({
           />
           {seal && (p.rating?.tier ?? 0) >= 2 && (
             <span className={`xcard-seal ${tierClass(p.rating)} ${p.rating.tier === 3 ? 'xcard-seal--filled' : 'xcard-seal--outline'}`}>
-              {p.rating.label}
+              {t(`score.band${p.rating.tier}`)}
             </span>
           )}
           {p.rating?.hidden_gem && (

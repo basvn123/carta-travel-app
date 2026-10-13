@@ -28,7 +28,8 @@ import { AroundHere, FeaturePhoto, summaryOf } from './AroundHere.jsx';
 import RoutesFromHere from './RoutesFromHere.jsx';
 import { NearestLine } from './CoverageEmpty.jsx';
 import { WebcamSection } from './WebcamEmbed.jsx';
-import { ScoreChip } from '../components/RatingBadge.jsx';
+import { ScoreChip, bandKey } from '../components/RatingBadge.jsx';
+import { tierForScore } from '../lib/rating.js';
 import { visitLength } from '../lib/nearby.js';
 import { roleOf } from '../lib/taxonomy.js';
 import { KindGlyph } from '../components/KindGlyph.jsx';
@@ -486,7 +487,13 @@ export function DestinationPage({
   const packs = packingList(destination, month);
 
   const intro = d?.intro;
-  const verdict = d?.verdict || destination.rating || null;
+  const verdictRaw = d?.verdict || destination.rating || null;
+  // The tier drives the Score's star and band word (T437); a dossier verdict
+  // without one takes it from the score against the model's cut-offs.
+  const verdict = verdictRaw && verdictRaw.score != null
+    ? { ...verdictRaw, tier: verdictRaw.tier ?? tierForScore(verdictRaw.score) }
+    : verdictRaw;
+  const verdictBand = verdict && bandKey(verdict.tier) ? t(bandKey(verdict.tier)) : '';
   const sleep = d?.sleep || null;
   const getting = d?.practical?.getting_there || null;
   const bookAhead = d?.practical?.book_ahead || [];
@@ -749,8 +756,7 @@ export function DestinationPage({
               <h1 className="destp-city" ref={titleRef} tabIndex={-1}>{city}</h1>
               {verdict?.score != null && (
                 <button type="button" className="destp-score" onClick={() => jumpTo('rating')} title={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}>
-                  <ScoreChip rating={verdict} size="lg" />
-                  {verdict.label && <span className="destp-score-label">{verdict.label}</span>}
+                  <ScoreChip rating={verdict} size="lg" band />
                 </button>
               )}
             </div>
@@ -1292,7 +1298,7 @@ export function DestinationPage({
                 id="sec-rating"
                 icon={StarIcon}
                 title={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}
-                summary={verdict.label || ''}
+                summary={verdictBand}
                 open={isOpen('rating')}
                 onToggle={() => toggle('rating')}
               >
