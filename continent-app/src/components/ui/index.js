@@ -12,3 +12,5 @@ export { Card } from './Card.jsx';
 export { Field } from './Field.jsx';
 export { Icon } from './Icon.jsx';
 export { Money } from './Money.jsx';
+export { Switch } from './Switch.jsx';
+export { Tile, TileGroup } from './Tile.jsx';

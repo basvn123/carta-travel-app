@@ -5567,4 +5567,9 @@ export const nl = {
   "money.est": "gesch.",
   "money.perPerson": "per persoon",
   "money.onRequest": "Prijs op aanvraag",
+  // The Score (T437): band words for a destination tier, and the spoken score.
+  "score.band1": "Zeer goed",
+  "score.band2": "Uitstekend",
+  "score.band3": "Uitzonderlijk",
+  "score.aria": "Beoordeeld met {n} op 10",
 };

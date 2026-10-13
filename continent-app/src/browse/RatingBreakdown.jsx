@@ -1,6 +1,6 @@
 import React from 'react';
 import { tierCutoffs } from '../lib/rating.js';
-import { tierClass } from '../components/RatingBadge.jsx';
+import { tierClass, ScoreChip } from '../components/RatingBadge.jsx';
 
 /**
  * Why this place scores what it scores.
@@ -34,7 +34,8 @@ export function RatingBreakdown({ rating, meta, t, countryLine }) {
   const comps = rating.components || {};
   const rows = ORDER.filter((k) => comps[k] != null && weights[k] != null);
   const pos = Math.max(0, Math.min(100, (rating.score / 10) * 100));
-  const tierName = (tier) => model.tier_labels?.[String(tier)] || t(`rating.tier${tier}`);
+  // The band words come from i18n (T437), never the English labels in meta.
+  const tierName = (tier) => t(`score.band${tier}`);
   const bands = [
     { from: 0, to: cuts[1], cls: 'rt-0', label: '' },
     { from: cuts[1], to: cuts[2], cls: 'rt-1', label: tierName(1) },
@@ -45,9 +46,9 @@ export function RatingBreakdown({ rating, meta, t, countryLine }) {
   return (
     <div className="rate-break rate-break-v2">
       <div className="rb-head">
-        <span className={`rb-score mono ${tierClass(rating)}`}>{rating.score.toFixed(1)}</span>
+        <ScoreChip rating={rating} size="lg" />
         <span className="rb-head-text">
-          {rating.label && <span className="rb-label">{rating.label}</span>}
+          {(rating.tier ?? 0) >= 1 && <span className="rb-label">{tierName(rating.tier)}</span>}
           {countryLine && <span className="rb-country">{countryLine}</span>}
         </span>
       </div>

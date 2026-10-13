@@ -1394,7 +1394,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T423-c | T423 | journey.fltBetween, brief.dayCostRange and match.budget still join figures with a literal word (match.budget spells out euros); move to formatMoneyRange in their tab migrations | next task | open |  |
 | T423-d | T423 | design-lint money-literal rule (euro in JSX or i18n, toFixed on a price, retired helper calls) lands in T425; then retire the formatMoney aliases call site by call site | next task | closed by T425 | before T426 |
 | T424-a | T424 | Owner approves the style guide (?styleguide) on a phone and on desktop; closes the design half of roadmap 1.2 | user | closed by T436 |  |
-| T424-b | T424 | The existing RatingBadge renders a 10 px label inside its chip; it becomes the kit's Score in the migration | next task | open |  |
+| T424-b | T424 | The existing RatingBadge renders a 10 px label inside its chip; it becomes the kit's Score in the migration | next task | closed by T437 |  |
 | T424-c | T424 | Style guide prose is English reference text, not i18n (kit labels and prices on it do switch language); translate only if the page is ever shown to travellers | next task | open |  |
 | T425-a | T425 | Confirm the skill's call: the cheapest pin in view takes the best-value sun marker instead of teal (code still draws it teal) | user | closed by T436 |  |
 | T425-b | T425 | Receipt footer used --accent-bg, now the same teal tint as selection; the receipt migration picks a distinct quiet tint | next task | open |  |
@@ -1407,3 +1407,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T426-c | T426 | 10-shell.css still holds Explore's origin picker, map guide, kind rail and drive prompt rules (on roles now); T427 migrates their JSX and moves the rules to Explore's CSS | next task | open |  |
 | T426-d | T426 | Explore's floating List/Map toggle is a dark-filled segmented control; T427 puts it on the kit Segmented | next task | open |  |
 | T426-e | T426 | Owner checks the migrated shell on a phone against the 1.3a sketch once it exists (no sketch yet; T426 followed carta-design) | user | open |  |
+| T437-a | T437 | Native review of the four Score strings T437 wrote in nl, de, fr, es and it (score.band1 to score.band3, score.aria) | user | open |  |
+| T437-b | T437 | The rating breakdown band strip and legend, and non-rating uses of --rate-bg and --rate-soft (tips tint, festival tags, travel-day number, password strength), still read the ochre tints; T438 repoints them with the brown palette | next task | open | T438 |
+| T437-c | T437 | rating.tier1 to rating.tier3 and meta.rating_model.tier_labels still feed the tier legend and the How good filter; T427 removes the legend and T440 the filter wording | next task | open |  |

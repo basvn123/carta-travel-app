@@ -70,6 +70,10 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
  * so it can outline that card.
  */
 
+// The Score drawn as a string for the map card (T437, RatingBadge.jsx): the
+// star is filled from the second tier up, outlined below.
+const STAR_SVG = (filled) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.8l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8L12 3.4z" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+
 const KIND_RADIUS = { metro: 9, city: 7, area: 7, town: 5.5, village: 4.5 };
 const TIER_FILL = ['match', ['get', 'tier'],
   3, TC['--rate'],
@@ -271,7 +275,7 @@ export function ExploreMap({
         + (thumb ? `<img class="xmap-card-img" src="${esc(thumb)}" alt="" loading="lazy">` : '')
         + '<div class="xmap-card-body"><div class="xmap-card-head">'
         + `<span class="xmap-card-name">${esc(city)}</span>`
-        + (score != null ? `<span class="xmap-card-score rt-${tier}">${Number(score).toFixed(1)}</span>` : '')
+        + (score != null ? `<span class="xmap-card-score rt-${tier}">${STAR_SVG(tier >= 2)}${Number(score).toFixed(1)}</span>` : '')
         + '</div>'
         + `<p class="xmap-card-sub">${esc(country)}</p>`
         + (eur >= 0 ? `<p class="xmap-card-eur">${eurHtml(eur, 'xmap-card-eur-line')}</p>` : '')

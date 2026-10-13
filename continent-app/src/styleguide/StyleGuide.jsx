@@ -15,16 +15,17 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
-import { Button, IconButton, Chip, ChipGroup, Segmented, Tabs, Card, Field, Icon, Money } from '../components/ui/index.js';
+import { Button, IconButton, Chip, ChipGroup, Segmented, Tabs, Card, Field, Icon, Money, Switch, Tile, TileGroup } from '../components/ui/index.js';
 import * as Icons from '../components/Icons.jsx';
-import { RatingBadge } from '../components/RatingBadge.jsx';
+import { RatingBadge, ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { formatMoney } from '../lib/money.js';
 import { thumbAt } from '../lib/heroImage.js';
 import './styleguide.css';
 
 const SECTIONS = [
   ['colour', 'Colour'], ['type', 'Type'], ['space', 'Space and shape'], ['buttons', 'Buttons'],
-  ['chips', 'Chips and filters'], ['switches', 'Segmented and tabs'], ['cards', 'Cards'],
+  ['chips', 'Chips and filters'], ['toggles', 'Switches and tiles'], ['switches', 'Segmented and tabs'],
+  ['score', 'Score'], ['cards', 'Cards'],
   ['fields', 'Fields'], ['icons', 'Icons'], ['money', 'Prices'], ['rules', 'Rules'],
 ];
 
@@ -115,6 +116,9 @@ export default function StyleGuide() {
   const [tab, setTab] = useState('overview');
   const [saved, setSaved] = useState(true);
   const [email, setEmail] = useState('');
+  const [gems, setGems] = useState(true);
+  const [noCar, setNoCar] = useState(false);
+  const [kinds, setKinds] = useState({ city: true, beach: false, mountains: false, nature: false });
 
   useEffect(() => {
     document.title = 'Design system | Carta';
@@ -266,6 +270,20 @@ export default function StyleGuide() {
             <Use yes="Filter: narrows a list, many can be on. Choice: one of a short set. Count: a figure beside a label. Status: a label on an object, each tone for its one job." no="Navigation between pages; more than one line of chips without a 'More' sheet." />
           </Section>
 
+          <Section id="toggles" title="Switches and tiles" lead="A switch applies a setting at once; tiles show a short set the eye finds by shape. Both take the one selected state.">
+            <div className="sg-fields">
+              <Switch label="Hidden gems" checked={gems} onChange={setGems} />
+              <Switch label="No car needed" hint="Walkable, with good local transport" checked={noCar} onChange={setNoCar} />
+              <Switch label="Unavailable" checked={false} disabled />
+            </div>
+            <TileGroup label="Trip type" columns={2} className="sg-tiles-demo">
+              {[['city', 'City', Icons.CityIcon], ['beach', 'Beach', Icons.BeachIcon], ['mountains', 'Mountains', Icons.MountainIcon], ['nature', 'Nature', Icons.TreeIcon]].map(([k, l, I]) => (
+                <Tile key={k} icon={<I size={24} />} selected={kinds[k]} onClick={() => setKinds((v) => ({ ...v, [k]: !v[k] }))}>{l}</Tile>
+              ))}
+            </TileGroup>
+            <Use yes="Switch: an on or off filter or setting that applies at once. Tile: a short set of kinds (trip types, sections), two or three across, all the same size." no="A setting that waits for Save (a checkbox in a form); a long list (chips or a select)." />
+          </Section>
+
           <Section id="switches" title="Segmented and tabs">
             <div className="sg-demo">
               <Segmented label="View" value={view} onChange={setView} options={[{ value: 'list', label: 'List', icon: <Icons.ListDayIcon size={16} /> }, { value: 'map', label: 'Map', icon: <Icons.MapPinIcon size={16} /> }]} />
@@ -273,6 +291,18 @@ export default function StyleGuide() {
             <Use yes="Segmented: two to four views of the same thing (List and Map, Overview and Day by day). The chosen one is lifted, white on the track." no="More than four options; filters (use chips)." />
             <Tabs label="Trip" value={tab} onChange={setTab} tabs={[{ id: 'overview', label: 'Overview' }, { id: 'days', label: 'Day by day', count: 7 }, { id: 'costs', label: 'Costs' }]} />
             <Use yes="Tabs: sections of one page that swap in place, underlined in teal." no="Moving between pages or tabs of the app (use links)." />
+          </Section>
+
+          <Section id="score" title="Score" lead="A drawn star and the figure in ink, never a filled chip, so a rating never reads as a button. The star is filled from Excellent up and outlined below; a page head may add the band word.">
+            <div className="sg-demo">
+              {[[9.8, 3], [8.1, 2], [7.2, 1], [6.1, 0]].map(([n, tier]) => <ScoreChip key={n} rating={{ score: n, tier }} size="sm" />)}
+            </div>
+            <div className="sg-demo">
+              <ScoreChip rating={{ score: 9.8, tier: 3 }} size="lg" band />
+              <ScoreChip rating={{ score: 8.1, tier: 2 }} size="lg" band />
+              <HiddenGemTag />
+            </div>
+            <Use yes="Every rating on a card, row, pin or page, at 12 px or more. The band word on a page head or preview." no="A coloured fill behind the figure; the score over a photograph." />
           </Section>
 
           <Section id="cards" title="Cards" lead="One anatomy for every object: media, title, meta, price, rating, actions. Compact rows are the default on Explore and Destinations; photo tiles are for rails and the home page.">

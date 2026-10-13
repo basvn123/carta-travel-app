@@ -1070,9 +1070,6 @@
 .shape-pick-desc p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
 .shape-pick-desc-why { margin-top: 6px !important; font-size: 11px !important; color: var(--ink-mute) !important; }
 .shape-pick-desc-why b { color: var(--ink-soft); font-weight: 700; }
-/* The pick-row score chip reuses the shared .score-chip.xs sizing; just give
-   it a steady min-width so the numbers line up down the column. */
-.shape-pick-meta .score-chip { min-width: 24px; justify-content: center; }
 .shape-pick-map {
   height: 460px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule);
 }

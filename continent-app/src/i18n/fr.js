@@ -5567,4 +5567,9 @@ export const fr = {
   "money.est": "est.",
   "money.perPerson": "par personne",
   "money.onRequest": "Prix sur demande",
+  // The Score (T437): band words for a destination tier, and the spoken score.
+  "score.band1": "Très bien",
+  "score.band2": "Excellent",
+  "score.band3": "Exceptionnel",
+  "score.aria": "Noté {n} sur 10",
 };
