@@ -1377,7 +1377,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T418-c | T418 | Five inputs named only by a placeholder (AiDayPlanModal 343, CartaChatPlanner 569, SavedTripsPanel 594, PastTripForm 520, Dropdown 127); the T421 Field requires a label, migration closes them | next task | open | after T421 |
 | T419-a | T419 | Decide whether measured figures keep a separate mono face (PRODUCT.md Numbers) or use the Lagoon sans with tabular figures | user | closed by T420 | before T420 |
 | T419-b | T419 | impeccable doctor reports PRODUCT.md as an older schema and offers init (interview adding Positioning, Operating Context, Evidence on Hand, Product Principles); decide whether to run it | user | closed by T420 |  |
-| T419-c | T419 | DESIGN.md and the carta-design skill still describe cream, Fraunces and terracotta; T424 rewrites both from the built Lagoon system | next task | open | after T423 |
+| T419-c | T419 | DESIGN.md and the carta-design skill still describe cream, Fraunces and terracotta; T424 rewrites both from the built Lagoon system | next task | closed by T425 | after T423 |
 | T420-a | T420 | PRODUCT.md says density is a feature (forty prices on one phone screen, whitespace only between groups) while Lagoon leads with large photo cards; decide where the dense view lives (map, a compact list toggle) before T421 sets card sizes | user | closed by T421 | before T421 |
 | T420-b | T420 | Planned task numbers moved up one (tokens T421, kit T422, money T423, style guide T424, docs and lint T425, migration T426 onward); T418-c's "T421 Field" is T422 and T419-c's "T424" is T425 | next task | open |  |
 | T421-a | T421 | Selection is still a deep teal fill (--ink-fill); the T422 kit moves every chip, tab and segment onto the --select-* tint | next task | closed by T422 |  |
@@ -1392,7 +1392,12 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T423-a | T423 | Destination PDF still prints EUR 12 through its own helpers; move it to formatMoney with its fonts (with T421-b) | next task | open |  |
 | T423-b | T423 | Nine i18n keys lost their euro sign but have no caller (filter.perDirection, detail.eachLocalRate, detail.perNightApprox, detail.perDayApprox, detail.perTwoDirections, detail.rentalMetaMany/One, detail.viaGround, dest.tripTotal); delete in a dead-string pass | next task | open |  |
 | T423-c | T423 | journey.fltBetween, brief.dayCostRange and match.budget still join figures with a literal word (match.budget spells out euros); move to formatMoneyRange in their tab migrations | next task | open |  |
-| T423-d | T423 | design-lint money-literal rule (euro in JSX or i18n, toFixed on a price, retired helper calls) lands in T425; then retire the formatMoney aliases call site by call site | next task | open | before T426 |
+| T423-d | T423 | design-lint money-literal rule (euro in JSX or i18n, toFixed on a price, retired helper calls) lands in T425; then retire the formatMoney aliases call site by call site | next task | closed by T425 | before T426 |
 | T424-a | T424 | Owner approves the style guide (?styleguide) on a phone and on desktop; closes the design half of roadmap 1.2 | user | open |  |
 | T424-b | T424 | The existing RatingBadge renders a 10 px label inside its chip; it becomes the kit's Score in the migration | next task | open |  |
 | T424-c | T424 | Style guide prose is English reference text, not i18n (kit labels and prices on it do switch language); translate only if the page is ever shown to travellers | next task | open |  |
+| T425-a | T425 | Confirm the skill's call: the cheapest pin in view takes the best-value sun marker instead of teal (code still draws it teal) | user | open |  |
+| T425-b | T425 | Receipt footer used --accent-bg, now the same teal tint as selection; the receipt migration picks a distinct quiet tint | next task | open |  |
+| T425-c | T425 | Kit positive status chip (green tint and text) vs the T380 'status, not green' rule; skill scopes it to short data labels, owner may prefer ink plus a dot | user | open |  |
+| T425-d | T425 | 02-base.css sets body type with literals and reads legacy token names; move onto roles in the shell migration | next task | open |  |
+| T425-e | T425 | Per-surface migration T426 to T435 runs in another session from Roadmap/1.2-migration-handoff.md | next task | open |  |
