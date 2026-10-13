@@ -9,7 +9,7 @@ import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { searchFold } from '../lib/textSearch.js';
 import { CURRENCIES, parseAmount } from '../lib/currency.js';
-import { eur } from '../lib/format.js';
+import { eurExact } from '../lib/format.js';
 import { lookupPlace } from '../lib/cityResearch.js';
 import { useI18n } from '../i18n/index.jsx';
 import { nightsBetween, nightsFor, moveNight, defaultPastLabel } from './pastTrip.js';
@@ -304,7 +304,7 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
     .map((m) => t(MODE_LABEL[m])).join(', ');
   const staySummary = places.map((p) => p.stay?.name).filter(Boolean).join(', ');
   const spendSum = summary.any
-    ? `${eur(summary.total)}${perHead && heads > 1 ? ` (${eur(perHead)} ${t('saved.pastEach')})` : ''}`
+    ? `${eurExact(summary.total)}${perHead && heads > 1 ? ` (${eurExact(perHead)} ${t('saved.pastEach')})` : ''}`
     : '';
   const feelSummary = [
     mem.rating != null ? `${mem.rating}/10` : '',
@@ -664,9 +664,9 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
           {summary.any && (
             <div className="pasttrip-total">
               <span>{t('saved.pastTotal')}</span>
-              <b>{eur(summary.total)}</b>
+              <b>{eurExact(summary.total)}</b>
               {heads > 1 && perHead != null && (
-                <small>{t('saved.pastPerPerson', { amount: eur(perHead) })}</small>
+                <small>{t('saved.pastPerPerson', { amount: eurExact(perHead) })}</small>
               )}
             </div>
           )}

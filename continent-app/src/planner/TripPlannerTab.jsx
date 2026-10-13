@@ -11,7 +11,7 @@ import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
-import { eur, fmtHours } from '../lib/format.js';
+import { fmtHours, eurExact } from '../lib/format.js';
 import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
@@ -175,7 +175,7 @@ function AnchorLegRow({ leg, from, to }) {
         <Icon size={11} /> {from} → {to}
         <small>{t('trip.legStats', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
       </span>
-      <span className="val">{`${estPrefix(fareProv(leg))}${eur(leg.ground_total)}`}</span>
+      <span className="val">{`${estPrefix(fareProv(leg))}${eurExact(leg.ground_total)}`}</span>
     </div>
   );
 }
@@ -194,9 +194,9 @@ function LegRow({ leg, onMode }) {
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
         ↳ <ModeIcon mode={leg.mode} /> {chosen.own
           ? (chosen.eur_total > 0
-            ? t('trip.legBookedSummary', { mode: t(MODE_META[leg.mode].label), price: eur(chosen.eur_total) })
+            ? t('trip.legBookedSummary', { mode: t(MODE_META[leg.mode].label), price: eurExact(chosen.eur_total) })
             : `${t(MODE_META[leg.mode].label)}, ${t('trip.legBookedNoPrice')}`)
-          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: `${estPrefix(legProv)}${eur(chosen.eur_pp)}`, hours: fmtHours(chosen.hours) })}
+          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: `~${eurExact(chosen.eur_pp)}`, hours: fmtHours(chosen.hours) })}
         {leg.long_haul && !chosen.own ? `, ${t('trip.longLeg')}` : ''}
         {!chosen.own && <FareTag prov={legProv} />}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
@@ -212,7 +212,7 @@ function LegRow({ leg, onMode }) {
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
                 <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && !o.own && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: `${o.own ? '' : estPrefix(fareProv(o))}${eur(o.eur_pp)}` })}</b>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: `${o.own ? '' : estPrefix(fareProv(o))}${eurExact(o.eur_pp)}` })}</b>
                 <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             ))}
@@ -1066,7 +1066,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                   </div>
                   {tp.transportPref === 'car' && tp.carRental && (
                     <p className="trip-note">
-                      {t('trip.carRentalNote', { total: eur(tp.carRental.eur_total), days: tp.carRental.days, perDay: eur(tp.carRental.eur_per_day), group: tp.groupSize })}
+                      {t('trip.carRentalNote', { total: eurExact(tp.carRental.eur_total), days: tp.carRental.days, perDay: eurExact(tp.carRental.eur_per_day), group: tp.groupSize })}
                     </p>
                   )}
                   {tp.transportPref === 'owncar' && (
@@ -1085,7 +1085,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 <div className="trip-block trip-savings">
                   <div className="trip-block-title"><BulbIcon size={13} /> {t('trip.cheaperTitle')}</div>
                   <div className="trip-saving-row">
-                    <span>{t('trip.cheaperOrder', { amount: eur(tp.cheaperOrder.saving_eur) })}</span>
+                    <span>{t('trip.cheaperOrder', { amount: eurExact(tp.cheaperOrder.saving_eur) })}</span>
                     <button onClick={tp.applyCheaperOrder}>{t('trip.reorder')}</button>
                   </div>
                 </div>
@@ -1154,7 +1154,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                             <PlaneIcon size={11} /> {t('trip.airportTransfers')}
                             <small>{t('trip.transfersSub')}</small>
                           </span>
-                          <span className="val">{eur(tp.flightTransfer ? tp.flightTransfer.ground_total : tp.flight.ground_total)}</span>
+                          <span className="val">{eurExact(tp.flightTransfer ? tp.flightTransfer.ground_total : tp.flight.ground_total)}</span>
                         </div>
                       )}
                     </>
@@ -1165,7 +1165,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                           <PlaneIcon size={11} /> {t('trip.yourFlight')}
                           <small>{t('trip.ownFlightSub')}</small>
                         </span>
-                        <span className="val">{tp.flight.cost_total ? eur(tp.flight.cost_total) : '…'}</span>
+                        <span className="val">{tp.flight.cost_total ? eurExact(tp.flight.cost_total) : '…'}</span>
                       </div>
                       <div className="trip-ownflight-fields">
                         <input
@@ -1220,7 +1220,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                             <PlaneIcon size={11} /> {t('trip.airportTransfers')}
                             <small>{t('trip.transfersSub')}</small>
                           </span>
-                          <span className="val">{eur(tp.flightTransfer ? tp.flightTransfer.ground_total : tp.flight.ground_total)}</span>
+                          <span className="val">{eurExact(tp.flightTransfer ? tp.flightTransfer.ground_total : tp.flight.ground_total)}</span>
                         </div>
                       )}
                       {/* The way back from "Add your fare" (T278): drop the
@@ -1238,7 +1238,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                             <CarIcon size={11} /> {t('trip.driveOut', { city: cityLabel(tp.stopDetails[0]?.dest?.city) })}
                             <small>{t('trip.driveSub', { km: tp.driveLegs.out.road_km, hours: fmtHours(tp.driveLegs.out.hours) })}</small>
                           </span>
-                          <span className="val">{eur(tp.driveLegs.out.ground_total)}</span>
+                          <span className="val">{eurExact(tp.driveLegs.out.ground_total)}</span>
                         </div>
                       )}
                       {tp.driveLegs?.home && (
@@ -1247,7 +1247,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                             <CarIcon size={11} /> {t('trip.driveHome', { city: cityLabel(tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city) })}
                             <small>{t('trip.driveSub', { km: tp.driveLegs.home.road_km, hours: fmtHours(tp.driveLegs.home.hours) })}</small>
                           </span>
-                          <span className="val">{eur(tp.driveLegs.home.ground_total)}</span>
+                          <span className="val">{eurExact(tp.driveLegs.home.ground_total)}</span>
                         </div>
                       )}
                     </>
@@ -1277,21 +1277,21 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                   {groundTotal > 0 && (
                     <div className="trip-total-row">
                       <span className="lbl"><TrainIcon size={11} /> {t('trip.groundBetween')} <small>{t('trip.groundEstimate')}</small></span>
-                      <span className="val">{eur(groundTotal)}</span>
+                      <span className="val">{eurExact(groundTotal)}</span>
                     </div>
                   )}
 
                   {tp.carRental && (
                     <div className="trip-total-row">
                       <span className="lbl"><CarIcon size={11} /> {t('trip.rentalCar')} <small>{t('trip.rentalDays', { days: tp.carRental.days })}</small></span>
-                      <span className="val">{eur(tp.carRental.eur_total)}</span>
+                      <span className="val">{eurExact(tp.carRental.eur_total)}</span>
                     </div>
                   )}
 
                   {tp.vignettes && (
                     <div className="trip-total-row">
                       <span className="lbl"><CarIcon size={11} /> {t('trip.vignettes')} <small>{t('trip.vignettesSub', { countries: tp.vignettes.items.map((v) => v.iso2).join(', ') })}</small></span>
-                      <span className="val">{eur(tp.vignettes.eur_total)}</span>
+                      <span className="val">{eurExact(tp.vignettes.eur_total)}</span>
                     </div>
                   )}
 
@@ -1299,18 +1299,18 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                     <React.Fragment key={i}>
                       <div className="trip-total-row">
                         <span className="lbl"><BedIcon size={11} /> {cityLabel(s.dest?.city)} <small>{s.nights === 1 ? t('trip.accomOne', { n: s.nights }) : t('trip.accomMany', { n: s.nights })}</small></span>
-                        <span className="val">{eur(tp.stayCosts[i].accomTotal)}</span>
+                        <span className="val">{eurExact(tp.stayCosts[i].accomTotal)}</span>
                       </div>
                       <div className="trip-total-row">
                         <span className="lbl"><ReceiptIcon size={11} /> {cityLabel(s.dest?.city)} <small>{t('trip.onGroundSub')}</small></span>
-                        <span className="val">{eur(tp.stayCosts[i].groundTotal)}</span>
+                        <span className="val">{eurExact(tp.stayCosts[i].groundTotal)}</span>
                       </div>
                     </React.Fragment>
                   ))}
 
                   <div className="trip-total-row grand">
                     <span className="lbl">{t('trip.total')} <small>{tp.groupSize} {tp.groupSize === 1 ? t('trip.personOne') : t('trip.personMany')}</small></span>
-                    <span className="val">{eur(tp.grandTotal)}</span>
+                    <span className="val">{eurExact(tp.grandTotal)}</span>
                   </div>
 
                   <div className="trip-save-row">

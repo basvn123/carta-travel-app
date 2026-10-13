@@ -11,3 +11,4 @@ export { Tabs } from './Tabs.jsx';
 export { Card } from './Card.jsx';
 export { Field } from './Field.jsx';
 export { Icon } from './Icon.jsx';
+export { Money } from './Money.jsx';

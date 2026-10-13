@@ -1389,3 +1389,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T422-a | T422 | The kit is built but the tabs do not use it yet; each tab's migration (T426 onward) swaps in Button, Chip, Card, Field and deletes the legacy rules | next task | open | after T424 |
 | T422-b | T422 | Trip wizard current step mark and a few data marks keep dark ink; the stepper becomes one shared component in its migration | next task | open |  |
 | T422-c | T422 | The phone plus button now draws as a tint circle; DESIGN.md (T360) asks for --bg-card with a border; settle in the shell migration | next task | open |  |
+| T423-a | T423 | Destination PDF still prints EUR 12 through its own helpers; move it to formatMoney with its fonts (with T421-b) | next task | open |  |
+| T423-b | T423 | Nine i18n keys lost their euro sign but have no caller (filter.perDirection, detail.eachLocalRate, detail.perNightApprox, detail.perDayApprox, detail.perTwoDirections, detail.rentalMetaMany/One, detail.viaGround, dest.tripTotal); delete in a dead-string pass | next task | open |  |
+| T423-c | T423 | journey.fltBetween, brief.dayCostRange and match.budget still join figures with a literal word (match.budget spells out euros); move to formatMoneyRange in their tab migrations | next task | open |  |
+| T423-d | T423 | design-lint money-literal rule (euro in JSX or i18n, toFixed on a price, retired helper calls) lands in T425; then retire the formatMoney aliases call site by call site | next task | open | before T426 |

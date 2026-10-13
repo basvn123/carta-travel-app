@@ -8,7 +8,7 @@
  * "Save as PDF" in the dialog.
  */
 
-import { eur } from './format.js';
+import { eurExact } from './format.js';
 import { ownTravelWord } from './transportLinks.js';
 import { flightReasonLabel } from './trip_planner_pricing.js';
 
@@ -46,7 +46,7 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveL
   lines.push('');
   // No carrier or times: they came from the frozen fare snapshots (T278).
   if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}`);
-  if (flight?.own) lines.push(`${ownTravelWord(flight)}, booked yourself${flight.out_date ? `, ${fmtLong(flight.out_date)}` : ''}${flight.cost_total ? ` (${eur(flight.cost_total)})` : ''}`);
+  if (flight?.own) lines.push(`${ownTravelWord(flight)}, booked yourself${flight.out_date ? `, ${fmtLong(flight.out_date)}` : ''}${flight.cost_total ? ` (${eurExact(flight.cost_total)})` : ''}`);
   if (flight?.driving && driveLegs?.out) lines.push(`Drive out${driveLegs.from ? ` from ${driveLegs.from}` : ''} to ${first?.dest?.city} (${driveLegs.out.road_km} km)`);
   if (anchorLegs?.in?.ground_total) lines.push(`Then ${anchorLegs.inCity || anchorLegs.anchor?.city} to ${first?.dest?.city} by ${modeWord(anchorLegs.in.mode)}`);
   stopDetails.forEach((s, i) => {
@@ -59,7 +59,7 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveL
   if (flight && !flight.combinable && !flight.own && !flight.driving && !tripHasCar) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
   if (grandTotal != null) {
     lines.push('');
-    lines.push(`Estimated total for ${groupSize} ${groupSize === 1 ? 'person' : 'people'}: ${eur(grandTotal)}`);
+    lines.push(`Estimated total for ${groupSize} ${groupSize === 1 ? 'person' : 'people'}: ${eurExact(grandTotal)}`);
   }
   lines.push('');
   lines.push('Planned with Carta.');
@@ -101,37 +101,37 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfe
     rows.push(`<tr><td>Flight out: ${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</td><td class="note">not priced</td></tr>`);
   } else if (flight?.own) {
     const when = flight.out_date ? `, ${esc(fmtLong(flight.out_date))}${flight.ret_date ? ` &rarr; ${esc(fmtLong(flight.ret_date))}` : ''}` : '';
-    rows.push(`<tr><td>${esc(ownTravelWord(flight))}: booked yourself${when}</td><td>${flight.cost_total ? esc(eur(flight.cost_total)) : '&mdash;'}</td></tr>`);
+    rows.push(`<tr><td>${esc(ownTravelWord(flight))}: booked yourself${when}</td><td>${flight.cost_total ? esc(eurExact(flight.cost_total)) : '&mdash;'}</td></tr>`);
   } else if (flight && !flight.driving && !tripHasCar) {
     rows.push(`<tr><td colspan="2" class="note">Flights: ${esc(flightReasonLabel(flight.reason))}</td></tr>`);
   }
   if (flight?.driving && driveLegs?.out) {
-    rows.push(`<tr><td>Drive out${driveLegs.from ? ` from ${esc(driveLegs.from)}` : ''} to ${esc(first?.dest?.city)} (${driveLegs.out.road_km} km)</td><td>${esc(eur(driveLegs.out.ground_total))}</td></tr>`);
+    rows.push(`<tr><td>Drive out${driveLegs.from ? ` from ${esc(driveLegs.from)}` : ''} to ${esc(first?.dest?.city)} (${driveLegs.out.road_km} km)</td><td>${esc(eurExact(driveLegs.out.ground_total))}</td></tr>`);
   }
   if (anchorLegs?.in?.ground_total) {
-    rows.push(`<tr><td>${esc(anchorLegs.inCity || anchorLegs.anchor?.city)} &rarr; ${esc(first?.dest?.city)} (${esc(modeWord(anchorLegs.in.mode))}, estimate)</td><td>${esc(eur(anchorLegs.in.ground_total))}</td></tr>`);
+    rows.push(`<tr><td>${esc(anchorLegs.inCity || anchorLegs.anchor?.city)} &rarr; ${esc(first?.dest?.city)} (${esc(modeWord(anchorLegs.in.mode))}, estimate)</td><td>${esc(eurExact(anchorLegs.in.ground_total))}</td></tr>`);
   }
   // 2. Each stop in order, the leg to the next stop between them.
   stopDetails.forEach((s, i) => {
     const c = stayCosts[i];
     if (c) {
-      rows.push(`<tr><td>${esc(s.dest?.city)}: ${s.nights} ${s.nights === 1 ? 'night' : 'nights'} accommodation</td><td>${esc(eur(c.accomTotal))}</td></tr>`);
-      rows.push(`<tr><td>${esc(s.dest?.city)}: on the ground</td><td>${esc(eur(c.groundTotal))}</td></tr>`);
+      rows.push(`<tr><td>${esc(s.dest?.city)}: ${s.nights} ${s.nights === 1 ? 'night' : 'nights'} accommodation</td><td>${esc(eurExact(c.accomTotal))}</td></tr>`);
+      rows.push(`<tr><td>${esc(s.dest?.city)}: on the ground</td><td>${esc(eurExact(c.groundTotal))}</td></tr>`);
     }
     const l = legs[i];
     if (i < stopDetails.length - 1 && l && l.ground_total) {
       // A hop the traveller booked themselves carries their own fare, so it
       // must not go out on the receipt labelled as one of Carta's estimates.
       const qual = l.modes?.[l.mode]?.own ? 'booked' : 'estimate';
-      rows.push(`<tr><td>${esc(s.dest?.city)} &rarr; ${esc(stopDetails[i + 1]?.dest?.city)} (${esc(modeWord(l.mode))}, ${qual})</td><td>${esc(eur(l.ground_total))}</td></tr>`);
+      rows.push(`<tr><td>${esc(s.dest?.city)} &rarr; ${esc(stopDetails[i + 1]?.dest?.city)} (${esc(modeWord(l.mode))}, ${qual})</td><td>${esc(eurExact(l.ground_total))}</td></tr>`);
     }
   });
   // 3. Getting home.
   if (anchorLegs?.out?.ground_total) {
-    rows.push(`<tr><td>${esc(last?.dest?.city)} &rarr; ${esc(anchorLegs.outCity || anchorLegs.anchor?.city)} (${esc(modeWord(anchorLegs.out.mode))}, estimate)</td><td>${esc(eur(anchorLegs.out.ground_total))}</td></tr>`);
+    rows.push(`<tr><td>${esc(last?.dest?.city)} &rarr; ${esc(anchorLegs.outCity || anchorLegs.anchor?.city)} (${esc(modeWord(anchorLegs.out.mode))}, estimate)</td><td>${esc(eurExact(anchorLegs.out.ground_total))}</td></tr>`);
   }
   if (flight?.driving && driveLegs?.home) {
-    rows.push(`<tr><td>Drive home from ${esc(last?.dest?.city)} (${driveLegs.home.road_km} km)</td><td>${esc(eur(driveLegs.home.ground_total))}</td></tr>`);
+    rows.push(`<tr><td>Drive home from ${esc(last?.dest?.city)} (${driveLegs.home.road_km} km)</td><td>${esc(eurExact(driveLegs.home.ground_total))}</td></tr>`);
   }
   if (flight?.combinable) {
     rows.push(`<tr><td>Flight home: ${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</td><td class="note">not priced</td></tr>`);
@@ -139,9 +139,9 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfe
   // 4. Round-trip items for the whole journey.
   // The airport transfers count for a routed flight and for one the
   // traveller booked (T278), at the mode they picked, as the total does.
-  if ((flight?.combinable || flight?.own) && flight.ground_total > 0) rows.push(`<tr><td>Airport transfers</td><td>${esc(eur(flightTransfer ? flightTransfer.ground_total : flight.ground_total))}</td></tr>`);
-  if (carRental) rows.push(`<tr><td>Rental car, ${carRental.days} days${carRental.cars > 1 ? `, ${carRental.cars} cars` : ''}</td><td>${esc(eur(carRental.eur_total))}</td></tr>`);
-  if (vignettes) rows.push(`<tr><td>Motorway vignettes (${esc(vignettes.items.map((v) => v.iso2).join(', '))})</td><td>${esc(eur(vignettes.eur_total))}</td></tr>`);
+  if ((flight?.combinable || flight?.own) && flight.ground_total > 0) rows.push(`<tr><td>Airport transfers</td><td>${esc(eurExact(flightTransfer ? flightTransfer.ground_total : flight.ground_total))}</td></tr>`);
+  if (carRental) rows.push(`<tr><td>Rental car, ${carRental.days} days${carRental.cars > 1 ? `, ${carRental.cars} cars` : ''}</td><td>${esc(eurExact(carRental.eur_total))}</td></tr>`);
+  if (vignettes) rows.push(`<tr><td>Motorway vignettes (${esc(vignettes.items.map((v) => v.iso2).join(', '))})</td><td>${esc(eurExact(vignettes.eur_total))}</td></tr>`);
 
   // Booking records worth printing: any element with a tick, a confirmation
   // code, a price or a link, plus the custom rows (dinner slots, tours...).
@@ -161,7 +161,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfe
       `${b.done ? 'Booked: ' : ''}${esc(b.label)}`,
       b.ref ? `ref ${esc(b.ref)}` : '',
     ].filter(Boolean).join(', ');
-    return `<tr><td>${bits}</td><td>${Number.isFinite(price) && String(b.price ?? '').trim() !== '' ? esc(eur(price)) : ''}</td></tr>`;
+    return `<tr><td>${bits}</td><td>${Number.isFinite(price) && String(b.price ?? '').trim() !== '' ? esc(eurExact(price)) : ''}</td></tr>`;
   }).join('');
 
   const notesHtml = extras?.notes?.trim()
@@ -225,7 +225,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfe
 
   ${rows.length ? `<h2>Estimated costs</h2>
   <table>${rows.join('')}
-    <tr class="total"><td>Estimated total</td><td>${esc(eur(grandTotal))}</td></tr>
+    <tr class="total"><td>Estimated total</td><td>${esc(eurExact(grandTotal))}</td></tr>
   </table>` : ''}
 
   ${bookingRowsHtml ? `<h2>Bookings</h2>

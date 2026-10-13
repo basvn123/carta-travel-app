@@ -61,6 +61,7 @@
 import {
   DEFAULT_LIFESTYLE, CLUB_DRINKS_PER_NIGHT, groundSpendPerPerson, stayTierNightly,
 } from './runtime_pricing.js';
+import { formatMoney } from './money.js';
 
 // Sanity gate on a harvested nightly rate. Below the floor the number is a
 // broken harvest rather than a bargain (the shipped file carries seven exact
@@ -290,7 +291,7 @@ export function computeCosts(destinations, choices) {
 }
 
 /** Whole euros, the only precision the underlying data earns. */
-export const eurDay = (v) => (v == null ? null : `€${Math.round(v)}`);
+export const eurDay = (v) => (v == null ? null : formatMoney(v, { precision: 'whole' }));
 
 /** The two cheapest months to stay, from the Airbnb seasonality curve, or
  *  null when this destination has no measured curve. 1-based months. */

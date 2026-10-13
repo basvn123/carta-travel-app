@@ -3,6 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { catalogue } from '../lib/appData.js';
 import { stayPerNight } from '../lib/costIndex.js';
 import { placeExits } from '../lib/detailSkeleton.js';
+import { formatMoney } from '../lib/money.js';
 
 /**
  * The data behind slot 9 of the detail-page skeleton (T180): three computed
@@ -106,7 +107,7 @@ export function usePlaceExits({ me, cc, load, centre, level, baseOf = () => null
       title: e.row.name || '',
       meta: [
         e.kind === 'cheaper' && Number.isFinite(stay(e.row))
-          ? t('detail.exitStay', { km: fmt(e.km), eur: Math.round(stay(e.row)) })
+          ? t('detail.exitStay', { km: fmt(e.km), eur: formatMoney(stay(e.row)) })
           : t('detail.exitKm', { km: fmt(e.km) }),
         meta ? meta(e.row) : null,
       ].filter(Boolean).join(', '),

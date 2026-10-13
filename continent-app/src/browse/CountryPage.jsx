@@ -7,6 +7,7 @@ import { KindGlyph } from '../components/KindGlyph.jsx';
 import { kindOf } from '../lib/taxonomy.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { formatMoney } from '../lib/money.js';
 
 /**
  * A country as a destination of its own (PLAN.md C9), not a filtered grid.
@@ -112,7 +113,7 @@ export function CountryPage({ iso2, rows, onClose, onSelect }) {
           by a middot (carta-design copy rules; T411, row T404-d). */}
       <p className="cpage-facts">
         <span>{t('cpage.holds', { n: mine.length, country })}</span>
-        {day != null && <span>{t('cpage.day', { eur: Math.round(day) })}</span>}
+        {day != null && <span>{t('cpage.day', { eur: formatMoney(day) })}</span>}
         {goodMonths.length > 0 && <span>{t('cpage.when', { months: fmtMonthRanges(goodMonths) })}</span>}
         <span>{t(carKey)}</span>
       </p>

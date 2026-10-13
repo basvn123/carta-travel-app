@@ -340,9 +340,9 @@ export function FirstRunReceipt({
 
   const footerText = footer
     ? (footer.kind === 'tier'
-      ? t('receipt.footerTier', { tier: tierInline(footer.tier), eur: `${footer.est ? '~ ' : ''}${eurExact(footer.total)}` })
+      ? t('receipt.footerTier', { tier: tierInline(footer.tier), eur: `${footer.est ? '~' : ''}${eurExact(footer.total)}` })
       : t(footer.kind === 'month' ? 'receipt.footerMonth' : 'receipt.footerLater',
-        { eur: `${footer.est ? '~ ' : ''}${eurExact(footer.total)}` }))
+        { eur: `${footer.est ? '~' : ''}${eurExact(footer.total)}` }))
     : null;
 
   const tiers = offeredStayTiers(ctx.data?.meta);

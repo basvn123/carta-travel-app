@@ -10,6 +10,7 @@ import {
   hookLine, humanDetail, loadAllJourneyCards, journeyExits, journeyHash, journeyShareUrl,
 } from '../lib/journeys.js';
 import { srcSetFor } from '../lib/heroImage.js';
+import { formatMoney } from '../lib/money.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { claimShared } from '../lib/sharedElement.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
@@ -1136,7 +1137,7 @@ export function JourneyPage({
                   <span className="jpage-rail-label">{t('journey.railLabel')}</span>
                   <p className="jpage-rail-line">
                     {t('journey.railLine', {
-                      eur: new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(rail.eurPp),
+                      eur: formatMoney(rail.eurPp, { precision: 'whole', locale: lang }),
                       time: minutesText(Math.round(rail.hours * 60)),
                       from: rail.from,
                     })}

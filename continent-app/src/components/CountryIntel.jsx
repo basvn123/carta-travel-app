@@ -7,6 +7,7 @@ import {
   TicketIcon, RoadIcon, CheckIcon, BanIcon,
 } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { formatMoneyRange } from '../lib/money.js';
 
 const BUDGET_LABEL_KEYS = {
   low: 'intel.budgetLow',
@@ -72,7 +73,7 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
         <span className="cintel-country">{country}</span>
         <span className="cintel-chips">
           {rec.budget_level && <span className={`cintel-chip budget-${rec.budget_level}`}>{BUDGET_LABEL_KEYS[rec.budget_level] ? t(BUDGET_LABEL_KEYS[rec.budget_level]) : rec.budget_level}</span>}
-          {rec.daily_budget_eur && <span className="cintel-chip">{t('intel.perDay', { lo: rec.daily_budget_eur[0], hi: rec.daily_budget_eur[1] })}</span>}
+          {rec.daily_budget_eur && <span className="cintel-chip">{t('intel.perDay', { range: formatMoneyRange(rec.daily_budget_eur[0], rec.daily_budget_eur[1]) })}</span>}
           {rec.currency && rec.currency !== 'EUR' && <span className="cintel-chip">{t('intel.notEuro', { currency: rec.currency })}</span>}
         </span>
         <span className="cintel-caret">{open ? '−' : '+'}</span>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { TrainIcon, BusIcon, CarIcon, SparkIcon } from '../components/Icons.jsx';
-import { eur, safeUrl } from '../lib/format.js';
+import { safeUrl, eurExact } from '../lib/format.js';
 import { fmtDur } from './dayFormat.js';
 
 // The three inter-city day-trip modes and their glyphs/labels. Exported because
@@ -80,8 +80,8 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
             {t('day.modeSummary', {
               km: opts.road_km,
               dur: fmtDur(cur.hours * 60),
-              fare: `${eur(cur.eur_pp)}${perLabel}`,
-              ret: eur(cur.eur_pp * 2),
+              fare: `~${eurExact(cur.eur_pp)} ${t('money.est')}${perLabel}`,
+              ret: eurExact(cur.eur_pp * 2),
               split: active === 'car' ? t('day.splitWithGroup') : '',
             })}
           </small>
@@ -118,7 +118,7 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
                   {React.createElement(MODE_META[m].Icon, { size: 12 })} {t(MODE_META[m].labelKey)}
                   {opts.recommended === m && <SparkIcon size={9} />}
                 </span>
-                <b>{eur(o.eur_pp)}{m === 'car' ? t('day.perCarShort') : t('day.perPersonShort')}</b>
+                <b>{eurExact(o.eur_pp)}{m === 'car' ? t('day.perCarShort') : t('day.perPersonShort')}</b>
                 <small>{t('day.eachWay', { dur: fmtDur(o.hours * 60) })}</small>
               </button>
             ))}

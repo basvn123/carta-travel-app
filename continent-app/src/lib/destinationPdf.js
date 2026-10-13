@@ -282,7 +282,7 @@ export async function downloadDestinationPdf({
       : T('dest.flyTo', { iata: getting.airport })]);
   }
   if (getting.transit) glance.push([T('pdf.transit'), `${T(`dest.transit.${getting.transit}`)}${getting.why ? ` ${getting.why}` : ''}`]);
-  if (getting.car_needed != null) glance.push([T('pdf.car'), getting.car_needed ? `${T('dest.carYes')}${getting.rental_eur_day != null ? ` ${T('dest.carRental', { eur: getting.rental_eur_day })}` : ''}` : T('dest.carNo')]);
+  if (getting.car_needed != null) glance.push([T('pdf.car'), getting.car_needed ? `${T('dest.carYes')}${getting.rental_eur_day != null ? ` ${T('dest.carRental', { eur: eurFmt(getting.rental_eur_day) })}` : ''}` : T('dest.carNo')]);
   if (d.practical?.book_ahead?.length) glance.push([T('pdf.bookAhead'), d.practical.book_ahead.join(', ')]);
   if (d.practical?.rhythm) glance.push([T('pdf.rhythm'), d.practical.rhythm]);
   if (d.water?.rating) glance.push([T('pdf.water'), `${d.water.rating}${d.water.excellent_pct != null ? `, ${T('dest.waterShare', { pct: d.water.excellent_pct, n: d.water.n_sites })}` : ''}`]);
@@ -592,6 +592,7 @@ export async function downloadDestinationPdf({
     if (args.from_m) args.from = MONTHS[args.from_m - 1];
     if (args.to_m) args.to = MONTHS[args.to_m - 1];
     if (args.month) args.month = MONTHS[args.month - 1];
+    if (args.rental_eur != null) args.rental_eur = eurFmt(args.rental_eur);
     return args;
   };
   if (tips.length) {

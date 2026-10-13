@@ -487,7 +487,7 @@ const TripCard = React.memo(function TripCard({ card, km, onOpen, t, countryName
     <span className="places-card-price"
       title={price.mode === 'plane' ? t('places.priceNoFlight') : undefined}>
       {eur(price.pp)}
-      <small>/pp</small>
+      <small> {t('money.perPerson')}</small>
     </span>
   ) : null;
   return (
