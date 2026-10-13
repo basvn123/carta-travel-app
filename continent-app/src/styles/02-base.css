@@ -12,10 +12,10 @@ html, body, #root {
 
 body {
   font-family: var(--ui);
-  font-size: 14px;
-  line-height: 1.45;
-  color: var(--ink);
-  background: var(--paper);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text);
+  background: var(--surface-page);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   /* T421 (Lagoon): one family for prose and figures, so every number lines
@@ -74,11 +74,11 @@ input, select {
 /* Slider thumbs grow under the finger. The dual range input ignores pointer
    events except on its thumbs, so :active still fires from a thumb press. */
 .dual-range-input:active::-webkit-slider-thumb,
-.single-range:active::-webkit-slider-thumb { scale: 1.3; background: var(--accent-bg); }
+.single-range:active::-webkit-slider-thumb { scale: 1.3; background: var(--action-tint); }
 .dual-range-input:active::-moz-range-thumb,
-.single-range:active::-moz-range-thumb { scale: 1.3; background: var(--accent-bg); }
+.single-range:active::-moz-range-thumb { scale: 1.3; background: var(--action-tint); }
 .trip-slider-input:active { opacity: 0.8; }
-.trip-slider:has(.trip-slider-input:active) .trip-slider-label b { color: var(--accent); }
+.trip-slider:has(.trip-slider-input:active) .trip-slider-label b { color: var(--action); }
 @media (prefers-reduced-motion: reduce) {
   .dual-range-input:active::-webkit-slider-thumb,
   .single-range:active::-webkit-slider-thumb,
@@ -93,7 +93,7 @@ input, select {
    :focus-visible rule (an inset ring, an ink ring on an accent fill, an
    input's accent border) still wins. */
 :where(a[href], button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 

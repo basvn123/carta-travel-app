@@ -27,19 +27,19 @@
 .header-nav-item,
 .bottom-nav-item,
 .plan-chooser-item { text-decoration: none; }
-.app-header-brand { color: var(--ink); min-height: var(--tap); }
+.app-header-brand { color: var(--text); min-height: var(--tap); }
 
 /* The count chip (carta-design "Count chip"): the shortlist's size after
-   My trips, mono on paper-dim, never the accent. */
+   My trips, a figure on --surface-sunken at the 12 px figure floor, never teal. */
 .nav-count {
   display: inline-block;
   min-width: 18px;
   padding: 0 var(--space-1);
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 11px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-caption);
   font-weight: 600;
   line-height: 16px;
   font-variant-numeric: tabular-nums;
@@ -51,24 +51,25 @@
   left: calc(50% + var(--space-2));
 }
 
-/* The state dot: a plan in progress, 6 px ink fill. On the raised plus it
-   sits on the ring's edge with a card-white border so it reads on the ring. */
+/* The state dot: a plan in progress, 6 px of --text. On the plus it sits on
+   the ring's edge with a white border so it reads on the ring. On the active
+   (tinted) desktop item it takes the selected ink. */
 .nav-dot {
   display: inline-block;
   flex: none;
   width: 6px;
   height: 6px;
-  border-radius: 999px;
-  background: var(--ink-fill);
+  border-radius: var(--radius-pill);
+  background: var(--text);
 }
-.header-nav-item.active .nav-dot { background: var(--paper); }
+.header-nav-item.active .nav-dot { background: var(--select-ink); }
 .bottom-nav-plus { position: relative; }
 .bottom-nav-plus .nav-dot {
   position: absolute;
   top: var(--space-1);
   right: var(--space-1);
   box-sizing: content-box;
-  border: 2px solid var(--bg-card);
+  border: 2px solid var(--surface);
 }
 
 /* The settings line (carta-design "Settings line"): one band under the
@@ -83,7 +84,7 @@
   min-width: 0;
   min-height: var(--tap);
   padding: 0 var(--space-5);
-  border-top: 1px solid var(--rule-soft);
+  border-top: 1px solid var(--border-soft);
   font-family: var(--ui);
 }
 .settings-line-parts {
@@ -96,7 +97,7 @@
      one. */
   overflow: hidden;
 }
-.settings-line-parts > * + * { border-left: 1px solid var(--rule-soft); }
+.settings-line-parts > * + * { border-left: 1px solid var(--border-soft); }
 .settings-slot,
 .settings-line .origin-picker.is-settings {
   display: flex;
@@ -111,30 +112,30 @@
   min-width: var(--tap);
   padding: 0 var(--space-3);
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   background: transparent;
-  color: var(--ink);
+  color: var(--text);
   font: inherit;
   white-space: nowrap;
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out);
 }
-.settings-part-label { font-size: 13px; color: var(--ink-soft); }
-.settings-part-value { font-size: 13px; font-weight: 500; color: var(--ink); }
+.settings-part-label { font-size: var(--text-label); color: var(--text-2); }
+.settings-part-value { font-size: var(--text-label); font-weight: 500; color: var(--text); }
 .settings-origin-city { margin-right: var(--space-1); }
 .settings-part-lifestyle .settings-part-value { display: inline-flex; gap: var(--space-2); }
-.settings-vibe { color: var(--ink-soft); font-weight: 400; }
+.settings-vibe { color: var(--text-2); font-weight: 400; }
 .settings-line .is-mono,
 .settings-pop .is-mono {
-  font-family: var(--mono);
+  font-family: var(--font);
   font-variant-numeric: tabular-nums;
 }
-.settings-part[aria-expanded="true"] { background: var(--paper-dim); }
+.settings-part[aria-expanded="true"] { background: var(--surface-sunken); }
 @media (hover: hover) {
-  .settings-part:hover { background: var(--paper-dim); }
+  .settings-part:hover { background: var(--surface-sunken); }
 }
 .settings-part:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: -2px;
 }
 .settings-currency {
@@ -142,8 +143,8 @@
   align-items: center;
   flex: none;
   padding: 0 var(--space-3);
-  font-size: 13px;
-  color: var(--ink-soft);
+  font-size: var(--text-label);
+  color: var(--text-2);
   white-space: nowrap;
 }
 .settings-line-extra {
@@ -190,10 +191,10 @@
   max-height: calc(100dvh - var(--filter-h) - var(--bottom-nav-h) - var(--space-5));
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  box-shadow: var(--shadow-2);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--radius-control);
+  box-shadow: var(--elev-2);
   animation: settings-pop-in var(--dur-3) var(--ease-out);
 }
 .settings-pop {
@@ -216,87 +217,31 @@
   .settings-line .origin-picker.is-settings .origin-pop { animation: none; }
   .settings-part { transition: none; }
 }
-.settings-ends {
+/* Which end of the trip the next calendar pick sets: the kit Segmented
+   (T426), each segment a word over a date. */
+.settings-ends { margin-bottom: var(--space-3); }
+.settings-ends .seg-item { padding-block: var(--space-2); }
+.settings-end-text {
   display: flex;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-}
-.settings-end {
-  display: inline-flex;
-  flex: 1;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 2px;
-  min-height: var(--tap);
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+  line-height: var(--leading-ui);
 }
-.settings-end-label { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
-/* The selected state (carta-design "Selected state"): ink fill. */
-.settings-end.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-.settings-end.on .settings-end-label { color: var(--select-ink); }
-.settings-note {
-  margin: var(--space-2) 0 0;
-  font-size: 13px;
-  color: var(--ink-soft);
-}
-.settings-text-btn {
-  min-height: var(--tap);
-  margin-top: var(--space-2);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
+.settings-end-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.seg-item.is-selected .settings-end-label { color: var(--text); }
+.settings-text-btn { margin-top: var(--space-2); }
+/* The six languages: kit filter chips, wrapping. */
 .settings-langs {
   display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
-.settings-lang {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
-  width: 100%;
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 14px;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+.settings-note {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-label);
+  color: var(--text-2);
 }
-.settings-lang .is-mono { font-size: 12px; color: var(--ink-soft); }
-@media (hover: hover) {
-  .settings-lang:hover:not(.on),
-  .settings-text-btn:hover { background: var(--paper-dim); }
-}
-.settings-lang.on { background: var(--select-bg); color: var(--select-ink); }
-.settings-lang.on .is-mono { color: var(--select-ink); }
-@media (prefers-reduced-motion: reduce) {
-  .settings-end,
-  .settings-lang { transition: none; }
-}
-
 /* Loading inside the tab (carta-design "Loading"): a still paper-dim block
    in the tab's own region, under the top bar and above the bottom nav, so
    both stay usable while a planner chunk or the full catalogue arrives. */
@@ -308,7 +253,7 @@
   bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
   overflow: hidden;
   padding: var(--space-4);
-  background: var(--paper);
+  background: var(--surface-page);
 }
 .tab-fallback .state-skel {
   max-width: 1180px;
@@ -372,7 +317,7 @@
    the 4.5:1 floor (verify_quality_floor, three Explore views). Ink on the
    tint passes; the tint itself goes in V4 (T391, "no tint on the Lifestyle
    door"). */
-.lifestyle-btn .lifestyle-btn-vibe { color: var(--ink); }
+.lifestyle-btn .lifestyle-btn-vibe { color: var(--text); }
 
 /* --------------------------------------------------------------------------
    V4 (T391): visual and dynamic
@@ -383,45 +328,45 @@
    avatar is a secondary round button rather than an accent disc
    (16-auth.css), and the Lifestyle door carries no tint and no accent glyph
    (DIRECTION.md part 9, "no tint on the Lifestyle door"). */
-.app-header-brand .brand-name { color: var(--ink); }
-.header-friends-btn svg { color: var(--ink-soft); }
+.app-header-brand .brand-name { color: var(--text); }
+.header-friends-btn svg { color: var(--text-2); }
 .account-avatar-btn { box-shadow: none; }
 .account-avatar {
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
-  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
 }
-.account-avatar-btn.on .account-avatar { border-color: var(--on-fill); }
+.account-avatar-btn.on .account-avatar { border-color: var(--select-border); }
 .lifestyle-btn {
-  border-color: var(--rule);
+  border-color: var(--border);
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--text-2);
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.lifestyle-btn .lifestyle-btn-icon { color: var(--ink-soft); }
-.lifestyle-btn-vibe::before { background: var(--rule); }
+.lifestyle-btn .lifestyle-btn-icon { color: var(--text-2); }
+.lifestyle-btn-vibe::before { background: var(--border); }
 /* Not wrapped: it cancels the accent hover that 24-destination-workspace.css
    still draws without a hover guard, on a touch screen too. */
 @media (hover: hover) {
-  .lifestyle-btn:hover { border-color: var(--rule); background: transparent; color: var(--ink-soft); }
+  .lifestyle-btn:hover { border-color: var(--border); background: transparent; color: var(--text-2); }
 }
 @media (hover: hover) {
-  .lifestyle-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); color: var(--ink); }
+  .lifestyle-btn:hover { border-color: var(--text-2); background: var(--surface-sunken); color: var(--text); }
 }
-.lifestyle-btn:active { background: var(--paper-dim); }
+.lifestyle-btn:active { background: var(--surface-sunken); }
 
-/* The active section (rules R4 and R5): one --ink-fill pill per navigation
+/* The active section (rules R4 and R5): one --select-bg pill per navigation
    row, placed and slid by useNavMarker() (src/lib/motion.js). The pill is
    what moves; the active desktop tab takes the same fill, and its words or
-   the phone icon turn --on-fill, only as the pill arrives (the fill and the
-   colour wait out most of the slide), so the words always sit on ink. */
+   the phone icon turn --select-ink, only as the pill arrives (the fill and
+   the colour wait out most of the slide). */
 .header-nav { position: relative; }
 .nav-marker {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   background: var(--select-bg);
   pointer-events: none;
   opacity: 0;
@@ -433,17 +378,16 @@
 .header-nav-item.active,
 .bottom-nav-item.active .bottom-nav-icon { transition-delay: calc(var(--dur-2) - var(--dur-1)); }
 .header-nav-item.active { background: var(--select-bg); color: var(--select-ink); }
-.header-nav-item.active .nav-dot { background: var(--on-fill); }
 .bottom-nav-item.active .bottom-nav-label { font-weight: 600; color: var(--select-ink); }
 /* 24-destination-workspace.css still marks the phone tab in the accent (and
    turns a hovered one accent); the pill is the mark now, the words are ink. */
 .bottom-nav-item.active { color: var(--select-ink); }
 /* Not wrapped, for the same reason: they cancel the unguarded accent hover. */
 @media (hover: hover) {
-  .bottom-nav-item:hover { color: var(--ink-soft); }
+  .bottom-nav-item:hover { color: var(--text-2); }
 }
 @media (hover: hover) {
-  .bottom-nav-item.active:hover { color: var(--ink); }
+  .bottom-nav-item.active:hover { color: var(--text); }
 }
 @media (min-width: 769px) {
   /* The accent underline goes; the pill is the active state on both widths. */
@@ -451,7 +395,7 @@
   .header-nav-item {
     margin: 0 1px;
     padding: 8px 10px;
-    border-radius: 6px;
+    border-radius: var(--radius-control);
   }
   .header-nav-item.active { background: var(--select-bg); color: var(--select-ink); }
 }
@@ -483,8 +427,8 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   html.tab-vt::view-transition-new(root) { animation: none; }
 }
 
-/* The dialog family (rules R7 and R10): one scrim, one close, 12 px, the
-   one dialog shadow; arriving in --dur-3, leaving in --dur-2. */
+/* The dialog family (rules R7 and R10; Lagoon, T426): one scrim, one close,
+   --radius-sheet, --elev-3; arriving in --dur-3, leaving in --dur-2. */
 @keyframes shell-scrim-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes shell-scrim-out { from { opacity: 1; } to { opacity: 0; } }
 @keyframes shell-dialog-in {
@@ -498,14 +442,14 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
 @keyframes shell-sheet-in { from { transform: translateY(100%); } to { transform: none; } }
 @keyframes shell-sheet-out { from { transform: none; } to { transform: translateY(100%); } }
 .shell-scrim {
-  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  background: color-mix(in srgb, var(--text) 28%, transparent);
   backdrop-filter: none;
   animation: shell-scrim-in var(--dur-3) var(--ease-out);
 }
 .shell-dialog {
   position: relative;
-  border-radius: 12px;
-  box-shadow: var(--shadow-2);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-3);
   animation: shell-dialog-in var(--dur-3) var(--ease-out);
 }
 .shell-close {
@@ -517,17 +461,17 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   height: var(--tap);
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--text-2);
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.shell-close:active { background: var(--paper-dim); color: var(--ink); }
+.shell-close:active { background: var(--surface-sunken); color: var(--text); }
 @media (hover: hover) {
-  .shell-close:hover { background: var(--paper-dim); color: var(--ink); }
+  .shell-close:hover { background: var(--surface-sunken); color: var(--text); }
 }
-.shell-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shell-close:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .shell-dialog > .shell-close {
   position: absolute;
   top: var(--space-2);
@@ -540,10 +484,8 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   z-index: 1;
   display: flex;
   margin: 0 0 calc(-1 * var(--tap)) auto;
-  background: var(--paper);
+  background: var(--surface);
 }
-/* The filter sheets' close takes the same look. */
-.fsheet-close { border-radius: 6px; }
 @media (prefers-reduced-motion: reduce) {
   .shell-scrim, .shell-dialog { animation: none; }
   .shell-close { transition: none; }
@@ -580,24 +522,24 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-5);
-  border-top: 1px solid var(--rule);
-  background: var(--paper);
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface);
 }
 .ls-trade {
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.4;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 .ls-trade-eur {
   display: inline-block;
-  font-family: var(--mono);
+  font-family: var(--font);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
 }
 /* The dialog's one primary: it closes, the prices behind are already set. */
 .ls-done {
@@ -605,21 +547,21 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   min-height: var(--tap);
   margin-left: auto;
   padding: 0 var(--space-5);
-  border: 1px solid var(--accent);
-  border-radius: 6px;
-  background: var(--accent);
-  color: var(--on-fill);
+  border: 1px solid var(--action);
+  border-radius: var(--radius-control);
+  background: var(--action);
+  color: var(--action-text);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
-.ls-done:active { background: var(--accent-press); border-color: var(--accent-press); transform: scale(0.97); }
+.ls-done:active { background: var(--action-press); border-color: var(--action-press); transform: scale(0.97); }
 @media (hover: hover) {
-  .ls-done:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .ls-done:hover { background: var(--action-hover); border-color: var(--action-hover); }
 }
-.ls-done:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ls-done:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 @media (max-width: 768px) {
   /* A sheet: it rises from the bottom over the one scrim, above the bottom
      nav in z-order so the bar never covers its foot (brief V4-6), with a
@@ -636,9 +578,8 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
     max-width: none;
     max-height: calc(100dvh - var(--space-7));
     border: 0;
-    border-top: 1px solid var(--rule);
-    border-radius: 12px 12px 0 0;
-    box-shadow: var(--shadow-2);
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    box-shadow: var(--elev-3);
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
     animation: shell-sheet-in var(--dur-3) var(--ease-out);
@@ -658,8 +599,8 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
     width: 40px;
     height: 4px;
     margin: var(--space-2) auto 0;
-    border-radius: 2px;
-    background: var(--rule);
+    border-radius: var(--radius-pill);
+    background: var(--border);
   }
   .lifestyle-panel .ls-close { top: var(--space-1); }
   .ls-foot {
@@ -690,20 +631,17 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
    chips"): --paper-dim, --ink and a --rule border, CloseIcon for the
    remove mark. Overrides the ochre chip of 25-feature-pages.css. */
 .xchip {
-  border: 1px solid var(--rule);
-  background: var(--paper-dim);
-  color: var(--ink);
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  color: var(--text);
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .xchip:hover { border-color: var(--rule); }
+  .xchip:hover { border-color: var(--text-2); }
 }
-@media (hover: hover) {
-  .xchip:hover { border-color: var(--ink-soft); }
-}
-.xchip:active { background: var(--rule-soft); }
-.xchip-x { display: inline-flex; color: var(--ink-soft); opacity: 1; }
-.xchip-clear { border-color: var(--rule); background: transparent; color: var(--ink-soft); }
+.xchip:active { background: var(--border-soft); }
+.xchip-x { display: inline-flex; color: var(--text-2); opacity: 1; }
+.xchip-clear { border-color: var(--border); background: transparent; color: var(--text-2); }
 @media (prefers-reduced-motion: reduce) {
   .xchip { transition: none; }
 }
@@ -742,8 +680,8 @@ html [data-focus-quiet]:focus,
 html [data-focus-quiet]:focus-visible { outline-color: transparent; }
 
 /* The crash and maintenance screens are the same block (brief V5-6): one
-   sentence and the way out, in the dialog family's 12 px. */
-.crash-card { border-radius: 12px; }
+   sentence and the way out, in the dialog family's --radius-sheet. */
+.crash-card { border-radius: var(--radius-sheet); }
 .crash-title { margin: 0 0 var(--space-3); }
 .maintenance-card .state-err {
   align-items: center;
@@ -751,9 +689,9 @@ html [data-focus-quiet]:focus-visible { outline-color: transparent; }
   padding: 0;
 }
 .maintenance-card .state-err-msg {
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--ink-soft);
+  font-size: var(--text-lead);
+  line-height: var(--leading-body);
+  color: var(--text-2);
 }
 .maintenance-card .state-err-actions { justify-content: center; }
 
@@ -762,12 +700,9 @@ html [data-focus-quiet]:focus-visible { outline-color: transparent; }
    the 32 to 38 px they had). Row T381-d. */
 @media (pointer: coarse) {
   .header-nav-item,
-  .header-pricing-btn,
-  .header-friends-btn,
   .account-avatar-btn,
   .account-signin-btn { min-height: var(--tap); }
-  .account-avatar-btn,
-  .header-friends-btn { min-width: var(--tap); }
+  .account-avatar-btn { min-width: var(--tap); }
 }
 
 /* Safe areas (brief V5-4). The header takes the top and side insets, the bar
@@ -820,7 +755,7 @@ html.kbd-open .bottom-nav { display: none; }
 @media (max-width: 768px) and (pointer: coarse) {
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="color"]):not([type="file"]),
   textarea,
-  select { font-size: max(16px, 1em); }
+  select { font-size: var(--text-lead); }
 }
 
 /* A narrow cost bar segment (a 39 px share of the bar) gets a 44 px hit box
@@ -834,7 +769,7 @@ html.kbd-open .bottom-nav { display: none; }
 /* ── T411, the V6 consistency pass ─────────────────────────────────────────
    The one close control (carta-design "Close control"): every .panel-close
    (the destination page bar on desktop, the sign-in dialog, the guides
-   panel) sits on paper, so it is CloseIcon at 16 px in a --tap box on a
+   panel) sits on the white surface, so it is CloseIcon at 16 px in a --tap box on a
    transparent ground, --ink-soft, never the dark disc it was built as when
    it sat on a photograph. */
 .panel-close,
@@ -842,13 +777,13 @@ html.kbd-open .bottom-nav { display: none; }
   width: var(--tap);
   height: var(--tap);
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 @media (hover: hover) {
   .panel-close:hover,
-  .dsheet-bar.is-stuck .panel-close:hover { background: var(--paper-dim); color: var(--ink); border-color: transparent; }
+  .dsheet-bar.is-stuck .panel-close:hover { background: var(--surface-sunken); color: var(--text); border-color: transparent; }
 }
 /* The shared date trigger reaches the tap floor on touch (row T410-f); the
    MonthStrip's info button keeps 32 px on a fine pointer, not 28 (row
@@ -860,3 +795,32 @@ html.kbd-open .bottom-nav { display: none; }
   .mstrip-info { width: 32px; height: 32px; }
 }
 .date-field-trigger { transition: border-color var(--dur-1) var(--ease-out); }
+
+/* --------------------------------------------------------------------------
+   T426 (roadmap 1.2): the shell on the Lagoon kit
+   -------------------------------------------------------------------------- */
+
+/* Get a pass and Friends are kit secondaries (Button size sm). Their old
+   classes (.header-pricing-btn, .header-friends-btn) still carry rules in
+   16-auth, 23, 24 and 26; those rules no longer match anything and go with
+   their own surfaces. */
+.shell-pass-btn,
+.shell-friends-btn { white-space: nowrap; }
+@media (pointer: coarse) {
+  .shell-pass-btn,
+  .shell-friends-btn { min-width: var(--tap); }
+}
+.shell-friends-btn[aria-pressed="true"] {
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
+}
+/* The narrowest phones keep the glyph alone; the name stays in aria-label. */
+@media (max-width: 379px) {
+  .shell-pass-btn .btn-label { display: none; }
+}
+/* On desktop Friends folds to its icon beside the avatar, as before. */
+@media (min-width: 769px) {
+  .shell-friends-btn { min-width: 32px; padding: 0 var(--space-2); }
+  .shell-friends-btn .btn-label { display: none; }
+}

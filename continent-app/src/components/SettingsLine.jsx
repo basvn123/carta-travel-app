@@ -7,6 +7,7 @@ import { OriginPicker } from './OriginPicker.jsx';
 import { DateField } from './DateField.jsx';
 import { Stepper } from './FilterControls.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
+import { Button, Chip, Segmented } from './ui/index.js';
 
 /**
  * The settings line (T381; carta-design "Settings line", DIRECTION.md rule
@@ -226,23 +227,25 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
             />
             {open === 'dates' && (
               <SettingsPop id={`${baseId}-dates`} label={t('settings.dates')} anchorRef={datesRef} onClose={close}>
-                {/* One calendar for both ends: the two ends above it say which
-                    one the next pick sets (the selected state, ink fill), and
+                {/* One calendar for both ends: the kit Segmented above it says
+                    which end the next pick sets (the lifted thumb, T426), and
                     a pick of the leaving day keeps the trip's length. */}
-                <div className="settings-ends" role="group" aria-label={t('settings.dates')}>
-                  {['start', 'end'].map((end) => (
-                    <button
-                      key={end}
-                      type="button"
-                      className={`settings-end${pickEnd === end ? ' on' : ''}`}
-                      aria-pressed={pickEnd === end}
-                      onClick={() => setPickEnd(end)}
-                    >
-                      <span className="settings-end-label">{t(end === 'start' ? 'settings.leave' : 'settings.return')}</span>
-                      <span className="is-mono">{shortDate(end === 'start' ? s.departDate : s.returnDate)}</span>
-                    </button>
-                  ))}
-                </div>
+                <Segmented
+                  block
+                  className="settings-ends"
+                  label={t('settings.dates')}
+                  value={pickEnd}
+                  onChange={setPickEnd}
+                  options={['start', 'end'].map((end) => ({
+                    value: end,
+                    label: (
+                      <span className="settings-end-text">
+                        <span className="settings-end-label">{t(end === 'start' ? 'settings.leave' : 'settings.return')}</span>
+                        <span className="is-mono">{shortDate(end === 'start' ? s.departDate : s.returnDate)}</span>
+                      </span>
+                    ),
+                  }))}
+                />
                 <DateField
                   inline
                   value={pickEnd === 'start' ? s.departDate : s.returnDate}
@@ -257,8 +260,9 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
                 </p>
                 {ownDates ? (
                   s.defaultDates && (
-                    <button
-                      type="button"
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       className="settings-text-btn"
                       onClick={() => {
                         s.setDepartDate(s.defaultDates.start);
@@ -268,7 +272,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
                       }}
                     >
                       {t('settings.useCartaDates')}
-                    </button>
+                    </Button>
                   )
                 ) : (
                   <p className="settings-note">{t('settings.cartaDates')}</p>
@@ -339,22 +343,20 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
             />
             {open === 'language' && (
               <SettingsPop id={`${baseId}-language`} label={t('settings.language')} anchorRef={langRef} onClose={close}>
-                <ul className="settings-langs">
+                {/* Six kit filter chips (T426): the one selected state, a tint
+                    and a tick. A pick sets the language and closes, as before. */}
+                <div className="settings-langs" role="group" aria-label={t('settings.language')}>
                   {languages.map((l) => (
-                    <li key={l.code}>
-                      <button
-                        type="button"
-                        lang={l.bcp47}
-                        className={`settings-lang${l.code === lang ? ' on' : ''}`}
-                        aria-pressed={l.code === lang}
-                        onClick={() => { setLang(l.code); close(); langRef.current?.focus(); }}
-                      >
-                        <span>{l.label}</span>
-                        <span className="is-mono" aria-hidden="true">{l.code.toUpperCase()}</span>
-                      </button>
-                    </li>
+                    <Chip
+                      key={l.code}
+                      lang={l.bcp47}
+                      selected={l.code === lang}
+                      onClick={() => { setLang(l.code); close(); langRef.current?.focus(); }}
+                    >
+                      {l.label}
+                    </Chip>
                   ))}
-                </ul>
+                </div>
               </SettingsPop>
             )}
           </div>

@@ -1388,7 +1388,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T421-f | T421 | Owner looks at every tab on a phone after the Lagoon re-skin (plan checkpoint) | user | open |  |
 | T422-a | T422 | The kit is built but the tabs do not use it yet; each tab's migration (T426 onward) swaps in Button, Chip, Card, Field and deletes the legacy rules | next task | open | after T424 |
 | T422-b | T422 | Trip wizard current step mark and a few data marks keep dark ink; the stepper becomes one shared component in its migration | next task | open |  |
-| T422-c | T422 | The phone plus button now draws as a tint circle; DESIGN.md (T360) asks for --bg-card with a border; settle in the shell migration | next task | open |  |
+| T422-c | T422 | The phone plus button now draws as a tint circle; DESIGN.md (T360) asks for --bg-card with a border; settle in the shell migration | next task | closed by T426 |  |
 | T423-a | T423 | Destination PDF still prints EUR 12 through its own helpers; move it to formatMoney with its fonts (with T421-b) | next task | open |  |
 | T423-b | T423 | Nine i18n keys lost their euro sign but have no caller (filter.perDirection, detail.eachLocalRate, detail.perNightApprox, detail.perDayApprox, detail.perTwoDirections, detail.rentalMetaMany/One, detail.viaGround, dest.tripTotal); delete in a dead-string pass | next task | open |  |
 | T423-c | T423 | journey.fltBetween, brief.dayCostRange and match.budget still join figures with a literal word (match.budget spells out euros); move to formatMoneyRange in their tab migrations | next task | open |  |
@@ -1399,6 +1399,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T425-a | T425 | Confirm the skill's call: the cheapest pin in view takes the best-value sun marker instead of teal (code still draws it teal) | user | closed by T436 |  |
 | T425-b | T425 | Receipt footer used --accent-bg, now the same teal tint as selection; the receipt migration picks a distinct quiet tint | next task | open |  |
 | T425-c | T425 | Kit positive status chip (green tint and text) vs the T380 'status, not green' rule; skill scopes it to short data labels, owner may prefer ink plus a dot | user | closed by T436 |  |
-| T425-d | T425 | 02-base.css sets body type with literals and reads legacy token names; move onto roles in the shell migration | next task | open |  |
+| T425-d | T425 | 02-base.css sets body type with literals and reads legacy token names; move onto roles in the shell migration | next task | closed by T426 |  |
 | T425-e | T425 | Per-surface migration T426 to T435 runs in another session from Roadmap/1.2-migration-handoff.md | next task | open |  |
 | T436-a | T436 | scripts/og/check.mjs: two share-card text fits fail (site square, beach-es-trenc og) with the Lagoon tokens; part of T421-b (share cards to Figtree) | next task | open |  |
+| T426-a | T426 | Five shell buttons stay raw (header My trips and avatar, bottom nav My trips and Account, the settings-line part): the kit has no nav item; owner picks a kit NavItem or URLs for My trips and Account so they become links | user | open |  |
+| T426-b | T426 | Dead .header-pricing-btn, .header-pricing-label* and .header-friends-btn rules in 16-auth, 23, 24 and 26 match nothing after T426; delete in those surfaces' migrations | next task | open |  |
+| T426-c | T426 | 10-shell.css still holds Explore's origin picker, map guide, kind rail and drive prompt rules (on roles now); T427 migrates their JSX and moves the rules to Explore's CSS | next task | open |  |
+| T426-d | T426 | Explore's floating List/Map toggle is a dark-filled segmented control; T427 puts it on the kit Segmented | next task | open |  |
+| T426-e | T426 | Owner checks the migrated shell on a phone against the 1.3a sketch once it exists (no sketch yet; T426 followed carta-design) | user | open |  |
