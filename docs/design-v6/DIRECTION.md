@@ -1,5 +1,7 @@
 # Design direction v6
 
+> **Superseded in part by Lagoon (2026-10-13, T419 to T425).** The look is now Lagoon: white on warm light grey, blue-grey ink, lagoon teal for actions, selection as a light tint (never `--ink-fill`), one typeface (Figtree) with tabular figures and no separate mono face, plum for hidden gems. Where this file and DESIGN.md or the carta-design skill disagree on colour, type, selection, radius or elevation, those win. The structural rules here (motion, the receipt, detail page grammar, the phone, the planning journey) still hold unless DESIGN.md says otherwise. Live reference: `/?styleguide`.
+
 Written by T380 (design wave V2, 2026-10-08) from the ten surface briefs in `docs/design-v6/briefs/`, the research in `TRIP-PLANNING-RESEARCH.md`, PRODUCT.md, DESIGN.md and the carta-design skill. The owner delegated the design calls in this pass to this session on 2026-10-07, inside the locked palette and type; every call below is recorded so the owner can overrule it later. Precedence stays as the waves state it: carta-design and DESIGN.md win over this file, this file wins over impeccable, the research and taste. A pattern this file does not cover is not built; it becomes a register row for the next wave.
 
 This file was committed first as the plan for T380 and then carried out. Part 10 lists what the plan changes in which file.

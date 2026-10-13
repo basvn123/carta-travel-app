@@ -1,5 +1,7 @@
 # Component roles: which outside library to read for what, and how a lifted component becomes Carta's
 
+> **T422 (2026-10-13):** Carta now has its own kit in `continent-app/src/components/ui/` (Button, IconButton, Chip, Segmented, Tabs, Card, Field, Icon, Money), styled in `03-button.css` and `04-ui.css` on the Lagoon roles. Reach for the kit first; read an outside library only for a component the kit does not have, under the rules below. The colour and type words below (terracotta, `--ink-fill` selection, mono figures) are historical; DESIGN.md has the current values.
+
 This is the standing rule for bringing a component from an outside UI library into Carta. It was written by T197 on 2026-10-02. It adopts nothing. It decides which library is worth reading for which job, what a component has to go through before it ships, and which libraries stay out.
 
 Read PRODUCT.md, DESIGN.md and the carta-design skill first. When this file and the skill disagree, the skill wins; on colour and type, DESIGN.md records what the skill's banner decided.
