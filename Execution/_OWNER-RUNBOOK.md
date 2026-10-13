@@ -9,6 +9,10 @@ owner row from 4 October appears below under its id, so nothing was dropped.
 
 ## Progress (newest first)
 
+- **2026-10-13 (design waves V1 to V6).** All six design waves are merged (not
+  pushed) and the build is on the preview https://design.carta-app.pages.dev.
+  Your steps for them are the new block L: ship it (L1), housekeeping (L2), the
+  decisions (L3), one real-phone pass (L4) and the translation review (L5).
 - **2026-10-07 evening (T413).** Blocks C and D done, E nearly done. A catalog probe
   (`Execution/P11/T362-live-migration-probe.sql` and `-2.sql`) showed that 017 to 024,
   028 to 030 and 032 to 043 were already live, so stage 2 shrank to seven pastes: the owner
@@ -70,6 +74,7 @@ when you have typed the command.
 | I | Paid Gemini runs | approve each spend cap | the P9 measurements |
 | J | Business, then Stripe | weeks (entity), then 2 h | wave 20 |
 | K | Launch | your calendar | wave 21 |
+| L | Design waves V1 to V6 | 1 h to ship, then reading and a phone pass | users see the design waves; the number and product calls the next design work waits on |
 
 ## The automation, once a gate is open
 
@@ -739,6 +744,115 @@ counts back from it (`Execution/P12/T220-launch-runway.md`).
 - [ ] **K9. After launch:** field Core Web Vitals after a month of traffic
   (T200-g), the first indexed dates into the T239 sheet (T222-f), and the
   answer-time line in the Terms (T216-b).
+
+---
+
+# Block L. The design waves V1 to V6: what only you can do
+
+Added 2026-10-13, after the Wave V6 log line. Waves V1 to V6 are merged on `main`
+and `master` (not pushed). The newest build is on the preview
+https://design.carta-app.pages.dev (deploy f90ca4fe); production still runs the
+block C build of 2026-10-07. Start with `docs/design-v6/MORNING.md` and the
+before and after gallery at
+`C:\Users\Gebruiker\Documents\Portfolio\design-v6-shots\index.html`. Each item
+below is one or more rows in `_OPEN.md`; the row wins on detail.
+
+## L1. Ship it (about 1 hour, in this order)
+
+- [ ] **L1.1 Data push (T412-b).** From `continent-app/`, with the Cloudflare and
+  `RCLONE_CONFIG_R2_*` variables exported: `node scripts/r2/push-data.mjs --live`
+  (phase 1 only). Check: `curl -sI https://data.carta-europetravel.com/data/trails/stubs/AL.json`
+  answers 200, then spot check two other country stubs. Do NOT add `--prune`
+  until T413-a is fixed: it would delete `data/status.json`.
+- [ ] **L1.2 Look at the preview once more** on a phone and a laptop: Explore, a
+  town, a trail, a journey, both planners, My trips.
+- [ ] **L1.3 Deploy production (T412-a, block C steps C3 and C4).**
+  `npm run build:pages`, then
+  `npx wrangler pages deploy dist --project-name carta-app --branch main`,
+  then the C4 checks. Merging or pushing to `main` deploys nothing: production
+  is a direct upload (T293). Delete `dist/` and `dist-data/` afterwards.
+- [ ] **L1.4 Push (optional).** `git push origin main`, so GitHub and a future
+  box clone see the design waves.
+- Known after the deploy: the destination forecast stays blocked until
+  `api.open-meteo.com` is in the CSP `connect-src` (T221-h, T413-b, with the
+  Open-Meteo decision in J5). That is a code task, not yours.
+
+## L2. Housekeeping (5 minutes)
+
+- [ ] **L2.1** Stop two stale `vite preview` servers left by wave V5, process ids
+  5860 (port 4209) and 27388 (port 4213):
+  `Stop-Process -Id 5860,27388`. They make the regions, route_page and trip_page
+  harnesses test an old build, and they hold the empty folders `wt/T404-app`,
+  `wt/T407-app` and `wt/T411-app` open; delete those three folders afterwards.
+- [ ] **L2.2** Playwright 1.61.1 asks for browser builds the shared cache does not
+  hold (T394-g); harnesses work round it. Align the package and the cache when
+  convenient.
+
+## L3. Decisions (read, then answer in one message)
+
+The number rules first, because three surfaces wait on them:
+
+- [ ] **L3.1 One day figure (T374-d, T411-b, T378-d, T392-c).** A town prices a
+  day on two bases (Rome €87 on the cost index against €99.54 on the receipt), and
+  one trip shows three figures across the planner, My trips and the day planner.
+  Choose the basis every surface reads.
+- [ ] **L3.2 Whole euros or two decimals (T372-e, T391-f).** Explore and the
+  Lifestyle figure print whole euros; PRODUCT.md and carta-design ask two decimals.
+- [ ] **L3.3 The shortlist star's colour (T393-d).** It fills with the accent,
+  against the rule that the accent is never a selection colour.
+- [ ] **L3.4 The pass dialog after the first plan (T411-e).** It opens by itself
+  the moment a trip is planned; may the first success be interrupted?
+
+Then the product calls:
+
+- [ ] **L3.5** First Destinations category for a new visitor: Trips or walks (T373-c).
+- [ ] **L3.6** The Destinations coverage line wording (T373-e).
+- [ ] **L3.7** Car trips, transport mode and baggage have no control on screen (T370-c).
+- [ ] **L3.8** Three planner strings still promise fare search; approve the new
+  wording (T377-c).
+- [ ] **L3.9** Does "What have you booked already?" stay the first wizard step (T377-d)?
+- [ ] **L3.10** Leg times and arrival clocks on day plan rows, which the August
+  rebuild removed (T378-e).
+- [ ] **L3.11** Record the price at save time so My trips can show price moves (T379-c).
+- [ ] **L3.12** The first photograph beside the destination head from 1024 px was
+  not built; overrule if you want it (T395-g).
+- [ ] **L3.13** Read the design calls made under your delegation in
+  `docs/design-v6/DIRECTION.md` part 9 (T380-a).
+
+Data-lane asks (a block F run, not a decision): a Europe-wide walks ranking and
+public-transport trail starts (T373-f), alternate town names for search (T384-h),
+monthly facts for beaches, mountains and walks (T394-b), and `cheapTips.json`
+in five languages (T377-f). The legal pages in five languages need a legal read
+(T401-h).
+
+## L4. One real-phone pass (about 45 minutes, after L1.3 or on the preview)
+
+- [ ] **L4.1 (T414-a).** On a real iPhone and a real Android phone, portrait and
+  landscape: Explore, a town, a trail, a journey, the trip planner with the
+  keyboard open, the day planner and My trips. Look for: the keyboard covering a
+  field or its button, the bottom bar under the notch and the home bar, scroll
+  momentum on the photo and day tracks, the share sheet, haptics and the press
+  feel, the install prompt, VoiceOver and TalkBack on the live total, the print
+  dialog on a journey, and Fraunces looking heavier on iOS (T401-c).
+  This one pass answers the per-surface phone rows: T380-f, T381-e, T382-f,
+  T383-i, T384-i, T385-f, T386-c, T387-f, T388-a, T389-d, T390-j, T391-b,
+  T392-g, T393-f, T394-d, T395-f, T396-b, T397-g, T398-a, T399-f, T401-b,
+  T402-f, T403-d, T404-b, T405-e, T406-a, T407-b, T408-a, T409-h, T410-a, T411-o.
+  Note what fails; close the rest.
+- [ ] **L4.2 (T405-c).** With an entitled account, force one failed destination
+  PDF export (airplane mode just before the click) and check the error line.
+
+## L5. Native translation review (when a native reader is available)
+
+- [ ] **L5.1** de, es, fr, it and nl strings written by the sessions, each row
+  lists its keys: T381-f, T382-e, T383-h, T384-j, T385-e, T386-b, T387-e
+  (183 strings, the largest), T388-b, T389-c, T390-k, T391-c, T392-f, T393-e,
+  T394-e, T395-e, T396-a, T397-f, T398-b, T401-a (100 strings), T402-e, T403-c,
+  T404-a, T405-d, T407-a, T409-a (217 keys per language), T410-b, T411-n (also
+  the shortlist word drifting inside es, fr, it and nl).
+
+Then say: "Block L: L1 deployed on <date>; my answers to L3 are ...; close the
+rows I checked."
 
 ---
 
