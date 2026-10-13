@@ -1369,3 +1369,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T412-c | T412 | verify_landing covfail passes on the dev server (69 of 69) and fails on a built vite preview; make the check robust against a cached coverage.json so a release run can use a build | next task | open |  |
 | T412-d | T412 | 10 V1 screenshots have no same-named later shot, so the gallery shows them alone; save an after-set with the same view names in the next design wave if the owner wants them paired | next task | open |  |
 | T412-e | T412 | regions (4213), route_page and trip_page (4209) hard-code stale-server ports and needed temporary copies in the release run; same fix as T411-l (CARTA_PORT), listed so the release run is not repeated by hand | next task | open |  |
+| T417-a | T417 | Approve or correct the design system plan in Roadmap/1.2-design-system-plan.md before T418 starts | user | open | before T418 |
+| T417-b | T417 | impeccable context resolves to continent-app/ and cannot see the root PRODUCT.md and DESIGN.md; make it load them before the direction round | next task | open | before T419 |
+| T417-c | T417 | Choose the one estimate notation (five in use today) from the T418 audit so formatMoney enforces one form | next task | open | before T422 |
