@@ -1,0 +1,1144 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T15:40:18.596Z",
+  "title": "Design System: Carta",
+  "extensions": {
+    "colorMeta": {
+      "neutral-0": {
+        "role": "neutral",
+        "displayName": "Neutral 0",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-25": {
+        "role": "neutral",
+        "displayName": "Neutral 25",
+        "canonical": "#fbfbfa",
+        "oklch": "oklch(98.8% 0.001 106.4)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-50": {
+        "role": "neutral",
+        "displayName": "Neutral 50",
+        "canonical": "#f6f5f2",
+        "oklch": "oklch(97.0% 0.004 91.4)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-100": {
+        "role": "neutral",
+        "displayName": "Neutral 100",
+        "canonical": "#efeeea",
+        "oklch": "oklch(94.9% 0.005 95.1)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-150": {
+        "role": "neutral",
+        "displayName": "Neutral 150",
+        "canonical": "#e9eae7",
+        "oklch": "oklch(93.5% 0.004 121.6)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-200": {
+        "role": "neutral",
+        "displayName": "Neutral 200",
+        "canonical": "#dcdfdd",
+        "oklch": "oklch(90.1% 0.004 157.2)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-300": {
+        "role": "neutral",
+        "displayName": "Neutral 300",
+        "canonical": "#c5cac8",
+        "oklch": "oklch(83.5% 0.006 170.4)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-600": {
+        "role": "neutral",
+        "displayName": "Neutral 600",
+        "canonical": "#5c6873",
+        "oklch": "oklch(51.1% 0.023 245.9)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-700": {
+        "role": "neutral",
+        "displayName": "Neutral 700",
+        "canonical": "#44515c",
+        "oklch": "oklch(42.8% 0.025 243.9)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-800": {
+        "role": "neutral",
+        "displayName": "Neutral 800",
+        "canonical": "#2e3a44",
+        "oklch": "oklch(34.2% 0.024 243.7)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "neutral-900": {
+        "role": "neutral",
+        "displayName": "Neutral 900",
+        "canonical": "#1f2a33",
+        "oklch": "oklch(27.9% 0.023 243.4)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "lagoon-50": {
+        "role": "primary",
+        "displayName": "Lagoon 50",
+        "canonical": "#eef7f7",
+        "oklch": "oklch(96.9% 0.010 197.0)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "lagoon-100": {
+        "role": "primary",
+        "displayName": "Lagoon 100",
+        "canonical": "#dff0f1",
+        "oklch": "oklch(94.3% 0.018 201.1)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "lagoon-200": {
+        "role": "primary",
+        "displayName": "Lagoon 200",
+        "canonical": "#bfe0e2",
+        "oklch": "oklch(88.3% 0.035 201.0)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "lagoon-300": {
+        "role": "primary",
+        "displayName": "Lagoon 300",
+        "canonical": "#8cc6ca",
+        "oklch": "oklch(78.8% 0.060 201.4)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "lagoon-600": {
+        "role": "primary",
+        "displayName": "Lagoon 600",
+        "canonical": "#0b7480",
+        "oklch": "oklch(51.2% 0.086 207.7)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "lagoon-700": {
+        "role": "primary",
+        "displayName": "Lagoon 700",
+        "canonical": "#0a6670",
+        "oklch": "oklch(46.7% 0.078 206.9)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "lagoon-800": {
+        "role": "primary",
+        "displayName": "Lagoon 800",
+        "canonical": "#08575f",
+        "oklch": "oklch(41.8% 0.069 206.0)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "lagoon-900": {
+        "role": "primary",
+        "displayName": "Lagoon 900",
+        "canonical": "#07454b",
+        "oklch": "oklch(35.8% 0.058 205.2)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "sun-100": {
+        "role": "secondary",
+        "displayName": "Sun 100",
+        "canonical": "#fdf1d8",
+        "oklch": "oklch(96.1% 0.035 85.4)",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a03",
+          "#7b5602",
+          "#a77606",
+          "#d5980e",
+          "#febe4a",
+          "#feeccf"
+        ]
+      },
+      "sun-400": {
+        "role": "secondary",
+        "displayName": "Sun 400",
+        "canonical": "#f2b33d",
+        "oklch": "oklch(80.6% 0.147 79.0)",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a03",
+          "#7b5602",
+          "#a77606",
+          "#d5980e",
+          "#febe4a",
+          "#feeccf"
+        ]
+      },
+      "sun-800": {
+        "role": "secondary",
+        "displayName": "Sun 800",
+        "canonical": "#7a5000",
+        "oklch": "oklch(46.7% 0.099 74.3)",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a03",
+          "#7b5602",
+          "#a77606",
+          "#d5980e",
+          "#febe4a",
+          "#feeccf"
+        ]
+      },
+      "surface-page": {
+        "role": "neutral",
+        "displayName": "Warm Light Grey",
+        "canonical": "#f6f5f2",
+        "oklch": "oklch(97.0% 0.004 91.4)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "surface-sunken": {
+        "role": "neutral",
+        "displayName": "Sunken Grey",
+        "canonical": "#efeeea",
+        "oklch": "oklch(94.9% 0.005 95.1)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "surface-hover": {
+        "role": "neutral",
+        "displayName": "Hover Grey",
+        "canonical": "#eeede9",
+        "oklch": "oklch(94.6% 0.005 95.1)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Blue-Grey Ink",
+        "canonical": "#1f2a33",
+        "oklch": "oklch(27.9% 0.023 243.4)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "text-2": {
+        "role": "neutral",
+        "displayName": "Secondary Ink",
+        "canonical": "#44515c",
+        "oklch": "oklch(42.8% 0.025 243.9)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "text-3": {
+        "role": "neutral",
+        "displayName": "Metadata Ink",
+        "canonical": "#5c6873",
+        "oklch": "oklch(51.1% 0.023 245.9)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border Grey",
+        "canonical": "#dcdfdd",
+        "oklch": "oklch(90.1% 0.004 157.2)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "border-soft": {
+        "role": "neutral",
+        "displayName": "Hairline Grey",
+        "canonical": "#e9eae7",
+        "oklch": "oklch(93.5% 0.004 121.6)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "action": {
+        "role": "primary",
+        "displayName": "Lagoon Teal",
+        "canonical": "#0b7480",
+        "oklch": "oklch(51.2% 0.086 207.7)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "action-hover": {
+        "role": "primary",
+        "displayName": "Deep Lagoon Hover",
+        "canonical": "#0a6670",
+        "oklch": "oklch(46.7% 0.078 206.9)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "action-press": {
+        "role": "primary",
+        "displayName": "Deep Lagoon Press",
+        "canonical": "#08575f",
+        "oklch": "oklch(41.8% 0.069 206.0)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "action-text": {
+        "role": "neutral",
+        "displayName": "Label White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
+        ]
+      },
+      "action-tint": {
+        "role": "primary",
+        "displayName": "Lagoon Mist",
+        "canonical": "#dff0f1",
+        "oklch": "oklch(94.3% 0.018 201.1)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "select-bg": {
+        "role": "primary",
+        "displayName": "Selected Tint",
+        "canonical": "#dff0f1",
+        "oklch": "oklch(94.3% 0.018 201.1)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "select-ink": {
+        "role": "primary",
+        "displayName": "Selected Ink",
+        "canonical": "#0a6670",
+        "oklch": "oklch(46.7% 0.078 206.9)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "select-border": {
+        "role": "primary",
+        "displayName": "Selected Edge",
+        "canonical": "#0b7480",
+        "oklch": "oklch(51.2% 0.086 207.7)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "focus": {
+        "role": "primary",
+        "displayName": "Focus Teal",
+        "canonical": "#0b7480",
+        "oklch": "oklch(51.2% 0.086 207.7)",
+        "tonalRamp": [
+          "#07454b",
+          "#08575f",
+          "#0a6670",
+          "#0b7480",
+          "#8cc6ca",
+          "#bfe0e2",
+          "#dff0f1",
+          "#eef7f7"
+        ]
+      },
+      "best": {
+        "role": "secondary",
+        "displayName": "Sun Yellow",
+        "canonical": "#f2b33d",
+        "oklch": "oklch(80.6% 0.147 79.0)",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a03",
+          "#7b5602",
+          "#a77606",
+          "#d5980e",
+          "#febe4a",
+          "#feeccf"
+        ]
+      },
+      "best-bg": {
+        "role": "secondary",
+        "displayName": "Sun Wash",
+        "canonical": "#fdf1d8",
+        "oklch": "oklch(96.1% 0.035 85.4)",
+        "tonalRamp": [
+          "#110a00",
+          "#2c230f",
+          "#483f2a",
+          "#675c47",
+          "#8a7f69",
+          "#afa38c",
+          "#d5c9b1",
+          "#f9edd4"
+        ]
+      },
+      "best-ink": {
+        "role": "secondary",
+        "displayName": "Sun Ink",
+        "canonical": "#7a5000",
+        "oklch": "oklch(46.7% 0.099 74.3)",
+        "tonalRamp": [
+          "#130900",
+          "#331f00",
+          "#573902",
+          "#7e5407",
+          "#a37736",
+          "#c99b5b",
+          "#f1c180",
+          "#ffebd3"
+        ]
+      },
+      "rate": {
+        "role": "tertiary",
+        "displayName": "Ochre",
+        "canonical": "#8f5a0c",
+        "oklch": "oklch(51.5% 0.108 68.8)",
+        "tonalRamp": [
+          "#140800",
+          "#351e00",
+          "#5b3601",
+          "#835102",
+          "#aa732f",
+          "#d19855",
+          "#f9be7b",
+          "#feebd7"
+        ]
+      },
+      "rate-soft": {
+        "role": "tertiary",
+        "displayName": "Ochre Text",
+        "canonical": "#946313",
+        "oklch": "oklch(53.9% 0.108 73.0)",
+        "tonalRamp": [
+          "#130900",
+          "#341f01",
+          "#583801",
+          "#805300",
+          "#a7752b",
+          "#ce9a53",
+          "#f6c079",
+          "#ffebd3"
+        ]
+      },
+      "rate-bg": {
+        "role": "tertiary",
+        "displayName": "Ochre Wash",
+        "canonical": "#f6e6cb",
+        "oklch": "oklch(93.1% 0.040 80.9)",
+        "tonalRamp": [
+          "#110a00",
+          "#2e220c",
+          "#4b3e27",
+          "#695c44",
+          "#8d7e66",
+          "#b2a389",
+          "#d8c8ae",
+          "#fcecd1"
+        ]
+      },
+      "gem-ink": {
+        "role": "tertiary",
+        "displayName": "Plum",
+        "canonical": "#7a4a6f",
+        "oklch": "oklch(47.7% 0.083 335.7)",
+        "tonalRamp": [
+          "#1a0015",
+          "#3b1033",
+          "#5a2d51",
+          "#7b4b70",
+          "#a06d94",
+          "#c691b9",
+          "#eeb6e0",
+          "#ffe6f8"
+        ]
+      },
+      "gem-bg": {
+        "role": "tertiary",
+        "displayName": "Plum Wash",
+        "canonical": "#f3e8f0",
+        "oklch": "oklch(94.2% 0.016 335.1)",
+        "tonalRamp": [
+          "#0f090e",
+          "#292127",
+          "#453d43",
+          "#645a61",
+          "#877d84",
+          "#aba1a8",
+          "#d1c7cf",
+          "#f6ebf3"
+        ]
+      },
+      "green": {
+        "role": "tertiary",
+        "displayName": "Moss",
+        "canonical": "#4a6a3a",
+        "oklch": "oklch(48.7% 0.082 135.9)",
+        "tonalRamp": [
+          "#040f00",
+          "#112c01",
+          "#2b491a",
+          "#486838",
+          "#6a8c5a",
+          "#8eb17d",
+          "#b3d7a2",
+          "#d6fcc5"
+        ]
+      },
+      "good-ink": {
+        "role": "tertiary",
+        "displayName": "Good Green",
+        "canonical": "#16794f",
+        "oklch": "oklch(51.1% 0.110 159.2)",
+        "tonalRamp": [
+          "#000f06",
+          "#022c1a",
+          "#024d2f",
+          "#017046",
+          "#3a9468",
+          "#61ba8c",
+          "#88e1b1",
+          "#c3ffdc"
+        ]
+      },
+      "trail-bg": {
+        "role": "tertiary",
+        "displayName": "Trail Wash",
+        "canonical": "#e8f0e6",
+        "oklch": "oklch(94.6% 0.016 139.4)",
+        "tonalRamp": [
+          "#080d07",
+          "#20261f",
+          "#3c423a",
+          "#596057",
+          "#7b837a",
+          "#a0a79e",
+          "#c5cdc3",
+          "#e9f1e7"
+        ]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Brick",
+        "canonical": "#b3372a",
+        "oklch": "oklch(51.9% 0.162 29.6)",
+        "tonalRamp": [
+          "#1f0000",
+          "#4b0200",
+          "#7c0501",
+          "#a62a1e",
+          "#cf5142",
+          "#fa7866",
+          "#ffb5a9",
+          "#ffe9e5"
+        ]
+      },
+      "danger-dark": {
+        "role": "tertiary",
+        "displayName": "Deep Brick",
+        "canonical": "#96291e",
+        "oklch": "oklch(45.1% 0.147 29.7)",
+        "tonalRamp": [
+          "#1f0000",
+          "#4b0100",
+          "#7b0702",
+          "#a03327",
+          "#c95849",
+          "#f27e6d",
+          "#feb6aa",
+          "#ffe9e5"
+        ]
+      },
+      "danger-bg": {
+        "role": "tertiary",
+        "displayName": "Brick Wash",
+        "canonical": "#f6dcd8",
+        "oklch": "oklch(91.5% 0.029 28.1)",
+        "tonalRamp": [
+          "#160605",
+          "#311f1c",
+          "#4e3a37",
+          "#6d5854",
+          "#917a76",
+          "#b69e9a",
+          "#ddc4c0",
+          "#fee9e6"
+        ]
+      },
+      "status-success": {
+        "role": "tertiary",
+        "displayName": "Signal Green",
+        "canonical": "#10b981",
+        "oklch": "oklch(69.6% 0.149 162.5)",
+        "tonalRamp": [
+          "#010f07",
+          "#012c1c",
+          "#034c33",
+          "#056f4c",
+          "#089769",
+          "#24c188",
+          "#5be8ad",
+          "#c1ffe0"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Destination names on a hero."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and section titles."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Row titles, lead text, primary buttons on a phone, the value in a field."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Body copy and list rows; prose caps at 68ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Labels, chips, secondary buttons."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Metadata; the floor for a figure or a rating."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "The floor for any functional text: badges, counts, captions on a pin."
+      }
+    },
+    "shadows": [
+      {
+        "name": "elev-1",
+        "value": "0 1px 2px rgba(31, 42, 51, 0.06), 0 2px 8px rgba(31, 42, 51, 0.05)",
+        "purpose": "A resting object with no border: an icon button on a photo, the selected segment."
+      },
+      {
+        "name": "elev-2",
+        "value": "0 4px 12px rgba(31, 42, 51, 0.10), 0 12px 28px rgba(31, 42, 51, 0.08)",
+        "purpose": "Raised: a popover, a sticky bar over content."
+      },
+      {
+        "name": "elev-3",
+        "value": "0 12px 32px rgba(31, 42, 51, 0.16), 0 2px 6px rgba(31, 42, 51, 0.08)",
+        "purpose": "Overlay: a sheet or a dialog."
+      }
+    ],
+    "motion": [
+      {
+        "name": "dur-1",
+        "value": "120ms",
+        "purpose": "Immediate feedback: a press, a chip toggling, a hover tint."
+      },
+      {
+        "name": "dur-2",
+        "value": "200ms",
+        "purpose": "A routine state change and every exit."
+      },
+      {
+        "name": "dur-3",
+        "value": "320ms",
+        "purpose": "A surface arriving: a sheet, a dialog, a popover."
+      },
+      {
+        "name": "dur-4",
+        "value": "480ms",
+        "purpose": "One authored movement over distance: the map camera, one leg of the route reveal."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Arrivals and settles."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "purpose": "Movement between two on-screen positions."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "floor",
+        "value": "360px"
+      },
+      {
+        "name": "tablet",
+        "value": "769px"
+      },
+      {
+        "name": "desktop",
+        "value": "1024px"
+      },
+      {
+        "name": "content-max",
+        "value": "1180px"
+      }
+    ],
+    "zIndex": {
+      "base": 0,
+      "sticky": 10,
+      "map-ui": 20,
+      "nav": 30,
+      "overlay": 40,
+      "sheet": 50,
+      "modal": 60,
+      "toast": 70
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action of a view: lagoon fill, white label.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Plan this trip</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--tap); padding: 0 var(--space-5); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font-family: var(--font); font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); cursor: pointer; transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out); } .ds-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; } .ds-btn-primary { background: var(--action); border-color: var(--action); color: var(--action-text); } .ds-btn-primary:hover { background: var(--action-hover); border-color: var(--action-hover); } .ds-btn-primary:active { background: var(--action-press); border-color: var(--action-press); opacity: 0.78; scale: 0.98; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "The default button: white with a border edge.",
+      "html": "<button class=\"ds-btn2\">Save for later</button>",
+      "css": ".ds-btn2 { display: inline-flex; align-items: center; justify-content: center; min-height: var(--tap); padding: 0 var(--space-5); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font-family: var(--font); font-size: var(--text-body); font-weight: 600; cursor: pointer; transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out); } .ds-btn2:hover { border-color: var(--neutral-300); background: var(--surface-hover); } .ds-btn2:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; } .ds-btn2:active { opacity: 0.78; scale: 0.98; }"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "An offer inside a bar or a row: teal label, no fill.",
+      "html": "<button class=\"ds-btn-quiet\">See all</button>",
+      "css": ".ds-btn-quiet { min-height: var(--tap); padding: 0 var(--space-5); border: 1px solid transparent; border-radius: var(--radius-control); background: none; color: var(--action); font-family: var(--font); font-size: var(--text-body); font-weight: 600; cursor: pointer; transition: background-color var(--dur-1) var(--ease-out); } .ds-btn-quiet:hover { background: var(--action-tint); } .ds-btn-quiet:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip-filter",
+      "description": "A toggle that narrows a list; selected takes the teal tint and a tick.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"false\">Beaches</button><button class=\"ds-chip is-on\" aria-pressed=\"true\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg>Hiking</button></div>",
+      "css": ".ds-chips { display: flex; gap: var(--space-2); } .ds-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface); color: var(--text); font-family: var(--font); font-size: var(--text-label); font-weight: 500; cursor: pointer; transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out); } .ds-chip:hover { border-color: var(--neutral-300); } .ds-chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; } .ds-chip.is-on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); font-weight: 600; }"
+    },
+    {
+      "name": "Segmented",
+      "kind": "nav",
+      "refersTo": "segmented-track",
+      "description": "Two to four views of one thing; the chosen segment is a lifted white thumb.",
+      "html": "<div class=\"ds-seg\" role=\"radiogroup\" aria-label=\"View\"><button class=\"ds-seg-item is-on\" role=\"radio\" aria-checked=\"true\">List</button><button class=\"ds-seg-item\" role=\"radio\" aria-checked=\"false\">Map</button></div>",
+      "css": ".ds-seg { display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--radius-control); background: var(--surface-sunken); } .ds-seg-item { min-height: 38px; padding: 0 var(--space-4); border: 0; border-radius: 8px; background: none; color: var(--text-2); font-family: var(--font); font-size: var(--text-label); font-weight: 600; cursor: pointer; transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out); } .ds-seg-item:hover { color: var(--text); } .ds-seg-item:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; } .ds-seg-item.is-on { background: var(--surface); color: var(--text); box-shadow: var(--elev-1); }"
+    },
+    {
+      "name": "Tabs",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Sections of one page; the chosen tab carries a 2 px teal underline.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab is-on\" role=\"tab\" aria-selected=\"true\">Overview</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Day by day <span class=\"ds-tab-n\">7</span></button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Costs</button></div>",
+      "css": ".ds-tabs { display: flex; gap: var(--space-5); border-bottom: 1px solid var(--border); } .ds-tab { position: relative; min-height: var(--tap); padding: 0; border: 0; background: none; color: var(--text-2); font-family: var(--font); font-size: var(--text-body); font-weight: 600; cursor: pointer; transition: color var(--dur-1) var(--ease-out); } .ds-tab::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; border-radius: 2px; background: var(--action); transform: scaleX(0); transition: transform var(--dur-2) var(--ease-out); } .ds-tab:hover { color: var(--text); } .ds-tab:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; } .ds-tab.is-on { color: var(--text); } .ds-tab.is-on::after { transform: scaleX(1); } .ds-tab-n { color: var(--text-3); font-weight: 500; }"
+    },
+    {
+      "name": "Place Row Card",
+      "kind": "card",
+      "refersTo": "card-row",
+      "description": "The compact default for lists: 72 px photo, name, meta, and the price line with its estimate mark.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-card-media\"></div><div class=\"ds-card-body\"><a class=\"ds-card-title\" href=\"#\">Plovdiv</a><div class=\"ds-card-meta\">Bulgaria</div><div class=\"ds-card-price\"><span class=\"ds-money\">~€49<span class=\"ds-est\"> est.</span></span> a day</div></div><button class=\"ds-icon-btn\" aria-label=\"Save\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z\"/></svg></button></article>",
+      "css": ".ds-card { position: relative; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); color: var(--text); font-family: var(--font); max-width: 420px; transition: border-color var(--dur-1) var(--ease-out); } .ds-card:hover { border-color: var(--neutral-300); } .ds-card:has(.ds-card-title:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; } .ds-card-media { flex: none; width: 72px; height: 72px; border-radius: var(--radius-control); background: var(--lagoon-200); } .ds-card-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; } .ds-card-title { color: inherit; text-decoration: none; font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); outline: 2px solid transparent; } .ds-card-title::after { content: ''; position: absolute; inset: 0; border-radius: inherit; } .ds-card-meta { color: var(--text-3); font-size: var(--text-label); } .ds-card-price { font-size: var(--text-body); font-weight: 600; font-variant-numeric: tabular-nums; } .ds-money { white-space: nowrap; } .ds-est { font-size: 0.85em; font-weight: 500; color: var(--text-3); } .ds-icon-btn { position: relative; z-index: 1; display: inline-grid; place-items: center; width: var(--tap); height: var(--tap); border: 1px solid transparent; border-radius: var(--radius-pill); background: none; color: var(--text-2); cursor: pointer; } .ds-icon-btn:hover { background: var(--surface-hover); color: var(--text); } .ds-icon-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field-input",
+      "description": "A labelled input; the label is always visible, focus is the teal ring plus a teal edge.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-trip\">Trip name</label><input id=\"ds-trip\" class=\"ds-input\" placeholder=\"Summer in the Balkans\"><p class=\"ds-field-hint\">Only you see this.</p></div>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; font-family: var(--font); max-width: 320px; } .ds-field-label { font-size: var(--text-label); font-weight: 600; color: var(--text); } .ds-input { min-height: var(--tap); padding: 0 var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font-family: var(--font); font-size: var(--text-lead); transition: border-color var(--dur-1) var(--ease-out); } .ds-input::placeholder { color: var(--text-3); } .ds-input:hover { border-color: var(--neutral-300); } .ds-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--action); } .ds-field-hint { margin: 0; font-size: var(--text-caption); color: var(--text-3); }"
+    },
+    {
+      "name": "Status Chips",
+      "kind": "chip",
+      "refersTo": "chip-status-best",
+      "description": "Labels on an object, each tone with one job: best value, hidden gem, rating.",
+      "html": "<div class=\"ds-tags\"><span class=\"ds-tag ds-best\">Best value</span><span class=\"ds-tag ds-gem\">Hidden gem</span><span class=\"ds-tag ds-rate\">8.9</span></div>",
+      "css": ".ds-tags { display: flex; gap: var(--space-2); } .ds-tag { display: inline-flex; align-items: center; height: 24px; padding: 0 var(--space-2); border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--text-caption); font-weight: 600; font-variant-numeric: tabular-nums; } .ds-best { background: var(--best); color: var(--text); } .ds-gem { background: var(--gem-bg); color: var(--gem-ink); } .ds-rate { background: var(--rate-bg); color: var(--rate); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Lagoon",
+    "overview": "Carta is a travel app you want to open: photos sell the place, and one calm price line with its source tells the truth under every photo. The look is \"Lagoon\" (T419, owner decision 2026-10-13): the category standard of Airbnb, Polarsteps and Wanderlog, executed at their craft level rather than reinvented. White surfaces sit on a warm light grey; ink is a blue-grey that is never black; one deep lagoon teal carries every action and every selection; sun yellow marks best value and nothing else; one friendly typeface, Figtree, sets everything, figures included, with tabular numerals.\n\nThe density is a working app, not a brochure. Explore and Destinations default to compact rows, about ten to a phone screen, each a small rounded photo, a name, a rating and a price line such as \"€49 a day\" with its source word. Large photo tiles appear on rails and the home page, where inspiration leads. Depth is quiet: objects at rest carry a hairline border, and only what floats (a sheet, a popover, a control over a photograph) takes a soft ink shadow.\n\nThe world refuses two things, both confirmed by the owner in the direction contract (`continent-app/.impeccable/surfaces/continent-app.md`): the brochure hero with text laid over a photograph, and the dark instrument look of black slabs and dark selected states.",
+    "keyCharacteristics": [
+      "Photography leads; text never sits on a photograph.",
+      "One teal for everything that acts or is selected, as a light tint plus teal text, never a dark slab.",
+      "Every colour outside the neutrals and teal has exactly one job.",
+      "One typeface, tabular figures everywhere, so prices line up and settle in place.",
+      "Borders at rest, shadows only on what floats.",
+      "Every control is 44 px on touch, with a 2 px teal focus ring."
+    ],
+    "rules": [
+      {
+        "name": "The One Teal Rule",
+        "body": "Teal means it acts or it is selected. Nothing decorative, no rating, no gem and no status is ever teal.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Job Rule",
+        "body": "Ochre is a rating, plum a hidden gem, sun yellow best value, red destruction. A colour borrowed for a second job stops meaning the first.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Slab Rule",
+        "body": "A selected state is the light teal tint with a teal label and a mark (a tick, an underline, a lifted thumb). Never a dark fill, so the app never reads as black.",
+        "section": "colors"
+      },
+      {
+        "name": "The Floor Rule",
+        "body": "Nothing functional is set under 11 px, and no figure or rating under 12 px. T421 raised every rule that was under 10 px; the older per-screen files still hold px sizes from 10 px up, which the migration moves onto the scale.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every column of figures uses tabular numerals in the one family. A figure that changes updates in place, never with a count-up.",
+        "section": "typography"
+      },
+      {
+        "name": "The Compact Default Rule",
+        "body": "Lists where places are compared default to compact rows (about ten to a phone screen); large photo tiles belong to rails and the home page.",
+        "section": "layout"
+      },
+      {
+        "name": "The Border Or Shadow Rule",
+        "body": "Elevation is declared once per object: a border or a shadow, never both.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** read a role (`--action`, `--surface`, `--text-3`) in every new or touched rule, and build from the kit in `src/components/ui/`.",
+      "**Do** keep one primary Button per view; everything else is secondary or quiet.",
+      "**Do** show selection as `--select-bg` with `--select-ink` and a mark: a tick on a chip, an underline on a tab, a lifted thumb on a segment.",
+      "**Do** put a caption under a photograph, never on it.",
+      "**Do** give every control a 44 px (`--tap`) target on touch and the 2 px `--focus` ring on `:focus-visible`.",
+      "**Do** print every euro through `formatMoney()` or `<Money>`: whole euros where places are compared, cents on receipts and totals, `~€87 est.` for an estimate.",
+      "**Do** declare elevation once: a `--border` at rest, or an `--elev-*` shadow on what floats.",
+      "**Do** take every duration and easing from the motion tokens and give every transition a reduced-motion branch."
+    ],
+    "donts": [
+      "**Don't** paint a selected state as a dark fill; the dark slab is the look Lagoon refused.",
+      "**Don't** use teal for anything that does not act or is not selected, or ochre, plum, sun yellow or red outside their one job.",
+      "**Don't** set sun yellow as text; use `--best-ink`.",
+      "**Don't** add a gradient, a second typeface, a monospaced face for figures, or a hex outside `01-tokens.css` and the token mirror.",
+      "**Don't** set functional text under 11 px, or a figure or rating under 12 px.",
+      "**Don't** give one object both a border and a shadow.",
+      "**Don't** write a euro sign into an i18n string, call `toFixed` on a price, or round a figure on a receipt.",
+      "**Don't** use a placeholder as the only name of a field.",
+      "**Don't** write em dashes, en dashes, middots or bullet characters as separators in any copy."
+    ]
+  }
+}

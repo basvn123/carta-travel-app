@@ -31,6 +31,15 @@
  *                    JetBrains Mono for measured facts. No Cormorant Garamond,
  *                    no Instrument Sans, no IBM Plex Mono, no face by name.
  *
+ *   font-size-literal  (T425) a font-size outside :root that is not a --text-* token
+ *   radius-literal   (T425) a px border-radius outside :root that is not a --radius-* token
+ *   legacy-token     (T425) a var() of a pre-Lagoon name (--paper, --ink, --accent,
+ *                    --bg-card, --mono ...) outside 01-tokens.css; new code reads roles
+ *   money-literal    (T425) a euro sign in JavaScript or an i18n string, or toFixed
+ *                    on a price; money goes through src/lib/money.js
+ *   raw-button       (T425) a <button> element outside src/components/ui; the
+ *                    migration moves them onto the kit, the baseline is its meter
+ *
  * styles.css already carries hundreds of old violations, so the detector is
  * baseline based: scripts/ci/design-lint.baseline.json records how many times
  * each (rule, file, line text) occurs today, and the run fails only when a key
@@ -68,6 +77,9 @@ const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono|font)\s*\))$/;  // --f
 const MIRROR_FILE = 'src/map/tokenColors.js';
 const JS_HEX_EXEMPT = new Set([MIRROR_FILE, 'src/components/CountryFlag.jsx', 'src/auth/GoogleButton.jsx']);
 const JS_HEX = /(?<![&\w/(])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b/;
+// T425: pre-Lagoon token names that new rules must not read (01-tokens.css aliases them).
+const LEGACY_TOKEN = /var\(\s*--(paper|paper-dim|paper-hover|paper-lift|ink|ink-soft|ink-mute|ink-fill|rule|rule-soft|accent|accent-soft|accent-bg|accent-hover|accent-press|accent-press-alt|accent-wash|accent-wash-alt|bg-card|on-fill|display|mono|shadow-1|shadow-2|shadow-card|wash)\s*\)/;
+const TOKENS_FILE = 'src/styles/01-tokens.css';
 // A :root custom property that names a typeface: a quoted family or a generic family keyword.
 const FACE_VALUE = /\b(serif|sans-serif|monospace|cursive|fantasy|system-ui)\b|['"][^'"]+['"]\s*,/;
 
@@ -109,6 +121,8 @@ function scanFile(abs, rel) {
     if (!isCss) {
       const code = l.replace(/^\s*(\/\/|\*|\/\*).*$/, '');
       if (!/(^|\/)i18n\//.test(rel) && !JS_HEX_EXEMPT.has(rel) && JS_HEX.test(code)) add('js-hex-literal', i);
+      if (rel !== 'src/lib/money.js' && (code.includes('€') || /\b\w*(eur|price|cost|total)\w*\)?\.toFixed\(/i.test(code))) add('money-literal', i);
+      if (rel.endsWith('.jsx') && !rel.startsWith('src/components/ui/') && /<button\b/.test(code)) add('raw-button', i);
       continue;
     }
 
@@ -118,6 +132,13 @@ function scanFile(abs, rel) {
     if (tok && !/^(display|ui|mono)$/.test(tok[1]) && FACE_VALUE.test(tok[2])) add('font-literal', i, '--' + tok[1]);
     if (!inRoot && /#[0-9a-fA-F]{3,8}\b/.test(l.replace(/url\([^)]*\)/g, ''))) add('hex-literal', i);
     if (/-gradient\s*\(/.test(l)) add('gradient', i);
+    if (!inRoot) {
+      const fs_ = l.match(/(?:^|[{;\s])font-size\s*:\s*([^;}]*)/);
+      if (fs_ && /\d/.test(fs_[1]) && !/^\s*var\(\s*--text-/.test(fs_[1])) add('font-size-literal', i, fs_[1].trim().slice(0, 30));
+      const rad = l.match(/border(?:-[a-z-]+)?-radius\s*:\s*([^;}]*)/);
+      if (rad && /\d+(\.\d+)?px/.test(rad[1].replace(/var\([^)]*\)/g, '')) && !/^\s*0(px)?\s*$/.test(rad[1])) add('radius-literal', i, rad[1].trim().slice(0, 30));
+      if (rel !== TOKENS_FILE && LEGACY_TOKEN.test(l)) add('legacy-token', i, l.match(LEGACY_TOKEN)[1]);
+    }
     const sh = l.match(/(?:box|text)-shadow\s*:\s*([^;}]*)/);
     if (sh && !/^\s*(none|inherit|initial|unset)\b/.test(sh[1]) && !/var\(\s*--shadow/.test(sh[1]) && !/^\s*var\(/.test(sh[1])) add('shadow-literal', i);
 
@@ -193,7 +214,7 @@ function selfTest() {
   const empty = path.join(fx, 'empty-baseline.json');
   const bad = check(path.join(fx, 'bad'), empty);
   const rules = new Set(bad.fresh.map((v) => v.rule));
-  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift'];
+  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift', 'font-size-literal', 'radius-literal', 'legacy-token', 'money-literal', 'raw-button'];
   const missing = want.filter((r) => !rules.has(r));
   const good = check(path.join(fx, 'good'), empty);
   let ok = true;
@@ -204,6 +225,26 @@ function selfTest() {
 }
 
 if (args.includes('--self-test')) selfTest();
+
+// T425: the migration meter. Per file, how many of the kit-migration rules are
+// still present; a migrated surface reads zero. `--meter [substring]` narrows
+// to files whose path contains the substring (a tab's files).
+if (args.includes('--meter')) {
+  const METER = ['raw-button', 'font-size-literal', 'radius-literal', 'legacy-token', 'money-literal'];
+  const filter = opt('--meter', '');
+  const rows = {};
+  for (const v of scan(path.resolve(opt('--root', appRoot)))) {
+    if (!METER.includes(v.rule) || (filter && !filter.startsWith('--') && !v.file.includes(filter))) continue;
+    rows[v.file] ??= Object.fromEntries(METER.map((r) => [r, 0]));
+    rows[v.file][v.rule]++;
+  }
+  const list = Object.entries(rows).sort((a, b) => Object.values(b[1]).reduce((s, n) => s + n, 0) - Object.values(a[1]).reduce((s, n) => s + n, 0));
+  console.log(['file'.padEnd(46), ...METER.map((r) => r.replace('-literal', '').padStart(14))].join(''));
+  for (const [f, c] of list) console.log([f.padEnd(46), ...METER.map((r) => String(c[r]).padStart(14))].join(''));
+  const tot = Object.fromEntries(METER.map((r) => [r, list.reduce((s, [, c]) => s + c[r], 0)]));
+  console.log(['TOTAL'.padEnd(46), ...METER.map((r) => String(tot[r]).padStart(14))].join(''));
+  process.exit(0);
+}
 
 const root = path.resolve(opt('--root', appRoot));
 const baselineFile = path.resolve(opt('--baseline', path.join(here, 'design-lint.baseline.json')));
