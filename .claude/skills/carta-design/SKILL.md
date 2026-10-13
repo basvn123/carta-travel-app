@@ -1,15 +1,19 @@
 ---
 name: carta-design
-description: The locked design system for Carta, the European budget travel price app at carta-europetravel.com, in its "Lagoon" rendition (white surfaces on warm light grey, blue-grey ink, lagoon teal for actions and selection, one face with tabular figures). Use this skill whenever you touch anything visual in the Carta codebase or write any Carta copy, including landing pages, marketing sections, app UI, React or HTML components, buttons, forms, cards, tables, charts, map overlays, emails, Open Graph images, favicons, icons, empty states, error states and CSS. Also use it whenever you are about to pick a colour, a font, a border radius or a shadow, or write a headline, a button label, an error message or an empty state for Carta, even if the request never mentions design at all. If a human will see the output, read this first.
+description: The locked design system for Carta, the European budget travel price app at carta-europetravel.com, in its "Lagoon" structure with the brown palette (white surfaces on warm light grey, two base colours: blue-grey ink and one warm brown for actions and selection, one face with tabular figures). Use this skill whenever you touch anything visual in the Carta codebase or write any Carta copy, including landing pages, marketing sections, app UI, React or HTML components, buttons, forms, cards, tables, charts, map overlays, emails, Open Graph images, favicons, icons, empty states, error states and CSS. Also use it whenever you are about to pick a colour, a font, a border radius or a shadow, or write a headline, a button label, an error message or an empty state for Carta, even if the request never mentions design at all. If a human will see the output, read this first.
 ---
 
-# Carta design system: Lagoon
+# Carta design system: Lagoon, in brown
 
 Rewritten 2026-10-13 (T425) from the built system: the tokens in
 `continent-app/src/styles/01-tokens.css` (T421), the kit in `continent-app/src/components/ui/` (T422),
 the money formatter `continent-app/src/lib/money.js` (T423) and the style guide (T424). History in one
 line: Carta wore a cool grey "Timetable" palette, then cream with Fraunces and terracotta (T198 to T380);
 both are retired and nothing below refers to them as current.
+
+Updated 2026-10-13 (T438) after the owner reviewed Explore: the lagoon teal became one warm brown
+(umber), a rating became a star and an ink figure (the Score, T437), provenance on the page became the
+estimate mark alone, and catalogue counts left the page furniture.
 
 ## Where the truth lives, and what wins
 
@@ -36,7 +40,7 @@ could defend out loud.
 
 A price transparency tool for budget travel in Europe. It prices the ground for every destination (bed,
 food, local transport, per person per day), plans the trip city by city and each day hour by hour, and
-labels every figure for where it came from. It does not price flights: the only flight figure in a total
+marks every estimate as an estimate. It does not price flights: the only flight figure in a total
 is one the traveller typed in, labelled as theirs. Never imply otherwise. It takes no booking and no
 commission; it hands the traveller to the operator.
 
@@ -47,12 +51,13 @@ at launch. The only real asset is trust in the numbers.
 
 Owner decision 2026-10-13 (T419): Carta looks like a top-tier travel app, measured against Airbnb,
 Polarsteps and Wanderlog, and their craft is the bar. Photography leads; the feel is warm, calm and
-inviting. White surfaces sit on a warm light grey; ink is blue-grey and never black; one deep lagoon teal
-does every action and every selection; sun yellow marks best value and nothing else. One friendly face,
+inviting. White surfaces sit on a warm light grey; ink is blue-grey and never black; one warm brown
+does every action and every selection, so the app has two base colours, the ink and the brown (owner
+decision 2026-10-13, T438); sun yellow marks best value and nothing else. One friendly face,
 Figtree, sets everything, figures included, with tabular numerals. Photos and cards have 16 px corners,
 controls 10 px, chips are round pills, and soft shadow belongs to things that float. Carta's own mark on
-that familiar structure is one calm price line with its source under every photo. The voice did not
-move: plain, specific, honest about coverage. Only the look moved, from instrument to inviting.
+that familiar structure is one calm price line under every photo, marked as an estimate where it is one.
+The voice did not move: plain, specific and short. Only the look moved, from instrument to inviting.
 
 ## Colour
 
@@ -66,7 +71,7 @@ DESIGN.md; `scripts/ci/token-contrast.mjs` checks every text and fill pair.
 | `--surface` | Cards, sheets, bars, the white | The page ground |
 | `--surface-sunken` | Input fills, quiet bands, a segmented track, loading blocks | A selected state |
 | `--surface-hover` | Hover on a quiet surface | A resting fill |
-| `--text` | Body text and headings (blue-grey, 13.4:1) | On a teal fill |
+| `--text` | Body text and headings (blue-grey, 13.4:1) | On a brown fill |
 | `--text-2` | Secondary text, default icon colour | A heading |
 | `--text-3` | Metadata at 11 to 14 px | Body copy |
 | `--border`, `--border-soft` | Edges of what you click or type into; hairlines inside an object | A second elevation on a shadowed object |
@@ -75,34 +80,38 @@ DESIGN.md; `scripts/ci/token-contrast.mjs` checks every text and fill pair.
 | `--select-bg`, `--select-ink`, `--select-border` | The one selected state | A dark fill |
 | `--focus` | The 2 px focus ring | Anything else |
 | `--best`, `--best-bg`, `--best-ink` | Best value: a marker or fill with `--text` on it; `--best-ink` when it must be text | Text in `--best` itself; anything but best value |
-| `--rate`, `--rate-bg`, `--rate-soft` | Ratings, a measure (ochre) | An action, a warning |
-| `--gem-ink`, `--gem-bg` | Hidden gems (plum) | Anything else |
+| `--rate` | The star of the Score (umber 700); `--rate-bg` and `--rate-soft` are neutral since T438 | A fill behind a rating, an action, a warning |
+| `--gem-ink`, `--gem-bg` | Hidden gems: the diamond and its word in umber 700 on a neutral ground | Anything else |
 | `--danger`, `--danger-dark` | Destructive actions | A warning, decoration |
 | `--green`, `--status-success` | Good news in data; indicator dots and ticks | Chrome, a button, text in `--status-success` |
 | `--kind-*` | Place kind, metro to area, as an ink density ramp | A rainbow |
-| Domain colours (`--water-*`, `--trail-*`, `--amber*`, `--ai-violet` and the rest) | One feature each, as listed in DESIGN.md | General purpose |
+| `--amber-ink` | Warning text, in rust (T438) so it never reads as the brown | An action |
+| Domain colours (`--water-*`, `--trail-*`, `--amber`, `--ai-violet` and the rest) | One feature each, as listed in DESIGN.md | General purpose |
 
 Rules that matter more than the table:
 
-**One action colour.** Teal means "this acts" or "this is live" (the view's one primary, a link, the
-focus ring, the live route, the chosen day on a map, the scrub marker on a profile). It is not
-decoration: no teal stripe, dot or tint on something that neither acts, is live, nor is selected.
+**One action colour.** Brown means "this acts", "this is live" or "this is selected" (the view's one
+primary, a link, the focus ring, the live route, the chosen day on a map, the scrub marker on a profile,
+the selected tint). It is not decoration: no brown stripe, dot or tint on something that neither acts,
+is live, nor is selected. The rating star and the gem diamond are the two small marks it lends out.
 
 **One selected state.** A selected chip, tab, segment, tile, rail row, nav item or section link is the
 light `--select-bg` tint with `--select-ink` text and icon, plus a mark so the state never rests on
-colour alone: a tick on a chip, a 2 px teal underline on a tab, a lifted white thumb (`--surface`,
-`--elev-1`) in a segmented control, a teal edge on a selected card, the teal icon and label in the bottom
+colour alone: a tick on a chip, a 2 px brown underline on a tab, a lifted white thumb (`--surface`,
+`--elev-1`) in a segmented control, a brown edge on a selected card, the brown icon and label in the bottom
 nav. Never a dark fill, never `--action` as a fill behind a selected label. The active section carries
 `aria-current="page"`.
 
-**Each colour has one job.** Ochre is a rating, plum a hidden gem, sun yellow best value, red
-destruction. A rating is never teal or red, because "Rome 9.5" in an action colour reads as a button and
-in red as an error. Gems moved from teal to plum for the same reason: a gem must never read as a button.
+**Two base colours, each mark with one job.** Ink and brown carry the app. A rating is the Score, an
+ink figure with a small brown star, never a filled chip, because "Rome 9.5" on a brown fill reads as a
+button and in red as an error. A hidden gem is a small brown diamond with its word. Sun yellow is best
+value and nothing else, red is destruction, rust (`--amber-ink`) is a warning. `token-contrast.mjs`
+keeps the warning, best value and quiet tints visibly apart from the brown (delta E).
 
 **Ink is never black.** `--text` is a blue-grey. No `#000`, no near-black slab. The 52 ink-filled
 controls that made the app read as black are gone (T421, T422); do not bring one back.
 
-**No new tints.** Use the tokens. Inventing a warm tint, a second teal or a new grey beside them is the
+**No new tints.** Use the tokens. Inventing a warm tint, a second brown or a new grey beside them is the
 same mistake as a hex in a component. A colour that is not in DESIGN.md does not exist.
 
 **Legacy names are aliases.** `--paper`, `--paper-dim`, `--bg-card`, `--ink`, `--ink-soft`,
@@ -162,16 +171,20 @@ in the kit. Two screens can never write the same figure two ways.
   (T425) catches it).
 - **One estimate notation.** `~€87 est.`: the tilde joined to the figure, the language's own short word
   after (`money.est`: est., gesch., stim.). `formatEst()` for a string, `<Money est>` in JSX. Never
-  "~ €87", never "est. €87", never an estimate shown by colour alone. Measured figures never carry it.
+  "~ €87", never "est. €87", never an estimate shown by colour alone. Measured figures never carry it:
+  a figure is an estimate when it is a stand-in (`isNational()` in `CostSummary.jsx`), and only those
+  take the mark.
 - **Ranges** go through `formatMoneyRange()`: "€40 to €60", with the language's own joiner.
 - **Per unit** is one phrase per language through i18n ("a person", "a day", "a night", "for the trip").
   No `/pp`, `/p`, `/day` in JSX.
 - **No figure** prints words (`money.onRequest`, "Price on request"), never a blank, a lone dash or
   "€NaN".
-- **Pedigree travels with the figure.** Measured, cached and estimated figures are labelled as such,
-  "national" after a figure that uses a country-level stand-in, the nearby town named when the figure is
-  borrowed. Never a flight figure of Carta's, never a bookable claim, never a stored figure shown as
-  current. Every external booking link warns that prices may have changed.
+- **The estimate mark is the whole pedigree on the page** (owner decision 2026-10-13, T438). No method
+  sentences ("measured from N stays", "the national basket", "N of M figures measured"), no "national"
+  word after a figure, no source footers. Never a flight figure of Carta's, never a bookable claim, never
+  a stored figure shown as current. Every external booking link warns that prices may have changed.
+- **One day-cost basis.** The traveller's Lifestyle prices the day everywhere: the card, the pin and the
+  page show the same figure (owner decision 2026-10-13, T374-d).
 
 ## Layout, spacing and shape
 
@@ -191,12 +204,15 @@ in the kit. Two screens can never write the same figure two ways.
 - **Layers** only through `--z-base` to `--z-toast`.
 - **Lists get hairlines, objects get borders.** Divide a run of facts with `--border-soft` rules; a
   bordered card is for a bounded object (a place, a trip, a receipt).
-- **Density** (owner decision 2026-10-13, T421): Explore and Destinations open as compact rows (a 72 px
-  rounded photo, name, rating, the price line with its source word, a save control), about ten to a
-  phone screen. Large photo tiles are for rails and the home page, where inspiration leads.
+- **Density** (owner decisions 2026-10-13, T421 and T438): a filtered or searched list on Explore and
+  Destinations is compact rows (a 72 px rounded photo, name, the Score, the price line, a save control),
+  about ten to a phone screen. Sections (rails) and the home page use large photo tiles, where
+  inspiration leads.
 - **Breakpoints.** Floor 360 px with no horizontal scroll; below 769 px the phone (five-slot bottom nav,
   sheets for choices, pages for detail); from 769 px the header carries the tabs; from 1024 px list and map
-  side by side, highlighting each other, and two-column detail pages. The content column caps at 1180 px.
+  side by side, highlighting each other, and two-column detail pages. Reading pages (a destination, a
+  trip, an item page) cap their content column at 1180 px; browse surfaces (Explore, Destinations) use
+  the full width with one gutter shared by the header, the settings line and the content (T438).
 - **Icons** through `<Icon>`: 16 px in chips and inline, 20 px in buttons, rows and the tab bar, 24 px in
   empty states. Line icons from `Icons.jsx`, 1.5 stroke, `currentColor`, `--text-2` by default,
   decorative ones `aria-hidden`. No tile behind an icon.
@@ -223,7 +239,7 @@ Use it; a new local button, chip or card style is a regression (the migration fr
 old ones, and the `raw-button` lint rule (T425) meters what is left; `node scripts/ci/design-lint.mjs --meter`).
 
 - **Button**: primary (`--action` fill, `--action-text`), secondary (`--surface`, `--border` edge),
-  quiet (no fill, teal label, `--action-tint` on hover: an offer inside a bar, a row or a card), danger
+  quiet (no fill, brown label, `--action-tint` on hover: an offer inside a bar, a row or a card), danger
   (`--danger` fill). Sizes md (`--tap`) and sm (32 px on a fine pointer only). Loading keeps its width;
   disabled is a sunken ground with `--text-3`, never a paler live button. One primary per view. A link
   that only navigates is a link, not a Button.
@@ -233,43 +249,50 @@ old ones, and the `raw-button` lint rule (T425) meters what is left; `node scrip
   count (a figure beside a label, `--surface-sunken`, `--text-2`, 12 px), status (tones neutral, best,
   gem, rate, positive, danger; `--radius-sm`; not interactive).
 - **Segmented**: a sunken track with a lifted white thumb, radio semantics.
-- **Tabs**: a teal underline that grows in, tablist semantics, arrow, Home and End keys.
+- **Tabs**: a brown underline that grows in, tablist semantics, arrow, Home and End keys.
 - **Card**: layouts row (the compact default) and tile (rails, home). Slots in fixed order: media, title,
   meta, rating, price, actions. The price slot takes `<Money>`. One stretched link or button on the title
-  opens the card; actions sit above the stretch; nothing interactive nests. Selected is a teal edge.
+  opens the card; actions sit above the stretch; nothing interactive nests. Selected is a brown edge.
 - **Field**: input, select or textarea with a visible label, help and error under it tied by
   `aria-describedby`; errors in `--danger` with the field edge `--danger`. A placeholder shows a real
   example and never stands in for the label.
 - **Icon** and **Money** as above.
+- **Score** (`RatingBadge.jsx`, T437): a drawn star in `--rate` and the figure in `--text`, tabular,
+  12 px or more, no fill; the star is filled from the second tier up and outlined below. `band` adds the
+  band word (Exceptional, Excellent, Very good) through i18n, on a page head or a preview.
+- **Switch** (T437): `role="switch"`, the whole row is the hit area; off is an outlined track with a
+  dark thumb, on is the brown track with the thumb moved across.
+- **Tile** (T437): an icon over its word in an even grid, as a toggle or a choice; selected is the tint
+  plus a tick.
 - Kept and restyled through tokens: `SheetShell`, `Dropdown`, `DateField`, `ReceiptCard`, `StateBlocks`,
   `InfoDot`. Read shadcn for keyboard and ARIA behaviour only; ship nothing of its look.
 
 ## Component rules
 
 Decided by the owner (T360, 2026-10-03; T362, 2026-10-07) and by T380 (design direction v6, 2026-10-08,
-reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms.
+reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and, since T438, in brown.
 
 **The receipt.** Carta's signature object, wherever a total needs justifying: a `--surface-sunken` head with destination and route, one hairline separated line per cost component with the figure right aligned in cents, a `2px solid var(--text)` rule above the sum, the sum, and a tinted footer showing what one changed input would do to the total. It is the page's one bordered object and may carry `--elev-1` instead of its border, not both. On a trip page the trip's own budget is the receipt (cost bar, lines, est marks, total a person and for the party, the one Lifestyle control under it); a nearby town's receipt is a labelled second view and carries no stay select of its own. A day plan carries one per person figure for the day from the same cost index; a tap opens the compact receipt. A receipt line may appear outside the receipt only when read live from it and set exactly as it sets it.
 
-**The cost bar.** At most one stacked bar above a receipt's lines, never instead of them: 8 px, full width, one segment per line in receipt order in the `--kind-*` ramp, 1 px `--surface` gaps, no teal, no legend, no percentages.
+**The cost bar.** At most one stacked bar above a receipt's lines, never instead of them: 8 px, full width, one segment per line in receipt order in the `--kind-*` ramp, 1 px `--surface` gaps, no brown, no legend, no percentages.
 
-**Cost on cards and pages.** A card or page that offers a place or a trip carries one price line: the day cost per person at the traveller's Lifestyle ("From {price} a person" with its length on a collection card, from the cheapest member, never an average), read from `src/lib/costIndex.js` so it agrees with Explore and the receipt. It carries its pedigree (the estimate notation, "national" with an InfoDot on the first occurrence per view, the borrowed town named). No figure when the data is too thin. A page shows one per person per day figure and every other mention on the page is that value.
+**Cost on cards and pages.** A card or page that offers a place or a trip carries one price line: the day cost per person at the traveller's Lifestyle ("From {price} a person" with its length on a collection card, from the cheapest member, never an average), read from `src/lib/costIndex.js` so it agrees with Explore and the receipt. It carries the estimate mark when it is an estimate and nothing else about its source (T438). No figure when the data is too thin. A page shows one per person per day figure and every other mention on the page is that value.
 
 **Best value.** The cheapest item in a comparison (the cheapest pin in view, a "Best value" status chip) is marked in `--best` with `--text` on it, once per view. It is a marker, not a selection and not an action.
 
-**Price pins.** From zoom 7, at most 30 DOM labels: name 12 px, figure 12 px semibold on `--surface` with a `--border` edge and `--radius-sm`; the cheapest in view takes the best-value marker; other pins are dots; clusters `--surface-sunken` with a `--text-3` stroke, never `--rate`. Every pin has a 44 px hit box.
+**Price pins.** From zoom 4, at most 30 DOM labels, the best rated in view: name 12 px, figure 12 px semibold on `--surface` with a `--border` edge and `--radius-sm`; the cheapest in view takes the best-value marker; every other place is an ink dot sized by place kind, drawn from the first frame. No number clusters (T438). Every pin has a 44 px hit box.
 
-**Map and list in sync.** A card under the pointer or in focus rings its pin 2 px `--text`, and a pin under the pointer outlines its card 2 px `--text`. The committed selection (the chosen day, the chosen place) is the one teal item on that map. On a multi-day map stops are numbered by day, the selected day's line is `--action` and every other day `--text`, beds are `--surface` squares with a `--text` border, and a line that is not the measured path says so under the map. On a planning map catalogue places are ink, a picked place carries a tick, and only the live route and its numbered stops are teal. While a map loads its box shows the geometry on hand as a still ink drawing, then crossfades in `--dur-3`.
+**Map and list in sync.** A card under the pointer or in focus rings its pin 2 px `--text`, and a pin under the pointer outlines its card 2 px `--text`. The committed selection (the chosen day, the chosen place) is the one brown item on that map. On a multi-day map stops are numbered by day, the selected day's line is `--action` and every other day `--text`, beds are `--surface` squares with a `--text` border, and a line that is not the measured path says so under the map. On a planning map catalogue places are ink, a picked place carries a tick, and only the live route and its numbered stops are brown. While a map loads its box shows the geometry on hand as a still ink drawing, then crossfades in `--dur-3`.
 
-**Ratings.** Ochre chips (`--rate`, `--rate-bg`), 12 px minimum; the star colour itself is roadmap 1.8. Hidden gems take the plum chip. Place kind is the ink ramp.
+**Ratings.** The Score: a star and the figure in ink, 12 px minimum, no fill (T437). A page head adds the band word. Hidden gems are a brown diamond with the word. Place kind is the ink ramp. Tier names such as "Worth the journey" never appear on screen.
 
-**Plan cards.** Equal weight; the recommended plan is marked with a teal border and a "Recommended" chip and keeps the same ground. Never dim the free plan. State limits as plain numbers.
+**Plan cards.** Equal weight; the recommended plan is marked with a brown border and a "Recommended" chip and keeps the same ground. Never dim the free plan. State limits as plain numbers.
 
 **Suitability strip.** Under a trip hero, a solid `--surface` band flush with the photo's bottom edge, square corners where it meets the photo. Exactly three cells in fixed order: difficulty (five squares filled `--text` to the level, outlined `--text-3` beyond, never `--rate` or `--action`, plus the word), style (one or two words from tags), total cost (with currency). A missing value shows a placeholder word ("Unrated", "Mixed", "Price on request"). One row of three on a phone.
 
 **Detail page grammar.** Decision first, then hand-off, then depth. Under the head, a key facts band of four to six measured facts as label-over-value rows (label 12 px `--text-2`, value tabular; no card, no colour); then Before you go (not-for and hazard lines, safety first, never folded); then one hand-off band with the page's one primary and at most four secondaries; then map and signature; at most five folded rows (sections under a `--border-soft` hairline, no box, no shadow); then exits; then sources. Download and report sit in one row of secondaries before the honest footer. From 1024 px the first photo may sit beside the head and a receipt page may run a sticky side column, inside the 1180 px cap. No bento grid: no tiles of mixed sizes.
 
-**Data drawings.** One family on the ink ramp: weight is the scale (filled to the level, outlined beyond), the figure always sits beside the drawing, the drawing reads the same when removed, no legend (a strip on a card is explained once per list as a text key), at most one committed item in teal. Members: the month strip (twelve cells, the chosen month outlined 2 px `--text`, never `--action` or `--rate`), the thin bar (at most 8 px, segments separated by 1 px `--surface`), the profile (elevation on a km axis, one teal marker shared with the map, moved by drag, tap or arrow keys), the gauge (five segments, the cheapest band may be `--green`), the five squares, the receipt, and the label-over-value row. `--climate-good` and `--climate-poor` stay only where they already are.
+**Data drawings.** One family on the ink ramp: weight is the scale (filled to the level, outlined beyond), the figure always sits beside the drawing, the drawing reads the same when removed, no legend (a strip on a card is explained once per list as a text key), at most one committed item in brown. Members: the month strip (twelve cells, the chosen month outlined 2 px `--text`, never `--action` or `--rate`), the thin bar (at most 8 px, segments separated by 1 px `--surface`), the profile (elevation on a km axis, one brown marker shared with the map, moved by drag, tap or arrow keys), the gauge (five segments, the cheapest band may be `--green`), the five squares, the receipt, and the label-over-value row. `--climate-good` and `--climate-poor` stay only where they already are.
 
 **InfoDot.** One glossary marker: a 6 px `--text-3` dot after the term, inside a real `<button>` with a `--tap` box and an aria-label naming the term. It opens a popover (`--surface`, `--elev-2`, `--radius-control`, at most 280 px, the term in 600 and one or two sentences 13 px `--text-2`) from the shared glossary. Escape, a second tap or a tap outside closes it and returns focus. One per term per view, on the first occurrence; never on a heading, a button label or a pin; never an "i" in a circle.
 
@@ -279,13 +302,13 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms.
 
 **Navigation.** Anything that changes the view (a tab, the brand mark, a card that opens a page, a back control) is an `<a href>` with the view's URL; a section change pushes one history entry; `<button>` is for actions. Every detail page has its own URL, a save control and a share control in its page bar. The back control names the list it returns to. Opened by pointer, focus goes to the page heading (tabindex -1); from the keyboard, the first control; closing returns focus to the opener.
 
-**Settings line.** One compact line on every priced view shows every input its prices depend on: origin, dates (or "Any dates"), party, Lifestyle, language and "Prices in EUR". Labels 13 px `--text-2`, values `--text`. Each part is a `--tap` button that opens its control. No teal. On a phone it never wraps: it drops parts from the left and keeps Lifestyle. A surface's own filters follow in the same band as secondaries.
+**Settings line.** A full-width band on every priced view, under the header and on the same gutter as the content, shows every input its prices depend on, like a booking bar: origin, dates (or "Any dates"), party and Lifestyle as equal segments, label (13 px `--text-2`) over value (`--text`), hairlines between them; language and "Prices in EUR" compact at the end (T438). Each part is a `--tap` button that opens its control. No brown fill. On a phone it never wraps: it drops parts from the left and keeps Lifestyle.
 
 **Lifestyle control.** There is one: the Lifestyle panel. A surface that changes how the traveller travels opens or embeds it and never builds a second slider. Shown as a slider it is stepped, one labelled stop per level, the figures update in place, and one sentence under it states the trade-off with the figure.
 
 **Filters.** Removable filter chips in one row above a filtered list, each named "Remove <filter>", ending in "Clear all", the same on every browse tab. At most one sticky refine row per list (`--surface`, `--border` bottom edge, `--tap` high, no shadow) holding Filters, sort, country and the active chips. Up to six categories on a phone are a 2 x 3 grid of equal buttons. The budget ceiling is a stepped select (Any, 40, 60, 80, 100, 130 a person a day, ground only, "Up to {price} a day"), never a free slider; it filters and does not re-price. A month select holds the twelve months plus "Any"; with a month, a card may carry one measured month fact ("Swim season includes July"), never a forecast.
 
-**Rails and cuts.** A rail has a heading, "See all N", arrows on a fine pointer, arrow keys when focused, the position as a figure, dots hidden from screen readers, scroll-snap, one aspect, no autoplay or loop. At most two rails per phone screen; further cuts are one row of chips. The first browse rail may be a cost cut ("Under {price} a day in <month>") sorted by day cost with countries interleaved.
+**Rails and cuts.** A rail has a heading (a figure, a verb, or a plain section name such as "Hidden gems"), "See all" without a number, arrows on a fine pointer, arrow keys when focused, dots hidden from screen readers, scroll-snap, one aspect, no autoplay or loop; no subtitle and no position figure (T438). Desktop shows at most four rails and a phone three; further cuts are one row of chips. The first browse rail may be a cost cut ("Under {price} a day in <month>") sorted by day cost with countries interleaved.
 
 **Tracks.** The day track, flashcards and the photo track share mechanics: one card per stop of `scroll-snap-type: x mandatory`, about 85 percent wide on a phone so the next shows, three across from 1024 px for days; Previous and Next secondaries at `--tap` and the position ("Day 3 of 7", "2 of 5") above or under it; arrow keys move one; position dots 6 px `--border`, the current one `--select-border`, hidden from screen readers. Swiping is a shortcut, never the only way. No autoplay, no looping, no flip, no 3D, no stacked shadows. Flashcards have a "Show all" link that turns the deck into a list, and print as the list. Every day stays reachable as a link from the page's own list.
 
@@ -301,7 +324,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms.
 
 **Small text.** A label above a group of controls is 12 px weight 600 `--text-2`, sentence case, no letter-spacing. A toggle may carry one line of 12 px metadata under its label. Difficulty is one five-step scale in one i18n group. Earned milestones are `--text`, locked ones `--text-3` outline, "New" is a `--border` outline chip.
 
-**Smaller rules still in force.** The comparison table puts items as columns, one row per attribute, sticky headers, two columns visible on a phone. On a list of dated plans the first upcoming one may be one size larger (a focal card), never a bento. Derived sentences show only when the authored text agrees with the data, never "0 of N". A view may restore the last category, country or open folds from browser storage in try/catch, correct without it. The secondary chrome ("Get a pass", the phone plus) is never filled in teal. The install hint is one line with a secondary "Add to home screen" in My trips, on a phone browser not running the installed app, after a saved trip, dismissed for good; never a modal or banner. Every modal has the scrim and the page behind takes no clicks.
+**Smaller rules still in force.** The comparison table puts items as columns, one row per attribute, sticky headers, two columns visible on a phone. On a list of dated plans the first upcoming one may be one size larger (a focal card), never a bento. Derived sentences show only when the authored text agrees with the data, never "0 of N". A view may restore the last category, country or open folds from browser storage in try/catch, correct without it. The secondary chrome ("Get a pass", the phone plus) is never filled in brown. The install hint is one line with a secondary "Add to home screen" in My trips, on a phone browser not running the installed app, after a saved trip, dismissed for good; never a modal or banner. Every modal has the scrim and the page behind takes no clicks.
 
 **Loading.** A waiting region holds its final height as a still `--surface-sunken` block, no shimmer, no spinner (a Button's own loading spinner excepted), "Loading" for screen readers only. Header and bottom nav stay usable while a tab loads.
 
@@ -340,9 +363,11 @@ adds side by side map and list, hover detail and keyboard shortcuts; it never re
 The voice did not change with the look. Carta sounds like an instrument, not a brochure.
 
 - Every headline carries a verb the traveller recognises or a number. "What the whole trip actually
-  costs" works; "Everything the price tag usually hides" could sit on any product.
-- Prefer the figure to the claim. "Bed prices measured in N of M destinations, refreshed 2 hours ago"
-  beats any adjective.
+  costs" works; "Everything the price tag usually hides" could sit on any product. A browse section title
+  may be a plain noun phrase ("Hidden gems").
+- Say less (owner, 2026-10-13). Every sentence on a page earns its place for the traveller. Method notes,
+  coverage statements and catalogue counts ("3,855 places", "253 trips in 39 countries") are not page
+  furniture; a figure the traveller needs (a price, a distance, their own shortlist) is.
 - No em dashes and no en dashes, anywhere: a comma, a colon or two sentences. `stripDashes()` in
   `src/lib/format.js` enforces it on shipped strings; the rule holds for source, docs and reports too. No
   middot or bullet characters as separators. Ranges use the word "to".
@@ -352,16 +377,16 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 - Active voice, verb first. A button that says "Save trip" produces "Trip saved."
 - Errors say what happened and what to do in one sentence, with no apology and no "Error:" prefix.
 - Empty states are an invitation, not an apology: name the space and give the action.
-- Honest about coverage in the product's own voice. Carta does not price flights; the fare is the
-  traveller's own entry. When the AI is off, say it is off. State limits plainly.
+- Honest in the product's own voice. Carta does not price flights; the fare is the traveller's own
+  entry. When the AI is off, say it is off. An empty result says so in one line.
 - Strings go through i18n keys in all six languages, never concatenation; test labels at the longest
   translation (usually German).
 
 ## Never do this
 
-1. A dark-filled selected state: a chip, tab, segment or row painted ink or deep teal with white text.
+1. A dark-filled selected state: a chip, tab, segment or row painted ink or deep brown with white text.
    Selection is the light tint plus a mark.
-2. A second primary in a view, or teal spent on decoration (a stripe, a dot, a tinted badge on something
+2. A second primary in a view, or brown spent on decoration (a stripe, a dot, a tinted badge on something
    that neither acts nor is live nor is selected).
 3. Gradients of any kind, a scrim over a photo, glassy blur as decoration, an inset or stacked shadow, or
    a border and a shadow on the same object.
@@ -379,7 +404,8 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 10. Functional text under 11 px, a figure or rating under 12 px, or a touch target under 44 px on a coarse
     pointer.
 
-Also never: a row of three stat counters as a hero device, numbered markers `01 / 02 / 03` unless order
+Also never: catalogue counts, method sentences or coverage notes as page furniture; a filled rating chip;
+a row of three stat counters as a hero device, numbered markers `01 / 02 / 03` unless order
 matters, scroll-triggered counters, marquees, parallax or fade-in on every section.
 
 ## Quality floor
@@ -401,11 +427,13 @@ Read the diff and answer these seven questions (DESIGN.md carries the same seven
 
 1. Any hex value outside `src/styles/01-tokens.css` (and the token mirror)? `design-lint.mjs` checks this.
 2. Any gradient, any colour not in DESIGN.md, any saturated hue beside `--action` outside its one job?
-3. Is ochre used for anything but a rating, plum for anything but a gem, sun yellow for anything but best
-   value, `--danger` for anything but destruction, and is every selected state the light tint with a mark?
+3. Is brown used only for what acts, is live or is selected (plus the rating star and the gem diamond),
+   sun yellow only for best value, `--danger` only for destruction, and is every selected state the light
+   tint with a mark?
 4. Is any rating or figure under 12 px, any functional text under 11 px, any column of figures without
    tabular numerals, any euro not from `formatMoney`?
 5. More than one primary button in a view, or text on a photograph?
-6. Does every headline contain a verb or a number, and is the diff free of em and en dashes, middots and
-   the banned words?
+6. Does every headline contain a verb or a number (or name a browse section), is there no count, method
+   line or coverage sentence that could go, and is the diff free of em and en dashes, middots and the
+   banned words?
 7. Remove one thing. There is almost always one decoration that is carrying nothing.

@@ -195,7 +195,7 @@ export function AppHeader({
 
       <div className="app-header-account">
         {/* Passes entry: "Get a pass", a kit secondary on every width (T426;
-            secondary chrome is never filled in teal). The language
+            secondary chrome is never filled in brown). The language
             picker left this row for the Account panel: switching languages is
             rare, the row over the map is not the place to spend width on it. */}
         {seePricing && (

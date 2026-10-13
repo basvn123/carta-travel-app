@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T15:40:18.596Z",
+  "generatedAt": "2026-10-13T18:38:58.860Z",
   "title": "Design System: Carta",
   "extensions": {
     "colorMeta": {
@@ -181,8 +181,8 @@
         ]
       },
       "lagoon-50": {
-        "role": "primary",
-        "displayName": "Lagoon 50",
+        "role": "retired",
+        "displayName": "Lagoon 50 (retired)",
         "canonical": "#eef7f7",
         "oklch": "oklch(96.9% 0.010 197.0)",
         "tonalRamp": [
@@ -197,8 +197,8 @@
         ]
       },
       "lagoon-100": {
-        "role": "primary",
-        "displayName": "Lagoon 100",
+        "role": "retired",
+        "displayName": "Lagoon 100 (retired)",
         "canonical": "#dff0f1",
         "oklch": "oklch(94.3% 0.018 201.1)",
         "tonalRamp": [
@@ -213,8 +213,8 @@
         ]
       },
       "lagoon-200": {
-        "role": "primary",
-        "displayName": "Lagoon 200",
+        "role": "retired",
+        "displayName": "Lagoon 200 (retired)",
         "canonical": "#bfe0e2",
         "oklch": "oklch(88.3% 0.035 201.0)",
         "tonalRamp": [
@@ -229,8 +229,8 @@
         ]
       },
       "lagoon-300": {
-        "role": "primary",
-        "displayName": "Lagoon 300",
+        "role": "retired",
+        "displayName": "Lagoon 300 (retired)",
         "canonical": "#8cc6ca",
         "oklch": "oklch(78.8% 0.060 201.4)",
         "tonalRamp": [
@@ -245,8 +245,8 @@
         ]
       },
       "lagoon-600": {
-        "role": "primary",
-        "displayName": "Lagoon 600",
+        "role": "retired",
+        "displayName": "Lagoon 600 (retired)",
         "canonical": "#0b7480",
         "oklch": "oklch(51.2% 0.086 207.7)",
         "tonalRamp": [
@@ -261,8 +261,8 @@
         ]
       },
       "lagoon-700": {
-        "role": "primary",
-        "displayName": "Lagoon 700",
+        "role": "retired",
+        "displayName": "Lagoon 700 (retired)",
         "canonical": "#0a6670",
         "oklch": "oklch(46.7% 0.078 206.9)",
         "tonalRamp": [
@@ -277,8 +277,8 @@
         ]
       },
       "lagoon-800": {
-        "role": "primary",
-        "displayName": "Lagoon 800",
+        "role": "retired",
+        "displayName": "Lagoon 800 (retired)",
         "canonical": "#08575f",
         "oklch": "oklch(41.8% 0.069 206.0)",
         "tonalRamp": [
@@ -293,8 +293,8 @@
         ]
       },
       "lagoon-900": {
-        "role": "primary",
-        "displayName": "Lagoon 900",
+        "role": "retired",
+        "displayName": "Lagoon 900 (retired)",
         "canonical": "#07454b",
         "oklch": "oklch(35.8% 0.058 205.2)",
         "tonalRamp": [
@@ -306,6 +306,134 @@
           "#bfe0e2",
           "#dff0f1",
           "#eef7f7"
+        ]
+      },
+      "umber-50": {
+        "role": "primary",
+        "displayName": "Umber 50",
+        "canonical": "#faf6f1",
+        "oklch": "oklch(97.5% 0.008 73.7)",
+        "tonalRamp": [
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
+        ]
+      },
+      "umber-100": {
+        "role": "primary",
+        "displayName": "Umber 100",
+        "canonical": "#f6e7d3",
+        "oklch": "oklch(93.5% 0.031 75.2)",
+        "tonalRamp": [
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
+        ]
+      },
+      "umber-200": {
+        "role": "primary",
+        "displayName": "Umber 200",
+        "canonical": "#e7d3bc",
+        "oklch": "oklch(87.7% 0.038 71.2)",
+        "tonalRamp": [
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
+        ]
+      },
+      "umber-300": {
+        "role": "primary",
+        "displayName": "Umber 300",
+        "canonical": "#d4b48f",
+        "oklch": "oklch(78.9% 0.062 70.8)",
+        "tonalRamp": [
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
+        ]
+      },
+      "umber-500": {
+        "role": "primary",
+        "displayName": "Umber 500",
+        "canonical": "#a8733f",
+        "oklch": "oklch(60.0% 0.096 63.7)",
+        "tonalRamp": [
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
+        ]
+      },
+      "umber-600": {
+        "role": "primary",
+        "displayName": "Umber 600",
+        "canonical": "#8c5a2b",
+        "oklch": "oklch(51.3% 0.091 61.6)",
+        "tonalRamp": [
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
+        ]
+      },
+      "umber-700": {
+        "role": "primary",
+        "displayName": "Umber 700",
+        "canonical": "#744820",
+        "oklch": "oklch(44.4% 0.081 60.4)",
+        "tonalRamp": [
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
+        ]
+      },
+      "umber-800": {
+        "role": "primary",
+        "displayName": "Umber 800",
+        "canonical": "#5a3716",
+        "oklch": "oklch(37.2% 0.068 61.2)",
+        "tonalRamp": [
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "sun-100": {
@@ -502,50 +630,50 @@
       },
       "action": {
         "role": "primary",
-        "displayName": "Lagoon Teal",
-        "canonical": "#0b7480",
-        "oklch": "oklch(51.2% 0.086 207.7)",
+        "displayName": "Umber",
+        "canonical": "#8c5a2b",
+        "oklch": "oklch(51.3% 0.091 61.6)",
         "tonalRamp": [
-          "#07454b",
-          "#08575f",
-          "#0a6670",
-          "#0b7480",
-          "#8cc6ca",
-          "#bfe0e2",
-          "#dff0f1",
-          "#eef7f7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "action-hover": {
         "role": "primary",
-        "displayName": "Deep Lagoon Hover",
-        "canonical": "#0a6670",
-        "oklch": "oklch(46.7% 0.078 206.9)",
+        "displayName": "Deep Umber Hover",
+        "canonical": "#744820",
+        "oklch": "oklch(44.4% 0.081 60.4)",
         "tonalRamp": [
-          "#07454b",
-          "#08575f",
-          "#0a6670",
-          "#0b7480",
-          "#8cc6ca",
-          "#bfe0e2",
-          "#dff0f1",
-          "#eef7f7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "action-press": {
         "role": "primary",
-        "displayName": "Deep Lagoon Press",
-        "canonical": "#08575f",
-        "oklch": "oklch(41.8% 0.069 206.0)",
+        "displayName": "Deep Umber Press",
+        "canonical": "#5a3716",
+        "oklch": "oklch(37.2% 0.068 61.2)",
         "tonalRamp": [
-          "#07454b",
-          "#08575f",
-          "#0a6670",
-          "#0b7480",
-          "#8cc6ca",
-          "#bfe0e2",
-          "#dff0f1",
-          "#eef7f7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "action-text": {
@@ -566,82 +694,82 @@
       },
       "action-tint": {
         "role": "primary",
-        "displayName": "Lagoon Mist",
-        "canonical": "#dff0f1",
-        "oklch": "oklch(94.3% 0.018 201.1)",
+        "displayName": "Umber Mist",
+        "canonical": "#f6e7d3",
+        "oklch": "oklch(93.5% 0.031 75.2)",
         "tonalRamp": [
-          "#07454b",
-          "#08575f",
-          "#0a6670",
-          "#0b7480",
-          "#8cc6ca",
-          "#bfe0e2",
-          "#dff0f1",
-          "#eef7f7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "select-bg": {
         "role": "primary",
         "displayName": "Selected Tint",
-        "canonical": "#dff0f1",
-        "oklch": "oklch(94.3% 0.018 201.1)",
+        "canonical": "#f6e7d3",
+        "oklch": "oklch(93.5% 0.031 75.2)",
         "tonalRamp": [
-          "#07454b",
-          "#08575f",
-          "#0a6670",
-          "#0b7480",
-          "#8cc6ca",
-          "#bfe0e2",
-          "#dff0f1",
-          "#eef7f7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "select-ink": {
         "role": "primary",
         "displayName": "Selected Ink",
-        "canonical": "#0a6670",
-        "oklch": "oklch(46.7% 0.078 206.9)",
+        "canonical": "#744820",
+        "oklch": "oklch(44.4% 0.081 60.4)",
         "tonalRamp": [
-          "#07454b",
-          "#08575f",
-          "#0a6670",
-          "#0b7480",
-          "#8cc6ca",
-          "#bfe0e2",
-          "#dff0f1",
-          "#eef7f7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "select-border": {
         "role": "primary",
         "displayName": "Selected Edge",
-        "canonical": "#0b7480",
-        "oklch": "oklch(51.2% 0.086 207.7)",
+        "canonical": "#8c5a2b",
+        "oklch": "oklch(51.3% 0.091 61.6)",
         "tonalRamp": [
-          "#07454b",
-          "#08575f",
-          "#0a6670",
-          "#0b7480",
-          "#8cc6ca",
-          "#bfe0e2",
-          "#dff0f1",
-          "#eef7f7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "focus": {
         "role": "primary",
         "displayName": "Focus Teal",
-        "canonical": "#0b7480",
-        "oklch": "oklch(51.2% 0.086 207.7)",
+        "canonical": "#8c5a2b",
+        "oklch": "oklch(51.3% 0.091 61.6)",
         "tonalRamp": [
-          "#07454b",
-          "#08575f",
-          "#0a6670",
-          "#0b7480",
-          "#8cc6ca",
-          "#bfe0e2",
-          "#dff0f1",
-          "#eef7f7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "best": {
@@ -663,8 +791,8 @@
       "best-bg": {
         "role": "secondary",
         "displayName": "Sun Wash",
-        "canonical": "#fdf1d8",
-        "oklch": "oklch(96.1% 0.035 85.4)",
+        "canonical": "#fdefc0",
+        "oklch": "oklch(95.2% 0.062 93.4)",
         "tonalRamp": [
           "#110a00",
           "#2c230f",
@@ -679,97 +807,97 @@
       "best-ink": {
         "role": "secondary",
         "displayName": "Sun Ink",
-        "canonical": "#7a5000",
-        "oklch": "oklch(46.7% 0.099 74.3)",
+        "canonical": "#1f2a33",
+        "oklch": "oklch(27.9% 0.023 243.4)",
         "tonalRamp": [
-          "#130900",
-          "#331f00",
-          "#573902",
-          "#7e5407",
-          "#a37736",
-          "#c99b5b",
-          "#f1c180",
-          "#ffebd3"
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
         ]
       },
       "rate": {
         "role": "tertiary",
-        "displayName": "Ochre",
-        "canonical": "#8f5a0c",
-        "oklch": "oklch(51.5% 0.108 68.8)",
+        "displayName": "Rating Star",
+        "canonical": "#744820",
+        "oklch": "oklch(44.4% 0.081 60.4)",
         "tonalRamp": [
-          "#140800",
-          "#351e00",
-          "#5b3601",
-          "#835102",
-          "#aa732f",
-          "#d19855",
-          "#f9be7b",
-          "#feebd7"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "rate-soft": {
-        "role": "tertiary",
-        "displayName": "Ochre Text",
-        "canonical": "#946313",
-        "oklch": "oklch(53.9% 0.108 73.0)",
+        "role": "neutral",
+        "displayName": "Quiet Text",
+        "canonical": "#5c6873",
+        "oklch": "oklch(51.1% 0.023 245.9)",
         "tonalRamp": [
-          "#130900",
-          "#341f01",
-          "#583801",
-          "#805300",
-          "#a7752b",
-          "#ce9a53",
-          "#f6c079",
-          "#ffebd3"
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
         ]
       },
       "rate-bg": {
-        "role": "tertiary",
-        "displayName": "Ochre Wash",
-        "canonical": "#f6e6cb",
-        "oklch": "oklch(93.1% 0.040 80.9)",
+        "role": "neutral",
+        "displayName": "Quiet Band",
+        "canonical": "#efeeea",
+        "oklch": "oklch(94.9% 0.005 95.1)",
         "tonalRamp": [
-          "#110a00",
-          "#2e220c",
-          "#4b3e27",
-          "#695c44",
-          "#8d7e66",
-          "#b2a389",
-          "#d8c8ae",
-          "#fcecd1"
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
         ]
       },
       "gem-ink": {
         "role": "tertiary",
-        "displayName": "Plum",
-        "canonical": "#7a4a6f",
-        "oklch": "oklch(47.7% 0.083 335.7)",
+        "displayName": "Gem Mark",
+        "canonical": "#744820",
+        "oklch": "oklch(44.4% 0.081 60.4)",
         "tonalRamp": [
-          "#1a0015",
-          "#3b1033",
-          "#5a2d51",
-          "#7b4b70",
-          "#a06d94",
-          "#c691b9",
-          "#eeb6e0",
-          "#ffe6f8"
+          "#5a3716",
+          "#744820",
+          "#8c5a2b",
+          "#a8733f",
+          "#d4b48f",
+          "#e7d3bc",
+          "#f6e7d3",
+          "#faf6f1"
         ]
       },
       "gem-bg": {
-        "role": "tertiary",
-        "displayName": "Plum Wash",
-        "canonical": "#f3e8f0",
-        "oklch": "oklch(94.2% 0.016 335.1)",
+        "role": "neutral",
+        "displayName": "Gem Ground",
+        "canonical": "#efeeea",
+        "oklch": "oklch(94.9% 0.005 95.1)",
         "tonalRamp": [
-          "#0f090e",
-          "#292127",
-          "#453d43",
-          "#645a61",
-          "#877d84",
-          "#aba1a8",
-          "#d1c7cf",
-          "#f6ebf3"
+          "#1f2a33",
+          "#2e3a44",
+          "#44515c",
+          "#5c6873",
+          "#c5cac8",
+          "#dcdfdd",
+          "#efeeea",
+          "#f6f5f2"
         ]
       },
       "green": {
@@ -1072,51 +1200,45 @@
     }
   ],
   "narrative": {
-    "northStar": "Lagoon",
-    "overview": "Carta is a travel app you want to open: photos sell the place, and one calm price line with its source tells the truth under every photo. The look is \"Lagoon\" (T419, owner decision 2026-10-13): the category standard of Airbnb, Polarsteps and Wanderlog, executed at their craft level rather than reinvented. White surfaces sit on a warm light grey; ink is a blue-grey that is never black; one deep lagoon teal carries every action and every selection; sun yellow marks best value and nothing else; one friendly typeface, Figtree, sets everything, figures included, with tabular numerals.\n\nThe density is a working app, not a brochure. Explore and Destinations default to compact rows, about ten to a phone screen, each a small rounded photo, a name, a rating and a price line such as \"€49 a day\" with its source word. Large photo tiles appear on rails and the home page, where inspiration leads. Depth is quiet: objects at rest carry a hairline border, and only what floats (a sheet, a popover, a control over a photograph) takes a soft ink shadow.\n\nThe world refuses two things, both confirmed by the owner in the direction contract (`continent-app/.impeccable/surfaces/continent-app.md`): the brochure hero with text laid over a photograph, and the dark instrument look of black slabs and dark selected states.",
+    "northStar": "Lagoon, in brown",
+    "overview": "Carta is a travel app you want to open: photos sell the place, and one calm price line sits under every photo, marked as an estimate where it is one. The look is \"Lagoon\" (T419, owner decision 2026-10-13): the category standard of Airbnb, Polarsteps and Wanderlog, executed at their craft level rather than reinvented. White surfaces sit on a warm light grey; ink is a blue-grey that is never black; one warm brown (umber) carries every action and every selection, so the app has two base colours, the ink and the brown (owner decision 2026-10-13, T438, which replaced the lagoon teal); sun yellow marks best value and nothing else; one friendly typeface, Figtree, sets everything, figures included, with tabular numerals.",
     "keyCharacteristics": [
       "Photography leads; text never sits on a photograph.",
-      "One teal for everything that acts or is selected, as a light tint plus teal text, never a dark slab.",
-      "Every colour outside the neutrals and teal has exactly one job.",
+      "Two base colours: blue-grey ink and one brown for everything that acts or is selected, as a light tint plus brown text, never a dark slab.",
+      "A rating is the Score: a brown star and an ink figure, never a filled chip.",
+      "Every colour outside the neutrals and the brown has exactly one job.",
       "One typeface, tabular figures everywhere, so prices line up and settle in place.",
       "Borders at rest, shadows only on what floats.",
-      "Every control is 44 px on touch, with a 2 px teal focus ring."
+      "Every control is 44 px on touch, with a 2 px brown focus ring."
     ],
     "rules": [
       {
-        "name": "The One Teal Rule",
-        "body": "Teal means it acts or it is selected. Nothing decorative, no rating, no gem and no status is ever teal.",
-        "section": "colors"
+        "name": "The Two Colours Rule",
+        "body": "Ink carries the text and the drawings; brown means it acts, is live or is selected. Nothing decorative and no status is ever brown; the rating star and the gem diamond are the two small marks it lends out."
       },
       {
         "name": "The One Job Rule",
-        "body": "Ochre is a rating, plum a hidden gem, sun yellow best value, red destruction. A colour borrowed for a second job stops meaning the first.",
-        "section": "colors"
+        "body": "Sun yellow is best value, red destruction, rust a warning. A colour borrowed for a second job stops meaning the first."
       },
       {
         "name": "The No Slab Rule",
-        "body": "A selected state is the light teal tint with a teal label and a mark (a tick, an underline, a lifted thumb). Never a dark fill, so the app never reads as black.",
-        "section": "colors"
+        "body": "A selected state is the light brown tint with a brown label and a mark (a tick, an underline, a lifted thumb). Never a dark fill, so the app never reads as black."
       },
       {
         "name": "The Floor Rule",
-        "body": "Nothing functional is set under 11 px, and no figure or rating under 12 px. T421 raised every rule that was under 10 px; the older per-screen files still hold px sizes from 10 px up, which the migration moves onto the scale.",
-        "section": "typography"
+        "body": "Nothing functional is set under 11 px, and no figure or rating under 12 px. T421 raised every rule that was under 10 px; the older per-screen files still hold px sizes from 10 px up, which the migration moves onto the scale."
       },
       {
         "name": "The Tabular Rule",
-        "body": "Every column of figures uses tabular numerals in the one family. A figure that changes updates in place, never with a count-up.",
-        "section": "typography"
+        "body": "Every column of figures uses tabular numerals in the one family. A figure that changes updates in place, never with a count-up."
       },
       {
         "name": "The Compact Default Rule",
-        "body": "Lists where places are compared default to compact rows (about ten to a phone screen); large photo tiles belong to rails and the home page.",
-        "section": "layout"
+        "body": "Lists where places are compared default to compact rows (about ten to a phone screen); large photo tiles belong to rails and the home page."
       },
       {
         "name": "The Border Or Shadow Rule",
-        "body": "Elevation is declared once per object: a border or a shadow, never both.",
-        "section": "elevation"
+        "body": "Elevation is declared once per object: a border or a shadow, never both."
       }
     ],
     "dos": [
@@ -1131,8 +1253,9 @@
     ],
     "donts": [
       "**Don't** paint a selected state as a dark fill; the dark slab is the look Lagoon refused.",
-      "**Don't** use teal for anything that does not act or is not selected, or ochre, plum, sun yellow or red outside their one job.",
-      "**Don't** set sun yellow as text; use `--best-ink`.",
+      "**Don't** use brown for anything that does not act, is not live or is not selected (beyond the rating star and the gem diamond), or sun yellow, rust or red outside their one job.",
+      "**Don't** fill a rating chip, show a catalogue count as page furniture, or put a method or coverage sentence beside a figure.",
+      "**Don't** set sun yellow as text; best value as text is ink beside the marker.",
       "**Don't** add a gradient, a second typeface, a monospaced face for figures, or a hex outside `01-tokens.css` and the token mirror.",
       "**Don't** set functional text under 11 px, or a figure or rating under 12 px.",
       "**Don't** give one object both a border and a shadow.",

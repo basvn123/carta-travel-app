@@ -25,8 +25,8 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const INITIALS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
 /** The compass mark, in the 32 unit box the favicon and Logo.jsx share. On a
- *  light ground (Lagoon, T425): an ink ring and a teal north needle. Icons pass
- *  their own colours for the white mark on a teal tile. */
+ *  light ground: an ink ring and a brown north needle (T438; teal from T425).
+ *  Icons pass their own colours for the white mark on a brown tile. */
 export function markShapes(p = {}) {
   const k = { ring: C.ink, inner: C.rule, north: C.accent, south: C.ink, pivot: C.card, pivotEdge: C.ink, ...p };
   return [

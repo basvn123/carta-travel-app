@@ -1,7 +1,7 @@
 /*
  * Tabs (T422): sections of one page that swap in place.
  *
- * A row of labels on a hairline; the chosen tab is --text with a 2 px teal
+ * A row of labels on a hairline; the chosen tab is --text with a 2 px brown
  * underline, the others --text-2. role="tablist" with role="tab"; arrow keys
  * move between tabs, Home and End jump. The caller renders the panel and may
  * pass panelId so each tab points at it (aria-controls). Navigation between

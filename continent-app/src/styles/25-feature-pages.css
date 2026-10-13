@@ -2859,7 +2859,7 @@
 .dsec.is-open .dsec-chev { transform: rotate(180deg); }
 .dsec-aside { flex: none; }
 .dsec-body { padding: 0 14px 14px; }
-.dsec-tips { background: var(--rate-bg); border-color: var(--rate-soft); }
+.dsec-tips { background: var(--rate-bg); border-color: var(--border); }
 .dsec-tips .dsec-icon { color: var(--ink-soft); }
 .dsec-more {
   display: inline-flex;
@@ -3046,7 +3046,7 @@
   border: 1px solid var(--rule-soft);
 }
 .ddo-type.is-trail { background: var(--trail-bg); color: var(--trail-ink); border-color: var(--trail-rule); }
-.ddo-type.is-festival { background: var(--rate-bg); color: var(--rate); border-color: var(--rate-soft); }
+.ddo-type.is-festival { background: var(--rate-bg); color: var(--rate); border-color: var(--border); }
 .ddo-type.is-swim { background: var(--swim-bg); color: var(--swim-ink); border-color: var(--swim-rule); }
 .ddo-type.is-experience { background: var(--accent-bg); color: var(--experience-ink); border-color: var(--experience-rule); }
 .ddo-name { font-size: 13.5px; font-weight: 600; line-height: 1.3; color: var(--ink); }

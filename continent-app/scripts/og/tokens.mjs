@@ -79,8 +79,8 @@ export const C = {
   rate: colour('rate'),
   rateBg: colour('rate-bg'),
   green: colour('green'),
-  lagoon200: colour('lagoon-200'),
-  lagoon300: colour('lagoon-300'),
+  umber200: colour('umber-200'),
+  umber300: colour('umber-300'),
   onFill: colour('on-fill'),
 };
 C.good = mix(C.green, C.card, 0.16); // the MonthStrip's good cell: green 16% on the card

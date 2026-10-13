@@ -33,7 +33,7 @@ const ROLES = [
   ['--surface-page', 'The ground behind everything', 'Never a card fill'],
   ['--surface', 'Cards, sheets, bars', 'Never the page ground'],
   ['--surface-sunken', 'Input fills, quiet bands, a segmented track', 'Never a selected state'],
-  ['--text', 'Body text and headings', 'Never on a teal fill'],
+  ['--text', 'Body text and headings', 'Never on a brown fill'],
   ['--text-2', 'Secondary text', 'Never for a heading'],
   ['--text-3', 'Metadata at 11 to 14 px', 'Never body copy'],
   ['--border', 'Card and input edges, dividers', 'Never as a second elevation on a shadowed object'],
@@ -45,8 +45,8 @@ const ROLES = [
   ['--danger', 'Destructive actions only', 'Never a warning or decoration'],
 ];
 const PRIMITIVES = ['--neutral-0', '--neutral-25', '--neutral-50', '--neutral-100', '--neutral-150', '--neutral-200',
-  '--neutral-300', '--neutral-600', '--neutral-700', '--neutral-800', '--neutral-900', '--lagoon-50', '--lagoon-100',
-  '--lagoon-200', '--lagoon-300', '--lagoon-600', '--lagoon-700', '--lagoon-800', '--lagoon-900', '--sun-100',
+  '--neutral-300', '--neutral-600', '--neutral-700', '--neutral-800', '--neutral-900', '--umber-50', '--umber-100',
+  '--umber-200', '--umber-300', '--umber-500', '--umber-600', '--umber-700', '--umber-800', '--sun-100',
   '--sun-400', '--sun-800'];
 const TYPE = [
   ['--text-display', 'Display', 'Destination names on a hero', 700],
@@ -156,10 +156,10 @@ export default function StyleGuide() {
         <main className="sg-main">
           <div className="sg-hero">
             <h1>Carta design system</h1>
-            <p>Lagoon: a calm, photo-first travel app in the manner of Airbnb, Polarsteps and Wanderlog, with one honest price line under every photo. Every part below is the live component and the live token; change the language at the top to see labels and prices in all six.</p>
+            <p>A calm, photo-first travel app in the manner of Airbnb, Polarsteps and Wanderlog, with one honest price line under every photo. Every part below is the live component and the live token; change the language at the top to see labels and prices in all six.</p>
           </div>
 
-          <Section id="colour" title="Colour" lead="Components read roles, never raw values. White surfaces on a warm light grey, blue-grey ink that is never black, one teal for actions and selection.">
+          <Section id="colour" title="Colour" lead="Components read roles, never raw values. White surfaces on a warm light grey, blue-grey ink that is never black, one warm brown for actions and selection: two base colours.">
             <div className="sg-swatches">
               {ROLES.map(([name, yes, no]) => (
                 <div className="sg-swatch" key={name}>
@@ -290,7 +290,7 @@ export default function StyleGuide() {
             </div>
             <Use yes="Segmented: two to four views of the same thing (List and Map, Overview and Day by day). The chosen one is lifted, white on the track." no="More than four options; filters (use chips)." />
             <Tabs label="Trip" value={tab} onChange={setTab} tabs={[{ id: 'overview', label: 'Overview' }, { id: 'days', label: 'Day by day', count: 7 }, { id: 'costs', label: 'Costs' }]} />
-            <Use yes="Tabs: sections of one page that swap in place, underlined in teal." no="Moving between pages or tabs of the app (use links)." />
+            <Use yes="Tabs: sections of one page that swap in place, underlined in brown." no="Moving between pages or tabs of the app (use links)." />
           </Section>
 
           <Section id="score" title="Score" lead="A drawn star and the figure in ink, never a filled chip, so a rating never reads as a button. The star is filled from Excellent up and outlined below; a page head may add the band word.">
@@ -389,11 +389,11 @@ export default function StyleGuide() {
 
           <Section id="rules" title="Rules">
             <ul className="sg-rules">
-              <li>One selected state: the light teal tint, a teal label and a mark. Never a dark fill.</li>
-              <li>One primary button per view. Teal means it acts or it is live.</li>
-              <li>Ochre is a rating, plum a hidden gem, sun yellow best value, red destruction. Each colour has one job.</li>
+              <li>One selected state: the light brown tint, a brown label and a mark. Never a dark fill.</li>
+              <li>One primary button per view. Brown means it acts, is live or is selected.</li>
+              <li>Two base colours: blue-grey ink and one brown. A rating is an ink figure with a brown star; sun yellow marks best value; red is destruction.</li>
               <li>Photos lead; text never sits on a photograph; a caption sits under it.</li>
-              <li>Every control is 44 px on touch; focus is a 2 px teal ring.</li>
+              <li>Every control is 44 px on touch; focus is a 2 px brown ring.</li>
               <li>Motion uses the four duration tokens, moves transform and opacity, and stops under reduced motion.</li>
               <li>No em or en dashes, no middots, sentence case, verb-first labels.</li>
             </ul>

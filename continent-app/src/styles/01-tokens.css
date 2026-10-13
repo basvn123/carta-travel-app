@@ -1,11 +1,12 @@
 /* ==========================================================================
-   Carta, Europe Travel: design tokens, "Lagoon" (T421, owner choice T419)
+   Carta, Europe Travel: design tokens (T421 Lagoon structure; the teal became
+   one warm brown, umber, on 2026-10-13 in T438)
 
    A top-tier travel app in the manner of Airbnb, Polarsteps and Wanderlog:
-   photography first, white surfaces on a warm light grey, blue-grey ink that
-   is never black, one deep lagoon teal for actions and selection, sun yellow
-   for best value only, one friendly typeface (Figtree) for everything,
-   figures included, with tabular numerals.
+   photography first, white surfaces on a warm light grey, and two base
+   colours: a blue-grey ink that is never black, and one warm brown for
+   actions and selection. Sun yellow marks best value only. One friendly
+   typeface (Figtree) sets everything, figures included, with tabular numerals.
 
    Three layers, read top to bottom:
      1. Primitives  the raw scales. Components never read these.
@@ -40,8 +41,8 @@
   --neutral-800:  #2e3a44;
   --neutral-900:  #1f2a33;
 
-  /* Lagoon teal. 600 is the action colour, chosen one step darker than the
-     T419 card (#0e7c86) so teal text clears AA on its own tint. */
+  /* Lagoon teal, the action colour T421 to T437. No role reads it since T438;
+     kept until the lint shows no direct reads, then deleted. */
   --lagoon-50:    #eef7f7;
   --lagoon-100:   #dff0f1;
   --lagoon-200:   #bfe0e2;
@@ -50,6 +51,20 @@
   --lagoon-700:   #0a6670;
   --lagoon-800:   #08575f;
   --lagoon-900:   #07454b;
+
+  /* Umber: the one warm brown (owner decision 2026-10-13, T438). 600 is the
+     action colour: white on it 5.8:1, 600 on its 100 tint 4.8:1, 700 on
+     the tint 6.4:1. 100 sits 9.9 delta E from the sunken grey, so a
+     selected item never looks like a quiet band. With the blue-grey ink it is one of the app's two base
+     colours. */
+  --umber-50:     #faf6f1;
+  --umber-100:    #f6e7d3;
+  --umber-200:    #e7d3bc;
+  --umber-300:    #d4b48f;
+  --umber-500:    #a8733f;
+  --umber-600:    #8c5a2b;
+  --umber-700:    #744820;
+  --umber-800:    #5a3716;
 
   /* Sun yellow: best value, as a fill or a marker. Never text. */
   --sun-400:      #f2b33d;
@@ -68,23 +83,25 @@
   --border:          var(--neutral-200);
   --border-soft:     var(--neutral-150);
 
-  --action:          var(--lagoon-600);   /* primary buttons, links, focus; white on it 5.5:1 */
-  --action-hover:    var(--lagoon-700);
-  --action-press:    var(--lagoon-800);
+  --action:          var(--umber-600);    /* primary buttons, links, focus; white on it 5.8:1 */
+  --action-hover:    var(--umber-700);
+  --action-press:    var(--umber-800);
   --action-text:     var(--neutral-0);    /* label on an --action fill */
-  --action-tint:     var(--lagoon-100);   /* --action as text on it 4.7:1 */
+  --action-tint:     var(--umber-100);    /* --action as text on it 4.8:1 */
 
-  /* The one selected state: a light tint, teal text, a teal edge. Never a
-     dark slab. T422 moves every chip, tab and segment onto it; until then
-     the legacy --ink-fill below carries selection as a deep teal fill. */
-  --select-bg:       var(--lagoon-100);
-  --select-ink:      var(--lagoon-700);   /* 5.7:1 on --select-bg */
-  --select-border:   var(--lagoon-600);
+  /* The one selected state: a light tint, brown text, a brown edge. Never
+     a dark slab. Surfaces not yet on the kit still read the legacy
+     --ink-fill below as a deep brown fill. */
+  --select-bg:       var(--umber-100);
+  --select-ink:      var(--umber-700);    /* 6.4:1 on --select-bg */
+  --select-border:   var(--umber-600);
 
-  --focus:           var(--lagoon-600);
+  --focus:           var(--umber-600);
   --best:            var(--sun-400);      /* best value marker; --text on it 7.9:1 */
-  --best-bg:         var(--sun-100);
-  --best-ink:        var(--sun-800);      /* best value as text, 7.1:1 on --surface */
+  --best-bg:         #fdefc0;             /* clearly yellow, apart from the brown tint (T438) */
+  /* Best value as text is ink beside the sun marker (T438): a dark yellow
+     text sat on top of the brown. */
+  --best-ink:        var(--text);
 
   /* ---- Scales ------------------------------------------------------------ */
 
@@ -151,34 +168,37 @@
   --ink:          var(--text);
   --ink-soft:     var(--text-2);
   --ink-mute:     var(--text-3);
-  /* Selection before T422: a deep teal fill under white labels (8.3:1),
-     replacing the slate slab that made the app read as black. */
-  --ink-fill:     var(--lagoon-800);
+  /* Selection before T422 on surfaces not yet migrated: a deep brown fill
+     under white labels (10.7:1). The migration retires it. */
+  --ink-fill:     var(--umber-800);
   --rule:         var(--border);
   --rule-soft:    var(--border-soft);
   --accent:       var(--action);
-  --accent-soft:  var(--lagoon-300);
+  --accent-soft:  var(--umber-300);
   --accent-bg:    var(--action-tint);
   --accent-hover:     var(--action-hover);
   --accent-press:     var(--action-press);
   --accent-press-alt: var(--action-press);
-  --accent-wash:      var(--lagoon-50);
-  --accent-wash-alt:  #f4f9f9;
+  --accent-wash:      var(--umber-50);
+  --accent-wash-alt:  var(--umber-50);
   --paper-hover:  var(--surface-hover);
   --paper-lift:   var(--neutral-25);
-  --wash:         var(--lagoon-50);
+  --wash:         var(--umber-50);
   --shadow-1:     var(--elev-1);
   --shadow-2:     var(--elev-2);
   --shadow-card:  var(--elev-1);
   --display:      var(--font);
   --mono:         var(--font);     /* figures use the one family, tabular (PRODUCT.md, T420) */
 
-  /* Ratings are a MEASURE, not a warning or an action: deep ochre, as before.
-     Paper text on --rate 5.3:1; --rate on --rate-bg 4.7:1; --rate-soft on
-     paper 4.8:1. The star colour itself is roadmap item 1.8. */
-  --rate:         #8f5a0c;
-  --rate-soft:    #946313;
-  --rate-bg:      #f6e6cb;
+  /* Ratings are a MEASURE (T437, T438): the Score draws a star in --rate and
+     the figure in ink, never a filled chip, so the brown star cannot read as
+     a button. The old ochre tints become neutral: --rate-bg the sunken
+     ground and --rate-soft the metadata grey (it is read as text, 5.2:1 on
+     the page), so a tips band or a festival tag no longer looks selected.
+     --rate on --surface 7.8:1. */
+  --rate:         var(--umber-700);
+  --rate-soft:    var(--text-3);
+  --rate-bg:      var(--surface-sunken);
   --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
   /* Destructive only, never decoration. Now that the action is teal, red
      means one thing: this erases something. */
@@ -196,10 +216,11 @@
   --verdict-3:    var(--rate);       /* filled ribbon */
   --verdict-2:    var(--rate);       /* outline ribbon */
   --verdict-1:    var(--ink-mute);   /* text only */
-  /* Hidden gems: plum, because teal is now the action colour and a gem must
-     never read as a button. --gem-ink on --gem-bg 5.8:1. */
-  --gem-ink:      #7a4a6f;
-  --gem-bg:       #f3e8f0;
+  /* Hidden gems join the brown family (T438): the diamond and the word in
+     umber 700 on a neutral ground, never a tinted chip that reads selected.
+     --gem-ink on --gem-bg 7.0:1. */
+  --gem-ink:      var(--umber-700);
+  --gem-bg:       var(--surface-sunken);
 
   /* ---- Domain colours (T191): one feature each, never general purpose --- */
 
@@ -241,10 +262,11 @@
   --warn-ink:           #b3402a;   /* over budget, no fare, cautions */
   --warn-vivid:         #cc4433;   /* poor water and swim-stop indicator */
   --amber:              #c68a12;   /* sufficient water, hazard rules, amber indicator */
-  --amber-ink:          #8a5a18;   /* warning note text */
-  --amber-ink-alt:      #8a5f0d;   /* amber text beside the ochre family */
-  --amber-ink-deep:     #855a0a;   /* deepest amber text */
-  --amber-warm:         #b3690f;   /* warm amber text */
+  /* Warning text is rust (T438): the old amber inks sat on the brown. */
+  --amber-ink:          #a8400f;   /* warning note text, 6.2:1 on --surface */
+  --amber-ink-alt:      #a8400f;   /* amber text beside the rating family */
+  --amber-ink-deep:     #9c3d12;   /* deepest warning text, 6.8:1 */
+  --amber-warm:         #a8400f;   /* warm warning text (was 4.25:1, under the floor) */
   --beach-ink:          #c48a2a;   /* beach pin name */
   --amber-bg:           #fdf3e2;   /* warning note fill */
   --amber-bg-alt:       #fcf2dd;   /* a second warning tint */

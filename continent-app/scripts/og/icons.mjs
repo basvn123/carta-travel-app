@@ -29,11 +29,12 @@ import { rasterise, closeBrowser } from './render.mjs';
 const PUB = path.join(APP_ROOT, 'public');
 const STORE = path.join(APP_ROOT, 'brand', 'store');
 
-/* Lagoon (T425): the app icon is the white compass on a lagoon teal tile, the
+/* T438: the app icon is the white compass on the action brown tile (it was
+   lagoon teal from T425), the
    way an app reads on a home screen; the header keeps the ink mark on white. */
-const ICON_MARK = { ring: C.onFill, inner: C.lagoon300, north: C.onFill, south: C.lagoon200, pivot: C.accent, pivotEdge: C.onFill };
+const ICON_MARK = { ring: C.onFill, inner: C.umber300, north: C.onFill, south: C.umber200, pivot: C.accent, pivotEdge: C.onFill };
 
-/** A square icon: teal ground, white mark centred and sized as a share of the side. */
+/** A square icon: brown ground, white mark centred and sized as a share of the side. */
 function iconSvg(size, share, { ground = true } = {}) {
   const m = size * share;
   const o = (size - m) / 2;
@@ -42,7 +43,7 @@ function iconSvg(size, share, { ground = true } = {}) {
     + `<g transform="translate(${o} ${o}) scale(${m / 32})">${markShapes(ICON_MARK)}</g></svg>`;
 }
 
-/** The favicon: a teal tile with the white mark, so it reads on light and dark tab strips. */
+/** The favicon: a brown tile with the white mark, so it reads on light and dark tab strips. */
 export function faviconSvg() {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">`
     + `<rect width="32" height="32" rx="7" fill="${C.accent}"/>`
