@@ -1382,7 +1382,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T420-b | T420 | Planned task numbers moved up one (tokens T421, kit T422, money T423, style guide T424, docs and lint T425, migration T426 onward); T418-c's "T421 Field" is T422 and T419-c's "T424" is T425 | next task | open |  |
 | T421-a | T421 | Selection is still a deep teal fill (--ink-fill); the T422 kit moves every chip, tab and segment onto the --select-* tint | next task | closed by T422 |  |
 | T421-b | T421 | Destination PDF (destinationPdf.js TTFs), share cards (scripts/og/render.mjs) and the numbers explainer (scripts/explainer/numbers.mjs) still use the old fonts and colours | next task | open |  |
-| T421-c | T421 | Brand mark (header compass, favicon, app icons) still has the old red needle and ink; regenerate in Lagoon via scripts/og | user | open |  |
+| T421-c | T421 | Brand mark (header compass, favicon, app icons) still has the old red needle and ink; regenerate in Lagoon via scripts/og | user | closed by T436 |  |
 | T421-d | T421 | verify_quality_floor.mjs type checks assume Fraunces and JetBrains Mono (serif size, prose in mono, bare figures); rewrite for one family | next task | open |  |
 | T421-e | T421 | 316 detector hits for functional text at 10 to 10.5 px remain; the migration moves those rules onto the type scale | next task | open | after T422 |
 | T421-f | T421 | Owner looks at every tab on a phone after the Lagoon re-skin (plan checkpoint) | user | open |  |
@@ -1393,11 +1393,12 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T423-b | T423 | Nine i18n keys lost their euro sign but have no caller (filter.perDirection, detail.eachLocalRate, detail.perNightApprox, detail.perDayApprox, detail.perTwoDirections, detail.rentalMetaMany/One, detail.viaGround, dest.tripTotal); delete in a dead-string pass | next task | open |  |
 | T423-c | T423 | journey.fltBetween, brief.dayCostRange and match.budget still join figures with a literal word (match.budget spells out euros); move to formatMoneyRange in their tab migrations | next task | open |  |
 | T423-d | T423 | design-lint money-literal rule (euro in JSX or i18n, toFixed on a price, retired helper calls) lands in T425; then retire the formatMoney aliases call site by call site | next task | closed by T425 | before T426 |
-| T424-a | T424 | Owner approves the style guide (?styleguide) on a phone and on desktop; closes the design half of roadmap 1.2 | user | open |  |
+| T424-a | T424 | Owner approves the style guide (?styleguide) on a phone and on desktop; closes the design half of roadmap 1.2 | user | closed by T436 |  |
 | T424-b | T424 | The existing RatingBadge renders a 10 px label inside its chip; it becomes the kit's Score in the migration | next task | open |  |
 | T424-c | T424 | Style guide prose is English reference text, not i18n (kit labels and prices on it do switch language); translate only if the page is ever shown to travellers | next task | open |  |
-| T425-a | T425 | Confirm the skill's call: the cheapest pin in view takes the best-value sun marker instead of teal (code still draws it teal) | user | open |  |
+| T425-a | T425 | Confirm the skill's call: the cheapest pin in view takes the best-value sun marker instead of teal (code still draws it teal) | user | closed by T436 |  |
 | T425-b | T425 | Receipt footer used --accent-bg, now the same teal tint as selection; the receipt migration picks a distinct quiet tint | next task | open |  |
-| T425-c | T425 | Kit positive status chip (green tint and text) vs the T380 'status, not green' rule; skill scopes it to short data labels, owner may prefer ink plus a dot | user | open |  |
+| T425-c | T425 | Kit positive status chip (green tint and text) vs the T380 'status, not green' rule; skill scopes it to short data labels, owner may prefer ink plus a dot | user | closed by T436 |  |
 | T425-d | T425 | 02-base.css sets body type with literals and reads legacy token names; move onto roles in the shell migration | next task | open |  |
 | T425-e | T425 | Per-surface migration T426 to T435 runs in another session from Roadmap/1.2-migration-handoff.md | next task | open |  |
+| T436-a | T436 | scripts/og/check.mjs: two share-card text fits fail (site square, beach-es-trenc og) with the Lagoon tokens; part of T421-b (share cards to Figtree) | next task | open |  |

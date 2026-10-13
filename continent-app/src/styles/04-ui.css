@@ -94,7 +94,9 @@
 .ui-chip-tone-best { background: var(--best); color: var(--text); }
 .ui-chip-tone-gem { background: var(--gem-bg); color: var(--gem-ink); }
 .ui-chip-tone-rate { background: var(--rate-bg); color: var(--rate); }
-.ui-chip-tone-positive { background: var(--trail-bg); color: var(--good-ink); }
+.ui-chip-tone-positive { background: var(--surface-sunken); color: var(--text); }
+/* Status, not green (T380, owner 2026-10-13): good news is ink with a status dot, never a green container. */
+.ui-chip-tone-positive::before { content: ''; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--status-success); }
 .ui-chip-tone-danger { background: var(--danger-bg); color: var(--danger); }
 
 /* ---- Segmented ---------------------------------------------------------- */

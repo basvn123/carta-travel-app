@@ -320,7 +320,7 @@ These are measures and semantics, each with one job.
 
 - **Ochre** (`--rate`, `--rate-soft`, `--rate-bg`): ratings as a measure. `--rate` as a fill takes white text (5.8:1); `--rate-soft` is ochre as text on the page (4.8:1); `--rate-bg` is the ground of a rating chip, with `--rate` on it at 4.7:1. Never for actions. The star colour is roadmap item 1.8.
 - **Plum** (`--gem-ink`, `--gem-bg`): hidden gems and nothing else (5.8:1). Moved off teal in T421 so a gem never reads as a button.
-- **Moss** (`--green`): good news in data, always with a word. Never chrome, never a button. `--good-ink` on `--trail-bg` is the positive status chip.
+- **Moss** (`--green`): good news in data, always with a word. Never chrome, never a button. The positive status chip is `--text` on `--surface-sunken` with a 6 px `--status-success` dot (owner, 2026-10-13: status, not green).
 - **Brick** (`--danger`, `--danger-dark`, `--danger-bg`): destructive actions only. Now that the action is teal, red means one thing: this erases something.
 - **Signal Green** (`--status-success`): indicator dots and ticks. Never text.
 
@@ -362,7 +362,7 @@ Unchanged by T421, from T191. Single-purpose indicator and tint colours for one 
 | `--leaf-ink` | `#2c6a1f` | add stamps and positive chips |
 | `--trail-ink` | `#3d6b42` | trail and park text |
 | `--trail-pin` | `#3d7a4e` | trail and nature map pins |
-| `--trail-bg` | `#e8f0e6` | trail and park card fill; the positive status chip |
+| `--trail-bg` | `#e8f0e6` | trail and park card fill |
 | `--trail-rule` | `#d2e0cf` | trail and park card border |
 | `--trail-bg-alt` | `#e8f3e6` | a second trail tint |
 | `--trail-rule-alt` | `#c5dfbe` | a second trail border |
@@ -562,7 +562,7 @@ One chip in four kinds. Selected takes the light tint and a tick, so the state n
 - **Filter:** a toggle that narrows a list; a button with `aria-pressed`. `--surface` with a `--border` edge, pill corners, `--text-label` at 500, 32 px high on a fine pointer and `--tap` on touch. Selected: `--select-bg`, `--select-border` edge, `--select-ink` label at 600, and a 14 px tick that replaces the icon.
 - **Choice:** one of a set, inside a ChipGroup (`role="radiogroup"`; arrow keys move the choice, only the chosen chip is in the tab order). Same look as filter.
 - **Count:** a figure beside a label ("Filters 3"); not interactive. A 20 px pill on `--surface-sunken`, `--text-caption` at 600 in `--text-2`.
-- **Status:** a label on an object; not interactive. 24 px, `--radius-sm`, `--text-caption` at 600, in one tone: `neutral` (`--surface-sunken`, `--text-2`), `best` (`--best` with `--text`), `gem` (`--gem-bg`, `--gem-ink`), `rate` (`--rate-bg`, `--rate`), `positive` (`--trail-bg`, `--good-ink`, always with its word), `danger` (`--danger-bg`, `--danger`).
+- **Status:** a label on an object; not interactive. 24 px, `--radius-sm`, `--text-caption` at 600, in one tone: `neutral` (`--surface-sunken`, `--text-2`), `best` (`--best` with `--text`), `gem` (`--gem-bg`, `--gem-ink`), `rate` (`--rate-bg`, `--rate`), `positive` (`--surface-sunken`, `--text`, a 6 px `--status-success` dot, always with its word), `danger` (`--danger-bg`, `--danger`).
 - **When to use:** filters and refine rows; a short set of choices (more than four options also lands here rather than in Segmented); labels on objects.
 - **Not for:** an action (use a Button); a selected state painted dark; a status tone used outside its one job.
 
