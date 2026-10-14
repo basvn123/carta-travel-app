@@ -3757,19 +3757,24 @@
   white-space: nowrap;
 }
 .dmap-pin-n {
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-  /* Ink at rest; the committed highlight is the one accent (T395). */
-  background: var(--ink-fill);
-  color: var(--on-fill);
-  font-size: 10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: var(--radius-pill);
+  /* Ink at rest, the same ink as the tile numbers; the committed highlight
+     is the one brown mark (T395; T446 moved it off --ink-fill, which is
+     umber 800 since T438, so every pin read as committed). */
+  background: var(--text);
+  color: var(--surface);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-.dmap-pin-name { font-size: 11px; font-weight: 600; color: var(--ink); }
+.dmap-pin-name { font-size: var(--text-caption); font-weight: 600; color: var(--text); }
 .dmap-pin-name .mono { color: var(--ink-mute); font-weight: 500; }
 .dmap-pin-dot {
   width: 9px;

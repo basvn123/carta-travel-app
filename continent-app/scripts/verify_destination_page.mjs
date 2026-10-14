@@ -153,7 +153,8 @@ check('map layers are tabs, without counts', await page.locator('#sec-highlights
 for (const [label, sel] of [
   ['highlight tiles', '#sec-highlights .dhl2'],
   ['numbered highlight marks', '.dhl2-n'],
-  ['things to do tiles', '#sec-do .card'],
+  // T446: photo tiles where there are photographs, a hairline list for the rest.
+  ['things to do tiles or rows', '#sec-do .card, #sec-do .ddo-list li'],
   ['walk and ride tiles', '#sec-routes .card'],
   ['day trip tiles', '#sec-trips .card'],
   ['booking exits', '.destp-exits .destp-exit'],

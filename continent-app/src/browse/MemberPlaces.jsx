@@ -41,7 +41,9 @@ export function MemberPlaces({ members, focusName, t }) {
                 </span>
               )}
             </span>
-            {m.desc && <span className="destp-member-desc">{m.desc}</span>}
+            {/* The Wikidata description ("human settlement in Albania") left
+                the page (T446): it names a category, not the place, and it
+                is English in every language. */}
             {safeUrl(m.wiki) && (
               <a className="destp-member-link" href={safeUrl(m.wiki)}
                 target="_blank" rel="noreferrer">{t('dest.memberRead')}</a>

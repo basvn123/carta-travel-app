@@ -18,6 +18,10 @@ import { Button } from '../components/ui/index.js';
  * and a page; the path is a name the reader recognises.
  */
 
+// Thousands grouped in the page's language (2,719 m; 2.719 m in German).
+const grouped = (n) => {
+  try { return new Intl.NumberFormat(document.documentElement.lang || undefined).format(n); } catch { return String(n); }
+};
 const KM = (km) => (km < 10 ? km.toFixed(1) : String(Math.round(km)));
 
 // The labels the trail page already uses, so a grade reads the same word in
@@ -32,8 +36,14 @@ const SHAPE_KEY = {
   point: 'trails.shapePoint', figure8: 'trails.shapeFigure8',
 };
 
-function Row({ row, t, onOpen }) {
+function Row({ row, t, onOpen, brief = false }) {
   const dir = t(`dir.${row.dir}`);
+  // The stretch that actually passes, named, so the path and the piece of
+  // it are never confused for one another (ROUTES.md R6). In a brief row
+  // (the destination page, T446) its name is a code more often than a
+  // place ("CNP - 01 - Roma - Castel Gandolfo"), so it moves into the
+  // row's title, which a screen reader announces and a pointer shows.
+  const stretch = row.stage?.name ? t('dest.routesStretch', { name: row.stage.name }) : null;
   return (
     <li>
       <button
@@ -41,22 +51,28 @@ function Row({ row, t, onOpen }) {
         className="drh-row"
         onClick={() => onOpen?.(row.activity === 'cycling' ? 'cycling' : 'trails', row)}
         disabled={!onOpen}
+        title={brief && stretch ? stretch : undefined}
       >
         <span className="drh-main">
           <span className="drh-name">{row.name}</span>
-          <span className="drh-facts">
-            <span className="mono">{t('dest.routesPasses', { km: `${KM(row.km)} km`, dir })}</span>
-            {row.km_len != null && <span className="mono">{KM(row.km_len)} km</span>}
-            {row.ascent_m != null && <span className="mono">{row.ascent_m} m</span>}
-            {GRADE_KEY[row.grade] && <span>{t(GRADE_KEY[row.grade])}</span>}
-            {SHAPE_KEY[row.shape] && <span>{t(SHAPE_KEY[row.shape])}</span>}
-            {row.way && <span className="drh-way">{t('trails.waymarkedShort')}</span>}
-          </span>
-          {/* The stretch that actually passes, named, so the path and the
-              piece of it are never confused for one another. */}
-          {row.stage?.name && (
-            <span className="drh-stage">{t('dest.routesStretch', { name: row.stage.name })}</span>
+          {brief ? (
+            <span className="drh-facts">
+              <span>{t('dest.routesFrom', { km: `${KM(row.km)} km`, dir })}</span>
+              {row.km_len != null && <span>{KM(row.km_len)} km</span>}
+              {row.ascent_m != null && <span>{t('dest.ascentUp', { m: grouped(row.ascent_m) })}</span>}
+              {GRADE_KEY[row.grade] && <span>{t(GRADE_KEY[row.grade])}</span>}
+            </span>
+          ) : (
+            <span className="drh-facts">
+              <span className="mono">{t('dest.routesPasses', { km: `${KM(row.km)} km`, dir })}</span>
+              {row.km_len != null && <span className="mono">{KM(row.km_len)} km</span>}
+              {row.ascent_m != null && <span className="mono">{row.ascent_m} m</span>}
+              {GRADE_KEY[row.grade] && <span>{t(GRADE_KEY[row.grade])}</span>}
+              {SHAPE_KEY[row.shape] && <span>{t(SHAPE_KEY[row.shape])}</span>}
+              {row.way && <span className="drh-way">{t('trails.waymarkedShort')}</span>}
+            </span>
           )}
+          {!brief && stretch && <span className="drh-stage">{stretch}</span>}
           {row.car_free && (
             <span className="drh-carfree">
               <TrainIcon size={13} />
@@ -102,8 +118,10 @@ function NodeNetwork({ nn, t }) {
  *   routes  the dossier's routes block
  *   onOpen  (layer, row) => opens the stretch's page
  *   limit   rows shown per group before "See all" (T429); null shows all
+ *   brief   rows as name plus one line of facts, the stretch in the title (T446)
+ *   credits false when the page collects the sources in one line of its own
  */
-export default function RoutesFromHere({ routes, t, onOpen, limit = null }) {
+export default function RoutesFromHere({ routes, t, onOpen, limit = null, brief = false, credits = true }) {
   const [all, setAll] = React.useState(false);
   const groups = [
     ['hiking', 'dest.routesHiking', RouteIcon],
@@ -118,7 +136,7 @@ export default function RoutesFromHere({ routes, t, onOpen, limit = null }) {
           <h3 className="drh-head"><Icon size={14} /> {t(label)}</h3>
           <ul className="drh-list">
             {(all || !limit ? routes[key] : routes[key].slice(0, limit)).map((row) => (
-              <Row key={`${key}|${row.id}`} row={row} t={t} onOpen={onOpen} />
+              <Row key={`${key}|${row.id}`} row={row} t={t} onOpen={onOpen} brief={brief} />
             ))}
           </ul>
         </div>
@@ -132,8 +150,8 @@ export default function RoutesFromHere({ routes, t, onOpen, limit = null }) {
       {/* The coverage sentence that stood here (dest.routesCoverage) left the
           page with the other method lines (T429, owner 2026-10-13); the PDF
           still prints it. */}
-      <p className="drh-credit">{t('dest.routesCredit')}</p>
-      <CreditFold t={t} licenceKeys={['credit.licence.routes']} />
+      {credits && <p className="drh-credit">{t('dest.routesCredit')}</p>}
+      {credits && <CreditFold t={t} licenceKeys={['credit.licence.routes']} />}
     </div>
   );
 }

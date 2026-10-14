@@ -1451,3 +1451,12 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T429-g | T429 | Things to do has a photo for fewer than half the items in many places (Rome among them), so the track falls back to text tiles; the dossier could carry a Commons image per do item | next task | open |  |
 | T429-h | T429 | Data seen on the page: a gallery credit reads "0, CC BY 3.0" (Valbona, the author field holds 0), and the Lifestyle panel's trade-off line names the record, "Rome (Fiumicino)", not the town | next task | open |  |
 | T429-i | T429 | src/browse/ExploreMap.jsx:621 fails eslint react-hooks/exhaustive-deps (collectKpins missing); predates T429, which did not touch the file | next task | open |  |
+| T446-a | T446 | The destination price card prices Carta default 7 nights while the page may recommend half a day (Valbona) or three or four days (Rome intro); choose whether the card prices the recommended visit until dates are set | user | open |  |
+| T446-b | T446 | The day figure is bed plus food, while PRODUCT.md describes it as bed, food and local transport; change the figure or the document | user | open |  |
+| T446-c | T446 | Day-trip drive times from the trip model are straight-line (Valbona to Theth 23 min by car); now marked est. on the page, but the pipeline should route them or drop the minutes | next task | open |  |
+| T446-d | T446 | The destination page shows the same landmarks in the gallery, Things to do and Highlights, and the map labels only some numbered pins; one numbered track tied to the map would remove the repetition | next task | open |  |
+| T446-e | T446 | Dossier intro, rhythm line and highlight kinds are English only and now hide in the other five languages; translate them in the pipeline | next task | open |  |
+| T446-f | T446 | impeccable run inside continent-app (its own git repo) cannot find PRODUCT.md and DESIGN.md at the outer root; sessions read them directly | next task | open |  |
+| T446-g | T446 | The shared Lifestyle panel opened from the price card keeps method lines, Fine tune the counts and ten tiles at once | next task | open |  |
+| T446-h | T446 | The kit Score draws an outlined star below tier 2 and a filled one above; reviewers read it as rated versus unrated | user | open |  |
+| T446-i | T446 | verify_keyboard waits 60 ms after Tab, so a focused element still scrolling can read as invisible (seen once) | next task | open |  |

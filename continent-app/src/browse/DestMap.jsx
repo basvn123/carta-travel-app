@@ -192,7 +192,13 @@ const DestMap = React.forwardRef(function DestMap({
     });
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-    map.on('load', () => { readyRef.current = true; renderLayerRef.current(); });
+    map.on('load', () => {
+      readyRef.current = true;
+      renderLayerRef.current();
+      // The compact credit opens itself over the pins on a wide map; it
+      // starts folded to its button, one tap from the full line (T446).
+      holder.current?.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
+    });
     const ro = new ResizeObserver(() => map.resize());
     ro.observe(holder.current);
     return () => {

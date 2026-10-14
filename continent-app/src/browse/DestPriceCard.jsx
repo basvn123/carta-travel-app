@@ -7,6 +7,7 @@ import { addDays } from '../lib/dates.js';
 import { priceFromIndex } from '../lib/destPrice.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
+import { formatMoney } from '../lib/money.js';
 import { Stepper } from '../components/FilterControls.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { ReceiptLine, ReceiptSum, useSettleChanged } from '../components/ReceiptCard.jsx';
@@ -14,6 +15,7 @@ import { FlightSheet } from '../components/FirstRunReceipt.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { ChevronDownIcon, ChevronRightIcon, RouteIcon, SunIcon } from '../components/Icons.jsx';
 import { isNational } from '../components/CostSummary.jsx';
+import { InfoDot } from '../components/InfoDot.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 
 /**
@@ -41,7 +43,7 @@ import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 const MAX_PARTY = 12;
 
 export function DestPriceCard({
-  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem,
+  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, carDayEur = null,
 }) {
   const { t, lang, languages } = useI18n();
   const ctx = useFirstRun();
@@ -133,7 +135,13 @@ export function DestPriceCard({
       <header className="dprice-head">
         <h2 className="dprice-title" id={`${uid}-h`}>{t('dest.priceTitle', { nights: nightsText, city })}</h2>
         <p className="dprice-day">
-          <span ref={dayRef}><Money value={price.dayEur} est={isNational(costRow)} /></span>
+          {/* One dot explains the mark, on its first occurrence (carta-design
+              "InfoDot", T446), set against "est." so it never reads as a
+              separator between the figure and its unit. */}
+          <span className="dprice-fig">
+            <span ref={dayRef}><Money value={price.dayEur} est={isNational(costRow)} /></span>
+            {isNational(costRow) && <InfoDot term="estimate" />}
+          </span>
           <span className="dprice-day-unit">{t('dest.priceDayUnit')}</span>
         </p>
       </header>
@@ -271,7 +279,14 @@ export function DestPriceCard({
       </dl>
 
       <div className="dprice-foot">
-        <p className="dprice-excludes">{t(fare ? 'dest.priceExcludesFare' : 'dest.priceExcludes')}</p>
+        <p className="dprice-excludes">
+          {t(fare ? 'dest.priceExcludesFare' : 'dest.priceExcludes')}
+          {/* Where the page says a car is needed, its hire is the largest
+              cost the day figure leaves out: said once, as a figure (T446). */}
+          {Number.isFinite(carDayEur) && carDayEur > 0 && (
+            <> {t('dest.priceCarHire', { eur: formatMoney(carDayEur) })}</>
+          )}
+        </p>
         <Button variant="quiet" size="sm" className="dprice-fare" onClick={() => setSheetOpen(true)}>
           {fare ? t('receipt.changeFare') : t('trip.addOwnFare')}
         </Button>
