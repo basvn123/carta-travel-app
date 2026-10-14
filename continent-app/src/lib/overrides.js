@@ -70,9 +70,9 @@ export function overrideFor(layer, id) {
 /**
  * One item with its correction applied, or null when it has been hidden.
  *
- * `imageKey` differs by layer: trails carry a single `img` string, everything
- * else carries an `images` array of {u, big}. Both are handled so callers can
- * stay uniform.
+ * `imageKey` differs by layer: trails carry a single `img` (an object {u, ...};
+ * a cycle route's is a plain URL), everything else carries an `images` array
+ * of {u, big}. All are handled so callers can stay uniform.
  */
 export function applyOverride(layer, item, { imageKey = 'images' } = {}) {
   if (!item || !item.id) return item;
@@ -87,7 +87,12 @@ export function applyOverride(layer, item, { imageKey = 'images' } = {}) {
 
   if (typeof patch.image === 'string' && patch.image.startsWith('https://')) {
     if (imageKey === 'img') {
-      out.img = patch.image;
+      // Keep the shape the wire uses (T449): a trail's `img` is an object
+      // read as img.u (openingScreen.photoOf, trailCards), a cycle route's a
+      // plain URL. Writing a string over a trail's object blanked the photo.
+      out.img = item.img && typeof item.img === 'object'
+        ? { ...item.img, u: patch.image, edited: true }
+        : patch.image;
     } else {
       // Replace the lead photograph only. The rest of the gallery is still
       // the pipeline's, so a correction fixes the card without throwing away

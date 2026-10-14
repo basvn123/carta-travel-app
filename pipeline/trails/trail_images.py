@@ -238,7 +238,11 @@ BAD_FILE_RE = re.compile(
 # "Зелен гуштер, Western Green Lizard (Lacerta bilineata).jpg" reached a
 # Macedonian route's gallery: the head of that name is Cyrillic, so anchoring
 # on the start missed it.
-SPECIES_RE = re.compile(r"^[A-Z][a-z]{3,}\s+[a-z]{4,}\b")
+#
+# T449: a date in front of the binomial ("2018-11-04 Colotois pennaria (2).jpg",
+# a moth that became Belgium's country cover through its best trail) defeated
+# both, so the head may be a date first.
+SPECIES_RE = re.compile(r"^(?:\d{4}[-_. ]\d{2}[-_. ]\d{2}[\s_-]+)?[A-Z][a-z]{3,}\s+[a-z]{4,}\b")
 BINOMIAL_RE = re.compile(r"\(\s*[A-Z][a-z]{3,}\s+[a-z]{4,}\s*\)")
 
 # Words that say the frame is the landscape rather than an object in it.
