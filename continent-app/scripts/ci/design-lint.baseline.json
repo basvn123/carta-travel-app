@@ -1,8 +1,8 @@
 {
  "note": "Counts of known design-lint violations by rule|file|line text. Regenerate with --update-baseline after fixing some; never to admit new ones.",
- "total": 9791,
+ "total": 9790,
  "byRule": {
-  "raw-button": 725,
+  "raw-button": 724,
   "em-dash": 9,
   "money-literal": 63,
   "banned-word": 8,
@@ -153,7 +153,6 @@
   "raw-button|src/browse/ExploreMap.jsx|const html = `<button type=\"button\" class=\"xmap-card-hit\" data-id=\"${esc(id)}\">`": 1,
   "raw-button|src/browse/ExploreMap.jsx|<button": 1,
   "money-literal|src/browse/ExploreTab.jsx|// An old link's \"Under €70 a day\" toggle (xp=e) lands on this ceiling.": 1,
-  "raw-button|src/browse/ExploreTab.jsx|<button": 1,
   "money-literal|src/browse/ExploreTab.jsx|// fixed \"Under €70 a day\" toggle; it lands on a €70 ceiling.": 1,
   "raw-button|src/browse/FilterChips.jsx|<button": 1,
   "raw-button|src/browse/FilterChips.jsx|<button type=\"button\" className=\"xchip xchip-clear\" onClick={onClearAll}>": 1,

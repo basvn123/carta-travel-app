@@ -6302,4 +6302,8 @@ export const en = {
   "gs.whyLake": "Lake {km} km away",
   "gs.whyPeak": "Peak {km} km away",
   "gs.whyMonth": "Good in {month}",
+  "sort.match": "Best match",
+  "gs.cheapest": "Cheapest first",
+  "explore.saveNamed": "Add {place} to shortlist",
+  "explore.unsaveNamed": "Remove {place} from shortlist",
 };

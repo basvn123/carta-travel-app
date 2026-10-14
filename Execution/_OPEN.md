@@ -1432,4 +1432,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T442-b | T442 | App's free text locationQuery is no longer set by any control since the guided search; the catalogue hook's text filter and Explore's empty-state branches for it are dead code; remove them or give the state to another tab | next task | open |  |
 | T442-c | T442 | Golden set misses are vibe data, not ranking (quiet Alps: Hallstatt, Alpbach; romantic France: Annecy, Colmar; Greek islands: Naxos, Paros, Milos; Italian lakes: Riva del Garda); tune in the T439 layer against the same set | next task | open |  |
 | T442-d | T442 | The guided search's When is one month; seasons (summer, spring) are named as unknown; a season needs a month range in the Explore filter | next task | open |  |
-| T442-e | T442 | Explore rows and rails print the catalogue's English country name in every language; Destinations and the planner use Intl.DisplayNames; one shared helper would fix every surface | next task | open |  |
+| T442-e | T442 | Explore rows and rails print the catalogue's English country name in every language; Destinations and the planner use Intl.DisplayNames; one shared helper would fix every surface | next task | closed by T444 |  |
+| T444-a | T444 | Explore has two taxonomies for the kind of place: Trip type tiles (9) in the rail and the vibes (20) in the search; merging Trip type into the vibes would give one vocabulary for both doors | user | open |  |
+| T444-b | T444 | Rail choices from the Explore check: a Within N hours of your origin rail from the reach times, and opening Explore on a hiking cut for the launch audience | user | open |  |
+| T444-c | T444 | Explore keyboard cost (WCAG 2.4.1): about 24 tab stops per rail strip, four strips before All places; roving tabindex per strip and a skip link to the list | next task | open |  |
+| T444-d | T444 | Explore rails repeat each other (Top rated repeats the first rows of All places; Seville and Ferrara in the first two rails); de-duplicate across sections | next task | open |  |
+| T444-e | T444 | Explore filter rail jargon without a key: role chips (Base, Basecamp, Day trip, Stop), the size glyph ramp, filled versus outlined stars | next task | open |  |
+| T444-f | T444 | The phone settings line drops the Lifestyle label, so Entire place reads like a stay-type filter | next task | open |  |
+| T444-g | T444 | The guided search field reads back only what the search sets; a trip type or rating set in the rail shows only as a chip | next task | open |  |

@@ -5595,4 +5595,8 @@ export const de = {
   "gs.whyLake": "See in {km} km",
   "gs.whyPeak": "Gipfel in {km} km",
   "gs.whyMonth": "Gut im {month}",
+  "sort.match": "Beste Treffer",
+  "gs.cheapest": "Günstigste zuerst",
+  "explore.saveNamed": "{place} merken",
+  "explore.unsaveNamed": "{place} nicht mehr merken",
 };

@@ -57,6 +57,7 @@ export function facetLabels(f, labels, nearRow, t) {
   else if (f.near && nearRow) out.push(t('gs.near', { place: nearRow.city }));
   if (f.month) out.push(labels.month(f.month));
   if (f.budget) out.push(labels.budget(f.budget));
+  if (f.sort === 'cost') out.push(t('gs.cheapest'));
   for (const x of f.nb || []) out.push(labels.extra(x));
   if (f.nocar) out.push(labels.extra('nocar'));
   if (f.quiet) out.push(labels.extra('quiet'));
@@ -154,7 +155,10 @@ export function GuidedSearch({
       return t('gs.anywhere');
     }
     if (s === 'when') return facets.month ? labels.month(facets.month) : t('gs.any');
-    if (s === 'budget') return facets.budget ? labels.budget(facets.budget) : t('gs.any');
+    if (s === 'budget') {
+      const parts = [facets.budget && labels.budget(facets.budget), facets.sort === 'cost' && t('gs.cheapest')].filter(Boolean);
+      return parts.length ? parts.join(', ') : t('gs.any');
+    }
     const n = (facets.nb || []).length + (facets.nocar ? 1 : 0) + (facets.quiet ? 1 : 0);
     return n ? facetLabels({ nb: facets.nb, nocar: facets.nocar, quiet: facets.quiet }, labels, null, t).join(', ') : t('gs.none');
   };
@@ -237,6 +241,10 @@ export function GuidedSearch({
           ))}
         </ChipGroup>
         <p className="gs-hint">{t('gs.budgetHint')}</p>
+        <div className="gs-extras">
+          <Switch label={t('gs.cheapest')} checked={facets.sort === 'cost'}
+            onChange={(on) => onApply({ sort: on ? 'cost' : null })} />
+        </div>
       </div>
     ),
     extras: (

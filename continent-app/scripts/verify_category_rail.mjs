@@ -154,7 +154,7 @@ const firstNames = async (page) => (await page.locator('.xrow .xrow-name').allIn
   check('desktop: nine trip styles', await group.locator('.ui-tile').count() === 9);
   check("desktop: the phone's top row stays folded", await page.locator('.explore-filterbar').isHidden());
   check('desktop: the search rides in the header',
-    await page.locator('.header-search-slot .results-search-input').isVisible().catch(() => false));
+    await page.locator('.header-search-slot .gsearch-trigger').isVisible().catch(() => false));
 
   // Scroll the rails away so the list's first names are the filtered list's.
   const before = await firstNames(page);
@@ -162,7 +162,8 @@ const firstNames = async (page) => (await page.locator('.xrow .xrow-name').allIn
   await page.waitForTimeout(1200);
   const after = await firstNames(page);
   check('desktop: the style narrows the list', after !== '' && after !== before, `${before.slice(0, 30)} -> ${after.slice(0, 30)}`);
-  await page.locator('.explore-side .xrail-clear').click();
+  // One "Clear all" since T444: the chips row above the list.
+  await page.locator('.xchips .xchip-clear').click();
   await page.waitForTimeout(1000);
   check('desktop: Clear all resets the style', await group.locator('.ui-tile.is-selected').count() === 0);
 

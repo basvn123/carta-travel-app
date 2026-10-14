@@ -283,6 +283,16 @@ const VIBE_WORDS_I18N = {
     views: ['panorama', 'vista'], city: ['citta'], oldtown: ['centro storico', 'storico'], adventure: ['avventura'],
   },
 };
+// "Cheap" in a budget app is a question Carta can answer: the cheapest
+// first (T444; the check found "cheap beach in greece" refused).
+const CHEAP_WORDS = {
+  en: ['cheap', 'cheapest', 'budget', 'affordable', 'inexpensive', 'low cost', 'on a budget', 'cheapest first'],
+  nl: ['goedkoop', 'goedkope', 'goedkoopst', 'betaalbaar', 'betaalbare'],
+  de: ['billig', 'gunstig', 'gunstige', 'preiswert', 'preiswerte'],
+  fr: ['pas cher', 'bon marche', 'abordable', 'economique'],
+  es: ['barato', 'barata', 'baratos', 'economico', 'economica'],
+  it: ['economico', 'economica', 'a buon mercato', 'conveniente'],
+};
 const EXTRA_WORDS = {
   beach: ['beach nearby', 'near a beach', 'close to a beach'],
   trail: ['trails', 'trail', 'trails nearby', 'walking trails'],
@@ -293,7 +303,7 @@ const EXTRA_WORDS = {
 
 // The order a typed word is read in when it could be two things: "lake"
 // is the vibe, "trails" the extra.
-const KIND_RANK = { vibe: 0, area: 1, country: 2, month: 3, extra: 4, place: 5 };
+const KIND_RANK = { vibe: 0, area: 1, country: 2, month: 3, sort: 4, extra: 5, place: 6 };
 
 const words = (s) => foldName(s).split(/[\s,;/.!?]+/).filter(Boolean);
 
@@ -347,6 +357,8 @@ export function buildVocab(ctx) {
     add({ kind: 'month', slot: 'when', value: m, label: long.charAt(0).toUpperCase() + long.slice(1) },
       [long, monthShort.format(d).replace('.', ''), monthEn.format(d)]);
   }
+  add({ kind: 'sort', slot: 'budget', value: 'cost', label: t('gs.cheapest') },
+    [t('gs.cheapest'), ...CHEAP_WORDS.en, ...(CHEAP_WORDS[lang] || [])]);
   for (const x of EXTRAS) {
     const label = x === 'nocar' ? t('filter.noCar') : x === 'quiet' ? t('filter.notCrowded') : t(`gs.extra.${x}`);
     add({ kind: 'extra', slot: 'extras', value: x, label }, [label, ...(EXTRA_WORDS[x] || [])]);
@@ -489,7 +501,7 @@ export function parseQuery(text, vocab, lang) {
   return { parts: out, unknown, fragment, near };
 }
 
-const slotKey = (p) => (p.slot === 'extras' ? `x:${p.value}` : p.slot);
+const slotKey = (p) => (p.slot === 'extras' ? `x:${p.value}` : p.kind === 'sort' ? 'sort' : p.slot);
 
 function mergeParts(base, part) {
   const merged = [...base.filter((p) => slotKey(p) !== slotKey(part)), part];
@@ -525,6 +537,7 @@ export function completions(text, vocab, lang, max = 8) {
     for (const e of vocab.entries) {
       let rank = -1;
       for (const k of e.keys) {
+        if (e.kind === 'place' && k !== e.keys[0] && k !== frag) continue;
         const r = k === frag ? 0 : k.startsWith(frag) ? 1 : k.split(' ').some((w) => w.startsWith(frag)) ? 2 : -1;
         if (r >= 0 && (rank < 0 || r < rank)) rank = r;
       }
@@ -578,6 +591,7 @@ export function partsToFacets(parts, steps) {
     if (p.kind === 'vibe') f.vibe = p.value;
     if (p.kind === 'month') f.month = p.value;
     if (p.kind === 'budget') f.budget = budgetStep(p.value, steps);
+    if (p.kind === 'sort') f.sort = p.value;
     if (p.kind === 'area') Object.assign(f, { area: p.value, country: null, near: null });
     if (p.kind === 'country') Object.assign(f, { country: p.value, area: null, near: null });
     if (p.kind === 'near') Object.assign(f, { near: p.value, area: null, country: null });

@@ -1118,7 +1118,7 @@
   font-size: var(--text-lead);
 }
 .gs-input::placeholder { color: var(--text-3); }
-.gs-input:focus { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--focus); }
+.gs-input:focus { outline: 2px solid var(--focus); outline-offset: 0; border-color: var(--focus); }
 .gs-field-clear { position: absolute; right: var(--space-1); }
 
 /* The answers it offers, and the words it cannot place. */
@@ -1199,9 +1199,11 @@
   white-space: nowrap;
 }
 .gs-tabs .ui-tab:not(.is-selected) .gs-slot-v { color: var(--text-2); }
+/* On a phone the five slots wrap to two rows instead of scrolling out of
+   sight (T444: Budget and Extras were cut off). */
 @media (max-width: 560px) {
-  .gs-tabs.ui-tabs { display: flex; overflow-x: auto; }
-  .gs-tabs .ui-tab { flex: 0 0 auto; min-width: 112px; }
+  .gs-tabs.ui-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: var(--space-1); }
+  .gs-tabs .ui-tab + .ui-tab { border-left: 0; }
 }
 
 /* A slot's choices. */
@@ -1239,4 +1241,50 @@
   color: var(--text-2);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ==========================================================================
+   T444 (the full Explore check, 2026-10-14): what the design review and
+   the detector found, fixed. Roles and scales only.
+   ========================================================================== */
+
+/* The row opens through a link now. */
+.explore-shell .xrow-hit { text-decoration: none; }
+
+/* On a phone the sort only orders the list, so it waits while the
+   sections lead (it stood alone in a row above them). */
+@media (max-width: 768px) {
+  .explore-shell.is-rails .xbar-tools { display: none; }
+  .explore-shell.is-rails .xbar { margin: 0; padding: 0; }
+}
+
+/* The docked peek card on a touch map: at the bottom of the frame, clear
+   of the floating List/Map switch, with its own close control. */
+.explore-shell .xmap-peek {
+  position: absolute;
+  right: var(--space-3);
+  bottom: calc(var(--tap) + var(--space-6) + var(--space-2));
+  left: var(--space-3);
+  z-index: 5;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  animation: xpeek-in var(--dur-2) var(--ease-out);
+}
+.explore-shell .xmap-peek .xmap-card-hit { color: inherit; text-decoration: none; }
+.explore-shell .xmap-peek .xmap-card {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  width: auto;
+}
+.explore-shell .xmap-peek .xmap-card-img { height: 100%; min-height: 104px; aspect-ratio: auto; }
+.explore-shell .xmap-peek .xmap-card-body { padding: var(--space-3) calc(var(--tap) + var(--space-1)) var(--space-3) var(--space-3); }
+.explore-shell .xmap-peek-close { position: absolute; top: var(--space-1); right: var(--space-1); }
+@keyframes xpeek-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xmap-peek { animation: none; }
 }

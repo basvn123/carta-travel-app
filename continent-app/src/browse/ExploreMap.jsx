@@ -8,7 +8,10 @@ import { TOKEN_COLOURS as TC, MAP_ONLY_COLOURS as MC } from '../map/tokenColors.
 import { eurDay } from '../lib/costIndex.js';
 import { formatApprox, formatEst } from '../lib/money.js';
 import { isNational } from '../components/CostSummary.jsx';
-import { Button } from '../components/ui/index.js';
+import { Button, IconButton } from '../components/ui/index.js';
+import { CloseIcon } from '../components/Icons.jsx';
+import { countryName } from '../lib/countryName.js';
+import { ScoreChip } from '../components/RatingBadge.jsx';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -145,6 +148,10 @@ export function ExploreMap({
   // V5 (T403, brief V5-5): the basemap style never arrived, so the frame
   // says so and offers the list instead of staying blank.
   const [failed, setFailed] = React.useState(false);
+  // T444: on touch the card a pin raises docks at the bottom of the map,
+  // above the floating List/Map switch, with a close control (a popup hung
+  // off the pin landed under the switch). A mouse keeps the popup.
+  const [peek, setPeek] = React.useState(null);
 
   // The whole catalogue, serialised once. `all` is the unfiltered set; when
   // a caller does not pass one, the current rows stand in and the map
@@ -166,6 +173,7 @@ export function ExploreMap({
         id: p.id,
         city: p.city,
         country: p.country,
+        cc: p.iso2 || '',
         tier: p.rating?.tier ?? 0,
         score: p.rating?.score ?? null,
         gem: p.rating?.hidden_gem ? 1 : 0,
@@ -225,6 +233,7 @@ export function ExploreMap({
       popupRef.current?.remove();
       popupRef.current = null;
       cardRef.current = null;
+      setPeek(null);
     };
     const popup = (map) => {
       if (!popupRef.current) {
@@ -240,7 +249,8 @@ export function ExploreMap({
       ? `<span class="${cls}"><span class="xmap-fig">${esc(dayFig(eur, est, tRef.current('money.est')))}</span> ${esc(tRef.current('cost.perDay'))}</span>`
       : '');
     const showTip = (map, f) => {
-      const { city, country, score, tier, ld, eur, est } = f.properties;
+      const { city, score, tier, ld, eur, est, cc } = f.properties;
+      const country = countryName(cc, f.properties.country);
       // No record yet: ask for its country; the tip shows once it lands.
       if (ld === 0) { onNeedDetailRef.current?.(f.properties.id); return; }
       const html = `<div class="xmap-pop"><strong>${esc(city)}</strong>`
@@ -252,11 +262,19 @@ export function ExploreMap({
       popup(map).setLngLat(f.geometry.coordinates).setHTML(html);
     };
     const showCard = (map, f) => {
-      const { id, city, country, score, tier, eur, est } = f.properties;
+      const { id, city, score, tier, eur, est, cc } = f.properties;
+      const country = countryName(cc, f.properties.country);
       const rec = byIdRef.current.get(id);
       const img = rec ? (rec.image?.url || rec.image || '') : '';
       const lead = rec ? (knownFor(rec) || '') : '';
       const thumb = img ? thumbAt(img, 250) : '';
+      if (typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches) {
+        popupRef.current?.remove();
+        popupRef.current = null;
+        cardRef.current = id;
+        setPeek({ id, city, country, score, tier, eur, est: est === 1, thumb, lead });
+        return;
+      }
       const html = `<button type="button" class="xmap-card-hit" data-id="${esc(id)}">`
         + '<div class="xmap-card">'
         + (thumb ? `<img class="xmap-card-img" src="${esc(thumb)}" alt="" loading="lazy">` : '')
@@ -402,6 +420,11 @@ export function ExploreMap({
       // card over the map); a second tap of the same pin, or a click with a
       // mouse past the card zoom, opens the place.
       const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+      // A tap on the open map puts the docked card away.
+      map.on('click', (e) => {
+        if (!coarse || !cardRef.current) return;
+        if (!map.queryRenderedFeatures(e.point, { layers: ['dest-dots'] }).length) closePop();
+      });
       map.on('click', 'dest-dots', (e) => {
         const f = e.features?.[0];
         if (!f) return;
@@ -433,6 +456,7 @@ export function ExploreMap({
         if (!coarse && map.getZoom() < CARD_FROM && cardRef.current) closePop();
       });
       map.on('moveend', () => {
+        setKpins(collectKpins(map));
         const b = map.getBounds();
         onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], map.getZoom());
       });
@@ -554,7 +578,7 @@ export function ExploreMap({
     // target is the button being removed under focus (see the effect above).
     if (e.relatedTarget) lastKpinRef.current = null;
     // Focus moving into the pin's own card (a tap on it) keeps the card.
-    if (e.relatedTarget?.closest?.('.maplibregl-popup')) return;
+    if (e.relatedTarget?.closest?.('.maplibregl-popup, .xmap-peek')) return;
     onPinLinkRef.current?.(null);
     closePop();
   };
@@ -590,6 +614,10 @@ export function ExploreMap({
     map.setFilter('dest-dots', keepIds
       ? (pins ? ['any', ['==', ['get', 'ld'], 0], kept] : kept)
       : null);
+    // The labels follow on the next frame (T444: after a cleared search the
+    // old ones stayed up for three to six seconds, until 'idle').
+    map.once('render', () => setKpins(collectKpins(map)));
+    map.triggerRepaint();
   }, [keepIds, pins]);
 
   applyFilterRef.current = applyFilter;
@@ -638,6 +666,34 @@ export function ExploreMap({
   return (
     <div className={`xmap${ready ? ' is-ready' : ''}`} role="region" aria-label={t('explore.mapAria')}>
       <div ref={containerRef} className="xmap-canvas" />
+      {peek && (
+        <div className="xmap-peek" role="group" aria-label={peek.city}>
+          <a className="xmap-card-hit" href={`#dest=${encodeURIComponent(peek.id)}`}
+            onClick={(e) => { e.preventDefault(); onSelectRef.current?.(peek.id); }}>
+            <div className="xmap-card">
+              {peek.thumb && <img className="xmap-card-img" src={peek.thumb} alt="" loading="lazy" />}
+              <div className="xmap-card-body">
+                <div className="xmap-card-head">
+                  <span className="xmap-card-name">{peek.city}</span>
+                  <ScoreChip rating={{ score: peek.score, tier: peek.tier }} size="sm" />
+                </div>
+                <p className="xmap-card-sub">{peek.country}</p>
+                {peek.eur >= 0 && (
+                  <p className="xmap-card-eur">
+                    <span className="xmap-card-eur-line">
+                      <span className="xmap-fig">{dayFig(peek.eur, peek.est, t('money.est'))}</span> {t('cost.perDay')}
+                    </span>
+                  </p>
+                )}
+                {peek.lead && <p className="xmap-card-lead">{peek.lead}</p>}
+              </div>
+            </div>
+          </a>
+          <IconButton label={t('gs.close')} tone="surface" className="xmap-peek-close" onClick={closePop}>
+            <CloseIcon size={16} />
+          </IconButton>
+        </div>
+      )}
       {failed && (
         <div className="xmap-failed" role="status">
           <p>{t('explore.mapFailed')}</p>

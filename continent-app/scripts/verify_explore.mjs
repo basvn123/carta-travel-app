@@ -282,10 +282,16 @@ try {
   // ── Open a destination: it is the full-screen page now. The deep contract
   // (gallery, highlights, PDF, parking deeplinks) lives in
   // scripts/verify_destination_page.mjs; this pass only proves the door. ──
+  // T444: the row is a link to the place, and opening it is one step in
+  // the history, so Back closes the page onto the list.
+  check('the row opens through a link', /^#dest=/.test(await page.locator('.xrow-hit').first().getAttribute('href') || ''));
+  const histBefore = await page.evaluate(() => history.length);
   await page.locator('.xrow-hit').first().click();
   await page.waitForTimeout(2500);
   const panel = page.locator('.destp');
   check('destination page opens', await panel.isVisible());
+  check('opening a place names it in the address and the history',
+    page.url().includes('#dest=') && await page.evaluate(() => history.length) === histBefore + 1);
   // P4.4: the page arrives folded, so a reader steers it instead of
   // scrolling a wall. Only the first section opens itself.
   check('the page arrives folded', await panel.locator('.dsec.is-open').count() === 1,
@@ -400,8 +406,14 @@ try {
   check('phone map: prices from the first view', n >= 5, `${n} labels`);
   await page.locator('.xmap-kpin.is-label').first().tap();
   await page.waitForTimeout(1200);
-  check('phone map: a tap raises the peek card', await page.locator('.xmap-card').isVisible()
-    && await page.locator('.destp').count() === 0);
+  check('phone map: a tap raises the peek card, docked with a close', await page.locator('.xmap-peek .xmap-card').isVisible()
+    && await page.locator('.xmap-peek-close').isVisible() && await page.locator('.destp').count() === 0);
+  const dock = await page.evaluate(() => {
+    const c = document.querySelector('.xmap-peek').getBoundingClientRect();
+    const f = document.querySelector('.xview-fab').getBoundingClientRect();
+    return { clear: c.bottom <= f.top, cardBottom: Math.round(c.bottom), fabTop: Math.round(f.top) };
+  });
+  check('phone map: the card sits clear of the floating switch', dock.clear, `card ${dock.cardBottom}, switch ${dock.fabTop}`);
   await page.screenshot({ path: 'shots/explore-phone-map.png' });
   await page.locator('.xmap-card-hit').tap();
   await page.waitForTimeout(2000);
@@ -455,9 +467,29 @@ try {
   const whys = await page.locator('.xrow .xrow-why').allTextContents();
   check('search: every row says why it answers', whys.length >= 6 && whys.every((w) => /km|Alps|July/.test(w)),
     whys[0]);
+  check('search: the sort says "Best match" while the question orders the list',
+    await page.locator('.xgrid-sort select').evaluate((s) => s.options[s.selectedIndex].text) === 'Best match');
+  check('search: the month chip says the month whole', await page.locator('.xchip', { hasText: 'Good in July' }).count() === 1);
   await page.locator('.gsearch-clear').click();
   await page.waitForTimeout(600);
   check('search: clear empties the question', !page.url().includes('xe=') && await page.locator('.gsearch-placeholder').isVisible());
+  // A budget word is a question Carta can answer (T444).
+  await page.locator('.header-search-slot .gsearch-trigger').click();
+  await page.waitForSelector('.gs-input');
+  await page.keyboard.type('cheap beach in greece ', { delay: 10 });
+  await page.waitForTimeout(400);
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(500);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(600);
+  check('search: "cheap" sorts the cheapest first', page.url().includes('xs=cost') && page.url().includes('xc=GR'));
+  // Back from a place returns to the list, not out of Carta.
+  await page.locator('.xrow-hit').first().click();
+  await page.waitForTimeout(1500);
+  await page.goBack();
+  await page.waitForTimeout(1200);
+  check('Back closes the place onto the list', await page.locator('.destp').count() === 0
+    && await page.locator('.xrow').first().isVisible());
   await page.close();
 } catch (e) {
   check('search pass ran', false, String(e).split('\n')[0]);
