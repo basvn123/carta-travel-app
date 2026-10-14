@@ -73,9 +73,54 @@ TYPE_HERO_CANDIDATES = {
     "nature-escape": ["Lofoten", "Lake Bled", "Black Forest"],
     "water-sports": ["Navagio", "Calanques National Park", "Costa Brava"],
 }
-TYPE_ORDER = ["cycling", "trail-running", "city", "cozy-towns", "road-trip",
-              "hiking", "culinary", "winter-sports", "nature-escape",
-              "water-sports"]
+# T448: the order the traveller meets the styles, which is the audience order
+# of T203 (walkers first, then quiet nature, bikes, cities and towns, cars,
+# food, water, snow, runners), not the schema id order.
+TYPE_ORDER = ["hiking", "nature-escape", "cycling", "city", "cozy-towns",
+              "road-trip", "culinary", "water-sports", "winter-sports",
+              "trail-running"]
+
+# T448: the style card shows people doing the thing (owner, 2026-10-14; the
+# amended rule 6 of docs/IMAGE_BRIEF.md). Each is one Commons file looked at
+# by eye, with its author and licence from the file page; it wins over the
+# article leads above, which stay as the fallback.
+TYPE_HERO_FILES = {
+    "cycling": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Col_Aubisque.jpg/1280px-Col_Aubisque.jpg", "w": 1280, "h": 775, "credit": "Col d'Aubisque", "page": "https://commons.wikimedia.org/wiki/File:Col_Aubisque.jpg", "author": "Myrabella", "licence": "CC BY-SA 3.0"},
+    "trail-running": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Runners_on_track_below_Lonscale_Fell_-_geograph.org.uk_-_4649478.jpg/1280px-Runners_on_track_below_Lonscale_Fell_-_geograph.org.uk_-_4649478.jpg", "w": 1280, "h": 960, "credit": "Lonscale Fell, Lake District", "page": "https://commons.wikimedia.org/wiki/File:Runners_on_track_below_Lonscale_Fell_-_geograph.org.uk_-_4649478.jpg", "author": "Alan O'Dowd", "licence": "CC BY-SA 2.0"},
+    "city": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Stradun_%28Dubrovnik%29_02_%28js%29.jpg/1280px-Stradun_%28Dubrovnik%29_02_%28js%29.jpg", "w": 1280, "h": 838, "credit": "Stradun, Dubrovnik", "page": "https://commons.wikimedia.org/wiki/File:Stradun_(Dubrovnik)_02_(js).jpg", "author": "Jerzy Strzelecki", "licence": "CC BY-SA 3.0"},
+    "cozy-towns": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/%C3%93bidos_-1_%2852113575953%29.jpg/1280px-%C3%93bidos_-1_%2852113575953%29.jpg", "w": 1280, "h": 853, "credit": "Óbidos", "page": "https://commons.wikimedia.org/wiki/File:%C3%93bidos_-1_(52113575953).jpg", "author": "Art Prof from Salt Lake City, UT", "licence": "CC BY 2.0"},
+    "road-trip": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Iceland_trip_%28Unsplash%29.jpg/1280px-Iceland_trip_%28Unsplash%29.jpg", "w": 1280, "h": 853, "credit": "Ring Road, Iceland", "page": "https://commons.wikimedia.org/wiki/File:Iceland_trip_(Unsplash).jpg", "author": "Calvin Chou (calvin1029)", "licence": "CC0"},
+    "hiking": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CH.VS.Zermatt_2021-10-17_Matterhorn_8726.jpg/1280px-CH.VS.Zermatt_2021-10-17_Matterhorn_8726.jpg", "w": 1280, "h": 853, "credit": "Trail above Zermatt", "page": "https://commons.wikimedia.org/wiki/File:CH.VS.Zermatt_2021-10-17_Matterhorn_8726.jpg", "author": "Roy Egloff", "licence": "CC BY-SA 4.0"},
+    "culinary": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/4_vendangeurs_by_JM_Rosier.jpg/1280px-4_vendangeurs_by_JM_Rosier.jpg", "w": 1280, "h": 841, "credit": "Beaumes-de-Venise vineyards", "page": "https://commons.wikimedia.org/wiki/File:4_vendangeurs_by_JM_Rosier.jpg", "author": "Jean-Marc Rosier", "licence": "CC BY-SA 3.0"},
+    "winter-sports": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Off-piste_skiers_ready_for_takeoff_from_Storebj%C3%B8rn_peak_in_Jotunheimen.jpg/1280px-Off-piste_skiers_ready_for_takeoff_from_Storebj%C3%B8rn_peak_in_Jotunheimen.jpg", "w": 1280, "h": 853, "credit": "Storebjørn, Jotunheimen", "page": "https://commons.wikimedia.org/wiki/File:Off-piste_skiers_ready_for_takeoff_from_Storebj%C3%B8rn_peak_in_Jotunheimen.jpg", "author": "Frankemann", "licence": "CC BY-SA 4.0"},
+    "nature-escape": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Sota_Seter_with_main_building.jpg/1280px-Sota_Seter_with_main_building.jpg", "w": 1280, "h": 853, "credit": "Sota Sæter, Breheimen", "page": "https://commons.wikimedia.org/wiki/File:Sota_Seter_with_main_building.jpg", "author": "Frankemann", "licence": "CC BY-SA 4.0"},
+    "water-sports": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/004_Benagil_Beach_%28Praia_Benagil%29_sea_kayaking_recreational_activity_in_Algarve%2C_Portugal.jpg/1280px-004_Benagil_Beach_%28Praia_Benagil%29_sea_kayaking_recreational_activity_in_Algarve%2C_Portugal.jpg", "w": 1280, "h": 853, "credit": "Praia de Benagil", "page": "https://commons.wikimedia.org/wiki/File:004_Benagil_Beach_(Praia_Benagil)_sea_kayaking_recreational_activity_in_Algarve,_Portugal.jpg", "author": "Marek Ślusarczyk (Tupungato)", "licence": "CC BY 3.0"},
+}
+
+# T448: the cheap beds a trip offers, read from its accommodation list, so
+# the library can filter on a hostel, hut or campsite night across styles.
+BED_WORDS = {
+    "hostel": re.compile(r"\b(hostels?|jugendherberge|auberge de jeunesse|dorm(itor(y|ies))?s?|bunks?)\b", re.I),
+    "hut": re.compile(r"\b(huts?|refuges?|refugios?|rifugi|rifugio|chata|chaty|bouda|planinarski dom|bac[oó]wka|katun|cabane|h[uü]tte|hizha|koliba)\b", re.I),
+    "camp": re.compile(r"\b(campsites?|camping|campground|glamping)\b", re.I),
+}
+NOT_A_HOSTEL_RE = re.compile(r"hostellerie|superbude", re.I)
+
+
+def bed_kinds(trip):
+    """hostel / hut / camp, for each kind any ranked bed of the trip names."""
+    out = []
+    for a in trip.get("accommodationStrategy") or []:
+        if not isinstance(a, dict):
+            continue
+        text = " ".join(str(a.get(k) or "") for k in ("name", "style", "description"))
+        for kind, rx in BED_WORDS.items():
+            if kind in out or not rx.search(text):
+                continue
+            if kind == "hostel" and NOT_A_HOSTEL_RE.search(text) and not re.search(r"\bdorm", text, re.I):
+                continue
+            out.append(kind)
+    return [k for k in BED_WORDS if k in out]
 
 VERIFY_RE = re.compile(r"\s*`?\[VERIFY[^\]]*\]`?", re.IGNORECASE)
 
@@ -89,6 +134,31 @@ MANUAL_PLACES = {
                                       "Madriu-Perafita-Claror Valley"],
 }
 
+
+# T448: heroes looked at by eye after the rebuild. The J2 uniqueness pass and
+# the newly cached places moved 32 trips to another photograph; 12 of the
+# new ones were worse (a ski week without snow, an office block for the
+# Soroca loop) and keep the photograph they had, and 3 had no good one
+# either way and take a hand-picked Commons file. Pinned like the audit
+# patch: the uniqueness pass never moves them.
+JOURNEY_HERO_PINS = {
+    "ad-winter-sports-grandvalira": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/1280px-AndorraSoldeuView.JPG", "w": 1280, "h": 1144, "credit": "Soldeu", "page": "https://en.wikipedia.org/wiki/Soldeu"},
+    "al-water-sports-riviera-karaburun": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Sazan%2C_godinet_dhe_port.jpg/1280px-Sazan%2C_godinet_dhe_port.jpg", "w": 1280, "h": 784, "credit": "Sazan Island Resort", "page": "https://en.wikipedia.org/wiki/Sazan_Island_Resort"},
+    "be-winter-sports-hautes-fagnes-nordic": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Vue_de_Malmedy_en_mai_2012.jpg/1280px-Vue_de_Malmedy_en_mai_2012.jpg", "w": 1280, "h": 960, "credit": "Malmedy", "page": "https://en.wikipedia.org/wiki/Malmedy"},
+    "bg-winter-sports-bansko-pirin": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Bansko_ski_resort_%2823917454674%29.jpg/1280px-Bansko_ski_resort_%2823917454674%29.jpg", "w": 1280, "h": 851, "credit": "Bansko", "page": "https://en.wikipedia.org/wiki/Bansko"},
+    "cz-winter-sports-krkonose-spindleruv-mlyn": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Spindle_town.JPG/1280px-Spindle_town.JPG", "w": 1280, "h": 960, "credit": "Špindlerův Mlýn", "page": "https://en.wikipedia.org/wiki/%C5%A0pindler%C5%AFv_Ml%C3%BDn"},
+    "hr-cycling-istria-parenzana": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Pula_Aerial_View.jpg/1280px-Pula_Aerial_View.jpg", "w": 1280, "h": 781, "credit": "Pula", "page": "https://en.wikipedia.org/wiki/Pula"},
+    "li-winter-sports-malbun-family": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Malbun_seen_from_Augstenberg_%28valo139%29.jpg/1280px-Malbun_seen_from_Augstenberg_%28valo139%29.jpg", "w": 1280, "h": 960, "credit": "Malbun", "page": "https://en.wikipedia.org/wiki/Malbun"},
+    "mc-road-trip-three-corniches-turini": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Roquebrune.jpg/1280px-Roquebrune.jpg", "w": 1280, "h": 720, "credit": "Alpes-Maritimes", "page": "https://en.wikipedia.org/wiki/Alpes-Maritimes"},
+    "md-road-trip-grand-loop": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/%D0%A1%D0%BE%D1%80%D0%BE%D0%BA%D1%81%D0%BA%D0%B0%D1%8F_%D0%BA%D1%80%D0%B5%D0%BF%D0%BE%D1%81%D1%82%D1%8C_Cetatea_Soroca_Soroca_Fortress_%2844738806701%29.jpg/1280px-%D0%A1%D0%BE%D1%80%D0%BE%D0%BA%D1%81%D0%BA%D0%B0%D1%8F_%D0%BA%D1%80%D0%B5%D0%BF%D0%BE%D1%81%D1%82%D1%8C_Cetatea_Soroca_Soroca_Fortress_%2844738806701%29.jpg", "w": 1280, "h": 800, "credit": "Soroca", "page": "https://en.wikipedia.org/wiki/Soroca"},
+    "me-road-trip-tara": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Kotor_aerial_1.jpg/1280px-Kotor_aerial_1.jpg", "w": 1280, "h": 837, "credit": "Bay of Kotor", "page": "https://en.wikipedia.org/wiki/Bay_of_Kotor"},
+    "pl-culinary-malopolska": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Krakow_Rynek_Glowny_panorama_2.jpg/1280px-Krakow_Rynek_Glowny_panorama_2.jpg", "w": 1280, "h": 629, "credit": "Kraków", "page": "https://en.wikipedia.org/wiki/Krak%C3%B3w"},
+    "pl-winter-sports-zakopane-bialka": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Zakopane_T58.jpg/1280px-Zakopane_T58.jpg", "w": 1280, "h": 960, "credit": "Zakopane", "page": "https://en.wikipedia.org/wiki/Zakopane"},
+    "be-water-sports-de-panne-kite-landyacht": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/De_Panne_Beach_R01.jpg/1280px-De_Panne_Beach_R01.jpg", "w": 1280, "h": 785, "credit": "De Panne beach", "page": "https://commons.wikimedia.org/wiki/File:De_Panne_Beach_R01.jpg"},
+    "lu-hiking-escapardenne-eislek": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Lac_de_la_Haute-S%C3%BBre%2C_Luxembourg_2012.jpg/1280px-Lac_de_la_Haute-S%C3%BBre%2C_Luxembourg_2012.jpg", "w": 1280, "h": 853, "credit": "Upper Sûre lake", "page": "https://commons.wikimedia.org/wiki/File:Lac_de_la_Haute-S%C3%BBre,_Luxembourg_2012.jpg"},
+    "hr-nature-escape-velebit-lika": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Uvala_Veliki-Lubenovac_Northern-Velebit_Dinarides_Croatia.jpg/1280px-Uvala_Veliki-Lubenovac_Northern-Velebit_Dinarides_Croatia.jpg", "w": 1280, "h": 853, "credit": "Veliki Lubenovac, Northern Velebit", "page": "https://commons.wikimedia.org/wiki/File:Uvala_Veliki-Lubenovac_Northern-Velebit_Dinarides_Croatia.jpg"},
+    "ro-road-trip-transfagarasan-transalpina": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/RO_B_Transfagarasan_view_towards_the_north_from_Balea_Lake_1.jpg/1280px-RO_B_Transfagarasan_view_towards_the_north_from_Balea_Lake_1.jpg", "w": 1280, "h": 857, "credit": "Transfăgărășan", "page": "https://commons.wikimedia.org/wiki/File:RO_B_Transfagarasan_view_towards_the_north_from_Balea_Lake_1.jpg"},
+}
 
 def strip_dashes(s):
     """lib/format.js stripDashes, in Python, so shipped copy obeys the house
@@ -660,6 +730,7 @@ def to_card(trip, hero):
         # T089: the first six tags, the same six the trip page shows, so the
         # list can filter on them without opening each trip.
         "tags": [str(x) for x in (trip.get("tags") or [])][:6],
+        "beds": bed_kinds(trip),
         "hero": hero,
     }
 
@@ -720,7 +791,7 @@ def main():
         save_cache(cache)
     # The audit's replacements win over pick_hero: it saw the categories and
     # the pixel size, and pick_hero only ever saw the file name.
-    overrides = load_hero_overrides()
+    overrides = {**load_hero_overrides(), **JOURNEY_HERO_PINS}
     n_over = 0
     for tid, hero in overrides.items():
         if tid in heroes:
@@ -765,6 +836,9 @@ def main():
     # a portrait crop.
     type_heroes = {}
     for slug, names in TYPE_HERO_CANDIDATES.items():
+        if TYPE_HERO_FILES.get(slug):
+            type_heroes[slug] = TYPE_HERO_FILES[slug]
+            continue
         pick = None
         for n in names:
             if usable(images.get(n), min_w=1000):

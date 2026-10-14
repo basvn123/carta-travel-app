@@ -15,7 +15,7 @@
   "region": "Eastern & Southeastern Europe",
   "regionKey": "eastern-southeastern",
   "subRegion": "Budapest — Pest districts V–IX, Buda I–II, XIII and Óbuda",
-  "tripType": "City Trips",
+  "tripType": "Cities",
   "tripTypeId": 3,
   "tripTypeSlug": "city",
   "durationDays": 7,

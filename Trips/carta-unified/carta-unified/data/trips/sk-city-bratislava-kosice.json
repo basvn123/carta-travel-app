@@ -15,7 +15,7 @@
   "region": "Eastern & Southeastern Europe",
   "regionKey": "eastern-southeastern",
   "subRegion": "Bratislava (Staré Mesto, Petržalka, Devín) and Košice (Hlavná, Spiš)",
-  "tripType": "City Trips",
+  "tripType": "Cities",
   "tripTypeId": 3,
   "tripTypeSlug": "city",
   "durationDays": 7,

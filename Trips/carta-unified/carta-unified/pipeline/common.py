@@ -7,22 +7,25 @@ import unicodedata
 # ---------------------------------------------------------------- trip types
 
 TRIP_TYPES = [
-    (1, "Cycling Trips", "cycling"),
-    (2, "Trail Running", "trail-running"),
-    (3, "City Trips", "city"),
-    (4, "Cozy Towns Trips", "cozy-towns"),
-    (5, "Road Trips & Scenic Drives", "road-trip"),
-    (6, "Hiking & Alpine Trekking", "hiking"),
-    (7, "Culinary & Wine Tours", "culinary"),
-    (8, "Winter Sports & Skiing", "winter-sports"),
-    (9, "Nature Escapes & Cabin Stays", "nature-escape"),
-    (10, "Water Sports & Coastal Trips", "water-sports"),
+    (1, "Cycling", "cycling"),
+    (2, "Trail running", "trail-running"),
+    (3, "Cities", "city"),
+    (4, "Small towns", "cozy-towns"),
+    (5, "Road trips", "road-trip"),
+    (6, "Hiking", "hiking"),
+    (7, "Food and drink", "culinary"),
+    (8, "Ski and snow", "winter-sports"),
+    (9, "Nature stays", "nature-escape"),
+    (10, "On the water", "water-sports"),
 ]
 
 _TYPE_BY_ID = {i: (name, slug) for i, name, slug in TRIP_TYPES}
 
-# every spelling seen across the four source batches -> canonical id
+# every spelling seen across the four source batches -> canonical id; the
+# T448 names (2026-10-14) first, the batch spellings after them
 _TYPE_ALIASES = {
+    "cities": 3, "small towns": 4, "food and drink": 7, "ski and snow": 8,
+    "nature stays": 9, "on the water": 10,
     "cycling trips": 1, "cycling": 1,
     "trail running": 2, "trail_running": 2, "trail-running": 2,
     "city trips": 3, "city": 3,
