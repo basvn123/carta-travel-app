@@ -321,7 +321,7 @@ try {
     await page.locator('.bottom-nav-item', { hasText: /destinations/i }).first()
       .click({ timeout: 15000 }).catch(() => {});
     await page.waitForTimeout(800);
-    await page.locator('.places-cat', { hasText: /beaches/i }).first()
+    await page.locator('.dtab-cats [role="tab"]', { hasText: /beaches/i }).first()
       .click({ timeout: 15000 }).catch(() => {});
     await page.waitForTimeout(1500);
     const locate = page.locator('.places-locate:visible').first();

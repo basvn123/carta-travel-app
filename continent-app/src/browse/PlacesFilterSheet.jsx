@@ -2,11 +2,10 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { CloseIcon } from '../components/Icons.jsx';
-import { count } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useAnchoredSheet } from './sheetAnchor.js';
 import { durationMs } from '../lib/motion.js';
-import { Button } from '../components/ui/index.js';
+import { Button, Chip, IconButton } from '../components/ui/index.js';
 
 /**
  * The Destinations filters, in the shape Explore already uses: one modal
@@ -152,15 +151,14 @@ export function PlacesFilterSheet({
           <span className="fsheet-grab" aria-hidden="true" />
           <div className="fsheet-head-row">
             <h2 className="fsheet-title" id="pfsheet-title">{t('filter.filters')}</h2>
-            <button
-              type="button"
+            <IconButton
               className="fsheet-close"
               onClick={onClose}
               ref={closeRef}
-              aria-label={t('filter.closeSheet')}
+              label={t('filter.closeSheet')}
             >
               <CloseIcon size={16} />
-            </button>
+            </IconButton>
           </div>
         </div>
 
@@ -195,18 +193,18 @@ export function PlacesFilterSheet({
                     <span className="fsheet-label">{g.label}</span>
                     <div className="fchips" role="group" aria-label={g.label}>
                       {g.options.map((o) => (
-                        <button
+                        // T428: the kit filter chip; no figure on it, the
+                        // list behind the sheet is the answer.
+                        <Chip
                           key={o.key}
-                          type="button"
-                          className={`fchip ${o.on ? 'on narrow' : ''}`}
-                          aria-pressed={o.on}
+                          kind="filter"
+                          className="fchip"
+                          selected={!!o.on}
                           disabled={o.disabled}
                           onClick={() => g.onToggle(o.key)}
                         >
-                          {o.Icon && <o.Icon size={13} />}
-                          <span>{o.label}</span>
-                          {o.n != null && <span className="fchip-n">{count(o.n)}</span>}
-                        </button>
+                          {o.label}
+                        </Chip>
                       ))}
                     </div>
                   </div>

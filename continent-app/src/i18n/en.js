@@ -4262,7 +4262,7 @@ export const en = {
      June", which is the question a lake list is actually asked.
      LAKE_FACETS in lib/lakeStory.js holds the tests. -- */
   "lake.filterSwim": "Swimming",
-  "lake.alsoHead": "Also in {country}, not scored yet",
+  "lake.alsoHead": "More in {country}",
   "lake.alsoNote": "Verified to exist and correctly named. We do not score water we have not looked at properly.",
   "lake.filterWater": "Water quality",
   "lake.filterSetting": "Setting",
@@ -4714,7 +4714,7 @@ export const en = {
   'cycle.facShape': "Shape",
   'cycle.facLoop': "Loop",
   'cycle.facCarfree': "Mostly car-free",
-  'cycle.showLocal': "Show {n} local network routes",
+  'cycle.showLocal': "Show local network routes",
   'cycle.hideLocal': "Hide the local network routes",
   'cycle.netIcn': "International route {ref}",
   'cycle.netNcn': "National route {ref}",
@@ -4815,7 +4815,7 @@ export const en = {
   'mtn.accessHead': 'Getting there',
   'mtn.floorPoolExhausted': '{country} has few mountains, and this is every one we could verify.',
   'mtn.floorNoCandidates': 'We have found no other named summit inside {country}.',
-  'mtn.alsoHead': 'Also in {country}, not scored yet',
+  'mtn.alsoHead': "More in {country}",
   'mtn.alsoNote': 'Verified to exist and correctly named. We do not score a mountain we have not measured.',
 
   // beach_beauty_v2: size, aspect, protection and the facet rail
@@ -4879,7 +4879,7 @@ export const en = {
   'beach.listedHead': 'Also here, not scored yet',
   'beach.listedNote': 'Verified to exist and correctly named. We do not score a beach we have not looked at.',
   'beach.mapCard': 'No photograph yet',
-  'beach.alsoHead': 'Also in {country}, not scored yet',
+  'beach.alsoHead': "More in {country}",
   'beach.alsoNote': 'Verified to exist and correctly named. We do not score a beach we have not looked at.',
 
   // Cross-layer neighbours (brief 08): the blocks that join the catalogues.
@@ -5232,9 +5232,9 @@ export const en = {
   'cov.reason.sharedNetwork': '{place}\'s cycle routes are stages of the networks of its neighbours; the nearest are below.',
   'cov.reason.noRoute': 'No cycle route is published for {place} yet.',
   'cov.reason.riverBeach': '{place} has no coast; its river beaches are not in an open register yet.',
-  'stub.listHead': '{n} famous walks we cannot map yet',
+  'stub.listHead': "Famous walks without a map yet",
   'stub.listNote': 'No open route data exists for these. Each page says where to get the track.',
-  'stub.showAll': 'Show all {n}',
+  'stub.showAll': "Show all",
   'stub.line': 'No open route data exists for this walk yet. Here is where to get the track.',
   'stub.known': 'What we know',
   'stub.where': 'Where to get the track',
@@ -6387,4 +6387,24 @@ export const en = {
   "country.known.TR": "Istanbul's mosques, Mediterranean beaches and ancient cities like Ephesus",
   "country.known.UA": "Carpathian mountains, Lviv's old town and Kamianets-Podilskyi fortress",
   "country.known.XK": "Ottoman Prizren, Rugova Canyon and the Sharr Mountains",
+  // T428: the Destinations tab
+  "dtab.head.trips": "Pick a kind of trip",
+  "dtab.head.trails": "Find your next walk",
+  "dtab.head.beaches": "Find your beach",
+  "dtab.head.lakes": "Swim, paddle or walk around a lake",
+  "dtab.head.mountains": "Get to the top",
+  "dtab.head.cycling": "Ride Europe's best routes",
+  "dtab.tryOne": "Try one",
+  "dtab.railBest.beach": "Best-known beaches",
+  "dtab.railBest.lake": "Best-known lakes",
+  "dtab.railBest.mountain": "Best-known mountains",
+  "dtab.railBest.cycle": "Top-rated routes",
+  "dtab.railBestTrail": "Top-rated walks in {country}",
+  "dtab.byCountry": "By country",
+  "dtab.chooseCountry": "Choose a country",
+  "dtab.exploreCountry": "See places in {country}",
+  "dtab.photoPrev": "Previous photo of {country}",
+  "dtab.photoNext": "Next photo of {country}",
+  "dtab.photoCredits": "Photographs",
+  "dtab.beds": "Hostel, hut or campsite beds",
 };

@@ -99,7 +99,7 @@ check('destinations tab opens', await page.locator('.places-tab').isVisible());
 // General click (T373 baseline). It now ranks the Beaches list from the same
 // anchors: every check below keeps its question, read off beach cards.
 const BEACHES = /^beaches$/i;
-await page.locator('.places-cat:visible, .side-cat:visible', { hasText: BEACHES }).first().click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: BEACHES }).first().click();
 await page.waitForTimeout(4000);
 
 const input = page.locator('.places-search input');
@@ -188,7 +188,7 @@ check('the coast nearest the address leads the list', addrKm[0] != null && addrK
 await page.screenshot({ path: 'shots/places-search-address.png' });
 
 // ── 3. Trips and trails follow the same anchor ──
-await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^trails$/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /^trails$/i }).click();
 await page.waitForTimeout(2500);
 const trailKm = (await page.locator('.places-tcard .places-card-km').allInnerTexts())
   .map((s) => parseInt(s.replace(/\D+/g, ''), 10));
@@ -202,7 +202,7 @@ await page.screenshot({ path: 'shots/places-search-trails.png' });
 
 // ── 4. The keyboard path: type, Enter to search, Enter to take the top hit ──
 // T384: back to Beaches (was the removed General category).
-await page.locator('.places-cat:visible, .side-cat:visible', { hasText: BEACHES }).first().click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: BEACHES }).first().click();
 await page.waitForTimeout(600);
 await page.locator('.places-nearclear').click();
 await page.waitForTimeout(400);

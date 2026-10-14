@@ -65,7 +65,7 @@ await page.waitForTimeout(2500);
 
 // Destinations tab -> Beaches -> open the first beach page.
 await openTab(page, /destinations/i);
-const beachCat = page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^beaches$/i }).first();
+const beachCat = page.locator('.dtab-cats [role="tab"]', { hasText: /^beaches$/i }).first();
 if (await beachCat.count()) { await beachCat.click(); await page.waitForTimeout(4000); }
 
 // Beach rows are .places-bcard (each layer has its own card class).

@@ -16,9 +16,10 @@ import { readFileSync } from 'node:fs';
 // harness has to ask for BOTH and scope to :visible. Asking for .places-cat
 // alone passed for as long as the tab was phone-first and has silently
 // pointed at a hidden node ever since the desktop shell landed.
-const CAT = '.places-cat:visible, .side-cat:visible';
+const CAT = '.dtab-cats [role="tab"]';
 // Sorts are twinned too, and again under different classes.
-const SORT = '.places-sort:visible, .side-sort:visible';
+// T428: the sort is one select; its options are the three orders.
+const SORT = '.dtab-sort-side select:visible option, .dtab-sort select:visible option';
 
 // The country filter is no longer a <select>. It is a button that opens a
 // search-and-listbox popover (src/components/CountryPicker.jsx), so
@@ -26,6 +27,9 @@ const SORT = '.places-sort:visible, .side-sort:visible';
 // whole run down before the first check. Driving it the way a person does
 // also exercises the popover, which the old selectOption never did.
 async function pickCountry(page, name) {
+  // T428: Trails at rest opens on the country galleries; the card is the picker.
+  const card = page.locator('.dgal-card .card-open', { hasText: new RegExp(`^${name}$`, 'i') }).first();
+  if (await card.isVisible().catch(() => false)) { await card.click(); await page.waitForTimeout(1800); return; }
   await page.locator('.places-country:visible').first().click();
   await page.waitForTimeout(400);
   const pop = page.locator('.country-picker-pop:visible');
@@ -125,7 +129,9 @@ check('no priced-from origin picker on trails', await page.locator('.places-cont
 check('no lifestyle pill on trails', await page.locator('.lifestyle-btn:visible').count() === 0);
 check('cards carry no clipped summary', await page.locator('.places-tcard-summary').count() === 0);
 const cardText = await page.locator('.places-tcard').first().innerText();
-check('card is facts only, no prose', !/waymarked|route in AL/i.test(cardText), cardText.replace(/\n/g, ' ').slice(0, 70));
+// T428: "Waymarked" is one of the card's facts now (the hook line), not prose;
+// the prose this guards against is the wire's summary sentence.
+check('card is facts only, no prose', !/route in AL/i.test(cardText), cardText.replace(/\n/g, ' ').slice(0, 70));
 await page.screenshot({ path: 'shots/trail-list.png' });
 
 // Other categories keep their price chrome.
@@ -276,8 +282,8 @@ await page.waitForTimeout(1500);
 // otherwise the composed-itinerary surface. Without moving the length slider
 // to 1 the list is multi-day itineraries and no .places-tcard exists at all.
 // The slider goes first: at 1 the index lists the countries with city walks.
-await page.locator('.trip-slider-input:visible').first()
-  .fill('1').catch(() => {});
+await page.locator('.dtab-length select:visible').first()
+  .selectOption('1').catch(() => {});
 await page.waitForTimeout(1600);
 await pickCountry(page, 'Albania').catch(() => {});
 await page.waitForTimeout(1800);

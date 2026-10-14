@@ -1,207 +1,151 @@
-/* The section opening screen (spec 5.3, T183): Band 1, the icons, and
-   Band 2, the useful cuts, over the five outdoor sections of Destinations.
-   browse/SectionOpening.jsx draws it.
+/* The opening of a Destinations section (T183; rebuilt in T428 on the kit).
 
-   Most of the look is borrowed on purpose: the cards are Explore's
-   .railcard and the rails are Explore's .xrails (25-feature-pages.css). This
-   file only adds the grid the icons sit in, the fixed 220 px rail card, the
-   44 px arrows and the dot indicator, all from tokens. carta-design has no
-   written carousel rule yet; row T183-b asks for one. */
+   Top to bottom: the head (one photograph of people doing the thing and
+   one title), "Try one", the photo rails, the countries track, then the
+   heading of the full list. Explore's idle page is the model: the same
+   strip mechanics (scroll snap, arrows on a fine pointer, a peek on touch),
+   the kit tile Card, no dots, no position figure, no count on "See all".
 
-.open-bands {
+   Tokens only: roles, the type and space scales, the motion tokens. */
+
+.dtab-open {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  margin: var(--space-4) 0 var(--space-6);
+  margin-bottom: var(--space-6);
 }
 
-/* ── Band 1: the icons ───────────────────────────────────────────────── */
+/* -- The head --------------------------------------------------------------- */
 
-.open-icons-title {
-  margin: 0;
-  font-family: var(--display);
-  font-size: 26px;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  /* One line in English at every width down to 380 px, as the spec asks.
-     It is allowed to wrap rather than truncate: the Spanish and French
-     headings are half as long again, and a heading cut off mid-word says
-     less than one on two lines. */
-  text-wrap: balance;
-}
-.open-icons-sub {
-  margin: var(--space-1) 0 0;
-  max-width: 62ch;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
-/* Inside the column (T394, brief V4-3): the grid starts and ends where the
-   heading over it does, on the 16 px gutter on a phone and the column edge
-   on a desktop; it used to bleed through the padding .places-wrap stands on
-   to the side panel's border. Hairlines between the tiles rather than cards
-   with gaps: a set of related places, divided by rules, the way carta-design
-   asks a list to be. */
-.open-icons-grid {
-  list-style: none;
-  margin: var(--space-3) 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  background: var(--rule-soft);
-  border-top: 1px solid var(--rule-soft);
-  border-bottom: 1px solid var(--rule-soft);
-}
-.open-icons-grid > li { display: flex; min-width: 0; }
-.open-icon.railcard {
-  flex: 1 1 auto;
-  width: 100%;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-@media (hover: hover) {
-  .open-icon.railcard:hover { transform: none; box-shadow: none; }
-}
-.open-icon .railcard-img { aspect-ratio: 4 / 3; }
-.open-icon:focus-visible { outline-offset: -2px; }
-.open-icon .railcard-name { font-size: 17px; }
-
-/* ── Band 2: the rails ───────────────────────────────────────────────── */
-
-.open-rails { margin: 0; }
-.open-railcard.railcard {
-  flex: 0 0 200px;
-  height: 220px;
-}
-.open-railcard .railcard-media { flex: none; height: 132px; overflow: hidden; }
-.open-railcard .railcard-img { height: 132px; aspect-ratio: auto; }
-.open-railcard .railcard-body {
-  flex: 1 1 auto;
-  min-height: 0;
-  justify-content: space-between;
-}
-/* Two lines for a rail card's name: cycle sections carry long ones. */
-.open-railcard .railcard-name {
-  flex: none;
-  max-height: 2.4em;
+.dtab-head { display: flex; flex-direction: column; gap: var(--space-3); }
+.dtab-head-media {
   overflow: hidden;
-  white-space: normal;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  aspect-ratio: 21 / 9;
+  max-height: 280px;
 }
-.open-noimg {
+.dtab-head-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dtab-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+@media (max-width: 768px) {
+  .dtab-head-media { aspect-ratio: 16 / 9; border-radius: var(--radius-control); }
+  .dtab-title { font-size: var(--text-title); }
+}
+
+/* -- Try one ----------------------------------------------------------------- */
+
+.dtab-starters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.dtab-starters-label {
+  margin-right: var(--space-1);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.dtab-starter .btn-label { white-space: normal; text-align: left; }
+/* The head and its starters read as one block. */
+.dtab-head + .dtab-starters { margin-top: calc(-1 * var(--space-3)); }
+@media (max-width: 768px) {
+  /* One row a thumb can swipe, not four wrapped lines. */
+  .dtab-starters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(-1 * var(--space-4));
+    padding: 2px var(--space-4);
+    scrollbar-width: none;
+  }
+  .dtab-starters::-webkit-scrollbar { display: none; }
+  .dtab-starter { flex: none; }
+  .dtab-starter .btn-label { white-space: nowrap; }
+}
+
+/* -- The rails --------------------------------------------------------------- */
+
+.dtab-rails { display: flex; flex-direction: column; gap: var(--space-6); }
+.dtab-rail { container-type: inline-size; min-width: 0; }
+.dtab-rail-head {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 100%;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
-.railcard-kind .open-where {
+.dtab-rail-title {
+  flex: 1 1 auto;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-/* The one figure, in mono, with its name under it in the sans (T394, brief
-   V4-2): the grid card's value column in small, so the opening's cards and
-   the grid's read as one family. */
-.railcard-kind .open-fact {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: auto;
-  text-align: right;
-}
-.open-fact-n {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.open-fact-l {
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-mute);
-}
-.open-railcard .railcard-kind,
-.open-icon .railcard-kind {
-  display: flex;
-  gap: var(--space-2);
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-
-.open-strip { scroll-snap-type: x mandatory; }
-.open-strip > .railcard { scroll-snap-align: start; }
-
-/* "See all N" at the tap floor on every width, in ink (T394, carta-design
-   "Accent marks": a "See all" link is secondary chrome, not an action in
-   accent). On a hover screen it underlines; a touch screen keeps no hover. */
-.xrails-all.open-all { min-height: var(--tap); color: var(--ink); }
-@media (hover: hover) {
-  .xrails-all.open-all:hover { color: var(--ink); text-decoration: underline; }
-}
-
-/* The arrows at the tap floor, and quiet at either end of the strip. */
-.xrails-arrow.open-arrow { width: var(--tap); height: var(--tap); }
-.xrails-arrow.open-arrow:disabled {
-  cursor: default;
-  color: var(--rule);
-  border-color: var(--rule-soft);
-}
-
-/* Where the strip is: one dot a page, the current one in ink. */
-.open-dots {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-2);
-  margin-top: var(--space-1);
-}
-.open-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--rule);
-}
-.open-dot.on { background: var(--ink); }
-
-/* Band 3: its heading, in the rails' title style, then the filter row. */
-.open-gridhead {
   margin: 0;
-  font-family: var(--display);
-  font-size: 20px;
+  font-size: var(--text-title);
   font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
+  line-height: var(--leading-tight);
+  color: var(--text);
+  overflow-wrap: anywhere;
 }
+.dtab-nav { display: none; gap: var(--space-1); }
+@media (hover: hover) and (pointer: fine) {
+  .dtab-nav { display: inline-flex; }
+}
+.dtab-arrow.is-prev svg { transform: rotate(180deg); }
+.dtab-arrow:disabled { opacity: 0.4; }
 
-/* Band 3's filter rail, moved under the bands while they show (phone only:
-   on a desktop the filters stand in the left panel and this is hidden with
-   the rest of .places-toolbar). */
-.places-filterrail { margin-top: 0; }
+.dtab-strip {
+  --tile-w: 78%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--tile-w);
+  gap: var(--space-3);
+  margin: 0;
+  padding: 2px 2px var(--space-2);
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.dtab-strip::-webkit-scrollbar { display: none; }
+.dtab-item { display: flex; min-width: 0; scroll-snap-align: start; }
+.dtab-item > .card { flex: 1 1 auto; min-width: 0; }
+@container (min-width: 560px) { .dtab-strip { --tile-w: calc((100% - 2 * var(--space-3)) / 2.4); } }
+@container (min-width: 860px) { .dtab-strip { --tile-w: calc((100% - 3 * var(--space-3)) / 3.4); } }
+@container (min-width: 1080px) { .dtab-strip { --tile-w: calc((100% - 4 * var(--space-3)) / 4.3); } }
 
-@media (max-width: 768px) {
-  .open-icons-title { font-size: 21px; }
-  .open-icons-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* Nine tiles in two columns: the first takes the full width, so the grid
-     closes on a whole row. */
-  .open-icons-grid[data-n='9'] > li:first-child,
-  .open-icons-grid[data-n='7'] > li:first-child,
-  .open-icons-grid[data-n='5'] > li:first-child,
-  .open-icons-grid[data-n='3'] > li:first-child { grid-column: 1 / -1; }
-  .open-icons-grid[data-n='9'] > li:first-child .railcard-img,
-  .open-icons-grid[data-n='7'] > li:first-child .railcard-img,
-  .open-icons-grid[data-n='5'] > li:first-child .railcard-img,
-  .open-icons-grid[data-n='3'] > li:first-child .railcard-img { aspect-ratio: 16 / 9; }
-  .open-icon .railcard-name { font-size: 15px; }
-  .open-bands { gap: var(--space-5); }
+/* A focused tile shows its ring inside the strip, which clips outside it. */
+.dtab-strip .card.is-interactive:has(.card-open:focus-visible) { outline-offset: -3px; }
+
+/* The rail tile: the kit tile Card with its name on up to two lines. */
+.dtab-tile .card-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.dtab-tile .card-media { aspect-ratio: 4 / 3; }
+.dtab-tile-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.dtab-tile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-2);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.dtab-where { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.dtab-fact { font-variant-numeric: tabular-nums; color: var(--text); }
+
+/* The full list's heading, under the opening. */
+.dtab-gridhead {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
 }

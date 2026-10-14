@@ -59,10 +59,10 @@ check('friends label folded to the icon',
 // Destinations: its search heads the column (NOT the header slot, which this
 // tab gave up), the left panel stands, the toolbar card is gone.
 check('search heads the results column',
-  await page.locator('.places-searchrow .places-search input').isVisible());
+  await page.locator('#header-search-slot .places-search input').isVisible());
 check('search left the header slot',
   await page.locator('.header-search-slot .places-search input').count() === 0);
-const searchTop = (await page.locator('.places-searchrow').boundingBox())?.y ?? 0;
+const searchTop = (await page.locator('#header-search-slot').boundingBox())?.y ?? 0;
 const listTop = (await page.locator('.places-list').first().boundingBox())?.y ?? 0;
 const barBottom = (await page.locator('.top-bar').boundingBox() || { y: 0, height: 0 });
 check('it sits under the bar and over the results',
@@ -73,7 +73,7 @@ check('toolbar card folded away', await page.locator('.places-toolbar').isHidden
 // Seven since Cycling joined General/Trips/Trails/Beaches/Lakes/Mountains.
 // Six since General was retired (T381 harness baseline, register row
 // T370-a): Trips, Trails, Beaches, Lakes, Mountains and Cycling.
-const sideCats = await page.locator('.places-side .side-cat').count();
+const sideCats = await page.locator('.dtab-cats [role="tab"]').count();
 check('every category has a tile in the panel', sideCats === 6, `${sideCats}`);
 check('origin picker off this page', await page.locator('.places-tab .origin-btn').count() === 0
   || await page.locator('.places-tab .origin-btn').first().isHidden());
@@ -88,9 +88,9 @@ check('country dropdown in the panel', await page.locator('.places-side .side-co
 // is --ink-fill (#2b3446), never the accent (carta-design "Selected state"),
 // and the tiles already wear it, so the assertion checks the ink fill
 // (T381, register row T370-a).
-await page.locator('.places-side .side-cat', { hasText: /trails/i }).first().click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /trails/i }).first().click();
 await page.waitForTimeout(1200);
-const onBg = await bg(page, '.places-side .side-cat.on');
+const onBg = await bg(page, '.dtab-cats [aria-selected="true"]');
 check('selected tile wears the ink fill', onBg === 'rgb(43, 52, 70)', onBg);
 // It stays on Trails: General, the category this used to return to, is
 // retired, and Trails is a category with a country index for the sorts.
@@ -98,25 +98,23 @@ await page.waitForTimeout(800);
 
 // Sorts live in the panel and switch on the accent. They only exist past the
 // country index (same rule as before this pass), so step into a country.
-await page.locator('.places-ccard').first().click();
+await page.locator('.dgal-card .card-open').first().click();
 await page.waitForTimeout(1200);
-const sortN = await page.locator('.places-side .side-sort').count();
+// T428: one sort select in the panel, with the three orders in it.
+const sortN = await page.locator('.places-side .dtab-sort-side select option').count();
 check('sorts stand in the panel', sortN === 3, `${sortN}`);
-await page.locator('.places-side .side-sort').nth(2).click();
+await page.locator('.places-side .dtab-sort-side select').selectOption({ index: 2 });
 await page.waitForTimeout(400);
-const sortBg = await bg(page, '.places-side .side-sort.on');
-// T391: the selected sort is --ink-fill (#2b3446) since the V3 destinations
-// build applied carta-design's "Selected state" (the accent is never a
-// selection colour); this asserted the accent #ce3823 before.
-check('active sort wears the ink fill', sortBg === 'rgb(43, 52, 70)', sortBg);
+check('the panel sort changes the order',
+  (await page.locator('.places-side .dtab-sort-side select').inputValue()) !== 'rating');
 
 // The column search still answers: typing offers suggestions under the field.
-await page.locator('.places-searchrow .places-search input').fill('Gent');
+await page.locator('#header-search-slot .places-search input').fill('Gent');
 await page.waitForTimeout(700);
 check('column search suggests', await page.locator('.places-sugg').isVisible());
 await page.screenshot({ path: 'shots/desktop-destinations.png' });
 await page.keyboard.press('Escape');
-await page.locator('.places-searchrow .places-search input').fill('');
+await page.locator('#header-search-slot .places-search input').fill('');
 await page.waitForTimeout(400);
 
 // ── Explore ──
@@ -165,7 +163,7 @@ check('phone: no card chrome on the toolbar',
 // T391: up to six categories on a phone are a 2 x 3 grid of equal buttons,
 // never a sideways strip that hides some (carta-design "Filter chips", built
 // by the V3 destinations session); this asserted the sideways row before.
-check('phone: categories are a grid with every tile on screen', await phone.locator('.places-cats').evaluate(
+check('phone: categories are a grid with every tile on screen', await phone.locator('.dtab-cats').evaluate(
   (el) => getComputedStyle(el).display === 'grid' && el.scrollWidth <= el.clientWidth + 1));
 check('phone: no origin chip', await phone.locator('.places-toolbar .origin-btn').count() === 0);
 // The opposite is the rule now: an index card may carry its published count
@@ -176,7 +174,7 @@ check('phone: a count line on an index card carries its number',
   (await phone.locator('.places-ccard .places-card-sub').allInnerTexts()).every((x) => /\d/.test(x)));
 // T391: the accent tick on every category tile is gone (rule R11, "Accent
 // marks": an accent mark means "this one acts"); this asserted a 2 px tick.
-const tickContent = await phone.locator('.places-cat').first()
+const tickContent = await phone.locator('.dtab-cats [role="tab"]').first()
   .evaluate((el) => getComputedStyle(el, '::before').content).catch(() => '');
 check('phone: category tiles carry no accent tick', tickContent === 'none' || tickContent === 'normal', tickContent);
 // T391 (shell V4, rule R4): the active bottom tab is an --ink-fill pill

@@ -1,132 +1,59 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
-import { useSettledFigure } from '../lib/figureChange.js';
-import { ChevronRightIcon, RouteIcon } from '../components/Icons.jsx';
+import { HeroImage } from '../components/HeroImage.jsx';
+import { ScoreChip } from '../components/RatingBadge.jsx';
+import { ChevronRightIcon } from '../components/Icons.jsx';
+import { Button, Card, IconButton } from '../components/ui/index.js';
 
 /**
- * The opening screen of an outdoor section (spec 5.3, T183): Band 1, the
- * icons, and Band 2, the useful cuts. Band 3 is the grid DestinationsTab
- * already draws under it. What goes in each band is decided in
- * lib/openingScreen.js; this file only draws it.
+ * The opening of a Destinations section (T428; T183 built the first one).
  *
- * Built from what the app already ships rather than new vocabulary: the rails
- * are Explore's rails (.xrails-*, .railcard, the same "See all N" and the
- * same arrow buttons), and the icons are railcards laid out as a grid. The
- * two things Explore did not have, the 220 px card and the dot indicator,
- * are drawn from tokens only (styles/30-section-opening.css). carta-design
- * has no written rule for a carousel yet; row T183-b asks the owner for one.
+ * Top to bottom, the same grammar Explore's idle page uses:
+ *   SectionHead   one photograph of people doing the thing (countryGallery.js
+ *                 SECTION_PHOTOS) and one plain title with a verb
+ *   rails         photo strips of kit tile Cards: the section's best known
+ *                 first, then the saved filters of lib/openingScreen.js, at
+ *                 most four on a desktop and three on a phone
+ *   starters      "Try one": the cuts that did not get a rail, as one row of
+ *                 secondary buttons that apply the same saved filter
+ *   children      what the tab puts after them (the countries track)
  *
- * `describe(row)` returns { name, where, fact } for one wire row: the name
- * in the display face, where it is in the sans, and at most one measured
- * fact in mono.
+ * What went (owner, 2026-10-14): the "Europe's 6 best-known mountains"
+ * heading and its ranking sentence, the dots and the "1 to 4 of 12" under a
+ * strip, the figure on "See all". The rails still follow carta-design
+ * "Rails": arrows on a fine pointer, arrow keys between cards, scroll snap,
+ * one aspect, nothing over a photograph but nothing at all.
  *
- * `maxRails` (T384, rule N4): a phone draws at most two rails; the further
- * cuts become one row of chips that apply the same saved filter as the
- * rail's "See all", so no cut is lost and the opening stops being a scroll
- * of six carousels. Desktop passes null and keeps every rail.
- *
- * T394 (V4): each card's one figure carries its label under it, as the grid
- * cards' values do (`describe` returns `factLabel`); `sharedKey(row)` names
- * the key the opened page claims its header photograph with, so the card's
- * photograph grows into the page (lib/sharedElement.js); and a cut's count
- * settles in place when a filter elsewhere changes it.
+ * `describe(row)` returns { name, where, fact, rating } for one wire row.
  */
 
-// What a Band 1 photo is drawn at: half the phone, a third of the column.
-const ICON_SIZES = '(max-width: 768px) 50vw, min(30vw, 380px)';
-const RAIL_SIZES = '200px';
+const RAIL_SIZES = '(max-width: 768px) 72vw, 280px';
 
-function Photo({ url, sizes, eager = false, first = false }) {
-  if (!url) {
-    return (
-      <span className="railcard-img open-noimg" aria-hidden="true">
-        <RouteIcon size={22} />
-      </span>
-    );
-  }
+export function SectionHead({ photo, title, id }) {
   return (
-    <img
-      className="railcard-img"
-      src={fallbackSrc(url, 500)}
-      srcSet={srcSetFor(url, 960)}
-      sizes={sizes}
-      alt=""
-      width={4}
-      height={3}
-      loading={eager ? 'eager' : 'lazy'}
-      fetchpriority={first ? 'high' : undefined}
-      decoding="async"
-    />
+    <header className="dtab-head">
+      {photo && (
+        <div className="dtab-head-media">
+          <HeroImage url={photo.u} city={photo.place} className="dtab-head-img"
+            maxWidth={1280} sizes="(max-width: 768px) 100vw, min(70vw, 1100px)"
+            ratio={[photo.w, photo.h]} eager />
+        </div>
+      )}
+      <h2 className="dtab-title" id={id}>{title}</h2>
+    </header>
   );
 }
 
-function Card({ row, describe, photo, onOpen, sizes, eager, first, className, sharedKey }) {
-  const d = describe(row);
-  const key = sharedKey ? sharedKey(row) : null;
-  const open = (e) => {
-    if (key == null) { onOpen(row); return; }
-    openShared(e.currentTarget, key, () => onOpen(row));
-  };
-  return (
-    <button
-      type="button"
-      className={`railcard ${className}`}
-      onClick={open}
-    >
-      <span className="railcard-media">
-        <Photo url={photo(row)} sizes={sizes} eager={eager} first={first} />
-      </span>
-      <span className="railcard-body">
-        <span className="railcard-name">{d.name}</span>
-        <span className="railcard-kind">
-          {d.where && <span className="open-where">{d.where}</span>}
-          {d.fact && (
-            <span className="open-fact">
-              <span className="open-fact-n">{d.fact}</span>
-              {d.factLabel && <span className="open-fact-l">{d.factLabel}</span>}
-            </span>
-          )}
-        </span>
-      </span>
-    </button>
-  );
-}
-
-/**
- * Where a strip is scrolled to, for the arrows and the dots. Pages are whole
- * viewports of the strip; the dot for the last page lights once the end is
- * reached, even when the last page is a partial one.
- */
-function useStripPosition(ref) {
-  const [pos, setPos] = useState({ pages: 1, page: 0, atStart: true, atEnd: true, first: 1, last: 1, total: 0 });
+/** Whether a strip can move either way, for the two arrows. */
+function useStripEnds(ref) {
+  const [ends, setEnds] = useState({ atStart: true, atEnd: true });
   const measure = useCallback(() => {
     const el = ref.current;
     if (!el) return;
-    const w = el.clientWidth || 1;
-    const max = Math.max(0, el.scrollWidth - w);
-    const pages = Math.max(1, Math.ceil(el.scrollWidth / w - 0.05));
-    const atEnd = el.scrollLeft >= max - 2;
-    const page = atEnd ? pages - 1 : Math.min(pages - 1, Math.round(el.scrollLeft / w));
-    // Which cards are whole in view, for the mono position (rule Rails).
-    const kids = Array.from(el.children);
-    const left = el.scrollLeft;
-    let first = 0;
-    let last = 0;
-    kids.forEach((k, i) => {
-      const inView = k.offsetLeft - el.offsetLeft >= left - 2
-        && k.offsetLeft - el.offsetLeft + k.offsetWidth <= left + w + 2;
-      if (inView) { if (!first) first = i + 1; last = i + 1; }
-    });
-    if (!first) { first = 1; last = 1; }
-    const total = kids.length;
-    const atStart = el.scrollLeft <= 2;
-    setPos((cur) => (cur.pages === pages && cur.page === page
-      && cur.atStart === atStart && cur.atEnd === atEnd
-      && cur.first === first && cur.last === last && cur.total === total
-      ? cur
-      : { pages, page, atStart, atEnd, first, last, total }));
+    const max = Math.max(0, el.scrollWidth - el.clientWidth);
+    const next = { atStart: el.scrollLeft <= 2, atEnd: el.scrollLeft >= max - 2 };
+    setEnds((cur) => (cur.atStart === next.atStart && cur.atEnd === next.atEnd ? cur : next));
   }, [ref]);
   useEffect(() => {
     const el = ref.current;
@@ -146,157 +73,126 @@ function useStripPosition(ref) {
       ro?.disconnect();
     };
   }, [ref, measure]);
-  return pos;
+  return ends;
 }
 
-function Rail({ rail, describe, photo, onOpen, t, sharedKey }) {
+/**
+ * A horizontal strip with a heading, an optional "See all" and the two
+ * arrows. Shared by the rails and the countries track so both move, focus
+ * and snap the same way.
+ */
+export function Strip({ id, title, onSeeAll = null, t, className = '', children }) {
   const stripRef = useRef(null);
-  const pos = useStripPosition(stripRef);
-  // Arrow keys on a focused card move to its neighbour and bring it into
-  // view (rule Rails; the day track's pattern). Tab still walks every card,
-  // so the arrows are a shortcut and never the only way.
+  const ends = useStripEnds(stripRef);
   const onKeyDown = (e) => {
     const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!dir || e.altKey || e.ctrlKey || e.metaKey) return;
-    const cards = Array.from(stripRef.current?.querySelectorAll('.railcard') || []);
+    const cards = Array.from(stripRef.current?.querySelectorAll('.card-open') || []);
     const at = cards.indexOf(document.activeElement);
     if (at < 0) return;
     const next = cards[at + dir];
     if (!next) return;
     e.preventDefault();
     next.focus({ preventScroll: true });
-    next.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: scrollBehavior() });
+    next.closest('.dtab-strip > *')?.scrollIntoView({ block: 'nearest', inline: 'start', behavior: scrollBehavior() });
   };
   const page = (dir) => {
     const el = stripRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * 0.9, behavior: scrollBehavior() });
+    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.9, behavior: scrollBehavior() });
   };
-  const headId = `open-rail-${rail.key}`;
   return (
-    <section className="xrails-rail open-rail" aria-labelledby={headId} data-rail={rail.key}>
-      <div className="xrails-head">
-        <div className="xrails-headings">
-          <h2 className="xrails-title" id={headId}>{rail.title}</h2>
-        </div>
-        <button type="button" className="xrails-all open-all" onClick={rail.onSeeAll}>
-          {t('rail.seeAll', { n: rail.n })}
-        </button>
-        {/* Desktop only (the .xrails-nav rule shows them on a hover screen),
-            44 px like every other control, disabled at either end. */}
-        <span className="xrails-nav">
-          <button type="button" className="xrails-arrow xrails-arrow--prev open-arrow"
-            onClick={() => page(-1)} disabled={pos.atStart}
-            aria-label={t('explore.railPrev')}>
+    <section className={`dtab-rail ${className}`.trim()} aria-labelledby={id}>
+      <div className="dtab-rail-head">
+        <h3 className="dtab-rail-title" id={id}>{title}</h3>
+        {onSeeAll && (
+          <Button variant="quiet" size="sm" className="dtab-all" onClick={onSeeAll}>
+            {t('rail.seeAllPlain')}
+          </Button>
+        )}
+        <span className="dtab-nav">
+          <IconButton tone="surface" className="dtab-arrow is-prev" label={t('explore.railPrev')}
+            onClick={() => page(-1)} disabled={ends.atStart}>
             <ChevronRightIcon size={16} />
-          </button>
-          <button type="button" className="xrails-arrow open-arrow"
-            onClick={() => page(1)} disabled={pos.atEnd}
-            aria-label={t('explore.railNext')}>
+          </IconButton>
+          <IconButton tone="surface" className="dtab-arrow" label={t('explore.railNext')}
+            onClick={() => page(1)} disabled={ends.atEnd}>
             <ChevronRightIcon size={16} />
-          </button>
+          </IconButton>
         </span>
       </div>
-      <div className="xrails-strip open-strip" ref={stripRef} role="group"
-        aria-label={t('open.railLabel', { name: rail.title })} onKeyDown={onKeyDown}>
-        {rail.rows.map((row) => (
-          <Card
-            key={row.id}
-            row={row}
-            describe={describe}
-            photo={photo}
-            onOpen={onOpen}
-            sizes={RAIL_SIZES}
-            className="open-railcard"
-            sharedKey={sharedKey}
-          />
-        ))}
-      </div>
-      {/* Where the strip is, not a control: the arrows and a swipe move it,
-          so the dots are hidden from assistive technology. */}
-      {pos.pages > 1 && (
-        <span className="open-pos" aria-hidden="true">
-          <span className="open-dots">
-            {Array.from({ length: Math.min(pos.pages, 8) }, (_, i) => (
-              <span key={i} className={`open-dot ${i === Math.min(pos.page, 7) ? 'on' : ''}`} />
-            ))}
-          </span>
-          <span className="open-pos-n">
-            {t('open.railPos', { from: pos.first, to: pos.last, n: pos.total })}
-          </span>
-        </span>
-      )}
+      <ul className="dtab-strip" ref={stripRef} onKeyDown={onKeyDown} aria-label={title}>
+        {children}
+      </ul>
     </section>
   );
 }
 
-/** A cut chip: its count settles in place when it changes (DIRECTION.md 2.3). */
-function Cut({ rail, count }) {
-  const nRef = useRef(null);
-  useSettledFigure(nRef, rail.n);
+/** One wire row as a rail tile: the photograph, the name, where and one
+ *  measured fact, and the Score. */
+export function RailTile({ row, describe, photo, onOpen, sharedKey }) {
+  const d = describe(row);
+  const key = sharedKey ? sharedKey(row) : null;
+  const url = photo(row);
   return (
-    <button type="button" className="open-cut" onClick={rail.onSeeAll} data-rail={rail.key}>
-      <span>{rail.title}</span>
-      <span className="open-cut-n" ref={nRef}>{count(rail.n)}</span>
-    </button>
+    <Card
+      layout="tile"
+      as="div"
+      className="dtab-tile"
+      media={(
+        <HeroImage url={url} city={d.name} className="dtab-tile-img" maxWidth={640}
+          sizes={RAIL_SIZES} ratio={[4, 3]} />
+      )}
+      title={d.name}
+      onOpen={(e) => {
+        const card = e.currentTarget.closest('.card');
+        if (key == null) onOpen(row);
+        else openShared(card, key, () => onOpen(row));
+      }}
+      meta={(d.where || d.fact) ? (
+        <span className="dtab-tile-meta">
+          {d.where && <span className="dtab-where">{d.where}</span>}
+          {d.fact && <span className="dtab-fact">{d.fact}</span>}
+        </span>
+      ) : null}
+      rating={d.rating ? <ScoreChip rating={d.rating} size="sm" /> : null}
+    />
   );
 }
 
 export function SectionOpening({
-  layer, icons, heading, sub, rails, describe, photo, onOpen, t,
-  maxRails = null, count = (n) => String(n), sharedKey = null,
+  layer, head = null, rails, starters = [], describe, photo, onOpen, t,
+  sharedKey = null, children = null,
 }) {
-  const shown = maxRails == null ? rails : rails.slice(0, maxRails);
-  const cuts = maxRails == null ? [] : rails.slice(maxRails);
   return (
-    <div className="open-bands" data-layer={layer}>
-      {icons.length > 0 && (
-        <section className="open-icons" aria-labelledby={`open-icons-${layer}`}
-          data-fill={icons.length}>
-          <h2 className="open-icons-title" id={`open-icons-${layer}`}>{heading}</h2>
-          {sub && <p className="open-icons-sub">{sub}</p>}
-          <ul className="open-icons-grid" data-n={icons.length}>
-            {icons.map((row, i) => (
-              <li key={row.id}>
-                <Card
-                  row={row}
-                  describe={describe}
-                  photo={photo}
-                  onOpen={onOpen}
-                  sizes={ICON_SIZES}
-                  eager={i < 3}
-                  first={i === 0}
-                  className="open-icon"
-                  sharedKey={sharedKey}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {shown.length > 0 && (
-        <div className="xrails open-rails" data-rails={shown.length}>
-          {shown.map((rail) => (
-            <Rail
-              key={rail.key}
-              rail={rail}
-              describe={describe}
-              photo={photo}
-              onOpen={onOpen}
-              t={t}
-              sharedKey={sharedKey}
-            />
+    <div className="open-bands dtab-open" data-layer={layer}>
+      {head && <SectionHead photo={head.photo} title={head.title} id={`dtab-head-${layer}`} />}
+      {starters.length > 0 && (
+        <div className="dtab-starters" role="group" aria-labelledby={`dtab-try-${layer}`}>
+          <span className="dtab-starters-label" id={`dtab-try-${layer}`}>{t('dtab.tryOne')}</span>
+          {starters.map((s) => (
+            <Button key={s.key} variant="secondary" size="sm" className="dtab-starter"
+              data-rail={s.key} onClick={s.onPick}>
+              {s.title}
+            </Button>
           ))}
         </div>
       )}
-      {cuts.length > 0 && (
-        <div className="open-cuts">
-          <p className="open-cuts-label" id={`open-cuts-${layer}`}>{t('open.moreCuts')}</p>
-          <div className="open-cuts-row" role="group" aria-labelledby={`open-cuts-${layer}`}>
-            {cuts.map((rail) => <Cut key={rail.key} rail={rail} count={count} />)}
-          </div>
+      {rails.length > 0 && (
+        <div className="dtab-rails" data-rails={rails.length}>
+          {rails.map((rail) => (
+            <Strip key={rail.key} id={`dtab-rail-${layer}-${rail.key}`} title={rail.title}
+              onSeeAll={rail.onSeeAll} t={t} className="open-rail">
+              {rail.rows.map((row) => (
+                <li key={row.id} className="dtab-item">
+                  <RailTile row={row} describe={describe} photo={photo} onOpen={onOpen}
+                    sharedKey={sharedKey} />
+                </li>
+              ))}
+            </Strip>
+          ))}
         </div>
       )}
+      {children}
     </div>
   );
 }

@@ -47,7 +47,7 @@ import {
 } from '../lib/tripStory.js';
 import {
   mountainRating, isLiftServed, liftLabel,
-  MOUNTAIN_FACETS, applyMountainFacets, mountainFacetCounts, floorNote,
+  MOUNTAIN_FACETS, applyMountainFacets, mountainFacetCounts,
 } from '../lib/mountainStory.js';
 import {
   associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes,
@@ -73,7 +73,6 @@ import { openShared } from '../lib/sharedElement.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { useTravelMonth } from '../components/SettingsLine.jsx';
 import { monthName } from '../lib/dates.js';
-import { CoverageFooter } from './HonestFooters.jsx';
 import { CoverageEmpty } from './CoverageEmpty.jsx';
 import { MICROSTATES, countryGeo, pointGeo } from '../lib/coverageEmpty.js';
 import { loadStubs } from '../lib/stubs.js';
@@ -85,8 +84,13 @@ import {
   trailFilling, cycleFilling, cycleTourFilling, beachFilling, lakeFilling, mountainFilling,
   GRADE_KEY, placeLine,
 } from '../lib/cardFillings.js';
-import { SectionOpening } from './SectionOpening.jsx';
+import { SectionOpening, SectionHead, Strip } from './SectionOpening.jsx';
+import { CountryGalleryCard } from './CountryGallery.jsx';
+import { SECTION_PHOTOS, countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
+import { Button, Chip, Field, Tabs } from '../components/ui/index.js';
+import { createPortal } from 'react-dom';
 import { pickIcons, buildRails, photoOf } from '../lib/openingScreen.js';
+import { okPhoto, firstOkImage } from '../lib/photoVeto.js';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 
 /**
@@ -173,6 +177,17 @@ function readMemory() {
     return null;
   }
 }
+/** The section (dc) and country (dn) a link names, or nothing (T428). */
+function readUrlBrowse() {
+  try {
+    const p = new URLSearchParams(window.location.search);
+    const cat = p.get('dc');
+    const cc = (p.get('dn') || '').toUpperCase();
+    return { cat: cat || null, country: /^[A-Z]{2}$/.test(cc) ? cc : '' };
+  } catch {
+    return { cat: null, country: '' };
+  }
+}
 function writeMemory(m) {
   try { window.localStorage.setItem(MEMORY_KEY, JSON.stringify(m)); } catch { /* storage refused: nothing to keep */ }
 }
@@ -225,80 +240,6 @@ const TRIP_SCALES = [
   { key: 'icons', labelKey: 'trip.scaleIcons' },
   { key: 'hidden', labelKey: 'trip.scaleHidden' },
 ];
-
-/**
- * How many days, as a slider with an axis that is actually a scale.
- *
- * The old one laid its four ticks out with space-between, which put "7" a
- * third of the way along a track where 7 of 14 days is the halfway point: the
- * label sat two days to the right of the value it named. Here every tick is
- * placed at its own value, in the same coordinates the thumb travels in, so
- * the number under the thumb is the number the thumb is on.
- *
- * The unit rides on the label rather than on every tick, because a scale that
- * repeats "days" four times is a scale nobody reads.
- */
-function TripLengthSlider({ days, setDays, n, t }) {
-  const value = days === null ? 0 : days;
-  const valueWord = days === null
-    ? t('trip.anyLength')
-    : t(days === 1 ? 'trip.oneDay' : 'trip.nDays', { n: days });
-  // The thumb's centre travels between half a thumb in from each end, which
-  // is what the ticks have to follow to line up with it. 18px is the thumb.
-  const at = (v) => `calc(${(v / TRIP_MAX_DAYS) * 100}% + ${9 - (v / TRIP_MAX_DAYS) * 18}px)`;
-  // Three stops, not four: at 360px the 1 sits 25px from the "Any" that owns
-  // the left end and the two labels touched. The readout above says exactly
-  // where the thumb is, so the axis only has to say where the ends are.
-  const ticks = [0, 7, TRIP_MAX_DAYS];
-  // The head says what the slider is set to and nothing else. It used to
-  // carry the size of the result set beside it ("283 trips"), which read as
-  // a claim about the catalogue rather than a caption on a control, and the
-  // list underneath already shows what survived the filter. The number stays
-  // on the element as data-n: the component is the only thing that knows the
-  // whole total (the list renders a page at a time), and the trips harness
-  // reads it from here rather than counting cards against themselves.
-  return (
-    <label className="trip-slider" data-n={n}>
-      <span className="trip-slider-head">
-        <span className="trip-slider-label">
-          {t('trip.lengthLabel')}
-          <b>{valueWord}</b>
-        </span>
-      </span>
-      <input
-        type="range"
-        className="trip-slider-input"
-        min="0"
-        max={TRIP_MAX_DAYS}
-        step="1"
-        value={value}
-        aria-label={t('trip.askDays')}
-        aria-valuetext={valueWord}
-        onChange={(e) => {
-          const v = Number(e.target.value);
-          setDays(v === 0 ? null : v);
-        }}
-      />
-      {/* 0 is "any length", so the scale starts at the word rather than at a
-          number nobody asked for. */}
-      <span className="trip-slider-ticks" aria-hidden="true">
-        {ticks.map((v) => (
-          <span
-            key={v}
-            className={`trip-slider-tick ${v === value ? 'on' : ''}`}
-            style={{ left: at(v) }}
-          >
-            {v === 0 ? t('trip.anyShort') : v}
-            {/* The unit rides on the last tick, said once. A floating label
-                at the right edge sat on top of the 14 it was explaining. */}
-            {v === TRIP_MAX_DAYS && ` ${t('trip.lengthUnit')}`}
-          </span>
-        ))}
-      </span>
-    </label>
-  );
-}
-
 
 /* 'general' - the priced city catalogue - used to lead this rail. It was the
  * same browse surface Explore already is, one tab away, so the two disagreed
@@ -446,11 +387,12 @@ const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 /** A walk's photograph: its own, the nearest town's (labelled as such), the
  *  line drawn as itself, or plain paper. */
 function TrailMedia({ tr, assoc }) {
+  const photo = okPhoto(assoc.photoUrl);
   const shape = useMemo(
-    () => (assoc.photoUrl ? null : trailPath(tr.geometry)),
-    [assoc.photoUrl, tr.geometry],
+    () => (photo ? null : trailPath(tr.geometry)),
+    [photo, tr.geometry],
   );
-  if (assoc.photoUrl) return <PlaceCardPhoto url={assoc.photoUrl} />;
+  if (photo) return <PlaceCardPhoto url={photo} />;
   if (shape) {
     return (
       <span className="places-card-img places-card-shape" aria-hidden="true">
@@ -517,7 +459,7 @@ const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen, t }) {
       testId={rating ? 'cycle-card' : 'cycle-listed-card'}
       onClick={() => onOpen(r)}
       sharedKey={r.id}
-      media={r.img ? <PlaceCardPhoto url={r.img} /> : <PlaceCardNoPhoto />}
+      media={okPhoto(r.img) ? <PlaceCardPhoto url={r.img} /> : <PlaceCardNoPhoto />}
       seal={rating
         ? <RatingBadge rating={rating} size="sm" showGem={false} />
         : <span className="cycle-card-unrated">{t('cycle.notScored')}</span>}
@@ -544,7 +486,7 @@ const CycleTourCard = React.memo(function CycleTourCard({ tr, countryName, onOpe
 });
 
 const BeachCard = React.memo(function BeachCard({ beach, km, countryName, onOpen, t }) {
-  const shot = beach.images?.[0];
+  const shot = firstOkImage(beach.images);
   const fill = useMemo(() => beachFilling(beach, { t, countryName }), [beach, t, countryName]);
   return (
     <PlaceCard
@@ -596,7 +538,7 @@ function LakeMonthFact({ lake, month, warmC, t, lang }) {
 }
 
 const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t, month = null, warmC = 18, lang }) {
-  const shot = lake.images?.[0];
+  const shot = firstOkImage(lake.images);
   const fill = useMemo(() => lakeFilling(lake, { t, countryName }), [lake, t, countryName]);
   const { swim } = fill;
   // The swimming verdict leads the hook whenever it is not a plain yes, the
@@ -628,7 +570,7 @@ const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t
  * an expedition.
  */
 const MountainCard = React.memo(function MountainCard({ mountain, km, countryName, onOpen, t }) {
-  const shot = mountain.images?.[0];
+  const shot = firstOkImage(mountain.images);
   const fill = useMemo(() => mountainFilling(mountain, { t, countryName }), [mountain, t, countryName]);
   const ride = isLiftServed(mountain);
   const lead = [
@@ -646,57 +588,6 @@ const MountainCard = React.memo(function MountainCard({ mountain, km, countryNam
       lead={lead}
       fill={fill}
     />
-  );
-});
-
-/** One country as a photo card: its best-rated place as the cover, the flag
- *  small beside the name. Real photography, never a stretched flag.
- *
- *  The caption sits in a solid band under the photograph (T394, carta-design
- *  "Caption band", rule N5): the name and the count used to lie on the
- *  picture over a gradient scrim, and their contrast changed with every
- *  photograph (a moth over Belgium, snow over Bulgaria). Pressed, the band
- *  turns ink. */
-const CountryCard = React.memo(function CountryCard({ cc, name, sub = null, n = null, img, onPick, onAskCover = null }) {
-  useEffect(() => {
-    if (!img && onAskCover) onAskCover(cc);
-  }, [img, onAskCover, cc]);
-  return (
-    <button className="places-ccard is-captioned" onClick={() => onPick(cc)}>
-      {/* A 3:1 photograph over the band. CARD_SIZES carries the widths it is
-          really drawn at; the ladder runs to 960 so a retina screen can
-          still climb. Without a cover the card shows its flag on paper-dim
-          (T384, brief V3-10), never two letters of the name. */}
-      <span className="places-ccard-media">
-        {img ? (
-          <HeroImage
-            url={img}
-            city={name}
-            iso2={cc}
-            className="places-card-img"
-            maxWidth={960}
-            sizes={CARD_SIZES}
-            ratio={[3, 1]}
-          />
-        ) : (
-          <span className="places-card-img places-ccard-noimg" aria-hidden="true">
-            <CountryFlag country={cc} size={28} />
-          </span>
-        )}
-      </span>
-      <span className="places-ccard-band">
-        <CountryFlag country={cc} size={13} className="places-card-flag" />
-        <span className="places-card-main">
-          <span className="places-card-name">{name}</span>
-          {sub && <span className="places-card-sub"><span>{sub}</span></span>}
-        </span>
-        {/* The published count beside the name, in mono (T384, rule N7):
-            on an index of countries it answers "where will I find the
-            most", which the name and the photograph cannot. */}
-        {n != null && <span className="places-card-count">{n}</span>}
-        <ChevronRightIcon size={15} className="places-card-chev" />
-      </span>
-    </button>
   );
 });
 
@@ -819,6 +710,55 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
  * This says what actually happened and offers the way back, in the tone the
  * geolocation failure already uses: no blame, one button.
  */
+/**
+ * Where everything on the section comes from, in one closed row at its end
+ * (T428). The credit sentences used to sit under every list with a coverage
+ * footer beside them; the owner asked for no text the traveller does not
+ * need, and a licence still has to be honoured, so the words wait here: the
+ * section's data credit, then every photograph on screen that is not a
+ * place's own (the section's head, the country galleries), each with its
+ * author, licence and file page.
+ */
+const SECTION_CREDIT = {
+  trails: ['trails.credit'],
+  beaches: ['beach.credit'],
+  lakes: ['lake.credit'],
+  mountains: ['mtn.credit'],
+  cycling: ['cycle.sourceNote', 'credit.licence.cycle'],
+};
+
+function PhotoCredit({ p }) {
+  return (
+    <li>
+      {p.place}: <a href={p.page} target="_blank" rel="noreferrer">{p.author}</a>, {p.licence}
+    </li>
+  );
+}
+
+function SourcesFold({ cat, isComposedTrips, sectionHead, countries, t }) {
+  const keys = cat === 'trips'
+    ? [isComposedTrips ? 'trip.credit' : 'journey.credit']
+    : (SECTION_CREDIT[cat] || []);
+  const photos = [];
+  if (sectionHead?.photo) photos.push(sectionHead.photo);
+  for (const cc of countries || []) photos.push(...countryPhotos(cc));
+  if (!keys.length && !photos.length) return null;
+  return (
+    <div className="dtab-sources">
+      <CreditFold t={t} licenceKeys={keys}>
+        {photos.length > 0 && (
+          <>
+            <p className="dtab-sources-head">{t('dtab.photoCredits')}</p>
+            <ul className="dtab-sources-list">
+              {photos.map((p) => <PhotoCredit key={p.u} p={p} />)}
+            </ul>
+          </>
+        )}
+      </CreditFold>
+    </div>
+  );
+}
+
 function LayerError({ onRetry, t, msg = 'layer.loadFailed' }) {
   return (
     <div className="places-empty places-loaderr" role="status">
@@ -853,6 +793,11 @@ export function DestinationsTab({
   isFavorite = null, onToggleFav = null,
   // "Add to a day plan" on the four feature pages: (kind, { id, cc, name, lat, lon }).
   onAddToDay = null,
+  // T428: whether this tab is the one on screen (both browse tabs stay
+  // mounted), so only the active one claims the header's search slot.
+  isActive = true,
+  // T428: "See places in {country}" opens Explore filtered to that country.
+  onExploreCountry = null,
 }) {
   const { t, lang } = useI18n();
   // The traveller's own month from the settings line, or null while the
@@ -865,11 +810,28 @@ export function DestinationsTab({
   // Read once per mount, before the first state is set (see readMemory).
   const memory = useRef(undefined);
   if (memory.current === undefined) memory.current = readMemory();
-  const [cat, setCat] = useState(() => (
-    CATS.some((c) => c.key === memory.current?.cat) ? memory.current.cat : 'trips'));  // CATS key
+  // T428: the URL wins over the memory, so a shared or reloaded link opens
+  // the section and the country it names (dc, dn), the way Explore's x* keys do.
+  const fromUrl = useRef(undefined);
+  if (fromUrl.current === undefined) fromUrl.current = readUrlBrowse();
+  const [cat, setCat] = useState(() => {
+    const want = fromUrl.current.cat || memory.current?.cat;
+    return CATS.some((c) => c.key === want) ? want : 'trips';   // CATS key
+  });
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [country, setCountry] = useState(() => memory.current?.country || '');   // ISO2 or '' for all
+  const [country, setCountry] = useState(() => fromUrl.current.country || memory.current?.country || '');   // ISO2 or '' for all
+  // Written back while this tab is on screen, keeping the hash (#dest=, a
+  // feature page) and history.state, which App's Back handling reads.
+  useEffect(() => {
+    if (!isActive) return;
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('dc', cat);
+      if (country) url.searchParams.set('dn', country); else url.searchParams.delete('dn');
+      if (url.href !== window.location.href) window.history.replaceState(window.history.state, '', url);
+    } catch { /* sandboxed: the tab still works, the address just does not follow */ }
+  }, [cat, country, isActive]);
   // The point everything is measured from in near-mode. A catalogue city or
   // any geocoded location, so it carries a name and coordinates rather than a
   // destination id: { id|null, name, sub, iso2|null, lat, lon }.
@@ -1179,48 +1141,8 @@ export function DestinationsTab({
     return m;
   }, [pricedAll]);
 
-  /**
-   * Country card covers.
-   *
-   * A country card is a strip, and a strip crops. Measured over the 3,021
-   * heroes whose shape the wire now carries (pipeline/apply_image_dims.py),
-   * the average photograph keeps 37 per cent of its frame in this box and
-   * only 136 of them are 2:1 or wider, which is why picking the cover by
-   * rating alone put a doorway, a roof and a stone shed on the index: those
-   * ARE the best-rated places, photographed close up.
-   *
-   * So the cover is chosen for the box as well as for the place. The rule is
-   * deliberately conservative, because the cover is also an identity: the
-   * best-rated place keeps the card unless a near-peer survives the crop
-   * MATERIALLY better, and then the highest-rated of those peers wins rather
-   * than the widest. Bulgaria swaps a monastery arcade for the Seven Rila
-   * Lakes; Slovenia keeps Lake Bled, because nothing near it is enough of an
-   * improvement to be worth not being Lake Bled.
-   *
-   * Read from the whole catalogue rather than from the priced list, which is
-   * what left Iceland with a grey card: it has twenty one photographed places
-   * and no fare from this origin, so it was absent from `pricedAll` and the
-   * cover lookup came back empty.
-   */
-
-  // Turkey and Ukraine publish walks and have no catalogue destination at all,
-  // so no photograph of them exists anywhere in `data`. Their cover comes from
-  // the layer being indexed instead: one country file, fetched only for the
-  // cards that would otherwise be grey, and at most a handful at a time.
-  const [wireCovers, setWireCovers] = useState({});
-  const coverAsked = useRef(new Set());
-  // Stable: CountryCard is memoized and runs an effect keyed on this prop, so
-  // a fresh arrow here would tear down and re-run that effect on 40+ cards on
-  // every keystroke. It only touches a ref and a state setter, so it never
-  // needs to be rebuilt.
-  const askCover = React.useCallback((cc) => {
-    if (!cc || coverAsked.current.has(cc)) return;
-    coverAsked.current.add(cc);
-    loadTrails(cc).then((rows) => {
-      const hit = (rows || []).find((r) => r.img?.u);
-      if (hit) setWireCovers((cur) => ({ ...cur, [cc]: hit.img.u }));
-    }).catch(() => { /* a country with no file simply keeps its placeholder */ });
-  }, []);
+  // Country cards draw their own photographs since T428 (lib/countryGallery.js,
+  // T449); the old cover took the first photograph of the best-rated trail.
 
   const q = useMemo(() => norm(debouncedQuery), [debouncedQuery]);
 
@@ -1425,7 +1347,7 @@ export function DestinationsTab({
   const chipsEmpty = (msgKey, onClear, labelKey = 'empty.clearChips', vars = undefined) => (
     <div className="places-empty empty-act">
       <p>{t(msgKey, vars)}</p>
-      <button type="button" className="cov-empty-btn" onClick={onClear}>{t(labelKey)}</button>
+      <Button variant="secondary" size="sm" className="cov-empty-btn" onClick={onClear}>{t(labelKey)}</Button>
     </div>
   );
 
@@ -2254,42 +2176,15 @@ export function DestinationsTab({
   const toggleChip = (setter) => (key) => setter(
     (cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]));
 
-  const toggleSort = (key) => {
-    setSort((s) => (s.key === key
-      ? { key, dir: -s.dir }
-      : { key, dir: SORTS.find((x) => x.key === key).defaultDir }));
-  };
-
   const toggleBand = (key) => {
     setBands((cur) => (cur.includes(key)
       ? cur.filter((k) => k !== key)
       : [...cur, key]));
   };
 
-  const toggleTrailSort = (key) => {
-    setTrailSort((s) => (s.key === key
-      ? { key, dir: -s.dir }
-      : { key, dir: TRAIL_SORTS.find((x) => x.key === key).defaultDir }));
-  };
-
-  const toggleCycleSort = (key) => {
-    setCycleSort((s) => (s.key === key
-      ? { key, dir: -s.dir }
-      : { key, dir: CYCLE_SORTS.find((x) => x.key === key).defaultDir }));
-  };
-
   const fmt = (n) => n.toLocaleString(lang);
 
   const showCountryIndex = !q && !country && !nearPlace;
-  // The one line that keys the cards' 6 px strip, for the sections whose
-  // cards carry one (CardStrip.jsx); none on the Trails country index, where
-  // no card has a strip, and none on an empty list.
-  const stripKey = rowCount === 0 ? null
-    : cat === 'trails' ? (showCountryIndex ? null : t('places.stripTrail'))
-      : isCycleCat ? t('places.stripCycle')
-        : isLakeCat ? t('places.stripLake', { c: Math.round(lakeIndex?.model?.warm_c ?? 18) })
-          : isMountainCat ? t('places.stripMtn')
-            : null;
   const showTripRows = isTripCat && !trailsLoading && tripRows && tripRows.length > 0;
   // Anything the traveller set that narrows the walks list: when it empties
   // the list, the list says so and offers to clear them, rather than calling
@@ -2681,10 +2576,8 @@ export function DestinationsTab({
     }
   };
 
-  // One card's words: the name, where it is, and one measured fact in mono
-  // with its label under it (T394, brief V4-2: the opening's cards read as
-  // the same family as the grid's, whose every figure carries its name).
-  // The labels are the grid cards' own value keys.
+  // One tile's words: the name, where it is, one measured fact and the
+  // Score (T428: the same tile Explore's rails draw, through the kit Card).
   const describeRow = (row) => {
     const layer = opening?.layer;
     const km = (v, digits) => `${Number(v).toLocaleString(lang, { maximumFractionDigits: digits })} km`;
@@ -2694,7 +2587,7 @@ export function DestinationsTab({
         name: row.name,
         where: grade && GRADE_KEY[grade] ? t(GRADE_KEY[grade]) : null,
         fact: row.distance_m != null ? km(row.distance_m / 1000, 1) : null,
-        factLabel: t('card.vLength'),
+        rating: trailRating(row),
       };
     }
     if (layer === 'cycle') {
@@ -2702,7 +2595,7 @@ export function DestinationsTab({
         name: routeTitle(row, t),
         where: countryName(row.cc),
         fact: row.km != null ? km(row.km, 0) : null,
-        factLabel: t('card.vLength'),
+        rating: row.score != null ? cycleRating(row, t) : null,
       };
     }
     if (layer === 'mountain') {
@@ -2710,7 +2603,7 @@ export function DestinationsTab({
         name: row.name,
         where: placeLine(row.range, countryName(row.cc)),
         fact: row.ele != null ? `${Math.round(row.ele).toLocaleString(lang)} m` : null,
-        factLabel: t('card.vHeight'),
+        rating: mountainRating(row, t),
       };
     }
     if (layer === 'lake') {
@@ -2719,25 +2612,68 @@ export function DestinationsTab({
         name: row.name,
         where: placeLine(row.region, countryName(row.cc)),
         fact: a != null ? `${a.toLocaleString(lang, { maximumFractionDigits: a < 10 ? 1 : 0 })} km²` : null,
-        factLabel: t('card.vArea'),
+        rating: lakeRating(row, t),
       };
     }
     return {
       name: row.name,
       where: placeLine(row.region, countryName(row.cc)),
       fact: row.lengthM != null ? `${Math.round(row.lengthM).toLocaleString(lang)} m` : null,
-      factLabel: t('card.vLength'),
+      rating: beachRating(row, t),
     };
   };
 
-  const openingHead = !opening ? null
-    : opening.layer === 'trail'
-      ? t('open.trail.head', { n: opening.icons.length, country: countryName(country) })
-      : t(`open.${opening.layer === 'mountain' ? 'mtn' : opening.layer}.head`, { n: opening.icons.length });
-  const openingSub = !opening ? null
-    : opening.layer === 'trail' ? t('open.trail.sub', { country: countryName(country) })
-      : opening.layer === 'cycle' ? t('open.cycle.sub')
-        : t('open.fameSub');
+  // ── The section's head, rails and starters (T428) ─────────────────────
+  //
+  // The head is one photograph of people doing the thing and one title with
+  // a verb; it shows while the section is at rest and no country is picked
+  // (a picked country gets its own band instead). The best-known set that
+  // used to sit under "Europe's 6 best-known mountains" is the first rail
+  // now, then the saved cuts: four rails on a desktop, three on a phone, and
+  // every cut beyond that is a "Try one" starter that applies the same
+  // filter. A starter is offered only where its filter leaves at least
+  // RAIL_MIN places (lib/openingScreen.js), so none of them leads nowhere.
+  const SECTION_KEY = { trails: 'trails', beaches: 'beaches', lakes: 'lakes', mountains: 'mountains', cycling: 'cycling' };
+  const sectionHead = SECTION_KEY[cat] && !country && !nearPlace && !q
+    ? { photo: SECTION_PHOTOS[SECTION_KEY[cat]] || null, title: t(`dtab.head.${cat}`) }
+    : null;
+  const isDesktop = useIsDesktop();
+  const railCap = isDesktop ? 4 : 3;
+  const openingRails = useMemo(() => {
+    if (!opening) return { rails: [], starters: [] };
+    const all = [];
+    if (opening.icons.length >= 3) {
+      all.push({
+        key: 'best',
+        title: opening.layer === 'trail'
+          ? t('dtab.railBestTrail', { country: countryName(country) })
+          : t(`dtab.railBest.${opening.layer}`),
+        rows: opening.icons,
+        onSeeAll: null,
+      });
+    }
+    // A place is shown once across the rails where it can be (row T444-d:
+    // Voidokilia stood in three of them); a rail that would drop under four
+    // keeps its own order rather than go thin.
+    const seen = new Set(all.flatMap((r) => r.rows.map((x) => x.id)));
+    for (const r of opening.rails) {
+      const fresh = r.rows.filter((x) => !seen.has(x.id));
+      const rows = fresh.length >= 4 ? fresh : r.rows;
+      rows.forEach((x) => seen.add(x.id));
+      all.push({
+        key: r.def.key,
+        title: t(r.def.titleKey),
+        rows,
+        onSeeAll: () => applyRail(opening.layer, r.def.facets),
+      });
+    }
+    return {
+      rails: all.slice(0, railCap),
+      starters: all.slice(railCap).filter((r) => r.onSeeAll)
+        .map((r) => ({ key: r.key, title: r.title, onPick: r.onSeeAll })),
+    };
+    // applyRail only calls the setters, which are stable.
+  }, [opening, railCap, t, country, countryName]);
 
   // ── Desktop chrome ────────────────────────────────────────────────────
   //
@@ -2749,45 +2685,66 @@ export function DestinationsTab({
   // put this page's own question up in the app's chrome, sharing a row with
   // the account and the pass. On a phone nothing moves: the toolbar card
   // stays exactly as it was, and CSS shows one arrangement or the other.
-  const isDesktop = useIsDesktop();
 
-  // The same controls drawn twice, phone toolbar and desktop side panel:
-  // one renderer each, so the two can never drift apart.
-  // Toggle buttons in a labelled group, one keyboard model on both widths
-  // (T384, brief V3-3): they carried role="tab" with no arrow keys and no
-  // tabpanel, which promised a screen reader a widget that was not there.
-  const renderCats = (cls) => CATS.map(({ key, Icon, labelKey }) => (
-    <button
-      key={key}
-      type="button"
-      aria-pressed={cat === key}
-      className={`${cls} ${cat === key ? 'on' : ''}`}
-      onClick={() => switchCat(key)}
+  // ── The tab's chrome (T428) ──────────────────────────────────────────
+  //
+  // Explore's grammar, so the two browse tabs read as one product:
+  //   - the six sections as one row of kit Tabs under the top bar, sticky
+  //     while the page scrolls (it was a 2 x 3 grid of buttons on a phone and
+  //     a second grid in the desktop panel);
+  //   - the search field, in the header's slot on a desktop like Explore's
+  //     guided search, beside one Filters button on a phone;
+  //   - one refine row over the list: the sort as one select (three toggle
+  //     buttons with an arrow before), the country, the Lifestyle door;
+  //   - the desktop panel keeps only what narrows the list.
+  // No figure rides a chip any more: the list under it is the answer.
+  const catTabs = (
+    <Tabs
+      className="dtab-cats"
+      label={t('places.sideBrowse')}
+      tabs={CATS.map(({ key, Icon, labelKey }) => ({
+        id: key,
+        label: (
+          <>
+            <Icon size={18} />
+            <span>{t(labelKey)}</span>
+          </>
+        ),
+      }))}
+      value={cat}
+      onChange={switchCat}
+      panelId="dtab-panel"
+    />
+  );
+
+  const sortCur = cat === 'trails' ? trailSort : isCycleCat ? cycleSort : sort;
+  const pickSort = (key) => {
+    if (!key) return;
+    if (cat === 'trails') {
+      setTrailSort({ key, dir: TRAIL_SORTS.find((x) => x.key === key).defaultDir });
+      return;
+    }
+    if (isCycleCat) {
+      setCycleSort({ key, dir: CYCLE_SORTS.find((x) => x.key === key).defaultDir });
+      return;
+    }
+    setNearPlace(null);
+    setSort({ key, dir: SORTS.find((x) => x.key === key).defaultDir });
+  };
+  const renderSort = (cls, hideLabel) => (showSorts && sortDefs.length > 0 ? (
+    <Field
+      as="select"
+      className={cls}
+      label={t('places.sortLabel')}
+      hideLabel={hideLabel}
+      value={sortCur.key}
+      onChange={(e) => pickSort(e.target.value)}
     >
-      <Icon size={20} />
-      <span>{t(labelKey)}</span>
-    </button>
-  ));
-
-  const renderSortButtons = (cls) => sortDefs.map(({ key, labelKey }) => {
-    const cur = cat === 'trails' ? trailSort : isCycleCat ? cycleSort : sort;
-    const on = (cat === 'trails' || isCycleCat) ? cur.key === key : (!nearPlace && cur.key === key);
-    return (
-      <button
-        key={key}
-        className={`${cls} ${on ? 'on' : ''}`}
-        onClick={() => {
-          if (cat === 'trails') { toggleTrailSort(key); return; }
-          if (isCycleCat) { toggleCycleSort(key); return; }
-          setNearPlace(null);
-          toggleSort(key);
-        }}
-      >
-        {t(labelKey)}
-        {on && <span className="places-sort-dir">{cur.dir === 1 ? '↑' : '↓'}</span>}
-      </button>
-    );
-  });
+      {sortDefs.map(({ key, labelKey }) => (
+        <option key={key} value={key}>{t(labelKey)}</option>
+      ))}
+    </Field>
+  ) : null);
 
   const renderCountry = (cls) => (
     <CountryPicker
@@ -2812,47 +2769,30 @@ export function DestinationsTab({
   );
 
   const renderFacetGroups = (only) => facetGroups
-    // A group outside the short toolbar set still shows while one of its
-    // chips is on (T183): an opening rail's "See all" can switch on a chip
-    // from any group, and a desktop panel that hid it would filter the grid
-    // with nothing on screen saying by what.
-    // The short set (T384, brief V3-1): only a group flagged `toolbar` shows
-    // inline, on the phone toolbar and the desktop panel alike; every other
-    // group lives in the Filters sheet. It used to be `toolbar !== false`
-    // on the panel and every group on the phone, so a phone listed thirty
-    // chips above the first lake and a desktop could not reach eight of the
-    // nine beach groups at all.
+    // Inline only the short set flagged `toolbar`, or a group with a chip
+    // on (an opening's "See all" can switch on a chip from any group);
+    // every other group lives in the Filters sheet (T384, brief V3-1).
     .filter((g) => (only === 'toolbar'
       ? g.toolbar === true || g.options.some((o) => o.on)
       : true))
     .map((g) => (
-    <div key={g.key} className="places-facet-group">
-      <p className="places-facet-label">{g.label}</p>
-      <div
-        className="places-classes"
-        role="group"
-        aria-label={g.label}
-      >
-      {g.options.map((o) => (
-        <button
-          key={o.key}
-          type="button"
-          className={`places-class ${o.cls || ''} ${o.on ? 'on' : ''}`}
-          aria-pressed={o.on}
-          disabled={o.disabled}
-          onClick={() => g.onToggle(o.key)}
-        >
-          {o.Icon && (
-            <span className="places-class-dot" aria-hidden="true">
-              <o.Icon size={16} />
-            </span>
-          )}
-          <span className="places-class-label">{o.label}</span>
-          {o.n != null && <span className="places-class-n">{fmt(o.n)}</span>}
-        </button>
-      ))}
+      <div key={g.key} className="dtab-facet">
+        <p className="dtab-facet-label">{g.label}</p>
+        <div className="dtab-chips" role="group" aria-label={g.label}>
+          {g.options.map((o) => (
+            <Chip
+              key={o.key}
+              kind="filter"
+              selected={!!o.on}
+              disabled={o.disabled}
+              className={o.cls || ''}
+              onClick={() => g.onToggle(o.key)}
+            >
+              {o.label}
+            </Chip>
+          ))}
+        </div>
       </div>
-    </div>
     ));
 
   // The search field, built once. It renders inline in the phone toolbar and
@@ -2943,73 +2883,99 @@ export function DestinationsTab({
     </div>
   );
 
-  // Sorts, the Filters door, the country, the lifestyle line: the row that
-  // decides which rows Band 3 lists. It heads the toolbar, except while a
-  // section's opening bands show (T183): then it moves down to sit on the
-  // grid it filters, so the icons come before any filter (spec 5.3).
-  const toolbarRight = (
-    <div className="places-toolbar-right">
-      {showSorts && sortDefs.length > 0 && (
-        <div className="places-sorts" role="group" aria-label={t('places.sortLabel')}>
-          {renderSortButtons('places-sort')}
-        </div>
-      )}
+  // The header's search slot belongs to whichever browse tab is on screen
+  // (both stay mounted), the way ExploreTab claims it.
+  const [headerSlot, setHeaderSlot] = useState(null);
+  useEffect(() => {
+    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
+    else setHeaderSlot(null);
+  }, [isDesktop, isActive]);
 
-      <div className="places-chips">
-        {/* The country picker sits immediately to the right of this
-            button on every width, and the sheet used to open with a
-            country dropdown of its own on top of whatever facets the tab
-            had. On a tab with no facets that made Filters a door to a
-            copy of the control beside it. Country now lives in one place
-            (the chip), and Filters only appears when it has facets of
-            its own to offer. */}
-        {facetGroups.length > 0 && (
-        <button
-          type="button"
-          ref={filterBtnRef}
-          className={`places-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
-          onClick={() => { setSheetFrom('toolbar'); setSheetOpen(true); }}
-          aria-haspopup="dialog"
-          aria-expanded={sheetOpen}
-        >
-          <FilterIcon size={14} />
-          <span>{t('filter.filters')}</span>
-          {activeFilters > 0 && <SettledCount className="filter-tray-badge" value={activeFilters}>{activeFilters}</SettledCount>}
-        </button>
-        )}
+  const filtersButton = facetGroups.length > 0 ? (
+    <Button
+      ref={filterBtnRef}
+      variant="secondary"
+      className="dtab-filters"
+      iconStart={<FilterIcon size={16} />}
+      onClick={() => { setSheetFrom('toolbar'); setSheetOpen(true); }}
+      aria-haspopup="dialog"
+      aria-expanded={sheetOpen}
+    >
+      {t('filter.filters')}
+      {activeFilters > 0 && <Chip kind="count" className="dtab-count">{fmt(activeFilters)}</Chip>}
+    </Button>
+  ) : null;
 
-        {/* Every tab has a country now, including the three published
-            layers where the only way in used to be typing its name
-            into the search field and hoping the match landed. */}
-        {countryOptions.length > 0 && renderCountry('places-country')}
-        {/* No "priced from" chip any more, on any width: the origin still
-            governs the prices (the map's From picker sets it), but naming
-            it here was one control too many on the browse surface. */}
-        {/* Every price on this tab is a whole trip at the traveller's own
-            stay tier, so the tier it was priced at belongs on screen beside
-            the numbers, and one tap opens the panel that changes it. */}
-        {showPriceChrome && onOpenLifestyle && renderLifestyle('')}
+  // How long the composed trip is: a stepped select (T428, row T199-a: the
+  // slider re-ranked the whole list on every step, 864 to 1,360 ms on a
+  // throttled phone).
+  const tripLength = isComposedTrips ? (
+    <Field
+      as="select"
+      className="dtab-length"
+      label={t('trip.lengthLabel')}
+      // The whole result set, for the trips harness: the list renders a page
+      // at a time, and the number is never said on screen (2026-09-02).
+      data-n={itinRows ? itinRows.length : 0}
+      value={itinDays == null ? '' : String(itinDays)}
+      onChange={(e) => setItinDays(e.target.value ? Number(e.target.value) : null)}
+    >
+      <option value="">{t('trip.anyLength')}</option>
+      {TRIP_DAYS.map((d) => (
+        <option key={d} value={d}>{t(d === 1 ? 'trip.oneDay' : 'trip.nDays', { n: d })}</option>
+      ))}
+    </Field>
+  ) : null;
+
+  const countryControl = countryOptions.length > 0 ? renderCountry('places-country dtab-country-pick') : null;
+  const lifestyleControl = showPriceChrome && onOpenLifestyle ? renderLifestyle('dtab-lifestyle') : null;
+  const sortControl = renderSort('dtab-sort', true);
+  const refineRow = (sortControl || countryControl || lifestyleControl || tripLength) ? (
+    <div className="dtab-refine">
+      {tripLength}
+      {sortControl}
+      {countryControl}
+      {lifestyleControl}
+    </div>
+  ) : null;
+
+  // A picked country, said once over the list with the one line it is known
+  // for, and the door to its places on Explore (T428).
+  // A country typed into the search counts too (typedCc), the way the old
+  // "Beaches in Sweden" line followed the field.
+  const bandCc = nearPlace ? null : (typedCc || null);
+  const countryBand = bandCc ? (
+    <div className="dtab-countryband">
+      <CountryFlag country={bandCc} size={18} className="dtab-countryband-flag" />
+      <div className="dtab-countryband-text">
+        <h2 className="dtab-countryband-name">{countryName(bandCc)}</h2>
+        {countryKnownKey(bandCc) && <p className="dtab-countryband-line">{t(countryKnownKey(bandCc))}</p>}
       </div>
-    </div>
-  );
-
-  /* What this tab narrows by, in the same card and under a hairline,
-      because a chip that changes WHICH rows are listed is the same kind
-      of control as the search field above it. The model is built once
-      (facetGroups) and rendered here and in the sheet. */
-  const hasInlineGroups = facetGroups.some((g) => g.toolbar === true || g.options.some((o) => o.on));
-  const facetsRow = (hasInlineGroups || isComposedTrips) ? (
-    <div className="places-facets">
-      {isComposedTrips && (
-        <TripLengthSlider
-          days={itinDays}
-          setDays={setItinDays}
-          n={itinRows ? itinRows.length : 0}
-          t={t}
-        />
+      {onExploreCountry && (
+        <Button variant="quiet" size="sm" className="dtab-countryband-go"
+          iconEnd={<ChevronRightIcon size={14} />} onClick={() => onExploreCountry(bandCc)}>
+          {t('dtab.exploreCountry', { country: countryName(bandCc) })}
+        </Button>
       )}
-      {renderFacetGroups('toolbar')}
     </div>
+  ) : null;
+
+  const pickCountry = (cc) => {
+    setCountry(cc);
+    setNearPlace(null);
+    scrollRef.current?.scrollTo?.(0, 0);
+  };
+  // The countries this section can open, as gallery cards (T428).
+  const countryTrack = countryOptions.length > 0 ? (
+    <Strip id={`dtab-bycountry-${cat}`} title={t('dtab.byCountry')} t={t} className="dtab-bycountry">
+      {countryOptions.map(([cc, name]) => (
+        <li key={cc} className="dtab-item dtab-item-country">
+          <CountryGalleryCard cc={cc} name={name} onPick={pickCountry} t={t}
+            href={`?tab=places&dc=${cat}&dn=${cc}`}
+            sizes="(max-width: 768px) 80vw, 320px" />
+        </li>
+      ))}
+    </Strip>
   ) : null;
 
   return (
@@ -3018,33 +2984,21 @@ export function DestinationsTab({
           is for assistive technology. It steps aside while a dialog (a detail
           page, a sheet) is open, so that dialog's own h1 is the only one. */}
       <h1 className="sr-only tab-h1">{t('nav.places')}</h1>
-      {/* Desktop-only left panel (CSS hides it under 769px): the categories
-          as a card grid under the brand, then everything that narrows or
-          orders the list, standing on the page ground with one hairline to
-          its right. The phone keeps the toolbar card below instead. */}
+      {/* Desktop only (CSS hides it under 769px): everything that narrows
+          the list, on the page ground with one hairline to its right. */}
       <aside className="side-panel places-side" aria-label={t('places.sideAria')}>
-        <div className="side-block">
-          {/* "Browse", not "Filter categories" (T384, brief V3-4): picking
-              beaches over lakes is choosing what to look at, not narrowing
-              a list. The words are this tab's own keys; the shared side.*
-              keys stay as they are for Explore and My trips. */}
-          <p className="side-label" id="places-side-cats">{t('places.sideBrowse')}</p>
-          <div className="side-cats" role="group" aria-labelledby="places-side-cats">{renderCats('side-cat')}</div>
-        </div>
         <div className="side-block">
           <p className="side-label">
             {t('places.sideRefine')}
             {activeFilters > 0 && (
-              <button type="button" className="side-clear" onClick={resetAll}>
+              <Button variant="quiet" size="sm" className="side-clear" onClick={resetAll}>
                 {t('filter.reset')}
-              </button>
+              </Button>
             )}
           </p>
+          {tripLength && <div className="side-group">{tripLength}</div>}
           {showSorts && sortDefs.length > 0 && (
-            <div className="side-group" role="group" aria-label={t('places.sortLabel')}>
-              <p className="side-sub">{t('places.sortLabel')}</p>
-              <div className="side-sorts">{renderSortButtons('side-sort')}</div>
-            </div>
+            <div className="side-group">{renderSort('dtab-sort-side', false)}</div>
           )}
           {countryOptions.length > 0 && (
             <div className="side-group">
@@ -3052,41 +3006,23 @@ export function DestinationsTab({
               {renderCountry('places-country side-country')}
             </div>
           )}
-          {(facetGroups.length > 0 || isComposedTrips) && (
-            <div className="side-group side-facets">
-              {isComposedTrips && (
-                <TripLengthSlider
-                  days={itinDays}
-                  setDays={setItinDays}
-                  n={itinRows ? itinRows.length : 0}
-                  t={t}
-                />
-              )}
-              {renderFacetGroups('toolbar')}
-            </div>
-          )}
-          {/* The door to the long set (T384, brief V3-1): the panel shows the
-              one short group inline and every other group behind this one
-              secondary button, the same sheet the phone opens. Before it,
-              eight of the nine beach groups had no door on a desktop. */}
           {facetGroups.length > 0 && (
-            <div className="side-group">
-              <button
-                type="button"
+            <div className="side-group side-facets">
+              {renderFacetGroups('toolbar')}
+              <Button
+                variant="secondary"
+                block
                 className="side-allfilters"
+                iconStart={<FilterIcon size={16} />}
                 onClick={() => { setSheetFrom('side'); setSheetOpen(true); }}
                 aria-haspopup="dialog"
                 aria-expanded={sheetOpen}
               >
-                <FilterIcon size={14} />
-                <span>{t('places.allFilters')}</span>
-                {activeFilters > 0 && <SettledCount className="places-count-chip" value={activeFilters}>{fmt(activeFilters)}</SettledCount>}
-              </button>
+                {t('places.allFilters')}
+                {activeFilters > 0 && <Chip kind="count" className="dtab-count">{fmt(activeFilters)}</Chip>}
+              </Button>
             </div>
           )}
-          {/* No "Lifestyle" caption above it: the button says the word
-              itself, and a heading that repeats its own button is text the
-              reader has to skip. */}
           {showPriceChrome && onOpenLifestyle && (
             <div className="side-group">
               {renderLifestyle('side-lifestyle')}
@@ -3097,35 +3033,18 @@ export function DestinationsTab({
 
       <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
-        {/* Desktop only: the search field at the head of the column, under
-            the top bar and over the results it searches. The phone renders
-            the same field inside the toolbar card below instead. One field,
-            one place, never both: they share a ref. */}
-        {isDesktop && <div className="places-searchrow">{searchField}</div>}
+        <div className="dtab-bar">{catTabs}</div>
+        {headerSlot
+          ? createPortal(searchField, headerSlot)
+          : (
+            <div className="dtab-top">
+              {searchField}
+              {!isDesktop && filtersButton}
+            </div>
+          )}
 
-        {/* Every control in one card, the same instrument Explore carries:
-            the category cards, then search, then the sorts and the one
-            Filters door, then whatever chips this tab narrows by. Read apart
-            they looked like five unrelated widgets sharing a background. */}
-        <div className="places-toolbar">
-        <div className="places-cats" role="group" aria-label={t('places.sideBrowse')}>
-          {renderCats('places-cat')}
-        </div>
-
-        <div className="places-controls">
-          {/* Inline on a phone; on desktop the same field heads the column
-              above and this renders nothing. */}
-          {!isDesktop && searchField}
-          {/* Sorts, the Filters door, the country, where the prices start
-              from and what they assume: one row, in that order. Filters
-              leads because it is the one control that decides WHICH rows are
-              listed; the sorts only reorder what it left. */}
-          {!opening && toolbarRight}
-        </div>
-
-        {!opening && facetsRow}
-        </div>
-
+        <div className="dtab-panel" id="dtab-panel" role="tabpanel"
+          aria-label={t((CATS.find((c) => c.key === cat) || CATS[0]).labelKey)}>
         {/* A refused or failed location fix, said once, under the field that
             asked for it. Cleared as soon as anything is typed. */}
         {locErr && <p className="places-locate-err" role="status">{locErr}</p>}
@@ -3161,66 +3080,52 @@ export function DestinationsTab({
             <div className="places-nearhead" data-scope={scope.scope}>
               <span className="places-nearname">{head}</span>
               {nearPlace.sub && <span className="places-nearsub">{nearPlace.sub}</span>}
-              <button className="places-nearclear" onClick={() => setNearPlace(null)}>
+              <Button variant="quiet" size="sm" className="places-nearclear" onClick={() => setNearPlace(null)}>
                 {t('places.clearNear')}
-              </button>
+              </Button>
             </div>
           );
         })()}
 
 
-        {/* The section opening screen (T183, spec 5.3): Band 1 and Band 2
-            while the section is at rest, then the filter row that moved out
-            of the toolbar for them, then Band 3, the grid below. */}
+        {countryBand}
+
+        {cat === 'trips' && !journeyView && !country && (
+          <h2 className="dtab-title dtab-title-solo">{t('dtab.head.trips')}</h2>
+        )}
+
+        {/* Trails at rest: the head, then the countries (a walk is ranked
+            within its country, so the section opens on them). */}
+        {cat === 'trails' && sectionHead && !opening && (
+          <SectionHead photo={sectionHead.photo} title={sectionHead.title} id="dtab-head-trails" />
+        )}
+
+        {/* The section's opening while it is at rest (T183, rebuilt T428):
+            the head, Try one, the rails, the countries; then the list. */}
         {opening && (
           <>
             <SectionOpening
               layer={opening.layer}
-              icons={opening.icons}
-              heading={openingHead}
-              sub={openingSub}
-              rails={opening.rails.map((r) => ({
-                key: r.def.key,
-                title: t(r.def.titleKey),
-                n: r.n,
-                rows: r.rows,
-                onSeeAll: () => applyRail(opening.layer, r.def.facets),
-              }))}
+              head={sectionHead}
+              rails={openingRails.rails}
+              starters={openingRails.starters}
               describe={describeRow}
               photo={(row) => photoOf(opening.layer, row)}
               onOpen={openFromBand}
               sharedKey={(row) => row.id}
               t={t}
-              maxRails={isDesktop ? null : 2}
-              count={fmt}
-            />
-            <h2 className="open-gridhead">{t('open.gridHead')}</h2>
-            {/* The refine row (T394, brief V4-9, rule N3): Filters, the
-                sorts and the country, apart from the facet chips so that on
-                a phone it alone sticks under the top chrome once Band 3
-                starts, and the chips scroll away with the list. */}
-            {toolbarRight && (
-              <div className="places-toolbar places-filterrail places-refine">
-                <div className="places-controls">{toolbarRight}</div>
-              </div>
-            )}
-            {facetsRow && (
-              <div className="places-toolbar places-filterrail places-filterrail-facets">
-                {facetsRow}
-              </div>
-            )}
+            >
+              {opening.layer !== 'trail' && countryTrack}
+            </SectionOpening>
+            <h2 className="open-gridhead dtab-gridhead">{t('open.gridHead')}</h2>
           </>
         )}
 
-        {!opening && activeChips.length > 0 && (
+        {!isJourneyBrowse && !(cat === 'trails' && showCountryIndex) && refineRow}
+
+        {activeChips.length > 0 && (
           <FilterChips t={t} chips={activeChips} onClearAll={clearAllChips} />
         )}
-
-        {/* The strip explained once, at the head of the list (T394, brief
-            V4-6, rule N8): the 6 px bar under each photograph is a drawing,
-            and a drawing on a card is keyed in words at the list head,
-            never by colour alone. */}
-        {stripKey && <p className="places-stripkey">{stripKey}</p>}
 
         {/* Beaches. No country index in front of the list: the tab opens on
             the beaches themselves, ranked across Europe, because "show me a
@@ -3239,14 +3144,6 @@ export function DestinationsTab({
               beachRows.length > 0
                 ? (
                   <>
-                    {wantBeachCountry && !nearPlace && (
-                      <p className="places-beachhead">
-                        {t('beach.countryHead', {
-                          country: countryName(wantBeachCountry),
-                          n: fmt(beachRows.length),
-                        })}
-                      </p>
-                    )}
                     {beachRows.slice(0, visible).map(({ b, km }, i) => (
                       <React.Fragment key={b.id}>
                         {bandBreak(beachRows, i) && (
@@ -3276,9 +3173,6 @@ export function DestinationsTab({
                           {t('beach.alsoHead', {
                             country: countryName(wantBeachCountry),
                           })}
-                          <span className="places-beachhead-note">
-                            {t('beach.alsoNote')}
-                          </span>
                         </p>
                         <ul className="places-listedrows">
                           {(listedBeaches[wantBeachCountry] || []).map((b) => (
@@ -3291,9 +3185,6 @@ export function DestinationsTab({
                                   {b.region}
                                 </span>
                               )}
-                              <span className="places-listedrow-chip">
-                                {t('region.listedNote')}
-                              </span>
                             </li>
                           ))}
                         </ul>
@@ -3321,12 +3212,6 @@ export function DestinationsTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {beachRows?.length > 0 && (
-              <>
-                <p className="places-credit">{t('beach.credit')}</p>
-                <CoverageFooter layer="beach" cc={wantBeachCountry} countryName={countryName} />
-              </>
-            )}
           </div>
         )}
 
@@ -3346,14 +3231,6 @@ export function DestinationsTab({
               lakeRows.length > 0
                 ? (
                   <>
-                    {wantLakeCountry && !nearPlace && (
-                      <p className="places-beachhead">
-                        {t('lake.countryHead', {
-                          country: countryName(wantLakeCountry),
-                          n: fmt(lakeRows.length),
-                        })}
-                      </p>
-                    )}
                     {lakeRows.slice(0, visible).map(({ b, km }, i) => (
                       <React.Fragment key={b.id}>
                         {bandBreak(lakeRows, i) && (
@@ -3384,9 +3261,6 @@ export function DestinationsTab({
                           {t('lake.alsoHead', {
                             country: countryName(wantLakeCountry),
                           })}
-                          <span className="places-beachhead-note">
-                            {t('lake.alsoNote')}
-                          </span>
                         </p>
                         <ul className="places-listedrows">
                           {(listedLakes[wantLakeCountry] || []).map((l) => (
@@ -3399,9 +3273,6 @@ export function DestinationsTab({
                                   {l.region}
                                 </span>
                               )}
-                              <span className="places-listedrow-chip">
-                                {t('region.listedNote')}
-                              </span>
                             </li>
                           ))}
                         </ul>
@@ -3426,12 +3297,6 @@ export function DestinationsTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {lakeRows?.length > 0 && (
-              <>
-                <p className="places-credit">{t('lake.credit')}</p>
-                <CoverageFooter layer="lake" cc={wantLakeCountry} countryName={countryName} />
-              </>
-            )}
           </div>
         )}
 
@@ -3451,26 +3316,6 @@ export function DestinationsTab({
               mountainRows.length > 0
                 ? (
                   <>
-                    {wantMountainCountry && !nearPlace && (
-                      <p className="places-beachhead">
-                        {t('mtn.countryHead', {
-                          country: countryName(wantMountainCountry),
-                          n: fmt(mountainRows.length),
-                        })}
-                        {/* One line, from one code, where the floor could
-                            not be reached. A reader sees "Lithuania's high
-                            points are gentle, and this is every one we
-                            could verify" rather than four mountains and no
-                            explanation. */}
-                        {floorNote(mountainIndex, wantMountainCountry, t,
-                          countryName(wantMountainCountry)) && (
-                          <span className="places-beachhead-note">
-                            {floorNote(mountainIndex, wantMountainCountry, t,
-                              countryName(wantMountainCountry))}
-                          </span>
-                        )}
-                      </p>
-                    )}
                     {/* The listed tier, under its own heading and never
                         inside the ranked list. These rows carry no score
                         key at all, so there is nothing to sort them by and
@@ -3501,9 +3346,6 @@ export function DestinationsTab({
                           {t('mtn.alsoHead', {
                             country: countryName(wantMountainCountry),
                           })}
-                          <span className="places-beachhead-note">
-                            {t('mtn.alsoNote')}
-                          </span>
                         </p>
                         <ul className="places-listedrows">
                           {(listedMountains[wantMountainCountry] || [])
@@ -3517,9 +3359,6 @@ export function DestinationsTab({
                                     {Math.round(m.ele).toLocaleString(lang)} m
                                   </span>
                                 )}
-                                <span className="places-listedrow-chip">
-                                  {t('region.listedNote')}
-                                </span>
                               </li>
                             ))}
                         </ul>
@@ -3544,12 +3383,6 @@ export function DestinationsTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {mountainRows?.length > 0 && (
-              <>
-                <p className="places-credit">{t('mtn.credit')}</p>
-                <CoverageFooter layer="mountain" cc={wantMountainCountry} countryName={countryName} />
-              </>
-            )}
           </div>
         )}
 
@@ -3598,11 +3431,6 @@ export function DestinationsTab({
 
             {!cyclingLoading && cycleRows && (
               <>
-                {!wantCycleCountry && (
-                  <p className="cycle-topnote" data-testid="cycle-top-note">
-                    {t('cycle.topNote')}
-                  </p>
-                )}
                 {cycleWindow.tours > 0 && (
                   <>
                     <p className="places-bandhead">{t('cycle.toursTitle')}</p>
@@ -3652,16 +3480,17 @@ export function DestinationsTab({
                 )}
 
                 {wantCycleCountry && (cycleRows.localHidden > 0 || cycleShowLocal) && (
-                  <button
-                    type="button"
+                  <Button
+                    variant="quiet"
+                    size="sm"
                     className="cycle-localtoggle"
                     data-testid="cycle-local-toggle"
                     onClick={() => setCycleShowLocal((v) => !v)}
                   >
                     {cycleShowLocal
                       ? t('cycle.hideLocal')
-                      : t('cycle.showLocal', { n: cycleRows.localHidden })}
-                  </button>
+                      : t('cycle.showLocal')}
+                  </Button>
                 )}
 
                 {!cycleRows.tours.length && !cycleRows.routes.length
@@ -3685,15 +3514,6 @@ export function DestinationsTab({
               <PlaceCardSkeletons label={t('card.loading')} />
             )}
 
-            {cycleRows && (cycleRows.routes.length > 0
-              || cycleRows.tours.length > 0) && (
-              <>
-              <p className="places-credit" data-testid="cycle-credit-foot">
-                {t('cycle.sourceNote')}
-              </p>
-              <CreditFold t={t} licenceKeys={['credit.licence.cycle']} />
-              <CoverageFooter layer="cycling" cc={wantCycleCountry} countryName={countryName} /></>
-            )}
           </div>
         )}
 
@@ -3715,9 +3535,11 @@ export function DestinationsTab({
         )}
 
         {isComposedTrips && (
-          <button
-            type="button"
+          <Button
+            variant="quiet"
+            size="sm"
             className="jsec-back jsec-back-solo"
+            iconStart={<ArrowLeftIcon size={14} />}
             onClick={() => {
               setJourneyView(null);
               setItinDays(null);
@@ -3725,9 +3547,8 @@ export function DestinationsTab({
               setItinScale(null);
             }}
           >
-            <ArrowLeftIcon size={14} />
-            <span>{t('journey.backStyles')}</span>
-          </button>
+            {t('journey.backStyles')}
+          </Button>
         )}
 
         {isItinCat && (
@@ -3775,9 +3596,9 @@ export function DestinationsTab({
                         .filter((n) => n >= 2 && rankTrips(itinCountry ? itinCountryRows : itinTop,
                           { days: n, pace: itinPace, scale: itinScale }).some((tr) => tr.days === n))
                         .map((n) => (
-                          <button key={n} type="button" className="cov-empty-btn" onClick={() => setItinDays(n)}>
+                          <Button key={n} variant="secondary" size="sm" className="cov-empty-btn" onClick={() => setItinDays(n)}>
                             {t('journey.nDays', { n })}
-                          </button>
+                          </Button>
                         ))}
                     </div>
                   )
@@ -3790,41 +3611,35 @@ export function DestinationsTab({
               <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {itinRows?.length > 0 && <p className="places-credit">{t('trip.credit')}</p>}
           </div>
         )}
 
         {isTripCat && !isItinCat && (
-          <div className={`places-list${showCountryIndex ? '' : ' pcard-grid'}`}>
+          <div className={`places-list${showCountryIndex ? ' dgal-grid' : ' pcard-grid'}`}>
             {showCountryIndex && (
               <>
-                {/* No Europe-wide trail ranking exists to fill an opening
-                    band from (T183): the trail wire is one file per
-                    country. Said plainly, where the bands would be. */}
                 {cat === 'trails' && tripCountries.length > 0 && (
-                  <p className="places-beachhead open-bycountry">{t('open.trail.byCountry')}</p>
+                  <h2 className="dtab-subhead">{t('dtab.chooseCountry')}</h2>
                 )}
                 {/* A way in without a country (T384, brief V3-10): the
                     locate the search field already has, said in words where
                     the walker is choosing. */}
                 {cat === 'trails' && tripCountries.length > 0 && canLocate && (
                   <div className="places-nearme">
-                    <button type="button" className="places-nearme-btn" onClick={useMyLocation}
-                      disabled={locBusy} aria-busy={locBusy || undefined}>
-                      <CrosshairIcon size={16} />
-                      <span>{t('places.walksNearMe')}</span>
-                    </button>
+                    <Button variant="secondary" size="sm" className="places-nearme-btn"
+                      iconStart={<CrosshairIcon size={16} />} onClick={useMyLocation} loading={locBusy}>
+                      {t('places.walksNearMe')}
+                    </Button>
                   </div>
                 )}
                 {tripCountries.map((c) => (
-                  <CountryCard
+                  <CountryGalleryCard
                     key={c.cc}
                     cc={c.cc}
                     name={c.name}
-                    n={cat === 'trails' ? fmt(c.n) : null}
-                    img={wireCovers[c.cc] || null}
-                    onAskCover={askCover}
-                    onPick={setCountry}
+                    onPick={pickCountry}
+                    t={t}
+                    href={`?tab=places&dc=${cat}&dn=${c.cc}`}
                   />
                 ))}
                 {trailsIndex && tripCountries.length === 0 && (
@@ -3857,10 +3672,9 @@ export function DestinationsTab({
                       : (
                         <div className="places-empty empty-act">
                           <p>{t('places.cityWalksEmpty', { country: countryName(trailsCountry || country) })}</p>
-                          <button type="button" className="cov-empty-btn"
-                            onClick={() => { setQuery(''); setCountry(''); }}>
+                          <Button variant="secondary" size="sm" className="cov-empty-btn" onClick={() => { setQuery(''); setCountry(''); }}>
                             {t('cov.showAll')}
-                          </button>
+                          </Button>
                         </div>
                       ))
                     : nearPlace
@@ -3881,12 +3695,9 @@ export function DestinationsTab({
 
             {showTripRows && (
               <>
-                <p className="places-credit">{t('trails.credit')}</p>
-                <CoverageFooter layer="trail" cc={trailsCountry} countryName={countryName} />
                 {stubs.length > 0 && (
                   <div className="stub-list" data-testid="stub-list">
-                    <p className="stub-list-head">{t('stub.listHead', { n: fmt(stubs.length) })}</p>
-                    <p className="stub-list-note">{t('stub.listNote')}</p>
+                    <h2 className="stub-list-head">{t('stub.listHead')}</h2>
                     <ul>
                       {(stubsAll ? stubs : stubs.slice(0, 6)).map((st) => (
                         <li key={st.id}>
@@ -3903,9 +3714,9 @@ export function DestinationsTab({
                       ))}
                     </ul>
                     {!stubsAll && stubs.length > 6 && (
-                      <button type="button" className="stub-more" onClick={() => setStubsAll(true)}>
-                        {t('stub.showAll', { n: fmt(stubs.length) })}
-                      </button>
+                      <Button variant="quiet" size="sm" className="stub-more" onClick={() => setStubsAll(true)}>
+                        {t('stub.showAll')}
+                      </Button>
                     )}
                   </div>
                 )}
@@ -3913,6 +3724,12 @@ export function DestinationsTab({
             )}
           </div>
         )}
+
+        <SourcesFold cat={cat} isComposedTrips={isComposedTrips} sectionHead={sectionHead}
+          countries={cat === 'trails' && showCountryIndex ? tripCountries.map((c) => c.cc)
+            : (opening && opening.layer !== 'trail' ? countryOptions.map(([cc]) => cc) : (country ? [country] : []))}
+          t={t} />
+        </div>
       </div>
 
       {pageCard && (
