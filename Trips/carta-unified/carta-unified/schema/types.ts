@@ -9,16 +9,16 @@
 /* ------------------------------------------------------------------ enums */
 
 export const TRIP_TYPES = [
-  { id: 1, name: 'Cycling Trips', slug: 'cycling' },
-  { id: 2, name: 'Trail Running', slug: 'trail-running' },
-  { id: 3, name: 'City Trips', slug: 'city' },
-  { id: 4, name: 'Cozy Towns Trips', slug: 'cozy-towns' },
-  { id: 5, name: 'Road Trips & Scenic Drives', slug: 'road-trip' },
-  { id: 6, name: 'Hiking & Alpine Trekking', slug: 'hiking' },
-  { id: 7, name: 'Culinary & Wine Tours', slug: 'culinary' },
-  { id: 8, name: 'Winter Sports & Skiing', slug: 'winter-sports' },
-  { id: 9, name: 'Nature Escapes & Cabin Stays', slug: 'nature-escape' },
-  { id: 10, name: 'Water Sports & Coastal Trips', slug: 'water-sports' },
+  { id: 1, name: 'Cycling', slug: 'cycling' },
+  { id: 2, name: 'Trail running', slug: 'trail-running' },
+  { id: 3, name: 'Cities', slug: 'city' },
+  { id: 4, name: 'Small towns', slug: 'cozy-towns' },
+  { id: 5, name: 'Road trips', slug: 'road-trip' },
+  { id: 6, name: 'Hiking', slug: 'hiking' },
+  { id: 7, name: 'Food and drink', slug: 'culinary' },
+  { id: 8, name: 'Ski and snow', slug: 'winter-sports' },
+  { id: 9, name: 'Nature stays', slug: 'nature-escape' },
+  { id: 10, name: 'On the water', slug: 'water-sports' },
 ] as const;
 
 export type TripTypeId = (typeof TRIP_TYPES)[number]['id'];

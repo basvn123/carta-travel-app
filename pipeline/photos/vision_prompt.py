@@ -18,7 +18,7 @@ ASCII clean, no em dashes, per project convention.
 
 import json
 
-PROMPT_VERSION = "brief_v1"
+PROMPT_VERSION = "brief_v2"  # T448: person_subject narrowed (IMAGE_BRIEF.md rule 6)
 
 MAX_DISTANCE_M = 2000
 
@@ -63,7 +63,9 @@ reject to the code and score both answers 0:
 - interior: an indoor photograph
 - map_diagram: a map, plan, diagram, board or screenshot
 - satellite: a satellite or aerial-map image
-- person_subject: an identifiable person as the main subject
+- person_subject: an identifiable person as the main subject (a portrait, \
+a posed face, a group photo or a crowd); a person doing the section's \
+activity small in a larger landscape is NOT this reject
 - marker_subject: a signpost, waymark or trail marker as the subject (a \
 sign at the edge of a good view is fine, a sign the photograph is about \
 is not)

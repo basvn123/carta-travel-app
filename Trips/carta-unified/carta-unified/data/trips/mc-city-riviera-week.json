@@ -15,9 +15,9 @@
   "region": "Western & Central Europe",
   "regionKey": "western-central",
   "subRegion": "Monaco & the Alpes-Maritimes",
-  "tripType": "City Trips",
-  "tripTypeId": 3,
-  "tripTypeSlug": "city",
+  "tripType": "Small towns",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
   "durationDays": 7,
   "bestPeriod": {
     "months": [

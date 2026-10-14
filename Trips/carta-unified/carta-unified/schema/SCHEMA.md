@@ -47,16 +47,16 @@ TypeScript expression of the same contract; the Supabase migrations in
 
 | id | Type | slug |
 |---|---|---|
-| 1 | Cycling Trips | `cycling` |
-| 2 | Trail Running | `trail-running` |
-| 3 | City Trips | `city` |
-| 4 | Cozy Towns Trips | `cozy-towns` |
-| 5 | Road Trips & Scenic Drives | `road-trip` |
-| 6 | Hiking & Alpine Trekking | `hiking` |
-| 7 | Culinary & Wine Tours | `culinary` |
-| 8 | Winter Sports & Skiing | `winter-sports` |
-| 9 | Nature Escapes & Cabin Stays | `nature-escape` |
-| 10 | Water Sports & Coastal Trips | `water-sports` |
+| 1 | Cycling | `cycling` |
+| 2 | Trail running | `trail-running` |
+| 3 | Cities | `city` |
+| 4 | Small towns | `cozy-towns` |
+| 5 | Road trips | `road-trip` |
+| 6 | Hiking | `hiking` |
+| 7 | Food and drink | `culinary` |
+| 8 | Ski and snow | `winter-sports` |
+| 9 | Nature stays | `nature-escape` |
+| 10 | On the water | `water-sports` |
 
 ## Season
 

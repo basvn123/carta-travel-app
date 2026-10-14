@@ -29,11 +29,20 @@ An image with any of these as its main subject is refused whatever else it shows
 3. Interiors.
 4. Maps and diagrams.
 5. Satellite or aerial-map imagery.
-6. Identifiable people as the main subject.
+6. Identifiable people as the main subject: a portrait, a posed face, a group photo or a crowd. A person doing the section's own activity, small to medium in a larger landscape (a walker on the path, a swimmer in the lake, a rider on the road), is not this reject; see "People doing the thing" below.
 7. A signpost or trail marker as the subject. A sign visible at the edge of a good view is fine; a sign that the photograph is about is not.
 8. An image taken more than 2 km from the feature, unless the image is explicitly framed as "seen from" (a view of the feature from a named vantage point, as the caption or the filename says so).
 
-Items 1 to 6 are the rules that already stood. Items 7 and 8 are new in T126.
+Items 1 to 6 are the rules that already stood. Items 7 and 8 are new in T126. Rule 6 was narrowed in T448.
+
+## People doing the thing (T448)
+
+The owner asked on 2026-10-14 to see people doing the activity, so a traveller understands at a glance what a style or a section is about: someone riding a bike on a cycling card, hikers with packs on a hiking card. The rule:
+
+- A style card in the trip library and the head photo of a Destinations section show a person or a few people doing that activity, small to medium in the frame, in a recognisable European setting. A car or campervan on the road it is driving is the road-trip style's subject and is not rule 2.
+- Never a portrait, a posed face filling the frame, a crowd, a race with bib numbers or sponsor logos, or a recognisable public figure.
+- A single trail, beach, lake, mountain or cycling item keeps its hero question above. The scorer may prefer a candidate with a small figure doing the activity over an empty one of equal quality, but it does not require one. Applying this to the item photos needs a fresh photo run and is a separate task.
+- The style and section photos are picked by hand, looked at by eye, and carry their Commons author and licence like every other photograph.
 
 ## How the two new rejects are enforced
 

@@ -15,7 +15,7 @@
   "region": "Northern Europe & Baltics",
   "regionKey": "northern-baltics",
   "subRegion": "Harju County, Gulf of Finland",
-  "tripType": "City Trips",
+  "tripType": "Cities",
   "tripTypeId": 3,
   "tripTypeSlug": "city",
   "durationDays": 7,

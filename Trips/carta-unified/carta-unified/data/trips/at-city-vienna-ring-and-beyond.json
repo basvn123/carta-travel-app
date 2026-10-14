@@ -15,7 +15,7 @@
   "region": "Western & Central Europe",
   "regionKey": "western-central",
   "subRegion": "Vienna",
-  "tripType": "City Trips",
+  "tripType": "Cities",
   "tripTypeId": 3,
   "tripTypeSlug": "city",
   "durationDays": 7,

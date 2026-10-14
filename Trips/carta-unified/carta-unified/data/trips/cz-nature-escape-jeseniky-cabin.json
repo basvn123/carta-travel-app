@@ -15,9 +15,9 @@
   "region": "Western & Central Europe",
   "regionKey": "western-central",
   "subRegion": "Jeseníky (Hrubý Jeseník), Moravian-Silesian and Olomouc Regions",
-  "tripType": "Nature Escapes & Cabin Stays",
-  "tripTypeId": 9,
-  "tripTypeSlug": "nature-escape",
+  "tripType": "Hiking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
   "durationDays": 7,
   "bestPeriod": {
     "months": [

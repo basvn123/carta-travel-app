@@ -97,6 +97,13 @@ export const typeLabel = (slug, t, fallback = '') => {
   return key ? t(key) : (fallback || slug);
 };
 
+// T448: the one line under a style's name ("A week on the bike along signed
+// routes"), or '' for a slug the map has not met.
+export const typeDesc = (slug, t) => {
+  const key = TYPE_LABEL_KEY[slug];
+  return key ? t(key.replace('journey.type', 'journey.typeDesc')) : '';
+};
+
 // Difficulty labels are a five-word enum in the schema; translated here.
 const DIFF_KEY = {
   Easy: 'journey.diffEasy',

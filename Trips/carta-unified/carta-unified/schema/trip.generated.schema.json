@@ -74,7 +74,7 @@
       "description": "Null until the geocoder resolves a basecamp; never filled by the model."
     },
 
-    "tripType": { "enum": ["Cycling Trips", "Trail Running", "City Trips", "Cozy Towns Trips", "Road Trips & Scenic Drives", "Hiking & Alpine Trekking", "Culinary & Wine Tours", "Winter Sports & Skiing", "Nature Escapes & Cabin Stays", "Water Sports & Coastal Trips"] },
+    "tripType": { "enum": ["Cycling", "Trail running", "Cities", "Small towns", "Road trips", "Hiking", "Food and drink", "Ski and snow", "Nature stays", "On the water"] },
     "tripTypeId": { "type": "integer", "minimum": 1, "maximum": 10 },
     "tripTypeSlug": { "enum": ["cycling", "trail-running", "city", "cozy-towns", "road-trip", "hiking", "culinary", "winter-sports", "nature-escape", "water-sports"] },
     "durationDays": { "const": 7 },

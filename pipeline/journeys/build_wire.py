@@ -73,9 +73,43 @@ TYPE_HERO_CANDIDATES = {
     "nature-escape": ["Lofoten", "Lake Bled", "Black Forest"],
     "water-sports": ["Navagio", "Calanques National Park", "Costa Brava"],
 }
-TYPE_ORDER = ["cycling", "trail-running", "city", "cozy-towns", "road-trip",
-              "hiking", "culinary", "winter-sports", "nature-escape",
-              "water-sports"]
+# T448: the order the traveller meets the styles, which is the audience order
+# of T203 (walkers first, then quiet nature, bikes, cities and towns, cars,
+# food, water, snow, runners), not the schema id order.
+TYPE_ORDER = ["hiking", "nature-escape", "cycling", "city", "cozy-towns",
+              "road-trip", "culinary", "water-sports", "winter-sports",
+              "trail-running"]
+
+# T448: the style card shows people doing the thing (owner, 2026-10-14; the
+# amended rule 6 of docs/IMAGE_BRIEF.md). Each is one Commons file looked at
+# by eye, with its author and licence from the file page; it wins over the
+# article leads above, which stay as the fallback.
+TYPE_HERO_FILES = {}
+
+# T448: the cheap beds a trip offers, read from its accommodation list, so
+# the library can filter on a hostel, hut or campsite night across styles.
+BED_WORDS = {
+    "hostel": re.compile(r"\b(hostels?|jugendherberge|auberge de jeunesse|dorm(itor(y|ies))?s?|bunks?)\b", re.I),
+    "hut": re.compile(r"\b(huts?|refuges?|refugios?|rifugi|rifugio|chata|chaty|bouda|planinarski dom|bac[oó]wka|katun|cabane|h[uü]tte|hizha|koliba)\b", re.I),
+    "camp": re.compile(r"\b(campsites?|camping|campground|glamping)\b", re.I),
+}
+NOT_A_HOSTEL_RE = re.compile(r"hostellerie|superbude", re.I)
+
+
+def bed_kinds(trip):
+    """hostel / hut / camp, for each kind any ranked bed of the trip names."""
+    out = []
+    for a in trip.get("accommodationStrategy") or []:
+        if not isinstance(a, dict):
+            continue
+        text = " ".join(str(a.get(k) or "") for k in ("name", "style", "description"))
+        for kind, rx in BED_WORDS.items():
+            if kind in out or not rx.search(text):
+                continue
+            if kind == "hostel" and NOT_A_HOSTEL_RE.search(text) and not re.search(r"\bdorm", text, re.I):
+                continue
+            out.append(kind)
+    return [k for k in BED_WORDS if k in out]
 
 VERIFY_RE = re.compile(r"\s*`?\[VERIFY[^\]]*\]`?", re.IGNORECASE)
 
@@ -660,6 +694,7 @@ def to_card(trip, hero):
         # T089: the first six tags, the same six the trip page shows, so the
         # list can filter on them without opening each trip.
         "tags": [str(x) for x in (trip.get("tags") or [])][:6],
+        "beds": bed_kinds(trip),
         "hero": hero,
     }
 
@@ -765,6 +800,9 @@ def main():
     # a portrait crop.
     type_heroes = {}
     for slug, names in TYPE_HERO_CANDIDATES.items():
+        if TYPE_HERO_FILES.get(slug):
+            type_heroes[slug] = TYPE_HERO_FILES[slug]
+            continue
         pick = None
         for n in names:
             if usable(images.get(n), min_w=1000):
