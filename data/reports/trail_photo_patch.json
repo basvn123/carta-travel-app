@@ -788,6 +788,14 @@
       "flags": [
         "strip:4.40"
       ]
+    },
+    {
+      "id": 86628,
+      "country": "BE",
+      "file": "2018-11-04_Colotois_pennaria_%282%29.jpg",
+      "flags": [
+        "name:species"
+      ]
     }
   ]
 }

@@ -162,6 +162,8 @@ function loadRejectVocabulary() {
  * high point of Belgium, so the words are anchored to compounds. "Gate" would
  * take every kissing gate on a moorland view.
  */
+const SPECIES_HEAD = /^(?:\d{4}[-_. ]\d{2}[-_. ]\d{2}[\s_-]+)?[A-Z][a-z]{3,}[\s_]+[a-z]{4,}(?![a-z])/;
+
 const TRAIL_BAD = [
   ['waymark', /\b(waymark\w*|way ?mark\w*|blaze|blazes|trail marker|route marker|markierung|wegmarkierung|wegzeichen|markering|balisage|balise|segnavia|marcaje|sen[ãa]l[ií]stica|znakowanie|turistick[aá] zna[čc]ka)\b/i],
   ['signage', /\b(signpost|sign ?post|fingerpost|guidepost|wegweiser|wegwijzer|panneau|pancarte|cartello|se[ñn]al de|information (board|panel|sign)|infotafel|informatietafel|trailhead sign|noticeboard|notice board|schild|tabu[lł]a informacyjna)\b/i],
@@ -289,6 +291,10 @@ function main() {
         if (re.test(words) && !looksGood) flags.push(`name:${tag}`);
       }
       if (vocab.offSubject?.test(words) && !looksGood) flags.push('name:off_subject');
+      // A species page filed where it was photographed, the same rule as
+      // SPECIES_RE in pipeline/trails/trail_images.py, a date allowed in
+      // front (T449: "2018-11-04 Colotois pennaria (2).jpg", a moth).
+      if (SPECIES_HEAD.test(title) && !looksGood) flags.push('name:species');
       if (vocab.historical?.test(words)) flags.push('~historical');
 
       // Subject, from the categories. A category is a subject statement, so
