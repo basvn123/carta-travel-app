@@ -1788,7 +1788,9 @@
 .destp-hood-bar span { display: block; height: 100%; background: var(--rate-soft); border-radius: 4px; }
 .destp-hood-eur { text-align: right; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .destp-sleep-note { font-size: 11.5px; color: var(--ink-mute); margin: 8px 0 0; }
-.destp-sleep-tiers { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); margin: 8px 0 0; }
+.destp-sleep-tiers { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: var(--space-1) var(--space-2); font-size: var(--text-body); color: var(--text-2); margin: var(--space-2) 0 0; }
+.destp-sleep-tiers > svg { grid-row: 1 / span 3; align-self: start; margin-top: 3px; color: var(--text-2); }
+.destp-sleep-tiers > .destp-sleep-tier { grid-column: 2; font-variant-numeric: tabular-nums; }
 .destp-season { margin: 10px 0 0; }
 .destp-season-bars { display: flex; align-items: flex-end; gap: 3px; height: 42px; }
 .destp-season-bars span { flex: 1; background: var(--rule); border-radius: 2px 2px 0 0; }
@@ -1800,8 +1802,10 @@
 .destp-get-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink); margin: 0; }
 .destp-get-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
 .destp-get-transit.is-excellent .destp-get-dot, .destp-get-transit.is-good .destp-get-dot { background: var(--status-success); }
-.destp-get-transit.is-limited .destp-get-dot { background: var(--rate-soft); }
-.destp-get-transit.is-poor .destp-get-dot { background: var(--danger); }
+/* Weak transit is a fact, not an alarm (T446): a hollow ink dot beside the
+   words; --danger is for destroying something, --rate for ratings. */
+.destp-get-transit.is-limited .destp-get-dot,
+.destp-get-transit.is-poor .destp-get-dot { background: none; border: 2px solid var(--text-3); box-sizing: border-box; }
 
 /* crowding + water */
 .destp-crowd, .destp-water { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--rule-soft); }
@@ -1829,14 +1833,16 @@
 .destp-do-group .mono { color: var(--rate-soft); }
 
 /* members */
-.destp-members { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
-.destp-member { border: 1px solid var(--rule-soft); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
-.destp-member.is-focus { border-color: var(--rate); background: var(--rate-bg); }
-.destp-member-head { display: flex; align-items: center; gap: 6px; }
-.destp-member-name { font-weight: 600; color: var(--ink); }
-.destp-member-h { margin-left: auto; font-size: 11px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 3px; }
-.destp-member-desc { font-size: 12px; color: var(--ink-soft); }
-.destp-member-link { font-size: 11.5px; color: var(--rate-soft); font-weight: 600; }
+/* A list under hairlines, not a grid of boxes (T446): name, the hours to
+   see it, the guide link. The member a search landed on wears the
+   selected tint. */
+.destp-members { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); column-gap: var(--space-6); }
+.destp-member { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); padding: var(--space-3) 0; border-top: 1px solid var(--border-soft); }
+.destp-member.is-focus { background: var(--select-bg); margin-inline: calc(-1 * var(--space-2)); padding-inline: var(--space-2); }
+.destp-member-head { display: flex; align-items: center; gap: var(--space-2); flex: 1 1 auto; min-width: 0; color: var(--text-2); }
+.destp-member-name { font-weight: 600; color: var(--text); }
+.destp-member-h { margin-left: auto; font-size: var(--text-caption); color: var(--text-2); display: inline-flex; align-items: center; gap: var(--space-1); font-variant-numeric: tabular-nums; }
+.destp-member-link { font-size: var(--text-label); color: var(--action); font-weight: 600; }
 
 /* A payment gate loses to nothing: the shared day-saved-overlay sits at
    z 62, and the full-screen destination page at z 240 was burying the pass
@@ -2272,7 +2278,9 @@
   box-shadow: var(--elev-1);
 }
 .rb-ticks { position: relative; height: 16px; margin-top: 6px; }
-.rb-legend { display: flex; gap: 4px 12px; flex-wrap: wrap; font-size: 10.5px; color: var(--ink-mute); margin-top: 2px; }
+/* No legend under the scale (carta-design "Data drawings": no legend; the
+   ticks carry their figures, the band word is in the head). T446. */
+.rb-legend { display: none; }
 .rb-leg { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
 .rb-leg-swatch { display: inline-block; width: 10px; height: 6px; border-radius: 2px; background: var(--rule); }
 .rb-leg.rt-2 .rb-leg-swatch { background: var(--rate-bg); border: 1px solid var(--rate-soft); }
@@ -2292,13 +2300,15 @@
 .rb-tick::before { content: ''; display: block; width: 1px; height: 5px; background: var(--rule); }
 .rb-tick .mono { font-size: 10.5px; color: var(--ink-soft); }
 .rb-parts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.rb-part { display: flex; flex-direction: column; gap: 4px; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--rule-soft); background: var(--bg-card); }
+/* The parts as label-over-value rows under hairlines, not boxed tiles (T446). */
+.rb-part { display: flex; flex-direction: column; gap: 4px; padding: var(--space-2) 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
 .rb-part-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .rb-part-name { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
 .rb-part-val { font-size: 14px; font-weight: 600; color: var(--ink); }
 .rb-part-track { display: block; height: 5px; border-radius: 3px; background: var(--paper-dim); overflow: hidden; }
 .rb-part-fill { display: block; height: 100%; border-radius: 3px; background: var(--rate-soft); }
-.rb-part-weight { font-size: 10.5px; color: var(--ink-mute); }
+/* The weight ("70% of the score") is method; it left the page (T446). */
+.rb-part-weight { display: none; }
 .rate-break-v2 .rate-break-note { margin-top: 10px; }
 @media (max-width: 380px) { .rb-parts { grid-template-columns: 1fr; } }
 
@@ -2395,8 +2405,10 @@
 .destp-v2 .destp-further { grid-template-columns: 1fr 1fr; }
 .destp-v2 .xp-source { margin-top: 8px; }
 
-.destp-sleep-tier { display: inline-flex; align-items: center; }
-.destp-sleep-sep { display: inline-block; width: 1px; height: 11px; background: var(--rule); margin: 0 8px; }
+/* The stay tiers, one to a line, no separators to wrap (T446). */
+.destp-sleep-tier { display: block; }
+.destp-sleep-tier::first-letter { text-transform: uppercase; }
+.destp-sleep-sep { display: none; }
 
 /* Routes from here (ROUTES.md R6). One row per PATH, with the stretch that
    passes named underneath, so the reader can tell the Via Francigena from

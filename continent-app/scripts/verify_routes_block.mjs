@@ -119,14 +119,16 @@ if (subject) {
   check('no row is named for a stage', offenders.length === 0,
     offenders.slice(0, 3).join(' | ') || `${names.length} names checked`);
 
-  const stretches = await page.locator('#sec-routes .drh-stage').count();
+  // T446: a brief row names the stretch in its title (a screen reader
+  // announces it, a pointer shows it), not as a printed code line.
+  const stretches = await page.locator('#sec-routes .drh-row[title]').count();
   check('the stretch that passes is named', stretches > 0, `${stretches} rows`);
 
   const facts = await page.locator('#sec-routes .drh-facts').allTextContents();
-  const withDistance = facts.filter((f) => /passes\s+[\d.]+\s*km/i.test(f));
+  const withDistance = facts.filter((f) => /^[\d.]+\s*km\s+\S.*of the centre/i.test(f));
   check('every row says how far it passes', withDistance.length === facts.length,
     `${withDistance.length}/${facts.length}`);
-  const far = facts.map((f) => Number((f.match(/passes\s+([\d.]+)\s*km/i) || [])[1]))
+  const far = facts.map((f) => Number((f.match(/^([\d.]+)\s*km/) || [])[1]))
     .filter((v) => v > 25.4);
   check('no row is further than the 25 km radius', far.length === 0, far.join(', '));
   const dirs = facts.filter((f) => /north|south|east|west/i.test(f));
@@ -136,7 +138,8 @@ if (subject) {
   // T429 (owner, 2026-10-13): method and coverage sentences left the page;
   // the PDF still prints this one.
   check('no coverage sentence in the block', await page.locator('#sec-routes .drh-note').count() === 0);
-  const credit = await page.locator('#sec-routes .drh-credit').textContent().catch(() => '');
+  // T446: the credits moved into the page's one sources line.
+  const credit = await page.locator('.destp-sources').textContent().catch(() => '');
   check('OSM is credited in the block', /openstreetmap/i.test(credit));
   check('Copernicus is credited for the ascent', /copernicus/i.test(credit));
 

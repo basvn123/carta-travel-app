@@ -1446,7 +1446,7 @@ export const nl = {
   "prov.seenToday": "vandaag gezien",
   "prov.seenYesterday": "gisteren gezien",
   "prov.seenDays": "{n} dagen geleden gezien",
-  "prov.est": "schatting",
+  "prov.est": "gesch.",
   "prov.estTitle": "een schatting, geen actuele prijs",
   "prov.bookingNote": "Prijzen kunnen veranderd zijn, controleer op de boekingssite.",
   "trails.nearbyTitle": "Wandelingen en dagtochten in de buurt",
@@ -5618,4 +5618,9 @@ export const nl = {
   "dest.packSummaryFor": "Inpakken voor {month}",
   "dest.membersInside": "Dorpen en plaatsen in {city}",
   "dest.trackLong": "{km} km lang",
+  "dest.routesFrom": "{km} {dir} van het centrum",
+  "dest.ascentUp": "{m} m stijgen",
+  "glossary.estimate.term": "gesch.",
+  "glossary.estimate.text": "Een deel van dit bedrag is hier nog niet gemeten, dus staat er een landelijk cijfer voor in de plaats. Een richtwaarde, geen offerte.",
+  "dest.priceCarHire": "Een huurauto komt erbij, ongeveer {eur} per dag.",
 };

@@ -97,11 +97,30 @@ export function DestTrack({ id, title, level = 2, items, render, extra = null, o
           </span>
         )}
       </div>
-      <ul className="dphoto-strip" ref={stripRef} onKeyDown={onKey} aria-labelledby={id}>
+      {/* A card reached with Tab comes fully into view at the start of the
+          strip, at once: the snap would otherwise leave a half-shown card
+          with its focus ring cut by the strip's edge (T446). */}
+      <ul
+        className="dphoto-strip"
+        ref={stripRef}
+        onKeyDown={onKey}
+        onFocus={(e) => {
+          if (all || !e.target.matches?.('.card-open')) return;
+          e.target.closest('.dphoto-item')?.scrollIntoView({ block: 'nearest', inline: 'start', behavior: 'instant' });
+        }}
+        aria-labelledby={id}
+      >
         {items.map((item, i) => (
           <li className="dphoto-item" key={item.key}>{render(item, i)}</li>
         ))}
       </ul>
+      {/* After See all the grid can run a few screens on a phone: the way
+          back sits at its end too, not only above it (T446). */}
+      {all && canAll && (
+        <Button variant="quiet" size="sm" className="dphoto-all is-end" onClick={toggleAll} aria-expanded={all}>
+          {t('dest.showLess')}
+        </Button>
+      )}
     </div>
   );
 }

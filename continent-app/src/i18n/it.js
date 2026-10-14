@@ -1446,7 +1446,7 @@ export const it = {
   "prov.seenToday": "visto oggi",
   "prov.seenYesterday": "visto ieri",
   "prov.seenDays": "visto {n} giorni fa",
-  "prov.est": "stima",
+  "prov.est": "stim.",
   "prov.estTitle": "una stima, non una tariffa in tempo reale",
   "prov.bookingNote": "I prezzi possono essere cambiati, verifica sul sito di prenotazione.",
   "trails.nearbyTitle": "Escursioni e gite vicine",
@@ -5618,4 +5618,9 @@ export const it = {
   "dest.packSummaryFor": "Cosa portare a {month}",
   "dest.membersInside": "Paesi e frazioni di {city}",
   "dest.trackLong": "{km} km di lunghezza",
+  "dest.routesFrom": "a {km} {dir} dal centro",
+  "dest.ascentUp": "{m} m di dislivello",
+  "glossary.estimate.term": "stim.",
+  "glossary.estimate.text": "Una parte di questa cifra non è ancora misurata qui, quindi si usa un dato nazionale. Un'indicazione, non un preventivo.",
+  "dest.priceCarHire": "L’auto a noleggio è a parte, circa {eur} al giorno.",
 };

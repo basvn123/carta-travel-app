@@ -2,7 +2,7 @@ import React from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { knownFor } from '../lib/knownFor.js';
 import { crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
-import { ClimateStrip, MONTHS_SHORT, fmtMonthRanges } from './ClimateStrip.jsx';
+import { ClimateStrip, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { claimShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
@@ -24,10 +24,12 @@ import { BathingWater } from './BathingWater.jsx';
 import { MemberPlaces } from './MemberPlaces.jsx';
 import { FeaturePhoto } from './AroundHere.jsx';
 import RoutesFromHere from './RoutesFromHere.jsx';
+import CreditFold from './CreditFold.jsx';
 import { NearestLine } from './CoverageEmpty.jsx';
 import { ScoreChip, HiddenGemTag, bandKey } from '../components/RatingBadge.jsx';
 import { tierForScore } from '../lib/rating.js';
 import { visitLength } from '../lib/nearby.js';
+import { countryName } from '../lib/countryName.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchDestPois } from '../lib/appData.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
@@ -36,7 +38,8 @@ import { SectionRail } from './SectionRail.jsx';
 import { DestTrack } from './DestTrack.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
 import { SaveButton } from './ExploreCards.jsx';
-import { Button, Card, Chip, IconButton, Tabs } from '../components/ui/index.js';
+import { Button, Card, Chip, IconButton, Money, Tabs } from '../components/ui/index.js';
+import { isNational } from '../components/CostSummary.jsx';
 import {
   PersonIcon, MapPinIcon, ParkingIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
   RainIcon, DrizzleIcon, SnowIcon, StormIcon, CompassIcon,
@@ -151,6 +154,26 @@ function monthOf(iso) {
   return n >= 1 && n <= 12 ? n : null;
 }
 const CROWD_KEY = ['crowd.quiet', 'crowd.moderate', 'crowd.busy', 'crowd.crowded'];
+/** A catalogue name that is a number with the place in brackets, as
+ *  OpenStreetMap sometimes records a waterfall or a spring ("7 (The Blue
+ *  Eye)"), shows the place (T446). Every other name is kept as it is. */
+const cleanName = (name) => {
+  const raw = String(name || '');
+  const m = /^\s*\d+\s*\((.+)\)\s*$/.exec(raw);
+  if (m) return m[1];
+  // A route's stage code is bookkeeping, not a name: "CNP - 01 - Roma -
+  // Castel Gandolfo" reads "Roma, Castel Gandolfo", "Romea Strata in
+  // Italia - Tappa RSIT47" reads "Romea Strata in Italia" (T446).
+  const parts = raw.split(/\s+-\s+/);
+  const named = parts.length > 1
+    ? parts.filter((p) => !/^(?:[A-Z]{2,5}|\d{1,3})$/.test(p.trim())
+      && !/^(?:tappa|stage|etappe|etapa|tronçon)\s+\S+$/i.test(p.trim()))
+    : parts;
+  const joined = (named.length ? named : parts).join(', ');
+  // Words set in capitals by the source ("DORSALE", "STAZIONE") are set in
+  // the name's own case.
+  return joined.replace(/\b([A-ZÀ-ÖØ-Ý]{4,})\b/g, (w) => w[0] + w.slice(1).toLowerCase());
+};
 const fmtKm = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
 /** Highlight photographs ship at 960px; the tiles want 500. Same file, one
  *  path segment, and Commons serves both. */
@@ -540,6 +563,18 @@ export function DestinationPage({
   const guideUrl = safeUrl(intro?.grounding?.[0]?.url || destination.guide?.url);
   const isUnesco = (destination.designations || []).some((g) => g.kind === 'unesco_whc');
   const monthList = (ms) => ms.map((m) => monthName(m, lang, false)).join(', ');
+  const countryLabel = countryName(destination.iso2, destination.country);
+  const fmtDate = (iso) => {
+    try {
+      return new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+        .format(new Date(`${iso}T00:00:00Z`));
+    } catch { return iso; }
+  };
+  // A score in the reader's own number format (7,7 in German), so a screen
+  // reader does not voice it as a date or a version.
+  const fmtScore = (n) => {
+    try { return new Intl.NumberFormat(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n); } catch { return Number(n).toFixed(1); }
+  };
 
   // The key facts (carta-design "Detail page grammar"): four to six measured
   // facts, label over value. The day cost is not among them: the price card
@@ -563,7 +598,9 @@ export function DestinationPage({
         : getting.airport,
     },
     getting?.car_needed != null && { k: 'car', label: t('dest.keyCar'), value: t(getting.car_needed ? 'dest.keyCarYes' : 'dest.keyCarNo') },
-    stayLen && { k: 'time', label: t('dest.keyTime'), value: t(stayLen.key, { n: stayLen.n }) },
+    // "Time here" left the facts (T446): a rule of thumb from the sights'
+    // hours, it contradicted the intro ("three or four days") and the card's
+    // stay on the same screen.
   ].filter(Boolean).slice(0, 6);
 
   const share = async () => {
@@ -632,18 +669,25 @@ export function DestinationPage({
   const effectiveLayer = layerChoices.some((c) => c.id === mapLayer) ? mapLayer
     : mapLayer === 'nearby' && nearbyForMap.length ? 'nearby' : 'highlights';
 
-  // Things to do: the photograph of a highlight the item names, else one
-  // from the POI shard, else the type glyph on a sunken ground.
-  const hlPhoto = photoMatcher(highlights.filter((h) => h.image?.url && !NOT_A_VIEW.test(h.image.url))
-    .map((h) => ({ name: h.name, img: thumb500(h.image.url) })));
-  // The items with a photograph lead (a stable sort keeps the sources order
-  // inside each group). Where fewer than half have one, the track drops its
-  // pictures altogether: a strip of grey squares reads as a page that broke.
-  const doRows = doItems.map((item, i) => {
+  // Things to do: the photograph of a highlight or a gallery photograph the
+  // item names (gallery captions are place names too: "Colosseum"), else
+  // one from the POI shard.
+  const hlPhoto = photoMatcher([
+    ...highlights.filter((h) => h.image?.url && !NOT_A_VIEW.test(h.image.url))
+      .map((h) => ({ name: h.name, img: thumb500(h.image.url) })),
+    ...(d?.gallery || []).filter((g) => g.caption && baseCity(g.caption) !== city && !NOT_A_VIEW.test(g.url))
+      .map((g) => ({ name: g.caption, img: g.thumb || thumb500(g.url) })),
+  ]);
+  const doRows = doItems.slice(0, TRACK_CAP).map((item, i) => {
     const poi = doPhotos(item.name);
     return { ...item, key: `${i}:${item.name}`, photo: hlPhoto(item.name) || (poi ? thumb500(poi) : null) };
-  }).sort((a, b) => (b.photo ? 1 : 0) - (a.photo ? 1 : 0)).slice(0, TRACK_CAP);
-  const doMedia = doRows.filter((r) => r.photo).length * 2 >= doRows.length;
+  });
+  // The items with a photograph are the track; the rest follow it as a
+  // hairline list (T446). With fewer than two photographs there is no track
+  // and the list holds everything: a strip of grey boxes reads as broken.
+  const doPhotoRows = doRows.filter((r) => r.photo);
+  const doTrack = doPhotoRows.length >= 2 ? doPhotoRows : [];
+  const doList = doTrack.length ? doRows.filter((r) => !r.photo) : doRows;
 
   // Walk and ride: the outdoors within reach from every layer, the trails,
   // beaches, lakes and peaks the Destinations tab knows, best first.
@@ -658,8 +702,12 @@ export function DestinationPage({
     };
     for (const l of ['trails', 'beaches', 'lakes', 'mountains']) (nearby[l] || []).forEach((f) => add(l, f));
     if (around) for (const l of ['trails', 'cycling', 'mountains', 'lakes', 'beaches']) (around[l] || []).forEach((f) => add(l, f));
+    // The walks and the rides lead (hikers first, PRODUCT.md), then the
+    // peaks, the lakes and the beaches; best first inside each (T446).
+    const RANK = { trails: 0, cycling: 1, mountains: 2, lakes: 3, beaches: 4 };
     return rows
-      .sort((a, b) => (b.score ?? -1) - (a.score ?? -1) || (a.km ?? 99) - (b.km ?? 99))
+      .sort((a, b) => (RANK[a.layer] - RANK[b.layer])
+        || (b.score ?? -1) - (a.score ?? -1) || (a.km ?? 99) - (b.km ?? 99))
       .slice(0, TRACK_CAP);
   })();
 
@@ -676,7 +724,8 @@ export function DestinationPage({
         lat: rec?.lat, lon: rec?.lon,
       };
     });
-    return [...trips, ...paired].slice(0, TRACK_CAP).map((tr, i) => ({ ...tr, key: `${i}:${tr.id}` }));
+    return [...trips, ...paired].filter((tr) => tr.id !== destination.id)
+      .slice(0, TRACK_CAP).map((tr, i) => ({ ...tr, key: `${i}:${tr.id}` }));
   })();
 
   const hasAround = outdoor.length > 0;
@@ -710,7 +759,7 @@ export function DestinationPage({
     ['routes', 'dest.nav.walkRide'], ['getting', 'dest.nav.getting'], ['trips', 'dest.nav.trips'],
   ].filter(([id]) => has[id]).map(([id, key]) => ({ id: `sec-${id}`, key: id, label: t(key) })));
 
-  const festMonths = fmtMonthRanges([...new Set(festivals.flatMap((f) => f.months || []))]);
+  const festMonths = monthList([...new Set(festivals.flatMap((f) => f.months || []))].sort((a, b) => a - b));
   const sleepNames = (sleep?.neighbourhoods || []).slice(0, 3).map((n) => n.name).filter(Boolean).join(', ');
   const parkSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`parking ${city}`)}`;
   const webPark = parking?.web || null;
@@ -718,12 +767,12 @@ export function DestinationPage({
   const hasPark = !!(parking && (parking.spots?.length > 0 || parking.park_ride || parking.web));
 
   const exits = [
-    links.flights_google && { key: 'gf', href: links.flights_google, label: t('dest.linkGflights'), Icon: PlaneIcon },
-    links.skyscanner && { key: 'sky', href: links.skyscanner, label: t('dest.linkSkyscanner'), Icon: PlaneIcon },
     links.booking && { key: 'bk', href: links.booking, label: t('dest.linkBooking'), Icon: BedIcon },
     links.airbnb && { key: 'ab', href: links.airbnb, label: t('dest.linkAirbnb'), Icon: BedIcon },
     links.getyourguide && { key: 'gyg', href: activityLink(links.getyourguide, 'dest-book'), label: t('dest.bookGyg'), Icon: CompassIcon },
     links.viator && { key: 'via', href: activityLink(links.viator, 'dest-book'), label: t('dest.bookViator'), Icon: CompassIcon },
+    links.flights_google && { key: 'gf', href: links.flights_google, label: t('dest.linkGflights'), Icon: PlaneIcon },
+    links.skyscanner && { key: 'sky', href: links.skyscanner, label: t('dest.linkSkyscanner'), Icon: PlaneIcon },
   ].filter(Boolean);
 
   return (
@@ -791,18 +840,19 @@ export function DestinationPage({
                 // "Navigation"); the click also opens the fold it lands on.
                 <a className="destp-score" href="#sec-rating"
                   onClick={(e) => { e.preventDefault(); jumpTo('rating'); }}
-                  aria-label={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}>
+                  aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
                   <ScoreChip rating={verdict} size="lg" band />
                 </a>
               )}
               {verdict?.hidden_gem && <HiddenGemTag />}
+              {/* The country, in the reader's language, once: a rank line names it
+                  already ("Top of Italy"), so then it stands alone (T446). */}
               <span className="destp-country">
-                {destination.country}
                 {verdict?.country_rank === 1 ? (
-                  <span className="destp-rank">{t('card.topOf', { country: destination.country })}</span>
+                  <span className="destp-rank">{t('card.topOf', { country: countryLabel })}</span>
                 ) : verdict?.country_badge ? (
-                  <span className="destp-rank">{t('card.rankIn', { n: verdict.country_rank, country: destination.country })}</span>
-                ) : null}
+                  <span className="destp-rank">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</span>
+                ) : countryLabel}
               </span>
               {isUnesco && (
                 <Chip kind="status" className="destp-unesco"
@@ -811,9 +861,26 @@ export function DestinationPage({
                 </Chip>
               )}
             </div>
+            {/* The day line under the name (T446): on a phone the price card
+                sits a screen down, and Carta's one line, what a day here
+                costs, belongs on the first screen. From 1024 px the sticky
+                card beside the head carries it, so this line hides. */}
+            {pdfCost?.dayEur != null && (
+              <p className="destp-dayline">
+                <Money value={pdfCost.dayEur} est={isNational(pdfCost)} />
+                <span className="destp-dayline-unit">{t('dest.priceDayUnit')}</span>
+              </p>
+            )}
             {/* What this place is: two or three sentences from our own
                 facts, one opening line after Wikivoyage. Never the article. */}
-            {settled && shortIntro && (
+            {/* The intro is written in English; in another language the guide
+                link stands alone rather than an English paragraph (T446). */}
+            {settled && shortIntro && lang !== 'en' && guideUrl && (
+              <p className="destp-short">
+                <a className="destp-short-src" href={guideUrl} target="_blank" rel="noreferrer">{t('detail.readGuide')}</a>
+              </p>
+            )}
+            {settled && shortIntro && lang === 'en' && (
               <p className="destp-short">
                 {shortIntro}
                 {guideUrl && (
@@ -851,15 +918,16 @@ export function DestinationPage({
                 onOpenLifestyle={onOpenLifestyle}
                 onPlanTrip={onPlanTrip}
                 onPlanDay={onPlanDay}
+                carDayEur={getting?.car_needed ? getting.rental_eur_day ?? null : null}
               />
             </div>
           )}
 
           {settled && has.when && (
             <Section id="when" title={t('dest.whenTitle')}>
-              {destination.climate?.m && <ClimateStrip climate={destination.climate} month={tripMonth} figures />}
+              {destination.climate?.m && <ClimateStrip climate={destination.climate} month={datesOwn ? tripMonth : null} figures />}
               {cheapMonths && (
-                <p className="xp-when-fact">{t('explore.whenCheapStay', { months: fmtMonthRanges(cheapMonths) })}</p>
+                <p className="xp-when-fact">{t('explore.whenCheapStay', { months: monthList(cheapMonths) })}</p>
               )}
               <CrowdCalendar destination={destination} t={t} />
               <BathingWater water={water} destination={destination} t={t} />
@@ -884,45 +952,76 @@ export function DestinationPage({
                       })}
                     </div>
                   )}
-                  {weatherOn && forecast.length > 0 && <p className="xp-source">{t('explore.weatherCredit')}</p>}
                 </div>
               )}
             </Section>
           )}
 
           {settled && has.do && (
-            <Section id="do">
-              <DestTrack
-                id="h-do"
-                title={t('dest.doTitle')}
-                items={doRows}
-                t={t}
-                render={(item) => {
-                  const TypeIcon = DO_TYPE_ICON[item.type] || CompassIcon;
-                  const { photo } = item;
-                  const href = item.link && safeUrl(item.link) ? activityLink(safeUrl(item.link), 'dest-do') : null;
-                  const opener = href
-                    ? { title: <a className="card-open" href={href} target="_blank" rel="noreferrer">{item.name}</a>, className: 'ddo2 is-interactive' }
-                    : item.ref && onOpenFeature
-                      ? { title: item.name, onOpen: () => onOpenFeature(item.ref.layer, item.ref), className: 'ddo2' }
-                      : { title: item.name, className: 'ddo2' };
-                  return (
-                    <Card
-                      layout="tile"
-                      {...opener}
-                      media={!doMedia ? null : photo
-                        ? <img src={photo} alt="" loading="lazy" />
-                        : <span className="ddo2-glyph" aria-hidden="true"><TypeIcon size={24} /></span>}
-                      meta={(
-                        <span className="dtile-meta">
-                          <span>{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
-                          {item.season?.length > 0 && <span>{monthList(item.season)}</span>}
+            <Section id="do" title={doTrack.length ? null : t('dest.doTitle')}>
+              {doTrack.length > 0 && (
+                <DestTrack
+                  id="h-do"
+                  title={t('dest.doTitle')}
+                  items={doTrack}
+                  t={t}
+                  render={(item) => {
+                    const href = item.link && safeUrl(item.link) ? activityLink(safeUrl(item.link), 'dest-do') : null;
+                    const opener = href
+                      ? { title: <a className="card-open" href={href} target="_blank" rel="noreferrer">{item.name}</a>, className: 'ddo2 is-interactive' }
+                      : item.ref && onOpenFeature
+                        ? { title: item.name, onOpen: () => onOpenFeature(item.ref.layer, item.ref), className: 'ddo2' }
+                        : { title: item.name, className: 'ddo2' };
+                    return (
+                      <Card
+                        layout="tile"
+                        {...opener}
+                        media={<img src={item.photo} alt="" loading="lazy" />}
+                        meta={(
+                          <span className="dtile-meta">
+                            <span>{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
+                            {item.season?.length > 0 && <span>{monthList(item.season)}</span>}
+                          </span>
+                        )}
+                      />
+                    );
+                  }}
+                />
+              )}
+              {/* The things without a photograph: one hairline list, name and
+                  kind, two columns from 680 px (T446). */}
+              {doList.length > 0 && (
+                <ul className="ddo-list">
+                  {doList.map((item) => {
+                    const TypeIcon = DO_TYPE_ICON[item.type] || CompassIcon;
+                    const href = item.link && safeUrl(item.link) ? activityLink(safeUrl(item.link), 'dest-do') : null;
+                    const body = (
+                      <>
+                        <TypeIcon size={16} className="ddo-list-icon" />
+                        <span className="ddo-list-main">
+                          <span className="ddo-list-name">{item.name}</span>
+                          <span className="ddo-list-meta">
+                            <span>{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
+                            {item.season?.length > 0 && <span>{monthList(item.season)}</span>}
+                          </span>
                         </span>
-                      )}
-                    />
-                  );
-                }}
-              />
+                      </>
+                    );
+                    return (
+                      <li key={item.key}>
+                        {href ? (
+                          <a className="ddo-list-row" href={href} target="_blank" rel="noreferrer">{body}</a>
+                        ) : item.ref && onOpenFeature ? (
+                          <Button variant="quiet" block className="ddo-list-row"
+                            onClick={() => onOpenFeature(item.ref.layer, item.ref)}>{body}</Button>
+                        ) : (
+                          <span className="ddo-list-row is-static">{body}</span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </Section>
           )}
 
@@ -995,7 +1094,7 @@ export function DestinationPage({
                       onOpen={() => { setHlFocus(i); setMapLayer('highlights'); }}
                       meta={(
                         <span className="dtile-meta">
-                          {h.kind && <span>{h.kind}</span>}
+                          {h.kind && lang === 'en' && <span>{h.kind}</span>}
                           {h.dist_km != null && <span>{fmtKm(h.dist_km)}</span>}
                         </span>
                       )}
@@ -1025,7 +1124,7 @@ export function DestinationPage({
                       layout="tile"
                       className="dout"
                       media={<FeaturePhoto src={f.thumb} lat={f.lat} lon={f.lon} />}
-                      title={f.name}
+                      title={cleanName(f.name)}
                       onOpen={onOpenFeature ? () => onOpenFeature(f.layer, { id: f.id, cc: f.cc }) : undefined}
                       meta={(
                         <span className="dtile-meta">
@@ -1039,7 +1138,7 @@ export function DestinationPage({
                   )}
                 />
               )}
-              {hasRoutes && <RoutesFromHere routes={routeRows} t={t} onOpen={onOpenFeature} limit={3} />}
+              {hasRoutes && <RoutesFromHere routes={routeRows} t={t} onOpen={onOpenFeature} limit={3} brief credits={false} />}
               {!hasRoutes && !hasAround && (
                 // pipeline/trails/attach.py MAX_KM (25 km to the line) and
                 // pipeline/dossier/build_dossier.py AROUND_KM (20 km).
@@ -1058,9 +1157,9 @@ export function DestinationPage({
 
           {settled && show.getting && (
             <Section id="getting" title={t('dest.gettingTitle')}>
-              {getting && <GettingThere getting={getting} t={t} />}
+              {getting && <GettingThere getting={lang === 'en' ? getting : { ...getting, why: null }} t={t} />}
               {!has.getting && <div className="sec-none" data-testid="section-none"><p>{t('dest.gettingNone', { city })}</p></div>}
-              {rhythm && <p className="destp-rhythm">{rhythm}</p>}
+              {rhythm && lang === 'en' && <p className="destp-rhythm">{rhythm}</p>}
               {bookAhead.length > 0 && (
                 <p className="destp-bookahead">
                   <AlertIcon size={16} className="destp-bookahead-icon" />
@@ -1089,13 +1188,19 @@ export function DestinationPage({
                         className="dtrip2"
                         {...opener}
                         media={<FeaturePhoto src={tr.image?.url} lat={tr.lat} lon={tr.lon} />}
-                        title={tr.name}
+                        title={cleanName(tr.name)}
                         meta={(
                           <span className="dtile-meta">
                             {itin ? (
                               <span>{t('dest.tripDays', { n: tr.days || 0 })}</span>
                             ) : tr.travel?.minutes != null && (
-                              <span>{t('dest.minutesBy', { n: tr.travel.minutes, mode: t(`mode.${tr.travel.mode}`) })}</span>
+                              // A time from the trip model, not a routed one,
+                              // is an estimate and says so (T446).
+                              <span>
+                                {tr.travel.source === 'routed'
+                                  ? t('dest.minutesBy', { n: tr.travel.minutes, mode: t(`mode.${tr.travel.mode}`) })
+                                  : `~${t('dest.minutesBy', { n: tr.travel.minutes, mode: t(`mode.${tr.travel.mode}`) })} ${t('money.est')}`}
+                              </span>
                             )}
                             {tr.dist_km != null && <span>{`${tr.dist_km} km`}</span>}
                           </span>
@@ -1110,7 +1215,7 @@ export function DestinationPage({
               )}
               {/* D7: the villages inside this area, from B1's members. */}
               {members?.length > 0 && (
-                <div className="destp-members">
+                <div className="destp-villages">
                   <h3 className="destp-subhead">{t('dest.membersInside', { city })}</h3>
                   <MemberPlaces members={members} focusName={memberFocus} t={t} />
                 </div>
@@ -1125,7 +1230,7 @@ export function DestinationPage({
                 <Fold level={2}
                   id="sec-rating"
                   icon={StarIcon}
-                  title={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}
+                  title={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}
                   summary={verdictBand}
                   open={isOpen('rating')}
                   onToggle={() => toggle('rating')}
@@ -1245,18 +1350,17 @@ export function DestinationPage({
                       <h3 className="destp-subhead">{t('explore.parkTitle')}</h3>
                       {webPark && (
                         <div className="dpark-web">
-                          <p className="dpark-web-head"><CheckIcon size={12} />{t('dest.parkChecked', { date: webPark.checked })}</p>
+                          <p className="dpark-web-head"><CheckIcon size={12} />{t('dest.parkChecked', { date: fmtDate(webPark.checked) })}</p>
                           {webPark.restricted && (
-                            <p className="dpark-web-line is-warn">{t('dest.parkRestricted')}{webPark.restricted_note ? ` ${webPark.restricted_note}` : ''}</p>
+                            <p className="dpark-web-line is-warn">{t('dest.parkRestricted')}</p>
                           )}
-                          {webPark.advice && <p className="dpark-web-line">{webPark.advice}</p>}
                           {webPark.car_parks?.length > 0 && (
                             <p className="dpark-web-line">
-                              <b>{t('dest.parkCityNamed')}:</b> {webPark.car_parks.map((c) => c.name + (c.note ? ` (${c.note})` : '')).join(', ')}
+                              <b>{t('dest.parkCityNamed')}:</b> {webPark.car_parks.map((c) => cleanName(c.name)).join(', ')}
                             </p>
                           )}
                           {webPark.park_ride_names?.length > 0 && (
-                            <p className="dpark-web-line"><b>{t('explore.park.park_ride')}:</b> {webPark.park_ride_names.join(', ')}</p>
+                            <p className="dpark-web-line"><b>{t('explore.park.park_ride')}:</b> {webPark.park_ride_names.map(cleanName).join(', ')}</p>
                           )}
                           {safeUrl(webPark.official_url) && (
                             <a className="dpark-web-link" href={safeUrl(webPark.official_url)} target="_blank" rel="noreferrer noopener"><LinkIcon size={12} />{t('dest.parkOfficial')}</a>
@@ -1270,7 +1374,7 @@ export function DestinationPage({
                             <li className="destp-park" key={`${s.lat}|${s.lon}`}>
                               <span className="destp-park-main">
                                 <span className="destp-park-name">
-                                  {s.name || t('explore.parkUnnamed')}
+                                  {s.name ? cleanName(s.name) : t('explore.parkUnnamed')}
                                   {confirmed && <span className="dpark-ok"><CheckIcon size={10} />{t('dest.parkVerified')}</span>}
                                 </span>
                                 <span className="destp-park-sub">
@@ -1330,6 +1434,18 @@ export function DestinationPage({
               </div>
               <p className="destp-exits-note">{t('prov.bookingNote')}</p>
             </section>
+          )}
+
+          {/* The sources the page owes, in one line before the utility row
+              (T446): the route data's licence and the live forecast. They
+              used to sit under their sections as method lines. */}
+          {settled && (hasRoutes || weatherOn) && (
+            <div className="destp-sources">
+              <p>
+                {[hasRoutes && t('dest.routesCredit'), weatherOn && t('explore.weatherCredit')].filter(Boolean).join(' ')}
+              </p>
+              {hasRoutes && <CreditFold t={t} licenceKeys={['credit.licence.routes']} />}
+            </div>
           )}
 
           {/* The page-end utility row (carta-design "Detail page grammar"):

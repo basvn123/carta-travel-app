@@ -4542,7 +4542,7 @@ export const en = {
   "dest.collapseAll": "Collapse all",
   "dest.nav.highlights": "Highlights",
   "dest.nav.around": "Around",
-  "dest.nav.trips": "Trips",
+  "dest.nav.trips": "Day trips",
   "dest.nav.park": "Parking",
   "dest.parkSource": "Locations and fees come from OpenStreetMap contributors and can be out of date. Check the operator before relying on a fee.",
   "dest.parkChecked": "Checked against the city's own sources on {date}",
@@ -6325,4 +6325,9 @@ export const en = {
   "dest.packSummaryFor": "Packing for {month}",
   "dest.membersInside": "Villages and towns inside {city}",
   "dest.trackLong": "{km} km long",
+  "dest.routesFrom": "{km} {dir} of the centre",
+  "dest.ascentUp": "{m} m up",
+  "glossary.estimate.term": "est.",
+  "glossary.estimate.text": "Part of this figure is not measured in this town yet, so a national figure stands in. A guide, not a quote.",
+  "dest.priceCarHire": "Car hire is extra, about {eur} a day.",
 };

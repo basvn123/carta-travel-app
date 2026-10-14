@@ -137,7 +137,7 @@
 }
 .destp-v3 .destp-score:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .destp-v3 .destp-short {
-  max-width: var(--measure);
+  max-width: min(var(--measure), 58ch);
   margin: var(--space-3) 0 0;
   font-size: var(--text-lead);
   font-weight: 400;
@@ -218,7 +218,7 @@
   line-height: var(--leading-tight);
   color: var(--text);
 }
-.dprice-day .money-est { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+.dprice-day .money-est { font-size: var(--text-label); font-weight: 500; color: var(--text-3); }
 .dprice-day-unit { font-size: var(--text-body); color: var(--text-2); }
 
 .dprice-inputs {
@@ -309,7 +309,7 @@
   background: var(--surface);
 }
 .dprice-bar-stay { background: var(--text); }
-.dprice-bar-food { background: var(--neutral-300); }
+.dprice-bar-food { background: var(--kind-village); }
 
 .dprice .dprice-lines { padding: 0; }
 .dprice .frr-line { padding: var(--space-2) 0; border-top-color: var(--border-soft); }
@@ -709,7 +709,7 @@ body:has(.destp) .accom-panel.lifestyle-panel { z-index: 251; }
 .climate-lo,
 .climate-rain {
   font-family: var(--font);
-  font-size: var(--text-micro);
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   line-height: 1.15;
   white-space: nowrap;
@@ -868,3 +868,153 @@ body:has(.destp) .accom-panel.lifestyle-panel { z-index: 251; }
   .destp .maplibregl-ctrl-attrib-button { width: var(--tap); height: var(--tap); }
   .destp .destp-member-link { display: inline-flex; align-items: center; min-height: var(--tap); }
 }
+
+/* --------------------------------------------------------------------------
+   T446: the impeccable critique and audit, fixed
+   -------------------------------------------------------------------------- */
+
+/* The day line under the name, phone and tablet only: what a day here costs
+   is on the first screen. From 1024 px the sticky card carries it. */
+.destp-dayline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+  margin: var(--space-2) 0 0;
+}
+.destp-dayline .money { font-size: var(--text-title); font-weight: 700; color: var(--text); }
+.destp-dayline .money-est { font-size: var(--text-label); font-weight: 500; color: var(--text-3); }
+.destp-dayline-unit { font-size: var(--text-body); color: var(--text-2); }
+@media (min-width: 1024px) { .destp-dayline { display: none; } }
+
+/* Things to do without a photograph: one hairline list, name over kind,
+   two columns where the column is wide enough. */
+.ddo-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: var(--space-6);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.dphoto + .ddo-list { margin-top: var(--space-4); }
+@media (min-width: 680px) { .ddo-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ddo-list > li { border-top: 1px solid var(--border-soft); }
+.ddo-list-row,
+.btn.ddo-list-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-3) 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+  font-weight: 400;
+  text-align: left;
+  text-decoration: none;
+}
+.btn.ddo-list-row .btn-label { display: flex; align-items: flex-start; gap: var(--space-3); min-width: 0; }
+.ddo-list-icon { flex: none; margin-top: 2px; color: var(--text-2); }
+.ddo-list-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ddo-list-name { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-ui); overflow-wrap: break-word; }
+.ddo-list-meta { display: flex; flex-wrap: wrap; gap: 0 var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+@media (hover: hover) {
+  a.ddo-list-row:hover .ddo-list-name,
+  .btn.ddo-list-row:hover .ddo-list-name { text-decoration: underline; text-underline-offset: 3px; }
+  .btn.ddo-list-row:hover { background: none; }
+}
+a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* The routes that pass the town, brief: the name, then one line of facts. */
+.destp-v3 .drh-facts { display: flex; flex-wrap: wrap; gap: 0 var(--space-3); color: var(--text-2); font-size: var(--text-label); }
+
+/* The sources the page owes, one caption before the utility row. */
+.destp-sources { margin-top: var(--space-7); color: var(--text-2); font-size: var(--text-caption); line-height: var(--leading-ui); }
+.destp-sources p { margin: 0 0 var(--space-1); max-width: var(--measure); }
+
+/* No functional text under 11 px, no figure under 12: the crowd badge
+   (19-guide-ratings.css draws its large size at 10 px) and the month
+   strip's initials. */
+.destp .crowd-badge.lg { font-size: var(--text-caption); }
+.destp .climate-chart.has-figures .climate-name { font-size: var(--text-caption); }
+
+/* The country's rank in the rating fold is a fact in ink, not brown. */
+.destp .rb-country { color: var(--text); }
+
+/* The map credit's button on touch: one centred glyph, not a tiled one. */
+@media (pointer: coarse) {
+  .destp .maplibregl-ctrl-attrib-button { background-repeat: no-repeat; background-position: center; }
+}
+
+/* On a phone the photo tracks run to the screen's edge, so the next card
+   is cut by the screen, not 16 px inside it; the first card still lines up
+   with the heading. */
+@media (max-width: 1023px) {
+  .destp-v3 .dphoto-strip {
+    margin-inline: calc(-1 * var(--space-4));
+    padding-inline: var(--space-4);
+    scroll-padding-inline: var(--space-4);
+  }
+}
+
+/* A control that takes keyboard focus is scrolled into view below the
+   sticky section rail, never under it (T446: track cards were covered at
+   1280 px). Sections keep their own margin for the rail's jumps. */
+.destp-v3 .card-open,
+.destp-v3 .ddo-list-row,
+.destp-v3 .drh-row,
+.destp-v3 .dsec-toggle { scroll-margin-top: calc(var(--tap) + var(--space-3)); }
+
+/* --------------------------------------------------------------------------
+   T446, second round: the re-critique
+   -------------------------------------------------------------------------- */
+
+/* The selected section in the rail wears its mark, not only a tint
+   (carta-design: every selected state is a light tint with a mark). */
+.destp-v3 .srail a.is-active { text-decoration: underline; text-decoration-color: var(--select-border); text-decoration-thickness: 2px; text-underline-offset: 6px; }
+
+/* The crowd badge on the page's two colours: a neutral status chip with its
+   word, not orange and green tints outside the palette. */
+.destp .crowd-badge { --cr-ink: var(--text-2); background: var(--surface-sunken); border-color: var(--border); color: var(--text); }
+
+/* The day figure and its dot are one unit; the unit follows them. */
+.dprice-fig { display: inline-flex; align-items: baseline; gap: 2px; }
+
+/* The Stay value keeps one line; a long German label ends in an ellipsis
+   before the chevron instead of pushing it off the row. */
+.btn.dprice-input .dprice-input-value { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
+
+/* "What to bring" is a list, not chips that look tappable. */
+.destp .xp-packs { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-2) var(--space-4); }
+.destp .xp-pack { padding: 0; border: 0; border-radius: 0; background: none; color: var(--text); font-size: var(--text-body); gap: var(--space-2); }
+.destp .xp-pack svg { color: var(--text-2); }
+
+/* The village list spans the column under its heading. */
+.destp-villages .destp-subhead { margin-bottom: var(--space-1); }
+
+/* After See all, the way back at the grid's end. */
+.dphoto-all.is-end { margin-top: var(--space-3); }
+
+/* From 1024 px the page name in the bar starts on the content's gutter. */
+@media (min-width: 1024px) {
+  .destp-v3 .destp-bar-name { padding-left: max(var(--space-4), calc((100% - 1180px) / 2 + var(--space-6) - var(--space-2))); }
+}
+
+/* MapLibre's controls: no blue glow on a pointer press (its own default),
+   the house ring on keyboard focus; and on touch the enlarged credit
+   button shows no white square behind its glyph. */
+.destp-v3 .maplibregl-ctrl button:focus:not(:focus-visible),
+.destp-v3 .maplibregl-ctrl-attrib-button:focus:not(:focus-visible) { box-shadow: none; outline: none; }
+.destp-v3 .maplibregl-ctrl button:focus-visible,
+.destp-v3 .maplibregl-ctrl-attrib-button:focus-visible { box-shadow: none; outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (pointer: coarse) {
+  .destp-v3 .maplibregl-ctrl-attrib-button { background-color: transparent; }
+}
+
+/* The unit under the figure: the estimate dot ends the figure's line and
+   never sits between the figure and its unit like a separator. */
+.dprice-day-unit { flex-basis: 100%; }
