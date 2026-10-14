@@ -151,62 +151,6 @@
 
 /* --- 7. Trip styles, as the rail's first group ---------------------------- */
 
-/* --- 10. Map and list in sync (house rule): ink, never the accent -------- */
-@media (max-width: 768px) {
-  /* The map takes the phone's height under the chrome, to the nav. */
-  .explore-shell .xcontent-map .xmap {
-    height: calc(100dvh - var(--bottom-nav-h) - 236px);
-    min-height: 320px;
-  }
-}
-
-/* --- 9. Price pins from zoom 7, and the one cheapest pin ------------------ */
-.explore-shell .xmap-kpin.is-label {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  width: auto;
-  height: auto;
-  padding: 2px 6px;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.25;
-  white-space: nowrap;
-  cursor: pointer;
-  pointer-events: auto;
-}
-/* Every pin has a 44 px hit box whatever its drawn size. */
-.explore-shell .xmap-kpin.is-label::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--tap);
-  height: var(--tap);
-  transform: translate(-50%, -50%);
-}
-.explore-shell .xmap-kpin-label { display: inline-flex; align-items: baseline; gap: var(--space-2); }
-.explore-shell .xmap-kpin-eur { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
-.explore-shell .xmap-kpin.is-cheapest {
-  z-index: 2;
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-fill);
-}
-.explore-shell .xmap-kpin.is-ringed { z-index: 3; outline: 2px solid var(--ink); outline-offset: 2px; }
-.explore-shell .xmap-kpin.is-label:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-/* The day cost in the name tip and the pin card. */
-.xmap-pop-eur,
-.xmap-card-eur-line { font-size: 12px; color: var(--ink-soft); }
-.xmap-pop-eur .mono,
-.xmap-card-eur-line .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
-.xmap-card-eur { margin: 2px 0 0; }
-
 /* --- 11. Empty states that name the cause -------------------------------- */
 .explore-shell .xempty {
   display: flex;
@@ -221,6 +165,7 @@
 /* --- 12. "Score key", a word instead of a bare "?" ----------------------- */
 
 /* --- 13. The floating List/Map switch never covers the last card --------- */
+/* (Its own rules are in the T441 block at the end of this file.) */
 @media (max-width: 768px) {
   .explore-shell .explore-wrap {
     padding-bottom: calc(var(--tap) + var(--space-7) + env(safe-area-inset-bottom, 0px));
@@ -410,25 +355,7 @@
 
 /* --- 4. State that answers at once, and nothing decorative moving ------- */
 
-.explore-shell .xbar .xview-toggle button {
-  transition: background-color var(--dur-1) var(--ease-out),
-    border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
 /* The grid dims while a filter change is pending; it never spins. */
-/* The map frame holds --paper-dim and the canvas crossfades in once drawn. */
-.explore-shell .xmap { background: var(--paper-dim); }
-.explore-shell .xmap .xmap-canvas { opacity: 0; transition: opacity var(--dur-3) var(--ease-out); }
-.explore-shell .xmap.is-ready .xmap-canvas { opacity: 1; }
-
-/* --- 5. The pin that becomes the cheapest in view settles from 0.9 -------
-   The individual scale property composes with the pin's centring
-   transform, so the label does not jump. One class per render: two pins are
-   never emphasised at once. */
-.explore-shell .xmap-kpin.is-cheapest { animation: xpin-in var(--dur-1) var(--ease-out); }
-@keyframes xpin-in {
-  from { scale: 0.9; }
-  to { scale: 1; }
-}
 
 /* --- 6 and 7. Rails: position, snap, one photograph shape, no lift ------- */
 
@@ -463,12 +390,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .explore-shell .railcard,
-.explore-shell .xchip,
-.explore-shell .xbar .xview-toggle button,
-.explore-shell .xmap .xmap-canvas { transition: none; }
+.explore-shell .xchip { transition: none; }
   .explore-shell .xcard-preview.xpop,
-  .explore-shell .xchip,
-  .explore-shell .xmap-kpin.is-cheapest { animation: none; }
+.explore-shell .xchip { animation: none; }
 }
 
 /* A card whose overflow is visible (so its popover can sit beside it) would
@@ -511,43 +435,6 @@
   overflow-wrap: anywhere;
 }
 .explore-shell .railcard-head { align-items: flex-start; }
-
-/* --- 5. The map did not load -------------------------------------------- */
-.explore-shell .xmap-failed {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  text-align: center;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  font-size: 14px;
-}
-.explore-shell .xmap-failed p { margin: 0; max-width: 28ch; }
-.explore-shell .xmap-failed-back {
-  min-height: var(--tap);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-family: var(--ui);
-  font-weight: 600;
-  cursor: pointer;
-}
-.explore-shell .xmap-failed-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-/* --- 9. The map frame follows the dynamic viewport -----------------------
-   vh ignores a collapsing address bar; dvh does not (design wave rules,
-   phone first). */
-.explore-shell .xmap { height: min(72dvh, 760px); }
-@media (min-width: 769px) {
-  .explore-shell .xcontent-map .xmap { height: 64dvh; }
-}
 
 /* T411: the cut chips reach the tap floor on touch wherever they are drawn
    (the quality floor measured 34 px), and the country page's facts stand
@@ -890,3 +777,284 @@
 .explore-shell .xfilters-btn { flex: none; }
 .explore-shell .xfilters-n { margin-left: var(--space-1); }
 .explore-shell .xcountry-link { margin: 0 0 var(--space-3); }
+
+/* ==========================================================================
+   T441 (the owner's review of 2026-10-13: "the map loads too long, then you
+   only see numbers"): the map on roles. Ink dots and price labels from the
+   opening view, the one cheapest in view in sun, a full-height map on a
+   phone, and the List/Map switch on the kit, floating above the bottom nav.
+   The old map, card and switch rules were deleted from 25 and this file in
+   the same commit.
+   ========================================================================== */
+
+/* --- The feed: the list alone, or the list beside a sticky map ---------- */
+.explore-shell .xcontent { display: block; min-width: 0; }
+.explore-shell .xcontent-main { min-width: 0; }
+/* Kept mounted after its first open; hidden while the list shows. */
+.explore-shell .xcontent-map[hidden] { display: none; }
+@media (min-width: 769px) {
+  .explore-shell .xcontent--split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 46%);
+    gap: var(--space-5);
+    align-items: start;
+  }
+  /* The map is first in the DOM for the keyboard (T190); the grid draws it
+     on the right. */
+  .explore-shell .xcontent--split .xcontent-map {
+    position: sticky;
+    top: var(--space-3);
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .explore-shell .xcontent--split .xcontent-main { grid-column: 1; grid-row: 1; }
+}
+@media (min-width: 1440px) {
+  .explore-shell .xcontent--split { grid-template-columns: minmax(0, 1fr) minmax(520px, 54%); }
+}
+@media (max-width: 768px) {
+  .explore-shell .xcontent--split .xcontent-main { display: none; }
+}
+
+/* --- The frame: sunken while it loads, the canvas fades in -------------- */
+.explore-shell .xmap {
+  position: relative;
+  height: min(72dvh, 760px);
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+/* Absolute, so the canvas takes the frame's box even where the frame is
+   sized by flex (the phone), which a percentage height cannot resolve. */
+.explore-shell .xmap-canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+.explore-shell .xmap.is-ready .xmap-canvas { opacity: 1; }
+.explore-shell .xmap-skel .state-skel { height: 100%; padding: 0; }
+.explore-shell .xmap-skel .state-skel-item { height: 100%; border-radius: 0; }
+@media (min-width: 769px) {
+  /* The whole frame in view under the top band, and still whole once it
+     sticks as the list scrolls. */
+  .explore-shell .xcontent-map .xmap {
+    height: calc(100dvh - var(--filter-h) - 2 * var(--space-8));
+    min-height: 420px;
+  }
+}
+@media (max-width: 768px) {
+  /* Full bleed and full height on a phone: under the search row the map
+     fills the scroller to the bottom nav, edge to edge, like the map apps
+     it sits beside. The sort and the guides strip only order and annotate
+     the list, so the map view leaves them out; the filter chips stay. */
+  .explore-shell.is-map .explore-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding-bottom: 0;
+  }
+  .explore-shell.is-map .xbar-tools,
+  .explore-shell.is-map .gld-strip,
+  .explore-shell.is-map .xcountry-link { display: none; }
+  /* The bar keeps the page's (visually hidden) h1 and gives up its space. */
+  .explore-shell.is-map .xbar { margin: 0; padding: 0; }
+  .explore-shell.is-map .xcontent,
+  .explore-shell.is-map .xcontent-map { display: flex; flex: 1 1 auto; flex-direction: column; }
+  .explore-shell .xcontent-map { margin: 0 calc(-1 * var(--space-4)); }
+  .explore-shell .xcontent-map .xmap {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 360px;
+    border: 0;
+    border-radius: 0;
+  }
+  /* maplibre-gl.css loads after this file (with the map), so the zoom
+     buttons need the extra class to win. */
+  .explore-shell .xmap .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
+}
+.explore-shell .xmap-failed {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-body);
+  text-align: center;
+}
+.explore-shell .xmap-failed p { margin: 0; max-width: 28ch; }
+
+/* --- The keyboard layer: one real button per pin in view ----------------
+   Transparent and pointer-events none (the mouse talks to the canvas), each
+   centred on its dot so the focus ring lands on what the reader sees. */
+.explore-shell .xmap-kpins { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.explore-shell .xmap-kpin {
+  position: absolute;
+  width: var(--kpin-d, 16px);
+  height: var(--kpin-d, 16px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.explore-shell .xmap-kpin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* --- Price labels (house rule "Price pins"): the name at 500, the figure
+   semibold, on the surface with a border edge. ExploreMap.jsx estimates the
+   same box for its collision check (LABEL_BOX_W, LABEL_H). ------------- */
+.explore-shell .xmap-kpin.is-label {
+  display: inline-flex;
+  align-items: baseline;
+  width: auto;
+  height: auto;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+}
+/* Every pin has a 44 px hit box whatever its drawn size. */
+.explore-shell .xmap-kpin.is-label::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--tap);
+  height: var(--tap);
+  transform: translate(-50%, -50%);
+}
+.explore-shell .xmap-kpin-label { display: inline-flex; align-items: baseline; gap: var(--space-1); }
+.explore-shell .xmap-kpin-eur { font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (hover: hover) {
+  .explore-shell .xmap-kpin.is-label:hover { border-color: var(--text-3); }
+}
+/* The one cheapest in view: the best-value marker, ink on sun. */
+.explore-shell .xmap-kpin.is-cheapest {
+  z-index: 2;
+  border-color: var(--best);
+  background: var(--best);
+  color: var(--text);
+  animation: xpin-in var(--dur-1) var(--ease-out);
+}
+/* The card under the pointer or in focus in the list rings its pin. */
+.explore-shell .xmap-kpin.is-ringed { z-index: 3; outline: 2px solid var(--text); outline-offset: 2px; }
+/* Settles from 0.9: the scale property composes with the centring
+   transform, so the label does not jump. */
+@keyframes xpin-in {
+  from { scale: 0.9; }
+  to { scale: 1; }
+}
+
+/* --- The tip and the card a pin opens ---------------------------------- */
+/* Above the price labels, which come later in the frame: a label under the
+   card must not catch the tap meant for the card. */
+.explore-shell .xmap .maplibregl-popup { z-index: 4; }
+.explore-shell .xmap .maplibregl-popup-content {
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+.explore-shell .xmap .maplibregl-popup-close-button { display: none; }
+.explore-shell .xmap-pop {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
+  color: var(--text);
+}
+.explore-shell .xmap-pop strong { margin-right: var(--space-2); font-weight: 600; }
+.explore-shell .xmap-pop-score { font-weight: 600; font-variant-numeric: tabular-nums; }
+.explore-shell .xmap-pop-sub { color: var(--text-2); }
+.explore-shell .xmap-pop-eur,
+.explore-shell .xmap-card-eur-line { font-size: var(--text-caption); color: var(--text-2); }
+.explore-shell .xmap-fig { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+.explore-shell .xmap-card-hit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.explore-shell .xmap-card-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.explore-shell .xmap-card { width: 232px; font-size: var(--text-label); line-height: var(--leading-ui); }
+.explore-shell .xmap-card-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+.explore-shell .xmap-card-body { padding: var(--space-2) var(--space-3) var(--space-3); }
+.explore-shell .xmap-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.explore-shell .xmap-card-name {
+  overflow: hidden;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.explore-shell .xmap-card-score {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.explore-shell .xmap-card-score svg { width: 1.05em; height: 1.05em; color: var(--rate); }
+.explore-shell .xmap-card-score.rt-0 svg { color: var(--text-3); }
+.explore-shell .xmap-card-sub { margin: 2px 0 0; font-size: var(--text-caption); color: var(--text-2); }
+.explore-shell .xmap-card-eur { margin: var(--space-1) 0 0; }
+.explore-shell .xmap-card-lead {
+  display: -webkit-box;
+  margin: var(--space-1) 0 0;
+  overflow: hidden;
+  font-size: var(--text-caption);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* --- The phone's List/Map switch: the kit Segmented, floating ----------- */
+.explore-shell .xview-fab { display: none; }
+@media (max-width: 768px) {
+  .explore-shell .xview-fab {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+    z-index: var(--z-overlay);
+    display: block;
+    transform: translateX(-50%);
+  }
+  .explore-shell .xview-fab .seg { box-shadow: var(--elev-2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xmap-canvas { transition: none; }
+  .explore-shell .xmap-kpin.is-cheapest { animation: none; }
+}

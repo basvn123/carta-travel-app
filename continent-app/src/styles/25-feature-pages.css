@@ -1688,61 +1688,11 @@
 /* --- tier legend (PLAN.md C8) ------------------------------------------- */
 
 /* --- Explore map view (PLAN.md C7) --------------------------------------- */
-.xview-toggle {
-  display: inline-flex;
-  border: 1px solid var(--rule-soft);
-  border-radius: 8px;
-  overflow: hidden;
-  margin-left: auto;
-}
-.xgrid-head .xview-toggle + .xgrid-sort { margin-left: 0; }
-.xview-toggle button {
-  font: inherit;
-  font-size: 12.5px;
-  padding: 5px 12px;
-  border: 0;
-  background: var(--bg-card);
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-.xview-toggle button.on { background: var(--select-bg); color: var(--select-ink); }
-.xmap {
-  position: relative;
-  height: min(72vh, 760px);
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--rule-soft);
-  margin: 0 0 14px;
-}
-.xmap-canvas { width: 100%; height: 100%; }
 /* T193: the map's skeleton fills the frame the canvas will fill. */
-.xmap-skel .state-skel { height: 100%; padding: 0; }
-.xmap-skel .state-skel-item { height: 100%; border-radius: 0; }
 /* T190: the keyboard layer over the WebGL pins (ExploreMap.jsx). One
    transparent button per pin in view, centred on it and sized to it, so the
    house ring lands on the dot. Pointer events pass through to the canvas:
    the mouse and a finger keep talking to the map exactly as before. */
-.xmap-kpins { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.xmap-kpin {
-  position: absolute;
-  width: var(--kpin-d, 16px);
-  height: var(--kpin-d, 16px);
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.xmap-kpin:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.xmap-pop { font-size: 12.5px; line-height: 1.35; }
-.xmap-pop strong { font-size: 13px; margin-right: 6px; }
-.xmap-pop-sub { color: var(--slate-mute); }
-.xmap-pop-score {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.xmap-pop-score.rt-3, .xmap-pop-score.rt-2 { color: var(--rate); }
  /* display:grid beats the hidden attr otherwise */
 
 /* --- country pages (PLAN.md C9) ------------------------------------------ */
@@ -1981,32 +1931,7 @@
 .xbar .explore-mock { margin: 0; align-self: flex-start; }
 .xbar-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-.xbar .xview-toggle {
-  margin-left: 0;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--bg-card);
-  overflow: visible;
-}
-.xbar .xview-toggle button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 13px;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink-soft);
-  font-weight: 600;
-  transition: background .15s, color .15s;
-}
-@media (hover: hover) {
-  .xbar .xview-toggle button:hover { color: var(--ink); }
-}
-.xbar .xview-toggle button.on { background: var(--select-bg); color: var(--select-ink); }
-.xbar .xview-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 
 .xbar .xgrid-sort { margin-left: 0; gap: 8px; color: var(--ink-mute); }
 .xgrid-sort-field { position: relative; display: inline-flex; align-items: center; }
@@ -2082,34 +2007,9 @@
 .xcard-preview-rank { margin: 0; font-size: 11.5px; font-weight: 600; color: var(--rate-bg); }
 
 /* --- the feed: grid alone, or grid beside a sticky map ------------------- */
-.xcontent { display: block; min-width: 0; }
-.xcontent-main { min-width: 0; }
-@media (min-width: 769px) {
-  .xcontent--split {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 46%);
-    gap: 20px;
-    align-items: start;
-  }
-  .xcontent-map { position: sticky; top: 12px; }
-  /* The map is first in the DOM for the keyboard (ExploreTab.jsx, T190);
-     the grid still draws it on the right. */
-  .xcontent--split .xcontent-map { grid-column: 2; grid-row: 1; }
-  .xcontent--split .xcontent-main { grid-column: 1; grid-row: 1; }
-  .xcontent-map .xmap {
-    height: calc(100dvh - var(--filter-h) - 36px);
-    margin: 0;
-    border-radius: 16px;
-    box-shadow: var(--shadow-1);
-  }
-}
-@media (min-width: 769px) and (max-width: 1180px) {
-  .xcontent--split { grid-template-columns: minmax(0, 1fr) minmax(300px, 44%); }
-}
-@media (max-width: 768px) {
-  .xcontent--split .xcontent-main { display: none; }
-  .xcontent-map .xmap { height: 64vh; min-height: 380px; margin: 0; border-radius: 14px; }
-}
+
+
+
 
 /* --- the phone: two-up cards, the bar without its title, a floating switch */
 
@@ -2127,49 +2027,14 @@
     white-space: nowrap;
     border: 0;
   }
-  .xbar .xview-toggle { display: none; }
   .xbar .xgrid-sort select { height: var(--tap); }
   /* T193: the 44px tap floor on the phone. Chips and toggles grow; the two
      small text controls keep their look and take a transparent tap box. */
   .xchip { min-height: var(--tap); }
   .xrails-all { position: relative; }
   .xrails-all::before { content: ''; position: absolute; inset: -11px -6px; }
-  /* maplibre-gl.css loads after this file (lazily, with the map), so the
-     zoom buttons need the extra class to win. */
-  .xmap .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
 }
-.xview-fab { display: none; }
 @media (max-width: 768px) {
-  .xview-fab {
-    position: fixed;
-    right: 14px;
-    bottom: calc(var(--bottom-nav-h) + 14px);
-    z-index: 40;
-    display: inline-flex;
-    gap: 2px;
-    margin: 0;
-    padding: 3px;
-    border: 1px solid var(--ink);
-    border-radius: 999px;
-    background: var(--ink);
-    box-shadow: var(--shadow-2);
-  }
-  .xview-fab button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: var(--tap);
-    padding: 0 14px;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    font: inherit;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.72);
-  }
-  .xview-fab button.on { background: var(--paper); color: var(--ink); }
-  .xview-fab button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   /* The floating switch covers the bottom of the feed. Telling the scroller
      so makes a control that takes keyboard focus down there scroll up clear
      of it, instead of being focused underneath it (T190). */
@@ -2200,8 +2065,7 @@
    so the sheet's own "Show N places" stays its one primary (T193). */
 
 @media (prefers-reduced-motion: reduce) {
-  .railcard,
-.xbar .xview-toggle button { transition: none; }
+  .railcard { transition: none; }
   .railcard:hover { transform: none; }
 }
 
@@ -3206,65 +3070,8 @@
 /* --- P4.5 the map card ---------------------------------------------------
    Zoomed in, a pin opens as a small card: the photo, the place, the rating
    and one line of what it is known for. */
-.xmap-card { width: 216px; font-size: 12.5px; line-height: 1.35; }
-.xmap-card-img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  background: var(--paper-dim);
-}
-.xmap-card-body { padding: var(--space-2) 10px 10px; }
-.xmap-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
-.xmap-card-name {
-  font-family: var(--display);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.xmap-card-sub { margin: 2px 0 0; font-size: 11.5px; color: var(--ink-mute); }
-.xmap-card-lead {
-  margin: var(--space-1) 0 0;
-  font-size: 11.5px;
-  line-height: 1.4;
-  color: var(--ink-soft);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.xmap-card-score {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 3px 7px;
-  border-radius: 999px;
-  flex: none;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-}
 /* The map card score is the Score drawn as a string (T437): ink, a star. */
-.xmap-card-score { display: inline-flex; align-items: center; gap: var(--space-1); background: none; color: var(--text); }
-.xmap-card-score svg { width: 1.05em; height: 1.05em; color: var(--rate); }
-.xmap-card-score.rt-0 svg { color: var(--text-3); }
 /* The popup IS the card: maplibre own padding would box it twice. */
-.xmap .maplibregl-popup-content { padding: 0; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-2); }
-.xmap .maplibregl-popup-close-button { display: none; }
-.xmap-card-hit {
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  font: inherit;
-}
 
 /* The thumbnail on "Best things to do" (P4.4). The card becomes a photo
    beside its text; where the shard has no photograph of the place, the
