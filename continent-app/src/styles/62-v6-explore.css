@@ -80,16 +80,6 @@
     gap: var(--space-2);
     margin: 0 0 var(--space-2);
   }
-  .explore-shell .xtop .explore-search {
-    position: relative;
-    display: flex;
-    align-items: center;
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: none;
-    margin: 0;
-  }
-  .explore-shell .xtop .explore-search .results-search-input { height: var(--tap); font-size: 16px; }
   .explore-shell .xtop .places-filter-btn {
     flex: none;
     width: auto;
@@ -98,25 +88,7 @@
   }
 }
 /* The search clear is the house close control: CloseIcon in a --tap box. */
-.explore-shell .explore-search .results-search-clear {
-  right: 0;
-  width: var(--tap);
-  height: var(--tap);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--ink-soft);
-}
-@media (pointer: fine) and (min-width: 769px) {
-  .explore-shell .explore-search .results-search-clear,
-  .header-search-slot .explore-search .results-search-clear {
-    right: 4px;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--ink-soft);
-  }
-}
+
 
 /* --- 5 and 8. The price on the card, with its pedigree word -------------
    Line 1: name, score, then the day cost; line 2: where, what size, and the
@@ -1057,4 +1029,214 @@
 @media (prefers-reduced-motion: reduce) {
   .explore-shell .xmap-canvas { transition: none; }
   .explore-shell .xmap-kpin.is-cheapest { animation: none; }
+}
+
+/* ==========================================================================
+   T442 (the owner's review of 2026-10-13: "a search people would use,
+   accurate, and the user can only ask this"): the guided search. A field-
+   shaped door that reads the question back, and a panel with one field
+   that only completes what Carta can answer, example questions, and five
+   slots, label over value. Roles and scales only; the kit draws every
+   control. The old free text field's rules were deleted from 15, 24 and
+   this file in the same commit. Not scoped to .explore-shell: the door
+   portals into the header and the panel into the body.
+   ========================================================================== */
+
+/* --- The door: reads like a field, holds the question ------------------- */
+.gsearch {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.btn.gsearch-trigger {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border-color: var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 500;
+  text-align: left;
+}
+.gsearch-trigger .btn-icon { color: var(--text-2); }
+.gsearch-trigger .btn-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gsearch-placeholder { color: var(--text-3); font-weight: 400; }
+.gsearch-summary { color: var(--text); font-weight: 600; }
+@media (hover: hover) {
+  .btn.gsearch-trigger:hover { border-color: var(--text-3); background: var(--surface); }
+}
+/* The clear control sits inside the field's right edge, so the question
+   keeps the width (the phone cut it to two words beside a separate one). */
+.gsearch.has-value .btn.gsearch-trigger { padding-right: calc(var(--tap) + var(--space-1)); }
+.gsearch-clear { position: absolute; top: 50%; right: 0; transform: translateY(-50%); }
+.header-search-slot .gsearch { flex: 1 1 auto; }
+.header-search-slot .btn.gsearch-trigger { min-height: 40px; }
+@media (max-width: 768px) {
+  .explore-shell .xtop .gsearch { flex: 1 1 auto; }
+  .explore-shell .xtop .btn.gsearch-trigger { font-size: var(--text-lead); }
+}
+
+/* --- The panel: white, full height on a phone --------------------------- */
+.fsheet.gsearch-sheet { background: var(--surface); }
+.gsearch-sheet .fsheet-body { padding: var(--space-4) var(--space-4) 0; }
+@media (max-width: 768px) {
+  .fsheet.gsearch-sheet { height: 92dvh; }
+}
+.gs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 100%;
+}
+.gs-h {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text-2);
+}
+.gs-hint { margin: var(--space-2) 0 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text-2); }
+
+/* The one field. */
+.gs-field { position: relative; display: flex; align-items: center; }
+.gs-field-icon { position: absolute; left: var(--space-4); color: var(--text-2); pointer-events: none; }
+.gs-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 52px 0 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-lead);
+}
+.gs-input::placeholder { color: var(--text-3); }
+.gs-input:focus { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--focus); }
+.gs-field-clear { position: absolute; right: var(--space-1); }
+
+/* The answers it offers, and the words it cannot place. */
+.gs-options { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.gs-option {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+.gs-option.is-active { background: var(--select-bg); }
+.gs-option-icon { display: inline-flex; color: var(--text-2); }
+.gs-option.is-active .gs-option-icon { color: var(--select-ink); }
+.gs-option-main { display: flex; flex-direction: column; min-width: 0; }
+.gs-option-label {
+  overflow: hidden;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gs-option-sub { font-size: var(--text-caption); color: var(--text-2); }
+.gs-option-slot { font-size: var(--text-caption); color: var(--text-3); white-space: nowrap; }
+.gs-option.is-active .gs-option-slot { color: var(--select-ink); }
+.gs-cant {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.gs-cant-line { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.gs-cant-help { margin: var(--space-1) 0 0; font-size: var(--text-label); color: var(--text-2); }
+
+/* "Try one": questions that answer today. */
+.gs-try-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  gap: var(--space-2);
+}
+.btn.gs-try-item {
+  justify-content: flex-start;
+  min-height: 52px;
+  padding: var(--space-2) var(--space-3);
+  font-weight: 500;
+  text-align: left;
+}
+.gs-try-item .btn-icon { color: var(--text-2); }
+.gs-try-item .btn-label { white-space: normal; line-height: var(--leading-ui); }
+
+/* The five slots: the booking bar's grammar, label over value. */
+.gs-tabs.ui-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  border-bottom-color: var(--border-soft);
+}
+.gs-tabs .ui-tab {
+  justify-content: flex-start;
+  min-width: 0;
+  min-height: 56px;
+  padding: var(--space-2) var(--space-2) var(--space-3);
+  text-align: left;
+}
+.gs-tabs .ui-tab + .ui-tab { border-left: 1px solid var(--border-soft); }
+.gs-slot { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-width: 0; }
+.gs-slot-k { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.gs-slot-v {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gs-tabs .ui-tab:not(.is-selected) .gs-slot-v { color: var(--text-2); }
+@media (max-width: 560px) {
+  .gs-tabs.ui-tabs { display: flex; overflow-x: auto; }
+  .gs-tabs .ui-tab { flex: 0 0 auto; min-width: 112px; }
+}
+
+/* A slot's choices. */
+.gs-panel { padding: var(--space-1) 0 var(--space-4); }
+.gs-vibes .ui-tile { min-height: 84px; }
+@media (max-width: 560px) {
+  .gs-vibes.ui-tile-group { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.gs-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.gs-group { margin-top: var(--space-5); }
+.gs-extras { display: flex; flex-direction: column; }
+
+/* The foot stays in reach while the choices scroll. */
+.gs-foot {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding: var(--space-3) 0 calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface);
+}
+.gs-foot-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.gs-none { margin: 0; font-size: var(--text-label); color: var(--text); }
+
+/* --- The answer: why each place fits the question ---------------------- */
+.explore-shell .xrow-why {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
