@@ -6,8 +6,9 @@ import { useI18n } from '../i18n/index.jsx';
  *
  * A drawn star and the figure in ink, tabular, on no fill: the form a
  * traveller already reads from every travel app, and one that can never be
- * mistaken for a button. The tier shows in the star itself: filled from the
- * second tier up, outlined below it, so the band reads without a word. Where
+ * mistaken for a button. The star is always filled (owner, 2026-10-14, T447:
+ * an outlined star below the second tier read as "not rated"); below the
+ * first band it is grey rather than brown (19-guide-ratings.css). Where
  * a page has room (the destination head, a preview), `band` adds the band's
  * word through i18n, never the English label the data carries.
  *
@@ -53,7 +54,7 @@ export function ScoreChip({ rating, size = 'sm', band = false }) {
   const aria = word ? `${t('score.aria', { n: figure })}, ${word}` : t('score.aria', { n: figure });
   return (
     <span className={`score-chip ${tierClass(rating)} ${size}`} role="img" aria-label={aria} title={aria}>
-      <Star filled={tier >= 2} />
+      <Star filled />
       <span className="score-chip-n" aria-hidden="true">{figure}</span>
       {word && <span className="score-chip-band" aria-hidden="true">{word}</span>}
     </span>
