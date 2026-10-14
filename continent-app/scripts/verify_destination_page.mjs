@@ -1,23 +1,31 @@
-// Headless verify for the full-screen destination page v2
-// (browse/DestinationPage.jsx) and its PDF download (lib/destinationPdf.js),
-// both rendered from the dossier contract in public/dossier/.
+// Headless verify for the full-screen destination page v3
+// (browse/DestinationPage.jsx, T429) and its PDF download
+// (lib/destinationPdf.js), both rendered from the dossier contract in
+// public/dossier/.
 //
 //   npm run build, then: node scripts/verify_destination_page.mjs
 //
-// Spawns its own vite preview (dist/, port 4207). The contract:
+// Spawns its own vite preview (dist/, port 4207), or uses CARTA_PORT. Build
+// with `npm run build` (local data): a build:pages bundle fetches its data
+// from the live data host, which does not answer localhost. The contract:
 //
 //   both      opening a card covers the screen with .destp; the gallery has
-//             photographs and none of them is broken; the short intro reads
-//             from our own facts; the four-fact strip renders; the folding
-//             sections exist and a closed one carries a summary; highlights,
-//             things to do, around-here rows, day trips, tips, parking and
-//             explore-further render (after "expand all"); the rating
-//             breakdown v2 renders; every picture on the page loaded (no
-//             naturalWidth 0); no em dash or middot anywhere in the text;
-//             Escape closes it.
+//             photographs, each named in full under it (no position figure);
+//             the short intro reads from our own facts; the key facts band
+//             renders; the price card prints the same day figure as the card
+//             and the pin, its total is the sum of its lines, and it carries
+//             the page's ONE primary; six sections are open with no toggle
+//             and at most five rows fold; the map mounts once scrolled to;
+//             photo tracks carry the things to do, the outdoors and the day
+//             trips; the rating breakdown renders; no method sentence, count
+//             line or "Set your dates" is left; every picture loaded; no em
+//             dash or middot anywhere; Escape closes it.
+//   lifestyle the price card's Stay opens the Lifestyle dialog ON TOP of the
+//             page, and Escape closes the dialog, not the page.
 //   phone     the back arrow is visible, the desktop cross is not, nothing
-//             scrolls horizontally, the highlight strip swipes sideways.
-//   desktop   the cross is visible, the back arrow is not; two columns.
+//             scrolls horizontally, the tracks swipe sideways.
+//   desktop   the cross is visible, the back arrow is not; two columns; at
+//             1280 x 720 the primary is in view without a scroll.
 //   hash      #dest=gem:valbona opens the page directly at boot.
 //   pdf       the export triggers a DOWNLOAD (not a print window) of a .pdf
 //             above 20 KB, saved to shots/destp_guide.pdf; or the paywall
@@ -57,6 +65,7 @@ const seed = (page) => page.addInitScript(() => {
     localStorage.setItem('continent.guestMode.v1', '1');
     localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
+    localStorage.setItem('carta.welcomeSeen.v1', '1');
   } catch { /* storage unavailable */ }
 });
 const wire = (page) => {
@@ -68,10 +77,19 @@ const wire = (page) => {
 const brokenImages = (page) => page.evaluate(() => Array.from(document.querySelectorAll('.destp img'))
   .filter((im) => im.complete && im.naturalWidth === 0 && !im.hidden)
   .map((im) => im.src.slice(0, 90)));
-const expandAll = async (page) => {
-  const btn = page.locator('.destp-subnav-all');
-  if (/expand/i.test(await btn.textContent().catch(() => ''))) await btn.click();
-  await page.waitForTimeout(900);
+// The page first, then the dossier: a check run before the page mounts
+// would find no loading block and pass too early.
+const settle = async (page) => {
+  await page.waitForSelector('.destp .destp-head', { timeout: 45000 });
+  await page.waitForFunction(() => !document.querySelector('.destp-wait'), null, { timeout: 45000 });
+};
+const scrollTo = (page, sel) => page.evaluate((s) => {
+  document.querySelector(s)?.scrollIntoView({ block: 'start' });
+}, sel);
+const openFold = async (page, id) => {
+  const t = page.locator(`#sec-${id} .dsec-toggle`);
+  if ((await t.getAttribute('aria-expanded').catch(() => 'true')) === 'false') await t.click();
+  await page.waitForTimeout(500);
 };
 
 // ── Desktop ──────────────────────────────────────────────────────────────
@@ -79,7 +97,8 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 wire(page);
 await seed(page);
 await page.goto(BASE + '#dest=gem:valbona', { waitUntil: 'domcontentloaded', timeout: 45000 });
-await page.waitForTimeout(4200);
+await settle(page);
+await page.waitForTimeout(1500);
 
 const destp = page.locator('.destp');
 check('hash #dest= opens the page at boot', await destp.isVisible());
@@ -87,50 +106,68 @@ check('city heading says Valbona', /valbona/i.test(await page.locator('.destp-ci
 
 const galleryN = await page.locator('.destp-slide').count();
 check('gallery has 5+ photographs', galleryN >= 5, `${galleryN} slides`);
+check('every photograph names its place under it', await page.locator('.destp-slide-cap').count() === galleryN);
+check('no position figure under the photographs', await page.locator('.destp-slide-pos').count() === 0);
+const capCut = await page.evaluate(() => Array.from(document.querySelectorAll('.destp-slide-cap'))
+  .filter((el) => el.scrollWidth > el.clientWidth + 1).map((el) => el.textContent));
+check('no photograph name is cut off', capCut.length === 0, capCut.slice(0, 2).join(' | '));
 check('short intro renders from our facts', /valbona/i.test(await page.locator('.destp-short').textContent().catch(() => '')));
-// T385: the strip keeps only the two cost facts (the sights hours joined the
-// visit line, the best months the month block), and a gem may lack a bed
-// price, so one fact is the floor now, not two.
-check('fact strip renders', await page.locator('.dfacts .dfact').count() >= 1);
+check('key facts render (4 to 6)', await (async () => {
+  const n = await page.locator('.destp-keys .destp-key').count();
+  return n >= 4 && n <= 6;
+})(), `${await page.locator('.destp-keys .destp-key').count()} facts`);
 check('score sits in the head', await page.locator('.destp-score .score-chip').count() === 1);
 
-await page.waitForTimeout(2500); // dossier sections + lazy map
-const foldsN = await page.locator('.dsec').count();
-check('folding sections render', foldsN >= 8, `${foldsN} folds`);
-check('a closed section carries its summary', await page.locator('.dsec:not(.is-open) .dsec-summary').count() > 0);
-// T385: the month block, the traveller's second question, is the one fold
-// open by default; the map sits below walk and ride and opens on demand.
-check('month block open by default', await page.locator('#sec-when.is-open').count() === 1);
-// T385: the map no longer opens by default, so these two run after Expand all.
-await expandAll(page);
-await page.waitForTimeout(2500); // the lazy map chunk and its first frame
-check('map mounts', await page.locator('.dmap .maplibregl-canvas, .dmap canvas').count() > 0);
-check('layer toggle shows within-20-km or trips', await page.locator('.destp-layer', { hasText: /20 km|day trips/i }).count() > 0);
+// The price card: one cost truth, a receipt that adds up, one primary.
+check('price card renders', await page.locator('.dprice').count() === 1);
+const sum = await page.evaluate(() => {
+  const lines = Array.from(document.querySelectorAll('.dprice .frr-line:not(.frr-sum) dd[data-eur]'))
+    .map((el) => Number(el.getAttribute('data-eur')));
+  const total = Number(document.querySelector('.dprice .frr-sum-eur')?.getAttribute('data-eur'));
+  return { lines, total, ok: Math.abs(lines.reduce((a, b) => a + b, 0) - total) < 0.011 };
+});
+check('price card total is the sum of its lines', sum.ok && sum.lines.length >= 2, JSON.stringify(sum));
+check('one primary on the page', await page.locator('.destp .btn-primary:visible').count() === 1);
+check('the primary is Plan a trip here', /plan a trip here/i.test(await page.locator('.destp .btn-primary').first().textContent().catch(() => '')));
+
+// Six open sections, at most five folded rows.
+const openN = await page.locator('section.dsec2').count();
+check('open sections render (5 or 6) with no toggle', openN >= 5 && await page.locator('section.dsec2 .dsec-toggle').count() === 0, `${openN} open`);
+const foldsN = await page.locator('.destp .dsec-toggle').count();
+check('at most five folded rows', foldsN <= 5, `${foldsN} folds`);
+check('When to go is open', await page.locator('#sec-when .climate-chart').count() === 1);
+
+// The map mounts when its section comes near the view.
+const mapFar = await page.evaluate(() => {
+  const s = document.querySelector('#sec-highlights .dmap-slot');
+  return s ? s.getBoundingClientRect().top > window.innerHeight + 320 : false;
+});
+const mapBefore = await page.locator('#sec-highlights .dmap canvas').count();
+await scrollTo(page, '#sec-highlights');
+await page.waitForTimeout(3500);
+check('map waits while it is far below the view', !mapFar || mapBefore === 0, mapFar ? 'far' : 'near at load');
+check('map mounts once scrolled to', await page.locator('#sec-highlights .dmap .maplibregl-canvas, #sec-highlights .dmap canvas').count() > 0);
+check('map layers are tabs, without counts', await page.locator('#sec-highlights .ui-tab').count() >= 2
+  && !(await page.locator('#sec-highlights .ui-tab-count').count()));
 
 for (const [label, sel] of [
-  ['highlight tiles', '.dhl'],
-  ['numbered tile badges', '.dhl-n'],
-  ['things to do cards', '.ddo'],
-  ['evidence meters', '.ddo-ev-bar'],
-  ['around-here tabs', '.dar-tab'],
-  ['around-here rows', '.dar-row'],
-  ['around-here pictures', '.dar-photo'],
-  ['day trip cards', '.dtrip'],
-  ['day trip photos', '.dtrip-photo'],
-  // T395: the tips run on the shared flashcard deck (carta-design
-  // "Flashcards"), so the old bullet list is gone; the deck's cards count.
-  ['insider tips', '.destp-tips .flash-card'],
-  ['explore further links', '.destp-further .xp-further-btn'],
+  ['highlight tiles', '#sec-highlights .dhl2'],
+  ['numbered highlight marks', '.dhl2-n'],
+  ['things to do tiles', '#sec-do .card'],
+  ['walk and ride tiles', '#sec-routes .card'],
+  ['day trip tiles', '#sec-trips .card'],
+  ['booking exits', '.destp-exits .destp-exit'],
   ['photo credit links', '.destp-slide-credit'],
 ]) {
   const n = await page.locator(sel).count();
   check(`${label} present`, n > 0, `${n}`);
 }
-check('no lettered plates stand in for photos', await page.locator('.destp-hl-plate').count() === 0);
+check('day trips carry a score', await page.locator('#sec-trips .score-chip').count() > 0);
+await openFold(page, 'tips');
+check('insider tips render on the deck', await page.locator('.destp-tips .flash-card').count() > 0);
+await openFold(page, 'rating');
 check('rating v2 breakdown renders', await page.locator('#sec-rating .rate-break-v2 .rb-parts .rb-part').count() >= 3);
 check('rating scale has three ticks', await page.locator('#sec-rating .rb-tick').count() === 3);
-check('day trips carry a score', await page.locator('.dtrip .score-chip').count() > 0);
-check('day trips explain themselves', await page.locator('.dtrip-why').count() > 0);
 check('desktop shows the cross', await page.locator('.destp-close').isVisible());
 check('desktop hides the back arrow', !(await page.locator('.destp-back').isVisible()));
 const grid = await page.evaluate(() => {
@@ -138,17 +175,38 @@ const grid = await page.evaluate(() => {
   return g ? getComputedStyle(g).gridTemplateColumns.split(' ').length : 0;
 });
 check('desktop grid is two columns', grid === 2, `${grid}`);
-await page.waitForTimeout(2500);
+await page.waitForTimeout(2000);
 let broken = await brokenImages(page);
 check('no broken image on the page (desktop)', broken.length === 0, broken.slice(0, 3).join(' | '));
 const pageText = await destp.textContent();
 check('no em or en dash in the page text', !/[—–]/.test(pageText));
 check('no middot separators in the page text', !/[·•]/.test(pageText));
-check('the old crowding sentence is gone', !/Measured yearly by region/i.test(pageText));
+check('no method sentence or count line left',
+  !/Set your dates|Priced for|figures here are measured|national basket|Tap a segment|\d+ ideas|\d+ sights|\d+ tips/i.test(pageText));
 await page.screenshot({ path: 'shots/destp-desktop.png', fullPage: false });
-await page.locator('.destp-scroll').evaluate((el) => { el.scrollTop = 900; });
-await page.waitForTimeout(600);
+
+// The section rail selects the section in view.
+await scrollTo(page, '#sec-when');
+await page.waitForTimeout(900);
+check('the rail selects When at its section',
+  /when/i.test(await page.locator('.srail a.is-active').first().textContent().catch(() => '')));
 await page.screenshot({ path: 'shots/destp-desktop-scrolled.png' });
+
+// The Lifestyle dialog opens over the page; Escape closes it, not the page.
+await scrollTo(page, '.dprice');
+await page.locator('.dprice-input[aria-haspopup="dialog"]').click();
+await page.waitForTimeout(900);
+const onTop = await page.evaluate(() => {
+  const p = document.querySelector('.accom-panel.lifestyle-panel');
+  if (!p) return false;
+  const r = p.getBoundingClientRect();
+  return p.contains(document.elementFromPoint(r.left + r.width / 2, r.top + Math.min(r.height / 2, 200)));
+});
+check('Stay opens the Lifestyle dialog over the page', onTop);
+await page.keyboard.press('Escape');
+await page.waitForTimeout(700);
+check('Escape closes the dialog and keeps the page',
+  !(await page.locator('.accom-panel.lifestyle-panel').isVisible().catch(() => false)) && await destp.isVisible());
 
 // ── The PDF download ─────────────────────────────────────────────────────
 const dlPromise = page.waitForEvent('download', { timeout: 25000 }).catch(() => null);
@@ -177,53 +235,71 @@ await page.keyboard.press('Escape');
 await page.waitForTimeout(500);
 check('Escape closes the page', !(await destp.isVisible().catch(() => false)));
 
-// Opening from the Explore grid covers the screen too.
-// T395: the header tabs are real links since the shell's V3 pass
-// (carta-design "Navigation"), so the Explore tab is an <a>, not a <button>.
-await page.locator(':is(a, button):has-text("Explore"):visible').first().click().catch(() => {});
-await page.waitForTimeout(2600);
-await page.locator('.explore-card, .xcard, .explore-grid button').first().click().catch(() => {});
-await page.waitForTimeout(2600);
-check('Explore card opens the full-screen page',
-  await page.locator('.destp').isVisible().catch(() => false));
-
-// A gateway record describes the CITY, not its airport; Rome's Pantheon
-// (a Wikidata Special:FilePath image before the fix) now loads.
+// A gateway record describes the CITY, not its airport.
 await page.goto(BASE + '#dest=FCO', { waitUntil: 'domcontentloaded' });
-await page.waitForTimeout(5000);
+await settle(page);
+await page.waitForTimeout(1500);
 const shortText = await page.locator('.destp-short').textContent().catch(() => '');
-check('Rome intro is short and names the place', /rome/i.test(shortText) && shortText.length < 420 && !/airport/i.test(shortText.slice(0, 60)), shortText.slice(0, 60));
-await expandAll(page);
-await page.waitForTimeout(3500);
+check('Rome intro is short and names the place', /rome/i.test(shortText) && shortText.length < 460 && !/airport/i.test(shortText.slice(0, 60)), shortText.slice(0, 60));
+const romeDay = await page.locator('.dprice-day .money').textContent().catch(() => '');
+check('Rome prints its day figure with the estimate mark', /~€\d+ est\./.test(romeDay), romeDay);
+// Rome's Pantheon (a Wikidata Special:FilePath image before the fix) loads.
+await scrollTo(page, '#sec-highlights');
+await page.waitForTimeout(1500);
+await page.locator('#sec-highlights .dphoto-all').click().catch(() => {});
+await page.waitForTimeout(800);
+await page.evaluate(() => {
+  const card = Array.from(document.querySelectorAll('#sec-highlights .dhl2')).find((c) => /Pantheon/i.test(c.textContent));
+  card?.scrollIntoView({ block: 'center' });
+});
+await page.waitForTimeout(2500);
 const pantheon = await page.evaluate(() => {
-  const im = Array.from(document.querySelectorAll('.dhl img')).find((x) => /Pantheon/i.test(x.src));
+  const card = Array.from(document.querySelectorAll('#sec-highlights .dhl2')).find((c) => /Pantheon/i.test(c.textContent));
+  const im = card?.querySelector('img');
   return im ? { complete: im.complete, w: im.naturalWidth, src: im.src.slice(0, 80) } : null;
 });
 check('Rome: the Pantheon photograph loads', !!pantheon && pantheon.w > 0, JSON.stringify(pantheon));
 broken = await brokenImages(page);
 check('no broken image on the page (Rome)', broken.length === 0, broken.slice(0, 3).join(' | '));
+await openFold(page, 'festivals');
 check('festivals section renders', await page.locator('.destp-fest').count() > 0);
 check('festivals carry a month', await page.locator('.destp-fest-when:not(.is-undated)').count() > 0);
+await openFold(page, 'practical');
 check('city parking rows render', await page.locator('.destp-park').count() > 0);
 check('parking rows carry Waze deeplinks', await page.locator('.destp-park-nav a[href*="waze.com"]').count() > 0);
 check('parking rows carry Google Maps deeplinks', await page.locator('.destp-park-nav a[href*="google.com/maps"]').count() > 0);
-check('parking carries the provenance line', /OpenStreetMap contributors/i.test(await page.locator('#sec-park').textContent().catch(() => '')));
-check('around-here lists cycling for Rome', await page.locator('.dar-tab', { hasText: /cycling/i }).count() > 0);
+check('parking carries the provenance line', /OpenStreetMap contributors/i.test(await page.locator('#sec-practical').textContent().catch(() => '')));
+check('walk and ride lists cycling for Rome', await page.locator('#sec-routes .card', { hasText: /cycling/i }).count() > 0);
 const cdgText = await (async () => {
   await page.goto(BASE + '#dest=CDG', { waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(4500);
+  await settle(page);
   return page.locator('.destp-short').textContent().catch(() => '');
 })();
 check('gateway record describes the city, not the airport',
   /paris/i.test(cdgText) && !/^\s*paris charles de gaulle airport/i.test(cdgText), cdgText.slice(0, 50));
 await page.close();
 
+// ── 1280 x 720: the primary in view at load ─────────────────────────────
+const small = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+wire(small);
+await seed(small);
+await small.goto(BASE + '#dest=FCO', { waitUntil: 'domcontentloaded', timeout: 45000 });
+await settle(small);
+await small.waitForTimeout(1200);
+const inView = await small.evaluate(() => {
+  const b = document.querySelector('.destp .btn-primary')?.getBoundingClientRect();
+  return b ? b.top >= 0 && b.bottom <= window.innerHeight : false;
+});
+check('1280 x 720: the primary is in view without a scroll', inView);
+await small.close();
+
 // ── Phone ────────────────────────────────────────────────────────────────
 const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
 wire(phone);
 await seed(phone);
 await phone.goto(BASE + '#dest=gem:valbona', { waitUntil: 'domcontentloaded', timeout: 45000 });
-await phone.waitForTimeout(4500);
+await settle(phone);
+await phone.waitForTimeout(1500);
 check('phone page opens', await phone.locator('.destp').isVisible());
 check('phone shows the back arrow', await phone.locator('.destp-back').isVisible());
 check('phone hides the cross', !(await phone.locator('.destp-close').isVisible()));
@@ -237,20 +313,13 @@ const covers = await phone.evaluate(() => {
   return r.width >= window.innerWidth - 1 && r.height >= window.innerHeight - 1;
 });
 check('phone page covers the viewport', covers);
-// T385: the map fold is closed by default now (the month block opens), so
-// open it for this check and close it again before the height check.
-const hlToggle = phone.locator('#sec-highlights .dsec-toggle');
-await hlToggle.click();
-await phone.waitForTimeout(1500);
-const stripSwipes = await phone.evaluate(() => {
-  const s = document.querySelector('.dhl-strip');
+const tracksSwipe = await phone.evaluate(() => {
+  const s = document.querySelector('#sec-do .dphoto-strip, #sec-routes .dphoto-strip');
   return s ? s.scrollWidth > s.clientWidth + 20 : false;
 });
-check('phone highlight tiles swipe sideways', stripSwipes);
-await hlToggle.click();
-await phone.waitForTimeout(600);
+check('phone photo tracks swipe sideways', tracksSwipe);
 const phoneScroll = await phone.evaluate(() => document.querySelector('.destp-scroll')?.scrollHeight || 0);
-check('phone page is compact (default state under 6,500 px)', phoneScroll < 6500, `${phoneScroll}px`);
+check('phone page stays within 7,000 px', phoneScroll < 7000, `${phoneScroll}px`);
 await phone.screenshot({ path: 'shots/destp-phone.png' });
 await phone.locator('.destp-scroll').evaluate((el) => { el.scrollTop = 900; });
 await phone.waitForTimeout(600);

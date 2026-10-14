@@ -1,6 +1,7 @@
 import React from 'react';
 import CreditFold from './CreditFold.jsx';
 import { RouteIcon, BikeIcon, TrainIcon, ChevronRightIcon } from '../components/Icons.jsx';
+import { Button } from '../components/ui/index.js';
 
 /**
  * "Routes from here": the long paths and cycle routes that pass this town.
@@ -96,7 +97,14 @@ function NodeNetwork({ nn, t }) {
   );
 }
 
-export default function RoutesFromHere({ routes, t, onOpen }) {
+/**
+ * props
+ *   routes  the dossier's routes block
+ *   onOpen  (layer, row) => opens the stretch's page
+ *   limit   rows shown per group before "See all" (T429); null shows all
+ */
+export default function RoutesFromHere({ routes, t, onOpen, limit = null }) {
+  const [all, setAll] = React.useState(false);
   const groups = [
     ['hiking', 'dest.routesHiking', RouteIcon],
     ['cycling', 'dest.routesCycling', BikeIcon],
@@ -109,16 +117,21 @@ export default function RoutesFromHere({ routes, t, onOpen }) {
         <div className="drh-group" key={key}>
           <h3 className="drh-head"><Icon size={14} /> {t(label)}</h3>
           <ul className="drh-list">
-            {routes[key].map((row) => (
+            {(all || !limit ? routes[key] : routes[key].slice(0, limit)).map((row) => (
               <Row key={`${key}|${row.id}`} row={row} t={t} onOpen={onOpen} />
             ))}
           </ul>
         </div>
       ))}
+      {limit && groups.some(([key]) => routes[key].length > limit) && (
+        <Button variant="quiet" size="sm" className="drh-all" aria-expanded={all} onClick={() => setAll((v) => !v)}>
+          {all ? t('dest.showLess') : t('rail.seeAllPlain')}
+        </Button>
+      )}
       <NodeNetwork nn={routes?.node_network} t={t} />
-      {/* Said out loud, because a short list here means thin mapping rather
-          than a thin country, and the reader cannot tell those apart. */}
-      <p className="drh-note">{t('dest.routesCoverage')}</p>
+      {/* The coverage sentence that stood here (dest.routesCoverage) left the
+          page with the other method lines (T429, owner 2026-10-13); the PDF
+          still prints it. */}
       <p className="drh-credit">{t('dest.routesCredit')}</p>
       <CreditFold t={t} licenceKeys={['credit.licence.routes']} />
     </div>

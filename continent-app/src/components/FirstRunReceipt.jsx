@@ -60,8 +60,10 @@ function monthYear(iso, lang) {
 /** "Your flight": where the airport is asked, once (FIRST_RUN_RESULT.md,
  *  "the door opens one sheet"). Prefilled from the remembered airport and the
  *  fare this receipt already holds. A modal with a scrim, a focus trap that
- *  sits above the page's own, and Escape that closes only the sheet. */
-function FlightSheet({ fare, origin, data, setOrigin, from, to, people, onSave, onRemove, onClose, t }) {
+ *  sits above the page's own, and Escape that closes only the sheet.
+ *  Exported for the destination page's price card (T429), which opens the
+ *  same sheet on the same store key, so a fare typed on either survives. */
+export function FlightSheet({ fare, origin, data, setOrigin, from, to, people, onSave, onRemove, onClose, t }) {
   const today = useToday();
   const panelRef = React.useRef(null);
   const closeRef = React.useRef(null);

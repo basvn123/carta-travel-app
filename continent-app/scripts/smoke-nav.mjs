@@ -67,8 +67,9 @@ await step('open a destination panel (best-effort)', async () => {
   try {
     await page.waitForSelector('.xcard-hit', { timeout: 8000 });
     await page.locator('.xcard-hit').first().click();
-    // The 0-10 index block became the euro-a-day cost receipt (costIndex.js).
-    await page.waitForSelector('.cost-receipt', { timeout: 6000 });
+    // The destination page's price card (T429): the day at the Lifestyle
+    // and the stay's total (lib/destPrice.js).
+    await page.waitForSelector('.dprice', { timeout: 6000 });
     return 'explore panel rendered';
   } catch { return 'skipped (grid not on the current view)'; }
 });

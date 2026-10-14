@@ -138,18 +138,20 @@ const SURFACES = {
     await openAll(p, FOLDS);
     await sleep(2000);
     // After the walk: the map's layer tabs move with the arrow keys.
+    // T429: the map's layers are the kit Tabs (.ui-tab, the selected one
+    // .is-selected) in the open map section.
     const after = async (pg, shot) => {
-      const on = pg.locator('.destp-layer.on').first();
+      const on = pg.locator('#sec-highlights .ui-tab.is-selected').first();
       if (!(await on.count())) return { layerTabs: 0 };
       const before = (await on.innerText()).trim();
       await on.focus(); await pg.keyboard.press('ArrowRight'); await sleep(1500);
       await shot('layer-arrow');
       const now = await pg.evaluate(() => ({
-        on: document.querySelector('.destp-layer.on')?.innerText.trim(),
-        focused: document.activeElement?.classList.contains('destp-layer'),
-        stops: [...document.querySelectorAll('.destp-layer')].filter((b) => b.tabIndex === 0).length,
+        on: document.querySelector('#sec-highlights .ui-tab.is-selected')?.innerText.trim(),
+        focused: document.activeElement?.classList.contains('ui-tab'),
+        stops: [...document.querySelectorAll('#sec-highlights .ui-tab')].filter((b) => b.tabIndex === 0).length,
       }));
-      return { layerTabs: await pg.locator('.destp-layer').count(), arrowSwitches: now.on !== before && now.focused, oneTabStop: now.stops === 1 };
+      return { layerTabs: await pg.locator('#sec-highlights .ui-tab').count(), arrowSwitches: now.on !== before && now.focused, oneTabStop: now.stops === 1 };
     };
     return { start: 'active', map: 'dest', max: 400, after };
   },

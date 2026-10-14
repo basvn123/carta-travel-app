@@ -286,41 +286,32 @@ try {
   // the history, so Back closes the page onto the list.
   check('the row opens through a link', /^#dest=/.test(await page.locator('.xrow-hit').first().getAttribute('href') || ''));
   const histBefore = await page.evaluate(() => history.length);
+  const rowDay = (await page.locator('.xrows .xrow').first().locator('.money').first().innerText().catch(() => '')).trim();
   await page.locator('.xrow-hit').first().click();
   await page.waitForTimeout(2500);
   const panel = page.locator('.destp');
   check('destination page opens', await panel.isVisible());
   check('opening a place names it in the address and the history',
     page.url().includes('#dest=') && await page.evaluate(() => history.length) === histBefore + 1);
-  // P4.4: the page arrives folded, so a reader steers it instead of
-  // scrolling a wall. Only the first section opens itself.
-  check('the page arrives folded', await panel.locator('.dsec.is-open').count() === 1,
-    `${await panel.locator('.dsec.is-open').count()} open`);
-  // V5 (T403, row T393-a): the destination page now opens "When to go" (the
-  // second fold) so the month answer is on the first screen; the check
-  // follows the page, it does not demand the old first fold.
-  check('the section that opens is the when-to-go one',
-    await panel.locator('.dsec').nth(1).evaluate((el) => el.classList.contains('is-open')));
-  // The titles are readable while everything is shut: a fold a reader
-  // cannot judge from its head is a fold they have to open to skip.
-  const foldedText = await panel.innerText();
-  check('page has when-to-go', /when to go/i.test(foldedText));
-  check('page has explore-further', /explore .* further/i.test(foldedText));
-  await page.waitForTimeout(2500);
-  // V5 (T403, row T393-a): the map lives in the highlights fold, which
-  // arrives shut; open it, then look for the canvas.
-  await panel.locator('.dsec').filter({ hasText: /highlights on the/i }).first().locator('button').first().click();
+  // T429: the page opens its sections (six at most, open without a click)
+  // and folds five rows at most, so a reader scrolls a page, not a list of
+  // headings.
+  check('the page opens its sections', await panel.locator('section.dsec2').count() >= 5,
+    `${await panel.locator('section.dsec2').count()} open`);
+  check('at most five rows fold', await panel.locator('.dsec-toggle').count() <= 5,
+    `${await panel.locator('.dsec-toggle').count()} folds`);
+  const pageText = await panel.innerText();
+  check('page has when-to-go', /when to go/i.test(pageText));
+  check('page has explore-further', /explore .* further/i.test(pageText));
+  // One cost truth (T429): the page's day figure is the row's.
+  const pageDay = (await panel.locator('.dprice-day .money').innerText().catch(() => '')).trim();
+  check('the page prints the row\'s day figure', !!rowDay && rowDay === pageDay, `${rowDay} / ${pageDay}`);
+  check('page shows the price card', await panel.locator('.dprice').count() === 1);
+  check('price card totals the stay in euros', /€\d/.test(await panel.locator('.dprice .frr-sum-eur').innerText().catch(() => '')));
+  // The map mounts when its section comes near the view.
+  await panel.locator('#sec-highlights').scrollIntoViewIfNeeded();
   await page.waitForTimeout(4000);
   check('page pins the place on a real map', await panel.locator('canvas').count() >= 1);
-  // Open the costs fold for the receipt checks below.
-  await panel.locator('#sec-cost .dsec-toggle').click();
-  await page.waitForTimeout(1200);
-  check('page shows the cost receipt', await panel.locator('.cost-receipt').count() === 1);
-  // The receipt has to say what it assumed. A price a reader cannot trace
-  // back to a setting is a price they must take on faith.
-  const assumes = await panel.locator('.cost-assumes').innerText().catch(() => '');
-  check('receipt names the lifestyle it priced for', /priced for/i.test(assumes), assumes.slice(0, 60));
-  check('receipt totals a day in euros', /€\d/.test(await panel.locator('.cost-total-eur').innerText()));
   await page.screenshot({ path: 'shots/explore-panel-desktop.png' });
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);

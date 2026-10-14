@@ -1,8 +1,8 @@
 import React from 'react';
 import { BAND_KEY, eurDay } from '../lib/costIndex.js';
 import { BedIcon, DiningIcon } from './Icons.jsx';
-import { accuracyVars } from '../lib/accuracy.js';
 import { useSettledFigure } from '../lib/figureChange.js';
+import { Money } from './ui/Money.jsx';
 
 /**
  * The cost language for the whole Explore page: a euro figure, a five-step
@@ -85,81 +85,41 @@ export function CostLine({ cost, t, gauge = true, figure = true }) {
   );
 }
 
-/** One row of the receipt: what it is, the gauge, the figure. */
-function CostRow({ icon: Icon, label, eur, band, level, t }) {
+/** One row of the receipt: what it is, the gauge, the figure. A figure not
+ *  measured in the town carries the estimate mark, as everywhere else. */
+function CostRow({ icon: Icon, label, eur, band, est }) {
   if (eur == null) return null;
   return (
     <div className="cost-row">
       <span className="cost-row-label">
         <Icon size={13} />
         <span className="cost-row-text">{label}</span>
-        {/* The compact receipt cannot carry the provenance sentence, so each
-            figure carries one word: measured in the city, or a country-level
-            figure standing in (owner call, T362 on T098-b). */}
-        {level && (
-          <span className="cost-level" title={t(level === 'city' ? 'cost.levelCityTitle' : 'cost.levelCountryTitle')}>
-            {t(level === 'city' ? 'cost.levelCity' : 'cost.levelCountry')}
-          </span>
-        )}
       </span>
       <CostGauge band={band} />
-      <span className="cost-row-eur mono">{eurDay(eur)}</span>
+      <span className="cost-row-eur"><Money value={eur} est={est} /></span>
     </div>
   );
 }
 
 /**
- * The panel's receipt: bed, food, a rule, the day. The same shape the trip
- * receipt uses everywhere else in the product, because a reader who has seen
- * one of them can read all of them.
+ * The compact day receipt in Explore's hover preview: bed, food, a rule,
+ * the day, with the cost bar above them. The same day figure as the card,
+ * the pin and the destination page (one cost truth, T429).
  *
- * The footer is not a disclaimer, it is the measurement's provenance, and it
- * is the reason to believe the three numbers above it.
+ * T429 (row T427-c) took the source words off it: the "city" and
+ * "country" level words became the estimate mark on the figure itself
+ * (the tilde and "est."), the way every other price on Carta says it, and the
+ * method sentences the destination page used to print under it left with
+ * the page's own (owner, 2026-10-13: the method stays in the data).
  */
-export function CostReceipt({ cost, t, lang, lifestyleLabel, onOpenLifestyle, compact = false }) {
+export function CostReceipt({ cost, t }) {
   if (!cost || cost.dayEur == null) return null;
   const bandWord = t(BAND_KEY[cost.dayBand]);
 
-  // Each figure states its own provenance, and states it at its own level:
-  // a city measurement says so and names the source, a country-level figure
-  // says that instead. The old receipt stayed silent on country figures
-  // ("silence is the honest default") but that hid the difference between the
-  // Ljubljana bed price, measured, and an Albanian one that is a prior, and
-  // made the strong number read as weak as the weak one (T098). Source names
-  // are the ones data_licenses.md credits: Inside Airbnb for the bed, Numbeo
-  // for the food anchors, Eurostat's price level index where a figure is scaled.
-  const monthYear = (iso) => {
-    if (!iso) return '';
-    try {
-      return new Intl.DateTimeFormat(lang || 'en', { month: 'long', year: 'numeric', timeZone: 'UTC' })
-        .format(new Date(`${iso.slice(0, 7)}-15T12:00:00Z`));
-    } catch { return iso.slice(0, 7); }
-  };
-  const bedLine = () => {
-    if (cost.stayEur == null) return '';
-    if (cost.stayLevel === 'region') return t('cost.bedRepaired');
-    if (cost.stayLevel === 'city') {
-      return cost.listings
-        ? t('cost.bedCityN', {
-          n: cost.listings.toLocaleString('en-GB'),
-          place: cost.source || '',
-          when: monthYear(cost.captured),
-        })
-        : t('cost.bedCity');
-    }
-    return String(cost.stayBasis || '').startsWith('airbnb_pli_scaled') ? t('cost.bedScaled') : t('cost.bedCountry');
-  };
-  const foodLine = () => {
-    if (cost.foodEur == null) return '';
-    if (cost.foodLevel === 'city') return t('cost.foodCity');
-    return String(cost.foodBasis || '').startsWith('pli_scaled') ? t('cost.foodScaled') : t('cost.foodCountry');
-  };
-
-  // The compact receipt's cost bar (house rule "The cost bar", V4 T393): one
-  // segment per line in receipt order, in the ink ramp, 8 px, no figures on
-  // the bar; the lines below carry them. Drawn only when both lines are.
-  const bar = compact && cost.stayEur != null && cost.foodEur != null
-    && cost.stayEur + cost.foodEur > 0;
+  // The cost bar (house rule "The cost bar", V4 T393): one segment per line
+  // in receipt order, in the ink ramp, 8 px, no figures on the bar; the lines
+  // below carry them. Drawn only when both lines are.
+  const bar = cost.stayEur != null && cost.foodEur != null && cost.stayEur + cost.foodEur > 0;
 
   return (
     <div className="cost-receipt">
@@ -169,40 +129,15 @@ export function CostReceipt({ cost, t, lang, lifestyleLabel, onOpenLifestyle, co
           <span className="xcost-bar-seg" style={{ flexGrow: cost.foodEur }} />
         </span>
       )}
-      <CostRow icon={BedIcon} label={t('cost.bed')} eur={cost.stayEur} band={cost.stayBand} t={t}
-        level={compact && cost.stayEur != null ? (cost.stayLevel === 'city' ? 'city' : 'country') : null} />
-      <CostRow icon={DiningIcon} label={t('cost.food')} eur={cost.foodEur} band={cost.foodBand} t={t}
-        level={compact && cost.foodEur != null ? (cost.foodLevel === 'city' ? 'city' : 'country') : null} />
+      <CostRow icon={BedIcon} label={t('cost.bed')} eur={cost.stayEur} band={cost.stayBand}
+        est={cost.stayLevel !== 'city'} />
+      <CostRow icon={DiningIcon} label={t('cost.food')} eur={cost.foodEur} band={cost.foodBand}
+        est={cost.foodLevel !== 'city'} />
       <div className="cost-total">
         <span className="cost-total-label">{t('cost.dayTotal')}</span>
         <span className={`cost-total-band ${BAND_CLASS[cost.dayBand]}`}>{bandWord}</span>
-        <span className="cost-total-eur mono">{eurDay(cost.dayEur)}</span>
+        <span className="cost-total-eur"><Money value={cost.dayEur} est={isNational(cost)} /></span>
       </div>
-      {/* What the three numbers above assume, with the door to change it. A
-          price the reader cannot trace back to a setting is a price they have
-          to take on faith, and this whole receipt exists not to ask that. */}
-      {lifestyleLabel && (
-        <p className="cost-assumes">
-          <span>{lifestyleLabel}</span>
-          {onOpenLifestyle && (
-            <button type="button" className="cost-assumes-edit" onClick={onOpenLifestyle}>
-              {t('cost.editLifestyle')}
-            </button>
-          )}
-        </p>
-      )}
-      {!compact && cost.tierFallback && <p className="cost-source">{t('cost.tierFallback')}</p>}
-      {!compact && bedLine() && <p className="cost-source">{bedLine()}</p>}
-      {!compact && foodLine() && <p className="cost-source">{foodLine()}</p>}
-      {/* The accuracy figure, with its date and method one click away. Food
-          only: the bed figure is not published until the stay hold-out is
-          big enough to quote (src/lib/accuracy.js). */}
-      {!compact && (
-        <details className="cost-accuracy">
-          <summary>{t('cost.accuracy', accuracyVars(lang))}</summary>
-          <p>{t('cost.accuracyMethod', accuracyVars(lang))}</p>
-        </details>
-      )}
     </div>
   );
 }
