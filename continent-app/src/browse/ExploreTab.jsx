@@ -63,6 +63,10 @@ import { CostReceipt } from '../components/CostSummary.jsx';
 import { Button, Chip, Segmented } from '../components/ui/index.js';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
+import { GuidedSearch } from './GuidedSearch.jsx';
+import {
+  noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
+} from '../lib/guidedSearch.js';
 import { visitLength } from '../lib/nearby.js';
 import { placeSights } from '../lib/placeStory.js';
 import { knownFor } from '../lib/knownFor.js';
@@ -104,14 +108,9 @@ const DETAIL_FROM = 6;
 
 const PAGE = 48;
 
-// One predicate each, shared by the C5 rails and the C6 filters, so a
-// rail's "See all" always lands on a grid showing the same list. Module
-// scope: they read only the row.
-const noCarOk = (p) => !p.local_transport?.car_needed
-  && (p.local_transport?.transit_quality === 'good'
-    || p.local_transport?.transit_quality === 'excellent');
-const underOk = (eur) => (p) => p.cost?.dayEur != null && p.cost.dayEur <= eur;
-const quietOk = (p) => p.crowding?.tier === 1;
+// The shared predicates (no car, under a budget, quiet) live in
+// lib/guidedSearch.js since T442, so the rails, the filters and the guided
+// search read one definition each.
 
 const SORTS = [
   { key: 'beauty', labelKey: 'sort.rating' },
@@ -250,7 +249,7 @@ const FOCUS_MS = 400;
 
 const ExploreCard = React.memo(function ExploreCard({
   p, role, selected, fav, onSelect, onToggleFav, t, reachMin,
-  linked = false, onLink = null, month = null,
+  linked = false, onLink = null, month = null, why = null,
 }) {
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
   // One popover, three doors: hover, focus, and the info control, which
@@ -343,6 +342,8 @@ const ExploreCard = React.memo(function ExploreCard({
             )}
           </span>
           <DayPrice cost={p.cost} t={t} />
+          {/* Why this place answers the guided question (T442). */}
+          {why && <span className="xrow-why">{why}</span>}
         </span>
       </button>
       <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} className="xrow-save" />
@@ -408,6 +409,11 @@ export function ExploreTab({
       sea: q.get('xp')?.includes('s') || false,
       // A vibe from the guided search data (T427): "hiking", "beach", ...
       vibe: q.get('xe') || null,
+      // The guided search's own facets (T442): a named area (xa), within
+      // 50 km of a place (xn), and a beach, trails or a lake close by (xd).
+      area: q.get('xa') || null,
+      near: q.get('xn') || null,
+      nb: list('xd'),
     };
   });
   const patchXf = React.useCallback((delta) => setXf((v) => ({ ...v, ...delta })), []);
@@ -497,6 +503,24 @@ export function ExploreTab({
     indices, searchHits,
   });
 
+  // The guided search's context (T442): the place a "near" facet names (from
+  // the list's own merged catalogue), and the one way each facet is named.
+  const nearRow = React.useMemo(
+    () => (xf.near ? allRows.find((p) => p.id === xf.near) || null : null),
+    [xf.near, allRows],
+  );
+  const gctx = React.useMemo(() => ({ guided, nearRow }), [guided, nearRow]);
+  const gLabels = React.useMemo(
+    () => makeLabels({ t, lang, guided, countries: availableCountries }),
+    [t, lang, guided, availableCountries],
+  );
+  // The why line under a result, while a guided facet is on.
+  const whyOn = !!(dxf.vibe || dxf.area || dxf.near || dxf.nb.length);
+  const whyOf = React.useCallback(
+    (p) => whyFacts(p, dxf, { ...gctx, t, lang, labels: gLabels }).join(', ') || null,
+    [dxf, gctx, t, lang, gLabels],
+  );
+
   // C1's role needs the neighbour count; built once per catalogue.
   const nearby = React.useMemo(
     () => (data?.destinations ? buildNearbyIndex(data.destinations) : {}),
@@ -521,27 +545,35 @@ export function ExploreTab({
     if (dxf.quiet && !quietOk(p)) return false;
     if (dxf.badged && !p.country_badge) return false;
     if (dxf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
-    // A vibe holds only once the guided data has landed; until then the list
-    // waits empty rather than showing places that may not match.
-    if (dxf.vibe && vibeOf(guided, p.id, dxf.vibe) < 80) return false;
+    // The guided facets (vibe, area, near, close by) hold only once the
+    // guided data has landed; until then the list waits empty rather than
+    // showing places that may not match (T442).
+    if ((dxf.vibe || dxf.area || dxf.near || dxf.nb.length) && !matchGuided(p, dxf, gctx)) return false;
     return true;
-  }), [rows, dxf, roleFor, guided]);
+  }), [rows, dxf, roleFor, gctx]);
+  // A guided question ranks its answer: nearest first around a place, the
+  // strongest vibe first otherwise, while the reader keeps the default sort.
+  const guidedRows = React.useMemo(() => {
+    if (sortKey && sortKey !== 'beauty') return taxRows;
+    const cmp = guidedComparator(dxf, gctx);
+    return cmp ? [...taxRows].sort(cmp) : taxRows;
+  }, [taxRows, dxf, gctx, sortKey]);
 
   // C7: what the map's viewport holds, counted live while the map is shown.
   const shownRows = React.useMemo(() => {
-    if (view !== 'map' || !bbox) return taxRows;
+    if (view !== 'map' || !bbox) return guidedRows;
     const [w, so, e, n] = bbox;
-    return taxRows.filter((p) => {
+    return guidedRows.filter((p) => {
       const lat = p.city_lat ?? p.lat;
       const lon = p.city_lon ?? p.lon;
       return lat >= so && lat <= n && lon >= w && lon <= e;
     });
-  }, [taxRows, view, bbox]);
+  }, [guidedRows, view, bbox]);
 
   // One list shape everywhere (T427): compact rows, beside the map too.
   const listed = React.useMemo(
-    () => (view === 'map' ? shownRows : taxRows).slice(0, visible),
-    [taxRows, shownRows, view, visible],
+    () => (view === 'map' ? shownRows : guidedRows).slice(0, visible),
+    [guidedRows, shownRows, view, visible],
   );
 
   // C6: the filter state is the URL, so a filtered view is shareable and
@@ -576,6 +608,9 @@ export function ExploreTab({
     const flags = `${xf.nocar ? 'c' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}${xf.badged ? 'b' : ''}`;
     setOrDrop('xp', flags);
     setOrDrop('xe', xf.vibe || '');
+    setOrDrop('xa', xf.area || '');
+    setOrDrop('xn', xf.near || '');
+    setOrDrop('xd', xf.nb.join(','));
     setOrDrop('xg', gemOnly ? '1' : '');
     setOrDrop('xu', unescoOnly ? '1' : '');
     setOrDrop('xc', countryFilter.join(','));
@@ -654,7 +689,8 @@ export function ExploreTab({
     setReachHours(null);
     setTripKinds([]);
     setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null,
-      nocar: false, quiet: false, sea: false, badged: false, vibe: null });
+      nocar: false, quiet: false, sea: false, badged: false, vibe: null,
+      area: null, near: null, nb: [] });
   };
 
   // C6: one chip per active filter, each removing exactly itself.
@@ -677,10 +713,10 @@ export function ExploreTab({
     if (xf.quiet) list.push({ key: 'quiet', label: t('filter.notCrowded'), remove: drop({ quiet: false }) });
     if (xf.sea) list.push({ key: 'sea', label: t('filter.nearSea'), remove: drop({ sea: false }) });
     if (xf.badged) list.push({ key: 'badged', label: t('filter.bestOf'), remove: drop({ badged: false }) });
-    if (xf.vibe) {
-      const v = guided?.vibes?.find((x) => x.id === xf.vibe);
-      list.push({ key: 'vibe', label: v ? (v.label[lang] || v.label.en) : xf.vibe, remove: drop({ vibe: null }) });
-    }
+    if (xf.vibe) list.push({ key: 'vibe', label: gLabels.vibe(xf.vibe), remove: drop({ vibe: null }) });
+    if (xf.area) list.push({ key: 'area', label: gLabels.area(xf.area), remove: drop({ area: null }) });
+    if (xf.near) list.push({ key: 'near', label: t('gs.near', { place: nearRow?.city || xf.near }), remove: drop({ near: null }) });
+    for (const x of xf.nb) list.push({ key: `nb:${x}`, label: gLabels.extra(x), remove: drop({ nb: xf.nb.filter((y) => y !== x) }) });
     if (gemOnly) list.push({ key: 'gem', label: t('rail.gems'), remove: () => setGemOnly(false) });
     if (unescoOnly) list.push({ key: 'unesco', label: t('dest.unesco'), remove: () => setUnescoOnly(false) });
     if (showFavOnly) list.push({ key: 'fav', label: t('filter.shortlistOnly'), remove: () => setShowFavOnly(false) });
@@ -690,7 +726,7 @@ export function ExploreTab({
     }
     if (reachAvailable && reachHours != null) list.push({ key: 'reach', label: t('filter.reachHours', { n: reachHours }), remove: () => setReachHours(null) });
     return list;
-  }, [xf, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, guided, lang]);
+  }, [xf, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago
@@ -720,33 +756,39 @@ export function ExploreTab({
     else setHeaderSlot(null);
   }, [isDesktop, isActive]);
 
-  // The same controls drawn twice, phone toolbar and desktop side panel:
-  // one renderer each, so the two can never drift apart.
-  const searchField = (
-    <div className="results-search explore-search">
-      <svg className="results-search-icon" width="15" height="15" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-        <circle cx="11" cy="11" r="7" />
-        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-      </svg>
-      <input
-        type="text"
-        className="results-search-input"
-        placeholder={t('results.searchPlaceholder')}
-        value={locationQuery}
-        onChange={(e) => setLocationQuery(e.target.value)}
-        aria-label={t('results.searchAria')}
-      />
-      {locationQuery && (
-        <button
-          className="results-search-clear"
-          onClick={() => setLocationQuery('')}
-          aria-label={t('results.clearSearch')}
-        >
-          <CloseIcon size={16} />
-        </button>
-      )}
-    </div>
+  // The guided search (T442) replaces the free text field: in the header on
+  // a desktop, at the top of the tab on a phone. It writes Explore's own
+  // filters; `replace` starts the question over (an example, Clear).
+  const applyGuided = React.useCallback((delta, replace = false) => {
+    const next = replace
+      ? { vibe: null, area: null, near: null, month: null, budget: null, nb: [], nocar: false, quiet: false, ...delta }
+      : { ...delta };
+    if ('country' in next || replace) {
+      setCountryFilter(next.country ? [next.country] : []);
+      delete next.country;
+    }
+    patchXf(next);
+  }, [patchXf, setCountryFilter]);
+  const searchField = (inHeader) => (
+    <GuidedSearch
+      t={t}
+      lang={lang}
+      guided={guided}
+      rows={allRows}
+      countries={availableCountries}
+      facets={{
+        vibe: xf.vibe, area: xf.area, near: xf.near,
+        country: countryFilter.length === 1 ? countryFilter[0] : null,
+        month: xf.month, budget: xf.budget, nb: xf.nb, nocar: xf.nocar, quiet: xf.quiet,
+      }}
+      nearRow={nearRow}
+      labels={gLabels}
+      empty={taxRows.length === 0}
+      budgetSteps={BUDGET_STEPS}
+      onApply={applyGuided}
+      onOpenPlace={openWithMember}
+      inHeader={inHeader}
+    />
   );
 
   // C5: the editorial rails. Every rail is (title, rows, seeAll) where the
@@ -896,7 +938,7 @@ export function ExploreTab({
 
   return (
     <div className={`explore-shell${view === 'map' ? ' is-map' : ''}`}>
-      {headerSlot && createPortal(searchField, headerSlot)}
+      {headerSlot && createPortal(searchField(true), headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the filter
           rail in folds, trip styles first, with one hairline to the panel's
@@ -924,7 +966,7 @@ export function ExploreTab({
         <div className="explore-filterbar xtop">
           {/* On desktop the same field has portalled into the app header
               and this renders nothing. */}
-          {!headerSlot && searchField}
+          {!headerSlot && searchField(false)}
           <Button
             variant="secondary"
             ref={filterBtnRef}
@@ -1105,6 +1147,7 @@ export function ExploreTab({
                   linked={view === 'map' && p.id === pinLinkId}
                   onLink={view === 'map' ? setCardLinkId : null}
                   month={dxf.month}
+                  why={whyOn ? whyOf(p) : null}
                 />
               ))}
             </div>

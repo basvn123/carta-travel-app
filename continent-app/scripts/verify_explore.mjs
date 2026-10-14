@@ -411,6 +411,58 @@ try {
   check('phone map pass ran', false, String(e).split('\n')[0]);
 }
 
+// ── The guided search (T442), by keyboard on a desktop: the door opens a
+// labelled dialog with the field in focus, a typed question offers only
+// what Carta can answer, Enter applies it to Explore's own filters (and the
+// URL), every row says why it answers, and Escape hands focus back. ──
+try {
+  const page = await boot({ width: 1440, height: 900 });
+  const exploreTab = page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
+  if (await exploreTab.isVisible().catch(() => false)) await exploreTab.click();
+  await page.waitForSelector('.xrow', { timeout: 30000 });
+  await page.waitForTimeout(2500);
+  const door = page.locator('.header-search-slot .gsearch-trigger');
+  check('search: the door sits in the header', await door.isVisible());
+  await door.focus();
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('.gs-input', { timeout: 10000 });
+  await page.waitForTimeout(600);
+  check('search: a labelled dialog with the field in focus',
+    await page.locator('.gsearch-sheet[role="dialog"][aria-modal="true"]').count() === 1
+    && await page.evaluate(() => document.activeElement?.classList.contains('gs-input')));
+  check('search: "Try one" offers six questions', await page.locator('.gs-try-item').count() === 6);
+  check('search: five slots as tabs', await page.locator('.gs-tabs [role="tab"]').count() === 5);
+  await page.keyboard.type('skiing in norway', { delay: 15 });
+  await page.waitForTimeout(400);
+  check('search: an unknown word is named', /skiing/.test(await page.locator('.gs-cant').textContent().catch(() => '')));
+  await page.locator('.gs-input').fill('');
+  await page.keyboard.type('hiking in the alps in july', { delay: 15 });
+  await page.waitForTimeout(400);
+  check('search: the question completes as one option',
+    await page.locator('.gs-option').first().textContent().then((s) => /Hiking base, Alps, July/.test(s)));
+  check('search: the combobox points at the active option',
+    await page.locator('.gs-input').getAttribute('aria-activedescendant') === 'gs-opt-0');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(600);
+  const url = page.url();
+  check('search: Enter applies it to the filters and the URL',
+    url.includes('xe=hiking') && url.includes('xa=alps') && url.includes('xm=7'), url.split('?')[1]?.slice(0, 80));
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(700);
+  check('search: Escape closes and returns focus to the door', await page.locator('.gsearch-sheet').count() === 0
+    && await page.evaluate(() => !!document.activeElement?.closest('.gsearch')));
+  check('search: the door reads the question back', /Hiking base, Alps, July/.test(await door.textContent()));
+  const whys = await page.locator('.xrow .xrow-why').allTextContents();
+  check('search: every row says why it answers', whys.length >= 6 && whys.every((w) => /km|Alps|July/.test(w)),
+    whys[0]);
+  await page.locator('.gsearch-clear').click();
+  await page.waitForTimeout(600);
+  check('search: clear empties the question', !page.url().includes('xe=') && await page.locator('.gsearch-placeholder').isVisible());
+  await page.close();
+} catch (e) {
+  check('search pass ran', false, String(e).split('\n')[0]);
+}
+
 // ── Report ──
 let failed = 0;
 for (const c of checks) {

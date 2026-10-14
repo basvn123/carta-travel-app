@@ -27,7 +27,7 @@ import { useDialogExit } from '../lib/motion.js';
  */
 export function SheetShell({
   title, onClose, anchorRef, width = 520, className = '',
-  labelId = 'sheetshell-title', closeLabel, children,
+  labelId = 'sheetshell-title', closeLabel, children, initialFocusRef = null,
 }) {
   const { t } = useI18n();
   const scrimRef = React.useRef(null);
@@ -37,7 +37,9 @@ export function SheetShell({
   const exit = useDialogExit(onClose);
   // Escape is bound on the capture phase and stops propagation, so a sheet
   // opened over another overlay closes itself rather than the whole stack.
-  useFocusTrap(panelRef, exit.close, { initialFocusRef: closeRef });
+  // A sheet that opens on a field (the guided search, T442) focuses it;
+  // the rest open on the close button.
+  useFocusTrap(panelRef, exit.close, { initialFocusRef: initialFocusRef || closeRef });
 
   // Swipe-down dismiss on touch, from the grab handle.
   const drag = React.useRef({ id: null, y0: 0 });

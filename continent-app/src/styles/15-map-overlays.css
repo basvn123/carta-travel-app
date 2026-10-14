@@ -672,56 +672,7 @@
   font-variant-numeric: tabular-nums;
 }
 /* Location search - live-filters both the list and the map markers. */
-.results-search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-top: 12px;
-}
-.results-search-icon {
-  position: absolute;
-  left: 11px;
-  color: var(--ink-mute);
-  pointer-events: none;
-}
-.results-search-input {
-  width: 100%;
-  padding: 9px 32px 9px 34px;
-  border: 1px solid var(--rule);
-  background: var(--paper-dim);
-  border-radius: 999px;
-  font-family: inherit;
-  font-size: 13px;
-  color: var(--ink);
-  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
-}
-.results-search-input::placeholder { color: var(--ink-mute); }
-.results-search-input:focus {
-  outline: none;
-  border-color: var(--ink);
-  background: var(--paper);
-  box-shadow: 0 0 0 3px var(--accent-bg);
-}
-.results-search-clear {
-  position: absolute;
-  right: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border: none;
-  background: var(--rule);
-  color: var(--ink);
-  border-radius: 50%;
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-  transition: background .15s ease;
-}
-@media (hover: hover) {
-  .results-search-clear:hover { background: var(--ink-mute); color: var(--paper); }
-}
+
 .results-sort button.on { background: var(--select-bg); color: var(--select-ink); }
 
 .fav-filter {
@@ -950,7 +901,6 @@
   .filter select,
   .dropdown-trigger,
   .dropdown-search input,
-  .results-search-input,
   .date-field-trigger { font-size: 16px; }
 
   /* ── Map fills the whole screen, sitting under the overlays ── */
