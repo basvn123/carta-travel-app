@@ -3597,7 +3597,11 @@
     border-top: 1px solid var(--rule-soft);
   }
   .bottom-nav-item { color: var(--ink-soft); }
-  .bottom-nav-item:hover { color: var(--accent); }
+  /* Hover only where a pointer hovers (T444): on touch the tapped item
+     kept the brown, so two items looked active. */
+  @media (hover: hover) {
+    .bottom-nav-item:hover { color: var(--accent); }
+  }
   .bottom-nav-item.active { color: var(--accent); }
 
   /* ── Explore: the same bands, the same tiles, the same cards. ── */

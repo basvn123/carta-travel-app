@@ -64,6 +64,7 @@ import { Button, Chip, Segmented } from '../components/ui/index.js';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
 import { GuidedSearch } from './GuidedSearch.jsx';
+import { countryName } from '../lib/countryName.js';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
 } from '../lib/guidedSearch.js';
@@ -305,10 +306,16 @@ const ExploreCard = React.memo(function ExploreCard({
       onPointerEnter={(e) => { if (e.pointerType === 'mouse') later('hover', HOVER_MS); onLink?.(p.id); }}
       onPointerLeave={() => { drop('hover'); onLink?.(null); }}
     >
-      <button
-        type="button"
+      <a
         className="xrow-hit"
-        onClick={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}
+        href={`#dest=${encodeURIComponent(p.id)}`}
+        onClick={(e) => {
+          // A plain click opens the place here (T444); with a modifier the
+          // browser opens the link, and a new tab reads #dest= at boot.
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          openShared(e.currentTarget, p.id, () => onSelect(p.id));
+        }}
         onFocus={() => { later('focus', FOCUS_MS); onLink?.(p.id); }}
         onBlur={() => { drop('focus'); onLink?.(null); }}
         aria-label={t('explore.openDest', { city: p.city })}
@@ -335,7 +342,7 @@ const ExploreCard = React.memo(function ExploreCard({
           </span>
           <span className="xrow-line2">
             <CountryFlag country={p.iso2} size={12} />
-            <span className="xrow-country">{p.country}</span>
+            <span className="xrow-country">{countryName(p.iso2, p.country)}</span>
             {p.rating?.hidden_gem && <HiddenGemTag />}
             {swimRelevant(p) && (
               <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
@@ -345,8 +352,8 @@ const ExploreCard = React.memo(function ExploreCard({
           {/* Why this place answers the guided question (T442). */}
           {why && <span className="xrow-why">{why}</span>}
         </span>
-      </button>
-      <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} className="xrow-save" />
+      </a>
+      <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" />
       {preview && place && (
         <CardPreview id={popId} p={p} t={t} best={best} role={role} countryLine={countryLine}
           reachMin={reachMin} month={month} place={place} reveal={open === 'pin'} />
@@ -489,7 +496,7 @@ export function ExploreTab({
     const hit = searchHits?.memberHits?.find((h) => h.id === id);
     const q = new URLSearchParams(window.location.search);
     if (hit) q.set('dm', hit.member); else q.delete('dm');
-    window.history.replaceState(null, '',
+    window.history.replaceState(window.history.state, '',
       `${window.location.pathname}?${q.toString()}${window.location.hash}`);
     onSelect(id);
   }, [searchHits, onSelect]);
@@ -555,6 +562,8 @@ export function ExploreTab({
   // strongest vibe first otherwise, while the reader keeps the default sort.
   const guidedRows = React.useMemo(() => {
     if (sortKey && sortKey !== 'beauty') return taxRows;
+    // (T444: under a guided question "beauty" reads "Best match"; picking
+    // "Rating" sets "rating", which the catalogue sorts by rating.)
     const cmp = guidedComparator(dxf, gctx);
     return cmp ? [...taxRows].sort(cmp) : taxRows;
   }, [taxRows, dxf, gctx, sortKey]);
@@ -617,7 +626,8 @@ export function ExploreTab({
     setOrDrop('xs', sortKey !== 'beauty' ? sortKey : '');
     setOrDrop('xw', view === 'map' ? 'map' : '');
     const qs = q.toString();
-    window.history.replaceState(null, '',
+    // The state rides along: it marks the history step a place opened.
+    window.history.replaceState(window.history.state, '',
       `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`);
   }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, view, isActive]);
 
@@ -708,7 +718,7 @@ export function ExploreTab({
       list.push({ key: 'rating', label: t('filter.ratingAtLeast', { band: t(`score.band${minVerdict(xf.verdicts)}`) }), remove: drop({ verdicts: [] }) });
     }
     for (const r of xf.roles) list.push({ key: `r:${r}`, label: t(`role.short.${r}`), remove: drop({ roles: xf.roles.filter((x) => x !== r) }) });
-    if (xf.month) list.push({ key: 'month', label: t('filter.goodIn') + ' ' + fmtMonthRanges([xf.month]), remove: drop({ month: null }) });
+    if (xf.month) list.push({ key: 'month', label: t('gs.whyMonth', { month: gLabels.monthInline(xf.month) }), remove: drop({ month: null }) });
     if (xf.nocar) list.push({ key: 'nocar', label: t('filter.noCar'), remove: drop({ nocar: false }) });
     if (xf.quiet) list.push({ key: 'quiet', label: t('filter.notCrowded'), remove: drop({ quiet: false }) });
     if (xf.sea) list.push({ key: 'sea', label: t('filter.nearSea'), remove: drop({ sea: false }) });
@@ -767,8 +777,12 @@ export function ExploreTab({
       setCountryFilter(next.country ? [next.country] : []);
       delete next.country;
     }
+    if ('sort' in next || (replace && sortKey === 'cost')) {
+      setSortKey(next.sort === 'cost' ? 'cost' : 'beauty');
+      delete next.sort;
+    }
     patchXf(next);
-  }, [patchXf, setCountryFilter]);
+  }, [patchXf, setCountryFilter, setSortKey, sortKey]);
   const searchField = (inHeader) => (
     <GuidedSearch
       t={t}
@@ -780,6 +794,7 @@ export function ExploreTab({
         vibe: xf.vibe, area: xf.area, near: xf.near,
         country: countryFilter.length === 1 ? countryFilter[0] : null,
         month: xf.month, budget: xf.budget, nb: xf.nb, nocar: xf.nocar, quiet: xf.quiet,
+        sort: sortKey === 'cost' ? 'cost' : null,
       }}
       nearRow={nearRow}
       labels={gLabels}
@@ -873,14 +888,21 @@ export function ExploreTab({
   // The control bar's three instruments. The count is a measured figure,
   // so it is grouped the way the reader's locale groups thousands.
 
+  // While a guided question orders the list (a vibe, or around a place),
+  // the default sort says so: "Best match" (T444; it read "Rating" over a
+  // list ordered by match). "Rating" stays a choice and turns the match
+  // order off.
+  const sortOptions = (xf.vibe || xf.near)
+    ? [{ key: 'beauty', labelKey: 'sort.match' }, { key: 'rating', labelKey: 'sort.rating' }, ...SORTS.slice(1)]
+    : SORTS;
   const sortSelect = (
     <label className="xgrid-sort">
       <span className="xgrid-sort-label">{t('places.sortLabel')}</span>
       <span className="xgrid-sort-field">
-        <select value={SORTS.some((x) => x.key === sortKey) ? sortKey : 'beauty'}
+        <select value={sortOptions.some((x) => x.key === sortKey) ? sortKey : 'beauty'}
           onChange={(e) => setSortKey(e.target.value)}
           aria-label={t('explore.sortAria')}>
-          {SORTS.map((x) => <option key={x.key} value={x.key}>{t(x.labelKey)}</option>)}
+          {sortOptions.map((x) => <option key={x.key} value={x.key}>{t(x.labelKey)}</option>)}
         </select>
         <ChevronDownIcon size={14} className="xgrid-sort-chev" />
       </span>
@@ -937,7 +959,7 @@ export function ExploreTab({
 
 
   return (
-    <div className={`explore-shell${view === 'map' ? ' is-map' : ''}`}>
+    <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails' : ''}`}>
       {headerSlot && createPortal(searchField(true), headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the filter
@@ -947,13 +969,8 @@ export function ExploreTab({
           over the grid, where the figures they change are. */}
       <aside className="side-panel explore-side" aria-label={t('filter.filters')}>
         <div className="side-block">
-          {/* No "Refine" eyebrow (T440); "Clear all" appears once anything
-              narrows the list. */}
-          {anyActive && (
-            <Button variant="quiet" size="sm" className="xrail-clear" onClick={resetAll}>
-              {t('filter.clearAll')}
-            </Button>
-          )}
+          {/* No "Refine" eyebrow (T440). "Clear all" lives once, in the chips
+              row above the list (T444). */}
           {filterRail}
         </div>
       </aside>

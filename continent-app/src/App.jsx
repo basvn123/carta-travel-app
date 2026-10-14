@@ -82,7 +82,7 @@ import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
 const GuidesPanel = lazy(() => import('./community/GuidesPanel.jsx').then((m) => ({ default: m.GuidesPanel })));
 const RegionPage = lazy(() => import('./browse/RegionPage.jsx').then((m) => ({ default: m.RegionPage })));
 import { readTrailFromUrl } from './lib/trails.js';
-import { readDestFromUrl } from './lib/dossier.js';
+import { readDestFromUrl, destFromHash } from './lib/dossier.js';
 import { readBeachFromUrl } from './lib/beaches.js';
 import { readRegionFromUrl } from './lib/regions.js';
 import { readLakeFromUrl } from './lib/lakes.js';
@@ -731,7 +731,9 @@ function TravelApp() {
       setSavedTripsOpen(false);
       setAccountOpen(false);
       setLifestyleOpen(false);
-      setSelectedId(null);
+      // A step that names a place (#dest=, T444) reopens it; any other step
+      // closes the page.
+      setSelectedId(destFromHash());
       activeTabRef.current = key;
       setActiveTab(key);
     };
@@ -739,10 +741,32 @@ function TravelApp() {
     return () => window.removeEventListener('popstate', onPop);
   }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen]);
 
-  // Stable so every Explore card's memo survives parent re-renders.
+  // Opening a place is one step in the history (T444, the Explore check):
+  // Back, and a phone's swipe back, close the page onto the list it came
+  // from instead of leaving Carta, and the address names the place (#dest=,
+  // the deep link readDestFromUrl reads at boot), so it can be shared or
+  // reopened. Stable, so every Explore card's memo survives parent renders.
   const openDetail = useCallback((id) => {
+    try {
+      if (id && window.history.state?.cartaDest !== id) {
+        window.history.pushState({ ...(window.history.state || {}), cartaDest: id }, '',
+          `${window.location.pathname}${window.location.search}#dest=${encodeURIComponent(id)}`);
+      }
+    } catch { /* sandboxed: the page still opens */ }
     setSelectedId(id);
   }, []);
+  // Closed by its own controls (the back arrow, Escape, the backdrop), the
+  // page steps back over the entry its opening pushed, so the history holds
+  // no dead step. A hand-off to another tab has pushed its own entry first,
+  // and Back itself has already moved, so neither steps back twice.
+  const prevSelectedRef = useRef(selectedId);
+  useEffect(() => {
+    const was = prevSelectedRef.current;
+    prevSelectedRef.current = selectedId;
+    if (was && !selectedId && window.history.state?.cartaDest === was) {
+      try { window.history.back(); } catch { /* sandboxed */ }
+    }
+  }, [selectedId]);
 
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.

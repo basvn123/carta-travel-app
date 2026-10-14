@@ -78,6 +78,16 @@ export function destShareUrl(destId) {
 let destReadResult;
 const DEST_ID_RE = /^(gem:[a-z0-9-]{1,60}|[A-Z]{3})$/;
 
+/** The place the current address names (#dest=), read fresh on every
+ *  history step (T444); readDestFromUrl below is the once-at-boot reader. */
+export function destFromHash() {
+  if (typeof window === 'undefined') return null;
+  const hash = window.location.hash || '';
+  if (!hash.includes('dest=')) return null;
+  const id = String(new URLSearchParams(hash.slice(1)).get('dest') || '').slice(0, 70);
+  return DEST_ID_RE.test(id) ? id : null;
+}
+
 export function readDestFromUrl() {
   if (destReadResult !== undefined) return destReadResult;
   if (typeof window === 'undefined') return null;

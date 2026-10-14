@@ -7,6 +7,7 @@ import { Chip, ChipGroup, Field, IconButton, Switch, Tile, TileGroup } from '../
 import { TRIP_KINDS } from '../lib/trip_kinds.js';
 import { KIND_ICONS } from './CategoryRail.jsx';
 import { formatMoney } from '../lib/money.js';
+import { countryName } from '../lib/countryName.js';
 
 /**
  * The Explore filter rail, rebuilt on the kit (T440, the owner's review of
@@ -81,10 +82,18 @@ export function ExploreFilterRail({
     return (m) => f.format(new Date(2026, m - 1, 15));
   }, [lang]);
   const rating = minVerdict(xf.verdicts);
+  // Country names in the reader's language, in the reader's order (T444);
+  // the search finds a country by either name.
+  const localCountries = React.useMemo(
+    () => availableCountries
+      .map(([iso2, name]) => [iso2, countryName(iso2, name), name])
+      .sort((a, b) => a[1].localeCompare(b[1], lang)),
+    [availableCountries, lang],
+  );
   const q = countryQuery.trim().toLowerCase();
   const countries = q
-    ? availableCountries.filter(([, name]) => name.toLowerCase().includes(q))
-    : availableCountries;
+    ? localCountries.filter(([, local, name]) => local.toLowerCase().includes(q) || name.toLowerCase().includes(q))
+    : localCountries;
 
   return (
     <div className="xrail">

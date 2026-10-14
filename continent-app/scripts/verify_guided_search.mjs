@@ -70,6 +70,8 @@ const QUESTIONS = [
   ['nl', 'strand griekenland', { vibe: 'beach', country: 'GR' }],
   ['fr', 'randonnee dans les pyrenees en aout', { vibe: 'hiking', area: 'pyrenees', month: 8 }],
   ['en', 'spa under 100', { vibe: 'spa', budget: 100 }],
+  ['en', 'cheap beach in greece', { vibe: 'beach', country: 'GR', sort: 'cost' }],
+  ['nl', 'goedkoop strand griekenland', { vibe: 'beach', country: 'GR', sort: 'cost' }],
 ];
 for (const [lang, q, want] of QUESTIONS) {
   const r = gs.parseQuery(`${q} `, vocab(lang), lang);
@@ -89,6 +91,9 @@ for (const [lang, q, want] of QUESTIONS) {
     && p.options.some((o) => o.parts?.[0]?.kind === 'near'));
   const f = gs.completions('old tow', vocab('en'), 'en');
   check('a phrase completes while it is typed', f.options[0]?.entry?.value === 'oldtown');
+  const pt = gs.completions('porto', vocab('en'), 'en');
+  check('a place completes by its own name, not through an alias', pt.options.every((o) => /porto/i.test(o.entry?.label || '')),
+    pt.options.map((o) => o.entry?.label).join(', '));
   const n = gs.completions('near rom', vocab('en'), 'en');
   check('after "near", places lead', n.options[0]?.entry?.kind === 'near');
   const x = gs.liveExamples(rows.map((r) => ({ ...r, cost: { dayEur: 70 } })), { guided, nearRow: null });

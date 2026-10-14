@@ -7,6 +7,7 @@ import { BookmarkIcon } from '../components/Icons.jsx';
 import { Card, IconButton, Money } from '../components/ui/index.js';
 import { isNational } from '../components/CostSummary.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
+import { countryName } from '../lib/countryName.js';
 
 /**
  * Explore's two card shapes (T427), built on the kit's parts: the Score,
@@ -38,13 +39,18 @@ export function DayPrice({ cost, t }) {
 
 /** The save control, the same on a tile and a row: a bookmark, like My trips
  *  in the nav (a star would sit beside the rating's star and read as one). */
-export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '' }) {
+export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', name = '' }) {
+  // The place's name is in the label (T444): a screen reader walking a rail
+  // heard "Add to shortlist" twenty times with no place.
+  const label = name
+    ? t(fav ? 'explore.unsaveNamed' : 'explore.saveNamed', { place: name })
+    : (fav ? t('results.removeShortlist') : t('results.addShortlist'));
   return (
     <IconButton
       tone={tone}
       className={className}
       pressed={fav}
-      label={fav ? t('results.removeShortlist') : t('results.addShortlist')}
+      label={label}
       onClick={onToggle}
     >
       <BookmarkIcon size={18} />
@@ -63,18 +69,25 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
           sizes="(max-width: 768px) 78vw, 280px" ratio={[4, 3]} />
       )}
       title={p.city}
-      onOpen={(e) => openShared(e.currentTarget.closest('.card'), p.id, () => onSelect(p.id))}
+      href={`#dest=${encodeURIComponent(p.id)}`}
+      onOpen={(e) => {
+        // A real link (T444): a plain click opens the place here, a
+        // modifier click lets the browser open it in a new tab.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        openShared(e.currentTarget.closest('.card'), p.id, () => onSelect(p.id));
+      }}
       meta={(
         <span className="xtile-meta">
           <CountryFlag country={p.iso2} size={12} />
-          <span>{p.country}</span>
+          <span>{countryName(p.iso2, p.country)}</span>
           {p.rating?.hidden_gem && <HiddenGemTag />}
         </span>
       )}
       price={<DayPrice cost={p.cost} t={t} />}
       rating={<ScoreChip rating={p.rating} size="sm" />}
       actions={onToggleFav ? (
-        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" />
+        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" name={p.city} />
       ) : null}
     />
   );

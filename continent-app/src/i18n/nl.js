@@ -5595,4 +5595,8 @@ export const nl = {
   "gs.whyLake": "Meer op {km} km",
   "gs.whyPeak": "Bergtop op {km} km",
   "gs.whyMonth": "Goed in {month}",
+  "sort.match": "Beste match",
+  "gs.cheapest": "Goedkoopste eerst",
+  "explore.saveNamed": "{place} bewaren",
+  "explore.unsaveNamed": "{place} niet meer bewaren",
 };
