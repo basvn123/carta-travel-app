@@ -258,7 +258,8 @@ old ones, and the `raw-button` lint rule (T425) meters what is left; `node scrip
   example and never stands in for the label.
 - **Icon** and **Money** as above.
 - **Score** (`RatingBadge.jsx`, T437): a drawn star in `--rate` and the figure in `--text`, tabular,
-  12 px or more, no fill; the star is filled from the second tier up and outlined below. `band` adds the
+  12 px or more, no fill; the star is always filled (owner, 2026-10-14, T447: an outlined star read as
+  "not rated"), and below the first band it is `--text-3` instead of `--rate`. `band` adds the
   band word (Exceptional, Excellent, Very good) through i18n, on a page head or a preview.
 - **Switch** (T437): `role="switch"`, the whole row is the hit area; off is an outlined track with a
   dark thumb, on is the brown track with the thumb moved across.

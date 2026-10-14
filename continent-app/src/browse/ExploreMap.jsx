@@ -280,7 +280,7 @@ export function ExploreMap({
         + (thumb ? `<img class="xmap-card-img" src="${esc(thumb)}" alt="" loading="lazy">` : '')
         + '<div class="xmap-card-body"><div class="xmap-card-head">'
         + `<span class="xmap-card-name">${esc(city)}</span>`
-        + (score != null ? `<span class="xmap-card-score rt-${tier}">${STAR_SVG(tier >= 2)}${Number(score).toFixed(1)}</span>` : '')
+        + (score != null ? `<span class="xmap-card-score rt-${tier}">${STAR_SVG(true)}${Number(score).toFixed(1)}</span>` : '')
         + '</div>'
         + `<p class="xmap-card-sub">${esc(country)}</p>`
         + (eur >= 0 ? `<p class="xmap-card-eur">${eurHtml(eur, est === 1, 'xmap-card-eur-line')}</p>` : '')
