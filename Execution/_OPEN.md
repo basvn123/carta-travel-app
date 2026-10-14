@@ -1440,3 +1440,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T444-e | T444 | Explore filter rail jargon without a key: role chips (Base, Basecamp, Day trip, Stop), the size glyph ramp, filled versus outlined stars | next task | open |  |
 | T444-f | T444 | The phone settings line drops the Lifestyle label, so Entire place reads like a stay-type filter | next task | open |  |
 | T444-g | T444 | The guided search field reads back only what the search sets; a trip type or rating set in the rail shows only as a chip | next task | open |  |
+| T445-a | T445 | Run the production deploy from continent-app: npx wrangler pages deploy dist --project-name carta-app --branch main (dist holds the checked build; the session's classifier refused it); preview 064f4dd1 passed 18 of 18 | user | open | 1 |
+| T445-b | T445 | Only search/guided.json was uploaded to R2 in T445; if pipelines changed other data since the last full push, run node scripts/r2/push-data.mjs --live with the rclone keys | user | open | 2 |
