@@ -34,9 +34,31 @@ import { LoadingBlock } from '../components/StateBlocks.jsx';
 // DestMap / the planner tabs, since maplibre was already in the main bundle
 // by the time they loaded. Loading it here on the first switch to map view
 // takes it (and maplibre-gl.css) off the critical path.
+const loadExploreMap = () => import('./ExploreMap.jsx');
 const ExploreMap = React.lazy(
-  () => import('./ExploreMap.jsx').then((m) => ({ default: m.ExploreMap })),
+  () => loadExploreMap().then((m) => ({ default: m.ExploreMap })),
 );
+// T441: fetch the map's code before it is asked for, when the browser is idle
+// after the first paint and again the moment a pointer or focus reaches the
+// Map switch, unless the reader saves data or sits on a slow line. The
+// basemap's two hosts are warmed at the same moment (here, not in index.html,
+// so a visit that never reaches Explore opens no connection to them).
+const MAP_HOSTS = ['https://basemaps.cartocdn.com', 'https://tiles.basemaps.cartocdn.com'];
+let mapPrefetched = false;
+function prefetchMap() {
+  if (mapPrefetched) return;
+  const c = typeof navigator !== 'undefined' ? navigator.connection : null;
+  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
+  mapPrefetched = true;
+  for (const href of MAP_HOSTS) {
+    const l = document.createElement('link');
+    l.rel = 'preconnect';
+    l.href = href;
+    l.crossOrigin = 'anonymous';
+    document.head.appendChild(l);
+  }
+  loadExploreMap().catch(() => { mapPrefetched = false; });
+}
 import { CostReceipt } from '../components/CostSummary.jsx';
 import { Button, Chip, Segmented } from '../components/ui/index.js';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
@@ -90,19 +112,6 @@ const noCarOk = (p) => !p.local_transport?.car_needed
     || p.local_transport?.transit_quality === 'excellent');
 const underOk = (eur) => (p) => p.cost?.dayEur != null && p.cost.dayEur <= eur;
 const quietOk = (p) => p.crowding?.tier === 1;
-
-// Four tiles: the grid view, beside the pin that means the map.
-function GridIcon({ size = 14 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"
-      fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
-      <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
-      <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
-      <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
-      <rect x="13.5" y="13.5" width="7" height="7" rx="1.5" />
-    </svg>
-  );
-}
 
 const SORTS = [
   { key: 'beauty', labelKey: 'sort.rating' },
@@ -422,6 +431,15 @@ export function ExploreTab({
     typeof window !== 'undefined'
       && new URLSearchParams(window.location.search).get('xw') === 'map' ? 'map' : 'grid'));
   const [bbox, setBbox] = React.useState(null);
+  // The map mounts on its first open and stays (T441).
+  const [mapOpened, setMapOpened] = React.useState(view === 'map');
+  React.useEffect(() => { if (view === 'map') setMapOpened(true); }, [view]);
+  React.useEffect(() => {
+    if (!isActive) return undefined;
+    const idle = window.requestIdleCallback;
+    const h = idle ? idle(prefetchMap, { timeout: 4000 }) : setTimeout(prefetchMap, 2500);
+    return () => { if (idle) window.cancelIdleCallback?.(h); else clearTimeout(h); };
+  }, [isActive]);
   // 'viewport' catalogue mode (T059, lib/catalogue.js). The grid ranks the
   // whole of Europe, so it asks for every country. The map draws every pin
   // from the boot index and fetches the countries it has on screen once the
@@ -472,21 +490,12 @@ export function ExploreTab({
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
-  const { rows, availableCountries, indices: costIndex } = useExploreCatalog({
+  const { all: allRows, rows, availableCountries, indices: costIndex } = useExploreCatalog({
     data, locationQuery, countryFilter, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
     indices, searchHits,
   });
-
-  // The whole catalogue, stable for as long as the data is. The map
-  // serialises THIS once and expresses the filters as a maplibre filter
-  // over it, rather than re-parsing the filtered set on every keystroke
-  // (P4.5).
-  const allRows = React.useMemo(
-    () => Object.values(data?.destinations || {}),
-    [data],
-  );
 
   // C1's role needs the neighbour count; built once per catalogue.
   const nearby = React.useMemo(
@@ -838,33 +847,22 @@ export function ExploreTab({
 
   // The desktop switch is the kit Segmented (T427). The phone's floating
   // switch below is redrawn with the map in T441.
-  const viewSwitch = (
-    <Segmented
-      size="sm"
-      label={t('explore.viewAria')}
-      value={view}
-      onChange={setView}
-      className="xview-seg"
-      options={[
-        { value: 'grid', label: t('explore.viewList'), icon: <ListDayIcon size={15} /> },
-        { value: 'map', label: t('explore.viewMap'), icon: <MapPinIcon size={15} /> },
-      ]}
-    />
-  );
-
-  const viewToggle = (cls) => (
-    <div className={`xview-toggle ${cls}`.trim()} role="group" aria-label={t('explore.viewAria')}>
-      <button type="button" className={view === 'grid' ? 'on' : ''} aria-pressed={view === 'grid'}
-        onClick={() => setView('grid')}>
-        {cls === 'xview-fab' ? <ListDayIcon size={15} /> : <GridIcon size={14} />}
-        <span>{cls === 'xview-fab' ? t('explore.viewList') : t('explore.viewGrid')}</span>
-      </button>
-      <button type="button" className={view === 'map' ? 'on' : ''} aria-pressed={view === 'map'}
-        onClick={() => setView('map')}>
-        <MapPinIcon size={15} />
-        <span>{t('explore.viewMap')}</span>
-      </button>
-    </div>
+  // One List/Map switch, the kit Segmented, drawn twice: in the top band on
+  // a desktop, floating above the bottom nav on a phone (T441; the phone's
+  // was a dark slab, row T426-d). Reaching it starts loading the map.
+  const viewSwitch = (cls) => (
+    <span className={cls} onPointerEnter={prefetchMap} onFocus={prefetchMap}>
+      <Segmented
+        size="sm"
+        label={t('explore.viewAria')}
+        value={view}
+        onChange={setView}
+        options={[
+          { value: 'grid', label: t('explore.viewList'), icon: <ListDayIcon size={15} /> },
+          { value: 'map', label: t('explore.viewMap'), icon: <MapPinIcon size={15} /> },
+        ]}
+      />
+    </span>
   );
 
   // The budget steps the rail offers; an old link's 70 euro step (xp=e) shows as its
@@ -897,7 +895,7 @@ export function ExploreTab({
 
 
   return (
-    <div className="explore-shell">
+    <div className={`explore-shell${view === 'map' ? ' is-map' : ''}`}>
       {headerSlot && createPortal(searchField, headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the filter
@@ -957,7 +955,7 @@ export function ExploreTab({
             {isMock && <span className="explore-mock">Mock data</span>}
           </div>
           <div className="xbar-tools">
-            {viewSwitch}
+            {viewSwitch('xview-seg')}
             {sortSelect}
           </div>
         </div>
@@ -1008,8 +1006,10 @@ export function ExploreTab({
               asked for straight after the control bar, instead of after
               every card of an infinitely scrolling list, which on a long
               list meant never. */}
-          {view === 'map' && (
-            <div className="xcontent-map">
+          {/* Kept mounted after its first open (T441), hidden while the list
+              shows, so switching back is instant instead of a rebuild. */}
+          {mapOpened && (
+            <div className="xcontent-map" hidden={view !== 'map'}>
               {/* While maplibre downloads, the frame the map will fill is
                   already drawn at its final size: a skeleton, not the app's
                   full-screen pulse, so nothing jumps when the canvas lands. */}
@@ -1018,11 +1018,16 @@ export function ExploreTab({
                   <LoadingBlock label={t('explore.mapLoading')} rows={1} shape="card" />
                 </div>
               )}>
+                {/* `all` is the list's own catalogue before the filters,
+                    airport gateways merged into one place (T441: the raw
+                    data drew three Paris dots, labelled "Paris (CDG)"). The
+                    map serialises it once and filters by id (P4.5). */}
                 <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
                   onSelect={openWithMember} onViewport={onMapViewport}
                   onNeedDetail={onMapNeedDetail} t={t}
                   ringId={cardLinkId} onPinLink={onPinLink} costs={costIndex}
-                  onBack={() => setView('grid')} />
+                  onBack={() => setView('grid')} visible={view === 'map'}
+                  framed={anyActive || searchHits != null} />
               </React.Suspense>
             </div>
           )}
@@ -1111,7 +1116,7 @@ export function ExploreTab({
         </div>
       </div>
 
-      {viewToggle('xview-fab')}
+      {viewSwitch('xview-fab')}
       </div>
 
       {countryPage && (

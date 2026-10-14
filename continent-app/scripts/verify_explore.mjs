@@ -24,8 +24,8 @@ const errors = [];
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
-const boot = async (viewport) => {
-  const page = await browser.newPage({ viewport });
+const boot = async (viewport, opts = {}) => {
+  const page = await browser.newPage({ viewport, ...opts });
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
   const NOISE = /ERR_FAILED|config is not valid|open-meteo/;
   page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 120)); });
@@ -237,10 +237,47 @@ try {
   check('the map canvas is up', await page.locator('.xcontent-map .maplibregl-canvas').count() === 1);
   check('the list stays beside the map', await page.locator('.xcontent--split .xrows .xrow').first().isVisible());
   check('the collections step aside for the map', await page.locator('.xrails-rail').count() === 0);
+  // T441: no number clusters; prices from the opening view, wholly inside
+  // the frame; the one cheapest in view in sun; the camera on Europe.
+  const pins = await page.evaluate(() => {
+    const frame = document.querySelector('.xcontent-map .xmap').getBoundingClientRect();
+    const labels = [...document.querySelectorAll('.xmap-kpin.is-label')].map((e) => e.getBoundingClientRect());
+    const cheap = document.querySelector('.xmap-kpin.is-cheapest');
+    const map = document.querySelector('.xmap-canvas')?._cartaMap;
+    const best = getComputedStyle(document.documentElement).getPropertyValue('--best').trim();
+    const probe = document.createElement('i');
+    probe.style.color = best;
+    document.body.appendChild(probe);
+    const bestRgb = getComputedStyle(probe).color;
+    probe.remove();
+    return {
+      labels: labels.length,
+      inside: labels.every((r) => r.left >= frame.left && r.right <= frame.right && r.top >= frame.top && r.bottom <= frame.bottom),
+      clusters: document.querySelectorAll('.xmap-kpin.is-cluster').length,
+      cheapest: document.querySelectorAll('.xmap-kpin.is-cheapest').length,
+      cheapSun: cheap ? getComputedStyle(cheap).backgroundColor === bestRgb : false,
+      zoom: map ? map.getZoom() : null,
+      center: map ? map.getCenter().toArray() : null,
+    };
+  });
+  check('map: prices from the opening view', pins.labels >= 8, `${pins.labels} labels`);
+  check('map: every label sits inside the frame', pins.inside);
+  check('map: no number clusters', pins.clusters === 0);
+  check('map: one cheapest in view, in sun', pins.cheapest === 1 && pins.cheapSun);
+  check('map: unfiltered, the camera frames Europe', pins.zoom != null && pins.zoom >= 2.8 && pins.zoom <= 4.6
+    && pins.center[0] > -5 && pins.center[0] < 25 && pins.center[1] > 40 && pins.center[1] < 58,
+    pins.zoom != null ? `zoom ${pins.zoom.toFixed(2)} at ${pins.center.map((n) => n.toFixed(1)).join(', ')}` : 'no map');
   await page.screenshot({ path: 'shots/explore-desktop-map.png' });
+  await page.locator('.xcontent-map .maplibregl-canvas').evaluate((c) => { c.dataset.probe = '1'; });
   await page.locator('.xbar .xview-seg [role="radio"]').first().click();
   await page.waitForTimeout(600);
-  check('back to the grid, the map is gone', await page.locator('.maplibregl-canvas').count() === 0);
+  check('back to the grid, the map is hidden', await page.locator('.xcontent-map[hidden]').count() === 1
+    && !(await page.locator('.maplibregl-canvas').isVisible()));
+  await page.locator('.xbar .xview-seg [role="radio"]').nth(1).click();
+  await page.waitForTimeout(400);
+  check('map again: the same map, kept mounted', await page.locator('.maplibregl-canvas[data-probe="1"]').isVisible());
+  await page.locator('.xbar .xview-seg [role="radio"]').first().click();
+  await page.waitForTimeout(400);
 
   // ── Open a destination: it is the full-screen page now. The deep contract
   // (gallery, highlights, PDF, parking deeplinks) lives in
@@ -335,6 +372,43 @@ try {
   await page.close();
 } catch (e) {
   check('phone pass ran', false, String(e).split('\n')[0]);
+}
+
+// ── The phone map (T441), on a touch screen: full height to the nav, the
+// kit switch floating, prices from the first view, and a tap on a price
+// raising the peek card instead of leaving the map. ──
+try {
+  const page = await boot({ width: 390, height: 844 }, { hasTouch: true, isMobile: true });
+  const explore = page.locator('.bottom-nav-item', { hasText: /explore/i }).first();
+  await explore.waitFor({ state: 'visible', timeout: 20000 });
+  await explore.tap();
+  await page.waitForSelector('.xrow', { timeout: 30000 });
+  await page.locator('.xview-fab [role="radio"]').nth(1).tap();
+  await page.waitForSelector('.xmap.is-ready', { timeout: 20000 });
+  await page.waitForTimeout(3500);
+  const geo = await page.evaluate(() => {
+    const m = document.querySelector('.xcontent-map .xmap').getBoundingClientRect();
+    const nav = document.querySelector('.bottom-nav')?.getBoundingClientRect();
+    return { top: m.top, bottom: m.bottom, width: m.width, navTop: nav ? nav.top : innerHeight };
+  });
+  check('phone map: full width and down to the nav', geo.width === 390 && Math.abs(geo.bottom - geo.navTop) <= 2,
+    `${Math.round(geo.top)} to ${Math.round(geo.bottom)}, nav at ${Math.round(geo.navTop)}`);
+  check('phone map: the sort leaves the map view, the h1 stays', await page.locator('.xbar-tools').isHidden()
+    && await page.evaluate(() => [...document.querySelectorAll('h1')]
+      .filter((h) => h.getClientRects().length > 0 && h.getBoundingClientRect().width > 0).length) === 1);
+  const n = await page.locator('.xmap-kpin.is-label').count();
+  check('phone map: prices from the first view', n >= 5, `${n} labels`);
+  await page.locator('.xmap-kpin.is-label').first().tap();
+  await page.waitForTimeout(1200);
+  check('phone map: a tap raises the peek card', await page.locator('.xmap-card').isVisible()
+    && await page.locator('.destp').count() === 0);
+  await page.screenshot({ path: 'shots/explore-phone-map.png' });
+  await page.locator('.xmap-card-hit').tap();
+  await page.waitForTimeout(2000);
+  check('phone map: the card opens the place', await page.locator('.destp').isVisible());
+  await page.close();
+} catch (e) {
+  check('phone map pass ran', false, String(e).split('\n')[0]);
 }
 
 // ── Report ──
