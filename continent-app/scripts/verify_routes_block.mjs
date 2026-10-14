@@ -133,8 +133,9 @@ if (subject) {
   check('the direction is translated, not a letter code', dirs.length === facts.length,
     `${dirs.length}/${facts.length}`);
 
-  check('coverage is admitted in the block',
-    /coverage is uneven/i.test(await page.locator('#sec-routes .drh-note').textContent().catch(() => '')));
+  // T429 (owner, 2026-10-13): method and coverage sentences left the page;
+  // the PDF still prints this one.
+  check('no coverage sentence in the block', await page.locator('#sec-routes .drh-note').count() === 0);
   const credit = await page.locator('#sec-routes .drh-credit').textContent().catch(() => '');
   check('OSM is credited in the block', /openstreetmap/i.test(credit));
   check('Copernicus is credited for the ascent', /copernicus/i.test(credit));

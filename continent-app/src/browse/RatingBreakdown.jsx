@@ -98,10 +98,9 @@ export function RatingBreakdown({ rating, meta, t, countryLine }) {
         </ul>
       )}
 
-      <p className="rate-break-note">
-        {t('rating.method')}
-        {rating.hidden_gem && ` ${t('rating.gemWhy')}`}
-      </p>
+      {/* The method sentence (rating.method) left with the page's other
+          method lines (T429, owner 2026-10-13); why a gem is a gem stays. */}
+      {rating.hidden_gem && <p className="rate-break-note">{t('rating.gemWhy')}</p>}
     </div>
   );
 }

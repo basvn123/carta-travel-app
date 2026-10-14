@@ -292,29 +292,6 @@
 }
 .frr-sheet-actions .btn { flex: 1 1 180px; }
 
-/* ── Where the receipt sits ── */
-
-/* Destination page: straight under the facts on a phone; on a desktop at the
-   head of the right column, with the side folds below it and the main
-   column running down the left beside both. */
-.destp-v2 .destp-grid.has-frr .destp-frr { min-width: 0; }
-@media (min-width: 1020px) {
-  .destp-v2 .destp-grid.has-frr { grid-template-rows: auto 1fr; }
-  .destp-v2 .destp-grid.has-frr .destp-frr { grid-column: 2; grid-row: 1; }
-  .destp-v2 .destp-grid.has-frr .destp-col.is-main { grid-column: 1; grid-row: 1 / span 2; }
-  .destp-v2 .destp-grid.has-frr .destp-col.is-side { grid-column: 2; grid-row: 2; }
-}
-
-/* While "Set your dates" is the view's primary, the page's own primary waits
-   as a secondary (FIRST_RUN_RESULT.md, "never a second primary"). */
-.destp-plan-btn.is-quiet {
-  color: var(--ink);
-  border-color: var(--rule);
-  background: var(--bg-card);
-}
-@media (hover: hover) {
-  .destp-plan-btn.is-quiet:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
-}
 .bpage-base.is-quiet {
   color: var(--ink);
   border-color: var(--rule);

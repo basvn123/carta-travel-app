@@ -79,10 +79,12 @@ export function ClimateStrip({ climate, month = null, figures = false }) {
 
   return (
     <>
-      {bestLabel && (
+      {/* With figures (the destination page) the strip stands alone: the
+          page's key facts already name the best months, and the sentence
+          explaining the bars went with the other method lines (T429). */}
+      {bestLabel && !figures && (
         <p className="climate-best">{t('bestTime.climateBest', { months: bestLabel })}</p>
       )}
-      {figures && <p className="climate-key">{t('dest.climateKey')}</p>}
       <div className={`climate-chart ${figures ? 'has-figures' : ''}`} role={figures ? 'list' : undefined}>
         {months.map((m, i) => (
           <div

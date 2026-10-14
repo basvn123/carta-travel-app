@@ -546,16 +546,6 @@
 /* ---- Hand-offs into the planners (I1) ------------------------------------
    Two doors on a destination page (trip wizard, day flow), one on a trail,
    beach, lake or mountain page, and the way back from a day to its trip. */
-.destp-plan-btn { color: var(--on-fill); border-color: var(--accent); background: var(--accent); }
-@media (hover: hover) {
-  .destp-plan-btn:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
-}
-/* T166: a page has one primary. When both doors show, the trip is the primary and
-   the day is the bordered secondary beside it. A lone door stays primary. */
-.destp-plan-btn + .destp-plan-btn { color: var(--ink); border-color: var(--rule); background: var(--bg-card); }
-@media (hover: hover) {
-  .destp-plan-btn + .destp-plan-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
-}
 .feat-dayplan {
   display: inline-flex;
   align-items: center;

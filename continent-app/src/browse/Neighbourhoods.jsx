@@ -40,7 +40,6 @@ export function Neighbourhoods({ sleep, t }) {
         ))}
       </ul>
       )}
-      {hoods.length > 0 && <p className="destp-sleep-note">{t('dest.sleepNote')}</p>}
       {sleep.tiers && (
         <p className="destp-sleep-tiers">
           <BedIcon size={13} />
