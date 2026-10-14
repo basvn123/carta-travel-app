@@ -1244,6 +1244,7 @@ function TravelApp() {
               choices={choices}
               onOpenLifestyle={openLifestyle}
               onOpenGuides={openGuides}
+              onOpenCountryInPlaces={openCountryInPlaces}
               isMock={!!data.meta?.is_mock}
             />
           </div>

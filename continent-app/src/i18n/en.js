@@ -5361,9 +5361,9 @@ export const en = {
   "cpage.holds": "Carta holds {n} destinations in {country}",
   "cpage.day": "a typical day runs {eur}",
   "cpage.when": "best {months}",
-  "cpage.carMost": "a car is needed almost everywhere",
-  "cpage.carSome": "a car helps outside the cities",
-  "cpage.carFew": "trains and buses cover most of it",
+  "cpage.carMost": "A car is needed almost everywhere",
+  "cpage.carSome": "A car helps outside the cities",
+  "cpage.carFew": "Trains and buses cover most of it",
   "cpage.best": "The best of {country}",
   "cpage.cities": "Cities worth your time",
   "cpage.towns": "Towns and villages",
@@ -6407,4 +6407,10 @@ export const en = {
   "dtab.photoNext": "Next photo of {country}",
   "dtab.photoCredits": "Photographs",
   "dtab.beds": "Hostel, hut or campsite beds",
+  // T450: the country page
+  "cpage.kDay": "Typical day",
+  "cpage.kWhen": "Best months",
+  "cpage.kCar": "Getting around",
+  "cpage.showAll": "Show every place in {country}",
+  "cpage.outdoors": "Walks, beaches and rides",
 };

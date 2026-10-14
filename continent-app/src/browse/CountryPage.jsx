@@ -1,26 +1,32 @@
 import React from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { ArrowLeftIcon } from '../components/Icons.jsx';
-import { HeroImage } from '../components/HeroImage.jsx';
-import { ScoreChip, tierClass } from '../components/RatingBadge.jsx';
-import { KindGlyph } from '../components/KindGlyph.jsx';
+import { ArrowLeftIcon, ChevronRightIcon } from '../components/Icons.jsx';
 import { kindOf } from '../lib/taxonomy.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { formatMoney } from '../lib/money.js';
+import { Button, IconButton, Money } from '../components/ui/index.js';
+import { PlaceTile } from './ExploreCards.jsx';
+import { Strip } from './SectionOpening.jsx';
+import { GalleryStrip } from './CountryGallery.jsx';
+import { countryPhotos, countryKnownKey } from '../lib/countryGallery.js';
+import CreditFold from './CreditFold.jsx';
 
 /**
- * A country as a destination of its own (PLAN.md C9), not a filtered grid.
+ * A country as a destination of its own (PLAN.md C9; rebuilt in T450 on the
+ * kit, after the Destinations tab).
  *
- * The A6 badges pay off here: Finland gets a page with a top three instead
- * of an unlabelled wall. Structure: the badged destinations first (that IS
- * the country's shortlist), then the kinds broken out - its best cities,
- * villages and landscapes - then the practical paragraph: how many places
- * Carta holds there, the typical day in euros (median over the country's
- * rows), when to go (the months most of its places rate best), and whether
- * a car is generally needed (the share of places that need one).
+ * Top to bottom: the photographs people know the country for (T449's
+ * gallery, swipeable), its name and the one line of what it is known for,
+ * three key facts set label over value (the typical day at the traveller's
+ * Lifestyle, the best months, how you get around), the two doors (every
+ * place on the map, and its walks, beaches and rides on Destinations), then
+ * the rails Explore draws: its best, its cities, its towns and villages, its
+ * landscapes. The credits wait in one closed row at the end.
  *
- * Every section renders only when it has content - a thin country shows a
+ * What went (owner, 2026-10-14): "Carta holds N destinations in {country}",
+ * the facts run together as one line, and the raw mini cards.
+ *
+ * Every section renders only when it has content: a thin country shows a
  * shorter page, never an empty shell.
  */
 
@@ -29,42 +35,25 @@ function median(xs) {
   return s.length ? s[Math.floor(s.length / 2)] : null;
 }
 
-function MiniCard({ p, onSelect, t }) {
-  const kind = kindOf(p);
-  return (
-    <button className="railcard" onClick={() => onSelect(p.id)}>
-      <span className="railcard-media">
-        <HeroImage url={p.image} city={p.city} iso2={p.iso2}
-          className="railcard-img" maxWidth={330} sizes="180px" ratio={[4, 3]} />
-        {(p.rating?.tier ?? 0) >= 2 && (
-          <span className={`railcard-seal ${tierClass(p.rating)}`} />
-        )}
-      </span>
-      <span className="railcard-body">
-        <span className="railcard-kind">
-          <KindGlyph kind={kind} size={9} label={t(`pkind.${kind}`)} />
-          <span>{t(`pkind.${kind}`)}</span>
-        </span>
-        <span className="railcard-name">{p.city}</span>
-        <ScoreChip rating={p.rating} size="xs" />
-      </span>
-    </button>
-  );
-}
-
-function Strip({ title, rows, onSelect, t }) {
+function Rail({ id, title, rows, onSelect, favorites, onToggleFav, t }) {
   if (!rows.length) return null;
   return (
-    <section className="cpage-section">
-      <h3 className="cpage-h">{title}</h3>
-      <div className="xrails-strip">
-        {rows.map((p) => <MiniCard key={p.id} p={p} onSelect={onSelect} t={t} />)}
-      </div>
-    </section>
+    <Strip id={id} title={title} t={t} className="cpg-rail">
+      {rows.map((p) => (
+        <li key={p.id} className="dtab-item">
+          <PlaceTile p={p} onSelect={onSelect} t={t}
+            fav={favorites ? favorites.has(p.id) : false}
+            onToggleFav={onToggleFav} />
+        </li>
+      ))}
+    </Strip>
   );
 }
 
-export function CountryPage({ iso2, rows, onClose, onSelect }) {
+export function CountryPage({
+  iso2, rows, onClose, onSelect, favorites = null, onToggleFav = null,
+  onShowAll = null, onOpenOutdoors = null,
+}) {
   const { t } = useI18n();
   const mine = React.useMemo(
     () => rows.filter((p) => p.iso2 === iso2)
@@ -72,6 +61,8 @@ export function CountryPage({ iso2, rows, onClose, onSelect }) {
     [rows, iso2],
   );
   const country = mine[0]?.country || iso2;
+  const knownKey = countryKnownKey(iso2);
+  const photos = countryPhotos(iso2);
 
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -81,7 +72,7 @@ export function CountryPage({ iso2, rows, onClose, onSelect }) {
 
   const badged = mine.filter((p) => p.country_badge)
     .sort((a, b) => (a.country_rank ?? 99) - (b.country_rank ?? 99));
-  const byKind = (kinds) => mine.filter((p) => kinds.includes(kindOf(p))).slice(0, 8);
+  const byKind = (kinds) => mine.filter((p) => kinds.includes(kindOf(p))).slice(0, 12);
   const cities = byKind(['metro', 'city']);
   const towns = byKind(['town', 'village']);
   const areas = byKind(['area']);
@@ -100,29 +91,92 @@ export function CountryPage({ iso2, rows, onClose, onSelect }) {
     : carShare > 0.3 ? 'cpage.carSome' : 'cpage.carFew';
 
   return (
-    <div className="cpage" role="dialog" aria-label={country}>
-      <div className="cpage-top">
-        <button className="cpage-back" onClick={onClose} aria-label={t('cpage.back')}>
+    <div className="cpage cpg" role="dialog" aria-label={country}>
+      <div className="cpg-bar">
+        <IconButton className="cpage-back" label={t('cpage.back')} onClick={onClose}>
           <ArrowLeftIcon size={20} />
-        </button>
-        <CountryFlag country={iso2} size={20} />
-        <h2 className="cpage-name">{country}</h2>
+        </IconButton>
       </div>
 
-      {/* The facts stand as separate spans spaced by the gap, never joined
-          by a middot (carta-design copy rules; T411, row T404-d). */}
-      <p className="cpage-facts">
-        <span>{t('cpage.holds', { n: mine.length, country })}</span>
-        {day != null && <span>{t('cpage.day', { eur: formatMoney(day) })}</span>}
-        {goodMonths.length > 0 && <span>{t('cpage.when', { months: fmtMonthRanges(goodMonths) })}</span>}
-        <span>{t(carKey)}</span>
-      </p>
+      <div className="cpg-wrap">
+        {photos.length > 0 && (
+          <div className="cpg-hero">
+            <GalleryStrip cc={iso2} name={country} t={t} eager
+              sizes="(max-width: 768px) 100vw, min(70vw, 1100px)" />
+          </div>
+        )}
 
-      <div className="cpage-body">
-        <Strip title={t('cpage.best', { country })} rows={badged} onSelect={onSelect} t={t} />
-        <Strip title={t('cpage.cities')} rows={cities} onSelect={onSelect} t={t} />
-        <Strip title={t('cpage.towns')} rows={towns} onSelect={onSelect} t={t} />
-        <Strip title={t('cpage.areas')} rows={areas} onSelect={onSelect} t={t} />
+        <header className="cpg-head">
+          <h2 className="cpage-name cpg-name">
+            <CountryFlag country={iso2} size={22} />
+            <span>{country}</span>
+          </h2>
+          {knownKey && <p className="cpg-line">{t(knownKey)}</p>}
+        </header>
+
+        <dl className="cpg-keys">
+          {day != null && (
+            <div className="cpg-key">
+              <dt>{t('cpage.kDay')}</dt>
+              <dd><Money value={day} est /> <span className="cpg-unit">{t('cost.perDay')}</span></dd>
+            </div>
+          )}
+          {goodMonths.length > 0 && (
+            <div className="cpg-key">
+              <dt>{t('cpage.kWhen')}</dt>
+              <dd>{fmtMonthRanges(goodMonths)}</dd>
+            </div>
+          )}
+          {mine.length > 0 && (
+            <div className="cpg-key">
+              <dt>{t('cpage.kCar')}</dt>
+              <dd>{t(carKey)}</dd>
+            </div>
+          )}
+        </dl>
+
+        {(onShowAll || onOpenOutdoors) && (
+          <div className="cpg-doors">
+            {onShowAll && (
+              <Button variant="secondary" iconEnd={<ChevronRightIcon size={14} />}
+                onClick={() => onShowAll(iso2)}>
+                {t('cpage.showAll', { country })}
+              </Button>
+            )}
+            {onOpenOutdoors && (
+              <Button variant="secondary" iconEnd={<ChevronRightIcon size={14} />}
+                onClick={() => onOpenOutdoors(iso2)}>
+                {t('cpage.outdoors')}
+              </Button>
+            )}
+          </div>
+        )}
+
+        <div className="cpage-body cpg-rails">
+          <Rail id={`cpg-best-${iso2}`} title={t('cpage.best', { country })} rows={badged}
+            onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t} />
+          <Rail id={`cpg-cities-${iso2}`} title={t('cpage.cities')} rows={cities}
+            onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t} />
+          <Rail id={`cpg-towns-${iso2}`} title={t('cpage.towns')} rows={towns}
+            onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t} />
+          <Rail id={`cpg-areas-${iso2}`} title={t('cpage.areas')} rows={areas}
+            onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t} />
+        </div>
+
+        {photos.length > 0 && (
+          <div className="dtab-sources">
+            <CreditFold t={t}>
+              <p className="dtab-sources-head">{t('dtab.photoCredits')}</p>
+              <ul className="dtab-sources-list">
+                {photos.map((p) => (
+                  <li key={p.u}>
+                    {p.place}: <a href={p.page} target="_blank" rel="noreferrer">{p.author}</a>, {p.licence}
+                  </li>
+                ))}
+              </ul>
+            </CreditFold>
+          </div>
+        )}
       </div>
     </div>
   );

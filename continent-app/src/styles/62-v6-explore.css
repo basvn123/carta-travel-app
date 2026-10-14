@@ -412,7 +412,6 @@
    (the quality floor measured 34 px), and the country page's facts stand
    apart by the gap, not by middots (row T404-d). */
 
-.cpage-facts { display: flex; flex-wrap: wrap; column-gap: var(--space-4); row-gap: var(--space-1); }
 
 /* ==========================================================================
    T427 (roadmap 1.2, the owner's Explore review of 2026-10-13): full width,

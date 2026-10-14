@@ -4441,9 +4441,9 @@ export const nl = {
   "cpage.holds": "Carta kent {n} bestemmingen in {country}",
   "cpage.day": "een gewone dag kost {eur}",
   "cpage.when": "op zijn best {months}",
-  "cpage.carMost": "bijna overal is een auto nodig",
-  "cpage.carSome": "buiten de steden helpt een auto",
-  "cpage.carFew": "trein en bus dekken het meeste",
+  "cpage.carMost": "Bijna overal is een auto nodig",
+  "cpage.carSome": "Buiten de steden helpt een auto",
+  "cpage.carFew": "Trein en bus dekken het meeste",
   "cpage.best": "Het beste van {country}",
   "cpage.cities": "Steden die de tijd waard zijn",
   "cpage.towns": "Stadjes en dorpen",
@@ -5700,4 +5700,10 @@ export const nl = {
   "dtab.photoNext": "Volgende foto van {country}",
   "dtab.photoCredits": "Foto's",
   "dtab.beds": "Bedden in hostel, hut of camping",
+  // T450: the country page
+  "cpage.kDay": "Gemiddelde dag",
+  "cpage.kWhen": "Beste maanden",
+  "cpage.kCar": "Onderweg",
+  "cpage.showAll": "Alle plaatsen in {country} tonen",
+  "cpage.outdoors": "Wandelingen, stranden en fietsroutes",
 };

@@ -383,6 +383,8 @@ export function ExploreTab({
   indices,
   isMock = false,
   onOpenGuides,
+  // T450: a country page's door to its walks, beaches and rides.
+  onOpenCountryInPlaces = null,
 }) {
   const { t, lang } = useI18n();
   // The guided search data (T439): vibes, areas and distances. Loaded on
@@ -1185,6 +1187,12 @@ export function ExploreTab({
           rows={rows}
           onClose={() => setCountryPage(null)}
           onSelect={(id) => { onSelect(id); }}
+          favorites={favSet}
+          onToggleFav={onToggleFav}
+          onShowAll={(cc) => { setCountryFilter([cc]); setCountryPage(null); }}
+          onOpenOutdoors={onOpenCountryInPlaces
+            ? (cc) => { setCountryPage(null); onOpenCountryInPlaces(cc); }
+            : null}
         />
       )}
 
