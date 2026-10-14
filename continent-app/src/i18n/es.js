@@ -4441,9 +4441,9 @@ export const es = {
   "cpage.holds": "Carta cubre {n} destinos en {country}",
   "cpage.day": "un día típico cuesta {eur}",
   "cpage.when": "mejor {months}",
-  "cpage.carMost": "hace falta coche casi en todas partes",
-  "cpage.carSome": "el coche ayuda fuera de las ciudades",
-  "cpage.carFew": "trenes y buses cubren casi todo",
+  "cpage.carMost": "Hace falta coche casi en todas partes",
+  "cpage.carSome": "El coche ayuda fuera de las ciudades",
+  "cpage.carFew": "Trenes y buses cubren casi todo",
   "cpage.best": "Lo mejor de {country}",
   "cpage.cities": "Ciudades que valen la pena",
   "cpage.towns": "Pueblos",
@@ -5700,4 +5700,10 @@ export const es = {
   "dtab.photoNext": "Foto siguiente de {country}",
   "dtab.photoCredits": "Fotografías",
   "dtab.beds": "Camas en albergue, refugio o camping",
+  // T450: the country page
+  "cpage.kDay": "Día típico",
+  "cpage.kWhen": "Mejores meses",
+  "cpage.kCar": "Moverse",
+  "cpage.showAll": "Ver todos los lugares en {country}",
+  "cpage.outdoors": "Rutas, playas y bici",
 };

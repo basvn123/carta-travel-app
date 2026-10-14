@@ -26,6 +26,11 @@ import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { ArrowLeftIcon } from '../components/Icons.jsx';
+import { Button, Card, IconButton } from '../components/ui/index.js';
+import { ScoreChip } from '../components/RatingBadge.jsx';
+import { HeroImage } from '../components/HeroImage.jsx';
+import { okPhoto } from '../lib/photoVeto.js';
+import { countryName } from '../lib/countryName.js';
 
 const KIND_KEY = {
   coast: 'region.kind.coast',
@@ -52,34 +57,25 @@ function cardImage(card) {
   // wire carried it, so both shapes are unwrapped here.
   const first = (card.images && card.images[0]) || card.img;
   const url = typeof first === 'string' ? first : first && first.u;
-  return typeof url === 'string' && url.startsWith('https://') ? url : null;
+  return typeof url === 'string' && url.startsWith('https://') ? okPhoto(url) : null;
 }
 
-function Card({ card, listed, t, onOpen }) {
+function RegionCard({ card, listed, t, onOpen }) {
   const img = cardImage(card);
   const score = typeof card.score === 'number' ? card.score
     : typeof card.rating === 'number' ? card.rating : null;
+  const where = card.region || card.range || null;
   return (
-    <button
+    <Card
       className={`rgnp-card${listed ? ' rgnp-listed' : ''}`}
-      onClick={() => onOpen(card)}
-    >
-      {img
+      media={img
         ? <img src={img} alt="" loading="lazy" />
         : <span className="rgnp-card-noimg" aria-hidden="true" />}
-      <span>
-        <span className="rgnp-card-name">{card.name}</span>
-        <br />
-        {listed
-          ? <span className="rgnp-listed-chip">{t('region.listedChip')}</span>
-          : (
-            <span className="rgnp-card-sub">
-              {[score != null ? score.toFixed(1) : null,
-                card.region || card.range || null].filter(Boolean).join(', ')}
-            </span>
-          )}
-      </span>
-    </button>
+      title={<span className="rgnp-card-name">{card.name}</span>}
+      onOpen={() => onOpen(card)}
+      meta={listed ? t('region.listedChip') : where}
+      rating={!listed && score != null ? <ScoreChip rating={{ score }} size="sm" /> : null}
+    />
   );
 }
 
@@ -148,10 +144,10 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
       <div className="rgnp" role="dialog" aria-modal="true"
         aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
-          <button className="rgnp-back" onClick={onClose}
-            aria-label={t('glyph.back')} ref={backRef}>
+          <IconButton className="rgnp-back" onClick={onClose}
+            label={t('glyph.back')} ref={backRef}>
             <ArrowLeftIcon size={20} />
-          </button>
+          </IconButton>
           <ErrorBlock message={t('layer.loadFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
         </div>
       </div>
@@ -166,10 +162,10 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
       <div className="rgnp" role="dialog" aria-modal="true"
         aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
-          <button className="rgnp-back" onClick={onClose}
-            aria-label={t('glyph.back')} ref={backRef}>
+          <IconButton className="rgnp-back" onClick={onClose}
+            label={t('glyph.back')} ref={backRef}>
             <ArrowLeftIcon size={20} />
-          </button>
+          </IconButton>
           <LoadingBlock label={t('region.loading')} rows={4} />
         </div>
       </div>
@@ -184,10 +180,10 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
       <div className="rgnp" role="dialog" aria-modal="true"
         aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
-          <button className="rgnp-back" onClick={onClose}
-            aria-label={t('glyph.back')} ref={backRef}>
+          <IconButton className="rgnp-back" onClick={onClose}
+            label={t('glyph.back')} ref={backRef}>
             <ArrowLeftIcon size={20} />
-          </button>
+          </IconButton>
           <h1>{t('region.notFound')}</h1>
           <p className="rgnp-card-sub">{t('region.notFoundHint')}</p>
           {nearIds.length > 0 && (
@@ -211,29 +207,37 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
   }
 
   const region = data?.region;
+  // The page's photograph: its best-rated member's own, where one exists.
+  const heroUrl = [...(data?.editorial || []), ...(data?.rated || [])].map(cardImage).find(Boolean) || null;
   return (
     <div className="rgnp" role="dialog" aria-modal="true"
       aria-label={t('region.kind.nuts2')} ref={pageRef}>
       <div className="rgnp-inner">
-        <button className="rgnp-back" onClick={onClose}
-          aria-label={t('glyph.back')} ref={backRef}>
+        <IconButton className="rgnp-back" onClick={onClose}
+          label={t('glyph.back')} ref={backRef}>
           <ArrowLeftIcon size={20} />
-        </button>
+        </IconButton>
         {region && (
           <>
             <div className="rgnp-kind">
               {t(KIND_KEY[region.kind] || 'region.kind.nuts2')}
-              {region.country ? `, ${region.country}` : ''}
+              {region.country ? `, ${countryName(region.country, region.country)}` : ''}
             </div>
             <h1>{region.name}</h1>
-            <button className="rgnp-share" onClick={share}>
+            <Button variant="quiet" size="sm" className="rgnp-share" onClick={share}>
               {copied ? t('region.shareDone') : t('region.share')}
-            </button>
+            </Button>
+            {heroUrl && (
+              <div className="rgnp-hero">
+                <HeroImage url={heroUrl} city={region.name} className="rgnp-hero-img"
+                  maxWidth={1280} sizes="(max-width: 860px) 100vw, 860px" ratio={[21, 9]} eager />
+              </div>
+            )}
 
             {data.editorial?.length > 0 && (
               <div className="rgnp-list">
                 {data.editorial.map((card) => (
-                  <Card key={`e-${card.layer}-${card.id}`} card={card}
+                  <RegionCard key={`e-${card.layer}-${card.id}`} card={card}
                         listed={false} t={t} onOpen={open} />
                 ))}
               </div>
@@ -241,10 +245,10 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
 
             {data.rated?.length > 0 && (
               <>
-                <p className="rgnp-sect">{t('region.ratedHead')}</p>
+                <h2 className="rgnp-sect">{t('region.ratedHead')}</h2>
                 <div className="rgnp-list">
                   {data.rated.map((card) => (
-                    <Card key={`r-${card.layer}-${card.id}`} card={card}
+                    <RegionCard key={`r-${card.layer}-${card.id}`} card={card}
                           listed={false} t={t} onOpen={open} />
                   ))}
                 </div>
@@ -253,11 +257,10 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
 
             {data.listed?.length > 0 && (
               <>
-                <p className="rgnp-sect">{t('region.listedHead')}</p>
-                <p className="rgnp-card-sub">{t('region.listedNote')}</p>
+                <h2 className="rgnp-sect">{t('region.listedHead')}</h2>
                 <div className="rgnp-list">
                   {data.listed.map((card) => (
-                    <Card key={`l-${card.layer}-${card.id}`} card={card}
+                    <RegionCard key={`l-${card.layer}-${card.id}`} card={card}
                           listed t={t} onOpen={open} />
                   ))}
                 </div>
@@ -266,12 +269,12 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
 
             {data.neighbours?.length > 0 && (
               <>
-                <p className="rgnp-sect">{t('region.neighboursHead')}</p>
+                <h2 className="rgnp-sect">{t('region.neighboursHead')}</h2>
                 <div className="rgnp-neigh">
                   {data.neighbours.map((n) => (
-                    <button key={n.id} onClick={() => onOpenRegion?.(n.id)}>
+                    <Button key={n.id} variant="secondary" size="sm" onClick={() => onOpenRegion?.(n.id)}>
                       {n.name}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </>

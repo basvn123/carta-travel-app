@@ -153,7 +153,9 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .dgal-card:hover .dgal-nav,
-  .dgal-card:focus-within .dgal-nav { display: inline-flex; }
+  .dgal-card:focus-within .dgal-nav,
+  .cpg-hero:hover .dgal-nav,
+  .cpg-hero:focus-within .dgal-nav { display: inline-flex; }
 }
 .dgal-arrow.is-prev svg { transform: rotate(180deg); }
 .dgal-blank {
