@@ -1460,3 +1460,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T446-g | T446 | The shared Lifestyle panel opened from the price card keeps method lines, Fine tune the counts and ten tiles at once | next task | open |  |
 | T446-h | T446 | The kit Score draws an outlined star below tier 2 and a filled one above; reviewers read it as rated versus unrated | user | closed by T447 |  |
 | T446-i | T446 | verify_keyboard waits 60 ms after Tab, so a focused element still scrolling can read as invisible (seen once) | next task | open |  |
+| T447-a | T447 | Run the production deploy of T429, T446 and T447 from continent-app: npx wrangler pages deploy dist --project-name carta-app --branch main (dist holds the build that passed the preview smoke test 18 of 18; the session classifier refused it). This build also turns off the E2E test seams the live bundle currently ships with (VITE_E2E_SEAMS was 1) | user | open | 1 |
