@@ -57,6 +57,10 @@
 /search_index.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
+# The guided search data (T439), a folder on the data host (T445).
+/search/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
 /coverage.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
