@@ -92,7 +92,7 @@ guard: true,
 
   // Restore the network and press the button.
   blocking = false;
-  const retry = page.locator('.places-loaderr .places-empty-cta:visible').first();
+  const retry = page.locator('.places-loaderr .state-err-actions button:visible').first();
   if (await retry.count()) {
     await retry.click();
     await page.waitForTimeout(2500);
@@ -150,7 +150,7 @@ guard: true,
     check('trips: it is not stuck on its loading dots',
       !dots.some((d) => d.trim() === ELLIPSIS), JSON.stringify(dots.slice(0, 2)));
     blocking = false;
-    const retry = page.locator('.places-loaderr .places-empty-cta:visible').first();
+    const retry = page.locator('.places-loaderr .state-err-actions button:visible').first();
     if (await retry.count()) {
       await retry.click();
       await page.waitForTimeout(2500);

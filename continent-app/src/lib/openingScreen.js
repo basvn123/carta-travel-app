@@ -35,6 +35,7 @@ import { cycleMatchesFacets } from './cycleStory.js';
 import {
   tripBand, tripHighlights, tripSuitability, isListed,
 } from './trailCards.js';
+import { okPhoto, firstOkImage } from './photoVeto.js';
 
 // Six, one size: the band ends without a ragged row at two and three across.
 export const ICON_MAX = 6;
@@ -48,12 +49,13 @@ export const RAIL_MIN = 4;
 export const RAIL_CAP = 12;
 export const RAIL_MAX = 6;
 
-/** The row's own photograph, or null. Never a stand-in. */
+/** The row's own photograph, or null. Never a stand-in; a photograph the
+ *  image check refused (lib/photoVeto.js, T428) counts as none. */
 export function photoOf(layer, row) {
   if (!row) return null;
-  if (layer === 'cycle') return row.img || null;
-  if (layer === 'trail') return row.img?.u || null;
-  return row.images?.[0]?.u || null;
+  if (layer === 'cycle') return okPhoto(row.img);
+  if (layer === 'trail') return okPhoto(row.img?.u);
+  return firstOkImage(row.images)?.u || null;
 }
 
 const countryOf = (layer, row) => (layer === 'trail' ? row.country : row.cc) || '';

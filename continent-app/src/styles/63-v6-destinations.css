@@ -1,628 +1,383 @@
 /* ==========================================================================
-   v6: Destinations browse (surface key 'destinations')
+   Destinations browse (surface key 'destinations')
 
-   Created empty by T380 (design wave V2). Every rule the build waves T384, T394 and T404
-   write for this surface goes here, and nowhere else. This file is imported
-   last in src/styles.css, after 46-owner-calls.css, so a rule here overrides
-   an older rule in a file this surface does not own without editing that
-   file. When a rule here replaces an old one in a file this surface DOES own
-   (see docs/design-v6/OWNERSHIP.md), delete the old rule in the same commit;
-   never leave two copies.
+   Rebuilt in T428 on the Lagoon kit, after Explore (T437 to T444). What the
+   rules here draw, top to bottom:
+     - the section tabs (kit Tabs), sticky under the top chrome;
+     - the search row on a phone (the field and the one Filters button);
+       on a desktop the field sits in the header's slot (24-destination-
+       workspace.css styles it there) and the left panel holds the filters;
+     - the band of a picked country, the countries track and grid, and the
+       gallery card (browse/CountryGallery.jsx);
+     - the refine row over the list (sort, country, Lifestyle), sticky on a
+       phone;
+     - the trip library's tiles, the Sources fold, the filter sheet's motion.
+   The opening (head, Try one, rails) is 30-section-opening.css; the list
+   card is 37-card-fillings.css.
 
-   Rules: tokens only (no hex, no font name, no literal duration or easing:
-   --dur-1 to --dur-4, --ease-out, --ease-in-out); every transition and
-   animation with a prefers-reduced-motion branch; carta-design and
-   DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
+   Rules: tokens only (roles, the type, space and radius scales, the motion
+   tokens); every transition and animation has a reduced-motion branch;
+   carta-design and DESIGN.md win.
    ========================================================================== */
 
-/* ==========================================================================
-   T384 (V3): structure, information and flow. Part 1, the rules this
-   surface owned inside 24-destination-workspace.css, moved here and deleted
-   there in the same commit (OWNERSHIP.md rule 5, row T373-j). Moved as they
-   were except where a comment says what changed and why. The rules that
-   share a selector with Explore (.places-shell, .explore-shell) and the
-   composed-trips block (TRIPS-LAYER) stay in 24 for now.
-   ========================================================================== */
+/* -- The section tabs -------------------------------------------------------- */
+
+.dtab-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 calc(-1 * var(--space-4)) var(--space-4);
+  padding: 0 var(--space-4);
+  background: var(--surface-page);
+}
+.dtab-cats { gap: var(--space-5); }
+.dtab-cats .ui-tab { flex: none; font-size: var(--text-body); font-weight: 600; }
+.dtab-cats .ui-tab svg { flex: none; color: var(--text-3); }
+.dtab-cats .ui-tab.is-selected svg { color: var(--action); }
+@media (min-width: 769px) {
+  .dtab-bar { margin: 0 0 var(--space-5); padding: 0; }
+}
+
+/* -- The search row (phone; desktop uses the header slot) -------------------- */
+
+.dtab-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.dtab-top .places-search { flex: 1 1 auto; min-width: 0; }
+.dtab-top .places-search input {
+  height: var(--tap);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-lead);
+  padding-right: calc(var(--tap) + var(--space-1));
+}
+.dtab-top .places-search input:focus { outline: none; border-color: var(--focus); }
+.dtab-filters { flex: none; }
+.dtab-count { margin-left: var(--space-1); }
+@media (min-width: 769px) {
+  .dtab-top .places-search { max-width: 560px; }
+}
+
+/* -- The panel ---------------------------------------------------------------- */
+
+.dtab-panel { min-width: 0; }
+.dtab-title-solo { margin: 0 0 var(--space-4); }
+.dtab-subhead {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text-2);
+}
+/* Under the Trails head, the label and the walks-near-me door sit tight. */
+.dtab-head + .places-list.dgal-grid { margin-top: var(--space-3); }
+
+/* A picked country: flag, name, the one line, and the door to Explore. */
+.dtab-countryband {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.dtab-countryband-flag { flex: none; }
+.dtab-countryband-text { flex: 1 1 220px; min-width: 0; }
+.dtab-countryband-name {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.dtab-countryband-line { margin: 2px 0 0; font-size: var(--text-body); color: var(--text-2); }
+.dtab-countryband-go { flex: none; }
+
+/* -- The countries: the track in an opening, the grid on Trails ------------- */
+
+.dtab-bycountry .dtab-strip { --tile-w: 84%; }
+@container (min-width: 560px) { .dtab-bycountry .dtab-strip { --tile-w: calc((100% - var(--space-3)) / 1.7); } }
+@container (min-width: 860px) { .dtab-bycountry .dtab-strip { --tile-w: calc((100% - 2 * var(--space-3)) / 2.6); } }
+@container (min-width: 1080px) { .dtab-bycountry .dtab-strip { --tile-w: calc((100% - 3 * var(--space-3)) / 3.5); } }
+
+.places-list.dgal-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+@media (min-width: 640px) {
+  .places-list.dgal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1040px) {
+  .places-list.dgal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.places-list.dgal-grid > .places-nearme { grid-column: 1 / -1; margin: 0; }
+
+/* The gallery card: the kit tile with a strip of three photographs in its
+   media box. The strip sits above the card's stretched link so a finger
+   can swipe it; the next photograph peeks in at the edge on touch. */
+.dgal-card .card-media { position: relative; aspect-ratio: 3 / 2; border-radius: 0; }
+.dgal { position: absolute; inset: 0; }
+.dgal-strip {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.dgal-strip::-webkit-scrollbar { display: none; }
+@media (pointer: coarse) {
+  .dgal-strip { grid-auto-columns: 92%; gap: 2px; }
+}
+.dgal-slide { display: block; scroll-snap-align: start; min-width: 0; height: 100%; }
+.dgal-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.dgal-nav {
+  position: absolute;
+  inset: auto var(--space-2) var(--space-2) auto;
+  z-index: 2;
+  display: none;
+  gap: var(--space-1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .dgal-card:hover .dgal-nav,
+  .dgal-card:focus-within .dgal-nav { display: inline-flex; }
+}
+.dgal-arrow.is-prev svg { transform: rotate(180deg); }
+.dgal-blank {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-sunken);
+}
+.dgal-title { display: inline-flex; align-items: center; gap: var(--space-2); }
+.dgal-flag { flex: none; }
+.dgal-line {
+  display: block;
+}
+.card .dgal-line {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* -- The refine row over the list -------------------------------------------- */
+
+.dtab-refine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+.dtab-refine .field { margin: 0; min-width: 0; }
+.dtab-refine .dtab-sort { flex: 1 1 140px; }
+.dtab-refine .dtab-length { flex: 1 1 160px; }
+.dtab-refine .country-picker { flex: 1 1 160px; min-width: 0; }
+.dtab-refine .places-country { width: 100%; max-width: none; min-height: var(--tap); }
+.dtab-refine .lifestyle-btn { flex: 1 1 100%; }
+@media (max-width: 768px) {
+  .dtab-refine {
+    position: sticky;
+    top: calc(var(--tap) + 1px);
+    z-index: 4;
+    margin: 0 calc(-1 * var(--space-4)) var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-soft);
+  }
+}
+@media (min-width: 769px) {
+  /* The desktop panel holds these. */
+  .dtab-refine { display: none; }
+}
+
+/* The facet chips, inline in the desktop panel. */
+.dtab-facet { display: flex; flex-direction: column; gap: var(--space-2); }
+.dtab-facet-label { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.dtab-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+
+/* The country picker beside the sort reads as the same control: the kit
+   field's height, border, radius and type (CountryPicker draws a button). */
+.dtab-refine .places-country,
+.places-side .places-country {
+  height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: var(--text-lead);
+  font-weight: 400;
+  color: var(--text);
+}
+
+/* The EuroVelo families: one row a thumb can swipe, not a wall of chips
+   in front of the list. */
+.places-list > .cycle-famrow {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin: 0 0 var(--space-2);
+  padding: 2px;
+  scrollbar-width: none;
+}
+.places-list > .cycle-famrow::-webkit-scrollbar { display: none; }
+.places-list > .cycle-famrow .cycle-famchip {
+  flex: none;
+  border-color: var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+}
+.places-list > .cycle-famrow .cycle-famchip-meta { color: var(--text-2); font-variant-numeric: tabular-nums; }
+
+/* -- The desktop panel --------------------------------------------------------- */
 
 @media (min-width: 769px) {
-  /* The toolbar card folds away: its controls stand in the side panel and
-     the search field heads the column it searches. */
-  .places-toolbar { display: none; }
-
-  /* Destinations asks its question in its own column: one field, first
-     thing under the top bar, directly over the results it filters, at the
-     width of a place name rather than the width of the page. */
-  .places-searchrow {
-    display: flex;
-    margin: 0 0 16px;
-  }
-  .places-searchrow .places-search {
-    flex: 1 1 auto;
-    max-width: 520px;
-    min-width: 0;
-  }
-  .places-searchrow .places-search input {
-    height: 42px;
-    border-radius: 999px;
-    border-color: var(--rule);
-  }
-  /* T384: the focus ring was an --accent-bg box-shadow (a shadow literal,
-     and a tint that carta-design keeps off selection); an input swaps its
-     outline for an --accent border instead (carta-design, Interaction). */
-  .places-searchrow .places-search input:focus {
-    outline: none;
-    border-color: var(--accent);
-    background: var(--paper);
-  }
-
-  /* Sorts as a stack of rows; the active one is the house selected state
-     (T384: it was --accent, which DIRECTION.md part 9 keeps for actions),
-     and its direction arrow rides the right edge. */
-  .side-sorts { display: flex; flex-direction: column; gap: 6px; }
-  .side-sort {
+  .places-side .side-label {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--rule-soft);
-    border-radius: 10px;
-    background: var(--paper-dim);
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    text-align: left;
-    transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out),
-      border-color var(--dur-1) var(--ease-out);
+    gap: var(--space-2);
   }
-  .side-sort:hover { color: var(--ink); border-color: var(--rule); }
-  .side-sort.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-  .side-sort.on .places-sort-dir { color: var(--select-ink); }
-  .side-sort:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-  /* The country, full width of the panel. The picker's wrapper (.country-
-     picker) is what the flex/box layout actually sees, not the button
-     .side-country still classes, so it has to carry the same width too. */
-  .side-country { width: 100%; max-width: none; border-radius: 10px; }
+  .places-side .side-facets { display: flex; flex-direction: column; gap: var(--space-4); }
+  .side-country { width: 100%; max-width: none; border-radius: var(--radius-control); }
   .side-group .country-picker { display: flex; width: 100%; }
   .side-group .country-picker-pop { left: 0; right: 0; width: auto; }
-
-  /* Facet chips: the toolbar's own chips, stacked, never on white. A chip
-     that is on is the selected state (T384: it was --accent with rgba
-     whites over it). */
-  .side-facets { gap: 10px; }
-  .side-facets .places-classes { margin-top: 0; gap: 6px; }
-  .side-panel .places-class { background: var(--paper-dim); }
-  .side-panel .places-class.on {
-    background: var(--select-bg);
-    border-color: var(--select-border);
-    color: var(--select-ink);
-  }
-  .side-panel .places-class.on .places-class-dot { background: transparent; color: var(--on-fill); }
-  .side-panel .places-class.on .places-class-n { color: var(--select-ink); }
-  .side-facets .trip-slider { flex: 1 1 100%; max-width: none; }
-
-  /* No pure white on these pages. */
-  .places-tab .places-search input,
-  .places-tab .places-country,
-  .side-panel .places-country { background: var(--paper-dim); }
-  .places-tab .places-sugg, .header-search-slot .places-sugg { background: var(--paper); }
+  .side-allfilters { justify-content: flex-start; }
 }
 
-@media (min-width: 769px) and (prefers-reduced-motion: reduce) {
-  .side-sort { transition: none; }
-}
+/* -- Active filter chips over the list (shell's FilterChips) ------------------ */
 
-@media (max-width: 768px) {
-  /* The toolbar card becomes bands on the ground. */
-  .places-wrap { padding-top: 8px; }
-  .places-toolbar {
-    padding: 0 0 12px;
-    border: none;
-    border-radius: 0;
-    background: none;
-    box-shadow: none;
-    gap: 0;
-    border-bottom: 1px solid var(--rule-soft);
-  }
-
-  /* Six categories as a 2 x 3 grid of equal buttons (T384, rule N9). It was
-     one sideways strip of 78 px tiles with an accent tick over each: at
-     380 px only four of six showed, nothing said the row scrolled, and the
-     tick carried nothing (shell R11). Every category is on screen at 360 px
-     now, at --tap or taller, and the selected one is ink. */
-  .places-cats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-2);
-    overflow: visible;
-    padding: 2px 0 var(--space-3);
-    border-bottom: 1px solid var(--rule-soft);
-  }
-  .places-cat {
-    min-width: 0;
-    min-height: var(--tap);
-    padding: var(--space-2) var(--space-1);
-    gap: var(--space-1);
-    border: 1px solid var(--rule-soft);
-    border-radius: 6px;
-    background: var(--paper-dim);
-    font-size: 12px;
-    transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out),
-      border-color var(--dur-1) var(--ease-out);
-  }
-  .places-cat.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-  .places-cat.on svg { color: var(--select-ink); }
-
-  .places-controls { padding-top: 12px; gap: 10px; }
-  .places-search input {
-    height: 42px;
-    border-radius: 999px;
-    border-color: var(--rule);
-    background: var(--paper-dim);
-    /* The locate button is --tap wide on a phone (26-shortlist-extras.css),
-       so the text stops before it rather than 2 px under it (T384, found by
-       verify_places_search once it ran past its old General step). */
-    padding-right: calc(var(--tap) + var(--space-1));
-  }
-  /* Filters and the country as one compact row, the lifestyle door under
-     them; the sorts, when a list is open, as a full-width segmented band
-     whose active segment is the base rule's ink fill (T384: the accent
-     override that sat here is gone). */
-  .places-toolbar-right { gap: 8px; }
-  .places-sorts { display: flex; width: 100%; }
-  .places-sort { flex: 1 1 0; justify-content: center; min-height: var(--tap); }
-  .places-chips { width: 100%; gap: 8px; }
-  .places-chips .places-filter-btn { flex: 1 1 0; min-width: 0; justify-content: center; }
-  .places-chips .country-picker { flex: 1 1 0; min-width: 0; }
-  .places-chips .places-country {
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: none;
-    height: 42px;
-    background: var(--paper-dim);
-  }
-  .places-chips .lifestyle-btn { flex: 1 1 100%; justify-content: center; }
-
-  /* Cards, two abreast. */
-  .places-list { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .places-dcard, .places-ccard, .places-tcard, .places-bcard {
-    aspect-ratio: 16 / 11;
-    border-radius: 12px;
-  }
-  /* A composed itinerary carries a route, chips and a cost line: half a
-     column cannot hold that, so it keeps the full row. */
-  .places-icard { grid-column: 1 / -1; }
-  .places-card-name { font-size: 14.5px; }
-  .places-card-sub { font-size: 10.5px; margin-top: 1px; }
-  .places-card-chev { display: none; }
-  .places-card-price { font-size: 12.5px; }
-  /* Reason chips need more width than half a column gives; the layer pages
-     still carry them in full. */
-  .places-bcard-tags { display: none; }
-}
-
-@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
-  .places-cat { transition: none; }
-}
-
-/* ==========================================================================
-   T384 (V3). Part 2, new rules.
-   ========================================================================== */
-
-/* Filters on this tab is a secondary (T384, the brief's target table and
-   shell R11): a door to more chips is not the view's one action, and the
-   accent pill's hover put white on --accent-soft at about 2.6:1.
-   Transparent, a --rule border, 6 px, --tap high, the count in the house
-   count chip. Scoped to the toolbar so Explore's copy of the class keeps the
-   look 46-owner-calls.css gives it. */
-.places-toolbar .places-filter-btn {
-  min-height: var(--tap);
-  height: auto;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: transparent;
-  font-size: 13px;
-  color: var(--ink);
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .places-toolbar .places-filter-btn:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
-}
-.places-toolbar .places-filter-btn.has-active { border-color: var(--ink); }
-.places-toolbar .places-filter-btn .filter-tray-badge,
-.places-count-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
-}
-
-/* The desktop panel's door to every facet group (T384, brief V3-1): one
-   secondary row under the short set, opening the same sheet the phone
-   opens. Desktop-only by construction: it renders inside .side-panel. */
-.side-allfilters {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: transparent;
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  text-align: left;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-.side-allfilters span:first-of-type { flex: 1; }
-.side-allfilters svg { color: var(--ink-soft); }
-@media (hover: hover) {
-  .side-allfilters:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
-}
-.side-allfilters:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-/* The active filter chips above the list (T384, rule N6): shell's
-   FilterChips draws them. Their shared look in 25-feature-pages.css is an
-   ochre ground, which carta-design keeps for ratings, so on this tab they
-   take the rule's own form until shell restyles the component (register
-   row): --paper-dim, --ink text, a --rule border, --tap high on touch. */
-.places-wrap > .xchips { margin: var(--space-3) 0; gap: var(--space-2); }
-.places-wrap > .xchips .xchip {
+.places-wrap .xchips { margin: 0 0 var(--space-3); gap: var(--space-2); }
+.places-wrap .xchips .xchip {
   min-height: 32px;
   padding: 0 var(--space-3);
-  background: var(--paper-dim);
-  border: 1px solid var(--rule);
-  color: var(--ink);
-  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-label);
 }
-.places-wrap > .xchips .xchip-clear { background: transparent; color: var(--ink-soft); }
+.places-wrap .xchips .xchip-clear { background: transparent; color: var(--text-2); }
 @media (hover: hover) {
-  .places-wrap > .xchips .xchip:hover { border-color: var(--ink-soft); }
+  .places-wrap .xchips .xchip:hover { border-color: var(--neutral-300); }
 }
 @media (pointer: coarse) {
-  .places-wrap > .xchips .xchip { min-height: var(--tap); }
+  .places-wrap .xchips .xchip { min-height: var(--tap); }
 }
 
-/* Band 2's further cuts on a phone (T384, rule N4): after two rails, one
-   row of secondary chips that apply the same saved filter as "See all".
-   The label is a group label, the count a count chip. */
-.open-cuts { margin: var(--space-4) 0 var(--space-6); }
-.open-cuts-label {
-  margin: 0 0 var(--space-2);
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.open-cuts-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.open-cut {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  max-width: 100%;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: transparent;
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  text-align: left;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .open-cut:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
-}
-.open-cut:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.open-cut-n {
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
+/* -- The trip library ---------------------------------------------------------- */
 
-/* The Trails country index (T384, brief V3-10). The published count beside
-   the name in mono as a count chip (rule N7), solid so it reads on any
-   photograph until V4 moves the caption under it; a country with no cover
-   shows its flag on --paper-dim, never two letters of its name. */
-.places-card-count {
-  align-self: flex-start;
-  margin-top: 3px;
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
+.jsec .jcap-card .card-media { position: relative; aspect-ratio: 3 / 2; }
+.jsec .jcap-card .places-card-img { position: absolute; inset: 0; }
+.jsec .jcap-card .card-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.jstyle-desc { display: block; font-size: var(--text-body); line-height: var(--leading-ui); color: var(--text-2); }
+.jcard-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.jcard-meta .jcap-where { display: flex; align-items: center; gap: var(--space-1); color: var(--text-2); }
+.jcard-meta .jcap-meta { color: var(--text-3); }
+.jcap-fig { font-variant-numeric: tabular-nums; color: var(--text); }
+.jcap-fig.is-none { font-weight: 400; color: var(--text-3); }
+.jcomposed { grid-column: 1 / -1; }
+.jsec-head { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.jsec-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text);
 }
-.places-ccard-noimg {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--paper-dim);
-}
-.places-nearme { grid-column: 1 / -1; margin: 0 0 var(--space-2); }
-.places-nearme-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: transparent;
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-.places-nearme-btn svg { color: var(--ink-soft); }
-@media (hover: hover) {
-  .places-nearme-btn:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
-}
-.places-nearme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-@media (prefers-reduced-motion: reduce) {
-  .places-toolbar .places-filter-btn,
-  .side-allfilters,
-  .open-cut,
-  .places-nearme-btn { transition: none; }
-}
-
-/* ==========================================================================
-   T394 (V4): visual and dynamic. Photographs carry no text, motion comes
-   from the tokens and only answers the traveller, data drawings are keyed.
-   docs/design-v6/plans/V4-destinations.md has the list in order.
-   ========================================================================== */
-
-/* -- 1. Caption band on the country cards (rule N5) ----------------------- */
-
-/* The photograph, then a solid band under it with the flag, the name, the
-   count and the chevron. The scrim and the white text are gone. The card
-   keeps its class (.places-ccard) for the harnesses and the keyboard floor. */
-.places-ccard.is-captioned {
-  display: flex;
-  flex-direction: column;
-  aspect-ratio: auto;
-  border: 1px solid var(--rule-soft);
-  border-radius: 12px;
-  background: var(--bg-card);
-}
-.places-ccard-media {
-  position: relative;
-  display: block;
-  flex: none;
-  aspect-ratio: 3 / 1;
-  overflow: hidden;
-  background: var(--paper-dim);
-}
-.places-ccard-band {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg-card);
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.places-ccard-band .places-card-flag { flex: none; margin: 0; }
-.places-ccard-band .places-card-main { flex: 1 1 auto; min-width: 0; }
-.places-ccard-band .places-card-name {
-  font-family: var(--display);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.places-ccard-band .places-card-count { align-self: center; margin-top: 0; }
-.places-ccard-band .places-card-chev { display: block; flex: none; color: var(--ink-soft); }
-/* Pressed, the band turns ink (carta-design "Caption band"), at once. */
-.places-ccard.is-captioned:active .places-ccard-band { background: var(--select-bg); }
-.places-ccard.is-captioned:active .places-card-name,
-.places-ccard.is-captioned:active .places-card-chev { color: var(--on-fill); }
-@media (hover: hover) {
-  .places-ccard.is-captioned:hover { border-color: var(--rule); }
-}
+.jsec-desc { margin: 0; font-size: var(--text-lead); color: var(--text-2); }
+.jsec-beds { grid-column: 1 / -1; }
 @media (max-width: 768px) {
-  /* Two abreast on a phone: the 16:11 tile rule of T384 no longer applies
-     to a captioned card, whose photograph keeps 3:2. */
-  .places-ccard.is-captioned { aspect-ratio: auto; border-radius: 10px; }
-  .places-ccard.is-captioned .places-ccard-media { aspect-ratio: 3 / 2; }
-  .places-ccard-band { padding: var(--space-2); gap: var(--space-1); }
-  .places-ccard-band .places-card-name { font-size: 15px; }
-  .places-ccard-band .places-card-chev { display: none; }
+  .jsec-title { font-size: var(--text-title); }
 }
 
-/* The composed trip card: its name, score and day chips moved from the
-   photograph into the body (DestinationsTab.jsx ItinCard). Its older rules
-   live in 24-destination-workspace.css (row T384-f); these override them
-   from here until they move. No hover zoom, no shadow transition. */
+/* -- Sources ------------------------------------------------------------------- */
+
+.dtab-sources { margin: var(--space-6) 0 var(--space-4); }
+.dtab-sources .credit-fold p { margin: var(--space-2) 0 0; font-size: var(--text-label); color: var(--text-2); }
+.dtab-sources-head { font-weight: 600; color: var(--text); }
+.dtab-sources-list {
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-caption);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.dtab-sources-list a { color: inherit; }
+
+/* -- Lists: the leftovers the kit does not draw -------------------------------- */
+
+.places-list > .places-nearme,
+.places-list > .stub-list,
+.places-list > .jsec-back-solo { grid-column: 1 / -1; }
+.stub-list-head {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+}
+.places-slow {
+  grid-column: 1 / -1;
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.places-empty .cov-empty-btn { min-height: var(--tap); }
+
+/* The composed trip card: name, score and day chips in the body. Its older
+   rules live in 24-destination-workspace.css (row T384-f). */
 .places-icard { transition: border-color var(--dur-1) var(--ease-out); }
 @media (hover: hover) {
   .places-icard:hover { box-shadow: none; }
   .places-icard:hover .places-card-img { transform: none; }
 }
-.places-icard .itin-card-head {
-  position: static;
-  margin: 0 0 var(--space-2);
-}
-.places-icard .itin-card-name { color: var(--ink); font-size: 16px; }
-.places-icard .itin-card-badges {
-  position: static;
-  margin: 0 0 var(--space-2);
-}
+.places-icard .itin-card-head { position: static; margin: 0 0 var(--space-2); }
+.places-icard .itin-card-name { color: var(--text); font-size: var(--text-lead); }
+.places-icard .itin-card-badges { position: static; margin: 0 0 var(--space-2); }
 .places-icard .itin-card-days,
 .places-icard .itin-card-near {
-  background: var(--paper-dim);
-  border: 1px solid var(--rule-soft);
-  color: var(--ink);
-}
-.places-icard .itin-card-body { transition: background-color var(--dur-1) var(--ease-out); }
-.places-icard:active .itin-card-body { background: var(--paper-dim); }
-
-/* -- 2. Nothing on a place card's photograph but the strip ---------------- */
-
-/* The small facts lead the hook line (PlaceCard.jsx `lead`). Their old chip
-   rules drew them on the photograph; in the body they are words. */
-.places-list .pcard .pcard-hook > .pcard-lead { position: static; }
-.places-list .pcard .pcard-hook > .places-card-km {
-  font-family: var(--mono);
-  font-size: 13px;
-}
-.places-list .pcard .pcard-hook > .places-lcard-swim { font-weight: 600; }
-.places-list .pcard .pcard-hook > .places-card-photoof { color: var(--ink-soft); }
-
-/* The month line (rule "Month"): one fact in the sans, the month in mono,
-   a fixed height so every card of a grid stays one height. */
-.pcard-note {
-  display: block;
-  height: 18px;
-  margin-top: var(--space-2);
-  font-family: var(--ui);
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pcard-month-m {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.pcard-month.is-warm::before {
-  content: '';
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: var(--space-1);
-  vertical-align: 1px;
-  border-radius: 50%;
-  background: var(--status-success);
-}
-/* The chosen month on the lake strip, outlined in ink (rule "Month"). */
-.places-card-strip .sig-seg.is-chosen {
-  position: relative;
-  z-index: 1;
-  outline: 2px solid var(--select-border);
-  outline-offset: 0;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-soft);
+  color: var(--text);
 }
 
-/* Pressed, the card's body turns ink, at once (carta-design "Caption band":
-   the pressed state of a photo card is the band in ink). The photograph does
-   not move. */
-.places-list .pcard { transition: border-color var(--dur-1) var(--ease-out); }
-.places-list .pcard .pcard-body { transition: background-color var(--dur-1) var(--ease-out); }
-.places-list .pcard:active .pcard-body { background: var(--select-bg); }
-.places-list .pcard:active .pcard-title,
-.places-list .pcard:active .pcard-where,
-.places-list .pcard:active .pcard-hook,
-.places-list .pcard:active .pcard-v-n,
-.places-list .pcard:active .pcard-v-l,
-.places-list .pcard:active .pcard-note,
-.places-list .pcard:active .pcard-month-m,
-.places-list .pcard:active .pcard-icons { color: var(--on-fill); }
-@media (hover: hover) {
-  .places-list .pcard:not(.pcard-skel):hover { border-color: var(--rule); }
-}
+/* -- Motion ---------------------------------------------------------------------- */
 
-/* The strip key at the list head (rule N8). */
-.places-stripkey {
-  margin: var(--space-2) 0 var(--space-3);
-  max-width: 72ch;
-  font-family: var(--ui);
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
-/* -- 3. The opening's cards ------------------------------------------------ */
-
-/* A rail or icon card pressed: its caption band turns ink, at once. */
-.open-bands .railcard .railcard-body { transition: background-color var(--dur-1) var(--ease-out); }
-.open-bands .railcard:active .railcard-body { background: var(--select-bg); }
-.open-bands .railcard:active .railcard-name,
-.open-bands .railcard:active .railcard-kind,
-.open-bands .railcard:active .open-fact-n,
-.open-bands .railcard:active .open-fact-l { color: var(--on-fill); }
-
-/* -- 4. The phone's category grid at --tap --------------------------------- */
-
-@media (max-width: 768px) {
-  /* One row each, the 20 px icon before the label: the 2 x 3 grid of T384
-     at about half its height, so the list starts a band higher. */
-  .places-cat {
-    flex-direction: row;
-    justify-content: center;
-    gap: var(--space-2);
-    min-height: var(--tap);
-    padding: 0 var(--space-2);
-    font-size: 13px;
-  }
-  .places-cat svg { flex: none; }
-}
-
-/* -- 5. Motion from the tokens (DIRECTION.md 2.3) -------------------------- */
-
-/* A section's content arriving: when the category changes, the opening and
-   the list are new elements, and they fade in and rise 8 px in --dur-2.
-   Paging and filtering keep the same elements, so they never replay it. */
+/* A section's content arriving when the tab changes: a fade and an 8 px
+   rise in --dur-2. Paging and filtering keep the same elements. */
 @keyframes v6-dest-arrive {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
-.places-wrap > .open-bands,
-.places-wrap > .places-list {
+.dtab-panel > .open-bands,
+.dtab-panel > .places-list {
   animation: v6-dest-arrive var(--dur-2) var(--ease-out) both;
 }
 
-/* An active filter chip entering its row: opacity and scale from 0.9 in
-   --dur-1. */
-@keyframes v6-dest-chip-in {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: none; }
-}
-.places-wrap > .xchips .xchip {
-  animation: v6-dest-chip-in var(--dur-1) var(--ease-out) both;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-
-/* Press on the tab's own controls: scale 0.97 in --dur-1 (the touch
-   feedback rule); a card never scales, its band answers instead. */
-.places-cat:active,
-.open-cut:active,
-.side-allfilters:active,
-.places-nearme-btn:active,
-.places-toolbar .places-filter-btn:active {
-  transform: scale(0.97);
-}
-
-/* -- 7. The filter sheet arrives and leaves --------------------------------- */
-
-/* Phone: it rises from the bottom in --dur-3 over the scrim, which fades
-   with it; it leaves in --dur-2. Desktop: it fades and rises 8 px. The
-   shared .fsheet keyframes in 14-filters-panels.css run on literals; these
-   take this tab's sheet onto the tokens. */
+/* The filter sheet arrives and leaves on the tokens. */
 @keyframes v6-dest-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
 @keyframes v6-dest-sheet-down { from { transform: none; } to { transform: translateY(100%); } }
 @keyframes v6-dest-fade-in { from { opacity: 0; } to { opacity: 1; } }
@@ -640,171 +395,19 @@
 @media (min-width: 769px) {
   .fsheet.fsheet-places { animation-name: v6-dest-pop-in; }
   .fsheet.fsheet-places.is-closing { animation-name: v6-dest-pop-out; }
-  /* A centred dialog on a pointer screen is not dragged: no handle. */
   .fsheet.fsheet-places .fsheet-grab { display: none; }
 }
-
-/* A dead option reads as dead: a zero count cannot be picked, so it does
-   not look like one that can. */
-.fsheet-places .fchip:disabled {
-  border-color: var(--rule-soft);
-  background: transparent;
-  color: var(--ink-mute);
-  cursor: default;
-}
-.fsheet-places .fchip:disabled .fchip-n { color: var(--ink-mute); }
-
-/* -- 8. Figures in place ---------------------------------------------------- */
-
-/* The counts that settle (useSettledFigure) keep their box: tabular mono,
-   so a dip never shifts the row. */
-.fsheet-places .fsheet-apply-count,
-.open-cut-n,
-.places-count-chip,
-.places-toolbar .places-filter-btn .filter-tray-badge {
-  display: inline-block;
-  font-variant-numeric: tabular-nums;
-}
-
-/* -- 11. The sticky refine row (rule N3) ------------------------------------ */
-
-@media (max-width: 768px) {
-  /* Once Band 3 starts, Filters, the sorts and the country stick under the
-     top chrome, at the top of the tab's scroll box: a --paper band, a
-     --rule bottom border, no shadow. The facet chips under it scroll with
-     the list. */
-  .places-wrap > .places-refine {
-    position: sticky;
-    top: 0;
-    z-index: 4;
-    margin: 0 -16px;
-    padding: var(--space-2) 16px;
-    background: var(--paper);
-    border-bottom: 1px solid var(--rule);
-  }
-  .places-wrap > .places-refine .places-controls { padding-top: 0; }
-  .places-wrap > .places-filterrail-facets { border-bottom: none; padding-bottom: var(--space-2); }
-}
+.fsheet-places .fchips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 @media (prefers-reduced-motion: reduce) {
-  .places-ccard-band,
-  .places-icard,
-  .places-icard .itin-card-body,
-  .places-list .pcard,
-  .places-list .pcard .pcard-body,
-  .open-bands .railcard .railcard-body,
-  .places-wrap > .xchips .xchip { transition: none; }
-  .places-wrap > .open-bands,
-  .places-wrap > .places-list,
-  .places-wrap > .xchips .xchip,
+  .places-icard { transition: none; }
+  .dtab-panel > .open-bands,
+  .dtab-panel > .places-list,
   .fsheet-scrim:has(> .fsheet-places),
   .fsheet-scrim.is-closing,
   .fsheet.fsheet-places,
   .fsheet.fsheet-places.is-closing,
   .fsheet.fsheet-places.is-anchored,
   .fsheet.fsheet-places.is-anchored.is-closing { animation: none; }
-  .places-cat:active,
-  .open-cut:active,
-  .side-allfilters:active,
-  .places-nearme-btn:active,
-  .places-toolbar .places-filter-btn:active { transform: none; }
-}
-
-/* ==========================================================================
-   T404 (V5): harden, adapt and polish. Controls at the tap floor, words in
-   the sans and numbers in the mono, a rail you can walk with the keys, long
-   German and Dutch labels that wrap instead of spilling, and every empty and
-   slow path in the house voice. docs/design-v6/plans/V5-destinations.md has
-   the list in order.
-   ========================================================================== */
-
-/* -- 1. Control rules (brief V5-1, rows T384-l and T394-i) ------------------ */
-
-/* Facet chips are filters, not status chips, so they take the control radius
-   (23-places-pages.css sets 6 px) and the target floor: 32 px on a fine
-   pointer, --tap on a coarse one (the sheet's chips already are). */
-.places-class { min-height: 32px; }
-.places-class-n { font-size: 11px; }
-@media (pointer: coarse) {
-  .places-class { min-height: var(--tap); }
-  /* The country picker and the locate crosshair, in landscape too (the
-     26-shortlist-extras floor only covers max-width: 768px). */
-  .places-country,
-  .country-picker .places-country { min-height: var(--tap); }
-  .places-locate { min-width: var(--tap); min-height: var(--tap); width: var(--tap); height: var(--tap); }
-  .side-sort,
-  .places-sort { min-height: var(--tap); }
-}
-
-/* A card value that is a word (Sand, W, Excellent) is not a measurement, so
-   it sets in the sans; the numbers keep the mono (carta-design "Mono"). */
-.pcard-v-n.is-word {
-  font-family: var(--ui);
-  font-weight: 600;
-}
-
-/* -- 3. Rails you can walk with the keys (rule Rails) ----------------------- */
-
-/* The dots and the mono position share one line under the strip. The dots
-   stay hidden from assistive technology (they are aria-hidden with it). */
-.open-pos {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-top: var(--space-1);
-}
-.open-pos .open-dots { margin-top: 0; justify-content: flex-start; }
-.open-pos-n {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-/* The focused card shows the 2 px ring on the card, not on the strip. */
-.open-bands .railcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-/* -- 5. Long words (brief V5-3): German and Dutch at 360 px ---------------- */
-
-.places-cat > span,
-.side-cat > span {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  hyphens: auto;
-  line-height: 1.15;
-  text-align: center;
-}
-.open-cut > span:first-child { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
-.places-class { max-width: 100%; }
-.places-class > span:not(.places-class-dot):not(.places-class-n) {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  text-align: left;
-}
-.open-icons-title,
-.open-gridhead,
-.xrails-title,
-.railcard-name,
-.pcard-title { overflow-wrap: anywhere; hyphens: auto; }
-.country-picker-label { min-width: 0; }
-
-/* -- 7. Empty, error and slow states (brief V5-5) --------------------------- */
-
-/* A skeleton still on screen after five seconds says so, once, over the
-   whole grid row; it never replaces the skeleton. */
-.places-slow {
-  grid-column: 1 / -1;
-  margin: 0 0 var(--space-2);
-  font-family: var(--ui);
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--ink-soft);
-}
-/* The one button of an emptied list is a control at the tap floor. */
-.places-empty .cov-empty-btn { min-height: var(--tap); }
-@media (max-width: 768px) {
-  /* Two lines where a German or Dutch label needs them; the button grows
-     past --tap rather than clip the word. */
-  .places-cat { height: auto; padding-block: var(--space-1); }
+  .dtab-strip, .dgal-strip { scroll-behavior: auto; }
 }

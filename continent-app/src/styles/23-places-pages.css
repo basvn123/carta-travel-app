@@ -530,7 +530,7 @@
       scrim, the mono numbers stay mono. One shared overlay grammar for
       destination cards, trip cards and country flag cards. ── */
 
-.places-dcard, .places-ccard, .places-tcard {
+.places-dcard {
   position: relative;
   display: block;
   width: 100%;
@@ -556,9 +556,7 @@
    picture could rescue it and the index read as a row of doorways and roofs.
    2.6:1 keeps 58 per cent of a 3:2 photograph, and is still a shade wider
    than the destination card under it. */
-.places-ccard { aspect-ratio: 2.6 / 1; }
-.places-tcard { aspect-ratio: 9 / 4; }
-.places-dcard:focus-visible, .places-ccard:focus-visible, .places-tcard:focus-visible {
+.places-dcard:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -848,53 +846,8 @@
   color: var(--ink-soft);
 }
 
-.places-bcard {
-  position: relative;
-  display: block;
-  width: 100%;
-  /* The photo-card frame, see .places-dcard. */
-  aspect-ratio: 25 / 12;
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--paper-dim);
-  text-align: left;
-}
-.places-bcard:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-@media (hover: hover) {
-  .places-bcard:hover .places-card-img { transform: scale(1.03); }
-}
-
-.places-bcard-where {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 4px;
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.9);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.places-bcard-where svg { flex: none; opacity: .9; }
-
-.places-bcard-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 7px;
-}
-.places-bcard-tags span {
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.18);
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--on-fill);
-  white-space: nowrap;
-}
+/* T428: .places-bcard, its where line and its tag chips were the photo-overlay
+   card; the kit tile Card draws these cards now (37-card-fillings.css). */
 
 /* ── The beach page ─────────────────────────────────────────────────────
    Shares the trail page's shell (.tpage: fixed overlay, bar, scroller) and
@@ -3447,45 +3400,10 @@
   .account-panel .panel-header { padding-right: 16px; }
 }
 
-/* ── Friends: its own door in the top row, beside Passes ────────────────── */
-.header-friends-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 38px;
-  padding: 0 13px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: transparent;
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  cursor: pointer;
-  white-space: nowrap;
-}
-@media (hover: hover) {
-  .header-friends-btn:hover { border-color: var(--ink); color: var(--ink); }
-}
-.header-friends-btn.on {
-  border-color: var(--select-border);
-  background: var(--select-bg);
-  color: var(--select-ink);
-}
-
-@media (max-width: 768px) {
-  /* Beside the Passes chip, same height, label kept: an icon alone in a row
-     that already carries one would be a guess. */
-  .header-friends-btn { height: 38px; padding: 0 11px; font-size: 12.5px; }
-}
+/* T426-b, T428: the header friends and pricing chips are gone; their rules
+   went with them. The account cluster keeps its narrow-screen gap. */
 @media (max-width: 420px) {
-  /* The label always shows: an icon alone in a row that already carries
-     another icon is a guess, and this door is new enough that nobody knows
-     the glyph yet. Both chips tighten instead, which is what actually makes
-     them fit next to each other on a 390px screen. */
-  .header-friends-btn { padding: 0 9px; gap: 5px; font-size: 12px; }
   .app-header-account { gap: 6px; padding: 0 14px 0 8px; }
-  .app-header-account .header-pricing-btn { padding: 0 10px; }
 }
 
 /* Sharing your handle: copy for the people who want the text, share for the

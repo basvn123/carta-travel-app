@@ -217,6 +217,18 @@
 }
 .card-open { color: inherit; text-decoration: none; background: none; border: 0; padding: 0; font: inherit; text-align: left; cursor: pointer; }
 .card.is-interactive .card-open::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+/* T428: the stretched link must not take the global press compression
+   (02-base.css): `scale` makes the link the containing block of its ::after,
+   the overlay shrinks to the title while the button is down, and a press
+   that started on the photograph is released on it, so no click reaches
+   the link. The card answers the press instead. */
+/* Doubled class: the global rule's :is() list carries input[type=checkbox],
+   one element more specific than a plain class chain. */
+.card.is-interactive .card-open.card-open:active { scale: none; opacity: 1; }
+.card.is-interactive:has(.card-open:active) { scale: 0.99; transition-duration: 0.06s; }
+@media (prefers-reduced-motion: reduce) {
+  .card.is-interactive:has(.card-open:active) { scale: none; }
+}
 .card-open:focus-visible { outline: 2px solid transparent; } /* the card draws the ring; forced colours still show this one */
 .card.is-interactive:has(.card-open:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
 @media (hover: hover) {

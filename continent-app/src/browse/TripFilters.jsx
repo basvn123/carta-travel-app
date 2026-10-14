@@ -161,7 +161,6 @@ export function TripFilters({
           {active > 0 && <span className="tf-count mono">{active}</span>}
         </button>
       </div>
-      <p className="tf-note">{t('journey.fltNote')}</p>
       {chips.length > 0 && (
         <div className="tf-chips">
           <FilterChips t={t} chips={chips} onClearAll={onClear} />

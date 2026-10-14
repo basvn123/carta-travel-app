@@ -131,9 +131,9 @@ check('a second tap clears the size', anyOn === 0, `${anyOn} still on`);
 // Switching category drops the size filter with it.
 await chips.nth(villageIdx).click();
 await page.waitForTimeout(400);
-await page.locator('.places-cat', { hasText: /trips/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /trips/i }).click();
 await page.waitForTimeout(500);
-await page.locator('.places-cat', { hasText: /general/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /general/i }).click();
 await page.waitForTimeout(700);
 check('changing category clears the size filter',
   await page.locator('.places-class.on').count() === 0);

@@ -121,7 +121,7 @@ try {
   await page.waitForTimeout(1200);
   check('destinations tab opens', await page.locator('.places-tab').isVisible());
 
-  await page.locator('.places-cat', { hasText: /^trips$/i }).click();
+  await page.locator('.dtab-cats [role="tab"]', { hasText: /^trips$/i }).click();
   await page.waitForTimeout(2000);
 
   // ── The style grid ──
@@ -230,8 +230,8 @@ try {
   // ── The composed door ──
   await page.locator('.jcomposed-card').click();
   await page.waitForTimeout(2500);
-  check('the composed view keeps its day slider',
-    await page.locator('.trip-slider:visible').count() >= 1);
+  check('the composed view keeps its length control (a select since T428)',
+    await page.locator('.dtab-length select:visible').count() >= 1);
   check('composed itinerary cards still render',
     await page.locator('.places-icard').count() >= 3,
     `${await page.locator('.places-icard').count()} cards`);
@@ -258,7 +258,7 @@ try {
   await ex.waitForTimeout(3000);
   await ex.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
   await ex.waitForTimeout(1200);
-  await ex.locator('.places-cat', { hasText: /^trips$/i }).click();
+  await ex.locator('.dtab-cats [role="tab"]', { hasText: /^trips$/i }).click();
   await ex.waitForTimeout(2000);
   await ex.locator('.jstyle-card').first().click();
   await ex.waitForTimeout(1500);
@@ -290,7 +290,7 @@ try {
   await desk.locator('[class*="top-tab"]', { hasText: /destinations/i })
     .first().click().catch(() => {});
   await desk.waitForTimeout(1000);
-  const deskCat = desk.locator('.side-cat:visible, .places-cat:visible',
+  const deskCat = desk.locator('.dtab-cats [role="tab"]',
     { hasText: /^trips$/i });
   await deskCat.first().click();
   await desk.waitForTimeout(2000);

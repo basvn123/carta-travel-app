@@ -68,9 +68,10 @@ check('destinations tab opens', await page.locator('.places-tab').isVisible());
 // the phone toolbar and in the left panel, and only one of them is ever on
 // screen. Counting the DOM rather than the view asserted a layout that has
 // not existed since the desktop shell landed.
-check('General still carries the country picker', await page.locator('.places-country:visible').count() === 1);
+// T428: the old General category is gone; the country picker sits in the
+// refine row over each list (phone) and the side panel (desktop).
 
-await page.locator('.places-cat', { hasText: /beaches/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /beaches/i }).click();
 await page.waitForTimeout(2500);
 
 // ── The controls this tab carries, and the ones it does not ──
@@ -207,8 +208,8 @@ if (listedProbe && listedProbe.rows) {
 }
 
 // ── Beaches, not a country index ──
-const flagCards = await page.locator('.places-ccard').count();
-check('no country flag index on Beaches', flagCards === 0, `${flagCards} flag cards`);
+const flagCards = await page.locator('.dgal-card').count();
+check('the countries track is offered (T428)', flagCards > 0, `${flagCards} country cards`);
 const cards = page.locator('.places-bcard');
 const nCards = await cards.count();
 check('beach cards render', nCards >= 3, `${nCards} cards`);
@@ -229,16 +230,20 @@ check('cards carry reason chips', cardTags >= 1, `${cardTags} chips`);
 // This is the brief's rule and the screenshot it came from: the tab shipped
 // "Excellent water 2", "Nothing built on it 0", "Lifeguard 0", and two chips
 // reading zero tell a reader the filters are broken even when they are honest.
-const chipTexts = await page.locator('.places-class-label').allInnerTexts();
-const chipCounts = await page.locator('.places-class-n').allInnerTexts();
-check('the filter rail renders chips', chipTexts.length >= 3, `${chipTexts.length} chips`);
-check('every chip carries a count', chipCounts.length === chipTexts.length,
-  `${chipCounts.length} counts for ${chipTexts.length} chips`);
-const zeroChips = chipCounts.filter((n) => parseInt(n.replace(/\D/g, ''), 10) === 0);
-check('no chip renders a zero count', zeroChips.length === 0,
-  zeroChips.length ? `${zeroChips.length} zeros` : chipTexts.slice(0, 6).join(' | '));
-check('the rail offers more than the three chips v1 had', chipTexts.length > 3,
+// T428: every group lives in the Filters sheet on a phone, and no chip
+// carries a figure any more (owner, 2026-10-14): the list is the answer.
+await page.locator('.dtab-filters:visible, .side-allfilters:visible').first().click().catch(() => {});
+await page.waitForTimeout(700);
+const chipTexts = await page.locator('.fsheet-places .fchip').allInnerTexts();
+check('the filter sheet renders chips', chipTexts.length >= 3, `${chipTexts.length} chips`);
+// A count is a short trailing figure; a name such as "Natura 2000" is not one.
+const countedChips = chipTexts.filter((txt) => /\s\d{1,3}$/.test(txt.trim()));
+check('no chip carries a count (T428)', countedChips.length === 0,
+  (countedChips.length ? countedChips : chipTexts).slice(0, 6).join(' | '));
+check('the sheet offers more than the three chips v1 had', chipTexts.length > 3,
   chipTexts.length + ' chips');
+await page.keyboard.press('Escape');
+await page.waitForTimeout(500);
 await page.screenshot({ path: 'shots/beaches-list.png', fullPage: false });
 
 // Ranked, best first.
@@ -254,13 +259,13 @@ const firstCountry = (await page.locator('.places-bcard-where').first().innerTex
 if (firstCountry) {
   await page.locator('.places-search input').fill(firstCountry);
   await page.waitForTimeout(2200);
-  const countryHead = await page.locator('.places-beachhead').first().innerText().catch(() => '');
+  const countryHead = await page.locator('.dtab-countryband-name').first().innerText().catch(() => '');
   check('typing a country names it over the list', new RegExp(firstCountry, 'i').test(countryHead),
     countryHead.replace(/\n/g, ' '));
   // The header carries the count as well as the name. It only exists once a
   // country is chosen, which is why this is asked here rather than on the
   // opening European ranking, where there is no single country to count.
-  check('the list says how many beaches are in that country', /\d/.test(countryHead),
+  check('the country band carries no count (T428)', !/\d/.test(countryHead),
     countryHead.replace(/\n/g, ' '));
 
   // The listed tier on screen. Thousands of rows ship as listed and they live
@@ -292,8 +297,8 @@ if (firstCountry) {
     const listedRows = await page.locator('.places-alsohere .places-listedrow').count();
     check('the listed tier renders under its own heading', listedRows > 0, `${listedRows} rows`);
     const alsoText = await page.locator('.places-alsohere').first().innerText();
-    check('the listed heading says they are not scored',
-      /not scored|nog niet|pas encore|noch nicht|sin valorar|non ancora/i.test(alsoText));
+    check('the listed tier has its own heading (T428: More in)',
+      /More in|Mehr in|Meer in|Autres en|Más en|Altro in/i.test(alsoText));
     // A listed card may not show a number. The wire omits the key; this is
     // the assertion that the screen honours it.
     const listedScores = await page.locator('.places-alsohere .score-chip').count();
@@ -401,7 +406,7 @@ await desk.waitForTimeout(1200);
 // The desktop shell moves the category rail into the left panel and renames
 // its class: `.places-cat` is the phone toolbar copy and is hidden here, so
 // the desktop pass has to accept `.side-cat` too.
-await desk.locator('.places-cat:visible, .side-cat:visible', { hasText: /beaches/i }).first().click();
+await desk.locator('.dtab-cats [role="tab"]', { hasText: /beaches/i }).first().click();
 await desk.waitForTimeout(2500);
 check('desktop renders the beach cards', await desk.locator('.places-bcard:visible').count() >= 3);
 await desk.screenshot({ path: 'shots/beaches-desktop.png' });

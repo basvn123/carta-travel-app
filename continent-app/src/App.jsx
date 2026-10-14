@@ -1329,6 +1329,8 @@ function TravelApp() {
             isFavorite={isFavorite}
             onToggleFav={toggleFav}
             onAddToDay={openDayForFeature}
+            isActive={activeTab === 'places'}
+            onExploreCountry={(cc) => { setCountryFilter([cc]); goToTab('map'); }}
           />
         </div>
       )}

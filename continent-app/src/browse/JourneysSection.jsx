@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
+import { Button, Card, Switch } from '../components/ui/index.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { formatMoney } from '../lib/money.js';
 
@@ -13,8 +14,8 @@ import { formatMoney } from '../lib/money.js';
  */
 const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 import {
-  loadJourneyIndex, loadJourneyType, loadAllJourneyCards, typeLabel, diffLabel, monthsShort,
-  coverageFacts, eurRange, styleFromPrice, takePendingJourney, splitAround,
+  loadJourneyIndex, loadJourneyType, loadAllJourneyCards, typeLabel, typeDesc, diffLabel, monthsShort,
+  eurRange, styleFromPrice, takePendingJourney,
 } from '../lib/journeys.js';
 import { cardTotal, readTripLength, writeTripLength } from '../lib/tripLength.js';
 import { openShared } from '../lib/sharedElement.js';
@@ -61,64 +62,55 @@ const norm = (s) => String(s || '')
 
 const eur0 = (n, lang) => formatMoney(n, { precision: 'whole', locale: lang });
 
-/** A sentence with its euro figure in mono and its words in sans (T397,
- *  the mono rule): "From [€255] a person, 7 days". */
-function FigLine({ t, k, vars, fig }) {
-  const [pre, figure, post] = splitAround(t, k, vars, fig);
-  return <>{pre}<span className="mono">{figure}</span>{post}</>;
-}
-
-/** A photograph, or the flag-and-name placeholder on paper-dim. */
+/** A photograph, or the flag-and-name placeholder on the sunken ground. */
 function CardPhoto({ hero, cc, name }) {
-  return (
-    <span className="jcap-photo">
-      {hero?.url
-        ? (
-          <img
-            className="places-card-img"
-            src={fallbackSrc(hero.url, 500)}
-            srcSet={srcSetFor(hero.url, 1280)}
-            sizes={CARD_SIZES}
-            alt=""
-            loading="lazy"
-          />
-        )
-        : (
-          <span className="places-card-img places-card-noimg jcap-noimg" aria-hidden="true">
-            {cc && <CountryFlag country={cc} size={16} />}
-            <span>{name}</span>
-          </span>
-        )}
-    </span>
-  );
-}
-
-/** One style as a photo card: the photograph, then the name, the count and
- *  the from-price in a band under it. */
-function StyleCard({ type, n, from, onPick, t, lang }) {
-  const name = typeLabel(type.slug, t, type.name);
-  return (
-    <button type="button" className="jstyle-card jcap-card" onClick={() => onPick(type.slug)}>
-      <CardPhoto hero={type.hero} name={name} />
-      <span className="jcap-band">
-        <span className="jcap-name jstyle-name">{name}</span>
-        <span className="jcap-fig">
-          {from
-            ? <FigLine t={t} k="journey.fromPrice" vars={{ eur: eur0(from.low, lang), n: from.days }} fig="eur" />
-            : t('journey.fromNone')}
-        </span>
-        <span className="jcap-meta">
-          <span className="jcap-count mono">{n}</span>
-          {' '}
-          {t(n === 1 ? 'journey.oneTripWord' : 'journey.nTripsWord')}
-        </span>
+  return hero?.url
+    ? (
+      <img
+        className="places-card-img"
+        src={fallbackSrc(hero.url, 500)}
+        srcSet={srcSetFor(hero.url, 1280)}
+        sizes={CARD_SIZES}
+        alt=""
+        width={4}
+        height={3}
+        loading="lazy"
+        decoding="async"
+      />
+    )
+    : (
+      <span className="places-card-img places-card-noimg jcap-noimg" aria-hidden="true">
+        {cc && <CountryFlag country={cc} size={16} />}
+        <span>{name}</span>
       </span>
-    </button>
+    );
+}
+
+/** One style as a kit tile (T428): the photograph of people doing it, the
+ *  name, one line of what the week is, and what the cheapest of them costs
+ *  a person at the length the list is read at (rule "Cost on cards"). No
+ *  count of trips: the list behind the card is the answer. */
+function StyleCard({ type, from, onPick, t, lang }) {
+  const name = typeLabel(type.slug, t, type.name);
+  const desc = typeDesc(type.slug, t);
+  return (
+    <Card
+      layout="tile"
+      className="jstyle-card jcap-card"
+      data-style={type.slug}
+      media={<CardPhoto hero={type.hero} name={name} />}
+      title={<span className="jcap-name jstyle-name">{name}</span>}
+      onOpen={() => onPick(type.slug)}
+      meta={desc ? <span className="jstyle-desc">{desc}</span> : null}
+      price={from
+        ? <span className="jcap-fig">{t('journey.fromPrice', { eur: eur0(from.low, lang), n: from.days })}</span>
+        : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
+    />
   );
 }
 
-/** One curated trip as a photo card: the photograph, then the title, where,
- *  the length, the range a person, the difficulty and the months. */
+/** One curated trip as a kit tile: the photograph, the title, where, the
+ *  length with the difficulty and the months, and the range a person. */
 function JourneyCard({ card, length, onOpen, t, lang }) {
   const months = monthsShort(card.months, lang);
   const diff = diffLabel(card.diffLabel, t);
@@ -127,29 +119,25 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
   const days = at?.days || card.days;
   const total = at ? eurRange({ low: at.low, high: at.high }, lang) : '';
   return (
-    <button
-      type="button"
+    <Card
+      layout="tile"
       className="jcard jcap-card"
+      media={<CardPhoto hero={card.hero} cc={card.cc} name={card.title} />}
+      title={<span className="jcap-name jcard-title">{card.title}</span>}
       // The card's photograph grows into the page's hero (rule "List to
-      // detail", T397); without View Transitions or under reduced motion
-      // the page opens as it always did.
-      onClick={(e) => openShared(e.currentTarget, card.id, () => onOpen(card))}
-    >
-      <CardPhoto hero={card.hero} cc={card.cc} name={card.title} />
-      <span className="jcap-band">
-        <span className="jcap-name jcard-title">{card.title}</span>
-        <span className="jcap-where">
-          <CountryFlag country={card.cc} size={12} className="places-card-flag" />
-          <span>{[card.country, card.sub].filter(Boolean).join(', ')}</span>
+      // detail", T397); without View Transitions the page opens as before.
+      onOpen={(e) => openShared(e.currentTarget.closest('.card'), card.id, () => onOpen(card))}
+      meta={(
+        <span className="jcard-meta">
+          <span className="jcap-where">
+            <CountryFlag country={card.cc} size={12} className="places-card-flag" />
+            <span>{[card.country, card.sub].filter(Boolean).join(', ')}</span>
+          </span>
+          <span className="jcap-meta">{[t('journey.nDays', { n: days }), diff, months].filter(Boolean).join(', ')}</span>
         </span>
-        {total && (
-          <span className="jcap-fig"><FigLine t={t} k="journey.rangePp" vars={{ range: total }} fig="range" /></span>
-        )}
-        <span className="jcap-meta">
-          {[t('journey.nDays', { n: days }), diff, months].filter(Boolean).join(', ')}
-        </span>
-      </span>
-    </button>
+      )}
+      price={total ? <span className="jcap-fig">{t('journey.rangePp', { range: total })}</span> : null}
+    />
   );
 }
 
@@ -215,7 +203,7 @@ function StyleCountryEmpty({ country, cards, geo, countryName, onOpen, onAllCoun
         </>
       )}
       {onAllCountries && (
-        <button type="button" className="cov-empty-btn" onClick={onAllCountries}>{t('cov.showAll')}</button>
+        <Button variant="secondary" size="sm" className="cov-empty-btn" onClick={onAllCountries}>{t('cov.showAll')}</Button>
       )}
     </div>
   );
@@ -238,6 +226,9 @@ export function JourneysSection({
   const [month, setMonth] = useState(null);
   const [tag, setTag] = useState(null);           // one tag at a time (T089)
   const [sort, setSort] = useState('written');
+  // T428: only trips that offer a hostel, hut or campsite bed (the wire's
+  // `beds`, T448), the budget traveller's question across every style.
+  const [cheapBeds, setCheapBeds] = useState(false);
   const [library, setLibrary] = useState(null);     // every trip, for the edges and from-prices
   const pickLength = (next) => { setLength(next); writeTripLength(next); };
 
@@ -308,8 +299,6 @@ export function JourneysSection({
     return out;
   }, [library, types, length, country]);
 
-  const coverage = useMemo(() => (index ? coverageFacts(index) : null), [index]);
-
   // The style's trips after the search and the country, before the filters:
   // the chips count from here, so a chip says how many it would show.
   const scoped = useMemo(() => {
@@ -331,6 +320,7 @@ export function JourneysSection({
   const bandOn = edges ? band : null;
   const apply = (list, { skipBand = false, skipTag = false, skipMonth = false } = {}) => {
     let out = list || [];
+    if (cheapBeds) out = out.filter((c) => (c.beds || []).length > 0);
     if (!skipTag) out = filterByTag(out, activeTag);
     if (!skipMonth) out = filterByMonth(out, month);
     if (!skipBand) out = filterByBand(out, { length, band: bandOn, edges });
@@ -340,26 +330,27 @@ export function JourneysSection({
     () => (scoped ? sortCards(apply(scoped), sort, length, lang) : null),
     // apply reads the same inputs listed here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scoped, activeTag, month, bandOn, edges, length, sort, lang],
+    [scoped, activeTag, month, bandOn, edges, length, sort, lang, cheapBeds],
   );
   const counts = useMemo(
     () => bandCounts(apply(scoped, { skipBand: true }), { length, edges }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scoped, activeTag, month, length, edges],
+    [scoped, activeTag, month, length, edges, cheapBeds],
   );
   const tagNumbers = useMemo(
     () => countTags(apply(scoped, { skipTag: true }), vocab),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scoped, month, bandOn, edges, length, vocab],
+    [scoped, month, bandOn, edges, length, vocab, cheapBeds],
   );
   const monthNumbers = useMemo(
     () => countMonths(apply(scoped, { skipMonth: true })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scoped, activeTag, bandOn, edges, length],
+    [scoped, activeTag, bandOn, edges, length, cheapBeds],
   );
   // Clear all takes the cost, the month and the tag off; the length is how
   // the list is read, not a filter, so it stays (T376-g).
-  const clearFilters = () => { setBand(null); setMonth(null); setTag(null); };
+  const clearFilters = () => { setBand(null); setMonth(null); setTag(null); setCheapBeds(false); };
+  const hasBeds = !!scoped && scoped.some((c) => (c.beds || []).length > 0);
 
   if (index === undefined) {
     return (
@@ -372,31 +363,15 @@ export function JourneysSection({
   if (!view) {
     return (
       <div className="places-list jsec">
-        {coverage && coverage.trips > 0 && (
-          <p className="jsec-coverage">
-            {country
-              ? t('journey.coverageCountry', {
-                country: countryName(country),
-                n: coverage.stylesIn(country),
-                styles: coverage.styles,
-              })
-              : t('journey.coverage', {
-                trips: coverage.trips,
-                countries: coverage.countries,
-                styles: coverage.styles,
-                thin: coverage.thin,
-              })}
-          </p>
-        )}
         {types.map((tp) => (
-          <StyleCard key={tp.slug} type={tp} n={tp.n} from={fromPrices[tp.slug]}
+          <StyleCard key={tp.slug} type={tp} from={fromPrices[tp.slug]}
             onPick={onView} t={t} lang={lang} />
         ))}
         {index && types.length === 0 && country && (
           <div className="places-empty empty-act">
             <p>{t('journey.emptyCountryAll', { country: countryName(country) })}</p>
             {onAllCountries && (
-              <button type="button" className="cov-empty-btn" onClick={onAllCountries}>{t('cov.showAll')}</button>
+              <Button variant="secondary" size="sm" className="cov-empty-btn" onClick={onAllCountries}>{t('cov.showAll')}</Button>
             )}
           </div>
         )}
@@ -407,14 +382,14 @@ export function JourneysSection({
               retryLabel={t('layer.retry')} />
           </div>
         )}
-        {/* The composer's door: a different product, a plain row. */}
-        <button type="button" className="jcomposed-card" onClick={onComposed}>
-          <span className="jcomposed-text">
-            <span className="jcomposed-title">{t('journey.composedTitle')}</span>
-            <span className="jcomposed-sub">{t('journey.composedSub')}</span>
-          </span>
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </button>
+        {/* The composer's door: a different product, one quiet row (T428:
+            its method sentence went). */}
+        <div className="jcomposed">
+          <Button variant="secondary" className="jcomposed-card" onClick={onComposed}
+            iconEnd={<ChevronRightIcon size={15} />}>
+            {t('journey.composedTitle')}
+          </Button>
+        </div>
       </div>
     );
   }
@@ -423,15 +398,16 @@ export function JourneysSection({
   return (
     <div className="places-list jsec">
       <div className="jsec-head">
-        <button type="button" className="jsec-back" onClick={() => onView(null)}>
-          <ArrowLeftIcon size={14} />
-          <span>{t('journey.backStyles')}</span>
-        </button>
-        <h2 className="jsec-title">
-          {typeLabel(view, t, openType?.name)}
-          {rows && <span className="jsec-n mono">{rows.length}</span>}
-        </h2>
+        <Button variant="quiet" size="sm" className="jsec-back" onClick={() => onView(null)}
+          iconStart={<ArrowLeftIcon size={14} />}>
+          {t('journey.backStyles')}
+        </Button>
+        <h2 className="jsec-title">{typeLabel(view, t, openType?.name)}</h2>
+        {typeDesc(view, t) && <p className="jsec-desc">{typeDesc(view, t)}</p>}
       </div>
+      {cards !== null && hasBeds && (
+        <Switch className="jsec-beds" label={t('dtab.beds')} checked={cheapBeds} onChange={setCheapBeds} />
+      )}
       {cards !== null && (
         <TripFilters
           length={length}
@@ -471,7 +447,7 @@ export function JourneysSection({
           ? (
             <div className="places-empty empty-act">
               <p>{t('journey.emptyFilters')}</p>
-              <button type="button" className="cov-empty-btn" onClick={clearFilters}>{t('journey.fltClear')}</button>
+              <Button variant="secondary" size="sm" className="cov-empty-btn" onClick={clearFilters}>{t('journey.fltClear')}</Button>
             </div>
           )
           : country
@@ -491,18 +467,15 @@ export function JourneysSection({
               ? (
                 <div className="places-empty empty-act">
                   <p>{t('journey.noneMatch')}</p>
-                  <button type="button" className="cov-empty-btn" onClick={onClearSearch}>{t('results.clearSearch')}</button>
+                  <Button variant="secondary" size="sm" className="cov-empty-btn" onClick={onClearSearch}>{t('results.clearSearch')}</Button>
                 </div>
               )
               : (
                 <div className="places-empty empty-act">
                   <p>{t('journey.emptyType')}</p>
-                  <button type="button" className="cov-empty-btn" onClick={() => onView(null)}>{t('journey.backStyles')}</button>
+                  <Button variant="secondary" size="sm" className="cov-empty-btn" onClick={() => onView(null)}>{t('journey.backStyles')}</Button>
                 </div>
               )
-      )}
-      {rows && rows.length > 0 && (
-        <p className="places-credit">{t('journey.credit')}</p>
       )}
     </div>
   );

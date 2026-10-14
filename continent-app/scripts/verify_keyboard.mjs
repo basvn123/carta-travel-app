@@ -71,7 +71,7 @@ const SURFACES = {
   destinations: async (p) => { await boot(p); await p.waitForSelector('.places-ccard, .jstyle-card'); return { start: null }; },
   'destinations-trails': async (p) => {
     await boot(p);
-    await vis(p, '.side-cat:has-text("Trails"), .places-cat:has-text("Trails")').click();
+    await vis(p, '.dtab-cats [role="tab"]:has-text("Trails")').click();
     await sleep(2500);
     return { start: null };
   },

@@ -98,7 +98,7 @@ try {
   // The filter sheet's apply button. rowCount feeds it; on cycling it read 0.
   // .places-filter-btn, not the label: the button only mounts when the tab
   // has facets of its own, and its text is translated.
-  const filterBtn = page.locator('.places-filter-btn:visible').first();
+  const filterBtn = page.locator('.dtab-filters:visible, .side-allfilters:visible').first();
   if (await filterBtn.count()) {
     await filterBtn.click();
     await page.waitForTimeout(700);

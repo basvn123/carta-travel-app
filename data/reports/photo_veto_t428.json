@@ -1,0 +1,2213 @@
+{
+ "generated": "2026-10-15",
+ "task": "T428",
+ "note": "Leading photographs looked at and refused (docs/IMAGE_BRIEF.md hard rejects). The app reads continent-app/src/lib/photoVeto.js; the trail rows are also on trail_photo_patch.json; beaches, lakes, mountains and cycling need their own drop at the next export (register row).",
+ "checked": 1317,
+ "fail": [
+  {
+   "layer": "beaches",
+   "country": "IE",
+   "id": "ie-tragumna-Q4461740",
+   "name": "Tragumna",
+   "url": "https://s2.geograph.org.uk/geophotos/02/44/89/2448934_83680113.jpg",
+   "file": "2448934_83680113.jpg",
+   "reason": "fire hydrant close-up"
+  },
+  {
+   "layer": "beaches",
+   "country": "DK",
+   "id": "dk-gedser-odde-Q848136",
+   "name": "Gedser Odde",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Hugo_Schnars-Alquist_-_Seascape_south_of_Gedser_Odde_with_the_Gedser_Rev_lightship_-_1919.png/500px-Hugo_Schnars-Alquist_-_Seascape_south_of_Gedser_Odde_with_the_Gedser_Rev_lightship_-_1919.png",
+   "file": "Hugo_Schnars-Alquist_-_Seascape_south_of_Gedser_Odde_with_the_Gedser_Rev_lightship_-_1919.png",
+   "reason": "painting of a ship"
+  },
+  {
+   "layer": "beaches",
+   "country": "LU",
+   "id": "lu-insenborn-way319653848",
+   "name": "Insenborn",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/%C3%8Bnsber_View_to_Footbridge_L%C3%ABltz.jpg/500px-%C3%8Bnsber_View_to_Footbridge_L%C3%ABltz.jpg",
+   "file": "%C3%8Bnsber_View_to_Footbridge_L%C3%ABltz.jpg",
+   "reason": "house and street close-up"
+  },
+  {
+   "layer": "beaches",
+   "country": "SE",
+   "id": "se-sigsarve-strand-Q10667701",
+   "name": "Sigsarve strand",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Old_kerosene_lamp_on_a_hut_at_Sigsarve_beach%2C_Gotland.jpg/500px-Old_kerosene_lamp_on_a_hut_at_Sigsarve_beach%2C_Gotland.jpg",
+   "file": "Old_kerosene_lamp_on_a_hut_at_Sigsarve_beach%2C_Gotland.jpg",
+   "reason": "wooden shelter and lantern close-up"
+  },
+  {
+   "layer": "beaches",
+   "country": "FI",
+   "id": "fi-yyteri-beach-Q120441350",
+   "name": "Yyteri Beach",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Onni_Yyteriss%C3%A4_3.jpg/500px-Onni_Yyteriss%C3%A4_3.jpg",
+   "file": "Onni_Yyteriss%C3%A4_3.jpg",
+   "reason": "horse and rider"
+  },
+  {
+   "layer": "beaches",
+   "country": "ES",
+   "id": "es-arrietara-Q8204949",
+   "name": "Arrietara",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Arrietara2.jpg/500px-Arrietara2.jpg",
+   "file": "Arrietara2.jpg",
+   "reason": "aerial with text labels (annotated diagram)"
+  },
+  {
+   "layer": "beaches",
+   "country": "NO",
+   "id": "no-uller-y-leirskole-way669928961",
+   "name": "Ullerøy leirskole",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Kanoer_uller%C3%B8yleirskole.jpg/500px-Kanoer_uller%C3%B8yleirskole.jpg",
+   "file": "Kanoer_uller%C3%B8yleirskole.jpg",
+   "reason": "stacked canoes on grass"
+  },
+  {
+   "layer": "beaches",
+   "country": "SI",
+   "id": "si-kobarid-beach-node9063870521",
+   "name": "Kobarid Beach",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Napoleon_Bridge_near_Kobarid%2C_view_from_south_01.jpg/500px-Napoleon_Bridge_near_Kobarid%2C_view_from_south_01.jpg",
+   "file": "Napoleon_Bridge_near_Kobarid%2C_view_from_south_01.jpg",
+   "reason": "stone bridge close-up"
+  },
+  {
+   "layer": "beaches",
+   "country": "IT",
+   "id": "it-poetto-Q3393181",
+   "name": "Poetto",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Cagliari%2C_Italy.jpg/500px-Cagliari%2C_Italy.jpg",
+   "file": "Cagliari%2C_Italy.jpg",
+   "reason": "distorted 360 panorama"
+  },
+  {
+   "layer": "beaches",
+   "country": "PL",
+   "id": "pl-gdansk-stogi-beach-Q138631556",
+   "name": "Gdańsk-Stogi Beach",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Kolob%C4%9B%C5%BEka%2C_Stogi%2C_Baltsk%C3%A9_mo%C5%99e_3.jpg/500px-Kolob%C4%9B%C5%BEka%2C_Stogi%2C_Baltsk%C3%A9_mo%C5%99e_3.jpg",
+   "file": "Kolob%C4%9B%C5%BEka%2C_Stogi%2C_Baltsk%C3%A9_mo%C5%99e_3.jpg",
+   "reason": "portrait with scooter"
+  },
+  {
+   "layer": "beaches",
+   "country": "CZ",
+   "id": "cz-doksy-way229209737",
+   "name": "Doksy",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Doksy_n%C3%A1dra%C5%BE%C3%AD_od_silnice.jpg/500px-Doksy_n%C3%A1dra%C5%BE%C3%AD_od_silnice.jpg",
+   "file": "Doksy_n%C3%A1dra%C5%BE%C3%AD_od_silnice.jpg",
+   "reason": "building facade (station)"
+  },
+  {
+   "layer": "beaches",
+   "country": "SE",
+   "id": "se-ireviken-relation14895025",
+   "name": "Ireviken",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Fiestra_en_Ireviken_01.jpg/500px-Fiestra_en_Ireviken_01.jpg",
+   "file": "Fiestra_en_Ireviken_01.jpg",
+   "reason": "shed window close-up"
+  },
+  {
+   "layer": "beaches",
+   "country": "SK",
+   "id": "sk-stare-mesto-way1180535177",
+   "name": "Staré Mesto",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Bronzov%C3%A1_plastika_hraj%C3%BAcich_se_det%C3%AD%2C_font%C3%A1na_Div%C3%ADzia%2C_Pre%C5%A1ov%2C_Pre%C5%A1ovsk%C3%BD_kraj_01.jpg/500px-Bronzov%C3%A1_plastika_hraj%C3%BAcich_se_det%C3%AD%2C_font%C3%A1na_Div%C3%ADzia%2C_Pre%C5%A1ov%2C_Pre%C5%A1ovsk%C3%BD_kraj_01.jpg",
+   "file": "Bronzov%C3%A1_plastika_hraj%C3%BAcich_se_det%C3%AD%2C_font%C3%A1na_Div%C3%ADzia%2C_Pre%C5%A1ov%2C_Pre%C5%A1ovsk%C3%BD_kraj_01.jpg",
+   "reason": "statue fountain and buildings"
+  },
+  {
+   "layer": "beaches",
+   "country": "DE",
+   "id": "de-sudstrand-sellin-Q63614901",
+   "name": "Südstrand Sellin",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/2015_Sellin_Strand_01.jpg/500px-2015_Sellin_Strand_01.jpg",
+   "file": "2015_Sellin_Strand_01.jpg",
+   "reason": "pebbles close-up"
+  },
+  {
+   "layer": "beaches",
+   "country": "DE",
+   "id": "de-drei-way9810192",
+   "name": "Drei",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Ferienwohnungen_Holnis_Strand_2017.jpg/500px-Ferienwohnungen_Holnis_Strand_2017.jpg",
+   "file": "Ferienwohnungen_Holnis_Strand_2017.jpg",
+   "reason": "hotel building facade"
+  },
+  {
+   "layer": "beaches",
+   "country": "SI",
+   "id": "si-punta-way536178500",
+   "name": "Punta",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Piran_Porta_Campo_Punta_side-4373.jpg/500px-Piran_Porta_Campo_Punta_side-4373.jpg",
+   "file": "Piran_Porta_Campo_Punta_side-4373.jpg",
+   "reason": "alley between houses"
+  },
+  {
+   "layer": "beaches",
+   "country": "CH",
+   "id": "ch-plage-des-eaux-vives-way691962854",
+   "name": "Plage des Eaux-Vives",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Notlab_Plage_des_Eaux-Vives_June_18th%2C_2016_Geneva_20160618_%2827186489433%29.jpg/500px-Notlab_Plage_des_Eaux-Vives_June_18th%2C_2016_Geneva_20160618_%2827186489433%29.jpg",
+   "file": "Notlab_Plage_des_Eaux-Vives_June_18th%2C_2016_Geneva_20160618_%2827186489433%29.jpg",
+   "reason": "people at a table"
+  },
+  {
+   "layer": "beaches",
+   "country": "DK",
+   "id": "dk-blokhus-beach-Q17489404",
+   "name": "Blokhus beach",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/160DK_Blokhus_%2814898553970%29.jpg/500px-160DK_Blokhus_%2814898553970%29.jpg",
+   "file": "160DK_Blokhus_%2814898553970%29.jpg",
+   "reason": "car on a beach"
+  },
+  {
+   "layer": "beaches",
+   "country": "PL",
+   "id": "pl-plaza-wiele-way1473658449",
+   "name": "plaża Wiele",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Kalwaria_Wielewska_-_kaplica_Naj%C5%9Bwi%C4%99tszego_Serca_Pana_Jezusa_-_tabliczka.jpg/500px-Kalwaria_Wielewska_-_kaplica_Naj%C5%9Bwi%C4%99tszego_Serca_Pana_Jezusa_-_tabliczka.jpg",
+   "file": "Kalwaria_Wielewska_-_kaplica_Naj%C5%9Bwi%C4%99tszego_Serca_Pana_Jezusa_-_tabliczka.jpg",
+   "reason": "chapel wall with plaque"
+  },
+  {
+   "layer": "beaches",
+   "country": "BE",
+   "id": "be-laguna-beach-way549423803",
+   "name": "Laguna Beach",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Belgium_Knokke-Heist_Duinbergen_Laguna_Beach_Humorhall_1.jpg/500px-Belgium_Knokke-Heist_Duinbergen_Laguna_Beach_Humorhall_1.jpg",
+   "file": "Belgium_Knokke-Heist_Duinbergen_Laguna_Beach_Humorhall_1.jpg",
+   "reason": "apartment block facade"
+  },
+  {
+   "layer": "beaches",
+   "country": "CZ",
+   "id": "cz-zatopeny-lom-blansko-way55854130",
+   "name": "Zatopený lom Blansko",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Blansko%2C_koleje_u_n%C3%A1dra%C5%BE%C3%AD.JPG/500px-Blansko%2C_koleje_u_n%C3%A1dra%C5%BE%C3%AD.JPG",
+   "file": "Blansko%2C_koleje_u_n%C3%A1dra%C5%BE%C3%AD.JPG",
+   "reason": "railway tracks and wires"
+  },
+  {
+   "layer": "beaches",
+   "country": "NL",
+   "id": "nl-redevelopment-jaarbeurs-p3-way1174431325",
+   "name": "Redevelopment Jaarbeurs P3",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Jaarbeurs_Utrecht_Andr%C3%A9_Volten_Parkingentrance.JPG/500px-Jaarbeurs_Utrecht_Andr%C3%A9_Volten_Parkingentrance.JPG",
+   "file": "Jaarbeurs_Utrecht_Andr%C3%A9_Volten_Parkingentrance.JPG",
+   "reason": "shop canopy and sign"
+  },
+  {
+   "layer": "beaches",
+   "country": "SK",
+   "id": "sk-sv-mara-way320838927",
+   "name": "Sv. Mara",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Kostol%C3%ADk_pri_Liptovskej_Mare_-_panoramio.jpg/500px-Kostol%C3%ADk_pri_Liptovskej_Mare_-_panoramio.jpg",
+   "file": "Kostol%C3%ADk_pri_Liptovskej_Mare_-_panoramio.jpg",
+   "reason": "church tower close-up"
+  },
+  {
+   "layer": "beaches",
+   "country": "CY",
+   "id": "cy-coral-bay-way5916700",
+   "name": "Coral bay",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gabriel_at_the_Coral_Bay_beach%2C_Cyprus_%28PPL1-Corrected%29_julesvernex2-2.jpg/500px-Gabriel_at_the_Coral_Bay_beach%2C_Cyprus_%28PPL1-Corrected%29_julesvernex2-2.jpg",
+   "file": "Gabriel_at_the_Coral_Bay_beach%2C_Cyprus_%28PPL1-Corrected%29_julesvernex2-2.jpg",
+   "reason": "child portrait"
+  },
+  {
+   "layer": "beaches",
+   "country": "HU",
+   "id": "hu-lupa-beach-relation8670667",
+   "name": "Lupa Beach",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/%27Lupa_Beach%27_Haltestelle%2C_2025_Budakal%C3%A1sz.jpg/500px-%27Lupa_Beach%27_Haltestelle%2C_2025_Budakal%C3%A1sz.jpg",
+   "file": "%27Lupa_Beach%27_Haltestelle%2C_2025_Budakal%C3%A1sz.jpg",
+   "reason": "beach shelter close-up"
+  },
+  {
+   "layer": "beaches",
+   "country": "PL",
+   "id": "pl-baltow-way410296865",
+   "name": "Bałtów",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Jurapark_Baltow%2C_Poland_%28www.juraparkbaltow.pl%29_-_%28Ba%C5%82t%C3%B3w%2C_Polska%29_-_panoramio_%2836%29.jpg/500px-Jurapark_Baltow%2C_Poland_%28www.juraparkbaltow.pl%29_-_%28Ba%C5%82t%C3%B3w%2C_Polska%29_-_panoramio_%2836%29.jpg",
+   "file": "Jurapark_Baltow%2C_Poland_%28www.juraparkbaltow.pl%29_-_%28Ba%C5%82t%C3%B3w%2C_Polska%29_-_panoramio_%2836%29.jpg",
+   "reason": "dinosaur statue"
+  },
+  {
+   "layer": "beaches",
+   "country": "SI",
+   "id": "si-malecnik-way1521212591",
+   "name": "Malečnik",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Cerkev_Sv._Marija_-_panoramio.jpg/500px-Cerkev_Sv._Marija_-_panoramio.jpg",
+   "file": "Cerkev_Sv._Marija_-_panoramio.jpg",
+   "reason": "church close-up"
+  },
+  {
+   "layer": "lakes",
+   "country": "NL",
+   "id": "nl-ijsselmeer-Q4121",
+   "name": "IJsselmeer",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/20190717_aalscholvers_bij_het_IJsselmeer1.jpg/500px-20190717_aalscholvers_bij_het_IJsselmeer1.jpg",
+   "file": "20190717_aalscholvers_bij_het_IJsselmeer1.jpg",
+   "reason": "cormorants close-up"
+  },
+  {
+   "layer": "lakes",
+   "country": "NL",
+   "id": "nl-markermeer-Q939766",
+   "name": "Markermeer",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/20120930_VD-172_Markermeer.jpg/500px-20120930_VD-172_Markermeer.jpg",
+   "file": "20120930_VD-172_Markermeer.jpg",
+   "reason": "sailing boat close-up"
+  },
+  {
+   "layer": "lakes",
+   "country": "EE",
+   "id": "ee-puhajarv-Q1515717",
+   "name": "Pühajärv",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Konrad_M%C3%A4gi_P%C3%BChaj%C3%A4rve_maastik_figuuridega.jpg/500px-Konrad_M%C3%A4gi_P%C3%BChaj%C3%A4rve_maastik_figuuridega.jpg",
+   "file": "Konrad_M%C3%A4gi_P%C3%BChaj%C3%A4rve_maastik_figuuridega.jpg",
+   "reason": "painting"
+  },
+  {
+   "layer": "lakes",
+   "country": "NL",
+   "id": "nl-eemmeer-Q1295357",
+   "name": "Eemmeer",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Zicht_op_Flevoland_en_Eemmeer.jpg/500px-Zicht_op_Flevoland_en_Eemmeer.jpg",
+   "file": "Zicht_op_Flevoland_en_Eemmeer.jpg",
+   "reason": "wind turbine"
+  },
+  {
+   "layer": "lakes",
+   "country": "EE",
+   "id": "ee-lake-peipus-Q19253",
+   "name": "Lake Peipus",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Peipus_Mustvee_2.JPG/500px-Peipus_Mustvee_2.JPG",
+   "file": "Peipus_Mustvee_2.JPG",
+   "reason": "concert shell close-up"
+  },
+  {
+   "layer": "lakes",
+   "country": "DK",
+   "id": "dk-sj-ls-Q12000746",
+   "name": "Sjælsø",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Zealand_2014-09-06_%2815212056417%29.jpg/500px-Zealand_2014-09-06_%2815212056417%29.jpg",
+   "file": "Zealand_2014-09-06_%2815212056417%29.jpg",
+   "reason": "too dark, silhouette"
+  },
+  {
+   "layer": "lakes",
+   "country": "FI",
+   "id": "fi-nasijarvi-Q824371",
+   "name": "Näsijärvi",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Free_Travel_Shirt_Tampere_j%C3%A4rvi.jpg/500px-Free_Travel_Shirt_Tampere_j%C3%A4rvi.jpg",
+   "file": "Free_Travel_Shirt_Tampere_j%C3%A4rvi.jpg",
+   "reason": "cloth draped on object"
+  },
+  {
+   "layer": "lakes",
+   "country": "LV",
+   "id": "lv-jugla-lake-Q2637736",
+   "name": "Jugla Lake",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Shore_of_Jugla_lake.jpg/500px-Shore_of_Jugla_lake.jpg",
+   "file": "Shore_of_Jugla_lake.jpg",
+   "reason": "graffiti block and chairs"
+  },
+  {
+   "layer": "lakes",
+   "country": "SK",
+   "id": "sk-zlate-piesky-Q207224",
+   "name": "Zlaté Piesky",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Bratislava%2C_Slovakia_%28Unsplash_VIpBQ5lSXIE%29.jpg/500px-Bratislava%2C_Slovakia_%28Unsplash_VIpBQ5lSXIE%29.jpg",
+   "file": "Bratislava%2C_Slovakia_%28Unsplash_VIpBQ5lSXIE%29.jpg",
+   "reason": "wakeboarder silhouette"
+  },
+  {
+   "layer": "lakes",
+   "country": "HR",
+   "id": "hr-jarun-lake-Q116952845",
+   "name": "Jarun Lake",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Jarun_20160702_5087_%28cropped%29.jpg/500px-Jarun_20160702_5087_%28cropped%29.jpg",
+   "file": "Jarun_20160702_5087_%28cropped%29.jpg",
+   "reason": "stadium building"
+  },
+  {
+   "layer": "lakes",
+   "country": "SI",
+   "id": "si-kopalisce-strunjan-spiaggia-di-strug-r10634067",
+   "name": "Kopališče Strunjan / Spiaggia di Strugnano",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Cormorant_in_Strunjan.jpg/500px-Cormorant_in_Strunjan.jpg",
+   "file": "Cormorant_in_Strunjan.jpg",
+   "reason": "cormorant close-up"
+  },
+  {
+   "layer": "lakes",
+   "country": "GB",
+   "id": "gb-loch-leven-Q2266807",
+   "name": "Loch Leven",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Black-headed_Gull_at_Loch_Leven_1.jpg/500px-Black-headed_Gull_at_Loch_Leven_1.jpg",
+   "file": "Black-headed_Gull_at_Loch_Leven_1.jpg",
+   "reason": "seagull close-up"
+  },
+  {
+   "layer": "lakes",
+   "country": "NO",
+   "id": "no-yeren-Q317277",
+   "name": "Øyeren",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Chair_by_%C3%98yeren_-_R%C3%A6lingen%2C_Norway_2021-10-22.jpg/500px-Chair_by_%C3%98yeren_-_R%C3%A6lingen%2C_Norway_2021-10-22.jpg",
+   "file": "Chair_by_%C3%98yeren_-_R%C3%A6lingen%2C_Norway_2021-10-22.jpg",
+   "reason": "garden chair close-up"
+  },
+  {
+   "layer": "lakes",
+   "country": "XK",
+   "id": "xk-mitrovica-lake-Q60500131",
+   "name": "Mitrovica Lake",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Lake_Mitrovica_Kosova.jpg/500px-Lake_Mitrovica_Kosova.jpg",
+   "file": "Lake_Mitrovica_Kosova.jpg",
+   "reason": "grey fog, bridge"
+  },
+  {
+   "layer": "lakes",
+   "country": "GB",
+   "id": "gb-serpentine-Q1471930",
+   "name": "Serpentine",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/London_Hyde_Park_Serpentine_angler-20130715-RM-125914.jpg/500px-London_Hyde_Park_Serpentine_angler-20130715-RM-125914.jpg",
+   "file": "London_Hyde_Park_Serpentine_angler-20130715-RM-125914.jpg",
+   "reason": "person fishing and sign"
+  },
+  {
+   "layer": "mountains",
+   "country": "PL",
+   "id": "pl-snezka-Q617511",
+   "name": "Śnieżka",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/Schronisko_Sniezka.JPG",
+   "file": "Schronisko_Sniezka.JPG",
+   "reason": "observatory building close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "DE",
+   "id": "de-brocken-Q155721",
+   "name": "Brocken",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Brocken-Gipfelbereich.jpg/500px-Brocken-Gipfelbereich.jpg",
+   "file": "Brocken-Gipfelbereich.jpg",
+   "reason": "summit buildings and signpost"
+  },
+  {
+   "layer": "mountains",
+   "country": "CH",
+   "id": "ch-pilatus-mountain-Q15265",
+   "name": "Pilatus",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Pilatus_Agusta_A109_Flug.jpg/500px-Pilatus_Agusta_A109_Flug.jpg",
+   "file": "Pilatus_Agusta_A109_Flug.jpg",
+   "reason": "helicopter"
+  },
+  {
+   "layer": "mountains",
+   "country": "IT",
+   "id": "it-mount-vesuvius-Q524",
+   "name": "Mount Vesuvius",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Mount_Vesuvius%3B_a_volcanic_eruption_at_the_foot_of_the_mount_Wellcome_V0025260.jpg/500px-Mount_Vesuvius%3B_a_volcanic_eruption_at_the_foot_of_the_mount_Wellcome_V0025260.jpg",
+   "file": "Mount_Vesuvius%3B_a_volcanic_eruption_at_the_foot_of_the_mount_Wellcome_V0025260.jpg",
+   "reason": "painting of an eruption"
+  },
+  {
+   "layer": "mountains",
+   "country": "MK",
+   "id": "mk-vodno-Q1048376",
+   "name": "Vodno",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Vodno_Telecommunication_Tower_2024_4.jpg/500px-Vodno_Telecommunication_Tower_2024_4.jpg",
+   "file": "Vodno_Telecommunication_Tower_2024_4.jpg",
+   "reason": "cross monument close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "SE",
+   "id": "se-areskutan-Q271149",
+   "name": "Åreskutan",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Snowy_%C3%85reskutan_Ski_lift.jpg/500px-Snowy_%C3%85reskutan_Ski_lift.jpg",
+   "file": "Snowy_%C3%85reskutan_Ski_lift.jpg",
+   "reason": "frozen chairlift chairs"
+  },
+  {
+   "layer": "mountains",
+   "country": "CZ",
+   "id": "cz-lysa-hora-Q1573557",
+   "name": "Lysá hora",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Lys%C3%A1_hora%2C_Gabrielka%2C_Beskydy%2C_prosinec_2011_%2810%29.JPG/500px-Lys%C3%A1_hora%2C_Gabrielka%2C_Beskydy%2C_prosinec_2011_%2810%29.JPG",
+   "file": "Lys%C3%A1_hora%2C_Gabrielka%2C_Beskydy%2C_prosinec_2011_%2810%29.JPG",
+   "reason": "frosted tree close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "GB",
+   "id": "gb-snowdon-Q217142",
+   "name": "Snowdon",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/%28Barcelona%29_Snowdon_and_Dinas_Emrys_from_above_Beddgelert_-_William_Turner_-_Tate_Britain.jpg/500px-%28Barcelona%29_Snowdon_and_Dinas_Emrys_from_above_Beddgelert_-_William_Turner_-_Tate_Britain.jpg",
+   "file": "%28Barcelona%29_Snowdon_and_Dinas_Emrys_from_above_Beddgelert_-_William_Turner_-_Tate_Britain.jpg",
+   "reason": "watercolour painting"
+  },
+  {
+   "layer": "mountains",
+   "country": "HU",
+   "id": "hu-kekes-Q747618",
+   "name": "Kékes",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/K%C3%A9kestet%C5%91_2023._%C3%A1prilis_k%C3%A9pek10.jpg/500px-K%C3%A9kestet%C5%91_2023._%C3%A1prilis_k%C3%A9pek10.jpg",
+   "file": "K%C3%A9kestet%C5%91_2023._%C3%A1prilis_k%C3%A9pek10.jpg",
+   "reason": "stone steps and flag close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "CZ",
+   "id": "cz-klet-Q1757192",
+   "name": "Kleť",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Klet_Aussichtsturm.JPG/500px-Klet_Aussichtsturm.JPG",
+   "file": "Klet_Aussichtsturm.JPG",
+   "reason": "lookout tower building close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "BE",
+   "id": "be-signal-de-botrange-Q322824",
+   "name": "Signal de Botrange",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Signal_de_Botrange_-_panoramio.jpg/500px-Signal_de_Botrange_-_panoramio.jpg",
+   "file": "Signal_de_Botrange_-_panoramio.jpg",
+   "reason": "tower and building by a road"
+  },
+  {
+   "layer": "mountains",
+   "country": "GR",
+   "id": "gr-mount-parnassus-Q105261",
+   "name": "Mount Parnassus",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Parnassus_Dodwell.jpg/500px-Parnassus_Dodwell.jpg",
+   "file": "Parnassus_Dodwell.jpg",
+   "reason": "painting"
+  },
+  {
+   "layer": "mountains",
+   "country": "LV",
+   "id": "lv-sigulda-Q465698",
+   "name": "Sigulda",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/The_new_Sigulda_castle_%282%29.JPG/500px-The_new_Sigulda_castle_%282%29.JPG",
+   "file": "The_new_Sigulda_castle_%282%29.JPG",
+   "reason": "manor building facade"
+  },
+  {
+   "layer": "mountains",
+   "country": "BG",
+   "id": "bg-botev-peak-Q894703",
+   "name": "Botev Peak",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Botev-peak-Mincov.jpg/500px-Botev-peak-Mincov.jpg",
+   "file": "Botev-peak-Mincov.jpg",
+   "reason": "summit observatory buildings"
+  },
+  {
+   "layer": "mountains",
+   "country": "SI",
+   "id": "si-vogel-mountain-Q753098",
+   "name": "Vogel",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Bohinj%2C_Mont_Vogel_14_%2853427518712%29.jpg/500px-Bohinj%2C_Mont_Vogel_14_%2853427518712%29.jpg",
+   "file": "Bohinj%2C_Mont_Vogel_14_%2853427518712%29.jpg",
+   "reason": "kiosk hut close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "PT",
+   "id": "pt-foia-mountain-Q913368",
+   "name": "Foia",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Foia_175.jpg/500px-Foia_175.jpg",
+   "file": "Foia_175.jpg",
+   "reason": "buildings and antennas"
+  },
+  {
+   "layer": "mountains",
+   "country": "PT",
+   "id": "pt-torre-serra-da-estrela-Q2746237",
+   "name": "Torre",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Os_quatro_edif%C3%ADcios.jpg/500px-Os_quatro_edif%C3%ADcios.jpg",
+   "file": "Os_quatro_edif%C3%ADcios.jpg",
+   "reason": "radar domes and monument"
+  },
+  {
+   "layer": "mountains",
+   "country": "IS",
+   "id": "is-esja-osmn4363603873",
+   "name": "Esja",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/2019-08-13_02_LEYNIR_-_IMO_9126388.jpg/500px-2019-08-13_02_LEYNIR_-_IMO_9126388.jpg",
+   "file": "2019-08-13_02_LEYNIR_-_IMO_9126388.jpg",
+   "reason": "tugboat"
+  },
+  {
+   "layer": "mountains",
+   "country": "BE",
+   "id": "be-kemmelberg-Q209541",
+   "name": "Kemmelberg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Kemmelberg23.jpg/500px-Kemmelberg23.jpg",
+   "file": "Kemmelberg23.jpg",
+   "reason": "road with traffic sign"
+  },
+  {
+   "layer": "mountains",
+   "country": "SE",
+   "id": "se-kebnekaise-Q214011",
+   "name": "Kebnekaise",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/20070818-0001-strolling_reindeer.jpg/500px-20070818-0001-strolling_reindeer.jpg",
+   "file": "20070818-0001-strolling_reindeer.jpg",
+   "reason": "reindeer"
+  },
+  {
+   "layer": "mountains",
+   "country": "FI",
+   "id": "fi-iso-syote-Q536744",
+   "name": "Iso-Syöte",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Iso_Sy%C3%B6te_Info.jpg/500px-Iso_Sy%C3%B6te_Info.jpg",
+   "file": "Iso_Sy%C3%B6te_Info.jpg",
+   "reason": "ski map information board"
+  },
+  {
+   "layer": "mountains",
+   "country": "CY",
+   "id": "cy-stavrovouni-monastery-Q2426066",
+   "name": "Stavrovouni Monastery",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Stavrovouni_Monastery.jpg/500px-Stavrovouni_Monastery.jpg",
+   "file": "Stavrovouni_Monastery.jpg",
+   "reason": "monastery building close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "BE",
+   "id": "be-baraque-de-fraiture-Q2183673",
+   "name": "Baraque de Fraiture",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Skipiste_Baraque_Fraiture.JPG",
+   "file": "Skipiste_Baraque_Fraiture.JPG",
+   "reason": "snowboarder sitting in snow"
+  },
+  {
+   "layer": "mountains",
+   "country": "DK",
+   "id": "dk-ejer-bavnehoj-Q185326",
+   "name": "Ejer Bavnehøj",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Genforeningst%C3%A5rnet_p%C3%A5_Ejer_Bavneh%C3%B8j.jpg/500px-Genforeningst%C3%A5rnet_p%C3%A5_Ejer_Bavneh%C3%B8j.jpg",
+   "file": "Genforeningst%C3%A5rnet_p%C3%A5_Ejer_Bavneh%C3%B8j.jpg",
+   "reason": "tower monument with flag"
+  },
+  {
+   "layer": "mountains",
+   "country": "EE",
+   "id": "ee-emumagi-Q3509259",
+   "name": "Emumägi",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Emumagi.jpg",
+   "file": "Emumagi.jpg",
+   "reason": "observation tower close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "NL",
+   "id": "nl-wilhelminaberg-Q2306258",
+   "name": "Wilhelminaberg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Landgraaf-SnowWorld.JPG/500px-Landgraaf-SnowWorld.JPG",
+   "file": "Landgraaf-SnowWorld.JPG",
+   "reason": "indoor ski dome building"
+  },
+  {
+   "layer": "mountains",
+   "country": "EE",
+   "id": "ee-toompea-Q171196",
+   "name": "Toompea",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/MR_toompea_02.jpg/500px-MR_toompea_02.jpg",
+   "file": "MR_toompea_02.jpg",
+   "reason": "football pitch and building"
+  },
+  {
+   "layer": "mountains",
+   "country": "UA",
+   "id": "ua-hoverla-Q627508",
+   "name": "Hoverla",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/%D0%93%D0%BE%D0%B2%D0%B5%D1%80%D0%BB%D0%B0_%D0%B2%D0%B6%D0%B5_%D0%BF%D0%BE%D1%80%D1%83%D1%87..jpg",
+   "file": "%D0%93%D0%BE%D0%B2%D0%B5%D1%80%D0%BB%D0%B0_%D0%B2%D0%B6%D0%B5_%D0%BF%D0%BE%D1%80%D1%83%D1%87..jpg",
+   "reason": "old black-and-white photo of people"
+  },
+  {
+   "layer": "mountains",
+   "country": "MK",
+   "id": "mk-popova-sapka-Q3112563",
+   "name": "Popova Šapka",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Popova_Sapka_vo_januari_2013_%24_%281%29.JPG/500px-Popova_Sapka_vo_januari_2013_%24_%281%29.JPG",
+   "file": "Popova_Sapka_vo_januari_2013_%24_%281%29.JPG",
+   "reason": "power pylon in snow"
+  },
+  {
+   "layer": "mountains",
+   "country": "BE",
+   "id": "be-mont-saint-aubert-Q2784509",
+   "name": "Mont-Saint-Aubert",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Le_Mont_Saint-Aubert_%281%29.JPG/500px-Le_Mont_Saint-Aubert_%281%29.JPG",
+   "file": "Le_Mont_Saint-Aubert_%281%29.JPG",
+   "reason": "church and car park"
+  },
+  {
+   "layer": "mountains",
+   "country": "LU",
+   "id": "lu-buurgplaatz-Q993417",
+   "name": "Buurgplaatz",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Buergplaz_Huldang.jpg/500px-Buergplaz_Huldang.jpg",
+   "file": "Buergplaz_Huldang.jpg",
+   "reason": "water tower close-up"
+  },
+  {
+   "layer": "mountains",
+   "country": "MD",
+   "id": "md-balanesti-hill-Q47940",
+   "name": "Bălănești Hill",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Dealul_B%C4%83l%C4%83ne%C8%99ti_2.JPG/500px-Dealul_B%C4%83l%C4%83ne%C8%99ti_2.JPG",
+   "file": "Dealul_B%C4%83l%C4%83ne%C8%99ti_2.JPG",
+   "reason": "horse cart on a road"
+  },
+  {
+   "layer": "mountains",
+   "country": "NL",
+   "id": "nl-posbank-Q1855065",
+   "name": "Posbank",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Posbank.jpg/500px-Posbank.jpg",
+   "file": "Posbank.jpg",
+   "reason": "brick monument"
+  },
+  {
+   "layer": "cycling",
+   "country": "AT",
+   "id": 1150,
+   "name": "EuroVelo 6 - part Austria - leg 3 common (Ottensheim - St. Georgen)",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Linz_WikiEule_2023_mit_Blick_zum_Schloss-3795.jpg/1280px-Linz_WikiEule_2023_mit_Blick_zum_Schloss-3795.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Linz_WikiEule_2023_mit_Blick_zum_Schloss-3795.jpg",
+   "reason": "owl sculpture in foreground"
+  },
+  {
+   "layer": "cycling",
+   "country": "AT",
+   "id": 413,
+   "name": "Innweg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Burg_Obernberg_01.jpg/1280px-Burg_Obernberg_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Burg_Obernberg_01.jpg",
+   "reason": "building facade"
+  },
+  {
+   "layer": "cycling",
+   "country": "BE",
+   "id": 3127,
+   "name": "Schelderoute - 6 - Antwerpen - Grens Nederland",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/53_Amerikadok-Zuidkaai%2C_Antwerpen.jpg/1280px-53_Amerikadok-Zuidkaai%2C_Antwerpen.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "53_Amerikadok-Zuidkaai%2C_Antwerpen.jpg",
+   "reason": "warehouse building"
+  },
+  {
+   "layer": "cycling",
+   "country": "DE",
+   "id": 13301,
+   "name": "Ruwer-Hochwald-Radweg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Infotafel_Romika-Weg.jpg/1280px-Infotafel_Romika-Weg.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Infotafel_Romika-Weg.jpg",
+   "reason": "information board"
+  },
+  {
+   "layer": "cycling",
+   "country": "FR",
+   "id": 11965,
+   "name": "EV3 France 27, Amboise - Tours",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/Amboise_-_le_Ch%C3%A2teau_%283-2014%29_2014-08-18_15.55.10.jpg/1280px-Amboise_-_le_Ch%C3%A2teau_%283-2014%29_2014-08-18_15.55.10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Amboise_-_le_Ch%C3%A2teau_%283-2014%29_2014-08-18_15.55.10.jpg",
+   "reason": "chateau facade close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "DE",
+   "id": 27776,
+   "name": "Main-Radweg, Abschnitt 10 \"Wertheim bis Miltenberg\"",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Burg_Wertheim_0010_Kugelpanorama.jpg/1280px-Burg_Wertheim_0010_Kugelpanorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Burg_Wertheim_0010_Kugelpanorama.jpg",
+   "reason": "distorted 360 panorama"
+  },
+  {
+   "layer": "cycling",
+   "country": "FR",
+   "id": 12891,
+   "name": "Eurovélo 17 : Arles – Port-Saint-Louis-du-Rhône",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Noon_in_Arles_-_panoramio.jpg/1280px-Noon_in_Arles_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Noon_in_Arles_-_panoramio.jpg",
+   "reason": "donkeys"
+  },
+  {
+   "layer": "cycling",
+   "country": "AT",
+   "id": 2283,
+   "name": "Alpe Adria Radweg Etappe 5",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Villach_Unterfederaun_Burgruine_Federaun_Bergfried_20102008_22.jpg/1280px-Villach_Unterfederaun_Burgruine_Federaun_Bergfried_20102008_22.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Villach_Unterfederaun_Burgruine_Federaun_Bergfried_20102008_22.jpg",
+   "reason": "ruined tower close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "AT",
+   "id": 540,
+   "name": "Triestingtal-Radweg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Guglzipf_Waldhuette.jpg/1280px-Guglzipf_Waldhuette.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Guglzipf_Waldhuette.jpg",
+   "reason": "restaurant building"
+  },
+  {
+   "layer": "cycling",
+   "country": "CZ",
+   "id": 615,
+   "name": "41 Břeclav - Nový Přerov",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Lednice_-_Z%C3%A1meck%C3%BD_Park_-_View_NW_on_Greenhouse.jpg/1280px-Lednice_-_Z%C3%A1meck%C3%BD_Park_-_View_NW_on_Greenhouse.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Lednice_-_Z%C3%A1meck%C3%BD_Park_-_View_NW_on_Greenhouse.jpg",
+   "reason": "glasshouse close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "FR",
+   "id": 9768,
+   "name": "Veloroute Quissac - Ganges",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Saint-Hippolyte-du-Fort_town_hall.jpg/1280px-Saint-Hippolyte-du-Fort_town_hall.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Saint-Hippolyte-du-Fort_town_hall.jpg",
+   "reason": "town hall facade, fountain, car"
+  },
+  {
+   "layer": "cycling",
+   "country": "PL",
+   "id": 60212,
+   "name": "Świerże - Zwoleń",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/%C5%BBytkowice%2C_Mauzoleum_Legionist%C3%B3w_%286%29.jpg/1280px-%C5%BBytkowice%2C_Mauzoleum_Legionist%C3%B3w_%286%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "%C5%BBytkowice%2C_Mauzoleum_Legionist%C3%B3w_%286%29.jpg",
+   "reason": "cross monument"
+  },
+  {
+   "layer": "cycling",
+   "country": "DE",
+   "id": 17362,
+   "name": "D-Netz Route 3",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Europaradweg_R1_D3_01.jpg/1280px-Europaradweg_R1_D3_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Europaradweg_R1_D3_01.jpg",
+   "reason": "route sign logo"
+  },
+  {
+   "layer": "cycling",
+   "country": "IE",
+   "id": 50742,
+   "name": "Waterford Greenway",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/7/71/Waterford_and_Suir_Valley_railway_near_Mount_Congreve_-_geograph.org.uk_-_5821591.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+   "file": "Waterford_and_Suir_Valley_railway_near_Mount_Congreve_-_geograph.org.uk_-_5821591.jpg",
+   "reason": "train window with passenger"
+  },
+  {
+   "layer": "cycling",
+   "country": "PL",
+   "id": 62054,
+   "name": "Trasa łącznikowa R10: Karwieńskie Błota - Władysławowo",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Wladyslawowo%2C_Poland_-_panoramio_%287%29.jpg/1280px-Wladyslawowo%2C_Poland_-_panoramio_%287%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Wladyslawowo%2C_Poland_-_panoramio_%287%29.jpg",
+   "reason": "fairground ride"
+  },
+  {
+   "layer": "cycling",
+   "country": "SK",
+   "id": 64259,
+   "name": "Hrebeňom Považského Inovca",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Vojensk%C3%BD_objekt_na_Inovci_-_panoramio.jpg/1280px-Vojensk%C3%BD_objekt_na_Inovci_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Vojensk%C3%BD_objekt_na_Inovci_-_panoramio.jpg",
+   "reason": "mast and fence in snow"
+  },
+  {
+   "layer": "cycling",
+   "country": "SK",
+   "id": 63769,
+   "name": "Cerová dráha",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Bratislava%2C_Nov%C3%A9_Mesto%2C_Lanov%C3%A1_dr%C3%A1ha_na_Kamz%C3%ADk%2C_doln%C3%AD_stanice.jpg/1280px-Bratislava%2C_Nov%C3%A9_Mesto%2C_Lanov%C3%A1_dr%C3%A1ha_na_Kamz%C3%ADk%2C_doln%C3%AD_stanice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Bratislava%2C_Nov%C3%A9_Mesto%2C_Lanov%C3%A1_dr%C3%A1ha_na_Kamz%C3%ADk%2C_doln%C3%AD_stanice.jpg",
+   "reason": "building and stairs"
+  },
+  {
+   "layer": "cycling",
+   "country": "BE",
+   "id": 2464,
+   "name": "RAVeL Ligne 109/2 Thuin-Chimay",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Le_Spantole_et_le_Rempart_du_Nord_%C3%A0_Thuin_%28DSCF7782%29.jpg/1280px-Le_Spantole_et_le_Rempart_du_Nord_%C3%A0_Thuin_%28DSCF7782%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Le_Spantole_et_le_Rempart_du_Nord_%C3%A0_Thuin_%28DSCF7782%29.jpg",
+   "reason": "cannon close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "DE",
+   "id": 13215,
+   "name": "Fünf-Flüsse-Radweg (Hauptweg)",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/St._Michael_-_Biberach_109.jpg/1280px-St._Michael_-_Biberach_109.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "St._Michael_-_Biberach_109.jpg",
+   "reason": "church interior"
+  },
+  {
+   "layer": "cycling",
+   "country": "DE",
+   "id": 34488,
+   "name": "Rheinland-Pfalz Radroute (Rhein-Pfalz-Kreis)",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/MS_Rhein_-_Main_%2844125301335%29.jpg/1280px-MS_Rhein_-_Main_%2844125301335%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "MS_Rhein_-_Main_%2844125301335%29.jpg",
+   "reason": "river cargo ship"
+  },
+  {
+   "layer": "cycling",
+   "country": "DE",
+   "id": 33448,
+   "name": "Fränkischer WasserRadweg - Etappe 2",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Unteremmendorf_Wegkreuz.jpg/1280px-Unteremmendorf_Wegkreuz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Unteremmendorf_Wegkreuz.jpg",
+   "reason": "wayside cross"
+  },
+  {
+   "layer": "cycling",
+   "country": "FR",
+   "id": 10201,
+   "name": "EuroVelo 5 - Via Romea Francigena - Grosbliederstroff to Gondrexange",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Grosbliederstroff%2C_sluis_IMG_5682_2023-05-10_11.49.jpg/1280px-Grosbliederstroff%2C_sluis_IMG_5682_2023-05-10_11.49.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Grosbliederstroff%2C_sluis_IMG_5682_2023-05-10_11.49.jpg",
+   "reason": "lock house and flags"
+  },
+  {
+   "layer": "cycling",
+   "country": "FR",
+   "id": 11037,
+   "name": "La Vélo Francette, Caen / Thury-Harcourt / Le Hom",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Cygnes_Etang_de_la_prairie_Caen_1299.JPG/1280px-Cygnes_Etang_de_la_prairie_Caen_1299.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Cygnes_Etang_de_la_prairie_Caen_1299.JPG",
+   "reason": "swans"
+  },
+  {
+   "layer": "cycling",
+   "country": "SE",
+   "id": 59621,
+   "name": "Ätradalsleden (Ulricehamn-Tranemo)",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Tranan_Tranemo_03.jpg/1280px-Tranan_Tranemo_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Tranan_Tranemo_03.jpg",
+   "reason": "building and car park"
+  },
+  {
+   "layer": "cycling",
+   "country": "CZ",
+   "id": 5051,
+   "name": "472 Vsetín - Martiňák",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Vset%C3%ADn_-_Palack%C3%A9ho_-_View_South_II.jpg/1280px-Vset%C3%ADn_-_Palack%C3%A9ho_-_View_South_II.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Vset%C3%ADn_-_Palack%C3%A9ho_-_View_South_II.jpg",
+   "reason": "buildings and car in snow"
+  },
+  {
+   "layer": "cycling",
+   "country": "IE",
+   "id": 50960,
+   "name": "EuroVelo 2",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Dunnes_Stores_entrance_in_the_Harbour_Place_shopping_centre.jpg/1280px-Dunnes_Stores_entrance_in_the_Harbour_Place_shopping_centre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Dunnes_Stores_entrance_in_the_Harbour_Place_shopping_centre.jpg",
+   "reason": "shopping centre interior"
+  },
+  {
+   "layer": "cycling",
+   "country": "IE",
+   "id": 51603,
+   "name": "Royal Canal Greenway",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/River_Rye_at_the_Ryewater_Aqueduct.jpg/1280px-River_Rye_at_the_Ryewater_Aqueduct.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "River_Rye_at_the_Ryewater_Aqueduct.jpg",
+   "reason": "culvert tunnel close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "PL",
+   "id": 61499,
+   "name": "Green Velo - Łącznik 201",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/20211031_111005_October_2021_in_August%C3%B3w.jpg/1280px-20211031_111005_October_2021_in_August%C3%B3w.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "20211031_111005_October_2021_in_August%C3%B3w.jpg",
+   "reason": "building and sign board"
+  },
+  {
+   "layer": "cycling",
+   "country": "SE",
+   "id": 59663,
+   "name": "Sydostleden (Fridafors - Karlshamn)",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Drottninggatan3Karlshamn20150717.JPG/1280px-Drottninggatan3Karlshamn20150717.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Drottninggatan3Karlshamn20150717.JPG",
+   "reason": "red building facade"
+  },
+  {
+   "layer": "cycling",
+   "country": "SK",
+   "id": 64555,
+   "name": null,
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/Stary_haj_a_rameno_08.jpg/1280px-Stary_haj_a_rameno_08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Stary_haj_a_rameno_08.jpg",
+   "reason": "plant close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "AT",
+   "id": 517,
+   "name": "Mürztalradweg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Mapeak_Sieberwarte.jpeg/1280px-Mapeak_Sieberwarte.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Mapeak_Sieberwarte.jpeg",
+   "reason": "gazebo and two people"
+  },
+  {
+   "layer": "cycling",
+   "country": "LV",
+   "id": 63179,
+   "name": "Rāmkalni Velo maršruts 31km",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Smil%C5%A1akmens_atsegumi_Pi%C4%B7%C4%93nes_krauj%C4%81.jpg/1280px-Smil%C5%A1akmens_atsegumi_Pi%C4%B7%C4%93nes_krauj%C4%81.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Smil%C5%A1akmens_atsegumi_Pi%C4%B7%C4%93nes_krauj%C4%81.jpg",
+   "reason": "murky rock and root close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "PL",
+   "id": 61885,
+   "name": "Z Puszczy Knyszyńskiej do Doliny Biebrzy",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/20230723_134417_July_2023_in_Supra%C5%9Bl.jpg/1280px-20230723_134417_July_2023_in_Supra%C5%9Bl.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "20230723_134417_July_2023_in_Supra%C5%9Bl.jpg",
+   "reason": "market stall and portrait"
+  },
+  {
+   "layer": "cycling",
+   "country": "CZ",
+   "id": 1440,
+   "name": "Knížecí",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/ba/Hrani%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%281%29.jpg/1280px-Hrani%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Hrani%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%281%29.jpg",
+   "reason": "spa building facade"
+  },
+  {
+   "layer": "cycling",
+   "country": "FI",
+   "id": 8569,
+   "name": "Cykelled Mariehamn - Eckerö",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Ecker%C3%B6_post-_och_tullhus_-_20250906_-_01.jpg/1280px-Ecker%C3%B6_post-_och_tullhus_-_20250906_-_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Ecker%C3%B6_post-_och_tullhus_-_20250906_-_01.jpg",
+   "reason": "building facade"
+  },
+  {
+   "layer": "cycling",
+   "country": "NL",
+   "id": 53888,
+   "name": "LF Kustroute - 06 - Den Helder - Egmond",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/View_of_Egmond_Castle.jpg/1280px-View_of_Egmond_Castle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "View_of_Egmond_Castle.jpg",
+   "reason": "painting"
+  },
+  {
+   "layer": "cycling",
+   "country": "PL",
+   "id": 62180,
+   "name": "Nad Sołokiją",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/PL_Belzec_extermination_camp_3.jpg/1280px-PL_Belzec_extermination_camp_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "PL_Belzec_extermination_camp_3.jpg",
+   "reason": "rusted texture close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "SE",
+   "id": 59662,
+   "name": "Sydostleden (Karlshamn - Sölvesborg)",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/S%C3%B6lvesborg_R%C3%A5dhuset.jpg/1280px-S%C3%B6lvesborg_R%C3%A5dhuset.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "S%C3%B6lvesborg_R%C3%A5dhuset.jpg",
+   "reason": "town hall building"
+  },
+  {
+   "layer": "cycling",
+   "country": "SK",
+   "id": 64724,
+   "name": null,
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Prame%C5%88_Mechenice_-_panoramio.jpg/1280px-Prame%C5%88_Mechenice_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Prame%C5%88_Mechenice_-_panoramio.jpg",
+   "reason": "stone wall structure close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "BE",
+   "id": 3109,
+   "name": "Kustroute - 2 - Nieuwpoort - Oostende",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Oostende_Duinenkerk_R11.jpg/1280px-Oostende_Duinenkerk_R11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Oostende_Duinenkerk_R11.jpg",
+   "reason": "church interior"
+  },
+  {
+   "layer": "cycling",
+   "country": "BE",
+   "id": 2456,
+   "name": "RAVel Ligne 150B Houyet - Jemelle",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/D%C3%A9part_depuis_Houyet_pour_la_longue_descente_de_la_Lesse.jpg/1280px-D%C3%A9part_depuis_Houyet_pour_la_longue_descente_de_la_Lesse.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "D%C3%A9part_depuis_Houyet_pour_la_longue_descente_de_la_Lesse.jpg",
+   "reason": "people in a kayak indoors"
+  },
+  {
+   "layer": "cycling",
+   "country": "BE",
+   "id": 3391,
+   "name": "RAVeL L115/2",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/La_%27Petite_Maison%27_de_Rhode_Saint-Gen%C3%A8se%2C_en_bordure_de_la_For%C3%AAt_de_Soignes.jpg/1280px-La_%27Petite_Maison%27_de_Rhode_Saint-Gen%C3%A8se%2C_en_bordure_de_la_For%C3%AAt_de_Soignes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "La_%27Petite_Maison%27_de_Rhode_Saint-Gen%C3%A8se%2C_en_bordure_de_la_For%C3%AAt_de_Soignes.jpg",
+   "reason": "old black-and-white photo of a house"
+  },
+  {
+   "layer": "cycling",
+   "country": "BE",
+   "id": 2740,
+   "name": "F751 Fietssnelweg As - Maaseik",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Inside_an_abandoned_SNCB_B22490_type-K3_carriage_in_As%2C_Belgium_%28DSCF3112-hdr%29.jpg/1280px-Inside_an_abandoned_SNCB_B22490_type-K3_carriage_in_As%2C_Belgium_%28DSCF3112-hdr%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Inside_an_abandoned_SNCB_B22490_type-K3_carriage_in_As%2C_Belgium_%28DSCF3112-hdr%29.jpg",
+   "reason": "train interior"
+  },
+  {
+   "layer": "cycling",
+   "country": "CZ",
+   "id": 5999,
+   "name": "6082 Bocanovice - Milíkov",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Kozubowa_1426.jpg/1280px-Kozubowa_1426.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Kozubowa_1426.jpg",
+   "reason": "hotel building close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "HR",
+   "id": 3840,
+   "name": "Po istarskim vrhovima",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/U%C4%8Dka_Land_Art_Trail%2C_work_of_land_art_and_rock_art_by_Boris_Pecigo%C5%A1_18.jpg/1280px-U%C4%8Dka_Land_Art_Trail%2C_work_of_land_art_and_rock_art_by_Boris_Pecigo%C5%A1_18.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "U%C4%8Dka_Land_Art_Trail%2C_work_of_land_art_and_rock_art_by_Boris_Pecigo%C5%A1_18.jpg",
+   "reason": "painted handprints on rocks"
+  },
+  {
+   "layer": "cycling",
+   "country": "IE",
+   "id": 50955,
+   "name": "EuroVelo 1",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Art_in_the_landscape_-_geograph.org.uk_-_3980441.jpg/1280px-Art_in_the_landscape_-_geograph.org.uk_-_3980441.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Art_in_the_landscape_-_geograph.org.uk_-_3980441.jpg",
+   "reason": "wooden sculpture in a moor"
+  },
+  {
+   "layer": "cycling",
+   "country": "PL",
+   "id": 62042,
+   "name": "Rowerowa 500 - J3",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/View_Tower%2C_Borowa_%289%29.jpg/1280px-View_Tower%2C_Borowa_%289%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "View_Tower%2C_Borowa_%289%29.jpg",
+   "reason": "walkway railing close-up"
+  },
+  {
+   "layer": "cycling",
+   "country": "PL",
+   "id": 62210,
+   "name": "Rezerwaty Krutyńskie",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Jezioro_Kruty%C5%84skie_-_panoramio_%28129%29.jpg/1280px-Jezioro_Kruty%C5%84skie_-_panoramio_%28129%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Jezioro_Kruty%C5%84skie_-_panoramio_%28129%29.jpg",
+   "reason": "duck"
+  },
+  {
+   "layer": "cycling",
+   "country": "SK",
+   "id": 64321,
+   "name": null,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Rozh%C4%BEad%C5%88a_na_Panskej_javorine%2C_Pova%C5%BEsk%C3%BD_Inovec_%282010%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+   "file": "Rozh%C4%BEad%C5%88a_na_Panskej_javorine%2C_Pova%C5%BEsk%C3%BD_Inovec_%282010%29.jpg",
+   "reason": "wooden lookout tower"
+  },
+  {
+   "layer": "cycling",
+   "country": "DK",
+   "id": 7882,
+   "name": "Fjorden Rundt",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Skaven_-_Skavenhus1.jpg/1280px-Skaven_-_Skavenhus1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Skaven_-_Skavenhus1.jpg",
+   "reason": "white building"
+  },
+  {
+   "layer": "cycling-tour",
+   "country": "DE",
+   "id": "de-d9-weser-romantische-stra-e-teil-7-relaxed",
+   "name": "Weser-Romantische Straße Teil 7",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Bundesstra%C3%9Fe_26n_Plakat.jpg/1280px-Bundesstra%C3%9Fe_26n_Plakat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Bundesstra%C3%9Fe_26n_Plakat.jpg",
+   "reason": "protest sign"
+  },
+  {
+   "layer": "cycling-tour",
+   "country": "DE",
+   "id": "de-usedom-rundweg-relaxed",
+   "name": "Usedom Rundweg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Karlshagen_%C3%B6ffentlicher_B%C3%BCcherschrank.jpg/1280px-Karlshagen_%C3%B6ffentlicher_B%C3%BCcherschrank.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Karlshagen_%C3%B6ffentlicher_B%C3%BCcherschrank.jpg",
+   "reason": "book exchange cabinet"
+  },
+  {
+   "layer": "cycling-tour",
+   "country": "DE",
+   "id": "de-frankischer-karpfen-radweg-balanced",
+   "name": "Fränkischer Karpfen-Radweg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cc/Heinersdorf_1_Nebengeb%C3%A4ude.jpg/1280px-Heinersdorf_1_Nebengeb%C3%A4ude.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Heinersdorf_1_Nebengeb%C3%A4ude.jpg",
+   "reason": "barn close-up"
+  },
+  {
+   "layer": "cycling-tour",
+   "country": "DE",
+   "id": "de-von-der-lahn-zur-werra-balanced",
+   "name": "Von der Lahn zur Werra",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Dorlar_%28Lahnau%29_Altes_Backhaus_%28001%29.JPG/1280px-Dorlar_%28Lahnau%29_Altes_Backhaus_%28001%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "file": "Dorlar_%28Lahnau%29_Altes_Backhaus_%28001%29.JPG",
+   "reason": "brick house"
+  },
+  {
+   "layer": "trails",
+   "country": "AD",
+   "id": 25575,
+   "name": "HRP Étape 32",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/1975_Capri_3000_Ghia_in_Andorra.jpg/1280px-1975_Capri_3000_Ghia_in_Andorra.jpg",
+   "file": "1975_Capri_3000_Ghia_in_Andorra.jpg",
+   "reason": "red car"
+  },
+  {
+   "layer": "trails",
+   "country": "AL",
+   "id": 63480,
+   "name": "Hiking trail to Mt. Melesin",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Cultural_Centre_of_Leskovik.jpg/1280px-Cultural_Centre_of_Leskovik.jpg",
+   "file": "Cultural_Centre_of_Leskovik.jpg",
+   "reason": "building facade"
+  },
+  {
+   "layer": "trails",
+   "country": "AL",
+   "id": 63479,
+   "name": "Hiking trail Leskovik-Shelegur",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Leskovik_Downtown_2013.jpg/1280px-Leskovik_Downtown_2013.jpg",
+   "file": "Leskovik_Downtown_2013.jpg",
+   "reason": "town street, apartment building"
+  },
+  {
+   "layer": "trails",
+   "country": "AL",
+   "id": 63485,
+   "name": "LK 08",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Squacco_Heron_near_Orikum%2C_Albania_230977161.png/1280px-Squacco_Heron_near_Orikum%2C_Albania_230977161.png",
+   "file": "Squacco_Heron_near_Orikum%2C_Albania_230977161.png",
+   "reason": "heron in flight"
+  },
+  {
+   "layer": "trails",
+   "country": "AL",
+   "id": 63465,
+   "name": "Gjipe Canyon Path",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Schlaefli%27s_Snail_imported_from_iNaturalist_photo_163114922_on_7_March_2024.png",
+   "file": "Schlaefli%27s_Snail_imported_from_iNaturalist_photo_163114922_on_7_March_2024.png",
+   "reason": "snail"
+  },
+  {
+   "layer": "trails",
+   "country": "AT",
+   "id": 20085,
+   "name": "BergeSeen Trail D5: Simonyhütte - Hallstatt",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Hallstatt_-_Tiergartenh%C3%BCtte.JPG/1280px-Hallstatt_-_Tiergartenh%C3%BCtte.JPG",
+   "file": "Hallstatt_-_Tiergartenh%C3%BCtte.JPG",
+   "reason": "wooden hut close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "AT",
+   "id": 20047,
+   "name": "BergeSeen Trail 12: Bad Ischl - Bad Goisern",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/R4411_in_Bad_Ischl_Frachtenbf._%2816323534638%29.jpg/1280px-R4411_in_Bad_Ischl_Frachtenbf._%2816323534638%29.jpg",
+   "file": "R4411_in_Bad_Ischl_Frachtenbf._%2816323534638%29.jpg",
+   "reason": "train"
+  },
+  {
+   "layer": "trails",
+   "country": "BA",
+   "id": 63960,
+   "name": "Marijin put M02/53 (Bugojno-Kupres)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Kupres_%E2%80%93_Crkva_Svete_Obitelji_%282024%29.jpg/1280px-Kupres_%E2%80%93_Crkva_Svete_Obitelji_%282024%29.jpg",
+   "file": "Kupres_%E2%80%93_Crkva_Svete_Obitelji_%282024%29.jpg",
+   "reason": "church facade"
+  },
+  {
+   "layer": "trails",
+   "country": "BA",
+   "id": 64034,
+   "name": "Javorov Do - Bijele Vode",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Lisica%2C_Javorov_do%2C_Bjela%C5%A1nica.jpg/1280px-Lisica%2C_Javorov_do%2C_Bjela%C5%A1nica.jpg",
+   "file": "Lisica%2C_Javorov_do%2C_Bjela%C5%A1nica.jpg",
+   "reason": "fox"
+  },
+  {
+   "layer": "trails",
+   "country": "BE",
+   "id": 86628,
+   "name": "Promenade du Lac de Nisramont",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/2018-11-04_Colotois_pennaria_%282%29.jpg/1280px-2018-11-04_Colotois_pennaria_%282%29.jpg",
+   "file": "2018-11-04_Colotois_pennaria_%282%29.jpg",
+   "reason": "moth on a leaf"
+  },
+  {
+   "layer": "trails",
+   "country": "BE",
+   "id": 98792,
+   "name": "schuurwandeling",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Brandstraat_200%2C_Mol.JPG/1280px-Brandstraat_200%2C_Mol.JPG",
+   "file": "Brandstraat_200%2C_Mol.JPG",
+   "reason": "farmhouse"
+  },
+  {
+   "layer": "trails",
+   "country": "BE",
+   "id": 95076,
+   "name": "Cordemois - Belvédère",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Abdij_Notre-Dame_de_Clairefontaine_Cordemois_abdijkerk_2-02-2024_11-38-11.jpg/1280px-Abdij_Notre-Dame_de_Clairefontaine_Cordemois_abdijkerk_2-02-2024_11-38-11.jpg",
+   "file": "Abdij_Notre-Dame_de_Clairefontaine_Cordemois_abdijkerk_2-02-2024_11-38-11.jpg",
+   "reason": "church interior"
+  },
+  {
+   "layer": "trails",
+   "country": "BE",
+   "id": 100744,
+   "name": "Via Brabantica, Halle - Nivelles",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Steengroeve_van_Rodenem_%2881670%29.jpg/1280px-Steengroeve_van_Rodenem_%2881670%29.jpg",
+   "file": "Steengroeve_van_Rodenem_%2881670%29.jpg",
+   "reason": "information board"
+  },
+  {
+   "layer": "trails",
+   "country": "BE",
+   "id": 92853,
+   "name": "Parkpad",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Heide_4%2C_Retie.jpg/1280px-Heide_4%2C_Retie.jpg",
+   "file": "Heide_4%2C_Retie.jpg",
+   "reason": "farmhouse facade"
+  },
+  {
+   "layer": "trails",
+   "country": "BE",
+   "id": 101023,
+   "name": "GRT-BVW 33 Sosoye - Namur",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/21._NAMUR._-_Rue_Mathieu..jpg/1280px-21._NAMUR._-_Rue_Mathieu..jpg",
+   "file": "21._NAMUR._-_Rue_Mathieu..jpg",
+   "reason": "old postcard of a street"
+  },
+  {
+   "layer": "trails",
+   "country": "BE",
+   "id": 35673,
+   "name": "GR 129, Grand-Reng - Fontaine-l'Évêque",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Labuissiere_-_Gemeentehuis.jpg/1280px-Labuissiere_-_Gemeentehuis.jpg",
+   "file": "Labuissiere_-_Gemeentehuis.jpg",
+   "reason": "building facade"
+  },
+  {
+   "layer": "trails",
+   "country": "BG",
+   "id": 75386,
+   "name": "Златни мостове - Алеко",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tintyava_hut.jpg/1280px-Tintyava_hut.jpg",
+   "file": "Tintyava_hut.jpg",
+   "reason": "building facade"
+  },
+  {
+   "layer": "trails",
+   "country": "BG",
+   "id": 75421,
+   "name": "Бонсови поляни - вр. Дупевица - Мало Бучино",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/ENBG_04_%D0%9B%D1%8E%D0%BB%D0%B8%D0%BD_%D0%BF%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0.jpg/1280px-ENBG_04_%D0%9B%D1%8E%D0%BB%D0%B8%D0%BD_%D0%BF%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0.jpg",
+   "file": "ENBG_04_%D0%9B%D1%8E%D0%BB%D0%B8%D0%BD_%D0%BF%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0.jpg",
+   "reason": "plant close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "BG",
+   "id": 75683,
+   "name": "Green Route",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/%D0%97%D0%B0%D1%81%D0%BB%D0%BE%D0%BD_%D0%B2_%D0%9F%D0%9F_%D0%97%D0%BB%D0%B0%D1%82%D0%BD%D0%B8_%D0%9F%D1%8F%D1%81%D1%8A%D1%86%D0%B8.jpg/1280px-%D0%97%D0%B0%D1%81%D0%BB%D0%BE%D0%BD_%D0%B2_%D0%9F%D0%9F_%D0%97%D0%BB%D0%B0%D1%82%D0%BD%D0%B8_%D0%9F%D1%8F%D1%81%D1%8A%D1%86%D0%B8.jpg",
+   "file": "%D0%97%D0%B0%D1%81%D0%BB%D0%BE%D0%BD_%D0%B2_%D0%9F%D0%9F_%D0%97%D0%BB%D0%B0%D1%82%D0%BD%D0%B8_%D0%9F%D1%8F%D1%81%D1%8A%D1%86%D0%B8.jpg",
+   "reason": "wooden house"
+  },
+  {
+   "layer": "trails",
+   "country": "BG",
+   "id": 75624,
+   "name": "ST701 Sofia - Mladost3",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/6/63/Summer_in_Boris%27_Garden%2C_Sofia_-_panoramio.jpg",
+   "file": "Summer_in_Boris%27_Garden%2C_Sofia_-_panoramio.jpg",
+   "reason": "park bench, people and cyclist"
+  },
+  {
+   "layer": "trails",
+   "country": "BG",
+   "id": 75273,
+   "name": "Чала (Търкало 4)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/BASA-2072K-1-337-270-National_costume_of_Bulgaria%2C_Chepelare.JPG/1280px-BASA-2072K-1-337-270-National_costume_of_Bulgaria%2C_Chepelare.JPG",
+   "file": "BASA-2072K-1-337-270-National_costume_of_Bulgaria%2C_Chepelare.JPG",
+   "reason": "old studio portrait"
+  },
+  {
+   "layer": "trails",
+   "country": "CH",
+   "id": 1555,
+   "name": "Aletsch Panoramaweg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/360_Grad_Ansicht_Bellwald%2C_2025.jpg/1280px-360_Grad_Ansicht_Bellwald%2C_2025.jpg",
+   "file": "360_Grad_Ansicht_Bellwald%2C_2025.jpg",
+   "reason": "distorted 360 panorama"
+  },
+  {
+   "layer": "trails",
+   "country": "CH",
+   "id": 9611,
+   "name": "Weg der Schweiz",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Weg_der_Schweiz%2C_Sisikon%2C_Switzerland%2C_2026-04-04.jpeg/1280px-Weg_der_Schweiz%2C_Sisikon%2C_Switzerland%2C_2026-04-04.jpeg",
+   "file": "Weg_der_Schweiz%2C_Sisikon%2C_Switzerland%2C_2026-04-04.jpeg",
+   "reason": "millstone close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "CH",
+   "id": 7742,
+   "name": "Tour du Lac / See-Rundweg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Jose-Luis_Arrieta_Tour_de_Romandie_2008_side.jpg/1280px-Jose-Luis_Arrieta_Tour_de_Romandie_2008_side.jpg",
+   "file": "Jose-Luis_Arrieta_Tour_de_Romandie_2008_side.jpg",
+   "reason": "cycle race and banner"
+  },
+  {
+   "layer": "trails",
+   "country": "CH",
+   "id": 8455,
+   "name": "Gorges du Gottéron",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Pont_du_Gott%C3%A9ron.jpg/1280px-Pont_du_Gott%C3%A9ron.jpg",
+   "file": "Pont_du_Gott%C3%A9ron.jpg",
+   "reason": "bridge underside"
+  },
+  {
+   "layer": "trails",
+   "country": "CY",
+   "id": 62715,
+   "name": "Kalopanagiotis Viewpoint Trail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/%C3%81gios_Io%C3%A1nnis_Lampadist%C3%ADs_Mise_au_tombeau.jpg/1280px-%C3%81gios_Io%C3%A1nnis_Lampadist%C3%ADs_Mise_au_tombeau.jpg",
+   "file": "%C3%81gios_Io%C3%A1nnis_Lampadist%C3%ADs_Mise_au_tombeau.jpg",
+   "reason": "icon painting"
+  },
+  {
+   "layer": "trails",
+   "country": "CY",
+   "id": 62737,
+   "name": "Trooditissa Fini Nature Trail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/216Zypern_Trooditissa_%2813919493477%29.jpg/1280px-216Zypern_Trooditissa_%2813919493477%29.jpg",
+   "file": "216Zypern_Trooditissa_%2813919493477%29.jpg",
+   "reason": "monastery courtyard building"
+  },
+  {
+   "layer": "trails",
+   "country": "CZ",
+   "id": 106266,
+   "name": "NS Leoš Janáček Očima dětí",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Vrchy%2C_Doln%C3%AD_Sklenov%2C_Hukvaldy_4.jpg/1280px-Vrchy%2C_Doln%C3%AD_Sklenov%2C_Hukvaldy_4.jpg",
+   "file": "Vrchy%2C_Doln%C3%AD_Sklenov%2C_Hukvaldy_4.jpg",
+   "reason": "information board"
+  },
+  {
+   "layer": "trails",
+   "country": "CZ",
+   "id": 103880,
+   "name": "[Ž] Jimramov - Trhonice - Jimramov",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Jimramov%2C_n%C3%A1m%C4%9Bst%C3%AD_Jana_Karafi%C3%A1ta_71.jpg/1280px-Jimramov%2C_n%C3%A1m%C4%9Bst%C3%AD_Jana_Karafi%C3%A1ta_71.jpg",
+   "file": "Jimramov%2C_n%C3%A1m%C4%9Bst%C3%AD_Jana_Karafi%C3%A1ta_71.jpg",
+   "reason": "building facade and cars"
+  },
+  {
+   "layer": "trails",
+   "country": "CZ",
+   "id": 102654,
+   "name": "[Č] Baba - Šárka, okruh",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Praha%2C_Dejvice%2C_Baba%2C_pohled_k_%C5%BDi%C5%BEkovsk%C3%A9mu_vys%C3%ADla%C4%8Di.jpg/1280px-Praha%2C_Dejvice%2C_Baba%2C_pohled_k_%C5%BDi%C5%BEkovsk%C3%A9mu_vys%C3%ADla%C4%8Di.jpg",
+   "file": "Praha%2C_Dejvice%2C_Baba%2C_pohled_k_%C5%BDi%C5%BEkovsk%C3%A9mu_vys%C3%ADla%C4%8Di.jpg",
+   "reason": "night shot, too dark"
+  },
+  {
+   "layer": "trails",
+   "country": "DE",
+   "id": 204519,
+   "name": "Heinrich-Scheuermann-Weg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Hirschbergh%C3%B6hle_%28A_324%29_03.jpg/1280px-Hirschbergh%C3%B6hle_%28A_324%29_03.jpg",
+   "file": "Hirschbergh%C3%B6hle_%28A_324%29_03.jpg",
+   "reason": "cave interior close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "DE",
+   "id": 212994,
+   "name": "Altmühl Panoramaweg Schlaufe 8 Pappenheimweg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Markgrafenkirche_Treuchtlingen_017.jpg/1280px-Markgrafenkirche_Treuchtlingen_017.jpg",
+   "file": "Markgrafenkirche_Treuchtlingen_017.jpg",
+   "reason": "altar and chalice"
+  },
+  {
+   "layer": "trails",
+   "country": "DE",
+   "id": 227715,
+   "name": "Genießerpfad - Karlsruher Grat",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Ottenhoefen-Bahnhof-06-2025-gje.jpg/1280px-Ottenhoefen-Bahnhof-06-2025-gje.jpg",
+   "file": "Ottenhoefen-Bahnhof-06-2025-gje.jpg",
+   "reason": "trains at a station"
+  },
+  {
+   "layer": "trails",
+   "country": "DE",
+   "id": 230718,
+   "name": "Rhein-Camino - 1. Etappe - Jakobsweg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Rhein_in_Flammen_2013_-_IMG_0023_%289572696116%29.jpg/1280px-Rhein_in_Flammen_2013_-_IMG_0023_%289572696116%29.jpg",
+   "file": "Rhein_in_Flammen_2013_-_IMG_0023_%289572696116%29.jpg",
+   "reason": "fireworks at night"
+  },
+  {
+   "layer": "trails",
+   "country": "EE",
+   "id": 63726,
+   "name": "E11 section 16: Loogamäe - Haanja (Suur Munamägi)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Barbara_von_Kr%C3%BCdeneri_m%C3%A4lestustahvel.jpg/1280px-Barbara_von_Kr%C3%BCdeneri_m%C3%A4lestustahvel.jpg",
+   "file": "Barbara_von_Kr%C3%BCdeneri_m%C3%A4lestustahvel.jpg",
+   "reason": "memorial plaque"
+  },
+  {
+   "layer": "trails",
+   "country": "ES",
+   "id": 176172,
+   "name": "Estels del Sud",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Arnes_-_Flickr_-_S._Rae.jpg/1280px-Arnes_-_Flickr_-_S._Rae.jpg",
+   "file": "Arnes_-_Flickr_-_S._Rae.jpg",
+   "reason": "building facade"
+  },
+  {
+   "layer": "trails",
+   "country": "ES",
+   "id": 177368,
+   "name": "Frigiliana - Cómpeta",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Frigiliana-skyline.jpg/1280px-Frigiliana-skyline.jpg",
+   "file": "Frigiliana-skyline.jpg",
+   "reason": "black-and-white panorama of buildings"
+  },
+  {
+   "layer": "trails",
+   "country": "ES",
+   "id": 181002,
+   "name": "Ruta de Pedra en Sec: Stage 7: Son Amer - Pont Romà",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Pont_Rom%C3%A1_Pollensa.jpg/1280px-Pont_Rom%C3%A1_Pollensa.jpg",
+   "file": "Pont_Rom%C3%A1_Pollensa.jpg",
+   "reason": "stone bridge close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "ES",
+   "id": 181128,
+   "name": "GR 289 Hartzaren Urratsa",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Lokala-1.jpg/1280px-Lokala-1.jpg",
+   "file": "Lokala-1.jpg",
+   "reason": "building and gate"
+  },
+  {
+   "layer": "trails",
+   "country": "ES",
+   "id": 177373,
+   "name": "Cómpeta - Frigiliana",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Frigiliana_%289675575781%29.jpg/1280px-Frigiliana_%289675575781%29.jpg",
+   "file": "Frigiliana_%289675575781%29.jpg",
+   "reason": "tiled street sign"
+  },
+  {
+   "layer": "trails",
+   "country": "FI",
+   "id": 112930,
+   "name": "Sapporo",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Vuokatti_2006_060.jpg/1280px-Vuokatti_2006_060.jpg",
+   "file": "Vuokatti_2006_060.jpg",
+   "reason": "ski jump tower close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "FI",
+   "id": 112659,
+   "name": "Kehä Vihreä",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Jyv%C3%A4skyl%C3%A4_Kankaankatu_15.jpg/1280px-Jyv%C3%A4skyl%C3%A4_Kankaankatu_15.jpg",
+   "file": "Jyv%C3%A4skyl%C3%A4_Kankaankatu_15.jpg",
+   "reason": "building under construction"
+  },
+  {
+   "layer": "trails",
+   "country": "FI",
+   "id": 112595,
+   "name": "Mariehamn Runt",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Panorama_of_Mariehamn_in_1944.jpg/1280px-Panorama_of_Mariehamn_in_1944.jpg",
+   "file": "Panorama_of_Mariehamn_in_1944.jpg",
+   "reason": "grey black-and-white view"
+  },
+  {
+   "layer": "trails",
+   "country": "FR",
+   "id": 28287,
+   "name": "Tour du Pic des Trois Seigneurs",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/ISS053-E-65818_-_View_of_Earth.jpg/1280px-ISS053-E-65818_-_View_of_Earth.jpg",
+   "file": "ISS053-E-65818_-_View_of_Earth.jpg",
+   "reason": "satellite night image"
+  },
+  {
+   "layer": "trails",
+   "country": "FR",
+   "id": 36247,
+   "name": "Corniches du Larzac",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Creissels_-_Place_du_19_Mars_1962_-_bo%C3%AEte_%C3%A0_livres.jpg/1280px-Creissels_-_Place_du_19_Mars_1962_-_bo%C3%AEte_%C3%A0_livres.jpg",
+   "file": "Creissels_-_Place_du_19_Mars_1962_-_bo%C3%AEte_%C3%A0_livres.jpg",
+   "reason": "book exchange shelf"
+  },
+  {
+   "layer": "trails",
+   "country": "GB",
+   "id": 187068,
+   "name": "Arran Coastal Way: Alternative via Goat Fell",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Boulders_on_summit_of_Goat_Fell_-_geograph.org.uk_-_4369394.jpg/1280px-Boulders_on_summit_of_Goat_Fell_-_geograph.org.uk_-_4369394.jpg",
+   "file": "Boulders_on_summit_of_Goat_Fell_-_geograph.org.uk_-_4369394.jpg",
+   "reason": "portrait of children on rocks"
+  },
+  {
+   "layer": "trails",
+   "country": "GB",
+   "id": 190217,
+   "name": "John Muir Way (Helensburgh to Balloch)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Hill_House%2C_Helensburgh_%2848672715436%29.jpg/1280px-The_Hill_House%2C_Helensburgh_%2848672715436%29.jpg",
+   "file": "The_Hill_House%2C_Helensburgh_%2848672715436%29.jpg",
+   "reason": "stained glass window close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "GR",
+   "id": 74265,
+   "name": "M4 Agapi-Sklavochori-Skalados-Koumaros",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Cross_on_top_of_the_Exomvourgo_Mountain%2C_Tinos%2C_Greece_julesvernex2.jpg/1280px-Cross_on_top_of_the_Exomvourgo_Mountain%2C_Tinos%2C_Greece_julesvernex2.jpg",
+   "file": "Cross_on_top_of_the_Exomvourgo_Mountain%2C_Tinos%2C_Greece_julesvernex2.jpg",
+   "reason": "cross monument close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "GR",
+   "id": 74276,
+   "name": "T1 Chora-Xompourgo-Mountados-Chora",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Monastery_of_the_Sacred_Heart_of_Jesus_seen_from_the_path_up_the_Exomvourgo_Mountain%2C_Tinos%2C_Greece_julesvernex2.jpg/1280px-Monastery_of_the_Sacred_Heart_of_Jesus_seen_from_the_path_up_the_Exomvourgo_Mountain%2C_Tinos%2C_Greece_julesvernex2.jpg",
+   "file": "Monastery_of_the_Sacred_Heart_of_Jesus_seen_from_the_path_up_the_Exomvourgo_Mountain%2C_Tinos%2C_Greece_julesvernex2.jpg",
+   "reason": "black-and-white photo"
+  },
+  {
+   "layer": "trails",
+   "country": "HR",
+   "id": 67002,
+   "name": "Pješačka ruta H",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Shoal_of_fish_in_Okrugljak_lake_in_Plitvice%2C_Croatia_%2848670436837%29.jpg/1280px-Shoal_of_fish_in_Okrugljak_lake_in_Plitvice%2C_Croatia_%2848670436837%29.jpg",
+   "file": "Shoal_of_fish_in_Okrugljak_lake_in_Plitvice%2C_Croatia_%2848670436837%29.jpg",
+   "reason": "fish underwater"
+  },
+  {
+   "layer": "trails",
+   "country": "HR",
+   "id": 67238,
+   "name": "Ljubotić - Stap",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Velebit_Ljubotic_5.jpg/1280px-Velebit_Ljubotic_5.jpg",
+   "file": "Velebit_Ljubotic_5.jpg",
+   "reason": "donkeys and ruins"
+  },
+  {
+   "layer": "trails",
+   "country": "HR",
+   "id": 66587,
+   "name": "Planinarska staza 18",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Pou%C4%8Dna_staza_Kalnik.jpg",
+   "file": "Pou%C4%8Dna_staza_Kalnik.jpg",
+   "reason": "carved information board"
+  },
+  {
+   "layer": "trails",
+   "country": "HR",
+   "id": 67248,
+   "name": "Via Apsyrtides #8: Osor => Ćunski",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Luftaufnahmen_Flug_Hamburg_Malta_2019_by-RaBoe_048.jpg/1280px-Luftaufnahmen_Flug_Hamburg_Malta_2019_by-RaBoe_048.jpg",
+   "file": "Luftaufnahmen_Flug_Hamburg_Malta_2019_by-RaBoe_048.jpg",
+   "reason": "aerial of an island from a plane, grey"
+  },
+  {
+   "layer": "trails",
+   "country": "HU",
+   "id": 72155,
+   "name": "Z, Lillafüredi Zöld körtúra",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/LAEV_2025_IMG135513310.jpg/1280px-LAEV_2025_IMG135513310.jpg",
+   "file": "LAEV_2025_IMG135513310.jpg",
+   "reason": "train window with passengers"
+  },
+  {
+   "layer": "trails",
+   "country": "HU",
+   "id": 72895,
+   "name": "Pécsi Erdei körtúra 1.",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/V%C3%ADzil%C3%B3_fogat_vizsg%C3%A1l.jpg/1280px-V%C3%ADzil%C3%B3_fogat_vizsg%C3%A1l.jpg",
+   "file": "V%C3%ADzil%C3%B3_fogat_vizsg%C3%A1l.jpg",
+   "reason": "hippos"
+  },
+  {
+   "layer": "trails",
+   "country": "HU",
+   "id": 70795,
+   "name": "Mária-út, M01-19 (Zsámbék – Telki – Máriaremete)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Lehrpfad_der_Remete-Schlucht%2C_Schneegl%C3%B6ckchen%2C_2026_Remetesz%C5%91l%C5%91s.jpg/1280px-Lehrpfad_der_Remete-Schlucht%2C_Schneegl%C3%B6ckchen%2C_2026_Remetesz%C5%91l%C5%91s.jpg",
+   "file": "Lehrpfad_der_Remete-Schlucht%2C_Schneegl%C3%B6ckchen%2C_2026_Remetesz%C5%91l%C5%91s.jpg",
+   "reason": "snowdrops close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "HU",
+   "id": 71240,
+   "name": "Mária-út, M01-28 (Eger – Kács)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Eger%2C_Hungary_-_panoramio_%286%29.jpg/1280px-Eger%2C_Hungary_-_panoramio_%286%29.jpg",
+   "file": "Eger%2C_Hungary_-_panoramio_%286%29.jpg",
+   "reason": "palace building"
+  },
+  {
+   "layer": "trails",
+   "country": "HU",
+   "id": 71467,
+   "name": "Mária-út, M80-10 (Mátraverebély–Szentkút–Buják)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Buj%C3%A1k%2C_Nepomuki_Szent_J%C3%A1nos-szobor_2021_01.jpg/1280px-Buj%C3%A1k%2C_Nepomuki_Szent_J%C3%A1nos-szobor_2021_01.jpg",
+   "file": "Buj%C3%A1k%2C_Nepomuki_Szent_J%C3%A1nos-szobor_2021_01.jpg",
+   "reason": "road and statue"
+  },
+  {
+   "layer": "trails",
+   "country": "IE",
+   "id": 80257,
+   "name": "Dublin Mountains Way",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Dublin_Mountains_Way_Waymarker.jpg/1280px-Dublin_Mountains_Way_Waymarker.jpg",
+   "file": "Dublin_Mountains_Way_Waymarker.jpg",
+   "reason": "waymark post close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "IE",
+   "id": 80730,
+   "name": "Slí Arann Mhor",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Donkey_and_Cart_-_geograph.org.uk_-_7159876.jpg/1280px-Donkey_and_Cart_-_geograph.org.uk_-_7159876.jpg",
+   "file": "Donkey_and_Cart_-_geograph.org.uk_-_7159876.jpg",
+   "reason": "donkey cart sculpture"
+  },
+  {
+   "layer": "trails",
+   "country": "IS",
+   "id": 62854,
+   "name": "Þórsmörk",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/LandCruiserInThorsmoerk.jpg/1280px-LandCruiserInThorsmoerk.jpg",
+   "file": "LandCruiserInThorsmoerk.jpg",
+   "reason": "vehicle in a river"
+  },
+  {
+   "layer": "trails",
+   "country": "IT",
+   "id": 197956,
+   "name": "Eremi del Monteluco",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Montelucobosco.jpg/1280px-Montelucobosco.jpg",
+   "file": "Montelucobosco.jpg",
+   "reason": "no-entry sign on a tree"
+  },
+  {
+   "layer": "trails",
+   "country": "IT",
+   "id": 191358,
+   "name": "Sentiero Frassati",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/MIR_E.652.014_a_Genova_Acquasanta.jpg/1280px-MIR_E.652.014_a_Genova_Acquasanta.jpg",
+   "file": "MIR_E.652.014_a_Genova_Acquasanta.jpg",
+   "reason": "train at a station"
+  },
+  {
+   "layer": "trails",
+   "country": "IT",
+   "id": 204334,
+   "name": "Cammino dei tre laghi - Tappa 6",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/20220205-malga_lunga_563-065.jpg/1280px-20220205-malga_lunga_563-065.jpg",
+   "file": "20220205-malga_lunga_563-065.jpg",
+   "reason": "signpost close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "IT",
+   "id": 196640,
+   "name": "Anello Verde",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Ponte_Isabella_%284665776352%29.jpg/1280px-Ponte_Isabella_%284665776352%29.jpg",
+   "file": "Ponte_Isabella_%284665776352%29.jpg",
+   "reason": "bridge at night, dark"
+  },
+  {
+   "layer": "trails",
+   "country": "LI",
+   "id": 13236,
+   "name": "Malbun - Augstenberg - Pfaelzerhuette",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/LIE_%E2%80%94_Gemeinde_Triesenberg_Malbun_%284er_Sessellift_Sareis_%C2%B7_Talstation%29_2023-05-29.jpg/1280px-LIE_%E2%80%94_Gemeinde_Triesenberg_Malbun_%284er_Sessellift_Sareis_%C2%B7_Talstation%29_2023-05-29.jpg",
+   "file": "LIE_%E2%80%94_Gemeinde_Triesenberg_Malbun_%284er_Sessellift_Sareis_%C2%B7_Talstation%29_2023-05-29.jpg",
+   "reason": "cable car station building"
+  },
+  {
+   "layer": "trails",
+   "country": "LT",
+   "id": 64630,
+   "name": "Camino Lituano 13 etapas: Kaunas–Pažaislis",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Town_Hall_Square_%28Kaunas%29_%281%29.jpg/1280px-Town_Hall_Square_%28Kaunas%29_%281%29.jpg",
+   "file": "Town_Hall_Square_%28Kaunas%29_%281%29.jpg",
+   "reason": "town square"
+  },
+  {
+   "layer": "trails",
+   "country": "LT",
+   "id": 64649,
+   "name": "E11 section 63: Vaišvydava – Kaunas",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Kaunas_Central_Library%2C_June_2025_1.jpg/1280px-Kaunas_Central_Library%2C_June_2025_1.jpg",
+   "file": "Kaunas_Central_Library%2C_June_2025_1.jpg",
+   "reason": "library building"
+  },
+  {
+   "layer": "trails",
+   "country": "LT",
+   "id": 64611,
+   "name": "Senųjų kaimų takas",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Vilnius%2C_Lithuania_-_panoramio_%287%29.jpg/1280px-Vilnius%2C_Lithuania_-_panoramio_%287%29.jpg",
+   "file": "Vilnius%2C_Lithuania_-_panoramio_%287%29.jpg",
+   "reason": "houses close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "LT",
+   "id": 64693,
+   "name": "Šilelio pažintinis takas",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/%C5%A0ilelio_pa%C5%BEintinis_takas%2C_%C4%8Ci%C5%BEi%C5%A1kiai%2C_Litva%2C_7.jpg/1280px-%C5%A0ilelio_pa%C5%BEintinis_takas%2C_%C4%8Ci%C5%BEi%C5%A1kiai%2C_Litva%2C_7.jpg",
+   "file": "%C5%A0ilelio_pa%C5%BEintinis_takas%2C_%C4%8Ci%C5%BEi%C5%A1kiai%2C_Litva%2C_7.jpg",
+   "reason": "wooden sign and sculpture"
+  },
+  {
+   "layer": "trails",
+   "country": "LT",
+   "id": 64733,
+   "name": "L6 Žaliųjų ežerų takas",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Vilnius._Verkiai_-_panoramio_%284%29.jpg/1280px-Vilnius._Verkiai_-_panoramio_%284%29.jpg",
+   "file": "Vilnius._Verkiai_-_panoramio_%284%29.jpg",
+   "reason": "manor building"
+  },
+  {
+   "layer": "trails",
+   "country": "LT",
+   "id": 64728,
+   "name": "L10 Paupio takas",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Sugar_Lips_%28Unsplash%29.jpg/1280px-Sugar_Lips_%28Unsplash%29.jpg",
+   "file": "Sugar_Lips_%28Unsplash%29.jpg",
+   "reason": "doughnut food close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "LT",
+   "id": 64632,
+   "name": "Camino Lituano 16 etapas: Prienai–Punia",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Bir%C5%A1tonas%2C_Lithuania_-_panoramio.jpg/1280px-Bir%C5%A1tonas%2C_Lithuania_-_panoramio.jpg",
+   "file": "Bir%C5%A1tonas%2C_Lithuania_-_panoramio.jpg",
+   "reason": "pavilion building facade"
+  },
+  {
+   "layer": "trails",
+   "country": "LU",
+   "id": 63165,
+   "name": "Escapardenne Lee Trail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Bourscheid%2C_Gringlee_%28103%29.jpg/1280px-Bourscheid%2C_Gringlee_%28103%29.jpg",
+   "file": "Bourscheid%2C_Gringlee_%28103%29.jpg",
+   "reason": "trail sign close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "LU",
+   "id": 63002,
+   "name": "Sentier de l'Alzette",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rollenger_Bildchen_01.jpg/1280px-Rollenger_Bildchen_01.jpg",
+   "file": "Rollenger_Bildchen_01.jpg",
+   "reason": "shrine and railing close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "LU",
+   "id": 63079,
+   "name": "Um Réimerwee",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Sch%C3%ABfflenger_Kierchtuerm-101.jpg/1280px-Sch%C3%ABfflenger_Kierchtuerm-101.jpg",
+   "file": "Sch%C3%ABfflenger_Kierchtuerm-101.jpg",
+   "reason": "church tower close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "LU",
+   "id": 63359,
+   "name": "BS5",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/View_Burschent_Apartments_%26_Camping.jpg/1280px-View_Burschent_Apartments_%26_Camping.jpg",
+   "file": "View_Burschent_Apartments_%26_Camping.jpg",
+   "reason": "grey fog"
+  },
+  {
+   "layer": "trails",
+   "country": "LU",
+   "id": 63384,
+   "name": "Sentier historique «Grünewald» Steinsel - Walferdange",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Walferdange%2C_Gr%C3%BCnewald%2C_Raschp%C3%ABtzer_%28Puits_01%29A.jpg/1280px-Walferdange%2C_Gr%C3%BCnewald%2C_Raschp%C3%ABtzer_%28Puits_01%29A.jpg",
+   "file": "Walferdange%2C_Gr%C3%BCnewald%2C_Raschp%C3%ABtzer_%28Puits_01%29A.jpg",
+   "reason": "wooden structure in forest"
+  },
+  {
+   "layer": "trails",
+   "country": "LV",
+   "id": 64146,
+   "name": "Turaidas gravas un alas",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Turaidas_muzejrezerv%C4%81ts_%287%29_%28Kenny_McFly%29.jpg/1280px-Turaidas_muzejrezerv%C4%81ts_%287%29_%28Kenny_McFly%29.jpg",
+   "file": "Turaidas_muzejrezerv%C4%81ts_%287%29_%28Kenny_McFly%29.jpg",
+   "reason": "wooden house"
+  },
+  {
+   "layer": "trails",
+   "country": "LV",
+   "id": 64286,
+   "name": "Ezertaka: Piedruja-Indrica-Krāslava",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Kraslava_-_panoramio_%2815%29_%28cropped%29.jpg/1280px-Kraslava_-_panoramio_%2815%29_%28cropped%29.jpg",
+   "file": "Kraslava_-_panoramio_%2815%29_%28cropped%29.jpg",
+   "reason": "office building"
+  },
+  {
+   "layer": "trails",
+   "country": "LV",
+   "id": 64206,
+   "name": "Svētā Jēkaba ceļš (Valka-Rīga) 7 etaps: Līgatne – Sigulda",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sigulda.Sunset.15.10.2018_%2845337679962%29.jpg/1280px-Sigulda.Sunset.15.10.2018_%2845337679962%29.jpg",
+   "file": "Sigulda.Sunset.15.10.2018_%2845337679962%29.jpg",
+   "reason": "dark railway at dusk"
+  },
+  {
+   "layer": "trails",
+   "country": "MD",
+   "id": 62981,
+   "name": "Biserica s. Rîșcova - Lacul Ivancea",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Biserica_din_R%C3%AE%C8%99cova_03.jpg/1280px-Biserica_din_R%C3%AE%C8%99cova_03.jpg",
+   "file": "Biserica_din_R%C3%AE%C8%99cova_03.jpg",
+   "reason": "church facade"
+  },
+  {
+   "layer": "trails",
+   "country": "ME",
+   "id": 62530,
+   "name": "Žabljak - Šljeme",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Zabljak_%2826334145194%29.jpg/1280px-Zabljak_%2826334145194%29.jpg",
+   "file": "Zabljak_%2826334145194%29.jpg",
+   "reason": "house close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "ME",
+   "id": 62516,
+   "name": "Berane - Šiško jezero",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Berane%2C_Montenegro_Jun_21%2C_2025_11-52-46_AM.jpeg/1280px-Berane%2C_Montenegro_Jun_21%2C_2025_11-52-46_AM.jpeg",
+   "file": "Berane%2C_Montenegro_Jun_21%2C_2025_11-52-46_AM.jpeg",
+   "reason": "house close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "ME",
+   "id": 62518,
+   "name": "Berane - Bogaje (Rožaje)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Berane%2C_Montenegro_Jun_19%2C_2025_12-22-13_PM.jpeg/1280px-Berane%2C_Montenegro_Jun_19%2C_2025_12-22-13_PM.jpeg",
+   "file": "Berane%2C_Montenegro_Jun_19%2C_2025_12-22-13_PM.jpeg",
+   "reason": "monument close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "ME",
+   "id": 62498,
+   "name": "Lubnice - Crna Glava",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Lubnice_Montenegro_07_12_54_519000.jpeg/1280px-Lubnice_Montenegro_07_12_54_519000.jpeg",
+   "file": "Lubnice_Montenegro_07_12_54_519000.jpeg",
+   "reason": "information sign board"
+  },
+  {
+   "layer": "trails",
+   "country": "MT",
+   "id": 62410,
+   "name": "Xlendi Walk",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Relief_of_San_%C4%A0u%C5%BCepp.jpg/1280px-Relief_of_San_%C4%A0u%C5%BCepp.jpg",
+   "file": "Relief_of_San_%C4%A0u%C5%BCepp.jpg",
+   "reason": "religious plaque close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "MT",
+   "id": 62404,
+   "name": "British Military Walk",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Mdina._Il-bieb_3.jpg/1280px-Mdina._Il-bieb_3.jpg",
+   "file": "Mdina._Il-bieb_3.jpg",
+   "reason": "palace gate facade"
+  },
+  {
+   "layer": "trails",
+   "country": "NL",
+   "id": 134357,
+   "name": "WaddenWandelen - Texel - 07",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Straatpo%C3%ABzie%2C_locatie_De_Staart%2C_De_Waal%2C_Texel_%2801%29.jpg/1280px-Straatpo%C3%ABzie%2C_locatie_De_Staart%2C_De_Waal%2C_Texel_%2801%29.jpg",
+   "file": "Straatpo%C3%ABzie%2C_locatie_De_Staart%2C_De_Waal%2C_Texel_%2801%29.jpg",
+   "reason": "inscription sign board"
+  },
+  {
+   "layer": "trails",
+   "country": "NL",
+   "id": 128860,
+   "name": "Landerummerhei en Waterplak (2013)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Fazant.jpg/1280px-Fazant.jpg",
+   "file": "Fazant.jpg",
+   "reason": "pheasant"
+  },
+  {
+   "layer": "trails",
+   "country": "NO",
+   "id": 24469,
+   "name": "Signatur Trollheimen",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/1475._Vinter_i_Norge_%2816172395641%29.jpg/1280px-1475._Vinter_i_Norge_%2816172395641%29.jpg",
+   "file": "1475._Vinter_i_Norge_%2816172395641%29.jpg",
+   "reason": "old postcard with frame"
+  },
+  {
+   "layer": "trails",
+   "country": "PL",
+   "id": 182757,
+   "name": "Wokół Ślęży",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Makieta_%C5%9Al%C4%99%C5%BCy_na_Prze%C5%82%C4%99czy_pod_Wie%C5%BCyc%C4%85_-_panoramio.jpg/1280px-Makieta_%C5%9Al%C4%99%C5%BCy_na_Prze%C5%82%C4%99czy_pod_Wie%C5%BCyc%C4%85_-_panoramio.jpg",
+   "file": "Makieta_%C5%9Al%C4%99%C5%BCy_na_Prze%C5%82%C4%99czy_pod_Wie%C5%BCyc%C4%85_-_panoramio.jpg",
+   "reason": "rock close-up in shade"
+  },
+  {
+   "layer": "trails",
+   "country": "PL",
+   "id": 183209,
+   "name": "Szlak Przełomu Złotego Potoku",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/2025-05_Rezerwat_Olszak_%2823%29_Przetacznik_o%C5%BCankowy.jpg/1280px-2025-05_Rezerwat_Olszak_%2823%29_Przetacznik_o%C5%BCankowy.jpg",
+   "file": "2025-05_Rezerwat_Olszak_%2823%29_Przetacznik_o%C5%BCankowy.jpg",
+   "reason": "flower close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "PL",
+   "id": 107637,
+   "name": "Głuchołazy Zdrój - Przełęcz Siodło",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/%C5%BBo%C5%82nierze_sprz%C4%85taj%C4%85cy_zniszczenia_w_budynku_przy_al._Jana_Paw%C5%82a_II_%E2%80%93_G%C5%82ucho%C5%82azy%2C_powodzie_w_Polsce_2024.jpg/1280px-%C5%BBo%C5%82nierze_sprz%C4%85taj%C4%85cy_zniszczenia_w_budynku_przy_al._Jana_Paw%C5%82a_II_%E2%80%93_G%C5%82ucho%C5%82azy%2C_powodzie_w_Polsce_2024.jpg",
+   "file": "%C5%BBo%C5%82nierze_sprz%C4%85taj%C4%85cy_zniszczenia_w_budynku_przy_al._Jana_Paw%C5%82a_II_%E2%80%93_G%C5%82ucho%C5%82azy%2C_powodzie_w_Polsce_2024.jpg",
+   "reason": "doorway with person"
+  },
+  {
+   "layer": "trails",
+   "country": "PL",
+   "id": 182838,
+   "name": "Szlak Harnasia Rogacza",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Schronisko_Magurka_A_875.jpg/1280px-Schronisko_Magurka_A_875.jpg",
+   "file": "Schronisko_Magurka_A_875.jpg",
+   "reason": "hotel building"
+  },
+  {
+   "layer": "trails",
+   "country": "PL",
+   "id": 183538,
+   "name": "Jamna (Chatka Włóczykija) - Jamna (Chatka Włóczykija)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Bukowiec_ko%C5%9Bci%C3%B3%C5%823_PR2.jpg/1280px-Bukowiec_ko%C5%9Bci%C3%B3%C5%823_PR2.jpg",
+   "file": "Bukowiec_ko%C5%9Bci%C3%B3%C5%823_PR2.jpg",
+   "reason": "wooden church close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "PL",
+   "id": 185481,
+   "name": "Bł. ks. Jana Balickiego",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Cmentarz_G%C5%82%C3%B3wny%2C_Przemy%C5%9Bl_2.jpg/1280px-Cmentarz_G%C5%82%C3%B3wny%2C_Przemy%C5%9Bl_2.jpg",
+   "file": "Cmentarz_G%C5%82%C3%B3wny%2C_Przemy%C5%9Bl_2.jpg",
+   "reason": "statue"
+  },
+  {
+   "layer": "trails",
+   "country": "PT",
+   "id": 80151,
+   "name": "Caminho Real 25",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/2015_Madeira_Samsung_%28108%29.jpg/1280px-2015_Madeira_Samsung_%28108%29.jpg",
+   "file": "2015_Madeira_Samsung_%28108%29.jpg",
+   "reason": "view from a car, motorway barrier"
+  },
+  {
+   "layer": "trails",
+   "country": "RO",
+   "id": 76243,
+   "name": "Circuitul Cheilor Turzii",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Turda_Gorges_%284632770526%29.jpg/1280px-Turda_Gorges_%284632770526%29.jpg",
+   "file": "Turda_Gorges_%284632770526%29.jpg",
+   "reason": "sheep close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "RO",
+   "id": 75799,
+   "name": "Cabana Omu - Muntele Strungile - Cabana Padina",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/RO_PH_Omu_from_Bucura.jpg/1280px-RO_PH_Omu_from_Bucura.jpg",
+   "file": "RO_PH_Omu_from_Bucura.jpg",
+   "reason": "summit buildings"
+  },
+  {
+   "layer": "trails",
+   "country": "RS",
+   "id": 67762,
+   "name": "Излетишта и видиковци Сокобање",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Dragonfly%2C_Ripaljka_1.jpg/1280px-Dragonfly%2C_Ripaljka_1.jpg",
+   "file": "Dragonfly%2C_Ripaljka_1.jpg",
+   "reason": "damselfly on a flower"
+  },
+  {
+   "layer": "trails",
+   "country": "RS",
+   "id": 67876,
+   "name": "Манастир Средиште - Гудурички врх",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Pogled_sa_osmatracnice_-_panoramio.jpg/1280px-Pogled_sa_osmatracnice_-_panoramio.jpg",
+   "file": "Pogled_sa_osmatracnice_-_panoramio.jpg",
+   "reason": "foggy ground and post, grey"
+  },
+  {
+   "layer": "trails",
+   "country": "RS",
+   "id": 67901,
+   "name": "Стаза бр. 12: Доброселица - Марића стена",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/27/Rutizam-com-436_1970ue_obj_obj-01-p8040169.jpg",
+   "file": "Rutizam-com-436_1970ue_obj_obj-01-p8040169.jpg",
+   "reason": "wooden hut close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "RS",
+   "id": 67975,
+   "name": "Планинарска кућа „Суваја\"- врх Головршац",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg/1280px-Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg",
+   "file": "Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg",
+   "reason": "insect on a plant"
+  },
+  {
+   "layer": "trails",
+   "country": "RS",
+   "id": 67974,
+   "name": "Планинарска кућа „Суваја\"- врх Бељаница",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg/1280px-Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg",
+   "file": "Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg",
+   "reason": "insect on a plant"
+  },
+  {
+   "layer": "trails",
+   "country": "RS",
+   "id": 67976,
+   "name": "Бељаница - Богојављенски успон",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg/1280px-Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg",
+   "file": "Panorama%2C_pogled_sa_ulaza_u_Resavsku_pecinu_04.jpg",
+   "reason": "insect on a plant"
+  },
+  {
+   "layer": "trails",
+   "country": "SE",
+   "id": 109570,
+   "name": "Ankarumsslingan Tjustleden",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Smalsp%C3%A5r_%2814%29.jpg/1280px-Smalsp%C3%A5r_%2814%29.jpg",
+   "file": "Smalsp%C3%A5r_%2814%29.jpg",
+   "reason": "cap close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "SE",
+   "id": 111492,
+   "name": "Lillskutan",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/%C3%85re_Fj%C3%A4llg%C3%A5rdsexpressen.jpg/1280px-%C3%85re_Fj%C3%A4llg%C3%A5rdsexpressen.jpg",
+   "file": "%C3%85re_Fj%C3%A4llg%C3%A5rdsexpressen.jpg",
+   "reason": "ski slope crowd"
+  },
+  {
+   "layer": "trails",
+   "country": "SE",
+   "id": 109601,
+   "name": "Trehörningsrundan",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Huvudentr%C3%A9n_Tivedens_nationalpark_03.jpg/1280px-Huvudentr%C3%A9n_Tivedens_nationalpark_03.jpg",
+   "file": "Huvudentr%C3%A9n_Tivedens_nationalpark_03.jpg",
+   "reason": "visitor centre building"
+  },
+  {
+   "layer": "trails",
+   "country": "SE",
+   "id": 108971,
+   "name": "Äventyrsstigen",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Lida_friluftsg%C3%A5rd%2C_nov_2018b.jpg/1280px-Lida_friluftsg%C3%A5rd%2C_nov_2018b.jpg",
+   "file": "Lida_friluftsg%C3%A5rd%2C_nov_2018b.jpg",
+   "reason": "lodge building"
+  },
+  {
+   "layer": "trails",
+   "country": "SE",
+   "id": 109043,
+   "name": "Blanktjärnsrundan",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/V%C3%A5l%C3%A5dalen_Fj%C3%A4llstation_20250907.jpg/1280px-V%C3%A5l%C3%A5dalen_Fj%C3%A4llstation_20250907.jpg",
+   "file": "V%C3%A5l%C3%A5dalen_Fj%C3%A4llstation_20250907.jpg",
+   "reason": "red building and car park"
+  },
+  {
+   "layer": "trails",
+   "country": "SE",
+   "id": 110539,
+   "name": "Österbybruksslingan",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/%C3%96sterbybruk_ironworks_village%2C_Uppland%2C_Sweden_%2826508683751%29.jpg/1280px-%C3%96sterbybruk_ironworks_village%2C_Uppland%2C_Sweden_%2826508683751%29.jpg",
+   "file": "%C3%96sterbybruk_ironworks_village%2C_Uppland%2C_Sweden_%2826508683751%29.jpg",
+   "reason": "drawing"
+  },
+  {
+   "layer": "trails",
+   "country": "SK",
+   "id": 68349,
+   "name": "Chodník Martina Kukučína",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Rodn%C3%BD_dom_Martina_Kuku%C4%8D%C3%ADna_v_Jasenovej.jpg/1280px-Rodn%C3%BD_dom_Martina_Kuku%C4%8D%C3%ADna_v_Jasenovej.jpg",
+   "file": "Rodn%C3%BD_dom_Martina_Kuku%C4%8D%C3%ADna_v_Jasenovej.jpg",
+   "reason": "cottage close-up"
+  },
+  {
+   "layer": "trails",
+   "country": "SK",
+   "id": 68354,
+   "name": "Chodník Andreja Kmeťa",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Vodn%C3%BD_raj_-_panoramio_%285%29.jpg/1280px-Vodn%C3%BD_raj_-_panoramio_%285%29.jpg",
+   "file": "Vodn%C3%BD_raj_-_panoramio_%285%29.jpg",
+   "reason": "swimming pool complex"
+  },
+  {
+   "layer": "trails",
+   "country": "SK",
+   "id": 68151,
+   "name": "Chodník Jurka Szomolanyiho",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Mlynsk%C3%A1_dolina_%C4%8Derven%C3%BD_most_02.jpg/1280px-Mlynsk%C3%A1_dolina_%C4%8Derven%C3%BD_most_02.jpg",
+   "file": "Mlynsk%C3%A1_dolina_%C4%8Derven%C3%BD_most_02.jpg",
+   "reason": "parked cars and bridge"
+  },
+  {
+   "layer": "trails",
+   "country": "XK",
+   "id": 62439,
+   "name": "Oshlak Trail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Inbound3842011617830234967.jpg/1280px-Inbound3842011617830234967.jpg",
+   "file": "Inbound3842011617830234967.jpg",
+   "reason": "fly close-up"
+  }
+ ]
+}

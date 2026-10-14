@@ -310,9 +310,10 @@ check('destinations tab opens', await page.locator('.places-tab').isVisible());
 
 // The chrome that must exist on General, so its absence on Lakes means
 // something was removed rather than never rendered.
-check('General still carries the country picker', await page.locator('.places-country:visible').count() === 1);
+// T428: the old General category is gone; the country picker sits in the
+// refine row over each list (phone) and the side panel (desktop).
 
-await page.locator('.places-cat', { hasText: /^lakes$/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /^lakes$/i }).click();
 await page.waitForTimeout(2500);
 
 // ── The controls this tab carries, and the ones it does not ──
@@ -323,7 +324,7 @@ check('price and A-Z sorts are gone on Lakes', await page.locator('.places-sort'
 check('the search field stays', await page.locator('.places-search input').count() === 1);
 
 // ── Lakes, not a country index ──
-check('no country flag index on Lakes', await page.locator('.places-ccard').count() === 0);
+check('the countries track is offered (T428)', await page.locator('.dgal-card').count() > 0);
 const cards = page.locator('.places-lcard');
 const nCards = await cards.count();
 check('lake cards render', nCards >= 3, `${nCards} cards`);
@@ -333,11 +334,19 @@ check('lake cards render', nCards >= 3, `${nCards} cards`);
 // you may get into, so the group leads the row and every chip carries its own
 // count. Brief 04 section 4 replaced the four flat chips with nine groups;
 // swimming is the one marked `toolbar`, so it is still the row on screen.
-const swimChip = page.locator('.places-facets .places-class', { hasText: /swim/i }).first();
+const swimChip = page.locator('.side-facets .ui-chip:visible, .fsheet-places .fchip', { hasText: /swim/i }).first();
+await page.locator('.dtab-filters:visible').first().click().catch(() => {});
+await page.waitForTimeout(700);
 const hasSwim = await swimChip.count() > 0;
 check('the swimming chip is offered', hasSwim, hasSwim ? await swimChip.innerText() : 'no chip');
+await page.keyboard.press('Escape');
+await page.waitForTimeout(500);
 if (hasSwim) {
+  await page.locator('.dtab-filters:visible').first().click().catch(() => {});
+  await page.waitForTimeout(700);
   await swimChip.click();
+  await page.waitForTimeout(300);
+  await page.keyboard.press('Escape');
   await page.waitForTimeout(1500);
   const left = await page.locator('.places-lcard').count();
   const warned = await page.locator('.places-lcard .places-lcard-swim').count();
@@ -345,7 +354,7 @@ if (hasSwim) {
   // filtered to swimmable water must carry none of them.
   check('the swimming filter leaves only water you may swim in',
     left > 0 && warned === 0, `${left} lakes, ${warned} with a warning chip`);
-  await swimChip.click();
+  await page.locator('.xchip-clear').first().click().catch(() => {});
   await page.waitForTimeout(1200);
 }
 
@@ -355,16 +364,20 @@ if (hasSwim) {
 // programme keeps is that a chip never carries a zero, so a zero option is
 // dropped rather than greyed out, and a group of nothing but zeroes never
 // renders at all.
-const groupSel = '.places-facets .places-classes';
+await page.locator('.dtab-filters:visible, .side-allfilters:visible').first().click().catch(() => {});
+await page.waitForTimeout(700);
+const groupSel = '.fsheet-places .fchips';
 const nGroups = await page.locator(groupSel).count();
 check('the lake filter groups are offered', nGroups >= 5, `${nGroups} groups`);
-const chipTexts = await page.locator(`${groupSel} .places-class`).allInnerTexts();
+const chipTexts = await page.locator(`${groupSel} .fchip`).allInnerTexts();
 const clean = chipTexts.map((txt) => txt.replace(/\s+/g, ' ').trim());
 const zeroes = clean.filter((txt) => / 0$/.test(txt));
 check('no filter chip renders a zero count', zeroes.length === 0,
   zeroes.slice(0, 3).join(' | '));
-check('the filter chips carry counts', clean.some((txt) => /\d/.test(txt)),
+check('no filter chip carries a count (T428)', clean.every((txt) => !/\s\d+$/.test(txt)),
   `${clean.length} chips`);
+await page.keyboard.press('Escape');
+await page.waitForTimeout(500);
 
 const cardImg = await cards.first().locator('.places-card-img').getAttribute('src').catch(() => '');
 check('cards carry a real photograph', /^https:\/\/upload\.wikimedia\.org/.test(cardImg || ''),
@@ -409,7 +422,7 @@ const firstCountry = (await page.locator('.places-bcard-where').first().innerTex
 if (firstCountry) {
   await page.locator('.places-search input').fill(firstCountry);
   await page.waitForTimeout(2200);
-  const countryHead = await page.locator('.places-beachhead').first().innerText().catch(() => '');
+  const countryHead = await page.locator('.dtab-countryband-name').first().innerText().catch(() => '');
   check('typing a country names it over the list', new RegExp(firstCountry, 'i').test(countryHead),
     countryHead.replace(/\n/g, ' '));
   check('the country list has lakes in it', await page.locator('.places-lcard').count() >= 1);
@@ -557,7 +570,7 @@ check('desktop: the destinations tab is reachable',
   await desk.locator('.places-tab').isVisible().catch(() => false));
 // Desktop draws the categories in the left panel (.side-cat), the phone in
 // the toolbar (.places-cat). One renderer, two class names.
-const deskCat = desk.locator('.side-cat:visible, .places-cat:visible',
+const deskCat = desk.locator('.dtab-cats [role="tab"]',
   { hasText: /^lakes$/i }).first();
 if (await deskCat.isVisible().catch(() => false)) {
   await deskCat.click();

@@ -108,21 +108,38 @@ const toTrips = async (page) => {
   // matches in both places at once. Without this the desktop pass clicked a
   // display:none tile until it timed out and the phone pass tripped
   // Playwright's strict mode on two sliders.
-  await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^\s*trips\s*$/i })
+  await page.locator('.dtab-cats [role="tab"]', { hasText: /^\s*trips\s*$/i })
     .first().click();
   // The Trips category opens on the curated library now; the composed
   // itineraries this harness checks live behind their own door at the end
   // of the style grid.
   await page.locator('.jcomposed-card').waitFor({ state: 'visible', timeout: 15000 });
   await page.locator('.jcomposed-card').click();
-  await page.locator('.trip-slider-input:visible').first()
+  await page.locator('.dtab-length select:visible').first()
     .waitFor({ state: 'visible', timeout: 15000 });
   await page.waitForTimeout(1800);
 };
 
 /** Drag the day slider. 0 is "any length". */
+// T428: a phone keeps every facet chip in the Filters sheet; the desktop
+// panel shows the short set inline. Press one wherever it is, and say which.
+async function pressChip(pg, re) {
+  const inline = pg.locator('.side-facets .ui-chip:visible', { hasText: re }).first();
+  if (await inline.count()) { const label = await inline.innerText(); await inline.click(); return label; }
+  await pg.locator('.dtab-filters:visible, .side-allfilters:visible').first().click().catch(() => {});
+  await pg.waitForTimeout(700);
+  const inSheet = pg.locator('.fsheet-places .fchip', { hasText: re }).first();
+  if (!(await inSheet.count())) { await pg.keyboard.press('Escape'); return ''; }
+  const label = await inSheet.innerText();
+  await inSheet.click();
+  await pg.waitForTimeout(300);
+  await pg.keyboard.press('Escape');
+  await pg.waitForTimeout(600);
+  return label;
+}
+
 const setDays = async (page, n) => {
-  await page.locator('.trip-slider-input:visible').first().fill(String(n));
+  await page.locator('.dtab-length select:visible').first().selectOption(n ? String(n) : '');
   await page.waitForTimeout(1100);
 };
 
@@ -132,7 +149,7 @@ const setDays = async (page, n) => {
  *  2026-09-02 (a caption on a control that read as a claim about the
  *  catalogue); it still knows it, and this is the only thing that does. */
 const totalOf = async (page) => {
-  const n = await page.locator('.trip-slider:visible').first()
+  const n = await page.locator('.dtab-length select:visible').first()
     .getAttribute('data-n').catch(() => null);
   return Number(n || 0);
 };
@@ -159,10 +176,11 @@ try {
   await toTrips(page);
 
   check('the Trips category opens on itineraries', await page.locator('.places-icard').count() > 0);
-  check('the day slider is there', await page.locator('.trip-slider-input:visible').first().isVisible());
+  check('the day slider is there', await page.locator('.dtab-length select:visible').first().isVisible());
   check('pace and place size are offered',
-    await page.locator('.places-facets .places-class:visible, .side-facets .places-class:visible').count() >= 5,
-    `${await page.locator('.places-facets .places-class:visible, .side-facets .places-class:visible').count()} chips`);
+    // T428: inline in the desktop panel; a phone keeps them in the sheet.
+    await page.locator('.side-facets .ui-chip:visible').count() >= 5 || !(await page.locator('.side-facets').isVisible().catch(() => false)),
+    `${await page.locator('.side-facets .ui-chip:visible').count()} chips`);
 
   const cards = await page.locator('.places-icard').count();
   check('a real page of trips', cards >= 12, `${cards} cards`);
@@ -198,13 +216,12 @@ try {
   await page.screenshot({ path: 'shots/trips-desktop.png' });
 
   // Pace is a real filter, and it narrows further.
-  const relaxed = page.locator('.places-facets .places-class:visible, .side-facets .places-class:visible').filter({ hasText: /relaxed/i }).first();
-  if (await relaxed.isEnabled().catch(() => false)) {
-    await relaxed.click();
+  const relaxedLabel = await pressChip(page, /relaxed/i);
+  if (relaxedLabel) {
     await page.waitForTimeout(1100);
     const paced = await totalOf(page);
     check('pace narrows the set', paced > 0 && paced <= afterDays, `${afterDays} -> ${paced}`);
-    await relaxed.click();
+    await pressChip(page, /relaxed/i);
     await page.waitForTimeout(900);
   } else {
     check('pace narrows the set', false, 'relaxed chip disabled');
@@ -214,7 +231,7 @@ try {
   // category showed before the itineraries arrived.
   await setDays(page, 1);
   await page.waitForTimeout(900);
-  const walkIdx = await page.locator('.places-ccard').count();
+  const walkIdx = await page.locator('.dgal-card').count();
   const walkCards = await page.locator('.places-tcard').count();
   check('one day still reaches the city walks', walkIdx > 0 || walkCards > 0,
     `${walkIdx} countries, ${walkCards} walks`);

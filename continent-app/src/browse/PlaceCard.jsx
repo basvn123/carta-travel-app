@@ -1,50 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import {
-  MapPinIcon, LoopIcon, MountainIcon, LakeIcon, BeachIcon, TreeIcon, CastleIcon,
-  CameraIcon, VillageIcon, HomeIcon, TrainIcon, ShieldIcon, SunIcon, CoffeeIcon,
-  LeafIcon, SwimIcon, BootIcon, GondolaIcon, DiningIcon,
-} from '../components/Icons.jsx';
+import { MapPinIcon } from '../components/Icons.jsx';
 import { thumbAt, isResizable } from '../lib/heroImage.js';
 import { openShared } from '../lib/sharedElement.js';
 import { useI18n } from '../i18n/index.jsx';
+import { Card } from '../components/ui/index.js';
 
 /*
- * PlaceCard, the one card (spec 5.1, T179).
+ * PlaceCard, the one card of the Destinations lists (spec 5.1, T179; on the
+ * kit Card since T428).
  *
  * Beaches, lakes, mountains, cycle routes and walks all draw through this
- * frame; lib/cardFillings.js decides what goes in it. Top to bottom:
+ * frame; lib/cardFillings.js decides what goes in it. It is the kit's tile
+ * Card (components/ui/Card.jsx): the photograph on top, then the name with
+ * the Score beside it, where it is, one line of the facts that matter most
+ * (a swimming verdict, a lift to the top, how far from a searched place),
+ * and up to three measured values set label over value, the way key facts
+ * read on the destination page.
  *
- *   the band   a 16:9 photograph, rounded top corners only, and the
- *              section's 6 px data strip along its bottom edge (CardStrip).
- *              Nothing else sits on the photograph (T394, carta-design
- *              "Caption band"): the seal and the small facts that used to
- *              ride its corners are in the body now.
- *   the body   the name in Fraunces with a mono ref chip and the ochre
- *              rating seal at the end of the same row, the place line, the
- *              hook on one line led by the small facts (distance from a
- *              searched place, a swimming verdict, a lift, whose photograph
- *              it is), exactly three measured values, an optional month
- *              line, and up to three 20 px icons
+ * What T428 took off (owner, 2026-10-14, "the trail stack also needs to
+ * go"): the 6 px data strip under the photograph and the key sentence that
+ * explained it, the mono reference chip, and the row of 20 px glyphs, which
+ * carried no key (row T444-e). The props stay, so a caller that passes a
+ * strip or icons still renders; they are simply not drawn.
  *
  * The outer element keeps each section's old class (.places-bcard,
  * .places-lcard, .places-mcard, .places-tcard, the cycle test ids) and the
- * inner classes the layer harnesses read (.places-card-name,
- * .places-bcard-where, .places-bcard-tags, .places-card-facts, ...), so a
- * harness that found a beach card before finds the same card now.
- *
- * Every row is a fixed height in 37-card-fillings.css, so every card in a
- * grid is the same height whatever its filling, and the skeleton below, built
- * from the same rows, is the card's final size before the data arrives.
+ * name keeps .places-card-name, so the layer harnesses find the same card.
  */
 
-// The three widths spec 5.2 names. All three are on Wikimedia's renderable
-// list (lib/heroImage.js WIKI_WIDTHS), which is the only reason they work.
+// The three widths spec 5.2 names, all on Wikimedia's renderable list.
 const CARD_WIDTHS = [500, 960, 1280];
 
-// What the band is drawn at: the full column less the 16 px gutters under
-// 640 px, about half the column up to 1039 px, a third of the list column
-// above it (the list sits beside the desktop panel, so a third of the window
-// overstates it; capped where the grid stops growing).
+// What the photograph is drawn at: the full column on a phone, half of it
+// up to 1039 px, a third of the list column above it.
 const PLACE_CARD_SIZES = '(max-width: 639px) calc(100vw - 32px), (max-width: 1039px) 47vw, min(26vw, 370px)';
 
 function cardSrcSet(url) {
@@ -52,7 +40,7 @@ function cardSrcSet(url) {
   return CARD_WIDTHS.map((w) => `${thumbAt(url, w)} ${w}w`).join(', ');
 }
 
-/** The photograph in the band, lazy, with the 500/960/1280 ladder. */
+/** The photograph, lazy, with the 500/960/1280 ladder. */
 export function PlaceCardPhoto({ url }) {
   if (!url) return null;
   return (
@@ -62,142 +50,108 @@ export function PlaceCardPhoto({ url }) {
       srcSet={cardSrcSet(url)}
       sizes={PLACE_CARD_SIZES}
       alt=""
-      width={16}
-      height={9}
+      width={4}
+      height={3}
       loading="lazy"
       decoding="async"
     />
   );
 }
 
-/** The band with nothing to show: paper, no glyph pretending to be a photo. */
+/** No photograph: the sunken ground, never a glyph pretending to be one. */
 export function PlaceCardNoPhoto({ children = null }) {
   return (
     <span className="places-card-img places-card-noimg" aria-hidden="true">{children}</span>
   );
 }
 
-const GLYPH = {
-  loop: LoopIcon,
-  summit: MountainIcon,
-  lake: LakeIcon,
-  coast: BeachIcon,
-  forest: TreeIcon,
-  castle: CastleIcon,
-  viewpoint: CameraIcon,
-  village: VillageIcon,
-  hut: HomeIcon,
-  rail: TrainIcon,
-  lifeguard: ShieldIcon,
-  sunset: SunIcon,
-  services: CoffeeIcon,
-  protected: LeafIcon,
-  swim: SwimIcon,
-  walks: BootIcon,
-  lift: GondolaIcon,
-  food: DiningIcon,
-};
-
 /**
  * @param className  the section's own card class, kept for the harnesses
  * @param testId     data-testid, where a harness reads one
  * @param media      the photograph (PlaceCardPhoto) or a drawn stand-in
- * @param seal       the rating chip, or the "not scored" word, at the end of
- *                   the name row
- * @param strip      the 6 px data strip (CardStrip), or null
- * @param lead       small facts that lead the hook line, each
- *                   { key, text, cls }: the classes stay what the harnesses
- *                   read (.places-card-km, .places-lcard-swim, ...)
+ * @param seal       the Score, or the "not scored" word
+ * @param lead       small facts that lead the hook line, each { key, text, cls }
  * @param fill       a filling from lib/cardFillings.js
  * @param hookClass  the class the hook's wrapper keeps for the harnesses
- * @param note       the month line (rule "Month"): undefined draws no row,
- *                   null an empty row of the same height, so every card in
- *                   a grid keeps one height while a month is set
- * @param foot       anything that rides at the end of the icon row
- * @param sharedKey  the key the opened page claims its header photograph
- *                   with (DetailSkeleton's hero.sharedKey); when given, the
- *                   card's photograph grows into the page (lib/sharedElement)
+ * @param note       the month line, when the traveller has a month of their own
+ * @param foot       a price, where the card has one (a city day)
+ * @param sharedKey  the key the opened page claims its header photograph with
  */
 export const PlaceCard = React.memo(function PlaceCard({
-  className = '', testId, onClick, media, seal = null, strip = null,
+  className = '', testId, onClick, media, seal = null,
   lead = null, fill, hookClass = 'places-bcard-tags', foot = null, note,
   sharedKey = null,
 }) {
-  const { title, ref, where, hook = [], values = [], icons = [], gem = null } = fill;
+  const { title, where, hook = [], values = [], icons = [], gem = null } = fill;
+  // The glyph row is gone (T428), but whether a walk or a ride comes back to
+  // where it started is a fact people choose by, so it leads the line in words.
+  const loop = icons.find((ic) => ic.code === 'loop');
   const parts = [
     ...(lead || []).filter((l) => l && l.text).map((l) => ({ ...l, lead: true })),
+    ...(loop ? [{ key: 'loop', cls: 'places-card-loop', text: loop.label }] : []),
     ...hook,
-  ];
-  const open = sharedKey == null
-    ? onClick
-    : (e) => openShared(e.currentTarget, sharedKey, () => onClick?.(e));
+  ].slice(0, 3);
+  const open = (e) => {
+    const card = e.currentTarget.closest('.card');
+    if (sharedKey == null) onClick?.(e);
+    else openShared(card, sharedKey, () => onClick?.(e));
+  };
+  const shown = values.filter((v) => !v.none).slice(0, 3);
   return (
-    <button type="button" className={`pcard ${className}`} data-testid={testId} onClick={open}>
-      <span className="pcard-band">
-        {media}
-        {strip}
-      </span>
-      <span className="pcard-body">
-        <span className="pcard-head">
-          <span className="places-card-name pcard-title">{title}</span>
-          {ref && <span className="pcard-ref">{ref}</span>}
-          {seal && <span className="pcard-seal">{seal}</span>}
-        </span>
-        <span className="pcard-where places-bcard-where">
-          {where && <MapPinIcon size={13} />}
-          {where && <span className="pcard-where-text">{where}</span>}
-        </span>
-        <span className={`pcard-hook ${hookClass}`}>
-          {parts.map((h, i) => (
-            <React.Fragment key={h.key || i}>
-              {i > 0 ? ', ' : null}
-              <span className={[h.cls, h.lead ? 'pcard-lead' : null].filter(Boolean).join(' ') || undefined}
-                title={h.title}>
-                {h.text}
-                {h.est ? <i aria-hidden="true">~</i> : null}
-              </span>
-            </React.Fragment>
-          ))}
-        </span>
-        <span className="pcard-values places-card-facts">
-          {values.map((v) => (
-            <span key={v.key} className={`pcard-v${v.none ? ' is-none' : ''}`}>
-              <span className={`pcard-v-n${v.cls ? ` ${v.cls}` : ''}${/\d/.test(String(v.value)) ? '' : ' is-word'}`} title={v.none ? undefined : v.title}>{v.value}</span>
-              <span className="pcard-v-l" title={v.label}>{v.label}</span>
+    <Card
+      layout="tile"
+      className={`pcard ${className}`.trim()}
+      data-testid={testId}
+      media={media}
+      title={<span className="places-card-name pcard-title">{title}</span>}
+      onOpen={open}
+      rating={seal}
+      price={foot}
+      meta={(
+        <span className="pcard-body">
+          {where && (
+            <span className="pcard-where places-bcard-where">
+              <MapPinIcon size={13} />
+              <span className="pcard-where-text">{where}</span>
             </span>
-          ))}
-        </span>
-        {note !== undefined && <span className="pcard-note">{note}</span>}
-        <span className="pcard-foot">
-          <span className="pcard-icons">
-            {icons.map((ic) => {
-              const Glyph = GLYPH[ic.code];
-              if (!Glyph) return null;
-              return (
-                <span key={ic.code} className={`pcard-icon${ic.cls ? ` ${ic.cls}` : ''}`}
-                  role="img" aria-label={ic.label} title={ic.label}>
-                  <Glyph size={20} />
-                </span>
-              );
-            })}
-          </span>
+          )}
+          {parts.length > 0 && (
+            <span className={`pcard-hook ${hookClass}`}>
+              {parts.map((h, i) => (
+                <React.Fragment key={h.key || i}>
+                  {i > 0 ? ', ' : null}
+                  <span className={[h.cls, h.lead ? 'pcard-lead' : null].filter(Boolean).join(' ') || undefined}
+                    title={h.title}>
+                    {h.text}
+                  </span>
+                </React.Fragment>
+              ))}
+            </span>
+          )}
+          {shown.length > 0 && (
+            <dl className="pcard-values places-card-facts">
+              {shown.map((v) => (
+                <div key={v.key} className="pcard-v">
+                  <dt className="pcard-v-l">{v.label}</dt>
+                  <dd className={`pcard-v-n${v.cls ? ` ${v.cls}` : ''}`} title={v.title}>{v.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {note ? <span className="pcard-note">{note}</span> : null}
           {gem && <span className="pcard-gem">{gem}</span>}
-          {foot}
         </span>
-      </span>
-    </button>
+      )}
+    />
   );
 });
 
 /**
- * The loading state of a card grid: cards at their final size on
- * --paper-dim, never a spinner and never three dots. Built from the card's
- * own rows, so nothing moves when the real cards replace them. Still, not
- * breathing (T394, carta-design "Loading": no shimmer, nothing loops).
+ * The loading state of a card grid: cards at their final shape on the
+ * sunken ground, never a spinner. Still, not breathing.
  */
 // A skeleton still on screen after this long gets one line that says so
-// (brief V5-5): a slow layer is not a failed one, and the traveller should
-// not have to guess which.
+// (brief V5-5): a slow layer is not a failed one.
 const SLOW_AFTER_MS = 5000;
 
 export function PlaceCardSkeletons({ n = 6, label }) {
@@ -212,18 +166,12 @@ export function PlaceCardSkeletons({ n = 6, label }) {
       <span className="sr-only" role="status">{slow ? t('layer.slow') : label}</span>
       {slow && <p className="places-slow" aria-hidden="true">{t('layer.slow')}</p>}
       {Array.from({ length: n }, (_, i) => (
-        <span className="pcard pcard-skel" aria-hidden="true" key={i}>
-          <span className="pcard-band" />
-          <span className="pcard-body">
-            <span className="pcard-head"><span className="pcard-skel-bar is-title" /></span>
-            <span className="pcard-where"><span className="pcard-skel-bar is-where" /></span>
-            <span className="pcard-hook"><span className="pcard-skel-bar is-hook" /></span>
-            <span className="pcard-values">
-              <span className="pcard-skel-bar" />
-              <span className="pcard-skel-bar" />
-              <span className="pcard-skel-bar" />
-            </span>
-            <span className="pcard-foot" />
+        <span className="card card-tile pcard-skel" aria-hidden="true" key={i}>
+          <span className="card-media" />
+          <span className="card-body">
+            <span className="pcard-skel-bar is-title" />
+            <span className="pcard-skel-bar is-where" />
+            <span className="pcard-skel-bar is-hook" />
           </span>
         </span>
       ))}

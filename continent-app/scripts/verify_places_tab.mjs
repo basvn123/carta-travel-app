@@ -60,7 +60,7 @@ await page.waitForTimeout(1500);
 check('places tab opens from the bar', await page.locator('.places-tab').isVisible());
 
 // ── Category bar ──
-const cats = page.locator('.places-cat');
+const cats = page.locator('.dtab-cats [role="tab"]');
 // Six: Trips, Trails, Beaches, Lakes, Mountains, Cycling. Asserted by NAME rather than by count, so the next category to
 // arrive does not fail this check for existing.
 const catNames = (await cats.allInnerTexts()).map((s) => s.trim().toLowerCase());
@@ -68,7 +68,7 @@ check('every category tab renders',
   ['trips', 'trails', 'beaches', 'lakes', 'mountains', 'cycling']
     .every((n) => catNames.some((c) => c.startsWith(n.slice(0, 5)))),
   catNames.join(', '));
-check('Trips starts active', /trips/i.test(await page.locator('.places-cat.on').innerText().catch(() => '')));
+check('Trips starts active', /trips/i.test(await page.locator('.dtab-cats [aria-selected="true"]').innerText().catch(() => '')));
 check('there is no General tab', !catNames.some((c) => c.startsWith('gener')));
 
 // ── Trips: the curated library, then the composed door, then the walks ──
@@ -78,7 +78,7 @@ check('there is no General tab', !catNames.some((c) => c.startsWith('gener')));
 // itineraries live behind their own door at the end of the grid, and the
 // one-day city walks this block covers are what the "1" chip on the day
 // rail reaches, so that is how it gets there.
-await page.locator('.places-cat', { hasText: /^trips$/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1600);
 check('trips category opens on the style grid',
   await page.locator('.jstyle-card').count() === 10);
@@ -86,10 +86,10 @@ await page.locator('.jcomposed-card').click();
 await page.waitForTimeout(1600);
 check('the composed door opens the itineraries',
   await page.locator('.places-icard').count() > 0);
-check('the day slider is there', await page.locator('.trip-slider-input:visible').isVisible());
-await page.locator('.trip-slider-input:visible').fill('1');
+check('the day slider is there', await page.locator('.dtab-length select:visible').isVisible());
+await page.locator('.dtab-length select:visible').first().selectOption('1');
 await page.waitForTimeout(1600);
-const tripIdx = await page.locator('.places-ccard').count();
+const tripIdx = await page.locator('.dgal-card').count();
 check('one day shows the published-country index', tripIdx > 5, `${tripIdx} countries`);
 await pickCountry(page, 'AL');
 await page.waitForTimeout(1500);
@@ -137,7 +137,7 @@ await page.locator('.tpage-back').click();
 await page.waitForTimeout(500);
 
 // ── Trails: facts-only cards, the page gets an elevation profile ──
-await page.locator('.places-cat', { hasText: /trails/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /trails/i }).click();
 await page.waitForTimeout(1500);
 const hikeCards = await page.locator('.places-tcard').count();
 check('hike cards render for Albania', hikeCards >= 3, `${hikeCards} cards`);
@@ -154,7 +154,7 @@ await page.waitForTimeout(400);
 // ── Beaches: its own published layer now, not a slice of the trips. The
 //    category has no country dropdown and no trip cards at all; see
 //    scripts/verify_beaches.mjs for the layer itself. ──
-await page.locator('.places-cat', { hasText: /beaches/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /beaches/i }).click();
 await page.waitForTimeout(2000);
 const beachCards = await page.locator('.places-bcard').count();
 check('beaches category shows published beaches', beachCards >= 1, `${beachCards} cards`);
@@ -163,7 +163,7 @@ await page.screenshot({ path: 'shots/places-beaches.png' });
 
 // Mountains carries the country picker like every other tab now, and still
 // narrows by a typed country name, which is the path this block drives.
-await page.locator('.places-cat', { hasText: /mountains/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /mountains/i }).click();
 await page.waitForTimeout(1600);
 check('mountains category carries the country picker',
   await page.locator('.places-country:visible').count() === 1);
@@ -172,8 +172,8 @@ check('mountains category carries the country picker',
 // inline; the difficulty and kind groups moved to the Filters sheet, so the
 // chips are read from the row and the sheet together, and the sheet must
 // hold more groups than the row.
-const mtnInline = await page.locator('.places-facets .places-class').allInnerTexts();
-await page.locator('.places-filter-btn:visible').first().click();
+const mtnInline = await page.locator('.dtab-chips .ui-chip:visible').allInnerTexts();
+await page.locator('.dtab-filters:visible, .side-allfilters:visible').first().click();
 await page.waitForTimeout(600);
 const mtnSheet = await page.locator('.fsheet-places .fchip').allInnerTexts();
 const mtnSheetGroups = await page.locator('.fsheet-places .fsheet-field').count();
@@ -202,7 +202,7 @@ const blanks = [];
 for (const [blankCat, blankRe] of [['trips', /^trips$/i],
   ['trails', /trails/i], ['beaches', /beaches/i], ['lakes', /^lakes$/i],
   ['mountains', /mountains/i]]) {
-  await page.locator('.places-cat', { hasText: blankRe }).first().click();
+  await page.locator('.dtab-cats [role="tab"]', { hasText: blankRe }).first().click();
   await page.waitForTimeout(2600);
   const seen = await page.evaluate(async () => {
     const cards = [...document.querySelectorAll(
@@ -248,13 +248,13 @@ const heroHosts = await page.evaluate(async () => {
 });
 check('every hero URL is on the host the CSP allows',
   heroHosts.n === 0, heroHosts.n ? `${heroHosts.n}: ${heroHosts.bad.join(', ')}` : 'all on upload.wikimedia.org');
-await page.locator('.places-cat', { hasText: /^trips$/i }).first().click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /^trips$/i }).first().click();
 await page.waitForTimeout(1500);
 
 // ── Near search: suggestions then closest-first ──
 // On Trails, because the Trips category is the style grid and a style card
 // has no distance to chip; the trail cards carry the km chips.
-await page.locator('.places-cat', { hasText: /trails/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /trails/i }).click();
 await page.waitForTimeout(800);
 await page.locator('.places-search input').fill('Tirana');
 await page.waitForTimeout(900);
@@ -304,11 +304,11 @@ check('no origin picker on the desktop page',
 // The desktop chrome that replaced it: search at the head of the column, the category
 // tiles and the filter panel on the left.
 check('desktop: search heads the results column',
-  await desk.locator('.places-searchrow .places-search input').isVisible().catch(() => false));
+  await desk.locator('#header-search-slot .places-search input').isVisible().catch(() => false));
 check('desktop: the side panel stands', await desk.locator('.places-side').isVisible().catch(() => false));
 
 // ── The trips index lost its intro paragraph ─────────────────────────────
-await desk.locator('.side-cat', { hasText: /^trips$/i }).click();
+await desk.locator('.dtab-cats [role="tab"]', { hasText: /^trips$/i }).click();
 await desk.waitForTimeout(1200);
 check('trips index carries no intro paragraph', await desk.locator('.places-intro').count() === 0);
 
@@ -323,33 +323,33 @@ check('the curated library draws no Lifestyle pill',
 
 // ── T404 (V5): rails you can walk with the keys, and an emptied list that
 // always offers its way back ─────────────────────────────────────────────
-await desk.locator('.side-cat', { hasText: /^lakes$/i }).click();
+await desk.locator('.dtab-cats [role="tab"]', { hasText: /^lakes$/i }).click();
 await desk.waitForTimeout(2500);
-const railStrip = desk.locator('.open-strip').first();
+const railStrip = desk.locator('.dtab-strip').first();
 check('V5: a rail strip is a named group',
   !!(await railStrip.getAttribute('aria-label').catch(() => null)));
-const railCards = railStrip.locator('.railcard');
+const railCards = railStrip.locator('.card-open');
 if (await railCards.count() > 1) {
   await railCards.nth(0).focus();
   await desk.keyboard.press('ArrowRight');
-  const movedTo = await desk.evaluate(() => [...document.querySelectorAll('.open-strip')][0]
-    ? [...document.querySelectorAll('.open-strip')][0].querySelectorAll('.railcard').length
-      && [...document.querySelectorAll('.open-strip')][0].querySelectorAll('.railcard')[1] === document.activeElement
-    : false);
+  const movedTo = await desk.evaluate(() => {
+    const strip = document.querySelector('.dtab-strip');
+    return !!strip && strip.querySelectorAll('.card-open')[1] === document.activeElement;
+  });
   check('V5: ArrowRight moves focus to the next card', movedTo === true);
 }
-const posText = await desk.locator('.open-pos-n').first().innerText().catch(() => '');
-check('V5: a rail says where it is, in the mono', /\d/.test(posText), posText);
-await desk.locator('.side-cat', { hasText: /^beaches$/i }).click();
+// T428 (owner, 2026-10-14): no dots and no "1 to 4 of 12" under a strip.
+check('a rail carries no position figure (T428)', await desk.locator('.open-pos-n, .open-dots').count() === 0);
+await desk.locator('.dtab-cats [role="tab"]', { hasText: /^beaches$/i }).click();
 await desk.waitForTimeout(2000);
-await desk.locator('.places-searchrow .places-search input').fill('zzqxjv');
+await desk.locator('#header-search-slot .places-search input').fill('zzqxjv');
 await desk.waitForTimeout(1500);
 check('V5: a search that matches nothing offers Clear search',
   await desk.locator('.places-empty .cov-empty-btn:visible').count() >= 1);
 await desk.locator('.places-empty .cov-empty-btn:visible').first().click().catch(() => {});
 await desk.waitForTimeout(800);
 check('V5: Clear search empties the field',
-  (await desk.locator('.places-searchrow .places-search input').inputValue()) === '');
+  (await desk.locator('#header-search-slot .places-search input').inputValue()) === '');
 
 await desk.close();
 

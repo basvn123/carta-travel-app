@@ -28,9 +28,10 @@ import { chromium } from 'playwright';
 // harness has to ask for BOTH and scope to :visible. Asking for .places-cat
 // alone passed for as long as the tab was phone-first and has silently
 // pointed at a hidden node ever since the desktop shell landed.
-const CAT = '.places-cat:visible, .side-cat:visible';
+const CAT = '.dtab-cats [role="tab"]';
 // Sorts are twinned too, and again under different classes.
-const SORT = '.places-sort:visible, .side-sort:visible';
+// T428: the sort is one select (the panel's on a desktop, the refine row's on a phone).
+const SORT = '.dtab-sort-side select:visible, .dtab-sort select:visible';
 
 // The facet rail is twinned the same way the category rail is, and again the
 // two halves do not share a wrapper class: .side-facets on desktop and
@@ -42,8 +43,10 @@ const SORT = '.places-sort:visible, .side-sort:visible';
 // ".side-facets:visible" OR ".places-facets:visible .places-class", which
 // silently matched the wrapper and made the band chips read as zero while
 // every other check still passed. Comma binds looser than a space.
+// T428: a phone keeps every chip in the Filters sheet (as Explore does); the
+// desktop panel shows the short set inline. Kit filter chips (.ui-chip).
 const inFacets = (sel) =>
-  `.side-facets:visible ${sel}, .places-facets:visible ${sel}`;
+  `.side-facets:visible ${sel}, .fsheet-places ${sel}`;
 
 const RAW_URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 // ?paymock: the GPX and KML exports are entitlement gated, and a headless run
@@ -72,6 +75,12 @@ const CC = (process.argv[3] || 'SI').toUpperCase();
 const COUNTRY_NAME = new Intl.DisplayNames(['en'], { type: 'region' });
 async function pickCountry(scope, cc) {
   const name = COUNTRY_NAME.of(cc);
+  const card = scope.locator(`.dgal-card[data-cc="${cc}"] .card-open`).first();
+  if (await card.isVisible().catch(() => false)) {
+    await card.click();
+    await scope.waitForTimeout(1800);
+    return;
+  }
   await scope.locator('.places-country:visible').first().click();
   await scope.waitForTimeout(400);
   const pop = scope.locator('.country-picker-pop:visible');
@@ -159,14 +168,14 @@ check('every trail photograph comes from Commons',
 await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-list.png`, fullPage: false });
 
 // ── The length filter ────────────────────────────────────────────────────
-const bandChips = page.locator(inFacets('.places-class')).filter({ hasNotText: /loops/i });
+const bandChips = page.locator(inFacets('.ui-chip')).filter({ hasNotText: /loops/i });
 const nBands = await bandChips.count();
 check('length band chips render', nBands >= 4, `${nBands} bands`);
 const bandLabel = await bandChips.first().innerText().catch(() => '');
-check('band chips carry a count', /\d/.test(bandLabel), bandLabel.replace(/\n/g, ' '));
+check('band chips carry no count (T428)', !/\s\d+$/.test(bandLabel.trim()), bandLabel.replace(/\n/g, ' '));
 
 // Tap the shortest band and confirm the list actually shortens to short walks.
-const shortChip = page.locator(inFacets('.places-class'), { hasText: /under 5 km/i }).first();
+const shortChip = page.locator(inFacets('.ui-chip'), { hasText: /under 5 km/i }).first();
 await shortChip.click();
 await page.waitForTimeout(900);
 // Compare WHICH cards are shown, not how many.
@@ -180,16 +189,18 @@ await page.waitForTimeout(900);
 // visible cards is what proves the filter moved the list.
 const afterBand = await page.locator('.places-tcard').count();
 const afterNames = await page.locator('.places-tcard .places-card-name').allInnerTexts();
-const bandTotal = parseInt((await shortChip.innerText()).replace(/\D+/g, ''), 10) || 0;
+const bandTotal = '(no count on the chip since T428)';
 check('length filter changes the list',
   afterBand > 0 && (afterNames.join('|') !== firstNames.join('|') || afterBand < nCards),
   `${afterBand} of ${nCards} shown, ${bandTotal} in the band`);
 const kmTexts = await page.locator('.places-tcard .places-card-facts').allInnerTexts();
-const kms = kmTexts.map((s) => parseFloat(s)).filter(Number.isFinite);
+// The facts are label over value since T428 ("Length 13.1 km ..."): read the
+// km figure itself, and require one, so an empty read cannot pass.
+const kms = kmTexts.map((s) => parseFloat(((s.match(/([\d.,]+)\s*km/) || [])[1] || '').replace(',', '.'))).filter(Number.isFinite);
 // The card rounds to one decimal and drops a trailing zero, so a 4.96 km
 // walk prints as "5 km". The bound is on the metres in the wire, not on the
 // rounded label, so the assertion has to allow the boundary value back.
-check('filtered list really is under 5 km', kms.every((k) => k <= 5),
+check('filtered list really is under 5 km', kms.length > 0 && kms.every((k) => k <= 5),
   `max ${Math.max(...kms)} km as printed`);
 await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-band-filter.png` });
 await shortChip.click();
@@ -211,14 +222,14 @@ if (await loopChip.count()) {
 }
 
 // ── Sort by length ───────────────────────────────────────────────────────
-await page.locator(SORT, { hasText: /length/i }).first().click();
+await page.locator(SORT).first().selectOption('distance');
 await page.waitForTimeout(900);
 const sortedKm = (await page.locator('.places-tcard .places-card-facts').allInnerTexts())
   .map((s) => parseFloat(s)).filter(Number.isFinite);
 check('length sort orders shortest first',
   sortedKm.every((k, i) => i === 0 || sortedKm[i - 1] <= k + 0.001),
   sortedKm.slice(0, 5).join(', '));
-await page.locator(SORT, { hasText: /rating/i }).first().click();
+await page.locator(SORT).first().selectOption('rating');
 await page.waitForTimeout(800);
 
 // ── The trail page ───────────────────────────────────────────────────────
@@ -314,8 +325,12 @@ await phone.waitForTimeout(900);
 await pickCountry(phone, CC);
 await phone.waitForTimeout(2500);
 check('phone: trail cards render', await phone.locator('.places-tcard').count() > 5);
-check('phone: the filter rail is there',
-  await phone.locator(inFacets('.places-class')).count() >= 4);
+await phone.locator('.dtab-filters:visible').first().click().catch(() => {});
+await phone.waitForTimeout(700);
+check('phone: the filter sheet holds the chips',
+  await phone.locator(inFacets('.ui-chip')).count() >= 4);
+await phone.keyboard.press('Escape');
+await phone.waitForTimeout(500);
 const overflow = await phone.evaluate(
   () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
 );

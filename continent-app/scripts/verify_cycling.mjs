@@ -551,10 +551,12 @@ if (!WIRE_ONLY) {
       // pass is where the chips are on screen.
       if (label === 'desktop') {
         check(`${label}: cycling has facet groups`,
-          await page.locator('.places-facet-group').count() >= 3,
-          `${await page.locator('.places-facet-group').count()} groups`);
+          // T428 (brief V3-1): the panel shows the short set inline and the rest
+          // behind All filters, so one inline group and the door are the contract.
+          await page.locator('.dtab-facet').count() >= 1 && await page.locator('.side-allfilters:visible').count() === 1,
+          `${await page.locator('.dtab-facet').count()} groups`);
         check(`${label}: cycling has sort buttons`,
-          await page.locator('.places-sort:visible, [class*=sort]:visible').count() >= 3);
+          await page.locator('.dtab-sort-side select option, .dtab-sort select option').count() >= 3);
       }
 
       if (await page.locator('[data-testid=cycle-page]').count()) {

@@ -658,7 +658,7 @@ const PAGES = {
   'dest-trails': async (page) => {
     await open(page, '');
     await page.locator('.places-ccard, .jstyle-card').first().waitFor({ timeout: 120000 });
-    await visible(page, '.side-cat:has-text("Trails"), .places-cat:has-text("Trails")').click();
+    await visible(page, '.dtab-cats [role="tab"]:has-text("Trails")').click();
     await page.waitForTimeout(3000);
   },
   journey: async (page) => {

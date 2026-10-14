@@ -292,10 +292,10 @@ check('destinations tab opens', await page.locator('.places-tab').isVisible());
 // desktop side rail and once in the phone toolbar, and CSS decides which one
 // a viewport shows. Counting both is how this check started failing on a
 // change that broke nothing.
-check('General still carries the country picker',
-  await page.locator('.places-country:visible').count() === 1);
+// T428: the old General category is gone; the country picker sits in the
+// refine row over each list (phone) and the side panel (desktop).
 
-await page.locator('.places-cat', { hasText: /^mountains$/i }).click();
+await page.locator('.dtab-cats [role="tab"]', { hasText: /^mountains$/i }).click();
 await page.waitForTimeout(2500);
 
 // ── The controls this tab carries, and the ones it does not ──
@@ -306,7 +306,7 @@ check('lifestyle tier is gone on Mountains', await page.locator('.lifestyle-btn:
 check('the search field stays', await page.locator('.places-search input').count() === 1);
 
 // ── Mountains, not trips and not a country index ──
-check('no country flag index on Mountains', await page.locator('.places-ccard').count() === 0);
+check('the countries track is offered (T428)', await page.locator('.dgal-card').count() > 0);
 check('no trip cards on Mountains', await page.locator('.places-card:not(.places-bcard)').count() === 0);
 const cards = page.locator('.places-mcard');
 const nCards = await cards.count();
@@ -323,8 +323,8 @@ check('cards carry the height in mono', heights >= 1, `${heights} of ${nCards}`)
 const cardScore = await cards.first().locator('.score-chip').innerText().catch(() => '');
 check('cards carry a score', /^\d/.test(cardScore.trim()), cardScore);
 check('cards carry reason chips', await cards.first().locator('.places-bcard-tags span').count() >= 1);
-const head = await page.locator('.places-beachhead').count()
-  ? await page.locator('.places-beachhead').first().innerText().catch(() => '')
+const head = await page.locator('.dtab-countryband-name').count()
+  ? await page.locator('.dtab-countryband-name').first().innerText().catch(() => '')
   : '';
 check('the opening list is the European ranking, with no country header',
   !head, head.replace(/\n/g, ' ').slice(0, 60));
@@ -340,18 +340,16 @@ check('the list is ranked best first',
 // ── The lift chip, which is why most people open this tab ──
 // It leads the "how you get there" group, which is the one group short
 // enough for the toolbar row; the other six filters live in the sheet.
-const chip = page.locator('.places-facets .places-class', { hasText: /lift/i }).first();
-if (await chip.count()) {
-  const chipLabel = await chip.innerText();
+const chipLabel = await pressChip(page, /lift/i);
+if (chipLabel) {
   check('the lift chip is offered', /lift/i.test(chipLabel), chipLabel.replace(/\n/g, ' '));
-  await chip.click();
   await page.waitForTimeout(1500);
   const liftCards = await page.locator('.places-mcard').count();
   const liftChips = await page.locator('.places-mcard-way').count();
   check('the lift filter keeps only mountains with a lift',
     liftCards > 0 && liftChips === liftCards, `${liftChips} of ${liftCards} say so`);
   await page.screenshot({ path: 'shots/mountains-lift.png', fullPage: false });
-  await chip.click();
+  await pressChip(page, /lift/i);
   await page.waitForTimeout(1200);
 } else {
   check('the lift chip is offered', false, 'no chip rendered');
@@ -363,7 +361,7 @@ if (await chip.count()) {
 // carrying its own count, and no chip offered at zero in this scope.
 // :visible, because the Explore tab keeps its own Filters button in the
 // page, hidden, and a bare class selector finds that one first.
-const filterBtn = page.locator('.places-filter-btn:visible').first();
+const filterBtn = page.locator('.dtab-filters:visible, .side-allfilters:visible').first();
 if (await filterBtn.count()) {
   await filterBtn.click();
   await page.waitForTimeout(900);
@@ -382,7 +380,7 @@ if (await filterBtn.count()) {
   check('the filters cover height, prominence, view, difficulty, access and month',
     found.length >= 5, `${found.length} of ${wanted.length} kinds seen`);
   const counted = await page.locator('.fsheet-places .fchip-n').count();
-  check('every filter chip carries a count', counted >= labels.length * 0.9,
+  check('no filter chip carries a count (T428)', counted === 0,
     `${counted} counts for ${labels.length} chips`);
   const zeroLive = await page.locator('.fsheet-places .fchip:not([disabled]) .fchip-n')
     .allInnerTexts();
@@ -413,11 +411,11 @@ const firstCountry = (await page.locator('.places-bcard-where').first().innerTex
 if (firstCountry) {
   await page.locator('.places-search input').fill(firstCountry);
   await page.waitForTimeout(2200);
-  const countryHead = await page.locator('.places-beachhead').first().innerText().catch(() => '');
+  const countryHead = await page.locator('.dtab-countryband-name').first().innerText().catch(() => '');
   check('typing a country names it over the list', new RegExp(firstCountry, 'i').test(countryHead),
     countryHead.replace(/\n/g, ' '));
   check('the country list has mountains in it', await page.locator('.places-mcard').count() >= 1);
-  check('the country list says how many mountains it holds', /\d/.test(countryHead),
+  check('the country band carries no count (T428)', !/\d/.test(countryHead),
     countryHead.replace(/\n/g, ' ').slice(0, 80));
   await page.locator('.places-search input').fill('');
   await page.waitForTimeout(1200);
@@ -556,7 +554,7 @@ check('desktop: the destinations tab is reachable',
 // Desktop draws the categories in the left panel (.side-cat) and the phone
 // draws them in the toolbar (.places-cat). One renderer, two class names, so
 // the harness asks for whichever one this viewport rendered.
-const deskCat = desk.locator('.side-cat:visible, .places-cat:visible',
+const deskCat = desk.locator('.dtab-cats [role="tab"]',
   { hasText: /^mountains$/i }).first();
 if (await deskCat.isVisible().catch(() => false)) {
   await deskCat.click();
@@ -640,3 +638,20 @@ console.log(failed === 0 && errors.length === 0
   ? '\nAll checks passed.'
   : `\n${failed} checks failed, ${errors.length} page errors.`);
 process.exit(failed === 0 ? 0 : 1);
+
+// T428: a phone keeps every facet chip in the Filters sheet; the desktop
+// panel shows the short set inline. Press one wherever it is, and say which.
+async function pressChip(pg, re) {
+  const inline = pg.locator('.side-facets .ui-chip:visible', { hasText: re }).first();
+  if (await inline.count()) { const label = await inline.innerText(); await inline.click(); return label; }
+  await pg.locator('.dtab-filters:visible, .side-allfilters:visible').first().click().catch(() => {});
+  await pg.waitForTimeout(700);
+  const inSheet = pg.locator('.fsheet-places .fchip', { hasText: re }).first();
+  if (!(await inSheet.count())) { await pg.keyboard.press('Escape'); return ''; }
+  const label = await inSheet.innerText();
+  await inSheet.click();
+  await pg.waitForTimeout(300);
+  await pg.keyboard.press('Escape');
+  await pg.waitForTimeout(600);
+  return label;
+}
