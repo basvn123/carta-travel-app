@@ -72,7 +72,10 @@ export function CountryPage({
 
   const badged = mine.filter((p) => p.country_badge)
     .sort((a, b) => (a.country_rank ?? 99) - (b.country_rank ?? 99));
-  const byKind = (kinds) => mine.filter((p) => kinds.includes(kindOf(p))).slice(0, 12);
+  // A place shows once on the page (T451): the best-of rail first, the kind
+  // rails after it without the places it already holds.
+  const inBest = new Set(badged.map((p) => p.id));
+  const byKind = (kinds) => mine.filter((p) => !inBest.has(p.id) && kinds.includes(kindOf(p))).slice(0, 12);
   const cities = byKind(['metro', 'city']);
   const towns = byKind(['town', 'village']);
   const areas = byKind(['area']);
@@ -91,7 +94,7 @@ export function CountryPage({
     : carShare > 0.3 ? 'cpage.carSome' : 'cpage.carFew';
 
   return (
-    <div className="cpage cpg" role="dialog" aria-label={country}>
+    <div className="cpage cpg" role="dialog" aria-modal="true" aria-label={country}>
       <div className="cpg-bar">
         <IconButton className="cpage-back" label={t('cpage.back')} onClick={onClose}>
           <ArrowLeftIcon size={20} />
@@ -107,10 +110,10 @@ export function CountryPage({
         )}
 
         <header className="cpg-head">
-          <h2 className="cpage-name cpg-name">
+          <h1 className="cpage-name cpg-name">
             <CountryFlag country={iso2} size={22} />
             <span>{country}</span>
-          </h2>
+          </h1>
           {knownKey && <p className="cpg-line">{t(knownKey)}</p>}
         </header>
 

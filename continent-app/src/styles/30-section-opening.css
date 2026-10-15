@@ -140,6 +140,8 @@
 }
 .dtab-where { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 .dtab-fact { font-variant-numeric: tabular-nums; color: var(--text); }
+/* T451: a fact says what it measures ("Height 2,812 m", not a bare "2,812 m"). */
+.dtab-fact-l { color: var(--text-2); }
 
 /* The full list's heading, under the opening. */
 .dtab-gridhead {

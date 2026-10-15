@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { Button, Card, Switch } from '../components/ui/index.js';
+import { Button, Card, Money, Switch } from '../components/ui/index.js';
+import { countryName as localCountryName } from '../lib/countryName.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
-import { formatMoney } from '../lib/money.js';
 
 /*
  * What these cards are really drawn at. They sit in .places-list, the same
@@ -15,7 +15,7 @@ import { formatMoney } from '../lib/money.js';
 const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 import {
   loadJourneyIndex, loadJourneyType, loadAllJourneyCards, typeLabel, typeDesc, diffLabel, monthsShort,
-  eurRange, styleFromPrice, takePendingJourney,
+  styleFromPrice, takePendingJourney,
 } from '../lib/journeys.js';
 import { cardTotal, readTripLength, writeTripLength } from '../lib/tripLength.js';
 import { openShared } from '../lib/sharedElement.js';
@@ -60,7 +60,14 @@ const norm = (s) => String(s || '')
   .replace(/[̀-ͯ]/g, '')
   .replace(/ł/g, 'l');
 
-const eur0 = (n, lang) => formatMoney(n, { precision: 'whole', locale: lang });
+/** A sentence with the kit's Money in its {eur} or {range} slot (T451): the
+ *  trip budgets are estimates, so they carry Explore's ~ and est. mark. */
+const SLOT = '\u0001';
+function withMoney(text, money) {
+  const at = text.indexOf(SLOT);
+  if (at < 0) return text;
+  return <>{text.slice(0, at)}{money}{text.slice(at + SLOT.length)}</>;
+}
 
 /** A photograph, or the flag-and-name placeholder on the sunken ground. */
 function CardPhoto({ hero, cc, name }) {
@@ -90,7 +97,7 @@ function CardPhoto({ hero, cc, name }) {
  *  name, one line of what the week is, and what the cheapest of them costs
  *  a person at the length the list is read at (rule "Cost on cards"). No
  *  count of trips: the list behind the card is the answer. */
-function StyleCard({ type, from, onPick, t, lang }) {
+function StyleCard({ type, from, onPick, t }) {
   const name = typeLabel(type.slug, t, type.name);
   const desc = typeDesc(type.slug, t);
   return (
@@ -103,7 +110,7 @@ function StyleCard({ type, from, onPick, t, lang }) {
       onOpen={() => onPick(type.slug)}
       meta={desc ? <span className="jstyle-desc">{desc}</span> : null}
       price={from
-        ? <span className="jcap-fig">{t('journey.fromPrice', { eur: eur0(from.low, lang), n: from.days })}</span>
+        ? <span className="jcap-fig">{withMoney(t('journey.fromPrice', { eur: SLOT, n: from.days }), <Money value={from.low} est />)}</span>
         : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
     />
   );
@@ -117,7 +124,7 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
   // The days and the total at the length the list is read at (T188).
   const at = cardTotal(card, length);
   const days = at?.days || card.days;
-  const total = at ? eurRange({ low: at.low, high: at.high }, lang) : '';
+  const total = at && (Number.isFinite(at.low) || Number.isFinite(at.high));
   return (
     <Card
       layout="tile"
@@ -131,12 +138,14 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
         <span className="jcard-meta">
           <span className="jcap-where">
             <CountryFlag country={card.cc} size={12} className="places-card-flag" />
-            <span>{[card.country, card.sub].filter(Boolean).join(', ')}</span>
+            <span>{[localCountryName(card.cc, card.country, lang), card.sub].filter(Boolean).join(', ')}</span>
           </span>
           <span className="jcap-meta">{[t('journey.nDays', { n: days }), diff, months].filter(Boolean).join(', ')}</span>
         </span>
       )}
-      price={total ? <span className="jcap-fig">{t('journey.rangePp', { range: total })}</span> : null}
+      price={total
+        ? <span className="jcap-fig">{withMoney(t('journey.rangePp', { range: SLOT }), <Money low={at.low} high={at.high} est />)}</span>
+        : null}
     />
   );
 }

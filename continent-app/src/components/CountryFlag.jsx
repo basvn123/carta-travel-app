@@ -193,8 +193,10 @@ export function CountryFlag({ country, size = 15, className = '' }) {
       width={size * 1.35}
       height={size * 0.9}
       viewBox="0 0 60 40"
-      role="img"
-      aria-label={`Flag of ${country}`}
+      // Decorative (T451): a flag always sits beside its country's name, and
+      // the old label read an English "Flag of AL" in every language.
+      aria-hidden="true"
+      focusable="false"
       preserveAspectRatio="xMidYMid slice"
     >
       {renderFlag(def)}

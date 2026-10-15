@@ -1391,10 +1391,7 @@
    itinerary card it keeps the full row. */
 @media (max-width: 768px) {
   .jstyle-card .jstyle-name { font-size: 15.5px; }
-  .jcard {
-    grid-column: 1 / -1;
-    aspect-ratio: 2 / 1;
-  }
+  .jcard { grid-column: 1 / -1; }
   .jcard .jcard-title { font-size: 16px; }
   .jsec-title { font-size: 19px; }
 }

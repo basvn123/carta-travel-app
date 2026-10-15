@@ -151,7 +151,12 @@ export function RailTile({ row, describe, photo, onOpen, sharedKey }) {
       meta={(d.where || d.fact) ? (
         <span className="dtab-tile-meta">
           {d.where && <span className="dtab-where">{d.where}</span>}
-          {d.fact && <span className="dtab-fact">{d.fact}</span>}
+          {d.fact && (
+            <span className="dtab-fact">
+              {d.factLabel && <span className="dtab-fact-l">{d.factLabel} </span>}
+              {d.fact}
+            </span>
+          )}
         </span>
       ) : null}
       rating={d.rating ? <ScoreChip rating={d.rating} size="sm" /> : null}
