@@ -1225,6 +1225,13 @@ def main():
     conn.commit()
     conn.close()
 
+    # T456: a short walk whose midpoint lies in another catalogue country is
+    # filed there (walks round Mützenich, a German village, sat under BE).
+    sys.path.insert(0, str(ROOT / "pipeline" / "regions"))
+    import place_truth
+    known = {t["country"] for t in trips}
+    for t in trips:
+        t["country"] = place_truth.trail_country(t.get("rg"), t["country"], t.get("distance_m"), known)
     by_country = defaultdict(list)
     for t in trips:
         by_country[t["country"]].append(t)
