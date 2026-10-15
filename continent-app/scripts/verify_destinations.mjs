@@ -65,7 +65,11 @@ for (const view of ['phone', 'desk']) {
   const tabs = await page.$$eval('.dtab-cats [role="tab"]', (els) => els.map((e) => ({ t: e.textContent.trim(), on: e.getAttribute('aria-selected') })));
   check(tabs.length === 6, `${tag}six section tabs`, String(tabs.length));
   check(tabs.find((x) => x.on === 'true')?.t === 'Beaches', `${tag}dc=beaches selects Beaches`);
-  check(await page.$('.dtab-head img') !== null, `${tag}the section head has its photograph`);
+  // T430 (owner, 2026-10-15): the photograph at the top of a section went;
+  // the head carries the title and the near-me door, and the rail tiles swipe.
+  check(await page.$('.dtab-head img') === null, `${tag}the section head carries no photograph`);
+  check(await page.$('.dtab-head .dtab-nearme') !== null, `${tag}the head carries the near-me door`);
+  check(await page.$$eval('.dtab-rail .tphotos', (els) => els.length) > 0, `${tag}rail tiles swipe their photographs`);
   check((await page.$eval('.dtab-head .dtab-title', (e) => e.textContent.trim()).catch(() => '')).length > 0, `${tag}the head has a title`);
   const rails = await page.$$eval('.dtab-rails > .dtab-rail', (els) => els.length);
   check(rails >= 2 && rails <= (view === 'phone' ? 3 : 4), `${tag}two to ${view === 'phone' ? 3 : 4} rails`, String(rails));
@@ -147,13 +151,13 @@ for (const view of ['phone', 'desk']) {
   check(trailCounts.length === 0, `${tag}no bare counts on Trails`, trailCounts.slice(0, 4).join(' | '));
   await page.close();
 
-  // Trips: ten styles, a line each, a price, no counts, no coverage sentence.
+  // Trips: fifteen styles since T431, a line each, a price, no counts, no coverage sentence.
   page = await open(browser, view, '?tab=places&dc=trips');
   const styles = await page.$$eval('.jstyle-card', (els) => els.map((e) => ({
     desc: (e.querySelector('.jstyle-desc')?.textContent || '').trim(),
     fig: (e.querySelector('.jcap-fig')?.textContent || '').trim(),
   })));
-  check(styles.length === 10, `${tag}ten trip styles`, String(styles.length));
+  check(styles.length === 15, `${tag}fifteen trip styles`, String(styles.length));
   check(styles.every((s) => s.desc.length > 10), `${tag}every style has its one line`);
   check(styles.every((s) => /From|No written/.test(s.fig)), `${tag}every style has its from-price`);
   check(await page.$('.jsec-coverage, .jcap-count') === null, `${tag}no coverage sentence, no trip count`);
@@ -175,7 +179,7 @@ for (const view of ['phone', 'desk']) {
   check(trip.every((x) => !x.fig || /est\./.test(x.fig)), `${tag}a trip's budget is marked an estimate`, trip[0]?.fig || '');
   await page.goBack();
   await page.waitForTimeout(1200);
-  check((await page.$$('.jstyle-card')).length === 10 && page.url().includes('tab=places'),
+  check((await page.$$('.jstyle-card')).length === 15 && page.url().includes('tab=places'),
     `${tag}Back closes a style's list onto the styles`, page.url().split('?')[1] || '');
   await page.close();
 

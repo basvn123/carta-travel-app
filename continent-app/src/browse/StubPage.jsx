@@ -1,7 +1,7 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { DetailPage } from './DetailSkeleton.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
+import { ItemHead } from './ItemParts.jsx';
 import { UploadForm } from '../community/UploadForm.jsx';
 import { stubLink } from '../lib/stubs.js';
 import { stripDashes } from '../lib/format.js';
@@ -44,13 +44,8 @@ export function StubPage({ stub, countryName, onClose }) {
       onClose={onClose}
       resetKey={stub.id}
       head={(
-        <>
-          <h1 className="bpage-name">
-            <CountryFlag country={stub.cc} size={15} className="bpage-flag" />
-            {name}
-          </h1>
-          <p className="dsk-crumb">{[stub.region, countryName(stub.cc)].filter(Boolean).join(', ')}</p>
-        </>
+        <ItemHead title={name} iso2={stub.cc}
+          where={[stub.region, countryName(stub.cc)].filter(Boolean).join(', ')} />
       )}
       hook={t('stub.line')}
       signature={(

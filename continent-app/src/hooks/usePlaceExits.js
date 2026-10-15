@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { firstOkImage, okPhoto } from '../lib/photoVeto.js';
 import { useI18n } from '../i18n/index.jsx';
 import { catalogue } from '../lib/appData.js';
 import { stayPerNight } from '../lib/costIndex.js';
@@ -113,6 +114,12 @@ export function usePlaceExits({ me, cc, load, centre, level, baseOf = () => null
       ].filter(Boolean).join(', '),
       mono: false,
       onOpen: () => open?.(e.row),
+      // T430: the alternatives are photo cards now ("Not quite right?").
+      row: e.row,
+      kind: e.kind,
+      photoUrl: firstOkImage(e.row.images)?.u || okPhoto(e.row.img?.u) || okPhoto(e.row.photo) || null,
+      rating: e.row.score != null ? { score: e.row.score, tier: e.row.tier ?? 0 } : null,
+      iso2: e.row.cc || null,
     }));
     // baseOf, centre, level, meta and open are stable per page type.
     // eslint-disable-next-line react-hooks/exhaustive-deps

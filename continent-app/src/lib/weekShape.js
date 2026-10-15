@@ -285,6 +285,7 @@ const CUTS = {
   'water-sports': { unit: 'water', cuts: [2, 3.5] }, // hours on the water
   'road-trip': { unit: 'drive', cuts: [100, 220] },  // km at the wheel
   city: { unit: 'city', cuts: [8, 14] },             // km on foot
+  pilgrim: { unit: 'walk', cuts: [13, 24] },         // T431: walked like a hiking week
 };
 
 const level = (v, [a, b]) => (v < a ? 1 : v < b ? 2 : 3);
@@ -539,7 +540,7 @@ const TITLE_OPTION = /\bor (?:the )?.+\b(alternative|option)\b/i;
 const OPTION_CUE = /\b(instead|alternative|alternatively|skipping)\b/i;
 const BAIL = /^bail-?out:?\s*/i;
 const FLEX = /weather|contingency|flex|rest day|spare day|best-conditions|best conditions|reserve day|buffer/i;
-const OUTDOOR = new Set(['hiking', 'trail-running', 'cycling', 'winter-sports', 'water-sports', 'nature-escape', 'road-trip']);
+const OUTDOOR = new Set(['hiking', 'trail-running', 'cycling', 'winter-sports', 'water-sports', 'nature-escape', 'road-trip', 'pilgrim']);
 export const CONDITION_TYPES = new Set(['winter-sports', 'water-sports']);
 
 /** The day's own fallback: the bail-out clause, or the first sentence that

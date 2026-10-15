@@ -184,7 +184,7 @@ export function lakeHeadline(lake, t, countryName) {
  * Every sentence the data supports, in reading order. `max` caps how many go
  * on a card; the page passes no cap and shows the lot.
  */
-export function lakeWhy(lake, t, max) {
+export function lakeWhy(lake, t, max, detail = false) {
   const out = [];
   for (const reason of lake.why || []) {
     // The opening line already said what kind of water this is, so the bare
@@ -203,7 +203,14 @@ export function lakeWhy(lake, t, max) {
     // A key with no catalogue entry falls back to the key itself, which must
     // never reach the page as a sentence.
     if (!line || line === key) continue;
-    out.push(line);
+    if (detail) {
+      // T430: the reason as a highlight, its tag word over its sentence.
+      const tagKey = keyFor(TAG_KEY, reason);
+      const title = tagKey ? t(tagKey, params) : '';
+      out.push({ key: reason.k, title: title && title !== tagKey ? title : '', line });
+    } else {
+      out.push(line);
+    }
     if (max && out.length >= max) break;
   }
   return out;
@@ -536,4 +543,13 @@ export function lakeFacetCounts(pool, state) {
     }
   }
   return out;
+}
+
+/** The reasons as highlights for the "Why go" band (T430). */
+// Reasons that restate the fact band (a height, an area, the season) do not
+// lead and are not highlights: they are already on the page as figures.
+const NOT_A_HIGHLIGHT = new Set(['height', 'prominence', 'range', 'area', 'depth', 'elevation', 'length', 'surface', 'season', 'difficulty', 'graded', 'parking', 'transit', 'roadAccess', 'unrated_coverage', 'no_photo_map_card', 'water_unknown_no_source', 'swimUnknown', 'photographed', 'curated', 'editorial_pick', 'shared']);
+
+export function lakeHighlights(lake, t, max = 4) {
+  return lakeWhy(lake, t, 12, true).filter((h) => !NOT_A_HIGHLIGHT.has(h.key)).slice(0, max);
 }

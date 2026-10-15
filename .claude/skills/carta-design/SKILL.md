@@ -11,6 +11,9 @@ the money formatter `continent-app/src/lib/money.js` (T423) and the style guide 
 line: Carta wore a cool grey "Timetable" palette, then cream with Fraunces and terracotta (T198 to T380);
 both are retired and nothing below refers to them as current.
 
+Updated 2026-10-15 (T430, T431): the item page and trip page grammar, the 3D terrain map, credits under photos,
+trip lists as tiles, the suitability strip retired.
+
 Updated 2026-10-13 (T438) after the owner reviewed Explore: the lagoon teal became one warm brown
 (umber), a rating became a star and an ink figure (the Score, T437), provenance on the page became the
 estimate mark alone, and catalogue counts left the page furniture.
@@ -207,7 +210,9 @@ in the kit. Two screens can never write the same figure two ways.
 - **Density** (owner decisions 2026-10-13, T421 and T438): a filtered or searched list on Explore and
   Destinations is compact rows (a 72 px rounded photo, name, the Score, the price line, a save control),
   about ten to a phone screen. Sections (rails) and the home page use large photo tiles, where
-  inspiration leads.
+  inspiration leads. A trip style's list is tiles too (owner 2026-10-15, T431): a week is chosen on its
+  photographs and the places it visits, so each trip is a tile with a 3:2 photo, the full title, the
+  places visited, the best months and the price.
 - **Breakpoints.** Floor 360 px with no horizontal scroll; below 769 px the phone (five-slot bottom nav,
   sheets for choices, pages for detail); from 769 px the header carries the tabs; from 1024 px list and map
   side by side, highlighting each other, and two-column detail pages. Reading pages (a destination, a
@@ -230,6 +235,12 @@ Photography leads, and every photo is real and licensed with its credit (`docs/t
 - Corners `--radius-card` on a free photo; a photo at the top of a tile takes the tile's corners.
 - A missing photo is the flag-and-name placeholder on `--surface-sunken`, never a grey or tinted box.
   Credits are text.
+- A photo's credit sits under that photo, on its caption line, small and in `--text-3` (owner
+  2026-10-15). Item pages keep no "Where this comes from" fold: the data sources are one line of links at
+  the foot of the page.
+- A gallery may run on a list tile (owner 2026-10-15): up to four photos that swipe inside the tile's
+  media, the first loaded at once and the rest on first touch, arrows only on hover, the tile still one
+  link. Not on the compact rows of a filtered list.
 - Never an AI-generated photograph, never stock people with laptops, never a 3D or glossy render.
 
 ## The kit
@@ -277,7 +288,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **The cost bar.** At most one stacked bar above a receipt's lines, never instead of them: 8 px, full width, one segment per line in receipt order in the `--kind-*` ramp, 1 px `--surface` gaps, no brown, no legend, no percentages.
 
-**Cost on cards and pages.** A card or page that offers a place or a trip carries one price line: the day cost per person at the traveller's Lifestyle ("From {price} a person" with its length on a collection card, from the cheapest member, never an average), read from `src/lib/costIndex.js` so it agrees with Explore and the receipt. It carries the estimate mark when it is an estimate and nothing else about its source (T438). No figure when the data is too thin. A page shows one per person per day figure and every other mention on the page is that value.
+**Cost on cards and pages.** A card or page that offers a place or a trip carries one price line: the day cost per person at the traveller's Lifestyle ("From {price} a person" with its length on a collection card, from the cheapest member, never an average; in a trip list whose length control already states the days, the card carries no length, owner 2026-10-15), read from `src/lib/costIndex.js` so it agrees with Explore and the receipt. It carries the estimate mark when it is an estimate and nothing else about its source (T438). No figure when the data is too thin. A page shows one per person per day figure and every other mention on the page is that value.
 
 **Best value.** The cheapest item in a comparison (the cheapest pin in view, a "Best value" status chip) is marked in `--best` with `--text` on it, once per view. It is a marker, not a selection and not an action.
 
@@ -289,9 +300,9 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Plan cards.** Equal weight; the recommended plan is marked with a brown border and a "Recommended" chip and keeps the same ground. Never dim the free plan. State limits as plain numbers.
 
-**Suitability strip.** Under a trip hero, a solid `--surface` band flush with the photo's bottom edge, square corners where it meets the photo. Exactly three cells in fixed order: difficulty (five squares filled `--text` to the level, outlined `--text-3` beyond, never `--rate` or `--action`, plus the word), style (one or two words from tags), total cost (with currency). A missing value shows a placeholder word ("Unrated", "Mixed", "Price on request"). One row of three on a phone.
+**Suitability strip (retired 2026-10-15, T431).** The three-cell band under a trip hero is gone: the trip page carries a fact band (days, distance, climb, highest point, where you sleep, start) and the difficulty as a status chip in the head (five squares filled `--text` to the level, outlined `--text-3` beyond, plus the word, with an InfoDot). The five squares stay the one difficulty drawing everywhere.
 
-**Detail page grammar.** Decision first, then hand-off, then depth. Under the head, a key facts band of four to six measured facts as label-over-value rows (label 12 px `--text-2`, value tabular; no card, no colour); then Before you go (not-for and hazard lines, safety first, never folded); then one hand-off band with the page's one primary and at most four secondaries; then map and signature; at most five folded rows (sections under a `--border-soft` hairline, no box, no shadow); then exits; then sources. Download and report sit in one row of secondaries before the honest footer. From 1024 px the first photo may sit beside the head and a receipt page may run a sticky side column, inside the 1180 px cap. No bento grid: no tiles of mixed sizes.
+**Detail page grammar** (owner decision 2026-10-15, T430 and T431: show first what makes the traveller want to go, then what decides it). Item pages (trail, beach, lake, mountain, cycle route and tour), top to bottom: the page bar (back naming the list, save, share); the photo gallery; the head (full name, the Score with its band, where, one hook line that sells the place, never a statistic about it); a fact band of four to six measured facts as label-over-value rows with a 16 px icon each (label 12 px `--text-2`, value tabular; no card, no colour; a missing fact is left out, never "Not recorded"); Why go, a photo track of highlights; the map with the climb drawn under it on routes; Before you go (at most four short icon rows, safety first, never folded); one hand-off row with the page's one primary and at most four secondaries (Download PDF is one of them, the page's only PDF door); getting there; at most three folded rows; Not quite right? (alternatives as large photo cards); nearby; one line of sources. The trip page: gallery, head, fact band, Why this trip, the price card (a sticky side column from 1024 px), Is this week for you, Not quite right? straight after it, the week day by day, getting there, before you go. From 1024 px a receipt page may run a sticky side column, inside the 1180 px cap. No bento grid: no tiles of mixed sizes.
 
 **Data drawings.** One family on the ink ramp: weight is the scale (filled to the level, outlined beyond), the figure always sits beside the drawing, the drawing reads the same when removed, no legend (a strip on a card is explained once per list as a text key), at most one committed item in brown. Members: the month strip (twelve cells, the chosen month outlined 2 px `--text`, never `--action` or `--rate`), the thin bar (at most 8 px, segments separated by 1 px `--surface`), the profile (elevation on a km axis, one brown marker shared with the map, moved by drag, tap or arrow keys), the gauge (five segments, the cheapest band may be `--green`), the five squares, the receipt, and the label-over-value row. `--climate-good` and `--climate-poor` stay only where they already are.
 
@@ -312,6 +323,8 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 **Rails and cuts.** A rail has a heading (a figure, a verb, or a plain section name such as "Hidden gems"), "See all" without a number, arrows on a fine pointer, arrow keys when focused, dots hidden from screen readers, scroll-snap, one aspect, no autoplay or loop; no subtitle and no position figure (T438). Desktop shows at most four rails and a phone three; further cuts are one row of chips. The first browse rail may be a cost cut ("Under {price} a day in <month>") sorted by day cost with countries interleaved.
 
 **Tracks.** The day track, flashcards and the photo track share mechanics: one card per stop of `scroll-snap-type: x mandatory`, about 85 percent wide on a phone so the next shows, three across from 1024 px for days; Previous and Next secondaries at `--tap` and the position ("Day 3 of 7", "2 of 5") above or under it; arrow keys move one; position dots 6 px `--border`, the current one `--select-border`, hidden from screen readers. Swiping is a shortcut, never the only way. No autoplay, no looping, no flip, no 3D, no stacked shadows. Flashcards have a "Show all" link that turns the deck into a list, and print as the list. Every day stays reachable as a link from the page's own list.
+
+**3D terrain map** (owner decision 2026-10-15, T430). A map on an item page or a trip day may offer a 2D / 3D Segmented control in a toolbar row under it, never over it. 3D drapes the route and pins on real terrain (the Mapterhorn elevation tiles through `src/lib/terrainSource.js`) with a hillshade in token colours; it is off by default, tilts and rotates only under the traveller's hand, eases its camera within `--dur-4` and never moves by itself (no orbit, no fly-through). Charts, profiles and photographs stay flat: "no 3D" still holds for them. Maps on a page never ask for Ctrl or Cmd: a two-finger trackpad swipe pans, a pinch zooms, a mouse wheel zooms, and on a phone the map in the page flow stays still until the traveller expands it.
 
 **Day list.** Between two stops one line gives minutes and km by the leg's mode; each stop carries an arrival time; both are estimates, so the first of each per view carries the tilde, "est." and an InfoDot. No hour grid, no end time stated as fact. Days are switched with one control, "Day N, weekday date", flanked by Previous and Next. Ways to add live in one labelled toolbar row inside the content; nothing floats over the list, and on a phone the bottom nav's plus is the only floating control.
 

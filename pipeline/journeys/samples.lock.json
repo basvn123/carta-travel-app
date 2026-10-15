@@ -1,0 +1,96 @@
+{
+  "heroes": {
+    "ba-hostel-sarajevo-mostar-kotor": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Old_Bridge_in_Mostar_during_sunset.jpg/1280px-Old_Bridge_in_Mostar_during_sunset.jpg",
+      "w": 1280,
+      "h": 720,
+      "credit": "Stari Most",
+      "page": "https://commons.wikimedia.org/wiki/File:Old_Bridge_in_Mostar_during_sunset.jpg",
+      "author": "Duesseljan",
+      "licence": "CC0"
+    },
+    "hr-beach-week-makarska-riviera": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Urbanisti%C4%8Dka_cjelina_Makarske.jpg/1280px-Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Makarska",
+      "page": "https://commons.wikimedia.org/wiki/File:Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+      "author": "SKas",
+      "licence": "CC BY-SA 4.0"
+    },
+    "cz-rail-prague-vienna-budapest": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg/1280px-Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Charles Bridge",
+      "page": "https://commons.wikimedia.org/wiki/File:Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+      "author": "A.Savin",
+      "licence": "FAL"
+    },
+    "es-pilgrim-camino-sarria-santiago": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Santiago_Cathedral_2021_-_west_panorama.jpg/1280px-Santiago_Cathedral_2021_-_west_panorama.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Santiago de Compostela",
+      "page": "https://commons.wikimedia.org/wiki/File:Santiago_Cathedral_2021_-_west_panorama.jpg",
+      "author": "Fernando Pascullo",
+      "licence": "CC BY-SA 4.0"
+    },
+    "gr-island-hopping-paros-antiparos-naxos": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg/1280px-Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+      "w": 1280,
+      "h": 960,
+      "credit": "Cyclades",
+      "page": "https://commons.wikimedia.org/wiki/File:Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+      "author": "kallerna",
+      "licence": "CC BY-SA 4.0"
+    }
+  },
+  "typeHeroes": {
+    "hostel": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Mura_di_cattaro%2C_05.JPG/1280px-Mura_di_cattaro%2C_05.JPG",
+      "w": 1280,
+      "h": 853,
+      "credit": "Fortifications of Kotor",
+      "page": "https://commons.wikimedia.org/wiki/File:Mura_di_cattaro,_05.JPG",
+      "author": "Sailko",
+      "licence": "CC BY 3.0"
+    },
+    "beach-week": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Brela_-_pla%C5%BEa_Punta_rata_%28istok%29.jpg/1280px-Brela_-_pla%C5%BEa_Punta_rata_%28istok%29.jpg",
+      "w": 1280,
+      "h": 960,
+      "credit": "Punta rata",
+      "page": "https://commons.wikimedia.org/wiki/File:Brela_-_pla%C5%BEa_Punta_rata_(istok).jpg",
+      "author": "Silverije",
+      "licence": "CC BY-SA 4.0"
+    },
+    "rail": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/G_4-5_107_Albula_Landwasser_normal.jpg/1280px-G_4-5_107_Albula_Landwasser_normal.jpg",
+      "w": 1280,
+      "h": 850,
+      "credit": "Landwasser Viaduct",
+      "page": "https://commons.wikimedia.org/wiki/File:G_4-5_107_Albula_Landwasser_normal.jpg",
+      "author": "SchmalspurDVZO",
+      "licence": "CC BY-SA 4.0"
+    },
+    "pilgrim": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Monument_Compostelle.JPG/1280px-Monument_Compostelle.JPG",
+      "w": 1280,
+      "h": 853,
+      "credit": "Monte do Gozo",
+      "page": "https://commons.wikimedia.org/wiki/File:Monument_Compostelle.JPG",
+      "author": "Antoine Cadotte",
+      "licence": "CC BY-SA 3.0"
+    },
+    "island-hopping": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/20221029_Naxos_762.jpg/1280px-20221029_Naxos_762.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Portara",
+      "page": "https://commons.wikimedia.org/wiki/File:20221029_Naxos_762.jpg",
+      "author": "Jean Housen",
+      "licence": "CC BY-SA 4.0"
+    }
+  }
+}

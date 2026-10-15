@@ -290,6 +290,14 @@ export function trailReasons(reasons, t, limit = 6, trip = null) {
   for (const r of list) {
     if (out.length >= limit) break;
     if ((r.code || r.k) === 'dayOut' && !comfortable) continue;
+    // T430 (critique): a summit "on the way" that stands well above the
+    // route's own high point is a peak the path passes below, so the
+    // sentence would contradict the profile beside it.
+    const code = r.code || r.k;
+    const top = trip?.elevation?.ele_max_m;
+    if ((code === 'summit' || code === 'summits') && Number.isFinite(Number(r.ele))
+      && Number.isFinite(top) && Number(r.ele) > top + 60) continue;
+    if (code === 'loop' && trip && trip.is_loop === false) continue;
     const text = reasonText(r, t);
     if (!text || seen.has(text)) continue;
     seen.add(text);

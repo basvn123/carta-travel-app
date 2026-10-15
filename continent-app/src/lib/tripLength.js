@@ -34,6 +34,50 @@ export const WEEK = 'week';
 export const SHORT = 'short';
 export const LENGTH_KEY = 'carta.tripLength';
 
+/*
+ * T431: the lengths grow with the catalogue. A list is read at the short
+ * version or at one authored length. While every trip is a week there are two
+ * choices (SHORT and WEEK); when 10 or 14 day trips arrive the control offers
+ * each authored length as `d{n}` (lengthOptions), and a `d{n}` choice keeps
+ * the trips written at that length. SHORT and WEEK never drop a trip. The
+ * trip page reads any authored length as its full length (pageLength).
+ */
+const DAYS_RE = /^d(\d{1,2})$/;
+export const daysKey = (n) => `d${n}`;
+const daysOf = (length) => {
+  const m = DAYS_RE.exec(String(length || ''));
+  return m ? Number(m[1]) : null;
+};
+
+/** The length choices for a set of cards: the short version first, then one
+ *  per authored length, or WEEK alone while every card shares one length.
+ *  [{ value, days }]; days is null for the short version. */
+export function lengthOptions(cards) {
+  const lengths = [...new Set((cards || []).map((c) => c?.days || 7))].sort((a, b) => a - b);
+  if (lengths.length <= 1) return [{ value: SHORT, days: null }, { value: WEEK, days: lengths[0] || 7 }];
+  return [{ value: SHORT, days: null }, ...lengths.map((n) => ({ value: daysKey(n), days: n }))];
+}
+
+/** A remembered choice made to fit the options on screen: itself when
+ *  offered, the week when a written length is not (and back again). */
+export function fitLength(length, options) {
+  const values = (options || []).map((o) => o.value);
+  if (values.includes(length)) return length;
+  if (values.includes(WEEK)) return WEEK;
+  const seven = values.find((v) => daysOf(v) === 7);
+  return seven || values[values.length - 1] || WEEK;
+}
+
+/** Whether a card is listed at a length: always, except at a written length
+ *  that is not its own. */
+export function cardAtLength(card, length) {
+  const n = daysOf(length);
+  return n == null || (card?.days || 7) === n;
+}
+
+/** The length a trip page opens on: the short version or its full length. */
+export const pageLength = (length) => (length === SHORT ? SHORT : WEEK);
+
 const BUDGET_SLOTS = ['accommodation', 'food', 'transport', 'activities'];
 
 /** Days in the short version: 4, or 3 for a Demanding or harder trip. */
@@ -134,10 +178,15 @@ export function cardTotal(card, length) {
   return { low: s.low, high: s.high, days };
 }
 
+const known = (v) => v === SHORT || v === WEEK || DAYS_RE.test(String(v || ''));
+
 export function readTripLength() {
-  try { return window.localStorage.getItem(LENGTH_KEY) === SHORT ? SHORT : WEEK; } catch { return WEEK; }
+  try {
+    const v = window.localStorage.getItem(LENGTH_KEY);
+    return known(v) ? v : WEEK;
+  } catch { return WEEK; }
 }
 
 export function writeTripLength(length) {
-  try { window.localStorage.setItem(LENGTH_KEY, length === SHORT ? SHORT : WEEK); } catch { /* blocked store: the choice lasts for this page */ }
+  try { window.localStorage.setItem(LENGTH_KEY, known(length) ? length : WEEK); } catch { /* blocked store: the choice lasts for this page */ }
 }

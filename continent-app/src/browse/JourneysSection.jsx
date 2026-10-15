@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { Button, Card, Money, Switch } from '../components/ui/index.js';
+import { Button, Card, Money, Segmented } from '../components/ui/index.js';
+import { InfoDot } from '../components/InfoDot.jsx';
+import { TilePhotos } from './PhotoGallery.jsx';
 import { countryName as localCountryName } from '../lib/countryName.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 
@@ -13,18 +15,23 @@ import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
  * DestinationsTab's CARD_SIZES because it is literally the same grid.
  */
 const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
+// T431: the trip and style tiles, three across from 1280 px, two from 769 px
+// and one on a phone, inside the 1180 px reading column.
+const TILE_SIZES = '(max-width: 768px) 92vw, (max-width: 1279px) 46vw, 380px';
 import {
-  loadJourneyIndex, loadJourneyType, loadAllJourneyCards, typeLabel, typeDesc, diffLabel, monthsShort,
+  loadJourneyIndex, loadJourneyType, loadAllJourneyCards, typeLabel, typeDesc, monthsShort,
   styleFromPrice, takePendingJourney,
 } from '../lib/journeys.js';
-import { cardTotal, readTripLength, writeTripLength } from '../lib/tripLength.js';
+import {
+  cardAtLength, cardTotal, fitLength, lengthOptions, readTripLength, writeTripLength, SHORT,
+} from '../lib/tripLength.js';
 import { openShared } from '../lib/sharedElement.js';
 import {
   bandCounts, costEdges, filterByBand, filterByMonth, monthCounts as countMonths, sortCards,
 } from '../lib/tripFilters.js';
 import { filterByTag, tagCounts as countTags, tagVocabulary } from '../lib/tripTags.js';
 import { TripFilters } from './TripFilters.jsx';
-import { ArrowLeftIcon, ChevronRightIcon } from '../components/Icons.jsx';
+import { ArrowLeftIcon, CalendarIcon, ChevronRightIcon, RouteIcon } from '../components/Icons.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { haversineKm } from '../lib/nearby.js';
 import { FAR_KM } from '../lib/coverageCases.js';
@@ -94,55 +101,84 @@ function CardPhoto({ hero, cc, name, row = false }) {
     );
 }
 
-/** One style as a kit tile (T428): the photograph of people doing it, the
- *  name, one line of what the week is, and what the cheapest of them costs
- *  a person at the length the list is read at (rule "Cost on cards"). No
- *  count of trips: the list behind the card is the answer. */
+/** One style as a kit tile (T428, T431): the photograph of people doing
+ *  it, the name, one line of what the week is, and what the cheapest of them
+ *  costs a person. The length sits in the control above the grid, so the
+ *  tile names no days (owner, 2026-10-15). No count of trips: the list
+ *  behind the tile is the answer. */
 function StyleCard({ type, from, onPick, t }) {
   const name = typeLabel(type.slug, t, type.name);
   const desc = typeDesc(type.slug, t);
   return (
     <Card
       layout="tile"
-      className="jstyle-card jcap-card"
+      wrap
+      className="jstyle-card ttile"
       data-style={type.slug}
-      media={<CardPhoto hero={type.hero} name={name} />}
+      media={<TilePhotos urls={[type.hero?.url]} city={name} sizes={TILE_SIZES} maxWidth={960} ratio={[3, 2]} />}
       title={<span className="jcap-name jstyle-name">{name}</span>}
       onOpen={() => onPick(type.slug)}
       meta={desc ? <span className="jstyle-desc">{desc}</span> : null}
       price={from
-        ? <span className="jcap-fig">{withMoney(t('journey.fromPrice', { eur: SLOT, n: from.days }), <Money value={from.low} est />)}</span>
+        ? <span className="jcap-fig">{withMoney(t('journey.fromPp', { eur: SLOT }), <Money value={from.low} est />)}</span>
         : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
     />
   );
 }
 
-/** One curated trip as a compact row (T452, as Explore's list and the place
- *  lists): the photograph, the title, where, the length with the difficulty
- *  and the months, and the range a person. */
+/** "Jun to Sep" for a run of months, "Apr, May, Sep" otherwise. */
+function monthsLine(months, lang, t) {
+  const m = (months || []).filter((x) => x >= 1 && x <= 12).sort((a, b) => a - b);
+  if (!m.length) return '';
+  const run = m.every((x, i) => i === 0 || x === m[i - 1] + 1);
+  if (run && m.length >= 3) {
+    return t('journey.monthsRun', { from: monthsShort([m[0]], lang), to: monthsShort([m[m.length - 1]], lang) });
+  }
+  return monthsShort(m, lang);
+}
+
+/** One curated trip as a photo tile (T431, owner 2026-10-15): the
+ *  photographs, swiped in place, the full title, where it is and the places
+ *  it visits, the best months, and the range a person at the list's length.
+ *  No day count (the length control above says it) and no difficulty word
+ *  (the trip page explains the effort with its numbers). */
 function JourneyCard({ card, length, onOpen, t, lang }) {
-  const months = monthsShort(card.months, lang);
-  const diff = diffLabel(card.diffLabel, t);
-  // The days and the total at the length the list is read at (T188).
+  const months = monthsLine(card.months, lang, t);
   const at = cardTotal(card, length);
-  const days = at?.days || card.days;
   const total = at && (Number.isFinite(at.low) || Number.isFinite(at.high));
+  const codes = (card.countries || []).length ? card.countries : [card.cc];
+  const where = codes.filter(Boolean).map((cc) => localCountryName(cc, cc === card.cc ? card.country : null, lang)).join(', ');
+  const urls = (card.photos || []).length ? card.photos : [card.hero?.url];
+  // The card's photograph grows into the page's hero (rule "List to
+  // detail", T397); without View Transitions the page opens as before.
+  const open = (e) => openShared(e.currentTarget.closest('.card'), card.id, () => onOpen(card));
   return (
     <Card
-      layout="row"
-      className="jcard jcap-card pcard"
-      media={<CardPhoto hero={card.hero} cc={card.cc} name={card.title} row />}
-      title={<span className="jcap-name jcard-title">{card.title}</span>}
-      // The card's photograph grows into the page's hero (rule "List to
-      // detail", T397); without View Transitions the page opens as before.
-      onOpen={(e) => openShared(e.currentTarget.closest('.card'), card.id, () => onOpen(card))}
+      layout="tile"
+      wrap
+      className="jcard ttile"
+      data-trip={card.id}
+      media={<TilePhotos urls={urls} city={card.title} iso2={card.cc} onOpen={open} sizes={TILE_SIZES} maxWidth={960} ratio={[3, 2]} />}
+      title={<span className="jcard-title">{card.title}</span>}
+      onOpen={open}
       meta={(
-        <span className="jcard-meta">
-          <span className="jcap-where">
-            <CountryFlag country={card.cc} size={12} className="places-card-flag" />
-            <span>{[localCountryName(card.cc, card.country, lang), card.sub].filter(Boolean).join(', ')}</span>
+        <span className="ttile-meta">
+          <span className="ttile-line">
+            <CountryFlag country={card.cc} size={16} className="ttile-flag" />
+            <span>{where}</span>
           </span>
-          <span className="jcap-meta">{[t('journey.nDays', { n: days }), diff, months].filter(Boolean).join(', ')}</span>
+          {(card.visits || []).length > 0 && (
+            <span className="ttile-line">
+              <RouteIcon size={16} aria-hidden="true" />
+              <span>{card.visits.join(', ')}</span>
+            </span>
+          )}
+          {months && (
+            <span className="ttile-line">
+              <CalendarIcon size={16} aria-hidden="true" />
+              <span>{months}</span>
+            </span>
+          )}
         </span>
       )}
       price={total
@@ -150,6 +186,15 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
         : null}
     />
   );
+}
+
+/** The length choices as the kit Segmented: the short version first, then
+ *  each written length (lib/tripLength.js lengthOptions). */
+function lengthChoices(options, t) {
+  return options.map((o) => ({
+    value: o.value,
+    label: o.value === SHORT ? t('journey.segShortAny') : t('journey.nDays', { n: o.days }),
+  }));
 }
 
 /** Still blocks at the final size of what is coming (rule "Loading"). */
@@ -232,7 +277,7 @@ export function JourneysSection({
   const [cardTries, setCardTries] = useState(0);
   // The length the list is read at, shared with the trip page through
   // lib/tripLength.js; the cost band, month, tag and sort are not kept.
-  const [length, setLength] = useState(readTripLength);
+  const [stored, setLength] = useState(readTripLength);
   const [band, setBand] = useState(null);
   const [month, setMonth] = useState(null);
   const [tag, setTag] = useState(null);           // one tag at a time (T089)
@@ -285,6 +330,14 @@ export function JourneysSection({
     loadAllJourneyCards().then((all) => { if (live) setLibrary(all); });
     return () => { live = false; };
   }, []);
+  // T431: the length choices come from the trips (lib/tripLength.js), so a
+  // 10 or 14 day trip adds its own choice; a remembered choice the list no
+  // longer offers falls back to the week.
+  const lenOptions = useMemo(
+    () => lengthOptions(view && cards ? cards : library),
+    [view, cards, library],
+  );
+  const length = fitLength(stored, lenOptions);
   const edges = useMemo(() => costEdges(library, length), [library, length]);
 
   const query = norm(q);
@@ -330,7 +383,7 @@ export function JourneysSection({
   const activeTag = tag && vocab.includes(tag) ? tag : null;
   const bandOn = edges ? band : null;
   const apply = (list, { skipBand = false, skipTag = false, skipMonth = false } = {}) => {
-    let out = list || [];
+    let out = (list || []).filter((c) => cardAtLength(c, length));
     if (cheapBeds) out = out.filter((c) => (c.beds || []).length > 0);
     if (!skipTag) out = filterByTag(out, activeTag);
     if (!skipMonth) out = filterByMonth(out, month);
@@ -365,15 +418,34 @@ export function JourneysSection({
 
   if (index === undefined) {
     return (
-      <div className="places-list jsec">
+      <div className="places-list jsec tlib">
         <Skeleton n={6} kind="style" t={t} />
       </div>
     );
   }
 
+  // The length control, the same on the library and on a style's list, so
+  // the from-price of a style and the range of its trips agree.
+  const lengthControl = (
+    <Segmented
+      size="sm"
+      className="tlib-length"
+      label={t('journey.lenLabel')}
+      value={length}
+      onChange={pickLength}
+      options={lengthChoices(lenOptions, t)}
+    />
+  );
+
   if (!view) {
     return (
-      <div className="places-list jsec">
+      <div className="places-list jsec tlib">
+        {/* A picked country has its own band above (DestinationsTab), so the
+            head keeps only the length choice then. */}
+        <header className={`dtab-head tlib-head${country ? ' is-bare' : ''}`}>
+          {!country && <h2 className="dtab-title">{t('dtab.head.trips')}</h2>}
+          {lengthControl}
+        </header>
         {types.map((tp) => (
           <StyleCard key={tp.slug} type={tp} from={fromPrices[tp.slug]}
             onPick={onView} t={t} lang={lang} />
@@ -407,22 +479,33 @@ export function JourneysSection({
 
   const openType = (index?.types || []).find((tp) => tp.slug === view);
   return (
-    <div className="places-list jsec jsec-trips">
-      <div className="jsec-head">
+    <div className="places-list jsec jsec-trips tlib">
+      <header className="tlib-head is-style">
         <Button variant="quiet" size="sm" className="jsec-back" onClick={() => onView(null)}
-          iconStart={<ArrowLeftIcon size={14} />}>
+          iconStart={<ArrowLeftIcon size={16} />}>
           {t('journey.backStyles')}
         </Button>
-        <h2 className="jsec-title">{typeLabel(view, t, openType?.name)}</h2>
-        {typeDesc(view, t) && <p className="jsec-desc">{typeDesc(view, t)}</p>}
-      </div>
-      {cards !== null && hasBeds && (
-        <Switch className="jsec-beds" label={t('dtab.beds')} checked={cheapBeds} onChange={setCheapBeds} />
-      )}
+        <h2 className="dtab-title">{typeLabel(view, t, openType?.name)}</h2>
+        {typeDesc(view, t) && <p className="tlib-desc">{typeDesc(view, t)}</p>}
+      </header>
       {cards !== null && (
         <TripFilters
-          length={length}
-          onLength={pickLength}
+          lengthControl={lengthControl}
+          beds={hasBeds || cheapBeds ? (
+            <div className="tlib-beds">
+              <Segmented
+                size="sm"
+                label={t('journey.bedsLabel')}
+                value={cheapBeds ? 'cheap' : 'any'}
+                onChange={(v) => setCheapBeds(v === 'cheap')}
+                options={[
+                  { value: 'any', label: t('journey.bedsAny') },
+                  { value: 'cheap', label: t('journey.bedsCheap') },
+                ]}
+              />
+              <InfoDot term="budget-beds" />
+            </div>
+          ) : null}
           band={bandOn}
           onBand={setBand}
           edges={edges}

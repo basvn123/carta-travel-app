@@ -75,6 +75,18 @@ export const SHEET_ORDER = {
     ['elevationM', L.high], ['verticalM', L.climb], ['distanceKm', L.km], 'surface', 'hutBooking',
     'bestMonths', 'bookingTimeline', 'audience',
   ],
+  // T431: the five styles of 2026-10-15. A hostel week is decided on the
+  // day's spend and the buses; a beach week on the months and the sea; a rail
+  // journey on the tickets; a pilgrim route like a walk; island hopping on
+  // the wind that runs the ferries.
+  hostel: ['foodPerDay', 'transitPass', 'bookingTimeline', 'bestMonths', 'audience'],
+  'beach-week': ['bestMonths', 'windConditions', 'foodPerDay', 'bookingTimeline', 'audience'],
+  rail: [['distanceKm', L.km], 'transitPass', 'bookingTimeline', 'foodPerDay', 'bestMonths', 'audience'],
+  pilgrim: [
+    ['distanceKm', L.walkKm], ['verticalM', L.climb], ['elevationM', L.high], 'surface',
+    'technicalRating', 'bookingTimeline', 'audience',
+  ],
+  'island-hopping': ['windConditions', 'bestMonths', 'bookingTimeline', 'foodPerDay', 'audience'],
 };
 
 // A type the table does not know keeps the order the page had before T175.

@@ -246,7 +246,7 @@ check('why text is composed, not a raw code',
   whyText.length > 20 && !/\bcode\b|undefined|NaN/.test(whyText),
   whyText.replace(/\n/g, ' | ').slice(0, 120));
 
-const pageRating = await page.locator('.tpage-sub .score-chip').first().innerText().catch(() => '');
+const pageRating = await page.locator('.ihead-line .score-chip').first().innerText().catch(() => ''); // T430: the head line
 check('trail page carries the rating', /^\d/.test(pageRating.trim()), pageRating);
 
 // The removed paragraphs must be gone.
@@ -260,14 +260,19 @@ check('the following-works paragraph is gone',
 // Views strip and highlights.
 // T396 (design wave V4): the views are one photo track; each frame carries
 // its km marker in the band under the photograph, not on it.
-const views = await page.locator('.dsk-ptrack-frame').count();
-check('views along the way render', views > 0, `${views} photographs`);
+// T430: the views are the gallery at the top, each photograph named in the
+// band under it with where on the route it was taken. A photograph the
+// browser cannot load (the sandbox cannot reach Commons) leaves the gallery.
+const views = await page.locator('.pgal .destp-slide').count();
+const viewsTried = views > 0 || await page.locator('.ipage-gallery').count() > 0
+  || await page.locator('.tpage-map').count() > 0;
+check('views along the way render (or the drawn route stands in)', viewsTried, `${views} photographs`);
 if (views > 1) {
-  const ats = await page.locator('.dsk-ptrack-at').allInnerTexts();
+  const ats = await page.locator('.pgal .destp-slide-cap').allInnerTexts();
   check('view photographs say where on the route they were taken',
-    ats.length > 0, ats.slice(0, 3).join(', '));
+    ats.some((a) => /km/.test(a)), ats.slice(0, 3).join(', '));
 }
-const hls = await page.locator('.tpage-highlights li').count();
+const hls = await page.locator('.ipage-why .ihl, .ipage-why .iwhy-row').count(); // T430: Why go
 check('what you walk past is listed', hls >= 0, `${hls} named features`);
 await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-page.png`, fullPage: false });
 await page.locator('.tpage-scroll').evaluate((el) => el.scrollTo(0, 900));

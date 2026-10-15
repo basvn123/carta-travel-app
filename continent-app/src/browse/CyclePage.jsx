@@ -9,7 +9,7 @@ import { routePoints, routeLength, nearestOnRoute } from '../lib/trailGeo.js';
 import { pointAlong } from '../lib/signature.js';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, previewNotHook, keyFactCells, bboxCentre, cycleLevel, LEVEL_WORD_KEY,
+  previewWords, previewNotHook, keyFactCells, bboxCentre, cycleLevel,
   markMapLive,
 } from '../lib/detailSkeleton.js';
 import {
@@ -21,22 +21,25 @@ import { loadCycling } from '../lib/cycling.js';
 import { loadCycleFamily, loadCycleRoute, loadCycleTour, gpxCredit }
   from '../lib/cycling.js';
 import {
-  agreementLine, bailoutLine, bikeLine, cycleRating, listedLine,
+  bailoutLine, bikeLine, cycleRating, listedLine,
   overnightLine, paceLine, routeTitle, safetyLine, seasonLine, stageLine,
-  surfaceLine, trafficFreeLine, whyLines, needsRoughBike,
+  surfaceLine, trafficFreeLine, whyLines,
 } from '../lib/cycleStory.js';
-import { RatingBadge } from '../components/RatingBadge.jsx';
-import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { FigureFooter } from './HonestFooters.jsx';
 import {
   SlopeProfile, MixBar, MixKeys, TrafficBar,
 } from './RouteFigures.jsx';
 import { Instrument, Row, EmptyTrack, SpanAxis } from './Signature.jsx';
 import { kmOf, trafficMix } from '../lib/signature.js';
-import { numberSentence } from '../lib/numberSentences.js';
-import { srcSetFor } from '../lib/heroImage.js';
+import { PhotoGallery } from './PhotoGallery.jsx';
+import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { Button, Chip } from '../components/ui/index.js';
+import { toPhotos } from '../lib/itemPhotos.js';
+import { beforeGoItems } from '../lib/beforeGo.js';
+import { useItemPdf } from '../hooks/useItemPdf.js';
+import { installMapGestures } from '../lib/mapGestures.js';
+import { MapShell } from './MapShell.jsx';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
   ListDayIcon, CheckIcon, InfoIcon, BulbIcon,
@@ -128,7 +131,11 @@ function useRouteMap(mapEl, geometry, bbox, onPick = null) {
       center: [12, 48],
       zoom: 4,
       attributionControl: { compact: true },
+      dragRotate: false,
+      touchPitch: false,
     });
+    // Two fingers pan, a pinch zooms, no Ctrl (T430, lib/mapGestures.js).
+    map._gestures = installMapGestures(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     // The ink sketch under the canvas until the map has drawn, and a tap on
     // the line that moves the profile's marker (T396, rules N8 and N11).
@@ -152,7 +159,7 @@ function useRouteMap(mapEl, geometry, bbox, onPick = null) {
       if (map._draw) map._draw();
     });
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; };
+    return () => { map._gestures?.dispose(); map.remove(); mapRef.current = null; };
   }, [mapEl]);
 
   useEffect(() => {
@@ -311,24 +318,6 @@ function tourGpxText(tour, route, t, link) {
     credit: gpxCredit(route),
     link,
   });
-}
-
-function Photos({ images }) {
-  if (!images || !images.length) return null;
-  return (
-    <div className="cycle-gallery" data-testid="cycle-gallery">
-      {images.slice(0, 6).map((img) => (
-        <figure key={img.url} className="cycle-shot">
-          <img src={img.thumb || img.url} alt={img.title || ''} loading="lazy" />
-          <figcaption>
-            <CameraIcon size={12} />
-            {' '}
-            {[img.author, img.license].filter(Boolean).join(', ')}
-          </figcaption>
-        </figure>
-      ))}
-    </div>
-  );
 }
 
 function Stages({ stages, t }) {
@@ -551,6 +540,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     setMarkM({ m: along });
     scrubTo.current?.(along);
   });
+  const getMap = React.useCallback(() => mapRef.current, [mapRef]);
   const highlightAt = React.useCallback((alongM) => {
     const map = mapRef.current;
     if (!map) return;
@@ -578,6 +568,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
   const rating = rated && carta.score != null
     ? cycleRating({ score: carta.score }, t) : null;
   const title = (tour && tour.title) || (route && routeTitle(route, t)) || '…';
+  const { onPdf, pdfBusy } = useItemPdf(tour ? 'tour' : 'cycle', tour || route, { title, countryName, carta });
   const cc = (tour && tour.country) || (route && route.country) || country;
   // The ref is worth a chip beside the title unless the title IS the ref,
   // which is what a route with no name of its own gets.
@@ -596,19 +587,8 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     open: (row) => onOpenNeighbour?.('cycle', row),
   });
 
-  const km = tour ? tour.km : route?.km;
-  const asc = tour ? tour.asc : route?.asc;
-  const level = cycleLevel(km, asc);
   const bike = tour ? tour.bike : carta.surface?.bike;
-  const cells = stripCells({
-    level,
-    word: level ? `${t(LEVEL_WORD_KEY[level])} ~` : '',
-    type: tour ? t('detail.typeTour') : (BIKE_TYPE[bike] ? t(BIKE_TYPE[bike]) : t('detail.typeRide')),
-    number: Number.isFinite(km) ? `${Math.round(km).toLocaleString(lang)} km` : '',
-  }, t);
-
   const images = (tour && tour.images && tour.images.length ? tour.images : carta.images) || [];
-  const heroShot = images[0] || null;
   const start = lineStart(geometry);
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
   // Stations with their km along the line (T386): a route reads its service
@@ -663,11 +643,6 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
   // bike: "a road bike is fine" beside "Not for you on a road bike" was the
   // contradiction of row T375-b.
   const sf = carta.surface;
-  const pavedSentence = sf && Number.isFinite(sf.paved_share) && sf.surface_known_share >= 0.25
-    && !needsRoughBike(sf.bike)
-    ? numberSentence('pavedShare', sf.paved_share * 100, { t, lang }) : '';
-  const freeSentence = sf && Number.isFinite(sf.traffic_free_share) && sf.highway_known_share >= 0.33
-    ? numberSentence('trafficFree', sf.traffic_free_share * 100, { t, lang }) : '';
   const surfaceMix = surfaceParts(carta.surface, t)
     ?.map((p) => ({ ...p, value: kmOf(p.share, routeM) })) || null;
   const trafficSplit = trafficParts(carta.surface);
@@ -684,20 +659,12 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
           <p className="cycle-surface" data-testid="cycle-surface">
             {surfaceLine(carta.surface, t)}
           </p>
-          {pavedSentence && <p className="numsent" data-testid="cycle-paved-sentence">{pavedSentence}</p>}
           {trafficFreeLine(carta.surface, t) && (
             <p className="cycle-free">{trafficFreeLine(carta.surface, t)}</p>
           )}
-          {freeSentence && <p className="numsent" data-testid="cycle-free-sentence">{freeSentence}</p>}
           <p className="cycle-safety" data-testid="cycle-safety">
             {safetyLine(carta.safety, t)}
           </p>
-          <p className="cycle-safety-note">{t('cycle.safetyHouse')}</p>
-          {agreementLine(carta.agreement, t) && (
-            <p className="cycle-agree" data-testid="cycle-agree">
-              {agreementLine(carta.agreement, t)}
-            </p>
-          )}
         </>
       )}
     >
@@ -785,20 +752,6 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         </>
       ),
     },
-    tour && tour.checks && {
-      key: 'checks',
-      icon: CheckIcon,
-      label: t('cycle.checksTitle'),
-      summary: previewWords(t('cycle.checksNote')),
-      body: (
-        <div className="cycle-checks" data-testid="cycle-checks">
-          <p>{t('cycle.checksNote')}</p>
-          <ul>
-            {(tour.checks.passed || []).map((c) => <li key={c}>{c}</li>)}
-          </ul>
-        </div>
-      ),
-    },
     why.length > 0 && {
       key: 'why',
       icon: BulbIcon,
@@ -866,13 +819,6 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         </>
       ),
     },
-    images.length > 1 && {
-      key: 'photos',
-      icon: CameraIcon,
-      label: t('beach.photos'),
-      summary: t('detail.photoCount', { n: images.length }),
-      body: <Photos images={images} />,
-    },
   ].filter(Boolean);
 
   const notForLinesFor = tour
@@ -887,6 +833,10 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         || carta.safety.known_share >= 0.33) ? carta.safety.score : null,
     });
 
+  const photos = toPhotos(images.map((im) => ({ ...im, url: im.thumb || im.url })), { fallbackCaption: title });
+  const before = (route || tour) ? beforeGoItems({ lines: notForLinesFor }) : [];
+  const sources = route ? [{ label: (route.osm && route.osm.attribution) || t('cycle.sourceNote') }] : [];
+
   return (
     <DetailPage
       name={title}
@@ -899,109 +849,91 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
       onShare={shareUrl ? onShare : null}
       resetKey={tourSlug || routeId}
       toast={toast}
-      hero={{
-        sharedKey: tourSlug || routeId,
-        cells,
-        // T406: the hero is the page's largest picture, so it takes the 1280 px
-        // thumbnail the wire carries as `thumb` (about 0.4 MB), not `url`, the
-        // original file (15.4 MB for route 1150), and a srcset over Wikimedia's
-        // renderable widths so a small phone fetches less. A URL it cannot
-        // resize keeps its one src.
-        media: heroShot ? (
-          <img
-            className="dsk-hero-img"
-            src={heroShot.thumb || heroShot.url}
-            srcSet={srcSetFor(heroShot.thumb || heroShot.url, 1280)}
-            sizes={srcSetFor(heroShot.thumb || heroShot.url, 1280) ? '100vw' : undefined}
-            alt={heroShot.title || title}
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-          />
-        ) : null,
-        credit: heroShot && (heroShot.author || heroShot.license) ? (
-          <p className="bpage-credit">
-            <CameraIcon size={12} />
-            <span className="lpage-credit-line">
-              {[heroShot.author, heroShot.license].filter(Boolean).join(', ')}
-            </span>
-          </p>
-        ) : null,
-      }}
+      gallery={photos.length ? (
+        <PhotoGallery photos={photos} label={title} claimKey={tourSlug || routeId}
+          fallback={{ city: title, iso2: cc }} />
+      ) : null}
       head={(
-        <div className="cycle-title">
-          <h1 data-testid="cycle-name">
-            {title}
-            {refChip && <span className="dsk-ref">{refChip}</span>}
-          </h1>
-          <p className="cycle-sub">
-            <CountryFlag country={cc} size={15} />
-            {' '}
-            {countryName}
-          </p>
-          {rating && (
-            <span data-testid="cycle-score">
-              <RatingBadge rating={rating} size="lg" showGem={false} />
-            </span>
+        <ItemHead
+          title={<span data-testid="cycle-name">{title}</span>}
+          iso2={cc}
+          where={countryName}
+          rating={rating || null}
+          chips={refChip ? <Chip kind="status">{refChip}</Chip> : null}
+          after={(
+            <>
+              {loading && <p className="places-empty" role="status">{t('state.loading')}</p>}
+              {/* A route or tour id that resolves to nothing: a gone page, said
+                  as one, with the way back to the list. Not a country claim. */}
+              {!loading && !route && !tour && (
+                <div className="places-empty empty-act">
+                  <p>{t('cycle.familyGone')}</p>
+                  <Button variant="secondary" className="cov-empty-btn" onClick={onClose}>{t('empty.cycleRoutes')}</Button>
+                </div>
+              )}
+            </>
           )}
-          {loading && <p className="places-empty" role="status">{t('state.loading')}</p>}
-          {/* A route or tour id that resolves to nothing: a gone page, said
-              as one, with the way back to the list. Not a country claim. */}
-          {!loading && !route && !tour && (
-            <div className="places-empty empty-act">
-              <p>{t('cycle.familyGone')}</p>
-              <button type="button" className="cov-empty-btn" onClick={onClose}>{t('empty.cycleRoutes')}</button>
-            </div>
-          )}
-        </div>
+        />
       )}
       hook={hook}
       keyFacts={keyFacts}
-      notFor={(route || tour) ? <NotFor lines={notForLinesFor} /> : null}
+      whyGo={why.slice(hook && !tour ? 1 : 0).slice(0, 4).map((w) => ({ key: w.text, title: '', line: w.text }))}
+      before={before}
       primary={gpxText ? (
-        <button type="button" className="cycle-gpx tpage-primary dsk-primary" data-testid="cycle-gpx" onClick={onGpx}>
-          <DownloadIcon size={16} />
-          <span>{t('cycle.gpx')}</span>
-        </button>
+        <Button variant="primary" data-testid="cycle-gpx"
+          iconStart={<DownloadIcon size={20} />} onClick={onGpx}>
+          {t('cycle.gpx')}
+        </Button>
       ) : null}
+      actions={[
+        dirUrl && (
+          <a key="dir" className="btn btn-secondary" href={dirUrl} target="_blank" rel="noopener noreferrer">
+            <span className="btn-icon" aria-hidden="true"><RouteIcon size={20} /></span>
+            <span className="btn-label">{t('trails.startDirections')}</span>
+          </a>
+        ),
+      ]}
+      onPdf={(route || tour) ? onPdf : null}
+      pdf={{
+        photos,
+        where: countryName,
+        route: (() => {
+          const flat = geometryParts(geometry).flat().filter((pt) => Array.isArray(pt) && finitePair(pt));
+          const step = Math.max(1, Math.ceil(flat.length / 400));
+          return flat.filter((_, i) => i % step === 0);
+        })(),
+        url: shareUrl,
+      }}
+      pdfBusy={pdfBusy}
       map={(
-        <div ref={mapEl} className="cycle-map" data-testid="cycle-map"
-          role="img" aria-label={t('cycle.mapLabel')}>
-          {/* The line in ink while maplibre loads (T396). */}
-          <MapSketch lines={sketchLines} label={title} />
-        </div>
+        <MapShell getMap={getMap} relief beneath={['cycle-casing']}>
+          <div ref={mapEl} className="cycle-map" data-testid="cycle-map"
+            role="img" aria-label={t('cycle.mapLabel')}>
+            {/* The line in ink while maplibre loads (T396). */}
+            <MapSketch lines={sketchLines} label={title} />
+          </div>
+        </MapShell>
       )}
       signature={surfaceBlock || null}
       rows={rows}
-      gettingThere={(route || tour) ? (
-        <>
-          {firstTown && <p className="dsk-get-town">{t('detail.startAt', { place: firstTown })}</p>}
-          {dirUrl && (
-            <a className="tpage-act tpage-act-wide" href={dirUrl} target="_blank" rel="noopener noreferrer">
-              <RouteIcon size={15} />
-              <span>{t('trails.startDirections')}</span>
-            </a>
+      gettingThere={(route || tour) && (firstTown || stations.length) ? (
+        <ul className="igo-list">
+          {firstTown && (
+            <li className="igo-row">
+              <ItemIcon name="pin" />
+              <span className="igo-main"><span>{t('detail.startAt', { place: firstTown })}</span></span>
+            </li>
           )}
-          {stations.length > 0 ? (
-            <div className="dsk-get-stations">
-              <p className="dsk-note">
-                <TrainIcon size={13} />
-                {' '}
-                {t('detail.stationsHead')}
-              </p>
-              <ul className="dsk-stations">
-                {stations.slice(0, 6).map((s) => (
-                  <li key={`${s.name}-${s.km}`}>
-                    <span className="dsk-station-name">{s.name}</span>
-                    <span className="dsk-station-km mono">{t('cycle.atKm', { km: Math.round(s.km) })}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>
-          )}
-        </>
+          {stations.slice(0, 6).map((s) => (
+            <li key={`${s.name}-${s.km}`} className="igo-row dsk-station">
+              <ItemIcon name="train" />
+              <span className="igo-main">
+                <span className="dsk-station-name">{s.name}</span>
+                <span className="igo-sub dsk-station-km">{t('cycle.atKm', { km: Math.round(s.km) })}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
       ) : null}
       exits={exits}
       nearby={wireRow ? (
@@ -1012,37 +944,8 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
           onOpen={onOpenNeighbour}
         />
       ) : null}
-      licenceKeys={route ? ['credit.licence.cycle'] : []}
-      sources={(
-        <>
-          {/* A tour is summed from its stages, so its totals are calculated.
-              A route's length and climb are read off the geometry; the
-              surface mix, the traffic-free share and the safety figure are
-              our arithmetic on it, and the safety one is a house measure. */}
-          {tour ? (
-            <FigureFooter kinds={[
-              tour.days != null && 'c', tour.km != null && 'c', tour.asc != null && 'c',
-            ]} />
-          ) : route && (
-            <FigureFooter kinds={[
-              route.km != null && 'm', route.asc != null && 'm',
-              carta.surface?.bike && 'c',
-              trafficFreeLine(carta.surface, t) && 'c',
-              carta.safety && 'c',
-            ]} />
-          )}
-          {/* One credit line. The wire's own attribution is the specific
-              one (it names the source that supplied this route);
-              cycle.sourceNote is the generic fallback. */}
-          {route && (
-            <p className="places-credit" data-testid="cycle-credit">
-              {(route.osm && route.osm.attribution) || t('cycle.sourceNote')}
-            </p>
-          )}
-          {/* A report is about the data, so it sits with the sources (T386). */}
-          {route && <ReportProblem item={{ layer: 'cycle', id: route.id, cc, name: title }} />}
-        </>
-      )}
+      sources={sources}
+      sourcesExtra={route ? <ReportProblem item={{ layer: 'cycle', id: route.id, cc, name: title }} /> : null}
     />
   );
 }

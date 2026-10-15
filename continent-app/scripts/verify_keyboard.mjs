@@ -85,17 +85,20 @@ const SURFACES = {
     await openAll(p, FOLDS);
     // After the walk: the day track (T162) moves one day per arrow key while
     // it has focus, and keeps the focus on the track while it moves.
+    // T431: the days are the shared Track now (.tweek .itrack-row, position
+    // in .itrack-pos); the arrow keys move it while the row has focus.
     const after = async (pg, shot) => {
-      const track = pg.locator('.dtrack').first();
+      const track = pg.locator('.tweek .itrack-row').first();
       if (!(await track.count())) return { dayTrack: false };
+      const pos = '.tweek .itrack-pos';
       await track.focus(); await pg.keyboard.press('Home'); await sleep(500);
-      const first = (await pg.locator('.dtrack-pos').innerText()).trim();
-      await pg.keyboard.press('ArrowRight'); await sleep(700);
+      const first = (await pg.locator(pos).innerText()).trim();
+      await pg.keyboard.press('ArrowRight'); await sleep(900);
       await shot('day-track');
-      const now = await pg.evaluate(() => ({
-        pos: document.querySelector('.dtrack-pos')?.textContent.trim() || '',
-        focus: !!document.activeElement?.classList.contains('dtrack'),
-      }));
+      const now = await pg.evaluate((sel) => ({
+        pos: document.querySelector(sel)?.textContent.trim() || '',
+        focus: !!document.activeElement?.classList.contains('itrack-row'),
+      }), pos);
       return { dayTrackArrows: now.pos !== first && /\b2\b/.test(now.pos), dayTrackKeepsFocus: now.focus };
     };
     return { start: null, max: 400, after };

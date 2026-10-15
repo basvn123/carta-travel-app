@@ -68,3 +68,24 @@ test("a card's total follows the length chosen", () => {
   assert.deepEqual(cardTotal(card, SHORT), { low: 300, high: 600, days: 3 });
   assert.equal(cardTotal({ days: 7 }, SHORT), null);
 });
+
+// T431: the length control grows with the catalogue.
+import { lengthOptions, fitLength, cardAtLength, pageLength, daysKey } from "../src/lib/tripLength.js";
+
+test("one authored length gives the short version and the week", () => {
+  const opts = lengthOptions([{ days: 7 }, { days: 7 }]);
+  assert.deepEqual(opts.map((o) => o.value), [SHORT, WEEK]);
+  assert.equal(opts[1].days, 7);
+});
+
+test("10 and 14 day trips add their own choices", () => {
+  const opts = lengthOptions([{ days: 7 }, { days: 14 }, { days: 10 }]);
+  assert.deepEqual(opts.map((o) => o.value), [SHORT, daysKey(7), daysKey(10), daysKey(14)]);
+  assert.equal(fitLength(WEEK, opts), daysKey(7), "the week maps onto the 7 day choice");
+  assert.equal(fitLength(daysKey(14), lengthOptions([{ days: 7 }])), WEEK, "a gone length falls back to the week");
+  assert.ok(cardAtLength({ days: 10 }, daysKey(10)));
+  assert.ok(!cardAtLength({ days: 7 }, daysKey(10)));
+  assert.ok(cardAtLength({ days: 7 }, SHORT) && cardAtLength({ days: 14 }, WEEK));
+  assert.equal(pageLength(daysKey(10)), WEEK);
+  assert.equal(pageLength(SHORT), SHORT);
+});

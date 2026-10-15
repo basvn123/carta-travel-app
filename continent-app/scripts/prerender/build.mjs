@@ -174,7 +174,9 @@ for (const [cc, rows] of pricedBy) {
     .map((e) => ({ ...e, path: paths.days(cc, e.days, e.band) })));
 }
 
-const journeys = list('journeys/journey').filter((f) => f.endsWith('.json')).map((f) => readJson(`journeys/journey/${f}`)).filter(Boolean);
+// T431: a sample trip of a new style (`sample: true`) stays out of the
+// prerender and so out of the sitemap until the owner has audited it.
+const journeys = list('journeys/journey').filter((f) => f.endsWith('.json')).map((f) => readJson(`journeys/journey/${f}`)).filter((j) => j && !j.sample);
 
 const SECTION_SRC = { trails: 'trails', beaches: 'beaches', lakes: 'lakes', mountains: 'mountains', cycling: 'cycling', trips: 'trips' };
 const ONE = { trails: 'walk', beaches: 'beach', lakes: 'lake', mountains: 'mountain', cycling: 'cycling route' };

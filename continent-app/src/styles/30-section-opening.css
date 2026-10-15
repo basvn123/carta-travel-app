@@ -17,32 +17,29 @@
 
 /* -- The head --------------------------------------------------------------- */
 
-.dtab-head { display: flex; flex-direction: column; gap: var(--space-3); }
-.dtab-head-media {
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-  aspect-ratio: 21 / 9;
-  max-height: 280px;
+.dtab-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
 }
-.dtab-head-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+/* The page head of a section, at Explore's head scale (T430). */
 .dtab-title {
   margin: 0;
-  font-size: var(--text-headline);
+  font-size: var(--text-display);
   font-weight: 700;
   line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
   color: var(--text);
   overflow-wrap: anywhere;
   hyphens: auto;
 }
+.dtab-nearme { flex: none; }
 @media (max-width: 768px) {
-  .dtab-head-media { aspect-ratio: 16 / 9; border-radius: var(--radius-control); }
-  .dtab-title { font-size: var(--text-title); }
+  .dtab-title { font-size: var(--text-headline); }
+  .dtab-head { flex-direction: column; align-items: stretch; }
+  .dtab-nearme { align-self: flex-start; }
 }
 
 /* -- Try one ----------------------------------------------------------------- */
@@ -53,15 +50,7 @@
   align-items: center;
   gap: var(--space-2);
 }
-.dtab-starters-label {
-  margin-right: var(--space-1);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text-2);
-}
-.dtab-starter .btn-label { white-space: normal; text-align: left; }
-/* The head and its starters read as one block. */
-.dtab-head + .dtab-starters { margin-top: calc(-1 * var(--space-3)); }
+.dtab-starter .ui-chip-label { white-space: nowrap; }
 @media (max-width: 768px) {
   /* One row a thumb can swipe, not four wrapped lines. */
   .dtab-starters {
@@ -73,7 +62,6 @@
   }
   .dtab-starters::-webkit-scrollbar { display: none; }
   .dtab-starter { flex: none; }
-  .dtab-starter .btn-label { white-space: nowrap; }
 }
 
 /* -- The rails --------------------------------------------------------------- */
@@ -104,11 +92,11 @@
 .dtab-arrow:disabled { opacity: 0.4; }
 
 .dtab-strip {
-  --tile-w: 78%;
+  --tile-w: 80%;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: var(--tile-w);
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin: 0;
   padding: 2px 2px var(--space-2);
   list-style: none;
@@ -120,25 +108,28 @@
 .dtab-strip::-webkit-scrollbar { display: none; }
 .dtab-item { display: flex; min-width: 0; scroll-snap-align: start; }
 .dtab-item > .card { flex: 1 1 auto; min-width: 0; }
-@container (min-width: 560px) { .dtab-strip { --tile-w: calc((100% - 2 * var(--space-3)) / 2.4); } }
-@container (min-width: 860px) { .dtab-strip { --tile-w: calc((100% - 3 * var(--space-3)) / 3.4); } }
-@container (min-width: 1080px) { .dtab-strip { --tile-w: calc((100% - 4 * var(--space-3)) / 4.3); } }
+/* T430: larger photographs than Explore's rails, three and a bit across on a
+   wide desktop, so a place is chosen on its picture; the gap is Explore's. */
+@container (min-width: 560px) { .dtab-strip { --tile-w: calc((100% - 2 * var(--space-4)) / 2.2); } }
+@container (min-width: 860px) { .dtab-strip { --tile-w: calc((100% - 2 * var(--space-4)) / 2.6); } }
+@container (min-width: 1080px) { .dtab-strip { --tile-w: calc((100% - 3 * var(--space-4)) / 3.2); } }
 
 /* A focused tile shows its ring inside the strip, which clips outside it. */
 .dtab-strip .card.is-interactive:has(.card-open:focus-visible) { outline-offset: -3px; }
 
-/* The rail tile: the kit tile Card with its name on up to two lines. */
-.dtab-tile .card-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+/* The rail tile: the kit tile Card with its full name (T430: never cut),
+   the meta set as Explore's tile sets it. */
 .dtab-tile .card-media { aspect-ratio: 4 / 3; }
 .dtab-tile-img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .dtab-tile-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 var(--space-2);
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
   font-size: var(--text-label);
   color: var(--text-2);
 }
-.dtab-where { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.dtab-where { min-width: 0; max-width: 100%; }
 .dtab-fact { font-variant-numeric: tabular-nums; color: var(--text); }
 /* T451: a fact says what it measures ("Height 2,812 m", not a bare "2,812 m"). */
 .dtab-fact-l { color: var(--text-2); }

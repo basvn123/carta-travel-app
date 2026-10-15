@@ -19,6 +19,11 @@ export const TRIP_TYPES = [
   { id: 8, name: 'Ski and snow', slug: 'winter-sports' },
   { id: 9, name: 'Nature stays', slug: 'nature-escape' },
   { id: 10, name: 'On the water', slug: 'water-sports' },
+  { id: 11, name: 'Hostel weeks', slug: 'hostel' },
+  { id: 12, name: 'Beach weeks', slug: 'beach-week' },
+  { id: 13, name: 'Rail journeys', slug: 'rail' },
+  { id: 14, name: 'Pilgrim routes', slug: 'pilgrim' },
+  { id: 15, name: 'Island hopping', slug: 'island-hopping' },
 ] as const;
 
 export type TripTypeId = (typeof TRIP_TYPES)[number]['id'];

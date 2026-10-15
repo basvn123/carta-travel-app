@@ -5,16 +5,18 @@ import assert from "node:assert/strict";
 import { SHEET_ORDER, sheetOrder, dataSheetRows } from "../src/lib/dataSheet.js";
 
 const STYLES = ["cycling", "trail-running", "city", "cozy-towns", "road-trip", "hiking",
-  "culinary", "winter-sports", "nature-escape", "water-sports"];
+  "culinary", "winter-sports", "nature-escape", "water-sports",
+  // T431: the five styles the owner added on 2026-10-15.
+  "hostel", "beach-week", "rail", "pilgrim", "island-hopping"];
 
-test("all ten styles have a field order, with no field twice", () => {
+test("all fifteen styles have a field order, with no field twice", () => {
   for (const s of STYLES) {
     const fields = sheetOrder(s).map(([f]) => f);
     assert.ok(fields.length >= 5, s);
     assert.equal(new Set(fields).size, fields.length, s);
     assert.ok(fields.includes("audience"), s);
   }
-  assert.equal(Object.keys(SHEET_ORDER).length, 10);
+  assert.equal(Object.keys(SHEET_ORDER).length, 15);
 });
 
 test("each style leads with its own field", () => {

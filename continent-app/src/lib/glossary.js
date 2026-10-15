@@ -20,6 +20,8 @@ export const GLOSSARY = {
   // The estimate mark on a price (T446): opened from the dot after the
   // destination page's day figure. No match: it is never looked up in prose.
   estimate: { scope: 'both' },
+  // T431: the "Where you sleep" choice on a style's trip list.
+  'budget-beds': { scope: 'trips' },
   hardpack: { scope: 'both', match: /\bhard-?pack(?:ed)?\b/i },
   bora: { scope: 'trips', match: /\bbora\b/i },
   'hut-to-hut': { scope: 'both', match: /\bhut[- ]to[- ]hut\b/i },

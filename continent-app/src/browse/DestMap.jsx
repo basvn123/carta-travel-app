@@ -5,6 +5,8 @@ import { isNum, declutterPins } from '../map/coords.js';
 import { keyablePin, nameMarker } from '../map/pinKeys.js';
 import { TOKEN_COLOURS as TC } from '../map/tokenColors.js';
 import { durationMs } from '../lib/motion.js';
+import { installMapGestures } from '../lib/mapGestures.js';
+
 
 /**
  * The destination page's one map. Four toggleable layers rather than four
@@ -187,10 +189,14 @@ const DestMap = React.forwardRef(function DestMap({
       center: [lon, lat],
       zoom: 11.5,
       attributionControl: { compact: true },
-      scrollZoom: false,
       cooperativeGestures: false,
+      dragRotate: false,
+      touchPitch: false,
     });
     mapRef.current = map;
+    // Two fingers pan, a pinch or a mouse wheel zooms, and on a phone the
+    // map stays still under a scrolling thumb (T430, lib/mapGestures.js).
+    map._gestures = installMapGestures(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('load', () => {
       readyRef.current = true;
@@ -206,6 +212,7 @@ const DestMap = React.forwardRef(function DestMap({
       declutterRef.current?.();
       declutterRef.current = null;
       readyRef.current = false;
+      map._gestures?.dispose();
       map.remove();
       mapRef.current = null;
     };

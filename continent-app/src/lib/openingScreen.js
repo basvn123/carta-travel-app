@@ -58,6 +58,23 @@ export function photoOf(layer, row) {
   return firstOkImage(row.images)?.u || null;
 }
 
+/**
+ * Up to `max` photographs of one row, for the tile's swipeable media (T430):
+ * a beach, lake or summit row carries its gallery on the wire; a trail or a
+ * cycle row carries one photograph, so it stays one.
+ */
+export function photosOf(layer, row, max = 4) {
+  if (!row) return [];
+  if (layer === 'cycle' || layer === 'trail') {
+    const one = photoOf(layer, row);
+    return one ? [one] : [];
+  }
+  return (Array.isArray(row.images) ? row.images : [])
+    .map((im) => okPhoto(im?.u))
+    .filter(Boolean)
+    .slice(0, max);
+}
+
 const countryOf = (layer, row) => (layer === 'trail' ? row.country : row.cc) || '';
 
 /** Band 1's ranking key per section; see the header for why it differs. */

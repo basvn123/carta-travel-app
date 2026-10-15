@@ -1,0 +1,598 @@
+{
+  "id": "es-pilgrim-camino-sarria-santiago",
+  "sourceId": "es-pilgrim-camino-sarria-santiago",
+  "slug": "es-pilgrim-camino-sarria-santiago",
+  "title": "The Camino Francés from Sarria to Santiago",
+  "country": "Spain",
+  "countryCode": "ES",
+  "countries": [
+    {
+      "name": "Spain",
+      "code": "ES"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Galicia, Lugo and A Coruña",
+  "tripType": "Pilgrim routes",
+  "tripTypeId": 14,
+  "tripTypeSlug": "pilgrim",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "May to June and September to October",
+    "note": "July and August fill every albergue by early afternoon.",
+    "avoid": "November to March, short days and many albergues closed",
+    "raw": "May to June, September to October"
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 245,
+      "high": 405
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 70,
+        "highEur": 120,
+        "note": "Albergues, €10 public and €12 to €20 private"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": "Menú del peregrino €12 to €15, café breakfasts"
+      },
+      "transport": {
+        "lowEur": 25,
+        "highEur": 45,
+        "note": "Bus from Santiago airport to Sarria and back to the airport"
+      },
+      "activities": {
+        "lowEur": 10,
+        "highEur": 30,
+        "note": "Credencial, cathedral roof tour"
+      }
+    },
+    "perDayEur": {
+      "low": 35,
+      "high": 58
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5, five walking days of 19 to 29 km on good paths, about 5 to 7 hours each",
+    "fitnessLevel": "Active",
+    "crowdLevel": "High",
+    "familyFriendly": null,
+    "carRequired": false
+  },
+  "basecamps": [],
+  "gatewayAirport": "SCQ Santiago de Compostela, bus to Sarria via Lugo in about 2 h 30 min",
+  "gatewayAirportCode": "SCQ",
+  "languages": [
+    "Spanish",
+    "Galician",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.78,
+    "lon": -7.41,
+    "precision": "city",
+    "matchedPlace": "Sarria",
+    "source": "manual"
+  },
+  "tags": [
+    "camino",
+    "pilgrim",
+    "albergue",
+    "walking",
+    "galicia",
+    "compostela"
+  ],
+  "summary": "The last 100 km of the Camino Francés, the minimum that earns the **Compostela**. Five days on oak-lined lanes and stone villages from **Sarria**, through **Portomarín** on its reservoir, octopus in **Melide** and eucalyptus woods, to the **Cathedral of Santiago** and the pilgrims' Mass. Beds are €10 to €20 a night and dinner is a three-course menú for €13.",
+  "summaryGenerated": false,
+  "hook": "111 km in five days, beds from €10 a night, and the Compostela at the end.",
+  "snapshot": null,
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "To Sarria",
+      "morning": "Fly to **Santiago de Compostela**, then the bus to **Sarria** via Lugo, about 2 h 30 min.",
+      "afternoon": "Get your **credencial** stamped at the parish church and check the first yellow arrow.",
+      "evening": "Pilgrim dinner on Rúa Maior and an early night.",
+      "dayStats": "Bus 2 h 30 min",
+      "stats": {
+        "mode": "bus",
+        "distanceKm": 115,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 150,
+          "high": 150
+        }
+      },
+      "sleep": "Albergue in Sarria",
+      "sleepRef": 1,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lugo_2023_-_Roman_Walls.jpg/1280px-Lugo_2023_-_Roman_Walls.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Roman Walls of Lugo",
+        "page": "https://commons.wikimedia.org/wiki/File:Lugo_2023_-_Roman_Walls.jpg",
+        "author": "Fernando Pascullo",
+        "licence": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "day": 2,
+      "title": "Sarria to Portomarín",
+      "morning": "Out through oak woods and hamlets; the **100 km stone** comes before lunch.",
+      "afternoon": "Down to the **Miño** reservoir and the climb of stairs into **Portomarín**, rebuilt stone by stone above the water.",
+      "evening": "Tarta de Santiago and an evening walk on the church square.",
+      "dayStats": "22 km, +420 m, -470 m, 5 h 30 min",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 22,
+        "ascentM": 420,
+        "descentM": 470,
+        "highM": 660,
+        "timeMin": {
+          "low": 330,
+          "high": 330
+        }
+      },
+      "sleep": "Albergue in Portomarín",
+      "sleepRef": 2,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Taurotragus_Orix._Marcelle%2C_Outeiro_de_Rei%2C_Galiza.jpg/1280px-Taurotragus_Orix._Marcelle%2C_Outeiro_de_Rei%2C_Galiza.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Marcelle Natureza",
+        "page": "https://commons.wikimedia.org/wiki/File:Taurotragus_Orix._Marcelle,_Outeiro_de_Rei,_Galiza.jpg",
+        "author": "Noel Feans",
+        "licence": "CC BY 2.0"
+      }
+    },
+    {
+      "day": 3,
+      "title": "Portomarín to Palas de Rei",
+      "morning": "The longest climb of the week, up to **Sierra Ligonde**, about 720 m, on forest tracks.",
+      "afternoon": "Down through Ligonde and Eirexe to **Palas de Rei**.",
+      "evening": "Caldo gallego and a foot soak.",
+      "dayStats": "25 km, +560 m, -320 m, 6 h 30 min",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 25,
+        "ascentM": 560,
+        "descentM": 320,
+        "highM": 720,
+        "timeMin": {
+          "low": 390,
+          "high": 390
+        }
+      },
+      "sleep": "Albergue in Palas de Rei",
+      "sleepRef": 3,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg/1280px-Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Monte Pedroso",
+        "page": "https://commons.wikimedia.org/wiki/File:Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg",
+        "author": "Luis Miguel Bugallo Sánchez (Lmbuga)",
+        "licence": "CC BY-SA 3.0"
+      }
+    },
+    {
+      "day": 4,
+      "title": "Palas de Rei to Arzúa",
+      "morning": "The longest day, 29 km, on rolling lanes through Galician farms.",
+      "afternoon": "**Pulpo a feira** in **Melide**, octopus with paprika on wooden plates, the Camino's best lunch.",
+      "evening": "Cheese from Arzúa, famous for it, with bread and a beer.",
+      "dayStats": "29 km, +500 m, -580 m, 7 h",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 29,
+        "ascentM": 500,
+        "descentM": 580,
+        "highM": 560,
+        "timeMin": {
+          "low": 420,
+          "high": 420
+        }
+      },
+      "sleep": "Albergue in Arzúa",
+      "sleepRef": 4,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar%2C_Santiago_de_Compostela.jpg/1280px-Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar%2C_Santiago_de_Compostela.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Church of Santa María la Real del Sar",
+        "page": "https://commons.wikimedia.org/wiki/File:Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar,_Santiago_de_Compostela.jpg",
+        "author": "Javier Pais",
+        "licence": "CC BY 2.0"
+      }
+    },
+    {
+      "day": 5,
+      "title": "Arzúa to O Pedrouzo",
+      "morning": "A shorter day under eucalyptus, with cafés every few kilometres.",
+      "afternoon": "Arrive in **O Pedrouzo** early and rest before the last stage.",
+      "evening": "Pilgrims' dinner and a 06:30 alarm.",
+      "dayStats": "19 km, +290 m, -350 m, 4 h 30 min",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 19,
+        "ascentM": 290,
+        "descentM": 350,
+        "highM": 410,
+        "timeMin": {
+          "low": 270,
+          "high": 270
+        }
+      },
+      "sleep": "Albergue in O Pedrouzo",
+      "sleepRef": 5,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg/1280px-Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Monte Pedroso",
+        "page": "https://commons.wikimedia.org/wiki/File:Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg",
+        "author": "Luis Miguel Bugallo Sánchez (Lmbuga)",
+        "licence": "CC BY-SA 3.0"
+      }
+    },
+    {
+      "day": 6,
+      "title": "O Pedrouzo to Santiago",
+      "morning": "Up to **Monte do Gozo**, the Mount of Joy, for the first sight of the cathedral spires.",
+      "afternoon": "Into the old town and the **Praza do Obradoiro**; queue at the pilgrim office for the **Compostela**.",
+      "evening": "Celebration dinner on Rúa do Franco.",
+      "dayStats": "20 km, +330 m, -360 m, 5 h",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 20,
+        "ascentM": 330,
+        "descentM": 360,
+        "highM": 370,
+        "timeMin": {
+          "low": 300,
+          "high": 300
+        }
+      },
+      "sleep": "Albergue in Santiago",
+      "sleepRef": 6,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Monument_Compostelle.JPG/1280px-Monument_Compostelle.JPG",
+        "w": 1280,
+        "h": 853,
+        "credit": "Monte do Gozo",
+        "page": "https://commons.wikimedia.org/wiki/File:Monument_Compostelle.JPG",
+        "author": "Antoine Cadotte",
+        "licence": "CC BY-SA 3.0"
+      }
+    },
+    {
+      "day": 7,
+      "title": "Santiago, the Mass and home",
+      "morning": "The noon pilgrims' Mass in the **Cathedral**; the botafumeiro swings on feast days and some Fridays.",
+      "afternoon": "Rooftop tour of the cathedral, about €12, then the bus to the airport, 35 minutes.",
+      "evening": null,
+      "dayStats": "City walking, about 4 km",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 4,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 120,
+          "high": 120
+        }
+      },
+      "sleep": null,
+      "sleepRef": null,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Santiago_cathedral_2021.jpg/1280px-Santiago_cathedral_2021.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Cathedral of Santiago de Compostela",
+        "page": "https://commons.wikimedia.org/wiki/File:Santiago_cathedral_2021.jpg",
+        "author": "Fernando",
+        "licence": "CC BY-SA 4.0"
+      }
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Albergue in Sarria",
+      "style": "albergue",
+      "location": "Sarria, Rúa Maior",
+      "description": "Many private albergues; book the first night.",
+      "booking": "a week ahead",
+      "priceNote": "€12 to €18 a bunk"
+    },
+    {
+      "rank": 2,
+      "name": "Albergue in Portomarín",
+      "style": "albergue",
+      "location": "Portomarín",
+      "description": "The Xunta's public albergue takes no bookings; private ones do.",
+      "booking": "book private beds ahead in summer",
+      "priceNote": "€10 to €15 a bunk"
+    },
+    {
+      "rank": 3,
+      "name": "Albergue in Palas de Rei",
+      "style": "albergue",
+      "location": "Palas de Rei",
+      "description": "Public and private albergues in the centre.",
+      "booking": "a few days ahead",
+      "priceNote": "€10 to €15 a bunk"
+    },
+    {
+      "rank": 4,
+      "name": "Albergue in Arzúa",
+      "style": "albergue",
+      "location": "Arzúa",
+      "description": "Most open at 13:00; washing lines and kitchens.",
+      "booking": "a few days ahead",
+      "priceNote": "€10 to €15 a bunk"
+    },
+    {
+      "rank": 5,
+      "name": "Albergue in O Pedrouzo",
+      "style": "albergue",
+      "location": "O Pedrouzo",
+      "description": "The last night on the trail; the busiest stop.",
+      "booking": "book ahead",
+      "priceNote": "€12 to €18 a bunk"
+    },
+    {
+      "rank": 6,
+      "name": "Albergue in Santiago",
+      "style": "albergue",
+      "location": "Santiago old town",
+      "description": "Seminario Menor and old town hostels, or a private room to celebrate.",
+      "booking": "a week ahead",
+      "priceNote": "€15 to €25 a bunk"
+    }
+  ],
+  "logistics": {
+    "connectivity": "EU roaming; signal is good in every village.",
+    "emergency": "112.",
+    "weather": "Galicia is green because it rains; a light rain jacket every day, all year.",
+    "bookingWindows": "Private albergues take bookings; public ones are first come from 13:00.",
+    "money": "Small cafés are cash only; ATMs in every stage town.",
+    "transportRules": "Luggage transfer between albergues costs about €5 a stage per bag.",
+    "permits": "The credencial, the pilgrim passport, with two stamps a day from Sarria for the Compostela.",
+    "health": "Treat hot spots on the first day; pharmacies in every stage town.",
+    "gettingThere": "Fly to Santiago; buses to Sarria run via Lugo.",
+    "other": []
+  },
+  "proTips": [
+    "Collect two stamps a day from Sarria: the pilgrim office asks for them on the last 100 km.",
+    "Start at 07:30 to finish before the afternoon heat and the albergue queue."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Who It Suits": "First-time pilgrims and walkers who want a week with meaning"
+    },
+    "surface": "Paths and quiet lanes, about 90% unpaved",
+    "distanceKm": 115,
+    "elevationM": 720,
+    "verticalM": 2100,
+    "technicalRating": "Waymarked with yellow arrows and stone markers every 500 m",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": false,
+    "bookingTimeline": "Private albergues a few days ahead, a week in summer",
+    "audience": "Walkers and pilgrims"
+  },
+  "packingNotes": [
+    "Broken-in walking shoes",
+    "Blister plasters",
+    "A light sleeping bag",
+    "Rain jacket",
+    "Shell for the credencial"
+  ],
+  "whatCouldGoWrong": [
+    "Summer albergues fill by early afternoon; book private beds or start early.",
+    "Blisters on day two end more Caminos than anything; stop and treat them early."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "Sample trip written for T431 to show every slot of the trip page. Prices, timetables and opening details are to be audited by the owner."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "t431-samples",
+    "sourceFile": "pipeline/journeys/sample_trips.py",
+    "sourceFormat": "python (sample)",
+    "sourceId": "es-pilgrim-camino-sarria-santiago",
+    "ingestedAt": "2026-10-15",
+    "synthesized": true
+  },
+  "sample": true,
+  "highlights": [
+    {
+      "title": "The Compostela",
+      "line": "Your certificate at the pilgrim office after the last 100 km.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Santiago_cathedral_2021.jpg/1280px-Santiago_cathedral_2021.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Cathedral of Santiago de Compostela",
+        "page": "https://commons.wikimedia.org/wiki/File:Santiago_cathedral_2021.jpg",
+        "author": "Fernando",
+        "licence": "CC BY-SA 4.0"
+      },
+      "day": 6
+    },
+    {
+      "title": "Monte do Gozo",
+      "line": "The first sight of the cathedral spires, 5 km from the end.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Monument_Compostelle.JPG/1280px-Monument_Compostelle.JPG",
+        "w": 1280,
+        "h": 853,
+        "credit": "Monte do Gozo",
+        "page": "https://commons.wikimedia.org/wiki/File:Monument_Compostelle.JPG",
+        "author": "Antoine Cadotte",
+        "licence": "CC BY-SA 3.0"
+      },
+      "day": 6
+    },
+    {
+      "title": "Pulpo in Melide",
+      "line": "Octopus with paprika on wooden plates, the Camino's best lunch.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar%2C_Santiago_de_Compostela.jpg/1280px-Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar%2C_Santiago_de_Compostela.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Church of Santa María la Real del Sar",
+        "page": "https://commons.wikimedia.org/wiki/File:Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar,_Santiago_de_Compostela.jpg",
+        "author": "Javier Pais",
+        "licence": "CC BY 2.0"
+      },
+      "day": 4
+    },
+    {
+      "title": "Portomarín",
+      "line": "A village moved stone by stone above its reservoir.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Taurotragus_Orix._Marcelle%2C_Outeiro_de_Rei%2C_Galiza.jpg/1280px-Taurotragus_Orix._Marcelle%2C_Outeiro_de_Rei%2C_Galiza.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Marcelle Natureza",
+        "page": "https://commons.wikimedia.org/wiki/File:Taurotragus_Orix._Marcelle,_Outeiro_de_Rei,_Galiza.jpg",
+        "author": "Noel Feans",
+        "licence": "CC BY 2.0"
+      },
+      "day": 2
+    }
+  ],
+  "photos": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Santiago_Cathedral_2021_-_west_panorama.jpg/1280px-Santiago_Cathedral_2021_-_west_panorama.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Santiago de Compostela",
+      "page": "https://commons.wikimedia.org/wiki/File:Santiago_Cathedral_2021_-_west_panorama.jpg",
+      "author": "Fernando Pascullo",
+      "licence": "CC BY-SA 4.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Monument_Compostelle.JPG/1280px-Monument_Compostelle.JPG",
+      "w": 1280,
+      "h": 853,
+      "credit": "Monte do Gozo",
+      "page": "https://commons.wikimedia.org/wiki/File:Monument_Compostelle.JPG",
+      "author": "Antoine Cadotte",
+      "licence": "CC BY-SA 3.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Santiago_cathedral_2021.jpg/1280px-Santiago_cathedral_2021.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Cathedral of Santiago de Compostela",
+      "page": "https://commons.wikimedia.org/wiki/File:Santiago_cathedral_2021.jpg",
+      "author": "Fernando",
+      "licence": "CC BY-SA 4.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lugo_2023_-_Roman_Walls.jpg/1280px-Lugo_2023_-_Roman_Walls.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Roman Walls of Lugo",
+      "page": "https://commons.wikimedia.org/wiki/File:Lugo_2023_-_Roman_Walls.jpg",
+      "author": "Fernando Pascullo",
+      "licence": "CC BY-SA 4.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Pantocrator_del_p%C3%B3rtico_de_la_Gloria_en_Santiago_de_Compostela.jpg/1280px-Pantocrator_del_p%C3%B3rtico_de_la_Gloria_en_Santiago_de_Compostela.jpg",
+      "w": 1280,
+      "h": 960,
+      "credit": "Glory's Portico",
+      "page": "https://commons.wikimedia.org/wiki/File:Pantocrator_del_p%C3%B3rtico_de_la_Gloria_en_Santiago_de_Compostela.jpg",
+      "author": "pedronchi",
+      "licence": "CC BY 2.0"
+    }
+  ],
+  "dayPlaces": [
+    {
+      "day": 1,
+      "name": "Sarria",
+      "lat": 42.781,
+      "lon": -7.414
+    },
+    {
+      "day": 2,
+      "name": "Portomarín",
+      "lat": 42.807,
+      "lon": -7.616
+    },
+    {
+      "day": 3,
+      "name": "Palas de Rei",
+      "lat": 42.873,
+      "lon": -7.869
+    },
+    {
+      "day": 4,
+      "name": "Arzúa",
+      "lat": 42.928,
+      "lon": -8.163
+    },
+    {
+      "day": 5,
+      "name": "O Pedrouzo",
+      "lat": 42.905,
+      "lon": -8.36
+    },
+    {
+      "day": 6,
+      "name": "Santiago de Compostela",
+      "lat": 42.87961,
+      "lon": -8.54408
+    },
+    {
+      "day": 7,
+      "name": "Santiago de Compostela",
+      "lat": 42.87961,
+      "lon": -8.54408
+    }
+  ],
+  "wordCount": 610
+}

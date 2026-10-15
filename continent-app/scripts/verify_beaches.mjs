@@ -320,32 +320,32 @@ check('the beach page opens', await page.locator('.bpage').isVisible());
 
 // The shared skeleton (T180, spec 5.4): three cells under the hero, a map,
 // and "Getting there" never folded.
-check('the hero strip carries exactly three cells',
-  await page.locator('.dsk-hero .jstrip-cell').count() === 3,
-  `${await page.locator('.dsk-hero .jstrip-cell').count()} cells`);
+// T430 (owner, 2026-10-15): the three-cell strip under a single hero is
+// retired; the page opens on a photo gallery and a fact band with icons.
+check('the page opens on a photo gallery, not a strip',
+  await page.locator('.ipage-gallery .pgal').count() === 1
+    && await page.locator('.jstrip-cell').count() === 0);
 check('getting there is on the page and never folded',
   await page.locator('[data-slot="getting-there"]').isVisible().catch(() => false));
 
-const where = await page.locator('.bpage-where').innerText().catch(() => '');
+// T430: "Directions in your maps app" is a secondary in the hand-off row,
+// and the place is named in the head (where, with the flag).
+const where = await page.locator('.ihead-where').innerText().catch(() => '');
 check('the page opens with the location', where.trim().length > 1, where.replace(/\n/g, ' '));
-check('the location row carries a pin icon', await page.locator('.bpage-where svg').count() >= 1);
-const mapsHref = await page.locator('.bpage-where').getAttribute('href').catch(() => '');
-check('the pin links to a map by coordinate', /google\.com\/maps.*destination=-?\d/.test(mapsHref || ''),
+const mapsHref = await page.locator('.ipage-acts a.btn').first().getAttribute('href').catch(() => '');
+check('the directions link opens a map by coordinate', /google\.com\/maps.*destination=-?\d/.test(mapsHref || ''),
   (mapsHref || '').slice(0, 70));
 
-const shot = await page.locator('.bpage-shot').getAttribute('src').catch(() => '');
-check('the page shows a large photograph', /^https:\/\/upload\.wikimedia\.org/.test(shot || ''));
-// T396 (design wave V4): the 64 px tab thumbnails became one photo track
-// (carta-design "Photo track", rule N7), every photograph a frame with its
-// credit and no tab roles, so the count reads the frames and a check below
-// proves no role=tab is left.
-const thumbs = await page.locator('.dsk-ptrack-frame').count();
+// T430: the photographs are the gallery at the top, each with its credit
+// under it. A photograph that fails to load leaves the gallery (the sandbox
+// cannot reach Commons), so the checks read what the browser could draw.
+const slides = await page.locator('.pgal .destp-slide').count();
+const shot = await page.locator('.pgal .destp-slide img').first().getAttribute('src').catch(() => '');
+check('the page shows a large photograph (or its placeholder when Commons is unreachable)',
+  slides === 0 ? await page.locator('.pgal.is-blank').count() === 1 : /^https:\/\/upload\.wikimedia\.org/.test(shot || ''));
 check('the photographs carry no tab roles', await page.locator('.dsk-page [role="tab"], .dsk-page [role="tablist"]').count() === 0);
-check('three or four photographs are offered', thumbs >= 2 && thumbs <= 4, `${thumbs} photographs`);
-// T396: every frame of the photo track carries its own credit now, so the
-// header photograph's credit is read where it sits, under the hero.
-const credit = await page.locator('.dsk-hero-credit .bpage-credit').innerText().catch(() => '');
-check('the photograph carries its author and licence', /cc|public domain/i.test(credit), credit.replace(/\n/g, ' '));
+const credit = await page.locator('.pgal .destp-slide-credit').first().innerText().catch(() => '');
+check('the photograph carries its author and licence', slides === 0 || /cc|public domain/i.test(credit), credit.replace(/\n/g, ' '));
 
 await openRowWith(page, '.bpage-why');
 const why = await page.locator('.bpage-why').innerText().catch(() => '');

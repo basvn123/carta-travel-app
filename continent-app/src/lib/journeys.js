@@ -90,6 +90,12 @@ export const TYPE_LABEL_KEY = {
   'winter-sports': 'journey.typeWinterSports',
   'nature-escape': 'journey.typeNatureEscape',
   'water-sports': 'journey.typeWaterSports',
+  // T431 (owner, 2026-10-15)
+  hostel: 'journey.typeHostel',
+  'beach-week': 'journey.typeBeachWeek',
+  rail: 'journey.typeRail',
+  pilgrim: 'journey.typePilgrim',
+  'island-hopping': 'journey.typeIslandHopping',
 };
 
 export const typeLabel = (slug, t, fallback = '') => {
@@ -426,7 +432,6 @@ function sentences(text) {
 }
 
 const ORPHAN = /^(?:it|its|this|these|that|those|they|their|there|he|she|is not|are not|isn't|aren't)\b/i;
-const NUMBER_WORD = /\b(?:one|two|three|four|five|six|seven|eight|nine|ten|twelve|twenty|thirty|forty|fifty|hundred|thousand)\b/i;
 const MAX_LINE = 190;
 
 function clip(sentence) {
@@ -436,24 +441,44 @@ function clip(sentence) {
   return `${(at > 80 ? cut.slice(0, at) : cut.slice(0, cut.lastIndexOf(' '))).replace(/[,;:]$/, '')}.`;
 }
 
+// T431 (owner, 2026-10-15): the hook sells the week, it never opens on a
+// statistic about the place ("Andorra is 468 km\u00b2"). These read as trivia.
+const TRIVIA = /km\u00b2|km2\b|square kilomet|square mile|per ?cent of|\bpopulation\b|inhabitants|\bfounded\b|\bcensus\b|\bis the (?:largest|smallest|second|third)\b/i;
+// "This week takes..." and "This route crosses..." name the trip, so they
+// may lead; "This is..." leans on the sentence before it.
+const ABOUT_TRIP = /^this (?:week|trip|route|loop|walk|ride|tour|journey|itinerary)\b/i;
+
 /**
- * The one-line reason this week exists. Looks in the authored hook, then the
- * summary: the first sentence of 40 to 190 characters that carries a number
- * (a digit or a number word), else the first sentence, clipped at a clause.
- * Returns { line, rest } where rest is the source text minus that sentence,
- * so the fold under it does not say it twice; null when there is no prose.
+ * The one-line reason this week exists. A trip's own first highlight wins
+ * (T431, docs/ITEM_PAGE_DATA_CONTRACT.md); then the authored hook, then the
+ * summary: the first sentence of 40 to 190 characters that is not trivia
+ * and names a place (a **bold** name), else the first that is not trivia,
+ * clipped at a clause. Returns { line, rest } where rest is the source text
+ * minus that sentence, so nothing under it says it twice; null when there
+ * is no prose.
  */
 export function hookLine(trip) {
+  const own = (trip?.highlights || []).find((h) => h && h.line);
+  if (own) return { line: stripBold(own.line), source: 'highlight', rest: '' };
   for (const key of ['hook', 'summary']) {
     if (key === 'summary' && trip?.summaryGenerated) continue;
-    const list = sentences(trip?.[key]);
+    const raw = String(trip?.[key] || '');
+    const list = sentences(raw);
     if (!list.length) continue;
+    const named = new Set(sentences(raw.replace(/\*\*([^*]+)\*\*/g, '\u2063$1')).filter((x) => x.includes('\u2063'))
+      .map((x) => x.replace(/\u2063/g, '')));
     // A sentence that leans on the one before it ("It is not...", "These
     // huts...") reads as an orphan on its own, so it never leads (rule
     // "Derived copy stays silent").
-    const fits = (s) => s.length >= 40 && s.length <= MAX_LINE && !ORPHAN.test(s);
-    const pick = list.find((s) => fits(s) && (/\d/.test(s) || NUMBER_WORD.test(s))) || list.find(fits) || list[0];
-    const rest = list.filter((s) => s !== pick).join(' ');
+    // The trivia test reads the clipped line: a sentence whose statistic sits
+    // past the clip still sells in its first clause.
+    const fits = (x) => x.length >= 40 && (!ORPHAN.test(x) || ABOUT_TRIP.test(x)) && !TRIVIA.test(clip(x));
+    const pick = list.find((x) => fits(x) && x.length <= MAX_LINE && named.has(x))
+      || list.find((x) => fits(x) && named.has(x))
+      || list.find(fits)
+      || list.find((x) => !TRIVIA.test(clip(x)))
+      || list[0];
+    const rest = list.filter((x) => x !== pick).join(' ');
     return { line: clip(pick), source: key, rest };
   }
   // A generated trip has no authored prose worth quoting. Build the line from
@@ -604,4 +629,63 @@ export function journeyExits(me, cards) {
     exits.push({ kind: 'nearby', card: more });
   }
   return exits;
+}
+
+/* ── Why this trip and the gallery (T431) ─────────────────────────────────── */
+
+/**
+ * The three to five reasons to go, as { key, title, line, photo, day }.
+ * A trip's own highlights[] (docs/ITEM_PAGE_DATA_CONTRACT.md) win; a trip
+ * without them gets the first named place of its best days (the **bold**
+ * names in the morning and afternoon), one a day, with the day's title as
+ * its line. No photograph is borrowed: a derived reason has none.
+ */
+export function tripHighlights(trip, max = 5) {
+  const own = (trip?.highlights || []).filter((h) => h && h.title);
+  if (own.length) {
+    return own.slice(0, max).map((h, i) => ({
+      key: `hl-${i}`, title: stripBold(h.title), line: stripBold(h.line || ''), photo: h.photo || null, day: h.day ?? null,
+    }));
+  }
+  const out = [];
+  const seen = new Set();
+  for (const day of trip?.itinerary || []) {
+    if (out.length >= Math.min(max, 4)) break;
+    const text = `${day.afternoon || ''} ${day.morning || ''}`;
+    const names = [...text.matchAll(/\*\*([^*]+)\*\*/g)].map((m) => m[1].split(/,|\s\(|:/)[0].trim());
+    const name = names.find((n) => n.length >= 3 && n.length <= 40 && /^[A-ZÀ-Þ]/.test(n)
+      && !/\d/.test(n) && !seen.has(n.toLowerCase()));
+    if (!name) continue;
+    seen.add(name.toLowerCase());
+    out.push({ key: `hl-d${day.day}`, title: name, line: stripBold(day.title || ''), photo: null, day: day.day ?? null });
+  }
+  return out.length >= 2 ? out : [];
+}
+
+/** A trip photograph in the gallery's shape, or null. */
+export function tripPhoto(img) {
+  if (!img?.url) return null;
+  return {
+    url: img.url, w: img.w || null, h: img.h || null,
+    caption: img.caption || img.credit || '', author: img.author || null, licence: img.licence || null,
+    page: img.page || null,
+  };
+}
+
+/** Every photograph a trip carries, once each: the hero, its gallery, its
+ *  highlights and its days, in that order. */
+export function tripGallery(trip, max = 12) {
+  const out = [];
+  const seen = new Set();
+  const add = (img) => {
+    const p = tripPhoto(img);
+    if (!p || seen.has(p.url)) return;
+    seen.add(p.url);
+    out.push(p);
+  };
+  add(trip?.hero);
+  (trip?.photos || []).forEach(add);
+  (trip?.highlights || []).forEach((h) => add(h?.photo));
+  (trip?.itinerary || []).forEach((d) => add(d?.photo));
+  return out.slice(0, max);
 }
