@@ -246,16 +246,27 @@
 
 /* T451: the trip cards are kit Cards; the legacy .jcap-card look (66-v6-trips,
    loaded later) must not repaint their edge, surface or press. */
-.jsec .card.jcap-card {
+.jsec .card.card-tile.jcap-card {
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--surface);
   color: var(--text);
 }
 .jsec .card.jcap-card:active { transform: none; }
-.jsec .jcap-card .card-media { position: relative; aspect-ratio: 3 / 2; }
+.jsec .card-tile.jcap-card .card-media { position: relative; aspect-ratio: 3 / 2; }
 .jsec .jcap-card .places-card-img { position: absolute; inset: 0; }
-.jsec .jcap-card .card-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.jsec .card-tile.jcap-card .card-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+/* T452: a style's trips are the list's compact rows (37-card-fillings.css
+   .pcard); the legacy column card of 66-v6-trips must not fold them. */
+.places-list.jsec.jsec-trips {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+  gap: 0 var(--space-6);
+}
+.places-list.jsec.jsec-trips > :not(.jcard) { grid-column: 1 / -1; }
+.jsec .card.card-row.jcap-card { flex-direction: row; overflow: visible; }
+.jsec .card.card-row.jcap-card .jcard-title { font-size: var(--text-lead); }
+.jsec .card.card-row.jcap-card .jcap-noimg > span { display: none; }
+.jsec .card.card-row.jcap-card .card-price { font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
 .jstyle-desc { display: block; font-size: var(--text-body); line-height: var(--leading-ui); color: var(--text-2); }
 .jcard-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .jcard-meta .jcap-where { display: flex; align-items: center; gap: var(--space-1); color: var(--text-2); }

@@ -10,12 +10,12 @@ import { Card } from '../components/ui/index.js';
  * kit Card since T428).
  *
  * Beaches, lakes, mountains, cycle routes and walks all draw through this
- * frame; lib/cardFillings.js decides what goes in it. It is the kit's tile
- * Card (components/ui/Card.jsx): the photograph on top, then the name with
- * the Score beside it, where it is, one line of the facts that matter most
- * (a swimming verdict, a lift to the top, how far from a searched place),
- * and up to three measured values set label over value, the way key facts
- * read on the destination page.
+ * frame; lib/cardFillings.js decides what goes in it. Since T452 it is the
+ * kit's compact row Card (components/ui/Card.jsx), the way Explore draws its
+ * list: a 72 px square photograph, the name with the Score beside it, where
+ * it is, two measured values, and one line of what it is like (a swimming
+ * verdict, a lift, how far from a searched place). The photo tiles stay in
+ * the rails above the list, where inspiration leads.
  *
  * What T428 took off (owner, 2026-10-14, "the trail stack also needs to
  * go"): the 6 px data strip under the photograph and the key sentence that
@@ -28,19 +28,19 @@ import { Card } from '../components/ui/index.js';
  * name keeps .places-card-name, so the layer harnesses find the same card.
  */
 
-// The three widths spec 5.2 names, all on Wikimedia's renderable list.
-const CARD_WIDTHS = [500, 960, 1280];
-
-// What the photograph is drawn at: the full column on a phone, half of it
-// up to 1039 px, a third of the list column above it.
-const PLACE_CARD_SIZES = '(max-width: 639px) calc(100vw - 32px), (max-width: 1039px) 47vw, min(26vw, 370px)';
+// The list is compact rows since T452 (the owner's row decision of
+// 2026-10-13, as Explore draws its list): a 72 px square photograph, so the
+// two smallest widths on Wikimedia's renderable list are all it needs (250
+// covers a 2x screen, the size Explore's rows ask for).
+const CARD_WIDTHS = [250, 500];
+const PLACE_CARD_SIZES = '72px';
 
 function cardSrcSet(url) {
   if (!isResizable(url)) return undefined;
   return CARD_WIDTHS.map((w) => `${thumbAt(url, w)} ${w}w`).join(', ');
 }
 
-/** The photograph, lazy, with the 500/960/1280 ladder. */
+/** The photograph, lazy, square. */
 export function PlaceCardPhoto({ url }) {
   if (!url) return null;
   return (
@@ -50,8 +50,8 @@ export function PlaceCardPhoto({ url }) {
       srcSet={cardSrcSet(url)}
       sizes={PLACE_CARD_SIZES}
       alt=""
-      width={4}
-      height={3}
+      width={1}
+      height={1}
       loading="lazy"
       decoding="async"
     />
@@ -96,10 +96,14 @@ export const PlaceCard = React.memo(function PlaceCard({
     if (sharedKey == null) onClick?.(e);
     else openShared(card, sharedKey, () => onClick?.(e));
   };
-  const shown = values.filter((v) => !v.none).slice(0, 3);
+  // A row holds what decides a click and no more (T452, owner 2026-10-15:
+  // "just enough to attract them"): two measured values, then up to three
+  // words of what it is like. The page holds the rest.
+  const shown = values.filter((v) => !v.none).slice(0, 2);
+  if (gem) parts.push({ key: 'gem', cls: 'pcard-gem', text: gem });
   return (
     <Card
-      layout="tile"
+      layout="row"
       className={`pcard ${className}`.trim()}
       data-testid={testId}
       media={media}
@@ -115,6 +119,16 @@ export const PlaceCard = React.memo(function PlaceCard({
               <span className="pcard-where-text">{where}</span>
             </span>
           )}
+          {shown.length > 0 && (
+            <dl className="pcard-values places-card-facts">
+              {shown.map((v) => (
+                <div key={v.key} className="pcard-v">
+                  <dt className="pcard-v-l">{v.label}</dt>
+                  <dd className={`pcard-v-n${v.cls ? ` ${v.cls}` : ''}`} title={v.title}>{v.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
           {parts.length > 0 && (
             <span className={`pcard-hook ${hookClass}`}>
               {parts.map((h, i) => (
@@ -128,18 +142,7 @@ export const PlaceCard = React.memo(function PlaceCard({
               ))}
             </span>
           )}
-          {shown.length > 0 && (
-            <dl className="pcard-values places-card-facts">
-              {shown.map((v) => (
-                <div key={v.key} className="pcard-v">
-                  <dt className="pcard-v-l">{v.label}</dt>
-                  <dd className={`pcard-v-n${v.cls ? ` ${v.cls}` : ''}`} title={v.title}>{v.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
           {note ? <span className="pcard-note">{note}</span> : null}
-          {gem && <span className="pcard-gem">{gem}</span>}
         </span>
       )}
     />
@@ -166,7 +169,7 @@ export function PlaceCardSkeletons({ n = 6, label }) {
       <span className="sr-only" role="status">{slow ? t('layer.slow') : label}</span>
       {slow && <p className="places-slow" aria-hidden="true">{t('layer.slow')}</p>}
       {Array.from({ length: n }, (_, i) => (
-        <span className="card card-tile pcard-skel" aria-hidden="true" key={i}>
+        <span className="card card-row pcard pcard-skel" aria-hidden="true" key={i}>
           <span className="card-media" />
           <span className="card-body">
             <span className="pcard-skel-bar is-title" />

@@ -39,7 +39,7 @@ test('pickValues marks a missing figure instead of dropping the cell', () => {
   assert.equal(cells[1].value, 'card.none');
 });
 
-test('a walk: length first (the harness parses it), time, climb uphill; loop and highlights as icons', () => {
+test('a walk: length first (the harness parses it), climb uphill, time; loop and highlights as icons', () => {
   const tr = {
     name: 'Sentiero', category: 'hike', country: 'IT', distance_m: 12400, duration_min: 250,
     ascent_m: 800, descent_m: 120, is_loop: true, difficulty: 'moderate',
@@ -49,8 +49,8 @@ test('a walk: length first (the harness parses it), time, climb uphill; loop and
   const fill = trailFilling({ tr, assoc: { dest: null }, kindKey: 'trails.hike' }, { t, countryName: () => 'Italy' });
   assertCard(fill);
   assert.match(fill.values[0].value, /^12\.4 km$/);
-  assert.match(fill.values[1].value, /^4\.2 h$/);
-  assert.match(fill.values[2].value, /^\+\d/);
+  assert.match(fill.values[1].value, /^\+\d/);
+  assert.match(fill.values[2].value, /^4\.2 h$/);
   assert.equal(fill.ref, 'CAI 12');
   assert.equal(fill.where, 'Italy');
   assert.equal(fill.icons[0].code, 'loop');
@@ -72,8 +72,8 @@ test('a city day trades the climb for its stops', () => {
   const tr = { name: 'Old town', category: 'citytrip', distance_m: 5200, duration_min: 180, n_stops: 7 };
   const fill = trailFilling({ tr, assoc: {}, kindKey: 'trails.cityDay' }, { t });
   assertCard(fill);
-  assert.deepEqual(fill.values.map((v) => v.key), ['length', 'time', 'stops']);
-  assert.equal(fill.values[2].value, '7');
+  assert.deepEqual(fill.values.map((v) => v.key), ['length', 'stops', 'time']);
+  assert.equal(fill.values[1].value, '7');
   assert.equal(fill.ref, null);
 });
 
