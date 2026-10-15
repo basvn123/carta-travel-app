@@ -361,6 +361,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
         ),
       ]}
       onPdf={onPdf}
+      pdf={{ photos, where: [beach.region, countryName].filter(Boolean).join(', '), url: beachShareUrl(beach) }}
       pdfBusy={pdfBusy}
       map={Number.isFinite(beach.lat) && Number.isFinite(beach.lon) ? (
         <div className="sig-mapwrap">

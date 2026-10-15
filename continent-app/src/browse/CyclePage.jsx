@@ -894,6 +894,16 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         ),
       ]}
       onPdf={(route || tour) ? onPdf : null}
+      pdf={{
+        photos,
+        where: countryName,
+        route: (() => {
+          const flat = geometryParts(geometry).flat().filter((pt) => Array.isArray(pt) && finitePair(pt));
+          const step = Math.max(1, Math.ceil(flat.length / 400));
+          return flat.filter((_, i) => i % step === 0);
+        })(),
+        url: shareUrl,
+      }}
       pdfBusy={pdfBusy}
       map={(
         <MapShell getMap={getMap} relief beneath={['cycle-casing']}>

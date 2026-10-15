@@ -203,6 +203,12 @@ function Fact({ label, value, word = false, title }) {
   );
 }
 
+/** A route thinned to about 400 points for the PDF's vector line. */
+const pdfLine = (pts) => {
+  const step = Math.max(1, Math.ceil((pts?.length || 0) / 400));
+  return (pts || []).filter((_, i) => i % step === 0 || i === pts.length - 1);
+};
+
 export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
   const { tr, assoc } = card;
@@ -1030,6 +1036,13 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         ),
       ]}
       onPdf={follow ? null : onPdf}
+      pdf={{
+        photos: galleryPhotos,
+        where: place ? [place.city, place.country].filter(Boolean).join(', ') : '',
+        route: pdfLine(pts).map((p) => [p.lon, p.lat]),
+        profile: pdfLine(pts).filter((p) => Number.isFinite(p.ele)).map((p) => [p.m / 1000, p.ele]),
+        url: shareUrl,
+      }}
       pdfBusy={pdfBusy}
       gettingThere={start && assoc.dest && startKm != null ? (
         <ul className="igo-list">

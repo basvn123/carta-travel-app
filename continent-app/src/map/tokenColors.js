@@ -40,6 +40,9 @@ export const TOKEN_COLOURS = {
   '--beach-ink': '#c48a2a',
   '--mountain-ink': '#6b5b95',
   '--gem-ink': '#744820',
+  // T430: the PDF kit's warning and tick colours (lib/pdfKit.js).
+  '--amber-ink': '#a8400f',
+  '--status-success': '#10b981',
 };
 
 /**

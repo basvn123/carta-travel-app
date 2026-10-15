@@ -14,6 +14,7 @@ import { SectionRail } from './SectionRail.jsx';
 import { Track } from './Track.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import { BeforeYouGo, HighlightCard, AlternativeCard, SourcesLine } from './ItemParts.jsx';
+import { capFirst } from '../lib/detailSkeleton.js';
 
 const PointMap = lazy(() => import('./PointMap.jsx'));
 
@@ -399,6 +400,7 @@ export function DetailPage({
   costLine = null,
   onPdf = null,
   pdfBusy = false,
+  pdf = null,
   gettingThere = null,
   rows = [],
   alternatives: altsIn = [],
@@ -455,9 +457,25 @@ export function DetailPage({
     })),
   ];
   const secondaries = [...(Array.isArray(actions) ? actions : [actions]).filter(Boolean)];
+  // The PDF prints what this page shows (T430): the name, the hook, the
+  // fact band, the reasons, the before-you-go rows, plus what the page adds
+  // through `pdf` (its photographs, where it is, its line and its climb).
+  const pdfModel = () => ({
+    name,
+    hook: typeof hook === 'string' ? hook : null,
+    facts: (keyFacts || []).map((c) => ({ label: c.label, value: c.value })),
+    why: whyGo.map((h) => ({ title: h.title || '', line: h.line || '' })),
+    before: (before || []).map((it) => {
+      const p = { ...it.params };
+      if (p.word) p.word = capFirst(p.word);
+      return { title: t(it.titleKey, p), line: t(it.subKey, p), safety: Boolean(it.safety) };
+    }),
+    sources: (Array.isArray(sources) ? sources : []).filter((x) => x && x.label),
+    ...(pdf || {}),
+  });
   if (onPdf) {
     secondaries.push(
-      <Button key="pdf" variant="secondary" className="ipage-pdf" onClick={onPdf} loading={pdfBusy}
+      <Button key="pdf" variant="secondary" className="ipage-pdf" onClick={() => onPdf(pdfModel())} loading={pdfBusy}
         iconStart={<DownloadIcon size={20} />}>
         {t('item.pdf')}
       </Button>,

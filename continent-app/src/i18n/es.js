@@ -5932,4 +5932,8 @@ export const es = {
   "journey.diffScale3": "Activo: días largos con subidas de verdad. Conviene estar en forma.",
   "journey.diffScale4": "Exigente: días largos y empinados por terreno duro, varios seguidos.",
   "journey.diffScale5": "Experto: terreno expuesto o técnico. Hace falta experiencia y el equipo adecuado.",
+  "pdf.route": "La ruta",
+  "pdf.climbLabel": "Altura a lo largo del camino",
+  "pdf.openInCarta": "Abrir esta página en Carta",
+  "journey.pricePpLine": "Por persona",
 };

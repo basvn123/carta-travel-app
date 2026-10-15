@@ -5932,4 +5932,8 @@ export const it = {
   "journey.diffScale3": "Attivo: giornate lunghe con salite vere. Serve essere in forma.",
   "journey.diffScale4": "Impegnativo: giornate lunghe e ripide su terreno difficile, diverse di fila.",
   "journey.diffScale5": "Esperto: terreno esposto o tecnico. Servono esperienza e l'attrezzatura giusta.",
+  "pdf.route": "Il percorso",
+  "pdf.climbLabel": "Quota lungo il percorso",
+  "pdf.openInCarta": "Apri questa pagina in Carta",
+  "journey.pricePpLine": "A persona",
 };

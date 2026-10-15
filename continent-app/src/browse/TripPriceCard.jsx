@@ -7,7 +7,7 @@ import { Stepper } from '../components/FilterControls.jsx';
 import { FlightSheet } from '../components/FirstRunReceipt.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
-import { formatMoney } from '../lib/money.js';
+import { formatMoney, formatEst } from '../lib/money.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { offeredSleepGroups, tierForGroup } from '../lib/sleepGroups.js';
 import { stopIndexFor, stopShare } from '../lib/lifestyleSlider.js';
@@ -132,6 +132,21 @@ export function TripPriceCard({
       srState: t(r.in ? 'journey.incYes' : 'journey.incNo'),
       value: r.key === 'travel' && fare?.costTotal ? eur(fare.costTotal) : null,
     }));
+  // What the booklet prints for the price (lib/tripPdf.js): this card's
+  // own figures at the traveller's choices, never a second sum.
+  const est = (v, precision = 'whole') => formatEst(v, t('money.est'), { precision, locale: lang });
+  const priceModel = () => (price ? {
+    days,
+    title: t('journey.priceHead', { n: days }),
+    perPerson: price.perPerson,
+    lines: SLOTS.filter((slot) => price.rows[slot] != null)
+      .map((slot) => ({ label: t(LINE_KEY[slot]), value: est(price.rows[slot]) })),
+    ppLabel: t('journey.pricePpLine'),
+    ppValue: est(price.perPerson),
+    partyLabel: t('receipt.total', { people: peopleText }),
+    partyValue: est(price.total, 'cents'),
+    included: included.map((r) => ({ in: r.in, label: r.label, value: r.value })),
+  } : null);
   const saveFare = (f) => {
     markFirstResultSeen();
     writeOwnFare(receiptKey, f);
@@ -202,7 +217,7 @@ export function TripPriceCard({
           {fare ? t('journey.changeTravel') : t('journey.addTravel')}
         </Button>
         {onPdf && (
-          <Button variant="secondary" block className="ipage-pdf" onClick={onPdf} loading={pdfBusy}
+          <Button variant="secondary" block className="ipage-pdf" onClick={() => onPdf(priceModel())} loading={pdfBusy}
             iconStart={<DownloadIcon size={20} />}>
             {t('item.pdf')}
           </Button>

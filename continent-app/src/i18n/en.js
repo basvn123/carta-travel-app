@@ -6639,4 +6639,8 @@ export const en = {
   "journey.diffScale3": "Active: long days with real climbs. You should be fit.",
   "journey.diffScale4": "Demanding: long, steep days on rough ground, several in a row.",
   "journey.diffScale5": "Expert: exposed or technical ground. Experience and the right gear needed.",
+  "pdf.route": "The route",
+  "pdf.climbLabel": "Height along the way",
+  "pdf.openInCarta": "Open this page in Carta",
+  "journey.pricePpLine": "A person",
 };

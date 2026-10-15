@@ -5932,4 +5932,8 @@ export const nl = {
   "journey.diffScale3": "Actief: lange dagen met echte klimmen. Je moet fit zijn.",
   "journey.diffScale4": "Zwaar: lange, steile dagen op ruw terrein, meerdere achter elkaar.",
   "journey.diffScale5": "Expert: blootgesteld of technisch terrein. Ervaring en de juiste uitrusting nodig.",
+  "pdf.route": "De route",
+  "pdf.climbLabel": "Hoogte onderweg",
+  "pdf.openInCarta": "Deze pagina openen in Carta",
+  "journey.pricePpLine": "Per persoon",
 };

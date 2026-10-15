@@ -12,6 +12,7 @@ import { weekStats } from '../lib/dayStats.js';
 import { haversineKm } from '../lib/nearby.js';
 import { SHORT, WEEK, pageLength, readTripLength, tripLengths, writeTripLength } from '../lib/tripLength.js';
 import { bookingOrder, bookingSource } from '../lib/bookingOrder.js';
+import { packCells, resolvePackCell } from '../lib/packGrid.js';
 import { railAlternative } from '../lib/railAlternative.js';
 import { parseGateway } from '../lib/gateway.js';
 import { formatMoney } from '../lib/money.js';
@@ -418,6 +419,54 @@ export function JourneyPage({
     { label: 'Wikimedia Commons', href: 'https://commons.wikimedia.org' },
   ];
 
+  // The booklet (lib/tripPdf.js) prints what this page shows, in its order
+  // and its words; the price card adds its own figures at the tap.
+  const n0 = (v) => Number(v).toLocaleString(lang, { maximumFractionDigits: 1 });
+  const dayFacts = (st) => [
+    st?.km != null ? `${n0(st.km)} km` : '',
+    st?.up ? t('journey.chartUp', { m: n0(st.up) }) : '',
+    st?.down ? t('journey.chartDown', { m: n0(st.down) }) : '',
+    st?.high != null ? t('journey.chartHigh', { m: n0(st.high) }) : '',
+    st?.minutes != null ? minutesText(st.minutes) : '',
+  ].filter(Boolean).join(', ');
+  const pdfModel = (price) => ({
+    name: trip.title,
+    where,
+    tags: [typeLabel(trip.tripTypeSlug, t, trip.tripType), profile.difficultyLabel ? diffLabel(profile.difficultyLabel, t) : ''].filter(Boolean).join(', '),
+    hook: hook ? (hook.built ? t('journey.hookBuilt', hook.built) : hook.line) : '',
+    photos: gallery,
+    facts: facts.map((c) => ({ label: c.label, value: c.value })),
+    why: highlights.map((h) => ({ title: h.title, line: h.line })),
+    price,
+    fit: [
+      best.months?.length ? `${t('journey.fBest')}: ${best.months.map((mo) => new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, mo - 1, 1))).join(', ')}` : '',
+      ...fitRows.map((r) => r.text),
+    ].filter(Boolean),
+    days: viewTrip.itinerary.map((d, k) => {
+      const stay = stays.find((x) => x.rank === d.sleepRef) || null;
+      return {
+        n: d.day,
+        title: d.title,
+        facts: dayFacts(stats.days[k]),
+        tonight: [d.sleep, stay?.style].filter(Boolean).join(', '),
+        photo: tripPhoto(d.photo),
+        parts: [['morning', d.morning], ['afternoon', d.afternoon], ['evening', d.evening]]
+          .filter(([, x]) => x).map(([when, x]) => ({ when: t(`journey.${when}`), text: x })),
+      };
+    }),
+    gateways: [
+      ...gateRows.slice(0, 3).map((g) => [g.name, g.code].filter(Boolean).join(', ')
+        + (Number.isFinite(g.transferMin) && g.transferTo ? `: ${t('journey.gatewayTransfer', { time: minutesText(g.transferMin), place: g.transferTo })}` : '')),
+      trip.logistics?.gettingThere || '',
+    ].filter(Boolean),
+    book: bookSteps ? bookingOrder(bookSource).steps.map((x) => x.text) : [],
+    risks: risks.map((r) => ({ text: r.text })),
+    good: logRows.map((r) => ({ title: r.title, text: r.text })),
+    tips: tips.map((r) => ({ text: r.text })),
+    pack: packCells(trip).map((c) => resolvePackCell(c, t, lang).label).filter(Boolean),
+    url: journeyShareUrl(trip.id),
+  });
+
   const dayMap = (trip.dayPlaces || []).length > 0 && !isShort;
   const outdoor = OUTDOOR.has(trip.tripTypeSlug);
   const dayIndex = Math.max(0, viewTrip.itinerary.findIndex((d) => d.day === selDay));
@@ -492,7 +541,7 @@ export function JourneyPage({
                 stayTier={stayTier}
                 stayTiers={stayTiers}
                 onChangeStayTier={onChangeStayTier}
-                onPdf={download}
+                onPdf={download ? (price) => download(pdfModel(price)) : null}
                 pdfBusy={pdfBusy}
               />
             </div>

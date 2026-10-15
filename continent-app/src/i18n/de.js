@@ -5932,4 +5932,8 @@ export const de = {
   "journey.diffScale3": "Aktiv: lange Tage mit echten Anstiegen. Du solltest fit sein.",
   "journey.diffScale4": "Anspruchsvoll: lange, steile Tage auf rauem Gelände, mehrere hintereinander.",
   "journey.diffScale5": "Experte: ausgesetztes oder technisches Gelände. Erfahrung und passende Ausrüstung nötig.",
+  "pdf.route": "Die Route",
+  "pdf.climbLabel": "Höhe entlang der Strecke",
+  "pdf.openInCarta": "Diese Seite in Carta öffnen",
+  "journey.pricePpLine": "Pro Person",
 };

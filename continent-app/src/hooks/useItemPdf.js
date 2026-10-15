@@ -11,12 +11,15 @@ import { useI18n } from '../i18n/index.jsx';
 export function useItemPdf(kind, item, ctx = {}) {
   const { t, lang } = useI18n();
   const [busy, setBusy] = useState(false);
-  const onPdf = useCallback(async () => {
+  // `model` is what the page shows, handed over by the page's shell
+  // (DetailPage builds it from its own facts, reasons and rows), so the PDF
+  // prints the page's words and never a second reading of the data.
+  const onPdf = useCallback(async (model = null) => {
     if (!item || busy) return;
     setBusy(true);
     try {
       const mod = await import('../lib/itemPdf.js');
-      await mod.downloadItemPdf(kind, item, { ...ctx, t, lang });
+      await mod.downloadItemPdf(kind, item, { ...ctx, model: model && !model.nativeEvent ? model : null, t, lang });
     } catch (err) {
       console.error('PDF failed', err);
     } finally {

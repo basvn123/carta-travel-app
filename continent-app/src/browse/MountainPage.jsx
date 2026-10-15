@@ -442,6 +442,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
         ),
       ]}
       onPdf={onPdf}
+      pdf={{ photos, where: [mountain.range, countryName].filter(Boolean).join(', '), url: mountainShareUrl(mountain) }}
       pdfBusy={pdfBusy}
       map={Number.isFinite(mountain.lat) && Number.isFinite(mountain.lon)
         ? <PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} name={mountain.name} relief zoom={12} />

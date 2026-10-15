@@ -5932,4 +5932,8 @@ export const fr = {
   "journey.diffScale3": "Actif : longues journées avec de vraies montées. Une bonne forme est utile.",
   "journey.diffScale4": "Exigeant : longues journées raides sur terrain accidenté, plusieurs d'affilée.",
   "journey.diffScale5": "Expert : terrain exposé ou technique. Expérience et bon équipement nécessaires.",
+  "pdf.route": "Le parcours",
+  "pdf.climbLabel": "Altitude le long du parcours",
+  "pdf.openInCarta": "Ouvrir cette page dans Carta",
+  "journey.pricePpLine": "Par personne",
 };

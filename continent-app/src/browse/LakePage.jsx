@@ -375,6 +375,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
         ),
       ]}
       onPdf={onPdf}
+      pdf={{ photos, where: [lake.region, countryName].filter(Boolean).join(', '), url: lakeShareUrl(lake) }}
       pdfBusy={pdfBusy}
       map={Number.isFinite(lake.lat) && Number.isFinite(lake.lon)
         ? <PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} name={lake.name} />
