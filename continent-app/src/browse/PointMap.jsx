@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { installMapGestures } from '../lib/mapGestures.js';
+import { MapShell } from './MapShell.jsx';
 
 /**
  * One place on a real map, for the detail pages of things you arrive at
@@ -14,13 +16,17 @@ import 'maplibre-gl/dist/maplibre-gl.css';
  * mountain pages used to skip a map to save that weight; the spec now puts a
  * map on every detail page, and lazy is how it costs nothing on the list.
  *
- * The 3D toggle (top right) and "Fly the route" belong to the terrain and
- * flyover work, and are not drawn here yet.
+ * T430: no Ctrl or Cmd to move it (lib/mapGestures.js), the 2D / 3D choice
+ * under it for a summit (`relief`), and Expand to open it full screen
+ * (MapShell.jsx). There is no fly-through: the 3D rule lets the camera move
+ * only under the traveller's hand.
  */
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
-export default function PointMap({ lat, lon, label, zoom = 11, children = null }) {
+export default function PointMap({ lat, lon, label, zoom = 11, relief = false, children = null }) {
   const el = useRef(null);
+  const mapRef = useRef(null);
+  const getMap = useCallback(() => mapRef.current, []);
   useEffect(() => {
     if (!el.current || !Number.isFinite(lat) || !Number.isFinite(lon)) return undefined;
     const map = new maplibregl.Map({
@@ -29,8 +35,12 @@ export default function PointMap({ lat, lon, label, zoom = 11, children = null }
       center: [lon, lat],
       zoom,
       attributionControl: { compact: true },
-      cooperativeGestures: true,
+      cooperativeGestures: false,
+      dragRotate: false,
+      touchPitch: false,
     });
+    mapRef.current = map;
+    map._gestures = installMapGestures(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     // Styled on an inner child: maplibre owns the marker element's transform.
     const pin = document.createElement('div');
@@ -52,7 +62,11 @@ export default function PointMap({ lat, lon, label, zoom = 11, children = null }
     // accessibility tree rather than reading "Map marker" (T190).
     pin.setAttribute('aria-hidden', 'true');
     pin.removeAttribute('aria-label');
-    return () => map.remove();
+    return () => { map._gestures?.dispose(); map.remove(); mapRef.current = null; };
   }, [lat, lon, zoom]);
-  return <div ref={el} className="dsk-map-frame" role="region" aria-label={label}>{children}</div>;
+  return (
+    <MapShell getMap={getMap} relief={relief}>
+      <div ref={el} className="dsk-map-frame" role="region" aria-label={label}>{children}</div>
+    </MapShell>
+  );
 }

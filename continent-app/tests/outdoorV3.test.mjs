@@ -11,17 +11,17 @@ import { splitTourByStages, cycleGpx } from '../src/lib/trailExport.js';
 
 const t = (k, p) => (p ? `${k} ${JSON.stringify(p)}` : k);
 
-test('keyFactCells keeps the page order, caps at six and pads to four', () => {
+// T430 (owner, 2026-10-15): a fact with no value is left out, never shown
+// as "Not recorded" or a placeholder word; the band no longer pads to four.
+test('keyFactCells keeps the page order, caps at six and leaves out a missing fact', () => {
   const facts = [
     { key: 'a', label: 'A', value: '1 km', mono: true },
     { key: 'b', label: 'B', value: '' },
     { key: 'c', label: 'C', value: '2 h', mono: true },
   ];
   const cells = keyFactCells(facts, t);
-  assert.deepEqual(cells.map((c) => c.key), ['a', 'b', 'c']);
-  assert.equal(cells[1].value, 'detail.stripUnmeasured');
-  assert.equal(cells[1].missing, true);
-  assert.equal(cells[1].mono, false);
+  assert.deepEqual(cells.map((c) => c.key), ['a', 'c']);
+  assert.equal(cells.some((c) => c.missing), false);
   assert.equal(cells[0].mono, true);
   const many = Array.from({ length: 9 }, (_, i) => ({ key: `k${i}`, label: `L${i}`, value: String(i) }));
   assert.equal(keyFactCells(many, t).length, 6);

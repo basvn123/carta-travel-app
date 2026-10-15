@@ -3,44 +3,47 @@ import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
-import { ChevronRightIcon } from '../components/Icons.jsx';
-import { Button, Card, IconButton } from '../components/ui/index.js';
+import { ChevronRightIcon, CrosshairIcon } from '../components/Icons.jsx';
+import { Button, Card, Chip, IconButton } from '../components/ui/index.js';
 
 /**
  * The opening of a Destinations section (T428; T183 built the first one).
  *
  * Top to bottom, the same grammar Explore's idle page uses:
- *   SectionHead   one photograph of people doing the thing (countryGallery.js
- *                 SECTION_PHOTOS) and one plain title with a verb
+ *   SectionHead   the section's title with a verb, set at Explore's head
+ *                 scale, and beside it the near-me door ("Beaches near me"),
+ *                 the way in most people take first (T430: the door sat at
+ *                 the foot of the Trails index and nowhere else)
+ *   starters      the cuts that did not get a rail, as one row of kit filter
+ *                 chips that apply the same saved filter
  *   rails         photo strips of kit tile Cards: the section's best known
  *                 first, then the saved filters of lib/openingScreen.js, at
  *                 most four on a desktop and three on a phone
- *   starters      "Try one": the cuts that did not get a rail, as one row of
- *                 secondary buttons that apply the same saved filter
  *   children      what the tab puts after them (the countries track)
  *
  * What went (owner, 2026-10-14): the "Europe's 6 best-known mountains"
  * heading and its ranking sentence, the dots and the "1 to 4 of 12" under a
- * strip, the figure on "See all". The rails still follow carta-design
- * "Rails": arrows on a fine pointer, arrow keys between cards, scroll snap,
- * one aspect, nothing over a photograph but nothing at all.
+ * strip, the figure on "See all". T430 (owner, 2026-10-15): the photograph
+ * at the top of each section; the rails' photographs carry the section now.
+ * The rails still follow carta-design "Rails": arrows on a fine pointer,
+ * arrow keys between cards, scroll snap, one aspect, nothing over a
+ * photograph.
  *
  * `describe(row)` returns { name, where, fact, rating } for one wire row.
  */
 
 const RAIL_SIZES = '(max-width: 768px) 72vw, 280px';
 
-export function SectionHead({ photo, title, id }) {
+export function SectionHead({ title, id, nearMe = null }) {
   return (
     <header className="dtab-head">
-      {photo && (
-        <div className="dtab-head-media">
-          <HeroImage url={photo.u} city={photo.place} className="dtab-head-img"
-            maxWidth={1280} sizes="(max-width: 768px) 100vw, min(70vw, 1100px)"
-            ratio={[photo.w, photo.h]} eager />
-        </div>
-      )}
       <h2 className="dtab-title" id={id}>{title}</h2>
+      {nearMe && (
+        <Button variant="secondary" className="dtab-nearme" iconStart={<CrosshairIcon size={20} />}
+          onClick={nearMe.onPick} loading={nearMe.busy}>
+          {nearMe.label}
+        </Button>
+      )}
     </header>
   );
 }
@@ -137,6 +140,7 @@ export function RailTile({ row, describe, photo, onOpen, sharedKey }) {
     <Card
       layout="tile"
       as="div"
+      wrap
       className="dtab-tile"
       media={(
         <HeroImage url={url} city={d.name} className="dtab-tile-img" maxWidth={640}
@@ -166,19 +170,17 @@ export function RailTile({ row, describe, photo, onOpen, sharedKey }) {
 
 export function SectionOpening({
   layer, head = null, rails, starters = [], describe, photo, onOpen, t,
-  sharedKey = null, children = null,
+  sharedKey = null, nearMe = null, children = null,
 }) {
   return (
     <div className="open-bands dtab-open" data-layer={layer}>
-      {head && <SectionHead photo={head.photo} title={head.title} id={`dtab-head-${layer}`} />}
+      {head && <SectionHead title={head.title} id={`dtab-head-${layer}`} nearMe={nearMe} />}
       {starters.length > 0 && (
-        <div className="dtab-starters" role="group" aria-labelledby={`dtab-try-${layer}`}>
-          <span className="dtab-starters-label" id={`dtab-try-${layer}`}>{t('dtab.tryOne')}</span>
+        <div className="dtab-starters" role="group" aria-label={t('dtab.tryOne')}>
           {starters.map((s) => (
-            <Button key={s.key} variant="secondary" size="sm" className="dtab-starter"
-              data-rail={s.key} onClick={s.onPick}>
+            <Chip key={s.key} className="dtab-starter" data-rail={s.key} onClick={s.onPick}>
               {s.title}
-            </Button>
+            </Chip>
           ))}
         </div>
       )}

@@ -48,6 +48,8 @@ import { isNum } from '../map/coords.js';
 import { FigureFooter } from './HonestFooters.jsx';
 import { UploadForm } from '../community/UploadForm.jsx';
 import { srcSetFor } from '../lib/heroImage.js';
+import { installMapGestures } from '../lib/mapGestures.js';
+import { MapShell } from './MapShell.jsx';
 
 /**
  * The trail page: a published hike or city day as a page of its own, opened
@@ -243,6 +245,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const [toast, setToast] = useState(null);
   const mapEl = useRef(null);
   const mapRef = useRef(null);
+  const getMap = useCallback(() => mapRef.current, []);
 
   useEffect(() => {
     let live = true;
@@ -379,7 +382,11 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       center: [12, 48],
       zoom: 4,
       attributionControl: { compact: true },
+      dragRotate: false,
+      touchPitch: false,
     });
+    // Two fingers pan, a pinch zooms, no Ctrl (T430, lib/mapGestures.js).
+    map._gestures = installMapGestures(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     // The ink sketch under the canvas until the map has drawn (T396).
     markMapLive(map);
@@ -414,7 +421,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     // Dragging the map means the walker wants to look somewhere else.
     map.on('dragstart', () => setCentred(false));
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; };
+    return () => { map._gestures?.dispose(); map.remove(); mapRef.current = null; };
   }, []);
 
   const fitRoute = useCallback(() => {
@@ -947,6 +954,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         })} />
       )}
       map={(
+        <MapShell getMap={getMap} relief beneath={['trail-casing']}>
         <div className="tpage-hero">
           <div className="tpage-map" ref={mapEl}>
             {/* The card's simplified line in ink while maplibre loads; the
@@ -996,6 +1004,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
             </div>
           )}
         </div>
+        </MapShell>
       )}
       signature={!isCityDay && (detail?.elevation || detail?.sf) ? (
         <Instrument

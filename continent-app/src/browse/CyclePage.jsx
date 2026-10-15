@@ -37,6 +37,8 @@ import { Instrument, Row, EmptyTrack, SpanAxis } from './Signature.jsx';
 import { kmOf, trafficMix } from '../lib/signature.js';
 import { numberSentence } from '../lib/numberSentences.js';
 import { srcSetFor } from '../lib/heroImage.js';
+import { installMapGestures } from '../lib/mapGestures.js';
+import { MapShell } from './MapShell.jsx';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
   ListDayIcon, CheckIcon, InfoIcon, BulbIcon,
@@ -128,7 +130,11 @@ function useRouteMap(mapEl, geometry, bbox, onPick = null) {
       center: [12, 48],
       zoom: 4,
       attributionControl: { compact: true },
+      dragRotate: false,
+      touchPitch: false,
     });
+    // Two fingers pan, a pinch zooms, no Ctrl (T430, lib/mapGestures.js).
+    map._gestures = installMapGestures(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     // The ink sketch under the canvas until the map has drawn, and a tap on
     // the line that moves the profile's marker (T396, rules N8 and N11).
@@ -152,7 +158,7 @@ function useRouteMap(mapEl, geometry, bbox, onPick = null) {
       if (map._draw) map._draw();
     });
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; };
+    return () => { map._gestures?.dispose(); map.remove(); mapRef.current = null; };
   }, [mapEl]);
 
   useEffect(() => {
@@ -551,6 +557,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     setMarkM({ m: along });
     scrubTo.current?.(along);
   });
+  const getMap = React.useCallback(() => mapRef.current, [mapRef]);
   const highlightAt = React.useCallback((alongM) => {
     const map = mapRef.current;
     if (!map) return;
@@ -965,11 +972,13 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         </button>
       ) : null}
       map={(
-        <div ref={mapEl} className="cycle-map" data-testid="cycle-map"
-          role="img" aria-label={t('cycle.mapLabel')}>
-          {/* The line in ink while maplibre loads (T396). */}
-          <MapSketch lines={sketchLines} label={title} />
-        </div>
+        <MapShell getMap={getMap} relief beneath={['cycle-casing']}>
+          <div ref={mapEl} className="cycle-map" data-testid="cycle-map"
+            role="img" aria-label={t('cycle.mapLabel')}>
+            {/* The line in ink while maplibre loads (T396). */}
+            <MapSketch lines={sketchLines} label={title} />
+          </div>
+        </MapShell>
       )}
       signature={surfaceBlock || null}
       rows={rows}

@@ -36,6 +36,12 @@ export const ATTRIBUTIONS = [
     credit: 'Basemap © CARTO',
   },
   {
+    source: 'Mapterhorn',
+    license: 'Open elevation sources, credited at mapterhorn.com/attribution',
+    credit: 'Terrain and relief shading on the 3D maps © Mapterhorn and its '
+      + 'elevation sources',
+  },
+  {
     source: 'Wikipedia',
     license: 'CC BY-SA 4.0',
     credit: 'City descriptions from Wikipedia, and the facts behind the '

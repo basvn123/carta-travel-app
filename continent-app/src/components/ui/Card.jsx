@@ -19,11 +19,13 @@ import React from 'react';
 
 export function Card({
   layout = 'row', media = null, title, href, onOpen, meta = null, rating = null, price = null,
-  actions = null, selected = false, as = 'article', className = '', ...rest
+  actions = null, selected = false, wrap = false, as = 'article', className = '', ...rest
 }) {
   const Tag = as;
+  // `wrap` lets the title run onto as many lines as it needs (T430: a walk or
+  // a trip is chosen on its full name, never on half of it).
   const cls = ['card', `card-${layout === 'tile' ? 'tile' : 'row'}`, (href || onOpen) && 'is-interactive',
-    selected && 'is-selected', className].filter(Boolean).join(' ');
+    selected && 'is-selected', wrap && 'card-wrap', className].filter(Boolean).join(' ');
   const opener = href
     ? <a className="card-open" href={href} onClick={onOpen}>{title}</a>
     : onOpen

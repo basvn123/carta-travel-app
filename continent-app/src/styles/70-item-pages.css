@@ -1,0 +1,175 @@
+/* T430 and T431: the item pages (trail, beach, lake, mountain, cycle route
+   and tour) and the trips surfaces, rebuilt on the kit and the Lagoon roles.
+   Imported last so it settles the older rules of 23, 25, 28, 29, 65 and 66
+   without editing them line by line; every value is a role or a scale. */
+
+/* ── The map frame: the map, then its toolbar row (MapShell.jsx) ── */
+.map-shell { position: relative; }
+.map-shell-frame { position: relative; }
+.map-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.map-tools .seg { margin-right: auto; }
+.map-tools .icon-btn { box-shadow: none; border: 1px solid var(--border); }
+/* A still map on a phone (lib/mapGestures.js): the thumb scrolls the page,
+   a tap opens the map full screen. */
+.maplibregl-map.is-still .maplibregl-canvas-container,
+.maplibregl-map.is-still .maplibregl-canvas { cursor: pointer; }
+
+.map-shell.is-expanded {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  background: var(--surface);
+}
+.map-shell.is-expanded .map-shell-frame { flex: 1 1 auto; min-height: 0; }
+.map-shell.is-expanded .map-shell-frame > *,
+.map-shell.is-expanded .dsk-map-frame,
+.map-shell.is-expanded .tpage-hero,
+.map-shell.is-expanded .cycle-map,
+.map-shell.is-expanded .destp-map-frame {
+  height: 100% !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+.map-shell.is-expanded .map-tools {
+  margin: 0;
+  padding: var(--space-2) var(--gutter);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.tpage.following .map-tools { display: none; }
+
+@media (min-width: 900px) {
+  /* The sticky map column keeps its toolbar in view. */
+  .dsk-map .dsk-map-frame,
+  .dsk-map .tpage-hero,
+  .dsk-map .cycle-map {
+    height: calc(100dvh - 52px - 2 * var(--space-4) - var(--tap) - var(--space-2));
+  }
+}
+
+/* ── The photo gallery (PhotoGallery.jsx) ──
+   The destination page's strip (64-v6-destination.css, under .destp-v3)
+   given to every page that opens on photographs. Each photograph sits over a
+   solid band with its name in full and its credit on a small second line;
+   the bands share one height so the photographs line up. */
+.pgal {
+  --pgal-h: clamp(220px, 34dvh, 320px);
+  position: relative;
+  height: auto;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
+}
+@media (min-width: 769px) {
+  .pgal { --pgal-h: clamp(260px, 40dvh, 440px); }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  .pgal { --pgal-h: 40dvh; }
+}
+.pgal .destp-gallery-track {
+  display: flex;
+  gap: 6px;
+  height: auto;
+  align-items: stretch;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.pgal .destp-gallery-track::-webkit-scrollbar { display: none; }
+.pgal .destp-slide {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  height: auto;
+  min-width: 220px;
+  margin: 0;
+  scroll-snap-align: start;
+}
+.pgal .destp-slide img {
+  display: block;
+  flex: none;
+  width: auto;
+  height: var(--pgal-h);
+  min-width: 100%;
+  max-width: 92vw;
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+.pgal.is-blank { display: flex; height: var(--pgal-h); }
+.pgal .destp-slide-band {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 0;
+  min-width: 100%;
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  box-sizing: border-box;
+  background: var(--surface);
+}
+.pgal .destp-slide-cap {
+  max-width: 100%;
+  color: var(--text);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+.pgal .destp-slide-credit {
+  display: block;
+  max-width: 100%;
+  padding-block: var(--space-2);
+  margin-block: calc(-1 * var(--space-2));
+  color: var(--text-3);
+  font-size: var(--text-caption);
+  line-height: 1.3;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (hover: hover) {
+  .pgal a.destp-slide-credit:hover { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
+}
+.pgal .destp-gallery-arrow {
+  position: absolute;
+  top: calc(var(--pgal-h) / 2);
+  transform: translateY(-50%);
+  z-index: 2;
+}
+.pgal .destp-gallery-arrow.is-prev { left: var(--space-3); }
+.pgal .destp-gallery-arrow.is-next { right: var(--space-3); }
+.pgal .destp-gallery-arrow.is-prev .icon-btn-glyph { transform: rotate(180deg); }
+.pgal .destp-gallery-arrow:disabled { opacity: 0; pointer-events: none; }
+@media (max-width: 720px) {
+  .pgal .destp-slide { width: 86%; }
+  .pgal .destp-slide img { width: 100%; max-width: none; }
+  .pgal .destp-gallery-arrow.is-prev { left: var(--space-2); }
+  .pgal .destp-gallery-arrow.is-next { right: var(--space-2); }
+}
+.pgal.is-final .destp-slide:only-child { width: 100%; }
+.pgal.is-final .destp-slide:only-child img { width: 100%; max-width: none; }
+.pgal:has(> .destp-gallery-track:focus-visible)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--focus);
+  pointer-events: none;
+  z-index: 3;
+}
+/* On the destination page the gallery keeps its own height and band. */
+.destp-v3 .pgal { --pgal-h: var(--destp-photo-h); }
+.destp-v3 .pgal .destp-slide-band { min-height: 60px; }

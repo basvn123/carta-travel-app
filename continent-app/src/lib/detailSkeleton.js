@@ -57,37 +57,37 @@ export const KEY_FACTS_MAX = 6;
 
 /**
  * The cells of the key facts band, in the page's own order. Each fact is
- * { key, label, value, mono }; a fact with no value keeps its cell and shows
- * the strip's placeholder word, so the band never claims a figure it lacks,
- * and the band is padded to four cells only from facts the page offered
- * (`fallback` facts, shown as placeholders) and cut at six. A page with no
- * fact at all gets no band.
+ * { key, label, value, mono, note?, icon? }. A fact with no value is left
+ * out (owner, 2026-10-15, T430: a missing fact is never "Not recorded" or a
+ * placeholder word); the band is topped up towards four only from the
+ * `fallback` facts the page offered that do have a value, and cut at six. A
+ * page with no fact at all gets no band.
  */
 export function keyFactCells(facts, t) {
-  const list = (facts || []).filter((f) => f && f.key && f.label);
-  if (!list.some((f) => f.value != null && f.value !== '')) return [];
-  const filled = list.filter((f) => f.value != null && f.value !== '' && !f.fallback);
-  const spare = list.filter((f) => !filled.includes(f));
+  const has = (f) => f.value != null && f.value !== '';
+  const list = (facts || []).filter((f) => f && f.key && f.label && has(f));
+  if (!list.length) return [];
+  const filled = list.filter((f) => !f.fallback);
+  const spare = list.filter((f) => f.fallback);
   const out = filled.slice(0, KEY_FACTS_MAX);
   for (const f of spare) {
     if (out.length >= KEY_FACTS_MIN) break;
     out.push(f);
   }
-  // Back into the page's order, so a padded cell does not jump to the end.
+  // Back into the page's order, so a topped-up cell does not jump to the end.
   const order = new Map(list.map((f, i) => [f.key, i]));
+  void t;
   return out
     .sort((a, b) => order.get(a.key) - order.get(b.key))
-    .map((f) => {
-      const has = f.value != null && f.value !== '';
-      return {
-        key: f.key,
-        label: f.label,
-        value: has ? String(f.value) : t('detail.stripUnmeasured'),
-        mono: has && Boolean(f.mono),
-        note: has && f.note ? String(f.note) : null,
-        missing: !has,
-      };
-    });
+    .map((f) => ({
+      key: f.key,
+      label: f.label,
+      value: String(f.value),
+      mono: Boolean(f.mono),
+      note: f.note ? String(f.note) : null,
+      icon: f.icon || null,
+      missing: false,
+    }));
 }
 
 /** The first letter in upper case, the rest as written. */

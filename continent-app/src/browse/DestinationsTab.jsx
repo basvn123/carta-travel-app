@@ -84,7 +84,7 @@ import {
 } from '../lib/cardFillings.js';
 import { SectionOpening, SectionHead, Strip } from './SectionOpening.jsx';
 import { CountryGalleryCard } from './CountryGallery.jsx';
-import { SECTION_PHOTOS, countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
+import { countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
 import { Button, Chip, Field, Tabs } from '../components/ui/index.js';
 import { createPortal } from 'react-dom';
 import { pickIcons, buildRails, photoOf } from '../lib/openingScreen.js';
@@ -2698,7 +2698,12 @@ export function DestinationsTab({
   // RAIL_MIN places (lib/openingScreen.js), so none of them leads nowhere.
   const SECTION_KEY = { trails: 'trails', beaches: 'beaches', lakes: 'lakes', mountains: 'mountains', cycling: 'cycling' };
   const sectionHead = SECTION_KEY[cat] && !country && !nearPlace && !q
-    ? { photo: SECTION_PHOTOS[SECTION_KEY[cat]] || null, title: t(`dtab.head.${cat}`) }
+    ? { title: t(`dtab.head.${cat}`) }
+    : null;
+  // The near-me door, in the head of every section (T430): the way in most
+  // people take first, said in the section's own words.
+  const nearMeDoor = sectionHead && canLocate
+    ? { label: t(`dtab.nearMe.${cat}`), onPick: useMyLocation, busy: locBusy }
     : null;
   const isDesktop = useIsDesktop();
   const railCap = isDesktop ? 4 : 3;
@@ -3168,7 +3173,7 @@ export function DestinationsTab({
         {/* Trails at rest: the head, then the countries (a walk is ranked
             within its country, so the section opens on them). */}
         {cat === 'trails' && sectionHead && !opening && topTrails !== undefined && !topTrails?.length && (
-          <SectionHead photo={sectionHead.photo} title={sectionHead.title} id="dtab-head-trails" />
+          <SectionHead title={sectionHead.title} id="dtab-head-trails" nearMe={nearMeDoor} />
         )}
 
         {/* The section's opening while it is at rest (T183, rebuilt T428):
@@ -3184,6 +3189,7 @@ export function DestinationsTab({
               photo={(row) => photoOf(opening.layer, row)}
               onOpen={openFromBand}
               sharedKey={(row) => row.id}
+              nearMe={nearMeDoor}
               t={t}
             >
               {opening.layer !== 'trail' && countryTrack}
@@ -3688,17 +3694,7 @@ export function DestinationsTab({
           <div className={`places-list${showCountryIndex ? ' dtab-trail-index' : ' pcard-grid'}`}>
             {showCountryIndex && (
               <>
-                {/* A way in without a country (T384, brief V3-10): the
-                    locate the search field already has, said in words where
-                    the walker is choosing. */}
-                {cat === 'trails' && tripCountries.length > 0 && canLocate && (
-                  <div className="places-nearme">
-                    <Button variant="secondary" size="sm" className="places-nearme-btn"
-                      iconStart={<CrosshairIcon size={16} />} onClick={useMyLocation} loading={locBusy}>
-                      {t('places.walksNearMe')}
-                    </Button>
-                  </div>
-                )}
+                {/* The near-me door moved up into the section head (T430). */}
                 {/* T451: a track like every other section's "By country", not a
                     grid of forty galleries that ran fourteen thousand pixels. */}
                 {tripCountries.length > 0 && (

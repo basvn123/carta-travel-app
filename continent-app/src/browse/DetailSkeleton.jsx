@@ -356,12 +356,12 @@ export function PhotoTrack({ frames, label, testId }) {
  * The map slot for a place with a point and no line. Lazy; while maplibre
  * and the tiles arrive the box shows the point in ink (MapSketch).
  */
-export function PlaceMap({ lat, lon, label, name = '' }) {
+export function PlaceMap({ lat, lon, label, name = '', relief = false, zoom }) {
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   const sketch = <MapSketch point={{ lat, lon }} label={name} />;
   return (
     <Suspense fallback={<div className="dsk-map-frame dsk-map-wait">{sketch}</div>}>
-      <PointMap lat={lat} lon={lon} label={label}>{sketch}</PointMap>
+      <PointMap lat={lat} lon={lon} label={label} relief={relief} zoom={zoom}>{sketch}</PointMap>
     </Suspense>
   );
 }

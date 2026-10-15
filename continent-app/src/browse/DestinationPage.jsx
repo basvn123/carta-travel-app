@@ -3,7 +3,6 @@ import { ReportProblem } from '../components/ReportProblem.jsx';
 import { knownFor } from '../lib/knownFor.js';
 import { crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { ClimateStrip, MONTHS_SHORT } from './ClimateStrip.jsx';
-import { claimShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { safeUrl, eur } from '../lib/format.js';
@@ -35,6 +34,7 @@ import { fetchDestPois } from '../lib/appData.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { SectionRail } from './SectionRail.jsx';
+import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestTrack } from './DestTrack.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
 import { SaveButton } from './ExploreCards.jsx';
@@ -260,111 +260,16 @@ function placeOpener(id, onSelect) {
 }
 
 function GalleryStrip({ gallery, city, iso2, fallbackUrl, destId, final = true }) {
-  const { t } = useI18n();
-  // The first photograph takes the card photograph's name (G2), so the card's
-  // picture grows into this one instead of the page appearing from nothing.
-  const claimRef = React.useCallback((el) => claimShared(el, destId), [destId]);
-  const scroller = React.useRef(null);
-  const [idx, setIdx] = React.useState(0);
-  const [failed, setFailed] = React.useState(() => new Set());
-  const imgs = (gallery?.length ? gallery : (fallbackUrl ? [{ url: fallbackUrl }] : []))
-    .filter((g) => !failed.has(g.url));
   // A caption that is the record's own name ("Rome (Fiumicino)") names the
   // town, not its airport (T385, brief V3-10); any other caption is kept.
+  // The strip itself is the shared PhotoGallery (T430), so the item pages and
+  // the trip page open on the same gallery as this page.
   const capOf = (cap) => (cap && baseCity(cap) === city ? city : (cap || ''));
-
-  const onScroll = (e) => {
-    const el = e.currentTarget;
-    const slide = el.querySelector('.destp-slide');
-    if (!slide) return;
-    const next = Math.round(el.scrollLeft / (slide.offsetWidth + 6));
-    setIdx((cur) => (cur === next ? cur : Math.min(next, imgs.length - 1)));
-  };
-  const nudge = (dir) => {
-    const el = scroller.current;
-    const slide = el?.querySelector('.destp-slide');
-    if (!el || !slide) return;
-    el.scrollBy({ left: dir * (slide.offsetWidth + 6), behavior: scrollBehavior() });
-  };
-
-  if (!imgs.length) {
-    return (
-      <div className="destp-gallery is-blank">
-        <HeroImage url={null} city={city} iso2={iso2} className="destp-slide-img" />
-      </div>
-    );
-  }
+  const photos = (gallery?.length ? gallery : (fallbackUrl ? [{ url: fallbackUrl }] : []))
+    .map((g) => ({ ...g, caption: capOf(g.caption) || city }));
   return (
-    // Until the dossier answers, the one photograph is the card's, kept at its
-    // own width; it takes the whole band only once it is known to stay alone,
-    // so the strip arriving never resizes it (a layout shift, T429).
-    <div className={`destp-gallery${final ? ' is-final' : ''}`}>
-      {/* A photo track (carta-design "Photo track"): the arrow keys move it
-          when it has focus, like the Previous and Next buttons. */}
-      <div
-        className="destp-gallery-track"
-        ref={scroller}
-        onScroll={onScroll}
-        tabIndex={imgs.length > 1 ? 0 : undefined}
-        aria-label={imgs.length > 1 ? city : undefined}
-        role={imgs.length > 1 ? 'group' : undefined}
-        onKeyDown={imgs.length > 1 ? (e) => {
-          if (e.key === 'ArrowRight') { e.preventDefault(); nudge(1); }
-          else if (e.key === 'ArrowLeft') { e.preventDefault(); nudge(-1); }
-        } : undefined}
-      >
-        {imgs.map((g, i) => (
-          <figure className="destp-slide" key={g.url}>
-            <img
-              ref={i === 0 ? claimRef : undefined}
-              src={g.url}
-              // The photograph's own proportions, so each slide takes its
-              // width before the file arrives and the strip never slides
-              // sideways as photographs load (a layout shift, T429).
-              width={g.w || undefined}
-              height={g.h || undefined}
-              // A photograph without recorded proportions is framed 4:3
-              // (cropped to fill), for the same reason.
-              style={g.w && g.h ? undefined : { aspectRatio: '4 / 3' }}
-              alt={capOf(g.caption)}
-              loading={i === 0 ? 'eager' : 'lazy'}
-              fetchpriority={i === 0 ? 'high' : undefined}
-              onError={() => setFailed((s) => new Set([...s, g.url]))}
-            />
-            {/* The caption band (carta-design "Caption band"): a solid band
-                flush under the photograph, never text on it. The place's
-                full name (owner, T429: never cut), then the credit on a
-                small second line. No position figure. */}
-            <figcaption className="destp-slide-band">
-              <span className="destp-slide-cap">{capOf(g.caption)}</span>
-              {safeUrl(g.page) && (g.author || g.licence) && (
-                <a
-                  className="destp-slide-credit"
-                  href={safeUrl(g.page)}
-                  title={[g.author, g.licence].filter(Boolean).join(', ')}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {[g.author, g.licence].filter(Boolean).join(', ')}
-                </a>
-              )}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-      {imgs.length > 1 && (
-        <>
-          <IconButton tone="photo" className="destp-gallery-arrow is-prev" onClick={() => nudge(-1)}
-            label={t('dest.photoPrev')} disabled={idx === 0}>
-            <ChevronRightIcon size={16} />
-          </IconButton>
-          <IconButton tone="photo" className="destp-gallery-arrow is-next" onClick={() => nudge(1)}
-            label={t('dest.photoNext')} disabled={idx >= imgs.length - 1}>
-            <ChevronRightIcon size={16} />
-          </IconButton>
-        </>
-      )}
-    </div>
+    <PhotoGallery photos={photos} label={city} claimKey={destId} final={final}
+      fallback={{ city, iso2 }} />
   );
 }
 
