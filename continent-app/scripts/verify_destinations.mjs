@@ -126,6 +126,22 @@ for (const view of ['phone', 'desk']) {
   check(grid >= 30, `${tag}Trails opens on the country track`, String(grid));
   const trailsH = await page.evaluate(() => document.querySelector('.places-scroll, .places-shell')?.scrollHeight || 0);
   check(trailsH < 4000, `${tag}the Trails opening is short`, String(trailsH));
+  // T453: walks before a country, from trails/top.json, spread across countries.
+  const trailRails = await page.$$eval('.dtab-open .dtab-rail', (els) => els.map((r) => ({
+    title: r.querySelector('.dtab-rail-title')?.textContent.trim() || '',
+    places: [...r.querySelectorAll('.dtab-tile .dtab-where')].map((e) => e.textContent.trim()),
+    imgs: r.querySelectorAll('.dtab-tile img').length,
+    tiles: r.querySelectorAll('.dtab-tile').length,
+  })));
+  check(trailRails.length >= 2, `${tag}Trails opens on walk rails`, trailRails.map((r) => r.title).join(' | '));
+  check(trailRails.every((r) => r.tiles >= 4 && r.imgs === r.tiles), `${tag}every walk rail has four or more photographed walks`);
+  check(await page.$('.dtab-open .dtab-all') === null, `${tag}Europe-wide walk rails carry no See all`);
+  const firstTile = page.locator('.dtab-open .dtab-tile .card-open').first();
+  if (await firstTile.count()) {
+    await firstTile.click();
+    await page.waitForTimeout(2500);
+    check(await page.$('.tpage, [role="dialog"]') !== null, `${tag}a walk tile opens its trail page`);
+  }
   check(await page.$('.places-card-count') === null, `${tag}no walk count on a country`);
   const trailCounts = await page.evaluate(COUNT_SCAN);
   check(trailCounts.length === 0, `${tag}no bare counts on Trails`, trailCounts.slice(0, 4).join(' | '));

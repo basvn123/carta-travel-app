@@ -4802,7 +4802,7 @@ export const es = {
   "cycle.loadFailed": "Las rutas en bici no se cargaron. Revisa tu conexión y vuelve a intentarlo.",
   "trip.loadFailed": "Los viajes no se cargaron. Revisa tu conexión y vuelve a intentarlo.",
   "trails.loadFailed": "Las rutas a pie no se cargaron. Revisa tu conexión y vuelve a intentarlo.",
-  "open.trail.railDay": "De medio día a un día (5 a 20 km)",
+  "open.trail.railDay": "De medio día a un día",
   "trails.cardWaymarked": "Señalizada",
   // The shared glossary (T156): one entry per term, read by InfoDot
   "glossary.hardpack.term": "Firme compactado",
@@ -5693,6 +5693,9 @@ export const es = {
   "dtab.railBest.mountain": "Las montañas más conocidas",
   "dtab.railBest.cycle": "Las rutas mejor valoradas",
   "dtab.railBestTrail": "Las rutas mejor valoradas en {country}",
+  "dtab.railBest.trail": "Las mejores rutas de cada país",
+  "open.trail.railTrek": "Rutas de varios días",
+  "open.trail.railView": "Rutas de un día con vistas",
   "dtab.byCountry": "Por país",
   "dtab.chooseCountry": "Elige un país",
   "dtab.exploreCountry": "Ver lugares en {country}",

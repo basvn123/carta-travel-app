@@ -1328,6 +1328,10 @@ def main():
     print(f"  {sum(e['n_trips'] for e in index_countries):,} rated and "
           f"{listed_total:,} listed row(s) across "
           f"{len(index_countries)} country file(s)")
+    # The Europe-wide list the Trails section opens on (T453), read back from
+    # the country files just written, so it can never disagree with them.
+    import export_top
+    export_top.build(out_dir)
     return 0
 
 

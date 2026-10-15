@@ -4802,7 +4802,7 @@ export const de = {
   "cycle.loadFailed": "Die Radrouten wurden nicht geladen. Prüfe die Verbindung und versuche es erneut.",
   "trip.loadFailed": "Die Reisen wurden nicht geladen. Prüfe die Verbindung und versuche es erneut.",
   "trails.loadFailed": "Die Wanderungen wurden nicht geladen. Prüfe die Verbindung und versuche es erneut.",
-  "open.trail.railDay": "Ein halber bis ganzer Tag (5 bis 20 km)",
+  "open.trail.railDay": "Ein halber bis ganzer Tag",
   "trails.cardWaymarked": "Markiert",
   // The shared glossary (T156): one entry per term, read by InfoDot
   "glossary.hardpack.term": "Festgefahrener Untergrund",
@@ -5693,6 +5693,9 @@ export const de = {
   "dtab.railBest.mountain": "Die bekanntesten Berge",
   "dtab.railBest.cycle": "Am besten bewertete Routen",
   "dtab.railBestTrail": "Am besten bewertete Wanderungen in {country}",
+  "dtab.railBest.trail": "Die besten Wanderungen jedes Landes",
+  "open.trail.railTrek": "Wanderungen über mehrere Tage",
+  "open.trail.railView": "Tageswanderungen mit Aussicht",
   "dtab.byCountry": "Nach Land",
   "dtab.chooseCountry": "Wähle ein Land",
   "dtab.exploreCountry": "Orte in {country} ansehen",

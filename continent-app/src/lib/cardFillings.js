@@ -99,8 +99,10 @@ const cell = (key, label, value, cls = '') => ({ key, label, value, cls });
 export function displayName(name) {
   if (typeof name !== 'string') return name;
   let v = stripDashes(name).replace(/\s+-\s+/g, ', ');
+  // Only when a name is left: "7 (Lindenweg)" keeps its bracket, because
+  // the bracket is the name.
   const bare = v.replace(/\s*\([^()]*\)\s*$/, '').trim();
-  if (bare) v = bare;
+  if (/\p{L}{3}/u.test(bare)) v = bare;
   return v ? v.charAt(0).toLocaleUpperCase() + v.slice(1) : v;
 }
 

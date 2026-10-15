@@ -5719,7 +5719,7 @@ export const en = {
   "cycle.loadFailed": "The cycle routes did not load. Check your connection and try again.",
   "trip.loadFailed": "The trips did not load. Check your connection and try again.",
   "trails.loadFailed": "The walks did not load. Check your connection and try again.",
-  "open.trail.railDay": "Half a day to a day (5 to 20 km)",
+  "open.trail.railDay": "Half a day to a day",
   "trails.cardWaymarked": "Waymarked",
   // The shared glossary (T156): one entry per term, read by InfoDot
   "glossary.hardpack.term": "Hardpack",
@@ -6400,6 +6400,9 @@ export const en = {
   "dtab.railBest.mountain": "Best-known mountains",
   "dtab.railBest.cycle": "Top-rated routes",
   "dtab.railBestTrail": "Top-rated walks in {country}",
+  "dtab.railBest.trail": "Each country's best walks",
+  "open.trail.railTrek": "Walks over several days",
+  "open.trail.railView": "Day walks with a view",
   "dtab.byCountry": "By country",
   "dtab.chooseCountry": "Choose a country",
   "dtab.exploreCountry": "See places in {country}",
