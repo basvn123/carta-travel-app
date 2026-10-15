@@ -4802,7 +4802,7 @@ export const nl = {
   "cycle.loadFailed": "De fietsroutes zijn niet geladen. Controleer je verbinding en probeer het opnieuw.",
   "trip.loadFailed": "De reizen zijn niet geladen. Controleer je verbinding en probeer het opnieuw.",
   "trails.loadFailed": "De wandelingen zijn niet geladen. Controleer je verbinding en probeer het opnieuw.",
-  "open.trail.railDay": "Een halve tot een hele dag (5 tot 20 km)",
+  "open.trail.railDay": "Een halve tot een hele dag",
   "trails.cardWaymarked": "Gemarkeerd",
   // The shared glossary (T156): one entry per term, read by InfoDot
   "glossary.hardpack.term": "Vaste ondergrond",
@@ -5693,6 +5693,9 @@ export const nl = {
   "dtab.railBest.mountain": "Bekendste bergen",
   "dtab.railBest.cycle": "Best beoordeelde routes",
   "dtab.railBestTrail": "Best beoordeelde wandelingen in {country}",
+  "dtab.railBest.trail": "De beste wandelingen van elk land",
+  "open.trail.railTrek": "Meerdaagse wandelingen",
+  "open.trail.railView": "Dagwandelingen met uitzicht",
   "dtab.byCountry": "Per land",
   "dtab.chooseCountry": "Kies een land",
   "dtab.exploreCountry": "Plaatsen in {country} bekijken",

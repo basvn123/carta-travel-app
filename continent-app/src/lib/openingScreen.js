@@ -105,6 +105,10 @@ export function cycleRouteKey(row) {
 export function pickIcons(layer, rows) {
   const pool = (rows || []).filter((r) => photoOf(layer, r) && isNamed(layer, r)
     && !isListed(r));
+  // A country's trails are one country; Europe-wide trails (T453) take the
+  // same per-country cap as every other section.
+  const capCountries = layer !== 'trail'
+    || new Set(pool.map((r) => countryOf(layer, r))).size > 1;
   pool.sort((a, b) => (iconRank(layer, b) - iconRank(layer, a))
     || ((b.score ?? b.rating ?? 0) - (a.score ?? a.rating ?? 0)));
   const perCountry = new Map();
@@ -112,7 +116,7 @@ export function pickIcons(layer, rows) {
   const out = [];
   for (const r of pool) {
     const cc = countryOf(layer, r);
-    if (layer !== 'trail' && (perCountry.get(cc) || 0) >= ICON_PER_COUNTRY) continue;
+    if (capCountries && (perCountry.get(cc) || 0) >= ICON_PER_COUNTRY) continue;
     const fam = layer === 'trail' && r.fam && r.fam.size > 1 ? r.fam.k
       : layer === 'cycle' ? cycleRouteKey(r) : null;
     if (fam && families.has(fam)) continue;
@@ -186,6 +190,15 @@ export const OPENING_RAILS = {
     { key: 'short', titleKey: 'open.trail.railShort', facets: { bands: ['short'] } },
     { key: 'lake', titleKey: 'open.trail.railLake', facets: { hls: ['lake'] } },
   ],
+  // Trails at rest, before a country is picked (T453): Europe-wide cuts of
+  // trails/top.json. Only cuts that read well across a continent; a loop or
+  // a short walk is a country-level choice and stays in the country rails.
+  trailEurope: [
+    { key: 'trek', titleKey: 'open.trail.railTrek', facets: { bands: ['trek'] } },
+    { key: 'view', titleKey: 'open.trail.railView', facets: { bands: ['half', 'day'], hls: ['viewpoint', 'summit'] } },
+    { key: 'waterfall', titleKey: 'open.trail.railWaterfall', facets: { hls: ['waterfall'] } },
+    { key: 'lake', titleKey: 'open.trail.railLake', facets: { hls: ['lake'] } },
+  ],
 };
 
 /** The same union-inside, intersection-across rule DestinationsTab's
@@ -203,6 +216,7 @@ export function trailMatches(tr, f) {
  *  function, so the rail and the grid cannot disagree. */
 export function railMatches(layer, rows, facets) {
   const list = rows || [];
+  if (layer === 'trailEurope') return list.filter((r) => trailMatches(r, facets));
   if (layer === 'beach') return applyBeachFacets(list, facets);
   if (layer === 'lake') return applyLakeFacets(list, facets);
   if (layer === 'mountain') return applyMountainFacets(list, facets);
@@ -211,22 +225,22 @@ export function railMatches(layer, rows, facets) {
   return [];
 }
 
-const scoreOf = (layer, r) => (layer === 'trail' ? r.rating : r.score) ?? -1;
+const scoreOf = (layer, r) => (layer === 'trail' || layer === 'trailEurope' ? r.rating : r.score) ?? -1;
 
 /**
  * Which rows a rail shows, in order: photographed rows first (a rail is a
  * row of pictures), then by score, then taking each country's best in turn so
- * a Europe-wide rail does not open on six rows from one country. A trail rail
- * is one country already, so it is score order alone.
+ * a Europe-wide rail does not open on six rows from one country. A country's
+ * trail rail has one lane, so the turn-taking leaves it in score order.
  */
 export function railOrder(layer, rows) {
+  const kind = layer === 'trailEurope' ? 'trail' : layer;
   const sorted = [...rows].sort((a, b) => (
-    (photoOf(layer, b) ? 1 : 0) - (photoOf(layer, a) ? 1 : 0))
+    (photoOf(kind, b) ? 1 : 0) - (photoOf(kind, a) ? 1 : 0))
     || (scoreOf(layer, b) - scoreOf(layer, a)));
-  if (layer === 'trail') return sorted.slice(0, RAIL_CAP);
   const queues = new Map();
   for (const r of sorted) {
-    const cc = countryOf(layer, r);
+    const cc = countryOf(kind, r);
     if (!queues.has(cc)) queues.set(cc, []);
     queues.get(cc).push(r);
   }
@@ -249,12 +263,12 @@ export function railOrder(layer, rows) {
  * A rail under the minimum is dropped rather than shown thin; the opening
  * report counts how many survive per section.
  */
-export function buildRails(layer, rows) {
+export function buildRails(layer, rows, set = layer) {
   const out = [];
-  for (const def of OPENING_RAILS[layer] || []) {
-    const hit = railMatches(layer, rows, def.facets);
+  for (const def of OPENING_RAILS[set] || []) {
+    const hit = railMatches(set, rows, def.facets);
     if (hit.length < RAIL_MIN) continue;
-    out.push({ def, n: hit.length, rows: railOrder(layer, hit) });
+    out.push({ def, n: hit.length, rows: railOrder(set, hit) });
     if (out.length === RAIL_MAX) break;
   }
   return out;

@@ -14,7 +14,7 @@ import { FilterChips } from './FilterChips.jsx';
 import { trailPath } from '../lib/trailShape.js';
 import { srcSetFor } from '../lib/heroImage.js';
 import { HeroPreload } from '../components/LayerPhoto.jsx';
-import { loadTrails, loadListedTrails, loadTrailsIndex } from '../lib/trails.js';
+import { loadTrails, loadListedTrails, loadTrailsIndex, loadTopTrails } from '../lib/trails.js';
 import {
   loadBeachIndex, loadBeaches, loadListedBeaches, loadTopBeaches,
 } from '../lib/beaches.js';
@@ -935,6 +935,16 @@ export function DestinationsTab({
   // location has pulled in on top of them.
   const [beachIndex, setBeachIndex] = useState(null);
   const [topBeaches, setTopBeaches] = useState(null);
+  // Trails at rest (T453): the Europe-wide list, loaded once Trails opens
+  // with no country; undefined until asked for, null when it is not there.
+  const [topTrails, setTopTrails] = useState(undefined);
+  useEffect(() => {
+    if (cat !== 'trails' || country || topTrails !== undefined) return undefined;
+    let live = true;
+    loadTopTrails().then((rows) => { if (live) setTopTrails(rows || null); })
+      .catch(() => { if (live) setTopTrails(null); });
+    return () => { live = false; };
+  }, [cat, country, topTrails]);
   const [countryBeaches, setCountryBeaches] = useState({});   // cc -> rows
   const [beachesLoading, setBeachesLoading] = useState(false);
   const [pageBeach, setPageBeach] = useState(null);
@@ -2562,9 +2572,9 @@ export function DestinationsTab({
   // place searched, no country picked, no chip on. The first filter of any
   // kind (a rail's "See all" included) folds them away and leaves the grid,
   // which is Band 3; clearing it brings them back. Trails are the exception
-  // in scope: their wire is one file per country with no Europe-wide ranking
-  // (beaches, lakes, mountains and cycling each ship a top.json), so the
-  // trail bands open on a country, and the country index says why.
+  // in scope: their wire is one file per country, so with no country the
+  // section opens on trails/top.json (T453, each country's best and its best
+  // in each Europe-wide cut), and with one on that country's own walks.
   const facetsOff = (f) => !Object.values(f).some((l) => l?.length);
   const trailChipsOn = bands.length > 0 || grades.length > 0 || climbs.length > 0
     || shapes.length > 0 || hls.length > 0 || suits.length > 0 || loopsOnly;
@@ -2574,18 +2584,23 @@ export function DestinationsTab({
       : isLakeCat ? (!country && facetsOff(lakeFacets) && topLakes?.length ? 'lake' : null)
         : isMountainCat ? (!country && facetsOff(mtnFacets) && topMountains?.length ? 'mountain' : null)
           : isCycleCat ? (!country && facetsOff(cycleFacets) && cycleTop?.routes?.length ? 'cycle' : null)
-            : cat === 'trails' ? (country && !trailChipsOn && tripCards?.length ? 'trail' : null)
+            : cat === 'trails' ? (trailChipsOn ? null
+              : country ? (tripCards?.length ? 'trail' : null)
+                : (topTrails?.length ? 'trailEurope' : null))
               : null;
 
   const opening = useMemo(() => {
     if (!openingLayer) return null;
+    if (openingLayer === 'trailEurope') {
+      return { layer: 'trail', europe: true, icons: pickIcons('trail', topTrails), rails: buildRails('trail', topTrails, 'trailEurope') };
+    }
     const rows = openingLayer === 'beach' ? topBeaches
       : openingLayer === 'lake' ? topLakes
         : openingLayer === 'mountain' ? topMountains
           : openingLayer === 'cycle' ? (cycleTop?.routes || [])
             : (tripCards || []).map((c) => c.tr).filter((tr) => tr.category !== 'citytrip');
     return { layer: openingLayer, icons: pickIcons(openingLayer, rows), rails: buildRails(openingLayer, rows) };
-  }, [openingLayer, topBeaches, topLakes, topMountains, cycleTop, tripCards]);
+  }, [openingLayer, topBeaches, topLakes, topMountains, cycleTop, tripCards, topTrails]);
 
   // A rail's "See all": its saved filter, put on the grid's own chips.
   const applyRail = (layer, f) => {
@@ -2613,6 +2628,9 @@ export function DestinationsTab({
     else if (layer === 'trail') {
       const card = (tripCards || []).find((c) => c.tr.id === row.id);
       if (card) setPageCard(card);
+      // A Europe-wide tile: no country list is loaded, so the card is built
+      // the way a neighbour's walk is.
+      else openNeighbour('trail', row);
     }
   };
 
@@ -2624,8 +2642,11 @@ export function DestinationsTab({
     if (layer === 'trail') {
       const grade = tripGrade(row);
       return {
-        name: row.name,
-        where: grade && GRADE_KEY[grade] ? t(GRADE_KEY[grade]) : null,
+        name: displayName(row.name),
+        // Europe-wide (T453) the country is what a tile has to say first;
+        // within one country, the grade.
+        where: opening?.europe ? countryName(row.country)
+          : (grade && GRADE_KEY[grade] ? t(GRADE_KEY[grade]) : null),
         fact: row.distance_m != null ? km(row.distance_m / 1000, 1) : null,
         factLabel: t('card.vLength'),
         rating: trailRating(row),
@@ -2690,7 +2711,7 @@ export function DestinationsTab({
     if (opening.icons.length >= 3) {
       all.push({
         key: 'best',
-        title: opening.layer === 'trail'
+        title: opening.layer === 'trail' && !opening.europe
           ? t('dtab.railBestTrail', { country: countryName(country) })
           : t(`dtab.railBest.${opening.layer}`),
         rows: opening.icons,
@@ -2709,7 +2730,7 @@ export function DestinationsTab({
         key: r.def.key,
         title: t(r.def.titleKey),
         rows,
-        onSeeAll: () => applyRail(opening.layer, r.def.facets),
+        onSeeAll: opening.europe ? null : () => applyRail(opening.layer, r.def.facets),
       });
     }
     return {
@@ -3149,7 +3170,7 @@ export function DestinationsTab({
 
         {/* Trails at rest: the head, then the countries (a walk is ranked
             within its country, so the section opens on them). */}
-        {cat === 'trails' && sectionHead && !opening && (
+        {cat === 'trails' && sectionHead && !opening && topTrails !== undefined && !topTrails?.length && (
           <SectionHead photo={sectionHead.photo} title={sectionHead.title} id="dtab-head-trails" />
         )}
 
@@ -3170,7 +3191,8 @@ export function DestinationsTab({
             >
               {opening.layer !== 'trail' && countryTrack}
             </SectionOpening>
-            <h2 className="open-gridhead dtab-gridhead">{t('open.gridHead')}</h2>
+            {/* Europe-wide trails have no list under them: the countries follow. */}
+            {!opening.europe && <h2 className="open-gridhead dtab-gridhead">{t('open.gridHead')}</h2>}
           </>
         )}
 

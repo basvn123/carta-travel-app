@@ -4802,7 +4802,7 @@ export const it = {
   "cycle.loadFailed": "Gli itinerari in bici non si sono caricati. Controlla la connessione e riprova.",
   "trip.loadFailed": "I viaggi non si sono caricati. Controlla la connessione e riprova.",
   "trails.loadFailed": "Le camminate non si sono caricate. Controlla la connessione e riprova.",
-  "open.trail.railDay": "Da mezza giornata a una giornata (da 5 a 20 km)",
+  "open.trail.railDay": "Da mezza giornata a una giornata",
   "trails.cardWaymarked": "Segnalato",
   // The shared glossary (T156): one entry per term, read by InfoDot
   "glossary.hardpack.term": "Fondo compatto",
@@ -5693,6 +5693,9 @@ export const it = {
   "dtab.railBest.mountain": "Le montagne più famose",
   "dtab.railBest.cycle": "I percorsi più votati",
   "dtab.railBestTrail": "Le escursioni più votate in {country}",
+  "dtab.railBest.trail": "Le escursioni migliori di ogni paese",
+  "open.trail.railTrek": "Cammini di più giorni",
+  "open.trail.railView": "Escursioni di un giorno con vista",
   "dtab.byCountry": "Per paese",
   "dtab.chooseCountry": "Scegli un paese",
   "dtab.exploreCountry": "Vedi i luoghi in {country}",

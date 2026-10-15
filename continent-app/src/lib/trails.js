@@ -66,6 +66,19 @@ export function loadTrails(country) {
     });
 }
 
+/** The Europe-wide walks the Trails section opens on (T453): each country's
+ *  best rated walks with a photograph, and its best in each rail's cut
+ *  (pipeline/trails/export_top.py). The same trip objects the country files
+ *  carry, so a tile opens the same trail page. Resolves null before the
+ *  first export that wrote it. */
+export function loadTopTrails() {
+  return Promise.all([cached('/trails/top.json'), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.trips)) return null;
+      return applyOverrides('trail', raw.trips.filter(drawable), { imageKey: 'img' });
+    });
+}
+
 /**
  * The `listed` tier of one country: routes verified to exist, named, deduped
  * and in region, and deliberately NOT scored.

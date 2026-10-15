@@ -4802,7 +4802,7 @@ export const fr = {
   "cycle.loadFailed": "Les itinéraires à vélo ne se sont pas chargés. Vérifiez votre connexion et réessayez.",
   "trip.loadFailed": "Les voyages ne se sont pas chargés. Vérifiez votre connexion et réessayez.",
   "trails.loadFailed": "Les randonnées ne se sont pas chargées. Vérifiez votre connexion et réessayez.",
-  "open.trail.railDay": "D'une demi-journée à une journée (5 à 20 km)",
+  "open.trail.railDay": "D'une demi-journée à une journée",
   "trails.cardWaymarked": "Balisée",
   // The shared glossary (T156): one entry per term, read by InfoDot
   "glossary.hardpack.term": "Sol damé",
@@ -5693,6 +5693,9 @@ export const fr = {
   "dtab.railBest.mountain": "Les montagnes les plus connues",
   "dtab.railBest.cycle": "Les itinéraires les mieux notés",
   "dtab.railBestTrail": "Les randonnées les mieux notées en {country}",
+  "dtab.railBest.trail": "Les plus belles randonnées de chaque pays",
+  "open.trail.railTrek": "Randonnées sur plusieurs jours",
+  "open.trail.railView": "Randonnées d'une journée avec vue",
   "dtab.byCountry": "Par pays",
   "dtab.chooseCountry": "Choisissez un pays",
   "dtab.exploreCountry": "Voir les lieux en {country}",
