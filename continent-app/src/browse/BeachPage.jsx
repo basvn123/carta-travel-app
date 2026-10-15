@@ -1,38 +1,36 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { FigureFooter } from './HonestFooters.jsx';
-import { BEACH_KIND } from '../lib/footers.js';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, PlaceMap, PhotoTrack } from './DetailSkeleton.jsx';
+import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
+import { PhotoGallery } from './PhotoGallery.jsx';
+import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { Button, Money } from '../components/ui/index.js';
+import { toPhotos } from '../lib/itemPhotos.js';
+import { beforeGoItems } from '../lib/beforeGo.js';
+import { useBaseDay } from '../hooks/useBaseDay.js';
+import { useItemPdf } from '../hooks/useItemPdf.js';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
+  previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
 } from '../lib/detailSkeleton.js';
-import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import {
   beachHeadline, beachWhy, beachTags, bestForLabel, componentLabel,
-  COMPONENT_ORDER, beachRating, componentWeights,
+  COMPONENT_ORDER, beachRating, componentWeights, beachHighlights,
 } from '../lib/beachStory.js';
 import { beachShareUrl, loadBeaches } from '../lib/beaches.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
-import { ScoreChip } from '../components/RatingBadge.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
-  MapPinIcon, LinkIcon, ChevronRightIcon,
-  CameraIcon, BulbIcon, InfoIcon, StarIcon,
+  MapPinIcon, ChevronRightIcon,
+  BulbIcon, InfoIcon, StarIcon,
   SunIcon,
 } from '../components/Icons.jsx';
 import {
   beachFacing, beachWalkIn, facingSummary, walkInSummary,
 } from '../lib/derivedModules.js';
 import { BeachFacing, BeachWalkIn } from './DerivedModules.jsx';
-import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
-import { LayerPhoto, HERO_SIZES } from '../components/LayerPhoto.jsx';
 
-// A frame of the photo track: most of the column on a phone (T396).
-const TRACK_SIZES = '(min-width: 900px) 440px, 85vw';
 import { BeachSignature, CompassRosette } from './Signature.jsx';
 import { compassPoint } from '../lib/signature.js';
 
@@ -65,48 +63,6 @@ import { compassPoint } from '../lib/signature.js';
 /** The way down as a level: only the access field says anything about it. */
 const beachLevel = (b) => ACCESS_LEVEL[b?.access] || 0;
 
-const fmtCoord = (n) => (Number.isFinite(n) ? n.toFixed(4) : '');
-
-/** A photograph's credit line, in the TASL order Commons expects: title,
- *  author, source, licence. Everything the file did not carry is dropped
- *  rather than filled with "unknown". */
-function ImageCredit({ image, t }) {
-  if (!image || (!image.by && !image.lic)) return null;
-  // Commons artist fields arrive with stray whitespace and trailing commas
-  // often enough that trimming here is cheaper than reharvesting when one
-  // slips through: "7alaskan , CC BY-SA 3.0" was the first one shipped.
-  const by = String(image.by || '').trim();
-  const lic = String(image.lic || '').trim();
-  return (
-    <p className="bpage-credit">
-      <CameraIcon size={12} />
-      {/* One flex item, not three: .bpage-credit is a flex row with a gap, so a
-          bare ", " between the author and the licence would take the gap on
-          both sides (T396-g). The lake and mountain pages do the same. */}
-      <span className="lpage-credit-line">
-        {by && (
-          <a href={image.page} target="_blank" rel="noopener noreferrer">
-            {by}
-          </a>
-        )}
-        {by && lic ? ', ' : ''}
-        {lic && (image.licUrl
-          ? (
-            <a href={image.licUrl} target="_blank" rel="noopener noreferrer">
-              {lic}
-            </a>
-          )
-          : <span>{lic}</span>)}
-        {!by && (
-          <a href={image.page} target="_blank" rel="noopener noreferrer">
-            {t('beach.photos')}
-          </a>
-        )}
-      </span>
-    </p>
-  );
-}
-
 export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
   // The score breakdown has one door since T386: the "How the score is
@@ -131,8 +87,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
     open: (row) => onOpenNeighbour?.('beach', row),
   });
 
-  const images = beach?.images || [];
-  const main = images[0] || null;
+  const images = useMemo(() => beach?.images || [], [beach]);
   const why = useMemo(() => (beach ? beachWhy(beach, t) : []), [beach, t]);
   const tags = useMemo(() => (beach ? beachTags(beach, t, 4) : []), [beach, t]);
   const rating = useMemo(() => (beach ? beachRating(beach, t) : null), [beach, t]);
@@ -140,6 +95,11 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
     () => (beach ? beachHeadline(beach, t, countryName) : ''),
     [beach, t, countryName],
   );
+
+  const highlights = useMemo(() => (beach ? beachHighlights(beach, t) : []), [beach, t]);
+  const photos = useMemo(() => toPhotos(images, { fallbackCaption: beach?.name || '' }), [images, beach?.name]);
+  const baseDay = useBaseDay(beach?.base?.id || null);
+  const { onPdf, pdfBusy } = useItemPdf('beach', beach, { countryName });
 
   if (!beach) return null;
 
@@ -227,14 +187,6 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
 
   const surfaceWord = beach.surface
     ? t(`beach.surfaceWord${beach.surface.charAt(0).toUpperCase()}${beach.surface.slice(1)}`) : '';
-  const cells = stripCells({
-    level: beachLevel(beach),
-    word: beach.access
-      ? t(`beach.access${beach.access.charAt(0).toUpperCase()}${beach.access.slice(1)}`) : '',
-    type: surfaceWord || t('detail.typeBeach'),
-    number: beach.lengthM ? `${beach.lengthM.toLocaleString(lang)} m` : '',
-  }, t);
-
   // The derived modules (T182): which way the sand faces and how you get
   // down to it, computed from fields the wire already carries. Both always
   // render inside About this beach; where the data cannot answer, the block
@@ -346,26 +298,14 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
         </div>
       ),
     },
-    images.length > 1 && {
-      key: 'photos',
-      icon: CameraIcon,
-      label: t('beach.photos'),
-      summary: t('detail.photoCount', { n: images.length }),
-      body: (
-        /* One photo track since T396 (carta-design "Photo track"): every
-           photograph at a readable size with its credit under it, Previous
-           and Next, no tab roles. The header keeps the first photograph. */
-        <PhotoTrack
-          testId="beach-photos"
-          label={t('beach.photos')}
-          frames={images.map((img, i) => ({
-            key: img.page || img.u || i,
-            media: <LayerPhoto layer="beaches" image={img} src={img.u} sizes={TRACK_SIZES} alt="" loading="lazy" />,
-            credit: <ImageCredit image={img} t={t} />,
-          }))}
-        />
-      ),
-    },
+  ].filter(Boolean);
+
+  const before = beforeGoItems({ lines: notForLines('beach', beach, { word: surfaceWord }) });
+  const sources = [
+    beach.osm && { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/${beach.osm}` },
+    beach.wiki && { label: 'Wikipedia', href: beach.wiki },
+    beach.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${beach.wd}` },
+    ...(beach.credit || []).map((c) => ({ label: c })),
   ].filter(Boolean);
 
   return (
@@ -379,55 +319,49 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       onShare={onShare}
       resetKey={beach.id}
       toast={toast}
-      hero={{
-        sharedKey: beach.id,
-        cells,
-        media: main ? (
-          <LayerPhoto
-            layer="beaches"
-            image={main}
-            hero
-            className="dsk-hero-img bpage-shot"
-            src={fallbackSrc(main.big || main.u, 960)}
-            srcSet={srcSetFor(main.big || main.u, 1920)}
-            sizes="100vw"
-            alt={beach.name}
-            width={16}
-            height={10}
-            loading="eager"
-            decoding="async"
-          />
-        ) : null,
-        credit: main ? <ImageCredit image={main} t={t} /> : null,
-      }}
+      gallery={(
+        <PhotoGallery photos={photos} label={beach.name} claimKey={beach.id}
+          fallback={{ city: beach.name, iso2: beach.cc }} />
+      )}
       head={(
-        <>
-          <h1 className="bpage-name">
-            <CountryFlag country={beach.cc} size={15} className="bpage-flag" />
-            {beach.name}
-          </h1>
-          {beach.nameLocal && <p className="bpage-local">{beach.nameLocal}</p>}
-          <p className="dsk-crumb">{[beach.region, countryName].filter(Boolean).join(', ')}</p>
-          <div className="bpage-scorerow">
-            <ScoreChip rating={rating} size="lg" />
-            <span className="bpage-band">{t(`beach.band${rating.tier}`)}</span>
-          </div>
-        </>
+        <ItemHead
+          title={beach.name}
+          iso2={beach.cc}
+          sub={beach.nameLocal || ''}
+          where={[beach.region, countryName].filter(Boolean).join(', ')}
+          rating={rating}
+        />
       )}
-      hook={headline}
+      hook={highlights[0]?.line || headline}
       keyFacts={keyFacts}
-      notFor={(
-        <NotFor lines={notForLines('beach', beach, { word: surfaceWord })} />
-      )}
+      whyGo={highlights.slice(1).filter((h) => h.title)}
+      before={before}
       primary={beach.base ? (
-        <button type="button" className="bpage-base dsk-primary" onClick={() => onSelectDest?.(beach.base.id)}>
-          <span>
-            {t('beach.basedOn', { city: beach.base.city })}
-            <small>{t('beach.basedKm', { km: Math.round(beach.base.km) })}</small>
-          </span>
-          <ChevronRightIcon size={15} />
-        </button>
+        <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(beach.base.id)}>
+          {t('beach.basedOn', { city: beach.base.city })}
+        </Button>
       ) : null}
+      costLine={baseDay && beach.base ? (
+        <>
+          {t('item.dayIn', { city: beach.base.city })}{' '}
+          <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
+          {t('cost.perDay')}
+        </>
+      ) : null}
+      actions={[
+        <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+          <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
+          <span className="btn-label">{t('detail.directions')}</span>
+        </a>,
+        onAddToDay && (
+          <Button key="day" variant="secondary" iconStart={<SunIcon size={20} />}
+            onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
+            {t('feat.addToDay')}
+          </Button>
+        ),
+      ]}
+      onPdf={onPdf}
+      pdfBusy={pdfBusy}
       map={Number.isFinite(beach.lat) && Number.isFinite(beach.lon) ? (
         <div className="sig-mapwrap">
           <PlaceMap lat={beach.lat} lon={beach.lon} label={t('detail.mapOf', { name: beach.name })} name={beach.name} />
@@ -441,27 +375,16 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       ) : null}
       signature={<BeachSignature beach={beach} />}
       rows={rows}
-      gettingThere={(
-        <>
-          {beach.base && (
-            <p className="dsk-get-town">{t('detail.townKm', { km: Math.round(beach.base.km), place: beach.base.city })}</p>
-          )}
-          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            <MapPinIcon size={15} />
-            <span className="bpage-where-text">{t('detail.directions')}</span>
-            <span className="bpage-where-coord">
-              {fmtCoord(beach.lat)}, {fmtCoord(beach.lon)}
+      gettingThere={beach.base ? (
+        <ul className="igo-list">
+          <li className="igo-row">
+            <ItemIcon name="bed" />
+            <span className="igo-main">
+              <span>{beach.base.city}</span>
+              <span className="igo-sub">{t('beach.basedKm', { km: Math.round(beach.base.km) })}</span>
             </span>
-            <ChevronRightIcon size={14} />
-          </a>
-          <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>
-        </>
-      )}
-      takeAway={onAddToDay ? (
-        <button type="button" className="tpage-act feat-dayplan" onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
-          <SunIcon size={15} />
-          <span>{t('feat.addToDay')}</span>
-        </button>
+          </li>
+        </ul>
       ) : null}
       exits={exits}
       nearby={(
@@ -472,44 +395,8 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
           onOpen={onOpenNeighbour}
         />
       )}
-      sources={(
-        <div className="bpage-sources">
-          <ul>
-            {beach.wiki && (
-              <li>
-                <a href={beach.wiki} target="_blank" rel="noopener noreferrer">
-                  <LinkIcon size={12} />
-                  {t('beach.onWikipedia')}
-                </a>
-              </li>
-            )}
-            {beach.osm && (
-              <li>
-                <a href={`https://www.openstreetmap.org/${beach.osm}`} target="_blank" rel="noopener noreferrer">
-                  <LinkIcon size={12} />
-                  {t('beach.onOsm')}
-                </a>
-              </li>
-            )}
-            {beach.wd && (
-              <li>
-                <a href={`https://www.wikidata.org/wiki/${beach.wd}`} target="_blank" rel="noopener noreferrer">
-                  <LinkIcon size={12} />
-                  {t('beach.onWikidata')}
-                </a>
-              </li>
-            )}
-          </ul>
-          {beach.credit?.length > 0 && (
-            <p className="bpage-attrib">{beach.credit.join('. ')}</p>
-          )}
-          {/* What Carta does not measure for a beach, said once (T386): the
-              signature no longer draws three empty month tracks. */}
-          <p className="bpage-note dsk-unmeasured">{t('detail.beachUnmeasured')}</p>
-          <FigureFooter kinds={facts.map((f) => BEACH_KIND[f.key])} />
-          <ReportProblem item={{ layer: 'beach', id: beach.id, cc: beach.cc, name: beach.name }} />
-        </div>
-      )}
+      sources={sources}
+      sourcesExtra={<ReportProblem item={{ layer: 'beach', id: beach.id, cc: beach.cc, name: beach.name }} />}
     />
   );
 }

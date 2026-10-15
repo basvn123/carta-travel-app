@@ -159,8 +159,8 @@ check('trail page opens full screen', await page.locator('.tpage').isVisible());
 const box = await page.locator('.tpage').boundingBox();
 check('page covers the viewport', box && box.height > 800, box ? `${Math.round(box.width)}x${Math.round(box.height)}` : 'none');
 check('page draws the route on a real map', await page.locator('.tpage-map canvas').isVisible().catch(() => false));
-check('page names the trail as a heading', (await page.locator('.tpage-title').innerText()).length > 3,
-  await page.locator('.tpage-title').innerText());
+check('page names the trail as a heading', (await page.locator('.ipage-head h1').innerText()).length > 3,
+  await page.locator('.ipage-head h1').innerText());
 
 await openRowWith(page, '.tpage-facts');
 const facts = await page.locator('.tpage-facts').innerText();
@@ -194,7 +194,7 @@ await page.screenshot({ path: 'shots/trail-page-body.png' });
 const primaryLabel = await page.locator('.tpage-primary').innerText();
 check('the handoff is the primary action', /gpx|hiking app/i.test(primaryLabel), primaryLabel);
 check('following is a secondary, not the primary', await page.locator('.tpage-primary.tpage-follow').count() === 0
-  && await page.locator('.tpage-act.tpage-follow').count() === 1);
+  && await page.locator('.ipage-acts .tpage-follow').count() === 1); // T430: kit secondaries in the hand-off row
 const [gpxDl] = await Promise.all([
   page.waitForEvent('download', { timeout: 15000 }),
   page.locator('.tpage-primary').click(),
@@ -208,9 +208,16 @@ check('GPX carries elevation from the wire', /<ele>/.test(gpx));
 check('GPX keeps the OpenStreetMap credit', /OpenStreetMap contributors/.test(gpx));
 check('GPX marks the start', /<wpt /.test(gpx));
 
+// T430: the Google Maps file moved into The measurements fold, a quiet
+// door beside the figures, so the hand-off row keeps four secondaries.
+await page.evaluate(() => {
+  const row = document.querySelector('.tpage-kml')?.closest('.jpage-lrow');
+  if (row && !row.classList.contains('is-open')) row.querySelector('.jpage-lrow-btn').click();
+});
+await page.waitForTimeout(300);
 const [kmlDl] = await Promise.all([
   page.waitForEvent('download', { timeout: 15000 }),
-  page.locator('.tpage-act', { hasText: /google maps/i }).first().click(),
+  page.locator('.tpage-kml').first().click(),
 ]);
 const kml = readFileSync(await kmlDl.path(), 'utf8');
 check('KML downloads for Google My Maps', /\.kml$/.test(kmlDl.suggestedFilename()), kmlDl.suggestedFilename());
@@ -223,7 +230,7 @@ check('KML carries the drawn line', /<LineString>/.test(kml) && /<coordinates>/.
 // is the one share door (carta-design "Detail page grammar"), so the check
 // presses that icon and still proves the copied link reopens the trail.
 check('the band carries no second share door',
-  await page.locator('.tpage-act', { hasText: /send the link/i }).count() === 0);
+  await page.locator('.ipage-handoff', { hasText: /send the link/i }).count() === 0);
 await page.locator('.tpage-bar-act:not(.fav-star)').click();
 await page.waitForTimeout(700);
 const copied = await page.evaluate(() => navigator.clipboard.readText().catch(() => ''));
@@ -232,7 +239,7 @@ check('a toast confirms the copy', await page.locator('.tpage-toast').isVisible(
   await page.locator('.tpage-toast').innerText().catch(() => ''));
 
 // ── Directions to the start ───────────────────────────────────────────────
-const dirHref = await page.locator('.tpage-act-wide').getAttribute('href').catch(() => '');
+const dirHref = await page.locator('.ipage-acts a.btn').first().getAttribute('href').catch(() => ''); // T430
 check('directions to the start use coordinates', /google\.com\/maps\/dir\/.*destination=-?\d+\.\d+,-?\d+\.\d+/.test(dirHref || ''),
   (dirHref || '').slice(0, 80));
 
@@ -298,8 +305,8 @@ await openRowWith(page, '.tpage-expect');
 const cityStory = await page.locator('.tpage-expect .tpage-story').innerText().catch(() => '');
 check('city day explanation counts stops and walking', /stops/.test(cityStory) && /km on foot/.test(cityStory),
   cityStory.replace(/\n/g, ' | ').slice(0, 120));
-check('city day offers the priced destination', await page.locator('.tpage-cta').isVisible().catch(() => false),
-  (await page.locator('.tpage-cta').innerText().catch(() => '')).replace(/\n/g, ' '));
+check('city day offers the priced destination', await page.locator('.dsk-primary-row .btn-primary').isVisible().catch(() => false), // T430: the kit primary, the price on the cost line
+  (await page.locator('.dsk-primary-row .btn-primary').innerText().catch(() => '')).replace(/\n/g, ' '));
 await page.screenshot({ path: 'shots/trail-citytrip.png' });
 await page.locator('.tpage-back').click();
 await page.waitForTimeout(500);
@@ -311,8 +318,8 @@ deep.on('pageerror', (e) => errors.push('deeplink pageerror: ' + e.message.split
 await deep.goto(`${ORIGIN}/#trail=${hike.id}&tc=AL`, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await deep.waitForTimeout(6000);
 check('shared link opens the trail page', await deep.locator('.tpage').isVisible().catch(() => false));
-check('shared link opens the right trail', (await deep.locator('.tpage-title').innerText().catch(() => '')).includes(hike.name.slice(0, 12)),
-  await deep.locator('.tpage-title').innerText().catch(() => ''));
+check('shared link opens the right trail', (await deep.locator('.ipage-head h1').innerText().catch(() => '')).includes(hike.name.slice(0, 12)),
+  await deep.locator('.ipage-head h1').innerText().catch(() => ''));
 check('shared link is stripped from the address bar', !deep.url().includes('trail='), deep.url());
 await deep.screenshot({ path: 'shots/trail-deeplink.png' });
 await deep.close();
@@ -342,12 +349,14 @@ check('desktop: shared link opens the page', await desk.locator('.tpage').isVisi
 // in a sticky column instead of above it.
 const colW = await desk.locator('.dsk-head').evaluate((el) => el.getBoundingClientRect().width).catch(() => 0);
 check('desktop: the column stays readable', colW > 500 && colW <= 800, `${Math.round(colW)} px`);
+// T430: the map and the climb share one sticky side column (.ipage-side).
 const mapBeside = await desk.evaluate(() => {
   const head = document.querySelector('.dsk-head');
   const map = document.querySelector('.dsk-map');
-  if (!head || !map) return null;
+  const side = document.querySelector('.ipage-side');
+  if (!head || !map || !side) return null;
   return { beside: map.getBoundingClientRect().left >= head.getBoundingClientRect().right,
-    sticky: getComputedStyle(map).position };
+    sticky: getComputedStyle(side).position };
 });
 check('desktop: the map sits beside the column, sticky',
   Boolean(mapBeside && mapBeside.beside && mapBeside.sticky === 'sticky'), JSON.stringify(mapBeside));

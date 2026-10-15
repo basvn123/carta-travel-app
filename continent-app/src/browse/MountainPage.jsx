@@ -1,37 +1,35 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { FigureFooter } from './HonestFooters.jsx';
-import { mountainKind } from '../lib/footers.js';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, PlaceMap, PhotoTrack } from './DetailSkeleton.jsx';
+import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
+import { PhotoGallery } from './PhotoGallery.jsx';
+import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { Button, Money } from '../components/ui/index.js';
+import { toPhotos } from '../lib/itemPhotos.js';
+import { beforeGoItems } from '../lib/beforeGo.js';
+import { useBaseDay } from '../hooks/useBaseDay.js';
+import { useItemPdf } from '../hooks/useItemPdf.js';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, previewNotHook, keyFactCells, pointCentre, MOUNTAIN_LEVEL,
+  previewWords, previewNotHook, keyFactCells, pointCentre, MOUNTAIN_LEVEL,
 } from '../lib/detailSkeleton.js';
-import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import {
   mountainHeadline, mountainWhy, mountainTags, mountainHazards, mountainSeason,
   bestForLabel, componentLabel, liftLabel, isLiftServed, isHiddenGem,
   mountainRating, COMPONENT_ORDER, SUB_ORDER,
-  difficultyLabel, viewBandLabel, bestMonthsLine, accessLabels,
+  difficultyLabel, viewBandLabel, bestMonthsLine, accessLabels, mountainHighlights,
 } from '../lib/mountainStory.js';
 import { mountainShareUrl, loadMountains } from '../lib/mountains.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
-import { ScoreChip } from '../components/RatingBadge.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
-  MapPinIcon, LinkIcon, ChevronRightIcon,
-  CameraIcon, MountainIcon, BulbIcon, InfoIcon, StarIcon,
+  MapPinIcon, ChevronRightIcon,
+  BulbIcon, InfoIcon, StarIcon,
   SunIcon,
 } from '../components/Icons.jsx';
-import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
-import { LayerPhoto, HERO_SIZES } from '../components/LayerPhoto.jsx';
 
-// A frame of the photo track: most of the column on a phone (T396).
-const TRACK_SIZES = '(min-width: 900px) 440px, 85vw';
 import { MountainSignature } from './Signature.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { numberSentence } from '../lib/numberSentences.js';
@@ -72,35 +70,6 @@ import { numberSentence } from '../lib/numberSentences.js';
  * conditions locally, because a wrong sentence about a mountain is the one
  * kind of wrong sentence in this app that can hurt somebody.
  */
-
-const fmtCoord = (n) => (Number.isFinite(n) ? n.toFixed(4) : '');
-
-/** A photograph's credit line, in the TASL order Commons expects. Everything
- *  the file did not carry is dropped rather than filled with "unknown". */
-function ImageCredit({ image, t }) {
-  if (!image || (!image.by && !image.lic)) return null;
-  const by = String(image.by || '').trim();
-  const lic = String(image.lic || '').trim();
-  return (
-    <p className="bpage-credit">
-      <CameraIcon size={12} />
-      <span className="lpage-credit-line">
-        {by && (
-          <a href={image.page} target="_blank" rel="noopener noreferrer">{by}</a>
-        )}
-        {by && lic ? ', ' : ''}
-        {lic && (image.licUrl
-          ? <a href={image.licUrl} target="_blank" rel="noopener noreferrer">{lic}</a>
-          : <span>{lic}</span>)}
-        {!by && (
-          <a href={image.page} target="_blank" rel="noopener noreferrer">
-            {t('mtn.photos')}
-          </a>
-        )}
-      </span>
-    </p>
-  );
-}
 
 /**
  * The way up, above the photograph.
@@ -178,8 +147,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     open: (row) => onOpenNeighbour?.('peak', row),
   });
 
-  const images = mountain?.images || [];
-  const main = images[0] || null;
+  const images = useMemo(() => mountain?.images || [], [mountain]);
   const why = useMemo(() => (mountain ? mountainWhy(mountain, t) : []), [mountain, t]);
   const tags = useMemo(() => (mountain ? mountainTags(mountain, t, 4) : []), [mountain, t]);
   const rating = useMemo(() => (mountain ? mountainRating(mountain, t) : null), [mountain, t]);
@@ -188,6 +156,11 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     () => (mountain ? mountainHeadline(mountain, t, countryName) : ''),
     [mountain, t, countryName],
   );
+
+  const highlights = useMemo(() => (mountain ? mountainHighlights(mountain, t) : []), [mountain, t]);
+  const photos = useMemo(() => toPhotos(images, { fallbackCaption: mountain?.name || '' }), [images, mountain?.name]);
+  const baseDay = useBaseDay(mountain?.near?.dest_id || null);
+  const { onPdf, pdfBusy } = useItemPdf('mountain', mountain, { countryName });
 
   if (!mountain) return null;
 
@@ -280,14 +253,6 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     },
   ].filter(Boolean);
 
-  const kindKey = `mtn.kindWord${(mountain.kind || 'peak').charAt(0).toUpperCase()}${(mountain.kind || 'peak').slice(1)}`;
-  const kindWord = t(kindKey);
-  const cells = stripCells({
-    level: mountainLevel(mountain),
-    word: difficultyLabel(mountain, t),
-    type: kindWord && kindWord !== kindKey ? kindWord : t('mtn.kindWordPeak'),
-    number: mountain.ele != null ? `${Math.round(mountain.ele).toLocaleString(lang)} m` : '',
-  }, t);
   const subs = SUB_ORDER.filter((key) => mountain.sub?.[key] != null);
 
   // The key facts band (T386): height, prominence, the way up in a word and
@@ -378,7 +343,6 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
                 <dt>{fact.label}{fact.term && <InfoDot term={fact.term} />}</dt>
                 <dd className={fact.mono ? 'mono' : ''}>
                   {fact.value}
-                  {fact.sentence && <span className="numsent">{fact.sentence}</span>}
                   {fact.note && <small>{fact.note}</small>}
                 </dd>
               </div>
@@ -409,29 +373,20 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
         </div>
       ),
     },
-    images.length > 1 && {
-      key: 'photos',
-      icon: CameraIcon,
-      label: t('mtn.photos'),
-      summary: t('detail.photoCount', { n: images.length }),
-      body: (
-        /* One photo track since T396 (carta-design "Photo track"): every
-           photograph at a readable size with its credit under it, Previous
-           and Next, no tab roles. The header keeps the first photograph. */
-        <PhotoTrack
-          testId="mountain-photos"
-          label={t('mtn.photos')}
-          frames={images.map((img, i) => ({
-            key: img.page || img.u || i,
-            media: <LayerPhoto layer="mountains" image={img} src={img.u} sizes={TRACK_SIZES} alt="" loading="lazy" />,
-            credit: <ImageCredit image={img} t={t} />,
-          }))}
-        />
-      ),
-    },
   ].filter(Boolean);
 
   const hasTransit = (mountain.acc || []).includes('transit');
+
+  const before = beforeGoItems({
+    hazards: mountain.hazards || [],
+    lines: notForLines('mountain', mountain, { word: difficultyLabel(mountain, t), shownHazards: hazards.map((h) => h.code) }),
+  });
+  const sources = [
+    { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/#map=14/${mountain.lat}/${mountain.lon}` },
+    mountain.wiki && { label: 'Wikipedia', href: mountain.wiki },
+    mountain.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${mountain.wd}` },
+    ...(mountain.credit || []).map((c) => ({ label: c })),
+  ].filter(Boolean);
 
   return (
     <DetailPage
@@ -444,72 +399,52 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       onShare={onShare}
       resetKey={mountain.id}
       toast={toast}
-      hero={{
-        sharedKey: mountain.id,
-        cells,
-        media: main ? (
-          <LayerPhoto
-            layer="mountains"
-            image={main}
-            hero
-            className="dsk-hero-img bpage-shot"
-            src={fallbackSrc(main.big || main.u, 960)}
-            srcSet={srcSetFor(main.big || main.u, 1920)}
-            sizes="100vw"
-            alt={mountain.name}
-            width={16}
-            height={10}
-            loading="eager"
-            decoding="async"
-          />
-        ) : null,
-        credit: main ? <ImageCredit image={main} t={t} /> : null,
-      }}
-      head={(
-        <>
-          <h1 className="bpage-name">
-            <CountryFlag country={mountain.cc} size={15} className="bpage-flag" />
-            {mountain.name}
-          </h1>
-          {mountain.nameLocal && <p className="bpage-local">{mountain.nameLocal}</p>}
-          <p className="dsk-crumb">{[mountain.range, countryName].filter(Boolean).join(', ')}</p>
-          <div className="bpage-scorerow">
-            <ScoreChip rating={rating} size="lg" />
-            <span className="bpage-band">{t(`mtn.band${rating.tier}`)}</span>
-            {isHiddenGem(mountain) && (
-              <span className="lpage-gem">{t('mtn.hiddenGem')}</span>
-            )}
-          </div>
-        </>
+      gallery={(
+        <PhotoGallery photos={photos} label={mountain.name} claimKey={mountain.id}
+          fallback={{ city: mountain.name, iso2: mountain.cc }} />
       )}
-      hook={headline}
+      head={(
+        <ItemHead
+          title={mountain.name}
+          iso2={mountain.cc}
+          sub={mountain.nameLocal || ''}
+          where={[mountain.range, countryName].filter(Boolean).join(', ')}
+          rating={rating}
+          gem={isHiddenGem(mountain)}
+        />
+      )}
+      hook={highlights[0]?.line || headline}
       keyFacts={keyFacts}
-      notFor={<NotFor lines={notForLines('mountain', mountain, { word: difficultyLabel(mountain, t), shownHazards: hazards.map((h) => h.code) })} />}
-      alert={hazards.length > 0 ? (
-        /* The block's own heading ("Before you go") names it, so the list
-           carries its words as a label rather than a second heading. */
-        <div className="lpage-hazards" role="note" aria-label={t('mtn.hazardsHead')}>
-          <ul>
-            {hazards.map((h) => <li key={h.code}>{h.line}</li>)}
-          </ul>
-          <p className="mpage-check">{t('mtn.hazardsCheck')}</p>
-        </div>
-      ) : null}
+      whyGo={highlights.slice(1).filter((h) => h.title)}
+      before={before}
       primary={mountain.near?.dest_id ? (
-        <button
-          type="button"
-          className="bpage-base dsk-primary"
-          onClick={() => onSelectDest?.(mountain.near.dest_id)}
-        >
-          <span>
-            {t('mtn.basedOn', { city: mountain.near.city })}
-            <small>{t('mtn.basedKm', { km: Math.round(mountain.near.km) })}</small>
-          </span>
-          <ChevronRightIcon size={15} />
-        </button>
+        <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(mountain.near.dest_id)}>
+          {t('mtn.basedOn', { city: mountain.near.city })}
+        </Button>
       ) : null}
+      costLine={baseDay && mountain.near?.city ? (
+        <>
+          {t('item.dayIn', { city: mountain.near.city })}{' '}
+          <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
+          {t('cost.perDay')}
+        </>
+      ) : null}
+      actions={[
+        <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+          <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
+          <span className="btn-label">{t('detail.directions')}</span>
+        </a>,
+        onAddToDay && (
+          <Button key="day" variant="secondary" iconStart={<SunIcon size={20} />}
+            onClick={() => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon })}>
+            {t('feat.addToDay')}
+          </Button>
+        ),
+      ]}
+      onPdf={onPdf}
+      pdfBusy={pdfBusy}
       map={Number.isFinite(mountain.lat) && Number.isFinite(mountain.lon)
-        ? <PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} name={mountain.name} />
+        ? <PlaceMap lat={mountain.lat} lon={mountain.lon} label={t('detail.mapOf', { name: mountain.name })} name={mountain.name} relief zoom={12} />
         : null}
       signature={(
         <MountainSignature
@@ -518,39 +453,33 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
             <MonthStrip
               good={monthsGood}
               avoid={monthsAvoid}
-              info={(
-                <>
-                  <p>{bestMonthsLine(mountain, t)}</p>
-                  <p>{t('mtn.seasonEstNote')}</p>
-                </>
-              )}
+              info={<p>{bestMonthsLine(mountain, t)}</p>}
             />
           ) : null}
         />
       )}
       rows={rows}
-      gettingThere={(
+      gettingThere={(mountain.near?.city || mountain.lift || mountain.acc?.length) ? (
         <>
           {mountain.near?.city && (
-            <p className="dsk-get-town">{t('detail.townKm', { km: Math.round(mountain.near.km), place: mountain.near.city })}</p>
+            <ul className="igo-list">
+              <li className="igo-row">
+                <ItemIcon name="bed" />
+                <span className="igo-main">
+                  <span>{mountain.near.city}</span>
+                  <span className="igo-sub">{t('mtn.basedKm', { km: Math.round(mountain.near.km) })}</span>
+                </span>
+              </li>
+              {hasTransit && (
+                <li className="igo-row">
+                  <ItemIcon name="bus" />
+                  <span className="igo-main"><span>{t('mtn.accTransit')}</span></span>
+                </li>
+              )}
+            </ul>
           )}
           <WayUp mountain={mountain} t={t} />
-          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            <MapPinIcon size={15} />
-            <span className="bpage-where-text">{t('detail.directions')}</span>
-            <span className="bpage-where-coord">
-              {fmtCoord(mountain.lat)}, {fmtCoord(mountain.lon)}
-            </span>
-            <ChevronRightIcon size={14} />
-          </a>
-          {!hasTransit && <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>}
         </>
-      )}
-      takeAway={onAddToDay ? (
-        <button type="button" className="tpage-act feat-dayplan" onClick={() => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon })}>
-          <SunIcon size={15} />
-          <span>{t('feat.addToDay')}</span>
-        </button>
       ) : null}
       exits={exits}
       nearby={(
@@ -561,43 +490,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
           onOpen={onOpenNeighbour}
         />
       )}
-      sources={(
-        <div className="bpage-sources">
-          <ul>
-            {mountain.wiki && (
-              <li>
-                <a href={mountain.wiki} target="_blank" rel="noopener noreferrer">
-                  <LinkIcon size={12} />
-                  {t('mtn.onWikipedia')}
-                </a>
-              </li>
-            )}
-            {mountain.wd && (
-              <li>
-                <a href={`https://www.wikidata.org/wiki/${mountain.wd}`} target="_blank" rel="noopener noreferrer">
-                  <LinkIcon size={12} />
-                  {t('mtn.onWikidata')}
-                </a>
-              </li>
-            )}
-            <li>
-              <a
-                href={`https://www.openstreetmap.org/#map=14/${mountain.lat}/${mountain.lon}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MountainIcon size={12} />
-                {t('mtn.onOsm')}
-              </a>
-            </li>
-          </ul>
-          {mountain.credit?.length > 0 && (
-            <p className="bpage-attrib">{mountain.credit.join('. ')}</p>
-          )}
-          <FigureFooter kinds={facts.map((f) => mountainKind(f.key, mountain))} />
-          <ReportProblem item={{ layer: 'mountain', id: mountain.id, cc: mountain.cc, name: mountain.name }} />
-        </div>
-      )}
+      sources={sources}
+      sourcesExtra={<ReportProblem item={{ layer: 'mountain', id: mountain.id, cc: mountain.cc, name: mountain.name }} />}
     />
   );
 }

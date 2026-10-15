@@ -173,3 +173,436 @@
 /* On the destination page the gallery keeps its own height and band. */
 .destp-v3 .pgal { --pgal-h: var(--destp-photo-h); }
 .destp-v3 .pgal .destp-slide-band { min-height: 60px; }
+
+/* ══ The item page (DetailSkeleton.jsx DetailPage, T430) ══════════════════
+   Scoped to .ipage so the older .dsk-page and .tpage rules of 23, 28 and 65
+   are settled here without touching the journey page. One column on a
+   phone in reading order; from 1024 px the map and the climb are a sticky
+   side column inside the 1180 px reading cap. */
+
+.ipage { background: var(--surface-page); }
+.ipage .tpage-bar.ipage-bar {
+  gap: var(--space-1);
+  padding: env(safe-area-inset-top, 0px) var(--space-2) 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
+}
+.ipage .ipage-back { padding-inline: var(--space-2); color: var(--text); }
+.ipage .ipage-back .btn-label { color: var(--text); }
+.ipage .ipage-bar-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+.ipage .ipage-bar-title.on { opacity: 1; }
+.ipage-bar-acts { display: flex; align-items: center; gap: 0; margin-left: auto; }
+@media (prefers-reduced-motion: reduce) {
+  .ipage .ipage-bar-title { transition: none; }
+}
+
+.ipage .ipage-wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 0 calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+}
+.ipage .ipage-gallery { margin: 0; }
+@media (min-width: 1024px) {
+  .ipage .ipage-wrap { padding-inline: var(--gutter); }
+  .ipage .ipage-gallery { margin-top: var(--space-4); border-radius: var(--radius-card); overflow: hidden; }
+  .ipage .ipage-gallery .pgal { border-bottom: 0; }
+}
+
+.ipage .ipage-grid { display: block; padding: 0 var(--gutter); }
+.ipage .ipage-grid > * { margin-block: var(--space-6) 0; }
+.ipage .ipage-grid > .ipage-head { margin-top: var(--space-5); }
+.ipage .ipage-grid > .dsk-keyfacts { margin-top: var(--space-4); }
+@media (min-width: 1024px) {
+  .ipage .ipage-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--space-7);
+    align-items: start;
+    padding: 0;
+  }
+  .ipage .ipage-grid.has-side { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .ipage .ipage-grid > * { grid-column: 1; }
+  .ipage .ipage-grid.has-side > .ipage-side {
+    grid-column: 2;
+    grid-row: 1 / span 40;
+    position: sticky;
+    top: var(--space-4);
+    margin-top: var(--space-5);
+    max-height: calc(100dvh - 52px - 2 * var(--space-4));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+}
+
+/* The head: the full name, the Score, where, one hook line. */
+.ipage .ipage-head h1 {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+@media (min-width: 1024px) {
+  .ipage .ipage-head h1 { font-size: var(--text-display); letter-spacing: -0.02em; }
+}
+.ihead-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-body);
+  color: var(--text-2);
+}
+.ihead-where { display: inline-flex; align-items: center; gap: var(--space-2); }
+.ihead-sub { margin: var(--space-1) 0 0; font-size: var(--text-body); color: var(--text-3); }
+.ipage .ipage-hook {
+  max-width: 62ch;
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-lead);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--text);
+}
+
+/* The fact band: an icon, the label over the value. */
+.ipage .dsk-kf-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-4);
+  margin: 0;
+  border-top: 1px solid var(--border-soft);
+}
+@media (min-width: 560px) {
+  .ipage .dsk-kf-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.ipage .dsk-kf { padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); min-width: 0; }
+.ipage .dsk-kf-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-caption);
+  font-weight: 400;
+  color: var(--text-2);
+}
+.ipage .dsk-kf-icon { display: inline-flex; color: var(--text-2); }
+.ipage .dsk-kf-value,
+.ipage .dsk-kf-value.mono {
+  margin: 2px 0 0 calc(16px + var(--space-2));
+  font-family: var(--font);
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.ipage .dsk-kf-note {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-caption);
+  font-weight: 400;
+  color: var(--text-3);
+}
+.ipage .dsk-kf-foot { margin: var(--space-2) 0 0; font-size: var(--text-caption); color: var(--text-3); }
+
+/* Section heads on the page: one size, a step over the hook. */
+.ipage .ipage-grid h2,
+.itrack-title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: 0;
+  color: var(--text);
+}
+.ipage .ipage-grid section > h2 { margin-bottom: var(--space-3); }
+
+/* ── Tracks (Track.jsx) ── */
+.itrack { --itrack-w: 82%; }
+.itrack-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+.itrack-head .itrack-title { margin-right: auto; }
+.itrack-ctrl { display: flex; align-items: center; gap: var(--space-1); margin-left: auto; }
+.itrack-pos { margin-right: var(--space-1); font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.itrack-arrow.is-prev .icon-btn-glyph { transform: rotate(180deg); }
+.itrack-arrow:disabled { opacity: 0.35; }
+.itrack-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--itrack-w);
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 2px var(--gutter) var(--space-1);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+.itrack-row::-webkit-scrollbar { display: none; }
+.itrack-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.itrack-cell { display: flex; min-width: 0; scroll-snap-align: start; }
+.itrack-cell > * { flex: 1 1 auto; min-width: 0; }
+@media (min-width: 720px) {
+  .itrack-third { --itrack-w: calc((100% - 2 * var(--space-3)) / 2.3); }
+  .itrack-half { --itrack-w: calc((100% - var(--space-3)) / 1.6); }
+}
+@media (min-width: 1024px) {
+  .itrack-row { margin: 0; padding-inline: 0; scroll-padding-inline: 0; }
+  .itrack-third { --itrack-w: calc((100% - 2 * var(--space-3)) / 2.6); }
+  .ipage-grid:not(.has-side) .itrack-third { --itrack-w: calc((100% - 2 * var(--space-3)) / 3); }
+  .itrack-half { --itrack-w: calc((100% - var(--space-3)) / 2); }
+}
+.itrack.is-grid .itrack-row {
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+@media print {
+  .itrack-row { grid-auto-flow: row; grid-template-columns: 1fr 1fr; overflow: visible; }
+  .itrack-ctrl { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .itrack-row { scroll-behavior: auto; }
+}
+
+/* ── Why go: a highlight card ── */
+.ihl {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.ihl-media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--surface-sunken); }
+.ihl-media img, .ihl-media .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ihl-body { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3) var(--space-4) var(--space-4); }
+.ihl-title { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
+.ihl-line { margin: 2px 0 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+.ihl-meta { margin: 2px 0 0; font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.ihl-credit {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-caption);
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Before you go ── */
+.ibyg-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 560px) {
+  .ibyg-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.ibyg-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.iicon { display: inline-flex; flex: none; color: var(--text-2); }
+.ibyg-row.is-safety .iicon { color: var(--amber-ink); }
+.ibyg-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ibyg-t { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.ibyg-s { font-size: var(--text-label); font-weight: 400; color: var(--text-2); line-height: var(--leading-ui); }
+
+/* ── Hand-off ── */
+.ipage .ipage-handoff { display: flex; flex-direction: column; gap: var(--space-3); }
+.ipage .ipage-handoff .dsk-primary-row > * { width: 100%; }
+@media (min-width: 560px) {
+  .ipage .ipage-handoff .dsk-primary-row > * { width: auto; min-width: 280px; }
+}
+.ipage .ipage-cost { margin: 0; font-size: var(--text-body); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ipage .ipage-cost strong { color: var(--text); font-weight: 600; }
+.ipage .ipage-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* ── Getting there ── */
+.igo-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.igo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.igo-row:first-child { border-top: 1px solid var(--border-soft); }
+.igo-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.igo-sub { font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.igo-row a { color: var(--action); }
+
+/* ── Not quite right? ── */
+.ialt .card-media { aspect-ratio: 3 / 2; }
+.ialt-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ialt-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); color: var(--text-2); }
+.ialt-fact { color: var(--text); font-variant-numeric: tabular-nums; }
+.ialt .card-title { font-size: var(--text-lead); }
+
+/* ── What a price covers ── */
+.iinc { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.iinc-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.iinc-row:last-child { border-bottom: 0; }
+.iinc-mark { display: inline-flex; flex: none; }
+.iinc-row.is-in .iinc-mark { color: var(--status-success); }
+.iinc-row.is-out .iinc-mark { color: var(--text-3); }
+.iinc-row.is-out .iinc-label { color: var(--text-2); }
+.iinc-label { flex: 1 1 auto; min-width: 0; }
+.iinc-value { flex: none; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* ── Sources, one line ── */
+.isrc { margin-top: var(--space-7); padding-top: var(--space-4); border-top: 1px solid var(--border-soft); }
+.isrc-line { margin: 0; font-size: var(--text-caption); line-height: var(--leading-body); color: var(--text-3); }
+.isrc-line a { color: var(--text-2); text-underline-offset: 2px; }
+.isrc > * + * { margin-top: var(--space-2); }
+
+/* The map and the climb in the side column, the toolbar under the map. */
+.ipage .ipage-side .dsk-map { margin: 0; }
+.ipage .ipage-side .dsk-signature { margin: var(--space-4) 0 0; }
+.ipage .dsk-map-frame,
+.ipage .dsk-map .tpage-hero,
+.ipage .dsk-map .cycle-map {
+  height: 46dvh;
+  min-height: 260px;
+  max-height: 440px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+@media (min-width: 1024px) {
+  .ipage .dsk-map-frame,
+  .ipage .dsk-map .tpage-hero,
+  .ipage .dsk-map .cycle-map { height: 52dvh; max-height: 560px; }
+}
+.ipage.following .dsk-map .tpage-hero { height: auto; max-height: none; border: 0; border-radius: 0; }
+/* Following on the trail page: the map takes the page under the bar, so
+   nothing between it and the page may be its containing block. */
+.tpage.following .ipage-side,
+.tpage.following .map-shell,
+.tpage.following .map-shell-frame {
+  position: static !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Why go, as a short list when the gallery already holds the photographs. */
+.iwhy {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 720px) {
+  .iwhy { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.iwhy-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border-soft);
+}
+.iwhy-t { font-size: var(--text-lead); font-weight: 600; color: var(--text); line-height: var(--leading-tight); }
+.iwhy-s { font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
+
+/* A link that looks like a secondary button (directions open the maps app,
+   so they stay a real link). */
+.ipage a.btn { text-decoration: none; }
+.ipage .ipage-acts { align-items: stretch; }
+.ipage .ipage-acts > .btn { min-height: var(--tap); }
+
+/* The way up on a summit page, set as a getting-there row, not a box. */
+.ipage .mpage-way {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) 0 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.ipage .mpage-way-word { font-weight: 600; font-size: var(--text-body); }
+.ipage .mpage-way-name,
+.ipage .mpage-way-src,
+.ipage .mpage-way-note,
+.ipage .mpage-way-ways { font-size: var(--text-caption); color: var(--text-3); }
+
+/* The lake's swim verdict: a status line, a dot and the words (carta-design
+   "Status, not green"), never a tinted box. */
+.ipage .lpage-swim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.ipage .lpage-swim-word {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+}
+.ipage .lpage-swim-word::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--text-3);
+}
+.ipage .lpage-swim-ok .lpage-swim-word::before { background: var(--status-success); }
+.ipage .lpage-swim-stop .lpage-swim-word::before { background: var(--danger); }
+.ipage .lpage-swim-season { font-size: var(--text-body); color: var(--text-2); }
+.ipage .lpage-swim-warn .lpage-swim-word::before { background: var(--amber-ink); }

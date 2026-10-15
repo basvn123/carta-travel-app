@@ -277,7 +277,6 @@ export function LakeSignature({ lake, warmC = 18 }) {
           {hasTemps && (
             <p className="bpage-note sig-note">{t('lake.seasonNote')}</p>
           )}
-          {hasWedge && <p className="sig-note">{t('sig.depthNote')}</p>}
         </>
       )}
     >
@@ -317,7 +316,7 @@ export function MountainSignature({ mountain, season = null }) {
     <Instrument
       kind="mountain"
       title={t('sig.mtnHead')}
-      note={hasAlt ? <p className="sig-note">{t('sig.altNote')}</p> : null}
+      note={null}
     >
       <Row label={t('sig.rowAlt')} figure={hasAlt ? t('sig.altFig', { ele, prom }) : null}>
         {hasAlt

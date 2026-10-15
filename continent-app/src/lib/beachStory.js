@@ -468,3 +468,32 @@ export function beachFacetCounts(pool, state) {
   }
   return out;
 }
+
+/**
+ * The reasons as highlights for the "Why go" band (T430): a short title (the
+ * reason's tag word) over its one sentence, in the pipeline's order, at most
+ * `max`. A reason with no tag word keeps its sentence under no title.
+ */
+const NOT_A_HIGHLIGHT = new Set(['height', 'prominence', 'range', 'area', 'depth', 'elevation', 'length', 'surface', 'season', 'difficulty', 'graded', 'parking', 'transit', 'roadAccess', 'unrated_coverage', 'no_photo_map_card', 'water_unknown_no_source', 'swimUnknown', 'photographed', 'curated', 'editorial_pick', 'shared']);
+
+export function beachHighlights(beach, t, max = 4) {
+  const out = [];
+  for (const reason of beach.why || []) {
+    if (NOT_A_HIGHLIGHT.has(reason.k)) continue;
+    const whyKey = keyFor(WHY_KEY, reason);
+    if (!whyKey) continue;
+    const params = { ...reason };
+    let sentenceKey = whyKey;
+    if (reason.k === 'services') {
+      params.list = serviceList(reason.list, t);
+      if (Number(reason.n) === 1) sentenceKey = 'beach.whyServices1';
+    }
+    const line = t(sentenceKey, params);
+    if (!line || line === sentenceKey) continue;
+    const tagKey = keyFor(TAG_KEY, reason);
+    const title = tagKey ? t(tagKey, params) : '';
+    out.push({ key: reason.k, title: title && title !== tagKey ? title : '', line });
+    if (out.length >= max) break;
+  }
+  return out;
+}

@@ -1,17 +1,19 @@
 import React, {
-  Suspense, lazy, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState,
+  Suspense, lazy, useCallback, useEffect, useId, useMemo, useRef, useState,
 } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { FavStar } from '../components/FavStar.jsx';
-import { Button } from '../components/Button.jsx';
-import { ArrowLeftIcon, ShareIcon, ChevronDownIcon, ChevronRightIcon } from '../components/Icons.jsx';
-import { claimShared } from '../lib/sharedElement.js';
+import { Button, IconButton } from '../components/ui/index.js';
+import {
+  ArrowLeftIcon, ShareIcon, ChevronDownIcon, ChevronRightIcon, CheckIcon, DownloadIcon,
+} from '../components/Icons.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { clampIndex, trackIndex, trackKey, trackLeft } from '../lib/dayTrack.js';
-import CreditFold from './CreditFold.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
 import { SectionRail } from './SectionRail.jsx';
+import { Track } from './Track.jsx';
+import { SaveButton } from './ExploreCards.jsx';
+import { BeforeYouGo, HighlightCard, AlternativeCard, SourcesLine } from './ItemParts.jsx';
 
 const PointMap = lazy(() => import('./PointMap.jsx'));
 
@@ -377,47 +379,53 @@ export function DetailPage({
   onFav = null,
   onShare = null,
   shareLabel,
+  copied = false,
   barTitleOn = false,
   resetKey,
   toast = null,
-  hero = null,
+  gallery = null,
   head = null,
   hook = null,
   keyFacts = null,
   keyFactsLead = null,
   keyFactsFoot = null,
-  notFor = null,
-  alert = null,
-  primary = null,
+  whyGo = [],
+  whyGoTitle = null,
+  before = [],
   map = null,
   signature = null,
-  rows = [],
+  primary = null,
+  actions = [],
+  costLine = null,
+  onPdf = null,
+  pdfBusy = false,
   gettingThere = null,
-  takeAway = null,
+  rows = [],
+  alternatives: altsIn = [],
   exits = [],
   nearby = null,
-  sources = null,
-  licenceKeys = [],
+  sources = [],
+  sourcesExtra = null,
 }) {
   const { t } = useI18n();
   const pageRef = useRef(null);
   const backRef = useRef(null);
   const scrollEl = useRef(null);
   const headEl = useRef(null);
-  const heroEl = useRef(null);
+  const galleryEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
 
-  // The rail's sections, in page order (T396). SectionRail drops any the
-  // page did not render; `railReady` makes it look again when slots appear.
+  // The rail's sections, in page order (T396, T430). SectionRail drops any
+  // the page did not render; `railReady` makes it look again when they come.
   const railItems = useMemo(() => [
     { id: 'dsk-sec-facts', key: 'facts', label: t('detail.railFacts') },
-    { id: 'dsk-sec-getting', key: 'getting', label: t('detail.gettingThere') },
     { id: 'dsk-sec-map', key: 'map', label: t('detail.railMap') },
+    { id: 'dsk-sec-getting', key: 'getting', label: t('detail.gettingThere') },
     { id: 'dsk-sec-details', key: 'details', label: t('detail.railDetails') },
-    { id: 'dsk-sec-nearby', key: 'nearby', label: t('detail.railNearby') },
+    { id: 'dsk-sec-nearby', key: 'nearby', label: t('item.railMore') },
   ], [t]);
-  const railReady = [resetKey, Boolean(keyFacts?.length || keyFactsLead), gettingThere !== false,
-    Boolean(map), rows.length, exits.length, Boolean(nearby)].join('|');
+  const railReady = [resetKey, Boolean(keyFacts?.length || keyFactsLead), Boolean(gettingThere),
+    Boolean(map), rows.length, altsIn.length + exits.length, Boolean(nearby)].join('|');
 
   // Focus management for the dialog: initial focus, a Tab cycle and focus
   // restoration (hooks/useFocusTrap.js). A page with a mode of its own (the
@@ -426,8 +434,7 @@ export function DetailPage({
 
   useEffect(() => { scrollEl.current?.scrollTo?.(0, 0); }, [resetKey]);
 
-  // The bar takes over the name only once the heading has scrolled away, so
-  // the two never sit on screen saying the same thing.
+  // The bar takes over the name only once the heading has scrolled away.
   useEffect(() => {
     const el = headEl.current;
     const root = scrollEl.current;
@@ -438,101 +445,132 @@ export function DetailPage({
     return () => io.disconnect();
   }, [resetKey]);
 
-  // The header photograph is the target of the card-to-page transition (T185).
-  const sharedKey = hero?.sharedKey;
-  useLayoutEffect(() => {
-    if (sharedKey == null) return;
-    claimShared(heroEl.current?.querySelector('img'), sharedKey);
-  }, [sharedKey]);
+  // The computed ways out (usePlaceExits) as photo cards, after any the
+  // page built itself.
+  const alternatives = [
+    ...altsIn,
+    ...exits.map((e) => ({
+      key: e.key, kind: e.kindLabel, title: e.title, photoUrl: e.photoUrl || null,
+      fact: e.meta, rating: e.rating || null, iso2: e.iso2 || null, onOpen: e.onOpen,
+    })),
+  ];
+  const secondaries = [...(Array.isArray(actions) ? actions : [actions]).filter(Boolean)];
+  if (onPdf) {
+    secondaries.push(
+      <Button key="pdf" variant="secondary" className="ipage-pdf" onClick={onPdf} loading={pdfBusy}
+        iconStart={<DownloadIcon size={20} />}>
+        {t('item.pdf')}
+      </Button>,
+    );
+  }
+  // A side column only where there is a map: a page with a figure and no
+  // map (the stub) keeps one column.
+  const hasSide = Boolean(map);
 
   return (
     <div
-      className={`tpage dsk-page ${className}`}
+      className={`tpage dsk-page ipage ${className}`}
       role="dialog"
       aria-modal="true"
       aria-label={name}
       ref={pageRef}
       data-testid={testId}
     >
-      <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
-          <ArrowLeftIcon size={15} />
-          <span>{backLabel}</span>
-        </button>
-        <span className={`tpage-bar-title ${titleGone || barTitleOn ? 'on' : ''}`}>{name}</span>
-        {onFav && <FavStar on={fav} onToggle={onFav} />}
-        {onShare && (
-          <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={shareLabel || t('trails.shareLink')}>
-            <ShareIcon size={15} />
-          </button>
-        )}
+      <div className="tpage-bar ipage-bar">
+        <Button variant="quiet" className="tpage-back ipage-back" onClick={onClose} ref={backRef}
+          iconStart={<ArrowLeftIcon size={20} />}>
+          {backLabel}
+        </Button>
+        <span className={`tpage-bar-title ipage-bar-title ${titleGone || barTitleOn ? 'on' : ''}`}>{name}</span>
+        <div className="ipage-bar-acts">
+          {onFav && <SaveButton fav={fav} onToggle={onFav} t={t} name={name} />}
+          {onShare && (
+            <IconButton className="tpage-bar-act" onClick={onShare}
+              label={copied ? t('dest.linkCopied') : (shareLabel || t('trails.shareLink'))}>
+              {copied ? <CheckIcon size={18} /> : <ShareIcon size={18} />}
+            </IconButton>
+          )}
+        </div>
       </div>
 
       <div className="tpage-scroll" ref={scrollEl}>
-        {/* The sticky section rail (T396, brief V4-8): shell's SectionRail,
-            once the hero has scrolled away, each link a real anchor to its
-            slot. First in the scroller, as on the journey page, and it
-            takes no room in the flow. Under three sections it is not drawn. */}
         <SectionRail
           items={railItems}
           scrollRef={scrollEl}
-          heroRef={hero ? heroEl : headEl}
+          heroRef={gallery ? galleryEl : headEl}
           ready={railReady}
           ariaLabel={t('detail.railAria')}
         />
-        <div className="dsk">
-          {hero && (
-            <figure className={`dsk-hero ${hero.media ? '' : 'no-media'}`} data-slot="hero" ref={heroEl}>
-              {hero.media && <div className="dsk-hero-media">{hero.media}</div>}
-              <div className="dsk-strip-band">
-                <DetailStrip cells={hero.cells} label={hero.label || t('detail.stripAria')} />
-              </div>
-              {hero.credit && <div className="dsk-hero-credit">{hero.credit}</div>}
-            </figure>
+        <div className="dsk ipage-wrap">
+          {gallery && (
+            <div className="ipage-gallery" data-slot="hero" ref={galleryEl}>
+              {gallery}
+            </div>
           )}
 
-          <div className="dsk-grid">
-            <div className="dsk-head" data-slot="head" ref={headEl}>{head}</div>
-
-            {hook && <p className="dsk-hook" data-slot="hook">{hook}</p>}
+          <div className={`dsk-grid ipage-grid${hasSide ? ' has-side' : ''}`}>
+            <header className="dsk-head ipage-head" data-slot="head" ref={headEl}>
+              {head}
+              {hook && <p className="dsk-hook ipage-hook" data-slot="hook">{hook}</p>}
+            </header>
 
             <KeyFacts cells={keyFacts} lead={keyFactsLead} foot={keyFactsFoot} />
 
-            {(alert || notFor) && (
-              <section className="dsk-before" data-slot="beforego" aria-labelledby="dsk-before-h">
-                <h2 id="dsk-before-h">{t('detail.beforeGo')}</h2>
-                {alert && <div className="dsk-alert" data-slot="alert">{alert}</div>}
-                {notFor && <div className="dsk-notfor" data-slot="notfor">{notFor}</div>}
+            {whyGo.length > 0 && (
+              <section className="ipage-why" data-slot="why" aria-labelledby="ipage-why-h">
+                {/* With photographs (a walk's sights, a trip's days) the
+                    reasons are a photo track; a place whose photographs are
+                    already the gallery gets them as a short list, so the same
+                    picture never shows twice. */}
+                {whyGo.some((h) => h.photo) ? (
+                  <Track title={whyGoTitle || t('item.whyGo')} headingId="ipage-why-h" size="third">
+                    {whyGo.map((h) => (
+                      <HighlightCard key={h.key} photo={h.photo} title={h.title} line={h.line} meta={h.meta} />
+                    ))}
+                  </Track>
+                ) : (
+                  <>
+                    <h2 id="ipage-why-h">{whyGoTitle || t('item.whyGo')}</h2>
+                    <ul className="iwhy">
+                      {whyGo.map((h) => (
+                        <li key={h.key} className="iwhy-row">
+                          {h.title && <span className="iwhy-t">{h.title}</span>}
+                          <span className="iwhy-s">{h.line}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
               </section>
             )}
 
-            {(primary || gettingThere !== false || takeAway) && (
-              <div className="dsk-handoff" data-slot="handoff">
+            {hasSide ? (
+              <div className="ipage-side" data-slot="side">
+                <div className="dsk-map" id="dsk-sec-map" data-slot="map">{map}</div>
+                {signature && <section className="dsk-signature" data-slot="signature">{signature}</section>}
+              </div>
+            ) : signature && <section className="dsk-signature" data-slot="signature">{signature}</section>}
+
+            <BeforeYouGo items={before} headingId="ipage-before-h" />
+
+            {(primary || secondaries.length > 0 || costLine) && (
+              <div className="dsk-handoff ipage-handoff" data-slot="handoff">
                 {primary && <div className="dsk-primary-row">{primary}</div>}
-                <div className="dsk-handoff-cols">
-                  {gettingThere !== false && (
-                    <section className="dsk-sec dsk-getting" id="dsk-sec-getting" data-slot="getting-there" aria-labelledby="dsk-getting-h">
-                      <h2 id="dsk-getting-h">{t('detail.gettingThere')}</h2>
-                      {gettingThere || <p className="dsk-note">{t('detail.gettingThereNone')}</p>}
-                    </section>
-                  )}
-                  {takeAway && (
-                    <section className="dsk-sec dsk-take" data-slot="take-away" aria-labelledby="dsk-take-h">
-                      <h2 id="dsk-take-h">{t('detail.takeAway')}</h2>
-                      <div className="dsk-acts">{takeAway}</div>
-                    </section>
-                  )}
-                </div>
+                {costLine && <p className="ipage-cost">{costLine}</p>}
+                {secondaries.length > 0 && <div className="dsk-acts ipage-acts">{secondaries}</div>}
               </div>
             )}
 
-            {map && <div className="dsk-map" id="dsk-sec-map" data-slot="map">{map}</div>}
-
-            {signature && <section className="dsk-signature" data-slot="signature">{signature}</section>}
+            {gettingThere && (
+              <section className="dsk-sec dsk-getting" id="dsk-sec-getting" data-slot="getting-there" aria-labelledby="dsk-getting-h">
+                <h2 id="dsk-getting-h">{t('detail.gettingThere')}</h2>
+                {gettingThere}
+              </section>
+            )}
 
             {rows.length > 0 && (
               <div className="dsk-rows jpage-lrows" id="dsk-sec-details" data-slot="rows">
-                {rows.map((r) => (
+                {rows.slice(0, 3).map((r) => (
                   <DetailRow key={r.key} id={`dsk-${r.key}`} icon={r.icon} label={r.label} summary={r.summary}>
                     {r.body}
                   </DetailRow>
@@ -540,18 +578,20 @@ export function DetailPage({
               </div>
             )}
 
-            {(exits.length > 0 || nearby) && (
-              <div className="dsk-exits" id="dsk-sec-nearby" data-slot="exits">
-                <DetailExits head={t('detail.exitsHead')} headId="dsk-exits-h" exits={exits} />
+            {(alternatives.length > 0 || nearby) && (
+              <div className="dsk-exits ipage-more" id="dsk-sec-nearby" data-slot="exits">
+                {alternatives.length > 0 && (
+                  <section className="ipage-alts" aria-labelledby="ipage-alts-h">
+                    <Track title={t('item.notQuite')} headingId="ipage-alts-h" size="third">
+                      {alternatives.map((a) => <AlternativeCard key={a.key} {...a} />)}
+                    </Track>
+                  </section>
+                )}
                 {nearby}
               </div>
             )}
 
-            {sources !== false && (
-              <div className="dsk-sources" data-slot="sources">
-                <CreditFold t={t} licenceKeys={licenceKeys}>{sources}</CreditFold>
-              </div>
-            )}
+            <SourcesLine items={Array.isArray(sources) ? sources : []}>{sourcesExtra}</SourcesLine>
           </div>
         </div>
       </div>

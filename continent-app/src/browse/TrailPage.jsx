@@ -6,8 +6,7 @@ import { loadTrail, loadTrails } from '../lib/trails.js';
 import {
   haversineKm, stopNameFromRef, trailRating,
   tripGrade, gradeIsDerived, tripRouteType, tripHighlights,
-  tripSuitability, suitabilityIsDerived, isListed, isDerivedRoute,
-  portalVerified, HIGHLIGHTS, SUITABILITY, ROUTE_TYPES,
+  tripSuitability, suitabilityIsDerived, HIGHLIGHTS, SUITABILITY, ROUTE_TYPES,
   trailWaymarked, trailSeason,
 } from '../lib/trailCards.js';
 import { trailStory, trailReasons, trailPlace } from '../lib/trailStory.js';
@@ -23,18 +22,16 @@ import {
   trailGpx, trailKml, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
   shareOrDownloadFile, shareTrailLink, stopNamesOf, downloadTextFile,
 } from '../lib/trailExport.js';
-import { eur } from '../lib/format.js';
 import { tokenColour as token } from '../map/tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, MapSketch, PhotoTrack } from './DetailSkeleton.jsx';
+import { DetailPage, MapSketch } from './DetailSkeleton.jsx';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, previewNotHook, keyFactCells, bboxCentre, markMapLive,
+  previewWords, previewNotHook, keyFactCells, bboxCentre, markMapLive,
   TRAIL_LEVEL, TRAIL_EFFORT_LEVEL,
 } from '../lib/detailSkeleton.js';
 import { haversineKm as kmBetween } from '../lib/nearby.js';
-import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import {
   DownloadIcon, CompassIcon, RouteIcon, BootIcon, InfoIcon, BulbIcon,
@@ -43,11 +40,15 @@ import {
   BedIcon, BottleIcon, LoopIcon, StarIcon, CameraIcon,
   SunIcon,
 } from '../components/Icons.jsx';
-import { RatingBadge } from '../components/RatingBadge.jsx';
 import { isNum } from '../map/coords.js';
-import { FigureFooter } from './HonestFooters.jsx';
 import { UploadForm } from '../community/UploadForm.jsx';
-import { srcSetFor } from '../lib/heroImage.js';
+import { PhotoGallery } from './PhotoGallery.jsx';
+import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { Button, Chip, Money } from '../components/ui/index.js';
+import { toPhotos } from '../lib/itemPhotos.js';
+import { beforeGoItems } from '../lib/beforeGo.js';
+import { useBaseDay } from '../hooks/useBaseDay.js';
+import { useItemPdf } from '../hooks/useItemPdf.js';
 import { installMapGestures } from '../lib/mapGestures.js';
 import { MapShell } from './MapShell.jsx';
 
@@ -108,39 +109,6 @@ const STORY_ICONS = {
   hut: BedIcon, spring: BottleIcon, loop: LoopIcon, star: StarIcon,
   camera: CameraIcon,
 };
-
-/**
- * What the walk looks like: the photographs the photo pass found ON the route.
- *
- * Every frame was shot within 400 m of the line (pipeline/trails/
- * trail_images.py), and they are ordered along the walk rather than by score,
- * so scrolling the strip is roughly walking it. The distance marker under each
- * one is the honest version of a caption: it says where you would be standing.
- *
- * Commons requires the licence and the author to travel with the file, so both
- * ride on the frame itself and the whole strip carries the source line.
- */
-function ViewStrip({ images, t }) {
-  // Since T396 one photo track (carta-design "Photo track"): every frame
-  // shows its km marker and its credit in the band under it, so nothing
-  // hides behind a tap and no text sits on a photograph.
-  if (!Array.isArray(images) || !images.length) return null;
-  return (
-    <>
-      <PhotoTrack
-        testId="trail-views"
-        label={t('trails.viewsTitle')}
-        frames={images.map((im) => ({
-          key: im.u,
-          media: <img src={im.u} alt={im.caption || im.title || ''} loading="lazy" decoding="async" />,
-          at: isNum(im.along_m) ? t('trails.viewAt', { km: km1(im.along_m) }) : null,
-          credit: [im.author, im.license].filter(Boolean).join(', ') || null,
-        }))}
-      />
-      <p className="tpage-credit tpage-views-credit">{t('detail.photosCredit')}</p>
-    </>
-  );
-}
 
 /** The trail grade as a level on the strip's five squares. */
 const trailLevel = (r) => TRAIL_LEVEL[tripGrade(r)] || TRAIL_EFFORT_LEVEL[r?.difficulty] || 0;
@@ -237,7 +205,7 @@ function Fact({ label, value, word = false, title }) {
 
 export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
-  const { tr, assoc, kindKey, price } = card;
+  const { tr, assoc } = card;
   const isCityDay = tr.category === 'citytrip';
   const [detail, setDetail] = useState(null);
   const [follow, setFollow] = useState(false);
@@ -321,10 +289,16 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   // read the card's line, simplified to 90 m for the placeholder sketch.
   // Measuring it again from that is a worse answer to a question already
   // answered. The fallback stays for a wire published before is_loop existed.
-  const loop = typeof src.is_loop === 'boolean'
-    ? src.is_loop
-    : (pts.length ? isLoopRoute(pts) : null);
   const start = pts.length ? pts[0] : null;
+  const end = pts.length ? pts[pts.length - 1] : null;
+  // T430 (critique): a route flagged a loop whose two ends lie more than a
+  // kilometre apart is not one ("Loop, so you finish where you parked" on
+  // Gosau to Hallstatt would strand a walker), so the ends get the last word.
+  const endsApartKm = start && end && pts.length > 1
+    ? haversineKm(start.lat, start.lon, end.lat, end.lon) : null;
+  const loop = (typeof src.is_loop === 'boolean'
+    ? src.is_loop
+    : (pts.length ? isLoopRoute(pts) : null)) && !(endsApartKm != null && endsApartKm > 1);
 
   // The nearest town, by value: the story memo below builds the object
   // itself, so a re-render that hands back the same town does not re-run it.
@@ -358,6 +332,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     return trailPlace(tr, detail, assoc.dest, (cc) => (dn ? dn.of(cc) : cc) || cc);
   }, [tr, detail, assoc.dest, lang]);
   const rating = trailRating(detail || tr);
+  const baseDay = useBaseDay(assoc.destId || null);
+  const { onPdf, pdfBusy } = useItemPdf('trail', tr, { detail, place, assoc });
 
   const { fix, err: fixErr } = useLiveFix(follow);
   const onRoute = useMemo(
@@ -609,42 +585,10 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     ? tripHighlights(src) : tripHighlights(tr);
   const suits = tripSuitability(src).length
     ? tripSuitability(src) : tripSuitability(tr);
-  const listed = isListed(src) || isListed(tr);
-  const portal = portalVerified(src) || portalVerified(tr);
   const family = detail?.family || tr.fam || null;
   const stops = detail?.stops;
   const ascent = detail?.ascent_m ?? tr.ascent_m;
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
-
-  // The strip under the hero: the grade, the kind of walk, the length.
-  const cells = stripCells({
-    level: TRAIL_LEVEL[grade] || TRAIL_EFFORT_LEVEL[tr.difficulty] || 0,
-    word: diffKey ? t(diffKey) + (derivedGrade ? ' ~' : '') : '',
-    type: t(kindKey),
-    number: isNum(totalM) ? `${km1(totalM)} km` : '',
-  }, t);
-
-  // The view image: the first photograph shot on the route, the card's own
-  // picture next, and the nearest town's hero last, captioned as that town
-  // so nobody reads it as a picture of the path.
-  const heroShot = detail?.images?.[0] || (tr.img?.u ? { u: tr.img.u } : null);
-  const heroUrl = heroShot?.u || assoc.photoUrl || null;
-  const heroCredit = heroShot?.author ? (
-    <p className="bpage-credit">
-      <CameraIcon size={12} />
-      <span className="lpage-credit-line">
-        {heroShot.page
-          ? <a href={heroShot.page} target="_blank" rel="noopener noreferrer">{heroShot.author}</a>
-          : <span>{heroShot.author}</span>}
-        {heroShot.license ? `, ${heroShot.license}` : ''}
-      </span>
-    </p>
-  ) : (!heroShot && assoc.photoOf ? (
-    <p className="bpage-credit">
-      <CameraIcon size={12} />
-      <span className="lpage-credit-line">{t('detail.photoNear', { place: assoc.photoOf })}</span>
-    </p>
-  ) : null);
 
   const why1 = why[0]?.text || '';
   const hook = why1 || story.points[0]?.text || '';
@@ -664,9 +608,9 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     { key: 'dist', label: t('trails.factDistance'), value: isNum(totalM) ? `${km1(totalM)} km` : '', mono: true },
   ] : [
     { key: 'time', label: t('trails.factTime'), value: isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : '', mono: true },
-    { key: 'ascent', label: t('trails.factAscent'), value: isNum(ascent) ? `${Math.round(ascent)} m` : '', mono: true },
-    { key: 'descent', label: t('trails.factDescent'), value: isNum(descentM) ? `${Math.round(descentM)} m` : '', mono: true },
-    { key: 'high', label: t('trails.factHigh'), value: isNum(detail?.elevation?.ele_max_m) ? `${Math.round(detail.elevation.ele_max_m)} m` : '', mono: true },
+    { key: 'ascent', label: t('trails.factAscent'), value: isNum(ascent) ? `${Math.round(ascent).toLocaleString(lang)} m` : '', mono: true },
+    { key: 'descent', label: t('trails.factDescent'), value: isNum(descentM) ? `${Math.round(descentM).toLocaleString(lang)} m` : '', mono: true },
+    { key: 'high', label: t('trails.factHigh'), value: isNum(detail?.elevation?.ele_max_m) ? `${Math.round(detail.elevation.ele_max_m).toLocaleString(lang)} m` : '', mono: true },
     waymarked && { key: 'way', label: t('detail.factWaymarked'), value: t('detail.waymarkedYes') },
     season && {
       key: 'season',
@@ -823,13 +767,6 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         </>
       ),
     },
-    Array.isArray(detail?.images) && detail.images.length > 0 && {
-      key: 'views',
-      icon: CameraIcon,
-      label: t('trails.viewsTitle'),
-      summary: t('detail.photoCount', { n: detail.images.length }),
-      body: <ViewStrip images={detail.images} t={t} />,
-    },
     {
       key: 'facts',
       icon: InfoIcon,
@@ -881,10 +818,51 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
               })}
             </div>
           )}
+          {!isCityDay && (
+            <Button variant="quiet" size="sm" className="tpage-kml" iconStart={<MapPinIcon size={16} />} onClick={onKml}>
+              {t('trails.kml')}
+            </Button>
+          )}
         </>
       ),
     },
   ].filter(Boolean);
+
+  // T430: the sights along the way as the "Why go" track, each with the
+  // photograph taken nearest to it on the route where there is one.
+  const shots = toPhotos(detail?.images, { fallbackCaption: tr.name }).map((p) => ({
+    ...p,
+    caption: [p.caption, isNum(p.alongM) ? t('trails.viewAt', { km: km1(p.alongM) }) : ''].filter(Boolean).join(', '),
+  }));
+  const nearestShot = (alongM) => {
+    if (!isNum(alongM)) return null;
+    let best = null;
+    for (const p of shots) {
+      if (!isNum(p.alongM)) continue;
+      const d = Math.abs(p.alongM - alongM);
+      if (d <= 1500 && (!best || d < best.d)) best = { p, d };
+    }
+    return best ? best.p : null;
+  };
+  const sights = (detail?.highlights || []).slice(0, 6).map((h, i) => ({
+    key: `${h.name}-${i}`,
+    title: h.name,
+    line: [t(`trails.kind_${h.kind}`), isNum(h.ele_m) ? `${Math.round(h.ele_m).toLocaleString(lang)} m` : '']
+      .filter((x) => x && !x.startsWith('trails.kind_')).join(', '),
+    meta: isNum(h.along_m) ? t('trails.atKm', { km: km1(h.along_m) }) : '',
+    photo: nearestShot(h.along_m),
+  }));
+  const reasonsList = why.slice(1).map((w) => ({ key: w.key, title: '', line: w.text }));
+  const whyGo = sights.length ? sights : reasonsList;
+  const galleryPhotos = shots.length ? shots
+    : (tr.img?.u ? toPhotos([{ u: tr.img.u, w: tr.img.w, h: tr.img.h }], { fallbackCaption: tr.name })
+      : (assoc.photoUrl ? toPhotos([assoc.photoUrl], { caption: assoc.photoOf ? t('detail.photoNear', { place: assoc.photoOf }) : tr.name }) : []));
+  const before = beforeGoItems({
+    lines: notForLines('trail', tr, { reasons: detail?.reasons || tr.reasons, grade, ascent, totalM }),
+  });
+  const sources = [
+    { label: detail?.attribution_text || tr.attribution_text || 'OpenStreetMap' },
+  ];
 
   return (
     <DetailPage
@@ -899,60 +877,30 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       barTitleOn={follow}
       resetKey={tr.id}
       toast={toast}
-      hero={{
-        sharedKey: tr.id,
-        cells,
-        // T406: a srcset over Wikimedia's renderable widths, capped at the 1280 px
-        // the wire ships, so no phone fetches more than before and a small one
-        // fetches less. A URL it cannot resize keeps its one src.
-        media: heroUrl ? (
-          <img
-            className="dsk-hero-img"
-            src={heroUrl}
-            srcSet={srcSetFor(heroUrl, 1280)}
-            sizes={srcSetFor(heroUrl, 1280) ? '100vw' : undefined}
-            alt={heroShot?.caption || tr.name}
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-          />
-        ) : null,
-        credit: heroCredit,
-      }}
+      gallery={galleryPhotos.length ? (
+        <PhotoGallery photos={galleryPhotos} label={tr.name} claimKey={tr.id}
+          fallback={{ city: tr.name, iso2: tr.country || tr.cc }} />
+      ) : null}
       head={(
-        <div className="tpage-head">
-          <h1 className="tpage-title">
-            {tr.name}
-            {ref && <span className="dsk-ref">{ref}</span>}
-          </h1>
-          <div className="tpage-sub">
-            {place && <span>{[place.city, place.country].filter(Boolean).join(', ')}</span>}
-            {isCityDay && assoc.dest?.rating && (
-              <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
-            )}
-            {!isCityDay && rating && (
-              <RatingBadge rating={rating} size="xs" showGem={false} />
-            )}
-            {!isCityDay && loop && (
-              <span className="tpage-loop">
-                <LoopIcon size={12} />
-                {t('trails.loop')}
-              </span>
-            )}
-          </div>
-        </div>
+        <ItemHead
+          title={tr.name}
+          iso2={tr.country || tr.cc}
+          where={place ? [place.city, place.country].filter(Boolean).join(', ') : ''}
+          rating={isCityDay ? (assoc.dest?.rating || null) : (rating || null)}
+          chips={(
+            <>
+              {!isCityDay && loop && <Chip kind="status" icon={<LoopIcon size={16} />}>{t('trails.loop')}</Chip>}
+              {ref && <Chip kind="status">{ref}</Chip>}
+            </>
+          )}
+        />
       )}
       hook={hook}
       keyFacts={keyFacts}
       keyFactsFoot={diffKey && derivedGrade ? `~ ${t('trails.gradeDerived')}` : null}
-      notFor={(
-        <NotFor lines={notForLines('trail', tr, {
-          reasons: detail?.reasons || tr.reasons,
-          grade,
-          ascent,
-          totalM,
-        })} />
-      )}
+      whyGo={whyGo}
+      whyGoTitle={sights.length ? t('trails.seeTitle') : null}
+      before={before}
       map={(
         <MapShell getMap={getMap} relief beneath={['trail-casing']}>
         <div className="tpage-hero">
@@ -1010,7 +958,6 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         <Instrument
           kind="trail"
           title={t('sig.trailHead')}
-          note={detail?.elevation ? <p className="sig-note">{t('sig.slopeNote')}</p> : null}
         >
           {detail?.elevation && (
             <SlopeProfile
@@ -1041,79 +988,65 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       ) : null}
       rows={rows}
       primary={follow ? null : (isCityDay && assoc.destId ? (
-        <button type="button" className="tpage-cta dsk-primary" onClick={() => onSelectDest(assoc.destId)}>
-          <span>{t('trails.openDest', { city: assoc.dest?.city || '' })}</span>
-          <span className="tpage-cta-right">
-            {price?.pp != null && (
-              <span className="tpage-cta-price">{t('places.fromPrice', { price: eur(price.pp) })} {t('money.perPerson')}</span>
-            )}
-            <ChevronRightIcon size={15} />
-          </span>
-        </button>
+        <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest(assoc.destId)}>
+          {t('trails.openDest', { city: assoc.dest?.city || '' })}
+        </Button>
       ) : (
         /* Taking it into the app you already walk with is the primary action,
-           because that is what this page is for; following it here is a
-           secondary that promises only what a browser tab can deliver. */
-        <button type="button" className="tpage-primary dsk-primary" onClick={onGpx}>
-          <DownloadIcon size={16} />
-          <span>{t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}</span>
-        </button>
+           because that is what this page is for (AllTrails and Komoot lead
+           with the same door); following it here is a secondary that
+           promises only what a browser tab can deliver. */
+        <Button variant="primary" className="tpage-primary" iconStart={<DownloadIcon size={20} />} onClick={onGpx}>
+          {t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}
+        </Button>
       ))}
-      gettingThere={(
+      costLine={!follow && baseDay && assoc.dest?.city ? (
         <>
+          {t('item.dayIn', { city: assoc.dest.city })}{' '}
+          <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
+          {t('cost.perDay')}
+        </>
+      ) : null}
+      actions={follow ? [] : [
+        start && dirUrl && (
+          <a key="dir" className="btn btn-secondary" href={dirUrl} target="_blank" rel="noopener noreferrer">
+            <span className="btn-icon" aria-hidden="true"><RouteIcon size={20} /></span>
+            <span className="btn-label">{t('trails.startDirections')}</span>
+          </a>
+        ),
+        isCityDay && assoc.destId && (
+          <Button key="gpx" variant="secondary" iconStart={<DownloadIcon size={20} />} onClick={onGpx}>
+            {t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}
+          </Button>
+        ),
+        <Button key="follow" variant="secondary" className="tpage-follow" iconStart={<CompassIcon size={20} />} onClick={startFollow}>
+          {t('trails.follow')}
+        </Button>,
+        onAddToDay && (
+          <Button key="day" variant="secondary" className="feat-dayplan" iconStart={<SunIcon size={20} />}
+            onClick={() => onAddToDay({ id: tr.id, cc: tr.country || tr.cc, name: tr.name, lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat), lon: start ? start.lon : (tr.bbox ? (tr.bbox[0] + tr.bbox[2]) / 2 : tr.lon) })}>
+            {t('feat.addToDay')}
+          </Button>
+        ),
+      ]}
+      onPdf={follow ? null : onPdf}
+      pdfBusy={pdfBusy}
+      gettingThere={start && assoc.dest && startKm != null ? (
+        <ul className="igo-list">
           {/* A town before any coordinate (T386): "4 km from Gosau" is what a
               walker plans by; the coordinates are for the maps app. */}
-          {start && assoc.dest && startKm != null && (
-            <p className="tpage-start-near dsk-get-town">
-              {startKm >= 2
-                ? t('trails.startNear', { km: Math.round(startKm), city: assoc.dest.city })
-                : t('trails.startIn', { city: assoc.dest.city })}
-            </p>
-          )}
-          {start && dirUrl && (
-            <a className="tpage-act tpage-act-wide" href={dirUrl} target="_blank" rel="noopener noreferrer">
-              <RouteIcon size={15} />
-              <span>{t('trails.startDirections')}</span>
-            </a>
-          )}
-          {start && (
-            <p className="tpage-start">
-              <span className="tpage-start-coords">
-                {start.lat.toFixed(5)}, {start.lon.toFixed(5)}
+          <li className="igo-row tpage-start-near">
+            <ItemIcon name="pin" />
+            <span className="igo-main">
+              <span>
+                {startKm >= 2
+                  ? t('trails.startNear', { km: Math.round(startKm), city: assoc.dest.city })
+                  : t('trails.startIn', { city: assoc.dest.city })}
               </span>
-            </p>
-          )}
-          {!isCityDay && start && <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>}
-        </>
-      )}
-      takeAway={!follow ? (
-        <div className="tpage-acts">
-          {/* The city day's primary is its town, so the file is a secondary
-              there (23-places-pages.css draws .tpage-primary quiet beside a
-              .tpage-cta). */}
-          {isCityDay && assoc.destId && (
-            <button type="button" className="tpage-primary" onClick={onGpx}>
-              <DownloadIcon size={16} />
-              <span>{t(canShareFiles ? 'trails.sendToApp' : 'trails.gpx')}</span>
-            </button>
-          )}
-          <button type="button" className="tpage-act" onClick={onKml}>
-            <MapPinIcon size={15} />
-            <span>{t('trails.kml')}</span>
-          </button>
-          <button type="button" className="tpage-act tpage-follow" onClick={startFollow}>
-            <CompassIcon size={15} />
-            <span>{t('trails.follow')}</span>
-          </button>
-          {/* The trailhead is where the day's idea sits; the bbox centre
-              stands in until the geometry has loaded. */}
-          {onAddToDay && (
-            <button type="button" className="tpage-act feat-dayplan" onClick={() => onAddToDay({ id: tr.id, cc: tr.country || tr.cc, name: tr.name, lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat), lon: start ? start.lon : (tr.bbox ? (tr.bbox[0] + tr.bbox[2]) / 2 : tr.lon) })}>
-              <SunIcon size={15} />
-              <span>{t('feat.addToDay')}</span>
-            </button>
-          )}
-        </div>
+              <span className="igo-sub tpage-start-coords">{start.lat.toFixed(5)}, {start.lon.toFixed(5)}</span>
+            </span>
+          </li>
+        </ul>
       ) : null}
       exits={exits}
       nearby={(
@@ -1124,42 +1057,11 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
           onOpen={onOpenNeighbour}
         />
       )}
-      licenceKeys={['credit.licence.routes']}
-      sources={(
+      sources={sources}
+      sourcesExtra={(
         <>
-          {/* Three notes that are claims about the data rather than about the
-              walk, so they read as provenance and not as features. */}
-          {(listed || portal || isDerivedRoute(src) || isDerivedRoute(tr)) && (
-            <div className="tpage-provenance">
-              {listed && <p>{t('trails.listedNote')}</p>}
-              {portal && (
-                <p>
-                  {t('trails.portalVerified', {
-                    source: typeof portal === 'string' ? portal : '',
-                  })}
-                </p>
-              )}
-              {(isDerivedRoute(src) || isDerivedRoute(tr)) && (
-                <p>{t('trails.derivedRouteNote')}</p>
-              )}
-            </div>
-          )}
-          {/* Length, climb and height are read off the geometry and the
-              elevation model. The time is our arithmetic on them, and a
-              grade that is not the mapper's own is ours too. */}
-          <FigureFooter kinds={[
-            isNum(totalM) && 'm',
-            isNum(src.duration_min) && 'c',
-            isNum(ascent) && 'm',
-            isNum(detail?.descent_m) && 'm',
-            isNum(detail?.elevation?.ele_max_m) && 'm',
-            isCityDay && isNum(tr.n_stops) && 'm',
-            diffKey && (derivedGrade ? 'c' : 'm'),
-          ]} />
-          <p className="tpage-credit">{detail?.attribution_text || tr.attribution_text}</p>
           {/* An upload is one more source, so its door sits with the others (T333). */}
           <UploadForm layer="trail" itemId={tr.id} />
-          {/* A report is about the data, so it sits with the sources (T386). */}
           <ReportProblem item={{ layer: 'trail', id: tr.id, cc: tr.country || tr.cc, name: tr.name }} />
         </>
       )}

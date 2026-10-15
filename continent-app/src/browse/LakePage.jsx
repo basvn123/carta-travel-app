@@ -1,37 +1,35 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { FigureFooter } from './HonestFooters.jsx';
-import { LAKE_KIND } from '../lib/footers.js';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { DetailPage, PlaceMap, PhotoTrack } from './DetailSkeleton.jsx';
+import { DetailPage, PlaceMap } from './DetailSkeleton.jsx';
+import { PhotoGallery } from './PhotoGallery.jsx';
+import { ItemHead, ItemIcon } from './ItemParts.jsx';
+import { Button, Money } from '../components/ui/index.js';
+import { toPhotos } from '../lib/itemPhotos.js';
+import { beforeGoItems } from '../lib/beforeGo.js';
+import { useBaseDay } from '../hooks/useBaseDay.js';
+import { useItemPdf } from '../hooks/useItemPdf.js';
 import { usePlaceExits } from '../hooks/usePlaceExits.js';
 import {
-  stripCells, previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
+  previewWords, previewNotHook, keyFactCells, pointCentre, ACCESS_LEVEL,
 } from '../lib/detailSkeleton.js';
-import { NotFor } from '../components/NotFor.jsx';
 import { notForLines } from '../lib/notFor.js';
 import {
   lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeSeason, lakeHazards,
   bestForLabel, componentLabel, serviceLabel, accessLabel,
-  COMPONENT_ORDER, SUB_ORDER, lakeRating, isHiddenGem,
+  COMPONENT_ORDER, SUB_ORDER, lakeRating, isHiddenGem, lakeHighlights,
 } from '../lib/lakeStory.js';
 import { lakeShareUrl, loadLakes } from '../lib/lakes.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
-import { ScoreChip } from '../components/RatingBadge.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
-  MapPinIcon, LinkIcon, ChevronRightIcon,
-  CameraIcon, BootIcon, BulbIcon, InfoIcon, StarIcon,
+  MapPinIcon, ChevronRightIcon,
+  BootIcon, BulbIcon, InfoIcon, StarIcon,
   SunIcon,
 } from '../components/Icons.jsx';
 import { lakeShore, shoreSummary } from '../lib/derivedModules.js';
 import { LakeShore } from './DerivedModules.jsx';
-import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
-import { LayerPhoto, HERO_SIZES } from '../components/LayerPhoto.jsx';
 
-// A frame of the photo track: most of the column on a phone (T396).
-const TRACK_SIZES = '(min-width: 900px) 440px, 85vw';
 import { LakeSignature } from './Signature.jsx';
 
 /**
@@ -69,41 +67,8 @@ import { LakeSignature } from './Signature.jsx';
  * a measurement would be the dishonest half of a useful feature.
  */
 
-const fmtCoord = (n) => (Number.isFinite(n) ? n.toFixed(4) : '');
 const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug',
   'sep', 'oct', 'nov', 'dec'];
-
-/** A photograph's credit line, in the TASL order Commons expects. Everything
- *  the file did not carry is dropped rather than filled with "unknown". */
-function ImageCredit({ image, t }) {
-  if (!image || (!image.by && !image.lic)) return null;
-  const by = String(image.by || '').trim();
-  const lic = String(image.lic || '').trim();
-  return (
-    <p className="bpage-credit">
-      <CameraIcon size={12} />
-      {/* One flex item, not three. .bpage-credit is a flex row with a gap, so
-          an author, a bare ", " and a licence as separate children come out as
-          "Sharon Hahn Darlin , CC BY 2.0" with the gap on both sides of the
-          comma. A licence notice is the last thing that should look careless,
-          so the whole line is one item and lays out inline inside it. */}
-      <span className="lpage-credit-line">
-        {by && (
-          <a href={image.page} target="_blank" rel="noopener noreferrer">{by}</a>
-        )}
-        {by && lic ? ', ' : ''}
-        {lic && (image.licUrl
-          ? <a href={image.licUrl} target="_blank" rel="noopener noreferrer">{lic}</a>
-          : <span>{lic}</span>)}
-        {!by && (
-          <a href={image.page} target="_blank" rel="noopener noreferrer">
-            {t('lake.photos')}
-          </a>
-        )}
-      </span>
-    </p>
-  );
-}
 
 /** The way in as a level: only the access field says anything about it. */
 const lakeLevel = (l) => ACCESS_LEVEL[l?.access] || 0;
@@ -129,8 +94,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     open: (row) => onOpenNeighbour?.('lake', row),
   });
 
-  const images = lake?.images || [];
-  const main = images[0] || null;
+  const images = useMemo(() => lake?.images || [], [lake]);
   const why = useMemo(() => (lake ? lakeWhy(lake, t) : []), [lake, t]);
   const tags = useMemo(() => (lake ? lakeTags(lake, t, 4) : []), [lake, t]);
   const rating = useMemo(() => (lake ? lakeRating(lake, t) : null), [lake, t]);
@@ -140,6 +104,11 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     () => (lake ? lakeHeadline(lake, t, countryName) : ''),
     [lake, t, countryName],
   );
+
+  const highlights = useMemo(() => (lake ? lakeHighlights(lake, t) : []), [lake, t]);
+  const photos = useMemo(() => toPhotos(images, { fallbackCaption: lake?.name || '' }), [images, lake?.name]);
+  const baseDay = useBaseDay(lake?.base?.id || null);
+  const { onPdf, pdfBusy } = useItemPdf('lake', lake, { countryName });
 
   if (!lake) return null;
 
@@ -201,14 +170,6 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     },
   ].filter(Boolean);
 
-  const kindKey = `lake.kindWord${(lake.kind || 'lake').charAt(0).toUpperCase()}${(lake.kind || 'lake').slice(1)}`;
-  const kindWord = t(kindKey);
-  const cells = stripCells({
-    level: lakeLevel(lake),
-    word: accessLabel(lake.access, t),
-    type: kindWord && kindWord !== kindKey ? kindWord : t('lake.kindWordLake'),
-    number: size.areaKm2 ? `${size.areaKm2.toLocaleString(lang)} km²` : '',
-  }, t);
   const subs = SUB_ORDER.filter((key) => lake.sub?.[key] != null);
 
   // The derived module (T182): how much path runs along the water, from the
@@ -340,26 +301,17 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
         </div>
       ),
     },
-    images.length > 1 && {
-      key: 'photos',
-      icon: CameraIcon,
-      label: t('lake.photos'),
-      summary: t('detail.photoCount', { n: images.length }),
-      body: (
-        /* One photo track since T396 (carta-design "Photo track"): every
-           photograph at a readable size with its credit under it, Previous
-           and Next, no tab roles. The header keeps the first photograph. */
-        <PhotoTrack
-          testId="lake-photos"
-          label={t('lake.photos')}
-          frames={images.map((img, i) => ({
-            key: img.page || img.u || i,
-            media: <LayerPhoto layer="lakes" image={img} src={img.u} sizes={TRACK_SIZES} alt="" loading="lazy" />,
-            credit: <ImageCredit image={img} t={t} />,
-          }))}
-        />
-      ),
-    },
+  ].filter(Boolean);
+
+  const before = beforeGoItems({
+    hazards: (lake.hazards || []),
+    lines: notForLines('lake', lake, { shownHazards: hazards.map((h) => h.code) }),
+  });
+  const sources = [
+    lake.osm && { label: 'OpenStreetMap', href: `https://www.openstreetmap.org/${lake.osm}` },
+    lake.wiki && { label: 'Wikipedia', href: lake.wiki },
+    lake.wd && { label: 'Wikidata', href: `https://www.wikidata.org/wiki/${lake.wd}` },
+    ...(lake.credit || []).map((c) => ({ label: c })),
   ].filter(Boolean);
 
   return (
@@ -373,99 +325,72 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
       onShare={onShare}
       resetKey={lake.id}
       toast={toast}
-      hero={{
-        sharedKey: lake.id,
-        cells,
-        media: main ? (
-          <LayerPhoto
-            layer="lakes"
-            image={main}
-            hero
-            className="dsk-hero-img bpage-shot"
-            src={fallbackSrc(main.big || main.u, 960)}
-            srcSet={srcSetFor(main.big || main.u, 1920)}
-            sizes="100vw"
-            alt={lake.name}
-            width={16}
-            height={10}
-            loading="eager"
-            decoding="async"
-          />
-        ) : null,
-        credit: main ? <ImageCredit image={main} t={t} /> : null,
-      }}
-      head={(
-        <>
-          <h1 className="bpage-name">
-            <CountryFlag country={lake.cc} size={15} className="bpage-flag" />
-            {lake.name}
-          </h1>
-          {lake.nameLocal && <p className="bpage-local">{lake.nameLocal}</p>}
-          <p className="dsk-crumb">{[lake.region, countryName].filter(Boolean).join(', ')}</p>
-          <div className="bpage-scorerow">
-            <ScoreChip rating={rating} size="lg" />
-            <span className="bpage-band">{t(`lake.band${rating.tier}`)}</span>
-            {isHiddenGem(lake) && (
-              <span className="lpage-gem">{t('lake.hiddenGem')}</span>
-            )}
-          </div>
-        </>
+      gallery={(
+        <PhotoGallery photos={photos} label={lake.name} claimKey={lake.id}
+          fallback={{ city: lake.name, iso2: lake.cc }} />
       )}
-      hook={headline}
+      head={(
+        <ItemHead
+          title={lake.name}
+          iso2={lake.cc}
+          sub={lake.nameLocal || ''}
+          where={[lake.region, countryName].filter(Boolean).join(', ')}
+          rating={rating}
+          gem={isHiddenGem(lake)}
+        />
+      )}
+      hook={highlights[0]?.line || headline}
       keyFactsLead={(
         /* The verdict never folds. See the file header. */
-        <div className={`lpage-swim lpage-swim-${swim.tone}`} role="note">
+        <p className={`lpage-swim lpage-swim-${swim.tone}`} role="note">
           <span className="lpage-swim-word">{swim.label}</span>
-          {swim.source && <span className="lpage-swim-src">{swim.source}</span>}
           {seasonLine && <span className="lpage-swim-season">{seasonLine}</span>}
-        </div>
+        </p>
       )}
       keyFacts={keyFacts}
-      notFor={<NotFor lines={notForLines('lake', lake, { shownHazards: hazards.map((h) => h.code) })} />}
-      alert={hazards.length > 0 ? (
-        /* The block's own heading ("Before you go") names it, so the list
-           carries its words as a label rather than a second heading. */
-        <div className="lpage-hazards" role="note" aria-label={t('lake.hazardsHead')}>
-          <ul>
-            {hazards.map((h) => <li key={h.code}>{h.line}</li>)}
-          </ul>
-        </div>
-      ) : null}
+      whyGo={highlights.slice(1).filter((h) => h.title)}
+      before={before}
       primary={lake.base ? (
-        <button type="button" className="bpage-base dsk-primary" onClick={() => onSelectDest?.(lake.base.id)}>
-          <span>
-            {t('lake.basedOn', { city: lake.base.city })}
-            <small>{t('lake.basedKm', { km: Math.round(lake.base.km) })}</small>
-          </span>
-          <ChevronRightIcon size={15} />
-        </button>
+        <Button variant="primary" iconEnd={<ChevronRightIcon size={20} />} onClick={() => onSelectDest?.(lake.base.id)}>
+          {t('lake.basedOn', { city: lake.base.city })}
+        </Button>
       ) : null}
+      costLine={baseDay && lake.base ? (
+        <>
+          {t('item.dayIn', { city: lake.base.city })}{' '}
+          <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
+          {t('cost.perDay')}
+        </>
+      ) : null}
+      actions={[
+        <a key="dir" className="btn btn-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+          <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
+          <span className="btn-label">{t('detail.directions')}</span>
+        </a>,
+        onAddToDay && (
+          <Button key="day" variant="secondary" iconStart={<SunIcon size={20} />}
+            onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
+            {t('feat.addToDay')}
+          </Button>
+        ),
+      ]}
+      onPdf={onPdf}
+      pdfBusy={pdfBusy}
       map={Number.isFinite(lake.lat) && Number.isFinite(lake.lon)
         ? <PlaceMap lat={lake.lat} lon={lake.lon} label={t('detail.mapOf', { name: lake.name })} name={lake.name} />
         : null}
       signature={<LakeSignature lake={lake} warmC={warmC} />}
       rows={rows}
-      gettingThere={(
-        <>
-          {lake.base && (
-            <p className="dsk-get-town">{t('detail.townKm', { km: Math.round(lake.base.km), place: lake.base.city })}</p>
-          )}
-          <a className="bpage-where" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            <MapPinIcon size={15} />
-            <span className="bpage-where-text">{t('detail.directions')}</span>
-            <span className="bpage-where-coord">
-              {fmtCoord(lake.lat)}, {fmtCoord(lake.lon)}
+      gettingThere={lake.base ? (
+        <ul className="igo-list">
+          <li className="igo-row">
+            <ItemIcon name="bed" />
+            <span className="igo-main">
+              <span>{lake.base.city}</span>
+              <span className="igo-sub">{t('lake.basedKm', { km: Math.round(lake.base.km) })}</span>
             </span>
-            <ChevronRightIcon size={14} />
-          </a>
-          <p className="dsk-note dsk-get-stop">{t('detail.noStopData')}</p>
-        </>
-      )}
-      takeAway={onAddToDay ? (
-        <button type="button" className="tpage-act feat-dayplan" onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
-          <SunIcon size={15} />
-          <span>{t('feat.addToDay')}</span>
-        </button>
+          </li>
+        </ul>
       ) : null}
       exits={exits}
       nearby={(
@@ -476,41 +401,8 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
           onOpen={onOpenNeighbour}
         />
       )}
-      sources={(
-        <div className="bpage-sources">
-          <ul>
-            {lake.wiki && (
-              <li>
-                <a href={lake.wiki} target="_blank" rel="noopener noreferrer">
-                  <LinkIcon size={12} />
-                  {t('lake.onWikipedia')}
-                </a>
-              </li>
-            )}
-            {lake.osm && (
-              <li>
-                <a href={`https://www.openstreetmap.org/${lake.osm}`} target="_blank" rel="noopener noreferrer">
-                  <LinkIcon size={12} />
-                  {t('lake.onOsm')}
-                </a>
-              </li>
-            )}
-            {lake.wd && (
-              <li>
-                <a href={`https://www.wikidata.org/wiki/${lake.wd}`} target="_blank" rel="noopener noreferrer">
-                  <LinkIcon size={12} />
-                  {t('lake.onWikidata')}
-                </a>
-              </li>
-            )}
-          </ul>
-          {lake.credit?.length > 0 && (
-            <p className="bpage-attrib">{lake.credit.join('. ')}</p>
-          )}
-          <FigureFooter kinds={facts.map((f) => LAKE_KIND[f.key])} />
-          <ReportProblem item={{ layer: 'lake', id: lake.id, cc: lake.cc, name: lake.name }} />
-        </div>
-      )}
+      sources={sources}
+      sourcesExtra={<ReportProblem item={{ layer: 'lake', id: lake.id, cc: lake.cc, name: lake.name }} />}
     />
   );
 }
