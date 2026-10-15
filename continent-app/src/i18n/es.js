@@ -3724,6 +3724,7 @@ export const es = {
   'cycle.agreeSome': 'El {pct}% de este trazado coincide con {source}; el resto difiere',
   'cycle.agreeLow': 'Solo el {pct}% de este trazado coincide con {source}',
   'cycle.familiesTitle': 'Rutas EuroVelo',
+  "cycle.stretch": "Un tramo de una ruta más larga",
   'cycle.familyCountryOne': '1 pais',
   'cycle.familyCountryMany': '{n} paises',
   'cycle.familyMeta': '{km} km, {countries}',

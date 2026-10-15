@@ -4,7 +4,7 @@ import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPicker } from '../components/CountryPicker.jsx';
-import { count, eur, stripDashes } from '../lib/format.js';
+import { eur, stripDashes } from '../lib/format.js';
 import { countryName as localCountryName } from '../lib/countryName.js';
 import { needsCountry } from '../lib/favorites.js';
 import { railOrigin } from '../lib/railAlternative.js';
@@ -36,9 +36,6 @@ import {
   loadTripIndex, loadTrips, loadTopTrips, rankTrips,
 } from '../lib/trips.js';
 import { loadCyclingIndex, loadCycling, loadTopCycling } from '../lib/cycling.js';
-import {
-  countryPhrase,
-} from '../lib/cycleStory.js';
 import {
   cycleRating, routeTitle,
   CYCLE_FACET_GROUPS, cycleMatchesFacets, cycleFacetCounts, isLocalNetworkRow,
@@ -3492,12 +3489,10 @@ export function DestinationsTab({
                       onClick={() => setPageCycle({ familyRef: f.ref })}
                     >
                       <span className="cycle-famchip-ref">{f.ref}</span>
-                      <span className="cycle-famchip-meta">
-                        {t('cycle.familyMeta', {
-                          km: count(f.km),
-                          countries: countryPhrase(f.countries.length, t),
-                        })}
-                      </span>
+                      {/* The route's own name (T455). Its length and country
+                          count were the sum of the sections Carta holds,
+                          not the route, so they are not shown. */}
+                      {f.name && <span className="cycle-famchip-meta">{f.name}</span>}
                     </button>
                   ))}
                 </div>

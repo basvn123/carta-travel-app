@@ -245,7 +245,9 @@ export function cycleFilling(r, { t, countryName = '' }) {
     title,
     ref,
     where: countryName || '',
-    hook: hookOf(evidence),
+    // One stretch of a longer route says so, in place of its reason (T455):
+    // "Aare-Route, 43 km" is a section of a 300 km route, not the route.
+    hook: hookOf(r.sec ? [t('cycle.stretch')] : evidence),
     values,
     icons: icons.slice(0, ICON_MAX),
   };

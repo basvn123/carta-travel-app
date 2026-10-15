@@ -3,7 +3,6 @@ import { ReportProblem } from '../components/ReportProblem.jsx';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useI18n } from '../i18n/index.jsx';
-import { count } from '../lib/format.js';
 import { tokenColour as token } from '../map/tokenColors.js';
 import { DetailPage, MapSketch } from './DetailSkeleton.jsx';
 import { routePoints, routeLength, nearestOnRoute } from '../lib/trailGeo.js';
@@ -22,7 +21,7 @@ import { loadCycling } from '../lib/cycling.js';
 import { loadCycleFamily, loadCycleRoute, loadCycleTour, gpxCredit }
   from '../lib/cycling.js';
 import {
-  agreementLine, bailoutLine, bikeLine, countryPhrase, cycleRating, listedLine,
+  agreementLine, bailoutLine, bikeLine, cycleRating, listedLine,
   overnightLine, paceLine, routeTitle, safetyLine, seasonLine, stageLine,
   surfaceLine, trafficFreeLine, whyLines, needsRoughBike,
 } from '../lib/cycleStory.js';
@@ -398,15 +397,8 @@ export function CycleFamilyPage({ familyRef, onClose, onOpenRoute }) {
           </button>
           <div className="cycle-title">
             <h1>{(family && family.ref) || familyRef}</h1>
-            {family && (
-              <p className="cycle-sub">
-                {t('cycle.familySummary', {
-                  km: count(family.km),
-                  sections: family.n_sections,
-                  countries: countryPhrase((family.countries || []).length, t),
-                })}
-              </p>
-            )}
+            {/* The route's name, not the sum of the sections Carta holds (T455). */}
+            {family?.name && <p className="cycle-sub">{family.name}</p>}
           </div>
         </header>
         {loading && <p className="places-empty" role="status">{t('state.loading')}</p>}

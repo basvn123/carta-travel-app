@@ -74,6 +74,7 @@ import cycle_index as IDX  # noqa: E402
 import cycle_sources as S  # noqa: E402
 import stage_planner as P  # noqa: E402
 import validate_cycling as V  # noqa: E402
+import wire_truth as W  # noqa: E402
 from db import connect as _db_connect  # noqa: E402,F401
 
 # Every lab connection in this layer goes through the patient wrapper:
@@ -446,6 +447,7 @@ def route_card(row, tier):
         "id": row["id"],
         "cc": row["country"],
         "name": display_name(row),
+        "raw_name": row.get("name"),
         "ref": row.get("ref"),
         "net": row.get("network"),
         "km": round((row.get("distance_m") or 0) / 1000.0, 1),
@@ -581,7 +583,7 @@ def tour_card(tour):
         "slug": tour["slug"],
         "cc": tour["country"],
         "title": tour_title(tour),
-        "pace": tour["pace"],
+        "pace": W.pace_for((tour.get("distance_m") or 0) / 1000.0, tour["days"]),
         "bike": tour["bike_type"],
         "days": tour["days"],
         "km": round((tour.get("distance_m") or 0) / 1000.0),
@@ -604,7 +606,7 @@ def tour_full(tour):
         "cc": tour["country"],
         "country": tour["country"],
         "title": tour_title(tour),
-        "pace": tour["pace"],
+        "pace": W.pace_for((tour.get("distance_m") or 0) / 1000.0, tour["days"]),
         "bike": tour["bike_type"],
         "days": tour["days"],
         "km": round((tour.get("distance_m") or 0) / 1000.0, 1),
@@ -817,6 +819,13 @@ def _build_country(conn, cc, stamp, by_country, counts, fam_rows,
 
     written, total_bytes = 0, 0
     for _cc, bundle in [(cc, by_country[cc])]:
+        # T455: a stretch of a longer route is marked by its raw name, then
+        # the raw name goes; one tour per route and length.
+        cards = bundle["routes"] + bundle["listed"]
+        W.mark_sections(cards)
+        for c in cards:
+            c.pop("raw_name", None)
+        bundle["tours"] = W.dedupe_tours(bundle["tours"])
         bundle["routes"].sort(key=lambda c: -(c.get("score") or 0))
         bundle["listed"].sort(key=lambda c: c.get("name") or "")
         bundle["tours"].sort(key=lambda c: -(c.get("scenic") or 0))
@@ -879,7 +888,9 @@ def _write_index(by_country, counts, families, stamp, written, total_bytes,
         "checks": [name for name, _ in V.HARD_CHECKS],
         # EV1 to EV19, each a manifest of its per-country sections.
         "families": [
-            {"ref": f["ref"], "km": f["km"], "n_sections": f["n_sections"],
+            # The official name; no total km, which was the sum of the
+            # sections held, not the route (T455).
+            {"ref": f["ref"], "name": W.EV_NAMES.get(f["ref"]), "n_sections": f["n_sections"],
              "n_published": f["n_published"],
              "countries": [c["cc"] for c in f["countries"]],
              "ecf_agreement": f["ecf_agreement"],
@@ -941,15 +952,15 @@ def display_name(row):
     it as one. Where the relation has no name but says where it runs, the
     `from` and `to` tags are the name: "Galisteo - Caceres".
     """
-    name = _clean_name(row.get("name"))
+    name = W.clean_route_name(_clean_name(row.get("name")))
     ref = (row.get("ref") or "").strip()
-    if name and name != ref and not _REF_ONLY_RE.match(name):
+    if name and name != ref:
         return name
     tags = row.get("raw_tags") or {}
     a = (tags.get("from") or "").strip()
     b = (tags.get("to") or "").strip()
     if a and b:
-        return f"{a} - {b}"
+        return W.clean_route_name(f"{a}, {b}")
     return None
 
 
@@ -958,7 +969,14 @@ def tour_title(tour):
     and the pace are facts the card and the page already show as facts, and
     a title that restates them reads as a filename."""
     raw = (tour.get("title") or "").strip()
-    return _clean_name(_TOUR_SUFFIX_RE.sub("", raw)) or raw
+    # T455: a title that is only a ref ("75") is no title; the first and
+    # last overnight towns are.
+    title = W.clean_route_name(_clean_name(_TOUR_SUFFIX_RE.sub("", raw)))
+    if title:
+        return title
+    towns = [(st.get("to") or {}).get("name") for st in tour.get("stages") or []]
+    towns = [x for x in towns if x]
+    return f"{towns[0]}, {towns[-1]}" if len(towns) >= 2 else raw
 
 
 def section_name(row):
@@ -1044,6 +1062,7 @@ def family_files(rows, published_ids, stamp, dry_run):
         agree = [a for a in agree if a is not None]
         payload = {
             "ref": ref,
+            "name": W.EV_NAMES.get(ref),
             "n": int(EV_RE.match(ref).group(1)),
             "generated_at": stamp,
             "n_sections": len(members),
