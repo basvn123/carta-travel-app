@@ -426,7 +426,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
         <>
           {t('item.dayIn', { city: mountain.near.city })}{' '}
           <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
-          {t('cost.perDay')}
+          {t('dest.priceDayUnit')}
         </>
       ) : null}
       actions={[

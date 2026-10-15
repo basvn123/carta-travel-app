@@ -1,5 +1,5 @@
 import React, {
-  Suspense, lazy, useCallback, useEffect, useId, useMemo, useRef, useState,
+  Suspense, lazy, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState,
 } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
@@ -432,7 +432,11 @@ export function DetailPage({
   // Focus management for the dialog: initial focus, a Tab cycle and focus
   // restoration (hooks/useFocusTrap.js). A page with a mode of its own (the
   // trail page's live follow) passes onEscape to leave the mode first.
-  useFocusTrap(pageRef, onEscape || onClose, { initialFocusRef: backRef });
+  // Arrival focus lands on the page's title, not the back control (rule
+  // "Navigation"; T430 critique: a deep link opened with a ring on Back).
+  const titleRef = useRef(null);
+  useLayoutEffect(() => { titleRef.current = headEl.current?.querySelector('h1') || backRef.current; });
+  useFocusTrap(pageRef, onEscape || onClose, { initialFocusRef: titleRef });
 
   useEffect(() => { scrollEl.current?.scrollTo?.(0, 0); }, [resetKey]);
 

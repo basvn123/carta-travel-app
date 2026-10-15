@@ -24,6 +24,16 @@ export const SPEND_STOPS = [
 ];
 export const SPEND_KEY = 'carta.tripSpend';
 
+/** Where you sleep, over the trip's own written bed range: its simplest
+ *  beds to its most comfortable (a hut week's range is huts, a city week's is
+ *  hostels to hotels), so the stops never name a bed the trip does not offer
+ *  (T430 critique: "Entire place" on a refuge week). */
+export const SLEEP_STOPS = [
+  { key: 'low', share: 0, labelKey: 'journey.sleepLow' },
+  { key: 'mid', share: 0.5, labelKey: 'journey.sleepMid' },
+  { key: 'high', share: 1, labelKey: 'journey.sleepHigh' },
+];
+
 export function readSpend() {
   try {
     const v = window.localStorage.getItem(SPEND_KEY);

@@ -5165,7 +5165,7 @@ export const en = {
   'journey.tipsHead': 'Pro tips',
   'journey.packHead': 'What to pack',
   'journey.railAria': 'Jump to a section',
-  'journey.railWhy': 'Why',
+  "journey.railWhy": "Why go",
   'journey.railCosts': 'Costs',
   'journey.railDays': 'Days',
   'journey.railSleep': 'Sleep',
@@ -6643,4 +6643,9 @@ export const en = {
   "pdf.climbLabel": "Height along the way",
   "pdf.openInCarta": "Open this page in Carta",
   "journey.pricePpLine": "A person",
+  "journey.railPrice": "Price",
+  "journey.railForYou": "For you?",
+  "journey.sleepLow": "Simplest beds",
+  "journey.sleepMid": "In between",
+  "journey.sleepHigh": "Most comfortable",
 };

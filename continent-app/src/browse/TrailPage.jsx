@@ -601,7 +601,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const ref = tr.f?.ref || null;
 
   // The key facts band (T386): what a walker decides on, open under the
-  // head. Distance is already in the strip, so the band carries the rest:
+  // head: distance first (T430: the strip that carried it is retired), then
   // time, climb, descent, high point, waymarks and season. A city day has
   // its own three. Waymarked appears only where a mapper tagged it, never as
   // a "no"; a season the climatology modelled says "est.".
@@ -613,6 +613,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     { key: 'stops', label: t('trails.factStops'), value: isNum(tr.n_stops) ? String(tr.n_stops) : '', mono: true },
     { key: 'dist', label: t('trails.factDistance'), value: isNum(totalM) ? `${km1(totalM)} km` : '', mono: true },
   ] : [
+    { key: 'dist', label: t('trails.factDistance'), value: isNum(totalM) ? `${km1(totalM)} km` : '', mono: true },
     { key: 'time', label: t('trails.factTime'), value: isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : '', mono: true },
     { key: 'ascent', label: t('trails.factAscent'), value: isNum(ascent) ? `${Math.round(ascent).toLocaleString(lang)} m` : '', mono: true },
     { key: 'descent', label: t('trails.factDescent'), value: isNum(descentM) ? `${Math.round(descentM).toLocaleString(lang)} m` : '', mono: true },
@@ -1010,7 +1011,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         <>
           {t('item.dayIn', { city: assoc.dest.city })}{' '}
           <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
-          {t('cost.perDay')}
+          {t('dest.priceDayUnit')}
         </>
       ) : null}
       actions={follow ? [] : [

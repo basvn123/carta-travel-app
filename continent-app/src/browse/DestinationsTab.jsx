@@ -3827,6 +3827,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <JourneyPage
             id={pageJourney.id}
+            {...favProps('journey', pageJourney.id)}
             railFrom={railOrigin(data, origin)}
             stayTier={stayTier}
             stayTiers={stayTiers}

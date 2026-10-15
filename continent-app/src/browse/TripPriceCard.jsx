@@ -9,10 +9,8 @@ import { InfoDot } from '../components/InfoDot.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { formatMoney, formatEst } from '../lib/money.js';
 import { useSettledFigure } from '../lib/figureChange.js';
-import { offeredSleepGroups, tierForGroup } from '../lib/sleepGroups.js';
-import { stopIndexFor, stopShare } from '../lib/lifestyleSlider.js';
 import {
-  SLOTS, SPEND_STOPS, includedRows, readSpend, tripPrice, writeSpend,
+  SLEEP_STOPS, SLOTS, SPEND_STOPS, includedRows, readSpend, tripPrice, writeSpend,
 } from '../lib/tripPrice.js';
 import { IncludedList } from './ItemParts.jsx';
 import { ChevronDownIcon, DownloadIcon, PlusIcon } from '../components/Icons.jsx';
@@ -76,8 +74,7 @@ function StopRange({ label, stops, index, onPick, id }) {
 }
 
 export function TripPriceCard({
-  trip, budget, days, lengthControl = null, stayTier = 'home', stayTiers = null, onChangeStayTier = null,
-  onPdf = null, pdfBusy = false,
+  trip, budget, days, lengthControl = null, onPdf = null, pdfBusy = false,
 }) {
   const { t, lang } = useI18n();
   const ctx = useFirstRun();
@@ -89,19 +86,10 @@ export function TripPriceCard({
   const [spend, setSpendKey] = useState(readSpend);
   React.useEffect(() => { setFare(readOwnFare(receiptKey)); }, [receiptKey]);
 
-  // Where you sleep: the stay groups the dataset offers (T173), or the four
-  // a week can be slept in when the host passes none.
-  const sleepStops = useMemo(() => {
-    const offered = offeredSleepGroups(stayTiers);
-    return offered.length > 1 ? offered : [];
-  }, [stayTiers]);
-  const [localStop, setLocalStop] = useState(null);
-  const sleepAt = localStop ?? stopIndexFor(sleepStops, stayTier);
-  const pickSleep = (i) => {
-    setLocalStop(i);
-    const g = sleepStops[i];
-    if (g && onChangeStayTier) onChangeStayTier(tierForGroup(g, stayTier));
-  };
+  // Where you sleep: the trip's own bed range (lib/tripPrice.js SLEEP_STOPS),
+  // starting in the middle; the choice lasts for this page.
+  const sleepStops = SLEEP_STOPS;
+  const [sleepAt, pickSleep] = useState(1);
   const spendAt = Math.max(0, SPEND_STOPS.findIndex((s) => s.key === spend));
   const pickSpend = (i) => { const k = SPEND_STOPS[i]?.key || 'mid'; setSpendKey(k); writeSpend(k); };
 
@@ -112,12 +100,12 @@ export function TripPriceCard({
   };
 
   const price = useMemo(() => tripPrice(budget, {
-    sleepShare: sleepStops.length ? stopShare(sleepAt, sleepStops.length) : 0.5,
+    sleepShare: sleepStops[sleepAt]?.share ?? 0.5,
     spendShare: SPEND_STOPS[spendAt]?.share ?? 0.5,
     days,
     party: people,
     fare: fare?.costTotal || 0,
-  }), [budget, sleepStops.length, sleepAt, spendAt, days, people, fare]);
+  }), [budget, sleepStops, sleepAt, spendAt, days, people, fare]);
 
   const figRef = React.useRef(null);
   useSettledFigure(figRef, price ? `${trip.id}:${price.perPerson}` : '');
@@ -189,7 +177,7 @@ export function TripPriceCard({
         />
       </div>
 
-      {price?.perPerson != null && sleepStops.length > 1 && (
+      {price?.perPerson != null && budget?.breakdown?.accommodation && (
         <StopRange id={`${uid}-sleep`} label={t('journey.bedsLabel')} stops={sleepStops} index={sleepAt} onPick={pickSleep} />
       )}
       {price?.perPerson != null && (
@@ -253,12 +241,13 @@ export function TripPriceCard({
               );
             })}
           </dl>
+          {open && (
+            <div className="tprice-report">
+              <ReportProblem priceOnly item={{ layer: 'trip', id: trip.id, name: trip.title }} />
+            </div>
+          )}
         </div>
       )}
-
-      <div className="tprice-report">
-        <ReportProblem priceOnly item={{ layer: 'trip', id: trip.id, name: trip.title }} />
-      </div>
 
       {sheetOpen && (
         <FlightSheet

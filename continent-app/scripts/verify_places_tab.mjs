@@ -132,7 +132,8 @@ const factsText = await page.locator('.tpage-facts').innerText().catch(() => '')
 check('page facts carry the wire numbers', /km/.test(factsText) && /h/.test(factsText), factsText.replace(/\n/g, ' '));
 const stopsCount = await page.locator('.tpage-stops li').count();
 check('citytrip page lists its stops', stopsCount >= 3, `${stopsCount} stops`);
-check('citytrip page offers the destination CTA', await page.locator('.tpage-cta').isVisible());
+// T430: the city day's destination button is the hand-off row's primary now.
+check('citytrip page offers the destination CTA', await page.locator('.tpage-cta, .dsk-primary-row .btn-primary').first().isVisible());
 await page.screenshot({ path: 'shots/places-page-citytrip.png' });
 await page.locator('.tpage-back').click();
 await page.waitForTimeout(500);

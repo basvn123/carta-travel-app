@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import {
   loadJourney, typeLabel, diffLabel, boldSegments, riskText, minutesText,
   hookLine, loadAllJourneyCards, journeyExits, journeyHash, journeyShareUrl,
-  tripHighlights, tripGallery, tripPhoto, eurRange,
+  tripHighlights, tripGallery, tripPhoto,
 } from '../lib/journeys.js';
 import { stripDashes, safeUrl } from '../lib/format.js';
 import { keyFactCells, capFirst } from '../lib/detailSkeleton.js';
@@ -16,7 +16,7 @@ import { packCells, resolvePackCell } from '../lib/packGrid.js';
 import { railAlternative } from '../lib/railAlternative.js';
 import { parseGateway } from '../lib/gateway.js';
 import { formatMoney } from '../lib/money.js';
-import { Button, Chip, IconButton } from '../components/ui/index.js';
+import { Button, Chip, IconButton, Money } from '../components/ui/index.js';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
@@ -72,12 +72,12 @@ const OUTDOOR = new Set(['hiking', 'trail-running', 'nature-escape', 'cycling', 
 
 /** The rail's stops: the section ids in page order and their labels. */
 const RAIL = [
-  ['why', 'sec-why', 'item.whyGo'],
-  ['budget', 'sec-budget', 'journey.railCosts'],
-  ['fit', 'sec-fit', 'journey.railFit'],
+  ['why', 'sec-why', 'journey.railWhy'],
+  ['budget', 'sec-budget', 'journey.railPrice'],
+  ['fit', 'sec-fit', 'journey.railForYou'],
   ['itin', 'sec-itin', 'journey.railWeek'],
-  ['ends', 'sec-ends', 'journey.railGetThere'],
-  ['prep', 'sec-prep', 'journey.railPrepare'],
+  ['ends', 'sec-ends', 'detail.gettingThere'],
+  ['prep', 'sec-prep', 'go.head'],
 ];
 
 // logistics slot -> label key and icon, in reading order.
@@ -169,7 +169,8 @@ function PageSkeleton({ t }) {
 
 export function JourneyPage({
   id, gatewayDest, railFrom = null, onClose, onSelectDest, onOpenJourney,
-  stayTier = 'home', stayTiers = null, onChangeStayTier = null,
+  // stayTier, stayTiers and onChangeStayTier are still passed by the host;
+  // the price card prices the trip's own bed range instead (T430 critique).
   fav = false, onFav = null,
 }) {
   const { t, lang } = useI18n();
@@ -241,8 +242,19 @@ export function JourneyPage({
     go();
   }, []);
 
-  useFocusTrap(pageRef, close, { initialFocusRef: backRef });
+  // Arrival focus lands on the trip's title (rule "Navigation").
+  const titleRef = useRef(null);
+  useLayoutEffect(() => { titleRef.current = headEl.current?.querySelector('h1') || backRef.current; });
+  useFocusTrap(pageRef, close, { initialFocusRef: titleRef });
   useEffect(() => { scrollEl.current?.scrollTo?.(0, 0); }, [id]);
+  // The trip arrives after the trap focused the back control on the loading
+  // view: move focus to its title once it is there.
+  const readyId = trip && trip !== 'failed' ? trip.id : null;
+  useEffect(() => {
+    if (!readyId) return;
+    const h = headEl.current?.querySelector('h1');
+    if (h && pageRef.current?.contains(document.activeElement)) h.focus({ preventScroll: true });
+  }, [readyId]);
 
   const tripReady = trip && trip !== 'failed' ? trip : null;
   const [railReady, setRailReady] = useState(null);
@@ -538,9 +550,6 @@ export function JourneyPage({
                 budget={viewTrip.budget}
                 days={viewDays}
                 lengthControl={<TripLengthChoice lengths={lengths} value={isShort ? SHORT : WEEK} onChange={pickLength} />}
-                stayTier={stayTier}
-                stayTiers={stayTiers}
-                onChangeStayTier={onChangeStayTier}
                 onPdf={download ? (price) => download(pdfModel(price)) : null}
                 pdfBusy={pdfBusy}
               />
@@ -574,7 +583,7 @@ export function JourneyPage({
                     const theirMid = card.eur ? ((card.eur.low ?? card.eur.high) + (card.eur.high ?? card.eur.low)) / 2 : null;
                     const less = myMid && theirMid && myMid - theirMid >= 50 ? Math.round((myMid - theirMid) / 10) * 10 : null;
                     const fact = kind === 'easier' && card.diffLabel ? diffLabel(card.diffLabel, t)
-                      : kind === 'cheaper' && less ? t('journey.lessPp', { eur: formatMoney(less, { locale: lang }) })
+                      : kind === 'cheaper' && less ? t('journey.lessPp', { eur: `~${formatMoney(less, { locale: lang })}` })
                         : (card.visits || []).slice(0, 2).join(', ');
                     return (
                       <AlternativeCard
@@ -585,7 +594,13 @@ export function JourneyPage({
                         iso2={card.cc}
                         where={card.country || ''}
                         fact={fact}
-                        price={card.eur ? <span className="jcap-fig">{t('journey.rangePp', { range: eurRange(card.eur, lang) })}</span> : null}
+                        price={card.eur ? (
+                          <span className="jcap-fig">
+                            <Money low={card.eur.low} high={card.eur.high} est />
+                            {' '}
+                            {t('journey.pricePp')}
+                          </span>
+                        ) : null}
                         onOpen={() => onOpenJourney?.(card)}
                       />
                     );

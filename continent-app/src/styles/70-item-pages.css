@@ -987,3 +987,42 @@
   .tprep .itrack-title { font-size: var(--text-lead); }
   .tprep .itrack-pos { display: none; }
 }
+/* "2D" and "3D" are short words: each segment still takes a full tap. */
+.map-tools .seg-item { min-width: var(--tap); justify-content: center; }
+
+/* ── Critique fixes (T430 close-out) ── */
+/* The title takes focus on arrival; it is not a control, so no ring. */
+.ipage .ipage-head h1:focus { outline-color: transparent; }
+/* No figure or helper line under 12 px on the item pages. */
+.ipage small, .ipage .money-est, .ipage .dsk-kf-note { font-size: var(--text-caption); }
+/* The booking hint keeps a readable line. */
+.ipage .jpage-book-hint { max-width: var(--measure); font-size: var(--text-caption); color: var(--text-3); }
+/* One size for every secondary in the hand-off row. */
+.ipage .ipage-acts .btn,
+.ipage .ipage-acts a.btn { min-height: var(--tap); font-size: var(--text-label); padding-inline: var(--space-4); }
+@media (min-width: 769px) {
+  .ipage .ipage-acts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+}
+/* Night pins take a full tap; the drawn disc stays 28 px. */
+.tmap-pin { width: var(--tap); height: var(--tap); border: 0; background: transparent; box-shadow: none; position: relative; color: var(--surface); }
+.tmap-pin::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius-pill);
+  background: var(--text);
+  box-shadow: var(--elev-1);
+  z-index: -1;
+}
+.tmap-pin.is-on { background: transparent; color: var(--action-text); }
+.tmap-pin.is-on::before { background: var(--action); }
+.tmap-pin { isolation: isolate; }
+/* What the price covers: two columns, in and out, so the card stays short. */
+@media (min-width: 1024px) {
+  .tprice .iinc { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--space-3); }
+  .tprice .iinc-row { font-size: var(--text-label); }
+}
+/* Full titles in the compact list rows too (owner, 2026-10-15). */
+.places-list .card.card-row .card-title { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+.places-list .card.card-row .card-title .card-open { overflow: visible; text-overflow: clip; white-space: normal; text-wrap: balance; }

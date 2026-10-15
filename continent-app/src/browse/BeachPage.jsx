@@ -345,7 +345,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
         <>
           {t('item.dayIn', { city: beach.base.city })}{' '}
           <strong><Money value={baseDay.dayEur} est={baseDay.est} /></strong>{' '}
-          {t('cost.perDay')}
+          {t('dest.priceDayUnit')}
         </>
       ) : null}
       actions={[
