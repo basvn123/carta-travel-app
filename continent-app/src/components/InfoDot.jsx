@@ -29,14 +29,17 @@ const POP_W = 280;
 const GUTTER = 12;
 const GAP = 8;
 
-export function InfoDot({ term, className = '' }) {
+export function InfoDot({ term, className = '', title = null, children = null }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);
   const btnRef = useRef(null);
   const popRef = useRef(null);
   const id = useId();
-  const known = hasTerm(term);
+  // T431: a dot may carry its own title and body (a trip's difficulty,
+  // explained with that trip's own hours and climbs) instead of a glossary
+  // term; the popover and its behaviour are the same.
+  const known = hasTerm(term) || Boolean(title);
 
   const close = useCallback((returnFocus = true) => {
     setOpen(false);
@@ -88,7 +91,7 @@ export function InfoDot({ term, className = '' }) {
 
   if (!known) return null;
   const keys = glossaryKeys(term);
-  const name = t(keys.term);
+  const name = title || t(keys.term);
 
   return (
     <span className={`infodot ${className}`.trim()}>
@@ -99,7 +102,7 @@ export function InfoDot({ term, className = '' }) {
         aria-label={t('glossary.dotLabel', { term: name })}
         aria-expanded={open}
         aria-controls={open ? id : undefined}
-        data-term={term}
+        data-term={term || undefined}
         onClick={() => (open ? close(true) : setOpen(true))}
       >
         <span className="infodot-mark" aria-hidden="true" />
@@ -114,7 +117,7 @@ export function InfoDot({ term, className = '' }) {
           style={pos ? { left: pos.left, top: pos.top, width: pos.width } : { visibility: 'hidden' }}
         >
           <strong className="infodot-term">{name}</strong>
-          <p className="infodot-text">{t(keys.text)}</p>
+          {children || <p className="infodot-text">{t(keys.text)}</p>}
         </div>,
         document.body,
       )}

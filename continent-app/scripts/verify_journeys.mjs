@@ -177,33 +177,23 @@ try {
   await jcards.first().click();
   await page.waitForTimeout(2500);
   check('the journey page opens', await page.locator('.jpage').isVisible());
-  check('the page leads with a hero photograph',
-    await page.locator('.jpage .bpage-shot').count() === 1);
-  check('the photograph names its source',
-    await page.locator('.jpage .bpage-credit').count() >= 1);
-  check('the budget renders as an itemised receipt',
-    await page.locator('.jpage-budget-rows li').count() >= 3);
-  check('seven days render', await page.locator('.jpage-day').count() === 7,
-    `${await page.locator('.jpage-day').count()} days`);
-  // T387 (brief V3.6): eighteen sections became seven groups. Where to sleep
-  // and Prepare (which holds the pro tips) are closed on arrival now, so the
-  // walk opens them before counting, as a reader would.
-  check('the page has seven groups at most, each an h2',
-    await page.locator('.jpage .dsec > .dsec-head > h2').count() >= 5);
-  check('the trip receipt carries the Lifestyle slider or its total',
-    await page.locator('#sec-budget .jpage-budget-total').count() === 1);
+  // T431 (owner, 2026-10-15): the page is rebuilt on the item pages'
+  // system: a credited gallery, the price card with its lines behind "See
+  // the breakdown", the days as cards with tonight's bed on each (Where to
+  // sleep merged in), and Before you go as cards that swipe.
+  check('the page leads with its gallery',
+    await page.locator('.jpage .ipage-gallery .pgal').count() === 1);
+  check('the price card carries the total a person and the party total',
+    await page.locator('#sec-budget .tprice-fig').count() === 1
+      && await page.locator('#sec-budget .tprice-line.is-total').count() === 1);
+  check('the price card says what is and is not included',
+    await page.locator('#sec-budget .iinc-row.is-out').count() >= 2);
+  check('seven days render', await page.locator('.jpage .tday').count() === 7,
+    `${await page.locator('.jpage .tday').count()} days`);
   check('the page has its own address',
     /^#journey=/.test(await page.evaluate(() => window.location.hash)));
-  await page.locator('#sec-sleep .dsec-toggle').click().catch(() => {});
-  await page.locator('#sec-prep .dsec-toggle').click().catch(() => {});
-  await page.waitForTimeout(500);
-  check('where to sleep renders', await page.locator('.jpage-stay').count() >= 1);
-  check('pro tips render', await page.locator('.jpage-tips').count() >= 1);
-  // T407 (brief V5.1 to V5.3, V5.5): hardening checks, added with the V5
-  // pass. The booking row is the tap target (the 22 px checkbox sits inside
-  // it), the day disclosure carries its day in its name so seven buttons do
-  // not share one name, and the print layout drops the controls and lets the
-  // days run down the paper. These are new assertions; none replaces an old one.
+  check('tonight is on the day cards', await page.locator('.jpage .tday-night').count() >= 5);
+  check('pro tips render as cards', await page.locator('#sec-prep .gocard').count() >= 2);
   const bookH = await page.locator('.jpage-book-list label').evaluateAll(
     (els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
   check('every booking row is at least 44 px high', bookH.length > 0 && Math.min(...bookH) >= 44,
@@ -216,12 +206,12 @@ try {
   await page.emulateMedia({ media: 'print' });
   const printed = await page.evaluate(() => {
     const d = (sel) => { const e = document.querySelector(sel); return e ? getComputedStyle(e).display : 'missing'; };
-    return { bar: d('.jpage .tpage-bar'), rail: d('.jpage .srail'), track: d('.jpage .dtrack'),
+    return { bar: d('.jpage .tpage-bar'), rail: d('.jpage .srail'), track: d('.jpage .tweek .itrack-row'),
       pos: getComputedStyle(document.querySelector('.jpage')).position };
   });
   await page.emulateMedia({ media: 'screen' });
   check('print drops the bar and the rail and stacks the days',
-    printed.bar === 'none' && printed.rail === 'none' && printed.track === 'block',
+    printed.bar === 'none' && printed.rail === 'none' && printed.track === 'grid',
     JSON.stringify(printed));
   await page.screenshot({ path: 'shots/journeys-page.png', fullPage: false });
   await page.screenshot({ path: 'shots/journeys-page-full.png', fullPage: true });
@@ -265,15 +255,12 @@ try {
   await seed(ex);
   await ex.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await ex.waitForTimeout(3000);
-  await ex.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
-  await ex.waitForTimeout(1200);
-  await ex.locator('.dtab-cats [role="tab"]', { hasText: /^trips$/i }).click();
-  await ex.waitForTimeout(2000);
-  await ex.locator('.jstyle-card').first().click();
-  await ex.waitForTimeout(1500);
-  await ex.locator('.jcard').first().click();
-  await ex.waitForTimeout(2500);
-  const cta = ex.locator('.jpage .bpage-base');
+  // T431: the town's day prices are offered only when the trip starts within
+  // 30 km of that town, so the pass opens a city week (Prague, gateway PRG)
+  // by its address instead of the first hiking week.
+  await ex.goto(`${URL.split('#')[0]}${URL.includes('?') ? '&' : '?'}tab=places#journey=cz-city-prague-layered`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await ex.waitForTimeout(4000);
+  const cta = ex.locator('.jpage .tgo-town');
   if (await cta.count()) {
     await cta.first().scrollIntoViewIfNeeded();
     await cta.first().click();
@@ -282,7 +269,7 @@ try {
       !/journey=/.test(await ex.evaluate(() => window.location.hash))
       && (await ex.locator('.jpage').count()) === 0);
   } else {
-    check('the first trip offers a town exit to test', false, 'no .bpage-base on the first card');
+    check('the Prague week offers its town exit to test', false, 'no .tgo-town on the Prague week');
   }
   await ex.close();
 } catch (e) {

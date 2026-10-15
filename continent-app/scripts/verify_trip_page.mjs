@@ -276,29 +276,28 @@ if (await style.count()) {
     await jp.waitForTimeout(4000);
 
     check('journey page opens', await jp.locator('.jpage').isVisible());
-    const jfolds = await jp.locator('.jpage .dsec').count();
-    check('the journey page is built from folds', jfolds >= 5, `${jfolds} folds`);
-    // T387 (trips brief V3.6): the week at a glance is the first block of
-    // the Fit group (#sec-fit) now, which opens on arrival.
-    check('the week at a glance opens on arrival',
-      await jp.locator('#sec-fit.is-open').count() === 1);
-    check('the day-by-day opens on arrival',
-      await jp.locator('#sec-itin.is-open').count() === 1);
-    check('the data sheet is closed on arrival',
-      await jp.locator('#sec-spec').count() === 0
-        || await jp.locator('#sec-spec.is-open').count() === 0);
-    check('the safety advisory is never folded',
-      await jp.locator('.lpage-hazards .dsec').count() === 0);
+    // T431 (owner, 2026-10-15): the trip page is rebuilt on the item pages'
+    // system. The folds and the data sheet are gone; the order is gallery,
+    // head, fact band, why, the price card in the side column, fit, the
+    // alternatives, the week, getting there and before you go.
+    check('the trip page opens on its gallery and head',
+      await jp.locator('.jpage .ipage-gallery').count() === 1 && await jp.locator('.jpage .ipage-head h1').count() === 1);
+    check('the price card sits in the sticky side column',
+      await jp.locator('.jpage .ipage-side #sec-budget').count() === 1);
+    check('no suitability strip and no data sheet',
+      await jp.locator('.jpage .dsk-strip, .jpage #sec-spec, .jpage .dsheet-row').count() === 0);
+    check('the risks are never folded',
+      await jp.locator('.jpage .dsec').count() === 0);
 
-    const jdays = await jp.locator('.jpage-day').count();
+    const jdays = await jp.locator('.jpage .tday').count();
     check('journey days render', jdays > 0, `${jdays} days`);
     check('day prose is folded', await jp.locator('.jpage .tday-prose').count() === 0);
     const jmore = jp.locator('.jpage .tday-more').first();
     if (await jmore.count()) {
-      const before = await jp.locator('.jpage-day-text').count();
+      const before = await jp.locator('.jpage .tday-text').count();
       await jmore.click();
       await jp.waitForTimeout(400);
-      const after = await jp.locator('.jpage-day-text').count();
+      const after = await jp.locator('.jpage .tday-text').count();
       check('opening a day restores its authored prose', after > before, `${before} -> ${after}`);
     }
     await jp.screenshot({ path: 'shots/journey-desktop.png' });

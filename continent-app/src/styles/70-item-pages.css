@@ -758,3 +758,232 @@
   .tlib:not(.jsec-trips) .card.ttile .card-price { font-size: var(--text-label); }
   .tlib-beds { flex-basis: 100%; }
 }
+
+/* ══ The trip page (T431) ═════════════════════════════════════════════════
+   The item pages' grid with the price card in the side column. Every rule
+   reads roles and scales only. */
+.ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { overflow: visible; max-height: none; }
+@media (min-width: 1024px) {
+  .ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { max-height: calc(100dvh - 52px - 2 * var(--space-4)); overflow-y: auto; }
+}
+
+/* Head: the style and the difficulty ride after where. */
+.tstyle-chip { flex: none; }
+.tdiff { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); color: var(--text); }
+.tdiff-squares { display: inline-flex; gap: 2px; }
+.tdiff-sq { width: 8px; height: 8px; border-radius: 0; border: 1px solid var(--text-3); }
+.tdiff-sq.is-on { background: var(--text); border-color: var(--text); }
+.tdiff-word { font-weight: 600; }
+.tdiff .infodot { margin-left: calc(-1 * var(--space-2)); }
+.tdiff-list { margin: var(--space-2) 0 0; padding-left: var(--space-4); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+.tdiff-list li + li { margin-top: var(--space-1); }
+
+/* The price card: a bordered object (a receipt), the figure first. */
+.tprice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.tprice-head { display: grid; gap: var(--space-1); }
+.tprice-title { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
+.tprice-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); margin: 0; }
+.tprice-fig-n { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); font-variant-numeric: tabular-nums; }
+.tprice-unit { font-size: var(--text-body); color: var(--text-2); }
+.tprice-none { margin: 0; color: var(--text-2); }
+.tprice-row.is-split { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.tprice-label { display: block; font-size: var(--text-label); font-weight: 500; color: var(--text); }
+.tprice-range-input {
+  display: block;
+  width: calc(100% - 100% / var(--n) + 18px);
+  height: var(--tap);
+  margin: var(--space-1) 0 0 calc(100% / (2 * var(--n)) - 9px);
+  accent-color: var(--action);
+  cursor: pointer;
+}
+@media (pointer: fine) { .tprice-range-input { height: 32px; } }
+.tprice-range-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tprice-stops {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  gap: var(--space-1);
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-3);
+}
+.tprice-stop { text-align: center; overflow-wrap: break-word; hyphens: auto; }
+.tprice-stop.is-on { color: var(--select-ink); font-weight: 600; }
+.tprice-sum, .tprice-lines { display: grid; gap: 0; margin: 0; }
+.tprice-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+}
+.tprice-line dt { display: inline-flex; align-items: center; color: var(--text-2); }
+.tprice-line dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
+.tprice-line.is-total dt { color: var(--text); font-weight: 600; }
+.tprice-line.is-total dd { font-weight: 700; }
+.tprice-acts { display: grid; gap: var(--space-2); }
+.tprice-more { display: grid; gap: var(--space-2); }
+.tprice-toggle { justify-self: start; margin-left: calc(-1 * var(--space-2)); }
+.tprice-lines[hidden] { display: none; }
+.tprice .iinc { margin: 0; }
+.tprice-report { font-size: var(--text-caption); }
+.tday-chev { transition: transform var(--dur-2) var(--ease-out); }
+.tday-chev.is-open { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .tday-chev { transition: none; } }
+
+/* Is this week for you. */
+.tfit-months { display: grid; gap: var(--space-2); margin-bottom: var(--space-3); }
+.tfit-label { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+
+/* The week: the climb chart, the map, the day cards. */
+.tweek { display: grid; gap: var(--space-4); }
+.tweek > h2 { margin: 0; }
+.wclimb { margin: 0; }
+.wclimb-cols {
+  display: grid;
+  grid-template-columns: repeat(var(--wclimb-n), minmax(0, 1fr));
+  gap: var(--space-1);
+  align-items: end;
+}
+.btn.wclimb-col {
+  display: block;
+  height: auto;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-2);
+}
+.wclimb-col .btn-label {
+  display: grid;
+  grid-template-rows: auto 96px auto auto auto;
+  justify-items: center;
+  gap: 2px;
+  width: 100%;
+  font-weight: 400;
+}
+.btn.wclimb-col:hover { background: var(--surface-hover); }
+.wclimb-col:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.btn.wclimb-col.is-on { background: var(--select-bg); color: var(--select-ink); }
+.wclimb-fig { font-size: var(--text-caption); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wclimb-bar-box { position: relative; display: flex; align-items: flex-end; width: 100%; height: 96px; justify-content: center; }
+.wclimb-bar { display: block; width: min(28px, 60%); border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--text-3); transition: height var(--dur-3) var(--ease-out); }
+.wclimb-col.is-on .wclimb-bar { background: var(--action); }
+.wclimb-col.is-rest .wclimb-bar { background: var(--border); }
+.wclimb-day { font-size: var(--text-caption); font-weight: 600; color: inherit; white-space: nowrap; }
+.wclimb-sub { min-height: 1.2em; font-size: var(--text-micro); font-weight: 500; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wclimb-cap { margin-top: var(--space-2); font-size: var(--text-caption); color: var(--text-3); }
+@media (max-width: 480px) {
+  .wclimb-col .btn-label { grid-template-rows: auto 72px auto auto auto; }
+  .wclimb-bar-box { height: 72px; }
+  .wclimb-sub.is-high { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .wclimb-bar { transition: none; } }
+.tweek-map .dsk-map-frame { height: 280px; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
+.tmap-pin {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius-pill);
+  background: var(--text);
+  color: var(--surface);
+  font: 600 var(--text-caption) / 1 var(--font);
+  box-shadow: var(--elev-1);
+  cursor: pointer;
+}
+.tmap-pin.is-on { background: var(--action); color: var(--action-text); }
+.tmap-pin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.tday {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.tday-media { aspect-ratio: 3 / 2; overflow: hidden; background: var(--surface-sunken); }
+.tday-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tday-body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); }
+.tday-n { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tday-title { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); color: var(--text); text-wrap: balance; }
+.tday-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; }
+.tday-facts li { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-body); color: var(--text); font-variant-numeric: tabular-nums; }
+.tday-icon { display: inline-flex; flex: none; color: var(--text-2); }
+.tday-icon.is-flip { transform: scaleY(-1); }
+.tday-night { display: flex; gap: var(--space-2); margin: 0; padding-top: var(--space-2); border-top: 1px solid var(--border-soft); font-size: var(--text-body); line-height: var(--leading-ui); color: var(--text); }
+.tday-night-l { color: var(--text-2); }
+.tday-night-k { display: block; font-size: var(--text-caption); color: var(--text-2); }
+.tday-more { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
+.tday-prose { display: grid; gap: var(--space-3); }
+.tday-when { display: block; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.tday-text, .tprose { margin: 0; max-width: var(--measure); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+.tday-text b, .tprose b { font-weight: 600; }
+
+/* Getting there. */
+.tgo { display: grid; gap: var(--space-3); }
+.tgo-town { justify-self: start; }
+
+/* Before you go: the cards swipe; the risks first. */
+.tprep { display: grid; gap: var(--space-5); }
+.tprep > h2 { margin: 0; }
+.tprep .itrack-title { font-size: var(--text-title); }
+.gocard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.gocard-icon { display: inline-flex; color: var(--text-2); }
+.gocard.is-risk .gocard-icon { color: var(--amber-ink); }
+.gocard-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.gocard-text.is-clamped .tprose {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.gocard-more { align-self: flex-start; margin: auto 0 0 calc(-1 * var(--space-2)); }
+.tprep-pack .itrack-title { margin-bottom: var(--space-3); }
+
+/* Loading. */
+.tskel { display: grid; gap: var(--space-3); padding: var(--space-4) var(--gutter); }
+.tskel-photo { display: block; aspect-ratio: 16 / 9; max-height: 40vh; border-radius: var(--radius-card); background: var(--surface-sunken); }
+.tskel-line { display: block; height: 14px; width: 60%; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.tskel-line.is-title { height: 28px; width: 80%; }
+/* The sticky column clears the section rail (T431; the item maps too). */
+@media (min-width: 1024px) {
+  .ipage .ipage-grid.has-side > .ipage-side { top: calc(44px + var(--space-4)); }
+  .ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { max-height: calc(100dvh - 52px - 44px - 2 * var(--space-4)); }
+}
+.tprice-fig-n .money-est { font-size: var(--text-body); font-weight: 400; color: var(--text-2); }
+.tprice-line .money-est { font-size: var(--text-caption); color: var(--text-2); }
+.tprice .iinc-row { padding-block: var(--space-1); font-size: var(--text-body); }
+.tprice .iinc-row { border-bottom: 0; }
+/* The back control keeps its whole label (T431: "Beach weeks" was cut to
+   "Beach w"); the bar title gives way instead. */
+.ipage .tpage-bar .ipage-back { flex: none; max-width: 60%; }
+.ipage .tpage-bar .ipage-back .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tgo-note { color: var(--text-2); }
+.itrack-pos { white-space: nowrap; }
+@media (max-width: 480px) {
+  .tprep .itrack-title { font-size: var(--text-lead); }
+  .tprep .itrack-pos { display: none; }
+}

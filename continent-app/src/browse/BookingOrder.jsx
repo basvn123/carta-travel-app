@@ -50,7 +50,7 @@ const monthOnly = (date, lang) => {
 };
 
 /** The steps as a list under an h3, or null when there is no step. */
-export function BookingOrder({ tripId, source, bestMonths = null }) {
+export function BookingOrder({ tripId, source, bestMonths = null, notes: showNotes = true }) {
   const { t, lang } = useI18n();
   const order = useMemo(() => bookingOrder(source), [source]);
   const [ticked, setTicked] = useState(() => readTicks(tripId));
@@ -113,7 +113,9 @@ export function BookingOrder({ tripId, source, bestMonths = null }) {
       <p className="jpage-book-count" aria-live="polite">
         {t('journey.bookProgress', { n: done, m: steps.length })}
       </p>
-      {notes.length > 0 && (
+      {/* T431: the trip page shows the steps only; the leftover clauses are
+          its Good to know cards. */}
+      {showNotes && notes.length > 0 && (
         <>
           <h4 className="jpage-book-sub">{t('journey.bookNotes')}</h4>
           <ul className="jpage-book-notes">

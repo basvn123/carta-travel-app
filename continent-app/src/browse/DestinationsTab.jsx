@@ -3835,7 +3835,9 @@ export function DestinationsTab({
               // The gateway airport code doubles as a catalogue id (BCN,
               // VIE...), which is what lets the page end on a priced CTA.
               const d = pageJourney.gw ? data.destinations[pageJourney.gw] : null;
-              return d ? { id: pageJourney.gw, city: d.city } : null;
+              // T431: with its position, so the page offers the town's day
+              // prices only when the trip starts within 30 km of it.
+              return d ? { id: pageJourney.gw, city: d.city, lat: d.city_lat ?? d.lat, lon: d.city_lon ?? d.lon } : null;
             })()}
             onClose={() => setPageJourney(null)}
             onSelectDest={(id) => { setPageJourney(null); onSelectDest(id); }}
