@@ -5873,4 +5873,11 @@ export const nl = {
   "journey.pack.why.islandHopping.power": "Veerboten lopen uit; houd de telefoon met je tickets opgeladen.",
   "journey.pack.why.islandHopping.daypack": "Laat de grote tas op de kamer en neem een kleine mee naar het strand.",
   "journey.pack.why.islandHopping.layer": "De zomerwind maakt de avonden aan dek koel.",
+  "journey.fromPp": "Vanaf {eur} per persoon",
+  "journey.monthsRun": "{from} tot {to}",
+  "journey.bedsLabel": "Waar je slaapt",
+  "journey.bedsAny": "Elk bed",
+  "journey.bedsCheap": "Hostel, hut of camping",
+  "glossary.budget-beds.term": "Hostel, hut of camping",
+  "glossary.budget-beds.text": "Reizen waarbij minstens één nacht in een slaapzaal, berghut of op een camping kan. Andere nachten kunnen in een hotel of pension zijn. Voor een hele week in hostels kies je de stijl Hostelweken.",
 };

@@ -43,7 +43,8 @@ try {
   const index = JSON.parse(readFileSync(`${WIRE}/index.json`, 'utf8'));
   const types = index.types || [];
   check('the journey wire is published', (index.n_trips || 0) > 0, `${index.n_trips} trips`);
-  check('ten styles are published', types.length === 10, `${types.length} styles`);
+  // T431: fifteen since the owner's five new styles (2026-10-15).
+  check('fifteen styles are published', types.length === 15, `${types.length} styles`);
   check('every style has a hero photograph',
     types.every((t) => t.hero && t.hero.url), '');
   const sum = types.reduce((n, t) => n + (t.n || 0), 0);
@@ -127,9 +128,9 @@ try {
   // ── The style grid ──
   const styles = page.locator('.jstyle-card');
   const nStyles = await styles.count();
-  check('ten style cards render', nStyles === 10, `${nStyles} cards`);
+  check('fifteen style cards render (T431)', nStyles === 15, `${nStyles} cards`);
   check('every style card shows a photograph',
-    await page.locator('.jstyle-card .places-card-img').count() === nStyles);
+    await page.locator('.jstyle-card .card-media').count() === nStyles);
   check('the composer keeps its own door',
     await page.locator('.jcomposed-card').count() === 1);
   check('no day slider on the style grid',
@@ -148,14 +149,22 @@ try {
   // ── One style's list ──
   await styles.first().click();
   await page.waitForTimeout(1500);
-  check('the style heading renders', await page.locator('.jsec-title').isVisible());
+  check('the style heading renders', await page.locator('.tlib-head .dtab-title').isVisible());
   check('the way back to the styles renders',
     await page.locator('.jsec-back:visible').count() === 1);
   const jcards = page.locator('.jcard');
   const nCards = await jcards.count();
   check('trip cards render', nCards >= 5, `${nCards} cards`);
   check('every trip card shows a photograph',
-    await page.locator('.jcard .places-card-img').count() === nCards);
+    await page.locator('.jcard .card-media').count() === nCards);
+  // T431 (owner, 2026-10-15): a trip card names the places it visits and
+  // carries no day count and no difficulty word; the length control says the
+  // length and the trip page explains the effort.
+  const cardTexts = await jcards.evaluateAll((els) => els.map((e) => e.textContent));
+  check('no trip card names its days or a difficulty word',
+    cardTexts.every((x) => !/\b\d+ days\b|Demanding|Moderate|Expert\b/.test(x)), '');
+  check('trip cards name the places they visit',
+    await page.locator('.jcard .ttile-line').count() >= nCards * 2, '');
   // T387 (brief V3.3): one filter row instead of three stacked groups. The
   // first card's top is reported, not gated: the tab chrome above the list
   // (search, country, category tiles) belongs to the Destinations surface.
@@ -225,7 +234,7 @@ try {
   await page.locator('.jsec-back').click();
   await page.waitForTimeout(800);
   check('the way back reaches the style grid',
-    await page.locator('.jstyle-card').count() === 10);
+    await page.locator('.jstyle-card').count() === 15);
 
   // ── The composed door ──
   await page.locator('.jcomposed-card').click();
@@ -240,7 +249,7 @@ try {
   await page.locator('.jsec-back-solo').click();
   await page.waitForTimeout(800);
   check('leaving the composed view lands on the styles',
-    await page.locator('.jstyle-card').count() === 10);
+    await page.locator('.jstyle-card').count() === 15);
   await page.close();
 } catch (e) {
   errors.push('script: ' + String(e && e.message ? e.message : e).split('\n')[0]);
@@ -294,8 +303,8 @@ try {
     { hasText: /^trips$/i });
   await deskCat.first().click();
   await desk.waitForTimeout(2000);
-  check('desktop shows the ten styles',
-    await desk.locator('.jstyle-card').count() === 10,
+  check('desktop shows the fifteen styles',
+    await desk.locator('.jstyle-card').count() === 15,
     `${await desk.locator('.jstyle-card').count()} cards`);
   await desk.screenshot({ path: 'shots/journeys-desktop.png' });
   await desk.locator('.jstyle-card').first().click();

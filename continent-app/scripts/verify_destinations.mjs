@@ -151,13 +151,13 @@ for (const view of ['phone', 'desk']) {
   check(trailCounts.length === 0, `${tag}no bare counts on Trails`, trailCounts.slice(0, 4).join(' | '));
   await page.close();
 
-  // Trips: ten styles, a line each, a price, no counts, no coverage sentence.
+  // Trips: fifteen styles since T431, a line each, a price, no counts, no coverage sentence.
   page = await open(browser, view, '?tab=places&dc=trips');
   const styles = await page.$$eval('.jstyle-card', (els) => els.map((e) => ({
     desc: (e.querySelector('.jstyle-desc')?.textContent || '').trim(),
     fig: (e.querySelector('.jcap-fig')?.textContent || '').trim(),
   })));
-  check(styles.length === 10, `${tag}ten trip styles`, String(styles.length));
+  check(styles.length === 15, `${tag}fifteen trip styles`, String(styles.length));
   check(styles.every((s) => s.desc.length > 10), `${tag}every style has its one line`);
   check(styles.every((s) => /From|No written/.test(s.fig)), `${tag}every style has its from-price`);
   check(await page.$('.jsec-coverage, .jcap-count') === null, `${tag}no coverage sentence, no trip count`);
@@ -179,7 +179,7 @@ for (const view of ['phone', 'desk']) {
   check(trip.every((x) => !x.fig || /est\./.test(x.fig)), `${tag}a trip's budget is marked an estimate`, trip[0]?.fig || '');
   await page.goBack();
   await page.waitForTimeout(1200);
-  check((await page.$$('.jstyle-card')).length === 10 && page.url().includes('tab=places'),
+  check((await page.$$('.jstyle-card')).length === 15 && page.url().includes('tab=places'),
     `${tag}Back closes a style's list onto the styles`, page.url().split('?')[1] || '');
   await page.close();
 

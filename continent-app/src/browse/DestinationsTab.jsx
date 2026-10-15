@@ -3166,9 +3166,8 @@ export function DestinationsTab({
 
         {countryBand}
 
-        {cat === 'trips' && !journeyView && !country && (
-          <h2 className="dtab-title dtab-title-solo">{t('dtab.head.trips')}</h2>
-        )}
+        {/* The trips head (T431) is JourneysSection's own, with the length
+            choice beside it. */}
 
         {/* Trails at rest: the head, then the countries (a walk is ranked
             within its country, so the section opens on them). */}

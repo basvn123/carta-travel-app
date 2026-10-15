@@ -5873,4 +5873,11 @@ export const de = {
   "journey.pack.why.islandHopping.power": "Fähren verspäten sich; das Handy mit den Tickets muss durchhalten.",
   "journey.pack.why.islandHopping.daypack": "Den großen Rucksack im Zimmer lassen, einen kleinen mit an den Strand.",
   "journey.pack.why.islandHopping.layer": "Der Sommerwind macht die Abende an Deck kühl.",
+  "journey.fromPp": "Ab {eur} pro Person",
+  "journey.monthsRun": "{from} bis {to}",
+  "journey.bedsLabel": "Wo du schläfst",
+  "journey.bedsAny": "Jedes Bett",
+  "journey.bedsCheap": "Hostel, Hütte oder Camping",
+  "glossary.budget-beds.term": "Hostel, Hütte oder Camping",
+  "glossary.budget-beds.text": "Reisen, bei denen mindestens eine Nacht im Schlafsaal, in einer Berghütte oder auf dem Campingplatz möglich ist. Andere Nächte können im Hotel oder in der Pension sein. Für eine ganze Woche im Hostel wähle den Stil Hostelwochen.",
 };

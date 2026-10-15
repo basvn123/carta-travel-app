@@ -6580,4 +6580,11 @@ export const en = {
   "journey.pack.why.islandHopping.power": "Ferries run late; keep the tickets on your phone alive.",
   "journey.pack.why.islandHopping.daypack": "Leave the big bag at the room and take a small one to the beach.",
   "journey.pack.why.islandHopping.layer": "The summer wind makes evenings on deck cool.",
+  "journey.fromPp": "From {eur} a person",
+  "journey.monthsRun": "{from} to {to}",
+  "journey.bedsLabel": "Where you sleep",
+  "journey.bedsAny": "Any bed",
+  "journey.bedsCheap": "Hostels, huts or camping",
+  "glossary.budget-beds.term": "Hostels, huts or camping",
+  "glossary.budget-beds.text": "Trips where at least one night can be a hostel dorm, a mountain hut or a campsite. Other nights may be in a hotel or guesthouse. For a whole week in hostels, pick the Hostel weeks style.",
 };

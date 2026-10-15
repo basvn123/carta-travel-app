@@ -5873,4 +5873,11 @@ export const it = {
   "journey.pack.why.islandHopping.power": "I traghetti tardano; tieni carico il telefono con i biglietti.",
   "journey.pack.why.islandHopping.daypack": "Lascia lo zaino grande in camera e porta uno piccolo in spiaggia.",
   "journey.pack.why.islandHopping.layer": "Il vento estivo rende fresche le serate sul ponte.",
+  "journey.fromPp": "Da {eur} a persona",
+  "journey.monthsRun": "da {from} a {to}",
+  "journey.bedsLabel": "Dove dormi",
+  "journey.bedsAny": "Qualsiasi letto",
+  "journey.bedsCheap": "Ostello, rifugio o campeggio",
+  "glossary.budget-beds.term": "Ostello, rifugio o campeggio",
+  "glossary.budget-beds.text": "Viaggi in cui almeno una notte può essere in camerata, in un rifugio di montagna o in campeggio. Le altre notti possono essere in hotel o pensione. Per una settimana intera in ostello, scegli lo stile Settimane in ostello.",
 };

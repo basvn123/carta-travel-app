@@ -4,6 +4,7 @@ import { formatMoney } from '../lib/money.js';
 import { SHORT, WEEK } from '../lib/tripLength.js';
 import { tagLabel } from '../lib/tripTags.js';
 import { FilterIcon } from '../components/Icons.jsx';
+import { Button } from '../components/ui/index.js';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { FilterChips } from './FilterChips.jsx';
@@ -65,7 +66,7 @@ const monthName = (m, lang) => {
 };
 
 export function TripFilters({
-  length, onLength,
+  lengthControl = null, beds = null,
   band, onBand, edges, counts,
   month = null, onMonth, monthCounts = {},
   tag = null, onTag, tags = [], tagCounts = {},
@@ -140,26 +141,24 @@ export function TripFilters({
 
   return (
     <>
-      <div className="tf-bar" role="group" aria-label={t('journey.fltAria')}>
-        <LengthSegments
-          value={length}
-          onChange={onLength}
-          shortLabel={t('journey.segShortAny')}
-          weekLabel={t('journey.nDays', { n: 7 })}
-          label={t('journey.lenLabel')}
-        />
-        <button
-          type="button"
+      {/* T431: one row, left aligned, that wraps on a phone: how long, where
+          you sleep, and the rest behind Filters. */}
+      <div className="tf-bar tlib-bar" role="group" aria-label={t('journey.fltAria')}>
+        {lengthControl}
+        <Button
           ref={btnRef}
-          className="tf-open"
+          variant="secondary"
+          size="sm"
+          className="tlib-filters"
           onClick={() => setOpen(true)}
           aria-haspopup="dialog"
           aria-expanded={open}
+          iconStart={<FilterIcon size={16} />}
         >
-          <FilterIcon size={14} />
-          <span>{t('filter.filters')}</span>
-          {active > 0 && <span className="tf-count mono">{active}</span>}
-        </button>
+          {t('filter.filters')}
+          {active > 0 && <span className="tlib-count">{active}</span>}
+        </Button>
+        {beds}
       </div>
       {chips.length > 0 && (
         <div className="tf-chips">

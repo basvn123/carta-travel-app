@@ -5873,4 +5873,11 @@ export const es = {
   "journey.pack.why.islandHopping.power": "Los ferris se retrasan; mantén cargado el móvil con los billetes.",
   "journey.pack.why.islandHopping.daypack": "Deja la mochila grande en la habitación y lleva una pequeña a la playa.",
   "journey.pack.why.islandHopping.layer": "El viento de verano refresca las noches en cubierta.",
+  "journey.fromPp": "Desde {eur} por persona",
+  "journey.monthsRun": "{from} a {to}",
+  "journey.bedsLabel": "Dónde duermes",
+  "journey.bedsAny": "Cualquier cama",
+  "journey.bedsCheap": "Albergue, refugio o camping",
+  "glossary.budget-beds.term": "Albergue, refugio o camping",
+  "glossary.budget-beds.text": "Viajes en los que al menos una noche puede ser en un dormitorio de albergue, un refugio de montaña o un camping. Las demás noches pueden ser en hotel o pensión. Para una semana entera en albergues, elige el estilo Semanas de albergue.",
 };

@@ -80,8 +80,9 @@ check('there is no General tab', !catNames.some((c) => c.startsWith('gener')));
 // rail reaches, so that is how it gets there.
 await page.locator('.dtab-cats [role="tab"]', { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1600);
+// T431: fifteen styles since the owner's five new ones.
 check('trips category opens on the style grid',
-  await page.locator('.jstyle-card').count() === 10);
+  await page.locator('.jstyle-card').count() === 15);
 await page.locator('.jcomposed-card').click();
 await page.waitForTimeout(1600);
 check('the composed door opens the itineraries',

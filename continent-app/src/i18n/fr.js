@@ -5873,4 +5873,11 @@ export const fr = {
   "journey.pack.why.islandHopping.power": "Les ferries ont du retard ; gardez le téléphone et ses billets chargés.",
   "journey.pack.why.islandHopping.daypack": "Laissez le gros sac à la chambre et prenez un petit pour la plage.",
   "journey.pack.why.islandHopping.layer": "Le vent d'été rend les soirées sur le pont fraîches.",
+  "journey.fromPp": "À partir de {eur} par personne",
+  "journey.monthsRun": "{from} à {to}",
+  "journey.bedsLabel": "Où dormir",
+  "journey.bedsAny": "Tout type de lit",
+  "journey.bedsCheap": "Auberge, refuge ou camping",
+  "glossary.budget-beds.term": "Auberge, refuge ou camping",
+  "glossary.budget-beds.text": "Voyages où au moins une nuit peut se passer en dortoir, en refuge de montagne ou au camping. Les autres nuits peuvent être à l'hôtel ou en chambre d'hôtes. Pour une semaine entière en auberge, choisissez le style Semaines en auberge.",
 };

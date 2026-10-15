@@ -653,3 +653,108 @@
 @media (prefers-reduced-motion: reduce) {
   .tphotos-arrow { transition: none; }
 }
+
+/* ══ Trips: the style library and a style's list (T431) ══════════════════
+   One grid of photo tiles for both, like the Destinations rails: one across
+   on a phone, two from 769 px, three from 1280 px. The head takes Explore's
+   scale; the length choice sits beside it on the library and leads the
+   filter row on a list, so the price on every tile is read at one length. */
+.places-list.jsec.tlib {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6) var(--space-4);
+  margin-top: var(--space-4);
+}
+@media (min-width: 769px) {
+  .places-list.jsec.tlib { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1280px) {
+  .places-list.jsec.tlib { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.places-list.jsec.tlib > :not(.ttile) { grid-column: 1 / -1; }
+.tlib-head.is-style {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+.tlib-head .jsec-back { margin-left: calc(-1 * var(--space-2)); }
+.tlib-desc { margin: 0; max-width: var(--measure); font-size: var(--text-lead); font-weight: 400; color: var(--text-2); }
+.tlib-length { flex: none; }
+
+/* The filter row: left aligned, wraps on a phone (the old row ran its
+   switch to the far right). */
+.tlib-bar.tf-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin: calc(-1 * var(--space-2)) 0 0;
+}
+.tlib-beds { display: inline-flex; align-items: center; gap: 0; }
+.tlib-count {
+  min-width: 20px;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+}
+.tf-chips { margin-top: calc(-1 * var(--space-3)); }
+
+/* The tile: a kit Card. The legacy caption-band look (66-v6-trips) and the
+   phone rule that spread a trip card over the row (25-feature-pages) stay
+   off it. Photo 3:2, swiped in place; nothing on the photograph. */
+.jsec .card.ttile {
+  grid-column: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  transform: none;
+}
+.jsec .card.ttile .card-media { position: relative; aspect-ratio: 3 / 2; }
+.jsec .card.ttile .tphotos-track { aspect-ratio: 3 / 2; }
+.jsec .card.ttile .card-body { gap: var(--space-2); padding: var(--space-3) var(--space-4) var(--space-4); }
+.jsec .card.ttile .card-title { font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); }
+.jsec .card.ttile .jcap-name,
+.jsec .card.ttile .jcard-title { font: inherit; color: inherit; }
+.jsec .card.jstyle-card.ttile .card-title { font-size: var(--text-title); }
+.ttile-meta { display: grid; gap: var(--space-1); min-width: 0; }
+.ttile-line {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.ttile-line > svg { flex: none; margin-top: 1px; color: var(--text-3); }
+.ttile-line .ttile-flag { flex: none; margin-top: 2px; }
+.jsec .card.ttile .card-figures { margin-top: auto; padding-top: var(--space-1); }
+.jsec .card.ttile .card-price { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.jsec .card.ttile .jcap-fig { font-size: inherit; }
+.jsec .card.ttile .card-body { display: flex; flex-direction: column; flex: 1; }
+.jsec .card.ttile { display: flex; flex-direction: column; }
+
+/* The skeleton keeps the tile's shape while the library loads. */
+.tlib .jskel { grid-template-columns: inherit; display: contents; }
+.tlib .jskel-card { border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--surface); }
+.tlib .jskel-photo { background: var(--surface-sunken); }
+.tlib .jskel-line { background: var(--surface-sunken); }
+.tlib-head .tlib-length { align-self: flex-start; }
+.tlib-head.is-bare { justify-content: flex-start; }
+/* The style library on a phone: two abreast, as the old grid, so fifteen
+   styles are four screens and not fifteen; a style's trips stay one across
+   with the bigger photograph. */
+@media (max-width: 768px) {
+  .places-list.jsec.tlib:not(.jsec-trips) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-3); }
+  .tlib:not(.jsec-trips) .card.jstyle-card.ttile .card-body { padding: var(--space-2) var(--space-3) var(--space-3); gap: var(--space-1); }
+  .tlib:not(.jsec-trips) .card.jstyle-card.ttile .card-title { font-size: var(--text-lead); }
+  .tlib:not(.jsec-trips) .jstyle-desc { font-size: var(--text-label); }
+  .tlib:not(.jsec-trips) .card.ttile .card-price { font-size: var(--text-label); }
+  .tlib-beds { flex-basis: 100%; }
+}

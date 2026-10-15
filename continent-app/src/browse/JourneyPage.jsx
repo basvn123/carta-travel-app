@@ -49,7 +49,7 @@ import { SectionRail } from './SectionRail.jsx';
 import { LifestyleSlider, SettledEur } from './LifestyleSlider.jsx';
 import { offeredSleepGroups, tierForGroup } from '../lib/sleepGroups.js';
 import { stopIndexFor, stopShare, tripFigures, eurCents } from '../lib/lifestyleSlider.js';
-import { SHORT, readTripLength, tripLengths, writeTripLength } from '../lib/tripLength.js';
+import { SHORT, pageLength, readTripLength, tripLengths, writeTripLength } from '../lib/tripLength.js';
 import {
   ArrowLeftIcon, MapPinIcon, ChevronRightIcon, CameraIcon, AlertIcon,
   ChevronDownIcon, CalendarIcon, ReceiptIcon, BedIcon,
@@ -608,7 +608,7 @@ export function JourneyPage({
   // Trip length (T101, spec I2): the whole week as written, or its short
   // version, a run of the best three or four days with its own total. The
   // length is remembered per viewer and shared with the browse filter.
-  const [length, setLength] = useState(readTripLength);
+  const [length, setLength] = useState(() => pageLength(readTripLength()));
   // The card's photograph grows into this hero (rule "List to detail",
   // lib/sharedElement.js; JourneysSection starts it). A no-op unless a card
   // opened this page inside a view transition.
