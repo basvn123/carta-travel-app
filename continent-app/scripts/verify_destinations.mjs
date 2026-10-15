@@ -65,7 +65,11 @@ for (const view of ['phone', 'desk']) {
   const tabs = await page.$$eval('.dtab-cats [role="tab"]', (els) => els.map((e) => ({ t: e.textContent.trim(), on: e.getAttribute('aria-selected') })));
   check(tabs.length === 6, `${tag}six section tabs`, String(tabs.length));
   check(tabs.find((x) => x.on === 'true')?.t === 'Beaches', `${tag}dc=beaches selects Beaches`);
-  check(await page.$('.dtab-head img') !== null, `${tag}the section head has its photograph`);
+  // T430 (owner, 2026-10-15): the photograph at the top of a section went;
+  // the head carries the title and the near-me door, and the rail tiles swipe.
+  check(await page.$('.dtab-head img') === null, `${tag}the section head carries no photograph`);
+  check(await page.$('.dtab-head .dtab-nearme') !== null, `${tag}the head carries the near-me door`);
+  check(await page.$$eval('.dtab-rail .tphotos', (els) => els.length) > 0, `${tag}rail tiles swipe their photographs`);
   check((await page.$eval('.dtab-head .dtab-title', (e) => e.textContent.trim()).catch(() => '')).length > 0, `${tag}the head has a title`);
   const rails = await page.$$eval('.dtab-rails > .dtab-rail', (els) => els.length);
   check(rails >= 2 && rails <= (view === 'phone' ? 3 : 4), `${tag}two to ${view === 'phone' ? 3 : 4} rails`, String(rails));

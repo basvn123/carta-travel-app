@@ -87,7 +87,7 @@ import { CountryGalleryCard } from './CountryGallery.jsx';
 import { countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
 import { Button, Chip, Field, Tabs } from '../components/ui/index.js';
 import { createPortal } from 'react-dom';
-import { pickIcons, buildRails, photoOf } from '../lib/openingScreen.js';
+import { pickIcons, buildRails, photoOf, photosOf } from '../lib/openingScreen.js';
 import { okPhoto, firstOkImage } from '../lib/photoVeto.js';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 
@@ -3187,6 +3187,7 @@ export function DestinationsTab({
               starters={openingRails.starters}
               describe={describeRow}
               photo={(row) => photoOf(opening.layer, row)}
+              photos={(row) => photosOf(opening.layer, row)}
               onOpen={openFromBand}
               sharedKey={(row) => row.id}
               nearMe={nearMeDoor}

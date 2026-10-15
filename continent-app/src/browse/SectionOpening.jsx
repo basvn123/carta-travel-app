@@ -5,6 +5,7 @@ import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { ChevronRightIcon, CrosshairIcon } from '../components/Icons.jsx';
 import { Button, Card, Chip, IconButton } from '../components/ui/index.js';
+import { TilePhotos } from './PhotoGallery.jsx';
 
 /**
  * The opening of a Destinations section (T428; T183 built the first one).
@@ -132,26 +133,30 @@ export function Strip({ id, title, onSeeAll = null, t, className = '', children 
 
 /** One wire row as a rail tile: the photograph, the name, where and one
  *  measured fact, and the Score. */
-export function RailTile({ row, describe, photo, onOpen, sharedKey }) {
+export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKey }) {
   const d = describe(row);
   const key = sharedKey ? sharedKey(row) : null;
   const url = photo(row);
+  const urls = photos ? photos(row) : [];
+  const open = (e) => {
+    const card = e.currentTarget.closest('.card');
+    if (key == null) onOpen(row);
+    else openShared(card, key, () => onOpen(row));
+  };
   return (
     <Card
       layout="tile"
       as="div"
       wrap
       className="dtab-tile"
-      media={(
+      media={urls.length > 1 ? (
+        <TilePhotos urls={urls} city={d.name} onOpen={open} sizes={RAIL_SIZES} />
+      ) : (
         <HeroImage url={url} city={d.name} className="dtab-tile-img" maxWidth={640}
           sizes={RAIL_SIZES} ratio={[4, 3]} />
       )}
       title={d.name}
-      onOpen={(e) => {
-        const card = e.currentTarget.closest('.card');
-        if (key == null) onOpen(row);
-        else openShared(card, key, () => onOpen(row));
-      }}
+      onOpen={open}
       meta={(d.where || d.fact) ? (
         <span className="dtab-tile-meta">
           {d.where && <span className="dtab-where">{d.where}</span>}
@@ -169,7 +174,7 @@ export function RailTile({ row, describe, photo, onOpen, sharedKey }) {
 }
 
 export function SectionOpening({
-  layer, head = null, rails, starters = [], describe, photo, onOpen, t,
+  layer, head = null, rails, starters = [], describe, photo, photos = null, onOpen, t,
   sharedKey = null, nearMe = null, children = null,
 }) {
   return (
@@ -191,7 +196,7 @@ export function SectionOpening({
               onSeeAll={rail.onSeeAll} t={t} className="open-rail">
               {rail.rows.map((row) => (
                 <li key={row.id} className="dtab-item">
-                  <RailTile row={row} describe={describe} photo={photo} onOpen={onOpen}
+                  <RailTile row={row} describe={describe} photo={photo} photos={photos} onOpen={onOpen}
                     sharedKey={sharedKey} />
                 </li>
               ))}

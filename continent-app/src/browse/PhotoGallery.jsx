@@ -123,3 +123,64 @@ export function PhotoGallery({
     </div>
   );
 }
+
+/**
+ * A tile's photographs, swiped inside its media box (T430, carta-design
+ * "Photography": a gallery may run on a list tile). Up to four. The first is
+ * loaded at once, the rest on the first touch, hover or swipe, so a rail of
+ * twenty tiles costs twenty photographs until somebody looks. A tap on the
+ * photograph opens the tile (the stretched link sits under this layer so the
+ * swipe reaches the photographs). The arrows are a pointer shortcut on hover
+ * and the position dots sit on a band under the photograph, never on it;
+ * both are hidden from screen readers, for whom the tile is one link and the
+ * page's gallery holds every photograph.
+ */
+export function TilePhotos({ urls = [], city = '', iso2, onOpen, sizes, maxWidth = 640, ratio = [4, 3] }) {
+  const { t } = useI18n();
+  const [all, setAll] = useState(false);
+  const [idx, setIdx] = useState(0);
+  const track = useRef(null);
+  const list = urls.filter(Boolean);
+  if (list.length < 2) {
+    return <HeroImage url={list[0] || null} city={city} iso2={iso2} className="dtab-tile-img" maxWidth={maxWidth} sizes={sizes} ratio={ratio} />;
+  }
+  const wake = () => { if (!all) setAll(true); };
+  const onScroll = (e) => {
+    wake();
+    const el = e.currentTarget;
+    const i = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
+    if (i !== idx) setIdx(i);
+  };
+  const nudge = (dir, e) => {
+    e.stopPropagation();
+    wake();
+    const el = track.current;
+    if (el) el.scrollBy({ left: dir * el.clientWidth, behavior: scrollBehavior() });
+  };
+  return (
+    <div className="tphotos" onPointerEnter={wake} onTouchStart={wake} onFocus={wake}>
+      {/* A tap on a photograph opens the tile; a swipe fires no click, so
+          the two never clash. The card's own link stays its keyboard door. */}
+      <div className="tphotos-track" ref={track} onScroll={onScroll} onClick={onOpen}>
+        {list.map((u, i) => (
+          <div className="tphotos-slide" key={u}>
+            {i === 0 || all
+              ? <HeroImage url={u} city={city} iso2={iso2} className="dtab-tile-img" maxWidth={maxWidth} sizes={sizes} ratio={ratio} />
+              : <span className="tphotos-wait" />}
+          </div>
+        ))}
+      </div>
+      <IconButton tone="photo" className="tphotos-arrow is-prev" label={t('dest.photoPrev')} tabIndex={-1}
+        aria-hidden="true" onClick={(e) => nudge(-1, e)} disabled={idx === 0}>
+        <ChevronRightIcon size={16} />
+      </IconButton>
+      <IconButton tone="photo" className="tphotos-arrow is-next" label={t('dest.photoNext')} tabIndex={-1}
+        aria-hidden="true" onClick={(e) => nudge(1, e)} disabled={idx >= list.length - 1}>
+        <ChevronRightIcon size={16} />
+      </IconButton>
+      <span className="tphotos-dots" aria-hidden="true">
+        {list.map((u, i) => <span key={u} className={i === idx ? 'is-on' : ''} />)}
+      </span>
+    </div>
+  );
+}

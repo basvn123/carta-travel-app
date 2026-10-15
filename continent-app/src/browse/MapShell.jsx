@@ -60,14 +60,19 @@ export function MapShell({ getMap, relief = false, beneath = [], className = '',
     const map = getMap?.();
     if (!map) return;
     setMode(value);
-    if (value === '3d') {
-      enableTerrain(map, {
-        beneath,
-        onFail: () => { disableTerrain(map); setMode('2d'); setCan3d(false); },
-      });
-    } else {
-      disableTerrain(map);
-    }
+    const run = () => {
+      if (value === '3d') {
+        enableTerrain(map, {
+          beneath,
+          onFail: () => { disableTerrain(map); setMode('2d'); setCan3d(false); },
+        });
+      } else {
+        disableTerrain(map);
+      }
+    };
+    // A tap before the style has loaded waits for it rather than failing.
+    if (typeof map.isStyleLoaded === 'function' && !map.isStyleLoaded()) map.once('load', run);
+    else run();
   };
 
   // A tap on the still map (phone) opens it.
