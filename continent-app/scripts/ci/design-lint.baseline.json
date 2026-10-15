@@ -1,10 +1,10 @@
 {
  "note": "Counts of known design-lint violations by rule|file|line text. Regenerate with --update-baseline after fixing some; never to admit new ones.",
- "total": 9231,
+ "total": 9230,
  "byRule": {
   "raw-button": 662,
   "em-dash": 9,
-  "money-literal": 62,
+  "money-literal": 61,
   "banned-word": 8,
   "middot": 2,
   "js-hex-literal": 13,
@@ -137,7 +137,6 @@
   "raw-button|src/browse/JourneyPage.jsx|<button type=\"button\" className=\"tpage-back\" onClick={close} ref={backRef}>": 1,
   "raw-button|src/browse/JourneyPage.jsx|<button type=\"button\" className=\"tpage-bar-act jpage-share\" onClick={onShare}": 1,
   "raw-button|src/browse/JourneyPage.jsx|<button type=\"button\" className=\"cov-empty-btn\" onClick={close}>{t('empty.trips')}</button>": 1,
-  "money-literal|src/browse/JourneysSection.jsx|* (rule \"Cost on cards\": \"From €N a person\" with its length, from the": 1,
   "raw-button|src/browse/JourneysSection.jsx|<button type=\"button\" className=\"cov-near-row\" onClick={() => onOpen(c)}>": 1,
   "raw-button|src/browse/LakePage.jsx|<button type=\"button\" className=\"bpage-base dsk-primary\" onClick={() => onSelectDest?.(lake.base.id)}>": 1,
   "raw-button|src/browse/LakePage.jsx|<button type=\"button\" className=\"tpage-act feat-dayplan\" onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>": 1,

@@ -38,7 +38,7 @@ import {
 } from './trailCards.js';
 import { trailClimbUp, trailPlace } from './trailStory.js';
 import { compassPoint } from './signature.js';
-import { count } from './format.js';
+import { count, stripDashes } from './format.js';
 import { activeLocale } from './localeState.js';
 
 export const VALUE_COUNT = 3;
@@ -89,10 +89,25 @@ const cell = (key, label, value, cls = '') => ({ key, label, value, cls });
  * regions after their country ("Montenegro, Montenegro" on the Bay of
  * Kotor), and a line that repeats itself reads as a bug.
  */
+/**
+ * A place's name as a card shows it (T451, the fact check): the wire carries
+ * raw OSM and Wikipedia titles, so a trailing disambiguator goes ("Montserrat
+ * (mountain)", "Augstenberg (Liechtenstein)"; the place line says where), a
+ * dash goes the house way (stripDashes; a spaced hyphen is a dash too), and
+ * the first letter is a capital ("plage du Moulin-Blanc").
+ */
+export function displayName(name) {
+  if (typeof name !== 'string') return name;
+  let v = stripDashes(name).replace(/\s+-\s+/g, ', ');
+  const bare = v.replace(/\s*\([^()]*\)\s*$/, '').trim();
+  if (bare) v = bare;
+  return v ? v.charAt(0).toLocaleUpperCase() + v.slice(1) : v;
+}
+
 export function placeLine(...parts) {
   const out = [];
   for (const p of parts) {
-    const v = typeof p === 'string' ? p.trim() : p;
+    const v = typeof p === 'string' ? stripDashes(p.trim()) : p;
     if (!v) continue;
     if (out.some((o) => String(o).toLowerCase() === String(v).toLowerCase())) continue;
     out.push(v);
@@ -289,7 +304,7 @@ export function beachFilling(beach, { t, countryName = '' }) {
   }
   if (beach.prot || beach.protected) icons.push({ code: 'protected', label: t('card.iProtected') });
   return {
-    title: beach.name,
+    title: displayName(beach.name),
     ref: null,
     where: placeLine(beach.region, countryName),
     hook: hookOf(beachTags(beach, t, HOOK_MAX).map((tag) => tag.label)),
@@ -327,7 +342,7 @@ export function lakeFilling(lake, { t, countryName = '' }) {
   }
   if (lake.protected) icons.push({ code: 'protected', label: t('card.iProtected') });
   return {
-    title: lake.name,
+    title: displayName(lake.name),
     ref: null,
     where: placeLine(lake.region, countryName),
     hook: hookOf(lakeTags(lake, t, HOOK_MAX).map((tag) => tag.label)),
@@ -376,7 +391,7 @@ export function mountainFilling(mountain, { t, countryName = '' }) {
   if (tags.has('hut')) icons.push({ code: 'hut', label: t('trails.hlHut') });
   if (tags.has('viewpoint')) icons.push({ code: 'viewpoint', label: t('trails.hlViewpoint') });
   return {
-    title: mountain.name,
+    title: displayName(mountain.name),
     ref: null,
     where: placeLine(mountain.range, countryName),
     hook,

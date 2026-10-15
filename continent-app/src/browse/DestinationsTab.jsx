@@ -5,6 +5,7 @@ import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPicker } from '../components/CountryPicker.jsx';
 import { count, eur, stripDashes } from '../lib/format.js';
+import { countryName as localCountryName } from '../lib/countryName.js';
 import { needsCountry } from '../lib/favorites.js';
 import { railOrigin } from '../lib/railAlternative.js';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -82,7 +83,7 @@ import {
 } from './PlaceCard.jsx';
 import {
   trailFilling, cycleFilling, cycleTourFilling, beachFilling, lakeFilling, mountainFilling,
-  GRADE_KEY, placeLine,
+  GRADE_KEY, placeLine, displayName,
 } from '../lib/cardFillings.js';
 import { SectionOpening, SectionHead, Strip } from './SectionOpening.jsx';
 import { CountryGalleryCard } from './CountryGallery.jsx';
@@ -820,7 +821,8 @@ export function DestinationsTab({
   });
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [country, setCountry] = useState(() => fromUrl.current.country || memory.current?.country || '');   // ISO2 or '' for all
+  const [country, setCountry] = useState(() => fromUrl.current.country
+    || (fromUrl.current.cat ? '' : memory.current?.country) || '');   // ISO2 or '' for all
   // Written back while this tab is on screen, keeping the hash (#dest=, a
   // feature page) and history.state, which App's Back handling reads.
   useEffect(() => {
@@ -1095,22 +1097,17 @@ export function DestinationsTab({
     return () => { live = false; };
   }, [isTripCat, trailsCountry, layerError.trails, retryTick, failLayer]);
 
-  // ISO2 -> display name, from the catalogue first (it matches the rows on
-  // screen), the browser's region names for any code the catalogue lacks.
+  // ISO2 -> display name in the reader's language (T451, the T444 rule:
+  // lib/countryName.js, so a German screen says "Albanien"), the catalogue's
+  // own name only for a code the engine does not know. A shared #tour= link
+  // carries no country, and Intl.DisplayNames.of throws on an empty or
+  // malformed code, which took the whole app down (row T375-a): no code
+  // names no country, and a code the engine refuses is shown as itself.
   const countryName = useMemo(() => {
     const map = new Map(availableCountries);
-    let dn = null;
-    try { dn = new Intl.DisplayNames([lang], { type: 'region' }); } catch { /* older engines */ }
-    // A shared #tour= link carries no country, and Intl.DisplayNames.of
-    // throws a RangeError on an empty or malformed code, which took the
-    // whole app down (row T375-a). No code names no country; a code the
-    // engine refuses is shown as itself.
     return (cc) => {
       if (!cc) return '';
-      const hit = map.get(cc);
-      if (hit) return hit;
-      if (!dn) return cc;
-      try { return dn.of(cc) || cc; } catch { return cc; }
+      try { return localCountryName(cc, map.get(cc) || cc, lang); } catch { return map.get(cc) || cc; }
     };
   }, [availableCountries, lang]);
 
@@ -1361,6 +1358,48 @@ export function DestinationsTab({
   const [stubs, setStubs] = useState([]);
   const [stubsAll, setStubsAll] = useState(false);
   const [pageStub, setPageStub] = useState(null);
+  // Back steps out of the tab's own layers (T451, the navigation rule T381
+  // set and T444 gave Explore): a style's list, then a page over it, each
+  // push one history entry, so Back and a phone's swipe back close the top
+  // layer onto the one beneath instead of leaving Carta. The trip page
+  // (JourneyPage) and the destination page (#dest=) push their own.
+  const placesLevel = (journeyView ? 1 : 0)
+    + ((pageCard || pageItin || pageBeach || pageLake || pageMountain || pageCycle || pageStub) ? 1 : 0);
+  const pushedLevel = useRef(0);
+  useEffect(() => {
+    if (!isActive) return;
+    try {
+      if (placesLevel > pushedLevel.current) {
+        for (let l = pushedLevel.current + 1; l <= placesLevel; l++) {
+          window.history.pushState({ ...(window.history.state || {}), cartaPlaces: l }, '', window.location.href);
+        }
+      } else if (placesLevel < pushedLevel.current) {
+        // Closed by its own control: step back over the entries the layer
+        // pushed, but only while they are still the top of the history (a
+        // place opened from the page has pushed its own on top).
+        const st = window.history.state || {};
+        if (st.cartaPlaces === pushedLevel.current && !st.cartaDest && !st.journey) {
+          window.history.go(placesLevel - pushedLevel.current);
+        }
+      }
+    } catch { /* sandboxed: the layers still open and close */ }
+    pushedLevel.current = placesLevel;
+  }, [placesLevel, isActive]);
+  useEffect(() => {
+    const onPop = (e) => {
+      const st = e.state || {};
+      const l = st.cartaPlaces ?? (st.journey ? pushedLevel.current : 0);
+      if (l >= pushedLevel.current) return;
+      if (l < 2) {
+        setPageCard(null); setPageItin(null); setPageBeach(null); setPageLake(null);
+        setPageMountain(null); setPageCycle(null); setPageStub(null);
+      }
+      if (l < 1) setJourneyView(null);
+      pushedLevel.current = l;
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
   useEffect(() => {
     setStubsAll(false);
     if (cat !== 'trails' || !trailsCountry) { setStubs([]); return undefined; }
@@ -1521,8 +1560,8 @@ export function DestinationsTab({
         return { cc: c.country, name: countryName(c.country), n };
       })
       .filter((c) => c.n > 0)
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [isTripCat, trailsIndex, cat, countryName]);
+      .sort((a, b) => a.name.localeCompare(b.name, lang));
+  }, [isTripCat, trailsIndex, cat, countryName, lang]);
 
 
   // ── Trips: the composed itineraries (pipeline/trips) ──────────────────
@@ -2237,7 +2276,8 @@ export function DestinationsTab({
     // priced catalogue offered countries with no cycling at all, which is
     // exactly what the note above says is worse than not offering them.
     if (isCycleCat) return fromIndex(cycleIndex);
-    return availableCountries;
+    return availableCountries.map(([cc]) => [cc, countryName(cc)])
+      .sort((a, b) => a[1].localeCompare(b[1], lang));
   }, [isBeachCat, isLakeCat, isMountainCat, isCycleCat, beachIndex, lakeIndex,
     mountainIndex, cycleIndex, availableCountries, countryName, lang]);
 
@@ -2587,6 +2627,7 @@ export function DestinationsTab({
         name: row.name,
         where: grade && GRADE_KEY[grade] ? t(GRADE_KEY[grade]) : null,
         fact: row.distance_m != null ? km(row.distance_m / 1000, 1) : null,
+        factLabel: t('card.vLength'),
         rating: trailRating(row),
       };
     }
@@ -2595,29 +2636,33 @@ export function DestinationsTab({
         name: routeTitle(row, t),
         where: countryName(row.cc),
         fact: row.km != null ? km(row.km, 0) : null,
+        factLabel: t('card.vLength'),
         rating: row.score != null ? cycleRating(row, t) : null,
       };
     }
     if (layer === 'mountain') {
       return {
-        name: row.name,
+        name: displayName(row.name),
         where: placeLine(row.range, countryName(row.cc)),
         fact: row.ele != null ? `${Math.round(row.ele).toLocaleString(lang)} m` : null,
+        factLabel: t('card.vHeight'),
         rating: mountainRating(row, t),
       };
     }
     if (layer === 'lake') {
       const a = row.size?.areaKm2;
       return {
-        name: row.name,
+        name: displayName(row.name),
         where: placeLine(row.region, countryName(row.cc)),
+        factLabel: t('card.vArea'),
         fact: a != null ? `${a.toLocaleString(lang, { maximumFractionDigits: a < 10 ? 1 : 0 })} km²` : null,
         rating: lakeRating(row, t),
       };
     }
     return {
-      name: row.name,
+      name: displayName(row.name),
       where: placeLine(row.region, countryName(row.cc)),
+      factLabel: t('card.vLength'),
       fact: row.lengthM != null ? `${Math.round(row.lengthM).toLocaleString(lang)} m` : null,
       rating: beachRating(row, t),
     };
@@ -2978,6 +3023,14 @@ export function DestinationsTab({
     </Strip>
   ) : null;
 
+  // T451: on a phone the section row scrolls sideways; the section a link
+  // or a starter opened is brought into view, never left off-screen.
+  useEffect(() => {
+    if (!isActive) return;
+    const el = document.querySelector('.dtab-cats [aria-selected="true"]');
+    el?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+  }, [cat, isActive]);
+
   return (
     <div className="places-shell">
       {/* The page's one h1 (T186): the tab has no visible title, so the name
@@ -3002,7 +3055,7 @@ export function DestinationsTab({
           )}
           {countryOptions.length > 0 && (
             <div className="side-group">
-              <p className="side-sub">{t('places.allCountries')}</p>
+              <p className="side-sub">{t('day.country')}</p>
               {renderCountry('places-country side-country')}
             </div>
           )}
@@ -3615,12 +3668,9 @@ export function DestinationsTab({
         )}
 
         {isTripCat && !isItinCat && (
-          <div className={`places-list${showCountryIndex ? ' dgal-grid' : ' pcard-grid'}`}>
+          <div className={`places-list${showCountryIndex ? ' dtab-trail-index' : ' pcard-grid'}`}>
             {showCountryIndex && (
               <>
-                {cat === 'trails' && tripCountries.length > 0 && (
-                  <h2 className="dtab-subhead">{t('dtab.chooseCountry')}</h2>
-                )}
                 {/* A way in without a country (T384, brief V3-10): the
                     locate the search field already has, said in words where
                     the walker is choosing. */}
@@ -3632,16 +3682,24 @@ export function DestinationsTab({
                     </Button>
                   </div>
                 )}
-                {tripCountries.map((c) => (
-                  <CountryGalleryCard
-                    key={c.cc}
-                    cc={c.cc}
-                    name={c.name}
-                    onPick={pickCountry}
-                    t={t}
-                    href={`?tab=places&dc=${cat}&dn=${c.cc}`}
-                  />
-                ))}
+                {/* T451: a track like every other section's "By country", not a
+                    grid of forty galleries that ran fourteen thousand pixels. */}
+                {tripCountries.length > 0 && (
+                  <Strip id="dtab-trail-countries" title={t('dtab.chooseCountry')} t={t} className="dtab-bycountry">
+                    {tripCountries.map((c) => (
+                      <li key={c.cc} className="dtab-item dtab-item-country">
+                        <CountryGalleryCard
+                          cc={c.cc}
+                          name={c.name}
+                          onPick={pickCountry}
+                          t={t}
+                          href={`?tab=places&dc=${cat}&dn=${c.cc}`}
+                          sizes="(max-width: 768px) 80vw, 320px"
+                        />
+                      </li>
+                    ))}
+                  </Strip>
+                )}
                 {trailsIndex && tripCountries.length === 0 && (
                   <CoverageEmpty layer="trail" cc="" countryName={countryName} onOpen={openNeighbour} />
                 )}

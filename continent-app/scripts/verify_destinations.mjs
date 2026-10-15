@@ -120,10 +120,12 @@ for (const view of ['phone', 'desk']) {
   check((await page.$eval('.dtab-countryband-name', (e) => e.textContent.trim()).catch(() => '')) === 'Slovenia', `${tag}and Slovenia's band`);
   await page.close();
 
-  // Trails at rest: the countries.
+  // Trails at rest: the countries, as one track (T451: the grid ran 14k px).
   page = await open(browser, view, '?tab=places&dc=trails');
-  const grid = await page.$$eval('.dgal-grid .dgal-card', (els) => els.length);
-  check(grid >= 30, `${tag}Trails opens on the country galleries`, String(grid));
+  const grid = await page.$$eval('.dtab-trail-index .dtab-strip .dgal-card', (els) => els.length);
+  check(grid >= 30, `${tag}Trails opens on the country track`, String(grid));
+  const trailsH = await page.evaluate(() => document.querySelector('.places-scroll, .places-shell')?.scrollHeight || 0);
+  check(trailsH < 4000, `${tag}the Trails opening is short`, String(trailsH));
   check(await page.$('.places-card-count') === null, `${tag}no walk count on a country`);
   const trailCounts = await page.evaluate(COUNT_SCAN);
   check(trailCounts.length === 0, `${tag}no bare counts on Trails`, trailCounts.slice(0, 4).join(' | '));
@@ -143,6 +145,40 @@ for (const view of ['phone', 'desk']) {
   check(tripCounts.length === 0, `${tag}no bare counts on Trips`, tripCounts.slice(0, 4).join(' | '));
   const first = await page.$eval('.jstyle-card .jcap-name', (e) => e.textContent.trim()).catch(() => '');
   check(first === 'Hiking', `${tag}Hiking leads`, first);
+  check(styles.filter((s) => /^From/.test(s.fig)).every((s) => /est\./.test(s.fig)), `${tag}a style's from-price is marked an estimate`);
+
+  // A style's list: the trip cards keep their text (T451: on a phone a
+  // legacy 2:1 box clipped them to the photograph), and Back closes it.
+  await page.click('.jstyle-card .card-open');
+  await page.waitForTimeout(1500);
+  const trip = await page.$$eval('.jcard', (els) => els.slice(0, 3).map((e) => ({
+    title: e.querySelector('.jcard-title')?.getBoundingClientRect().height || 0,
+    fig: (e.querySelector('.jcap-fig')?.textContent || '').trim(),
+  })));
+  check(trip.length > 0 && trip.every((x) => x.title > 0), `${tag}trip cards show their title`, String(trip.length));
+  check(trip.every((x) => !x.fig || /est\./.test(x.fig)), `${tag}a trip's budget is marked an estimate`, trip[0]?.fig || '');
+  await page.goBack();
+  await page.waitForTimeout(1200);
+  check((await page.$$('.jstyle-card')).length === 10 && page.url().includes('tab=places'),
+    `${tag}Back closes a style's list onto the styles`, page.url().split('?')[1] || '');
+  await page.close();
+
+  // Mountains: a rail's fact says what it measures.
+  page = await open(browser, view, '?tab=places&dc=mountains');
+  const facts = await page.$$eval('.dtab-tile .dtab-fact', (els) => els.slice(0, 6).map((e) => e.textContent.trim()));
+  check(facts.length > 0 && facts.every((f) => /^[A-Za-z]/.test(f)), `${tag}rail facts carry their label`, facts.slice(0, 2).join(' | '));
+  await page.close();
+
+  // German: the country names are German, the flags are not read out.
+  page = await open(browser, view, '?tab=places&dc=beaches');
+  // Init scripts run in order on every load: this one outlasts the 'en' seed.
+  await page.addInitScript(() => { try { localStorage.setItem('continent.lang.v1', 'de'); } catch { /* */ } });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('.dtab-cats', { timeout: 60000 });
+  await page.waitForTimeout(3000);
+  const deNames = await page.$$eval('.dgal-card .card-title', (els) => els.map((e) => e.textContent.trim()));
+  check(deNames.includes('Albanien') || deNames.includes('Kroatien'), `${tag}German country names on the cards`, deNames.slice(0, 3).join(', '));
+  check(await page.$('svg.country-flag[aria-label]') === null, `${tag}flags are decorative`);
   await page.close();
 }
 await browser.close();
