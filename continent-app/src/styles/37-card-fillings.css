@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════════
    The one card of the Destinations lists, five fillings (spec 5.1, T179):
-   browse/PlaceCard.jsx, on the kit tile Card since T428.
+   browse/PlaceCard.jsx, on the kit Card since T428, a compact row since T452.
 
    The kit draws the frame (components/ui/Card.jsx, 04-ui.css): a border, the
    card radius, the photograph on top, one stretched link on the name. This
@@ -12,28 +12,83 @@
    glyphs (owner, 2026-10-14: "the trail stack also needs to go"), and the
    fixed row heights that existed to keep them aligned.
 
-   The grid is uniform: one up under 640 px, two up to 1039 px, three above.
+   T452 (owner, 2026-10-15: in line with Explore, just enough to attract):
+   the list is Explore's compact row. A 72 px square photograph, the name
+   with the Score beside it, where, two values, one line of what it is like;
+   no box, a hairline between rows, the surface on hover. Columns of rows
+   at least 400 px wide, as .xrows does.
    ══════════════════════════════════════════════════════════════════════════ */
 
 .places-list.pcard-grid {
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
-}
-@media (min-width: 640px) {
-  .places-list.pcard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (min-width: 1040px) {
-  .places-list.pcard-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+  gap: 0 var(--space-6);
 }
 
-/* The photograph sits in the kit's media box; the section image rules
+/* The row: Explore's .xrow, on the kit Card. */
+.card.card-row.pcard {
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2);
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: none;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .card.card-row.pcard.is-interactive:hover { background: var(--surface); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card.card-row.pcard { transition: none; }
+}
+
+/* The photograph: a 72 px square; the section image rules
    (23-places-pages.css .places-card-img) place it absolutely inside it. */
-.card.pcard .card-media { position: relative; aspect-ratio: 3 / 2; }
+.card.pcard .card-media {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  aspect-ratio: auto;
+  border-radius: var(--radius-card);
+}
 .card.pcard .places-card-noimg { position: absolute; inset: 0; background: var(--surface-sunken); }
-.card.pcard .card-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+/* Name and Score on the first line, everything else under it. */
+.card.card-row.pcard .card-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-2);
+  row-gap: 2px;
+}
+.card.card-row.pcard .card-title {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: var(--text-lead);
+  white-space: nowrap;
+}
+/* One line each: a long name ends in an ellipsis, never a cut word. */
+.card.card-row.pcard .card-title .card-open {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card.card-row.pcard .jcap-where > span:last-child,
+.card.card-row.pcard .jcap-meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card.card-row.pcard .jcap-where { min-width: 0; }
+.card.card-row.pcard .card-figures { display: contents; }
+.card.card-row.pcard .card-rating { grid-column: 2; grid-row: 1; }
+.card.card-row.pcard .card-meta,
+.card.card-row.pcard .card-price { grid-column: 1 / -1; }
+.card.card-row.pcard .card-price { margin: 0; }
 .card.pcard .card-meta { color: var(--text-2); }
 
-.pcard-body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.pcard-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 
 .card.pcard .pcard-where {
   display: flex;
@@ -49,9 +104,9 @@
 .card.pcard .pcard-hook {
   display: block;
   margin: 0;
-  font-size: var(--text-body);
+  font-size: var(--text-caption);
   line-height: var(--leading-ui);
-  color: var(--text);
+  color: var(--text-2);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -69,27 +124,22 @@
 .card.pcard .pcard-hook > .places-lcard-swim { font-weight: 600; }
 .card.pcard .pcard-hook > .places-card-km { font-variant-numeric: tabular-nums; }
 
-/* The measured values: label over value, the value tabular in --text. */
+/* The two measured values on one line, each its label then its figure
+   ("Length 12.4 km   Climb 640 m"), the figure tabular in --text. */
 .card.pcard .pcard-values {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2);
-  margin: var(--space-2) 0 0;
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--border-soft);
-}
-.pcard-v { min-width: 0; margin: 0; }
-.pcard-v-l {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-4);
   margin: 0;
-  font-size: var(--text-caption);
-  color: var(--text-2);
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  max-height: 1.5em;
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
 }
+.pcard-v { display: flex; gap: var(--space-1); min-width: 0; margin: 0; }
+.pcard-v-l { margin: 0; color: var(--text-2); white-space: nowrap; }
 .pcard-v-n {
   margin: 0;
-  font-size: var(--text-body);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--text);
@@ -106,7 +156,7 @@
   text-overflow: ellipsis;
 }
 .pcard-month-m { font-variant-numeric: tabular-nums; color: var(--text); }
-.pcard-gem { font-size: var(--text-label); color: var(--text-2); }
+.card.pcard .pcard-hook > .pcard-gem { color: var(--text); }
 
 /* The "not scored" word in the Score's place. */
 .card.pcard .places-card-unrated,
@@ -125,7 +175,7 @@
 
 /* Loading: cards at their final shape on the sunken ground, still. */
 .pcard-skel { pointer-events: none; }
-.pcard-skel .card-media { aspect-ratio: 3 / 2; }
+.pcard-skel .card-media { width: 72px; height: 72px; flex: none; border-radius: var(--radius-card); background: var(--surface-sunken); }
 .pcard-skel-bar {
   display: block;
   height: 12px;

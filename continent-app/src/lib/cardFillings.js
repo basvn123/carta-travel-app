@@ -153,8 +153,8 @@ const DIFF_KEY = {
 /**
  * card is DestinationsTab's trip card { tr, assoc, kindKey }. The hook is the
  * kind, the grade and up to two highlights: the same words the chips carried,
- * now read as one line. The values are length, walking time and the climb read
- * uphill (T108-d); a city day trades the climb for its number of stops.
+ * now read as one line. The values are length, the climb read uphill and the
+ * walking time (T108-d, T452); a city day trades the climb for its stops.
  */
 export function trailFilling(card, { t, countryName = () => null }) {
   const { tr, assoc = {}, kindKey } = card;
@@ -182,11 +182,13 @@ export function trailFilling(card, { t, countryName = () => null }) {
   }
   const climb = trailClimbUp(tr);
   const values = pickValues([
+    // Length, then what the walk is like (the climb, or a city day's stops),
+    // then the time: a list row shows the first two (T452).
     cell('length', t('card.vLength'), kmText(tr.distance_m)),
-    cell('time', t('card.vTime'), hoursText(tr.duration_min)),
     isCityDay
       ? cell('stops', t('card.vStops'), num(tr.n_stops) != null ? String(tr.n_stops) : null)
       : cell('climb', t('card.vClimb'), num(climb) != null ? `+${count(climb)} m` : null),
+    cell('time', t('card.vTime'), hoursText(tr.duration_min)),
   ], t);
   const icons = [];
   if (!isCityDay && tr.is_loop) icons.push({ code: 'loop', label: t('trails.loop'), cls: 'places-card-loop' });

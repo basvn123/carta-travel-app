@@ -35,13 +35,13 @@ import { MonoLine } from './CoverageEmpty.jsx';
  * first.
  *
  * Ten styles, hiking first because the launch speaks to hikers first
- * (PRODUCT.md), then the wire's order. Each style is a photo card with its
- * caption in a paper band under the photograph (rule "Caption band": no text
- * on a photo, no scrim): the name, how many weeks are written in it, and
- * what the cheapest of them costs a person at the length the list is read at
- * (rule "Cost on cards": "From €N a person" with its length, from the
- * cheapest member, never an average). Tapping one lists that style's trips
- * as photo cards, and tapping a trip opens the JourneyPage with the plan.
+ * (PRODUCT.md), then the wire's order. Each style is a photo tile with its
+ * caption under the photograph (rule "Caption band": no text on a photo, no
+ * scrim): the name, its one line, and what the cheapest of its trips costs a
+ * person at the length the list is read at (rule "Cost on cards": the
+ * from-price with its length, from the cheapest member, never an average,
+ * marked as an estimate). Tapping one lists that style's trips as compact
+ * rows (T452), and tapping a trip opens the JourneyPage with the plan.
  *
  * The composed city routes (pipeline/trips, 2 to 14 days) keep their own door
  * at the end of the grid: they are a different product, built by the
@@ -69,18 +69,19 @@ function withMoney(text, money) {
   return <>{text.slice(0, at)}{money}{text.slice(at + SLOT.length)}</>;
 }
 
-/** A photograph, or the flag-and-name placeholder on the sunken ground. */
-function CardPhoto({ hero, cc, name }) {
+/** A photograph, or the flag-and-name placeholder on the sunken ground. A
+ *  row's photograph is the 72 px square of the list (T452). */
+function CardPhoto({ hero, cc, name, row = false }) {
   return hero?.url
     ? (
       <img
         className="places-card-img"
-        src={fallbackSrc(hero.url, 500)}
-        srcSet={srcSetFor(hero.url, 1280)}
-        sizes={CARD_SIZES}
+        src={fallbackSrc(hero.url, row ? 250 : 500)}
+        srcSet={srcSetFor(hero.url, row ? 500 : 1280)}
+        sizes={row ? '72px' : CARD_SIZES}
         alt=""
-        width={4}
-        height={3}
+        width={row ? 1 : 4}
+        height={row ? 1 : 3}
         loading="lazy"
         decoding="async"
       />
@@ -116,8 +117,9 @@ function StyleCard({ type, from, onPick, t }) {
   );
 }
 
-/** One curated trip as a kit tile: the photograph, the title, where, the
- *  length with the difficulty and the months, and the range a person. */
+/** One curated trip as a compact row (T452, as Explore's list and the place
+ *  lists): the photograph, the title, where, the length with the difficulty
+ *  and the months, and the range a person. */
 function JourneyCard({ card, length, onOpen, t, lang }) {
   const months = monthsShort(card.months, lang);
   const diff = diffLabel(card.diffLabel, t);
@@ -127,9 +129,9 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
   const total = at && (Number.isFinite(at.low) || Number.isFinite(at.high));
   return (
     <Card
-      layout="tile"
-      className="jcard jcap-card"
-      media={<CardPhoto hero={card.hero} cc={card.cc} name={card.title} />}
+      layout="row"
+      className="jcard jcap-card pcard"
+      media={<CardPhoto hero={card.hero} cc={card.cc} name={card.title} row />}
       title={<span className="jcap-name jcard-title">{card.title}</span>}
       // The card's photograph grows into the page's hero (rule "List to
       // detail", T397); without View Transitions the page opens as before.
@@ -405,7 +407,7 @@ export function JourneysSection({
 
   const openType = (index?.types || []).find((tp) => tp.slug === view);
   return (
-    <div className="places-list jsec">
+    <div className="places-list jsec jsec-trips">
       <div className="jsec-head">
         <Button variant="quiet" size="sm" className="jsec-back" onClick={() => onView(null)}
           iconStart={<ArrowLeftIcon size={14} />}>
