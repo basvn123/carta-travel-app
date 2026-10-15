@@ -23,7 +23,7 @@ Research behind the order (summarised from the planning pass; full notes in the 
 - continent-app/scripts/measure_item_pages.mjs, verify_item_pdf.mjs
 - continent-app/tests/mapGestures.test.mjs
 - docs/ITEM_PAGE_DATA_CONTRACT.md
-- Execution/P11/T430-shots/ (before and after shots), Execution/P11/T430-critique/ (impeccable snapshots)
+- Execution/P11/T430-shots/ (before and after shots, PDF contact sheets), Execution/P11/T430-critique/ (impeccable snapshots), Execution/P11/T430-unused-keys.txt
 
 **Modified:**
 - .claude/skills/carta-design/SKILL.md (owner decisions of 2026-10-15)
@@ -74,6 +74,8 @@ On a phone the item pages grew by 300 to 530 px: the reasons, Before you go and 
 
 Impeccable critique (dual-agent, Nielsen heuristics /40), item pages: before 22/40; after: see "Impeccable after" below.
 
+Harnesses after the close-out (production build, port 5298; failures marked "as before" match the baseline run of 2026-10-15 and come from the sandbox's blocked photo and tile hosts or from earlier data rows): beaches, mountains, trail_page, destinations, destination_page and journeys pass; trails 33/33 (exit 1 only on network console errors, as before); lakes fails only GB and IE lake counts (T456-e, as before); cycling 75/78 (as before); places_tab fails only "every card carries a picture" (as before); trip_page 58/60 (as before); verify_item_pdf 27/27 (new); explore 96/101 (map price labels and a photo, tile hosts blocked; Explore code untouched); quality floor: every item, trip and list screen passes, the two failures are day-planner screens; keyboard: the trip page's day track moves by arrow keys and keeps focus, the destinations lists report stops without a visible ring (row T430-i, no pre-change baseline to compare).
+
 ## What broke and how it was fixed
 
 | What | Cause | Fix |
@@ -89,7 +91,7 @@ Impeccable critique (dual-agent, Nielsen heuristics /40), item pages: before 22/
 
 ## What is still open
 
-The galleries, the 3D terrain, the swiped tiles and the PDF photographs could not be looked at with real images: the sandbox blocks upload.wikimedia.org and the tile hosts, so the layouts were judged around placeholders (row T430-a). The new copy in German, Dutch, French, Spanish and Italian was written in this session and wants a native read (T430-b). The destination PDF still uses the old faces and should move onto `lib/pdfKit.js` (T421-b, still open). 101 i18n keys are no longer referenced by any screen (list in this report's folder, `T430-unused-keys.txt`) and can be deleted after a check that no harness reads them (T430-c). Trails carry photographs on 21% of routes and highlights on 70%; the data contract names the fields (T430-d). The research starters "Good with children" and "Swim in {month}" were held back as facets because no layer carries the fields (T430-e). The critique's remaining findings are listed under "Impeccable after" and in rows T430-f onward.
+The galleries, the 3D terrain, the swiped tiles and the PDF photographs could not be looked at with real images: the sandbox blocks upload.wikimedia.org and the tile hosts, so the layouts were judged around placeholders (row T430-a). The new copy in German, Dutch, French, Spanish and Italian was written in this session and wants a native read (T430-b). The destination PDF still uses the old faces and should move onto `lib/pdfKit.js` (T421-b, still open). 101 i18n keys are no longer referenced by any screen (list in this report's folder, `T430-unused-keys.txt`) and can be deleted after a check that no harness reads them (T430-c). Trails carry photographs on 21% of routes and highlights on 70%; the data contract names the fields (T430-d). The research starters "Good with children" and "Swim in {month}" were held back as facets because no layer carries the fields (T430-e). The critique's remaining findings are listed under "Impeccable after" and in rows T430-f to T430-h. The keyboard harness reports stops without a visible ring on the Destinations lists and had no run from before this task to compare against (T430-i). The before and after showcase is a private artifact: https://claude.ai/artifact/LkhGGZMfLhuMVR2vc9EnFV
 
 ## Rollback procedure
 
