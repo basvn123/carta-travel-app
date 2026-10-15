@@ -72,13 +72,37 @@ TYPE_HERO_CANDIDATES = {
     "winter-sports": ["Zermatt", "St. Moritz", "Kitzbühel"],
     "nature-escape": ["Lofoten", "Lake Bled", "Black Forest"],
     "water-sports": ["Navagio", "Calanques National Park", "Costa Brava"],
+    # T431: the new styles' photographs come from samples.lock.json; these
+    # article leads are the fallback a full build would try.
+    "hostel": ["Stari Most", "Kotor"],
+    "beach-week": ["Makarska Riviera", "Brela"],
+    "rail": ["Semmering railway", "Wien Hauptbahnhof"],
+    "pilgrim": ["Camino de Santiago", "Santiago de Compostela Cathedral"],
+    "island-hopping": ["Paros", "Naxos"],
 }
+# T431: the sample trips of the new styles (sample_trips.py) pin their own
+# hero, and each new style its photograph, from the dossier galleries the
+# app already ships; the lock file is written by that script.
+SAMPLES_LOCK = Path(__file__).resolve().parent / "samples.lock.json"
+
+
+def load_samples_lock():
+    if not SAMPLES_LOCK.exists():
+        return {}, {}
+    raw = json.loads(SAMPLES_LOCK.read_text(encoding="utf-8"))
+    return raw.get("heroes") or {}, raw.get("typeHeroes") or {}
+
+
 # T448: the order the traveller meets the styles, which is the audience order
 # of T203 (walkers first, then quiet nature, bikes, cities and towns, cars,
 # food, water, snow, runners), not the schema id order.
 TYPE_ORDER = ["hiking", "nature-escape", "cycling", "city", "cozy-towns",
               "road-trip", "culinary", "water-sports", "winter-sports",
-              "trail-running"]
+              "trail-running",
+              # T431: the five styles the owner added on 2026-10-15, each
+              # with one sample trip (sample_trips.py) until the catalogue
+              # grows; they follow the ten the traveller already knows.
+              "hostel", "beach-week", "rail", "pilgrim", "island-hopping"]
 
 # T448: the style card shows people doing the thing (owner, 2026-10-14; the
 # amended rule 6 of docs/IMAGE_BRIEF.md). Each is one Commons file looked at
@@ -702,6 +726,61 @@ def gateway_rows(trip):
     return [first], True
 
 
+VISIT_STOP_RE = re.compile(
+    r"^(the|a|an|out|into|to|down|up|back|south|north|east|west|again|across|"
+    r"arriv\w*|land\w*|day|rest|free|first|last|final|two|three|one|via|over|"
+    r"from|home|depart\w*|leave|transfer|loop|return\w*|easy|long|short|big|"
+    r"full|half|morning|afternoon|evening|ferry|bus|train|drive|walk|ride|run|"
+    r"ski|plus|then|on|by|with|towards?|onto|around|through|along|above|below|"
+    r"beyond|under|in|at|of|for|optional|reserve|spare|buffer|recovery|"
+    r"acclimati\w*|warm|settle|explore|exploring|discover|base|basecamp|hotel|"
+    r"villa|guesthouse|hostel|camp\w*|refuge|rifugio|hut|chalet|apartment)\b",
+    re.I)
+
+
+def visits(trip, n=4):
+    """T431: the places a trip card names ("Kaysersberg, Ribeauvillé,
+    Haut-Koenigsbourg"), so a list says where the week goes instead of how
+    long it is. A trip's own `visits`, then its `dayPlaces`, then the place
+    names in its day titles (structured slots only, never prose)."""
+    own = [str(x) for x in trip.get("visits") or [] if x]
+    if own:
+        return own[:n]
+    out = []
+    for d in trip.get("dayPlaces") or []:
+        name = (d or {}).get("name")
+        if name and name not in out:
+            out.append(name)
+    if out:
+        return out[:n]
+    for day in trip.get("itinerary") or []:
+        for part in re.split(r"[:;,/\u2192>&+()]|\s[-\u2013]\s|\bto\b|\band\b|\bin\b|"
+                             r"\bat\b|\bvia\b|\bover\b|\bfrom\b|\bthen\b|\bby\b|\bon\b",
+                             str(day.get("title") or "")):
+            part = re.sub(r"'s\b", "", part).strip(" ,.")
+            part = re.sub(r"^(the|a)\s+", "", part, flags=re.I)
+            words = part.split()
+            if (part and 1 <= len(words) <= 3 and part[0].isupper()
+                    and not VISIT_STOP_RE.search(part)
+                    and not PLACE_JUNK_RE.search(part)
+                    and part not in COUNTRY_NAMES
+                    and not any(ch.isdigit() for ch in part)
+                    and part not in out):
+                out.append(part)
+    return out[:n]
+
+
+def card_photos(trip, hero, n=4):
+    """T431: up to four photographs a trip card swipes through: the hero,
+    then the trip's own `photos[]` (each a credited Commons file)."""
+    out = []
+    for img in [hero] + list(trip.get("photos") or []):
+        url = (img or {}).get("url")
+        if url and url not in out:
+            out.append(url)
+    return out[:n]
+
+
 def to_card(trip, hero):
     budget = trip.get("budget") or {}
     total = budget.get("totalEur") or {}
@@ -732,6 +811,9 @@ def to_card(trip, hero):
         "tags": [str(x) for x in (trip.get("tags") or [])][:6],
         "beds": bed_kinds(trip),
         "hero": hero,
+        "visits": visits(trip),
+        **({"photos": card_photos(trip, hero)} if trip.get("photos") else {}),
+        **({"sample": True} if trip.get("sample") else {}),
     }
 
 
@@ -791,7 +873,8 @@ def main():
         save_cache(cache)
     # The audit's replacements win over pick_hero: it saw the categories and
     # the pixel size, and pick_hero only ever saw the file name.
-    overrides = {**load_hero_overrides(), **JOURNEY_HERO_PINS}
+    sample_heroes, sample_type_heroes = load_samples_lock()
+    overrides = {**load_hero_overrides(), **JOURNEY_HERO_PINS, **sample_heroes}
     n_over = 0
     for tid, hero in overrides.items():
         if tid in heroes:
@@ -836,8 +919,9 @@ def main():
     # a portrait crop.
     type_heroes = {}
     for slug, names in TYPE_HERO_CANDIDATES.items():
-        if TYPE_HERO_FILES.get(slug):
-            type_heroes[slug] = TYPE_HERO_FILES[slug]
+        fixed = TYPE_HERO_FILES.get(slug) or sample_type_heroes.get(slug)
+        if fixed:
+            type_heroes[slug] = fixed
             continue
         pick = None
         for n in names:

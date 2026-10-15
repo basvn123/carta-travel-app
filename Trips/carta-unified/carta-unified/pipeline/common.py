@@ -17,6 +17,12 @@ TRIP_TYPES = [
     (8, "Ski and snow", "winter-sports"),
     (9, "Nature stays", "nature-escape"),
     (10, "On the water", "water-sports"),
+    # T431 (owner, 2026-10-15): five styles with one sample trip each
+    (11, "Hostel weeks", "hostel"),
+    (12, "Beach weeks", "beach-week"),
+    (13, "Rail journeys", "rail"),
+    (14, "Pilgrim routes", "pilgrim"),
+    (15, "Island hopping", "island-hopping"),
 ]
 
 _TYPE_BY_ID = {i: (name, slug) for i, name, slug in TRIP_TYPES}
@@ -42,6 +48,12 @@ _TYPE_ALIASES = {
     "nature_cabin": 9, "nature escapes": 9, "nature escape": 9,
     "water sports & coastal trips": 10, "water sports and coastal trips": 10,
     "water_sports": 10, "water sports": 10, "coastal": 10,
+    # T431: after the ten, so a substring match never reaches them first
+    "hostel weeks": 11, "hostel week": 11, "backpacker weeks": 11,
+    "beach weeks": 12, "beach week": 12, "beach-week": 12,
+    "rail journeys": 13, "rail journey": 13, "car-free rail": 13,
+    "pilgrim routes": 14, "pilgrim route": 14, "pilgrimage": 14,
+    "island hopping": 15, "island-hopping": 15,
 }
 
 

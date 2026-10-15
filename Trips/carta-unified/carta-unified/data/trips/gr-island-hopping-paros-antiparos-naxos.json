@@ -1,0 +1,569 @@
+{
+  "id": "gr-island-hopping-paros-antiparos-naxos",
+  "sourceId": "gr-island-hopping-paros-antiparos-naxos",
+  "slug": "gr-island-hopping-paros-antiparos-naxos",
+  "title": "Paros, Antiparos and Naxos by Ferry",
+  "country": "Greece",
+  "countryCode": "GR",
+  "countries": [
+    {
+      "name": "Greece",
+      "code": "GR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "The Cyclades",
+  "tripType": "Island hopping",
+  "tripTypeId": 15,
+  "tripTypeSlug": "island-hopping",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Late May to June and September to mid-October",
+    "note": "The sea is warmest in September.",
+    "avoid": "July and August, when the meltemi wind and prices both peak",
+    "raw": "May to June, September to October"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 470,
+      "high": 800
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 180,
+        "highEur": 330,
+        "note": "Studios and rooms, six nights"
+      },
+      "food": {
+        "lowEur": 160,
+        "highEur": 260,
+        "note": "Bakeries, gyros, tavernas"
+      },
+      "transport": {
+        "lowEur": 100,
+        "highEur": 150,
+        "note": "Three ferries on deck, island buses"
+      },
+      "activities": {
+        "lowEur": 30,
+        "highEur": 60,
+        "note": "Antiparos cave, Portara at sunset, a boat trip"
+      }
+    },
+    "perDayEur": {
+      "low": 67,
+      "high": 114
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "1/5, ferries, beaches and village walks",
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [],
+  "gatewayAirport": "ATH Athens, 1 h to Piraeus by metro; home by ferry or from JNX Naxos",
+  "gatewayAirportCode": "ATH",
+  "languages": [
+    "Greek",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 37.0853,
+    "lon": 25.1521,
+    "precision": "city",
+    "matchedPlace": "Paros",
+    "source": "dossier"
+  },
+  "tags": [
+    "islands",
+    "ferry",
+    "beaches",
+    "cyclades",
+    "sunset",
+    "car-free"
+  ],
+  "summary": "Three Cycladic islands and no car. **Paros** for fishing harbours and white lanes, tiny **Antiparos** ten minutes across the strait for its cave and empty beaches, and **Naxos**, the biggest and greenest, for the marble **Portara** at sunset and long sandy beaches. Every hop is a short ferry and every island has a bus.",
+  "summaryGenerated": false,
+  "hook": "Three islands, three short ferries and the Portara of Naxos at sunset.",
+  "snapshot": null,
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Athens and the Acropolis",
+      "morning": "Metro from the airport to the centre, 40 minutes. Afternoon at the **Acropolis**, about €20.",
+      "afternoon": "Plaka and Anafiotika's island lanes under the rock.",
+      "evening": "Sunset from the Areopagus hill, free, then souvlaki.",
+      "dayStats": "City walking, about 7 km",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 7,
+        "ascentM": 90,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 240,
+          "high": 240
+        }
+      },
+      "sleep": "Hostel in Athens",
+      "sleepRef": 1,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg/1280px-Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+        "w": 1280,
+        "h": 800,
+        "credit": "Acropolis of Athens",
+        "page": "https://commons.wikimedia.org/wiki/File:Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+        "author": "A.Savin",
+        "licence": "CC BY-SA 3.0"
+      }
+    },
+    {
+      "day": 2,
+      "title": "Ferry to Paros",
+      "morning": "Morning ferry from **Piraeus** to **Paros**, 3 to 4 hours on a conventional boat, from €40 on deck.",
+      "afternoon": "Settle in **Parikia** and visit the **Panagia Ekatontapyliani**, the church of a hundred doors.",
+      "evening": "Sunset on the windmill quay, drinks by the old harbour.",
+      "dayStats": "Ferry 3 h 30 min, 170 km",
+      "stats": {
+        "mode": "ferry",
+        "distanceKm": 170,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 210,
+          "high": 210
+        }
+      },
+      "sleep": "Studio in Parikia",
+      "sleepRef": 2,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/EKPYL_2881.jpg/1280px-EKPYL_2881.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Panagia Ekatontapyliani",
+        "page": "https://commons.wikimedia.org/wiki/File:EKPYL_2881.jpg",
+        "author": "Geraki",
+        "licence": "CC BY-SA 3.0 gr"
+      }
+    },
+    {
+      "day": 3,
+      "title": "Naoussa and Kolymbithres",
+      "morning": "Bus to **Naoussa**, the fishing harbour with tavernas on the quay.",
+      "afternoon": "Swim among the wind-carved granite of **Kolymbithres** beach.",
+      "evening": "Grilled octopus by the boats in Naoussa.",
+      "dayStats": "Bus 20 min, beach day",
+      "stats": {
+        "mode": "bus",
+        "distanceKm": 22,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 60,
+          "high": 60
+        }
+      },
+      "sleep": "Studio in Parikia",
+      "sleepRef": 2,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg/1280px-Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg",
+        "w": 1280,
+        "h": 852,
+        "credit": "Paros",
+        "page": "https://commons.wikimedia.org/wiki/File:Fish_tavern,_Naoussa,_Paros,_119137.jpg",
+        "author": "Zde",
+        "licence": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "day": 4,
+      "title": "Antiparos",
+      "morning": "Bus to Pounta, then the 10 minute ferry to **Antiparos**, about €2.",
+      "afternoon": "The **Cave of Antiparos**, 400 steps down into stalactites, about €6; then a quiet beach.",
+      "evening": "Dinner on Antiparos' main street before the last boat.",
+      "dayStats": "Ferry 10 min, bus, cave 400 steps",
+      "stats": {
+        "mode": "ferry",
+        "distanceKm": 16,
+        "ascentM": 100,
+        "descentM": 100,
+        "highM": null,
+        "timeMin": {
+          "low": 120,
+          "high": 120
+        }
+      },
+      "sleep": "Studio in Parikia",
+      "sleepRef": 2,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Antiparos_Cave.jpg/1280px-Antiparos_Cave.jpg",
+        "w": 1280,
+        "h": 852,
+        "credit": "Cave of Antiparos",
+        "page": "https://commons.wikimedia.org/wiki/File:Antiparos_Cave.jpg",
+        "author": "Kondephy",
+        "licence": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "day": 5,
+      "title": "Hop to Naxos",
+      "morning": "Ferry from Parikia to **Naxos** in about 45 minutes, from €10.",
+      "afternoon": "Old town lanes up to the Venetian castle.",
+      "evening": "The marble **Portara** at sunset, the gate of an unfinished temple of Apollo.",
+      "dayStats": "Ferry 45 min, 40 km",
+      "stats": {
+        "mode": "ferry",
+        "distanceKm": 40,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 60,
+          "high": 60
+        }
+      },
+      "sleep": "Room in Naxos town",
+      "sleepRef": 3,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/20221029_Naxos_762.jpg/1280px-20221029_Naxos_762.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Portara",
+        "page": "https://commons.wikimedia.org/wiki/File:20221029_Naxos_762.jpg",
+        "author": "Jean Housen",
+        "licence": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "day": 6,
+      "title": "Naxos beaches or the mountain villages",
+      "morning": "Bus to **Agios Prokopios** and its long sandy beach.",
+      "afternoon": "Or the bus inland to **Halki** and Apiranthos, marble villages and kitron liqueur.",
+      "evening": "Taverna dinner in the old town.",
+      "dayStats": "Bus 20 min, beach or villages",
+      "stats": {
+        "mode": "bus",
+        "distanceKm": 30,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 120,
+          "high": 120
+        }
+      },
+      "sleep": "Room in Naxos town",
+      "sleepRef": 3,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg/1280px-Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Naxos",
+        "page": "https://commons.wikimedia.org/wiki/File:Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg",
+        "author": "Manfred Werner (Tsui)",
+        "licence": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "day": 7,
+      "title": "Back to Athens",
+      "morning": "Ferry from Naxos to **Piraeus**, about 5 hours, or a 40 minute flight from Naxos airport.",
+      "afternoon": "Metro to the airport.",
+      "evening": null,
+      "dayStats": "Ferry 5 h, 190 km",
+      "stats": {
+        "mode": "ferry",
+        "distanceKm": 190,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 300,
+          "high": 300
+        }
+      },
+      "sleep": null,
+      "sleepRef": null,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg/1280px-Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+        "w": 1280,
+        "h": 960,
+        "credit": "Cyclades",
+        "page": "https://commons.wikimedia.org/wiki/File:Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+        "author": "kallerna",
+        "licence": "CC BY-SA 4.0"
+      }
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hostel in Athens",
+      "style": "hostel",
+      "location": "Athens, near Monastiraki",
+      "description": "Rooftop hostels with Acropolis views.",
+      "booking": "two weeks ahead",
+      "priceNote": "€20 to €35 a dorm bed"
+    },
+    {
+      "rank": 2,
+      "name": "Studio in Parikia",
+      "style": "studio",
+      "location": "Parikia, Paros",
+      "description": "Family-run studios with a kitchenette, five minutes from the port.",
+      "booking": "a month ahead in June and September",
+      "priceNote": "€45 to €80 a night for the studio"
+    },
+    {
+      "rank": 3,
+      "name": "Room in Naxos town",
+      "style": "room",
+      "location": "Naxos old town",
+      "description": "Rooms in the old town or at Agios Georgios beach.",
+      "booking": "a month ahead",
+      "priceNote": "€40 to €75 a night"
+    }
+  ],
+  "logistics": {
+    "connectivity": "EU roaming; 4G on all three islands.",
+    "emergency": "112; the coastguard is 108.",
+    "weather": "The meltemi blows hardest in July and August and can cancel small boats.",
+    "bookingWindows": "Book Piraeus ferries two to three weeks ahead; island hops can be bought the day before.",
+    "money": "Euro; cards widely taken, small tavernas prefer cash.",
+    "transportRules": "Deck class is the cheapest ticket and has seats inside and out.",
+    "permits": null,
+    "health": "Strong sun from May; shade is rare on the beaches.",
+    "gettingThere": "Fly to Athens and take the metro to Piraeus.",
+    "other": []
+  },
+  "proTips": [
+    "Compare conventional and fast ferries: the slow boat is half the price and steadier in wind.",
+    "Stay in Parikia on Paros: every ferry and bus leaves from there."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Who It Suits": "Couples, friends and families who want beaches without a car"
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "Meltemi north wind in July and August",
+    "gpxReady": false,
+    "bookingTimeline": "Ferries 2 to 3 weeks ahead from Piraeus",
+    "audience": "Island hoppers"
+  },
+  "packingNotes": [
+    "Seasickness tablets for windy days",
+    "A light jacket for the ferry deck",
+    "Snorkel mask",
+    "Sun hat"
+  ],
+  "whatCouldGoWrong": [
+    "A meltemi day can cancel the small Antiparos boats; move the cave day.",
+    "Ferries run late in summer; never book a flight on the same afternoon."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "Sample trip written for T431 to show every slot of the trip page. Prices, timetables and opening details are to be audited by the owner."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "t431-samples",
+    "sourceFile": "pipeline/journeys/sample_trips.py",
+    "sourceFormat": "python (sample)",
+    "sourceId": "gr-island-hopping-paros-antiparos-naxos",
+    "ingestedAt": "2026-10-15",
+    "synthesized": true
+  },
+  "sample": true,
+  "highlights": [
+    {
+      "title": "The Portara at sunset",
+      "line": "A marble gate to nowhere, the symbol of Naxos.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/20221029_Naxos_762.jpg/1280px-20221029_Naxos_762.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Portara",
+        "page": "https://commons.wikimedia.org/wiki/File:20221029_Naxos_762.jpg",
+        "author": "Jean Housen",
+        "licence": "CC BY-SA 4.0"
+      },
+      "day": 5
+    },
+    {
+      "title": "Naoussa harbour",
+      "line": "Fishing boats, octopus drying in the sun and tavernas on the quay.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg/1280px-Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg",
+        "w": 1280,
+        "h": 852,
+        "credit": "Paros",
+        "page": "https://commons.wikimedia.org/wiki/File:Fish_tavern,_Naoussa,_Paros,_119137.jpg",
+        "author": "Zde",
+        "licence": "CC BY-SA 4.0"
+      },
+      "day": 3
+    },
+    {
+      "title": "Cave of Antiparos",
+      "line": "400 steps down into a hall of stalactites.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Antiparos_Cave.jpg/1280px-Antiparos_Cave.jpg",
+        "w": 1280,
+        "h": 852,
+        "credit": "Cave of Antiparos",
+        "page": "https://commons.wikimedia.org/wiki/File:Antiparos_Cave.jpg",
+        "author": "Kondephy",
+        "licence": "CC BY-SA 4.0"
+      },
+      "day": 4
+    },
+    {
+      "title": "The Acropolis",
+      "line": "Start the week on the rock above Athens.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg/1280px-Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+        "w": 1280,
+        "h": 800,
+        "credit": "Acropolis of Athens",
+        "page": "https://commons.wikimedia.org/wiki/File:Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+        "author": "A.Savin",
+        "licence": "CC BY-SA 3.0"
+      },
+      "day": 1
+    }
+  ],
+  "photos": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg/1280px-Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+      "w": 1280,
+      "h": 960,
+      "credit": "Cyclades",
+      "page": "https://commons.wikimedia.org/wiki/File:Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+      "author": "kallerna",
+      "licence": "CC BY-SA 4.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg/1280px-Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg",
+      "w": 1280,
+      "h": 852,
+      "credit": "Paros",
+      "page": "https://commons.wikimedia.org/wiki/File:Fish_tavern,_Naoussa,_Paros,_119137.jpg",
+      "author": "Zde",
+      "licence": "CC BY-SA 4.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Antiparos-cave-church.jpg/1280px-Antiparos-cave-church.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Antiparos",
+      "page": "https://commons.wikimedia.org/wiki/File:Antiparos-cave-church.jpg",
+      "author": "Dimorsitanos",
+      "licence": "CC BY-SA 3.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/20221029_Naxos_762.jpg/1280px-20221029_Naxos_762.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Portara",
+      "page": "https://commons.wikimedia.org/wiki/File:20221029_Naxos_762.jpg",
+      "author": "Jean Housen",
+      "licence": "CC BY-SA 4.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg/1280px-Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Naxos",
+      "page": "https://commons.wikimedia.org/wiki/File:Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg",
+      "author": "Manfred Werner (Tsui)",
+      "licence": "CC BY-SA 4.0"
+    }
+  ],
+  "dayPlaces": [
+    {
+      "day": 1,
+      "name": "Athens",
+      "lat": 37.9805,
+      "lon": 23.73118
+    },
+    {
+      "day": 2,
+      "name": "Parikia",
+      "lat": 37.085,
+      "lon": 25.152
+    },
+    {
+      "day": 3,
+      "name": "Naoussa",
+      "lat": 37.124,
+      "lon": 25.236
+    },
+    {
+      "day": 4,
+      "name": "Antiparos",
+      "lat": 37.00944444,
+      "lon": 25.06083333
+    },
+    {
+      "day": 5,
+      "name": "Naxos",
+      "lat": 37.0855,
+      "lon": 25.3686
+    },
+    {
+      "day": 6,
+      "name": "Naxos",
+      "lat": 37.0855,
+      "lon": 25.3686
+    },
+    {
+      "day": 7,
+      "name": "Naxos",
+      "lat": 37.0855,
+      "lon": 25.3686
+    }
+  ],
+  "wordCount": 523
+}

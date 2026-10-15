@@ -2,10 +2,10 @@
   "schemaVersion": "2.0",
   "dataset": "Carta — unified European trip dataset",
   "generated": "2026-09-02",
-  "tripCount": 253,
+  "tripCount": 258,
   "regions": {
-    "western-central": 100,
-    "southern-mediterranean": 70,
+    "western-central": 101,
+    "southern-mediterranean": 74,
     "eastern-southeastern": 53,
     "northern-baltics": 30
   },
@@ -59,6 +59,31 @@
       "id": 10,
       "name": "On the water",
       "slug": "water-sports"
+    },
+    {
+      "id": 11,
+      "name": "Hostel weeks",
+      "slug": "hostel"
+    },
+    {
+      "id": 12,
+      "name": "Beach weeks",
+      "slug": "beach-week"
+    },
+    {
+      "id": 13,
+      "name": "Rail journeys",
+      "slug": "rail"
+    },
+    {
+      "id": 14,
+      "name": "Pilgrim routes",
+      "slug": "pilgrim"
+    },
+    {
+      "id": 15,
+      "name": "Island hopping",
+      "slug": "island-hopping"
     }
   ],
   "trips": [
@@ -75787,6 +75812,2884 @@
         "ingestedAt": "2026-09-02",
         "synthesized": false
       }
+    },
+    {
+      "id": "ba-hostel-sarajevo-mostar-kotor",
+      "sourceId": "ba-hostel-sarajevo-mostar-kotor",
+      "slug": "ba-hostel-sarajevo-mostar-kotor",
+      "title": "Sarajevo, Mostar and the Bay of Kotor in Hostel Beds",
+      "country": "Bosnia and Herzegovina",
+      "countryCode": "BA",
+      "countries": [
+        {
+          "name": "Bosnia and Herzegovina",
+          "code": "BA"
+        },
+        {
+          "name": "Montenegro",
+          "code": "ME"
+        }
+      ],
+      "isMultiCountry": true,
+      "region": "Southern & Mediterranean Europe",
+      "regionKey": "southern-mediterranean",
+      "subRegion": "Sarajevo, the Neretva valley and the Bay of Kotor",
+      "tripType": "Hostel weeks",
+      "tripTypeId": 11,
+      "tripTypeSlug": "hostel",
+      "durationDays": 7,
+      "bestPeriod": {
+        "months": [
+          5,
+          6,
+          9,
+          10
+        ],
+        "monthNames": [
+          "May",
+          "June",
+          "September",
+          "October"
+        ],
+        "window": "May to June and September to October",
+        "note": null,
+        "avoid": "July and August, when Mostar passes 38 °C and cruise ships fill Kotor",
+        "raw": "May to June, September to October"
+      },
+      "budgetTier": "€",
+      "budgetTierRange": [
+        1,
+        1
+      ],
+      "budgetTierRaw": "€",
+      "budget": {
+        "currency": "EUR",
+        "totalEur": {
+          "low": 300,
+          "high": 500
+        },
+        "totalNote": null,
+        "breakdown": {
+          "accommodation": {
+            "lowEur": 90,
+            "highEur": 150,
+            "note": "Dorm beds from €15 a night, six nights"
+          },
+          "food": {
+            "lowEur": 100,
+            "highEur": 170,
+            "note": "Bakeries, ćevapi and market lunches"
+          },
+          "transport": {
+            "lowEur": 60,
+            "highEur": 90,
+            "note": "Train to Mostar, bus to Kotor, city buses"
+          },
+          "activities": {
+            "lowEur": 50,
+            "highEur": 90,
+            "note": "Tunnel museum, Blagaj and Kravica day, Kotor walls"
+          }
+        },
+        "perDayEur": {
+          "low": 43,
+          "high": 71
+        }
+      },
+      "profile": {
+        "difficulty": 2,
+        "difficultyLabel": "Easy",
+        "difficultyNote": "2/5, city walking and one 1,350 step climb above Kotor",
+        "fitnessLevel": "Easy",
+        "crowdLevel": "Moderate",
+        "familyFriendly": null,
+        "carRequired": false
+      },
+      "basecamps": [],
+      "gatewayAirport": "SJJ Sarajevo, 30 min to the old town by bus; TIV Tivat or DBV Dubrovnik for the way home",
+      "gatewayAirportCode": "SJJ",
+      "languages": [
+        "Bosnian",
+        "Montenegrin",
+        "English"
+      ],
+      "currency": "BAM and EUR",
+      "emergencyNumber": "112",
+      "coordinates": {
+        "lat": 43.84864,
+        "lon": 18.35644,
+        "precision": "city",
+        "matchedPlace": "Sarajevo",
+        "source": "dossier"
+      },
+      "tags": [
+        "hostel",
+        "backpacker",
+        "train",
+        "old-towns",
+        "balkans",
+        "budget"
+      ],
+      "summary": "Three of the best value old towns in Europe, joined by one of its most beautiful train rides. The week starts in **Sarajevo**, where Ottoman lanes meet Austro-Hungarian avenues, rides the Neretva canyon line to **Mostar** and its rebuilt **Stari Most**, then crosses to Montenegro for the walled town of **Kotor** at the head of its fjord-like bay. Every night is a social hostel with a dorm bed under €20.",
+      "summaryGenerated": false,
+      "hook": "Three old towns, one canyon train and six nights in dorms for under €150.",
+      "snapshot": null,
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Sarajevo, the old bazaar",
+          "morning": "Bus 200 from the airport to the centre takes about 30 minutes. Drop your bag and walk **Baščaršija**, the copper-smiths' lanes and the Sebilj fountain.",
+          "afternoon": "Free walking tour from the Eternal Flame, about two and a half hours, tips only. It covers the **Latin Bridge** and the 1914 assassination corner.",
+          "evening": "Ćevapi at a buregdžinica for about €6, then the view over the city from the **Yellow Fortress** at sunset.",
+          "dayStats": "City walking, about 8 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 8,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 240,
+              "high": 240
+            }
+          },
+          "sleep": "Hostel in Baščaršija",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Latin_Bridge_02_%2822757259615%29.jpg/1280px-Latin_Bridge_02_%2822757259615%29.jpg",
+            "w": 1280,
+            "h": 894,
+            "credit": "Latin Bridge",
+            "page": "https://commons.wikimedia.org/wiki/File:Latin_Bridge_02_(22757259615).jpg",
+            "author": "sundeviljeff",
+            "licence": "CC BY 2.0"
+          }
+        },
+        {
+          "day": 2,
+          "title": "Sarajevo, the siege and the hills",
+          "morning": "Tram and bus to the **Tunnel of Hope** museum, the 800 m lifeline under the airport runway during the siege. Entry about €10.",
+          "afternoon": "The **War Childhood Museum**, small and unforgettable, then the cable car up Trebević to the abandoned 1984 Olympic bobsleigh track.",
+          "evening": "Coffee the Bosnian way in a džezva, then a bar crawl in the hostel quarter.",
+          "dayStats": "City walking, about 9 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 9,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 300,
+              "high": 300
+            }
+          },
+          "sleep": "Hostel in Baščaršija",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/War_Childhood_Museum_3.jpg/1280px-War_Childhood_Museum_3.jpg",
+            "w": 1280,
+            "h": 1351,
+            "credit": "War Childhood Museum",
+            "page": "https://commons.wikimedia.org/wiki/File:War_Childhood_Museum_3.jpg",
+            "author": "Anida Krečo",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 3,
+          "title": "The Neretva canyon train to Mostar",
+          "morning": "The 07:15 train to Mostar takes about two hours through the Neretva canyon, the most scenic line in the Balkans. Tickets about €10 at the station.",
+          "afternoon": "Walk the old town to **Stari Most** and watch the divers, who jump 21 m into the river once the hat has collected enough.",
+          "evening": "Sunset from the **Kriva Ćuprija**, the small crooked bridge, and dinner on a terrace over the river.",
+          "dayStats": "Train 2 h, city walking 6 km",
+          "stats": {
+            "mode": "train",
+            "distanceKm": 6,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 180,
+              "high": 180
+            }
+          },
+          "sleep": "Hostel in the old town of Mostar",
+          "sleepRef": 2,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Old_Bridge_in_Mostar_during_sunset.jpg/1280px-Old_Bridge_in_Mostar_during_sunset.jpg",
+            "w": 1280,
+            "h": 720,
+            "credit": "Stari Most",
+            "page": "https://commons.wikimedia.org/wiki/File:Old_Bridge_in_Mostar_during_sunset.jpg",
+            "author": "Duesseljan",
+            "licence": "CC0"
+          }
+        },
+        {
+          "day": 4,
+          "title": "Blagaj, Počitelj and the Kravica falls",
+          "morning": "Hostels run a shared minibus day for about €35. First stop the **Blagaj Tekke**, a dervish house under a cliff at the source of the Buna.",
+          "afternoon": "The stone village of **Počitelj**, then a swim under the **Kravica** waterfalls, warm enough from late May.",
+          "evening": "Back in Mostar for grilled trout and the evening light on the bridge.",
+          "dayStats": "Minibus day, about 110 km",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 110,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 480,
+              "high": 480
+            }
+          },
+          "sleep": "Hostel in the old town of Mostar",
+          "sleepRef": 2,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/1280px-Stari_Most_viewed_from_North.jpg",
+            "w": 1280,
+            "h": 463,
+            "credit": "Mostar",
+            "page": "https://commons.wikimedia.org/wiki/File:Stari_Most_viewed_from_North.jpg",
+            "author": "Bernard Gagnon",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 5,
+          "title": "Over the mountains to Kotor",
+          "morning": "The morning bus to Kotor takes five to six hours through Trebinje and Herceg Novi, about €25. Sit on the right for the bay.",
+          "afternoon": "Arrive in **Kotor**, drop your bag and get lost in the marble lanes of the walled town.",
+          "evening": "Sunset drink on the walls by the Sea Gate, then burek from the bakery by the North Gate.",
+          "dayStats": "Bus 5 h 30 min, 190 km",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 190,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 330,
+              "high": 330
+            }
+          },
+          "sleep": "Hostel inside Kotor's walls",
+          "sleepRef": 3,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg/1280px-20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg",
+            "w": 1280,
+            "h": 852,
+            "credit": "Kotor",
+            "page": "https://commons.wikimedia.org/wiki/File:20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg",
+            "author": "User:Ggia",
+            "licence": "CC BY-SA 3.0"
+          }
+        },
+        {
+          "day": 6,
+          "title": "The walls of Kotor and Perast",
+          "morning": "Climb the **Fortifications of Kotor** early, 1,350 steps and 260 m to San Giovanni, about €15 in season. Go before 08:00 for the light and the shade.",
+          "afternoon": "Local bus to **Perast** for about €2, then the boat to **Our Lady of the Rocks**, an island church built on sunken ships.",
+          "evening": "Last night: grilled squid by the harbour and the hostel's rooftop.",
+          "dayStats": "Walk 8 km, climb 260 m",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 8,
+            "ascentM": 260,
+            "descentM": 260,
+            "highM": 280,
+            "timeMin": {
+              "low": 240,
+              "high": 240
+            }
+          },
+          "sleep": "Hostel inside Kotor's walls",
+          "sleepRef": 3,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Mura_di_cattaro%2C_05.JPG/1280px-Mura_di_cattaro%2C_05.JPG",
+            "w": 1280,
+            "h": 853,
+            "credit": "Fortifications of Kotor",
+            "page": "https://commons.wikimedia.org/wiki/File:Mura_di_cattaro,_05.JPG",
+            "author": "Sailko",
+            "licence": "CC BY 3.0"
+          }
+        },
+        {
+          "day": 7,
+          "title": "Budva beach, then home",
+          "morning": "Bus to **Budva** in 40 minutes for a last swim at the old town beach.",
+          "afternoon": "Bus to Tivat airport in 30 minutes, or two hours to Dubrovnik for more flights.",
+          "evening": null,
+          "dayStats": "Bus 40 min, beach day",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 25,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 60,
+              "high": 60
+            }
+          },
+          "sleep": null,
+          "sleepRef": null,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Budva_%2826871774051%29.jpg/1280px-Budva_%2826871774051%29.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Budva",
+            "page": "https://commons.wikimedia.org/wiki/File:Budva_(26871774051).jpg",
+            "author": "Nick Savchenko from Kiev, Ukraine",
+            "licence": "CC BY-SA 2.0"
+          }
+        }
+      ],
+      "accommodationStrategy": [
+        {
+          "rank": 1,
+          "name": "Hostel in Baščaršija",
+          "style": "hostel",
+          "location": "Sarajevo old town",
+          "description": "Pick one inside the bazaar quarter with a kitchen and a common room; most run the free walking tour and evening outings.",
+          "booking": "two weeks ahead for weekends",
+          "priceNote": "€15 to €20 a dorm bed"
+        },
+        {
+          "rank": 2,
+          "name": "Hostel in the old town of Mostar",
+          "style": "hostel",
+          "location": "Mostar, 5 minutes from Stari Most",
+          "description": "Family-run hostels here sell the Blagaj and Kravica day and often include breakfast.",
+          "booking": "a week ahead",
+          "priceNote": "€14 to €20 a dorm bed"
+        },
+        {
+          "rank": 3,
+          "name": "Hostel inside Kotor's walls",
+          "style": "hostel",
+          "location": "Kotor old town",
+          "description": "Two well-known hostels sit inside the walls, so the fortress climb starts at your door.",
+          "booking": "three weeks ahead in summer",
+          "priceNote": "€18 to €28 a dorm bed"
+        }
+      ],
+      "logistics": {
+        "connectivity": "Montenegro and Bosnia are outside EU roaming; buy a local prepaid SIM for about €5 or use hostel wifi.",
+        "emergency": "112 works in both countries.",
+        "weather": "Mostar is one of the hottest towns in Europe in July; carry water on the minibus day.",
+        "bookingWindows": "The Sarajevo to Mostar train has no seat reservations; arrive 20 minutes early in summer.",
+        "money": "Bosnia uses the convertible mark (BAM, about €0.51); Montenegro uses the euro. Small places are cash only.",
+        "transportRules": "Buses charge about €1 to €2 for each bag in the hold; keep coins.",
+        "permits": null,
+        "health": "Tap water is safe in all three towns.",
+        "gettingThere": "Fly into Sarajevo and out of Tivat or Dubrovnik to avoid doubling back.",
+        "other": []
+      },
+      "proTips": [
+        "Take the Sarajevo to Mostar train, not the bus: same price, half the bends and the canyon views.",
+        "Climb Kotor's walls before 08:00; the ticket booth opens later and the steps are in shade.",
+        "Pay for Blagaj and Kravica through the hostel; the shared minibus is cheaper than two buses and a taxi."
+      ],
+      "typeSpecific": {
+        "raw": {
+          "Who It Suits": "Solo travellers and friends on a first Balkan trip"
+        },
+        "surface": null,
+        "distanceKm": null,
+        "elevationM": null,
+        "verticalM": null,
+        "technicalRating": null,
+        "transitPass": null,
+        "hutBooking": null,
+        "liftNetwork": null,
+        "snowReliability": null,
+        "windConditions": null,
+        "gpxReady": false,
+        "bookingTimeline": "Hostels two to three weeks ahead from June",
+        "audience": "Solo and budget travellers, 18 to 35"
+      },
+      "packingNotes": [
+        "A padlock for the hostel lockers",
+        "Flip-flops for shared showers",
+        "A shawl or long sleeves for the mosques",
+        "Water shoes for Kravica"
+      ],
+      "whatCouldGoWrong": [
+        "The Mostar train can be replaced by a bus at short notice; check the station board the day before.",
+        "The border at Debeli Brijeg can add an hour on summer weekends."
+      ],
+      "sources": {
+        "verified": null,
+        "confidenceNotes": "Sample trip written for T431 to show every slot of the trip page. Prices, timetables and opening details are to be audited by the owner."
+      },
+      "verifyFlags": [],
+      "verifyFlagCount": 0,
+      "volatilePricing": false,
+      "dataVintage": 2026,
+      "provenance": {
+        "batch": "t431-samples",
+        "sourceFile": "pipeline/journeys/sample_trips.py",
+        "sourceFormat": "python (sample)",
+        "sourceId": "ba-hostel-sarajevo-mostar-kotor",
+        "ingestedAt": "2026-10-15",
+        "synthesized": true
+      },
+      "sample": true,
+      "highlights": [
+        {
+          "title": "Stari Most at sunset",
+          "line": "The rebuilt Ottoman bridge, with divers leaping 21 m into the Neretva.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Old_Bridge_in_Mostar_during_sunset.jpg/1280px-Old_Bridge_in_Mostar_during_sunset.jpg",
+            "w": 1280,
+            "h": 720,
+            "credit": "Stari Most",
+            "page": "https://commons.wikimedia.org/wiki/File:Old_Bridge_in_Mostar_during_sunset.jpg",
+            "author": "Duesseljan",
+            "licence": "CC0"
+          },
+          "day": 3
+        },
+        {
+          "title": "The canyon train",
+          "line": "Two hours along the emerald Neretva for about €10.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/1280px-Stari_Most_viewed_from_North.jpg",
+            "w": 1280,
+            "h": 463,
+            "credit": "Mostar",
+            "page": "https://commons.wikimedia.org/wiki/File:Stari_Most_viewed_from_North.jpg",
+            "author": "Bernard Gagnon",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 3
+        },
+        {
+          "title": "Kotor from its walls",
+          "line": "1,350 steps to San Giovanni and the whole bay below.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Mura_di_cattaro%2C_05.JPG/1280px-Mura_di_cattaro%2C_05.JPG",
+            "w": 1280,
+            "h": 853,
+            "credit": "Fortifications of Kotor",
+            "page": "https://commons.wikimedia.org/wiki/File:Mura_di_cattaro,_05.JPG",
+            "author": "Sailko",
+            "licence": "CC BY 3.0"
+          },
+          "day": 6
+        },
+        {
+          "title": "Baščaršija",
+          "line": "Copper lanes, coffee in a džezva and ćevapi for €6.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+            "w": 1280,
+            "h": 765,
+            "credit": "Sarajevo",
+            "page": "https://commons.wikimedia.org/wiki/File:Sarajevo_City_Panorama.JPG",
+            "author": "Julian Nyča",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 1
+        },
+        {
+          "title": "Our Lady of the Rocks",
+          "line": "An island church built on scuttled ships, by boat from Perast.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Kotor_area_Our_Lady_of_the_Rocks.JPG/1280px-Kotor_area_Our_Lady_of_the_Rocks.JPG",
+            "w": 1280,
+            "h": 647,
+            "credit": "Our Lady of the Rocks",
+            "page": "https://commons.wikimedia.org/wiki/File:Kotor_area_Our_Lady_of_the_Rocks.JPG",
+            "author": "Brian Dell",
+            "licence": "Public domain"
+          },
+          "day": 6
+        }
+      ],
+      "photos": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Old_Bridge_in_Mostar_during_sunset.jpg/1280px-Old_Bridge_in_Mostar_during_sunset.jpg",
+          "w": 1280,
+          "h": 720,
+          "credit": "Stari Most",
+          "page": "https://commons.wikimedia.org/wiki/File:Old_Bridge_in_Mostar_during_sunset.jpg",
+          "author": "Duesseljan",
+          "licence": "CC0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+          "w": 1280,
+          "h": 765,
+          "credit": "Sarajevo",
+          "page": "https://commons.wikimedia.org/wiki/File:Sarajevo_City_Panorama.JPG",
+          "author": "Julian Nyča",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg/1280px-20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg",
+          "w": 1280,
+          "h": 852,
+          "credit": "Kotor",
+          "page": "https://commons.wikimedia.org/wiki/File:20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg",
+          "author": "User:Ggia",
+          "licence": "CC BY-SA 3.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Mura_di_cattaro%2C_05.JPG/1280px-Mura_di_cattaro%2C_05.JPG",
+          "w": 1280,
+          "h": 853,
+          "credit": "Fortifications of Kotor",
+          "page": "https://commons.wikimedia.org/wiki/File:Mura_di_cattaro,_05.JPG",
+          "author": "Sailko",
+          "licence": "CC BY 3.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Latin_Bridge_02_%2822757259615%29.jpg/1280px-Latin_Bridge_02_%2822757259615%29.jpg",
+          "w": 1280,
+          "h": 894,
+          "credit": "Latin Bridge",
+          "page": "https://commons.wikimedia.org/wiki/File:Latin_Bridge_02_(22757259615).jpg",
+          "author": "sundeviljeff",
+          "licence": "CC BY 2.0"
+        }
+      ],
+      "dayPlaces": [
+        {
+          "day": 1,
+          "name": "Sarajevo",
+          "lat": 43.84864,
+          "lon": 18.35644
+        },
+        {
+          "day": 2,
+          "name": "Sarajevo",
+          "lat": 43.84864,
+          "lon": 18.35644
+        },
+        {
+          "day": 3,
+          "name": "Mostar",
+          "lat": 43.3438,
+          "lon": 17.8079
+        },
+        {
+          "day": 4,
+          "name": "Mostar",
+          "lat": 43.3438,
+          "lon": 17.8079
+        },
+        {
+          "day": 5,
+          "name": "Kotor",
+          "lat": 42.4247,
+          "lon": 18.7712
+        },
+        {
+          "day": 6,
+          "name": "Kotor",
+          "lat": 42.4247,
+          "lon": 18.7712
+        },
+        {
+          "day": 7,
+          "name": "Budva",
+          "lat": 42.2911,
+          "lon": 18.8403
+        }
+      ],
+      "wordCount": 655
+    },
+    {
+      "id": "hr-beach-week-makarska-riviera",
+      "sourceId": "hr-beach-week-makarska-riviera",
+      "slug": "hr-beach-week-makarska-riviera",
+      "title": "A Family Beach Week on the Makarska Riviera",
+      "country": "Croatia",
+      "countryCode": "HR",
+      "countries": [
+        {
+          "name": "Croatia",
+          "code": "HR"
+        }
+      ],
+      "isMultiCountry": false,
+      "region": "Southern & Mediterranean Europe",
+      "regionKey": "southern-mediterranean",
+      "subRegion": "Makarska Riviera, Split-Dalmatia",
+      "tripType": "Beach weeks",
+      "tripTypeId": 12,
+      "tripTypeSlug": "beach-week",
+      "durationDays": 7,
+      "bestPeriod": {
+        "months": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "monthNames": [
+          "June",
+          "July",
+          "August",
+          "September"
+        ],
+        "window": "June to September, sea above 22 °C",
+        "note": "Late June and September are calmer and cheaper.",
+        "avoid": "October to April, when most beach bars and boats stop",
+        "raw": "June to September"
+      },
+      "budgetTier": "€€",
+      "budgetTierRange": [
+        2,
+        2
+      ],
+      "budgetTierRaw": "€€",
+      "budget": {
+        "currency": "EUR",
+        "totalEur": {
+          "low": 450,
+          "high": 750
+        },
+        "totalNote": null,
+        "breakdown": {
+          "accommodation": {
+            "lowEur": 210,
+            "highEur": 350,
+            "note": "An apartment for four, shared, six nights"
+          },
+          "food": {
+            "lowEur": 140,
+            "highEur": 220,
+            "note": "Self-catering breakfasts and lunches, konoba dinners"
+          },
+          "transport": {
+            "lowEur": 40,
+            "highEur": 70,
+            "note": "Bus from Split, boat to Bol, local buses"
+          },
+          "activities": {
+            "lowEur": 60,
+            "highEur": 110,
+            "note": "Biokovo Skywalk, boat day, Cetina canyon"
+          }
+        },
+        "perDayEur": {
+          "low": 64,
+          "high": 107
+        }
+      },
+      "profile": {
+        "difficulty": 1,
+        "difficultyLabel": "Easy",
+        "difficultyNote": "1/5, beaches and short walks; every day trip suits children from 5",
+        "fitnessLevel": "Easy",
+        "crowdLevel": "High",
+        "familyFriendly": true,
+        "carRequired": false
+      },
+      "basecamps": [
+        "Makarska"
+      ],
+      "gatewayAirport": "SPU Split, 1 h 45 min to Makarska by bus",
+      "gatewayAirportCode": "SPU",
+      "languages": [
+        "Croatian",
+        "English",
+        "German"
+      ],
+      "currency": "EUR",
+      "emergencyNumber": "112",
+      "coordinates": {
+        "lat": 43.3,
+        "lon": 17.0333,
+        "precision": "city",
+        "matchedPlace": "Makarska",
+        "source": "dossier"
+      },
+      "tags": [
+        "beach",
+        "family",
+        "one-base",
+        "boat",
+        "snorkel",
+        "croatia"
+      ],
+      "summary": "One apartment, no packing up, and a different beach every day. **Makarska** sits between the pine-backed pebble coves of the riviera and the wall of **Biokovo** behind it, with a boat to **Zlatni Rat** on Brač and the **Cetina** canyon at Omiš within an hour. Shallow pebble shelves, lifeguards on the town beach and ice cream on every promenade.",
+      "summaryGenerated": false,
+      "hook": "Seven days, one apartment, five beaches and a glass skywalk 1,228 m above the sea.",
+      "snapshot": null,
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrive and settle in",
+          "morning": "Bus from Split airport or the bus station to **Makarska**, about 1 h 45 min, from €10.",
+          "afternoon": "Unpack, find the supermarket and walk the **Makarska** promenade to the town beach.",
+          "evening": "Pizza on the harbour and a first swim off the Sveti Petar peninsula.",
+          "dayStats": "Bus 1 h 45 min, then rest",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 70,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 120,
+              "high": 120
+            }
+          },
+          "sleep": "Apartment in Makarska",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Urbanisti%C4%8Dka_cjelina_Makarske.jpg/1280px-Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Makarska",
+            "page": "https://commons.wikimedia.org/wiki/File:Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+            "author": "SKas",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 2,
+          "title": "The town beach and the Sveti Petar woods",
+          "morning": "Morning on the main beach, shallow pebbles and lifeguards in summer.",
+          "afternoon": "Shaded walk round the **Sveti Petar** peninsula to the lighthouse, 2 km on a flat path.",
+          "evening": "Fish platter at a konoba in the old town.",
+          "dayStats": "Beach day, walk 2 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 2,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 60,
+              "high": 60
+            }
+          },
+          "sleep": "Apartment in Makarska",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Nugal_beach_MakarskaTucepi.jpg/1280px-Nugal_beach_MakarskaTucepi.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Nugal Beach",
+            "page": "https://commons.wikimedia.org/wiki/File:Nugal_beach_MakarskaTucepi.jpg",
+            "author": "Tengilorg",
+            "licence": "CC BY 3.0"
+          }
+        },
+        {
+          "day": 3,
+          "title": "Punta Rata at Brela",
+          "morning": "Bus to **Brela** in 20 minutes for **Punta Rata**, often named the most beautiful beach in Europe.",
+          "afternoon": "Picnic under the pines, then snorkel round the rock with its single pine.",
+          "evening": "Back by bus or the coastal path, 8 km, for older children.",
+          "dayStats": "Bus 20 min, beach day",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 14,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 60,
+              "high": 60
+            }
+          },
+          "sleep": "Apartment in Makarska",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Brela_-_pla%C5%BEa_Punta_rata_%28istok%29.jpg/1280px-Brela_-_pla%C5%BEa_Punta_rata_%28istok%29.jpg",
+            "w": 1280,
+            "h": 960,
+            "credit": "Punta rata",
+            "page": "https://commons.wikimedia.org/wiki/File:Brela_-_pla%C5%BEa_Punta_rata_(istok).jpg",
+            "author": "Silverije",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 4,
+          "title": "Boat day to Zlatni Rat on Brač",
+          "morning": "Summer excursion boats leave Makarska harbour for **Bol** on Brač, about 1 h, around €35 an adult and half for children.",
+          "afternoon": "**Zlatni Rat**, the horn-shaped spit that moves with the wind, and warm shallow water on both sides.",
+          "evening": "Boat back at about 17:00; early night.",
+          "dayStats": "Boat 1 h each way",
+          "stats": {
+            "mode": "ferry",
+            "distanceKm": 40,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 120,
+              "high": 120
+            }
+          },
+          "sleep": "Apartment in Makarska",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/K%C3%B6ves_%C3%B6b%C3%B6l_-_panoramio.jpg/1280px-K%C3%B6ves_%C3%B6b%C3%B6l_-_panoramio.jpg",
+            "w": 1280,
+            "h": 960,
+            "credit": "Garma",
+            "page": "https://commons.wikimedia.org/wiki/File:K%C3%B6ves_%C3%B6b%C3%B6l_-_panoramio.jpg",
+            "author": "Mrcsifkin",
+            "licence": "CC BY-SA 3.0"
+          }
+        },
+        {
+          "day": 5,
+          "title": "Biokovo Skywalk",
+          "morning": "Shuttle up the **Biokovo** nature park road to the glass **Skywalk** at 1,228 m, booked the day before. Park ticket about €20 to €30 an adult in season.",
+          "afternoon": "Back down for a lazy afternoon on **Nugal** beach, or the town beach with small children.",
+          "evening": "Ice cream and the evening promenade.",
+          "dayStats": "Shuttle up 1,228 m, beach afternoon",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 46,
+            "ascentM": null,
+            "descentM": null,
+            "highM": 1228,
+            "timeMin": {
+              "low": 240,
+              "high": 240
+            }
+          },
+          "sleep": "Apartment in Makarska",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Biokovo_and_Makarska_in_Croatia_2018.jpg/1280px-Biokovo_and_Makarska_in_Croatia_2018.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Biokovo",
+            "page": "https://commons.wikimedia.org/wiki/File:Biokovo_and_Makarska_in_Croatia_2018.jpg",
+            "author": "Sergei Gussev",
+            "licence": "CC BY 2.0"
+          }
+        },
+        {
+          "day": 6,
+          "title": "The Cetina canyon at Omiš",
+          "morning": "Bus to **Omiš** in 40 minutes; family rafting on the **Cetina** runs from age 5 with a guide, about €30.",
+          "afternoon": "Lunch in Omiš old town under the pirate fortress.",
+          "evening": "Last sunset swim at Makarska.",
+          "dayStats": "Bus 40 min, rafting 3 h",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 60,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 240,
+              "high": 240
+            }
+          },
+          "sleep": "Apartment in Makarska",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Vyhled_ze_Sv._Jure_na_SZ%2C_podel_pobrezi_a_hlavniho_hrebene.jpg/1280px-Vyhled_ze_Sv._Jure_na_SZ%2C_podel_pobrezi_a_hlavniho_hrebene.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Park prirode Biokovo",
+            "page": "https://commons.wikimedia.org/wiki/File:Vyhled_ze_Sv._Jure_na_SZ,_podel_pobrezi_a_hlavniho_hrebene.jpg",
+            "author": "Martin Brož",
+            "licence": "CC BY 3.0"
+          }
+        },
+        {
+          "day": 7,
+          "title": "Back to Split",
+          "morning": "A last morning swim, then the bus to Split, 1 h 45 min.",
+          "afternoon": "Two hours in **Diocletian's Palace** before the airport bus if flights allow.",
+          "evening": null,
+          "dayStats": "Bus 1 h 45 min",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 70,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 120,
+              "high": 120
+            }
+          },
+          "sleep": null,
+          "sleepRef": null,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Croatia-01239_-_The_Peristil_%289551533404%29.jpg/1280px-Croatia-01239_-_The_Peristil_%289551533404%29.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Diocletian's Palace",
+            "page": "https://commons.wikimedia.org/wiki/File:Croatia-01239_-_The_Peristil_(9551533404).jpg",
+            "author": "Dennis G. Jarvis",
+            "licence": "CC BY-SA 2.0"
+          }
+        }
+      ],
+      "accommodationStrategy": [
+        {
+          "rank": 1,
+          "name": "Apartment in Makarska",
+          "style": "apartment",
+          "location": "Makarska, 10 minutes from the beach",
+          "description": "A two-bedroom apartment with a kitchen and a balcony sleeps four; the price is shared by the party.",
+          "booking": "two to three months ahead for July and August",
+          "priceNote": "€90 to €150 a night for the apartment"
+        }
+      ],
+      "logistics": {
+        "connectivity": "EU roaming works; 4G everywhere on the coast.",
+        "emergency": "112; lifeguards on Makarska town beach from June to September.",
+        "weather": "The bora can close boats on two or three days a summer; keep the boat day flexible.",
+        "bookingWindows": "Skywalk shuttles and rafting book out in August; book a day or two ahead.",
+        "money": "Euro; cards work almost everywhere, boats prefer cash.",
+        "transportRules": "Children under 6 travel free on most local buses; excursion boats charge half for 3 to 12.",
+        "permits": null,
+        "health": "Pebble beaches: water shoes save tears.",
+        "gettingThere": "Fly to Split; the airport bus links to the coastal buses south.",
+        "other": []
+      },
+      "proTips": [
+        "Pick an apartment on the Sveti Petar side: shade in the afternoon and a shorter walk to the quiet coves.",
+        "Go to Punta Rata before 10:00 for space under the pines."
+      ],
+      "typeSpecific": {
+        "raw": {
+          "Who It Suits": "Families with children from 3 to 14"
+        },
+        "surface": null,
+        "distanceKm": null,
+        "elevationM": 1228,
+        "verticalM": null,
+        "technicalRating": null,
+        "transitPass": null,
+        "hutBooking": null,
+        "liftNetwork": null,
+        "snowReliability": null,
+        "windConditions": "Bora can stop boats for a day",
+        "gpxReady": false,
+        "bookingTimeline": "Apartment two to three months ahead for July and August",
+        "audience": "Families"
+      },
+      "packingNotes": [
+        "Water shoes for the pebbles",
+        "Snorkel masks",
+        "Sun hats and rash vests",
+        "A beach umbrella or rent one"
+      ],
+      "whatCouldGoWrong": [
+        "The bora can cancel the Bol boat; swap it with the Cetina day.",
+        "August beaches fill by 11:00; go early or after 16:00."
+      ],
+      "sources": {
+        "verified": null,
+        "confidenceNotes": "Sample trip written for T431 to show every slot of the trip page. Prices, timetables and opening details are to be audited by the owner."
+      },
+      "verifyFlags": [],
+      "verifyFlagCount": 0,
+      "volatilePricing": false,
+      "dataVintage": 2026,
+      "provenance": {
+        "batch": "t431-samples",
+        "sourceFile": "pipeline/journeys/sample_trips.py",
+        "sourceFormat": "python (sample)",
+        "sourceId": "hr-beach-week-makarska-riviera",
+        "ingestedAt": "2026-10-15",
+        "synthesized": true
+      },
+      "sample": true,
+      "highlights": [
+        {
+          "title": "Punta Rata",
+          "line": "Turquoise water and one pine on a rock, 20 minutes by bus.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Brela_-_pla%C5%BEa_Punta_rata_%28istok%29.jpg/1280px-Brela_-_pla%C5%BEa_Punta_rata_%28istok%29.jpg",
+            "w": 1280,
+            "h": 960,
+            "credit": "Punta rata",
+            "page": "https://commons.wikimedia.org/wiki/File:Brela_-_pla%C5%BEa_Punta_rata_(istok).jpg",
+            "author": "Silverije",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 3
+        },
+        {
+          "title": "Zlatni Rat by boat",
+          "line": "The golden horn of Brač, warm shallows on both sides.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/K%C3%B6ves_%C3%B6b%C3%B6l_-_panoramio.jpg/1280px-K%C3%B6ves_%C3%B6b%C3%B6l_-_panoramio.jpg",
+            "w": 1280,
+            "h": 960,
+            "credit": "Garma",
+            "page": "https://commons.wikimedia.org/wiki/File:K%C3%B6ves_%C3%B6b%C3%B6l_-_panoramio.jpg",
+            "author": "Mrcsifkin",
+            "licence": "CC BY-SA 3.0"
+          },
+          "day": 4
+        },
+        {
+          "title": "Biokovo Skywalk",
+          "line": "A glass platform 1,228 m above the riviera.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Biokovo_and_Makarska_in_Croatia_2018.jpg/1280px-Biokovo_and_Makarska_in_Croatia_2018.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Biokovo",
+            "page": "https://commons.wikimedia.org/wiki/File:Biokovo_and_Makarska_in_Croatia_2018.jpg",
+            "author": "Sergei Gussev",
+            "licence": "CC BY 2.0"
+          },
+          "day": 5
+        },
+        {
+          "title": "Makarska promenade",
+          "line": "Ice cream, palm trees and a lifeguarded town beach.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Urbanisti%C4%8Dka_cjelina_Makarske.jpg/1280px-Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Makarska",
+            "page": "https://commons.wikimedia.org/wiki/File:Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+            "author": "SKas",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 1
+        }
+      ],
+      "photos": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Urbanisti%C4%8Dka_cjelina_Makarske.jpg/1280px-Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Makarska",
+          "page": "https://commons.wikimedia.org/wiki/File:Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+          "author": "SKas",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Brela_-_pla%C5%BEa_Punta_rata_%28istok%29.jpg/1280px-Brela_-_pla%C5%BEa_Punta_rata_%28istok%29.jpg",
+          "w": 1280,
+          "h": 960,
+          "credit": "Punta rata",
+          "page": "https://commons.wikimedia.org/wiki/File:Brela_-_pla%C5%BEa_Punta_rata_(istok).jpg",
+          "author": "Silverije",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Biokovo_and_Makarska_in_Croatia_2018.jpg/1280px-Biokovo_and_Makarska_in_Croatia_2018.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Biokovo",
+          "page": "https://commons.wikimedia.org/wiki/File:Biokovo_and_Makarska_in_Croatia_2018.jpg",
+          "author": "Sergei Gussev",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Nugal_beach_MakarskaTucepi.jpg/1280px-Nugal_beach_MakarskaTucepi.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Nugal Beach",
+          "page": "https://commons.wikimedia.org/wiki/File:Nugal_beach_MakarskaTucepi.jpg",
+          "author": "Tengilorg",
+          "licence": "CC BY 3.0"
+        }
+      ],
+      "dayPlaces": [
+        {
+          "day": 1,
+          "name": "Makarska",
+          "lat": 43.3,
+          "lon": 17.0333
+        },
+        {
+          "day": 2,
+          "name": "Makarska",
+          "lat": 43.3,
+          "lon": 17.0333
+        },
+        {
+          "day": 3,
+          "name": "Brela",
+          "lat": 43.37,
+          "lon": 16.93
+        },
+        {
+          "day": 4,
+          "name": "Bol",
+          "lat": 43.26,
+          "lon": 16.65
+        },
+        {
+          "day": 5,
+          "name": "Biokovo",
+          "lat": 43.32,
+          "lon": 17.06
+        },
+        {
+          "day": 6,
+          "name": "Omiš",
+          "lat": 43.44,
+          "lon": 16.69
+        },
+        {
+          "day": 7,
+          "name": "Split",
+          "lat": 43.50891,
+          "lon": 16.43915
+        }
+      ],
+      "wordCount": 531
+    },
+    {
+      "id": "cz-rail-prague-vienna-budapest",
+      "sourceId": "cz-rail-prague-vienna-budapest",
+      "slug": "cz-rail-prague-vienna-budapest",
+      "title": "Prague, Vienna and Budapest by Train",
+      "country": "Czechia",
+      "countryCode": "CZ",
+      "countries": [
+        {
+          "name": "Czechia",
+          "code": "CZ"
+        },
+        {
+          "name": "Austria",
+          "code": "AT"
+        },
+        {
+          "name": "Slovakia",
+          "code": "SK"
+        },
+        {
+          "name": "Hungary",
+          "code": "HU"
+        }
+      ],
+      "isMultiCountry": true,
+      "region": "Western & Central Europe",
+      "regionKey": "western-central",
+      "subRegion": "Bohemia, Vienna, Bratislava and Budapest",
+      "tripType": "Rail journeys",
+      "tripTypeId": 13,
+      "tripTypeSlug": "rail",
+      "durationDays": 7,
+      "bestPeriod": {
+        "months": [
+          4,
+          5,
+          6,
+          9,
+          10,
+          12
+        ],
+        "monthNames": [
+          "April",
+          "May",
+          "June",
+          "September",
+          "October",
+          "December"
+        ],
+        "window": "April to June, September to October, and December for the markets",
+        "note": null,
+        "avoid": "Mid-July to August heat and peak hostel prices",
+        "raw": "Spring, autumn, December"
+      },
+      "budgetTier": "€€",
+      "budgetTierRange": [
+        2,
+        2
+      ],
+      "budgetTierRaw": "€€",
+      "budget": {
+        "currency": "EUR",
+        "totalEur": {
+          "low": 410,
+          "high": 780
+        },
+        "totalNote": null,
+        "breakdown": {
+          "accommodation": {
+            "lowEur": 140,
+            "highEur": 300,
+            "note": "Hostels and budget hotels, six nights"
+          },
+          "food": {
+            "lowEur": 140,
+            "highEur": 230,
+            "note": "Bakeries, beer halls, market lunches"
+          },
+          "transport": {
+            "lowEur": 70,
+            "highEur": 130,
+            "note": "Three trains booked ahead, city transport"
+          },
+          "activities": {
+            "lowEur": 60,
+            "highEur": 120,
+            "note": "Opera standing place, thermal bath, castles"
+          }
+        },
+        "perDayEur": {
+          "low": 59,
+          "high": 111
+        }
+      },
+      "profile": {
+        "difficulty": 1,
+        "difficultyLabel": "Easy",
+        "difficultyNote": "1/5, city walking and three train rides of 1 to 4 hours",
+        "fitnessLevel": "Easy",
+        "crowdLevel": "High",
+        "familyFriendly": true,
+        "carRequired": false
+      },
+      "basecamps": [],
+      "gatewayAirport": "PRG Prague, 35 min to the centre by bus and metro; home from BUD Budapest",
+      "gatewayAirportCode": "PRG",
+      "languages": [
+        "Czech",
+        "German",
+        "Slovak",
+        "Hungarian",
+        "English"
+      ],
+      "currency": "CZK, EUR, HUF",
+      "emergencyNumber": "112",
+      "coordinates": {
+        "lat": 50.08737,
+        "lon": 14.42132,
+        "precision": "city",
+        "matchedPlace": "Prague",
+        "source": "dossier"
+      },
+      "tags": [
+        "train",
+        "car-free",
+        "capitals",
+        "danube",
+        "interrail",
+        "cafes"
+      ],
+      "summary": "Four capitals, three easy trains and no car. **Prague** for its bridges and beer, **Vienna** for coffee houses and a €15 opera ticket, **Bratislava** for an afternoon on the Danube and **Budapest** for its thermal baths. Booked a few weeks ahead, every train costs less than a taxi to the airport.",
+      "summaryGenerated": false,
+      "hook": "Four capitals in seven days, three trains for under €60 booked ahead.",
+      "snapshot": null,
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Prague old town",
+          "morning": "Bus 59 and metro from the airport, about 35 minutes. Walk to **Old Town Square** for the astronomical clock.",
+          "afternoon": "**Charles Bridge** and the Lesser Town lanes below the castle.",
+          "evening": "Dinner and a 0.5 l Pilsner for under €3 in a Vinohrady beer hall.",
+          "dayStats": "City walking, about 8 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 8,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 240,
+              "high": 240
+            }
+          },
+          "sleep": "Hostel in Prague",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Prague_07-2016_View_from_Old_Town_Hall_Tower_img3.jpg/1280px-Prague_07-2016_View_from_Old_Town_Hall_Tower_img3.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Old Town Square",
+            "page": "https://commons.wikimedia.org/wiki/File:Prague_07-2016_View_from_Old_Town_Hall_Tower_img3.jpg",
+            "author": "A.Savin",
+            "licence": "FAL"
+          }
+        },
+        {
+          "day": 2,
+          "title": "Prague Castle and Petřín",
+          "morning": "**Prague Castle** grounds and St Vitus nave are free to walk; the combined ticket is optional.",
+          "afternoon": "Down through the gardens to **Petřín** hill and its mirror maze, then the river.",
+          "evening": "Jazz in a cellar, or the **Dancing House** terrace at sunset.",
+          "dayStats": "City walking, about 10 km, 130 m up",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 10,
+            "ascentM": 130,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 300,
+              "high": 300
+            }
+          },
+          "sleep": "Hostel in Prague",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Karl%C5%AFv_most_Praha%2C_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg/1280px-Karl%C5%AFv_most_Praha%2C_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Prague Castle",
+            "page": "https://commons.wikimedia.org/wiki/File:Karl%C5%AFv_most_Praha,_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg",
+            "author": "Tilman2007",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 3,
+          "title": "Railjet to Vienna",
+          "morning": "Railjet from Prague hlavní nádraží to Vienna in about 4 hours, from €20 booked ahead.",
+          "afternoon": "Check in, then **Naschmarkt** for a late lunch.",
+          "evening": "Standing place at the **Vienna State Opera**, from about €15, sold 80 minutes before curtain.",
+          "dayStats": "Train 4 h, 330 km",
+          "stats": {
+            "mode": "train",
+            "distanceKm": 330,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 240,
+              "high": 240
+            }
+          },
+          "sleep": "Budget hotel in Vienna",
+          "sleepRef": 2,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Staatsoper_Wien_DSC_5273w.jpg/1280px-Staatsoper_Wien_DSC_5273w.jpg",
+            "w": 1280,
+            "h": 734,
+            "credit": "Vienna State Opera house",
+            "page": "https://commons.wikimedia.org/wiki/File:Staatsoper_Wien_DSC_5273w.jpg",
+            "author": "P e z i",
+            "licence": "CC BY-SA 3.0 at"
+          }
+        },
+        {
+          "day": 4,
+          "title": "Vienna, palaces and coffee",
+          "morning": "**Schönbrunn** gardens and the Gloriette, free; the palace tour is extra.",
+          "afternoon": "The **Hofburg** and the Museum quarter, then cake in a classic café.",
+          "evening": "Heuriger wine tavern in Grinzing by tram 38.",
+          "dayStats": "City walking, about 11 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 11,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 300,
+              "high": 300
+            }
+          },
+          "sleep": "Budget hotel in Vienna",
+          "sleepRef": 2,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Wien_-_Schloss_Sch%C3%B6nbrunn.JPG/1280px-Wien_-_Schloss_Sch%C3%B6nbrunn.JPG",
+            "w": 1280,
+            "h": 853,
+            "credit": "Schonbrunn Palace",
+            "page": "https://commons.wikimedia.org/wiki/File:Wien_-_Schloss_Sch%C3%B6nbrunn.JPG",
+            "author": "C.Stadler/Bwag",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 5,
+          "title": "Bratislava on the way",
+          "morning": "Regional train to **Bratislava** in about 1 h, around €12 return-free single.",
+          "afternoon": "**Bratislava Castle**, the old town and the UFO bridge over the Danube; leave bags in station lockers.",
+          "evening": "Evening train on to **Budapest**, about 2 h 30 min, from €15.",
+          "dayStats": "Trains 1 h and 2 h 30 min",
+          "stats": {
+            "mode": "train",
+            "distanceKm": 260,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 210,
+              "high": 210
+            }
+          },
+          "sleep": "Hostel in Budapest",
+          "sleepRef": 3,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Bratislava_-_Burg_%28b%29.JPG/1280px-Bratislava_-_Burg_%28b%29.JPG",
+            "w": 1280,
+            "h": 853,
+            "credit": "Bratislava Castle",
+            "page": "https://commons.wikimedia.org/wiki/File:Bratislava_-_Burg_(b).JPG",
+            "author": "C.Stadler/Bwag",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 6,
+          "title": "Budapest baths and bridges",
+          "morning": "**Széchenyi** thermal baths in the city park, about €30 for the day.",
+          "afternoon": "**Heroes' Square** and **Andrássy út** back to the **Parliament** on the river.",
+          "evening": "Ruin bars of the Jewish quarter.",
+          "dayStats": "City walking, about 9 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 9,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 240,
+              "high": 240
+            }
+          },
+          "sleep": "Hostel in Budapest",
+          "sleepRef": 3,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Hungarian_Parliament_Building_from_across_the_Danube%2C_2025-01-11.jpg/1280px-Hungarian_Parliament_Building_from_across_the_Danube%2C_2025-01-11.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Hungarian Parliament Building",
+            "page": "https://commons.wikimedia.org/wiki/File:Hungarian_Parliament_Building_from_across_the_Danube,_2025-01-11.jpg",
+            "author": "Kilyann Le Hen",
+            "licence": "CC BY 4.0"
+          }
+        },
+        {
+          "day": 7,
+          "title": "Buda Castle, then home",
+          "morning": "Funicular or the stairs to **Buda Castle** and Fisherman's Bastion.",
+          "afternoon": "Bus 100E to the airport, about 35 minutes.",
+          "evening": null,
+          "dayStats": "City walking, about 5 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 5,
+            "ascentM": 60,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 180,
+              "high": 180
+            }
+          },
+          "sleep": null,
+          "sleepRef": null,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Budav%C3%A1ri_Palota%2C_ABCDEF_%C3%A9p%C3%BClet.jpg/1280px-Budav%C3%A1ri_Palota%2C_ABCDEF_%C3%A9p%C3%BClet.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Buda Castle",
+            "page": "https://commons.wikimedia.org/wiki/File:Budav%C3%A1ri_Palota,_ABCDEF_%C3%A9p%C3%BClet.jpg",
+            "author": "Varius",
+            "licence": "CC BY-SA 3.0"
+          }
+        }
+      ],
+      "accommodationStrategy": [
+        {
+          "rank": 1,
+          "name": "Hostel in Prague",
+          "style": "hostel",
+          "location": "Prague New Town",
+          "description": "Pick one within walking distance of the main station for the morning train.",
+          "booking": "three weeks ahead",
+          "priceNote": "€18 to €30 a dorm bed, €60 to €90 a private double"
+        },
+        {
+          "rank": 2,
+          "name": "Budget hotel in Vienna",
+          "style": "budget hotel",
+          "location": "Vienna, near the Westbahnhof or Hauptbahnhof",
+          "description": "Vienna's hostels are large and clean; budget hotels near the stations are close in price for two.",
+          "booking": "three weeks ahead",
+          "priceNote": "€25 to €40 a dorm bed, €80 to €120 a double"
+        },
+        {
+          "rank": 3,
+          "name": "Hostel in Budapest",
+          "style": "hostel",
+          "location": "Budapest District VII",
+          "description": "The Jewish quarter is the hostel quarter, steps from the ruin bars.",
+          "booking": "two weeks ahead",
+          "priceNote": "€15 to €25 a dorm bed"
+        }
+      ],
+      "logistics": {
+        "connectivity": "EU roaming works in all four countries.",
+        "emergency": "112 everywhere.",
+        "weather": "Danube summers are hot and continental; spring and autumn are best for walking.",
+        "bookingWindows": "Railjet and EuroCity fares rise as the date nears; book 3 to 6 weeks ahead on the operators' sites.",
+        "money": "Three currencies: koruna, euro, forint. Cards work almost everywhere; skip exchange booths.",
+        "transportRules": "An Interrail Global pass rarely pays for three short trains; buy point to point.",
+        "permits": null,
+        "health": null,
+        "gettingThere": "Fly into Prague and out of Budapest; open-jaw tickets often cost the same as a return.",
+        "other": []
+      },
+      "proTips": [
+        "Use the station lockers in Bratislava hlavná stanica so the stopover costs nothing but time.",
+        "Buy the Vienna 24 or 48 hour transport ticket only if you plan more than four rides a day."
+      ],
+      "typeSpecific": {
+        "raw": {
+          "Who It Suits": "First trips by train, couples, friends, families with older children"
+        },
+        "surface": null,
+        "distanceKm": 590,
+        "elevationM": null,
+        "verticalM": null,
+        "technicalRating": null,
+        "transitPass": "Point-to-point tickets beat a pass for this route",
+        "hutBooking": null,
+        "liftNetwork": null,
+        "snowReliability": null,
+        "windConditions": null,
+        "gpxReady": false,
+        "bookingTimeline": "Trains 3 to 6 weeks ahead",
+        "audience": "Car-free travellers"
+      },
+      "packingNotes": [
+        "A day bag for the Bratislava stop",
+        "Flip-flops and a towel for the baths",
+        "A smart layer for the opera"
+      ],
+      "whatCouldGoWrong": [
+        "Track work can replace a train with a bus on Sundays; check the operator's site the day before."
+      ],
+      "sources": {
+        "verified": null,
+        "confidenceNotes": "Sample trip written for T431 to show every slot of the trip page. Prices, timetables and opening details are to be audited by the owner."
+      },
+      "verifyFlags": [],
+      "verifyFlagCount": 0,
+      "volatilePricing": false,
+      "dataVintage": 2026,
+      "provenance": {
+        "batch": "t431-samples",
+        "sourceFile": "pipeline/journeys/sample_trips.py",
+        "sourceFormat": "python (sample)",
+        "sourceId": "cz-rail-prague-vienna-budapest",
+        "ingestedAt": "2026-10-15",
+        "synthesized": true
+      },
+      "sample": true,
+      "highlights": [
+        {
+          "title": "Charles Bridge at dawn",
+          "line": "Prague's Gothic bridge before the crowds, statues against the castle.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg/1280px-Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Charles Bridge",
+            "page": "https://commons.wikimedia.org/wiki/File:Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+            "author": "A.Savin",
+            "licence": "FAL"
+          },
+          "day": 1
+        },
+        {
+          "title": "€15 at the opera",
+          "line": "Standing places at the Vienna State Opera, sold on the night.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Staatsoper_Wien_DSC_5273w.jpg/1280px-Staatsoper_Wien_DSC_5273w.jpg",
+            "w": 1280,
+            "h": 734,
+            "credit": "Vienna State Opera house",
+            "page": "https://commons.wikimedia.org/wiki/File:Staatsoper_Wien_DSC_5273w.jpg",
+            "author": "P e z i",
+            "licence": "CC BY-SA 3.0 at"
+          },
+          "day": 3
+        },
+        {
+          "title": "Széchenyi baths",
+          "line": "Outdoor thermal pools in a palace, steaming even in winter.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+            "w": 1280,
+            "h": 662,
+            "credit": "Budapest",
+            "page": "https://commons.wikimedia.org/wiki/File:View_from_Gell%C3%A9rt_Hill_to_the_Danube,_Hungary_-_Budapest_(28493220635).jpg",
+            "author": "Visions of Domino",
+            "licence": "CC BY 2.0"
+          },
+          "day": 6
+        },
+        {
+          "title": "Bratislava Castle",
+          "line": "A Danube capital in an afternoon between two trains.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Bratislava_-_Burg_%28b%29.JPG/1280px-Bratislava_-_Burg_%28b%29.JPG",
+            "w": 1280,
+            "h": 853,
+            "credit": "Bratislava Castle",
+            "page": "https://commons.wikimedia.org/wiki/File:Bratislava_-_Burg_(b).JPG",
+            "author": "C.Stadler/Bwag",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 5
+        }
+      ],
+      "photos": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg/1280px-Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Charles Bridge",
+          "page": "https://commons.wikimedia.org/wiki/File:Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+          "author": "A.Savin",
+          "licence": "FAL"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+          "w": 1280,
+          "h": 662,
+          "credit": "Budapest",
+          "page": "https://commons.wikimedia.org/wiki/File:View_from_Gell%C3%A9rt_Hill_to_the_Danube,_Hungary_-_Budapest_(28493220635).jpg",
+          "author": "Visions of Domino",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/1280px-Schoenbrunn_philharmoniker_2012.jpg",
+          "w": 1280,
+          "h": 576,
+          "credit": "Vienna",
+          "page": "https://commons.wikimedia.org/wiki/File:Schoenbrunn_philharmoniker_2012.jpg",
+          "author": "Superbass",
+          "licence": "CC BY-SA 3.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Slovakia_bratislava.jpg/1280px-Slovakia_bratislava.jpg",
+          "w": 1280,
+          "h": 959,
+          "credit": "Bratislava",
+          "page": "https://commons.wikimedia.org/wiki/File:Slovakia_bratislava.jpg",
+          "author": "Arne Müseler",
+          "licence": "CC BY-SA 4.0"
+        }
+      ],
+      "dayPlaces": [
+        {
+          "day": 1,
+          "name": "Prague",
+          "lat": 50.08737,
+          "lon": 14.42132
+        },
+        {
+          "day": 2,
+          "name": "Prague",
+          "lat": 50.08737,
+          "lon": 14.42132
+        },
+        {
+          "day": 3,
+          "name": "Vienna",
+          "lat": 48.20849,
+          "lon": 16.37208
+        },
+        {
+          "day": 4,
+          "name": "Vienna",
+          "lat": 48.20849,
+          "lon": 16.37208
+        },
+        {
+          "day": 5,
+          "name": "Bratislava",
+          "lat": 48.15556,
+          "lon": 17.14184
+        },
+        {
+          "day": 6,
+          "name": "Budapest",
+          "lat": 47.49222,
+          "lon": 19.05081
+        },
+        {
+          "day": 7,
+          "name": "Budapest",
+          "lat": 47.49222,
+          "lon": 19.05081
+        }
+      ],
+      "wordCount": 549
+    },
+    {
+      "id": "es-pilgrim-camino-sarria-santiago",
+      "sourceId": "es-pilgrim-camino-sarria-santiago",
+      "slug": "es-pilgrim-camino-sarria-santiago",
+      "title": "The Camino Francés from Sarria to Santiago",
+      "country": "Spain",
+      "countryCode": "ES",
+      "countries": [
+        {
+          "name": "Spain",
+          "code": "ES"
+        }
+      ],
+      "isMultiCountry": false,
+      "region": "Southern & Mediterranean Europe",
+      "regionKey": "southern-mediterranean",
+      "subRegion": "Galicia, Lugo and A Coruña",
+      "tripType": "Pilgrim routes",
+      "tripTypeId": 14,
+      "tripTypeSlug": "pilgrim",
+      "durationDays": 7,
+      "bestPeriod": {
+        "months": [
+          5,
+          6,
+          9,
+          10
+        ],
+        "monthNames": [
+          "May",
+          "June",
+          "September",
+          "October"
+        ],
+        "window": "May to June and September to October",
+        "note": "July and August fill every albergue by early afternoon.",
+        "avoid": "November to March, short days and many albergues closed",
+        "raw": "May to June, September to October"
+      },
+      "budgetTier": "€",
+      "budgetTierRange": [
+        1,
+        1
+      ],
+      "budgetTierRaw": "€",
+      "budget": {
+        "currency": "EUR",
+        "totalEur": {
+          "low": 245,
+          "high": 405
+        },
+        "totalNote": null,
+        "breakdown": {
+          "accommodation": {
+            "lowEur": 70,
+            "highEur": 120,
+            "note": "Albergues, €10 public and €12 to €20 private"
+          },
+          "food": {
+            "lowEur": 140,
+            "highEur": 210,
+            "note": "Menú del peregrino €12 to €15, café breakfasts"
+          },
+          "transport": {
+            "lowEur": 25,
+            "highEur": 45,
+            "note": "Bus from Santiago airport to Sarria and back to the airport"
+          },
+          "activities": {
+            "lowEur": 10,
+            "highEur": 30,
+            "note": "Credencial, cathedral roof tour"
+          }
+        },
+        "perDayEur": {
+          "low": 35,
+          "high": 58
+        }
+      },
+      "profile": {
+        "difficulty": 3,
+        "difficultyLabel": "Active",
+        "difficultyNote": "3/5, five walking days of 19 to 29 km on good paths, about 5 to 7 hours each",
+        "fitnessLevel": "Active",
+        "crowdLevel": "High",
+        "familyFriendly": null,
+        "carRequired": false
+      },
+      "basecamps": [],
+      "gatewayAirport": "SCQ Santiago de Compostela, bus to Sarria via Lugo in about 2 h 30 min",
+      "gatewayAirportCode": "SCQ",
+      "languages": [
+        "Spanish",
+        "Galician",
+        "English"
+      ],
+      "currency": "EUR",
+      "emergencyNumber": "112",
+      "coordinates": {
+        "lat": 42.78,
+        "lon": -7.41,
+        "precision": "city",
+        "matchedPlace": "Sarria",
+        "source": "manual"
+      },
+      "tags": [
+        "camino",
+        "pilgrim",
+        "albergue",
+        "walking",
+        "galicia",
+        "compostela"
+      ],
+      "summary": "The last 100 km of the Camino Francés, the minimum that earns the **Compostela**. Five days on oak-lined lanes and stone villages from **Sarria**, through **Portomarín** on its reservoir, octopus in **Melide** and eucalyptus woods, to the **Cathedral of Santiago** and the pilgrims' Mass. Beds are €10 to €20 a night and dinner is a three-course menú for €13.",
+      "summaryGenerated": false,
+      "hook": "111 km in five days, beds from €10 a night, and the Compostela at the end.",
+      "snapshot": null,
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "To Sarria",
+          "morning": "Fly to **Santiago de Compostela**, then the bus to **Sarria** via Lugo, about 2 h 30 min.",
+          "afternoon": "Get your **credencial** stamped at the parish church and check the first yellow arrow.",
+          "evening": "Pilgrim dinner on Rúa Maior and an early night.",
+          "dayStats": "Bus 2 h 30 min",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 115,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 150,
+              "high": 150
+            }
+          },
+          "sleep": "Albergue in Sarria",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lugo_2023_-_Roman_Walls.jpg/1280px-Lugo_2023_-_Roman_Walls.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Roman Walls of Lugo",
+            "page": "https://commons.wikimedia.org/wiki/File:Lugo_2023_-_Roman_Walls.jpg",
+            "author": "Fernando Pascullo",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 2,
+          "title": "Sarria to Portomarín",
+          "morning": "Out through oak woods and hamlets; the **100 km stone** comes before lunch.",
+          "afternoon": "Down to the **Miño** reservoir and the climb of stairs into **Portomarín**, rebuilt stone by stone above the water.",
+          "evening": "Tarta de Santiago and an evening walk on the church square.",
+          "dayStats": "22 km, +420 m, -470 m, 5 h 30 min",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 22,
+            "ascentM": 420,
+            "descentM": 470,
+            "highM": 660,
+            "timeMin": {
+              "low": 330,
+              "high": 330
+            }
+          },
+          "sleep": "Albergue in Portomarín",
+          "sleepRef": 2,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Taurotragus_Orix._Marcelle%2C_Outeiro_de_Rei%2C_Galiza.jpg/1280px-Taurotragus_Orix._Marcelle%2C_Outeiro_de_Rei%2C_Galiza.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Marcelle Natureza",
+            "page": "https://commons.wikimedia.org/wiki/File:Taurotragus_Orix._Marcelle,_Outeiro_de_Rei,_Galiza.jpg",
+            "author": "Noel Feans",
+            "licence": "CC BY 2.0"
+          }
+        },
+        {
+          "day": 3,
+          "title": "Portomarín to Palas de Rei",
+          "morning": "The longest climb of the week, up to **Sierra Ligonde**, about 720 m, on forest tracks.",
+          "afternoon": "Down through Ligonde and Eirexe to **Palas de Rei**.",
+          "evening": "Caldo gallego and a foot soak.",
+          "dayStats": "25 km, +560 m, -320 m, 6 h 30 min",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 25,
+            "ascentM": 560,
+            "descentM": 320,
+            "highM": 720,
+            "timeMin": {
+              "low": 390,
+              "high": 390
+            }
+          },
+          "sleep": "Albergue in Palas de Rei",
+          "sleepRef": 3,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg/1280px-Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Monte Pedroso",
+            "page": "https://commons.wikimedia.org/wiki/File:Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg",
+            "author": "Luis Miguel Bugallo Sánchez (Lmbuga)",
+            "licence": "CC BY-SA 3.0"
+          }
+        },
+        {
+          "day": 4,
+          "title": "Palas de Rei to Arzúa",
+          "morning": "The longest day, 29 km, on rolling lanes through Galician farms.",
+          "afternoon": "**Pulpo a feira** in **Melide**, octopus with paprika on wooden plates, the Camino's best lunch.",
+          "evening": "Cheese from Arzúa, famous for it, with bread and a beer.",
+          "dayStats": "29 km, +500 m, -580 m, 7 h",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 29,
+            "ascentM": 500,
+            "descentM": 580,
+            "highM": 560,
+            "timeMin": {
+              "low": 420,
+              "high": 420
+            }
+          },
+          "sleep": "Albergue in Arzúa",
+          "sleepRef": 4,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar%2C_Santiago_de_Compostela.jpg/1280px-Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar%2C_Santiago_de_Compostela.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Church of Santa María la Real del Sar",
+            "page": "https://commons.wikimedia.org/wiki/File:Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar,_Santiago_de_Compostela.jpg",
+            "author": "Javier Pais",
+            "licence": "CC BY 2.0"
+          }
+        },
+        {
+          "day": 5,
+          "title": "Arzúa to O Pedrouzo",
+          "morning": "A shorter day under eucalyptus, with cafés every few kilometres.",
+          "afternoon": "Arrive in **O Pedrouzo** early and rest before the last stage.",
+          "evening": "Pilgrims' dinner and a 06:30 alarm.",
+          "dayStats": "19 km, +290 m, -350 m, 4 h 30 min",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 19,
+            "ascentM": 290,
+            "descentM": 350,
+            "highM": 410,
+            "timeMin": {
+              "low": 270,
+              "high": 270
+            }
+          },
+          "sleep": "Albergue in O Pedrouzo",
+          "sleepRef": 5,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg/1280px-Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Monte Pedroso",
+            "page": "https://commons.wikimedia.org/wiki/File:Monte_Pedroso_desde_Lara%C3%B1o_-_Santiago_-_Galiza-4.jpg",
+            "author": "Luis Miguel Bugallo Sánchez (Lmbuga)",
+            "licence": "CC BY-SA 3.0"
+          }
+        },
+        {
+          "day": 6,
+          "title": "O Pedrouzo to Santiago",
+          "morning": "Up to **Monte do Gozo**, the Mount of Joy, for the first sight of the cathedral spires.",
+          "afternoon": "Into the old town and the **Praza do Obradoiro**; queue at the pilgrim office for the **Compostela**.",
+          "evening": "Celebration dinner on Rúa do Franco.",
+          "dayStats": "20 km, +330 m, -360 m, 5 h",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 20,
+            "ascentM": 330,
+            "descentM": 360,
+            "highM": 370,
+            "timeMin": {
+              "low": 300,
+              "high": 300
+            }
+          },
+          "sleep": "Albergue in Santiago",
+          "sleepRef": 6,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Monument_Compostelle.JPG/1280px-Monument_Compostelle.JPG",
+            "w": 1280,
+            "h": 853,
+            "credit": "Monte do Gozo",
+            "page": "https://commons.wikimedia.org/wiki/File:Monument_Compostelle.JPG",
+            "author": "Antoine Cadotte",
+            "licence": "CC BY-SA 3.0"
+          }
+        },
+        {
+          "day": 7,
+          "title": "Santiago, the Mass and home",
+          "morning": "The noon pilgrims' Mass in the **Cathedral**; the botafumeiro swings on feast days and some Fridays.",
+          "afternoon": "Rooftop tour of the cathedral, about €12, then the bus to the airport, 35 minutes.",
+          "evening": null,
+          "dayStats": "City walking, about 4 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 4,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 120,
+              "high": 120
+            }
+          },
+          "sleep": null,
+          "sleepRef": null,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Santiago_cathedral_2021.jpg/1280px-Santiago_cathedral_2021.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Cathedral of Santiago de Compostela",
+            "page": "https://commons.wikimedia.org/wiki/File:Santiago_cathedral_2021.jpg",
+            "author": "Fernando",
+            "licence": "CC BY-SA 4.0"
+          }
+        }
+      ],
+      "accommodationStrategy": [
+        {
+          "rank": 1,
+          "name": "Albergue in Sarria",
+          "style": "albergue",
+          "location": "Sarria, Rúa Maior",
+          "description": "Many private albergues; book the first night.",
+          "booking": "a week ahead",
+          "priceNote": "€12 to €18 a bunk"
+        },
+        {
+          "rank": 2,
+          "name": "Albergue in Portomarín",
+          "style": "albergue",
+          "location": "Portomarín",
+          "description": "The Xunta's public albergue takes no bookings; private ones do.",
+          "booking": "book private beds ahead in summer",
+          "priceNote": "€10 to €15 a bunk"
+        },
+        {
+          "rank": 3,
+          "name": "Albergue in Palas de Rei",
+          "style": "albergue",
+          "location": "Palas de Rei",
+          "description": "Public and private albergues in the centre.",
+          "booking": "a few days ahead",
+          "priceNote": "€10 to €15 a bunk"
+        },
+        {
+          "rank": 4,
+          "name": "Albergue in Arzúa",
+          "style": "albergue",
+          "location": "Arzúa",
+          "description": "Most open at 13:00; washing lines and kitchens.",
+          "booking": "a few days ahead",
+          "priceNote": "€10 to €15 a bunk"
+        },
+        {
+          "rank": 5,
+          "name": "Albergue in O Pedrouzo",
+          "style": "albergue",
+          "location": "O Pedrouzo",
+          "description": "The last night on the trail; the busiest stop.",
+          "booking": "book ahead",
+          "priceNote": "€12 to €18 a bunk"
+        },
+        {
+          "rank": 6,
+          "name": "Albergue in Santiago",
+          "style": "albergue",
+          "location": "Santiago old town",
+          "description": "Seminario Menor and old town hostels, or a private room to celebrate.",
+          "booking": "a week ahead",
+          "priceNote": "€15 to €25 a bunk"
+        }
+      ],
+      "logistics": {
+        "connectivity": "EU roaming; signal is good in every village.",
+        "emergency": "112.",
+        "weather": "Galicia is green because it rains; a light rain jacket every day, all year.",
+        "bookingWindows": "Private albergues take bookings; public ones are first come from 13:00.",
+        "money": "Small cafés are cash only; ATMs in every stage town.",
+        "transportRules": "Luggage transfer between albergues costs about €5 a stage per bag.",
+        "permits": "The credencial, the pilgrim passport, with two stamps a day from Sarria for the Compostela.",
+        "health": "Treat hot spots on the first day; pharmacies in every stage town.",
+        "gettingThere": "Fly to Santiago; buses to Sarria run via Lugo.",
+        "other": []
+      },
+      "proTips": [
+        "Collect two stamps a day from Sarria: the pilgrim office asks for them on the last 100 km.",
+        "Start at 07:30 to finish before the afternoon heat and the albergue queue."
+      ],
+      "typeSpecific": {
+        "raw": {
+          "Who It Suits": "First-time pilgrims and walkers who want a week with meaning"
+        },
+        "surface": "Paths and quiet lanes, about 90% unpaved",
+        "distanceKm": 115,
+        "elevationM": 720,
+        "verticalM": 2100,
+        "technicalRating": "Waymarked with yellow arrows and stone markers every 500 m",
+        "transitPass": null,
+        "hutBooking": null,
+        "liftNetwork": null,
+        "snowReliability": null,
+        "windConditions": null,
+        "gpxReady": false,
+        "bookingTimeline": "Private albergues a few days ahead, a week in summer",
+        "audience": "Walkers and pilgrims"
+      },
+      "packingNotes": [
+        "Broken-in walking shoes",
+        "Blister plasters",
+        "A light sleeping bag",
+        "Rain jacket",
+        "Shell for the credencial"
+      ],
+      "whatCouldGoWrong": [
+        "Summer albergues fill by early afternoon; book private beds or start early.",
+        "Blisters on day two end more Caminos than anything; stop and treat them early."
+      ],
+      "sources": {
+        "verified": null,
+        "confidenceNotes": "Sample trip written for T431 to show every slot of the trip page. Prices, timetables and opening details are to be audited by the owner."
+      },
+      "verifyFlags": [],
+      "verifyFlagCount": 0,
+      "volatilePricing": false,
+      "dataVintage": 2026,
+      "provenance": {
+        "batch": "t431-samples",
+        "sourceFile": "pipeline/journeys/sample_trips.py",
+        "sourceFormat": "python (sample)",
+        "sourceId": "es-pilgrim-camino-sarria-santiago",
+        "ingestedAt": "2026-10-15",
+        "synthesized": true
+      },
+      "sample": true,
+      "highlights": [
+        {
+          "title": "The Compostela",
+          "line": "Your certificate at the pilgrim office after the last 100 km.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Santiago_cathedral_2021.jpg/1280px-Santiago_cathedral_2021.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Cathedral of Santiago de Compostela",
+            "page": "https://commons.wikimedia.org/wiki/File:Santiago_cathedral_2021.jpg",
+            "author": "Fernando",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 6
+        },
+        {
+          "title": "Monte do Gozo",
+          "line": "The first sight of the cathedral spires, 5 km from the end.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Monument_Compostelle.JPG/1280px-Monument_Compostelle.JPG",
+            "w": 1280,
+            "h": 853,
+            "credit": "Monte do Gozo",
+            "page": "https://commons.wikimedia.org/wiki/File:Monument_Compostelle.JPG",
+            "author": "Antoine Cadotte",
+            "licence": "CC BY-SA 3.0"
+          },
+          "day": 6
+        },
+        {
+          "title": "Pulpo in Melide",
+          "line": "Octopus with paprika on wooden plates, the Camino's best lunch.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar%2C_Santiago_de_Compostela.jpg/1280px-Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar%2C_Santiago_de_Compostela.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Church of Santa María la Real del Sar",
+            "page": "https://commons.wikimedia.org/wiki/File:Colexiata_Santa_Mar%C3%ADa_a_Maior_e_Real_do_Sar,_Santiago_de_Compostela.jpg",
+            "author": "Javier Pais",
+            "licence": "CC BY 2.0"
+          },
+          "day": 4
+        },
+        {
+          "title": "Portomarín",
+          "line": "A village moved stone by stone above its reservoir.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Taurotragus_Orix._Marcelle%2C_Outeiro_de_Rei%2C_Galiza.jpg/1280px-Taurotragus_Orix._Marcelle%2C_Outeiro_de_Rei%2C_Galiza.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Marcelle Natureza",
+            "page": "https://commons.wikimedia.org/wiki/File:Taurotragus_Orix._Marcelle,_Outeiro_de_Rei,_Galiza.jpg",
+            "author": "Noel Feans",
+            "licence": "CC BY 2.0"
+          },
+          "day": 2
+        }
+      ],
+      "photos": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Santiago_Cathedral_2021_-_west_panorama.jpg/1280px-Santiago_Cathedral_2021_-_west_panorama.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Santiago de Compostela",
+          "page": "https://commons.wikimedia.org/wiki/File:Santiago_Cathedral_2021_-_west_panorama.jpg",
+          "author": "Fernando Pascullo",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Monument_Compostelle.JPG/1280px-Monument_Compostelle.JPG",
+          "w": 1280,
+          "h": 853,
+          "credit": "Monte do Gozo",
+          "page": "https://commons.wikimedia.org/wiki/File:Monument_Compostelle.JPG",
+          "author": "Antoine Cadotte",
+          "licence": "CC BY-SA 3.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Santiago_cathedral_2021.jpg/1280px-Santiago_cathedral_2021.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Cathedral of Santiago de Compostela",
+          "page": "https://commons.wikimedia.org/wiki/File:Santiago_cathedral_2021.jpg",
+          "author": "Fernando",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lugo_2023_-_Roman_Walls.jpg/1280px-Lugo_2023_-_Roman_Walls.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Roman Walls of Lugo",
+          "page": "https://commons.wikimedia.org/wiki/File:Lugo_2023_-_Roman_Walls.jpg",
+          "author": "Fernando Pascullo",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Pantocrator_del_p%C3%B3rtico_de_la_Gloria_en_Santiago_de_Compostela.jpg/1280px-Pantocrator_del_p%C3%B3rtico_de_la_Gloria_en_Santiago_de_Compostela.jpg",
+          "w": 1280,
+          "h": 960,
+          "credit": "Glory's Portico",
+          "page": "https://commons.wikimedia.org/wiki/File:Pantocrator_del_p%C3%B3rtico_de_la_Gloria_en_Santiago_de_Compostela.jpg",
+          "author": "pedronchi",
+          "licence": "CC BY 2.0"
+        }
+      ],
+      "dayPlaces": [
+        {
+          "day": 1,
+          "name": "Sarria",
+          "lat": 42.781,
+          "lon": -7.414
+        },
+        {
+          "day": 2,
+          "name": "Portomarín",
+          "lat": 42.807,
+          "lon": -7.616
+        },
+        {
+          "day": 3,
+          "name": "Palas de Rei",
+          "lat": 42.873,
+          "lon": -7.869
+        },
+        {
+          "day": 4,
+          "name": "Arzúa",
+          "lat": 42.928,
+          "lon": -8.163
+        },
+        {
+          "day": 5,
+          "name": "O Pedrouzo",
+          "lat": 42.905,
+          "lon": -8.36
+        },
+        {
+          "day": 6,
+          "name": "Santiago de Compostela",
+          "lat": 42.87961,
+          "lon": -8.54408
+        },
+        {
+          "day": 7,
+          "name": "Santiago de Compostela",
+          "lat": 42.87961,
+          "lon": -8.54408
+        }
+      ],
+      "wordCount": 610
+    },
+    {
+      "id": "gr-island-hopping-paros-antiparos-naxos",
+      "sourceId": "gr-island-hopping-paros-antiparos-naxos",
+      "slug": "gr-island-hopping-paros-antiparos-naxos",
+      "title": "Paros, Antiparos and Naxos by Ferry",
+      "country": "Greece",
+      "countryCode": "GR",
+      "countries": [
+        {
+          "name": "Greece",
+          "code": "GR"
+        }
+      ],
+      "isMultiCountry": false,
+      "region": "Southern & Mediterranean Europe",
+      "regionKey": "southern-mediterranean",
+      "subRegion": "The Cyclades",
+      "tripType": "Island hopping",
+      "tripTypeId": 15,
+      "tripTypeSlug": "island-hopping",
+      "durationDays": 7,
+      "bestPeriod": {
+        "months": [
+          5,
+          6,
+          9,
+          10
+        ],
+        "monthNames": [
+          "May",
+          "June",
+          "September",
+          "October"
+        ],
+        "window": "Late May to June and September to mid-October",
+        "note": "The sea is warmest in September.",
+        "avoid": "July and August, when the meltemi wind and prices both peak",
+        "raw": "May to June, September to October"
+      },
+      "budgetTier": "€€",
+      "budgetTierRange": [
+        2,
+        2
+      ],
+      "budgetTierRaw": "€€",
+      "budget": {
+        "currency": "EUR",
+        "totalEur": {
+          "low": 470,
+          "high": 800
+        },
+        "totalNote": null,
+        "breakdown": {
+          "accommodation": {
+            "lowEur": 180,
+            "highEur": 330,
+            "note": "Studios and rooms, six nights"
+          },
+          "food": {
+            "lowEur": 160,
+            "highEur": 260,
+            "note": "Bakeries, gyros, tavernas"
+          },
+          "transport": {
+            "lowEur": 100,
+            "highEur": 150,
+            "note": "Three ferries on deck, island buses"
+          },
+          "activities": {
+            "lowEur": 30,
+            "highEur": 60,
+            "note": "Antiparos cave, Portara at sunset, a boat trip"
+          }
+        },
+        "perDayEur": {
+          "low": 67,
+          "high": 114
+        }
+      },
+      "profile": {
+        "difficulty": 1,
+        "difficultyLabel": "Easy",
+        "difficultyNote": "1/5, ferries, beaches and village walks",
+        "fitnessLevel": "Easy",
+        "crowdLevel": "Moderate",
+        "familyFriendly": true,
+        "carRequired": false
+      },
+      "basecamps": [],
+      "gatewayAirport": "ATH Athens, 1 h to Piraeus by metro; home by ferry or from JNX Naxos",
+      "gatewayAirportCode": "ATH",
+      "languages": [
+        "Greek",
+        "English"
+      ],
+      "currency": "EUR",
+      "emergencyNumber": "112",
+      "coordinates": {
+        "lat": 37.0853,
+        "lon": 25.1521,
+        "precision": "city",
+        "matchedPlace": "Paros",
+        "source": "dossier"
+      },
+      "tags": [
+        "islands",
+        "ferry",
+        "beaches",
+        "cyclades",
+        "sunset",
+        "car-free"
+      ],
+      "summary": "Three Cycladic islands and no car. **Paros** for fishing harbours and white lanes, tiny **Antiparos** ten minutes across the strait for its cave and empty beaches, and **Naxos**, the biggest and greenest, for the marble **Portara** at sunset and long sandy beaches. Every hop is a short ferry and every island has a bus.",
+      "summaryGenerated": false,
+      "hook": "Three islands, three short ferries and the Portara of Naxos at sunset.",
+      "snapshot": null,
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Athens and the Acropolis",
+          "morning": "Metro from the airport to the centre, 40 minutes. Afternoon at the **Acropolis**, about €20.",
+          "afternoon": "Plaka and Anafiotika's island lanes under the rock.",
+          "evening": "Sunset from the Areopagus hill, free, then souvlaki.",
+          "dayStats": "City walking, about 7 km",
+          "stats": {
+            "mode": "walk",
+            "distanceKm": 7,
+            "ascentM": 90,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 240,
+              "high": 240
+            }
+          },
+          "sleep": "Hostel in Athens",
+          "sleepRef": 1,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg/1280px-Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+            "w": 1280,
+            "h": 800,
+            "credit": "Acropolis of Athens",
+            "page": "https://commons.wikimedia.org/wiki/File:Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+            "author": "A.Savin",
+            "licence": "CC BY-SA 3.0"
+          }
+        },
+        {
+          "day": 2,
+          "title": "Ferry to Paros",
+          "morning": "Morning ferry from **Piraeus** to **Paros**, 3 to 4 hours on a conventional boat, from €40 on deck.",
+          "afternoon": "Settle in **Parikia** and visit the **Panagia Ekatontapyliani**, the church of a hundred doors.",
+          "evening": "Sunset on the windmill quay, drinks by the old harbour.",
+          "dayStats": "Ferry 3 h 30 min, 170 km",
+          "stats": {
+            "mode": "ferry",
+            "distanceKm": 170,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 210,
+              "high": 210
+            }
+          },
+          "sleep": "Studio in Parikia",
+          "sleepRef": 2,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/EKPYL_2881.jpg/1280px-EKPYL_2881.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Panagia Ekatontapyliani",
+            "page": "https://commons.wikimedia.org/wiki/File:EKPYL_2881.jpg",
+            "author": "Geraki",
+            "licence": "CC BY-SA 3.0 gr"
+          }
+        },
+        {
+          "day": 3,
+          "title": "Naoussa and Kolymbithres",
+          "morning": "Bus to **Naoussa**, the fishing harbour with tavernas on the quay.",
+          "afternoon": "Swim among the wind-carved granite of **Kolymbithres** beach.",
+          "evening": "Grilled octopus by the boats in Naoussa.",
+          "dayStats": "Bus 20 min, beach day",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 22,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 60,
+              "high": 60
+            }
+          },
+          "sleep": "Studio in Parikia",
+          "sleepRef": 2,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg/1280px-Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg",
+            "w": 1280,
+            "h": 852,
+            "credit": "Paros",
+            "page": "https://commons.wikimedia.org/wiki/File:Fish_tavern,_Naoussa,_Paros,_119137.jpg",
+            "author": "Zde",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 4,
+          "title": "Antiparos",
+          "morning": "Bus to Pounta, then the 10 minute ferry to **Antiparos**, about €2.",
+          "afternoon": "The **Cave of Antiparos**, 400 steps down into stalactites, about €6; then a quiet beach.",
+          "evening": "Dinner on Antiparos' main street before the last boat.",
+          "dayStats": "Ferry 10 min, bus, cave 400 steps",
+          "stats": {
+            "mode": "ferry",
+            "distanceKm": 16,
+            "ascentM": 100,
+            "descentM": 100,
+            "highM": null,
+            "timeMin": {
+              "low": 120,
+              "high": 120
+            }
+          },
+          "sleep": "Studio in Parikia",
+          "sleepRef": 2,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Antiparos_Cave.jpg/1280px-Antiparos_Cave.jpg",
+            "w": 1280,
+            "h": 852,
+            "credit": "Cave of Antiparos",
+            "page": "https://commons.wikimedia.org/wiki/File:Antiparos_Cave.jpg",
+            "author": "Kondephy",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 5,
+          "title": "Hop to Naxos",
+          "morning": "Ferry from Parikia to **Naxos** in about 45 minutes, from €10.",
+          "afternoon": "Old town lanes up to the Venetian castle.",
+          "evening": "The marble **Portara** at sunset, the gate of an unfinished temple of Apollo.",
+          "dayStats": "Ferry 45 min, 40 km",
+          "stats": {
+            "mode": "ferry",
+            "distanceKm": 40,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 60,
+              "high": 60
+            }
+          },
+          "sleep": "Room in Naxos town",
+          "sleepRef": 3,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/20221029_Naxos_762.jpg/1280px-20221029_Naxos_762.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Portara",
+            "page": "https://commons.wikimedia.org/wiki/File:20221029_Naxos_762.jpg",
+            "author": "Jean Housen",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 6,
+          "title": "Naxos beaches or the mountain villages",
+          "morning": "Bus to **Agios Prokopios** and its long sandy beach.",
+          "afternoon": "Or the bus inland to **Halki** and Apiranthos, marble villages and kitron liqueur.",
+          "evening": "Taverna dinner in the old town.",
+          "dayStats": "Bus 20 min, beach or villages",
+          "stats": {
+            "mode": "bus",
+            "distanceKm": 30,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 120,
+              "high": 120
+            }
+          },
+          "sleep": "Room in Naxos town",
+          "sleepRef": 3,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg/1280px-Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Naxos",
+            "page": "https://commons.wikimedia.org/wiki/File:Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg",
+            "author": "Manfred Werner (Tsui)",
+            "licence": "CC BY-SA 4.0"
+          }
+        },
+        {
+          "day": 7,
+          "title": "Back to Athens",
+          "morning": "Ferry from Naxos to **Piraeus**, about 5 hours, or a 40 minute flight from Naxos airport.",
+          "afternoon": "Metro to the airport.",
+          "evening": null,
+          "dayStats": "Ferry 5 h, 190 km",
+          "stats": {
+            "mode": "ferry",
+            "distanceKm": 190,
+            "ascentM": null,
+            "descentM": null,
+            "highM": null,
+            "timeMin": {
+              "low": 300,
+              "high": 300
+            }
+          },
+          "sleep": null,
+          "sleepRef": null,
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg/1280px-Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+            "w": 1280,
+            "h": 960,
+            "credit": "Cyclades",
+            "page": "https://commons.wikimedia.org/wiki/File:Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+            "author": "kallerna",
+            "licence": "CC BY-SA 4.0"
+          }
+        }
+      ],
+      "accommodationStrategy": [
+        {
+          "rank": 1,
+          "name": "Hostel in Athens",
+          "style": "hostel",
+          "location": "Athens, near Monastiraki",
+          "description": "Rooftop hostels with Acropolis views.",
+          "booking": "two weeks ahead",
+          "priceNote": "€20 to €35 a dorm bed"
+        },
+        {
+          "rank": 2,
+          "name": "Studio in Parikia",
+          "style": "studio",
+          "location": "Parikia, Paros",
+          "description": "Family-run studios with a kitchenette, five minutes from the port.",
+          "booking": "a month ahead in June and September",
+          "priceNote": "€45 to €80 a night for the studio"
+        },
+        {
+          "rank": 3,
+          "name": "Room in Naxos town",
+          "style": "room",
+          "location": "Naxos old town",
+          "description": "Rooms in the old town or at Agios Georgios beach.",
+          "booking": "a month ahead",
+          "priceNote": "€40 to €75 a night"
+        }
+      ],
+      "logistics": {
+        "connectivity": "EU roaming; 4G on all three islands.",
+        "emergency": "112; the coastguard is 108.",
+        "weather": "The meltemi blows hardest in July and August and can cancel small boats.",
+        "bookingWindows": "Book Piraeus ferries two to three weeks ahead; island hops can be bought the day before.",
+        "money": "Euro; cards widely taken, small tavernas prefer cash.",
+        "transportRules": "Deck class is the cheapest ticket and has seats inside and out.",
+        "permits": null,
+        "health": "Strong sun from May; shade is rare on the beaches.",
+        "gettingThere": "Fly to Athens and take the metro to Piraeus.",
+        "other": []
+      },
+      "proTips": [
+        "Compare conventional and fast ferries: the slow boat is half the price and steadier in wind.",
+        "Stay in Parikia on Paros: every ferry and bus leaves from there."
+      ],
+      "typeSpecific": {
+        "raw": {
+          "Who It Suits": "Couples, friends and families who want beaches without a car"
+        },
+        "surface": null,
+        "distanceKm": null,
+        "elevationM": null,
+        "verticalM": null,
+        "technicalRating": null,
+        "transitPass": null,
+        "hutBooking": null,
+        "liftNetwork": null,
+        "snowReliability": null,
+        "windConditions": "Meltemi north wind in July and August",
+        "gpxReady": false,
+        "bookingTimeline": "Ferries 2 to 3 weeks ahead from Piraeus",
+        "audience": "Island hoppers"
+      },
+      "packingNotes": [
+        "Seasickness tablets for windy days",
+        "A light jacket for the ferry deck",
+        "Snorkel mask",
+        "Sun hat"
+      ],
+      "whatCouldGoWrong": [
+        "A meltemi day can cancel the small Antiparos boats; move the cave day.",
+        "Ferries run late in summer; never book a flight on the same afternoon."
+      ],
+      "sources": {
+        "verified": null,
+        "confidenceNotes": "Sample trip written for T431 to show every slot of the trip page. Prices, timetables and opening details are to be audited by the owner."
+      },
+      "verifyFlags": [],
+      "verifyFlagCount": 0,
+      "volatilePricing": false,
+      "dataVintage": 2026,
+      "provenance": {
+        "batch": "t431-samples",
+        "sourceFile": "pipeline/journeys/sample_trips.py",
+        "sourceFormat": "python (sample)",
+        "sourceId": "gr-island-hopping-paros-antiparos-naxos",
+        "ingestedAt": "2026-10-15",
+        "synthesized": true
+      },
+      "sample": true,
+      "highlights": [
+        {
+          "title": "The Portara at sunset",
+          "line": "A marble gate to nowhere, the symbol of Naxos.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/20221029_Naxos_762.jpg/1280px-20221029_Naxos_762.jpg",
+            "w": 1280,
+            "h": 853,
+            "credit": "Portara",
+            "page": "https://commons.wikimedia.org/wiki/File:20221029_Naxos_762.jpg",
+            "author": "Jean Housen",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 5
+        },
+        {
+          "title": "Naoussa harbour",
+          "line": "Fishing boats, octopus drying in the sun and tavernas on the quay.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg/1280px-Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg",
+            "w": 1280,
+            "h": 852,
+            "credit": "Paros",
+            "page": "https://commons.wikimedia.org/wiki/File:Fish_tavern,_Naoussa,_Paros,_119137.jpg",
+            "author": "Zde",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 3
+        },
+        {
+          "title": "Cave of Antiparos",
+          "line": "400 steps down into a hall of stalactites.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Antiparos_Cave.jpg/1280px-Antiparos_Cave.jpg",
+            "w": 1280,
+            "h": 852,
+            "credit": "Cave of Antiparos",
+            "page": "https://commons.wikimedia.org/wiki/File:Antiparos_Cave.jpg",
+            "author": "Kondephy",
+            "licence": "CC BY-SA 4.0"
+          },
+          "day": 4
+        },
+        {
+          "title": "The Acropolis",
+          "line": "Start the week on the rock above Athens.",
+          "photo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg/1280px-Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+            "w": 1280,
+            "h": 800,
+            "credit": "Acropolis of Athens",
+            "page": "https://commons.wikimedia.org/wiki/File:Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+            "author": "A.Savin",
+            "licence": "CC BY-SA 3.0"
+          },
+          "day": 1
+        }
+      ],
+      "photos": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg/1280px-Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+          "w": 1280,
+          "h": 960,
+          "credit": "Cyclades",
+          "page": "https://commons.wikimedia.org/wiki/File:Despotik%C3%B3_Ant%C3%ADparos_P%C3%A1ros_N%C3%A1xos_aerial.jpg",
+          "author": "kallerna",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg/1280px-Fish_tavern%2C_Naoussa%2C_Paros%2C_119137.jpg",
+          "w": 1280,
+          "h": 852,
+          "credit": "Paros",
+          "page": "https://commons.wikimedia.org/wiki/File:Fish_tavern,_Naoussa,_Paros,_119137.jpg",
+          "author": "Zde",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Antiparos-cave-church.jpg/1280px-Antiparos-cave-church.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Antiparos",
+          "page": "https://commons.wikimedia.org/wiki/File:Antiparos-cave-church.jpg",
+          "author": "Dimorsitanos",
+          "licence": "CC BY-SA 3.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/20221029_Naxos_762.jpg/1280px-20221029_Naxos_762.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Portara",
+          "page": "https://commons.wikimedia.org/wiki/File:20221029_Naxos_762.jpg",
+          "author": "Jean Housen",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg/1280px-Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg",
+          "w": 1280,
+          "h": 853,
+          "credit": "Naxos",
+          "page": "https://commons.wikimedia.org/wiki/File:Naxos_%CE%9D%CE%AC%CE%BE%CE%BF%CF%82_2020-08-20_02_Chora_Grotta_and_Vintzi_beaches.jpg",
+          "author": "Manfred Werner (Tsui)",
+          "licence": "CC BY-SA 4.0"
+        }
+      ],
+      "dayPlaces": [
+        {
+          "day": 1,
+          "name": "Athens",
+          "lat": 37.9805,
+          "lon": 23.73118
+        },
+        {
+          "day": 2,
+          "name": "Parikia",
+          "lat": 37.085,
+          "lon": 25.152
+        },
+        {
+          "day": 3,
+          "name": "Naoussa",
+          "lat": 37.124,
+          "lon": 25.236
+        },
+        {
+          "day": 4,
+          "name": "Antiparos",
+          "lat": 37.00944444,
+          "lon": 25.06083333
+        },
+        {
+          "day": 5,
+          "name": "Naxos",
+          "lat": 37.0855,
+          "lon": 25.3686
+        },
+        {
+          "day": 6,
+          "name": "Naxos",
+          "lat": 37.0855,
+          "lon": 25.3686
+        },
+        {
+          "day": 7,
+          "name": "Naxos",
+          "lat": 37.0855,
+          "lon": 25.3686
+        }
+      ],
+      "wordCount": 523
     }
   ]
 }

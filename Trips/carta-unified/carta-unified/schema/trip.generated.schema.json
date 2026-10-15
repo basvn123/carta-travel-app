@@ -74,9 +74,9 @@
       "description": "Null until the geocoder resolves a basecamp; never filled by the model."
     },
 
-    "tripType": { "enum": ["Cycling", "Trail running", "Cities", "Small towns", "Road trips", "Hiking", "Food and drink", "Ski and snow", "Nature stays", "On the water"] },
-    "tripTypeId": { "type": "integer", "minimum": 1, "maximum": 10 },
-    "tripTypeSlug": { "enum": ["cycling", "trail-running", "city", "cozy-towns", "road-trip", "hiking", "culinary", "winter-sports", "nature-escape", "water-sports"] },
+    "tripType": { "enum": ["Cycling", "Trail running", "Cities", "Small towns", "Road trips", "Hiking", "Food and drink", "Ski and snow", "Nature stays", "On the water", "Hostel weeks", "Beach weeks", "Rail journeys", "Pilgrim routes", "Island hopping"] },
+    "tripTypeId": { "type": "integer", "minimum": 1, "maximum": 15 },
+    "tripTypeSlug": { "enum": ["cycling", "trail-running", "city", "cozy-towns", "road-trip", "hiking", "culinary", "winter-sports", "nature-escape", "water-sports", "hostel", "beach-week", "rail", "pilgrim", "island-hopping"] },
     "durationDays": { "const": 7 },
     "tags": {
       "type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true,
@@ -275,6 +275,44 @@
         }
       }
     },
+    "photos": {
+      "type": "array", "maxItems": 8, "items": { "$ref": "#/$defs/photo" },
+      "description": "T431, optional: the trip's gallery after the hero, credited Commons files at 1280 px or wider. docs/ITEM_PAGE_DATA_CONTRACT.md."
+    },
+    "highlights": {
+      "type": "array", "maxItems": 5,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["title", "line"],
+        "properties": {
+          "title": { "$ref": "#/$defs/text", "maxLength": 40 },
+          "line": { "$ref": "#/$defs/text", "maxLength": 90, "description": "Why it is worth it, in one appeal-led line. Never an area, a population or a founding date." },
+          "photo": { "anyOf": [{ "$ref": "#/$defs/photo" }, { "type": "null" }] },
+          "day": { "anyOf": [{ "type": "integer", "minimum": 1, "maximum": 7 }, { "type": "null" }] }
+        }
+      },
+      "description": "T431, optional: the three to five reasons to go, shown as photo cards under 'Why this trip'."
+    },
+    "dayPlaces": {
+      "type": "array", "maxItems": 14,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["day", "name", "lat", "lon"],
+        "properties": {
+          "day": { "type": "integer", "minimum": 1, "maximum": 7 },
+          "name": { "$ref": "#/$defs/text", "maxLength": 60 },
+          "lat": { "type": "number", "minimum": 27, "maximum": 72 },
+          "lon": { "type": "number", "minimum": -32, "maximum": 45 }
+        }
+      },
+      "description": "T431, optional: where each night is spent, for the day map and the card's visits line."
+    },
+    "visits": {
+      "type": "array", "maxItems": 6, "items": { "$ref": "#/$defs/text", "maxLength": 40 },
+      "description": "T431, optional: the places a trip card names. Derived from dayPlaces or the day titles when absent."
+    },
+    "sample": {
+      "type": "boolean",
+      "description": "T431: a worked example of a new style, shown like any trip but kept out of the sitemap and the prerender until the owner audits it."
+    },
     "provenance": {
       "type": "object", "additionalProperties": false,
       "required": ["batch", "sourceFile", "sourceFormat", "sourceId", "ingestedAt", "synthesized", "model", "promptVersion", "reviewedAt"],
@@ -293,6 +331,19 @@
   },
 
   "$defs": {
+    "photo": {
+      "type": "object", "additionalProperties": false, "required": ["url", "credit", "page"],
+      "description": "T431: one credited photograph. credit names the place shown; author and licence come from the file page.",
+      "properties": {
+        "url": { "type": "string", "pattern": "^https://upload\\.wikimedia\\.org/", "maxLength": 600 },
+        "w": { "anyOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+        "h": { "anyOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+        "credit": { "$ref": "#/$defs/text", "maxLength": 80 },
+        "page": { "type": "string", "pattern": "^https://", "maxLength": 600 },
+        "author": { "anyOf": [{ "type": "string", "maxLength": 120 }, { "type": "null" }] },
+        "licence": { "anyOf": [{ "type": "string", "maxLength": 40 }, { "type": "null" }] }
+      }
+    },
     "text": {
       "type": "string",
       "minLength": 1,
@@ -351,7 +402,7 @@
       "required": ["mode", "distanceKm", "ascentM", "descentM", "timeMin", "spendEur", "note"],
       "description": "The measured line of one day as typed values; the page formats it. Replaces the v2.0 free-text dayStats string.",
       "properties": {
-        "mode": { "enum": ["ride", "run", "walk", "hike", "drive", "ski", "paddle", "sail", "swim", "mixed", "rest"] },
+        "mode": { "enum": ["ride", "run", "walk", "hike", "drive", "ski", "paddle", "sail", "swim", "mixed", "rest", "bus", "train", "ferry"], "description": "bus, train and ferry (T431): a travel day on public transport." },
         "distanceKm": { "anyOf": [{ "type": "number", "minimum": 0, "maximum": 600 }, { "type": "null" }] },
         "ascentM": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 9000 }, { "type": "null" }] },
         "descentM": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 15000 }, { "type": "null" }] },
@@ -366,7 +417,8 @@
           "description": "Realistic moving or activity time in minutes, as a range."
         },
         "spendEur": { "$ref": "#/$defs/eurPairOrNull", "description": "Tickets, tastings, hire or tolls for the day, per person." },
-        "note": { "$ref": "#/$defs/qualifierOrNull", "maxLength": 140, "description": "Surface, grade, water or bail-out in a few words." }
+        "note": { "$ref": "#/$defs/qualifierOrNull", "maxLength": 140, "description": "Surface, grade, water or bail-out in a few words." },
+        "highM": { "anyOf": [{ "type": "integer", "minimum": -50, "maximum": 4900 }, { "type": "null" }], "description": "T431: the day's highest point in metres, for the trip page's week climb chart. Optional." }
       }
     },
     "day": {
@@ -383,7 +435,8 @@
         "sleepRef": {
           "anyOf": [{ "type": "integer", "minimum": 1, "maximum": 3 }, { "type": "null" }],
           "description": "The rank of the accommodationStrategy entry slept in tonight (register row T084-b). Required on days 1 to 6; null on day 7 only."
-        }
+        },
+        "photo": { "anyOf": [{ "$ref": "#/$defs/photo" }, { "type": "null" }], "description": "T431, optional: the day card's photograph." }
       }
     },
     "stay": {

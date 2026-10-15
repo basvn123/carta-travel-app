@@ -1,0 +1,577 @@
+{
+  "id": "cz-rail-prague-vienna-budapest",
+  "sourceId": "cz-rail-prague-vienna-budapest",
+  "slug": "cz-rail-prague-vienna-budapest",
+  "title": "Prague, Vienna and Budapest by Train",
+  "country": "Czechia",
+  "countryCode": "CZ",
+  "countries": [
+    {
+      "name": "Czechia",
+      "code": "CZ"
+    },
+    {
+      "name": "Austria",
+      "code": "AT"
+    },
+    {
+      "name": "Slovakia",
+      "code": "SK"
+    },
+    {
+      "name": "Hungary",
+      "code": "HU"
+    }
+  ],
+  "isMultiCountry": true,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Bohemia, Vienna, Bratislava and Budapest",
+  "tripType": "Rail journeys",
+  "tripTypeId": 13,
+  "tripTypeSlug": "rail",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10,
+      12
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October",
+      "December"
+    ],
+    "window": "April to June, September to October, and December for the markets",
+    "note": null,
+    "avoid": "Mid-July to August heat and peak hostel prices",
+    "raw": "Spring, autumn, December"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 410,
+      "high": 780
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 140,
+        "highEur": 300,
+        "note": "Hostels and budget hotels, six nights"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 230,
+        "note": "Bakeries, beer halls, market lunches"
+      },
+      "transport": {
+        "lowEur": 70,
+        "highEur": 130,
+        "note": "Three trains booked ahead, city transport"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 120,
+        "note": "Opera standing place, thermal bath, castles"
+      }
+    },
+    "perDayEur": {
+      "low": 59,
+      "high": 111
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "1/5, city walking and three train rides of 1 to 4 hours",
+    "fitnessLevel": "Easy",
+    "crowdLevel": "High",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [],
+  "gatewayAirport": "PRG Prague, 35 min to the centre by bus and metro; home from BUD Budapest",
+  "gatewayAirportCode": "PRG",
+  "languages": [
+    "Czech",
+    "German",
+    "Slovak",
+    "Hungarian",
+    "English"
+  ],
+  "currency": "CZK, EUR, HUF",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.08737,
+    "lon": 14.42132,
+    "precision": "city",
+    "matchedPlace": "Prague",
+    "source": "dossier"
+  },
+  "tags": [
+    "train",
+    "car-free",
+    "capitals",
+    "danube",
+    "interrail",
+    "cafes"
+  ],
+  "summary": "Four capitals, three easy trains and no car. **Prague** for its bridges and beer, **Vienna** for coffee houses and a €15 opera ticket, **Bratislava** for an afternoon on the Danube and **Budapest** for its thermal baths. Booked a few weeks ahead, every train costs less than a taxi to the airport.",
+  "summaryGenerated": false,
+  "hook": "Four capitals in seven days, three trains for under €60 booked ahead.",
+  "snapshot": null,
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Prague old town",
+      "morning": "Bus 59 and metro from the airport, about 35 minutes. Walk to **Old Town Square** for the astronomical clock.",
+      "afternoon": "**Charles Bridge** and the Lesser Town lanes below the castle.",
+      "evening": "Dinner and a 0.5 l Pilsner for under €3 in a Vinohrady beer hall.",
+      "dayStats": "City walking, about 8 km",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 8,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 240,
+          "high": 240
+        }
+      },
+      "sleep": "Hostel in Prague",
+      "sleepRef": 1,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Prague_07-2016_View_from_Old_Town_Hall_Tower_img3.jpg/1280px-Prague_07-2016_View_from_Old_Town_Hall_Tower_img3.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Old Town Square",
+        "page": "https://commons.wikimedia.org/wiki/File:Prague_07-2016_View_from_Old_Town_Hall_Tower_img3.jpg",
+        "author": "A.Savin",
+        "licence": "FAL"
+      }
+    },
+    {
+      "day": 2,
+      "title": "Prague Castle and Petřín",
+      "morning": "**Prague Castle** grounds and St Vitus nave are free to walk; the combined ticket is optional.",
+      "afternoon": "Down through the gardens to **Petřín** hill and its mirror maze, then the river.",
+      "evening": "Jazz in a cellar, or the **Dancing House** terrace at sunset.",
+      "dayStats": "City walking, about 10 km, 130 m up",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 10,
+        "ascentM": 130,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 300,
+          "high": 300
+        }
+      },
+      "sleep": "Hostel in Prague",
+      "sleepRef": 1,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Karl%C5%AFv_most_Praha%2C_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg/1280px-Karl%C5%AFv_most_Praha%2C_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Prague Castle",
+        "page": "https://commons.wikimedia.org/wiki/File:Karl%C5%AFv_most_Praha,_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg",
+        "author": "Tilman2007",
+        "licence": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "day": 3,
+      "title": "Railjet to Vienna",
+      "morning": "Railjet from Prague hlavní nádraží to Vienna in about 4 hours, from €20 booked ahead.",
+      "afternoon": "Check in, then **Naschmarkt** for a late lunch.",
+      "evening": "Standing place at the **Vienna State Opera**, from about €15, sold 80 minutes before curtain.",
+      "dayStats": "Train 4 h, 330 km",
+      "stats": {
+        "mode": "train",
+        "distanceKm": 330,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 240,
+          "high": 240
+        }
+      },
+      "sleep": "Budget hotel in Vienna",
+      "sleepRef": 2,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Staatsoper_Wien_DSC_5273w.jpg/1280px-Staatsoper_Wien_DSC_5273w.jpg",
+        "w": 1280,
+        "h": 734,
+        "credit": "Vienna State Opera house",
+        "page": "https://commons.wikimedia.org/wiki/File:Staatsoper_Wien_DSC_5273w.jpg",
+        "author": "P e z i",
+        "licence": "CC BY-SA 3.0 at"
+      }
+    },
+    {
+      "day": 4,
+      "title": "Vienna, palaces and coffee",
+      "morning": "**Schönbrunn** gardens and the Gloriette, free; the palace tour is extra.",
+      "afternoon": "The **Hofburg** and the Museum quarter, then cake in a classic café.",
+      "evening": "Heuriger wine tavern in Grinzing by tram 38.",
+      "dayStats": "City walking, about 11 km",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 11,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 300,
+          "high": 300
+        }
+      },
+      "sleep": "Budget hotel in Vienna",
+      "sleepRef": 2,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Wien_-_Schloss_Sch%C3%B6nbrunn.JPG/1280px-Wien_-_Schloss_Sch%C3%B6nbrunn.JPG",
+        "w": 1280,
+        "h": 853,
+        "credit": "Schonbrunn Palace",
+        "page": "https://commons.wikimedia.org/wiki/File:Wien_-_Schloss_Sch%C3%B6nbrunn.JPG",
+        "author": "C.Stadler/Bwag",
+        "licence": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "day": 5,
+      "title": "Bratislava on the way",
+      "morning": "Regional train to **Bratislava** in about 1 h, around €12 return-free single.",
+      "afternoon": "**Bratislava Castle**, the old town and the UFO bridge over the Danube; leave bags in station lockers.",
+      "evening": "Evening train on to **Budapest**, about 2 h 30 min, from €15.",
+      "dayStats": "Trains 1 h and 2 h 30 min",
+      "stats": {
+        "mode": "train",
+        "distanceKm": 260,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 210,
+          "high": 210
+        }
+      },
+      "sleep": "Hostel in Budapest",
+      "sleepRef": 3,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Bratislava_-_Burg_%28b%29.JPG/1280px-Bratislava_-_Burg_%28b%29.JPG",
+        "w": 1280,
+        "h": 853,
+        "credit": "Bratislava Castle",
+        "page": "https://commons.wikimedia.org/wiki/File:Bratislava_-_Burg_(b).JPG",
+        "author": "C.Stadler/Bwag",
+        "licence": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "day": 6,
+      "title": "Budapest baths and bridges",
+      "morning": "**Széchenyi** thermal baths in the city park, about €30 for the day.",
+      "afternoon": "**Heroes' Square** and **Andrássy út** back to the **Parliament** on the river.",
+      "evening": "Ruin bars of the Jewish quarter.",
+      "dayStats": "City walking, about 9 km",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 9,
+        "ascentM": null,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 240,
+          "high": 240
+        }
+      },
+      "sleep": "Hostel in Budapest",
+      "sleepRef": 3,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Hungarian_Parliament_Building_from_across_the_Danube%2C_2025-01-11.jpg/1280px-Hungarian_Parliament_Building_from_across_the_Danube%2C_2025-01-11.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Hungarian Parliament Building",
+        "page": "https://commons.wikimedia.org/wiki/File:Hungarian_Parliament_Building_from_across_the_Danube,_2025-01-11.jpg",
+        "author": "Kilyann Le Hen",
+        "licence": "CC BY 4.0"
+      }
+    },
+    {
+      "day": 7,
+      "title": "Buda Castle, then home",
+      "morning": "Funicular or the stairs to **Buda Castle** and Fisherman's Bastion.",
+      "afternoon": "Bus 100E to the airport, about 35 minutes.",
+      "evening": null,
+      "dayStats": "City walking, about 5 km",
+      "stats": {
+        "mode": "walk",
+        "distanceKm": 5,
+        "ascentM": 60,
+        "descentM": null,
+        "highM": null,
+        "timeMin": {
+          "low": 180,
+          "high": 180
+        }
+      },
+      "sleep": null,
+      "sleepRef": null,
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Budav%C3%A1ri_Palota%2C_ABCDEF_%C3%A9p%C3%BClet.jpg/1280px-Budav%C3%A1ri_Palota%2C_ABCDEF_%C3%A9p%C3%BClet.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Buda Castle",
+        "page": "https://commons.wikimedia.org/wiki/File:Budav%C3%A1ri_Palota,_ABCDEF_%C3%A9p%C3%BClet.jpg",
+        "author": "Varius",
+        "licence": "CC BY-SA 3.0"
+      }
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hostel in Prague",
+      "style": "hostel",
+      "location": "Prague New Town",
+      "description": "Pick one within walking distance of the main station for the morning train.",
+      "booking": "three weeks ahead",
+      "priceNote": "€18 to €30 a dorm bed, €60 to €90 a private double"
+    },
+    {
+      "rank": 2,
+      "name": "Budget hotel in Vienna",
+      "style": "budget hotel",
+      "location": "Vienna, near the Westbahnhof or Hauptbahnhof",
+      "description": "Vienna's hostels are large and clean; budget hotels near the stations are close in price for two.",
+      "booking": "three weeks ahead",
+      "priceNote": "€25 to €40 a dorm bed, €80 to €120 a double"
+    },
+    {
+      "rank": 3,
+      "name": "Hostel in Budapest",
+      "style": "hostel",
+      "location": "Budapest District VII",
+      "description": "The Jewish quarter is the hostel quarter, steps from the ruin bars.",
+      "booking": "two weeks ahead",
+      "priceNote": "€15 to €25 a dorm bed"
+    }
+  ],
+  "logistics": {
+    "connectivity": "EU roaming works in all four countries.",
+    "emergency": "112 everywhere.",
+    "weather": "Danube summers are hot and continental; spring and autumn are best for walking.",
+    "bookingWindows": "Railjet and EuroCity fares rise as the date nears; book 3 to 6 weeks ahead on the operators' sites.",
+    "money": "Three currencies: koruna, euro, forint. Cards work almost everywhere; skip exchange booths.",
+    "transportRules": "An Interrail Global pass rarely pays for three short trains; buy point to point.",
+    "permits": null,
+    "health": null,
+    "gettingThere": "Fly into Prague and out of Budapest; open-jaw tickets often cost the same as a return.",
+    "other": []
+  },
+  "proTips": [
+    "Use the station lockers in Bratislava hlavná stanica so the stopover costs nothing but time.",
+    "Buy the Vienna 24 or 48 hour transport ticket only if you plan more than four rides a day."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Who It Suits": "First trips by train, couples, friends, families with older children"
+    },
+    "surface": null,
+    "distanceKm": 590,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "Point-to-point tickets beat a pass for this route",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": false,
+    "bookingTimeline": "Trains 3 to 6 weeks ahead",
+    "audience": "Car-free travellers"
+  },
+  "packingNotes": [
+    "A day bag for the Bratislava stop",
+    "Flip-flops and a towel for the baths",
+    "A smart layer for the opera"
+  ],
+  "whatCouldGoWrong": [
+    "Track work can replace a train with a bus on Sundays; check the operator's site the day before."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "Sample trip written for T431 to show every slot of the trip page. Prices, timetables and opening details are to be audited by the owner."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "t431-samples",
+    "sourceFile": "pipeline/journeys/sample_trips.py",
+    "sourceFormat": "python (sample)",
+    "sourceId": "cz-rail-prague-vienna-budapest",
+    "ingestedAt": "2026-10-15",
+    "synthesized": true
+  },
+  "sample": true,
+  "highlights": [
+    {
+      "title": "Charles Bridge at dawn",
+      "line": "Prague's Gothic bridge before the crowds, statues against the castle.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg/1280px-Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+        "w": 1280,
+        "h": 853,
+        "credit": "Charles Bridge",
+        "page": "https://commons.wikimedia.org/wiki/File:Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+        "author": "A.Savin",
+        "licence": "FAL"
+      },
+      "day": 1
+    },
+    {
+      "title": "€15 at the opera",
+      "line": "Standing places at the Vienna State Opera, sold on the night.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Staatsoper_Wien_DSC_5273w.jpg/1280px-Staatsoper_Wien_DSC_5273w.jpg",
+        "w": 1280,
+        "h": 734,
+        "credit": "Vienna State Opera house",
+        "page": "https://commons.wikimedia.org/wiki/File:Staatsoper_Wien_DSC_5273w.jpg",
+        "author": "P e z i",
+        "licence": "CC BY-SA 3.0 at"
+      },
+      "day": 3
+    },
+    {
+      "title": "Széchenyi baths",
+      "line": "Outdoor thermal pools in a palace, steaming even in winter.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+        "w": 1280,
+        "h": 662,
+        "credit": "Budapest",
+        "page": "https://commons.wikimedia.org/wiki/File:View_from_Gell%C3%A9rt_Hill_to_the_Danube,_Hungary_-_Budapest_(28493220635).jpg",
+        "author": "Visions of Domino",
+        "licence": "CC BY 2.0"
+      },
+      "day": 6
+    },
+    {
+      "title": "Bratislava Castle",
+      "line": "A Danube capital in an afternoon between two trains.",
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Bratislava_-_Burg_%28b%29.JPG/1280px-Bratislava_-_Burg_%28b%29.JPG",
+        "w": 1280,
+        "h": 853,
+        "credit": "Bratislava Castle",
+        "page": "https://commons.wikimedia.org/wiki/File:Bratislava_-_Burg_(b).JPG",
+        "author": "C.Stadler/Bwag",
+        "licence": "CC BY-SA 4.0"
+      },
+      "day": 5
+    }
+  ],
+  "photos": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg/1280px-Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+      "w": 1280,
+      "h": 853,
+      "credit": "Charles Bridge",
+      "page": "https://commons.wikimedia.org/wiki/File:Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+      "author": "A.Savin",
+      "licence": "FAL"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+      "w": 1280,
+      "h": 662,
+      "credit": "Budapest",
+      "page": "https://commons.wikimedia.org/wiki/File:View_from_Gell%C3%A9rt_Hill_to_the_Danube,_Hungary_-_Budapest_(28493220635).jpg",
+      "author": "Visions of Domino",
+      "licence": "CC BY 2.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/1280px-Schoenbrunn_philharmoniker_2012.jpg",
+      "w": 1280,
+      "h": 576,
+      "credit": "Vienna",
+      "page": "https://commons.wikimedia.org/wiki/File:Schoenbrunn_philharmoniker_2012.jpg",
+      "author": "Superbass",
+      "licence": "CC BY-SA 3.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Slovakia_bratislava.jpg/1280px-Slovakia_bratislava.jpg",
+      "w": 1280,
+      "h": 959,
+      "credit": "Bratislava",
+      "page": "https://commons.wikimedia.org/wiki/File:Slovakia_bratislava.jpg",
+      "author": "Arne Müseler",
+      "licence": "CC BY-SA 4.0"
+    }
+  ],
+  "dayPlaces": [
+    {
+      "day": 1,
+      "name": "Prague",
+      "lat": 50.08737,
+      "lon": 14.42132
+    },
+    {
+      "day": 2,
+      "name": "Prague",
+      "lat": 50.08737,
+      "lon": 14.42132
+    },
+    {
+      "day": 3,
+      "name": "Vienna",
+      "lat": 48.20849,
+      "lon": 16.37208
+    },
+    {
+      "day": 4,
+      "name": "Vienna",
+      "lat": 48.20849,
+      "lon": 16.37208
+    },
+    {
+      "day": 5,
+      "name": "Bratislava",
+      "lat": 48.15556,
+      "lon": 17.14184
+    },
+    {
+      "day": 6,
+      "name": "Budapest",
+      "lat": 47.49222,
+      "lon": 19.05081
+    },
+    {
+      "day": 7,
+      "name": "Budapest",
+      "lat": 47.49222,
+      "lon": 19.05081
+    }
+  ],
+  "wordCount": 549
+}

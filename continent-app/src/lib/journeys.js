@@ -90,6 +90,12 @@ export const TYPE_LABEL_KEY = {
   'winter-sports': 'journey.typeWinterSports',
   'nature-escape': 'journey.typeNatureEscape',
   'water-sports': 'journey.typeWaterSports',
+  // T431 (owner, 2026-10-15)
+  hostel: 'journey.typeHostel',
+  'beach-week': 'journey.typeBeachWeek',
+  rail: 'journey.typeRail',
+  pilgrim: 'journey.typePilgrim',
+  'island-hopping': 'journey.typeIslandHopping',
 };
 
 export const typeLabel = (slug, t, fallback = '') => {
