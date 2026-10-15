@@ -1263,6 +1263,11 @@ def main():
         print(f"[beaches] WARNING: index.json and top.json now describe only "
               f"{', '.join(sorted(wanted))}. Re-run with no --countries "
               f"before shipping, or they will disagree with the files on disk.")
+    # T456: where each place is, said from the NUTS spine, and the rows that
+    # are not this layer's, applied to the files just written.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "regions"))
+    import repair_places_wire
+    repair_places_wire.place_pass("beaches", out_dir)
 
 
 GLOBAL_MAX = 1.0

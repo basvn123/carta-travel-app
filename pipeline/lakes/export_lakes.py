@@ -1386,6 +1386,11 @@ def main():
     if filled:
         print(f"[lakes] countries filled to the floor: "
               f"{', '.join(f'{k}+{v}' for k, v in sorted(filled.items()))}")
+    # T456: where each place is, said from the NUTS spine, and the rows that
+    # are not this layer's, applied to the files just written.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "regions"))
+    import repair_places_wire
+    repair_places_wire.place_pass("lakes", out_dir)
 
 
 GLOBAL_MAX = 1.0
