@@ -3724,6 +3724,7 @@ export const nl = {
   'cycle.agreeSome': '{pct}% van deze lijn komt overeen met {source}, de rest wijkt af',
   'cycle.agreeLow': 'Slechts {pct}% van deze lijn komt overeen met {source}',
   'cycle.familiesTitle': 'EuroVelo-routes',
+  "cycle.stretch": "Een deel van een langere route",
   'cycle.familyCountryOne': '1 land',
   'cycle.familyCountryMany': '{n} landen',
   'cycle.familyMeta': '{km} km, {countries}',

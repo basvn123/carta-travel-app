@@ -4642,6 +4642,7 @@ export const en = {
   'cycle.agreeSome': '{pct}% of this line matches {source}; the rest differs',
   'cycle.agreeLow': 'Only {pct}% of this line matches {source}',
   'cycle.familiesTitle': 'EuroVelo routes',
+  "cycle.stretch": "A stretch of a longer route",
   'cycle.familyCountryOne': '1 country',
   'cycle.familyCountryMany': '{n} countries',
   'cycle.familyMeta': '{km} km, {countries}',

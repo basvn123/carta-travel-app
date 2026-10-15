@@ -109,7 +109,8 @@ export function pickIcons(layer, rows) {
   // same per-country cap as every other section.
   const capCountries = layer !== 'trail'
     || new Set(pool.map((r) => countryOf(layer, r))).size > 1;
-  pool.sort((a, b) => (iconRank(layer, b) - iconRank(layer, a))
+  pool.sort((a, b) => ((a.sec ? 1 : 0) - (b.sec ? 1 : 0))
+    || (iconRank(layer, b) - iconRank(layer, a))
     || ((b.score ?? b.rating ?? 0) - (a.score ?? a.rating ?? 0)));
   const perCountry = new Map();
   const families = new Set();
