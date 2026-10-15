@@ -197,7 +197,17 @@ def measured(peak):
 # Access: the term the brief says to boost
 # ---------------------------------------------------------------------------
 
-SUMMIT_LIFT_M = 700          # a top station this close is this mountain's lift
+# A top station this close (horizontally) is this mountain's lift. Was 700 m
+# until T454: every true summit lift in the wire sat within 219 m, and from
+# 300 m out the station was a shoulder or a glacier terrace well below the
+# summit (Teide at 550 m, Titlis at 592 m).
+SUMMIT_LIFT_M = 250
+# Lifts checked by hand to end at the summit although OSM measures their top
+# station further out than SUMMIT_LIFT_M (the summit node and the station
+# node sit apart): the Lomnicky stit cable car ends at the observatory on the
+# top, the Harderbahn, Ulriksbanen, the Ljubljana castle funicular and the
+# Montjuic cable car at the top of their hills. Wikidata ids.
+LIFT_TOP_CONFIRMED = {"Q1072105", "Q382484", "Q386192", "Q60357008", "Q1122701"}
 NEAR_LIFT_M = 3000           # further out it is a lift on the mountain
 
 LIFT_WORDS = {
@@ -225,6 +235,11 @@ def lift_of(peak):
     regularly unreachable, and a country enriched without it should still be
     able to say that Nebelhorn has a cable car."""
     seed = (peak.get("seed") or {}).get("lift") or ""
+    # A curated lift is a lift to the top only where the seed says it reaches
+    # the summit (T454); otherwise it is a lift on the mountain. A road keeps
+    # its own word.
+    seed_top = bool((peak.get("seed") or {}).get("top")) or seed == "road"
+    seed_kind = (LIFT_WORDS.get(seed, "") if seed_top else "liftsNearby") if seed else ""
     near = _near(peak)
     tags = _tags(peak)
     facts = _facts(peak)
@@ -234,22 +249,24 @@ def lift_of(peak):
                    for k in tags)
     kind, metres, src = "", None, ""
 
-    if lift_m is not None and lift_m <= SUMMIT_LIFT_M:
+    confirmed = peak.get("wd") in LIFT_TOP_CONFIRMED
+    if lift_m is not None and (lift_m <= SUMMIT_LIFT_M or (confirmed and lift_m <= NEAR_LIFT_M)):
         kind = "cableCar" if any(k.startswith("aerialway=cable_car") for k in tags) \
             else "gondola" if any(k.startswith("aerialway=gondola") for k in tags) \
             else "chairlift"
         metres, src = lift_m, "osm"
-    elif has_rack and rail_m is not None and rail_m <= SUMMIT_LIFT_M:
+    elif has_rack and rail_m is not None and (rail_m <= SUMMIT_LIFT_M
+                                              or (confirmed and rail_m <= NEAR_LIFT_M)):
         kind = "funicular" if any(k.startswith("railway=funicular") for k in tags) \
             else "rackRailway"
         metres, src = rail_m, "osm"
-    elif seed:
-        kind, src = LIFT_WORDS.get(seed, ""), "curated"
+    elif seed and seed_top:
+        kind, src = seed_kind, "curated"
     elif lift_m is not None and lift_m <= NEAR_LIFT_M:
         kind, metres, src = "liftsNearby", lift_m, "osm"
 
     if not kind and seed:
-        kind, src = LIFT_WORDS.get(seed, ""), "curated"
+        kind, src = seed_kind, "curated"
     if not kind and ("cable_car" in facts or "funicular" in facts):
         kind, src = "liftsNearby", "wiki"
     if not kind:
