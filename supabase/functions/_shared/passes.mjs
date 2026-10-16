@@ -154,3 +154,83 @@ export function logModelEvent(service, row, waitUntil) {
     console.error('ai_model_events log failed:', e && e.message ? e.message : e);
   }
 }
+
+/* ── The yearly plan (T460, migration 053). ──
+ *
+ * The Year Pass is sold as a Stripe subscription that renews every year; the
+ * Trip Pass stays a one-off payment. These helpers turn Stripe objects into
+ * the arguments the database functions take, kept here (pure, no Stripe or
+ * Deno import) so scripts/billing tests can check them in node.
+ */
+
+/** The tiers sold as a subscription rather than a one-off payment. */
+export const RECURRING_TIERS = ['year'];
+
+/** Checkout mode for a tier. */
+export function checkoutModeFor(tier) {
+  return RECURRING_TIERS.includes(tier) ? 'subscription' : 'payment';
+}
+
+/** The withdrawal waiver text for the checkbox Stripe shows (custom_text). */
+export function waiverText(tier, termsUrl) {
+  const terms = `Carta's [terms of service](${termsUrl}) say what a plan buys and how refunds work.`;
+  if (RECURRING_TIERS.includes(tier)) {
+    return 'I ask Carta to start my yearly plan as soon as this payment completes, and I understand '
+      + 'that I then lose my 14-day right of withdrawal under EU consumer law. The plan renews every '
+      + `year at the same price until I cancel, which I can do at any time in Account. ${terms}`;
+  }
+  return 'I ask Carta to start my pass as soon as this payment completes, and I understand that I '
+    + `then lose my 14-day right of withdrawal under EU consumer law. ${terms}`;
+}
+
+const id = (v) => (typeof v === 'string' ? v : v?.id || '');
+
+/**
+ * Whether a paid invoice grants a year, and with what. The first invoice
+ * (subscription_create) and every renewal (subscription_cycle) grant; a
+ * proration or a manual invoice does not. The user and tier ride on the
+ * subscription's metadata, written at checkout.
+ */
+export function grantFromInvoice(invoice, subscription) {
+  if (!invoice || invoice.status !== 'paid') return { grant: false, why: 'unpaid' };
+  const reason = invoice.billing_reason || '';
+  if (reason !== 'subscription_create' && reason !== 'subscription_cycle') {
+    return { grant: false, why: `billing_reason ${reason || 'none'}` };
+  }
+  const meta = subscription?.metadata || invoice.subscription_details?.metadata
+    || invoice.parent?.subscription_details?.metadata || {};
+  const userId = meta.user_id || '';
+  const tier = meta.tier || '';
+  if (!userId || !RECURRING_TIERS.includes(tier)) return { grant: false, why: 'missing user or tier' };
+  const gate = /^[A-Za-z]{1,32}$/.test(String(meta.reason || '')) ? meta.reason : null;
+  return {
+    grant: true,
+    first: reason === 'subscription_create',
+    args: {
+      p_user: userId,
+      p_tier: tier,
+      // The invoice id is the idempotency key: a replayed invoice.paid is a
+      // no-op in grant_pass, as a replayed checkout session always was.
+      p_session_id: invoice.id,
+      p_customer_id: id(invoice.customer) || null,
+      p_buyer_country: invoice.customer_address?.country || null,
+      p_amount_cents: typeof invoice.amount_paid === 'number' ? invoice.amount_paid : null,
+      p_currency: invoice.currency || null,
+      p_reason: reason === 'subscription_create' ? gate : 'renewal',
+    },
+  };
+}
+
+/** The subscription's state as set_subscription_state takes it. */
+export function stateFromSubscription(sub) {
+  const meta = sub?.metadata || {};
+  const end = sub?.current_period_end ?? sub?.items?.data?.[0]?.current_period_end ?? null;
+  return {
+    p_user: meta.user_id || '',
+    p_subscription_id: sub?.id || '',
+    p_status: sub?.status || null,
+    p_cancel_at_period_end: !!sub?.cancel_at_period_end,
+    p_current_period_end: typeof end === 'number' ? new Date(end * 1000).toISOString() : null,
+    p_customer_id: id(sub?.customer) || null,
+  };
+}

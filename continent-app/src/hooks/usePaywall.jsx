@@ -24,12 +24,13 @@
  * month, and never at all for somebody who already pays.
  */
 import React, {
-  createContext, useContext, useState, useCallback, useMemo, useRef, useEffect,
+  createContext, useContext, useState, useCallback, useMemo, useRef, useEffect, Suspense, lazy,
 } from 'react';
 import { useEntitlement } from './useEntitlement.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { authConfigured } from '../lib/supabaseClient.js';
-import { PassModal } from '../components/PassModal.jsx';
+// The panel and its stylesheet load when it first opens (T460), not with the app.
+const PassModal = lazy(() => import('../components/PassModal.jsx').then((m) => ({ default: m.PassModal })));
 import {
   trackPaywall, trackPaywallOnExit, isLeavingForCheckout,
 } from '../lib/paywallEvents.js';
@@ -43,6 +44,9 @@ import { E2E_SEAMS } from '../lib/e2eSeams.js';
  * must not import the hook that mounts it. Adding a reason means adding its
  * heading there and to all six locales.
  */
+// Gates asked only when a metered allowance is spent or nearly spent.
+const QUOTA_REASONS = new Set(['plans', 'ground', 'plansLow']);
+
 export const GATES = {
   // Hard gates: the traveller pressed something that needs a pass.
   export:    { kind: 'hard' },
@@ -119,6 +123,18 @@ export function PaywallProvider({ children, onSignIn }) {
   const openedHard = useRef(false);
 
   const signedIn = !!user && authConfigured;
+  // A guest who chose a plan and was sent to sign in comes back to it.
+  const [initialTier, setInitialTier] = useState('');
+  useEffect(() => {
+    if (!signedIn) return;
+    let pending = null;
+    try { pending = JSON.parse(sessionStorage.getItem('carta.pendingPass') || 'null'); } catch { /* none */ }
+    if (!pending) return;
+    try { sessionStorage.removeItem('carta.pendingPass'); } catch { /* private mode */ }
+    setInitialTier(pending.tier === 'trip' ? 'trip' : 'year');
+    openedHard.current = true;
+    setReason(GATES[pending.reason] ? pending.reason : 'browse');
+  }, [signedIn]);
 
   // Counted here rather than at each call site: require(), nudge() and
   // openPrices() are three doors into one modal, and a funnel that depends on
@@ -189,12 +205,16 @@ export function PaywallProvider({ children, onSignIn }) {
    * decide whether to explain itself.
    */
   const require = useCallback((why) => {
-    if (paid) return true;
+    // A paying traveller passes every gate except the ones that are only
+    // asked when an allowance has run out or is about to (T460): those used
+    // to return true for anyone who paid, so "See passes" did nothing for the
+    // one person most likely to buy again.
+    if (paid && !(QUOTA_REASONS.has(why) && entitlement.known)) return true;
     const gate = GATES[why] || GATES.browse;
     openedHard.current = gate.kind === 'hard';
     setReason(why);
     return false;
-  }, [paid]);
+  }, [paid, entitlement.known]);
 
   /**
    * Offer a pass without blocking anything. Returns true if the prompt was
@@ -257,13 +277,16 @@ export function PaywallProvider({ children, onSignIn }) {
       {children}
       {reason && (
         <div onClick={(e) => e.stopPropagation()}>
-          <PassModal
-            entitlement={entitlement}
-            reason={reason}
-            signedIn={signedIn}
-            onClose={handleClose}
-            onSignIn={() => { close(); onSignIn?.(); }}
-          />
+          <Suspense fallback={null}>
+            <PassModal
+              entitlement={entitlement}
+              reason={reason}
+              signedIn={signedIn}
+              initialTier={initialTier}
+              onClose={handleClose}
+              onSignIn={() => { close(); onSignIn?.(); }}
+            />
+          </Suspense>
         </div>
       )}
     </PaywallContext.Provider>

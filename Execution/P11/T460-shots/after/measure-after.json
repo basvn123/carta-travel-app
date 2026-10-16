@@ -1,0 +1,98 @@
+[
+  {
+    "scene": "pass-guest",
+    "view": "p360",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-free",
+    "view": "p360",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-trip",
+    "view": "p360",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-guest",
+    "view": "phone",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-free",
+    "view": "phone",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-trip",
+    "view": "phone",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-guest",
+    "view": "ipad",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /See passes|See plans/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-free",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Terms 32x14"
+    ],
+    "smallCount": 1,
+    "primaries": [
+      "See passes",
+      "Start yearly plan, €14.99"
+    ],
+    "words": 159,
+    "errors": []
+  },
+  {
+    "scene": "pass-trip",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Terms 32x14"
+    ],
+    "smallCount": 1,
+    "primaries": [
+      "Extend my pass",
+      "Start yearly plan, €14.99"
+    ],
+    "words": 158,
+    "errors": []
+  },
+  {
+    "scene": "pass-guest",
+    "view": "desk",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /See passes|See plans/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-free",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "See passes",
+      "Start yearly plan, €14.99"
+    ],
+    "words": 159,
+    "errors": []
+  },
+  {
+    "scene": "pass-trip",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Extend my pass",
+      "Start yearly plan, €14.99"
+    ],
+    "words": 158,
+    "errors": []
+  }
+]

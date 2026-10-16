@@ -1762,7 +1762,7 @@
    z 62, and the full-screen destination page at z 240 was burying the pass
    modal launched from its own PDF button - a guest clicked and saw nothing
    happen. The pass variant outranks every page. */
-.day-saved-overlay.pass-overlay { z-index: 320; }
+.pass-overlay { z-index: 320; }
 
 /* --- practical layer (PLAN.md D4) ---------------------------------------- */
 .destp-rhythm { font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; max-width: 66ch; }

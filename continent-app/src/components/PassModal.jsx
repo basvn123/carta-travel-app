@@ -2,20 +2,32 @@ import React, { useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 import {
-  TIERS, TIER_ORDER, PAID_TIERS, formatPrice, yearPassTripsEquivalent, daysLeft,
+  TIERS, formatPrice, daysLeft, monthlyCents, isRecurring,
 } from '../lib/pricing.js';
 import { startCheckout } from '../lib/checkout.js';
-import { SparkIcon, CheckIcon, CloseIcon } from './Icons.jsx';
+import { resumeYearly } from '../lib/billing.js';
+import { CheckIcon, CloseIcon } from './Icons.jsx';
+import { Button, Chip, IconButton } from './ui/index.js';
 import { TermsOfService } from './TermsOfService.jsx';
+import '../styles/71-pass.css';
 
 /**
- * What the modal leads with, per reason code. Naming the moment beats a cold
- * "want to pay?", and `sub` replaces the generic lead where a reassurance is
- * worth more than the pitch (nobody's work is lost by a gate).
+ * The pass panel (T460): built to be decided in one look.
  *
- * The reason codes themselves live in hooks/usePaywall.jsx; this is only the
- * copy for them, kept here so the modal does not import the hook that mounts
- * it. Every key must exist in all six locales.
+ *   1. A heading that names the moment (a spent allowance, an export, a
+ *      second trip), and a line under it only where it reassures.
+ *   2. Two plans as one radio choice: Yearly, which renews and is
+ *      recommended, and the Trip Pass, paid once for 60 days. The billed
+ *      amount is the large figure; the monthly figure is small and only ever
+ *      beside it, never instead of it.
+ *   3. What the chosen plan adds, in plain numbers, once.
+ *   4. One primary, "Continue to payment". Stripe's page carries the order
+ *      button the law words ("Pay" or "Subscribe") and the withdrawal waiver
+ *      tick box (checkout function, consent_collection).
+ *   5. One line of small print: VAT included, the yearly plan renews until
+ *      cancelled, the terms.
+ *
+ * Free is a line, not a card: it is what the traveller already has.
  */
 const REASON_COPY = {
   plans:     { heading: 'pass.headingPlans' },
@@ -36,204 +48,187 @@ const FAIL_KEY = {
   no_price: 'pass.errUnavailable',
   bad_tier: 'pass.errGeneric',
   stripe_error: 'pass.errGeneric',
-  // The pass already runs as far ahead as a pass can go (three years), so
-  // the checkout function refused before Stripe charged for nothing.
   pass_max: 'pass.errMax',
+  subscribed: 'pass.errSubscribed',
   quota_check: 'pass.errUnavailable',
   network: 'pass.errNetwork',
 };
 
-/**
- * The pass picker. Opened either from the account panel (browsing) or from a
- * spent allowance (the upsell moment), which `reason` distinguishes so the
- * heading can name what just ran out instead of asking a cold "want to pay?".
- *
- * Deliberately NOT a subscription pitch. Both passes are one-off payments and
- * the copy says so, because the thing being sold here is partly the absence of
- * a recurring charge to remember.
- */
-export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedIn }) {
+/** A guest's chosen plan, kept through sign-in (Google leaves the page). */
+export const PENDING_PASS_KEY = 'carta.pendingPass';
+
+export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedIn, initialTier = '' }) {
   const { t, lang } = useI18n();
-  const [busy, setBusy] = useState('');
+  const locale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).bcp47;
+  const current = entitlement?.tier || 'free';
+  const subscribed = current === 'year' && entitlement?.subscription?.live && !entitlement?.subscription?.cancelling;
+  // Cancelled with paid time left: the answer is to keep it, not to buy a
+  // second subscription beside it.
+  const cancelling = !!(entitlement?.subscription?.live && entitlement?.subscription?.cancelling);
+  // The yearly plan is offered first and chosen by default; a Trip Pass
+  // holder is offered the switch, a free traveller the better value.
+  // A Trip Pass running out is offered more days first; everyone else sees
+  // the yearly plan chosen.
+  const [pick, setPick] = useState(initialTier === 'trip' || (current === 'trip' && reason === 'expiring') ? 'trip' : 'year');
+  const [busy, setBusy] = useState(false);
   const [failCode, setFailCode] = useState('');
   const [termsOpen, setTermsOpen] = useState(false);
   const cardRef = useRef(null);
   const closeRef = useRef(null);
-  // Escape on the shared capture-phase stack; off while the terms page is on top.
   useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef, enabled: !termsOpen });
 
-  const locale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).bcp47;
-  const current = entitlement?.tier || 'free';
+  const copy = REASON_COPY[reason] || {};
+  const heading = t(copy.heading || 'pass.heading');
   const left = daysLeft(entitlement?.expiresAt);
-
-  const buy = async (tier) => {
-    if (!signedIn) { onSignIn?.(); return; }
-    setFailCode('');
-    setBusy(tier);
-    const res = await startCheckout(tier, reason);
-    if (!res.ok) {
-      setFailCode(res.code || 'stripe_error');
-      setBusy('');
-    }
-    // On success the browser is already navigating to Stripe; leaving `busy`
-    // set keeps the button from being pressed twice during the handover.
+  const fmtDate = (iso) => {
+    try { return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso)); } catch { return ''; }
   };
 
-  const copy = REASON_COPY[reason] || {};
-  const headingKey = copy.heading || 'pass.heading';
-  const leadKey = copy.sub || 'pass.lead';
+  const buy = async () => {
+    if (!signedIn) {
+      try { sessionStorage.setItem(PENDING_PASS_KEY, JSON.stringify({ tier: pick, reason })); } catch { /* private mode */ }
+      onSignIn?.();
+      return;
+    }
+    setFailCode('');
+    setBusy(true);
+    const res = await startCheckout(pick, reason);
+    if (!res.ok) { setFailCode(res.code || 'stripe_error'); setBusy(false); }
+  };
+
+  const resume = async () => {
+    setFailCode('');
+    setBusy(true);
+    const res = await resumeYearly();
+    setBusy(false);
+    if (!res.ok) { setFailCode(res.code || 'stripe_error'); return; }
+    entitlement?.refresh?.();
+    onClose?.();
+  };
+
+  const plan = TIERS[pick];
+  // What the plan adds, the thing the traveller just reached for first.
+  const ADD = {
+    plans: t(isRecurring(pick) ? 'pass.addPlansYear' : 'pass.addPlansTrip', { n: plan.aiPlans }),
+    ground: t('pass.addSearches', { n: plan.grounded }),
+    export: t('pass.addExports'),
+    save: t('pass.addTrips'),
+    share: t('pass.addTogether'),
+    import: t('pass.addImport'),
+  };
+  const LEAD = { plansLow: 'plans', celebrate: 'save', expiring: 'plans' };
+  const first = ADD[reason] ? reason : LEAD[reason] || 'plans';
+  const adds = [first, ...['plans', 'ground', 'export', 'save', 'share', 'import'].filter((k) => k !== first)]
+    .map((k) => ADD[k]);
+
+  // What the traveller holds now, in one line.
+  const holding = current === 'trip' && left != null
+    ? t('pass.holdTrip', { date: fmtDate(entitlement.expiresAt) })
+    : subscribed && entitlement.subscription.renewsAt
+      ? t('pass.holdYear', { date: fmtDate(entitlement.subscription.renewsAt) })
+      : current === 'year' && entitlement?.expiresAt
+        ? t('pass.holdYearEnds', { date: fmtDate(entitlement.expiresAt) })
+        : '';
 
   return (
-    <div className="day-saved-overlay pass-overlay" role="dialog" aria-modal="true" onClick={onClose}>
-      <div className="day-saved-card pass-card" ref={cardRef} onClick={(e) => e.stopPropagation()}>
-        {/* The house close control (CloseIcon, never a "×" glyph). */}
-        <button className="day-saved-close pass-close" ref={closeRef} onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>
-          <CloseIcon size={16} />
-        </button>
-
-        <div className="ai-plan-head">
-          <span className="ai-plan-badge" aria-hidden="true"><SparkIcon size={20} /></span>
-          <h3>{t(headingKey)}</h3>
+    <div className="pass-overlay shell-scrim" onClick={onClose}>
+      <div
+        className="pass-sheet shell-dialog"
+        ref={cardRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pass-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="pass-head">
+          <h2 className="pass-title" id="pass-title">{heading}</h2>
+          <IconButton ref={closeRef} label={t('shape.close')} onClick={onClose}><CloseIcon size={16} /></IconButton>
         </div>
-        <p className="ai-plan-lead">{t(leadKey)}</p>
+        {copy.sub && <p className="pass-sub">{t(copy.sub)}</p>}
+        {holding && <p className="pass-holding">{holding}</p>}
 
-        {current !== 'free' && left != null && (
-          <p className="pass-current">{t(left === 1 ? 'pass.current1' : 'pass.current', { name: t(TIERS[current].labelKey), days: left })}</p>
-        )}
-
-        {/* The withdrawal waiver, stated BEFORE the buy buttons.
-            A pass starts the moment payment lands, so under Article 16(m) of
-            the Consumer Rights Directive the 14-day right of withdrawal only
-            ends if the buyer asked for immediate access and acknowledged
-            losing it. The explicit consent itself is the required checkbox on
-            Stripe's own page (consent_collection in the checkout Edge
-            Function), and the webhook records the answer against the grant
-            (migration 025). This line is here so nobody meets that checkbox
-            for the first time with their card details already typed, and so
-            the terms can be read before leaving for Stripe. A second checkbox
-            on this side would be duplicate friction, not a second consent. */}
-        <p className="pass-waiver">
-          {t('pass.waiverNote')}
-          {' '}
-          <button type="button" className="auth-link pass-terms-link" onClick={() => setTermsOpen(true)}>
-            {t('pass.legalLink')}
-          </button>
-        </p>
-
-        <div className="pass-grid">
-          {TIER_ORDER.map((id) => {
-            const tier = TIERS[id];
-            const isCurrent = id === current;
-            const buyable = PAID_TIERS.includes(id);
-            return (
-              <div key={id} className={`pass-tier ${tier.featured ? 'featured' : ''} ${isCurrent ? 'current' : ''}`}>
-                {tier.featured && <span className="pass-flag">{t('pass.recommended')}</span>}
-                <h4>{t(tier.labelKey)}</h4>
-                {/* A price is a measured figure: mono, through Intl, two
-                    decimals, the free plan included ("€0.00", not "€0"), so
-                    the three prices line up as one column of money (T390,
-                    brief V3-10). */}
-                <div className="pass-price">
-                  <span className="pass-price-eur">{formatPrice(tier.priceCents, locale)}</span>
-                  <small>
-                    {id === 'trip' ? t('pass.perTrip') : id === 'year' ? t('pass.perYear') : ''}
-                  </small>
-                </div>
-                <p className="pass-blurb">{t(tier.blurbKey)}</p>
-                <ul className="pass-features">
-                  {/* Limits as plain numbers and a period (carta-design "Plan
-                      cards"): "60 Carta bot day plans in 30 days", never
-                      "Unlimited (fair use 60)", which made the traveller
-                      decode a ceiling out of a claim (T390, brief V3-10). */}
-                  <li>
-                    <CheckIcon size={11} />
-                    {id === 'free'
-                      ? t('pass.featPlansFree', { n: tier.aiPlans })
-                      : t(tier.periodDays === 30 ? 'pass.featPlans30' : 'pass.featPlansYear', { n: tier.aiPlans })}
-                  </li>
-                  <li>
-                    <CheckIcon size={11} />
-                    {tier.grounded > 0
-                      ? t('pass.featSearchN', { n: tier.grounded })
-                      : t('pass.featSearchOff')}
-                  </li>
-                  {id === 'year' && (
-                    <li><CheckIcon size={11} /> {t('pass.featValueLess', { n: yearPassTripsEquivalent() })}</li>
-                  )}
-                  {buyable && <li><CheckIcon size={11} /> {t('pass.featOneOff')}</li>}
-                </ul>
-                {buyable ? (
+        {subscribed ? (
+          <p className="pass-sub">{t('pass.subscribedNote', { date: fmtDate(entitlement.subscription.renewsAt) })}</p>
+        ) : cancelling ? (
+          <>
+            <p className="pass-holding">{t('pass.cancellingNote', { date: fmtDate(entitlement.subscription.renewsAt || entitlement.expiresAt) })}</p>
+            {failCode && <p className="pass-error" role="alert">{t(FAIL_KEY[failCode] || 'pass.errGeneric')}</p>}
+            <Button variant="primary" block loading={busy} onClick={resume}>{t('pass.resume')}</Button>
+          </>
+        ) : (
+          <>
+            <div className="pass-plans" role="radiogroup" aria-label={t('pass.choose')}>
+              {['year', 'trip'].map((id) => {
+                const tier = TIERS[id];
+                const on = pick === id;
+                const recurring = isRecurring(id);
+                return (
                   <button
-                    className={`pass-buy ${tier.featured ? 'guide-next' : 'pass-buy-quiet'}`}
-                    disabled={!!busy}
-                    onClick={() => buy(id)}
-                    // Two buttons both read "Get this pass"; a screen reader
-                    // hears which pass each one buys.
-                    aria-label={t('pass.buyNamed', { name: t(tier.labelKey) })}
+                    key={id}
+                    type="button"
+                    role="radio"
+                    aria-checked={on}
+                    tabIndex={on ? 0 : -1}
+                    className={`pass-plan${on ? ' is-selected' : ''}`}
+                    onClick={() => setPick(id)}
+                    onKeyDown={(e) => {
+                      if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                        setPick(id === 'year' ? 'trip' : 'year');
+                        requestAnimationFrame(() => cardRef.current?.querySelector('.pass-plan[aria-checked="true"]')?.focus());
+                      }
+                    }}
                   >
-                    {busy === id ? t('pass.opening') : t('pass.buy')}
+                    <span className="pass-plan-mark" aria-hidden="true">{on && <CheckIcon size={14} />}</span>
+                    <span className="pass-plan-body">
+                      <span className="pass-plan-top">
+                        <span className="pass-plan-name">{t(tier.labelKey)}</span>
+                        {tier.featured && <Chip kind="status" tone="neutral">{t('pass.recommended')}</Chip>}
+                      </span>
+                      <span className="pass-plan-price">
+                        <span className="pass-plan-fig">{formatPrice(tier.priceCents, locale)}</span>
+                        <span className="pass-plan-per">{t(recurring ? 'pass.perYearRenews' : 'pass.perOnce')}</span>
+                      </span>
+                      <span className="pass-plan-note">
+                        {recurring
+                          ? t('pass.yearNote', { month: formatPrice(monthlyCents(id), locale) })
+                          : t('pass.tripNote', { n: tier.periodDays })}
+                      </span>
+                      {recurring && current === 'trip' && (
+                        <span className="pass-plan-note">{t('pass.carryOver')}</span>
+                      )}
+                    </span>
                   </button>
-                ) : (
-                  <div className="pass-buy-placeholder">
-                    {isCurrent ? t('pass.yourPlan') : ''}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
 
-        {/* The three plans side by side, one row per allowance (carta-design
-            "Comparison table", T400, brief V4-6): plans as columns, figures in
-            mono from TIERS, the header row sticky, and on a phone the table
-            scrolls sideways inside itself with two plans in view. The
-            recommended plan is marked only by its card's border above. */}
-        <div className="pass-compare-wrap" role="region" aria-label={t('pass.compareTitle')} tabIndex={0}>
-          <table className="pass-compare">
-            <caption className="sr-only">{t('pass.compareTitle')}</caption>
-            <thead>
-              <tr>
-                <td />
-                {TIER_ORDER.map((id) => <th key={id} scope="col">{t(TIERS[id].labelKey)}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">{t('pass.comparePrice')}</th>
-                {TIER_ORDER.map((id) => <td key={id} className="is-fig">{formatPrice(TIERS[id].priceCents, locale)}</td>)}
-              </tr>
-              <tr>
-                <th scope="row">{t('pass.comparePlans')}</th>
-                {TIER_ORDER.map((id) => <td key={id} className="is-fig">{TIERS[id].aiPlans}</td>)}
-              </tr>
-              <tr>
-                <th scope="row">{t('pass.compareSearches')}</th>
-                {TIER_ORDER.map((id) => <td key={id} className="is-fig">{TIERS[id].grounded}</td>)}
-              </tr>
-              <tr>
-                <th scope="row">{t('pass.compareLasts')}</th>
-                {TIER_ORDER.map((id) => (
-                  <td key={id} className={TIERS[id].periodDays ? 'is-fig' : ''}>
-                    {TIERS[id].periodDays
-                      ? t('pass.compareDays', { n: TIERS[id].periodDays })
-                      : t('pass.compareForever')}
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <div className="pass-adds">
+              <h3 className="pass-adds-title">{t('pass.addsTitle')}</h3>
+              <ul>
+                {adds.map((a) => <li key={a}><span aria-hidden="true"><CheckIcon size={16} /></span><span>{a}</span></li>)}
+              </ul>
+            </div>
 
-        {failCode && (
-          <p className="ai-plan-note ai-plan-note-warn">{t(FAIL_KEY[failCode] || 'pass.errGeneric')}</p>
+            {failCode && <p className="pass-error" role="alert">{t(FAIL_KEY[failCode] || 'pass.errGeneric')}</p>}
+
+            <Button variant="primary" block loading={busy} onClick={buy}>
+              {!signedIn ? t('pass.signInToBuy')
+                : isRecurring(pick) ? t('pass.continueYear', { price: formatPrice(plan.priceCents, locale) })
+                  : current === 'trip' ? t('pass.continueAddDays', { n: plan.periodDays, price: formatPrice(plan.priceCents, locale) })
+                    : t('pass.continueTrip', { price: formatPrice(plan.priceCents, locale) })}
+            </Button>
+            <p className="pass-free">
+              {current === 'free' ? `${t('pass.freeLine', { n: TIERS.free.aiPlans })} ` : ''}{t('pass.keepNote')}
+            </p>
+          </>
         )}
-        <p className="ai-plan-note">{t('pass.vatNote')}</p>
-        <p className="ai-plan-note">{t('pass.noSubNote')}</p>
-        {/* The contract line. The waiver and the link to the terms now sit
-            above the buy buttons (see pass-waiver), where they are read before
-            a price is chosen; this keeps the plain statement that buying is
-            agreeing, without a second copy of the same link. */}
-        <p className="ai-plan-note">{t('pass.legalNote')}</p>
+
+        <p className="pass-legal">
+          {t(isRecurring(pick) || subscribed ? 'pass.legalYear' : 'pass.legalTrip', { price: formatPrice(TIERS.year.priceCents, locale) })}
+          {' '}
+          <a className="pass-terms" href="?legal=terms" onClick={(e) => { e.preventDefault(); setTermsOpen(true); }}>{t('pass.terms')}</a>
+        </p>
       </div>
       {termsOpen && <TermsOfService onClose={() => setTermsOpen(false)} />}
     </div>

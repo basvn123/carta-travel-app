@@ -129,31 +129,6 @@
   background: var(--paper-dim);
 }
 
-/* 10. Passes. Prices are measured figures: mono, tabular, the free plan
-   included, so the three line up as one column of money. */
-.pass-price .pass-price-eur {
-  font-family: var(--mono);
-  font-size: 24px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-}
-.pass-price small { font-family: var(--ui); }
-.pass-close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--tap);
-  min-height: var(--tap);
-  color: var(--ink-soft);
-}
-/* On a phone the recommended plan comes first, so its button is inside the
-   first screen; the cards keep equal weight and their own order on wider
-   screens. */
-@media (max-width: 720px) {
-  .pass-tier.featured { order: -1; margin-top: var(--space-2); }
-}
-
 /* 11. One sign-in door: the modal's submit is its one primary, in the accent
    like every submit on the account surface; its tabs reach the tap floor.
    "Continue with Google" and the gate's "Create an account" stay secondary. */
@@ -245,76 +220,11 @@
 .memo-photos.is-track .memo-photo img { aspect-ratio: 3 / 2; border-radius: 6px; }
 .memo-photos .memo-photo figcaption { font-size: 12px; }
 
-/* 6. The plans compared: plans as columns, one row per allowance, figures in
-   mono, the header row and the row labels sticky; on a phone the table
-   scrolls sideways inside itself with two plans in view. */
-.pass-compare-wrap {
-  margin: var(--space-4) 0 var(--space-2);
-  overflow-x: auto;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-}
-.pass-compare-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.pass-compare {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-family: var(--ui);
-  font-size: 13px;
-  color: var(--ink);
-}
-.pass-compare th,
-.pass-compare td {
-  padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid var(--rule-soft);
-  text-align: left;
-  vertical-align: baseline;
-}
-.pass-compare tbody tr:last-child th,
-.pass-compare tbody tr:last-child td { border-bottom: none; }
-.pass-compare thead th,
-.pass-compare thead td {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--paper);
-  border-bottom-color: var(--rule);
-  font-weight: 600;
-}
-.pass-compare tbody th {
-  position: sticky;
-  left: 0;
-  background: var(--bg-card);
-  font-weight: 400;
-  color: var(--ink-soft);
-}
-.pass-compare thead td { left: 0; z-index: 2; }
-.pass-compare td.is-fig {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-@media (max-width: 720px) {
-  .pass-compare th,
-  .pass-compare td { padding: var(--space-2); }
-  .pass-compare tbody th,
-  .pass-compare thead td { min-width: 84px; }
-  .pass-compare thead th,
-  .pass-compare tbody td { min-width: 80px; }
-}
 /* The modal's motion from the tokens: the card rises 8 px over the scrim in
    --dur-3; the plan cards neither stagger in nor lift on hover (a decorative
    hover lift, and box-shadow is not animated). */
 .pass-overlay { animation: acc-fade var(--dur-3) var(--ease-out) backwards; }
-.pass-card { animation: acc-rise var(--dur-3) var(--ease-out) backwards; }
-.pass-tier {
-  animation: none;
-  transition: border-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .pass-tier:hover { transform: none; box-shadow: none; }
-}
+
 @keyframes acc-fade {
   from { opacity: 0; }
 }
@@ -349,10 +259,9 @@
    place. */
 
 @media (prefers-reduced-motion: reduce) {
-  .pass-tier { transition: none; }
+  
   .undo-toast,
-.pass-overlay,
-.pass-card { animation: none; }
+.pass-overlay { animation: none; }
 }
 
 /* ── V5 (T410): harden, adapt and polish ──────────────────────────────────
@@ -489,18 +398,13 @@
   .saved-trips-panel { scroll-padding-bottom: calc(var(--tap) + var(--space-5)); }
 }
 
-/* 5. The pass half of 21-chat-passes.css, hardened (T410, OWNERSHIP rule 5).
-   The hover rules moved here from 21 and sit inside (hover: hover); the
-   transitions read the duration tokens; the pass card is sized in dvh. */
-.pass-tier { transition: border-color var(--dur-1) var(--ease-out); }
-.pass-buy-quiet,
 .account-avatar-edit,
 .account-avatar-opt,
 .pw-reveal,
 .pw-strength-seg,
 .auth-banner-x { transition-duration: var(--dur-1); transition-timing-function: var(--ease-out); }
 @media (hover: hover) {
-  .pass-buy-quiet:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  
   .auth-submit-quiet:hover:not(:disabled) { background: var(--paper-dim); border-color: var(--ink); }
   .account-avatar-edit:hover { border-color: var(--ink-soft); color: var(--ink); background: var(--paper-dim); }
   .account-avatar-opt:hover { border-color: var(--ink-soft); }
@@ -508,9 +412,6 @@
   .auth-check:hover { color: var(--ink); }
   .auth-banner-x:hover { background: color-mix(in srgb, var(--green) 14%, var(--paper)); }
   .account-delete-arm:hover { background: var(--paper); border-color: var(--danger); color: var(--danger-dark); }
-}
-@media (max-width: 720px) {
-  .pass-card { margin: 2dvh auto; max-height: 92dvh; }
 }
 
 /* ── Guides (T434): a real dialog on the kit. ── */

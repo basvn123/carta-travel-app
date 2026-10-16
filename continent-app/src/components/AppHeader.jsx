@@ -133,7 +133,10 @@ export function AppHeader({
   // The pass chip is chrome, not a gate, so it goes straight to the price
   // table. A caller may still override where it points; nothing does today.
   const paywall = usePaywall();
-  const seePricing = onSeePricing || paywall.openPrices;
+  // A live yearly plan renews by itself: there is nothing left to sell in
+  // the header, so the chip steps aside (T460).
+  const subscribed = paywall.entitlement?.subscription?.live && !paywall.entitlement.subscription.cancelling;
+  const seePricing = subscribed ? null : (onSeePricing || paywall.openPrices);
   return (
     <div className={`app-header ${children ? 'has-filters' : ''}`}>
       <SectionLink
