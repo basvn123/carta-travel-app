@@ -8,6 +8,14 @@ export function estimateWalkMinutes(km) {
   return Math.max(1, Math.round((km / WALK_KMH) * 60));
 }
 
+/** A distance in km with one decimal in the reader's notation ("4,4" in
+ *  German), never a raw toFixed (T433). */
+export function fmtKm(km, lang = 'en') {
+  if (!Number.isFinite(Number(km))) return '?';
+  const loc = lang === 'en' ? 'en-GB' : lang;
+  return new Intl.NumberFormat(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(km));
+}
+
 /** "1 h 20 min" / "45 min", visit durations in human units. */
 export function fmtDur(min) {
   const m = Math.round(min);

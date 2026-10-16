@@ -65,6 +65,17 @@ export function geoLines(r) {
   };
 }
 
+/**
+ * The town a hit sits in, from Nominatim's address parts: what the day
+ * planner calls the start ("places around Wallet"), never a guess from the
+ * catalogue (T433: a stay near a researched town used to be named after that
+ * town). A town hit is its own locality.
+ */
+function localityOf(x) {
+  const a = x?.address || {};
+  return a.city || a.town || a.village || a.municipality || a.hamlet || a.suburb || a.county || '';
+}
+
 export async function geocodeAddress(query, opts = {}) {
   const q = (query || '').trim();
   if (q.length < 3) return [];
@@ -99,6 +110,7 @@ export async function geocodeAddress(query, opts = {}) {
           // hotel | address | town, so a results row can wear an icon that
           // says what it is before the words are read.
           kind: placeKind(x),
+          locality: placeKind(x) === 'town' ? (x.name || localityOf(x)) : localityOf(x),
           lat: Number(x.lat),
           lon: Number(x.lon),
         };
@@ -141,6 +153,7 @@ export async function reverseGeocode(lat, lon, opts = {}) {
       country: (x.address?.country || '').split(' / ')[0],
       iso2: (x.address?.country_code || '').toUpperCase() || null,
       kind: placeKind(x),
+      locality: localityOf(x),
       lat,
       lon,
     };

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
@@ -7,7 +7,8 @@ import { useI18n } from '../i18n/index.jsx';
 import { useDismiss } from './DayPlanPanel.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import { addDays, todayISO, fmtDate } from '../lib/dates.js';
-import { MoreIcon, TrashIcon, RouteIcon, ChevronRightIcon } from '../components/Icons.jsx';
+import { MoreIcon, TrashIcon, ChevronRightIcon } from '../components/Icons.jsx';
+import { Card, Button } from '../components/ui/index.js';
 
 /**
  * "Continue a trip" (D2).
@@ -69,46 +70,40 @@ export function hasImminentTrip(plans, today = todayISO()) {
   });
 }
 
-function StatusBadge({ status }) {
-  const { t } = useI18n();
-  if (status.kind === 'now') return <span className="dtcard-badge now">{t('day.tripNow')}</span>;
-  if (status.kind === 'past') return <span className="dtcard-badge past">{t('day.tripPast')}</span>;
-  if (status.kind === 'soon') {
-    const label = status.inDays <= 1
-      ? t('day.tripTomorrow')
-      : t('day.tripInDays', { n: status.inDays });
-    return <span className="dtcard-badge soon">{label}</span>;
+/** "On now", "Tomorrow", "In 5 days", "Past": said in the meta line, never
+ *  printed on the photograph (carta-design, never-do 4). */
+function statusText(status, t) {
+  if (status.kind === 'now') return t('day.tripNow');
+  if (status.kind === 'past') return t('day.tripPast');
+  if (status.kind === 'soon') return status.inDays <= 1 ? t('day.tripTomorrow') : t('day.tripInDays', { n: status.inDays });
+  return '';
+}
+
+/** A trip with no name of its own is called by its towns, never "Untitled". */
+export function tripName(plan, t) {
+  if (plan.label) return plan.label;
+  const towns = [...new Set((plan.stops || []).map((st) => cityLabel(st.city || '')).filter(Boolean))];
+  if (!towns.length) return t('day.untitledTrip');
+  if (towns.length <= 3) return towns.join(', ');
+  return t('day.tripTownsMore', { towns: towns.slice(0, 2).join(', '), n: towns.length - 2 });
+}
+
+/** Days of the trip still ahead of today, the ones a day plan can be for. */
+function daysAhead(plan, today) {
+  let n = 0;
+  for (const st of plan.stops || []) {
+    for (let d = 0; d < stopNights(st); d += 1) {
+      const iso = st.arrive_date ? addDays(st.arrive_date, d) : null;
+      if (!iso || iso >= today) n += 1;
+    }
   }
-  return null;
+  return n;
 }
 
-/** "Bruges 2n → Paris 3n", with each stop's flag. Capped so a fourteen-stop
- *  interrail trip does not wrap the card into a paragraph. */
-function StopChips({ stops, max = 3 }) {
-  const { t } = useI18n();
-  const shown = stops.slice(0, max);
-  const rest = stops.length - shown.length;
-  return (
-    <div className="dtcard-stops">
-      {shown.map((st, i) => (
-        <React.Fragment key={i}>
-          {i > 0 && <ChevronRightIcon size={11} className="dtcard-arrow" />}
-          <span className="dtcard-stop">
-            {st.country && <CountryFlag country={st.country} size={11} />}
-            <b>{cityLabel(st.city)}</b>
-            <small>{t('day.nightsShort', { n: stopNights(st) })}</small>
-          </span>
-        </React.Fragment>
-      ))}
-      {rest > 0 && <span className="dtcard-stop more">{t('day.plusNStops', { n: rest })}</span>}
-    </div>
-  );
-}
-
-function dateRange(p) {
+function dateRange(p, t) {
   if (!p.start_date) return '';
-  const end = p.end_date && p.end_date !== p.start_date ? ` → ${fmtDate(p.end_date)}` : '';
-  return `${fmtDate(p.start_date)}${end}`;
+  if (!p.end_date || p.end_date === p.start_date) return fmtDate(p.start_date, true);
+  return t('day.dateRange', { from: fmtDate(p.start_date, true), to: fmtDate(p.end_date, true) });
 }
 
 /**
@@ -123,34 +118,36 @@ function TripCard({ plan, destinations, onPick }) {
   const stops = plan.stops || [];
   const coverStop = stops.find((st) => destinations[st.destination_id]?.image?.url) || stops[0];
   const coverDest = coverStop ? destinations[coverStop.destination_id] : null;
-  const label = plan.label || t('day.untitledTrip');
+  const label = tripName(plan, t);
+  const ahead = daysAhead(plan, today);
+  const when = statusText(status, t);
   return (
-    <button
-      type="button"
-      className={`dtcard${status.kind === 'past' ? ' past' : ''}`}
-      onClick={() => onPick(plan)}
-    >
-      <span className="dtcard-photo">
+    <Card
+      layout="row"
+      className={`dtrow${status.kind === 'past' ? ' is-past' : ''}`}
+      media={(
         <HeroImage
           url={coverDest?.image?.url}
           city={coverDest?.city || label}
           iso2={coverDest?.iso2}
-          className="dtcard-img"
-          maxWidth={960}
-          sizes="(max-width: 768px) 82vw, 320px"
-          ratio={[3, 2]}
+          maxWidth={240}
+          sizes="72px"
+          ratio={[1, 1]}
         />
-        <StatusBadge status={status} />
-      </span>
-      <span className="dtcard-body">
-        <span className="dtcard-title">{label}</span>
-        {dateRange(plan) && <span className="dtcard-dates">{dateRange(plan)}</span>}
-        {stops.length > 0 && <StopChips stops={stops} />}
-        <span className="dtcard-go">
-          {t('day.planADay')}<ChevronRightIcon size={13} />
-        </span>
-      </span>
-    </button>
+      )}
+      title={label}
+      onOpen={() => onPick(plan)}
+      meta={(
+        <>
+          <span>{dateRange(plan, t)}</span>
+          {status.kind === 'now' && ahead > 0 && (
+            <span>{t(ahead === 1 ? 'day.daysToPlanOne' : 'day.daysToPlan', { n: ahead })}</span>
+          )}
+          {when && <span className={`dtrow-when ${status.kind}`}>{when}</span>}
+        </>
+      )}
+      actions={<ChevronRightIcon size={18} className="dtrow-go" />}
+    />
   );
 }
 
@@ -233,51 +230,51 @@ function CardSkeletons({ n = 2 }) {
   );
 }
 
+/**
+ * "Plan a day of your trip" (T433). The owner found the old block unclear:
+ * a sign-in paragraph about "every trip you save becoming a set of days".
+ * It now says what it does in its heading, lists each saved trip as one
+ * compact row (photo, name, dates, how many of its days are still ahead),
+ * and a guest sees one line and one button.
+ *
+ *   lead  the trip is on now or this week: it sits above the question
+ */
 export function ContinueTripCards({
   plans, destinations, loading, failed = false, onRetry, signedIn, authConfigured,
-  onOpenDay, onRequestAuth, onPlanTrip,
+  onOpenDay, onRequestAuth, onPlanTrip, lead = false,
 }) {
   const { t } = useI18n();
   const [sheetPlan, setSheetPlan] = useState(null);
   const today = todayISO();
   const sorted = useMemo(() => sortTripsByStatus(plans || [], today), [plans, today]);
+  // Past trips cannot have a day planned; they stay in My trips.
+  const live = sorted.filter((p) => tripStatus(p, today).kind !== 'past');
 
   // Accounts are off for this deployment: no trips to continue, and no sign-in
   // to offer either.
   if (!authConfigured) return null;
 
   return (
-    <div className="day-landing-section dtsection">
-      <div className="trip-block-title">{t('day.continueATrip')}</div>
+    <section className={`dayw-section dtsection${lead ? ' is-lead' : ''}`} aria-labelledby="dt-trips-h">
+      <h2 className="dayw-section-h" id="dt-trips-h">{t('day.planTripDay')}</h2>
 
       {!signedIn ? (
-        /* A note in grey type asking somebody to sign in is the weakest thing
-           on the page. The offer is a card of its own, with the reason on it
-           and the button inside it. */
         <div className="dtsignin">
-          <span className="dtsignin-ico" aria-hidden="true"><RouteIcon size={20} /></span>
-          <div className="dtsignin-text">
-            <b>{t('day.signInTitle')}</b>
-            <p>{t('day.signInBody')}</p>
-          </div>
-          <button type="button" className="dtsignin-btn" onClick={onRequestAuth}>
-            {t('day.signIn')}
-          </button>
+          <p className="dtsignin-text">{t('day.signInLine')}</p>
+          <Button size="sm" onClick={onRequestAuth}>{t('day.signIn')}</Button>
         </div>
       ) : loading ? (
         <CardSkeletons />
       ) : failed ? (
         <ErrorBlock message={t('state.savedFailed')} onRetry={onRetry} retryLabel={t('layer.retry')} />
-      ) : sorted.length === 0 ? (
-        <div className="dtempty">
-          <p>{t('day.noSavedTrips')}</p>
-          <button type="button" className="dtempty-btn" onClick={onPlanTrip}>
-            {t('day.planATrip')}
-          </button>
+      ) : live.length === 0 ? (
+        <div className="dtsignin">
+          <p className="dtsignin-text">{t('day.noSavedTrips')}</p>
+          <Button size="sm" onClick={onPlanTrip}>{t('day.planATrip')}</Button>
         </div>
       ) : (
-        <div className="dtcards">
-          {sorted.map((p) => (
+        <div className="dtrows">
+          {live.slice(0, 4).map((p) => (
             <TripCard key={p.id} plan={p} destinations={destinations} onPick={setSheetPlan} />
           ))}
         </div>
@@ -295,7 +292,7 @@ export function ContinueTripCards({
           }}
         />
       )}
-    </div>
+    </section>
   );
 }
 
@@ -340,50 +337,45 @@ function CardMenu({ onDelete }) {
  * shallower 4:3 photo, because these are single days rather than trips and
  * should not out-shout the trips above them.
  */
-export function DayPlanCards({ plans, destinations, onOpen, onDelete, hideTitle = false }) {
+export function DayPlanCards({ plans, destinations, onOpen, onDelete }) {
   const { t } = useI18n();
+  const [all, setAll] = useState(false);
   if (!plans.length) return null;
+  const shown = all ? plans : plans.slice(0, 3);
   return (
-    <div className="day-landing-section dtsection">
-      {/* On a returning visit the list IS the view, and its h1 already says
-          "Your day plans" (T389), so the block title would say it twice. */}
-      {!hideTitle && <div className="trip-block-title">{t('day.yourDayPlans')}</div>}
-      <div className="dtcards small">
-        {plans.map((sp) => {
+    <section className="dayw-section dtsection" aria-labelledby="dt-plans-h">
+      <h2 className="dayw-section-h" id="dt-plans-h">{t('day.yourDayPlans')}</h2>
+      <div className="dtrows">
+        {shown.map((sp) => {
           const dest = destinations[sp.stops?.[0]?.destinationId];
           const days = sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1;
-          const label = sp.label || dest?.city || t('day.dayPlanFallback');
+          const label = sp.label || (dest?.city ? cityLabel(dest.city) : t('day.dayPlanFallback'));
           return (
-            <div className="dtcard-wrap" key={sp.id}>
-              <button type="button" className="dtcard" onClick={() => onOpen(sp)}>
-                <span className="dtcard-photo">
-                  <HeroImage
-                    url={dest?.image?.url}
-                    city={dest?.city || label}
-                    iso2={dest?.iso2}
-                    className="dtcard-img"
-                    maxWidth={960}
-                    sizes="(max-width: 768px) 82vw, 320px"
-                    ratio={[3, 2]}
-                  />
-                </span>
-                <span className="dtcard-body">
-                  <span className="dtcard-title">{label}</span>
-                  <span className="dtcard-dates">
-                    {fmtDate(sp.startDate)}
-                    {days > 1 ? t('day.nDaysSuffix', { n: days }) : ''}
-                    {(sp.stops?.length || 1) > 1 ? t('day.nCitiesSuffix', { n: sp.stops.length }) : ''}
-                  </span>
-                  <span className="dtcard-go">
-                    {t('day.openPlan')}<ChevronRightIcon size={13} />
-                  </span>
-                </span>
-              </button>
-              <CardMenu onDelete={() => onDelete(sp.id)} />
-            </div>
+            <Card
+              key={sp.id}
+              layout="row"
+              className="dtrow"
+              media={(
+                <HeroImage url={dest?.image?.url} city={dest?.city || label} iso2={dest?.iso2} maxWidth={240} sizes="72px" ratio={[1, 1]} />
+              )}
+              title={label}
+              onOpen={() => onOpen(sp)}
+              meta={(
+                <>
+                  <span>{fmtDate(sp.startDate, true)}</span>
+                  {days > 1 && <span>{t('day.nDays', { n: days })}</span>}
+                </>
+              )}
+              actions={<CardMenu onDelete={() => onDelete(sp.id)} />}
+            />
           );
         })}
       </div>
-    </div>
+      {plans.length > 3 && (
+        <Button variant="quiet" size="sm" className="dtrows-more" onClick={() => setAll((v) => !v)}>
+          {all ? t('dayex.showLess') : t('dayex.showMore', { n: plans.length - 3 })}
+        </Button>
+      )}
+    </section>
   );
 }

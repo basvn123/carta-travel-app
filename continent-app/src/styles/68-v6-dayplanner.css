@@ -33,32 +33,9 @@
 
 /* ---- The map's own furniture ---- */
 
-.dayws-overlay {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  z-index: 6;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  pointer-events: none;
-}
-.dayws-overlay > * { pointer-events: auto; }
-
-.dayws-top {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
 /* One spec for both map-bar controls: same height, same paper, same hairline,
    so the two corners read as one row and not as two unrelated widgets. */
-.dayws-stay-btn,
-.dayws-tips-btn {
+.dayws-stay-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -75,13 +52,10 @@
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .dayws-stay-btn:hover:not(:disabled),
-  .dayws-tips-btn:hover { border-color: var(--ink-soft); }
+  .dayws-stay-btn:hover:not(:disabled) { border-color: var(--text-2); }
 }
-.dayws-stay-btn:focus-visible,
-.dayws-tips-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.dayws-stay-btn svg,
-.dayws-tips-btn svg { flex: none; color: var(--ink-mute); }
+.dayws-stay-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.dayws-stay-btn svg { flex: none; color: var(--text-3); }
 .dayws-stay-btn:disabled { cursor: default; }
 
 .dayws-stay { position: relative; min-width: 0; max-width: min(62%, 340px); }
@@ -168,45 +142,6 @@
   .dayws-stay-clear:hover { color: var(--danger); }
 }
 .dayws-stay-panel .daytrip-transport { margin-top: 12px; }
-
-.dayws-tips { position: relative; flex: none; }
-.dayws-tips-btn svg { color: var(--rate); }
-.dayws-tips.open .dayws-tips-btn { border-color: var(--ink-soft); }
-.dayws-tips-label { font-size: 13px; font-weight: 600; white-space: nowrap; }
-
-.dayws-tips-panel {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: min(94vw, 380px);
-  max-height: min(64vh, 520px);
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  background: var(--paper);
-  box-shadow: var(--shadow-2);
-  z-index: 3;
-}
-.dayws-tips-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 12px 12px 10px 14px;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.dayws-tips-head h3 { font-family: var(--display); font-size: 15.5px; font-weight: 500; }
-.dayws-tips-close {
-  display: flex;
-  width: 26px; height: 26px;
-  align-items: center; justify-content: center;
-  border-radius: 8px;
-  color: var(--ink-mute);
-}
-@media (hover: hover) {
-  .dayws-tips-close:hover { background: var(--paper-dim); color: var(--ink); }
-}
 .dayws-tips-body { overflow-y: auto; padding: 4px 14px 14px; }
 .dayws-tips-sec { padding-top: 12px; }
 .dayws-tips-sec + .dayws-tips-sec { margin-top: 12px; border-top: 1px solid var(--rule-soft); }
@@ -279,11 +214,6 @@
 
 /* The pin filters live in the same overlay column, so they can never land on
    top of the two bars above them. */
-.day-map-tools-inline {
-  position: static;
-  top: auto; left: auto; right: auto;
-  max-width: 100%;
-}
 
 /* ---- The Carta bot ----
    T389: the floating bot and its menu went (rule N3, carta-design "Day list");
@@ -305,45 +235,6 @@
 }
 .dayws-city-add > *:first-child { flex: 1; min-width: 0; }
 
-.dayws-tabs {
-  flex-shrink: 0;
-  display: flex;
-  gap: 2px;
-  padding: 8px 20px 0;
-  border-bottom: 1px solid var(--rule);
-}
-.dayws-tab {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 9px 6px 10px;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  font-size: 12.5px;
-  font-weight: 600;
-  white-space: nowrap;
-  color: var(--ink-soft);
-  border-radius: 6px 6px 0 0;
-  transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
-}
-.dayws-tab svg { flex: none; }
-@media (hover: hover) {
-  .dayws-tab:hover { color: var(--ink); }
-}
-.dayws-tab.on { color: var(--select-ink); background: var(--select-bg); border-bottom-color: var(--ink-fill); }
-.dayws-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.dayws-tab-count {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  padding: 1px 5px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-}
-
 .dayws-back { margin-top: 22px; }
 
 /* ---- Tab 1: today's plan ---- */
@@ -352,41 +243,9 @@
 /* Two controls, one at each end: what you can add, and where the day can go.
    The stop count is NOT repeated here, it is already in the header strip and
    on the tab itself, and a number printed three times stops being read. */
-.dayp-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.dayp-pop { position: relative; flex: none; }
-.dayp-round {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px; height: 42px;
-  border: 1px solid var(--rule);
-  border-radius: 50%;
-  background: var(--bg-card);
-  color: var(--ink-soft);
-  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .dayp-round:hover { border-color: var(--ink-soft); color: var(--ink); }
-}
-.dayp-round:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.dayp-round.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 /* Deep slate, not terracotta. On this screen the accent is spoken for: the
    Carta button floats over the map in it, and a second filled terracotta
    circle a thumb away would make neither of them the answer. */
-.dayp-round-primary {
-  background: var(--action);
-  border-color: var(--action);
-  color: var(--on-fill);
-}
-@media (hover: hover) {
-  .dayp-round-primary:hover { background: var(--action-hover); border-color: var(--action-hover); color: var(--on-fill); }
-}
 
 .dayp-menu {
   position: absolute;
@@ -400,7 +259,6 @@
   box-shadow: var(--shadow-2);
   z-index: 4;
 }
-.dayp-menu-end { left: auto; right: 0; }
 .dayp-menu-item {
   display: flex;
   width: 100%;
@@ -418,9 +276,6 @@
 .dayp-menu-item svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
 .dayp-menu-item b { display: block; font-size: 13.5px; font-weight: 600; }
 .dayp-menu-item small { display: block; font-size: 11.5px; line-height: 1.4; color: var(--ink-mute); }
-.dayp-menu-small { padding: 7px 10px; }
-.dayp-menu-small b { font-size: 12.5px; font-weight: 500; color: var(--ink-soft); }
-.dayp-menu-rule { height: 1px; background: var(--rule-soft); margin: 5px 8px; }
 
 /* T389 (row T384-k): the 2px accent stripe down the left went (carta-design
    accent marks: no stripe on an inert block). The summary is a quiet note. */
@@ -436,133 +291,12 @@
 
 /* The route itself. A dotted rail joins the stops, so the list reads as one
    walk rather than as four unrelated cards. */
-.dayr-list { list-style: none; }
-.dayr-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 0;
-}
-.dayr-row::before {
-  content: '';
-  position: absolute;
-  left: 21px;
-  top: 53px;
-  bottom: -4px;
-  border-left: 2px dotted var(--rule);
-}
-.dayr-row.last::before { display: none; }
-.dayr-mark { position: relative; flex: none; width: 44px; height: 44px; }
-.dayr-mark .day-thumb {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--bg-card);
-  box-shadow: var(--shadow-1);
-}
-.dayr-mark .day-thumb-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-}
-.dayr-no {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: var(--ink-fill);
-  border: 2px solid var(--paper);
-  color: var(--on-fill);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.dayr-body { flex: 1; min-width: 0; }
-.dayr-name {
-  display: block;
-  font-size: 14.5px;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--ink);
-}
 /* Inline, so on a name that wraps to two lines the star follows the last
    word instead of floating out at the right edge of the row. */
-.dayr-must { display: inline-flex; margin-left: 5px; vertical-align: -1px; color: var(--rate); }
-.dayr-kind {
-  display: block;
-  margin-top: 2px;
-  font-size: 12px;
-  color: var(--ink-mute);
-}
-.dayr-tools { flex: none; display: flex; gap: 2px; opacity: 0.55; transition: opacity var(--dur-1) var(--ease-out); }
-.dayr-row:focus-within .dayr-tools { opacity: 1; }
-@media (hover: hover) {
-  .dayr-row:hover .dayr-tools { opacity: 1; }
-}
-.dayr-tool {
-  width: 26px; height: 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  color: var(--ink-soft);
-  font-size: 13px;
-  line-height: 1;
-}
-.dayr-tool-up { transform: rotate(180deg); }
-@media (hover: hover) {
-  .dayr-tool:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
-}
-.dayr-tool:disabled { opacity: 0.3; cursor: default; }
-@media (hover: hover) {
-  .dayr-tool-del:hover { color: var(--danger); }
-}
 /* The pin was tapped: ring its row once so the two agree. */
-.dayr-row {
-  border-radius: 12px;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  transition: outline-color var(--dur-1) var(--ease-out);
-}
-.dayr-row.flash { outline-color: var(--ink); }
-
-.dayp-finds { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
-.dayp-finds-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin-bottom: 8px;
-}
-.dayp-find { padding: 6px 0; }
-.dayp-find b { display: block; font-size: 13.5px; font-weight: 600; }
-.dayp-find small { display: block; font-size: 12px; line-height: 1.45; color: var(--ink-soft); }
 
 /* Empty day: name the space, give the action. */
 .dayp-empty { text-align: center; padding: 26px 4px 8px; }
-.dayp-empty-glyph {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-  margin-bottom: 12px;
-}
 .dayp-empty h3 { font-family: var(--display); font-size: 19px; font-weight: 500; }
 .dayp-empty p {
   max-width: 34ch;
@@ -578,173 +312,20 @@
   gap: 9px;
   margin-top: 16px;
 }
-.dayp-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 44px;
-  padding: 0 18px;
-  border-radius: 6px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 14px;
-  font-weight: 600;
-}
-@media (hover: hover) {
-  .dayp-cta:hover { background: var(--accent-hover); }
-}
-.dayp-cta-ghost {
-  background: transparent;
-  border: 1px solid var(--rule);
-  color: var(--ink);
-}
-@media (hover: hover) {
-  .dayp-cta-ghost:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
-}
-.dayp-ready {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  width: 100%;
-  margin-top: 18px;
-  padding: 12px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--bg-card);
-  text-align: left;
-}
-@media (hover: hover) {
-  .dayp-ready:hover { border-color: var(--ink); }
-}
-.dayp-ready-ico {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 34px; height: 34px;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--ink-soft);
-}
-.dayp-ready-text { min-width: 0; }
-.dayp-ready-text b { display: block; font-size: 13.5px; font-weight: 600; }
-.dayp-ready-text small { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
 
 /* ---- Tab 2: add more ---- */
 
 .daya { padding-top: 12px; }
-.daya-modes {
-  display: flex;
-  gap: 3px;
-  padding: 3px;
-  border-radius: 12px;
-  background: var(--paper-dim);
-  margin-bottom: 14px;
-}
-.daya-mode {
-  flex: 1;
-  padding: 9px 8px;
-  border-radius: 9px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-mute);
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.daya-mode.on { background: var(--bg-card); color: var(--ink); box-shadow: var(--shadow-1); }
-.daya-mode:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
-.daya-lead, .daya-empty, .daya-thin {
+.daya-empty, .daya-thin {
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--ink-mute);
   margin-bottom: 12px;
 }
 .daya-empty { margin: 14px 0; }
-
-.daya-ready {
-  padding: 14px;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  background: var(--bg-card);
-  margin-bottom: 10px;
-}
-.daya-ready.rec { border-color: var(--accent); }
-.daya-ready-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 5px;
-}
-.daya-ready-title { font-family: var(--display); font-size: 16px; color: var(--ink); }
-.daya-ready-tag {
-  flex: none;
-  font-size: 10.5px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-}
-.daya-ready-desc { font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
-.daya-ready-stats {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1) var(--space-3);
-  flex-wrap: wrap;
-  margin-top: 9px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
-}
 /* T399 (brief V4-3): figures are parted by space, as in the head's stats
    line, not by pipes. */
-.daya-sep { display: none; }
-.daya-ready-names {
-  margin-top: 8px;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.daya-ready-use {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  height: 38px;
-  padding: 0 15px;
-  /* T389 (brief V3-6): "Use this day" is a secondary on every card. One per
-     card, the recommended one in accent, put two to four filled buttons on a
-     tab whose primary is the plan itself. */
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 600;
-}
-@media (hover: hover) {
-  .daya-ready-use:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
-}
-
-.daya-ask {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  width: 100%;
-  margin-top: 6px;
-  padding: 12px 14px;
-  border: 1px dashed var(--rule);
-  border-radius: 12px;
-  text-align: left;
-}
-@media (hover: hover) {
-  .daya-ask:hover { border-color: var(--ink); }
-}
-.daya-ask svg { flex: none; color: var(--ink-soft); }
-.daya-ask b { display: block; font-size: 13.5px; font-weight: 600; }
-.daya-ask small { display: block; font-size: 11.5px; color: var(--ink-mute); }
 
 .daya-search {
   display: flex;
@@ -779,23 +360,6 @@
   margin-bottom: 12px;
 }
 .daya-picks::-webkit-scrollbar { display: none; }
-.daya-pick {
-  flex: none;
-  height: 32px;
-  padding: 0 13px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .daya-pick:hover { border-color: var(--ink-soft); color: var(--ink); }
-}
-.daya-pick.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-.daya-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* A browsable place: the photo earns its space, and the sentence beside it
    says what the place actually is. */
@@ -1166,30 +730,20 @@
      compact head at 380 x 800 (the first stop sat at 661 px before). */
   .day-ws .trip-sheet { height: 80%; }
   .dayws-daybar { padding: 9px 15px 2px; }
-  .dayws-tabs { padding: 6px 15px 0; }
-  .dayws-tab { font-size: 12.5px; gap: 5px; }
   .daya-shot .day-thumb { width: 76px; height: 76px; }
 }
 
 @media (min-width: 769px) {
-  .dayws-overlay {
-    left: calc(var(--panel-w) + 14px);
-    right: 14px;
-  }
   .dayws-stay { max-width: 340px; }
 }
 
 /* Very narrow phones: the two map bars stack rather than squeeze. */
 @media (max-width: 420px) {
-  .dayws-tips-label { display: none; }
-  .dayws-tips-btn { padding: 6px 11px; }
   .dayws-stay { max-width: calc(100% - 58px); }
-  .dayp-empty-actions .dayp-cta { flex: 1 1 100%; justify-content: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dayws-stay-btn, .dayws-tips-btn, .dayp-round, .daya-card, .daya-pick,
-  .dayws-tab, .dayf-drop, .daya-mode, .dayr-tools, .dayr-row {
+  .dayws-stay-btn, .daya-card, .dayf-drop {
     transition: none;
   }
 }
@@ -1213,17 +767,6 @@
   border: 1px solid var(--rule);
   border-radius: 14px;
   background: var(--paper);
-}
-.dayex-head-photo {
-  flex: 0 0 auto;
-  width: 76px; height: 57px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--paper-dim);
-  display: block;
-}
-.dayex-head-photo img, .dayex-head-photo .hero-blank {
-  width: 100%; height: 100%; object-fit: cover; display: block;
 }
 .dayex-head-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
 .dayex-head-text b { font-family: var(--display); font-size: 19px; letter-spacing: -0.01em; }
@@ -1361,14 +904,6 @@
 .dayex-card-photo img, .dayex-card-photo .hero-blank {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
-.dayex-card-flag {
-  position: absolute; left: 8px; top: 8px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--ink-fill);
-  color: var(--on-fill);
-  font-family: var(--ui); font-size: 12px; font-weight: 600;
-}
 .dayex-card-text { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px; min-width: 0; }
 .dayex-card-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .dayex-card-name b { font-size: 14.5px; line-height: 1.3; }
@@ -1413,16 +948,6 @@
 /* ---- the tray ---------------------------------------------------------- */
 /* Phone: a bar above the bottom nav, so the running total of the day and the
    two ways out of the screen are reachable without scrolling back up. */
-.dayex-tray {
-  position: fixed;
-  left: 0; right: 0;
-  bottom: var(--bottom-nav-h, 62px);
-  z-index: 40;
-  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px;
-  padding: 10px 14px;
-  border-top: 1px solid var(--rule);
-  background: var(--paper);
-}
 .dayex-tray-summary {
   flex: 1 1 auto; min-width: 0;
   border: none; background: none; cursor: pointer;
@@ -1433,33 +958,9 @@
      which is the half of this label that says what kind of day it is. */
   line-height: 1.3;
 }
-.dayex-tray-acts { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; margin-left: auto; }
 @media (max-width: 460px) {
   .dayex-tray-summary { flex: 1 0 100%; }
-  .dayex-tray-acts { width: 100%; }
-  .dayex-tray-carta, .dayex-tray-open { flex: 1 1 0; }
 }
-.dayex-tray-carta, .dayex-tray-open {
-  padding: 0 14px;
-  white-space: nowrap;
-}
-.dayex-tray-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.dayex-tray-list li {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.dayex-tray-list li:last-child { border-bottom: none; }
-.dayex-tray-name { flex: 1 1 auto; min-width: 0; font-size: 14px; overflow: hidden; text-overflow: ellipsis; }
-.dayex-tray-moves { display: flex; gap: 4px; flex: 0 0 auto; }
-.dayex-tray-moves button {
-  width: 32px; height: 32px;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--paper);
-  cursor: pointer; font: inherit; font-size: 14px; color: var(--ink-soft);
-}
-.dayex-tray-moves button:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* ---- the detail sheet -------------------------------------------------- */
 .dayex-detail-photo {
@@ -1497,12 +998,6 @@
   }
   .dayex-cards > * { flex: none; }
   /* The tray stops floating over the page and becomes a card in the column. */
-  .dayex-tray {
-    position: sticky; bottom: 12px; left: auto; right: auto;
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    margin-top: 6px;
-  }
   .dayex { padding-bottom: 20px; }
 }
 
@@ -1514,7 +1009,6 @@
   .dayex-more { min-height: var(--tap); padding: 0 6px; }
   .dayex-view button { min-height: var(--tap); }
   .dayex-tray-summary { min-height: var(--tap); display: flex; align-items: center; }
-  .dayex-tray-moves button { width: var(--tap); height: var(--tap); }
 }
 
 /* ==========================================================================
@@ -1524,59 +1018,12 @@
 /* ---- Landing: the way back after the fork, and "How this works" ---- */
 
 /* After the fork the rail is gone; one back link says where the way back goes. */
-.day-flow-backrow { margin-bottom: var(--space-3); }
-.day-flow-backlink {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 var(--space-1);
-  border: 0;
-  background: none;
-  color: var(--ink-soft);
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.day-flow-backlink svg { color: var(--ink-soft); flex: none; }
-@media (hover: hover) {
-  .day-flow-backlink:hover { color: var(--ink); text-decoration: underline; }
-}
 
 /* "How this works" is a text button under the question it explains. */
-.day-flow-howto { margin-top: var(--space-3); }
-.day-flow-howlink {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--ink-soft);
-  font-family: var(--ui);
-  font-size: 13px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .day-flow-howlink:hover { color: var(--ink); }
-}
-.day-flow-howto .day-flow-help-card { margin: var(--space-2) 0 0; }
 
 /* ---- Landing: a returning visit leads with the plans ---- */
 
-.day-flow-returning { gap: var(--space-4); }
-.day-flow-returning .dtsection { margin: 0; }
-.day-flow-returning .day-flow-newday { align-self: stretch; }
-@media (min-width: 769px) {
-  .day-flow-returning .day-flow-newday { align-self: flex-start; }
-}
-
 /* ---- Workspace head: name, status, the day switcher ---- */
-
-.day-topcard-head { min-width: 0; flex: 1 1 auto; }
 /* The save state is a status word with the house success dot (carta-design
    "Status, not green"), not a green chip that looks like a button. */
 .day-save-status {
@@ -1667,19 +1114,6 @@
 .day-sw-menu { left: auto; right: 0; width: min(calc(100vw - 32px), 240px); }
 
 /* The add-a-city row has its own way out now that no chip toggles it. */
-.dayws-city-cancel {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--tap);
-  height: var(--tap);
-  border: 0;
-  background: transparent;
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-.day-city-chip-del svg { display: block; }
 
 /* The compact head on a phone (brief V3-3): the day before its chrome. The
    name row loses the input-sized min-height the trip planner's editable name
@@ -1693,68 +1127,19 @@
   .day-ws .trip-topcard-name { min-height: 0; line-height: 1.3; }
   .day-ws .day-save-status { margin-top: 2px; }
   .day-ws .day-sw { margin-top: 6px; }
-  .day-ws .day-topcard-stats { margin-top: 6px; }
-  .day-ws .dayws-tabs { padding-top: 0; }
   .day-ws .trip-sheet-scroll { padding-top: 0; }
   .day-ws .dayp { padding-top: 8px; }
-  .day-ws .dayp-bar { margin-bottom: 6px; }
 }
 
 /* ---- The plan toolbar: Add and Share, labelled (rule N3) ---- */
-
-.dayp-tool {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
-}
-.dayp-tool svg { flex: none; color: var(--ink-soft); }
-.dayp-tool .dayp-tool-caret { color: var(--ink-mute); }
-.dayp-tool.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-.dayp-tool.on svg, .dayp-tool.on .dayp-tool-caret { color: var(--select-ink); }
-.dayp-tool:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (hover: hover) {
-  .dayp-tool:hover:not(.on) { border-color: var(--ink-soft); }
-}
-.dayp-menu-label {
-  padding: var(--space-2) 10px var(--space-1);
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
 /* Add and Share open in the shared sheet (SheetShell): anchored to the button
    on a pointer screen, a bottom sheet on a phone. */
-.dayp-choices { display: flex; flex-direction: column; padding-bottom: var(--space-2); }
-.dayp-choices .dayp-menu-item { min-height: var(--tap); align-items: center; }
-.dayp-choices .dayp-menu-item svg { margin-top: 0; }
 .day-sw-more .dayp-menu { z-index: 6; }
 
 /* ---- Add more on a phone: the pin filters as one row, no hint line ---- */
-@media (max-width: 768px) {
-  .day-map-tools-inline .day-map-card { flex-direction: row; align-items: center; overflow-x: auto; scrollbar-width: none; }
-  .day-map-tools-inline .day-map-card::-webkit-scrollbar { display: none; }
-  .day-map-tools-inline .day-map-chips { flex: none; overflow: visible; }
-  .day-map-tools-inline .day-map-card-foot { flex: none; overflow: visible; padding-top: 0; border-top: 0; }
-  .day-map-tools-inline .day-map-hint { display: none; }
-}
 
 /* ---- The builder's tray: the honest count and the fit line ---- */
 /* The summary and the fit line share the summary's old place in the tray. */
-.dayex-tray-state { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; }
-@media (max-width: 460px) {
-  .dayex-tray-state { flex: 1 0 100%; }
-}
 .dayex-tray-fit {
   margin: 0;
   font-family: var(--ui);
@@ -1764,7 +1149,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .day-sw-btn, .day-sw-morebtn, .dayp-tool { transition: none; }
+  .day-sw-btn, .day-sw-morebtn { transition: none; }
 }
 
 /* ============================================================
@@ -1775,16 +1160,6 @@
 /* The day strip (rule N4): stops in ink, the time between them in rule, each
    segment as wide as its minutes, 1 px paper between segments. No figures,
    no legend, no accent; the stop in view is outlined. */
-.dayp-strip {
-  display: flex;
-  gap: 1px;
-  height: 8px;
-  margin: 0 0 var(--space-3);
-}
-.dayp-strip-seg { flex-basis: 0; min-width: 2px; }
-.dayp-strip-seg.stop { background: var(--ink); }
-.dayp-strip-seg.gap { background: var(--rule); }
-.dayp-strip-seg.on { outline: 2px solid var(--select-border); outline-offset: 1px; }
 
 /* A tab's content arrives: it fades and rises 8 px in --dur-2; the outgoing
    tab does not move (design direction v6, part 2.3). */
@@ -1858,7 +1233,6 @@
   border-color: var(--select-border);
   color: var(--select-ink);
 }
-:is(.day-ws, .dayex) .guide-chip.on .guide-chip-kind { color: var(--on-fill); }
 
 /* Day-planner rules that sit in tripplanner's sheets (rows T388-e, T389-f):
    the stripe and the tinted ground go and the trip link is ink, overridden
@@ -1867,10 +1241,8 @@
 .daytrip-reco { border-left: 1px solid var(--rule); background: var(--bg-card); }
 .daytrip-reco-icon,
 .daytrip-reco-main b svg { color: var(--ink-soft); }
-.day-topcard-trip { color: var(--ink); }
 
 /* The stats line: figures in mono with spacing instead of pipes (V4-3). */
-.day-ws .day-topcard-stats { gap: var(--space-1) var(--space-3); font-size: 12px; }
 
 @media (prefers-reduced-motion: reduce) {
   .day-ws .dayp,
@@ -1889,22 +1261,13 @@
    carry their 44 px hit box (a ::before ring, 11-trip-planner.css and
    26-shortlist-extras.css), so they are not touched here. */
 @media (pointer: coarse) {
-  .dayws-tab { min-height: var(--tap); }
   /* The 44 px tabs cost 7 px; the head card above them gives 4 back (its bottom padding, 8 to 4)
      so the first stop stays near 420 px and two stops fit above the bottom bar at 360 x 640. */
   .day-ws .trip-topcard { padding-bottom: 4px; }
-  .dayws-tips-btn,
   .dayws-stay-btn,
   .dayws-stay-find,
-  .dayws-stay-clear,
-  .dayws-tips-close,
-  .dayws-city-cancel { min-height: var(--tap); min-width: var(--tap); }
+  .dayws-stay-clear { min-height: var(--tap); min-width: var(--tap); }
   .day-ws .trip-newtrip-btn { min-height: var(--tap); }
-  .dayr-tool { width: var(--tap); height: var(--tap); }
-  .dayr-tools { gap: 0; }
-  .day-map-chip,
-  .daya-mode,
-  .daya-ready-use,
   .dayf-browse,
   .dayf-act,
   .day-undo-btn { min-height: var(--tap); }
@@ -1913,7 +1276,6 @@
   .dtmenu-btn { min-width: var(--tap); min-height: var(--tap); }
   .dtmenu-item { min-height: var(--tap); }
   /* CountryIntel is tripplanner's; only its head inside this surface's tips dialog is lifted. */
-  .dayws-tips-panel .cintel-head { min-height: var(--tap); }
   .dem-map .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
 }
 
@@ -1991,15 +1353,8 @@
 }
 /* Words that cannot break (German compounds, a long town name) wrap inside
    their box instead of pushing the sheet wider. */
-.dayr-name,
-.dayr-kind,
-.day-topcard-stats,
 .dayws-tip-name,
-.dayws-tip-note,
-.daya-card-name,
-.day-flow-card h2,
-.day-flow-card p,
-.dtcard-name { overflow-wrap: anywhere; hyphens: auto; }
+.dayws-tip-note { overflow-wrap: anywhere; hyphens: auto; }
 
 /* T411, the V6 consistency pass. On a touch screen the day's save and the
    way back to the trip reach --tap, and every planning map pin carries a
@@ -2007,8 +1362,6 @@
    box is a pseudo-element, so the marker MapLibre positions keeps its own
    position and transform. */
 @media (pointer: coarse) {
-  .day-save-btn,
-  .day-topcard-trip { min-height: var(--tap); }
   :is(.day-ws, .dem-map) .dem-pin::after {
     content: '';
     position: absolute;
@@ -2019,3 +1372,753 @@
     transform: translate(-50%, -50%);
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   T433, the day planner rebuilt (2026-10-16). The questions wear the trip
+   planner's own wizard frame (.trip-wizard-modal, DayWizardShell.jsx), so
+   their head, rail, footer and motion come from 19-guide-ratings.css and
+   67-v6-tripplanner.css unchanged; what is here is the day planner's own
+   content. Roles and scales only (DESIGN.md); phone first.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── The flow's steps ─────────────────────────────────────────────────── */
+/* The shared step rail on a touch screen (both planners): a step you can go
+   back to is a 44 px target, not the 37 px the desktop rail draws. */
+@media (pointer: coarse) { .wiz-step-btn { min-height: var(--tap); } }
+.day-wizard .dayw-step { display: flex; flex-direction: column; gap: var(--space-5); }
+.day-wizard .guide-title { margin: 0; }
+.day-wizard .wiz-main { max-width: var(--wiz-max); }
+.day-wizard.wiz-form { --wiz-max: 880px; }
+.day-wizard.wiz-mid { --wiz-max: 1080px; }
+.day-wizard.wiz-wide { --wiz-max: 1600px; }
+
+/* Where the day is, carried from step 2 onwards. */
+.dayw-start {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  align-self: flex-start;
+  max-width: 100%;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-2);
+}
+.dayw-start-text { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--space-2); min-width: 0; }
+.dayw-start-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.dayw-start-text small { font-size: var(--text-label); color: var(--text-2); }
+.dayw-start-change.btn { flex: none; min-height: var(--tap); border-radius: var(--radius-pill); }
+
+/* Step 1: the field, the one-tap answers under it, the work already started. */
+.day-wizard .dayw-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 56px;
+  margin: 0;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: none;
+}
+.day-wizard .dayw-search:focus-within { border-color: var(--focus); outline: 2px solid var(--focus); outline-offset: 1px; box-shadow: none; }
+.day-wizard .dayw-search-ico { flex: none; color: var(--text-2); }
+.day-wizard .dayw-search .day-stay-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 48px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--text-lead);
+  color: var(--text);
+}
+.day-wizard .dayw-search .day-stay-input::placeholder { color: var(--text-2); }
+.day-wizard .dayw-search .trip-add-btn { flex: none; min-height: 48px; }
+
+.dayw-quick { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dayw-quick-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  cursor: pointer;
+}
+.dayw-quick-row svg { color: var(--text-2); }
+.dayw-quick-row small { color: var(--text-2); font-size: var(--text-caption); }
+@media (hover: hover) { .dayw-quick-row:hover { border-color: var(--text-3); } }
+.dayw-note { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+
+.dayw-results { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--surface); overflow: hidden; }
+.dayw-hit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 60px;
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-bottom: 1px solid var(--border-soft);
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.dayw-hit:last-child { border-bottom: none; }
+.dayw-hit.on, .dayw-hit:focus-visible { background: var(--surface-hover); }
+@media (hover: hover) { .dayw-hit:hover { background: var(--surface-hover); } }
+.dayw-hit-ico { flex: none; color: var(--text-2); display: inline-flex; }
+.dayw-hit-text { display: flex; flex-direction: column; min-width: 0; }
+.dayw-hit-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.dayw-hit-text small { font-size: var(--text-label); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.dayw-chosen {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 64px;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border: 1px solid var(--select-border);
+  border-radius: var(--radius-card);
+  background: var(--select-bg);
+  color: var(--select-ink);
+}
+.dayw-chosen-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.dayw-chosen-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.dayw-chosen-text small { font-size: var(--text-label); color: var(--text-2); }
+
+.dayw-section { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-3); }
+.dayw-section.is-lead { margin-top: 0; }
+.dayw-section-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
+.dtrows { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+@media (min-width: 900px) { .dtrows { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.dtrow .card-meta { display: flex; flex-wrap: wrap; column-gap: var(--space-3); }
+.dtrow.is-past { opacity: 0.72; }
+.dtrow-when { font-weight: 600; color: var(--text); }
+.dtrow-when.past { font-weight: 400; color: var(--text-2); }
+.dtrow-go { color: var(--text-3); }
+.dtrows-more { align-self: flex-start; }
+.dtsignin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.dtsignin-text { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.dtrow .dtmenu { position: relative; }
+.dtrow .dtmenu-btn { width: var(--tap); height: var(--tap); }
+
+/* Step 2: the calendar beside how many days. */
+.dayw-when { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); align-items: start; }
+@media (min-width: 900px) { .dayw-when { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); } }
+.dayw-when-cal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.dayw-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dayw-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.dayw-count-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.dayw-count-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.dayw-count-text small { font-size: var(--text-label); color: var(--text-2); }
+.dayw-foot-days { font-size: var(--text-label); color: var(--text-2); }
+
+/* Step 3: ideas, a field and the strongest places with their photos. */
+.day-wizard .day-ideas { display: flex; flex-direction: column; gap: var(--space-4); }
+.day-wizard .day-ideas-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 52px;
+  margin: 0;
+  padding: 0 var(--space-2) 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+.day-wizard .day-ideas-search:focus-within { border-color: var(--focus); outline: 2px solid var(--focus); outline-offset: 1px; }
+.day-wizard .day-ideas-search-ico { position: static; flex: none; color: var(--text-2); }
+.day-wizard .day-ideas-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 48px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.day-wizard .day-ideas-input::placeholder { color: var(--text-2); }
+.day-wizard .day-ideas-clear { position: static; width: var(--tap); height: var(--tap); }
+.day-wizard .day-ideas-group { display: flex; flex-direction: column; gap: var(--space-2); }
+.day-wizard .day-ideas-results { display: flex; flex-direction: column; gap: var(--space-4); }
+.day-ideas-h { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.day-wizard .day-ideas-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+@media (min-width: 700px) { .day-wizard .day-ideas-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.day-wizard .day-ideas-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.day-wizard .day-ideas-row .day-thumb { width: 48px; height: 48px; border-radius: var(--radius-sm); flex: none; }
+.day-wizard .day-ideas-row.on { border-color: var(--select-border); background: var(--select-bg); }
+@media (hover: hover) { .day-wizard .day-ideas-row:hover:not(.on) { border-color: var(--text-3); } }
+.day-wizard .day-ideas-row-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.day-wizard .day-ideas-row-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.day-wizard .day-ideas-row-text small { font-size: var(--text-label); color: var(--text-2); }
+.day-wizard .day-ideas-row-mark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.day-wizard .day-ideas-row.on .day-ideas-row-mark { border-color: var(--select-border); background: var(--surface); color: var(--select-ink); }
+.day-wizard .day-ideas-chips { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.day-wizard .day-ideas-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border: 1px solid var(--select-border);
+  border-radius: var(--radius-card);
+  background: var(--select-bg);
+}
+.day-wizard .day-ideas-chip .day-thumb { width: 40px; height: 40px; border-radius: var(--radius-sm); flex: none; }
+.day-wizard .day-ideas-chip-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.day-wizard .day-ideas-chip-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.day-wizard .day-ideas-chip-text small { font-size: var(--text-label); color: var(--text-2); }
+.day-ideas-when-select {
+  flex: none;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+}
+.day-wizard .day-ideas-chip-x { width: var(--tap); height: var(--tap); flex: none; }
+
+/* Step 4: two equal answers, each with the picture of what it gives. */
+.dayw-fork { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+@media (min-width: 768px) { .dayw-fork { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.dayw-fork-card.card-tile .card-media { aspect-ratio: auto; }
+.dayw-fork-card .card-body { padding: var(--space-4) var(--space-5) var(--space-5); gap: var(--space-2); }
+.dayw-fork-card .card-title { font-size: var(--text-title); }
+.dayw-fork-card .card-meta { white-space: normal; }
+@media (hover: hover) { .dayw-fork-card.is-interactive:hover { border-color: var(--text-3); } }
+.dayw-fork-photo { position: relative; display: block; aspect-ratio: 16 / 9; background: var(--surface-sunken); overflow: hidden; }
+/* The frame sets the shape; the photo fills it rather than stretching it. */
+.dayw-fork-photo img { position: absolute; inset: 0; }
+.dayw-fork-photo img, .dayw-fork-tile-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* On a phone both answers fit the first screen: the photo is a strip. */
+@media (max-width: 768px) {
+  .dayw-fork-photo { aspect-ratio: 3 / 1; }
+  .dayw-fork-card .card-body { padding: var(--space-3) var(--space-4) var(--space-4); }
+}
+.dayw-fork-mosaic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; background: var(--border-soft); }
+.dayw-fork-mosaic.n0 { aspect-ratio: 16 / 9; background: var(--surface-sunken); }
+.dayw-fork-tile { display: flex; flex-direction: column; min-width: 0; background: var(--surface); }
+.dayw-fork-tile-img { display: block; aspect-ratio: 1 / 1; background: var(--surface-sunken); overflow: hidden; }
+.dayw-fork-tile-name {
+  padding: var(--space-2) var(--space-2) 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.dayw-fork-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.dayw-fork-sub { font-size: var(--text-body); color: var(--text-2); }
+
+/* What an AI action costs, before the tap. */
+.credit-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.credit-chip svg { color: var(--text-2); }
+.credit-chip.is-out { color: var(--text); background: var(--amber-bg); }
+
+/* ── Carta's questions ────────────────────────────────────────────────── */
+.daychat { display: flex; flex-direction: column; gap: var(--space-5); }
+.daychat-progress { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.daychat-dots { display: inline-flex; gap: 4px; margin-left: var(--space-2); }
+.daychat-dots > span { width: 16px; height: 4px; border-radius: var(--radius-sm); background: var(--border); }
+.daychat-dots > span.done { background: var(--text-3); }
+.daychat-dots > span.now { background: var(--select-border); }
+.daychat-recap { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: calc(-1 * var(--space-2)); }
+.daychat-recap-chip {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-2);
+  font: inherit;
+  font-size: var(--text-label);
+  cursor: pointer;
+}
+@media (pointer: coarse) { .daychat-recap-chip { min-height: var(--tap); } }
+@media (hover: hover) { .daychat-recap-chip:hover { border-color: var(--text-3); color: var(--text); } }
+.daychat-tiles { --tile-gap: var(--space-2); }
+@media (max-width: 560px) { .daychat-tiles { --tile-cols: 2 !important; } }
+.daychat-tile-text { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+.daychat-tile-text small { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.daychat-sub { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+.daychat-h { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.daychat-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.daychat-hint { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.daychat-switch { max-width: 520px; }
+.daychat-final { display: flex; flex-direction: column; gap: var(--space-4); }
+.daychat-credit { align-self: flex-start; }
+/* On a phone the footer is one row: the cost sits on the summary, not in it. */
+@media (max-width: 768px) { .dayw-chat .guide-foot-summary .credit-chip { display: none; } }
+@media (min-width: 769px) { .daychat-credit { display: none; } }
+.daychat-switches { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--surface); }
+.daychat-switches > .ui-switch { padding-inline: var(--space-4); border-bottom: 1px solid var(--border-soft); }
+.daychat-switches > .ui-switch:last-child { border-bottom: none; }
+.daychat-weather { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.daychat-busy, .daychat-fail { display: flex; flex-direction: column; gap: var(--space-4); }
+.daychat-fail-text { margin: 0; font-size: var(--text-body); color: var(--text-2); max-width: var(--measure); }
+.daychat-fail-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* ── Build it myself ──────────────────────────────────────────────────── */
+.dayw-manual .dayex { display: flex; flex-direction: column; gap: var(--space-4); padding: 0; }
+.dayw-manual .dayex-head {
+  position: static;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+.dayw-manual .dayex-head-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.dayw-manual .dayex-head-text small { font-size: var(--text-label); color: var(--text-2); }
+.dayw-manual .dayex-head-acts { display: flex; align-items: center; gap: var(--space-2); flex: none; }
+.dayw-manual .dayex-search-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--tap); height: var(--tap);
+  border: 1px solid var(--border); border-radius: 50%;
+  background: var(--surface); color: var(--text-2); cursor: pointer;
+}
+.dayw-manual .dayex-bar {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+}
+.dayw-manual .dayex-chips { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; padding-block: 2px; }
+.dayw-manual .dayex-chips::-webkit-scrollbar { display: none; }
+.dayw-manual .dayex-chips .ui-chip { flex: none; }
+.dayw-manual .dayex-view { flex: none; }
+.dayw-manual .dayex-body { display: block; }
+@media (min-width: 1100px) {
+  .dayw-manual .dayex-body { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: var(--space-6); align-items: start; }
+  .dayw-manual .dayex-mapcol { position: sticky; top: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+}
+.dayw-manual .dayex-mapview .dayex-list { display: none; }
+.dayw-manual .dayex-mapcol { display: none; }
+.dayw-manual .dayex-mapview .dayex-mapcol { display: block; }
+@media (min-width: 1100px) { .dayw-manual .dayex-mapcol { display: flex; } }
+.dayw-manual .dayex-map {
+  position: relative;
+  height: 62vh;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  isolation: isolate;
+}
+@media (min-width: 1100px) { .dayw-manual .dayex-map { height: 300px; } }
+
+/* A photo card carries nothing on its photograph. */
+.dayw-manual .dayex-card.is-picked { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
+.dayex-must { display: inline-flex; align-items: center; gap: 3px; font-weight: 600; color: var(--text); }
+.dayex-must svg { color: var(--rate); fill: currentColor; }
+.dayw-manual .dayex-card-meta { display: flex; flex-wrap: wrap; column-gap: var(--space-2); row-gap: 2px; font-size: var(--text-label); color: var(--text-2); }
+
+/* Places without a photograph: compact rows, never a fake image. */
+.dayex-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); margin: var(--space-3) 0 0; padding: 0; list-style: none; }
+@media (min-width: 700px) { .dayex-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.dayex-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.dayex-row.is-picked { border-color: var(--select-border); background: var(--select-bg); }
+.dayex-row .dayex-add { position: static; flex: none; }
+
+/* Your days so far: the days the picks make, as a schedule. */
+.dayex-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-height: calc(100vh - 420px);
+  min-height: 260px;
+  padding: var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow-y: auto;
+}
+.dayex-preview-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.dayex-preview-head h2 { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
+.dayex-preview-head span { font-size: var(--text-label); color: var(--text-2); }
+.dayex-days { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.dayex-day { display: flex; flex-direction: column; gap: var(--space-1); padding-block: var(--space-3); border-top: 1px solid var(--border-soft); }
+.dayex-day:first-child { border-top: none; padding-top: 0; }
+.dayex-day-head { display: flex; align-items: baseline; gap: var(--space-2); }
+.dayex-day-head b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.dayex-day-head span { font-size: var(--text-label); color: var(--text-2); }
+.dayex-day-rows { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.dayex-day-rows li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; column-gap: var(--space-2); min-height: 36px; }
+.dayex-day-time { font-size: var(--text-label); font-variant-numeric: tabular-nums; color: var(--text-2); }
+.dayex-day-name { font-size: var(--text-label); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dayex-day-x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border: none; border-radius: 50%;
+  background: none; color: var(--text-3); cursor: pointer;
+}
+@media (pointer: coarse) { .dayex-day-x { width: var(--tap); height: var(--tap); } }
+@media (hover: hover) { .dayex-day-x:hover { background: var(--surface-hover); color: var(--text); } }
+.dayex-day-foot { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+.dayex-preview-carta { display: flex; justify-content: flex-start; }
+.dayw-manual .dayex-tray-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: var(--tap);
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.dayw-manual .dayex-tray-summary:disabled { text-decoration: none; color: var(--text-2); cursor: default; }
+.dayw-manual .dayex-tray-fit { font-size: var(--text-caption); font-weight: 600; color: var(--amber-ink); }
+.dayex-tray-sheet .dayex-sheet-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-top: var(--space-4); }
+@media (max-width: 768px) {
+  .dayw-manual .dayex-tray-summary { font-size: var(--text-label); }
+}
+
+/* ── The planned day ──────────────────────────────────────────────────── */
+.day-ws { --panel-w: min(620px, 46vw); }
+@media (min-width: 1280px) { .day-ws { --panel-w: min(760px, 52vw); } }
+.day-ws .dayws-map { position: absolute; inset: 0; }
+/* Maps set into a card or a sheet fill it; the full-page map sits beside the panel. */
+.dayex-map .trip-map,
+.daymap-card .trip-map,
+.daymap-full .trip-map { left: 0 !important; }
+.day-ws .dayws-panel {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: var(--panel-w);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-6) var(--space-8);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface-page);
+  border-right: 1px solid var(--border-soft);
+  z-index: 2;
+}
+.day-ws.is-page .dayws-panel {
+  inset: 0;
+  width: 100%;
+  padding: var(--space-3) var(--space-4) var(--space-7);
+  border-right: none;
+  gap: var(--space-4);
+}
+
+.dayws-head { display: flex; align-items: center; gap: var(--space-2); }
+.dayws-head .dayws-back { flex: none; margin-left: calc(-1 * var(--space-2)); }
+.dayws-head-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.dayws-title { margin: 0; font-size: var(--text-headline); font-weight: 600; line-height: var(--leading-tight); color: var(--text); overflow-wrap: anywhere; }
+.day-ws.is-page .dayws-title { font-size: var(--text-title); }
+.dayws-trip-link {
+  align-self: flex-start;
+  min-height: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--action);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  cursor: pointer;
+}
+.dayws-head .day-save-status { flex: none; display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--tap); font-size: var(--text-label); color: var(--text-2); }
+.dayws-head .day-save-status::before { content: none; }
+.day-ws .day-sw { margin: 0; }
+.dayws-cities { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.day-ws .dayws-daybar { padding: 0; border: none; background: none; }
+.day-ws .dayws-city-add { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* The day's card: the time it spans, the stops, the walking, the figure. */
+.days-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.day-ws.is-page .days-card { padding: var(--space-4); }
+.days-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.day-ws.is-page .days-head { flex-direction: column; gap: var(--space-2); }
+.day-ws.is-page .days-cost.btn { margin: 0; padding-inline: 0; }
+.day-ws.is-page .days-cost .btn-label { flex-direction: row; align-items: baseline; gap: var(--space-2); }
+.days-time { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.days-time > b { font-size: var(--text-headline); font-weight: 600; line-height: var(--leading-tight); font-variant-numeric: tabular-nums; color: var(--text); }
+.day-ws.is-page .days-time > b { font-size: var(--text-title); }
+.days-facts { display: flex; flex-wrap: wrap; column-gap: var(--space-3); row-gap: 2px; font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.days-cost.btn { flex: none; height: auto; min-height: var(--tap); padding: var(--space-1) var(--space-2); margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-2)) 0 0; }
+.days-cost .btn-label { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; white-space: normal; }
+.days-cost-fig { font-size: var(--text-title); font-weight: 600; color: var(--text); }
+.days-cost-fig .money-est { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.days-cost-label { font-size: var(--text-caption); color: var(--text-2); }
+@media (hover: hover) { .days-cost:hover .days-cost-label { color: var(--text); text-decoration: underline; } }
+.days-route { display: flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.days-route.is-checked { color: var(--good-ink); }
+.days-route.is-flagged { color: var(--amber-ink); font-weight: 600; }
+
+/* The day bar: the day's shape with its hours under it. */
+.dayb { display: flex; flex-direction: column; gap: var(--space-1); }
+.dayb-track { position: relative; height: 26px; border-radius: var(--radius-sm); background: var(--surface-sunken); overflow: hidden; }
+.dayb-seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1px;
+  border-radius: var(--radius-sm);
+  background: var(--neutral-200);
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: background var(--dur-1) var(--ease-out);
+}
+.dayb-seg.is-lunch { background: var(--neutral-100); outline: 1px solid var(--border); outline-offset: -1px; }
+.dayb-seg.on { background: var(--select-bg); color: var(--select-ink); outline: 1px solid var(--select-border); outline-offset: -1px; }
+.dayb-ticks { position: relative; height: 16px; }
+.dayb-ticks > span { position: absolute; top: 0; transform: translateX(-50%); font-size: var(--text-caption); font-variant-numeric: tabular-nums; color: var(--text-3); }
+.dayb-ticks > span:first-child { transform: none; }
+
+/* The map card on a phone, the full map one tap away. */
+.daymap-card {
+  position: relative;
+  height: 180px;
+  flex: none;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  isolation: isolate;
+}
+.daymap-open { position: absolute; right: var(--space-3); top: var(--space-3); z-index: 3; }
+.daymap-sheet.fsheet { width: 100%; max-width: none; height: calc(100dvh - var(--space-6)); max-height: none; }
+.daymap-sheet .fsheet-body { position: relative; flex: 1 1 auto; padding: 0; overflow: hidden; }
+.daymap-full { position: absolute; inset: 0; }
+
+.day-ws .dayws-mode { flex: none; }
+/* The start's pin is 18 px; its tap box is the 44 px floor, not 36. */
+.trip-pin-stay::before { inset: -13px; }
+
+/* The day, hour by hour. */
+.dayp { display: flex; flex-direction: column; gap: var(--space-4); }
+.dayp-summary { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); font-size: var(--text-body); color: var(--text-2); }
+.dayp-summary svg { flex: none; margin-top: 3px; }
+.dayt { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.dayt > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px 48px minmax(0, 1fr) auto;
+  column-gap: var(--space-3);
+  align-items: start;
+}
+.day-ws.is-page .dayt > li { grid-template-columns: 44px 44px minmax(0, 1fr) auto; column-gap: var(--space-2); }
+.dayt-time .dayt-est { display: block; font-weight: 400; }
+.dayt-time { padding-top: 14px; font-size: var(--text-label); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+.dayt-start, .dayt-end, .dayt-lunch { min-height: 48px; }
+.dayt-start .dayt-time, .dayt-end .dayt-time, .dayt-lunch .dayt-time { color: var(--text-2); }
+.dayt-rail { position: relative; display: flex; align-items: center; justify-content: center; align-self: stretch; color: var(--text-2); }
+.dayt-rail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 2px dotted var(--border);
+  z-index: 0;
+}
+.dayt-rail > svg { position: relative; z-index: 1; padding: 3px; box-sizing: content-box; background: var(--surface-page); border-radius: 50%; }
+.dayt-start .dayt-rail::before { top: 50%; }
+.dayt-end .dayt-rail::before { bottom: 50%; }
+.dayt-rail.is-end > svg { color: var(--text); }
+.dayt-leg.is-ride .dayt-rail::before { border-left-style: dashed; border-left-color: var(--text-3); }
+.dayt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-block: var(--space-2); }
+.dayt-start .dayt-body, .dayt-end .dayt-body, .dayt-lunch .dayt-body { padding-top: 14px; }
+.dayt-name { display: block; font-size: var(--text-body); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.dayt-start .dayt-name, .dayt-end .dayt-name, .dayt-lunch .dayt-name { font-size: var(--text-label); color: var(--text-2); }
+.dayt-must { display: inline-flex; margin-left: var(--space-1); vertical-align: -1px; color: var(--rate); }
+.dayt-must svg { fill: currentColor; }
+.dayt-meta { font-size: var(--text-label); color: var(--text-2); }
+.dayt-links { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-3); }
+.dayt-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: none;
+}
+@media (pointer: coarse) { .dayt-link { min-height: var(--tap); } }
+@media (hover: hover) { .dayt-link:hover { text-decoration: underline; } }
+.dayt-link-quiet { color: var(--text-2); font-weight: 400; }
+.dayt-flag { font-size: var(--text-label); font-weight: 600; color: var(--amber-ink); }
+.dayt-est { font-size: var(--text-caption); color: var(--text-3); }
+.dayt-stop { padding-block: var(--space-1); border-radius: var(--radius-card); transition: background var(--dur-2) var(--ease-out); }
+.dayt-stop.flash { background: var(--select-bg); }
+.dayt-mark { position: relative; padding-top: var(--space-2); }
+.dayt-mark .day-thumb { display: block; width: 48px; height: 48px; border-radius: var(--radius-sm); object-fit: cover; }
+.day-ws.is-page .dayt-mark .day-thumb { width: 44px; height: 44px; }
+.dayt-no {
+  position: absolute;
+  top: 2px;
+  left: -6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--text);
+  color: var(--surface);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.dayt-tools { display: flex; align-items: center; padding-top: var(--space-1); }
+.dayt-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  border: none;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.dayt-tool:disabled { color: var(--border); cursor: default; }
+@media (hover: hover) { .dayt-tool:hover:not(:disabled) { background: var(--surface-hover); color: var(--text); } }
+.dayt-tool-up { transform: rotate(180deg); }
+.dayt-menu { position: relative; display: inline-flex; }
+.dayt-menu-pop { position: absolute; top: 100%; right: 0; z-index: var(--z-overlay); min-width: 200px; }
+.dayt-menu-pop .dayp-menu-item.btn { justify-content: flex-start; width: 100%; color: var(--text); border-radius: 0; }
+.dayt-leg { min-height: 40px; }
+.dayt-leg .dayt-time { padding-top: 0; }
+.dayt-leg-text { grid-column: 3 / 4; padding-block: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+.dayt-leg.is-ride .dayt-leg-text { color: var(--text); }
+.dayt-leg > .dayt-link { grid-column: 4 / 5; align-self: center; padding-right: var(--space-2); }
+.dayp-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dayp-empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding: var(--space-6) var(--space-4); border: 1px dashed var(--border); border-radius: var(--radius-card); text-align: center; }
+.dayp-empty h2 { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
+.dayp-empty p { margin: 0; font-size: var(--text-body); color: var(--text-2); max-width: var(--measure); }
+.dayp-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* The start bar in the column, not over the map. */
+.day-ws .dayws-stay { position: relative; align-self: flex-start; }
+.day-ws .dayws-stay-btn { box-shadow: none; border: 1px solid var(--border-soft); background: var(--surface); min-height: var(--tap); }
+
+/* The kit's tips sheet. */
+.dayk-sheet .dayws-tips-body { max-height: none; padding: 0; }
+.dayk-import { display: flex; flex-direction: column; gap: var(--space-3); }
+
+/* Motion: the day's rows and card settle in, never under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .days-card, .dayt { animation: dayt-in var(--dur-3) var(--ease-out) both; }
+  .dayt { animation-delay: 60ms; }
+}
+@keyframes dayt-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

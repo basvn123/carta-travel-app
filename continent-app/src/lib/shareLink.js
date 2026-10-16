@@ -213,3 +213,102 @@ export function readTripShareFromUrl() {
   } catch { /* the decode still works; only the address bar stays busy */ }
   return (readResult = raw);
 }
+
+/* ---- a day plan as a link (T433) ----
+ *
+ * The same scheme under its own param: `#day=1.<b64>`. The payload is the
+ * plan's towns, days, start point and the catalogue places per day, by index,
+ * nothing more: the receiver re-routes every walk itself, so no geometry and
+ * no verdict is ever trusted from a link. Decoded through the same whitelist
+ * and clamps as a trip, and the same refusal of prototype names as ids.
+ *
+ *   { v: 1, label, start: 'YYYY-MM-DD', stay: { lat, lon, label } | null,
+ *     stops: [{ d: destinationId, n: days }], a: { [stopIdx]: { [dayIdx]: [poiIdx] } } }
+ */
+const DAY_PARAM = 'day';
+
+export async function encodeDayShare(plan) {
+  if (!plan || !Array.isArray(plan.stops) || !plan.stops.length) return null;
+  try {
+    const bytes = new TextEncoder().encode(JSON.stringify(plan));
+    if (typeof CompressionStream !== 'undefined') return `1.${toB64url(await deflate(bytes))}`;
+    return `0.${toB64url(bytes)}`;
+  } catch {
+    return null;
+  }
+}
+
+export async function buildDayShareUrl(plan) {
+  const payload = await encodeDayShare(plan);
+  if (!payload || typeof window === 'undefined') return null;
+  return `${window.location.origin}${window.location.pathname}#${DAY_PARAM}=${payload}`;
+}
+
+const finiteIn = (v, min, max) => (Number.isFinite(Number(v)) && Number(v) >= min && Number(v) <= max ? Number(v) : null);
+
+/** Whitelist + clamp a decoded day plan; null when unusable. Exported for tests. */
+export function sanitizeDayShare(d) {
+  if (!d || typeof d !== 'object' || !Array.isArray(d.stops)) return null;
+  const stops = d.stops.slice(0, 10)
+    .map((s) => ({ destinationId: safeId(s?.d), days: clampInt(s?.n, 1, 7, 1) }))
+    .filter((s) => s.destinationId);
+  if (!stops.length) return null;
+  const lat = finiteIn(d.stay?.lat, -90, 90);
+  const lon = finiteIn(d.stay?.lon, -180, 180);
+  const stay = lat != null && lon != null
+    ? { lat, lon, label: strOrNull(d.stay?.label) || '', shortLabel: strOrNull(d.stay?.label) || '' }
+    : null;
+  const assign = {};
+  const a = d.a && typeof d.a === 'object' ? d.a : {};
+  stops.forEach((s, si) => {
+    const days = a[String(si)];
+    if (!days || typeof days !== 'object') return;
+    const out = {};
+    for (let di = 0; di < s.days; di += 1) {
+      const list = Array.isArray(days[String(di)]) ? days[String(di)] : [];
+      // An index out of range is a different place or none: dropped, never clamped.
+      const idxs = [...new Set(list.slice(0, 20).map(Number).filter((x) => Number.isInteger(x) && x >= 0 && x <= 5000))];
+      if (idxs.length) out[di] = idxs;
+    }
+    if (Object.keys(out).length) assign[si] = out;
+  });
+  return {
+    label: typeof d.label === 'string' ? d.label.replace(/[<>]/g, '').slice(0, 80) : '',
+    startDate: isIsoDate(d.start) ? d.start : null,
+    stay,
+    stops,
+    assign,
+  };
+}
+
+export async function decodeDayShare(raw) {
+  if (typeof raw !== 'string' || raw.length < 3 || raw.length > 20000) return null;
+  if (raw.indexOf('.') !== 1) return null;
+  const marker = raw[0];
+  try {
+    let bytes = fromB64url(raw.slice(2));
+    if (marker === '1') {
+      if (typeof DecompressionStream === 'undefined') return null;
+      bytes = await inflate(bytes);
+    } else if (marker !== '0') {
+      return null;
+    }
+    return sanitizeDayShare(JSON.parse(new TextDecoder().decode(bytes)));
+  } catch {
+    return null;
+  }
+}
+
+let dayReadResult;
+export function readDayShareFromUrl() {
+  if (dayReadResult !== undefined) return dayReadResult;
+  if (typeof window === 'undefined') return null;
+  const hash = window.location.hash || '';
+  if (!hash.startsWith('#') || !hash.includes(`${DAY_PARAM}=`)) return (dayReadResult = null);
+  const raw = new URLSearchParams(hash.slice(1)).get(DAY_PARAM);
+  if (!raw) return (dayReadResult = null);
+  try {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  } catch { /* the decode still works */ }
+  return (dayReadResult = raw);
+}

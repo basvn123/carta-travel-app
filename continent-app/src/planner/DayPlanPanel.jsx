@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { SheetShell } from '../browse/SheetShell.jsx';
 import { PoiThumb } from './DayActivityRows.jsx';
 import { isMustSee, poiKind, poiMapCat } from './dayDraft.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
-  PlusIcon, ShareIcon, MapPinIcon, DownloadIcon, RouteIcon, CalendarIcon,
-  SparkIcon, StarIcon, MountainIcon, CheckIcon, ChevronDownIcon, CloseIcon,
+  RouteIcon, StarIcon, ChevronDownIcon, CloseIcon, ShoeIcon, BusIcon, CarIcon,
+  DiningIcon, HomeIcon, ClockIcon, SparkIcon, PlusIcon, MoreIcon,
 } from '../components/Icons.jsx';
-import { formatSteps, kmToSteps } from '../lib/steps.js';
+import { Button, IconButton } from '../components/ui/index.js';
+import { fmtClockLoose } from './daySchedule.js';
+import { fmtDur, fmtKm } from './dayFormat.js';
+import { googleMapsDirUrl } from '../lib/routing.js';
 import { durationMs } from '../lib/motion.js';
 import { useSettledFigure } from '../lib/figureChange.js';
+import { isWalkable } from '../lib/dayRoute.js';
 
 /**
  * Close a popover on outside click and on Escape.
@@ -21,8 +24,6 @@ import { useSettledFigure } from '../lib/figureChange.js';
  */
 export function useDismiss(open, close) {
   const ref = useRef(null);
-  // Focus enters the menu once, as it opens (callers pass a fresh close
-  // function every render, so this must not hang off the main effect).
   useEffect(() => {
     if (!open) return;
     ref.current?.querySelector('[role="menu"] [role="menuitem"]:not(:disabled)')?.focus();
@@ -60,108 +61,6 @@ export function useDismiss(open, close) {
   return ref;
 }
 
-/** One stop of today's walk. Everything that is not the place itself was cut:
- *  no clock, no leg distance, no explanation of how you get there. The order
- *  is the information, and the map above draws the rest. */
-function RouteStop({ item, n, last, flash, onMoveUp, onMoveDown, onRemove, rowRef, rowKey, onHoverChange, t }) {
-  return (
-    <li
-      className={`dayr-row${flash ? ' flash' : ''}${last ? ' last' : ''}`}
-      ref={rowRef}
-      data-key={rowKey}
-      onMouseEnter={onHoverChange ? () => onHoverChange(true) : undefined}
-      onMouseLeave={onHoverChange ? () => onHoverChange(false) : undefined}
-    >
-      <span className="dayr-mark">
-        <PoiThumb img={item.img} cat={poiMapCat(item)} name={item.name} />
-        <span className="dayr-no">{n}</span>
-      </span>
-      <span className="dayr-body">
-        <span className="dayr-name">
-          {item.name}
-          {isMustSee(item) && (
-            <span className="dayr-must" title={t('dayws.mustTitle')}><StarIcon size={9} /></span>
-          )}
-        </span>
-        <span className="dayr-kind">
-          {poiKind(item)}
-          {/* A place the catalogue never heard of was pinned by best effort,
-              and when that effort missed it sits on the city centre. Saying so
-              is a correctness caveat, not decoration, so it survives the cut
-              that took every other badge off this list. */}
-          {item.custom && (
-            <span
-              className="day-badge-custom"
-              title={item.unmapped
-                ? t('dayws.customApproxTitle')
-                : t('dayws.customTitle')}
-            >
-              {item.unmapped ? t('dayws.customApprox') : t('dayws.custom')}
-            </span>
-          )}
-        </span>
-      </span>
-      <span className="dayr-tools">
-        {/* T399: drawn icons from the one set, not the Unicode arrows and
-            the multiplication sign (design direction v6, part 5). Up is the
-            down chevron turned. */}
-        <button className="dayr-tool" onClick={onMoveUp} disabled={n === 1} aria-label={t('dayws.moveUp')} title={t('dayws.moveUp')}>
-          <ChevronDownIcon size={16} className="dayr-tool-up" />
-        </button>
-        <button className="dayr-tool" onClick={onMoveDown} disabled={last} aria-label={t('dayws.moveDown')} title={t('dayws.moveDown')}>
-          <ChevronDownIcon size={16} />
-        </button>
-        <button className="dayr-tool dayr-tool-del" onClick={onRemove} aria-label={t('dayws.removeStop')} title={t('dayws.removeStop')}>
-          <CloseIcon size={14} />
-        </button>
-      </span>
-    </li>
-  );
-}
-
-/**
- * The day strip (T399, carta-design "Data drawings", rule N4): one thin bar,
- * one segment per stop in ink and one per stretch between stops in rule,
- * each as wide as its minutes in the day's schedule (the same model that
- * prints "done ~14:00" in the head). It carries no figure, no legend and no
- * accent; the rows and the figures line carry the numbers, so it is hidden
- * from screen readers. The stop the traveller is looking at (under the
- * pointer, or tapped on the map) is outlined.
- *
- * `schedule` is buildDaySchedule()'s result plus `startMin`, the minute the
- * day leaves the door. Segments run from there to `endMin`, so their minutes
- * add up to the finish time the head prints.
- */
-function daySegments(schedule) {
-  const rows = schedule?.rows || [];
-  if (!rows.length) return [];
-  const segs = [];
-  let t = Number.isFinite(schedule.startMin) ? Math.min(schedule.startMin, rows[0].arriveMin) : rows[0].arriveMin;
-  rows.forEach((r, i) => {
-    if (r.arriveMin > t) segs.push({ kind: 'gap', min: r.arriveMin - t });
-    segs.push({ kind: 'stop', i, min: Math.max(1, r.departMin - r.arriveMin) });
-    t = r.departMin;
-  });
-  if (Number.isFinite(schedule.endMin) && schedule.endMin > t) segs.push({ kind: 'gap', min: schedule.endMin - t });
-  return segs;
-}
-
-function DayStrip({ schedule, focusIdx }) {
-  const segs = daySegments(schedule);
-  if (segs.length < 2) return null;
-  return (
-    <div className="dayp-strip" aria-hidden="true">
-      {segs.map((s, k) => (
-        <span
-          key={k}
-          className={`dayp-strip-seg ${s.kind}${s.kind === 'stop' && s.i === focusIdx ? ' on' : ''}`}
-          style={{ flexGrow: s.min }}
-        />
-      ))}
-    </div>
-  );
-}
-
 /** A line of the day's figures that settles in place when they change: one
  *  opacity dip through the shared primitive, no count-up (design direction
  *  v6, part 2.3). `value` is the string of figures it shows. */
@@ -171,8 +70,7 @@ export function SettledLine({ className, value, children }) {
   return <div className={className} ref={ref}>{children}</div>;
 }
 
-/** A stable key per stop, so React keeps a row's element when it moves and
- *  the reorder can slide it (a key holding the index remounts the row). */
+/** A stable key per stop, so React keeps a row's element when it moves. */
 function stopKeys(items) {
   const seen = new Map();
   return items.map((it) => {
@@ -183,20 +81,14 @@ function stopKeys(items) {
   });
 }
 
-/**
- * Slide rows to their new place after a reorder (FLIP, design direction v6
- * part 2.3: a moved row slides in --dur-2 with --ease-in-out and the others
- * shift the same way). Reads each row's top before the paint, plays the
- * difference back to zero through the Web Animations API, and does nothing
- * under reduced motion, where durationMs() returns 0 and the rows jump.
- */
+/** Slide rows to their new place after a reorder (FLIP, under --dur-2). */
 function useRowSlide(listRef, keys) {
   const tops = useRef(new Map());
   const sig = keys.join('|');
   useLayoutEffect(() => {
     const list = listRef.current;
     if (!list) return;
-    const rows = [...list.children];
+    const rows = [...list.querySelectorAll('[data-key]')];
     const next = new Map();
     rows.forEach((el) => { next.set(el.dataset.key, el.getBoundingClientRect().top); });
     const prev = tops.current;
@@ -219,31 +111,216 @@ function useRowSlide(listRef, keys) {
 }
 
 /**
- * Tab 1 of the day workspace: today's plan, and nothing else.
+ * The day bar (T433): the shape of the day on one line, with the hours under
+ * it. Each stop is a segment as wide as its visit, numbered as on the map;
+ * the walks between are the gaps, lunch its own segment. It replaces the
+ * unlabelled ink strip the owner and the critique found unreadable: the hour
+ * ticks make it a timetable you can read at a glance.
+ */
+export function DayBar({ schedule, startMin, focusIdx = null }) {
+  const { t } = useI18n();
+  const rows = schedule?.rows || [];
+  if (!rows.length) return null;
+  const t0 = Number.isFinite(startMin) ? Math.min(startMin, rows[0].arriveMin) : rows[0].arriveMin;
+  const t1 = Math.max(schedule.endMin || 0, rows[rows.length - 1].departMin);
+  const span = Math.max(60, t1 - t0);
+  const pct = (m) => `${((m - t0) / span) * 100}%`;
+  const ticks = [];
+  for (let h = Math.ceil(t0 / 60); h * 60 <= t1; h += 1) ticks.push(h);
+  const step = ticks.length > 8 ? 2 : 1;
+  return (
+    <div className="dayb" aria-hidden="true">
+      <div className="dayb-track">
+        {rows.map((r, i) => (
+          <span
+            key={i}
+            className={`dayb-seg${i === focusIdx ? ' on' : ''}`}
+            style={{ left: pct(r.arriveMin), width: `calc(${((r.departMin - r.arriveMin) / span) * 100}% - 2px)` }}
+          >{(r.departMin - r.arriveMin) / span > 0.06 ? i + 1 : ''}</span>
+        ))}
+        {schedule.lunch && (
+          <span
+            className="dayb-seg is-lunch"
+            style={{ left: pct(schedule.lunch.startMin), width: `calc(${((schedule.lunch.endMin - schedule.lunch.startMin) / span) * 100}% - 2px)` }}
+            title={t('dayws.lunch')}
+          />
+        )}
+      </div>
+      <div className="dayb-ticks">
+        {ticks.filter((h, k) => k % step === 0).map((h) => (
+          <span key={h} style={{ left: pct(h * 60) }}>{String(h).padStart(2, '0')}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** A leg between two rows of the timeline: a checked walk, or the ride a
+ *  traveller should take instead, with the directions one tap away. */
+function LegRow({ leg, from, to, t, lang, stepFree }) {
+  if (!leg) return null;
+  const walk = isWalkable(leg.status) && !leg.ride;
+  const transitUrl = from && to ? googleMapsDirUrl([from, to], leg.ride && leg.mode === 'car' ? 'driving' : 'transit') : null;
+  const walkUrl = from && to ? googleMapsDirUrl([from, to], 'walking') : null;
+  if (walk) {
+    return (
+      <li className={`dayt-leg${leg.status === 'long' ? ' is-long' : ''}`}>
+        <span className="dayt-time" aria-hidden="true" />
+        <span className="dayt-rail" aria-hidden="true"><ShoeIcon size={14} /></span>
+        <span className="dayt-leg-text">
+          {leg.ferry
+            ? t('dayws.legFerry', { min: leg.min ?? '?' })
+            : t('dayws.legWalk', { min: leg.min ?? '?', km: fmtKm(leg.km, lang) })}
+          {leg.status === 'long' && (
+            <>
+              {' '}<span className="dayt-flag">{t(stepFree ? 'dayws.legLongStepFree' : 'dayws.legLong')}</span>
+              {transitUrl && <a className="dayt-link" href={transitUrl} target="_blank" rel="noreferrer">{t('dayws.legTransit')}</a>}
+            </>
+          )}
+          {!leg.checked && <span className="dayt-est"> {t('money.est')}</span>}
+        </span>
+        {walkUrl && leg.status !== 'long' && (
+          <a className="dayt-link dayt-link-quiet" href={walkUrl} target="_blank" rel="noreferrer">{t('dayws.legDirections')}</a>
+        )}
+      </li>
+    );
+  }
+  const Icon = leg.mode === 'car' ? CarIcon : BusIcon;
+  const why = leg.ride ? null
+    : leg.status === 'detour' ? t('dayws.legWhyDetour')
+      : leg.status === 'far' ? t('dayws.legWhyFar')
+        : leg.status === 'unreachable' ? t('dayws.legWhyOffPath')
+          : t('dayws.legWhyNoPath');
+  return (
+    <li className="dayt-leg is-ride">
+      <span className="dayt-time" aria-hidden="true" />
+      <span className="dayt-rail" aria-hidden="true"><Icon size={14} /></span>
+      <span className="dayt-leg-text">
+        {why && <span className="dayt-flag">{why}</span>}{' '}
+        {t(leg.mode === 'car' ? 'dayws.legDrive' : 'dayws.legRide', { min: leg.min ?? '?' })}
+        <span className="dayt-est"> {t('money.est')}</span>
+      </span>
+      {(leg.dirUrl || transitUrl) && (
+        <a className="dayt-link" href={leg.dirUrl || transitUrl} target="_blank" rel="noreferrer">{t('dayws.legDirections')}</a>
+      )}
+    </li>
+  );
+}
+
+/** "Check hours": the catalogue holds no opening hours yet, so the day never
+ *  claims a place is open; it opens the place on Google Maps, where its hours
+ *  and today's exceptions are. */
+function hoursUrl(item, city) {
+  if (!Number.isFinite(item?.lat)) return null;
+  const q = [item.name, city].filter(Boolean).join(', ');
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+}
+
+/** A phone's stop tools: one button, the three actions in a menu, so a row
+ *  is one line of controls wide rather than three stacked 44 px buttons. */
+function StopMenu({ n, last, onMoveUp, onMoveDown, onRemove, name, t }) {
+  const [open, setOpen] = useState(false);
+  const ref = useDismiss(open, () => setOpen(false));
+  const pick = (fn) => () => { setOpen(false); fn(); };
+  return (
+    <span className="dayt-menu" ref={ref}>
+      <IconButton
+        className="dayt-tool"
+        label={t('dayws.stopActions', { name })}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      ><MoreIcon size={18} /></IconButton>
+      {open && (
+        <span className="dayp-menu dayt-menu-pop" role="menu">
+          <Button variant="quiet" role="menuitem" className="dayp-menu-item" disabled={n === 1} onClick={pick(onMoveUp)}
+            iconStart={<ChevronDownIcon size={16} className="dayt-tool-up" />}>{t('dayws.moveUp')}</Button>
+          <Button variant="quiet" role="menuitem" className="dayp-menu-item" disabled={last} onClick={pick(onMoveDown)}
+            iconStart={<ChevronDownIcon size={16} />}>{t('dayws.moveDown')}</Button>
+          <Button variant="quiet" role="menuitem" className="dayp-menu-item" onClick={pick(onRemove)}
+            iconStart={<CloseIcon size={16} />}>{t('dayws.removeStop')}</Button>
+        </span>
+      )}
+    </span>
+  );
+}
+
+function StopRow({
+  item, n, last, time, dwell, flash, onMoveUp, onMoveDown, onRemove, rowRef, rowKey,
+  onHoverChange, offPathM, city, compact, t,
+}) {
+  const url = hoursUrl(item, city);
+  return (
+    <li
+      className={`dayt-stop${flash ? ' flash' : ''}`}
+      ref={rowRef}
+      data-key={rowKey}
+      onMouseEnter={onHoverChange ? () => onHoverChange(true) : undefined}
+      onMouseLeave={onHoverChange ? () => onHoverChange(false) : undefined}
+    >
+      <span className="dayt-time">{time}{n === 1 && time && <small className="dayt-est"> {t('money.est')}</small>}</span>
+      <span className="dayt-mark">
+        <PoiThumb img={item.img} cat={poiMapCat(item)} name={item.name} />
+        <span className="dayt-no">{n}</span>
+      </span>
+      <span className="dayt-body">
+        <span className="dayt-name">
+          {item.name}
+          {isMustSee(item) && <span className="dayt-must" title={t('dayws.mustTitle')}><StarIcon size={12} /></span>}
+        </span>
+        <span className="dayt-meta">
+          {[poiKind(item), dwell ? fmtDur(dwell) : null].filter(Boolean).join(', ')}
+          {item.custom && (
+            <span className="dayt-flag">{item.unmapped ? t('dayws.customApprox') : t('dayws.custom')}</span>
+          )}
+        </span>
+        <span className="dayt-links">
+          {url && <a className="dayt-link" href={url} target="_blank" rel="noreferrer">{t('dayws.checkHours')}</a>}
+          {offPathM != null && <span className="dayt-flag">{t('dayws.offPath', { m: offPathM })}</span>}
+        </span>
+      </span>
+      {compact ? (
+        <span className="dayt-tools">
+          <StopMenu n={n} last={last} onMoveUp={onMoveUp} onMoveDown={onMoveDown} onRemove={onRemove} name={item.name} t={t} />
+        </span>
+      ) : (
+      <span className="dayt-tools">
+        <IconButton className="dayt-tool" onClick={onMoveUp} disabled={n === 1} label={t('dayws.moveUp')}>
+          <ChevronDownIcon size={18} className="dayt-tool-up" />
+        </IconButton>
+        <IconButton className="dayt-tool" onClick={onMoveDown} disabled={last} label={t('dayws.moveDown')}>
+          <ChevronDownIcon size={18} />
+        </IconButton>
+        <IconButton className="dayt-tool" onClick={onRemove} label={t('dayws.removeStop')}>
+          <CloseIcon size={16} />
+        </IconButton>
+      </span>
+      )}
+    </li>
+  );
+}
+
+/**
+ * The day, hour by hour (T433). One list from the door and back: when you
+ * leave, each stop with its arrival time, how long it takes and a way to
+ * check its hours, the leg to the next with its minutes and kilometres as
+ * routed on real footpaths (or the ride Carta recommends where no footpath
+ * was found), lunch where it falls, and when the day is done.
  *
- * One toolbar row sits above the list (T389, carta-design "Day list": a
- * planning surface puts its ways to add in one labelled toolbar row inside
- * the content). "Add" holds every way to put something into the day: more
- * places, Carta planning it, the refining asks that used to float over the
- * map as the Carta bot (more stops, less walking, rain, food) and reordering
- * the route, once. "Share" holds where the day can go: Google Maps, a message
- * to the people coming with you, then the file exports. Nothing floats over
- * the list any more.
+ *   items       today's stops, in order
+ *   schedule    buildDaySchedule() result, plus startMin
+ *   legs[i]     leg from stop i to i+1 (see DayPlannerTab legForRow)
+ *   stayLeg     the leg from the start to stop 0, or null
+ *   offPath[i]  metres from stop i to the nearest path, or null
+ *   start       { label, lat, lon } where the day leaves from, or null
  */
 export function DayPlanPanel({
-  items, dayNumber, city,
-  onMoveUp, onMoveDown, onRemove, rowRefs, flashIdx, onHoverRow,
-  onAddMore, onOptimize, onAskCarta, canOptimize,
-  botPrompts = [], onBotPrompt,
-  gmapsUrl, onShare, shareState, onPdf, onKml, onIcs,
-  citytrip, onUseCitytrip, walksBlock, discoveries = [], aiSummary = '',
-  schedule = null, focusIdx = null,
+  items, dayNumber, city, schedule, legs = [], stayLeg = null, offPath = [], start = null,
+  onMoveUp, onMoveDown, onRemove, rowRefs, flashIdx, onHoverRow, focusIdx = null,
+  onAddMore, onAskCarta, onOptimize, canOptimize, aiSummary = '', dwellOf, stepFree = false, compact = false,
+  walksBlock = null,
 }) {
   const { t, lang } = useI18n();
-  const [addOpen, setAddOpen] = useState(false);
-  const [shareOpen, setShareOpen] = useState(false);
-  const addBtnRef = useRef(null);
-  const shareBtnRef = useRef(null);
   const listRef = useRef(null);
   const keys = stopKeys(items);
   useRowSlide(listRef, keys);
@@ -252,192 +329,82 @@ export function DayPlanPanel({
     return (
       <div className="dayp">
         <div className="dayp-empty">
-          <span className="dayp-empty-glyph" aria-hidden="true"><RouteIcon size={22} /></span>
-          <h3>{t('dayws.emptyTitle', { n: dayNumber })}</h3>
+          <h2>{t('dayws.emptyTitle', { n: dayNumber })}</h2>
           <p>{t('dayws.emptySub', { city: city || t('day.thisCity') })}</p>
           <div className="dayp-empty-actions">
-            <button className="dayp-cta" onClick={onAskCarta}>
-              <SparkIcon size={14} /> {t('dayws.emptyAsk')}
-            </button>
-            <button className="dayp-cta dayp-cta-ghost" onClick={onAddMore}>
-              <PlusIcon size={14} /> {t('dayws.emptyBrowse')}
-            </button>
+            <Button variant="primary" iconStart={<PlusIcon size={16} />} onClick={onAddMore}>{t('dayws.emptyBrowse')}</Button>
+            <Button iconStart={<SparkIcon size={16} />} onClick={onAskCarta}>{t('dayws.emptyAsk')}</Button>
           </div>
-          {citytrip && (
-            <button className="dayp-ready" onClick={onUseCitytrip}>
-              <span className="dayp-ready-ico"><RouteIcon size={16} /></span>
-              <span className="dayp-ready-text">
-                <b>{t('day.readyMade', { city: city || '' })}</b>
-                <small>{t('day.readyMadeSubSteps', {
-                  n: citytrip.n_stops,
-                  steps: formatSteps(kmToSteps(citytrip.distance_m / 1000), lang),
-                })}</small>
-              </span>
-            </button>
-          )}
         </div>
       </div>
     );
   }
 
+  const rows = schedule?.rows || [];
+  const lunchAfter = schedule?.lunch ? schedule.lunch.afterIndex : -1;
+  const startMin = Number.isFinite(schedule?.startMin) ? schedule.startMin : rows[0]?.arriveMin;
+  const pos = (it) => (Number.isFinite(it?.lat) ? { lat: it.lat, lon: it.lon } : null);
+
   return (
     <div className="dayp">
-      <div className="dayp-bar" role="toolbar" aria-label={t('dayws.toolbarAria', { n: dayNumber })}>
-        <button
-          ref={addBtnRef}
-          type="button"
-          className={`dayp-tool${addOpen ? ' on' : ''}`}
-          onClick={() => { setShareOpen(false); setAddOpen((v) => !v); }}
-          aria-haspopup="dialog"
-          aria-expanded={addOpen}
-          title={t('dayws.addAria')}
-        >
-          <PlusIcon size={16} />
-          <span>{t('dayws.toolAdd')}</span>
-          <ChevronDownIcon size={14} className="dayp-tool-caret" />
-        </button>
-        <button
-          ref={shareBtnRef}
-          type="button"
-          className={`dayp-tool${shareOpen ? ' on' : ''}`}
-          onClick={() => { setAddOpen(false); setShareOpen((v) => !v); }}
-          aria-haspopup="dialog"
-          aria-expanded={shareOpen}
-          title={t('dayws.shareAria')}
-        >
-          <ShareIcon size={15} />
-          <span>{t('dayws.toolShare')}</span>
-          <ChevronDownIcon size={14} className="dayp-tool-caret" />
-        </button>
-      </div>
+      {aiSummary && <p className="dayp-summary"><SparkIcon size={14} /> {aiSummary}</p>}
 
-      {/* Both choices open in the shared sheet: a popover hung off its
-          button on a pointer screen, a bottom sheet over the one scrim on a
-          phone, where eight two-line items never fit above the bottom nav as
-          a dropdown (the V1 walk found the exports cut off there). */}
-      {addOpen && (
-        <SheetShell
-          title={t('dayws.addAria')}
-          onClose={() => setAddOpen(false)}
-          anchorRef={addBtnRef}
-          width={320}
-          className="dayp-sheet"
-          labelId="dayp-add-title"
-        >
-          <div className="dayp-choices">
-            <button type="button" className="dayp-menu-item" onClick={() => { setAddOpen(false); onAddMore(); }}>
-              <MapPinIcon size={14} />
-              <span><b>{t('dayws.addPlaces')}</b><small>{t('dayws.addPlacesSub')}</small></span>
-            </button>
-            {canOptimize && (
-              <button type="button" className="dayp-menu-item" onClick={() => { setAddOpen(false); onOptimize(); }}>
-                <RouteIcon size={14} />
-                <span><b>{t('dayws.addReorder')}</b><small>{t('dayws.addReorderSub')}</small></span>
-              </button>
-            )}
-            <div className="dayp-menu-rule" aria-hidden="true" />
-            <div className="dayp-menu-label">{t('dayws.botTitle')}</div>
-            <button type="button" className="dayp-menu-item" onClick={() => { setAddOpen(false); onAskCarta(); }}>
-              <SparkIcon size={14} />
-              <span><b>{t('dayws.addCarta')}</b><small>{t('dayws.addCartaSub')}</small></span>
-            </button>
-            {botPrompts.map((p) => (
-              <button
-                key={p.key}
-                type="button"
-                className="dayp-menu-item"
-                onClick={() => { setAddOpen(false); onBotPrompt?.(p.key); }}
-              >
-                {React.createElement(p.Icon, { size: 14 })}
-                <span><b>{t(p.labelKey)}</b><small>{t(p.subKey)}</small></span>
-              </button>
-            ))}
-          </div>
-        </SheetShell>
-      )}
-      {shareOpen && (
-        <SheetShell
-          title={t('dayws.shareAria')}
-          onClose={() => setShareOpen(false)}
-          anchorRef={shareBtnRef}
-          width={320}
-          className="dayp-sheet"
-          labelId="dayp-share-title"
-        >
-          <div className="dayp-choices">
-            {gmapsUrl && (
-              <a className="dayp-menu-item" href={gmapsUrl} target="_blank" rel="noreferrer" onClick={() => setShareOpen(false)}>
-                <MapPinIcon size={14} />
-                <span><b>{t('export.openInGmaps')}</b><small>{t('dayws.shareGmapsSub')}</small></span>
-              </a>
-            )}
-            {/* Stays open so "Copied" is read where it was clicked. */}
-            <button type="button" className="dayp-menu-item" onClick={onShare}>
-              {shareState === 'copied' ? <CheckIcon size={14} /> : <ShareIcon size={14} />}
-              <span>
-                <b>{shareState === 'copied' ? t('day.copied') : t('dayws.shareFriends')}</b>
-                <small>{t('dayws.shareFriendsSub')}</small>
-              </span>
-            </button>
-            <div className="dayp-menu-rule" aria-hidden="true" />
-            <button type="button" className="dayp-menu-item dayp-menu-small" onClick={() => { setShareOpen(false); onPdf(); }}>
-              <DownloadIcon size={13} /> <span><b>{t('day.downloadPdf')}</b></span>
-            </button>
-            <button type="button" className="dayp-menu-item dayp-menu-small" onClick={() => { setShareOpen(false); onKml(); }}>
-              <RouteIcon size={13} /> <span><b>{t('export.myMaps')}</b></span>
-            </button>
-            <button type="button" className="dayp-menu-item dayp-menu-small" onClick={() => { setShareOpen(false); onIcs(); }}>
-              <CalendarIcon size={13} /> <span><b>{t('export.calendar')}</b></span>
-            </button>
-          </div>
-        </SheetShell>
-      )}
-
-      {aiSummary && <p className="dayp-summary">{aiSummary}</p>}
-
-      <DayStrip schedule={schedule} focusIdx={focusIdx} />
-
-      <ol className="dayr-list" ref={listRef}>
+      <ol className="dayt" ref={listRef}>
+        <li className="dayt-start">
+          <span className="dayt-time">{fmtClockLoose(startMin)}</span>
+          <span className="dayt-rail is-end" aria-hidden="true"><HomeIcon size={14} /></span>
+          <span className="dayt-body"><span className="dayt-name">{start?.label ? t('dayws.leaveFrom', { place: start.label }) : t('dayws.leave')}</span></span>
+        </li>
+        {stayLeg && <LegRow leg={stayLeg} from={pos(start)} to={pos(items[0])} t={t} lang={lang} stepFree={stepFree} />}
         {items.map((it, i) => (
-          <RouteStop
-            key={keys[i]}
-            rowKey={keys[i]}
-            item={it}
-            n={i + 1}
-            last={i === items.length - 1}
-            flash={flashIdx === i}
-            onMoveUp={() => onMoveUp(i)}
-            onMoveDown={() => onMoveDown(i)}
-            onRemove={() => onRemove(i)}
-            rowRef={(el) => { if (rowRefs) rowRefs.current[i] = el; }}
-            onHoverChange={(on) => onHoverRow?.(on ? i : null)}
-            t={t}
-          />
+          <React.Fragment key={keys[i]}>
+            <StopRow
+              rowKey={keys[i]}
+              item={it}
+              n={i + 1}
+              last={i === items.length - 1}
+              time={rows[i] ? fmtClockLoose(rows[i].arriveMin) : ''}
+              dwell={dwellOf ? dwellOf(it) : null}
+              flash={flashIdx === i || focusIdx === i}
+              onMoveUp={() => onMoveUp(i)}
+              onMoveDown={() => onMoveDown(i)}
+              onRemove={() => onRemove(i)}
+              rowRef={(el) => { if (rowRefs) rowRefs.current[i] = el; }}
+              onHoverChange={(on) => onHoverRow?.(on ? i : null)}
+              offPathM={offPath[i] ?? null}
+              city={city}
+              compact={compact}
+              t={t}
+            />
+            {i === lunchAfter && (
+              <li className="dayt-lunch">
+                <span className="dayt-time">{fmtClockLoose(schedule.lunch.startMin)}</span>
+                <span className="dayt-rail" aria-hidden="true"><DiningIcon size={14} /></span>
+                <span className="dayt-body"><span className="dayt-name">{t('dayws.lunchFor', { min: schedule.lunch.endMin - schedule.lunch.startMin })}</span></span>
+              </li>
+            )}
+            {i < items.length - 1 && <LegRow leg={legs[i]} from={pos(it)} to={pos(items[i + 1])} t={t} lang={lang} stepFree={stepFree} />}
+          </React.Fragment>
         ))}
+        <li className="dayt-end">
+          <span className="dayt-time">{schedule ? fmtClockLoose(schedule.endMin) : ''}</span>
+          <span className="dayt-rail is-end" aria-hidden="true"><ClockIcon size={14} /></span>
+          <span className="dayt-body">
+            <span className="dayt-name">{t('dayws.dayDone')}</span>
+            {schedule?.freeMin >= 45 && <span className="dayt-meta">{t('dayws.freeLeft', { dur: fmtDur(schedule.freeMin) })}</span>}
+          </span>
+        </li>
       </ol>
 
       {walksBlock}
 
-      {/* Places Carta found off the catalogue while planning: they carry their
-          own map pins but no row to sit in, so they are named once, here. */}
-      {discoveries.length > 0 && (
-        <div className="dayp-finds">
-          <div className="dayp-finds-title"><MountainIcon size={11} /> {t('ai.discoveryTitle')}</div>
-          {discoveries.map((s, i) => (
-            <div className="dayp-find" key={i}>
-              <b>
-                {s.name}
-                {/* Two caveats that must travel with the find: an event may not
-                    be running when you get there, and a place Carta knew but
-                    could not locate has no pin to check it against. */}
-                {s.isEvent && <span className="ai-disc-tag ai-event-tag">{t('ai.eventTag')}</span>}
-                {s.unmapped && <span className="ai-disc-tag ai-unmapped-tag">{t('ai.unmappedTag')}</span>}
-              </b>
-              {s.why && <small>{s.why}</small>}
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="dayp-tools" role="toolbar" aria-label={t('dayws.toolbarAria', { n: dayNumber })}>
+        <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={onAddMore}>{t('dayws.addPlaces')}</Button>
+        <Button size="sm" iconStart={<SparkIcon size={16} />} onClick={onAskCarta}>{t('dayws.askCarta')}</Button>
+        {canOptimize && (
+          <Button size="sm" iconStart={<RouteIcon size={16} />} onClick={onOptimize}>{t('dayws.addReorder')}</Button>
+        )}
+      </div>
     </div>
   );
 }
@@ -445,15 +412,9 @@ export function DayPlanPanel({
 /**
  * Undo instead of confirm (carta-design rule N6, T409).
  *
- * A destructive action on the traveller's own data runs at once and offers
- * "Undo" for six seconds. Two shapes are supported:
- *
  *   offer(label, onUndo)            the change is already made; Undo puts it back.
  *   offer(label, onUndo, onCommit)  the change is only hidden; onCommit does the
- *                                   real, irreversible work when the six seconds
- *                                   end, when a second action starts, or when the
- *                                   panel unmounts, so nothing is ever left half
- *                                   deleted.
+ *                                   real work when the six seconds end.
  */
 const UNDO_MS = 6000;
 
@@ -485,7 +446,6 @@ export function useUndo() {
     cur?.onUndo?.();
   }, []);
 
-  // A panel that closes inside the window still honours the delete.
   useEffect(() => () => {
     window.clearTimeout(timer.current);
     const cur = ref.current;
@@ -506,3 +466,4 @@ export function UndoToast({ pending, onUndo }) {
     </div>
   );
 }
+

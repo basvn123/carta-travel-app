@@ -98,6 +98,10 @@ async function audit(page, vp, flow, name) {
     // A ::before with negative insets is a real tap box (browsers hit-test
     // pseudo-elements), so the measured rect grows by it.
     const tapRect = (el) => {
+      // The kit Card's title button is stretched over the whole card by an
+      // ::after at inset 0 (the stretched-link pattern), so the card is
+      // what a finger hits.
+      if (el.matches('.card.is-interactive .card-open')) return el.closest('.card').getBoundingClientRect();
       // A checkbox inside its <label> is tapped through the label.
       const lab = el.matches('input[type="checkbox"], input[type="radio"]') ? el.closest('label') : null;
       const r = (lab || el).getBoundingClientRect();
@@ -352,100 +356,96 @@ async function tripFlow(browser, vp) {
   await ctx.close();
 }
 
-// ── the day planner ───────────────────────────────────────────────────────
+// ── the day planner (T433: the trip wizard's frame) ─────────────────────
 const answerStay = async (page) => {
-  await page.locator('.day-flow-search input').fill('Hotel Artemide Rome');
+  await page.locator('.day-stay-input').fill('Hotel Artemide Rome');
   await page.locator('.day-flow-search .trip-add-btn').click();
   await page.locator('.day-stay-result').first().waitFor({ timeout: 30000 });
   await page.locator('.day-stay-result').first().click();
-  await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
-};
-const pickDate = async (page) => {
-  await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
-  const cells = page.locator('.day-flow-date .cal-day:not(.disabled):not(.outside):not([aria-disabled="true"]):not([disabled])');
-  if (await cells.count() > 3) await cells.nth(3).click();
-  await page.waitForTimeout(300);
+  await page.locator('.dayw-chosen').waitFor({ timeout: 30000 });
 };
 const addIdea = async (page, q) => {
   const input = page.locator('.day-ideas-input');
   await input.fill(q);
-  await page.locator('.day-ideas-row').first().waitFor({ timeout: 30000 });
-  await page.locator('.day-ideas-row').first().click();
+  await page.locator('.day-ideas-results .day-ideas-row').first().waitFor({ timeout: 30000 });
+  await page.locator('.day-ideas-results .day-ideas-row').first().click();
   await page.waitForTimeout(400);
 };
+// Carta's questions: answer each with its first tile, Next, until the
+// summary (stopAt: the question number to stop on), or until it builds.
 const walkBot = async (page, stopAt) => {
-  for (let guard = 0; guard < 30; guard += 1) {
-    if (await page.locator('.rbs, .chat-result').count()) return;
-    const prog = (await page.locator('.chat-progress').textContent().catch(() => '')).trim();
-    if (stopAt && new RegExp(`^\\D*${stopAt}\\b`).test(prog)) return;
-    const send = page.locator('.chat-send:visible').first();
+  for (let q = 1; q < 14; q += 1) {
+    await page.waitForTimeout(500);
+    if (await page.locator('.daychat-busy, .dayws-panel').count()) return;
+    if (stopAt && q === stopAt) return;
     const town = page.locator('.chat-town-picker .chat-opt').first();
-    const opt = page.locator('.chat-body .chat-opt:visible').first();
-    if (await page.locator('.chat-free-final').count()) await page.locator('.chat-free-final .chat-send').click();
-    else if (await town.count()) await town.click();
-    else if (await page.locator('.chat-opts-multi').count()) {
-      const first = page.locator('.chat-opts-multi .chat-opt').first();
-      if (await first.count() && !(await page.locator('.chat-opts-multi .chat-opt.on').count())) await first.click();
-      await send.click();
-    } else if (await opt.count()) await opt.click();
-    await page.waitForTimeout(350);
+    if (await town.count()) { await town.click(); continue; }
+    const tiles = page.locator('.daychat .ui-tile');
+    if (await tiles.count() && !(await page.locator('.daychat .ui-tile.is-selected').count())) await tiles.first().click();
+    await page.locator('.guide-next').click();
   }
+};
+// Plan-day answers with catalogue ids, as the T433 function does.
+const catalogueBot = async (page) => {
+  await page.route('**/functions/v1/plan-day**', async (r) => {
+    const body = JSON.parse(r.request().postData() || '{}');
+    const c = (body.candidates || []).slice(0, 5);
+    await new Promise((res) => setTimeout(res, 1200));
+    r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      summary: 'Ancient Rome in the morning, lunch in Monti, the churches after.',
+      stops: c.map((x, i) => ({ id: x.id, name: x.name, inCatalog: true, arrive: `${9 + i}:30`, dwellMin: 60, why: 'Because.' })),
+      totals: { walkKm: 4, endTime: '16:00' },
+      refineToken: 'mock', refinesLeft: 2,
+    }) });
+  });
 };
 
 async function dayFlow(browser, vp) {
   const { ctx, page } = await newPage(browser, vp);
   const shot = (name) => audit(page, vp, 'day', name);
   try {
+    await catalogueBot(page);
     await open(page, '?tab=day&o=CRL&paymock&savedmock');
-    await page.locator('.day-flow-search input').waitFor({ timeout: 90000 });
+    await page.locator('.day-stay-input').waitFor({ timeout: 90000 });
     await page.waitForTimeout(1000);
-
-    // 1 Start point
     await shot('01-start');
 
-    // the Continue-a-trip sheet
-    if (await page.locator('.dtcard').count()) {
-      await click(page, '.dtcard', 900);
+    // Plan a day of your trip, and its which-day sheet
+    if (await page.locator('.dtrow .card-open').count()) {
+      await click(page, '.dtrow .card-open', 900);
       await page.locator('.dtday-sheet').waitFor({ timeout: 15000 }).catch(() => {});
       await shot('02-continue-sheet');
       await page.keyboard.press('Escape');
       await page.waitForTimeout(500);
-    } else console.log('    (no Continue-a-trip card rendered)');
+    } else console.log('    (no trip row rendered)');
 
     await answerStay(page);
-    await click(page, '.day-flow-next', 900);
+    await guideNext(page, 900);
 
-    // 2 When
-    await pickDate(page);
-    await shot('03-when');
-    await click(page, '.day-flow-next', 900);
+    // 2 Days: three of them
+    await page.locator('.fstepper-btn').nth(1).click();
+    await page.locator('.fstepper-btn').nth(1).click();
+    await shot('03-days');
+    await guideNext(page, 900);
 
-    // 3 Ideas, yes, with two of them
-    await page.locator('.day-ideas-choice-btn').first().waitFor({ timeout: 30000 });
-    await page.locator('.day-ideas-choice-btn').first().click();
-    await page.waitForTimeout(500);
+    // 3 Ideas, with two of them
     await addIdea(page, 'Colosseum');
-    await page.locator('.day-ideas-clear').click().catch(() => {});
     await addIdea(page, 'Pantheon');
-    await page.waitForTimeout(500);
     await shot('04-ideas');
-    await click(page, '.day-ideas-body .day-flow-next', 900);
+    await guideNext(page, 1200);
 
     // 4 How
-    await page.locator('.day-flow-card').first().waitFor({ timeout: 30000 });
-    await page.waitForTimeout(500);
+    await page.locator('.dayw-fork-card').first().waitFor({ timeout: 30000 });
     await shot('05-how');
 
-    // the bot, at its third question, then its answer
-    await click(page, '.day-flow-card.primary', 1200);
-    await page.locator('.chat-opt').first().waitFor({ timeout: 30000 });
+    // Carta's questions, the third, the summary, then the planned days
+    await click(page, '.dayw-fork-card .card-open', 1000);
     await walkBot(page, 3);
-    await page.waitForTimeout(400);
     await shot('06-bot-q3');
     await walkBot(page, 0);
-    await page.locator('.chat-result').waitFor({ timeout: 60000 });
-    await page.waitForTimeout(2500);
-    await shot('07-bot-result');
+    await page.locator('.dayws-panel').waitFor({ timeout: 60000 });
+    await page.waitForTimeout(3000);
+    await shot('07-bot-days');
   } catch (e) {
     console.log(`  ERROR day/${vp.key}: ${String(e).split('\n')[0].slice(0, 200)}`);
     report.push({ viewport: vp.key, flow: 'day', name: 'aborted', error: String(e).slice(0, 300) });
@@ -458,40 +458,55 @@ async function dayFlow(browser, vp) {
   const bshot = (name) => audit(b.page, vp, 'day', name);
   try {
     await open(b.page, '?tab=day&o=CRL&paymock');
-    await b.page.locator('.day-flow-search input').waitFor({ timeout: 90000 });
+    await b.page.locator('.day-stay-input').waitFor({ timeout: 90000 });
     await answerStay(b.page);
-    await click(b.page, '.day-flow-next', 900);
-    await pickDate(b.page);
-    await click(b.page, '.day-flow-next', 900);
-    await b.page.locator('.day-ideas-choice-btn').first().waitFor({ timeout: 30000 });
-    await b.page.locator('.day-ideas-choice-btn').nth(1).click();
-    await b.page.locator('.day-flow-card').first().waitFor({ timeout: 30000 });
-    await b.page.locator('.day-flow-card').nth(1).click();
+    await guideNext(b.page, 900);
+    await guideNext(b.page, 900);
+    await guideNext(b.page, 1200);
+    await b.page.locator('.dayw-fork-card .card-open').nth(1).click();
     await b.page.locator('.dayex-card').first().waitFor({ timeout: 45000 });
     await b.page.waitForTimeout(2500);
     await bshot('08-build-list');
-    await b.page.locator('.dayex-add').first().click({ timeout: 15000 });
-    await b.page.waitForTimeout(400);
-    const viewSwitch = b.page.locator('.dayex-view button').nth(1);
+    for (let i = 0; i < 4; i += 1) {
+      await b.page.locator('.dayex-card .dayex-add:not(.on)').first().click({ timeout: 15000 });
+      await b.page.waitForTimeout(250);
+    }
+    const viewSwitch = b.page.locator('.dayex-view [role="radio"]').nth(1);
     if (await viewSwitch.isVisible().catch(() => false)) {
       await viewSwitch.click();
       await b.page.waitForTimeout(3000);
       await bshot('09-build-map');
-      await b.page.locator('.dayex-view button').nth(0).click();
+      await b.page.locator('.dayex-view [role="radio"]').nth(0).click();
       await b.page.waitForTimeout(600);
     } else {
-      // Desktop keeps the map beside the list; the list shot already has it.
       await b.page.waitForTimeout(2000);
       await bshot('09-build-map');
     }
     await click(b.page, '.dayex-tray-summary', 900);
     await bshot('10-build-tray');
+    await b.page.keyboard.press('Escape');
+    await b.page.waitForTimeout(400);
+    await guideNext(b.page, 5000);
+    await bshot('11-day');
+    await scrollOverview(b.page, 1);
+    await bshot('12-day-timeline');
+    await scrollOverview(b.page, 2);
+    await bshot('13-day-kit');
   } catch (e) {
     console.log(`  ERROR builder/${vp.key}: ${String(e).split('\n')[0].slice(0, 200)}`);
     report.push({ viewport: vp.key, flow: 'day', name: 'builder-aborted', error: String(e).slice(0, 300) });
     await b.page.screenshot({ path: `${OUT}/${vp.key}/day-builder-ERROR.png` }).catch(() => {});
   }
   await b.ctx.close();
+}
+
+// One screen down the planned day, whatever scrolls it (its panel or the page).
+async function scrollOverview(page, screens) {
+  await page.evaluate((n) => {
+    const el = document.querySelector('.dayws-panel');
+    if (el) el.scrollTop += el.clientHeight * 0.85 * n;
+  }, screens);
+  await page.waitForTimeout(800);
 }
 
 // ── run ───────────────────────────────────────────────────────────────────

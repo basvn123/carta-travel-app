@@ -3,14 +3,15 @@ import { useI18n } from '../i18n/index.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
-import { Button } from '../components/Button.jsx';
+import { Button, IconButton, Chip, Segmented, Card } from '../components/ui/index.js';
 import { PlannerSection } from './PlannerSection.jsx';
-import { DayExploreMap } from '../map/DayExploreMap.jsx';
+import { TripMap } from '../map/TripMap.jsx';
+import { DayWizardShell } from './DayWizardShell.jsx';
+import { CreditChip } from '../components/CreditChip.jsx';
+import { fmtClockLoose } from './daySchedule.js';
+import { fmtKm } from './dayFormat.js';
 import { haversineKm } from '../lib/runtime_pricing.js';
-import { cityLabel } from '../lib/placeName.js';
 import { fmtDate } from '../lib/dates.js';
-import { formatSteps, kmToSteps, stepsToKm } from '../lib/steps.js';
-import { fmtDur } from './dayFormat.js';
 import { loadBeaches } from '../lib/beaches.js';
 import { loadLakes } from '../lib/lakes.js';
 import { loadTrails } from '../lib/trails.js';
@@ -19,11 +20,10 @@ import { tripCentre } from '../lib/trailCards.js';
 import { bandChip } from '../lib/regions.js';
 import {
   RAIL_KM, poiRow, waterRow, trailRow, townRow, doRow, eventRow,
-  eventOnDate, stepsForRoute, orderFromStay,
-  LOCAL_KM, townReach, reachLine, TOWN_VISIT_MIN, PLACE_VISIT_MIN, DAY_FIT_MIN,
+  eventOnDate, LOCAL_KM, townReach, reachLine,
 } from './dayExploreRails.js';
 import { scrollBehavior } from '../lib/motion.js';
-import { CloseIcon } from '../components/Icons.jsx';
+import { CloseIcon, StarIcon, PlusIcon, CheckIcon } from '../components/Icons.jsx';
 
 /**
  * "Build it myself": the guided builder around a stay (D6).
@@ -92,14 +92,60 @@ function useNearViewport(fn) {
   return ref;
 }
 
-/** One place, as a card: photo, name, rating, how far, and one tap to add. */
-function PlaceCard({ row, picked, onToggle, onOpen, highlighted, onHover, t }) {
-  // A town further than a walk says how you get there without a car first
-  // ("about 46 min by train"), not how far a car would drive (T389).
+/** The add button a card and a row share. */
+function AddButton({ row, picked, onToggle, t }) {
+  if (!row.add) return null;
+  return (
+    <button
+      className={`dayex-add${picked ? ' on' : ''}`}
+      onClick={() => onToggle(row)}
+      aria-pressed={picked}
+      aria-label={picked
+        ? t('dayex.removeFromDay', { name: row.name })
+        : t('dayex.addToDay', { name: row.name })}
+      title={picked ? t('dayex.inYourDay') : t('dayex.addToDayShort')}
+    >
+      {picked ? <CheckIcon size={18} /> : <PlusIcon size={18} />}
+    </button>
+  );
+}
+
+/** What a place is and how far, under its name. "Must see" is said here, in
+ *  words, never printed on the photograph (carta-design, never-do 4). */
+function PlaceMeta({ row, t }) {
   const dist = reachLine(row, t);
   return (
+    <>
+      <span className="dayex-card-name">
+        <b>{row.name}</b>
+        {row.rating?.score != null && <ScoreChip rating={row.rating} size="xs" />}
+        {row.gem && <HiddenGemTag />}
+      </span>
+      <span className="dayex-card-meta">
+        {row.must && row.kind !== 'sight' && <span className="dayex-must"><StarIcon size={12} />{t('day.mustSee')}</span>}
+        {dist && <span className="dayex-card-dist">{dist}</span>}
+        {row.kind === 'trail' && row.lenKm != null && (
+          <span className="dayex-card-fact">{t('dayex.trailFact', { km: row.lenKm, m: row.ascentM ?? 0 })}</span>
+        )}
+        {row.waterClass && (
+          <span className={`dayex-water bw-${String(row.waterClass).toLowerCase()}`}>
+            {t(`water.${String(row.waterClass).toLowerCase()}`)}
+          </span>
+        )}
+        {row.kind === 'town' && row.km != null && (
+          <span className="dayex-card-fact">{bandChip(row.km, t)}</span>
+        )}
+        {row.sub && row.kind !== 'town' && <span className="dayex-card-sub">{row.sub}</span>}
+      </span>
+    </>
+  );
+}
+
+/** One place with a photograph: the photo, then its name and facts. */
+function PlaceCard({ row, picked, onToggle, onOpen, highlighted, onHover, t }) {
+  return (
     <div
-      className={`dayex-card${highlighted ? ' is-hi' : ''}`}
+      className={`dayex-card${highlighted ? ' is-hi' : ''}${picked ? ' is-picked' : ''}`}
       onMouseEnter={() => onHover?.(row.key)}
       onMouseLeave={() => onHover?.('')}
       data-key={row.key}
@@ -107,55 +153,39 @@ function PlaceCard({ row, picked, onToggle, onOpen, highlighted, onHover, t }) {
       <button className="dayex-card-body" onClick={() => onOpen(row)}>
         <span className="dayex-card-photo">
           <HeroImage url={row.photo} city={row.name} iso2={row.iso2} maxWidth={500} sizes="(max-width: 700px) 62vw, 300px" />
-          {row.must && <span className="dayex-card-flag">{t('day.mustSee')}</span>}
         </span>
-        <span className="dayex-card-text">
-          <span className="dayex-card-name">
-            <b>{row.name}</b>
-            {row.rating?.score != null && <ScoreChip rating={row.rating} size="xs" />}
-            {row.gem && <HiddenGemTag />}
-          </span>
-          {dist && <span className="dayex-card-dist">{dist}</span>}
-          <span className="dayex-card-meta">
-            {row.kind === 'trail' && row.lenKm != null && (
-              <span className="dayex-card-fact">{t('dayex.trailFact', { km: row.lenKm, m: row.ascentM ?? 0 })}</span>
-            )}
-            {row.waterClass && (
-              <span className={`dayex-water bw-${String(row.waterClass).toLowerCase()}`}>
-                {t(`water.${String(row.waterClass).toLowerCase()}`)}
-              </span>
-            )}
-            {row.kind === 'town' && row.km != null && (
-              <span className="dayex-card-fact">{bandChip(row.km, t)}</span>
-            )}
-            {row.sub && row.kind !== 'town' && <span className="dayex-card-sub">{row.sub}</span>}
-          </span>
-        </span>
+        <span className="dayex-card-text"><PlaceMeta row={row} t={t} /></span>
       </button>
-      {row.add && (
-        <button
-          className={`dayex-add${picked ? ' on' : ''}`}
-          onClick={() => onToggle(row)}
-          aria-pressed={picked}
-          aria-label={picked
-            ? t('dayex.removeFromDay', { name: row.name })
-            : t('dayex.addToDay', { name: row.name })}
-          title={picked ? t('dayex.inYourDay') : t('dayex.addToDayShort')}
-        >
-          {picked ? (
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-          ) : (
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          )}
-        </button>
-      )}
+      <AddButton row={row} picked={picked} onToggle={onToggle} t={t} />
     </div>
+  );
+}
+
+/** A place with no photograph: a compact row (the kit's Card), never a fake
+ *  image. */
+function PlaceRow({ row, picked, onToggle, onOpen, highlighted, onHover, t }) {
+  const dist = reachLine(row, t);
+  return (
+    <Card
+      as="li"
+      layout="row"
+      className={`dayex-row${highlighted ? ' is-hi' : ''}`}
+      selected={picked}
+      data-key={row.key}
+      onMouseEnter={() => onHover?.(row.key)}
+      onMouseLeave={() => onHover?.('')}
+      title={row.name}
+      onOpen={() => onOpen(row)}
+      meta={(
+        <>
+          {row.must && <span className="dayex-must"><StarIcon size={12} />{t('day.mustSee')}</span>}
+          {dist && <span>{dist}</span>}
+          {row.sub && row.kind !== 'town' && <span>{row.sub}</span>}
+        </>
+      )}
+      rating={row.rating?.score != null ? <ScoreChip rating={row.rating} size="xs" /> : null}
+      actions={<AddButton row={row} picked={picked} onToggle={onToggle} t={t} />}
+    />
   );
 }
 
@@ -166,37 +196,52 @@ function Rail({ title, sub, rows, loading, isPicked, hi, ...card }) {
   const [open, setOpen] = useState(false);
   const SHOWN = 6;
   if (!loading && !rows.length) return null;
-  const shown = open ? rows : rows.slice(0, SHOWN);
+  const withPhoto = rows.filter((r) => r.photo);
+  const without = rows.filter((r) => !r.photo);
+  const shown = open ? withPhoto : withPhoto.slice(0, SHOWN);
+  const rowsShown = open ? without : without.slice(0, 4);
+  const more = (withPhoto.length - shown.length) + (without.length - rowsShown.length);
   return (
     <PlannerSection
       title={title}
       sub={sub}
       className="dayex-rail"
-      aside={rows.length > SHOWN ? (
-        <button className="dayex-more" onClick={() => setOpen((v) => !v)}>
-          {open ? t('dayex.showLess') : t('dayex.showMore', { n: rows.length - SHOWN })}
-        </button>
+      aside={more > 0 || open ? (
+        <Button variant="quiet" size="sm" className="dayex-more" onClick={() => setOpen((v) => !v)}>
+          {open ? t('dayex.showLess') : t('dayex.showMore', { n: more })}
+        </Button>
       ) : null}
     >
-      <div className="dayex-cards">
-        {loading && !rows.length
-          ? [0, 1, 2].map((i) => <div className="dayex-card dayex-card-skel" key={i} aria-hidden="true" />)
-          : shown.map((r) => (
-            <PlaceCard key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...card} t={t} />
+      {(loading && !rows.length) || shown.length > 0 ? (
+        <div className="dayex-cards">
+          {loading && !rows.length
+            ? [0, 1, 2].map((i) => <div className="dayex-card dayex-card-skel" key={i} aria-hidden="true" />)
+            : shown.map((r) => (
+              <PlaceCard key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...card} t={t} />
+            ))}
+        </div>
+      ) : null}
+      {rowsShown.length > 0 && (
+        <ul className="dayex-rows">
+          {rowsShown.map((r) => (
+            <PlaceRow key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...card} t={t} />
           ))}
-      </div>
+        </ul>
+      )}
     </PlannerSection>
   );
 }
 
 export function DayExploreBuilder({
+  // T433: the wizard frame, the start's own name, and the days the picks make.
+  wizard, startName = '', daysLine = '', preview = [], homeTownId = null,
   stay, dateISO, explorePois, exploreTowns, destinations, stayTownId,
   ideas = [], shortlistPoints = [],
-  picks, onTogglePick, onMovePick, townPicks, onToggleTown,
+  picks, onTogglePick, townPicks, onToggleTown,
   onStartPlanning, onLetCartaPlan, onChangeStay, onOpenDest, onOpenFeature,
 }) {
 
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [chip, setChip] = useState('all');
   const [view, setView] = useState('list');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -240,8 +285,8 @@ export function DayExploreBuilder({
   // The town the stay belongs to: what the header names, and whose dossier
   // answers "things to do" and "on this day".
   const homeTown = useMemo(
-    () => (stayTownId ? exploreTowns.find((x) => x.id === stayTownId) : null) || exploreTowns[0] || null,
-    [stayTownId, exploreTowns],
+    () => exploreTowns.find((x) => x.id === (homeTownId || stayTownId)) || exploreTowns[0] || null,
+    [homeTownId, stayTownId, exploreTowns],
   );
 
   const loadWater = useCallback(() => {
@@ -448,26 +493,6 @@ export function DayExploreBuilder({
     return out;
   }, [picks, byKey]);
 
-  const steps = useMemo(
-    () => (stay ? stepsForRoute(stay, orderFromStay(stay, trayRows), kmToSteps) : 0),
-    [stay, trayRows],
-  );
-
-  // Towns in the tray are rides, not walks (brief V3-7): each one counts its
-  // minutes there and back by the mode its card states, and never adds to the
-  // step count, which is why "2 places, about 0 steps" could print before.
-  const townRide = useCallback((id) => {
-    const row = townRows.find((r) => r.add?.town === id);
-    if (row) return row.reach?.min ? row.reach.min : 0;
-    const tn = exploreTowns.find((x) => x.id === id);
-    if (!tn || (tn.km ?? 0) < LOCAL_KM) return 0;
-    return townReach(homeTown?.dest, tn.dest)?.min || 0;
-  }, [townRows, exploreTowns, homeTown]);
-  const rideRoundMin = useMemo(
-    () => townPicks.reduce((n, s) => n + 2 * townRide(s.destinationId), 0),
-    [townPicks, townRide],
-  );
-
   const toggle = useCallback((row) => {
     if (row.add?.town) onToggleTown(row.add.town);
     else if (row.add) onTogglePick(row.add);
@@ -490,17 +515,34 @@ export function DayExploreBuilder({
 
   // The map view draws the same rows the list does, so a filter means the
   // same thing in both and switching view never changes what is on offer.
-  const markers = useMemo(() => (flat || allRows).filter(matches).map((r) => ({
-    id: r.key,
-    label: r.name,
-    lat: r.lat,
-    lon: r.lon,
-    cat: r.kind === 'water' ? 'beach' : r.kind === 'trail' || r.kind === 'nature' ? 'beach'
-      : r.kind === 'town' ? 'town' : r.kind === 'active' ? 'active' : 'sight',
-    must: !!r.must,
-    selected: isPicked(r),
-    focused: hi === r.key,
-  })), [flat, allRows, matches, isPicked, hi]);
+  const markers = useMemo(() => (flat || allRows).filter(matches)
+    .filter((r) => !isPicked(r) && Number.isFinite(r.lat) && Number.isFinite(r.lon))
+    // The map frames the day's own surroundings: a town an hour away is in
+    // the list, not a reason to zoom the map out to half a country.
+    .filter((r) => r.km == null || r.km <= 15)
+    .slice(0, 60)
+    .map((r) => ({
+      id: r.key,
+      label: r.name,
+      lat: r.lat,
+      lon: r.lon,
+      cat: r.kind === 'water' ? 'beach' : r.kind === 'trail' || r.kind === 'nature' ? 'beach'
+        : r.kind === 'town' ? 'town' : r.kind === 'active' ? 'active' : 'sight',
+      must: !!r.must,
+    })), [flat, allRows, matches, isPicked]);
+  // The picks, numbered in the order the days will walk them, the stay first.
+  const mapStops = useMemo(() => {
+    const out = stay ? [{ lat: stay.lat, lon: stay.lon, stay: true, city: startName }] : [];
+    let no = 0;
+    for (const d of preview) {
+      for (const p of d.clock?.rows || []) {
+        no += 1;
+        if (Number.isFinite(p.lat)) out.push({ lat: p.lat, lon: p.lon, city: p.name, no });
+      }
+    }
+    return out;
+  }, [stay, preview, startName]);
+  const rowByKey = useMemo(() => new Map(allRows.map((r) => [r.key, r])), [allRows]);
 
   // Tapping a pin scrolls its card into view, which is what keeps the two
   // halves of the desktop layout one surface rather than two lists.
@@ -512,211 +554,233 @@ export function DayExploreBuilder({
   }, []);
 
   const count = picks.length + townPicks.length;
-  const placesPart = picks.length
-    ? t(picks.length === 1 ? 'dayex.trayOne' : 'dayex.trayMany', { n: picks.length, steps: formatSteps(steps) })
-    : '';
-  const nTowns = townPicks.length;
-  const townsPart = !nTowns ? '' : rideRoundMin
-    ? t(nTowns === 1 ? 'dayex.trayTownOne' : 'dayex.trayTownMany', { n: nTowns, time: fmtDur(rideRoundMin) })
-    : t(nTowns === 1 ? 'dayex.trayTownBareOne' : 'dayex.trayTownBareMany', { n: nTowns });
-  const trayLabel = count === 0
+  // ---- T433: the days the picks make, said as a schedule -----------------
+  const nDays = preview.length;
+  const lateDay = preview.find((d) => d.clock?.rows?.length && d.clock.endMin > 19 * 60);
+  const summaryText = count === 0
     ? t('dayex.trayEmpty')
-    : placesPart && townsPart ? t('dayex.trayJoin', { a: placesPart, b: townsPart }) : (placesPart || townsPart);
-  // Whether the picks still fit one day: the rides there and back, a half day
-  // in each town, an hour at each place and the walking between them. Past
-  // nine hours the tray says so in one sentence rather than letting a day
-  // that cannot be done look like a plan.
-  const walkMin = Math.round((stepsToKm(steps) / 4.6) * 60);
-  const dayMin = rideRoundMin + nTowns * TOWN_VISIT_MIN + picks.length * PLACE_VISIT_MIN + walkMin;
-  const tooLong = count > 0 && dayMin > DAY_FIT_MIN;
+    : t(nDays > 1 ? 'dayex.trayDays' : 'dayex.trayDay', { n: count, d: nDays });
+
+  const daysPreview = (
+    <ol className="dayex-days">
+      {preview.map((d) => (
+        <li className="dayex-day" key={`${d.si}:${d.di}`}>
+          <div className="dayex-day-head">
+            <b>{t('itin.dayN', { n: d.no })}</b>
+            <span>{[d.date ? fmtDate(d.date, true) : '', d.town].filter(Boolean).join(', ')}</span>
+          </div>
+          {d.clock.rows.length ? (
+            <>
+              <ul className="dayex-day-rows">
+                {d.clock.rows.map((r) => (
+                  <li key={r.key || `${r.destId}:${r.idx}`}>
+                    <span className="dayex-day-time">~{fmtClockLoose(r.arriveMin)}</span>
+                    <span className="dayex-day-name">{r.name}</span>
+                    {rowByKey.get(r.key) && (
+                      <IconButton
+                        className="dayex-day-x"
+                        onClick={() => toggle(rowByKey.get(r.key))}
+                        label={t('dayex.removeFromDay', { name: r.name })}
+                      ><CloseIcon size={14} /></IconButton>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="dayex-day-foot">
+                {t('dayex.dayDone', { time: fmtClockLoose(d.clock.endMin), km: fmtKm(d.clock.km, lang) })}
+              </p>
+            </>
+          ) : (
+            <p className="dayex-day-foot">{t('dayex.dayFree')}</p>
+          )}
+        </li>
+      ))}
+    </ol>
+  );
+
+  const foot = {
+    back: () => wizard.onGo(wizard.at - 1),
+    summary: (
+      <button
+        type="button"
+        className="dayex-tray-summary"
+        onClick={() => setTrayOpen(true)}
+        aria-haspopup="dialog"
+        disabled={!count}
+      >
+        <span>{summaryText}</span>
+        {lateDay && <small className="dayex-tray-fit">{t('dayex.dayLate', { n: lateDay.no })}</small>}
+      </button>
+    ),
+    secondary: wide ? { label: count ? t('dayex.cartaRest') : t('dayex.cartaAll'), onClick: () => onLetCartaPlan(trayRows) } : null,
+    next: {
+      label: t(nDays > 1 ? 'dayex.openMyDays' : 'dayex.openMyDay'),
+      onClick: onStartPlanning,
+      disabled: !count,
+    },
+  };
 
   return (
-    <div className={`dayex${view === 'map' ? ' dayex-mapview' : ''}`}>
-      {/* The banner answers "where am I planning from", with the one control
-          that changes it. It is a photo because the stay is a place, and a
-          line of grey text is what the old landing used to say instead. */}
-      <header className="dayex-head">
-        <span className="dayex-head-photo">
-          <HeroImage url={homeTown?.dest?.image?.url || ''} city={homeTown?.dest?.city || ''} maxWidth={500} sizes="76px" />
-        </span>
-        <span className="dayex-head-text">
-          <b>{homeTown?.dest?.city ? cityLabel(homeTown.dest.city) : (stay?.shortLabel || stay?.label || '')}</b>
-          <small>{dateISO ? t('dayex.headDate', { date: fmtDate(dateISO, true) }) : t('dayex.headNoDate')}</small>
-        </span>
-        <span className="dayex-head-acts">
-          <button
-            className="dayex-search-btn"
-            onClick={() => { setSearchOpen((v) => !v); setQuery(''); }}
-            aria-expanded={searchOpen}
-            aria-label={t('day.exploreSearchAria')}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
-            </svg>
-          </button>
-          <button className="dayex-change" onClick={onChangeStay}>{t('dayex.change')}</button>
-        </span>
-      </header>
-
-      {searchOpen && (
-        <div className="dayex-searchrow">
-          <input
-            className="dayex-search-input"
-            autoFocus
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t('day.exploreSearchPlaceholder')}
-            aria-label={t('day.exploreSearchAria')}
-          />
-          {query && (
-            <button className="dayex-search-clear" onClick={() => setQuery('')} aria-label={t('day.clearSearch')}><CloseIcon size={16} /></button>
-          )}
-        </div>
-      )}
-
-      <div className="dayex-bar">
-        <div className="dayex-chips" role="tablist" aria-label={t('dayex.filterAria')}>
-          {CHIPS.map((c) => (
-            <button
-              key={c}
-              role="tab"
-              aria-selected={chip === c}
-              className={`guide-chip${chip === c ? ' on' : ''}`}
-              onClick={() => setChip(c)}
-            >{t(CHIP_KEY[c])}</button>
-          ))}
-        </div>
-        <div className="dayex-view">
-          <button className={view === 'list' ? 'on' : ''} onClick={() => setView('list')} aria-pressed={view === 'list'}>
-            {t('dayex.viewList')}
-          </button>
-          <button className={view === 'map' ? 'on' : ''} onClick={() => setView('map')} aria-pressed={view === 'map'}>
-            {t('dayex.viewMap')}
-          </button>
-        </div>
-      </div>
-
-      <div className="dayex-body">
-        <div className="dayex-list" ref={listRef}>
-          {flat ? (
-            <PlannerSection
-              title={t(CHIP_KEY[chip])}
-              className="dayex-rail"
-              aside={<span className="dayex-count">{t('dayex.nPlaces', { n: flat.length })}</span>}
+    <DayWizardShell {...wizard} layout="wide" canvasKey="manual" foot={foot} className="dayw-manual">
+      <div className={`dayex${view === 'map' ? ' dayex-mapview' : ''}`}>
+        <header className="dayex-head">
+          <span className="dayex-head-text">
+            <h1 className="guide-title">{t('dayex.title', { town: startName || homeTown?.dest?.city || '' })}</h1>
+            {daysLine && <small>{daysLine}</small>}
+          </span>
+          <span className="dayex-head-acts">
+            <IconButton
+              tone="surface"
+              className="dayex-search-btn"
+              onClick={() => { setSearchOpen((v) => !v); setQuery(''); }}
+              aria-expanded={searchOpen}
+              label={t('day.exploreSearchAria')}
             >
-              <div className="dayex-cards dayex-cards-full">
-                {flat.length
-                  ? flat.map((r) => (
-                    <PlaceCard key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...cardProps} t={t} />
-                  ))
-                  : (
-                    <div className="trip-note empty-act">
-                      <p>{t('dayex.noneHere')}</p>
-                      <button type="button" className="cov-empty-btn"
-                        onClick={() => { setChip('all'); setQuery(''); }}>
-                        {t('dayex.showAllKinds')}
-                      </button>
-                    </div>
-                  )}
-              </div>
-            </PlannerSection>
-          ) : (
-            <>
-              {ideaRows.length > 0 && (
-                <Rail title={t('dayex.railIdeas')} sub={t('dayex.railIdeasSub')} rows={ideaRows} {...cardProps} />
-              )}
-              {/* The rails run from the door outwards (brief V3-7): what is on
-                  that day, then what you walk to (sights, walks and nature,
-                  things to do, food, your shortlist), and only then the beaches,
-                  lakes and towns that need a ride. A Rome hotel used to open on
-                  "Beaches and lakes" and "Towns worth the trip". */}
-              {eventRows.length > 0 && (
-                <Rail title={t('dayex.railOnThisDay')} rows={eventRows} {...cardProps} />
-              )}
-              <Rail title={t('dayex.railSights')} rows={sightRows} {...cardProps} />
-              <div ref={trailRef}>
-                <Rail title={t('dayex.railNature')} rows={natureRows} loading={!!loading.trail} {...cardProps} />
-              </div>
-              <div ref={dossRef}>
-                <Rail title={t('dayex.railDo')} rows={doRows} loading={!!loading.doss} {...cardProps} />
-              </div>
-              <Rail title={t('dayex.railFood')} rows={foodRows} {...cardProps} />
-              {shortRows.length > 0 && (
-                <Rail title={t('dayex.railShortlist')} rows={shortRows} {...cardProps} />
-              )}
-              <div ref={waterRef}>
-                <Rail title={t('dayex.railWater')} rows={water || []} loading={!!loading.water} {...cardProps} />
-              </div>
-              <Rail title={t('dayex.railTowns')} rows={townRows} {...cardProps} />
-            </>
-          )}
-        </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
+              </svg>
+            </IconButton>
+            <Button size="sm" className="dayex-change" onClick={onChangeStay}>{t('dayex.change')}</Button>
+          </span>
+        </header>
 
-        <div className="dayex-mapcol">
-          {(wide || view === 'map') && (
-            <DayExploreMap
-              stay={{ lat: stay?.lat, lon: stay?.lon, label: stay?.shortLabel || t('day.yourStay') }}
-              markers={markers}
-              onFocus={focusCard}
+        {searchOpen && (
+          <div className="dayex-searchrow">
+            <input
+              className="dayex-search-input"
+              autoFocus
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t('day.exploreSearchPlaceholder')}
+              aria-label={t('day.exploreSearchAria')}
+            />
+            {query && (
+              <button className="dayex-search-clear" onClick={() => setQuery('')} aria-label={t('day.clearSearch')}><CloseIcon size={16} /></button>
+            )}
+          </div>
+        )}
+
+        <div className="dayex-bar">
+          <div className="dayex-chips" role="group" aria-label={t('dayex.filterAria')}>
+            {CHIPS.map((c) => (
+              <Chip key={c} selected={chip === c} onClick={() => setChip(c)}>{t(CHIP_KEY[c])}</Chip>
+            ))}
+          </div>
+          {!wide && (
+            <Segmented
+              size="sm"
+              className="dayex-view"
+              label={t('dayex.viewAria')}
+              value={view}
+              onChange={setView}
+              options={[
+                { value: 'list', label: t('dayex.viewList') },
+                { value: 'map', label: t('dayex.viewMap') },
+              ]}
             />
           )}
         </div>
-      </div>
 
-      {/* The tray: what the day holds so far, how far it walks, and the two
-          ways out of this screen. Carta's button is here whether or not
-          anything is picked, because "I have had enough of choosing" is a
-          normal thing to feel halfway down a list of beaches. */}
-      <div className="dayex-tray">
-        <div className="dayex-tray-state">
-          <button className="dayex-tray-summary" onClick={() => setTrayOpen((v) => !v)} aria-expanded={trayOpen}>
-            {trayLabel}
-          </button>
-          {tooLong && (
-            <p className="dayex-tray-fit" role="status">{t('dayex.trayTooLong', { time: fmtDur(dayMin) })}</p>
-          )}
-        </div>
-        <div className="dayex-tray-acts">
-          {/* The tray's two doors are the shared Button: one secondary, one
-              primary, and a primary that cannot act yet goes neutral (T193). */}
-          <Button className="dayex-tray-carta" onClick={() => onLetCartaPlan(trayRows)}>
-            {count ? t('dayex.cartaRest') : t('dayex.cartaAll')}
-          </Button>
-          <Button variant="primary" className="dayex-tray-open" onClick={onStartPlanning} disabled={!count}>
-            {t('dayex.openMyDay')}
+        <div className="dayex-body">
+          <div className="dayex-list" ref={listRef}>
+            {flat ? (
+              <PlannerSection
+                title={t(CHIP_KEY[chip])}
+                className="dayex-rail"
+                aside={<span className="dayex-count">{t('dayex.nPlaces', { n: flat.length })}</span>}
+              >
+                {flat.length ? (
+                  <>
+                    <div className="dayex-cards dayex-cards-full">
+                      {flat.filter((r) => r.photo).map((r) => (
+                        <PlaceCard key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...cardProps} t={t} />
+                      ))}
+                    </div>
+                    <ul className="dayex-rows">
+                      {flat.filter((r) => !r.photo).map((r) => (
+                        <PlaceRow key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...cardProps} t={t} />
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <div className="trip-note empty-act">
+                    <p>{t('dayex.noneHere')}</p>
+                    <Button size="sm" onClick={() => { setChip('all'); setQuery(''); }}>
+                      {t('dayex.showAllKinds')}
+                    </Button>
+                  </div>
+                )}
+              </PlannerSection>
+            ) : (
+              <>
+                {ideaRows.length > 0 && (
+                  <Rail title={t('dayex.railIdeas')} rows={ideaRows} {...cardProps} />
+                )}
+                {eventRows.length > 0 && (
+                  <Rail title={t('dayex.railOnThisDay')} rows={eventRows} {...cardProps} />
+                )}
+                <Rail title={t('dayex.railSights')} rows={sightRows} {...cardProps} />
+                <div ref={trailRef}>
+                  <Rail title={t('dayex.railNature')} rows={natureRows} loading={!!loading.trail} {...cardProps} />
+                </div>
+                <div ref={dossRef}>
+                  <Rail title={t('dayex.railDo')} rows={doRows} loading={!!loading.doss} {...cardProps} />
+                </div>
+                <Rail title={t('dayex.railFood')} rows={foodRows} {...cardProps} />
+                {shortRows.length > 0 && (
+                  <Rail title={t('dayex.railShortlist')} rows={shortRows} {...cardProps} />
+                )}
+                <div ref={waterRef}>
+                  <Rail title={t('dayex.railWater')} rows={water || []} loading={!!loading.water} {...cardProps} />
+                </div>
+                <Rail title={t('dayex.railTowns')} rows={townRows} {...cardProps} />
+              </>
+            )}
+          </div>
 
-          </Button>
+          <div className="dayex-mapcol">
+            {wide && (
+              <section className="dayex-preview" aria-labelledby="dayex-preview-h">
+                <div className="dayex-preview-head">
+                  <h2 id="dayex-preview-h">{t('dayex.trayTitle')}</h2>
+                  {count > 0 && <span>{summaryText}</span>}
+                </div>
+                {count ? daysPreview : <p className="dayex-day-foot">{t('dayex.trayNone')}</p>}
+                <div className="dayex-preview-carta">
+                  <CreditChip />
+                </div>
+              </section>
+            )}
+            {(wide || view === 'map') && (
+              <div className="dayex-map">
+                <TripMap
+                  stops={mapStops}
+                  pois={markers}
+                  onPoiClick={(id) => { const r = rowByKey.get(id); if (r?.add) toggle(r); else focusCard(id); }}
+                  focus={stay ? { lat: stay.lat, lon: stay.lon, zoom: 12 } : null}
+                  padBottom={40}
+                  fitMaxZoom={14}
+                  showRoute={false}
+                  zoomControls
+                  cooperativeGestures={!wide}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {trayOpen && (
-        <SheetShell title={t('dayex.trayTitle')} onClose={() => setTrayOpen(false)} width={460}>
-          {count === 0 ? (
-            <p className="trip-note">{t('dayex.trayNone')}</p>
-          ) : (
-            <ul className="dayex-tray-list">
-              {trayRows.map((r, i) => (
-                <li key={r.key}>
-                  <span className="dayex-tray-name">{r.name}</span>
-                  <span className="dayex-tray-moves">
-                    <button onClick={() => onMovePick(r.key, -1)} disabled={i === 0} aria-label={t('dayex.moveUp')}>↑</button>
-                    <button onClick={() => onMovePick(r.key, 1)} disabled={i === trayRows.length - 1} aria-label={t('dayex.moveDown')}>↓</button>
-                    <button onClick={() => toggle(r)} aria-label={t('dayex.removeFromDay', { name: r.name })}><CloseIcon size={16} /></button>
-                  </span>
-                </li>
-              ))}
-              {townPicks.map((s) => (
-                <li key={s.destinationId}>
-                  <span className="dayex-tray-name">{destinations[s.destinationId]?.city || ''}</span>
-                  <span className="dayex-tray-moves">
-                    <button onClick={() => onToggleTown(s.destinationId)} aria-label={t('day.remove')}><CloseIcon size={16} /></button>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
+        <SheetShell title={t('dayex.trayTitle')} onClose={() => setTrayOpen(false)} width={480} className="dayex-tray-sheet">
+          {count === 0 ? <p className="trip-note">{t('dayex.trayNone')}</p> : daysPreview}
+          <div className="dayex-sheet-acts">
+            <Button onClick={() => { setTrayOpen(false); onLetCartaPlan(trayRows); }}>
+              {count ? t('dayex.cartaRest') : t('dayex.cartaAll')}
+            </Button>
+            <CreditChip />
+          </div>
         </SheetShell>
       )}
 
@@ -734,23 +798,23 @@ export function DayExploreBuilder({
           {detail.desc && <p className="dayex-detail-desc">{detail.desc}</p>}
           <div className="dayex-detail-acts">
             {detail.open?.type === 'dest' && onOpenDest && (
-              <button className="guide-back" onClick={() => { setDetail(null); onOpenDest(detail.open.id); }}>
+              <Button onClick={() => { setDetail(null); onOpenDest(detail.open.id); }}>
                 {t('dayex.openPage')}
-              </button>
+              </Button>
             )}
             {detail.open?.type === 'feature' && onOpenFeature && (
-              <button className="guide-back" onClick={() => { setDetail(null); onOpenFeature(detail.open.layer, detail.open.ref); }}>
+              <Button onClick={() => { setDetail(null); onOpenFeature(detail.open.layer, detail.open.ref); }}>
                 {t('dayex.openPage')}
-              </button>
+              </Button>
             )}
             {detail.add && (
-              <button className="guide-next" onClick={() => { toggle(detail); setDetail(null); }}>
+              <Button variant="primary" onClick={() => { toggle(detail); setDetail(null); }}>
                 {isPicked(detail) ? t('day.removeFromMyDays') : t('dayex.addToDayShort')}
-              </button>
+              </Button>
             )}
           </div>
         </SheetShell>
       )}
-    </div>
+    </DayWizardShell>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
+import { CreditChip } from '../components/CreditChip.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { DAY_STYLES } from './dayDraft.js';
 import { stopPhaseLabels } from './daySchedule.js';
@@ -103,6 +104,8 @@ export function AiDayPlanModal({
       ...answers,
       refine,
       prevStops: refine && result ? result.stops.map((s) => s.name) : [],
+      // T433: the token the last answer carried makes the next change free.
+      refineToken: refine && result?.refineToken ? result.refineToken : null,
     });
     if (res.ok) {
       setResult(res.plan);
@@ -272,9 +275,9 @@ export function AiDayPlanModal({
                 </button>
               )}
             </div>
+            <CreditChip className="ai-plan-credit" />
             {signedIn && entitlement?.known && entitlement.plansCap > 0 && (
               <p className="ai-plan-note ai-plan-balance">
-                {t('ai.balance', { left: entitlement.plansLeft, cap: entitlement.plansCap })}
                 {/* Offered on the LAST plan, not after the last one. Asking
                     once the allowance is spent is asking after a failure,
                     which is the worst moment there is; asking while the
@@ -327,6 +330,7 @@ export function AiDayPlanModal({
             {/* Not happy? Push it back. Each pass replaces the proposal. */}
             <div className="ai-refine">
               <span className="carta-plan-q">{t('ai.refineLabel')}</span>
+              <CreditChip free={result.refinesLeft > 0 && !!result.refineToken} freeLeft={result.refinesLeft || 0} />
               <div className="ai-refine-nudges">
                 {NUDGES.map((n) => (
                   <button

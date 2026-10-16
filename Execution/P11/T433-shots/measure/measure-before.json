@@ -1,0 +1,210 @@
+{
+  "phone": {
+    "start": {
+      "words": 51,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "when": {
+      "words": 81,
+      "chrome": 24,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "ideas": {
+      "words": 59,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "how": {
+      "words": 61,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "build": {
+      "words": 112,
+      "chrome": 31,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "build-picked": {
+      "words": 114,
+      "chrome": 31,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "planned": {
+      "words": 51,
+      "chrome": 23,
+      "targets": 0,
+      "map": 83,
+      "figure": false
+    },
+    "tapsToPlannedDay": 11
+  },
+  "ipad": {
+    "start": {
+      "words": 51,
+      "chrome": 6,
+      "targets": 4,
+      "map": 0,
+      "figure": false
+    },
+    "when": {
+      "words": 84,
+      "chrome": 6,
+      "targets": 9,
+      "map": 0,
+      "figure": false
+    },
+    "ideas": {
+      "words": 59,
+      "chrome": 6,
+      "targets": 5,
+      "map": 0,
+      "figure": false
+    },
+    "how": {
+      "words": 94,
+      "chrome": 6,
+      "targets": 5,
+      "map": 0,
+      "figure": false
+    },
+    "build": {
+      "words": 112,
+      "chrome": 10,
+      "targets": 14,
+      "map": 0,
+      "figure": false
+    },
+    "build-picked": {
+      "words": 114,
+      "chrome": 10,
+      "targets": 14,
+      "map": 0,
+      "figure": false
+    },
+    "planned": {
+      "words": 53,
+      "chrome": 11,
+      "targets": 0,
+      "map": 44,
+      "figure": false
+    },
+    "tapsToPlannedDay": 11
+  },
+  "ipadl": {
+    "start": {
+      "words": 51,
+      "chrome": 5,
+      "targets": 4,
+      "map": 0,
+      "figure": false
+    },
+    "when": {
+      "words": 84,
+      "chrome": 5,
+      "targets": 9,
+      "map": 0,
+      "figure": false
+    },
+    "ideas": {
+      "words": 59,
+      "chrome": 5,
+      "targets": 5,
+      "map": 0,
+      "figure": false
+    },
+    "how": {
+      "words": 94,
+      "chrome": 5,
+      "targets": 5,
+      "map": 0,
+      "figure": false
+    },
+    "build": {
+      "words": 112,
+      "chrome": 8,
+      "targets": 14,
+      "map": 0,
+      "figure": false
+    },
+    "build-picked": {
+      "words": 114,
+      "chrome": 8,
+      "targets": 14,
+      "map": 0,
+      "figure": false
+    },
+    "planned": {
+      "words": 53,
+      "chrome": 9,
+      "targets": 0,
+      "map": 54,
+      "figure": false
+    },
+    "tapsToPlannedDay": 11
+  },
+  "desk": {
+    "start": {
+      "words": 51,
+      "chrome": 8,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "when": {
+      "words": 84,
+      "chrome": 8,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "ideas": {
+      "words": 59,
+      "chrome": 8,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "how": {
+      "words": 94,
+      "chrome": 8,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "build": {
+      "words": 101,
+      "chrome": 13,
+      "targets": 0,
+      "map": 21,
+      "figure": false
+    },
+    "build-picked": {
+      "words": 103,
+      "chrome": 13,
+      "targets": 0,
+      "map": 21,
+      "figure": false
+    },
+    "planned": {
+      "words": 53,
+      "chrome": 15,
+      "targets": 0,
+      "map": 64,
+      "figure": false
+    },
+    "tapsToPlannedDay": 11
+  }
+}

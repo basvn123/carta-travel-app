@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { CreditChip } from '../components/CreditChip.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { SparkIcon, UploadIcon } from '../components/Icons.jsx';
@@ -127,6 +128,7 @@ export function MagicImportZone({ onResult, importContext, leadKey = 'extras.imp
               {t('extras.importBrowse')}
             </button>
             <span className="extras-drop-hint">{t('extras.importHint')}</span>
+            <CreditChip />
           </div>
           {/* A link is a document too: a blog's "one day in Salzburg", a
               shared Google Doc export, a tour page. */}

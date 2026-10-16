@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useDismiss } from './DayPlanPanel.jsx';
 import { isMustSee } from './dayDraft.js';
@@ -9,22 +9,6 @@ import {
   ChevronRightIcon, ChevronDownIcon,
 } from '../components/Icons.jsx';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
-
-/**
- * The predefined things a traveller asks Carta about a day. A blank chat box
- * is a worse control than four buttons: nobody opens one knowing what this
- * particular bot is good at. Each entry is a whole request, and the ones that
- * carry `refine` skip the questionnaire entirely and generate on open.
- */
-export const BOT_PROMPTS = [
-  { key: 'plan', labelKey: 'dayws.botPlan', subKey: 'dayws.botPlanSub', Icon: SparkIcon, needsPlan: false },
-  { key: 'more', labelKey: 'dayws.botMore', subKey: 'dayws.botMoreSub', Icon: PlusIcon, needsPlan: true, refineKey: 'dayws.botMoreAsk' },
-  { key: 'reorder', labelKey: 'dayws.botReorder', subKey: 'dayws.botReorderSub', Icon: RouteIcon, needsPlan: true, action: 'optimize' },
-  { key: 'easy', labelKey: 'dayws.botEasy', subKey: 'dayws.botEasySub', Icon: MountainIcon, needsPlan: true, refineKey: 'dayws.botEasyAsk' },
-  { key: 'rain', labelKey: 'dayws.botRain', subKey: 'dayws.botRainSub', Icon: InfoIcon, needsPlan: false, refineKey: 'dayws.botRainAsk' },
-  { key: 'food', labelKey: 'dayws.botFood', subKey: 'dayws.botFoodSub', Icon: TicketIcon, needsPlan: false, refineKey: 'dayws.botFoodAsk' },
-];
 
 /**
  * Top left of the map: where you are sleeping tonight.
@@ -90,117 +74,6 @@ export function DayStayBar({
           {/* Getting from the door to today's town belongs with the door, not
               inside the list of places you walk between once you are there. */}
           {transportBlock}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * Top right of the map: what a local would tell you before you set off.
- *
- * Carta's hand-written orientation for the town, the country's own habits
- * (tipping, transport, the hours things keep), and the walks that are the
- * sight rather than the way to one. All of it is read-once context, so it
- * lives behind one button instead of three cards nobody scrolls to.
- */
-export function DayTipsPanel({
-  city, country, countryRec, intel, walks, dayWalks, assignedIdx, onToggleIntel, onToggleWalk,
-}) {
-  const { t, lang } = useI18n();
-  const [open, setOpen] = useState(false);
-  const ref = useDismiss(open, () => setOpen(false));
-  // T409 (brief V5-2): the tips panel is a dialog, so Tab stays inside it and
-  // focus goes back to its button on the way out. The trap owns Escape.
-  const panelRef = useRef(null);
-  useFocusTrap(panelRef, () => setOpen(false), { enabled: open });
-  const count = (intel ? intel.areas.length : 0) + walks.length + (countryRec ? 1 : 0);
-  if (!count) return null;
-
-  return (
-    <div className={`dayws-tips${open ? ' open' : ''}`} ref={ref}>
-      <button
-        className="dayws-tips-btn"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        title={t('dayws.tipsTitle')}
-      >
-        <BulbIcon size={15} />
-        <span className="dayws-tips-label">{t('dayws.tipsShort')}</span>
-      </button>
-
-      {open && (
-        <div className="dayws-tips-panel" role="dialog" aria-label={t('dayws.tipsTitle')} ref={panelRef}>
-          <div className="dayws-tips-head">
-            <h3>{t('dayws.tipsTitle')}</h3>
-            <button className="dayws-tips-close" onClick={() => setOpen(false)} aria-label={t('shape.close')}>
-              <CloseIcon size={14} />
-            </button>
-          </div>
-          <div className="dayws-tips-body">
-            {intel && (
-              <section className="dayws-tips-sec">
-                <div className="dayws-tips-sub"><SparkIcon size={11} /> {t('dayws.tipsIntel', { city })}</div>
-                <p className="dayws-tips-intro">{intel.intro}</p>
-                {intel.areas.map((a) => {
-                  const added = a.idx != null && assignedIdx.includes(a.idx);
-                  return (
-                    <div className={`dayws-tip-row${added ? ' added' : ''}`} key={a.name}>
-                      <span className="dayws-tip-body">
-                        <span className="dayws-tip-name">
-                          {a.name}
-                          <span className="dayws-tip-tag">{a.tag}</span>
-                          {a.item && isMustSee(a.item) && (
-                            <span className="dayws-tip-star" title={t('dayws.mustTitle')}><StarIcon size={9} /></span>
-                          )}
-                        </span>
-                        <span className="dayws-tip-note">{a.note}</span>
-                      </span>
-                      {a.idx != null && (
-                        <button
-                          className={`dayws-tip-add${added ? ' on' : ''}`}
-                          onClick={() => onToggleIntel(a.idx)}
-                          aria-pressed={added}
-                          title={added ? t('dayws.removeFromDay') : t('dayws.addToDay')}
-                        >{added ? '✓' : '+'}</button>
-                      )}
-                    </div>
-                  );
-                })}
-                <p className="dayws-tips-foot"><InfoIcon size={11} /> {intel.tip}</p>
-              </section>
-            )}
-
-            {walks.length > 0 && (
-              <section className="dayws-tips-sec">
-                <div className="dayws-tips-sub"><MountainIcon size={11} /> {t('dayws.tipsWalks')}</div>
-                {walks.map((w) => {
-                  const added = dayWalks.includes(w.name);
-                  return (
-                    <div className={`dayws-tip-row${added ? ' added' : ''}`} key={w.name}>
-                      <span className="dayws-tip-body">
-                        <span className="dayws-tip-name">{w.name}</span>
-                        <span className="dayws-tip-note">{t('dayws.walkSteps', { n: formatSteps(kmToSteps(w.km), lang) })} {w.note}</span>
-                      </span>
-                      <button
-                        className={`dayws-tip-add${added ? ' on' : ''}`}
-                        onClick={() => onToggleWalk(w.name)}
-                        aria-pressed={added}
-                        title={added ? t('dayws.removeFromDay') : t('dayws.addToDay')}
-                      >{added ? '✓' : '+'}</button>
-                    </div>
-                  );
-                })}
-              </section>
-            )}
-
-            {countryRec && (
-              <section className="dayws-tips-sec">
-                <div className="dayws-tips-sub"><InfoIcon size={11} /> {t('dayws.tipsCountry', { country })}</div>
-                <CountryIntel country={country} rec={countryRec} compact />
-              </section>
-            )}
-          </div>
         </div>
       )}
     </div>
@@ -285,48 +158,85 @@ export function DaySwitcher({
   );
 }
 
-const TABS = [
-  { key: 'plan', labelKey: 'dayws.tabPlan', Icon: RouteIcon },
-  { key: 'add', labelKey: 'dayws.tabAdd', Icon: ListDayIcon },
-  { key: 'files', labelKey: 'dayws.tabFiles', Icon: TicketIcon },
-];
 
-/** The three questions a planned day gets asked, in the order they get asked:
- *  what am I doing, what else could I do, where is the paperwork. */
-export function DayTabsRail({ tab, onTab, counts = {} }) {
-  const { t } = useI18n();
-  // T409 (brief V5-2): the tab pattern. One tab is in the Tab order, the arrow
-  // keys, Home and End move between the three, and each tab names its panel.
-  const onKey = (e) => {
-    const at = TABS.findIndex((x) => x.key === tab);
-    let to = -1;
-    if (e.key === 'ArrowRight') to = (at + 1) % TABS.length;
-    else if (e.key === 'ArrowLeft') to = (at + TABS.length - 1) % TABS.length;
-    else if (e.key === 'Home') to = 0;
-    else if (e.key === 'End') to = TABS.length - 1;
-    if (to < 0) return;
-    e.preventDefault();
-    onTab(TABS[to].key);
-    document.getElementById(`dayws-tab-${TABS[to].key}`)?.focus();
-  };
+/**
+ * What a local would tell you, as content (T433): the town's own notes, the
+ * walks that are the sight, the country's habits. The day kit opens it in a
+ * sheet; the floating tips button over the map is gone.
+ */
+export function DayTipsBody({
+  city, country, countryRec, intel, walks, dayWalks, assignedIdx, onToggleIntel, onToggleWalk,
+}) {
+  const { t, lang } = useI18n();
   return (
-    <div className="dayws-tabs" role="tablist" aria-label={t('dayws.tabsAria')} onKeyDown={onKey}>
-      {TABS.map(({ key, labelKey, Icon }) => (
-        <button
-          key={key}
-          id={`dayws-tab-${key}`}
-          role="tab"
-          aria-selected={tab === key}
-          aria-controls={`dayws-panel-${key}`}
-          tabIndex={tab === key ? 0 : -1}
-          className={`dayws-tab${tab === key ? ' on' : ''}`}
-          onClick={() => onTab(key)}
-        >
-          <Icon size={14} />
-          {t(labelKey)}
-          {counts[key] > 0 && <span className="dayws-tab-count">{counts[key]}</span>}
-        </button>
-      ))}
-    </div>
+    <>
+            {intel && (
+              <section className="dayws-tips-sec">
+                <div className="dayws-tips-sub"><SparkIcon size={11} /> {t('dayws.tipsIntel', { city })}</div>
+                <p className="dayws-tips-intro">{intel.intro}</p>
+                {intel.areas.map((a) => {
+                  const added = a.idx != null && assignedIdx.includes(a.idx);
+                  return (
+                    <div className={`dayws-tip-row${added ? ' added' : ''}`} key={a.name}>
+                      <span className="dayws-tip-body">
+                        <span className="dayws-tip-name">
+                          {a.name}
+                          <span className="dayws-tip-tag">{a.tag}</span>
+                          {a.item && isMustSee(a.item) && (
+                            <span className="dayws-tip-star" title={t('dayws.mustTitle')}><StarIcon size={9} /></span>
+                          )}
+                        </span>
+                        <span className="dayws-tip-note">{a.note}</span>
+                      </span>
+                      {a.idx != null && (
+                        <button
+                          className={`dayws-tip-add${added ? ' on' : ''}`}
+                          onClick={() => onToggleIntel(a.idx)}
+                          aria-pressed={added}
+                          title={added ? t('dayws.removeFromDay') : t('dayws.addToDay')}
+                        >{added ? '✓' : '+'}</button>
+                      )}
+                    </div>
+                  );
+                })}
+                <p className="dayws-tips-foot"><InfoIcon size={11} /> {intel.tip}</p>
+              </section>
+            )}
+
+            {walks.length > 0 && (
+              <section className="dayws-tips-sec">
+                <div className="dayws-tips-sub"><MountainIcon size={11} /> {t('dayws.tipsWalks')}</div>
+                {walks.map((w) => {
+                  const added = dayWalks.includes(w.name);
+                  return (
+                    <div className={`dayws-tip-row${added ? ' added' : ''}`} key={w.name}>
+                      <span className="dayws-tip-body">
+                        <span className="dayws-tip-name">{w.name}</span>
+                        <span className="dayws-tip-note">{t('dayws.walkSteps', { n: formatSteps(kmToSteps(w.km), lang) })} {w.note}</span>
+                      </span>
+                      <button
+                        className={`dayws-tip-add${added ? ' on' : ''}`}
+                        onClick={() => onToggleWalk(w.name)}
+                        aria-pressed={added}
+                        title={added ? t('dayws.removeFromDay') : t('dayws.addToDay')}
+                      >{added ? '✓' : '+'}</button>
+                    </div>
+                  );
+                })}
+              </section>
+            )}
+
+            {countryRec && (
+              <section className="dayws-tips-sec">
+                <div className="dayws-tips-sub"><InfoIcon size={11} /> {t('dayws.tipsCountry', { country })}</div>
+                <CountryIntel country={country} rec={countryRec} compact />
+              </section>
+            )}
+              </>
   );
+}
+
+/** How many tips there are, for the kit tile. */
+export function tipsCount({ intel, walks = [], countryRec }) {
+  return (intel ? intel.areas.length : 0) + walks.length + (countryRec ? 1 : 0);
 }

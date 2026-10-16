@@ -1,0 +1,268 @@
+[
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "01-start",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "02-continue-sheet",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "03-when",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "04-ideas",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "05-how",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "06-bot-q3",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "07-bot-result",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "11-overview-bot",
+    "hscroll": 0,
+    "small": [
+      "Your stay [36x36] <div.trip-pin>"
+    ],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "08-build-list",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "09-build-map",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "10-build-tray",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "12-overview",
+    "hscroll": 0,
+    "small": [
+      "Your stay [36x36] <div.trip-pin>"
+    ],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "flow": "day",
+    "name": "13-overview-scrolled",
+    "hscroll": 0,
+    "small": [
+      "Your stay [36x36] <div.trip-pin>"
+    ],
+    "overlap": null,
+    "footers": 1,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "01-start",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "02-continue-sheet",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "03-when",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "04-ideas",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "05-how",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "06-bot-q3",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "07-bot-result",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "11-overview-bot",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "08-build-list",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "09-build-map",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "10-build-tray",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "12-overview",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "flow": "day",
+    "name": "13-overview-scrolled",
+    "hscroll": 0,
+    "small": [],
+    "overlap": null,
+    "footers": 0,
+    "errors": []
+  }
+]

@@ -18,6 +18,7 @@ const {
   cleanText, haversineKm, sanitizeCandidates, sanitizeAiStops, twoOptOrder,
   scheduleDay, cacheKeyInput, modelChain, shouldFallOver, attemptTimeoutMs, DEFAULT_MODEL_CHAIN,
   CACHE_KEY_VERSION, selectCandidates, dayCentroid,
+  signRefineToken, verifyRefineToken, REFINES_FREE,
 } = await import(pathToFileURL(logicPath).href);
 
 let failures = 0;
@@ -438,6 +439,44 @@ check('budget: too little left stops the chain', attemptTimeoutMs(3, 75_000) ===
 check('budget: a slow first model still leaves room for one more',
   attemptTimeoutMs(1, 40_000) >= 8_000);
 check('budget: negative elapsed counts as zero', attemptTimeoutMs(0, -5) === 40_000);
+
+/* ---- T433: free refines, several days, catalogue only ---- */
+{
+  const SECRET = 'test-secret';
+  const tok = await signRefineToken({ u: 'user-a', k: 'plan-hash', n: 0 }, SECRET);
+  const ok = await verifyRefineToken(tok, SECRET, 'user-a');
+  check('refine token: genuine token verifies', ok.ok && ok.k === 'plan-hash' && ok.n === 0);
+  check('refine token: another user is refused', !(await verifyRefineToken(tok, SECRET, 'user-b')).ok);
+  check('refine token: another secret is refused', !(await verifyRefineToken(tok, 'other', 'user-a')).ok);
+  const [body, sig] = tok.split('.');
+  const forged = `${body.slice(0, -2)}AA.${sig}`;
+  check('refine token: a tampered body is refused', !(await verifyRefineToken(forged, SECRET, 'user-a')).ok);
+  const old = await signRefineToken({ u: 'user-a', k: 'p', n: 0 }, SECRET, Date.now() - 2 * 86400_000);
+  check('refine token: an expired token is refused', !(await verifyRefineToken(old, SECRET, 'user-a')).ok);
+  check('refine token: garbage is refused', !(await verifyRefineToken('nope', SECRET, 'user-a')).ok);
+  check('refine token: two free changes', REFINES_FREE === 2);
+  const spent = await signRefineToken({ u: 'user-a', k: 'p', n: REFINES_FREE }, SECRET);
+  const v = await verifyRefineToken(spent, SECRET, 'user-a');
+  check('refine token: a spent count still verifies but is not under the cap', v.ok && !(v.n < REFINES_FREE));
+}
+{
+  const base = {
+    model: 'm', destId: 'ROM', month: 10, dateISO: '2026-10-17', groupSize: 2, pace: 'balanced',
+    vibe: 'mix', avoidHills: false, freeText: '', lang: 'en', candidates: [{ id: '1' }, { id: '2' }],
+    refine: '', prevStopIds: [], wantEvents: false, profile: null, mustInclude: [],
+  };
+  check('cache v6', CACHE_KEY_VERSION === 6);
+  check('cache: one day and three days are different questions',
+    cacheKeyInput({ ...base, days: 1 }) !== cacheKeyInput({ ...base, days: 3 }));
+  check('cache: an absent days field keys as one day',
+    cacheKeyInput(base) === cacheKeyInput({ ...base, days: 1 }));
+  const prof = { companions: 'solo', moods: [], diet: [] };
+  check('cache: the indoor answer forks the key',
+    cacheKeyInput({ ...base, profile: prof }) !== cacheKeyInput({ ...base, profile: { ...prof, indoor: true } }));
+  check('cache: the step-free answer forks the key',
+    cacheKeyInput({ ...base, profile: prof }) !== cacheKeyInput({ ...base, profile: { ...prof, stepFree: true } }));
+  check('chain: a lite model leads', /lite/.test(DEFAULT_MODEL_CHAIN[0]));
+}
 
 if (failures) {
   console.error(`\n${failures} test(s) failed`);

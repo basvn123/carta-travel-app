@@ -407,6 +407,25 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           'line-opacity': 0.9,
         },
       });
+      // A leg Carta could not walk (no footpath, a detour round water, or a
+      // hop past walking range, T433) is a ride: a thin grey dash, never the
+      // brown walk line, so the map never tells anybody to walk it.
+      map.addSource('trip-ride', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+      });
+      map.addLayer({
+        id: 'trip-ride-line',
+        type: 'line',
+        source: 'trip-ride',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: {
+          'line-color': tokenColour('--text-3'),
+          'line-width': 2.5,
+          'line-dasharray': [0.6, 1.8],
+          'line-opacity': 0.9,
+        },
+      });
       // The container's final size settles a frame after this tab mounts (its
       // layout is driven by --panel-w / --filter-h). MapLibre sizes its canvas
       // once at construction, so without this it can bake in a 0x0 canvas and
@@ -550,10 +569,12 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       if (src) {
         const segs = showRoute && Array.isArray(routeSegments) ? routeSegments : null;
         if (segs && segs.length) {
-          const walk = segs.filter((s) => s.mode !== 'ferry' && s.coordinates?.length >= 2);
+          const walk = segs.filter((s) => s.mode !== 'ferry' && s.mode !== 'ride' && s.coordinates?.length >= 2);
           const ferry = segs.filter((s) => s.mode === 'ferry' && s.coordinates?.length >= 2);
+          const ride = segs.filter((s) => s.mode === 'ride' && s.coordinates?.length >= 2);
           drawRoute(walk.map((s) => s.coordinates));
           fsrc?.setData({ type: 'FeatureCollection', features: ferry.map((s) => asFeature(s.coordinates)) });
+          map.getSource('trip-ride')?.setData({ type: 'FeatureCollection', features: ride.map((s) => asFeature(s.coordinates)) });
           map.setPaintProperty('trip-route-line', 'line-dasharray', [1, 0]);
           map.setPaintProperty('trip-route-line', 'line-width', 4);
         } else {
@@ -563,6 +584,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
             : (pts.length >= 2 ? pts.map((p) => [p.lon, p.lat]) : null);
           drawRoute(line ? [line] : []);
           fsrc?.setData({ type: 'FeatureCollection', features: [] });
+          map.getSource('trip-ride')?.setData({ type: 'FeatureCollection', features: [] });
           map.setPaintProperty('trip-route-line', 'line-dasharray', hasReal ? [1, 0] : [1.5, 1.6]);
           map.setPaintProperty('trip-route-line', 'line-width', hasReal ? 4 : 2.5);
         }

@@ -72,7 +72,7 @@ import { computeCosts } from './lib/costIndex.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
 import { loadInitialState, tabHref, tabFromSearch } from './lib/urlState.js';
 import { readFavList, isFav, favDestIds, toggleFav as toggleFavKey } from './lib/favorites.js';
-import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
+import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
 import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
@@ -469,6 +469,13 @@ function TravelApp() {
     if (pendingTrail) goToTab('places', { replace: true });
   }, [pendingTrail, goToTab]);
 
+  // A day plan shared as a link (#day=..., T433): read once at startup and
+  // handed to the Day planner, which opens it as a plan of the recipient's own.
+  const [sharedDayRaw, setSharedDayRaw] = useState(() => readDayShareFromUrl());
+  useEffect(() => {
+    if (sharedDayRaw) goToTab('day', { replace: true });
+  }, [sharedDayRaw, goToTab]);
+
   // A single DESTINATION shared as a link (#dest=gem:valbona, see
   // lib/dossier.js): read once at startup, then the full-screen destination
   // page opens over whichever tab loads. Same contract as the trail hash: it
@@ -780,7 +787,7 @@ function TravelApp() {
   // Europe, and a shared link can name a place anywhere, so either one asks
   // for the full catalogue. A place opened by id needs only its own country.
   // The deep-link states are read once at load, so this is decided once.
-  const deepLinked = !!(pendingFriend || pendingGuide || shareToken || sharedTripRaw
+  const deepLinked = !!(pendingFriend || pendingGuide || shareToken || sharedTripRaw || sharedDayRaw
     || pendingTrail || pendingDest || pendingBeach || pendingLake || pendingMountain
     || pendingCycle || pendingRegion || pendingTrip || bootJourney);
   useEffect(() => {
@@ -1388,6 +1395,9 @@ function TravelApp() {
               onDaySeedConsumed={clearPendingDaySeed}
               onOpenTrip={openTripFromDay}
               onOpenLifestyle={openLifestyle}
+              costs={exploreIndices}
+              sharedDayRaw={sharedDayRaw}
+              onSharedDayConsumed={() => setSharedDayRaw(null)}
             />}
           </Suspense>
         </div>

@@ -46,11 +46,14 @@ function summarizeRoute(route) {
 
   const legs = (route.legs || []).map((l) => {
     let ferryKm = 0, ferryMin = 0, walkKm = 0, walkMin = 0;
+    // This leg's own line, so a caller that judges legs one by one (the day
+    // planner's route checks, T433) can draw each as what it is.
+    const coords = [];
     (l.steps || []).forEach((s) => {
       const mode = isFerryStep(s) ? 'ferry' : 'walk';
       if (mode === 'ferry') { ferryKm += (s.distance || 0) / 1000; ferryMin += (s.duration || 0) / 60; }
       else { walkKm += (s.distance || 0) / 1000; walkMin += (s.duration || 0) / 60; }
-      (s.geometry?.coordinates || []).forEach((c) => pushCoord(mode, c));
+      (s.geometry?.coordinates || []).forEach((c) => { pushCoord(mode, c); coords.push(c); });
     });
     return {
       km: (l.distance || 0) / 1000,
@@ -59,6 +62,7 @@ function summarizeRoute(route) {
       ferryKm, walkKm,
       ferryMin: ferryKm > 0 ? Math.max(1, Math.round(ferryMin)) : 0,
       walkMin: walkKm > 0 ? Math.max(1, Math.round(walkMin)) : 0,
+      coords,
     };
   });
 
@@ -69,6 +73,10 @@ function summarizeRoute(route) {
     km: (route.distance || 0) / 1000,
     min: Math.max(1, Math.round((route.duration || 0) / 60)),
     hasFerry: legs.some((l) => l.ferry),
+    // How far each requested point lay from the path OSRM snapped it to, in
+    // metres. A sight 600 m from the nearest walkable way is a sight the
+    // route does not actually reach.
+    snapM: (route.waypoints || []).map((w) => (Number.isFinite(w?.distance) ? w.distance : null)),
   };
 }
 
@@ -98,7 +106,7 @@ export async function fetchRoute(points, profile = 'foot') {
     const j = await r.json();
     const route = j?.routes?.[0];
     if (!route?.geometry?.coordinates?.length) return null;
-    return summarizeRoute(route);
+    return summarizeRoute({ ...route, waypoints: j.waypoints || [] });
   } catch {
     return null;
   }

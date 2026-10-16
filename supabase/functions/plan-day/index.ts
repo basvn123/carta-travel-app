@@ -45,6 +45,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   cleanText, sanitizeCandidates, selectCandidates, dayCentroid, sanitizeAiStops,
   scheduleDay, cacheKeyInput, modelChain, shouldFallOver, attemptTimeoutMs, CACHE_KEY_VERSION,
+  signRefineToken, verifyRefineToken, REFINES_FREE,
 } from './logic.mjs';
 import { consume, logCapRejection, logModelEvent, refund } from '../_shared/passes.mjs';
 
@@ -111,6 +112,7 @@ function buildPrompt(p: {
   wantEvents: boolean; refine: string; prevStops: string[];
   profile: Record<string, unknown> | null;
   mustInclude: { name: string; id: string | null; lat: number | null; lon: number | null; timeOfDay: string | null }[];
+  days: number;
 }) {
   const langName = LANG_NAMES[p.lang] || 'English';
   const summer = p.month >= 6 && p.month <= 8;
@@ -125,11 +127,17 @@ function buildPrompt(p: {
     }))),
     '',
     'RULES:',
-    `- Build ${PACE_STOPS[p.pace] || PACE_STOPS.balanced}. Start at ${(p.profile?.startTime as string) || '09:30'}, be finished by 18:00.`,
+    p.days > 1
+      // T433: several days. The app cuts them by neighbourhood and orders and
+      // times each one on routed footpaths, so the model only chooses.
+      ? `- Choose the places for ${p.days} days, ${PACE_STOPS[p.pace] || PACE_STOPS.balanced} EACH day, so about ${p.days * (p.pace === 'relaxed' ? 4 : p.pace === 'packed' ? 7 : 5)} stops in all. List them strongest first; Carta splits them into days by neighbourhood and orders each day itself, so do not worry about the order or the arrival times beyond a rough guess.`
+      : `- Build ${PACE_STOPS[p.pace] || PACE_STOPS.balanced}. Start at ${(p.profile?.startTime as string) || '09:30'}, be finished by 18:00.`,
     // The named stops are exempt, or two rules would contradict each other:
     // a traveller who named three places we do not hold would otherwise be
     // asking for a day the 80 percent rule forbids.
-    '- At least 80 percent of the stops, NOT counting any the traveller named below, MUST come from the candidate list, referenced by their exact id with inCatalog=true. Never invent an id.',
+    // T433: catalogue places only. A place Carta has not checked has no
+    // position it can route to safely, so the app never puts one on a walk.
+    '- EVERY stop MUST come from the candidate list, referenced by its exact id with inCatalog=true. Never invent an id, and never add a place that is not in the list.',
     '- Sequence to minimise backtracking: neighbouring stops belong next to each other. Alternate heavy visits (museums, castles) with light ones (squares, views).',
     `- Group of ${p.groupSize}. ${p.groupSize >= 5 ? 'Large group: walking is about 20 percent slower, spontaneous restaurant tables are unrealistic, prefer roomy venues and note where booking ahead matters.' : ''}`,
     summer ? '- Peak-summer heat: place indoor or shaded stops between 13:00 and 16:00, outdoor highlights in the morning or late afternoon.' : '',
@@ -162,6 +170,8 @@ function buildPrompt(p: {
         ? `- Food must suit: ${(p.profile.diet as string[]).join(', ')}. Only pick eating stops that genuinely work for that, and say so in the why line.`
         : '',
       p.profile.avoidCrowds ? '- They want to avoid crowds: prefer the quieter hour for each busy place, and where a famous stop has a calmer alternative nearby, take it.' : '',
+      p.profile.indoor ? '- Keep at least one indoor stop in every day, in case of rain.' : '',
+      p.profile.stepFree ? '- Step-free: they have a pushchair or a wheelchair. Prefer places with level access, skip towers, catacombs and anything known for stairs, and keep the day compact.' : '',
       (p.profile.weather as { rain?: boolean } | null)?.rain
         ? '- Rain is likely: weight the day toward indoor stops, and keep the outdoor ones short and close together.' : '',
       (p.profile.weather as { hot?: boolean } | null)?.hot
@@ -177,15 +187,15 @@ function buildPrompt(p: {
       ? `- These stops were named by the traveller and MUST all appear in the day: ${p.mustInclude.map((m) => {
         const when = m.timeOfDay ? ` in the ${m.timeOfDay}` : '';
         return m.id ? `${m.name} (candidate id ${m.id})${when}` : `${m.name}${when}`;
-      }).join('; ')}. Where one carries a candidate id, use that id with inCatalog=true. Where it does not, add it with inCatalog=false and its real coordinates. Honour any stated time of day. Build the rest of the day around these, and if the walking budget is tight, drop other stops rather than these.`
+      }).join('; ')}. Where one carries a candidate id, use that id with inCatalog=true; one without an id is not a place Carta can route to, so leave it out. Honour any stated time of day. Build the rest of the day around these, and if the walking budget is tight, drop other stops rather than these.`
       : '',
     p.freeText
-      ? `- The traveller's own wish, treat as a hard requirement if feasible: "${p.freeText}". If it needs a real place that is NOT in the candidate list, add it with inCatalog=false, its real name and its real coordinates near ${p.city}; never fake a candidate id for it.`
-      : '- Add no stops beyond the candidate list unless a rule below allows it.',
+      ? `- The traveller's own wish, treat as a hard requirement if feasible: "${p.freeText}". Meet it with places from the candidate list; never fake a candidate id for it.`
+      : '',
     // Events are the one thing the catalogue structurally cannot hold: it
     // stores permanent places, not what happens on a given Tuesday.
     p.wantEvents
-      ? `- ALSO look for festivals, markets, fairs or seasonal events that plausibly run in ${p.city} around ${p.dateISO || `month ${p.month}`}, and work at most two of them into the day as inCatalog=false stops with isEvent=true, real venue coordinates, and the event name. Only suggest ones you genuinely believe recur at that time of year. In their "why" line, say plainly that the traveller should confirm this year's dates, because you cannot see live listings. Never state a specific date as fact.`
+      ? `- ALSO look for festivals, markets, fairs or seasonal events that plausibly run in ${p.city} around ${p.dateISO || `month ${p.month}`}, and add at most two of them as inCatalog=false stops with isEvent=true and the event name; Carta lists them beside the day as things to check, never on the walking route. Only suggest ones you genuinely believe recur at that time of year. In their "why" line, say plainly that the traveller should confirm this year's dates, because you cannot see live listings. Never state a specific date as fact.`
       : '',
     // The refine loop: the traveller has seen a plan and asked for a change.
     p.refine
@@ -255,6 +265,8 @@ Deno.serve(async (req) => {
     ? (body.prevStops as unknown[]).slice(0, 12).map((s) => cleanText(String(s), 90)).filter(Boolean)
     : [];
   const wantEvents = !!body.wantEvents;
+  // T433: the days one plan covers. One credit buys them all.
+  const days = Math.max(1, Math.min(7, Math.round(Number(body.days)) || 1));
   // The chat planner's structured answers. Whitelisted field by field: this
   // text goes straight into the prompt, so nothing arbitrary may ride along.
   const rawProfile = (body.profile || null) as Record<string, unknown> | null;
@@ -284,6 +296,8 @@ Deno.serve(async (req) => {
         .filter(Boolean)
       : [],
     avoidCrowds: !!rawProfile.avoidCrowds,
+    indoor: !!rawProfile.indoor,
+    stepFree: !!rawProfile.stepFree,
     weather: rawProfile.weather && typeof rawProfile.weather === 'object'
       ? {
         rain: !!(rawProfile.weather as Record<string, unknown>).rain,
@@ -336,7 +350,8 @@ Deno.serve(async (req) => {
   const centroid = dayCentroid(candidates, stay);
   const promptCandidates = promptTrimEnabled
     ? selectCandidates(candidates, centroid, {
-      limit: 30,
+      // A day needs about thirty to choose from; each further day a dozen more.
+      limit: 30 + 12 * (days - 1),
       keepIds: mustInclude.map((m) => m.id).filter((id): id is string => !!id),
     })
     : candidates;
@@ -361,7 +376,18 @@ Deno.serve(async (req) => {
   // The response carries the tier and what is left of it so the client can
   // render "2 of 3 plans left this month" and put the upsell in front of a
   // free user at the exact moment the limit bites.
-  const quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
+  // T433: a change to a plan already paid for is free, twice. The proof is
+  // the signed token the last answer carried (see signRefineToken).
+  let freeRefine = false;
+  let refineN = 0;
+  let tokenKey = '';
+  if (refine && typeof body.refineToken === 'string') {
+    const v = await verifyRefineToken(body.refineToken, SERVICE_KEY, user.id);
+    if (v.ok && v.n < REFINES_FREE) { freeRefine = true; refineN = v.n + 1; tokenKey = v.k; }
+  }
+  const quota = freeRefine
+    ? { ok: true, status: 'free_refine', tier: null, left: null, cap: null, used: null }
+    : await consume(service, user.id, 'plan', GLOBAL_CAP);
   if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
   if (!quota.ok) {
     // Count the refusal before answering it. Nothing else records that this
@@ -400,8 +426,13 @@ Deno.serve(async (req) => {
   const hash = await sha256Hex(cacheKeyInput({
     model: CHAIN.join(','), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
     freeText, lang, candidates: promptCandidates, refine, prevStopIds: prevStops, wantEvents,
-    profile, mustInclude,
+    profile, mustInclude, days,
   }));
+  // The next refine token: the same plan, one more free change spent.
+  const nextToken = async () => ({
+    refineToken: await signRefineToken({ u: user.id, k: tokenKey || hash, n: refineN }, SERVICE_KEY),
+    refinesLeft: Math.max(0, REFINES_FREE - refineN),
+  });
   const { data: cached } = await service
     .from('ai_plan_cache')
     .select('payload, created_at')
@@ -431,15 +462,16 @@ Deno.serve(async (req) => {
   if (isHit) {
     return json(200, {
       ...cached.payload,
-      meta: { ...cached.payload.meta, cached: true },
+      meta: { ...cached.payload.meta, cached: true, freeRefine },
       pass: { tier: quota.tier, plansLeft: quota.left ?? null },
+      ...(await nextToken()),
     });
   }
 
   // Everything spent from here on has to be returned if the day never gets
   // built. Quota is now a thing travellers PAY for, so an outage on our side
   // must not quietly cost them a generation.
-  const spent: string[] = ['plan'];
+  const spent: string[] = freeRefine ? [] : ['plan'];
   const failed = async (status: number, body: Record<string, unknown>) => {
     for (const kind of spent) await refund(service, user.id, kind);
     return json(status, body);
@@ -448,7 +480,7 @@ Deno.serve(async (req) => {
   // ---- the one AI call: plain generateContent, no tools, low temperature ----
   const prompt = buildPrompt({
     city, country, dateISO, month, groupSize, pace, vibe, avoidHills, freeText, lang,
-    hasStay: !!stay, candidates: promptCandidates, wantEvents, refine, prevStops, profile, mustInclude,
+    hasStay: !!stay, candidates: promptCandidates, wantEvents, refine, prevStops, profile, mustInclude, days,
   });
   // Google Search grounding is the paid feature, and the only one here that
   // reliably costs money: on Gemini 3 it bills per individual search query the
@@ -555,11 +587,26 @@ Deno.serve(async (req) => {
   // must be dropped the same way rather than silently let through because it
   // happens to exist somewhere in the untrimmed deck.
   const centre = { lat: centreLat, lon: centreLon };
-  const { stops: safeStops, dropped } = sanitizeAiStops(parsed.stops, promptCandidates, centre);
+  const { stops: allStops, dropped } = sanitizeAiStops(parsed.stops, promptCandidates, centre, {
+    maxStops: Math.min(40, 10 * days),
+  });
+  // T433: only catalogue places become stops. An event the model suggested
+  // is listed beside the day for the traveller to check; anything else it
+  // added from memory is dropped, never routed.
+  const safeStops = allStops.filter((s: { external?: boolean }) => !s.external);
+  const events = allStops
+    .filter((s: { external?: boolean; isEvent?: boolean; name?: string }) => s.external && s.isEvent && s.name)
+    .slice(0, 2)
+    .map((s: { name: string; why?: string }) => ({ name: s.name, why: s.why || '' }));
   if (safeStops.length < 2) return await failed(502, { code: 'ai_bad_output' });
   // The traveller's own walking answer is ENFORCED here, not merely asked of
   // the model above: the prompt line is a request, this is the guarantee.
-  const sched = scheduleDay(safeStops, {
+  // Several days are cut and ordered by the app, so the one-day walking cut
+  // (which would drop the places that belong on another day) does not apply.
+  const sched = days > 1 ? {
+    stops: safeStops.map((s: Record<string, unknown>) => ({ ...s, arrive: null, walkKmFromPrev: 0, walkMinFromPrev: 0 })),
+    totalKm: 0, endTime: null, lunchAfter: -1, lunchMin: 0, optimized: false, farDropped: 0, fromStay: false,
+  } : scheduleDay(safeStops, {
     stay, groupSize, maxWalkKm: profile?.maxWalkKm ?? undefined,
     // The traveller's chosen start is enforced here too: asking the model to
     // begin at 11:00 and then re-timing the day from 09:30 would hand back a
@@ -571,13 +618,15 @@ Deno.serve(async (req) => {
   // answer, it is a city that cannot give this traveller a walking day, which
   // is exactly what `too_few` already tells them while offering the built-in
   // planner. A one-stop "route" would be worse than saying so.
-  if (sched.stops.filter((s: { arrive?: string | null }) => s.arrive).length < 2) {
+  if (days === 1 && sched.stops.filter((s: { arrive?: string | null }) => s.arrive).length < 2) {
     return await failed(400, { code: 'too_few' });
   }
 
   const payload = {
     summary: cleanText(String(parsed.summary ?? ''), 400),
     stops: sched.stops,
+    events,
+    days,
     totals: {
       stops: sched.stops.length,
       walkKm: sched.totalKm,
@@ -606,6 +655,7 @@ Deno.serve(async (req) => {
       // plan), 'cap' (pass fair-use spent) or 'off' (disabled server-wide).
       // The first two are the upsell moments.
       groundingSkipped,
+      freeRefine,
     },
   };
 
@@ -634,5 +684,6 @@ Deno.serve(async (req) => {
   return json(200, {
     ...payload,
     pass: { tier: quota.tier, plansLeft: quota.left ?? null },
+    ...(await nextToken()),
   });
 });
