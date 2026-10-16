@@ -97,8 +97,32 @@ async function facts(page, mobile) {
       const w = Math.max(0, Math.min(r.right, vw) - Math.max(r.left, 0));
       map = Math.max(map, (w * h) / (vw * vh));
     }
+    // T459: photographs in the first screen (the builder's "too many
+    // pictures"), and the How cards' empty space: for each fork card, the
+    // room between its last piece of content and its own bottom edge.
+    let photos = 0;
+    for (const img of document.querySelectorAll('.guide-canvas img')) {
+      if (!vis(img)) continue;
+      const r = img.getBoundingClientRect();
+      if (r.width >= 80 && r.height >= 60) photos += 1;
+    }
+    let forkGap = null;
+    const forks = [...document.querySelectorAll('.dayw-fork-card')].filter(vis);
+    if (forks.length === 2) {
+      const ends = forks.map((card) => {
+        let last = card.getBoundingClientRect().top;
+        for (const el of card.querySelectorAll('img, span, b, small, p, h2, h3')) {
+          const r = el.getBoundingClientRect();
+          if (r.height && el.textContent.trim().length + (el.tagName === 'IMG' ? 1 : 0)) last = Math.max(last, r.bottom);
+        }
+        return card.getBoundingClientRect().bottom - last;
+      });
+      forkGap = Math.round(Math.abs(ends[0] - ends[1]));
+    }
     return {
       words,
+      photos,
+      forkGap,
       chrome: Math.round((chrome / vh) * 100),
       targets: small,
       map: Math.round(map * 100),

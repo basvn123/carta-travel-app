@@ -758,36 +758,8 @@
    the map demoted to a view you switch to. The tray at the bottom is the one
    piece of persistent state, because "what is in my day so far" is the
    question the whole screen exists to keep answering. */
-.dayex { display: flex; flex-direction: column; gap: 14px; padding-bottom: 96px; }
+.dayex { display: flex; flex-direction: column; gap: 14px; }
 
-/* The stay, as a place rather than a line of grey text. */
-.dayex-head {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  background: var(--paper);
-}
-.dayex-head-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.dayex-head-text b { font-family: var(--display); font-size: 19px; letter-spacing: -0.01em; }
-.dayex-head-text small { font-size: 12.5px; color: var(--ink-soft); }
-.dayex-head-acts { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
-.dayex-search-btn, .dayex-change {
-  height: 36px;
-  padding: 0 13px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit; font-size: 13px; font-weight: 600;
-  cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.dayex-search-btn { width: 36px; padding: 0; }
-@media (hover: hover) {
-  .dayex-search-btn:hover,
-  .dayex-change:hover { border-color: var(--ink-soft); }
-}
 .dayex-searchrow { position: relative; }
 .dayex-search-input {
   width: 100%;
@@ -807,14 +779,6 @@
   cursor: pointer; font-size: 17px; line-height: 1; color: var(--ink-soft);
 }
 
-/* The filter row sticks, because the chips are how you get back out of a
-   category you followed three screens deep. */
-.dayex-bar {
-  position: sticky; top: 0; z-index: 5;
-  display: flex; align-items: center; gap: 12px;
-  padding: 8px 0;
-  background: var(--paper);
-}
 .dayex-chips {
   display: flex; gap: 7px; align-items: center;
   overflow-x: auto; flex: 1 1 auto;
@@ -823,34 +787,6 @@
 }
 .dayex-chips::-webkit-scrollbar { display: none; }
 .dayex-chips .guide-chip { flex: 0 0 auto; }
-.dayex-view {
-  flex: 0 0 auto;
-  display: inline-flex;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  overflow: hidden;
-  background: var(--paper);
-}
-.dayex-view button {
-  border: none; background: none; cursor: pointer;
-  padding: 7px 14px;
-  font: inherit; font-size: 12.5px; font-weight: 600;
-  color: var(--ink-soft);
-}
-.dayex-view button.on { background: var(--select-bg); color: var(--select-ink); }
-
-/* Phone leads with the list; the map is a view you ask for. */
-.dayex-body { display: block; }
-.dayex-mapcol { display: none; }
-.dayex-mapview .dayex-list { display: none; }
-.dayex-mapview .dayex-mapcol { display: block; }
-.dayex-mapcol .dem-map {
-  width: 100%;
-  height: clamp(420px, 62vh, 700px);
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--rule);
-}
 
 /* ---- a rail ------------------------------------------------------------ */
 .dayex-rail { margin: 0; }
@@ -886,7 +822,6 @@
   overflow: hidden;
   min-width: 0;
 }
-.dayex-card.is-hi { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
 .dayex-card-skel { min-height: 210px; background: var(--paper-dim); border-style: dashed; }
 .dayex-card-body {
   display: flex; flex-direction: column;
@@ -945,23 +880,6 @@
    primary (T193). */
 .dayex-add.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 
-/* ---- the tray ---------------------------------------------------------- */
-/* Phone: a bar above the bottom nav, so the running total of the day and the
-   two ways out of the screen are reachable without scrolling back up. */
-.dayex-tray-summary {
-  flex: 1 1 auto; min-width: 0;
-  border: none; background: none; cursor: pointer;
-  padding: 0; text-align: left;
-  font: inherit; font-size: 13px; font-weight: 600;
-  color: var(--ink);
-  /* Two short lines beat one elided one: "1 place, ..." hides the step count,
-     which is the half of this label that says what kind of day it is. */
-  line-height: 1.3;
-}
-@media (max-width: 460px) {
-  .dayex-tray-summary { flex: 1 0 100%; }
-}
-
 /* ---- the detail sheet -------------------------------------------------- */
 .dayex-detail-photo {
   display: block;
@@ -982,33 +900,18 @@
 
 /* ---- desktop ----------------------------------------------------------- */
 @media (min-width: 1100px) {
-  /* List left, map right, both in view: hovering a card lights its pin and
-     tapping a pin scrolls its card in, which is what makes the two halves
-     one surface instead of two lists of the same places. */
-  .dayex-body { display: grid; grid-template-columns: minmax(520px, 1fr) minmax(0, 440px); gap: 20px; align-items: start; }
-  .dayex-list { display: block; min-width: 0; }
-  .dayex-mapcol { display: block; position: sticky; top: 64px; }
-  .dayex-mapview .dayex-list { display: block; }
-  .dayex-view { display: none; }
-  .dayex-mapcol .dem-map { height: calc(100dvh - 210px); max-height: 760px; }
   /* A grid, not a strip: there is room to compare six places at once. */
   .dayex-cards {
     display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
     overflow: visible; margin: 0; padding-inline: 0;
   }
   .dayex-cards > * { flex: none; }
-  /* The tray stops floating over the page and becomes a card in the column. */
-  .dayex { padding-bottom: 20px; }
 }
 
 /* The builder's phone tap boxes, moved by T389 from the Q1 phone audit block in
    26-shortlist-extras.css; they must follow the builder block, as they did there. */
 @media (max-width: 768px) {
-  .dayex-search-btn, .dayex-change { height: var(--tap); }
-  .dayex-search-btn { width: var(--tap); }
   .dayex-more { min-height: var(--tap); padding: 0 6px; }
-  .dayex-view button { min-height: var(--tap); }
-  .dayex-tray-summary { min-height: var(--tap); display: flex; align-items: center; }
 }
 
 /* ==========================================================================
@@ -1138,15 +1041,6 @@
 
 /* ---- Add more on a phone: the pin filters as one row, no hint line ---- */
 
-/* ---- The builder's tray: the honest count and the fit line ---- */
-/* The summary and the fit line share the summary's old place in the tray. */
-.dayex-tray-fit {
-  margin: 0;
-  font-family: var(--ui);
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--ink-soft);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .day-sw-btn, .day-sw-morebtn { transition: none; }
@@ -1386,30 +1280,10 @@
    back to is a 44 px target, not the 37 px the desktop rail draws. */
 @media (pointer: coarse) { .wiz-step-btn { min-height: var(--tap); } }
 .day-wizard .dayw-step { display: flex; flex-direction: column; gap: var(--space-5); }
-.day-wizard .guide-title { margin: 0; }
 .day-wizard .wiz-main { max-width: var(--wiz-max); }
 .day-wizard.wiz-form { --wiz-max: 880px; }
 .day-wizard.wiz-mid { --wiz-max: 1080px; }
 .day-wizard.wiz-wide { --wiz-max: 1600px; }
-
-/* Where the day is, carried from step 2 onwards. */
-.dayw-start {
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  align-self: flex-start;
-  max-width: 100%;
-  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text-2);
-}
-.dayw-start-text { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--space-2); min-width: 0; }
-.dayw-start-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.dayw-start-text small { font-size: var(--text-label); color: var(--text-2); }
-.dayw-start-change.btn { flex: none; min-height: var(--tap); border-radius: var(--radius-pill); }
 
 /* Step 1: the field, the one-tap answers under it, the work already started. */
 .day-wizard .dayw-search {
@@ -1644,40 +1518,7 @@
 }
 .day-wizard .day-ideas-chip-x { width: var(--tap); height: var(--tap); flex: none; }
 
-/* Step 4: two equal answers, each with the picture of what it gives. */
-.dayw-fork { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
-@media (min-width: 768px) { .dayw-fork { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.dayw-fork-card.card-tile .card-media { aspect-ratio: auto; }
-.dayw-fork-card .card-body { padding: var(--space-4) var(--space-5) var(--space-5); gap: var(--space-2); }
-.dayw-fork-card .card-title { font-size: var(--text-title); }
-.dayw-fork-card .card-meta { white-space: normal; }
-@media (hover: hover) { .dayw-fork-card.is-interactive:hover { border-color: var(--text-3); } }
-.dayw-fork-photo { position: relative; display: block; aspect-ratio: 16 / 9; background: var(--surface-sunken); overflow: hidden; }
-/* The frame sets the shape; the photo fills it rather than stretching it. */
-.dayw-fork-photo img { position: absolute; inset: 0; }
-.dayw-fork-photo img, .dayw-fork-tile-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
-/* On a phone both answers fit the first screen: the photo is a strip. */
-@media (max-width: 768px) {
-  .dayw-fork-photo { aspect-ratio: 3 / 1; }
-  .dayw-fork-card .card-body { padding: var(--space-3) var(--space-4) var(--space-4); }
-}
-.dayw-fork-mosaic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; background: var(--border-soft); }
-.dayw-fork-mosaic.n0 { aspect-ratio: 16 / 9; background: var(--surface-sunken); }
-.dayw-fork-tile { display: flex; flex-direction: column; min-width: 0; background: var(--surface); }
-.dayw-fork-tile-img { display: block; aspect-ratio: 1 / 1; background: var(--surface-sunken); overflow: hidden; }
-.dayw-fork-tile-name {
-  padding: var(--space-2) var(--space-2) 0;
-  font-size: var(--text-caption);
-  line-height: var(--leading-ui);
-  color: var(--text-2);
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-.dayw-fork-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
-.dayw-fork-sub { font-size: var(--text-body); color: var(--text-2); }
-
+/* Step 4: the fork is in the T459 section below. */
 /* What an AI action costs, before the tap. */
 .credit-chip {
   display: inline-flex;
@@ -1701,26 +1542,11 @@
 .daychat-dots > span { width: 16px; height: 4px; border-radius: var(--radius-sm); background: var(--border); }
 .daychat-dots > span.done { background: var(--text-3); }
 .daychat-dots > span.now { background: var(--select-border); }
-.daychat-recap { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: calc(-1 * var(--space-2)); }
-.daychat-recap-chip {
-  min-height: 36px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text-2);
-  font: inherit;
-  font-size: var(--text-label);
-  cursor: pointer;
-}
-@media (pointer: coarse) { .daychat-recap-chip { min-height: var(--tap); } }
-@media (hover: hover) { .daychat-recap-chip:hover { border-color: var(--text-3); color: var(--text); } }
 .daychat-tiles { --tile-gap: var(--space-2); }
 @media (max-width: 560px) { .daychat-tiles { --tile-cols: 2 !important; } }
 .daychat-tile-text { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
 .daychat-tile-text small { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
 .daychat-sub { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
-.daychat-h { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .daychat-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .daychat-hint { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .daychat-switch { max-width: 520px; }
@@ -1739,65 +1565,18 @@
 
 /* ── Build it myself ──────────────────────────────────────────────────── */
 .dayw-manual .dayex { display: flex; flex-direction: column; gap: var(--space-4); padding: 0; }
-.dayw-manual .dayex-head {
-  position: static;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: none;
-  box-shadow: none;
-}
-.dayw-manual .dayex-head-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
-.dayw-manual .dayex-head-text small { font-size: var(--text-label); color: var(--text-2); }
-.dayw-manual .dayex-head-acts { display: flex; align-items: center; gap: var(--space-2); flex: none; }
 .dayw-manual .dayex-search-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: var(--tap); height: var(--tap);
   border: 1px solid var(--border); border-radius: 50%;
   background: var(--surface); color: var(--text-2); cursor: pointer;
 }
-.dayw-manual .dayex-bar {
-  position: static;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin: 0;
-  padding: 0;
-  background: none;
-  border: none;
-}
 .dayw-manual .dayex-chips { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; padding-block: 2px; }
 .dayw-manual .dayex-chips::-webkit-scrollbar { display: none; }
 .dayw-manual .dayex-chips .ui-chip { flex: none; }
 .dayw-manual .dayex-view { flex: none; }
-.dayw-manual .dayex-body { display: block; }
-@media (min-width: 1100px) {
-  .dayw-manual .dayex-body { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: var(--space-6); align-items: start; }
-  .dayw-manual .dayex-mapcol { position: sticky; top: 0; display: flex; flex-direction: column; gap: var(--space-4); }
-}
-.dayw-manual .dayex-mapview .dayex-list { display: none; }
-.dayw-manual .dayex-mapcol { display: none; }
-.dayw-manual .dayex-mapview .dayex-mapcol { display: block; }
-@media (min-width: 1100px) { .dayw-manual .dayex-mapcol { display: flex; } }
-.dayw-manual .dayex-map {
-  position: relative;
-  height: 62vh;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  isolation: isolate;
-}
-@media (min-width: 1100px) { .dayw-manual .dayex-map { height: 300px; } }
-
 /* A photo card carries nothing on its photograph. */
 .dayw-manual .dayex-card.is-picked { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
-.dayex-must { display: inline-flex; align-items: center; gap: 3px; font-weight: 600; color: var(--text); }
-.dayex-must svg { color: var(--rate); fill: currentColor; }
 .dayw-manual .dayex-card-meta { display: flex; flex-wrap: wrap; column-gap: var(--space-2); row-gap: 2px; font-size: var(--text-label); color: var(--text-2); }
 
 /* Places without a photograph: compact rows, never a fake image. */
@@ -1814,66 +1593,6 @@
 }
 .dayex-row.is-picked { border-color: var(--select-border); background: var(--select-bg); }
 .dayex-row .dayex-add { position: static; flex: none; }
-
-/* Your days so far: the days the picks make, as a schedule. */
-.dayex-preview {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  max-height: calc(100vh - 420px);
-  min-height: 260px;
-  padding: var(--space-4);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  overflow-y: auto;
-}
-.dayex-preview-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
-.dayex-preview-head h2 { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.dayex-preview-head span { font-size: var(--text-label); color: var(--text-2); }
-.dayex-days { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
-.dayex-day { display: flex; flex-direction: column; gap: var(--space-1); padding-block: var(--space-3); border-top: 1px solid var(--border-soft); }
-.dayex-day:first-child { border-top: none; padding-top: 0; }
-.dayex-day-head { display: flex; align-items: baseline; gap: var(--space-2); }
-.dayex-day-head b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.dayex-day-head span { font-size: var(--text-label); color: var(--text-2); }
-.dayex-day-rows { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
-.dayex-day-rows li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; column-gap: var(--space-2); min-height: 36px; }
-.dayex-day-time { font-size: var(--text-label); font-variant-numeric: tabular-nums; color: var(--text-2); }
-.dayex-day-name { font-size: var(--text-label); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dayex-day-x {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border: none; border-radius: 50%;
-  background: none; color: var(--text-3); cursor: pointer;
-}
-@media (pointer: coarse) { .dayex-day-x { width: var(--tap); height: var(--tap); } }
-@media (hover: hover) { .dayex-day-x:hover { background: var(--surface-hover); color: var(--text); } }
-.dayex-day-foot { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
-.dayex-preview-carta { display: flex; justify-content: flex-start; }
-.dayw-manual .dayex-tray-summary {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-height: var(--tap);
-  justify-content: center;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--text);
-  text-decoration: underline;
-  text-decoration-color: var(--border);
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
-.dayw-manual .dayex-tray-summary:disabled { text-decoration: none; color: var(--text-2); cursor: default; }
-.dayw-manual .dayex-tray-fit { font-size: var(--text-caption); font-weight: 600; color: var(--amber-ink); }
-.dayex-tray-sheet .dayex-sheet-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-top: var(--space-4); }
-@media (max-width: 768px) {
-  .dayw-manual .dayex-tray-summary { font-size: var(--text-label); }
-}
 
 /* ── The planned day ──────────────────────────────────────────────────── */
 .day-ws { --panel-w: min(620px, 46vw); }
@@ -2122,3 +1841,214 @@
   .dayt { animation-delay: 60ms; }
 }
 @keyframes dayt-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ════════════════════════════════════════════════════════════════════════
+   T459, the day planner's second pass (2026-10-16). The trip planner's
+   frame, complete: the "Planning around" recap (kit Recap), the title
+   straight inside .guide-canvas so its size and spacing are the trip
+   wizard's, and the card beside every step (DayRail on .plan-total).
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* One rhythm on every step: a step is a stack of sections, space-6 apart; a
+   section is its heading and its options, space-3 apart. The heading is the
+   trip wizard's (.wlife-h in 67-v6-tripplanner.css), value for value. */
+.day-wizard .dayw-step,
+.day-wizard .daychat,
+.dayw-manual .dayex { display: flex; flex-direction: column; gap: var(--space-6); }
+.day-wizard .dayw-q,
+.day-wizard .daychat-sub,
+.day-wizard .day-ideas-group { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-3); }
+.day-wizard .wiz-q-h {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+}
+.day-wizard .day-ideas { gap: var(--space-6); }
+.day-wizard .daychat-sub > .ui-chip,
+.day-wizard .daychat-sub > .seg { align-self: flex-start; }
+.day-wizard .daychat-hint { margin-top: calc(-1 * var(--space-3)); }
+
+/* "Question 3 of 7" sits as a small line over the question. */
+.day-wizard .daychat-progress { margin: 0 0 var(--space-2); }
+
+/* The rail card: the trip planner's .plan-total, with the day's own lines. */
+.dayr .plan-total-fig .plan-total-pp { font-size: var(--text-label); }
+.dayr-days-wrap { border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
+.dayr-days { display: flex; flex-direction: column; gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
+.dayr-day { display: flex; flex-direction: column; gap: var(--space-2); }
+.dayr-day-h { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: var(--space-2); margin: 0; }
+.dayr-day-h b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.dayr-day-h span { font-size: var(--text-label); color: var(--text-2); }
+.dayr-places { display: flex; flex-direction: column; gap: var(--space-1); margin: 0; padding: 0; list-style: none; counter-reset: dayr; }
+.dayr-places li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: var(--text-body);
+  color: var(--text);
+  counter-increment: dayr;
+}
+.dayr-places li::before {
+  content: counter(dayr);
+  flex: none;
+  min-width: 20px;
+  font-size: var(--text-label);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+}
+.dayr-day-foot { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.dayr-day-empty.btn { align-self: flex-start; min-height: var(--tap); padding-inline: 0; color: var(--action); }
+.dayr-carta { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
+/* The card scrolls inside the rail rather than running under the footer:
+   the head, the recap, the footer and a step of air are what it shares the
+   screen with. */
+.wiz-rail .dayr { max-height: calc(100dvh - 300px - var(--tap) - var(--space-6) - var(--space-6)); overflow-y: auto; }
+/* In its sheet the card is the sheet: no second frame, no second title. */
+.dayw-rail-sheet .plan-total { border: none; padding: 0; background: none; }
+.dayw-rail-sheet .plan-total-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.dayw-rail-btn.btn { display: inline-flex; align-items: baseline; gap: var(--space-2); }
+
+/* Step 4: two equal answers. Both photographs fill one frame, so the two
+   cards end together (owner: a white gap under "Build it myself"). */
+.dayw-fork { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); align-items: stretch; }
+@media (min-width: 640px) { .dayw-fork { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.dayw-fork-card { height: 100%; }
+.dayw-fork-card.card-tile .card-media { aspect-ratio: auto; }
+.dayw-fork-card .card-body { padding: var(--space-4) var(--space-5) var(--space-5); gap: var(--space-2); }
+.dayw-fork-card .card-title { font-size: var(--text-title); }
+.dayw-fork-card .card-meta { white-space: normal; }
+@media (hover: hover) { .dayw-fork-card.is-interactive:hover { border-color: var(--text-3); } }
+.dayw-fork-photo,
+.dayw-fork-mosaic { position: relative; display: block; aspect-ratio: 16 / 10; background: var(--surface-sunken); overflow: hidden; }
+.dayw-fork-mosaic { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: var(--border-soft); }
+.dayw-fork-mosaic.n1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.dayw-fork-mosaic.n2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+.dayw-fork-mosaic.n3 .dayw-fork-tile:first-child { grid-row: 1 / span 2; }
+.dayw-fork-tile { position: relative; display: block; min-width: 0; min-height: 0; overflow: hidden; background: var(--surface-sunken); }
+.dayw-fork-photo img,
+.dayw-fork-tile img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.dayw-fork-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.dayw-fork-sub { font-size: var(--text-body); color: var(--text-2); }
+/* On a phone both answers fit the first screen: the photographs are strips. */
+@media (max-width: 639px) {
+  .dayw-fork-photo, .dayw-fork-mosaic { aspect-ratio: 3 / 1; }
+  .dayw-fork-card .card-body { padding: var(--space-3) var(--space-4) var(--space-4); }
+}
+
+/* Build it myself: Where, then What, then the places, in one column. */
+.dayw-manual .dayex-where-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: var(--space-1);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.dayw-manual .dayex-where-reach { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.dayw-manual .dayex-what-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.dayw-manual .dayex-what-acts { display: inline-flex; align-items: center; gap: var(--space-2); flex: none; }
+.dayw-manual .dayex-view { display: inline-flex; flex: none; }
+.dayw-manual .dayex-searchrow { margin: 0; }
+.dayw-manual .dayex-list { display: flex; flex-direction: column; gap: var(--space-6); }
+.dayw-manual .dayex-map {
+  position: relative;
+  height: min(560px, 70dvh);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  isolation: isolate;
+}
+.dayw-manual .dayex-map .trip-map { left: 0 !important; }
+/* Three places a theme, side by side wherever three fit. */
+@media (min-width: 640px) {
+  .dayw-manual .dayex-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    overflow: visible;
+    margin: 0;
+    padding-inline: 0;
+  }
+  .dayw-manual .dayex-cards > * { flex: none; }
+}
+.dayw-manual .dayex-card { border-color: var(--border-soft); border-radius: var(--radius-card); background: var(--surface); }
+.dayw-manual .dayex-card-photo { aspect-ratio: 3 / 2; background: var(--surface-sunken); }
+.dayw-manual .dayex-card-text { gap: var(--space-1); padding: var(--space-3); }
+.dayw-manual .dayex-card-name b { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
+.dayw-manual .dayex-card-dist,
+.dayw-manual .dayex-card-sub,
+.dayw-manual .dayex-card-fact { font-family: inherit; font-size: var(--text-label); color: var(--text-2); }
+.dayw-manual .dayex-more.btn { color: var(--action); }
+.dayw-manual .dayex-count { font-size: var(--text-label); color: var(--text-2); }
+@media (max-width: 768px) {
+  .dayw-manual .dayex-what-head { flex-wrap: wrap; }
+}
+
+/* Step 2: every date control on one card, as the trip wizard's When step
+   ("a card reads as one question with its parts"). */
+.day-wizard .dayw-when {
+  gap: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+}
+.day-wizard .dayw-when-cal,
+.day-wizard .dayw-count { border: none; border-radius: 0; background: none; }
+.day-wizard .dayw-count { border-top: 1px solid var(--border-soft); }
+@media (min-width: 900px) {
+  .day-wizard .dayw-when { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); }
+  .day-wizard .dayw-count { align-self: stretch; align-items: flex-start; border-top: none; border-left: 1px solid var(--border-soft); padding: var(--space-5); }
+}
+
+/* A phone keeps the rhythm, a step tighter. */
+@media (max-width: 768px) {
+  .day-wizard .dayw-step,
+  .day-wizard .daychat,
+  .dayw-manual .dayex,
+  .dayw-manual .dayex-list,
+  .day-wizard .day-ideas { gap: var(--space-5); }
+  .dayw-rail-btn.btn { font-weight: 600; color: var(--text); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 3px; }
+}
+
+/* Step 1: the chosen start keeps its one Change (the recap starts at step 2). */
+.dayw-chosen .dayw-start-change.btn { flex: none; min-height: var(--tap); border-radius: var(--radius-pill); }
+
+/* Touch screens: every way back to an answer, and every route link, is a
+   44 px target, whatever width the screen is (the recap's chips are 32 px
+   from 769 px, and German's "Route" measured 43 px wide). */
+@media (pointer: coarse) {
+  .day-wizard .guide-recap-chip.is-link { min-height: var(--tap); }
+}
+.dayt-link { min-width: var(--tap); justify-content: center; }
+
+/* The footer's summary gives way to Back and Next: a long label (German
+   "Noch nichts gewählt") shortens with an ellipsis instead of running
+   under the buttons. */
+.day-wizard .guide-foot-summary { flex: 1 1 auto; min-width: 0; }
+.dayw-rail-btn.btn { max-width: 100%; min-width: 0; overflow: hidden; }
+.dayw-rail-btn.btn > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* On a phone the recap is one line that scrolls sideways, so the question
+   and the first places stay in the first screen (T459 critique: three
+   wrapped rows took 140 px). */
+@media (max-width: 768px) {
+  .day-wizard .wiz-recap-inbody .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .day-wizard .wiz-recap-inbody .guide-recap-inner::-webkit-scrollbar { display: none; }
+  .day-wizard .wiz-recap-inbody .guide-recap-chip,
+  .day-wizard .wiz-recap-inbody .guide-recap-label { flex: none; white-space: nowrap; }
+  .dayw-manual .dayex { gap: var(--space-4); }
+}

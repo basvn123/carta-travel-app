@@ -1,17 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { Button, IconButton, Chip, Segmented, Card } from '../components/ui/index.js';
 import { PlannerSection } from './PlannerSection.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { DayWizardShell } from './DayWizardShell.jsx';
+import { DayRail } from './DayRail.jsx';
 import { CreditChip } from '../components/CreditChip.jsx';
-import { fmtClockLoose } from './daySchedule.js';
-import { fmtKm } from './dayFormat.js';
 import { haversineKm } from '../lib/runtime_pricing.js';
-import { fmtDate } from '../lib/dates.js';
 import { loadBeaches } from '../lib/beaches.js';
 import { loadLakes } from '../lib/lakes.js';
 import { loadTrails } from '../lib/trails.js';
@@ -22,8 +19,8 @@ import {
   RAIL_KM, poiRow, waterRow, trailRow, townRow, doRow, eventRow,
   eventOnDate, LOCAL_KM, townReach, reachLine,
 } from './dayExploreRails.js';
-import { scrollBehavior } from '../lib/motion.js';
-import { CloseIcon, StarIcon, PlusIcon, CheckIcon } from '../components/Icons.jsx';
+import { CloseIcon, PlusIcon, CheckIcon, SearchIcon } from '../components/Icons.jsx';
+import { cityLabel } from '../lib/placeName.js';
 
 /**
  * "Build it myself": the guided builder around a stay (D6).
@@ -46,16 +43,28 @@ import { CloseIcon, StarIcon, PlusIcon, CheckIcon } from '../components/Icons.js
  * them before drawing a single card is a landing that feels broken.
  */
 
-const CHIPS = ['all', 'sight', 'water', 'nature', 'active', 'food', 'town'];
+// In the order the rails read (T459): what a place is famous for, then the
+// outdoors, then food, then the rest.
+const CHIPS = ['all', 'sight', 'nature', 'food', 'active', 'water'];
 const CHIP_KEY = {
   all: 'dayex.chipAll',
   sight: 'dayex.chipSights',
   water: 'dayex.chipWater',
   nature: 'dayex.chipNature',
-  active: 'dayex.chipActivities',
+  active: 'dayex.railDo',
   food: 'dayex.chipFood',
-  town: 'dayex.chipTowns',
 };
+
+// "Where" (T459): the places a day can be spent, each a circle around its
+// centre. The start's own circle is a little wider, since the stay is rarely
+// at the heart of its town. A town is offered while it is a day out (the
+// builder's own horizon, EXPLORE_POI_KM in DayPlannerTab) and has places to
+// show; the strongest six, so Bruges from Ghent beats the nearest suburb.
+const HOME_KM = 10;
+const AREA_KM = 8;
+const AREA_TOWNS = 6;
+const AREA_REACH_KM = 60;
+const AREA_MIN_PLACES = 3;
 
 /** Which chip a row answers to. A rail's rows may span chips (the "things to
  *  do" rail carries whatever the dossier listed), so this is per row. */
@@ -110,19 +119,14 @@ function AddButton({ row, picked, onToggle, t }) {
   );
 }
 
-/** What a place is and how far, under its name. "Must see" is said here, in
- *  words, never printed on the photograph (carta-design, never-do 4). */
+/** What a place is and how far, under its name: one line of facts. No score
+ *  (owner, T459: the places stay, their ratings go). */
 function PlaceMeta({ row, t }) {
   const dist = reachLine(row, t);
   return (
     <>
-      <span className="dayex-card-name">
-        <b>{row.name}</b>
-        {row.rating?.score != null && <ScoreChip rating={row.rating} size="xs" />}
-        {row.gem && <HiddenGemTag />}
-      </span>
+      <span className="dayex-card-name"><b>{row.name}</b></span>
       <span className="dayex-card-meta">
-        {row.must && row.kind !== 'sight' && <span className="dayex-must"><StarIcon size={12} />{t('day.mustSee')}</span>}
         {dist && <span className="dayex-card-dist">{dist}</span>}
         {row.kind === 'trail' && row.lenKm != null && (
           <span className="dayex-card-fact">{t('dayex.trailFact', { km: row.lenKm, m: row.ascentM ?? 0 })}</span>
@@ -142,12 +146,10 @@ function PlaceMeta({ row, t }) {
 }
 
 /** One place with a photograph: the photo, then its name and facts. */
-function PlaceCard({ row, picked, onToggle, onOpen, highlighted, onHover, t }) {
+function PlaceCard({ row, picked, onToggle, onOpen, t }) {
   return (
     <div
-      className={`dayex-card${highlighted ? ' is-hi' : ''}${picked ? ' is-picked' : ''}`}
-      onMouseEnter={() => onHover?.(row.key)}
-      onMouseLeave={() => onHover?.('')}
+      className={`dayex-card${picked ? ' is-picked' : ''}`}
       data-key={row.key}
     >
       <button className="dayex-card-body" onClick={() => onOpen(row)}>
@@ -163,43 +165,42 @@ function PlaceCard({ row, picked, onToggle, onOpen, highlighted, onHover, t }) {
 
 /** A place with no photograph: a compact row (the kit's Card), never a fake
  *  image. */
-function PlaceRow({ row, picked, onToggle, onOpen, highlighted, onHover, t }) {
+function PlaceRow({ row, picked, onToggle, onOpen, t }) {
   const dist = reachLine(row, t);
   return (
     <Card
       as="li"
       layout="row"
-      className={`dayex-row${highlighted ? ' is-hi' : ''}`}
+      className="dayex-row"
       selected={picked}
       data-key={row.key}
-      onMouseEnter={() => onHover?.(row.key)}
-      onMouseLeave={() => onHover?.('')}
       title={row.name}
       onOpen={() => onOpen(row)}
       meta={(
         <>
-          {row.must && <span className="dayex-must"><StarIcon size={12} />{t('day.mustSee')}</span>}
           {dist && <span>{dist}</span>}
           {row.sub && row.kind !== 'town' && <span>{row.sub}</span>}
         </>
       )}
-      rating={row.rating?.score != null ? <ScoreChip rating={row.rating} size="xs" /> : null}
       actions={<AddButton row={row} picked={picked} onToggle={onToggle} t={t} />}
     />
   );
 }
 
-/** A rail: a heading and its cards, scroll-snapped on a phone, a grid on a
- *  desktop, with "Show more" once there are more than the grid shows. */
-function Rail({ title, sub, rows, loading, isPicked, hi, ...card }) {
+/** A rail: a heading and one row of three photographs (scroll-snapped on a
+ *  phone), with "Show more" for the rest. Places without a photograph come in
+ *  only once the rail is opened, so the first look is three pictures a theme
+ *  (owner, T459: the builder was an overload of pictures and things to do). */
+function Rail({ title, sub, rows, loading, isPicked, ...card }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
-  const SHOWN = 6;
+  const SHOWN = 3;
   if (!loading && !rows.length) return null;
   const withPhoto = rows.filter((r) => r.photo);
   const without = rows.filter((r) => !r.photo);
+  // A theme with no photographs at all still shows its first few places.
   const shown = open ? withPhoto : withPhoto.slice(0, SHOWN);
-  const rowsShown = open ? without : without.slice(0, 4);
+  const rowsShown = open ? without : withPhoto.length ? [] : without.slice(0, SHOWN);
   const more = (withPhoto.length - shown.length) + (without.length - rowsShown.length);
   return (
     <PlannerSection
@@ -217,14 +218,14 @@ function Rail({ title, sub, rows, loading, isPicked, hi, ...card }) {
           {loading && !rows.length
             ? [0, 1, 2].map((i) => <div className="dayex-card dayex-card-skel" key={i} aria-hidden="true" />)
             : shown.map((r) => (
-              <PlaceCard key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...card} t={t} />
+              <PlaceCard key={r.key} row={r} picked={isPicked(r)} {...card} t={t} />
             ))}
         </div>
       ) : null}
       {rowsShown.length > 0 && (
         <ul className="dayex-rows">
           {rowsShown.map((r) => (
-            <PlaceRow key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...card} t={t} />
+            <PlaceRow key={r.key} row={r} picked={isPicked(r)} {...card} t={t} />
           ))}
         </ul>
       )}
@@ -234,47 +235,28 @@ function Rail({ title, sub, rows, loading, isPicked, hi, ...card }) {
 
 export function DayExploreBuilder({
   // T433: the wizard frame, the start's own name, and the days the picks make.
-  wizard, startName = '', daysLine = '', preview = [], homeTownId = null,
+  wizard, startName = '', preview = [], homeTownId = null,
+  // T459: the recap and the rail's answers come from the flow around it.
+  recap = [], railRows = [], figure = null,
   stay, dateISO, explorePois, exploreTowns, destinations, stayTownId,
   ideas = [], shortlistPoints = [],
   picks, onTogglePick, townPicks, onToggleTown,
-  onStartPlanning, onLetCartaPlan, onChangeStay, onOpenDest, onOpenFeature,
+  onStartPlanning, onLetCartaPlan, onOpenDest, onOpenFeature,
 }) {
 
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const [chip, setChip] = useState('all');
   const [view, setView] = useState('list');
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [detail, setDetail] = useState(null);
-  const [trayOpen, setTrayOpen] = useState(false);
-  const [hi, setHi] = useState('');
-  /**
-   * Is the two-column desktop layout live?
-   *
-   * The map has to be MOUNTED only when it has a box to measure. On a phone
-   * the map column is display:none until the Map view is chosen, and a
-   * MapLibre canvas created inside a display:none parent comes up 0x0 and
-   * stays that way: it never sees a resize, so it never draws its pins. So
-   * the query drives mounting rather than only styling.
-   */
-  const [wide, setWide] = useState(
-    () => (typeof window !== 'undefined'
-      ? !!window.matchMedia?.('(min-width: 1100px)').matches
-      : false),
-  );
-  useEffect(() => {
-    const mq = window.matchMedia?.('(min-width: 1100px)');
-    if (!mq) return undefined;
-    const on = (e) => setWide(e.matches);
-    mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
-  }, []);
+  const [area, setArea] = useState('home');
 
   // Lazily loaded layers, each filled by its own rail coming into view.
   const [water, setWater] = useState(null);
   const [trails, setTrails] = useState(null);
-  const [dossier, setDossier] = useState(null);
+  const [dossiers, setDossiers] = useState({});
+  const [dossWanted, setDossWanted] = useState(false);
   const [loading, setLoading] = useState({});
 
   const cc = useMemo(() => {
@@ -282,12 +264,64 @@ export function DayExploreBuilder({
     return (d?.iso2 || d?.country_code || d?.cc || '').toUpperCase();
   }, [stayTownId, destinations, exploreTowns]);
 
-  // The town the stay belongs to: what the header names, and whose dossier
-  // answers "things to do" and "on this day".
+  // The town the stay belongs to.
   const homeTown = useMemo(
     () => exploreTowns.find((x) => x.id === (homeTownId || stayTownId)) || exploreTowns[0] || null,
     [homeTownId, stayTownId, exploreTowns],
   );
+
+  /**
+   * "Where" (T459). The owner's question was "I start from Ghent, but where do
+   * I pick where I spend the day?". A day belongs to one town (dayBuild.js), so
+   * the answer is a town: the start's own, or one of the nearest towns a day
+   * out. Choosing one re-centres every rail on it; a place picked there gives
+   * that town its day. A town the traveller already named (an idea from step
+   * 3) is offered even when it is further out.
+   */
+  // Catalogue places within a circle, for whether a town has a day in it.
+  const placesNear = useCallback((lat, lon, km) => {
+    let n = 0;
+    for (const p of explorePois) {
+      const d = haversineKm(lat, lon, p.lat, p.lon);
+      if (d != null && d <= km) n += 1;
+    }
+    return n;
+  }, [explorePois]);
+  const areas = useMemo(() => {
+    const out = [{
+      id: 'home', destId: homeTown?.id || null, label: startName || cityLabel(homeTown?.dest?.city || ''),
+      lat: stay?.lat, lon: stay?.lon, radius: HOME_KM, town: homeTown,
+    }];
+    const named = new Set(townPicks.map((s) => s.destinationId));
+    const homeName = (out[0].label || '').toLowerCase();
+    const near = exploreTowns
+      .filter((tn) => tn.id !== homeTown?.id && tn.id !== stayTownId && tn.km != null
+        && tn.km >= 4 && (tn.km <= AREA_REACH_KM || named.has(tn.id))
+        && cityLabel(tn.dest?.city || '').toLowerCase() !== homeName
+        && (named.has(tn.id) || placesNear(tn.lat, tn.lon, AREA_KM) >= AREA_MIN_PLACES))
+      .sort((a, b) => ((b.dest?.rating?.score || 0) - (a.dest?.rating?.score || 0)) || (a.km - b.km));
+    const keep = [...near.filter((tn) => named.has(tn.id)), ...near.filter((tn) => !named.has(tn.id))]
+      .slice(0, Math.max(AREA_TOWNS, named.size));
+    keep.sort((a, b) => a.km - b.km).forEach((tn) => out.push({
+      id: tn.id, destId: tn.id, label: cityLabel(tn.dest?.city || ''),
+      lat: tn.lat, lon: tn.lon, radius: AREA_KM, town: tn, km: tn.km,
+    }));
+    return out;
+  }, [homeTown, stayTownId, exploreTowns, startName, stay, townPicks, placesNear]);
+  const here = areas.find((a) => a.id === area) || areas[0];
+  const inArea = useCallback((r) => {
+    if (!here || !Number.isFinite(here.lat) || !Number.isFinite(r.lat)) return true;
+    const km = haversineKm(here.lat, here.lon, r.lat, r.lon);
+    return km == null || km <= here.radius;
+  }, [here]);
+  // The outdoors is reached rather than walked to: a trail or a beach belongs
+  // to the area it is a short ride from, not to its streets.
+  const inReach = useCallback((r, km) => {
+    if (!here || !Number.isFinite(here.lat) || !Number.isFinite(r.lat)) return true;
+    const d = haversineKm(here.lat, here.lon, r.lat, r.lon);
+    return d == null || d <= km;
+  }, [here]);
+  const areaTown = here?.town || homeTown;
 
   const loadWater = useCallback(() => {
     if (!cc || !stay) return;
@@ -297,14 +331,14 @@ export function DayExploreBuilder({
         const rows = [];
         (bs || []).forEach((b) => {
           const r = waterRow(b, 'beach', stay);
-          if (r.km != null && r.km <= RAIL_KM.water) rows.push(r);
+          if (r.km != null && r.km <= RAIL_KM.water + AREA_REACH_KM) rows.push(r);
         });
         (ls || []).forEach((l) => {
           const r = waterRow(l, 'lake', stay);
-          if (r.km != null && r.km <= RAIL_KM.water) rows.push(r);
+          if (r.km != null && r.km <= RAIL_KM.water + AREA_REACH_KM) rows.push(r);
         });
         rows.sort((a, b) => (b.score - a.score) || (a.km - b.km));
-        setWater(rows.slice(0, 18));
+        setWater(rows.slice(0, 60));
       })
       .finally(() => setLoading((l) => ({ ...l, water: false })));
   }, [cc, stay]);
@@ -317,25 +351,30 @@ export function DayExploreBuilder({
         const rows = [];
         (trs || []).forEach((tr) => {
           const r = trailRow(tr, tripCentre(tr), stay);
-          if (r && r.km != null && r.km <= RAIL_KM.trail) rows.push(r);
+          if (r && r.km != null && r.km <= RAIL_KM.trail + AREA_REACH_KM) rows.push(r);
         });
         rows.sort((a, b) => (b.score - a.score) || (a.km - b.km));
-        setTrails(rows.slice(0, 18));
+        setTrails(rows.slice(0, 60));
       })
       .finally(() => setLoading((l) => ({ ...l, trail: false })));
   }, [cc, stay]);
 
-  const loadDoss = useCallback(() => {
-    if (!homeTown) return;
+  // The dossier ("things to do", "on this day") is the chosen town's, fetched
+  // once its rail is near the screen and then again for each town chosen.
+  const wantDoss = useCallback(() => setDossWanted(true), []);
+  useEffect(() => {
+    const id = areaTown?.id;
+    if (!dossWanted || !id || dossiers[id] !== undefined) return;
     setLoading((l) => ({ ...l, doss: true }));
-    loadDossier(homeTown.id).catch(() => null)
-      .then((d) => setDossier(d || null))
+    loadDossier(id).catch(() => null)
+      .then((d) => setDossiers((m) => ({ ...m, [id]: d || null })))
       .finally(() => setLoading((l) => ({ ...l, doss: false })));
-  }, [homeTown]);
+  }, [dossWanted, areaTown, dossiers]);
+  const dossier = areaTown ? dossiers[areaTown.id] || null : null;
 
   const waterRef = useNearViewport(loadWater);
   const trailRef = useNearViewport(loadTrailRows);
-  const dossRef = useNearViewport(loadDoss);
+  const dossRef = useNearViewport(wantDoss);
 
   // ---- the rows each rail draws -----------------------------------------
 
@@ -343,30 +382,26 @@ export function DayExploreBuilder({
     () => explorePois.map((p) => poiRow(p, destinations)),
     [explorePois, destinations],
   );
+  const areaPoiRows = useMemo(() => poiRows.filter(inArea), [poiRows, inArea]);
   const byKey = useMemo(() => new Map(poiRows.map((r) => [r.key, r])), [poiRows]);
 
   const pickedKeys = useMemo(() => new Set(picks.map((p) => p.key)), [picks]);
   const pickedTowns = useMemo(() => new Set(townPicks.map((s) => s.destinationId)), [townPicks]);
 
+  // Towns as rows survive only to resolve a whole-town idea from step 3.
   const townRows = useMemo(() => exploreTowns
     .filter((tn) => tn.id !== stayTownId)
     .map(townRow)
-    .sort((a, b) => (b.score - a.score) || (a.km - b.km))
-    .slice(0, 18)
     .map((r) => {
       const tn = exploreTowns.find((x) => x.id === r.add.town);
       return (r.km ?? 0) >= LOCAL_KM ? { ...r, reach: townReach(homeTown?.dest, tn?.dest) } : r;
     }), [exploreTowns, stayTownId, homeTown]);
 
   /**
-   * The ideas from step 3, as cards.
-   *
-   * An idea arrives in one of three shapes and all three have to appear here,
-   * because this rail's whole promise is "what you told us you wanted". A
-   * catalogue POI resolves to its own row. A whole town resolves to its town
-   * row. A geocoded place has no catalogue record at all, so it is drawn from
-   * what the traveller gave us: a name and a coordinate, with no rating and
-   * no [+] button, since there is no POI for the day to hold.
+   * The ideas from step 3, as cards, wherever they are: "what you told us you
+   * wanted" is not filtered by the town on screen. A catalogue POI resolves to
+   * its own row, a whole town to its town row, and a geocoded place is drawn
+   * from what the traveller gave us, with no [+] since the day cannot hold it.
    */
   const ideaRows = useMemo(() => {
     const townByKey = new Map(townRows.map((r) => [r.key, r]));
@@ -395,50 +430,51 @@ export function DayExploreBuilder({
     return out;
   }, [ideas, byKey, townRows, stay]);
 
-  const sightRows = useMemo(() => poiRows
+  const byStrength = (a, b) => (b.score - a.score) || ((a.km ?? 0) - (b.km ?? 0));
+
+  const sightRows = useMemo(() => areaPoiRows
     .filter((r) => r.kind === 'sight')
-    .sort((a, b) => (Number(b.must) - Number(a.must)) || (b.score - a.score) || (a.km - b.km))
-    .slice(0, 18), [poiRows]);
+    .sort((a, b) => (Number(b.must) - Number(a.must)) || byStrength(a, b))
+    .slice(0, 18), [areaPoiRows]);
 
   const natureRows = useMemo(() => {
-    const pois = poiRows.filter((r) => r.kind === 'nature')
-      .sort((a, b) => (b.score - a.score) || (a.km - b.km));
-    return [...(trails || []), ...pois].slice(0, 18);
-  }, [trails, poiRows]);
+    const pois = areaPoiRows.filter((r) => r.kind === 'nature').sort(byStrength);
+    const near = (trails || []).filter((r) => inReach(r, RAIL_KM.trail));
+    return [...near, ...pois].slice(0, 18);
+  }, [trails, areaPoiRows, inReach]);
 
   const doRows = useMemo(() => {
     const out = [];
     const items = dossier?.do || dossier?.things || [];
-    if (homeTown) items.forEach((it, i) => out.push(doRow(it, homeTown, i)));
-    const active = poiRows.filter((r) => r.kind === 'active')
-      .sort((a, b) => (b.score - a.score) || (a.km - b.km));
+    if (areaTown) items.forEach((it, i) => out.push(doRow(it, areaTown, i)));
+    const active = areaPoiRows.filter((r) => r.kind === 'active').sort(byStrength);
     return [...out, ...active].slice(0, 18);
-  }, [dossier, homeTown, poiRows]);
+  }, [dossier, areaTown, areaPoiRows]);
 
-  const foodRows = useMemo(() => poiRows
+  const foodRows = useMemo(() => areaPoiRows
     .filter((r) => r.kind === 'food')
-    .sort((a, b) => (b.score - a.score) || (a.km - b.km))
-    .slice(0, 18), [poiRows]);
+    .sort(byStrength)
+    .slice(0, 18), [areaPoiRows]);
+
+  const waterRows = useMemo(
+    () => (water || []).filter((r) => inReach(r, RAIL_KM.water)).slice(0, 18),
+    [water, inReach],
+  );
 
   /**
-   * The shortlist, snapped to what is actually around this stay.
-   *
-   * A favourite is a PLACE with its own coordinates; a card here has to be
-   * something the day can hold. So a shortlisted point within reach is
-   * matched to the nearest harvested POI, the same coordinate join the day
-   * workspace uses, and anything with no POI near it is left out rather than
-   * listed as an un-addable tease.
+   * The shortlist, snapped to what is actually in the chosen area: a
+   * favourite is matched to the nearest harvested POI (the coordinate join
+   * the day workspace uses), and anything with no POI near it is left out.
    */
   const shortRows = useMemo(() => {
-    if (!shortlistPoints.length || !stay) return [];
+    if (!shortlistPoints.length || !here) return [];
     const out = [];
     const taken = new Set();
     for (const pt of shortlistPoints) {
-      const fromStay = haversineKm(stay.lat, stay.lon, pt.lat, pt.lon);
-      if (fromStay == null || fromStay > RAIL_KM.shortlist) continue;
+      if (!inArea(pt)) continue;
       let best = null;
       let bestKm = 1.2;
-      for (const r of poiRows) {
+      for (const r of areaPoiRows) {
         if (taken.has(r.key)) continue;
         const d = haversineKm(pt.lat, pt.lon, r.lat, r.lon);
         if (d != null && d < bestKm) { bestKm = d; best = r; }
@@ -446,27 +482,27 @@ export function DayExploreBuilder({
       if (best) { taken.add(best.key); out.push(best); }
     }
     return out;
-  }, [shortlistPoints, poiRows, stay]);
+  }, [shortlistPoints, areaPoiRows, inArea, here]);
 
   const eventRows = useMemo(() => {
     const evs = dossier?.festivals || dossier?.events || [];
-    if (!homeTown || !dateISO) return [];
-    return evs.filter((e) => eventOnDate(e, dateISO)).map((e, i) => eventRow(e, homeTown, i));
-  }, [dossier, homeTown, dateISO]);
+    if (!areaTown || !dateISO) return [];
+    return evs.filter((e) => eventOnDate(e, dateISO)).map((e, i) => eventRow(e, areaTown, i));
+  }, [dossier, areaTown, dateISO]);
 
   // ---- what the screen actually draws ------------------------------------
 
   const allRows = useMemo(() => {
     const seen = new Set();
     const out = [];
-    for (const r of [...ideaRows, ...sightRows, ...(water || []), ...natureRows,
-      ...doRows, ...foodRows, ...shortRows, ...townRows, ...eventRows]) {
+    for (const r of [...ideaRows, ...sightRows, ...natureRows, ...foodRows,
+      ...doRows, ...waterRows, ...shortRows, ...eventRows]) {
       if (seen.has(r.key)) continue;
       seen.add(r.key);
       out.push(r);
     }
     return out;
-  }, [ideaRows, sightRows, water, natureRows, doRows, foodRows, shortRows, townRows, eventRows]);
+  }, [ideaRows, sightRows, natureRows, foodRows, doRows, waterRows, shortRows, eventRows]);
 
   const q = query.trim().toLowerCase();
   const matches = useCallback(
@@ -475,14 +511,16 @@ export function DayExploreBuilder({
     [chip, q],
   );
 
-  // A chip (or a search) collapses the rails into one list for that category:
-  // the reading order the rails give is only useful while everything is shown.
+  // A chip (or a search) collapses the rails into one list for that category.
+  // A search looks across every area, so a place is findable by name wherever
+  // it is.
   const flat = useMemo(() => {
     if (chip === 'all' && !q) return null;
-    return allRows.filter(matches).sort((a, b) => (b.score - a.score) || ((a.km ?? 0) - (b.km ?? 0)));
-  }, [chip, q, allRows, matches]);
-
-  // ---- the tray ----------------------------------------------------------
+    const pool = q
+      ? [...allRows, ...poiRows.filter((r) => !allRows.some((x) => x.key === r.key))]
+      : allRows;
+    return pool.filter(matches).sort(byStrength);
+  }, [chip, q, allRows, poiRows, matches]);
 
   const trayRows = useMemo(() => {
     const out = [];
@@ -505,21 +543,17 @@ export function DayExploreBuilder({
 
   const openDetail = useCallback((row) => setDetail(row), []);
 
-  const cardProps = {
-    onToggle: toggle,
-    onOpen: openDetail,
-    onHover: setHi,
-    isPicked,
-    hi,
-  };
+  const cardProps = { onToggle: toggle, onOpen: openDetail, isPicked };
 
   // The map view draws the same rows the list does, so a filter means the
   // same thing in both and switching view never changes what is on offer.
-  const markers = useMemo(() => (flat || allRows).filter(matches)
+  const shownRows = flat || allRows;
+  // The map frames the chosen area: a row with no distance or one an hour
+  // away is in the list, never a reason to zoom out to half a country (the
+  // T459 critique found the T433 map framed on Italy).
+  const markers = useMemo(() => shownRows.filter(matches)
     .filter((r) => !isPicked(r) && Number.isFinite(r.lat) && Number.isFinite(r.lon))
-    // The map frames the day's own surroundings: a town an hour away is in
-    // the list, not a reason to zoom the map out to half a country.
-    .filter((r) => r.km == null || r.km <= 15)
+    .filter((r) => inReach(r, 25))
     .slice(0, 60)
     .map((r) => ({
       id: r.key,
@@ -529,7 +563,7 @@ export function DayExploreBuilder({
       cat: r.kind === 'water' ? 'beach' : r.kind === 'trail' || r.kind === 'nature' ? 'beach'
         : r.kind === 'town' ? 'town' : r.kind === 'active' ? 'active' : 'sight',
       must: !!r.must,
-    })), [flat, allRows, matches, isPicked]);
+    })), [shownRows, matches, isPicked, inReach]);
   // The picks, numbered in the order the days will walk them, the stay first.
   const mapStops = useMemo(() => {
     const out = stay ? [{ lat: stay.lat, lon: stay.lon, stay: true, city: startName }] : [];
@@ -542,77 +576,59 @@ export function DayExploreBuilder({
     }
     return out;
   }, [stay, preview, startName]);
-  const rowByKey = useMemo(() => new Map(allRows.map((r) => [r.key, r])), [allRows]);
+  const mapFocus = useMemo(
+    () => (here && Number.isFinite(here.lat) ? { lat: here.lat, lon: here.lon, zoom: 13 } : null),
+    [here],
+  );
+  const rowByKey = useMemo(() => new Map(shownRows.map((r) => [r.key, r])), [shownRows]);
 
-  // Tapping a pin scrolls its card into view, which is what keeps the two
-  // halves of the desktop layout one surface rather than two lists.
-  const listRef = useRef(null);
-  const focusCard = useCallback((key) => {
-    setHi(key);
-    const el = listRef.current?.querySelector(`[data-key="${CSS.escape(key)}"]`);
-    el?.scrollIntoView({ behavior: scrollBehavior(), block: 'center', inline: 'center' });
-  }, []);
+  // Picks per area, for the small count on each "Where" chip.
+  const pickedIn = useMemo(() => {
+    const m = new Map();
+    for (const r of trayRows) {
+      const a = areas.find((x) => x.id !== 'home' && x.destId === r.add?.destId)
+        || areas.find((x) => {
+          if (!Number.isFinite(x.lat)) return false;
+          const d = haversineKm(x.lat, x.lon, r.lat, r.lon);
+          return d != null && d <= x.radius;
+        });
+      if (a) m.set(a.id, (m.get(a.id) || 0) + 1);
+    }
+    return m;
+  }, [trayRows, areas]);
 
   const count = picks.length + townPicks.length;
-  // ---- T433: the days the picks make, said as a schedule -----------------
   const nDays = preview.length;
-  const lateDay = preview.find((d) => d.clock?.rows?.length && d.clock.endMin > 19 * 60);
   const summaryText = count === 0
     ? t('dayex.trayEmpty')
-    : t(nDays > 1 ? 'dayex.trayDays' : 'dayex.trayDay', { n: count, d: nDays });
+    : t(nDays > 1 ? 'dayex.trayDays' : 'dayex.trayDay', { n: picks.length || count, d: nDays });
 
-  const daysPreview = (
-    <ol className="dayex-days">
-      {preview.map((d) => (
-        <li className="dayex-day" key={`${d.si}:${d.di}`}>
-          <div className="dayex-day-head">
-            <b>{t('itin.dayN', { n: d.no })}</b>
-            <span>{[d.date ? fmtDate(d.date, true) : '', d.town].filter(Boolean).join(', ')}</span>
-          </div>
-          {d.clock.rows.length ? (
-            <>
-              <ul className="dayex-day-rows">
-                {d.clock.rows.map((r) => (
-                  <li key={r.key || `${r.destId}:${r.idx}`}>
-                    <span className="dayex-day-time">~{fmtClockLoose(r.arriveMin)}</span>
-                    <span className="dayex-day-name">{r.name}</span>
-                    {rowByKey.get(r.key) && (
-                      <IconButton
-                        className="dayex-day-x"
-                        onClick={() => toggle(rowByKey.get(r.key))}
-                        label={t('dayex.removeFromDay', { name: r.name })}
-                      ><CloseIcon size={14} /></IconButton>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <p className="dayex-day-foot">
-                {t('dayex.dayDone', { time: fmtClockLoose(d.clock.endMin), km: fmtKm(d.clock.km, lang) })}
-              </p>
-            </>
-          ) : (
-            <p className="dayex-day-foot">{t('dayex.dayFree')}</p>
-          )}
-        </li>
-      ))}
-    </ol>
+  const goArea = useCallback((destId) => {
+    const a = areas.find((x) => x.destId === destId);
+    setArea(a ? a.id : 'home');
+    setChip('all');
+    setQuery('');
+  }, [areas]);
+
+  const rail = (
+    <DayRail
+      figure={figure}
+      rows={railRows}
+      days={preview}
+      onTownDay={goArea}
+      footer={(
+        <div className="dayr-carta">
+          <Button block onClick={() => onLetCartaPlan(trayRows)}>
+            {count ? t('dayex.cartaRest') : t(nDays > 1 ? 'dayex.cartaAllDays' : 'dayex.cartaAll')}
+          </Button>
+          <CreditChip />
+        </div>
+      )}
+    />
   );
 
   const foot = {
     back: () => wizard.onGo(wizard.at - 1),
-    summary: (
-      <button
-        type="button"
-        className="dayex-tray-summary"
-        onClick={() => setTrayOpen(true)}
-        aria-haspopup="dialog"
-        disabled={!count}
-      >
-        <span>{summaryText}</span>
-        {lateDay && <small className="dayex-tray-fit">{t('dayex.dayLate', { n: lateDay.no })}</small>}
-      </button>
-    ),
-    secondary: wide ? { label: count ? t('dayex.cartaRest') : t('dayex.cartaAll'), onClick: () => onLetCartaPlan(trayRows) } : null,
     next: {
       label: t(nDays > 1 ? 'dayex.openMyDays' : 'dayex.openMyDay'),
       onClick: onStartPlanning,
@@ -620,74 +636,106 @@ export function DayExploreBuilder({
     },
   };
 
-  return (
-    <DayWizardShell {...wizard} layout="wide" canvasKey="manual" foot={foot} className="dayw-manual">
-      <div className={`dayex${view === 'map' ? ' dayex-mapview' : ''}`}>
-        <header className="dayex-head">
-          <span className="dayex-head-text">
-            <h1 className="guide-title">{t('dayex.title', { town: startName || homeTown?.dest?.city || '' })}</h1>
-            {daysLine && <small>{daysLine}</small>}
-          </span>
-          <span className="dayex-head-acts">
-            <IconButton
-              tone="surface"
-              className="dayex-search-btn"
-              onClick={() => { setSearchOpen((v) => !v); setQuery(''); }}
-              aria-expanded={searchOpen}
-              label={t('day.exploreSearchAria')}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
-              </svg>
-            </IconButton>
-            <Button size="sm" className="dayex-change" onClick={onChangeStay}>{t('dayex.change')}</Button>
-          </span>
-        </header>
+  const reach = here?.id !== 'home' && here?.town ? townReach(homeTown?.dest, here.town.dest) : null;
+  const reachText = reach?.min ? reachLine({ reach }, t) : null;
 
-        {searchOpen && (
-          <div className="dayex-searchrow">
-            <input
-              className="dayex-search-input"
-              autoFocus
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t('day.exploreSearchPlaceholder')}
-              aria-label={t('day.exploreSearchAria')}
-            />
-            {query && (
-              <button className="dayex-search-clear" onClick={() => setQuery('')} aria-label={t('day.clearSearch')}><CloseIcon size={16} /></button>
-            )}
+  return (
+    <DayWizardShell
+      {...wizard}
+      layout="wide"
+      canvasKey="manual"
+      foot={foot}
+      className="dayw-manual"
+      recap={recap}
+      title={t('dayex.pickTitle')}
+      rail={rail}
+      railSummary={summaryText}
+      railTitle={t('dayr.title')}
+    >
+      <div className={`dayex${view === 'map' ? ' dayex-mapview' : ''}`}>
+        {/* With no other town a day out there is nothing to choose: the
+            recap already names the start. */}
+        {areas.length > 1 && (
+        <section className="dayw-q" aria-labelledby="dayex-where-h">
+          <h2 className="wiz-q-h" id="dayex-where-h">{t('dayex.whereH')}</h2>
+          <div className="dayex-chips dayex-where" role="group" aria-labelledby="dayex-where-h">
+            {areas.map((a) => (
+              <Chip key={a.id} kind="choice" selected={here?.id === a.id} onClick={() => { setArea(a.id); setChip('all'); }}>
+                {a.label}
+                {pickedIn.get(a.id) ? <span className="dayex-where-n">{pickedIn.get(a.id)}</span> : null}
+              </Chip>
+            ))}
           </div>
+          {reachText && <p className="dayex-where-reach">{t('dayex.whereReach', { reach: reachText, from: areas[0].label })}</p>}
+        </section>
         )}
 
-        <div className="dayex-bar">
+        <section className="dayw-q" aria-labelledby="dayex-what-h">
+          <div className="dayex-what-head">
+            <h2 className="wiz-q-h" id="dayex-what-h">{t('dayex.whatH')}</h2>
+            <span className="dayex-what-acts">
+              <IconButton
+                tone="surface"
+                className="dayex-search-btn"
+                onClick={() => { setSearchOpen((v) => !v); setQuery(''); }}
+                aria-expanded={searchOpen}
+                label={t('day.exploreSearchAria')}
+              ><SearchIcon size={18} /></IconButton>
+              <Segmented
+                size="sm"
+                className="dayex-view"
+                label={t('dayex.viewAria')}
+                value={view}
+                onChange={setView}
+                options={[
+                  { value: 'list', label: t('dayex.viewList') },
+                  { value: 'map', label: t('dayex.viewMap') },
+                ]}
+              />
+            </span>
+          </div>
+          {searchOpen && (
+            <div className="dayex-searchrow">
+              <input
+                className="dayex-search-input"
+                autoFocus
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t('day.exploreSearchPlaceholder')}
+                aria-label={t('day.exploreSearchAria')}
+              />
+              {query && (
+                <button className="dayex-search-clear" onClick={() => setQuery('')} aria-label={t('day.clearSearch')}><CloseIcon size={16} /></button>
+              )}
+            </div>
+          )}
           <div className="dayex-chips" role="group" aria-label={t('dayex.filterAria')}>
             {CHIPS.map((c) => (
               <Chip key={c} selected={chip === c} onClick={() => setChip(c)}>{t(CHIP_KEY[c])}</Chip>
             ))}
           </div>
-          {!wide && (
-            <Segmented
-              size="sm"
-              className="dayex-view"
-              label={t('dayex.viewAria')}
-              value={view}
-              onChange={setView}
-              options={[
-                { value: 'list', label: t('dayex.viewList') },
-                { value: 'map', label: t('dayex.viewMap') },
-              ]}
-            />
-          )}
-        </div>
+        </section>
 
-        <div className="dayex-body">
-          <div className="dayex-list" ref={listRef}>
+        {view === 'map' ? (
+          <div className="dayex-map">
+            <TripMap
+              stops={mapStops}
+              pois={markers}
+              onPoiClick={(id) => { const r = rowByKey.get(id); if (r) setDetail(r); }}
+              focus={mapFocus}
+              padBottom={40}
+              fitMaxZoom={14}
+              showRoute={false}
+              zoomControls
+              cooperativeGestures
+            />
+          </div>
+        ) : (
+          <div className="dayex-list">
             {flat ? (
               <PlannerSection
-                title={t(CHIP_KEY[chip])}
+                title={q ? t('dayex.searchTitle', { q: query.trim() }) : t(CHIP_KEY[chip])}
                 className="dayex-rail"
                 aside={<span className="dayex-count">{t('dayex.nPlaces', { n: flat.length })}</span>}
               >
@@ -695,12 +743,12 @@ export function DayExploreBuilder({
                   <>
                     <div className="dayex-cards dayex-cards-full">
                       {flat.filter((r) => r.photo).map((r) => (
-                        <PlaceCard key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...cardProps} t={t} />
+                        <PlaceCard key={r.key} row={r} picked={isPicked(r)} {...cardProps} t={t} />
                       ))}
                     </div>
                     <ul className="dayex-rows">
                       {flat.filter((r) => !r.photo).map((r) => (
-                        <PlaceRow key={r.key} row={r} picked={isPicked(r)} highlighted={hi === r.key} {...cardProps} t={t} />
+                        <PlaceRow key={r.key} row={r} picked={isPicked(r)} {...cardProps} t={t} />
                       ))}
                     </ul>
                   </>
@@ -725,64 +773,25 @@ export function DayExploreBuilder({
                 <div ref={trailRef}>
                   <Rail title={t('dayex.railNature')} rows={natureRows} loading={!!loading.trail} {...cardProps} />
                 </div>
+                <Rail title={t('dayex.railFood')} rows={foodRows} {...cardProps} />
                 <div ref={dossRef}>
                   <Rail title={t('dayex.railDo')} rows={doRows} loading={!!loading.doss} {...cardProps} />
                 </div>
-                <Rail title={t('dayex.railFood')} rows={foodRows} {...cardProps} />
+                <div ref={waterRef}>
+                  <Rail title={t('dayex.railWater')} rows={waterRows} loading={!!loading.water} {...cardProps} />
+                </div>
                 {shortRows.length > 0 && (
                   <Rail title={t('dayex.railShortlist')} rows={shortRows} {...cardProps} />
                 )}
-                <div ref={waterRef}>
-                  <Rail title={t('dayex.railWater')} rows={water || []} loading={!!loading.water} {...cardProps} />
-                </div>
-                <Rail title={t('dayex.railTowns')} rows={townRows} {...cardProps} />
+                {!sightRows.length && !natureRows.length && !foodRows.length && !doRows.length
+                  && !waterRows.length && !loading.trail && !loading.water && !loading.doss && (
+                  <p className="trip-note">{t('dayex.areaEmpty', { town: here?.label || '' })}</p>
+                )}
               </>
             )}
           </div>
-
-          <div className="dayex-mapcol">
-            {wide && (
-              <section className="dayex-preview" aria-labelledby="dayex-preview-h">
-                <div className="dayex-preview-head">
-                  <h2 id="dayex-preview-h">{t('dayex.trayTitle')}</h2>
-                  {count > 0 && <span>{summaryText}</span>}
-                </div>
-                {count ? daysPreview : <p className="dayex-day-foot">{t('dayex.trayNone')}</p>}
-                <div className="dayex-preview-carta">
-                  <CreditChip />
-                </div>
-              </section>
-            )}
-            {(wide || view === 'map') && (
-              <div className="dayex-map">
-                <TripMap
-                  stops={mapStops}
-                  pois={markers}
-                  onPoiClick={(id) => { const r = rowByKey.get(id); if (r?.add) toggle(r); else focusCard(id); }}
-                  focus={stay ? { lat: stay.lat, lon: stay.lon, zoom: 12 } : null}
-                  padBottom={40}
-                  fitMaxZoom={14}
-                  showRoute={false}
-                  zoomControls
-                  cooperativeGestures={!wide}
-                />
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
-
-      {trayOpen && (
-        <SheetShell title={t('dayex.trayTitle')} onClose={() => setTrayOpen(false)} width={480} className="dayex-tray-sheet">
-          {count === 0 ? <p className="trip-note">{t('dayex.trayNone')}</p> : daysPreview}
-          <div className="dayex-sheet-acts">
-            <Button onClick={() => { setTrayOpen(false); onLetCartaPlan(trayRows); }}>
-              {count ? t('dayex.cartaRest') : t('dayex.cartaAll')}
-            </Button>
-            <CreditChip />
-          </div>
-        </SheetShell>
-      )}
 
       {detail && (
         <SheetShell title={detail.name} onClose={() => setDetail(null)} width={520} className="dayex-detail">
@@ -791,10 +800,11 @@ export function DayExploreBuilder({
               <HeroImage url={detail.photo} city={detail.name} maxWidth={960} sizes="(max-width: 700px) 92vw, 500px" />
             </span>
           )}
-          <div className="dayex-detail-head">
-            {detail.rating?.score != null && <ScoreChip rating={detail.rating} size="sm" />}
-            {reachLine(detail, t) && <span className="dayex-detail-dist">{reachLine(detail, t)}</span>}
-          </div>
+          {reachLine(detail, t) && (
+            <p className="dayex-detail-head">
+              <span className="dayex-detail-dist">{reachLine(detail, t)}</span>
+            </p>
+          )}
           {detail.desc && <p className="dayex-detail-desc">{detail.desc}</p>}
           <div className="dayex-detail-acts">
             {detail.open?.type === 'dest' && onOpenDest && (

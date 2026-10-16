@@ -1,0 +1,266 @@
+{
+  "phone": {
+    "start": {
+      "words": 35,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 25,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "when": {
+      "words": 71,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 25,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "ideas": {
+      "words": 64,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 25,
+      "targets": 0,
+      "map": 0,
+      "figure": true
+    },
+    "how": {
+      "words": 49,
+      "photos": 2,
+      "forkGap": 0,
+      "chrome": 25,
+      "targets": 2,
+      "map": 0,
+      "figure": true
+    },
+    "build": {
+      "words": 79,
+      "photos": 3,
+      "forkGap": null,
+      "chrome": 25,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "build-picked": {
+      "words": 81,
+      "photos": 3,
+      "forkGap": null,
+      "chrome": 25,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "planned": {
+      "words": 56,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 10,
+      "targets": 0,
+      "map": 19,
+      "figure": true
+    },
+    "tapsToPlannedDay": 10
+  },
+  "ipad": {
+    "start": {
+      "words": 45,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 15,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "when": {
+      "words": 82,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 15,
+      "targets": 2,
+      "map": 0,
+      "figure": false
+    },
+    "ideas": {
+      "words": 76,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 15,
+      "targets": 0,
+      "map": 0,
+      "figure": true
+    },
+    "how": {
+      "words": 60,
+      "photos": 4,
+      "forkGap": 0,
+      "chrome": 15,
+      "targets": 2,
+      "map": 0,
+      "figure": true
+    },
+    "build": {
+      "words": 117,
+      "photos": 6,
+      "forkGap": null,
+      "chrome": 15,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "build-picked": {
+      "words": 119,
+      "photos": 6,
+      "forkGap": null,
+      "chrome": 15,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "planned": {
+      "words": 79,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 0,
+      "targets": 0,
+      "map": 51,
+      "figure": true
+    },
+    "tapsToPlannedDay": 10
+  },
+  "ipadl": {
+    "start": {
+      "words": 45,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 13,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "when": {
+      "words": 82,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 13,
+      "targets": 2,
+      "map": 0,
+      "figure": false
+    },
+    "ideas": {
+      "words": 76,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 13,
+      "targets": 0,
+      "map": 0,
+      "figure": true
+    },
+    "how": {
+      "words": 60,
+      "photos": 4,
+      "forkGap": 0,
+      "chrome": 13,
+      "targets": 2,
+      "map": 0,
+      "figure": true
+    },
+    "build": {
+      "words": 139,
+      "photos": 6,
+      "forkGap": null,
+      "chrome": 13,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "build-picked": {
+      "words": 141,
+      "photos": 6,
+      "forkGap": null,
+      "chrome": 13,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "planned": {
+      "words": 115,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 0,
+      "targets": 0,
+      "map": 51,
+      "figure": true
+    },
+    "tapsToPlannedDay": 10
+  },
+  "desk": {
+    "start": {
+      "words": 59,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": false
+    },
+    "when": {
+      "words": 104,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": true
+    },
+    "ideas": {
+      "words": 94,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": true
+    },
+    "how": {
+      "words": 78,
+      "photos": 4,
+      "forkGap": 0,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": true
+    },
+    "build": {
+      "words": 123,
+      "photos": 3,
+      "forkGap": null,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": true
+    },
+    "build-picked": {
+      "words": 138,
+      "photos": 3,
+      "forkGap": null,
+      "chrome": 19,
+      "targets": 0,
+      "map": 0,
+      "figure": true
+    },
+    "planned": {
+      "words": 79,
+      "photos": 0,
+      "forkGap": null,
+      "chrome": 0,
+      "targets": 0,
+      "map": 45,
+      "figure": true
+    },
+    "tapsToPlannedDay": 10
+  }
+}

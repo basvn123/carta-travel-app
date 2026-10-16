@@ -226,7 +226,9 @@ const EXTRA_PRESETS = [
 
 export function CartaChatPlanner({
   // T433: the wizard frame the questions live in, and what the frame needs.
-  wizard, banner = null, dayCount = 1, startName = '',
+  wizard, dayCount = 1, startName = '',
+  // T459: the flow's recap (start, days, ideas) and its rail card.
+  recap: recapBase = [], rail = null, railSummary = null,
   towns, dateISO, groupSize, signedIn, onRun, onImport, onBack, onManual,
   stayPoint, cityOptions, onSuggestCity, resolveNearest, onResearchCity,
   presetTownId = null, defaultTownId = null, ideas = [], townCandidateCount = null,
@@ -534,7 +536,39 @@ export function CartaChatPlanner({
     );
   };
 
-  const recap = visible.slice(0, stepSafe).filter((q) => answered(q) && q.key !== 'extra');
+  // One recap (T459): the flow's own answers, then this conversation's, each
+  // a chip that reopens its question. The T433 chat kept a second row of its
+  // own under a start pill; the trip planner has one "Planning around".
+  const answeredQs = phase === 'ask'
+    ? visible.slice(0, stepSafe).filter((q) => answered(q) && q.key !== 'extra')
+    : visible.filter((q) => answered(q) && q.key !== 'extra');
+  const recap = [
+    ...recapBase,
+    ...answeredQs.map((q) => ({
+      key: `q-${q.key}`,
+      text: answerLabel(q, answers[q.key]),
+      onClick: phase === 'ask' ? () => go(visible.indexOf(q)) : undefined,
+      title: t('chat.changeAnswer'),
+    })),
+  ];
+
+  const title = phase === 'ask' && current
+    ? (current.key === 'extra'
+      ? t(dayCount > 1 ? 'chat.summaryDays' : 'chat.summaryDay', { n: dayCount, town: townName || startName })
+      : t(current.qKey, questionVars(current)))
+    : phase === 'busy' ? t(dayCount > 1 ? 'chat.buildingDays' : 'chat.buildingDay', { n: dayCount })
+      : phase === 'fail' ? t('chat.failTitle') : null;
+
+  const lead = phase === 'ask' && current ? (
+    <p className="daychat-progress">
+      <span>{t('chat.qOf', { n: stepSafe + 1, total })}</span>
+      <span className="daychat-dots" aria-hidden="true">
+        {visible.map((q, i) => (
+          <span key={q.key} className={i < stepSafe ? 'done' : i === stepSafe ? 'now' : ''} />
+        ))}
+      </span>
+    </p>
+  ) : null;
 
   return (
     <DayWizardShell
@@ -544,41 +578,16 @@ export function CartaChatPlanner({
       dir={dir}
       foot={foot}
       className="dayw-chat"
+      recap={recap}
+      title={title}
+      lead={lead}
+      rail={rail}
+      railSummary={railSummary}
+      railTitle={t('dayr.title')}
     >
-      {banner}
       <div className="daychat">
         {phase === 'ask' && current && (
           <>
-            <div className="daychat-progress">
-              <SparkIcon size={14} />
-              <span>{t('chat.qOf', { n: stepSafe + 1, total })}</span>
-              <span className="daychat-dots" aria-hidden="true">
-                {visible.map((q, i) => (
-                  <span key={q.key} className={i < stepSafe ? 'done' : i === stepSafe ? 'now' : ''} />
-                ))}
-              </span>
-            </div>
-
-            {recap.length > 0 && (
-              <div className="daychat-recap" aria-label={t('chat.recapAria')}>
-                {recap.map((q) => (
-                  <button
-                    key={q.key}
-                    type="button"
-                    className="daychat-recap-chip"
-                    onClick={() => go(visible.indexOf(q))}
-                    title={t('chat.changeAnswer')}
-                  >
-                    {answerLabel(q, answers[q.key])}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <h1 className="guide-title">
-              {current.key === 'extra' ? t(dayCount > 1 ? 'chat.summaryDays' : 'chat.summaryDay', { n: dayCount, town: townName || startName }) : t(current.qKey, questionVars(current))}
-            </h1>
-
             {current.key === 'companions' && (
               <>
                 {choiceTiles(current, 3)}
@@ -596,7 +605,7 @@ export function CartaChatPlanner({
               <>
                 {choiceTiles(current, 2)}
                 <div className="daychat-sub">
-                  <h2 className="daychat-h">{t('chat.startLabel')}</h2>
+                  <h2 className="wiz-q-h">{t('chat.startLabel')}</h2>
                   <ChipGroup label={t('chat.startLabel')}>
                     {START_CHIPS.map((c) => (
                       <Chip
@@ -615,7 +624,7 @@ export function CartaChatPlanner({
               <>
                 {choiceTiles(current, 2)}
                 <div className="daychat-sub">
-                  <h2 className="daychat-h">{t('chat.gettingAround')}</h2>
+                  <h2 className="wiz-q-h">{t('chat.gettingAround')}</h2>
                   <Segmented
                     label={t('chat.gettingAround')}
                     value={answers.transitOk ? 'transit' : 'foot'}
@@ -667,7 +676,7 @@ export function CartaChatPlanner({
               <>
                 {choiceTiles(current, 2)}
                 <div className="daychat-sub">
-                  <h2 className="daychat-h">{t('chat.dietLabel')}</h2>
+                  <h2 className="wiz-q-h">{t('chat.dietLabel')}</h2>
                   <div className="daychat-chips">
                     {DIET_CHIPS.map((d) => (
                       <Chip
@@ -731,14 +740,12 @@ export function CartaChatPlanner({
 
         {phase === 'busy' && (
           <div className="daychat-busy">
-            <h1 className="guide-title">{t(dayCount > 1 ? 'chat.buildingDays' : 'chat.buildingDay', { n: dayCount })}</h1>
             <RouteBuildingStage stages={stages} reworking={rounds > 0} />
           </div>
         )}
 
         {phase === 'fail' && (
           <div className="daychat-fail">
-            <h1 className="guide-title">{t('chat.failTitle')}</h1>
             <p className="daychat-fail-text">{t(`ai.${CHAT_FAIL_KEY[failCode] || 'error'}`)}</p>
             <div className="daychat-fail-acts">
               {failCode === 'auth' && onSignIn

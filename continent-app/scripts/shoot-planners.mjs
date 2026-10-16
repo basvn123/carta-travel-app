@@ -25,7 +25,7 @@ const argv = Object.fromEntries(process.argv.slice(2).map((a) => {
 }));
 const PORT = 4231;
 const BASE = (argv.url || `http://127.0.0.1:${PORT}/`).replace(/\/?$/, '/');
-const OUT = 'shots/planners';
+const OUT = argv.lang && argv.lang !== 'en' ? `shots/planners-${argv.lang}` : 'shots/planners';
 
 const VIEWPORTS = [
   { key: 'mobile', width: 375, height: 812, mobile: true },
@@ -166,9 +166,11 @@ async function audit(page, vp, flow, name) {
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────
-const seed = (page) => page.addInitScript(() => {
+// --lang=de walks the same screens in another language (T459: German lengths).
+const LANG = argv.lang || 'en';
+const seed = (page) => page.addInitScript((lang) => {
   try {
-    localStorage.setItem('continent.lang.v1', 'en');
+    localStorage.setItem('continent.lang.v1', lang);
     localStorage.setItem('continent.guestMode.v1', '1');
     localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
@@ -176,7 +178,7 @@ const seed = (page) => page.addInitScript(() => {
     localStorage.setItem('carta.welcomeSeen', '1');
     localStorage.setItem('continent.onboardingSeen.v1', '1');
   } catch { /* storage unavailable */ }
-});
+}, LANG);
 
 async function newPage(browser, vp) {
   const ctx = await browser.newContext({
@@ -482,7 +484,10 @@ async function dayFlow(browser, vp) {
       await b.page.waitForTimeout(2000);
       await bshot('09-build-map');
     }
-    await click(b.page, '.dayex-tray-summary', 900);
+    // T459: "Your days" is the rail card on a wide screen and a footer
+    // button that opens it as a sheet on a narrower one.
+    const railBtn = b.page.locator('.dayw-rail-btn');
+    if (await railBtn.isVisible().catch(() => false)) await click(b.page, '.dayw-rail-btn', 900);
     await bshot('10-build-tray');
     await b.page.keyboard.press('Escape');
     await b.page.waitForTimeout(400);
