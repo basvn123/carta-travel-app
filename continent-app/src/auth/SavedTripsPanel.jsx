@@ -1,10 +1,13 @@
-import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
-import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore, loadTripExtras, persistTripExtras } from '../planner/dayPlanStore.js';
-import { MapPinIcon, RouteIcon, ListDayIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon, LinkIcon, PersonIcon, ExpandIcon, ShrinkIcon, CloseIcon } from '../components/Icons.jsx';
+import {
+  loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore,
+  loadTripExtras, persistTripExtras,
+} from '../planner/dayPlanStore.js';
+import { CalendarIcon, BookmarkIcon, CheckIcon, RouteIcon, LinkIcon } from '../components/Icons.jsx';
+import { TileGroup, Tile, Chip } from '../components/ui/index.js';
 import { PastTripForm } from './PastTripForm.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import {
@@ -14,33 +17,48 @@ import {
 import {
   loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, SPEND_CATS,
 } from './pastTripMemory.js';
-import { CountryFlag, CountryFlagStack, COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
-import { crewLabel, crewInitials, namedCrew, newCrewMember, readCrew, writeCrew, MAX_CREW } from './tripCrew.js';
+import { COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
+import { crewLabel, crewInitials, namedCrew, readCrew, writeCrew, MAX_CREW } from './tripCrew.js';
 import { TripSharePanel } from './TripSharePanel.jsx';
 import { ModerationNotice } from './ModerationNotice.jsx';
 import { fetchMyStatements, contestStatement, latestByPlan } from './moderation.js';
-import { FriendTripPanel } from './FriendTripPanel.jsx';
 import { fetchFriendLinks, listFriendTrips } from './friends.js';
-import { kindsForDest } from '../lib/trip_kinds.js';
-import { eur } from '../lib/format.js';
-import { eurDay } from '../lib/costIndex.js';
+import { formatMoney } from '../lib/money.js';
+import { countryName } from '../lib/countryName.js';
 import { useI18n } from '../i18n/index.jsx';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { activeLocale } from '../lib/localeState.js';
 import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
-import { FAV_KIND_LABEL, parseFavKey } from '../lib/favorites.js';
-import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { FAV_KINDS, parseFavKey } from '../lib/favorites.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
-import { useSettledFigure } from '../lib/figureChange.js';
-import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
+import { DayPrice } from '../browse/ExploreCards.jsx';
+import '../styles/70-mytrips.css';
 import { InstallHint } from './InstallHint.jsx';
+import {
+  localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique,
+  nightsBetween, tripFigure, visitedRecord, yearOf,
+} from '../lib/myTrips.js';
+import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
+import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
+import {
+  TripsTab, ShortlistTab, ShortlistFilters, VisitedTab, YearFilter, VisitedCountriesSheet,
+} from './mytrips/MyTripsTabs.jsx';
 
-// The mini map at the top of Planned trips rides on the same code-split chunk
-// as the big map: opening the panel before the map tab must not stall on
-// maplibre, so it streams in behind a quiet placeholder.
-const SavedTripMap = lazy(() => import('../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
+/**
+ * My trips (T434). Three tabs, one page:
+ *   Trips      the next trip as the focal card with what it costs the party
+ *              now, the weather, the days planned and who is going; later
+ *              trips, drafts and day plans as rows.
+ *   Shortlist  everything starred anywhere, priced as Explore prices it, with
+ *              a kind and an order filter and "Plan a trip" from it.
+ *   Visited    the record: a map, the figures it adds up to, the countries
+ *              (with the ones marked by hand), the trips by year.
+ *
+ * This file keeps the state, the data and the undo; the tabs and cards are
+ * drawn in ./mytrips/. Dates decide what is upcoming and what is past
+ * (lib/myTrips.js); nobody files anything.
+ */
 
-// How many individual days of a trip plan have Day-planner picks on this
+// How many individual days of a trip plan have Day planner picks on this
 // device (assignments = { stopIdx: { dayIdx: [activityIdx...] } }).
 function countPlannedDays(planId) {
   const a = loadAssignments(planId);
@@ -50,23 +68,8 @@ function countPlannedDays(planId) {
   );
 }
 
-// Local calendar date as YYYY-MM-DD; all stored trip dates are plain date
-// strings, so classification is a string comparison in the user's own day.
-function localToday() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-function addDaysIso(offset) {
-  const d = new Date();
-  d.setDate(d.getDate() + offset);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-// ?savedmock verify seam, same precedent as ?provmock on the price surfaces:
-// fixture favorites and trip plans stand in for the Supabase tables so the
-// account-only card shapes render in headless checks. Display only, never on
-// for real users unless they type the flag themselves.
+// ?savedmock verify seam: fixture rows stand in for the Supabase tables so
+// the account-only shapes render in headless checks. Never on in production.
 const SAVED_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('savedmock');
 const MOCK_FAVS = [
@@ -74,836 +77,58 @@ const MOCK_FAVS = [
   { id: 'mf2', destination_id: 'OPO', city: 'Porto', country: 'Portugal', depart_date: addDaysIso(62), return_date: addDaysIso(65), created_at: addDaysIso(-30) },
   { id: 'mf3', destination_id: 'gem:bruges', city: 'Bruges', country: 'Belgium', created_at: addDaysIso(-45) },
 ];
-// Two friends showing three trips between them, so the ?savedmock seam can
-// render the comparison as well as the shelf.
 const MOCK_FRIEND_TRIPS = [
   { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft1', label: 'Two weeks in Portugal', startDate: addDaysIso(-90), endDate: addDaysIso(-80), cities: ['Lisbon', 'Porto'], countries: ['Portugal'], destinationIds: ['LIS', 'OPO'] },
   { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft2', label: 'Alpine summer', startDate: addDaysIso(-200), endDate: addDaysIso(-193), cities: ['Innsbruck'], countries: ['Austria'], destinationIds: ['INN'] },
   { ownerId: 'u-jonas', ownerHandle: 'jonas', ownerName: 'Jonas Peeters', tripPlanId: 'ft3', label: 'A week in Rome', startDate: addDaysIso(-150), endDate: addDaysIso(-143), cities: ['Rome'], countries: ['Italy'], destinationIds: ['FCO'] },
 ];
-
-// One statement of reasons (migration 039) against the first mock plan, so
-// the ?savedmock seam renders the owner's notice and its complaint form; it
-// carries the ground 051 adds (the content rule item c6, someone else's work).
 const MOCK_STATEMENTS = [
   { id: 1, plan_id: 'mp1', plan_label: 'Lisbon and Porto', source: 'notice', notice_count: 2, facts: 'The guide copies a chapter of a published travel book word for word.', automated: false, created_at: addDaysIso(-3), contest_until: addDaysIso(180), complaint_status: 'none', complaint_note: null, reinstated: false, ground: 'terms', ground_ref: 'c6' },
 ];
-
+// Stops carry their own windows so the seam can price the trips the way a
+// real account's rows are priced (choices on the first stop, T434).
+const mockStops = (list) => list.map(([id, a, b]) => ({ destination_id: id, city: '', country: '', arrive_date: addDaysIso(a), depart_date: addDaysIso(b) }));
 const MOCK_PLANS = [
-  { id: 'mp1', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'], start_date: addDaysIso(21), end_date: addDaysIso(27), destination_ids: ['LIS', 'OPO'] },
+  { id: 'mp1', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'], start_date: addDaysIso(21), end_date: addDaysIso(27), destination_ids: ['LIS', 'OPO'], stops: mockStops([['LIS', 21, 24], ['OPO', 24, 27]]), choices: { groupSize: 2 } },
   { id: 'mp2', label: 'Autumn in Flanders', cities: ['Bruges'], countries: ['Belgium'], start_date: addDaysIso(-40), end_date: addDaysIso(-35), destination_ids: ['gem:bruges'] },
-  { id: 'mp3', label: null, cities: ['Salzburg'], countries: ['Austria'], start_date: addDaysIso(-11), end_date: addDaysIso(-9), destination_ids: ['SZG'] },
+  { id: 'mp3', label: null, cities: ['Salzburg'], countries: ['Austria'], start_date: addDaysIso(-380), end_date: addDaysIso(-377), destination_ids: ['SZG'] },
   { id: 'mp4', label: null, cities: ['Munich'], countries: ['Germany'], start_date: addDaysIso(-9), end_date: addDaysIso(-7), destination_ids: ['MUC'] },
-  // A second trip ahead, so the seam draws the focal card AND a row (T400,
-  // brief V4-2): the first upcoming plan is the focal card, every later one a row.
   { id: 'mp5', label: null, cities: ['Ljubljana'], countries: ['Slovenia'], start_date: addDaysIso(75), end_date: addDaysIso(79), destination_ids: [] },
 ];
 
-function daysUntil(dateStr, todayIso) {
-  return Math.round((new Date(dateStr + 'T00:00:00') - new Date(todayIso + 'T00:00:00')) / 86400000);
-}
+const MAP_PAD = { top: 24, left: 24, right: 24, bottom: 24 };
+const TAB_KEY = 'carta.savedTripsTab';
+const SORT_KEY = 'carta.mytrips.sort';
+const readStored = (key, allowed, fallback) => {
+  try { const v = localStorage.getItem(key); return allowed.includes(v) ? v : fallback; } catch { return fallback; }
+};
+const writeStored = (key, v) => { try { localStorage.setItem(key, v); } catch { /* private mode */ } };
 
-// A standalone day plan's last calendar day, for past/upcoming sorting.
-function dayPlanEndDate(sp) {
-  if (!sp.startDate) return null;
-  const total = sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1;
-  const d = new Date(sp.startDate + 'T00:00:00');
-  d.setDate(d.getDate() + total - 1);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-// First-seen-order dedupe, dropping holes; keeps "Lisbon, Porto" in the order
-// the trip actually visits them, unlike a Set spread of mixed sources.
-function orderedUnique(list) {
-  const out = [];
-  for (const v of list) if (v && !out.includes(v)) out.push(v);
-  return out;
-}
-
-/** One labelled shelf of the overview: title + count, an explainer of what
- *  lands here, then its cards. `big` promotes the title to the display face,
- *  for the one heading that names each tab's main list. `action` is the one
- *  thing you can do to the shelf itself, kept on the heading line. */
-function SavedSection({ title, sub, count, muted, big, action, children }) {
-  // The count is the house count chip (carta-design "Count chip"): mono, ink
-  // on --paper-dim, never the accent, and no chip at all when the shelf is
-  // empty. It used to fill with the accent when the shelf held something,
-  // which spent the page's one action colour on a number (T390, brief V3-2).
-  return (
-    <div className={`panel-section saved-section${muted ? ' is-muted' : ''}${big ? ' is-big' : ''}`}>
-      <div className="saved-section-head">
-        <h2 className="saved-section-title">{title}</h2>
-        {count != null && count > 0 && (
-          <span className="saved-section-count">{count}</span>
-        )}
-        {action && <span className="saved-section-action">{action}</span>}
-      </div>
-      {sub && <p className="saved-section-sub">{sub}</p>}
-      {children}
-    </div>
-  );
-}
-
-/** An empty shelf, as an invitation rather than a dashed drop zone. */
-// The round icon mark that used to head this block carried nothing the
-// sentence does not say, so it went (T367, docs/ONBOARDING_AND_EMPTY_STATES.md
-// "Before you ship"); callers may still pass an Icon and it is ignored.
-// `secondary` draws the invitation's button as a secondary: one primary per
-// tab (T390, brief V3-2), so a second empty shelf on the same tab asks quietly.
-function SavedEmpty({ text, cta, onCta, secondary = false }) {
-  return (
-    <div className="saved-empty">
-      <p className="saved-empty-text">{text}</p>
-      {cta && onCta && (
-        <button className={`saved-empty-cta${secondary ? ' is-secondary' : ''}`} onClick={onCta}>{cta}</button>
-      )}
-    </div>
-  );
-}
-
-/**
- * The Undo toast (carta-design "Undo, not confirm" and "Bottom slot", T400).
- * It is portalled into the shell's one bottom slot, so it stacks above the
- * bottom nav with every other transient message instead of pinning itself to
- * the window; where the slot is missing (a harness mounting the panel alone)
- * it renders in place. "Undo" is a secondary; the close ends the hold at once.
- */
-function UndoToast({ label, onUndo, onClose }) {
-  const { t } = useI18n();
-  const undoBtn = useRef(null);
-  // After a removal the card (and the menu that held focus) is gone, so focus
-  // would fall back to the page. Hand it to Undo, the one control the keyboard
-  // user needs next (row T400-d). Only when focus is lost: a pointer user's
-  // focus ring does not show on a programmatic focus.
-  useEffect(() => {
-    const a = document.activeElement;
-    if (!a || a === document.body || !document.contains(a)) undoBtn.current?.focus({ preventScroll: true });
-  }, []);
-  const node = (
-    <div className="undo-toast" role="status">
-      <span className="undo-toast-text">{t('saved.undoRemoved', { name: label })}</span>
-      <button type="button" ref={undoBtn} className="undo-toast-undo" onClick={onUndo}>{t('saved.undo')}</button>
-      <button type="button" className="undo-toast-close" onClick={onClose} aria-label={t('a11y.close')} title={t('a11y.close')}>
-        <CloseIcon size={16} />
-      </button>
-    </div>
-  );
-  const slot = typeof document !== 'undefined' ? document.querySelector('.bottom-slot') : null;
-  return slot ? createPortal(node, slot) : node;
-}
-
-/** The record map at device size, as a real modal: it names itself, tells a
- *  screen reader that the page behind is out of reach, and keeps Tab inside
- *  (T410, brief V5-4). Escape stays with the panel's capture listener. */
-function RecordMapDialog({ title, onClose, children }) {
-  const ref = useRef(null);
-  useFocusTrap(ref, onClose);
-  return (
-    <div className="savedmap-full" role="dialog" aria-modal="true" aria-label={title} ref={ref}>
-      {children}
-    </div>
-  );
-}
-
-/** The shared "more" affordance: one quiet button, a popover with the card's
- *  secondary actions, and Remove always last, in --danger. Remove runs at once
- *  and the panel offers Undo for six seconds (T400). */
-function CardMenu({ actions = [], onAskRemove, removeLabel }) {
-  const { t } = useI18n();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
-  const moreRef = useRef(null);
-
-  // The menu is a menu: opening it moves focus to its first item, Arrow keys,
-  // Home and End walk it, Escape closes it and gives focus back to the button
-  // (T410, brief V5-4).
-  useEffect(() => {
-    if (menuOpen) menuRef.current?.querySelector('[role="menuitem"]')?.focus();
-  }, [menuOpen]);
-  const onMenuKey = (e) => {
-    const items = [...(menuRef.current?.querySelectorAll('[role="menuitem"]') || [])];
-    if (!items.length) return;
-    const at = items.indexOf(document.activeElement);
-    let next = null;
-    if (e.key === 'ArrowDown') next = items[(at + 1) % items.length];
-    else if (e.key === 'ArrowUp') next = items[(at - 1 + items.length) % items.length];
-    else if (e.key === 'Home') next = items[0];
-    else if (e.key === 'End') next = items[items.length - 1];
-    if (next) { e.preventDefault(); next.focus(); }
-  };
-
-  useEffect(() => {
-    if (!menuOpen) return undefined;
-    const onDocDown = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
-    };
-    // Capture phase, and it stops the key: App keeps its own Escape stack on
-    // window, so one press would close the menu AND the page behind it.
-    const onKey = (e) => {
-      if (e.key !== 'Escape') return;
-      e.stopPropagation();
-      setMenuOpen(false);
-      moreRef.current?.focus();
-    };
-    document.addEventListener('mousedown', onDocDown);
-    document.addEventListener('keydown', onKey, true);
-    return () => {
-      document.removeEventListener('mousedown', onDocDown);
-      document.removeEventListener('keydown', onKey, true);
-    };
-  }, [menuOpen]);
-
-  return (
-    <div className="saved-card-menu" ref={menuRef}>
-      <button
-        className="saved-card-more"
-        ref={moreRef}
-        onClick={() => setMenuOpen((v) => !v)}
-        aria-label={t('saved.actions')}
-        aria-haspopup="menu"
-        aria-expanded={menuOpen}
-        title={t('saved.actions')}
-      >
-        <MoreIcon size={16} />
-      </button>
-      {menuOpen && (
-        <div className="saved-card-pop" role="menu" onKeyDown={onMenuKey}>
-          {actions.map((a) => (
-            <button
-              key={a.key}
-              role="menuitem"
-              className="saved-card-pop-item"
-              onClick={() => { setMenuOpen(false); a.onClick(); }}
-            >
-              {a.icon}
-              {a.label}
-            </button>
-          ))}
-          {onAskRemove && (
-            <button
-              role="menuitem"
-              className="saved-card-pop-item danger"
-              onClick={() => { setMenuOpen(false); onAskRemove(); }}
-              aria-label={removeLabel}
-            >
-              <TrashIcon size={14} />
-              {t('saved.remove')}
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * What a day costs one person at the traveller's Lifestyle, for a saved place
- * or plan (carta-design "Cost on cards", brief V3-3, T390).
- *
- * The figure comes from the same computeCosts() map Explore's cards print
- * from (App computes it once and hands it down as `costs`), and it is set
- * with the same eurDay() formatter, so a place reads the same euro here as on
- * its Explore card. It is the figure for the traveller's inputs NOW, never a
- * price stored at save time (no such price exists, row T379-c). A plan with
- * several towns says "From" its cheapest town. A figure that leans on a
- * country-level stand-in (the bed or the food measured for the country, not
- * the town) carries the word "national". No costs map, or no figure for any
- * of the ids, renders nothing rather than a placeholder that pretends.
- */
-// A sentence is translated whole and its figure cut back in, so the figure
-// can sit in mono while the words around it stay in the UI face.
-const SLOT = '\u0001';
-// How long a removal is held behind its Undo toast (carta-design "Undo, not
-// confirm": six seconds).
-const UNDO_MS = 6000;
-function splitSlot(text) {
-  const [before, after = ''] = String(text).split(SLOT);
-  return [before, after];
-}
-
-function SavedCost({ costs, ids }) {
-  const { t } = useI18n();
-  const eurRef = useRef(null);
-  const rows = (costs && ids?.length)
-    ? orderedUnique(ids).map((id) => costs.get(id)).filter((c) => c && c.dayEur != null)
-    : [];
-  const pick = rows.length ? rows.reduce((a, b) => (b.dayEur < a.dayEur ? b : a)) : null;
-  const shown = pick ? eurDay(pick.dayEur) : '';
-  // A Lifestyle change re-prices the card where it stands: the figure
-  // changes at once and dips once in --dur-2 so the eye sees it moved
-  // (T400, DIRECTION.md 2.3 "A figure updates in place"); never a count-up.
-  useSettledFigure(eurRef, shown);
-  if (!pick) return null;
-  const national = pick.stayLevel !== 'city' || pick.foodLevel !== 'city';
-  const [before, after] = splitSlot(t(rows.length > 1 ? 'saved.costFromDay' : 'saved.costDay', { eur: SLOT }));
-  return (
-    <span className="saved-cost">
-      {before}<span className="saved-cost-eur" ref={eurRef}>{shown}</span>{after}
-      {national && <>{' '}<span className="saved-cost-level">{t('saved.costNational')}</span></>}
-    </span>
-  );
-}
-
-/** Compact bordered row: the day-plan card, and any saved thing that needs a
- *  small footprint. Unchanged anatomy from the previous panel. */
-// Removal runs at once and the panel offers Undo in the bottom slot for six
-// seconds (carta-design "Undo, not confirm", T400, row T390-e): a day plan, a
-// trip plan, a saved place and a star are all held by the app until the toast
-// ends, so the inline Keep or Remove these cards used to ask is gone.
-function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, figure = null, onOpen, openTitle, actions = [], onDelete, deleteLabel, footer }) {
-  return (
-    <div className={`saved-card${footer ? ' has-footer' : ''}`}>
-      <div className="saved-card-row">
-        <button className="saved-card-main" onClick={onOpen} title={openTitle}>
-          <span className={`saved-card-icon is-${visualKind}`}>{visual || <Icon size={16} />}</span>
-          <span className="saved-card-text">
-            <span className="saved-card-title">{title}</span>
-            {meta && <span className="saved-card-meta">{meta}</span>}
-            {figure}
-          </span>
-        </button>
-        <CardMenu actions={actions} onAskRemove={onDelete} removeLabel={deleteLabel} />
-      </div>
-      {footer && (
-        <button className="saved-card-footer" onClick={footer.onClick} title={footer.title}>
-          <span>{footer.label}</span>
-          <span className="saved-card-footer-go" aria-hidden="true">›</span>
-        </button>
-      )}
-    </div>
-  );
-}
-
-/** A favorite: one saved place, photo first, its country flag worn in the
- *  corner and the day it was kept in the caption. The bookmark mark is the
- *  saved state itself, so tapping it is how a favorite is let go (at once,
- *  with Undo in the bottom slot).
- *
- *  Nothing sits on the photograph (carta-design "Caption band", T400, brief
- *  V4-1): the name, the figure, the dates and when it was kept sit in a solid
- *  band flush under it, and the bookmark sits in that band. The flag stays on
- *  the photo because it is a picture, on its own solid chip. */
-function FavCard({ trip, img, dates, kind, savedOn, figure = null, onOpen, openTitle, onDelete, deleteLabel }) {
-  const { t } = useI18n();
-  // The corner flag already names the country; the text line only steps in
-  // for a country the flag catalogue does not cover.
-  const hasFlag = !!(trip.country && COUNTRY_ISO2[trip.country]);
-
-  return (
-    <div className="fav-card">
-      <button className="fav-card-open" onClick={onOpen} title={openTitle}>
-        <span className={`fav-card-photo${img ? '' : ' is-fallback'}`} aria-hidden="true">
-          {img ? <ShotPhoto url={img} className="fav-card-img" /> : <MapPinIcon size={22} />}
-          {hasFlag && (
-            <span className="fav-card-flag">
-              <CountryFlag country={trip.country} size={13} />
-            </span>
-          )}
-        </span>
-        <span className="fav-card-text">
-          <span className="fav-card-city">{trip.city}</span>
-          {figure}
-          {(!hasFlag && trip.country) || dates ? (
-            <span className="fav-card-sub">
-              {!hasFlag && trip.country && <span className="fav-card-country">{trip.country}</span>}
-              {dates && <span className="fav-card-dates">{dates}</span>}
-            </span>
-          ) : null}
-          {(kind || savedOn) && (
-            <span className="fav-card-kept">
-              {kind && <span className="fav-card-kind">{kind}</span>}
-              {savedOn && <span className="fav-card-savedon">{t('saved.savedOn', { date: savedOn })}</span>}
-            </span>
-          )}
-        </span>
-      </button>
-      <button
-        className="fav-card-mark"
-        onClick={onDelete}
-        aria-label={deleteLabel}
-        title={deleteLabel}
-      >
-        <BookmarkIcon size={16} />
-      </button>
-    </div>
-  );
-}
-
-/**
- * ShotPhoto, the one way an image is drawn in this panel.
- *
- * Every picture here used to be a background-image on a span, which means the
- * browser cannot pick a size, cannot lazy-load it and cannot reserve the box:
- * each card downloaded one arbitrary width and reflowed when it landed. This
- * is the CardPhoto pattern from the Destinations tab instead - a real img element
- * with a srcSet, a sizes hint and intrinsic dimensions as the ASPECT (CSS
- * sizes the element; the pair only reserves the space).
- *
- * One aspect for everything, so the record reads as a record rather than a
- * pile of differently-shaped photographs.
- */
-const SHOT_SIZES = '(min-width: 769px) 360px, 50vw';
-
-function ShotPhoto({ url, className, alt = '' }) {
-  if (!url) return null;
-  return (
-    <img
-      className={className}
-      src={fallbackSrc(url, 500)}
-      srcSet={srcSetFor(url, 960)}
-      sizes={SHOT_SIZES}
-      alt={alt}
-      width={3}
-      height={2}
-      loading="lazy"
-      decoding="async"
-    />
-  );
-}
-
-/**
- * One shortlisted thing, whatever kind it is.
- *
- * Deliberately smaller and quieter than FavCard: the shortlist is a list of
- * wishes and can run long, where the account's saved destinations are a
- * handful of considered saves. Same star as the page it came from, so
- * un-starring here and un-starring there are visibly the same act.
- */
-function ShortlistRow({ row, figure = null, onOpen, onRemove, removeLabel, missingLabel }) {
-  return (
-    <div className={`slist-row${row.missing ? ' is-missing' : ''}`}>
-      <button
-        type="button"
-        className="slist-open"
-        onClick={row.missing ? undefined : onOpen}
-        disabled={row.missing}
-      >
-        <span className="slist-shot">
-          {row.img
-            ? <ShotPhoto url={row.img} className="slist-img" />
-            : <span className="slist-img is-fallback" aria-hidden="true"><MapPinIcon size={16} /></span>}
-        </span>
-        <span className="slist-text">
-          <span className="slist-name">
-            {row.missing ? missingLabel : (row.name || (row.pending ? '…' : row.id))}
-          </span>
-          {row.sub && !row.missing && <span className="slist-sub">{row.sub}</span>}
-          {!row.missing && figure}
-        </span>
-        {row.cc && <span className="slist-flag" aria-hidden="true"><CountryFlag country={row.cc} size={13} /></span>}
-      </button>
-      <button
-        type="button"
-        className="slist-drop"
-        onClick={onRemove}
-        aria-label={removeLabel}
-        title={removeLabel}
-      >
-        <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"
-          fill="currentColor" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
-          <polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.3 21 12 17.3 5.7 21 7.2 14 2 9.3 8.9 8.6" />
-        </svg>
-      </button>
-    </div>
-  );
-}
-
-/**
- * Who came, on the face of the card.
- *
- * A trip's crew was only reachable by opening the whole "add a past trip"
- * form and scrolling to the companions fold, which is a long walk to write
- * one name. This is the short way: the people already on the trip as a row of
- * initials, and one plus that opens a friend list and a name field.
- *
- * It writes exactly what the form writes, `extras.people` through writeCrew,
- * so a name added here is the same name the expense ledger splits by and the
- * memory line reads back. Appending is the only edit offered, because the
- * ledger stores `paidBy` as an index into this list (see tripCrew.js) and
- * removal renumbers it. Removing a name you just mistyped is still allowed,
- * from the row itself, where the consequence is visible.
- */
-function CrewBar({ crew, friends, onAdd, onRemove }) {
-  const { t, lang } = useI18n();
-  const [open, setOpen] = useState(false);
-  const [typed, setTyped] = useState('');
-  const people = namedCrew(crew);
-  const avatars = crewInitials(crew, 4);
-  const full = people.length >= MAX_CREW;
-  // A friend already on the trip is not offered again: the chip would add a
-  // second row for the same person.
-  const pickable = (friends || []).filter((f) => !crew.some((c) => c.userId === f.userId));
-
-  const addTyped = () => {
-    const name = typed.trim();
-    if (!name) return;
-    onAdd({ ...newCrewMember(), name });
-    setTyped('');
-  };
-
-  return (
-    <div className={`uptrip-crew${open ? ' is-open' : ''}`}>
-      <div className="uptrip-crew-row">
-        {avatars.length > 0 && (
-          <span className="uptrip-crew-stack" aria-hidden="true">
-            {avatars.map((a) => (
-              <span className="uptrip-crew-dot" key={a.id} title={a.name}>{a.initials}</span>
-            ))}
-            {people.length > avatars.length && (
-              <span className="uptrip-crew-dot is-more">+{people.length - avatars.length}</span>
-            )}
-          </span>
-        )}
-        <span className="uptrip-crew-line">
-          {people.length ? crewLabel(crew, lang, 3) : t('saved.crewEmpty')}
-        </span>
-        {!full && (
-          <button
-            className="uptrip-crew-add"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-label={t('saved.crewAdd')}
-            title={t('saved.crewAdd')}
-          >
-            <PlusIcon size={14} />
-          </button>
-        )}
-      </div>
-      {open && (
-        <div className="uptrip-crew-pop">
-          <span className="uptrip-crew-cap">{t('saved.crewTitle')}</span>
-          {pickable.length > 0 && (
-            <div className="uptrip-crew-chips">
-              {pickable.map((f) => (
-                <button
-                  key={f.userId}
-                  className="uptrip-crew-chip"
-                  onClick={() => onAdd({
-                    ...newCrewMember(),
-                    name: f.displayName || f.handle,
-                    userId: f.userId,
-                  })}
-                >
-                  <PlusIcon size={11} />
-                  {f.displayName || `@${f.handle}`}
-                </button>
-              ))}
-            </div>
-          )}
-          <div className="uptrip-crew-typerow">
-            <input
-              className="uptrip-crew-input"
-              value={typed}
-              placeholder={t('saved.crewName')}
-              onChange={(e) => setTyped(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTyped(); } }}
-            />
-            <button className="uptrip-crew-save" onClick={addTyped} disabled={!typed.trim()}>
-              {t('saved.crewAddName')}
-            </button>
-          </div>
-          {people.length > 0 && (
-            <div className="uptrip-crew-list">
-              {crew.map((c, i) => (c.name?.trim() ? (
-                <span className="uptrip-crew-item" key={c.id}>
-                  {c.userId && <PersonIcon size={11} />}
-                  {c.name.trim()}
-                  <button
-                    className="uptrip-crew-drop"
-                    onClick={() => onRemove(i)}
-                    aria-label={t('saved.crewRemove', { name: c.name.trim() })}
-                    title={t('saved.crewRemove', { name: c.name.trim() })}
-                  >
-                    <CloseIcon size={12} />
-                  </button>
-                </span>
-              ) : null))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/** How far off a trip is, in words with the number in mono ("In 21 days",
- *  "Departs today", "Underway now"). `when` is { key, n } from whenParts. */
-function WhenText({ when, className = 'uptrip-when' }) {
-  const { t } = useI18n();
-  if (!when) return null;
-  if (when.n == null) return <span className={className}>{t(when.key)}</span>;
-  const [before, after] = splitSlot(t(when.key, { n: SLOT }));
-  return (
-    <span className={className}>
-      {before}<span className="uptrip-when-n">{when.n}</span>{after}
-    </span>
-  );
-}
-
-/** The journey card, shared by Planned and Visited, in three sizes
- *  (carta-design "Focal card", T400, brief V4-2): `focal` for the next trip,
- *  one size larger; `row` for every later plan, a thumbnail and a line; and
- *  the plain card for the record.
- *
- *  Nothing sits on the photograph (carta-design "Caption band", brief V4-1).
- *  The name, the places, the countdown, the dates and the figure sit in a
- *  solid band flush under it, and the card menu sits in that band. The flag
- *  stays on the photo on its own solid chip, because it is a picture. The
- *  countdown chip that rode on the photo, the two gradients and the state
- *  mark (a calendar or a tick repeating the tab) went with the move. */
-function JourneyCard({ title, sub, img, when = null, countries = [], dates, visited, foreign, variant = 'card', figure = null, summary = '', share = null, onOpen, openTitle, actions, onDelete, deleteLabel, footer, crew }) {
-  const { t } = useI18n();
-  const isRow = variant === 'row';
-
-  return (
-    <div className={`uptrip-card is-${variant}${visited ? ' is-visited' : ''}${foreign ? ' is-foreign' : ''}`}>
-      <div className="uptrip-visual">
-        <button className="uptrip-open" onClick={onOpen} title={openTitle}>
-          <span className={`uptrip-photo${img ? '' : ' is-fallback'}`} aria-hidden="true">
-            {img ? <ShotPhoto url={img} className="uptrip-img" /> : <RouteIcon size={isRow ? 18 : 26} />}
-            {!isRow && countries.length > 0 && (
-              <span className="uptrip-flag">
-                <CountryFlagStack countries={countries} size={15} />
-              </span>
-            )}
-          </span>
-          <span className="uptrip-text">
-            <span className="uptrip-title">{title}</span>
-            {sub && <span className="uptrip-sub">{sub}</span>}
-            {(when || dates) && (
-              <span className="uptrip-dateblock">
-                <WhenText when={when} />
-                {dates && <span className="uptrip-dates">{dates}</span>}
-              </span>
-            )}
-            {figure}
-            {summary && <span className="uptrip-summary">{summary}</span>}
-          </span>
-        </button>
-        {/* A card you do not own has nothing in this menu: no edits, and
-            certainly no Remove, which would read as deleting somebody else's
-            trip. Absent beats present-and-inert. */}
-        {(actions.length > 0 || onDelete) && (
-          <div className="uptrip-menu">
-            <CardMenu
-              actions={actions}
-              onAskRemove={onDelete || null}
-              removeLabel={deleteLabel}
-            />
-          </div>
-        )}
-      </div>
-      {crew}
-      {/* Share as a visible secondary on the card (T390, brief V3-4): it was
-          the second item of a 32 px menu on the photograph, which is where a
-          traveller handing a plan to the people coming along never looked. */}
-      {(share || footer) && (
-        <div className="uptrip-actions">
-          {footer && (
-            <button className="saved-card-footer" onClick={footer.onClick} title={footer.title}>
-              <span>{footer.label}</span>
-              <span className="saved-card-footer-go" aria-hidden="true">›</span>
-            </button>
-          )}
-          {share && (
-            <button
-              type="button"
-              className="uptrip-share"
-              onClick={share.onClick}
-              aria-expanded={share.open}
-            >
-              <LinkIcon size={14} />
-              <span>{t('saved.shareTrip')}</span>
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * The record, next to what friends have shown you.
- *
- * Computed entirely from list_friend_trips, which is to say from trips each
- * friend has already chosen to show you. No new query, no new permission, and
- * nothing here that you could not already have counted by opening their trips
- * one at a time.
- *
- * Which is exactly why it is NOT a leaderboard, and says so. A friend's number
- * is what they show, not where they have been: somebody who has seen thirty
- * countries and shares one trip appears as one country. Presenting that as a
- * ranking would turn a private visibility choice into a public score, and
- * quietly pressure people into sharing more than they meant to.
- */
-function FriendLedger({ mine, friendTrips }) {
-  const { t } = useI18n();
-  const rows = useMemo(() => {
-    const by = new Map();
-    (friendTrips || []).forEach((ft) => {
-      const key = ft.ownerId;
-      if (!by.has(key)) {
-        by.set(key, {
-          key,
-          who: ft.ownerName || `@${ft.ownerHandle}`,
-          countries: new Set(),
-          cities: new Set(),
-          trips: 0,
-        });
-      }
-      const r = by.get(key);
-      r.trips += 1;
-      (ft.countries || []).forEach((c) => c && r.countries.add(c));
-      (ft.cities || []).forEach((c) => c && r.cities.add(c));
-    });
-    return [...by.values()]
-      .map((r) => ({ ...r, countries: r.countries.size, cities: r.cities.size }))
-      .sort((a, b) => b.countries - a.countries || b.cities - a.cities);
-  }, [friendTrips]);
-
-  if (rows.length === 0) return null;
-
-  return (
-    <div className="fledger">
-      <div className="fledger-head">
-        <span className="saved-section-title">{t('saved.alongside')}</span>
-      </div>
-      <p className="saved-section-sub">{t('saved.alongsideSub')}</p>
-      <div className="fledger-rows">
-        <div className="fledger-row is-me">
-          <span className="fledger-who">{t('saved.alongsideYou')}</span>
-          <span className="fledger-num">{mine.countries.length}</span>
-          <span className="fledger-num is-soft">{mine.cities.length}</span>
-        </div>
-        {rows.map((r) => (
-          <div className="fledger-row" key={r.key}>
-            <span className="fledger-who">{r.who}</span>
-            <span className="fledger-num">{r.countries}</span>
-            <span className="fledger-num is-soft">{r.cities}</span>
-          </div>
-        ))}
-        <div className="fledger-row is-legend">
-          <span className="fledger-who" />
-          <span className="fledger-num">{t('saved.visitedCountries')}</span>
-          <span className="fledger-num is-soft">{t('saved.visitedCities')}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/** What the record adds up to: countries against the whole European map, and
- *  cities, each card carrying its own evidence, flags with names, city chips.
- *  The denominator is the flag catalogue itself, every European country the
- *  app can show, so the fraction stays honest as coverage grows. */
-function TravelLedger({ visitedCountries, visitedCities }) {
-  const { t } = useI18n();
-  const europeanTotal = useMemo(() => new Set(Object.values(COUNTRY_ISO2)).size, []);
-  const europeanVisited = visitedCountries.filter((c) => COUNTRY_ISO2[c]).length;
-  const MAX_FLAGS = 8;
-  const MAX_CITIES = 6;
-  const cityLine = visitedCities.slice(0, MAX_CITIES).join(', ')
-    + (visitedCities.length > MAX_CITIES ? ` +${visitedCities.length - MAX_CITIES}` : '');
-
-  return (
-    <div className="ledger2">
-      <div className="ledger2-card">
-        <span className="ledger2-title">{t('saved.visitedCountries')}</span>
-        <span className="ledger2-num">
-          {europeanVisited}
-          <span className="ledger2-of">/ {europeanTotal}</span>
-        </span>
-        <span className="ledger2-cap">{t('saved.europeanCountries')}</span>
-        <div className="ledger2-flags">
-          {visitedCountries.slice(0, MAX_FLAGS).map((c) => (
-            <span key={c} className="ledger2-flagitem">
-              <CountryFlag country={c} size={17} />
-              <span className="ledger2-flagname">{c}</span>
-            </span>
-          ))}
-          {visitedCountries.length > MAX_FLAGS && (
-            <span className="ledger2-flagitem is-more">+{visitedCountries.length - MAX_FLAGS}</span>
-          )}
-        </div>
-      </div>
-      <div className="ledger2-card">
-        <span className="ledger2-title">{t('saved.visitedCities')}</span>
-        <span className="ledger2-num">{visitedCities.length}</span>
-        <span className="ledger2-cap">{t('saved.citiesLabel')}</span>
-        {cityLine && <span className="ledger2-cities">{cityLine}</span>}
-      </div>
-    </div>
-  );
-}
-
-// Standalone Saved trips panel, opened from the bottom nav. Three states of
-// travelling, three tabs: Favorites is the shortlist of single places saved
-// from the map, Planned is the calendar of upcoming routes and day plans, and
-// Visited is the record that finished trips file themselves into, with the
-// country and city ledger on top.
 export function SavedTripsPanel({
-  // onClose is still passed by App; the page closes from the nav and Escape.
-  data, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab,
-  // The shortlist: the star anyone can tap on any page, guest or not. It is a
-  // different store from `saved_trips` below, which is the account's own
-  // destination saves, so the Favorites tab shows both and says which is
-  // which rather than pretending one list exists.
+  data, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab,
   favorites = null, onToggleFav = null, onOpenFeature = null, onOpenDest = null,
-  // The cost map App computes once with computeCosts(data.destinations,
-  // choices), the one Explore prints from, so every saved card can say what a
-  // day costs at the traveller's Lifestyle (brief V3-3). Optional: without it
-  // the cards carry no figure, which is the state before App passes it.
-  costs = null,
-  // Opens Account at Friends. When App passes it, friends' trips leave
-  // Planned for one line that points there (brief V3-9); without it the shelf
-  // stays here, so nothing a friend showed you becomes unreachable.
-  onOpenFriends = null,
+  // The day-cost map Explore prints from, and the Lifestyle the trip planner
+  // prices with, so every figure here is the figure there.
+  costs = null, stayTier = 'home', lifestyle = null,
+  onOpenFriends = null, onPlanTripCountry = null,
 }) {
   const { user, configured } = useAuth();
   const { t, lang } = useI18n();
-  // Memoised because the `|| {}` fallback would otherwise mint a new object
-  // on every render, which defeats every memo downstream of it (the shortlist
-  // resolver in particular re-derives its whole section tree on that dep).
   const destinations = useMemo(() => data?.destinations || {}, [data]);
   const todayIso = localToday();
 
-  const [tab, setTab] = useState(() => {
-    try {
-      const stored = localStorage.getItem('carta.savedTripsTab');
-      return ['favorites', 'planned', 'visited'].includes(stored) ? stored : 'planned';
-    } catch { return 'planned'; }
-  });
-  // Whether the traveller chose a tab in this visit. The remembered tab is a
-  // convenience, but a returning traveller with a trip ahead comes back for
-  // that trip (PRODUCT.md's returning audience), so once an upcoming plan is
-  // known the page opens on Planned unless a tab was picked in this visit
-  // (T390, brief V3-2). It used to reopen on whatever was last looked at.
+  const [tab, setTab] = useState(() => readStored(TAB_KEY, ['favorites', 'planned', 'visited'], 'planned'));
   const pickedRef = useRef(false);
-  const pickTab = (v) => {
-    pickedRef.current = true;
-    setTab(v);
-    try { localStorage.setItem('carta.savedTripsTab', v); } catch { /* private mode */ }
-  };
+  const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
 
-  // authed gates what needs an account behind it; the mock seam counts.
   const authed = !!user || SAVED_MOCK;
   const [trips, setTrips] = useState(SAVED_MOCK ? MOCK_FAVS : []);
   const [loading, setLoading] = useState(!!user && !SAVED_MOCK);
-  const [error, setError] = useState('');
   const [tripPlans, setTripPlans] = useState(SAVED_MOCK ? MOCK_PLANS : []);
   const [tripPlansLoading, setTripPlansLoading] = useState(!!user && !SAVED_MOCK);
-  // A trip list that cannot be read is NOT a traveller with no trips.
-  // This was a bare .catch(() => {}) until migration 020 made every read
-  // of trip_plans return 42501, and the two states rendered identically:
-  // Planned and Visited went quietly empty for every account, and nothing
-  // on screen or in the console said so. Same lesson as 012.
+  // A list that cannot be read is not a traveller with no trips (020 lesson).
   const [tripPlansError, setTripPlansError] = useState('');
-  // Statements of reasons for this account's plans (migration 039), read
-  // through RLS. A failure here hides the notices and nothing else: the
-  // trips themselves must still show.
   const [statements, setStatements] = useState(SAVED_MOCK ? MOCK_STATEMENTS : []);
-  // Day plans, local-first; account sync can rewrite them underneath this
-  // panel (a pull from another device), so refresh on those changes.
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
   useEffect(() => subscribeDayPlanStore(({ remote }) => {
     if (remote) setDayPlans(loadStandalonePlans());
@@ -911,13 +136,8 @@ export function SavedTripsPanel({
 
   const loadTrips = () => {
     setLoading(true);
-    setError('');
-    fetchSavedTrips(user.id)
-      .then(setTrips)
-      .catch(() => setError(t('saved.errLoad')))
-      .finally(() => setLoading(false));
+    fetchSavedTrips(user.id).then(setTrips).catch(() => {}).finally(() => setLoading(false));
   };
-
   const loadTripPlans = () => {
     setTripPlansLoading(true);
     setTripPlansError('');
@@ -930,71 +150,46 @@ export function SavedTripsPanel({
       })
       .finally(() => setTripPlansLoading(false));
   };
-
   const loadStatements = () => {
-    fetchMyStatements()
-      .then(setStatements)
-      .catch((e) => console.error('statements of reasons failed to load', e));
+    fetchMyStatements().then(setStatements).catch((e) => console.error('statements of reasons failed to load', e));
   };
-
   useEffect(() => {
     if (!user || SAVED_MOCK) { setLoading(false); setTripPlansLoading(false); return; }
     loadTrips();
     loadTripPlans();
     loadStatements();
-  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the account id: the three loaders are rebuilt every render and listing them would refetch on each one
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the account id; the loaders are rebuilt each render
 
   const handleDelete = async (id) => {
     setTrips((prev) => prev.filter((x) => x.id !== id));
     if (SAVED_MOCK) return;
-    try {
-      await deleteTrip(id);
-    } catch {
-      loadTrips(); // roll back the optimistic removal on failure
-    }
+    try { await deleteTrip(id); } catch { loadTrips(); }
   };
 
-  // ── Adding a trip that already happened. It is written in the shape the
-  // record already reads (an account trip plan when there is an account, a
-  // device day plan when there is not), so it comes back through the same
-  // classifier, card, map and ledger as every other finished trip. ──
-  // `editing` is null when closed, { id } when a logged trip is being
-  // rewritten, and {} when a new one is being told for the first time.
+  // ── A trip that already happened, told by hand. ──
   const [pastOpen, setPastOpen] = useState(false);
   const [pastEdit, setPastEdit] = useState(null);
   const [pastBusy, setPastBusy] = useState(false);
   const [pastError, setPastError] = useState('');
-  // Memories live outside React state (extras in localStorage, shadowed to the
-  // account), so a save bumps this to re-read them.
   const [memTick, setMemTick] = useState(0);
   const [openMemory, setOpenMemory] = useState('');
-  // Which trip has its share panel open. A trip plan only, never a device
-  // day plan: a share token references trip_plans, so a guest's own local
-  // trips have nothing to point at.
   const [openShare, setOpenShare] = useState('');
-  // Friends, and the trips they have set to 'friends'. Both are account only
-  // and both fail quietly: a project without migration 011 simply has neither,
-  // which is not something the traveller can act on.
   const [friends, setFriends] = useState([]);
   const [friendTrips, setFriendTrips] = useState(SAVED_MOCK ? MOCK_FRIEND_TRIPS : []);
-  const [openFriendTrip, setOpenFriendTrip] = useState('');
-  // Visibility per own trip: local edits first, then the value the trip row
-  // came back with. Never a bare 'private' default while a real value exists,
-  // because a control that says "Only me" over a trip that is actually shown
-  // to friends misstates a security setting.
   const [visById, setVisById] = useState({});
-  // The record's map, blown up to the whole device. Off by default: a map that
-  // covers the screen the moment the tab opens hides the record it belongs to.
   const [mapFull, setMapFull] = useState(false);
+  const [kind, setKind] = useState('all');
+  const [sort, setSort] = useState(() => readStored(SORT_KEY, ['recent', 'cheap'], 'recent'));
+  const pickSort = (v) => { setSort(v); writeStored(SORT_KEY, v); };
+  const [year, setYear] = useState('all');
+  const [countriesOpen, setCountriesOpen] = useState(false);
+  const countriesRef = useRef(null);
+  const manualCountries = useVisitedCountries();
 
-  // ── Undo, not confirm (carta-design, T400, row T390-e). A removal hides the
-  // thing at once and holds it for six seconds behind one toast in the shell's
-  // bottom slot; only when the toast ends (or the next removal starts, or the
-  // page closes) does `commit` run the real delete. "Undo" just drops the
-  // hold, so nothing has to be written back. A star is the exception: it is
-  // let go at once through the shared store, and Undo stars it again. ──
-  const [undo, setUndo] = useState(null); // { key, label } for the toast
-  const undoRef = useRef(null);           // { key, commit, restore, timer }
+  // ── Undo, not confirm: a removal hides the thing at once and is held for six
+  // seconds behind one toast; only then does `commit` run. ──
+  const [undo, setUndo] = useState(null);
+  const undoRef = useRef(null);
   const flushUndo = useCallback(() => {
     const u = undoRef.current;
     if (!u) return;
@@ -1017,7 +212,6 @@ export function SavedTripsPanel({
     setUndo(null);
     u.restore?.();
   };
-  // Leaving the page, or the whole tab, finishes the removal it held.
   useEffect(() => {
     window.addEventListener('pagehide', flushUndo);
     return () => { window.removeEventListener('pagehide', flushUndo); flushUndo(); };
@@ -1025,29 +219,16 @@ export function SavedTripsPanel({
   const heldKey = undo?.key || '';
 
   useEffect(() => {
-    // The mock seam seeds both lists, so a guest running it must not have them
-    // wiped: SAVED_MOCK stands in for exactly the account this effect needs.
     if (SAVED_MOCK) return undefined;
     if (!user) { setFriends([]); setFriendTrips([]); return undefined; }
     let live = true;
-    fetchFriendLinks(user.id)
-      .then((rows) => { if (live) setFriends(rows.filter((r) => r.kind === 'friend')); })
-      .catch(() => {});
-    listFriendTrips()
-      .then((rows) => { if (live) setFriendTrips(rows); })
-      .catch(() => {});
+    fetchFriendLinks(user.id).then((rows) => { if (live) setFriends(rows.filter((r) => r.kind === 'friend')); }).catch(() => {});
+    listFriendTrips().then((rows) => { if (live) setFriendTrips(rows); }).catch(() => {});
     return () => { live = false; };
   }, [user]);
 
-  // Escape leaves the full-screen map, the way it leaves every other overlay
-  // in the app. Bound only while it is open, so it never eats the key from
-  // the panel underneath.
-  //
-  // In the CAPTURE phase, and it stops the event there. App keeps its own
-  // Escape stack on window (shared trip, then Account, then My trips), and
-  // that listener is registered first, so one press used to close the big map
-  // AND the panel behind it in the same tick: you asked to leave the map and
-  // landed back on Explore. While this dialog is up the key belongs to it.
+  // Escape leaves the full-screen map first, in the capture phase, so one
+  // press does not also close the page behind it.
   useEffect(() => {
     if (!mapFull) return undefined;
     const onKey = (e) => {
@@ -1059,22 +240,13 @@ export function SavedTripsPanel({
     return () => window.removeEventListener('keydown', onKey, true);
   }, [mapFull]);
 
-  // Spend categories in the reader's language, so the ledger rows a memory
-  // writes are readable rather than machine keys.
   const spendLabels = useMemo(
     () => Object.fromEntries(SPEND_CATS.map((c) => [c, t(`saved.pastSpend_${c}`)])),
     [t],
   );
-
-  const openPastForm = (initial) => {
-    setPastError('');
-    setPastEdit(initial || null);
-    setPastOpen(true);
-  };
+  const openPastForm = (initial) => { setPastError(''); setPastEdit(initial || null); setPastOpen(true); };
 
   const handleSavePastTrip = async (form) => {
-    // An unnamed trip is named after its countries, which is what the record's
-    // cards read as their headline.
     const payload = { ...form, label: form.label || defaultPastLabel(form.places) };
     const editId = pastEdit?.id || null;
     setPastBusy(true);
@@ -1083,10 +255,7 @@ export function SavedTripsPanel({
       let planId = editId;
       if (SAVED_MOCK) {
         planId = editId || `mock:${Date.now()}`;
-        setTripPlans((prev) => [
-          pastTripAsPlanRow(planId, payload),
-          ...prev.filter((p) => p.id !== planId),
-        ]);
+        setTripPlans((prev) => [pastTripAsPlanRow(planId, payload), ...prev.filter((p) => p.id !== planId)]);
       } else if (pastEdit?.local) {
         updatePastTripOnDevice(editId, payload);
         setDayPlans(loadStandalonePlans());
@@ -1095,16 +264,12 @@ export function SavedTripsPanel({
         setTripPlans((prev) => prev.map((p) => (p.id === editId ? pastTripAsPlanRow(editId, payload) : p)));
       } else if (user) {
         planId = await savePastTripToAccount(user.id, payload);
-        // Optimistic: the record shows the trip at once, and the next fetch
-        // replaces this row with the stored one.
         setTripPlans((prev) => [pastTripAsPlanRow(planId, payload), ...prev]);
       } else {
         const saved = savePastTripOnDevice(payload);
         planId = saved.id;
         setDayPlans(saved.plans);
       }
-      // Everything a trip plan cannot hold rides alongside it, keyed by the
-      // same id, so it survives an edit and syncs with the trip.
       if (payload.memory) saveMemory(planId, { ...payload.memory, places: payload.memory.places }, spendLabels);
       setMemTick((n) => n + 1);
       setPastOpen(false);
@@ -1121,43 +286,26 @@ export function SavedTripsPanel({
     clearMemory(id);
     setMemTick((n) => n + 1);
     if (SAVED_MOCK) return;
-    try {
-      await deleteTripPlan(id);
-    } catch {
-      loadTripPlans(); // roll back the optimistic removal on failure
-    }
+    try { await deleteTripPlan(id); } catch { loadTripPlans(); }
   };
 
-  const fmtDate = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
-  const fmtDateYear = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) : '';
-  // Supabase timestamps come with a time part; trim to the calendar day.
-  const fmtStamp = (s) => (s ? fmtDateYear(String(s).slice(0, 10)) : '');
+  const fmtDay = (s) => (s ? new Date(`${s}T00:00:00Z`).toLocaleDateString(activeLocale(), { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }) : '');
+  const fmtDate = (s) => (s ? new Date(`${s}T00:00:00Z`).toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '');
+  const fmtRange = (a, b) => {
+    if (!a) return '';
+    if (!b || a === b) return fmtDay(a);
+    return t('saved.dateRange', { from: fmtDay(a), to: fmtDay(b) });
+  };
 
-  // ── Temporal classification: the dates decide, nobody files anything. ──
-  // What is on show: the lists without the one removal the undo toast holds.
+  // ── What is on show: the lists without the one removal Undo holds. ──
   const shownPlans = useMemo(() => tripPlans.filter((p) => `plan:${p.id}` !== heldKey), [tripPlans, heldKey]);
   const shownDayPlans = useMemo(() => dayPlans.filter((sp) => `day:${sp.id}` !== heldKey), [dayPlans, heldKey]);
   const shownTrips = useMemo(() => trips.filter((x) => `fav:${x.id}` !== heldKey), [trips, heldKey]);
-  const upcomingPlans = useMemo(() => shownPlans
-    .filter((p) => !p.end_date || p.end_date >= todayIso)
-    .sort((a, b) => (a.start_date || '9999') < (b.start_date || '9999') ? -1 : 1),
-  [shownPlans, todayIso]);
-  const pastPlans = useMemo(() => shownPlans
-    .filter((p) => p.end_date && p.end_date < todayIso)
-    .sort((a, b) => (a.end_date < b.end_date ? 1 : -1)),
-  [shownPlans, todayIso]);
-  const upcomingDayPlans = useMemo(() => shownDayPlans
-    .filter((sp) => { const end = dayPlanEndDate(sp); return !end || end >= todayIso; })
-    .sort((a, b) => ((a.startDate || '9999') < (b.startDate || '9999') ? -1 : 1)),
-  [shownDayPlans, todayIso]);
-  const pastDayPlans = useMemo(() => shownDayPlans
-    .filter((sp) => { const end = dayPlanEndDate(sp); return end && end < todayIso; })
-    .sort((a, b) => (dayPlanEndDate(a) < dayPlanEndDate(b) ? 1 : -1)),
-  [shownDayPlans, todayIso]);
+  const { upcomingPlans, pastPlans, upcomingDayPlans, pastDayPlans } = useMemo(
+    () => classifyTrips({ plans: shownPlans, dayPlans: shownDayPlans, todayIso }),
+    [shownPlans, shownDayPlans, todayIso],
+  );
 
-  // The trip's own words, keyed by plan id, for every finished trip on show.
-  // A trip with a memory was told by hand; one without was lived through the
-  // app, and the record shows both the same way.
   const memories = useMemo(() => {
     const out = {};
     [...pastPlans.map((p) => p.id), ...pastDayPlans.map((sp) => sp.id)].forEach((id) => {
@@ -1165,12 +313,8 @@ export function SavedTripsPanel({
       if (m) out[id] = m;
     });
     return out;
-    // memTick is the point: memories live in localStorage, so a save has to
-    // re-read them even though no prop changed.
-  }, [pastPlans, pastDayPlans, memTick]); // eslint-disable-line react-hooks/exhaustive-deps -- memTick is a deliberate trigger: memories live in localStorage, which React cannot see change
+  }, [pastPlans, pastDayPlans, memTick]); // eslint-disable-line react-hooks/exhaustive-deps -- memTick re-reads localStorage
 
-  // The helpers below are callbacks so the record's memos can list them;
-  // each changes only when the catalogue (or an index built from it) does.
   const destCoords = useCallback((id) => {
     const d = destinations[id];
     if (!d) return null;
@@ -1179,10 +323,8 @@ export function SavedTripsPanel({
     return lat != null && lon != null ? { lat, lon } : null;
   }, [destinations]);
 
-  // ── Images for everything. The direct lookup misses when a stop's id is a
-  // researched town or an id that fell out of the catalogue, so every card
-  // walks a fallback chain: its own destinations, then any catalogue entry in
-  // the same city, then the best-rated photo of the same country. ──
+  // Images: a stop's own photo, then any catalogue entry in the same city,
+  // then the best-rated photo of the same country.
   const imageLookup = useMemo(() => {
     const byCity = new Map();
     const byCountry = new Map();
@@ -1198,44 +340,22 @@ export function SavedTripsPanel({
     }
     return { byCity, byCountry };
   }, [destinations]);
-
   const resolveImage = useCallback(({ ids = [], cities = [], countries = [] }) => {
-    for (const id of ids) {
-      const u = destinations[id]?.image?.url;
-      if (u) return u;
-    }
-    for (const c of cities) {
-      const hit = imageLookup.byCity.get((c || '').toLowerCase());
-      if (hit) return hit.url;
-    }
-    for (const c of countries) {
-      const hit = imageLookup.byCountry.get(c);
-      if (hit) return hit.url;
-    }
+    for (const id of ids) { const u = destinations[id]?.image?.url; if (u) return u; }
+    for (const c of cities) { const hit = imageLookup.byCity.get((c || '').toLowerCase()); if (hit) return hit.url; }
+    for (const c of countries) { const hit = imageLookup.byCountry.get(c); if (hit) return hit.url; }
     return null;
   }, [destinations, imageLookup]);
 
-  // A trip plan's places, from its stored arrays and its stops both, so a
-  // plan saved before the arrays existed still knows where it went.
   const planCountries = useCallback((p) => orderedUnique([
-    ...(p.countries || []),
-    ...(p.destination_ids || []).map((id) => destinations[id]?.country),
+    ...(p.countries || []), ...(p.destination_ids || []).map((id) => destinations[id]?.country),
   ]), [destinations]);
   const planCities = useCallback((p) => orderedUnique([
-    ...(p.cities || []),
-    ...(p.destination_ids || []).map((id) => destinations[id]?.city),
+    ...(p.cities || []), ...(p.destination_ids || []).map((id) => destinations[id]?.city),
   ]), [destinations]);
-  const dayPlanCountries = useCallback(
-    (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.country)),
-    [destinations],
-  );
-  const dayPlanCities = useCallback(
-    (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.city)),
-    [destinations],
-  );
+  const dayPlanCountries = useCallback((sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.country)), [destinations]);
+  const dayPlanCities = useCallback((sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.city)), [destinations]);
 
-  // City name -> coordinates, best-rated entry wins the name, so a record that
-  // stored "Munich" as plain text (no destination id) still lands on the map.
   const cityCoordIndex = useMemo(() => {
     const m = new Map();
     for (const d of Object.values(destinations)) {
@@ -1249,183 +369,39 @@ export function SavedTripsPanel({
     }
     return m;
   }, [destinations]);
-  const cityCoords = useCallback(
-    (city) => cityCoordIndex.get((city || '').toLowerCase()) || null,
-    [cityCoordIndex],
-  );
+  const cityCoords = useCallback((city) => cityCoordIndex.get((city || '').toLowerCase()) || null, [cityCoordIndex]);
 
-  // Every place in the record, pinned. Not first stops only: the map is the
-  // record's own claim, so each city of each finished trip earns its pin, and
-  // the countries underneath are painted from the same trips.
-  const visitedItems = useMemo(() => {
-    const out = [];
-    const seen = new Set();
-    const add = (city, at, open, id) => {
-      if (!at) return;
-      const key = (city || '').toLowerCase() || `${at.lat},${at.lon}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-      out.push({
-        lat: at.lat,
-        lon: at.lon,
-        city: city || '',
-        plain: true,
-        // Zoomed in, the pin wears the place's own photograph.
-        img: resolveImage({ ids: id ? [id] : [], cities: [city] }),
-        open,
-      });
-    };
-    pastPlans.forEach((p) => {
-      const open = () => setOpenMemory((cur) => (cur === p.id ? '' : p.id));
-      (p.destination_ids || []).forEach((id) => add(destinations[id]?.city, destCoords(id), open, id));
-      (p.cities || []).forEach((c) => add(c, cityCoords(c), open));
-      // A place off the catalogue pins from its own geocoded coordinates.
-      memoryPoints(memories[p.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
-    });
-    pastDayPlans.forEach((sp) => {
-      const open = () => setOpenMemory((cur) => (cur === sp.id ? '' : sp.id));
-      (sp.stops || []).forEach((s) => {
-        add(destinations[s.destinationId]?.city, destCoords(s.destinationId), open, s.destinationId);
-      });
-      memoryPoints(memories[sp.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
-    });
-    return out;
-  }, [pastPlans, pastDayPlans, destinations, memories, resolveImage, destCoords, cityCoords]);
-
-  // What the record adds up to: distinct countries and cities out of finished
-  // trips only. Favorites never count, a wish is not a visit.
-  const visited = useMemo(() => {
-    const countries = new Set();
-    const cities = new Set();
-    pastPlans.forEach((p) => {
-      planCountries(p).forEach((c) => countries.add(c));
-      planCities(p).forEach((c) => cities.add(c));
-    });
-    pastDayPlans.forEach((sp) => {
-      dayPlanCountries(sp).forEach((c) => countries.add(c));
-      dayPlanCities(sp).forEach((c) => cities.add(c));
-    });
-    // Places the catalogue has never held count too: the traveller was there.
-    Object.values(memories).forEach((m) => {
-      (m.places || []).forEach((p) => {
-        if (p.country) countries.add(p.country);
-        if (p.city) cities.add(p.city);
-      });
-    });
-    return { countries: [...countries].sort(), cities: [...cities] };
-  }, [pastPlans, pastDayPlans, memories, planCountries, planCities, dayPlanCountries, dayPlanCities]);
-
-  // MapLibre states the cooperative-gesture rule in its own overlay, in the
-  // traveller's language.
-  const mapLocale = useMemo(() => ({
-    'CooperativeGesturesHandler.WindowsHelpText': t('map.ctrlZoom'),
-    'CooperativeGesturesHandler.MacHelpText': t('map.cmdZoom'),
-    'CooperativeGesturesHandler.MobileHelpText': t('map.twoFingers'),
-  }), [t]);
-
-  // The same countries as ISO2, which is what the map paints by.
-  const visitedIso = useMemo(
-    () => visited.countries.map((c) => COUNTRY_ISO2[c]).filter(Boolean),
-    [visited],
-  );
-
-  // Everything both copies of the record's map agree on. The frame differs
-  // (a card, or the whole device), the data never does. Tapping a pin opens
-  // that trip, which means leaving the big map: a trip opening behind a
-  // full-screen map would look like nothing happened.
-  const visitedMapProps = {
-    stops: visitedItems,
-    countryFills: visitedIso,
-    // A record is read as a pattern of dots, so the basemap gets out of the
-    // way: Positron without labels, where every name would be somewhere you
-    // did NOT go. The planner's maps keep Voyager (see map/TripMap.jsx).
-    basemap: 'record',
-    showRoute: false,
-    scrollZoom: true,
-    zoomControls: true,
-    mapLocale,
-    photoZoom: 6,
-    easeToSelected: false,
-    padBottom: 0,
-    fitMaxZoom: 7,
-    fitPadding: { top: 24, left: 24, right: 24, bottom: 24 },
-    onSelectStop: (i) => { setMapFull(false); visitedItems[i]?.open(); },
-  };
-
-  // How far off a trip is, as { key, n } so WhenText can set the number in
-  // mono. On the day it says "Departs today", while it runs "Underway now".
-  const whenParts = (start, end) => {
-    if (!start) return { key: 'saved.noDatesYet' };
-    const n = daysUntil(start, todayIso);
-    if (n < 0) return (!end || end >= todayIso) ? { key: 'saved.underway' } : null;
-    if (n === 0) return { key: 'saved.departsToday' };
-    return { key: n === 1 ? 'saved.inDays1' : 'saved.inDaysN', n };
-  };
-
-  const planTitle = (p) => {
-    if (p.label) return p.label;
-    const cs = p.cities || [];
-    if (cs.length > 1) return `${cs[0]} → ${cs[cs.length - 1]}`;
-    return cs[0] || t('saved.untitledTrip');
-  };
-
-  // The journey card wears the country as its headline when the trip stays in
-  // one, the cities beneath; a named or multi-country trip keeps its route.
-  const journeyParts = (p) => {
+  // The trip's headline: the country when it stays in one, else its label or route.
+  const journeyParts = useCallback((p) => {
     const countries = planCountries(p);
     const cities = planCities(p);
     if (p.label) return { title: p.label, sub: cities.join(', '), countries };
-    if (countries.length === 1) return { title: countries[0], sub: cities.join(', '), countries };
-    return { title: planTitle(p), sub: countries.join(', '), countries };
-  };
-  const dayJourneyParts = (sp) => {
+    if (countries.length === 1) return { title: countryName(COUNTRY_ISO2[countries[0]], countries[0]), sub: cities.join(', '), countries };
+    const cs = p.cities || [];
+    const title = cs.length > 1 ? t('saved.routeTitle', { from: cs[0], to: cs[cs.length - 1] }) : (cs[0] || t('saved.untitledTrip'));
+    return { title, sub: countries.map((c) => countryName(COUNTRY_ISO2[c], c)).join(', '), countries };
+  }, [planCountries, planCities, t]);
+  const dayJourneyParts = useCallback((sp) => {
     const countries = dayPlanCountries(sp);
     const cities = dayPlanCities(sp);
     if (sp.label && countries.length !== 1) return { title: sp.label, sub: cities.join(', '), countries };
-    if (countries.length === 1) return { title: countries[0], sub: cities.join(', ') || sp.label, countries };
+    if (countries.length === 1) return { title: countryName(COUNTRY_ISO2[countries[0]], countries[0]), sub: cities.join(', ') || sp.label, countries };
     return { title: sp.label || t('saved.dayPlanFallbackTitle'), sub: cities.join(', '), countries };
-  };
+  }, [dayPlanCountries, dayPlanCities, t]);
 
-  const dayPlanMeta = (sp) => {
-    const totalDays = sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1;
-    return [
-      fmtDate(sp.startDate),
-      (sp.stops?.length || 1) > 1 ? t('saved.citiesN', { n: sp.stops.length }) : '',
-      t(totalDays === 1 ? 'saved.days1' : 'saved.daysN', { n: totalDays }),
-    ].filter(Boolean).join(', ');
-  };
-
-  // What a logged trip says on its own card, before it is opened: the marks
-  // that were actually made, never a placeholder for the ones that were not.
   const memoryLine = (m) => {
     const spend = spendSummary(m);
     return [
-      // Who came leads: it is the most concrete thing a trip can say about
-      // itself, and the only line here that names anyone.
       crewLabel(m.crew, lang),
       m.rating != null ? t('saved.pastRatedN', { n: m.rating }) : '',
-      spend.any ? eur(spend.total) : '',
+      spend.any ? formatMoney(spend.total) : '',
       m.photos?.length ? t(m.photos.length === 1 ? 'saved.pastPhotos1' : 'saved.pastPhotosN', { n: m.photos.length }) : '',
-      m.story?.trim() ? t('saved.pastStoryWritten') : '',
-    ].filter(Boolean).join(', ') || t('saved.pastSeeTrip');
+    ].filter(Boolean).join(', ');
   };
 
-  // ── Who came, editable from the card itself. ──
-  // The roster is the same `extras.people` list the form and the expense
-  // ledger use, read straight off the store rather than out of a memory blob:
-  // a trip that was never written up as a memory still has people on it, and
-  // must still be able to say who.
-  const crewFor = (planId) => {
-    const extras = loadTripExtras(planId);
-    return readCrew(extras, { memory: extras.memory });
-  };
-  const writeCrewFor = (planId, next) => {
-    persistTripExtras(planId, writeCrew(loadTripExtras(planId), next));
-    setMemTick((n) => n + 1);
-  };
-  // Appending never moves an existing slot, so nothing an expense already
-  // points at changes meaning. Removal does renumber, which is why it lives
-  // behind the open list rather than on the card face.
+  // ── Who came, editable from the record (the same list the ledger splits by). ──
+  const crewFor = (planId) => { const extras = loadTripExtras(planId); return readCrew(extras, { memory: extras.memory }); };
+  const writeCrewFor = (planId, next) => { persistTripExtras(planId, writeCrew(loadTripExtras(planId), next)); setMemTick((n) => n + 1); };
   const crewBarFor = (planId) => (
     <CrewBar
       crew={crewFor(planId)}
@@ -1436,8 +412,6 @@ export function SavedTripsPanel({
         writeCrewFor(planId, [...cur, member]);
       }}
       onRemove={(i) => {
-        // The house undo rule (row T400-e): the name goes at once, Undo writes
-        // the whole list back so every index an expense points at returns.
         const before = crewFor(planId);
         const name = before[i]?.name?.trim() || '';
         writeCrewFor(planId, before.filter((_, j) => j !== i));
@@ -1446,691 +420,504 @@ export function SavedTripsPanel({
     />
   );
 
-  // "Share this trip", a visible button on the card (it used to be a menu
-  // item). Only for a saved trip plan, and only when signed in: the token
-  // hangs off trip_plans, so a guest's device-local trip has nothing to
-  // reference.
-  const shareFor = (planId) => (user ? {
-    open: openShare === planId,
-    onClick: () => setOpenShare((cur) => (cur === planId ? '' : planId)),
-  } : null);
-
-  // The statement of reasons against a plan a moderator took off the public
-  // guides, under its card. The newest statement per plan.
   const statementByPlan = useMemo(() => latestByPlan(statements), [statements]);
-  const statementFor = (planId) => (statementByPlan[planId]
-    ? (
-      <ModerationNotice
-        statement={statementByPlan[planId]}
-        contest={SAVED_MOCK ? async () => ({ ok: true, status: 'open' }) : contestStatement}
-        onContested={SAVED_MOCK ? undefined : loadStatements}
-      />
-    )
-    : null);
-
-  const sharePanelFor = (planId) => (openShare === planId && user
-    ? (
-      <TripSharePanel
-        userId={user.id}
-        tripPlanId={planId}
-        visibility={visById[planId]
-          || tripPlans.find((tp) => tp.id === planId)?.visibility
-          || 'private'}
-        onVisibility={(id, v) => setVisById((cur) => ({ ...cur, [id]: v }))}
-        canInvite={!tripPlans.find((tp) => tp.id === planId)?.coplan}
-      />
-    )
-    : null);
-
-  // Re-opening a logged trip in the form it was told in. The memory holds the
-  // places (it is the only thing that knows an off-catalogue town), and the
-  // trip itself holds the dates.
-  const placesFromPlan = (p) => (p.cities || []).map((city, i) => ({
-    id: (p.destination_ids || [])[i] || null,
-    city,
-    country: destinations[(p.destination_ids || [])[i]]?.country || '',
-    lat: null,
-    lon: null,
-    nights: null,
-  }));
-  const editableFromPlan = (p, mem) => ({
-    id: p.id,
-    label: p.label || '',
-    startDate: p.start_date,
-    endDate: p.end_date,
-    places: mem?.places?.length ? mem.places : placesFromPlan(p),
-    memory: mem,
-  });
-  const editableFromDayPlan = (sp, mem) => ({
-    id: sp.id,
-    local: true,
-    label: sp.label || '',
-    startDate: sp.startDate,
-    endDate: dayPlanEndDate(sp),
-    places: mem?.places?.length ? mem.places : (sp.stops || []).map((s) => ({
-      id: destinations[s.destinationId] ? s.destinationId : null,
-      city: destinations[s.destinationId]?.city || s.city || '',
-      country: destinations[s.destinationId]?.country || s.country || '',
-      lat: s.lat ?? null,
-      lon: s.lon ?? null,
-      nights: null,
-    })),
-    memory: mem,
-  });
-
-  const plannedCount = upcomingPlans.length + upcomingDayPlans.length;
-  const pastCount = pastPlans.length + pastDayPlans.length;
-
-  // See pickedRef above: land on Planned once a trip ahead is known.
-  useEffect(() => {
-    if (!pickedRef.current && plannedCount > 0 && tab !== 'planned') setTab('planned');
-  }, [plannedCount]); // eslint-disable-line react-hooks/exhaustive-deps -- runs when the plans arrive; `tab` is read, not watched, so a later pick is never undone
-
-  // Both kinds of past trip interleave into one record, newest first.
-  const pastRecord = useMemo(() => {
-    const rows = [
-      ...pastPlans.map((p) => ({ kind: 'plan', when: p.end_date, item: p })),
-      ...pastDayPlans.map((sp) => ({ kind: 'day', when: dayPlanEndDate(sp), item: sp })),
-    ];
-    rows.sort((a, b) => (a.when < b.when ? 1 : -1));
-    return rows;
-  }, [pastPlans, pastDayPlans]);
-
-  const signedOutEmpty = (
-    <SavedEmpty
-      Icon={RouteIcon}
-      text={configured ? t('saved.signInPrompt') : t('saved.notConfigured')}
-      cta={configured ? t('saved.signIn') : null}
-      onCta={configured ? onOpenAuth : null}
+  const statementFor = (planId) => (statementByPlan[planId] ? (
+    <ModerationNotice
+      statement={statementByPlan[planId]}
+      contest={SAVED_MOCK ? async () => ({ ok: true, status: 'open' }) : contestStatement}
+      onContested={SAVED_MOCK ? undefined : loadStatements}
     />
-  );
+  ) : null);
+  const sharePanelFor = (planId, title) => (openShare === planId && user ? (
+    <TripSharePanel
+      userId={user.id}
+      tripPlanId={planId}
+      title={title}
+      visibility={visById[planId] || tripPlans.find((tp) => tp.id === planId)?.visibility || 'private'}
+      onVisibility={(id, v) => setVisById((cur) => ({ ...cur, [id]: v }))}
+      canInvite={!tripPlans.find((tp) => tp.id === planId)?.coplan}
+    />
+  ) : null);
+  const toggleShare = (planId) => {
+    if (!user && !SAVED_MOCK) { onOpenAuth?.(); return; }
+    const opening = openShare !== planId;
+    setOpenShare(opening ? planId : '');
+    // The panel opens under the card: bring it into view and give it focus,
+    // so a phone user is not left looking at a button that did nothing.
+    if (opening) {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        const el = document.getElementById(`tshare-${planId}`);
+        el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        el?.focus({ preventScroll: true });
+      }));
+    }
+  };
 
-  // Three states of travelling, drawn from one renderer and shown twice: a
-  // row of tiles on a phone, a column in the desktop panel under the brand.
-  // Destinations and Explore are built the same way, and for the same reason:
-  // two arrangements of one control cannot drift apart if the source only
-  // holds one of them.
-  // The shortlist, resolved back into names and photographs (the stored keys
-  // are only kind/country/id, see hooks/useFavoriteItems.js).
+  // ── Trips: view models for the focal card and the rows. ──
+  const priceFor = useCallback((p) => tripFigure(p, { data, stayTier, lifestyle }), [data, stayTier, lifestyle]);
+  const isoFor = (countries) => COUNTRY_ISO2[countries?.[0]] || '';
+
+  // Browser storage is read once per plan list and per edit, never per render
+  // (T434 audit, P1-2): days planned on this device and who is coming.
+  const planLocal = useMemo(() => {
+    const out = {};
+    upcomingPlans.forEach((p) => {
+      out[p.id] = {
+        planned: countPlannedDays(p.id),
+        crew: crewInitials(crewFor(p.id), MAX_CREW).map((c) => ({ id: c.id, name: c.name, initials: c.initials })),
+      };
+    });
+    return out;
+  }, [upcomingPlans, memTick]); // eslint-disable-line react-hooks/exhaustive-deps -- memTick re-reads storage after an edit
+  const figures = useMemo(() => {
+    const out = {};
+    upcomingPlans.forEach((p) => { out[p.id] = priceFor(p); });
+    return out;
+  }, [upcomingPlans, priceFor]);
+
+  const planModel = (p, i) => {
+    const parts = journeyParts(p);
+    const nights = nightsBetween(p.start_date, p.end_date);
+    const { planned, crew } = planLocal[p.id] || { planned: 0, crew: [] };
+    const when = whenParts(p.start_date, p.end_date, todayIso);
+    const figure = figures[p.id] || null;
+    const removeLabel = t('saved.removeItem', { name: parts.title });
+    const onRemove = p.coplan ? null : () => removeWithUndo({ key: `plan:${p.id}`, label: parts.title, commit: () => handleDeleteTripPlan(p.id) });
+    const below = <>{statementFor(p.id)}{sharePanelFor(p.id, parts.title)}</>;
+    const common = {
+      id: p.id,
+      title: parts.title,
+      img: resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries }),
+      iso2: isoFor(parts.countries),
+      onOpen: () => onLoadTripPlan?.(p.id),
+      onRemove,
+      removeLabel,
+      below,
+    };
+    if (i === 0) {
+      return {
+        ...common,
+        sub: parts.sub,
+        countries: parts.countries,
+        when,
+        dates: fmtRange(p.start_date, p.end_date),
+        nights,
+        figure,
+        dest: destinations[(p.destination_ids || [])[0]] || null,
+        start: p.start_date,
+        planned,
+        // A trip of six nights is seven days to plan.
+        days: Math.max(nights + 1, planned),
+        people: crew,
+        party: figure?.party || null,
+        coplanBy: p.coplan ? (p.ownerName || '') : '',
+        onPlanDays: () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
+        onInvite: p.coplan ? null : () => toggleShare(p.id),
+        inviteOpen: openShare === p.id,
+      };
+    }
+    return {
+      ...common,
+      meta: [whenText(t, when), fmtRange(p.start_date, p.end_date)].filter(Boolean).join(', '),
+      figure: figure ? <TripPrice figure={figure} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
+      menuActions: [
+        { key: 'days', label: t('saved.planDays'), icon: <CalendarIcon size={16} />, onClick: () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }) },
+        ...(p.coplan ? [] : [{ key: 'share', label: t('saved.shareInvite'), icon: <LinkIcon size={16} />, onClick: () => toggleShare(p.id) }]),
+      ],
+    };
+  };
+
+  const dayPlanMeta = (sp) => {
+    const total = sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1;
+    return [
+      sp.startDate ? fmtDay(sp.startDate) : t('saved.noDatesYet'),
+      t(total === 1 ? 'saved.days1' : 'saved.daysN', { n: total }),
+    ].join(', ');
+  };
+  const dayPlanModel = (sp) => {
+    const parts = dayJourneyParts(sp);
+    const first = (sp.stops || [])[0]?.destinationId;
+    const cost = first ? costs?.get?.(first) : null;
+    const label = sp.label || t('saved.fallbackDayPlan');
+    return {
+      id: sp.id,
+      title: sp.label || parts.title,
+      img: resolveImage({ ids: (sp.stops || []).map((s) => s.destinationId), cities: dayPlanCities(sp), countries: parts.countries }),
+      iso2: isoFor(parts.countries),
+      meta: dayPlanMeta(sp),
+      figure: cost ? <DayPrice cost={cost} t={t} /> : null,
+      onOpen: () => onOpenDayPlan?.(sp.id),
+      onRemove: () => removeWithUndo({ key: `day:${sp.id}`, label, commit: () => setDayPlans(deleteStandalonePlan(sp.id)) }),
+      removeLabel: t('saved.removeItem', { name: label }),
+    };
+  };
+
+  const nextModel = upcomingPlans.length ? planModel(upcomingPlans[0], 0) : null;
+  const laterModels = upcomingPlans.slice(1).map((p, i) => planModel(p, i + 1));
+  const dayModels = upcomingDayPlans.map(dayPlanModel);
+
+  // ── Shortlist: the starred things and the account's saved places, one list. ──
   const shortlist = useFavoriteItems(favorites, destinations);
-
-  // Whether the account section below is ALSO going to draw an empty state,
-  // which is what decides how loudly the shortlist states its own emptiness.
-  const accountFavsEmpty = !authed || (!loading && !error && trips.length === 0);
-
-  // Open one shortlisted row, whatever kind it is. Destinations go to the
-  // destination page, everything else to its own layer page, which is the
-  // same door the Destinations tab uses.
+  const favOrder = useMemo(() => {
+    const m = new Map();
+    [...(favorites || [])].forEach((k, i) => m.set(k, i));
+    return m;
+  }, [favorites]);
+  const shortRows = useMemo(() => {
+    const rows = shortlist.sections.flatMap((s) => s.rows)
+      .filter((r) => `star:${r.key}` !== heldKey)
+      .map((r) => ({ ...r, order: favOrder.get(r.key) ?? -1 }));
+    const destIds = new Set(rows.filter((r) => r.kind === 'dest').map((r) => r.id));
+    if (authed) {
+      shownTrips.filter((x) => !destIds.has(x.destination_id)).forEach((x) => {
+        rows.push({
+          key: `acct:${x.id}`, account: x, kind: 'dest', id: x.destination_id,
+          cc: COUNTRY_ISO2[x.country] || destinations[x.destination_id]?.iso2 || '',
+          name: x.city, sub: x.country,
+          img: resolveImage({ ids: [x.destination_id], cities: [x.city], countries: [x.country] }),
+          order: -1 - new Date(x.created_at || 0).getTime() / 1e13,
+        });
+      });
+    }
+    return rows;
+  }, [shortlist.sections, favOrder, heldKey, authed, shownTrips, destinations, resolveImage]);
+  const kinds = useMemo(() => FAV_KINDS.filter((k) => shortRows.some((r) => r.kind === k)), [shortRows]);
+  const kindNow = kinds.includes(kind) ? kind : 'all';
+  const shownShort = useMemo(() => {
+    const list = shortRows.filter((r) => kindNow === 'all' || r.kind === kindNow);
+    const dayEur = (r) => (r.kind === 'dest' ? costs?.get?.(r.id)?.dayEur : null);
+    return list.sort((a, b) => {
+      if (sort === 'cheap') {
+        const x = dayEur(a); const y = dayEur(b);
+        if (x != null || y != null) return (x ?? Infinity) - (y ?? Infinity);
+      }
+      return b.order - a.order;
+    });
+  }, [shortRows, kindNow, sort, costs]);
+  // "Plan a trip" from the shortlist: the country holding the most starred
+  // places, handed to the trip wizard's Where step (the same seed a
+  // destination page's "Plan a trip here" uses).
+  const planCountry = useMemo(() => {
+    const by = new Map();
+    shortRows.filter((r) => r.kind === 'dest' && r.cc).forEach((r) => by.set(r.cc, (by.get(r.cc) || 0) + 1));
+    let best = null;
+    by.forEach((n, cc) => { if (!best || n > best.n) best = { cc, n }; });
+    return best;
+  }, [shortRows]);
+  const planCountryName = planCountry
+    ? (Object.entries(COUNTRY_ISO2).find(([, iso]) => iso === planCountry.cc)?.[0] || '')
+    : '';
   const openShortlisted = (row) => {
     if (row.kind === 'dest') { onOpenDest?.(row.id); return; }
     onOpenFeature?.(row.kind, { id: row.id, cc: row.cc });
   };
   const dropShortlisted = (row) => {
+    if (row.account) {
+      removeWithUndo({ key: `fav:${row.account.id}`, label: row.name, commit: () => handleDelete(row.account.id) });
+      return;
+    }
     const parsed = parseFavKey(row.key);
     if (!parsed) return;
     onToggleFav?.(parsed.id, parsed.kind, parsed.cc);
-    removeWithUndo({
-      key: `star:${row.key}`,
-      label: row.name || row.id,
-      restore: () => onToggleFav?.(parsed.id, parsed.kind, parsed.cc),
-    });
+    removeWithUndo({ key: `star:${row.key}`, label: row.name || row.id, restore: () => onToggleFav?.(parsed.id, parsed.kind, parsed.cc) });
   };
 
-  // Planned first: the next trip is what a traveller comes back for, then the
-  // shortlist, then the record (T390, brief V3-2; the default tab was already
-  // Planned, and now the order says so too).
+  // ── Visited: years, the record and the map, filtered by the chosen year. ──
+  const pastYear = (p) => yearOf(p.end_date || p.start_date);
+  const dayYear = (sp) => yearOf(dayPlanEndDate(sp));
+  const years = useMemo(() => {
+    const ys = new Set([...pastPlans.map(pastYear), ...pastDayPlans.map(dayYear)].filter(Boolean));
+    return [...ys].sort((a, b) => b - a);
+  }, [pastPlans, pastDayPlans]); // eslint-disable-line react-hooks/exhaustive-deps -- the year helpers are pure
+  const yearNow = years.includes(year) ? year : 'all';
+  const inYear = (y) => yearNow === 'all' || y === yearNow;
+  const yPlans = useMemo(() => pastPlans.filter((p) => inYear(pastYear(p))), [pastPlans, yearNow]); // eslint-disable-line react-hooks/exhaustive-deps
+  const yDays = useMemo(() => pastDayPlans.filter((sp) => inYear(dayYear(sp))), [pastDayPlans, yearNow]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Only the chosen year's memories count towards the chosen year.
+  const yMemories = useMemo(() => {
+    const ids = new Set([...yPlans.map((p) => p.id), ...yDays.map((sp) => sp.id)]);
+    return Object.fromEntries(Object.entries(memories).filter(([id]) => ids.has(id)));
+  }, [memories, yPlans, yDays]);
+  const record = useMemo(() => visitedRecord({
+    pastPlans: yPlans, pastDayPlans: yDays, memories: yMemories, destinations,
+    manualCountries: yearNow === 'all' ? manualCountries : [],
+  }), [yPlans, yDays, yMemories, destinations, manualCountries, yearNow]);
+  const allRecord = useMemo(() => visitedRecord({ pastPlans, pastDayPlans, memories, destinations }), [pastPlans, pastDayPlans, memories, destinations]);
+
+  const visitedItems = useMemo(() => {
+    const out = [];
+    const seen = new Set();
+    const add = (city, at, open, id) => {
+      if (!at) return;
+      const key = (city || '').toLowerCase() || `${at.lat},${at.lon}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push({ lat: at.lat, lon: at.lon, city: city || '', plain: true, img: resolveImage({ ids: id ? [id] : [], cities: [city] }), open });
+    };
+    yPlans.forEach((p) => {
+      const open = () => setOpenMemory((cur) => (cur === p.id ? '' : p.id));
+      (p.destination_ids || []).forEach((id) => add(destinations[id]?.city, destCoords(id), open, id));
+      (p.cities || []).forEach((c) => add(c, cityCoords(c), open));
+      memoryPoints(memories[p.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
+    });
+    yDays.forEach((sp) => {
+      const open = () => setOpenMemory((cur) => (cur === sp.id ? '' : sp.id));
+      (sp.stops || []).forEach((s) => add(destinations[s.destinationId]?.city, destCoords(s.destinationId), open, s.destinationId));
+      memoryPoints(memories[sp.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
+    });
+    return out;
+  }, [yPlans, yDays, destinations, memories, resolveImage, destCoords, cityCoords]);
+
+  const mapLocale = useMemo(() => ({
+    'CooperativeGesturesHandler.WindowsHelpText': t('map.ctrlZoom'),
+    'CooperativeGesturesHandler.MacHelpText': t('map.cmdZoom'),
+    'CooperativeGesturesHandler.MobileHelpText': t('map.twoFingers'),
+  }), [t]);
+  const visitedIso = useMemo(() => record.countries.map((c) => COUNTRY_ISO2[c]).filter(Boolean), [record]);
+  // One object per change of the record, never per render: TripMap re-frames
+  // and re-pins whenever its props change identity (T434 audit, P1-1).
+  const mapProps = useMemo(() => ({
+    stops: visitedItems,
+    countryFills: visitedIso,
+    basemap: 'record',
+    showRoute: false,
+    scrollZoom: true,
+    zoomControls: true,
+    mapLocale,
+    photoZoom: 6,
+    easeToSelected: false,
+    padBottom: 0,
+    fitMaxZoom: 7,
+    fitPadding: MAP_PAD,
+    onSelectStop: (i) => { setMapFull(false); visitedItems[i]?.open(); },
+  }), [visitedItems, visitedIso, mapLocale]);
+
+  const placesFromPlan = (p) => (p.cities || []).map((city, i) => ({
+    id: (p.destination_ids || [])[i] || null, city,
+    country: destinations[(p.destination_ids || [])[i]]?.country || '', lat: null, lon: null, nights: null,
+  }));
+  const editableFromPlan = (p, mem) => ({
+    id: p.id, label: p.label || '', startDate: p.start_date, endDate: p.end_date,
+    places: mem?.places?.length ? mem.places : placesFromPlan(p), memory: mem,
+  });
+  const editableFromDayPlan = (sp, mem) => ({
+    id: sp.id, local: true, label: sp.label || '', startDate: sp.startDate, endDate: dayPlanEndDate(sp),
+    places: mem?.places?.length ? mem.places : (sp.stops || []).map((s) => ({
+      id: destinations[s.destinationId] ? s.destinationId : null,
+      city: destinations[s.destinationId]?.city || s.city || '',
+      country: destinations[s.destinationId]?.country || s.country || '',
+      lat: s.lat ?? null, lon: s.lon ?? null, nights: null,
+    })),
+    memory: mem,
+  });
+
+  const recordGroups = useMemo(() => {
+    const rows = [
+      ...yPlans.map((p) => ({ kind: 'plan', when: p.end_date, item: p })),
+      ...yDays.map((sp) => ({ kind: 'day', when: dayPlanEndDate(sp), item: sp })),
+    ].sort((a, b) => (a.when < b.when ? 1 : -1));
+    const groups = [];
+    rows.forEach((r) => {
+      const y = yearOf(r.when);
+      let g = groups.find((x) => x.year === y);
+      if (!g) { g = { year: y, items: [] }; groups.push(g); }
+      g.items.push(r);
+    });
+    return groups;
+  }, [yPlans, yDays]);
+
+  const recordRow = (row) => {
+    if (row.kind === 'plan') {
+      const p = row.item;
+      const parts = journeyParts(p);
+      const mem = memories[p.id];
+      const showing = openMemory === p.id;
+      const line = mem ? memoryLine(mem) : '';
+      return {
+        id: `p${p.id}`,
+        title: parts.title,
+        img: coverPhoto(mem) || resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries }),
+        iso2: isoFor(parts.countries),
+        meta: [parts.sub, fmtRange(p.start_date, p.end_date), line].filter(Boolean).join(', '),
+        onOpen: mem ? () => setOpenMemory(showing ? '' : p.id) : () => onLoadTripPlan?.(p.id),
+        menuActions: [
+          { key: 'edit', label: t('saved.openTripPlanner'), icon: <RouteIcon size={16} />, onClick: () => onLoadTripPlan?.({ id: p.id, edit: true }) },
+          ...(user || SAVED_MOCK ? [{ key: 'share', label: t('saved.shareTrip'), icon: <LinkIcon size={16} />, onClick: () => toggleShare(p.id) }] : []),
+        ],
+        onRemove: () => removeWithUndo({ key: `plan:${p.id}`, label: parts.title, commit: () => handleDeleteTripPlan(p.id) }),
+        removeLabel: t('saved.removeItem', { name: parts.title }),
+        below: (
+          <>
+            {showing && mem && <TripMemoryView memory={mem} onEdit={() => openPastForm(editableFromPlan(p, mem))} />}
+            {showing && crewBarFor(p.id)}
+            {statementFor(p.id)}
+            {sharePanelFor(p.id, parts.title)}
+          </>
+        ),
+      };
+    }
+    const sp = row.item;
+    const parts = dayJourneyParts(sp);
+    const mem = memories[sp.id];
+    const showing = openMemory === sp.id;
+    const line = mem ? memoryLine(mem) : '';
+    return {
+      id: `d${sp.id}`,
+      title: parts.title,
+      img: coverPhoto(mem) || resolveImage({ ids: (sp.stops || []).map((s) => s.destinationId), cities: dayPlanCities(sp), countries: parts.countries }),
+      iso2: isoFor(parts.countries),
+      meta: [parts.sub, fmtRange(sp.startDate, dayPlanEndDate(sp)), line].filter(Boolean).join(', '),
+      onOpen: mem ? () => setOpenMemory(showing ? '' : sp.id) : () => onOpenDayPlan?.(sp.id),
+      onRemove: () => removeWithUndo({
+        key: `day:${sp.id}`,
+        label: parts.title,
+        commit: () => { clearMemory(sp.id); setMemTick((n) => n + 1); setDayPlans(deleteStandalonePlan(sp.id)); },
+      }),
+      removeLabel: t('saved.removeItem', { name: parts.title }),
+      below: showing && mem ? (
+        <>
+          <TripMemoryView memory={mem} onEdit={() => openPastForm(editableFromDayPlan(sp, mem))} />
+          {crewBarFor(sp.id)}
+        </>
+      ) : null,
+    };
+  };
+  const groups = recordGroups.map((g) => ({ year: g.year, rows: g.items.map(recordRow) }));
+
+  const plannedCount = upcomingPlans.length + upcomingDayPlans.length;
+  const pastCount = pastPlans.length + pastDayPlans.length;
+
+  // Land on Trips once a trip ahead is known, unless a tab was picked this visit.
+  useEffect(() => {
+    if (!pickedRef.current && plannedCount > 0 && tab !== 'planned') setTab('planned');
+  }, [plannedCount]); // eslint-disable-line react-hooks/exhaustive-deps -- runs when the plans arrive
+
   const TABS = [
-    { key: 'planned', Icon: CalendarIcon, labelKey: 'saved.tabPlanned', n: plannedCount },
-    { key: 'favorites', Icon: BookmarkIcon, labelKey: 'saved.tabFavorites', n: (authed && !loading ? shownTrips.length : 0) + shortlist.count },
-    { key: 'visited', Icon: CheckIcon, labelKey: 'saved.tabVisited', n: pastCount },
+    { key: 'planned', Icon: CalendarIcon, label: t('saved.tabTrips'), n: plannedCount },
+    { key: 'favorites', Icon: BookmarkIcon, label: t('saved.tabFavorites'), n: shortRows.length },
+    { key: 'visited', Icon: CheckIcon, label: t('saved.tabVisited'), n: pastCount },
   ];
-  const renderTabs = (cls) => TABS.map(({ key, Icon, labelKey, n }) => (
-    <button
-      key={key}
-      role="tab"
-      aria-selected={tab === key}
-      className={`saved-tab ${cls} ${tab === key ? 'on' : ''}`}
-      onClick={() => pickTab(key)}
-    >
-      <Icon size={16} />
-      <span>{t(labelKey)}</span>
-      {n > 0 && <small>{n}</small>}
-    </button>
-  ));
+  const renderTabs = (cls) => (
+    <TileGroup label={t('saved.title')} kind="tabs" columns={1} className={cls}>
+      {TABS.map(({ key, Icon, label, n }) => (
+        <Tile
+          key={key}
+          kind="tab"
+          selected={tab === key}
+          icon={<Icon size={20} />}
+          aria-controls="mytrips-panel"
+          onClick={() => pickTab(key)}
+        >
+          {label}
+          {n > 0 && <Chip kind="count" className="mt-tab-n">{n}</Chip>}
+        </Tile>
+      ))}
+    </TileGroup>
+  );
+
+  const shortFilters = (compact) => (
+    <ShortlistFilters kinds={kinds} kind={kindNow} onKind={setKind} sort={sort} onSort={pickSort} compact={compact} />
+  );
+  const yearFilter = (compact) => <YearFilter years={years} year={yearNow} onYear={setYear} compact={compact} />;
+  const sideFilters = tab === 'favorites' && shortRows.length > 0 ? shortFilters(false)
+    : tab === 'visited' ? yearFilter(false) : null;
+  const phoneFilters = tab === 'favorites' && shortRows.length > 1 ? shortFilters(true)
+    : tab === 'visited' && years.length > 1 ? yearFilter(true) : null;
+
+  const pastForm = pastOpen ? (
+    <PastTripForm
+      friends={friends}
+      key={pastEdit?.id || 'new'}
+      destinations={destinations}
+      todayIso={todayIso}
+      busy={pastBusy}
+      error={pastError}
+      initial={pastEdit}
+      onCancel={() => { setPastOpen(false); setPastEdit(null); }}
+      onSave={handleSavePastTrip}
+    />
+  ) : null;
 
   return (
-    <div className="saved-shell">
-      {/* Desktop-only left panel (CSS hides it under 769px), the same column
-          Destinations and Explore stand their filters in: the three states of
-          travelling under one mono label, closed by one hairline on its right.
-          The phone keeps the tile row inside the header below. */}
+    <div className="saved-shell mytrips">
       <aside className="side-panel saved-side" aria-label={t('saved.title')}>
         <div className="side-block">
-          {/* The rail's own "Saved trips" label went (T390): the page's
-              visible h1 says "My trips", and a second name for the same page
-              one column over was the inconsistency the brief counted. */}
-          <div className="side-cats" role="tablist" aria-label={t('saved.title')}>
-            {renderTabs('side-cat')}
-          </div>
+          <span className="mt-filter-label">{t('saved.showLabel')}</span>
+          {renderTabs('mt-tiles is-side')}
         </div>
+        {sideFilters && <div className="side-block mt-side-filters">{sideFilters}</div>}
       </aside>
 
       <div className="panel open account-panel saved-trips-panel">
-      <div className="panel-header saved-panel-header">
-        {/* The page's one h1 (T186), visible again (T390, brief V3-1): a page
-            with an address names itself, and "My trips" on both widths is the
-            one name for it. No overline and no close cross: the bottom nav and
-            the header leave this page, Escape still does, and the letter x
-            here was a second, unlabelled way out. Three states of travelling
-            follow, one mutually exclusive choice: the calendar of
-            commitments, the shortlist of wishes, the record. */}
-        <h1 className="saved-title">{t('saved.title')}</h1>
-        <div className="saved-tabs" role="tablist" aria-label={t('saved.title')}>
-          {renderTabs('saved-cat')}
+        <div className="panel-header saved-panel-header">
+          <h1 className="saved-title">{t('saved.title')}</h1>
+          {renderTabs('mt-tiles is-top')}
+          {phoneFilters && <div className="mt-refine">{phoneFilters}</div>}
         </div>
-      </div>
 
-      {/* The one place Carta suggests installing (owner call, T362 on T246-d):
-          after a trip is saved, on a phone browser, once. */}
-      <InstallHint hasSavedTrip={trips.length > 0 || tripPlans.length > 0 || dayPlans.length > 0} />
+        <InstallHint hasSavedTrip={trips.length > 0 || tripPlans.length > 0 || dayPlans.length > 0} />
 
-      {tab === 'favorites' && (
-        /* ── The shortlist: everything starred anywhere in the app, grouped
-            by what it is. It comes FIRST and it works signed out, because
-            the star is the one keeping gesture a guest has. The account's
-            own saved destinations follow underneath, labelled as such, so
-            the two stores are visibly two stores rather than one list that
-            mysteriously half-empties on sign-out. ── */
-        <SavedSection title={t('fav.shortlistTitle')} count={shortlist.count} big>
-          {shortlist.count === 0 ? (
-            /* One invitation per tab. On a fresh device the account section
-               below is also empty and already says "sign in to save trips";
-               two stacked empty states in one tab is a tab that has failed to
-               decide what it is asking for. So the shortlist only pleads its
-               own case when the account section is not already pleading
-               one, and otherwise says its piece in a single quiet line. */
-            accountFavsEmpty ? (
-              <p className="footnote">{t('fav.shortlistEmpty')}</p>
-            ) : (
-              <SavedEmpty
-                Icon={MapPinIcon}
-                text={t('fav.shortlistEmpty')}
-                cta={t('saved.browseMap')}
-                onCta={() => onGoToTab && onGoToTab('places')}
-              />
-            )
-          ) : (
-            shortlist.sections.map(({ kind, rows }) => (
-              <div className="slist-group" key={kind}>
-                <div className="slist-group-title">{t(FAV_KIND_LABEL[kind])}</div>
-                <div className="slist-rows">
-                  {rows.map((row) => (
-                    <ShortlistRow
-                      key={row.key}
-                      row={row}
-                      figure={row.kind === 'dest' ? <SavedCost costs={costs} ids={[row.id]} /> : null}
-                      onOpen={() => openShortlisted(row)}
-                      onRemove={() => dropShortlisted(row)}
-                      removeLabel={t('fav.remove')}
-                      missingLabel={t('fav.missing')}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))
-          )}
-        </SavedSection>
-      )}
-
-      {tab === 'favorites' && (
-        /* ── Favorites: places saved from the map, photo first. ── */
-        <SavedSection title={t('fav.savedPlaces')}>
-          {!authed ? (
-            <SavedEmpty
-              Icon={MapPinIcon}
-              text={configured ? t('saved.signInPrompt') : t('saved.notConfigured')}
-              cta={configured ? t('saved.signIn') : null}
-              onCta={configured ? onOpenAuth : null}
+        <div className="mt-panel" id="mytrips-panel" role="tabpanel" aria-labelledby="mytrips-panel-title">
+          {/* The section's name as the page's h2, for the heading outline; the
+              tile above already shows it. */}
+          <h2 className="sr-only" id="mytrips-panel-title">{TABS.find((x) => x.key === tab)?.label}</h2>
+          {tab === 'planned' && (
+            <TripsTab
+              authed={authed}
+              configured={configured}
+              loading={tripPlansLoading}
+              error={tripPlansError}
+              onRetry={loadTripPlans}
+              next={nextModel}
+              later={laterModels}
+              dayPlans={dayModels}
+              friendsShared={friendTrips.length}
+              onOpenFriends={onOpenFriends}
+              onPlanTrip={() => onGoToTab?.('trip')}
+              onSignIn={onOpenAuth}
+              todayIso={todayIso}
             />
-          ) : loading ? (
-            <LoadingBlock label={t('saved.loading')} rows={3} />
-          ) : error ? (
-            <ErrorBlock message={t('state.savedFailed')} onRetry={loadTrips} retryLabel={t('layer.retry')} />
-          ) : shownTrips.length === 0 ? (
-            <SavedEmpty
-              Icon={MapPinIcon}
-              text={t('saved.destinationsEmpty')}
-              cta={t('saved.browseMap')}
-              /* Both "Browse the map" doors go to Destinations (T390, brief
-                 V3-2); this one used to open Explore while its twin above
-                 opened Destinations under the same label. */
-              onCta={() => onGoToTab && onGoToTab('places')}
+          )}
+          {tab === 'favorites' && (
+            <ShortlistTab
+              rows={shownShort}
+              showKind={kinds.length > 1 && kindNow === 'all'}
+              costs={costs}
+              loading={shortlist.loading || (authed && loading)}
+              onOpen={openShortlisted}
+              onRemove={dropShortlisted}
+              planCountryName={planCountryName}
+              onPlanTrip={onPlanTripCountry && planCountry ? () => onPlanTripCountry(planCountry.cc) : null}
+              onBrowse={() => onGoToTab?.('places')}
             />
-          ) : (
-            <div className="fav-grid">
-              {shownTrips.map((trip) => (
-                <FavCard
-                  key={trip.id}
-                  trip={trip}
-                  img={resolveImage({ ids: [trip.destination_id], cities: [trip.city], countries: [trip.country] })}
-                  dates={trip.depart_date ? `${fmtDate(trip.depart_date)} → ${fmtDate(trip.return_date)}` : ''}
-                  kind={(() => { const k = kindsForDest(destinations[trip.destination_id]?.categories)[0]; return k ? t(`kind.${k.key}`) : ''; })()}
-                  savedOn={fmtStamp(trip.created_at)}
-                  figure={<SavedCost costs={costs} ids={[trip.destination_id]} />}
-                  onOpen={() => onLoadTrip(trip)}
-                  openTitle={t('saved.openDestination')}
-                  onDelete={() => removeWithUndo({
-                    key: `fav:${trip.id}`,
-                    label: trip.city,
-                    commit: () => handleDelete(trip.id),
-                  })}
-                  deleteLabel={t('saved.removeItem', { name: trip.city })}
-                />
-              ))}
-            </div>
           )}
-        </SavedSection>
-      )}
-
-      {tab === 'planned' && (
-        <>
-          {/* ── Upcoming journeys: the heaviest objects in the panel. ── */}
-          <SavedSection
-            title={t('saved.upcomingJourneys')}
-            count={authed && !tripPlansLoading ? upcomingPlans.length : null}
-            big
-          >
-            {!authed ? signedOutEmpty : tripPlansLoading ? (
-              <LoadingBlock label={t('saved.loading')} rows={2} shape="card" />
-            ) : tripPlansError ? (
-              <ErrorBlock message={t('state.savedFailed')} onRetry={loadTripPlans} retryLabel={t('layer.retry')} />
-            ) : upcomingPlans.length === 0 ? (
-              <SavedEmpty
-                Icon={RouteIcon}
-                text={t('saved.upcomingEmpty')}
-                cta={t('saved.planFirstTrip')}
-                onCta={() => onGoToTab && onGoToTab('trip')}
-              />
-            ) : (
-              <div className="saved-card-stack">
-                {upcomingPlans.map((p, i) => {
-                  const plannedDays = countPlannedDays(p.id);
-                  const parts = journeyParts(p);
-                  return (
-                    <div className="saved-record-row" key={p.id}>
-                    <JourneyCard
-                      /* The next trip is the page's focal card, one size up;
-                         every later plan is a row (brief V4-2). */
-                      variant={i === 0 ? 'focal' : 'row'}
-                      title={parts.title}
-                      sub={parts.sub}
-                      countries={parts.countries}
-                      img={resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries })}
-                      when={whenParts(p.start_date, p.end_date)}
-                      dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
-                      figure={<SavedCost costs={costs} ids={p.destination_ids || []} />}
-                      share={shareFor(p.id)}
-                      onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
-                      openTitle={t('saved.openTripPlan')}
-                      /* No "Edit" here any more: tapping the card opens the
-                         plan in the planner, which is where it is edited
-                         (T390, brief V3-2). Share has its own button below. */
-                      actions={[]}
-                      /* A trip you co-plan is one you may edit and may not
-                         delete: the delete policy stays owner-only (migration
-                         020), so offering Remove here would offer a button
-                         that quietly does nothing. */
-                      onDelete={p.coplan ? null : () => removeWithUndo({
-                        key: `plan:${p.id}`,
-                        label: parts.title,
-                        commit: () => handleDeleteTripPlan(p.id),
-                      })}
-                      deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
-                      crew={p.coplan ? (
-                        <div className="uptrip-coplan">
-                          <PersonIcon size={11} />
-                          {t('coplan.ownedBy', { who: p.ownerName || t('saved.fallbackTrip') })}
-                        </div>
-                      ) : undefined}
-                      footer={{
-                        label: plannedDays > 0
-                          ? t(plannedDays === 1 ? 'saved.plannedDays1' : 'saved.plannedDaysN', { n: plannedDays })
-                          : t('saved.planItsDays'),
-                        title: t('saved.planDaysTitle'),
-                        onClick: () => onOpenDayPlan && onOpenDayPlan({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
-                      }}
-                    />
-                    {statementFor(p.id)}
-                    {sharePanelFor(p.id)}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </SavedSection>
-
-          {/* ── What friends are showing you. Their own trips, read only,
-                 and only the ones they set to 'friends'. Absent entirely when
-                 nobody has shared anything, rather than an empty shelf that
-                 says the feature exists. ── */}
-          {friendTrips.length > 0 && onOpenFriends && (
-            <div className="panel-section saved-section saved-friends-line">
-              <p className="saved-section-sub">
-                {t(friendTrips.length === 1 ? 'saved.friendsShared1' : 'saved.friendsSharedN', { n: friendTrips.length })}
-              </p>
-              <button type="button" className="saved-friends-open" onClick={onOpenFriends}>
-                {t('saved.friendsOpen')}
-              </button>
-            </div>
+          {tab === 'visited' && (
+            <VisitedTab
+              record={record}
+              mapProps={mapProps}
+              hasMap={visitedItems.length > 0 || visitedIso.length > 0}
+              mapFull={mapFull}
+              onMapFull={setMapFull}
+              groups={groups}
+              pastForm={pastForm}
+              onAddPast={() => openPastForm(null)}
+              error={tripPlansError}
+              onEditCountries={() => setCountriesOpen(true)}
+              countriesRef={countriesRef}
+            />
           )}
-          {friendTrips.length > 0 && !onOpenFriends && (
-            <SavedSection
-              title={t('friends.theirTrips')}
-              sub={t('friends.theirTripsSub')}
-              count={friendTrips.length}
-            >
-              <div className="saved-card-stack">
-                {friendTrips.map((ft) => {
-                  const showing = openFriendTrip === ft.tripPlanId;
-                  const who = ft.ownerName || `@${ft.ownerHandle}`;
-                  return (
-                    <div className="saved-record-row" key={ft.tripPlanId}>
-                      <JourneyCard
-                        foreign
-                        title={ft.label || (ft.cities || []).join(', ')}
-                        sub={t('friends.byWhom', { who })}
-                        countries={ft.countries || []}
-                        img={resolveImage({
-                          ids: ft.destinationIds || [],
-                          cities: ft.cities || [],
-                          countries: ft.countries || [],
-                        })}
-                        dates={ft.startDate ? `${fmtDate(ft.startDate)} → ${fmtDateYear(ft.endDate)}` : ''}
-                        onOpen={() => setOpenFriendTrip(showing ? '' : ft.tripPlanId)}
-                        openTitle={t('friends.openTheirTrip')}
-                        actions={[]}
-                      />
-                      {showing && <FriendTripPanel planId={ft.tripPlanId} destinations={destinations} />}
-                    </div>
-                  );
-                })}
-              </div>
-            </SavedSection>
-          )}
+        </div>
 
-          {/* ── Day plans: lighter commitments, lighter cards. ── */}
-          <SavedSection
-            title={t('saved.dayPlans')}
-            count={upcomingDayPlans.length}
-          >
-            {upcomingDayPlans.length === 0 ? (
-              <SavedEmpty
-                Icon={ListDayIcon}
-                text={t('saved.dayPlansEmpty')}
-                cta={t('saved.openDayPlanner')}
-                secondary
-                onCta={() => onGoToTab && onGoToTab('day')}
-              />
-            ) : (
-              <div className="saved-card-stack">
-                {upcomingDayPlans.map((sp) => {
-                  const url = resolveImage({
-                    ids: (sp.stops || []).map((s) => s.destinationId),
-                    cities: dayPlanCities(sp),
-                    countries: dayPlanCountries(sp),
-                  });
-                  const photo = url
-                    ? <span className="saved-card-photo" aria-hidden="true"><ShotPhoto url={url} className="saved-card-img" /></span>
-                    : null;
-                  return (
-                    <SavedCard
-                      key={sp.id}
-                      Icon={ListDayIcon}
-                      visual={photo}
-                      visualKind={photo ? 'photo' : 'icon'}
-                      title={sp.label || t('saved.dayPlanFallbackTitle')}
-                      meta={dayPlanMeta(sp)}
-                      figure={<SavedCost costs={costs} ids={(sp.stops || []).map((s) => s.destinationId)} />}
-                      onOpen={() => onOpenDayPlan && onOpenDayPlan(sp.id)}
-                      openTitle={t('saved.openDayPlan')}
-                      onDelete={() => removeWithUndo({
-                        key: `day:${sp.id}`,
-                        label: sp.label || t('saved.fallbackDayPlan'),
-                        commit: () => setDayPlans(deleteStandalonePlan(sp.id)),
-                      })}
-                      deleteLabel={t('saved.removeItem', { name: sp.label || t('saved.fallbackDayPlan') })}
-                    />
-                  );
-                })}
-              </div>
-            )}
-          </SavedSection>
-        </>
-      )}
-
-      {tab === 'visited' && (
-        <>
-          {/* ── The map of the record: every country you finished a trip in
-              painted, every city in it pinned. It belongs here and nowhere
-              else, a map of plans would be a map of intentions. ── */}
-          {pastCount > 0 && (
-            <div className="panel-section saved-section saved-map-section">
-              <div className="saved-map">
-                {/* While the big map is up this frame keeps its height but
-                    drops its map: only one MapLibre instance is ever alive,
-                    which is the expensive thing here, and both are built from
-                    the same visitedMapProps so neither can drift. */}
-                {!mapFull && (
-                  <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
-                    <SavedTripMap {...visitedMapProps} cooperativeGestures />
-                  </Suspense>
-                )}
-                <button
-                  className="saved-map-expand"
-                  onClick={() => setMapFull(true)}
-                  aria-label={t('saved.mapExpand')}
-                  title={t('saved.mapExpand')}
-                >
-                  <ExpandIcon size={15} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── The map at device size. It is portalled to <body> on purpose:
-              the panel is transformed while open, and a transformed ancestor
-              becomes the containing block for position:fixed, which would pin
-              this overlay to the panel's column instead of the screen. Out
-              here it also drops cooperativeGestures, because a map that owns
-              the whole device should answer a pinch directly. ── */}
-          {mapFull && pastCount > 0 && createPortal(
-            <RecordMapDialog title={t('saved.mapFullTitle')} onClose={() => setMapFull(false)}>
-              <div className="savedmap-full-map">
-                <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
-                  <SavedTripMap
-                    {...visitedMapProps}
-                    fitMaxZoom={9}
-                    fitPadding={{ top: 84, left: 28, right: 28, bottom: 56 }}
-                  />
-                </Suspense>
-              </div>
-              <div className="savedmap-full-bar">
-                <span className="savedmap-full-title">{t('saved.mapFullTitle')}</span>
-                <button
-                  className="savedmap-full-close"
-                  onClick={() => setMapFull(false)}
-                  aria-label={t('saved.mapShrink')}
-                  title={t('saved.mapShrink')}
-                >
-                  <ShrinkIcon size={15} />
-                  <span>{t('saved.mapShrink')}</span>
-                </button>
-              </div>
-            </RecordMapDialog>,
-            document.body,
-          )}
-
-          {/* ── The ledger, once there is a record to add up. Day plans are
-              local-first, so the record works signed out too. ── */}
-          {pastCount > 0 && (
-            <div className="panel-section saved-section">
-              <TravelLedger
-                visitedCountries={visited.countries}
-                visitedCities={visited.cities}
-              />
-              <FriendLedger mine={visited} friendTrips={friendTrips} />
-            </div>
-          )}
-
-          {/* ── The record: finished trips file themselves, newest first. ── */}
-          <SavedSection
-            title={t('saved.travelRecord')}
-            count={pastCount}
-            big
-            /* One way in at a time (brief V3-6): while the record is empty its
-               invitation below is the entry, so the heading's button waits
-               until there is a record to add to. */
-            action={pastCount === 0 && !pastOpen ? null : (
-              <button
-                className={`saved-add-past${pastOpen ? ' is-open' : ''}`}
-                onClick={() => (pastOpen ? (setPastOpen(false), setPastEdit(null)) : openPastForm(null))}
-                aria-expanded={pastOpen}
-              >
-                <PlusIcon size={13} />
-                {t('saved.addPastTrip')}
-              </button>
-            )}
-          >
-            {/* Trips taken before Carta, or booked somewhere else, are told
-                here rather than left out of the record. */}
-            {pastOpen && (
-              <PastTripForm
-                friends={friends}
-                key={pastEdit?.id || 'new'}
-                destinations={destinations}
-                todayIso={todayIso}
-                busy={pastBusy}
-                error={pastError}
-                initial={pastEdit}
-                onCancel={() => { setPastOpen(false); setPastEdit(null); }}
-                onSave={handleSavePastTrip}
-              />
-            )}
-            {tripPlansError && !pastOpen ? (
-              <div className="auth-error" role="alert">{tripPlansError}</div>
-            ) : pastCount === 0 && !pastOpen ? (
-              <SavedEmpty
-                Icon={CheckIcon}
-                text={t('saved.pastEmpty')}
-                cta={t('saved.addPastTrip')}
-                onCta={() => openPastForm(null)}
-              />
-            ) : pastCount === 0 ? null : (
-              <div className="saved-card-stack">
-                {pastRecord.map((row) => {
-                  if (row.kind === 'plan') {
-                    const p = row.item;
-                    const parts = journeyParts(p);
-                    const mem = memories[p.id];
-                    const showing = openMemory === p.id;
-                    return (
-                      <div className="saved-record-row" key={`p${p.id}`}>
-                        <JourneyCard
-                          visited
-                          title={parts.title}
-                          sub={parts.sub}
-                          countries={parts.countries}
-                          // Your own photograph outranks the catalogue's: it is
-                          // the one picture of this trip that was actually there.
-                          img={coverPhoto(mem)
-                            || resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries })}
-                          dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
-                          onOpen={mem
-                            ? () => setOpenMemory(showing ? '' : p.id)
-                            : () => onLoadTripPlan && onLoadTripPlan(p.id)}
-                          openTitle={mem ? t('saved.pastSeeTrip') : t('saved.openTripPlan')}
-                          /* "Edit this trip" lives in the memory view, under
-                             what it edits; the menu's copy of it went (row
-                             T390-f). A trip with no memory has nothing to
-                             edit there, so the menu keeps the planner door. */
-                          actions={[
-                            {
-                              key: 'edit',
-                              label: mem ? t('saved.openTripPlanner') : t('saved.edit'),
-                              icon: <RouteIcon size={14} />,
-                              onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
-                            },
-                          ].filter(Boolean)}
-                          share={shareFor(p.id)}
-                          crew={crewBarFor(p.id)}
-                          /* The memory's summary reads in the caption band;
-                             it used to be a footer button that did what a
-                             tap on the card does (row T390-f). */
-                          summary={mem ? memoryLine(mem) : ''}
-                          onDelete={() => removeWithUndo({
-                            key: `plan:${p.id}`,
-                            label: parts.title,
-                            commit: () => handleDeleteTripPlan(p.id),
-                          })}
-                          deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
-                        />
-                        {showing && mem && (
-                          <TripMemoryView memory={mem} onEdit={() => openPastForm(editableFromPlan(p, mem))} />
-                        )}
-                        {statementFor(p.id)}
-                        {sharePanelFor(p.id)}
-                      </div>
-                    );
-                  }
-                  const sp = row.item;
-                  const parts = dayJourneyParts(sp);
-                  const mem = memories[sp.id];
-                  const showing = openMemory === sp.id;
-                  return (
-                    <div className="saved-record-row" key={`d${sp.id}`}>
-                      <JourneyCard
-                        visited
-                        title={parts.title}
-                        sub={parts.sub}
-                        countries={parts.countries}
-                        img={coverPhoto(mem) || resolveImage({
-                          ids: (sp.stops || []).map((s) => s.destinationId),
-                          cities: dayPlanCities(sp),
-                          countries: parts.countries,
-                        })}
-                        dates={sp.startDate ? `${fmtDate(sp.startDate)} → ${fmtDateYear(dayPlanEndDate(sp))}` : ''}
-                        onOpen={mem
-                          ? () => setOpenMemory(showing ? '' : sp.id)
-                          : () => onOpenDayPlan && onOpenDayPlan(sp.id)}
-                        openTitle={mem ? t('saved.pastSeeTrip') : t('saved.openDayPlan')}
-                        actions={[]}
-                        crew={crewBarFor(sp.id)}
-                        summary={mem ? memoryLine(mem) : ''}
-                        onDelete={() => removeWithUndo({
-                          key: `day:${sp.id}`,
-                          label: parts.title,
-                          commit: () => {
-                            clearMemory(sp.id);
-                            setMemTick((n) => n + 1);
-                            setDayPlans(deleteStandalonePlan(sp.id));
-                          },
-                        })}
-                        deleteLabel={t('saved.removeItem', { name: sp.label || t('saved.fallbackDayPlan') })}
-                      />
-                      {showing && mem && (
-                        <TripMemoryView memory={mem} onEdit={() => openPastForm(editableFromDayPlan(sp, mem))} />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </SavedSection>
-        </>
-      )}
-      {undo && (
-        <UndoToast key={undo.key} label={undo.label} onUndo={undoRemoval} onClose={flushUndo} />
-      )}
+        {countriesOpen && (
+          <VisitedCountriesSheet
+            fromTrips={allRecord.fromTrips}
+            manual={manualCountries}
+            onToggle={(c) => toggleVisitedCountry(c)}
+            onClose={() => { setCountriesOpen(false); countriesRef.current?.focus(); }}
+          />
+        )}
+        {undo && <UndoToast key={undo.key} label={undo.label} onUndo={undoRemoval} onClose={flushUndo} />}
       </div>
     </div>
   );

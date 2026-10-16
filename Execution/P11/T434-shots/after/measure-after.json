@@ -1,0 +1,188 @@
+[
+  {
+    "scene": "mytrips-empty",
+    "view": "p360",
+    "error": "TimeoutError: locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.saved-trips-panel, .mytrips').first() to be visible\u001b[22m\n"
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 37,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "p360",
+    "error": "TimeoutError: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4260/?savedmock\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 21,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-empty",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Plan a trip"
+    ],
+    "words": 13,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Open trip"
+    ],
+    "words": 50,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "phone",
+    "hscroll": false,
+    "small": [
+      "Bruges 50x19",
+      "Porto 40x19",
+      "Lisbon 48x19"
+    ],
+    "smallCount": 3,
+    "primaries": [
+      "Plan a trip in Portugal"
+    ],
+    "words": 31,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 32,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-empty",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Plan a trip"
+    ],
+    "words": 14,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Open trip 111x40",
+      "Plan days 136x40",
+      "Invite 112x40",
+      "Slovenia 61x19"
+    ],
+    "smallCount": 4,
+    "primaries": [
+      "Open trip"
+    ],
+    "words": 82,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Bruges 50x19",
+      "Porto 40x19",
+      "Lisbon 48x19"
+    ],
+    "smallCount": 3,
+    "primaries": [
+      "Plan a trip in Portugal"
+    ],
+    "words": 33,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Germany 67x19",
+      "Autumn in Flanders 141x19",
+      "Belgium 59x19",
+      "Austria 52x19"
+    ],
+    "smallCount": 4,
+    "primaries": [],
+    "words": 66,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-empty",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Plan a trip"
+    ],
+    "words": 14,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Open trip"
+    ],
+    "words": 88,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Plan a trip in Portugal"
+    ],
+    "words": 33,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 39,
+    "errors": []
+  }
+]

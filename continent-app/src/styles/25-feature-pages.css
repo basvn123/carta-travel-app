@@ -81,8 +81,6 @@
   /* And the hub's help rows fold away, the way the browse toolbars do the
      moment the panel appears: one set of doors, never two. */
   .account-shell .account-help-section { display: none; }
-  /* My trips keeps its tabs in the rail for the same reason. */
-  .saved-trips-panel .saved-tabs { display: none; }
 
   /* The rail's rows. Modelled on .side-sort: a quiet tile until it is the
      page you are on, and then the full accent. */
@@ -115,10 +113,6 @@
   .side-navrow.on svg { color: var(--select-ink); }
   .side-navrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  /* My trips: three states of travelling, one under the other. The browse
-     panels put six categories in a 2-up grid; three tabs read better as
-     rows, and the count rides the right edge where a count belongs. */
-  .saved-side .side-cats { grid-template-columns: 1fr; gap: 6px; }
   .saved-side .side-cat {
     flex-direction: row;
     align-items: center;
@@ -158,13 +152,7 @@
     padding-top: 8px;
     padding-bottom: 0;
   }
-  .saved-tabs {
-    display: flex;
-    gap: 7px;
-    margin-top: 0;
-    padding: 3px 0 12px;
-    border-bottom: 1px solid var(--rule-soft);
-  }
+  
   .saved-cat {
     position: relative;
     flex: 1 1 0;
@@ -604,8 +592,7 @@
   border-radius: 12px;
   background: var(--bg-card);
 }
-.coplan-title { display: block; margin-bottom: 4px; }
-.coplan-sub { margin-bottom: 10px; }
+
 .coplan-list { margin-bottom: 10px; }
 .coplan-row {
   display: flex;
@@ -638,46 +625,6 @@
   display: flex;
   gap: 8px;
   align-items: stretch;
-}
-.coplan-pick {
-  flex: 1;
-  min-width: 0;
-  min-height: 36px;
-  padding: 7px 10px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--paper);
-  font-family: var(--ui);
-  font-size: 12.5px;
-  color: var(--ink);
-}
-.coplan-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.coplan-ask-btn {
-  flex: none;
-  min-height: 36px;
-  padding: 7px 15px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: transparent;
-  font-family: var(--ui);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .coplan-ask-btn:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
-}
-.coplan-ask-btn:disabled { opacity: 0.5; cursor: default; }
-/* A trip somebody else owns, in a list of your own. It says whose it is
-   rather than looking identical to the ones you can delete. */
-.uptrip-coplan {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 3px;
-  font-size: 11px;
-  color: var(--rate-soft);
 }
 
 /* ---- Region layer: travel band dividers and the region page ---------- */
@@ -1904,8 +1851,6 @@
 .xbar .explore-mock { margin: 0; align-self: flex-start; }
 .xbar-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-
-
 .xbar .xgrid-sort { margin-left: 0; gap: 8px; color: var(--ink-mute); }
 .xgrid-sort-field { position: relative; display: inline-flex; align-items: center; }
 .xbar .xgrid-sort select {
@@ -1980,9 +1925,6 @@
 .xcard-preview-rank { margin: 0; font-size: 11.5px; font-weight: 600; color: var(--rate-bg); }
 
 /* --- the feed: grid alone, or grid beside a sticky map ------------------- */
-
-
-
 
 /* --- the phone: two-up cards, the bar without its title, a floating switch */
 

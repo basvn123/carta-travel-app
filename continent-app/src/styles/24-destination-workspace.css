@@ -3382,9 +3382,6 @@
     color: var(--ink-mute);
   }
 
-  /* Category cards, two abreast: quiet tiles until one is on, and then the
-     full accent, which is the one way "selected" reads on this page. */
-  .side-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .side-cat {
     display: flex;
     flex-direction: column;
@@ -4170,15 +4167,13 @@
 /* The one filled action on these pages wears the accent, the way Get a pass
    does in the bar. Scoped to the two shells: the same class is the ink button
    in the auth modal and on the map, which are not this design. */
-.account-shell .auth-submit,
-.saved-shell .saved-empty-cta {
+.account-shell .auth-submit {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--on-fill);
 }
 @media (hover: hover) {
-  .account-shell .auth-submit:hover:not(:disabled),
-  .saved-shell .saved-empty-cta:hover {
+  .account-shell .auth-submit:hover:not(:disabled) {
     background: var(--accent-soft);
     border-color: var(--accent-soft);
   }

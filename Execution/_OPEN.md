@@ -1574,3 +1574,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T459-d | T459 | Real-phone pass on the T459 builder: the Where chips, the one-line recap, the Your days sheet from the footer | user | open |  |
 | T459-e | T459 | German strings outside the day planner block may still be written without umlauts (ue, oe, ae); sweep de.js by hand, not by blind replace | next task | open |  |
 | T459-f | T459 | The builder map lists one place under two names (Baths of Diocletian, Terme di Diocleziano); dedupe in the catalogue with the far-away picks and photos the owner is fixing | user | open |  |
+| T434-a | T434 | Paste supabase/migrations/052_coplan_links.sql after 046, then run node scripts/verify_live_policies.mjs; until then "Copy invite link" hides itself and an opened link says it no longer works | user | open |  |
+| T434-b | T434 | PastTripForm.jsx is still on raw buttons (20) with 22 to 35 px controls, and a full browser storage loses a past trip's story and photos without a word (audit P1-3); give it its own kit pass | next task | open |  |
+| T434-c | T434 | The record map paints visited countries and pins in brown (TripMap record basemap) where carta-design asks for the ink ramp, and shows an empty box while it loads instead of a still ink drawing; fix in map/TripMap.jsx | next task | open |  |
+| T434-d | T434 | My trips has no URL and adds no history entry, so a phone's Back leaves it (audit P2); carry the section in App's hash router (#trips, #shortlist, #visited) | next task | open |  |
+| T434-e | T434 | "Plan a trip in {country}" seeds the trip wizard with a country only; seeding the exact starred places needs a seed.destIds path in GuidedTripWizard.jsx | next task | open |  |
+| T434-f | T434 | Native review of the 62 new and 6 changed My trips strings in nl, de, fr, es and it | user | open |  |
+| T434-g | T434 | Real-phone pass on My trips: the focal card, an invite link through the phone's share sheet, the countries sheet, the still map that opens full size on a tap | user | open |  |
+| T434-h | T434 | verify_friends.mjs stops at its second step: it clicks .header-friends-btn, the header Friends button T426 removed; open Friends from the Account panel instead | next task | open |  |

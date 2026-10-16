@@ -75,6 +75,8 @@ import { readFavList, isFav, favDestIds, toggleFav as toggleFavKey } from './lib
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
+import { IconButton } from './components/ui/index.js';
+import { readCoplanTokenFromUrl, stripCoplanTokenFromUrl, holdCoplanToken, acceptCoplanLink } from './auth/coplanners.js';
 import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
 
 // The guides gallery streams in on demand: it is a whole browse surface
@@ -98,7 +100,9 @@ import { AuthGate } from './auth/AuthGate.jsx';
 import { SharedTripView } from './auth/SharedTripView.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
-import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
+// My trips is its own chunk with its own stylesheet (T434): nothing of it is
+// needed before the traveller opens it.
+const SavedTripsPanel = lazy(() => import('./auth/SavedTripsPanel.jsx').then((m) => ({ default: m.SavedTripsPanel })));
 import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome } from './lib/origins.js';
@@ -212,6 +216,43 @@ function TravelApp() {
     setAccountEntry((n) => n + 1);
     setAccountOpen(true);
   }, [pendingFriend, user, setAccountOpen, setSavedTripsOpen]);
+
+  // An invite to plan a trip together (#coplan=<token>, migration 052, T434).
+  // Held in session storage until it is used, so a guest can sign in or
+  // create an account first (Google leaves the page and comes back). Signed
+  // in, the link is answered once: the trip joins My trips, which opens on it,
+  // and one line in the bottom slot says what happened.
+  const [pendingCoplan, setPendingCoplan] = useState(() => readCoplanTokenFromUrl());
+  const [coplanNote, setCoplanNote] = useState('');
+  useEffect(() => {
+    if (!pendingCoplan) return;
+    stripCoplanTokenFromUrl();
+    holdCoplanToken(pendingCoplan);
+  }, [pendingCoplan]);
+  useEffect(() => {
+    if (!pendingCoplan || authLoading) return undefined;
+    if (!user) {
+      if (authConfigured) { setAuthModalMode('signup'); setAuthModalOpen(true); }
+      return undefined;
+    }
+    let live = true;
+    const done = (status, label) => {
+      if (!live) return;
+      holdCoplanToken(null);
+      setPendingCoplan(null);
+      const key = { joined: 'coplan.linkJoined', own: 'coplan.linkOwn', blocked: 'coplan.linkBlocked', too_many: 'coplan.linkTooMany' }[status]
+        || 'coplan.linkGone';
+      setCoplanNote(t(key, { trip: label || t('saved.fallbackTrip') }));
+      if (status === 'joined' || status === 'own') { setAccountOpen(false); setSavedTripsOpen(true); }
+    };
+    acceptCoplanLink(pendingCoplan).then((r) => done(r.status, r.label)).catch(() => done('gone'));
+    return () => { live = false; };
+  }, [pendingCoplan, user, authLoading, authConfigured, setAuthModalMode, setAuthModalOpen, setAccountOpen, setSavedTripsOpen, t]);
+  useEffect(() => {
+    if (!coplanNote) return undefined;
+    const id = setTimeout(() => setCoplanNote(''), 8000);
+    return () => clearTimeout(id);
+  }, [coplanNote]);
 
   // The published guides gallery, and a direct link to one of them
   // (#guide=<id>). Same rule as every other hash this app answers: read once
@@ -787,7 +828,7 @@ function TravelApp() {
   // Europe, and a shared link can name a place anywhere, so either one asks
   // for the full catalogue. A place opened by id needs only its own country.
   // The deep-link states are read once at load, so this is decided once.
-  const deepLinked = !!(pendingFriend || pendingGuide || shareToken || sharedTripRaw || sharedDayRaw
+  const deepLinked = !!(pendingFriend || pendingCoplan || pendingGuide || shareToken || sharedTripRaw || sharedDayRaw
     || pendingTrail || pendingDest || pendingBeach || pendingLake || pendingMountain
     || pendingCycle || pendingRegion || pendingTrip || bootJourney);
   useEffect(() => {
@@ -1464,6 +1505,7 @@ function TravelApp() {
       )}
       {savedTripsOpen && (
         <div onClick={(e) => e.stopPropagation()}>
+          <Suspense fallback={<div className="mt-loading" aria-busy="true" />}>
           <SavedTripsPanel
             data={data}
             onClose={() => setSavedTripsOpen(false)}
@@ -1479,6 +1521,9 @@ function TravelApp() {
                computeCosts() map Explore's cards print from (T390-a), and
                friends' trips as one line pointing at Friends. */
             costs={exploreIndices}
+            stayTier={choices.stay_tier || 'home'}
+            lifestyle={choices.lifestyle}
+            onPlanTripCountry={openTripForCountry}
             onOpenFriends={() => openAccountAt('friends')}
             /* An empty shelf offers the tab that fills it, so "nothing here
                yet" comes with somewhere to go. */
@@ -1500,6 +1545,7 @@ function TravelApp() {
             onOpenFeature={(layer, ref) => { setSavedTripsOpen(false); openFeature(layer, ref); }}
             onOpenDest={(id) => { setSavedTripsOpen(false); openDetail(id); }}
           />
+          </Suspense>
         </div>
       )}
       {guidesOpen && (
@@ -1558,6 +1604,14 @@ function TravelApp() {
         <AnnouncementBar />
         {/* A pass expires quietly by design, so the only warning is this one. */}
         <PassExpiryBanner />
+        {coplanNote && (
+          <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
+            {coplanNote}
+            <IconButton label={t('a11y.close')} className="confirm-toast-close" onClick={() => setCoplanNote('')}>
+              <CloseIcon size={16} />
+            </IconButton>
+          </div>
+        )}
         {emailConfirmed && (
           <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
             <span className="confirm-toast-check" aria-hidden="true">✓</span>

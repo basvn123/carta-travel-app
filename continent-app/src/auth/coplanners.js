@@ -129,3 +129,87 @@ export async function removeCoplanner(planId, userId) {
     .eq('user_id', userId);
   if (error) throw error;
 }
+
+/* ── Invite by link (T434, migration 052). The owner makes a link; whoever
+ * opens it signed in joins the trip and becomes the owner's friend in one
+ * step, which is how Wanderlog adds tripmates. Every call answers
+ * `{ missing: true }` on a project without 052 (PGRST202, the function is not
+ * there yet), so the share panel hides the row instead of failing. ── */
+const missingFn = (error) => error && (error.code === 'PGRST202' || error.code === '42883');
+
+/** The link a co-planner opens: the app at #coplan=<token>. */
+export function coplanLinkUrl(token) {
+  if (typeof window === 'undefined') return '';
+  return `${window.location.origin}/#coplan=${token}`;
+}
+
+export async function listCoplanLinks(planId) {
+  if (MOCK) return { links: MOCK === 'none' ? [] : [{ token: 'f'.repeat(64), expiresAt: '2026-10-23T10:00:00Z', uses: 1 }] };
+  if (!supabase || !planId) return { links: [] };
+  const { data, error } = await supabase.rpc('list_coplan_links', { plan: planId });
+  if (missingFn(error)) return { links: [], missing: true };
+  if (error) throw error;
+  return { links: (data || []).map((r) => ({ token: r.token, expiresAt: r.expires_at, uses: r.uses })) };
+}
+
+export async function createCoplanLink(planId) {
+  if (MOCK) return { token: 'e'.repeat(64), expiresAt: '2026-10-23T10:00:00Z' };
+  const { data, error } = await supabase.rpc('create_coplan_link', { plan: planId });
+  if (missingFn(error)) return { missing: true };
+  if (error) {
+    if (/too_many_links/.test(error.message || '')) {
+      const e = new Error('too many links'); e.code = 'TOO_MANY_LINKS'; throw e;
+    }
+    throw error;
+  }
+  const row = Array.isArray(data) ? data[0] : data;
+  return { token: row?.token, expiresAt: row?.expires_at };
+}
+
+export async function revokeCoplanLink(token) {
+  if (MOCK) return true;
+  const { data, error } = await supabase.rpc('revoke_coplan_link', { link: token });
+  if (error) throw error;
+  return !!data;
+}
+
+/** joined | own | gone | blocked | too_many | missing, plus the trip. */
+export async function acceptCoplanLink(token) {
+  if (!/^[0-9a-f]{64}$/.test(String(token || ''))) return { status: 'gone' };
+  if (MOCK) return { status: 'joined', tripPlanId: 'mp1', label: 'Lisbon and Porto' };
+  const { data, error } = await supabase.rpc('accept_coplan_link', { link: token });
+  if (missingFn(error)) return { status: 'missing' };
+  if (error) throw error;
+  const row = Array.isArray(data) ? data[0] : data;
+  return { status: row?.status || 'gone', tripPlanId: row?.trip_plan_id || null, label: row?.label || '' };
+}
+
+/* The token rides in the hash (#coplan=<token>), like every link this app
+ * hands out, so it never reaches a server log. It is kept in this tab's
+ * session storage until it is used, so a sign-in round trip (Google sends
+ * the browser away and back) does not drop it. */
+const COPLAN_PARAM = 'coplan';
+const COPLAN_KEY = 'carta.pendingCoplan';
+
+export function readCoplanTokenFromUrl() {
+  if (typeof window === 'undefined') return null;
+  const hash = (window.location.hash || '').replace(/^#/, '');
+  const fromHash = hash.includes(`${COPLAN_PARAM}=`) ? new URLSearchParams(hash).get(COPLAN_PARAM) : null;
+  let held = null;
+  try { held = sessionStorage.getItem(COPLAN_KEY); } catch { /* private mode */ }
+  const tok = fromHash || held;
+  return /^[0-9a-f]{64}$/.test(tok || '') ? tok : null;
+}
+
+export function holdCoplanToken(token) {
+  try { if (token) sessionStorage.setItem(COPLAN_KEY, token); else sessionStorage.removeItem(COPLAN_KEY); } catch { /* private mode */ }
+}
+
+export function stripCoplanTokenFromUrl() {
+  if (typeof window === 'undefined') return;
+  const params = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
+  if (!params.has(COPLAN_PARAM)) return;
+  params.delete(COPLAN_PARAM);
+  const rest = params.toString();
+  window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${rest ? `#${rest}` : ''}`);
+}

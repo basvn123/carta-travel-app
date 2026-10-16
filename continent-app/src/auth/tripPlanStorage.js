@@ -28,7 +28,7 @@ export async function fetchTripPlans(userId) {
   // real, up-to-date trip window, including any date changes saved later.
   const { data: stops } = await supabase
     .from('trip_plan_stops')
-    .select('trip_plan_id, arrive_date, depart_date, city, country, position, destination_id')
+    .select('trip_plan_id, arrive_date, depart_date, city, country, position, destination_id, choices')
     .in('trip_plan_id', plans.map((p) => p.id))
     .order('position', { ascending: true });
   const byPlan = {};
@@ -63,6 +63,10 @@ export async function fetchTripPlans(userId) {
       // Destination ids in stop order, so overview cards can borrow the first
       // stop's catalogue photo and coordinates without a second fetch.
       destination_ids: ss.map((s) => s.destination_id).filter(Boolean),
+      // The planner's own answers (party, transport, typed figures) ride on
+      // the first stop. My trips prices the trip from them (T434), so the
+      // card says what the trip planner says when the trip is opened.
+      choices: ss[0]?.choices || null,
       // The stops themselves, each with its own window. `start_date` and
       // `end_date` above flatten the trip to one span, which is enough to
       // list it but not to answer "where am I staying next Tuesday": the Day

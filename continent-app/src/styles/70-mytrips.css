@@ -1,0 +1,459 @@
+/* My trips (T434), on the kit and the roles only.
+   Imported by auth/SavedTripsPanel.jsx, so it loads with the page's own lazy
+   chunk and leaves the first-paint stylesheet. The shell (the side panel and
+   the column) stays in 25-feature-pages.css with Destinations and Explore.
+
+   One grammar with Explore and Destinations: a side panel with the sections
+   as tiles and the filters under them on desktop; on a phone the same tiles
+   under the title, and the filters as one refine row. Cards are white on the
+   warm grey, bordered, never shadowed; selection is the tint and a mark. */
+
+.mytrips { --bg-card: var(--surface); }
+
+/* ── The header: title, the section tiles (phone), the refine row ── */
+.mytrips .saved-panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-2);
+}
+.mytrips .saved-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.mt-tiles .ui-tile { position: relative; min-height: 72px; gap: var(--space-1); }
+.mt-tiles.is-top { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mt-tiles .ui-tile-label { display: inline-flex; align-items: center; gap: 6px; }
+.mt-tab-n.ui-chip { min-width: 20px; justify-content: center; }
+.mt-filter-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.mt-filters { display: flex; flex-direction: column; gap: var(--space-5); }
+.mt-filters.is-compact { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.mt-filter { min-width: 0; }
+.mt-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.mt-refine .mt-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.mt-refine .mt-chips::-webkit-scrollbar { display: none; }
+.mt-refine .ui-chip { flex: none; }
+
+/* ── The panel body ── */
+.mt-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-4) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom));
+}
+.mt-section { display: flex; flex-direction: column; gap: var(--space-3); }
+.mt-section-head { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); }
+.mt-section-title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.mt-section-action { margin-left: auto; }
+.mt-rows { display: grid; gap: var(--space-2); }
+.mt-muted { color: var(--text-3); }
+.mt-spacer { flex: 1; }
+.mt-error { margin: 0; color: var(--danger); font-size: var(--text-body); }
+
+/* The empty tab: one line, one way forward. */
+.mt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-6) 0;
+}
+.mt-empty-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.mt-empty-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.mt-signin-line { margin: 0; }
+.mt-friends-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  font-size: var(--text-body);
+  color: var(--text-2);
+}
+
+/* ── The next trip: the focal card ── */
+.mt-next { display: flex; flex-direction: column; gap: var(--space-3); }
+.mt-hero {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+}
+.mt-hero-media {
+  display: block;
+  background: var(--surface-sunken);
+  cursor: pointer;
+  aspect-ratio: 16 / 9;
+  max-height: 34vh;
+  overflow: hidden;
+}
+.mt-hero-media .hero-blank,
+.mt-hero-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mt-hero-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  min-width: 0;
+}
+.mt-hero-top { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); }
+.mt-hero-title { margin: 0; font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); }
+.mt-hero-sub, .mt-hero-dates, .mt-hero-coplan { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.mt-hero-coplan { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Four facts as label over value, hairlines between, never a card in a card. */
+.mt-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin: var(--space-2) 0 0;
+  border-top: 1px solid var(--border-soft);
+}
+.mt-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--space-3) var(--space-3) var(--space-3) 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.mt-fact:nth-child(2n) { padding-left: var(--space-3); border-left: 1px solid var(--border-soft); }
+.mt-fact-label { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.mt-fact-value {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+}
+.mt-weather, .mt-going { display: inline-flex; align-items: center; gap: var(--space-2); }
+.mt-weather svg { color: var(--text-2); flex: none; }
+.mt-going-n { font-size: var(--text-body); font-weight: 500; color: var(--text-2); }
+.mt-progress { display: flex; flex-direction: column; gap: 6px; }
+/* The thin bar of the data drawings family: 8 px at most, ink, no brown. */
+.mt-bar {
+  display: block;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+.mt-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--text);
+  transform-origin: left center;
+  transition: transform var(--dur-3) var(--ease-out);
+}
+.mt-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/* Who is going: initials in rings, overlapping a little. */
+.mt-faces { display: inline-flex; align-items: center; }
+.mt-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: -6px;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text);
+}
+.mt-face:first-child { margin-left: 0; }
+.mt-face.is-more { color: var(--text-2); }
+
+/* The price on a trip: the kit's Money, the party after it. */
+.mt-price { font-variant-numeric: tabular-nums; }
+.mt-price-unit { font-weight: 400; color: var(--text-2); }
+
+/* ── Rows: later trips, drafts, day plans, the record, the shortlist ── */
+.mt-row-wrap { display: flex; flex-direction: column; gap: var(--space-2); }
+.mytrips .mt-row { background: var(--surface); }
+.mt-row .card-media { overflow: hidden; border-radius: var(--radius-control); }
+.mt-row-img, .mt-row .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mt-row-meta { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.mt-row-meta > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mt-row-go { color: var(--text-3); margin-right: var(--space-2); }
+.mt-row.is-missing .card-title { color: var(--text-3); }
+.mt-plan-these { display: flex; }
+
+/* The card menu: a popover under its button. */
+.mt-menu { position: relative; }
+.mt-menu-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: var(--space-1);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+.mt-menu .mt-menu-item.btn {
+  justify-content: flex-start;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--text);
+}
+.mt-menu-item svg { color: var(--text-2); flex: none; }
+.mt-menu .mt-menu-item.is-danger, .mt-menu-item.is-danger svg { color: var(--danger); }
+.mt-menu-item:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+@media (hover: hover) { .mt-menu-item:hover { background: var(--surface-hover); } }
+
+/* ── Visited ── */
+.mt-map {
+  position: relative;
+  height: min(34vh, 300px);
+  min-height: 200px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+.mt-map > div { position: absolute; inset: 0; }
+.mt-map-wait { background: var(--surface-sunken); }
+.mt-map-expand { position: absolute; top: var(--space-2); left: var(--space-2); z-index: 2; }
+.mt-map-shield { display: none; }
+@media (pointer: coarse) {
+  /* The map in the page is a picture on touch; its controls live full size. */
+  .mt-map .maplibregl-ctrl-group { display: none; }
+  .mt-map-shield {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+}
+
+/* The figures the record adds up to: one band, label over value. */
+.mt-band {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.mt-band-cell { padding: var(--space-3); min-width: 0; }
+.mt-band-cell + .mt-band-cell { border-left: 1px solid var(--border-soft); }
+.mt-band dt { font-size: var(--text-caption); color: var(--text-2); }
+.mt-band dd {
+  margin: 2px 0 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.mt-flags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.mt-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--text-label);
+  color: var(--text);
+}
+.mt-year { display: flex; flex-direction: column; gap: var(--space-2); }
+.mt-year + .mt-year { margin-top: var(--space-3); }
+.mt-year-title {
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.mt-country-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  max-height: min(56vh, 520px);
+  overflow-y: auto;
+  padding: var(--space-2) 0 var(--space-4);
+  overscroll-behavior: contain;
+}
+.mt-country-grid .ui-chip:disabled { opacity: 1; cursor: default; }
+.mt-sheet-note { margin: 0 0 var(--space-3); font-size: var(--text-caption); color: var(--text-2); }
+.mt-sheet-foot { display: flex; justify-content: flex-end; padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
+
+/* Who came along, on a past trip. */
+.mt-crew {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.mt-crew-row { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.mt-crew-line { flex: 1; min-width: 0; font-size: var(--text-body); color: var(--text-2); }
+.mt-crew-pop { display: flex; flex-direction: column; gap: var(--space-3); padding-bottom: var(--space-2); }
+.mt-crew-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.mt-crew-type { display: flex; align-items: flex-end; gap: var(--space-2); }
+.mt-crew-type .field { flex: 1; }
+.mt-crew-list { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); margin: 0; padding: 0; list-style: none; }
+.mt-crew-item { display: inline-flex; align-items: center; gap: 2px; padding-left: var(--space-3); border: 1px solid var(--border-soft); border-radius: var(--radius-pill); font-size: var(--text-label); }
+
+/* ── The share panel under a trip (TripSharePanel) ── */
+.mytrips .tshare {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.tshare-block { display: flex; flex-direction: column; gap: var(--space-2); }
+.tshare-block + .tshare-block { padding-top: var(--space-4); border-top: 1px solid var(--border-soft); }
+.tshare-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.tshare-sub { margin: 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); max-width: var(--measure); }
+.tshare-opts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tshare-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.tshare-status, .tshare-error { margin: 0; font-size: var(--text-label); }
+.tshare-status { display: inline-flex; align-items: center; gap: 6px; color: var(--text); }
+.tshare-status::before { content: ''; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--status-success, var(--green)); }
+.tshare-error { color: var(--danger); }
+.tshare-list, .coplan-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.tshare-row, .coplan-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  border-bottom: 1px solid var(--border-soft);
+}
+.tshare-row:last-child, .coplan-row:last-child { border-bottom: 0; }
+.tshare-row-meta, .coplan-who { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.tshare-row-name, .coplan-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.tshare-row-date, .coplan-state { font-size: var(--text-caption); color: var(--text-2); }
+.coplan-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+}
+.coplan-ask { display: flex; align-items: flex-end; gap: var(--space-2); }
+.coplan-ask .field { flex: 1; min-width: 0; }
+.mytrips .tshare-ask {
+  border: 0;
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.tshare-ask-text { margin: 0; font-size: var(--text-body); color: var(--text); }
+.tshare-ask-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* The lazy chunk's own placeholder while it loads. */
+.mt-loading { position: fixed; inset: 0; z-index: 55; background: var(--surface-page); }
+
+/* ── Desktop: the side panel holds the sections and the filters ── */
+@media (min-width: 769px) {
+  .mt-tiles.is-top, .mt-refine { display: none; }
+  .mytrips .saved-panel-header,
+  .mt-panel { width: 100%; max-width: 1180px; margin: 0 auto; }
+  .mytrips .saved-panel-header { padding: var(--space-6) var(--space-6) 0; }
+  .mt-panel { padding: var(--space-5) var(--space-6) var(--space-8); }
+  /* In the side panel the three sections are full-width rows: icon, name,
+     count. The panel is 216 to 264 px, and three tiles abreast broke the
+     longer names (Merkliste, Besucht) mid-word. */
+  .saved-side .mt-tiles { grid-template-columns: 1fr; gap: var(--space-2); }
+  .saved-side .mt-tiles .ui-tile {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--space-3);
+    min-height: var(--tap);
+    padding: 0 var(--space-3);
+  }
+  .saved-side .mt-tiles .ui-tile-icon svg { width: 20px; height: 20px; }
+  .saved-side .mt-tiles .ui-tile-label { flex: 1; justify-content: space-between; }
+  .saved-side .mt-tiles .ui-tile-tick { display: none; }
+  .mt-side-filters { padding-top: var(--space-5); margin-top: var(--space-5); border-top: 1px solid var(--border-soft); }
+}
+
+/* Two columns once there is room: rows two to a line, the focal card's photo
+   beside its facts. */
+@media (min-width: 1024px) {
+  .mt-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mt-hero { flex-direction: row; }
+  .mt-hero-media { flex: 0 0 42%; aspect-ratio: auto; max-height: none; min-height: 320px; }
+  .mt-hero-body { padding: var(--space-4) var(--space-5) var(--space-5); }
+  .mt-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mt-fact { padding: var(--space-3) var(--space-3) var(--space-3) 0; }
+  .mt-fact + .mt-fact { padding-left: var(--space-3); border-left: 1px solid var(--border-soft); }
+  .mt-map { height: 360px; }
+}
+
+/* ── Phone ── */
+@media (max-width: 768px) {
+  .mytrips .saved-panel-header { padding: var(--space-3) var(--gutter) 0; }
+  .mt-tiles.is-top .ui-tile { min-height: 64px; }
+  .mt-band-cell { padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3); }
+  .mt-band dd { font-size: var(--text-lead); }
+  .mt-hero-actions .btn { flex: 1 1 auto; }
+  .mt-hero-actions .btn-primary { flex-basis: 100%; }
+  .mt-hero-media { aspect-ratio: 2 / 1; }
+  .mt-hero-body { gap: var(--space-1); }
+  .mt-facts { margin-top: var(--space-1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mt-bar > span { transition: none; }
+}

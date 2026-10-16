@@ -466,7 +466,7 @@ const run = async () => {
   await page.locator('.saved-trips-panel').waitFor({ timeout: 12000 });
   // By label, not by index: T390 put Planned first (brief V3-2), so the
   // second tab is Favorites now.
-  await page.locator('.saved-tab:visible').filter({ hasText: /planned/i }).first().click();
+  await page.locator('.mytrips [role="tab"]:visible').filter({ hasText: /^Trips/ }).first().click();
   await page.waitForTimeout(600);
 
   // Changed by T410 (the shell's T401 now passes onOpenFriends from App, the
@@ -478,7 +478,7 @@ const run = async () => {
   const panel = await page.locator('.saved-trips-panel').innerText();
   if (!/A friend showed you a trip|Friends showed you \d+ trips/i.test(panel)) fail('Planned has no line pointing at Friends');
   else ok('Planned carries one line pointing at Friends');
-  if (await page.locator('.saved-trips-panel .saved-record-row').filter({ hasText: 'Two weeks in Portugal' }).count() > 0) {
+  if (await page.locator('.saved-trips-panel .mt-row').filter({ hasText: 'Two weeks in Portugal' }).count() > 0) {
     fail('a friend trip card still stands on My trips, with a menu that could offer Remove');
   } else ok('no friend trip card stands on My trips, so no Remove and no edits there');
 
@@ -581,12 +581,12 @@ const run = async () => {
     .filter({ hasText: /^(Saved trips|My trips)$/ }).locator('visible=true').first();
   await myTrips.click({ timeout: 60000 });
   await op.locator('.saved-trips-panel').waitFor({ timeout: 15000 });
-  await op.locator('.saved-tab:visible').filter({ hasText: /planned/i }).first().click();
-  await op.locator('.uptrip-card').first().waitFor({ timeout: 15000 });
+  await op.locator('.mytrips [role="tab"]:visible').filter({ hasText: /^Trips/ }).first().click();
+  await op.locator('.mt-hero, .mt-row').first().waitFor({ timeout: 15000 });
   // Open the share panel through the card's own Share button, the way a
   // person would. T390 (brief V3-4) moved Share out of the card menu onto
   // the card; the menu no longer lists it.
-  await op.locator('.uptrip-share').first().click({ timeout: 10000 });
+  await op.locator('.mt-hero button').filter({ hasText: /^Invite$/ }).first().click({ timeout: 10000 });
   await op.locator('.tshare-coplan').waitFor({ timeout: 15000 });
 
   const co2 = await op.locator('.tshare-coplan').innerText();

@@ -1,9 +1,12 @@
-import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import {
-  PersonIcon, LinkIcon, CheckIcon, ChevronDownIcon, MapPinIcon, CloseIcon,
+  PersonIcon, LinkIcon, CheckIcon, MapPinIcon, CloseIcon, ArrowLeftIcon,
 } from '../components/Icons.jsx';
-import { CountryFlag, CountryFlagStack } from '../components/CountryFlag.jsx';
+import { Button, Card, Chip, ChipGroup, IconButton } from '../components/ui/index.js';
+import { HeroImage } from '../components/HeroImage.jsx';
+import { CountryFlag, CountryFlagStack, COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import {
   listGuides, getGuide, reportGuideOpened, fmtMonths, fmtRoute, buildGuideUrl,
@@ -11,6 +14,8 @@ import {
 import { foreignMemory, foreignTripPoints } from '../auth/foreignTrip.js';
 import { ReportGuide } from './ReportGuide.jsx';
 
+// One object for the life of the page: TripMap re-frames when it changes.
+const GUIDE_MAP_PAD = { top: 26, left: 26, right: 26, bottom: 26 };
 const ForeignTripMap = lazy(() => import('../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
 
 /**
@@ -41,37 +46,33 @@ const ForeignTripMap = lazy(() => import('../map/TripMap.jsx').then((m) => ({ de
  * second whitelist beside it.
  */
 
+/** One published guide as a kit tile: the photo, the title, then the route,
+ *  its length and months, and the byline, all under the photo. */
 function GuideCard({ guide, img, onOpen, t, lang }) {
   const when = fmtMonths(guide.months, lang, t('friends.dateJoin'));
   const nights = guide.nightsTotal;
   const who = guide.ownerName || `@${guide.ownerHandle}`;
+  const facts = [
+    fmtRoute(guide.cities),
+    nights > 0 ? t(nights === 1 ? 'guides.nightsOne' : 'guides.nights', { n: nights }) : '',
+    when,
+  ].filter(Boolean).join(', ');
   return (
-    <button type="button" className="gld-card" onClick={onOpen}>
-      <span className="gld-card-photo">
-        {img
-          ? <img src={img} alt="" loading="lazy" decoding="async" />
-          : <span className="gld-card-nophoto" aria-hidden="true"><MapPinIcon size={18} /></span>}
-        {guide.countries.length > 0 && (
-          <span className="gld-card-flags"><CountryFlagStack countries={guide.countries} size={13} /></span>
-        )}
-      </span>
-      <span className="gld-card-body">
-        <b className="gld-card-title">{guide.label || fmtRoute(guide.cities)}</b>
-        <span className="gld-card-route">{fmtRoute(guide.cities)}</span>
-        <span className="gld-card-facts">
-          {nights > 0 && (
-            <span className="gld-fact">
-              {t(nights === 1 ? 'guides.nightsOne' : 'guides.nights', { n: nights })}
-            </span>
-          )}
-          {when && <span className="gld-fact">{when}</span>}
+    <Card
+      layout="tile"
+      className="gld-card"
+      media={<HeroImage url={img} city={guide.cities?.[0] || ''} iso2={COUNTRY_ISO2[guide.countries?.[0]] || ''} maxWidth={500} ratio={[4, 3]} sizes="(min-width: 769px) 280px, 90vw" />}
+      title={guide.label || fmtRoute(guide.cities)}
+      onOpen={onOpen}
+      wrap
+      meta={(
+        <span className="gld-card-meta">
+          {guide.countries.length > 0 && <CountryFlagStack countries={guide.countries} size={14} />}
+          <span>{facts}</span>
+          <span className="gld-card-by"><PersonIcon size={14} /> {t('guides.by', { who })}</span>
         </span>
-        <span className="gld-card-by">
-          <PersonIcon size={11} />
-          {t('guides.by', { who })}
-        </span>
-      </span>
-    </button>
+      )}
+    />
   );
 }
 
@@ -131,9 +132,7 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
   if (!guide) {
     return (
       <div className="panel-section">
-        <button type="button" className="gld-back" onClick={onBack}>
-          <ChevronDownIcon size={14} className="gld-back-chev" /> {t('guides.back')}
-        </button>
+        <Button variant="quiet" size="sm" className="gld-back" iconStart={<ArrowLeftIcon size={16} />} onClick={onBack}>{t('guides.back')}</Button>
         {state.failed ? (
           <ErrorBlock message={t('guides.loadFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
         ) : (
@@ -151,9 +150,7 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
   return (
     <>
       <div className="panel-section">
-        <button type="button" className="gld-back" onClick={onBack}>
-          <ChevronDownIcon size={14} className="gld-back-chev" /> {t('guides.back')}
-        </button>
+        <Button variant="quiet" size="sm" className="gld-back" iconStart={<ArrowLeftIcon size={16} />} onClick={onBack}>{t('guides.back')}</Button>
         <h2 className="gld-title">{guide.label || fmtRoute(guide.stops.map((s) => s.city))}</h2>
         <div className="gld-byline">
           <span className="gld-by"><PersonIcon size={12} /> {t('guides.by', { who })}</span>
@@ -164,10 +161,9 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
           )}
           {when && <span className="gld-meta">{when}</span>}
         </div>
-        <button type="button" className="gld-copy" onClick={copyLink}>
-          {copied ? <CheckIcon size={13} /> : <LinkIcon size={13} />}
+        <Button size="sm" iconStart={copied ? <CheckIcon size={16} /> : <LinkIcon size={16} />} onClick={copyLink} aria-live="polite">
           {copied ? t('share.copied') : t('guides.copyLink')}
-        </button>
+        </Button>
         {copyFailed && <p className="auth-error" role="alert">{t('share.copyFailed')}</p>}
       </div>
 
@@ -179,12 +175,11 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
                 stops={points}
                 showRoute={points.length > 1}
                 scrollZoom={false}
-                cooperativeGestures
                 zoomControls
                 easeToSelected={false}
                 padBottom={0}
                 fitMaxZoom={7}
-                fitPadding={{ top: 26, left: 26, right: 26, bottom: 26 }}
+                fitPadding={GUIDE_MAP_PAD}
               />
             </Suspense>
           </div>
@@ -193,7 +188,7 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
 
       {guide.stops.length > 0 && (
         <div className="panel-section">
-          <div className="section-title">{t('guides.routeTitle')}</div>
+          <h3 className="gld-h">{t('guides.routeTitle')}</h3>
           <ol className="gld-stops">
             {guide.stops.map((s) => (
               <li className="gld-stop" key={`${s.position}${s.destination_id || s.city}`}>
@@ -214,14 +209,14 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
 
       {memory?.story && (
         <div className="panel-section">
-          <div className="section-title">{t('guides.storyTitle')}</div>
+          <h3 className="gld-h">{t('guides.storyTitle')}</h3>
           <p className="gld-story">{memory.story}</p>
         </div>
       )}
 
       {(memory?.highlights || []).length > 0 && (
         <div className="panel-section">
-          <div className="section-title">{t('guides.highlightsTitle')}</div>
+          <h3 className="gld-h">{t('guides.highlightsTitle')}</h3>
           <ul className="gld-highlights">
             {memory.highlights.map((h, i) => (
               <li key={`${i}${String(h).slice(0, 12)}`}>{typeof h === 'string' ? h : h?.text || ''}</li>
@@ -245,6 +240,10 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
 
 export function GuidesPanel({ onClose, destinations, openGuideId, onPublish = null }) {
   const { t, lang } = useI18n();
+  // A real dialog over the page (T434 audit P1-8): it names itself, keeps
+  // Tab inside and closes on Escape.
+  const boxRef = useRef(null);
+  useFocusTrap(boxRef, onClose);
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -281,19 +280,10 @@ export function GuidesPanel({ onClose, destinations, openGuideId, onPublish = nu
   };
 
   return (
-    <div className="panel open account-panel guides-panel">
-      {/* Same chrome as the account and My trips slide-overs, deliberately:
-          a third bespoke shell would be a third thing to keep in step. */}
-      <div className="panel-header">
-        <button className="panel-close" onClick={onClose} aria-label={t('guides.close')}>
-          <CloseIcon size={16} />
-        </button>
-        <div className="panel-tag">{t('guides.tag')}</div>
-        <h2 className="panel-city account-heading">{t('guides.title')}</h2>
-      </div>
-
-      <div className="panel-section">
-        <p className="account-section-hint">{t('guides.lede')}</p>
+    <div className="panel open account-panel guides-panel" role="dialog" aria-modal="true" aria-labelledby="guides-title" ref={boxRef}>
+      <div className="panel-header gld-head">
+        <h1 className="gld-page-title" id="guides-title">{t('guides.title')}</h1>
+        <IconButton label={t('guides.close')} onClick={onClose}><CloseIcon size={16} /></IconButton>
       </div>
 
       {open ? (
@@ -308,28 +298,14 @@ export function GuidesPanel({ onClose, destinations, openGuideId, onPublish = nu
         <>
           {countries.length > 1 && (
             <div className="panel-section">
-              <div className="gld-filters" role="group" aria-label={t('guides.filterLabel')}>
-                <button
-                  type="button"
-                  className={`gld-chip${country === '' ? ' on' : ''}`}
-                  aria-pressed={country === ''}
-                  onClick={() => setCountry('')}
-                >
-                  {t('guides.everywhere')}
-                </button>
+              <ChipGroup label={t('guides.filterLabel')} className="gld-filters">
+                <Chip kind="choice" selected={country === ''} onClick={() => setCountry('')}>{t('guides.everywhere')}</Chip>
                 {countries.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    className={`gld-chip${country === c ? ' on' : ''}`}
-                    aria-pressed={country === c}
-                    onClick={() => setCountry(c)}
-                  >
-                    <CountryFlag country={c} size={12} />
+                  <Chip key={c} kind="choice" selected={country === c} icon={<CountryFlag country={c} size={14} />} onClick={() => setCountry(c)}>
                     {c}
-                  </button>
+                  </Chip>
                 ))}
-              </div>
+              </ChipGroup>
             </div>
           )}
 
@@ -344,7 +320,7 @@ export function GuidesPanel({ onClose, destinations, openGuideId, onPublish = nu
                 {/* A guide is a saved trip its owner made public, so the way
                     to write the first one starts in My trips. */}
                 {onPublish && (
-                  <button type="button" className="cov-empty-btn" onClick={onPublish}>{t('guides.publishCta')}</button>
+                  <Button onClick={onPublish}>{t('guides.publishCta')}</Button>
                 )}
               </div>
             ) : (
