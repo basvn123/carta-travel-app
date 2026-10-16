@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { CreditChip } from '../components/CreditChip.jsx';
 import {
   HomeIcon, SearchIcon, SparkIcon, MapPinIcon,
 } from '../components/Icons.jsx';
@@ -314,6 +315,7 @@ export function TownPickerStep({
               <SparkIcon size={13} /> {aiBusy ? '…' : t('chat.townAiAsk')}
             </button>
           </div>
+          <CreditChip />
           {note && <p className="trip-note chat-town-note">{note}</p>}
           {aiBusy && (
             <div className="chat-bubble bot chat-typing"><span /><span /><span /></div>

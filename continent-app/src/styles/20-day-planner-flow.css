@@ -56,141 +56,17 @@
    NOTE: .day-map-card carries a backdrop-filter, which makes it the containing
    block for any position:fixed descendant. Every popover in here is therefore
    position:absolute on purpose. */
-.day-map-tools {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  /* Real air under the card so the hint is a line you read, not a caption
-     squeezed against the controls. */
-  gap: 10px;
-  pointer-events: none;
-}
-.day-map-tools > * { pointer-events: auto; }
-
-.day-map-card {
-  position: relative;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px;
-  border: 1px solid var(--rule);
-  border-radius: 16px;
-  background: rgba(246, 245, 242, 0.86);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 10px rgba(31, 42, 51, 0.10), 0 8px 24px rgba(31, 42, 51, 0.06);
-}
-.day-map-chips {
-  display: flex;
-  gap: 6px;
-  max-width: 100%;
-  /* Overflow scrolls sideways rather than wrapping to a ragged second line. */
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.day-map-chips::-webkit-scrollbar { display: none; }
 
 /* One pill spec for every control in here: same height, same padding, same
    filled active state, whether it filters, opens a group or flips a view. */
-.day-map-chip {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: rgba(255, 255, 255, 0.72);
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: border-color .14s, background .14s, color .14s;
-}
-.day-map-chip svg { color: var(--ink-mute); flex: none; }
-@media (hover: hover) {
-  .day-map-chip:hover:not(:disabled) { border-color: var(--ink-soft); color: var(--ink); }
-}
 /* Deep slate, not the terracotta accent: an active filter is a state, not an
    alert, and the map pins must stay the loudest thing on the canvas. */
-.day-map-chip.on {
-  background: var(--select-bg);
-  border-color: var(--select-border);
-  color: var(--select-ink);
-}
-.day-map-chip.on svg { color: var(--select-ink); }
-.day-map-chip:disabled { opacity: 0.42; cursor: default; }
-.day-map-count {
-  font-family: var(--mono);
-  font-size: 10px;
-  opacity: 0.75;
-}
 
 /* Second layer: the quality group's trigger and the view toggle, kept apart
    from the category chips by a hairline so a filter is never mistaken for a
    state or the other way round. */
-.day-map-card-foot {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  max-width: 100%;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-top: 8px;
-  border-top: 1px solid rgba(220, 223, 221, 0.6);
-}
-.day-map-card-foot::-webkit-scrollbar { display: none; }
-.day-map-divider {
-  flex: none;
-  width: 1px;
-  height: 18px;
-  background: var(--rule);
-}
-.day-map-caret { transition: transform .16s; }
-.day-map-caret.up { transform: rotate(180deg); }
-.day-map-quality {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(220, 223, 221, 0.6);
-}
 
 /* The one instruction on the screen, given its own line and its own weight. */
-.day-map-hint {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 100%;
-  font-size: 11.5px;
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--ink-soft);
-  background: rgba(246, 245, 242, 0.9);
-  backdrop-filter: blur(6px);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  padding: 7px 12px;
-  box-shadow: 0 1px 6px rgba(31, 42, 51, 0.08);
-}
-.day-map-hint svg { color: var(--ink-mute); flex: none; }
-
-@media (min-width: 769px) {
-  .day-map-tools {
-    top: 12px;
-    left: calc(var(--panel-w) + 14px);
-    right: auto;
-    max-width: calc(100% - var(--panel-w) - 28px);
-  }
-}
 
 /* ───────── "Shape day N" - the inline Carta-plan panel in the rail ───────── */
 
@@ -358,28 +234,10 @@
 }
 
 /* ── "Where do you drive from?" (wizard car branch + planner own-car editor) ── */
-.guide-carfrom { margin: 10px 0 12px; }
 /* Address then button, stacked: a full-street-address field kept beside a
    "Search" button on a phone left it a third of the width, truncating what
    was typed mid-entry. The field gets the whole row; the button sits under it.
    Side by side returns once there is room (tablet and up). */
-.guide-carfrom-row { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
-.guide-carfrom-row .guide-search { flex: 1; min-width: 0; margin-bottom: 0; width: 100%; }
-.guide-carfrom-search { flex: none; white-space: nowrap; }
-@media (min-width: 640px) {
-  .guide-carfrom-row { flex-direction: row; align-items: center; }
-  .guide-carfrom-row .guide-search { width: auto; }
-}
-.guide-carfrom-list { margin-top: 8px; }
-.guide-carfrom-list .guide-city-btn { display: flex; gap: 8px; align-items: center; text-align: left; }
-.guide-carfrom-label { font-size: 12px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; }
-.guide-carfrom-picked .guide-carfrom-icon {
-  display: flex; align-items: center; justify-content: center;
-  width: 34px; height: 34px; flex: none;
-  border-radius: 8px;
-  border: 1px solid var(--rule);
-  color: var(--accent);
-}
 .trip-carfrom { margin: 8px 0 4px; }
 .trip-carfrom-row { display: flex; gap: 8px; }
 .trip-carfrom-row .trip-ownflight-input { flex: 1; min-width: 0; }
@@ -631,38 +489,11 @@ button.ai-sched-main:focus-visible {
 }
 
 /* Applied-schedule card in the day rail */
-.ai-day-panel {
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper-dim);
-  padding: 10px 12px;
-  margin: 10px 0;
-}
-.ai-day-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.ai-day-panel-title {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 700; color: var(--accent);
-}
-.ai-day-panel-summary { font-size: 12px; color: var(--ink-soft); line-height: 1.5; margin: 6px 0 0; }
-.ai-sched-compact .ai-sched-stop { padding: 5px 0; }
-.ai-sched-compact .ai-sched-body b { font-size: 12px; }
-.ai-sched-compact .ai-sched-body small { font-size: 11px; }
 
 /* Bot finds that live outside Carta's catalogue. They can't become timeline
    rows (there is nothing to add), so they are listed once, here. */
-.day-ai-find {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 7px 0;
-  border-bottom: 1px dashed var(--rule);
-}
-.day-ai-find:last-child { border-bottom: none; }
-.day-ai-find b { font-size: 12.5px; font-weight: 600; color: var(--ink); }
-.day-ai-find small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
 
 /* The empty-day CTA pair: AI first, route picker under it. */
-.day-ai-btn { margin-bottom: 8px; }
 
 /* AI discovery pins on the day map: violet spark, clearly not a catalogue pin. */
 .dem-pin.ai-disc { --cat: var(--ai-violet); border-style: dashed; border-color: var(--ai-violet); cursor: default; }
@@ -681,35 +512,6 @@ button.ai-sched-main:focus-visible {
 /* The Carta bot's call to action wears the same clothes as the planning-method
    card that introduces it (.day-flow-card.primary): a soft branded container,
    not a slab of saturated rust. One assistant, one look, wherever you meet it. */
-.day-ai-hero {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  border: 1px solid var(--accent);
-  border-radius: 14px;
-  background: var(--accent-bg);
-  color: var(--ink);
-  text-align: left;
-  cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-}
-@media (hover: hover) {
-  .day-ai-hero:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
-}
-.day-ai-hero-ico {
-  flex: 0 0 auto;
-  width: 36px; height: 36px;
-  border-radius: 12px;
-  background: var(--accent);
-  color: var(--on-fill);
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.day-ai-hero-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.day-ai-hero-text b { font-size: 15px; font-weight: 700; letter-spacing: 0.1px; color: var(--accent); }
-.day-ai-hero-text small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.4; }
 
 /* Date + party size, side by side. */
 .ai-plan-facts { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -766,12 +568,10 @@ margin-bottom: 8px;
 .ai-event-tag { background: var(--event-bg); color: var(--event-ink); }
 /* A find the bot could not place: kept, listed, and honest about having no
    pin, in the app's neutral tones rather than the discovery violet. */
-.ai-unmapped-tag { background: var(--paper-dim); color: var(--ink-soft); }
 .dem-pin.ai-event { --cat: var(--event-ink); border-color: var(--event-ink); }
 
 @media (max-width: 768px) {
   .ai-plan-facts { gap: 10px; }
-  .day-ai-hero-text b { font-size: 14px; }
 }
 
 /* ───────── Day planner: guided full-screen flow ───────── */
@@ -784,42 +584,14 @@ margin-bottom: 8px;
 }
 /* Matches the trip planner's form column, so the two planners ask their
    questions at the same width. */
-.day-flow {
-  width: 100%;
-  max-width: 880px;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 18px 20px 40px;
-}
 /* The manual step hosts the wide explore map, so it drops the reading width. */
-.day-flow-manual { max-width: 1400px; }
 
 /* Step rail + help affordance. The rail itself is the trip planner's
    (.wiz-steps, same classes, same file), so the two planners read as one
    product; what is left here is the band it sits in. The pill rail this
    replaced (.day-flow-step-dot and its connectors) is gone. */
-.day-flow-top {
-  margin-bottom: 26px;
-  padding-bottom: 2px;
-  border-bottom: 1px solid var(--rule);
-}
 /* T389: the help circle left the title line; "How this works" is now a text
    button under the question (.day-flow-howto in 68-v6-dayplanner.css). */
-.day-flow-top .shape-head-title { padding-right: 0; }
-.day-flow-top .wiz-steps { margin-top: 8px; }
-.day-flow-help-card {
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper-dim);
-  padding: 14px 16px;
-  margin-bottom: 20px;
-}
-.day-flow-help-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; margin: 6px 0 10px; }
-.day-flow-help-close {
-  border: 1px solid var(--rule); border-radius: 8px;
-  padding: 6px 14px; font-size: 12.5px; color: var(--ink-soft); background: transparent;
-}
 
 /* One question per screen, vertically centred so it reads as a single ask. */
 .day-flow-step {
@@ -833,20 +605,6 @@ margin-bottom: 8px;
 /* The question and its answer live on one card. Without it the input floats
    alone on the page background and the step reads as an unfinished screen
    rather than a form. */
-.day-flow-panel {
-  width: 100%;
-  max-width: 620px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 34px 34px 30px;
-  border: 1px solid var(--rule);
-  border-radius: 20px;
-  background: var(--paper);
-  box-shadow: var(--shadow-2, 0 10px 30px -22px rgba(26, 26, 26, 0.45));
-}
-.day-flow-panel-wide { max-width: 800px; }
 
 /* ── Landing: the question beside the place ──────────────────────────────
    The three setup questions used to sit alone on an empty page. "Where are
@@ -860,42 +618,24 @@ margin-bottom: 8px;
    to sit beside them is gone on purpose: the popular-city chips already
    answer "where", and the map spent a screen of height saying the same thing
    again while pushing saved work under the fold. */
-.day-flow-split {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 640px;
-  margin-inline: auto;
-  padding-bottom: 32px;
-}
 /* The fork step is the one landing question that is a COMPARISON, not an
    answer: two cards have to sit side by side wide enough to read their point
    lists without hyphenating. 640px gave each card ~279px, which is a tile.
    920px gives each ~440px, which is a card you can actually weigh. */
-.day-flow-wide { max-width: 980px; }
-.day-flow-split-wide { max-width: 920px; }
-.day-flow-forms { min-width: 0; display: flex; flex-direction: column; }
-.day-flow-split .day-flow-step { padding-bottom: 0; }
-.day-flow-split .day-flow-panel { max-width: none; margin: 0; }
 /* Saved work continues the question column, close under the card it
    continues, never a screen of dead space below it. */
-.day-flow-saved { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
 
 /* ---- Continue a trip (D2) ---------------------------------------------- */
 /* A saved trip used to be a bordered row: a 46px thumb, a name, and a date
    range in grey. That is a filing system's view of a trip. These cards lead
    with the photograph, because what makes somebody recognise "Bruges, the
    one in October" is the picture, not the string. */
-.day-flow-lead { margin-bottom: 20px; }
 .dtsection { display: flex; flex-direction: column; }
 .dtcards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: var(--space-3);
 }
-.dtcard-wrap { position: relative; display: flex; min-width: 0; }
-.dtcard-wrap .dtcard { width: 100%; }
 .dtcard {
   display: flex;
   flex-direction: column;
@@ -916,7 +656,6 @@ margin-bottom: 8px;
    the press reads in greyscale too. */
 .dtcard .dtcard-body { transition: background-color var(--dur-1) var(--ease-out); }
 .dtcard:active .dtcard-body { background: var(--select-bg); }
-.dtcard:active .dtcard-body :is(.dtcard-title, .dtcard-dates, .dtcard-stop, .dtcard-stop small, .dtcard-go) { color: var(--select-ink); }
 @media (prefers-reduced-motion: reduce) {
   .dtcard, .dtcard .dtcard-body { transition: none; }
 }
@@ -938,78 +677,16 @@ margin-bottom: 8px;
   overflow: hidden;
   background: var(--paper-dim);
 }
-.dtcard-img {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% var(--card-focus, 38%);
-}
 /* T399: the name moved off the photograph into the band under it (caption
    band rule), Fraunces at the caption size; the gradient scrim went. */
-.dtcard-title {
-  color: var(--ink);
-  font-family: var(--display);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.25;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
 /* One badge, top right, answering the only question a list of saved trips
    raises: which of these is the one I am on. */
-.dtcard-badge {
-  position: absolute;
-  top: 9px;
-  right: 9px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  background: rgba(255, 255, 255, .92);
-  color: var(--ink-soft);
-}
-.dtcard-badge.now { background: var(--select-bg); color: var(--select-ink); }
-.dtcard-badge.past { background: rgba(255, 255, 255, .8); color: var(--ink-mute); }
 .dtcard-body {
   display: flex;
   flex-direction: column;
   gap: 7px;
   padding: 11px 13px 12px;
   min-width: 0;
-}
-.dtcard-dates {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-.dtcard-stops { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; min-width: 0; }
-.dtcard-stop {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  max-width: 100%;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.dtcard-stop b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dtcard-stop small { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
-.dtcard-stop.more { color: var(--ink-mute); font-size: 11.5px; }
-.dtcard-arrow { flex: none; color: var(--ink-mute); }
-.dtcard-go {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  margin-top: 2px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--ink);
 }
 
 /* Two grey cards while the trips load, so the section holds its height
@@ -1031,14 +708,6 @@ margin-bottom: 8px;
   border-radius: 14px;
   background: var(--bg-card);
 }
-.dtsignin-ico {
-  display: flex;
-  flex: none;
-  padding: 9px;
-  border-radius: 12px;
-  background: transparent;
-  color: var(--ink-soft);
-}
 .dtsignin-text { flex: 1 1 auto; min-width: 0; }
 .dtsignin-text b { display: block; font-size: 14px; }
 .dtsignin-text p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
@@ -1046,24 +715,6 @@ margin-bottom: 8px;
    the only filled control on the day planner's first screen, so the page's
    answer to "what do I do here" was to sign in rather than to say where the
    day starts. */
-.dtsignin-btn,
-.dtempty-btn {
-  flex: none;
-  padding: 10px 16px;
-  min-height: var(--tap);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .dtsignin-btn:hover, .dtempty-btn:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
-}
-.dtempty { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
-.dtempty p { margin: 0; font-size: 13px; color: var(--ink-soft); }
 
 /* The delete action, behind a menu rather than beside the card as a bare
    cross one mis-tap from the plan it removes. */
@@ -1173,187 +824,37 @@ margin-bottom: 8px;
     scrollbar-width: none;
   }
   .dtcards::-webkit-scrollbar { display: none; }
-  .dtcard-wrap, .dtcards > .dtcard { flex: 0 0 82vw; scroll-snap-align: start; }
+  .dtcards > .dtcard { flex: 0 0 82vw; scroll-snap-align: start; }
   .dtsignin { flex-wrap: wrap; }
-  .dtsignin-btn { width: 100%; }
 }
 /* The chosen destination, above the later questions: city photo, name, the
    picked date once there is one, and the way back to change the answer. */
-.day-flow-dest {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 10px 12px;
-  margin-bottom: 14px;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-1);
-}
-.day-flow-dest .day-thumb {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  flex: none;
-}
-.day-flow-dest-text {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.day-flow-dest-name {
-  font-size: 14.5px;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.3;
-  overflow-wrap: anywhere;
-}
-.day-flow-dest-date {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-.day-flow-dest-change {
-  flex: none;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  border-radius: 999px;
-  padding: 6px 13px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: border-color .15s, color .15s;
-}
-@media (hover: hover) {
-  .day-flow-dest-change:hover { border-color: var(--ink); color: var(--ink); }
-}
 
 /* Once chosen, the stay IS the field. */
-.day-flow-chosen-change {
-  margin-left: auto;
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--ink-soft);
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  padding: 4px 10px;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .day-flow-chosen-change:hover { color: var(--ink); border-color: var(--ink); }
-}.day-picks-status {
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: none;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-}
-.day-flow-q {
-  font-family: var(--display);
-  font-size: 30px;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.2;
-  text-align: center;
-}
 
 /* Quick-fill chips: the ways a day already has a starting point on the stay
    step, common dates on the date step. Same shape both times so "one tap
    shortcut" reads the same. */
-.day-flow-suggest { display: flex; flex-direction: column; gap: 9px; }
 /* A section label in the UI face and sentence case. It was an uppercase mono
    overline, which carta-design bans as a decorative eyebrow (T193). */
-.day-flow-suggest-label {
-  font-family: var(--ui); font-size: 12px; font-weight: 600;
-  color: var(--ink-soft);
-  text-align: center;
-}
-.day-flow-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.day-flow-chips-center { justify-content: center; }
-.day-flow-chip {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 13.5px;
-  cursor: pointer;
-  transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
-}
-@media (hover: hover) {
-  .day-flow-chip:hover { border-color: var(--ink); color: var(--ink); }
-}
-.day-flow-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); font-weight: 600; }
-.day-flow-chip small { font-size: 11px; color: var(--ink-mute); }
-.day-flow-chip.on small { color: var(--select-ink); }
 
 /* The question's own sub-line. Quieter than the question and closer to it
    than to the field, so it reads as part of what is being asked rather than
    as the first piece of the answer. */
-.day-flow-qsub {
-  margin: -4px 0 0;
-  font-size: 13.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-  text-align: center;
-}
 
 /* ---- Quick starts: location, the trip you are on, where you started last --
    Three labelled groups rather than one undifferentiated pile of chips: a
    chip only helps if you can tell at a glance which question it answers. */
-.day-flow-quick { display: flex; flex-direction: column; gap: 14px; }
-.day-flow-quickgroup { display: flex; flex-direction: column; gap: 8px; align-items: center; }
 /* Every quick start is a real tap target on a phone held one-handed at a
    station, which is exactly where this step gets used. */
-.day-flow-quickchip { min-height: var(--tap); padding-inline: 16px; }
-.day-flow-quickchip:disabled { opacity: 0.55; cursor: default; }
-.day-flow-quickchip small { color: var(--ink-mute); }
 /* The location failure sits under its own chip, not under the whole group:
    it is about that one button, and nothing else on the step has failed. */
-.day-flow-quickerr { margin: 0; text-align: center; max-width: 34em; }
 
 /* ---- Results: what the place is, then which one it is ------------------- */
-.day-stay-hit {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  min-height: var(--tap);
-  padding: 10px 13px;
-}
-.day-stay-hit-ico {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px; height: 28px;
-  border-radius: 8px;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-}
-.day-stay-hit-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: left; }
-.day-stay-hit-text b { font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
 /* The town-and-country line is what tells three Gents apart, so it stays on
    one line and truncates rather than wrapping the row to three deep. */
-.day-stay-hit-text small {
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 /* Arrow-key focus and hover look the same on purpose: one highlight, whether
    it arrived by mouse or by keyboard. */
-.day-stay-hit.on,
-.day-stay-hit:focus-visible { background: var(--paper-dim); outline: none; }
-.day-stay-hit.on .day-stay-hit-ico { background: var(--select-bg); color: var(--select-ink); }
 
 .day-flow-search { display: flex; gap: 8px; }
 .day-flow-search .day-stay-input {
@@ -1362,185 +863,46 @@ margin-bottom: 8px;
   padding: 14px 16px;
   border-radius: 12px;
 }
-.day-flow-results { max-height: 260px; overflow-y: auto; }
-.day-flow-chosen {
-  display: flex; align-items: center; gap: 9px;
-  padding: 13px 15px;
-  border: 2px solid var(--ink);
-  border-radius: 12px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-size: 14px; font-weight: 600;
-}
-.day-flow-chosen .day-stay-chosen-label { flex: 1 1 auto; }
-.day-flow-date {
-  display: flex; flex-direction: column; align-items: stretch; gap: 8px;
-  padding-top: 4px;
-  border-top: 1px dashed var(--rule);
-}
-.day-flow-date .day-flow-suggest-label { text-align: center; }
 /* One month is enough to choose a day; the range shading collapses to a
    single highlighted date. */
-.day-flow-date .cal-panes { grid-template-columns: 1fr; }
 /* A month grid stretched across the full panel gave every date a 74px cell
    and pushed Continue below the fold. Capping the calendar's width keeps the
    whole month plus the button inside one screen. The cap used to be 316px,
    which put the cells at roughly 43px with 12.5px numerals: legible, but a
    thumb-sized target it was not, and a date grid is nothing but targets. At
    372px the cells clear 50px and the numbers can carry their real size. */
-.day-flow-date .date-field-inline {
-  width: 100%;
-  max-width: 372px;
-  margin: 0 auto;
-}
-.day-flow-date .cal-inline .cal-day { font-size: 14px; border-radius: 10px; }
-.day-flow-date .cal-inline .cal-head { margin-bottom: 4px; }
-.day-flow-date .cal-inline .cal-title { font-size: 14px; }
-.day-flow-date .cal-weekday { font-size: 11px; padding-bottom: 5px; }
-.day-flow-date .cal-inline .cal-weekdays,
-.day-flow-date .cal-inline .cal-grid { gap: 3px; }
 /* A 720px laptop is the shortest screen the date step has to finish on, and
    thumb-sized cells are what that step is for, so the room comes out of the
    card's own padding and the space around the question instead of out of the
    grid. The cells stay at or above 44px. */
-@media (max-height: 830px) and (min-width: 981px) {
-  .day-flow-top { margin-bottom: 14px; }
-  .day-flow-split { padding-bottom: 14px; }
-  .day-flow-split .day-flow-panel { padding: 20px 26px 18px; gap: 11px; }
-  .day-flow-q { font-size: 25px; }
-  .day-flow-date { padding-top: 0; }
-  .day-flow-date .date-field-inline { max-width: 340px; }
-}
 /* Each step's one primary is the shared Button (T193); this rule only places
    it. Its face, height, focus ring and not-yet state come from .btn-primary. */
-.day-flow-next {
-  align-self: center;
-  min-width: 220px;
-}
 
 /* The fork: chat or by hand. */
-.day-flow-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.day-flow-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  /* The whole card is the button, so it needs the height of a surface you
-     press and not of a paragraph you read. */
-  min-height: 220px;
-  padding: var(--space-6);
-  border: 1px solid var(--rule);
-  border-radius: 16px;
-  background: var(--paper);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease-out);
-}
 /* T389: no lift and no accent on hover. The two cards are equal weight
    (carta-design plan cards), so hovering one must not make it look like the
    recommended one; the ink border says "this is the one under the pointer". */
-@media (hover: hover) {
-  .day-flow-card:hover { border-color: var(--ink); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .day-flow-card { transition: none; }
-}
 /* A card-sized button with no visible focus ring is unreachable by keyboard in
    practice: you cannot tell which of the two you are about to press. */
-.day-flow-card:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-color: var(--accent);
-}
-.day-flow-card b { font-size: 20px; font-family: var(--display); letter-spacing: -0.01em; color: var(--ink); }
-.day-flow-card small { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
-.day-flow-card-top {
-  display: flex; align-items: center; justify-content: space-between;
-  width: 100%; gap: 10px;
-  margin-bottom: 4px;
-}
-.day-flow-card-ico {
-  width: 52px; height: 52px;
-  border-radius: 14px;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  display: inline-flex; align-items: center; justify-content: center;
-}
 /* 9px uppercase mono was a badge you had to lean in to read, on the one card
    the screen is trying to point at. At 11px with real padding it is legible
    at arm's length and still reads as a stamp rather than a heading. */
-.day-flow-card-tag {
-  padding: 5px 11px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-family: var(--ui); font-size: 12px; font-weight: 600;
-  white-space: nowrap;
-}
 /* What each route actually gets you, so the fork is a real comparison
    rather than two similar-looking buttons. */
-.day-flow-card-points {
-  list-style: none;
-  margin: 10px 0 8px;
-  padding: 10px 0 0;
-  border-top: 1px dashed var(--rule);
-  display: flex; flex-direction: column; gap: 6px;
-  width: 100%;
-}
-.day-flow-card-points li {
-  display: flex; align-items: flex-start; gap: 7px;
-  font-size: 12px; line-height: 1.45;
-  color: var(--ink-soft);
-  text-align: left;
-}
-.day-flow-card-points li svg { flex: 0 0 auto; margin-top: 2px; color: var(--ink-soft); }
 /* The action every card ends in, so the fork is two buttons and not one button
    beside a leaflet. Only the recommended card fills its action: two saturated
    blocks side by side made the screen shout twice and said neither was the
    answer. The second is an outline of the same size, so it is unmistakably a
    button and unmistakably the quieter one. */
-.day-flow-card-go {
-  display: inline-flex; align-items: center; gap: 6px;
-  /* Both cards stretch to the taller one, so auto keeps the two actions on the
-     same line however long the lists above them are. */
-  margin-top: auto;
-  padding: 9px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: transparent;
-  color: var(--ink);
-  font-size: 12.5px; font-weight: 600;
-  transition: border-color 0.12s ease, color 0.12s ease;
-}
-@media (hover: hover) {
-  .day-flow-card:hover .day-flow-card-go { border-color: var(--ink); }
-}
 /* A picture of the difference, above the words for it. Carta's route is a
    line that visits places; building it yourself is the places themselves. The
    two previews are the same height and the same width, so what changes
    between the cards is the SHAPE of the answer and nothing else. */
-.day-flow-card-prev {
-  width: 100%; height: 64px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  border: 1px solid var(--rule-soft);
-  background: var(--paper-dim);
-  overflow: hidden;
-  display: flex;
-}
-.day-flow-card-prev svg { width: 100%; height: 100%; display: block; }
 /* The three-thumb collage: real photos of real places near the stay, so the
    manual card shows what browsing would actually put in front of you. */
-.day-flow-card-thumbs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; width: 100%; }
-.day-flow-card-thumb {
-  background: var(--paper-dim) center / cover no-repeat;
-  min-height: 0;
-}
-.day-flow-card { border-width: 1.5px; }
 /* T389 (brief V3-6): the fork's cards are equal weight. The recommended one is
    marked by its accent border and the Recommended badge only, with the same
    ground, title, icon and action as the other (carta-design plan cards). */
-.day-flow-card.primary { border-color: var(--accent); }
 
 /* ───────── Step 3: anything already in mind ───────── */
 
@@ -1548,49 +910,9 @@ margin-bottom: 8px;
    "no" is a real answer here and not a way out of the question: a skip link
    under a search box would have made having no plan feel like a failure to
    fill something in. */
-.day-ideas-choice {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 4px;
-}
-.day-ideas-choice-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  min-height: 72px;
-  padding: 16px 18px;
-  border: 1.5px solid var(--rule);
-  border-radius: 14px;
-  background: var(--paper);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
-}
 /* T389: the chosen answer is the house selected state (a 2px ink border, no
    --accent-bg ground): the accent title on --accent-bg read at 3.83:1
    (verify_quality_floor.mjs), and a hover no longer lifts the card. */
-@media (hover: hover) {
-  .day-ideas-choice-btn:hover { border-color: var(--ink-soft); }
-}
-.day-ideas-choice-btn.on { border: 2px solid var(--select-border); padding: 15.5px 17.5px; }
-@media (prefers-reduced-motion: reduce) {
-  .day-ideas-choice-btn { transition: none; }
-}
-.day-ideas-choice-btn b { font-size: 15px; color: var(--ink); }
-.day-ideas-choice-btn small { font-size: 12.5px; color: var(--ink-soft); line-height: 1.45; }
-.day-ideas-choice-ico {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 34px; height: 34px;
-  margin-bottom: 2px;
-  border-radius: 10px;
-  background: var(--paper-dim);
-  color: var(--ink);
-}
-.day-ideas-choice-btn.on .day-ideas-choice-ico { background: var(--select-bg); color: var(--select-ink); }
-
-.day-ideas-body { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
 
 /* What has been taken so far. Each chip is a small record rather than a
    label: the thumbnail says which place, the distance says whether it is a
@@ -1628,21 +950,6 @@ margin-bottom: 8px;
 /* Morning / Afternoon / Evening / Any, as a segmented control. Optional by
    design: "Any" is the default and carries no opinion, so the traveller only
    touches this when the time of day actually matters to them. */
-.day-ideas-when { display: inline-flex; flex: none; gap: 2px; padding: 2px; border-radius: 8px; background: var(--paper-dim); }
-.day-ideas-when-btn {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 5px 8px;
-  border: none; border-radius: 6px;
-  background: transparent;
-  color: var(--ink-soft);
-  font-size: 11.5px;
-  cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease;
-}
-@media (hover: hover) {
-  .day-ideas-when-btn:hover { color: var(--ink); }
-}
-.day-ideas-when-btn.on { background: var(--select-bg); color: var(--select-ink); font-weight: 600; }
 
 .day-ideas-search { position: relative; display: flex; align-items: center; }
 .day-ideas-search-ico { position: absolute; left: 12px; color: var(--ink-mute); pointer-events: none; }
@@ -1673,10 +980,6 @@ margin-bottom: 8px;
 .day-ideas-group { display: flex; flex-direction: column; gap: 6px; }
 /* The group headings are the one place the flow's centred overline would
    read wrong: they label a left-aligned list, so they sit over its edge. */
-.day-ideas-group .day-flow-suggest-label {
-  display: flex; align-items: center; gap: 5px;
-  text-align: left;
-}
 .day-ideas-rows { display: flex; flex-direction: column; gap: 4px; list-style: none; margin: 0; padding: 0; }
 .day-ideas-row {
   display: flex;
@@ -1717,15 +1020,8 @@ margin-bottom: 8px;
    were 150px each, which is not a target and not enough room for the helper
    line that tells you what each one does. */
 @media (max-width: 620px) {
-  .day-ideas-choice { grid-template-columns: 1fr; }
-  .day-ideas-choice-btn { min-height: 72px; flex-direction: row; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .day-ideas-choice-ico { margin-bottom: 0; }
-  .day-ideas-choice-btn b { flex: 1; min-width: 0; }
-  .day-ideas-choice-btn small { flex-basis: 100%; }
   /* The chip's time control needs the full width once the name is beside a
      thumbnail: at phone width it wrapped to one button per line. */
   .day-ideas-chip { flex-wrap: wrap; }
-  .day-ideas-when { width: 100%; justify-content: space-between; order: 3; }
-  .day-ideas-when-btn { flex: 1; justify-content: center; }
 }
 

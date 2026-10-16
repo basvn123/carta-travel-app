@@ -485,12 +485,75 @@ export function scheduleDay(stops, {
 // Deliberately absent: the 2.5 family, which answers 404 "no longer
 // available to new users" on keys created recently, and preview aliases,
 // which move without notice.
+//
+// T433: the order of a day is no longer the model's job. The app cuts the
+// days by neighbourhood and orders and times each one on routed footpaths
+// (continent-app/src/lib/daySpread.js, dayRoute.js), and this function keeps
+// only the model's choice of places from the candidate deck. Choosing is
+// what the lite models do as well as the thinking ones, at a fraction of the
+// price and with the larger free budget, so they lead now and the thinking
+// model is the fallback.
 export const DEFAULT_MODEL_CHAIN = [
-  'gemini-flash-latest',   // 3.6 Flash today, the best of these at sequencing
-  'gemini-3.5-flash',      // same class, its own separate daily budget
-  'gemini-3.5-flash-lite', // no thinking, much larger budget
-  'gemini-3.1-flash-lite', // last resort, same shape as the one above
+  'gemini-flash-lite-latest', // the current Flash-Lite, the cheapest that answers in the schema
+  'gemini-3.5-flash-lite',    // the same class pinned, its own daily budget
+  'gemini-flash-latest',      // the thinking Flash, when both lite budgets are spent
+  'gemini-3.1-flash-lite',    // last resort
 ];
+
+/* ---- free refines (T433) ----
+ *
+ * One AI plan costs one plan from the traveller's allowance, and the first
+ * two changes asked of it ("fewer steps", "more food") are free. Free is
+ * proven by a token the function signs when it answers: HMAC-SHA256 over the
+ * user, the plan's cache hash, how many free changes are spent and an expiry,
+ * keyed with a server secret the client never sees. A token is only good for
+ * the user it was issued to, for 24 hours, and only while its count is under
+ * REFINES_FREE; every refine returns the next one. Stateless, so no table and
+ * no migration.
+ */
+export const REFINES_FREE = 2;
+const TOKEN_TTL_MS = 24 * 3600 * 1000;
+const b64u = (bytes) => {
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+};
+const unb64u = (s) => {
+  const t = s.replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(t + '='.repeat((4 - (t.length % 4)) % 4));
+  return Uint8Array.from(bin, (c) => c.charCodeAt(0));
+};
+async function hmac(secret, text) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(text)));
+}
+
+/** A token for `n` free changes spent on plan `k` by user `u`. */
+export async function signRefineToken({ u, k, n }, secret, now = Date.now()) {
+  if (!secret || !u || !k) return null;
+  const body = b64u(new TextEncoder().encode(JSON.stringify({ u, k, n, exp: now + TOKEN_TTL_MS })));
+  return `${body}.${b64u(await hmac(secret, body))}`;
+}
+
+/** { ok, k, n } when the token is genuine, unexpired and this user's. */
+export async function verifyRefineToken(token, secret, user, now = Date.now()) {
+  try {
+    if (!secret || typeof token !== 'string' || token.length > 600) return { ok: false };
+    const [body, sig] = token.split('.');
+    if (!body || !sig) return { ok: false };
+    const want = b64u(await hmac(secret, body));
+    // Constant-time compare: the signature is not leaked a byte at a time.
+    if (want.length !== sig.length) return { ok: false };
+    let diff = 0;
+    for (let i = 0; i < want.length; i += 1) diff |= want.charCodeAt(i) ^ sig.charCodeAt(i);
+    if (diff) return { ok: false };
+    const p = JSON.parse(new TextDecoder().decode(unb64u(body)));
+    if (p.u !== user || !(p.exp > now) || !Number.isInteger(p.n) || p.n < 0) return { ok: false };
+    return { ok: true, k: String(p.k), n: p.n };
+  } catch {
+    return { ok: false };
+  }
+}
 
 /**
  * Resolve the ordered list of models to try.
@@ -552,7 +615,7 @@ export function attemptTimeoutMs(index, elapsedMs, budgetMs = AI_TIME_BUDGET_MS)
  * whenever the key or the payload shape changes; see the comment on `v` in
  * cacheKeyInput for what each bump meant.
  */
-export const CACHE_KEY_VERSION = 5;
+export const CACHE_KEY_VERSION = 6;
 
 /**
  * The free-text channels are where the same intent forks the cache most
@@ -631,7 +694,7 @@ function compact(obj) {
  */
 export function cacheKeyInput({
   model, destId, month, dateISO, groupSize, pace, vibe, avoidHills, freeText,
-  lang, candidates, refine, prevStopIds, wantEvents, profile, mustInclude,
+  lang, candidates, refine, prevStopIds, wantEvents, profile, mustInclude, days = 1,
 }) {
   const n = Number(groupSize);
   const size = Number.isFinite(n) ? n : 2;
@@ -662,7 +725,11 @@ export function cacheKeyInput({
     // leaving it at 4 would not serve a wrong plan, it would just leave the
     // whole existing cache unreachable under a different name. Bumping says
     // so honestly. The v4 rows age out on the seven-day freshness window.
+    // v6 (T433): several days in one plan, catalogue places only (a stop the
+    // model invented is no longer kept), and two new answers (an indoor
+    // option each day, step-free). A v5 row answered a different question.
     v: CACHE_KEY_VERSION,
+    days: Number(days) > 1 ? Math.min(7, Math.round(Number(days))) : null,
     model,
     destId,
     when: wantEvents ? (dateISO || null) : month,
@@ -686,7 +753,7 @@ export function cacheKeyInput({
         food: profile.food || null,
         diet: [...(profile.diet || [])].sort(),
         flags: [profile.avoidHills ? 'h' : '', profile.transitOk ? 't' : '',
-          profile.avoidCrowds ? 'c' : '',
+          profile.avoidCrowds ? 'c' : '', profile.indoor ? 'i' : '', profile.stepFree ? 's' : '',
           profile.weather?.rain ? 'r' : '', profile.weather?.hot ? 'x' : ''].join('') || null,
       })
       : null,

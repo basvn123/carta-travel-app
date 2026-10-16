@@ -7,7 +7,7 @@ import {
   SearchIcon, PlusIcon, CheckIcon, StarIcon, SparkIcon, RouteIcon,
   MapPinIcon, MountainIcon, InfoIcon, CloseIcon,
 } from '../components/Icons.jsx';
-import { formatSteps, kmToSteps } from '../lib/steps.js';
+import { Chip } from '../components/ui/index.js';
 
 // The picks the traveller actually thinks in. Deliberately five: a sixth chip
 // (food) turned the row into a scroller and buried "top rated", which is the
@@ -102,60 +102,30 @@ function PlaceCard({ item, idx, added, focused, note, onToggle, onFocus, t }) {
   );
 }
 
-/** One ready-made day: what it is built around, how long it runs, and the
- *  first places it visits, so the choice is made on evidence and not on a
- *  title. Applying it replaces nothing quietly: the caller confirms. */
-function ReadyCard({ route, highlight, onUse, t, lang }) {
-  const names = route.stops.slice(0, 4).map((s) => s.item.name);
-  return (
-    <div className={`daya-ready${highlight ? ' rec' : ''}`}>
-      <div className="daya-ready-head">
-        <span className="daya-ready-title">{route.title}</span>
-        {route.recommended && <span className="daya-ready-tag">{t('dayws.readyMatch')}</span>}
-      </div>
-      <p className="daya-ready-desc">{route.desc}</p>
-      <div className="daya-ready-stats">
-        <span>{t('dayws.stopsN', { n: route.stops.length })}</span>
-        <span className="daya-sep" aria-hidden="true" />
-        <span>{t('dayws.readySteps', { n: formatSteps(kmToSteps(route.km), lang) })}</span>
-        <span className="daya-sep" aria-hidden="true" />
-        <span>{t('dayws.readyHours', { h: (route.totalMin / 60).toFixed(1) })}</span>
-      </div>
-      <p className="daya-ready-names">{names.join(', ')}{route.stops.length > names.length ? `, ${t('day.plusNMore', { n: route.stops.length - names.length })}` : ''}</p>
-      <button className="daya-ready-use" onClick={() => onUse(route)}>
-        <RouteIcon size={13} /> {t('dayws.readyUse')}
-      </button>
-    </div>
-  );
-}
-
 /**
- * Tab 2 of the day workspace: everything you could still add to today.
+ * Add places: everything you could still add to today.
  *
- * Two sub-tabs, because there are two different questions. "Ready-made" is for
- * a traveller who wants a good day handed to them: whole routes, already
- * ordered, from the same rating signal the map pins use. "Custom" is for one
- * who knows what they are looking for: search anything (the catalogue is a head
- * start, not a gate: a place it has never heard of still becomes a stop), then
- * browse by pick. Tapping any card moves the map to it, so how far it sits from
+ * T433: the "Ready-made" half ("Whole days for {city}, already in walking
+ * order") is gone, at the owner's call: whole days are what Carta's questions
+ * and the builder make now. What stays is search anything (the catalogue is a
+ * head start, not a gate: a place it has never heard of still becomes a stop),
+ * then browse by pick. Tapping any card moves the map to it, so how far it sits from
  * today's route is a fact you can see rather than guess.
  */
 export function DayAddPanel({
   city, deck, farDeck, assignedIdx, onToggle, onFocus, focusedIdx,
   query, onQuery, searchResults, onAddCustom, customBusy,
-  routes, citytrip, onUseCitytrip, onUseRoute, onAskCarta,
   suggestions = [], limited = false,
-  mode, onMode, pick, onPick,
+  pick, onPick,
   // Places from the traveller's own shortlist that are in reach of this
   // city, already resolved into the same {item, idx, km} deck shape as
   // everything else here (see DayPlannerTab's shortlistDeck).
   shortlist = [],
 }) {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   // mode (ready / custom) and pick live in the parent: switching to the plan
   // and back must not drop a traveller who was three filters deep in the
   // catalogue back onto the ready-made list.
-  const setMode = onMode;
   const setPick = onPick;
   const [shown, setShown] = useState(PAGE);
 
@@ -174,65 +144,8 @@ export function DayAddPanel({
   const searching = query.trim().length >= 2;
   const exactHit = searchResults.some(({ item }) => item.name.trim().toLowerCase() === query.trim().toLowerCase());
 
-  const hasReady = !!citytrip || routes.length > 0;
-
   return (
     <div className="daya">
-      <div className="daya-modes" role="tablist" aria-label={t('dayws.addAria')}>
-        <button
-          role="tab"
-          aria-selected={mode === 'ready'}
-          className={`daya-mode${mode === 'ready' ? ' on' : ''}`}
-          onClick={() => setMode('ready')}
-        >{t('dayws.modeReady')}</button>
-        <button
-          role="tab"
-          aria-selected={mode === 'custom'}
-          className={`daya-mode${mode === 'custom' ? ' on' : ''}`}
-          onClick={() => setMode('custom')}
-        >{t('dayws.modeCustom')}</button>
-      </div>
-
-      {mode === 'ready' && (
-        <div className="daya-ready-list">
-          <p className="daya-lead">{t('dayws.readyLead', { city: city || t('day.thisCity') })}</p>
-          {citytrip && (
-            <div className="daya-ready rec">
-              <div className="daya-ready-head">
-                <span className="daya-ready-title">{t('dayws.citytripTitle', { city: city || '' })}</span>
-                <span className="daya-ready-tag">{t('dayws.readyWalk')}</span>
-              </div>
-              <p className="daya-ready-desc">{t('dayws.citytripDesc')}</p>
-              <div className="daya-ready-stats">
-                <span>{t('dayws.stopsN', { n: citytrip.n_stops })}</span>
-                <span className="daya-sep" aria-hidden="true" />
-                <span>{t('dayws.readySteps', { n: formatSteps(kmToSteps(citytrip.distance_m / 1000), lang) })}</span>
-              </div>
-              <button className="daya-ready-use" onClick={onUseCitytrip}>
-                <RouteIcon size={13} /> {t('dayws.readyUse')}
-              </button>
-            </div>
-          )}
-          {routes.map((r, i) => (
-            <ReadyCard
-              lang={lang}
-              key={r.key}
-              route={r}
-              highlight={!citytrip && i === 0}
-              onUse={onUseRoute}
-              t={t}
-            />
-          ))}
-          {!hasReady && <p className="daya-empty">{t('dayws.readyNone')}</p>}
-          <button className="daya-ask" onClick={onAskCarta}>
-            <SparkIcon size={14} />
-            <span><b>{t('dayws.readyAsk')}</b><small>{t('dayws.readyAskSub')}</small></span>
-          </button>
-        </div>
-      )}
-
-      {mode === 'custom' && (
-        <>
           {limited && <p className="daya-thin">{t('day.limitedData')}</p>}
 
           <div className="daya-search">
@@ -280,12 +193,11 @@ export function DayAddPanel({
             <>
               <div className="daya-picks" role="group" aria-label={t('dayws.picksAria')}>
                 {PICKS.map(({ key, labelKey }) => (
-                  <button
+                  <Chip
                     key={key}
-                    className={`daya-pick${pick === key ? ' on' : ''}`}
+                    selected={pick === key}
                     onClick={() => { setPick(key); setShown(PAGE); }}
-                    aria-pressed={pick === key}
-                  >{t(labelKey)}</button>
+                  >{t(labelKey)}</Chip>
                 ))}
               </div>
 
@@ -383,8 +295,6 @@ export function DayAddPanel({
               </p>
             </>
           )}
-        </>
-      )}
     </div>
   );
 }

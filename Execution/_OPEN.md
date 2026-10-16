@@ -1553,3 +1553,18 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T458-d | T458 | The phone planned trip's map is a 150 px card after the trip kit, out of the first screen; confirm or move it higher | user | open |  |
 | T458-e | T458 | Desktop Review reads 154 words in its first screen (64 before) because each stay carries Find a place and the booking price; distill to one line a stay | next task | open |  |
 | T458-f | T458 | Flight rows name the airport by code ("Flight to TIA"); pass the origins table to TripItinerary so they read the airport's city | next task | open |  |
+| T433-a | T433 | Deploy the plan-day Edge Function (days, catalogue-only stops, two free refines by signed token, lite-first model chain, cache v6) and check no GEMINI_MODEL or GEMINI_MODELS secret overrides the chain | user | open |  |
+| T433-b | T433 | The catalogue holds no opening hours (0 of 3,865 POI shards), so the day links Check hours instead of checking them; harvest OSM opening_hours per POI in the data lane | user | open |  |
+| T433-c | T433 | Marine reserves and similar non-visitable POIs (Fondali Punta Mesco, Cinque Terre) sit in the catalogue as places; the planner now draws rides to them, the planned POI curation is the real fix | user | open |  |
+| T433-d | T433 | The old day harnesses (verify_day_dates, _ideas, _landing, _overview, _start_point, _steps, _workspace, verify_continue_trip, ai/verify_day_flow, ai/verify_day_custom, day parts of verify_audit_round2 and verify_keyboard) drive removed markup; repair onto the T433 flow or retire them | next task | open |  |
+| T433-e | T433 | TownPickerStep (the bot's town question) still uses DayExploreMap while every other day map is TripMap; move it for one pin language | next task | open |  |
+| T433-f | T433 | Native review of the 104 new day planner strings in nl, de, fr, es and it | user | open |  |
+| T433-g | T433 | Real-phone pass on the T433 day planner: planned-day page scroll in iOS Safari, the map card's cooperative gestures, the steps and kit sheets over Safari's bar, the Ideas time select | user | open |  |
+| T433-h | T433 | The builder preview (straight line, marked ~) and the planned day (routed) time the same day differently, usually by 10 to 15 minutes; one clock for both | next task | open |  |
+| T433-i | T433 | The day flow's fixed chrome on a phone is about a third of the screen with the bottom nav visible, as in the trip planner (T432-g); decide whether the nav hides inside a flow | user | open |  |
+| T433-j | T433 | The kit Card always renders its title as h3, so the fork reads h1 then h3 with no h2; give Card a heading level prop | next task | open |  |
+| T433-k | T433 | HeroImage has no onError fallback, so a trip row whose photo URL fails shows a broken image; fall back to the named placeholder | next task | open |  |
+| T433-l | T433 | POI kinds and visit times come from the data (Colosseum is Theatre, 25 min; Quirinal Palace 1 h 20 min); correct kinds and dwell times in the catalogue | user | open |  |
+| T433-m | T433 | Trail rows in the builder sit at the trail's centre, not its trailhead, so their walking distance and the day's leg point to the middle of the route | next task | open |  |
+| T433-n | T433 | The step-free answer shortens legs and asks for level access, but the catalogue holds no accessibility data; decide whether to collect it or label the answer as advice | user | open |  |
+| T433-o | T433 | Every day route is computed on routing.openstreetmap.de (public FOSSGIS OSRM, fair use); decide on a self-hosted router on the Hetzner box before launch traffic | user | open |  |
