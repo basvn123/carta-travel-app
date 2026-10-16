@@ -3,14 +3,14 @@
 
    Rebuilt in T428 on the Lagoon kit, after Explore (T437 to T444). What the
    rules here draw, top to bottom:
-     - the section tabs (kit Tabs), sticky under the top chrome;
+     - Explore's full-width column, and the six sections as kit tiles (in
+       the side panel on a desktop, a 2 x 3 grid on a phone; T457);
      - the search row on a phone (the field and the one Filters button);
        on a desktop the field sits in the header's slot (24-destination-
        workspace.css styles it there) and the left panel holds the filters;
      - the band of a picked country, the countries track and grid, and the
        gallery card (browse/CountryGallery.jsx);
-     - the refine row over the list (sort, country, Lifestyle), sticky on a
-       phone;
+     - the refine row over the list on a phone (sort, country), sticky;
      - the trip library's tiles, the Sources fold, the filter sheet's motion.
    The opening (head, Try one, rails) is 30-section-opening.css; the list
    card is 37-card-fillings.css.
@@ -20,23 +20,27 @@
    carta-design and DESIGN.md win.
    ========================================================================== */
 
-/* -- The section tabs -------------------------------------------------------- */
+/* -- The content column (T457) ---------------------------------------------- */
 
-.dtab-bar {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  margin: 0 calc(-1 * var(--space-4)) var(--space-4);
-  padding: 0 var(--space-4);
-  background: var(--surface-page);
-}
-.dtab-cats { gap: var(--space-5); }
-.dtab-cats .ui-tab { flex: none; font-size: var(--text-body); font-weight: 600; }
-.dtab-cats .ui-tab svg { flex: none; color: var(--text-3); }
-.dtab-cats .ui-tab.is-selected svg { color: var(--action); }
+/* Explore's column: the full width, 32 px past the panel's hairline and 24 px
+   under the settings line, so both browse tabs start on the same lines. The
+   1180 px reading cap is for pages (a destination, a trip), not for browse
+   surfaces (carta-design, Breakpoints). */
 @media (min-width: 769px) {
-  .dtab-bar { margin: 0 0 var(--space-5); padding: 0; }
+  .places-shell .places-wrap {
+    max-width: none;
+    margin: 0;
+    padding: var(--space-5) var(--space-6) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  }
 }
+
+/* -- The sections (T457: kit tiles, was a row of tabs) ------------------------ */
+
+/* On a desktop the six head the side panel; on a phone they are the 2 x 3
+   grid of equal buttons at the top of the column, in the flow (a grid this
+   tall does not stick). 62-v6-explore.css draws both, the icon over the
+   word, as Explore's panel draws its trip types. */
+.dtab-bar { margin: 0 0 var(--space-3); }
 
 /* -- The search row (phone; desktop uses the header slot) -------------------- */
 
@@ -64,9 +68,6 @@
 }
 
 /* -- The panel ---------------------------------------------------------------- */
-
-/* The side rail's field labels on the type scale (T451: they were 11 px). */
-.places-side .side-sub { font-size: var(--text-caption); color: var(--text-2); }
 
 .dtab-panel { min-width: 0; }
 .dtab-title-solo { margin: 0 0 var(--space-4); }
@@ -154,7 +155,7 @@
 @media (max-width: 768px) {
   .dtab-refine {
     position: sticky;
-    top: calc(var(--tap) + 1px);
+    top: 0;
     z-index: 4;
     margin: 0 calc(-1 * var(--space-4)) var(--space-3);
     padding: var(--space-2) var(--space-4);
@@ -167,16 +168,17 @@
   .dtab-refine { display: none; }
 }
 
-/* The facet chips, inline in the desktop panel. */
+/* The facet chips, inline in the desktop panel: Explore's rail sections, the
+   heading at 12 px (T457: it was 13). */
 .dtab-facet { display: flex; flex-direction: column; gap: var(--space-2); }
-.dtab-facet-label { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.dtab-facet-label { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .dtab-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 
-/* The country picker beside the sort reads as the same control: the kit
-   field's height, border, radius and type (CountryPicker draws a button). */
-.dtab-refine .places-country,
-.places-side .places-country {
+/* The country picker beside the sort on a phone reads as the same control:
+   the kit field's height, border, radius and type (CountryPicker draws a
+   button). The desktop panel's country is the rail's fold. */
+.dtab-refine .places-country {
   height: var(--tap);
   padding: 0 var(--space-3);
   border: 1px solid var(--border);
@@ -208,19 +210,70 @@
 
 /* -- The desktop panel --------------------------------------------------------- */
 
+/* Explore's rail, section for section (T457): the sections' tiles, the sort,
+   the short facet set and All filters, the country fold last. The rail's
+   own gap spaces the groups, so the older group margin steps aside. */
 @media (min-width: 769px) {
-  .places-side .side-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
+  .places-side .xrail > .side-group { margin-top: 0; }
+  .places-side .side-facets { display: flex; flex-direction: column; gap: var(--space-5); }
+  .places-side .xrail-sec > .field .field-label {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--text-2);
   }
-  .places-side .side-facets { display: flex; flex-direction: column; gap: var(--space-4); }
-  .side-country { width: 100%; max-width: none; border-radius: var(--radius-control); }
-  .side-group .country-picker { display: flex; width: 100%; }
-  .side-group .country-picker-pop { left: 0; right: 0; width: auto; }
   .side-allfilters { justify-content: flex-start; }
 }
+
+/* -- A picked country's band over the list (T428 drew it; T457 sets it) ----- */
+
+.dtab-countryband {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-5);
+}
+/* Centred on the name's first line (28 px at the tight leading). */
+.dtab-countryband-flag { flex: none; margin-top: var(--space-2); }
+.dtab-countryband-go { align-self: center; }
+.dtab-countryband-text { flex: 1 1 240px; min-width: 0; }
+.dtab-countryband-name {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.dtab-countryband-line {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.dtab-countryband-go { flex: none; }
+
+/* The phone's country list (CountryPicker in the refine row) draws its rows
+   as the side panel's fold does (T457): a flag a row, 44 px rows, the names
+   on one line whether or not a flag is drawn; the caret is the chevron. */
+.country-picker-pop .origin-opt {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  text-align: start;
+}
+.country-picker-pop .origin-search { min-height: var(--tap); }
+/* The header field gets its width back where the head's near-me door
+   replaces the crosshair (T457). */
+.header-search-slot .places-search:not(:has(.places-locate)) input { padding-right: var(--space-3); }
+.country-picker-pop .origin-opt-flag { display: inline-flex; flex: none; width: 17px; }
+.country-picker .origin-btn-caret { flex: none; color: var(--text-3); }
+
+/* The By country track is one of the rails (T457): the rails' 4:3 photo,
+   not the gallery's 3:2, so the four strips share one aspect. */
+.dtab-bycountry .dgal-card .card-media { aspect-ratio: 4 / 3; }
 
 /* -- Active filter chips over the list (shell's FilterChips) ------------------ */
 

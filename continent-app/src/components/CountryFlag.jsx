@@ -118,6 +118,13 @@ const FLAGS = {
   SM: { kind: 'emblem', field: null, draw: (k) => (
     <g key={k}><rect width="60" height="20" fill="#fff" /><rect y="20" width="60" height="20" fill="#5eb6e4" /></g>
   ) },
+  // T457: the cycling and mountain layers publish Türkiye and Ukraine, and
+  // the Destinations country fold left their flag slots empty.
+  TR: { kind: 'emblem', field: '#e30a17', draw: (k) => (
+    <g key={k}><circle cx="24" cy="20" r="10" fill="#fff" /><circle cx="26.5" cy="20" r="8" fill="#e30a17" />
+    <path d="M33 20 L41.5 17.2 L36.3 24.4 L36.3 15.6 L41.5 22.8 Z" fill="#fff" /></g>
+  ) },
+  UA: H(['#0057b7', '#ffd700']),
   XK: { kind: 'emblem', field: '#244aa5', draw: (k) => (
     <g key={k}><path d="M24 14 Q26 10 30 12 Q34 10 36 14 Q38 20 34 26 L26 26 Q22 20 24 14 Z" fill="#d0a650" />
     {[0, 1, 2, 3, 4, 5].map((i) => <circle key={i} cx={17 + i * 5.2} cy="8" r="1.6" fill="#fff" />)}</g>

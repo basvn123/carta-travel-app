@@ -971,6 +971,9 @@ export function ExploreTab({
           over the grid, where the figures they change are. */}
       <aside className="side-panel explore-side" aria-label={t('filter.filters')}>
         <div className="side-block">
+          {/* T457: one heading for the panel, so its h3s sit under an h2, as
+              on Destinations. */}
+          <h2 className="sr-only">{t('filter.filters')}</h2>
           {/* No "Refine" eyebrow (T440). "Clear all" lives once, in the chips
               row above the list (T444). */}
           {filterRail}

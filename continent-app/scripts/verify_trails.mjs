@@ -81,6 +81,17 @@ async function pickCountry(scope, cc) {
     await scope.waitForTimeout(1800);
     return;
   }
+  // T457: on a desktop the country is the side panel's fold (one radio a
+  // country, with its flag, "All countries" first), not a button.
+  const fold = scope.locator('.places-side .side-country:visible');
+  if (await fold.count()) {
+    const label = name;
+    if (!(await fold.evaluate((d) => d.open))) await fold.locator('summary').click();
+    await fold.locator('.xrail-country-find input').fill(label);
+    await fold.locator('.xrail-country', { hasText: new RegExp(`^${label}$`, 'i') }).first().click();
+    await scope.waitForTimeout(1800);
+    return;
+  }
   await scope.locator('.places-country:visible').first().click();
   await scope.waitForTimeout(400);
   const pop = scope.locator('.country-picker-pop:visible');

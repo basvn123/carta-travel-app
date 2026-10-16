@@ -97,7 +97,16 @@ for (const view of ['phone', 'desk']) {
     check(await page.$('.dtab-top .dtab-filters') !== null, `${tag}search and Filters share one row`);
   } else {
     check(await page.$('#header-search-slot .places-search') !== null, `${tag}the search sits in the header slot`);
-    check(await page.$('.places-side .side-cats, .places-side .side-cat') === null, `${tag}the side panel holds no section grid`);
+    // T457 (owner 2026-10-16): the six sections head the side panel as
+    // kit tiles, the way Explore's panel heads with its trip types, and the
+    // country is the panel's fold with a flag a row.
+    check(await page.locator('.places-side .dtab-cats [role="tab"]').count() === 6, `${tag}the side panel heads with the six section tiles`);
+    check(await page.locator('.places-side .side-country .xrail-country').count() > 1, `${tag}the country is the panel's fold`);
+    const lines = await page.evaluate(() => {
+      const x = (sel) => Math.round(document.querySelector(sel)?.getBoundingClientRect().x ?? -1);
+      return { content: x('.places-wrap .dtab-title'), rail: x('.places-side .xrail-h') };
+    });
+    check(lines.content === 296 && lines.rail === 32, `${tag}the panel and the column stand on Explore's lines`, JSON.stringify(lines));
   }
 
   // Picking a country: the band, the URL, the Explore door.
