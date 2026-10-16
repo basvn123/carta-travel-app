@@ -626,6 +626,19 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           shape.appendChild(num);
         }
         el.appendChild(shape);
+        // A planned trip's stop says what it is beside its number (T432):
+        // "Berat, 3 nights", so the map reads as the trip without the list.
+        if (p.tag && !bare) {
+          el.classList.add('has-tag');
+          const tag = document.createElement('span');
+          tag.className = 'trip-pin-tag';
+          const name = document.createElement('b');
+          name.textContent = p.city || '';
+          const sub = document.createElement('small');
+          sub.textContent = p.tag;
+          tag.append(name, sub);
+          el.appendChild(tag);
+        }
         el.addEventListener('click', (e) => {
           e.stopPropagation();
           onSelectRef.current?.(i);

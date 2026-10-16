@@ -1,14 +1,9 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import {
-  tripDaysBetween, DEFAULT_LIFESTYLE, haversineKm,
-  drivingEstimate,
-} from '../lib/runtime_pricing.js';
-import { combineTripLegs, suggestNextStops, unpricedFlight, ownFlightTransfers, stopStayCost, pickLegMode } from '../lib/trip_planner_pricing.js';
-import { legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm } from '../lib/transport.js';
-import { originHome } from '../lib/origins.js';
+import { tripDaysBetween, DEFAULT_LIFESTYLE, haversineKm } from '../lib/runtime_pricing.js';
+import { suggestNextStops } from '../lib/trip_planner_pricing.js';
+import { priceTrip, normalizeTransferMode, tripStopDetails, MAX_PARTY } from '../lib/tripTotal.js';
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
-import { round2 } from '../lib/math.js';
 import {
   fetchTripPlanWithStops, createTripPlan, renameTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
@@ -21,20 +16,6 @@ const DEFAULT_STOP_NIGHTS = 2;
 // would invalidate every memo below that reads destinations (T192).
 const NO_DESTINATIONS = Object.freeze({});
 
-// A hop the traveller paid for themselves. Flights and island ferries are the
-// two Carta cannot price at all, but the set is all five modes on purpose: the
-// wizard now asks what every leg cost, and a fare somebody actually paid beats
-// an estimate of the same journey. An own entry replaces the estimate for that
-// mode and leaves the other modes priced, so switching back is still one tap.
-const OWN_LEG_MODES = new Set(['fly', 'ferry', 'train', 'bus', 'car']);
-
-/** Airport-transfer choice as { in, out }. Accepts the legacy single-string
- *  shape from older drafts/saved trips (one mode for both directions). */
-function normalizeTransferMode(v) {
-  if (typeof v === 'string') return { in: v, out: v };
-  return { in: v?.in || 'auto', out: v?.out || 'auto' };
-}
-
 /** Draft-plan state + pricing for the Trip Planner tab.
  *
  *  The traveller first picks the window they want to travel (tripStart,  *  tripEnd), then adds an ordered list of stops, each with a number of nights.
@@ -46,7 +27,7 @@ function normalizeTransferMode(v) {
  *  figure in a total is the one the traveller typed (ownFlight). Overland legs
  *  between consecutive stops are estimated (interCityGroundEstimate).
  */
-export function useTripPlanner(data, countryInsights = null, preferredStayTier = 'home') {
+export function useTripPlanner(data, countryInsights = null, preferredStayTier = 'home', appLifestyle = null) {
   const destinations = data?.destinations || NO_DESTINATIONS;
   const carModel = data?.meta?.car_model || null;
 
@@ -126,11 +107,13 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const [planLabel, setPlanLabel] = useState(draft?.planLabel || '');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
   const [planned, setPlanned] = useState(draft?.planned || false); // true = show the day-by-day itinerary view
-  // How the days are priced: the daily lifestyle the wizard estimated with,
-  // handed over with the trip so the receipt prices the same days (T388, row
-  // T377-g). null = the app default, as before, for trips that never came
-  // through the wizard.
-  const [lifestyle, setLifestyle] = useState(draft?.lifestyle || null);
+  // How the days are priced: the app's own Lifestyle, live (T432). A trip
+  // used to freeze the eating habits it was handed at, so changing them in
+  // the Lifestyle panel moved every price in the app except this one.
+  const lifestyle = appLifestyle || DEFAULT_LIFESTYLE;
+  // Beds the traveller has booked and typed in, keyed by destination id so a
+  // reorder keeps them on the right town: { [destinationId]: eurTotal }.
+  const [ownStays, setOwnStays] = useState(draft?.ownStays || {});
 
   // Keep the draft stored while planning; drop it once it's empty. Saved plans
   // carry their planId so the next visit knows not to restore them (see
@@ -143,31 +126,17 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, lifestyle,
+      stayTier, ownStays,
     });
   }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, lifestyle]);
+      stayTier, ownStays]);
 
-  // Chain each stop's arrive/depart dates from the trip start. A stop with no
-  // trip start yet still carries its nights so the UI can show "2 nights".
-  const stopDetails = useMemo(() => {
-    let cursor = tripStart;
-    return stops.map((s) => {
-      const nights = Math.max(0, s.nights || 0);
-      const arriveDate = cursor || '';
-      const departDate = cursor ? addDays(cursor, nights) : '';
-      cursor = departDate;
-      return {
-        ...s,
-        nights,
-        activities: s.activities || [],
-        arriveDate,
-        departDate,
-        dest: destinations[s.destinationId] || null,
-      };
-    });
-  }, [stops, destinations, tripStart]);
+  // Each stop with its chained dates (the same chain priceTrip prices).
+  const stopDetails = useMemo(
+    () => tripStopDetails(stops, destinations, tripStart),
+    [stops, destinations, tripStart],
+  );
 
   const plannedNights = useMemo(
     () => stops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0),
@@ -287,15 +256,17 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setPlanId(null);
     setPlanLabel('');
     setPlanned(false);
-    setLifestyle(null);
+    setOwnStays({});
   }, [setTransferMode]);
 
   // Load a whole itinerary the guided wizard just assembled: a start date, an
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs, lifestyle: wizardLifestyle }) => {
-    setLifestyle(wizardLifestyle || null);
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs, ownStays: wizardOwnStays }) => {
+    // Every field here mirrors lib/tripTotal.js wizardPlannerState(), the
+    // transform the wizard prices its running estimate through (T432): a
+    // field set here and not there would move the total at the hand-over.
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -307,7 +278,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     // Never clobber a name the traveller already typed ("Bas en Noa" must
     // survive picking France in the wizard), the wizard label is a fallback.
     if (label != null) setPlanLabel((prev) => (prev && prev.trim() ? prev : label));
-    if (gs != null) setGroupSize(Math.max(1, Math.min(20, gs)));
+    if (gs != null) setGroupSize(Math.max(1, Math.min(MAX_PARTY, gs)));
     if (transport) setTransportPref(transport);
     if (wizardPace) setPace(wizardPace);
     if (wizardBaggage) setBaggage(wizardBaggage);
@@ -321,6 +292,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     // Carta and hands over nothing.
     setLegModes(wizardLegModes || {});
     setOwnLegs(wizardOwnLegs || {});
+    setOwnStays(wizardOwnStays || {});
     // A fresh wizard trip must not inherit the previous draft's airport
     // transfer choice (a leftover "taxi" would silently reprice this one).
     setTransferMode('auto');
@@ -350,155 +322,19 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     });
   }, [stopDetails, destinations, transportPref]);
 
-  // The round flight: into the first stop, out of the last stop. Stops with
-  // no routes of their own (ground-only gems) fly via the wizard's fly-in
-  // anchor when one is set. Carta does not price flights (owner decision,
-  // 2026-10-02, T273), so the route comes back through unpricedFlight: the
-  // airports stay, the fare does not (and since T278 neither do the snapshot
-  // carrier and times). The routed flight is worked out even when the
-  // traveller typed their own fare: it is where the airport-to-centre
-  // transfer comes from.
-  const routedFlight = useMemo(() => {
-    if (transportPref === 'owncar') return null;
-    const first = stopDetails[0];
-    const last = stopDetails[stopDetails.length - 1];
-    if (!first?.dest || !last?.dest) return null;
-    const anchorDest = anchorId ? destinations[anchorId] : null;
-    const returnDest = returnAnchorId ? destinations[returnAnchorId] : null;
-    const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
-    // Home leg: out of the airport the traveller PICKED for the return (its own
-    // step), else the last stop's own airport, else the arrival anchor for a
-    // ground-only final gem.
-    const outDest = hasRoutes(returnDest)
-      ? returnDest
-      : (hasRoutes(last.dest) ? last.dest : (anchorDest || last.dest));
-    // Tag the resolved fly-from / fly-into airports so the ground transfers to
-    // reach them (anchorLegs) are priced whenever they differ from the stop.
-    const withIds = (priced, inDest) => ({
-      ...priced,
-      in_from_id: inDest?.id ?? null,
-      out_from_id: outDest?.id ?? null,
-    });
-    // Inbound: honour the exact fly-in the traveller picked in the wizard, price
-    // into the SAME airport (anchorDest) from the SAME origin (anchorOrigin) so
-    // the overview shows the flight they chose, not a re-derived one. Fall back
-    // to the first stop's own airport only when the anchor can't be combined
-    // with the home leg (keeps otherwise-unpriceable trips priced).
-    if (anchorDest) {
-      const viaAnchor = combineTripLegs(anchorDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin, { allDests: destinations, estimates: true });
-      if (viaAnchor.combinable) return withIds(unpricedFlight(viaAnchor), anchorDest);
-    }
-    const inDest = hasRoutes(first.dest) ? first.dest : (anchorDest || first.dest);
-    return withIds(unpricedFlight(combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin, { allDests: destinations, estimates: true })), inDest);
-  }, [stopDetails, groupSize, anchorId, anchorOrigin, returnAnchorId, destinations, baggage, transportPref]);
-
-  const flight = useMemo(() => {
-    // Driving there in their own car: there is no flight to price at all.
-    // `driving` marks it so the overview/receipt render drive legs instead of
-    // ever showing a Ryanair fare for a trip nobody flies.
-    if (transportPref === 'owncar') return { driving: true };
-    // Booked with another airline: show what the traveller told us, never a
-    // Ryanair fare. `own` marks it so every surface (overview, receipt, export)
-    // renders the airline + their entered cost instead of the Ryanair rows.
-    if (ownFlight) {
-      const mode = ownFlight.mode || 'fly';
-      const own = {
-        own: true,
-        airline: ownFlight.airline || '',
-        // How they actually travel there. Older drafts and saved trips carry
-        // no mode because the only answer used to be a flight.
-        mode,
-        cost_total: round2(ownFlight.costTotal || 0),
-        out_date: ownFlight.outDate || null,
-        ret_date: ownFlight.retDate || null,
-      };
-      // Their own car to the door has no airport or station to leave from.
-      if (mode === 'car') return own;
-      // Where they land and leave from (T278): the arrival the wizard asked
-      // for wins, else the airport the routed flight uses; the home airport
-      // is picked the way the routed flight picks it. anchorLegs prices the
-      // hop from there to the first stop and back, which an own fare used to
-      // lose (wizard trips included).
-      const first = stopDetails[0];
-      const last = stopDetails[stopDetails.length - 1];
-      if (!first?.dest || !last?.dest) return own;
-      const routed = routedFlight?.combinable ? routedFlight : null;
-      const anchorDest = anchorId ? destinations[anchorId] : null;
-      const returnDest = returnAnchorId ? destinations[returnAnchorId] : null;
-      const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
-      const routedIn = routed?.in_from_id ? destinations[routed.in_from_id] : null;
-      const routedOut = routed?.out_from_id ? destinations[routed.out_from_id] : null;
-      const inDest = anchorDest || routedIn || first.dest;
-      const outDest = hasRoutes(returnDest) ? returnDest
-        : (hasRoutes(last.dest) ? last.dest : (anchorDest || routedOut || last.dest));
-      // The airport-to-centre hop is an airport fact; a train or a bus pulls
-      // into the station, so only a flight takes it.
-      const airports = ownFlightTransfers(mode === 'fly' ? routed : null, inDest, outDest, groupSize);
-      return { ...own, ...airports };
-    }
-    return routedFlight;
-  }, [routedFlight, stopDetails, groupSize, anchorId, returnAnchorId, destinations, ownFlight, transportPref]);
-
-  // Priced transport options (train / bus / car with booking links) between
-  // each consecutive pair of stops, resolved to a chosen mode: an explicit
-  // per-leg override wins, then the trip-wide preference, then Carta's pick.
-  // Whether the trip actually has a car on the ground (a rental, or the
-  // traveller's own car driven from home) - it decides both the leg
-  // recommendation (no phantom cars) and the rental line.
-  const tripHasCar = transportPref === 'car' || transportPref === 'owncar';
-
-  const legs = useMemo(() => {
-    const group = Math.max(1, groupSize || 1);
-    const out = [];
-    for (let i = 0; i < stopDetails.length - 1; i++) {
-      const a = stopDetails[i].dest;
-      const b = stopDetails[i + 1].dest;
-      const opts = a && b ? legTransportOptions(a, b, groupSize, { carModel, countryInsights, hasCar: tripHasCar }) : null;
-      // A hop the traveller booked themselves. It joins the priced overland
-      // options rather than replacing them, so switching to the train and back
-      // to the flight is one tap either way and neither price is lost. It also
-      // rescues a sea crossing Carta can't price at all: "no overland route"
-      // becomes the ferry they actually hold a ticket for.
-      const own = ownLegs[i];
-      const ownEntry = own && OWN_LEG_MODES.has(own.mode) ? (() => {
-        const total = Math.max(0, Math.min(99999, Number(own.eur) || 0));
-        return {
-          eur_pp: round2(total / group),
-          eur_total: round2(total),
-          hours: null,
-          links: [],
-          own: true,
-          note: null,
-        };
-      })() : null;
-
-      if (!opts || ((opts.no_road || !opts.recommended) && !ownEntry)) {
-        out.push(opts);
-        continue;
-      }
-      const priced = opts.no_road ? {} : opts.modes;
-      const modes = ownEntry ? { ...priced, [own.mode]: ownEntry } : priced;
-      // An explicit per-leg pick wins, but only while it still names a mode
-      // this leg actually offers (reordering the trip can retire one).
-      let mode = modes[legModes[i]] ? legModes[i] : null;
-      if (!mode && ownEntry) mode = own.mode;
-      // Nobody chose: Carta's pick, by the rule the wizard's estimate uses
-      // too (pickLegMode, T388), so the two screens price the same leg.
-      if (!mode) mode = pickLegMode(opts, { transportPref, hasCar: tripHasCar });
-      const chosen = modes[mode] || modes[opts.recommended] || ownEntry;
-      out.push({
-        ...opts,
-        no_road: false,
-        modes,
-        recommended: opts.recommended || own.mode,
-        mode,
-        hours: chosen.hours,
-        ground_eur_per_person: chosen.eur_pp,
-        ground_total: chosen.eur_total,
-      });
-    }
-    return out;
-  }, [stopDetails, groupSize, carModel, countryInsights, transportPref, tripHasCar, legModes, ownLegs]);
+  // Every priced part of the trip, from the one function the wizard's running
+  // estimate also prices through (lib/tripTotal.js, T432), so the figure the
+  // traveller watched on every step is the figure the planned trip shows.
+  const priced = useMemo(() => priceTrip({
+    stops, tripStart, tripEnd, groupSize, transportPref, legModes, ownLegs, ownStays, transferMode,
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier, lifestyle,
+  }, { data, countryInsights }), [stops, tripStart, tripEnd, groupSize, transportPref, legModes, ownLegs,
+    ownStays, transferMode, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier,
+    lifestyle, data, countryInsights]);
+  const {
+    flight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes, stayCosts,
+    grandTotal, tripHasCar,
+  } = priced;
 
   const setLegMode = useCallback((index, mode) => {
     setLegModes((prev) => ({ ...prev, [index]: mode }));
@@ -514,225 +350,17 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     });
   }, []);
 
-  // The wizard's anchor prices the FLIGHT when the first/last stop has no
-  // fares of its own ("fly into Bergamo, sleep at Lake Como"), but getting
-  // from that airport city to the first stop (and back at the end) is a real
-  // overland journey that used to be silently absent from both the itinerary
-  // and the total. Price it like any other leg.
-  const anchorLegs = useMemo(() => {
-    const none = { in: null, out: null, anchor: null };
-    // A routed flight, or one the traveller booked that lands somewhere
-    // (T278: an own fare used to lose this leg, wizard trips included).
-    if (!flight?.combinable && !flight?.in_from_id && !flight?.out_from_id) return none;
-    // You've just flown in, so this hop is an AIRPORT TRANSFER, not an inter-city
-    // drive: public transport, a taxi, or the rental you collect at the airport,
-    // never your own car with tolls (which is what the generic leg engine used
-    // to recommend, and why it read as "you drive from the airport").
-    const hasRental = transportPref === 'car';
-    const legFor = (a, b, dir) => {
-      if (!a || !b) return null;
-      const opts = airportTransferOptions(a, b, groupSize, { carModel, hasRental });
-      if (!opts || !Object.keys(opts.modes).length) return null;
-      const want = transferMode[dir];
-      const mode = want !== 'auto' ? want : opts.recommended;
-      const chosen = opts.modes[mode] || opts.modes[opts.recommended] || Object.values(opts.modes)[0];
-      return { ...opts, mode: chosen.mode, hours: chosen.hours, ground_eur_per_person: chosen.eur_pp, ground_total: chosen.eur_total, links: chosen.links };
-    };
-    const first = stopDetails[0];
-    const last = stopDetails[stopDetails.length - 1];
-    // The airports the round flight actually uses (from the flight pricing).
-    // When either differs from the stop it serves, the airport<->stop transfer
-    // is a real journey - price it so it shows up in the itinerary and total.
-    // Covers "fly into Bergamo, sleep at Como" AND "fly home from a different
-    // airport near your last stop".
-    const inFrom = flight.in_from_id ? destinations[flight.in_from_id] : null;
-    const outFrom = flight.out_from_id ? destinations[flight.out_from_id] : null;
-    return {
-      in: (inFrom && flight.in_from_id !== first.destinationId) ? legFor(inFrom, first.dest, 'in') : null,
-      out: (outFrom && flight.out_from_id !== last.destinationId) ? legFor(last.dest, outFrom, 'out') : null,
-      anchor: inFrom || null,
-      // The airport cities each transfer connects to. The fly-in and fly-home
-      // airports can differ (you fly home from near your last stop), so the
-      // itinerary labels each transfer with its own airport, not a shared one.
-      inCity: inFrom?.city || null,
-      outCity: outFrom?.city || null,
-    };
-  }, [flight, destinations, stopDetails, groupSize, carModel, transportPref, transferMode]);
-
-  // The airport <-> stay transfers folded into the flight (stops you fly
-  // STRAIGHT into): the stored fare is a public-transport (bus/shuttle)
-  // estimate, so offer the same taxi / rental alternatives the anchor legs do
-  // and let the chosen transferMode drive the total, so "how you get from the
-  // plane to your bed" is a real, priced choice, not a hidden assumption.
-  const flightTransfer = useMemo(() => {
-    if (!(flight?.combinable || flight?.own) || !(flight.ground_total > 0)) return null;
-    const iso2 = stopDetails[0]?.dest?.iso2;
-    const fuelByIso = carModel?.fuel_price_by_iso2 || {};
-    const petrol = fuelByIso[iso2] ?? carModel?.fuel_price_eur_per_l ?? 1.8;
-    const consumption = carModel?.consumption_l_per_100km ?? 6.5;
-    const capacity = carModel?.car_capacity ?? 4;
-    const hasRental = transportPref === 'car';
-    // Approximate the hop distance from the stored transfer: its minutes when we
-    // have them, otherwise back the km out of the ~0.15 EUR/km public fare.
-    const kmOf = (eurPp, minutes) => (minutes > 0 ? (minutes / 60) * 42 : Math.max(1, (eurPp || 0) / 0.15));
-    const legOf = (eurPp, minutes) => (eurPp > 0
-      ? transferModesFromKm(kmOf(eurPp, minutes), groupSize, { petrol, consumption, capacity, hasRental, publicOverride: eurPp })
-      : null);
-    const inT = legOf(flight.into_ground_eur, flight.into_ground_minutes);
-    const outT = legOf(flight.out_ground_eur, flight.out_ground_minutes);
-    if (!inT && !outT) return null;
-    // Combine the fly-in and fly-home hops into one figure per mode, keeping
-    // only modes BOTH legs support so a total is never half-priced.
-    const combined = {};
-    for (const k of new Set([...(inT ? Object.keys(inT.modes) : []), ...(outT ? Object.keys(outT.modes) : [])])) {
-      if ((inT && !inT.modes[k]) || (outT && !outT.modes[k])) continue;
-      const a = inT?.modes[k];
-      const b = outT?.modes[k];
-      combined[k] = {
-        mode: k,
-        eur_total: round2((a?.eur_total || 0) + (b?.eur_total || 0)),
-        eur_pp: round2((a?.eur_pp || 0) + (b?.eur_pp || 0)),
-        hours: round2((a?.hours || 0) + (b?.hours || 0)),
-      };
-    }
-    if (!Object.keys(combined).length) return null;
-    const baseRec = (inT || outT).recommended;
-    const recommended = combined[baseRec] ? baseRec : Object.keys(combined)[0];
-    // Each direction follows its own choice ("taxi there, train back"), kept
-    // within the modes BOTH hops support so the picker's compared totals stay
-    // whole. `mode` is the shared pick when the directions agree, null when
-    // they diverge (the picker then highlights nothing).
-    const pick = (dir) => (transferMode[dir] !== 'auto' && combined[transferMode[dir]] ? transferMode[dir] : recommended);
-    const modeIn = pick('in');
-    const modeOut = pick('out');
-    const inChosen = inT ? inT.modes[modeIn] : null;
-    const outChosen = outT ? outT.modes[modeOut] : null;
-    return {
-      modes: combined, recommended,
-      mode: modeIn === modeOut ? modeIn : null,
-      mode_in: modeIn, mode_out: modeOut,
-      ground_total: round2((inChosen?.eur_total || 0) + (outChosen?.eur_total || 0)),
-      ground_eur_per_person: round2((inChosen?.eur_pp || 0) + (outChosen?.eur_pp || 0)),
-      hours: round2((inChosen?.hours || 0) + (outChosen?.hours || 0)),
-      minutes: (flight.into_ground_minutes || 0) + (flight.out_ground_minutes || 0),
-      estimated: true,
-    };
-  }, [flight, stopDetails, groupSize, carModel, transportPref, transferMode]);
-
-  // Own-car trips start and end at the traveller's door, not an airport: the
-  // drive out (home -> first stop) and the drive home (last stop -> home) are
-  // real, priced legs. Halves of drivingEstimate's round trip, so they reuse
-  // the toll layer's real per-corridor rates (vignettes, peage) where mapped.
-  // The Map tab's max_drive_km cap ("is driving a realistic alternative to a
-  // flight?") is lifted: the traveller already chose to drive.
-  const driveLegs = useMemo(() => {
-    if (transportPref !== 'owncar' || !stopDetails.length) return null;
-    // The traveller's own "driving from" answer wins; the selected origin
-    // airport's city is only the fallback for drafts predating that question.
-    const home = (carHome && carHome.lat != null ? carHome : null)
-      || originHome(data, data?.meta?.selected_origin) || data?.meta?.home || null;
-    if (!home) return null;
-    const model = { ...(carModel || {}), max_drive_km: 4000 };
-    const half = (dest) => {
-      if (!dest) return null;
-      const rt = drivingEstimate(dest, home, { group_size: groupSize }, model);
-      if (!rt) return null;
-      return {
-        road_km: rt.road_km,
-        hours: rt.drive_hours_one_way,
-        cars: rt.cars,
-        fuel_eur: round2(rt.fuel_total / 2),
-        toll_eur: round2(rt.toll_total / 2),
-        toll_notes: rt.toll_notes,
-        ground_total: round2(rt.total / 2),
-        ground_eur_per_person: round2(rt.per_person / 2),
-        mode: 'car',
-        estimated: true,
-      };
-    };
-    return {
-      out: half(stopDetails[0].dest),
-      home: half(stopDetails[stopDetails.length - 1].dest),
-      from: carHome?.name || null,
-    };
-  }, [transportPref, stopDetails, data, carModel, groupSize, carHome]);
-
-  // One rental car for the whole trip (only priced into the total when the
-  // traveller chose 'car'; per-leg car choices only pay fuel + tolls since a
-  // trip mixing modes usually means point rentals or rideshares).
-  const carRental = useMemo(() => {
-    if (transportPref !== 'car' || !stopDetails.length) return null;
-    const days = Math.max(1, plannedNights);
-    const iso2 = stopDetails[0].dest?.iso2;
-    // groupSize matters: 7 people need 2 cars, and the "whole group" label on
-    // this line must actually cover the whole group.
-    return rentalEstimate(carModel, iso2, days, tripStart || stopDetails[0].arriveDate, groupSize);
-  }, [transportPref, stopDetails, plannedNights, carModel, tripStart, groupSize]);
-
-  // Vignette countries (AT, CH, SI, CZ, SK, HU, RO, BG) charge a windscreen
-  // sticker instead of per-km tolls, so car legs there price EUR 0 toll. Bill
-  // each country's sticker ONCE per trip, one per car, for the countries the
-  // chosen car legs touch. Own-car trips already pay the home<->trip corridor's
-  // vignettes inside the drive legs (drivingEstimate's toll layer), so the
-  // first/last stop's countries are excluded there to avoid double-billing.
-  const vignettes = useMemo(() => {
-    const prices = carModel?.toll_model?.vignettes_eur;
-    if (!prices) return null;
-    const isoSet = new Set();
-    legs.forEach((l, i) => {
-      if (!l || l.no_road || l.mode !== 'car') return;
-      const a = stopDetails[i]?.dest;
-      const b = stopDetails[i + 1]?.dest;
-      if (a?.iso2) isoSet.add(a.iso2);
-      if (b?.iso2) isoSet.add(b.iso2);
+  // A bed the traveller booked themselves, as the whole stay's price for the
+  // party; a blank or zero clears it back to Carta's estimate.
+  const setOwnStay = useCallback((destinationId, eurTotal) => {
+    setOwnStays((prev) => {
+      const next = { ...prev };
+      const v = Math.max(0, Math.min(99999, Number(eurTotal) || 0));
+      if (!v) delete next[destinationId];
+      else next[destinationId] = v;
+      return next;
     });
-    if (transportPref === 'owncar') {
-      isoSet.delete(stopDetails[0]?.dest?.iso2);
-      isoSet.delete(stopDetails[stopDetails.length - 1]?.dest?.iso2);
-    }
-    const items = [...isoSet]
-      .filter((iso) => prices[iso] != null)
-      .map((iso) => ({ iso2: iso, eur: prices[iso] }));
-    if (!items.length) return null;
-    const cars = Math.max(1, Math.ceil(groupSize / Math.max(1, carModel?.car_capacity || 4)));
-    return {
-      items,
-      cars,
-      eur_total: round2(items.reduce((n, v) => n + v.eur, 0) * cars),
-    };
-  }, [legs, stopDetails, transportPref, carModel, groupSize]);
-
-  // Accommodation + on-the-ground spend per stop, through stopStayCost: the
-  // same function the wizard's running estimate prices a stop with, at the
-  // lifestyle it handed over (T388, row T377-g).
-  const stayCosts = useMemo(() => stopDetails.map((s) => (
-    s.dest
-      ? stopStayCost(s.dest, s.nights, s.arriveDate, { groupSize, stayTier, lifestyle: lifestyle || DEFAULT_LIFESTYLE })
-      : null
-  )), [stopDetails, groupSize, stayTier, lifestyle]);
-
-  const grandTotal = useMemo(() => {
-    let total = 0;
-    if (flight?.combinable) {
-      // The airport transfer is priced by the chosen mode (flightTransfer),
-      // not the raw stored public fare, so the total reflects taxi/rental too.
-      // The flight itself adds nothing: Carta does not price it (T273).
-      total += flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0);
-    } else if (flight?.own) {
-      // Their own fare, plus the airport transfers it lands into (T278).
-      total += flight.cost_total || 0;
-      total += flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0);
-    }
-    if (driveLegs?.out?.ground_total) total += driveLegs.out.ground_total;
-    if (driveLegs?.home?.ground_total) total += driveLegs.home.ground_total;
-    legs.forEach((l) => { if (l && l.ground_total) total += l.ground_total; });
-    if (anchorLegs.in?.ground_total) total += anchorLegs.in.ground_total;
-    if (anchorLegs.out?.ground_total) total += anchorLegs.out.ground_total;
-    stayCosts.forEach((s) => { if (s) total += s.total; });
-    if (carRental) total += carRental.eur_total;
-    if (vignettes) total += vignettes.eur_total;
-    return round2(total);
-  }, [flight, flightTransfer, driveLegs, legs, anchorLegs, stayCosts, carRental, vignettes]);
+  }, []);
 
   // "Take this trip cheaper": a cheaper stop ORDER when reordering
   // meaningfully shortens the overland route. The cheaper-start-dates sweep
@@ -819,6 +447,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     // told us about and repriced the hop as a coach.
     setLegModes(sorted[0]?.choices?.legModes || {});
     setOwnLegs(sorted[0]?.choices?.ownLegs || {});
+    setOwnStays(sorted[0]?.choices?.ownStays || {});
     setPlanned(false);
   }, []);
 
@@ -843,7 +472,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}) } : {}),
+            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}), ...(Object.keys(ownStays).length ? { ownStays } : {}) } : {}),
           },
         };
       }));
@@ -878,7 +507,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, ownStays]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,
@@ -886,7 +515,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     groupSize, setGroupSize,
     transportPref, setTransportPref, transferMode, setTransferMode, pace, setPace, setLegMode, setOwnLeg, carRental,
     // The raw share-link ingredients (the same fields the draft persists).
-    anchorId, anchorOrigin, returnAnchorId, legModes, ownLegs,
+    anchorId, anchorOrigin, returnAnchorId, legModes, ownLegs, ownStays, setOwnStay,
+    priced, lifestyle,
     cheaperOrder, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,

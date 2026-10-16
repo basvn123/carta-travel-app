@@ -128,14 +128,29 @@ function sanitizeShared(d) {
       costTotal: Number.isFinite(Number(d.ownFlight.costTotal))
         ? Math.max(0, Math.min(99999, Number(d.ownFlight.costTotal)))
         : null,
+      // The way there and home apart (T432), so a shared own car keeps
+      // Carta's estimate for the direction nobody typed.
+      ...(Number.isFinite(Number(d.ownFlight.costOut)) ? { costOut: Math.max(0, Math.min(99999, Number(d.ownFlight.costOut))) } : {}),
+      ...(Number.isFinite(Number(d.ownFlight.costBack)) ? { costBack: Math.max(0, Math.min(99999, Number(d.ownFlight.costBack))) } : {}),
     }
     : null;
+
+  // Beds the sender booked and typed in, by destination id (T432).
+  const ownStays = {};
+  if (d.ownStays && typeof d.ownStays === 'object') {
+    const ids = new Set(stops.map((s) => s.destinationId));
+    for (const [k, v] of Object.entries(d.ownStays)) {
+      const n = Number(v);
+      if (ids.has(k) && Number.isFinite(n) && n > 0) ownStays[k] = Math.min(99999, n);
+    }
+  }
 
   return {
     tripStart: isIsoDate(d.tripStart) ? d.tripStart : '',
     stops,
     legModes,
     ownLegs,
+    ownStays,
     ownFlight,
     groupSize: clampInt(d.groupSize, 1, 20, 2),
     transportPref: oneOf(d.transportPref, ['auto', 'car', 'owncar', 'public'], 'auto'),

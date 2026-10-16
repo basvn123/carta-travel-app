@@ -56,7 +56,7 @@ const PERIOD_FIELDS = [
 // be shown faithfully as a per-day integer, so the panel snaps back to per-week
 // - this keeps the priced spend exactly equal to the preset and lets the active
 // tile highlight correctly).
-const PROFILES = {
+export const PROFILES = {
   Backpacker:      { cadence: 'week', dinners_per_week: 1, lunches_per_week: 3, fastfood_per_week: 4, drinks_per_week: 4,  club_nights_per_week: 0, coffees_per_day: 0, self_catered_days_per_week: 5 },
   Easygoing:       { ...DEFAULT_LIFESTYLE },
   Foodie:          { cadence: 'week', dinners_per_week: 7, lunches_per_week: 5, fastfood_per_week: 0, drinks_per_week: 5,  club_nights_per_week: 0, coffees_per_day: 0, self_catered_days_per_week: 0 },
@@ -77,7 +77,7 @@ export const PROFILE_LABEL_KEYS = {
 };
 
 // One glyph per preset, so the grid is scannable before it is read.
-const PROFILE_ICONS = {
+export const PROFILE_ICONS = {
   Backpacker: BackpackIcon,
   Easygoing: LeafIcon,
   Foodie: DiningIcon,
@@ -88,7 +88,7 @@ const PROFILE_ICONS = {
 
 // One glyph per way to sleep. The table itself lives in lib/sleepGroups.js
 // so the headless harness can import it without a JSX loader.
-const SLEEP_ICONS = { dorm: BunkIcon, private: BedIcon, home: HomeIcon, hotel: HotelIcon };
+export const SLEEP_ICONS = { dorm: BunkIcon, private: BedIcon, home: HomeIcon, hotel: HotelIcon };
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
