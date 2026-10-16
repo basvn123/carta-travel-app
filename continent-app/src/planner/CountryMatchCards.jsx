@@ -42,9 +42,10 @@ export function DayCostLine({ cost, t, className = '' }) {
   return (
     <p className={`wiz-cost-line ${className}`}>
       {parts[0]}
-      <span className="mono">{cost.minText}</span>
+      {/* A figure that stands in for towns not yet measured carries the
+          estimate mark, and nothing else about its source (T438). */}
+      <span className="mono">{cost.national ? `~${cost.minText} ${t('money.est')}` : cost.minText}</span>
       {parts.slice(1).join('')}
-      {cost.national && <> {t('match.national')}</>}
     </p>
   );
 }

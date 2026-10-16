@@ -15,12 +15,17 @@ import { fmtHours, eurExact } from '../lib/format.js';
 import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
+import { MAX_PARTY } from '../lib/tripTotal.js';
+import { useLifestyleLabel } from './planHooks.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon, CloseIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon, CloseIcon, ExpandIcon } from '../components/Icons.jsx';
+import { IconButton, Money } from '../components/ui/index.js';
+import { Stepper as KitStepper } from '../components/FilterControls.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
@@ -363,13 +368,77 @@ function ShortlistStops({ rows, onPick }) {
   );
 }
 
-export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null }) {
+/**
+ * The stop a pin was tapped for, on the map itself (T432): where, when, how
+ * many nights (changeable here), what its bed costs, and the way to the
+ * place's own page. The map answers "what is this stop" without the list.
+ */
+function StopPeek({ stop, index, stayCost, onNights, onOpen, onClose }) {
   const { t } = useI18n();
+  if (!stop?.dest) return null;
+  const city = cityLabel(stop.dest.city);
+  return (
+    <div className="trip-peek" role="group" aria-label={city}>
+      <span
+        className="trip-peek-photo"
+        style={stop.dest.image?.url ? { backgroundImage: `url(${stop.dest.image.url})` } : undefined}
+        aria-hidden="true"
+      />
+      <div className="trip-peek-main">
+        <p className="trip-peek-city"><span className="trip-peek-i">{index + 1}</span>{city}</p>
+        <p className="trip-peek-when">
+          {stop.arriveDate ? `${fmtDate(stop.arriveDate, true)} → ${fmtDate(stop.departDate, true)}` : ''}
+        </p>
+        {stayCost && (
+          <p className="trip-peek-bed">
+            {t('plan.lineBeds')}{' '}
+            {stayCost.ownAccom ? <Money value={stayCost.accomTotal} precision="cents" /> : <Money value={stayCost.accomTotal} est precision="cents" />}
+          </p>
+        )}
+        <div className="trip-peek-row">
+          <KitStepper
+            value={stop.nights}
+            min={1}
+            max={30}
+            onChange={onNights}
+            ariaLabel={t(stop.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: stop.nights })}
+            decLabel={t('trip.fewer')}
+            incLabel={t('trip.more')}
+          />
+          <span className="trip-peek-nights">{t(stop.nights === 1 ? 'plan.nightOneWord' : 'plan.nightManyWord')}</span>
+          {onOpen && (
+            <Button size="sm" variant="quiet" onClick={() => onOpen(stop.destinationId)}>{t('plan.openPlace')}</Button>
+          )}
+        </div>
+      </div>
+      <IconButton label={t('wizard.close')} onClick={onClose} className="trip-peek-close"><CloseIcon size={16} /></IconButton>
+    </div>
+  );
+}
+
+/** The whole route on a phone's full screen, with the stop card over it. */
+function MapFull({ children, onClose }) {
+  const { t } = useI18n();
+  const ref = useRef(null);
+  useFocusTrap(ref, onClose);
+  return (
+    <div className="trip-mapfull" ref={ref} role="dialog" aria-modal="true" aria-label={t('plan.mapTitle')}>
+      {children}
+      <IconButton label={t('wizard.close')} tone="surface" onClick={onClose} className="trip-mapfull-close"><CloseIcon size={16} /></IconButton>
+    </div>
+  );
+}
+
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null }) {
+  const { t, lang } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
+  const lifestyleLabel = useLifestyleLabel();
   // `stayTier` is the lifestyle panel's "where you sleep" choice; the planner
   // prices its stays from the same setting as the map and the receipt.
-  const tp = useTripPlanner(data, countryInsights, stayTier);
+  // The days are priced at the Lifestyle panel's habits, live, the same
+  // value the wizard's estimate reads (T432).
+  const tp = useTripPlanner(data, countryInsights, stayTier, lifestyle || data?.meta?.defaults?.lifestyle || null);
   // A finished itinerary is the one moment the traveller is looking at
   // something they built and want to keep, which is where an offer belongs.
   // Fires on the TRANSITION into the planned view and only for a trip that
@@ -415,6 +484,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     return v > 0 ? v : null;
   });
   const [dragging, setDragging] = useState(false);
+  // The planned trip on a phone is a page with the map in a card (T432): the
+  // full-screen map behind a sheet left the data a fifth of the screen.
+  const [mapFull, setMapFull] = useState(false);
   // Below 768px the panel is a draggable bottom sheet; above it's a fixed
   // full-height left column (so it never overlaps the bottom nav and the map
   // fills the right). The grip drag/height only applies in the narrow layout.
@@ -478,10 +550,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // the route on the map. Edit / Replan / Start over stay one tap away.
   const handleWizardComplete = (selection) => {
     tp.loadFromWizard(selection);
-    // The wizard's travel style decides what a bed costs (budget hostels vs
-    // 4-star); the planner's receipt must price the same tier the estimate
-    // promised.
-    if (selection.stayTier) tp.setStayTier(selection.stayTier);
     tp.setPlanned(true);
     setWizardOpen(false);
     setSelectedStop(null);
@@ -539,6 +607,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         ownFlight: d.ownFlight?.airline || d.ownFlight?.costTotal ? d.ownFlight : null,
         legModes: d.legModes,
         ownLegs: d.ownLegs,
+        ownStays: d.ownStays,
       });
       // The sender's trip name wins here (loadFromWizard treats its label as a
       // fallback so wizard runs never clobber a typed name; a share must).
@@ -607,6 +676,33 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   );
 
   const hasDates = tp.tripStart && tp.tripEnd && tp.windowNights > 0;
+  // Know before you go: the countries' rules and this trip's savings, as one
+  // track (planner/CheapTipsSection.jsx, T432).
+  const beforeYouGo = tp.stopDetails.length > 0 ? (() => {
+    const tripCountries = [...new Set(tp.stopDetails.map((s) => s.dest?.country).filter(Boolean))];
+    const withIntel = countryInsights ? tripCountries.filter((c) => countryInsights[c]) : [];
+    return (
+      <CheapTipsSection
+        stopDetails={tp.stopDetails}
+        tripStart={tp.tripStart}
+        transportPref={tp.transportPref}
+        groupSize={tp.groupSize}
+        intel={withIntel.map((c) => (
+          <CountryIntel key={c} country={c} rec={countryInsights[c]} />
+        ))}
+      />
+    );
+  })() : null;
+
+  // What the traveller paid to get there or home (T432), typed on the
+  // overview's route. One record holds both directions, kept apart.
+  const setTravelPaid = (dir, n) => {
+    const base = tp.ownFlight || { airline: '', mode: tp.transportPref === 'owncar' ? 'car' : 'fly' };
+    const split = base.costOut != null || base.costBack != null;
+    const costOut = dir === 'out' ? n : (split ? Number(base.costOut) || 0 : Number(base.costTotal) || 0);
+    const costBack = dir === 'back' ? n : (split ? Number(base.costBack) || 0 : 0);
+    tp.setOwnFlight({ ...base, costOut, costBack, costTotal: Math.round((costOut + costBack) * 100) / 100 });
+  };
   // The inline builder is now only an editor for a trip that already exists,   // opened from Saved trips' "Edit", or "Edit stops" on a planned trip. A fresh
   // trip planner shows only the guide launcher; new trips are built by the wizard.
   const hasTrip = tp.stopDetails.length > 0;
@@ -616,14 +712,17 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // glide) on every nights bump, stop select or sheet drag, none of which
   // moves a pin. stopDetails itself changes on every nights bump, so the
   // array is keyed on what the map draws: the coordinates and the names.
+  // A planned trip's pins carry their nights (T432): the map reads as the
+  // trip, "Berat, 3 nights", not as a row of numbers.
+  const pinTag = (s) => (tp.planned ? t(s.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: s.nights }) : '');
   const mapStopsKey = tp.stopDetails
     .filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null)
-    .map((s) => `${s.dest.lat},${s.dest.lon},${cityLabel(s.dest.city)}`)
+    .map((s) => `${s.dest.lat},${s.dest.lon},${cityLabel(s.dest.city)},${pinTag(s)}`)
     .join('|');
   const mapStops = useMemo(
     () => tp.stopDetails
       .filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null)
-      .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city) })),
+      .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city), tag: pinTag(s) })),
     [mapStopsKey], // eslint-disable-line react-hooks/exhaustive-deps -- keyed by value on purpose, see above
   );
 
@@ -785,27 +884,72 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     );
   }
 
+  const pagePhone = Boolean(tp.planned) && isNarrow;
+  const peek = selectedStop != null && tp.stopDetails[selectedStop] ? (
+    <StopPeek
+      stop={tp.stopDetails[selectedStop]}
+      index={selectedStop}
+      stayCost={tp.stayCosts[selectedStop]}
+      onNights={(n) => tp.setStopNights(selectedStop, n)}
+      onOpen={onOpenDest}
+      onClose={() => setSelectedStop(null)}
+    />
+  ) : null;
+  const routeProps = {
+    stops: mapStops,
+    onSelectStop: setSelectedStop,
+    selectedIndex: selectedStop,
+    routeGeometry: tripRouteOk ? tripRoute.geometry : null,
+    routeSegments: tripRouteOk ? tripRoute.segments : null,
+  };
+  // The phone's map card: the route at a glance in the page, a tap from the
+  // whole screen. It stays still under a scrolling thumb.
+  const mapCard = pagePhone ? (
+    <div className="trip-mapcard">
+      <div className="trip-mapcard-map">
+      {!mapFull && (
+        <TripMap
+          {...routeProps}
+          onSelectStop={(i) => { setSelectedStop(i); setMapFull(true); }}
+          padBottom={16}
+          fitPadding={{ top: 48, bottom: 44, left: 32, right: 72 }}
+          scrollZoom={false}
+          easeToSelected={false}
+          cooperativeGestures
+          revealRoute
+        />
+      )}
+      </div>
+      <div className="trip-mapcard-foot">
+        <Button variant="quiet" size="sm" className="trip-mapcard-open" onClick={() => setMapFull(true)}
+          iconStart={<ExpandIcon size={16} />}>
+          {t('plan.openMap')}
+        </Button>
+      </div>
+    </div>
+  ) : null;
+
   return (
-    <div className="trip-planner-screen">
-      <TripMap
-        stops={mapStops}
-        padBottom={isNarrow ? sheetH : 48}
-        onSelectStop={setSelectedStop}
-        selectedIndex={selectedStop}
-        routeGeometry={tripRouteOk ? tripRoute.geometry : null}
-        routeSegments={tripRouteOk ? tripRoute.segments : null}
-        // The planned trip's route draws itself once, leg by leg, when the
-        // planned view first opens (T398, "Route reveal").
-        revealRoute={Boolean(tp.planned)}
-      />
+    <div className={`trip-planner-screen ${tp.planned ? 'is-planned' : ''} ${pagePhone ? 'is-page' : ''}`}>
+      {!pagePhone && (
+        <TripMap
+          {...routeProps}
+          padBottom={isNarrow ? sheetH : 48}
+          // The planned trip's route draws itself once, leg by leg, when the
+          // planned view first opens (T398, "Route reveal").
+          revealRoute={Boolean(tp.planned)}
+        />
+      )}
+      {!pagePhone && tp.planned && peek && <div className="trip-peek-slot">{peek}</div>}
 
       {/* Left panel (desktop) / bottom sheet (mobile) */}
       <div
         className={`trip-sheet ${dragging ? 'dragging' : ''}`}
         ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
-        style={isNarrow && sheetHeight != null ? { height: sheetHeight } : undefined}
+        style={isNarrow && !pagePhone && sheetHeight != null ? { height: sheetHeight } : undefined}
       >
+        {!pagePhone && (
         <div
           className="trip-sheet-grip-hit"
           onPointerDown={onGripDown}
@@ -832,6 +976,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         >
           <div className="trip-sheet-grip" />
         </div>
+        )}
 
         {/* Trip header. On phones the whole card doubles as a drag handle
             (the bare grip strip was too small a target to discover), so the
@@ -839,11 +984,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             The name input opts out - typing must not start a drag. */}
         <div
           className="trip-topcard"
-          onPointerDown={isNarrow ? (e) => { if (!e.target.closest('input, button')) onGripDown(e); } : undefined}
-          onPointerMove={isNarrow ? onGripMove : undefined}
-          onPointerUp={isNarrow ? onGripUp : undefined}
-          onPointerCancel={isNarrow ? onGripUp : undefined}
-          style={isNarrow ? { touchAction: 'none' } : undefined}
+          onPointerDown={isNarrow && !pagePhone ? (e) => { if (!e.target.closest('input, button')) onGripDown(e); } : undefined}
+          onPointerMove={isNarrow && !pagePhone ? onGripMove : undefined}
+          onPointerUp={isNarrow && !pagePhone ? onGripUp : undefined}
+          onPointerCancel={isNarrow && !pagePhone ? onGripUp : undefined}
+          style={isNarrow && !pagePhone ? { touchAction: 'none' } : undefined}
         >
           {/* The trip's name is an editable field, so the page's one h1
               carries the same words for assistive tech (T193). */}
@@ -856,11 +1001,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             aria-label={t('trip.nameAria')}
           />
           <div className="trip-topcard-sub">
-            {hasDates
-              ? `${fmtDate(tp.tripStart)} → ${fmtDate(tp.tripEnd)}`
-              : ''}
+            {hasDates ? `${fmtDate(tp.tripStart)} → ${fmtDate(tp.tripEnd)}` : ''}
             {tp.stopDetails.length > 0 && (
-              <span className="trip-topcard-count">{tp.stopDetails.length} {tp.stopDetails.length === 1 ? t('trip.stopOne') : t('trip.stopMany')}</span>
+              <span className="trip-topcard-count">
+                {tp.stopDetails.length} {tp.stopDetails.length === 1 ? t('trip.stopOne') : t('trip.stopMany')}
+                {', '}
+                {t(tp.plannedNights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: tp.plannedNights })}
+              </span>
             )}
           </div>
         </div>
@@ -874,7 +1021,21 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               stopDetails={tp.stopDetails}
               grandTotal={tp.grandTotal}
               groupSize={tp.groupSize}
-              onSetGroupSize={(n) => tp.setGroupSize(Math.max(1, Math.min(20, n)))}
+              onSetGroupSize={(n) => tp.setGroupSize(Math.max(1, Math.min(MAX_PARTY, n)))}
+              priced={tp.priced}
+              ownFlight={tp.ownFlight}
+              onTravelPaid={setTravelPaid}
+              onOwnLeg={(i, mode, n) => tp.setOwnLeg(i, mode, n)}
+              onOwnStay={tp.setOwnStay}
+              mapSlot={mapCard}
+              onPdf={async () => {
+                const { downloadPlanPdf } = await import('../lib/planPdf.js');
+                await downloadPlanPdf({
+                  label: tp.planLabel, priced: tp.priced, dayPlan: tp.dayPlan,
+                  lifestyle: lifestyleLabel, t, lang, transportPref: tp.transportPref,
+                });
+              }}
+              beforeSlot={beforeYouGo}
               flight={tp.flight}
               legs={tp.legs}
               setLegMode={tp.setLegMode}
@@ -898,6 +1059,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 transportPref: tp.transportPref,
                 legModes: tp.legModes,
                 ownLegs: tp.ownLegs,
+                ownStays: tp.ownStays,
                 pace: tp.pace,
                 baggage: tp.baggage,
                 anchorId: tp.anchorId,
@@ -1336,21 +1498,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               fold, closed until asked for (T388, brief item 6). Outside the
               planned/edit branches so it shows on both; the stop-count guard
               hides it pre-trip. */}
-          {tp.stopDetails.length > 0 && (() => {
-            const tripCountries = [...new Set(tp.stopDetails.map((s) => s.dest?.country).filter(Boolean))];
-            const withIntel = countryInsights ? tripCountries.filter((c) => countryInsights[c]) : [];
-            return (
-              <CheapTipsSection
-                stopDetails={tp.stopDetails}
-                tripStart={tp.tripStart}
-                transportPref={tp.transportPref}
-                groupSize={tp.groupSize}
-                intel={withIntel.map((c) => (
-                  <CountryIntel key={c} country={c} rec={countryInsights[c]} />
-                ))}
-              />
-            );
-          })()}
+          {!tp.planned && beforeYouGo}
         </div>
 
         {/* The planned trip's actions live at the bottom of this panel on
@@ -1365,6 +1513,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
 
       {saveNotice && (
         <div className="trip-save-toast" role="status">{saveNotice}</div>
+      )}
+
+      {pagePhone && mapFull && (
+        <MapFull onClose={() => { setMapFull(false); setSelectedStop(null); }}>
+          <TripMap {...routeProps} padBottom={peek ? 220 : 32} revealRoute={false} zoomControls />
+          {peek && <div className="trip-peek-slot is-full">{peek}</div>}
+        </MapFull>
       )}
 
       {wizardOpen && (

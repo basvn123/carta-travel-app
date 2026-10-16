@@ -1032,8 +1032,9 @@ function TravelApp() {
   // which are pages of their own.
   const settingsParts = savedTripsOpen || accountOpen ? null
     : activeTab === 'map' || activeTab === 'places' ? undefined
-      : activeTab === 'trip' ? ['lifestyle', 'language', 'currency']
-        : null;
+      // The Trip planner carries its Lifestyle on its own price card and its
+      // Who step (T432), so the shell's line would only repeat it.
+      : null;
 
   // The two nav badges (carta-design, count chip): the shortlist's size after
   // My trips, and a dot on the planner door while an unsaved trip plan with

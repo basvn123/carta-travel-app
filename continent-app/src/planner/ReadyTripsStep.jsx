@@ -185,7 +185,7 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip =
         </p>
 
         {cost != null && cost > 0 && (() => {
-          const parts = t(party === 1 ? 'ready.costLineOne' : 'ready.costLineMany', { eur: '\u0000', n: party }).split('\u0000');
+          const parts = t(party === 1 ? 'plan.cardTotalOne' : 'plan.cardTotalMany', { eur: '\u0000', n: party }).split('\u0000');
           return (
             <p className="wiz-cost-line wtrip-total">
               {parts[0]}<span className="mono">~{eur(cost)}</span>{parts.slice(1).join('')}
@@ -343,7 +343,6 @@ export function ReadyTripsStep({
           {/* h2 under the step's h1 (T193). */}
           <h2 className="wready-title">
             <span>{t('ready.listTitle', { countries: pickedNames.join(', ') })}</span>
-            <span className="wready-col-n">{list.length}</span>
           </h2>
 
           <div className="wready-grid">

@@ -247,6 +247,12 @@ async function tripFlow(browser, vp) {
     await shot('02-from');
     await guideNext(page);
 
+    // 2b Who: the party and the Lifestyle (T432)
+    await page.locator('.wwho').first().waitFor({ timeout: 30000 }).catch(() => {});
+    await page.waitForTimeout(400);
+    await shot('02b-who');
+    await guideNext(page);
+
     // 3 When: flexible, 7 nights, a month
     await clickText(page, /I'm flexible/);
     for (let i = 0; i < 25; i += 1) {
@@ -324,7 +330,7 @@ async function tripFlow(browser, vp) {
     await guideNext(page, 1800);
 
     // 7 Finish
-    await page.locator('.guide-summary-title, .guide-summary-fact').first().waitFor({ timeout: 30000 }).catch(() => {});
+    await page.locator('.wrev, .guide-summary-title').first().waitFor({ timeout: 30000 }).catch(() => {});
     await page.waitForTimeout(800);
     await shot('10-finish');
 
@@ -334,6 +340,15 @@ async function tripFlow(browser, vp) {
     await page.locator('.trip-planday-btn, .trip-sheet').first().waitFor({ timeout: 30000 }).catch(() => {});
     await page.waitForTimeout(1200);
     await shot('11-planned');
+    // further down the overview: the route, the days, before you go
+    for (const [i, name] of [[1, '12-planned-route'], [2, '13-planned-days']]) {
+      await page.evaluate((k) => {
+        const el = document.querySelector('.trip-planner-screen.is-page .trip-sheet') || document.querySelector('.trip-sheet-scroll');
+        if (el) el.scrollTop = k * (el.clientHeight - 80);
+      }, i);
+      await page.waitForTimeout(700);
+      await shot(name);
+    }
   } catch (e) {
     console.log(`  ERROR trip/${vp.key}: ${String(e).split('\n')[0].slice(0, 200)}`);
     report.push({ viewport: vp.key, flow: 'trip', name: 'aborted', error: String(e).slice(0, 300) });
