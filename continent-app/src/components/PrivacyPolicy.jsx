@@ -1,8 +1,6 @@
-import React, { useRef } from 'react';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { useDialogExit } from '../lib/motion.js';
-import { CloseIcon } from './Icons.jsx';
-import { useI18n } from '../i18n/index.jsx';
+import React from 'react';
+import { CONTACT } from '../lib/contact.js';
+import { LegalDoc } from './LegalDoc.jsx';
 
 /**
  * The privacy policy, readable inside the app (App Store guideline 5.1.1(i)
@@ -17,28 +15,12 @@ import { useI18n } from '../i18n/index.jsx';
  * that record too.
  */
 const UPDATED = '3 October 2026';
-const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function PrivacyPolicy({ onClose }) {
   // A dialog for the keyboard and a screen reader too (T186): focus moves in,
   // Tab stays inside, Escape closes it and focus goes back to the opener.
-  const cardRef = useRef(null);
-  const closeRef = useRef(null);
-  const exit = useDialogExit(onClose);
-  useFocusTrap(cardRef, exit.close, { initialFocusRef: closeRef });
-  const { t } = useI18n();
   return (
-    <div className={`auth-overlay shell-scrim${exit.leaving ? ' is-leaving' : ''}`} onClick={exit.close}>
-      <div className={`auth-modal privacy-modal shell-dialog${exit.leaving ? ' is-leaving' : ''}`} ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-privacy-title" onClick={(e) => e.stopPropagation()}>
-        {/* The one close of the dialog family (T391): CloseIcon in a --tap
-            box, its label translated. */}
-        <button ref={closeRef} type="button" className="shell-close" onClick={exit.close} aria-label={t('a11y.close')}>
-          <CloseIcon size={16} />
-        </button>
-        <h2 className="auth-title" id="legal-privacy-title">Privacy policy</h2>
-        <p className="privacy-updated">Last updated {UPDATED}</p>
-
-        <div className="privacy-body">
+    <LegalDoc id="legal-privacy" title="Privacy policy" updated={UPDATED} onClose={onClose}>
           <h3>What Carta collects</h3>
           <p>
             Without an account, your trips, day plans and preferences stay on
@@ -224,8 +206,6 @@ export function PrivacyPolicy({ onClose }) {
             Write to the address above for anything else and you will get an
             answer within 30 days.
           </p>
-        </div>
-      </div>
-    </div>
+    </LegalDoc>
   );
 }

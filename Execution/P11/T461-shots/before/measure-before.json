@@ -1,0 +1,578 @@
+[
+  {
+    "scene": "mytrips-empty",
+    "view": "p360",
+    "error": "TimeoutError: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4270/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 61,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Browse the map"
+    ],
+    "words": 65,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "p360",
+    "hscroll": false,
+    "small": [
+      "Munich 24x30",
+      "Salzburg 24x30",
+      "Bruges 24x30"
+    ],
+    "smallCount": 3,
+    "primaries": [],
+    "words": 51,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 29,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "See passes"
+    ],
+    "words": 30,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 77,
+    "errors": []
+  },
+  {
+    "scene": "account-feedback",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Send"
+    ],
+    "words": 59,
+    "errors": []
+  },
+  {
+    "scene": "account-privacy",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 310,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 257,
+    "errors": []
+  },
+  {
+    "scene": "pass-guest",
+    "view": "p360",
+    "hscroll": false,
+    "small": [
+      "Get the Trip Pass 234x38"
+    ],
+    "smallCount": 1,
+    "primaries": [
+      "Get this pass"
+    ],
+    "words": 101,
+    "errors": []
+  },
+  {
+    "scene": "pass-free",
+    "view": "p360",
+    "hscroll": false,
+    "small": [
+      "Get the Trip Pass 234x38"
+    ],
+    "smallCount": 1,
+    "primaries": [
+      "See passes",
+      "Get this pass"
+    ],
+    "words": 148,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-empty",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 45,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 72,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Browse the map"
+    ],
+    "words": 70,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "phone",
+    "hscroll": false,
+    "small": [
+      "Munich 24x30",
+      "Salzburg 24x30",
+      "Bruges 24x30"
+    ],
+    "smallCount": 3,
+    "primaries": [],
+    "words": 62,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 53,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "See passes"
+    ],
+    "words": 52,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 94,
+    "errors": []
+  },
+  {
+    "scene": "account-feedback",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Send"
+    ],
+    "words": 59,
+    "errors": []
+  },
+  {
+    "scene": "account-privacy",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 310,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 309,
+    "errors": []
+  },
+  {
+    "scene": "pass-guest",
+    "view": "phone",
+    "hscroll": false,
+    "small": [
+      "Get the Trip Pass 264x38"
+    ],
+    "smallCount": 1,
+    "primaries": [
+      "Get this pass"
+    ],
+    "words": 122,
+    "errors": []
+  },
+  {
+    "scene": "pass-free",
+    "view": "phone",
+    "hscroll": false,
+    "small": [
+      "Get the Trip Pass 264x38"
+    ],
+    "smallCount": 1,
+    "primaries": [
+      "See passes",
+      "Get this pass"
+    ],
+    "words": 174,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-empty",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Planned 181x36",
+      "Shortlist 181x36",
+      "Visited 181x36",
+      "Sign in 72x33"
+    ],
+    "smallCount": 4,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 45,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Planned3 181x36",
+      "Shortlist3 181x36",
+      "Visited4 181x36"
+    ],
+    "smallCount": 3,
+    "primaries": [],
+    "words": 104,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Planned3 181x36",
+      "Shortlist3 181x36",
+      "Visited4 181x36",
+      "Browse the map 126x33"
+    ],
+    "smallCount": 4,
+    "primaries": [
+      "Browse the map"
+    ],
+    "words": 75,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Planned3 181x36",
+      "Shortlist3 181x36",
+      "Visited4 181x36",
+      "Munich 24x30",
+      "Salzburg 24x30",
+      "Bruges 24x30"
+    ],
+    "smallCount": 6,
+    "primaries": [],
+    "words": 86,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 52,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "See passes"
+    ],
+    "words": 53,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 136,
+    "errors": []
+  },
+  {
+    "scene": "account-feedback",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Send"
+    ],
+    "words": 58,
+    "errors": []
+  },
+  {
+    "scene": "account-privacy",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 507,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 474,
+    "errors": []
+  },
+  {
+    "scene": "pass-guest",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Get the Trip Pass 203x38",
+      "Get the Year Pass 203x38"
+    ],
+    "smallCount": 2,
+    "primaries": [
+      "Get this pass"
+    ],
+    "words": 247,
+    "errors": []
+  },
+  {
+    "scene": "pass-free",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Get the Trip Pass 203x38",
+      "Get the Year Pass 203x38"
+    ],
+    "smallCount": 2,
+    "primaries": [
+      "See passes",
+      "Get this pass"
+    ],
+    "words": 300,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-empty",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 45,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 79,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Browse the map"
+    ],
+    "words": 65,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 62,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 52,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "See passes"
+    ],
+    "words": 53,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 106,
+    "errors": []
+  },
+  {
+    "scene": "account-feedback",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Send"
+    ],
+    "words": 58,
+    "errors": []
+  },
+  {
+    "scene": "account-privacy",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 310,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 331,
+    "errors": []
+  },
+  {
+    "scene": "pass-guest",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Get this pass"
+    ],
+    "words": 247,
+    "errors": []
+  },
+  {
+    "scene": "pass-free",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "See passes",
+      "Get this pass"
+    ],
+    "words": 300,
+    "errors": []
+  }
+]

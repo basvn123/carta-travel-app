@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
 import { onRadioKeys } from './radioKeys.js';
 import {
-  ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, DownloadIcon,
+  ArrowLeftIcon, CheckIcon, ChevronRightIcon, CloseIcon, DownloadIcon,
   FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
   PersonIcon, QuestionIcon, PiggyIcon, ShareIcon, ShieldIcon, SignOutIcon,
   TrashIcon,
@@ -12,10 +12,9 @@ import {
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { Imprint } from '../components/Imprint.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
-import { ATTRIBUTIONS } from '../data/attribution.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { TIERS, daysLeft, canUpgrade, formatPrice } from '../lib/pricing.js';
+import { daysLeft } from '../lib/pricing.js';
 import {
   MIN_PASSWORD_LENGTH, passwordStrength, checkPasswordRules, passwordMeetsRules,
 } from '../lib/passwordStrength.js';
@@ -27,9 +26,11 @@ import { FriendsSpoke } from './FriendsSpoke.jsx';
 import { PasswordField } from './PasswordField.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
-import { sendFeedback } from '../lib/feedback.js';
-import { accuracyVars } from '../lib/accuracy.js';
+import { FaqView } from './account/FaqView.jsx';
+import { FeedbackView } from './account/FeedbackView.jsx';
+import { PlanSection } from './account/PlanSection.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
+import { Button } from '../components/ui/index.js';
 
 /**
  * What the pass holds today, as figures and one thin bar (T400, brief V4-9).
@@ -101,64 +102,7 @@ function PassBalance({ entitlement, t }) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Same address the privacy policy names as the controller contact.
-const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 const SHARE_URL = 'https://carta-europetravel.com';
-
-// The FAQ, in four groups. Fourteen flat rows is a wall; grouped, a reader
-// scanning for "why did the price change" never reads past the heading that
-// is not theirs. Order runs outward-in: what the product is, then what its
-// numbers mean, then planning, then the account, because the questions a
-// first-time visitor has are the ones the earlier groups answer.
-//
-// Answers that quote a figure interpolate it (FAQ_VARS below) rather than
-// spelling it out, so a pass price or a catalogue size can never drift away
-// from the value the rest of the app renders.
-const FAQ_GROUPS = [
-  {
-    labelKey: 'account.faqGroup1',
-    items: [['account.faq1Q', 'account.faq1A'],
-      ['account.faq3Q', 'account.faq3A'], ['account.faq4Q', 'account.faq4A']],
-  },
-  {
-    labelKey: 'account.faqGroup2',
-    items: [['account.faq5Q', 'account.faq5A'], ['account.faq6Q', 'account.faq6A'],
-      ['account.faq7Q', 'account.faq7A'], ['account.faq15Q', 'account.faq15A']],
-  },
-  {
-    labelKey: 'account.faqGroup3',
-    items: [['account.faq8Q', 'account.faq8A'], ['account.faq9Q', 'account.faq9A'],
-      ['account.faq10Q', 'account.faq10A']],
-  },
-  {
-    labelKey: 'account.faqGroup4',
-    items: [['account.faq11Q', 'account.faq11A'], ['account.faq12Q', 'account.faq12A'],
-      ['account.faq13Q', 'account.faq13A'], ['account.faq14Q', 'account.faq14A']],
-  },
-];
-
-/** Every figure the answers quote, read from the same sources the product
- *  renders elsewhere: the loaded catalogue and lib/pricing.js. A count that
- *  cannot be read yet falls back to the shipped catalogue size rather than
- *  rendering "{n}" at the traveller. */
-function faqVars(destinations, lang) {
-  const n = Array.isArray(destinations)
-    ? destinations.length
-    : (destinations && typeof destinations === 'object' ? Object.keys(destinations).length : 0);
-  const acc = accuracyVars(lang);
-  return {
-    // The published accuracy figure (T097-c: here and nowhere on a card).
-    accPct: acc.pct, accLo: acc.lo, accHi: acc.hi, accEur: acc.eur,
-    accN: acc.n, accCountries: acc.countries, accWhen: acc.when,
-    n: (n || 3038).toLocaleString('en-GB'),
-    freePlans: TIERS.free.aiPlans,
-    tripPlans: TIERS.trip.aiPlans,
-    tripGround: TIERS.trip.grounded,
-    tripPrice: formatPrice(TIERS.trip.priceCents),
-    yearPlans: TIERS.year.aiPlans,
-    yearGround: TIERS.year.grounded,
-    yearPrice: formatPrice(TIERS.year.priceCents),
-  };
-}
 
 /** Initials for the avatar disc. Two letters from a name, one from an email,
  *  because a coloured circle with nothing in it reads as a broken image. */
@@ -365,13 +309,6 @@ export function AccountPanel({
 
   // The open question is keyed by its i18n key, not its index: with the
   // answers grouped, an index is only unique within one group.
-  const [openFaq, setOpenFaq] = useState(null);
-  const faqFigures = useMemo(() => faqVars(destinations, lang), [destinations, lang]);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [feedbackKind, setFeedbackKind] = useState('other');
-  const [feedbackBusy, setFeedbackBusy] = useState(false);
-  const [feedbackSent, setFeedbackSent] = useState(false);
-  const [feedbackErr, setFeedbackErr] = useState('');
   const [shareCopied, setShareCopied] = useState(false);
 
   // Re-seed the form when the account itself changes (sign out and back in as
@@ -703,36 +640,6 @@ export function AccountPanel({
     }
   };
 
-  // Feedback goes to the database, where the admin panel reads it. It used
-  // to be a mailto:, which did nothing at all on a device with no mail client
-  // configured and left no record when it failed. The mailto survives as the
-  // fallback for exactly that case: if the write is refused, the message the
-  // person already typed is not lost, it just travels the old way.
-  const mailtoFeedback = () => {
-    const subject = encodeURIComponent(t('account.feedbackSubject'));
-    const body = encodeURIComponent(feedbackText.trim());
-    window.location.href = `mailto:${CONTACT}?subject=${subject}&body=${body}`;
-  };
-
-  const handleSendFeedback = async () => {
-    if (!feedbackText.trim() || feedbackBusy) return;
-    setFeedbackBusy(true);
-    setFeedbackErr('');
-    try {
-      await sendFeedback({ message: feedbackText.trim(), kind: feedbackKind });
-      setFeedbackSent(true);
-      setFeedbackText('');
-    } catch (e) {
-      if (e?.code === 'too_many') {
-        setFeedbackErr(t('account.feedbackTooMany'));
-      } else {
-        mailtoFeedback();
-      }
-    }
-    setFeedbackBusy(false);
-  };
-
-  const tier = TIERS[entitlement.tier] || TIERS.free;
 
   // The hub used to title itself with your own name, and then the card
   // directly under it said the same name again with the email beneath. Two
@@ -745,7 +652,6 @@ export function AccountPanel({
     : view === 'friends' ? t('friends.title')
     : view === 'faq' ? t('account.menuFaq')
     : view === 'feedback' ? t('account.feedbackTitle')
-    : view === 'data' ? t('account.menuData')
     : user ? null : t('account.preferences');
 
   // The panel's spokes as one list, drawn twice: as the hub's menu rows on a
@@ -764,10 +670,10 @@ export function AccountPanel({
     user && isAdmin && { key: 'admin', group: 'account', Icon: LockIcon, label: t('account.menuAdmin'), go: () => { onClose?.(); onOpenAdmin?.(); } },
     { key: 'feedback', group: 'help', view: 'feedback', Icon: FeedbackIcon, label: t('account.menuFeedback'), go: () => setView('feedback') },
     { key: 'faq', group: 'help', view: 'faq', Icon: QuestionIcon, label: t('account.menuFaq'), go: () => setView('faq') },
+    { key: 'share', group: 'help', Icon: ShareIcon, label: shareCopied ? t('account.inviteCopied') : t('account.inviteBtn'), go: handleShare },
     { key: 'privacy', group: 'help', Icon: ShieldIcon, label: t('account.privacyPolicy'), go: () => setPrivacyOpen(true) },
     { key: 'terms', group: 'help', Icon: ShieldIcon, label: t('account.terms'), go: () => setTermsOpen(true) },
     { key: 'imprint', group: 'help', Icon: InfoIcon, label: t('account.imprint'), go: () => setImprintOpen(true) },
-    { key: 'data', group: 'help', view: 'data', Icon: InfoIcon, label: t('account.menuData'), go: () => setView('data') },
   ].filter(Boolean);
 
   const renderNav = (group, cls) => NAV.filter((r) => r.group === group).map(
@@ -841,8 +747,7 @@ export function AccountPanel({
             ) : configured ? (
               <div className="account-signin-card">
                 <span className="account-hub-avatar account-hub-avatar-guest" aria-hidden="true"><PersonIcon size={20} /></span>
-                <p className="account-section-hint">{t('account.signInPrompt')}</p>
-                <button className="auth-submit account-wide-btn" onClick={onOpenAuth}>{t('account.signIn')}</button>
+                <Button variant="primary" onClick={onOpenAuth}>{t('account.signIn')}</Button>
               </div>
             ) : null}
           </div>
@@ -901,40 +806,7 @@ export function AccountPanel({
               numbers, so the hub no longer repeats a price list with ticks.
               Until the balance is known the line holds its place as a still
               block (carta-design "Loading"), so the button does not jump. */}
-          {user && (
-            <div className="panel-section">
-              <h2 className="account-group-label">{t('pass.sectionTitle')}</h2>
-              <div className="account-pass-card">
-                <div className="account-pass-head">
-                  <b className="account-pass-tier">{t(tier.labelKey)}</b>
-                  {entitlement.known ? (
-                    <PassBalance entitlement={entitlement} t={t} />
-                  ) : (
-                    <span className="account-pass-status is-loading" aria-hidden="true" />
-                  )}
-                  {!entitlement.known && <span className="sr-only">{t('account.passLoading')}</span>}
-                </div>
-                {canUpgrade(entitlement.tier) && (
-                  <button className="auth-submit account-pass-cta" onClick={paywall.openPrices}>
-                    {t(entitlement.tier === 'free' ? 'pass.seePasses' : 'pass.extend')}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Word of mouth is the whole marketing budget, so the invitation
-              stays, after the traveller's own settings rather than before. */}
-          <div className="panel-section">
-            <div className="account-invite">
-              <b className="account-invite-title">{t('account.inviteTitle')}</b>
-              <p className="account-invite-body">{t('account.inviteBody')}</p>
-              <button type="button" className="account-invite-btn" onClick={handleShare}>
-                {shareCopied ? <CheckIcon size={15} /> : <ShareIcon size={15} />}
-                {shareCopied ? t('account.inviteCopied') : t('account.inviteBtn')}
-              </button>
-            </div>
-          </div>
+          {user && <PlanSection balance={<PassBalance entitlement={entitlement} t={t} />} />}
 
           {/* The account's own spokes on a phone (brief V3-7, V3-8). On a
               phone Friends had no door here, only a 38 px icon in the top
@@ -968,10 +840,10 @@ export function AccountPanel({
               )}
               <MenuRow icon={<FeedbackIcon size={17} />} label={t('account.menuFeedback')} onClick={() => setView('feedback')} />
               <MenuRow icon={<QuestionIcon size={17} />} label={t('account.menuFaq')} onClick={() => setView('faq')} />
+              <MenuRow icon={<ShareIcon size={17} />} label={shareCopied ? t('account.inviteCopied') : t('account.inviteBtn')} onClick={handleShare} />
               <MenuRow icon={<ShieldIcon size={17} />} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
               <MenuRow icon={<ShieldIcon size={17} />} label={t('account.terms')} onClick={() => setTermsOpen(true)} />
               <MenuRow icon={<InfoIcon size={17} />} label={t('account.imprint')} onClick={() => setImprintOpen(true)} />
-              <MenuRow icon={<InfoIcon size={17} />} label={t('account.menuData')} onClick={() => setView('data')} />
             </div>
           </div>
         </>
@@ -1404,117 +1276,9 @@ export function AccountPanel({
         />
       )}
 
-      {view === 'faq' && (
-        <div className="panel-section">
-          <p className="account-section-hint">{t('account.faqHint')}</p>
-          {FAQ_GROUPS.map((group) => (
-            <div key={group.labelKey} className="account-faq-group">
-              <h2 className="account-faq-grouplabel">{t(group.labelKey)}</h2>
-              <div className="account-faq">
-                {group.items.map(([qKey, aKey]) => (
-                  <div key={qKey} className={`account-faq-item${openFaq === qKey ? ' open' : ''}`}>
-                    <button
-                      type="button"
-                      className="account-faq-q"
-                      aria-expanded={openFaq === qKey}
-                      onClick={() => setOpenFaq(openFaq === qKey ? null : qKey)}
-                    >
-                      <span>{t(qKey)}</span>
-                      <ChevronDownIcon size={15} className="account-faq-chev" />
-                    </button>
-                    {openFaq === qKey && <p className="account-faq-a">{t(aKey, faqFigures)}</p>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-          {/* The FAQ can only ever answer the questions we thought of, so it
-              ends by pointing at the one route that handles the rest. */}
-          <div className="account-faq-foot">
-            <p className="account-section-hint">{t('account.faqMore')}</p>
-            <button type="button" className="account-wide-btn" onClick={() => setView('feedback')}>
-              <FeedbackIcon size={16} /> {t('account.faqMoreBtn')}
-            </button>
-          </div>
-        </div>
-      )}
+      {view === 'faq' && <FaqView onFeedback={() => setView('feedback')} />}
 
-      {/* Data credits. Every source whose license asks for a visible credit,
-          from src/data/attribution.js, which is derived from
-          docs/tos/data_licenses.md. This used to sit in the front page's
-          footer; the front page is gone, so the credits live here, where the
-          privacy policy already is. A hairline list rather than cards: the
-          licenses ask for legibility, not for decoration. */}
-      {view === 'data' && (
-        <div className="panel-section">
-          <p className="account-section-hint">{t('account.dataHint')}</p>
-          <ul className="account-credits">
-            {ATTRIBUTIONS.map((a) => (
-              <li key={a.source}>{a.credit}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {view === 'feedback' && (
-        <div className="panel-section">
-          {feedbackSent ? (
-            <div className="account-feedback-done">
-              <CheckIcon size={18} />
-              <p>{t('account.feedbackThanks')}</p>
-              <button
-                type="button"
-                className="account-wide-btn admin-btn-secondary"
-                onClick={() => setFeedbackSent(false)}
-              >
-                {t('account.feedbackAgain')}
-              </button>
-            </div>
-          ) : (
-            <>
-              <p className="account-section-hint">{t('account.feedbackHint')}</p>
-              {/* What kind of message this is, so the inbox can be triaged
-                  without reading every one of them first. */}
-              <div className="admin-tone" role="radiogroup" aria-label={t('account.feedbackKind')} onKeyDown={onRadioKeys}>
-                {['bug', 'idea', 'other'].map((k) => (
-                  <button
-                    key={k}
-                    type="button"
-                    role="radio"
-                    aria-checked={feedbackKind === k}
-                    tabIndex={feedbackKind === k ? 0 : -1}
-                    className={`admin-tone-opt ${feedbackKind === k ? 'on' : ''}`}
-                    onClick={() => setFeedbackKind(k)}
-                  >
-                    {t(`account.feedbackKind.${k}`)}
-                  </button>
-                ))}
-              </div>
-              <div className="auth-field">
-                <label className="auth-label" htmlFor="acct-feedback">{t('account.feedbackLabel')}</label>
-                <textarea
-                  id="acct-feedback"
-                  className="account-feedback-input"
-                  rows={6}
-                  maxLength={4000}
-                  value={feedbackText}
-                  onChange={(e) => { setFeedbackText(e.target.value); setFeedbackErr(''); }}
-                  placeholder={t('account.feedbackPlaceholder')}
-                />
-              </div>
-              {feedbackErr && <p className="auth-error" role="alert">{feedbackErr}</p>}
-              <button
-                className="auth-submit account-wide-btn"
-                disabled={!feedbackText.trim() || feedbackBusy}
-                onClick={handleSendFeedback}
-              >
-                {feedbackBusy ? t('account.pleaseWait') : t('account.feedbackSend')}
-              </button>
-              <p className="auth-hint account-feedback-note">{t('account.feedbackNote', { email: CONTACT })}</p>
-            </>
-          )}
-        </div>
-      )}
+      {view === 'feedback' && <FeedbackView />}
 
       {/* The legal texts render at document.body, not inside the panel. Two
           reasons, both about the panel's own CSS reaching them: the panel is

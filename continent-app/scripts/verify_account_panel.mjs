@@ -1,7 +1,8 @@
 // Headless check for the account hub (2026-08-13 redesign).
 //
 // The panel is now a hub with spokes: the hub holds the profile card, the
-// pass card, the invite banner and a help menu (feedback / FAQ / privacy);
+// plan card (T461: "Your plan") and a help menu (FAQ / feedback / Share Carta
+// / privacy);
 // profile details, the FAQ and the feedback form are subviews behind a back
 // button. This harness fakes a signed-in traveller: a session is written
 // straight into the storage key supabase-js reads, and every auth/RPC call
@@ -9,7 +10,7 @@
 // no credentials are needed to run it.
 //
 // What it checks:
-//   1. The hub: profile card seeded with the identity, invite banner, menu.
+//   1. The hub: profile card seeded with the identity, Share row, menu.
 //   2. Profile spoke: editable name/email, stated once, saves and confirms,
 //      plus the handle: seeded, normalised as you type, refused when it is
 //      too short, and reported as taken without naming who took it.
@@ -18,8 +19,9 @@
 //   5. Passwords revealable, measured live, floor at 8.
 //   6. Forgot password reaches the reset mail.
 //   7. Sign out sits clear of the delete button; deletion is red and gated.
-//   8. FAQ spoke: fourteen questions in four groups, answers open on tap,
-//      figures interpolated from pricing.js, no retired fare copy left.
+//   8. FAQ spoke (T461): fifteen questions in four groups, a search that
+//      filters them, answers open on tap, figures interpolated from
+//      pricing.js, no catalogue counts and no retired fare copy.
 //   9. Feedback spoke: the send button stays off until there is a message.
 //  10. Google-only accounts get the email route, never a password form.
 // Plus the quality floor: 44px targets, label contrast, 380px clean.
@@ -224,8 +226,9 @@ try {
   if (!cardText.includes(USER.email)) fail(`profile card does not carry the email: ${cardText}`);
   const mono = await page.locator('.account-hub-avatar').first().innerText();
   if (mono.trim() !== 'SO') fail(`monogram for Sam Okonkwo is "${mono}", expected SO`);
-  if (!(await page.locator('.account-invite').count())) fail('the invite banner is missing');
-  // Four help rows: feedback, FAQ, privacy, data sources. Friends is NOT among
+  // T461: the invite banner became one "Share Carta" row in Help.
+  if (await page.locator('.account-invite').count()) fail('the invite banner is back on the hub');
+  // Help rows: feedback, FAQ, Share Carta, privacy. Friends is NOT among
   // them; it has its own door in the header (see verify_friends.mjs), because
   // seeing who you travel with is a place you go, not a setting you change.
   // Counted by label rather than by row total: Lifestyle joined the hub as a
@@ -233,11 +236,12 @@ try {
   // two apart.
   const menuLabels = await page.locator('.account-nav:visible').allInnerTexts();
   const menuRows = menuLabels.length;
-  // "Data sources" is "Where the numbers come from" since T390 (brief V3-8):
-  // the old name clashed with the "Your data" spoke.
-  for (const label of ['Send feedback', 'Common questions', 'Privacy', 'Where the numbers come from']) {
+  // T461: "Where the numbers come from" is gone at the owner's call; the
+  // credits the licences ask for are printed in the Imprint (checked in 8b).
+  for (const label of ['Send feedback', 'Common questions', 'Share Carta', 'Privacy']) {
     if (!menuLabels.some((l) => l.includes(label))) fail(`the panel has no "${label}" row`);
   }
+  if (menuLabels.some((l) => l.includes('Where the numbers come from'))) fail('the retired credits row is back');
   // Reversed by T390 (brief V3-7): on a phone Friends had no door on the hub,
   // only a 38 px icon in the top bar, so the hub now carries a Friends row in
   // the phone-only block (hidden on desktop, where the rail has the row).
@@ -246,20 +250,28 @@ try {
   }
   const rowBox = await page.locator('.account-nav:visible').first().boundingBox();
   if (!rowBox || rowBox.height < 34) fail(`navigation rows are ${rowBox?.height}px tall`);
-  // The page you are on wears the house selected state, --ink-fill
-  // rgb(43, 52, 70) (carta-design "Selected state"). Updated by T390 (row
-  // T379-f): this line asserted the pre-T363 accent rgb(224, 90, 71), which
-  // the stylesheet no longer has; accent is never a selection colour now.
-  const railOn = await page.locator('.account-side .side-navrow.on').first()
-    .evaluate((el) => getComputedStyle(el).backgroundColor).catch(() => '');
-  if (railOn !== 'rgb(43, 52, 70)') fail(`the current page in the panel is ${railOn}, not --ink-fill`);
+  // The page you are on wears the house selected state. Lagoon (design
+  // system 1.2) made that the --select-bg tint with a mark, not the old
+  // --ink-fill; T461 reads the token instead of a typed rgb so the next
+  // palette tune does not break this line again.
+  const [railOn, selectBg] = await page.locator('.account-side .side-navrow.on').first()
+    .evaluate((el) => {
+      const probe = document.createElement('span');
+      probe.style.background = 'var(--select-bg)';
+      document.body.appendChild(probe);
+      const want = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return [getComputedStyle(el).backgroundColor, want];
+    }).catch(() => ['', 'x']);
+  if (railOn !== selectBg) fail(`the current page in the panel is ${railOn}, not --select-bg ${selectBg}`);
   if (await page.locator('#acct-name').count()) fail('the profile form leaks onto the hub');
-  ok(`hub: profile card (SO), invite banner, ${menuRows} menu rows at ${Math.round(rowBox.height)}px`);
+  ok(`hub: profile card (SO), Share row, ${menuRows} menu rows at ${Math.round(rowBox.height)}px`);
 
-  // The invite button falls back to the clipboard in headless chromium.
-  await page.locator('.account-invite-btn').click();
+  // The share row falls back to the clipboard in headless chromium.
+  const shareRow = page.locator('.account-nav:visible', { hasText: 'Share Carta' }).first();
+  await shareRow.click();
   await page.waitForTimeout(400);
-  const inviteLabel = await page.locator('.account-invite-btn').innerText();
+  const inviteLabel = await page.locator('.account-nav:visible', { hasText: /Link copied|Share Carta/ }).first().innerText();
   const clip = await page.evaluate(() => navigator.clipboard.readText()).catch(() => '');
   if (!/copied|gekopieerd/i.test(inviteLabel) && !clip.includes('carta-europetravel.com')) {
     fail(`sharing neither confirmed nor copied: label "${inviteLabel}", clipboard "${clip.slice(0, 60)}"`);
@@ -271,14 +283,20 @@ try {
   // passes"; the feature ticks and the price moved out, because the pass
   // modal states them in the same plain numbers and the hub is the
   // traveller's settings first. This block asserted three ticks and a price.
-  console.log('2. pass');
-  const passCard = page.locator('.account-pass-card');
-  if (!(await passCard.count())) fail('no pass card on the hub');
+  // T461: the card is "Your plan": the tier, the balance and one door; for
+  // a yearly subscriber it also carries Manage payment and Cancel yearly plan
+  // (the latter checked by verify_paywall's subscriber walk).
+  console.log('2. plan');
+  const passCard = page.locator('.acct-plan');
+  if (!(await passCard.count())) fail('no Your plan card on the hub');
   const passText = await passCard.innerText();
-  if (!/2 of 3/.test(passText)) fail(`pass card does not state the live balance: ${passText}`);
+  if (!/Your plan/.test(passText)) fail(`the plan card has no heading: ${passText}`);
+  if (!/2 of 3/.test(passText)) fail(`plan card does not state the live balance: ${passText}`);
   if (await page.locator('.account-pass-feat').count()) fail('the hub repeats the pass feature list');
-  if (!(await passCard.locator('.account-pass-cta').count())) fail('the pass card has no door to the passes');
-  ok('pass card: balance and one door to the passes');
+  if (!(await passCard.locator('button', { hasText: /See prices|Add days or switch to yearly/ }).count())) {
+    fail('the plan card has no door to the passes');
+  }
+  ok('plan card: balance and one door to the passes');
   await page.screenshot({ path: `${SHOTS}/account-hub.png` });
 
   // ---- 3. Profile spoke: identity stated once, editable, saves.
@@ -598,58 +616,61 @@ try {
   ok('the panel returns to the hub');
   await goTo(page, 'Common questions');
   const faqItems = await page.locator('.account-faq-item').count();
-  if (faqItems !== 14) fail(`expected 14 FAQ entries, found ${faqItems}`);
-  const groups = await page.locator('.account-faq-grouplabel').allInnerTexts();
+  if (faqItems !== 15) fail(`expected 15 FAQ entries, found ${faqItems}`);
+  const groups = await page.locator('.account-faq-group h2').allInnerTexts();
   if (groups.length !== 4) fail(`expected 4 FAQ group headings, found ${groups.length}`);
-  if (await page.locator('.account-faq-a').count()) fail('an answer is open before anything was tapped');
+  if (await page.locator('.account-faq-item[open]').count()) fail('an answer is open before anything was tapped');
   const firstQ = page.locator('.account-faq-q').first();
   await firstQ.click();
-  if (await firstQ.getAttribute('aria-expanded') !== 'true') fail('the opened question does not say aria-expanded');
-  const answer = await page.locator('.account-faq-a').first().innerText();
+  if (!(await page.locator('.account-faq-item').first().evaluate((d) => d.open))) fail('the first question did not open');
+  const answer = await page.locator('.account-faq-item[open] .account-faq-a').first().innerText();
   if (answer.length < 40) fail(`the first answer is suspiciously short: "${answer}"`);
-  // The catalogue size is interpolated, so an unresolved placeholder here means
-  // the answer is quoting a variable name at the traveller.
-  if (/\{\w+\}/.test(answer)) fail(`an unfilled placeholder survived into an answer: "${answer}"`);
-  // The accuracy figure lives in the FAQ and nowhere on a card (T097-c, T368).
-  await page.locator('.account-faq-q', { hasText: 'How accurate are the prices?' }).click();
-  const accA = await page.locator('.account-faq-item.open .account-faq-a').innerText();
-  if (!/within EUR 6 a day for 88% of destinations/.test(accA)) fail(`the accuracy answer lacks the published figure: "${accA}"`);
-  if (/\{\w+\}/.test(accA)) fail(`the accuracy answer has an unfilled placeholder: "${accA}"`);
-  // Open a question in a later group: the open row is keyed by its i18n key,
-  // and an index-keyed accordion would open two rows at once here.
-  await page.locator('.account-faq-group').nth(3).locator('.account-faq-q').first().click();
-  if (await page.locator('.account-faq-a').count() !== 1) fail('two answers are open at once');
-  // The pass answer has to quote the shipped prices, never a rounded retelling.
-  const passQ = page.locator('.account-faq-q', { hasText: 'What does a pass add?' });
-  await passQ.click();
-  const passA = await page.locator('.account-faq-item.open .account-faq-a').innerText();
-  for (const figure of ['€6.99', '€14.99', '60', '40', '300', '120']) {
-    if (!passA.includes(figure)) fail(`the pass answer never names ${figure}: "${passA}"`);
+  // Every answer, open or not, must be free of unfilled placeholders and of
+  // the catalogue counts the owner struck (T461).
+  const allA = (await page.locator('.account-faq-a').allTextContents()).join(' ');
+  if (/\{\w+\}/.test(allA)) fail('an unfilled placeholder survived into an answer');
+  if (/43 (European )?countries|destinations across/i.test(allA)) fail('an answer still quotes catalogue counts');
+  // The plan answers quote the shipped prices from pricing.js.
+  await page.locator('.account-faq-q', { hasText: 'What is the difference between the Trip Pass and the yearly plan?' }).click();
+  const passA = await page.locator('.account-faq-item[open] .account-faq-a', { hasText: 'Trip Pass is' }).innerText();
+  for (const figure of ['€6.99', '€14.99', '60 days']) {
+    if (!passA.includes(figure)) fail(`the plan answer never names ${figure}: "${passA}"`);
   }
-  // The free allowance is two plans for the life of the account (TIERS.free,
-  // src/lib/pricing.js; migration 021), never "a month" (row T379-e, T390).
-  if (/a month/i.test(passA) || !/life of the account/i.test(passA)) {
-    fail(`the pass answer misstates the free allowance: "${passA}"`);
-  }
+  // Refunds go to the role address, never a personal inbox (T461).
+  if (!/hello@carta-europetravel\.com/.test(allA)) fail('the refund answer does not name the contact address');
+  if (/gmail\.com/i.test(allA)) fail('a personal address is printed in the FAQ');
   // Carta stopped pricing flights; an answer that still sells fares is a lie
   // about the product, which is the failure this FAQ exists to avoid.
-  const allAnswers = (await page.locator('.account-faq-q').allInnerTexts()).join(' ');
+  const allQ = (await page.locator('.account-faq-q').allInnerTexts()).join(' ');
   for (const stale of ['Ryanair', 'Wizz', 'on the map']) {
-    if (allAnswers.includes(stale)) fail(`a question still describes the retired fare map: ${stale}`);
+    if ((allQ + allA).includes(stale)) fail(`the FAQ still describes the retired fare map: ${stale}`);
   }
-  if (!(await page.locator('.account-faq-foot button').count())) fail('the FAQ has no route to feedback');
-  ok(`${faqItems} questions in ${groups.length} groups, one answer at a time, figures interpolated`);
+  // The search filters as you type, and says so when nothing matches.
+  const search = page.locator('.acct-faq input[type="search"]');
+  await search.fill('refund');
+  const hits = await page.locator('.account-faq-item').count();
+  if (hits < 1 || hits >= faqItems) fail(`searching "refund" left ${hits} questions`);
+  await search.fill('zzzqqq');
+  if (!(await page.locator('.acct-faq .acct-empty').count())) fail('an empty search says nothing');
+  await search.fill('');
+  if (!(await page.locator('.acct-faq-foot button').count())) fail('the FAQ has no route to feedback');
+  ok(`${faqItems} questions in ${groups.length} groups, search filters, figures interpolated`);
   await page.screenshot({ path: `${SHOTS}/account-faq.png` });
 
-  // ---- 8b. The data credits spoke. The licenses that ask for a visible
-  //          credit are answered here now that the front page is gone, so an
-  //          empty list is a compliance problem, not a cosmetic one.
+  // ---- 8b. The data credits. The licences that ask for a visible credit
+  //          are answered in the Imprint since T461 (the "Where the numbers
+  //          come from" spoke is gone), so an empty list there is a
+  //          compliance problem, not a cosmetic one.
   await goHome(page);
-  await goTo(page, 'Where the numbers come from'); // renamed from "Data sources" by T390
-  const creditLines = await page.locator('.account-credits li').allInnerTexts();
-  if (creditLines.length < 10) fail(`data sources spoke lists ${creditLines.length} credits`);
+  await goTo(page, 'Imprint');
+  const creditLines = await page.locator('.legal-credits li').allInnerTexts();
+  if (creditLines.length < 10) fail(`the Imprint lists ${creditLines.length} credits`);
   if (!creditLines.some((l) => /OpenStreetMap/.test(l))) fail('credits never name OpenStreetMap');
-  ok(`data sources: ${creditLines.length} credits, OpenStreetMap among them`);
+  const legalText = await page.locator('.legal-doc').innerText();
+  if (/gmail\.com/i.test(legalText)) fail('the Imprint prints a personal address');
+  ok(`imprint: ${creditLines.length} credits, OpenStreetMap among them`);
+  await page.keyboard.press('Escape');
+  await page.locator('.legal-doc').waitFor({ state: 'detached', timeout: 5000 });
 
   // ---- 9. The feedback spoke.
   console.log('8. feedback spoke');
@@ -658,12 +679,13 @@ try {
   const feedbackBox = page.locator('#acct-feedback');
   await feedbackBox.waitFor({ timeout: 5000 });
   // "Send", not "Send by email" (T390, brief V3-13): the message is written
-  // to the inbox; email is only the fallback when that fails.
+  // to the inbox. T461 dropped the mail fallback and the address with it.
   const sendBtn = page.locator('.account-panel button', { hasText: /^Send$/ });
   if (!(await sendBtn.isDisabled())) fail('the send button is live with an empty message');
   await feedbackBox.fill('The Porto bus fare looked too low for August.');
   if (await sendBtn.isDisabled()) fail('the send button stayed off after typing a message');
-  ok('feedback: send stays off until there is a message');
+  if (/@/.test(await page.locator('.acct-feedback').innerText())) fail('the feedback form prints an address');
+  ok('feedback: send stays off until there is a message, no address shown');
   await page.screenshot({ path: `${SHOTS}/account-feedback.png` });
 
   // ---- Quality floor on the hub.
@@ -681,6 +703,84 @@ try {
   if (await page.locator('.account-panel').count()) fail('Escape did not close the account page');
   await openPanel(page);
   ok('no cross on the page, and Escape is the way out');
+
+  // ---- 9b. Keyboard: the legal dialog keeps focus, and Escape in the FAQ
+  //          search clears it before it closes Account (T461 audit).
+  console.log('9b. keyboard');
+  await goTo(page, 'Privacy');
+  await page.locator('.legal-doc').waitFor({ timeout: 5000 });
+  await page.waitForTimeout(300);
+  await page.keyboard.press('Shift+Tab');
+  if (!(await page.evaluate(() => !!document.activeElement?.closest('.legal-doc')))) {
+    fail('Shift+Tab from the legal title left the dialog');
+  }
+  await page.keyboard.press('Escape');
+  await page.locator('.legal-doc').waitFor({ state: 'detached', timeout: 5000 });
+  await goTo(page, 'Common questions');
+  const faqSearch = page.locator('.acct-faq input[type="search"]');
+  await faqSearch.fill('refund');
+  await faqSearch.press('Escape');
+  await page.waitForTimeout(300);
+  if (!(await page.locator('.account-panel').count())) fail('Escape in the FAQ search closed Account');
+  else if (await faqSearch.inputValue() !== '') fail('Escape in the FAQ search did not clear it');
+  ok('focus stays in the legal dialog; Escape clears the FAQ search first');
+  await goHome(page);
+
+  // ---- 9c. A yearly subscriber cancels online (BGB 312k, T460-e) and keeps
+  //          the plan again. The entitlement row and the billing function are
+  //          stubbed; the panel's own markup and focus are what is checked.
+  console.log('9c. yearly subscriber');
+  const sub = { subscription_id: 'sub_1', subscription_status: 'active', cancel_at_period_end: false, renews_at: '2027-10-03T10:00:00Z' };
+  const billingCalls = [];
+  const ctxY = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  await ctxY.addInitScript(seedSession(PROJECT_REF, USER));
+  const pageY = await ctxY.newPage();
+  await stubSupabase(pageY, state);
+  await pageY.route('**/rest/v1/rpc/ai_status*', (route) => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({
+      tier: 'year', expiresAt: sub.renews_at, resetsAt: null,
+      plansUsed: 3, plansCap: 300, plansLeft: 297, groundUsed: 0, groundCap: 120, groundLeft: 120,
+    }),
+  }));
+  await pageY.route('**/rest/v1/entitlements*', (route) => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify(sub),
+  }));
+  await pageY.route('**/functions/v1/billing*', async (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    billingCalls.push(body.action);
+    if (body.action === 'cancel') sub.cancel_at_period_end = true;
+    if (body.action === 'resume') sub.cancel_at_period_end = false;
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) });
+  });
+  await pageY.goto(`${BASE}/?o=CRL`);
+  await pageY.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await openPanel(pageY);
+  const planY = pageY.locator('.acct-plan');
+  await planY.locator('button', { hasText: 'Cancel yearly plan' }).waitFor({ timeout: 15000 });
+  if (!/Renews/.test(await planY.innerText())) fail('the yearly plan does not say when it renews');
+  if (!(await planY.locator('button', { hasText: 'Manage payment' }).count())) fail('no route to the billing page');
+  await planY.locator('button', { hasText: 'Cancel yearly plan' }).click();
+  const focusedText = () => pageY.evaluate(() => document.activeElement?.textContent?.trim() || document.activeElement?.tagName);
+  if (await focusedText() !== 'Keep it') fail(`the confirm opened with focus on "${await focusedText()}", not the safe choice`);
+  if (!/runs until/.test(await planY.innerText())) fail('the confirm does not say when the plan ends');
+  await pageY.keyboard.press('Escape');
+  await pageY.waitForTimeout(200);
+  if (!(await pageY.locator('.account-panel').count())) fail('Escape in the confirm closed Account');
+  if (await focusedText() !== 'Cancel yearly plan') fail(`Escape left focus on "${await focusedText()}"`);
+  await planY.locator('button', { hasText: 'Cancel yearly plan' }).click();
+  await planY.locator('button', { hasText: /^Cancel plan$/ }).click();
+  await planY.locator('.acct-status', { hasText: 'Cancelled' }).waitFor({ timeout: 10000 });
+  if (!billingCalls.includes('cancel')) fail('cancelling never reached the billing function');
+  if (await pageY.evaluate(() => document.activeElement?.id) !== 'acct-plan-title') fail('focus was dropped after cancelling');
+  await planY.locator('button', { hasText: 'Keep my yearly plan' }).waitFor({ timeout: 10000 });
+  if (!/Ends/.test(await planY.innerText())) fail('a cancelled plan does not say when it ends');
+  await planY.locator('button', { hasText: 'Keep my yearly plan' }).click();
+  await planY.locator('.acct-status', { hasText: 'Kept' }).waitFor({ timeout: 10000 });
+  await planY.locator('button', { hasText: 'Cancel yearly plan' }).waitFor({ timeout: 10000 });
+  ok(`subscriber: renews date, cancel confirmed in place, announced and focused, resumed (${billingCalls.join(', ')})`);
+  await pageY.screenshot({ path: `${SHOTS}/account-plan-yearly.png` });
+  await ctxY.close();
 
   // ---- 10. A Google-only account has no password. Every password control
   // must step aside for the email route, and deletion must still ask.

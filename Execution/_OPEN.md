@@ -1581,12 +1581,22 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T434-e | T434 | "Plan a trip in {country}" seeds the trip wizard with a country only; seeding the exact starred places needs a seed.destIds path in GuidedTripWizard.jsx | next task | open |  |
 | T434-f | T434 | Native review of the 62 new and 6 changed My trips strings in nl, de, fr, es and it | user | open |  |
 | T434-g | T434 | Real-phone pass on My trips: the focal card, an invite link through the phone's share sheet, the countries sheet, the still map that opens full size on a tap | user | open |  |
-| T434-h | T434 | verify_friends.mjs stops at its second step: it clicks .header-friends-btn, the header Friends button T426 removed; open Friends from the Account panel instead | next task | open |  |
+| T434-h | T434 | verify_friends.mjs stops at its second step: it clicks .header-friends-btn, the header Friends button T426 removed; open Friends from the Account panel instead | next task | closed by T461 |  |
 | T460-a | T460 | Switch the yearly plan and the 60-day Trip Pass on, in the order of Execution/P11/_OPEN-pass-subscription.md (paste 053, recurring Price and STRIPE_PRICE_YEAR, Customer Portal, four webhook events, deploy checkout, stripe-webhook and billing, test mode); until 053 the server grants 30 days | user | open | after T461 |
 | T460-b | T460 | Legal review of the yearly plan before it sells: tacit yearly renewal (DE 309 Nr. 9, NL 6:236 j), the FR renewal reminder, a 312k cancel button behind sign-in, the waiver sharing Stripe's terms tick box, the confirmation recording the waiver, the 30-day price notice the terms now promise | user | open | before T460-a goes live |
 | T460-c | T460 | The webhook and billing Edge Functions are not executed by any test (no Deno here); the pure helpers and 053 are tested; run Stripe test mode end to end (procedure step 7) | next task | open |  |
 | T460-d | T460 | Price calls: the yearly plan at EUR 14.99 pays off only from a third trip (two Trip Passes EUR 13.98), EUR 12.99 would make it the plain deal; live-search ceilings still 40 and 120 against T041-a's 10 and 30 (T148) | user | open |  |
-| T460-e | T460 | The cancel route in Account (Cancel yearly plan, Resume, the billing page) that the panel, the terms and the Stripe checkbox point at | next task | open |  |
-| T460-f | T460 | account.faq13A still describes two one-off 30-day passes; rewrite with the FAQ | next task | open |  |
+| T460-e | T460 | The cancel route in Account (Cancel yearly plan, Resume, the billing page) that the panel, the terms and the Stripe checkbox point at | next task | closed by T461 |  |
+| T460-f | T460 | account.faq13A still describes two one-off 30-day passes; rewrite with the FAQ | next task | closed by T461 |  |
 | T460-g | T460 | CheckIcon in components/Icons.jsx carries the accessible name "Recommended" everywhere it is used; make it decorative and let callers name it | next task | open |  |
 | T460-h | T460 | deno check would reject apiVersion '2025-10-29.clover' against npm:stripe@17 types in checkout, stripe-webhook and billing (predates T460; deploy does not type-check) | next task | open |  |
+| T461-a | T461 | Set up Cloudflare Email Routing so hello@carta-europetravel.com forwards to the owner's inbox; the legal texts and the refund answer name it | user | open |  |
+| T461-b | T461 | Publish the Imprint's business details (T015: legal name, address, KBO/BCE number); the page says registration is in progress, and EU e-Commerce Art 5 needs them before passes sell | user | open | before T460-a goes live |
+| T461-c | T461 | The privacy policy, terms and imprint stay English only in all six languages; translating them is a product and legal call | user | open |  |
+| T461-d | T461 | The Terms say some outbound links earn a commission while PRODUCT.md says Carta takes no commission on travel; one of the two has to change | user | open |  |
+| T461-e | T461 | BGB 312k(4) text-form confirmation of a yearly cancellation: switch on Stripe's cancellation email or have the billing function send one | user | open | with T460-b |
+| T461-f | T461 | Kit hover on a disabled primary paints it brown under grey text (03-button.css .btn-primary:hover without :not(:disabled)), app-wide | next task | open |  |
+| T461-g | T461 | Account hub leftovers: Sign out two levels deep, guest view titled twice, AuthModal opens on Close, 22 legacy buttons in the Profile, Security and Your data forms, Home airport and Travellers rows not added | next task | open |  |
+| T461-h | T461 | FriendsSpoke (13 raw buttons) is not on the kit, and the planned move of the Alongside your friends ledger into it was dropped | next task | open |  |
+| T461-i | T461 | The legal body follows the 68ch --measure token (about 95 characters a line; detector line-length x63); tightening it is a token call | user | open |  |
+| T461-j | T461 | verify_trails_export reports 465 facet counts that disagree with their rows in public/trails/*.json (for example AL grade.moderate 42 vs 44); data, not T461 | next task | open |  |

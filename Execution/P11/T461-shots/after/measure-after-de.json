@@ -1,0 +1,256 @@
+[
+  {
+    "scene": "account-guest",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Anmelden"
+    ],
+    "words": 18,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 28,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "p360",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-nav:visible, .account-row:visible').filter({ hasText: /Common questions|questions/i }).first()\u001b[2"
+  },
+  {
+    "scene": "account-feedback",
+    "view": "p360",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-nav:visible, .account-row:visible').filter({ hasText: /Send feedback/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "account-privacy",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 332,
+    "errors": []
+  },
+  {
+    "scene": "account-imprint",
+    "view": "p360",
+    "hscroll": false,
+    "small": [
+      "hello@carta-europetravel.com 191x17"
+    ],
+    "smallCount": 1,
+    "primaries": [],
+    "words": 163,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "p360",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 329,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Anmelden"
+    ],
+    "words": 22,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 29,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "phone",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-nav:visible, .account-row:visible').filter({ hasText: /Common questions|questions/i }).first()\u001b[2"
+  },
+  {
+    "scene": "account-feedback",
+    "view": "phone",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-nav:visible, .account-row:visible').filter({ hasText: /Send feedback/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "account-privacy",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 332,
+    "errors": []
+  },
+  {
+    "scene": "account-imprint",
+    "view": "phone",
+    "hscroll": false,
+    "small": [
+      "hello@carta-europetravel.com 191x17"
+    ],
+    "smallCount": 1,
+    "primaries": [],
+    "words": 197,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 387,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Anmelden"
+    ],
+    "words": 15,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 27,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "ipad",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-nav:visible, .account-row:visible').filter({ hasText: /Common questions|questions/i }).first()\u001b[2"
+  },
+  {
+    "scene": "account-feedback",
+    "view": "ipad",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-nav:visible, .account-row:visible').filter({ hasText: /Send feedback/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "account-privacy",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 681,
+    "errors": []
+  },
+  {
+    "scene": "account-imprint",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "hello@carta-europetravel.com 191x17"
+    ],
+    "smallCount": 1,
+    "primaries": [],
+    "words": 417,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 645,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Anmelden"
+    ],
+    "words": 15,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 27,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "desk",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-nav:visible, .account-row:visible').filter({ hasText: /Common questions|questions/i }).first()\u001b[2"
+  },
+  {
+    "scene": "account-feedback",
+    "view": "desk",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-nav:visible, .account-row:visible').filter({ hasText: /Send feedback/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "account-privacy",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 529,
+    "errors": []
+  },
+  {
+    "scene": "account-imprint",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 320,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 557,
+    "errors": []
+  }
+]

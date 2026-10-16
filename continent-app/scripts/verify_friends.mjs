@@ -70,6 +70,17 @@ const ANA = { user_id: '00000000-0000-4000-8000-0000000000a3', handle: 'ana_r', 
 // about the account panel alone uses ACCOUNT_PANEL below.
 const ACCOUNT_PANEL = '.account-panel:not(.saved-trips-panel)';
 
+// T461 (row T434-h): the header's Friends button went with T426, so Friends
+// is reached the way a traveller reaches it now: Account (the header avatar
+// on a wide screen, the bottom bar on a phone), then the Friends row.
+async function openFriends(p, timeout = 60000) {
+  const avatar = p.locator('.account-avatar-btn:visible').first();
+  if (await avatar.count()) await avatar.click({ timeout });
+  else await p.locator('.bottom-nav-item:visible', { hasText: 'Account' }).first().click({ timeout });
+  await p.locator(ACCOUNT_PANEL).waitFor({ timeout: 15000 });
+  await p.locator('.account-nav:visible', { hasText: /^\s*Friends/ }).first().click({ timeout: 15000 });
+}
+
 // Relative time is only rendered inside four weeks, and the New mark is
 // relative to the last visit, so both fixtures are stamped at run time.
 const RECENT = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
@@ -274,8 +285,8 @@ const run = async () => {
   await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
 
   /* ---- 2. The spoke, sorted by who it is waiting on ---- */
-  const row = page.locator('.header-friends-btn');
-  await row.click({ timeout: 15000 });
+  await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await openFriends(page, 15000);
   await page.locator('.frn-find').waitFor({ timeout: 10000 });
 
   // Your own handle leads the page: adding a friend needs yours before theirs.
@@ -532,7 +543,8 @@ const run = async () => {
   const ep = await emptyCtx.newPage();
   await stub(ep, emptyState);
   await ep.goto(`${BASE}/?o=CRL`);
-  await ep.locator('.header-friends-btn').click({ timeout: 60000 });
+  await ep.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await openFriends(ep);
   await ep.locator('.frn-empty-act').waitFor({ timeout: 20000 });
   const emptyBtn = ep.locator('.frn-empty-btn');
   if (!await emptyBtn.count()) {
@@ -550,7 +562,8 @@ const run = async () => {
   cp.on('pageerror', (e) => fail(`page error on the co-plan band: ${e.message}`));
   await stub(cp, state);
   await cp.goto(`${BASE}/?o=CRL&coplanmock=some`);
-  await cp.locator('.header-friends-btn').click({ timeout: 60000 });
+  await cp.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await openFriends(cp);
   await cp.locator('.frn-find').waitFor({ timeout: 20000 });
   await cp.waitForTimeout(900);
   const co = await cp.locator(ACCOUNT_PANEL).innerText();
@@ -598,8 +611,9 @@ const run = async () => {
   // T410: the friends the picker lists arrive from a second request after the
   // block draws, so wait for the first option before reading the list; on a
   // slow server the read used to race it and see an empty picker.
-  await op.locator('.coplan-pick option').nth(1).waitFor({ state: 'attached', timeout: 20000 }).catch(() => {});
-  const picks = await op.locator('.coplan-pick option').allInnerTexts();
+  // T434 moved the picker onto the kit Field (a select inside .coplan-ask).
+  await op.locator('.coplan-ask select option').nth(1).waitFor({ state: 'attached', timeout: 20000 }).catch(() => {});
+  const picks = await op.locator('.coplan-ask select option').allInnerTexts();
   if (picks.some((p) => /Jonas/.test(p))) {
     fail(`the picker offers somebody who is not a friend: ${JSON.stringify(picks)}`);
   } else if (!picks.some((p) => /Ana Rocha/.test(p))) {
@@ -607,12 +621,15 @@ const run = async () => {
   } else ok('only accepted friends can be asked to co-plan');
 
   // The third visibility exists and says what publishing means.
-  const vis = await op.locator('.tshare-vis').innerText();
+  // T434: visibility is a kit Segmented in the "Who can see this trip"
+  // block, and Anyone asks once, inline, before it publishes.
+  const visBlock = op.locator('.tshare-block').filter({ hasText: 'Who can see this trip' });
+  const vis = await visBlock.innerText();
   if (!/Anyone/i.test(vis)) fail('the trip cannot be published as a guide');
   else ok('a trip can be published to the guides gallery');
-  await op.locator('.tshare-vis-opt').filter({ hasText: /^Anyone$/ }).click();
+  await visBlock.locator('[role="radio"]').filter({ hasText: /^Anyone$/ }).click();
   await op.waitForTimeout(400);
-  const visSub = await op.locator('.tshare-vis .tshare-vis-sub').innerText();
+  const visSub = await visBlock.locator('.tshare-ask').innerText();
   if (!/never do|dates/i.test(visSub)) {
     fail(`publishing does not say what travels and what does not: "${visSub}"`);
   } else ok('and publishing states what travels and what never does');
@@ -625,20 +642,11 @@ const run = async () => {
   const dp = await deskCtx.newPage();
   await stub(dp, state);
   await dp.goto(`${BASE}/?o=CRL`);
-  const friendsBtn = dp.locator('.header-friends-btn');
-  await friendsBtn.waitFor({ timeout: 120000 });
-  // Above 769px the browse chrome folds this door to its icon on purpose
-  // (styles.css, the min-width: 769px block), because the left rail already
-  // names it. So the desktop check is that it still HAS a name, not that the
-  // name is painted: an icon-only control with no accessible name is the
-  // actual defect this guards against.
-  const deskName = (await friendsBtn.getAttribute('title'))
-    || (await friendsBtn.getAttribute('aria-label')) || '';
-  if (!/Friends/i.test(deskName)) fail(`the header Friends button has no accessible name: "${deskName}"`);
-  else ok('the header carries a labelled Friends door');
-  await friendsBtn.click();
+  await dp.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  // T461: Friends is a row in Account, with its name painted (row T434-h).
+  await openFriends(dp);
   await dp.locator('.frn-find').waitFor({ timeout: 15000 });
-  ok('it opens straight onto the friends page, not the account hub');
+  ok('Account carries a labelled Friends row that opens the friends page');
 
   // Opening My trips must close the account panel, and the other way round.
   // The desktop header names the page "My trips" since shell V3 (row T390-b);
@@ -647,7 +655,7 @@ const run = async () => {
   await dp.waitForTimeout(500);
   if (await dp.locator(ACCOUNT_PANEL).count()) fail('opening My trips left the account panel open');
   else ok('opening My trips closes the account panel');
-  await dp.locator('.header-friends-btn').click();
+  await openFriends(dp);
   await dp.waitForTimeout(500);
   if (await dp.locator('.saved-trips-panel').count()) fail('opening Friends left My trips open');
   else ok('opening the account side closes My trips');
@@ -661,8 +669,8 @@ const run = async () => {
   await mp.goto(`${BASE}/?o=CRL`);
   // The phone header has no avatar (it lives only in the bottom bar), and the
   // desktop one is present but hidden, so it must not be waited on here.
-  await mp.locator('.header-friends-btn').waitFor({ timeout: 120000 });
-  await mp.locator('.header-friends-btn').click();
+  await mp.locator('.bottom-nav-item:visible', { hasText: 'Account' }).first().waitFor({ timeout: 120000 });
+  await openFriends(mp);
   await mp.locator('.frn-find').waitFor({ timeout: 10000 });
   await mp.waitForTimeout(400);
   const overflow = await mp.evaluate(
@@ -671,15 +679,17 @@ const run = async () => {
   if (overflow <= 1) ok('no sideways scroll at 390px');
   else fail(`page scrolls sideways by ${overflow}px at 390px`);
 
-  // The word, not just the glyph, at the narrowest width this app supports.
-  const mobLabel = await mp.locator('.header-friends-btn').innerText();
-  if (!/Friends/i.test(mobLabel)) fail(`the Friends button is icon-only at 390px: "${mobLabel}"`);
-  else ok('the Friends button keeps its word at 390px');
+  // The word, not just the glyph, at the narrowest width this app supports:
+  // the page names itself Friends.
+  const mobLabel = await mp.locator(ACCOUNT_PANEL).innerText();
+  if (!/Friends/i.test(mobLabel)) fail('the friends page does not name itself at 390px');
+  else ok('the friends page names itself at 390px');
   await mp.screenshot({ path: `${SHOTS}/friends-mobile.png` });
 
   // The row carrying Passes must survive a full-bleed slide-over: it used to
   // start at top:0 and bury the one control that sells the product.
-  const passVisible = async () => mp.locator('.header-pricing-btn').isVisible();
+  // T426 renamed the header's pass door .shell-pass-btn (row T434-h).
+  const passVisible = async () => mp.locator('.shell-pass-btn').first().isVisible();
   if (!await passVisible()) fail('Passes is not visible with the account panel open');
   else ok('Passes survives the account panel');
   const headerBox = await mp.locator('.app-header').boundingBox();

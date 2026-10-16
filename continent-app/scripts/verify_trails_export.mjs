@@ -259,8 +259,9 @@ try {
       + 'so loadTrails() has to read the content type');
   }
 
-  // ---- 11. The data credits, which live in Account > Data sources now that
-  //          the front page (and its footer) is gone.
+  // ---- 11. The data credits, which live in the Imprint's Data credits
+  //          section since T461 (Account > Data sources is gone); the
+  //          Imprint opens from Account.
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1360, height: 900 } });
   await page.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
@@ -270,19 +271,19 @@ try {
   } catch { /* auth not configured in this build */ }
   await page.locator('.account-avatar-btn').first().click({ timeout: 60000 });
   await page.locator('.account-panel').waitFor({ timeout: 30000 });
-  await page.locator('.account-nav:visible', { hasText: /data sources/i }).click({ timeout: 30000 });
+  await page.locator('.account-nav:visible', { hasText: /^\s*Imprint/ }).first().click({ timeout: 30000 });
 
-  const credits = page.locator('.account-credits li');
+  const credits = page.locator('.legal-credits li');
   await credits.first().waitFor({ timeout: 30000 });
   const lines = await credits.allInnerTexts();
-  console.log(`Account > Data sources renders ${lines.length} credit lines`);
+  console.log(`Imprint > Data credits renders ${lines.length} credit lines`);
   for (const name of ['OpenStreetMap', 'swisstopo', 'IGN', 'Kartverket', 'Copernicus']) {
     if (!lines.some((l) => l.includes(name))) fail(`credits never name ${name}`);
   }
-  const heading = await page.locator('.account-heading').innerText();
+  const heading = await page.locator('.legal-title').innerText();
   console.log(`  heading: ${JSON.stringify(heading)}`);
   console.log(`  first three: ${lines.slice(0, 3).map((l) => JSON.stringify(l)).join(' | ')}`);
-  await page.locator('.account-panel').screenshot({ path: `${SHOTS}/trails-credits.png` });
+  await page.locator('.legal-doc').screenshot({ path: `${SHOTS}/trails-credits.png` });
 
   // ---- 12. Narrow. The panel is full-width on a phone, so the list has to sit
   //          inside it without pushing the document sideways.
@@ -291,8 +292,8 @@ try {
   const overflow = await page.evaluate(() =>
     document.documentElement.scrollWidth - document.documentElement.clientWidth);
   if (overflow > 0) fail(`${overflow}px of horizontal scroll at 380px`);
-  await page.locator('.account-credits').scrollIntoViewIfNeeded();
-  await page.locator('.account-panel').screenshot({ path: `${SHOTS}/trails-credits-380.png` });
+  await page.locator('.legal-credits').scrollIntoViewIfNeeded();
+  await page.locator('.legal-doc').screenshot({ path: `${SHOTS}/trails-credits-380.png` });
   console.log('380px: credits readable, no horizontal scroll');
 
   await browser.close();
