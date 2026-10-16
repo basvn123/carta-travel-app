@@ -1,0 +1,188 @@
+[
+  {
+    "who": "guest",
+    "view": "p360",
+    "sheetH": 708,
+    "scrollH": 792,
+    "vh": 740,
+    "words": 84,
+    "primary": [
+      "Anmelden und weiter"
+    ],
+    "small": [],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "free",
+    "view": "p360",
+    "sheetH": 708,
+    "scrollH": 792,
+    "vh": 740,
+    "words": 85,
+    "primary": [
+      "Jahresplan starten, 14,99 €"
+    ],
+    "small": [],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "trip",
+    "view": "p360",
+    "sheetH": 708,
+    "scrollH": 782,
+    "vh": 740,
+    "words": 103,
+    "primary": [
+      "Jahresplan starten, 14,99 €"
+    ],
+    "small": [],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "guest",
+    "view": "phone",
+    "sheetH": 754,
+    "scrollH": 754,
+    "vh": 844,
+    "words": 105,
+    "primary": [
+      "Anmelden und weiter"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "free",
+    "view": "phone",
+    "sheetH": 754,
+    "scrollH": 754,
+    "vh": 844,
+    "words": 106,
+    "primary": [
+      "Jahresplan starten, 14,99 €"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "trip",
+    "view": "phone",
+    "sheetH": 744,
+    "scrollH": 744,
+    "vh": 844,
+    "words": 104,
+    "primary": [
+      "Jahresplan starten, 14,99 €"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "guest",
+    "view": "ipad",
+    "sheetH": 649,
+    "scrollH": 649,
+    "vh": 1180,
+    "words": 105,
+    "primary": [
+      "Anmelden und weiter"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "free",
+    "view": "ipad",
+    "sheetH": 649,
+    "scrollH": 649,
+    "vh": 1180,
+    "words": 106,
+    "primary": [
+      "Jahresplan starten, 14,99 €"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "trip",
+    "view": "ipad",
+    "sheetH": 658,
+    "scrollH": 658,
+    "vh": 1180,
+    "words": 104,
+    "primary": [
+      "Jahresplan starten, 14,99 €"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "guest",
+    "view": "desk",
+    "sheetH": 649,
+    "scrollH": 649,
+    "vh": 900,
+    "words": 105,
+    "primary": [
+      "Anmelden und weiter"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "free",
+    "view": "desk",
+    "sheetH": 649,
+    "scrollH": 649,
+    "vh": 900,
+    "words": 106,
+    "primary": [
+      "Jahresplan starten, 14,99 €"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "trip",
+    "view": "desk",
+    "sheetH": 658,
+    "scrollH": 658,
+    "vh": 900,
+    "words": 104,
+    "primary": [
+      "Jahresplan starten, 14,99 €"
+    ],
+    "small": [
+      "AGB 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  }
+]

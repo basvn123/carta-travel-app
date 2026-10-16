@@ -1,0 +1,194 @@
+[
+  {
+    "who": "guest",
+    "view": "p360",
+    "sheetH": 708,
+    "scrollH": 735,
+    "vh": 740,
+    "words": 106,
+    "primary": [
+      "Sign in to continue"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "free",
+    "view": "p360",
+    "sheetH": 708,
+    "scrollH": 735,
+    "vh": 740,
+    "words": 106,
+    "primary": [
+      "Start yearly plan, €14.99"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "trip",
+    "view": "p360",
+    "sheetH": 708,
+    "scrollH": 744,
+    "vh": 740,
+    "words": 104,
+    "primary": [
+      "Start yearly plan, €14.99"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "guest",
+    "view": "phone",
+    "sheetH": 717,
+    "scrollH": 717,
+    "vh": 844,
+    "words": 106,
+    "primary": [
+      "Sign in to continue"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "free",
+    "view": "phone",
+    "sheetH": 717,
+    "scrollH": 717,
+    "vh": 844,
+    "words": 106,
+    "primary": [
+      "Start yearly plan, €14.99"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "trip",
+    "view": "phone",
+    "sheetH": 726,
+    "scrollH": 726,
+    "vh": 844,
+    "words": 104,
+    "primary": [
+      "Start yearly plan, €14.99"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "guest",
+    "view": "ipad",
+    "sheetH": 629,
+    "scrollH": 629,
+    "vh": 1180,
+    "words": 106,
+    "primary": [
+      "Sign in to continue"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "free",
+    "view": "ipad",
+    "sheetH": 629,
+    "scrollH": 629,
+    "vh": 1180,
+    "words": 106,
+    "primary": [
+      "Start yearly plan, €14.99"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "trip",
+    "view": "ipad",
+    "sheetH": 639,
+    "scrollH": 639,
+    "vh": 1180,
+    "words": 104,
+    "primary": [
+      "Start yearly plan, €14.99"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "guest",
+    "view": "desk",
+    "sheetH": 629,
+    "scrollH": 629,
+    "vh": 900,
+    "words": 106,
+    "primary": [
+      "Sign in to continue"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "free",
+    "view": "desk",
+    "sheetH": 629,
+    "scrollH": 629,
+    "vh": 900,
+    "words": 106,
+    "primary": [
+      "Start yearly plan, €14.99"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  },
+  {
+    "who": "trip",
+    "view": "desk",
+    "sheetH": 639,
+    "scrollH": 639,
+    "vh": 900,
+    "words": 104,
+    "primary": [
+      "Start yearly plan, €14.99"
+    ],
+    "small": [
+      "Terms 14"
+    ],
+    "primaryInView": true,
+    "minFont": 12
+  }
+]

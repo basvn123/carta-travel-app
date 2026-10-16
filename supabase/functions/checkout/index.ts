@@ -1,11 +1,14 @@
 /**
  * checkout, the Edge Function that opens a Stripe Checkout session for a pass.
  *
- * Both passes are ONE-OFF payments, including the Year Pass. That is
- * deliberate: a Year Pass is 365 days of access bought once, not a
- * subscription that renews itself. Nobody is auto-charged, nobody has to
- * remember to cancel, and the "forgot to cancel" revenue that funds a lot of
- * subscription apps is revenue this product chooses not to take.
+ * TWO KINDS OF SALE (T460, owner decision 2026-10-16). The Trip Pass is a
+ * ONE-OFF payment (mode 'payment', 60 days since migration 053). The yearly
+ * plan is a SUBSCRIPTION (mode 'subscription') that renews every year at the
+ * same price until the traveller cancels, which they can do at any time in
+ * Account (the billing function, and Stripe's Customer Portal). The renewal
+ * is said three times before anyone pays: on the plan card, in the panel's
+ * one line of small print, and in the waiver checkbox Stripe shows. Each paid
+ * invoice of the subscription is granted by the webhook (invoice.paid).
  *
  * The price is NEVER read from the client. The browser sends a tier id and
  * nothing else; the amount comes from the Stripe Price object named by
@@ -50,13 +53,17 @@
  * runs on the service role; a database that lacks it answers 503 so the
  * deploy order (paste 044 first) fails loudly rather than charging blind.
  *
+ * STRIPE_PRICE_YEAR must name a RECURRING yearly Price (EUR 14.99, tax
+ * behaviour inclusive) since T460; a one-off Price there makes Stripe refuse
+ * the subscription session, which the modal reports as "could not open".
+ *
  * Secrets: STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR,
  * CHECKOUT_SUCCESS_URL, CHECKOUT_CANCEL_URL, CHECKOUT_TERMS_URL,
  * SUPABASE_SERVICE_ROLE_KEY (set by the platform).
  */
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { PAID_TIERS, stripePriceFor } from '../_shared/passes.mjs';
+import { PAID_TIERS, stripePriceFor, checkoutModeFor, waiverText } from '../_shared/passes.mjs';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -106,9 +113,17 @@ Deno.serve(async (req) => {
   });
   if (canErr) return json(503, { code: 'quota_check', message: canErr.message });
   if (can && can.reason === 'bad_tier') return json(400, { code: 'bad_tier' });
+  // A live yearly plan renews by itself: a second one would charge twice.
+  if (can && can.reason === 'subscribed') return json(409, { code: 'subscribed', renewsAt: can.renewsAt || null });
   if (!can || can.ok !== true) {
     return json(409, { code: 'pass_max', expiresAt: can?.expiresAt || null });
   }
+
+  // One Stripe customer per traveller: reuse the one a past purchase made,
+  // so the billing page shows every invoice in one place.
+  const { data: ent } = await service.from('entitlements')
+    .select('stripe_customer_id').eq('user_id', user.id).maybeSingle();
+  const customer = ent?.stripe_customer_id || '';
 
   const stripe = new Stripe(SECRET, { apiVersion: '2025-10-29.clover' });
 
@@ -117,26 +132,29 @@ Deno.serve(async (req) => {
   const consent = termsUrl ? {
     consent_collection: { terms_of_service: 'required' as const },
     custom_text: {
-      terms_of_service_acceptance: {
-        message: 'I ask Carta to start my pass as soon as this payment completes, '
-          + 'and I understand that I then lose my 14-day right of withdrawal under '
-          + `EU consumer law. Carta's [terms of service](${termsUrl}) say what a `
-          + 'pass buys and how refunds work.',
-      },
+      terms_of_service_acceptance: { message: waiverText(tier, termsUrl) },
     },
   } : {};
+  const mode = checkoutModeFor(tier) as 'payment' | 'subscription';
+  const meta = { user_id: user.id, tier, reason };
+  // A subscription carries the user on the subscription itself, which is
+  // where every later renewal invoice finds it; payment_intent_data is not
+  // allowed in subscription mode.
+  const byMode = mode === 'subscription'
+    ? { subscription_data: { metadata: meta } }
+    : { payment_intent_data: { metadata: meta } };
 
   try {
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
+      mode,
       line_items: [{ price, quantity: 1 }],
       // The webhook grants the pass off these two, so they are the load-
       // bearing part of the whole flow. client_reference_id survives even if
       // metadata is dropped by an intermediary.
       client_reference_id: user.id,
-      metadata: { user_id: user.id, tier, reason },
-      payment_intent_data: { metadata: { user_id: user.id, tier, reason } },
-      customer_email: user.email || undefined,
+      metadata: meta,
+      ...byMode,
+      ...(customer ? { customer } : { customer_email: user.email || undefined }),
       automatic_tax: { enabled: true },
       // Required for automatic_tax to resolve a rate for digital goods: the
       // rate follows where the CUSTOMER is, not where we are.

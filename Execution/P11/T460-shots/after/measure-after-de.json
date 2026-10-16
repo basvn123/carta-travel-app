@@ -1,0 +1,47 @@
+[
+  {
+    "scene": "pass-guest",
+    "view": "phone",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-free",
+    "view": "phone",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-trip",
+    "view": "phone",
+    "error": "TimeoutError: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.account-avatar-btn, .header-account-btn').filter({ visible: true }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-guest",
+    "view": "ipad",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /See passes|See plans/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-free",
+    "view": "ipad",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /See passes|See plans|Extend my pass|Switch to yearly/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-trip",
+    "view": "ipad",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /See passes|See plans|Extend my pass|Switch to yearly/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-guest",
+    "view": "desk",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /See passes|See plans/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-free",
+    "view": "desk",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /See passes|See plans|Extend my pass|Switch to yearly/ }).first()\u001b[22m\n"
+  },
+  {
+    "scene": "pass-trip",
+    "view": "desk",
+    "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /See passes|See plans|Extend my pass|Switch to yearly/ }).first()\u001b[22m\n"
+  }
+]

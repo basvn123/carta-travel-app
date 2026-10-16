@@ -89,6 +89,8 @@ export function PassExpiryBanner() {
 
   if (!entitlement?.known) return null;
   if (entitlement.tier === 'free' || !entitlement.expiresAt) return null;
+  // A yearly plan that renews by itself is not running out (T460).
+  if (entitlement.subscription?.live && !entitlement.subscription.cancelling) return null;
   if (dismissed === entitlement.expiresAt) return null;
 
   const left = daysLeft(entitlement.expiresAt);
@@ -103,7 +105,7 @@ export function PassExpiryBanner() {
     <div className="site-banner" role="status">
       <TicketIcon size={15} />
       <span className="site-banner-text">
-        {t('pass.current', {
+        {t(left === 1 ? 'pass.current1' : 'pass.current', {
           name: t(TIERS[entitlement.tier]?.labelKey || 'pass.tripName'),
           days: left,
         })}

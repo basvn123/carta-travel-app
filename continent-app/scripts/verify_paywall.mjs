@@ -74,14 +74,12 @@ for (const f of files) {
 }
 
 // --- 4. Every key the modal can render, in all six locales -------------------
-// pass.waiverNote and pass.legalLink are the withdrawal waiver line above the
-// buy buttons (T032). They are checked here, not merely rendered, because a
-// locale that loses either one shows a buyer no waiver at all, and a sale made
-// without a visible waiver stays refundable for 14 days under the Consumer
-// Rights Directive. That is a revenue failure no other check would catch.
-const wanted = new Set([
-  'pass.heading', 'pass.lead', 'pass.waiverNote', 'pass.legalNote', 'pass.legalLink',
-]);
+// Read off the panel itself (T460): every t('pass.*') it names, plus the
+// reason headings above. A locale that loses the small print shows a buyer no
+// VAT, renewal or withdrawal line, which is a revenue and a legal failure no
+// other check would catch.
+const wanted = new Set([...modalSrc.matchAll(/t\(\s*'(pass\.[\w]+)'/g)].map((m) => m[1]));
+for (const m of modalSrc.matchAll(/'(pass\.[\w]+)'/g)) wanted.add(m[1]);
 for (const { heading, sub } of copy.values()) {
   wanted.add(heading);
   if (sub) wanted.add(sub);
@@ -98,29 +96,29 @@ for (const lang of LOCALES) {
   }
 }
 
-// --- 4b. The waiver actually says 14 ----------------------------------------
-// A present-but-vague waiver line is the failure mode here: the consent has to
-// name the right being given up, so the number is the load-bearing word. Every
-// locale's translation of the withdrawal period keeps the digits, so "14" is a
+// --- 4b. The withdrawal line names the 14 days --------------------------------
+// T460: the consent itself is the required tick box on Stripe's page (the
+// checkout function's consent_collection, with waiverText from
+// _shared/passes.mjs), shown before any card is typed. The panel states the
+// same fact in its one line of small print, once per plan: the yearly line
+// also names the renewal. Every locale keeps the digits, so "14" is a
 // language-independent check.
 for (const lang of LOCALES) {
   const src = read(`i18n/${lang}.js`);
-  const m = src.match(/"pass\.waiverNote":\s*"((?:[^"\\]|\\.)*)"/);
-  if (m && !m[1].includes('14')) {
-    note(`i18n/${lang}.js: "pass.waiverNote" does not name the 14-day withdrawal period.`);
+  for (const key of ['pass.legalTrip', 'pass.legalYear']) {
+    const line = src.split('\n').find((l) => l.trimStart().startsWith(`"${key}":`));
+    if (!line) note(`i18n/${lang}.js is missing "${key}".`);
+    else if (!line.includes('14')) note(`i18n/${lang}.js: "${key}" does not name the 14-day withdrawal period.`);
   }
 }
-
-// The modal must render the waiver BEFORE the pass grid. Reading order is the
-// whole point: the buyer should not meet the waiver for the first time on
-// Stripe's page with their card details already typed.
 {
-  const waiverAt = modalSrc.indexOf("t('pass.waiverNote')");
-  const gridAt = modalSrc.indexOf('className="pass-grid"');
-  if (waiverAt === -1) note('PassModal.jsx: the waiver line (pass.waiverNote) is gone.');
-  else if (gridAt !== -1 && waiverAt > gridAt) {
-    note('PassModal.jsx: the waiver line renders after the pass grid, so it sits below the buy buttons.');
+  if (!modalSrc.includes("'pass.legalYear'") || !modalSrc.includes("'pass.legalTrip'")) {
+    note('PassModal.jsx: the small print (pass.legalTrip, pass.legalYear) is gone.');
   }
+}
+const sharedPasses = readFileSync(join(process.env.CARTA_REPO_ROOT || join(SRC, '..', '..'), 'supabase', 'functions', '_shared', 'passes.mjs'), 'utf8');
+if (!sharedPasses.includes('14-day right of withdrawal') || !sharedPasses.includes('renews every')) {
+  note('_shared/passes.mjs: the checkout waiver text no longer names the 14 days or the yearly renewal.');
 }
 
 // --- 5. Duplicate keys, which silently take the last value -------------------

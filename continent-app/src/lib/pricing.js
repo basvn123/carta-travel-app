@@ -23,8 +23,9 @@
  *  - Year Pass stays at EUR 14.99. The ratio is what matters: at 3.76x the
  *    Trip Pass the annual tier was dominated by simply buying two Trip Passes,
  *    which is what a traveller taking two trips a year would rationally do. At
- *    roughly 2.1x it becomes the obvious upgrade, and "two trips and it pays
- *    for itself" is a claim that matches how people actually travel. The
+ *    roughly 2.1x it becomes the obvious upgrade. (Two Trip Passes are
+ *    EUR 13.98, so the yearly plan pays off from the third trip; since T460 it
+ *    is also what renews, which is its real case.) The
  *    earlier "four trips for the price of one" framing described a segment
  *    that the trip-frequency data does not show existing.
  *
@@ -35,6 +36,15 @@
  *    So there is no evidence base for .99 specifically, which is why the price
  *    moved on cost grounds instead. PRICE_TEST_ALTERNATIVES below exists
  *    because this is a live A/B question, not a settled one.
+ *
+ * THE YEARLY PLAN AND THE 60-DAY TRIP PASS (owner decision 2026-10-16, T460).
+ * The Year Pass is sold as a yearly plan that renews until cancelled, at the
+ * same EUR 14.99: the market sells planners by the year (Wanderlog Pro about
+ * $40, Roadtrippers $36 to $60) and a renewing plan is what turns a second
+ * trip into a second year. The Trip Pass stays a one-off payment for the
+ * traveller who plans one trip, and runs 60 days rather than 30, because a
+ * trip is planned over about six weeks and the pass should still be live on
+ * the trip itself. Migration 053 carries both to plan_tiers and Stripe.
  *
  * COST FLOOR (2026-07-28). The fair-use caps are sized so a pass stays
  * profitable even if the buyer exhausts every unit, because the caps are the
@@ -89,10 +99,9 @@ export const TIERS = {
     priceCents: 699,
     aiPlans: 60,
     grounded: 40,
-    periodDays: 30,
+    periodDays: 60,
     labelKey: 'pass.tripName',
     blurbKey: 'pass.tripBlurb',
-    featured: true,
   },
   year: {
     id: 'year',
@@ -100,8 +109,11 @@ export const TIERS = {
     aiPlans: 300,
     grounded: 120,
     periodDays: 365,
+    // Renews every year until cancelled (Stripe subscription, migration 053).
+    recurring: true,
     labelKey: 'pass.yearName',
     blurbKey: 'pass.yearBlurb',
+    featured: true,
   },
 };
 
@@ -144,6 +156,22 @@ export function yearPassTripsEquivalent() {
   const year = TIERS.year.priceCents;
   if (!trip) return 0;
   return Math.floor(year / trip) + 1;
+}
+
+/** True for a plan that renews by itself (the yearly plan). */
+export function isRecurring(tier) {
+  return !!TIERS[tier]?.recurring;
+}
+
+/**
+ * What a recurring plan comes to a month, in cents, for the small line beside
+ * its price ("about EUR 1.25 a month"). Never shown instead of the billed
+ * amount: the panel prints the yearly figure large and this one small.
+ */
+export function monthlyCents(tier) {
+  const t = TIERS[tier];
+  if (!t?.recurring || !t.periodDays) return null;
+  return Math.round(t.priceCents / 12);
 }
 
 /** True once a tier is worth showing an upgrade prompt for. */

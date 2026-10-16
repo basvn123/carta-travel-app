@@ -73,6 +73,12 @@ for (const f of files) {
     const row = db.get(u[2]);
     if (row) row.aiPlans = Number(u[1]);
   }
+  // And period pins: update public.plan_tiers set period_days = N where tier = 'x'
+  // (053 moves the Trip Pass to 60 days, T460).
+  for (const u of sql.matchAll(/update public\.plan_tiers set period_days = (\d+) where tier = '(\w+)'/g)) {
+    const row = db.get(u[2]);
+    if (row) row.periodDays = Number(u[1]);
+  }
 }
 if (db.size !== 3) note(`migrations: expected 3 plan_tiers rows, parsed ${db.size}.`);
 

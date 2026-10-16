@@ -16,8 +16,9 @@ import { useI18n } from '../i18n/index.jsx';
  *
  * What these terms have to carry, and why (T013, Legal.md item 2):
  *
- *  - What a pass buys and does not. Both passes are one-off payments for a
- *    fixed number of days, never a subscription (checkout/index.ts).
+ *  - What a pass buys and does not. The Trip Pass is a one-off payment for a
+ *    fixed number of days; the yearly plan is a subscription that renews
+ *    until cancelled (T460, checkout/index.ts).
  *  - The 14-day right of withdrawal and the express waiver for a pass that
  *    starts at once. The waiver itself is collected as a checkbox on the
  *    Stripe Checkout page (consent_collection in the checkout function); the
@@ -51,7 +52,7 @@ import { useI18n } from '../i18n/index.jsx';
  * removing one means a migration. Someone qualified should read the section
  * before the first takedown that cites it; until then it is not reviewed.
  */
-const UPDATED = '7 October 2026';
+const UPDATED = '16 October 2026';
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function TermsOfService({ onClose }) {
@@ -185,13 +186,16 @@ export function TermsOfService({ onClose }) {
 
           <h3>What a pass buys</h3>
           <p>
-            A pass is a fixed number of days of access to Carta's paid features,
-            bought once. The Trip Pass and the Year Pass differ only in how many
-            days they run and in their fair-use ceilings. Both start the moment
-            your payment completes and end on their own on the last day. There
-            is no renewal and no recurring charge. When a pass ends, your trips
-            and plans stay saved and readable; only the paid actions stop until
-            you buy another.
+            There are two ways to buy access to Carta's paid features. The Trip
+            Pass is a fixed number of days, bought once: it starts the moment
+            your payment completes and ends on its own on the last day, with no
+            renewal and no recurring charge. The yearly plan is a subscription:
+            it starts the moment your first payment completes, runs for a year,
+            and renews for another year at the same price on each anniversary
+            until you cancel it. The two differ otherwise only in how long they
+            run and in their fair-use ceilings. When a pass or plan ends, your
+            trips and plans stay saved and readable; only the paid actions stop
+            until you buy again.
           </p>
           <p>
             The paid features, at the date above, are: Carta bot day plans up
@@ -233,6 +237,22 @@ export function TermsOfService({ onClose }) {
             store your card number. If a payment fails, nothing is charged and
             no pass is granted.
           </p>
+          <p>
+            For the yearly plan, the same card is charged the yearly price on
+            each renewal date, and Stripe emails a receipt each time. If we ever
+            change the yearly price, we tell you by email at least 30 days
+            before the renewal it applies to, and you can cancel before then.
+          </p>
+
+          <h3>Cancelling the yearly plan</h3>
+          <p>
+            You can cancel the yearly plan at any time, online, from your
+            Account page ("Cancel yearly plan"), without giving a reason. The
+            plan then runs to the end of the year you have paid for and is not
+            renewed; nothing more is charged. Until that day you can take the
+            cancellation back from the same page. You can also manage your card
+            and download invoices there through Stripe's billing page.
+          </p>
 
           <h3>Your right to withdraw, and why checkout asks you to waive it</h3>
           <p>
@@ -246,8 +266,10 @@ export function TermsOfService({ onClose }) {
           <p>
             A pass is useful only if it starts straight away, so the Stripe
             checkout page asks you to tick a box confirming exactly that: you
-            want your pass to begin as soon as payment completes, and you
-            understand that your 14-day right of withdrawal ends when it does.
+            want your pass or plan to begin as soon as payment completes, and
+            you understand that your 14-day right of withdrawal ends when it
+            does. For the yearly plan the same box also states that the plan
+            renews every year until you cancel.
             You cannot buy a pass without ticking it. If you would rather keep
             the full 14 days, do not buy; the free features remain available
             and nothing is lost.
@@ -258,7 +280,9 @@ export function TermsOfService({ onClose }) {
             Beyond your legal rights we refund in three cases. First, if you
             ask within 14 days of buying and you have used no Carta bot plan,
             no live search and no export on that pass, we refund the whole
-            amount, no questions asked. Second, if the paid features are
+            amount, no questions asked; the same holds for a yearly renewal you
+            ask about within 14 days of it, if you have used nothing since it
+            was charged. Second, if the paid features are
             unavailable through our fault for a substantial part of your pass,
             we extend the pass by the days lost or, if you prefer, refund the
             unused share. Third, if we withdraw or materially reduce a paid

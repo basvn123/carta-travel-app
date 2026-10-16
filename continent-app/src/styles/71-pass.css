@@ -1,0 +1,156 @@
+/* The pass panel (T460), on the kit and the roles only. Imported by
+   components/PassModal.jsx, which usePaywall loads lazily, so none of this is
+   in the first-paint stylesheet.
+
+   A bottom sheet on a phone, a centred dialog from 769 px: the heading, two
+   plans as one radio choice, what the chosen plan adds, one primary, one line
+   of small print. The recommended plan carries a status chip; the chosen one
+   carries the selected state (tint, brown edge, a tick), never a dark fill. */
+
+.pass-overlay {
+  position: fixed;
+  inset: 0;
+  /* z 320 lives in 25-feature-pages.css with the reason: it outranks the
+     destination page (240) and the day-plan dialog (62) that open it. */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.pass-sheet {
+  --pass-pad-top: var(--space-4);
+  width: 100%;
+  max-height: calc(100dvh - var(--space-6));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--pass-pad-top) var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom));
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: var(--surface);
+  color: var(--text);
+}
+.pass-head {
+  /* The heading and its close stay in reach while the sheet scrolls. */
+  position: sticky;
+  top: calc(-1 * var(--pass-pad-top));
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: calc(-1 * var(--pass-pad-top));
+  padding-top: var(--pass-pad-top);
+  background: var(--surface);
+}
+.pass-title {
+  margin: 0;
+  padding-top: var(--space-2);
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+}
+.pass-sub, .pass-holding {
+  margin: calc(-1 * var(--space-2)) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.pass-holding { color: var(--text); }
+
+/* Two plans, one choice. */
+.pass-plans { display: grid; gap: var(--space-2); }
+.pass-plan {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+.pass-plan.is-selected { border-color: var(--select-border); background: var(--select-bg); }
+.pass-plan:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (hover: hover) { .pass-plan:not(.is-selected):hover { background: var(--surface-hover); } }
+.pass-plan-mark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--action-text);
+}
+.pass-plan.is-selected .pass-plan-mark { border-color: var(--action); background: var(--action); }
+.pass-plan-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.pass-plan-top { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.pass-plan-top .ui-chip { order: -1; }
+.pass-plan-name { font-size: var(--text-lead); font-weight: 600; }
+.pass-plan.is-selected .pass-plan-name { color: var(--select-ink); }
+.pass-plan-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 var(--space-2); }
+.pass-plan-fig {
+  font-size: var(--text-title);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.pass-plan-per { font-size: var(--text-body); color: var(--text-2); }
+.pass-plan-note { font-size: var(--text-label); color: var(--text-2); }
+
+/* What the chosen plan adds, once. */
+.pass-adds { display: flex; flex-direction: column; gap: var(--space-2); }
+.pass-adds-title { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.pass-adds ul { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.pass-adds li { display: flex; align-items: flex-start; gap: var(--space-2); font-size: var(--text-body); line-height: var(--leading-ui); }
+.pass-adds li svg { flex: none; margin-top: 2px; color: var(--text-2); }
+
+.pass-error { margin: 0; font-size: var(--text-body); color: var(--danger); }
+.pass-free { margin: calc(-1 * var(--space-2)) 0 0; text-align: center; font-size: var(--text-label); color: var(--text-2); }
+.pass-legal {
+  margin: 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+  text-align: center;
+}
+.pass-terms {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.pass-terms:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+@media (min-width: 769px) {
+  .pass-overlay { align-items: center; padding: var(--space-6); }
+  .pass-sheet {
+    --pass-pad-top: var(--space-5);
+    max-width: 520px;
+    max-height: calc(100dvh - var(--space-8));
+    padding: var(--pass-pad-top) var(--space-6) var(--space-6);
+    border-radius: var(--radius-sheet);
+  }
+  .pass-plans { grid-template-columns: 1fr 1fr; }
+  .pass-plan { flex-direction: column; gap: var(--space-2); padding: var(--space-4); }
+  .pass-plan-mark { position: absolute; top: var(--space-4); right: var(--space-4); margin: 0; }
+  .pass-plan-top { padding-right: var(--space-7); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pass-plan { transition: none; }
+}
