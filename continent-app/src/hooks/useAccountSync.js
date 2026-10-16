@@ -3,6 +3,7 @@ import { saveTrip, fetchUserSettings, saveUserSettings } from '../auth/tripStora
 import { clampRatingRange, rangeFromMinTier } from '../lib/rating.js';
 import { readFavList, writeFavList } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
+import { mergeVisitedCountries, useVisitedCountries } from '../lib/visitedCountries.js';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
  *  account: pulls saved settings once right after login (never when a shared
@@ -32,6 +33,8 @@ export function useAccountSync({
   // traveller who chose Nederlands on the phone reads Nederlands on the laptop
   // too. Origin, party, stay tier and Lifestyle already sync inside `choices`.
   const { lang, setLang, languages } = useI18n();
+  // Countries marked visited by hand on My trips (T434), synced with the rest.
+  const visitedCountries = useVisitedCountries();
   // The account id we've already pulled settings for (keyed by id, not a bare
   // boolean, so a second sign-in in the same page session re-hydrates for the
   // new account instead of being short-circuited by the first pull).
@@ -105,6 +108,9 @@ export function useAccountSync({
         const incoming = readFavList(settings.favorites);
         if (incoming.size) setFavorites((prev) => new Set([...prev, ...incoming]));
       }
+      // Countries marked visited by hand (T434) merge the same way: a list
+      // that only grows, so a union loses nothing marked on either side.
+      if (Array.isArray(settings.visitedCountries)) mergeVisitedCountries(settings.visitedCountries);
     }).catch(() => {}).finally(() => { hydratedRef.current = true; });
     // The setters are App's useState setters, stable for the page's life, so
     // listing them never re-runs the pull; appliedForRef guards it regardless.
@@ -131,10 +137,11 @@ export function useAccountSync({
         // account replace the local list, loses stars that were never
         // anywhere else, which is the worse of the two.
         favorites: writeFavList(favorites),
+        visitedCountries,
       }).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
-  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites, lang]);
+  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites, lang, visitedCountries]);
 
   const handleSaveTrip = useCallback(async (destination) => {
     if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }

@@ -123,7 +123,7 @@ const run = async () => {
   ok('a card carries its route, its length, its season and its byline');
 
   /* ---- 4. Country chips ---- */
-  const chips = page.locator('.gld-chip');
+  const chips = page.locator('.gld-filters [role="radio"]');
   const chipCount = await chips.count();
   if (chipCount < 3) fail(`only ${chipCount} country chips, expected Everywhere plus two countries`);
   else ok(`${chipCount} filter chips, one per country that actually has a guide`);

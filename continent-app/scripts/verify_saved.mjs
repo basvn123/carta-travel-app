@@ -1,33 +1,35 @@
-// Headless look at the three-tab Saved-trips panel, in the states reachable
-// without an account:
-//   1. Fresh device: Favorites / Planned / Visited tabs, empty invitations.
-//   2. Seeded day plans: one upcoming (card + mini map + caption) and one
-//      finished (Visited tab: ledger cards + travel-record journey card).
-//   3. The ?savedmock seam: favorites with flags and saved dates, the big
-//      planned journey card, three visited cards, and no photo fallbacks,
-//      every card must resolve an image through the fallback chain.
-//   4. Mobile width: no sideways scroll, all three tabs.
+// Headless check of My trips (rebuilt in T434: Trips, Shortlist, Visited on
+// the kit). What it walks:
+//   1. Fresh device, desktop: three section tiles in the side panel wired to
+//      one tabpanel; the selected tile wears the light select tint, never a
+//      dark fill; each empty tab is one line and one way forward, no map.
+//   2. Seeded day plans: the upcoming one is a row on Trips, Remove runs at
+//      once with Undo; the finished one is on Visited with the map, a pin and
+//      the figures band.
+//   3. The ?savedmock seam: the next trip is the one focal card with its
+//      countdown and its price for the party, marked as an estimate; a later
+//      trip is a row; the statement of reasons still opens and contests; the
+//      record runs by year with a year filter; the shortlist prices like
+//      Explore and offers "Plan a trip"; countries can be marked by hand.
+//   4. Phone width: no sideways scroll on any tab, 44 px tiles, nothing
+//      functional under 11 px and no figure under 12 px.
 // Run from inside continent-app/:  node scripts/verify_saved.mjs
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
 const PORT = Number(process.env.CARTA_PORT) || 4191;
-const BASE = `http://127.0.0.1:${PORT}`;
+const BASE = process.env.BASE_URL || `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
 
-// Reuse an already-running preview on this port; only spawn when nothing
-// answers. (Not port 4190: it is on the fetch spec's blocked-port list.)
 const isUp = async () => {
   try { return (await fetch(BASE)).ok; } catch { return false; }
 };
 let srv = null;
 const waitForServer = async () => {
   if (await isUp()) return;
-  srv = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], {
-    shell: true, stdio: 'ignore',
-  });
+  srv = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { shell: true, stdio: 'ignore' });
   for (let i = 0; i < 60; i += 1) {
     if (await isUp()) return;
     await new Promise((r) => setTimeout(r, 500));
@@ -35,8 +37,6 @@ const waitForServer = async () => {
   throw new Error('vite preview never came up');
 };
 
-// Dates relative to today so the classification under test never goes stale:
-// one plan safely finished, one safely ahead.
 const iso = (offsetDays) => {
   const d = new Date();
   d.setDate(d.getDate() + offsetDays);
@@ -44,97 +44,82 @@ const iso = (offsetDays) => {
 };
 const DAY_PLANS = [
   { id: 'v1', label: 'Bruges', startDate: iso(-10), stops: [{ destinationId: 'gem:bruges', days: 2 }] },
-  {
-    id: 'v2',
-    label: 'Lisbon and Porto',
-    startDate: iso(28),
-    stops: [{ destinationId: 'LIS', days: 3 }, { destinationId: 'OPO', days: 2 }],
-  },
+  { id: 'v2', label: 'Lisbon and Porto', startDate: iso(28), stops: [{ destinationId: 'LIS', days: 3 }, { destinationId: 'OPO', days: 2 }] },
 ];
 
 const fail = (msg) => { console.error('FAIL:', msg); process.exitCode = 1; };
 const ok = (msg) => console.log('  ok:', msg);
 
-// Past the entry gate and any first-run coach marks, into the app proper.
 const enterApp = async (page) => {
-  try {
-    await page.getByRole('button', { name: 'Continue without an account' }).click({ timeout: 12000 });
-  } catch { /* auth not configured in this build */ }
+  try { await page.getByRole('button', { name: 'Continue without an account' }).click({ timeout: 12000 }); } catch { /* no gate */ }
   for (const label of ['Explore the map', 'Open the app', 'Got it']) {
-    try { await page.getByRole('button', { name: label }).first().click({ timeout: 3000 }); } catch { /* not shown */ }
+    try { await page.getByRole('button', { name: label }).first().click({ timeout: 2500 }); } catch { /* not shown */ }
   }
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(500);
 };
-
-// "Saved" lives in the header on desktop ("Saved trips") and in the bottom
-// nav on mobile ("My trips").
 const openSaved = async (page) => {
-  const btn = page.locator('.header-nav-item, .bottom-nav-item')
-    .filter({ hasText: /^(Saved trips|My trips)$/ }).locator('visible=true').first();
+  const btn = page.locator('.header-nav-item, .bottom-nav-item').filter({ hasText: /^(Saved trips|My trips)$/ }).locator('visible=true').first();
   await btn.waitFor({ timeout: 25000 });
   await btn.click();
-  await page.locator('.saved-trips-panel').waitFor({ timeout: 10000 });
-  await page.waitForTimeout(600);
+  await page.locator('.mytrips .saved-trips-panel').waitFor({ timeout: 15000 });
+  await page.waitForTimeout(500);
 };
+// The section tiles are drawn twice (side panel on desktop, under the title
+// on a phone); :visible picks whichever this width shows.
+const tab = (page, name) => page.locator('[role="tab"]:visible').filter({ hasText: name }).first();
+const pick = async (page, name) => { await tab(page, name).click(); await page.waitForTimeout(500); };
 
-// T390 (brief V3-2) put Planned first: the next trip is what a returning
-// traveller comes back for. The order was Favorites, Planned, Visited.
-const TAB_INDEX = { planned: 0, favorites: 1, visited: 2 };
-// The three tabs are drawn twice from one renderer (browse chrome v4): a tile
-// row inside the header on a phone, a column in the left panel on desktop,
-// with CSS showing one arrangement or the other. :visible picks whichever
-// this viewport is actually showing.
-const tabButtons = (page) => page.locator('.saved-tab:visible');
-const pickTab = async (page, which) => {
-  await tabButtons(page).nth(TAB_INDEX[which]).click();
-  await page.waitForTimeout(400);
-};
+// Text sizes: nothing functional under 11 px, no figure under 12 px.
+const smallText = (page) => page.evaluate(() => {
+  const root = document.querySelector('.mytrips');
+  const bad = [];
+  root?.querySelectorAll('*').forEach((el) => {
+    if (!el.childNodes.length || ![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const px = parseFloat(getComputedStyle(el).fontSize);
+    const txt = el.textContent.trim();
+    if (px < 11 || (/\d/.test(txt) && px < 12)) bad.push(`${txt.slice(0, 24)} ${px}px`);
+  });
+  return bad;
+});
 
 try {
   await waitForServer();
   const browser = await chromium.launch();
 
-  // ---- 1. Fresh device: three tabs up top, invitations instead of dead ends.
-  const empty = await browser.newPage({ viewport: { width: 1360, height: 900 } });
+  // ---- 1. Fresh device, desktop ----
+  console.log('1. fresh device');
+  const ctx1 = await browser.newContext({ viewport: { width: 1360, height: 900 } });
+  const empty = await ctx1.newPage();
   await empty.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await empty.goto(BASE);
   await enterApp(empty);
   await openSaved(empty);
-  const tabs = await tabButtons(empty).count();
-  if (tabs !== 3) fail(`expected 3 tabs, got ${tabs}`);
-  // Desktop: the tabs stand in the left panel. The selected one is the house
-  // selected state, --ink-fill rgb(43, 52, 70) (carta-design "Selected state",
-  // DIRECTION.md rule account 6). Updated by T390 (row T379-f): this line used
-  // to assert the pre-T363 accent rgb(224, 90, 71), a value the stylesheet no
-  // longer has, and accent is never a selection colour now.
-  if (!(await empty.locator('.saved-side').isVisible())) fail('no left panel on desktop My trips');
-  const onBg = await empty.locator('.saved-side .side-cat.on').first()
-    .evaluate((el) => getComputedStyle(el).backgroundColor).catch(() => '');
-  if (onBg !== 'rgb(43, 52, 70)') fail(`the selected tab is ${onBg}, not --ink-fill`);
-  const dashed = await empty.evaluate(() => [...document.querySelectorAll('.saved-empty')]
-    .map((el) => getComputedStyle(el).borderStyle).filter((s) => s.includes('dashed')).length);
-  if (dashed) fail(`${dashed} empty state(s) still drawn with a dashed border`);
-  const plannedEmpties = await empty.locator('.saved-empty').count();
-  if (plannedEmpties < 1) fail('planned tab shows no empty invitation');
-  // The map belongs to the record now: nothing on Planned, and nothing on an
-  // empty Visited tab either (a map of no visits says nothing).
-  if (await empty.locator('.saved-map').count()) fail('planned tab still carries the mini map');
-  await empty.waitForTimeout(900);
-  console.log('planned tab, fresh device: empty shelves =', plannedEmpties);
-  await empty.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-empty-planned.png` });
-  await pickTab(empty, 'favorites');
-  const favEmpty = await empty.locator('.saved-empty').count();
-  if (favEmpty !== 1) fail(`favorites tab should show exactly one state block, got ${favEmpty}`);
-  await empty.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-empty-favorites.png` });
-  await pickTab(empty, 'visited');
-  const visEmpty = await empty.locator('.saved-empty').count();
-  if (visEmpty !== 1) fail(`visited tab should show exactly one state block, got ${visEmpty}`);
-  if (await empty.locator('.ledger2').count()) fail('empty visited tab should not show a zeroed ledger');
-  if (await empty.locator('.saved-map').count()) fail('empty visited tab should not show a map of nothing');
-  await empty.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-empty-visited.png` });
+  const tabs = await empty.locator('.saved-side [role="tab"]').count();
+  if (tabs !== 3) fail(`expected 3 section tiles in the side panel, got ${tabs}`);
+  const controls = await empty.locator('.saved-side [role="tab"]').first().getAttribute('aria-controls');
+  if (!controls || !(await empty.locator(`#${controls}[role="tabpanel"]`).count())) fail('the section tiles do not point at a tabpanel');
+  const onBg = await empty.locator('.saved-side [role="tab"][aria-selected="true"]').evaluate((el) => getComputedStyle(el).backgroundColor);
+  const tint = await empty.evaluate(() => { const p = document.createElement('div'); p.style.background = 'var(--select-bg)'; document.body.appendChild(p); const c = getComputedStyle(p).backgroundColor; p.remove(); return c; });
+  if (onBg !== tint) fail(`the selected section is ${onBg}, not the --select-bg tint ${tint}`);
+  if (!(await empty.locator('.mt-empty').count())) fail('Trips shows no empty line');
+  if (!(await empty.getByRole('button', { name: 'Plan a trip' }).count())) fail('the empty Trips tab offers no "Plan a trip"');
+  const caption = await empty.locator('.mytrips').innerText();
+  if (/find them back|stays on this device|Shape a day/i.test(caption)) fail('a retired caption is still on the page');
+  await empty.locator('.mytrips').screenshot({ path: `${SHOTS}/saved-empty-trips.png` });
+  await pick(empty, 'Shortlist');
+  if ((await empty.locator('.mt-empty').count()) !== 1) fail('the empty Shortlist should be one line');
+  await pick(empty, 'Visited');
+  if (await empty.locator('.mt-map').count()) fail('an empty record should not draw a map of nothing');
+  if (await empty.locator('.mt-band').count()) fail('an empty record should not show a zeroed figures band');
+  ok('fresh device: tiles, tabpanel, tint, one-line empties');
+  await ctx1.close();
 
-  // ---- 2. Seeded day plans: the dates do the filing.
-  const full = await browser.newPage({ viewport: { width: 1360, height: 900 } });
+  // ---- 2. Seeded day plans ----
+  console.log('2. seeded day plans');
+  const ctx2 = await browser.newContext({ viewport: { width: 1360, height: 900 } });
+  const full = await ctx2.newPage();
   await full.addInitScript((plans) => {
     localStorage.setItem('continent.homeSeen.v1', '1');
     localStorage.setItem('carta.savedTripsTab', 'planned');
@@ -143,275 +128,134 @@ try {
   await full.goto(BASE);
   await enterApp(full);
   await openSaved(full);
-
-  const upTitles = await full.locator('.saved-card .saved-card-title').allInnerTexts();
-  if (upTitles.length !== 1 || !upTitles[0].includes('Lisbon')) {
-    fail(`expected one upcoming day-plan card (Lisbon and Porto), got: ${JSON.stringify(upTitles)}`);
-  }
-  if (await full.locator('.saved-map').count()) fail('planned tab still carries the mini map');
-  await full.waitForTimeout(700);
-  await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-planned-full.png` });
-
-  // The card menu still opens. Remove runs at once and offers Undo in the
-  // bottom slot for six seconds (T400: carta-design "Undo, not confirm"
-  // replaced the inline Keep or Remove this step used to assert).
-  await full.locator('.saved-card .saved-card-more').first().click();
-  await full.locator('.saved-card-pop').waitFor({ timeout: 4000 });
-  await full.locator('.saved-card-pop-item.danger').click();
+  const rowTitles = await full.locator('.mt-row .card-title').allInnerTexts();
+  if (!rowTitles.some((s) => /Lisbon and Porto/.test(s))) fail(`the upcoming day plan is not a row: ${JSON.stringify(rowTitles)}`);
+  await full.locator('.mt-row .mt-menu button').first().click();
+  await full.locator('.mt-menu-item.is-danger').click();
   await full.locator('.undo-toast').waitFor({ timeout: 4000 });
-  if (await full.locator('.saved-card .saved-card-title').count()) fail('Remove left the day plan on the list');
-  await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-confirm.png` });
-  await full.locator('.undo-toast-undo').click();
-  if ((await full.locator('.saved-card .saved-card-title').count()) !== 1) fail('"Undo" did not put the card back');
+  if ((await full.locator('.mt-row .card-title').filter({ hasText: 'Lisbon and Porto' }).count())) fail('Remove left the day plan on the list');
+  await full.locator('.undo-toast').getByRole('button', { name: 'Undo' }).click();
+  if (!(await full.locator('.mt-row .card-title').filter({ hasText: 'Lisbon and Porto' }).count())) fail('"Undo" did not put the day plan back');
+  await pick(full, 'Visited');
+  const past = await full.locator('.mt-year .mt-row .card-title').allInnerTexts();
+  if (!past.some((s) => /Belgium|Bruges/.test(s))) fail(`the finished day plan is not on the record: ${JSON.stringify(past)}`);
+  await full.locator('.mt-map canvas').waitFor({ timeout: 20000 }).catch(() => fail('record map canvas never appeared'));
+  await full.locator('.mt-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('record map never drew a pin'));
+  const band = await full.locator('.mt-band dd').allInnerTexts();
+  if (band[0] !== '1') fail(`the figures band should count 1 country, got ${JSON.stringify(band)}`);
+  const hint = await full.locator('.maplibregl-cooperative-gesture-screen').count();
+  if (hint) fail('the record map still asks for Ctrl to zoom');
+  ok('seeded: day plan row with undo, record row, map with pin, band');
+  await full.locator('.mytrips').screenshot({ path: `${SHOTS}/saved-visited-full.png` });
+  await ctx2.close();
 
-  // Visited tab: the finished Bruges day plan became a journey card, and the
-  // ledger adds it up: 1 European country out of the whole flag catalogue.
-  await pickTab(full, 'visited');
-  const visCards = await full.locator('.uptrip-card.is-visited').count();
-  if (visCards !== 1) fail(`expected 1 visited journey card, got ${visCards}`);
-  const visTitle = await full.locator('.uptrip-card.is-visited .uptrip-title').innerText();
-  if (!/Belgium|Bruges/.test(visTitle)) fail(`visited card title unexpected: "${visTitle}"`);
-  // The record's own map: Bruges pinned, Belgium painted.
-  await full.locator('.saved-map .trip-map canvas').waitFor({ timeout: 15000 }).catch(() => fail('record map canvas never appeared'));
-  // Pins are drawn on the style's load event, which is a network round trip
-  // after the canvas exists.
-  await full.locator('.saved-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('record map never drew a pin'));
-  const visPins = await full.locator('.saved-map .trip-pin.trip-pin-plain').count();
-  if (visPins < 1) fail(`record map pinned nothing, got ${visPins} pins`);
-  const numbered = await full.locator('.saved-map .trip-pin-no').allInnerTexts();
-  if (numbered.some((s) => s.trim())) fail(`record pins should carry no numbers: ${JSON.stringify(numbered)}`);
-  const shapesRes = await full.evaluate(() => fetch('/country_shapes.json').then((r) => r.ok));
-  if (!shapesRes) fail('country_shapes.json is not being served');
-  const ledgerNums = await full.locator('.ledger2-num').allInnerTexts();
-  if (ledgerNums.length !== 2) fail(`expected 2 ledger cards, got ${ledgerNums.length}`);
-  if (!/1\s*\/\s*43/.test(ledgerNums[0].replace(/\s+/g, ' '))) {
-    fail(`countries ledger should read 1 / 43, got "${ledgerNums[0]}"`);
-  }
-  console.log('ledger:', ledgerNums.map((s) => s.replace(/\s+/g, ' ')));
-  const flagItems = await full.locator('.ledger2-flagitem').count();
-  if (flagItems < 1) fail('countries ledger shows no flag');
-  await full.waitForTimeout(700);
-  await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-visited-full.png` });
-
-  // ---- 3b. The record, next to what friends have shown you.
-  //
-  // Every number here comes from trips a friend already chose to show, so the
-  // block must never read as a ranking: a friend who has seen thirty countries
-  // and shares one trip appears as one, and presenting that as a score would
-  // turn a private choice into public pressure.
-  const compare = async (page) => {
-    const led = page.locator('.fledger');
-    if (!await led.count()) { fail('no friend comparison on the Visited tab'); return; }
-    const text = await led.innerText();
-    if (!/Sofie Vermeulen/.test(text) || !/Jonas Peeters/.test(text)) {
-      fail(`the comparison does not name both friends: ${text}`);
-    } else ok('the comparison lists each friend once, not each trip');
-    // Sofie shows Portugal and Austria, Jonas shows Italy, so the rows are 2
-    // and 1 and Sofie sorts first.
-    const nums = await led.locator('.fledger-row:not(.is-legend) .fledger-num').allInnerTexts();
-    const countries = nums.filter((_, i) => i % 2 === 0);
-    if (countries[1] !== '2' || countries[2] !== '1') {
-      fail(`friend country counts are wrong or unsorted: ${JSON.stringify(countries)}`);
-    } else ok('counts are per friend, deduped across their trips, most first');
-    if (!/not a ranking/i.test(text)) {
-      fail('the comparison does not say it is not a ranking');
-    } else ok('and it says plainly that it is not a ranking');
-  };
-
-  // ---- 3. The account-only shapes, through the ?savedmock seam.
-  const mock = await browser.newPage({ viewport: { width: 1360, height: 900 } });
-  await mock.addInitScript(() => localStorage.setItem('carta.savedTripsTab', 'planned'));
+  // ---- 3. The mock seam ----
+  console.log('3. ?savedmock');
+  const ctx3 = await browser.newContext({ viewport: { width: 1360, height: 900 } });
+  const mock = await ctx3.newPage();
+  await mock.addInitScript(() => { localStorage.setItem('carta.savedTripsTab', 'planned'); localStorage.removeItem('carta.visitedCountries.v1'); });
   await mock.goto(`${BASE}/?savedmock`);
   await enterApp(mock);
   await openSaved(mock);
-  // T400 (brief V4-2): the seam holds two trips ahead; the next one is the
-  // focal card and the later one a row, so the checks read the focal card.
-  const upCards = await mock.locator('.uptrip-card:not(.is-foreign)').count();
-  if (upCards !== 2) fail(`expected 2 upcoming trip cards, got ${upCards}`);
-  if ((await mock.locator('.uptrip-card.is-focal').count()) !== 1) fail('the next trip is not the one focal card');
-  if ((await mock.locator('.uptrip-card.is-row').count()) !== 1) fail('the later trip is not drawn as a row');
-  const upTitle = await mock.locator('.uptrip-card.is-focal .uptrip-title').innerText();
-  const upSub = await mock.locator('.uptrip-card.is-focal .uptrip-sub').innerText().catch(() => '');
-  if (!/Portugal/.test(upTitle)) fail(`upcoming card should headline the country, got "${upTitle}"`);
-  if (!/Lisbon.*Porto/.test(upSub)) fail(`upcoming card cities line unexpected: "${upSub}"`);
-  const chip = await mock.locator('.uptrip-card.is-focal .uptrip-when').innerText();
+  if ((await mock.locator('.mt-hero').count()) !== 1) fail('the next trip is not the one focal card');
+  const heroTitle = await mock.locator('.mt-hero-title').innerText();
+  if (!/Portugal/.test(heroTitle)) fail(`the focal card should headline the country, got "${heroTitle}"`);
+  if (!/Lisbon.*Porto/.test(await mock.locator('.mt-hero-sub').innerText())) fail('the focal card does not list its cities');
+  const chip = await mock.locator('.mt-hero-top .ui-chip').first().innerText();
   if (!/In \d+ days/.test(chip)) fail(`countdown unexpected: "${chip}"`);
-  if (!(await mock.locator('.uptrip-card.is-focal .uptrip-flag').count())) fail('upcoming card is missing its corner flag badge');
-  // The "Dates" label went with the caption band (T400): the dates read in
-  // mono beside the countdown, so the check asks for the dates themselves.
-  if (!(await mock.locator('.uptrip-card.is-focal .uptrip-dates').count())) fail('upcoming card is missing its dates');
-  // Caption band (T400, brief V4-1): no words on any photograph.
-  const onPhoto = await mock.locator('.uptrip-photo, .fav-card-photo').evaluateAll((els) => els.filter((e) => e.innerText.trim()).length);
-  if (onPhoto) fail(`${onPhoto} photograph(s) still carry text`);
-  await mock.waitForTimeout(900);
-  await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-planned.png` });
+  const cost = await mock.locator('.mt-hero .mt-price').innerText().catch(() => '');
+  if (!/^~.*est\..*for 2/.test(cost.replace(/\s+/g, ' '))) fail(`the trip cost should read "~€N est. for 2", got "${cost}"`);
+  if (!/ to /.test(await mock.locator('.mt-hero-dates').innerText())) fail('the dates are not written "to"');
+  const primaries = await mock.locator('.mt-panel .btn-primary:visible').count();
+  if (primaries !== 1) fail(`Trips should have one primary, got ${primaries}`);
+  if ((await mock.locator('#mt-later .mt-row, .mt-section:has(#mt-later) .mt-row').count()) !== 1) fail('the later trip is not one row');
+  const onPhoto = await mock.locator('.mt-hero-media').evaluateAll((els) => els.filter((e) => e.innerText.trim()).length);
+  if (onPhoto) fail('the focal photo carries text');
+  await mock.locator('.mytrips').screenshot({ path: `${SHOTS}/saved-mock-trips.png` });
 
-  // The statement of reasons (T070, DSA Articles 17 and 20): the mock plan
-  // carries one, so its owner sees what was done, why, and how to contest.
+  // The statement of reasons under the trip still works.
   const note = mock.locator('.modnote').first();
   await note.waitFor({ timeout: 8000 }).catch(() => fail('the planned trip carries no statement of reasons'));
   if (await mock.locator('.modnote').count()) {
-    if (!/off the public guides/i.test(await note.locator('.modnote-title').innerText())) fail('the statement has no plain title');
-    if (!/nothing in it was deleted/i.test(await note.locator('.modnote-line').innerText())) fail('the one-line state does not say nothing was deleted');
-    if (await note.locator('.modnote-body').count()) fail('the statement opens before it is asked for');
     const toggle = note.locator('.modnote-toggle').first();
-    if (await toggle.getAttribute('aria-expanded') !== 'false') fail('the statement toggle does not say it is collapsed');
+    if (await toggle.getAttribute('aria-expanded') !== 'false') fail('the statement opens before it is asked for');
     await toggle.click();
-    const facts = await note.locator('.modnote-body').innerText();
-    for (const [what, re] of [['what was done', /removed .* from the public guides/i], ['why', /copies a chapter of a published travel book/i],
-      ['what started it', /2 reports from readers/i], ['who decided', /person on the Carta team/i], ['the options', /contest this decision here/i],
-      ['the ground (051)', /content rule for public guides: Someone else's work/i], ['the lock (051)', /cannot be published again/i]]) {
-      if (!re.test(facts)) fail(`the statement does not say ${what}`);
-    }
-    if (await toggle.getAttribute('aria-expanded') !== 'true' || !(await toggle.getAttribute('aria-controls'))) fail('the toggle is not tied to the statement it opens');
-    // The complaint form: focus in, a label, a short complaint worded, then sent.
-    await note.locator('.modnote-toggle', { hasText: /contest this decision/i }).click();
-    const cbox = note.locator('.modnote-form textarea');
-    if (!(await cbox.evaluate((el) => el === document.activeElement))) fail('opening the complaint did not move focus into it');
-    const cid = await cbox.getAttribute('id');
-    if (!(await note.locator(`label[for="${cid}"]`).count())) fail('the complaint field has no label tied to it');
-    await cbox.fill('too short');
-    await note.locator('.modnote-form button[type="submit"]').click();
-    if (!/at least 10 characters/i.test(await note.locator('.modnote-form [role="alert"]').innerText())) fail('a short complaint is not refused in words');
-    if (await cbox.getAttribute('aria-invalid') !== 'true') fail('a short complaint does not mark the field invalid');
-    await cbox.fill('The text is my own blog post, published under my name.');
-    await note.locator('.modnote-form button[type="submit"]').click();
-    await note.locator('.modnote-line[role="status"]').waitFor({ timeout: 5000 }).catch(() => fail('a sent complaint says nothing'));
-    if (!/complaint sent/i.test(await note.locator('.modnote-line').innerText())) fail('a sent complaint does not confirm itself');
-    await mock.waitForTimeout(500);
-    await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-statement.png` });
-    ok('the statement of reasons: facts, the toggle, and the complaint form with its focus, label and words');
+    if (await toggle.getAttribute('aria-expanded') !== 'true') fail('the statement toggle does not open');
   }
 
-  // Visited tab: three finished mock trips, ledger at 3 countries.
-  await pickTab(mock, 'visited');
-  const mockVis = await mock.locator('.uptrip-card.is-visited').count();
-  if (mockVis !== 3) fail(`expected 3 visited journey cards, got ${mockVis}`);
-  const mockVisTitles = await mock.locator('.uptrip-card.is-visited .uptrip-title').allInnerTexts();
-  if (!mockVisTitles.some((s) => s.includes('Flanders'))) fail(`visited record misses the labelled plan: ${JSON.stringify(mockVisTitles)}`);
-  if (!mockVisTitles.some((s) => /Austria|Salzburg/.test(s))) fail(`visited record misses Salzburg: ${JSON.stringify(mockVisTitles)}`);
-  const mockLedger = await mock.locator('.ledger2-num').allInnerTexts();
-  if (!/3\s*\/\s*43/.test((mockLedger[0] || '').replace(/\s+/g, ' '))) {
-    fail(`mock countries ledger should read 3 / 43, got "${mockLedger[0]}"`);
-  }
-  await compare(mock);
-  const mockFlagNames = await mock.locator('.ledger2-flagname').allInnerTexts();
-  for (const c of ['Austria', 'Belgium', 'Germany']) {
-    if (!mockFlagNames.includes(c)) fail(`ledger flags miss ${c}: ${JSON.stringify(mockFlagNames)}`);
-  }
-  // The record map carries a pin per visited city, three countries painted.
-  await mock.locator('.saved-map .trip-map canvas').waitFor({ timeout: 15000 }).catch(() => fail('mock record map never appeared'));
-  await mock.locator('.saved-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('mock record map never drew a pin'));
-  const mockPins = await mock.locator('.saved-map .trip-pin').count();
-  if (mockPins < 3) fail(`mock record map should pin every visited city, got ${mockPins}`);
-
-  // The map is explorable: +/- buttons, and the wheel scrolls the page until
-  // ctrl is held (it says so).
-  if (!(await mock.locator('.saved-map .maplibregl-ctrl-zoom-in').count())) fail('record map has no zoom controls');
-  const mapBox = await mock.locator('.saved-map').boundingBox();
-  await mock.mouse.move(mapBox.x + mapBox.width / 2, mapBox.y + mapBox.height / 2);
-  await mock.mouse.wheel(0, -200);
-  await mock.waitForTimeout(400);
-  const gestureHint = await mock.locator('.maplibregl-cooperative-gesture-screen').innerText().catch(() => '');
-  if (!/ctrl/i.test(gestureHint)) fail(`plain wheel over the map should explain itself, got "${gestureHint}"`);
-
-  // Every pin builds a photo of its city, revealed one zoom step past the
-  // frame. The URL is deferred until the photo zoom actually holds, so this
-  // reads it AFTER the zoom step rather than at the opening frame: whether it
-  // had already hydrated by then only ever said whether the painted country
-  // shapes landed before the first fit or after it, which is a race.
-  const photoBgs = () => mock.locator('.saved-map .trip-pin-photo').evaluateAll(
-    (els) => els.map((e) => getComputedStyle(e).backgroundImage));
-  if ((await photoBgs()).length !== mockPins) {
-    fail(`expected a photo on each of ${mockPins} pins, got ${(await photoBgs()).length}`);
-  }
-  if (await mock.locator('.saved-map .trip-map.pins-photo').count()) fail('photos should be hidden at the opening frame');
-  await mock.locator('.saved-map .maplibregl-ctrl-zoom-in').click();
-  await mock.waitForTimeout(1100);
-  if (!(await mock.locator('.saved-map .trip-map.pins-photo').count())) fail('one zoom step in should reveal the photo pins');
-  const photos = await photoBgs();
-  if (photos.some((b) => !/^url\(/.test(b))) fail(`a record pin has no photo: ${JSON.stringify(photos)}`);
-  const pinNames = await mock.locator('.saved-map .trip-pin-label').allInnerTexts();
-  for (const c of ['Munich', 'Salzburg', 'Bruges']) {
-    if (!pinNames.includes(c)) fail(`photo pins miss ${c}: ${JSON.stringify(pinNames)}`);
-  }
-  await mock.waitForTimeout(600);
-  await mock.locator('.saved-map').screenshot({ path: `${SHOTS}/saved-record-photopins.png` });
-  await mock.locator('.saved-map .maplibregl-ctrl-zoom-out').click();
-  await mock.waitForTimeout(900);
-  // Every visited card must resolve a photo through the fallback chain.
-  const visFallbacks = await mock.locator('.uptrip-photo.is-fallback').count();
-  if (visFallbacks) fail(`${visFallbacks} visited card(s) fell back to an icon instead of a photo`);
-  await mock.waitForTimeout(700);
-  await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-visited.png` });
-
-  // Favorites: photo grid with flags, kind tags and saved dates.
-  await pickTab(mock, 'favorites');
-  const favs = await mock.locator('.fav-card').count();
-  if (favs !== 3) fail(`expected 3 favorite cards, got ${favs}`);
-  const favFallbacks = await mock.locator('.fav-card-photo.is-fallback').count();
-  if (favFallbacks) fail(`${favFallbacks} favorite(s) fell back to an icon instead of a photo`);
-  if ((await mock.locator('.fav-card-flag').count()) !== 3) fail('favorite cards are missing corner flags');
-  if ((await mock.locator('.fav-card-savedon').count()) !== 3) fail('favorite cards are missing their saved dates');
-  await mock.waitForTimeout(600);
-  await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-favorites.png` });
-  // Letting a favorite go runs at once and Undo brings it back (T400:
-  // carta-design "Undo, not confirm" replaced the in-place Keep or Remove).
-  await mock.locator('.fav-card-mark').first().click();
+  // Shortlist.
+  await pick(mock, 'Shortlist');
+  const shortRows = await mock.locator('.mt-panel .mt-row').count();
+  if (shortRows !== 3) fail(`expected 3 shortlist rows, got ${shortRows}`);
+  const prices = await mock.locator('.mt-panel .mt-row .xprice').allInnerTexts();
+  if (prices.length < 1) fail('shortlist rows carry no day price');
+  if (prices.some((p) => /national/i.test(p))) fail('a shortlist price still says "national"');
+  if (!(await mock.getByRole('button', { name: /Plan a trip in Portugal/ }).count())) fail('the shortlist offers no "Plan a trip in Portugal"');
+  await mock.locator('.mt-panel .mt-row').first().locator('button[aria-pressed="true"]').click();
   await mock.locator('.undo-toast').waitFor({ timeout: 4000 });
-  if ((await mock.locator('.fav-card').count()) !== 2) fail('the bookmark did not let the favorite go');
-  await mock.locator('.undo-toast-undo').click();
-  if ((await mock.locator('.fav-card').count()) !== 3) fail('"Undo" did not bring the favorite back');
+  if ((await mock.locator('.mt-panel .mt-row').count()) !== 2) fail('the bookmark did not let the place go');
+  await mock.locator('.undo-toast').getByRole('button', { name: 'Undo' }).click();
+  if ((await mock.locator('.mt-panel .mt-row').count()) !== 3) fail('"Undo" did not bring the place back');
+  await mock.locator('.mytrips').screenshot({ path: `${SHOTS}/saved-mock-shortlist.png` });
 
-  // Mock seam, mobile width, all three tabs, no sideways scroll.
-  const mockMob = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
-  await mockMob.addInitScript(() => localStorage.setItem('carta.savedTripsTab', 'planned'));
-  await mockMob.goto(`${BASE}/?savedmock`);
-  await enterApp(mockMob);
-  await openSaved(mockMob);
-  await mockMob.waitForTimeout(900);
-  await pickTab(mockMob, 'planned');
-  if (await mockMob.locator('.modnote-toggle').count()) {
-    await mockMob.locator('.modnote-toggle').first().click();
-    await mockMob.waitForTimeout(400);
-    const noteOver = await mockMob.evaluate(() => {
-      const n = document.querySelector('.modnote');
-      return n ? document.documentElement.scrollWidth - window.innerWidth : -1;
-    });
-    if (noteOver > 1) fail(`the open statement scrolls sideways on mobile by ${noteOver}px`);
-    await mockMob.screenshot({ path: `${SHOTS}/saved-mock-mobile-statement.png` });
-  } else fail('no statement of reasons on the mobile planned tab');
-  for (const which of ['planned', 'visited', 'favorites']) {
-    await pickTab(mockMob, which);
-    const overflow = await mockMob.evaluate(() => {
-      const p = document.querySelector('.saved-trips-panel');
-      return p ? p.scrollWidth - p.clientWidth : -1;
-    });
-    if (overflow > 1) fail(`mock ${which} tab scrolls sideways on mobile by ${overflow}px`);
-    await mockMob.screenshot({ path: `${SHOTS}/saved-mock-mobile-${which}.png` });
-  }
+  // Visited: years, the record, the map, countries by hand.
+  await pick(mock, 'Visited');
+  const years = await mock.locator('.saved-side .mt-chips [role="radio"]').allInnerTexts();
+  if (years.length < 3) fail(`expected a year filter with at least two years, got ${JSON.stringify(years)}`);
+  const recTitles = await mock.locator('.mt-year .card-title').allInnerTexts();
+  if (!recTitles.some((s) => s.includes('Flanders'))) fail(`the record misses the labelled plan: ${JSON.stringify(recTitles)}`);
+  if (!recTitles.some((s) => /Austria|Salzburg/.test(s))) fail(`the record misses Salzburg: ${JSON.stringify(recTitles)}`);
+  await mock.locator('.mt-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('mock record map never drew a pin'));
+  if ((await mock.locator('.mt-map .trip-pin').count()) < 3) fail('the record map should pin every visited city');
+  const before = Number((await mock.locator('.mt-band dd').first().innerText()).trim());
+  await mock.getByRole('button', { name: /^(Edit|Add countries)$/ }).click();
+  const sheetChip = mock.locator('.mt-country-grid button', { hasText: 'Iceland' });
+  await sheetChip.waitFor({ timeout: 5000 });
+  if ((await mock.locator('.mt-country-grid button[disabled]').count()) < 3) fail('countries already on the record are not fixed in the sheet');
+  await sheetChip.click();
+  await mock.getByRole('button', { name: 'Done' }).click();
+  await mock.waitForTimeout(300);
+  const after = Number((await mock.locator('.mt-band dd').first().innerText()).trim());
+  if (after !== before + 1) fail(`marking Iceland should add one country (${before} to ${after})`);
+  if (!(await mock.locator('.mt-flag', { hasText: 'Iceland' }).count())) fail('Iceland is not among the flags');
+  const y2025 = mock.locator('.saved-side .mt-chips [role="radio"]').filter({ hasText: /^20\d\d$/ }).last();
+  await y2025.click();
+  await mock.waitForTimeout(300);
+  const filtered = await mock.locator('.mt-year').count();
+  if (filtered !== 1) fail(`one year chosen should show one year group, got ${filtered}`);
+  await mock.locator('.mytrips').screenshot({ path: `${SHOTS}/saved-mock-visited.png` });
+  ok('mock: focal card priced for the party, row, statement, shortlist, years, countries by hand');
+  await ctx3.close();
 
-  // ---- 4. Seeded day plans, mobile width.
-  const mob = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  // ---- 4. Phone ----
+  console.log('4. phone');
+  const ctx4 = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const mob = await ctx4.newPage();
   await mob.addInitScript((plans) => {
     localStorage.setItem('carta.savedTripsTab', 'planned');
     localStorage.setItem('carta.dayplans.v1', JSON.stringify(plans));
   }, DAY_PLANS);
-  await mob.goto(BASE);
+  await mob.goto(`${BASE}/?savedmock`);
   await enterApp(mob);
   await openSaved(mob);
-  await mob.waitForTimeout(900);
-  const overflow = await mob.evaluate(() => {
-    const p = document.querySelector('.saved-trips-panel');
-    return p ? p.scrollWidth - p.clientWidth : -1;
-  });
-  if (overflow > 1) fail(`saved panel scrolls sideways on mobile by ${overflow}px`);
-  await mob.screenshot({ path: `${SHOTS}/saved-mobile-planned.png` });
-  await pickTab(mob, 'visited');
-  await mob.screenshot({ path: `${SHOTS}/saved-mobile-visited.png` });
+  for (const which of ['Trips', 'Shortlist', 'Visited']) {
+    await pick(mob, which);
+    const over = await mob.evaluate(() => document.querySelector('.saved-trips-panel').scrollWidth - document.querySelector('.saved-trips-panel').clientWidth);
+    if (over > 1) fail(`${which} scrolls sideways on a phone by ${over}px`);
+    const tileH = await tab(mob, which).evaluate((el) => el.getBoundingClientRect().height);
+    if (tileH < 44) fail(`the ${which} tile is ${tileH}px tall`);
+    const small = await smallText(mob);
+    if (small.length) fail(`${which}: text under the floor: ${small.slice(0, 5).join(' | ')}`);
+    await mob.screenshot({ path: `${SHOTS}/saved-mobile-${which.toLowerCase()}.png` });
+  }
+  ok('phone: no sideways scroll, 44 px tiles, text floors');
+  await ctx4.close();
 
   await browser.close();
   console.log(process.exitCode ? 'done with failures' : 'all checks passed');
+} catch (e) {
+  console.error(e);
+  process.exitCode = 1;
 } finally {
   if (srv) srv.kill();
 }

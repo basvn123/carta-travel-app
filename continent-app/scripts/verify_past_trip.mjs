@@ -57,7 +57,7 @@ const openSaved = async (page) => {
 };
 
 const openVisited = async (page) => {
-  await page.locator('.saved-tab:visible').nth(2).click();
+  await page.locator('.mytrips [role="tab"]:visible').nth(2).click();
   await page.waitForTimeout(400);
 };
 
@@ -94,7 +94,7 @@ const run = async () => {
 
   // One way in at a time (T390, brief V3-6): while the record is empty the
   // heading's button waits and the empty state's invitation is the entry.
-  const addBtn = page.locator('.saved-add-past:visible, .saved-empty-cta:visible')
+  const addBtn = page.locator('button:visible')
     .filter({ hasText: /past trip/i }).first();
   if (!await addBtn.count()) fail('no "Add a past trip" button on the Visited tab');
   await addBtn.click();
@@ -199,7 +199,7 @@ const run = async () => {
   await page.waitForTimeout(900);
 
   if (await page.locator('.pasttrip-form').count()) fail('form stayed open after saving');
-  const cards = page.locator('.uptrip-card.is-visited');
+  const cards = page.locator('.mt-year .mt-row');
   if (await cards.count() !== 1) fail(`expected 1 visited card, got ${await cards.count()}`);
   else {
     const text = await cards.first().innerText();
@@ -207,31 +207,31 @@ const run = async () => {
     // The small "Visited" label went with the caption band (T400): the card
     // sits on the Visited tab and carries its dates in mono, so the check
     // asks for the dates.
-    if (!(await cards.first().locator('.uptrip-dates').count())) fail(`saved card carries no dates: ${text}`);
+    if (!(await cards.first().locator('.card-meta').count())) fail(`saved card carries no dates: ${text}`);
     else ok(`card reads: ${text.replace(/\n/g, ' | ')}`);
   }
   // The cover is an img element inside .uptrip-photo (ShotPhoto), not a
   // background-image on the span any more; this read the span's style
   // attribute and failed on every run since that change (found by T390).
-  const cardPhoto = await page.locator('.uptrip-photo img').first().getAttribute('src').catch(() => '');
+  const cardPhoto = await page.locator('.mt-year .card-media img').first().getAttribute('src').catch(() => '');
   if (!/data:image\/jpeg/.test(cardPhoto || '')) fail('the card did not take your own photo as its cover');
   else ok('the card wears your photograph');
 
-  const ledger = await page.locator('.ledger2').innerText().catch(() => '');
+  const ledger = await page.locator('.mt-flags').innerText().catch(() => '');
   if (!/Austria|Germany/.test(ledger)) fail(`ledger did not count the trip: ${ledger}`);
   else ok('ledger counts the logged trip');
-  if (!await page.locator('.saved-map').count()) fail('no record map after logging a trip');
+  if (!await page.locator('.mt-map').count()) fail('no record map after logging a trip');
   else ok('record map is there');
 
   // ── The card carries what was entered, and opens the trip back up ──
   // T400 (row T390-f): the summary reads in the card's caption band; the
   // footer button that repeated the card's own tap went, so the card opens it.
-  const summary = page.locator('.uptrip-card.is-visited .uptrip-summary').first();
+  const summary = page.locator('.mt-year .mt-row .card-meta').first();
   const footerText = await summary.innerText().catch(() => '');
   if (!/8\/10/.test(footerText) || !/640/.test(footerText)) {
     fail(`card does not summarise the memory: "${footerText}"`);
   } else ok(`card summary reads: ${footerText.replace(/\n/g, ' ')}`);
-  await page.locator('.uptrip-card.is-visited .uptrip-open').first().click();
+  await page.locator('.mt-year .mt-row .card-open').first().click();
   await page.locator('.memo').waitFor({ timeout: 5000 });
   // The receipt carries the cost bar above its lines (T400, brief V4-4).
   const segs = await page.locator('.memo .costbar-seg').count();
@@ -264,10 +264,10 @@ const run = async () => {
   await editForm.locator('.pasttrip-input.is-plain').first().fill('Alpine summer');
   await editForm.locator('.pasttrip-save').click();
   await page.waitForTimeout(800);
-  if (await page.locator('.uptrip-card.is-visited').count() !== 1) {
+  if (await page.locator('.mt-year .mt-row').count() !== 1) {
     fail('editing a logged trip made a second one');
   } else {
-    const renamed = await page.locator('.uptrip-card.is-visited').first().innerText();
+    const renamed = await page.locator('.mt-year .mt-row').first().innerText();
     if (!/Alpine summer/.test(renamed)) fail(`the rename did not stick: ${renamed}`);
     else ok('editing rewrites the same trip');
   }
@@ -278,7 +278,7 @@ const run = async () => {
   await enterApp(page);
   await openSaved(page);
   await openVisited(page);
-  if (await page.locator('.uptrip-card.is-visited').count() !== 1) {
+  if (await page.locator('.mt-year .mt-row').count() !== 1) {
     fail('the logged trip did not survive a reload');
   } else ok('the logged trip survives a reload');
   await ctx.close();
@@ -293,7 +293,7 @@ const run = async () => {
   await openSaved(mpage);
   await openVisited(mpage);
   // An empty record's one entry is the empty state's invitation (T390).
-  await mpage.locator('.saved-add-past:visible, .saved-empty-cta:visible').filter({ hasText: /past trip/i }).first().click();
+  await mpage.locator('button:visible').filter({ hasText: /past trip/i }).first().click();
   await mpage.locator('.pasttrip-form').waitFor({ timeout: 5000 });
   await mpage.waitForTimeout(300);
   const overflow = await mpage.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -311,8 +311,8 @@ const run = async () => {
   await enterApp(apage);
   await openSaved(apage);
   await openVisited(apage);
-  const before = await apage.locator('.uptrip-card.is-visited').count();
-  await apage.locator('.saved-add-past').click();
+  const before = await apage.locator('.mt-year .mt-row').count();
+  await apage.locator('button:visible').filter({ hasText: /past trip/i }).first().click();
   const mform = apage.locator('.pasttrip-form');
   await mform.waitFor({ timeout: 5000 });
   await mform.locator('.pasttrip-input').first().fill('Porto');
@@ -322,12 +322,12 @@ const run = async () => {
   await pickPastDate(apage, 1, 2, 9);
   await mform.locator('.pasttrip-save').click();
   await apage.waitForTimeout(700);
-  const after = await apage.locator('.uptrip-card.is-visited').count();
+  const after = await apage.locator('.mt-year .mt-row').count();
   if (after !== before + 1) fail(`mock account path: ${before} cards became ${after}`);
   else {
     // The record is sorted by end date, so the logged trip sits wherever its
     // dates put it, not necessarily on top.
-    const card = apage.locator('.uptrip-card.is-visited').filter({ hasText: 'Portugal' }).first();
+    const card = apage.locator('.mt-year .mt-row').filter({ hasText: 'Portugal' }).first();
     if (!await card.count()) fail('logged account trip is not named after its country');
     else ok(`account-shaped card reads: ${(await card.innerText()).replace(/\n/g, ' | ')}`);
   }

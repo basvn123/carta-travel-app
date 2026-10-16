@@ -1,48 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { LinkIcon, TrashIcon, PersonIcon } from '../components/Icons.jsx';
+import { LinkIcon, TrashIcon, PersonIcon, PlusIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
+import { Button, IconButton, Segmented, Field } from '../components/ui/index.js';
 import {
   fetchTripShares, createTripShare, revokeTripShare, buildShareUrl,
   SHARE_DURATIONS, DEFAULT_SHARE_DAYS, daysLeft,
 } from './tripShares.js';
 import { setTripVisibility, fetchFriendLinks } from './friends.js';
-import { listTripCoplanners, inviteCoplanner, removeCoplanner } from './coplanners.js';
-import { onRadioKeys } from './radioKeys.js';
+import {
+  listTripCoplanners, inviteCoplanner, removeCoplanner,
+  listCoplanLinks, createCoplanLink, revokeCoplanLink, coplanLinkUrl,
+} from './coplanners.js';
 
 /**
- * TripSharePanel, handing one saved trip to somebody as a read-only link.
+ * TripSharePanel, everything about one trip and other people, under its card.
  *
- * Opens under the trip's card, the same way the memory view does, so sharing
- * reads as something you do TO this trip rather than a place you go.
+ * Three questions, in the order a traveller asks them (T434):
+ *   1. Who plans this with me: co-planners, invited by link or from friends.
+ *   2. A view-only link for anyone, with no account needed.
+ *   3. Who sees the trip inside Carta: only me, my friends, or the guides.
  *
- * The two scopes are stated as what the reader will see, not as permission
- * levels: "where and when" against "the whole trip". What neither of them
- * carries is said out loud, because the one question anybody sharing a trip
- * actually has is whether their money is in it. It is not, at either scope,
- * and the reader is never asked to take that on trust: the whitelist lives in
- * one SQL function and proves itself on apply (migration 009).
- *
- * Every link can be withdrawn, and says when it was made, because a link you
- * cannot take back is the thing that stops people sharing at all.
- *
- * Visibility sits at the top of the same panel rather than in a menu of its
- * own, so one screen answers the whole of "who can see this trip". Friends and
- * links are independent: a private trip can still have a live link out, which
- * is exactly why the links below are listed even when visibility is private.
- */
-/**
- * Who can see this trip, as three answers rather than as permission levels.
- *
- * The third one publishes. It is the only option here that puts something in
- * front of strangers, so it is the only one whose sub-line has to say exactly
- * what does and does not travel: migration 019 narrows the friend projection
- * for a public reader (no dates, no crew, no spend), and a control that
- * publishes without saying so would be the whole problem.
- *
- * 'link' is absent on purpose. A share token is handed to one person and is
- * managed by the list further down this panel, so it is not a third state of
- * the same question.
+ * What a link never carries (the expense ledger, booking references, notes)
+ * is said once, because whether their money is in it is the one question
+ * anybody sharing a trip has. The whitelist lives in one SQL function
+ * (migration 009). Every link can be withdrawn, and the two answers that
+ * cannot be held back (publishing, withdrawing a link somebody may hold) ask
+ * once in place, with the safe answer focused.
  */
 const VIS_OPTS = [
   { key: 'private', labelKey: 'share.visPrivate', subKey: 'share.visPrivateSub' },
@@ -50,25 +34,53 @@ const VIS_OPTS = [
   { key: 'public', labelKey: 'guides.publish', subKey: 'guides.publishSub' },
 ];
 
+/** Copies a URL, or hands it to the phone's own share sheet when there is one. */
+async function handOver(url, title) {
+  if (typeof navigator !== 'undefined' && navigator.share && window.matchMedia?.('(pointer: coarse)').matches) {
+    try { await navigator.share({ url, title }); return 'shared'; } catch (e) { if (e?.name === 'AbortError') return 'cancelled'; }
+  }
+  await navigator.clipboard.writeText(url);
+  return 'copied';
+}
+
+/** An inline "are you sure" with the safe answer focused; Escape keeps. */
+function AskInline({ text, sub, keepLabel, goLabel, goVariant = 'danger', onKeep, onGo, label }) {
+  const keepRef = useRef(null);
+  useEffect(() => { keepRef.current?.focus(); }, []);
+  return (
+    <div
+      className="tshare-ask"
+      role="group"
+      aria-label={label}
+      onKeyDown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); onKeep(); } }}
+    >
+      <p className="tshare-ask-text">{text}</p>
+      {sub && <p className="tshare-sub">{sub}</p>}
+      <div className="tshare-ask-row">
+        <Button ref={keepRef} size="sm" onClick={onKeep}>{keepLabel}</Button>
+        <Button size="sm" variant={goVariant} onClick={onGo}>{goLabel}</Button>
+      </div>
+    </div>
+  );
+}
 
 /**
- * CoplannerBlock, who else may edit this trip.
+ * Plan together. A co-planner edits the route and the dates; they cannot
+ * delete the trip, publish it or change who sees it, and the owner's day
+ * plans, expenses and bookings stay the owner's (migration 020).
  *
- * Only friends appear in the picker, because migration 020's insert policy
- * only accepts a friend and a control that offers what the database refuses
- * is a control that lies. Only the owner sees this block at all.
- *
- * The sub-line says exactly what a co-planner gets and what they do not, in
- * the same voice the visibility control above uses, because "Collaborate" on
- * its own is the kind of button people press without knowing what they just
- * handed over.
+ * Two ways in: a link anyone can open signed in (migration 052, which also
+ * makes them friends, the condition 020 sets), or a friend from the list.
+ * Without 052 on the project the link row hides itself.
  */
-function CoplannerBlock({ userId, tripPlanId, t }) {
+function PlanTogether({ userId, tripPlanId, t, title }) {
   const paywall = usePaywall();
   const [people, setPeople] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [links, setLinks] = useState({ links: [], missing: false });
   const [pick, setPick] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState('');
+  const [note, setNote] = useState('');
   const [error, setError] = useState('');
 
   const reload = () => listTripCoplanners(tripPlanId).then(setPeople).catch(() => {});
@@ -76,19 +88,57 @@ function CoplannerBlock({ userId, tripPlanId, t }) {
   useEffect(() => {
     let live = true;
     listTripCoplanners(tripPlanId).then((rows) => { if (live) setPeople(rows); }).catch(() => {});
+    listCoplanLinks(tripPlanId).then((r) => { if (live) setLinks(r); }).catch(() => {});
     fetchFriendLinks(userId)
       .then((rows) => { if (live) setFriends(rows.filter((l) => l.kind === 'friend')); })
       .catch(() => {});
     return () => { live = false; };
   }, [tripPlanId, userId]);
 
+  useEffect(() => {
+    if (!note) return undefined;
+    const id = setTimeout(() => setNote(''), 4000);
+    return () => clearTimeout(id);
+  }, [note]);
+
   const onTrip = new Set(people.map((p) => p.userId));
   const canAsk = friends.filter((f) => !onTrip.has(f.userId));
 
-  const invite = async () => {
+  const inviteByLink = async () => {
+    if (!paywall.require('share')) return;
+    setBusy('link');
+    setError('');
+    try {
+      // One live link per trip: copying again hands over the same link
+      // rather than minting another until the cap refuses.
+      let token = links.links[0]?.token || '';
+      if (!token) {
+        const made = await createCoplanLink(tripPlanId);
+        if (made.missing) { setLinks({ links: [], missing: true }); return; }
+        token = made.token;
+      }
+      const how = await handOver(coplanLinkUrl(token), title || t('saved.fallbackTrip'));
+      if (how !== 'cancelled') setNote(t(how === 'shared' ? 'coplan.linkShared' : 'coplan.linkCopied'));
+      listCoplanLinks(tripPlanId).then(setLinks).catch(() => {});
+    } catch (err) {
+      setError(t(err?.code === 'TOO_MANY_LINKS' ? 'coplan.tooManyLinks' : 'coplan.failed'));
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const stopLinks = async () => {
+    setError('');
+    try {
+      await Promise.all(links.links.map((l) => revokeCoplanLink(l.token)));
+      setLinks({ links: [], missing: false });
+    } catch { setError(t('coplan.failed')); }
+  };
+
+  const ask = async () => {
     if (!pick) return;
     if (!paywall.require('share')) return;
-    setBusy(true);
+    setBusy('ask');
     setError('');
     try {
       await inviteCoplanner(tripPlanId, userId, pick);
@@ -97,7 +147,7 @@ function CoplannerBlock({ userId, tripPlanId, t }) {
     } catch (err) {
       setError(t(err.code === 'ALREADY_ON_TRIP' ? 'coplan.errAlready' : 'coplan.failed'));
     } finally {
-      setBusy(false);
+      setBusy('');
     }
   };
 
@@ -107,61 +157,78 @@ function CoplannerBlock({ userId, tripPlanId, t }) {
   };
 
   return (
-    <div className="tshare-coplan">
-      <span className="coplan-title">{t('coplan.title')}</span>
-      <p className="coplan-sub">{t('coplan.sub')}</p>
+    <section className="tshare-block tshare-coplan" aria-labelledby={`coplan-${tripPlanId}`}>
+      <h3 className="tshare-h" id={`coplan-${tripPlanId}`}>{t('coplan.title')}</h3>
+      <p className="tshare-sub">{t('coplan.sub')}</p>
 
       {people.length > 0 && (
-        <div className="coplan-list">
+        <ul className="coplan-list">
           {people.map((p) => (
-            <div className="coplan-row" key={p.userId}>
-              <span className="frn-face" aria-hidden="true">
-                {p.avatarEmoji || <PersonIcon size={14} />}
+            <li className="coplan-row" key={p.userId}>
+              <span className="coplan-face" aria-hidden="true">
+                {p.avatarEmoji || <PersonIcon size={16} />}
               </span>
               <span className="coplan-who">
-                <b>{p.displayName || `@${p.handle}`}</b>
+                <span className="coplan-name">{p.displayName || `@${p.handle}`}</span>
                 <span className="coplan-state">
                   {t(p.status === 'accepted' ? 'coplan.stateOn' : 'coplan.statePending')}
                 </span>
               </span>
-              <button type="button" className="frn-no frn-text" onClick={() => drop(p.userId)}>
+              <Button size="sm" variant="quiet" onClick={() => drop(p.userId)}>
                 {t(p.status === 'accepted' ? 'coplan.remove' : 'friends.cancel')}
-              </button>
-            </div>
+              </Button>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
-      {canAsk.length > 0 ? (
+      {!links.missing && (
+        <div className="tshare-actions">
+          <Button
+            size="sm"
+            iconStart={<LinkIcon size={16} />}
+            onClick={inviteByLink}
+            loading={busy === 'link'}
+          >
+            {t('coplan.inviteLink')}
+          </Button>
+          {links.links.length > 0 && (
+            <Button size="sm" variant="quiet" onClick={stopLinks}>
+              {t('coplan.stopLinks', { n: links.links.length })}
+            </Button>
+          )}
+        </div>
+      )}
+      {!links.missing && <p className="tshare-sub">{t('coplan.linkWhat')}</p>}
+      {note && <p className="tshare-status" role="status">{note}</p>}
+
+      {canAsk.length > 0 && (
         <div className="coplan-ask">
-          <select
-            className="coplan-pick"
+          <Field
+            as="select"
+            label={t('coplan.pickLabel')}
+            hideLabel
             value={pick}
             onChange={(e) => setPick(e.target.value)}
-            aria-label={t('coplan.pickLabel')}
           >
             <option value="">{t('coplan.pickLabel')}</option>
             {canAsk.map((f) => (
-              <option key={f.userId} value={f.userId}>
-                {f.displayName || `@${f.handle}`}
-              </option>
+              <option key={f.userId} value={f.userId}>{f.displayName || `@${f.handle}`}</option>
             ))}
-          </select>
-          <button type="button" className="coplan-ask-btn" onClick={invite} disabled={!pick || busy}>
-            {busy ? t('account.pleaseWait') : t('coplan.invite')}
-          </button>
+          </Field>
+          <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={ask} disabled={!pick} loading={busy === 'ask'}>
+            {t('coplan.invite')}
+          </Button>
         </div>
-      ) : (
-        <p className="tshare-never">{t(friends.length ? 'coplan.allAsked' : 'coplan.needFriend')}</p>
       )}
 
-      {error && <div className="auth-error" role="alert">{error}</div>}
-    </div>
+      {error && <p className="tshare-error" role="alert">{error}</p>}
+    </section>
   );
 }
 
 export function TripSharePanel({
-  userId, tripPlanId, visibility = 'private', onVisibility, canInvite = true,
+  userId, tripPlanId, visibility = 'private', onVisibility, canInvite = true, title = '',
 }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
@@ -175,22 +242,8 @@ export function TripSharePanel({
   // Thirty days by default rather than forever: a link handed out for one
   // conversation should not outlive it, and nobody comes back to tidy up.
   const [days, setDays] = useState(DEFAULT_SHARE_DAYS);
-  // The two answers that cannot be held back and undone later ask once, in
-  // place (carta-design "Undo, not confirm", the confirm half): publishing to
-  // the public guides, and withdrawing a link somebody may already hold.
   const [askPublic, setAskPublic] = useState(false);
   const [askRevoke, setAskRevoke] = useState('');
-  const keepPublicRef = useRef(null);
-  const keepRevokeRef = useRef(null);
-  // The safe answer takes focus, so Enter or a second tap never publishes or
-  // withdraws by accident, and Escape keeps things as they are.
-  useEffect(() => { if (askPublic) keepPublicRef.current?.focus(); }, [askPublic]);
-  useEffect(() => { if (askRevoke) keepRevokeRef.current?.focus(); }, [askRevoke]);
-  const onAskKey = (e, keep) => {
-    if (e.key !== 'Escape') return;
-    e.stopPropagation();
-    keep();
-  };
 
   const subKey = (VIS_OPTS.find((o) => o.key === vis) || VIS_OPTS[0]).subKey;
 
@@ -224,19 +277,16 @@ export function TripSharePanel({
     return () => { live = false; };
   }, [tripPlanId, t]);
 
-  // The tick is a confirmation, not a state: it has to go away on its own or
-  // the next copy has nothing to report.
+  // "Copied" is a confirmation, not a state: two seconds, then "Copy" again.
   useEffect(() => {
     if (!copied) return undefined;
-    // Two seconds, then the button reads "Copy link" again (brief V4-7).
     const id = setTimeout(() => setCopied(''), 2000);
     return () => clearTimeout(id);
   }, [copied]);
 
   const fmtDate = (iso) => {
     try {
-      return new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short', year: 'numeric' })
-        .format(new Date(iso));
+      return new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso));
     } catch { return ''; }
   };
 
@@ -244,18 +294,16 @@ export function TripSharePanel({
     const url = buildShareUrl(token);
     if (!url) return;
     try {
-      await navigator.clipboard.writeText(url);
-      setCopied(token);
+      const how = await handOver(url, title || t('saved.fallbackTrip'));
+      if (how !== 'cancelled') setCopied(token);
     } catch {
       setError(t('share.copyFailed'));
     }
   };
 
   const make = async () => {
-    // The first share link is free, always. It is how the next traveller
-    // hears about Carta, and a product with no marketing budget cannot tax
-    // its own word of mouth. The second one is a collaboration habit, and
-    // that is what the pass is for.
+    // The first share link is free, always: it is how the next traveller
+    // hears about Carta. A second one is a habit, and that is what a pass is for.
     if (links.length >= 1 && !paywall.require('share')) return;
     setBusy(true);
     setError('');
@@ -281,163 +329,101 @@ export function TripSharePanel({
     }
   };
 
-  // The panel reads in the order a traveller hands a plan on (T390, brief
-  // V3-4): make a link (what it shows, how long it works, Make a link), the
-  // links that already work, then who may edit it, then who sees it inside
-  // Carta. Visibility used to open the panel, so the first thing a traveller
-  // who only wanted a link met was a three-way publishing choice.
   return (
-    <div className="tshare">
-      <p className="tshare-lede">{t('share.lede')}</p>
+    <div className="tshare" id={`tshare-${tripPlanId}`} tabIndex={-1}>
+      {canInvite && <PlanTogether userId={userId} tripPlanId={tripPlanId} t={t} title={title} />}
 
-      <div className="tshare-scopes" role="radiogroup" aria-label={t('share.scopeLabel')} onKeyDown={onRadioKeys}>
-        {[
-          { key: 'itinerary', title: t('share.scopeItinerary'), sub: t('share.scopeItinerarySub') },
-          { key: 'memory', title: t('share.scopeMemory'), sub: t('share.scopeMemorySub') },
-        ].map((s) => (
-          <button
-            key={s.key}
-            type="button"
-            role="radio"
-            aria-checked={scope === s.key}
-            tabIndex={scope === s.key ? 0 : -1}
-            className={`tshare-scope${scope === s.key ? ' on' : ''}`}
-            onClick={() => setScope(s.key)}
-          >
-            <b>{s.title}</b>
-            <span>{s.sub}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="tshare-life">
-        <span className="tshare-life-title">{t('share.lifeTitle')}</span>
-        <div className="tshare-life-opts" role="radiogroup" aria-label={t('share.lifeTitle')} onKeyDown={onRadioKeys}>
-          {SHARE_DURATIONS.map((d) => (
-            <button
-              key={String(d)}
-              type="button"
-              role="radio"
-              aria-checked={days === d}
-              tabIndex={days === d ? 0 : -1}
-              className={`tshare-life-opt${days === d ? ' on' : ''}`}
-              onClick={() => setDays(d)}
-            >
-              {d ? t('share.lifeDays', { n: d }) : t('share.lifeForever')}
-            </button>
-          ))}
+      <section className="tshare-block" aria-labelledby={`tshare-link-${tripPlanId}`}>
+        <h3 className="tshare-h" id={`tshare-link-${tripPlanId}`}>{t('share.linkTitle')}</h3>
+        <p className="tshare-sub">{t('share.neverIncluded')}</p>
+        <div className="tshare-opts">
+          <Segmented
+            label={t('share.scopeLabel')}
+            size="sm"
+            value={scope}
+            onChange={setScope}
+            options={[
+              { value: 'itinerary', label: t('share.scopeItinerary') },
+              { value: 'memory', label: t('share.scopeMemory') },
+            ]}
+          />
+          <Segmented
+            label={t('share.lifeTitle')}
+            size="sm"
+            value={String(days)}
+            onChange={(v) => setDays(v === 'null' ? null : Number(v))}
+            options={SHARE_DURATIONS.map((d) => ({
+              value: String(d),
+              label: d ? t('share.lifeDays', { n: d }) : t('share.lifeForever'),
+            }))}
+          />
         </div>
-      </div>
+        <div className="tshare-actions">
+          <Button size="sm" iconStart={<LinkIcon size={16} />} onClick={make} loading={busy}>
+            {t('share.make')}
+          </Button>
+        </div>
 
-      <p className="tshare-never">{t('share.neverIncluded')}</p>
-
-      <button type="button" className="tshare-make" onClick={make} disabled={busy}>
-        <LinkIcon size={14} />
-        {busy ? t('share.making') : t('share.make')}
-      </button>
-
-      {error && <div className="auth-error" role="alert">{error}</div>}
-
-      {!loading && links.length > 0 && (
-        <div className="tshare-list">
-          <span className="tshare-list-title">{t('share.liveLinks', { n: links.length })}</span>
-          {links.map((l) => (
-            <div className="tshare-row" key={l.token}>
-              <span className="tshare-row-meta">
-                <b>{t(l.scope === 'memory' ? 'share.scopeMemory' : 'share.scopeItinerary')}</b>
-                <span className="tshare-row-date">
-                  {l.expires_at
-                    ? t('share.expiresIn', { n: Math.max(0, daysLeft(l.expires_at)) })
-                    : t('share.madeOn', { date: fmtDate(l.created_at) })}
+        {!loading && links.length > 0 && (
+          <ul className="tshare-list" aria-label={t('share.liveLinks', { n: links.length })}>
+            {links.map((l) => (
+              <li className="tshare-row" key={l.token}>
+                <span className="tshare-row-meta">
+                  <span className="tshare-row-name">{t(l.scope === 'memory' ? 'share.scopeMemory' : 'share.scopeItinerary')}</span>
+                  <span className="tshare-row-date">
+                    {l.expires_at
+                      ? t('share.expiresIn', { n: Math.max(0, daysLeft(l.expires_at)) })
+                      : t('share.madeOn', { date: fmtDate(l.created_at) })}
+                  </span>
                 </span>
-              </span>
-              <button
-                type="button"
-                className={`tshare-copy${copied === l.token ? ' is-copied' : ''}`}
-                onClick={() => copy(l.token)}
-                aria-live="polite"
-              >
-                {/* "Copied" in place, as a status: ink words after a 6 px
-                    success dot, never a green tick (carta-design "Status,
-                    not green", T400). */}
-                {copied === l.token
-                  ? <span className="tshare-dot" aria-hidden="true" />
-                  : <LinkIcon size={13} />}
-                {copied === l.token ? t('share.copied') : t('share.copy')}
-              </button>
-              <button
-                type="button"
-                className="tshare-revoke"
-                onClick={() => setAskRevoke(l.token)}
-                aria-label={t('share.revoke')}
-                title={t('share.revoke')}
-              >
-                <TrashIcon size={13} />
-              </button>
-              {askRevoke === l.token && (
-                <div
-                  className="tshare-ask"
-                  role="group"
-                  aria-label={t('share.revoke')}
-                  onKeyDown={(e) => onAskKey(e, () => setAskRevoke(''))}
-                >
-                  <p className="tshare-ask-text">{t('share.revokeAsk')}</p>
-                  <div className="tshare-ask-row">
-                    <button type="button" className="tshare-ask-keep" ref={keepRevokeRef} onClick={() => setAskRevoke('')}>
-                      {t('share.revokeKeep')}
-                    </button>
-                    <button type="button" className="tshare-ask-danger" onClick={() => withdraw(l.token)}>
-                      {t('share.revokeGo')}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {canInvite && <CoplannerBlock userId={userId} tripPlanId={tripPlanId} t={t} />}
-
-      <div className="tshare-vis">
-        <span className="tshare-vis-title">{t('share.visTitle')}</span>
-        <div className="tshare-vis-opts" role="radiogroup" aria-label={t('share.visTitle')} data-arrow-select="false" onKeyDown={onRadioKeys}>
-          {VIS_OPTS.map((o) => (
-            <button
-              key={o.key}
-              type="button"
-              role="radio"
-              aria-checked={vis === o.key}
-              tabIndex={vis === o.key ? 0 : -1}
-              className={`tshare-vis-opt${vis === o.key ? ' on' : ''}`}
-              onClick={() => pickVisibility(o.key)}
-            >
-              {t(o.labelKey)}
-            </button>
-          ))}
-        </div>
-        {askPublic ? (
-          <div
-            className="tshare-ask"
-            role="group"
-            aria-label={t('guides.publish')}
-            onKeyDown={(e) => onAskKey(e, () => setAskPublic(false))}
-          >
-            <p className="tshare-ask-text">{t('share.publicAsk')}</p>
-            <p className="tshare-vis-sub">{t('guides.publishSub')}</p>
-            <div className="tshare-ask-row">
-              <button type="button" className="tshare-ask-keep" ref={keepPublicRef} onClick={() => setAskPublic(false)}>
-                {t('share.publicKeep')}
-              </button>
-              <button type="button" className="tshare-ask-publish" onClick={() => pickVisibility('public', true)}>
-                {t('share.publicGo')}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <p className="tshare-vis-sub">{t(subKey)}</p>
+                <Button size="sm" variant="quiet" onClick={() => copy(l.token)} aria-live="polite">
+                  {copied === l.token ? t('share.copied') : t('share.copy')}
+                </Button>
+                <IconButton label={t('share.revoke')} onClick={() => setAskRevoke(l.token)}>
+                  <TrashIcon size={16} />
+                </IconButton>
+                {askRevoke === l.token && (
+                  <AskInline
+                    label={t('share.revoke')}
+                    text={t('share.revokeAsk')}
+                    keepLabel={t('share.revokeKeep')}
+                    goLabel={t('share.revokeGo')}
+                    onKeep={() => setAskRevoke('')}
+                    onGo={() => withdraw(l.token)}
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
         )}
-      </div>
+      </section>
+
+      <section className="tshare-block" aria-labelledby={`tshare-vis-${tripPlanId}`}>
+        <h3 className="tshare-h" id={`tshare-vis-${tripPlanId}`}>{t('share.visTitle')}</h3>
+        <Segmented
+          label={t('share.visTitle')}
+          size="sm"
+          value={vis}
+          onChange={(v) => pickVisibility(v)}
+          options={VIS_OPTS.map((o) => ({ value: o.key, label: t(o.labelKey) }))}
+        />
+        {askPublic ? (
+          <AskInline
+            label={t('guides.publish')}
+            text={t('share.publicAsk')}
+            sub={t('guides.publishSub')}
+            keepLabel={t('share.publicKeep')}
+            goLabel={t('share.publicGo')}
+            goVariant="primary"
+            onKeep={() => setAskPublic(false)}
+            onGo={() => pickVisibility('public', true)}
+          />
+        ) : (
+          <p className="tshare-sub">{t(subKey)}</p>
+        )}
+      </section>
+
+      {error && <p className="tshare-error" role="alert">{error}</p>}
     </div>
   );
 }

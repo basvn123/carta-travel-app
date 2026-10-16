@@ -1,0 +1,157 @@
+[
+  {
+    "scene": "mytrips-empty",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Reise planen"
+    ],
+    "words": 11,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Reise öffnen"
+    ],
+    "words": 42,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "phone",
+    "hscroll": false,
+    "small": [
+      "Bruges 50x19",
+      "Porto 40x19",
+      "Lisbon 48x19"
+    ],
+    "smallCount": 3,
+    "primaries": [
+      "Reise nach Portugal planen"
+    ],
+    "words": 33,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 31,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-empty",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Reise planen"
+    ],
+    "words": 12,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Reise öffnen 130x40",
+      "Tage planen 152x40",
+      "Einladen 130x40",
+      "Slovenia 61x19"
+    ],
+    "smallCount": 4,
+    "primaries": [
+      "Reise öffnen"
+    ],
+    "words": 70,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Bruges 50x19",
+      "Porto 40x19",
+      "Lisbon 48x19"
+    ],
+    "smallCount": 3,
+    "primaries": [
+      "Reise nach Portugal planen"
+    ],
+    "words": 35,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "Germany 67x19",
+      "Autumn in Flanders 141x19",
+      "Belgium 59x19"
+    ],
+    "smallCount": 3,
+    "primaries": [],
+    "words": 64,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-empty",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Reise planen"
+    ],
+    "words": 12,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-trips",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Reise öffnen"
+    ],
+    "words": 85,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-shortlist",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Reise nach Portugal planen"
+    ],
+    "words": 35,
+    "errors": []
+  },
+  {
+    "scene": "mytrips-visited",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 38,
+    "errors": []
+  }
+]

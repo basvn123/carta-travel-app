@@ -33,121 +33,6 @@
   .cycle-fav.on:hover { color: var(--accent); }
 }
 
-/* ─── My trips: one way to draw a photograph ───
-   Every picture in this panel used to be a background-image, which meant the
-   browser could not pick a size, could not lazy-load and could not reserve
-   the box: each card fetched one arbitrary width and reflowed when it landed.
-   They are real <img> elements now (ShotPhoto in SavedTripsPanel.jsx), so the
-   old background-* rules have nothing left to paint and the fill happens
-   here instead. object-fit keeps ONE aspect across the panel whatever shape
-   the source photograph is. */
-.fav-card-img,
-.uptrip-img,
-.saved-card-img,
-.slist-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-/* ─── The shortlist, grouped by kind (hooks/useFavoriteItems.js) ───
-   Quieter and denser than the saved-destination cards above it: a shortlist
-   is a list of wishes and runs long, where a saved trip is a considered few. */
-.slist-group + .slist-group { margin-top: 14px; }
-.slist-group-title {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin-bottom: 6px;
-}
-/* A run of related facts is a LIST, so it is divided by hairlines rather
-   than boxed one card per row. The rows also stop at a readable measure: at
-   1280px a full-bleed row put the star half a screen from the name it
-   belongs to. */
-.slist-rows {
-  display: flex;
-  flex-direction: column;
-  max-width: 640px;
-  border-top: 1px solid var(--rule-soft);
-}
-.slist-row {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.slist-open {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 8px;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .slist-open:hover { background: var(--paper-dim); }
-}
-.slist-open:focus-visible, .slist-drop:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.slist-open:disabled { cursor: default; opacity: 0.55; }
-.slist-shot {
-  flex: none;
-  position: relative;
-  width: 54px;
-  aspect-ratio: 3 / 2;
-  border-radius: 6px;
-  overflow: hidden;
-  background: var(--paper-dim);
-}
-.slist-img.is-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-mute);
-}
-.slist-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.slist-name {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.slist-sub {
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.slist-flag { flex: none; display: flex; align-items: center; }
-/* A row the layer no longer publishes: still listed, visibly inert, and
-   droppable. A wish that silently vanished is worse than one the app admits
-   it can no longer find. */
-.slist-row.is-missing .slist-name { color: var(--ink-mute); font-style: italic; }
-.slist-drop {
-  flex: none;
-  width: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: none;
-  color: var(--accent);
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .slist-drop:hover { background: var(--paper-dim); }
-}
-
-
 /* ==========================================================================
    The Where step, rebuilt (prompt T2)
    Two tabs over one selection: a quiz that recommends countries from the
@@ -369,7 +254,6 @@
 }
 .mcard-month { font-weight: 400; color: var(--ink-soft); }
 
-
 .mcard-places { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
 .mcard-place { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .mcard-place { position: relative; }
@@ -518,7 +402,6 @@
   color: var(--ink-mute);
   cursor: pointer;
 }
-
 
 /* The shortlist badge on a hand-picked country card. */
 /* In the caption band under the photograph since T398. */
@@ -685,22 +568,21 @@
    the tap box instead, as the planner pins and "See all" already do. */
 @media (max-width: 768px) {
   .places-search input,
-  .places-country,
-  .feat-dayplan,
-  .tpage-act,
-  .cycle-gpx,
-  .bpage-where,
-  .bpage-scorebtn,
-  .bpage-scorehint,
-  .credit-fold > summary,
-  .destp-score,
-  .destp-layer,
-  .destp-subnav button,
-  .destp-subnav-all,
-  .dsec-more,
-  .saved-empty-cta,
-  .bpage-sources a,
-  .account-invite-btn { min-height: var(--tap); }
+.places-country,
+.feat-dayplan,
+.tpage-act,
+.cycle-gpx,
+.bpage-where,
+.bpage-scorebtn,
+.bpage-scorehint,
+.credit-fold > summary,
+.destp-score,
+.destp-layer,
+.destp-subnav button,
+.destp-subnav-all,
+.dsec-more,
+.bpage-sources a,
+.account-invite-btn { min-height: var(--tap); }
   .bpage-sources li { padding: 0; }
   .credit-fold > summary { display: flex; align-items: center; }
   .places-locate,
