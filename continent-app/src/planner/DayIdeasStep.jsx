@@ -281,7 +281,6 @@ export function DayIdeasStep({
 
   return (
     <div className="day-ideas">
-      <h1 className="guide-title">{t('ideas.question')}</h1>
 
       {ideas.length > 0 && (
         <ul className="day-ideas-chips">
@@ -343,7 +342,7 @@ export function DayIdeasStep({
 
       {topRows.length > 0 && (
         <div className="day-ideas-group">
-          <h2 className="day-ideas-h">{t('ideas.popular')}</h2>
+          <h2 className="day-ideas-h wiz-q-h">{t('ideas.popular')}</h2>
           <ul className="day-ideas-rows">
             {topRows.map((r) => <Row key={r.key} r={r} />)}
           </ul>

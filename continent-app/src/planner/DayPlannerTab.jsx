@@ -4,7 +4,7 @@ import { TripMap } from '../map/TripMap.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
-import { Button, Chip, IconButton, Segmented, Card } from '../components/ui/index.js';
+import { Button, Chip, IconButton, Segmented, Card, Money } from '../components/ui/index.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
 import { legTransportOptions } from '../lib/transport.js';
@@ -38,6 +38,7 @@ import { openDayPlanIcs } from './dayPlanIcs.js';
 import { DayTripTransport } from './DayTripTransport.jsx';
 import { DayExploreBuilder } from './DayExploreBuilder.jsx';
 import { DayWizardShell } from './DayWizardShell.jsx';
+import { DayRail } from './DayRail.jsx';
 import { buildDays, previewClock } from './dayBuild.js';
 import { CreditChip } from '../components/CreditChip.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -3193,19 +3194,37 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     })();
     const homeDest = homeTownId ? destinations[homeTownId] : null;
 
-    // The fork, the chat and the builder say where the day is.
-    const startBanner = newStayPoint && landingStep !== 'stay' && (
-      <div className="dayw-start">
-        <MapPinIcon size={16} />
-        <span className="dayw-start-text">
-          <b>{startName}</b>
-          {landingStep !== 'when' && daysLine && <small>{daysLine}</small>}
-        </span>
-        <Button variant="quiet" size="sm" className="dayw-start-change" onClick={() => goFlow(0)}>
-          {t('day.change')}
-        </Button>
-      </div>
-    );
+    // What Carta is planning around (T459): the trip planner's recap, every
+    // answer given so far as a chip that goes back to its question. It
+    // replaces the T433 start pill, whose one Change button went to step 1
+    // whatever was being changed.
+    const editTitle = (i) => t('wizard.recapEdit', { step: FLOW[i]?.label || '' });
+    const recap = !newStayPoint || at === 0 ? [] : [
+      { key: 'start', Icon: MapPinIcon, text: startName || newStayPoint.shortLabel || newStayPoint.label, onClick: () => goFlow(0), title: editTitle(0) },
+      ...(at > 1 && daysLine ? [{ key: 'days', Icon: CalendarIcon, text: daysLine, onClick: () => goFlow(1), title: editTitle(1) }] : []),
+      ...(at > 2 && ideas.length ? [{
+        key: 'ideas',
+        Icon: StarIcon,
+        text: t(ideas.length === 1 ? 'day.ideasOne' : 'day.ideasMany', { n: ideas.length }),
+        onClick: () => goFlow(2),
+        title: editTitle(2),
+      }] : []),
+    ];
+
+    // The card beside every step (T459), the trip planner's "Your trip": what
+    // a day at the start costs one person, then the answers that shape it.
+    const costRowHere = costs && homeTownId ? costs.get(homeTownId) : null;
+    const figure = costRowHere && costRowHere.dayEur != null
+      ? { eur: costRowHere.dayEur, est: costRowHere.stayLevel !== 'city' || costRowHere.foodLevel !== 'city' }
+      : null;
+    const railRows = newStayPoint ? [
+      { key: 'start', label: t('dayr.start'), value: newStayPoint.shortLabel || startName },
+      { key: 'days', label: t('wizard.summaryDates'), value: at > 0 ? daysLine : '' },
+    ] : [];
+    const landingRail = <DayRail figure={figure} rows={railRows} empty={!newStayPoint} />;
+    const railSummary = figure
+      ? <><span className="plan-total-btn-lbl">{t('dayr.title')}</span><span className="plan-total-btn-n"><Money value={figure.eur} est={figure.est} /></span></>
+      : null;
 
     if (landingStep === 'chat') {
       return (
@@ -3213,7 +3232,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           <CartaChatPlanner
             wizard={wizard}
             onWizardBack={back}
-            banner={startBanner}
+            recap={recap}
+            rail={landingRail}
+            railSummary={railSummary}
             dayCount={dayCount}
             startName={startName}
             initialAnswers={chatPresets}
@@ -3251,8 +3272,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             wizard={wizard}
             onWizardBack={back}
             startName={startName}
-            daysLine={daysLine}
-            dayCount={dayCount}
+            recap={recap}
+            railRows={railRows}
+            figure={figure}
             preview={builderPreview}
             stay={newStayPoint}
             dateISO={newStartDate}
@@ -3271,7 +3293,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
               ? removeLandingCity(id) : addLandingCity(id))}
             onStartPlanning={startExplorePlanning}
             onLetCartaPlan={letCartaFinish}
-            onChangeStay={() => goFlow(0)}
             onOpenDest={onOpenDest}
             onOpenFeature={onOpenFeature}
           />
@@ -3324,12 +3345,21 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           foot={foot}
           canvasKey={landingStep}
           className={`dayw-on-${landingStep}`}
+          recap={recap}
+          title={{
+            stay: t('day.whereStaying'),
+            when: t('day.whichDays'),
+            ideas: t('ideas.question'),
+            how: t('day.howToPlan'),
+          }[landingStep]}
+          rail={landingRail}
+          railSummary={railSummary}
+          railTitle={t('dayr.title')}
         >
           {/* STEP 1, where the day starts. */}
           {landingStep === 'stay' && (
             <div className="dayw-step">
               {tripsLead && tripCards(true)}
-              <h1 className="guide-title">{t('day.whereStaying')}</h1>
               {newStayPoint ? (
                 <div className="dayw-chosen">
                   <MapPinIcon size={18} />
@@ -3432,8 +3462,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           {/* STEP 2, which days. */}
           {landingStep === 'when' && (
             <div className="dayw-step">
-              {startBanner}
-              <h1 className="guide-title">{t('day.whenVisiting')}</h1>
               <div className="dayw-when">
                 <div className="dayw-when-cal">
                   <div className="dayw-chips" role="group" aria-label={t('day.whenVisiting')}>
@@ -3480,7 +3508,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           {/* STEP 3, anything already in mind. Skip is the footer. */}
           {landingStep === 'ideas' && (
             <div className="dayw-step">
-              {startBanner}
               <DayIdeasStep
                 stayPoint={newStayPoint}
                 explorePois={explorePois}
@@ -3496,8 +3523,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           {/* STEP 4, how. Two equal answers, each showing what it gives. */}
           {landingStep === 'how' && (
             <div className="dayw-step">
-              {startBanner}
-              <h1 className="guide-title">{t('day.howToPlan')}</h1>
               <div className="dayw-fork">
                 <Card
                   layout="tile"
@@ -3535,10 +3560,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                     <span className={`dayw-fork-mosaic n${forkPlaces.length}`}>
                       {forkPlaces.map((p) => (
                         <span className="dayw-fork-tile" key={p.img}>
-                          <span className="dayw-fork-tile-img">
-                            <HeroImage url={p.img} city={p.name} maxWidth={500} sizes="180px" ratio={[1, 1]} />
-                          </span>
-                          <span className="dayw-fork-tile-name">{p.name}</span>
+                          <HeroImage url={p.img} city={p.name} maxWidth={500} sizes="200px" ratio={[1, 1]} />
                         </span>
                       ))}
                     </span>
@@ -3547,10 +3569,11 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                   meta={(
                     <span className="dayw-fork-body">
                       <span className="dayw-fork-sub">
-                        {startName
-                          ? t('day.forkPickSub', { n: explorePois.length, town: startName })
-                          : t('day.planManuallySubHere')}
+                        {startName ? t('day.forkBuildSub', { town: startName }) : t('day.planManuallySubHere')}
                       </span>
+                      {/* Said beside the other card's cost, so the two answers
+                          compare line for line and end together. */}
+                      <span className="credit-chip">{t('day.forkFree')}</span>
                     </span>
                   )}
                 />

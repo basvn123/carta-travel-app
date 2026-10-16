@@ -1568,3 +1568,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T433-m | T433 | Trail rows in the builder sit at the trail's centre, not its trailhead, so their walking distance and the day's leg point to the middle of the route | next task | open |  |
 | T433-n | T433 | The step-free answer shortens legs and asks for level access, but the catalogue holds no accessibility data; decide whether to collect it or label the answer as advice | user | open |  |
 | T433-o | T433 | Every day route is computed on routing.openstreetmap.de (public FOSSGIS OSRM, fair use); decide on a self-hosted router on the Hetzner box before launch traffic | user | open |  |
+| T459-a | T459 | The trip wizard still writes its recap markup itself; move it onto the kit Recap, the shared section heading (.wiz-q-h) and the phone's one-line recap so both planners are one object | next task | open |  |
+| T459-b | T459 | The phone builder's first place name sits under the fold at 390x844 (heading, Where and What rows first); put search and List or Map on the chip row on a phone | next task | open |  |
+| T459-c | T459 | Native review of the 18 new and 5 changed day planner strings in nl, de, fr, es and it, and the 30 German umlaut repairs | user | open |  |
+| T459-d | T459 | Real-phone pass on the T459 builder: the Where chips, the one-line recap, the Your days sheet from the footer | user | open |  |
+| T459-e | T459 | German strings outside the day planner block may still be written without umlauts (ue, oe, ae); sweep de.js by hand, not by blind replace | next task | open |  |
+| T459-f | T459 | The builder map lists one place under two names (Baths of Diocletian, Terme di Diocleziano); dedupe in the catalogue with the far-away picks and photos the owner is fixing | user | open |  |

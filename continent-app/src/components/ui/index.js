@@ -15,3 +15,4 @@ export { Money } from './Money.jsx';
 export { Switch } from './Switch.jsx';
 export { Tile, TileGroup } from './Tile.jsx';
 export { StepRail, StepMini, StepList } from './StepRail.jsx';
+export { Recap } from './Recap.jsx';

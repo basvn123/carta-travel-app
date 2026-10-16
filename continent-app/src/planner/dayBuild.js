@@ -25,6 +25,11 @@ const WALK_KMH = 4.5;
 // The planner's own rule (STAY_WALK_MAX_KM): past 2.5 km the start is a ride.
 const RIDE_FROM_KM = 2.5 * STREET_FACTOR;
 const RIDE_KMH = 35;
+// A day holds about five hours of visits before a second day is opened for
+// the same town (T459: two places in Ghent over two days used to land one a
+// day, and a pick elsewhere then moved them between days). The days asked
+// for and not needed yet stay free, in order, for more picks or for Carta.
+const DAY_FILL_MIN = 300;
 
 /**
  * picks    [{ destId, idx, lat, lon, minutes, must, name, img }]
@@ -79,12 +84,15 @@ export function buildDays({
     const k = daysOf.get(id);
     const ps = byTown.get(id);
     stops.push({ destinationId: id, days: k });
-    const lists = spreadIntoDays(ps, {
-      days: k,
+    const load = ps.reduce((sum, p) => sum + (Number(p.minutes) || 60), 0);
+    const used = Math.min(k, Math.max(1, Math.ceil(load / DAY_FILL_MIN)));
+    const filled = spreadIntoDays(ps, {
+      days: used,
       start,
       minutes: (p) => Number(p.minutes) || 60,
       weight: (p) => (p.must ? 1 : 0),
     });
+    const lists = [...filled, ...Array.from({ length: k - used }, () => [])];
     assign[si] = {};
     lists.forEach((list, di) => {
       if (list.length) assign[si][di] = list.map((j) => ps[j].idx);
