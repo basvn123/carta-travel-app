@@ -22,9 +22,6 @@ export function AuthGate({ onSignIn, onSignUp, onGuest }) {
         </div>
 
         <h2 className="auth-title auth-gate-title">{t('gate.title')}</h2>
-        <p className="auth-sub auth-gate-sub">
-          {t('gate.sub')}
-        </p>
 
         <div className="auth-gate-actions">
           <GoogleButton />

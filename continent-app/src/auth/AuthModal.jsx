@@ -91,8 +91,11 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
     forgot: t('auth.titleForgot'),
   };
   const subs = {
-    signin: t('auth.subSignin'),
-    signup: t('auth.subSignup'),
+    // Signing in and creating an account need no caption (owner, T461):
+    // the title and the fields say it. Resetting keeps its one line, because
+    // it says what will happen next.
+    signin: '',
+    signup: '',
     forgot: t('auth.subForgot'),
   };
 
@@ -128,7 +131,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
         )}
 
         <h2 className="auth-title" id="auth-modal-title">{titles[mode]}</h2>
-        <p className="auth-sub">{subs[mode]}</p>
+        {subs[mode] && <p className="auth-sub">{subs[mode]}</p>}
 
         {mode !== 'forgot' && !notice && (
           <>

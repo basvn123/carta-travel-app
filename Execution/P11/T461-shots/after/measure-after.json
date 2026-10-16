@@ -1,0 +1,222 @@
+[
+  {
+    "scene": "account-guest",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 24,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 31,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 311,
+    "errors": []
+  },
+  {
+    "scene": "account-feedback",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 13,
+    "errors": []
+  },
+  {
+    "scene": "account-privacy",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 332,
+    "errors": []
+  },
+  {
+    "scene": "account-imprint",
+    "view": "phone",
+    "hscroll": false,
+    "small": [
+      "hello@carta-europetravel.com 191x17"
+    ],
+    "smallCount": 1,
+    "primaries": [],
+    "words": 146,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "phone",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 387,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 17,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 29,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 460,
+    "errors": []
+  },
+  {
+    "scene": "account-feedback",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 12,
+    "errors": []
+  },
+  {
+    "scene": "account-privacy",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 681,
+    "errors": []
+  },
+  {
+    "scene": "account-imprint",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [
+      "hello@carta-europetravel.com 191x17"
+    ],
+    "smallCount": 1,
+    "primaries": [],
+    "words": 351,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "ipad",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 648,
+    "errors": []
+  },
+  {
+    "scene": "account-guest",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [
+      "Sign in"
+    ],
+    "words": 17,
+    "errors": []
+  },
+  {
+    "scene": "account-hub",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 29,
+    "errors": []
+  },
+  {
+    "scene": "account-faq",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 373,
+    "errors": []
+  },
+  {
+    "scene": "account-feedback",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 12,
+    "errors": []
+  },
+  {
+    "scene": "account-privacy",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 529,
+    "errors": []
+  },
+  {
+    "scene": "account-imprint",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 242,
+    "errors": []
+  },
+  {
+    "scene": "account-terms",
+    "view": "desk",
+    "hscroll": false,
+    "small": [],
+    "smallCount": 0,
+    "primaries": [],
+    "words": 560,
+    "errors": []
+  }
+]

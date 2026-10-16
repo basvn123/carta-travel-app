@@ -7,7 +7,8 @@
  * directly harvested carrier fares) are deliberately absent; the ledger is
  * the full record.
  *
- * Rendered by Account > Data sources (auth/AccountPanel.jsx). The
+ * Rendered in the Imprint, under "Data credits" (components/Imprint.jsx,
+ * since T461; it was Account > Data sources before). The
  * credit lines stay in English on purpose: they are license notices naming
  * proper nouns, and a translated "© OpenStreetMap contributors" is a worse
  * credit, not a better one. The prose around the block (heading, lede) goes

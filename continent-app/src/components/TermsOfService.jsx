@@ -1,8 +1,6 @@
-import React, { useRef } from 'react';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { useDialogExit } from '../lib/motion.js';
-import { CloseIcon } from './Icons.jsx';
-import { useI18n } from '../i18n/index.jsx';
+import React from 'react';
+import { CONTACT } from '../lib/contact.js';
+import { LegalDoc } from './LegalDoc.jsx';
 
 /**
  * The Terms of Service, readable inside the app and reachable by URL
@@ -53,28 +51,12 @@ import { useI18n } from '../i18n/index.jsx';
  * before the first takedown that cites it; until then it is not reviewed.
  */
 const UPDATED = '16 October 2026';
-const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function TermsOfService({ onClose }) {
   // A dialog for the keyboard and a screen reader too (T186): focus moves in,
   // Tab stays inside, Escape closes it and focus goes back to the opener.
-  const cardRef = useRef(null);
-  const closeRef = useRef(null);
-  const exit = useDialogExit(onClose);
-  useFocusTrap(cardRef, exit.close, { initialFocusRef: closeRef });
-  const { t } = useI18n();
   return (
-    <div className={`auth-overlay shell-scrim${exit.leaving ? ' is-leaving' : ''}`} onClick={exit.close}>
-      <div className={`auth-modal privacy-modal shell-dialog${exit.leaving ? ' is-leaving' : ''}`} ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="legal-terms-title" onClick={(e) => e.stopPropagation()}>
-        {/* The one close of the dialog family (T391): CloseIcon in a --tap
-            box, its label translated. */}
-        <button ref={closeRef} type="button" className="shell-close" onClick={exit.close} aria-label={t('a11y.close')}>
-          <CloseIcon size={16} />
-        </button>
-        <h2 className="auth-title" id="legal-terms-title">Terms of service</h2>
-        <p className="privacy-updated">Last updated {UPDATED}</p>
-
-        <div className="privacy-body">
+    <LegalDoc id="legal-terms" title="Terms of service" updated={UPDATED} onClose={onClose}>
           <h3>Who provides Carta</h3>
           <p>
             Carta is operated from Belgium by the person or company named in
@@ -135,9 +117,9 @@ export function TermsOfService({ onClose }) {
             mode and calibrated on prices we have observed. Stay prices, food
             and daily budgets are estimates in the same sense: typical figures
             for a place and a travel style, not an offer to sell anything at
-            that price. Where a figure rests on a measured price, the screen
-            names its source and says when it was observed; where it is a
-            model, the screen says so.
+            that price. A figure the app could not measure for the place
+            itself, and took from its country's level instead, carries the
+            mark "est." on the screen.
           </p>
           <p>
             An estimate is not a quote. The only price that counts is the one
@@ -154,8 +136,8 @@ export function TermsOfService({ onClose }) {
             bathing water classes, trail grades, climate, distances, walking
             times and place descriptions come from public and open data
             sources, are combined and rewritten by us, and can be out of date
-            or wrong. The Data sources screen in the Account panel names the
-            source of every layer. Nothing in Carta replaces checking with the
+            or wrong. The data credits in the Imprint name the open sources
+            Carta is built on. Nothing in Carta replaces checking with the
             place itself, and nothing in it is advice about whether a trip,
             a route, a swim or a climb is safe for you.
           </p>
@@ -508,8 +490,6 @@ export function TermsOfService({ onClose }) {
             answer within 30 days, and for a refund request usually within a
             few working days.
           </p>
-        </div>
-      </div>
-    </div>
+    </LegalDoc>
   );
 }
