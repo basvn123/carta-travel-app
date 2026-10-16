@@ -10,7 +10,8 @@ import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
 const PORT = 4191;
-const BASE = `http://127.0.0.1:${PORT}`;
+// BASE_URL points the walk at a running dev server (T458).
+const BASE = (process.env.BASE_URL || `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
 
@@ -34,7 +35,7 @@ const fail = (msg) => { console.error('FAIL:', msg); process.exitCode = 1; };
 
 /** Add a stop by typing its name into the Stays step's search. */
 const addStop = async (page, name) => {
-  const card = page.locator('.guide-card', { hasText: /add a stop/i });
+  const card = page.locator('.wstays-add');
   await card.locator('input.guide-search').fill(name);
   const hit = page.locator('.guide-city-btn').first();
   await hit.waitFor({ timeout: 15000 });
@@ -64,32 +65,26 @@ try {
       localStorage.setItem('carta.welcomeSeen', '1');
       localStorage.setItem('continent.onboardingSeen.v1', '1');
     });
-    await page.goto(`${BASE}/?tab=trip&o=CRL`);
+    await page.goto(`${BASE}/?tab=trip&o=CRL&paymock`);
 
-    // One flow: the planner opens on step one and the first question is what
-    // is already held.
-    // T388 (row T377-a): the booked question is its own step with three cards
-    // (travel, beds, nothing yet), and the dates are two steps on (From, When),
-    // so the counts and the walk below follow the seven-step flow.
-    const bits = page.locator('.guide-booked-bit');
-    await bits.first().waitFor({ timeout: 30000 });
-    if (await bits.count() !== 3) fail(`${size.name}: expected three booked cards, got ${await bits.count()}`);
-    await page.locator('.guide-booked-bit', { hasText: /where you sleep/i }).click();
+    // T432 made the booked question three kit tiles (travel, beds, nothing
+    // yet) and T458 put Who before When, so with beds booked the flow is:
+    // Booked, Who, When, Stays, Getting there, Finish.
+    const tiles = page.locator('.wbook-tile');
+    await tiles.first().waitFor({ timeout: 90000 });
+    if (await tiles.count() !== 3) fail(`${size.name}: expected three booked tiles, got ${await tiles.count()}`);
+    await page.locator('.wbook-tile', { hasText: /places to sleep/i }).click();
     await page.waitForTimeout(400);
-
-    // Booked beds mean Carta does not pick cities, so the country step goes:
-    // Booked, From, When, Stays, Getting there, Finish. The named rail is a
-    // desktop control; the phone shows "Step x of n" instead.
     if (size.width >= 769) {
       const railNames = await page.locator('.wiz-step-name').allInnerTexts();
-      if (railNames.length !== 6) fail(`${size.name}: expected six steps with stays booked, got ${railNames.length}`);
+      if (railNames.length !== 6) fail(`${size.name}: expected six steps with stays booked, got ${railNames.length} (${railNames.join(', ')})`);
       if (railNames.some((x) => /^where$/i.test(x.trim()))) fail(`${size.name}: the country step is still on the rail`);
     } else {
       const mini = await page.locator('.wiz-mini-now').innerText().catch(() => '');
       if (!/of 6/.test(mini)) fail(`${size.name}: expected six steps with stays booked (${mini})`);
     }
     for (let i = 0; i < 2; i += 1) {
-      await page.locator('.guide-next').click();
+      await page.locator('.guide-next:visible').first().click();
       await page.waitForTimeout(900);
     }
 
@@ -99,8 +94,8 @@ try {
     await page.waitForTimeout(300);
     await days.nth(8).click();
     await page.waitForTimeout(400);
-    await page.locator('.guide-next').click();
-    await page.locator('.guide-card', { hasText: /add a stop/i }).waitFor({ timeout: 30000 });
+    await page.locator('.guide-next:visible').first().click();
+    await page.locator('.wstays-add').waitFor({ timeout: 30000 });
 
     // Two Italian stops and one across the water, so the no-road hop is
     // exercised too.
@@ -110,61 +105,74 @@ try {
     console.log(`${size.name}: stops`, a, b, c);
 
     const shape = await page.evaluate(() => ({
-      stops: document.querySelectorAll('.booked-stop').length,
-      indexes: [...document.querySelectorAll('.booked-stop-index')].map((e) => e.textContent),
-      dates: [...document.querySelectorAll('.booked-stop-date')].map((e) => e.textContent.trim()),
-      foot: (document.querySelector('.guide-foot-summary') || {}).textContent || '',
+      stops: document.querySelectorAll('.wstay').length,
+      indexes: [...document.querySelectorAll('.wstay-index')].map((e) => e.textContent),
+      ranges: [...document.querySelectorAll('.wstay-sub')].map((e) => e.textContent.trim()),
+      steppers: document.querySelectorAll('.wstay .fstepper').length,
+      finds: [...document.querySelectorAll('.wstay a.wrev-find')].map((e) => e.getAttribute('href')),
     }));
-    console.log(`${size.name}:`, JSON.stringify(shape));
-    if (shape.stops !== 3) fail(`${size.name}: expected 3 stop rows, got ${shape.stops}`);
+    console.log(`${size.name}:`, JSON.stringify({ ...shape, finds: shape.finds.length }));
+    if (shape.stops !== 3) fail(`${size.name}: expected 3 stay cards, got ${shape.stops}`);
     if (shape.indexes.join(',') !== '1,2,3') fail(`${size.name}: stop numbering is ${shape.indexes}`);
-    if (shape.dates.length !== 3) fail(`${size.name}: stops are missing their arrival dates`);
-    if (!/3 cities/.test(shape.foot) && !/nights planned/.test(shape.foot)) fail(`${size.name}: the footer does not count the stops (${shape.foot})`);
-    // Dates chain: each stop starts on or after the one before it.
-    const iso = shape.dates.map((d) => Date.parse(d));
-    if (!(iso[0] < iso[1] && iso[1] < iso[2])) fail(`${size.name}: arrival dates do not chain (${shape.dates})`);
+    if (shape.steppers !== 3) fail(`${size.name}: every stay needs the kit stepper (${shape.steppers})`);
+    // Dates chain: each stay starts the day the one before it ends.
+    const pairs = shape.ranges.map((r) => r.split(' to '));
+    if (pairs.some((p) => p.length !== 2)) fail(`${size.name}: a stay is missing its dates (${shape.ranges})`);
+    for (let i = 1; i < pairs.length; i += 1) {
+      if (pairs[i][0] !== pairs[i - 1][1]) fail(`${size.name}: stay ${i + 1} does not start when stay ${i} ends (${shape.ranges})`);
+    }
+    // "Find a place" carries the stay's own dates and the party.
+    if (shape.finds.length !== 3) fail(`${size.name}: expected a find link on each unpaid stay, got ${shape.finds.length}`);
+    if (shape.finds[0] && !/checkin=\d{4}-\d{2}-\d{2}.*checkout=/.test(shape.finds[0])) fail(`${size.name}: the find link lacks dates (${shape.finds[0]})`);
     await page.screenshot({ path: `${SHOTS}/booked-stays-${size.name}.png`, fullPage: true });
 
-    // Taking a stop out puts the nights back.
-    await page.locator('.trip-stop-remove').last().click();
+    // The stepper moves the nights, and every later stay moves with it.
+    const firstStay = page.locator('.wstay').first();
+    await firstStay.locator('.fstepper-btn').nth(1).click();
+    await page.waitForTimeout(400);
+    const moved = await page.locator('.wstay-sub').nth(1).textContent();
+    if (moved.trim() === shape.ranges[1]) fail(`${size.name}: adding a night did not move the next stay (${moved})`);
+
+    // A price paid for a bed replaces the estimate and hides the find link.
+    await firstStay.locator('.plan-paid-add').click();
+    const bed = firstStay.locator('.plan-paid-input');
+    await bed.fill('210');
+    await bed.press('Enter');
+    await page.waitForTimeout(400);
+    if (await firstStay.locator('a.wrev-find').count()) fail(`${size.name}: a paid stay still offers to find a place`);
+
+    // Taking a stop out removes its card.
+    await page.locator('.wstay-remove').last().click();
     await page.waitForTimeout(500);
-    if (await page.locator('.booked-stop').count() !== 2) fail(`${size.name}: removing a stop did not remove its row`);
+    if (await page.locator('.wstay').count() !== 2) fail(`${size.name}: removing a stop did not remove its card`);
     await addStop(page, 'Dubrovnik');
 
-    // On to Getting there: one leg per hop, plus the way there and home. This
-    // path said "No trip chosen yet" here until T388 (row T377-e).
-    await page.locator('.guide-next').click();
+    // On to Getting there: one leg per hop, plus the way there and home.
+    await page.locator('.guide-next:visible').first().click();
     await page.locator('.tlegs').waitFor({ timeout: 30000 });
     const legs = await page.locator('.tleg').count();
     if (legs !== 4) fail(`${size.name}: expected four legs (out, two hops, home), got ${legs}`);
 
     // The sea crossing: name it a flight and say what it cost.
     const seaLeg = page.locator('.tleg', { hasText: /Dubrovnik/i }).first();
-    // Each leg is a row that opens (T388 walk update): open the crossing first.
     const seaHead = seaLeg.locator('.tleg-head');
     if ((await seaHead.getAttribute('aria-expanded')) !== 'true') await seaHead.click();
     await seaLeg.locator('.tleg-mode', { hasText: /^flight$/i }).click();
-    // The price field opens from "Add what you paid" (it used to be open).
-    if (await seaLeg.locator('.tleg-addpaid').count()) await seaLeg.locator('.tleg-addpaid').click();
-    await seaLeg.locator('.tleg-input').fill('184');
+    const fare = seaLeg.locator('.plan-paid-input');
+    await fare.fill('184');
+    await fare.press('Enter');
     await page.waitForTimeout(400);
-    const total = await page.locator('.tlegs-total').innerText();
-    if (!/184/.test(total)) fail(`${size.name}: the entered fare is not in the travel total (${total})`);
     await page.screenshot({ path: `${SHOTS}/booked-legs-${size.name}.png`, fullPage: true });
 
-    // Hand it over: the flight and its price have to survive into the trip.
-    // Finish is one more step after Getting there.
-    await page.locator('.guide-next').click();
-    await page.waitForTimeout(1200);
-    await page.locator('.guide-next', { hasText: /arrange/i }).last().click();
-    await page.locator('.trip-sheet').waitFor({ timeout: 30000 });
+    // Hand it over: the flight, its price and the bed price survive into the trip.
+    await page.locator('.guide-next:visible').first().click();
+    await page.waitForTimeout(1500);
+    await page.locator('.guide-next:visible').first().click();
+    await page.locator('.trip-planner-screen.is-planned').waitFor({ timeout: 30000 });
     await page.waitForTimeout(2000);
-    const itin = await page.evaluate(() => ({
-      legs: [...document.querySelectorAll('.itin-leg, .trip-leg')].map((e) => e.textContent.trim()),
-      sheet: (document.querySelector('.trip-sheet') || {}).textContent || '',
-    }));
-    console.log(`${size.name}: itinerary`, JSON.stringify(itin.legs.slice(0, 3)));
-    if (!/184/.test(itin.sheet)) fail(`${size.name}: the fare entered for the crossing never reached the trip`);
+    const sheet = await page.locator('.trip-planner-screen').innerText();
+    if (!/184/.test(sheet)) fail(`${size.name}: the fare entered for the crossing never reached the trip`);
+    if (!/210/.test(sheet)) fail(`${size.name}: the bed price never reached the trip`);
     await page.screenshot({ path: `${SHOTS}/booked-overview-${size.name}.png`, fullPage: true });
 
     await ctx.close();

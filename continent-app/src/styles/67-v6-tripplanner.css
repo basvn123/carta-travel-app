@@ -1765,3 +1765,335 @@
   .wrev-main > .tsum,
   .wrev-main > .guide-car-advice { grid-column: 1 / -1; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   T458, the planner after the owner's walk (2026-10-16): the price card in
+   line with the step's content, room around its controls, the party in three
+   groups, where you leave from as a card of its own, tickets and places to
+   stay one tap away, the trip kit as tiles, Before you go cards of one shape,
+   pins that show the stop.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* The price card starts where the step's content starts, under the title. */
+@media (min-width: 1100px) {
+  .trip-wizard-modal .wiz-rail { margin-top: calc(var(--text-headline) * 1.2 + var(--space-5)); }
+}
+
+/* Room around the card's controls, and a hairline between its rows. */
+.plan-input {
+  flex-wrap: wrap;
+  padding-block: var(--space-2);
+  column-gap: var(--space-4);
+  row-gap: var(--space-2);
+}
+.plan-input .fstepper { gap: var(--space-3); }
+.plan-input-panel { flex-basis: 100%; padding-bottom: var(--space-2); }
+.plan-input .plan-input-btn.btn { text-align: right; white-space: normal; }
+
+/* The party, three groups. */
+.party { display: flex; flex-direction: column; gap: var(--space-2); }
+.party-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 64px;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.party.is-compact .party-row { min-height: 0; padding: var(--space-2) 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
+.party-label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.party-label b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.party.is-compact .party-label b { font-size: var(--text-body); }
+.party-label small { font-size: var(--text-caption); color: var(--text-3); }
+.party-rule { margin: 0; font-size: var(--text-caption); color: var(--text-2); line-height: var(--leading-body); }
+.wwho-party { display: block; }
+@media (min-width: 900px) {
+  .wwho-party .party { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+  .wwho-party .party-rule { grid-column: 1 / -1; }
+}
+
+/* Where you leave from: one card, the airports as a choice. */
+.worigin {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.worigin-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.worigin-search { display: flex; gap: var(--space-2); }
+.worigin-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font: inherit;
+  font-size: var(--text-lead);
+  color: var(--text);
+}
+.worigin-input:focus-visible { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
+.worigin-results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.worigin-result.btn { justify-content: flex-start; text-align: left; }
+.worigin-picked { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-lead); color: var(--text); }
+.worigin-picked svg { color: var(--text-2); }
+.worigin-air { display: flex; flex-direction: column; gap: var(--space-2); }
+.worigin-air-lbl { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.worigin-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.worigin-chips .ui-chip small { margin-left: var(--space-1); font-size: var(--text-caption); color: var(--text-3); }
+
+/* Tickets for a leg, in view. */
+.tlegs .tleg-find {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  padding: 0 var(--space-4) var(--space-3);
+  font-size: var(--text-label);
+}
+.tlegs .tleg-find-lbl { color: var(--text-2); }
+.tlegs .tleg-find-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--action);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (pointer: coarse) { .tlegs .tleg-find-link { min-height: var(--tap); } }
+
+/* Review: the gallery, each stay's actions, the transfers in the journey. */
+.wrev-hero .wrev-gallery { border-radius: var(--radius-card); overflow: hidden; }
+.wrev-stop { grid-template-columns: auto 56px minmax(0, 1fr) auto auto; }
+.wrev-stop-acts { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
+.wrev-find.btn, .itin-find.btn { text-decoration: none; }
+@media (max-width: 640px) {
+  .wrev-stop { grid-template-columns: auto 48px minmax(0, 1fr) auto; }
+  .wrev-stop-acts { grid-column: 1 / -1; justify-content: flex-start; }
+}
+.tsum-row.is-transfer .tsum-route { color: var(--text-2); }
+
+/* The trip kit: four tiles, one tap each. */
+.itin-tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+@media (min-width: 560px) { .itin-tool-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.itin-tool.btn {
+  height: auto;
+  min-height: 104px;
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  justify-content: flex-start;
+  align-items: stretch;
+  text-align: left;
+}
+.itin-tool.btn .btn-label { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); white-space: normal; }
+.itin-tool-icon { color: var(--text-2); }
+.itin-tool-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.itin-tool-state { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.itin-bed-acts, .itin-hop-acts { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
+.itin-hop { align-items: center; }
+
+/* The kit's sheets: the tools on the kit's controls. */
+.itin-tool-sheet .extras-section { display: flex; flex-direction: column; gap: var(--space-2); }
+.itin-tool-sheet .extras-input,
+.itin-tool-sheet .extras-notes,
+.itin-tool-sheet .extras-label-input {
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font: inherit;
+  font-size: var(--text-lead);
+  color: var(--text);
+}
+.itin-tool-sheet .extras-notes { width: 100%; resize: vertical; line-height: var(--leading-body); }
+.itin-tool-sheet .extras-row,
+.itin-tool-sheet .extras-check-row {
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.itin-tool-sheet .extras-check-row { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap); padding-block: var(--space-1); }
+.itin-tool-sheet .extras-add-btn {
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font: inherit;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+.extras-find {
+  margin-left: auto;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Before you go: every card one shape and one height. */
+.bgo-track .bgo-card { height: 232px; }
+.bgo-track .bgo-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.bgo-meta { display: flex; align-items: center; gap: var(--space-2); }
+.bgo-meta svg { color: var(--text-2); flex: none; }
+
+/* Pins that show the stop: a small photograph beside the name. */
+.trip-pin-tag { flex-direction: row; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1); }
+.trip-pin-tag-img { width: 32px; height: 32px; border-radius: var(--radius-sm); object-fit: cover; flex: none; background: var(--surface-sunken); }
+.trip-pin-tag-words { display: flex; flex-direction: column; }
+.trip-pin-plain.has-tag .trip-pin-tag { bottom: 12px; }
+/* The tapped stop stays the brown of the route, ringed in ink. */
+.trip-planner-screen .trip-pin.active .trip-pin-shape { background: var(--action); outline: 2px solid var(--text); outline-offset: 2px; }
+.trip-mapcard-map { height: 150px; }
+.trip-planner-screen .trip-pin-plain.has-tag { min-width: var(--tap); }
+.trip-mapcard .trip-pin-tag { display: none; }
+
+/* Your stays (T458): one card a stay. The number, the photo and the name on
+   the first line; the nights on the kit stepper and the stay's own actions
+   on the second. On desktop the add card stands beside the list. */
+.wstays { display: flex; flex-direction: column; gap: var(--space-4); }
+.wstay-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.wstay {
+  display: grid;
+  grid-template-columns: 28px 56px minmax(0, 1fr) var(--tap);
+  grid-template-areas: 'idx thumb info remove' 'nights nights nights nights' 'acts acts acts acts';
+  align-items: center;
+  column-gap: var(--space-3);
+  row-gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+@media (min-width: 560px) {
+  .wstay { grid-template-areas: 'idx thumb info remove' 'idx thumb nights acts'; grid-template-columns: 28px 56px auto minmax(0, 1fr); row-gap: var(--space-2); }
+  .wstay .wstay-info { grid-column: 3 / 5; grid-row: 1; padding-right: var(--tap); }
+  .wstay-acts { justify-content: flex-end; }
+}
+@media (min-width: 1100px) {
+  .wstay { grid-template-areas: 'idx thumb info nights acts remove'; grid-template-columns: 28px 56px minmax(0, 1fr) auto auto var(--tap); }
+  .wstay .wstay-info { grid-column: auto; grid-row: auto; padding-right: 0; }
+  .wstay-acts { flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+}
+.wstay-index {
+  grid-area: idx;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wstay-thumb {
+  grid-area: thumb;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken) center / cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.wstay-info { grid-area: info; min-width: 0; }
+.wstay-city { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
+.wstay-city .guide-flag-img-sm { display: inline-block; vertical-align: -2px; margin-left: var(--space-1); }
+.wstay-sub { margin: var(--space-1) 0 0; font-size: var(--text-caption); color: var(--text-2); }
+.wstay-remove {
+  grid-area: remove;
+  justify-self: end;
+  width: var(--tap);
+  height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+}
+.wstay-remove:hover { background: var(--surface-hover); color: var(--danger); }
+.wstay-remove:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.wstay-nights { grid-area: nights; display: flex; align-items: center; gap: var(--space-2); }
+.wstay-nights .fstepper { gap: var(--space-3); }
+.wstay-nights-word { font-size: var(--text-body); color: var(--text-2); }
+.wstay-acts { grid-area: acts; display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); min-width: 0; }
+
+/* Edit stops (T458): the stop as two rows, its name and dates over its nights
+   and its moves, every control the 44px box; the kit stepper; the transport
+   as choice chips that wrap; a footer that leads back to the trip. */
+.trip-planner-screen .trip-stop {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto auto;
+  grid-template-areas: 'idx body body remove' 'idx stepper up down';
+  align-items: center;
+  column-gap: var(--space-2);
+  row-gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.trip-planner-screen .trip-stop.active { border-color: var(--action); outline: 0; }
+.trip-planner-screen .trip-stop-idx {
+  grid-area: idx;
+  align-self: start;
+  margin-top: var(--space-2);
+  width: 28px;
+  height: 28px;
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-caption);
+}
+.trip-planner-screen .trip-stop-body { grid-area: body; }
+.trip-planner-screen .trip-stop-city { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.trip-planner-screen .trip-stop-when { font-size: var(--text-caption); color: var(--text-2); }
+.trip-planner-screen .trip-stop .trip-stepper { grid-area: stepper; display: flex; align-items: center; gap: var(--space-2); }
+.trip-planner-screen .trip-stop .trip-stepper .fstepper { gap: var(--space-2); }
+.trip-step-suffix { font-size: var(--text-body); color: var(--text-2); }
+.trip-planner-screen .trip-stop-tools { display: contents; }
+.trip-planner-screen .trip-stop-tools .trip-stop-move,
+.trip-planner-screen .trip-stop-tools .trip-stop-remove { width: var(--tap); height: var(--tap); color: var(--text-2); }
+.trip-planner-screen .trip-stop-tools .trip-stop-move { grid-area: down; }
+.trip-planner-screen .trip-stop-tools .trip-stop-move.is-up { grid-area: up; }
+.trip-planner-screen .trip-stop-tools .trip-stop-move.is-up svg { transform: rotate(180deg); }
+.trip-planner-screen .trip-stop-tools .trip-stop-remove { grid-area: remove; align-self: start; }
+.trip-planner-screen .trip-stop-tools .trip-stop-remove:hover { color: var(--danger); }
+.trip-transport-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.trip-transport-chips .ui-chip svg { color: currentColor; }
+.trip-planner-screen .trip-block-title { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.trip-save-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
+.trip-edit-footer .trip-edit-done.btn { flex: 1 1 auto; }
+
+/* The flight transfers in the route (T458): the way from the airport to the
+   first bed and back, a quiet row between the flight and the stops. */
+.itin-airport-hop { display: flex; align-items: center; flex-wrap: nowrap; gap: var(--space-3); padding: var(--space-2) 0 var(--space-2) var(--space-6); }
+.itin-airport-hop-icon { flex: none; color: var(--text-2); }
+.itin-airport-hop-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.itin-airport-hop-main b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.itin-airport-hop-main small { font-size: var(--text-caption); color: var(--text-2); }
+.itin-airport-hop-eur { flex: none; font-size: var(--text-body); color: var(--text); }

@@ -1534,16 +1534,22 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T457-g | T457 | Destinations rail tiles keep wrapped full titles (T430) and beach, lake and mountain tiles a gallery dot row, so a rail's tiles differ in height where Explore's are one height; decide one title rule for rail tiles on both tabs | user | open | owner decision |
 | T457-h | T457 | Cycling's Full list (now right under the head) has a 54 px gap before "EuroVelo routes" and the EuroVelo chip strip is cut at the right edge with no arrow; older than T457 | next task | open |  |
 | T432-a | T432 | InfoDot on est., the planner readiness line and Move the whole trip waits on the glossary (T193-a) | next task | open |  |
-| T432-b | T432 | The trip planner shows four date formats on one trip ("Fri 16 Oct", "16 Oct 2026", arrows and "to"); route every planner date through one locale-aware formatter | next task | open |  |
-| T432-c | T432 | Older trip planner strings fall back to English in de (From and Where headings, Planning around, month chips, Travellers, Change) and country names come from the data in English; add the missing keys and send them for native review | next task | open |  |
-| T432-d | T432 | TripMap stop pins have a 26 px hit box and a tapped pin turns ink while the rest stay brown, the reverse of the map selection rule | next task | open |  |
+| T432-b | T432 | The trip planner shows four date formats on one trip ("Fri 16 Oct", "16 Oct 2026", arrows and "to"); route every planner date through one locale-aware formatter | next task | closed by T458 |  |
+| T432-c | T432 | Older trip planner strings fall back to English in de (From and Where headings, Planning around, month chips, Travellers, Change) and country names come from the data in English; add the missing keys and send them for native review | next task | closed by T458 |  |
+| T432-d | T432 | TripMap stop pins have a 26 px hit box and a tapped pin turns ink while the rest stay brown, the reverse of the map selection rule | next task | closed by T458 |  |
 | T432-e | T432 | One leg reads 72 km on Getting there (the published leg) and 93 km on the planned trip (the routed leg); read one source | next task | open |  |
 | T432-f | T432 | DateField on a phone: day cells 45 x 26 px and enabled out-of-month days at 2.22:1 contrast | next task | open |  |
 | T432-g | T432 | The trip wizard is eight steps with no shortcut for a known trip and the bottom nav stays visible during the flow; decide whether Booked, From and Who become the price card inputs | user | open |  |
-| T432-h | T432 | Children are priced as adults (no child rates in the data) and the planner asks no ages; decide whether to collect ages for a future child rate | user | open |  |
-| T432-i | T432 | Before you go's country card is CountryIntel inside a card with a green Budget-friendly fill and a /day range; flatten it into fact rows | next task | open |  |
-| T432-j | T432 | Edit stops (the trip planner editor view) keeps the older UI | next task | open |  |
+| T432-h | T432 | Children are priced as adults (no child rates in the data) and the planner asks no ages; decide whether to collect ages for a future child rate | user | closed by T458 |  |
+| T432-i | T432 | Before you go's country card is CountryIntel inside a card with a green Budget-friendly fill and a /day range; flatten it into fact rows | next task | closed by T458 |  |
+| T432-j | T432 | Edit stops (the trip planner editor view) keeps the older UI | next task | closed by T458 |  |
 | T432-k | T432 | carta-design asks one per person per day figure on a priced page; the planner price card shows the trip and a person, not a day; decide whether it adds one | user | open |  |
 | T432-l | T432 | Move the whole trip uses "-1" and "+1" text buttons and the leg mode chips show selection by tint without a tick | next task | open |  |
 | T432-m | T432 | Confirm two T432 calls: the Where quiz spend answer no longer changes the Lifestyle (the Who step owns it), and the Trip tab no longer shows the settings line (language and currency stay in Account) | user | open |  |
 | T432-n | T432 | Real-phone pass on the new planner: the price field keyboard, the full map gestures and the sticky footer under the Safari bar | user | open |  |
+| T458-a | T458 | Edit stops still ends in its old trip receipt (own-fare fields, totals, "16 Oct 2026" date inputs with an arrow) and a small city info button; replace the receipt with the price card | next task | open |  |
+| T458-b | T458 | Native review of the 92 translated planner strings (German "Reisende(r)", French "Aller", fr/it "{country}:" phrasing); country names still come from the data in English | user | open |  |
+| T458-c | T458 | Children count half and babies free by rule of thumb (no child rates, no ages asked) and Booking.com links pass children without ages; decide whether to collect ages | user | open |  |
+| T458-d | T458 | The phone planned trip's map is a 150 px card after the trip kit, out of the first screen; confirm or move it higher | user | open |  |
+| T458-e | T458 | Desktop Review reads 154 words in its first screen (64 before) because each stay carries Find a place and the booking price; distill to one line a stay | next task | open |  |
+| T458-f | T458 | Flight rows name the airport by code ("Flight to TIA"); pass the origins table to TripItinerary so they read the airport's city | next task | open |  |

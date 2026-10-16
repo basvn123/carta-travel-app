@@ -90,7 +90,23 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
     ownStays = {}, baggage = 'cabin', anchorId = null, anchorOrigin = null,
     returnAnchorId = null, ownFlight = null, carHome = null, stayTier = 'home',
   } = state || {};
-  const groupSize = Math.max(1, Math.min(MAX_PARTY, Math.round(state?.groupSize || 1)));
+  // The party (T458): everyone 12 and over counts as an adult; children 3 to
+  // 11 share the rooms, eat about half and ride public transport at about
+  // half fare, so they count half on beds, meals and public fares; babies
+  // 0 to 2 travel free. Cars are priced per car and need a seat for everyone.
+  // `groupSize` (the head count Carta prices beds and legs for) is adults
+  // plus children; `weight` scales what children pay half of.
+  const adults = Math.max(1, Math.min(MAX_PARTY, Math.round(state?.groupSize || 1)));
+  const children = Math.max(0, Math.min(MAX_PARTY - adults, Math.round(state?.children || 0)));
+  const babies = Math.max(0, Math.min(MAX_PARTY - adults - children, Math.round(state?.babies || 0)));
+  const groupSize = adults + children;
+  const seats = groupSize + babies;
+  const weight = groupSize > 0 ? (adults + children * 0.5) / groupSize : 1;
+  const PUBLIC = new Set(['train', 'bus', 'ferry', 'public']);
+  const halfFor = (mode, eur) => round2(PUBLIC.has(mode) ? eur * weight : eur);
+  const scaleModes = (modes) => Object.fromEntries(Object.entries(modes || {}).map(([k, v]) => [
+    k, v && !v.own ? { ...v, eur_total: halfFor(k, v.eur_total), eur_pp: v.eur_pp } : v,
+  ]));
   const lifestyle = state?.lifestyle || DEFAULT_LIFESTYLE;
   const transferMode = normalizeTransferMode(state?.transferMode);
 
@@ -189,7 +205,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
       legs.push(opts);
       continue;
     }
-    const priced = opts.no_road ? {} : opts.modes;
+    const priced = opts.no_road ? {} : scaleModes(opts.modes);
     const modes = ownEntry ? { ...priced, [own.mode]: ownEntry } : priced;
     let mode = modes[legModes[i]] ? legModes[i] : null;
     if (!mode && ownEntry) mode = own.mode;
@@ -214,8 +230,9 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
     const hasRental = transportPref === 'car';
     const legFor = (a, b, dir) => {
       if (!a || !b) return null;
-      const opts = airportTransferOptions(a, b, groupSize, { carModel, hasRental });
-      if (!opts || !Object.keys(opts.modes).length) return null;
+      const raw = airportTransferOptions(a, b, groupSize, { carModel, hasRental });
+      if (!raw || !Object.keys(raw.modes).length) return null;
+      const opts = { ...raw, modes: scaleModes(raw.modes) };
       const want = transferMode[dir];
       const mode = want !== 'auto' ? want : opts.recommended;
       const chosen = opts.modes[mode] || opts.modes[opts.recommended] || Object.values(opts.modes)[0];
@@ -243,7 +260,10 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
     const hasRental = transportPref === 'car';
     const kmOf = (eurPp, minutes) => (minutes > 0 ? (minutes / 60) * 42 : Math.max(1, (eurPp || 0) / 0.15));
     const legOf = (eurPp, minutes) => (eurPp > 0
-      ? transferModesFromKm(kmOf(eurPp, minutes), groupSize, { petrol, consumption, capacity, hasRental, publicOverride: eurPp })
+      ? (() => {
+        const t = transferModesFromKm(kmOf(eurPp, minutes), groupSize, { petrol, consumption, capacity, hasRental, publicOverride: eurPp });
+        return t ? { ...t, modes: scaleModes(t.modes) } : t;
+      })()
       : null);
     const inT = legOf(flight.into_ground_eur, flight.into_ground_minutes);
     const outT = legOf(flight.out_ground_eur, flight.out_ground_minutes);
@@ -273,6 +293,9 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
           mode: modeIn === modeOut ? modeIn : null,
           mode_in: modeIn, mode_out: modeOut,
           ground_total: round2((inChosen?.eur_total || 0) + (outChosen?.eur_total || 0)),
+          // Each direction apart, for the route's own rows (T458).
+          in_total: round2(inChosen?.eur_total || 0),
+          out_total: round2(outChosen?.eur_total || 0),
           ground_eur_per_person: round2((inChosen?.eur_pp || 0) + (outChosen?.eur_pp || 0)),
           hours: round2((inChosen?.hours || 0) + (outChosen?.hours || 0)),
           minutes: (flight.into_ground_minutes || 0) + (flight.out_ground_minutes || 0),
@@ -291,7 +314,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
       const model = { ...(carModel || {}), max_drive_km: 4000 };
       const half = (dest) => {
         if (!dest) return null;
-        const rt = drivingEstimate(dest, home, { group_size: groupSize }, model);
+        const rt = drivingEstimate(dest, home, { group_size: seats }, model);
         if (!rt) return null;
         return {
           road_km: rt.road_km,
@@ -316,7 +339,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
   }
 
   const carRental = transportPref === 'car' && stopDetails.length
-    ? rentalEstimate(carModel, first.dest?.iso2, Math.max(1, plannedNights), tripStart || first.arriveDate, groupSize)
+    ? rentalEstimate(carModel, first.dest?.iso2, Math.max(1, plannedNights), tripStart || first.arriveDate, seats)
     : null;
 
   let vignettes = null;
@@ -336,7 +359,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
     }
     const items = [...isoSet].filter((iso) => prices[iso] != null).map((iso) => ({ iso2: iso, eur: prices[iso] }));
     if (items.length) {
-      const cars = Math.max(1, Math.ceil(groupSize / Math.max(1, carModel?.car_capacity || 4)));
+      const cars = Math.max(1, Math.ceil(seats / Math.max(1, carModel?.car_capacity || 4)));
       vignettes = { items, cars, eur_total: round2(items.reduce((n, v) => n + v.eur, 0) * cars) };
     }
   }
@@ -346,7 +369,12 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
   // that stay; the days there stay Carta's.
   const stayCosts = stopDetails.map((s) => {
     if (!s.dest) return null;
-    const est = stopStayCost(s.dest, s.nights, s.arriveDate, { groupSize, stayTier, lifestyle });
+    const raw = stopStayCost(s.dest, s.nights, s.arriveDate, { groupSize, stayTier, lifestyle });
+    const est = raw && weight !== 1 ? (() => {
+      const accomTotal = round2(raw.accomTotal * weight);
+      const groundTotal = round2(raw.groundTotal * weight);
+      return { ...raw, accomTotal, groundTotal, total: round2(accomTotal + groundTotal) };
+    })() : raw;
     const own = paidEur(ownStays?.[s.destinationId]);
     if (!est || !own) return est ? { ...est, ownAccom: false } : est;
     return {
@@ -390,6 +418,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
     stopDetails, plannedNights, windowNights: tripDaysBetween(state?.tripStart, state?.tripEnd),
     routedFlight, flight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes,
     stayCosts, tripHasCar, groupSize, parts, grandTotal, travelSplit,
+    party: { adults, children, babies, head: groupSize, seats, weight },
     perPerson: round2(grandTotal / groupSize),
   };
 }
@@ -470,6 +499,8 @@ export function wizardPlannerState(payload, { stayTier = 'home', lifestyle = nul
     tripEnd: p.startDate ? addDays(p.startDate, total) : '',
     stops,
     groupSize: Math.max(1, Math.min(MAX_PARTY, p.groupSize || 1)),
+    children: Math.max(0, p.children || 0),
+    babies: Math.max(0, p.babies || 0),
     transportPref: p.transport || 'auto',
     pace: p.pace || 'balanced',
     baggage: p.baggage || 'cabin',

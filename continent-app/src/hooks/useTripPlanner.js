@@ -39,6 +39,14 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const [tripEnd, setTripEnd] = useState(draft?.tripEnd || '');
   const [stops, setStops] = useState(draft?.stops || []); // [{ destinationId, nights, activities: string[] }]
   const [groupSize, setGroupSize] = useState(draft?.groupSize || 2);
+  // Children 3 to 11 and babies 0 to 2 (T458), priced by lib/tripTotal.js.
+  const [children, setChildren] = useState(draft?.children || 0);
+  const [babies, setBabies] = useState(draft?.babies || 0);
+  const setParty = useCallback(({ adults, children: c, babies: b }) => {
+    if (adults != null) setGroupSize(Math.max(1, Math.min(MAX_PARTY, adults)));
+    if (c != null) setChildren(Math.max(0, Math.min(MAX_PARTY, c)));
+    if (b != null) setBabies(Math.max(0, Math.min(MAX_PARTY, b)));
+  }, []);
   // How the traveller wants to get between stops: 'auto' lets Carta pick the
   // best mode per leg, 'car' assumes one rental for the whole trip, 'owncar'
   // means they DRIVE from home in their own car (no flight, no rental - fuel
@@ -126,9 +134,9 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, ownStays,
+      stayTier, ownStays, children, babies,
     });
-  }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
+  }, [children, babies, tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
       stayTier, ownStays]);
 
@@ -263,7 +271,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs, ownStays: wizardOwnStays }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs, ownStays: wizardOwnStays, children: wizardChildren, babies: wizardBabies }) => {
     // Every field here mirrors lib/tripTotal.js wizardPlannerState(), the
     // transform the wizard prices its running estimate through (T432): a
     // field set here and not there would move the total at the hand-over.
@@ -279,6 +287,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     // survive picking France in the wizard), the wizard label is a fallback.
     if (label != null) setPlanLabel((prev) => (prev && prev.trim() ? prev : label));
     if (gs != null) setGroupSize(Math.max(1, Math.min(MAX_PARTY, gs)));
+    setChildren(Math.max(0, wizardChildren || 0));
+    setBabies(Math.max(0, wizardBabies || 0));
     if (transport) setTransportPref(transport);
     if (wizardPace) setPace(wizardPace);
     if (wizardBaggage) setBaggage(wizardBaggage);
@@ -326,9 +336,9 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // estimate also prices through (lib/tripTotal.js, T432), so the figure the
   // traveller watched on every step is the figure the planned trip shows.
   const priced = useMemo(() => priceTrip({
-    stops, tripStart, tripEnd, groupSize, transportPref, legModes, ownLegs, ownStays, transferMode,
+    stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs, ownStays, transferMode,
     baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier, lifestyle,
-  }, { data, countryInsights }), [stops, tripStart, tripEnd, groupSize, transportPref, legModes, ownLegs,
+  }, { data, countryInsights }), [stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
     ownStays, transferMode, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier,
     lifestyle, data, countryInsights]);
   const {
@@ -448,6 +458,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setLegModes(sorted[0]?.choices?.legModes || {});
     setOwnLegs(sorted[0]?.choices?.ownLegs || {});
     setOwnStays(sorted[0]?.choices?.ownStays || {});
+    setChildren(sorted[0]?.choices?.children || 0);
+    setBabies(sorted[0]?.choices?.babies || 0);
     setPlanned(false);
   }, []);
 
@@ -472,7 +484,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}), ...(Object.keys(ownStays).length ? { ownStays } : {}) } : {}),
+            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}), ...(Object.keys(ownStays).length ? { ownStays } : {}), ...(children ? { children } : {}), ...(babies ? { babies } : {}) } : {}),
           },
         };
       }));
@@ -507,12 +519,12 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, ownStays]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, ownStays, children, babies]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,
     stops, stopDetails, plannedNights, windowNights,
-    groupSize, setGroupSize,
+    groupSize, setGroupSize, children, babies, setParty,
     transportPref, setTransportPref, transferMode, setTransferMode, pace, setPace, setLegMode, setOwnLeg, carRental,
     // The raw share-link ingredients (the same fields the draft persists).
     anchorId, anchorOrigin, returnAnchorId, legModes, ownLegs, ownStays, setOwnStay,

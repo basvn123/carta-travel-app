@@ -36,10 +36,12 @@ const FOODIE = {
 };
 
 /** A wizard hand-over, the shape GuidedTripWizard's handOver memo builds. */
-function handOver(ids, { party = 2, mode = "fly", out = 0, back = 0, transport = "auto", ownLegs = {}, ownStays = {}, nights = 3 } = {}) {
+function handOver(ids, { party = 2, children = 0, babies = 0, mode = "fly", out = 0, back = 0, transport = "auto", ownLegs = {}, ownStays = {}, nights = 3 } = {}) {
   return {
     startDate: "2027-05-10",
     groupSize: party,
+    children,
+    babies,
     transport,
     pace: "balanced",
     baggage: "cabin",
@@ -165,6 +167,22 @@ test("the party and the Lifestyle move the figures they price, and only those", 
 test("the party is capped where the planner caps it", { skip }, () => {
   const p = price(handOver([byCity("Berat", "AL")], { party: 40 }));
   assert.equal(p.groupSize, MAX_PARTY);
+});
+
+test("children count half on beds, meals and public fares; babies travel free", { skip }, () => {
+  const trip = [byCity("Berat", "AL"), byCity("Gjirokastër", "AL")];
+  const two = price(handOver(trip, { party: 2 }));
+  const fourAdults = price(handOver(trip, { party: 4 }));
+  const family = price(handOver(trip, { party: 2, children: 2 }));
+  const withBaby = price(handOver(trip, { party: 2, babies: 1 }));
+  // Children are priced for the beds and legs of four people, at the weight 3 / 4.
+  close(family.parts.beds, Math.round(fourAdults.parts.beds * 0.75 * 100) / 100, "beds at three quarters of four adults");
+  close(family.parts.days, Math.round(fourAdults.parts.days * 0.75 * 100) / 100, "meals at three quarters of four adults");
+  assert.ok(family.grandTotal < fourAdults.grandTotal && family.grandTotal > two.grandTotal, "between two and four adults");
+  close(withBaby.grandTotal, two.grandTotal, "a baby adds nothing");
+  assert.equal(family.party.children, 2);
+  assert.equal(withBaby.party.seats, 3, "a baby still needs a seat in a car");
+  close(sum(tripLines(family)), family.grandTotal, "the lines still add up");
 });
 
 test("money typed with a comma or as text reads as euros, blanks as nothing", () => {

@@ -628,15 +628,29 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         el.appendChild(shape);
         // A planned trip's stop says what it is beside its number (T432):
         // "Berat, 3 nights", so the map reads as the trip without the list.
-        if (p.tag && !bare) {
+        if (p.tag && !p.stay) {
           el.classList.add('has-tag');
           const tag = document.createElement('span');
           tag.className = 'trip-pin-tag';
+          // A small photograph of the stop beside its name (T458): a handful
+          // of stops at most, so it loads at once, lazily.
+          if (p.tagImg) {
+            const img = document.createElement('img');
+            img.className = 'trip-pin-tag-img';
+            img.src = p.tagImg;
+            img.alt = '';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            tag.appendChild(img);
+          }
+          const words = document.createElement('span');
+          words.className = 'trip-pin-tag-words';
           const name = document.createElement('b');
           name.textContent = p.city || '';
           const sub = document.createElement('small');
           sub.textContent = p.tag;
-          tag.append(name, sub);
+          words.append(name, sub);
+          tag.appendChild(words);
           el.appendChild(tag);
         }
         el.addEventListener('click', (e) => {

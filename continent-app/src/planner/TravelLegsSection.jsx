@@ -37,7 +37,10 @@ function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText }) 
   const Icon = MODE_ICON[mode];
   const paid = paidEur(value?.eur);
   const [open, setOpen] = useState(false);
-  const links = useMemo(() => (open ? legLinks({
+  // The places to book this hop, always in view (T458): a traveller deciding
+  // how to get from one stop to the next wants the trains and buses one tap
+  // away, not behind a fold.
+  const links = useMemo(() => (leg.booked ? [] : legLinks({
     from: leg.from,
     to: leg.to,
     mode,
@@ -46,7 +49,7 @@ function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText }) 
     adults,
     subId: `wiz_${leg.kind}`,
     lang,
-  }) : []), [open, leg, mode, adults, lang]);
+  })), [leg, mode, adults, lang]);
   const bodyId = `legbody-${leg.key}`;
 
   return (
@@ -87,13 +90,23 @@ function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText }) 
             value={paid}
             estimate={estimate || null}
             hint={false}
-            label={leg.kind === 'inter' ? t('plan.youPaidFor', { people: partyText }) : t('plan.yourFareFor', { people: partyText })}
+            label={leg.kind === 'inter' ? t('plan.ticketFor', { people: partyText }) : t('plan.yourFareFor', { people: partyText })}
             onChange={(n) => onChange(leg.key, { eur: n ? String(n) : '', ...(mode ? {} : { mode: leg.kind === 'inter' ? 'train' : 'fly' }) })}
           />
         </div>
       </div>
       {leg.published && !open && (
         <p className="tleg-measured">{publishedLine(leg.published, t)}</p>
+      )}
+      {links.length > 0 && (
+        <div className="tleg-find">
+          <span className="tleg-find-lbl">{t('plan.findTickets')}</span>
+          {links.slice(0, 4).map((l) => (
+            <a key={l.key} className="tleg-find-link" href={l.url} target="_blank" rel="noreferrer noopener">
+              {l.label}<span className="sr-only"> {t('plan.opensNewTab')}</span>
+            </a>
+          ))}
+        </div>
       )}
       <div id={bodyId} hidden={!open} className="tleg-body">
         {open && (
@@ -132,16 +145,6 @@ function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText }) 
                         : t('travel.airportKm', { km: a.km })}
                     </small>
                   </span>
-                ))}
-              </div>
-            )}
-            {links.length > 0 && (
-              <div className="tleg-links">
-                <span className="tleg-links-label">{t('travel.checkOn')}</span>
-                {links.map((l) => (
-                  <a key={l.key} className="tleg-link" href={l.url} target="_blank" rel="noreferrer noopener">
-                    {l.label} <span aria-hidden="true">&#8599;</span>
-                  </a>
                 ))}
               </div>
             )}
@@ -232,9 +235,17 @@ export function TravelLegsSection({
 }
 
 /** The same legs, read-only, for the review: route, how, and the figure. */
-export function TravelLegsSummary({ legs, values, estimates = {}, onEdit }) {
+export function TravelLegsSummary({ legs, values, estimates = {}, onEdit, transfers = null }) {
   const { t } = useI18n();
   if (!legs.length) return null;
+  // The airport transfers sit in the journey where they happen (T458): after
+  // the way there, before the way home.
+  const rows = [];
+  legs.forEach((leg) => {
+    if (leg.kind === 'back' && transfers?.out) rows.push({ transfer: transfers.out, key: 'tr-out' });
+    rows.push({ leg, key: leg.key });
+    if (leg.kind === 'out' && transfers?.in) rows.push({ transfer: transfers.in, key: 'tr-in' });
+  });
   return (
     <div className="tsum">
       <div className="tsum-head">
@@ -242,7 +253,16 @@ export function TravelLegsSummary({ legs, values, estimates = {}, onEdit }) {
         {onEdit && <Button variant="quiet" size="sm" onClick={onEdit}>{t('travel.edit')}</Button>}
       </div>
       <div className="tsum-list">
-        {legs.map((leg) => {
+        {rows.map(({ leg, transfer, key }) => {
+          if (transfer) {
+            return (
+              <div className="tsum-row is-transfer" key={key}>
+                <span className="tsum-route">{transfer.label}</span>
+                <span className="tsum-mode"><BusIcon size={12} /> {t('plan.transfer')}</span>
+                <span className="tsum-eur"><Money value={transfer.eur} est precision="cents" /></span>
+              </div>
+            );
+          }
           const v = values[leg.key] || {};
           const Icon = MODE_ICON[v.mode];
           const paid = paidEur(v.eur);
