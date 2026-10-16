@@ -64,7 +64,6 @@ import {
   CityIcon, TownIcon, VillageIcon, AreaIcon, LoopIcon, LakeIcon, FilterIcon,
   BikeIcon, ArrowLeftIcon,
 } from '../components/Icons.jsx';
-import { LifestyleButton } from './LifestyleButton.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
 import CreditFold from './CreditFold.jsx';
 import { openShared } from '../lib/sharedElement.js';
@@ -85,7 +84,8 @@ import {
 import { SectionOpening, SectionHead, Strip } from './SectionOpening.jsx';
 import { CountryGalleryCard } from './CountryGallery.jsx';
 import { countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
-import { Button, Chip, Field, Tabs } from '../components/ui/index.js';
+import { Button, Chip, Field, Segmented, Tile, TileGroup } from '../components/ui/index.js';
+import { CountryFold } from './RailFold.jsx';
 import { createPortal } from 'react-dom';
 import { pickIcons, buildRails, photoOf, photosOf } from '../lib/openingScreen.js';
 import { okPhoto, firstOkImage } from '../lib/photoVeto.js';
@@ -767,7 +767,7 @@ function LayerError({ onRetry, t, msg = 'layer.loadFailed' }) {
 
 export function DestinationsTab({
   data, pricedAll, availableCountries = [], onSelectDest,
-  stayTier = 'home', lifestyle, onOpenLifestyle, origin = null,
+  stayTier = 'home', origin = null,
   // Sets the Lifestyle panel's "Where you sleep" answer, for the trip
   // page's Lifestyle slider (T173).
   onChangeStayTier = null,
@@ -2207,9 +2207,16 @@ export function DestinationsTab({
     return () => io.disconnect();
   }, [rowCount]);
 
+  // Highlights or Full list (T457, the owner: the full list "is brought to
+  // the bottom"; find a smarter way). The opening's rails are the
+  // highlights; the full list is one choice from the head, where Explore
+  // keeps List | Map. A new section opens on its highlights.
+  const [dview, setDview] = useState('top');
+
   const switchCat = (next) => {
     if (next === cat) return;
     setCat(next);
+    setDview('top');
     setQuery('');
     setJourneyView(null);
     // The country deliberately survives the switch: "I am looking at Albania,
@@ -2640,6 +2647,7 @@ export function DestinationsTab({
       const grade = tripGrade(row);
       return {
         name: displayName(row.name),
+        cc: opening?.europe ? row.country : null,
         // Europe-wide (T453) the country is what a tile has to say first;
         // within one country, the grade.
         where: opening?.europe ? countryName(row.country)
@@ -2652,6 +2660,7 @@ export function DestinationsTab({
     if (layer === 'cycle') {
       return {
         name: routeTitle(row, t),
+        cc: row.cc,
         where: countryName(row.cc),
         fact: row.km != null ? km(row.km, 0) : null,
         factLabel: t('card.vLength'),
@@ -2661,6 +2670,7 @@ export function DestinationsTab({
     if (layer === 'mountain') {
       return {
         name: displayName(row.name),
+        cc: row.cc,
         where: placeLine(row.range, countryName(row.cc)),
         fact: row.ele != null ? `${Math.round(row.ele).toLocaleString(lang)} m` : null,
         factLabel: t('card.vHeight'),
@@ -2671,6 +2681,7 @@ export function DestinationsTab({
       const a = row.size?.areaKm2;
       return {
         name: displayName(row.name),
+        cc: row.cc,
         where: placeLine(row.region, countryName(row.cc)),
         factLabel: t('card.vArea'),
         fact: a != null ? `${a.toLocaleString(lang, { maximumFractionDigits: a < 10 ? 1 : 0 })} km²` : null,
@@ -2679,6 +2690,7 @@ export function DestinationsTab({
     }
     return {
       name: displayName(row.name),
+      cc: row.cc,
       where: placeLine(row.region, countryName(row.cc)),
       factLabel: t('card.vLength'),
       fact: row.lengthM != null ? `${Math.round(row.lengthM).toLocaleString(lang)} m` : null,
@@ -2706,7 +2718,13 @@ export function DestinationsTab({
     ? { label: t(`dtab.nearMe.${cat}`), onPick: useMyLocation, busy: locBusy }
     : null;
   const isDesktop = useIsDesktop();
-  const railCap = isDesktop ? 4 : 3;
+  // The By country track is one of the rails (T457): four on a desktop and
+  // three on a phone in all, as on Explore, so the full list comes after the
+  // same number of rails as Explore's "All places" does.
+  const hasCountryTrack = !!opening && (opening.layer === 'trail'
+    ? !!opening.europe
+    : countryOptions.length > 0);
+  const railCap = (isDesktop ? 4 : 3) - (hasCountryTrack ? 1 : 0);
   const openingRails = useMemo(() => {
     if (!opening) return { rails: [], starters: [] };
     const all = [];
@@ -2742,6 +2760,22 @@ export function DestinationsTab({
     };
     // applyRail only calls the setters, which are stable.
   }, [opening, railCap, t, country, countryName]);
+  // In the Full list view every saved cut is a door over the list.
+  const openingDoors = useMemo(() => [
+    ...openingRails.rails.filter((r) => r.onSeeAll)
+      .map((r) => ({ key: r.key, title: r.title, onPick: r.onSeeAll })),
+    ...openingRails.starters,
+  ], [openingRails]);
+  const viewSwitch = opening && !opening.europe ? {
+    label: t('dtab.viewLabel'),
+    value: dview,
+    onChange: (v) => { setDview(v); scrollRef.current?.scrollTo?.(0, 0); },
+    options: [
+      { value: 'top', label: t('dtab.viewTop') },
+      { value: 'all', label: t('dtab.viewAll') },
+    ],
+  } : null;
+  const listView = dview === 'all' && !!viewSwitch;
 
   // ── Desktop chrome ────────────────────────────────────────────────────
   //
@@ -2754,35 +2788,31 @@ export function DestinationsTab({
   // the account and the pass. On a phone nothing moves: the toolbar card
   // stays exactly as it was, and CSS shows one arrangement or the other.
 
-  // ── The tab's chrome (T428) ──────────────────────────────────────────
+  // ── The tab's chrome (T428, T457) ──────────────────────────────────────
   //
   // Explore's grammar, so the two browse tabs read as one product:
-  //   - the six sections as one row of kit Tabs under the top bar, sticky
-  //     while the page scrolls (it was a 2 x 3 grid of buttons on a phone and
-  //     a second grid in the desktop panel);
+  //   - the six sections as kit tiles, an icon over the word, the way
+  //     Explore's panel offers its trip types (T457, the owner: the row of
+  //     small underlined tabs was "too little"). On a desktop they head the
+  //     side panel, two across; on a phone they are the 2 x 3 grid of equal
+  //     buttons the design system names for six categories. They keep tab
+  //     semantics: the six swap the panel below in place;
   //   - the search field, in the header's slot on a desktop like Explore's
   //     guided search, beside one Filters button on a phone;
-  //   - one refine row over the list: the sort as one select (three toggle
-  //     buttons with an arrow before), the country, the Lifestyle door;
-  //   - the desktop panel keeps only what narrows the list.
+  //   - one refine row over the list on a phone: the sort as one select and
+  //     the country; on a desktop the panel holds both;
+  //   - the Lifestyle door is the settings line's alone (row T381-b).
   // No figure rides a chip any more: the list under it is the answer.
-  const catTabs = (
-    <Tabs
-      className="dtab-cats"
-      label={t('places.sideBrowse')}
-      tabs={CATS.map(({ key, Icon, labelKey }) => ({
-        id: key,
-        label: (
-          <>
-            <Icon size={18} />
-            <span>{t(labelKey)}</span>
-          </>
-        ),
-      }))}
-      value={cat}
-      onChange={switchCat}
-      panelId="dtab-panel"
-    />
+  const catTiles = (
+    <TileGroup kind="tabs" columns={isDesktop ? 2 : 3} label={t('places.sideBrowse')}
+      className="dtab-cats xrail-tiles">
+      {CATS.map(({ key, Icon, labelKey }) => (
+        <Tile key={key} kind="tab" icon={<Icon size={20} />} selected={key === cat}
+          aria-controls="dtab-panel" data-cat={key} onClick={() => switchCat(key)}>
+          {t(labelKey)}
+        </Tile>
+      ))}
+    </TileGroup>
   );
 
   const sortCur = cat === 'trails' ? trailSort : isCycleCat ? cycleSort : sort;
@@ -2824,18 +2854,6 @@ export function DestinationsTab({
     />
   );
 
-  // The same door Explore draws, from the same component: this tab prices
-  // every card at the traveller's own bed and habits, so the control that
-  // sets them cannot look different here.
-  const renderLifestyle = (cls) => (
-    <LifestyleButton
-      stayTier={stayTier}
-      lifestyle={lifestyle}
-      onClick={onOpenLifestyle}
-      className={cls}
-    />
-  );
-
   const renderFacetGroups = (only) => facetGroups
     // Inline only the short set flagged `toolbar`, or a group with a chip
     // on (an opening's "See all" can switch on a chip from any group);
@@ -2844,9 +2862,9 @@ export function DestinationsTab({
       ? g.toolbar === true || g.options.some((o) => o.on)
       : true))
     .map((g) => (
-      <div key={g.key} className="dtab-facet">
-        <p className="dtab-facet-label">{g.label}</p>
-        <div className="dtab-chips" role="group" aria-label={g.label}>
+      <div key={g.key} className="dtab-facet xrail-sec">
+        <h3 className="dtab-facet-label xrail-h">{g.label}</h3>
+        <div className="dtab-chips xrail-chips" role="group" aria-label={g.label}>
           {g.options.map((o) => (
             <Chip
               key={o.key}
@@ -2880,7 +2898,10 @@ export function DestinationsTab({
         placeholder={t('places.searchDest')}
         aria-label={t('places.searchDest')}
       />
-      {canLocate && (
+      {/* On a desktop the head's labelled near-me door does this (T457: two
+          doors to one action, and the header field lost a third of its
+          width to the crosshair); a phone keeps it in the field. */}
+      {canLocate && !(isDesktop && nearMeDoor) && (
         <button
           type="button"
           className="places-locate"
@@ -2996,14 +3017,12 @@ export function DestinationsTab({
   ) : null;
 
   const countryControl = countryOptions.length > 0 ? renderCountry('places-country dtab-country-pick') : null;
-  const lifestyleControl = showPriceChrome && onOpenLifestyle ? renderLifestyle('dtab-lifestyle') : null;
   const sortControl = renderSort('dtab-sort', true);
-  const refineRow = (sortControl || countryControl || lifestyleControl || tripLength) ? (
+  const refineRow = (sortControl || countryControl || tripLength) ? (
     <div className="dtab-refine">
       {tripLength}
       {sortControl}
       {countryControl}
-      {lifestyleControl}
     </div>
   ) : null;
 
@@ -3024,6 +3043,12 @@ export function DestinationsTab({
           iconEnd={<ChevronRightIcon size={14} />} onClick={() => onExploreCountry(bandCc)}>
           {t('dtab.exploreCountry', { country: countryName(bandCc) })}
         </Button>
+      )}
+      {/* A country's walks open on its rails too (T457): the band is their
+          head, so the view switch stands in it. */}
+      {viewSwitch && !sectionHead && (
+        <Segmented size="sm" className="dtab-view" label={viewSwitch.label} value={viewSwitch.value}
+          onChange={viewSwitch.onChange} options={viewSwitch.options} />
       )}
     </div>
   ) : null;
@@ -3046,41 +3071,27 @@ export function DestinationsTab({
     </Strip>
   ) : null;
 
-  // T451: on a phone the section row scrolls sideways; the section a link
-  // or a starter opened is brought into view, never left off-screen.
-  useEffect(() => {
-    if (!isActive) return;
-    const el = document.querySelector('.dtab-cats [aria-selected="true"]');
-    el?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
-  }, [cat, isActive]);
-
   return (
     <div className="places-shell">
       {/* The page's one h1 (T186): the tab has no visible title, so the name
           is for assistive technology. It steps aside while a dialog (a detail
           page, a sheet) is open, so that dialog's own h1 is the only one. */}
       <h1 className="sr-only tab-h1">{t('nav.places')}</h1>
-      {/* Desktop only (CSS hides it under 769px): everything that narrows
-          the list, on the page ground with one hairline to its right. */}
+      {/* Desktop only (CSS hides it under 769px): Explore's panel, section
+          for section (T457): the six sections as tiles, then everything that
+          narrows the list, the country last in a fold with its flags. */}
       <aside className="side-panel places-side" aria-label={t('places.sideAria')}>
-        <div className="side-block">
-          <p className="side-label">
-            {t('places.sideRefine')}
-            {activeFilters > 0 && (
-              <Button variant="quiet" size="sm" className="side-clear" onClick={resetAll}>
-                {t('filter.reset')}
-              </Button>
-            )}
-          </p>
-          {tripLength && <div className="side-group">{tripLength}</div>}
-          {showSorts && sortDefs.length > 0 && (
-            <div className="side-group">{renderSort('dtab-sort-side', false)}</div>
+        <div className="side-block xrail">
+          <h2 className="sr-only">{t('places.sideAria')}</h2>
+          {isDesktop && (
+            <section className="xrail-sec" aria-labelledby="dtab-h-browse">
+              <h3 className="xrail-h" id="dtab-h-browse">{t('places.sideBrowse')}</h3>
+              {catTiles}
+            </section>
           )}
-          {countryOptions.length > 0 && (
-            <div className="side-group">
-              <p className="side-sub">{t('day.country')}</p>
-              {renderCountry('places-country side-country')}
-            </div>
+          {tripLength && <div className="side-group xrail-sec">{tripLength}</div>}
+          {showSorts && sortDefs.length > 0 && (
+            <div className="side-group xrail-sec">{renderSort('dtab-sort-side', false)}</div>
           )}
           {facetGroups.length > 0 && (
             <div className="side-group side-facets">
@@ -3095,21 +3106,23 @@ export function DestinationsTab({
                 aria-expanded={sheetOpen}
               >
                 {t('places.allFilters')}
-                {activeFilters > 0 && <Chip kind="count" className="dtab-count">{fmt(activeFilters)}</Chip>}
+                {activeFilters - (country ? 1 : 0) > 0 && (
+                  <Chip kind="count" className="dtab-count">{fmt(activeFilters - (country ? 1 : 0))}</Chip>
+                )}
               </Button>
             </div>
           )}
-          {showPriceChrome && onOpenLifestyle && (
-            <div className="side-group">
-              {renderLifestyle('side-lifestyle')}
-            </div>
+          {countryOptions.length > 0 && (
+            <CountryFold t={t} single name="dtab-country" className="side-country"
+              countries={countryOptions} selected={country ? [country] : []}
+              onPick={(cc) => { setCountry(cc); setNearPlace(null); }} />
           )}
         </div>
       </aside>
 
       <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
-        <div className="dtab-bar">{catTabs}</div>
+        {!isDesktop && <div className="dtab-bar">{catTiles}</div>}
         {headerSlot
           ? createPortal(searchField, headerSlot)
           : (
@@ -3169,6 +3182,13 @@ export function DestinationsTab({
         {/* The trips head (T431) is JourneysSection's own, with the length
             choice beside it. */}
 
+        {/* A section narrowed by a filter keeps its head (T457: Explore keeps
+            "Explore Europe" over a filtered list); the rails and the view
+            switch step aside while the list is the answer. */}
+        {!opening && sectionHead && !(cat === 'trails' && showCountryIndex) && (
+          <SectionHead title={sectionHead.title} id={`dtab-head-${cat}`} nearMe={nearMeDoor} />
+        )}
+
         {/* Trails at rest: the head, then the countries (a walk is ranked
             within its country, so the section opens on them). */}
         {cat === 'trails' && sectionHead && !opening && topTrails !== undefined && !topTrails?.length && (
@@ -3182,8 +3202,9 @@ export function DestinationsTab({
             <SectionOpening
               layer={opening.layer}
               head={sectionHead}
-              rails={openingRails.rails}
-              starters={openingRails.starters}
+              view={viewSwitch}
+              rails={listView ? [] : openingRails.rails}
+              starters={listView ? openingDoors : openingRails.starters}
               describe={describeRow}
               photo={(row) => photoOf(opening.layer, row)}
               photos={(row) => photosOf(opening.layer, row)}
@@ -3192,10 +3213,11 @@ export function DestinationsTab({
               nearMe={nearMeDoor}
               t={t}
             >
-              {opening.layer !== 'trail' && countryTrack}
+              {!listView && opening.layer !== 'trail' && countryTrack}
             </SectionOpening>
-            {/* Europe-wide trails have no list under them: the countries follow. */}
-            {!opening.europe && <h2 className="open-gridhead dtab-gridhead">{t('open.gridHead')}</h2>}
+            {/* Europe-wide trails have no list under them: the countries
+                follow. In the Full list view the head names the list. */}
+            {!opening.europe && !listView && <h2 className="open-gridhead dtab-gridhead">{t('open.gridHead')}</h2>}
           </>
         )}
 

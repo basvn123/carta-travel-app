@@ -33,6 +33,18 @@ const BASE = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 41
 // open it, type the name, click the option. A name of '' picks "All countries".
 const COUNTRY_NAME = new Intl.DisplayNames(['en'], { type: 'region' });
 async function pickCountry(scope, cc) {
+
+  // T457: on a desktop the country is the side panel's fold (one radio a
+  // country, with its flag, "All countries" first), not a button.
+  const fold = scope.locator('.places-side .side-country:visible');
+  if (await fold.count()) {
+    const label = cc ? COUNTRY_NAME.of(cc) : 'All countries';
+    if (!(await fold.evaluate((d) => d.open))) await fold.locator('summary').click();
+    if (cc) await fold.locator('.xrail-country-find input').fill(label);
+    await fold.locator('.xrail-country', { hasText: new RegExp(`^${label}$`, 'i') }).first().click();
+    await scope.waitForTimeout(1200);
+    return;
+  }
   await scope.locator('.places-country:visible').first().click();
   await scope.waitForTimeout(400);
   const pop = scope.locator('.country-picker-pop:visible');
@@ -239,7 +251,8 @@ try {
 
   // Back to the itineraries, then narrow by country.
   await setDays(page, 0);   // back to any length
-  const picker = page.locator('.places-country:visible').first();
+  // T457: on a desktop the country is the side panel's fold.
+  const picker = page.locator('.places-country:visible, .places-side .side-country:visible').first();
   if (await picker.isVisible().catch(() => false)) {
     await pickCountry(page, 'AT');
     await page.waitForTimeout(2000);

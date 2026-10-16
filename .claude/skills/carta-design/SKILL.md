@@ -14,6 +14,13 @@ both are retired and nothing below refers to them as current.
 Updated 2026-10-15 (T430, T431): the item page and trip page grammar, the 3D terrain map, credits under photos,
 trip lists as tiles, the suitability strip retired.
 
+Updated 2026-10-16 (T457, the owner: Destinations must line up with Explore): both browse tabs share one side
+panel grammar (the same padding, 12 px section headings, kit tiles first, the country last in a fold with a
+search and a flag a row) and one full-width content column. Destinations' six sections are kit tiles with tab
+semantics, two across at the top of the desktop panel and the 2 x 3 grid at the top of a phone column. A
+section's head carries "Highlights | Full list" where Explore's carries List | Map: the full list is one choice
+from the top. The rails take Explore's tile widths and lines, and the countries track counts as one of the rails.
+
 Updated 2026-10-13 (T438) after the owner reviewed Explore: the lagoon teal became one warm brown
 (umber), a rating became a star and an ink figure (the Score, T437), provenance on the page became the
 estimate mark alone, and catalogue counts left the page furniture.
@@ -320,7 +327,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Filters.** Removable filter chips in one row above a filtered list, each named "Remove <filter>", ending in "Clear all", the same on every browse tab. At most one sticky refine row per list (`--surface`, `--border` bottom edge, `--tap` high, no shadow) holding Filters, sort, country and the active chips. Up to six categories on a phone are a 2 x 3 grid of equal buttons. The budget ceiling is a stepped select (Any, 40, 60, 80, 100, 130 a person a day, ground only, "Up to {price} a day"), never a free slider; it filters and does not re-price. A month select holds the twelve months plus "Any"; with a month, a card may carry one measured month fact ("Swim season includes July"), never a forecast.
 
-**Rails and cuts.** A rail has a heading (a figure, a verb, or a plain section name such as "Hidden gems"), "See all" without a number, arrows on a fine pointer, arrow keys when focused, dots hidden from screen readers, scroll-snap, one aspect, no autoplay or loop; no subtitle and no position figure (T438). Desktop shows at most four rails and a phone three; further cuts are one row of chips. The first browse rail may be a cost cut ("Under {price} a day in <month>") sorted by day cost with countries interleaved.
+**Rails and cuts.** A rail has a heading (a figure, a verb, or a plain section name such as "Hidden gems"), "See all" without a number, arrows on a fine pointer, arrow keys when focused, dots hidden from screen readers, scroll-snap, one aspect, no autoplay or loop; no subtitle and no position figure (T438). Desktop shows at most four rails and a phone three (a countries track counts as one); further cuts are one row of door buttons (secondary, small) right over the list they narrow (T457, Explore's doors). The first browse rail may be a cost cut ("Under {price} a day in <month>") sorted by day cost with countries interleaved.
 
 **Tracks.** The day track, flashcards and the photo track share mechanics: one card per stop of `scroll-snap-type: x mandatory`, about 85 percent wide on a phone so the next shows, three across from 1024 px for days; Previous and Next secondaries at `--tap` and the position ("Day 3 of 7", "2 of 5") above or under it; arrow keys move one; position dots 6 px `--border`, the current one `--select-border`, hidden from screen readers. Swiping is a shortcut, never the only way. No autoplay, no looping, no flip, no 3D, no stacked shadows. Flashcards have a "Show all" link that turns the deck into a list, and print as the list. Every day stays reachable as a link from the page's own list.
 

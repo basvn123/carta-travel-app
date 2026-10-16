@@ -1,9 +1,8 @@
 import React from 'react';
 import { KindGlyph } from '../components/KindGlyph.jsx';
 import { KINDS } from '../lib/taxonomy.js';
-import { CountryFlag } from '../components/CountryFlag.jsx';
-import { ChevronDownIcon, ChevronRightIcon } from '../components/Icons.jsx';
-import { Chip, ChipGroup, Field, IconButton, Switch, Tile, TileGroup } from '../components/ui/index.js';
+import { Chip, ChipGroup, Field, Switch, Tile, TileGroup } from '../components/ui/index.js';
+import { CountryFold, RailFold as Fold } from './RailFold.jsx';
 import { TRIP_KINDS } from '../lib/trip_kinds.js';
 import { KIND_ICONS } from './CategoryRail.jsx';
 import { formatMoney } from '../lib/money.js';
@@ -26,7 +25,8 @@ import { countryName } from '../lib/countryName.js';
  *   On or off     Switches: hidden gems, no car, quiet in high season, near
  *                 the sea, World Heritage, best of its country, my shortlist
  *   Size, what you do with it, country
- *                 longer lists, in quiet folds that start closed
+ *                 longer lists, in quiet folds that start closed (RailFold.jsx,
+ *                 shared with the Destinations rail since T457)
  *
  * State contract: `xf` belongs to ExploreTab (and the URL there); this
  * component only renders it and calls `patch`. App-level filters (gems,
@@ -53,19 +53,6 @@ export function verdictsFrom(min) {
   return min ? RATING_STEPS.filter((k) => Number(k) >= Number(min)) : [];
 }
 
-function Fold({ label, n = 0, children }) {
-  return (
-    <details className="xrail-fold">
-      <summary className="xrail-fold-head">
-        <span className="xrail-h">{label}</span>
-        {n > 0 && <Chip kind="count">{n}</Chip>}
-        <ChevronDownIcon size={16} className="xrail-fold-chev" />
-      </summary>
-      <div className="xrail-fold-body">{children}</div>
-    </details>
-  );
-}
-
 export function ExploreFilterRail({
   t, lang, xf, patch, budgetSteps,
   gemOnly, setGemOnly,
@@ -76,7 +63,6 @@ export function ExploreFilterRail({
   showFavOnly, setShowFavOnly,
   onOpenCountry,
 }) {
-  const [countryQuery, setCountryQuery] = React.useState('');
   const monthName = React.useMemo(() => {
     const f = new Intl.DateTimeFormat(lang, { month: 'long' });
     return (m) => f.format(new Date(2026, m - 1, 15));
@@ -90,10 +76,6 @@ export function ExploreFilterRail({
       .sort((a, b) => a[1].localeCompare(b[1], lang)),
     [availableCountries, lang],
   );
-  const q = countryQuery.trim().toLowerCase();
-  const countries = q
-    ? localCountries.filter(([, local, name]) => local.toLowerCase().includes(q) || name.toLowerCase().includes(q))
-    : localCountries;
 
   return (
     <div className="xrail">
@@ -195,32 +177,9 @@ export function ExploreFilterRail({
         </div>
       </Fold>
 
-      <Fold label={t('sort.country')} n={countryFilter.length}>
-        <Field label={t('filter.countrySearch')} hideLabel type="search" value={countryQuery}
-          placeholder={t('filter.countrySearch')} onChange={(e) => setCountryQuery(e.target.value)}
-          className="xrail-country-find" />
-        <ul className="xrail-countries">
-          {countries.map(([iso2, name]) => (
-            <li key={iso2} className="xrail-country-row">
-              <label className="xrail-country">
-                <input
-                  type="checkbox"
-                  checked={countryFilter.includes(iso2)}
-                  onChange={() => setCountryFilter(toggleIn(countryFilter, iso2))}
-                />
-                <CountryFlag country={iso2} size={12} />
-                <span>{name}</span>
-              </label>
-              {onOpenCountry && (
-                <IconButton label={t('cpage.open', { country: name })} onClick={() => onOpenCountry(iso2)}
-                  className="xrail-country-page">
-                  <ChevronRightIcon size={16} />
-                </IconButton>
-              )}
-            </li>
-          ))}
-        </ul>
-      </Fold>
+      <CountryFold t={t} countries={localCountries} selected={countryFilter}
+        onPick={(iso2) => setCountryFilter(toggleIn(countryFilter, iso2))}
+        onOpenCountry={onOpenCountry} />
     </div>
   );
 }

@@ -17,6 +17,18 @@ const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 417
 // open it, type the name, click the option. A name of '' picks "All countries".
 const COUNTRY_NAME = new Intl.DisplayNames(['en'], { type: 'region' });
 async function pickCountry(scope, cc) {
+
+  // T457: on a desktop the country is the side panel's fold (one radio a
+  // country, with its flag, "All countries" first), not a button.
+  const fold = scope.locator('.places-side .side-country:visible');
+  if (await fold.count()) {
+    const label = cc ? COUNTRY_NAME.of(cc) : 'All countries';
+    if (!(await fold.evaluate((d) => d.open))) await fold.locator('summary').click();
+    if (cc) await fold.locator('.xrail-country-find input').fill(label);
+    await fold.locator('.xrail-country', { hasText: new RegExp(`^${label}$`, 'i') }).first().click();
+    await scope.waitForTimeout(1200);
+    return;
+  }
   await scope.locator('.places-country:visible').first().click();
   await scope.waitForTimeout(400);
   const pop = scope.locator('.country-picker-pop:visible');
@@ -322,6 +334,11 @@ check('trips index carries no intro paragraph', await desk.locator('.places-intr
 // Explore, where the prices are.)
 check('the curated library draws no Lifestyle pill',
   await desk.locator('.places-side .lifestyle-btn:visible').count() === 0);
+// T457 (row T381-b): no Destinations section draws its own Lifestyle door;
+// the settings line is the one door, and it is there.
+check('the settings line is the Lifestyle door on Destinations',
+  await desk.locator('.places-shell .lifestyle-btn').count() === 0
+  && await desk.locator('.settings-part-lifestyle:visible').count() === 1);
 
 // ── T404 (V5): rails you can walk with the keys, and an emptied list that
 // always offers its way back ─────────────────────────────────────────────

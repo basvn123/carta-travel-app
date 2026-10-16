@@ -15,9 +15,10 @@ import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
  * DestinationsTab's CARD_SIZES because it is literally the same grid.
  */
 const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
-// T431: the trip and style tiles, three across from 1280 px, two from 769 px
-// and one on a phone, inside the 1180 px reading column.
-const TILE_SIZES = '(max-width: 768px) 92vw, (max-width: 1279px) 46vw, 380px';
+// T431: the trip and style tiles, two across from 769 px and one on a phone;
+// T457: in the full-width column, three from 1280 px (at most about 410 px
+// wide) and four from 1600 px.
+const TILE_SIZES = '(max-width: 768px) 92vw, (max-width: 1279px) 46vw, 410px';
 import {
   loadJourneyIndex, loadJourneyType, loadAllJourneyCards, typeLabel, typeDesc, monthsShort,
   styleFromPrice, takePendingJourney,

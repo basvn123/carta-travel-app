@@ -1,8 +1,10 @@
 /* The opening of a Destinations section (T183; rebuilt in T428 on the kit).
 
-   Top to bottom: the head (one photograph of people doing the thing and
-   one title), "Try one", the photo rails, the countries track, then the
-   heading of the full list. Explore's idle page is the model: the same
+   Top to bottom: the head (one title, the near-me door), the photo rails,
+   the countries track (one of the rails, T457), "Try one", then the heading
+   of the full list. Explore's idle page is the model, rails then the doors
+   then "All places" (T457 put "Try one" after the rails, as Explore puts
+   its doors, right over the list they narrow); the same
    strip mechanics (scroll snap, arrows on a fine pointer, a peek on touch),
    the kit tile Card, no dots, no position figure, no count on "See all".
 
@@ -24,10 +26,11 @@
   justify-content: space-between;
   gap: var(--space-3) var(--space-4);
 }
-/* The page head of a section, at Explore's head scale (T430). */
+/* The page head of a section, at Explore's head scale: 28 px like "Explore
+   Europe" (T457; T430 had set it at 40). */
 .dtab-title {
   margin: 0;
-  font-size: var(--text-display);
+  font-size: var(--text-headline);
   font-weight: 700;
   line-height: var(--leading-tight);
   letter-spacing: -0.02em;
@@ -36,8 +39,32 @@
   hyphens: auto;
 }
 .dtab-nearme { flex: none; }
+/* T457: Explore's head bar. The view switch (Highlights | Full list) and the
+   near-me door sit where Explore keeps List | Map and the sort, as compact
+   controls, so the head is the height of Explore's. */
+.dtab-head-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+/* Explore's 16 px from the head to the first rail, inside the opening's
+   32 px rhythm between rails. */
+.dtab-open > .dtab-head { margin-bottom: calc(-1 * var(--space-4)); }
 @media (max-width: 768px) {
-  .dtab-title { font-size: var(--text-headline); }
+  /* On a phone the head is read, not drawn, as Explore's is: the selected
+     section tile already names it, and the field's crosshair is the near-me
+     door. What stays drawn is the view switch. The trips head (with its
+     length choice) keeps its title. */
+  .dtab-head:not(.tlib-head) .dtab-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .dtab-head:not(.tlib-head) .dtab-nearme { display: none; }
+  .dtab-head:not(.tlib-head):not(:has(.dtab-view)) { display: contents; }
+  .dtab-head:not(.tlib-head):not(:has(.dtab-view)) .dtab-head-tools { display: none; }
+}
+@media (max-width: 768px) {
   .dtab-head { flex-direction: column; align-items: stretch; }
   .dtab-nearme { align-self: flex-start; }
 }
@@ -50,7 +77,7 @@
   align-items: center;
   gap: var(--space-2);
 }
-.dtab-starter .ui-chip-label { white-space: nowrap; }
+.dtab-starter { white-space: nowrap; }
 @media (max-width: 768px) {
   /* One row a thumb can swipe, not four wrapped lines. */
   .dtab-starters {
@@ -108,11 +135,15 @@
 .dtab-strip::-webkit-scrollbar { display: none; }
 .dtab-item { display: flex; min-width: 0; scroll-snap-align: start; }
 .dtab-item > .card { flex: 1 1 auto; min-width: 0; }
-/* T430: larger photographs than Explore's rails, three and a bit across on a
-   wide desktop, so a place is chosen on its picture; the gap is Explore's. */
-@container (min-width: 560px) { .dtab-strip { --tile-w: calc((100% - 2 * var(--space-4)) / 2.2); } }
-@container (min-width: 860px) { .dtab-strip { --tile-w: calc((100% - 2 * var(--space-4)) / 2.6); } }
-@container (min-width: 1080px) { .dtab-strip { --tile-w: calc((100% - 3 * var(--space-4)) / 3.2); } }
+/* T457: Explore's tile widths at Explore's steps (62-v6-explore.css,
+   .xrails-strip), so a rail on either tab shows the same number of places:
+   two and a bit, three and a bit, four and a bit, five and a bit. T430 had
+   drawn them larger, three across, which put the full list three screens
+   down. The gap is Explore's. */
+@container (min-width: 560px) { .dtab-strip { --tile-w: calc((100% - 2 * var(--space-4)) / 2.4); } }
+@container (min-width: 860px) { .dtab-strip { --tile-w: calc((100% - 3 * var(--space-4)) / 3.4); } }
+@container (min-width: 1080px) { .dtab-strip { --tile-w: calc((100% - 4 * var(--space-4)) / 4.4); } }
+@container (min-width: 1320px) { .dtab-strip { --tile-w: calc((100% - 5 * var(--space-4)) / 5.4); } }
 
 /* A focused tile shows its ring inside the strip, which clips outside it. */
 .dtab-strip .card.is-interactive:has(.card-open:focus-visible) { outline-offset: -3px; }
@@ -121,15 +152,23 @@
    the meta set as Explore's tile sets it. */
 .dtab-tile .card-media { aspect-ratio: 4 / 3; }
 .dtab-tile-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* T457: Explore's tile lines. The flag and where it is on one line, cut with
+   an ellipsis rather than wrapped; the measured fact sits in the figures
+   line opposite the Score, where Explore's tile has its price. */
 .dtab-tile-meta {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1) var(--space-2);
+  gap: var(--space-2);
+  min-width: 0;
   font-size: var(--text-label);
   color: var(--text-2);
 }
-.dtab-where { min-width: 0; max-width: 100%; }
+.dtab-tile-meta .country-flag { flex: none; }
+.dtab-where { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dtab-tile .card-price { font-size: var(--text-label); font-weight: 600; }
+/* A tile with no measured fact keeps its Score on the right. */
+.dtab-tile .card-rating { margin-left: auto; }
+.dtab-tile .dtab-fact-l { font-weight: 400; }
 .dtab-fact { font-variant-numeric: tabular-nums; color: var(--text); }
 /* T451: a fact says what it measures ("Height 2,812 m", not a bare "2,812 m"). */
 .dtab-fact-l { color: var(--text-2); }

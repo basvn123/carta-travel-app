@@ -662,13 +662,19 @@
 .places-list.jsec.tlib {
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6) var(--space-4);
-  margin-top: var(--space-4);
+  /* T457: the head stands on the same line as every other section's. */
+  margin-top: 0;
 }
 @media (min-width: 769px) {
   .places-list.jsec.tlib { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 1280px) {
   .places-list.jsec.tlib { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* T457: the Destinations column is the full width, as Explore's is, so a
+   wide screen takes a fourth tile rather than three half a screen wide. */
+@media (min-width: 1600px) {
+  .places-list.jsec.tlib { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .places-list.jsec.tlib > :not(.ttile) { grid-column: 1 / -1; }
 .tlib-head.is-style {

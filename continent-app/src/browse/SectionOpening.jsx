@@ -3,24 +3,29 @@ import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ChevronRightIcon, CrosshairIcon } from '../components/Icons.jsx';
-import { Button, Card, Chip, IconButton } from '../components/ui/index.js';
+import { Button, Card, IconButton, Segmented } from '../components/ui/index.js';
 import { TilePhotos } from './PhotoGallery.jsx';
 
 /**
  * The opening of a Destinations section (T428; T183 built the first one).
  *
- * Top to bottom, the same grammar Explore's idle page uses:
- *   SectionHead   the section's title with a verb, set at Explore's head
- *                 scale, and beside it the near-me door ("Beaches near me"),
- *                 the way in most people take first (T430: the door sat at
- *                 the foot of the Trails index and nowhere else)
- *   starters      the cuts that did not get a rail, as one row of kit filter
- *                 chips that apply the same saved filter
+ * Top to bottom, the same grammar Explore's idle page uses (T457 set the
+ * order and the parts on Explore's):
+ *   SectionHead   the section's title with a verb, at Explore's head scale,
+ *                 and beside it, where Explore keeps List | Map, the view
+ *                 switch Highlights | Full list and the near-me door
+ *                 ("Beaches near me", T430)
  *   rails         photo strips of kit tile Cards: the section's best known
- *                 first, then the saved filters of lib/openingScreen.js, at
- *                 most four on a desktop and three on a phone
+ *                 first, then the saved filters of lib/openingScreen.js; with
+ *                 the countries track, at most four on a desktop and three
+ *                 on a phone
  *   children      what the tab puts after them (the countries track)
+ *   starters      the cuts that did not get a rail, as one row of Explore's
+ *                 door buttons right over the list they narrow ("Try one")
+ * The Full list view keeps the head and the doors and drops the rails, so
+ * the list is one choice from the top of the section.
  *
  * What went (owner, 2026-10-14): the "Europe's 6 best-known mountains"
  * heading and its ranking sentence, the dots and the "1 to 4 of 12" under a
@@ -33,19 +38,28 @@ import { TilePhotos } from './PhotoGallery.jsx';
  * `describe(row)` returns { name, where, fact, rating } for one wire row.
  */
 
-const RAIL_SIZES = '(max-width: 768px) 72vw, 280px';
+// T457: Explore's tile widths, about 230 to 300 px on a desktop.
+const RAIL_SIZES = '(max-width: 768px) 72vw, 300px';
 
-export function SectionHead({ title, id, nearMe = null }) {
+export function SectionHead({ title, id, nearMe = null, view = null }) {
   return (
-    <header className="dtab-head">
+    <div className="dtab-head">
       <h2 className="dtab-title" id={id}>{title}</h2>
-      {nearMe && (
-        <Button variant="secondary" className="dtab-nearme" iconStart={<CrosshairIcon size={20} />}
-          onClick={nearMe.onPick} loading={nearMe.busy}>
-          {nearMe.label}
-        </Button>
+      {(view || nearMe) && (
+        <div className="dtab-head-tools">
+          {view && (
+            <Segmented size="sm" className="dtab-view" label={view.label} value={view.value}
+              onChange={view.onChange} options={view.options} />
+          )}
+          {nearMe && (
+            <Button variant="secondary" size="sm" className="dtab-nearme" iconStart={<CrosshairIcon size={16} />}
+              onClick={nearMe.onPick} loading={nearMe.busy}>
+              {nearMe.label}
+            </Button>
+          )}
+        </div>
       )}
-    </header>
+    </div>
   );
 }
 
@@ -131,8 +145,9 @@ export function Strip({ id, title, onSeeAll = null, t, className = '', children 
   );
 }
 
-/** One wire row as a rail tile: the photograph, the name, where and one
- *  measured fact, and the Score. */
+/** One wire row as a rail tile, on Explore's three lines (T457): the name;
+ *  the flag and where it is, on one line; the measured fact and the Score
+ *  on one line, the fact where Explore's tile has its price. */
 export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKey }) {
   const d = describe(row);
   const key = sharedKey ? sharedKey(row) : null;
@@ -157,15 +172,16 @@ export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKe
       )}
       title={d.name}
       onOpen={open}
-      meta={(d.where || d.fact) ? (
+      meta={d.where ? (
         <span className="dtab-tile-meta">
-          {d.where && <span className="dtab-where">{d.where}</span>}
-          {d.fact && (
-            <span className="dtab-fact">
-              {d.factLabel && <span className="dtab-fact-l">{d.factLabel} </span>}
-              {d.fact}
-            </span>
-          )}
+          {d.cc && <CountryFlag country={d.cc} size={12} />}
+          <span className="dtab-where">{d.where}</span>
+        </span>
+      ) : null}
+      price={d.fact ? (
+        <span className="dtab-fact">
+          {d.factLabel && <span className="dtab-fact-l">{d.factLabel} </span>}
+          {d.fact}
         </span>
       ) : null}
       rating={d.rating ? <ScoreChip rating={d.rating} size="sm" /> : null}
@@ -175,20 +191,11 @@ export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKe
 
 export function SectionOpening({
   layer, head = null, rails, starters = [], describe, photo, photos = null, onOpen, t,
-  sharedKey = null, nearMe = null, children = null,
+  sharedKey = null, nearMe = null, view = null, children = null,
 }) {
   return (
     <div className="open-bands dtab-open" data-layer={layer}>
-      {head && <SectionHead title={head.title} id={`dtab-head-${layer}`} nearMe={nearMe} />}
-      {starters.length > 0 && (
-        <div className="dtab-starters" role="group" aria-label={t('dtab.tryOne')}>
-          {starters.map((s) => (
-            <Chip key={s.key} className="dtab-starter" data-rail={s.key} onClick={s.onPick}>
-              {s.title}
-            </Chip>
-          ))}
-        </div>
-      )}
+      {head && <SectionHead title={head.title} id={`dtab-head-${layer}`} nearMe={nearMe} view={view} />}
       {rails.length > 0 && (
         <div className="dtab-rails" data-rails={rails.length}>
           {rails.map((rail) => (
@@ -205,6 +212,18 @@ export function SectionOpening({
         </div>
       )}
       {children}
+      {/* Try one, after the rails and right over the list it narrows, drawn
+          as Explore draws its doors over "All places" (T457). */}
+      {starters.length > 0 && (
+        <nav className="dtab-starters" aria-label={t('dtab.tryOne')}>
+          {starters.map((s) => (
+            <Button key={s.key} variant="secondary" size="sm" className="dtab-starter" data-rail={s.key}
+              onClick={s.onPick}>
+              {s.title}
+            </Button>
+          ))}
+        </nav>
+      )}
     </div>
   );
 }

@@ -17,10 +17,10 @@
   scrollbar-gutter: stable;
   background: var(--paper);
 }
-/* The same 1180px column Explore uses. At 780 the catalogue was a narrow
-   strip down the middle of a 1920px screen with a third of the window empty
-   on either side, and the toolbar card above it was narrower than the header
-   it sits under. */
+/* The base column. At 780 the catalogue was a narrow strip down the middle
+   of a 1920px screen with a third of the window empty on either side. Inside
+   the desktop shell, 63-v6-destinations.css takes it to Explore's full width
+   (T457); this cap is what is left for any other host. */
 .places-wrap {
   max-width: 1180px;
   margin: 0 auto;

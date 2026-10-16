@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { CountryFlag } from './CountryFlag.jsx';
+import { ChevronDownIcon } from './Icons.jsx';
 
 /**
  * The country filter as a real dropdown, not a bare <select>. A native select
@@ -8,6 +10,11 @@ import { useI18n } from '../i18n/index.jsx';
  * it. This wears the same button + anchored panel shape as OriginPicker
  * (.origin-pop and kin), so it opens the same way on phone and desktop that
  * every other picker in the toolbar already does.
+ *
+ * T457: a flag a row and rows at the 44 px touch floor, the way the side
+ * panel's country fold draws them, and a drawn chevron for the caret. The
+ * button is named by what it shows ("Croatia"), the search by its job, and
+ * the listbox holds only the options.
  */
 export function CountryPicker({ value, options, onChange, className = '', label }) {
   const { t } = useI18n();
@@ -50,24 +57,23 @@ export function CountryPicker({ value, options, onChange, className = '', label 
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={allLabel}
       >
         <span className="country-picker-label">{current}</span>
-        <span className="origin-btn-caret" aria-hidden="true">▾</span>
+        <ChevronDownIcon size={16} className="origin-btn-caret" aria-hidden="true" />
       </button>
 
       {open && (
-        <div className="origin-pop country-picker-pop" role="listbox">
+        <div className="origin-pop country-picker-pop">
           <input
             ref={inputRef}
             className="origin-search"
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={allLabel}
-            aria-label={allLabel}
+            placeholder={t('filter.countrySearch')}
+            aria-label={t('filter.countrySearch')}
           />
-          <div className="origin-list">
+          <div className="origin-list" role="listbox" aria-label={allLabel}>
             <button
               type="button"
               className={`origin-opt ${!value ? 'on' : ''}`}
@@ -75,6 +81,7 @@ export function CountryPicker({ value, options, onChange, className = '', label 
               role="option"
               aria-selected={!value}
             >
+              <span className="origin-opt-flag" aria-hidden="true" />
               <span className="origin-opt-city">{allLabel}</span>
             </button>
             {filtered.length === 0 && (
@@ -89,6 +96,7 @@ export function CountryPicker({ value, options, onChange, className = '', label 
                 role="option"
                 aria-selected={cc === value}
               >
+                <span className="origin-opt-flag" aria-hidden="true"><CountryFlag country={cc} size={12} /></span>
                 <span className="origin-opt-city">{name}</span>
               </button>
             ))}
