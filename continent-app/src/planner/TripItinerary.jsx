@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { eur, eurExact, fmtHours, safeUrl } from '../lib/format.js';
+import { fmtDate } from '../lib/dates.js';
 import { TripExtras } from './TripExtras.jsx';
 import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
@@ -13,12 +14,14 @@ import { groundLinkFor } from '../lib/groundLinks.js';
 import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Money, Segmented } from '../components/ui/index.js';
+import { cityLabel } from '../lib/placeName.js';
 import { PlanTotal, PaidField } from './PlanTotal.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon, CloseIcon, TicketIcon, LuggageIcon, PencilIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
-import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
+import { TRAVEL_MODE_LABEL, legLinks, stayDatesLink } from '../lib/transportLinks.js';
+import { SheetShell } from '../browse/SheetShell.jsx';
 
 // How the traveller told us they get there and home. Carta prices none of it,
 // so these two helpers exist to say what THEY said rather than assume a plane:
@@ -43,16 +46,10 @@ function ownTravelHow(flight, t) {
 /** "Fri 18 Sep" in the interface language (T388: the month and weekday
  *  names were English in every language). The document language follows the
  *  chosen UI language (PRODUCT.md), so it is the locale to format with. */
-const LONG_FMT = new Map();
+// One date style across the planner (T458): the same stamp as every other
+// planner date, in the reader's language.
 function fmtLong(iso) {
-  if (!iso) return '';
-  const [y, m, d] = iso.split('-').map(Number);
-  const docLang = (typeof document !== 'undefined' && document.documentElement.lang) || 'en';
-  const loc = docLang === 'en' || docLang.startsWith('en-') ? 'en-GB' : docLang;
-  if (!LONG_FMT.has(loc)) {
-    LONG_FMT.set(loc, new Intl.DateTimeFormat(loc, { weekday: 'short', day: '2-digit', month: 'short', timeZone: 'UTC' }));
-  }
-  return LONG_FMT.get(loc).format(new Date(Date.UTC(y, m - 1, d)));
+  return iso ? fmtDate(iso, true) : '';
 }
 
 /** "Fri 18 Sep, 19:45-21:45", the date plus the priced flight's local dep/arr
@@ -124,6 +121,26 @@ export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTra
         })}
       </div>
     </div>
+  );
+}
+
+/** The way from the plane to the first bed and from the last bed back to the
+ *  plane (T458): a plain row in the route with its mode and its estimate, so
+ *  the journey reads whole. The mode is chosen on the picker under the route. */
+function FlightTransferRow({ label, mode, eur }) {
+  const { t } = useI18n();
+  if (!(eur > 0)) return null;
+  const meta = TRANSFER_META[mode] || TRANSFER_META.public;
+  const Icon = meta.Icon;
+  return (
+    <li className="itin-hop itin-airport-hop">
+      <span className="itin-airport-hop-icon" aria-hidden="true"><Icon size={16} /></span>
+      <span className="itin-airport-hop-main">
+        <b>{label}</b>
+        <small>{t('plan.transfer')}, {t(meta.labelKey)}</small>
+      </span>
+      <span className="itin-airport-hop-eur"><Money value={eur} est precision="cents" /></span>
+    </li>
   );
 }
 
@@ -338,7 +355,7 @@ function ItinDriveRow({ leg, labelKey, city, from }) {
 }
 
 export function TripItinerary({
-  dayPlan, stopDetails, grandTotal, groupSize, onSetGroupSize = null, flight, label = '',
+  dayPlan, stopDetails, grandTotal, groupSize, flight, label = '',
   legs = [], setLegMode = null, anchorLegs = null, flightTransfer = null,
   driveLegs = null, stayCosts = [], carRental = null, vignettes = null,
   tripHasCar = false,
@@ -348,13 +365,13 @@ export function TripItinerary({
   // T432: the one priced trip (lib/tripTotal.js) and the traveller's own
   // figures, each typed where the thing it paid for is shown.
   priced = null, ownFlight = null, onTravelPaid = null, onOwnLeg = null, onOwnStay = null,
-  mapSlot = null, beforeSlot = null, onPdf = null,
+  mapSlot = null, beforeSlot = null, onPdf = null, party = null, onSetParty = null,
 }) {
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
   const { t } = useI18n();
   const [tab, setTab] = useState('overview');
-  const [adminOpen, setAdminOpen] = useState(false);
+  const [toolOpen, setToolOpen] = useState('');
   const [moreExports, setMoreExports] = useState(false);
   const [shareState, setShareState] = useState('');
 
@@ -383,7 +400,24 @@ export function TripItinerary({
   }
   stopDetails.forEach((s, i) => {
     if (!s.dest) return;
-    bookingRows.push({ key: `stay-${i}`, label: t('extras.stayIn', { city: s.dest.city }), estimate: stayCosts[i]?.accomTotal ?? null });
+    bookingRows.push({
+      key: `stay-${i}`, label: t('extras.stayIn', { city: s.dest.city }), estimate: stayCosts[i]?.accomTotal ?? null,
+      findUrl: stayDatesLink({
+        city: s.dest.city, country: s.dest.country, checkin: s.arriveDate, checkout: s.departDate,
+        adults: party?.adults || groupSize, children: party?.children || 0,
+      }),
+      findLabel: t('plan.findStay'),
+    });
+    // The hop to the next stop is a booking too: a train or a bus ticket.
+    const leg = i < stopDetails.length - 1 ? legs[i] : null;
+    const next = stopDetails[i + 1]?.dest;
+    if (leg && leg.mode && !leg.no_road && next && leg.mode !== 'car') {
+      const link = legLinks({ from: { city: s.dest.city, iso2: s.dest.iso2 }, to: { city: next.city, iso2: next.iso2 }, mode: leg.mode, date: next ? stopDetails[i + 1].arriveDate : '' })[0];
+      bookingRows.push({
+        key: `leg-${i}`, label: t('plan.legBooking', { a: s.dest.city, b: next.city }), estimate: leg.ground_total ?? null,
+        findUrl: link?.url || null, findLabel: t('plan.findTickets'),
+      });
+    }
   });
   if (carRental) bookingRows.push({ key: 'car', label: t('extras.car'), estimate: carRental.eur_total ?? null });
 
@@ -393,6 +427,17 @@ export function TripItinerary({
     tripHasCar, driveLegs, grandTotal, groupSize,
     extras, bookingRows,
   };
+
+  // The four tools and what each holds now, for its tile.
+  const doneBookings = bookingRows.filter((r) => extras.bookings?.[r.key]?.done).length;
+  const packed = (extras.checklist || []).filter((c) => c.done).length;
+  const tools = [
+    { key: 'bookings', Icon: TicketIcon, title: t('plan.toolBookings'), state: t('plan.toolBookedOf', { n: doneBookings, of: bookingRows.length }) },
+    { key: 'packing', Icon: LuggageIcon, title: t('plan.toolPacking'), state: (extras.checklist || []).length ? t('plan.toolPackedOf', { n: packed, of: extras.checklist.length }) : t('plan.toolEmpty') },
+    { key: 'notes', Icon: PencilIcon, title: t('plan.toolNotes'), state: (extras.notes || '').trim() ? t('plan.toolWritten') : t('plan.toolEmpty') },
+    { key: 'expenses', Icon: ReceiptIcon, title: t('plan.toolExpenses'), state: (extras.expenses || []).length ? t('plan.toolEntries', { n: extras.expenses.length }) : t('plan.toolEmpty') },
+  ];
+  const openTool = tools.find((x) => x.key === toolOpen) || null;
 
   // Files need a pass; links do not. Sharing a trip is how somebody else
   // first hears about Carta, so gating it would tax the only marketing this
@@ -488,16 +533,22 @@ export function TripItinerary({
   const travelMode = flight?.driving ? 'car' : (flight?.mode || 'fly');
   const firstCity = stopDetails[0]?.dest?.city || '';
   const lastCity = stopDetails[stopDetails.length - 1]?.dest?.city || '';
+  // A flight lands at an airport, not at a town without one (T458): with a
+  // transfer on the trip, the flight row names the airports it joins.
+  const inIata = flightTransfer ? stopDetails[0]?.dest?.anchor_airport : null;
+  const outIata = flightTransfer ? stopDetails[stopDetails.length - 1]?.dest?.anchor_airport : null;
+  const flyIn = inIata ? t('plan.howTo', { how: ownTravelHow(flight, t), place: inIata }) : '';
+  const flyOut = outIata ? t('plan.howFrom', { how: ownTravelHow(flight, t), place: outIata }) : '';
   const thereText = flight?.driving
     ? [driveLegs?.from, driveLegs?.out ? t('trip.driveSub', { km: driveLegs.out.road_km, hours: fmtHours(driveLegs.out.hours) }) : ''].filter(Boolean).join(', ')
     : flight?.combinable
       ? `${t('itin.fromTo', { a: flight.origin, b: flight.into_anchor })}, ${fmtLong(stopDetails[0]?.arriveDate)}`
-      : [ownTravelHow(flight, t), firstCity, fmtLong(flight?.out_date || stopDetails[0]?.arriveDate)].filter(Boolean).join(', ');
+      : [flyIn || ownTravelHow(flight, t), flyIn ? '' : firstCity, fmtLong(flight?.out_date || stopDetails[0]?.arriveDate)].filter(Boolean).join(', ');
   const homeText = flight?.driving
     ? (driveLegs?.home ? t('trip.driveSub', { km: driveLegs.home.road_km, hours: fmtHours(driveLegs.home.hours) }) : '')
     : flight?.combinable
       ? `${t('itin.fromTo', { a: flight.out_anchor, b: flight.origin })}, ${fmtLong(stopDetails[stopDetails.length - 1]?.departDate)}`
-      : [ownTravelHow(flight, t), lastCity, fmtLong(flight?.ret_date || stopDetails[stopDetails.length - 1]?.departDate)].filter(Boolean).join(', ');
+      : [flyOut || ownTravelHow(flight, t), flyOut ? '' : lastCity, fmtLong(flight?.ret_date || stopDetails[stopDetails.length - 1]?.departDate)].filter(Boolean).join(', ');
   const datesText = stopDetails[0]?.arriveDate
     ? t('plan.dateRange', { a: fmtLong(stopDetails[0].arriveDate), b: fmtLong(stopDetails[stopDetails.length - 1]?.departDate) })
     : '';
@@ -566,18 +617,35 @@ export function TripItinerary({
           <PlanTotal
             priced={priced}
             dates={datesText}
-            people={groupSize}
-            onPeople={onSetGroupSize}
+            party={party}
+            onParty={onSetParty}
             onAddFare={onTravelPaid ? jumpToFare : null}
             variant="card"
             title={t('plan.tripTotal')}
             footer={oneMoreNight > 0 ? (
               <p className="plan-whatif">
-                {t('trip.oneMoreNight', { city: stopDetails[lastIdx]?.dest?.city || '' })}{' '}
-                <b>+<Money value={oneMoreNight} est precision="cents" /></b>
+                {t('trip.oneMoreNightAdds', { city: stopDetails[lastIdx]?.dest?.city || '' })}{' '}
+                <b><Money value={oneMoreNight} est precision="cents" /></b>
               </p>
             ) : null}
           />
+
+          {/* The trip's tools, one tap each (T458): what is booked, what is
+              packed, notes, who paid what. They used to sit in one long fold
+              at the foot of the page. */}
+          <section className="itin-tools" aria-labelledby="itin-tools-h">
+            <h2 className="itin-h" id="itin-tools-h">{t('plan.toolsTitle')}</h2>
+            <div className="itin-tool-grid">
+              {tools.map((tool) => (
+                <Button key={tool.key} variant="secondary" className="itin-tool" onClick={() => setToolOpen(tool.key)}
+                  aria-haspopup="dialog">
+                  <span className="itin-tool-icon" aria-hidden="true"><tool.Icon size={24} /></span>
+                  <span className="itin-tool-name">{tool.title}</span>
+                  <span className="itin-tool-state">{tool.state}</span>
+                </Button>
+              ))}
+            </div>
+          </section>
 
           {mapSlot}
 
@@ -599,12 +667,20 @@ export function TripItinerary({
                     value={paidOut}
                     estimate={flight?.driving ? driveLegs?.out?.ground_total ?? null : null}
                     label={t('plan.yourFareFor', { people: partyText })}
+                    addLabel={t('plan.addYourFare')}
                     onChange={(n) => onTravelPaid('out', n)}
                     folded
                     hint={false}
                   />
                 )}
               </li>
+              {!anchorIn && flightTransfer && (
+                <FlightTransferRow
+                  label={t('plan.transferIn', { city: cityLabel(stopDetails[0]?.dest?.city || '') })}
+                  mode={flightTransfer.mode_in || flightTransfer.mode}
+                  eur={flightTransfer.in_total}
+                />
+              )}
               {anchorIn && (
                 <li className="itin-hop">
                   <AnchorTransferLeg
@@ -648,34 +724,66 @@ export function TripItinerary({
                                 : <Money value={sc.accomTotal} est precision="cents" />}
                             </span>
                           </span>
-                          {onOwnStay && (
-                            <PaidField
-                              id={`paid-bed-${i}`}
-                              value={sc.ownAccom ? sc.accomTotal : 0}
-                              estimate={sc.estAccomTotal ?? sc.accomTotal}
-                              label={t('plan.bedPaid')}
-                              onChange={(n) => onOwnStay(s.destinationId, n)}
-                              folded
-                              hint={false}
-                            />
-                          )}
+                          <span className="itin-bed-acts">
+                            {!sc.ownAccom && (
+                              <a
+                                className="btn btn-quiet btn-sm itin-find"
+                                href={stayDatesLink({
+                                  city: s.dest.city, country: s.dest.country, checkin: s.arriveDate, checkout: s.departDate,
+                                  adults: party?.adults || groupSize, children: party?.children || 0,
+                                })}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                <span className="btn-label">{t('plan.findStay')}</span>
+                              </a>
+                            )}
+                            {onOwnStay && (
+                              <PaidField
+                                id={`paid-bed-${i}`}
+                                value={sc.ownAccom ? sc.accomTotal : 0}
+                                estimate={sc.estAccomTotal ?? sc.accomTotal}
+                                label={t('plan.bookingPrice')}
+                                addLabel={t('plan.addBookingPrice')}
+                                onChange={(n) => onOwnStay(s.destinationId, n)}
+                                folded
+                                hint={false}
+                              />
+                            )}
+                          </span>
                         </div>
                       )}
                     </li>
                     {leg && (
                       <li className="itin-hop">
                         <ItinLeg leg={leg} onMode={setLegMode ? (m) => setLegMode(i, m) : null} />
-                        {onOwnLeg && leg.mode && !leg.no_road && (
-                          <PaidField
-                            id={`paid-leg-${i}`}
-                            value={legOwn ? leg.ground_total : 0}
-                            estimate={legOwn ? null : leg.ground_total}
-                            label={t('plan.youPaidFor', { people: partyText })}
-                            onChange={(n) => onOwnLeg(i, n > 0 ? leg.mode : null, n)}
-                            folded
-                            hint={false}
-                          />
-                        )}
+                        <span className="itin-hop-acts">
+                          {!legOwn && leg.mode && leg.mode !== 'car' && !leg.no_road && (() => {
+                            const next = stopDetails[i + 1];
+                            const link = legLinks({
+                              from: { city: s.dest?.city, iso2: s.dest?.iso2 },
+                              to: { city: next?.dest?.city, iso2: next?.dest?.iso2 },
+                              mode: leg.mode, date: next?.arriveDate || '',
+                            })[0];
+                            return link ? (
+                              <a className="btn btn-quiet btn-sm itin-find" href={link.url} target="_blank" rel="noreferrer noopener">
+                                <span className="btn-label">{t('plan.findTicketsOn', { site: link.label })}</span>
+                              </a>
+                            ) : null;
+                          })()}
+                          {onOwnLeg && leg.mode && !leg.no_road && (
+                            <PaidField
+                              id={`paid-leg-${i}`}
+                              value={legOwn ? leg.ground_total : 0}
+                              estimate={legOwn ? null : leg.ground_total}
+                              label={t('plan.youPaidFor', { people: partyText })}
+                              addLabel={t('plan.addTicketPrice')}
+                              onChange={(n) => onOwnLeg(i, n > 0 ? leg.mode : null, n)}
+                              folded
+                              hint={false}
+                            />
+                          )}
+                        </span>
                       </li>
                     )}
                   </React.Fragment>
@@ -691,6 +799,13 @@ export function TripItinerary({
                   />
                 </li>
               )}
+              {!anchorOut && flightTransfer && (
+                <FlightTransferRow
+                  label={t('plan.transferOut', { city: cityLabel(stopDetails[stopDetails.length - 1]?.dest?.city || '') })}
+                  mode={flightTransfer.mode_out || flightTransfer.mode}
+                  eur={flightTransfer.out_total}
+                />
+              )}
               <li className="itin-end">
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
                 <span className="itin-end-main">
@@ -703,6 +818,7 @@ export function TripItinerary({
                     value={paidBack}
                     estimate={flight?.driving ? driveLegs?.home?.ground_total ?? null : null}
                     label={t('plan.yourFareFor', { people: partyText })}
+                    addLabel={t('plan.addYourFare')}
                     onChange={(n) => onTravelPaid('back', n)}
                     folded
                     hint={false}
@@ -785,37 +901,6 @@ export function TripItinerary({
           </section>
 
           {beforeSlot}
-
-          <div className={`trip-block trip-admin ${adminOpen ? 'open' : ''}`}>
-            <h2 className="trip-fold-h">
-              <button className="day-collapse-head" onClick={() => setAdminOpen((v) => !v)} aria-expanded={adminOpen}>
-                <span className="day-collapse-headline">
-                  <span className="day-collapse-title">{t('trip.adminTitle')}</span>
-                  <span className={`day-collapse-caret ${adminOpen ? 'open' : ''}`} aria-hidden="true"><ChevronDownIcon size={16} /></span>
-                </span>
-              </button>
-            </h2>
-            {adminOpen && (
-              <>
-                <TripExtras
-                  rows={bookingRows}
-                  extras={extras}
-                  onChange={saveExtras}
-                  days={dayPlan.map((d) => ({ n: d.dayNum, city: d.stop.dest?.city || '', date: d.date }))}
-                  importContext={{
-                    stops: stopDetails.filter((s) => s.dest).map((s) => ({
-                      city: s.dest.city,
-                      country: s.dest.country,
-                      arrive: s.arriveDate || '',
-                      nights: s.nights,
-                    })),
-                    groupSize,
-                  }}
-                />
-                <ExpenseLedger extras={extras} onChange={saveExtras} groupSize={groupSize} />
-              </>
-            )}
-          </div>
 
           {/* Take the trip with you: the PDF first, then the rest, all in
               view as one grid of equal buttons (T432). */}
@@ -920,6 +1005,28 @@ export function TripItinerary({
           )}
         </div>
       ) : null}
+
+      {openTool && (
+        <SheetShell title={openTool.title} onClose={() => setToolOpen('')} className="itin-tool-sheet" labelId="itin-tool-sheet-title">
+          {openTool.key === 'expenses' ? (
+            <ExpenseLedger extras={extras} onChange={saveExtras} groupSize={groupSize} />
+          ) : (
+            <TripExtras
+              only={openTool.key}
+              rows={bookingRows}
+              extras={extras}
+              onChange={saveExtras}
+              days={dayPlan.map((d) => ({ n: d.dayNum, city: d.stop.dest?.city || '', date: d.date }))}
+              importContext={{
+                stops: stopDetails.filter((s) => s.dest).map((s) => ({
+                  city: s.dest.city, country: s.dest.country, arrive: s.arriveDate || '', nights: s.nights,
+                })),
+                groupSize,
+              }}
+            />
+          )}
+        </SheetShell>
+      )}
     </div>
   );
 }

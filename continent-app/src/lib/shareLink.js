@@ -83,6 +83,10 @@ const clampInt = (v, min, max, dflt) => {
 const isIsoDate = (s) => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
 const strOrNull = (v) => (typeof v === 'string' && v ? v.slice(0, 40) : null);
 const oneOf = (v, opts, dflt) => (opts.includes(v) ? v : dflt);
+// A stop id is looked up as a key, so a hostile link must not name one the
+// object prototype already answers ("__proto__", "constructor"): the
+// lookup would return a truthy non-place (T458 pen test).
+const safeId = (v) => (typeof v === 'string' && v && !(v in Object.prototype) && v !== 'prototype' ? v.slice(0, 40) : '');
 
 const LEG_MODES = new Set(['train', 'bus', 'car']);
 // Hops the sender booked themselves; they travel with a price because Carta
@@ -93,7 +97,7 @@ const OWN_LEG_MODES = new Set(['fly', 'ferry', 'train', 'bus', 'car']);
 function sanitizeShared(d) {
   if (!d || typeof d !== 'object' || !Array.isArray(d.stops)) return null;
   const stops = d.stops.slice(0, 20).map((s) => ({
-    destinationId: typeof s?.destinationId === 'string' ? s.destinationId.slice(0, 40) : '',
+    destinationId: safeId(s?.destinationId),
     nights: clampInt(s?.nights, 1, 30, 2),
     activities: Array.isArray(s?.activities)
       ? s.activities.slice(0, 20).map((a) => String(a).slice(0, 80))
@@ -153,6 +157,8 @@ function sanitizeShared(d) {
     ownStays,
     ownFlight,
     groupSize: clampInt(d.groupSize, 1, 20, 2),
+    children: clampInt(d.children, 0, 19, 0),
+    babies: clampInt(d.babies, 0, 19, 0),
     transportPref: oneOf(d.transportPref, ['auto', 'car', 'owncar', 'public'], 'auto'),
     pace: oneOf(d.pace, ['relaxed', 'balanced', 'packed'], 'balanced'),
     baggage: oneOf(d.baggage, ['cabin', 'priority', 'checked'], 'cabin'),

@@ -335,6 +335,19 @@ export function flightSearchLink({ iata, city }) {
   return slug ? `https://www.skyscanner.net/transport/flights-to/${slug}/` : null;
 }
 
+/** Booking.com's search for one stay of a planned trip (T458): the town, the
+ *  nights and the party, so the results are the traveller's own dates. */
+export function stayDatesLink({ city, country, checkin = '', checkout = '', adults = 2, children = 0 }) {
+  const where = [city, country].filter(Boolean).join(', ');
+  if (!where) return null;
+  const q = new URLSearchParams({ ss: where, group_adults: String(Math.max(1, Math.min(20, Math.round(adults) || 1))), no_rooms: '1' });
+  const kids = Math.max(0, Math.min(19, Math.round(children) || 0));
+  if (kids > 0) q.set('group_children', String(kids));
+  if (/^\d{4}-\d{2}-\d{2}$/.test(checkin)) q.set('checkin', checkin);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(checkout)) q.set('checkout', checkout);
+  return `https://www.booking.com/searchresults.html?${q.toString()}`;
+}
+
 /** Booking.com's plain search for a town, which takes a written place name. */
 export function staySearchLink({ city, country }) {
   const where = [city, country].filter(Boolean).join(', ');

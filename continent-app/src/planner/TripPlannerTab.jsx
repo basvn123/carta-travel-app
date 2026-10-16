@@ -4,7 +4,6 @@ import { DateField } from '../components/DateField.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { favDestIds } from '../lib/favorites.js';
-import { CountryIntel } from '../components/CountryIntel.jsx';
 import { Button } from '../components/Button.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMap } from '../map/TripMap.jsx';
@@ -22,8 +21,8 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon, CloseIcon, ExpandIcon } from '../components/Icons.jsx';
-import { IconButton, Money } from '../components/ui/index.js';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon, CloseIcon, ExpandIcon, ChevronDownIcon } from '../components/Icons.jsx';
+import { IconButton, Money, Chip, ChipGroup } from '../components/ui/index.js';
 import { Stepper as KitStepper } from '../components/FilterControls.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -61,16 +60,13 @@ function NightsRing({ planned, total }) {
   );
 }
 
+// The editor's stepper is the kit's (T458), with the unit beside the figure.
 function Stepper({ value, onChange, min = 0, max = 60, suffix }) {
   const { t } = useI18n();
   return (
     <div className="trip-stepper">
-      <button type="button" className="trip-step-btn" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label={t('trip.fewer')}>-</button>
-      <div className="trip-step-val">
-        <span className="trip-step-num">{value}</span>
-        {suffix && <span className="trip-step-suffix">{suffix(value)}</span>}
-      </div>
-      <button type="button" className="trip-step-btn" onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max} aria-label={t('trip.more')}>+</button>
+      <KitStepper value={value} min={min} max={max} onChange={onChange} decLabel={t('trip.fewer')} incLabel={t('trip.more')} />
+      {suffix && <span className="trip-step-suffix">{suffix(value)}</span>}
     </div>
   );
 }
@@ -387,7 +383,7 @@ function StopPeek({ stop, index, stayCost, onNights, onOpen, onClose }) {
       <div className="trip-peek-main">
         <p className="trip-peek-city"><span className="trip-peek-i">{index + 1}</span>{city}</p>
         <p className="trip-peek-when">
-          {stop.arriveDate ? `${fmtDate(stop.arriveDate, true)} → ${fmtDate(stop.departDate, true)}` : ''}
+          {stop.arriveDate ? t('plan.dateRange', { a: fmtDate(stop.arriveDate, true), b: fmtDate(stop.departDate, true) }) : ''}
         </p>
         {stayCost && (
           <p className="trip-peek-bed">
@@ -608,6 +604,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         legModes: d.legModes,
         ownLegs: d.ownLegs,
         ownStays: d.ownStays,
+        children: d.children,
+        babies: d.babies,
       });
       // The sender's trip name wins here (loadFromWizard treats its label as a
       // fallback so wizard runs never clobber a typed name; a share must).
@@ -687,9 +685,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
         tripStart={tp.tripStart}
         transportPref={tp.transportPref}
         groupSize={tp.groupSize}
-        intel={withIntel.map((c) => (
-          <CountryIntel key={c} country={c} rec={countryInsights[c]} />
-        ))}
+        intelRecs={withIntel.map((c) => ({ country: c, rec: countryInsights[c] }))}
       />
     );
   })() : null;
@@ -715,16 +711,43 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // A planned trip's pins carry their nights (T432): the map reads as the
   // trip, "Berat, 3 nights", not as a row of numbers.
   const pinTag = (s) => (tp.planned ? t(s.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: s.nights }) : '');
-  const mapStopsKey = tp.stopDetails
-    .filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null)
-    .map((s) => `${s.dest.lat},${s.dest.lon},${cityLabel(s.dest.city)},${pinTag(s)}`)
-    .join('|');
+  // A flown trip starts and ends at an airport (T458): the planned map shows
+  // it as a pin of its own, and the road to it is part of the drawn route.
+  const flying = Boolean(tp.planned && tp.flight && !tp.flight.driving
+    && (tp.flight.combinable || (tp.flight.own && (tp.flight.mode || 'fly') === 'fly')));
+  const airportOf = (dest) => {
+    const iata = dest?.anchor_airport || null;
+    const o = iata ? data?.meta?.origins?.[iata] : null;
+    return o && o.lat != null ? { lat: o.lat, lon: o.lon, city: `${cityLabel(o.city || iata)} ${iata}`, tag: t('plan.pinAirport'), plain: true, airport: true } : null;
+  };
+  const geoStops = tp.stopDetails.filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null);
+  const airIn = flying ? airportOf(geoStops[0]?.dest) : null;
+  const airOut = flying ? airportOf(geoStops[geoStops.length - 1]?.dest) : null;
+  const mapStopsKey = [
+    airIn ? `${airIn.lat},${airIn.lon}` : '',
+    ...geoStops.map((s) => `${s.dest.lat},${s.dest.lon},${cityLabel(s.dest.city)},${pinTag(s)}`),
+    airOut ? `${airOut.lat},${airOut.lon}` : '',
+  ].join('|');
   const mapStops = useMemo(
-    () => tp.stopDetails
-      .filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null)
-      .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city), tag: pinTag(s) })),
+    () => [
+      ...(airIn ? [airIn] : []),
+      ...tp.stopDetails
+        .map((s, i) => ({ s, i }))
+        .filter(({ s }) => s.dest && s.dest.lat != null && s.dest.lon != null)
+        .map(({ s, i }) => ({
+          lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city), tag: pinTag(s),
+          tagImg: tp.planned ? (s.dest.image?.url || null) : null, stopIndex: i,
+        })),
+      // Flying home from the same airport: the route still returns to it,
+      // with no second pin on top of the first.
+      ...(airOut ? [airIn && airIn.lat === airOut.lat && airIn.lon === airOut.lon ? { ...airOut, ghost: true } : airOut] : []),
+    ],
     [mapStopsKey], // eslint-disable-line react-hooks/exhaustive-deps -- keyed by value on purpose, see above
   );
+  // The pins TripMap draws (no ghost), and its indexes back to the trip's.
+  const pinStops = useMemo(() => mapStops.filter((m) => !m.ghost), [mapStops]);
+  const toStop = (i) => (pinStops[i]?.stopIndex ?? null);
+  const toMapIndex = (stop) => (stop == null ? null : pinStops.findIndex((m) => m.stopIndex === stop));
 
   // Draw the real road route through the stops whenever there are two or more
   // (keyless OSRM, same as the day planner's walking route), while editing
@@ -896,9 +919,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     />
   ) : null;
   const routeProps = {
-    stops: mapStops,
-    onSelectStop: setSelectedStop,
-    selectedIndex: selectedStop,
+    stops: pinStops,
+    onSelectStop: (i) => { const s = toStop(i); if (s != null) setSelectedStop(s); },
+    selectedIndex: toMapIndex(selectedStop),
     routeGeometry: tripRouteOk ? tripRoute.geometry : null,
     routeSegments: tripRouteOk ? tripRoute.segments : null,
   };
@@ -910,7 +933,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       {!mapFull && (
         <TripMap
           {...routeProps}
-          onSelectStop={(i) => { setSelectedStop(i); setMapFull(true); }}
+          onSelectStop={(i) => { const s = toStop(i); if (s != null) { setSelectedStop(s); setMapFull(true); } }}
           padBottom={16}
           fitPadding={{ top: 48, bottom: 44, left: 32, right: 72 }}
           scrollZoom={false}
@@ -1001,7 +1024,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
             aria-label={t('trip.nameAria')}
           />
           <div className="trip-topcard-sub">
-            {hasDates ? `${fmtDate(tp.tripStart)} → ${fmtDate(tp.tripEnd)}` : ''}
+            {hasDates ? t('plan.dateRange', { a: fmtDate(tp.tripStart, true), b: fmtDate(tp.tripEnd, true) }) : ''}
             {tp.stopDetails.length > 0 && (
               <span className="trip-topcard-count">
                 {tp.stopDetails.length} {tp.stopDetails.length === 1 ? t('trip.stopOne') : t('trip.stopMany')}
@@ -1023,6 +1046,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               groupSize={tp.groupSize}
               onSetGroupSize={(n) => tp.setGroupSize(Math.max(1, Math.min(MAX_PARTY, n)))}
               priced={tp.priced}
+              party={{ adults: tp.groupSize, children: tp.children, babies: tp.babies }}
+              onSetParty={tp.setParty}
               ownFlight={tp.ownFlight}
               onTravelPaid={setTravelPaid}
               onOwnLeg={(i, mode, n) => tp.setOwnLeg(i, mode, n)}
@@ -1060,6 +1085,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 legModes: tp.legModes,
                 ownLegs: tp.ownLegs,
                 ownStays: tp.ownStays,
+                children: tp.children,
+                babies: tp.babies,
                 pace: tp.pace,
                 baggage: tp.baggage,
                 anchorId: tp.anchorId,
@@ -1171,7 +1198,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                               )}
                             </div>
                             <div className="trip-stop-when">
-                              {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : t('trip.setDates')}
+                              {s.arriveDate ? t('plan.dateRange', { a: fmtDate(s.arriveDate, true), b: fmtDate(s.departDate, true) }) : t('trip.setDates')}
                             </div>
                           </div>
                           <Stepper
@@ -1180,9 +1207,19 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                             suffix={(n) => (n === 1 ? t('trip.nightOne') : t('trip.nightMany'))}
                           />
                           <div className="trip-stop-tools" onClick={(e) => e.stopPropagation()}>
-                            {i > 0 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, -1)} aria-label={t('trip.moveUp')} title={t('trip.moveUp')}>↑</button>}
-                            {i < tp.stopDetails.length - 1 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, 1)} aria-label={t('trip.moveDown')} title={t('trip.moveDown')}>↓</button>}
-                            <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label={t('trip.removeStopAria')} title={t('trip.remove')}><CloseIcon size={16} /></button>
+                            {i > 0 && (
+                              <IconButton className="trip-stop-move is-up" label={t('trip.moveUp')} onClick={() => tp.moveStop(i, -1)}>
+                                <ChevronDownIcon size={18} />
+                              </IconButton>
+                            )}
+                            {i < tp.stopDetails.length - 1 && (
+                              <IconButton className="trip-stop-move" label={t('trip.moveDown')} onClick={() => tp.moveStop(i, 1)}>
+                                <ChevronDownIcon size={18} />
+                              </IconButton>
+                            )}
+                            <IconButton className="trip-stop-remove" label={t('trip.removeStopAria')} onClick={() => tp.removeStop(i)}>
+                              <CloseIcon size={16} />
+                            </IconButton>
                           </div>
                         </div>
                         {/* Full width of the row (not squeezed into the narrow
@@ -1212,20 +1249,18 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               {tp.stopDetails.length > 1 && (
                 <div className="trip-block">
                   <div className="trip-block-title">{t('trip.betweenTitle')}</div>
-                  <div className="trip-transport-seg">
+                  <ChipGroup label={t('trip.betweenTitle')} className="trip-transport-chips">
                     {[
                       ['auto', SparkIcon, 'trip.cartaPicks'],
                       ['public', TrainIcon, 'trip.trainBus'],
                       ['car', CarIcon, 'trip.rentalCarOpt'],
                       ['owncar', CarIcon, 'trip.ownCarOpt'],
-                    ].map(([k, I, lbl]) => (
-                      <button
-                        key={k}
-                        className={tp.transportPref === k ? 'on' : ''}
-                        onClick={() => tp.setTransportPref(k)}
-                      ><I size={12} /> {t(lbl)}</button>
+                    ].map(([k, ModeIco, lbl]) => (
+                      <Chip key={k} kind="choice" selected={tp.transportPref === k} onClick={() => tp.setTransportPref(k)}>
+                        {React.createElement(ModeIco, { size: 16 })} {t(lbl)}
+                      </Chip>
                     ))}
-                  </div>
+                  </ChipGroup>
                   {tp.transportPref === 'car' && tp.carRental && (
                     <p className="trip-note">
                       {t('trip.carRentalNote', { total: eurExact(tp.carRental.eur_total), days: tp.carRental.days, perDay: eurExact(tp.carRental.eur_per_day), group: tp.groupSize })}
@@ -1476,10 +1511,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                   </div>
 
                   <div className="trip-save-row">
-                    <button className="trip-newtrip-btn" onClick={handleStartOver}>{t('trip.startOver')}</button>
-                    <button className="trip-save-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
+                    <Button variant="quiet" className="trip-newtrip-btn" onClick={handleStartOver}>{t('trip.startOver')}</Button>
+                    <Button variant="secondary" className="trip-save-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
                       {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
-                    </button>
+                    </Button>
                   </div>
                   {saveError && <ErrorBlock message={saveError} />}
                   {!authConfigured && <p className="trip-note">{t('trip.noAuthNote')}</p>}
@@ -1507,6 +1542,17 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           <div className="trip-sheet-footer">
             {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
             <div className="trip-sheet-footer-row">{plannedActionButtons}</div>
+          </div>
+        )}
+        {/* Editing the stops always has a way back to the trip (T458): the
+            editor used to end in a receipt with no exit but Save. */}
+        {!tp.planned && tp.stopDetails.length > 0 && !wizardOpen && (
+          <div className="trip-sheet-footer trip-edit-footer">
+            <div className="trip-sheet-footer-row">
+              <Button variant="primary" className="trip-edit-done" onClick={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); }}>
+                {t('trip.doneEditing')}
+              </Button>
+            </div>
           </div>
         )}
       </div>

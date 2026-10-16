@@ -151,8 +151,7 @@ async function walk(browser, vp) {
     await shot('booked');
     await page.getByText(/^Nothing yet$/).first().click();
     await next();
-    await shot('from');
-    await next();
+    if (await page.locator('.worigin').count() && !(await page.locator('.wwho').count())) { await shot('from'); await next(); }
     if (await page.locator('.wwho').count()) { await shot('who'); await next(); }
     await page.getByText(/I'm flexible/).first().click();
     await page.locator('.guide-month-grid .guide-chip').nth(1).click().catch(() => {});

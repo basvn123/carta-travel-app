@@ -2,6 +2,7 @@
 // planners so each tab doesn't re-implement its own copy.
 
 import { useEffect, useState } from 'react';
+import { activeLocale } from './localeState.js';
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -30,6 +31,17 @@ export function addDays(iso, n) {
 export function fmtDate(iso, withWeekday = false) {
   if (!iso) return '';
   const [y, m, d] = iso.split('-').map(Number);
+  // Other languages read their own month and weekday names (T458); English
+  // keeps the compact stamp below exactly as it was.
+  const loc = activeLocale();
+  if (loc && !loc.toLowerCase().startsWith('en')) {
+    try {
+      return new Intl.DateTimeFormat(loc, withWeekday
+        ? { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }
+        : { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+        .format(new Date(Date.UTC(y, m - 1, d)));
+    } catch { /* fall back to the English stamp */ }
+  }
   const base = `${String(d).padStart(2, '0')} ${MONTHS[m - 1]}`;
   if (!withWeekday) return `${base} ${y}`;
   const wd = WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];

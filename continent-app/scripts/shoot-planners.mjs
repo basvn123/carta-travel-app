@@ -242,12 +242,7 @@ async function tripFlow(browser, vp) {
     await clickText(page, /^Nothing yet$/);
     await guideNext(page);
 
-    // 2 From
-    await page.locator('.guide-airport-chip, .guide-origin-home-card').first().waitFor({ timeout: 30000 }).catch(() => {});
-    await shot('02-from');
-    await guideNext(page);
-
-    // 2b Who: the party and the Lifestyle (T432)
+    // 2 Who: the party and the Lifestyle (T432; From moved into Getting there, T458)
     await page.locator('.wwho').first().waitFor({ timeout: 30000 }).catch(() => {});
     await page.waitForTimeout(400);
     await shot('02b-who');

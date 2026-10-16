@@ -48,7 +48,7 @@ async function next(page, ms = 1200) {
 }
 
 async function setStepper(page, rowText, want) {
-  const row = page.locator('.wiz-party-row').filter({ hasText: rowText }).first();
+  const row = page.locator('.party-row').filter({ hasText: rowText }).first();
   for (let i = 0; i < 25; i += 1) {
     const cur = Number((await row.locator('.fstepper-value').first().textContent().catch(() => '0')).trim());
     if (cur === want) return;
@@ -75,7 +75,6 @@ async function run(browser, sc) {
     await page.locator('.guide-next').first().waitFor({ timeout: 90000 });
     await page.getByText(/^Nothing yet$/).first().click();
     await next(page);
-    await next(page); // From
     await setStepper(page, 'Adults', sc.adults);
     await setStepper(page, 'Children', sc.kids);
     await page.locator('.wlife .ui-tile').filter({ hasText: sc.sleep }).first().click().catch(() => {});

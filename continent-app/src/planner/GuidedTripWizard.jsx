@@ -24,12 +24,15 @@ import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 // until they tap "What's there".
 const TripPage = lazy(() => import('../browse/TripPage.jsx').then((m) => ({ default: m.TripPage })));
 import { TravelLegsSection, TravelLegsSummary } from './TravelLegsSection.jsx';
+import { PhotoGallery } from '../browse/PhotoGallery.jsx';
 import { PlanTotal, PlanTotalButton, PaidField } from './PlanTotal.jsx';
 import { LifestyleChoices } from './LifestyleChoices.jsx';
+import { PartyEditor } from './PartyEditor.jsx';
+import { partyText } from '../lib/party.js';
 import { priceTrip as priceWholeTrip, wizardPlannerState, paidEur, MAX_PARTY } from '../lib/tripTotal.js';
 import { prefillMode, openJaw, publishedLeg } from '../lib/gettingThere.js';
 import { loadDossier } from '../lib/dossier.js';
-import { TRAVEL_MODES, TRAVEL_MODE_LABEL, googleFlightsExploreLink } from '../lib/transportLinks.js';
+import { TRAVEL_MODES, TRAVEL_MODE_LABEL, googleFlightsExploreLink, stayDatesLink } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
 import { matchCountries, SPEND_CHOICES } from '../lib/countryMatch.js';
 import { loadTrailsIndex } from '../lib/trails.js';
@@ -107,7 +110,10 @@ const BOOKED_NONE = { key: 'none', Icon: SparkIcon, labelKey: 'plan.bookedNone' 
 // trip leaves from, and when. Who travels used to be a fourth step; it is a
 // stepper on the Finish summary now, because party size is an adjustment
 // people make while reading a price, not a gate to get past before seeing one.
-const BASICS_STEPS = ['Booked', 'From', 'Who', 'When'];
+// Where the trip leaves from is asked on Getting there, where it is used
+// (T458): the hand-off links start there. Only a traveller whose travel is
+// booked keeps a From step, to say where it puts them down.
+const BASICS_STEPS = ['Booked', 'Who', 'When'];
 
 // The step after those, whose real name is what the rail shows and what the
 // render switches on: your own stays, a published trip, or the city picker.
@@ -343,7 +349,7 @@ export function GuidedTripWizard({
       setCountries(new Set([hit.country]));
       setWhereTab('hand');
       setTripPick(null);
-      // BASICS_STEPS then Where: the index is fixed once stays are unbooked.
+      // Booked, Who, When, then Where, once nothing is booked.
       goStep(BASICS_STEPS.length + 1);
     }
     onSeedConsumed && onSeedConsumed();
@@ -428,6 +434,8 @@ export function GuidedTripWizard({
   // so where it asks. Everything downstream prices from the combined size.
   const [adults, setAdults] = useState(() => plannerStore.getState().travelers.adults || 2);
   const [kids, setKids] = useState(() => plannerStore.getState().travelers.children || 0);
+  // Babies 0 to 2 travel free (T458); children 3 to 11 are `kids`.
+  const [babies, setBabies] = useState(() => plannerStore.getState().travelers.babies || 0);
   // The children stepper stays folded until asked for: most trips have none,
   // and a zero counter on the summary card is a question nobody answered.
   const [, setKidsOpen] = useState(false);
@@ -538,9 +546,10 @@ export function GuidedTripWizard({
     // Someone who has already booked their beds has chosen their cities, so
     // the country picker has nothing left to ask them.
     // The four opening questions are four steps, not one scrolling screen.
+    const basics = booked.travel ? ['Booked', 'From', 'Who', 'When'] : BASICS_STEPS;
     return booked.stays
-      ? [...BASICS_STEPS, third, ...rest]
-      : [...BASICS_STEPS, 'Where', third, ...rest];
+      ? [...basics, third, ...rest]
+      : [...basics, 'Where', third, ...rest];
   }, [booked.stays, booked.travel, buildMode]);
 
   // A draft saved before the Who step was removed restores a step number one
@@ -747,14 +756,18 @@ export function GuidedTripWizard({
   }, [orderedIncludedIds, nights, tripStartDate]);
 
   // Where the trip leaves from, as a point the link builders understand.
+  // The airport the traveller flies from, chosen on the origin card; the
+  // flight links on every leg start there.
+  const [depIata, setDepIata] = useState(() => savedDraft.depIata || '');
+  const depIataOk = depIata && nearAirports.some((a) => a.iata === depIata) ? depIata : '';
   const homePoint = useMemo(() => ({
     city: originPlace?.name || originCity,
     country: null,
     iso2: originPlace?.iso2 || originRec?.iso2 || null,
     lat: originPoint?.lat ?? null,
     lon: originPoint?.lon ?? null,
-    iata: nearAirports[0]?.iata || originCode || null,
-  }), [originPlace, originCity, originRec, originPoint?.lat, originPoint?.lon, nearAirports, originCode]);
+    iata: depIataOk || nearAirports[0]?.iata || originCode || null,
+  }), [originPlace, originCity, originRec, originPoint?.lat, originPoint?.lon, nearAirports, originCode, depIataOk]);
 
   const pointOf = useCallback((id) => {
     const d = destinations[id];
@@ -1230,6 +1243,7 @@ export function GuidedTripWizard({
     setQuizMust(new Set());
     setAdults(2);
     setKids(0);
+    setBabies(0);
     setKidsOpen(false);
     setTravelStyle(TRAVEL_STYLES.find((st) => st.stayTier === stayTier)?.key || 'standard');
     setOriginQuery('');
@@ -1298,7 +1312,10 @@ export function GuidedTripWizard({
     }
     return {
       startDate: start,
-      groupSize,
+      // Adults; children and babies are priced by their own rule (T458).
+      groupSize: adults,
+      children: kids,
+      babies,
       stayTier: effectiveStayTier,
       // Driving there means driving between the stops too.
       transport: ownCarChosen ? 'owncar' : 'auto',
@@ -1327,7 +1344,7 @@ export function GuidedTripWizard({
       stops,
     };
   }, [readyTrip, includedIds, orderedIncludedIds, nights, tripStartDate, totalNights, destinations,
-    selectedCountries, travelValues, travelLegs, ownStays, groupSize, effectiveStayTier, ownCarChosen,
+    selectedCountries, travelValues, travelLegs, ownStays, adults, kids, babies, effectiveStayTier, ownCarChosen,
     pace, booked.travel, arrivalId, originPlace, t]);
 
   const finish = () => {
@@ -1658,7 +1675,7 @@ export function GuidedTripWizard({
   const recapChips = [];
   if (step > 1) {
     if (originPlace) {
-      recapChips.push({ Icon: MapPinIcon, text: t('wizard.fromPlaceRecap', { place: originPlace.name }), to: stepNo('From') });
+      recapChips.push({ Icon: MapPinIcon, text: t('wizard.fromPlaceRecap', { place: originPlace.name }), to: stepNo('From') || stepNo('Getting') });
     }
     if (stepNo('Who') || !steps.includes('Who')) {
       recapChips.push({
@@ -1679,7 +1696,7 @@ export function GuidedTripWizard({
       recapChips.push({ Icon: PlaneIcon, text: t('wizard.arrivingIn', { city: cityLabel(arrivalDest.city) }), to: stepNo('From') });
     }
     if (dateMode === 'exact' && startDate && endDate) {
-      recapChips.push({ Icon: CalendarIcon, text: `${fmtDate(startDate, true)} → ${fmtDate(endDate, true)}`, to: stepNo('When') });
+      recapChips.push({ Icon: CalendarIcon, text: t('plan.dateRange', { a: fmtDate(startDate, true), b: fmtDate(endDate, true) }), to: stepNo('When') });
     } else if (dateMode === 'flex') {
       recapChips.push({ Icon: CalendarIcon, text: `${flexNights} ${t('wizard.nights')}, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label || flexMonth : t('wizard.anyMonth')}`, to: stepNo('When') });
     }
@@ -1720,7 +1737,7 @@ export function GuidedTripWizard({
         durationNights: windowNights || flexNights || 0,
         flexibleMonths: flexMonth ? [flexMonth] : [],
       },
-      travelers: { adults, children: kids, lifestyle: travelStyle },
+      travelers: { adults, children: kids, babies, lifestyle: travelStyle },
       wizard: {
         step,
         countries: [...countries],
@@ -1741,6 +1758,7 @@ export function GuidedTripWizard({
         pace,
         stayStyle,
         ownStays,
+        depIata,
       },
       selectedDestination: [...countries][0] || null,
       // How they told us they are getting there, and what they said it cost.
@@ -1769,9 +1787,9 @@ export function GuidedTripWizard({
     });
     if (stayStyle === 'single') plannerStore.setItineraryType('single');
   }, [originPlace, nearAirports, dateMode, startDate, endDate, windowNights, flexNights,
-    flexMonth, adults, kids, travelStyle, countries, travelValues, includedIds, nights,
+    flexMonth, adults, kids, babies, travelStyle, countries, travelValues, includedIds, nights,
     stayStyle, step, buildMode, tripPick?.id, quiz, destinations, nightlyFor,
-    booked, order, arrivalId, pace, ownStays]);
+    booked, order, arrivalId, pace, ownStays, depIata]);
 
   // A new step starts at its own top. Without this the body keeps the previous
   // step's scroll offset, so a long screen can open halfway down its own
@@ -1826,8 +1844,45 @@ export function GuidedTripWizard({
     if (i >= 0) goStep(i + 1);
   };
 
+  // ---- The review's photographs and its airport transfers (T458) --------
+  // Each stop's own gallery (the dossier the destination page shows), three
+  // photographs a stop, nine at most, captioned under the photo.
+  const [stopGalleries, setStopGalleries] = useState({});
+  const reviewStops = stepName === 'Finish' ? handOver.stops : null;
+  useEffect(() => {
+    if (!reviewStops?.length) return undefined;
+    let live = true;
+    Promise.all(reviewStops.map((s) => loadDossier(s.destinationId)
+      .then((d) => [s.destinationId, Array.isArray(d?.gallery) ? d.gallery : []])))
+      .then((rows) => { if (live) setStopGalleries(Object.fromEntries(rows)); });
+    return () => { live = false; };
+  }, [reviewStops]);
+  const reviewPhotos = useMemo(() => {
+    const out = [];
+    for (const s of handOver.stops) {
+      const d = destinations[s.destinationId];
+      if (!d) continue;
+      const g = (stopGalleries[s.destinationId] || []).filter((p) => p && p.url);
+      const list = g.length ? g : (d.image?.url ? [{ url: d.image.url }] : []);
+      list.slice(0, 3).forEach((p) => out.push({ ...p, caption: p.caption || cityLabel(d.city) }));
+    }
+    return out.slice(0, 9);
+  }, [handOver.stops, stopGalleries, destinations]);
+  // The runway to the first bed and the last bed to the runway, as legs.
+  const reviewTransfers = useMemo(() => {
+    if (!priced) return null;
+    const first = priced.stopDetails[0]?.dest;
+    const last = priced.stopDetails[priced.stopDetails.length - 1]?.dest;
+    const ft = priced.flightTransfer;
+    const inEur = (ft?.in_total || 0) + (priced.anchorLegs?.in?.ground_total || 0);
+    const outEur = (ft?.out_total || 0) + (priced.anchorLegs?.out?.ground_total || 0);
+    return {
+      in: inEur > 0 && first ? { label: t('plan.transferIn', { city: cityLabel(first.city) }), eur: inEur } : null,
+      out: outEur > 0 && last ? { label: t('plan.transferOut', { city: cityLabel(last.city) }), eur: outEur } : null,
+    };
+  }, [priced, t]);
+
   // ---- The finish summary: the trip in four facts and a photo ------------
-  const summaryHero = anchorDest || destinations[includedIds[0]] || null;
   const summaryTitle = selectedCountries.map((c) => c.country).slice(0, 2).join(' & ')
     || [...new Set(includedIds.map((id) => destinations[id]?.country).filter(Boolean))].slice(0, 2).join(' & ')
     || t('wizard.planYourTrip');
@@ -1887,10 +1942,90 @@ export function GuidedTripWizard({
     ? windowNights - totalNights : 0;
 
   // The party from the price card: adults move, children stay as answered.
-  const setParty = (n) => setAdults(Math.max(1, Math.min(MAX_PARTY - kids, n - kids)));
+  const party = { adults, children: kids, babies };
+  const setParty = (p) => {
+    setAdults(Math.max(1, p.adults ?? adults));
+    setKids(Math.max(0, p.children ?? kids));
+    setBabies(Math.max(0, p.babies ?? babies));
+  };
   const gotoGetting = steps.includes('Getting')
     ? () => { setTotalOpen(false); goStep(steps.indexOf('Getting') + 1); }
     : null;
+
+  // Where the trip leaves from, and the airport it flies from (T458). Asked
+  // on Getting there, where it is used, and on From when the travel is
+  // booked. The airports are a choice now: the flight links start at the one
+  // picked.
+  const originCard = (
+    <section className="worigin" aria-labelledby="worigin-h">
+      <h2 className="worigin-h" id="worigin-h">{t('plan.leaveFrom')}</h2>
+      {originPlace ? (
+        <div className="worigin-picked">
+          <MapPinIcon size={20} />
+          <b>{originPlace.name}</b>
+          <Button variant="quiet" size="sm" onClick={() => { setOriginPlace(null); setOriginResults([]); }}>
+            {t('wizard.change')}
+          </Button>
+        </div>
+      ) : (
+        <>
+          <form className="worigin-search" onSubmit={(e) => { e.preventDefault(); searchOrigin(); }}>
+            <label className="sr-only" htmlFor="worigin-q">{t('wizard.originLabel')}</label>
+            <input
+              id="worigin-q"
+              className="worigin-input"
+              type="search"
+              value={originQuery}
+              onChange={(e) => setOriginQuery(e.target.value)}
+              placeholder={t('wizard.originPlaceholder')}
+              autoComplete="off"
+            />
+            <Button type="submit" variant="secondary" disabled={originBusy || originQuery.trim().length < 3} loading={originBusy}>
+              {t('wizard.search')}
+            </Button>
+          </form>
+          {originResults.length > 0 && (
+            <ul className="worigin-results">
+              {originResults.map((r, i) => (
+                <li key={`${r.lat},${r.lon},${i}`}>
+                  <Button
+                    variant="quiet"
+                    block
+                    className="worigin-result"
+                    iconStart={<MapPinIcon size={16} />}
+                    onClick={() => {
+                      setOriginPlace({ name: r.shortLabel || r.name, lat: r.lat, lon: r.lon, iso2: r.iso2 });
+                      setOriginResults([]);
+                      setOriginQuery('');
+                    }}
+                  >
+                    {r.label}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+      {nearAirports.length > 0 && (
+        <div className="worigin-air">
+          <span className="worigin-air-lbl" id="worigin-air">{t('plan.flyFrom')}</span>
+          <ChipGroup label={t('plan.flyFrom')} className="worigin-chips" aria-labelledby="worigin-air">
+            {nearAirports.map((a, i) => (
+              <Chip
+                key={a.iata}
+                kind="choice"
+                selected={(depIataOk || nearAirports[0]?.iata) === a.iata && (depIataOk ? true : i === 0)}
+                onClick={() => setDepIata(a.iata)}
+              >
+                <b>{a.iata}</b> {a.city || a.name} <small>{a.km} km</small>
+              </Chip>
+            ))}
+          </ChipGroup>
+        </div>
+      )}
+    </section>
+  );
 
   // ---------------------------------------------------------------- render --
   // The step rail is the wizard's orientation, and there is no opening
@@ -2316,6 +2451,8 @@ export function GuidedTripWizard({
             <>
               <StepTitle className="guide-title">{t('wizard.gettingTitle')}</StepTitle>
 
+              {!booked.travel && originCard}
+
               {/* Getting there works on every path (T388, row T377-e): its
                   legs come from the stops and the dates, which a built route
                   and booked beds have as surely as a ready-made trip. Only a
@@ -2394,7 +2531,6 @@ export function GuidedTripWizard({
               {/* The question that shapes the rest of the flow. It is first
                   because every answer below it, and every screen after it,
                   reads differently once something is already held. */}
-              <p className="guide-sub wbook-sub">{t('plan.bookedSub')}</p>
               <TileGroup label={t('wizard.alreadyBooked')} columns={3} className="wbook-tiles">
                 {BOOKED_BITS.map((b) => (
                   <Tile
@@ -2424,78 +2560,7 @@ export function GuidedTripWizard({
             <>
               <StepTitle className="guide-title">{t('wizard.originLabel')}</StepTitle>
 
-              {/* Where does the trip leave from? A typed address unlocks
-                  every airport within 200 km; skipping it keeps the app's
-                  own departure airport, so the step never blocks. */}
-              <div className="guide-card guide-origin-home-card">
-                {originPlace ? (
-                  <div className="guide-origin-picked">
-                    <div className="guide-origin-picked-main">
-                      <b>{originPlace.name}</b>
-                      <button className="guide-answered-edit" onClick={() => { setOriginPlace(null); setOriginResults([]); }}>
-                        {t('wizard.change')}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="guide-carfrom-row">
-                      <input
-                        className="guide-search"
-                        type="search"
-                        value={originQuery}
-                        onChange={(e) => setOriginQuery(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') searchOrigin(); }}
-                        placeholder={t('wizard.originPlaceholder')}
-                        aria-label={t('wizard.originLabel')}
-                      />
-                      <button
-                        className="guide-back guide-carfrom-search"
-                        onClick={searchOrigin}
-                        disabled={originBusy || originQuery.trim().length < 3}
-                      >
-                        {originBusy ? t('wizard.searching') : t('wizard.search')}
-                      </button>
-                    </div>
-                    {originResults.length > 0 && (
-                      <div className="guide-city-list guide-carfrom-list">
-                        {originResults.map((r, i) => (
-                          <button
-                            key={`${r.lat},${r.lon},${i}`}
-                            className="guide-city guide-city-btn"
-                            onClick={() => {
-                              setOriginPlace({ name: r.shortLabel || r.name, lat: r.lat, lon: r.lon, iso2: r.iso2 });
-                              setOriginResults([]);
-                              setOriginQuery('');
-                            }}
-                          >
-                            <MapPinIcon size={12} /> <span className="guide-carfrom-label">{r.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-                {nearAirports.length > 0 && (
-                  <div className="guide-airport-chips" aria-label={t('wizard.airportsNear')}>
-                    <span className="trip-field-label"><PlaneIcon size={14} /> {t('wizard.airportsNear')}</span>
-                    <div className="guide-airport-chip-row">
-                      {nearAirports.map((a) => (
-                        <span key={a.iata} className="guide-airport-chip">
-                          <b>{a.iata}</b> {a.name}
-                          <small>{a.km} km</small>
-                        </span>
-                      ))}
-                    </div>
-                    {/* The airports are listed, and the obvious next thought
-                        is "so where do they actually go". Undated here: on
-                        this step the traveller has not answered When yet. */}
-                    <ExploreFlightsCard airport={nearAirports[0]} lang={lang} t={t} />
-                  </div>
-                )}
-              </div>
-
-
+              {originCard}
 
               {/* Travel booked: the one thing Carta then needs is where it
                   puts you down, and how, because that decides the transfer
@@ -2585,33 +2650,7 @@ export function GuidedTripWizard({
               <StepTitle className="guide-title">{t('plan.whoTitle')}</StepTitle>
               <div className="wwho">
                 <div className="wwho-party">
-                  <div className="wiz-party-row">
-                    <span className="wiz-party-label">{t('plan.adults')}</span>
-                    <Stepper
-                      value={adults}
-                      min={1}
-                      max={MAX_PARTY - kids}
-                      onChange={setAdults}
-                      ariaLabel={t('plan.adults')}
-                      decLabel={t('trip.fewer')}
-                      incLabel={t('trip.more')}
-                    />
-                  </div>
-                  <div className="wiz-party-row">
-                    <span className="wiz-party-label">
-                      {t('wizard.children')}
-                      <small>{t('plan.childrenPriced')}</small>
-                    </span>
-                    <Stepper
-                      value={kids}
-                      min={0}
-                      max={MAX_PARTY - adults}
-                      onChange={setKids}
-                      ariaLabel={t('wizard.children')}
-                      decLabel={t('trip.fewer')}
-                      incLabel={t('trip.more')}
-                    />
-                  </div>
+                  <PartyEditor value={party} onChange={setParty} />
                 </div>
                 <LifestyleChoices />
               </div>
@@ -2727,43 +2766,72 @@ export function GuidedTripWizard({
             <>
               <StepTitle className="guide-title">{t('wizard.staysTitle')}</StepTitle>
 
+              {/* T458: one card a stay, its nights on the kit stepper, its
+                  dates, a place to find and the price paid; the add card sits
+                  beside the list on desktop so the step uses the width. */}
+              <div className={`wstays ${stopDates.length ? '' : 'is-empty'}`}>
               {stopDates.length > 0 && (
-                <ol className="booked-route">
+                <ol className="wstay-list">
                   {stopDates.map((row, i) => {
                     const dest = destinations[row.id];
                     if (!dest) return null;
+                    const leave = row.arrive ? addDays(row.arrive, row.nights) : '';
                     return (
-                      <li className="booked-route-item" key={`${row.id}-${i}`}>
-                        <div className="booked-stop">
-                          <span className="booked-stop-index">{i + 1}</span>
-                          <CityThumb dest={dest} className="booked-stop-thumb" />
-                          <div className="booked-stop-info">
-                            <div className="booked-stop-city">{cityLabel(dest.city)} <Flag iso2={dest.iso2} className="guide-flag-img-sm" /></div>
-                            <div className="booked-stop-sub">
-                              {dest.country}
-                              {row.arrive && <span className="booked-stop-date">{fmtDate(row.arrive)}</span>}
-                            </div>
-                          </div>
-                          <div className="guide-nights">
-                            <button onClick={() => setCityNights(row.id, (nights[row.id] || 1) - 1)} aria-label={t('wizard.fewerNights')}>-</button>
-                            <span className="guide-nights-val">
-                              <b>{row.nights}</b> {row.nights === 1 ? t('wizard.nightOne') : t('wizard.nightMany')}
-                            </span>
-                            <button onClick={() => setCityNights(row.id, (nights[row.id] || 0) + 1)} aria-label={t('wizard.moreNights')}>+</button>
-                          </div>
+                      <li className="wstay" key={`${row.id}-${i}`}>
+                        <span className="wstay-index" aria-hidden="true">{i + 1}</span>
+                        <CityThumb dest={dest} className="wstay-thumb" />
+                        <div className="wstay-info">
+                          <h3 className="wstay-city">{cityLabel(dest.city)} <Flag iso2={dest.iso2} className="guide-flag-img-sm" /></h3>
+                          <p className="wstay-sub">
+                            {row.arrive
+                              ? t('plan.dateRange', { a: fmtDate(row.arrive, true), b: fmtDate(leave, true) })
+                              : dest.country}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="wstay-remove"
+                          onClick={() => setCityNights(row.id, 0)}
+                          aria-label={t('wizard.removeStop', { city: cityLabel(dest.city) })}
+                          title={t('wizard.removeStop', { city: cityLabel(dest.city) })}
+                        ><CloseIcon size={16} /></button>
+                        <div className="wstay-nights">
+                          <Stepper
+                            value={row.nights}
+                            min={1}
+                            max={30}
+                            onChange={(n) => setCityNights(row.id, n)}
+                            ariaLabel={t('wizard.nightsIn', { city: cityLabel(dest.city) })}
+                            decLabel={t('wizard.fewerNights')}
+                            incLabel={t('wizard.moreNights')}
+                          />
+                          <span className="wstay-nights-word">{row.nights === 1 ? t('wizard.nightOne') : t('wizard.nightMany')}</span>
+                        </div>
+                        <div className="wstay-acts">
+                          {row.arrive && !(ownStays[row.id] > 0) && (
+                            <a
+                              className="btn btn-quiet btn-sm wrev-find"
+                              href={stayDatesLink({
+                                city: dest.city, country: dest.country, checkin: row.arrive, checkout: leave,
+                                adults: adults, children: kids,
+                              })}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
+                              <span className="btn-label">{t('plan.findStay')}</span>
+                              <span className="sr-only"> {t('plan.opensNewTab')}</span>
+                            </a>
+                          )}
                           <PaidField
                             id={`bed-${row.id}`}
                             value={paidEur(ownStays[row.id])}
                             estimate={bedEstimate(row.id)}
-                            label={t('plan.bedPaid')}
+                            label={t('plan.bookingPrice')}
+                            addLabel={t('plan.addBookingPrice')}
                             onChange={(n) => setOwnStay(row.id, n)}
+                            folded
+                            hint={false}
                           />
-                          <button
-                            className="trip-stop-remove"
-                            onClick={() => setCityNights(row.id, 0)}
-                            aria-label={t('wizard.removeStop', { city: cityLabel(dest.city) })}
-                            title={t('wizard.removeStop', { city: cityLabel(dest.city) })}
-                          ><CloseIcon size={16} /></button>
                         </div>
                       </li>
                     );
@@ -2771,7 +2839,7 @@ export function GuidedTripWizard({
                 </ol>
               )}
 
-              <div className="guide-card">
+              <div className="guide-card wstays-add">
                 <div className="guide-card-head"><BedIcon size={14} /> {t('wizard.addStop')}</div>
                 <input
                   className="guide-search"
@@ -2805,6 +2873,7 @@ export function GuidedTripWizard({
                 {stayQuery && !stayMatches.length && (
                   <p className="guide-empty">{t('wizard.noCityMatches', { q: stayQuery })}</p>
                 )}
+              </div>
               </div>
             </>
           )}
@@ -3241,24 +3310,10 @@ export function GuidedTripWizard({
 
               <div className="wrev">
                 <div className="wrev-main">
-                  {summaryHero && (
-                    <figure className="wrev-hero">
-                      <HeroImage
-                        url={summaryHero.image?.url || null}
-                        city={cityLabel(summaryHero.city)}
-                        iso2={summaryHero.iso2}
-                        className="wrev-hero-img"
-                        maxWidth={1280}
-                        ratio={[16, 9]}
-                        eager
-                      />
-                      <figcaption className="wrev-cap">
-                        <b>{cityLabel(summaryHero.city)}, {summaryHero.country}</b>
-                        {summaryHero.image?.credit && summaryHero.image.credit !== summaryHero.city && (
-                          <small>{summaryHero.image.credit}</small>
-                        )}
-                      </figcaption>
-                    </figure>
+                  {reviewPhotos.length > 0 && (
+                    <div className="wrev-hero">
+                      <PhotoGallery photos={reviewPhotos} label={handOver.label || summaryTitle} className="wrev-gallery" />
+                    </div>
                   )}
 
                   <div className="wrev-head">
@@ -3268,7 +3323,7 @@ export function GuidedTripWizard({
 
                   <dl className="wrev-facts">
                     {[
-                      ['Who', t('wizard.summaryTravellers'), `${groupSize} ${groupSize === 1 ? t('wizard.travellerOne') : t('wizard.travellerMany')}`],
+                      ['Who', t('wizard.summaryTravellers'), partyText(t, party)],
                       ['When', t('wizard.summaryDates'), summaryDates],
                       ['Getting', t('wizard.summaryGettingThere'), summaryTransport],
                     ].map(([to, label, value]) => (
@@ -3305,15 +3360,29 @@ export function GuidedTripWizard({
                               ? <span className="plan-line-yours"><Money value={priced.stayCosts[i].accomTotal} precision="cents" /><small>{t('plan.yours')}</small></span>
                               : <Money value={bedEstimate(sd.destinationId)} est precision="cents" />}
                           </span>
-                          <PaidField
-                            id={`rev-bed-${sd.destinationId}`}
-                            value={paidEur(ownStays[sd.destinationId])}
-                            estimate={bedEstimate(sd.destinationId)}
-                            label={t('plan.bedPaid')}
-                            onChange={(n) => setOwnStay(sd.destinationId, n)}
-                            folded
-                            hint={false}
-                          />
+                          <span className="wrev-stop-acts">
+                            <a
+                              className="btn btn-quiet btn-sm wrev-find"
+                              href={stayDatesLink({
+                                city: cityLabel(sd.dest.city), country: sd.dest.country,
+                                checkin: sd.arriveDate, checkout: sd.departDate, adults, children: kids,
+                              })}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
+                              <span className="btn-label">{t('plan.findStay')}</span>
+                            </a>
+                            <PaidField
+                              id={`rev-bed-${sd.destinationId}`}
+                              value={paidEur(ownStays[sd.destinationId])}
+                              estimate={bedEstimate(sd.destinationId)}
+                              label={t('plan.bookingPrice')}
+                              addLabel={t('plan.addBookingPrice')}
+                              onChange={(n) => setOwnStay(sd.destinationId, n)}
+                              folded
+                              hint={false}
+                            />
+                          </span>
                         </li>
                       ))}
                     </ol>
@@ -3325,6 +3394,7 @@ export function GuidedTripWizard({
                       values={travelValues}
                       estimates={legEstimates}
                       onEdit={gotoGetting}
+                      transfers={reviewTransfers}
                     />
                   )}
 
@@ -3355,8 +3425,8 @@ export function GuidedTripWizard({
                   <PlanTotal
                     priced={priced}
                     dates={summaryDates}
-                    people={groupSize}
-                    onPeople={setParty}
+                    party={party}
+                    onParty={setParty}
                     onAddFare={gotoGetting}
                     variant="card"
                     defaultOpen
@@ -3374,8 +3444,8 @@ export function GuidedTripWizard({
              <PlanTotal
                priced={priced}
                dates={summaryDates}
-               people={groupSize}
-               onPeople={setParty}
+               party={party}
+               onParty={setParty}
                onAddFare={gotoGetting}
              />
            </aside>
@@ -3512,8 +3582,8 @@ export function GuidedTripWizard({
           <PlanTotal
             priced={priced}
             dates={summaryDates}
-            people={groupSize}
-            onPeople={setParty}
+            party={party}
+            onParty={setParty}
             onAddFare={gotoGetting}
             variant="sheet"
             defaultOpen

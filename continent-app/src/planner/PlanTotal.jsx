@@ -2,10 +2,11 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { Button, Money } from '../components/ui/index.js';
-import { Stepper } from '../components/FilterControls.jsx';
+import { PartyEditor } from './PartyEditor.jsx';
+import { partyText } from '../lib/party.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { formatMoney, formatEst } from '../lib/money.js';
-import { tripLines, tripReadiness, MAX_PARTY } from '../lib/tripTotal.js';
+import { tripLines, tripReadiness } from '../lib/tripTotal.js';
 import { useLifestyleLabel, useTotalDelta } from './planHooks.js';
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from '../components/Icons.jsx';
 
@@ -56,7 +57,7 @@ function LineValue({ line, lang, t, onAddFare }) {
 }
 
 export function PlanTotal({
-  priced, dates = '', people, onPeople = null, onAddFare = null,
+  priced, dates = '', party: partyIn = null, onParty = null, onAddFare = null,
   variant = 'rail', title = null, defaultOpen = false, footer = null, className = '',
 }) {
   const { t, lang } = useI18n();
@@ -64,13 +65,15 @@ export function PlanTotal({
   const lifestyle = useLifestyleLabel();
   const uid = useId();
   const [open, setOpen] = useState(defaultOpen);
+  const [editParty, setEditParty] = useState(false);
   const total = priced ? priced.grandTotal : null;
   const delta = useTotalDelta(total);
   const figRef = useRef(null);
   useSettledFigure(figRef, total);
   const lines = tripLines(priced);
   const ready = tripReadiness(priced);
-  const party = Math.max(1, people || priced?.groupSize || 1);
+  const partyObj = partyIn || priced?.party || { adults: priced?.groupSize || 1, children: 0, babies: 0 };
+  const party = Math.max(1, (partyObj.adults || 0) + (partyObj.children || 0) + (partyObj.babies || 0));
   const hasTrip = Boolean(priced && priced.stopDetails.length);
 
   return (
@@ -109,21 +112,22 @@ export function PlanTotal({
             <dd>{dates}</dd>
           </div>
         )}
-        <div className="plan-input">
+        <div className={`plan-input ${editParty ? 'is-open' : ''}`}>
           <dt id={`${uid}-people`}>{t('settings.party')}</dt>
           <dd>
-            {onPeople ? (
-              <Stepper
-                value={party}
-                min={1}
-                max={MAX_PARTY}
-                onChange={onPeople}
-                ariaLabel={t('settings.partyAria', { n: party })}
-                decLabel={t('settings.partyDec')}
-                incLabel={t('settings.partyInc')}
-              />
-            ) : party}
+            {onParty ? (
+              <Button variant="quiet" size="sm" className="plan-input-btn" aria-expanded={editParty}
+                aria-controls={`${uid}-party`} onClick={() => setEditParty((v) => !v)}
+                iconEnd={<ChevronDownIcon size={16} className={editParty ? 'plan-chev is-open' : 'plan-chev'} />}>
+                {partyText(t, partyObj)}
+              </Button>
+            ) : partyText(t, partyObj)}
           </dd>
+          {onParty && editParty && (
+            <div className="plan-input-panel" id={`${uid}-party`}>
+              <PartyEditor value={partyObj} onChange={onParty} compact />
+            </div>
+          )}
         </div>
         {settings?.openLifestyle && (
           <div className="plan-input">
@@ -198,7 +202,9 @@ export function PlanTotalButton({ priced, onOpen }) {
  * Money a traveller paid, typed in where the thing it paid for is shown: a
  * leg, a bed, the way there. A blank field means "use Carta's estimate".
  */
-export function PaidField({ value, onChange, label, estimate = null, id: idProp, folded = false, hint = true }) {
+const PAID_MAX = 1000000;
+
+export function PaidField({ value, onChange, label, estimate = null, id: idProp, folded = false, hint = true, addLabel = null }) {
   const { t, lang } = useI18n();
   const auto = useId();
   const id = idProp || auto;
@@ -210,7 +216,9 @@ export function PaidField({ value, onChange, label, estimate = null, id: idProp,
   useEffect(() => { setText(show(value)); }, [value, lang]); // eslint-disable-line react-hooks/exhaustive-deps -- show() is derived from lang
   const commit = (raw) => {
     const n = Number(String(raw).replace(/\s/g, '').replace(',', '.'));
-    const v = Number.isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : 0;
+    // A typed price is a booking, not a typo test: capped at a million so a
+    // slipped key cannot turn the total into eleven digits (T458).
+    const v = Number.isFinite(n) && n > 0 ? Math.min(PAID_MAX, Math.round(n * 100) / 100) : 0;
     setText(show(v));
     onChange(v);
   };
@@ -219,7 +227,7 @@ export function PaidField({ value, onChange, label, estimate = null, id: idProp,
   if (folded && !open && !(value > 0)) {
     return (
       <Button variant="quiet" size="sm" className="plan-paid-add" onClick={() => setOpen(true)} iconStart={<PlusIcon size={16} />}>
-        {t('travel.addWhatYouPaid')}
+        {addLabel || t('travel.addWhatYouPaid')}
       </Button>
     );
   }

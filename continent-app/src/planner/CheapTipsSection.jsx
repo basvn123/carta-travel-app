@@ -3,6 +3,11 @@ import { tipsForTrip } from '../lib/cheapTips.js';
 import { useI18n } from '../i18n/index.jsx';
 import { Button } from '../components/ui/index.js';
 import { scrollBehavior } from '../lib/motion.js';
+import { monthName } from '../lib/dates.js';
+import { stripDashes } from '../lib/format.js';
+import {
+  CalendarIcon, TrainIcon, CarIcon, DiningIcon, StarIcon, InfoIcon, SparkIcon,
+} from '../components/Icons.jsx';
 
 // i18n keys for the tip categories. The tip texts themselves are English data
 // in cheapTips.json and wait on a translation pass (row T377-f).
@@ -16,19 +21,41 @@ const CATEGORY_KEY = {
   connectivity: 'trip.tipCatConnectivity',
 };
 
-const TRACK_CAP = 6;
+const TRACK_CAP = 8;
+
+/** One country's rules as cards of one shape (T458): the best time, getting
+ *  around, the car, food, what not to miss and what is good to know. Each card
+ *  is a fact; nothing nests. */
+function countryCards(country, rec, t, lang) {
+  if (!rec) return [];
+  const out = [];
+  const card = (key, Icon, label, title, text) => {
+    if (!title && !text) return;
+    out.push({ key: `${country}-${key}`, Icon, meta: `${label}, ${country}`, title: stripDashes(title || ''), text: stripDashes(text || '') });
+  };
+  if (rec.best_months?.length) {
+    card('best', CalendarIcon, t('intel.bestTime'), rec.best_months.map((m) => monthName(m, lang)).join(', '), rec.best_time_note);
+  }
+  const ground = rec.bus?.note || rec.rail?.note;
+  if (ground) card('around', TrainIcon, t('intel.gettingAround'), (rec.bus?.operators || [])[0] || rec.rail?.operator || '', ground);
+  if (rec.driving) {
+    const d = rec.driving;
+    card('car', CarIcon, t('intel.byCar'), d.vignette || d.tolls || '', (d.warnings || [])[0] || d.tolls || '');
+  }
+  if (rec.food?.length) card('food', DiningIcon, t('intel.eatDrink'), rec.food.slice(0, 2).join(', '), rec.food.slice(2).join(', '));
+  (rec.must_see || []).slice(0, 2).forEach((m, i) => card(`see${i}`, StarIcon, t('intel.dontMiss'), m.name, m.why));
+  (rec.insights || []).slice(0, 2).forEach((s, i) => card(`know${i}`, InfoIcon, t('intel.goodToKnow'), '', s));
+  return out;
+}
 
 /**
- * Before you go (T432): the planned trip's country rules and the savings
- * researched for this trip, as one track of cards rather than a long closed
- * fold (carta-design "Tracks"). One card a fact: the country's rules first
- * (`intel`, the CountryIntel nodes the planner tab renders for the route),
- * then the tips filtered to this trip's countries, month, transport and party
- * (lib/cheapTips.js). Swiping is a shortcut: Previous and Next move one card,
- * the position says where you are, and Show all turns the track into a list.
+ * Before you go: the countries' rules and the savings researched for this
+ * trip, as one track of cards of one shape (carta-design "Tracks"). Swiping is
+ * a shortcut: Previous and Next move one card, the position says where you
+ * are, and Show all turns the track into a list.
  */
-export function CheapTipsSection({ stopDetails = [], tripStart = null, transportPref = null, groupSize = 1, intel = null }) {
-  const { t } = useI18n();
+export function CheapTipsSection({ stopDetails = [], tripStart = null, transportPref = null, groupSize = 1, intelRecs = [] }) {
+  const { t, lang } = useI18n();
   const [all, setAll] = useState(false);
   const [at, setAt] = useState(0);
   const trackRef = useRef(null);
@@ -50,23 +77,26 @@ export function CheapTipsSection({ stopDetails = [], tripStart = null, transport
 
   const cards = useMemo(() => {
     const out = [];
-    (Array.isArray(intel) ? intel : intel ? [intel] : []).forEach((node, i) => {
-      out.push({ key: `intel-${node?.key ?? i}`, kind: 'intel', node });
-    });
+    for (const { country, rec } of intelRecs) out.push(...countryCards(country, rec, t, lang));
     picked.byCountry.forEach((g) => g.tips.forEach((tip) => {
-      out.push({ key: tip.id, kind: 'tip', tip, place: countryNames.get(g.iso2) || g.iso2 });
+      const label = CATEGORY_KEY[tip.category] ? t(CATEGORY_KEY[tip.category]) : (tip.category || '');
+      out.push({
+        key: tip.id, Icon: SparkIcon, meta: [label, countryNames.get(g.iso2) || g.iso2].filter(Boolean).join(', '),
+        title: stripDashes(tip.title || ''), text: stripDashes(tip.tip || ''), save: tip.savings || '',
+      });
     }));
-    // Europe-wide tips wait behind Show all: the track is this trip's
-    // countries first (T432 critique: a Spain tip on an Albania trip).
-    if (!out.some((c) => c.kind === 'tip')) {
-      picked.generic.forEach((tip) => out.push({ key: tip.id, kind: 'tip', tip, place: '' }));
+    // Europe-wide tips only when nothing was researched for these countries.
+    if (!out.length) {
+      picked.generic.forEach((tip) => out.push({
+        key: tip.id, Icon: SparkIcon, meta: CATEGORY_KEY[tip.category] ? t(CATEGORY_KEY[tip.category]) : '',
+        title: stripDashes(tip.title || ''), text: stripDashes(tip.tip || ''), save: tip.savings || '',
+      }));
     }
     return out;
-  }, [intel, picked, countryNames]);
+  }, [intelRecs, picked, countryNames, t, lang]);
 
   const shown = all ? cards : cards.slice(0, TRACK_CAP);
 
-  // Which card leads the track, read from the scroll position.
   const onScroll = useCallback(() => {
     const el = trackRef.current;
     if (!el || !el.firstElementChild) return;
@@ -86,19 +116,14 @@ export function CheapTipsSection({ stopDetails = [], tripStart = null, transport
 
   if (!cards.length) return null;
 
-  const card = (c) => (c.kind === 'intel' ? (
-    <article className="bgo-card bgo-intel" key={c.key}>{c.node}</article>
-  ) : (
+  const renderCard = (c) => (
     <article className="bgo-card" key={c.key}>
-      <p className="bgo-meta">
-        {CATEGORY_KEY[c.tip.category] ? t(CATEGORY_KEY[c.tip.category]) : c.tip.category}
-        {c.place ? `, ${c.place}` : ''}
-      </p>
-      <h3 className="bgo-title">{c.tip.title}</h3>
-      <p className="bgo-text">{c.tip.tip}</p>
-      {c.tip.savings && <p className="bgo-save">{c.tip.savings}</p>}
+      <p className="bgo-meta">{c.Icon && <c.Icon size={16} />} {c.meta}</p>
+      {c.title && <h3 className="bgo-title">{c.title}</h3>}
+      {c.text && <p className="bgo-text">{c.text}</p>}
+      {c.save && <p className="bgo-save">{c.save}</p>}
     </article>
-  ));
+  );
 
   return (
     <section className="bgo" aria-labelledby="bgo-h">
@@ -111,7 +136,7 @@ export function CheapTipsSection({ stopDetails = [], tripStart = null, transport
         )}
       </div>
       {all ? (
-        <div className="bgo-list">{shown.map(card)}</div>
+        <div className="bgo-list">{shown.map(renderCard)}</div>
       ) : (
         <>
           <div
@@ -126,7 +151,7 @@ export function CheapTipsSection({ stopDetails = [], tripStart = null, transport
               if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
             }}
           >
-            {shown.map(card)}
+            {shown.map(renderCard)}
           </div>
           {shown.length > 1 && (
             <div className="bgo-nav">

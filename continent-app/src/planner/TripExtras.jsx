@@ -62,6 +62,9 @@ function BookingRow({ row, booking, onPatch, onRemove, t }) {
         {row.estimate != null && (
           <span className="extras-est">{t('extras.est', { price: eurExact(row.estimate) })}</span>
         )}
+        {row.findUrl && !b.done && (
+          <a className="extras-find" href={row.findUrl} target="_blank" rel="noreferrer noopener">{row.findLabel}</a>
+        )}
         {onRemove && (
           <button className="extras-remove" onClick={onRemove} title={t('extras.removeTitle')}
  aria-label={t('extras.removeTitle')}><CloseIcon size={16} /></button>
@@ -141,7 +144,9 @@ function InboxItem({ item, days, onRoute, onDiscard, t }) {
   );
 }
 
-export function TripExtras({ rows, extras, onChange, days = [], importContext = null }) {
+export function TripExtras({ rows, extras, onChange, days = [], importContext = null, only = null }) {
+  // `only` shows one tool alone, in its own sheet on the planned trip (T458).
+  const show = (k) => !only || only === k;
   const { t } = useI18n();
   const [newItem, setNewItem] = useState('');
 
@@ -207,8 +212,9 @@ export function TripExtras({ rows, extras, onChange, days = [], importContext = 
     <div className="trip-extras">
       {/* Bookings: tick off each element as it gets booked for real. The
           dropzone sits above the rows it fills, so cause lands on effect. */}
+      {show('bookings') && (
       <section className="extras-section">
-        <div className="trip-block-title">{t('extras.bookingsTitle')}</div>
+        {!only && <div className="trip-block-title">{t('extras.bookingsTitle')}</div>}
         {importContext && (
           <MagicImportZone onResult={applyImport} importContext={importContext} />
         )}
@@ -233,11 +239,12 @@ export function TripExtras({ rows, extras, onChange, days = [], importContext = 
         ))}
         <button className="extras-add-btn" onClick={addCustom}>+ {t('extras.addBooking')}</button>
       </section>
+      )}
 
       {/* The Activity Inbox: imported activities wait here until each one is
           routed to a real day. Renders only while there is something staged,
           an empty inbox is not a section worth scrolling past. */}
-      {inbox.length > 0 && days.length > 0 && (
+      {show('bookings') && inbox.length > 0 && days.length > 0 && (
         <section className="extras-section extras-inbox">
           <div className="trip-block-title">
             {t('extras.inboxTitle')}
@@ -258,22 +265,25 @@ export function TripExtras({ rows, extras, onChange, days = [], importContext = 
       )}
 
       {/* Notes: door codes, opening hours, promises made. */}
+      {show('notes') && (
       <section className="extras-section">
-        <div className="trip-block-title">{t('extras.notesTitle')}</div>
+        {!only && <div className="trip-block-title">{t('extras.notesTitle')}</div>}
         <textarea
           className="extras-notes"
           value={extras.notes}
           placeholder={t('extras.notesPlaceholder')}
           aria-label={t('extras.notesPlaceholder')}
-          rows={3}
+          rows={only ? 10 : 3}
           onChange={(e) => onChange({ ...extras, notes: e.target.value })}
         />
       </section>
+      )}
 
       {/* Packing list. */}
+      {show('packing') && (
       <section className="extras-section">
         <div className="trip-block-title">
-          {t('extras.checkTitle')}
+          {!only && t('extras.checkTitle')}
           {extras.checklist.length > 0 && (
             <span className="extras-count">{packedCount}/{extras.checklist.length}</span>
           )}
@@ -313,6 +323,7 @@ export function TripExtras({ rows, extras, onChange, days = [], importContext = 
           )}
         </form>
       </section>
+      )}
     </div>
   );
 }
