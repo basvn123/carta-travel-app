@@ -5,31 +5,30 @@ import { HeroImage } from '../../components/HeroImage.jsx';
 import { ChevronRightIcon } from '../../components/Icons.jsx';
 import { formatEst, formatMoney } from '../../lib/money.js';
 import { tabHref } from '../../lib/urlState.js';
-import { PERSONAS, cheapestDay, exploreHref, isEstimate } from '../../lib/homeDemo.js';
+import { PERSONAS, exploreHref, isEstimate, placeDay } from '../../lib/homeDemo.js';
 import { useReducedMotion } from './useHome.js';
 
 /**
- * Six travellers and the trip each one comes for (T463), as a rail of photo
- * cards (carta-design "Rails and cuts": scroll-snap, arrows on a fine pointer,
- * arrow keys when focused, no autoplay, no loop, no position figure).
+ * Six travellers and the trip each one comes for (T463, T464), as a rail of
+ * photo cards (carta-design "Rails and cuts": scroll-snap, arrows on a fine
+ * pointer, arrow keys when focused, no autoplay, no loop, no position figure).
  *
  * Each card is one link: to Explore on its own question (the facets travel in
  * the address, so a new tab keeps them), or for cyclists to Destinations on
- * cycle routes. Its photo carries one solid pill with the cheapest day that
- * question returns at the traveller's Lifestyle (the home page exception's
- * price on a photo); with too few places, or before the guided data arrives,
- * the pill is left out rather than guessed.
+ * cycle routes. Its photo is one real place that question returns, and the
+ * solid pill on it names that place with its own day price at the
+ * traveller's Lifestyle (the home page exception's label on a photo). With
+ * no figure for the place the pill keeps the name alone.
  *
  * Props
  *   rows      searchRows() of the catalogue, [] while it loads
- *   guided    the guided search data, null until it arrives
- *   photos    personaPhotos(), or null while the journey index loads
+ *   photos    personaPhotos()
  *   ready     the browser has been idle once (photos wait for it)
  *   door      the page's click handler factory
  *   onSearch  ({ facets }) hands a search to Explore
  *   onCategory (kind) opens Destinations on one kind
  */
-export function HomeTravellers({ rows, guided, photos, ready, door, onSearch, onCategory }) {
+export function HomeTravellers({ rows, photos, ready, door, onSearch, onCategory }) {
   const { t } = useI18n();
   const reduced = useReducedMotion();
   const trackRef = React.useRef(null);
@@ -37,9 +36,9 @@ export function HomeTravellers({ rows, guided, photos, ready, door, onSearch, on
 
   const prices = React.useMemo(() => {
     const out = {};
-    for (const p of PERSONAS) out[p.id] = p.facets ? cheapestDay(rows, p.facets, guided) : null;
+    for (const p of PERSONAS) out[p.id] = placeDay(rows, p.place);
     return out;
-  }, [rows, guided]);
+  }, [rows]);
 
   React.useEffect(() => {
     const el = trackRef.current;
@@ -65,7 +64,7 @@ export function HomeTravellers({ rows, guided, photos, ready, door, onSearch, on
   const priceText = (cost) => {
     if (!cost) return '';
     const fig = isEstimate(cost) ? formatEst(cost.dayEur, t('money.est')) : formatMoney(cost.dayEur);
-    return t('home.from', { price: fig });
+    return t('home.aDay', { price: fig });
   };
 
   return (
@@ -97,12 +96,18 @@ export function HomeTravellers({ rows, guided, photos, ready, door, onSearch, on
           return (
             <li key={p.id}>
               <a className="home-who-card" href={href} onClick={door(go)}>
-                <span className="home-who-media">
+                <span className="home-who-media" style={photo?.focus ? { '--who-focus': photo.focus } : undefined}>
                   {ready && photo && (
                     <HeroImage url={photo.url} city={t(p.title)} className="home-who-img"
-                      maxWidth={960} sizes="(max-width: 768px) 78vw, 300px" ratio={[4, 5]} />
+                      maxWidth={1280} sizes="(max-width: 599px) 64vw, (max-width: 1023px) 32vw, 270px" ratio={[4, 5]} />
                   )}
-                  {price && <span className="home-who-price">{price}</span>}
+                  {(p.label || price) && (
+                    <span className="home-who-price">
+                      {p.label && <span className="home-who-place">{p.label}</span>}
+                      {p.label && price ? ' ' : null}
+                      {price && <span>{price}</span>}
+                    </span>
+                  )}
                 </span>
                 <span className="home-who-title">{t(p.title)}</span>
                 <span className="home-who-body">{t(p.body)}</span>

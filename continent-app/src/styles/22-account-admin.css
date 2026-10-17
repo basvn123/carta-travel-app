@@ -174,7 +174,11 @@
   text-align: left;
   transition: background var(--dur-1) var(--ease-out);
 }
-.account-menu-row + .account-menu-row { border-top: 1px solid var(--rule-soft); }
+.account-menu-row + .account-menu-row { border-top: 1px solid var(--border-soft); }
+/* A row that changes the view is a link (T464, Home): it reads as its
+   button siblings do. */
+a.account-menu-row { color: var(--text); text-decoration: none; }
+a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 @media (hover: hover) {
   .account-menu-row:hover { background: var(--paper-dim); }
 }

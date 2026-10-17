@@ -1615,3 +1615,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T463-e | T463 | Home finish review minor items: the chapter bar uses tab semantics for a scroll index, the plan capture ends on a half card, the promise rows could shrink to one line | next task | open | |
 | T463-f | T463 | Re-measure LCP and CLS of the home page on a throttled phone now that the first screen carries an eager app capture (trip.webp) | next task | open | |
 | T463-g | T463 | Deploy the T463 home page (supersedes T462-h): npm run build:pages with VITE_E2E_SEAMS empty, then npx wrangler pages deploy dist --project-name carta-app --branch main | user | closed by T463 | |
+| T464-a | T464 | Owner to confirm the five new persona places and photos on the home page (Bovec, Albufeira, Český Krumlov, Porto, Mostar; credits in the T464 report) | user | open | |
+| T464-b | T464 | Owner call: keep the phone story as a compact swipe track (current, shorter page) or stack the five chapters vertically as the researched leaders do (about +1,500 px) | user | open | |
+| T464-c | T464 | .home-page carries container-type: inline-size, so it is the containing block of any position: fixed descendant; a future fixed element on the home page must be portalled out | next task | open | |
+| T464-d | T464 | Fix the day planner copy bugs from T463-c ("1 tips", "A long walk.Bus or tram") and reshoot the day and share captures; outside T464's files, taken by T435 | next task | open | |
+| T464-e | T464 | Measure LCP and CLS of the home page on a throttled phone and desktop (T463-f); the eager desktop capture is now 98 KB (100,014 bytes) | next task | open | |

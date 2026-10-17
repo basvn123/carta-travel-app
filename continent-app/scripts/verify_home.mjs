@@ -21,7 +21,12 @@
  *   track     (phone) Next moves the chapter track one slide, and the bar
  *             and the position follow
  *   who       six traveller cards, each a link, each with a pill: at least
- *             four a "from" price in the house notation, cyclists a label
+ *             four name a place and its own day price in the house notation,
+ *             cyclists a label
+ *   height    (phone) the page is at most 2,900 px tall (T464; 4,006 before)
+ *   laptop    (desktop) the hero's laptop screen is at least 760 px wide
+ *   homedoor  the header's Home tab (desktop) or Account > Home (phone) leads
+ *             home
  *   copy      no catalogue count, dash, middot or banned word on the page
  *   tryone    the lakes question opens Explore with xe=lake, xa=alps, xm=7,
  *             and Lake Bled is in its answer; every question carries facets
@@ -177,9 +182,20 @@ async function run(browser, vp) {
     cards: [...document.querySelectorAll('a.home-who-card')].filter((a) => a.getAttribute('href')).length,
     prices: [...document.querySelectorAll('.home-who-price')].map((e) => e.textContent),
   }));
-  const froms = who.prices.filter((p) => /^From /.test(p));
-  check(k, 'who', who.cards === 6 && who.prices.length === 6 && froms.length >= 4 && froms.every((p) => /^From ~?€\d+( est\.)? a day$/.test(p)),
+  // T464: each pill names its place before that place's own day price.
+  const named = who.prices.filter((p) => / a day$/.test(p));
+  check(k, 'who', who.cards === 6 && who.prices.length === 6 && named.length >= 4
+    && named.every((p) => /^\S.*\S ~?€\d+( est\.)? a day$/.test(p)),
     `${who.cards} cards; ${who.prices.join(' | ')}`);
+
+  // T464: the phone page is short enough to read in a few screens, and the
+  // desktop laptop draws the app large enough to read its figures.
+  const size = await page.evaluate(() => ({
+    h: document.querySelector('.home-page').scrollHeight,
+    desk: Math.round(document.querySelector('.home-browser-img')?.getBoundingClientRect().width || 0),
+  }));
+  if (vp.isMobile) check(k, 'height', size.h <= 2900, `page ${size.h} px (T463: 4,006 at 390x844)`);
+  else check(k, 'laptop', size.desk >= 760, `laptop screen ${size.desk} px (T463: 586 at 1440)`);
 
   const copy = await page.evaluate((banned) => {
     const text = document.querySelector('.home-page').innerText;
@@ -208,9 +224,21 @@ async function run(browser, vp) {
     `${url}; ${xp.n} places, Lake Bled ${xp.bled ? 'listed' : 'missing'}`);
 
   // Back home through the brand mark, then the search field.
-  await page.click('a[href*="tab=home"]');
+  await page.click('a.app-header-brand');
   await page.waitForSelector('.home-page', { timeout: 15000 });
   check(k, 'return', await page.locator('.home-page').isVisible(), 'the brand mark leads home');
+  // T464: a named door home as well: the header's Home tab on desktop, the
+  // Account menu's Home row on a phone.
+  await page.click('.home-hero a.home-try[href*="xe=lake"]');
+  await page.waitForFunction(() => /xe=lake/.test(window.location.search), null, { timeout: 15000 }).catch(() => {});
+  if (vp.isMobile) {
+    await page.click('.bottom-nav [href*="account"], .bottom-nav button:has-text("Account")');
+    await page.click('.account-help-section a.account-menu-row[href*="tab=home"]');
+  } else {
+    await page.click('.header-nav a.header-nav-item[href*="tab=home"]');
+  }
+  const door = await page.waitForSelector('.home-page', { timeout: 15000 }).then(() => true).catch(() => false);
+  check(k, 'homedoor', door, vp.isMobile ? 'Account > Home leads home' : 'the Home tab leads home');
   await page.click('.home-hero .home-search');
   const sheet = await page.waitForSelector('.gsearch-sheet', { timeout: 15000 }).then(() => true).catch(() => false);
   check(k, 'search', sheet, sheet ? 'Explore opened with its search panel' : 'no search panel');
@@ -259,6 +287,8 @@ async function langs(browser) {
   const sets = [
     ...['en', 'de', 'es', 'fr', 'it', 'nl'].map((l) => [l, { width: 360, height: 740 }]),
     ['en', { width: 390, height: 664 }], ['de', { width: 390, height: 664 }],
+    // A Pixel 5's visible viewport (T464, roadmap 1.9).
+    ['en', { width: 393, height: 727 }], ['de', { width: 393, height: 727 }],
   ];
   for (const [lang, viewport] of sets) {
     const vp = { key: `${lang}${viewport.width}`, viewport, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };

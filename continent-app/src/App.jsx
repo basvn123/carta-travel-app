@@ -1590,6 +1590,7 @@ function TravelApp() {
             onOpenLifestyle={() => { setAccountOpen(false); setLifestyleOpen(true); }}
             onOpenSaved={() => { setAccountOpen(false); setSavedTripsOpen(true); }}
             onOpenGuides={openGuides}
+            onOpenHome={() => goToTab('home')}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
             /* For the read-only trip settings rows (T390-g, for T400). */

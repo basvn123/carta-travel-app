@@ -31,6 +31,9 @@
   scrollbar-gutter: stable;
   background: var(--surface-page);
   color: var(--text);
+  /* The hero's laptop bleeds to this box's right edge (T464), measured in
+     its own width (cqw) so the scrollbar never makes it scroll sideways. */
+  container-type: inline-size;
 }
 .home-wrap {
   max-width: 1180px;
@@ -38,10 +41,12 @@
   padding: var(--space-4) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
 }
 
-.home-section { margin-top: calc(var(--space-8) + var(--space-5)); }
+.home-section { margin-top: calc(var(--space-7) + var(--space-2)); }
+/* A section heading is title size on a phone and headline from 769 px:
+   one step under the page's h1 at every width. */
 .home-h2 {
-  margin: 0 0 var(--space-5);
-  font-size: var(--text-headline);
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-title);
   font-weight: 700;
   line-height: var(--leading-tight);
   letter-spacing: -0.02em;
@@ -63,7 +68,6 @@
 
 .home-hero {
   display: grid;
-  gap: var(--space-7);
   align-items: center;
 }
 .home-hero-text { min-width: 0; }
@@ -134,6 +138,15 @@
   scrollbar-width: none;
 }
 .home-tries-list::-webkit-scrollbar { display: none; }
+/* On a phone the row runs to the screen's edge, so a chip cut by the edge
+   reads as "more this way" rather than as a clipped box. */
+@media (max-width: 768px) {
+  .home-tries-list {
+    margin-right: calc(var(--gutter) * -1);
+    padding-right: var(--gutter);
+    scroll-padding-inline: 0 var(--gutter);
+  }
+}
 .home-tries-list li { flex: none; scroll-snap-align: start; }
 .home-try {
   display: inline-flex;
@@ -169,13 +182,24 @@
 .home-devices {
   position: relative;
   min-width: 0;
-  padding-bottom: var(--space-2);
 }
 .home-devices-desk { display: none; }
 .home-devices-phone {
   position: relative;
-  width: min(68%, 270px);
+  width: min(78%, 300px);
   margin: 0 auto;
+}
+
+/* A peek (phone only, T464): the device rises from a hairline and only its
+   top is in view, where each capture carries its point (the trip's total,
+   a place's day price). The whole hero then fits the first screen, and a
+   chapter card is half as tall as a whole phone made it. */
+.home-peek { position: relative; overflow: hidden; }
+.home-devices-peek {
+  height: 300px;
+  margin: var(--space-5) calc(var(--gutter) * -1) 0;
+  padding: var(--space-2) var(--gutter) 0;
+  border-bottom: 1px solid var(--border);
 }
 
 /* ── The devices ──────────────────────────────────────────────────────── */
@@ -308,23 +332,34 @@
 .home-chapters::-webkit-scrollbar { display: none; }
 .home-chapters:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .home-chapter {
-  flex: 0 0 85%;
+  flex: 0 0 86%;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   min-width: 0;
-  padding: var(--space-5) var(--space-4) var(--space-4);
+  overflow: hidden;
+  padding: var(--space-5) var(--space-4) 0;
   border-radius: var(--radius-sheet);
   background: var(--surface);
   scroll-snap-align: start;
 }
+.home-chapter-peek {
+  height: 250px;
+  margin: auto calc(var(--space-4) * -1) 0;
+  padding: var(--space-1) var(--space-4) 0;
+}
 .home-chapter-phone {
-  width: min(64%, 230px);
+  width: min(86%, 270px);
   margin: 0 auto;
   box-shadow: var(--elev-2);
 }
+/* The screen rises inside the phone so the window shows the chapter's
+   point (CHAPTERS[].peek); the hero's trip rises past its own header. */
+.home-peek .home-phone-view { overflow: hidden; }
+.home-chapter-peek .home-phone-img { transform: translateY(var(--peek-y, 0%)); }
+.home-devices-peek .home-phone-img { transform: translateY(-9%); }
 .home-chapter-text { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); min-width: 0; }
-.home-chapter-title { font-size: var(--text-title); }
+.home-chapter-title { font-size: var(--text-lead); }
 .home-chapter-body {
   margin: 0;
   font-size: var(--text-body);
@@ -362,7 +397,7 @@
 .home-who-track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 78%;
+  grid-auto-columns: 64%;
   gap: var(--space-4);
   margin: 0 calc(var(--gutter) * -1);
   padding: 0 var(--gutter) var(--space-2);
@@ -397,11 +432,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: var(--who-focus, center);
 }
 .home-who-price {
   position: absolute;
   left: var(--space-3);
   bottom: var(--space-3);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
   max-width: calc(100% - var(--space-5));
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
@@ -413,6 +453,7 @@
   line-height: var(--leading-ui);
   font-variant-numeric: tabular-nums;
 }
+.home-who-place { font-weight: 700; }
 .home-who-title { font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); }
 .home-who-body { font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 @media (hover: hover) {
@@ -491,6 +532,39 @@
 }
 .home-promises .home-glyph { color: var(--text-2); }
 
+/* On a phone a plan is one row (T464): its name and terms on the left, the
+   price on the right, the way a fare list reads. The blurb and the list of
+   what a pass adds wait behind "Compare passes", which opens the full table;
+   the section was the tallest on the page (1,118 px at 390). */
+@media (max-width: 768px) {
+  .home-plan {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-3);
+    row-gap: 0;
+    padding: var(--space-3) var(--space-4);
+  }
+  .home-plan.is-featured { padding: calc(var(--space-3) - 1px) calc(var(--space-4) - 1px); }
+  .home-plan-top { grid-column: 1; justify-content: flex-start; }
+  .home-plan-top .ui-chip { order: 0; }
+  .home-plan-note { grid-column: 1; }
+  .home-plan-price {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 0;
+  }
+  .home-plan-fig { font-size: var(--text-title); }
+  .home-plan-blurb, .home-adds .home-h3, .home-adds ul { display: none; }
+  /* Free has no terms line, so it keeps its one sentence. */
+  .home-plan:first-child .home-plan-blurb { display: block; grid-column: 1; margin: 0; font-size: var(--text-label); color: var(--text-2); }
+  .home-pass-more { gap: var(--space-5); margin-top: var(--space-4); }
+  .home-pass-door { width: 100%; }
+  .home-promises li { min-height: var(--tap); }
+}
+
 /* ── The close ────────────────────────────────────────────────────────── */
 
 .home-close { max-width: 640px; }
@@ -533,9 +607,14 @@
 @media (min-width: 769px) {
   .home-wrap { padding-top: var(--space-6); }
   .home-title { font-size: var(--text-display); }
+  .home-h2 { margin-bottom: var(--space-5); font-size: var(--text-headline); }
+  .home-sub { font-size: var(--text-lead); font-weight: 400; }
   .home-cta { width: auto; }
+  /* From 769 px the laptop is the hero's one device (T464): the phone on
+     top of it repeated the same total, and neither was readable. */
+  .home-devices { margin-top: var(--space-6); }
   .home-devices-desk { display: block; }
-  .home-devices-phone { width: 38%; max-width: 260px; margin: -30% var(--space-3) 0 auto; }
+  .home-devices-peek { display: none; }
   .home-tries { align-items: flex-start; }
   .home-tries-label { line-height: calc(var(--tap) - var(--space-3)); }
   .home-tries-list { flex-wrap: wrap; overflow: visible; }
@@ -548,15 +627,26 @@
   .home-wrap { padding-top: var(--space-8); padding-left: var(--space-6); padding-right: var(--space-6); }
   .home-section { margin-top: calc(var(--space-8) * 2); }
 
+  .home-wrap { padding-top: var(--space-6); }
   .home-hero {
+    --home-bleed: calc(max(0px, (100cqw - 1180px) / 2) + var(--space-6));
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: var(--space-8);
+    gap: var(--space-7);
+    /* The hero's box reaches the page's right edge and clips there, so the
+       laptop is cut by the edge of the page and nothing scrolls sideways. */
+    margin-right: calc(var(--home-bleed) * -1);
+    padding-right: var(--home-bleed);
+    overflow-x: clip;
   }
-  .home-devices { padding: 0 0 var(--space-6) var(--space-6); }
-  .home-devices-phone {
-    width: 29%;
-    max-width: 230px;
-    margin: -34% 0 0 calc(var(--space-6) * -1);
+  /* The laptop runs past the column to the window's right edge, so the
+     capture (the app at 1152 px) is drawn near its own size: the receipt
+     column, which carries the figures, stays whole on the left, and the
+     edge cuts into the map. .home-page clips the overflow. */
+  .home-devices { margin-top: 0; padding: var(--space-4) 0 0; }
+  /* The rail's photographs reach into the first desktop screen. */
+  .home-hero + .home-section { margin-top: var(--space-7); }
+  .home-devices-desk {
+    width: min(1000px, calc(100% + var(--home-bleed) + 140px));
   }
 
   /* The story: chapters on the left, the pinned phone on the right. */
@@ -574,7 +664,7 @@
     align-items: center;
     gap: var(--space-4);
   }
-  .home-story-phone { width: min(340px, calc((100dvh - 210px) / 2.2)); }
+  .home-story-phone { width: min(360px, calc((100dvh - 230px) / 2.25)); }
   .home-story-phone .home-phone-img {
     opacity: 0;
     transition: opacity var(--dur-3) var(--ease-out);
@@ -587,18 +677,19 @@
   .home-chapters {
     display: block;
     margin: 0;
-    padding: 18dvh 0;
+    padding: 4dvh 0 26dvh;
     overflow: visible;
     scroll-snap-type: none;
   }
   .home-chapter {
-    min-height: 56dvh;
+    min-height: 32dvh;
+    overflow: visible;
     justify-content: center;
     padding: 0;
     background: none;
     border-radius: 0;
   }
-  .home-chapter-phone { display: none; }
+  .home-chapter-peek { display: none; }
   .home-chapter-text { max-width: 30rem; gap: var(--space-3); }
   .home-chapter-title { font-size: var(--text-headline); letter-spacing: -0.02em; text-wrap: balance; }
   .home-chapter-body { font-size: var(--text-lead); }

@@ -7,10 +7,13 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { tabHref } from '../lib/urlState.js';
 import {
   PersonIcon, CompassIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon,
-  TicketIcon, FriendsIcon,
+  TicketIcon, FriendsIcon, HomeIcon,
 } from './Icons.jsx';
 
 const NAV_ITEMS = [
+  // Home leads (T464, owner 2026-10-17: the brand mark alone was too quiet a
+  // way back to the home page).
+  { key: 'home', labelKey: 'nav.home', Icon: HomeIcon },
   { key: 'places', labelKey: 'nav.places', Icon: GlobeIcon },
   // The tab is still keyed 'map' (state, share links, deep links all use it),
   // but it reads Explore here exactly as it does in the phone bar: one name
