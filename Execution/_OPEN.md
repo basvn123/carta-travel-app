@@ -1620,3 +1620,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T464-c | T464 | .home-page carries container-type: inline-size, so it is the containing block of any position: fixed descendant; a future fixed element on the home page must be portalled out | next task | open | |
 | T464-d | T464 | Fix the day planner copy bugs from T463-c ("1 tips", "A long walk.Bus or tram") and reshoot the day and share captures; outside T464's files, taken by T435 | next task | open | |
 | T464-e | T464 | Measure LCP and CLS of the home page on a throttled phone and desktop (T463-f); the eager desktop capture is now 98 KB (100,014 bytes) | next task | open | |
+| T465-a | T465 | Re-run scripts/verify_focus_trap.mjs on a fresh build so the plan chooser's focus trap is re-proved with the tile markup (it served a stale dist in T465) | next task | open | |
+| T465-b | T465 | Owner to confirm the plan chooser's two drawn tiles on a real phone (a route and a day timeline in ink; carta-design covers icons, not small drawings on a menu tile) | user | open | |

@@ -808,7 +808,10 @@
   color: var(--select-ink);
 }
 
-/* The Trip planner / Day planner chooser, anchored above the plus. */
+/* The Trip planner / Day planner chooser, anchored above the plus: a menu
+   of two (carta-design "Dialog family": a choice of two from the bottom nav
+   is a menu, not a sheet), so no grab handle and no close of its own; the
+   plus, the scrim and Escape close it. */
 .plan-chooser-backdrop {
   position: fixed;
   inset: 0;
@@ -824,11 +827,11 @@
   bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
   transform: translateX(-50%);
   z-index: 51;
-  width: min(330px, calc(100vw - 28px));
+  width: min(360px, calc(100vw - var(--gutter) * 2));
+  padding: var(--space-3) var(--space-3) var(--space-3);
   background: var(--surface);
-  border-radius: var(--radius-control);
-  box-shadow: var(--elev-2);
-  overflow: hidden;
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-3);
   animation: plan-chooser-in var(--dur-3) var(--ease-out);
 }
 .plan-chooser.is-leaving { animation: plan-chooser-out var(--dur-2) var(--ease-in-out) forwards; }
@@ -840,31 +843,57 @@
   from { opacity: 1; transform: translateX(-50%) translateY(0); }
   to   { opacity: 0; transform: translateX(-50%) translateY(var(--space-2)); }
 }
+/* T465: a heading and two equal tiles side by side, each a drawing over the
+   planner's name. Ink, not accent (T391): neither tile is the view's
+   primary, so the drawings are --text lines on white and the tile edge is
+   the --border of a thing you press. */
+.plan-chooser-h {
+  margin: 0 0 var(--space-3) var(--space-1);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.plan-chooser-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
 .plan-chooser-item {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 15px 18px;
-  text-align: left;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: calc(var(--tap) * 2.5);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
   color: var(--text);
+  text-align: left;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.plan-chooser-item + .plan-chooser-item { border-top: 1px solid var(--border-soft); }
-.plan-chooser-item { transition: background-color var(--dur-1) var(--ease-out); }
 .plan-chooser-item:active { background: var(--surface-sunken); }
 @media (hover: hover) {
-  .plan-chooser-item:hover { background: var(--surface-sunken); }
+  .plan-chooser-item:hover { background: var(--surface-hover); border-color: var(--neutral-300); }
 }
-/* Ink, not accent (T391): neither item is the view's primary. */
-.plan-chooser-icon { color: var(--text-2); flex-shrink: 0; }
-.plan-chooser-text {
+.plan-chooser-item:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.plan-chooser-art { display: block; width: 100%; height: auto; aspect-ratio: 132 / 64; }
+.pca-line { fill: none; stroke: var(--text-3); stroke-width: 2; stroke-linecap: round; }
+.pca-stop { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
+.pca-stop-end { fill: var(--text); }
+.pca-bar { fill: var(--surface-sunken); stroke: var(--border); stroke-width: 1; }
+.plan-chooser-title {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: auto;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
 }
-.plan-chooser-title { font-size: var(--text-body); font-weight: 600; }
-.plan-chooser-sub { font-size: var(--text-caption); color: var(--text-3); }
+.plan-chooser-title .nav-dot { position: static; flex: none; }
+.plan-chooser-chev { margin-left: auto; flex: none; color: var(--text-2); }
 
 @media (prefers-reduced-motion: reduce) {
   .plan-chooser, .plan-chooser.is-leaving,

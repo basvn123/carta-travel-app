@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { GlobeIcon, CompassIcon, RouteIcon, ListDayIcon, BookmarkIcon, PlusIcon, PersonIcon } from './Icons.jsx';
+import { GlobeIcon, CompassIcon, BookmarkIcon, PlusIcon, PersonIcon, ChevronRightIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { SectionLink, NavCount } from './AppHeader.jsx';
 import { IconButton } from './ui/index.js';
@@ -14,6 +14,35 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 // which left the top bar on mobile so the row over the map keeps its width
 // for the filters). The section doors are links (T381, the navigation rule);
 // My trips and Account are pages laid over a tab, so they stay toggles.
+
+/* The chooser's two drawings (T465): line work in ink on the tile's white,
+   the shape of what each planner makes. Decorative, so hidden from assistive
+   tech; the planner's name is the label. They are drawings, not icons in a
+   tinted tile (carta-design "Icons"). */
+function TripDrawing() {
+  return (
+    <svg className="plan-chooser-art" viewBox="0 0 132 64" aria-hidden="true" focusable="false">
+      <path className="pca-line" d="M18 46 C 38 46, 40 20, 64 24 S 96 46, 114 18" />
+      <circle className="pca-stop" cx="18" cy="46" r="5" />
+      <circle className="pca-stop" cx="64" cy="24" r="5" />
+      <circle className="pca-stop pca-stop-end" cx="114" cy="18" r="5" />
+    </svg>
+  );
+}
+function DayDrawing() {
+  return (
+    <svg className="plan-chooser-art" viewBox="0 0 132 64" aria-hidden="true" focusable="false">
+      <path className="pca-line" d="M24 12 V 52" />
+      <circle className="pca-stop" cx="24" cy="12" r="4.5" />
+      <circle className="pca-stop" cx="24" cy="32" r="4.5" />
+      <circle className="pca-stop pca-stop-end" cx="24" cy="52" r="4.5" />
+      <rect className="pca-bar" x="38" y="8" width="58" height="8" rx="4" />
+      <rect className="pca-bar" x="38" y="28" width="76" height="8" rx="4" />
+      <rect className="pca-bar" x="38" y="48" width="44" height="8" rx="4" />
+    </svg>
+  );
+}
+
 export function BottomNav({
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
@@ -55,21 +84,30 @@ export function BottomNav({
       {chooser.mounted && (
         <>
           <div className={`plan-chooser-backdrop${chooser.leaving ? ' is-leaving' : ''}`} onClick={() => setPlanOpen(false)} />
-          <div className={`plan-chooser${chooser.leaving ? ' is-leaving' : ''}`} role="dialog" aria-modal="true" aria-label={t('nav.planNew')} ref={chooserRef}>
-            <SectionLink tab="trip" className="plan-chooser-item" onNavigate={goTab}>
-              <RouteIcon size={22} className="plan-chooser-icon" />
-              <span className="plan-chooser-text">
-                <span className="plan-chooser-title">{t('nav.trip')}</span>
-                <span className="plan-chooser-sub">{t('nav.planTripSub')}</span>
-              </span>
-            </SectionLink>
-            <SectionLink tab="day" className="plan-chooser-item" onNavigate={goTab}>
-              <ListDayIcon size={22} className="plan-chooser-icon" />
-              <span className="plan-chooser-text">
-                <span className="plan-chooser-title">{t('nav.day')}</span>
-                <span className="plan-chooser-sub">{t('nav.planDaySub')}</span>
-              </span>
-            </SectionLink>
+          {/* Two tiles side by side (T465, owner 2026-10-17: the rows' sub
+              lines went, a more modern chooser came). Each is a drawing of
+              what you make and the planner's own name: a route through three
+              stops, a day down a timeline. One thumb reaches both. */}
+          <div className={`plan-chooser${chooser.leaving ? ' is-leaving' : ''}`} role="dialog" aria-modal="true" aria-labelledby="plan-chooser-h" ref={chooserRef}>
+            <h2 className="plan-chooser-h" id="plan-chooser-h">{t('nav.planNew')}</h2>
+            <div className="plan-chooser-tiles">
+              <SectionLink tab="trip" className="plan-chooser-item" onNavigate={goTab}>
+                <TripDrawing />
+                <span className="plan-chooser-title">
+                  {t('nav.trip')}
+                  {planInProgress && <span className="nav-dot" aria-hidden="true" />}
+                  {planInProgress && <span className="sr-only">, {t('nav.planInProgress')}</span>}
+                  <ChevronRightIcon size={16} className="plan-chooser-chev" />
+                </span>
+              </SectionLink>
+              <SectionLink tab="day" className="plan-chooser-item" onNavigate={goTab}>
+                <DayDrawing />
+                <span className="plan-chooser-title">
+                  {t('nav.day')}
+                  <ChevronRightIcon size={16} className="plan-chooser-chev" />
+                </span>
+              </SectionLink>
+            </div>
           </div>
         </>
       )}

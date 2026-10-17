@@ -83,8 +83,8 @@ const commons = (path) => `https://upload.wikimedia.org/wikipedia/commons/thumb/
  * in Destinations and carry no day price of their own: their pill names what
  * the card opens instead of a figure.
  *
- * Each card is one real place (T464, after the critique found "From ~€60 a
- * day" printed on the Matterhorn, a figure that belonged to a town in
+ * Each card is one real place (T464, after the critique found a "from" day price of 60 euros
+ * printed on the Matterhorn, a figure that belonged to a town in
  * Slovenia): `place` is a catalogue id that the card's own search returns,
  * `label` its short name, and the pill on the photo is that place's own day
  * price at the traveller's Lifestyle. So the photograph, the name and the

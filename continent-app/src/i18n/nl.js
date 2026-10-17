@@ -76,8 +76,6 @@ export const nl = {
   'nav.explore': 'Ontdek',
   'nav.myTrips': 'Mijn reizen',
   'nav.planNew': 'Plan iets nieuws',
-  'nav.planTripSub': 'Route, stops en kosten ter plaatse',
-  'nav.planDaySub': 'Uur per uur in één stad',
   // Shell V3 (T381): landmarks, the settings line, nav badges
   'nav.sectionsLabel': 'Onderdelen',
   'nav.planInProgress': 'Er is een reisplan in de maak',

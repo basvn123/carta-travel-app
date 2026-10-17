@@ -84,8 +84,6 @@ export const en = {
   'nav.explore': 'Explore',
   'nav.myTrips': 'My trips',
   'nav.planNew': 'Plan something new',
-  'nav.planTripSub': 'Route, stops and ground costs',
-  'nav.planDaySub': 'Hour by hour in one city',
   // Shell V3 (T381): landmarks, the settings line, nav badges
   'nav.sectionsLabel': 'Sections',
   'nav.planInProgress': 'A trip plan is in progress',
