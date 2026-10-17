@@ -2017,8 +2017,8 @@
 .tpage-fact-label {
   display: block;
   margin-top: 2px;
-  font-size: 10.5px;
-  color: var(--ink-mute);
+  font-size: var(--text-micro);
+  color: var(--text-3);
 }
 
 /* The one primary action: leaving with the route. Following it in the browser
@@ -2185,7 +2185,7 @@
 }
 .tpage-credit {
   margin: 20px 0 0;
-  font-size: 10.5px;
+  font-size: var(--text-micro);
   line-height: 1.45;
   color: var(--ink-mute);
 }

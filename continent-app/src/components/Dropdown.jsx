@@ -128,6 +128,7 @@ export function Dropdown({
                 ref={inputRef}
                 type="text"
                 placeholder={searchPlaceholder ?? t('dropdown.search')}
+                aria-label={searchPlaceholder ?? t('dropdown.search')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />

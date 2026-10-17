@@ -1674,7 +1674,9 @@
 .days-cost-label { font-size: var(--text-caption); color: var(--text-2); }
 @media (hover: hover) { .days-cost:hover .days-cost-label { color: var(--text); text-decoration: underline; } }
 .days-route { display: flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-label); color: var(--text-2); }
-.days-route.is-checked { color: var(--good-ink); }
+/* T435: a verdict is ink with the success tick, never green text in a sentence. */
+.days-route.is-checked { color: var(--text); }
+.days-route.is-checked svg { color: var(--status-success); }
 .days-route.is-flagged { color: var(--amber-ink); font-weight: 600; }
 
 /* The day bar: the day's shape with its hours under it. */

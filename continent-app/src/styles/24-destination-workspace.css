@@ -192,14 +192,14 @@
   gap: 7px;
   width: 100%;
   height: 100%;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
+  /* T435: Lagoon roles, the one family, no letter-spacing (carta-design
+     "Photography": the flag-and-name placeholder on --surface-sunken). */
+  background: var(--surface-sunken);
+  color: var(--text-3);
 }
 .hero-blank-mark {
-  font-family: var(--display);
-  font-size: 23px;
+  font-size: var(--text-title);
   font-weight: 600;
-  letter-spacing: 0.04em;
 }
 .xp-near-img.hero-blank { gap: 3px; }
 .xp-near-img.hero-blank .hero-blank-mark { font-size: 12px; }
@@ -1196,7 +1196,7 @@
   color: var(--ink);
   font-weight: 500;
 }
-.itin-card-also { font-family: var(--mono); font-size: 10.5px; }
+.itin-card-also { font-size: var(--text-micro); font-variant-numeric: tabular-nums; }
 .itin-card-checks { margin-left: auto; }
 .itin-card-checks.warn { color: var(--rate); }
 

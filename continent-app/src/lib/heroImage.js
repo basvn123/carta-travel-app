@@ -55,7 +55,10 @@ export function isResizable(url) {
 /** The same photo at one of the widths Wikimedia will actually render. */
 export function thumbAt(url, width) {
   if (!isResizable(url)) return url;
-  return url.replace(THUMB_RE, `/${width}px-`);
+  // Snap to a width Commons renders (T435): a caller asking for 240 got a
+  // 400 and a broken image on the day planner's plan cards.
+  const w = WIKI_WIDTHS.find((x) => x >= width) || WIKI_WIDTHS[WIKI_WIDTHS.length - 1];
+  return url.replace(THUMB_RE, `/${w}px-`);
 }
 
 /**

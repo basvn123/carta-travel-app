@@ -3629,7 +3629,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       key: 'tips',
       Icon: KIT_ICONS.tips,
       title: t('dayws.kitTips'),
-      state: t('dayws.kitTipsN', { n: tipsN }),
+      state: tipsN === 1 ? t('dayws.kitTips1') : t('dayws.kitTipsN', { n: tipsN }),
       body: (
         <div className="dayws-tips-body">
           <DayTipsBody

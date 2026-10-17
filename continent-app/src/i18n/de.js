@@ -6158,6 +6158,7 @@ export const de = {
   "dayws.kitTitle": "Dein Tagesset",
   "dayws.kitTips": "Tipps vor Ort",
   "dayws.kitTipsN": "{n} Tipps",
+  "dayws.kitTips1": "1 Tipp",
   "dayws.kitNotes": "Notizen und Dateien",
   "dayws.kitImport": "Ideen importieren",
   "dayws.kitImportSub": "Aus Link oder Datei",

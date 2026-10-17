@@ -1400,7 +1400,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T425-b | T425 | Receipt footer used --accent-bg, now the same teal tint as selection; the receipt migration picks a distinct quiet tint | next task | open |  |
 | T425-c | T425 | Kit positive status chip (green tint and text) vs the T380 'status, not green' rule; skill scopes it to short data labels, owner may prefer ink plus a dot | user | closed by T436 |  |
 | T425-d | T425 | 02-base.css sets body type with literals and reads legacy token names; move onto roles in the shell migration | next task | closed by T426 |  |
-| T425-e | T425 | Per-surface migration T426 to T435 runs in another session from Roadmap/1.2-migration-handoff.md | next task | open |  |
+| T425-e | T425 | Per-surface migration T426 to T435 runs in another session from Roadmap/1.2-migration-handoff.md | next task | closed by T435 |  |
 | T436-a | T436 | scripts/og/check.mjs: two share-card text fits fail (site square, beach-es-trenc og) with the Lagoon tokens; part of T421-b (share cards to Figtree) | next task | closed by T438 |  |
 | T426-a | T426 | Five shell buttons stay raw (header My trips and avatar, bottom nav My trips and Account, the settings-line part): the kit has no nav item; owner picks a kit NavItem or URLs for My trips and Account so they become links | user | open |  |
 | T426-b | T426 | Dead .header-pricing-btn, .header-pricing-label* and .header-friends-btn rules in 16-auth, 23, 24 and 26 match nothing after T426; delete in those surfaces' migrations | next task | closed by T428 |  |
@@ -1610,7 +1610,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T462-h | T462 | Deploy the T462 home page to production: npm run build:pages with VITE_E2E_SEAMS empty, then npx wrangler pages deploy dist --project-name carta-app --branch main | user | closed by T463 | |
 | T463-a | T463 | Confirm the six home persona photos (trail above Zermatt, Praia de Benagil, Col d'Aubisque, Landwasser Viaduct, Lisbon, Krakow) and the story (Julian Alps trip, a day at Bled) in continent-app/src/lib/homeDemo.js; replaces T462-a | user | closed by T463 | |
 | T463-b | T463 | The home captures in public/home/<lang>/ are pictures of today's app; rerun scripts/shoot_home_screens.mjs whenever a captured screen or its prices change (the test catches a blank capture, not a stale one) | next task | open | |
-| T463-c | T463 | App copy bugs seen in the captures: the day kit says "1 tips", and a day leg reads "A long walk.Bus or tram" with no space | next task | open | |
+| T463-c | T463 | App copy bugs seen in the captures: the day kit says "1 tips", and a day leg reads "A long walk.Bus or tram" with no space | next task | closed by T435 | |
 | T463-d | T463 | npx eslint src reports 1 error in src/browse/ExploreMap.jsx:621 (collectKpins missing from a useCallback dependency list), predating T463 | next task | open | |
 | T463-e | T463 | Home finish review minor items: the chapter bar uses tab semantics for a scroll index, the plan capture ends on a half card, the promise rows could shrink to one line | next task | open | |
 | T463-f | T463 | Re-measure LCP and CLS of the home page on a throttled phone now that the first screen carries an eager app capture (trip.webp) | next task | open | |
@@ -1618,9 +1618,9 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T464-a | T464 | Owner to confirm the five new persona places and photos on the home page (Bovec, Albufeira, Český Krumlov, Porto, Mostar; credits in the T464 report) | user | open | |
 | T464-b | T464 | Owner call: keep the phone story as a compact swipe track (current, shorter page) or stack the five chapters vertically as the researched leaders do (about +1,500 px) | user | open | |
 | T464-c | T464 | .home-page carries container-type: inline-size, so it is the containing block of any position: fixed descendant; a future fixed element on the home page must be portalled out | next task | open | |
-| T464-d | T464 | Fix the day planner copy bugs from T463-c ("1 tips", "A long walk.Bus or tram") and reshoot the day and share captures; outside T464's files, taken by T435 | next task | open | |
+| T464-d | T464 | Fix the day planner copy bugs from T463-c ("1 tips", "A long walk.Bus or tram") and reshoot the day and share captures; outside T464's files, taken by T435 | next task | closed by T435 | |
 | T464-e | T464 | Measure LCP and CLS of the home page on a throttled phone and desktop (T463-f); the eager desktop capture is now 98 KB (100,014 bytes) | next task | open | |
-| T465-a | T465 | Re-run scripts/verify_focus_trap.mjs on a fresh build so the plan chooser's focus trap is re-proved with the tile markup (it served a stale dist in T465) | next task | open | |
+| T465-a | T465 | Re-run scripts/verify_focus_trap.mjs on a fresh build so the plan chooser's focus trap is re-proved with the tile markup (it served a stale dist in T465) | next task | closed by T435 | |
 | T465-b | T465 | Owner to confirm the plan chooser's two drawn tiles on a real phone (a route and a day timeline in ink; carta-design covers icons, not small drawings on a menu tile) | user | open | |
 | T466-a | T466 | Friends page and destination friends line were reviewed from harness screenshots, not a formal impeccable critique (signed-in page needs the fake-session harness); a friend trip row is crowded on a phone; T435 covers it | next task | open | |
 | T466-b | T466 | Two raw buttons stay on Friends (the trip row toggle in FriendsSpoke, the medallion in FriendBadges): the kit has no disclosure-row or medallion component | next task | open | |
@@ -1631,3 +1631,12 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T467-b | T467 | Owner call: fold the Countries section under the Visited band into the band itself, now that the band shows the flags | user | open | |
 | T468-a | T468 | Real-phone round on an iPhone 13 and a Pixel 5: the wizard without the bottom bar, its footer above the home indicator, Report a problem with the keyboard up, the first-run date fields (T402-d) and the next-trip actions with the install hint (T410-h) | user | open | |
 | T468-b | T468 | Owner to confirm the bottom bar stepping aside inside a planner step flow (answers T432-g and T433-i); reverting is one rule in 60-v6-shell.css | user | open | |
+| T435-a | T435 | Journey deep link is dead on a cold load (#journey=<id> lands on the Destinations trips list) and journey tiles are not <a href> | next task | open | |
+| T435-b | T435 | The journey gallery captions carry no author or licence, unlike every other page | next task | open | |
+| T435-c | T435 | The journey price card has its own two sliders, a second Lifestyle control; replace with one Lifestyle row that opens the panel | next task | open | |
+| T435-d | T435 | Per-unit price wording differs by screen (a person a day, a day, a day here, a person, each, about); pick one order and the estimate mark everywhere | next task | open | |
+| T435-e | T435 | One page bar and focus rule: the destination page needs back-to-list on desktop and focus on its title; the region page needs the item pages' bar | next task | open | |
+| T435-f | T435 | Performance: CSS ships as one 893 KB file (plan requirement 15, CSS per route, unmet); the i18n eager chunk is 105 KB gzip and useFocusTrap's chunk 52 KB gzip | next task | open | |
+| T435-g | T435 | z-index has no token layer in use: 48 distinct values, 150 literal uses, 6 through a variable | next task | open | |
+| T435-h | T435 | P3 consistency tails: pill search and sort controls beside 10 px selects, the My trips statement pill, Explore phone sort row and floating List/Map control, trail section rail mark, uppercase bathing-site names, retired names in CSS comments | next task | open | |
+| T435-i | T435 | Owner call: map pins show the tilde alone (~€83, T441) while carta-design asks for ~€83 est. everywhere; confirm the exception or extend the pins | user | open | |

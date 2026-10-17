@@ -243,6 +243,7 @@ export function AiDayPlanModal({
               <span className="carta-plan-q">{t('ai.freeLabel')}</span>
               <textarea
                 className="ai-plan-free"
+                aria-label={t('ai.freeLabel')}
                 value={freeText}
                 maxLength={280}
                 rows={2}

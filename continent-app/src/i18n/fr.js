@@ -6158,6 +6158,7 @@ export const fr = {
   "dayws.kitTitle": "Votre kit du jour",
   "dayws.kitTips": "Conseils locaux",
   "dayws.kitTipsN": "{n} conseils",
+  "dayws.kitTips1": "1 conseil",
   "dayws.kitNotes": "Notes et fichiers",
   "dayws.kitImport": "Importer des idées",
   "dayws.kitImportSub": "Depuis un lien ou un fichier",
