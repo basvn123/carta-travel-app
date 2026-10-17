@@ -656,6 +656,16 @@ Added by T380 (design direction v6, `docs/design-v6/DIRECTION.md` part 2). Every
 
 No overshoot, bounce or elastic curve exists. Durations and easings come from these tokens, never a literal. Routine motion animates `transform` and `opacity`; a press, hover or selection may also animate `background-color`, `border-color` and `color` at `--dur-1`; a reveal may animate `clip-path`, `mask-position` or `stroke-dashoffset`. Nothing animates `width`, `height`, `top`, `left`, margins, padding, `grid-template-*`, `box-shadow`, `filter` or `backdrop-filter`; `transition: all` is never written. A figure that changes updates in place with one opacity dip (`settleFigure()` in `src/lib/figureChange.js`), never a count-up. Nothing moves because the page scrolled. The press shade (opacity 0.78, `scale: 0.98`, 60 ms) comes from `02-base.css`. The reduced-motion floor in `02-base.css` zeroes every duration, and every rule carries its own `prefers-reduced-motion: reduce` branch as well.
 
+### Home page exception (T462)
+
+Owner decision 2026-10-17 ("allow it"): the home page (`src/browse/home/`, styles in `src/styles/61-v6-home.css`) persuades rather than operates, so it is the one surface that may move on its own and put a label on a photograph. It adds no token.
+
+- **One looping product demo** that plays by itself, with a pause control first in its tab order (WCAG 2.2.2). It pauses off screen, in a hidden browser tab, under a page or panel, and while the pointer or focus is inside it. Under reduced motion it never plays and shows its final frame.
+- **Sections reveal once** on entering the viewport (opacity and a short translate, `--dur-3`, `--ease-out`), below the first viewport only and never before the observer exists. Under reduced motion nothing reveals.
+- **A label or a price on a photograph** only inside a solid `--surface` pill with `--elev-1`; never a scrim, a gradient or a sentence on a photo.
+
+Everything else in this file still binds the home page: the motion tokens, the animated properties above, no overshoot, no parallax, no count-up, one primary, `--tap` targets, no catalogue counts. No other surface takes this exception.
+
 ### Interaction
 
 Focus: `outline: 2px solid var(--focus); outline-offset: 2px` on `:focus-visible` (the focus floor in `02-base.css` reads it since T426). Brown, so focus never reads as an error. The browser's own surfaces take the palette too: text selection is `--select-bg`, the caret and native checkboxes and radios are `--action`, scrollbars are `--neutral-300`. Inputs may add `border-color: var(--action)` to the ring but never ship `outline: none` without a replacement.
@@ -680,7 +690,7 @@ These are owner decisions about specific surfaces. They still hold; where a valu
 - **Do** read a role (`--action`, `--surface`, `--text-3`) in every new or touched rule, and build from the kit in `src/components/ui/`.
 - **Do** keep one primary Button per view; everything else is secondary or quiet.
 - **Do** show selection as `--select-bg` with `--select-ink` and a mark: a tick on a chip, an underline on a tab, a lifted thumb on a segment.
-- **Do** put a caption under a photograph, never on it.
+- **Do** put a caption under a photograph, never on it (the home page's solid pill labels are the one exception, see Motion).
 - **Do** give every control a 44 px (`--tap`) target on touch and the 2 px `--focus` ring on `:focus-visible`.
 - **Do** print every euro through `formatMoney()` or `<Money>`: whole euros where places are compared, cents on receipts and totals, `~€87 est.` for an estimate.
 - **Do** declare elevation once: a `--border` at rest, or an `--elev-*` shadow on what floats.

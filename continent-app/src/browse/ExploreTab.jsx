@@ -385,6 +385,9 @@ export function ExploreTab({
   onOpenGuides,
   // T450: a country page's door to its walks, beaches and rides.
   onOpenCountryInPlaces = null,
+  // T462: a search handed over from the home page, once: { facets } applies
+  // a guided question, { open: true } opens the search panel on arrival.
+  seed = null, onSeedConsumed = null,
 }) {
   const { t, lang } = useI18n();
   // The guided search data (T439): vibes, areas and distances. Loaded on
@@ -785,6 +788,26 @@ export function ExploreTab({
     }
     patchXf(next);
   }, [patchXf, setCountryFilter, setSortKey, sortKey]);
+  // The home page's hand-over (T462): the question replaces whatever was
+  // asked before, the list starts at its top, and the field opens when the
+  // visitor asked for the search itself. Only the field this width shows
+  // takes the open request (the header one on a desktop, the tab's own on
+  // a phone), so a hidden twin never opens a sheet of its own.
+  const [openRequest, setOpenRequest] = React.useState(false);
+  const clearOpenRequest = React.useCallback(() => setOpenRequest(false), []);
+  // A request Explore could not take (the visitor left before it opened)
+  // must not open the panel on a later visit.
+  React.useEffect(() => { if (!isActive) setOpenRequest(false); }, [isActive]);
+  React.useEffect(() => {
+    if (!seed) return;
+    if (seed.facets) {
+      applyGuided(seed.facets, true);
+      setVisible(PAGE);
+    }
+    if (seed.open) setOpenRequest(true);
+    onSeedConsumed?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per hand-over: each seed is a new object
+  }, [seed]);
   const searchField = (inHeader) => (
     <GuidedSearch
       t={t}
@@ -805,6 +828,8 @@ export function ExploreTab({
       onApply={applyGuided}
       onOpenPlace={openWithMember}
       inHeader={inHeader}
+      requestOpen={openRequest && isActive && inHeader === isDesktop}
+      onOpenRequested={clearOpenRequest}
     />
   );
 

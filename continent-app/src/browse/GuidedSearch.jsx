@@ -67,8 +67,15 @@ export function facetLabels(f, labels, nearRow, t) {
 export function GuidedSearch({
   t, lang, guided, rows, countries, facets, nearRow, labels, empty = false,
   budgetSteps, onApply, onOpenPlace, inHeader = false,
+  // T462: the home page's search field asks for this panel open on arrival.
+  requestOpen = false, onOpenRequested = null,
 }) {
   const [open, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    if (!requestOpen) return;
+    setOpen(true);
+    onOpenRequested?.();
+  }, [requestOpen, onOpenRequested]);
   const [text, setText] = React.useState('');
   const [active, setActive] = React.useState(0);
   const [slot, setSlot] = React.useState('what');

@@ -1,0 +1,805 @@
+/* ==========================================================================
+   The home page (T462; browse/home/HomePage.jsx and HomeDemo.jsx)
+
+   "Plan any trip in Europe, with honest prices": the promise, the real
+   search, the one primary and the live demo in the first screen; then the
+   six kinds of trip, what Carta does beside three real priced places, the
+   passes and the photo credits. Phone first at 360px; from 1024px the hero
+   splits into the words and the demo.
+
+   The home page is the one surface with the motion exception (DESIGN.md
+   "Home page exception", owner 2026-10-17): the demo loops and pauses
+   (data-paused freezes every animation inside it), and a label may sit on a
+   photograph inside a solid --surface pill. Nothing else here moves on its
+   own. Tokens only (no hex, no font name, no literal duration or easing);
+   every animation has its reduced-motion branch at the end of this file.
+   ========================================================================== */
+
+/* ── The page ─────────────────────────────────────────────────────────── */
+
+.home-page {
+  position: absolute;
+  top: var(--filter-h);
+  left: 0;
+  right: 0;
+  bottom: var(--bottom-nav-h);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  background: var(--surface-page);
+  color: var(--text);
+}
+.home-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+}
+
+.home-section { margin-top: var(--space-7); }
+.home-h2 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: var(--text);
+}
+.home-h3 {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+
+/* ── The hero ─────────────────────────────────────────────────────────── */
+
+.home-hero {
+  display: grid;
+  gap: var(--space-5);
+  align-items: center;
+}
+.home-hero-text { min-width: 0; }
+.home-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--text);
+}
+.home-sub {
+  max-width: 34em;
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+
+/* The search: Explore's guided search, one tap away. Shaped like the field
+   it opens (the pill of gsearch-trigger), a link because it goes there. */
+.home-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: calc(var(--tap) + var(--space-2));
+  margin-top: var(--space-4);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--text-body);
+  text-decoration: none;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.home-glyph { display: inline-flex; flex: none; }
+.home-search .home-glyph { color: var(--text); }
+.home-search span { min-width: 0; overflow-wrap: anywhere; }
+@media (hover: hover) {
+  .home-search:hover { border-color: var(--neutral-300); }
+}
+.home-search:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Three questions that return places today: chips in the kit's filter
+   shape, links because each one opens Explore on its answer. On a phone
+   they run in one scrolling row, so the primary keeps its place in the
+   first screen in every language. */
+.home-tries {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  min-width: 0;
+}
+.home-tries-label {
+  flex: none;
+  font-size: var(--text-label);
+  color: var(--text-3);
+}
+.home-tries-list {
+  display: flex;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.home-tries-list::-webkit-scrollbar { display: none; }
+.home-tries-list li { flex: none; scroll-snap-align: start; }
+.home-try {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-label);
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .home-try:hover { background: var(--surface-hover); border-color: var(--neutral-300); }
+}
+.home-try:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (pointer: fine) {
+  .home-try { min-height: calc(var(--tap) - var(--space-3)); }
+}
+
+.home-cta {
+  width: 100%;
+  margin-top: var(--space-4);
+  text-decoration: none;
+}
+
+/* ── The live demo ────────────────────────────────────────────────────── */
+
+.home-demo {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  overflow: hidden;
+}
+.home-demo-still {
+  min-height: calc(var(--space-8) * 7);
+  border: 0;
+  background: var(--surface-sunken);
+}
+.home-demo-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-1) 0 var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+}
+/* The pause control comes first in the DOM (it is the first stop inside
+   the carousel, WCAG 2.2.2) and sits at the end of the row. */
+.home-demo-pause { order: 2; flex: none; margin-left: auto; }
+.home-demo-tabs {
+  order: 1;
+  min-width: 0;
+  gap: var(--space-4);
+  border-bottom: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.home-demo-tabs::-webkit-scrollbar { display: none; }
+.home-demo-tabs .ui-tab { flex: none; min-width: var(--tap); justify-content: center; }
+.home-demo-foot { padding: 0 var(--space-2) var(--space-2) var(--space-1); }
+.home-demo-act { text-decoration: none; }
+.home-demo-progress {
+  height: 2px;
+  background: var(--border-soft);
+}
+.home-demo-progress-fill {
+  display: block;
+  height: 100%;
+  background: var(--select-border);
+  transform-origin: left center;
+  animation: home-progress var(--home-scene-ms) linear both;
+}
+
+.home-stage { position: relative; container-type: inline-size; }
+.home-scenes { display: grid; }
+/* Every scene sits in the same cell, so the stage is as tall as its tallest
+   scene and never jumps; the shown one fades in over the last. */
+.home-scene {
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  min-width: 0;
+  padding: var(--space-4);
+  opacity: 0;
+  pointer-events: none;
+  /* The old scene leaves first, then the new one arrives: never two
+     scenes' words on top of each other. */
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+.home-scene.is-on { opacity: 1; transition: opacity var(--dur-3) var(--ease-out) var(--dur-2); }
+.home-sc { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); align-content: start; min-width: 0; }
+
+/* Scene 1: the search */
+.home-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--text);
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+.home-field svg { flex: none; }
+.home-query { min-width: 0; }
+.home-results {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.home-result {
+  display: grid;
+  grid-template-columns: calc(var(--space-8) + var(--space-2)) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+}
+.home-result-img,
+.home-result .hero-blank {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  height: auto;
+  border-radius: var(--radius-control);
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+.home-result-text { display: grid; min-width: 0; }
+.home-result-name {
+  font-size: var(--text-lead);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.home-result-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-label);
+  color: var(--text-3);
+}
+.home-result-figs {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-1);
+}
+.home-dayfig {
+  font-size: var(--text-body);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.home-dayfig-unit {
+  font-size: var(--text-label);
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+/* Scene 2: the place */
+/* The place as Explore's tile shows it, drawn flat inside the demo's
+   sheet (no card inside the sheet): the photo, then its lines. */
+/* The photo beside its lines at every width, never wider than 240px: the
+   scene is no taller than the others, and the photo it reveals late is never
+   larger than the headline (so it never becomes the page's LCP). */
+.home-place {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+}
+@container (min-width: 440px) {
+  .home-place { grid-template-columns: 240px minmax(0, 1fr); gap: var(--space-4); }
+}
+.home-place-photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.home-place-img,
+.home-place-photo .hero-blank {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.home-place-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); min-width: 0; }
+/* In a narrow column the longer languages wrap rather than overflow. */
+.home-place .home-dayfig { white-space: normal; }
+.home-place-best { flex-wrap: wrap; }
+.home-add { max-width: 100%; }
+.home-add .btn-label { white-space: normal; text-align: start; }
+.home-place-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.home-place-name {
+  min-width: 0;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+.home-place-meta,
+.home-place-best {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.home-add { justify-self: start; pointer-events: none; }
+
+/* Scene 3: the trip */
+.home-sc-trip { gap: var(--space-4); }
+@container (min-width: 440px) {
+  .home-sc-trip { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; }
+}
+.home-route {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.home-leg {
+  fill: none;
+  stroke: var(--action);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.home-stop circle { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
+.home-stop-n { font-size: var(--text-caption); font-weight: 700; fill: var(--text); }
+.home-stop-name { font-size: var(--text-label); font-weight: 600; fill: var(--text); }
+.home-stop { transform-box: fill-box; transform-origin: center; }
+.home-receipt { display: grid; min-width: 0; }
+.home-receipt-head {
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-3);
+}
+.home-lines { margin: var(--space-1) 0 0; padding: 0; list-style: none; }
+.home-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+}
+.home-line-name { display: grid; min-width: 0; font-weight: 600; }
+.home-line-nights { font-size: var(--text-label); font-weight: 400; color: var(--text-3); }
+.home-line .money,
+.home-sum .money { white-space: nowrap; }
+.home-sum {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 2px solid var(--text);
+  font-size: var(--text-lead);
+  font-weight: 700;
+}
+
+/* Scene 4: the share */
+.home-share { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: var(--space-2); }
+.home-share-head { font-size: var(--text-label); font-weight: 600; color: var(--text-3); }
+.home-share-trip {
+  overflow-wrap: anywhere;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+.home-share-link {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.home-share-url {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.home-share-url svg { flex: none; }
+.home-copy {
+  display: grid;
+  align-items: center;
+  min-height: calc(var(--tap) - var(--space-2));
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+.home-copy-a,
+.home-copy-b { grid-area: 1 / 1; white-space: nowrap; }
+.home-copy-b {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  opacity: 0;
+}
+.home-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--status-success);
+}
+.home-share-rows { margin: var(--space-2) 0 0; padding: 0; list-style: none; }
+.home-share-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  border-top: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+}
+.home-share-row svg { flex: none; color: var(--text-2); }
+.home-pass {
+  margin-left: auto;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The demo's choreography: one authored moment per scene, replayed each
+   time a scene comes on. Delays are built from the motion tokens. */
+.is-on .home-word {
+  animation: home-in var(--dur-2) var(--ease-out) both;
+  animation-delay: calc(var(--dur-3) + var(--i) * var(--dur-1));
+}
+.is-on .home-result {
+  animation: home-rise var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(var(--dur-4) * 3 + var(--i) * var(--dur-1));
+}
+.is-on .home-result.is-picked {
+  animation:
+    home-rise var(--dur-3) var(--ease-out) both,
+    home-pick var(--dur-2) var(--ease-out) forwards;
+  animation-delay: calc(var(--dur-4) * 3), calc(var(--dur-4) * 7);
+}
+.is-on .home-place-price {
+  animation: home-rise var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(var(--dur-4) * 2);
+}
+.is-on .home-place-best {
+  animation: home-in var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(var(--dur-4) * 3);
+}
+.is-on .home-add {
+  animation: home-press var(--dur-3) var(--ease-out) forwards;
+  animation-delay: calc(var(--dur-4) * 7);
+}
+.is-on .home-leg {
+  animation: home-draw var(--dur-3) var(--ease-in-out) both;
+  animation-delay: calc(var(--dur-3) + var(--i) * var(--dur-3));
+}
+.is-on .home-stop {
+  animation: home-pop var(--dur-2) var(--ease-out) both;
+  animation-delay: calc(var(--dur-2) + var(--i) * var(--dur-3));
+}
+.is-on .home-line {
+  animation: home-rise var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(var(--dur-4) * 2 + var(--i) * var(--dur-2));
+}
+.is-on .home-sum {
+  animation: home-rise var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(var(--dur-4) * 4);
+}
+.is-on .home-copy-a {
+  animation: home-out var(--dur-2) var(--ease-out) forwards;
+  animation-delay: calc(var(--dur-4) * 3);
+}
+.is-on .home-copy-b {
+  animation: home-in var(--dur-2) var(--ease-out) forwards;
+  animation-delay: calc(var(--dur-4) * 3);
+}
+.is-on .home-share-row {
+  animation: home-rise var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(var(--dur-4) * 5 + var(--i) * var(--dur-3));
+}
+
+/* Frozen (the pause button, off screen, a hidden tab, a page over it):
+   every animation in the demo holds its frame and resumes from there. The
+   progress line holds whenever the scenes stop turning, which also covers a
+   pointer or focus inside the stage (useDemoClock keeps the same time). */
+.home-demo[data-paused="true"] .home-scene *,
+.home-demo[data-turning="false"] .home-demo-progress-fill { animation-play-state: paused; }
+
+@keyframes home-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes home-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes home-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes home-pick {
+  to { background-color: var(--select-bg); border-color: var(--select-border); }
+}
+@keyframes home-press {
+  0% { transform: none; }
+  40% { transform: scale(0.98); opacity: 0.78; }
+  100% {
+    transform: none;
+    opacity: 1;
+    background-color: var(--select-bg);
+    border-color: var(--select-border);
+    color: var(--select-ink);
+  }
+}
+@keyframes home-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes home-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes home-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ── The kinds of trip ────────────────────────────────────────────────── */
+
+/* On a phone the six kinds run in one swiped row, a rail like Explore's
+   (one aspect, scroll-snap, the next tile showing at the edge); from 769px
+   they sit in a grid. */
+.home-kinds-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 40%;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 var(--gutter);
+  scrollbar-width: none;
+}
+.home-kinds-grid::-webkit-scrollbar { display: none; }
+.home-kinds-grid li { scroll-snap-align: start; }
+.home-kind {
+  position: relative;
+  display: block;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  color: var(--text);
+  text-decoration: none;
+}
+.home-kind:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.home-kind-media {
+  display: block;
+  aspect-ratio: 4 / 5;
+  background: var(--surface-sunken);
+}
+.home-kind-img,
+.home-kind-media .hero-blank {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-3) var(--ease-out);
+}
+@media (hover: hover) {
+  .home-kind:hover .home-kind-img { transform: scale(1.04); }
+}
+.home-kind-blank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-2);
+}
+/* The home page exception: the kind's name on its photo, in a solid pill. */
+.home-kind-label {
+  position: absolute;
+  left: var(--space-2);
+  bottom: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: calc(100% - var(--space-4));
+  min-height: calc(var(--tap) - var(--space-3));
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text);
+}
+.home-kind-label svg { flex: none; }
+
+/* ── What Carta does ───────────────────────────────────────────────────
+   Four rows with hairlines, never cards; two by two from 1024px. */
+
+.home-feat-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+.home-feat {
+  display: grid;
+  grid-template-columns: var(--space-5) minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-3) 0 var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+.home-feat-icon { margin-top: 2px; color: var(--text); }
+.home-feat-text { min-width: 0; }
+.home-feat-body {
+  max-width: var(--measure);
+  margin: var(--space-1) 0 var(--space-1);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.home-door { margin-left: calc(-1 * var(--space-3)); text-decoration: none; }
+
+/* ── The passes ───────────────────────────────────────────────────────── */
+
+.home-pass-grid {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.home-pass-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+  align-content: start;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.home-pass-name { font-size: var(--text-lead); font-weight: 600; }
+.home-pass-note,
+.home-pass-blurb { grid-column: 1 / -1; }
+.home-pass-price {
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+.home-pass-note { font-size: var(--text-label); color: var(--text-3); }
+.home-pass-blurb {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.home-pass-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  margin-top: var(--space-4);
+}
+.home-trade { margin: 0; font-size: var(--text-label); color: var(--text-3); }
+
+/* ── The photo credits ────────────────────────────────────────────────── */
+
+.home-credits {
+  margin-top: var(--space-7);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-caption);
+  line-height: var(--leading-body);
+  color: var(--text-3);
+}
+.home-credits summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.home-credits summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.home-credits ul { margin: 0; padding: 0 0 0 var(--space-4); }
+.home-credits li { margin: var(--space-1) 0; }
+.home-credits a { color: var(--text-2); text-underline-offset: 2px; }
+@media (pointer: coarse) {
+  .home-credits li { margin: 0; }
+  .home-credits a { display: inline-flex; align-items: center; min-height: var(--tap); }
+}
+
+/* ── Wider screens ────────────────────────────────────────────────────── */
+
+@media (min-width: 769px) {
+  .home-wrap { padding-top: var(--space-6); }
+  .home-section { margin-top: var(--space-8); }
+  .home-h2 { font-size: var(--text-headline); }
+  .home-title { font-size: var(--text-display); }
+  .home-sub { font-size: var(--text-lead); font-weight: 400; }
+  .home-tries { flex-wrap: wrap; }
+  .home-tries-list { flex-wrap: wrap; overflow: visible; }
+  .home-cta { width: auto; }
+  .home-kinds-grid {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .home-kind-media { aspect-ratio: 4 / 3; }
+  .home-pass-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .home-pass-card { grid-template-columns: minmax(0, 1fr); padding: var(--space-4); }
+  .home-pass-card > * { grid-column: 1; }
+  .home-pass-price { font-size: var(--text-headline); }
+  .home-scene { padding: var(--space-5); }
+}
+@media (min-width: 1024px) {
+  .home-wrap { padding-top: var(--space-7); }
+  .home-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-6); }
+  .home-hero.is-solo { grid-template-columns: minmax(0, 1fr); }
+  .home-kinds-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .home-kind-media { aspect-ratio: 4 / 5; }
+  .home-feat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-7); }
+  .home-feat { padding: var(--space-4) 0 var(--space-3); }
+}
+@media (min-width: 1280px) {
+  .home-hero { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-7); }
+}
+
+/* ── Reduced motion: nothing moves; the demo shows its finished frame ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .home-search,
+  .home-try,
+  .home-kind-img,
+  .home-scene { transition: none; }
+  .home-scene *,
+  .home-demo-progress-fill { animation: none !important; }
+  .home-kind:hover .home-kind-img { transform: none; }
+}

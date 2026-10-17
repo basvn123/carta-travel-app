@@ -1,13 +1,13 @@
 /* ==========================================================================
-   v6: the landing page and the first run (surface key 'landing')
+   v6: the first run (surface key 'landing')
 
-   Created empty by T380 (design wave V2). Every rule the build waves T382, T392 and T402
-   write for this surface goes here, and nowhere else. This file is imported
-   last in src/styles.css, after 46-owner-calls.css, so a rule here overrides
-   an older rule in a file this surface does not own without editing that
-   file. When a rule here replaces an old one in a file this surface DOES own
-   (see docs/design-v6/OWNERSHIP.md), delete the old rule in the same commit;
-   never leave two copies.
+   Created empty by T380 (design wave V2) for the landing page and the first
+   run. T462 replaced the landing page with the home page, whose rules live in
+   61-v6-home.css; what stays here is the first-run receipt's strip and cost
+   bar (FirstRunReceipt.jsx, ReceiptCard.jsx), which the destination page and
+   the trip page still draw. When a rule here replaces an old one in a file
+   this surface DOES own (see docs/design-v6/OWNERSHIP.md), delete the old
+   rule in the same commit; never leave two copies.
 
    Rules: tokens only (no hex, no font name, no literal duration or easing:
    --dur-1 to --dur-4, --ease-out, --ease-in-out); every transition and
@@ -15,69 +15,20 @@
    DESIGN.md win; docs/design-v6/DIRECTION.md is the direction.
    ========================================================================== */
 
-/* ── T382 (V3): structure, information and flow ─────────────────────────
-   The order on a phone is the order a first visitor needs it: the claim,
-   the instrument line, the town choice, the strip, the receipt, the one
-   primary, the two sentences, the priced list. Everything down to the
-   primary fits the first screen at 380 x 800 (brief V3-5), with no sticky
-   band (landing R5 rejected): the content above the primary was shortened
-   instead. DOM order is that order at every width (WCAG 1.3.2, 2.4.3). */
-
-/* The running instrument: the coverage in one line, read from the
-   catalogue with its date (brief V3-9). Prose, so --ui. Under the primary
-   since T392 (DIRECTION.md part 6 order), capped at a reading measure. */
-.lp-instrument {
-  margin: var(--space-3) 0 0;
-  max-width: 36em;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
-/* Each demo town says what its receipt measures (rule R7, toggle
-   metadata): the name, then one line in --ui 12px, --ink-soft on paper and
-   --on-fill when pressed. The button stays at least --tap high. */
-.lp-town {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1px;
-  padding: var(--space-1) var(--space-2);
-  line-height: 1.2;
-  text-align: center;
-}
-.lp-town-name {
-  max-width: 100%;
-  /* A long name wraps; it is never cut (T402, V5-2). */
-  overflow-wrap: anywhere;
-}
-.lp-town-meta {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--ink-soft);
-}
-.lp-town[aria-pressed="true"] .lp-town-meta { color: var(--on-fill); }
-
 /* The strip's cells (T382, V3-4; the hit area closed by T402, V5-1): one
    cell is one touch target. The select fills the whole cell, taller than
    --tap, and the label sits over it and lets the tap through, so a finger
-   anywhere in the cell opens the picker. The first-run strip's cells (.frr-cell)
-   are built the same way. */
-.lp-field,
+   anywhere in the cell opens the picker. */
 .frr-cell {
   position: relative;
   min-height: calc(var(--tap) + var(--space-3));
 }
-.lp-field { display: flex; flex-direction: column; min-width: 0; cursor: pointer; }
-.lp-field-label,
 .frr-cell-label {
   position: relative;
   z-index: 1;
   padding: var(--space-2) var(--space-2) 0 var(--space-3);
   pointer-events: none;
 }
-.lp-field select,
 .frr-cell select,
 .frr-cell input {
   position: absolute;
@@ -101,10 +52,8 @@
   font-weight: 500;
   cursor: pointer;
 }
-.lp-field select { font-family: var(--ui); }
 /* The chevron of a select cell: two ink-soft borders on a pseudo-element,
    so it reads the same in WebKit and Chromium; the tap goes to the select. */
-.lp-field::after,
 .frr-cell:has(> select)::after {
   content: "";
   position: absolute;
@@ -118,144 +67,6 @@
   translate: 0 -75%;
   pointer-events: none;
 }
-@media (min-width: 480px) {
-  .lp-field select { font-size: 15px; }
-}
-
-/* The receipt card is ReceiptCard (38-first-run.css); here only its place,
-   and on a phone a tighter rhythm inside it so the sum, the footer line and
-   the primary make the first screen. */
-.lp-receipt { margin-top: var(--space-2); }
-@media (max-width: 899px) {
-  .lp-wrap { padding-top: var(--space-3); }
-  .lp-hero { gap: var(--space-2); }
-  .lp-strip { margin-top: var(--space-2); }
-  .lp-towns-label { font-size: 12px; }
-  .lp-receipt .frr-head { padding: var(--space-2) var(--space-4); }
-  .lp-receipt .frr-line { padding: var(--space-2) 0; }
-  .lp-receipt .frr-foot { padding: var(--space-2) var(--space-4); }
-}
-
-/* The side column: the one primary, the two sentences shared with the
-   first-run receipt, then the priced list. Under the receipt on a phone;
-   beside it from 900px. */
-.lp-notes { margin-top: var(--space-2); }
-.lp-notes .lp-note:first-child { margin-top: 0; }
-
-/* The priced list for the undecided (rule R1): at most five rows under a
-   heading with a verb, each row a control that opens the town, the name
-   in --ui and the day figure in --mono with its tilde, est. and the word
-   "national" where a national figure stands in; hairlines between rows,
-   cheapest first, no badge, no accent, no highlighted row. */
-.lp-walk { margin-top: var(--space-6); }
-.lp-walk-title {
-  margin: 0;
-  font-family: var(--display);
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--ink);
-  text-wrap: balance;
-}
-.lp-walk-sub {
-  margin: var(--space-1) 0 var(--space-3);
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-.lp-walk-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--rule);
-}
-.lp-walk-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  min-height: var(--tap);
-  margin: 0;
-  padding: var(--space-2) var(--space-1);
-  border: 0;
-  border-bottom: 1px solid var(--rule-soft);
-  background: transparent;
-  color: var(--ink);
-  font-family: var(--ui);
-  font-size: 14px;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out);
-}
-.lp-walk-list li:last-child .lp-walk-row { border-bottom-color: var(--rule); }
-@media (hover: hover) {
-  .lp-walk-row:hover { background: var(--paper-dim); }
-}
-.lp-walk-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.lp-walk-name { display: flex; flex-direction: column; min-width: 0; }
-.lp-walk-city {
-  font-weight: 500;
-  /* The name is the link: a long one ("Apuseni (Scarisoara ...)") wraps onto
-     a second line instead of ending in an ellipsis (T402, V5-2). */
-  overflow-wrap: anywhere;
-}
-.lp-walk-country {
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.lp-walk-fig {
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  white-space: nowrap;
-}
-.lp-walk-word {
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--ink-soft);
-}
-
-/* The receipt card's head on this page carries "Open {city}"; on the
-   narrowest phones the button keeps its label and the title wraps. */
-.lp-receipt .frr-title { overflow-wrap: anywhere; }
-
-/* Desktop: the side column starts level with the receipt's town row, and
-   its primary sizes to its label. */
-@media (min-width: 900px) {
-  .lp-instrument { font-size: 15px; }
-  .lp-side { padding-top: var(--space-5); }
-  .lp-walk { margin-top: var(--space-6); }
-}
-
-/* ── T392 (V4): visual and dynamic ─────────────────────────────────────
-   The page answers its inputs in place. Figures settle through
-   settleFigure() (lib/figureChange.js, scripted, so no keyframe here); the
-   rules below place the cost bar, the proof specimens, the coverage bars,
-   the receipt-shaped still block and the press, hover and focus states. */
-
-/* The phone fold (register row T382-b; DIRECTION.md part 7, shorten what
-   sits above the primary): below 769px the "Price a stay in" label is read
-   by screen readers only; it stays the town group's accessible name. */
-@media (max-width: 768px) {
-  .lp-towns-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-}
-
-/* The priced list's heading is a section name: 22px on a phone, 26px from
-   769px (DIRECTION.md part 5). */
-@media (min-width: 769px) {
-  .lp-walk-title { font-size: 26px; }
-}
 
 /* The cost bar (carta-design "The cost bar"): the shell's CostBar, drawn by
    ReceiptCard between the head and the lines, inset like the lines. Its own
@@ -267,78 +78,6 @@
    grey box around the 44px hit area here. */
 .frr-bar .costbar-track { background: transparent; }
 .frr-bar .costbar-read { margin-top: var(--space-1); font-size: 12px; }
-@media (max-width: 899px) {
-  .lp-receipt .frr-bar { padding-top: var(--space-1); }
-  .lp-receipt .frr-bar .costbar-read { margin-top: 0; }
-}
-
-/* Proof specimens (rule R8): one receipt line under a proof point, set
-   exactly as the receipt sets it (the .frr-line rules), with no card, no
-   emphasis; a hairline above it separates it from the claim. */
-.lp-spec {
-  margin: var(--space-3) 0 0;
-  padding: 0;
-  border-top: 1px solid var(--rule-soft);
-}
-.lp-spec .frr-line:first-child { border-top: 0; }
-.lp-spec .mono {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-}
-.lp-proof-list .lp-spec-none {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--rule-soft);
-  font-size: 13px;
-}
-
-/* Coverage bars (rule R4): one thin bar under the "Regions with none"
-   figure, regions with at least one row in --ink-soft, regions with none
-   in --rule, 1px --paper between them; the figure beside it says the
-   same, so the bar is hidden from screen readers. */
-.lp-covbar {
-  display: flex;
-  gap: 1px;
-  width: 100%;
-  min-width: 64px;
-  height: 6px;
-  margin-top: var(--space-1);
-  background: var(--paper);
-}
-.lp-covbar-with { background: var(--ink-soft); }
-.lp-covbar-none { background: var(--rule); }
-
-/* The receipt-shaped still block (brief V4-9; DIRECTION.md part 2.3,
-   Loading): the towns row, the strip and the card at their final heights in
-   --paper-dim, no shimmer, no spinner. */
-.lp-skel-towns,
-.lp-skel-strip,
-.lp-skel-card {
-  border-radius: 6px;
-  background: var(--paper-dim);
-}
-.lp-skel-towns { height: var(--tap); }
-.lp-skel-strip { height: 60px; margin-top: var(--space-2); }
-.lp-skel-card { height: 340px; margin-top: var(--space-2); border-radius: 10px; }
-@media (min-width: 769px) {
-  .lp-skel-towns { margin-top: var(--space-5); }
-  .lp-skel-strip { margin-top: var(--space-3); }
-}
-
-/* Press, hover and focus on the strip (brief V4-8). The press is the shared
-   touch feedback (02-base.css) on the label; hover tints the cell under a
-   pointer that can hover; a focused select rings its whole cell, as the
-   first-run strip does. */
-.lp-field { transition: background-color var(--dur-1) var(--ease-out); }
-@media (hover: hover) {
-  .lp-field:hover { background: var(--paper-dim); }
-}
-.lp-field:first-child { border-radius: 6px 0 0 6px; }
-.lp-field:last-child { border-radius: 0 6px 6px 0; }
-.lp-field:focus-within { outline: 2px solid var(--accent); outline-offset: -2px; }
-/* The cell carries the ring; the select's own ring is drawn clear, so it
-   still shows in forced colours. */
-.lp-field select:focus-visible { outline: 2px solid transparent; }
 
 /* The first-run strip without its Stay cell (FirstRunReceipt hideStay,
    T387-c): three cells across, and in a narrow column the party across the
@@ -349,25 +88,4 @@
   .frr-strip.is-no-stay .frr-cell:first-child { grid-column: 1 / -1; border-bottom: 1px solid var(--rule-soft); }
   .frr-strip.is-no-stay .frr-cell:nth-child(2) { border-left: 0; border-bottom: 0; }
   .frr-strip.is-no-stay .frr-cell:nth-child(3) { border-left: 1px solid var(--rule-soft); }
-}
-
-/* ── T402 (V5): harden, adapt and polish ──────────────────────────────
-   The coverage table's place while coverage.json loads (it is read when the
-   section nears the viewport), so the section below does not jump; the
-   sentence that stands in for the receipt when no demo town can be priced. */
-.lp-table-hold {
-  min-height: calc(var(--space-8) * 4);
-  margin: var(--space-4) 0 var(--space-2);
-  border-top: 1px solid var(--rule);
-}
-.lp-nodemo {
-  max-width: 36em;
-  margin: var(--space-3) 0 0;
-  font-size: 15px;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lp-walk-row,
-  .lp-field { transition: none; }
 }

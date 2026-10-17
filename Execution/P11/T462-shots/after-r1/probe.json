@@ -1,0 +1,93 @@
+[
+ {
+  "lang": "en",
+  "view": "360",
+  "words": 435,
+  "counts": 9,
+  "h1": 1,
+  "primaries": 1,
+  "overflowX": false,
+  "primaryAboveNav": true,
+  "smallTargets": 3,
+  "height": 740,
+  "errors": []
+ },
+ {
+  "lang": "en",
+  "view": "390",
+  "words": 435,
+  "counts": 9,
+  "h1": 1,
+  "primaries": 1,
+  "overflowX": false,
+  "primaryAboveNav": true,
+  "smallTargets": 3,
+  "height": 844,
+  "errors": []
+ },
+ {
+  "lang": "en",
+  "view": "768",
+  "words": 435,
+  "counts": 9,
+  "h1": 1,
+  "primaries": 1,
+  "overflowX": false,
+  "primaryAboveNav": true,
+  "smallTargets": 3,
+  "height": 1024,
+  "errors": []
+ },
+ {
+  "lang": "en",
+  "view": "1024",
+  "words": 435,
+  "counts": 9,
+  "h1": 1,
+  "primaries": 1,
+  "overflowX": false,
+  "primaryAboveNav": true,
+  "smallTargets": 21,
+  "height": 768,
+  "errors": []
+ },
+ {
+  "lang": "en",
+  "view": "1440",
+  "words": 435,
+  "counts": 9,
+  "h1": 1,
+  "primaries": 1,
+  "overflowX": false,
+  "primaryAboveNav": true,
+  "smallTargets": 21,
+  "height": 900,
+  "errors": []
+ },
+ {
+  "lang": "de",
+  "view": "360",
+  "words": 437,
+  "counts": 9,
+  "h1": 1,
+  "primaries": 1,
+  "overflowX": false,
+  "primaryAboveNav": true,
+  "smallTargets": 3,
+  "height": 740,
+  "errors": []
+ },
+ {
+  "lang": "de",
+  "view": "1440",
+  "words": 437,
+  "counts": 9,
+  "h1": 1,
+  "primaries": 1,
+  "overflowX": false,
+  "primaryAboveNav": true,
+  "smallTargets": 21,
+  "height": 900,
+  "errors": []
+ }
+]
