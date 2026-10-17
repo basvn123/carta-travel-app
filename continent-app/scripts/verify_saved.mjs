@@ -142,7 +142,8 @@ try {
   await full.locator('.mt-map canvas').waitFor({ timeout: 20000 }).catch(() => fail('record map canvas never appeared'));
   await full.locator('.mt-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('record map never drew a pin'));
   const band = await full.locator('.mt-band dd').allInnerTexts();
-  if (band[0] !== '1') fail(`the figures band should count 1 country, got ${JSON.stringify(band)}`);
+  // T467: the countries cell leads the band and also draws their flags.
+  if (parseInt(band[0], 10) !== 1) fail(`the figures band should count 1 country, got ${JSON.stringify(band)}`);
   const hint = await full.locator('.maplibregl-cooperative-gesture-screen').count();
   if (hint) fail('the record map still asks for Ctrl to zoom');
   ok('seeded: day plan row with undo, record row, map with pin, band');
@@ -207,7 +208,7 @@ try {
   if (!recTitles.some((s) => /Austria|Salzburg/.test(s))) fail(`the record misses Salzburg: ${JSON.stringify(recTitles)}`);
   await mock.locator('.mt-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('mock record map never drew a pin'));
   if ((await mock.locator('.mt-map .trip-pin').count()) < 3) fail('the record map should pin every visited city');
-  const before = Number((await mock.locator('.mt-band dd').first().innerText()).trim());
+  const before = parseInt(await mock.locator('.mt-band dd').first().innerText(), 10);
   await mock.getByRole('button', { name: /^(Edit|Add countries)$/ }).click();
   const sheetChip = mock.locator('.mt-country-grid button', { hasText: 'Iceland' });
   await sheetChip.waitFor({ timeout: 5000 });
@@ -215,7 +216,7 @@ try {
   await sheetChip.click();
   await mock.getByRole('button', { name: 'Done' }).click();
   await mock.waitForTimeout(300);
-  const after = Number((await mock.locator('.mt-band dd').first().innerText()).trim());
+  const after = parseInt(await mock.locator('.mt-band dd').first().innerText(), 10);
   if (after !== before + 1) fail(`marking Iceland should add one country (${before} to ${after})`);
   if (!(await mock.locator('.mt-flag', { hasText: 'Iceland' }).count())) fail('Iceland is not among the flags');
   const y2025 = mock.locator('.saved-side .mt-chips [role="radio"]').filter({ hasText: /^20\d\d$/ }).last();
