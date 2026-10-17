@@ -14,8 +14,11 @@ import { ExploreTab } from './browse/ExploreTab.jsx';
 import { DestinationPage } from './browse/DestinationPage.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
-import { LandingPage } from './browse/LandingPage.jsx';
 import Logo from './components/Logo.jsx';
+// The home page (T462). In the entry bundle, not lazy: it is what a first
+// visit paints, and a lazy chunk cost that paint about 1.8 s on a slow
+// phone (React suspends and renders the shell twice; T462 report).
+import { HomePage } from './browse/home/HomePage.jsx';
 
 // A failed dynamic import is almost always a stale bundle: the client is still
 // running an old index.html whose chunk hashes no longer exist on the server
@@ -573,9 +576,17 @@ function TravelApp() {
   const [pendingTrip, setPendingTrip] = useState(() => readTripFromUrl());
   // One country, handed to the Destinations tab from the planner's brief.
   const [pendingCountry, setPendingCountry] = useState(null);
-  // One category, handed to the Destinations tab from the landing page's
-  // primary action ("Find a town to walk from" opens the walks).
+  // One category, handed to the Destinations tab from the home page's trip
+  // kinds (T462) or a journey link.
   const [pendingCategory, setPendingCategory] = useState(null);
+  // One search, handed to Explore from the home page (T462): { facets } is a
+  // guided question, { open: true } opens the search panel itself.
+  const [pendingExploreSeed, setPendingExploreSeed] = useState(null);
+  const clearExploreSeed = useCallback(() => setPendingExploreSeed(null), []);
+  const openExploreSearch = useCallback((seed) => {
+    setPendingExploreSeed({ ...seed });
+    goToTab('map');
+  }, [goToTab]);
   useEffect(() => {
     if (pendingTrip) goToTab('places', { replace: true });
   }, [pendingTrip, goToTab]);
@@ -1294,6 +1305,8 @@ function TravelApp() {
               onOpenLifestyle={openLifestyle}
               onOpenGuides={openGuides}
               onOpenCountryInPlaces={openCountryInPlaces}
+              seed={pendingExploreSeed}
+              onSeedConsumed={clearExploreSeed}
               isMock={!!data.meta?.is_mock}
             />
           </div>
@@ -1327,19 +1340,23 @@ function TravelApp() {
         </div>
       )}
 
-      {/* The landing page, which is also the home page (T209): a live
-          receipt for a real town, the proof points and the coverage. Not
-          kept alive like the tabs: it holds nothing worth keeping. */}
+      {/* The home page (T462, which replaced the T209 landing receipt): what
+          Carta does, a live demo of it, and a door to each part. Not kept
+          alive like the tabs: it holds nothing worth keeping. */}
       {activeTab === 'home' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
-          <LandingPage
+          <HomePage
             data={data}
-            lifestyle={choices.lifestyle}
-            onStart={() => {
-              setPendingCategory('trails');
+            indices={exploreIndices}
+            pageOver={!!selectedDest || savedTripsOpen || accountOpen}
+            onNavigate={goToTab}
+            onSearch={openExploreSearch}
+            onCategory={(key) => {
+              setPendingCategory(key);
               goToTab('places');
             }}
             onOpenDest={openDetail}
+            onOpenTrips={toggleSaved}
           />
         </div>
       )}

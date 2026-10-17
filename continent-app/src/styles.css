@@ -39,7 +39,6 @@
 @import './styles/36-cost-bar.css';
 @import './styles/37-card-fillings.css';
 @import './styles/38-first-run.css';
-@import './styles/39-landing.css';
 @import './styles/40-upload.css';
 @import './styles/42-feedback.css';
 @import './styles/43-trip-length.css';
@@ -51,6 +50,7 @@
    it is the surface order of docs/design-v6/OWNERSHIP.md. */
 @import './styles/60-v6-shell.css';
 @import './styles/61-v6-landing.css';
+@import './styles/61-v6-home.css';
 @import './styles/62-v6-explore.css';
 @import './styles/63-v6-destinations.css';
 @import './styles/64-v6-destination.css';

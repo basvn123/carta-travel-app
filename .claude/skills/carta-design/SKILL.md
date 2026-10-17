@@ -236,6 +236,10 @@ Photography leads, and every photo is real and licensed with its credit (`docs/t
 - **No text on a photograph.** Name, figure, length and credit sit under the photo on `--surface`, flush
   with its edge; no scrim, no gradient, no alpha band. The only things over a photo are round icon
   buttons (`IconButton tone="photo"`: a white disc with `--elev-1`), such as save.
+- **The home page exception (T462, owner 2026-10-17).** On the home page only (`src/browse/home/`), a
+  short label or a price may sit on a photograph inside a solid `--surface` pill with `--elev-1`, so
+  its contrast never depends on the photo. Still no scrim, no gradient, no alpha band, and never a
+  sentence on a photo. Everywhere else the rule above holds.
 - One aspect per row or rail: 4:3 on kit tiles, 3:2 on browse and library cards where they already use
   it. On a phone the photo takes at most a third of a choice card's height. A hero is at most 40 percent
   of the viewport height on a phone and 60 percent on desktop.
@@ -372,6 +376,24 @@ page scrolled, nothing loops, the bottom nav never moves. Every transition has a
 `prefers-reduced-motion: reduce` branch that sets it to `none`; scripted motion asks
 `prefersReducedMotion()` or `durationMs()` in `src/lib/motion.js`.
 
+The home page exception (T462, owner 2026-10-17: "allow it"). The home page (`src/browse/home/`) is the
+one surface that persuades rather than operates, so it may move on its own, within these limits:
+
+- **One looping product demo** that plays by itself. Its pause control comes first in its tab order and
+  stays visible (WCAG 2.2.2). It pauses while it is off screen, while the browser tab is hidden, while a
+  page or panel sits over the home page, and while the pointer or focus is inside it. Under
+  `prefers-reduced-motion: reduce` it never plays: it shows its final frame, and its scene tabs swap
+  frames at once.
+- **Sections may reveal once** as they enter the viewport (opacity and a short translate at `--dur-3`,
+  `--ease-out`), only below the first viewport, and only after the observer exists, so content is never
+  hidden without it. Under reduced motion nothing reveals; it is simply there.
+- **Labels on photographs** in a solid pill (see Photography).
+
+Still binding on the home page: motion tokens for every transition, transform, opacity, clip-path and
+stroke-dashoffset only, no overshoot or bounce, no parallax, no count-up, no marquee, no gradient or
+scrim, one primary, 44 px targets. No other surface takes this exception; a loop anywhere else is a
+defect.
+
 Phone first. Design the phone layout first, at 360 px. Every fixed or sticky bar reads
 `env(safe-area-inset-*)`; full-height layouts use `100dvh`. The one primary sits in the lower half of the
 screen inside the content, never sticky over it and never in the top bar. A swipe, drag or long press
@@ -411,7 +433,8 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
    that neither acts nor is live nor is selected).
 3. Gradients of any kind, a scrim over a photo, glassy blur as decoration, an inset or stacked shadow, or
    a border and a shadow on the same object.
-4. Text on a photograph. The caption sits under it on `--surface`.
+4. Text on a photograph. The caption sits under it on `--surface`. (The home page's solid pill labels
+   are the one exception; see Photography.)
 5. Uppercase eyebrows or kickers, letter-spaced labels, a costume face for numbers, or any face but
    Figtree.
 6. Fabricated social proof: testimonials, user counts, press, partner logos, "popular" badges without a
@@ -427,7 +450,8 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 
 Also never: catalogue counts, method sentences or coverage notes as page furniture; a filled rating chip;
 a row of three stat counters as a hero device, numbered markers `01 / 02 / 03` unless order
-matters, scroll-triggered counters, marquees, parallax or fade-in on every section.
+matters, scroll-triggered counters, marquees, parallax or fade-in on every section. (The home page may
+reveal its sections once and run one looping demo with a pause control; see Interaction and motion.)
 
 ## Quality floor
 

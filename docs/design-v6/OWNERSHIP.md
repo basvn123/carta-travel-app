@@ -37,7 +37,7 @@ The surfaces, in the order of the v6 stylesheets:
 | Surface | Prefixes |
 |---|---|
 | shell | `brand`, `shell`, `toast`, `a11y`, `common`, `nav`, `header`, `lang`, `lifestyle`, `settings` (new, the settings line), `side`, `state`, `empty`, `maintenance`, `origin`, `country`, `glossary`, `num`, `prov`, `dropdown`, `kind`, `pkind`, `role`, `monthStrip`, `legend`, `dir`, `tip`, `fig`, `photo`, `credit`, `layer`, `mode`, `why`, `sig`, `feat`, `band`, `scope`, `prerender`, and any `legal.*` the shell adds |
-| landing | `landing`, `receipt` |
+| landing | `home` (the home page, T462; it replaced `landing`), `receipt` |
 | explore | `explore`, `filter`, `sort`, `results`, `compare`, `rail`, `cpage`, `rating`, `cost`, `card`, `mapSize`, `map` |
 | destinations | `places`, `cov`, `open`, `stub`, `region`, `trails` (the browse strings; the trail page's own strings are `detail.*` and `route.*`), `cycle` (browse) |
 | destination | `dest`, `bestTime`, `crowd`, `water`, `pdf`, `nb`, `transfer` |
@@ -195,19 +195,23 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 | `src/lib/urlState.js` | shell | logic |
 | `src/map/coords.js` | shell | logic |
 
-### landing (9 files)
+### landing (11 files)
+
+T462 replaced the landing page with the home page (`src/browse/home/`); the surface key stays `landing` and now covers the home page and the first-run receipt.
 
 | File | Surface | Kind |
 |---|---|---|
-| `src/browse/LandingPage.jsx` | landing | renders |
+| `src/browse/home/HomePage.jsx` | landing | renders |
+| `src/browse/home/HomeDemo.jsx` | landing | renders |
+| `src/browse/home/useDemoClock.js` | landing | logic |
 | `src/components/FirstRunReceipt.jsx` | landing | renders |
 | `src/components/ReceiptCard.jsx` | landing | renders |
 | `src/styles/38-first-run.css` | landing | style |
-| `src/styles/39-landing.css` | landing | style |
 | `src/styles/61-v6-landing.css` | landing | style |
+| `src/styles/61-v6-home.css` | landing | style |
 | `src/lib/firstRun.js` | landing | logic |
 | `src/lib/firstRunContext.js` | landing | logic |
-| `src/lib/landing.js` | landing | logic |
+| `src/lib/homeDemo.js` | landing | logic |
 
 ### explore (18 files)
 

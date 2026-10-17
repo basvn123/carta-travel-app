@@ -74,7 +74,7 @@ Decided by the owner on 2026-10-13 (T419), after two rounds of invented visual w
 
 ## Positioning
 
-Every travel product shows a price; Carta shows what the whole day costs, honestly (T201, `Execution/P12/T201-positioning.md`; restated 2026-10-13 when the method left the page, T438). Each neighbouring category beats Carta on one axis and none can say the second half: route and trail products (Komoot, AllTrails) do not price the town the walk starts from; journey planners (Rome2Rio, Omio) price the leg but not the stay; flight discovery (Skyscanner, Google Flights) does not know what a bed and a day cost; itinerary planners (Wanderlog, TripIt) start from whatever the user types in (T202).
+Carta plans any trip in Europe, with honest prices (owner, 2026-10-17, T462): find a place, see what a day there costs a person, plan the trip and each day of it, and share it. The home page leads with that sentence; the hiker stays the first audience the product's defaults serve. Every travel product shows a price; Carta shows what the whole day costs, honestly (T201, `Execution/P12/T201-positioning.md`; restated 2026-10-13 when the method left the page, T438). Each neighbouring category beats Carta on one axis and none can say the second half: route and trail products (Komoot, AllTrails) do not price the town the walk starts from; journey planners (Rome2Rio, Omio) price the leg but not the stay; flight discovery (Skyscanner, Google Flights) does not know what a bed and a day cost; itinerary planners (Wanderlog, TripIt) start from whatever the user types in (T202).
 
 ## Operating Context
 
@@ -102,7 +102,7 @@ Colour is never the only carrier. The place-kind hierarchy is an ink-density ram
 
 Focus and keyboard. Visible focus on every interactive element, `outline: 2px solid var(--accent)` with an offset. `outline: none` is never shipped without a replacement. Every `aria-modal` overlay traps focus through `useFocusTrap` and closes on Escape. Navigation is a real `<a>`, actions are a real `<button>`, headings stay in order with one `h1` per view.
 
-Motion. `prefers-reduced-motion: reduce` is honoured on every transition and animation. Animations stay under 300 ms and animate only transform and opacity. No parallax, no scroll-triggered counters, no bounce.
+Motion. `prefers-reduced-motion: reduce` is honoured on every transition and animation. Animations stay under 300 ms and animate only transform and opacity. No parallax, no scroll-triggered counters, no bounce. The home page carries the one owner-approved exception (T462, DESIGN.md "Home page exception"): a looping product demo with a pause control and sections that reveal once; reduced motion stops both.
 
 Language. The document language follows the chosen UI language. Strings are never built by concatenation; they go through the i18n keys so word order survives translation.
 
