@@ -1614,4 +1614,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T463-d | T463 | npx eslint src reports 1 error in src/browse/ExploreMap.jsx:621 (collectKpins missing from a useCallback dependency list), predating T463 | next task | open | |
 | T463-e | T463 | Home finish review minor items: the chapter bar uses tab semantics for a scroll index, the plan capture ends on a half card, the promise rows could shrink to one line | next task | open | |
 | T463-f | T463 | Re-measure LCP and CLS of the home page on a throttled phone now that the first screen carries an eager app capture (trip.webp) | next task | open | |
-| T463-g | T463 | Deploy the T463 home page (supersedes T462-h): npm run build:pages with VITE_E2E_SEAMS empty, then npx wrangler pages deploy dist --project-name carta-app --branch main | user | open | |
+| T463-g | T463 | Deploy the T463 home page (supersedes T462-h): npm run build:pages with VITE_E2E_SEAMS empty, then npx wrangler pages deploy dist --project-name carta-app --branch main | user | closed by T463 | |
