@@ -1597,7 +1597,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T461-e | T461 | BGB 312k(4) text-form confirmation of a yearly cancellation: switch on Stripe's cancellation email or have the billing function send one | user | open | with T460-b |
 | T461-f | T461 | Kit hover on a disabled primary paints it brown under grey text (03-button.css .btn-primary:hover without :not(:disabled)), app-wide | next task | open |  |
 | T461-g | T461 | Account hub leftovers: Sign out two levels deep, guest view titled twice, AuthModal opens on Close, 22 legacy buttons in the Profile, Security and Your data forms, Home airport and Travellers rows not added | next task | open |  |
-| T461-h | T461 | FriendsSpoke (13 raw buttons) is not on the kit, and the planned move of the Alongside your friends ledger into it was dropped | next task | open |  |
+| T461-h | T461 | FriendsSpoke (13 raw buttons) is not on the kit, and the planned move of the Alongside your friends ledger into it was dropped | next task | closed by T466 |  |
 | T461-i | T461 | The legal body follows the 68ch --measure token (about 95 characters a line; detector line-length x63); tightening it is a token call | user | open |  |
 | T461-j | T461 | verify_trails_export reports 465 facet counts that disagree with their rows in public/trails/*.json (for example AL grade.moderate 42 vs 44); data, not T461 | next task | open |  |
 | T462-a | T462 | Confirm the home demo story (search: Lake Bled, Lake Bohinj, Zell am See; trip: Ljubljana, Lake Bled, Lake Bohinj) and the six kind photos, STORY and KINDS in continent-app/src/lib/homeDemo.js | user | closed by T463 | |
@@ -1622,3 +1622,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T464-e | T464 | Measure LCP and CLS of the home page on a throttled phone and desktop (T463-f); the eager desktop capture is now 98 KB (100,014 bytes) | next task | open | |
 | T465-a | T465 | Re-run scripts/verify_focus_trap.mjs on a fresh build so the plan chooser's focus trap is re-proved with the tile markup (it served a stale dist in T465) | next task | open | |
 | T465-b | T465 | Owner to confirm the plan chooser's two drawn tiles on a real phone (a route and a day timeline in ink; carta-design covers icons, not small drawings on a menu tile) | user | open | |
+| T466-a | T466 | Friends page and destination friends line were reviewed from harness screenshots, not a formal impeccable critique (signed-in page needs the fake-session harness); a friend trip row is crowded on a phone; T435 covers it | next task | open | |
+| T466-b | T466 | Two raw buttons stay on Friends (the trip row toggle in FriendsSpoke, the medallion in FriendBadges): the kit has no disclosure-row or medallion component | next task | open | |
+| T466-c | T466 | T189-b is half done: the Friends page shows state.friendsFailed with a retry; ReadyTripsStep and the wizard failure states remain | next task | open | |
+| T466-d | T466 | The Alongside your friends ledger is still not on the Friends page (it needs the record counts only SavedTripsPanel computes); T390-f stays open for it | next task | open | |
+| T466-e | T466 | Owner to see the new Friends page, the destination page friends line and the My trips faces line on a real phone and confirm the direction | user | open | |

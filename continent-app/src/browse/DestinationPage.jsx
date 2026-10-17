@@ -50,6 +50,7 @@ import {
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { FlashDeck } from './FlashDeck.jsx';
+import { FriendsWentHere } from '../components/FriendsWentHere.jsx';
 import { cardCategory } from '../lib/flashcards.js';
 
 /**
@@ -825,6 +826,9 @@ export function DestinationPage({
                 onPlanDay={onPlanDay}
                 carDayEur={getting?.car_needed ? getting.rental_eur_day ?? null : null}
               />
+              {/* Friends showing you a trip that stops here (T466); nothing
+                  at all for a guest or when no friend trip stops here. */}
+              <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
             </div>
           )}
 

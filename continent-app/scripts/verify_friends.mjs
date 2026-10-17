@@ -236,6 +236,12 @@ const run = async () => {
   const guestText = await guest.locator(ACCOUNT_PANEL).innerText();
   if (/Friends/i.test(guestText)) fail('a guest is offered a Friends row');
   else ok('a guest is never shown the Friends row');
+  // T466: a destination page carries no friends line for a guest.
+  await guest.goto(`${BASE}/?o=CRL#dest=LIS`);
+  await guest.locator('.destp').first().waitFor({ timeout: 60000 });
+  await guest.waitForTimeout(1500);
+  if (await guest.locator('.frn-here').count()) fail('a guest sees a friends line on a destination page');
+  else ok('a guest sees no friends line on a destination page');
   await guestCtx.close();
 
   /* ---- signed in ---- */
@@ -489,6 +495,8 @@ const run = async () => {
   const panel = await page.locator('.saved-trips-panel').innerText();
   if (!/A friend showed you a trip|Friends showed you \d+ trips/i.test(panel)) fail('Planned has no line pointing at Friends');
   else ok('Planned carries one line pointing at Friends');
+  await page.locator('.mt-friends-line').first().scrollIntoViewIfNeeded().catch(() => {});
+  await page.screenshot({ path: `${SHOTS}/friends-mytrips-line.png` });
   if (await page.locator('.saved-trips-panel .mt-row').filter({ hasText: 'Two weeks in Portugal' }).count() > 0) {
     fail('a friend trip card still stands on My trips, with a menu that could offer Remove');
   } else ok('no friend trip card stands on My trips, so no Remove and no edits there');
@@ -659,6 +667,31 @@ const run = async () => {
   await dp.waitForTimeout(500);
   if (await dp.locator('.saved-trips-panel').count()) fail('opening Friends left My trips open');
   else ok('opening the account side closes My trips');
+
+  // T466: friends in the rest of the app. Lisbon's page names the friend
+  // showing a trip that stops there, with her face, and opens that trip in
+  // place, read only.
+  await dp.goto(`${BASE}/?o=CRL#dest=LIS`);
+  await dp.locator('.destp').first().waitFor({ timeout: 60000 });
+  const here = dp.locator('.frn-here');
+  await here.waitFor({ timeout: 20000 }).catch(() => {});
+  const hereText = (await here.count()) ? await here.innerText() : '';
+  if (!/Sofie Vermeulen has a trip here/.test(hereText)) fail(`Lisbon's page does not name the friend with a trip there: "${hereText}"`);
+  else ok('a destination page names the friend showing a trip that stops there');
+  if (!(await here.locator('.frn-face').count())) fail('the friends line on a destination page has no face');
+  else ok('with her face');
+  await here.locator('.frn-here-head').click();
+  await dp.locator('.frn-here-trip').first().click();
+  await dp.locator('.frn-here .ftrip').first().waitFor({ timeout: 15000 }).catch(() => {});
+  if (!(await dp.locator('.frn-here .ftrip').count())) fail('the friend trip does not open on the destination page');
+  else ok('and the trip opens in place, read only');
+  await dp.locator('.frn-here').first().scrollIntoViewIfNeeded().catch(() => {});
+  await dp.screenshot({ path: `${SHOTS}/friends-destination.png` });
+  await dp.goto(`${BASE}/?o=CRL#dest=SVQ`);
+  await dp.locator('.destp').first().waitFor({ timeout: 60000 });
+  await dp.waitForTimeout(1500);
+  if (await dp.locator('.frn-here').count()) fail('a place no friend trip stops at still shows a friends line');
+  else ok('a place no friend trip stops at shows nothing');
   await deskCtx.close();
 
   /* ---- 8. Mobile ---- */

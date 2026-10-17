@@ -303,9 +303,6 @@ function TravelApp() {
   // outline stay inside the page the traveller is looking at (T186). React 18
   // has no boolean inert, so the attribute is written as an empty string.
   const behindPanel = savedTripsOpen || accountOpen ? '' : undefined;
-  const toggleFriends = () => (accountOpen && accountView === 'friends'
-    ? setAccountOpen(false)
-    : openAccountAt('friends'));
 
   // One door into a section, whatever pressed it: the header tabs, the brand
   // mark, the phone's bottom bar and the empty-shelf links all land on the
@@ -1199,8 +1196,6 @@ function TravelApp() {
           user={user}
           onOpenAccount={toggleAccount}
           accountOpen={accountOpen}
-          onOpenFriends={toggleFriends}
-          friendsOpen={accountOpen && accountView === 'friends'}
           onBrandClick={goToTab}
           activeTab={activeTab}
           onChangeTab={goToTab}

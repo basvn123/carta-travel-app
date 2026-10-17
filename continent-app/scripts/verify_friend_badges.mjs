@@ -24,7 +24,9 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4196;
+// CARTA_PORT points the check at a server already running, as verify_friends
+// does (T466); without it the old fixed port and its own preview stand.
+const PORT = Number(process.env.CARTA_PORT) || 4196;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -126,7 +128,14 @@ const seedSession = (ref, user) => `(() => {
 })()`;
 
 const openSpoke = async (page) => {
-  await page.locator('.header-friends-btn').first().click({ timeout: 120000 });
+  // T466: Friends has one door, the Friends row in Account (the header
+  // button went), reached here from the header avatar on a wide screen.
+  await page.locator('.account-avatar-btn, .bottom-nav-item').first().waitFor({ state: 'attached', timeout: 120000 });
+  const avatar = page.locator('.account-avatar-btn:visible').first();
+  if (await avatar.count()) await avatar.click({ timeout: 120000 });
+  else await page.locator('.bottom-nav-item:visible', { hasText: 'Account' }).first().click({ timeout: 120000 });
+  await page.locator('.account-panel:not(.saved-trips-panel)').waitFor({ timeout: 15000 });
+  await page.locator('.account-nav:visible', { hasText: /^\s*Friends/ }).first().click({ timeout: 15000 });
   await page.locator('.frn-find').waitFor({ timeout: 15000 });
 };
 

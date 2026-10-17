@@ -1,7 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  PersonIcon, CheckIcon, CloseIcon, PlusIcon, InfoIcon, ShareIcon, RouteIcon,
+  CheckIcon, CloseIcon, PlusIcon, InfoIcon, ShareIcon, RouteIcon, ChevronDownIcon,
 } from '../components/Icons.jsx';
+import { Button, IconButton } from '../components/ui/index.js';
+import { HeroImage } from '../components/HeroImage.jsx';
+import { Face } from './FriendFaces.jsx';
+import { refreshFriendTrips } from './useFriendTrips.js';
 import { useI18n } from '../i18n/index.jsx';
 import { findByHandle, normaliseHandle, handleProblem, fetchMyProfile } from './profiles.js';
 import {
@@ -56,13 +60,19 @@ import { GuidesStrip } from '../community/GuidesStrip.jsx';
  * making.
  */
 
+/* T466 (owner 2026-10-17: modernise Friends and align it with the rest of
+   the app). The page is now on the Lagoon kit, laid out like My trips and
+   Account: a card for you and your invite, groups under a house label, each
+   group one bordered card of hairline rows, real faces instead of a person
+   glyph, and the plans friends show you as photo rows before the list of
+   people. Every button is the kit's; the class names the harnesses read
+   (frn-yes, frn-no, frn-me-copy and the rest) stay on them. */
+
 function Person({ link, fact, children }) {
   const name = link.displayName || `@${link.handle}`;
   return (
     <div className="frn-row">
-      <span className="frn-face" aria-hidden="true">
-        {link.avatarEmoji || <PersonIcon size={15} />}
-      </span>
+      <Face name={name} emoji={link.avatarEmoji} />
       <span className="frn-who">
         <b>{name}</b>
         {link.displayName && <span className="frn-handle">@{link.handle}</span>}
@@ -70,6 +80,39 @@ function Person({ link, fact, children }) {
       </span>
       <span className="frn-acts">{children}</span>
     </div>
+  );
+}
+
+/** A group under the house label: the label is a real heading. */
+function Band({ id, title, count, action, children, className = '' }) {
+  return (
+    <section className={`panel-section frn-band ${className}`.trim()} aria-labelledby={id}>
+      <div className="frn-head">
+        <h3 className="frn-h" id={id}>
+          {title}
+          {count != null && <span className="frn-count">{count}</span>}
+        </h3>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/** A trip's photo: the first stop's catalogue picture, or its flag-and-name
+ *  placeholder (carta-design "Photography": never a grey box). */
+function TripThumb({ trip, destinations }) {
+  const dest = (trip.destinationIds || []).map((id) => destinations?.[id]).find((d) => d?.image?.url);
+  return (
+    <HeroImage
+      url={dest?.image?.url || null}
+      city={dest?.city || (trip.cities || [])[0] || trip.label}
+      iso2={dest?.iso2}
+      className="frn-trip-img"
+      maxWidth={250}
+      sizes="72px"
+      ratio={[1, 1]}
+    />
   );
 }
 
@@ -104,8 +147,17 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
   // looking at it. The stamp is written on the way out.
   const [lastSeen] = useState(readLastSeen);
 
+  // The first read failed outright: the page says so with a way to try
+  // again (state.friendsFailed, register T189-b), instead of an empty list
+  // that reads as having no friends.
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [tries, setTries] = useState(0);
+
   const reload = () => {
     setBadgeBump((k) => k + 1);
+    // Accepting somebody is the moment their trips become visible, so the
+    // shared copy other screens read goes stale here.
+    refreshFriendTrips();
     return Promise.all([
       fetchFriendLinks(userId).then(setLinks),
       // Accepting a request is exactly the moment their trips become visible.
@@ -118,9 +170,10 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
 
   useEffect(() => {
     let live = true;
+    setLoadFailed(false);
     fetchFriendLinks(userId)
       .then((rows) => { if (live) setLinks(rows); })
-      .catch(() => { if (live) setError(t('friends.unavailable')); })
+      .catch(() => { if (live) setLoadFailed(true); })
       .finally(() => { if (live) setLoading(false); });
     listFriendTrips()
       .then((rows) => { if (live) setTrips(rows); })
@@ -134,7 +187,7 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
       .then((row) => { if (live && row?.handle) setMyHandle(row.handle); })
       .catch((err) => console.warn('[friends] could not read your handle:', err?.message || err));
     return () => { live = false; };
-  }, [userId, t]);
+  }, [userId, t, tries]);
 
   // Stamping the visit on the way OUT, not on the way in: doing it on mount
   // would clear every New mark in the same frame that drew it.
@@ -284,112 +337,188 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
   // you; only an empty graph with nothing pending makes inviting the primary.
   const invitePrimary = incoming.length === 0 && invites.length === 0 && friends.length === 0;
 
+  if (loadFailed) {
+    return (
+      <div className="panel-section">
+        <ErrorBlock message={t('state.friendsFailed')} onRetry={() => { setLoading(true); setTries((n) => n + 1); }} retryLabel={t('layer.retry')} />
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className="frn-page">
       {myHandle && (
-        <div className="panel-section">
-          <div className="section-title section-title-iconed">
-            <PersonIcon size={12} /> {t('friends.yourHandle')}
-          </div>
+        <section className="panel-section frn-band" aria-labelledby="frn-me-h">
           <div className="frn-me">
-            <span className="frn-me-handle">@{myHandle}</span>
-            <button type="button" className="frn-me-copy" onClick={copyHandle}>
-              {copied ? <CheckIcon size={13} /> : null}
-              {copied ? t('share.copied') : t('share.copy')}
-            </button>
-            <button
-              type="button"
-              className={`frn-me-share${invitePrimary ? ' primary' : ''}`}
-              onClick={shareHandle}
-            >
-              <ShareIcon size={13} />
-              {t('friends.invite')}
-            </button>
+            <div className="frn-me-text">
+              <h3 className="frn-h" id="frn-me-h">{t('friends.yourHandle')}</h3>
+              <span className="frn-me-handle">@{myHandle}</span>
+              <span className="frn-me-line">{t('friends.meLine')}</span>
+            </div>
+            <div className="frn-me-acts">
+              <Button
+                variant={invitePrimary ? 'primary' : 'secondary'}
+                className={`frn-me-share${invitePrimary ? ' primary' : ''}`}
+                iconStart={<ShareIcon size={16} />}
+                onClick={shareHandle}
+              >
+                {t('friends.invite')}
+              </Button>
+              <Button
+                variant="quiet"
+                className="frn-me-copy"
+                iconStart={copied ? <CheckIcon size={16} /> : null}
+                onClick={copyHandle}
+              >
+                {copied ? t('share.copied') : t('share.copy')}
+              </Button>
+            </div>
           </div>
-        </div>
+        </section>
       )}
 
       {incoming.length > 0 && (
-        <div className="panel-section">
-          <div className="section-title">{t('friends.waitingOnYou', { n: incoming.length })}</div>
-          {incoming.map((l) => (
-            <Person link={l} key={l.id}>
-              <button type="button" className="frn-yes" onClick={() => accept(l.id)} aria-label={t('friends.accept')}>
-                <CheckIcon size={13} /> {t('friends.accept')}
-              </button>
-              <button type="button" className="frn-no" onClick={() => drop(l.id)} aria-label={t('friends.decline')} title={t('friends.decline')}>
-                <CloseIcon size={13} />
-              </button>
-            </Person>
-          ))}
-        </div>
+        <Band id="frn-in-h" title={t('friends.waitingOnYou', { n: incoming.length })}>
+          <div className="frn-list">
+            {incoming.map((l) => (
+              <Person link={l} key={l.id}>
+                <Button variant="primary" size="sm" className="frn-yes" iconStart={<CheckIcon size={16} />} onClick={() => accept(l.id)}>
+                  {t('friends.accept')}
+                </Button>
+                <IconButton className="frn-no" label={t('friends.decline')} onClick={() => drop(l.id)}>
+                  <CloseIcon size={16} />
+                </IconButton>
+              </Person>
+            ))}
+          </div>
+        </Band>
       )}
 
       {invites.length > 0 && (
-        <div className="panel-section">
-          <div className="section-title">{t('coplan.invitesTitle', { n: invites.length })}</div>
-          {invites.map((iv) => {
-            const who = iv.ownerName || `@${iv.ownerHandle}`;
-            const where = fmtWhere(iv.cities);
-            return (
-              <div className="frn-row" key={iv.tripPlanId}>
-                <span className="frn-face" aria-hidden="true"><RouteIcon size={15} /></span>
-                <span className="frn-who">
-                  <b>{iv.label || where}</b>
-                  <span className="frn-fact">{t('coplan.askedBy', { who })}</span>
-                </span>
-                <span className="frn-acts">
-                  <button
-                    type="button"
-                    className="frn-yes"
-                    onClick={() => takeInvite(iv.tripPlanId)}
-                  >
-                    <CheckIcon size={13} /> {t('coplan.join')}
-                  </button>
-                  <button
-                    type="button"
-                    className="frn-no"
-                    onClick={() => refuseInvite(iv.tripPlanId)}
-                    aria-label={t('friends.decline')}
-                    title={t('friends.decline')}
-                  >
-                    <CloseIcon size={13} />
-                  </button>
-                </span>
-              </div>
-            );
-          })}
-          <p className="account-section-hint">{t('coplan.whatYouGet')}</p>
-        </div>
+        <Band id="frn-co-h" title={t('coplan.invitesTitle', { n: invites.length })}>
+          <div className="frn-list">
+            {invites.map((iv) => {
+              const who = iv.ownerName || `@${iv.ownerHandle}`;
+              const where = fmtWhere(iv.cities);
+              return (
+                <div className="frn-row" key={iv.tripPlanId}>
+                  <span className="frn-face frn-face-md frn-face-trip" aria-hidden="true"><RouteIcon size={16} /></span>
+                  <span className="frn-who">
+                    <b>{iv.label || where}</b>
+                    <span className="frn-fact">{t('coplan.askedBy', { who })}</span>
+                  </span>
+                  <span className="frn-acts">
+                    {/* One primary per view: with a friend request waiting too,
+                        that request keeps it and joining is secondary. */}
+                    <Button
+                      variant={incoming.length ? 'secondary' : 'primary'}
+                      size="sm"
+                      className="frn-yes"
+                      iconStart={<CheckIcon size={16} />}
+                      onClick={() => takeInvite(iv.tripPlanId)}
+                    >
+                      {t('coplan.join')}
+                    </Button>
+                    <IconButton className="frn-no" label={t('friends.decline')} onClick={() => refuseInvite(iv.tripPlanId)}>
+                      <CloseIcon size={16} />
+                    </IconButton>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <p className="frn-hint">{t('coplan.whatYouGet')}</p>
+        </Band>
       )}
 
       {outgoing.length > 0 && (
-        <div className="panel-section">
-          <div className="section-title">{t('friends.waitingOnThem', { n: outgoing.length })}</div>
-          {outgoing.map((l) => (
-            <Person link={l} key={l.id} fact={t('friends.factAsked')}>
-              <button type="button" className="frn-no frn-text" onClick={() => drop(l.id)}>
-                {t('friends.cancel')}
-              </button>
-            </Person>
-          ))}
-        </div>
+        <Band id="frn-out-h" title={t('friends.waitingOnThem', { n: outgoing.length })}>
+          <div className="frn-list">
+            {outgoing.map((l) => (
+              <Person link={l} key={l.id} fact={t('friends.factAsked')}>
+                <Button variant="quiet" size="sm" className="frn-no frn-text" onClick={() => drop(l.id)}>
+                  {t('friends.cancel')}
+                </Button>
+              </Person>
+            ))}
+          </div>
+        </Band>
       )}
 
-      <div className="panel-section">
-        <div className="frn-head">
-          <span className="section-title">{t('friends.yours', { n: friends.length })}</span>
-          <button
-            type="button"
+      {/* The plans come before the people (T466): the page is about where
+          your friends are going, and the people are its index. */}
+      {friends.length > 0 && (
+        <Band id="frn-trips-h" title={t('friends.theirTrips')} count={shelf.length || null}>
+          {shelf.length === 0 ? (
+            /* An empty state is an invitation, not an apology: it names the
+               space and hands over the action that fills it. The action is
+               yours to take, because the only half of this you control is
+               showing a trip of your own. */
+            <div className="frn-empty-act">
+              <p>{t('friends.emptyTrips')}</p>
+              {onOpenSaved && (
+                <Button className="frn-empty-btn" onClick={onOpenSaved}>
+                  {t('friends.showATrip')}
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="frn-list frn-shelf">
+              {shelf.map((ft) => {
+                const showing = openTrip === ft.tripPlanId;
+                const who = ft.ownerName || `@${ft.ownerHandle}`;
+                const when = fmtWindow(ft.startDate, ft.endDate, lang, t('friends.dateJoin'));
+                const moved = since(ft.updatedAt, lang);
+                return (
+                  <div className={`frn-trip${showing ? ' is-open' : ''}`} key={ft.tripPlanId}>
+                    <button
+                      type="button"
+                      className={`frn-trip-row${showing ? ' on' : ''}`}
+                      onClick={() => setOpenTrip(showing ? '' : ft.tripPlanId)}
+                      aria-expanded={showing}
+                    >
+                      <TripThumb trip={ft} destinations={destinations} />
+                      <span className="frn-trip-meta">
+                        <b>
+                          {ft.label || (ft.cities || []).join(', ')}
+                          {ft.isNew && <span className="frn-trip-new">{t('friends.newMark')}</span>}
+                        </b>
+                        <span className="frn-trip-who">
+                          <Face name={who} emoji={ft.ownerEmoji} size="sm" />
+                          {t('friends.byWhom', { who })}
+                          {moved && <span className="frn-trip-when">{moved}</span>}
+                        </span>
+                        {when && <span className="frn-trip-dates">{when}</span>}
+                      </span>
+                      {(ft.countries || []).length > 0 && (
+                        <CountryFlagStack countries={ft.countries} size={14} />
+                      )}
+                      <ChevronDownIcon size={16} className="frn-trip-chev" />
+                    </button>
+                    {showing && <FriendTripPanel planId={ft.tripPlanId} destinations={destinations} />}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Band>
+      )}
+
+      <Band
+        id="frn-yours-h"
+        title={t('friends.yours', { n: friends.length })}
+        action={(
+          <IconButton
             className={`frn-about-btn${aboutOpen ? ' on' : ''}`}
-            onClick={() => setAboutOpen((v) => !v)}
+            label={t('friends.aboutTitle')}
+            pressed={aboutOpen}
             aria-expanded={aboutOpen}
-            aria-label={t('friends.aboutTitle')}
-            title={t('friends.aboutTitle')}
+            onClick={() => setAboutOpen((v) => !v)}
           >
-            <InfoIcon size={14} />
-          </button>
-        </div>
+            <InfoIcon size={16} />
+          </IconButton>
+        )}
+      >
         {aboutOpen && (
           <div className="frn-about">
             <p>{t('friends.noneYet')}</p>
@@ -401,7 +530,7 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
             of its own: adding somebody is a thing you do TO this list, and a
             page with fewer bands has a clearer order. */}
         <form className="frn-find" onSubmit={search}>
-          <div className="acct-handle-row">
+          <label className="acct-handle-row">
             <span className="acct-handle-at" aria-hidden="true">@</span>
             <input
               type="text"
@@ -413,17 +542,17 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
               placeholder={t('friends.handlePlaceholder')}
               aria-label={t('friends.addTitle')}
             />
-          </div>
-          <button type="submit" className="auth-submit auth-submit-quiet" disabled={searching || !query}>
-            {searching ? t('account.pleaseWait') : t('friends.look')}
-          </button>
+          </label>
+          <Button type="submit" variant="secondary" className="frn-look" loading={searching} disabled={!query}>
+            {t('friends.look')}
+          </Button>
         </form>
         {found && (
           <div className="frn-found">
             <Person link={found}>
-              <button type="button" className="frn-yes" onClick={ask}>
-                <PlusIcon size={13} /> {t('friends.ask')}
-              </button>
+              <Button variant="secondary" size="sm" className="frn-yes" iconStart={<PlusIcon size={16} />} onClick={ask}>
+                {t('friends.ask')}
+              </Button>
             </Person>
           </div>
         )}
@@ -435,71 +564,17 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
         ) : friends.length === 0 ? (
           <p className="frn-empty">{t('friends.emptyPeople')}</p>
         ) : (
-          friends.map((l) => (
-            <Person link={l} key={l.id} fact={factFor(l)}>
-              <button type="button" className="frn-no frn-text" onClick={() => drop(l.id)}>
-                {t('friends.remove')}
-              </button>
-            </Person>
-          ))
-        )}
-      </div>
-
-      {friends.length > 0 && (
-        <div className="panel-section">
-          <div className="section-title">
-            {t('friends.theirTrips')}
-            {shelf.length > 0 && <span className="frn-count">({shelf.length})</span>}
+          <div className="frn-list">
+            {friends.map((l) => (
+              <Person link={l} key={l.id} fact={factFor(l)}>
+                <Button variant="quiet" size="sm" className="frn-no frn-text" onClick={() => drop(l.id)}>
+                  {t('friends.remove')}
+                </Button>
+              </Person>
+            ))}
           </div>
-          {shelf.length === 0 ? (
-            /* An empty state is an invitation, not an apology: it names the
-               space and hands over the action that fills it. The action is
-               yours to take, because the only half of this you control is
-               showing a trip of your own. */
-            <div className="frn-empty-act">
-              <p>{t('friends.emptyTrips')}</p>
-              {onOpenSaved && (
-                <button type="button" className="frn-empty-btn" onClick={onOpenSaved}>
-                  {t('friends.showATrip')}
-                </button>
-              )}
-            </div>
-          ) : (
-            shelf.map((ft) => {
-              const showing = openTrip === ft.tripPlanId;
-              const who = ft.ownerName || `@${ft.ownerHandle}`;
-              const when = fmtWindow(ft.startDate, ft.endDate, lang, t('friends.dateJoin'));
-              const moved = since(ft.updatedAt, lang);
-              return (
-                <div className="frn-trip" key={ft.tripPlanId}>
-                  <button
-                    type="button"
-                    className={`frn-trip-row${showing ? ' on' : ''}`}
-                    onClick={() => setOpenTrip(showing ? '' : ft.tripPlanId)}
-                    aria-expanded={showing}
-                  >
-                    <span className="frn-trip-meta">
-                      <b>
-                        {ft.label || (ft.cities || []).join(', ')}
-                        {ft.isNew && <span className="frn-trip-new">{t('friends.newMark')}</span>}
-                      </b>
-                      <span className="frn-trip-who">
-                        {t('friends.byWhom', { who })}
-                        {moved && <span className="frn-trip-when">{moved}</span>}
-                      </span>
-                      {when && <span className="frn-trip-dates">{when}</span>}
-                    </span>
-                    {(ft.countries || []).length > 0 && (
-                      <CountryFlagStack countries={ft.countries} size={14} />
-                    )}
-                  </button>
-                  {showing && <FriendTripPanel planId={ft.tripPlanId} destinations={destinations} />}
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
+        )}
+      </Band>
 
       <FriendBadges userId={userId} friendCount={friends.length} refreshKey={badgeBump} />
 
@@ -511,6 +586,6 @@ export function FriendsSpoke({ userId, pendingHandle, destinations, onOpenSaved,
       <div className="panel-section frn-guides">
         <GuidesStrip onOpen={onOpenGuides} />
       </div>
-    </>
+    </div>
   );
 }

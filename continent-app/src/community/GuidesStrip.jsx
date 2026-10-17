@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { CompassIcon } from '../components/Icons.jsx';
+import { Button } from '../components/ui/index.js';
 import { listGuides } from './guides.js';
 
 /**
@@ -51,9 +52,9 @@ export function GuidesStrip({ onOpen }) {
             {t('guides.stripMany')}
           </>}
       </p>
-      <button type="button" className="gld-strip-btn" onClick={onOpen}>
+      <Button variant="quiet" size="sm" className="gld-strip-btn" onClick={onOpen}>
         {t('guides.seeAll')}
-      </button>
+      </Button>
     </div>
   );
 }

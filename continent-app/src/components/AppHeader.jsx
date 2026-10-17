@@ -7,7 +7,7 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { tabHref } from '../lib/urlState.js';
 import {
   PersonIcon, CompassIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon,
-  TicketIcon, FriendsIcon, HomeIcon,
+  TicketIcon, HomeIcon,
 } from './Icons.jsx';
 
 const NAV_ITEMS = [
@@ -117,7 +117,7 @@ function AccountButton({ user, onOpenAccount, accountOpen }) {
 // floats over the map itself, level with the Destinations pill (see
 // .map-toolrow in App), where it has room to state the question it is asking.
 export function AppHeader({
-  user, onOpenAccount, accountOpen, onSeePricing, onOpenFriends, friendsOpen,
+  user, onOpenAccount, accountOpen, onSeePricing,
   onBrandClick,
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
@@ -224,24 +224,8 @@ export function AppHeader({
             collapses when empty (:empty), so the planner tabs and
             Destinations leave no hole in the row. */}
         <div className="header-search-slot" id="header-search-slot" />
-        {/* Friends is its own door, not a row buried in the account panel:
-            seeing who you travel with is a place you go, not a setting you
-            change. It lives in this group rather than with the section tabs
-            because those collapse on a phone and this must not. */}
-        {onOpenFriends && user && (
-          <Button
-            variant="secondary"
-            size="sm"
-            className="shell-friends-btn"
-            iconStart={<FriendsIcon size={16} />}
-            onClick={onOpenFriends}
-            aria-pressed={!!friendsOpen}
-            aria-label={t('friends.title')}
-            title={t('friends.title')}
-          >
-            {t('friends.title')}
-          </Button>
-        )}
+        {/* Friends has one door (T466): the Friends row in Account. The
+            header button repeated it, the double door T461's critique named. */}
         <AccountButton user={user} onOpenAccount={onOpenAccount} accountOpen={accountOpen} />
       </div>
     </div>

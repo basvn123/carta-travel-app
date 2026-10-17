@@ -1,0 +1,388 @@
+/* ==========================================================================
+   Friends (T466): the Friends page (auth/FriendsSpoke.jsx), its milestones
+   (auth/FriendBadges.jsx), the faces (auth/FriendFaces.jsx) and the friends
+   line on a destination page (components/FriendsWentHere.jsx).
+
+   Rewritten on Lagoon roles only, replacing the T190-era rules that lived in
+   23-places-pages.css (pill buttons, a grey "ochre" seal, white text on the
+   light tan hover). The page reads like My trips and Account: a card for you
+   and your invite, a house label over each group, each group one bordered
+   card of hairline rows, faces as discs, the plans friends show you as photo
+   rows. Buttons are the kit's (03-button.css). Phone first at 360 px.
+   ========================================================================== */
+
+.frn-page { display: flex; flex-direction: column; }
+
+/* ── A group: the house label, then one card ──────────────────────────── */
+
+.frn-band { display: flex; flex-direction: column; gap: var(--space-3); }
+.frn-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: var(--tap);
+}
+.frn-h {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+/* A count beside a label is the kit's count chip. */
+.frn-count {
+  display: inline-flex;
+  align-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  justify-content: center;
+}
+.frn-hint { margin: 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
+
+/* ── You, and the invite ──────────────────────────────────────────────── */
+
+.frn-me {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.frn-me-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; flex: 1 1 220px; }
+.frn-me-text .frn-h { min-height: 0; }
+.frn-me-handle {
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.frn-me-line { font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
+.frn-me-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+@media (max-width: 480px) {
+  .frn-me-acts { width: 100%; }
+  .frn-me-acts .frn-me-share { flex: 1 1 auto; }
+}
+
+/* ── Lists: one bordered card, hairline rows ──────────────────────────── */
+
+.frn-list {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+}
+.frn-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: calc(var(--tap) + var(--space-5));
+  padding: var(--space-3) var(--space-4);
+}
+.frn-list > * + * { border-top: 1px solid var(--border-soft); }
+.frn-who { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.frn-who b {
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.frn-handle { font-size: var(--text-caption); color: var(--text-3); }
+/* What a person is DOING: a plan they showed you, never where they are. */
+.frn-fact { font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+.frn-fact-when { font-variant-numeric: tabular-nums; }
+.frn-acts { display: flex; align-items: center; gap: var(--space-1); flex: none; }
+
+/* ── Faces ────────────────────────────────────────────────────────────── */
+
+.frn-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1;
+}
+.frn-face-sm { width: 24px; height: 24px; font-size: var(--text-micro); }
+.frn-face-lg { width: 48px; height: 48px; font-size: var(--text-lead); }
+.frn-face.is-more { color: var(--text-2); }
+.frn-stack { display: inline-flex; align-items: center; flex: none; }
+.frn-stack .frn-face { box-sizing: content-box; border: 2px solid var(--surface); }
+.frn-stack .frn-face + .frn-face { margin-left: calc(var(--space-2) * -1); }
+
+/* ── Empty states: an invitation with its action ──────────────────────── */
+
+.frn-empty { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+.frn-empty-act {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+.frn-empty-act p { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+
+/* ── The plans friends show you ───────────────────────────────────────── */
+
+.frn-trip-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: calc(var(--tap) * 2);
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .frn-trip-row:hover { background: var(--surface-hover); }
+}
+.frn-trip-row:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.frn-trip-img {
+  display: block;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-control);
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+.frn-trip-row .hero-blank.frn-trip-img { display: inline-flex; align-items: center; justify-content: center; }
+.frn-trip-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.frn-trip-meta b {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+}
+.frn-trip-who {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}
+.frn-trip-when { font-variant-numeric: tabular-nums; color: var(--text-3); }
+.frn-trip-dates { font-size: var(--text-caption); font-variant-numeric: tabular-nums; color: var(--text-2); }
+/* New is a status: a --border outline chip (carta-design "Small text"). */
+.frn-trip-new {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.frn-trip-chev { flex: none; color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
+.frn-trip-row.on .frn-trip-chev { transform: rotate(180deg); }
+/* The trip opened under its row: the borrowed trip view, inside the card. */
+.frn-trip .ftrip { margin: 0; padding: 0 var(--space-4) var(--space-4); border: 0; border-radius: 0; background: transparent; }
+
+/* ── Adding somebody ──────────────────────────────────────────────────── */
+
+.frn-find { display: flex; align-items: stretch; gap: var(--space-2); }
+.frn-find .acct-handle-row {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+.frn-find .acct-handle-row:focus-within { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
+.frn-find .acct-handle-at { color: var(--text-3); font-size: var(--text-lead); }
+.frn-find .acct-handle-row input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+}
+/* The ring is drawn on the field's frame (:focus-within above). */
+.frn-find .acct-handle-row input:focus { outline: 2px solid transparent; }
+.frn-find .acct-handle-row input::placeholder { color: var(--text-3); }
+.frn-find .frn-look { flex: none; }
+.frn-found .frn-row {
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+}
+
+/* How friends work, folded behind the info control. */
+.frn-about {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+.frn-about p { margin: 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
+.frn-about p + p { margin-top: var(--space-2); }
+
+/* ── Milestones ───────────────────────────────────────────────────────── */
+
+.fbadge-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.fbadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  min-height: calc(var(--tap) * 2);
+  padding: var(--space-2) var(--space-1);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-3);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .fbadge:hover { background: var(--surface-hover); }
+}
+.fbadge.on { background: var(--surface-sunken); }
+.fbadge:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* Locked: a --text-3 outline. Earned: ink, a solid edge on white. */
+.fbadge-medal {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1.5px dashed var(--text-3);
+  border-radius: var(--radius-pill);
+  color: var(--text-3);
+}
+.fbadge-earned { color: var(--text); }
+.fbadge-earned .fbadge-medal {
+  border: 2px solid var(--text);
+  background: var(--surface);
+  color: var(--text);
+}
+.fbadge-name {
+  max-width: 100%;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.fbadge-count { font-size: var(--text-micro); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-2); }
+/* The one counted badge: a ring from 12 o'clock that fills to the count. */
+.fbadge-medal:has(.fbadge-ring) { border-color: transparent; }
+.fbadge-ring { position: absolute; inset: -2px; width: calc(100% + 4px); height: calc(100% + 4px); transform: rotate(-90deg); }
+.fbadge-ring circle { fill: none; stroke-width: 2; }
+.fbadge-ring-track { stroke: var(--border); }
+.fbadge-ring-fill { stroke: var(--text); stroke-linecap: round; transition: stroke-dashoffset var(--dur-3) var(--ease-out); }
+/* A badge earned during this visit settles in once. */
+.fbadge-fresh .fbadge-medal { animation: fbadge-arrive var(--dur-3) var(--ease-out); }
+@keyframes fbadge-arrive {
+  from { opacity: 0; transform: translateY(var(--space-1)); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fbadge-about {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.fbadge-about b { font-weight: 600; color: var(--text); }
+.fbadge-date { font-variant-numeric: tabular-nums; color: var(--text); }
+@media (max-width: 420px) {
+  .fbadge-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ── Friends on a destination page ────────────────────────────────────── */
+
+.frn-here {
+  margin-top: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+}
+/* Both rows are kit buttons (quiet, block) laid out as rows: ink, not the
+   quiet button's brown, and the row's hover rather than the brown tint. */
+.btn.frn-here-head,
+.btn.frn-here-trip {
+  justify-content: flex-start;
+  border: 0;
+  border-radius: 0;
+  color: var(--text);
+  font-weight: 400;
+  white-space: normal;
+  text-align: left;
+}
+.btn.frn-here-head { min-height: calc(var(--tap) + var(--space-2)); padding: var(--space-2) var(--space-4); }
+.btn.frn-here-head .btn-label { display: flex; align-items: center; gap: var(--space-3); width: 100%; }
+.btn.frn-here-trip { min-height: var(--tap); padding: var(--space-3) var(--space-4); }
+.btn.frn-here-trip .btn-label { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; }
+.btn.frn-here-trip.on { background: var(--surface-sunken); }
+@media (hover: hover) {
+  .btn.frn-here-head:hover, .btn.frn-here-trip:hover { background: var(--surface-hover); }
+}
+.frn-here-head:focus-visible, .frn-here-trip:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.frn-here-line { flex: 1; min-width: 0; font-size: var(--text-label); font-weight: 600; line-height: var(--leading-ui); }
+.frn-here-chev { flex: none; color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
+.frn-here-chev.is-open { transform: rotate(180deg); }
+.frn-here-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--border-soft); }
+.frn-here-list > li + li { border-top: 1px solid var(--border-soft); }
+.frn-here-trip b { font-size: var(--text-body); font-weight: 600; }
+.frn-here-meta { display: flex; flex-wrap: wrap; gap: 0 var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .frn-trip-row, .frn-trip-chev, .frn-here-chev, .fbadge, .fbadge-ring-fill { transition: none; }
+  .fbadge-fresh .fbadge-medal { animation: none; }
+}
