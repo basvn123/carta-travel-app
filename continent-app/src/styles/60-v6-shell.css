@@ -733,6 +733,24 @@ html [data-focus-quiet]:focus-visible { outline-color: transparent; }
 html.kbd-open { --bottom-nav-h: 0px; }
 html.kbd-open .bottom-nav { display: none; }
 
+/* Inside a planner's step flow on a phone (T468, roadmap 1.9): while a
+   wizard step with its Back and Next footer is the screen, the bar steps
+   aside as it does for the keyboard. The flow's fixed chrome was about 30
+   percent of an iPhone 13 and a Pixel 5 (header, the step's footer and the
+   86 px bar), against the quarter carta-design allows a multi-step flow;
+   without the bar it is under a fifth. The footer's Back, the header's brand
+   mark and the system back still leave the flow. A planner tab kept mounted
+   behind another tab (.tab-keep-hidden) or under My trips or Account
+   ([inert]) does not count, so the bar is back everywhere else. */
+@media (max-width: 768px) {
+  html:has(.guide-foot:not(.tab-keep-hidden .guide-foot):not([inert] .guide-foot)) { --bottom-nav-h: 0px; }
+  html:has(.guide-foot:not(.tab-keep-hidden .guide-foot):not([inert] .guide-foot)) .bottom-nav { display: none; }
+  html:has(.guide-foot:not(.tab-keep-hidden .guide-foot):not([inert] .guide-foot)) .trip-wizard-modal.wiz-inline .guide-foot,
+  html:has(.guide-foot:not(.tab-keep-hidden .guide-foot):not([inert] .guide-foot)) .guide-foot {
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 /* A short landscape screen (844 x 390 on a phone): one compact header row, so
    the header and the settings line leave the page more than a quarter of the
    height (row T381-d). The controls keep --tap through the rule above. */

@@ -2,6 +2,7 @@ import React, { useId, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { CheckIcon } from './Icons.jsx';
+import { Button } from './ui/index.js';
 import { REPORT_WHATS, sendReport } from '../lib/feedback.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@.]+$/;
@@ -32,6 +33,13 @@ export function ReportProblem({ item, priceOnly = false, className = '' }) {
   const [sent, setSent] = useState(false);
   const id = useId();
   const btnRef = useRef(null);
+  // With the keyboard up on a phone the sheet's lower half sits behind it
+  // (rows T386-d, T406-d): once a field has focus and the keyboard has had
+  // time to rise, Send is brought into the visible part of the sheet.
+  const sendRef = useRef(null);
+  const showSend = () => {
+    setTimeout(() => sendRef.current?.scrollIntoView?.({ block: 'nearest' }), 350);
+  };
   if (!item || item.id === undefined || item.id === null || item.id === '') return null;
 
   const close = () => {
@@ -102,6 +110,7 @@ export function ReportProblem({ item, priceOnly = false, className = '' }) {
                 maxLength={2000}
                 value={text}
                 onChange={(e) => { setText(e.target.value); setErr(''); }}
+                onFocus={showSend}
                 placeholder={t('report.placeholder')}
               />
               <label className="report-label" htmlFor={`${id}-mail`}>{t('report.emailLabel')}</label>
@@ -112,13 +121,14 @@ export function ReportProblem({ item, priceOnly = false, className = '' }) {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setErr(''); }}
+                onFocus={showSend}
                 aria-describedby={`${id}-note`}
               />
               <p className="report-note" id={`${id}-note`}>{t('report.emailNote')}</p>
               {err && <p className="report-err" role="alert">{err}</p>}
-              <button type="submit" className="report-send" disabled={busy || !text.trim()}>
+              <Button ref={sendRef} type="submit" variant="primary" block className="report-send" loading={busy} disabled={!text.trim()}>
                 {t('report.send')}
-              </button>
+              </Button>
             </form>
           )}
         </SheetShell>

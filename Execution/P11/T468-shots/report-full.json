@@ -1,0 +1,350 @@
+{
+  "iphone13": {
+    "destinations": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "destination": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "report-sheet": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 26,
+      "hscroll": false
+    },
+    "explore-list": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "plan-chooser": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 46,
+      "hscroll": false
+    },
+    "lifestyle": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 41,
+      "hscroll": false
+    },
+    "pass": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 29,
+      "hscroll": false
+    },
+    "account": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 13,
+      "hscroll": false
+    },
+    "mytrips": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 13,
+      "hscroll": false
+    },
+    "trip-planned": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 23,
+      "hscroll": false
+    },
+    "day": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 13,
+      "hscroll": false
+    },
+    "day-start": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "trip-booked": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "trip-who": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "trip-when": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "trip-where": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "trip-pick": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "trip-getting": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    },
+    "trip-finish": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 20,
+      "hscroll": false
+    }
+  },
+  "pixel5": {
+    "destinations": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "destination": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "report-sheet": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 24,
+      "hscroll": false
+    },
+    "explore-list": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "plan-chooser": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 42,
+      "hscroll": false
+    },
+    "lifestyle": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 38,
+      "hscroll": false
+    },
+    "pass": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 26,
+      "hscroll": false
+    },
+    "account": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 12,
+      "hscroll": false
+    },
+    "mytrips": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 12,
+      "hscroll": false
+    },
+    "trip-planned": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 21,
+      "hscroll": false
+    },
+    "day": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 12,
+      "hscroll": false
+    },
+    "day-start": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-booked": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-who": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-when": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-where": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-pick": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-getting": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-finish": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    }
+  },
+  "narrow": {
+    "destinations": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "destination": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "report-sheet": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 24,
+      "hscroll": false
+    },
+    "explore-list": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "plan-chooser": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 42,
+      "hscroll": false
+    },
+    "lifestyle": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 38,
+      "hscroll": false
+    },
+    "pass": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 27,
+      "hscroll": false
+    },
+    "account": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 12,
+      "hscroll": false
+    },
+    "mytrips": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 12,
+      "hscroll": false
+    },
+    "trip-planned": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 21,
+      "hscroll": false
+    },
+    "day": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 12,
+      "hscroll": false
+    },
+    "day-start": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-booked": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-who": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-when": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-where": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-pick": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-getting": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    },
+    "trip-finish": {
+      "hidden": [],
+      "clipped": [],
+      "chrome": 18,
+      "hscroll": false
+    }
+  }
+}

@@ -55,19 +55,8 @@
 .report-input:focus { outline: none; border-color: var(--accent); }
 .report-note { margin: 0; font-size: 12px; color: var(--ink-mute); }
 .report-err { margin: 0; font-size: 13px; color: var(--ink); border-left: 2px solid var(--accent); padding-left: var(--space-2); }
-.report-send {
-  min-height: var(--tap);
-  border: 0;
-  border-radius: 6px;
-  background: var(--accent);
-  color: var(--paper);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-}
-.report-send:disabled { opacity: 0.5; cursor: default; }
-.report-send:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* Send is the kit's primary (T468); the sheet's one action. */
+.report-send { margin-top: var(--space-1); }
 .report-done { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); font-size: 14px; color: var(--ink); }
 .report-done p { margin: 0; }
 
