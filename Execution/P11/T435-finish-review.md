@@ -148,6 +148,21 @@ T435-h, P3:
 
 T435-i, owner: map pins carry the tilde alone ("~€83"), a T441 decision that keeps the label compact (the tooltip and the accessible name carry "est."). The review read it as the retired bare tilde. The owner confirms the exception, or the pins move to `~€83 est.`.
 
+## Deploy
+
+Deployed to production on 2026-10-17, as the owner asked, and smoke-checked:
+
+- **Build.** `VITE_E2E_SEAMS= npm run build:pages` built the app with the dev seams empty. A grep found no paymock, savedmock, badgemock or coplanmock in the bundle, and the Pages limit check passed at 158 files.
+- **Deploy.** `npx wrangler pages deploy dist --project-name carta-app --branch main` deployed it as Pages `e0455baa`, carrying T464 to T468 and T435.
+- **Data.** The data shards (dist-data/ to R2) did not change in this session and were not pushed.
+- **Smoke check of carta-europetravel.com at 390 and 1440, no page errors:**
+  - the home page is 2,639 px tall on a phone and 4,120 px on desktop
+  - the traveller pills name their places ("Bovec ~€60 est. a day")
+  - the Home tab is in the header
+  - the phone peek is present
+
+Rollback of the deploy: redeploy the previous build, Pages `204d4932`, from the Cloudflare dashboard (Deployments, then "Rollback to this deployment"). Or revert the merges and redeploy.
+
 ## Rollback procedure
 
 In the app repo: `git revert -m 1 <merge of p11-finish-review>`. The six share captures come back with it. In the root repo, revert the report commit and the roadmap line.
