@@ -197,13 +197,15 @@ Kind: "renders" is JSX; "renders (js)" is JavaScript that builds markup, a PDF o
 
 ### landing (11 files)
 
-T462 replaced the landing page with the home page (`src/browse/home/`); the surface key stays `landing` and now covers the home page and the first-run receipt.
+T462 replaced the landing page with the home page (`src/browse/home/`), and T463 rebuilt it around real app captures; the surface key stays `landing` and now covers the home page and the first-run receipt.
 
 | File | Surface | Kind |
 |---|---|---|
 | `src/browse/home/HomePage.jsx` | landing | renders |
-| `src/browse/home/HomeDemo.jsx` | landing | renders |
-| `src/browse/home/useDemoClock.js` | landing | logic |
+| `src/browse/home/HomeStory.jsx` | landing | renders |
+| `src/browse/home/HomeTravellers.jsx` | landing | renders |
+| `src/browse/home/Devices.jsx` | landing | renders |
+| `src/browse/home/useHome.js` | landing | logic |
 | `src/components/FirstRunReceipt.jsx` | landing | renders |
 | `src/components/ReceiptCard.jsx` | landing | renders |
 | `src/styles/38-first-run.css` | landing | style |

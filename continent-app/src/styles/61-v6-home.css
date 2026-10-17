@@ -1,18 +1,21 @@
 /* ==========================================================================
-   The home page (T462; browse/home/HomePage.jsx and HomeDemo.jsx)
+   The home page (T463, after T462; browse/home/)
 
-   "Plan any trip in Europe, with honest prices": the promise, the real
-   search, the one primary and the live demo in the first screen; then the
-   six kinds of trip, what Carta does beside three real priced places, the
-   passes and the photo credits. Phone first at 360px; from 1024px the hero
-   splits into the words and the demo.
+   The trip told in the app's own screens: the promise, the real search and
+   the same priced trip on a laptop and a phone; five chapters beside one
+   pinned phone; six travellers on a photo rail; the passes as the app's pass
+   dialog shows them; the search again; the photo credits. Phone first at
+   360px; from 1024px the hero splits into words and devices and the phone
+   pins beside the chapters.
 
-   The home page is the one surface with the motion exception (DESIGN.md
-   "Home page exception", owner 2026-10-17): the demo loops and pauses
-   (data-paused freezes every animation inside it), and a label may sit on a
-   photograph inside a solid --surface pill. Nothing else here moves on its
-   own. Tokens only (no hex, no font name, no literal duration or easing);
-   every animation has its reduced-motion branch at the end of this file.
+   The devices hold real captures (public/home/<lang>/): a straight phone
+   (an ink bezel, a 9:41 bar, the island) and a light browser window, each
+   one object with one shadow and no border.
+
+   The home page exception (DESIGN.md, owner 2026-10-17): the pinned phone
+   crossfades to the chapter in view, and a price sits on a photo in a solid
+   --surface pill. Nothing loops and nothing moves with the scroll itself.
+   Tokens only; every transition has its reduced-motion branch at the end.
    ========================================================================== */
 
 /* ── The page ─────────────────────────────────────────────────────────── */
@@ -35,13 +38,13 @@
   padding: var(--space-4) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
 }
 
-.home-section { margin-top: var(--space-7); }
+.home-section { margin-top: calc(var(--space-8) + var(--space-5)); }
 .home-h2 {
-  margin: 0 0 var(--space-4);
-  font-size: var(--text-title);
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-headline);
   font-weight: 700;
   line-height: var(--leading-tight);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   color: var(--text);
 }
@@ -52,12 +55,15 @@
   line-height: var(--leading-tight);
   color: var(--text);
 }
+.home-glyph { display: inline-flex; flex: none; }
+.home-flip { transform: scaleX(-1); }
+.home-door { text-decoration: none; }
 
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
 .home-hero {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-7);
   align-items: center;
 }
 .home-hero-text { min-width: 0; }
@@ -79,7 +85,7 @@
 }
 
 /* The search: Explore's guided search, one tap away. Shaped like the field
-   it opens (the pill of gsearch-trigger), a link because it goes there. */
+   it opens, a link because it goes there. */
 .home-search {
   display: flex;
   align-items: center;
@@ -95,7 +101,6 @@
   text-decoration: none;
   transition: border-color var(--dur-1) var(--ease-out);
 }
-.home-glyph { display: inline-flex; flex: none; }
 .home-search .home-glyph { color: var(--text); }
 .home-search span { min-width: 0; overflow-wrap: anywhere; }
 @media (hover: hover) {
@@ -103,10 +108,8 @@
 }
 .home-search:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-/* Three questions that return places today: chips in the kit's filter
-   shape, links because each one opens Explore on its answer. On a phone
-   they run in one scrolling row, so the primary keeps its place in the
-   first screen in every language. */
+/* Three questions that return places today, in one scrolling row on a
+   phone so the primary keeps its place in the first screen. */
 .home-tries {
   display: flex;
   align-items: center;
@@ -117,7 +120,7 @@
 .home-tries-label {
   flex: none;
   font-size: var(--text-label);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 .home-tries-list {
   display: flex;
@@ -161,437 +164,140 @@
   text-decoration: none;
 }
 
-/* ── The live demo ────────────────────────────────────────────────────── */
-
-.home-demo {
-  min-width: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sheet);
-  background: var(--surface);
-  overflow: hidden;
-}
-.home-demo-still {
-  min-height: calc(var(--space-8) * 7);
-  border: 0;
-  background: var(--surface-sunken);
-}
-.home-demo-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 0 var(--space-1) 0 var(--space-3);
-  border-bottom: 1px solid var(--border-soft);
-}
-/* The pause control comes first in the DOM (it is the first stop inside
-   the carousel, WCAG 2.2.2) and sits at the end of the row. */
-.home-demo-pause { order: 2; flex: none; margin-left: auto; }
-.home-demo-tabs {
-  order: 1;
-  min-width: 0;
-  gap: var(--space-4);
-  border-bottom: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.home-demo-tabs::-webkit-scrollbar { display: none; }
-.home-demo-tabs .ui-tab { flex: none; min-width: var(--tap); justify-content: center; }
-.home-demo-foot { padding: 0 var(--space-2) var(--space-2) var(--space-1); }
-.home-demo-act { text-decoration: none; }
-.home-demo-progress {
-  height: 2px;
-  background: var(--border-soft);
-}
-.home-demo-progress-fill {
-  display: block;
-  height: 100%;
-  background: var(--select-border);
-  transform-origin: left center;
-  animation: home-progress var(--home-scene-ms) linear both;
-}
-
-.home-stage { position: relative; container-type: inline-size; }
-.home-scenes { display: grid; }
-/* Every scene sits in the same cell, so the stage is as tall as its tallest
-   scene and never jumps; the shown one fades in over the last. */
-.home-scene {
-  grid-area: 1 / 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-content: start;
-  min-width: 0;
-  padding: var(--space-4);
-  opacity: 0;
-  pointer-events: none;
-  /* The old scene leaves first, then the new one arrives: never two
-     scenes' words on top of each other. */
-  transition: opacity var(--dur-2) var(--ease-out);
-}
-.home-scene.is-on { opacity: 1; transition: opacity var(--dur-3) var(--ease-out) var(--dur-2); }
-.home-sc { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); align-content: start; min-width: 0; }
-
-/* Scene 1: the search */
-.home-field {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  color: var(--text);
-  font-size: var(--text-body);
-  font-weight: 500;
-}
-.home-field svg { flex: none; }
-.home-query { min-width: 0; }
-.home-results {
-  display: grid;
-  gap: var(--space-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.home-result {
-  display: grid;
-  grid-template-columns: calc(var(--space-8) + var(--space-2)) minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2);
-  border: 1px solid transparent;
-  border-radius: var(--radius-control);
-}
-.home-result-img,
-.home-result .hero-blank {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  height: auto;
-  border-radius: var(--radius-control);
-  object-fit: cover;
-  background: var(--surface-sunken);
-}
-.home-result-text { display: grid; min-width: 0; }
-.home-result-name {
-  font-size: var(--text-lead);
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-.home-result-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--text-label);
-  color: var(--text-3);
-}
-.home-result-figs {
-  display: grid;
-  justify-items: end;
-  gap: var(--space-1);
-}
-.home-dayfig {
-  font-size: var(--text-body);
-  font-weight: 600;
-  white-space: nowrap;
-}
-.home-dayfig-unit {
-  font-size: var(--text-label);
-  font-weight: 400;
-  color: var(--text-3);
-}
-
-/* Scene 2: the place */
-/* The place as Explore's tile shows it, drawn flat inside the demo's
-   sheet (no card inside the sheet): the photo, then its lines. */
-/* The photo beside its lines at every width, never wider than 240px: the
-   scene is no taller than the others, and the photo it reveals late is never
-   larger than the headline (so it never becomes the page's LCP). */
-.home-place {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-3);
-}
-@container (min-width: 440px) {
-  .home-place { grid-template-columns: 240px minmax(0, 1fr); gap: var(--space-4); }
-}
-.home-place-photo {
+/* The same trip on a laptop and a phone. The phone is pulled up over the
+   window's corner; both keep their box before the capture arrives. */
+.home-devices {
   position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
-.home-place-img,
-.home-place-photo .hero-blank {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.home-place-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); min-width: 0; }
-/* In a narrow column the longer languages wrap rather than overflow. */
-.home-place .home-dayfig { white-space: normal; }
-.home-place-best { flex-wrap: wrap; }
-.home-add { max-width: 100%; }
-.home-add .btn-label { white-space: normal; text-align: start; }
-.home-place-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-.home-place-name {
   min-width: 0;
-  font-size: var(--text-title);
-  font-weight: 700;
-  line-height: var(--leading-tight);
+  padding-bottom: var(--space-2);
 }
-.home-place-meta,
-.home-place-best {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--text-label);
-  color: var(--text-2);
-}
-.home-add { justify-self: start; pointer-events: none; }
-
-/* Scene 3: the trip */
-.home-sc-trip { gap: var(--space-4); }
-@container (min-width: 440px) {
-  .home-sc-trip { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; }
-}
-.home-route {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
-.home-leg {
-  fill: none;
-  stroke: var(--action);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-.home-stop circle { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
-.home-stop-n { font-size: var(--text-caption); font-weight: 700; fill: var(--text); }
-.home-stop-name { font-size: var(--text-label); font-weight: 600; fill: var(--text); }
-.home-stop { transform-box: fill-box; transform-origin: center; }
-.home-receipt { display: grid; min-width: 0; }
-.home-receipt-head {
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text-3);
-}
-.home-lines { margin: var(--space-1) 0 0; padding: 0; list-style: none; }
-.home-line {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-}
-.home-line-name { display: grid; min-width: 0; font-weight: 600; }
-.home-line-nights { font-size: var(--text-label); font-weight: 400; color: var(--text-3); }
-.home-line .money,
-.home-sum .money { white-space: nowrap; }
-.home-sum {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding-top: var(--space-2);
-  border-top: 2px solid var(--text);
-  font-size: var(--text-lead);
-  font-weight: 700;
+.home-devices-desk { display: none; }
+.home-devices-phone {
+  position: relative;
+  width: min(68%, 270px);
+  margin: 0 auto;
 }
 
-/* Scene 4: the share */
-.home-share { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: var(--space-2); }
-.home-share-head { font-size: var(--text-label); font-weight: 600; color: var(--text-3); }
-.home-share-trip {
-  overflow-wrap: anywhere;
-  font-size: var(--text-title);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-}
-.home-share-link {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken);
-}
-.home-share-url {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex: 1;
-  min-width: 0;
+/* ── The devices ──────────────────────────────────────────────────────── */
+
+.home-browser {
   overflow: hidden;
-  white-space: nowrap;
-  font-size: var(--text-label);
-  color: var(--text-2);
-}
-.home-share-url svg { flex: none; }
-.home-copy {
-  display: grid;
-  align-items: center;
-  min-height: calc(var(--tap) - var(--space-2));
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-card);
   background: var(--surface);
-  font-size: var(--text-label);
-  font-weight: 600;
+  box-shadow: var(--elev-3);
 }
-.home-copy-a,
-.home-copy-b { grid-area: 1 / 1; white-space: nowrap; }
-.home-copy-b {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  opacity: 0;
-}
-.home-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-pill);
-  background: var(--status-success);
-}
-.home-share-rows { margin: var(--space-2) 0 0; padding: 0; list-style: none; }
-.home-share-row {
+.home-browser-bar {
   display: flex;
-  min-width: 0;
   align-items: center;
   gap: var(--space-3);
-  min-height: var(--tap);
-  border-top: 1px solid var(--border-soft);
-  font-size: var(--text-body);
+  height: calc(var(--space-6) + var(--space-1));
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--surface);
 }
-.home-share-row svg { flex: none; color: var(--text-2); }
-.home-pass {
-  margin-left: auto;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
+.home-browser-dots { display: inline-flex; gap: var(--space-1); flex: none; }
+.home-browser-dots i {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--border);
+}
+.home-browser-url {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0 auto;
+  padding: var(--space-1) var(--space-4);
+  border-radius: var(--radius-pill);
   background: var(--surface-sunken);
   color: var(--text-2);
   font-size: var(--text-caption);
-  font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-browser-dots + .home-browser-url { transform: translateX(calc(var(--space-6) * -0.5)); }
+.home-browser-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1440 / 900;
+  background: var(--surface-page);
 }
 
-/* The demo's choreography: one authored moment per scene, replayed each
-   time a scene comes on. Delays are built from the motion tokens. */
-.is-on .home-word {
-  animation: home-in var(--dur-2) var(--ease-out) both;
-  animation-delay: calc(var(--dur-3) + var(--i) * var(--dur-1));
+.home-phone {
+  padding: var(--space-2);
+  border-radius: calc(var(--radius-sheet) * 2);
+  background: var(--text);
+  box-shadow: var(--elev-3);
 }
-.is-on .home-result {
-  animation: home-rise var(--dur-3) var(--ease-out) both;
-  animation-delay: calc(var(--dur-4) * 3 + var(--i) * var(--dur-1));
+.home-phone-glass {
+  overflow: hidden;
+  border-radius: calc(var(--radius-sheet) * 2 - var(--space-2));
+  background: var(--surface-page);
 }
-.is-on .home-result.is-picked {
-  animation:
-    home-rise var(--dur-3) var(--ease-out) both,
-    home-pick var(--dur-2) var(--ease-out) forwards;
-  animation-delay: calc(var(--dur-4) * 3), calc(var(--dur-4) * 7);
+.home-phone-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  aspect-ratio: 390 / 40;
+  padding: 0 9%;
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 600;
 }
-.is-on .home-place-price {
-  animation: home-rise var(--dur-3) var(--ease-out) both;
-  animation-delay: calc(var(--dur-4) * 2);
+.home-phone-time { position: relative; top: 1px; }
+.home-phone-island {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  width: 30%;
+  height: 62%;
+  border-radius: var(--radius-pill);
+  background: var(--text);
+  transform: translateX(-50%);
 }
-.is-on .home-place-best {
-  animation: home-in var(--dur-3) var(--ease-out) both;
-  animation-delay: calc(var(--dur-4) * 3);
+.home-phone-icons { width: 16%; height: auto; fill: currentColor; }
+.home-phone-icons .home-phone-cell { stroke: currentColor; stroke-width: 1; opacity: 0.45; }
+.home-phone-view {
+  position: relative;
+  aspect-ratio: 600 / 1298;
+  background: var(--surface-page);
 }
-.is-on .home-add {
-  animation: home-press var(--dur-3) var(--ease-out) forwards;
-  animation-delay: calc(var(--dur-4) * 7);
-}
-.is-on .home-leg {
-  animation: home-draw var(--dur-3) var(--ease-in-out) both;
-  animation-delay: calc(var(--dur-3) + var(--i) * var(--dur-3));
-}
-.is-on .home-stop {
-  animation: home-pop var(--dur-2) var(--ease-out) both;
-  animation-delay: calc(var(--dur-2) + var(--i) * var(--dur-3));
-}
-.is-on .home-line {
-  animation: home-rise var(--dur-3) var(--ease-out) both;
-  animation-delay: calc(var(--dur-4) * 2 + var(--i) * var(--dur-2));
-}
-.is-on .home-sum {
-  animation: home-rise var(--dur-3) var(--ease-out) both;
-  animation-delay: calc(var(--dur-4) * 4);
-}
-.is-on .home-copy-a {
-  animation: home-out var(--dur-2) var(--ease-out) forwards;
-  animation-delay: calc(var(--dur-4) * 3);
-}
-.is-on .home-copy-b {
-  animation: home-in var(--dur-2) var(--ease-out) forwards;
-  animation-delay: calc(var(--dur-4) * 3);
-}
-.is-on .home-share-row {
-  animation: home-rise var(--dur-3) var(--ease-out) both;
-  animation-delay: calc(var(--dur-4) * 5 + var(--i) * var(--dur-3));
+.home-phone-img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
 }
 
-/* Frozen (the pause button, off screen, a hidden tab, a page over it):
-   every animation in the demo holds its frame and resumes from there. The
-   progress line holds whenever the scenes stop turning, which also covers a
-   pointer or focus inside the stage (useDemoClock keeps the same time). */
-.home-demo[data-paused="true"] .home-scene *,
-.home-demo[data-turning="false"] .home-demo-progress-fill { animation-play-state: paused; }
+/* ── The story ────────────────────────────────────────────────────────── */
 
-@keyframes home-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes home-out { from { opacity: 1; } to { opacity: 0; } }
-@keyframes home-rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes home-pick {
-  to { background-color: var(--select-bg); border-color: var(--select-border); }
-}
-@keyframes home-press {
-  0% { transform: none; }
-  40% { transform: scale(0.98); opacity: 0.78; }
-  100% {
-    transform: none;
-    opacity: 1;
-    background-color: var(--select-bg);
-    border-color: var(--select-border);
-    color: var(--select-ink);
-  }
-}
-@keyframes home-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes home-pop {
-  from { opacity: 0; transform: scale(0.6); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes home-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.home-story-grid { display: grid; gap: var(--space-4); }
+.home-story-grid > * { min-width: 0; }
+.home-story-stage { display: none; }
 
-/* ── The kinds of trip ────────────────────────────────────────────────── */
+/* The chapter bar: the kit's tabs, scrolling sideways when the language
+   is long. */
+.home-story-bar {
+  gap: var(--space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.home-story-bar::-webkit-scrollbar { display: none; }
+.home-story-bar .ui-tab { flex: none; min-width: var(--tap); justify-content: center; }
+.home-story-bar.is-wide { display: none; }
 
-/* On a phone the six kinds run in one swiped row, a rail like Explore's
-   (one aspect, scroll-snap, the next tile showing at the edge); from 769px
-   they sit in a grid. */
-.home-kinds-grid {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 40%;
+/* Narrow: a snap track, one chapter a slide, the next one showing. */
+.home-chapters {
+  position: relative;
+  display: flex;
   gap: var(--space-3);
-  margin: 0 calc(-1 * var(--gutter));
+  margin: var(--space-4) calc(var(--gutter) * -1) 0;
   padding: 0 var(--gutter);
   list-style: none;
   overflow-x: auto;
@@ -599,137 +305,200 @@
   scroll-padding: 0 var(--gutter);
   scrollbar-width: none;
 }
-.home-kinds-grid::-webkit-scrollbar { display: none; }
-.home-kinds-grid li { scroll-snap-align: start; }
-.home-kind {
-  position: relative;
-  display: block;
-  border-radius: var(--radius-card);
-  overflow: hidden;
+.home-chapters::-webkit-scrollbar { display: none; }
+.home-chapters:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.home-chapter {
+  flex: 0 0 85%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  scroll-snap-align: start;
+}
+.home-chapter-phone {
+  width: min(64%, 230px);
+  margin: 0 auto;
+  box-shadow: var(--elev-2);
+}
+.home-chapter-text { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); min-width: 0; }
+.home-chapter-title { font-size: var(--text-title); }
+.home-chapter-body {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.home-chapter-text .home-door { margin-left: calc(var(--space-3) * -1); }
+
+.home-track-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+.home-track-pos {
+  min-width: 5em;
+  text-align: center;
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+
+/* ── The travellers ───────────────────────────────────────────────────── */
+
+.home-who-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.home-rail-arrows { display: none; gap: var(--space-1); flex: none; margin-bottom: var(--space-4); }
+@media (pointer: fine) {
+  .home-rail-arrows { display: flex; }
+}
+.home-who-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 78%;
+  gap: var(--space-4);
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 0 var(--gutter) var(--space-2);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 var(--gutter);
+  scrollbar-width: none;
+}
+.home-who-track::-webkit-scrollbar { display: none; }
+.home-who-track li { min-width: 0; scroll-snap-align: start; }
+.home-who-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
   color: var(--text);
   text-decoration: none;
+  border-radius: var(--radius-card);
 }
-.home-kind:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.home-kind-media {
+.home-who-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.home-who-media {
+  position: relative;
   display: block;
   aspect-ratio: 4 / 5;
+  margin-bottom: var(--space-2);
+  overflow: hidden;
+  border-radius: var(--radius-card);
   background: var(--surface-sunken);
 }
-.home-kind-img,
-.home-kind-media .hero-blank {
+.home-who-img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--dur-3) var(--ease-out);
 }
-@media (hover: hover) {
-  .home-kind:hover .home-kind-img { transform: scale(1.04); }
-}
-.home-kind-blank {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--text-2);
-}
-/* The home page exception: the kind's name on its photo, in a solid pill. */
-.home-kind-label {
+.home-who-price {
   position: absolute;
-  left: var(--space-2);
-  bottom: var(--space-2);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  max-width: calc(100% - var(--space-4));
-  min-height: calc(var(--tap) - var(--space-3));
-  padding: 0 var(--space-3);
+  left: var(--space-3);
+  bottom: var(--space-3);
+  max-width: calc(100% - var(--space-5));
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--surface);
   box-shadow: var(--elev-1);
+  color: var(--text);
   font-size: var(--text-label);
   font-weight: 600;
-  color: var(--text);
+  line-height: var(--leading-ui);
+  font-variant-numeric: tabular-nums;
 }
-.home-kind-label svg { flex: none; }
-
-/* ── What Carta does ───────────────────────────────────────────────────
-   Four rows with hairlines, never cards; two by two from 1024px. */
-
-.home-feat-list {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--border);
+.home-who-title { font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); }
+.home-who-body { font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+@media (hover: hover) {
+  .home-who-card:hover .home-who-title { text-decoration: underline; text-underline-offset: 3px; }
 }
-.home-feat {
-  display: grid;
-  grid-template-columns: var(--space-5) minmax(0, 1fr);
-  gap: var(--space-3);
-  padding: var(--space-3) 0 var(--space-2);
-  border-bottom: 1px solid var(--border);
-}
-.home-feat-icon { margin-top: 2px; color: var(--text); }
-.home-feat-text { min-width: 0; }
-.home-feat-body {
-  max-width: var(--measure);
-  margin: var(--space-1) 0 var(--space-1);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  color: var(--text-2);
-}
-.home-door { margin-left: calc(-1 * var(--space-3)); text-decoration: none; }
 
 /* ── The passes ───────────────────────────────────────────────────────── */
 
-.home-pass-grid {
+.home-plan-grid {
   display: grid;
   gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.home-pass-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  column-gap: var(--space-3);
-  row-gap: var(--space-1);
-  align-content: start;
-  padding: var(--space-3) var(--space-4);
+.home-plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  padding: var(--space-5);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--surface);
 }
-.home-pass-name { font-size: var(--text-lead); font-weight: 600; }
-.home-pass-note,
-.home-pass-blurb { grid-column: 1 / -1; }
-.home-pass-price {
-  font-size: var(--text-title);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-}
-.home-pass-note { font-size: var(--text-label); color: var(--text-3); }
-.home-pass-blurb {
-  margin: var(--space-1) 0 0;
+/* The recommended plan: a brown edge and its chip, the same ground. */
+.home-plan.is-featured { border: 2px solid var(--action); padding: calc(var(--space-5) - 1px); }
+.home-plan-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
+.home-plan-top .ui-chip { order: 2; }
+.home-plan-name { font-size: var(--text-lead); font-weight: 600; }
+.home-plan-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 var(--space-2); margin-top: var(--space-1); }
+.home-plan-fig { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); font-variant-numeric: tabular-nums; }
+.home-plan-per { font-size: var(--text-label); color: var(--text-2); }
+.home-plan-note { font-size: var(--text-label); color: var(--text-2); }
+.home-plan-blurb {
+  margin: var(--space-2) 0 0;
   font-size: var(--text-body);
   line-height: var(--leading-body);
-  color: var(--text-2);
+  color: var(--text);
 }
-.home-pass-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3) var(--space-5);
-  margin-top: var(--space-4);
-}
-.home-trade { margin: 0; font-size: var(--text-label); color: var(--text-3); }
 
-/* ── The photo credits ────────────────────────────────────────────────── */
+.home-pass-more {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+.home-adds ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 var(--space-5);
+  padding: 0;
+  list-style: none;
+}
+.home-adds li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+.home-adds li .home-glyph { margin-top: 3px; color: var(--text-2); }
+.home-promises {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border-soft);
+}
+.home-promises li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: calc(var(--tap) + var(--space-3));
+  border-bottom: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+.home-promises .home-glyph { color: var(--text-2); }
+
+/* ── The close ────────────────────────────────────────────────────────── */
+
+.home-close { max-width: 640px; }
+
+/* ── Credits ──────────────────────────────────────────────────────────── */
 
 .home-credits {
-  margin-top: var(--space-7);
+  margin-top: var(--space-8);
   padding-top: var(--space-2);
   border-top: 1px solid var(--border);
   font-size: var(--text-caption);
@@ -756,50 +525,88 @@
 
 /* ── Wider screens ────────────────────────────────────────────────────── */
 
+@media (min-width: 600px) {
+  .home-chapter { flex-basis: 60%; }
+  .home-who-track { grid-auto-columns: calc((100% - var(--space-4)) / 2.3); }
+}
+
 @media (min-width: 769px) {
   .home-wrap { padding-top: var(--space-6); }
-  .home-section { margin-top: var(--space-8); }
-  .home-h2 { font-size: var(--text-headline); }
   .home-title { font-size: var(--text-display); }
-  .home-sub { font-size: var(--text-lead); font-weight: 400; }
-  .home-tries { flex-wrap: wrap; }
-  .home-tries-list { flex-wrap: wrap; overflow: visible; }
   .home-cta { width: auto; }
-  .home-kinds-grid {
-    grid-auto-flow: row;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-  }
-  .home-kind-media { aspect-ratio: 4 / 3; }
-  .home-pass-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .home-pass-card { grid-template-columns: minmax(0, 1fr); padding: var(--space-4); }
-  .home-pass-card > * { grid-column: 1; }
-  .home-pass-price { font-size: var(--text-headline); }
-  .home-scene { padding: var(--space-5); }
-}
-@media (min-width: 1024px) {
-  .home-wrap { padding-top: var(--space-7); }
-  .home-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-6); }
-  .home-hero.is-solo { grid-template-columns: minmax(0, 1fr); }
-  .home-kinds-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .home-kind-media { aspect-ratio: 4 / 5; }
-  .home-feat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-7); }
-  .home-feat { padding: var(--space-4) 0 var(--space-3); }
-}
-@media (min-width: 1280px) {
-  .home-hero { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-7); }
+  .home-devices-desk { display: block; }
+  .home-devices-phone { width: 38%; max-width: 260px; margin: -30% var(--space-3) 0 auto; }
+  .home-tries { align-items: flex-start; }
+  .home-tries-label { line-height: calc(var(--tap) - var(--space-3)); }
+  .home-tries-list { flex-wrap: wrap; overflow: visible; }
+  .home-plan-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .home-chapter { flex-basis: 44%; }
+  .home-who-track { grid-auto-columns: calc((100% - var(--space-4) * 2) / 3.2); }
 }
 
-/* ── Reduced motion: nothing moves; the demo shows its finished frame ── */
+@media (min-width: 1024px) {
+  .home-wrap { padding-top: var(--space-8); padding-left: var(--space-6); padding-right: var(--space-6); }
+  .home-section { margin-top: calc(var(--space-8) * 2); }
+
+  .home-hero {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-8);
+  }
+  .home-devices { padding: 0 0 var(--space-6) var(--space-6); }
+  .home-devices-phone {
+    width: 29%;
+    max-width: 230px;
+    margin: -34% 0 0 calc(var(--space-6) * -1);
+  }
+
+  /* The story: chapters on the left, the pinned phone on the right. */
+  .home-story-grid {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: var(--space-8);
+    align-items: start;
+  }
+  .home-story-stage { display: block; order: 2; align-self: stretch; }
+  .home-story-pin {
+    position: sticky;
+    top: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .home-story-phone { width: min(340px, calc((100dvh - 210px) / 2.2)); }
+  .home-story-phone .home-phone-img {
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
+  .home-story-phone .home-phone-img.is-on { opacity: 1; }
+  .home-story-bar.is-wide { display: flex; }
+  .home-story-bar.is-narrow { display: none; }
+  .home-track-nav { display: none; }
+
+  .home-chapters {
+    display: block;
+    margin: 0;
+    padding: 18dvh 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .home-chapter {
+    min-height: 56dvh;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border-radius: 0;
+  }
+  .home-chapter-phone { display: none; }
+  .home-chapter-text { max-width: 30rem; gap: var(--space-3); }
+  .home-chapter-title { font-size: var(--text-headline); letter-spacing: -0.02em; text-wrap: balance; }
+  .home-chapter-body { font-size: var(--text-lead); }
+
+  .home-who-track { grid-auto-columns: calc((100% - var(--space-4) * 3) / 4); margin: 0; padding: 0 0 var(--space-2); scroll-padding: 0; }
+  .home-pass-more { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .home-search,
-  .home-try,
-  .home-kind-img,
-  .home-scene { transition: none; }
-  .home-scene *,
-  .home-demo-progress-fill { animation: none !important; }
-  .home-kind:hover .home-kind-img { transform: none; }
+  .home-search, .home-try, .home-story-phone .home-phone-img { transition: none; }
 }
