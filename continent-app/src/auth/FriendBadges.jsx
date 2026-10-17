@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  MedalIcon, PlusIcon, CompassIcon, LinkIcon, SparkIcon, FriendsIcon,
+  PlusIcon, CompassIcon, LinkIcon, SparkIcon, FriendsIcon,
 } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { BADGES, fetchAchievements } from './achievements.js';
@@ -9,8 +9,9 @@ import { BADGES, fetchAchievements } from './achievements.js';
  * FriendBadges, the milestone row at the foot of the friends spoke.
  *
  * Five medallions, one per milestone the database awards (migration 013).
- * An earned one takes the ochre seal treatment; a locked one sits as a muted
- * outline whose only job is to say, on a tap, exactly what would earn it. The
+ * An earned one is drawn in ink (carta-design "Small text": earned
+ * milestones are --text, locked ones a --text-3 outline); a locked one is a
+ * muted outline whose only job is to say, on a tap, exactly what would earn it. The
  * one counted badge wears a thin progress ring fed by the friend list the
  * spoke has already fetched, so drawing progress costs no query.
  *
@@ -91,9 +92,9 @@ export function FriendBadges({ userId, friendCount, refreshKey }) {
   const pickedAt = picked ? earned.get(picked.id) : null;
 
   return (
-    <div className="panel-section">
-      <div className="section-title section-title-iconed">
-        <MedalIcon size={12} /> {t('friends.badgesTitle')}
+    <section className="panel-section frn-band" aria-labelledby="frn-badges-h">
+      <div className="frn-head">
+        <h3 className="frn-h" id="frn-badges-h">{t('friends.badgesTitle')}</h3>
       </div>
       <div className="fbadge-row">
         {BADGES.map((b) => {
@@ -138,6 +139,6 @@ export function FriendBadges({ userId, friendCount, refreshKey }) {
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

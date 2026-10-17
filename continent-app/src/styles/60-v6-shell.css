@@ -800,29 +800,17 @@ html.kbd-open .bottom-nav { display: none; }
    T426 (roadmap 1.2): the shell on the Lagoon kit
    -------------------------------------------------------------------------- */
 
-/* Get a pass and Friends are kit secondaries (Button size sm). Their old
-   classes (.header-pricing-btn, .header-friends-btn) still carry rules in
-   16-auth, 23, 24 and 26; those rules no longer match anything and go with
-   their own surfaces. */
-.shell-pass-btn,
-.shell-friends-btn { white-space: nowrap; }
+/* Get a pass is a kit secondary (Button size sm). Its old class
+   (.header-pricing-btn) still carries rules in 16-auth, 23, 24 and 26; those
+   rules no longer match anything and go with their own surfaces. The header
+   Friends button went in T466: Friends has one door, in Account. */
+.shell-pass-btn { white-space: nowrap; }
 @media (pointer: coarse) {
-  .shell-pass-btn,
-  .shell-friends-btn { min-width: var(--tap); }
-}
-.shell-friends-btn[aria-pressed="true"] {
-  border-color: var(--select-border);
-  background: var(--select-bg);
-  color: var(--select-ink);
+  .shell-pass-btn { min-width: var(--tap); }
 }
 /* The narrowest phones keep the glyph alone; the name stays in aria-label. */
 @media (max-width: 379px) {
   .shell-pass-btn .btn-label { display: none; }
-}
-/* On desktop Friends folds to its icon beside the avatar, as before. */
-@media (min-width: 769px) {
-  .shell-friends-btn { min-width: 32px; padding: 0 var(--space-2); }
-  .shell-friends-btn .btn-label { display: none; }
 }
 
 /* One gutter on every tab (T427): the header, the settings line and the

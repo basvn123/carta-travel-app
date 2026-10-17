@@ -226,47 +226,32 @@
 
 /* The door on Explore and at the foot of the friends page. One real count,
    one action, and it removes itself when there is nothing to open. */
+/* T466: on Lagoon roles, and its door is the kit's quiet button. */
 .gld-strip {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 0 0 14px;
-  padding: 11px 14px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 12px;
-  background: var(--bg-card);
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
 }
-.gld-strip-icon { display: inline-flex; flex: none; color: var(--ink-mute); }
+.gld-strip-icon { display: inline-flex; flex: none; color: var(--text-2); }
 .gld-strip-text {
   flex: 1;
   min-width: 0;
   margin: 0;
-  font-size: 12.5px;
-  color: var(--ink-soft);
+  font-size: var(--text-label);
+  color: var(--text-2);
 }
 /* A count is a measured fact, so it is set like one. */
 .gld-strip-n {
-  font-family: var(--mono);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
 }
-.gld-strip-btn {
-  flex: none;
-  min-height: 32px;
-  padding: 6px 13px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: transparent;
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .gld-strip-btn:hover { border-color: var(--ink); color: var(--ink); }
-}
+.gld-strip-btn { flex: none; }
 .frn-guides { padding-top: 0; }
 
 /* The gallery. ONE column, and the card runs across rather than down.

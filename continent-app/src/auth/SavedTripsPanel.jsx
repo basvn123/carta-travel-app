@@ -23,6 +23,7 @@ import { TripSharePanel } from './TripSharePanel.jsx';
 import { ModerationNotice } from './ModerationNotice.jsx';
 import { fetchMyStatements, contestStatement, latestByPlan } from './moderation.js';
 import { fetchFriendLinks, listFriendTrips } from './friends.js';
+import { ownersOf } from './useFriendTrips.js';
 import { formatMoney } from '../lib/money.js';
 import { countryName } from '../lib/countryName.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -873,6 +874,7 @@ export function SavedTripsPanel({
               later={laterModels}
               dayPlans={dayModels}
               friendsShared={friendTrips.length}
+              friendFaces={ownersOf(friendTrips)}
               onOpenFriends={onOpenFriends}
               onPlanTrip={() => onGoToTab?.('trip')}
               onSignIn={onOpenAuth}

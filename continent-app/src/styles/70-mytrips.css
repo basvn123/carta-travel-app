@@ -77,18 +77,20 @@
 .mt-empty-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .mt-empty-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .mt-signin-line { margin: 0; }
-.mt-friends-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
+/* T466: the faces of the friends showing you a trip, the count, and the
+   way to Friends; the whole line is one kit button laid out as a row. */
+.btn.mt-friends-line {
+  justify-content: flex-start;
+  min-height: calc(var(--tap) + var(--space-2));
   padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
-  border: 1px solid var(--border-soft);
   border-radius: var(--radius-card);
-  background: var(--surface);
-  font-size: var(--text-body);
-  color: var(--text-2);
+  font-weight: 400;
+  white-space: normal;
+  text-align: left;
 }
+.btn.mt-friends-line .btn-label { display: flex; align-items: center; gap: var(--space-3); width: 100%; }
+.mt-friends-text { flex: 1; min-width: 0; }
+.mt-friends-open { display: inline-flex; align-items: center; gap: var(--space-1); flex: none; font-size: var(--text-label); font-weight: 600; color: var(--action); }
 
 /* ── The next trip: the focal card ── */
 .mt-next { display: flex; flex-direction: column; gap: var(--space-3); }

@@ -276,9 +276,6 @@
    and the three small controls on the Visited tab. */
 @media (pointer: coarse) {
   .account-back,
-.frn-me-copy,
-.frn-me-share,
-.frn-about-btn,
 .account-avatar-edit,
 .account-invite-btn,
 .admin-tone-opt,
@@ -291,9 +288,7 @@
 .account-panel input[type="text"],
 .account-panel input[type="email"],
 .account-panel input[type="password"] { min-height: var(--tap); }
-  .frn-about-btn,
-.pw-reveal { min-width: var(--tap); }
-  .frn-about-btn { width: var(--tap); height: var(--tap); }
+  .pw-reveal { min-width: var(--tap); }
   .pw-reveal { width: var(--tap); height: var(--tap); right: 0; }
   .auth-link,
   .account-panel .auth-link {

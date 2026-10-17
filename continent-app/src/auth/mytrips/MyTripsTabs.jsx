@@ -7,11 +7,12 @@ import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
 import { LoadingBlock, ErrorBlock } from '../../components/StateBlocks.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { DayPrice, SaveButton } from '../../browse/ExploreCards.jsx';
-import { ExpandIcon, ShrinkIcon, PlusIcon, RouteIcon, PencilIcon } from '../../components/Icons.jsx';
+import { ExpandIcon, ShrinkIcon, PlusIcon, RouteIcon, PencilIcon, ChevronRightIcon } from '../../components/Icons.jsx';
 import { FAV_KIND_LABEL } from '../../lib/favorites.js';
 import { countryName } from '../../lib/countryName.js';
 import { TripHeroCard, TripRow } from './TripCards.jsx';
 import { RecordMapDialog } from './parts.jsx';
+import { FaceStack } from '../FriendFaces.jsx';
 
 const FULL_PAD = { top: 84, left: 28, right: 28, bottom: 56 };
 const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
@@ -49,7 +50,7 @@ export function Empty({ title, action, secondary }) {
  */
 export function TripsTab({
   authed, configured, loading, error, onRetry, next, later, dayPlans,
-  friendsShared, onOpenFriends, onPlanTrip, onSignIn, todayIso,
+  friendsShared, friendFaces = [], onOpenFriends, onPlanTrip, onSignIn, todayIso,
 }) {
   const { t } = useI18n();
   const nothing = !next && !later.length && !dayPlans.length;
@@ -94,11 +95,14 @@ export function TripsTab({
           )}
         </>
       )}
+      {/* T466: the friends line is the faces of the friends showing you a
+          trip, then the count; the whole line opens Friends. */}
       {friendsShared > 0 && onOpenFriends && (
-        <div className="mt-friends-line">
-          <span>{t(friendsShared === 1 ? 'saved.friendsShared1' : 'saved.friendsSharedN', { n: friendsShared })}</span>
-          <Button variant="quiet" size="sm" onClick={onOpenFriends}>{t('saved.friendsOpen')}</Button>
-        </div>
+        <Button variant="secondary" block className="mt-friends-line" onClick={onOpenFriends}>
+          <FaceStack people={friendFaces} />
+          <span className="mt-friends-text">{t(friendsShared === 1 ? 'saved.friendsShared1' : 'saved.friendsSharedN', { n: friendsShared })}</span>
+          <span className="mt-friends-open">{t('saved.friendsOpen')}<ChevronRightIcon size={16} /></span>
+        </Button>
       )}
     </>
   );
