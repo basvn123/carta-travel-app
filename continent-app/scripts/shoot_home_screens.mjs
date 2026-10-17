@@ -18,7 +18,10 @@
  * sees; the seam only exists on the dev server.
  *
  * Output: public/home/<lang>/<screen>.webp, phone screens 600 px wide
- * (2x of the frame on desktop), the laptop screen 1440 px wide.
+ * (2x of the frame on desktop), the laptop screen 1728 px wide: the app at
+ * 1152x720 and 1.5x, so the hero's large laptop shows it close to its own
+ * size and its figures stay readable (T464; at 1440 px the hero drew it at
+ * 0.41 and 14 px text came out under 6 px).
  *
  * It does not start a server. Serve the app first (never `npm run dev`,
  * whose predev rewrites public/):
@@ -72,7 +75,7 @@ const SEED = [
 async function context(browser, lang, phone) {
   const ctx = await browser.newContext(phone
     ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, locale: lang }
-    : { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1, locale: lang });
+    : { viewport: { width: 1152, height: 720 }, deviceScaleFactor: 1.5, locale: lang });
   await ctx.addInitScript(({ seed, lang: l }) => {
     try {
       for (const [k, v] of seed) localStorage.setItem(k, v);
@@ -183,7 +186,7 @@ let failed = 0;
 for (const lang of LANGS) {
   const dir = join(OUT, lang);
   mkdirSync(dir, { recursive: true });
-  for (const [set, phone, width] of [[PHONE, true, 600], [DESK, false, 1440]]) {
+  for (const [set, phone, width] of [[PHONE, true, 600], [DESK, false, 1728]]) {
     for (const [name, go] of Object.entries(set)) {
       if (ONLY && !ONLY.has(name)) continue;
       const ctx = await context(browser, lang, phone);

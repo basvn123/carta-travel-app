@@ -19,6 +19,7 @@ import {
   MIN_PASSWORD_LENGTH, passwordStrength, checkPasswordRules, passwordMeetsRules,
 } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
+import { tabHref } from '../lib/urlState.js';
 import {
   fetchMyProfile, saveMyProfile, normaliseHandle, handleProblem, HANDLE_MAX,
 } from './profiles.js';
@@ -220,7 +221,7 @@ function MenuRow({ icon, label, value, onClick }) {
 
 export function AccountPanel({
   onClose, onOpenAuth, initialView = 'home', onViewChange, pendingFriendHandle,
-  destinations, onOpenAdmin, onOpenLifestyle, onOpenSaved, onOpenGuides,
+  destinations, onOpenAdmin, onOpenLifestyle, onOpenSaved, onOpenGuides, onOpenHome,
   stayTier = 'home', lifestyle,
 }) {
   const {
@@ -827,6 +828,24 @@ export function AccountPanel({
               up, read the fine print. All three work signed out. */}
           <div className="panel-section account-help-section">
             <div className="account-menu account-menu-help">
+              {/* The way back to the home page on a phone (T464, owner
+                  2026-10-17), where the brand mark is small and the bottom
+                  nav has no room. A link, because it changes the view. */}
+              {onOpenHome && (
+                <a
+                  className="account-nav account-menu-row"
+                  href={tabHref('home')}
+                  onClick={(e) => {
+                    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    onOpenHome();
+                  }}
+                >
+                  <span className="account-menu-icon"><HomeIcon size={17} /></span>
+                  <span className="account-menu-label">{t('nav.home')}</span>
+                  <ChevronRightIcon size={16} className="account-menu-chev" />
+                </a>
+              )}
               {/* The staff door. Rendered only for accounts on the admin
                   list; for everybody else this row does not exist. It opens
                   the back office as a full page rather than a spoke: a table

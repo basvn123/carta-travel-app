@@ -1,11 +1,11 @@
-// The home page (T463, after T462: src/lib/homeDemo.js and the home.* strings).
+// The home page (T463, T464: src/lib/homeDemo.js and the home.* strings).
 // Run: npm test (continent-app/)
 //
-// The fixtures pin the story's shape, the travellers' "from" price (the
-// cheapest member of a search, never an average, and nothing over fewer than
-// three places) and the photo sources. The real-data tests run when
-// public/app_data.json and public/search/guided.json are present: every
-// question and every traveller must return places today, and every captured
+// The fixtures pin the story's shape, each traveller's card (one real place:
+// its photo, its name and its own day price) and the photo credits. The
+// real-data tests run when public/app_data.json and public/search/guided.json
+// are present: every question must return places today, every traveller's
+// place must be one its own search returns, with a price, and every captured
 // screen must exist in all six languages. The catalog tests keep the six
 // languages in step and the copy inside the house rules.
 import test from 'node:test';
@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
   CHAPTERS, PERSONAS, SEARCHES, SCREEN_LANGS, STORY_PLACE, STORY_SEARCH,
-  cheapestDay, exploreHref, isEstimate, personaPhotos, screenSrc, searchRows,
+  exploreHref, isEstimate, personaPhotos, placeDay, screenSrc, searchRows,
 } from '../src/lib/homeDemo.js';
 import { computeCosts } from '../src/lib/costIndex.js';
 import { matchAll } from '../src/lib/guidedSearch.js';
@@ -62,35 +62,19 @@ test('the estimate mark is the card predicate', () => {
   assert.equal(isEstimate(null), false);
 });
 
-// A guided fixture: four lakes (one unpriced) and one place that is no lake.
-const GUIDED = {
-  d: {
-    a: { v: { lake: 80 }, a: ['alps'] },
-    b: { v: { lake: 90 }, a: ['alps'] },
-    c: { v: { lake: 70 }, a: ['alps'] },
-    d: { v: { lake: 95 }, a: ['alps'] },
-    e: { v: { lake: 20 }, a: ['alps'] },
-  },
-};
 const ROWS = [
   { id: 'a', iso2: 'SI', cost: cost(77, 'country') },
   { id: 'b', iso2: 'AT', cost: cost(61) },
-  { id: 'c', iso2: 'IT', cost: cost(107) },
   { id: 'd', iso2: 'CH', cost: null },
-  { id: 'e', iso2: 'CH', cost: cost(12) },
 ];
 
-test("a traveller's price is the cheapest priced place its search returns", () => {
-  const best = cheapestDay(ROWS, { vibe: 'lake', area: 'alps' }, GUIDED);
-  assert.equal(best.dayEur, 61, 'the cheapest match, not the cheapest place (e is no lake)');
-  assert.equal(isEstimate(best), false);
-});
-
-test('a "from" over fewer than three places, or before the data arrives, is left out', () => {
-  assert.equal(cheapestDay(ROWS.slice(0, 2), { vibe: 'lake' }, GUIDED), null);
-  assert.equal(cheapestDay(ROWS, { vibe: 'lake' }, null), null);
-  assert.equal(cheapestDay([], { vibe: 'lake' }, GUIDED), null);
-  assert.equal(cheapestDay(ROWS, null, GUIDED), null);
+test("a traveller's price is its own place's day, and nothing when that place has none", () => {
+  assert.equal(placeDay(ROWS, 'b').dayEur, 61);
+  assert.equal(isEstimate(placeDay(ROWS, 'a')), true, 'a country-level stand-in keeps its mark');
+  assert.equal(placeDay(ROWS, 'd'), null, 'an unpriced place shows no figure');
+  assert.equal(placeDay(ROWS, 'zz'), null);
+  assert.equal(placeDay([], 'a'), null);
+  assert.equal(placeDay(ROWS, null), null);
 });
 
 test("the catalogue rows carry each place's day cost, and nothing without indices", () => {
@@ -100,20 +84,24 @@ test("the catalogue rows carry each place's day cost, and nothing without indice
   assert.deepEqual(searchRows({ a: {} }, null), []);
 });
 
-test('six travellers, hikers first, each with a door and a photo source', () => {
+test('six travellers, hikers first, each with a door, a place and a credited photo', () => {
   assert.equal(PERSONAS.length, 6);
   assert.equal(PERSONAS[0].id, 'hike');
   for (const p of PERSONAS) {
     assert.ok(p.facets || p.kind, `${p.id} opens something`);
     // A card with no question has no price to show, so it names what it opens.
     if (!p.facets) assert.ok(p.pill && en[p.pill], `${p.id} has a pill label`);
-    assert.ok(p.photo.style || p.photo.dest, `${p.id} has a photo source`);
+    // A card with a question is one real place: its name sits on its photo.
+    if (p.facets) assert.ok(p.place && p.label, `${p.id} names its place`);
+    const ph = p.photo;
+    assert.match(ph.url, /^https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/thumb\/.+\/1280px-/, `${p.id} is a Commons thumb`);
+    assert.ok(ph.author && ph.licence && ph.credit, `${p.id} carries its credit`);
+    assert.match(ph.page, /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/, `${p.id} links its file page`);
+    assert.ok(Math.min(ph.w, ph.h) >= 2000, `${p.id} original is large enough for a sharp 4:5 crop`);
   }
-  const photos = personaPhotos({ types: [{ slug: 'hiking', hero: { url: 'u', author: 'A', licence: 'CC0' } }] }, {});
-  assert.equal(photos.hike.url, 'u');
-  assert.equal(photos.hike.licence, 'CC0');
-  assert.equal(photos.city, null);
+  const photos = personaPhotos();
   assert.deepEqual(Object.keys(photos), PERSONAS.map((p) => p.id));
+  assert.equal(photos.city.credit, 'Ribeira, Porto');
 });
 
 const appData = join(pub, 'app_data.json');
@@ -143,19 +131,17 @@ test("the story's place is in the catalogue and its search finds it", { skip: !h
   assert.ok(matchAll(row, STORY_SEARCH, { guided, nearRow: null }), 'the lakes question returns Lake Bled');
 });
 
-test('every traveller with a question shows a price from the shipped catalogue', { skip: !haveData }, () => {
-  const { guided, rows } = shipped();
+test("every traveller's place is in the catalogue, priced, and returned by its own search", { skip: !haveData }, () => {
+  // The photo, the name and the figure are one place, and the card opens a
+  // search that lists it: a card can never show a place its door leaves out.
+  const { data, guided, rows } = shipped();
   for (const p of PERSONAS.filter((x) => x.facets)) {
-    const best = cheapestDay(rows, p.facets, guided);
-    assert.ok(best && best.dayEur > 0, `${p.id} has a "from" price`);
+    assert.ok(data.destinations[p.place], `${p.id}: ${p.place} is in the catalogue`);
+    const day = placeDay(rows, p.place);
+    assert.ok(day && day.dayEur > 0, `${p.id}: ${p.place} has a day price`);
+    const row = rows.find((r) => r.id === p.place);
+    assert.ok(matchAll(row, p.facets, { guided, nearRow: null }), `${p.id}: its search returns ${p.place}`);
   }
-});
-
-test('every traveller has its photo in the shipped data', { skip: !existsSync(journeysFile) || !existsSync(appData) }, () => {
-  const ix = JSON.parse(readFileSync(journeysFile, 'utf8'));
-  const data = JSON.parse(readFileSync(appData, 'utf8'));
-  const photos = personaPhotos(ix, data.destinations);
-  for (const p of PERSONAS) assert.ok(photos[p.id]?.url, `${p.id} has a photo`);
 });
 
 test('every captured screen exists in all six languages', () => {

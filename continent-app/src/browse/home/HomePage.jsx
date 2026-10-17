@@ -8,8 +8,7 @@ import { usePaywall } from '../../hooks/usePaywall.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { TIERS, TIER_ORDER, formatPrice, isRecurring, monthlyCents } from '../../lib/pricing.js';
 import { tabHref } from '../../lib/urlState.js';
-import { loadGuidedData, useGuidedData } from '../../lib/guidedData.js';
-import { loadJourneyIndex } from '../../lib/journeys.js';
+import { loadGuidedData } from '../../lib/guidedData.js';
 import {
   SEARCHES, STORY_PLACE, STORY_SEARCH, exploreHref, personaPhotos, screenSrc, searchRows,
 } from '../../lib/homeDemo.js';
@@ -186,17 +185,9 @@ export function HomePage({
   const { t, lang } = useI18n();
   const destinations = data?.destinations || null;
 
-  const [journeys, setJourneys] = React.useState(null);
-  React.useEffect(() => {
-    let live = true;
-    loadJourneyIndex().then((ix) => { if (live) setJourneys(ix); }).catch(() => {});
-    return () => { live = false; };
-  }, []);
-  const photos = React.useMemo(() => personaPhotos(journeys, destinations), [journeys, destinations]);
+  const photos = React.useMemo(() => personaPhotos(), []);
 
-  // The travellers' prices read the guided search over the catalogue; the
-  // data loads once the page is idle, and it is Explore's next need anyway.
-  const guided = useGuidedData();
+  // Each traveller's card prices its own place from the catalogue rows.
   const rows = React.useMemo(() => searchRows(destinations, indices), [destinations, indices]);
 
   // Photos wait for an idle browser: the headline comes first on a slow line.
@@ -212,9 +203,9 @@ export function HomePage({
     place: place
       ? { label: place.city, href: `#dest=${encodeURIComponent(STORY_PLACE)}`, go: () => onOpenDest(STORY_PLACE) }
       : { label: t('nav.places'), href: tabHref('places'), go: () => onNavigate('places') },
-    trip: { label: t('nav.trip'), href: tabHref('trip'), go: () => onNavigate('trip') },
-    day: { label: t('nav.day'), href: tabHref('day'), go: () => onNavigate('day') },
-    trips: { label: t('nav.myTrips'), go: onOpenTrips },
+    trip: { label: t('home.ctaPlan'), href: tabHref('trip'), go: () => onNavigate('trip') },
+    day: { label: t('home.ctaDay'), href: tabHref('day'), go: () => onNavigate('day') },
+    trips: { label: t('home.ctaTrips'), go: onOpenTrips },
   };
 
   const Title = pageOver ? 'div' : 'h1';
@@ -233,21 +224,24 @@ export function HomePage({
           </div>
           <div className="home-devices">
             <BrowserFrame className="home-devices-desk" src={screenSrc(lang, 'desk')} alt={t('home.deskAlt')} eager />
-            <PhoneFrame className="home-devices-phone" src={screenSrc(lang, 'trip')} alt={t('home.tripAlt')} eager />
+            <div className="home-peek home-devices-peek">
+              <PhoneFrame className="home-devices-phone" src={screenSrc(lang, 'trip')} alt={t('home.tripAlt')} eager />
+            </div>
           </div>
         </section>
 
-        <HomeStory lang={lang} acts={acts} door={door} />
-
+        {/* Photography and real prices come second (T464): on a phone the
+            first photograph used to wait 2.8 screens behind the story. */}
         <HomeTravellers
           rows={rows}
-          guided={guided}
-          photos={journeys ? photos : null}
+          photos={photos}
           ready={ready}
           door={door}
           onSearch={onSearch}
           onCategory={onCategory}
         />
+
+        <HomeStory lang={lang} acts={acts} door={door} />
 
         <HomePasses t={t} />
 
@@ -256,7 +250,7 @@ export function HomePage({
           <SearchBlock t={t} onSearch={onSearch} idPrefix="home-close" />
         </section>
 
-        <HomeCredits t={t} photos={journeys ? photos : null} />
+        <HomeCredits t={t} photos={photos} />
       </div>
     </div>
   );

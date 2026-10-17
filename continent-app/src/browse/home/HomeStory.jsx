@@ -147,7 +147,6 @@ export function HomeStory({ lang, acts, door }) {
                   className={`home-chapter${i === active ? ' is-on' : ''}`}
                   aria-current={i === active ? 'step' : undefined}
                 >
-                  <PhoneFrame className="home-chapter-phone" src={screenSrc(lang, c.id)} alt={t(c.alt)} />
                   <div className="home-chapter-text">
                     <h3 className="home-h3 home-chapter-title">{t(c.title)}</h3>
                     <p className="home-chapter-body">{t(c.body)}</p>
@@ -162,6 +161,11 @@ export function HomeStory({ lang, acts, door }) {
                         {act.label}
                       </Button>
                     ))}
+                  </div>
+                  {/* Narrow: the screen rises from the card's lower edge, its
+                      top half (where each capture carries its point) in view. */}
+                  <div className="home-peek home-chapter-peek" style={{ '--peek-y': c.peek || '0%' }}>
+                    <PhoneFrame className="home-chapter-phone" src={screenSrc(lang, c.id)} alt={t(c.alt)} />
                   </div>
                 </li>
               );
