@@ -379,11 +379,13 @@ page scrolled, nothing loops, the bottom nav never moves. Every transition has a
 The home page exception (T462, owner 2026-10-17: "allow it"). The home page (`src/browse/home/`) is the
 one surface that persuades rather than operates, so it may move on its own, within these limits:
 
-- **One looping product demo** that plays by itself. Its pause control comes first in its tab order and
-  stays visible (WCAG 2.2.2). It pauses while it is off screen, while the browser tab is hidden, while a
-  page or panel sits over the home page, and while the pointer or focus is inside it. Under
-  `prefers-reduced-motion: reduce` it never plays: it shows its final frame, and its scene tabs swap
-  frames at once.
+- **One pinned product phone that follows the story** (T463, owner 2026-10-17, replacing T462's
+  looping demo). From 1024 px a phone frame holding real captures of the app stays pinned beside the
+  chapters and crossfades its screen (opacity, `--dur-3`) to the chapter in the middle of the page; the
+  chapter bar follows. Nothing scrubs, slides or scales with the scroll and nothing plays by itself;
+  below 1024 px the chapters are a snap track with Previous and Next. Under
+  `prefers-reduced-motion: reduce` the screen swaps at once. Show the app as real captures from
+  `scripts/shoot_home_screens.mjs` in a straight phone or browser frame, never a coded copy of it.
 - **Sections may reveal once** as they enter the viewport (opacity and a short translate at `--dur-3`,
   `--ease-out`), only below the first viewport, and only after the observer exists, so content is never
   hidden without it. Under reduced motion nothing reveals; it is simply there.
@@ -451,7 +453,7 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 Also never: catalogue counts, method sentences or coverage notes as page furniture; a filled rating chip;
 a row of three stat counters as a hero device, numbered markers `01 / 02 / 03` unless order
 matters, scroll-triggered counters, marquees, parallax or fade-in on every section. (The home page may
-reveal its sections once and run one looping demo with a pause control; see Interaction and motion.)
+reveal its sections once and pin one product phone that follows its chapters; see Interaction and motion.)
 
 ## Quality floor
 

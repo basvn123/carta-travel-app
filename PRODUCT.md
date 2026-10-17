@@ -102,7 +102,7 @@ Colour is never the only carrier. The place-kind hierarchy is an ink-density ram
 
 Focus and keyboard. Visible focus on every interactive element, `outline: 2px solid var(--accent)` with an offset. `outline: none` is never shipped without a replacement. Every `aria-modal` overlay traps focus through `useFocusTrap` and closes on Escape. Navigation is a real `<a>`, actions are a real `<button>`, headings stay in order with one `h1` per view.
 
-Motion. `prefers-reduced-motion: reduce` is honoured on every transition and animation. Animations stay under 300 ms and animate only transform and opacity. No parallax, no scroll-triggered counters, no bounce. The home page carries the one owner-approved exception (T462, DESIGN.md "Home page exception"): a looping product demo with a pause control and sections that reveal once; reduced motion stops both.
+Motion. `prefers-reduced-motion: reduce` is honoured on every transition and animation. Animations stay under 300 ms and animate only transform and opacity. No parallax, no scroll-triggered counters, no bounce. The home page carries the one owner-approved exception (T462, T463, DESIGN.md "Home page exception"): a pinned phone of real app captures whose screen crossfades to the chapter in view, and sections that may reveal once; reduced motion swaps and shows at once.
 
 Language. The document language follows the chosen UI language. Strings are never built by concatenation; they go through the i18n keys so word order survives translation.
 
