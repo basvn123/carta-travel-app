@@ -20,9 +20,10 @@
   max-height: min(90vh, 760px);
   display: flex;
   flex-direction: column;
-  background: var(--paper);
-  border-radius: 18px;
-  box-shadow: var(--shadow-2);
+  /* T435: the dialog family (white, --radius-sheet, --elev-3). */
+  background: var(--surface);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-3);
   overflow: hidden;
 }
 .guide-head {

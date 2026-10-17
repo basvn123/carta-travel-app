@@ -6158,6 +6158,7 @@ export const nl = {
   "dayws.kitTitle": "Je dagkit",
   "dayws.kitTips": "Lokale tips",
   "dayws.kitTipsN": "{n} tips",
+  "dayws.kitTips1": "1 tip",
   "dayws.kitNotes": "Notities en bestanden",
   "dayws.kitImport": "Ideeën importeren",
   "dayws.kitImportSub": "Uit een link of bestand",

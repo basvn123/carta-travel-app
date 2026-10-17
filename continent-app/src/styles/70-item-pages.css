@@ -884,7 +884,7 @@
 .btn.wclimb-col.is-on { background: var(--select-bg); color: var(--select-ink); }
 .wclimb-fig { font-size: var(--text-caption); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .wclimb-bar-box { position: relative; display: flex; align-items: flex-end; width: 100%; height: 96px; justify-content: center; }
-.wclimb-bar { display: block; width: min(28px, 60%); border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--text-3); transition: height var(--dur-3) var(--ease-out); }
+.wclimb-bar { display: block; width: min(28px, 60%); height: 100%; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--text-3); transform-origin: bottom; transition: transform var(--dur-3) var(--ease-out); }
 .wclimb-col.is-on .wclimb-bar { background: var(--action); }
 .wclimb-col.is-rest .wclimb-bar { background: var(--border); }
 .wclimb-day { font-size: var(--text-caption); font-weight: 600; color: inherit; white-space: nowrap; }

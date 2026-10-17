@@ -174,7 +174,8 @@ function LegRow({ leg, from, to, t, lang, stepFree }) {
           {leg.status === 'long' && (
             <>
               {' '}<span className="dayt-flag">{t(stepFree ? 'dayws.legLongStepFree' : 'dayws.legLong')}</span>
-              {transitUrl && <a className="dayt-link" href={transitUrl} target="_blank" rel="noreferrer">{t('dayws.legTransit')}</a>}
+              {/* T435 (T463-c): a space between the flag's sentence and the link. */}
+              {transitUrl && <>{' '}<a className="dayt-link" href={transitUrl} target="_blank" rel="noreferrer">{t('dayws.legTransit')}</a></>}
             </>
           )}
           {!leg.checked && <span className="dayt-est"> {t('money.est')}</span>}

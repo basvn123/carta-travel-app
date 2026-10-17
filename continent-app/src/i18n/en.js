@@ -6772,6 +6772,7 @@ export const en = {
   "dayws.kitTitle": "Your day kit",
   "dayws.kitTips": "Local tips",
   "dayws.kitTipsN": "{n} tips",
+  "dayws.kitTips1": "1 tip",
   "dayws.kitNotes": "Notes and files",
   "dayws.kitImport": "Import ideas",
   "dayws.kitImportSub": "From a link or a file",

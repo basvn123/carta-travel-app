@@ -75,7 +75,7 @@ export function WeekClimb({ days, sel = null, onPick }) {
                 {v != null && v > 0 ? (byUp ? `+${fmt(v)}` : fmt(v)) : ''}
               </span>
               <span className="wclimb-bar-box" aria-hidden="true">
-                <span className="wclimb-bar" style={{ height: `${v ? Math.max(4, (v / max) * 100) : 2}%` }} />
+                <span className="wclimb-bar" style={{ transform: `scaleY(${v ? Math.max(4, (v / max) * 100) / 100 : 0.02})` }} />
               </span>
               <span className="wclimb-day" aria-hidden="true">{t('journey.dayShort', { n: d.day })}</span>
               <span className="wclimb-sub" aria-hidden="true">{d.km != null && byUp && !d.travel ? `${fmt(d.km)} km` : ''}</span>

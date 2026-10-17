@@ -521,6 +521,7 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
                 className="pasttrip-input is-plain"
                 value={member.name}
                 placeholder={t('saved.pastCompanionPlaceholder')}
+                aria-label={t('saved.pastCompanionPlaceholder')}
                 onChange={(e) => patchMem({
                   crew: (mem.crew || []).map((c, j) => (j === i ? { ...c, name: e.target.value } : c)),
                 })}

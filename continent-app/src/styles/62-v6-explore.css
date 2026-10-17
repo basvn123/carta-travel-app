@@ -283,15 +283,18 @@
 /* --- 3. Spend the accent once (carta-design "Accent marks") -------------- */
 /* Active filter chips: paper, ink, a rule border (house "Filter chips"). */
 .explore-shell .xchip {
-  border: 1px solid var(--rule);
-  background: var(--paper-dim);
-  color: var(--ink);
+  /* T435: the same removable chip as on Destinations. */
+  min-height: 32px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-label);
   transition: border-color var(--dur-1) var(--ease-out);
   animation: xchip-in var(--dur-1) var(--ease-out);
 }
-.explore-shell .xchip-clear { background: transparent; color: var(--ink-soft); animation: none; }
+.explore-shell .xchip-clear { background: transparent; color: var(--text-2); animation: none; }
 @media (hover: hover) {
-  .explore-shell .xchip:hover { border-color: var(--ink-soft); }
+  .explore-shell .xchip:hover { border-color: var(--neutral-300); }
 }
 @keyframes xchip-in {
   from { opacity: 0; transform: scale(0.9); }
