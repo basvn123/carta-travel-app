@@ -6,7 +6,8 @@
 //
 // Runs at a 390x844 phone viewport. Asserts: no Home tab in the bar, the four
 // labelled items render whole (no ellipsis truncation), the plus chooser
-// opens/closes, both chooser options land on their planner tab, My trips opens
+// opens/closes as two drawn tiles side by side with no sub line (T465), both
+// chooser options land on their planner tab, My trips opens
 // the saved panel and Account opens the account panel. Screenshots to
 // shots/bottom-nav-*.png.
 
@@ -56,6 +57,16 @@ check('chooser opens', await page.locator('.plan-chooser').isVisible());
 const chooserTitles = await page.locator('.plan-chooser-title').allInnerTexts();
 check('chooser lists both planners', /trip planner/i.test(chooserTitles[0] || '')
   && /day planner/i.test(chooserTitles[1] || ''), chooserTitles.join(' | '));
+// T465: two tiles side by side, each a drawing and a name, no sub line, and
+// both well over the touch floor.
+const tiles = await page.evaluate(() => [...document.querySelectorAll('.plan-chooser-item')].map((e) => {
+  const r = e.getBoundingClientRect();
+  return { top: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height), art: !!e.querySelector('svg.plan-chooser-art'), text: e.innerText.trim() };
+}));
+check('chooser is two tiles side by side, drawn, with no sub line',
+  tiles.length === 2 && tiles[0].top === tiles[1].top && tiles.every((x) => x.art && x.w >= 44 && x.h >= 88 && !/\n/.test(x.text))
+  && (await page.locator('.plan-chooser-sub').count()) === 0, JSON.stringify(tiles));
+check('chooser names itself', /plan something new/i.test(await page.locator('#plan-chooser-h').innerText().catch(() => '')));
 await page.screenshot({ path: 'shots/bottom-nav-chooser.png' });
 
 await page.locator('.plan-chooser-item').first().click();

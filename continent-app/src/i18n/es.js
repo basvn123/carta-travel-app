@@ -76,8 +76,6 @@ export const es = {
   'nav.explore': 'Explorar',
   'nav.myTrips': 'Mis viajes',
   'nav.planNew': 'Planear algo nuevo',
-  'nav.planTripSub': 'Ruta, paradas y costes en destino',
-  'nav.planDaySub': 'Hora a hora en una ciudad',
   // Shell V3 (T381): landmarks, the settings line, nav badges
   'nav.sectionsLabel': 'Secciones',
   'nav.planInProgress': 'Hay un plan de viaje en curso',
