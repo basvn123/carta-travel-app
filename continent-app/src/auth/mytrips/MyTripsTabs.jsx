@@ -298,8 +298,27 @@ export function VisitedTab({
       )}
 
       {hasAny && (
+        /* T467: the countries lead, large, with their flags (the hero
+           figure the travel-stats apps open on); cities, trips and nights
+           follow as the supporting three. No denominator: a share of
+           Carta's catalogue would be a catalogue count, and a share of
+           "Europe" depends on whose list of countries it is. */
         <dl className="mt-band" aria-label={t('saved.recordFacts')}>
-          <div className="mt-band-cell"><dt>{t('saved.factCountries')}</dt><dd>{record.countries.length}</dd></div>
+          <div className="mt-band-cell mt-band-hero">
+            <dt>{t('saved.factCountries')}</dt>
+            <dd>
+              <span className="mt-band-fig">{record.countries.length}</span>
+              {record.countries.length > 0 && (
+                <span
+                  className="mt-band-flags"
+                  aria-hidden="true"
+                  data-more={record.countries.length > 8 ? `+${record.countries.length - 8}` : undefined}
+                >
+                  {record.countries.slice(0, 8).map((c) => <CountryFlag key={c} country={c} size={18} />)}
+                </span>
+              )}
+            </dd>
+          </div>
           <div className="mt-band-cell"><dt>{t('saved.factCities')}</dt><dd>{record.cities.length}</dd></div>
           <div className="mt-band-cell"><dt>{t('saved.factTrips')}</dt><dd>{record.trips}</dd></div>
           <div className="mt-band-cell"><dt>{t('saved.factNights')}</dt><dd>{record.nights}</dd></div>

@@ -1627,3 +1627,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T466-c | T466 | T189-b is half done: the Friends page shows state.friendsFailed with a retry; ReadyTripsStep and the wizard failure states remain | next task | open | |
 | T466-d | T466 | The Alongside your friends ledger is still not on the Friends page (it needs the record counts only SavedTripsPanel computes); T390-f stays open for it | next task | open | |
 | T466-e | T466 | Owner to see the new Friends page, the destination page friends line and the My trips faces line on a real phone and confirm the direction | user | open | |
+| T467-a | T467 | Owner to confirm the My trips Visited band (countries as the hero with flags, then cities, trips, nights) on a real phone | user | open | |
+| T467-b | T467 | Owner call: fold the Countries section under the Visited band into the band itself, now that the band shows the flags | user | open | |

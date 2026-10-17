@@ -272,7 +272,7 @@
 /* The figures the record adds up to: one band, label over value. */
 .mt-band {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
   margin: 0;
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-card);
@@ -287,6 +287,18 @@
   font-weight: 600;
   color: var(--text);
   font-variant-numeric: tabular-nums;
+}
+/* T467: the countries cell is the band's hero: the figure large and the
+   flags beside it, the rest of the list behind a "+n". */
+.mt-band-hero dd { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
+.mt-band-fig { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); }
+.mt-band-flags { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-1); }
+.mt-band-flags[data-more]::after {
+  content: attr(data-more);
+  margin-left: var(--space-1);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-2);
 }
 
 .mt-flags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
@@ -447,8 +459,15 @@
 @media (max-width: 768px) {
   .mytrips .saved-panel-header { padding: var(--space-3) var(--gutter) 0; }
   .mt-tiles.is-top .ui-tile { min-height: 64px; }
+  /* The hero takes the whole first row, the three figures share the next:
+     no label is squeezed at 360 px, even "Nächte unterwegs". */
+  .mt-band { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mt-band-hero { grid-column: 1 / -1; border-bottom: 1px solid var(--border-soft); }
+  .mt-band-hero + .mt-band-cell { border-left: 0; }
   .mt-band-cell { padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3); }
+  .mt-band-hero { padding: var(--space-3); }
   .mt-band dd { font-size: var(--text-lead); }
+  .mt-band-hero .mt-band-fig { font-size: var(--text-headline); }
   .mt-hero-actions .btn { flex: 1 1 auto; }
   .mt-hero-actions .btn-primary { flex-basis: 100%; }
   .mt-hero-media { aspect-ratio: 2 / 1; }
