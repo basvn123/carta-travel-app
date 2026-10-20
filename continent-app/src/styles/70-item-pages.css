@@ -181,15 +181,21 @@
    side column inside the 1180 px reading cap. */
 
 .ipage { background: var(--surface-page); }
-.ipage .tpage-bar.ipage-bar {
+/* The one page bar (PageBar.jsx, T474): every full-screen page wears it, so
+   it is not scoped to .ipage. */
+.tpage-bar.ipage-bar {
+  flex: none;
+  /* content-box: the notch inset adds to the 52 px bar instead of eating it
+     (an installed app on a notched phone had a few pixels left). */
+  box-sizing: content-box;
   gap: var(--space-1);
-  padding: env(safe-area-inset-top, 0px) var(--space-2) 0;
+  padding: env(safe-area-inset-top, 0px) max(var(--space-2), env(safe-area-inset-right, 0px)) 0 max(var(--space-2), env(safe-area-inset-left, 0px));
   background: var(--surface);
   border-bottom: 1px solid var(--border-soft);
 }
-.ipage .ipage-back { padding-inline: var(--space-2); color: var(--text); }
-.ipage .ipage-back .btn-label { color: var(--text); }
-.ipage .ipage-bar-title {
+.ipage-bar .ipage-back { padding-inline: var(--space-2); color: var(--text); }
+.ipage-bar .ipage-back .btn-label { color: var(--text); }
+.ipage-bar .ipage-bar-title {
   flex: 1 1 auto;
   min-width: 0;
   font-size: var(--text-lead);
@@ -201,10 +207,10 @@
   opacity: 0;
   transition: opacity var(--dur-2) var(--ease-out);
 }
-.ipage .ipage-bar-title.on { opacity: 1; }
+.ipage-bar .ipage-bar-title.on { opacity: 1; }
 .ipage-bar-acts { display: flex; align-items: center; gap: 0; margin-left: auto; }
 @media (prefers-reduced-motion: reduce) {
-  .ipage .ipage-bar-title { transition: none; }
+  .ipage-bar .ipage-bar-title { transition: none; }
 }
 
 .ipage .ipage-wrap {
@@ -802,26 +808,35 @@
 .tprice-none { margin: 0; color: var(--text-2); }
 .tprice-row.is-split { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .tprice-label { display: block; font-size: var(--text-label); font-weight: 500; color: var(--text); }
-.tprice-range-input {
-  display: block;
-  width: calc(100% - 100% / var(--n) + 18px);
-  height: var(--tap);
-  margin: var(--space-1) 0 0 calc(100% / (2 * var(--n)) - 9px);
-  accent-color: var(--action);
-  cursor: pointer;
+/* The one Lifestyle control (carta-design "Lifestyle control", T474): a row
+   that names the traveller's Lifestyle, label over value like a settings
+   part, and opens the panel; under it, one sentence with the trip's range. */
+.tprice-ls { display: grid; gap: var(--space-2); }
+.tprice-ls-btn.btn {
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  white-space: normal;
 }
-@media (pointer: fine) { .tprice-range-input { height: 32px; } }
-.tprice-range-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.tprice-stops {
-  display: grid;
-  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
-  gap: var(--space-1);
+.tprice-ls-btn .btn-label { display: grid; gap: 2px; flex: 1 1 auto; min-width: 0; }
+.tprice-ls-label { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
+.tprice-ls-value {
+  overflow: hidden;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tprice-ls-btn .btn-icon { color: var(--text-2); }
+.tprice-ls-say {
+  margin: 0;
   font-size: var(--text-caption);
-  line-height: var(--leading-ui);
-  color: var(--text-3);
+  line-height: var(--leading-body);
+  color: var(--text-2);
 }
-.tprice-stop { text-align: center; overflow-wrap: break-word; hyphens: auto; }
-.tprice-stop.is-on { color: var(--select-ink); font-weight: 600; }
+.tprice-ls-say .money { color: var(--text); font-weight: 600; }
 .tprice-sum, .tprice-lines { display: grid; gap: 0; margin: 0; }
 .tprice-line {
   display: flex;
@@ -985,8 +1000,8 @@
 .tprice .iinc-row { border-bottom: 0; }
 /* The back control keeps its whole label (T431: "Beach weeks" was cut to
    "Beach w"); the bar title gives way instead. */
-.ipage .tpage-bar .ipage-back { flex: none; max-width: 60%; }
-.ipage .tpage-bar .ipage-back .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ipage-bar .ipage-back { flex: none; max-width: 60%; }
+.ipage-bar .ipage-back .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tgo-note { color: var(--text-2); }
 .itrack-pos { white-space: nowrap; }
 @media (max-width: 480px) {

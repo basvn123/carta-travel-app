@@ -64,5 +64,5 @@
 .adminpage-fbreport { margin: 0; font-size: 13px; font-weight: 600; }
 
 /* The sheet opens over a full page (z 240), so its scrim sits above it. */
-.fsheet-scrim:has(> .report-sheet) { z-index: 330; }
+.fsheet-scrim:has(> .report-sheet) { z-index: calc(var(--z-page) + 130); }
 .report-link { white-space: nowrap; }

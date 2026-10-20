@@ -32,11 +32,6 @@
 }
 .itin-export-toggle > span:first-child { display: inline-flex; align-items: center; gap: 8px; }
 .itin-export-toggle svg:first-child { color: var(--accent); }
-.itin-export.open .itin-export-toggle {
-  border-color: var(--ink-mute);
-  border-radius: 12px 12px 0 0;
-  border-bottom: none;
-}
 .itin-export-menu {
   display: flex;
   flex-direction: column;
@@ -64,19 +59,14 @@
 @media (hover: hover) {
   .itin-export-item:hover { background: var(--paper-dim); color: var(--ink); }
 }
-.itin-export-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 2px 0; text-align: center; }
 
 /* Bookings / notes / packing list on the planned itinerary. One rhythm:
    28px between sections, carried by the section wrapper rather than by each
    title's own ad-hoc margin, so inserting a section (the inbox appears and
    disappears) never changes its neighbours' spacing. */
 .trip-extras { margin-top: 4px; }
-.extras-section + .extras-section { margin-top: 28px; }
 /* The expense ledger is its own component but the same stack: it keeps the
    28px beat where the sections hand over to it. */
-.trip-extras + .trip-extras.exp-ledger { margin-top: 28px; }
-.trip-extras .trip-block-title { display: flex; align-items: baseline; gap: 8px; }
-.extras-count { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); font-weight: 400; }
 
 /* ── Magic import: documents in, filled rows + staged activities out ── */
 .extras-dropzone {
@@ -135,18 +125,8 @@
   background: var(--accent-bg);
   color: var(--accent);
 }
-.extras-inbox-sub { font-size: 11.5px; color: var(--ink-mute); margin: 2px 0 8px; }
-.extras-inbox-item {
-  display: flex; align-items: center; gap: 9px;
-  padding: 9px 10px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--paper);
-  margin-bottom: 6px;
-}
 .extras-inbox-glyph { flex: none; color: var(--ink-mute); display: inline-flex; }
 .extras-inbox-info { flex: 1; min-width: 0; }
-.extras-inbox-name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
 .extras-inbox-meta { font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
 .extras-inbox-day { flex: none; }
 .extras-inbox-day .dropdown-trigger {
@@ -164,15 +144,6 @@
 
 /* Imported activities pinned onto a day row in the days list. */
 .itin-day-extras { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 0 6px 10px; }
-.itin-day-extra {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 5px 3px 9px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 11.5px;
-  color: var(--ink-soft);
-}
 .itin-day-extra small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 .itin-day-extra button {
   border: none; background: none; cursor: pointer;
@@ -181,18 +152,12 @@
 @media (hover: hover) {
   .itin-day-extra button:hover { color: var(--accent); }
 }
-.extras-row { padding: 8px 0 10px; border-bottom: 1px solid var(--rule-soft); }
-.extras-row-head { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
 .extras-row-head input[type='checkbox'] { accent-color: var(--accent); flex: none; }
 .extras-label { flex: 1; min-width: 0; font-weight: 600; color: var(--ink); }
 .extras-row.done .extras-label { color: var(--ink-mute); }
-.extras-est { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); white-space: nowrap; }
 .extras-remove {
   flex: none; border: none; background: none; color: var(--ink-mute);
   font-size: 16px; line-height: 1; padding: 0 4px; cursor: pointer;
-}
-@media (hover: hover) {
-  .extras-remove:hover { color: var(--accent); }
 }
 /* Two fixed rows per booking: code beside the paid amount, then the link on
    its own full line. The old flex-wrap laid the three fields out differently
@@ -208,20 +173,15 @@
   border: 1px solid var(--rule); border-radius: 8px; background: var(--paper);
   color: var(--ink);
 }
-.extras-input:focus { outline: none; border-color: var(--accent); }
 .extras-input::placeholder { color: var(--ink-mute); }
-.extras-price { font-variant-numeric: tabular-nums; }
 .extras-url-wrap { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; }
 .extras-url { flex: 1; }
 .extras-label-input {
   flex: 1; min-width: 0; padding: 4px 8px; font-size: 13px; font-weight: 600;
   border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink);
 }
-.extras-label-input:focus { outline: none; border-color: var(--accent); }
 .extras-open-link { flex: none; display: inline-flex; align-items: center; color: var(--accent); padding: 2px; }
 .extras-delta { font-size: 11px; margin-top: 5px; color: var(--ink-soft); }
-.extras-delta.under { color: var(--good-ink-alt); }
-.extras-delta.over { color: var(--accent); }
 .extras-add-btn {
   margin-top: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600;
   border: 1px solid var(--rule); border-radius: 8px; background: transparent;
@@ -231,17 +191,7 @@
   .extras-add-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--ink-mute); }
 }
 .extras-add-btn:disabled { opacity: 0.4; cursor: default; }
-.extras-notes {
-  width: 100%; resize: vertical; padding: 8px 10px; font-size: 12.5px; line-height: 1.5;
-  font-family: inherit; border: 1px solid var(--rule); border-radius: 8px;
-  background: var(--paper); color: var(--ink);
-}
-.extras-notes:focus { outline: none; border-color: var(--accent); }
 .extras-notes::placeholder { color: var(--ink-mute); }
-.extras-check-row {
-  display: flex; align-items: center; gap: 8px; padding: 5px 0;
-  border-bottom: 1px solid var(--rule-soft); font-size: 13px; cursor: pointer;
-}
 .extras-check-row input[type='checkbox'] { accent-color: var(--accent); flex: none; }
 .extras-check-text { flex: 1; min-width: 0; }
 .extras-check-row.done .extras-check-text { color: var(--ink-mute); text-decoration: line-through; }
@@ -250,17 +200,10 @@
 
 /* ── Group expense ledger ── */
 .exp-ledger { margin-top: 4px; }
-.exp-people { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .exp-person { flex: 1 1 110px; min-width: 0; }
-.exp-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px dashed var(--rule);
-}
 .exp-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .exp-row-main b { font-size: 12.5px; }
 .exp-row-main small { font-size: 10.5px; color: var(--ink-mute); }
-.exp-row-amt { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
 .exp-add { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
 .exp-desc { flex: 2 1 150px; min-width: 0; }
 .exp-cur, .exp-payer { flex: 0 0 auto; }
@@ -269,18 +212,6 @@
   flex-basis: 100%;
   display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
 }
-.exp-sharers-lbl { font-size: 10.5px; color: var(--ink-mute); }
-.exp-sharer-chip {
-  padding: 3px 9px; border-radius: 999px;
-  border: 1px solid var(--rule);
-  font-size: 11px; color: var(--ink-mute);
-  background: transparent;
-}
-.exp-sharer-chip.on {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-bg);
-}
 .exp-balances {
   margin-top: 10px;
   padding: 10px 12px;
@@ -288,9 +219,7 @@
   border: 1px solid var(--rule);
   border-radius: 10px;
 }
-.exp-total { font-size: 12px; font-weight: 700; color: var(--ink); }
 .exp-settle { margin-top: 4px; font-size: 12px; color: var(--ink-soft); }
-.exp-square { color: var(--green); }
 .exp-rate-note { margin-top: 6px; font-size: 10px; color: var(--ink-mute); }
 
 /* Even vertical rhythm. The band between the "Saved trips" rule and the first
@@ -952,7 +881,7 @@
 .savedmap-full {
   position: fixed;
   inset: 0;
-  z-index: 400;
+  z-index: calc(var(--z-page) + 200);
   background: var(--paper);
 }
 /* The map fills the layer; the bar floats over it so no pixel of the record
@@ -1027,36 +956,17 @@
 .day-save-btn.saved, .day-save-btn:disabled { color: var(--good-ink-soft); border-color: color-mix(in srgb, var(--good-ink-soft) 40%, transparent); cursor: default; }
 
 /* Itinerary overview: the arrival/return flight rows around the stops list. */
-.itin-flight-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 7px 10px;
-  border: 1px dashed var(--rule);
-  border-radius: 10px;
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  background: var(--paper-dim);
-}
 .itin-flight-row svg { color: var(--accent); flex: none; }
 .itin-flight-row b { color: var(--ink); font-weight: 600; }
 .itin-flight-row small { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); white-space: nowrap; }
 
 /* Airport-transfer rows are buttons: tap to open the public/taxi/rental
    comparison right in the route view (same look as the plain flight rows). */
-.itin-transfer-main {
-  width: 100%;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.itin-transfer-main:disabled { cursor: default; }
 .itin-transfer-main small { margin-left: auto; }
 .itin-transfer-main .itin-leg-change { flex: none; margin-left: 8px; }
 @media (hover: hover) {
   .itin-transfer-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
 }
-.itin-transfer-modes { padding: 6px 0 2px; }
 
 /* Home<->first/last-stop drive rows (own-car trips): title stacked over the
    distance/time, rather than side by side like the short flight rows above -

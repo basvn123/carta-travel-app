@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { displayName } from '../lib/format.js';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
@@ -127,7 +128,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       key: 'water',
       label: t('beach.factWater'),
       value: t(`beach.water${beach.water.class}`),
-      note: beach.water.site || '',
+      note: displayName(beach.water.site) || '',
     },
     beach.surface && {
       key: 'surface',
@@ -156,7 +157,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
     beach.prot && {
       key: 'prot',
       label: t('beach.factProtected'),
-      value: beach.prot.name,
+      value: displayName(beach.prot.name),
       note: t(beach.prot.net === 'natura2000'
         ? 'beach.fProtectedNatura2000' : 'beach.fProtectedEmerald'),
     },
@@ -201,7 +202,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   // an absent one), the ground underfoot, the length and which way it faces.
   const capWord = (s) => (s ? s.charAt(0).toLocaleUpperCase(lang) + s.slice(1) : '');
   const keyFacts = keyFactCells([
-    { key: 'water', label: t('beach.factWater'), value: beach.water ? t(`beach.water${beach.water.class}`) : '', note: beach.water?.site || null },
+    { key: 'water', label: t('beach.factWater'), value: beach.water ? t(`beach.water${beach.water.class}`) : '', note: displayName(beach.water?.site) || null },
     beach.access && { key: 'access', label: t('beach.factAccess'), value: t(`beach.access${beach.access.charAt(0).toUpperCase()}${beach.access.slice(1)}`) },
     beach.lifeguard && { key: 'lifeguard', label: t('beach.factLifeguard'), value: t('beach.yes') },
     { key: 'surface', label: t('beach.factSurface'), value: surfaceWord },

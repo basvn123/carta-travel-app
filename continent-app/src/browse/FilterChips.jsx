@@ -12,10 +12,13 @@ import { CloseIcon } from '../components/Icons.jsx';
  * a --rule border, CloseIcon for the remove mark, and each chip named for
  * what it does, "Remove <filter>".
  */
-export function FilterChips({ t, chips, onClearAll }) {
+export function FilterChips({ t, chips, onClearAll, lead = null }) {
   if (!chips.length) return null;
   return (
     <div className="xchips" role="group" aria-label={t('filter.activeAria')}>
+      {/* An optional control that leads the row (Explore's sort on a phone,
+          T474): one refine row rather than a row of its own above it. */}
+      {lead && <span className="xchips-lead">{lead}</span>}
       {chips.map((c) => (
         <button
           key={c.key}

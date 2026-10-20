@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+// The rules only this route renders load with its chunk (T474, CSS per route;
+// scripts/css-routes.mjs).
+import '../styles/admin.css';
 import { useI18n } from '../i18n/index.jsx';
 import { LockIcon, CloseIcon } from '../components/Icons.jsx';
 import { ContentSection } from '../components/admin/ContentSection.jsx';

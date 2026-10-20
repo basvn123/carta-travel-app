@@ -35,7 +35,7 @@
 
 /* The left-hand Lifestyle panel opens over a scrim on every tab now, so it
    must sit above it (it was z-index 15, under the scrim's 40). */
-.accom-panel.lifestyle-panel { z-index: 41; }
+.accom-panel.lifestyle-panel { z-index: calc(var(--z-overlay) + 1); }
 
 /* The compact receipt on an Explore card says, per figure, whether it was
    measured in the city or is a country-level one (T098-b, owner call). */

@@ -65,6 +65,7 @@ import {
   BikeIcon, ArrowLeftIcon,
 } from '../components/Icons.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
+import { loadAllJourneyCards, dropJourneyHash } from '../lib/journeys.js';
 import CreditFold from './CreditFold.jsx';
 import { openShared } from '../lib/sharedElement.js';
 import { useSettledFigure } from '../lib/figureChange.js';
@@ -785,6 +786,9 @@ export function DestinationsTab({
   // primary action opens the walks. The country filter survives, as it does
   // when the category tabs are pressed.
   openCategory = null, onOpenCategoryConsumed,
+  // One week from the journeys library, { id, fromLink }: a shared link or a
+  // starred week (T474). It opens over whatever the tab shows.
+  openJourney = null, onOpenJourneyConsumed,
   // The shortlist, as the pair-aware pair App keeps: isFavorite(id, kind)
   // and onToggleFav(id, kind). Every full-screen feature page below wears the
   // same star from them, so a trail is kept exactly the way a city is.
@@ -1043,6 +1047,27 @@ export function DestinationsTab({
     }
     onOpenCategoryConsumed?.();
   }, [openCategory, onOpenCategoryConsumed]);
+
+  // One week to open, asked for from outside the list (T474, row T435-a): a
+  // shared #journey=<id> link or a starred week in My trips. App keeps the id
+  // until this says the page is open, so a doubled effect only reads the
+  // cached library twice. A link's own history entry becomes the list, so
+  // Back from the week lands on Trips rather than reopening the week.
+  const journeyConsumed = useRef(onOpenJourneyConsumed);
+  journeyConsumed.current = onOpenJourneyConsumed;
+  useEffect(() => {
+    if (!openJourney?.id) return undefined;
+    let live = true;
+    const { id, fromLink } = openJourney;
+    loadAllJourneyCards().catch(() => []).then((all) => {
+      if (!live) return;
+      const card = (all || []).find((c) => c.id === id);
+      if (fromLink) dropJourneyHash();
+      setPageJourney({ id, gw: card?.gw || null });
+      journeyConsumed.current?.();
+    });
+    return () => { live = false; };
+  }, [openJourney]);
 
   // Debounce only the 24.8k-row filter, never the input itself.
   useEffect(() => {

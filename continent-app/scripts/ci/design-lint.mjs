@@ -37,6 +37,10 @@
  *                    --bg-card, --mono ...) outside 01-tokens.css; new code reads roles
  *   money-literal    (T425) a euro sign in JavaScript or an i18n string, or toFixed
  *                    on a price; money goes through src/lib/money.js
+ *   z-index-literal  (T474) a z-index of 10 or more written as a number; the
+ *                    layers are the --z-* ladder in 01-tokens.css (a step inside
+ *                    a band is calc(var(--z-band) + n)); 1 to 9 is stacking
+ *                    inside one component and stays a number
  *   raw-button       (T425) a <button> element outside src/components/ui; the
  *                    migration moves them onto the kit, the baseline is its meter
  *
@@ -138,6 +142,8 @@ function scanFile(abs, rel) {
       const rad = l.match(/border(?:-[a-z-]+)?-radius\s*:\s*([^;}]*)/);
       if (rad && /\d+(\.\d+)?px/.test(rad[1].replace(/var\([^)]*\)/g, '')) && !/^\s*0(px)?\s*$/.test(rad[1])) add('radius-literal', i, rad[1].trim().slice(0, 30));
       if (rel !== TOKENS_FILE && LEGACY_TOKEN.test(l)) add('legacy-token', i, l.match(LEGACY_TOKEN)[1]);
+      const zi = l.match(/(?:^|[{;\s])z-index\s*:\s*(-?\d+)\s*(?:!important\s*)?(?:[;}]|$)/);
+      if (zi && Math.abs(Number(zi[1])) >= 10) add('z-index-literal', i, zi[1]);
     }
     const sh = l.match(/(?:box|text)-shadow\s*:\s*([^;}]*)/);
     if (sh && !/^\s*(none|inherit|initial|unset)\b/.test(sh[1]) && !/var\(\s*--shadow/.test(sh[1]) && !/^\s*var\(/.test(sh[1])) add('shadow-literal', i);
@@ -214,7 +220,7 @@ function selfTest() {
   const empty = path.join(fx, 'empty-baseline.json');
   const bad = check(path.join(fx, 'bad'), empty);
   const rules = new Set(bad.fresh.map((v) => v.rule));
-  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift', 'font-size-literal', 'radius-literal', 'legacy-token', 'money-literal', 'raw-button'];
+  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift', 'font-size-literal', 'radius-literal', 'legacy-token', 'money-literal', 'raw-button', 'z-index-literal'];
   const missing = want.filter((r) => !rules.has(r));
   const good = check(path.join(fx, 'good'), empty);
   let ok = true;

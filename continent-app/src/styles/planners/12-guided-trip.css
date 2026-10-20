@@ -1,0 +1,344 @@
+/* 12-guided-trip.css, the rules only the trip and day planners render (T474, CSS per route).
+   The rest of this domain stays in src/styles/12-guided-trip.css; a rule lives in one
+   of the two, so edit it where it is. This sheet loads with the route's
+   chunk, after the main sheet, and holds only rules nothing later in the
+   cascade could override; scripts/css-routes.mjs --check proves it on a build. */
+.guide-head {
+  position: relative;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+.guide-close {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-size: 20px; line-height: 1;
+  color: var(--ink-mute);
+}
+@media (hover: hover) {
+  .guide-close:hover { color: var(--accent); }
+}
+.guide-sub { color: var(--ink-soft); font-size: 13px; margin: 4px 0 16px; }
+.cpm {
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  margin-bottom: 16px;
+}
+.guide-country-block { margin-bottom: 20px; }
+.guide-block-head {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule);
+}
+.guide-city-list { display: flex; flex-direction: column; gap: 8px; }
+.guide-city.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
+.guide-city-name {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+}
+.guide-nights {
+  display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
+}
+.guide-nights-zero { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); font-weight: 600; }
+.guide-datemode {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.guide-when-nights {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  padding-bottom: 10px;
+  white-space: nowrap;
+}
+.guide-noflight .guide-empty { display: flex; align-items: baseline; gap: 6px; color: var(--warn-ink); }
+.guide-design-btn {
+  display: flex; flex-direction: row; align-items: center; gap: 10px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+@media (hover: hover) {
+  .guide-design-btn:hover { opacity: 0.93; }
+}
+.guide-design-text { display: flex; flex-direction: column; gap: 1px; }
+.guide-stay-view { margin-bottom: 10px; }
+.guide-tier {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1.5px 8px 1.5px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.guide-tier-legend {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: -8px 0 14px;
+  font-size: 11px;
+}
+.guide-tier-legend-note { color: var(--ink-mute); font-size: 10.5px; }
+.citypick-map { height: 340px; }
+@media (hover: hover) {
+  .citypick-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); box-shadow: 0 2px 8px rgba(26, 26, 26, 0.22); }
+}
+.citypick-name { font-size: 11px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.citypick-meta {
+  font-family: var(--mono); font-size: var(--text-micro); font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  padding: 0.5px 4px; border-radius: 5px;
+  white-space: nowrap;
+}
+.citypick-meta:empty { display: none; }
+.citypick-meta.is-nights { color: var(--on-fill); background: var(--ink-fill); }
+.citypick-pin.on {
+  background: var(--select-bg); border-color: var(--select-border);
+}
+.citypick-pin { position: relative; }
+.citypick-fly { display: none; }
+.citypick-pin.anchor {
+  padding: 5px 11px 5px 10px;
+  background: var(--ink);
+  border-color: var(--ink);
+  box-shadow: var(--shadow-2);
+  z-index: 5;
+}
+.citypick-pin.anchor .citypick-ic { display: none; }
+.guide-search {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.guide-search:focus { outline: none; border-color: var(--accent); }
+.guide-nights-budget {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.guide-nights-budget.over { color: var(--warn-ink); }
+.guide-stay-group { margin-bottom: 14px; }
+.guide-stay-group-title {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin: 10px 0 7px;
+}
+@media (hover: hover) {
+  .guide-show-more:hover { border-color: var(--accent); color: var(--accent); }
+}
+.guide-anchor-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--ink-fill);
+  color: var(--on-fill);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.guide-startover {
+  margin-right: 10px;
+  /* Two words on one line: at 375 the footer summary beside it was squeezing
+     "Start over" onto two, under a control only 12px tall. */
+  white-space: nowrap;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (hover: hover) {
+  .guide-startover:hover { color: var(--warn-ink); }
+}
+@media (hover: hover) {
+  .guide-chip:hover { border-color: var(--ink-soft); }
+}
+.guide-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.guide-empty { font-size: 12.5px; color: var(--ink-soft); }
+.guide-arrange-item.dragging { opacity: 0.45; }
+.guide-foot-summary { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.guide-foot-actions { display: flex; gap: 10px; }
+.guide-back:not(.btn) { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--rule); color: var(--ink-soft); font-size: 13px; }
+@media (hover: hover) {
+  .guide-back:not(.btn):hover { border-color: var(--ink-soft); }
+}
+.day-saved-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.42);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  z-index: calc(var(--z-modal) + 2);
+}
+.day-saved-close {
+  position: absolute;
+  top: 10px; right: 12px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 22px; line-height: 1;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .day-saved-close:hover { background: var(--paper-dim); color: var(--ink); }
+}
+.day-saved-done {
+  padding: 12px; border-radius: 10px; width: 100%;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft); font-size: 13.5px;
+}
+@media (hover: hover) {
+  .day-saved-done:hover { border-color: var(--ink-soft); }
+}
+.itin-tabs {
+  display: flex;
+  gap: var(--space-1);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+}
+.itin-overview { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; }
+.itin-stop-idx {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+}
+.itin-stop-city { display: block; font-family: var(--display); font-size: 15.5px; color: var(--ink); }
+.itin-leg-rail {
+  position: absolute;
+  left: 23px; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--rule);
+}
+.itin-leg-main {
+  display: flex; align-items: center; gap: 9px;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px 7px 0;
+  background: none; border: none;
+  cursor: pointer;
+}
+.itin-leg-modes {
+  display: flex; gap: 6px;
+  padding: 0 10px 10px 14px;
+}
+.itin-leg .trip-leg-links { margin: 0; padding: 0 10px 10px 14px; }
+.itin-leg-noroad { padding: 6px 10px 6px 24px; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+.itin-bd-sec-rows .trip-total-row { border: none; padding: 7px 2px; }
+.itin-day-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+@media (hover: hover) {
+  .itin-day-row-main:hover { border-color: var(--ink-soft); }
+}
+.itin-day-row-num { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
+.itin-day-row-meta { font-size: 12.5px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.itin-day-plan-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+@media (hover: hover) {
+  .itin-day-plan-btn:hover { border-color: var(--ink-soft); }
+}
+@media (hover: hover) {
+  .itin-day-planner-btn:hover { border-color: var(--ink-soft); }
+}
+.itin-day { padding-top: 14px; }
+.itin-day-head { margin-bottom: 14px; }
+.itin-day-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute);}
+.itin-day-empty { font-size: 13px; color: var(--ink-soft); line-height: 1.55; font-style: italic; }
+.itin-visit-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.itin-visit {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+.itin-visit-idx {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+}
+.itin-visit-name { display: block; font-size: 14px; color: var(--ink); }
+.itin-visit-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
+.guide-thumb-fallback { font-family: var(--display); color: var(--ink-mute); }
+.guide-city-thumb {
+  flex-shrink: 0;
+  width: 56px; height: 56px;
+  border-radius: 10px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.guide-city-thumb .guide-thumb-fallback { font-size: 22px; }
+.guide-arrange-thumb .guide-thumb-fallback { font-size: 18px; }
+.itin-stop-thumb {
+  flex-shrink: 0;
+  width: 46px; height: 46px;
+  border-radius: 9px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.itin-stop-thumb-fallback { font-family: var(--display); font-size: 18px; color: var(--ink-mute); }
+.itin-day-hero {
+  aspect-ratio: 3 / 1;
+  border-radius: 10px 10px 0 0;
+  background: var(--paper-dim) center/cover no-repeat;
+}
+.itin-day-cap {
+  margin-bottom: 16px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper);
+}
+.itin-day-hero + .itin-day-cap { border-top: none; border-radius: 0 0 10px 10px; }

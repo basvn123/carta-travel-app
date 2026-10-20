@@ -1,11 +1,12 @@
 import React from 'react';
-import { DEFAULT_LIFESTYLE, offeredStayTiers } from '../lib/runtime_pricing.js';
+import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import {
   BedIcon, BunkIcon, HomeIcon, HotelIcon,
   BackpackIcon, LeafIcon, DiningIcon, CoffeeIcon, MusicIcon, FriendsIcon,
   ChevronDownIcon, CloseIcon,
 } from '../components/Icons.jsx';
 import { HOTEL_GRADES, sleepGroupOf, offeredSleepGroups, tierForGroup } from '../lib/sleepGroups.js';
+import { PROFILES } from '../lib/lifestyleProfiles.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { computeCosts, eurDay } from '../lib/costIndex.js';
@@ -51,19 +52,9 @@ const PERIOD_FIELDS = [
   { key: 'self_catered_days_per_week', max: { week: 7,  day: 1 } },
 ];
 
-// Per-person presets, defined in the weekly cadence. Picking one applies the
-// preset in its native weekly cadence (a weekly rate like 5 dinners/week can't
-// be shown faithfully as a per-day integer, so the panel snaps back to per-week
-// - this keeps the priced spend exactly equal to the preset and lets the active
-// tile highlight correctly).
-export const PROFILES = {
-  Backpacker:      { cadence: 'week', dinners_per_week: 1, lunches_per_week: 3, fastfood_per_week: 4, drinks_per_week: 4,  club_nights_per_week: 0, coffees_per_day: 0, self_catered_days_per_week: 5 },
-  Easygoing:       { ...DEFAULT_LIFESTYLE },
-  Foodie:          { cadence: 'week', dinners_per_week: 7, lunches_per_week: 5, fastfood_per_week: 0, drinks_per_week: 5,  club_nights_per_week: 0, coffees_per_day: 0, self_catered_days_per_week: 0 },
-  'Cafe & culture':{ cadence: 'week', dinners_per_week: 3, lunches_per_week: 5, fastfood_per_week: 1, drinks_per_week: 3,  club_nights_per_week: 0, coffees_per_day: 0, self_catered_days_per_week: 2 },
-  Nightlife:       { cadence: 'week', dinners_per_week: 3, lunches_per_week: 2, fastfood_per_week: 4, drinks_per_week: 12, club_nights_per_week: 3, coffees_per_day: 0, self_catered_days_per_week: 1 },
-  Family:          { cadence: 'week', dinners_per_week: 2, lunches_per_week: 4, fastfood_per_week: 3, drinks_per_week: 2,  club_nights_per_week: 0, coffees_per_day: 0, self_catered_days_per_week: 5 },
-};
+// The presets live in lib/lifestyleProfiles.js (T474), so pure modules and
+// the node tests can read them; re-exported here for the panel's callers.
+export { PROFILES };
 
 // Display keys for the profile names above; the PROFILES keys stay as logic
 // keys (matchProfile / setProfile) and are resolved to text at render time.

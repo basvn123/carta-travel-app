@@ -364,7 +364,7 @@ try {
   check('phone page covers the screen',
     !!pbox && pbox.x === 0 && pbox.y === 0 && pbox.width === 390,
     pbox ? Math.round(pbox.width) + 'x' + Math.round(pbox.height) : 'no box');
-  check('phone page exits by the back arrow', await page.locator('.destp-back').isVisible());
+  check('phone page exits by its back control', await page.locator('.destp .ipage-back').isVisible());
   await page.screenshot({ path: 'shots/explore-panel-phone.png' });
   await page.close();
 } catch (e) {
@@ -459,7 +459,8 @@ try {
   check('search: every row says why it answers', whys.length >= 6 && whys.every((w) => /km|Alps|July/.test(w)),
     whys[0]);
   check('search: the sort says "Best match" while the question orders the list',
-    await page.locator('.xgrid-sort select').evaluate((s) => s.options[s.selectedIndex].text) === 'Best match');
+    // The sort is twinned (T474: on a phone it leads the chip row), so read the one on screen.
+    await page.locator('.xgrid-sort select:visible').first().evaluate((s) => s.options[s.selectedIndex].text) === 'Best match');
   check('search: the month chip says the month whole', await page.locator('.xchip', { hasText: 'Good in July' }).count() === 1);
   await page.locator('.gsearch-clear').click();
   await page.waitForTimeout(600);

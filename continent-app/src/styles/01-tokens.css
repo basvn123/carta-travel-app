@@ -134,15 +134,29 @@
   --elev-2:          0 4px 12px rgba(31, 42, 51, 0.10), 0 12px 28px rgba(31, 42, 51, 0.08);
   --elev-3:          0 12px 32px rgba(31, 42, 51, 0.16), 0 2px 6px rgba(31, 42, 51, 0.08);
 
-  /* Layers, low to high. */
+  /* Layers, low to high (T474). Every z-index of 10 or more reads one of
+     these, or one plus a small step inside its band written as
+     calc(var(--z-band) + n); 1 to 9 is stacking inside one component and
+     stays a number. The values are the ones the app shipped with, so the
+     ladder names the order rather than changing it. */
   --z-base:          0;
-  --z-sticky:        10;
-  --z-map-ui:        20;
-  --z-nav:           30;
-  --z-overlay:       40;
-  --z-sheet:         50;
-  --z-modal:         60;
-  --z-toast:         70;
+  --z-sticky:        10;   /* a bar that sticks inside a scroll view */
+  --z-float:         12;   /* lists and panels floating over the map (+2 to +6) */
+  --z-popover:       20;   /* menus, tips and suggestions over those */
+  --z-header:        25;   /* the app header and top bar (+1 while a tool row pops) */
+  --z-tray:          30;   /* the open filter tray, a page's own toast */
+  --z-overlay:       40;   /* drawers, phone panels, the calendar and their scrims (+1) */
+  --z-nav:           50;   /* the bottom nav, the site banner, the plan chooser (-1, +1) */
+  --z-shell:         55;   /* shell panels over the nav: account, phone header, dest panel (+1 to +4) */
+  --z-modal:         60;   /* dialogs, sheets, full overlays (+1, +2) */
+  --z-toast:         80;   /* a confirmation toast over a dialog */
+  --z-menu:          90;   /* phone popovers (90); dropdown menus, the loading screen (+10) */
+  --z-page:          200;  /* full-screen pages and what opens over them (+10 to +200) */
+  --z-top:           1000; /* the definition popover (+0), the guides panel (+200) */
+  --z-max:           9999; /* the crash screen, above everything */
+  /* Inside the map's own layer: the selected and the hovered price pin. */
+  --z-pin-selected:  50;
+  --z-pin-hover:     100;
 
   /* Spacing on a 4 px grid. --space-5 and --space-6 moved onto the grid
      (were 22 and 30 px). */

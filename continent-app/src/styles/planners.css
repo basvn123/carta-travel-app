@@ -1,0 +1,16 @@
+/* The planners route sheet (T474, CSS per route): the rules only the trip and day planners
+   render, split out of the main sheet by scripts/css-routes.mjs and imported by
+   the route's lazy entries, so they load with its chunk and not before the
+   first paint. Same order as src/styles.css. */
+
+@import './planners/11-trip-planner.css';
+@import './planners/12-guided-trip.css';
+@import './planners/17-saved-trips.css';
+@import './planners/18-detail-panel.css';
+@import './planners/19-guide-ratings.css';
+@import './planners/20-day-planner-flow.css';
+@import './planners/21-chat-passes.css';
+@import './planners/24-destination-workspace.css';
+@import './planners/26-shortlist-extras.css';
+@import './planners/67-v6-tripplanner.css';
+@import './planners/68-v6-dayplanner.css';

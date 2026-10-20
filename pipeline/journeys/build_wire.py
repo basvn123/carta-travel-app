@@ -984,6 +984,17 @@ def main():
     }, ensure_ascii=False), encoding="utf-8")
     print(f"wrote {OUT} ({len(trips)} journeys, {len(index_types)} styles)")
 
+    # T474 (row T435-b): the lead images arrive with a page and a place name
+    # only; credits.py adds each photograph's author and licence, so the trip
+    # page's gallery credits every photo the way every other page does.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from credits import credit_wire
+    s = credit_wire(OUT, allow_fetch=allow)
+    print(f"{s['credited']}/{s['photos']} photographs credited ({s['filled']} filled)")
+    if s["missing"]:
+        print(f"  ! {len(s['missing'])} photograph(s) without a licence; "
+              "run pipeline/journeys/credits.py to see them", file=sys.stderr)
+
 
 if __name__ == "__main__":
     main()

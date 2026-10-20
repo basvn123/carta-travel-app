@@ -25,8 +25,9 @@ import { nearestRegions } from '../lib/coverageEmpty.js';
 import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { ArrowLeftIcon } from '../components/Icons.jsx';
-import { Button, Card, IconButton } from '../components/ui/index.js';
+import { usePageArrival } from '../hooks/usePageArrival.js';
+import { Button, Card } from '../components/ui/index.js';
+import { PageBar } from './PageBar.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { okPhoto } from '../lib/photoVeto.js';
@@ -79,7 +80,7 @@ function RegionCard({ card, listed, t, onOpen }) {
   );
 }
 
-export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
+export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion, backLabel = '' }) {
   const { t } = useI18n();
   const [data, setData] = useState(undefined);
   const [failed, setFailed] = useState(false);
@@ -116,10 +117,26 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
   }, [id, tries]);
 
   // Escape (capture phase, per the escape-stack rule) plus the focus
-  // management this dialog's aria-modal has always promised.
+  // management this dialog's aria-modal has always promised. Arrival focus
+  // follows the one page rule (hooks/usePageArrival.js, T474).
   const pageRef = useRef(null);
   const backRef = useRef(null);
-  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
+  const arrivalRef = usePageArrival(pageRef, data?.region?.id ?? (data === null ? 'missing' : null));
+  useFocusTrap(pageRef, onClose, { initialFocusRef: arrivalRef });
+
+  // The bar takes over the name once the heading has scrolled away.
+  const scrollEl = useRef(null);
+  const headEl = useRef(null);
+  const [nameOn, setNameOn] = useState(false);
+  const loaded = Boolean(data?.region);
+  useEffect(() => {
+    const el = headEl.current;
+    const root = scrollEl.current;
+    if (!el || !root || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([entry]) => setNameOn(!entry.isIntersecting), { root, threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [id, loaded]);
 
   const open = (card) => {
     const feature = LAYER_TO_FEATURE[card.layer];
@@ -139,52 +156,49 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
     } catch { /* clipboard refused; the button just stays */ }
   };
 
-  if (failed) {
-    return (
-      <div className="rgnp" role="dialog" aria-modal="true"
-        aria-label={t('region.kind.nuts2')} ref={pageRef}>
-        <div className="rgnp-inner">
-          <IconButton className="rgnp-back" onClick={onClose}
-            label={t('glyph.back')} ref={backRef}>
-            <ArrowLeftIcon size={20} />
-          </IconButton>
-          <ErrorBlock message={t('layer.loadFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />
-        </div>
+
+  // One shell for every state (T474, row T435-e): the bar the item pages
+  // wear (back naming the tab it returns to, the name once the heading has
+  // gone, share), then the scrolling body.
+  const shell = (body, { name = '', canShare = false } = {}) => (
+    <div className="rgnp" role="dialog" aria-modal="true"
+      aria-label={name || t('region.kind.nuts2')} ref={pageRef}>
+      <PageBar
+        t={t}
+        backLabel={backLabel || t('glyph.back')}
+        onBack={onClose}
+        backRef={backRef}
+        name={name}
+        nameOn={nameOn}
+        onShare={canShare ? share : null}
+        shareLabel={t('region.share')}
+        copied={copied}
+        copiedLabel={t('region.shareDone')}
+      />
+      <div className="rgnp-scroll" ref={scrollEl}>
+        <div className="rgnp-inner">{body}</div>
       </div>
-    );
+    </div>
+  );
+
+  if (failed) {
+    return shell(<ErrorBlock message={t('layer.loadFailed')} onRetry={() => setTries((n) => n + 1)} retryLabel={t('layer.retry')} />);
   }
 
   if (data === undefined) {
     // Still fetching. Without this the page rendered its container with a
     // back button and nothing else, which reads as a page that broke rather
     // than one that has not arrived.
-    return (
-      <div className="rgnp" role="dialog" aria-modal="true"
-        aria-label={t('region.kind.nuts2')} ref={pageRef}>
-        <div className="rgnp-inner">
-          <IconButton className="rgnp-back" onClick={onClose}
-            label={t('glyph.back')} ref={backRef}>
-            <ArrowLeftIcon size={20} />
-          </IconButton>
-          <LoadingBlock label={t('region.loading')} rows={4} />
-        </div>
-      </div>
-    );
+    return shell(<LoadingBlock label={t('region.loading')} rows={4} />);
   }
 
   if (data === null) {
     // An id that resolves to no file at all: a stale link, or a region
     // that left the spine. Say which, rather than showing an empty shell
     // that reads as a broken page.
-    return (
-      <div className="rgnp" role="dialog" aria-modal="true"
-        aria-label={t('region.kind.nuts2')} ref={pageRef}>
-        <div className="rgnp-inner">
-          <IconButton className="rgnp-back" onClick={onClose}
-            label={t('glyph.back')} ref={backRef}>
-            <ArrowLeftIcon size={20} />
-          </IconButton>
-          <h1>{t('region.notFound')}</h1>
+    return shell(
+      <>
+          <h1 ref={headEl}>{t('region.notFound')}</h1>
           <p className="rgnp-card-sub">{t('region.notFoundHint')}</p>
           {nearIds.length > 0 && (
             <div className="cov-empty" data-testid="region-nearest">
@@ -201,32 +215,24 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
               </ul>
             </div>
           )}
-        </div>
-      </div>
+      </>,
     );
   }
 
   const region = data?.region;
   // The page's photograph: its best-rated member's own, where one exists.
   const heroUrl = [...(data?.editorial || []), ...(data?.rated || [])].map(cardImage).find(Boolean) || null;
-  return (
-    <div className="rgnp" role="dialog" aria-modal="true"
-      aria-label={t('region.kind.nuts2')} ref={pageRef}>
-      <div className="rgnp-inner">
-        <IconButton className="rgnp-back" onClick={onClose}
-          label={t('glyph.back')} ref={backRef}>
-          <ArrowLeftIcon size={20} />
-        </IconButton>
+  return shell(
+    <>
         {region && (
           <>
-            <div className="rgnp-kind">
+            {/* The name first, then what kind of region it is and where
+                (T474, row T435-e), as the item pages' head reads. */}
+            <h1 ref={headEl}>{region.name}</h1>
+            <p className="rgnp-kind">
               {t(KIND_KEY[region.kind] || 'region.kind.nuts2')}
               {region.country ? `, ${countryName(region.country, region.country)}` : ''}
-            </div>
-            <h1>{region.name}</h1>
-            <Button variant="quiet" size="sm" className="rgnp-share" onClick={share}>
-              {copied ? t('region.shareDone') : t('region.share')}
-            </Button>
+            </p>
             {heroUrl && (
               <div className="rgnp-hero">
                 <HeroImage url={heroUrl} city={region.name} className="rgnp-hero-img"
@@ -281,7 +287,7 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
             )}
           </>
         )}
-      </div>
-    </div>
+    </>,
+    { name: region?.name || '', canShare: Boolean(region) },
   );
 }

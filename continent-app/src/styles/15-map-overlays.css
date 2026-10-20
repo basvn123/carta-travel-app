@@ -47,7 +47,7 @@
   position: absolute;
   top: calc(100% + 10px);
   left: 0;
-  z-index: 40;
+  z-index: var(--z-overlay);
   width: 252px;
   padding: 14px;
   background: var(--paper);
@@ -535,7 +535,7 @@
 /* ─── Map hover card (MapView popup, .map-tip) ────────────────────────────
    Replaces MapLibre's default white popup with the app's editorial card:
    paper, rounded, soft shadow, a hero thumbnail and the rating score-chip. */
-.map-tip.maplibregl-popup { z-index: 20; will-change: transform; }
+.map-tip.maplibregl-popup { z-index: var(--z-popover); will-change: transform; }
 /* A clean floating card reads more modern than an arrow, and it sidesteps
    matching the tip triangle's border to the card edge. */
 .map-tip .maplibregl-popup-tip { display: none; }
@@ -655,7 +655,7 @@
   background: var(--paper);
   border-right: 1px solid var(--rule);
   border-top: 1px solid var(--rule);
-  z-index: 12;
+  z-index: var(--z-float);
   display: flex;
   flex-direction: column;
 }
@@ -764,7 +764,7 @@
   left: 50%;
   bottom: 84px;
   transform: translateX(-50%);
-  z-index: 60;
+  z-index: var(--z-modal);
   background: var(--ink);
   color: var(--paper);
   font-size: 12.5px;
@@ -928,7 +928,7 @@
      specificity) still wins when collapsed. */
   .results-list {
     display: flex;
-    z-index: 14;
+    z-index: calc(var(--z-float) + 2);
     bottom: var(--bottom-nav-h);
     transform: none;
     box-shadow: var(--shadow-2);
@@ -940,8 +940,8 @@
      after opening it from the filter sheet. They scroll internally
      (overflow-y:auto). Bottom stops above the persistent bottom nav, same as
      every other full-bleed panel, rather than covering it. */
-  .panel { z-index: 40; top: 0; bottom: var(--bottom-nav-h); }
-  .accom-panel { z-index: 40; top: 0; bottom: var(--bottom-nav-h); }
+  .panel { z-index: var(--z-overlay); top: 0; bottom: var(--bottom-nav-h); }
+  .accom-panel { z-index: var(--z-overlay); top: 0; bottom: var(--bottom-nav-h); }
 
   /* The detail panel uses translateX for its open/close transition; keep that
      working at full width. */

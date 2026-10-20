@@ -1,0 +1,6 @@
+/* The admin route sheet (T474, CSS per route): the rules only the admin page
+   render, split out of the main sheet by scripts/css-routes.mjs and imported by
+   the route's lazy entries, so they load with its chunk and not before the
+   first paint. Same order as src/styles.css. */
+
+@import './admin/22-account-admin.css';

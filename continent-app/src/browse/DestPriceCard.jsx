@@ -7,7 +7,7 @@ import { addDays } from '../lib/dates.js';
 import { priceFromIndex } from '../lib/destPrice.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
-import { formatMoney } from '../lib/money.js';
+import { formatEst } from '../lib/money.js';
 import { Stepper } from '../components/FilterControls.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { ReceiptLine, ReceiptSum, useSettleChanged } from '../components/ReceiptCard.jsx';
@@ -284,7 +284,7 @@ export function DestPriceCard({
           {/* Where the page says a car is needed, its hire is the largest
               cost the day figure leaves out: said once, as a figure (T446). */}
           {Number.isFinite(carDayEur) && carDayEur > 0 && (
-            <> {t('dest.priceCarHire', { eur: formatMoney(carDayEur) })}</>
+            <> {t('dest.priceCarHire', { eur: formatEst(carDayEur, t('money.est'), { locale: lang }) })}</>
           )}
         </p>
         <Button variant="quiet" size="sm" className="dprice-fare" onClick={() => setSheetOpen(true)}>

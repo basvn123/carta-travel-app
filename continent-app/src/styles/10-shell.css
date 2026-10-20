@@ -22,7 +22,7 @@
 .top-bar {
   position: absolute;
   top: 0; left: 0; right: 0;
-  z-index: 25;
+  z-index: var(--z-header);
   display: flex;
   flex-direction: column;
   /* Chrome, not page. The bar used to carry the page ground and no rule,
@@ -66,7 +66,7 @@
      map guide pill below it (z 24). Otherwise the tip floats on top of the
      panel the reader just opened. */
   position: relative;
-  z-index: 25;
+  z-index: var(--z-header);
 }
 
 .app-header-brand {
@@ -466,7 +466,7 @@
   background: var(--surface);
   border-radius: var(--radius-card);
   box-shadow: var(--elev-2);
-  z-index: 60;
+  z-index: var(--z-modal);
 }
 .origin-search {
   width: 100%;
@@ -617,7 +617,7 @@
   left: var(--panel-w);
   right: 0;
   margin: 0 auto;
-  z-index: 15;
+  z-index: calc(var(--z-float) + 3);
   width: 340px;
   max-width: calc(100vw - 24px);
   padding: 16px 18px;
@@ -716,7 +716,7 @@
     width: auto;
     max-width: none;
     max-height: min(65dvh, calc(100dvh - 140px));
-    z-index: 90;
+    z-index: var(--z-menu);
   }
   /* ...and it has to outrank the map-control rule above (two classes, so a
      media query alone does not win it): on a phone the list is a sheet across
@@ -734,7 +734,7 @@
 .bottom-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  z-index: 50;
+  z-index: var(--z-nav);
   display: grid;
   /* 2 x 1fr | auto | 2 x 1fr keeps the plus dead-centre whatever the label
      widths do. */
@@ -816,7 +816,7 @@
   position: fixed;
   inset: 0;
   /* Below the bar (z 50): the plus stays visible and tappable to close. */
-  z-index: 49;
+  z-index: calc(var(--z-nav) - 1);
   background: color-mix(in srgb, var(--text) 28%, transparent);
   animation: shell-scrim-in var(--dur-3) var(--ease-out);
 }
@@ -826,7 +826,7 @@
   left: 50%;
   bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
   transform: translateX(-50%);
-  z-index: 51;
+  z-index: calc(var(--z-nav) + 1);
   width: min(360px, calc(100vw - var(--gutter) * 2));
   padding: var(--space-3) var(--space-3) var(--space-3);
   background: var(--surface);

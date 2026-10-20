@@ -24,7 +24,7 @@ Vier plannen werken de rijen uit; de roadmap zegt wat en wanneer, het plan zegt 
 
 ## Begin hier
 
-**Deze week (W43, vanaf 19 oktober):** 1.2 afronden (de restlijst T435-a tot T435-i), 1.3 en 1.3a (de app-schil, met de drie plekken uit 1.15 als uitgangspunt) en 1.10 (het weerbericht, nu stuk op productie). Daarna W44: 1.16 (de prijszin) en 1.14 (de kaartknop) zijn klein en gaan meteen live.
+**Deze week (W43, vanaf 19 oktober):** 1.2 is af in code (T474; alleen jouw besluit T435-i staat nog open), dus nu 1.3 en 1.3a (de app-schil, met de drie plekken uit 1.15 als uitgangspunt) en 1.10 (het weerbericht, nu stuk op productie). Daarna W44: 1.16 (de prijszin) en 1.14 (de kaartknop) zijn klein en gaan meteen live.
 
 **Jouw besluiten, met de week waarin ze nodig zijn.** De voorstellen en de reden staan in het plan van elke rij; elk besluit staat ook als rij in `Execution/_OPEN.md`.
 
@@ -69,7 +69,7 @@ Je hebt al veel: een ontwerpbrief per tab (T370 tot T379), één richtingsdocume
 | # | Wat | Klaar als | Week | Status |
 | --- | --- | --- | --- | --- |
 | 1.1 | V6-design nakijken op een echte iPhone en Android, dan live zetten (blok 3) | Productie toont V1 tot V6 | W42 | Klaar (V1 tot V6 live op 13 okt; T464 tot T468 en T435 op 17 okt) |
-| 1.2 | Designsysteem op één plek: kleuren, lettertypes en -groottes, knoppen, kaarten, chips en filters, iconen en de prijsnotatie, met voor elk een voorbeeld en wanneer je het gebruikt | Door alle tabs heen dezelfde knoppen, kaarten en prijsnotatie (nu nog 89 soorten knoppen, en hele euro's naast centen) | W43 | Grotendeels klaar (T435, 17 okt: critique 26/36, audit 12/20, detector 2.487 naar 368); restlijst T435-a tot T435-i |
+| 1.2 | Designsysteem op één plek: kleuren, lettertypes en -groottes, knoppen, kaarten, chips en filters, iconen en de prijsnotatie, met voor elk een voorbeeld en wanneer je het gebruikt | Door alle tabs heen dezelfde knoppen, kaarten en prijsnotatie (nu nog 89 soorten knoppen, en hele euro's naast centen) | W43 | Klaar in code (T474, 21 okt): de restlijst T435-a tot T435-h gebouwd (journeylink, fotobronnen, één Lifestyle, één eenheid, één paginabalk, CSS per route 893 naar 741 KB, z-index-ladder, de kleine punten); open: jouw besluit T435-i (de tilde op de pins) en een telefooncheck (T474-f) |
 | 1.3 | Per tab opschrijven wat er nu staat, met de ontwerpbrief van die tab (T370 tot T379) erbij | Per tab een lijst: houden, weg, nieuw | W43 | Te doen |
 | 1.3a | App-schil: kop, navigatie, instellingenbalk en de onderbalk op een telefoon, met de drie plekken uit 1.15 | Goedgekeurde schets op telefoon en desktop | W43 tot W44 | Te doen |
 | 1.3b | Destinations-tab: categorieën, filters, de tripbibliotheek, land- en regiopagina's | Goedgekeurde schets op telefoon en desktop | W44 | Te doen |

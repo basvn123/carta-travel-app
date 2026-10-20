@@ -3,13 +3,6 @@
    must not change: the cascade depends on it. */
 
 /* ───────── Trip planner (map backdrop + bottom sheet) ───────── */
-
-.trip-planner-screen {
-  position: absolute;
-  top: var(--filter-h);
-  left: 0; right: 0; bottom: var(--bottom-nav-h);
-  overflow: hidden;
-}
 /* !important: maplibre stamps its own .maplibregl-map { position: relative }
    on the container, and its stylesheet loads after ours (lazy-loaded tab
    chunk), which used to collapse the map to 0px height. Same fight as
@@ -155,36 +148,13 @@
 
 /* Floating trip header */
 /* Trip header - a static bar at the top of the panel (was a floating card) */
-.trip-topcard {
-  position: relative;
-  flex-shrink: 0;
-  padding: 6px 20px 12px;
-  border-bottom: 1px solid var(--rule);
-}
-.trip-topcard-name {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  border: none;
-  background: transparent;
-  font-family: var(--display);
-  font-size: 19px;
-  color: var(--ink);
-  /* Right padding leaves room for the absolute close button in the corner. */
-  padding: 0 34px 0 0;
-}
 .trip-topcard-name::placeholder { color: var(--ink-mute); }
-.trip-topcard-name:focus { outline: none; }
 .trip-topcard-sub {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--ink-soft);
   margin-top: 3px;
   letter-spacing: 0.02em;
-}
-.trip-topcard-count {
-  margin-left: 8px;
-  color: var(--ink-soft);
 }
 
 /* Bottom sheet */
@@ -245,47 +215,15 @@
 }
 
 .trip-block { margin-top: 18px; }
-.trip-block:first-child { margin-top: 6px; }
-.trip-block-title {
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
-  margin-bottom: 10px;
-}
 
 /* Travel window row */
-.trip-dates-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  flex-wrap: wrap;
-}
 .trip-field {
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 120px;
 }
-.trip-field-label {
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.trip-dates-arrow {
-  color: var(--ink-mute);
-  padding-bottom: 8px;
-  font-size: 15px;
-}
 .trip-field-people { min-width: 0; margin-left: auto; }
-.trip-people {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 4px 6px;
-  background: var(--paper);
-}
 .trip-people span { font-family: var(--mono); font-size: 13px; min-width: 12px; text-align: center; }
 .trip-people button {
   width: 24px; height: 24px;
@@ -306,12 +244,8 @@
   padding-top: 16px;
   border-top: 1px solid var(--rule);
 }
-.nights-ring-track { stroke: var(--rule); }
 .nights-ring-arc { stroke: var(--green); transition: stroke-dashoffset .3s; }
-.nights-ring-arc.over { stroke: var(--accent); }
-.trip-nights-text { font-size: 13px; color: var(--ink-soft); }
 .trip-nights-text strong { color: var(--ink); font-family: var(--mono); }
-.trip-nights-warn { color: var(--accent); font-size: 12px; }
 
 /* Stops */
 .trip-stops { margin-top: 14px; }
@@ -326,40 +260,12 @@
   cursor: pointer;
   transition: border-color .15s, box-shadow .15s, opacity .15s;
 }
-.trip-stop.active { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
-.trip-stop.dragging { opacity: 0.45; }
-.trip-stop-idx {
-  display: flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 600;
-  flex-shrink: 0;
-  cursor: grab;
-}
-.trip-stop-idx:active { cursor: grabbing; }
 .trip-stop-body { flex: 1; min-width: 0; }
-.trip-stop-city {
-  font-family: var(--display);
-  font-size: 16px;
-  color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
 .trip-stop-when {
   font-family: var(--mono);
   font-size: 10.5px;
   color: var(--ink-mute);
   margin-top: 1px;
-}
-
-.trip-stepper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
 }
 .trip-step-btn {
   width: 26px; height: 26px;
@@ -376,9 +282,6 @@
 .trip-step-btn:disabled { opacity: 0.3; cursor: default; }
 .trip-step-val { text-align: center; min-width: 30px; line-height: 1.05; }
 .trip-step-num { font-family: var(--mono); font-size: 15px; color: var(--ink); display: block; }
-.trip-step-suffix { font-size: var(--text-micro); color: var(--ink-mute); }
-
-.trip-stop-tools { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
 .trip-stop-move, .trip-stop-remove {
   width: 26px; height: 24px;
   color: var(--ink-mute);
@@ -395,28 +298,8 @@
   .trip-stop-remove { font-size: 19px; }
   .day-timeline-tools { gap: 0; }
 }
-@media (hover: hover) {
-  .trip-stop-move:hover { color: var(--ink); }
-}
-@media (hover: hover) {
-  .trip-stop-remove:hover { color: var(--accent); }
-}
-
-.trip-leg {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-mute);
-  padding: 6px 12px 6px 24px;
-}
 
 /* Suggestions */
-.trip-suggest-row {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: thin;
-}
 .trip-suggest-card {
   flex: 0 0 132px;
   width: 132px;
@@ -427,35 +310,6 @@
   text-align: left;
   transition: border-color .15s, transform .15s;
 }
-@media (hover: hover) {
-  .trip-suggest-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-}
-.trip-suggest-thumb {
-  position: relative;
-  height: 78px;
-  background: var(--paper-dim) center/cover no-repeat;
-  display: flex; align-items: center; justify-content: center;
-}
-.trip-suggest-fallback { font-family: var(--display); font-size: 26px; color: var(--ink-mute); }
-.trip-suggest-chip {
-  position: absolute;
-  left: 6px; bottom: 6px;
-  background: rgba(26,26,26,0.72);
-  color: var(--on-fill);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 999px;
-}
-.trip-suggest-meta { padding: 7px 9px 9px; }
-.trip-suggest-city {
-  display: block;
-  font-family: var(--display);
-  font-size: 13.5px;
-  color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
 .trip-suggest-sub {
   display: flex; align-items: center; gap: 3px;
   font-family: var(--mono);
@@ -465,13 +319,10 @@
 }
 
 /* Add stop */
-.trip-add-row { display: flex; gap: 10px; align-items: stretch; }
 .trip-add-row .dropdown { flex: 1; }
-.trip-add-row .dropdown.trip-add-country { flex: 0 0 34%; }
 /* Phones: country + city as an even pair, Add on its own full-width row -
    three unequal controls squeezed side by side read as clutter. */
 @media (max-width: 768px) {
-  .trip-add-row { display: grid; grid-template-columns: 1fr 1fr; }
   .trip-add-row .dropdown,
   .trip-add-row .dropdown.trip-add-country,
   .trip-add-row .dropdown.trip-add-city { width: 100%; min-width: 0; }
@@ -494,18 +345,9 @@
 .trip-add-btn:disabled { opacity: 0.35; cursor: default; }
 
 /* Totals */
-.trip-total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--rule);
-}
 .trip-total-row .lbl { color: var(--ink-soft); font-size: 13px; }
 .trip-total-row .lbl small { display: block; color: var(--ink-mute); font-size: 10.5px; font-family: var(--mono); margin-top: 1px; }
 .trip-total-row .val { font-family: var(--mono); font-size: 13px; color: var(--ink); white-space: nowrap; }
-.trip-total-row.grand { border-bottom: none; padding-top: 12px; }
 .trip-total-row.grand .lbl { font-family: var(--display); font-size: 16px; color: var(--ink); }
 .trip-total-row.grand .val { font-size: 17px; font-weight: 600; }
 
@@ -527,7 +369,6 @@
   font-size: 13px;
   font-family: inherit;
 }
-.trip-ownflight-input:focus { outline: none; border-color: var(--accent); }
 .trip-ownflight-cost { flex: 0 0 108px; font-family: var(--mono); }
 
 .trip-save-row { display: flex; gap: 10px; margin-top: 16px; }
@@ -541,20 +382,6 @@
   font-size: 13.5px;
   font-weight: 600;
   transition: opacity .15s;
-}
-@media (hover: hover) {
-  .trip-save-btn:hover:not(:disabled) { opacity: 0.9; }
-}
-.trip-save-btn:disabled { opacity: 0.6; cursor: default; }
-.trip-newtrip-btn {
-  padding: 11px 16px;
-  border-radius: 10px;
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
-  font-size: 13px;
-}
-@media (hover: hover) {
-  .trip-newtrip-btn:hover { border-color: var(--ink-soft); }
 }
 
 /* Saved trips.
@@ -636,66 +463,26 @@
     box-shadow: 4px 0 20px rgba(26, 26, 26, 0.05);
     transition: none;
   }
-  .trip-sheet-grip-hit { display: none; }
-  .trip-topcard { padding-top: 16px; }
 }
 
 
 /* Planned view: Plan your days, Save trip and More in ONE row pinned at the
    bottom of the sheet (T388, brief item 7); Edit stops, Replan route and
    Start over are items of the More menu (67-v6-tripplanner.css). */
-.trip-save-planned-btn, .trip-planday-btn {
-  padding: 0 14px;
-  white-space: nowrap;
-}
 
 /* Day planner: base-city + day-trip transport recommendation. */
-.daytrip-base .trip-block-title { display: flex; align-items: center; gap: 6px; }
 .daytrip-base .trip-block-title svg { color: var(--accent); }
-.daytrip-reco {
-  display: flex; align-items: flex-start; gap: 11px;
-  padding: 11px 13px;
-  /* One border and the card ground, no stripe or tint (T411; the day
-     planner already drew it so from 68-v6-dayplanner.css). */
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-}
 .daytrip-reco-icon { color: var(--accent); margin-top: 2px; }
 .daytrip-reco-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .daytrip-reco-main b { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--ink); }
 .daytrip-reco-main b svg { color: var(--accent); }
 .daytrip-reco-main small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
-.daytrip-hint { color: var(--good-ink-soft); }
-.daytrip-hint.warn { color: var(--warn-ink); }
 /* "You're already in the city" note - icon aligned to the first line. */
-.daytrip-here { display: flex; gap: 6px; align-items: baseline; }
 .daytrip-here svg { flex: none; color: var(--accent); position: relative; top: 1px; }
-.daytrip-more {
-  align-self: center;
-  padding: 5px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  cursor: pointer;
-  white-space: nowrap;
-}
-@media (hover: hover) {
-  .daytrip-more:hover { border-color: var(--accent); color: var(--accent); }
-}
 .daytrip-modes { margin-top: 10px; }
 /* The three modes are BUTTONS: pick one and the whole day plans around it. */
 .daytrip-mode-btn { font: inherit; transition: border-color 0.12s ease, box-shadow 0.12s ease; }
-.daytrip-mode-btn span { display: inline-flex; align-items: center; gap: 4px; }
-.daytrip-mode-btn span svg:last-child:not(:first-child) { color: var(--accent); }
-@media (hover: hover) {
-  .daytrip-mode-btn:hover { border-color: var(--accent); }
-}
-.daytrip-mode-btn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.daytrip-pick-note { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); }/* "Fly to a nearby airport instead" alternatives (no direct fare). */
+.daytrip-mode-btn span { display: inline-flex; align-items: center; gap: 4px; }/* "Fly to a nearby airport instead" alternatives (no direct fare). */
 
 
 /* First-visit "Ryanair fares only" notice. */
@@ -719,31 +506,6 @@
   margin-right: 0.32em;
   letter-spacing: 0;
 }
-.fare-prov {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  margin-left: 6px;
-  vertical-align: baseline;
-}
-.fare-prov-est {
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--ink-soft);
-  background: var(--paper-dim);
-  border: 1px solid var(--rule-soft);
-  border-radius: 4px;
-  padding: 0 4px;
-  cursor: help;
-  white-space: nowrap;
-}
-.fare-prov-age {
-  font-size: 10px;
-  color: var(--ink-mute);
-  white-space: nowrap;
-}
-.booking-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin: 4px 0 0; }
 /* Inside a flex link row the note takes its own full-width line. */
 .cost-group-links .booking-note { flex: 1 0 100%; margin: 0; }
 .trip-leg-links .booking-note { flex: 1 0 100%; margin: 0; }/* The hover card's freshness line (built in plain DOM by MapView). */
@@ -777,14 +539,6 @@
   border-top: 1px solid var(--rule);
   background: var(--paper);
 }
-.trip-sheet-footer-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-.trip-footer-error { margin: 0 0 8px; }
-
-.trip-origin-row { display: flex; }
 .trip-origin-row .origin-picker { position: relative; }
 .trip-footer-error .state-err-msg { font-size: 13px; }
 .trip-planned-error {

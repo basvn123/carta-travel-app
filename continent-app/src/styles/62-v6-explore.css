@@ -164,7 +164,7 @@
    accent (carta-design, "Selected state"). */
 /* The card with its popover open sits above its neighbours. */
 
-/* The type scale (DIRECTION part 5): a card name is Fraunces 19 px, a
+/* The type scale (DIRECTION part 5): a card name is the heading face at 19 px, a
    section (a rail) 22 px on a phone and 26 px from 769 px, the page title
    40 px on desktop (the phone draws the count, not the title). */
 .explore-shell .railcard-name { font-size: 19px; line-height: 1.2; letter-spacing: 0; }
@@ -295,6 +295,12 @@
 .explore-shell .xchip-clear { background: transparent; color: var(--text-2); animation: none; }
 @media (hover: hover) {
   .explore-shell .xchip:hover { border-color: var(--neutral-300); }
+}
+/* The tap floor on touch, as on Destinations (T474): the 32 px above beat
+   the phone's .xchip { min-height: var(--tap) } and left the chips at 32. */
+@media (pointer: coarse) {
+  .explore-shell .xchip,
+  .explore-shell .xchips-lead .xgrid-sort { min-height: var(--tap); }
 }
 @keyframes xchip-in {
   from { opacity: 0; transform: scale(0.9); }
@@ -469,7 +475,59 @@
     white-space: nowrap;
   }
   .explore-shell .xbar { justify-content: flex-end; margin-bottom: var(--space-3); }
+  /* One refine row (carta-design "Filters", T474, row T435-h): with active
+     filters the sort leads the chip row and the bar's twin steps aside, and
+     the row scrolls sideways rather than wrapping into three. */
+  .explore-shell .xbar:has(+ .xchips) .xgrid-sort { display: none; }
+  .explore-shell .xbar:has(+ .xchips) { margin-bottom: 0; }
+  .explore-shell .xchips {
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .explore-shell .xchips::-webkit-scrollbar { display: none; }
+  .explore-shell .xchips > * { flex: none; }
+  .explore-shell .xchips-lead { display: flex; }
+  /* The sort as a dropdown chip: the removable chips' height, edge and
+     corners, its name in secondary ink, the choice beside it, one chevron. */
+  .explore-shell .xchips-lead .xgrid-sort {
+    position: relative;
+    gap: var(--space-1);
+    height: 32px;
+    margin: 0;
+    padding-left: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    font-size: var(--text-label);
+    color: var(--text-2);
+  }
+  .explore-shell .xchips-lead .xgrid-sort-field { position: relative; display: inline-flex; align-items: center; height: 100%; }
+  .explore-shell .xchips-lead .xgrid-sort select {
+    appearance: none;
+    /* Over the chip's edge too, so the control is as tall as the chip: 44 px
+       on touch, never the 42 inside its border. */
+    height: calc(100% + 2px);
+    margin-block: -1px;
+    padding: 0 calc(var(--space-3) + 14px) 0 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  /* The ring is drawn on the chip; a transparent one stays for forced colours. */
+  .explore-shell .xchips-lead .xgrid-sort select:focus-visible { outline: 2px solid transparent; }
+  .explore-shell .xchips-lead .xgrid-sort:has(select:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .explore-shell .xchips-lead .xgrid-sort-chev { position: absolute; right: var(--space-3); color: var(--text-2); pointer-events: none; }
 }
+.xchips-lead { display: none; }
 
 /* --- Sections ------------------------------------------------------------ */
 .explore-shell .xrails {
@@ -1090,7 +1148,8 @@
   min-height: var(--tap);
   padding: 0 var(--space-4);
   border-color: var(--border);
-  border-radius: var(--radius-pill);
+  /* A search field, so the control radius (T474, row T435-h). */
+  border-radius: var(--radius-control);
   background: var(--surface);
   color: var(--text);
   font-weight: 500;

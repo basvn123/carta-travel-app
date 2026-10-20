@@ -37,15 +37,16 @@ import { SectionRail } from './SectionRail.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestTrack } from './DestTrack.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
-import { SaveButton } from './ExploreCards.jsx';
-import { Button, Card, Chip, IconButton, Money, Tabs } from '../components/ui/index.js';
+import { PageBar } from './PageBar.jsx';
+import { usePageArrival } from '../hooks/usePageArrival.js';
+import { Button, Card, Chip, Money, Tabs } from '../components/ui/index.js';
 import { isNational } from '../components/CostSummary.jsx';
 import {
   PersonIcon, MapPinIcon, ParkingIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
   RainIcon, DrizzleIcon, SnowIcon, StormIcon, CompassIcon,
   ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon,
   BackpackIcon, CheckIcon, BedIcon, StarIcon, ChevronRightIcon, MusicIcon, SparkIcon, LinkIcon,
-  DownloadIcon, BulbIcon, AlertIcon, ArrowLeftIcon, CloseIcon, ShareIcon,
+  DownloadIcon, BulbIcon, AlertIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { scrollBehavior } from '../lib/motion.js';
@@ -289,6 +290,8 @@ export function DestinationPage({
   isFavorite, onToggleFavorite, onOpenFeature, onOpenItin,
   // The two doors into the planners (App.openTripForCountry / openDayForDest).
   onPlanTrip = null, onPlanDay = null,
+  // What the back control names: the tab the page closes back to (T474).
+  backLabel = '',
 }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
@@ -381,20 +384,13 @@ export function DestinationPage({
   const backRef = React.useRef(null);
   const skipEscape = React.useCallback(
     () => !!pageRef.current?.querySelector('.dropdown-menu'), []);
-  // Where focus lands on open (carta-design "Navigation"): opened by pointer
-  // or touch, the page heading (tabindex -1, no ring); from the keyboard, the
-  // first control in the bar, so the next key acts.
+  // Where focus lands on open: the one page rule (hooks/usePageArrival.js,
+  // carta-design "Navigation", T474): the heading by pointer, touch or a
+  // link; the back control from the keyboard, so the next key acts.
   const titleRef = React.useRef(null);
-  const openFocusRef = React.useRef(null);
-  React.useLayoutEffect(() => {
-    let kb = false;
-    try { kb = !!document.activeElement?.matches?.(':focus-visible'); } catch { /* treat as pointer */ }
-    const first = [...(pageRef.current?.querySelectorAll('.destp-bar button') || [])]
-      .find((b) => b.offsetParent !== null) || backRef.current;
-    openFocusRef.current = kb ? first : (titleRef.current || first);
-  }, [destination?.id]);
+  const arrivalRef = usePageArrival(pageRef, destination?.id ?? null);
   useFocusTrap(pageRef, onClose, {
-    initialFocusRef: openFocusRef,
+    initialFocusRef: arrivalRef,
     skipEscapeWhen: skipEscape,
     enabled: !!destination,
   });
@@ -689,25 +685,23 @@ export function DestinationPage({
       aria-modal="true"
       aria-label={city}
     >
-      <div className={`destp-bar ${stuck ? 'is-stuck' : ''}`}>
-        <IconButton className="destp-back" onClick={onClose} label={t('glyph.back')} ref={backRef}>
-          <ArrowLeftIcon size={20} />
-        </IconButton>
-        <span className="destp-bar-name">{city}</span>
-        <div className="destp-bar-actions">
-          {/* carta-design "Navigation": every detail page carries a save and
-              a share control in its page bar. */}
-          {onToggleFavorite && (
-            <SaveButton fav={isFavorite} onToggle={onToggleFavorite} t={t} name={city} className="destp-save" />
-          )}
-          <IconButton className="destp-share" onClick={share} label={copied ? t('dest.linkCopied') : t('dest.share')}>
-            {copied ? <CheckIcon size={18} /> : <ShareIcon size={18} />}
-          </IconButton>
-          <IconButton className="destp-close" onClick={onClose} label={t('detail.close')}>
-            <CloseIcon size={16} />
-          </IconButton>
-        </div>
-      </div>
+      {/* The one page bar (PageBar, T474, row T435-e): back naming the list
+          on a phone and a desktop alike, the name once the heading has
+          scrolled away, save and share (carta-design "Navigation"). */}
+      <PageBar
+        t={t}
+        backLabel={backLabel || t('detail.backToList')}
+        onBack={onClose}
+        backRef={backRef}
+        name={city}
+        nameOn={stuck}
+        fav={isFavorite}
+        onFav={onToggleFavorite || null}
+        onShare={share}
+        shareLabel={t('dest.share')}
+        copied={copied}
+        copiedLabel={t('dest.linkCopied')}
+      />
 
       {notice && (
         <p className="destp-notice" role="status">

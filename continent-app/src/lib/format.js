@@ -87,6 +87,33 @@ export function safeUrl(url) {
   return /^https?:\/\//i.test(url.trim()) ? url : null;
 }
 
+// Words a register keeps lower case inside a name ("Limnothalassa Gialovas
+// kai Nisos Sfaktiria", "Ría de Vigo"), across the languages Europe's
+// registers write in.
+const NAME_SMALL = new Set([
+  'a', 'al', 'am', 'and', 'au', 'aux', 'da', 'das', 'de', 'dei', 'del', 'della', 'der', 'des', 'di', 'do', 'dos',
+  'du', 'e', 'el', 'en', 'et', 'i', 'im', 'in', 'kai', 'la', 'las', 'le', 'les', 'lo', 'los', 'of', 'on', 'sur',
+  'the', 'und', 'van', 'von', 'y',
+]);
+
+/** A name a European register publishes in capitals ("VOIDOKILIA", a
+ *  Natura 2000 site's "LIMNOTHALASSA GIALOVAS KAI NISOS SFAKTIRIA") in the
+ *  case the page prints every other name in (T474, row T435-h). Only a name
+ *  with no lower-case letter at all changes, so "Ría de Vigo", or an "EU"
+ *  inside a mixed name, stays exactly as written; short ones (an "EU" alone)
+ *  are left too. */
+export function displayName(s, lang = 'en') {
+  if (typeof s !== 'string') return s;
+  const letters = s.replace(/[^\p{L}]/gu, '');
+  if (letters.length < 4) return s;
+  if (letters !== letters.toLocaleUpperCase(lang) || letters === letters.toLocaleLowerCase(lang)) return s;
+  return s.toLocaleLowerCase(lang).replace(/(^|[\s\-('/’])(\p{L})(\p{L}*)/gu, (m, sep, first, rest, at) => {
+    const word = first + rest;
+    if (at > 0 && NAME_SMALL.has(word)) return sep + word;
+    return sep + first.toLocaleUpperCase(lang) + rest;
+  });
+}
+
 // Human labels for dest.costs.price_source (on-the-ground spend).
 export const PRICE_SOURCE_LABELS = {
   numbeo_city: 'city prices',

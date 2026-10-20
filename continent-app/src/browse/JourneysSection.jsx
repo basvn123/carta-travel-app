@@ -21,7 +21,7 @@ const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 const TILE_SIZES = '(max-width: 768px) 92vw, (max-width: 1279px) 46vw, 410px';
 import {
   loadJourneyIndex, loadJourneyType, loadAllJourneyCards, typeLabel, typeDesc, monthsShort,
-  styleFromPrice, takePendingJourney,
+  styleFromPrice, journeyHash,
 } from '../lib/journeys.js';
 import {
   cardAtLength, cardTotal, fitLength, lengthOptions, readTripLength, writeTripLength, SHORT,
@@ -153,6 +153,13 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
   // The card's photograph grows into the page's hero (rule "List to
   // detail", T397); without View Transitions the page opens as before.
   const open = (e) => openShared(e.currentTarget.closest('.card'), card.id, () => onOpen(card));
+  // The title is a real link to the week's address (rule "Navigation", T474):
+  // a plain click opens the page here, a modifier click is the browser's.
+  const openLink = (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    open(e);
+  };
   return (
     <Card
       layout="tile"
@@ -161,7 +168,8 @@ function JourneyCard({ card, length, onOpen, t, lang }) {
       data-trip={card.id}
       media={<TilePhotos urls={urls} city={card.title} iso2={card.cc} onOpen={open} sizes={TILE_SIZES} maxWidth={960} ratio={[3, 2]} />}
       title={<span className="jcard-title">{card.title}</span>}
-      onOpen={open}
+      href={journeyHash(card.id)}
+      onOpen={openLink}
       meta={(
         <span className="ttile-meta">
           <span className="ttile-line">
@@ -248,12 +256,20 @@ function StyleCountryEmpty({ country, cards, geo, countryName, onOpen, onAllCoun
           <ul className="cov-near">
             {near.map(({ c, km }) => (
               <li key={c.id}>
-                <button type="button" className="cov-near-row" onClick={() => onOpen(c)}>
+                <a
+                  className="cov-near-row"
+                  href={journeyHash(c.id)}
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                    e.preventDefault();
+                    onOpen(c);
+                  }}
+                >
                   <span className="cov-near-name">{c.title}</span>
                   <span className="cov-near-meta">
                     {countryName(c.cc)} <span className="mono">{nf(km)} km</span>
                   </span>
-                </button>
+                </a>
               </li>
             ))}
           </ul>
@@ -297,22 +313,6 @@ export function JourneysSection({
       .catch(() => { if (live) setIndex(null); });
     return () => { live = false; };
   }, [indexTries]);
-
-  // A link that opened the app on #journey=<id> (lib/journeys.js reads it
-  // once at startup) opens that week as soon as the library is on screen.
-  useEffect(() => {
-    const id = takePendingJourney();
-    if (!id) return undefined;
-    let live = true;
-    loadAllJourneyCards().then((all) => {
-      if (!live) return;
-      const card = all.find((c) => c.id === id);
-      onOpen(card || { id, gw: null });
-    });
-    return () => { live = false; };
-    // Once per mount: the pending id is handed over a single time.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (!view || view === 'composed') { setCards(undefined); return undefined; }

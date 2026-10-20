@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { displayName } from '../lib/format.js';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
@@ -145,7 +146,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
       value: t(`lake.water${lake.water.class}`),
       note: lake.water.sites > 0
         ? t('lake.factSites', { n: lake.water.sites })
-        : (lake.water.site || ''),
+        : (displayName(lake.water.site) || ''),
     },
     lake.access && {
       key: 'access',

@@ -9,7 +9,7 @@
    selected day and the pin turns into a numbered stop of the route. */
 .trip-poi-pin { padding-right: 5px; }
 /* Candidates stay a register quieter than the route: paler border, muted
-   label, a lighter shadow. The numbered terracotta stops are the loudest
+   label, a lighter shadow. The numbered action-brown stops are the loudest
    thing on this map; hovering a candidate restores its full voice. */
 .trip-poi-pin:not(.sel) {
   border-color: var(--rule-soft);
@@ -59,7 +59,7 @@
 
 /* One pill spec for every control in here: same height, same padding, same
    filled active state, whether it filters, opens a group or flips a view. */
-/* Deep slate, not the terracotta accent: an active filter is a state, not an
+/* Deep slate, not the action accent: an active filter is a state, not an
    alert, and the map pins must stay the loudest thing on the canvas. */
 
 /* Second layer: the quality group's trigger and the view toggle, kept apart
@@ -111,18 +111,6 @@
   margin: 6px 0 0;
 }
 .carta-plan-row { margin-top: 13px; }
-.carta-plan-q {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--ink-soft);
-  margin-bottom: 6px;
-}
-.carta-plan-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
 .carta-plan-chip {
   padding: 6px 11px;
   border-radius: 999px;
@@ -134,11 +122,6 @@
   cursor: pointer;
   transition: border-color 0.14s, background 0.14s, color 0.14s;
 }
-@media (hover: hover) {
-  .carta-plan-chip:hover { border-color: var(--ink); color: var(--ink); }
-}
-.carta-plan-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
-.carta-plan-moods .day-guide-mood { font-size: 12px; }
 
 /* The which-part-of-town answer: honest options built from the data, each
    with how many catalogued places it holds. */
@@ -193,7 +176,6 @@
   background: var(--paper);
   padding: 10px 11px;
 }
-.carta-route.rec { border-color: var(--accent); }
 .carta-route-head {
   display: flex;
   align-items: center;
@@ -238,37 +220,9 @@
    "Search" button on a phone left it a third of the width, truncating what
    was typed mid-entry. The field gets the whole row; the button sits under it.
    Side by side returns once there is room (tablet and up). */
-.trip-carfrom { margin: 8px 0 4px; }
-.trip-carfrom-row { display: flex; gap: 8px; }
 .trip-carfrom-row .trip-ownflight-input { flex: 1; min-width: 0; }
-.trip-carfrom-btn {
-  font-family: var(--ui);
-  font-weight: 600; font-size: 12px;
-  color: var(--ink-soft);
-  border: 1px solid var(--rule); border-radius: 8px;
-  background: none; padding: 6px 10px; cursor: pointer;
-}
-.trip-carfrom-btn:disabled { opacity: 0.5; cursor: default; }
 .trip-carfrom-results { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
-.trip-carfrom-result {
-  text-align: left; font-size: 12px; color: var(--ink-soft);
-  border: 1px solid var(--rule); border-radius: 8px;
-  background: none; padding: 6px 9px; cursor: pointer;
-}
-@media (hover: hover) {
-  .trip-carfrom-result:hover { border-color: var(--ink); color: var(--ink); }
-}
 .trip-carfrom-note b { color: var(--ink); }
-.trip-carfrom-change {
-  font-family: var(--ui);
-  font-weight: 600; font-size: 12px;
-  color: var(--ink-soft);
-  border: 1px solid var(--rule); border-radius: 999px;
-  background: none; padding: 2px 8px; cursor: pointer;
-}
-@media (hover: hover) {
-  .trip-carfrom-change:hover { color: var(--ink); border-color: var(--ink); }
-}
 .trip-ownflight-date { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .trip-ownflight-date > span {
   font-family: var(--ui);
@@ -277,12 +231,6 @@
 }
 
 /* ── Stay step: rating/price filters + per-night price chip ── */
-.guide-stay-filters {
-  display: flex; align-items: center; gap: 10px;
-  flex-wrap: wrap;
-  margin: 8px 0 4px;
-}
-.guide-stay-filter { display: flex; align-items: center; gap: 6px; }
 .guide-stay-filter > span {
   font-family: var(--ui);
   font-weight: 600; font-size: 12px;
@@ -293,41 +241,12 @@
   border: 1px solid var(--rule); border-radius: 8px;
   background: var(--paper); padding: 5px 8px;
 }
-.guide-stay-filter-clear {
-  font-family: var(--ui);
-  font-weight: 600; font-size: 12px;
-  color: var(--ink-soft);
-  border: 1px solid var(--rule); border-radius: 999px;
-  background: none; padding: 3px 9px; cursor: pointer;
-}
-@media (hover: hover) {
-  .guide-stay-filter-clear:hover { color: var(--ink); border-color: var(--ink); }
-}
-.guide-stay-price {
-  font-family: var(--mono); font-size: var(--text-micro);
-  color: var(--ink-soft);
-  background: var(--paper-dim);
-  border-radius: 999px;
-  padding: 2px 7px;
-  white-space: nowrap;
-}
 
 /* ───────── AI day planner (plan-day) ───────── */
 
 /* The dialog: a centered card on desktop, a full-width sheet on phones.
    Reuses the carta-plan question rows so the questions read identically to
    the route picker. */
-.ai-plan-overlay { align-items: flex-start; overflow-y: auto; }
-.ai-plan-card {
-  width: min(100%, 520px);
-  margin: 4vh auto;
-  text-align: left;
-  padding: 22px 22px 18px;
-}
-.ai-plan-head {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 6px; padding-right: 26px;
-}
 .ai-plan-head h3 { font-family: var(--display); font-size: 17px; font-weight: 600; color: var(--ink); }
 .ai-plan-badge {
   /* A plain --ink-soft icon, no tile (never-do 1, accent marks; T411, row
@@ -336,36 +255,12 @@
   color: var(--ink-soft);
   display: inline-flex; align-items: center; justify-content: center;
 }
-.ai-plan-lead { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin: 4px 0 12px; }
 .ai-plan-note { font-size: 11.5px; color: var(--ink-mute); line-height: 1.5; margin-top: 10px; }
-.ai-plan-note-warn { color: var(--amber-ink); background: var(--amber-bg); border-radius: 8px; padding: 8px 10px; }
-.ai-plan-hills { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); cursor: pointer; }
 .ai-plan-hills input { accent-color: var(--accent); width: 15px; height: 15px; }
-.ai-plan-free {
-  width: 100%;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit; font-size: 13px;
-  padding: 9px 11px;
-  resize: vertical;
-}
-.ai-plan-free:focus { outline: none; border-color: var(--accent); }
 .ai-plan-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-.ai-plan-generate { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
-.ai-plan-secondary { text-align: center; }
-.ai-plan-busy { text-align: center; padding: 26px 0 18px; }
 .ai-plan-busy p { font-size: 13px; color: var(--ink-soft); margin-top: 12px; }
 
 /* The proposed schedule (modal) + the applied schedule card (day rail). */
-.ai-sched { list-style: none; margin: 8px 0 0; padding: 0; }
-.ai-sched-stop {
-  display: flex; gap: 10px;
-  padding: 7px 0;
-  border-bottom: 1px dashed var(--rule);
-}
-.ai-sched-stop:last-child { border-bottom: none; }
 /* The Carta bot's day lands as a cascade rather than all at once, so the
    schedule reads as something being written for you. Staggered by row, capped
    at eight so a long day never feels slow to arrive. */
@@ -398,22 +293,12 @@ color: var(--ink-soft);
 .ai-sched-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .ai-sched-body b { font-size: 13px; font-weight: 600; color: var(--ink); }
 .ai-sched-body small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
-.ai-sched-walk { color: var(--ink-mute); }
 
 /* ── The proposal as a route: a map of the day above the stops it lists ──
    A named place the traveller has never been to is not a place yet. The photo
    is what makes "Huis van Alijn" a decision rather than a word, and the map is
    what answers the question the list structurally cannot: is this one walk
    through one quarter, or three corners of the city stitched together. */
-.ai-route-map {
-  position: relative;
-  height: 248px;
-  margin: 12px 0 4px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--paper-dim);
-}
 /* The trip map is normally full-bleed BESIDE the desktop side panel, so it
    carries `left: var(--panel-w)`. Embedded here that left over offset left the
    canvas 34px wide, fitBounds could not fit a route into less padding than it
@@ -455,7 +340,6 @@ button.ai-sched-main { cursor: pointer; }
 /* Selected: the row and its pin are one thing, so picking either says so on
    both. Kept to a tint and a rule, no lift, this is a list of places and not
    a stack of cards. */
-.ai-sched-stop.on { background: var(--bg-card); outline: 2px solid var(--select-border); outline-offset: -2px; }
 .ai-sched-stop.on .ai-sched-body b { color: var(--ink); }
 .ai-sched-stop {
   border-radius: 8px;
@@ -474,18 +358,7 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-mute);
 }
 @media (max-width: 640px) {
-  .ai-route-map { height: 204px; }
   .ai-sched-time { flex-basis: 58px; }
-}
-.ai-disc-tag {
-  display: inline-flex; align-items: center; gap: 3px;
-  margin-left: 6px;
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: var(--ai-violet-bg);
-  color: var(--ai-violet);
-  font-size: var(--text-micro); font-weight: 700;
-  vertical-align: 1px;
 }
 
 /* Applied-schedule card in the day rail */
@@ -501,11 +374,6 @@ button.ai-sched-main:focus-visible {
   .dem-pin.ai-disc:hover { transform: none; }
 }
 
-@media (max-width: 768px) {
-  .ai-plan-overlay { padding: 10px; }
-  .ai-plan-card { margin: 2vh auto; max-height: 92vh; overflow-y: auto; }
-}
-
 /* ───────── AI planner round 2: hero CTA, facts, refine loop, events ───────── */
 
 /* The one big call to action on an empty day. */
@@ -514,32 +382,9 @@ button.ai-sched-main:focus-visible {
    not a slab of saturated rust. One assistant, one look, wherever you meet it. */
 
 /* Date + party size, side by side. */
-.ai-plan-facts { display: flex; gap: 14px; flex-wrap: wrap; }
-.ai-plan-fact { display: flex; flex-direction: column; gap: 5px; }
-.ai-plan-fact .carta-plan-q { display: inline-flex; align-items: center; gap: 5px; }
-.ai-plan-date {
-  border: 1px solid var(--rule);
-  border-radius: 9px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit; font-size: 13px;
-  padding: 7px 10px;
-}
-.ai-plan-date:focus { outline: none; border-color: var(--accent); }
-.ai-plan-people { align-self: flex-start; }
-.ai-plan-toggles { display: flex; gap: 18px; flex-wrap: wrap; }
 .ai-plan-hills span { display: inline-flex; align-items: center; gap: 5px; }
 
 /* "Proposal, not yet on your map" framing above the result. */
-.ai-plan-proposal-tag {
-  display: inline-block;
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-size: 10.5px; font-weight: 600;
-margin-bottom: 8px;
-}
 
 /* Push the plan back at the AI until it is right. */
 .ai-refine {
@@ -547,8 +392,6 @@ margin-bottom: 8px;
   margin-top: 14px;
   padding-top: 12px;
 }
-.ai-refine-nudges { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 9px; }
-.ai-refine-row { display: flex; gap: 8px; }
 .ai-refine-input {
   flex: 1 1 auto;
   min-width: 0;
@@ -559,29 +402,15 @@ margin-bottom: 8px;
   font: inherit; font-size: 13px;
   padding: 9px 11px;
 }
-.ai-refine-input:focus { outline: none; border-color: var(--accent); }
 
 /* Import is the decisive action: heavier than the secondary buttons. */
-.ai-plan-import { font-weight: 700; padding-top: 13px; padding-bottom: 13px; }
 
 /* Events wear their own tint, distinct from ordinary AI discoveries. */
-.ai-event-tag { background: var(--event-bg); color: var(--event-ink); }
 /* A find the bot could not place: kept, listed, and honest about having no
    pin, in the app's neutral tones rather than the discovery violet. */
 .dem-pin.ai-event { --cat: var(--event-ink); border-color: var(--event-ink); }
 
-@media (max-width: 768px) {
-  .ai-plan-facts { gap: 10px; }
-}
-
 /* ───────── Day planner: guided full-screen flow ───────── */
-
-.day-flow-screen {
-  display: flex;
-  justify-content: center;
-  padding: 0;
-  overflow-y: auto;
-}
 /* Matches the trip planner's form column, so the two planners ask their
    questions at the same width. */
 /* The manual step hosts the wide explore map, so it drops the reading width. */
@@ -630,12 +459,6 @@ margin-bottom: 8px;
    range in grey. That is a filing system's view of a trip. These cards lead
    with the photograph, because what makes somebody recognise "Bruges, the
    one in October" is the picture, not the string. */
-.dtsection { display: flex; flex-direction: column; }
-.dtcards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-3);
-}
 .dtcard {
   display: flex;
   flex-direction: column;
@@ -649,36 +472,20 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out);
 }
-@media (hover: hover) {
-  .dtcard:hover { border-color: var(--ink); }
-}
 /* T399 (carta-design caption band): pressed, the band turns --ink-fill, so
    the press reads in greyscale too. */
-.dtcard .dtcard-body { transition: background-color var(--dur-1) var(--ease-out); }
 .dtcard:active .dtcard-body { background: var(--select-bg); }
 @media (prefers-reduced-motion: reduce) {
-  .dtcard, .dtcard .dtcard-body { transition: none; }
+  .dtcard { transition: none; }
 }
 /* A trip you can no longer travel is still worth reopening, so it is dimmed
    rather than hidden, and it comes back to full strength on hover: muted is a
    ranking signal, not a disabled state. */
-.dtcard.past { opacity: .62; }
-@media (hover: hover) {
-  .dtcard.past:hover { opacity: 1; }
-}
 /* The photo wrapper owns the ratio and the image fills it absolutely, for the
    same reason .mcard-pick does: HeroImage writes the ratio into the width and
    height ATTRIBUTES, so a 16x9 image left to size itself is 9px tall. */
-.dtcard-photo {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
-  background: var(--paper-dim);
-}
 /* T399: the name moved off the photograph into the band under it (caption
-   band rule), Fraunces at the caption size; the gradient scrim went. */
+   band rule), the heading face at the caption size; the gradient scrim went. */
 /* One badge, top right, answering the only question a list of saved trips
    raises: which of these is the one I am on. */
 .dtcard-body {
@@ -691,23 +498,10 @@ margin-bottom: 8px;
 
 /* Two grey cards while the trips load, so the section holds its height
    instead of shunting the question up the page when they land. */
-.dtcard.skeleton { cursor: default; border-color: var(--rule); }
 .dtcard.skeleton .dtcard-photo { background: var(--paper-dim); }
-.dtskel-line { display: block; height: 10px; border-radius: 4px; background: var(--paper-dim); }
-.dtskel-line.w40 { width: 40%; }
-.dtskel-line.w70 { width: 70%; }
 
 /* Signed out, and empty. Both used to be a sentence of grey type, and an
    offer with nothing to press is not an offer. */
-.dtsignin {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  background: var(--bg-card);
-}
 .dtsignin-text { flex: 1 1 auto; min-width: 0; }
 .dtsignin-text b { display: block; font-size: 14px; }
 .dtsignin-text p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
@@ -718,19 +512,6 @@ margin-bottom: 8px;
 
 /* The delete action, behind a menu rather than beside the card as a bare
    cross one mis-tap from the plan it removes. */
-.dtmenu { position: absolute; top: 8px; left: 8px; }
-.dtmenu-btn {
-  display: flex;
-  padding: 6px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .92);
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .dtmenu-btn:hover { color: var(--ink); }
-}
 .dtmenu-pop {
   position: absolute;
   top: calc(100% + 5px);
@@ -743,53 +524,9 @@ margin-bottom: 8px;
   background: var(--bg-card);
   box-shadow: var(--shadow-1);
 }
-.dtmenu-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  width: 100%;
-  padding: 8px 9px;
-  border: none;
-  border-radius: 7px;
-  background: none;
-  font-size: 13px;
-  text-align: left;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .dtmenu-item:hover { background: var(--paper-dim); }
-}
-.dtmenu-item.danger { color: var(--danger); }
 
 /* "Which day?": every day of the trip, grouped under its stop. Picking one
    answers the stay question and the date question at once. */
-.dtday-groups { display: flex; flex-direction: column; gap: 16px; }
-.dtday-groupname {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 7px;
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.dtday-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.dtday-chip {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-height: 44px;
-  padding: 7px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-  text-align: left;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .dtday-chip:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
-}
 .dtday-chip b { font-size: 13px; font-weight: 600; }
 .dtday-chip small {
   font-family: var(--mono);
@@ -799,12 +536,6 @@ margin-bottom: 8px;
 }
 /* A day that has gone is shown, not hidden: seeing that days 1 and 2 are
    behind you is how you know which day 3 is. */
-.dtday-chip:disabled {
-  cursor: not-allowed;
-  opacity: .45;
-  background: var(--paper-dim);
-  text-decoration: line-through;
-}
 
 @media (prefers-reduced-motion: reduce) {
   .dtcard { transition: none; }
@@ -813,19 +544,8 @@ margin-bottom: 8px;
 /* On a phone the cards are a swipe, not a stack: three trips down the page
    pushes the question that follows them off the fold. */
 @media (max-width: 700px) {
-  .dtcards {
-    display: flex;
-    gap: 10px;
-    margin-inline: -16px;
-    padding-inline: 16px;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
   .dtcards::-webkit-scrollbar { display: none; }
   .dtcards > .dtcard { flex: 0 0 82vw; scroll-snap-align: start; }
-  .dtsignin { flex-wrap: wrap; }
 }
 /* The chosen destination, above the later questions: city photo, name, the
    picked date once there is one, and the way back to change the answer. */
@@ -855,8 +575,6 @@ margin-bottom: 8px;
    one line and truncates rather than wrapping the row to three deep. */
 /* Arrow-key focus and hover look the same on purpose: one highlight, whether
    it arrived by mouse or by keyboard. */
-
-.day-flow-search { display: flex; gap: 8px; }
 .day-flow-search .day-stay-input {
   flex: 1 1 auto;
   font-size: 16px;
@@ -917,18 +635,6 @@ margin-bottom: 8px;
 /* What has been taken so far. Each chip is a small record rather than a
    label: the thumbnail says which place, the distance says whether it is a
    walk, and the four time buttons are the only other thing worth asking. */
-.day-ideas-chips { display: flex; flex-direction: column; gap: 8px; list-style: none; margin: 0; padding: 0; }
-.day-ideas-chip {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 8px 8px 10px;
-  /* T389: the 3px accent stripe went (carta-design accent marks: no stripe on
-     an inert control). */
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--paper);
-}
 .day-ideas-chip-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .day-ideas-chip-text b {
   font-size: 13.5px; color: var(--ink);
@@ -943,44 +649,13 @@ margin-bottom: 8px;
   background: transparent; color: var(--ink-mute);
   cursor: pointer;
 }
-@media (hover: hover) {
-  .day-ideas-chip-x:hover { background: var(--paper-dim); color: var(--ink); }
-}
 
 /* Morning / Afternoon / Evening / Any, as a segmented control. Optional by
    design: "Any" is the default and carries no opinion, so the traveller only
    touches this when the time of day actually matters to them. */
-
-.day-ideas-search { position: relative; display: flex; align-items: center; }
 .day-ideas-search-ico { position: absolute; left: 12px; color: var(--ink-mute); pointer-events: none; }
-.day-ideas-input {
-  width: 100%;
-  padding: 12px 36px 12px 34px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 14px;
-}
-.day-ideas-input:focus { outline: none; border-color: var(--accent); }
-.day-ideas-clear {
-  position: absolute; right: 8px;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px;
-  border: none; border-radius: 6px;
-  background: transparent; color: var(--ink-mute);
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .day-ideas-clear:hover { background: var(--paper-dim); color: var(--ink); }
-}
-
-.day-ideas-results { display: flex; flex-direction: column; gap: 14px; }
-.day-ideas-group { display: flex; flex-direction: column; gap: 6px; }
 /* The group headings are the one place the flow's centred overline would
    read wrong: they label a left-aligned list, so they sit over its edge. */
-.day-ideas-rows { display: flex; flex-direction: column; gap: 4px; list-style: none; margin: 0; padding: 0; }
 .day-ideas-row {
   display: flex;
   align-items: center;
@@ -994,10 +669,6 @@ margin-bottom: 8px;
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease;
 }
-@media (hover: hover) {
-  .day-ideas-row:hover { background: var(--paper-dim); }
-}
-.day-ideas-row.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
 .day-ideas-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .day-ideas-row-text b {
   font-size: 13.5px; font-weight: 500; color: var(--ink);
@@ -1014,14 +685,8 @@ margin-bottom: 8px;
   font-size: 15px; line-height: 1;
 }
 .day-ideas-row.on .day-ideas-row-mark { background: var(--select-bg); color: var(--select-ink); }
-.day-ideas-note { margin: 0; font-size: 12.5px; color: var(--ink-soft); text-align: center; }
 
 /* A phone gets the two choices stacked and full width: side by side they
    were 150px each, which is not a target and not enough room for the helper
    line that tells you what each one does. */
-@media (max-width: 620px) {
-  /* The chip's time control needs the full width once the name is beside a
-     thumbnail: at phone width it wrapped to one button per line. */
-  .day-ideas-chip { flex-wrap: wrap; }
-}
 

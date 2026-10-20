@@ -1522,8 +1522,6 @@
 /* Day by day. */
 .itin-days { list-style: none; margin: 0; padding: 0; }
 .itin-day { padding: 12px 0; border-top: 1px solid var(--rule-soft); }
-.itin-day:first-child { border-top: none; padding-top: 0; }
-.itin-day-head { display: flex; align-items: center; gap: 9px; }
 .itin-day-no {
   flex: none;
   width: 24px;
@@ -1807,23 +1805,12 @@
      Travel  every leg of the chosen trip with its links out and one field
              for what it actually cost
 
-   Everything here is the app's own vocabulary: warm paper, terracotta for
+   Everything here is the app's own vocabulary: warm paper, action-brown for
    the live choice, mono for anything measured, 14px cards, hairlines
    between rows rather than boxes inside boxes.
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Where: the card is a div now, so both its actions are real buttons ── */
-.guide-ccard-pick {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  text-align: left;
-  border-radius: inherit;
-  overflow: hidden;
-}
-.guide-ccard-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* The second action on a card that is otherwise one big target: quiet, in
    the corner, and only as loud as it needs to be to be found. */
 .guide-ccard-info {
@@ -1854,66 +1841,20 @@
   transform: translate(-50%, -50%);
 }
 @media (hover: hover) {
-  .guide-ccard-info:hover,
   .guide-ccard-pick:hover ~ .guide-ccard-info {
     background: rgba(31, 42, 51, 0.86);
     color: var(--on-fill);
   }
 }
-.guide-ccard-info:focus-visible { outline: 2px solid var(--on-fill); outline-offset: 1px; }
-.guide-ccard.reading { border-color: var(--accent); }
 .guide-ccard.reading .guide-ccard-info { background: var(--accent); }
 
 /* The shortlist, visible in both views and one tap from being undone. */
-.guide-picked-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 2px 0 10px;
-}
-.guide-picked-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 8px 5px 6px;
-  /* A picked country is a selection: ink fill (T411, selected state). */
-  border: 1px solid var(--ink-fill);
-  border-radius: 999px;
-  background: var(--select-bg);
-  color: var(--select-ink);
-  font-size: 12.5px;
-  font-weight: 600;
-}
-@media (hover: hover) {
-  .guide-picked-chip:hover { background: var(--select-bg); }
-}
-.guide-picked-x { font-size: 14px; line-height: 1; opacity: .7; }
 
 /* Opening a brief splits the width; closing it gives the grid the room back.
    Only from 1024px up: below that the brief is a sheet (CountryBrief.jsx
    DRAWER_MIN) and there is no second column to make. */
-@media (min-width: 1024px) {
-  .guide-where.has-brief {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 420px;
-    gap: 20px;
-    align-items: start;
-  }
-}
 
 /* ── The country brief ─────────────────────────────────────────────────── */
-.cbrief {
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  max-height: min(86vh, 900px);
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  background: var(--paper);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-}
 .cbrief-head {
   display: flex;
   align-items: center;
@@ -1939,22 +1880,6 @@
 }
 /* The drawer's close, floating over the photo strip rather than sitting in a
    title bar of its own. Dark plate, because it lands on a photograph. */
-.cbrief-hero-wrap { position: relative; }
-.cbrief-close {
-  position: absolute;
-  top: 9px;
-  right: 9px;
-  z-index: 2;
-  width: 32px; height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(31, 42, 51, 0.52);
-  font-size: 19px;
-  line-height: 1;
-  color: var(--on-fill);
-}
 .cbrief-close::after {
   content: '';
   position: absolute;
@@ -1964,11 +1889,6 @@
   height: var(--tap);
   transform: translate(-50%, -50%);
 }
-@media (hover: hover) {
-  .cbrief-close:hover { background: rgba(31, 42, 51, 0.82); }
-}
-.cbrief-close:focus-visible { outline: 2px solid var(--on-fill); outline-offset: 1px; }
-.cbrief-body { overflow-y: auto; overscroll-behavior: contain; }
 .cbrief-sect { padding: 12px 0; border-bottom: 1px solid var(--rule-soft); }
 .cbrief-sect:last-child { border-bottom: none; }
 .cbrief-h {
@@ -2003,19 +1923,6 @@
 .cbrief-band.b0, .cbrief-band.b1 { color: var(--green); border-color: var(--budget-low-rule); }
 .cbrief-band.b3, .cbrief-band.b4 { color: var(--rate-soft); border-color: var(--rate-rule); }
 .cbrief-figs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-.cbrief-fig {
-  padding: 8px 10px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--paper-dim);
-}
-.cbrief-fig-label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: var(--ink-mute);
-}
 .cbrief-fig-label svg { color: var(--ink-mute); }
 .cbrief-fig-val {
   display: block;
@@ -2024,7 +1931,6 @@
   font-size: 16px;
   font-variant-numeric: tabular-nums;
 }
-.cbrief-fig-sub { display: block; font-size: 10.5px; color: var(--ink-mute); }
 .cbrief-note { margin-top: 8px; font-size: 11.5px; line-height: 1.5; color: var(--ink-mute); }
 
 /* Places, as a list with hairlines: a run of related facts, not five cards. */
@@ -2073,19 +1979,6 @@
   font-size: 10.5px;
   color: var(--rate-soft);
 }
-
-.cbrief-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.cbrief-chip {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  padding: 4px 9px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  background: var(--paper-dim);
-  font-size: 11.5px;
-  color: var(--ink-soft);
-}
 .cbrief-chip b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
 .cbrief-line {
   display: flex;
@@ -2097,7 +1990,6 @@
   color: var(--ink-soft);
 }
 .cbrief-line svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
-.cbrief-tips { list-style: none; display: grid; gap: 7px; }
 .cbrief-tips li {
   display: flex;
   gap: 6px;
@@ -2108,23 +2000,6 @@
 .cbrief-tips svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
 
 .cbrief-foot { padding: 10px 14px; border-top: 1px solid var(--rule-soft); background: var(--paper-dim); }
-.cbrief-add {
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 11px 14px;
-  border-radius: 11px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 14px;
-  font-weight: 600;
-}
-@media (hover: hover) {
-  .cbrief-add:hover { background: var(--accent-soft); }
-}
-.cbrief-add.on { background: var(--paper); color: var(--ink-soft); border: 1px solid var(--rule); }
 
 /* ── The brief, reworked (T4) ────────────────────────────────────────
    One component in two positions: a 420px drawer in the grid's second column
@@ -2133,16 +2008,8 @@
 
 /* The phone/tablet sheet. SheetShell owns the scrim, the trap and the swipe;
    this is only the height and the room for the sticky footer. */
-.fsheet.cbrief-sheet { max-height: 88dvh; }
-.fsheet.cbrief-sheet .fsheet-body {
-  padding: 0;
-  overscroll-behavior: contain;
-  scroll-padding-bottom: 76px;
-}
 
 /* The photo strip both positions open on. */
-.cbrief-hero { position: relative; display: block; }
-.cbrief-hero-img { display: block; width: 100%; height: auto; object-fit: cover; }
 .cbrief-hero-scrim {
   position: absolute;
   inset: auto 0 0 0;
@@ -2150,70 +2017,18 @@
   background: linear-gradient(to top, rgba(31, 42, 51, .74), rgba(31, 42, 51, 0));
   pointer-events: none;
 }
-.cbrief-hero-name {
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 11px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--on-fill);
-  font-family: var(--display);
-  font-size: 19px;
-  font-weight: 600;
-  line-height: 1.15;
-  text-shadow: 0 1px 3px rgba(31, 42, 51, .5);
-}
 
 /* The folds. The .dsec grammar, with the brief's own padding so a 420px
    drawer does not read as a page. */
-.cbrief-folds { padding: 2px 0 6px; }
-.cbrief-folds .dsec { padding-left: 14px; padding-right: 14px; }
-.cbrief-folds .dsec-body { padding-bottom: 12px; }
 
 /* At a glance. */
-.cbrief-months {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 2px;
-  margin-bottom: 9px;
-}
-.cbrief-mo {
-  padding: 5px 0;
-  border-radius: 5px;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-  font-size: var(--text-micro);
-  font-weight: 600;
-  line-height: 1;
-  text-align: center;
-  overflow: hidden;
-}
-.cbrief-mo.good { background: var(--accent-bg); color: var(--ink); }
-.cbrief-mo.mine { box-shadow: inset 0 0 0 1.5px var(--ink); color: var(--ink); }
-.cbrief-verdict { font-size: 12.5px; line-height: 1.5; margin-bottom: 6px; }
-.cbrief-verdict.v-good { color: var(--green); }
-.cbrief-verdict.v-off { color: var(--rate-soft); }
 
 .cbrief-facts { display: grid; gap: 7px; margin-top: 10px; }
-.cbrief-fact { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 8px; }
 .cbrief-fact dt { font-size: 11.5px; color: var(--ink-mute); }
 .cbrief-fact dd { font-size: 12.5px; line-height: 1.45; }
 
 /* The horizontal photo rails. Scroll-snap, and the only thing on the page
    allowed to overflow sideways. */
-.cbrief-rail {
-  display: flex;
-  gap: 9px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  padding-bottom: 4px;
-  margin: 0 -14px;
-  padding-left: 14px;
-  padding-right: 14px;
-  -webkit-overflow-scrolling: touch;
-}
 .cbrief-rail-card {
   flex: none;
   width: 152px;
@@ -2227,35 +2042,6 @@
   overflow: hidden;
   transition: border-color .15s, box-shadow .15s;
 }
-@media (hover: hover) {
-  .cbrief-rail-card:not(.is-static):not([disabled]):hover {
-    border-color: var(--ink-mute);
-    box-shadow: var(--shadow-1);
-  }
-}
-.cbrief-rail-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.cbrief-rail-card.is-skeleton {
-  height: 168px;
-  border-style: dashed;
-  background: var(--paper-dim);
-}
-.cbrief-rail-img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  background: var(--paper-dim);
-}
-.cbrief-rail-img.is-blank {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 0 8px;
-  color: var(--ink-mute);
-  text-align: center;
-}
 .cbrief-rail-img.is-blank small {
   font-size: 10px;
   line-height: 1.25;
@@ -2263,13 +2049,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
-}
-.cbrief-rail-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 7px 9px 0;
 }
 .cbrief-rail-head b {
   min-width: 0;
@@ -2279,17 +2058,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.cbrief-rail-why {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  padding: 3px 9px 0;
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--ink-mute);
 }
 
 .cbrief-more,
@@ -2301,26 +2069,9 @@
   text-decoration: underline;
   min-height: var(--tap);
 }
-.cbrief-retry { font-size: 11.5px; color: var(--ink-mute); display: flex; align-items: center; gap: 8px; }
 .cbrief-retry button { margin-top: 0; }
 
 /* Best trips. */
-.cbrief-trips { list-style: none; display: grid; gap: 8px; }
-.cbrief-trip {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-align: left;
-  border: 1px solid var(--rule);
-  border-radius: 11px;
-  background: var(--paper);
-  padding: 7px;
-  min-height: var(--tap);
-}
-@media (hover: hover) {
-  .cbrief-trip:not([disabled]):hover { border-color: var(--ink-mute); }
-}
 .cbrief-trip-img {
   flex: none;
   width: 76px;
@@ -2340,28 +2091,9 @@
   line-height: 1.3;
 }
 .cbrief-trip-text small { font-size: 11.5px; color: var(--ink-mute); }
-.cbrief-trip-plan {
-  margin: 4px 0 2px 86px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: underline;
-  min-height: var(--tap);
-}
 
 /* Things to do: one sub-rail per group. */
-.cbrief-group + .cbrief-group { margin-top: 14px; }
-.cbrief-group-h {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 7px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
 .cbrief-group-h .mono { margin-left: auto; font-size: 11px; }
-.cbrief-events { list-style: none; display: grid; gap: 6px; }
 .cbrief-events li {
   font-size: 12px;
   line-height: 1.45;
@@ -2372,7 +2104,6 @@
 .cbrief-events li.is-mine { border-left-color: var(--accent); color: var(--ink); font-weight: 600; }
 
 /* Your shortlist here. */
-.cbrief-favs { list-style: none; display: grid; gap: 7px; }
 .cbrief-favs li { display: flex; align-items: center; gap: 9px; }
 .cbrief-fav-img {
   flex: none;
@@ -2387,41 +2118,20 @@
 .cbrief-fav-text small { font-size: 11px; color: var(--ink-mute); }
 
 /* Getting there. */
-.cbrief-airports { list-style: none; display: grid; gap: 7px; margin-bottom: 8px; }
 .cbrief-airports li { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; }
 .cbrief-airports b { font-size: 12.5px; }
 .cbrief-airports span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cbrief-airports small { margin-left: auto; flex: none; font-size: 11px; color: var(--ink-mute); }
-.cbrief-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: underline;
-}
 
 /* Worth knowing: the driving rules read as their own list under the tips. */
 .cbrief-driving { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--rule-soft); }
 
 /* Eat and drink: the guide's own lines, so a chip is a sentence and wraps. */
-.cbrief-chip { white-space: normal; text-align: left; line-height: 1.35; }
 
 /* The footer in the sheet sits above the home indicator and never covers
    the last fold, which the body's own padding leaves room for. */
-.cbrief-foot.is-sticky {
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
-  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--rule);
-  background: var(--paper);
-}
 
 @media (max-width: 768px) {
-  .cbrief-hero-name { font-size: 17px; }
-  .cbrief-fact { grid-template-columns: 92px minmax(0, 1fr); }
   .cbrief-rail-card { width: 144px; }
 }
 
@@ -2432,39 +2142,6 @@
 /* ── One list of ready-made trips (T5) ─────────────────────── */
 /* The two columns, the map/list toggle and the toolbar row they sat in are
    gone: one ranked list, with the shortlist still editable above it. */
-.wready-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: var(--space-4);
-}
-.wready-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: var(--tap);
-  padding: 5px 12px 5px 10px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 12.5px;
-  font-weight: 600;
-}
-.wready-chip.on { border-color: var(--accent); background: var(--accent-bg); }
-@media (hover: hover) {
-  .wready-chip:hover { background: var(--accent); color: var(--on-fill); }
-}
-.wready-chip-x { font-size: 15px; line-height: 1; opacity: .7; }
-
-.wready-title {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin: 0 0 var(--space-3);
-  font-family: var(--display);
-  font-size: 17px;
-  font-weight: 600;
-}
 .wready-col-n {
   font-family: var(--mono);
   font-size: 11.5px;
@@ -2473,9 +2150,6 @@
 }
 /* One column on a phone, two once the step has room, three on a wide desktop.
    The card's photo `sizes` is written to match: 92vw, 45vw, 380px. */
-.wready-grid { display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 769px) { .wready-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1200px) { .wready-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 .wready-more {
   width: 100%;
@@ -2488,9 +2162,6 @@
   font-weight: 600;
   color: var(--ink-soft);
 }
-@media (hover: hover) {
-  .wready-more:hover { border-color: var(--accent); color: var(--accent); }
-}
 
 .wready-note {
   display: flex;
@@ -2502,21 +2173,7 @@
   color: var(--ink-mute);
 }
 .wready-note svg { color: var(--ink-mute); flex: none; }
-.wready-link {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
 .wready-own { margin-top: 8px; }
-.wready-empty {
-  padding: 22px;
-  border: 1px dashed var(--rule);
-  border-radius: 14px;
-  background: var(--paper-dim);
-  text-align: center;
-}
 .wready-empty p { font-size: 13.5px; color: var(--ink-soft); }
 .wready-empty-actions { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
 
@@ -2534,40 +2191,12 @@
   overflow: hidden;
   transition: border-color .15s, box-shadow .15s;
 }
-@media (hover: hover) {
-  .wtrip:hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
-}
-.wtrip.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 /* aspect-ratio, not a fixed 128px: the old box letterboxed a landscape
    photograph on every screen it was drawn at. */
-.wtrip-media { position: relative; aspect-ratio: 16 / 10; }
-.wtrip-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.wtrip-noimg {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-}
 .wtrip-scrim {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(31, 42, 51, 0.45) 0%, rgba(31, 42, 51, 0) 46%);
-}
-.wtrip-days {
-  position: absolute;
-  top: 8px; left: 8px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(31, 42, 51, 0.66);
-  color: var(--on-fill);
-  font-size: 11px;
 }
 .wtrip-days b { font-family: var(--mono); font-size: 12px; }
 .wtrip-check {
@@ -2588,25 +2217,9 @@
   flex: 1;
   padding: var(--space-3);
 }
-.wtrip-route {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px;
-  margin: 0;
-}
-.wtrip-city {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  font-weight: 600;
-}
-.wtrip-arrow { color: var(--ink-mute); }
 
 /* The lengths this same route was also composed at. Choosing one swaps which
    trip the card IS, so the buttons below always act on what is on screen. */
-.wtrip-lens { display: flex; flex-wrap: wrap; gap: 6px; }
 .wtrip-len {
   min-height: 32px;
   padding: 4px 10px;
@@ -2618,7 +2231,6 @@
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
 }
-.wtrip-len.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
 
 .wtrip-acts { display: flex; gap: var(--space-2); margin-top: auto; padding-top: var(--space-1); }
 .wtrip-choose, .wtrip-what {
@@ -2633,16 +2245,7 @@
   font-size: 13px;
   font-weight: 600;
 }
-.wtrip-choose { border: 1px solid var(--accent); background: var(--accent); color: var(--on-fill); }
 .wtrip.on .wtrip-choose { background: var(--accent-bg); color: var(--accent); }
-.wtrip-what { border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft); }
-@media (hover: hover) {
-  .wtrip-what:hover { border-color: var(--accent); color: var(--accent); }
-}
-.wtrip-choose:focus-visible, .wtrip-what:focus-visible, .wtrip-len:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-}
 
 /* The end of the list: the other way out of it, quiet enough not to compete
    with the cards above it. It used to be a two-button switch at the TOP of the
@@ -2664,10 +2267,6 @@
 }
 .wready-own-card svg { flex: none; color: var(--ink-mute); }
 .wready-own-card b { margin-left: auto; color: var(--accent); white-space: nowrap; }
-@media (hover: hover) {
-  .wready-own-card:hover { border-color: var(--accent); }
-}
-.wready-back { display: inline-block; margin-bottom: var(--space-3); }
 
 /* The trip once it is chosen, with the way there under it. */
 .wpicked {
@@ -2678,73 +2277,17 @@
   background: var(--paper);
   box-shadow: var(--shadow-card);
 }
-.wpicked-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.wpicked-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
 .wpicked-name { flex: 1; min-width: 0; font-family: var(--display); font-size: 17px; font-weight: 600; }
-.wpicked-stops { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 4px; }
-.wpicked-i {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 17px; height: 17px;
-  border-radius: 50%;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-}
-.wpicked-date { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 
 /* ── What the algorithm did with the cities ───────────────────────────── */
-.wroute {
-  margin-bottom: 14px;
-  padding: 12px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper-dim);
-}
-.wroute-head { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
-.wroute-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink);
-}
 .wroute-label svg { color: var(--accent); }
-.wroute-saved {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--green);
-  font-variant-numeric: tabular-nums;
-}
 .wroute-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
-.wroute-stop {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 5px;
-  padding: 4px 8px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 12.5px;
-  font-weight: 600;
-}
 .wroute-stop b {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
-.wroute-arrow { color: var(--ink-mute); }
 .wroute-foot {
   display: flex;
   align-items: center;
@@ -2754,20 +2297,6 @@
   font-size: 11.5px;
   color: var(--ink-mute);
 }
-.wroute-fact { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-.wroute-warn { display: inline-flex; align-items: center; gap: 5px; color: var(--accent); }
-.wroute-apply {
-  margin-left: auto;
-  padding: 6px 11px;
-  border: 1px solid var(--accent);
-  border-radius: 9px;
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
-}
-@media (hover: hover) {
-  .wroute-apply:hover { background: var(--accent); color: var(--on-fill); }
-}
 
 /* ── Getting there, and back ──────────────────────────────────────────── */
 /* ── Getting there, as a step (T6) ─────────────────────────────────────── */
@@ -2775,7 +2304,6 @@
    blocks are PlannerSections like every other captioned block in the wizard. */
 .tlegs { margin-top: var(--space-2); }
 .tlegs-sec { min-width: 0; }
-.tlegs-sec .guide-section-title { font-size: 15px; display: flex; align-items: center; gap: 7px; }
 .tlegs-sec .guide-section-title svg { color: var(--accent); }
 
 /* The whole journey on one line, and the way into any part of it. */
@@ -2843,35 +2371,10 @@
 }
 
 /* "Fly into BCN, home from GRO": worth a line only when the saving is real. */
-.tlegs-jaw {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  margin-bottom: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border-radius: 10px;
-  background: var(--accent-bg);
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
 .tlegs-jaw svg { flex: none; margin-top: 2px; color: var(--accent); }
 
 /* One anchor date for the whole trip: this is the control the relative-time
    model exists for. */
-.tlegs-shift {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 12px 0;
-  padding: 9px 12px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 11px;
-  background: var(--paper-dim);
-}
-.tlegs-shift-label { font-size: 12px; font-weight: 600; }
-.tlegs-shift-ctl { display: inline-flex; align-items: center; gap: 4px; }
 .tlegs-shift-btn {
   width: 30px; height: 30px;
   border: 1px solid var(--rule);
@@ -2881,9 +2384,6 @@
   font-size: 12px;
   color: var(--ink-soft);
 }
-@media (hover: hover) {
-  .tlegs-shift-btn:hover { border-color: var(--accent); color: var(--accent); }
-}
 .tlegs-shift-date {
   min-width: 92px;
   text-align: center;
@@ -2892,52 +2392,11 @@
   font-variant-numeric: tabular-nums;
 }
 .tlegs-shift-note { font-size: 11.5px; color: var(--ink-mute); flex: 1; min-width: 140px; }
-
-.tlegs-list { display: grid; gap: 10px; }
-.tleg {
-  padding: 11px 13px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 12px;
-  background: var(--paper);
-}
-.tleg.answered { border-color: var(--rule); }
 /* The header is the control that opens the leg, so it is a full-width button
    with a tap target, not a row of text with a caret beside it. */
-.tleg-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  width: 100%;
-  min-height: var(--tap);
-  background: none;
-  text-align: left;
-}
-.tleg-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.tleg-head-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  margin-left: auto;
-}
 .tleg-chev { color: var(--ink-mute); transition: transform .15s; flex: none; }
-.tleg.open .tleg-chev { transform: rotate(180deg); }
-.tleg-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 2px 8px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  font-size: 11px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
 .tleg-tag svg { color: var(--ink-mute); }
-.tleg-tag.is-booked { border-color: var(--accent); color: var(--accent); }
 .tleg-tag.is-booked svg { color: var(--accent); }
-.tleg-tag.is-paid { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 /* What the trip's own composer measured for this hop. */
 .tleg-measured {
   margin-top: 4px;
@@ -2945,14 +2404,6 @@
   color: var(--ink-mute);
 }
 .tleg-body { margin-top: var(--space-2); }
-.tleg-booked {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
 .tleg-booked svg { flex: none; margin-top: 2px; color: var(--accent); }
 
 /* Which airports actually fly somewhere near this end of the trip. */
@@ -2962,15 +2413,6 @@
   align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-2);
-}
-.tleg-airports-label { font-size: 11.5px; color: var(--ink-mute); }
-.tleg-airport {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 3px 9px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
 }
 .tleg-airport b { font-family: var(--mono); font-size: 12px; }
 .tleg-airport small { font-size: 10.5px; color: var(--ink-mute); }
@@ -2996,18 +2438,6 @@
 @media (hover: hover) {
   .tleg-addpaid:hover svg { color: var(--accent); }
 }
-
-.tleg-route { display: inline-flex; align-items: baseline; gap: 7px; flex-wrap: wrap; font-size: 14px; }
-.tleg-arrow { color: var(--ink-mute); }
-.tleg-date {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
 .tleg-modes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
 .tleg-mode {
   display: inline-flex;
@@ -3022,10 +2452,6 @@
   transition: border-color .15s, color .15s, background .15s;
 }
 .tleg-mode svg { color: var(--ink-mute); }
-@media (hover: hover) {
-  .tleg-mode:hover { border-color: var(--accent); }
-}
-.tleg-mode.on { border-color: var(--accent); background: var(--accent-bg); color: var(--ink); font-weight: 600; }
 .tleg-mode.on svg { color: var(--accent); }
 
 .tleg-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 9px; }
@@ -3044,9 +2470,7 @@
 }
 
 .tleg-paid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-.tleg-field { display: block; }
 .tleg-field-wide { flex: 1; min-width: 160px; }
-.tleg-field-label { display: block; font-size: 11px; color: var(--ink-mute); margin-bottom: 3px; }
 .tleg-input-wrap {
   display: inline-flex;
   align-items: center;
@@ -3069,16 +2493,7 @@
   font-variant-numeric: tabular-nums;
   outline: none;
 }
-.tleg-text {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--rule);
-  border-radius: 9px;
-  background: var(--paper);
-  font-size: 13px;
-  outline: none;
-}
-.tleg-input:focus-visible, .tleg-text:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tleg-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .tlegs-foot {
   display: flex;
@@ -3093,38 +2508,13 @@
 .tlegs-total { font-family: var(--mono); font-size: 18px; font-variant-numeric: tabular-nums; }
 
 /* The same legs on Finish, reporting rather than asking. */
-.tsum-list { display: grid; gap: 6px; }
-.tsum-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--rule-soft);
-  font-size: 13px;
-}
-.tsum-row:last-child { border-bottom: 0; }
 .tsum-route { display: inline-flex; align-items: baseline; gap: 6px; flex-wrap: wrap; min-width: 0; }
-.tsum-mode {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.tsum-eur {
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-variant-numeric: tabular-nums;
-}
 
 /* ── Narrow ───────────────────────────────────────────────────────────── */
 
 @media (max-width: 719px) {
   .cbrief-figs { grid-template-columns: 1fr; }
   .tleg-field-wide { min-width: 120px; }
-  .tlegs-shift { gap: 8px; }
   .tlegs-shift-note { min-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3166,7 +2556,6 @@
 .guide-booked-text b { display: block; font-size: 14px; font-weight: 600; }
 .guide-booked-text small { display: block; font-size: 11.5px; line-height: 1.4; color: var(--ink-mute); }
 .guide-booked-bit .guide-mode-check { position: absolute; top: 8px; right: 8px; }
-.guide-booked-card .guide-note { margin-top: 10px; }
 
 /* "Nothing yet" is an answer, not an absence, so it sits on the same row and
    carries the same weight as the two beside it: same card, same accent fill
@@ -3195,9 +2584,6 @@
   font-size: 12.5px;
   font-weight: 600;
   color: var(--ink-soft);
-}
-@media (hover: hover) {
-  .guide-when-reopen:hover { border-color: var(--accent); color: var(--accent); }
 }
 .guide-when-reopen svg { color: var(--ink-mute); }
 
@@ -3305,18 +2691,21 @@
     margin: 0;
     position: relative;
   }
+  /* The header's search is a field like every other (T474, row T435-h):
+     the control radius, the field's focus (the ring and an action edge). */
   .header-search-slot .places-search input {
     height: 38px;
-    border-radius: 999px;
-    border-color: var(--rule);
-    background: var(--paper-dim);
+    border-radius: var(--radius-control);
+    border-color: var(--border);
+    background: var(--surface-sunken);
   }
-  .header-search-slot .places-search input:focus {
-    outline: none;
-    border-color: var(--ink);
-    background: var(--paper);
-    box-shadow: 0 0 0 3px var(--accent-bg);
+  .header-search-slot .places-search input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+    border-color: var(--action);
+    background: var(--surface);
   }
+  .header-search-slot .places-search input:focus { background: var(--surface); }
   /* The suggestion list needs more room than the field: hang it from the
      right edge so it grows leftwards into the bar's empty middle. */
   .header-search-slot .places-sugg {
@@ -3592,7 +2981,7 @@
     background: var(--accent);
   }
   /* An active kind is a pressed toggle, so --ink-fill, the same as the
-     Destinations tiles above (T166); terracotta is kept for the one action
+     Destinations tiles above (T166); action-brown is kept for the one action
      (T193). */
   .explore-toolbar .kind-rail-chip.on {
     background: var(--select-bg);
@@ -3633,41 +3022,15 @@
 .destp {
   position: fixed;
   inset: 0;
-  z-index: 240;
+  z-index: calc(var(--z-page) + 40);
   display: flex;
   flex-direction: column;
   background: var(--paper);
 }
 
-.destp-bar {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 52px;
-  padding: 0 10px;
-  border-bottom: 1px solid var(--rule-soft);
-  background: var(--paper);
-}
-.destp-bar-name {
-  flex: 1;
-  min-width: 0;
-  font-family: var(--display);
-  font-size: 14.5px;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0;
-  transition: opacity .18s ease;
-}
-.destp-bar.is-stuck .destp-bar-name { opacity: 1; }
-.destp-bar-actions { display: flex; align-items: center; gap: 8px; }
-.destp-close { position: static; }
-/* Phone: the back arrow is the exit. Desktop: the cross is. Never both. */
-@media (max-width: 720px) { .destp-close { display: none; } }
-@media (min-width: 721px) { .destp-back { display: none; } }
+/* The page's bar is the shared PageBar (T474, .ipage-bar in 70-item-pages.css):
+   back naming the list on both sizes, where it was an arrow on a phone and a
+   cross on a desktop. */
 
 .destp-scroll {
   flex: 1;

@@ -25,22 +25,6 @@
 
 /* White surfaces on the warm light grey (carta-design "Own world"). */
 .destp-v3 { background: var(--surface-page); }
-.destp-v3 .destp-bar {
-  gap: var(--space-1);
-  background: var(--surface);
-  border-bottom-color: var(--border-soft);
-}
-.destp-v3 .destp-bar-name {
-  font-family: var(--font);
-  font-size: var(--text-lead);
-  font-weight: 600;
-  color: var(--text);
-  transition: opacity var(--dur-2) var(--ease-out);
-}
-.destp-v3 .destp-bar-actions { gap: 0; }
-@media (prefers-reduced-motion: reduce) {
-  .destp-v3 .destp-bar-name { transition: none; }
-}
 
 /* The grid. One column on a phone in reading order: head, key facts, the
    price card, the sections. From 1024 px the card is a sticky side column
@@ -542,17 +526,18 @@ h3.dphoto-title { font-size: var(--text-lead); font-weight: 600; letter-spacing:
   background: var(--surface-sunken);
 }
 
-/* The Lifestyle dialog opens over the page. The page is a full-screen layer
-   at z 240 (24-destination-workspace.css) and the dialog was drawn under
-   it at 58 and 59 (60-v6-shell.css), so the price card's Stay opened a
-   panel nobody could see. While a destination page is open, the scrim and
-   the dialog stand above it. */
-body:has(.destp) .lifestyle-scrim { z-index: 250; top: 0; }
-body:has(.destp) .accom-panel.lifestyle-panel { z-index: 251; }
+/* The Lifestyle dialog opens over the page. A destination or trip page is a
+   full-screen layer at z 240 (24-destination-workspace.css, 23-places-pages.css)
+   and the dialog was drawn under it at 58 and 59 (60-v6-shell.css), so the
+   price card's Stay opened a panel nobody could see. While such a page is
+   open, the scrim and the dialog stand above it (T474: the journey page's
+   Lifestyle row opens it too, so .tpage joins .destp). */
+body:has(.destp, .tpage) .lifestyle-scrim { z-index: calc(var(--z-page) + 50); top: 0; }
+body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-page) + 51); }
 /* On a desktop the dialog is a drawer under the shell's header; over the
    page there is no header, so it runs from the top. */
 @media (min-width: 769px) {
-  body:has(.destp) .accom-panel.lifestyle-panel { top: 0; }
+  body:has(.destp, .tpage) .accom-panel.lifestyle-panel { top: 0; }
 }
 
 /* --------------------------------------------------------------------------
@@ -731,14 +716,8 @@ body:has(.destp) .accom-panel.lifestyle-panel { z-index: 251; }
 .climate-chart.has-figures .climate-col.is-best .climate-name { color: var(--text); font-weight: 700; }
 
 /* Safe areas. index.html sets viewport-fit=cover, so the full-screen page
-   keeps its bar out from under the notch and its content out from under
-   the rounded corners in landscape. */
-.destp-v2 .destp-bar {
-  box-sizing: content-box;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-left: max(var(--space-2), env(safe-area-inset-left, 0px));
-  padding-right: max(var(--space-2), env(safe-area-inset-right, 0px));
-}
+   keeps its content out from under the rounded corners in landscape; the
+   shared page bar keeps itself out from under the notch (70-item-pages.css). */
 .destp-v2 .destp-scroll {
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
@@ -850,7 +829,7 @@ body:has(.destp) .accom-panel.lifestyle-panel { z-index: 251; }
 .destp-notice-x { margin-left: auto; }
 
 /* Long names and long languages wrap; they never push a row sideways. */
-.destp-city, .destp-bar-name { overflow-wrap: anywhere; hyphens: auto; }
+.destp-city { overflow-wrap: anywhere; hyphens: auto; }
 .destp-hood { min-width: 0; }
 .destp-hood-name { min-width: 0; overflow-wrap: anywhere; }
 .destp-sleep-tiers { flex-wrap: wrap; }
@@ -975,7 +954,7 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 
 /* The selected section in the rail wears its mark, not only a tint
    (carta-design: every selected state is a light tint with a mark). */
-.destp-v3 .srail a.is-active { text-decoration: underline; text-decoration-color: var(--select-border); text-decoration-thickness: 2px; text-underline-offset: 6px; }
+/* .srail a.is-active carries its underline mark in 34-section-rail.css (T474). */
 
 /* The crowd badge on the page's two colours: a neutral status chip with its
    word, not orange and green tints outside the palette. */
@@ -999,10 +978,6 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 /* After See all, the way back at the grid's end. */
 .dphoto-all.is-end { margin-top: var(--space-3); }
 
-/* From 1024 px the page name in the bar starts on the content's gutter. */
-@media (min-width: 1024px) {
-  .destp-v3 .destp-bar-name { padding-left: max(var(--space-4), calc((100% - 1180px) / 2 + var(--space-6) - var(--space-2))); }
-}
 
 /* MapLibre's controls: no blue glow on a pointer press (its own default),
    the house ring on keyboard focus; and on touch the enlarged credit

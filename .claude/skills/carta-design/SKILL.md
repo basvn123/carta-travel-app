@@ -186,7 +186,8 @@ in the kit. Two screens can never write the same figure two ways.
   take the mark.
 - **Ranges** go through `formatMoneyRange()`: "€40 to €60", with the language's own joiner.
 - **Per unit** is one phrase per language through i18n ("a person", "a day", "a night", "for the trip").
-  No `/pp`, `/p`, `/day` in JSX.
+  No `/pp`, `/p`, `/day` in JSX. When two units apply the order is one: "a person a day" (T474); a
+  person's share is "a person", never "each"; a unit is never a suffix glued to a figure.
 - **No figure** prints words (`money.onRequest`, "Price on request"), never a blank, a lone dash or
   "€NaN".
 - **The estimate mark is the whole pedigree on the page** (owner decision 2026-10-13, T438). No method
@@ -323,7 +324,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Close control.** CloseIcon at 16 px in a `--tap` IconButton, top right (inline right on a toast), plain tone, label "Close" translated. No letter x, no multiplication sign, no grey disc.
 
-**Navigation.** Anything that changes the view (a tab, the brand mark, a card that opens a page, a back control) is an `<a href>` with the view's URL; a section change pushes one history entry; `<button>` is for actions. Every detail page has its own URL, a save control and a share control in its page bar. The back control names the list it returns to. Opened by pointer, focus goes to the page heading (tabindex -1); from the keyboard, the first control; closing returns focus to the opener.
+**Navigation.** Anything that changes the view (a tab, the brand mark, a card that opens a page, a back control) is an `<a href>` with the view's URL; a section change pushes one history entry; `<button>` is for actions. Every detail page has its own URL, a save control and a share control in its page bar. The back control names the list it returns to, on a phone and a desktop alike: every full-screen page wears the one page bar, `PageBar.jsx` (back, the name once the heading has gone, save, share; T474). Opened by pointer or a link, focus goes to the page heading (tabindex -1); from the keyboard, the first control (`usePageArrival.js`); closing returns focus to the opener.
 
 **Settings line.** A full-width band on every priced view, under the header and on the same gutter as the content, shows every input its prices depend on, like a booking bar: origin, dates (or "Any dates"), party and Lifestyle as equal segments, label (13 px `--text-2`) over value (`--text`), hairlines between them; language and "Prices in EUR" compact at the end (T438). Each part is a `--tap` button that opens its control. No brown fill. On a phone it never wraps: it drops parts from the left and keeps Lifestyle.
 

@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  z-index: 60;
+  z-index: var(--z-modal);
 }
 .guide-modal {
   width: min(100%, 560px);
@@ -25,23 +25,6 @@
   border-radius: var(--radius-sheet);
   box-shadow: var(--elev-3);
   overflow: hidden;
-}
-.guide-head {
-  position: relative;
-  padding: 16px 18px 12px;
-  border-bottom: 1px solid var(--rule);
-  flex-shrink: 0;
-}
-.guide-close {
-  position: absolute;
-  top: 12px; right: 12px;
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  font-size: 20px; line-height: 1;
-  color: var(--ink-mute);
-}
-@media (hover: hover) {
-  .guide-close:hover { color: var(--accent); }
 }
 .guide-steps { display: flex; gap: 6px; flex-wrap: wrap; padding-right: 32px; }
 .guide-step-dot {
@@ -65,7 +48,6 @@
 
 .guide-body { overflow-y: auto; padding: 18px; flex: 1; }
 .guide-title { font-family: var(--display); font-size: 20px; color: var(--ink); font-weight: 600; }
-.guide-sub { color: var(--ink-soft); font-size: 13px; margin: 4px 0 16px; }
 
 /* Step 1 - countries */
 .guide-country-grid {
@@ -105,28 +87,10 @@
 }
 
 /* Clickable country map (step 1) */
-.cpm {
-  width: 100%;
-  height: 300px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--rule);
-  margin-bottom: 16px;
-}
 .guide-country-name { font-family: var(--display); font-size: 14.5px; color: var(--ink); }
 .guide-country-n { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 
 /* Step 2/3 - per-country blocks */
-.guide-country-block { margin-bottom: 20px; }
-.guide-block-head {
-  display: flex; align-items: center; gap: 7px;
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--rule);
-}
 .guide-visit-count, .guide-city-gems {
   margin-left: auto;
   font-family: var(--mono);
@@ -134,7 +98,6 @@
   color: var(--ink-soft);
   display: inline-flex; align-items: center; gap: 3px;
 }
-.guide-city-list { display: flex; flex-direction: column; gap: 8px; }
 .guide-city {
   display: flex;
   align-items: center;
@@ -144,24 +107,13 @@
   border-radius: 12px;
   transition: border-color .15s, background .15s;
 }
-.guide-city.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
 .guide-city-info { flex: 1; min-width: 0; }
-.guide-city-name {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
-}
 .guide-city-insight {
   font-size: 11.5px;
   color: var(--ink-soft);
   margin-top: 2px;
   line-height: 1.4;
   overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-}
-.guide-nights {
-  display: flex; align-items: center; gap: 8px;
-  flex-shrink: 0;
 }
 .guide-nights button {
   width: 26px; height: 26px;
@@ -177,18 +129,8 @@
 .guide-nights button:disabled { opacity: 0.3; cursor: default; }
 .guide-nights-val { font-size: 12px; min-width: 52px; text-align: center; color: var(--ink-soft); }
 .guide-nights-val b { font-family: var(--mono); color: var(--ink); }
-.guide-nights-zero { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); font-weight: 600; }
 
 /* Step 2 - when (exact dates vs flexible) */
-.guide-datemode {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
-  padding: 4px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper-dim);
-}
 .guide-datemode button {
   flex: 1;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -223,13 +165,6 @@
   min-width: 130px;
   white-space: nowrap;
 }
-.guide-when-nights {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink);
-  padding-bottom: 10px;
-  white-space: nowrap;
-}
 .guide-months { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
 .guide-note {
   display: flex; align-items: center; gap: 6px;
@@ -251,7 +186,6 @@
 .guide-origin-row .origin-picker { position: relative; }
 .guide-origin-row .origin-btn-from { display: inline; }
 .guide-noflight { padding: 4px 0 8px; }
-.guide-noflight .guide-empty { display: flex; align-items: baseline; gap: 6px; color: var(--warn-ink); }
 .guide-noflight-back { margin-top: 10px; }
 
 /* Own flight (another airline): airline + total-fare inputs shown on the
@@ -263,58 +197,20 @@
 .guide-ownflight-lead { display: flex; align-items: baseline; gap: 6px; }
 
 /* Stay step: Carta-designs-it CTA, map/list switch, tier chips + legend. */
-.guide-design-btn {
-  display: flex; flex-direction: row; align-items: center; gap: 10px;
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 12px 16px;
-  border: none;
-  border-radius: 12px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: left;
-}
-@media (hover: hover) {
-  .guide-design-btn:hover { opacity: 0.93; }
-}
 .guide-design-spark {
   display: flex; align-items: center; justify-content: center;
   flex: none;
 }
-.guide-design-text { display: flex; flex-direction: column; gap: 1px; }
 .guide-design-btn small { font-weight: 400; font-size: 11px; opacity: 0.85; }
-.guide-stay-view { margin-bottom: 10px; }
-.guide-tier {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 1.5px 8px 1.5px 6px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 11px;
-  white-space: nowrap;
-}
 /* Neutral chip, coloured glyph - the icon reads the tier, not a colour block. */
 .guide-tier-top svg { color: var(--accent); }
 .guide-tier-great svg { color: var(--good-mid); }
 .guide-tier-good svg { color: var(--ink-mute); }
-.guide-tier-legend {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  margin: -8px 0 14px;
-  font-size: 11px;
-}
-.guide-tier-legend-note { color: var(--ink-mute); font-size: 10.5px; }
 .guide-city-combo { font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
 .guide-city-combo b { font-weight: 600; }
 
 /* City-picker map pills: the browse map's price-pill language, city names +
    worth-a-visit tint. */
-.citypick-map { height: 340px; }
 .citypick-pin {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 3px 7px 3px 6px;
@@ -325,48 +221,22 @@
   cursor: pointer;
   transition: border-color .12s, background .12s, transform .12s, box-shadow .12s;
 }
-@media (hover: hover) {
-  .citypick-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); box-shadow: 0 2px 8px rgba(26, 26, 26, 0.22); }
-}
 /* The tier icon - not the pill colour - carries "what kind of stop" this is. */
 .citypick-ic { display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .citypick-pin.tier-top .citypick-ic { color: var(--accent); }
 .citypick-pin.tier-great .citypick-ic { color: var(--good-mid); }
 .citypick-pin.tier-good .citypick-ic { color: var(--ink-soft); }
 .citypick-pin.tier-ok .citypick-ic { color: var(--ink-mute); }
-.citypick-name { font-size: 11px; font-weight: 600; color: var(--ink); white-space: nowrap; }
 .citypick-pin.tier-ok .citypick-name { font-weight: 500; color: var(--ink-soft); }
 /* Rating / nights read as a quiet mono chip - the number, not a colour block. */
-.citypick-meta {
-  font-family: var(--mono); font-size: var(--text-micro); font-weight: 600;
-  color: var(--ink-soft);
-  background: var(--paper-dim);
-  padding: 0.5px 4px; border-radius: 5px;
-  white-space: nowrap;
-}
-.citypick-meta:empty { display: none; }
-.citypick-meta.is-nights { color: var(--on-fill); background: var(--ink-fill); }
 /* A picked city on the planning map is ink, the selected state (T398); only
    the live route is accent. */
-.citypick-pin.on {
-  background: var(--select-bg); border-color: var(--select-border);
-}
 .citypick-pin.on .citypick-name,
 .citypick-pin.on .citypick-ic { color: var(--select-ink); }
 .citypick-pin.on .citypick-meta { color: var(--on-fill); background: rgba(255, 255, 255, 0.22); }
 /* Arrival city ("fly into ..."): a bigger, cleaner sign so the traveller
    instantly sees where they land. The "Fly here" flag floats above the pill. */
-.citypick-pin { position: relative; }
-.citypick-fly { display: none; }
-.citypick-pin.anchor {
-  padding: 5px 11px 5px 10px;
-  background: var(--ink);
-  border-color: var(--ink);
-  box-shadow: var(--shadow-2);
-  z-index: 5;
-}
 .citypick-pin.anchor .citypick-name { color: var(--on-fill); font-size: 12.5px; font-weight: 700; }
-.citypick-pin.anchor .citypick-ic { display: none; }
 .citypick-pin.anchor .citypick-meta { color: var(--on-fill); background: rgba(255, 255, 255, 0.22); }
 .citypick-pin.anchor .citypick-fly {
   position: absolute;
@@ -400,32 +270,8 @@
 .citypick-pin.anchor.on { background: var(--ink); border-color: var(--ink); }
 
 /* Step 4 - stays: search, groups, budget */
-.guide-search {
-  width: 100%;
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 13.5px;
-  color: var(--ink);
-}
-.guide-search:focus { outline: none; border-color: var(--accent); }
-.guide-nights-budget {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  margin-bottom: 14px;
-}
 .guide-nights-budget b { color: var(--ink); }
-.guide-nights-budget.over, .guide-nights-budget.over b { color: var(--warn-ink); }
-.guide-stay-group { margin-bottom: 14px; }
-.guide-stay-group-title {
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin: 10px 0 7px;
-}
+.guide-nights-budget.over b { color: var(--warn-ink); }
 .guide-show-more {
   margin-top: 8px;
   padding: 7px 14px;
@@ -434,34 +280,6 @@
   font-size: 12px;
   color: var(--ink-soft);
   width: 100%;
-}
-@media (hover: hover) {
-  .guide-show-more:hover { border-color: var(--accent); color: var(--accent); }
-}
-.guide-anchor-badge {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--ink-fill);
-  color: var(--on-fill);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 11px;
-  white-space: nowrap;
-}
-.guide-startover {
-  margin-right: 10px;
-  /* Two words on one line: at 375 the footer summary beside it was squeezing
-     "Start over" onto two, under a control only 12px tall. */
-  white-space: nowrap;
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-@media (hover: hover) {
-  .guide-startover:hover { color: var(--warn-ink); }
 }
 
 /* Step 3 - activity chips */
@@ -476,15 +294,10 @@
   color: var(--ink);
   transition: border-color .15s, background .15s;
 }
-@media (hover: hover) {
-  .guide-chip:hover { border-color: var(--ink-soft); }
-}
-.guide-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
 .guide-chip.on .guide-chip-kind { color: var(--select-ink); }
 .guide-chip-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
 /* An empty state is the content of its box, so it is not metadata grey and
    not italic (docs/ONBOARDING_AND_EMPTY_STATES.md, the rules). */
-.guide-empty { font-size: 12.5px; color: var(--ink-soft); }
 
 /* Step 4 - arrange */
 .guide-arrange { display: flex; flex-direction: column; gap: 8px; }
@@ -496,7 +309,6 @@
   background: var(--paper);
   transition: opacity .15s;
 }
-.guide-arrange-item.dragging { opacity: 0.45; }
 .guide-arrange-idx {
   display: flex; align-items: center; justify-content: center;
   width: 26px; height: 26px;
@@ -549,8 +361,6 @@
   flex-shrink: 0;
 }
 /* "2 cities, 6 nights" is a phrase, so the UI face (T193). */
-.guide-foot-summary { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.guide-foot-actions { display: flex; gap: 10px; }
 
 /* ── Running price estimate: its own full-width band under the header, so the
    total is a section of the wizard rather than a chip in the corner. Every
@@ -674,10 +484,6 @@
 /* The wizard footer's Back and Next are the shared Button (T193) and take
    their face from .btn; these rules still dress the other .guide-back and
    .guide-next controls inside the steps. */
-.guide-back:not(.btn) { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--rule); color: var(--ink-soft); font-size: 13px; }
-@media (hover: hover) {
-  .guide-back:not(.btn):hover { border-color: var(--ink-soft); }
-}
 .guide-next:not(.btn) {
   padding: 10px 22px;
   border-radius: 10px;
@@ -691,7 +497,7 @@
 @media (hover: hover) {
   .guide-next:not(.btn):hover:not(:disabled) { opacity: 0.9; }
 }
-/* A ghosted terracotta button read as a live one someone had dimmed, and on
+/* A ghosted action-brown button read as a live one someone had dimmed, and on
    the first screen of a step (nothing filled in yet) that is the whole
    footer. Not-yet gets its own flat neutral instead, which is both more
    legible and unmistakably inactive. */
@@ -710,7 +516,7 @@
   backdrop-filter: blur(2px);
   display: flex; align-items: center; justify-content: center;
   padding: 24px;
-  z-index: 62;
+  z-index: calc(var(--z-modal) + 2);
 }
 .trip-plan-prompt {
   width: min(100%, 400px);
@@ -751,15 +557,6 @@
 }
 
 /* ── Day planner: "In Saved trips" confirmation popup ── */
-.day-saved-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(26, 26, 26, 0.42);
-  backdrop-filter: blur(2px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px;
-  z-index: 62;
-}
 .day-saved-card {
   position: relative;
   width: min(100%, 400px);
@@ -768,20 +565,6 @@
   box-shadow: var(--shadow-2);
   padding: 26px 24px 20px;
   text-align: center;
-}
-.day-saved-close {
-  position: absolute;
-  top: 10px; right: 12px;
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: var(--ink-soft);
-  font-size: 22px; line-height: 1;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .day-saved-close:hover { background: var(--paper-dim); color: var(--ink); }
 }
 .day-saved-badge {
   width: 46px; height: 46px;
@@ -793,25 +576,11 @@
 }
 .day-saved-card h3 { font-family: var(--display); font-size: 19px; color: var(--ink); font-weight: 600; }
 .day-saved-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; margin: 8px 0 20px; }
-.day-saved-done {
-  padding: 12px; border-radius: 10px; width: 100%;
-  border: 1px solid var(--rule);
-  color: var(--ink-soft); font-size: 13.5px;
-}
-@media (hover: hover) {
-  .day-saved-done:hover { border-color: var(--ink-soft); }
-}
 
 /* ───────── Guided trip: itinerary day view ───────── */
 .itin { padding-top: 4px; }
 /* Two views as a segmented control (T398): Overview and Day by day, the one
    on in the selected state; the day switcher follows when a day is open. */
-.itin-tabs {
-  display: flex;
-  gap: var(--space-1);
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--rule);
-}
 .itin-tab {
   flex: 1 1 0;
   min-width: 0;
@@ -836,8 +605,6 @@
 @media (prefers-reduced-motion: reduce) {
   .itin-tab { transition: none; }
 }
-
-.itin-overview { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; }
 .itin-stop {
   display: flex; align-items: center; gap: 12px;
   width: 100%; text-align: left;
@@ -850,22 +617,13 @@
   .itin-stop:hover { border-color: var(--ink-soft); }
 }
 .itin-stop.active { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
-.itin-stop-idx {
-  display: flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px; flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono); font-size: 12px; font-weight: 600;
-}
 /* The stop in focus takes the selected state (T398); the accent numbers on
    the map are the live route and stay there. */
 .itin-stop.active .itin-stop-idx { background: var(--select-bg); color: var(--select-ink); }
 .itin-stop-main { flex: 1; min-width: 0; }
-.itin-stop-city { display: block; font-family: var(--display); font-size: 15.5px; color: var(--ink); }
 .itin-stop-sub { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); margin-top: 1px; }
 /* The receipt's head (T398, row T388-j): the label in --ui, the party and
-   the sums in --mono; Fraunces never carries a number. */
+   the sums in --mono; the heading face never carries a number. */
 .itin-overview-total {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
   margin-top: 8px; padding-top: 14px;
@@ -896,20 +654,6 @@
   margin: -4px 0;
   padding-left: 23px;
 }
-.itin-leg-rail {
-  position: absolute;
-  left: 23px; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--rule);
-}
-.itin-leg-main {
-  display: flex; align-items: center; gap: 9px;
-  width: 100%;
-  text-align: left;
-  padding: 7px 10px 7px 0;
-  background: none; border: none;
-  cursor: pointer;
-}
 .itin-leg-glyph {
   position: relative;
   z-index: 1;
@@ -934,13 +678,7 @@
 @media (hover: hover) {
   .itin-leg-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
 }
-.itin-leg-modes {
-  display: flex; gap: 6px;
-  padding: 0 10px 10px 14px;
-}
 .itin-leg-modes .trip-leg-mode { flex: 1; }
-.itin-leg .trip-leg-links { margin: 0; padding: 0 10px 10px 14px; }
-.itin-leg-noroad { padding: 6px 10px 6px 24px; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 
 /* ── Overview: the grouped receipt ──
    Journey order, one group per part of the story, then the grand total and a
@@ -970,7 +708,6 @@
   color: var(--ink-mute);
 }
 .itin-bd-sec-rows { padding: 3px 0 0; }
-.itin-bd-sec-rows .trip-total-row { border: none; padding: 7px 2px; }
 /* Row typography inside the receipt: the label carries the meaning, the
    sub-line is a sentence (body face, not mono), the figure is the only mono. */
 .itin-breakdown-body .trip-total-row .lbl { font-size: 13px; color: var(--ink); }
@@ -1032,7 +769,6 @@
 .itin-days-list { margin-top: 16px; }
 /* flex-wrap carries the imported-activity chips (.itin-day-extras spans the
    full width) onto their own line under the day. */
-.itin-day-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
 .itin-day-row-main {
   flex: 1;
   min-width: 0;
@@ -1046,26 +782,6 @@
   text-align: left;
   cursor: pointer;
   transition: border-color .15s;
-}
-@media (hover: hover) {
-  .itin-day-row-main:hover { border-color: var(--ink-soft); }
-}
-.itin-day-row-num { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
-.itin-day-row-meta { font-size: 12.5px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.itin-day-plan-btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 0 14px;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-@media (hover: hover) {
-  .itin-day-plan-btn:hover { border-color: var(--ink-soft); }
 }
 
 /* ── Day tab: overflow note + Day-planner handoff ── */
@@ -1092,53 +808,19 @@
 }
 /* A secondary (T398): the planned view's one primary is Plan your days in
    the footer. */
-@media (hover: hover) {
-  .itin-day-planner-btn:hover { border-color: var(--ink-soft); }
-}
-
-.itin-day { padding-top: 14px; }
-.itin-day-head { margin-bottom: 14px; }
-.itin-day-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute);}
 .itin-day-city {
   display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
   font-family: var(--display); font-size: 18px; color: var(--ink); margin-top: 2px;
 }
 .itin-day-of { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
-.itin-day-empty { font-size: 13px; color: var(--ink-soft); line-height: 1.55; font-style: italic; }
-.itin-visit-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.itin-visit {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-}
-.itin-visit-idx {
-  display: flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px; flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  font-family: var(--mono); font-size: 11px; font-weight: 700;
-}
 .itin-visit-main { flex: 1; min-width: 0; }
-.itin-visit-name { display: block; font-size: 14px; color: var(--ink); }
-.itin-visit-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
 
 /* ───────── Guided wizard: imagery + interests ───────── */
 
 /* Shared lettered fallback for any city thumbnail without a photo. */
-.guide-thumb-fallback,
 .guide-visit-hero-fallback { font-family: var(--display); color: var(--ink-mute); }
 
 /* Step 2 - city photo thumbnail on each city row */
-.guide-city-thumb {
-  flex-shrink: 0;
-  width: 56px; height: 56px;
-  border-radius: 10px;
-  background: var(--paper-dim) center/cover no-repeat;
-  display: flex; align-items: center; justify-content: center;
-}
-.guide-city-thumb .guide-thumb-fallback { font-size: 22px; }
 
 /* Tile grid shared by the vacation-type quiz (VIBES) tiles */
 .guide-interest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -1175,7 +857,6 @@
   background: var(--paper-dim) center/cover no-repeat;
   display: flex; align-items: center; justify-content: center;
 }
-.guide-arrange-thumb .guide-thumb-fallback { font-size: 18px; }
 
 /* Carta-plan prompt: a strip of the trip's city photos */
 .trip-plan-prompt-strip { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
@@ -1188,29 +869,8 @@
 }
 
 /* Planned itinerary imagery */
-.itin-stop-thumb {
-  flex-shrink: 0;
-  width: 46px; height: 46px;
-  border-radius: 9px;
-  background: var(--paper-dim) center/cover no-repeat;
-  display: flex; align-items: center; justify-content: center;
-}
-.itin-stop-thumb-fallback { font-family: var(--display); font-size: 18px; color: var(--ink-mute); }
 /* The day's photograph carries no text (T398, rule "Caption band"): the
    day's head is a paper band flush under it. */
-.itin-day-hero {
-  aspect-ratio: 3 / 1;
-  border-radius: 10px 10px 0 0;
-  background: var(--paper-dim) center/cover no-repeat;
-}
-.itin-day-cap {
-  margin-bottom: 16px;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--paper);
-}
-.itin-day-hero + .itin-day-cap { border-top: none; border-radius: 0 0 10px 10px; }
 
 @media (max-width: 768px) {
   .guide-overlay { padding: 0; align-items: flex-end; }

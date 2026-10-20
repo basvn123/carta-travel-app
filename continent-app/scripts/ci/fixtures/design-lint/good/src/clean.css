@@ -6,3 +6,5 @@
 h1 { font-family: var(--font); }
 .price { font-family: var(--font); font-variant-numeric: tabular-nums; }
 .btn { font-family: inherit; }
+.layer { position: fixed; z-index: calc(var(--z-page) + 40); }
+.badge { position: absolute; z-index: 2; }

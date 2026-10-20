@@ -1051,7 +1051,9 @@ export function ExploreTab({
 
 
         {/* C6: active filters as removable chips, right under the bar. */}
-        <FilterChips t={t} chips={chips} onClearAll={resetAll} />
+        {/* On a phone the sort leads the chip row (62-v6-explore.css), so
+            the list has one refine row; the bar's own sort shows otherwise. */}
+        <FilterChips t={t} chips={chips} onClearAll={resetAll} lead={sortSelect} />
 
         {/* The one community surface on a browse tab: a real count of what
             people have published, and one door. Absent entirely when

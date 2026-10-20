@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+// The rules only this route renders load with its chunk (T474, CSS per route;
+// scripts/css-routes.mjs).
+import '../styles/planners.css';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { TripMap } from '../map/TripMap.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';

@@ -442,7 +442,7 @@
   position: absolute;
   top: calc(100% + 6px);
   left: 0; right: 0;
-  z-index: 20;
+  z-index: var(--z-popover);
   background: var(--bg-card);
   border: 1px solid var(--rule);
   border-radius: 12px;
@@ -1708,7 +1708,7 @@
 .tpage {
   position: fixed;
   inset: 0;
-  z-index: 240;
+  z-index: calc(var(--z-page) + 40);
   display: flex;
   flex-direction: column;
   background: var(--paper);
@@ -2440,7 +2440,7 @@
   left: 50%;
   bottom: calc(28px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
-  z-index: 30;
+  z-index: var(--z-tray);
   padding: 11px 16px;
   border-radius: 10px;
   background: var(--ink);
@@ -2576,7 +2576,7 @@
     max-height: none;
     /* Over the bottom nav (50) and the header (57), under the auth overlays
        (60): while a destination is open it IS the screen. */
-    z-index: 58;
+    z-index: calc(var(--z-shell) + 3);
     border: 0;
     border-radius: 0;
     box-shadow: none;
@@ -2661,7 +2661,7 @@
 .modnote-title { margin: 0; font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--ink); }
 .modnote-date { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
 .modnote-line { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
-.modnote-toggle { min-height: 44px; }
+/* .modnote-toggle is the kit small secondary (T474): 32 px on a fine pointer, --tap on touch. */
 .modnote-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
 .modnote-facts { margin: 0; width: 100%; }
 .modnote-facts > div { padding: 9px 0; border-top: 1px solid var(--rule-soft); }
@@ -2920,7 +2920,7 @@
    reachable from every screen instead of only from the ones behind a panel.
    56px is the mobile header row (see .app-header-account). ─────────────── */
 @media (max-width: 768px) {
-  .app-header { z-index: 57; }
+  .app-header { z-index: calc(var(--z-shell) + 2); }
   .account-panel,
   .saved-trips-panel {
     top: 56px;

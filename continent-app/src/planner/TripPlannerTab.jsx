@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+// The rules only this route renders load with its chunk (T474, CSS per route;
+// scripts/css-routes.mjs).
+import '../styles/planners.css';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';

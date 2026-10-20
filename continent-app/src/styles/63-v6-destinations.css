@@ -54,7 +54,8 @@
 .dtab-top .places-search input {
   height: var(--tap);
   border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
+  /* A search field, so the control radius (T474, row T435-h). */
+  border-radius: var(--radius-control);
   background: var(--surface);
   color: var(--text);
   font-size: var(--text-lead);

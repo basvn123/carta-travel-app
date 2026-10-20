@@ -52,6 +52,8 @@
   text-align: left;
   cursor: pointer;
 }
+/* A row that opens a page is a link (rule "Navigation", T474). */
+a.cov-near-row { text-decoration: none; }
 @media (hover: hover) {
   .cov-near-row:hover .cov-near-name { text-decoration: underline; }
 }
