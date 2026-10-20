@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
+import { Button } from '../components/ui/index.js';
 import { useI18n } from '../i18n/index.jsx';
 import { AlertIcon, CheckIcon } from '../components/Icons.jsx';
 
@@ -120,15 +121,17 @@ export function ModerationNotice({ statement, contest, onContested }) {
       <p className="modnote-line" role={sent ? 'status' : undefined}>
         {sent ? t('moderation.contestSent') : line}
       </p>
-      <button
-        type="button"
-        className="gld-copy modnote-toggle"
+      {/* The kit's small secondary (T474, row T435-h): it was a 12.5 px pill. */}
+      <Button
+        variant="secondary"
+        size="sm"
+        className="modnote-toggle"
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
       >
         {t(open ? 'moderation.hideWhy' : 'moderation.readWhy')}
-      </button>
+      </Button>
 
       {open && (
         <div id={panelId} className="modnote-body">

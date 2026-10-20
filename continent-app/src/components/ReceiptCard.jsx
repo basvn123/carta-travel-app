@@ -1,5 +1,6 @@
 import React from 'react';
 import { eurExact } from '../lib/format.js';
+import { formatEst } from '../lib/money.js';
 import { settleFigure } from '../lib/figureChange.js';
 import { CostBar } from '../browse/CostBar.jsx';
 
@@ -100,7 +101,7 @@ export function ReceiptSum({ sumLabel, total, est, each = null, eachText, live =
       <dd className="mono" aria-live={live ? 'polite' : undefined}>
         <span className="frr-sum-eur" data-eur={total} data-key="sum"><ReceiptFigure eur={total} est={est} t={t} /></span>
         {each != null && eachText && (
-          <span className="frr-each">{eachText(`${est ? '~' : ''}${eurExact(each)}`)}</span>
+          <span className="frr-each">{eachText(est ? formatEst(each, t('money.est'), { precision: 'cents' }) : eurExact(each))}</span>
         )}
       </dd>
     </div>

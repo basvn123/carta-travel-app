@@ -26,7 +26,8 @@
     "ci:routes": "node scripts/ci/check-routes.mjs",
     "ci:contract": "node scripts/ci/check-contract.mjs",
     "ci:smoke": "node scripts/ci/smoke.mjs",
-    "ci": "npm run lint && npm run test && npm run verify && npm run ci:routes && npm run ci:contract && npm run build && npm run ci:smoke && npm run build:pages"
+    "ci:css-routes": "node scripts/css-routes.mjs --check dist/assets",
+    "ci": "npm run lint && npm run test && npm run verify && npm run ci:routes && npm run ci:contract && npm run build && npm run ci:css-routes && npm run ci:smoke && npm run build:pages"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",

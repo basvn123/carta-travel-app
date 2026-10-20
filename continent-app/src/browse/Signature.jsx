@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { count } from '../lib/format.js';
+import { count, displayName } from '../lib/format.js';
 import {
   monthCells, altitudeParts, lakeWedge, compassPoint, ALT_SCALE_M,
 } from '../lib/signature.js';
@@ -245,7 +245,7 @@ export function BeachSignature({ beach }) {
           ))}
         </span>
       </Row>
-      {beach.water.site && <p className="sig-note">{t('detail.waterSite', { site: beach.water.site })}</p>}
+      {beach.water.site && <p className="sig-note">{t('detail.waterSite', { site: displayName(beach.water.site) })}</p>}
     </Instrument>
   );
 }

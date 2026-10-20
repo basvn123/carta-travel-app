@@ -122,8 +122,10 @@ const REF_STAY = {
 };
 
 /** One day of eating and drinking at `lifestyle`, against the reference
- *  prices. The same arithmetic groundSpendPerPerson does, on one basket. */
-function refDayFood(lifestyle) {
+ *  prices. The same arithmetic groundSpendPerPerson does, on one basket.
+ *  Exported for lib/tripPrice.js, which places a written trip budget at the
+ *  traveller's Lifestyle by the same measure (T474). */
+export function refDayFood(lifestyle) {
   const ls = { ...DEFAULT_LIFESTYLE, ...(lifestyle || {}) };
   const per = ls.cadence === 'day' ? 1 : 1 / 7;
   const club = (REF_PRICES.club_entry_eur + CLUB_DRINKS_PER_NIGHT * REF_PRICES.cocktail_eur);

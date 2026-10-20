@@ -74,10 +74,6 @@
    touched the card. The margin belongs to the title, and the sub, when a step
    has one, pulls itself up into that space rather than adding to it. */
 .guide-canvas > .guide-title { margin-bottom: var(--space-5); }
-.guide-canvas > .guide-title + .guide-sub {
-  margin-top: calc(-1 * var(--space-3));
-  margin-bottom: var(--space-5);
-}
 /* A label directly inside a planner surface, not one nested in a card that
    already sets its own. */
 .guide-canvas > .trip-field-label,
@@ -96,28 +92,13 @@
 .day-flow-panel > .day-flow-q { margin-bottom: 0; }
 
 /* ---- The two tabs ------------------------------------------------------- */
-.guide-wtabs { width: min(100%, 420px); margin-bottom: var(--space-5); }
 .guide-wtabs button { min-height: var(--tap); }
 
 /* ---- The quiz ----------------------------------------------------------- */
-.wq { display: block; }
-.wq-q { scroll-margin-top: 12px; }
 /* A collapsed answer is a sibling of the next question, not a section, so the
    `.guide-section + .guide-section` rule never fires between them and the next
    heading landed on the answer above it. */
-.wq-done + .guide-section,
-.guide-section + .wq-done { margin-top: var(--space-5); }
-
-.wq-group + .wq-group { margin-top: var(--space-4); }
-.wq-group-label {
-  display: block;
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin-bottom: var(--space-2);
-}
-
-.wq-chips { display: grid; gap: var(--space-2); }
+.wq-done + .guide-section { margin-top: var(--space-5); }
 .wq-cols-1 { grid-template-columns: 1fr; }
 .wq-cols-2 { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); }
 
@@ -135,14 +116,8 @@
   color: var(--ink);
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-@media (hover: hover) {
-  .wq-chip:hover:not(:disabled) { border-color: var(--ink-soft); }
-}
-.wq-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* One selected state (T398, rule "Selected state"): ink fill, never the
    accent tint. */
-.wq-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
-.wq-chip:disabled { opacity: .45; cursor: default; }
 .wq-chip-icon { flex: none; display: flex; color: var(--ink-soft); }
 .wq-chip.on .wq-chip-icon { color: var(--select-ink); }
 .wq-chip-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
@@ -168,10 +143,6 @@
   cursor: pointer;
   color: var(--ink);
 }
-@media (hover: hover) {
-  .wq-done:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
-}
-.wq-done:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .wq-done-check { flex: none; display: flex; color: var(--accent); }
 .wq-done-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
 .wq-done-text small {
@@ -204,37 +175,12 @@
 .wq-results { margin-top: var(--space-7); }
 
 /* ---- The recommendation cards ------------------------------------------- */
-.mcards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-  gap: var(--space-4);
-}
-.mcard {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--paper);
-}
-.mcard.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
 /* The button owns the shape and the image fills it absolutely, the same way
    the Destinations cards do it. Letting the <img> carry the ratio does not
    work: HeroImage sets width/height ATTRIBUTES to the ratio (3 and 2), and a
    2px-tall image is what you get, with the country name stranded outside it. */
 /* The photograph and its caption band in one button (T398, rule "Caption
    band"): the name sits under the picture, never on it. */
-.mcard-pick {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  overflow: hidden;
-  background: var(--bg-card);
-}
 .mcard-img {
   position: relative;
   flex: none;
@@ -245,36 +191,9 @@
   object-fit: cover;
   object-position: 50% var(--card-focus, 38%);
 }
-
-.mcard-body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); }
-.mcard-match {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.mcard-month { font-weight: 400; color: var(--ink-soft); }
-
-.mcard-places { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
 .mcard-place { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.mcard-place { position: relative; }
-.mcard-place-img {
-  display: block;
-  width: 100%;
-  height: 58px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: var(--paper-dim);
-}
-.mcard-place-name {
-  font-size: 11px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .mcard-acts { display: flex; gap: var(--space-2); margin-top: auto; }
-.mcard-add,
 .mcard-info {
   display: inline-flex;
   align-items: center;
@@ -296,10 +215,6 @@
   background: var(--bg-card);
   color: var(--ink);
 }
-@media (hover: hover) {
-  .mcard-add:hover { border-color: var(--ink-soft); }
-}
-.mcard-add.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .mcard-info {
   flex: none;
   border: 1px solid var(--rule);
@@ -307,33 +222,12 @@
   color: var(--ink-soft);
   font-weight: 500;
 }
-@media (hover: hover) {
-  .mcard-info:hover { border-color: var(--ink-soft); }
-}
-
-.mcards-more {
-  display: block;
-  margin: var(--space-4) auto 0;
-  min-height: var(--tap);
-  padding: 0 18px;
-  background: none;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  color: var(--ink-soft);
-  font-size: 13px;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .mcards-more:hover { border-color: var(--ink-soft); }
-}
 
 /* ---- The country map, now polygons -------------------------------------- */
 /* The map is taller than it is wide on a phone and wider than it is tall on a
    desktop, and Europe is roughly square, so the height is capped rather than
    let run to the full column: a very tall box fits Europe by WIDTH and fills
    the spare height with Greenland and the Atlantic. */
-.cpm-wrap { position: relative; }
-.cpm { height: min(58vh, 520px); min-height: 380px; margin-bottom: 0; }
 .guide-where-map .cpm { height: min(58vh, 520px); margin-bottom: 0; }
 
 .cpm-legend {
@@ -350,46 +244,16 @@
   color: var(--ink-soft);
   pointer-events: none;
 }
-.cpm-legend-item { display: inline-flex; align-items: center; gap: 5px; }
 .cpm-legend i { width: 11px; height: 11px; border-radius: 3px; display: block; }
 /* The planning map's keys in ink (T398): a picked country is ink, a
    recommendation a dashed ink line; the accent stays for the live route. */
-.cpm-key-sel { background: var(--kind-village); border: 1.5px solid var(--ink); }
-.cpm-key-rec { border: 1.5px dashed var(--ink-soft); }
 
 /* Touch: a tap opens this instead of a hover tooltip nobody can reach. */
-.cpm-card {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 8px;
-  border-radius: 12px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  box-shadow: var(--shadow-2);
-}
 .cpm-card-img { width: 56px; height: 56px; border-radius: 9px; object-fit: cover; flex: none; }
 .cpm-card-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
 .cpm-card-text b { font-family: var(--display); font-size: 15px; }
-.cpm-card-acts { display: flex; gap: var(--space-2); }
-.cpm-card-add,
-.cpm-card-info {
-  min-height: 36px;
-  padding: 0 12px;
-  border-radius: 999px;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-}
 /* Add is a secondary here: the step's one primary is Next (brief target
    table); added, it takes the selected state. */
-.cpm-card-add { border: 1px solid var(--rule); background: var(--bg-card); color: var(--ink); }
-.cpm-card-add.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
-.cpm-card-info { border: 1px solid var(--rule); background: none; color: var(--ink-soft); font-weight: 500; }
 .cpm-card-close {
   flex: none;
   align-self: flex-start;
@@ -405,21 +269,13 @@
 
 /* The shortlist badge on a hand-picked country card. */
 /* In the caption band under the photograph since T398. */
-.guide-ccard-fav {
-  align-self: flex-start;
-  font-family: var(--ui);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
 
 @media (max-width: 768px) {
   .guide-section + .guide-section { margin-top: var(--space-6); }
   .wq-cols-2 { grid-template-columns: repeat(2, 1fr); }
   .wq-chip { padding: 8px 10px; }
   .wq-chip-text b { font-size: 12.5px; }
-  .mcards { grid-template-columns: 1fr; }
-  .cpm, .guide-where-map .cpm { height: 62vh; min-height: 380px; }
+  .guide-where-map .cpm { height: 62vh; min-height: 380px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -476,16 +332,12 @@
 
   /* trip wizard */
   .wiz-mini { min-height: var(--tap); padding: 5px 0 6px; margin-top: 2px; }
-  .guide-search { min-height: var(--tap); }
-  .guide-back { min-height: var(--tap); }
   .guide-startover { display: inline-flex; align-items: center; min-height: var(--tap); }
-  .guide-chip { min-height: var(--tap); }
   .guide-people-lg button { width: var(--tap); height: var(--tap); }
   .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .guide-recap-inner::-webkit-scrollbar { display: none; }
   .guide-recap-chip, .guide-recap-label { flex: none; white-space: nowrap; }
   .dsec-toggle { min-height: var(--tap); }
-  .cbrief-add { min-height: var(--tap); }
 
   /* day planner rail and questions */
   .wiz-step-btn { min-height: var(--tap); }
@@ -497,14 +349,9 @@
   .day-flow-date .cal-inline .cal-day { min-height: var(--tap); }
   .day-ideas-when { padding: 0; }
   .day-ideas-when-btn { min-height: var(--tap); }
-  .day-ideas-chip-x { width: var(--tap); height: var(--tap); }
 
   /* the bot */
   .chat-back { width: var(--tap); height: var(--tap); }
-  .chat-bubble.chat-bubble-edit { min-height: var(--tap); display: flex; align-items: center; }
-  .carta-plan-chip { min-height: var(--tap); }
-  .ai-refine-input { min-height: var(--tap); }
-  .ai-refine-row .trip-add-btn { min-height: var(--tap); }
 
   /* Map pins keep their size (a 44px dot would hide the map) and grow an
      invisible tap box around them instead; the audit measures that box. */
@@ -521,36 +368,26 @@
   .app-header-account .header-pricing-btn { height: var(--tap); min-width: var(--tap); }
   .guide-chip { min-width: var(--tap); }
   .guide-datemode button { min-height: var(--tap); }
-  .guide-ccard-info { width: var(--tap); height: var(--tap); }
   .wtrip-len { min-height: var(--tap); min-width: var(--tap); }
-  .wready-more { min-height: var(--tap); }
-  .wready-link, .tday-more, .itin-stop-open, .guide-answered-edit, .tleg-link {
+  .wready-link, .tday-more, .itin-stop-open, .tleg-link {
     display: inline-flex; align-items: center; min-height: var(--tap);
   }
   /* "Edit" is one short word, so the pill also needs the width (T193). */
   .guide-answered-edit { min-width: var(--tap); justify-content: center; }
   .tpage-back { min-height: var(--tap); }
   .tpage-bar-act { width: var(--tap); height: var(--tap); }
-  .tlegs-shift-btn { width: var(--tap); height: var(--tap); }
-  .tleg-mode { min-height: var(--tap); }
   .guide-people button,
   .guide-summary-party .guide-people button,
   .itin-bd-party .guide-people button { width: var(--tap); height: var(--tap); }
-  .extras-check-row { min-height: var(--tap); padding-block: 0; }
-  .extras-row-head { min-height: var(--tap); }
   .tprac-row.is-link > a { min-height: var(--tap); align-items: center; }
   .itin-drive-row { min-height: var(--tap); }
-  .itin-tab, .itin-day-row-main, .itin-day-plan-btn,
-  .itin-overview-total, .itin-export-toggle,
-  .extras-add-btn, .extras-input, .exp-sharer-chip,
-  .trip-topcard-name, .trip-save-planned-btn, .trip-edit-btn, .trip-startover-btn { min-height: var(--tap); }
+  .itin-tab, .itin-overview-total, .itin-export-toggle, .extras-add-btn { min-height: var(--tap); }
   /* MapLibre's own stylesheet loads after this one; the extra class wins. */
   .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-in,
   .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-out { width: var(--tap); height: var(--tap); }
   /* "Next: Getting there" does not fit beside Back and Start over at 375px;
      the actions drop to their own line only when the label needs it, rather
      than breaking the button in two. */
-  .guide-foot-inner { flex-wrap: wrap; }
   .guide-foot-actions { flex: 1 1 auto; justify-content: flex-end; }
   .guide-next { white-space: nowrap; }
 }
@@ -586,10 +423,6 @@
   .bpage-sources li { padding: 0; }
   .credit-fold > summary { display: flex; align-items: center; }
   .places-locate,
-  .destp-back,
-  .destp-bar-btn,
-  .rgnp-back,
-  .rgnp-share,
   .auth-close { min-width: var(--tap); min-height: var(--tap); }
   .mstrip-info { width: var(--tap); height: var(--tap); }
   .destp-short-src,

@@ -1,7 +1,8 @@
 // T431: the week's price at the traveller's choices. Run: npm test
 import test from "node:test";
 import assert from "node:assert/strict";
-import { tripPrice, includedRows } from "../src/lib/tripPrice.js";
+import { tripPrice, includedRows, lifestyleShares } from "../src/lib/tripPrice.js";
+import { PROFILES } from "../src/lib/lifestyleProfiles.js";
 
 const budget = {
   totalEur: { low: 400, high: 800 },
@@ -37,4 +38,34 @@ test("what is included says the travel to the start is not, until it is added", 
   assert.equal(includedRows(trip).find((r) => r.key === "travel").in, false);
   assert.equal(includedRows(trip, { fare: 120 }).find((r) => r.key === "travel").in, true);
   assert.equal(includedRows({ ...trip, included: ["Ferry tickets"], notIncluded: ["Flights"] }).length, 2);
+});
+
+// T474 (row T435-c): the page has no sliders of its own; the traveller's one
+// Lifestyle places the week on its written ranges.
+test("the way to sleep runs from the simplest bed to a hotel", () => {
+  assert.equal(lifestyleShares(PROFILES.Easygoing, "dorm").sleepShare, 0);
+  assert.equal(lifestyleShares(PROFILES.Easygoing, "hotel4").sleepShare, 1);
+  const home = lifestyleShares(PROFILES.Easygoing, "home").sleepShare;
+  const priv = lifestyleShares(PROFILES.Easygoing, "private").sleepShare;
+  assert.ok(priv > 0 && priv < home && home < 1);
+  // a tier the panel does not know lands where the panel shows it, the entire place
+  assert.equal(lifestyleShares(null, "nonsense").sleepShare, home);
+});
+
+test("the habits run from the thriftiest preset to the most generous", () => {
+  const shares = Object.fromEntries(Object.entries(PROFILES).map(([k, ls]) => [k, lifestyleShares(ls, "home").spendShare]));
+  assert.equal(Math.min(...Object.values(shares)), 0);
+  assert.equal(Math.max(...Object.values(shares)), 1);
+  assert.equal(shares.Backpacker, 0);
+  assert.ok(shares.Easygoing > shares.Backpacker && shares.Easygoing < 1);
+  for (const v of Object.values(shares)) assert.ok(v >= 0 && v <= 1);
+});
+
+test("a changed Lifestyle moves the week and never leaves its written range", () => {
+  const thrifty = tripPrice(budget, lifestyleShares(PROFILES.Backpacker, "dorm"));
+  const generous = tripPrice(budget, lifestyleShares(PROFILES.Nightlife, "hotel"));
+  assert.equal(thrifty.perPerson, 150 + 150 + 60 + 40);
+  assert.equal(generous.perPerson, 350 + 250 + 120 + 80);
+  const mid = tripPrice(budget, lifestyleShares(PROFILES.Easygoing, "home"));
+  assert.ok(mid.perPerson > thrifty.perPerson && mid.perPerson < generous.perPerson);
 });

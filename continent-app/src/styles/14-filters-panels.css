@@ -77,7 +77,7 @@
        the Budget and Quality captions live. */
     top: calc(100% + 10px);
     left: 0; right: 0;
-    z-index: 30;
+    z-index: var(--z-tray);
     /* Fully opaque: at even 2% transparency the results rows and price pills
        behind it ghost straight through the tray's own labels. */
     background: var(--paper);
@@ -275,7 +275,7 @@
   .marker-root:hover .price-pill {
     transform: translateY(-2px);
     box-shadow: var(--shadow-2);
-    z-index: 100;
+    z-index: var(--z-pin-hover);
   }
 }
 
@@ -300,7 +300,7 @@
   color: var(--select-ink);
   border-color: var(--select-border);
   font-weight: 600;
-  z-index: 50;
+  z-index: var(--z-pin-selected);
 }
 .price-pill.is-deal.selected {
   /* keep deal-rust but stronger */
@@ -367,7 +367,7 @@
   background: var(--paper);
   border-left: 1px solid var(--rule);
   border-top: 1px solid var(--rule);
-  z-index: 15;
+  z-index: calc(var(--z-float) + 3);
   overflow-y: auto;
   transform: translateX(100%);
   transition: transform var(--dur-3) var(--ease-out);
@@ -378,7 +378,7 @@
 /* Account & Saved trips slide-overs open over whatever tab is showing, so
    they layer above the tab bodies while staying under the auth overlays
    (z 60). The destination detail panel keeps the base z-index. */
-.account-panel { z-index: 56; }/* ── The destination panel's identity bar ────────────────────────────────
+.account-panel { z-index: calc(var(--z-shell) + 1); }/* ── The destination panel's identity bar ────────────────────────────────
    Eyebrow, score, name and the one badge that is a warning rather than a
    qualifier, above the hero and pinned. Everything below it scrolls, so the
    answer to "which place am I reading about" is never more than a glance
@@ -666,7 +666,7 @@
   align-items: center;
   justify-content: center;
   background: var(--paper);
-  z-index: 100;
+  z-index: calc(var(--z-menu) + 10);
   gap: 18px;
 }
 .loading-screen .name {
@@ -902,7 +902,7 @@
   left: calc(var(--panel-w) + 12px);
   /* Above the drive prompt (z 15): the picker's popover drops over that card,
      and the popover is where the prompt's own button sends you. */
-  z-index: 16;
+  z-index: calc(var(--z-float) + 4);
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -913,7 +913,7 @@
    popover under the trip-kind chips. Lift the whole strip for as long as the
    popover is down, and only then, so the header's filter tray keeps the map to
    itself the rest of the time. */
-.map-toolrow.pop-open { z-index: 26; }
+.map-toolrow.pop-open { z-index: calc(var(--z-header) + 1); }
 .map-toolrow > * { pointer-events: auto; }
 .app.list-collapsed .map-toolrow { left: 12px; }
 
@@ -1471,7 +1471,7 @@
   inset: 0;
   /* Over the bottom nav (z 50) and its raised plus: while the sheet is up,
      nothing from the shell may overlap the controls. */
-  z-index: 60;
+  z-index: var(--z-modal);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -1628,7 +1628,7 @@
 
 /* ── Chips: every option visible, one tap to switch, wrapping across the
       horizontal axis instead of stacking dropdowns down the vertical one.
-      Ink fill means "this is my trip"; terracotta means "this is hiding
+      Ink fill means "this is my trip"; action-brown means "this is hiding
       destinations from the map", the same thing the accent means everywhere
       else in the app. ── */
 .fchips {
@@ -1746,7 +1746,7 @@
   transition: background .15s;
 }
 /* Muted, not the full accent: the bars are context, and the one thing on this
-   screen allowed to shout in terracotta is the action button. */
+   screen allowed to shout in action-brown is the action button. */
 .dual-range-bar.in { background: var(--accent-soft); opacity: 0.62; }
 
 /* Secondary, full-width action inside a section (lifestyle). */
@@ -1842,7 +1842,7 @@
   grid-template-columns: 1.6fr 1fr 1.4fr;
   gap: 32px;
   align-items: start;
-  z-index: 18;
+  z-index: calc(var(--z-float) + 6);
   animation: slide-down var(--dur-3) var(--ease-out);
 }
 .more-panel.with-detail {
@@ -2194,7 +2194,7 @@
   border: 1px solid var(--rule);
   border-radius: 6px;
   box-shadow: var(--shadow-2);
-  z-index: 100;
+  z-index: calc(var(--z-menu) + 10);
   overflow: hidden;
   animation: dropdown-in 0.12s ease-out;
 }
@@ -2360,7 +2360,7 @@
   background: var(--paper);
   border-right: 1px solid var(--rule);
   border-top: 1px solid var(--rule);
-  z-index: 15;
+  z-index: calc(var(--z-float) + 3);
   overflow-y: auto;
 }
 
@@ -2374,7 +2374,7 @@
   border-left: 1px solid var(--rule);
   width: clamp(360px, 34vw, 520px);
   box-shadow: var(--shadow-2);
-  z-index: 41;
+  z-index: calc(var(--z-overlay) + 1);
 }
 /* The scrim dims the grid the drawer reprices, and stops at the bar. It used
    to cover the window (inset: 0) and out-rank .top-bar (z-index 25), so with
@@ -2385,7 +2385,7 @@
   position: fixed;
   top: var(--filter-h, 0px);
   left: 0; right: 0; bottom: 0;
-  z-index: 40;
+  z-index: var(--z-overlay);
   background: rgba(31, 42, 51, 0.28);
   animation: lifestyle-scrim-in var(--dur-3) var(--ease-out);
 }
@@ -2587,7 +2587,7 @@
 }
 
 .ls-tune { margin-top: 14px; }
-/* Two colours in this panel, beige and terracotta. .panel-segment's default
+/* Two colours in this panel, beige and action-brown. .panel-segment's default
    active fill is --ink-fill, which is right in the map's dark chrome and a
    third colour in here, so the cadence toggle takes the accent like every
    other "on" state on this screen. It is also a secondary control sitting

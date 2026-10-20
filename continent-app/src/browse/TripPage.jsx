@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import {
-  ArrowLeftIcon, ShareIcon, RouteIcon, LoopIcon, BedIcon, TrainIcon,
+  RouteIcon, LoopIcon, BedIcon, TrainIcon,
   CarIcon, BusIcon, CalendarIcon, MapPinIcon, AlertIcon, CheckIcon,
   ClockIcon, ReceiptIcon, LinkIcon, MountainIcon, LakeIcon, BeachIcon,
   BootIcon, SunIcon, PlusIcon, ChevronDownIcon, CompassIcon, CameraIcon,
@@ -13,7 +13,8 @@ import { RatingBadge } from '../components/RatingBadge.jsx';
 import { GlossLine } from '../components/InfoDot.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { FavStar } from '../components/FavStar.jsx';
+import { usePageArrival } from '../hooks/usePageArrival.js';
+import { PageBar } from './PageBar.jsx';
 import { eur, eurExact } from '../lib/format.js';
 import { loadTrip, tripShareUrl } from '../lib/trips.js';
 import { creditFor } from '../lib/imageCredit.js';
@@ -400,8 +401,23 @@ export function TripPage({
   // telling a screen reader it was modal. See hooks/useFocusTrap.js.
   const pageRef = useRef(null);
   const backRef = useRef(null);
-  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
   const [detail, setDetail] = useState(null);
+  // Arrival focus follows the one page rule (hooks/usePageArrival.js, T474).
+  const arrivalRef = usePageArrival(pageRef, detail?.id ?? null);
+  useFocusTrap(pageRef, onClose, { initialFocusRef: arrivalRef });
+  // The bar takes over the name once the caption band's heading has scrolled
+  // away (PageBar), as on every other page.
+  const scrollEl = useRef(null);
+  const headEl = useRef(null);
+  const [nameOn, setNameOn] = useState(false);
+  useEffect(() => {
+    const el = headEl.current;
+    const root = scrollEl.current;
+    if (!el || !root || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([entry]) => setNameOn(!entry.isIntersecting), { root, threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [card.id]);
   const [failed, setFailed] = useState(false);
   const [selected, setSelected] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -493,22 +509,22 @@ export function TripPage({
   return (
     <div className="tpage itin-page" role="dialog" aria-modal="true"
       aria-label={ready ? tripHeadline(trip, t) : t('trip.loading')} ref={pageRef}>
-      <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
-          <ArrowLeftIcon size={15} />
-          <span>{t('trip.back')}</span>
-        </button>
-        <span className="tpage-bar-title on">
-          {ready ? tripHeadline(trip, t) : t('trip.loading')}
-        </span>
-        <FavStar on={fav} onToggle={onFav} />
-        <button type="button" className="tpage-bar-act" onClick={onShare}
-          aria-label={t('trip.shareLink')}>
-          <ShareIcon size={15} />
-        </button>
-      </div>
+      <PageBar
+        t={t}
+        backLabel={t('trip.back')}
+        onBack={onClose}
+        backRef={backRef}
+        name={ready ? tripHeadline(trip, t) : t('trip.loading')}
+        nameOn={nameOn}
+        fav={fav}
+        onFav={onFav}
+        onShare={onShare}
+        shareLabel={t('trip.shareLink')}
+        copied={copied}
+        copiedLabel={t('dest.linkCopied')}
+      />
 
-      <div className="tpage-scroll">
+      <div className="tpage-scroll" ref={scrollEl}>
         {/* The photograph leads, and nothing is written on it (the caption
             band rule, T380): the name, the countries, the themes and the
             credit sit in a solid band flush under the photo, no scrim and no
@@ -531,7 +547,7 @@ export function TripPage({
         </div>
         <div className="itin-capband">
           <div className="itin-capband-in">
-            <h1 className="itin-capband-title">
+            <h1 className="itin-capband-title" ref={headEl}>
               {ready ? tripHeadline(trip, t) : t('trip.loading')}
             </h1>
             {((trip.countries || []).length > 0 || trip.score != null) && (

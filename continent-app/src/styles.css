@@ -3,7 +3,13 @@
    into one stylesheet, so the cascade is exactly what the single file had. Add
    new rules to the file that owns the domain; never reorder these lines, and
    never import a domain file anywhere else. maplibre-gl.css is imported lazily
-   from the map components and always lands after this sheet. */
+   from the map components and always lands after this sheet.
+
+   Two exceptions load with their route instead of before the first paint
+   (T474, CSS per route): src/styles/planners.css (the trip and day planners)
+   and src/styles/admin.css (the admin page), each the rules of these domain
+   files that only its route renders. scripts/css-routes.mjs moves them and its
+   --check proves on every build that none of them can change a screen. */
 
 @import './styles/01-tokens.css';
 @import './styles/02-base.css';

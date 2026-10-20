@@ -1,47 +1,59 @@
 /**
- * tripPrice.js (T431): what a written week costs at the traveller's choices.
+ * tripPrice.js (T431, T474): what a written week costs at the traveller's
+ * Lifestyle.
  *
  * The trip's authored budget is four ranges a person (bed, food, getting
- * around, activities) and a total. Two choices place each line on its
- * range: where you sleep moves the bed line, how you spend moves the other
- * three, each from the low end (0) to the high end (1). The party multiplies
- * a person's total; a fare the traveller typed in for getting to the start
- * (lib/firstRun.js own fares, keyed journey:<id>) is added once, as theirs.
- * Carta never adds a flight of its own.
+ * around, activities) and a total. Two shares place each line on its range,
+ * from the low end (0) to the high end (1): where you sleep moves the bed
+ * line, how you spend moves the other three. Both come from the one
+ * Lifestyle the whole app prices from (carta-design "Lifestyle control":
+ * there is one), through lifestyleShares() below, so the trip page never
+ * carries a second control of its own (T474, row T435-c). The party
+ * multiplies a person's total; a fare the traveller typed in for getting to
+ * the start (lib/firstRun.js own fares, keyed journey:<id>) is added once, as
+ * theirs. Carta never adds a flight of its own.
  *
  * Pure functions only, so the node tests import them.
  */
 import { between } from './lifestyleSlider.js';
+import { SLEEP_GROUPS, sleepGroupOf } from './sleepGroups.js';
+import { refDayFood } from './costIndex.js';
+import { PROFILES } from './lifestyleProfiles.js';
 
 export const SLOTS = ['accommodation', 'food', 'transport', 'activities'];
 const SLEEP_SLOT = 'accommodation';
 
-/** How you spend, three stops from the low end of each range to the high. */
-export const SPEND_STOPS = [
-  { key: 'save', share: 0, labelKey: 'journey.spendSave' },
-  { key: 'mid', share: 0.5, labelKey: 'journey.spendMid' },
-  { key: 'treat', share: 1, labelKey: 'journey.spendTreat' },
-];
-export const SPEND_KEY = 'carta.tripSpend';
+// How a day of eating and drinking spreads across the presets, on the
+// reference basket: the thriftiest preset is the low end of a trip's range,
+// the most generous the high end.
+const PRESET_DAYS = Object.values(PROFILES).map(refDayFood);
+const SPEND_LOW = Math.min(...PRESET_DAYS);
+const SPEND_HIGH = Math.max(...PRESET_DAYS);
 
-/** Where you sleep, over the trip's own written bed range: its simplest
- *  beds to its most comfortable (a hut week's range is huts, a city week's is
- *  hostels to hotels), so the stops never name a bed the trip does not offer
- *  (T430 critique: "Entire place" on a refuge week). */
-export const SLEEP_STOPS = [
-  { key: 'low', share: 0, labelKey: 'journey.sleepLow' },
-  { key: 'mid', share: 0.5, labelKey: 'journey.sleepMid' },
-  { key: 'high', share: 1, labelKey: 'journey.sleepHigh' },
-];
+const clamp01 = (v) => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0.5);
 
-export function readSpend() {
-  try {
-    const v = window.localStorage.getItem(SPEND_KEY);
-    return SPEND_STOPS.some((s) => s.key === v) ? v : 'mid';
-  } catch { return 'mid'; }
-}
-export function writeSpend(key) {
-  try { window.localStorage.setItem(SPEND_KEY, key); } catch { /* blocked store: this page only */ }
+/**
+ * Where the traveller's Lifestyle sits on a trip's written ranges.
+ *
+ *   sleepShare   the way to sleep, in the panel's order from the simplest bed
+ *                to the most comfortable (dorm 0, private room, entire place,
+ *                hotel 1): a dorm traveller pays the low end of the trip's
+ *                bed range, a hotel traveller the high end, whatever beds the
+ *                trip itself offers (a hut week's range is huts)
+ *   spendShare   a day of eating and drinking at their habits, against the
+ *                same reference basket the price bands use (costIndex.js),
+ *                between the thriftiest preset (0) and the most generous (1)
+ *
+ * Unknown or missing settings land in the middle, the way the panel's own
+ * defaults do.
+ */
+export function lifestyleShares(lifestyle, stayTier) {
+  const at = SLEEP_GROUPS.findIndex((g) => g.key === sleepGroupOf(stayTier));
+  const sleepShare = at >= 0 ? at / (SLEEP_GROUPS.length - 1) : 0.5;
+  const spendShare = SPEND_HIGH > SPEND_LOW
+    ? clamp01((refDayFood(lifestyle) - SPEND_LOW) / (SPEND_HIGH - SPEND_LOW))
+    : 0.5;
+  return { sleepShare, spendShare };
 }
 
 /**

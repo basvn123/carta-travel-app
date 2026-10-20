@@ -1,18 +1,19 @@
 import React, {
-  Suspense, lazy, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState,
+  Suspense, lazy, useCallback, useEffect, useId, useMemo, useRef, useState,
 } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { Button, IconButton } from '../components/ui/index.js';
+import { usePageArrival } from '../hooks/usePageArrival.js';
+import { Button } from '../components/ui/index.js';
 import {
-  ArrowLeftIcon, ShareIcon, ChevronDownIcon, ChevronRightIcon, CheckIcon, DownloadIcon,
+  ChevronDownIcon, ChevronRightIcon, DownloadIcon,
 } from '../components/Icons.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { clampIndex, trackIndex, trackKey, trackLeft } from '../lib/dayTrack.js';
 import { KeyFacts } from './KeyFacts.jsx';
 import { SectionRail } from './SectionRail.jsx';
 import { Track } from './Track.jsx';
-import { SaveButton } from './ExploreCards.jsx';
+import { PageBar } from './PageBar.jsx';
 import { BeforeYouGo, HighlightCard, AlternativeCard, SourcesLine } from './ItemParts.jsx';
 import { capFirst } from '../lib/detailSkeleton.js';
 
@@ -432,11 +433,11 @@ export function DetailPage({
   // Focus management for the dialog: initial focus, a Tab cycle and focus
   // restoration (hooks/useFocusTrap.js). A page with a mode of its own (the
   // trail page's live follow) passes onEscape to leave the mode first.
-  // Arrival focus lands on the page's title, not the back control (rule
-  // "Navigation"; T430 critique: a deep link opened with a ring on Back).
-  const titleRef = useRef(null);
-  useLayoutEffect(() => { titleRef.current = headEl.current?.querySelector('h1') || backRef.current; });
-  useFocusTrap(pageRef, onEscape || onClose, { initialFocusRef: titleRef });
+  // Arrival focus follows the one page rule (hooks/usePageArrival.js, rule
+  // "Navigation"): the title by pointer or a link, the back control from the
+  // keyboard (T474; T430 critique: a deep link opened with a ring on Back).
+  const arrivalRef = usePageArrival(pageRef, resetKey);
+  useFocusTrap(pageRef, onEscape || onClose, { initialFocusRef: arrivalRef });
 
   useEffect(() => { scrollEl.current?.scrollTo?.(0, 0); }, [resetKey]);
 
@@ -498,22 +499,20 @@ export function DetailPage({
       ref={pageRef}
       data-testid={testId}
     >
-      <div className="tpage-bar ipage-bar">
-        <Button variant="quiet" className="tpage-back ipage-back" onClick={onClose} ref={backRef}
-          iconStart={<ArrowLeftIcon size={20} />}>
-          {backLabel}
-        </Button>
-        <span className={`tpage-bar-title ipage-bar-title ${titleGone || barTitleOn ? 'on' : ''}`}>{name}</span>
-        <div className="ipage-bar-acts">
-          {onFav && <SaveButton fav={fav} onToggle={onFav} t={t} name={name} />}
-          {onShare && (
-            <IconButton className="tpage-bar-act" onClick={onShare}
-              label={copied ? t('dest.linkCopied') : (shareLabel || t('trails.shareLink'))}>
-              {copied ? <CheckIcon size={18} /> : <ShareIcon size={18} />}
-            </IconButton>
-          )}
-        </div>
-      </div>
+      <PageBar
+        t={t}
+        backLabel={backLabel}
+        onBack={onClose}
+        backRef={backRef}
+        name={name}
+        nameOn={titleGone || barTitleOn}
+        fav={fav}
+        onFav={onFav}
+        onShare={onShare}
+        shareLabel={shareLabel || t('trails.shareLink')}
+        copied={copied}
+        copiedLabel={t('dest.linkCopied')}
+      />
 
       <div className="tpage-scroll" ref={scrollEl}>
         <SectionRail

@@ -7,13 +7,13 @@ import { Stepper } from '../components/FilterControls.jsx';
 import { FlightSheet } from '../components/FirstRunReceipt.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
+import { useSettings } from '../components/SettingsLine.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { formatMoney, formatEst } from '../lib/money.js';
 import { useSettledFigure } from '../lib/figureChange.js';
-import {
-  SLEEP_STOPS, SLOTS, SPEND_STOPS, includedRows, readSpend, tripPrice, writeSpend,
-} from '../lib/tripPrice.js';
+import { SLOTS, includedRows, lifestyleShares, tripPrice } from '../lib/tripPrice.js';
 import { IncludedList } from './ItemParts.jsx';
-import { ChevronDownIcon, DownloadIcon, PlusIcon } from '../components/Icons.jsx';
+import { ChevronDownIcon, ChevronRightIcon, DownloadIcon, PlusIcon } from '../components/Icons.jsx';
 
 /**
  * The trip page's price card (T431, owner 2026-10-15): what the week costs a
@@ -24,9 +24,12 @@ import { ChevronDownIcon, DownloadIcon, PlusIcon } from '../components/Icons.jsx
  *                (the trips' budgets are written ranges), with its dot
  *   length       the short version or the whole trip (lib/tripLength.js)
  *   people       the app's party (FirstRunContext), so every card agrees
- *   two sliders  where you sleep (the Lifestyle stay groups the dataset
- *                offers, which moves the bed line) and how you spend (food,
- *                getting around and activities, low end to high end)
+ *   Lifestyle    the one Lifestyle control (carta-design, T474): a row that
+ *                names the traveller's Lifestyle and opens the panel, and one
+ *                sentence with the trip's own range; the Lifestyle places the
+ *                bed line and the other three on the trip's written ranges
+ *                (lib/tripPrice.js lifestyleShares), so this page and every
+ *                other price in the app move together
  *   your travel  the traveller's own fare to the start and home, typed in
  *                and labelled as theirs (Carta never prices a flight); the
  *                same sheet and store as the destination page, keyed
@@ -46,31 +49,11 @@ const LINE_KEY = {
   activities: 'journey.bActivities',
 };
 
-/** A stepped range control with its words under the stops. */
-function StopRange({ label, stops, index, onPick, id }) {
-  const { t, lang } = useI18n();
-  const n = stops.length;
-  return (
-    <div className="tprice-range" style={{ '--n': n }}>
-      <label className="tprice-label" htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        type="range"
-        className="tprice-range-input"
-        min="0"
-        max={n - 1}
-        step="1"
-        value={index}
-        aria-valuetext={t(stops[index]?.labelKey)}
-        onChange={(e) => onPick(Number(e.target.value))}
-      />
-      <div className="tprice-stops" aria-hidden="true" lang={lang}>
-        {stops.map((s, i) => (
-          <span key={s.key} className={`tprice-stop${i === index ? ' is-on' : ''}`}>{t(s.labelKey)}</span>
-        ))}
-      </div>
-    </div>
-  );
+const SLOT = '';
+/** A sentence with one money node in it, keeping the language's word order. */
+function withMoney(text, money) {
+  const [before, after = ''] = String(text).split(SLOT);
+  return <>{before}{money}{after}</>;
 }
 
 export function TripPriceCard({
@@ -83,15 +66,17 @@ export function TripPriceCard({
   const [fare, setFare] = useState(() => readOwnFare(receiptKey));
   const [sheetOpen, setSheetOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [spend, setSpendKey] = useState(readSpend);
   React.useEffect(() => { setFare(readOwnFare(receiptKey)); }, [receiptKey]);
 
-  // Where you sleep: the trip's own bed range (lib/tripPrice.js SLEEP_STOPS),
-  // starting in the middle; the choice lasts for this page.
-  const sleepStops = SLEEP_STOPS;
-  const [sleepAt, pickSleep] = useState(1);
-  const spendAt = Math.max(0, SPEND_STOPS.findIndex((s) => s.key === spend));
-  const pickSpend = (i) => { const k = SPEND_STOPS[i]?.key || 'mid'; setSpendKey(k); writeSpend(k); };
+  // The traveller's one Lifestyle (the settings line's, App's choices) places
+  // each line on the trip's written range; the panel is where it changes.
+  const settings = useSettings();
+  const shares = lifestyleShares(settings?.lifestyle, settings?.stayTier);
+  const profileKey = matchProfile(settings?.lifestyle || {});
+  const lifestyleText = [
+    t(`stay.${settings?.stayTier || 'home'}`),
+    profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom'),
+  ].join(', ');
 
   const people = Math.max(1, Math.min(MAX_PARTY, Math.round(ctx?.choices?.group_size || 1)));
   const setPeople = (n) => {
@@ -100,12 +85,18 @@ export function TripPriceCard({
   };
 
   const price = useMemo(() => tripPrice(budget, {
-    sleepShare: sleepStops[sleepAt]?.share ?? 0.5,
-    spendShare: SPEND_STOPS[spendAt]?.share ?? 0.5,
+    sleepShare: shares.sleepShare,
+    spendShare: shares.spendShare,
     days,
     party: people,
     fare: fare?.costTotal || 0,
-  }), [budget, sleepStops, sleepAt, spendAt, days, people, fare]);
+  }), [budget, shares.sleepShare, shares.spendShare, days, people, fare]);
+  // The trip's own range a person, simplest end to most generous, for the
+  // sentence under the Lifestyle row.
+  const ends = useMemo(() => ({
+    low: tripPrice(budget, { sleepShare: 0, spendShare: 0, days })?.perPerson ?? null,
+    high: tripPrice(budget, { sleepShare: 1, spendShare: 1, days })?.perPerson ?? null,
+  }), [budget, days]);
 
   const figRef = React.useRef(null);
   useSettledFigure(figRef, price ? `${trip.id}:${price.perPerson}` : '');
@@ -177,11 +168,25 @@ export function TripPriceCard({
         />
       </div>
 
-      {price?.perPerson != null && budget?.breakdown?.accommodation && (
-        <StopRange id={`${uid}-sleep`} label={t('journey.bedsLabel')} stops={sleepStops} index={sleepAt} onPick={pickSleep} />
-      )}
-      {price?.perPerson != null && (
-        <StopRange id={`${uid}-spend`} label={t('journey.spendLabel')} stops={SPEND_STOPS} index={spendAt} onPick={pickSpend} />
+      {price?.perPerson != null && settings?.openLifestyle && (
+        <div className="tprice-ls">
+          <Button
+            variant="secondary"
+            block
+            className="tprice-ls-btn"
+            aria-haspopup="dialog"
+            onClick={settings.openLifestyle}
+            iconEnd={<ChevronRightIcon size={18} />}
+          >
+            <span className="tprice-ls-label">{t('settings.lifestyle')}</span>
+            <span className="tprice-ls-value">{lifestyleText}</span>
+          </Button>
+          {ends.low != null && ends.high != null && ends.high > ends.low && (
+            <p className="tprice-ls-say">
+              {withMoney(t('journey.lsRange', { range: SLOT }), <Money low={ends.low} high={ends.high} est />)}
+            </p>
+          )}
+        </div>
       )}
 
       {price?.total != null && (

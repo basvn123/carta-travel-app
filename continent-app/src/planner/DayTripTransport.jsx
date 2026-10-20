@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { TrainIcon, BusIcon, CarIcon, SparkIcon } from '../components/Icons.jsx';
 import { safeUrl, eurExact } from '../lib/format.js';
+import { formatEst } from '../lib/money.js';
 import { fmtDur } from './dayFormat.js';
 
 // The three inter-city day-trip modes and their glyphs/labels. Exported because
@@ -27,7 +28,7 @@ export const MODE_META = {
  *   onPickMode  choose a different mode (persisted with the plan)
  */
 export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
   if (!fromDest || !toDest || !opts) return null;
   // Staying in, or right next to, the day-trip city itself: there's no
@@ -63,7 +64,11 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
     : oneWayH <= 2 ? t('day.depart830')
     : oneWayH <= 3 ? t('day.depart800')
     : t('day.departTooFar');
-  const perLabel = active === 'car' ? t('day.perCarSuffix') : t('day.perPersonSuffix');
+  // A fare a person, or a car's cost to split (T474: one phrase per unit, the
+  // figure through the money formatter with its estimate mark).
+  const fareFor = (mode, eur, est) => t(mode === 'car' ? 'day.farePerCar' : 'day.farePerPerson', {
+    eur: est ? formatEst(eur, t('money.est'), { precision: 'cents', locale: lang }) : eurExact(eur),
+  });
 
   return (
     <div className="trip-block daytrip-transport">
@@ -80,7 +85,7 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
             {t('day.modeSummary', {
               km: opts.road_km,
               dur: fmtDur(cur.hours * 60),
-              fare: `~${eurExact(cur.eur_pp)} ${t('money.est')}${perLabel}`,
+              fare: fareFor(active, cur.eur_pp, true),
               ret: eurExact(cur.eur_pp * 2),
               split: active === 'car' ? t('day.splitWithGroup') : '',
             })}
@@ -118,7 +123,7 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
                   {React.createElement(MODE_META[m].Icon, { size: 12 })} {t(MODE_META[m].labelKey)}
                   {opts.recommended === m && <SparkIcon size={9} />}
                 </span>
-                <b>{eurExact(o.eur_pp)}{m === 'car' ? t('day.perCarShort') : t('day.perPersonShort')}</b>
+                <b>{fareFor(m, o.eur_pp, false)}</b>
                 <small>{t('day.eachWay', { dur: fmtDur(o.hours * 60) })}</small>
               </button>
             ))}

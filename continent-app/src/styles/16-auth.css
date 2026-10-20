@@ -71,7 +71,7 @@
 }
 
 /* "See pricing" in the header: quiet chrome next to the account button, the
-   same pill height, terracotta only on the glyph so it reads as a place to go
+   same pill height, action-brown only on the glyph so it reads as a place to go
    rather than an alert. */
 .header-pricing-btn {
   display: inline-flex;
@@ -121,7 +121,7 @@
 .auth-overlay {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: var(--z-modal);
   background: color-mix(in srgb, var(--ink) 28%, transparent);
   backdrop-filter: none;
   display: flex;
@@ -411,7 +411,7 @@
   left: 50%;
   bottom: 28px;
   transform: translateX(-50%);
-  z-index: 80;
+  z-index: var(--z-toast);
   display: flex;
   align-items: center;
   gap: 10px;

@@ -187,7 +187,7 @@
 .settings-line .origin-picker.is-settings .origin-pop {
   position: fixed;
   top: calc(var(--filter-h) + var(--space-1));
-  z-index: 60;
+  z-index: var(--z-modal);
   max-height: calc(100dvh - var(--filter-h) - var(--bottom-nav-h) - var(--space-5));
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -275,7 +275,7 @@
   /* Above the My trips and Account pages (z 56) so a message is never hidden
      behind them (row T400-c), under every dialog and sheet: the Lifestyle
      scrim and panel are 58 and 59 below, the filter sheets 60 (T401). */
-  z-index: 57;
+  z-index: calc(var(--z-shell) + 2);
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
@@ -669,9 +669,9 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
 
 /* The Lifestyle dialog stands over the bottom slot on every width (row
    T400-c); 46-owner-calls.css gave the desktop drawer z 41. */
-.lifestyle-scrim { z-index: 58; }
+.lifestyle-scrim { z-index: calc(var(--z-shell) + 3); }
 .accom-panel.lifestyle-panel,
-.accom-panel.lifestyle-panel.from-right { z-index: 59; }
+.accom-panel.lifestyle-panel.from-right { z-index: calc(var(--z-shell) + 4); }
 
 /* A pointer open does not draw a focus ring on the control focus moved to
    (row T396-e). useFocusTrap() marks it, and the mark comes off at the first

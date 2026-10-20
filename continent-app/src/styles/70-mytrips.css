@@ -416,7 +416,7 @@
 .tshare-ask-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 /* The lazy chunk's own placeholder while it loads. */
-.mt-loading { position: fixed; inset: 0; z-index: 55; background: var(--surface-page); }
+.mt-loading { position: fixed; inset: 0; z-index: var(--z-shell); background: var(--surface-page); }
 
 /* ── Desktop: the side panel holds the sections and the filters ── */
 @media (min-width: 769px) {

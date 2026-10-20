@@ -35,8 +35,9 @@ import { useEffect, useRef } from 'react';
 
 // How the last input arrived. Script focus after a mouse or touch open shows
 // :focus-visible in Chromium when nothing was focused before, which put a ring
-// on the Back control of every detail page.
-let lastInput = 'keyboard';
+// on the Back control of every detail page. Null until the first input: a
+// page the app booted on (a shared link) was opened by no key (T474).
+let lastInput = null;
 if (typeof document !== 'undefined') {
   document.addEventListener('keydown', () => {
     lastInput = 'keyboard';
@@ -44,6 +45,10 @@ if (typeof document !== 'undefined') {
   }, true);
   document.addEventListener('pointerdown', () => { lastInput = 'pointer'; }, true);
 }
+
+/** Was the last input a key? The page arrival rule (usePageArrival) reads it
+ *  to choose between the heading and the bar's first control. */
+export const lastInputWasKeyboard = () => lastInput === 'keyboard';
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), '
   + 'select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
@@ -93,7 +98,7 @@ export function useFocusTrap(panelRef, onClose, options = {}) {
     // of them with `display: none` at any given width. So try the ref, then
     // check whether it actually took focus, and fall back to the first
     // element in the panel that will.
-    const quiet = (el) => { if (lastInput === 'pointer') el.setAttribute('data-focus-quiet', ''); };
+    const quiet = (el) => { if (lastInput !== 'keyboard') el.setAttribute('data-focus-quiet', ''); };
     const focusFirst = () => {
       const named = initialFocusRef?.current;
       if (named) quiet(named);

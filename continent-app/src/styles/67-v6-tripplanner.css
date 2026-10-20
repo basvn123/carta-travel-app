@@ -21,13 +21,6 @@
    line in --ui with the figure alone in --mono, from the cost index Explore
    prices with. Used on the match cards, the country grid, the brief's glance
    and the ready-made trip cards. */
-.wiz-cost-line {
-  margin: 0;
-  font-family: var(--ui);
-  font-size: 13px;
-  line-height: 1.35;
-  color: var(--ink-soft);
-}
 .wiz-cost-line .mono {
   font-family: var(--mono);
   font-size: 13px;
@@ -39,17 +32,6 @@
 /* The country grid: the figure sits in a paper band under the photograph,
    never on it. The card stops being a fixed 4:3 box so the band has a row
    of its own; the photograph keeps its 4:3 on the pick button. */
-.guide-ccard {
-  aspect-ratio: auto;
-  display: flex;
-  flex-direction: column;
-}
-.guide-ccard-pick {
-  position: relative;
-  inset: auto;
-  height: auto;
-  border-radius: 0;
-}
 .wiz-ccard-cost {
   padding: var(--space-2) var(--space-3);
   background: var(--paper);
@@ -59,21 +41,10 @@
 /* Ready-made trip cards that read as a choice (brief item 9): a shorter
    photograph, the cost line under the route, and Choose as a secondary, so
    the step's one accent fill is Next. The chosen card is ink, never accent. */
-.wtrip-media { aspect-ratio: 16 / 7; }
-.wtrip-total { margin: 0; }
-.wtrip-choose {
-  border: 1px solid var(--rule);
-  background: var(--bg-card);
-  color: var(--ink);
-}
-.wtrip.on { border-color: var(--select-border); box-shadow: none; outline: 1px solid var(--select-border); outline-offset: -2px; }
 .wtrip.on .wtrip-choose {
   border-color: var(--select-border);
   background: var(--select-bg);
   color: var(--select-ink);
-}
-@media (hover: hover) {
-  .wtrip-choose:hover { border-color: var(--ink-soft); }
 }
 
 /* The running estimate says it is one (brief item 2): "est." after the
@@ -118,13 +89,6 @@
 }
 
 /* The answered quiz as one line (brief item 8). */
-.wq-summary {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
 .wq-summary .wq-done-check { flex: none; margin-top: 2px; }
 .wq-summary-text {
   flex: 1 1 auto;
@@ -164,14 +128,13 @@
   text-overflow: ellipsis;
 }
 .trip-sheet-footer-row > .trip-save-planned-btn { flex: none; }
-.trip-sheet-footer-row > .trip-save-planned-btn:only-of-type { flex: 1 1 auto; }
 .trip-more { position: relative; flex: none; }
 .trip-more-btn { min-width: var(--tap); padding: 0 var(--space-3); }
 .trip-more-menu {
   position: absolute;
   right: 0;
   bottom: calc(100% + var(--space-2));
-  z-index: 20;
+  z-index: var(--z-popover);
   min-width: 200px;
   display: flex;
   flex-direction: column;
@@ -181,24 +144,6 @@
   border-radius: 10px;
   box-shadow: var(--shadow-2);
   animation: wiz-more-in var(--dur-2) var(--ease-out);
-}
-.trip-more-item {
-  display: flex;
-  align-items: center;
-  min-height: var(--tap);
-  padding: 0 var(--space-4);
-  border: none;
-  background: transparent;
-  color: var(--ink);
-  font-family: var(--ui);
-  font-size: 14px;
-  text-align: left;
-  white-space: nowrap;
-}
-.trip-more-item.is-danger { color: var(--danger); }
-.trip-more-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-@media (hover: hover) {
-  .trip-more-item:hover { background: var(--paper-dim); }
 }
 @keyframes wiz-more-in {
   from { opacity: 0; transform: translateY(4px); }
@@ -227,7 +172,6 @@
    over lives in the steps sheet; the status line shares the row with Back
    and Next and wraps to two short lines inside it. */
 @media (max-width: 768px) {
-  .trip-wizard-modal .guide-foot-inner { flex-wrap: nowrap; gap: var(--space-2); }
   .trip-wizard-modal .guide-foot-summary {
     flex: 1 1 0;
     min-width: 0;
@@ -236,8 +180,6 @@
     line-height: 1.4;
   }
   .trip-wizard-modal .guide-foot-actions { flex: none; gap: var(--space-2); }
-  .trip-wizard-modal .guide-foot-actions .guide-next { flex: none; }
-  .trip-wizard-modal .guide-foot-actions .guide-back { padding: 0 var(--space-3); }
 }
 .wiz-sheet-startover {
   display: flex;
@@ -253,12 +195,7 @@
    one-row footer, nothing else (the recap scrolls with the step). Tighter
    padding so the three stay within a quarter of an 800 px screen. */
 @media (max-width: 768px) {
-  .trip-wizard-modal .guide-head { padding: var(--space-2) var(--space-4) var(--space-2); }
   .trip-wizard-modal .wiz-mini { margin-top: var(--space-1); }
-  .trip-wizard-modal .wiz-mini-bar { margin-top: var(--space-1); }
-  .trip-wizard-modal .guide-estimate-main { padding: var(--space-2) var(--space-4); }
-  .trip-wizard-modal .guide-foot { padding-top: var(--space-2); }
-  .trip-wizard-modal.wiz-inline .guide-foot { padding-bottom: var(--space-2); }
   .wiz-recap-inbody {
     margin: calc(-1 * 18px) calc(-1 * 18px) var(--space-4);
     border-bottom: 1px solid var(--rule-soft);
@@ -286,58 +223,21 @@
   background: var(--bg-card);
 }
 .guide-booked-bit.on .guide-booked-icon { color: var(--ink); }
-.wtrip.on { border-color: var(--select-border); box-shadow: none; outline: 1px solid var(--select-border); outline-offset: -2px; }
-.wtrip-len.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
-.tleg-mode.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); font-weight: 600; }
 .tleg-mode.on svg { color: var(--select-ink); }
-@media (hover: hover) {
-  .tleg-mode:hover { border-color: var(--rule); }
-}
 /* The picked country on Trips is a filter chip (rule "Filter chips"): paper
    dim, ink text, a rule border; no accent fill on hover. */
-.wready-chip.on { border-color: var(--rule); background: var(--paper-dim); color: var(--ink); }
-@media (hover: hover) {
-  .wready-chip:hover { background: var(--paper-dim); color: var(--ink); }
-}
-.guide-ccard.on { border-color: var(--select-border); box-shadow: none; outline: 1px solid var(--select-border); outline-offset: -2px; }
-.guide-ccard.reading { border-color: var(--ink-soft); }
 .guide-ccard.reading .guide-ccard-info { background: var(--select-bg); color: var(--select-ink); }
 @media (hover: hover) {
-  .guide-booked-bit:hover:not(.on),
-  .tleg-mode:hover:not(.on),
-  .wready-chip:hover { border-color: var(--ink-soft); }
+  .guide-booked-bit:hover:not(.on) { border-color: var(--ink-soft); }
 }
 /* The desktop step rail: done and current steps in ink (progress is data,
    not an action; T388 did the phone bar). Scoped to the trip wizard because
    the day planner's flow shares the classes. */
-.trip-wizard-modal .wiz-step.done .wiz-step-btn { border-top-color: var(--ink-mute); }
-.trip-wizard-modal .wiz-step.now .wiz-step-btn { border-top-color: var(--ink); }
-.trip-wizard-modal .wiz-step.now .wiz-step-mark { background: var(--ink); color: var(--on-fill); }
-@media (hover: hover) {
-  .trip-wizard-modal .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--ink-soft); }
-}
-@media (hover: hover) {
-  .trip-wizard-modal .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--ink); }
-}
 
 /* Photographs under captions (brief V4-3, rule "Caption band"): nothing sits
    on a photograph; the name, the length, the star and the tick sit in a
    paper band flush under it. On a phone the photograph is at most a third of
    a choice card. */
-.mcard-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--paper);
-  border-bottom: 1px solid var(--rule-soft);
-  color: var(--ink);
-  font-family: var(--display);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: left;
-}
 .mcard-check,
 .wtrip-check,
 .guide-ccard-check {
@@ -354,29 +254,10 @@
   background: var(--ink-fill);
   color: var(--on-fill);
 }
-.wtrip-cap {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 20px;
-}
-.wtrip-days {
-  position: static;
-  padding: 0;
-  border-radius: 0;
-  background: none;
-  color: var(--ink-soft);
-  font-family: var(--ui);
-  font-size: 12px;
-}
 .wtrip-days b { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
 
 /* The country grid card: the photograph keeps its ratio inside the pick
    button and the caption band follows it in the flow. */
-.guide-ccard-pick {
-  display: flex;
-  flex-direction: column;
-}
 .guide-ccard-pick .guide-ccard-img {
   position: relative;
   inset: auto;
@@ -391,93 +272,36 @@
   background: var(--paper);
   border-top: 1px solid var(--rule-soft);
 }
-.guide-ccard-name {
-  align-items: center;
-  color: var(--ink);
-  font-size: 16px;
-}
 .wiz-ccard-cost { border-top: none; padding-top: 0; }
 /* The second action stays a round icon button on the photograph's corner
    (an icon, not text), in card ink instead of a translucent disc. */
-.guide-ccard-info {
-  top: var(--space-2);
-  right: var(--space-2);
-  bottom: auto;
-  border: 1px solid var(--rule);
-  background: var(--bg-card);
-  color: var(--ink-soft);
-}
-.guide-ccard-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (hover: hover) {
-  .guide-ccard-info:hover,
   .guide-ccard-pick:hover ~ .guide-ccard-info { background: var(--bg-card); color: var(--ink-soft); }
 }
 @media (hover: hover) {
-  .guide-ccard:hover:not(.on) { border-color: var(--ink-soft); }
-  .guide-ccard-info:hover,
   .guide-ccard-pick:hover ~ .guide-ccard-info { background: var(--paper-dim); color: var(--ink); }
-}
-@media (max-width: 768px) {
-  .guide-ccard-name { font-size: 14px; }
-  /* A choice card's photograph is at most a third of the card on a phone. */
-  .mcard-pick .mcard-img { aspect-ratio: 3 / 1; }
-  .wtrip-media { aspect-ratio: 3 / 1; }
 }
 
 /* The match card's reasons as a run of labelled values (brief V4-8): the
    count in mono, its words under it in --ui; no bullet. */
-.mcard-why {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
-}
 .mcard-why-fact {
   display: flex;
   flex-direction: column;
   gap: 1px;
   min-width: 0;
 }
-.mcard-why-n {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.mcard-why-l,
-.mcard-why-text {
-  font-family: var(--ui);
-  font-size: 12px;
-  line-height: 1.35;
-  color: var(--ink-soft);
-}
-.mcard-why-text { flex-basis: 100%; }
 .mcard-why-text .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
 
 /* The country brief's months in the ink ramp (brief V4-9, rule "Month
    strip"): good months filled by weight, the traveller's month outlined
    2 px ink, the verdict in words in ink. The rules live in
    24-destination-workspace.css (row T388-c). */
-.cbrief-mo.good { background: var(--kind-town); color: var(--on-fill); }
-.cbrief-mo.mine { box-shadow: none; outline: 2px solid var(--ink); outline-offset: -2px; color: var(--ink); }
 .cbrief-mo.good.mine { color: var(--on-fill); outline-offset: 0; }
-.cbrief-verdict,
-.cbrief-verdict.v-good,
-.cbrief-verdict.v-off { color: var(--ink); }
 
 /* The wizard head in one line on a phone (row T388-i): the step name and
    "Step x of 7" share a row and the progress bar runs under both, so the
    head stops spending two lines on one fact. */
 @media (max-width: 768px) {
-  .trip-wizard-modal .guide-head { position: relative; padding-bottom: var(--space-3); }
-  .trip-wizard-modal .guide-head-inner {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
   .trip-wizard-modal .guide-head-inner > .shape-head-title { flex: 1 1 auto; min-width: 0; }
   .trip-wizard-modal .wiz-mini {
     flex: none;
@@ -486,56 +310,21 @@
     margin-top: 0;
     padding: 0;
   }
-  .trip-wizard-modal .wiz-mini-line { justify-content: flex-end; min-height: var(--tap); }
-  .trip-wizard-modal .wiz-mini-bar {
-    position: absolute;
-    left: var(--space-4);
-    right: var(--space-4);
-    bottom: var(--space-1);
-    margin-top: 0;
-  }
 }
 
 /* Press and selection answer at once (DIRECTION 2.3, "Press and
    selection"): a choice card or chip scales to 0.97 on press and its fill
    changes in --dur-1. */
-.guide-booked-bit,
-.wq-chip,
-.wtrip-len,
-.tleg-mode,
-.mcard-add,
-.wtrip-choose,
-.itin-day-plan-btn {
+.guide-booked-bit {
   transition-property: border-color, background-color, color, transform;
   transition-duration: var(--dur-1);
   transition-timing-function: var(--ease-out);
 }
-.guide-booked-bit:active,
-.wq-chip:active:not(:disabled),
-.wtrip-len:active,
-.tleg-mode:active,
-.mcard-add:active,
-.wtrip-choose:active,
-.itin-day-plan-btn:active { transform: scale(0.97); }
+.guide-booked-bit:active { transform: scale(0.97); }
 
 @media (prefers-reduced-motion: reduce) {
-  .guide-booked-bit,
-  .wq-chip,
-  .wtrip-len,
-  .tleg-mode,
-  .mcard-add,
-  .wtrip-choose,
-  .itin-day-plan-btn,
-  .guide-datemode button,
-  .guide-ccard,
-  .guide-ccard-img { transition: none; }
-  .guide-booked-bit:active,
-  .wq-chip:active:not(:disabled),
-  .wtrip-len:active,
-  .tleg-mode:active,
-  .mcard-add:active,
-  .wtrip-choose:active,
-  .itin-day-plan-btn:active { transform: none; }
+  .guide-booked-bit { transition: none; }
+  .guide-booked-bit:active { transform: none; }
 }
 
 /* The planned receipt as carta-design's receipt (brief V4-3, row T388-j):
@@ -577,7 +366,6 @@
 .itin-total-figs small { font-variant-numeric: tabular-nums; }
 .itin-breakdown-body { padding: 0 var(--space-4); }
 .itin-breakdown-body .costbar { margin-top: var(--space-3); }
-.itin-breakdown-body .trip-total-row,
 .itin-breakdown-body .itin-bd-leg { border-bottom: 1px solid var(--rule-soft); }
 .itin-breakdown-body .trip-total-row .val,
 .itin-breakdown-body .itin-bd-leg .val {
@@ -610,12 +398,6 @@
 /* The day switcher (brief V4-7 as amended, rule "Day list"): one control,
    "Day 3 of 8" and the date in --mono, flanked by Previous and Next at --tap;
    the arrow keys move a day while it has focus. */
-.itin-dayswitch {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) 0 0;
-}
 .itin-dayswitch-btn {
   flex: none;
   min-height: var(--tap);
@@ -629,11 +411,6 @@
   font-weight: 600;
   transition: border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
-.itin-dayswitch-btn:disabled { opacity: 0.45; cursor: default; }
-.itin-dayswitch-btn:active:not(:disabled) { transform: scale(0.97); }
-@media (hover: hover) {
-  .itin-dayswitch-btn:hover:not(:disabled) { border-color: var(--ink-soft); }
-}
 @media (pointer: fine) {
   .itin-dayswitch-btn { min-height: 32px; }
 }
@@ -645,42 +422,18 @@
   align-items: center;
   gap: 1px;
 }
-.itin-dayswitch-pos {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.itin-dayswitch-date {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.itin-day-cap .itin-day-city { font-size: 19px; }
 @media (prefers-reduced-motion: reduce) {
   .itin-dayswitch-btn { transition: none; }
-  .itin-dayswitch-btn:active:not(:disabled) { transform: none; }
 }
 
 /* The country brief's photograph carries nothing (rule "Caption band"): the
    flag and name sit in a paper band under it. The rules live in
    24-destination-workspace.css (row T388-c). */
-.cbrief-hero-name {
-  position: static;
-  padding: var(--space-2) var(--space-4);
-  border-bottom: 1px solid var(--rule-soft);
-  background: var(--paper);
-  color: var(--ink);
-  text-shadow: none;
-}
 /* The route's flight rows: the plane is a glyph, not an action (rule
    "Accent marks"); the rule lives in 17-saved-trips.css. */
 .itin-flight-row svg { color: var(--ink-soft); }
 /* Getting there: the picked trip's card and the section glyphs in ink, not
    accent (rule "Accent marks"; the rules live in 24, row T388-c). */
-.wpicked { border-color: var(--rule); }
 /* What a leg's figure buys, in words under its mono facts (brief V4-6). */
 .itin-leg-text small.itin-leg-incl {
   font-family: var(--ui);
@@ -710,19 +463,9 @@
 
 /* Modal wizard: the one scrim (--ink at 28 percent, no blur), a close cross
    that reaches --tap, and a visible focus border on the trip's name. */
-.guide-overlay.trip-wizard-overlay {
-  background: color-mix(in srgb, var(--ink) 28%, transparent);
-  backdrop-filter: none;
-}
 .guide-overlay.trip-wizard-overlay .guide-close {
   min-width: var(--tap);
   min-height: var(--tap);
-}
-.trip-topcard-name:focus-visible {
-  outline-color: transparent;
-  border-bottom: 2px solid var(--ink);
-  padding-bottom: 2px;
-  border-radius: 0;
 }
 
 /* Steppers, crosses and move buttons reach --tap on a coarse pointer. */
@@ -738,21 +481,18 @@
 }
 
 /* German and Dutch step names, chips and footer buttons wrap at 360 px. */
-.wiz-step, .wq-chip, .guide-foot button, .guide-recap > * {
+.wiz-step, .wq-chip, .guide-recap > * {
   overflow-wrap: anywhere;
   hyphens: auto;
 }
 @media (max-width: 400px) {
-  .guide-foot { gap: var(--space-2); flex-wrap: wrap; }
   .guide-recap { flex-wrap: wrap; max-width: 100%; }
 }
 
 /* A selected card's 1 px inside outline (the ink selected state) overrode the
    focus ring, so a keyboard user on the chosen card saw no focus (the
    verify_keyboard "Nothing yet" finding, T402). The ring wins when focused. */
-.guide-booked-bit.on:focus-visible,
-.wtrip.on:focus-visible,
-.wq-chip.on:focus-visible {
+.guide-booked-bit.on:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -765,39 +505,14 @@
    ════════════════════════════════════════════════════════════════════════ */
 
 /* ── The wizard's canvas: a wider column, and the price beside it ──────── */
-.trip-wizard-modal.wiz-form { --wiz-max: 1180px; }
-.trip-wizard-modal.wiz-mid { --wiz-max: 1240px; }
-.trip-wizard-modal.wiz-wide { --wiz-max: 1600px; }
-.trip-wizard-modal.wiz-inline.wiz-when.wiz-form { --wiz-max: 1180px; }
-.trip-wizard-modal { --wiz-rail: 360px; }
-
-.trip-wizard-modal .wiz-main {
-  width: 100%;
-  max-width: var(--wiz-max);
-  margin-inline: auto;
-}
 .trip-wizard-modal .wiz-main .guide-canvas {
   max-width: none;
   margin: 0;
   min-width: 0;
 }
-.trip-wizard-modal.wiz-form .wiz-main .guide-canvas,
-.trip-wizard-modal.wiz-mid .wiz-main .guide-canvas { margin-block: 0; }
-.trip-wizard-modal .wiz-main.has-rail {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--wiz-rail);
-  gap: var(--space-7);
-  align-items: start;
-}
-.trip-wizard-modal .wiz-rail {
-  position: sticky;
-  top: 0;
-}
 
 /* Room between the recap and the question (owner: too compact), and the
    question set at the size of a page title. */
-.trip-wizard-modal.wiz-inline .guide-body { padding-top: var(--space-6); }
-.trip-wizard-modal .guide-recap { padding-block: var(--space-3); }
 .trip-wizard-modal .guide-canvas > .guide-title {
   font-size: var(--text-headline);
   font-weight: 700;
@@ -805,24 +520,12 @@
   letter-spacing: -0.015em;
   margin: 0 0 var(--space-5);
 }
-.trip-wizard-modal .guide-canvas > .guide-sub { margin: calc(-1 * var(--space-3)) 0 var(--space-5); }
-.trip-wizard-modal .wiz-recap-inbody { margin: 0 0 var(--space-5); }
 @media (max-width: 768px) {
-  .trip-wizard-modal.wiz-inline .guide-body { padding: var(--space-4) var(--gutter) var(--space-6); }
   .trip-wizard-modal .guide-canvas > .guide-title { font-size: var(--text-title); margin-bottom: var(--space-4); }
-  .trip-wizard-modal .wiz-recap-inbody {
-    background: none;
-    border: 0;
-    margin-inline: 0;
-    padding: 0;
-  }
-  .trip-wizard-modal .wiz-recap-inbody .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .trip-wizard-modal .wiz-recap-inbody .guide-recap-chip { flex: none; }
 }
 
 /* ── Booked: three large tiles across the column ──────────────────────── */
 .wbook-sub { color: var(--text-2); }
-.wbook-tiles { gap: var(--space-4); }
 .ui-tile.wbook-tile {
   min-height: 200px;
   gap: var(--space-4);
@@ -833,7 +536,6 @@
 .ui-tile.wbook-tile .ui-tile-label { font-size: var(--text-title); font-weight: 600; }
 .ui-tile.wbook-tile .ui-tile-tick { top: var(--space-3); right: var(--space-3); width: 20px; height: 20px; }
 @media (max-width: 768px) {
-  .wbook-tiles { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
   .ui-tile.wbook-tile {
     min-height: 88px;
     flex-direction: row;
@@ -844,91 +546,19 @@
 }
 
 /* ── From: the airports as one quiet line ───────────────────────────── */
-.trip-wizard-modal .guide-airport-chip-row { flex-wrap: wrap; gap: var(--space-2); }
 @media (max-width: 768px) {
-  .trip-wizard-modal .guide-airport-chip-row {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin-inline: calc(-1 * var(--space-4));
-    padding-inline: var(--space-4);
-  }
   .trip-wizard-modal .guide-airport-chip { flex: none; }
 }
 
 /* ── Who: the party, then the Lifestyle's two answers ─────────────────── */
-.wwho { display: flex; flex-direction: column; gap: var(--space-6); }
-.wwho-party {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4);
-}
-.wwho-party .wiz-party-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 72px;
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
-.wwho-party .wiz-party-label {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: var(--text-lead);
-  font-weight: 600;
-  color: var(--text);
-}
 .wwho-party .wiz-party-label small { font-size: var(--text-caption); font-weight: 400; color: var(--text-3); }
-.wlife { display: flex; flex-direction: column; gap: var(--space-5); }
-.wlife-h { margin: 0 0 var(--space-3); font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .wlife-tiles .ui-tile { min-height: 96px; }
 @media (max-width: 768px) {
-  .wwho-party { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
-  .wwho-party .wiz-party-row { min-height: 64px; }
-  .wlife-tiles { --tile-cols: 2 !important; }
   .wlife-tiles .ui-tile { min-height: 80px; }
 }
 
 /* ── The price card (planner/PlanTotal.jsx) ─────────────────────────────── */
-.plan-total {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
-.plan-total-sheet .plan-total { border: none; padding: 0; }
-.plan-total-head { display: flex; flex-direction: column; gap: var(--space-1); }
-.plan-total-title { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
-.plan-total-fig {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin: 0;
-}
-.plan-total-n { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); }
 .plan-total-n .money-est { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
-.plan-total-delta {
-  font-size: var(--text-caption);
-  font-weight: 600;
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-}
-.plan-total-pp { margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.plan-total-ppfig { color: var(--text); font-weight: 600; }
-.plan-total-empty { margin: 0; font-size: var(--text-body); color: var(--text-2); }
-
-.plan-total-inputs { margin: 0; display: flex; flex-direction: column; }
 .plan-input {
   display: flex;
   align-items: center;
@@ -939,54 +569,10 @@
 }
 .plan-input dt { font-size: var(--text-label); color: var(--text-2); }
 .plan-input dd { margin: 0; font-size: var(--text-body); color: var(--text); text-align: right; }
-.plan-input-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-height: var(--tap);
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-weight: 600;
-  color: var(--action);
-  cursor: pointer;
-  text-align: right;
-}
-.plan-input-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 
 .plan-total-more { border-top: 1px solid var(--border-soft); }
-.plan-total-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  min-height: var(--tap);
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-}
-.plan-total-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
-.plan-chev { color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
-.plan-chev.is-open { transform: rotate(180deg); }
-.plan-lines { margin: 0 0 var(--space-3); display: flex; flex-direction: column; }
-.plan-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 36px;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-}
 .plan-line dt { color: var(--text-2); }
 .plan-line dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
-.plan-line-yours { display: inline-flex; align-items: baseline; gap: var(--space-1); font-weight: 600; color: var(--text); }
 .plan-line-yours small {
   font-size: var(--text-micro);
   font-weight: 600;
@@ -995,55 +581,14 @@
   background: var(--surface-sunken);
   color: var(--text-2);
 }
-.plan-line-out { font-size: var(--text-caption); color: var(--text-3); }
-.plan-line-add {
-  min-height: var(--tap);
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--action);
-  cursor: pointer;
-}
-.plan-line-add:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
-.plan-ready {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin: 0;
-  font-size: var(--text-caption);
-  color: var(--text-2);
-}
-.plan-ready-bar { display: block; height: 6px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
 .plan-ready-bar > span { display: block; height: 100%; background: var(--text); border-radius: inherit; }
-.plan-whatif { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
 .plan-whatif b { color: var(--text); font-variant-numeric: tabular-nums; }
 
 /* The phone's figure, in the footer's left half. */
-.plan-total-btn {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  min-height: var(--tap);
-  padding: 0 var(--space-1);
-  border: none;
-  background: none;
-  font: inherit;
-  cursor: pointer;
-  text-align: left;
-}
-.plan-total-btn-lbl { font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
-.plan-total-btn-n { font-size: var(--text-lead); font-weight: 700; color: var(--text); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 4px; }
 .plan-total-btn-n .money-est { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
-.plan-total-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 
 /* What the traveller paid, typed where the thing is shown. */
 .plan-paid { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.plan-paid-lbl { font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; }
-.plan-paid-box { position: relative; display: flex; align-items: center; }
 .plan-paid-cur {
   position: absolute;
   left: var(--space-3);
@@ -1051,130 +596,21 @@
   color: var(--text-2);
   pointer-events: none;
 }
-.plan-paid-input {
-  width: 8.5em;
-  height: var(--tap);
-  padding: 0 var(--space-3) 0 calc(var(--space-3) + 1.25em);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  font: inherit;
-  font-size: var(--text-lead);
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-}
-.plan-paid-input:focus-visible { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
 .plan-paid.is-set .plan-paid-input { border-color: var(--select-border); background: var(--select-bg); }
 /* Rows that are buttons keep their own layout inside the kit Button. */
-.itin-stopcard .itin-stop.btn, .itin-days-list .itin-day-row-main.btn { height: auto; justify-content: flex-start; border-radius: var(--radius-card); }
 .itin-stopcard .itin-stop .btn-label, .itin-days-list .itin-day-row-main .btn-label { display: contents; }
 .plan-total-toggle.btn { justify-content: space-between; padding-inline: 0; }
 .plan-total-toggle.btn .btn-label { color: var(--text); }
 .plan-total-btn.btn { height: auto; min-height: var(--tap); padding: 0 var(--space-1); }
 .plan-total-btn.btn .btn-label { display: flex; flex-direction: column; align-items: flex-start; }
-.plan-input-btn.btn { padding-inline: 0; }
 .tlegs-shift-btn.btn { min-width: var(--tap); padding-inline: var(--space-3); }
 .plan-paid-input::placeholder { color: var(--text-3); }
-.plan-paid-reset {
-  align-self: flex-start;
-  min-height: 32px;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--text-caption);
-  color: var(--action);
-  cursor: pointer;
-}
-@media (pointer: coarse) { .plan-paid-reset { min-height: var(--tap); } }
 
 /* ── Getting there: every row carries its money ─────────────────────────── */
-.tlegs { display: flex; flex-direction: column; gap: var(--space-5); }
-.tlegs-sec { display: flex; flex-direction: column; gap: var(--space-2); }
-.tlegs-sec-h {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0;
-  font-size: var(--text-lead);
-  font-weight: 600;
-  color: var(--text);
-}
 .tlegs-sec-h svg { color: var(--text-2); }
-.tlegs-list { display: flex; flex-direction: column; gap: var(--space-2); }
-.tlegs .tleg {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  padding: 0;
-}
-.tlegs .tleg.is-paid { border-color: var(--select-border); }
-.tlegs .tleg-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-}
-.tlegs .tleg-head {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-  min-height: var(--tap);
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.tlegs .tleg-head:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
-.tlegs .tleg-route { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-lead); color: var(--text); }
 .tlegs .tleg-route b { font-weight: 600; }
-.tlegs .tleg-arrow { color: var(--text-3); }
-.tlegs .tleg-head-meta { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
-.tlegs .tleg-tag { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--text-2); }
 .tlegs .tleg-tag.is-open { color: var(--action); font-weight: 600; }
-.tlegs .tleg-chev { color: var(--text-3); transition: transform var(--dur-2) var(--ease-out); }
-.tlegs .tleg.open .tleg-chev { transform: rotate(180deg); }
-.tlegs .tleg-money { display: flex; align-items: flex-end; gap: var(--space-3); }
 .tlegs .tleg-est { padding-bottom: 12px; font-size: var(--text-body); color: var(--text-2); white-space: nowrap; }
-.tlegs .tleg-measured { margin: 0; padding: 0 var(--space-4) var(--space-3); font-size: var(--text-caption); color: var(--text-2); }
-.tlegs .tleg-body:not([hidden]) {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4) var(--space-4);
-  border-top: 1px solid var(--border-soft);
-}
-.tlegs .tleg-field { display: flex; flex-direction: column; gap: 2px; max-width: 360px; }
-.tlegs .tleg-field-label { font-size: var(--text-caption); color: var(--text-2); }
-.tlegs .tleg-text {
-  height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  font: inherit;
-  font-size: var(--text-lead);
-  color: var(--text);
-}
-.tlegs .tleg-text:focus-visible { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
-.tlegs .tleg-booked { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.tlegs-shift {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
-.tlegs-shift-label { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.tlegs-shift-ctl { display: flex; align-items: center; gap: var(--space-3); }
 .tlegs-shift-btn {
   min-width: var(--tap);
   min-height: var(--tap);
@@ -1186,43 +622,10 @@
   color: var(--text);
   cursor: pointer;
 }
-.tlegs-shift-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.tlegs-shift-date { font-size: var(--text-lead); font-variant-numeric: tabular-nums; }
-@media (hover: hover) {
-  .tlegs-shift-btn:hover { background: var(--surface-hover); }
-}
-@media (max-width: 640px) {
-  .tlegs .tleg-row { grid-template-columns: minmax(0, 1fr); }
-  .tlegs .tleg-money { justify-content: space-between; }
-}
 
 /* The read-only legs on the review. */
-.tsum { display: flex; flex-direction: column; gap: var(--space-2); }
-.tsum-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.tsum-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.tsum-list { display: flex; flex-direction: column; }
-.tsum-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: var(--tap);
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-}
-.tsum-route { display: flex; align-items: center; gap: var(--space-2); color: var(--text); }
-.tsum-mode { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--text-2); font-size: var(--text-caption); }
-.tsum-eur { text-align: right; font-variant-numeric: tabular-nums; }
-@media (max-width: 640px) {
-  .tsum-row { grid-template-columns: minmax(0, 1fr) auto; padding-block: var(--space-2); }
-  .tsum-mode { grid-column: 1; }
-  .tsum-eur { grid-column: 2; grid-row: 1 / span 2; }
-}
 
 /* ── Review: the trip as one card ───────────────────────────────────────── */
-.wrev { display: flex; flex-direction: column; gap: var(--space-5); }
-.wrev-main { display: flex; flex-direction: column; gap: var(--space-5); }
-.wrev-hero { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .wrev-hero-img,
 .wrev-hero .hero-blank {
   display: block;
@@ -1238,55 +641,13 @@
 .wrev-cap { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .wrev-cap b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .wrev-cap small { font-size: var(--text-caption); color: var(--text-3); }
-.wrev-head { display: flex; flex-direction: column; gap: var(--space-1); }
-.wrev-title { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.wrev-sub { margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.wrev-facts {
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
 .wrev-fact { padding: var(--space-3) var(--space-4); min-width: 0; }
-.wrev-fact + .wrev-fact { border-left: 1px solid var(--border-soft); }
 .wrev-fact dt { font-size: var(--text-caption); color: var(--text-2); }
 .wrev-fact dd { margin: 2px 0 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.wrev-fact .guide-answered-edit { padding: 0; min-height: 32px; font-weight: 500; }
-@media (pointer: coarse) { .wrev-fact .guide-answered-edit { min-height: var(--tap); } }
-.wrev-h { margin: 0 0 var(--space-2); font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.wrev-stops { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-.wrev-stop {
-  display: grid;
-  grid-template-columns: auto 56px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
-.wrev-stop-i {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--text);
-}
-.wrev-stop-thumb { width: 56px; height: 56px; border-radius: var(--radius-control); background-size: cover; background-position: center; background-color: var(--surface-sunken); }
 .wrev-stop-main { display: flex; flex-direction: column; min-width: 0; }
 .wrev-stop-main b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .wrev-stop-main small { font-size: var(--text-caption); color: var(--text-2); }
 @media (max-width: 640px) {
-  .wrev-facts { grid-template-columns: minmax(0, 1fr); }
-  .wrev-fact + .wrev-fact { border-left: none; border-top: 1px solid var(--border-soft); }
-  .wrev-stop { grid-template-columns: auto 48px minmax(0, 1fr); }
-  .wrev-stop-thumb { width: 48px; height: 48px; }
   .wrev-stop .plan-paid { grid-column: 1 / -1; }
 }
 
@@ -1298,14 +659,10 @@
 .booked-stop .plan-paid { flex: none; }
 @media (max-width: 640px) {
   .booked-stop { flex-wrap: wrap; }
-  .booked-stop .plan-paid { order: 5; width: 100%; }
 }
 
 /* ── The planned trip ───────────────────────────────────────────────────── */
 /* Desktop: a wider column for the data, the map beside it. */
-@media (min-width: 769px) {
-  .trip-planner-screen.is-planned { --panel-w: min(620px, 46vw); }
-}
 /* Phone: the trip is a page; the map is a card in it. */
 .trip-planner-screen.is-page .trip-sheet {
   inset: 0;
@@ -1317,24 +674,9 @@
   border-radius: 0;
   box-shadow: none;
 }
-.trip-planner-screen.is-page .trip-topcard { padding-top: var(--space-4); }
 /* The page scrolls as one: the trip's name leaves with the content, and only
    the one-row footer stays (carta-design: a flow's fixed chrome on a phone at
    most a quarter of the screen). */
-.trip-planner-screen.is-page .trip-sheet { overflow-y: auto; display: block; }
-.trip-planner-screen.is-page .trip-sheet-scroll { overflow: visible; min-height: 0; }
-.trip-planner-screen.is-page .trip-sheet-footer { position: sticky; bottom: 0; z-index: 2; }
-
-.trip-mapcard {
-  margin: 0 0 var(--space-2);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: var(--surface);
-}
-.trip-mapcard-map { position: relative; height: 210px; background: var(--surface-sunken); }
-.trip-mapcard-map .trip-map,
-.trip-mapcard-map > div { position: absolute !important; inset: 0 !important; }
 .trip-mapcard-foot {
   display: flex;
   align-items: center;
@@ -1347,70 +689,9 @@
   color: var(--text-2);
 }
 
-.trip-mapfull {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  background: var(--surface-page);
-}
-.trip-mapfull .trip-map { left: 0 !important; }
-.trip-mapfull-close {
-  position: absolute;
-  top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
-  right: var(--space-3);
-  z-index: 3;
-}
-
 /* A stop's card over the map. */
-.trip-peek-slot {
-  position: absolute;
-  left: calc(var(--panel-w) + var(--space-4));
-  bottom: var(--space-4);
-  z-index: 8;
-  width: min(420px, calc(100% - var(--panel-w) - 2 * var(--space-4)));
-}
-.trip-peek-slot.is-full {
-  left: var(--space-3);
-  right: var(--space-3);
-  bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
-  width: auto;
-}
-.trip-peek {
-  position: relative;
-  display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
-  gap: var(--space-3);
-  padding: var(--space-3);
-  padding-right: calc(var(--tap) + var(--space-2));
-  background: var(--surface);
-  border-radius: var(--radius-card);
-  box-shadow: var(--elev-3);
-}
-.trip-peek-photo {
-  width: 88px;
-  height: 88px;
-  border-radius: var(--radius-control);
-  background-size: cover;
-  background-position: center;
-  background-color: var(--surface-sunken);
-}
 .trip-peek-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.trip-peek-city { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.trip-peek-i {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: var(--radius-pill);
-  background: var(--action);
-  color: var(--action-text);
-  font-size: var(--text-micro);
-  font-weight: 700;
-}
-.trip-peek-when, .trip-peek-bed { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
 .trip-peek-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
-.trip-peek-nights { font-size: var(--text-label); color: var(--text-2); }
-.trip-peek-close { position: absolute; top: var(--space-1); right: var(--space-1); }
 
 /* The pins say what the stop is. */
 .trip-pin.has-tag { overflow: visible; }
@@ -1432,62 +713,9 @@
 .trip-pin-tag small { font-size: var(--text-micro); font-weight: 500; color: var(--text-2); line-height: var(--leading-ui); }
 
 /* ── The overview ─────────────────────────────────────────────────────────── */
-.itin-overview { display: flex; flex-direction: column; gap: var(--space-6); }
-.itin .itin-tabs { margin-bottom: var(--space-4); }
-.itin-h { margin: 0 0 var(--space-3); font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.itin-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-.itin-end, .itin-stopcard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
-.itin-end {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-}
-.itin-end-icon { display: grid; place-items: center; width: 32px; color: var(--text-2); }
 .itin-end-main { display: flex; flex-direction: column; min-width: 0; }
 .itin-end-main b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .itin-end-main small { font-size: var(--text-caption); color: var(--text-2); }
-.itin-stopcard.active { border-color: var(--select-border); }
-.itin-stopcard .itin-stop {
-  display: grid;
-  grid-template-columns: auto 64px minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: none;
-  background: none;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.itin-stopcard .itin-stop:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: var(--radius-card); }
-.itin-stopcard .itin-stop-idx {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: var(--radius-pill);
-  background: var(--action);
-  color: var(--action-text);
-  font-size: var(--text-caption);
-  font-weight: 700;
-}
-.itin-stopcard .itin-stop-thumb {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-control);
-  background-size: cover;
-  background-position: center;
-  background-color: var(--surface-sunken);
-}
-.itin-stopcard .itin-stop-city { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.itin-stopcard .itin-stop-sub { font-size: var(--text-caption); color: var(--text-2); }
 .itin-bed {
   display: flex;
   align-items: flex-end;
@@ -1497,31 +725,10 @@
   padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--border-soft);
 }
-.itin-bed-lbl { display: flex; flex-direction: column; gap: 2px; font-size: var(--text-caption); color: var(--text-2); padding-bottom: 10px; }
-.itin-bed-fig { font-size: var(--text-body); color: var(--text); font-variant-numeric: tabular-nums; }
-.itin-hop {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding: 0 0 0 var(--space-6);
-}
 .itin-hop > .itin-leg, .itin-hop > .itin-transfer { flex: 1 1 260px; min-width: 0; }
-.itin-extras { margin: var(--space-3) 0 0; display: flex; flex-direction: column; }
 .itin-extras > div { display: flex; justify-content: space-between; min-height: 36px; align-items: center; border-bottom: 1px solid var(--border-soft); font-size: var(--text-body); }
 .itin-extras dt { color: var(--text-2); }
 .itin-extras dd { margin: 0; }
-
-.itin-day-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.itin-days-list .itin-day-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  min-height: 56px;
-  border-bottom: 1px solid var(--border-soft);
-}
 .itin-days-list .itin-day-row-main {
   flex: 1 1 auto;
   display: flex;
@@ -1542,58 +749,11 @@
 .itin-days-list .itin-day-row-meta small { font-size: var(--text-caption); color: var(--text-2); }
 .itin-days-list .itin-day-row.is-planned .itin-day-row-num::after { content: ''; display: inline-block; width: 6px; height: 6px; margin-left: var(--space-1); border-radius: 50%; background: var(--status-success); vertical-align: middle; }
 .itin-days-list .itin-day-plan-btn { flex: none; }
-
-.itin-export-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2);
-}
 .itin-export-grid > .btn { justify-content: flex-start; min-width: 0; }
 .itin-export-grid > .btn .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.itin-export-link { text-decoration: none; }
-@media (max-width: 560px) {
-  .itin-export-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-.itin-day-hero {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  height: auto;
-  object-fit: cover;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
 
 /* ── Before you go: one track of cards ─────────────────────────────────────── */
-.bgo { display: flex; flex-direction: column; gap: var(--space-3); }
-.bgo-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
-.bgo-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.bgo-all {
-  min-height: var(--tap);
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--action);
-  cursor: pointer;
-}
-.bgo-track {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 85%;
-  gap: var(--space-3);
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  padding-bottom: var(--space-1);
-}
 .bgo-track::-webkit-scrollbar { display: none; }
-.bgo-track:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-card); }
-@media (min-width: 769px) { .bgo-track { grid-auto-columns: calc((100% - var(--space-3)) / 2); } }
-.bgo-list { display: flex; flex-direction: column; gap: var(--space-3); }
 .bgo-card {
   scroll-snap-align: start;
   display: flex;
@@ -1607,16 +767,6 @@
   overflow: hidden;
 }
 .bgo-card.bgo-intel { max-height: 420px; overflow-y: auto; }
-.bgo-meta { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
-.bgo-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); line-height: var(--leading-tight); }
-.bgo-text { margin: 0; font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
-.bgo-save { margin: auto 0 0; font-size: var(--text-label); font-weight: 600; color: var(--text); }
-.bgo-nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.bgo-pos { font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
-
-@media (prefers-reduced-motion: reduce) {
-  .plan-chev, .tlegs .tleg-chev { transition: none; }
-}
 
 /* ── T432, after the first critique (dual-agent, 21/40) ─────────────────────
    One batch: the floors (nothing functional under 11 px, figures 12 px), the
@@ -1624,112 +774,51 @@
    wider planned column, the folded price fields. */
 
 /* Floors on the planner's older pieces. */
-.trip-wizard-modal .guide-recap-chip,
-.trip-wizard-modal .guide-recap-label { font-size: var(--text-caption); }
-.trip-wizard-modal .wiz-step-mark,
-.wpicked-i,
-.wpicked-date,
-.tlegs .tleg-date,
-.trip-topcard-sub,
-.trip-topcard-count,
-.itin .fare-prov-est,
-.bgo .cintel-chip,
 .trip-pin-tag small { font-size: var(--text-caption); }
 .plan-total .money-est,
 .plan-total-btn .money-est,
 .wrev .money-est,
 .itin .money-est { font-size: var(--text-caption); }
-@media (max-width: 768px) {
-  .trip-wizard-modal .wiz-recap-inbody .guide-recap-inner { flex-wrap: wrap; overflow: visible; }
-}
 
 /* The phone footer's figure is never clipped. */
 .trip-wizard-modal .guide-foot-summary { overflow: visible; height: auto; min-height: var(--tap); }
 
 /* The one selected state on the step rail: tint and a mark, never a disc of ink. */
-.trip-wizard-modal .wiz-step.now .wiz-step-mark {
-  background: var(--select-bg);
-  color: var(--select-ink);
-  outline: 1px solid var(--select-border);
-  outline-offset: -1px;
-}
-.trip-wizard-modal .wiz-step.now .wiz-step-btn { border-top-color: var(--select-border); }
 
 /* Hairlines, not dashes; a card has a border or a shadow, not both. */
-.trip-wizard-modal .guide-card-row { border-top-style: solid; border-color: var(--border-soft); }
-.trip-wizard-modal .guide-card { box-shadow: none; }
 
 /* When: the kit's segmented control and stepper. */
-.wwhen-mode { margin-bottom: var(--space-4); }
-.wwhen-nights { display: inline-flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); color: var(--text-2); }
-.guide-month-grid.ui-chip-group { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 /* Number discs are data: ink on the sunken grey, the brown stays for what acts. */
-.itin-stopcard .itin-stop-idx,
-.trip-peek-i {
-  background: var(--surface-sunken);
-  color: var(--text);
-}
 
 /* Map overlay: Close clear of the zoom control; pins clear of the credit. */
-.trip-mapfull-close { right: auto; left: var(--space-3); }
-.trip-mapcard-map { height: 180px; }
 .trip-mapcard-foot { justify-content: flex-end; min-height: var(--tap); }
 
 /* The planned trip on a wide screen gives the data more than the map. */
-@media (min-width: 1280px) {
-  .trip-planner-screen.is-planned { --panel-w: min(760px, 52vw); }
-}
-.trip-topcard-name { font-size: var(--text-title); font-weight: 600; }
 
 /* The phone's price sheet: the card on the sheet's own ground. */
-.plan-total-sheet .plan-total { padding: var(--space-2) 0 var(--space-4); }
 
 /* Price fields: Carta's figure as help, a folded offer, the review row. */
-.plan-paid-hint { font-size: var(--text-caption); color: var(--text-2); }
-.plan-paid-add.btn { align-self: center; }
-.wrev-stop { grid-template-columns: auto 56px minmax(0, 1fr) auto auto; }
-.wrev-stop-bed { font-size: var(--text-body); color: var(--text); text-align: right; white-space: nowrap; }
 @media (max-width: 640px) {
-  .wrev-stop { grid-template-columns: auto 48px minmax(0, 1fr) auto; }
   .wrev-stop .plan-paid, .wrev-stop .plan-paid-add { grid-column: 1 / -1; justify-self: start; }
 }
 
 /* Before you go: each card its own height; nothing scrolls inside a card. */
-.bgo-track { align-items: start; }
 .bgo-card.bgo-intel { max-height: none; overflow: visible; min-height: 0; }
-.itin-hop .itin-leg-main { min-height: var(--tap); }
-
-.trip-mapcard { isolation: isolate; }
-.trip-planner-screen.is-page .trip-sheet-footer { z-index: var(--z-sticky); }
 @media (max-width: 640px) {
-  .itin-end { grid-template-columns: auto minmax(0, 1fr); }
   .itin-end > .plan-paid, .itin-end > .plan-paid-add { grid-column: 2; justify-self: start; }
 }
 
 /* ── T432, after the confirming round (25/40) ───────────────────────────── */
 /* One column for every step: the rail and the content stop jumping. */
-.trip-wizard-modal.wiz-form,
-.trip-wizard-modal.wiz-mid,
-.trip-wizard-modal.wiz-wide,
-.trip-wizard-modal.wiz-inline.wiz-when.wiz-form { --wiz-max: 1440px; }
 /* The leg line on the overview at the figure floor. */
-.itin-hop .itin-leg-text small,
-.itin-hop .itin-leg-text { font-size: var(--text-caption); }
+.itin-hop .itin-leg-text small { font-size: var(--text-caption); }
 .trip-wizard-modal .guide-airport-chip small { font-size: var(--text-caption); }
 /* Export labels wrap rather than cut. */
 .itin-export-grid > .btn { height: auto; min-height: var(--tap); white-space: normal; text-align: left; }
 .itin-export-grid > .btn .btn-label { overflow: visible; text-overflow: clip; white-space: normal; }
 /* The phone footer keeps the figure and drops its label where room is short. */
-@media (max-width: 400px) {
-  .plan-total-btn-lbl { display: none; }
-}
 /* The Where switches take the kit's segmented look: a lifted white thumb. */
-.trip-wizard-modal .guide-datemode {
-  background: var(--surface-sunken);
-  border-radius: var(--radius-control);
-  padding: 3px;
-}
 .trip-wizard-modal .guide-datemode > button.on,
 .trip-wizard-modal .guide-datemode > [aria-selected="true"] {
   background: var(--surface);
@@ -1746,21 +835,10 @@
   color: var(--text-3);
   opacity: 1;
 }
-.trip-wizard-modal .guide-next:disabled .btn-label { color: var(--text-3); }
 
 /* Review on a wide screen: the photo beside the trip's facts, never a whole
    first screen of picture (critique P3), still framed whole at 16:9. */
 @media (min-width: 1100px) {
-  .wrev-main {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    column-gap: var(--space-6);
-    row-gap: var(--space-5);
-    align-items: start;
-  }
-  .wrev-main > .wrev-hero { grid-row: span 2; }
-  .wrev-main > .wrev-facts { grid-template-columns: minmax(0, 1fr); }
-  .wrev-main > .wrev-facts .wrev-fact + .wrev-fact { border-left: none; border-top: 1px solid var(--border-soft); }
   .wrev-main > .wrev-stays,
   .wrev-main > .tsum,
   .wrev-main > .guide-car-advice { grid-column: 1 / -1; }
@@ -1775,59 +853,20 @@
    ════════════════════════════════════════════════════════════════════════ */
 
 /* The price card starts where the step's content starts, under the title. */
-@media (min-width: 1100px) {
-  .trip-wizard-modal .wiz-rail { margin-top: calc(var(--text-headline) * 1.2 + var(--space-5)); }
-}
 
 /* Room around the card's controls, and a hairline between its rows. */
-.plan-input {
-  flex-wrap: wrap;
-  padding-block: var(--space-2);
-  column-gap: var(--space-4);
-  row-gap: var(--space-2);
-}
-.plan-input .fstepper { gap: var(--space-3); }
-.plan-input-panel { flex-basis: 100%; padding-bottom: var(--space-2); }
-.plan-input .plan-input-btn.btn { text-align: right; white-space: normal; }
 
 /* The party, three groups. */
 .party { display: flex; flex-direction: column; gap: var(--space-2); }
-.party-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 64px;
-  padding: var(--space-2) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
 .party.is-compact .party-row { min-height: 0; padding: var(--space-2) 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
 .party-label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .party-label b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.party.is-compact .party-label b { font-size: var(--text-body); }
 .party-label small { font-size: var(--text-caption); color: var(--text-3); }
-.party-rule { margin: 0; font-size: var(--text-caption); color: var(--text-2); line-height: var(--leading-body); }
-.wwho-party { display: block; }
 @media (min-width: 900px) {
-  .wwho-party .party { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
   .wwho-party .party-rule { grid-column: 1 / -1; }
 }
 
 /* Where you leave from: one card, the airports as a choice. */
-.worigin {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
-  margin-bottom: var(--space-5);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
-.worigin-h { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.worigin-search { display: flex; gap: var(--space-2); }
 .worigin-input {
   flex: 1 1 auto;
   min-width: 0;
@@ -1840,51 +879,17 @@
   font-size: var(--text-lead);
   color: var(--text);
 }
-.worigin-input:focus-visible { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
-.worigin-results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .worigin-result.btn { justify-content: flex-start; text-align: left; }
-.worigin-picked { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-lead); color: var(--text); }
 .worigin-picked svg { color: var(--text-2); }
-.worigin-air { display: flex; flex-direction: column; gap: var(--space-2); }
-.worigin-air-lbl { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
-.worigin-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .worigin-chips .ui-chip small { margin-left: var(--space-1); font-size: var(--text-caption); color: var(--text-3); }
 
 /* Tickets for a leg, in view. */
-.tlegs .tleg-find {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-3);
-  padding: 0 var(--space-4) var(--space-3);
-  font-size: var(--text-label);
-}
-.tlegs .tleg-find-lbl { color: var(--text-2); }
-.tlegs .tleg-find-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  color: var(--action);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-@media (pointer: coarse) { .tlegs .tleg-find-link { min-height: var(--tap); } }
 
 /* Review: the gallery, each stay's actions, the transfers in the journey. */
 .wrev-hero .wrev-gallery { border-radius: var(--radius-card); overflow: hidden; }
-.wrev-stop { grid-template-columns: auto 56px minmax(0, 1fr) auto auto; }
-.wrev-stop-acts { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
-.wrev-find.btn, .itin-find.btn { text-decoration: none; }
-@media (max-width: 640px) {
-  .wrev-stop { grid-template-columns: auto 48px minmax(0, 1fr) auto; }
-  .wrev-stop-acts { grid-column: 1 / -1; justify-content: flex-start; }
-}
 .tsum-row.is-transfer .tsum-route { color: var(--text-2); }
 
 /* The trip kit: four tiles, one tap each. */
-.itin-tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
-@media (min-width: 560px) { .itin-tool-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .itin-tool.btn {
   height: auto;
   min-height: 104px;
@@ -1895,64 +900,16 @@
   text-align: left;
 }
 .itin-tool.btn .btn-label { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); white-space: normal; }
-.itin-tool-icon { color: var(--text-2); }
-.itin-tool-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.itin-tool-state { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
-.itin-bed-acts, .itin-hop-acts { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
-.itin-hop { align-items: center; }
 
 /* The kit's sheets: the tools on the kit's controls. */
-.itin-tool-sheet .extras-section { display: flex; flex-direction: column; gap: var(--space-2); }
-.itin-tool-sheet .extras-input,
-.itin-tool-sheet .extras-notes,
-.itin-tool-sheet .extras-label-input {
-  min-height: var(--tap);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  font: inherit;
-  font-size: var(--text-lead);
-  color: var(--text);
-}
-.itin-tool-sheet .extras-notes { width: 100%; resize: vertical; line-height: var(--leading-body); }
-.itin-tool-sheet .extras-row,
-.itin-tool-sheet .extras-check-row {
-  padding: var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
-.itin-tool-sheet .extras-check-row { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap); padding-block: var(--space-1); }
-.itin-tool-sheet .extras-add-btn {
-  min-height: var(--tap);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  font: inherit;
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-}
-.extras-find {
-  margin-left: auto;
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--action);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 
 /* Before you go: every card one shape and one height. */
-.bgo-track .bgo-card { height: 232px; }
 .bgo-track .bgo-text {
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.bgo-meta { display: flex; align-items: center; gap: var(--space-2); }
 .bgo-meta svg { color: var(--text-2); flex: none; }
 
 /* Pins that show the stop: a small photograph beside the name. */
@@ -1961,137 +918,30 @@
 .trip-pin-tag-words { display: flex; flex-direction: column; }
 .trip-pin-plain.has-tag .trip-pin-tag { bottom: 12px; }
 /* The tapped stop stays the brown of the route, ringed in ink. */
-.trip-planner-screen .trip-pin.active .trip-pin-shape { background: var(--action); outline: 2px solid var(--text); outline-offset: 2px; }
-.trip-mapcard-map { height: 150px; }
 .trip-planner-screen .trip-pin-plain.has-tag { min-width: var(--tap); }
-.trip-mapcard .trip-pin-tag { display: none; }
 
 /* Your stays (T458): one card a stay. The number, the photo and the name on
    the first line; the nights on the kit stepper and the stay's own actions
    on the second. On desktop the add card stands beside the list. */
-.wstays { display: flex; flex-direction: column; gap: var(--space-4); }
-.wstay-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-.wstay {
-  display: grid;
-  grid-template-columns: 28px 56px minmax(0, 1fr) var(--tap);
-  grid-template-areas: 'idx thumb info remove' 'nights nights nights nights' 'acts acts acts acts';
-  align-items: center;
-  column-gap: var(--space-3);
-  row-gap: var(--space-3);
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
 @media (min-width: 560px) {
-  .wstay { grid-template-areas: 'idx thumb info remove' 'idx thumb nights acts'; grid-template-columns: 28px 56px auto minmax(0, 1fr); row-gap: var(--space-2); }
   .wstay .wstay-info { grid-column: 3 / 5; grid-row: 1; padding-right: var(--tap); }
-  .wstay-acts { justify-content: flex-end; }
 }
 @media (min-width: 1100px) {
-  .wstay { grid-template-areas: 'idx thumb info nights acts remove'; grid-template-columns: 28px 56px minmax(0, 1fr) auto auto var(--tap); }
   .wstay .wstay-info { grid-column: auto; grid-row: auto; padding-right: 0; }
   .wstay-acts { flex-direction: column; align-items: flex-start; gap: var(--space-1); }
 }
-.wstay-index {
-  grid-area: idx;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.wstay-thumb {
-  grid-area: thumb;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken) center / cover no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
 .wstay-info { grid-area: info; min-width: 0; }
-.wstay-city { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
-.wstay-city .guide-flag-img-sm { display: inline-block; vertical-align: -2px; margin-left: var(--space-1); }
-.wstay-sub { margin: var(--space-1) 0 0; font-size: var(--text-caption); color: var(--text-2); }
-.wstay-remove {
-  grid-area: remove;
-  justify-self: end;
-  width: var(--tap);
-  height: var(--tap);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: none;
-  color: var(--text-3);
-  cursor: pointer;
-}
-.wstay-remove:hover { background: var(--surface-hover); color: var(--danger); }
-.wstay-remove:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.wstay-nights { grid-area: nights; display: flex; align-items: center; gap: var(--space-2); }
-.wstay-nights .fstepper { gap: var(--space-3); }
-.wstay-nights-word { font-size: var(--text-body); color: var(--text-2); }
 .wstay-acts { grid-area: acts; display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); min-width: 0; }
 
 /* Edit stops (T458): the stop as two rows, its name and dates over its nights
    and its moves, every control the 44px box; the kit stepper; the transport
    as choice chips that wrap; a footer that leads back to the trip. */
-.trip-planner-screen .trip-stop {
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1fr) auto auto;
-  grid-template-areas: 'idx body body remove' 'idx stepper up down';
-  align-items: center;
-  column-gap: var(--space-2);
-  row-gap: var(--space-2);
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
-.trip-planner-screen .trip-stop.active { border-color: var(--action); outline: 0; }
-.trip-planner-screen .trip-stop-idx {
-  grid-area: idx;
-  align-self: start;
-  margin-top: var(--space-2);
-  width: 28px;
-  height: 28px;
-  background: var(--surface-sunken);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: var(--text-caption);
-}
-.trip-planner-screen .trip-stop-body { grid-area: body; }
-.trip-planner-screen .trip-stop-city { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.trip-planner-screen .trip-stop-when { font-size: var(--text-caption); color: var(--text-2); }
-.trip-planner-screen .trip-stop .trip-stepper { grid-area: stepper; display: flex; align-items: center; gap: var(--space-2); }
-.trip-planner-screen .trip-stop .trip-stepper .fstepper { gap: var(--space-2); }
-.trip-step-suffix { font-size: var(--text-body); color: var(--text-2); }
-.trip-planner-screen .trip-stop-tools { display: contents; }
 .trip-planner-screen .trip-stop-tools .trip-stop-move,
 .trip-planner-screen .trip-stop-tools .trip-stop-remove { width: var(--tap); height: var(--tap); color: var(--text-2); }
-.trip-planner-screen .trip-stop-tools .trip-stop-move { grid-area: down; }
-.trip-planner-screen .trip-stop-tools .trip-stop-move.is-up { grid-area: up; }
-.trip-planner-screen .trip-stop-tools .trip-stop-move.is-up svg { transform: rotate(180deg); }
-.trip-planner-screen .trip-stop-tools .trip-stop-remove { grid-area: remove; align-self: start; }
-.trip-planner-screen .trip-stop-tools .trip-stop-remove:hover { color: var(--danger); }
-.trip-transport-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .trip-transport-chips .ui-chip svg { color: currentColor; }
-.trip-planner-screen .trip-block-title { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.trip-save-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
-.trip-edit-footer .trip-edit-done.btn { flex: 1 1 auto; }
 
 /* The flight transfers in the route (T458): the way from the airport to the
    first bed and back, a quiet row between the flight and the stops. */
-.itin-airport-hop { display: flex; align-items: center; flex-wrap: nowrap; gap: var(--space-3); padding: var(--space-2) 0 var(--space-2) var(--space-6); }
 .itin-airport-hop-icon { flex: none; color: var(--text-2); }
 .itin-airport-hop-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .itin-airport-hop-main b { font-size: var(--text-body); font-weight: 600; color: var(--text); }

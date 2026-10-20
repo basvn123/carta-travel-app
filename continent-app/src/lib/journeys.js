@@ -554,11 +554,14 @@ export function readJourneyFromUrl() {
   return journeyReadResult;
 }
 
-/** Hand the pending id over once; later mounts see null. */
-export function takePendingJourney() {
-  const id = readJourneyFromUrl();
-  journeyReadResult = null;
-  return id;
+/** Turn the entry a link opened on into the list: the address keeps its
+ *  query and loses #journey=, so the page can push the week's own entry and
+ *  Back returns to the list rather than to the same week (T474). */
+export function dropJourneyHash() {
+  if (typeof window === 'undefined') return;
+  const { pathname, search, hash } = window.location;
+  if (!JOURNEY_HASH.test(hash || '')) return;
+  try { window.history.replaceState(window.history.state, '', `${pathname}${search}`); } catch { /* address stays */ }
 }
 
 /** The hash that addresses one journey. */

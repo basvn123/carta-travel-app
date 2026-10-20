@@ -204,7 +204,7 @@
    shell's own stacking stands (register row T400-c asks shell for the
    general fix). */
 @media (min-width: 769px) {
-  .bottom-slot:has(> .undo-toast) { z-index: 57; }
+  .bottom-slot:has(> .undo-toast) { z-index: calc(var(--z-shell) + 2); }
 }
 @keyframes acc-rise {
   from { opacity: 0; transform: translateY(8px); }

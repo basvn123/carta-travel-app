@@ -588,16 +588,19 @@ function TravelApp() {
     if (pendingTrip) goToTab('places', { replace: true });
   }, [pendingTrip, goToTab]);
 
-  // A shared JOURNEY link (#journey=<id>, a week from the journeys library;
-  // T387 wrote the reader in lib/journeys.js, T391 the shell's half). The
-  // week opens inside the Trips category of Destinations, where
-  // JourneysSection takes the pending id once on mount, so the shell only has
-  // to land there: Destinations, on Trips, through the same boot door as the
-  // other shared links.
+  // One journey (a week from the journeys library) to open, handed to
+  // Destinations like the other pending items: a shared #journey=<id> link
+  // at boot (T387 reads it in lib/journeys.js), or a starred week in My trips.
+  // The id stays here until Destinations says the page is open (T474, row
+  // T435-a), so a remount or React running an effect twice cannot drop it,
+  // which is how the old take-once handover in JourneysSection lost it.
+  const [pendingJourney, setPendingJourney] = useState(null);
+  const clearPendingJourney = useCallback(() => setPendingJourney(null), []);
   const [bootJourney] = useState(() => readJourneyFromUrl());
   useEffect(() => {
     if (!bootJourney) return;
     setPendingCategory('trips');
+    setPendingJourney({ id: bootJourney, fromLink: true });
     goToTab('places', { replace: true });
     // Once, at boot: the id is read once and never changes.
   }, [bootJourney, goToTab]);
@@ -706,10 +709,13 @@ function TravelApp() {
     else if (layer === 'mountains' || layer === 'mountain') setPendingMountain({ id: String(ref.id), cc: ref.cc });
     else if (layer === 'cycling' || layer === 'cycle') setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
     else if (layer === 'trips' || layer === 'trip') setPendingTrip({ id: String(ref.id) });
-    // A starred journey (T390-c): the shell lands on the Trips category, the
-    // journeys library. Opening the week itself needs a door JourneysSection
-    // reads after mount, which is trips' and destinations' half (row T391-a).
-    else if (layer === 'journey' || layer === 'journeys') setPendingCategory('trips');
+    // A starred journey (T390-c): the week opens over the Trips category, the
+    // list it belongs to, through the same door a shared link uses (T474,
+    // closes row T391-a).
+    else if (layer === 'journey' || layer === 'journeys') {
+      setPendingCategory('trips');
+      setPendingJourney({ id: String(ref.id) });
+    }
     else return;
     goToTab('places');
   }, [goToTab]);
@@ -878,6 +884,13 @@ function TravelApp() {
   // 3,000-line components (and up to four live MapLibre contexts) on every
   // lifestyle slider tick and every search keystroke.
   const openLifestyle = useCallback(() => setLifestyleOpen(true), [setLifestyleOpen]);
+  // What a page opened over the shell names in its back control (carta-design
+  // "Navigation": the back control names the list it returns to; T474): the
+  // surface it closes back to.
+  const backToLabel = savedTripsOpen ? t('nav.saved')
+    : accountOpen ? t('nav.account')
+      : ({ map: t('nav.explore'), places: t('nav.places'), trip: t('nav.trip'), day: t('nav.day'), home: t('nav.home') }[activeTab]
+        || t('detail.backToList'));
   const requestAuth = useCallback(() => setAuthModalOpen(true), [setAuthModalOpen]);
   // The day planner's two hand-offs, stable for the same reason (T192): as
   // inline arrows they gave DayPlannerTab new props on every App render.
@@ -1388,6 +1401,8 @@ function TravelApp() {
             onOpenCountryConsumed={() => setPendingCountry(null)}
             openCategory={pendingCategory}
             onOpenCategoryConsumed={() => setPendingCategory(null)}
+            openJourney={pendingJourney}
+            onOpenJourneyConsumed={clearPendingJourney}
             isFavorite={isFavorite}
             onToggleFav={toggleFav}
             onAddToDay={openDayForFeature}
@@ -1464,6 +1479,7 @@ function TravelApp() {
           <Suspense fallback={null}>
             <RegionPage
               id={pendingRegion.id}
+              backLabel={backToLabel}
               onClose={() => setPendingRegion(null)}
               onOpenRegion={(rid) => setPendingRegion({ id: rid })}
               onOpenFeature={(layer, ref) => { setPendingRegion(null); openFeature(layer, ref); }}
@@ -1484,6 +1500,7 @@ function TravelApp() {
             choices={choices}
             onOpenLifestyle={openLifestyle}
             onClose={() => setSelectedId(null)}
+            backLabel={backToLabel}
             onSelect={openDetail}
             isFavorite={selectedId ? isFavorite(selectedId, 'dest') : false}
             onToggleFavorite={selectedId ? () => toggleFav(selectedId, 'dest') : undefined}

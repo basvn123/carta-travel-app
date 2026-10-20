@@ -1,0 +1,95 @@
+/* 17-saved-trips.css, the rules only the trip and day planners render (T474, CSS per route).
+   The rest of this domain stays in src/styles/17-saved-trips.css; a rule lives in one
+   of the two, so edit it where it is. This sheet loads with the route's
+   chunk, after the main sheet, and holds only rules nothing later in the
+   cascade could override; scripts/css-routes.mjs --check proves it on a build. */
+.itin-export.open .itin-export-toggle {
+  border-color: var(--ink-mute);
+  border-radius: 12px 12px 0 0;
+  border-bottom: none;
+}
+.itin-export-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 2px 0; text-align: center; }
+.extras-section + .extras-section { margin-top: 28px; }
+.trip-extras + .trip-extras.exp-ledger { margin-top: 28px; }
+.trip-extras .trip-block-title { display: flex; align-items: baseline; gap: 8px; }
+.extras-count { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); font-weight: 400; }
+.extras-inbox-sub { font-size: 11.5px; color: var(--ink-mute); margin: 2px 0 8px; }
+.extras-inbox-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  margin-bottom: 6px;
+}
+.extras-inbox-name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.itin-day-extra {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 5px 3px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.extras-row { padding: 8px 0 10px; border-bottom: 1px solid var(--rule-soft); }
+.extras-row-head { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+.extras-est { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); white-space: nowrap; }
+@media (hover: hover) {
+  .extras-remove:hover { color: var(--accent); }
+}
+.extras-input:focus { outline: none; border-color: var(--accent); }
+.extras-price { font-variant-numeric: tabular-nums; }
+.extras-label-input:focus { outline: none; border-color: var(--accent); }
+.extras-delta.under { color: var(--good-ink-alt); }
+.extras-delta.over { color: var(--accent); }
+.extras-notes {
+  width: 100%; resize: vertical; padding: 8px 10px; font-size: 12.5px; line-height: 1.5;
+  font-family: inherit; border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--paper); color: var(--ink);
+}
+.extras-notes:focus { outline: none; border-color: var(--accent); }
+.extras-check-row {
+  display: flex; align-items: center; gap: 8px; padding: 5px 0;
+  border-bottom: 1px solid var(--rule-soft); font-size: 13px; cursor: pointer;
+}
+.exp-people { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.exp-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.exp-row-amt { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.exp-sharers-lbl { font-size: 10.5px; color: var(--ink-mute); }
+.exp-sharer-chip {
+  padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--rule);
+  font-size: 11px; color: var(--ink-mute);
+  background: transparent;
+}
+.exp-sharer-chip.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+.exp-total { font-size: 12px; font-weight: 700; color: var(--ink); }
+.exp-square { color: var(--green); }
+.itin-flight-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+}
+.itin-transfer-main {
+  width: 100%;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.itin-transfer-main:disabled { cursor: default; }
+.itin-transfer-modes { padding: 6px 0 2px; }

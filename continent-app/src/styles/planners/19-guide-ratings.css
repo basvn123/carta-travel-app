@@ -1,0 +1,474 @@
+/* 19-guide-ratings.css, the rules only the trip and day planners render (T474, CSS per route).
+   The rest of this domain stays in src/styles/19-guide-ratings.css; a rule lives in one
+   of the two, so edit it where it is. This sheet loads with the route's
+   chunk, after the main sheet, and holds only rules nothing later in the
+   cascade could override; scripts/css-routes.mjs --check proves it on a build. */
+.guide-stay-wrap { display: flex; gap: 12px; align-items: stretch; }
+.guide-city-side-photo {
+  width: 100%;
+  height: 110px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guide-city-side-title { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.guide-city-side-insight { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin: 4px 0 8px; }
+.citypick-pin.focused { box-shadow: 0 0 0 3px var(--accent-bg), 0 1px 6px rgba(0, 0, 0, 0.18); border-color: var(--accent); }
+@media (max-width: 999px) {
+  .trip-wizard-modal .guide-stay-wrap .guide-city-side {
+    max-height: none;
+    overflow: visible;
+  }
+}
+.guide-staystyle { margin-bottom: 10px; }
+.guide-final-stop { display: flex; align-items: center; gap: 7px; font-size: 12.5px; padding: 4px 0; color: var(--ink-soft); }
+.guide-city-btn { cursor: pointer; text-align: left; width: 100%; }
+@media (max-width: 700px) {
+  .guide-stay-wrap { flex-direction: column; }
+}
+.day-guide-moods { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.day-guide-mood {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.day-guide-mood.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+.day-guide-rec.picked { border-color: var(--good-ink); background: rgba(22, 121, 79, 0.05); }
+@media (max-width: 700px) {
+  .day-guide-moods { grid-template-columns: 1fr; }
+}
+.dem-stay.dem-stay-clickable { pointer-events: auto; cursor: pointer; }
+@media (hover: hover) {
+  .dem-stay.dem-stay-clickable:hover .dem-stay-pin { transform: scale(1.08); }
+}
+.dem-stay.focused .dem-stay-pin {
+  filter: drop-shadow(0 0 3px var(--accent)) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.32));
+}
+.dem-stay-body { fill: var(--accent); stroke: var(--on-fill); stroke-width: 2; }
+.dem-stay-glyph { fill: none; stroke: var(--on-fill); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.dem-pin.is-dot .dem-pin-rate { display: none; }
+@media (hover: hover) {
+  .dem-pin.is-dot:hover .dem-pin-rate { display: inline-flex; }
+}
+.dem-pin.on .dem-pin-chk { display: inline-flex; }
+.shape-modal .guide-sub { font-size: 13.5px; }
+.shape-modal .guide-body { display: flex; flex-direction: column; }
+.trip-block.day-strip {
+  position: sticky;
+  top: -6px;
+  z-index: 6;
+  margin: 0 -20px;
+  padding: 12px 20px 10px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  box-shadow: 0 6px 12px -10px rgba(26, 26, 26, 0.25);
+}
+.day-thumb { width: 46px; height: 46px; border-radius: 10px; }
+.trip-wizard-modal .guide-sub { font-size: 13.5px; }
+.trip-wizard-modal .guide-path { padding: 15px 18px; border-radius: 14px; }
+.trip-wizard-overlay { padding: 0; align-items: stretch; justify-content: stretch; }
+.trip-wizard-modal { --wiz-max: 1060px; }
+.trip-wizard-modal.wiz-form { --wiz-max: 880px; }
+.trip-wizard-modal.wiz-mid { --wiz-max: 1060px; }
+.trip-wizard-modal.wiz-wide { --wiz-max: 1560px; }
+.trip-wizard-modal .guide-head-inner,
+.trip-wizard-modal .guide-canvas,
+.trip-wizard-modal .guide-estimate-main,
+.trip-wizard-modal .guide-estimate-detail {
+  width: 100%;
+  max-width: var(--wiz-max);
+  margin-inline: auto;
+}
+.guide-foot-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+@media (min-width: 900px) {
+  .trip-wizard-modal .guide-head,
+  .trip-wizard-modal .guide-foot,
+  .trip-wizard-modal .guide-recap,
+  .trip-wizard-modal .guide-estimate-main,
+  .trip-wizard-modal .guide-estimate-detail { padding-left: 28px; padding-right: 28px; }
+  .trip-wizard-modal .guide-body { padding: 28px 28px 40px; }
+  .trip-wizard-modal .guide-estimate-chips { display: flex; }
+  .trip-wizard-modal .guide-estimate-detail {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    column-gap: 40px;
+  }
+}
+.trip-wizard-modal .guide-foot { padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+.trip-wizard-modal.wiz-inline .guide-foot { padding-bottom: 12px; }
+.guide-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(26, 26, 26, 0.05);
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.guide-card + .guide-card { margin-top: 0; }
+.guide-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.guide-card > .guide-card-row:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.trip-wizard-modal.wiz-form .guide-body,
+.trip-wizard-modal.wiz-mid .guide-body { display: flex; flex-direction: column; }
+.trip-wizard-modal.wiz-form .guide-canvas,
+.trip-wizard-modal.wiz-mid .guide-canvas { margin-block: auto; }
+.trip-wizard-modal.wiz-top .guide-canvas { margin-block: 0 auto; }
+.trip-wizard-modal .guide-path-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+.trip-wizard-modal .guide-path {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.04);
+  transition: border-color .14s, box-shadow .14s, transform .1s;
+}
+.trip-wizard-modal .guide-path:active { transform: scale(0.985); }
+.trip-wizard-modal .guide-path-text { gap: 3px; }
+@media (hover: hover) {
+  .trip-wizard-modal .guide-path:hover .guide-path-chev { color: var(--accent); transform: translateX(2px); }
+}
+@media (min-width: 720px) {
+  .trip-wizard-modal .guide-path {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 24px 22px 20px;
+    height: 100%;
+  }
+  .trip-wizard-modal .guide-path-chev { margin: auto 0 0; }
+  .trip-wizard-modal .guide-path:hover { transform: translateY(-2px); }
+  .trip-wizard-modal .guide-path:active { transform: translateY(-1px) scale(0.99); }
+}
+.guide-lede .guide-sub { max-width: 56ch; margin-inline: auto; }
+.guide-inline { position: absolute; inset: 0; display: flex; }
+.trip-wizard-modal.wiz-inline {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--paper);
+}
+.wiz-inline .guide-body { padding-top: 0; }
+.guide-lede .guide-sub { font-size: 15px; color: var(--ink-soft); margin-top: 10px; }
+.trip-wizard-modal.wiz-inline .guide-path-list { margin-top: 34px; gap: 18px; }
+@media (hover: hover) {
+  .trip-wizard-modal.wiz-inline .guide-path:hover {
+    border-color: var(--accent);
+    box-shadow: 0 10px 28px rgba(31, 42, 51, 0.10);
+  }
+}
+.trip-wizard-modal.wiz-inline .guide-path:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-chev {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-fill);
+    transform: translateX(2px);
+  }
+}
+@media (hover: hover) {
+  .trip-wizard-modal.wiz-inline .guide-path:hover .guide-path-icon { transform: translateY(-1px); }
+}
+@media (min-width: 720px) {
+  .trip-wizard-modal.wiz-inline .guide-path { padding: 26px 24px 22px; gap: 16px; }
+  .trip-wizard-modal.wiz-inline .guide-path-text small { max-width: 34ch; }
+  .trip-wizard-modal.wiz-inline .guide-path-chev { margin: auto 0 0 auto; }
+}
+@media (max-width: 719px) {
+  .trip-wizard-modal.wiz-inline .guide-path-list { margin-top: 24px; gap: 12px; }
+}
+.guide-canvas > .guide-stay-view,
+.trip-wizard-modal .guide-stay-view:not(.guide-toolbar .guide-stay-view) { width: min(100%, 340px); }
+.guide-cgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+}
+.guide-ccard:active { transform: scale(0.97); }
+.guide-ccard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 768px) {
+  .guide-cgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-ccard:active { transform: none; }
+}
+@media (hover: hover) {
+  .guide-explore-card:hover { border-color: var(--rule); }
+}
+.guide-templates { margin: 4px 0 14px; }
+@media (hover: hover) {
+  .guide-template:hover { border-color: var(--accent); box-shadow: var(--shadow-1); transform: translateY(-1px); }
+}
+.guide-template-name { font-family: var(--display); font-size: 14px; }
+.guide-template-route { display: flex; flex-wrap: wrap; gap: 3px 6px; font-size: 12px; }
+.guide-template-arrow { color: var(--ink-mute); margin-right: 6px; }
+.guide-template-legs { font-size: 11px; color: var(--ink-mute); }
+.booked-stop .trip-stop-remove { width: 26px; height: 26px; }
+.booked-stop-thumb .guide-thumb-fallback { font-size: 18px; color: var(--ink-mute); }
+.booked-stop-city .guide-flag-img-sm { display: inline-block; vertical-align: -2px; margin-left: 3px; }
+.booked-add .trip-add-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+}
+.booked-add .trip-add-btn { padding: 0 28px; }
+.booked-route .trip-add-btn { height: 38px; }
+@media (max-width: 700px) {
+  .booked-stop .guide-nights { grid-area: nights; }
+  .booked-stop .trip-stop-remove { grid-area: remove; }
+  .booked-add .trip-add-row { grid-template-columns: 1fr 1fr; }
+}
+.guide-month-grid .guide-chip {
+  justify-content: center;
+  text-align: center;
+  padding: 10px 8px;
+  font-size: 12.5px;
+}
+.guide-card .guide-arrival-when { margin-top: 0; }
+.guide-card .guide-note { margin-top: 10px; }
+.trip-wizard-modal .guide-carfrom { max-width: 620px; }
+@media (min-width: 1000px) {
+  .trip-wizard-modal .guide-flight-wrap,
+  .trip-wizard-modal .guide-stay-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+  }
+  .trip-wizard-modal .guide-flight-wrap .fpm-map,
+  .trip-wizard-modal .guide-flight-side {
+    height: clamp(340px, calc(100dvh - 570px), 640px);
+    max-height: none;
+  }
+  .trip-wizard-modal .guide-stay-wrap .citypick-map {
+    height: clamp(340px, calc(100dvh - 545px), 640px);
+    max-height: none;
+  }
+  .trip-wizard-modal .guide-flight-wrap-home .fpm-map,
+  .trip-wizard-modal .guide-flight-wrap-home .guide-flight-side {
+    height: clamp(400px, calc(100dvh - 330px), 720px);
+  }
+  .trip-wizard-modal .guide-flight-side,
+  .trip-wizard-modal .guide-city-side {
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(26, 26, 26, 0.05);
+  }
+  .trip-wizard-modal .guide-city-side-photo { height: 170px; }
+}
+.guide-side-idle { display: flex; flex-direction: column; height: 100%; }
+.guide-side-idle-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--ink-mute);
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 22px 12px 18px;
+}
+.guide-side-idle-list { display: flex; flex-direction: column; gap: 8px; }
+@media (hover: hover) {
+  .guide-side-idle-row:hover { border-color: var(--accent); background: var(--accent-bg); }
+}
+.guide-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 4px 0 14px;
+}
+.guide-toolbar .guide-stay-filters { margin: 0; }
+.guide-summary-hero .guide-thumb-fallback { font-size: 42px; }
+.guide-summary-stops .guide-final-stop { gap: 8px; }
+.guide-shortrow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--accent-bg);
+}
+.guide-shortrow-label {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.guide-shortrow-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.guide-shortrow-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+.guide-shortrow-chip.on { border-color: var(--accent); background: var(--accent); color: var(--on-fill); }
+.wtrip-star {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px;
+  color: var(--rate);
+}
+.trip-awaiting-dates {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.trip-planday-btn { width: 100%; }
+.guide-nights-budget {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.guide-nights-budget.done { border-color: var(--green); color: var(--good-ink-soft); }
+.guide-nights-budget.over { border-color: var(--warn-ink); color: var(--warn-ink); }
+.guide-answered {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+}
+.guide-answered-label {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.guide-answered-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.guide-answered-edit {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: none;
+  padding: 3px 9px;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .guide-answered-edit:hover { color: var(--accent); border-color: var(--accent); }
+}
+@media (hover: hover) {
+  .guide-design-btn-quiet:hover { border-color: var(--accent); }
+}
+.guide-design-btn-quiet .guide-design-spark { color: var(--accent); }
+.guide-design-btn-quiet.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.citypick-pin.focused,
+.citypick-pin.sel { z-index: 4; }
+@media (hover: hover) {
+  .citypick-pin:hover { z-index: 4; }
+}
+.guide-range-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.guide-range-end.next { border-color: var(--accent-soft); background: var(--accent-bg); }
+.guide-when-card .guide-card-row { margin-top: 12px; padding-top: 12px; }
+.guide-when-card .guide-flexpad { margin-top: 0; }
+.guide-when-card .cal-inline .cal-day { aspect-ratio: auto; height: 26px; }
+@media (min-width: 900px) and (min-height: 860px) {
+  .trip-wizard-modal.wiz-inline.wiz-when.wiz-form { --wiz-max: 920px; }
+  .wiz-inline .guide-canvas > .guide-sub { font-size: 15px; margin-bottom: 20px; }
+  .wiz-inline .guide-when-card { padding: 26px 30px 24px; }
+  .wiz-inline .guide-when-card .guide-datemode { margin-bottom: 20px; }
+  .wiz-inline .guide-when-card .guide-card-row { margin-top: 20px; padding-top: 20px; }
+  .wiz-inline .guide-when-card .cal-inline:not(.cal-panes-1) { max-width: 780px; }
+  .wiz-inline .guide-when-card .cal-inline .cal-panes {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 34px;
+  }
+  .wiz-inline .guide-when-card .cal-inline .cal-day { height: 40px; font-size: 15px; border-radius: 10px; }
+  .wiz-inline .guide-when-card .cal-inline .cal-weekday { font-size: 11.5px; padding-bottom: 8px; }
+  .wiz-inline .guide-when-card .cal-pane-title { font-size: 16px; margin-bottom: 10px; }
+  .wiz-inline .guide-when-card .cal-inline:not(.cal-panes-1) .cal-nav { width: 30px; height: 30px; font-size: 20px; }
+  .wiz-inline .guide-when-card .guide-flexpad { font-size: 13.5px; padding: 9px 16px; }
+}
+@media (max-height: 840px) {
+  .trip-wizard-modal.wiz-when .guide-body { padding-top: 16px; padding-bottom: 20px; }
+  .trip-wizard-modal.wiz-when .guide-canvas > .guide-title { margin-bottom: var(--space-3); }
+  .trip-wizard-modal.wiz-when .guide-sub { margin-bottom: 10px; font-size: 13px; }
+  .guide-when-card { padding: 14px 18px; margin-bottom: 0; }
+  .guide-when-card .guide-card-row { margin-top: 9px; padding-top: 9px; }
+  .guide-when-card .guide-datemode button { padding-top: 8px; padding-bottom: 8px; }
+  .guide-when-card .guide-range-end { padding: 4px 10px; }
+  .guide-when-card .cal-inline .cal-day { height: 23px; }
+  .guide-when-card .cal-inline .cal-panes { gap: 14px; }
+}
+@media (max-height: 700px) {
+  .trip-wizard-modal.wiz-when .guide-body { padding-top: 10px; padding-bottom: 12px; }
+  .trip-wizard-modal.wiz-when .guide-canvas > .guide-title { margin-bottom: var(--space-2); }
+  .trip-wizard-modal.wiz-when .guide-sub { margin-bottom: 5px; font-size: 12.5px; }
+  .guide-when-card { padding: 11px 16px; }
+  .guide-when-card .guide-card-row { margin-top: 6px; padding-top: 6px; }
+  .guide-when-card .guide-flexpad { padding-top: 5px; padding-bottom: 5px; }
+  .guide-when-card .guide-datemode button { padding-top: 6px; padding-bottom: 6px; }
+  .guide-when-card .guide-range-end { padding: 3px 10px; }
+  .guide-when-card .cal-inline .cal-day { height: 21px; }
+  .guide-when-card .cal-inline .cal-weekday { padding-bottom: 2px; }
+}
+.trip-wizard-modal .guide-canvas { animation: wiz-in-fwd .3s cubic-bezier(0.25, 1, 0.5, 1); }
+.trip-wizard-modal.wiz-back .guide-canvas { animation-name: wiz-in-back; }
+@media (prefers-reduced-motion: reduce) {
+  .trip-wizard-modal .guide-canvas { animation: none; }
+  .trip-wizard-modal .guide-canvas { transition: none; }
+}
+.trip-wizard-modal .guide-datemode { max-width: 520px; }

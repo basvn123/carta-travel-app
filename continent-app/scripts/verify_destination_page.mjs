@@ -169,8 +169,9 @@ check('insider tips render on the deck', await page.locator('.destp-tips .flash-
 await openFold(page, 'rating');
 check('rating v2 breakdown renders', await page.locator('#sec-rating .rate-break-v2 .rb-parts .rb-part').count() >= 3);
 check('rating scale has three ticks', await page.locator('#sec-rating .rb-tick').count() === 3);
-check('desktop shows the cross', await page.locator('.destp-close').isVisible());
-check('desktop hides the back arrow', !(await page.locator('.destp-back').isVisible()));
+// T474: one page bar on both sizes, back naming the list, no cross.
+check('desktop back names the list', (await page.locator('.destp .ipage-back').innerText()).trim().length > 0);
+check('desktop has no close cross', (await page.locator('.destp-close').count()) === 0);
 const grid = await page.evaluate(() => {
   const g = document.querySelector('.destp-grid');
   return g ? getComputedStyle(g).gridTemplateColumns.split(' ').length : 0;
@@ -302,8 +303,8 @@ await phone.goto(BASE + '#dest=gem:valbona', { waitUntil: 'domcontentloaded', ti
 await settle(phone);
 await phone.waitForTimeout(1500);
 check('phone page opens', await phone.locator('.destp').isVisible());
-check('phone shows the back arrow', await phone.locator('.destp-back').isVisible());
-check('phone hides the cross', !(await phone.locator('.destp-close').isVisible()));
+check('phone back names the list', (await phone.locator('.destp .ipage-back').innerText()).trim().length > 0);
+check('phone has no close cross', (await phone.locator('.destp-close').count()) === 0);
 const hscroll = await phone.evaluate(() => {
   const s = document.querySelector('.destp-scroll');
   return s ? s.scrollWidth - s.clientWidth : 0;
@@ -328,9 +329,9 @@ await phone.screenshot({ path: 'shots/destp-phone-scrolled.png' });
 await phone.locator('.destp-scroll').evaluate((el) => { el.scrollTop = 1900; });
 await phone.waitForTimeout(600);
 await phone.screenshot({ path: 'shots/destp-phone-scrolled-2.png' });
-await phone.locator('.destp-back').click();
+await phone.locator('.destp .ipage-back').click();
 await phone.waitForTimeout(400);
-check('back arrow closes on phone', !(await phone.locator('.destp').isVisible().catch(() => false)));
+check('back closes on phone', !(await phone.locator('.destp').isVisible().catch(() => false)));
 await phone.close();
 
 await browser.close();

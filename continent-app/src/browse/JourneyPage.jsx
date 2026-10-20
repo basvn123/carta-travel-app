@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { usePageArrival } from '../hooks/usePageArrival.js';
 import {
   loadJourney, typeLabel, diffLabel, boldSegments, riskText, minutesText,
   hookLine, loadAllJourneyCards, journeyExits, journeyHash, journeyShareUrl,
@@ -16,11 +17,11 @@ import { packCells, resolvePackCell } from '../lib/packGrid.js';
 import { railAlternative } from '../lib/railAlternative.js';
 import { parseGateway } from '../lib/gateway.js';
 import { formatMoney } from '../lib/money.js';
-import { Button, Chip, IconButton, Money } from '../components/ui/index.js';
+import { Button, Chip, Money } from '../components/ui/index.js';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
-import { SaveButton } from './ExploreCards.jsx';
+import { PageBar } from './PageBar.jsx';
 import { SectionRail } from './SectionRail.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
@@ -32,8 +33,8 @@ import { BookingOrder } from './BookingOrder.jsx';
 import { PackGrid } from './PackGrid.jsx';
 import { useItemPdf } from '../hooks/useItemPdf.js';
 import {
-  AlertIcon, ArrowLeftIcon, CalendarIcon, CarIcon, CheckIcon, ChevronRightIcon, CloudIcon,
-  FamilyIcon, FriendsIcon, HeartIcon, InfoIcon, PiggyIcon, PlugIcon, ShareIcon, ShieldIcon, TicketIcon,
+  AlertIcon, CalendarIcon, CarIcon, ChevronRightIcon, CloudIcon,
+  FamilyIcon, FriendsIcon, HeartIcon, InfoIcon, PiggyIcon, PlugIcon, ShieldIcon, TicketIcon,
   TrainIcon, BulbIcon, LuggageIcon,
 } from '../components/Icons.jsx';
 
@@ -242,19 +243,13 @@ export function JourneyPage({
     go();
   }, []);
 
-  // Arrival focus lands on the trip's title (rule "Navigation").
-  const titleRef = useRef(null);
-  useLayoutEffect(() => { titleRef.current = headEl.current?.querySelector('h1') || backRef.current; });
-  useFocusTrap(pageRef, close, { initialFocusRef: titleRef });
-  useEffect(() => { scrollEl.current?.scrollTo?.(0, 0); }, [id]);
-  // The trip arrives after the trap focused the back control on the loading
-  // view: move focus to its title once it is there.
+  // Arrival focus follows the one page rule (hooks/usePageArrival.js, rule
+  // "Navigation", T474). The trip arrives after the trap focused the bar on
+  // the loading view, so the hook moves focus to its title once it is there.
   const readyId = trip && trip !== 'failed' ? trip.id : null;
-  useEffect(() => {
-    if (!readyId) return;
-    const h = headEl.current?.querySelector('h1');
-    if (h && pageRef.current?.contains(document.activeElement)) h.focus({ preventScroll: true });
-  }, [readyId]);
+  const arrivalRef = usePageArrival(pageRef, readyId);
+  useFocusTrap(pageRef, close, { initialFocusRef: arrivalRef });
+  useEffect(() => { scrollEl.current?.scrollTo?.(0, 0); }, [id]);
 
   const tripReady = trip && trip !== 'failed' ? trip : null;
   const [railReady, setRailReady] = useState(null);
@@ -326,22 +321,20 @@ export function JourneyPage({
 
   const name = tripReady?.title || '';
   const bar = (label) => (
-    <div className="tpage-bar ipage-bar">
-      <Button variant="quiet" className="tpage-back ipage-back" onClick={close} ref={backRef}
-        iconStart={<ArrowLeftIcon size={20} />}>
-        {label}
-      </Button>
-      <span className={`tpage-bar-title ipage-bar-title ${titleGone ? 'on' : ''}`}>{name}</span>
-      {tripReady && (
-        <div className="ipage-bar-acts">
-          {onFav && <SaveButton fav={fav} onToggle={onFav} t={t} name={name} />}
-          <IconButton className="tpage-bar-act jpage-share" onClick={onShare}
-            label={copied ? t('dest.linkCopied') : t('journey.shareLink')}>
-            {copied ? <CheckIcon size={18} /> : <ShareIcon size={18} />}
-          </IconButton>
-        </div>
-      )}
-    </div>
+    <PageBar
+      t={t}
+      backLabel={label}
+      onBack={close}
+      backRef={backRef}
+      name={name}
+      nameOn={titleGone}
+      fav={fav}
+      onFav={tripReady ? onFav : null}
+      onShare={tripReady ? onShare : null}
+      shareLabel={t('journey.shareLink')}
+      copied={copied}
+      copiedLabel={t('dest.linkCopied')}
+    />
   );
   const shell = (label, body) => (
     <div className="tpage dsk-page ipage jpage" role="dialog" aria-modal="true" aria-label={label} ref={pageRef}

@@ -1,7 +1,9 @@
 /* The sticky section rail (T165). browse/SectionRail.jsx draws it.
-   carta-design: a --paper band, --tap high, a --rule bottom border, no
-   shadow; links in --ui 13px --ink-soft; the section in view is an
-   --ink-fill pill with --on-fill text and a 6px radius. */
+   carta-design: a page-ground band, --tap high, a hairline bottom border, no
+   shadow; links at label size in secondary ink; the section in view takes
+   the one selected state, the light tint, the selected ink and a mark (an
+   underline in the selected edge colour), on every page that wears the rail
+   (T474, row T435-h: the trail page had the tint without the mark). */
 
 .srail {
   position: sticky;
@@ -46,7 +48,14 @@
 @media (hover: hover) {
   .srail a:hover { color: var(--ink); }
 }
-.srail a.is-active { background: var(--select-bg); color: var(--select-ink); }
+.srail a.is-active {
+  background: var(--select-bg);
+  color: var(--select-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--select-border);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+}
 .srail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* A jump lands the section's heading just under the rail, not behind it. */
