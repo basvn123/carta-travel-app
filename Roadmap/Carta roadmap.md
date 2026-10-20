@@ -1,8 +1,19 @@
 # Carta roadmap
 
-Oct 13, 2026, @Bas
+Oct 13, 2026, @Bas; bijgewerkt 20 oktober (T469 tot T472)
 
 Eerst het design, de datakwaliteit en de voorpagina; daarna één land volledig, dan alles linken, dan zoeken en de launch. Launchdoel: dinsdag 4 mei 2027.
+
+Waarom Carta bestaat staat in PRODUCT.md onder "Mission": een goedkope vlucht is nog geen goedkope reis, en Carta neemt de onzekerheid over wat de dagen ter plaatse kosten weg. Elke rij hieronder moet die belofte dichterbij brengen. Hoe reizigers beslissen staat in `user_knowledge.md`.
+
+Vier plannen werken de rijen uit; de roadmap zegt wat en wanneer, het plan zegt waarom en hoe:
+
+| Plan | Rijen |
+| --- | --- |
+| [Designsysteem 1.2](1.2-design-system-plan.md) | 1.2 |
+| [Navigatie, pass en prijsweergave](1.15-navigatie-pass-prijsweergave.md) | 1.15 tot 1.18, 2.18 tot 2.21, 4.18 tot 4.21, 5.11, 5.12 |
+| [Seizoen, rating en prijs per maand](2.10-seizoen-rating-prijs.md) | 1.10, 1.11, 2.10 tot 2.13, 3.9, 4.9 tot 4.12 |
+| [Kosten en logistiek](2.14-kosten-en-logistiek.md) | 1.12 tot 1.14, 2.14 tot 2.17, 3.10, 4.13 tot 4.17, 5.9, 5.10 |
 
 ## Hoe je dit gebruikt
 
@@ -10,6 +21,27 @@ Eerst het design, de datakwaliteit en de voorpagina; daarna één land volledig,
 - **Klaar** betekent dat de kolom "Klaar als" klopt in de app zelf, op een telefoon. Niet in de code.
 - **Hoe** je iets aanpakt, beslis je zelf. Dit document zegt wat er in de app moet veranderen, niet welke techniek. Per fase staan open vragen die je kunt onderzoeken.
 - **Aanpassen mag altijd:** rijen toevoegen, weken verschuiven of iets op Geparkeerd zetten. De fasetabel in het overzicht is de samenvatting; zet een fase op Klaar als al haar items klaar zijn.
+
+## Begin hier
+
+**Deze week (W43, vanaf 19 oktober):** 1.2 afronden (de restlijst T435-a tot T435-i), 1.3 en 1.3a (de app-schil, met de drie plekken uit 1.15 als uitgangspunt) en 1.10 (het weerbericht, nu stuk op productie). Daarna W44: 1.16 (de prijszin) en 1.14 (de kaartknop) zijn klein en gaan meteen live.
+
+**Jouw besluiten, met de week waarin ze nodig zijn.** De voorstellen en de reden staan in het plan van elke rij; elk besluit staat ook als rij in `Execution/_OPEN.md`.
+
+| Besluit | Vraag | Voorstel | Nodig vóór |
+| --- | --- | --- | --- |
+| T472-a | Drie plekken in de navigatie (Explore, Plan, My trips) plus account; Destinations en Explore samen | Ja | W44 (1.15) |
+| T472-b | De naam van de pass | "Trip Pass" houden, nooit "Get a pass" alleen | W44 (1.15) |
+| T472-c | Een trip bewaren zonder account, op het toestel | Ja | W44 (1.15) |
+| T471-b | De één-zin voor kosten plus logistiek | Een van de drie opties in het plan | W45 (1.13) |
+| T472-f | Hoofdacties op de telefoon 48 px | Ja in planners en onderbalk | W45 (1.17) |
+| T472-g | Dagdelen boven de klok | Boven de klok | W45 (1.17) |
+| T472-e | Buffer op het triptotaal | Regel van de reiziger, standaard uit | W46 (1.18) |
+| T471-a | Numbeo vervangen of betalen | Vervangen (Eurostat plus eigen metingen) | W48 (2.14) |
+| T470-a | LiteAPI-productiesleutel en Hostelworld-aanvraag (handstap) | Doen | W49 (2.12) |
+| T471-d | MOTIS op de Hetzner-box | Ja, eerst Italië, Oostenrijk en Zwitserland | W51 (2.16) |
+| T471-c | Alternatieven over de grens | Ja voor Europa, nee voor dichtbij | W7 (4.13) |
+| T472-d | Delen en samen bewerken gratis | Ja; de pass houdt export, trips en AI | W13 (5.12, vóór 5.6) |
 
 ## Overzicht
 
@@ -24,8 +56,8 @@ De fases lopen na elkaar; de handstappen lopen erachter mee. Blok 7 (de box) moe
 | 1. Design | 12 okt tot 15 nov (W42 tot W46) | Weten wat waar komt, in elke tab | Elk scherm heeft een goedgekeurd ontwerp en V6 staat live | Bezig |
 | 2. Datakwaliteit en structuur | 16 nov tot 20 dec (W47 tot W51) | Wat je ziet klopt; elke bestemming heeft een vaste structuur | Steekproef van 200 items onder 2% fout, één prijs op elk scherm, nieuwe voorpagina live | Te doen |
 | 3. Pilotland Italië | 4 jan tot 14 feb (W1 tot W6) | Eén land volledig en gecontroleerd | Elke Italiaanse regio op doel voor elke laag | Te doen |
-| 4. Linken en planners | 15 feb tot 14 mrt (W7 tot W10) | Alles verwijst naar alles; de planners kloppen | Van elk item kom je in één tik bij alles in de buurt en in je trip | Te doen |
-| 5. Zoeken, uitrol en launch | 15 mrt tot 9 mei (W11 tot W18) | Zoeken in gewone taal, meer landen, launch | Live op 4 mei 2027 | Te doen |
+| 4. Linken en planners | 15 feb tot 21 mrt (W7 tot W11) | Alles verwijst naar alles; de planners kloppen en zijn één werkruimte | Van elk item kom je in één tik bij alles in de buurt en in je trip | Te doen |
+| 5. Zoeken, uitrol en launch | 22 mrt tot 9 mei (W12 tot W18) | Zoeken in gewone taal, meer landen, launch | Live op 4 mei 2027 | Te doen |
 
 21 december tot 3 januari is buffer.
 
@@ -37,10 +69,10 @@ Je hebt al veel: een ontwerpbrief per tab (T370 tot T379), één richtingsdocume
 
 | # | Wat | Klaar als | Week | Status |
 | --- | --- | --- | --- | --- |
-| 1.1 | V6-design nakijken op een echte iPhone en Android, dan live zetten (blok 3) | Productie toont V1 tot V6 | W42 | Bezig |
+| 1.1 | V6-design nakijken op een echte iPhone en Android, dan live zetten (blok 3) | Productie toont V1 tot V6 | W42 | Klaar (V1 tot V6 live op 13 okt; T464 tot T468 en T435 op 17 okt) |
 | 1.2 | Designsysteem op één plek: kleuren, lettertypes en -groottes, knoppen, kaarten, chips en filters, iconen en de prijsnotatie, met voor elk een voorbeeld en wanneer je het gebruikt | Door alle tabs heen dezelfde knoppen, kaarten en prijsnotatie (nu nog 89 soorten knoppen, en hele euro's naast centen) | W43 | Grotendeels klaar (T435, 17 okt: critique 26/36, audit 12/20, detector 2.487 naar 368); restlijst T435-a tot T435-i |
 | 1.3 | Per tab opschrijven wat er nu staat, met de ontwerpbrief van die tab (T370 tot T379) erbij | Per tab een lijst: houden, weg, nieuw | W43 | Te doen |
-| 1.3a | App-schil: kop, navigatie, instellingenbalk en de onderbalk op een telefoon | Goedgekeurde schets op telefoon en desktop | W43 | Te doen |
+| 1.3a | App-schil: kop, navigatie, instellingenbalk en de onderbalk op een telefoon, met de drie plekken uit 1.15 | Goedgekeurde schets op telefoon en desktop | W43 tot W44 | Te doen |
 | 1.3b | Destinations-tab: categorieën, filters, de tripbibliotheek, land- en regiopagina's | Goedgekeurde schets op telefoon en desktop | W44 | Te doen |
 | 1.3c | Trip planner: de stappen van de wizard en het geplande resultaat | Goedgekeurde schets op telefoon en desktop | W44 | Te doen |
 | 1.3d | Day planner: de vragen, de dag en de kaart | Goedgekeurde schets op telefoon en desktop | W45 | Te doen |
@@ -56,6 +88,10 @@ Je hebt al veel: een ontwerpbrief per tab (T370 tot T379), één richtingsdocume
 | 1.12 | Ontwerp kosten en logistiek: het blok "Not quite right?" met goedkopere alternatieven, "Sleep nearby and save", het Lifestyle-paneel als bon per regel, een rit met tijd en kosten samen, de kaartknop bovenaan de dag ([kosten en logistiek](2.14-kosten-en-logistiek.md), punten 1, 2, 3, 6 en 7) | Goedgekeurde schets op telefoon en desktop, kleuren uit carta-design | W46 | Te doen |
 | 1.13 | Positionering vastleggen: "wat de trip kost en hoe je er komt, in één plan" en "Carta navigeert nooit, je kaartapp brengt je er", in PRODUCT.md, carta-design, de voorpagina, de FAQ en de oude documenten die nog zeggen dat Carta vluchten prijst ([kosten en logistiek](2.14-kosten-en-logistiek.md), punt 4; jouw zin, T471-b) | Elk bestand uit de lijst in punt 4 zegt hetzelfde; geen document zegt nog dat Carta de vlucht prijst | W45 | Te doen |
 | 1.14 | Kaartknop herstellen: Google Maps staat in een mobiele browser maar 3 tussenstops toe en de app stuurt er tot 9; de knop naar boven als "Open Day 2 in Google Maps", in stukken op een telefoon, Apple Maps op een iPhone ([kosten en logistiek](2.14-kosten-en-logistiek.md), punt 7) | Een dag met 8 stops opent volledig op een iPhone en een Pixel, in Google Maps en in Apple Maps | W44 | Te doen |
+| 1.15 | Ontwerp navigatie: drie plekken (Explore met Destinations erin, Plan met trip en dag, My trips) en een accounticoon; "Get a pass" uit de kop, de pass alleen op het moment dat je iets betaalds aantikt, in Account en op de prijzenpagina; één zin over wat gratis is ("Planning is free. A Trip Pass adds exports, more saved trips and more AI plans."), nooit "100% free" ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 1 en 2; besluiten T472-a tot c) | Goedgekeurde schets op telefoon en desktop; elke betaalde actie heeft haar passblad; de zin staat in carta-design | W44 | Te doen |
+| 1.16 | Wat de prijs bevat, in één zin overal: de voorpagina en de FAQ zeggen nu "local transport" en de bestemmingspagina zegt dat het er niet in zit, terwijl de som bed plus eten is; zes talen, PRODUCT.md en carta-design gelijk; plus de tekst die aan elkaar plakt (wizard-landkaart, getallen buiten de vertaalsleutel) en de dode oude bon ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 4 en 6) | Geen scherm of document zegt dat lokaal vervoer in de dagprijs zit, tot 2.14 die regel bouwt; een schermlezer leest "Italy, from about 87 euros" | W44 | Te doen |
+| 1.17 | Ontwerp één werkruimte voor trip en dag: de dag klapt open in de trip met stad en datum ingevuld, desktop route of dag links en kaart rechts met een vaste kostenbalk, telefoon kaart met een schuiflade in drie standen, ochtend, middag en avond boven de klok, tikken in plaats van slepen, 48 px voor de hoofdacties ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 7 en 8; besluiten T472-f en g) | Goedgekeurde schets op telefoon en desktop, samen met 1.3c en 1.3d | W45 | Te doen |
+| 1.18 | Prijsweergave vastleggen: één teken per prijs (`~€43 est.` of niets), het niveau één keer op de bon (stad of land), bron en datum in de uitklap, geen bandbreedtes op kaarten, de buffer als regel van de reiziger ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 4 en 5; besluit T472-e) | De regel staat in carta-design en DIRECTION.md, met 1.8 | W46 | Te doen |
 
 Open vragen om zelf te onderzoeken:
 
@@ -88,6 +124,10 @@ Voor er meer inhoud bijkomt, moet wat je nu ziet kloppen, en krijgt elke bestemm
 | 2.15 | Eigen bedprijs voor de buren van dure steden, in dezelfde gratis LiteAPI-ronde als 2.12; `source_km` meet de plaats zelf (Prato zegt nu 0,1 km van Florence) | Rond de tien dure steden uit punt 3 heeft elke buur binnen 45 minuten een eigen gemeten bedprijs | W49 tot W50 | Te doen |
 | 2.16 | De graaf tussen bestemmingen: rijtijd (Valhalla) en trein- en busverbinding (MOTIS met open dienstregelingen) op de box, plus het gelijkenisprofiel `alike` (top 20 per bestemming) ([kosten en logistiek](2.14-kosten-en-logistiek.md), punten 1 en 6) | Elke bestemming kent haar buren binnen 2 uur met tijd, manier en verbinding; een nieuwe plaats krijgt ze vanzelf | W51 | Te doen |
 | 2.17 | Kinderen en kinderwagen als data: rolstoel, speeltuin, verschoontafel, trappen en oppervlak uit OSM op de POI's, plus een tabel per soort plaats | Elke POI-soort heeft een waarde voor kinderen en voor stapvrij, met bron | W50 | Te doen |
+| 2.18 | Navigatie en pass live volgens 1.15: drie plekken en account, "Get a pass" uit de kop, het passblad op elk betaald moment, de zin over gratis op voorpagina, FAQ en passcherm; oude links (`?tab=destinations`, `?tab=map`, `#trip=`, `#coplan=`) leiden naar de nieuwe plek ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 1 en 2) | Op een iPhone en een Pixel: drie plekken plus account, geen pass in de kop, elke oude link opent de juiste plek | W47 | Te doen |
+| 2.19 | Opslaan zonder account: de eerste trip bewaart op het toestel ("Saved on this device"); inloggen pas bij een tweede toestel, samen bewerken of een tweede trip ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 2; besluit T472-c) | Een nieuwe bezoeker bewaart een trip zonder inlogscherm en vindt hem na herladen terug in My trips | W48 | Te doen |
+| 2.20 | Instellingen sturen elk getal: de balk toont de standaard als zin ("Prices for 14 to 21 Nov, 2 people"), duur apart te kiezen, groepsgrootte verandert de kaartprijs, een maandrail toont de prijs van die maand ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 3) | Datums, personen of Lifestyle wijzigen op Explore verandert kaart, pin, pagina, bon en planner naar hetzelfde bedrag; "Best in October" toont oktoberprijzen | W50 | Te doen |
+| 2.21 | Prijsniveau eerlijk in de data: elk bed- en eetgetal draagt zijn niveau (eigen meting, geleend van een stad, land) met bron en datum; geen vulwaarden (Moldavië, Roemenië, Kosovo en Albanië staan alle vier op exact €48 per nacht) ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 5) | Geen twee landen delen een landprijs zonder bron; elke bonregel noemt haar niveau | W49 | Te doen |
 
 Besloten op 20 oktober (T470): weer van MET Norway; hotelprijzen alleen uit gratis, echte bronnen (jouw handstap: de LiteAPI-productiesleutel en de Hostelworld-aanvraag, T470-a, vóór W49); de kaart toont de maandscore en waarom; Claude doet de twee beoordelingen, jij kijkt ze na.
 
@@ -126,9 +166,9 @@ Open vragen om zelf te onderzoeken:
 
 ## Fase 4. Linken en planners
 
-*15 februari tot 14 maart*
+*15 februari tot 21 maart*
 
-Nu de inhoud klopt, gaat alles naar elkaar verwijzen en moeten de twee planners logisch en juist zijn.
+Nu de inhoud klopt, gaat alles naar elkaar verwijzen en moeten de twee planners logisch en juist zijn. Daarna worden ze één werkruimte (4.18 tot 4.21). Deze fase telt 21 rijen; daarom loopt ze tot en met W11, zonder dat de launch schuift.
 
 | # | Wat | Klaar als | Week | Status |
 | --- | --- | --- | --- | --- |
@@ -149,6 +189,10 @@ Nu de inhoud klopt, gaat alles naar elkaar verwijzen en moeten de twee planners 
 | 4.15 | Elke rit met tijd en kosten: echte route, brandstof per land (Oil Bulletin, wekelijks), tol per tolkilometer, vignetten, parkeren; trein en bus met bandbreedte en "verbinding bestaat"; de tol van je eigen auto vanaf je eigen huis, niet Brussel ([kosten en logistiek](2.14-kosten-en-logistiek.md), punt 6) | 50 ritten in twaalf landen: rijtijd binnen 10%, tol en brandstof binnen 15%, de echte treinprijs in 80% binnen de bandbreedte | W8 tot W9 | Te doen |
 | 4.16 | Dagplanner: een lege dag toont zes voorstellen en "start from a ready-made day"; één tempovraag in de wizard die elke dag meekrijgt; een baby zet stapvrij aan, kinderen zetten kindvriendelijk eerst; stappen zichtbaar tegen je budget ([kosten en logistiek](2.14-kosten-en-logistiek.md), punt 5) | Geen lege dag zonder voorstellen; een gezin met een baby krijgt een dag zonder trappen | W8 tot W9 | Te doen |
 | 4.17 | Lifestyle-paneel als bon: per regel hoeveelheid, prijs en bedrag; één woordenlijst (de zes profielen) in wizard, dagplanner en reispagina's | Dezelfde Lifestyle geeft op kaart, bon, planner en reispagina hetzelfde bedrag | W9 | Te doen |
+| 4.18 | Eén werkruimte live volgens 1.17: van Explore naar een trip naar een dag zonder tabwissel, de dag opent met de steden en datums van de trip, een vaste kostenbalk die naar de bon opent ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 7) | Een trip van drie steden en één uitgewerkte dag maken zonder van plek te wisselen; de kostenbalk en de bon tonen hetzelfde bedrag | W10 | Te doen |
+| 4.19 | De dag in ochtend, middag en avond boven de klok, met de maaltijden eraan; tickets tellen mee in het dagtotaal waar de prijs bekend is (OSM `fee` en `charge`), anders "ticket, price not known" zonder bedrag ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 7) | Een museum met een bekende prijs verhoogt het dagtotaal; geen verzonnen ticketprijs | W9 | Te doen |
+| 4.20 | Telefoon: kaart met een schuiflade in drie standen op Explore en in Plan, met het bedrag altijd in de strook; 48 px voor de hoofdacties ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 7 en 8; besluit T472-f) | Op een Pixel 5 met één hand een plaats vinden, toevoegen en de bon openen zonder de kaart te verliezen | W11 | Te doen |
+| 4.21 | Lange trips snel: vensterlijsten in Explore, Plan en My trips, dagen standaard ingeklapt ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 9) | Een trip van 21 dagen: elke tik onder 100 ms (INP) op een middenklasse telefoon | W11 | Te doen |
 
 Open vragen om zelf te onderzoeken:
 
@@ -157,22 +201,24 @@ Open vragen om zelf te onderzoeken:
 
 ## Fase 5. Zoeken, uitrol en launch
 
-*15 maart tot 9 mei*
+*22 maart tot 9 mei*
 
 Het recept uit Italië gaat naar meer landen, gebruikers kunnen zoeken in gewone taal, en Carta gaat live.
 
 | # | Wat | Klaar als | Week | Status |
 | --- | --- | --- | --- | --- |
-| 5.1 | Zoeken in gewone taal voor gebruikers, eerst op Italië | Het zoekvak op de voorpagina beantwoordt de twintig testvragen | W11 tot W12 | Te doen |
-| 5.2 | Het recept uitrollen naar de volgende landen (voorstel: Oostenrijk, Zwitserland, Frankrijk) | Elk land op doel volgens het coverage-rapport | W11 tot W17 | Te doen |
+| 5.1 | Zoeken in gewone taal voor gebruikers, eerst op Italië | Het zoekvak op de voorpagina beantwoordt de twintig testvragen | W12 tot W13 | Te doen |
+| 5.2 | Het recept uitrollen naar de volgende landen (voorstel: Oostenrijk, Zwitserland, Frankrijk) | Elk land op doel volgens het coverage-rapport | W12 tot W17 | Te doen |
 | 5.3 | Launchdag vastleggen, minstens 42 dagen vooraf (blok 12) | Datum gekozen, uiterlijk 23 maart | W12 | Te doen |
 | 5.4 | Eén pagina per item en een sitemap (blok 11) | De pagina's verschijnen in Google | W12 tot W13 | Te doen |
 | 5.5 | Nederlands, Frans en Duits nagelezen | Een moedertaallezer keurde elke taal goed | W14 | Te doen |
-| 5.6 | Betalingen live (blok 10) | Testaankopen geslaagd, live keys aan | W14 | Te doen |
+| 5.6 | Betalingen live (blok 10), met wat de pass geeft na besluit T472-d | Testaankopen geslaagd, live keys aan | W14 | Te doen |
 | 5.7 | Launch | Live op dinsdag 4 mei 2027 | W18 | Te doen |
 | 5.8 | Later: de kosten van deur tot trail | Na de launch opnieuw bekijken | na W18 | Geparkeerd |
 | 5.9 | Later: opslaan uit sociale media (TikTok via oEmbed, geplakte tekst, Google Takeout-lijsten) en de Carta-bon met de goedkopere versie ([kosten en logistiek](2.14-kosten-en-logistiek.md), punt 8a) | Na de launch opnieuw bekijken; heeft 4.13 en 4.17 nodig | na W18 | Geparkeerd |
 | 5.10 | Later: gepland tegenover echt, een portemonnee onderweg met ECB-koersen, en met toestemming terug naar de catalogus vanaf 10 reizigers per plaats en maand ([kosten en logistiek](2.14-kosten-en-logistiek.md), punt 8c) | Na de launch opnieuw bekijken; heeft een privacyregel nodig | na W18 | Geparkeerd |
+| 5.11 | Offline: de actieve trip, haar dagen en haar bon blijven op het toestel zodra je ze opent, met "Offline, last updated 14:02" ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 9) | Met vliegtuigmodus aan opent een bewaarde trip met elke dag en de bon | W13 | Te doen |
+| 5.12 | Delen en samen plannen zonder account: een bewerklink naast de leeslink (alleen een naam, Undo per wijziging, intrekbaar), de kostenverdeler gaat mee in de link ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 10; besluit T472-d) | Een reisgenoot zonder account past via de link een stop aan en ziet wie wat betaalt; de eigenaar ziet de wijziging en kan de link intrekken | W13 tot W14 | Te doen |
 
 ## Achtergrond: handstappen uit je takenlijst
 
@@ -182,7 +228,7 @@ Deze blokken uit `1-manual-steps.md` lopen naast de fases. Ze staan hier alleen 
 | --- | --- | --- | --- | --- |
 | 1 | Push naar GitHub en CI nakijken | W42 | alles wat volgt | Te doen |
 | 2 | Gemini afronden, wave 17 starten; weekmeting vanaf 14 oktober | W42 tot W43 | fase 3 (zoekproef) | Te doen |
-| 3 | V6 nakijken en live zetten | W42 tot W43 | fase 1 (item 1.1) | Bezig |
+| 3 | V6 nakijken en live zetten | W42 tot W43 | fase 1 (item 1.1) | Klaar (13 okt) |
 | 4 | Admin en database nakijken | W44 |  | Te doen |
 | 5 | Huishouden; de trails-lab-dump moet vóór 6 november | W44 |  | Te doen |
 | 6 | Datalane op de laptop (F1 tot F9) | W47 tot W51 | fase 2 | Te doen |
@@ -200,14 +246,14 @@ Twee of drie items per week. De status houd je bij in de fasetabellen; schuif hi
 | Week | Maandag | Focus |
 | --- | --- | --- |
 | W42 | 12 okt 2026 | 1.1; blok 1, 2 en 3 |
-| W43 | 19 okt | 1.2, 1.3, 1.3a, 1.10 (weerbericht) |
-| W44 | 26 okt | 1.3b, 1.3c, 1.4, 1.14 (kaartknop); blok 4 en 5 (dump vóór 6 november) |
-| W45 | 2 nov | 1.5, 1.3d, 1.3e, 1.13 (positionering, na jouw zin T471-b); blok 10 starten (eenmanszaak, boekhouder) |
-| W46 | 9 nov | 1.6, 1.7, 1.8, 1.11, 1.12; fase 1 afronden |
-| W47 | 16 nov | 1.9, 2.1, 2.2, 2.10; datalane F1 |
-| W48 | 23 nov | 2.3, 2.4, 2.10, 2.11, 2.14 (Numbeo-besluit T471-a vooraf); LiteAPI-sleutel en Hostelworld-aanvraag klaar (T470-a); jij kijkt de 30 rating-verschillen na |
-| W49 | 30 nov | 2.4, 2.5, 2.11, 2.12, 2.14, 2.15; blok 7 starten (box) |
-| W50 | 7 dec | 2.6, 2.7 (datalane F2, F3, F7), 2.12, 2.13, 2.14, 2.15, 2.17; jij doet de steekproef van tien bestemmingsmaanden |
+| W43 | 19 okt | 1.2, 1.3, 1.3a, 1.10 (weerbericht); jouw besluiten T472-a tot c |
+| W44 | 26 okt | 1.3a, 1.3b, 1.3c, 1.4, 1.14 (kaartknop), 1.15 (navigatie), 1.16 (prijszin, meteen live); blok 4 en 5 (dump vóór 6 november) |
+| W45 | 2 nov | 1.5, 1.3d, 1.3e, 1.13 (positionering, na jouw zin T471-b), 1.17 (werkruimte); blok 10 starten (eenmanszaak, boekhouder) |
+| W46 | 9 nov | 1.6, 1.7, 1.8, 1.11, 1.12, 1.18 (prijsweergave); fase 1 afronden |
+| W47 | 16 nov | 1.9, 2.1, 2.2, 2.10, 2.18 (navigatie en pass live); datalane F1 |
+| W48 | 23 nov | 2.3, 2.4, 2.10, 2.11, 2.14 (Numbeo-besluit T471-a vooraf), 2.19 (opslaan zonder account); LiteAPI-sleutel en Hostelworld-aanvraag klaar (T470-a); jij kijkt de 30 rating-verschillen na |
+| W49 | 30 nov | 2.4, 2.5, 2.11, 2.12, 2.14, 2.15, 2.21 (prijsniveau); blok 7 starten (box) |
+| W50 | 7 dec | 2.6, 2.7 (datalane F2, F3, F7), 2.12, 2.13, 2.14, 2.15, 2.17, 2.20 (instellingen); jij doet de steekproef van tien bestemmingsmaanden |
 | W51 | 14 dec | 2.8, 2.9, 2.13, 2.16 (graaf op de box); fase 2 afronden; box klaar |
 | W52 | 21 dec | buffer (2.13 of 2.16 als die niet paste) |
 | W53 | 28 dec | buffer |
@@ -219,12 +265,12 @@ Twee of drie items per week. De status houd je bij in de fasetabellen; schuif hi
 | W6 | 8 feb | 3.7, 3.8, 3.9, 3.10; fase 3 afronden |
 | W7 | 15 feb | 4.1, 4.2, 4.9, 4.13 |
 | W8 | 22 feb | 4.3, 4.4, 4.10, 4.11, 4.14, 4.15, 4.16 |
-| W9 | 1 mrt | 4.5, 4.6, 4.11, 4.12, 4.15, 4.16, 4.17 |
-| W10 | 8 mrt | 4.7, 4.8, 4.12; fase 4 afronden |
-| W11 | 15 mrt | 5.1; 5.2 starten |
-| W12 | 22 mrt | 5.3 (launchdag uiterlijk 23 maart), 5.4 |
-| W13 | 29 mrt | 5.4; 5.2 |
-| W14 | 5 apr | 5.5, 5.6 |
+| W9 | 1 mrt | 4.5, 4.6, 4.11, 4.12, 4.15, 4.16, 4.17, 4.19 (dagdelen en tickets) |
+| W10 | 8 mrt | 4.7, 4.8, 4.12, 4.18 (één werkruimte) |
+| W11 | 15 mrt | 4.20 (schuiflade), 4.21 (lange trips), 4.8; fase 4 afronden |
+| W12 | 22 mrt | 5.1, 5.3 (launchdag uiterlijk 23 maart), 5.4; 5.2 starten |
+| W13 | 29 mrt | 5.1, 5.4, 5.11 (offline), 5.12 (delen zonder account; besluit T472-d vooraf); 5.2 |
+| W14 | 5 apr | 5.5, 5.6 (na 5.12), 5.12 |
 | W15 | 12 apr | 5.2; soft-launch-lijst klaar (uiterlijk 13 april) |
 | W16 | 19 apr | gates legal, payments, perf en uptime gehaald; regels van communities nalezen |
 | W17 | 26 apr | outreach versturen; go of no-go |
