@@ -51,7 +51,7 @@ Je hebt al veel: een ontwerpbrief per tab (T370 tot T379), één richtingsdocume
 | 1.7 | Voorpagina ontwerpen: de negen blokken uit het voorstel | Ontwerp goedgekeurd, cijfers nog voorlopig | W46 | Te doen |
 | 1.8 | Open ontwerpkeuzes beslissen: welke dagprijs elk scherm toont, hele euro's of centen, de eerste categorie van Destinations, de kleur van de ster | Elke keuze staat in DIRECTION.md | W46 | Te doen |
 | 1.9 | Telefoonproblemen die je nu ziet: hoofdknoppen onder de onderbalk, knoppen afgekapt op 380 px, de wizard die 48% van een Pixel 5 inneemt | Geen hoofdknop verborgen op iPhone 13 en Pixel 5 | W47 | Klaar in code (T468, 17 okt); check op een echte telefoon open (T468-a) |
-| 1.10 | Weerbericht herstellen: het 7-daagse weer wordt op productie geblokkeerd (de CSP mist `api.open-meteo.com`) en draait op een gratis licentie die geen commercieel gebruik toestaat; overstappen naar MET Norway via een eigen proxy ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 5) | Het weer staat op productie, met bron en tijdstip | W43 | Te doen |
+| 1.10 | Weerbericht herstellen: het 7-daagse weer wordt op productie geblokkeerd (de CSP mist `api.open-meteo.com`) en draait op een gratis licentie die geen commercieel gebruik toestaat; overstappen naar MET Norway (besloten 20 oktober) via een eigen proxy ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 5) | Het weer staat op productie, met bron en tijdstip | W43 | Te doen |
 | 1.11 | Ontwerp seizoen: één reden per maand op de kaart, de maandbalk (prijs en weer) met een slimme tip en één knop naar betere datums, de zonsondergang en het binnenfilter in de dagplanner ([seizoensplan](2.10-seizoen-rating-prijs.md), punten 1, 4 en 5) | Goedgekeurde schets op telefoon en desktop, kleuren uit carta-design | W46 | Te doen |
 
 Open vragen om zelf te onderzoeken:
@@ -77,15 +77,15 @@ Voor er meer inhoud bijkomt, moet wat je nu ziet kloppen, en krijgt elke bestemm
 | 2.7 | Ratings en buren opnieuw berekenen (datalane F3 en F7) | Strand-, meer-, berg-, trail- en fietspagina's tonen hun buren uit andere lagen | W50 | Te doen |
 | 2.8 | Kwaliteitsscore per item; "Report a problem" op elk item | Zwakke items blijven verborgen tot ze gefixt zijn | W51 | Te doen |
 | 2.9 | Voorpagina live met de cijfers en voorbeelden van nu (het ontwerp uit 1.7) | Nieuwe bezoekers zien de nieuwe voorpagina | W51 | Te doen |
-| 2.10 | Rating repareren vóór hij per maand mag bewegen: een UNESCO-geopark telt als nationaal park (Bochum 8,5 "Worth a detour", vlak onder Sevilla 8,6), scores schuiven nog bij elke nieuwe plaats, Rome en Parijs staan zeven keer in de top 15 (elk vliegveld een rij), de reden en "geschat" staan niet op de pagina; daarna een controle tegen externe ranglijsten ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 2) | 100 plaatsen erbij verschuift geen bestaande score; de 30 grootste verschillen met de externe lijsten door jou beoordeeld | W47 tot W48 | Te doen |
+| 2.10 | Rating repareren vóór hij per maand mag bewegen: een UNESCO-geopark telt als nationaal park (Bochum 8,5 "Worth a detour", vlak onder Sevilla 8,6), scores schuiven nog bij elke nieuwe plaats, Rome en Parijs staan zeven keer in de top 15 (elk vliegveld een rij), de reden en "geschat" staan niet op de pagina; daarna een controle tegen externe ranglijsten ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 2) | 100 plaatsen erbij verschuift geen bestaande score; de 30 grootste verschillen met de externe lijsten door Claude beoordeeld met bron en door jou nagekeken | W47 tot W48 | Te doen |
 | 2.11 | Seizoensfiche per bestemming: klimaat ververst (2001 tot 2025, nu 2001 tot 2020) en aangevuld met regendagen, zon, daglicht, zeewater en sneeuw; tijdzone; drukte per maand; sluitingen (veerboten, passen, hutten, liften, open aanbod), elk met een bron | Elke bestemming, ook een nieuwe, heeft per maand feiten en beperkingen met bron en datum | W48 tot W49 | Te doen |
-| 2.12 | Prijs per maand op elk scherm: de bon volgt de maand al, de kaart niet (Edinburgh ~€135 op de kaart, €182,61 op de bon); de seizoenscurve komt uit reviews in plaats van prijzen (augustus met de Fringe maar +5%), 3.251 plaatsen hebben geen eigen curve, de 284 prijzen per slaapsoort zijn testdata | Kaart, pin, pagina, bon en planner tonen dezelfde maandprijs; terugtest onder 15% fout; geen testdata in de wire | W49 tot W50 | Te doen |
-| 2.13 | Maandoordeel en maandscore met één menselijke zin waarom, uit vaste regels en de feiten van die plaats, in zes talen (geen AI bij het laden) | Van 60 bestemmingsmaanden klopt 90% met jouw oordeel | W50 tot W51 | Te doen |
+| 2.12 | Prijs per maand op elk scherm: de bon volgt de maand al, de kaart niet (Edinburgh ~€135 op de kaart, €182,61 op de bon); de seizoenscurve komt uit reviews in plaats van prijzen (augustus met de Fringe maar +5%), 3.251 plaatsen hebben geen eigen curve, de 284 prijzen per slaapsoort zijn testdata | Kaart, pin, pagina, bon en planner tonen dezelfde maandprijs uit echte, gratis gemeten tarieven (LiteAPI en Hostelworld, €0 per ronde); terugtest onder 15% fout; geen testdata in de wire | W49 tot W50 | Te doen |
+| 2.13 | Maandoordeel en maandscore met één menselijke zin waarom, uit vaste regels en de feiten van die plaats, in zes talen (geen AI bij het laden) | Van 60 bestemmingsmaanden (door Claude beoordeeld met twee bronnen, tien nagekeken door jou) klopt 90% | W50 tot W51 | Te doen |
+
+Besloten op 20 oktober (T470): weer van MET Norway; hotelprijzen alleen uit gratis, echte bronnen (jouw handstap: de LiteAPI-productiesleutel en de Hostelworld-aanvraag, T470-a, vóór W49); de kaart toont de maandscore en waarom; Claude doet de twee beoordelingen, jij kijkt ze na.
 
 Open vragen om zelf te onderzoeken:
 
-- Weerbron: MET Norway gratis via een eigen proxy, of Open-Meteo betaald (T469-a)? En de LiteAPI-productiesleutel voor maandprijzen (T469-b)?
-- Toont een kaart bij een gekozen maand de maandscore of de basisscore (T469-c)?
 - Wat is een bestemming: elke gemeente, of alleen plaatsen met verblijf? En is "in de buurt" een afstand of een aantal rijminuten?
 - Eén tabel met relaties of een graaf? Vergelijk met je Gemini-document.
 - Welke bron wint bij een conflict: OpenStreetMap, Wikidata of de officiële site?
@@ -132,7 +132,7 @@ Nu de inhoud klopt, gaat alles naar elkaar verwijzen en moeten de twee planners 
 | 4.6 | Explore en Destinations delen filters, kaarten en zoeken | Hetzelfde filter geeft hetzelfde resultaat in beide tabs | W9 | Te doen |
 | 4.7 | Voorpagina afwerken: elk blok linkt naar de echte item- en laagpagina's | Meer dan 60% van de nieuwe bezoekers klikt door | W10 | Te doen |
 | 4.8 | Snel op een telefoon: nu halen laadtijd en reactietijd (LCP en INP) de norm niet | Core Web Vitals groen op een middenklasse telefoon | W10 | Te doen |
-| 4.9 | Explore toont de maand: maandscore, dagprijs van die maand en de reden op kaart en lijst; "Best in October" zegt per plaats waarom | Cortina in november staat niet meer bij de besten, en de kaart zegt waarom | W7 | Te doen |
+| 4.9 | Explore toont de maand: maandscore, dagprijs van die maand en de reden op kaart en lijst (besloten 20 oktober: met een gekozen maand de maandscore en waarom); "Best in October" zegt per plaats waarom | Cortina in november staat niet meer bij de besten, en de kaart zegt waarom | W7 | Te doen |
 | 4.10 | Maandbalk met slimme tip op de bestemmingspagina en de bon: twaalf maanden prijs en weer, één uitgerekende zin, één knop die de datums verschuift (zelfde lengte, met Undo); nooit bij vastliggende datums ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 4) | Edinburgh in november toont de tip, de knop zet september en kan terug | W8 | Te doen |
 | 4.11 | Dagplanner: zonsondergang als lijn in de dag, een melding bij buiten na donker, een binnenfilter bij regen; de AI-dagplanner krijgt het uur van zonsondergang mee | Een novemberdag in Edinburgh met een wandeling na 16:09 krijgt de melding | W8 tot W9 | Te doen |
 | 4.12 | Weer dat je kunt vertrouwen: bron en tijd bij elk getal, zekerheid in woorden, verversen op de dag zelf, na 10 dagen alleen "usually", en de nauwkeurigheid gemeten tegen de waarnemingen ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 5) | Regen ja of nee voor morgen minstens 80% juist, en dat cijfer staat op de cijferpagina | W9 tot W10 | Te doen |
@@ -190,9 +190,9 @@ Twee of drie items per week. De status houd je bij in de fasetabellen; schuif hi
 | W45 | 2 nov | 1.5, 1.3d, 1.3e; blok 10 starten (eenmanszaak, boekhouder) |
 | W46 | 9 nov | 1.6, 1.7, 1.8, 1.11; fase 1 afronden |
 | W47 | 16 nov | 1.9, 2.1, 2.2, 2.10; datalane F1 |
-| W48 | 23 nov | 2.3, 2.4, 2.10, 2.11; jij beoordeelt de 30 rating-verschillen |
+| W48 | 23 nov | 2.3, 2.4, 2.10, 2.11; LiteAPI-sleutel en Hostelworld-aanvraag klaar (T470-a); jij kijkt de 30 rating-verschillen na |
 | W49 | 30 nov | 2.4, 2.5, 2.11, 2.12; blok 7 starten (box) |
-| W50 | 7 dec | 2.6, 2.7 (datalane F2, F3, F7), 2.12, 2.13; jij beoordeelt de 60 bestemmingsmaanden |
+| W50 | 7 dec | 2.6, 2.7 (datalane F2, F3, F7), 2.12, 2.13; jij doet de steekproef van tien bestemmingsmaanden |
 | W51 | 14 dec | 2.8, 2.9, 2.13; fase 2 afronden; box klaar |
 | W52 | 21 dec | buffer (2.13 als die niet paste) |
 | W53 | 28 dec | buffer |

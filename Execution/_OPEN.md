@@ -1,7 +1,7 @@
 ﻿# Open items register
 
-One row per open item, appended when a task writes its report. The rule is in
-CLAUDE.md under "Every open item also goes into the register". The row is a
+One row per closed by T470 item, appended when a task writes its report. The rule is in
+CLAUDE.md under "Every closed by T470 item also goes into the register". The row is a
 pointer; the reasoning stays in the task's report. Rows are never deleted, only
 marked closed. `Order` is filled only when sequence matters; the ordered
 procedure for the Stripe launch is in `P2/_OPEN-stripe-launch.md`, and the one
@@ -11,11 +11,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 
 | ID | Raised by | Item | Owner | Status | Order |
 |---|---|---|---|---|---|
-| T030-a | T030 | Verify or create the two Stripe Prices: 699 and 1499 EUR, one_time, eur, note the ids and the mode; attach Dashboard screenshots | user | open | 1 |
-| T030-b | T030 | Set STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR as Supabase secrets, then deploy checkout and stripe-webhook (webhook with --no-verify-jwt) | user | open | 4 |
+| T030-a | T030 | Verify or create the two Stripe Prices: 699 and 1499 EUR, one_time, eur, note the ids and the mode; attach Dashboard screenshots | user | closed by T470 | 1 |
+| T030-b | T030 | Set STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR as Supabase secrets, then deploy checkout and stripe-webhook (webhook with --no-verify-jwt) | user | closed by T470 | 4 |
 | T030-c | T030 | The 007 header claims the pricing UI reads plan_tiers; it does not, PassModal renders TIERS from pricing.js. Fetch the table or drop the claim and add a drift check | next task | closed by T265 | |
 | T030-d | T030 | Re-running the 007 insert as written resets the free tier to 3 plans and undoes 021; fix the free row before any re-run | next task | closed by T265 | |
-| T031-a | T031 | Make the real test purchases per supabase/functions/checkout/test_purchase_e2e.md on fresh accounts, never the owner account | user | open | 6 |
+| T031-a | T031 | Make the real test purchases per supabase/functions/checkout/test_purchase_e2e.md on fresh accounts, never the owner account | user | closed by T470 | 6 |
 | T031-b | T031 | grant_pass sets tier unconditionally, so a Year holder buying a Trip Pass is downgraded; three candidate fixes in the report, needs a migration | next task | closed by T265 | |
 | T031-c | T031 | entitlements.expires_at can be extended without limit by repeated purchases; grant_pass caps nothing | next task | closed by T265 | |
 | T031-d | T031 | Migration 018 line 93 regex bound {5,600} exceeds the Postgres cap of 255 and breaks supabase start locally; use {5,255} | next task | closed by T253 | |
@@ -1649,3 +1649,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T469-g | T469 | Rating repairs before month variation: geopark counted as national park (Bochum 8.5, Witten 8.0), zlog cohort stats unfrozen, fallback coefficients refit each run, airport duplicate rows, spread gate failing, no reason or confidence on the page; roadmap 2.10 | next task | open | 2 |
 | T469-h | T469 | Pricing truth: 284 fixture stay-tier rows in the public wire, 286 hand-typed inside_airbnb_city rows labelled measured, two summer curves (receipt 1.35, planner DEFAULT_ACCOM_MODEL 1.25), Explore card ignores the month; roadmap 2.12 | next task | open | |
 | T469-i | T469 | Stale text: en.js:2341 says 30 years of climate normals (data is 2001-2020), runtime_pricing.js:327 and priceMonths.js:5 say the season curve comes from calendar.csv (it is reviews.csv); fold into 2.11 and 2.12 | next task | open | |
+| T470-a | T470 | Owner step before W49 for roadmap 2.12: create the LiteAPI production key (card verification, no charge, low-limit virtual card) and apply for the Hostelworld partner programme (Partnerize, needs the live site URL); only free endpoints are used | user | open | 1 |
+| T470-b | T470 | harvest_climate_power.py still calls the Open-Meteo elevation API (non-commercial tier); move the lapse correction to Copernicus DEM or Mapterhorn terrain tiles in roadmap 2.11 | next task | open | |
