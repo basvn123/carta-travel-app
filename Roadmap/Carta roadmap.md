@@ -51,6 +51,8 @@ Je hebt al veel: een ontwerpbrief per tab (T370 tot T379), één richtingsdocume
 | 1.7 | Voorpagina ontwerpen: de negen blokken uit het voorstel | Ontwerp goedgekeurd, cijfers nog voorlopig | W46 | Te doen |
 | 1.8 | Open ontwerpkeuzes beslissen: welke dagprijs elk scherm toont, hele euro's of centen, de eerste categorie van Destinations, de kleur van de ster | Elke keuze staat in DIRECTION.md | W46 | Te doen |
 | 1.9 | Telefoonproblemen die je nu ziet: hoofdknoppen onder de onderbalk, knoppen afgekapt op 380 px, de wizard die 48% van een Pixel 5 inneemt | Geen hoofdknop verborgen op iPhone 13 en Pixel 5 | W47 | Klaar in code (T468, 17 okt); check op een echte telefoon open (T468-a) |
+| 1.10 | Weerbericht herstellen: het 7-daagse weer wordt op productie geblokkeerd (de CSP mist `api.open-meteo.com`) en draait op een gratis licentie die geen commercieel gebruik toestaat; overstappen naar MET Norway via een eigen proxy ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 5) | Het weer staat op productie, met bron en tijdstip | W43 | Te doen |
+| 1.11 | Ontwerp seizoen: één reden per maand op de kaart, de maandbalk (prijs en weer) met een slimme tip en één knop naar betere datums, de zonsondergang en het binnenfilter in de dagplanner ([seizoensplan](2.10-seizoen-rating-prijs.md), punten 1, 4 en 5) | Goedgekeurde schets op telefoon en desktop, kleuren uit carta-design | W46 | Te doen |
 
 Open vragen om zelf te onderzoeken:
 
@@ -62,7 +64,7 @@ Open vragen om zelf te onderzoeken:
 
 *16 november tot 20 december*
 
-Voor er meer inhoud bijkomt, moet wat je nu ziet kloppen, en krijgt elke bestemming een vaste structuur waar de rest aan hangt.
+Voor er meer inhoud bijkomt, moet wat je nu ziet kloppen, en krijgt elke bestemming een vaste structuur waar de rest aan hangt. Daar hoort sinds 20 oktober ook het seizoen bij: per maand wat een plek waard is, wat het kost en waarom (2.10 tot 2.13, uitgewerkt in het [seizoensplan](2.10-seizoen-rating-prijs.md)). Die vier zijn vooral pipeline-werk in de datalane; jouw tijd gaat naar twee beoordelingen.
 
 | # | Wat | Klaar als | Week | Status |
 | --- | --- | --- | --- | --- |
@@ -75,9 +77,15 @@ Voor er meer inhoud bijkomt, moet wat je nu ziet kloppen, en krijgt elke bestemm
 | 2.7 | Ratings en buren opnieuw berekenen (datalane F3 en F7) | Strand-, meer-, berg-, trail- en fietspagina's tonen hun buren uit andere lagen | W50 | Te doen |
 | 2.8 | Kwaliteitsscore per item; "Report a problem" op elk item | Zwakke items blijven verborgen tot ze gefixt zijn | W51 | Te doen |
 | 2.9 | Voorpagina live met de cijfers en voorbeelden van nu (het ontwerp uit 1.7) | Nieuwe bezoekers zien de nieuwe voorpagina | W51 | Te doen |
+| 2.10 | Rating repareren vóór hij per maand mag bewegen: een UNESCO-geopark telt als nationaal park (Bochum 8,5 "Worth a detour", vlak onder Sevilla 8,6), scores schuiven nog bij elke nieuwe plaats, Rome en Parijs staan zeven keer in de top 15 (elk vliegveld een rij), de reden en "geschat" staan niet op de pagina; daarna een controle tegen externe ranglijsten ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 2) | 100 plaatsen erbij verschuift geen bestaande score; de 30 grootste verschillen met de externe lijsten door jou beoordeeld | W47 tot W48 | Te doen |
+| 2.11 | Seizoensfiche per bestemming: klimaat ververst (2001 tot 2025, nu 2001 tot 2020) en aangevuld met regendagen, zon, daglicht, zeewater en sneeuw; tijdzone; drukte per maand; sluitingen (veerboten, passen, hutten, liften, open aanbod), elk met een bron | Elke bestemming, ook een nieuwe, heeft per maand feiten en beperkingen met bron en datum | W48 tot W49 | Te doen |
+| 2.12 | Prijs per maand op elk scherm: de bon volgt de maand al, de kaart niet (Edinburgh ~€135 op de kaart, €182,61 op de bon); de seizoenscurve komt uit reviews in plaats van prijzen (augustus met de Fringe maar +5%), 3.251 plaatsen hebben geen eigen curve, de 284 prijzen per slaapsoort zijn testdata | Kaart, pin, pagina, bon en planner tonen dezelfde maandprijs; terugtest onder 15% fout; geen testdata in de wire | W49 tot W50 | Te doen |
+| 2.13 | Maandoordeel en maandscore met één menselijke zin waarom, uit vaste regels en de feiten van die plaats, in zes talen (geen AI bij het laden) | Van 60 bestemmingsmaanden klopt 90% met jouw oordeel | W50 tot W51 | Te doen |
 
 Open vragen om zelf te onderzoeken:
 
+- Weerbron: MET Norway gratis via een eigen proxy, of Open-Meteo betaald (T469-a)? En de LiteAPI-productiesleutel voor maandprijzen (T469-b)?
+- Toont een kaart bij een gekozen maand de maandscore of de basisscore (T469-c)?
 - Wat is een bestemming: elke gemeente, of alleen plaatsen met verblijf? En is "in de buurt" een afstand of een aantal rijminuten?
 - Eén tabel met relaties of een graaf? Vergelijk met je Gemini-document.
 - Welke bron wint bij een conflict: OpenStreetMap, Wikidata of de officiële site?
@@ -100,6 +108,7 @@ Begin binnen Italië met één regio, bijvoorbeeld Trentino-Alto Adige: daar zit
 | 3.6 | Trips: elke stijl aanwezig in Italië | Tien stijlen, minstens twee trips per stijl | W5 | Te doen |
 | 3.7 | Zoekproef in gewone taal (RAG) op Italië, zoals "rustigste dorpjes binnen 45 minuten rijden van Bolzano" | Twintig testvragen met een juist antwoord en een bron | W5 tot W6 | Te doen |
 | 3.8 | Het recept opschrijven: wat werkte en wat tijd kostte | Een checklist die je op het volgende land kunt toepassen | W6 | Te doen |
+| 3.9 | Seizoen in Italië nakijken: maandoordelen, sluitingen en maandprijzen tegen lokale bronnen (Dolomieten in november, de eilanden in de winter, Sicilië in augustus) | Elke Italiaanse sluiting heeft een bron en een datum; de maandprijzen van tien steden binnen 15% van een echte zoekopdracht | W5 tot W6 | Te doen |
 
 Open vragen om zelf te onderzoeken:
 
@@ -118,11 +127,15 @@ Nu de inhoud klopt, gaat alles naar elkaar verwijzen en moeten de twee planners 
 | 4.1 | Elk item verwijst naar zijn bestemming en omgekeerd; de overzichtstab uit 1.4 met echte data | Van elke pagina kom je in één tik bij alles in de buurt | W7 | Te doen |
 | 4.2 | "Voeg toe aan trip" op elk item; bewaarde lijsten per soort item | Een strand, berg of trail komt met één tik in je trip | W7 | Te doen |
 | 4.3 | Tripplanner: de gekozen stijl filtert de routes, stops zijn steden (geen "Rome (Fiumicino)"), de prijs komt van de basisstad, "Plan a trip here" houdt stad en datums | Trail running in Italië geeft trail-running-trips | W8 | Te doen |
-| 4.4 | Dagplanner: suggesties uit de lagen, het juiste seizoen, echte rijtijden | Een oktoberdag rond Chamonix zonder skiën of pleinen | W8 | Te doen |
+| 4.4 | Dagplanner: suggesties uit de lagen, het juiste seizoen (uit de seizoensfiche van 2.11), echte rijtijden | Een oktoberdag rond Chamonix zonder skiën of pleinen | W8 | Te doen |
 | 4.5 | Beide planners controleren op tien voorbeeldtrips | Elk getal van de tien trips nagekeken | W9 | Te doen |
 | 4.6 | Explore en Destinations delen filters, kaarten en zoeken | Hetzelfde filter geeft hetzelfde resultaat in beide tabs | W9 | Te doen |
 | 4.7 | Voorpagina afwerken: elk blok linkt naar de echte item- en laagpagina's | Meer dan 60% van de nieuwe bezoekers klikt door | W10 | Te doen |
 | 4.8 | Snel op een telefoon: nu halen laadtijd en reactietijd (LCP en INP) de norm niet | Core Web Vitals groen op een middenklasse telefoon | W10 | Te doen |
+| 4.9 | Explore toont de maand: maandscore, dagprijs van die maand en de reden op kaart en lijst; "Best in October" zegt per plaats waarom | Cortina in november staat niet meer bij de besten, en de kaart zegt waarom | W7 | Te doen |
+| 4.10 | Maandbalk met slimme tip op de bestemmingspagina en de bon: twaalf maanden prijs en weer, één uitgerekende zin, één knop die de datums verschuift (zelfde lengte, met Undo); nooit bij vastliggende datums ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 4) | Edinburgh in november toont de tip, de knop zet september en kan terug | W8 | Te doen |
+| 4.11 | Dagplanner: zonsondergang als lijn in de dag, een melding bij buiten na donker, een binnenfilter bij regen; de AI-dagplanner krijgt het uur van zonsondergang mee | Een novemberdag in Edinburgh met een wandeling na 16:09 krijgt de melding | W8 tot W9 | Te doen |
+| 4.12 | Weer dat je kunt vertrouwen: bron en tijd bij elk getal, zekerheid in woorden, verversen op de dag zelf, na 10 dagen alleen "usually", en de nauwkeurigheid gemeten tegen de waarnemingen ([seizoensplan](2.10-seizoen-rating-prijs.md), punt 5) | Regen ja of nee voor morgen minstens 80% juist, en dat cijfer staat op de cijferpagina | W9 tot W10 | Te doen |
 
 Open vragen om zelf te onderzoeken:
 
@@ -172,27 +185,27 @@ Twee of drie items per week. De status houd je bij in de fasetabellen; schuif hi
 | Week | Maandag | Focus |
 | --- | --- | --- |
 | W42 | 12 okt 2026 | 1.1; blok 1, 2 en 3 |
-| W43 | 19 okt | 1.2, 1.3, 1.3a |
+| W43 | 19 okt | 1.2, 1.3, 1.3a, 1.10 (weerbericht) |
 | W44 | 26 okt | 1.3b, 1.3c, 1.4; blok 4 en 5 (dump vóór 6 november) |
 | W45 | 2 nov | 1.5, 1.3d, 1.3e; blok 10 starten (eenmanszaak, boekhouder) |
-| W46 | 9 nov | 1.6, 1.7, 1.8; fase 1 afronden |
-| W47 | 16 nov | 1.9, 2.1, 2.2; datalane F1 |
-| W48 | 23 nov | 2.3, 2.4 |
-| W49 | 30 nov | 2.4, 2.5; blok 7 starten (box) |
-| W50 | 7 dec | 2.6, 2.7 (datalane F2, F3, F7) |
-| W51 | 14 dec | 2.8, 2.9; fase 2 afronden; box klaar |
-| W52 | 21 dec | buffer |
+| W46 | 9 nov | 1.6, 1.7, 1.8, 1.11; fase 1 afronden |
+| W47 | 16 nov | 1.9, 2.1, 2.2, 2.10; datalane F1 |
+| W48 | 23 nov | 2.3, 2.4, 2.10, 2.11; jij beoordeelt de 30 rating-verschillen |
+| W49 | 30 nov | 2.4, 2.5, 2.11, 2.12; blok 7 starten (box) |
+| W50 | 7 dec | 2.6, 2.7 (datalane F2, F3, F7), 2.12, 2.13; jij beoordeelt de 60 bestemmingsmaanden |
+| W51 | 14 dec | 2.8, 2.9, 2.13; fase 2 afronden; box klaar |
+| W52 | 21 dec | buffer (2.13 als die niet paste) |
 | W53 | 28 dec | buffer |
 | W1 | 4 jan 2027 | 3.1, 3.2 |
 | W2 | 11 jan | 3.3 |
 | W3 | 18 jan | 3.3, 3.4 |
 | W4 | 25 jan | 3.4, 3.5; blok 9 starten |
-| W5 | 1 feb | 3.6, 3.7 |
-| W6 | 8 feb | 3.7, 3.8; fase 3 afronden |
-| W7 | 15 feb | 4.1, 4.2 |
-| W8 | 22 feb | 4.3, 4.4 |
-| W9 | 1 mrt | 4.5, 4.6 |
-| W10 | 8 mrt | 4.7, 4.8; fase 4 afronden |
+| W5 | 1 feb | 3.6, 3.7, 3.9 |
+| W6 | 8 feb | 3.7, 3.8, 3.9; fase 3 afronden |
+| W7 | 15 feb | 4.1, 4.2, 4.9 |
+| W8 | 22 feb | 4.3, 4.4, 4.10, 4.11 |
+| W9 | 1 mrt | 4.5, 4.6, 4.11, 4.12 |
+| W10 | 8 mrt | 4.7, 4.8, 4.12; fase 4 afronden |
 | W11 | 15 mrt | 5.1; 5.2 starten |
 | W12 | 22 mrt | 5.3 (launchdag uiterlijk 23 maart), 5.4 |
 | W13 | 29 mrt | 5.4; 5.2 |
