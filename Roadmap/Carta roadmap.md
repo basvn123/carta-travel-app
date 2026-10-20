@@ -30,9 +30,6 @@ Vier plannen werken de rijen uit; de roadmap zegt wat en wanneer, het plan zegt 
 
 | Besluit | Vraag | Voorstel | Nodig vóór |
 | --- | --- | --- | --- |
-| T472-a | Drie plekken in de navigatie (Explore, Plan, My trips) plus account; Destinations en Explore samen | Ja | W44 (1.15) |
-| T472-b | De naam van de pass | "Trip Pass" houden, nooit "Get a pass" alleen | W44 (1.15) |
-| T472-c | Een trip bewaren zonder account, op het toestel | Ja | W44 (1.15) |
 | T471-b | De één-zin voor kosten plus logistiek | Een van de drie opties in het plan | W45 (1.13) |
 | T472-f | Hoofdacties op de telefoon 48 px | Ja in planners en onderbalk | W45 (1.17) |
 | T472-g | Dagdelen boven de klok | Boven de klok | W45 (1.17) |
@@ -42,6 +39,8 @@ Vier plannen werken de rijen uit; de roadmap zegt wat en wanneer, het plan zegt 
 | T471-d | MOTIS op de Hetzner-box | Ja, eerst Italië, Oostenrijk en Zwitserland | W51 (2.16) |
 | T471-c | Alternatieven over de grens | Ja voor Europa, nee voor dichtbij | W7 (4.13) |
 | T472-d | Delen en samen bewerken gratis | Ja; de pass houdt export, trips en AI | W13 (5.12, vóór 5.6) |
+
+Besloten op 20 oktober (T473): drie plekken in de navigatie (Explore met Destinations erin, Plan, My trips) plus een accounticoon (T472-a); de pass heet Trip Pass en een knop zegt nooit "Get a pass" alleen (T472-b); de eerste trip bewaart op het toestel zonder account (T472-c).
 
 ## Overzicht
 
@@ -88,7 +87,7 @@ Je hebt al veel: een ontwerpbrief per tab (T370 tot T379), één richtingsdocume
 | 1.12 | Ontwerp kosten en logistiek: het blok "Not quite right?" met goedkopere alternatieven, "Sleep nearby and save", het Lifestyle-paneel als bon per regel, een rit met tijd en kosten samen, de kaartknop bovenaan de dag ([kosten en logistiek](2.14-kosten-en-logistiek.md), punten 1, 2, 3, 6 en 7) | Goedgekeurde schets op telefoon en desktop, kleuren uit carta-design | W46 | Te doen |
 | 1.13 | Positionering vastleggen: "wat de trip kost en hoe je er komt, in één plan" en "Carta navigeert nooit, je kaartapp brengt je er", in PRODUCT.md, carta-design, de voorpagina, de FAQ en de oude documenten die nog zeggen dat Carta vluchten prijst ([kosten en logistiek](2.14-kosten-en-logistiek.md), punt 4; jouw zin, T471-b) | Elk bestand uit de lijst in punt 4 zegt hetzelfde; geen document zegt nog dat Carta de vlucht prijst | W45 | Te doen |
 | 1.14 | Kaartknop herstellen: Google Maps staat in een mobiele browser maar 3 tussenstops toe en de app stuurt er tot 9; de knop naar boven als "Open Day 2 in Google Maps", in stukken op een telefoon, Apple Maps op een iPhone ([kosten en logistiek](2.14-kosten-en-logistiek.md), punt 7) | Een dag met 8 stops opent volledig op een iPhone en een Pixel, in Google Maps en in Apple Maps | W44 | Te doen |
-| 1.15 | Ontwerp navigatie: drie plekken (Explore met Destinations erin, Plan met trip en dag, My trips) en een accounticoon; "Get a pass" uit de kop, de pass alleen op het moment dat je iets betaalds aantikt, in Account en op de prijzenpagina; één zin over wat gratis is ("Planning is free. A Trip Pass adds exports, more saved trips and more AI plans."), nooit "100% free" ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 1 en 2; besluiten T472-a tot c) | Goedgekeurde schets op telefoon en desktop; elke betaalde actie heeft haar passblad; de zin staat in carta-design | W44 | Te doen |
+| 1.15 | Ontwerp navigatie: drie plekken (Explore met Destinations erin, Plan met trip en dag, My trips) en een accounticoon (besloten 20 oktober, T473); "Get a pass" uit de kop, de pass alleen op het moment dat je iets betaalds aantikt, in Account en op de prijzenpagina; één zin over wat gratis is ("Planning is free. A Trip Pass adds exports, more saved trips and more AI plans."), nooit "100% free" ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 1 en 2; besloten T472-a tot c, T473) | Goedgekeurde schets op telefoon en desktop; elke betaalde actie heeft haar passblad; de zin staat in carta-design | W44 | Te doen |
 | 1.16 | Wat de prijs bevat, in één zin overal: de voorpagina en de FAQ zeggen nu "local transport" en de bestemmingspagina zegt dat het er niet in zit, terwijl de som bed plus eten is; zes talen, PRODUCT.md en carta-design gelijk; plus de tekst die aan elkaar plakt (wizard-landkaart, getallen buiten de vertaalsleutel) en de dode oude bon ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 4 en 6) | Geen scherm of document zegt dat lokaal vervoer in de dagprijs zit, tot 2.14 die regel bouwt; een schermlezer leest "Italy, from about 87 euros" | W44 | Te doen |
 | 1.17 | Ontwerp één werkruimte voor trip en dag: de dag klapt open in de trip met stad en datum ingevuld, desktop route of dag links en kaart rechts met een vaste kostenbalk, telefoon kaart met een schuiflade in drie standen, ochtend, middag en avond boven de klok, tikken in plaats van slepen, 48 px voor de hoofdacties ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 7 en 8; besluiten T472-f en g) | Goedgekeurde schets op telefoon en desktop, samen met 1.3c en 1.3d | W45 | Te doen |
 | 1.18 | Prijsweergave vastleggen: één teken per prijs (`~€43 est.` of niets), het niveau één keer op de bon (stad of land), bron en datum in de uitklap, geen bandbreedtes op kaarten, de buffer als regel van de reiziger ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 4 en 5; besluit T472-e) | De regel staat in carta-design en DIRECTION.md, met 1.8 | W46 | Te doen |
@@ -125,7 +124,7 @@ Voor er meer inhoud bijkomt, moet wat je nu ziet kloppen, en krijgt elke bestemm
 | 2.16 | De graaf tussen bestemmingen: rijtijd (Valhalla) en trein- en busverbinding (MOTIS met open dienstregelingen) op de box, plus het gelijkenisprofiel `alike` (top 20 per bestemming) ([kosten en logistiek](2.14-kosten-en-logistiek.md), punten 1 en 6) | Elke bestemming kent haar buren binnen 2 uur met tijd, manier en verbinding; een nieuwe plaats krijgt ze vanzelf | W51 | Te doen |
 | 2.17 | Kinderen en kinderwagen als data: rolstoel, speeltuin, verschoontafel, trappen en oppervlak uit OSM op de POI's, plus een tabel per soort plaats | Elke POI-soort heeft een waarde voor kinderen en voor stapvrij, met bron | W50 | Te doen |
 | 2.18 | Navigatie en pass live volgens 1.15: drie plekken en account, "Get a pass" uit de kop, het passblad op elk betaald moment, de zin over gratis op voorpagina, FAQ en passcherm; oude links (`?tab=destinations`, `?tab=map`, `#trip=`, `#coplan=`) leiden naar de nieuwe plek ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punten 1 en 2) | Op een iPhone en een Pixel: drie plekken plus account, geen pass in de kop, elke oude link opent de juiste plek | W47 | Te doen |
-| 2.19 | Opslaan zonder account: de eerste trip bewaart op het toestel ("Saved on this device"); inloggen pas bij een tweede toestel, samen bewerken of een tweede trip ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 2; besluit T472-c) | Een nieuwe bezoeker bewaart een trip zonder inlogscherm en vindt hem na herladen terug in My trips | W48 | Te doen |
+| 2.19 | Opslaan zonder account: de eerste trip bewaart op het toestel ("Saved on this device"); inloggen pas bij een tweede toestel, samen bewerken of een tweede trip ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 2; besloten T472-c, T473) | Een nieuwe bezoeker bewaart een trip zonder inlogscherm en vindt hem na herladen terug in My trips | W48 | Te doen |
 | 2.20 | Instellingen sturen elk getal: de balk toont de standaard als zin ("Prices for 14 to 21 Nov, 2 people"), duur apart te kiezen, groepsgrootte verandert de kaartprijs, een maandrail toont de prijs van die maand ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 3) | Datums, personen of Lifestyle wijzigen op Explore verandert kaart, pin, pagina, bon en planner naar hetzelfde bedrag; "Best in October" toont oktoberprijzen | W50 | Te doen |
 | 2.21 | Prijsniveau eerlijk in de data: elk bed- en eetgetal draagt zijn niveau (eigen meting, geleend van een stad, land) met bron en datum; geen vulwaarden (Moldavië, Roemenië, Kosovo en Albanië staan alle vier op exact €48 per nacht) ([navigatie en pass](1.15-navigatie-pass-prijsweergave.md), punt 5) | Geen twee landen delen een landprijs zonder bron; elke bonregel noemt haar niveau | W49 | Te doen |
 
@@ -246,7 +245,7 @@ Twee of drie items per week. De status houd je bij in de fasetabellen; schuif hi
 | Week | Maandag | Focus |
 | --- | --- | --- |
 | W42 | 12 okt 2026 | 1.1; blok 1, 2 en 3 |
-| W43 | 19 okt | 1.2, 1.3, 1.3a, 1.10 (weerbericht); jouw besluiten T472-a tot c |
+| W43 | 19 okt | 1.2, 1.3, 1.3a, 1.10 (weerbericht) |
 | W44 | 26 okt | 1.3a, 1.3b, 1.3c, 1.4, 1.14 (kaartknop), 1.15 (navigatie), 1.16 (prijszin, meteen live); blok 4 en 5 (dump vóór 6 november) |
 | W45 | 2 nov | 1.5, 1.3d, 1.3e, 1.13 (positionering, na jouw zin T471-b), 1.17 (werkruimte); blok 10 starten (eenmanszaak, boekhouder) |
 | W46 | 9 nov | 1.6, 1.7, 1.8, 1.11, 1.12, 1.18 (prijsweergave); fase 1 afronden |
