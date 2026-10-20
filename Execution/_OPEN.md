@@ -1,7 +1,7 @@
 ﻿# Open items register
 
-One row per closed by T470 item, appended when a task writes its report. The rule is in
-CLAUDE.md under "Every closed by T470 item also goes into the register". The row is a
+One row per open item, appended when a task writes its report. The rule is in
+CLAUDE.md under "Every open item also goes into the register". The row is a
 pointer; the reasoning stays in the task's report. Rows are never deleted, only
 marked closed. `Order` is filled only when sequence matters; the ordered
 procedure for the Stripe launch is in `P2/_OPEN-stripe-launch.md`, and the one
@@ -11,11 +11,11 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 
 | ID | Raised by | Item | Owner | Status | Order |
 |---|---|---|---|---|---|
-| T030-a | T030 | Verify or create the two Stripe Prices: 699 and 1499 EUR, one_time, eur, note the ids and the mode; attach Dashboard screenshots | user | closed by T470 | 1 |
-| T030-b | T030 | Set STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR as Supabase secrets, then deploy checkout and stripe-webhook (webhook with --no-verify-jwt) | user | closed by T470 | 4 |
+| T030-a | T030 | Verify or create the two Stripe Prices: 699 and 1499 EUR, one_time, eur, note the ids and the mode; attach Dashboard screenshots | user | open | 1 |
+| T030-b | T030 | Set STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR as Supabase secrets, then deploy checkout and stripe-webhook (webhook with --no-verify-jwt) | user | open | 4 |
 | T030-c | T030 | The 007 header claims the pricing UI reads plan_tiers; it does not, PassModal renders TIERS from pricing.js. Fetch the table or drop the claim and add a drift check | next task | closed by T265 | |
 | T030-d | T030 | Re-running the 007 insert as written resets the free tier to 3 plans and undoes 021; fix the free row before any re-run | next task | closed by T265 | |
-| T031-a | T031 | Make the real test purchases per supabase/functions/checkout/test_purchase_e2e.md on fresh accounts, never the owner account | user | closed by T470 | 6 |
+| T031-a | T031 | Make the real test purchases per supabase/functions/checkout/test_purchase_e2e.md on fresh accounts, never the owner account | user | open | 6 |
 | T031-b | T031 | grant_pass sets tier unconditionally, so a Year holder buying a Trip Pass is downgraded; three candidate fixes in the report, needs a migration | next task | closed by T265 | |
 | T031-c | T031 | entitlements.expires_at can be extended without limit by repeated purchases; grant_pass caps nothing | next task | closed by T265 | |
 | T031-d | T031 | Migration 018 line 93 regex bound {5,600} exceeds the Postgres cap of 255 and breaks supabase start locally; use {5,255} | next task | closed by T253 | |
@@ -1640,14 +1640,24 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T435-g | T435 | z-index has no token layer in use: 48 distinct values, 150 literal uses, 6 through a variable | next task | open | |
 | T435-h | T435 | P3 consistency tails: pill search and sort controls beside 10 px selects, the My trips statement pill, Explore phone sort row and floating List/Map control, trail section rail mark, uppercase bathing-site names, retired names in CSS comments | next task | open | |
 | T435-i | T435 | Owner call: map pins show the tilde alone (~€83, T441) while carta-design asks for ~€83 est. everywhere; confirm the exception or extend the pins | user | open | |
-| T469-a | T469 | Owner call: forecast source for roadmap 1.10, MET Norway free through an own caching proxy (recommended) or paid Open-Meteo; the live forecast is blocked by the CSP and on a non-commercial licence today | user | open | 1 |
-| T469-b | T469 | Owner call: LiteAPI production key (card verification, no charge) so monthly bed prices can be measured for roadmap 2.12, and whether to buy /pricing/index (about $33 per 665-city sweep) | user | open | |
-| T469-c | T469 | Owner call: with a month chosen, does a card show the month score or the base score (roadmap 2.13 and 4.9) | user | open | |
-| T469-d | T469 | Owner review: judge the 30 largest disagreements between Carta top 200 and the external reference rankings, after the 2.10 repairs | user | open | 3 |
-| T469-e | T469 | Owner review: judge the golden set of 60 destination-months that calibrates the month score (roadmap 2.13) | user | open | 4 |
+| T469-a | T469 | Owner call: forecast source for roadmap 1.10, MET Norway free through an own caching proxy (recommended) or paid Open-Meteo; the live forecast is blocked by the CSP and on a non-commercial licence today | user | closed by T470 | 1 |
+| T469-b | T469 | Owner call: LiteAPI production key (card verification, no charge) so monthly bed prices can be measured for roadmap 2.12, and whether to buy /pricing/index (about $33 per 665-city sweep) | user | closed by T470 | |
+| T469-c | T469 | Owner call: with a month chosen, does a card show the month score or the base score (roadmap 2.13 and 4.9) | user | closed by T470 | |
+| T469-d | T469 | Owner review: judge the 30 largest disagreements between Carta top 200 and the external reference rankings, after the 2.10 repairs | user | closed by T470 | 3 |
+| T469-e | T469 | Owner review: judge the golden set of 60 destination-months that calibrates the month score (roadmap 2.13) | user | closed by T470 | 4 |
 | T469-f | T469 | Production forecast broken: api.open-meteo.com missing from connect-src in public/_headers and vercel.json, smoke filters the error as noise, licence non-commercial; roadmap 1.10 | next task | open | 2 |
 | T469-g | T469 | Rating repairs before month variation: geopark counted as national park (Bochum 8.5, Witten 8.0), zlog cohort stats unfrozen, fallback coefficients refit each run, airport duplicate rows, spread gate failing, no reason or confidence on the page; roadmap 2.10 | next task | open | 2 |
 | T469-h | T469 | Pricing truth: 284 fixture stay-tier rows in the public wire, 286 hand-typed inside_airbnb_city rows labelled measured, two summer curves (receipt 1.35, planner DEFAULT_ACCOM_MODEL 1.25), Explore card ignores the month; roadmap 2.12 | next task | open | |
 | T469-i | T469 | Stale text: en.js:2341 says 30 years of climate normals (data is 2001-2020), runtime_pricing.js:327 and priceMonths.js:5 say the season curve comes from calendar.csv (it is reviews.csv); fold into 2.11 and 2.12 | next task | open | |
 | T470-a | T470 | Owner step before W49 for roadmap 2.12: create the LiteAPI production key (card verification, no charge, low-limit virtual card) and apply for the Hostelworld partner programme (Partnerize, needs the live site URL); only free endpoints are used | user | open | 1 |
 | T470-b | T470 | harvest_climate_power.py still calls the Open-Meteo elevation API (non-commercial tier); move the lapse correction to Copernicus DEM or Mapterhorn terrain tiles in roadmap 2.11 | next task | open | |
+| T471-a | T471 | Owner call: the food basket for all 3,868 destinations is Numbeo (June 2026), whose commercial use needs a paid licence from $260 a month; replace it with Eurostat price levels per category plus own measurements (recommended, roadmap 2.14) or buy the licence; a launch risk until decided | user | open | 1 |
+| T471-b | T471 | Owner call: the one-line positioning for cost plus logistics (three options in Roadmap/2.14-kosten-en-logistiek.md point 4) before roadmap 1.13 rewrites PRODUCT.md, carta-design and the home page | user | open | |
+| T471-c | T471 | Owner call: may destination alternatives (dupes) cross a border, e.g. Dubrovnik to Kotor; proposal yes for the Europe-wide list, no for the nearby list until the graph knows border crossings | user | open | |
+| T471-d | T471 | Owner call: run a self-hosted MOTIS (train and bus timetables, Transitous itself is non-commercial only) on the Hetzner box for roadmap 2.16, starting with Italy, Austria and Switzerland | user | open | |
+| T471-e | T471 | Day route link breaks on phones: googleMapsDirUrl (lib/routing.js) sends up to 9 waypoints but Google allows 3 in a mobile browser, and stops past 9 are dropped silently; the button sits at the bottom of the day; roadmap 1.14 | next task | open | |
+| T471-f | T471 | Own-car tolls are always priced from Brussels: apply_toll_layer.py computes driving_toll from meta.home while tripTotal.js applies it from the traveller's carHome; leg tolls average the two endpoint countries and vignettes add 0; roadmap 4.15 | next task | open | |
+| T471-g | T471 | Lifestyle math defects: Foodie prices below Easygoing (self-catered days add to meals out), a coffee a day merges in on load while the label still reads Easygoing, group size does not move the card home price, three style vocabularies; roadmap 2.14 and 4.17 | next task | open | |
+| T471-h | T471 | Stale positioning that contradicts the no-flight-pricing rule: 1.CARTA.md, docs/1.CARTA.md and README.md say Carta prices the flight (Ryanair fares, cabin bag); roadmap 1.13 | next task | open | |
+| T471-i | T471 | Provenance defect: accommodation.source_km measures hub to source, not destination to source (Prato says 0.1 km from Florence, it is 17.6 km), and satellites copy the hub's stay price; roadmap 2.15 | next task | open | |
+| T471-j | T471 | Dead or dishonest pieces: browse/LifestyleButton.jsx and LifestyleSlider.jsx unimported, nearbyPlaces in lib/nearby.js unused, ground_fare_calibration never loaded, flix_network.json (8,701 pairs) unused, dayws.emptySub promises a ready-made day with no button; fold into 4.13, 4.15, 4.16 | next task | open | |
