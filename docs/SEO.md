@@ -2,6 +2,10 @@
 
 This is the living version of the plan first written in Execution/P12/T205-programmatic-seo.md (closed, never edited). The URL scheme in the section below was ratified by T223 and is implemented in continent-app/src/lib/urlScheme.js. Later tasks (T221 prerender, T222 sitemaps, T224 page families, T225 editorial links, T239 monthly sheet) read this file and change it when a decision changes.
 
+## The positioning behind every title and description
+
+One sentence (owner, 2026-10-21, T471-b; the text lives in PRODUCT.md): "Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." The home page title and description (`continent-app/index.html`) and the answer to "How is Carta different from Google Maps or Wanderlog?" use it. Page-level titles and descriptions below stay specific to the page (a trail, a town, a cost page) and keep to what the data can back: the day figure is a bed plus food and drink, local transport is not in it yet, Carta never prices flights and never navigates (it hands over to the traveller's maps app).
+
 ## Where the plan starts from
 
 Three facts about the current build shape every decision below, so they are stated once here.

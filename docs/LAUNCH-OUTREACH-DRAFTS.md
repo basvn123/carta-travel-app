@@ -11,6 +11,7 @@ Each figure is read from the file beside it. A draft may say nothing else about 
 | Fact | Source |
 |---|---|
 | 43 credit entries | continent-app/src/data/attribution.js, counted by its `source:` keys on 2026-10-06 (43). The EEA appears twice, so there are 42 distinct bodies, and one entry is Carta's own image copies, so 41 outside bodies |
+| The positioning sentence: "Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." | PRODUCT.md, Positioning (owner, 2026-10-21, T471-b). Never say Carta navigates or prices flights |
 | 3,868 destinations | Execution/P12/T201-positioning.md, repeated in Execution/P12/T318-numbers-explainer.md |
 | Credits are public without an account | Execution/P12/T318-numbers-explainer.md: the page /about/numbers repeats all 43 credits, and Account then Data sources shows them with no sign-in |
 | Carta does not price flights | Execution/P12/T272-owner-decisions-2026-10-02.md |
@@ -26,7 +27,7 @@ Subject: Carta credits {{BODY}}
 
 Hello,
 
-I am {{OWNER_NAME}}, and I build Carta, a budget travel planner for Europe. Carta went live on {{LAUNCH_DATE}}. I am writing to say that it uses {{WHAT_WE_SHOW}} from {{BODY}}, under {{LICENCE}}, and that we credit it in the app.
+I am {{OWNER_NAME}}, and I build Carta, one app for planning a trip anywhere in Europe: it plans the whole trip in one place, with what each day costs. Carta went live on {{LAUNCH_DATE}}. I am writing to say that it uses {{WHAT_WE_SHOW}} from {{BODY}}, under {{LICENCE}}, and that we credit it in the app.
 
 The credit sits with the other 43 on one page that needs no account: {{CREDIT_URL}}. If the wording is wrong, or you would like it changed, reply and I will fix it the same week.
 

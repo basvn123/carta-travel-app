@@ -1,5 +1,7 @@
 # Carta product roadmap
 
+> Historical (marked 2026-10-21, T505). Written 2026-09-19. The live plan is `Roadmap/Carta roadmap.md`, and the positioning below is replaced by the owner's sentence of 2026-10-21 (T471-b): "Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." Carta never navigates and never prices flights.
+
 What is actually left to build before Carta is a product rather than a project,
 in the order the dependencies demand. Written 2026-09-19 against the repo as it
 stands on `trails-photos-and-card-overlay`.
@@ -241,14 +243,11 @@ SEO is a nice-to-have or the whole strategy.
 
 One sentence, because the differentiator is invisible in a screenshot.
 
-The old answer was "ground costs, not just flights". That answer dies with the
-fares: it was defined against a thing you no longer do. The new one is stronger
-and needs stating plainly. Carta tells you what a place costs to actually be in,
-for the way you travel, across 3,868 places in Europe, from open data with the
-sources named. The test question is no longer "why not Skyscanner Everywhere",
-because you are not in that business. It is "why not a cost-of-living site", and
-the answer is that those price living there, not visiting, and they do not know
-about your beaches, trails and lakes.
+Superseded. The 2026-09-19 answer was "what a place costs to actually be in"
+against cost-of-living sites. The current answer is the owner's sentence of
+2026-10-21: "Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." The test question is now "why not Google Maps or Wanderlog":
+those plan or navigate but do not know what a bed or a day costs, and Carta
+never navigates, it hands over to the maps app.
 
 Write the sentence. It gives you a test to check future features against, which
 is what stops a project this size sprawling.

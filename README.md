@@ -1,8 +1,9 @@
 # Carta, Europe Travel App
 
-Find affordable European getaways by **total trip cost** (real Ryanair fares +
-Airbnb-based stays + on-the-ground spend), then plan the trip city by city and
-day by day. The destination count is `meta.n_destinations` in `app_data.json`, across 43 European countries (master schema v15,
+**Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs.** Carta is one app for planning a trip anywhere in Europe: it prices a bed
+plus food and drink per person per day in every place it covers, then plans the trip city by city and
+day by day. Carta never navigates (each day and ride opens in the traveller's maps app) and
+never prices flights (a fare is the traveller's own entry). The destination count is `meta.n_destinations` in `app_data.json`, across 43 European countries (master schema v15,
 see [SCHEMA.md](docs/SCHEMA.md)).
 
 ## Repository layout
@@ -39,12 +40,12 @@ see [SCHEMA.md](docs/SCHEMA.md)).
 │   ├── ingestion/          26-collector raw open-data mirror -> data/raw/
 │   │                       (NAP schedule feeds, GTFS-RT/SIRI, OpenSky ADS-B,
 │   │                       ferries, pricing archives, holiday calendars)
-│   └── estimation/         Fare model: snapshot history, quantile GBDT,
-│                           PSI/KS drift gates. See docs/ESTIMATION.md
+│   └── estimation/         Retired fare model (Carta no longer prices flights);
+│                           kept for history. See docs/ESTIMATION.md
 │
 ├── pipeline/               All live data-pipeline code (run from the repo root)
 │   ├── harvest_*.py            Fetch external sources -> cache/ and/or master
-│   │                           (Ryanair fares, Wikipedia, Inside Airbnb,
+│   │                           (Wikipedia, Inside Airbnb,
 │   │                           Overture POIs, Eurostat, EEA, WorldClim, …)
 │   ├── apply_*.py              Idempotent patchers: fold a cache/layer into the
 │   │                           master (beauty, rating, climate, lodging, tolls…)
