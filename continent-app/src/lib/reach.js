@@ -8,13 +8,27 @@
  * origin", never an error, and the filter simply disables itself.
  */
 import { useEffect, useState } from 'react';
-import { fareFileBase } from './fareFile.js';
 import { dataUrl } from './dataHost.js';
 
-/** Served path for an origin's reach artifact (same reserved-name escaping
- *  as the fare slices: reach/PRN.json would be the printer on Windows). */
+// Windows still resolves the old DOS device names anywhere a path is parsed,
+// extension or not: reach/PRN.json would be the printer, and git refuses to
+// index it. One trailing underscore makes the name ordinary again (PRN ->
+// PRN_); origin codes are alphanumeric IATA, so nothing real collides.
+const RESERVED = new Set([
+  'CON', 'PRN', 'AUX', 'NUL',
+  ...Array.from({ length: 10 }, (_, i) => `COM${i}`),
+  ...Array.from({ length: 10 }, (_, i) => `LPT${i}`),
+]);
+
+/** Basename (no extension) for an origin's reach artifact. `PRN` -> `PRN_`. */
+export function reachFileBase(origin) {
+  const code = String(origin || '').toUpperCase();
+  return RESERVED.has(code) ? `${code}_` : code;
+}
+
+/** Served path for an origin's reach artifact. */
 export function reachUrl(origin) {
-  return `/reach/${fareFileBase(origin)}.json`;
+  return `/reach/${reachFileBase(origin)}.json`;
 }
 
 // Cached per origin, keyed by the escaped code. Resolves to
@@ -26,7 +40,7 @@ const reachPromises = new Map();
  *  here once, so consumers can compare without re-checking. */
 export function loadReach(origin) {
   if (!origin || !/^[A-Z0-9]{3,4}$/.test(origin)) return Promise.resolve(null);
-  const key = fareFileBase(origin);
+  const key = reachFileBase(origin);
   if (!reachPromises.has(key)) {
     const p = fetch(dataUrl(reachUrl(origin)))
       .then((r) => (r.ok ? r.json() : null))

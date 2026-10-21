@@ -34,9 +34,8 @@ export function fmtHours(h) {
   return rest ? `${Math.floor(m / 60)} h ${rest} min` : `${Math.floor(m / 60)} h`;
 }
 
-/** Stored flight times ('HH:MM/HH:MM', dep/arr local, from
- *  harvest_flight_times.py) -> { dep, arr } for display, or null when the
- *  times harvest doesn't cover this leg yet (arr may be null too). */
+/** Flight times ('HH:MM/HH:MM', dep/arr local) -> { dep, arr } for display,
+ *  or null when the leg has no times (arr may be null too). */
 export function flightTimes(t) {
   if (typeof t !== 'string' || !t) return null;
   const [dep, arr] = t.split('/');

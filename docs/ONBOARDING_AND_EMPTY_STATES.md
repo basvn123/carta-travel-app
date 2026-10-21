@@ -2,7 +2,7 @@
 
 Design document, task T211 (mind-map M11). Status: awaiting owner approval. No code ships from this document until the owner says so. It is written under the carta-design skill, PRODUCT.md and DESIGN.md, and where it disagrees with those, those win. Its sibling is `docs/FIRST_RUN_RESULT.md` (T187, revised by T211), which designs the moment the first priced total appears; this page designs the ninety seconds before it and every screen that has nothing to show.
 
-Two facts set the frame. Carta does not price flights (owner decision of 2026-10-02, T272; the last Carta flight figure left the screens in T273). The departure airport is therefore no longer the hinge the mind map assumed; what makes a number personal today is the group size, the stay style and the lifestyle, and the only flight figure in a total is one the traveller typed. And the launch speaks to hikers first (T203, confirmed in T275): the first screen says its first sentence to someone who travels to a town to walk from it.
+Two facts set the frame. When this was written, Carta did not price flights (owner decision of 2026-10-02, T272; the last Carta flight figure left the screens in T273), so the departure airport was no longer the hinge the mind map assumed and the only flight figure in a total was one the traveller typed. Update 2026-10-21 (batch T511-T519): Carta now shows Google Flights' price for the flight from the traveller's home airport, with the airline, the times and when it was checked, and a typed fare replaces it; the airport is again part of what makes a number personal, next to the group size, the stay style and the lifestyle. And the launch speaks to hikers first (T203, confirmed in T275): the first screen says its first sentence to someone who travels to a town to walk from it.
 
 ## Part 1. The first ninety seconds
 
@@ -40,7 +40,7 @@ What the visitor is not shown on this page in the first run: the rating system, 
 
 "Price a week here" opens the first-run result designed in `docs/FIRST_RUN_RESULT.md`: the receipt for 7 nights and the default group, every line a ground cost with its provenance row, the sum in mono, the footer showing what one changed input does, the orientation line saying the defaults were Carta's, and one primary, "Set your dates". The receipt reaches the visitor without a question asked. That is the done condition of the mind map ("reaches a priced result without a dead end"), met in two taps.
 
-Under the receipt sits the flight door. One sentence, "Carta does not price flights, so none is in this total. Add what you paid and it counts.", and one secondary button, "Add your fare". It is the existing `trip.flightNotPriced` sentence and the existing `trip.addOwnFare` button, already in six catalogues since T273, moved to the receipt the visitor meets first.
+Under the receipt sits the flight door, shown when no flight price exists for the dates (since T517 the receipt otherwise carries Google Flights' price as its flight line). One sentence saying no flight is in this total and that what the traveller paid counts once added, and one secondary button, "Add your fare". It is the existing `trip.flightNotPriced` sentence and the existing `trip.addOwnFare` button, already in six catalogues since T273, moved to the receipt the visitor meets first.
 
 ### How the airport is asked, once
 

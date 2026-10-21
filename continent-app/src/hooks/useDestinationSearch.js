@@ -72,6 +72,9 @@ export function useDestinationSearch({
       return { pricedAll: [], unreachableAll: [] };
     }
     const reach = [], unreach = [];
+    // The home airport's swept flights (T518): the plane total includes the
+    // return flight where the sweep has one near these dates.
+    const flightOpts = { flights: data.flights || null };
     for (const [destId, d] of Object.entries(data.destinations)) {
       if (d.lat == null || d.lon == null) continue;
       const row = {
@@ -95,7 +98,7 @@ export function useDestinationSearch({
         crowding: d.crowding || null,
         image: d.image?.url || null,     // hero thumbnail for the map hover card
       };
-      const b = composeTrip(d, departDate, returnDate, choices, data.destinations);
+      const b = composeTrip(d, departDate, returnDate, choices, data.destinations, flightOpts);
       if (b == null) {
         unreach.push({ ...row, total: null, pp: null, reachable: false });
       } else {
@@ -110,8 +113,10 @@ export function useDestinationSearch({
           planeOk: b.plane_reachable,      // is there a flight at all for these dates
           drivable: b.drivable,
           viaAirport: b.via_airport,       // set when flying into a nearby airport
-          // No flight provenance any more (T273): in plane mode the total
-          // leaves the flight out, so there is no fare on the row to label.
+          // The return flight in this total (T518), or null: in plane mode
+          // without a flight near the dates the total leaves it out, and the
+          // card's title says so.
+          flight: b.transport_mode === 'plane' ? b.flight : null,
         });
       }
     }

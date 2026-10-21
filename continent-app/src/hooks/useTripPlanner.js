@@ -4,6 +4,7 @@ import { suggestNextStops } from '../lib/trip_planner_pricing.js';
 import { priceTrip, normalizeTransferMode, tripStopDetails, MAX_PARTY } from '../lib/tripTotal.js';
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
+import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
 import {
   fetchTripPlanWithStops, createTripPlan, renameTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
@@ -84,10 +85,16 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   useEffect(() => {
     if (preferredStayTier) setStayTier(preferredStayTier);
   }, [preferredStayTier]);
-  // Ryanair baggage the traveller expects to book: 'cabin' (free small bag),
+  // The bag the traveller expects to book: 'cabin' (free small bag),
   // 'priority' (10 kg cabin bag) or 'checked' (20 kg hold bag). Priced per
-  // person per flight leg on top of the seat fare.
+  // person per flight, by airline, on top of the fare (flights/bagFees.js).
   const [baggage, setBaggage] = useState(draft?.baggage || 'cabin');
+  // When they want to fly, each way: 'any', 'morning', 'midday', 'evening'.
+  // The planner prices the cheapest flight inside those hours (T517).
+  const [flightHours, setFlightHoursRaw] = useState(draft?.flightHours || { out: 'any', back: 'any' });
+  const setFlightHours = useCallback((dir, band) => {
+    setFlightHoursRaw((prev) => ({ ...prev, [dir]: band }));
+  }, []);
   // The wizard's chosen fly-in destination. When the first/last stop is a
   // ground-only gem (no routes of its own), flights are priced via this anchor
   // instead, "fly into Bergamo, sleep at Lake Como".
@@ -138,10 +145,10 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, ownStays, children, babies, deviceKey,
+      stayTier, ownStays, children, babies, deviceKey, flightHours,
     });
   }, [children, babies, tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
-      baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
+      flightHours, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
       stayTier, ownStays, deviceKey]);
 
   // Each stop with its chained dates (the same chain priceTrip prices).
@@ -341,12 +348,20 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // Every priced part of the trip, from the one function the wizard's running
   // estimate also prices through (lib/tripTotal.js, T432), so the figure the
   // traveller watched on every step is the figure the planned trip shows.
-  const priced = useMemo(() => priceTrip({
+  // The flight there and home is Google Flights' price: first the sweep's
+  // cheapest for the day, then, once the live search for the trip's exact
+  // days answers (useLiveFlights), every flight of the day in the chosen hours.
+  const tripState = useMemo(() => ({
     stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs, ownStays, transferMode,
-    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier, lifestyle,
-  }, { data, countryInsights }), [stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier, lifestyle, flightHours,
+  }), [stops, tripStart, tripEnd, groupSize, children, babies, transportPref, legModes, ownLegs,
     ownStays, transferMode, baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, stayTier,
-    lifestyle, data, countryInsights]);
+    lifestyle, flightHours]);
+  const pricedSwept = useMemo(() => priceTrip(tripState, { data, countryInsights }), [tripState, data, countryInsights]);
+  const liveFlights = useLiveFlights(pricedSwept.cartaFlight?.queries);
+  const priced = useMemo(() => (liveFlights.size
+    ? priceTrip({ ...tripState, liveFlights }, { data, countryInsights })
+    : pricedSwept), [liveFlights, pricedSwept, tripState, data, countryInsights]);
   const {
     flight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes, stayCosts,
     grandTotal, tripHasCar,
@@ -537,8 +552,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const snapshot = useMemo(() => ({
     tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
     baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planLabel, planned,
-    stayTier, ownStays, children, babies,
-  }), [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
+    stayTier, ownStays, children, babies, flightHours,
+  }), [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace, flightHours,
     baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planLabel, planned,
     stayTier, ownStays, children, babies]);
 
@@ -558,6 +573,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setPace(d.pace || 'balanced');
     if (d.stayTier) setStayTier(d.stayTier);
     setBaggage(d.baggage || 'cabin');
+    setFlightHoursRaw(d.flightHours || { out: 'any', back: 'any' });
     setAnchorId(d.anchorId || null);
     setAnchorOrigin(d.anchorOrigin || null);
     setReturnAnchorId(d.returnAnchorId || null);
@@ -585,6 +601,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, grandTotal, dayPlan,
     vignettes, tripHasCar,
     baggage, setBaggage,
+    flightHours, setFlightHours,
     stayTier, setStayTier,
     ownFlight, setOwnFlight,
     carHome, setCarHome,

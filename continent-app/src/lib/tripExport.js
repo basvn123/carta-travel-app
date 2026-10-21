@@ -36,16 +36,28 @@ const MODE_WORD = {
 };
 const modeWord = (mode) => MODE_WORD[mode] || mode;
 
+/** "Vueling VY1234, 21:55 to 23:59, Fri 16 Oct 2026": the flight Carta priced
+ *  for one way (T518), from priced.cartaFlight, or '' when there is none. */
+function cartaLegText(leg, airlines) {
+  if (!leg?.cost) return '';
+  const who = [airlines?.[leg.airline]?.name || leg.airline, leg.flightNo].filter(Boolean).join(' ');
+  return [who, leg.dep && leg.arr ? `${leg.dep} to ${leg.arr}` : '', fmtLong(leg.date)].filter(Boolean).join(', ');
+}
+
 /** Plain-text itinerary, used for sharing. */
-export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveLegs = null, tripHasCar = false, grandTotal, groupSize }) {
+export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveLegs = null, tripHasCar = false, grandTotal, groupSize, cartaFlight = null, airlines = null }) {
   const lines = [];
   lines.push(label || 'My trip');
   const first = stopDetails[0];
   const last = stopDetails[stopDetails.length - 1];
   if (first?.arriveDate) lines.push(`${fmtLong(first.arriveDate)} to ${fmtLong(last?.departDate)}`);
   lines.push('');
-  // No carrier or times: they came from the frozen fare snapshots (T278).
-  if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}`);
+  // The flight Carta priced each way (T518): Google Flights' fare, airline
+  // and times. Without one, the route alone, as before.
+  const cfOut = cartaFlight?.out?.cost ? cartaFlight.out : null;
+  const cfBack = cartaFlight?.back?.cost ? cartaFlight.back : null;
+  if (cfOut) lines.push(`Fly ${cfOut.from} to ${cfOut.to}: ${cartaLegText(cfOut, airlines)} (${eurExact(cfOut.cost.total)})`);
+  else if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}`);
   if (flight?.own) lines.push(`${ownTravelWord(flight)}, booked yourself${flight.out_date ? `, ${fmtLong(flight.out_date)}` : ''}${flight.cost_total ? ` (${eurExact(flight.cost_total)})` : ''}`);
   if (flight?.driving && driveLegs?.out) lines.push(`Drive out${driveLegs.from ? ` from ${driveLegs.from}` : ''} to ${first?.dest?.city} (${driveLegs.out.road_km} km)`);
   if (anchorLegs?.in?.ground_total) lines.push(`Then ${anchorLegs.inCity || anchorLegs.anchor?.city} to ${first?.dest?.city} by ${modeWord(anchorLegs.in.mode)}`);
@@ -54,9 +66,11 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveL
     lines.push(`${i + 1}. ${s.dest.city}, ${s.dest.country} - ${s.nights} ${s.nights === 1 ? 'night' : 'nights'} (${fmtLong(s.arriveDate)})`);
   });
   if (anchorLegs?.out?.ground_total) lines.push(`Then ${last?.dest?.city} to ${anchorLegs.outCity || anchorLegs.anchor?.city} by ${modeWord(anchorLegs.out.mode)}`);
-  if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}`);
+  if (cfBack) lines.push(`Fly home ${cfBack.from} to ${cfBack.to}: ${cartaLegText(cfBack, airlines)} (${eurExact(cfBack.cost.total)})`);
+  else if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}`);
   if (flight?.driving && driveLegs?.home) lines.push(`Drive home from ${last?.dest?.city} (${driveLegs.home.road_km} km)`);
-  if (flight && !flight.combinable && !flight.own && !flight.driving && !tripHasCar) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
+  if (flight && !flight.combinable && !flight.own && !flight.driving && !tripHasCar && !cfOut && !cfBack) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
+  if (cfOut || cfBack) lines.push('Flight prices are Google Flights fares when Carta checked them; they may have changed.');
   if (grandTotal != null) {
     lines.push('');
     lines.push(`Estimated total for ${groupSize} ${groupSize === 1 ? 'person' : 'people'}: ${eurExact(grandTotal)}`);
@@ -90,19 +104,25 @@ export async function shareTrip(trip) {
 /** Printable HTML for the trip, opened in a new window for print-to-PDF.
  *  The cost table reads chronologically: getting there, each stop (with the
  *  leg to the next one), getting home, then the round-trip items. */
-function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfer = null, legs = [], anchorLegs = null, driveLegs = null, stayCosts = [], carRental, vignettes = null, tripHasCar = false, grandTotal, groupSize, extras = null, bookingRows = [] }) {
+function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfer = null, legs = [], anchorLegs = null, driveLegs = null, stayCosts = [], carRental, vignettes = null, tripHasCar = false, grandTotal, groupSize, extras = null, bookingRows = [], cartaFlight = null, airlines = null }) {
   const first = stopDetails[0];
   const last = stopDetails[stopDetails.length - 1];
   const rows = [];
+  // The flight Carta priced each way (T518), Google Flights' fare.
+  const cfOut = cartaFlight?.out?.cost ? cartaFlight.out : null;
+  const cfBack = cartaFlight?.back?.cost ? cartaFlight.back : null;
+  const cfRow = (word, leg) => `<tr><td>${word}: ${esc(leg.from)} &rarr; ${esc(leg.to)}, ${esc(cartaLegText(leg, airlines))}</td><td>${esc(eurExact(leg.cost.total))}</td></tr>`;
 
   // 1. Getting there.
-  if (flight?.combinable) {
+  if (cfOut) {
+    rows.push(cfRow('Flight out', cfOut));
+  } else if (flight?.combinable) {
     // Carta does not price flights (T273): the route, and no figure.
     rows.push(`<tr><td>Flight out: ${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</td><td class="note">not priced</td></tr>`);
   } else if (flight?.own) {
     const when = flight.out_date ? `, ${esc(fmtLong(flight.out_date))}${flight.ret_date ? ` &rarr; ${esc(fmtLong(flight.ret_date))}` : ''}` : '';
     rows.push(`<tr><td>${esc(ownTravelWord(flight))}: booked yourself${when}</td><td>${flight.cost_total ? esc(eurExact(flight.cost_total)) : '&mdash;'}</td></tr>`);
-  } else if (flight && !flight.driving && !tripHasCar) {
+  } else if (flight && !flight.driving && !tripHasCar && !cfBack) {
     rows.push(`<tr><td colspan="2" class="note">Flights: ${esc(flightReasonLabel(flight.reason))}</td></tr>`);
   }
   if (flight?.driving && driveLegs?.out) {
@@ -133,7 +153,9 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfe
   if (flight?.driving && driveLegs?.home) {
     rows.push(`<tr><td>Drive home from ${esc(last?.dest?.city)} (${driveLegs.home.road_km} km)</td><td>${esc(eurExact(driveLegs.home.ground_total))}</td></tr>`);
   }
-  if (flight?.combinable) {
+  if (cfBack) {
+    rows.push(cfRow('Flight home', cfBack));
+  } else if (flight?.combinable) {
     rows.push(`<tr><td>Flight home: ${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</td><td class="note">not priced</td></tr>`);
   }
   // 4. Round-trip items for the whole journey.
@@ -213,13 +235,15 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfe
   <p class="dates">${esc(fmtLong(first?.arriveDate))} &rarr; ${esc(fmtLong(last?.departDate))}, ${groupSize} ${groupSize === 1 ? 'person' : 'people'}</p>
 
   <h2>Route</h2>
-  ${flight?.combinable ? `<div class="stop">Fly <b>${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</b> <span class="when">${esc(fmtLong(first?.arriveDate))}</span></div>` : ''}
+  ${cfOut ? `<div class="stop">Fly <b>${esc(cfOut.from)} &rarr; ${esc(cfOut.to)}</b> <span class="when">${esc(cartaLegText(cfOut, airlines))}</span></div>` : ''}
+  ${!cfOut && flight?.combinable ? `<div class="stop">Fly <b>${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</b> <span class="when">${esc(fmtLong(first?.arriveDate))}</span></div>` : ''}
   ${flight?.own ? `<div class="stop">Getting there: <b>${esc(ownTravelWord(flight))}</b> <span class="when">${esc(fmtLong(flight.out_date || first?.arriveDate))}</span></div>` : ''}
   ${flight?.driving && driveLegs?.out ? `<div class="stop">Drive out${driveLegs.from ? ` from <b>${esc(driveLegs.from)}</b>` : ''} to <b>${esc(first?.dest?.city)}</b> <span class="when">${driveLegs.out.road_km} km</span></div>` : ''}
   ${stopDetails.map((s, i) => `
     <div class="stop">${i + 1}. <b>${esc(s.dest?.city)}, ${esc(s.dest?.country)}</b>
     <span class="when">${esc(fmtLong(s.arriveDate))} &rarr; ${esc(fmtLong(s.departDate))}, ${s.nights} ${s.nights === 1 ? 'night' : 'nights'}</span></div>`).join('')}
-  ${flight?.combinable ? `<div class="stop">Fly home <b>${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</b> <span class="when">${esc(fmtLong(last?.departDate))}</span></div>` : ''}
+  ${cfBack ? `<div class="stop">Fly home <b>${esc(cfBack.from)} &rarr; ${esc(cfBack.to)}</b> <span class="when">${esc(cartaLegText(cfBack, airlines))}</span></div>` : ''}
+  ${!cfBack && flight?.combinable ? `<div class="stop">Fly home <b>${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</b> <span class="when">${esc(fmtLong(last?.departDate))}</span></div>` : ''}
   ${flight?.own && flight.ret_date ? `<div class="stop">Getting home: <b>${esc(ownTravelWord(flight))}</b> <span class="when">${esc(fmtLong(flight.ret_date))}</span></div>` : ''}
   ${flight?.driving && driveLegs?.home ? `<div class="stop">Drive home from <b>${esc(last?.dest?.city)}</b> <span class="when">${driveLegs.home.road_km} km</span></div>` : ''}
 
@@ -237,7 +261,9 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfe
 
   ${packHtml}
 
-  <p class="foot">Planned with Carta. Carta does not price flights, so a flight is in the total only when you entered what you paid. Ground and stay costs are estimates.</p>
+  <p class="foot">${cfOut || cfBack
+    ? 'Planned with Carta. Flight prices are Google Flights fares when Carta checked them; they may have changed, so confirm on Google Flights. Ground and stay costs are estimates.'
+    : 'Planned with Carta. Carta does not price flights, so a flight is in the total only when you entered what you paid. Ground and stay costs are estimates.'}</p>
 </body></html>`;
 }
 

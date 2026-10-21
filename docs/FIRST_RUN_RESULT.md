@@ -8,7 +8,7 @@ This page specifies what a first-time visitor sees at the moment their first pri
 
 A first-run result is the first time a visitor sees an itemised total for a trip: the bed, the food and the getting around, for a number of nights and a number of people, each line saying where its figure came from. Until P6 lands, that moment does not exist: the trip page shows a range per person and hands the visitor to another tool, the destination panel shows a per-day figure without the lines, and the planner's "Estimated total" arrives at the end of a six-step wizard. After T099 the trip page and the destination page show the total without asking anything first, priced from the defaults, and the planner shows the same component at its Finish step. That total is the first result, and it is the same component wherever it first appears.
 
-Carta does not price flights. No flight figure of Carta's is on the receipt; the flight is a door under it, and the only flight line that can appear is one made of what the traveller typed.
+Update 2026-10-21 (batch T511-T519, reversing T272): Carta now shows Google Flights' price for the flight, with the airline, the times, when it was checked and a link to Google Flights. The flight line on the receipt is, in order: a fare the traveller typed (labelled as theirs), else Google Flights' price for those days, else no line and the door below. The sections that follow were written when Carta showed no flight price; read them with this paragraph.
 
 The visitor arrives at the result from one of three doors, and the design has to hold for all three.
 
@@ -46,7 +46,7 @@ Total for 2 people                                 ~ €901.60
 
 A dorm bed instead would be ~ €640.40. Set your dates to reprice.
 
-Carta does not price flights, so none is in this total.
+No flight found for these dates, so none is in this total.
 Add what you paid and it counts.            [ Add your fare ]
 ```
 
@@ -71,7 +71,7 @@ The blocks above are wireframes, not copy to paste: the implementer reads the fi
 
 Nothing is rounded to look tidier. `€31.40` is the point and `€31` is a different product.
 
-No flight figure of Carta's appears, ever, on any line or in any footer, with or without a tilde (PRODUCT.md, "The one rule the numbers follow"; T273). The flight line exists only when the traveller typed a fare, it is labelled as theirs in its second row, and it carries no tilde because it is not an estimate. The tilde and the `est.` tag stay for every other estimate: a line whose figure stands in from the national basket because the town has not been measured carries them, and the total inherits them, because a sum that contains an estimate is an estimate. A receipt where every line is measured has no tilde anywhere.
+A flight figure is never presented as Carta's own (PRODUCT.md, "The one rule the numbers follow"). The flight line is either the traveller's typed fare, labelled as theirs in its second row, or Google Flights' price, with the airline, the times and when it was checked in its second row (T517, T518). Neither carries a tilde, because neither is Carta's estimate; bag fees are, and carry it. The tilde and the `est.` tag stay for every other estimate: a line whose figure stands in from the national basket because the town has not been measured carries them, and the total inherits them, because a sum that contains an estimate is an estimate. A receipt where every line is measured has no tilde anywhere.
 
 Each line's second row is its provenance in plain words: the number of listings the stay rate was measured from, the per-day figure the food line multiplies, the airline and the route on a typed fare. This is the `cost.stayMeasuredN` pattern CostSummary already uses, extended to every line. Where the engine has no measured figure and falls back to a national one, the second row says so once ("national basket, est.") and otherwise stays silent, as CostReceipt does today, so the receipt reads as a price and not as a disclaimer.
 
@@ -97,7 +97,7 @@ Three pieces of prose carry what the lines cannot.
 
 The orientation line sits above the card, in `--ui` at body size, and is the only part of this screen that exists because the viewer is new. It says what was assumed and that the assumption is theirs to change. "Priced for 2 people and 7 nights at Trieste's own rates. Set your own dates and the total reprices." When the visitor set the dates themselves (the planner door, or a trip page they repriced), the line drops its second sentence and reads "Priced for 2 people, 4 to 11 May." It is prose, so it is never mono.
 
-The flight sentence sits under the footer, in `--ink-soft` at label size, with the door beside it: "Carta does not price flights, so none is in this total. Add what you paid and it counts." and the secondary button "Add your fare". These are the `trip.flightNotPriced` and `trip.addOwnFare` strings T273 put in the planner, in six catalogues already, so the receipt and the planner say the same thing in the same words. The sentence appears once per receipt. It says the thing plainly because stating coverage is what makes the accurate lines believable. Once a fare is typed, the sentence and the door are replaced by the flight line in the receipt and nothing else changes.
+When no flight price exists for the dates, the flight sentence sits under the footer, in `--ink-soft` at label size, with the door beside it, and the secondary button "Add your fare". (Its 2026-10-02 wording, "Carta does not price flights, so none is in this total", is false since T517; the current string is the app's.) These are the `trip.flightNotPriced` and `trip.addOwnFare` strings T273 put in the planner, in six catalogues already, so the receipt and the planner say the same thing in the same words. The sentence appears once per receipt. It says the thing plainly because stating coverage is what makes the accurate lines believable. Once a fare is typed, the sentence and the door are replaced by the flight line in the receipt and nothing else changes.
 
 The door opens one sheet, "Your flight": flying from (the `OriginPicker` list), airline, what you paid for the whole group, and the out and return days. That is where the departure airport is asked, once, and remembered in `choices.origin` as the planner does today; `docs/ONBOARDING_AND_EMPTY_STATES.md` has the reasoning. The sheet is prefilled on every later opening.
 

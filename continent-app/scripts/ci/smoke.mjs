@@ -182,7 +182,7 @@ for (const route of ROUTES) {
   });
   // Only same-origin JSON matters. A third-party image or an affiliate script
   // failing offline says nothing about the contract; a 404 on our own
-  // app_data.json, a fare slice or a layer wire says everything.
+  // app_data.json or a layer wire says everything.
   page.on('response', (r) => {
     const u = r.url();
     if (!u.startsWith(BASE) || !/\.json(\?|$)/.test(u)) return;
@@ -214,7 +214,7 @@ for (const route of ROUTES) {
   // The boot payload landed. Not a network assertion: the question is whether
   // the app got its data, so this reads the rendered result. A destination
   // count on screen, or any element the data drives, means app_data.json
-  // resolved and hydrateForOrigin ran.
+  // resolved and withOriginRoutes ran.
   const booted = await page.evaluate((sel) => {
     const root = document.getElementById('root');
     if (!root || root.children.length === 0) return { mounted: false, signals: 0 };

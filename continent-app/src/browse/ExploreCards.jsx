@@ -8,6 +8,7 @@ import { Card, IconButton, Money } from '../components/ui/index.js';
 import { isNational } from '../components/CostSummary.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { countryName } from '../lib/countryName.js';
+import { FlightChip } from '../components/flights/Flights.jsx';
 
 /**
  * Explore's two card shapes (T427), built on the kit's parts: the Score,
@@ -22,19 +23,36 @@ import { countryName } from '../lib/countryName.js';
  *   DayPrice   the one price line: the day cost per person at the
  *              traveller's Lifestyle (costIndex.js), whole euros, with the
  *              estimate mark only when the figure is a stand-in. No source
- *              words, no gauge (owner, 2026-10-13).
+ *              words, no gauge (owner, 2026-10-13). Under it, when
+ *              the home airport's sweep has one in the travel month, the
+ *              cheapest return flight a person with its airline's mark
+ *              (T518, `cost.flight`, set by ExploreTab): one quiet caption
+ *              line, nothing at all when there is no flight.
  */
 
 export function DayPrice({ cost, t }) {
   const ref = React.useRef(null);
   useSettledFigure(ref, cost?.dayEur ?? null);
-  if (!cost || cost.dayEur == null) return null;
+  const flight = cost?.flight || null;
+  const day = cost && cost.dayEur != null;
+  if (!day && !flight) return null;
   return (
-    <span className="xprice" ref={ref}>
-      <Money value={cost.dayEur} est={isNational(cost)} />
-      {/* "a person a day" wherever a place is priced (owner 1.8, T504). */}
-      <span className="xprice-unit"> {t('dest.priceDayUnit')}</span>
-    </span>
+    <>
+      {day && (
+        <span className="xprice" ref={ref}>
+          <Money value={cost.dayEur} est={isNational(cost)} />
+          {/* "a person a day" wherever a place is priced (owner 1.8, T504). */}
+          <span className="xprice-unit"> {t('dest.priceDayUnit')}</span>
+        </span>
+      )}
+      {flight && (
+        // Its own line under the day price, in the row and on the tile alike
+        // (the tile's price slot is inline, so the line is a block here).
+        <span className="xprice-flight">
+          <FlightChip perSeat={flight.perSeat} airline={flight.airline} />
+        </span>
+      )}
+    </>
   );
 }
 

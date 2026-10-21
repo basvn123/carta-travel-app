@@ -40,3 +40,6 @@ scripts/ai/shots/
 
 # Local API cache for scripts/audit-content.mjs, not a deliverable.
 reports/.wikidata-cache.json
+
+# wrangler's local build and dev state (workers/flight-sweep, T514)
+.wrangler/

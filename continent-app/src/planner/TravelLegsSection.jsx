@@ -10,6 +10,7 @@ import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import { paidEur } from '../lib/tripTotal.js';
 import { PaidField } from './PlanTotal.jsx';
+import { FlightRow, HoursFilter, AirlineMark } from '../components/flights/Flights.jsx';
 
 /**
  * How you get there, how you get between the stops, and how you get home
@@ -32,10 +33,18 @@ const MODE_ICON = {
 };
 
 /** One hop, with its money always in view and its how folded under it. */
-function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText }) {
+function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText, flightProps = null }) {
   const mode = value?.mode || '';
   const Icon = MODE_ICON[mode];
   const paid = paidEur(value?.eur);
+  // Carta's flight for the way there or home (T518): Google Flights' fare,
+  // shown until the traveller types their own, which stays the override in
+  // the field beside it. Only for a way flown (or not answered yet).
+  const dir = leg.kind === 'out' || leg.kind === 'back' ? leg.kind : null;
+  const cf = flightProps?.cartaFlight;
+  const showFlight = Boolean(dir && cf && !paid && !leg.booked && (!mode || mode === 'fly'));
+  const fLeg = showFlight ? cf[dir] : null;
+  const fState = fLeg ? null : (fLeg === undefined && flightProps?.waiting?.[dir] ? 'loading' : 'none');
   const [open, setOpen] = useState(false);
   // The places to book this hop, always in view (T458): a traveller deciding
   // how to get from one stop to the next wants the trains and buses one tap
@@ -95,6 +104,25 @@ function LegRow({ leg, value, onChange, adults, estimate, t, lang, partyText }) 
           />
         </div>
       </div>
+      {showFlight && (
+        <div className="tleg-flight">
+          <FlightRow
+            leg={fLeg || null}
+            cost={fLeg?.cost}
+            dir={dir}
+            bagKey={flightProps.baggage}
+            state={fState}
+            wantedDate={cf.queries?.[dir === 'out' ? 0 : 1]?.date || leg.date || null}
+          />
+          {flightProps.onFlightHours && (
+            <HoursFilter
+              value={flightProps.flightHours?.[dir] || 'any'}
+              onChange={(band) => flightProps.onFlightHours(dir, band)}
+              label={`${t('flight.hours')}, ${dir === 'back' ? t('flight.back') : t('flight.out')}`}
+            />
+          )}
+        </div>
+      )}
       {leg.published && !open && (
         <p className="tleg-measured">{publishedLine(leg.published, t)}</p>
       )}
@@ -178,9 +206,16 @@ function publishedLine(pub, t) {
 export function TravelLegsSection({
   legs, values, onChange, adults = 1, startDate, onSetStart, dateMin, dateMax,
   openJawHint = '', estimates = {}, party = 1,
+  // Carta's flight there and home (T518), all optional: priced.cartaFlight,
+  // the hours wanted each way and their setter, the trip's bag, and which
+  // ways still wait on a live answer ({ out, back }).
+  cartaFlight = null, flightHours = null, onFlightHours = null, baggage = 'cabin', flightWaiting = null,
 }) {
   const { t, lang } = useI18n();
   const partyText = party === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: party });
+  const flightProps = cartaFlight
+    ? { cartaFlight, flightHours, onFlightHours, baggage, waiting: flightWaiting }
+    : null;
   const shift = (days) => {
     if (!startDate || !onSetStart) return;
     const next = addDays(startDate, days);
@@ -225,6 +260,7 @@ export function TravelLegsSection({
                 t={t}
                 lang={lang}
                 partyText={partyText}
+                flightProps={flightProps}
               />
             ))}
           </div>
@@ -235,7 +271,7 @@ export function TravelLegsSection({
 }
 
 /** The same legs, read-only, for the review: route, how, and the figure. */
-export function TravelLegsSummary({ legs, values, estimates = {}, onEdit, transfers = null }) {
+export function TravelLegsSummary({ legs, values, estimates = {}, onEdit, transfers = null, cartaFlight = null }) {
   const { t } = useI18n();
   if (!legs.length) return null;
   // The airport transfers sit in the journey where they happen (T458): after
@@ -267,6 +303,8 @@ export function TravelLegsSummary({ legs, values, estimates = {}, onEdit, transf
           const Icon = MODE_ICON[v.mode];
           const paid = paidEur(v.eur);
           const est = estimates[leg.key] || 0;
+          // Carta's flight for the way there or home (T518), Google's fare.
+          const fLeg = (leg.kind === 'out' || leg.kind === 'back') && !leg.booked && (!v.mode || v.mode === 'fly') ? cartaFlight?.[leg.kind] : null;
           return (
             <div className="tsum-row" key={leg.key}>
               <span className="tsum-route">
@@ -280,6 +318,11 @@ export function TravelLegsSummary({ legs, values, estimates = {}, onEdit, transf
               <span className="tsum-eur">
                 {paid > 0 ? (
                   <span className="plan-line-yours"><Money value={paid} precision="cents" /><small>{t('plan.yours')}</small></span>
+                ) : fLeg?.cost ? (
+                  <span className="plan-line-yours plan-line-flight">
+                    <AirlineMark code={fLeg.airline} size="sm" />
+                    <Money value={fLeg.cost.total} precision="cents" />
+                  </span>
                 ) : est > 0 ? (
                   <Money value={est} est precision="cents" />
                 ) : (

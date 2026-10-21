@@ -189,6 +189,7 @@ export function StepReview({
               estimates={legEstimates}
               onEdit={gotoGetting}
               transfers={reviewTransfers}
+              cartaFlight={priced?.cartaFlight || null}
             />
           )}
 

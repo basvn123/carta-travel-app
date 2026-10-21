@@ -18,7 +18,6 @@
  *   - /country_insights.json  per-country travel intel (planners + detail)
  */
 
-import { faresUrl } from './fareFile.js';
 import { shardName } from './poiShard.js';
 import { DATA_BASE, dataUrl } from './dataHost.js';
 import { createCatalogue } from './catalogue.js';
@@ -128,19 +127,6 @@ export const firstPaintPromise = CATALOGUE_MODE === 'all'
 // rejection before useAppData attaches its own catch. Consumers still get
 // the real error from their own .then/.catch chains.
 firstPaintPromise?.catch(() => {});
-
-// Per-origin fare slices (public/fares/{IATA}.json, written by sync-data.mjs;
-// faresUrl() escapes the handful of codes Windows reserves, see fareFile.js).
-// Cached per origin; resolves null on failure so useAppData can tell "no such
-// file / offline" apart from "empty but valid" and fall back gracefully.
-const faresPromises = new Map();
-export function fetchFares(origin) {
-  if (!origin || !/^[A-Z0-9]{3,4}$/.test(origin)) return Promise.resolve(null);
-  if (!faresPromises.has(origin)) {
-    faresPromises.set(origin, fetchJson(faresUrl(origin)).catch(() => null));
-  }
-  return faresPromises.get(origin);
-}
 
 const poiShardPromises = new Map();
 /**

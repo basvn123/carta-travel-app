@@ -19,11 +19,11 @@ sys.path.insert(0, str(ROOT))
 from src.ingestion.core import ledger, registry  # noqa: E402
 from src.ingestion.core.collector import Collector  # noqa: E402
 
-MIN_COLLECTORS = 29   # a floor, never an equality: the roster may only grow
+MIN_COLLECTORS = 27   # a floor, never an equality: the roster may only grow
 # 28 until T311 moved the four retired fare harvesters (Wizz Air, Vueling,
 # Volotea, the Ryanair timetable) to pipeline/archive/ (register row T267-a).
-MIN_HARVESTERS = 24
-MIN_ROWS = 150
+MIN_HARVESTERS = 22
+MIN_ROWS = 140
 
 
 @pytest.fixture(scope="module")

@@ -52,9 +52,10 @@ could defend out loud.
 anywhere in Europe, cutting coordination and logistics. It prices the ground for every destination (a bed
 plus food and drink, per person per day; local transport is not in the day figure yet), plans the trip city
 by city and each day hour by hour, and marks every estimate as an estimate. Carta never navigates: no route
-guidance and no GPS, the traveller's maps app takes them there. It does not price flights: the only flight figure in a total
-is one the traveller typed in, labelled as theirs. Never imply otherwise. It takes no booking and no
-commission; it hands the traveller to the operator.
+guidance and no GPS, the traveller's maps app takes them there. For the flight it shows Google Flights'
+price, with the airline, the times and when it was checked, so the flight, the bed and the days add up to one
+total; a fare the traveller types in replaces it. The flight price is never presented as Carta's own. It
+takes no booking and no commission; it hands the traveller to the operator.
 
 The audience counts money: students, young workers, families on one income, retirees, and hikers first
 at launch. The only real asset is trust in the numbers.
@@ -194,8 +195,15 @@ in the kit. Two screens can never write the same figure two ways.
   "€NaN".
 - **The estimate mark is the whole pedigree on the page** (owner decision 2026-10-13, T438). No method
   sentences ("measured from N stays", "the national basket", "N of M figures measured"), no "national"
-  word after a figure, no source footers. Never a flight figure of Carta's, never a bookable claim, never
-  a stored figure shown as current. Every external booking link warns that prices may have changed.
+  word after a figure, no source footers. Never a flight figure presented as Carta's own, never a bookable
+  claim, never a stored figure shown as current. Every external booking link warns that prices may have changed.
+- **Flights** (T511 to T518, 2026-10-21). A flight figure is Google Flights' price, not Carta's estimate,
+  so it never carries the tilde or "est.". It always travels with the airline mark, the departure and
+  arrival times, when it was checked and the link out to Google Flights with "prices may have changed".
+  The airline mark is the airline's own logo in a white square, never recoloured, tinted or redrawn. A
+  fare the traveller typed in replaces it and is labelled as theirs. A price checked more than 3 days ago
+  is not shown. Bag fees (10 kg cabin, 20 kg checked) are Carta's estimates and take the tilde and word.
+  Cents on receipts, whole euros on cards, like every other figure.
 - **One day-cost basis.** The traveller's Lifestyle prices the day everywhere: the card, the pin and the
   page show the same figure (owner decision 2026-10-13, T374-d).
 
@@ -443,8 +451,8 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 - Empty states are an invitation, not an apology: name the space and give the action.
 - A hand-over names the thing and the app: "Open Day 2 in Google Maps", "Open this ride in Google Maps".
   Never "Navigate", "Start route" or "Directions", because Carta does not navigate.
-- Honest in the product's own voice. Carta does not price flights; the fare is the traveller's own
-  entry. When the AI is off, say it is off. An empty result says so in one line.
+- Honest in the product's own voice. A flight price is named as Google Flights', with when it was
+  checked; a fare the traveller typed is labelled as theirs. When the AI is off, say it is off. An empty result says so in one line.
 - Strings go through i18n keys in all six languages, never concatenation; test labels at the longest
   translation (usually German).
 

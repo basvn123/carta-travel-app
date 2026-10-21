@@ -36,4 +36,4 @@ The error rate is AI failures divided by AI calls, both as the app saw them: the
 
 The priced-trip and click counts are per-day counters with no user, no time of day and no page, so they include guests and cannot be broken down by person. A click on a link inside an exported PDF is outside the app and is not counted. With no partner id set in the build, links are not decorated, nothing can earn, and nothing is counted.
 
-Carta does not price flights, so no metric here depends on a fare source.
+No metric here depends on a fare source. Flight prices come from Google Flights through the `flight-sweep` Worker (T514); the sweep's health (searches, refusals, the `checked` time in `data/flights/_index.json`) is not on the admin Overview yet.

@@ -24,10 +24,11 @@ import '../styles/73-budget-search.css';
  * the answer is BudgetResults (Fits, Tight, the receipt).
  *
  * The Lifestyle and the bed come from the settings line (useSettings), so
- * the search and the Explore card price a day from the same inputs.
+ * the search and the Explore card price a day from the same inputs. Flying,
+ * the return flight comes from data.flights (the home airport's sweep).
  *
  * props
- *   data    the app data ({ destinations, meta })
+ *   data    the app data ({ destinations, meta, flights })
  *   onOpen  (destId) => open that place's page, Explore's own door
  */
 export function BudgetSearch({ data, onOpen }) {
@@ -61,9 +62,12 @@ export function BudgetSearch({ data, onOpen }) {
   );
   const lifestyle = s?.lifestyle || null;
   const stayTier = s?.stayTier || 'home';
+  // The home airport's swept flights (T518): 'fly' prices the return flight
+  // and its bags into the total; 'car' and 'public' still name the way only.
+  const flights = data?.flights || null;
   const result = React.useMemo(
-    () => (query ? budgetSearch(list, query, { lifestyle, stayTier }) : null),
-    [list, query, lifestyle, stayTier],
+    () => (query ? budgetSearch(list, query, { lifestyle, stayTier, flights }) : null),
+    [list, query, lifestyle, stayTier, flights],
   );
 
   const example = formatMoney(1500);

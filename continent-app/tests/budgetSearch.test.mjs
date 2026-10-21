@@ -197,3 +197,38 @@ test("the worked example: 2 people, 1,500, 5 days in October", { skip: have ? fa
     assert.equal(rec.lines.reduce((n, l) => n + l.eur, 0), rec.total);
   }
 });
+
+// T518: 'fly' prices the return flight from the home airport's swept file,
+// bags included; 'car' and 'public' still only name the way there.
+const NOW_MIN = Math.floor(Date.now() / 60000);
+const FLIGHTS = {
+  v: 1, from: "BRU",
+  to: { BCN: { "2026-10-24": [50, "FR", "07:00", "09:00", 0, NOW_MIN] } },
+  back: { BCN: { "2026-10-28": [60, "FR", "18:00", "20:00", 0, NOW_MIN] } },
+};
+const FLOWN = { ...place("flown", { night: 30, meal: 12 }), anchor_airport: "BCN" };
+
+test("fly mode puts the return flight and bags in the total", () => {
+  const q = normalizeQuery({ budget: 1500, adults: 2, days: 5, month: 10, mode: "fly" }, TODAY);
+  const ground = priceForBudget(FLOWN, { ...q, mode: "public" }, { flights: FLIGHTS });
+  const p = priceForBudget(FLOWN, q, { flights: FLIGHTS });
+  // Two seats, 50 out and 60 back, a 10 kg cabin bag (FR 20) each way each.
+  assert.equal(p.flight.total, (50 + 60) * 2 + 20 * 2 * 2);
+  assert.equal(p.there, p.flight.total + p.flight.transfers);
+  assert.equal(p.core, ground.core + p.there, "the flight is added to the stay");
+  assert.equal(p.dayPp, ground.dayPp, "the day price a person stays the card's basis");
+  const r = budgetReceipt(p, q);
+  assert.equal(r.lines[0].key, "there", "getting there leads the receipt");
+  assert.equal(r.lines.reduce((n, l) => n + l.eur, 0), r.total);
+  assert.ok(!r.unpriced.some((u) => u.key === "there"), "a priced flight is not listed as not in the total");
+  assert.equal(ground.there, null, "train or bus is not priced");
+  assert.ok(budgetReceipt(ground, { ...q, mode: "public" }).unpriced.some((u) => u.key === "there"));
+});
+
+test("fly mode without a flight near the dates gives no figure; without the file it is unpriced", () => {
+  const q = normalizeQuery({ budget: 1500, adults: 2, days: 5, month: 10, mode: "fly" }, TODAY);
+  assert.equal(priceForBudget(CHEAP, q, { flights: FLIGHTS }), null, "no airport, no flight, no total");
+  const noFile = priceForBudget(FLOWN, q, {});
+  assert.equal(noFile.there, null, "flights not loaded: getting there stays unpriced");
+  assert.ok(budgetReceipt(noFile, q).unpriced.some((u) => u.key === "there"));
+});

@@ -21,12 +21,13 @@ import {
   tripDaysBetween, DEFAULT_LIFESTYLE, drivingEstimate,
 } from './runtime_pricing.js';
 import {
-  combineTripLegs, unpricedFlight, ownFlightTransfers, stopStayCost, pickLegMode,
+  combineTripLegs, ownFlightTransfers, stopStayCost, pickLegMode,
 } from './trip_planner_pricing.js';
 import {
   legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm,
 } from './transport.js';
-import { originHome } from './origins.js';
+import { originHome, destAnchor } from './origins.js';
+import { pickLeg, legCost } from './flights/flights.js';
 import { addDays } from './dates.js';
 import { round2 } from './math.js';
 
@@ -72,6 +73,8 @@ export function tripStopDetails(stops, destinations, tripStart) {
   });
 }
 
+// A stop with an air route of its own: its own anchor airport, with a last
+// leg Carta can price (origins.js). No fare is involved since T511.
 const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
 
 /**
@@ -79,7 +82,10 @@ const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
  *
  * state: { stops, tripStart, groupSize, transportPref, legModes, ownLegs,
  *          ownStays, transferMode, baggage, anchorId, anchorOrigin,
- *          returnAnchorId, ownFlight, carHome, stayTier, lifestyle }
+ *          returnAnchorId, ownFlight, carHome, stayTier, lifestyle,
+ *          flightHours: { out, back } ('any' | 'morning' | 'midday' | 'evening'),
+ *          liveFlights: Map from useLiveFlights() }
+ * ctx.data.flights is the home airport's swept flight file (T517).
  * ctx:   { data, countryInsights }
  */
 export function priceTrip(state, { data = null, countryInsights = null } = {}) {
@@ -87,7 +93,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
   const carModel = data?.meta?.car_model || null;
   const {
     stops = [], tripStart = '', transportPref = 'auto', legModes = {}, ownLegs = {},
-    ownStays = {}, baggage = 'cabin', anchorId = null, anchorOrigin = null,
+    ownStays = {}, anchorId = null, anchorOrigin = null,
     returnAnchorId = null, ownFlight = null, carHome = null, stayTier = 'home',
   } = state || {};
   // The party (T458): everyone 12 and over counts as an adult; children 3 to
@@ -127,7 +133,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
   const ownOut = split ? (Number(ownFlight.costOut) || 0) > 0 : ownCarCost > 0;
   const ownBack = split ? (Number(ownFlight.costBack) || 0) > 0 : ownCarCost > 0;
 
-  // ---- The round flight's airports (Carta prices no seat, T273) ----------
+  // ---- The round flight's airports (no fare: T511; T517 adds flights back)
   let routedFlight = null;
   if (transportPref !== 'owncar' && first?.dest && last?.dest) {
     const outDest = hasRoutes(returnDest)
@@ -139,16 +145,16 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
       out_from_id: outDest?.id ?? null,
     });
     const combine = (inDest) => combineTripLegs(
-      inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin,
-      { allDests: destinations, estimates: true },
+      inDest, first.arriveDate, outDest, last.departDate, groupSize, anchorOrigin,
+      { allDests: destinations },
     );
     if (anchorDest) {
       const viaAnchor = combine(anchorDest);
-      if (viaAnchor.combinable) routedFlight = withIds(unpricedFlight(viaAnchor), anchorDest);
+      if (viaAnchor.combinable) routedFlight = withIds(viaAnchor, anchorDest);
     }
     if (!routedFlight) {
       const inDest = hasRoutes(first.dest) ? first.dest : (anchorDest || first.dest);
-      routedFlight = withIds(unpricedFlight(combine(inDest)), inDest);
+      routedFlight = withIds(combine(inDest), inDest);
     }
   }
 
@@ -187,6 +193,47 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
       };
     }
   }
+
+  // ---- Carta's flight there and home (T517) ------------------------------
+  // Google Flights' price for the flight the trip routes through, each way:
+  // live for the exact day when the planner asked for it, else the sweep's
+  // cheapest that day. A fare the traveller typed for a direction wins; a
+  // day with no flight stays empty rather than guessed. Bags are added per
+  // airline from the trip's baggage choice (flights/bagFees.js).
+  const cartaFlight = (() => {
+    // An older record holds one typed total for both ways: it covers both.
+    const typedPair = ownFlight && !split && ownFlight.costTotal > 0;
+    const flies = transportPref !== 'owncar' && !typedPair && (!ownFlight || (ownFlight.mode || 'fly') === 'fly');
+    const routed = routedFlight;
+    if (!flies || !routed || !first?.arriveDate || !last?.departDate) return null;
+    const home = anchorOrigin || data?.meta?.selected_origin || null;
+    const inAirport = destAnchor(destinations[routed.in_from_id]);
+    const outAirport = destAnchor(destinations[routed.out_from_id]);
+    if (!home || !inAirport || !outAirport) return null;
+    const file = data?.flights?.from === home ? data.flights : null;
+    const live = state?.liveFlights;
+    const hours = state?.flightHours || {};
+    const paying = groupSize;
+    const bagKey = state?.baggage || 'small';
+    const side = (dir, from, to, date) => {
+      const leg = pickLeg({
+        file, live: live?.get?.(`${from}-${to}-${date}`) || null, dir,
+        airport: dir === 'out' ? to : from, date, hours: hours[dir] || 'any',
+      });
+      return leg ? { ...leg, from, to, cost: legCost(leg, { paying, bagKey }) } : leg;
+    };
+    return {
+      home,
+      inAirport,
+      outAirport,
+      out: ownOut ? null : side('out', home, inAirport, first.arriveDate),
+      back: ownBack ? null : side('back', outAirport, home, last.departDate),
+      queries: [
+        { o: home, d: inAirport, date: first.arriveDate },
+        { o: outAirport, d: home, date: last.departDate },
+      ],
+    };
+  })();
 
   // ---- Stop to stop -------------------------------------------------------
   const legs = [];
@@ -390,6 +437,8 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
   const parts = {
     // What they typed for getting there and home (a fare, a ticket, the car).
     travel: round2(flight?.own || flight?.driving ? (flight.cost_total || 0) : 0),
+    // Carta's flight for each way they did not type, bags included (T517).
+    flights: round2((cartaFlight?.out?.cost?.total || 0) + (cartaFlight?.back?.cost?.total || 0)),
     // Runway to bed and bed to runway, plus a named arrival to the first stop.
     transfers: round2(
       ((flight?.combinable || flight?.own) ? (flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0)) : 0)
@@ -416,7 +465,7 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
 
   return {
     stopDetails, plannedNights, windowNights: tripDaysBetween(state?.tripStart, state?.tripEnd),
-    routedFlight, flight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes,
+    routedFlight, flight, cartaFlight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes,
     stayCosts, tripHasCar, groupSize, parts, grandTotal, travelSplit,
     party: { adults, children, babies, head: groupSize, seats, weight },
     perPerson: round2(grandTotal / groupSize),
@@ -425,13 +474,14 @@ export function priceTrip(state, { data = null, countryInsights = null } = {}) {
 
 /**
  * The trip's receipt lines in one fixed order, each marked for what it is:
- * 'est' a Carta estimate, 'yours' a figure the traveller typed, 'missing' a
- * part only the traveller can price (their fare to the start and home).
+ * 'est' a Carta estimate, 'yours' a figure the traveller typed, 'flight'
+ * Google Flights' price with its airline and check time (`leg`), 'missing'
+ * a way there or home nobody has priced yet (no flight found, or not flown).
  * Every screen and the PDF render these lines; none adds its own.
  */
 export function tripLines(priced) {
   if (!priced) return [];
-  const { parts, flight, legs, stayCosts, driveLegs } = priced;
+  const { parts, flight, legs, stayCosts, driveLegs, cartaFlight } = priced;
   const tr = priced.travelSplit || { legacy: false, out: 0, back: 0 };
   const lines = [];
   if (tr.legacy) {
@@ -441,7 +491,9 @@ export function tripLines(priced) {
     for (const dir of ['out', 'back']) {
       const paid = tr[dir];
       const est = flight?.driving ? (dir === 'out' ? driveLegs?.out?.ground_total : driveLegs?.home?.ground_total) || 0 : 0;
+      const carta = cartaFlight?.[dir];
       if (paid > 0) lines.push({ key: dir, eur: paid, kind: 'yours' });
+      else if (carta?.cost) lines.push({ key: dir, eur: carta.cost.total, kind: 'flight', leg: carta });
       else if (est > 0) lines.push({ key: dir, eur: est, kind: 'est' });
       else lines.push({ key: dir, eur: 0, kind: 'missing' });
     }

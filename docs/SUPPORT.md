@@ -70,9 +70,9 @@ Sale not found:
 
 ### 2. A price that turned out wrong
 
-This is the message that tests the provenance chain. Carta does not price flights (owner decision of
-2026-10-02, T272) and no screen shows a flight figure of its own since T273 removed the frozen estimates. A
-flight in a total is one the traveller typed in. Every other figure carries what it is: a harvested quote shows its source and the day it was seen, a
+This is the message that tests the provenance chain. A flight price is Google Flights' price (since T517,
+2026-10-21), shown with the airline, the times, when it was checked and a link to Google Flights that warns
+prices may have changed; a fare the traveller typed in replaces it. Bag fees are Carta's estimates. Every other figure carries what it is: a harvested quote shows its source and the day it was seen, a
 cached quote shows its expiry, an estimate carries a tilde and the label est. Before answering, ask for the
 place, the dates and a screenshot, open the same screen, and read the chip on the figure. Then answer with the
 chip's own words, one of the three below.
@@ -90,6 +90,13 @@ The figure was an observed quote that has aged:
 > Hi [name], thank you for telling me. The price you saw came from [source], seen on [date], so it was [N] days
 > old when you looked. Fares move; the age is shown next to the price for that reason. I checked the same
 > [route/date] now and [source] shows [price]. I am sorry for the gap. Bas
+
+The figure was a flight price:
+
+> Hi [name], thank you for telling me. The flight price you saw is Google Flights' price for that day,
+> checked [time] before you looked; Carta does not sell tickets and does not set the price. Fares move between
+> checks, which is why the time is shown next to it and the link warns that prices may have changed. If you
+> already know your fare, "Add your fare" puts your own figure in the total instead. Bas
 
 The figure was wrong in our data (a bug, a mismatch, a wrong place):
 

@@ -9,6 +9,7 @@ import { formatMoney, formatEst } from '../lib/money.js';
 import { tripLines, tripReadiness } from '../lib/tripTotal.js';
 import { useLifestyleLabel, useTotalDelta } from './planHooks.js';
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from '../components/Icons.jsx';
+import { AirlineMark } from '../components/flights/Flights.jsx';
 
 /**
  * The trip's one price card (T432). The wizard holds it in a sticky side
@@ -44,6 +45,16 @@ function LineValue({ line, lang, t, onAddFare }) {
     return onAddFare
       ? <Button variant="quiet" size="sm" className="plan-line-add" onClick={onAddFare}>{t('plan.addYourFare')}</Button>
       : <span className="plan-line-out">{t('plan.notIn')}</span>;
+  }
+  // Google Flights' fare (T518): a measured price, not Carta's estimate, so
+  // it carries no tilde; the airline's mark says whose flight it is.
+  if (line.kind === 'flight') {
+    return (
+      <span className="plan-line-yours plan-line-flight">
+        <AirlineMark code={line.leg?.airline} size="sm" />
+        <Money value={line.eur} precision="cents" />
+      </span>
+    );
   }
   if (line.kind === 'yours') {
     return (

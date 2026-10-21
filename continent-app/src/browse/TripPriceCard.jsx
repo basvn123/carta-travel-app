@@ -14,6 +14,9 @@ import { useSettledFigure } from '../lib/figureChange.js';
 import { SLOTS, includedRows, lifestyleShares, tripPrice } from '../lib/tripPrice.js';
 import { IncludedList } from './ItemParts.jsx';
 import { ChevronDownIcon, ChevronRightIcon, DownloadIcon, PlusIcon } from '../components/Icons.jsx';
+import { legCost } from '../lib/flights/flights.js';
+import { FlightRow, AirlineMark } from '../components/flights/Flights.jsx';
+import { homeFlightSetup, journeyAirports, bestRoundTrip, backDate, withEnds } from './cartaFlight.js';
 
 /**
  * The trip page's price card (T431, owner 2026-10-15): what the week costs a
@@ -30,10 +33,11 @@ import { ChevronDownIcon, ChevronRightIcon, DownloadIcon, PlusIcon } from '../co
  *                bed line and the other three on the trip's written ranges
  *                (lib/tripPrice.js lifestyleShares), so this page and every
  *                other price in the app move together
- *   your travel  the traveller's own fare to the start and home, typed in
- *                and labelled as theirs (Carta never prices a flight); the
- *                same sheet and store as the destination page, keyed
- *                journey:<id>
+ *   your travel  Carta's return flight from the home airport to the week's
+ *                cheapest gateway near the app's dates (T518, cartaFlight.js),
+ *                or the traveller's own fare to the start and home, typed in
+ *                and labelled as theirs, which wins; the same sheet and store
+ *                as the destination page, keyed journey:<id>
  *   breakdown    four lines, closed until asked, each with its note behind
  *                a dot; then what is in and what is not, as rows
  *
@@ -84,13 +88,24 @@ export function TripPriceCard({
     ctx?.setChoices?.((prev) => ({ ...prev, group_size: Math.min(MAX_PARTY, Math.max(1, Math.round(n))) }));
   };
 
+  // Carta's flight (T518): out on the app's leaving day, home after the
+  // week's own nights, into whichever gateway is cheapest. A typed fare wins.
+  const fl = homeFlightSetup(ctx);
+  const codes = useMemo(() => journeyAirports(trip), [trip]);
+  const flightBack = backDate(fl.from, days - 1);
+  const carta = useMemo(
+    () => (fare?.costTotal ? null : bestRoundTrip(fl.file, codes, fl.from, flightBack, { paying: people, bagKey: fl.bagKey })),
+    [fare, fl.file, codes, fl.from, flightBack, people, fl.bagKey],
+  );
+
   const price = useMemo(() => tripPrice(budget, {
     sleepShare: shares.sleepShare,
     spendShare: shares.spendShare,
     days,
     party: people,
     fare: fare?.costTotal || 0,
-  }), [budget, shares.sleepShare, shares.spendShare, days, people, fare]);
+    carta,
+  }), [budget, shares.sleepShare, shares.spendShare, days, people, fare, carta]);
   // The trip's own range a person, simplest end to most generous, for the
   // sentence under the Lifestyle row.
   const ends = useMemo(() => ({
@@ -103,13 +118,15 @@ export function TripPriceCard({
 
   const eur = (v) => formatMoney(v, { precision: 'cents', locale: lang });
   const peopleText = people === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: people });
-  const included = includedRows(trip, { nights: Math.max(1, days - 1), fare: fare?.costTotal || 0 })
+  const flight = price?.carta || null;
+  const included = includedRows(trip, { nights: Math.max(1, days - 1), fare: fare?.costTotal || 0, carta: flight })
     .map((r) => ({
       key: r.key,
       in: r.in,
       label: r.text || t(r.labelKey, r.params || {}),
       srState: t(r.in ? 'journey.incYes' : 'journey.incNo'),
-      value: r.key === 'travel' && fare?.costTotal ? eur(fare.costTotal) : null,
+      value: r.key === 'travel' && fare?.costTotal ? eur(fare.costTotal)
+        : r.key === 'travel' && r.in && flight ? eur(flight.total) : null,
     }));
   // What the booklet prints for the price (lib/tripPdf.js): this card's
   // own figures at the traveller's choices, never a second sum.
@@ -197,11 +214,28 @@ export function TripPriceCard({
               <dd>{eur(price.fare)}</dd>
             </div>
           )}
+          {flight && (
+            <div className="tprice-line is-own">
+              <dt><AirlineMark code={flight.out.airline} size="sm" />{' '}{t('flight.flightLine')}</dt>
+              <dd><Money value={flight.total} precision="cents" /></dd>
+            </div>
+          )}
           <div className="tprice-line is-total">
             <dt>{t('receipt.total', { people: peopleText })}</dt>
             <dd><Money value={price.total} est precision="cents" /></dd>
           </div>
         </dl>
+      )}
+
+      {flight && (
+        <div className="tprice-flights">
+          <FlightRow leg={withEnds(flight.out, fl.file?.from, flight.airport)}
+            cost={legCost(flight.out, { paying: people, bagKey: fl.bagKey })}
+            dir="out" bagKey={fl.bagKey} wantedDate={fl.from} />
+          <FlightRow leg={withEnds(flight.back, flight.airport, fl.file?.from)}
+            cost={legCost(flight.back, { paying: people, bagKey: fl.bagKey })}
+            dir="back" bagKey={fl.bagKey} wantedDate={flightBack} />
+        </div>
       )}
 
       <div className="tprice-acts">

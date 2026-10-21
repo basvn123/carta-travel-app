@@ -170,7 +170,7 @@ export const RANK_VERSION = 1;
  * the rating components and the rest) arrives with the shard.
  *
  * What decides the list: every field useDestinationSearch, composeTrip,
- * hydrateForOrigin, computeCosts and useExploreCatalog read to filter, price
+ * withOriginRoutes, computeCosts and useExploreCatalog read to filter, price
  * and order, plus what an Explore or Destinations card prints on its face.
  * tests/rankTier.test.mjs prices every destination from the lite record and
  * from the full one and requires the same answer, so a pricing input left
@@ -302,7 +302,7 @@ export function mergeCatalogue(boot, chunkMap, lite = null) {
   }
   const core = { ...(boot.top || {}), meta: boot.meta, destinations };
   // A catalogue holding any lite record says so at the top, where it
-  // survives hydrateForOrigin's copy, so a screen that needs the detail of
+  // survives withOriginRoutes's copy, so a screen that needs the detail of
   // every place can wait for the rest (App.jsx).
   if (liteCount) core.partial = true;
   return { core, missing, lite: liteCount };

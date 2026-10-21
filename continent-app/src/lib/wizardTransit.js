@@ -3,9 +3,8 @@
  *
  * The wizard used to price everything from ONE departure airport (the app's
  * chosen origin). This module widens that to a real departure ADDRESS:
- *   - nearbyAirports()        every fare-carrying origin within reach of the
- *                             typed address (the traveller will happily drive
- *                             an hour to the airport that actually flies).
+ *   - nearbyAirports()        every departure airport within reach of the
+ *                             typed address, nearest first.
  *   - TRAVEL_STYLES           the three lifestyle tiers (budget / standard /
  *                             comfort) as one object each: the stay tier the
  *                             receipt prices beds at plus the eating-out
@@ -74,27 +73,23 @@ export function styleLifestyle(styleKey, metaDefaults) {
 }
 
 /**
- * Every fare-carrying departure airport within `maxKm` of a point, richest
- * route network first. Airports with zero coverage are dropped outright: an
- * airfield that flies nowhere is not a way into Europe.
+ * Every departure airport (meta.origins) within `maxKm` of a point, nearest
+ * first. Until T511 this ranked by how many places each airport's fares
+ * reached and dropped airports with none; with the fares gone, distance
+ * alone orders them (T517 can bring a route count back).
  *
- * @returns [{ iata, name, city, km, coverage }]
+ * @returns [{ iata, name, city, km }]
  */
 export function nearbyAirports(meta, lat, lon, { maxKm = AIRPORT_SEARCH_KM, limit = MAX_AIRPORTS } = {}) {
   if (lat == null || lon == null) return [];
   const origins = meta?.origins || {};
-  const coverage = meta?.origin_coverage || {};
   const out = [];
   for (const [iata, o] of Object.entries(origins)) {
     if (o.lat == null || o.lon == null) continue;
     const km = haversineKm(lat, lon, o.lat, o.lon);
     if (km == null || km > maxKm) continue;
-    const cov = coverage[iata] || 0;
-    if (cov <= 0) continue;
-    out.push({ iata, name: o.name || o.city || iata, city: o.city || iata, km: Math.round(km), coverage: cov });
+    out.push({ iata, name: o.name || o.city || iata, city: o.city || iata, km: Math.round(km) });
   }
-  // Route network first, distance breaks ties: the nearest airport is often
-  // the one that barely flies anywhere.
-  out.sort((a, b) => (b.coverage - a.coverage) || (a.km - b.km));
+  out.sort((a, b) => a.km - b.km);
   return out.slice(0, limit);
 }

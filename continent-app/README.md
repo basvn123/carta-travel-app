@@ -60,14 +60,15 @@ the rust accent ("deal"). Click any pill to open the detail panel.
 
 ### Detail panel (right side)
 
-- Trip total: round-trip flight fare + baggage, then on-the-ground spend broken
+- Trip total: the round-trip flight (Google Flights' price from the flight-sweep
+  files, or the fare the traveller typed) + estimated baggage, then on-the-ground spend broken
   out by activity (dinners, lunches, drinks, coffees, groceries). Values switch
   between total and per-person based on the global toggle. "Adjust lifestyle"
   opens the lifestyle panel.
 - **Verify the flight price**, opens Aviasales and Skyscanner for the chosen
   origin, destination, and dates so you can compare against other carriers. Two
-  sites rather than one because they cover different slices of the budget
-  carriers the app harvests. For gems, the panel notes the anchor airport you fly
+  sites rather than one because they cover different slices of the market. A
+  flight Carta shows links to Google Flights, whose price it is. For gems, the panel notes the anchor airport you fly
   into and the ground transfer time.
 
 ## How it works under the hood
@@ -76,8 +77,16 @@ the rust accent ("deal"). Click any pill to open the detail panel.
   (runs automatically on `npm run dev/build/data`) from the repo-root master
   `app_data/app_data.json`. A flights-only mock can be generated with
   `python pipeline/gen_mock_data.py` from the repo root if the master is absent.
-- **`src/runtime_pricing.js`**, `composeTrip()` looks up the cheapest fare for
-  the dates, adds baggage, and adds the lifestyle ground spend from `dest.costs`.
+- **`src/lib/flights/`** (T517), the flight layer: `flightData.js` loads the
+  sweep's `flights/{IATA}.json` and `_index.json` from the data host (R2, not
+  `public/`), `useLiveFlights.js` calls `/api/flights` (`functions/api/flights.js`)
+  for the trip planner's exact day, `flights.js` picks a leg (typed fare, then
+  live, then swept within 3 days, never older than 3 days) and builds the Google
+  Flights link, `bagFees.js` holds the per-airline bag estimates. The sweep
+  itself is the `flight-sweep` Worker in `workers/flight-sweep`; formats in
+  `../docs/SCHEMA.md`, "Flight prices".
+- **`src/lib/runtime_pricing.js`**, `composeTrip()` prices the trip for the
+  dates and adds the lifestyle ground spend from `dest.costs`.
   `buildFlightLinks()` produces the comparison deeplinks.
 - **`src/lib/affiliate.js`**, the Aviasales/Travelpayouts deeplink builder. The
   outbound click is the only thing in the app that earns: Travelpayouts
@@ -120,6 +129,6 @@ editor, and set the two env vars.
   Travelpayouts Flight Search API would give in-app results but is gated at 50k
   MAU, needs a server for its request signature, and forbids collecting booking
   links ahead of a user click, so it does not fit a static build.
-- The Ryanair fare is what `ryanair-py` returns from Ryanair's price-calendar API.
-  It is the same data Ryanair's own site shows, but lead time and cabin selection
-  on the actual booking page may add a few euros (seat selection, payment fees).
+- A flight price is Google Flights' cheapest price for that day when it was
+  checked (the time is shown); the airline's own booking page may differ (seat
+  selection, payment fees), so every link says prices may have changed.
