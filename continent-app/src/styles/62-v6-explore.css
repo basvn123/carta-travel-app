@@ -1108,7 +1108,7 @@
   .explore-shell .xview-fab {
     position: fixed;
     left: 50%;
-    bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+    bottom: calc(var(--bottom-nav-h) + var(--space-3));
     z-index: var(--z-overlay);
     display: block;
     transform: translateX(-50%);

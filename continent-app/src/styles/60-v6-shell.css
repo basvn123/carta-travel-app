@@ -250,7 +250,7 @@
   top: var(--filter-h);
   left: 0;
   right: 0;
-  bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+  bottom: var(--bottom-nav-h);
   overflow: hidden;
   padding: var(--space-4);
   background: var(--surface-page);
@@ -271,7 +271,7 @@
   left: 50%;
   /* The nav grows by the home-bar inset (10-shell.css pads it), so the slot
      clears that too. */
-  bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+  bottom: calc(var(--bottom-nav-h) + var(--space-3));
   /* Above the My trips and Account pages (z 56) so a message is never hidden
      behind them (row T400-c), under every dialog and sheet: the Lifestyle
      scrim and panel are 58 and 59 below, the filter sheets 60 (T401). */

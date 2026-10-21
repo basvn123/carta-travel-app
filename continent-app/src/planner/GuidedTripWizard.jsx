@@ -2690,7 +2690,7 @@ export function GuidedTripWizard({
                           <span className="trip-field-label">{t('wizard.start')}</span>
                           <b>{startDate ? fmtDate(startDate, true) : t('wizard.departureDate')}</b>
                         </span>
-                        <span className="trip-dates-arrow">→</span>
+                        <span className="trip-dates-arrow" aria-hidden="true">→</span>
                         <span className={`guide-range-end ${!endDate ? 'empty' : ''} ${startDate && !endDate ? 'next' : ''}`}>
                           <span className="trip-field-label">{t('wizard.end')}</span>
                           <b>{endDate ? fmtDate(endDate, true) : t('wizard.returnDate')}</b>

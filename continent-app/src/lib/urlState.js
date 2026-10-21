@@ -101,7 +101,8 @@ export function decodeState(search) {
   const q = new URLSearchParams(search || '');
   const has = (k) => q.has(k);
   const out = {};
-  if (has('tab')) out.activeTab = q.get('tab');
+  // `?tab=destinations` is the old name of the places tab (T494).
+  if (has('tab')) out.activeTab = q.get('tab') === 'destinations' ? 'places' : q.get('tab');
   if (has('d')) out.departDate = q.get('d');
   if (has('r')) out.returnDate = q.get('r');
   if (has('g')) out.group_size = Math.max(1, parseInt(q.get('g'), 10) || 1);
@@ -203,7 +204,8 @@ export function tabHref(key, search = (typeof window !== 'undefined' ? window.lo
 
 /** The section a query names, in the same terms App reads at load. */
 export function tabFromSearch(search) {
-  const tab = new URLSearchParams(search).get('tab');
+  const raw = new URLSearchParams(search).get('tab');
+  const tab = raw === 'destinations' ? 'places' : raw;
   return ['home', 'map', 'places', 'trip', 'day'].includes(tab) ? tab : 'map';
 }
 
