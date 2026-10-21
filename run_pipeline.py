@@ -1456,6 +1456,15 @@ TASKS = [
         "note": "Eurostat updates ~annually; pass --refresh in the script to re-download.",
     },
     {
+        "key": "flight_routes",
+        "title": "Flight route list (Eurostat airport pairs) -> R2 data/flights/_routes.json",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "cmds": [[PY, "pipeline/flights/build_routes.py", "--upload"]],
+        "note": "T512. The flight-sweep Worker reads the list from R2; Eurostat publishes "
+                "with a long lag, so the Worker's own find tier adds newer routes.",
+    },
+    {
         "key": "lodging",
         "title": "Inside Airbnb lodging anchors -> premiums",
         "cadence": "quarterly",
