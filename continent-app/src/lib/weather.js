@@ -1,55 +1,34 @@
 /**
- * weather.js, the live 7-day forecast on a destination's Explore panel.
+ * weather.js, the live 7-day forecast on the destination page, the trip card
+ * and the day planner.
  *
- * Open-Meteo's public forecast API: no key, CORS-open, and licensed for
- * non-commercial use with attribution (docs/tos/data_licenses.md has the
- * row; the panel prints the credit). One request per opened destination,
- * cached for the session, fetched only when the panel is actually open, so
- * browsing the grid costs zero calls.
+ * MET Norway's Locationforecast (CC BY 4.0, commercial use allowed with the
+ * credit the page prints), fetched through our own Pages Function
+ * /api/forecast (T483): MET wants an identifying User-Agent and caching, and
+ * the same origin needs no CSP entry. The rows are built by
+ * lib/metForecast.js. One request per opened destination, cached for the
+ * session, fetched only when the panel is actually open, so browsing the
+ * grid costs zero calls.
  *
- * This is deliberately client-side: a forecast is the one block on the page
- * that CANNOT be kept fresh by a pipeline cadence, it is stale the day
- * after it is harvested. The climate normals (NASA POWER, in the wire) say
- * what a month is usually like; this says what this week actually looks like.
+ * This is deliberately live: a forecast is the one block on the page that
+ * CANNOT be kept fresh by a pipeline cadence, it is stale the day after it
+ * is harvested. The climate normals (NASA POWER, in the wire) say what a
+ * month is usually like; this says what this week actually looks like.
  */
 import { useEffect, useState } from 'react';
 
 const cache = new Map();
 
-// WMO weather interpretation codes -> a compact kind the UI can draw.
-// Groups follow Open-Meteo's published table.
-export function weatherKind(code) {
-  if (code === 0) return 'sun';
-  if (code === 1 || code === 2) return 'partsun';
-  if (code === 3) return 'cloud';
-  if (code === 45 || code === 48) return 'fog';
-  if (code >= 51 && code <= 57) return 'drizzle';
-  if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82)) return 'rain';
-  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'snow';
-  if (code >= 95) return 'storm';
-  return 'cloud';
-}
-
+/** Daily rows { date, kind, hi, lo, rainMm, updated }, or null when the
+ *  forecast could not be fetched. `updated` is when MET last ran the model. */
 export function fetchForecast(lat, lon) {
   const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
   if (!cache.has(key)) {
-    const url = 'https://api.open-meteo.com/v1/forecast'
-      + `?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}`
-      + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max'
-      + '&timezone=auto&forecast_days=7';
-    cache.set(key, fetch(url)
+    cache.set(key, fetch(`/api/forecast?lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => {
-        const d = j?.daily;
-        if (!d || !Array.isArray(d.time)) return null;
-        return d.time.map((iso, i) => ({
-          date: iso,
-          code: d.weather_code?.[i] ?? null,
-          kind: weatherKind(d.weather_code?.[i] ?? 3),
-          hi: d.temperature_2m_max?.[i] ?? null,
-          lo: d.temperature_2m_min?.[i] ?? null,
-          rainPct: d.precipitation_probability_max?.[i] ?? null,
-        }));
+        if (!j || !Array.isArray(j.days) || !j.days.length) return null;
+        return j.days.map((d) => ({ ...d, updated: j.updated || null }));
       })
       .catch(() => null));
   }

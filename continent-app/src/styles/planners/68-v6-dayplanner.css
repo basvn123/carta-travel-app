@@ -1355,6 +1355,9 @@
   overflow: hidden;
 }
 .dayt-link { min-width: var(--tap); justify-content: center; }
+/* T487: the day's Google Maps link(s), under the summary. */
+.dayx-gmaps { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: var(--space-3) 0; }
+.dayx-gmaps-h { flex: 1 0 100%; margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .day-wizard .guide-foot-summary { flex: 1 1 auto; min-width: 0; }
 .dayw-rail-btn.btn { max-width: 100%; min-width: 0; overflow: hidden; }
 .dayw-rail-btn.btn > :where(.btn-icon, .btn-label, .btn-spinner) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

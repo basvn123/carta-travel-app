@@ -102,11 +102,36 @@ export function DayKit({ tools }) {
 export const KIT_ICONS = { tips: BulbIcon, notes: PencilIcon, files: TicketIcon, ideas: SparkIcon };
 
 /**
+ * The day in Google Maps (T487), under the summary where a traveller looks
+ * when they set off. One link when it fits; otherwise the day in parts, each
+ * ending where the next begins, so no stop is ever dropped (a phone's browser
+ * takes 3 stops a link, the desktop site 9; lib/routing.js).
+ */
+export function DayGmaps({ parts, dayNumber = null }) {
+  const { t } = useI18n();
+  if (!parts?.length) return null;
+  const title = dayNumber ? t('day.gmapsOpen', { n: dayNumber }) : t('export.openInGmaps');
+  const link = (href, label, key) => (
+    <a key={key} className="btn btn-secondary btn-sm itin-export-link" href={href} target="_blank" rel="noreferrer">
+      <span className="btn-icon" aria-hidden="true"><MapPinIcon size={16} /></span>
+      <span className="btn-label">{label}</span>
+    </a>
+  );
+  if (parts.length === 1) return <div className="dayx-gmaps">{link(parts[0].url, title)}</div>;
+  return (
+    <div className="dayx-gmaps" role="group" aria-label={title}>
+      <p className="dayx-gmaps-h">{title}</p>
+      {parts.map((p, i) => link(p.url, t('day.gmapsPart', { i: i + 1, from: p.from.city || '', to: p.to.city || '' }), i))}
+    </div>
+  );
+}
+
+/**
  * Take the day with you (T433), the trip planner's export row: the PDF and a
- * share link first, Google Maps beside them, the calendar and My Maps under
+ * share link first (Google Maps moved up to DayGmaps, T487), the calendar and My Maps under
  * "More". Files are behind the pass; the link and Google Maps are not.
  */
-export function DayExports({ onPdf, onShareLink, onShareText, gmapsUrl, onIcs, onKml, note }) {
+export function DayExports({ onPdf, onShareLink, onShareText, onIcs, onKml, note }) {
   const { t } = useI18n();
   const [more, setMore] = useState(false);
   return (
@@ -119,12 +144,6 @@ export function DayExports({ onPdf, onShareLink, onShareText, gmapsUrl, onIcs, o
         <Button variant="secondary" iconStart={<LinkIcon size={20} />} onClick={onShareLink}>
           {t('dayws.shareLink')}
         </Button>
-        {gmapsUrl && (
-          <a className="btn btn-secondary itin-export-link" href={gmapsUrl} target="_blank" rel="noreferrer">
-            <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
-            <span className="btn-label">{t('export.openInGmaps')}</span>
-          </a>
-        )}
       </div>
       <Button
         variant="quiet"

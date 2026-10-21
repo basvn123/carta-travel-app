@@ -14,7 +14,9 @@ import { legTransportOptions } from '../lib/transport.js';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { fetchDestPoiMap } from '../lib/appData.js';
 import { fetchTripPlans, fetchTripPlanWithStops } from '../auth/tripPlanStorage.js';
-import { fetchDrivingRoute, googleMapsDirUrl } from '../lib/routing.js';
+import {
+  fetchDrivingRoute, googleMapsDirUrl, googleMapsDirParts, GMAPS_STOPS_PHONE, GMAPS_STOPS_DESKTOP,
+} from '../lib/routing.js';
 import { routeDay, routeSegments, isWalkable } from '../lib/dayRoute.js';
 import { useI18n } from '../i18n/index.jsx';
 import { localIntelFor } from '../lib/localIntel.js';
@@ -51,7 +53,7 @@ import {
   buildDaySchedule, fmtClockLoose, GAP_SUGGEST_MIN, DAY_START_MIN,
 } from './daySchedule.js';
 import { formatSteps, kmToSteps, stepsToKm } from '../lib/steps.js';
-import { fetchForecast, weatherKind } from '../lib/weather.js';
+import { fetchForecast } from '../lib/weather.js';
 import { loadDossier } from '../lib/dossier.js';
 import { searchFold } from '../lib/textSearch.js';
 import { useShortlistPoints, resolveFeatureRow } from '../hooks/useFavoriteItems.js';
@@ -63,7 +65,7 @@ import { DayFilesPanel } from './DayFilesPanel.jsx';
 import {
   DayStayBar, DaySwitcher, DayTipsBody, tipsCount,
 } from './DayWorkspaceChrome.jsx';
-import { DaySummary, DayKit, DayExports, KIT_ICONS } from './DayOverview.jsx';
+import { DaySummary, DayKit, DayExports, DayGmaps, KIT_ICONS } from './DayOverview.jsx';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { buildDayShareUrl, decodeDayShare } from '../lib/shareLink.js';
 import {
@@ -1737,7 +1739,12 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     ? dayRoute.walkKm
     : Math.round(assignedItems.reduce((s, _, i) => s + (walkLeg(i)?.km || 0), stayLeg && !stayLeg.ride ? (stayLeg.km || 0) : 0) * 10) / 10;
 
-  const gmapsUrl = googleMapsDirUrl(walkPins, 'walking');
+  // T487: a phone's browser opens Google Maps with 3 stops a link, so on a
+  // phone (narrow or touch) the day comes in parts; nothing is dropped.
+  const gmapsPhone = isNarrow || (typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches);
+  const gmapsParts = googleMapsDirParts(walkPins, 'walking', gmapsPhone ? GMAPS_STOPS_PHONE : GMAPS_STOPS_DESKTOP);
+  // A shared day is opened on someone's phone: phone-sized parts.
+  const gmapsShareParts = googleMapsDirParts(walkPins, 'walking', GMAPS_STOPS_PHONE);
 
   // The map's inputs, held still between renders. TripMap reframes when its
   // stops, segments or padding change by identity, and a reframe reports the
@@ -2005,7 +2012,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const shareDay = async () => {
     const cityName = stop?.dest?.city || t('day.myDay');
     const lines = assignedItems.map((it, i) => `${i + 1}. ${it.name}`);
-    const text = [t('day.shareTextTitle', { city: cityName }), ...lines, gmapsUrl ? t('day.shareRoute', { url: gmapsUrl }) : '']
+    const text = [t('day.shareTextTitle', { city: cityName }), ...lines, ...gmapsShareParts.map((p) => t('day.shareRoute', { url: p.url }))]
       .filter(Boolean).join('\n');
     try {
       if (navigator.share) {
@@ -2832,9 +2839,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       if (!live) return;
       const row = (rows || []).find((r) => r.date === date);
       if (!row) { setChatWeather(null); return; }
-      const kind = row.kind || weatherKind(row.code ?? 3);
       setChatWeather({
-        rain: ['rain', 'drizzle', 'storm'].includes(kind) || (row.rainPct ?? 0) >= 60,
+        rain: ['rain', 'drizzle', 'storm'].includes(row.kind) || (row.rainMm ?? 0) >= 1,
         hot: (row.hi ?? 0) > 30,
         hi: row.hi ?? null,
       });
@@ -3804,6 +3810,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           focusIdx={focusRow}
         />
 
+        <DayGmaps parts={gmapsParts} dayNumber={stop && planDays.length > 0 ? dayNumber : null} />
+
         {plan.standalone && stop && (
           <DayStayBar
             stayLabel={stayLabel}
@@ -3913,7 +3921,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           onPdf={downloadPdf}
           onShareLink={shareDayLink}
           onShareText={shareDay}
-          gmapsUrl={gmapsUrl}
           onIcs={downloadIcsFile}
           onKml={downloadKmlFile}
           note={shareState === 'copied' ? t('day.copied') : shareState === 'linked' ? t('dayws.linkCopied') : ''}

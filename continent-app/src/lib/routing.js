@@ -154,3 +154,23 @@ export function googleMapsDirUrl(points, mode = 'walking') {
   if (middle.length) params.set('waypoints', middle.map(ll).join('|'));
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
+
+// Google Maps in a mobile browser takes 3 stops between the start and the end
+// of a link; the desktop site takes 9 (T487, row T471-e).
+export const GMAPS_STOPS_PHONE = 3;
+export const GMAPS_STOPS_DESKTOP = MAX_GMAPS_WAYPOINTS;
+
+/** The ordered points as one or more Google Maps links that keep every stop:
+ *  each part ends where the next begins, so walking the parts in order walks
+ *  the whole day. [{ url, from, to }] with from and to the part's first and
+ *  last point; empty when there are not two usable points. */
+export function googleMapsDirParts(points, mode = 'walking', maxStops = GMAPS_STOPS_DESKTOP) {
+  const pts = (points || []).filter((p) => p && Number.isFinite(p.lat) && Number.isFinite(p.lon));
+  const step = Math.max(1, maxStops) + 1;
+  const parts = [];
+  for (let i = 0; i < pts.length - 1; i += step) {
+    const chunk = pts.slice(i, i + step + 1);
+    parts.push({ url: googleMapsDirUrl(chunk, mode), from: chunk[0], to: chunk[chunk.length - 1] });
+  }
+  return parts;
+}

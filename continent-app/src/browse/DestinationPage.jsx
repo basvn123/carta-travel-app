@@ -551,6 +551,12 @@ export function DestinationPage({
     }
   };
 
+  // When MET last ran the model, in the reader's own clock (T483).
+  const fmtUpdated = (iso) => {
+    try {
+      return new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, { hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+    } catch { return ''; }
+  };
   const fmtDay = (iso) => {
     try {
       return new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, { weekday: 'short', timeZone: 'UTC' })
@@ -847,8 +853,8 @@ export function DestinationPage({
                             <Glyph size={17} className="xp-wday-icon" />
                             <span className="xp-wday-hi">{day.hi != null ? `${Math.round(day.hi)}°` : ''}</span>
                             <span className="xp-wday-lo">{day.lo != null ? `${Math.round(day.lo)}°` : ''}</span>
-                            {day.rainPct != null && day.rainPct >= 30 && (
-                              <span className="xp-wday-rain">{`${day.rainPct}%`}</span>
+                            {day.rainMm != null && day.rainMm >= 1 && (
+                              <span className="xp-wday-rain">{`${Math.round(day.rainMm)} mm`}</span>
                             )}
                           </div>
                         );
@@ -1345,7 +1351,7 @@ export function DestinationPage({
           {settled && (hasRoutes || weatherOn) && (
             <div className="destp-sources">
               <p>
-                {[hasRoutes && t('dest.routesCredit'), weatherOn && t('explore.weatherCredit')].filter(Boolean).join(' ')}
+                {[hasRoutes && t('dest.routesCredit'), weatherOn && t('explore.weatherCredit', { time: fmtUpdated(forecast[0]?.updated) })].filter(Boolean).join(' ')}
               </p>
               {hasRoutes && <CreditFold t={t} licenceKeys={['credit.licence.routes']} />}
             </div>

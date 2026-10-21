@@ -300,9 +300,9 @@ export const ATTRIBUTIONS = [
     credit: 'French timetable data from transport.data.gouv.fr, SNCF',
   },
   {
-    source: 'Open-Meteo',
-    license: 'CC BY 4.0 (non-commercial API tier)',
-    credit: 'Live weather forecasts by Open-Meteo.com',
+    source: 'MET Norway',
+    license: 'CC BY 4.0',
+    credit: 'Weather forecasts from MET Norway (Norwegian Meteorological Institute), api.met.no',
   },
   {
     source: 'Exchange Rate API',

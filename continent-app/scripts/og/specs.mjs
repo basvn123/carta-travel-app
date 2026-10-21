@@ -207,10 +207,10 @@ export function siteSpec(_counts, sample) {
     kind: 'Carta',
     title: 'What a day costs, place by place',
     // No catalogue counts and no method line on the card (owner, 2026-10-13, T438).
-    subtitle: 'Bed, food and local transport for one person, priced town by town across Europe.',
+    subtitle: 'A bed plus food and drink for one person, priced town by town across Europe.',
     panel: null,
     strip: null,
-    alt: 'Carta prices the ground for every place in Europe it covers: the bed, food and local transport, per person per day.',
+    alt: 'Carta prices the ground for every place in Europe it covers: a bed plus food and drink, per person per day.',
   };
   if (sample) spec.panel = { ...sample.panel, head: `Example, ${sample.title}` };
   return spec;

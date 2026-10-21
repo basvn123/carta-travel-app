@@ -49,9 +49,29 @@ function numbersPage() {
   };
 }
 
+// T483: the dev server answers /api/forecast with the same Pages Function
+// the deploy runs, so the forecast works on localhost too.
+function forecastProxy() {
+  return {
+    name: 'carta-forecast-proxy',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if (!req.url.startsWith('/api/forecast')) return next();
+        try {
+          const { onRequestGet } = await import('./functions/api/forecast.js');
+          const out = await onRequestGet({ request: new Request(new URL(req.url, 'http://localhost')) });
+          res.statusCode = out.status;
+          out.headers.forEach((v, k) => res.setHeader(k, v));
+          res.end(Buffer.from(await out.arrayBuffer()));
+        } catch (e) { next(e); }
+      });
+    },
+  };
+}
+
 export default defineConfig({
   // T480: English in a first-paint part and a lazy rest (scripts/i18n/enSplit.mjs).
-  plugins: [react(), numbersPage(), englishSplit(APP_ROOT)],
+  plugins: [react(), numbersPage(), englishSplit(APP_ROOT), forecastProxy()],
   server: { port: 5173, host: true },
   css: { lightningcss: { targets: CSS_TARGETS } },
   build: { cssMinify: 'lightningcss' },

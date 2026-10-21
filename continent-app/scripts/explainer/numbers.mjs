@@ -154,7 +154,7 @@ export function renderNumbersPage(f) {
 <p>This page is built from the same files the app reads. Nothing on it is typed by hand, and it needs no account.</p>
 
 <h2>What a day price is made of</h2>
-<p>Carta prices the ground: the bed, food and local transport, per person per day. It does not price flights and it takes no bookings. A traveller who has a fare types in what they paid, and only then does a trip total include the flight, as their own figure.</p>
+<p>Carta prices the ground: a bed plus food and drink, per person per day. Local transport and tickets are not in that figure. It does not price flights and it takes no bookings. A traveller who has a fare types in what they paid, and only then does a trip total include the flight, as their own figure.</p>
 <p>Under every day price the receipt says which kind of figure it is. For the bed, one of these:</p>
 <ul class="rules">${li(BED_KEYS)}</ul>
 <p style="margin-top:var(--space-4)">For food, one of these:</p>

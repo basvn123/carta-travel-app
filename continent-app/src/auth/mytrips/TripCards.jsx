@@ -18,7 +18,7 @@ const SKY = {
 
 /**
  * What the weather does on the first day. Within a week of leaving it is the
- * live forecast for that day (Open-Meteo, the same source as the destination
+ * live forecast for that day (MET Norway, the same source as the destination
  * panel); further out it is the month's usual daytime high from the climate
  * normals on the wire. Nothing when neither is known.
  */
