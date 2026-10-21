@@ -64,6 +64,10 @@ CURVE_MIN, CURVE_MAX = 0.5, 2.2
 # Star classes never come out cheaper than the class below (the T536 first
 # build had Vienna's 4-star under its 3-star from 26 classed hotels).
 STAR_STEP = 1.08
+# A country's season curve needs this many measured towns behind it; with
+# fewer, one city's calendar (Barcelona's trade fairs) would become the
+# country's, so the country's own Eurostat tourism season stands in.
+MIN_CURVE_TOWNS = 3
 
 
 def size_bucket(pop):
@@ -237,6 +241,7 @@ def build(dests, obs, iab, supply, euro):
 
     # Country aggregates: curves, star ratios, Airbnb ratios, levels by size.
     cc_curve = defaultdict(lambda: defaultdict(lambda: [[] for _ in range(12)]))
+    curve_towns = defaultdict(lambda: defaultdict(int))
     star_ratio = defaultdict(lambda: defaultdict(list))
     bnb_ratio = defaultdict(lambda: defaultdict(list))
     lvl_by = defaultdict(lambda: defaultdict(list))
@@ -246,6 +251,7 @@ def build(dests, obs, iab, supply, euro):
         for k, v in m.items():
             if k.startswith("_"):
                 continue
+            curve_towns[cc][k] += 1
             for i, c in enumerate(v["curve"]):
                 if c:
                     cc_curve[cc][k][i].append(c)
@@ -270,7 +276,8 @@ def build(dests, obs, iab, supply, euro):
                 v = (ia.get("home") or {}).get(str(c))
                 if v:
                     cap_ratio[c].append(v / h4)
-    cc_curve = {cc: {k: [median(x) if x else None for x in v] for k, v in kk.items()}
+    cc_curve = {cc: {k: [median(x) if x else None for x in v] for k, v in kk.items()
+                     if curve_towns[cc][k] >= MIN_CURVE_TOWNS}
                 for cc, kk in cc_curve.items()}
     ratio = lambda table, cc, k, default: (median(table[cc][k]) if table[cc][k] else  # noqa: E731
                                           median(table["EU"][k]) if table["EU"][k] else default)
@@ -278,8 +285,13 @@ def build(dests, obs, iab, supply, euro):
     for c in HOME_CAPS:
         caps.setdefault(c, {2: 0.8, 4: 1.0, 6: 1.35, 8: 1.7}[c])
 
+    # Europe's season, the mean of the countries Eurostat covers: the last
+    # fallback for a country it does not (the UK, Bosnia).
+    eu_nights = ([round(sum(v[i] for v in nights.values()) / len(nights), 3)
+                  for i in range(12)] if nights else None)
+
     def nights_curve(cc):
-        n = nights.get(cc) or nights.get("EU")
+        n = nights.get(cc) or eu_nights
         return [round(x ** 0.35, 3) for x in n] if n else None
 
     # Pass 2: every bed type for every destination.
