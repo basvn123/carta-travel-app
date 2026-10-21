@@ -141,12 +141,7 @@ RUNS: dict[str, Run] = {
     "ferryhopper": _WEEKLY,
     "flixbus_gtfs": _WEEKLY,
     "renfe_kaggle": _WEEKLY,
-    "ryanair_archive": _WEEKLY,
     "sncf_availability": _WEEKLY,
-    "travelpayouts": Run("manual", "tp_stage", "soft",
-                         "retired from the schedule with the fare tasks (T255); "
-                         "still part of the weekly ingestion sweep, where a missing "
-                         "token SKIPs"),
     "holidays": Run("monthly", "demand_events", "soft",
                     "also part of the weekly ingestion sweep"),
     "school_holidays": Run("monthly", "demand_events", "soft",
@@ -156,15 +151,9 @@ RUNS: dict[str, Run] = {
     # Manual tier (the script's own header says so).
     "pipeline/harvest_accommodation.py": Run("quarterly", "lodging", "hard"),
     "pipeline/harvest_activities.py": Run("backfill", "activities", "hard"),
-    "pipeline/harvest_all_origins.py": Run("manual", "fares", "hard",
-                                           "every fare harvest is retired (T255, 2026-10-01)"),
     "pipeline/harvest_bathing_water.py": Run("quarterly", "bathing_water", "hard"),
     "pipeline/harvest_climate_power.py": Run("backfill", "climate", "hard"),
     "pipeline/harvest_events.py": Run("monthly", "events", "soft"),
-    "pipeline/harvest_flight_times.py": Run("monthly", "flight_times", "hard",
-                                            "reads the retired Ryanair endpoint; "
-                                            "scheduled but produces nothing new until "
-                                            "a fare source returns"),
     "pipeline/harvest_geonames.py": Run("backfill", "geonames", "hard"),
     "pipeline/harvest_hostelworld.py": Run("monthly", "staytiers", "hard",
                                            "SKIPs without partner credentials"),
@@ -251,9 +240,7 @@ MODULES = [
     "bus.flixbus_gtfs",
     # Historical pricing and yield proxies
     "pricing.renfe_kaggle",
-    "pricing.ryanair_archive",
     "pricing.sncf_availability",
-    "pricing.travelpayouts",
     # Exogenous demand catalysts (holiday calendars for the estimation model)
     "events.holidays",
 ]
@@ -434,14 +421,6 @@ Rules of the ledger:
 """
 
 SECTIONS = (
-    Section(
-        id="fares_direct",
-        title="1. Flight fares, direct carrier harvest (primary source)",
-        level="##",
-        columns=('Source', 'What we take', 'License', 'Attribution required', 'Share-alike', 'Where attributed today'),
-        intro="",
-        outro="",
-    ),
     Section(
         id="fare_partners",
         title="2. Fare caches and partner APIs",
@@ -959,89 +938,17 @@ script it was and when it was retired.
 )
 
 SOURCES = (
-    # 1. Flight fares, direct carrier harvest (primary source)
-    Source(
-        key="ryanair_farefinder_api",
-        section="fares_direct",
-        scripts=('pipeline/harvest_all_origins.py', 'pipeline/harvest_flight_times.py'),
-        name="Ryanair farefinder API (`pipeline/harvest_all_origins.py`, `harvest_flight_times.py`)",
-        takes="Cheapest fare per day per route, departure and arrival times",
-        licence="None: public unauthenticated endpoint, direct harvest. Prices are facts; ToS risk accepted and kept polite (rate limits, resumable runs)",
-        attribution="No",
-        share_alike="No",
-        attributed="Carrier shown on fare surfaces (provenance code FR)",
-    ),
-    Source(
-        key="wizz_air_timetable_api",
-        retired=True,
-        section="fares_direct",
-        scripts=('pipeline/archive/harvest_wizzair.py',),
-        name="Wizz Air timetable API (`pipeline/archive/harvest_wizzair.py`, RETIRED)",
-        takes="Per-day fares both directions, converted to EUR",
-        licence="Same as Ryanair: public endpoint, direct harvest",
-        attribution="No",
-        share_alike="No",
-        attributed="Carrier shown (provenance code W6). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it",
-    ),
-    Source(
-        key="vueling_apiw_endpoints",
-        retired=True,
-        section="fares_direct",
-        scripts=('pipeline/archive/harvest_vueling.py',),
-        name="Vueling apiw endpoints (`pipeline/archive/harvest_vueling.py`, RETIRED)",
-        takes="Route discovery plus full per-day fare calendar",
-        licence="Same: public endpoint, direct harvest",
-        attribution="No",
-        share_alike="No",
-        attributed="Carrier shown (provenance code VY). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it",
-    ),
-    Source(
-        key="volotea_getminprice_api",
-        retired=True,
-        section="fares_direct",
-        scripts=('pipeline/archive/harvest_volotea.py',),
-        name="Volotea getminprice API (`pipeline/archive/harvest_volotea.py`, RETIRED)",
-        takes="Cheapest fare per window per route",
-        licence="Same: public endpoint with a static site key, direct harvest",
-        attribution="No",
-        share_alike="No",
-        attributed="Carrier shown (provenance code V7). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it",
-    ),
+    # 2. Partner APIs
     Source(
         key="exchangerate_api_open_endpoint",
         retired=True,
-        section="fares_direct",
-        scripts=('pipeline/archive/harvest_wizzair.py',),
-        name="ExchangeRate-API open endpoint (open.er-api.com, used by `harvest_wizzair.py`)",
+        section="fare_partners",
+        name="ExchangeRate-API open endpoint (open.er-api.com, was used by the retired Wizz Air harvester)",
         takes="Daily EUR conversion table (`cache/fx_rates_eur.json`)",
         licence="Free open endpoint; terms require a credit link (\"Rates by Exchange Rate API\"), verify current wording",
         attribution="Yes",
         share_alike="No",
-        attributed="Home footer, Data sources block. RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it",
-    ),
-    Source(
-        key="ryanair_timetable_api",
-        retired=True,
-        section="fares_direct",
-        scripts=("pipeline/archive/harvest_ryanair_schedules.py",),
-        name="Ryanair timetable API, services-api.ryanair.com/timtbl (`pipeline/archive/harvest_ryanair_schedules.py`, RETIRED)",
-        takes="Published departure and arrival times per directed leg per month; departure times are patched into the fares table as `out_f` / `ret_f`, flight numbers stay in the cache. Row added 2026-10-01 (T078): the script existed without one",
-        licence="Same as the farefinder row: public unauthenticated endpoint, direct harvest; a timetable is facts. Manual tier, idle since the fare harvests were retired (T255, 2026-10-01)",
-        attribution="No",
-        share_alike="No",
-        attributed="Carrier shown on fare surfaces (provenance code FR); nothing new to credit. RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it",
-    ),
-    # 2. Fare caches and partner APIs
-    Source(
-        key="travelpayouts_aviasales",
-        section="fare_partners",
-        collectors=('travelpayouts',),
-        name="Travelpayouts / Aviasales (collector: travelpayouts)",
-        takes="Cached fares for carriers Carta cannot scrape, staged to `data/derived/tp_fares.json`",
-        licence="Affiliate programme API terms; data shown with affiliate deeplinks",
-        attribution="Deeplink with partner marker per programme terms; verify display wording rules",
-        share_alike="No",
-        attributed="Deeplinks carry the marker; fare provenance label (TP) in the UI",
+        attributed="Home footer, Data sources block. RETIRED: the harvester was deleted with the old flight fare logic (T511); the app credit row stays until the app's attribution list drops it",
     ),
     Source(
         key="hostelworld_partner_api",
@@ -1337,17 +1244,6 @@ SOURCES = (
         takes="AVE dynamic pricing history",
         licence="Per Kaggle dataset page, verify",
         attribution="Per dataset, verify",
-        share_alike="Verify",
-        attributed="Model training only",
-    ),
-    Source(
-        key="github_lcc_price_archives",
-        section="collectors",
-        collectors=('ryanair_archive',),
-        name="GitHub LCC price archives (collector: ryanair_archive)",
-        takes="Historical Ryanair, Wizz Air, easyJet scrape repos",
-        licence="Per repository license, verify each repo",
-        attribution="Per repo, verify",
         share_alike="Verify",
         attributed="Model training only",
     ),
@@ -2633,13 +2529,7 @@ STORABLE_VOCAB = (
     "Yes, per file, with credit", "No", "Verify", "n/a", "Per row above",
 )
 STORABLE: dict[str, str] = {
-    'ryanair_farefinder_api': 'Yes',
-    'wizz_air_timetable_api': 'Yes',
-    'vueling_apiw_endpoints': 'Yes',
-    'volotea_getminprice_api': 'Yes',
     'exchangerate_api_open_endpoint': 'Verify',
-    'ryanair_timetable_api': 'Yes',
-    'travelpayouts_aviasales': 'Verify',
     'hostelworld_partner_api': 'Verify',
     'liteapi_nuitee': 'Verify',
     'ferryhopper_trips_widget': 'No',
@@ -2667,7 +2557,6 @@ STORABLE: dict[str, str] = {
     'flix_eu_gtfs_feed': 'Verify',
     'greek_nap': 'Verify',
     'kaggle_renfe_archives': 'Verify',
-    'github_lcc_price_archives': 'Verify',
     'sncf_tgv_max_availability': 'Yes',
     'nager_date': 'Yes',
     'openholidays_api': 'Verify',

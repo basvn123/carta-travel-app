@@ -475,36 +475,3 @@ def test_sources_allow_missing(monkeypatch, tmp_path):
     assert derive.cmd_sources(args) == 2
     args.allow_missing = True
     assert derive.cmd_sources(args) == 0
-
-
-# ---------------------------------------------------------------------------
-# T267-a: the retired fare harvesters are archived, not scheduled
-# ---------------------------------------------------------------------------
-
-RETIRED = ("harvest_wizzair.py", "harvest_vueling.py", "harvest_volotea.py",
-           "harvest_ryanair_schedules.py")
-
-
-def test_retired_harvesters_are_archived():
-    for name in RETIRED:
-        assert not (ROOT / "pipeline" / name).exists(), name
-        assert (ROOT / "pipeline" / "archive" / name).exists(), name
-
-
-def test_no_task_runs_a_retired_harvester():
-    tasks = registry.pipeline_tasks(ROOT)
-    for key in ("wizz_fares", "vueling_fares", "volotea_fares"):
-        assert key not in tasks
-    for name in RETIRED:
-        assert name not in RUN_PIPELINE.replace(
-            "harvest_ryanair_schedules.py are in pipeline/archive/", "")
-    assert "def wizz_step" not in RUN_PIPELINE
-
-
-def test_retired_rows_stay_in_the_ledger():
-    keys = {s.key: s for s in registry.SOURCES}
-    for key in ("wizz_air_timetable_api", "vueling_apiw_endpoints",
-                "volotea_getminprice_api", "exchangerate_api_open_endpoint",
-                "ryanair_timetable_api"):
-        assert keys[key].retired is True, key
-    assert registry.validate() == []

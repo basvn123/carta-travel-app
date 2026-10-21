@@ -12,10 +12,7 @@
 # report-only tasks before master writers, short writers before long ones, and
 # the long raw mirror last of the tasks.
 #
-# The eight fare steps (tp_stage, fare_history, fare_model, volotea_fares,
-# vueling_fares, fares_targeted, wizz_fares, fares) are gone: no fare source
-# is live, so run_pipeline.py has them on the manual cadence (T255).
-# Execution/P4/T255-retire-fare-harvests.md has the old order to restore.
+# The eight fare steps are gone (removed in T511 with the old flight fare logic).
 #
 # Before step 1 the box needs app_data/app_data.json and data/history, which
 # are gitignored: run_pipeline.sh --pull-only fetches them from R2, or copy

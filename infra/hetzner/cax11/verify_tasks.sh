@@ -213,9 +213,6 @@ for k in sorted(set(before) | set(after)):
     a = (after.get(k) or {}).get("last_success") if isinstance(after.get(k), dict) else None
     if a != b:
         delta[k] = {"before": b, "after": a}
-if json.dumps(before.get("fares_freshness"), sort_keys=True) != json.dumps(after.get("fares_freshness"), sort_keys=True):
-    delta["fares_freshness"] = {"changed": True}
-
 rec = {
     "step": env["STEP"],
     "task_key": env["KEY"],
