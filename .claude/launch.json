@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "carta-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "continent-app", "run", "dev", "--", "--port", "5173", "--strictPort"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["continent-app/node_modules/vite/bin/vite.js", "continent-app", "--port", "5173", "--strictPort"],
       "port": 5173
     }
   ]
