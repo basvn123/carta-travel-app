@@ -781,7 +781,6 @@ export const it = {
   "detail.trailsCountOne": "{n} escursione o gita",
   "detail.trailsCountMany": "{n} escursioni e gite",
   "detail.kmEachWay": "{km} km per tratta",
-  "detail.groundSub": "Cibo, bevande e trasporti locali",
   "detail.perTwoDirections": "{n} × 2 tratte",
   "detail.removeShortlist": "Rimuovi dalla shortlist",
   "detail.rental": "Noleggio",

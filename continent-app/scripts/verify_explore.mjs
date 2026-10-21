@@ -27,7 +27,7 @@ const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 const boot = async (viewport, opts = {}) => {
   const page = await browser.newPage({ viewport, ...opts });
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
-  const NOISE = /ERR_FAILED|config is not valid|open-meteo/;
+  const NOISE = /ERR_FAILED|config is not valid/;
   page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 120)); });
   await page.addInitScript(() => {
     try {

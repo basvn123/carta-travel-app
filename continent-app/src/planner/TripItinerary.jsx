@@ -4,7 +4,7 @@ import { fmtDate } from '../lib/dates.js';
 import { TripExtras } from './TripExtras.jsx';
 import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
-import { googleMapsDirUrl } from '../lib/routing.js';
+import { googleMapsDirParts, GMAPS_STOPS_PHONE, GMAPS_STOPS_DESKTOP } from '../lib/routing.js';
 import { cityCoords } from '../lib/runtime_pricing.js';
 import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
 import { tripKml, downloadKml } from '../lib/kmlExport.js';
@@ -519,10 +519,15 @@ export function TripItinerary({
   // The whole trip as a Google Maps driving route (city to city, in order).
   // Route through each city CENTRE, never the raw dest coordinate: for
   // airport-tier stops that raw point is the runway, so cityCoords keeps the
-  // pins downtown where the traveller actually stays.
-  const gmapsUrl = googleMapsDirUrl(
-    stopDetails.filter((s) => s.dest?.lat != null).map((s) => cityCoords(s.dest)),
+  // pins downtown where the traveller actually stays. A phone's browser takes
+  // 3 stops a link, so there the route comes in parts, each ending where the
+  // next begins; nothing is dropped (T487-a).
+  const gmapsPhone = typeof window !== 'undefined'
+    && !!window.matchMedia?.('(max-width: 768px), (pointer: coarse)').matches;
+  const gmapsParts = googleMapsDirParts(
+    stopDetails.filter((s) => s.dest?.lat != null).map((s) => ({ ...cityCoords(s.dest), city: s.dest.city })),
     'driving',
+    gmapsPhone ? GMAPS_STOPS_PHONE : GMAPS_STOPS_DESKTOP,
   );
 
   // The traveller's own figures for the way there and home (T432): an older
@@ -935,12 +940,16 @@ export function TripItinerary({
                   {t('export.copyLink')}
                 </Button>
               )}
-              {gmapsUrl && (
-                <a className="btn btn-secondary itin-export-link" href={gmapsUrl} target="_blank" rel="noreferrer" title={t('export.openRoute')}>
+              {gmapsParts.map((p, i) => (
+                <a key={i} className="btn btn-secondary itin-export-link" href={p.url} target="_blank" rel="noreferrer" title={t('export.openRoute')}>
                   <span className="btn-icon" aria-hidden="true"><MapPinIcon size={20} /></span>
-                  <span className="btn-label">{t('export.openInGmaps')}</span>
+                  <span className="btn-label">
+                    {gmapsParts.length === 1
+                      ? t('export.openInGmaps')
+                      : t('day.gmapsPart', { i: i + 1, from: p.from.city || '', to: p.to.city || '' })}
+                  </span>
                 </a>
-              )}
+              ))}
             </div>
             <Button variant="quiet" size="sm" className="itin-export-more" aria-expanded={moreExports}
               onClick={() => setMoreExports((v) => !v)}

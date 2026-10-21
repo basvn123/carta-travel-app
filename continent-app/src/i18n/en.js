@@ -1015,7 +1015,6 @@ export const en = {
   "detail.trailsCountOne": "{n} hike or day trip",
   "detail.trailsCountMany": "{n} hikes and day trips",
   "detail.kmEachWay": "{km} km each way",
-  "detail.groundSub": "Food, drinks and getting around",
   "detail.perTwoDirections": "{n} × 2 directions",
   "detail.removeShortlist": "Remove from shortlist",
   "detail.rental": "Rental",

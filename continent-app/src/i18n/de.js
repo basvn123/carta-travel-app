@@ -781,7 +781,6 @@ export const de = {
   "detail.trailsCountOne": "{n} Wanderung oder Tagestour",
   "detail.trailsCountMany": "{n} Wanderungen und Tagestouren",
   "detail.kmEachWay": "{km} km pro Strecke",
-  "detail.groundSub": "Essen, Getränke und Nahverkehr",
   "detail.perTwoDirections": "{n} × 2 Richtungen",
   "detail.removeShortlist": "Von der Merkliste entfernen",
   "detail.rental": "Mietwagen",

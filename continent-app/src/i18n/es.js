@@ -781,7 +781,6 @@ export const es = {
   "detail.trailsCountOne": "{n} ruta o excursión",
   "detail.trailsCountMany": "{n} rutas y excursiones",
   "detail.kmEachWay": "{km} km por trayecto",
-  "detail.groundSub": "Comida, bebidas y transporte local",
   "detail.perTwoDirections": "{n} × 2 trayectos",
   "detail.removeShortlist": "Quitar de la preselección",
   "detail.rental": "Alquiler",

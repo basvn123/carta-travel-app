@@ -64,7 +64,7 @@ const errors = [];
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
-const NOISE = /ERR_FAILED|config is not valid|open-meteo|basemaps\.cartocdn/;
+const NOISE = /ERR_FAILED|config is not valid|basemaps\.cartocdn/;
 // A generic "Failed to load resource" console line carries no URL, so it is
 // useless as a failure. Requests are watched properly below instead, which
 // names what broke.

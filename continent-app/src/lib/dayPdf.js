@@ -18,7 +18,7 @@ import { createPdf, fileSlug, clean } from './pdfKit.js';
 import { formatMoney } from './money.js';
 import { routeDay, isWalkable } from './dayRoute.js';
 import { buildDaySchedule, fmtClockLoose } from '../planner/daySchedule.js';
-import { googleMapsDirUrl } from './routing.js';
+import { googleMapsDirParts, GMAPS_STOPS_PHONE } from './routing.js';
 import { addDays } from './dates.js';
 import { fmtKm } from '../planner/dayFormat.js';
 
@@ -140,8 +140,17 @@ export async function downloadDayPdf({
         }
       });
       kit.para(`${fmtClockLoose(schedule.endMin)}   ${t('dayws.dayDone')}`, { size: 9.5, color: C.text2, after: 1.5 });
-      const gurl = googleMapsDirUrl([...(stay && startsAtStart ? [stay] : []), ...placed], 'walking');
-      if (gurl) kit.link(t('export.openInGmaps'), gurl);
+      // A printed day is opened on a phone: links of 3 stops, each part
+      // ending where the next begins, so no stop is dropped (T487-a).
+      const gparts = googleMapsDirParts([
+        ...(stay && startsAtStart ? [{ lat: stay.lat, lon: stay.lon, city: t('day.yourStay') }] : []),
+        ...placed.map((it) => ({ lat: it.lat, lon: it.lon, city: it.name })),
+      ], 'walking', GMAPS_STOPS_PHONE);
+      if (gparts.length === 1) kit.link(t('day.gmapsOpen', { n: dayNo }), gparts[0].url);
+      else if (gparts.length > 1) {
+        kit.para(t('day.gmapsOpen', { n: dayNo }), { size: 9.5, color: C.text2, after: 0.6 });
+        gparts.forEach((g, i) => kit.link(t('day.gmapsPart', { i: i + 1, from: g.from.city || '', to: g.to.city || '' }), g.url));
+      }
       kit.gap(3);
     }
   }

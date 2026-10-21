@@ -781,7 +781,6 @@ export const nl = {
   "detail.trailsCountOne": "{n} wandeling of dagtrip",
   "detail.trailsCountMany": "{n} wandelingen en dagtrips",
   "detail.kmEachWay": "{km} km enkele reis",
-  "detail.groundSub": "Eten, drinken en vervoer ter plaatse",
   "detail.perTwoDirections": "{n} × 2 richtingen",
   "detail.removeShortlist": "Verwijderen uit shortlist",
   "detail.rental": "Huurauto",
