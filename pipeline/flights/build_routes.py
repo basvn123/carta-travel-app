@@ -110,7 +110,8 @@ def ourairports(offline):
         to_iata[code] = iata
         k = SIZE_RANK.get(r["type"], 3)
         try:
-            info = {"name": short_name(r["name"]), "city": r["municipality"] or short_name(r["name"]),
+            town = re.sub(r"\s*\(.*?\)", "", r["municipality"] or "").strip()
+            info = {"name": short_name(r["name"]), "city": town or short_name(r["name"]),
                     "country": countries.get(r["iso_country"], r["iso_country"]),
                     "lat": round(float(r["latitude_deg"]), 4), "lon": round(float(r["longitude_deg"]), 4)}
         except ValueError:
