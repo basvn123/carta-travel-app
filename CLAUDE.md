@@ -21,6 +21,18 @@ The report is written at the end of the task, before the branch is merged and be
 
 A report is never updated after the task is closed. If a bug is discovered later, a new task investigates and fixes it, which may mean a new report that references the original.
 
+## Batches: one report and one test round for several tasks
+
+When one prompt names several tasks, they run as a batch (owner decision, 2026-10-21, to spend fewer tokens without doing shallower work). The depth of the work stays the same: the same audit, the same measurements, the same rollback, one register row per open item. What a batch drops is repetition.
+
+- **Numbers.** Before taking a task number, take the highest number in `git log --all --oneline` and in every worktree's `Execution/` folder, and count up from there. Two sessions that both took T470 cost a whole renumber task (T477).
+- **Branches and commits.** One batch branch in the root repo and one in `continent-app/`. Tasks that run in parallel each get their own app branch and worktree, merged into the batch branch at the end. Every task is still its own commit (or its own few commits), with a message starting `T{n}:`, so any one task can be undone with `git revert` without touching the others.
+- **One report.** The batch writes one report at the end, `Execution/P{n}/T{first}-T{last}-{slug}.md`. It has a short shared header, then one section per task with the template's headings, each kept to what is true for that task. Register rows are still one per open item with the task's own ID (`T479-a`), written in the same commit as the report.
+- **Checks per task: static only.** Lint the files the task touched, run the node unit tests (`npm test`), and when the task promises a number, run the fast build below and measure. No dev server, no browser and no screenshots per task. Each task instead writes down which screens and states the end check must look at.
+- **One end check.** The browser round runs once, on the merged batch, before the report is written. It covers every screen any task touched, at phone and desktop width, using each task's checklist. If something fails, the per-task commits show which task caused it; fix it on the batch branch and note it under that task's "What broke".
+- **Fast build.** Measure with a NOPUBLIC build (an outside vite config with `publicDir: false`, as in `wt/vite.t474.mjs`). It takes about 10 seconds and its `assets/` and `index.html` are the same as a full build's. The full build with `public/` is only for a deploy.
+- **Fewer tokens per step.** Search first, then read only the lines you need. Never read `src/i18n/en.js`, `styles.css` or a wire file whole. Hand broad searches and independent tasks to subagents on the task's model, and give them the baseline already measured so they do not build it again. Prefer the DOM checks in `scripts/verify_*.mjs` over screenshots; take one screenshot per touched screen and width, and only where the look is the point. Sync the root repo's copy of `continent-app/` once per batch, not after every task.
+
 ## Every open item also goes into the register
 
 The "What is still open" section of a report is prose, and prose across many reports is where open work gets lost. So every open item is also written as one row in `Execution/_OPEN.md`, the structured register, at the same moment the report is written.
@@ -69,7 +81,7 @@ One exception: schema migrations, data migrations, and database changes affect m
 
 Create a branch `{phase}-{slug}` for each task where `{phase}` is P0, P1, etc., and `{slug}` is a short kebab-case name from the task title. Example: `p7-explore-cards`, `p3-urban-beauty`.
 
-Commit the task's work to that branch, write the report, and then merge or hand off. Do not stack tasks on one branch. Do not merge the task before the report is written.
+Commit the task's work to that branch, write the report, and then merge or hand off. Do not stack tasks on one branch. Do not merge the task before the report is written. A batch (see above) is the one exception: its tasks share a batch branch, each as its own commit, and the batch merges after its one report.
 
 If a task has no code changes (e.g., a pure research or audit task), the commit is the report itself.
 
@@ -88,6 +100,8 @@ The production baseline for this work is tagged `prod-2026-09` at commit `8b53ba
 7. Add one row per open item to `Execution/_OPEN.md`, and mark any earlier row this task closed.
 8. Commit the report and the register together.
 9. Hand the branch back to the user or mark it ready for merge.
+
+In a batch, steps 3 to 5 repeat for each task with static checks only. The end check (step 5 in the browser), the report (6), the register (7) and the commit (8) then happen once for the whole batch.
 
 ## Measurements
 
@@ -108,10 +122,10 @@ Report these clearly so the next task does not spend time rediscovering them:
 - The schema versioning is in `pipeline/schema.py` and in `SCHEMA.md`. Changes propagate to the wire format and the app's hydration. Schema changes are slow.
 - Pipeline runs are orchestrated by `run_pipeline.py`. Any change to the data contract (a new column, a removed field, a renamed key) must be tested end to end: pipeline run, data artifact, wire build, app load.
 - The app is Vite + React. The dev server watches the `public/` directory and reloads. The built dist is deployed to the CDN.
-- Tests are not wired to CI. Run `npm run dev` in `continent-app/` and look at every screen a prompt touches before committing.
+- Tests are not wired to CI. Run `npm run dev` in `continent-app/` and look at every screen a prompt touches before committing (in a batch, once before the batch report).
 - Git is set up. Commit between prompts so each one is revertible. The repo root has commit history but the app root (`continent-app/`) is its own git tree.
 
 ---
 
-**Last updated:** 2026-09-24
+**Last updated:** 2026-10-21
 **Production tag:** prod-2026-09 (commit 8b53babed)
