@@ -305,7 +305,9 @@
   /* Layout */
   --filter-h:     132px;
   --panel-w:      440px;
-  --bottom-nav-h: 86px;
+  /* The phone bar plus the home-indicator inset, so the bar keeps 68 px for
+     its items on a notched phone and everything above it clears the bar. */
+  --bottom-nav-h: calc(86px + env(safe-area-inset-bottom, 0px));
 
   /* Motion (T380, design direction v6, docs/design-v6/DIRECTION.md part 2).
      Four durations and two easings; every transition and animation reads

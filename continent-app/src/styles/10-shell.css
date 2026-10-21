@@ -122,6 +122,11 @@
   color: var(--text-2);
   transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
+/* Touch tablets from 769 px get the header: keep each tab at the --tap floor
+   (T494). */
+@media (pointer: coarse) {
+  .header-nav-item { min-height: var(--tap); }
+}
 @media (hover: hover) {
   .header-nav-item:hover { color: var(--text); background: var(--surface-sunken); }
 }
@@ -824,7 +829,7 @@
 .plan-chooser {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+  bottom: calc(var(--bottom-nav-h) + var(--space-3));
   transform: translateX(-50%);
   z-index: calc(var(--z-nav) + 1);
   width: min(360px, calc(100vw - var(--gutter) * 2));

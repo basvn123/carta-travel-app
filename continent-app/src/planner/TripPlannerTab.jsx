@@ -1130,7 +1130,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 <span className="trip-field-label">{t('trip.start')}</span>
                 <DateField value={tp.tripStart} min={dateMin} max={tp.tripEnd || dateMax} onChange={tp.setTripStart} placeholder={t('trip.startDate')} />
               </label>
-              <span className="trip-dates-arrow">→</span>
+              <span className="trip-dates-arrow" aria-hidden="true">→</span>
               <label className="trip-field">
                 <span className="trip-field-label">{t('trip.end')}</span>
                 <DateField value={tp.tripEnd} min={tp.tripStart || dateMin} max={dateMax} onChange={tp.setTripEnd} placeholder={t('trip.endDate')} />

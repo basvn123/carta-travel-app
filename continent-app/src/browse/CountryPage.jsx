@@ -121,7 +121,7 @@ export function CountryPage({
           {day != null && (
             <div className="cpg-key">
               <dt>{t('cpage.kDay')}</dt>
-              <dd><Money value={day} est /> <span className="cpg-unit">{t('cost.perDay')}</span></dd>
+              <dd><Money value={day} est /> <span className="cpg-unit">{t('dest.priceDayUnit')}</span></dd>
             </div>
           )}
           {goodMonths.length > 0 && (
