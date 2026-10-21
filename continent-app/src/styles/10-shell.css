@@ -86,17 +86,6 @@
   line-height: 1;
   color: var(--text);
 }
-.app-header-brand .brand-sub {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  color: var(--text-2);
-  margin-top: 5px;
-}
-.app-header-brand .brand-divider {
-  height: 44px;
-  margin-left: 8px;
-}
 
 /* Section tabs next to the brand (Destinations / Explore / Trip planner /
    Day planner / Saved trips). Desktop-only: below 768px they collapse and
@@ -142,8 +131,6 @@
    2. Then drop the words: icon-only pills, titles still on hover. */
 @media (min-width: 769px) and (max-width: 1180px) {
   .app-header { gap: 14px; padding: 9px 20px; }
-  .app-header-brand .brand-sub { display: none; }
-  .app-header-brand .brand-divider { margin-left: 4px; }
   .header-nav-item { padding: 8px 10px; }
 }
 @media (min-width: 769px) and (max-width: 1060px) {
@@ -278,63 +265,13 @@
 }
 
 @media (max-width: 768px) {
-  /* One fixed panel on mobile: the calendar/filter triggers sit on the LEFT,
-     the account avatar on the RIGHT, both the same 40px circle at the same
-     height. The filter sheet drops open beneath this row (which stays put). */
-  .app-header {
-    padding: 0;
-    gap: 0;
-    align-items: flex-start;   /* account stays top-aligned when the sheet opens */
-    /* The band above paints the ground; this row stays transparent so the two
-       cannot drift apart. No blur either: backdrop-filter would turn this
-       header into the containing block for position: fixed children, which
-       once pinned the centered calendar dialog to the 56px bar. */
-    background: none;
-    backdrop-filter: none;
-  }
-  .app-header-brand { display: none; }
-  .app-header-account {
-    align-self: flex-start;
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    /* Right gutter matches .explore-wrap's on this width, so the chips end
-       level with the toolbar card below rather than 4px inside it. */
-    padding: 0 14px 0 10px;
-    height: 56px;
-    min-height: 56px;
-  }
-  /* Account left this row on mobile: it is the rightmost item of the bottom
-     bar now, and the row over the map keeps its width for the filters. */
-  .app-header-account .account-avatar-btn { display: none; }
-  /* Passes: the same secondary as on desktop (T391; T360 made the desktop
-     chip one): transparent, a --rule border, the 6 px control radius and a
-     --tap target. The accent stays on its glyph only. */
-  .app-header-account .header-pricing-btn {
-    height: var(--tap);
-    padding: 0 12px;
-    gap: 6px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    box-shadow: none;
-    color: var(--text);
-    font-weight: 600;
-  }
-  .app-header-account .header-pricing-btn:active {
-    border-color: var(--text-2);
-    background: var(--surface-sunken);
-    color: var(--text);
-  }
-  .app-header-account .header-pricing-btn svg { width: 16px; height: 16px; }
-  .header-pricing-label { display: none; }
-  .app-header-account .header-pricing-label-short { display: inline; }
+  /* No header row on a phone (T496, 1.3a): the logo, the places and Account
+     live in the bottom nav and in Account, and the pass left the bar, so
+     the settings band is the top of the screen. */
+  .app-header { display: none; }
+}
 
-  /* The desktop section tabs collapse; BottomNav (which includes Home) is
-     the switch on mobile. */
-  .header-nav { display: none; }
-}/* ───────── Guidance tip: a compact, collapsible pill for first-time visitors.
+/* ───────── Guidance tip: a compact, collapsible pill for first-time visitors.
    It floats at the bottom-right of the header (position: absolute inside
    .top-bar), so - unlike the old full-width strip - its height is NOT folded
    into --filter-h: the map fills the space right under the header and the
@@ -729,24 +666,24 @@
   .map-toolrow .origin-pop { left: 12px; right: 12px; }
 }
 
-/* ───────── Bottom nav, MOBILE only: Destinations | Explore | plus | My trips
-   | Account. The raised central plus opens the Trip planner / Day planner
-   chooser (.plan-chooser). On desktop the sections live in the app header
-   (.header-nav), so the bar hides and its height variable zeroes out - every
-   panel/map offset uses var(--bottom-nav-h), so the layout reclaims the strip
-   automatically. ───────── */
+/* ───────── Bottom nav, PHONE only: Explore | Plan | My trips | Account
+   (T496, roadmap 1.3a T1). Four equal slots of --tap-main; no plus. On
+   desktop the places live in the app header (.header-nav), so the bar hides
+   and its height variable zeroes out: every panel and map offset uses
+   var(--bottom-nav-h), so the layout reclaims the strip. ───────── */
 
 .bottom-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: var(--z-nav);
   display: grid;
-  /* 2 x 1fr | auto | 2 x 1fr keeps the plus dead-centre whatever the label
-     widths do. */
-  grid-template-columns: 1fr 1fr auto 1fr 1fr;
-  align-items: stretch;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  /* 64 px plus the home-indicator inset (--bottom-nav-h carries both): the
+     slots keep --tap-main on a notched phone, where the old 86 px box with
+     the inset inside it left them 34 px (1.3a "Fouten"). */
   height: var(--bottom-nav-h);
-  padding: 10px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
   /* Chrome that recedes (T391, brief V4-1): the page ground, one --rule
      hairline, no blur and no fourth shadow. */
   background: var(--surface);
@@ -759,8 +696,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 2px;
   min-width: 0;
+  min-height: var(--tap-main);
   border-radius: var(--radius-control);
   color: var(--text-2);
   transition: color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
@@ -788,131 +726,15 @@
   text-overflow: ellipsis;
 }
 
-/* The plus: a secondary round icon button inside the bar (T391). It used to
-   rise 26 px over the bar's edge, where it covered whatever sat just above
-   the nav (the landing primary at 380 x 800, rows T381-g and T382-c).
-   Rotates to a cross while the chooser is open. */
-.bottom-nav-plus {
-  align-self: center;
-  margin: 0 10px;
-  /* The kit IconButton, surface tone (T426): a white disc with one --border
-     edge (T360, owner call on T166-a; closes T422-c). Teal is left for the
-     page's one primary action. Only the box grows past the kit's --tap. */
-  width: 52px;
-  height: 52px;
-  color: var(--text);
-  transition: transform var(--dur-2) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-.bottom-nav-plus:active { transform: scale(0.97); }
-.bottom-nav-plus.open { transform: rotate(45deg); }
-/* On the Trip/Day planner tabs the plus is the "you are here" item: the
-   selected state, the --select tint with the teal glyph (T391, rule R4). */
-.bottom-nav-plus.active {
-  border-color: var(--select-border);
-  background: var(--select-bg);
-  color: var(--select-ink);
-}
-
-/* The Trip planner / Day planner chooser, anchored above the plus: a menu
-   of two (carta-design "Dialog family": a choice of two from the bottom nav
-   is a menu, not a sheet), so no grab handle and no close of its own; the
-   plus, the scrim and Escape close it. */
-.plan-chooser-backdrop {
-  position: fixed;
-  inset: 0;
-  /* Below the bar (z 50): the plus stays visible and tappable to close. */
-  z-index: calc(var(--z-nav) - 1);
-  background: color-mix(in srgb, var(--text) 28%, transparent);
-  animation: shell-scrim-in var(--dur-3) var(--ease-out);
-}
-.plan-chooser-backdrop.is-leaving { animation: shell-scrim-out var(--dur-2) var(--ease-in-out) forwards; }
-.plan-chooser {
-  position: fixed;
-  left: 50%;
-  bottom: calc(var(--bottom-nav-h) + var(--space-3));
-  transform: translateX(-50%);
-  z-index: calc(var(--z-nav) + 1);
-  width: min(360px, calc(100vw - var(--gutter) * 2));
-  padding: var(--space-3) var(--space-3) var(--space-3);
-  background: var(--surface);
-  border-radius: var(--radius-sheet);
-  box-shadow: var(--elev-3);
-  animation: plan-chooser-in var(--dur-3) var(--ease-out);
-}
-.plan-chooser.is-leaving { animation: plan-chooser-out var(--dur-2) var(--ease-in-out) forwards; }
-@keyframes plan-chooser-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(var(--space-2)); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-@keyframes plan-chooser-out {
-  from { opacity: 1; transform: translateX(-50%) translateY(0); }
-  to   { opacity: 0; transform: translateX(-50%) translateY(var(--space-2)); }
-}
-/* T465: a heading and two equal tiles side by side, each a drawing over the
-   planner's name. Ink, not accent (T391): neither tile is the view's
-   primary, so the drawings are --text lines on white and the tile edge is
-   the --border of a thing you press. */
-.plan-chooser-h {
-  margin: 0 0 var(--space-3) var(--space-1);
-  font-size: var(--text-label);
-  font-weight: 600;
-  line-height: var(--leading-ui);
-  color: var(--text-2);
-}
-.plan-chooser-tiles {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-2);
-}
-.plan-chooser-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-width: 0;
-  min-height: calc(var(--tap) * 2.5);
-  padding: var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  color: var(--text);
-  text-align: left;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-.plan-chooser-item:active { background: var(--surface-sunken); }
-@media (hover: hover) {
-  .plan-chooser-item:hover { background: var(--surface-hover); border-color: var(--neutral-300); }
-}
-.plan-chooser-item:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.plan-chooser-art { display: block; width: 100%; height: auto; aspect-ratio: 132 / 64; }
-.pca-line { fill: none; stroke: var(--text-3); stroke-width: 2; stroke-linecap: round; }
-.pca-stop { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
-.pca-stop-end { fill: var(--text); }
-.pca-bar { fill: var(--surface-sunken); stroke: var(--border); stroke-width: 1; }
-.plan-chooser-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  margin-top: auto;
-  font-size: var(--text-lead);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-}
-.plan-chooser-title .nav-dot { position: static; flex: none; }
-.plan-chooser-chev { margin-left: auto; flex: none; color: var(--text-2); }
-
 @media (prefers-reduced-motion: reduce) {
-  .plan-chooser, .plan-chooser.is-leaving,
-  .plan-chooser-backdrop, .plan-chooser-backdrop.is-leaving { animation: none; }
-  .bottom-nav-plus, .bottom-nav-item, .bottom-nav-icon, .plan-chooser-item, .header-nav-item { transition: none; }
-  .bottom-nav-item:active, .bottom-nav-plus:active { transform: none; }
+  .bottom-nav-item, .bottom-nav-icon, .header-nav-item { transition: none; }
+  .bottom-nav-item:active { transform: none; }
 }
 
 /* Narrow phones: a little less type before the longest translated labels
    (Bestemmingen, Destinazioni) start truncating. */
 @media (max-width: 360px) {
-  .bottom-nav { padding-left: 6px; padding-right: 6px; }
-  .bottom-nav-label { font-size: var(--text-micro); }
-  .bottom-nav-plus { margin-left: 6px; margin-right: 6px; }
+  .bottom-nav { padding-left: var(--space-1); padding-right: var(--space-1); }
 }
 
 /* Desktop: the header tabs replace the bar entirely. Must come after the base

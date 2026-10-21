@@ -20,6 +20,9 @@ export const GLOSSARY = {
   // The estimate mark on a price (T446): opened from the dot after the
   // destination page's day figure. No match: it is never looked up in prose.
   estimate: { scope: 'both' },
+  // What the day figure holds (T498, roadmap 1.3b rule 6): one dot on the
+  // first place the day price has a name (Budget a day, Typical day).
+  'day-price': { scope: 'both' },
   // T431: the "Where you sleep" choice on a style's trip list.
   'budget-beds': { scope: 'trips' },
   hardpack: { scope: 'both', match: /\bhard-?pack(?:ed)?\b/i },

@@ -36,14 +36,116 @@ function unpackLifestyle(s) {
   return Object.keys(out).length ? out : null;
 }
 
+/* ---------------------------------------------------------------------------
+ * Places and views (T496, roadmap 1.15 and 2.18)
+ *
+ * The traveller sees three places and an icon: Explore, Plan, My trips and
+ * Account, plus Home behind the logo and the Trip Pass prices. The app still
+ * renders a few views inside two of them, so a place is the address and a view
+ * is what is drawn:
+ *
+ *   place     view(s)        address
+ *   explore   map            (no tab)  or ?tab=explore      Places, the catalogue
+ *             places         ?tab=explore&cat=trails        the trips and outdoor layers
+ *   plan      planstart      ?tab=plan&mode=new             "Plan something new"
+ *             trip           ?tab=plan&mode=trip            the trip planner
+ *             day            ?tab=plan&mode=day             one day
+ *   trips     (a page)       ?tab=trips                     My trips
+ *   account   (a page)       ?tab=account[&view=friends]    Account
+ *   home      home           ?tab=home
+ *   pricing   pricing        ?tab=pricing  (and the path /pricing)
+ *
+ * `?tab=plan` with no mode opens the plan in progress, else the start page.
+ * Every older address still opens: LEGACY_TABS reads it (never writes it).
+ * ------------------------------------------------------------------------- */
+
+/** The places, in nav order, then the two that are not in the bar. */
+export const PLACE_KEYS = Object.freeze(['explore', 'plan', 'trips', 'account', 'home', 'pricing']);
+/** The views App renders. `trips` and `account` are pages laid over a view. */
+export const VIEW_KEYS = Object.freeze(['home', 'map', 'places', 'planstart', 'trip', 'day', 'pricing']);
+/** The Destinations categories, reachable inside Explore as `cat=`. */
+export const EXPLORE_CATS = Object.freeze(['trips', 'trails', 'beaches', 'lakes', 'mountains', 'cycling']);
+/** The Account spokes an address may name (`view=`). */
+export const ACCOUNT_VIEWS = Object.freeze(['home', 'profile', 'security', 'yourdata', 'friends', 'faq', 'feedback', 'plan']);
+
+/** Every retired `tab=` value and the view it opens now (1.15 section 3). */
+export const LEGACY_TABS = Object.freeze({
+  map: 'map',
+  places: 'places',
+  destinations: 'places',
+  trip: 'trip',
+  day: 'day',
+});
+
+/** The place a view belongs to: what the nav marks while it shows. */
+export function placeOf(view) {
+  if (view === 'map' || view === 'places') return 'explore';
+  if (view === 'planstart' || view === 'trip' || view === 'day') return 'plan';
+  return view;
+}
+
+/**
+ * Read an address into what to draw: { view, overlay, cat, accountView }.
+ *   view         one of VIEW_KEYS (the view under a page, for trips/account)
+ *   overlay      'trips' | 'account' | null
+ *   cat          a Destinations category for the places view, or null
+ *   accountView  the Account spoke named by `view=`, or null
+ * `hasPlan` says whether a trip plan is open on this device, which is what
+ * a bare `?tab=plan` opens; without one it opens the start page.
+ */
+export function routeFromSearch(search, { hasPlan = false } = {}) {
+  const q = new URLSearchParams(search || '');
+  const raw = String(q.get('tab') || '').toLowerCase();
+  const cat = q.get('cat');
+  const out = { view: 'map', overlay: null, cat: null, accountView: null };
+  if (LEGACY_TABS[raw]) {
+    out.view = LEGACY_TABS[raw];
+  } else if (raw === 'explore' || raw === '') {
+    out.view = EXPLORE_CATS.includes(cat) ? 'places' : 'map';
+  } else if (raw === 'plan') {
+    const mode = q.get('mode');
+    out.view = mode === 'day' ? 'day'
+      : mode === 'new' ? 'planstart'
+        // A country seed (cc) is a trip hand-off, whatever is on the device.
+        : (mode === 'trip' || hasPlan || q.has('cc')) ? 'trip' : 'planstart';
+  } else if (raw === 'home' || raw === 'pricing') {
+    out.view = raw;
+  } else if (raw === 'trips' || raw === 'account') {
+    out.overlay = raw;
+    if (raw === 'account' && ACCOUNT_VIEWS.includes(q.get('view'))) out.accountView = q.get('view');
+  }
+  if (out.view === 'places' && EXPLORE_CATS.includes(cat)) out.cat = cat;
+  return out;
+}
+
+/** The query keys that name a place, in the form the address writes them. */
+function placeParams(key, { cat } = {}) {
+  switch (key) {
+    case 'map':
+    case 'explore': return { tab: 'explore' };
+    case 'places': return { tab: 'explore', cat: EXPLORE_CATS.includes(cat) ? cat : 'trips' };
+    case 'plan': return { tab: 'plan' };
+    case 'trip': return { tab: 'plan', mode: 'trip' };
+    case 'planstart': return { tab: 'plan', mode: 'new' };
+    case 'day': return { tab: 'plan', mode: 'day' };
+    default: return { tab: key };
+  }
+}
+const PLACE_PARAM_KEYS = ['tab', 'mode', 'cat', 'view'];
+
 /** Build a query string (no leading '?') from the live app state. */
 export function encodeState({
   departDate, returnDate, choices, priceMode, countryFilter,
   tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
   ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours, activeTab,
+  exploreCat,
 }) {
   const q = new URLSearchParams();
-  if (activeTab && activeTab !== 'map') q.set('tab', activeTab);
+  // Explore's Places is the address's default, so it names no tab; every
+  // other place writes its own keys (T496).
+  if (activeTab && activeTab !== 'map' && activeTab !== 'explore') {
+    for (const [k, v] of Object.entries(placeParams(activeTab, { cat: exploreCat }))) q.set(k, v);
+  }
   if (departDate) q.set('d', departDate);
   if (returnDate) q.set('r', returnDate);
   if (choices?.group_size) q.set('g', String(choices.group_size));
@@ -101,8 +203,12 @@ export function decodeState(search) {
   const q = new URLSearchParams(search || '');
   const has = (k) => q.has(k);
   const out = {};
-  // `?tab=destinations` is the old name of the places tab (T494).
-  if (has('tab')) out.activeTab = q.get('tab') === 'destinations' ? 'places' : q.get('tab');
+  // The view the address names, old names included (LEGACY_TABS, T496). A
+  // page over a view (trips, account) keeps its own key here.
+  if (has('tab')) {
+    const route = routeFromSearch(search);
+    out.activeTab = route.overlay || route.view;
+  }
   if (has('d')) out.departDate = q.get('d');
   if (has('r')) out.returnDate = q.get('r');
   if (has('g')) out.group_size = Math.max(1, parseInt(q.get('g'), 10) || 1);
@@ -182,31 +288,53 @@ export function decodeState(search) {
 /** The query string a hand-off link carries, for share buttons. */
 export function seedQuery(seed) {
   const q = new URLSearchParams();
-  if (seed?.cc) { q.set('tab', 'trip'); q.set('cc', seed.cc); }
-  else if (seed?.dest) { q.set('tab', 'day'); q.set('dest', seed.dest); }
-  else if (seed?.feat) { q.set('tab', 'day'); q.set('feat', `${seed.feat.kind}:${seed.feat.cc}:${seed.feat.id}`); }
+  if (seed?.cc) { q.set('tab', 'plan'); q.set('cc', seed.cc); }
+  else if (seed?.dest) { q.set('tab', 'plan'); q.set('mode', 'day'); q.set('dest', seed.dest); }
+  else if (seed?.feat) { q.set('tab', 'plan'); q.set('mode', 'day'); q.set('feat', `${seed.feat.kind}:${seed.feat.cc}:${seed.feat.id}`); }
   return q.toString();
 }
 
 /**
- * The address of one section (T381, the navigation rule): the current query
- * with `tab` swapped, so a link opened in a new tab or copied keeps the
- * traveller's dates, party and filters. Explore ('map') is the URL's implicit
- * default, but its link still names it: a link with no query at all opens on
- * the visit's default section instead (App.jsx), so `tab=map` is spelled out
- * and persistState drops it again once the app is running.
+ * The address of one place or view (T381, the navigation rule; T496 the
+ * places): the current query with the place keys swapped, so a link opened in
+ * a new tab or copied keeps the traveller's dates, party and filters. Explore
+ * is the address's implicit default, but its link still names it
+ * (`tab=explore`): a link with no query at all opens on the visit's default
+ * place instead (App.jsx), and persistState drops it again once the app runs.
+ * Takes a place key (explore, plan, trips, account, home, pricing) or a view
+ * key (map, places, planstart, trip, day).
  */
-export function tabHref(key, search = (typeof window !== 'undefined' ? window.location.search : '')) {
+export function tabHref(key, search = (typeof window !== 'undefined' ? window.location.search : ''), opts = {}) {
   const q = new URLSearchParams(search);
-  q.set('tab', key);
+  for (const k of PLACE_PARAM_KEYS) q.delete(k);
+  for (const [k, v] of Object.entries(placeParams(key, opts))) q.set(k, v);
+  if (key === 'account' && opts.view && opts.view !== 'home' && ACCOUNT_VIEWS.includes(opts.view)) q.set('view', opts.view);
   return `?${q.toString()}`;
 }
 
-/** The section a query names, in the same terms App reads at load. */
-export function tabFromSearch(search) {
-  const raw = new URLSearchParams(search).get('tab');
-  const tab = raw === 'destinations' ? 'places' : raw;
-  return ['home', 'map', 'places', 'trip', 'day'].includes(tab) ? tab : 'map';
+/* ---------------------------------------------------------------------------
+ * The country page's address (T498, roadmap 1.3b D): #country=IT, a hash
+ * like #dest= and #region=, so a shared country opens over whatever view the
+ * link lands on and Back closes it. Read-only for every older key: a hash
+ * that names no country, or a malformed code, opens nothing. The Explore
+ * categories keep `cat=` (EXPLORE_CATS); Places is the address's default.
+ * ------------------------------------------------------------------------- */
+
+/** The ISO2 code a hash names (#country=IT, any case), or null. */
+export function countryFromHash(hash) {
+  const m = /(?:^#|&)country=([A-Za-z]{2})(?:&|$)/.exec(String(hash || ''));
+  return m ? m[1].toUpperCase() : null;
+}
+
+/** The hash that opens one country's page. */
+export function countryHash(iso2) {
+  return `#country=${String(iso2 || '').toUpperCase()}`;
+}
+
+/** The view a query names, in the same terms App reads at load. */
+export function tabFromSearch(search, opts) {
+  const route = routeFromSearch(search, opts);
+  return route.overlay || route.view;
 }
 
 /** Best-effort: read URL first, then fall back to the localStorage mirror. */
@@ -223,7 +351,7 @@ export function loadInitialState() {
 
 
 // Every key encodeState can write; persistState replaces exactly these.
-const OWN_KEYS = ['b', 'big', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'o', 'pm', 'pr', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
+const OWN_KEYS = ['b', 'big', 'cat', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'mode', 'o', 'pm', 'pr', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
 
 /** Push the encoded state into the URL (replaceState) and the localStorage mirror.
  *
@@ -236,9 +364,14 @@ const OWN_KEYS = ['b', 'big', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', '
  */
 export function persistState(state) {
   if (typeof window === 'undefined') return;
-  const qs = encodeState(state);
+  const current = new URLSearchParams(window.location.search);
+  // The places view writes the category Destinations is on (its own `dc`
+  // key), so a reload or a copied link opens the same layer (T496).
+  const qs = encodeState({ ...state, exploreCat: state.exploreCat || current.get('dc') || undefined });
   const own = new URLSearchParams(qs);
-  const merged = new URLSearchParams(window.location.search);
+  const merged = current;
+  // `view` names an Account spoke at boot only (App reads it once).
+  merged.delete('view');
   for (const key of OWN_KEYS) merged.delete(key);
   for (const [k, v] of own) merged.set(k, v);
   const ms = merged.toString();

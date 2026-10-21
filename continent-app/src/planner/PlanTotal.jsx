@@ -59,12 +59,15 @@ function LineValue({ line, lang, t, onAddFare }) {
 export function PlanTotal({
   priced, dates = '', party: partyIn = null, onParty = null, onAddFare = null,
   variant = 'rail', title = null, defaultOpen = false, footer = null, className = '',
+  // The total bar opens this receipt (T500): a new openKey opens the lines.
+  id = undefined, openKey = 0,
 }) {
   const { t, lang } = useI18n();
   const settings = useSettings();
   const lifestyle = useLifestyleLabel();
   const uid = useId();
   const [open, setOpen] = useState(defaultOpen);
+  useEffect(() => { if (openKey) setOpen(true); }, [openKey]);
   const [editParty, setEditParty] = useState(false);
   const total = priced ? priced.grandTotal : null;
   const delta = useTotalDelta(total);
@@ -77,7 +80,7 @@ export function PlanTotal({
   const hasTrip = Boolean(priced && priced.stopDetails.length);
 
   return (
-    <section className={`plan-total plan-total-${variant} ${className}`.trim()} aria-labelledby={`${uid}-h`}>
+    <section id={id} tabIndex={id ? -1 : undefined} className={`plan-total plan-total-${variant} ${className}`.trim()} aria-labelledby={`${uid}-h`}>
       <header className="plan-total-head">
         <h2 className={`plan-total-title ${variant === 'sheet' ? 'sr-only' : ''}`} id={`${uid}-h`}>{title || t('plan.yourTrip')}</h2>
         {hasTrip ? (
@@ -177,24 +180,6 @@ export function PlanTotal({
       )}
       {footer}
     </section>
-  );
-}
-
-/**
- * The phone's figure: the total and a way into the card, sitting in the
- * wizard's one-row footer instead of a band of its own over the step.
- */
-export function PlanTotalButton({ priced, onOpen }) {
-  const { t } = useI18n();
-  const ref = useRef(null);
-  const total = priced?.stopDetails?.length ? priced.grandTotal : null;
-  useSettledFigure(ref, total);
-  if (total == null) return null;
-  return (
-    <Button variant="quiet" className="plan-total-btn" onClick={onOpen} aria-haspopup="dialog">
-      <span className="plan-total-btn-lbl">{t('plan.yourTrip')}</span>
-      <span ref={ref} className="plan-total-btn-n"><Money value={total} est precision="cents" /></span>
-    </Button>
   );
 }
 

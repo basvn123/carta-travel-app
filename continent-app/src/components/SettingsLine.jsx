@@ -7,7 +7,10 @@ import { OriginPicker } from './OriginPicker.jsx';
 import { DateField } from './DateField.jsx';
 import { Stepper } from './FilterControls.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
-import { Button, Chip, Segmented } from './ui/index.js';
+import { Button, Segmented } from './ui/index.js';
+import { SheetShell } from '../browse/SheetShell.jsx';
+import { useIsDesktop } from '../hooks/useIsDesktop.js';
+import { BedIcon, ChevronDownIcon } from './Icons.jsx';
 
 /**
  * The settings line (T381; carta-design "Settings line", DIRECTION.md rule
@@ -15,19 +18,24 @@ import { Button, Chip, Segmented } from './ui/index.js';
  * prices depend on, each part a button that opens the control that sets it.
  *
  *   origin    the departure airport (OriginPicker, settings face)
- *   dates     the traveller's own dates, or "Any dates" while Carta's pair
- *             stands (a popover with the two DateFields)
+ *   dates     always real dates, labelled "Suggested dates" while Carta's
+ *             pair stands (a popover with the calendar and a Nights stepper)
  *   party     how many travel (a popover with the shared Stepper)
  *   lifestyle the bed and the habits (opens the one Lifestyle dialog)
- *   language  the six catalogues (a popover listing them)
- *   currency  "Prices in EUR", a fixed word: EUR is the only currency
+ *
+ * Language and "Prices in EUR" left the line for Account (T496, owner
+ * T485-g): neither moves a price.
+ *
+ * On a phone (T496, roadmap 1.3a T1 and T2) the line is one sentence and the
+ * bed: "Prices for 14 Nov to 21 Nov, 2 people" opens one sheet with From, the
+ * dates, Nights, People and one Done; the bed opens the Lifestyle dialog.
  *
  * The values live in App, which fills SettingsContext once; this file only
  * reads and writes them, so any surface can mount a line (or read a value
  * through useSettings / useTravelMonth) without a prop chain.
  *
  * Props, the contract other surfaces build against (register row T380-e):
- *   parts     which parts to draw, in this fixed order; default all six
+ *   parts     which parts to draw, in this fixed order; default all four
  *   children  a surface's own filters (a budget ceiling, a month, car-free),
  *             drawn after the parts in the same band, in secondary styling
  *   className extra class on the band
@@ -56,8 +64,9 @@ export function useTravelMonth() {
   return useContext(SettingsContext)?.travelMonth ?? null;
 }
 
-export const SETTINGS_PARTS = ['origin', 'dates', 'party', 'lifestyle', 'language', 'currency'];
-const MAX_PARTY = 12; // the first-run receipt's ceiling (FirstRunReceipt.jsx MAX_PARTY)
+export const SETTINGS_PARTS = ['origin', 'dates', 'party', 'lifestyle'];
+const MAX_NIGHTS = 30;
+const MAX_PARTY = 12; // the party ceiling the old first-run receipt set
 
 /**
  * A small non-modal popover under a part: Escape or a press outside closes
@@ -109,7 +118,11 @@ function SettingsPop({ id, label, anchorRef, onClose, children }) {
 }
 
 /** One part: a label over (or before) its value, one button. */
-function Part({ name, label, value, display, mono, onClick, expanded, popId, partRef, hasPopup = 'dialog' }) {
+function Part({
+  name, label, value, display, mono, onClick, expanded, popId, partRef, hasPopup = 'dialog',
+  // The phone face's two buttons draw their own content and name (T496).
+  ariaLabel, className = '', children,
+}) {
   const { t } = useI18n();
   // A value that changes settles in place (T391, DIRECTION.md 2.3): one dip
   // of its opacity, the box keeping its width; nothing moves that did not
@@ -120,15 +133,19 @@ function Part({ name, label, value, display, mono, onClick, expanded, popId, par
     <button
       type="button"
       ref={partRef}
-      className={`settings-part settings-part-${name}`}
+      className={`settings-part settings-part-${name} ${className}`.trim()}
       onClick={onClick}
       aria-haspopup={hasPopup}
-      aria-expanded={hasPopup === 'dialog' && popId ? !!expanded : undefined}
-      aria-controls={expanded ? popId : undefined}
-      aria-label={t('settings.changeAria', { label, value })}
+      aria-expanded={hasPopup === 'dialog' && (popId || children) ? !!expanded : undefined}
+      aria-controls={expanded && popId ? popId : undefined}
+      aria-label={ariaLabel || t('settings.changeAria', { label, value })}
     >
-      <span className="settings-part-label" aria-hidden="true">{label}</span>
-      <span ref={valueRef} className={`settings-part-value${mono ? ' is-mono' : ''}`} aria-hidden="true">{display ?? value}</span>
+      {children || (
+        <>
+          <span className="settings-part-label" aria-hidden="true">{label}</span>
+          <span ref={valueRef} className={`settings-part-value${mono ? ' is-mono' : ''}`} aria-hidden="true">{display ?? value}</span>
+        </>
+      )}
     </button>
   );
 }
@@ -156,16 +173,84 @@ function nightsBetween(a, b) {
   return Math.max(0, Math.round(ms / 86400000));
 }
 
+/**
+ * The date controls every face shares: which end the next pick sets, the
+ * calendar, then the trip's length as a Nights stepper (T496, 1.3a: the
+ * length is its own choice) and who picked the dates.
+ */
+function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate, onUseCarta }) {
+  const { t } = useI18n();
+  const nights = nightsBetween(s.departDate, s.returnDate);
+  const setNights = (n) => {
+    if (!s.departDate) return;
+    s.setReturnDate(addDaysISO(s.departDate, Math.max(1, Math.min(MAX_NIGHTS, n))));
+  };
+  return (
+    <>
+      {/* One calendar for both ends: the kit Segmented above it says which
+          end the next pick sets (the lifted thumb, T426), and a pick of the
+          leaving day keeps the trip's length. */}
+      <Segmented
+        block
+        className="settings-ends"
+        label={t('settings.dates')}
+        value={pickEnd}
+        onChange={setPickEnd}
+        options={['start', 'end'].map((end) => ({
+          value: end,
+          label: (
+            <span className="settings-end-text">
+              <span className="settings-end-label">{t(end === 'start' ? 'settings.leave' : 'settings.return')}</span>
+              <span className="is-mono">{shortDate(end === 'start' ? s.departDate : s.returnDate)}</span>
+            </span>
+          ),
+        }))}
+      />
+      <DateField
+        inline
+        value={pickEnd === 'start' ? s.departDate : s.returnDate}
+        rangeStart={s.departDate}
+        rangeEnd={s.returnDate}
+        min={pickEnd === 'end' ? (s.departDate || s.dateBounds?.min) : s.dateBounds?.min}
+        max={s.dateBounds?.max}
+        onChange={pickDate}
+      />
+      <div className="settings-row">
+        <span className="settings-row-label">{t('settings.nightsLabel')}</span>
+        <Stepper
+          value={Math.max(1, nights)}
+          min={1}
+          max={MAX_NIGHTS}
+          onChange={setNights}
+          ariaLabel={t('settings.nightsAria', { n: nights })}
+          decLabel={t('settings.nightsDec')}
+          incLabel={t('settings.nightsInc')}
+        />
+      </div>
+      {s.ownDates ? (
+        s.defaultDates && (
+          <Button variant="secondary" size="sm" className="settings-text-btn" onClick={onUseCarta}>
+            {t('settings.useCartaDates')}
+          </Button>
+        )
+      ) : (
+        <p className="settings-note">{t('settings.cartaDates')}</p>
+      )}
+    </>
+  );
+}
+
 export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children, slot = false }) {
   const s = useSettings();
-  const { t, lang, setLang, languages } = useI18n();
+  const { t } = useI18n();
+  const isDesktop = useIsDesktop();
   const shortDate = useShortDate();
-  const [open, setOpen] = useState(null); // 'dates' | 'party' | 'language' | null
+  const [open, setOpen] = useState(null); // 'dates' | 'party' | 'sheet' | null
   const [pickEnd, setPickEnd] = useState('start');
   const baseId = useId();
   const datesRef = useRef(null);
   const partyRef = useRef(null);
-  const langRef = useRef(null);
+  const summaryRef = useRef(null);
   // A pick on the leaving end moves the trip and keeps its length, then hands
   // the next pick to the return; a pick on the return end sets it, unless it
   // lands on or before the leaving day, which then moves instead.
@@ -185,19 +270,128 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
 
   const show = (p) => parts.includes(p);
   const toggle = (p) => {
-    if (p === 'dates') setPickEnd('start');
+    if (p === 'dates' || p === 'sheet') setPickEnd('start');
     setOpen((v) => (v === p ? null : p));
   };
 
   const ownDates = !!s.ownDates;
-  const datesValue = ownDates
+  const nights = nightsBetween(s.departDate, s.returnDate);
+  // Always the real dates (1.3a D1, 2.20): the label says who picked them,
+  // so the assumption behind every figure is on screen.
+  const range = s.departDate && s.returnDate
     ? t('settings.datesRange', { start: shortDate(s.departDate), end: shortDate(s.returnDate) })
-    : t('settings.anyDates');
+    : '';
+  const datesValue = range
+    ? t(nights === 1 ? 'settings.datesNight' : 'settings.datesNights', { range, n: nights })
+    : t('settings.pickDates');
+  const datesLabel = ownDates ? t('settings.dates') : t('settings.datesSuggested');
   const party = Number.isFinite(s.party) ? s.party : 2;
+  const people = t(party === 1 ? 'settings.peopleOne' : 'settings.peopleMany', { n: party });
   const profileKey = matchProfile(s.lifestyle || {});
   const bed = t(`stay.${s.stayTier || 'home'}`);
   const vibe = profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom');
-  const langCode = String(lang || 'en').toUpperCase();
+  const resetToCartaDates = () => {
+    if (!s.defaultDates) return;
+    s.setDepartDate(s.defaultDates.start);
+    s.setReturnDate(s.defaultDates.end);
+  };
+  const closeSheet = () => { close(); summaryRef.current?.focus(); };
+
+  // The phone face (1.3a T1): one sentence for the dates and the party, one
+  // button for the bed. The sentence opens the one settings sheet (T2); the
+  // bed opens the Lifestyle dialog, since a sheet never holds a sheet.
+  if (!isDesktop) {
+    const summary = t('settings.summary', { dates: range || t('settings.pickDates'), people });
+    return (
+      <div className={`settings-line settings-line-phone ${className}`.trim()} role="group" aria-label={t('settings.label')}>
+        {(show('dates') || show('party') || show('origin')) && (
+          <Part
+            name="summary"
+            className="settings-summary"
+            partRef={summaryRef}
+            value={summary}
+            expanded={open === 'sheet'}
+            ariaLabel={t('settings.summaryAria', { summary })}
+            onClick={() => toggle('sheet')}
+          >
+            <span className="settings-summary-text" aria-hidden="true">
+              {/* "Prices for" is the first thing a narrow phone drops; it
+                  only stands while the dates are Carta's suggestion. */}
+              {!ownDates && <span className="settings-summary-pre">{`${t('settings.summaryPre')} `}</span>}
+              {summary}
+            </span>
+            <ChevronDownIcon size={16} className="settings-summary-chev" />
+          </Part>
+        )}
+        {show('lifestyle') && s.openLifestyle && (
+          <Part
+            name="bed"
+            className="settings-bed"
+            value={`${bed}, ${vibe}`}
+            ariaLabel={t('settings.changeAria', { label: t('settings.lifestyle'), value: `${bed}, ${vibe}` })}
+            onClick={s.openLifestyle}
+          >
+            <BedIcon size={16} className="settings-bed-icon" />
+            <span className="settings-bed-text" aria-hidden="true">{bed}</span>
+            <ChevronDownIcon size={16} className="settings-summary-chev" />
+          </Part>
+        )}
+        {open === 'sheet' && (
+          <SheetShell
+            title={t('settings.label')}
+            labelId={`${baseId}-sheet`}
+            className="settings-sheet"
+            closeLabel={t('a11y.close')}
+            onClose={closeSheet}
+          >
+            {show('origin') && (
+              <section className="settings-sheet-sec">
+                <h3 className="settings-sheet-h">{t('settings.from')}</h3>
+                <OriginPicker
+                  data={s.data}
+                  origin={s.origin}
+                  onChangeOrigin={s.setOrigin}
+                  fromLabel={t('settings.from')}
+                />
+              </section>
+            )}
+            {show('dates') && (
+              <section className="settings-sheet-sec">
+                <h3 className="settings-sheet-h">{datesLabel}</h3>
+                <DatesControl
+                  s={s}
+                  pickEnd={pickEnd}
+                  setPickEnd={setPickEnd}
+                  pickDate={pickDate}
+                  shortDate={shortDate}
+                  onUseCarta={resetToCartaDates}
+                />
+              </section>
+            )}
+            {show('party') && (
+              <section className="settings-sheet-sec settings-row">
+                <h3 className="settings-sheet-h settings-row-label">{t('settings.party')}</h3>
+                <Stepper
+                  value={party}
+                  min={1}
+                  max={MAX_PARTY}
+                  onChange={(n) => s.setParty(n)}
+                  ariaLabel={t('settings.partyAria', { n: party })}
+                  decLabel={t('settings.partyDec')}
+                  incLabel={t('settings.partyInc')}
+                />
+              </section>
+            )}
+            {/* The sheet's one primary. Every change holds at once; Done
+                only closes. */}
+            <Button variant="primary" block className="settings-done" onClick={closeSheet}>
+              {t('settings.done')}
+            </Button>
+          </SheetShell>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className={`settings-line ${className}`.trim()} role="group" aria-label={t('settings.label')}>
@@ -217,66 +411,24 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
           <div className="settings-slot settings-slot-dates">
             <Part
               name="dates"
-              label={t('settings.dates')}
+              label={datesLabel}
               value={datesValue}
-              mono={ownDates}
+              mono
               partRef={datesRef}
               popId={`${baseId}-dates`}
               expanded={open === 'dates'}
               onClick={() => toggle('dates')}
             />
             {open === 'dates' && (
-              <SettingsPop id={`${baseId}-dates`} label={t('settings.dates')} anchorRef={datesRef} onClose={close}>
-                {/* One calendar for both ends: the kit Segmented above it says
-                    which end the next pick sets (the lifted thumb, T426), and
-                    a pick of the leaving day keeps the trip's length. */}
-                <Segmented
-                  block
-                  className="settings-ends"
-                  label={t('settings.dates')}
-                  value={pickEnd}
-                  onChange={setPickEnd}
-                  options={['start', 'end'].map((end) => ({
-                    value: end,
-                    label: (
-                      <span className="settings-end-text">
-                        <span className="settings-end-label">{t(end === 'start' ? 'settings.leave' : 'settings.return')}</span>
-                        <span className="is-mono">{shortDate(end === 'start' ? s.departDate : s.returnDate)}</span>
-                      </span>
-                    ),
-                  }))}
+              <SettingsPop id={`${baseId}-dates`} label={datesLabel} anchorRef={datesRef} onClose={close}>
+                <DatesControl
+                  s={s}
+                  pickEnd={pickEnd}
+                  setPickEnd={setPickEnd}
+                  pickDate={pickDate}
+                  shortDate={shortDate}
+                  onUseCarta={() => { resetToCartaDates(); close(); datesRef.current?.focus(); }}
                 />
-                <DateField
-                  inline
-                  value={pickEnd === 'start' ? s.departDate : s.returnDate}
-                  rangeStart={s.departDate}
-                  rangeEnd={s.returnDate}
-                  min={pickEnd === 'end' ? (s.departDate || s.dateBounds?.min) : s.dateBounds?.min}
-                  max={s.dateBounds?.max}
-                  onChange={pickDate}
-                />
-                <p className="settings-note">
-                  <span className="is-mono">{t('settings.nights', { n: nightsBetween(s.departDate, s.returnDate) })}</span>
-                </p>
-                {ownDates ? (
-                  s.defaultDates && (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="settings-text-btn"
-                      onClick={() => {
-                        s.setDepartDate(s.defaultDates.start);
-                        s.setReturnDate(s.defaultDates.end);
-                        close();
-                        datesRef.current?.focus();
-                      }}
-                    >
-                      {t('settings.useCartaDates')}
-                    </Button>
-                  )
-                ) : (
-                  <p className="settings-note">{t('settings.cartaDates')}</p>
-                )}
               </SettingsPop>
             )}
           </div>
@@ -319,51 +471,12 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
               display={(
                 <>
                   <span>{bed}</span>
-                  {/* The habits drop first on a phone: the bed is the larger
-                      half of the bill, so it is the part that stays. */}
                   <span className="settings-vibe">{vibe}</span>
                 </>
               )}
               onClick={s.openLifestyle}
             />
           </div>
-        )}
-
-        {show('language') && (
-          <div className="settings-slot settings-slot-language">
-            <Part
-              name="language"
-              label={t('settings.language')}
-              value={langCode}
-              mono
-              partRef={langRef}
-              popId={`${baseId}-language`}
-              expanded={open === 'language'}
-              onClick={() => toggle('language')}
-            />
-            {open === 'language' && (
-              <SettingsPop id={`${baseId}-language`} label={t('settings.language')} anchorRef={langRef} onClose={close}>
-                {/* Six kit filter chips (T426): the one selected state, a tint
-                    and a tick. A pick sets the language and closes, as before. */}
-                <div className="settings-langs" role="group" aria-label={t('settings.language')}>
-                  {languages.map((l) => (
-                    <Chip
-                      key={l.code}
-                      lang={l.bcp47}
-                      selected={l.code === lang}
-                      onClick={() => { setLang(l.code); close(); langRef.current?.focus(); }}
-                    >
-                      {l.label}
-                    </Chip>
-                  ))}
-                </div>
-              </SettingsPop>
-            )}
-          </div>
-        )}
-
-        {show('currency') && (
-          <span className="settings-currency">{t('settings.currency')}</span>
         )}
       </div>
       {(children || slot) && (

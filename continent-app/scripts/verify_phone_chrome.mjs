@@ -35,7 +35,9 @@ const argv = Object.fromEntries(process.argv.slice(2).map((a) => {
   const m = a.match(/^--([^=]+)(?:=(.*))?$/);
   return m ? [m[1], m[2] ?? true] : [a, true];
 }));
-const BASE = `http://${argv.host || 'localhost'}:${argv.port || 5210}/`;
+// T502: a bare URL argument (as the other harnesses take) wins over --host/--port.
+const URL_ARG = Object.keys(argv).find((k) => /^https?:\/\//.test(k));
+const BASE = URL_ARG ? URL_ARG.replace(/\/?$/, '/') : `http://${argv.host || 'localhost'}:${argv.port || 5210}/`;
 const OUT = 'scripts/shots/phone';
 mkdirSync(OUT, { recursive: true });
 const ONLY = argv.only ? new Set(String(argv.only).split(',')) : null;
@@ -108,7 +110,7 @@ async function measure(page) {
 
     // Labels cut inside their control.
     const clipped = [];
-    for (const lab of document.querySelectorAll('.btn-label, .ui-tab, .ui-chip, .ui-tile-label, .bottom-nav-label, .header-nav-label, .plan-chooser-title')) {
+    for (const lab of document.querySelectorAll('.btn-label, .ui-tab, .ui-chip, .ui-tile-label, .bottom-nav-label, .header-nav-label, .plan-start-title')) {
       // A search field shows the typed query and may cut it: a field, not a label.
       if (!shown(lab) || lab.closest('.gsearch-trigger, .header-search-slot')) continue;
       const r = lab.getBoundingClientRect();
@@ -170,7 +172,10 @@ const tap = async (page, sel, ms = 1200) => {
 
 /** The screens, each one opened fresh or reached by a walk. */
 const SCREENS = [
-  ['destinations', async (p) => open(p, '?tab=places', '.places-tab')],
+  // T502: the tab keys of the three places (T496-T501): Destinations is
+  // Explore's layers (?tab=explore&cat=), the plus and its chooser became
+  // Plan's start page, and the pass is the pricing page.
+  ['destinations', async (p) => open(p, '?tab=explore&cat=trails', '.places-tab')],
   ['destination', async (p) => open(p, '#dest=gem%3Abled', '.destp', 4000)],
   ['report-sheet', async (p) => {
     await open(p, '#dest=gem%3Abled', '.destp', 4000);
@@ -189,13 +194,13 @@ const SCREENS = [
     await p.keyboard.type('The price looks old.');
     await p.waitForTimeout(800);
   }],
-  ['explore-list', async (p) => open(p, '?tab=map&xe=lake&xa=alps&xm=7', '.bottom-nav', 5000)],
-  ['plan-chooser', async (p) => { await open(p, '?tab=places', '.bottom-nav-plus'); await tap(p, '.bottom-nav-plus', 700); }],
-  ['lifestyle', async (p) => { await open(p, '?tab=map', '.bottom-nav', 5000); await tap(p, '.settings-part-lifestyle:visible, .lifestyle-btn:visible'); }],
-  ['pass', async (p) => { await open(p, '?tab=places', '.shell-pass-btn'); await tap(p, '.shell-pass-btn:visible'); }],
-  ['account', async (p) => { await open(p, '?tab=places', '.bottom-nav'); await tap(p, '.bottom-nav .bottom-nav-item >> nth=-1'); }],
+  ['explore-list', async (p) => open(p, '?tab=explore&xe=lake&xa=alps&xm=7', '.bottom-nav', 5000)],
+  ['plan-chooser', async (p) => open(p, '?tab=plan', '.plan-start')],
+  ['lifestyle', async (p) => { await open(p, '?tab=explore', '.bottom-nav', 5000); await tap(p, '.settings-bed:visible, .settings-part-lifestyle:visible'); }],
+  ['pass', async (p) => open(p, '?tab=pricing', 'h1')],
+  ['account', async (p) => { await open(p, '?tab=explore', '.bottom-nav'); await tap(p, '.bottom-nav .bottom-nav-item >> nth=-1'); }],
   ['mytrips', async (p) => {
-    await open(p, '?tab=places&savedmock', '.bottom-nav');
+    await open(p, '?tab=explore&savedmock', '.bottom-nav');
     await p.locator('.bottom-nav-item', { hasText: 'My trips' }).first().click();
     await p.waitForTimeout(2500);
   }],
@@ -205,13 +210,13 @@ const SCREENS = [
     if (await p.locator('.pass-overlay').count()) { await p.keyboard.press('Escape'); await p.waitForTimeout(500); }
   }],
   ['day', async (p) => open(p, `?paymock#day=${DAY}`, '.bottom-nav', 9000)],
-  ['day-start', async (p) => open(p, '?tab=day', '.bottom-nav', 4000)],
+  ['day-start', async (p) => open(p, '?tab=plan&mode=day', '.bottom-nav', 4000)],
 ];
 
 /** The trip wizard, walked step by step on one page (measure_trip_planner's walk). */
 async function wizard(page, record) {
   const next = async (ms = 1400) => { await page.locator('.guide-next:visible').first().click(); await page.waitForTimeout(ms); };
-  await open(page, '?tab=trip&o=CRL&paymock', '.guide-next', 1500);
+  await open(page, '?tab=plan&mode=trip&o=CRL&paymock', '.guide-next', 1500);
   await record('trip-booked');
   await page.getByText(/^Nothing yet$/).first().click();
   await next();

@@ -993,3 +993,123 @@ a.ddo-list-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 /* The unit under the figure: the estimate dot ends the figure's line and
    never sits between the figure and its unit like a separator. */
 .dprice-day-unit { flex-basis: 100%; }
+
+/* --------------------------------------------------------------------------
+   T499: four tabs and the Overview (roadmap 1.4, owner answers T491-a to i)
+   -------------------------------------------------------------------------- */
+
+/* What the day figure includes, under it, on the first screen. From 1024 px
+   the card carries the figure and this sentence, and the head drops both. */
+.destp-v4 .destp-dayline-incl {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+@media (min-width: 1024px) {
+  .destp-v4 .destp-day { display: none; }
+}
+.dprice-incl { display: none; }
+@media (min-width: 1024px) {
+  .dprice-incl {
+    display: block;
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-caption);
+    line-height: var(--leading-ui);
+    color: var(--text-2);
+  }
+}
+
+/* The tab bar follows the sticky-rail rule (owner answer T491-c): one band
+   per page, --surface, a --border bottom edge, no shadow. It is the first
+   child of the body, so it sticks for the whole panel. On a phone it runs
+   to the screen's edges and scrolls sideways when a language's labels do
+   not fit (German at 360 px); tabs are 48 px high on touch (T472-f). */
+.destp-v4 .destp-tabs {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  margin: var(--space-2) calc(-1 * var(--space-4)) 0;
+  padding: 0 var(--space-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.destp-v4 .destp-tabs .ui-tabs {
+  gap: var(--space-5);
+  border-bottom: 0;
+  scroll-padding-inline: var(--space-4);
+}
+.destp-v4 .destp-tabs .ui-tab { flex: none; white-space: nowrap; }
+@media (pointer: coarse) {
+  .destp-v4 .destp-tabs .ui-tab { min-height: var(--tap-main, 48px); }
+}
+@media (min-width: 1024px) {
+  .destp-v4 .destp-tabs { margin-inline: 0; padding-inline: 0; }
+  .destp-v4 .destp-tabs .ui-tabs { gap: var(--space-6); }
+}
+/* Without the section rail the side card sticks at the top of the view. */
+@media (min-width: 1024px) {
+  .destp-v4 .destp-grid > .destp-side {
+    top: 0;
+    max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px));
+  }
+}
+
+/* A jump (a See all, the Score) lands its heading under the stuck bar. */
+.destp-v4 .destp-panel [id^="sec-"],
+.destp-v4 .destp-panel .dsec2 { scroll-margin-top: calc(var(--tap) + var(--space-5)); }
+
+/* The panel opens close under the bar; the facts need no top rule there. */
+.destp-v4 .destp-panel > .destp-keys:first-child { border-top: 0; }
+.destp-v4 .destp-panel > .dsec2:first-child { padding-top: var(--space-5); }
+
+/* Around {city}: the choice chips under the heading. On a phone one row
+   that scrolls sideways to the screen's edge, so the track below keeps its
+   place; on a wide column they wrap. */
+.dov-chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(-1 * var(--space-4)) var(--space-4);
+  padding: 2px var(--space-4);
+}
+.dov-chips::-webkit-scrollbar { display: none; }
+.dov-chips .ui-chip { flex: none; }
+@media (min-width: 769px) {
+  .dov-chips { flex-wrap: wrap; overflow: visible; margin-inline: 0; padding-inline: 0; }
+}
+/* The one sentence for the empty kinds sits under the track. */
+.dov-around .sec-none { margin-top: var(--space-4); max-width: var(--measure); }
+.dov-around .sec-none p { color: var(--text-2); }
+.dov-around .sec-none .sec-none-link { color: var(--text); }
+
+/* "See all" under a list (a track carries its own in its head). */
+.dov-all { margin-top: var(--space-2); }
+.dov-all.btn { padding-inline: 0; }
+
+/* The year and this week: the strip, then the seven days; side by side
+   where the column is wide enough for both. */
+.dov-year-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+@media (min-width: 680px) and (max-width: 1023px), (min-width: 1280px) {
+  .dov-year-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .dov-year-grid .destp-week { margin-top: 0; }
+  .dov-year-grid .destp-week .destp-subhead { margin-top: 0; }
+}
+.dov-months .climate-best {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.climate-chart.has-figures.is-compact { height: 112px; }
+
+/* On a phone the price card follows the year (owner answer T491-g). */
+.dov-price { padding-top: var(--space-7); }
+
+/* Take {city} with you: one sentence and the secondary button. */
+.dov-take-lead {
+  max-width: var(--measure);
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}

@@ -418,8 +418,15 @@ try {
     // object, so ten of sixteen cards on this page showed a blank frame
     // while the wire held their photograph.
     const wireFile = await getJson('/region/COAST_BE-BELGIAN-COAST.json');
-    const withPhoto = [...(wireFile?.rated || []), ...(wireFile?.listed || [])]
-      .filter((c) => (c.images && c.images[0]) || c.img).length;
+    // T498: the rated cards are a rail per layer, twelve at most each,
+    // so a picture past the twelfth of its layer is not on the page.
+    const pic = (c) => (c.images && c.images[0]) || c.img;
+    const perLayer = new Map();
+    for (const c of [...(wireFile?.editorial || []), ...(wireFile?.rated || [])]) {
+      if (pic(c)) perLayer.set(c.layer, (perLayer.get(c.layer) || 0) + 1);
+    }
+    const withPhoto = [...perLayer.values()].reduce((n, k) => n + Math.min(12, k), 0)
+      + (wireFile?.listed || []).filter(pic).length;
     const rendered = await page2.locator('.rgnp-card img').count();
     check('every card with a picture in the wire renders it',
       withPhoto > 0 && rendered >= withPhoto,

@@ -195,7 +195,6 @@ margin-bottom: 8px;
 }
 .carta-plan-row { margin-top: 13px; }
 .trip-carfrom-results { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
-.trip-ownflight-date { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .ai-plan-badge {
   /* A plain --ink-soft icon, no tile (never-do 1, accent marks; T411, row
      T399-d): the AI day plan and the pass dialogs head the same way. */

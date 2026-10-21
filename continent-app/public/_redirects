@@ -9,7 +9,7 @@
 # link and og:url in index.html both declare www, and two live hostnames would
 # duplicate every crawled URL.
 #
-# There is deliberately no SPA catch-all (`/* /index.html 200`) here.
+# There is deliberately no SPA catch-all (`/* / 200`) here.
 #
 # The app is one client-rendered URL: every route lives in the hash or the query
 # string, and src only ever reads window.location.pathname and writes it back
@@ -19,3 +19,12 @@
 # which does answer 404, so a missing shard still fails loudly; the files the
 # app host still serves (boot.json and the three catalogue files) do not.
 # Restoring a real 404 on the app host is register row T294-a.
+
+# The pricing page has a real address (T496, T497). The deploy carries a real
+# 404.html now, so unknown paths no longer fall back to the app: rewrite the
+# pricing paths to the app shell (to /, since Pages answers /index.html with
+# a 308 to /, which would drop the path), which pathBoot.js reads as ?tab=pricing.
+/pricing      / 200
+/pricing/     / 200
+/:lang/pricing  / 200
+/:lang/pricing/ / 200

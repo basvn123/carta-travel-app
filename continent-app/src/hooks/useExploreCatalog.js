@@ -18,7 +18,7 @@ function baseCity(name) {
 /** Multi-airport cities (Rome, Paris, London) collapse to one card. Without a
  *  fare to arbitrate, the group's representative is the gateway that knows the
  *  place best: highest fame, image as tiebreak. Non-airport rows never merge. */
-function dedupeGateways(rows) {
+export function dedupeGateways(rows) {
   const winners = new Map();
   const order = [];
   const better = (a, b) => {

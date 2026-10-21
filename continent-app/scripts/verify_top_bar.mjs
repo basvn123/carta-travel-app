@@ -12,7 +12,7 @@
 //   1. One header row, and none of the map-era controls left behind in it.
 //   2. The Passes entry is labelled at both widths: "See pricing" on desktop,
 //      the short chip on a phone.
-//   3. Desktop: five section tabs, the active one marked, and clicking one
+//   3. Desktop: three places (T502), the active one marked, and clicking one
 //      really changes the tab.
 //   4. The bar is a full-bleed page frame: brand pinned to the left gutter,
 //      account cluster to the right, both gutters equal, and one single row
@@ -74,8 +74,10 @@ const rightEdge = async (page, sel) => {
 {
   const page = await boot({ width: 390, height: 844 }, 'phone');
 
-  const header = await box(page, '.app-header');
-  check('one header row', !!header, header ? `${Math.round(header.width)}x${Math.round(header.height)}` : 'missing');
+  // T502: a phone draws no header bar on a browse view (T496-T501); the
+  // settings line stands on top instead.
+  check('no header bar on a phone browse view', !(await page.locator('.app-header').isVisible()));
+  check('the settings line stands on top', await page.locator('.settings-line-phone').isVisible());
 
   // The map era, gone rather than merely hidden.
   for (const [what, sel] of [
@@ -96,14 +98,8 @@ const rightEdge = async (page, sel) => {
   check('bottom-bar slot >= 44px tall', !!slotBox && slotBox.height >= 43.5,
     slotBox ? `${Math.round(slotBox.width)}x${Math.round(slotBox.height)}` : 'missing');
 
-  // The Passes chip: labelled, not a bare icon, and at the header's own size.
-  const passShort = page.locator('.header-pricing-label-short');
-  const passText = await passShort.innerText().catch(() => '');
-  check('passes chip shows its label', await passShort.isVisible().catch(() => false) && passText.trim().length > 0, passText.trim());
-  const passBox = await box(page, '.header-pricing-btn');
-  // 38px is the header's stated button size (44px is the page-level size).
-  check('passes chip >= 36px tall', !!passBox && passBox.height >= 36,
-    passBox ? `${Math.round(passBox.width)}x${Math.round(passBox.height)}` : 'missing');
+  // The Passes chip checks went with the chip (T496-T501: no pass in the header).
+  const passText = await page.locator('.bottom-nav-item .bottom-nav-label').last().innerText().catch(() => '');
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   check('no horizontal overflow at 390px', overflow <= 0, `overflow ${overflow}px`);
@@ -114,6 +110,10 @@ const rightEdge = async (page, sel) => {
   await page.waitForTimeout(900);
   const opts = page.locator('.account-lang-opt');
   check('account panel shows the language grid', await page.locator('.account-lang-grid').isVisible());
+  // T502: "Prices in EUR" and "How Carta works" moved into Account (T496-T501).
+  check('account carries the currency line', await page.locator('.account-currency').isVisible());
+  check('account has a How Carta works row to Home',
+    /tab=home/.test(await page.locator('a.account-nav[href*="tab=home"]').first().getAttribute('href').catch(() => '') || ''));
   check('all six languages listed', await opts.count() === 6, String(await opts.count()));
   await page.screenshot({ path: `${SHOTS}/top-bar-account-lang.png` });
 
@@ -121,11 +121,9 @@ const rightEdge = async (page, sel) => {
   await page.waitForTimeout(700);
   const active = await page.locator('.account-lang-opt.on').innerText().catch(() => '');
   check('picked language marked active', /deutsch/i.test(active), active.trim());
-  // Escape leaves the panel, which is the phone's way out of it.
-  await page.keyboard.press('Escape');
-  await page.waitForTimeout(500);
-  const passDe = await page.locator('.header-pricing-label-short').innerText().catch(() => '');
-  check('the header relabels in German', passDe.trim().length > 0 && passDe.trim() !== passText.trim(),
+  // T502: the bottom bar's Account label is the relabel probe now.
+  const passDe = await page.locator('.bottom-nav-item .bottom-nav-label').last().innerText().catch(() => '');
+  check('the bottom bar relabels in German', passDe.trim().length > 0 && passDe.trim() !== passText.trim(),
     `${passText.trim()} -> ${passDe.trim()}`);
   await page.screenshot({ path: `${SHOTS}/top-bar-mobile-de.png` });
   await page.close();
@@ -145,34 +143,15 @@ const rightEdge = async (page, sel) => {
 
   const tabs = page.locator('.header-nav-item');
   const labels = (await tabs.allInnerTexts()).map((s) => s.trim());
-  check('five section tabs', labels.length === 5, labels.join(' | '));
+  check('three places in the header', labels.join('|') === 'Explore|Plan|My trips', labels.join(' | '));
   check('the open section is marked', await page.locator('.header-nav-item.active').count() === 1);
 
-  // Desktop chrome v4: the bar's one filled action says "Get a pass" at
-  // every width; the long "See pricing" wording retired with the white bar.
-  check('the pass chip shows Get a pass',
-    await page.locator('.header-pricing-label-short').isVisible().catch(() => false));
-  check('the long pricing label is hidden here',
-    !(await page.locator('.header-pricing-label').isVisible().catch(() => false)));
-  // This used to assert an accent fill, rgb(224, 90, 71). T360 (owner call on
-  // T166-a) made the chip a secondary: no fill, a --rule border, the accent
-  // only on its glyph, so the accent stays for each page's one primary
-  // (24-destination-workspace.css). Updated to that design, reading the
-  // tokens rather than a hard-coded colour (T381 harness baseline, T370-a).
-  check('the pass chip is a secondary with the accent on its glyph only',
-    await page.locator('.header-pricing-btn').evaluate((el) => {
-      const probe = document.createElement('i');
-      probe.style.cssText = 'position:absolute;color:var(--accent);border:1px solid var(--rule)';
-      document.body.appendChild(probe);
-      const want = getComputedStyle(probe);
-      const cs = getComputedStyle(el);
-      const svg = el.querySelector('svg');
-      const ok = cs.backgroundColor === 'rgba(0, 0, 0, 0)'
-        && cs.borderTopColor === want.borderTopColor
-        && (!svg || getComputedStyle(svg).color === want.color);
-      probe.remove();
-      return ok;
-    }));
+  // The pass chip checks went with the chip (T496-T501: no pass, no Home
+  // tab and no strapline in the header; the account icon is far right).
+  check('no pass button, strapline or Home tab in the header',
+    await page.locator('.header-pricing-btn, .shell-pass-btn, .brand-sub').count() === 0);
+  check('the account icon is the far right of the bar',
+    await page.locator('.app-header-account > .account-door:last-child').isVisible());
   check('the active tab carries the underline',
     (await page.locator('.header-nav-item.active').evaluate((el) => getComputedStyle(el, '::after').height)) === '3px');
 
@@ -185,7 +164,7 @@ const rightEdge = async (page, sel) => {
   await page.waitForTimeout(1800);
   // The desktop surface is the side panel now; the toolbar card is the
   // phone's arrangement of the same controls.
-  check('Explore is the open tab', await page.locator('.explore-side').isVisible());
+  check('Explore is the open tab', await page.locator('.explore-tab').isVisible());
   const hdrBox = await box(page, '.app-header');
   const brandBox = await box(page, '.app-header-brand');
   const acctRight = await rightEdge(page, '.app-header-account');
@@ -210,10 +189,10 @@ const rightEdge = async (page, sel) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.waitForTimeout(300);
 
-  // Clicking a tab really moves: Destinations is a different surface.
-  await tabs.first().click();
+  // Clicking a tab really moves: Plan is a different surface (T502).
+  await tabs.filter({ hasText: /^plan$/i }).first().click();
   await page.waitForTimeout(1800);
-  check('a tab click changes the surface', await page.locator('.places-side').isVisible());
+  check('a tab click changes the surface', await page.locator('.plan-start').isVisible());
   await page.screenshot({ path: `${SHOTS}/top-bar-desktop.png` });
   await page.close();
 }

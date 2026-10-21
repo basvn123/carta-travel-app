@@ -16,10 +16,6 @@
   border-bottom: 1px solid var(--rule);
 }
 .trip-topcard-name:focus { outline: none; }
-.trip-topcard-count {
-  margin-left: 8px;
-  color: var(--ink-soft);
-}
 .trip-block:first-child { margin-top: 6px; }
 .trip-block-title {
   font-family: var(--display);
@@ -121,18 +117,8 @@
 @media (max-width: 768px) {
   .trip-add-row { display: grid; grid-template-columns: 1fr 1fr; }
 }
-.trip-total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--rule);
-}
-.trip-total-row.grand { border-bottom: none; padding-top: 12px; }
 .trip-ownflight-input:focus { outline: none; border-color: var(--accent); }
 @media (min-width: 769px) {
-  .trip-sheet-grip-hit { display: none; }
   .trip-topcard { padding-top: 16px; }
 }
 .daytrip-hint { color: var(--good-ink-soft); }
@@ -161,29 +147,6 @@
   color: var(--ink-soft);
   margin-top: 3px;
   letter-spacing: 0.02em;
-}
-.trip-sheet-grip {
-  width: 40px; height: 4px;
-  border-radius: 2px;
-  background: var(--rule);
-  margin: 0 auto;
-  transition: background-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .trip-sheet-grip-hit:hover .trip-sheet-grip { background: var(--ink-mute); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .trip-sheet-grip { transition: none; }
-}
-.trip-sheet-scroll {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  /* A classic (non-overlay) scrollbar is laid out INSIDE the padding box, so on
-     Windows it ate 15 of these 20px and drew itself through the timeline's
-     connector rail. The gutter reserves its own strip beside the padding. */
-  scrollbar-gutter: stable;
-  padding: 6px 20px 22px;
 }
 .trip-block { margin-top: 18px; }
 .trip-field {
@@ -220,10 +183,7 @@
   .trip-add-row .dropdown.trip-add-city { width: 100%; min-width: 0; }
 }
 .trip-note { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin-top: 8px; }
-.trip-ownflight-fields { display: flex; gap: 8px; margin-top: 8px; }
-.trip-save-row { display: flex; gap: 10px; margin-top: 16px; }
 @media (max-width: 768px) {
-  .trip-sheet-scroll { padding: 6px 15px 18px; }
   .trip-field { min-width: 104px; }
 }
 .daytrip-reco-icon { color: var(--accent); margin-top: 2px; }

@@ -81,7 +81,7 @@ export function transportLabel(trip, t) {
 export function seasonLabel(trip, t) {
   const months = trip.season || [];
   if (!months.length) return '';
-  const range = fmtMonthRanges(months);
+  const range = fmtMonthRanges(months, t);
   return trip.seasonBasis === 'all'
     ? t('trip.seasonAll', { months: range })
     : t('trip.seasonSome', { months: range });
@@ -144,7 +144,7 @@ export function tripWhy(trip, t, max) {
     const key = keyFor(WHY_KEY, reason);
     if (!key) continue;
     const params = { ...reason };
-    if (reason.k === 'season') params.months = fmtMonthRanges(reason.months);
+    if (reason.k === 'season') params.months = fmtMonthRanges(reason.months, t);
     if (reason.k === 'hiddenGem') params.cities = nameList(reason.cities, t);
     const line = t(key, params);
     // A key with no catalogue entry falls back to the key itself, which must

@@ -29,6 +29,7 @@ import { stripDashes } from './format.js';
 import { activityLink } from './activityAffiliates.js';
 import { destShareUrl } from './dossier.js';
 import { trailClimbUp, gradeLabelKey } from './trailStory.js';
+import { pdfOutdoorRows } from './destOverview.js';
 import { TOKEN_COLOURS as T } from '../map/tokenColors.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -129,7 +130,16 @@ export async function downloadDestinationPdf({
   const eurFmt = (n) => (Number.isFinite(n) ? `EUR ${Math.round(n).toLocaleString('en-GB')}` : '');
   // Receipt-like lines (tiers, neighbourhood nights) print to the cent, as the page does (T405).
   const eurCents = (n) => (Number.isFinite(n) ? `EUR ${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '');
-  const kmFmt = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
+  // Figures in the reader's own number format and units through i18n (T499,
+  // row T491-k): the PDF promises six languages, so no English unit is
+  // typed here.
+  const nf = (n, digits = 0) => {
+    try {
+      return new Intl.NumberFormat(lang, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(n);
+    } catch { return Number(n).toFixed(digits); }
+  };
+  const kmText = (km) => T('pdf.km', { km: nf(Math.round(km)) });
+  const kmFmt = (km) => (km < 0.95 ? T('pdf.metres', { m: nf(Math.round((km * 1000) / 10) * 10) }) : kmText(km));
   const monthList = (ms) => (ms || []).map((m) => MONTHS[m - 1]).join(', ');
   const T = (key, vars) => clean(t(key, vars));
 
@@ -363,9 +373,9 @@ export async function downloadDestinationPdf({
       h3(T(label));
       for (const r of rows) {
         const bits = [];
-        if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
+        if (r.km_len != null) bits.push(kmText(r.km_len));
         const up = trailClimbUp(r);
-        if (up != null) bits.push(`${Math.round(up)} m up`);
+        if (up != null) bits.push(T('dest.ascentUp', { m: nf(Math.round(up)) }));
         if (r.car_free) bits.push(T('dest.routesCarFree'));
         ensure(lh(9) + 1.5);
         font(SANS, 'normal', 9, C.ink);
@@ -395,21 +405,22 @@ export async function downloadDestinationPdf({
   }
 
   // ------------------------------------------------------------ around
-  const around = d.around;
-  const LAYERS = ['trails', 'cycling', 'mountains', 'lakes', 'beaches'];
-  if (around && LAYERS.some((l) => around[l]?.length)) {
-    h2(T('pdf.around', { km: around.radius_km || 20 }));
-    for (const layer of LAYERS) {
-      const rows = around[layer] || [];
-      if (!rows.length) continue;
-      h3(`${T(`dest.layerKind.${layer}`)}   ${around.counts?.[layer] || rows.length}`);
-      for (const r of rows.slice(0, 6)) {
+  // The 20 km reading first, then the nearby rows it lacks (Rome's lakes,
+  // four of Valbona's five peaks), deduplicated by id, so the PDF lists what
+  // the page lists (T499, row T491-k). The heading's radius covers every
+  // row printed.
+  const outdoor = pdfOutdoorRows(d.around, d.nearby);
+  if (outdoor.layers.length) {
+    h2(T('pdf.around', { km: nf(outdoor.km) }));
+    for (const { layer, rows, count } of outdoor.layers) {
+      h3(`${T(`dest.layerKind.${layer}`)}   ${nf(count)}`);
+      for (const r of rows) {
         const bits = [];
-        if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
+        if (r.km_len != null) bits.push(kmText(r.km_len));
         // Same reading as AroundHere: the climb uphill, the grade's label.
         const up = trailClimbUp(r);
-        if (up != null) bits.push(`${Math.round(up)} m up`);
-        if (r.elev_m != null) bits.push(`${Math.round(r.elev_m)} m`);
+        if (up != null) bits.push(T('dest.ascentUp', { m: nf(Math.round(up)) }));
+        if (r.elev_m != null) bits.push(T('pdf.metres', { m: nf(Math.round(r.elev_m)) }));
         const gradeKey = gradeLabelKey(r);
         if (gradeKey) bits.push(T(gradeKey));
         if (r.water) bits.push(r.water);
@@ -419,7 +430,7 @@ export async function downloadDestinationPdf({
         font(MONO, 'normal', 7.5, C.mute);
         doc.text(bits.join('  '), M + W - 60, y + 0.4, { baseline: 'top' });
         font(MONO, 'bold', 8, C.soft);
-        doc.text(`${kmFmt(r.km)} ${r.bearing || ''}${r.score != null ? `   ${r.score.toFixed(1)}` : ''}`, PAGE_W - M, y + 0.3, { baseline: 'top', align: 'right' });
+        doc.text(`${kmFmt(r.km)} ${r.bearing || ''}${r.score != null ? `   ${nf(r.score, 1)}` : ''}`, PAGE_W - M, y + 0.3, { baseline: 'top', align: 'right' });
         y += lh(9) + 1.2;
       }
       y += 1.5;
@@ -523,7 +534,7 @@ export async function downloadDestinationPdf({
       const sub = tr.kind === 'composed_trip'
         ? T('dest.tripDays', { n: tr.days || 0 })
         : [tr.travel?.minutes != null ? T('dest.minutesBy', { n: tr.travel.minutes, mode: T(`mode.${tr.travel.mode}`) }) : '',
-          tr.dist_km != null ? `${tr.dist_km} km` : ''].filter(Boolean).join('   ');
+          tr.dist_km != null ? kmText(tr.dist_km) : ''].filter(Boolean).join('   ');
       const whyL = tr.blurb ? wrap(tr.blurb, 8.8, W - 30) : [];
       const h = lh(10) + lh(7.8) + whyL.length * lh(8.8) + 3;
       ensure(h);

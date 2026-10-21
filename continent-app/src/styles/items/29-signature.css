@@ -34,7 +34,6 @@
   font-variant-numeric: tabular-nums;
 }
 .sig-empty.is-tall { height: 44px; }
-.sig .cycle-bars .rsurf + .rsurf { margin-top: 0; }
 .sig .mstrip-cells { max-width: none; }
 .sig-slope { stroke: none; }
 .sig-profile-line { fill: none; stroke: var(--ink); stroke-width: 1.4; }

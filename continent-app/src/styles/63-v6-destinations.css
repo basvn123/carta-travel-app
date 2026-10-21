@@ -40,7 +40,7 @@
    grid of equal buttons at the top of the column, in the flow (a grid this
    tall does not stick). 62-v6-explore.css draws both, the icon over the
    word, as Explore's panel draws its trip types. */
-.dtab-bar { margin: 0 0 var(--space-3); }
+.dtab-bar { margin: 0 0 var(--space-4); }
 
 /* -- The search row (phone; desktop uses the header slot) -------------------- */
 
@@ -439,3 +439,44 @@
   .fsheet.fsheet-places.is-anchored.is-closing { animation: none; }
   .dtab-strip, .dgal-strip { scroll-behavior: auto; }
 }
+
+/* -- Explore's outdoor side (T498, roadmap 1.3b) ------------------------------ */
+
+/* A picked country's coasts, ranges and regions: one row of door buttons
+   right over the list they narrow (carta-design "Rails and cuts"), its name
+   as a 12 px label in front; one swipeable row on a phone. */
+.dtab-regions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+}
+.dtab-regions-h {
+  margin-right: var(--space-1);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+@media (max-width: 768px) {
+  .dtab-regions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(-1 * var(--space-4));
+    padding: 2px var(--space-4);
+    scrollbar-width: none;
+  }
+  .dtab-regions::-webkit-scrollbar { display: none; }
+  .dtab-regions .btn, .dtab-regions-h { flex: none; }
+}
+/* The List | Map switch alone, when no head or country band carries it. */
+.dtab-head-bare { justify-content: flex-end; margin: 0 0 var(--space-3); }
+/* The outdoor map: the Explore map's frame, under the head, over the list. */
+.dtab-mapwrap { margin: 0 0 var(--space-4); }
+@media (max-width: 768px) {
+  .dtab-mapwrap { margin-inline: calc(-1 * var(--space-4)); }
+  .dtab-mapwrap .xmap { border-radius: 0; border-inline: 0; height: min(70dvh, 640px); }
+}
+/* The trip library's filters, portalled into the side panel (T498). */
+.places-side .tlib-slot:empty { display: none; }

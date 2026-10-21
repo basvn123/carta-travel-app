@@ -32,7 +32,8 @@ import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
 const PORT = Number(process.env.CARTA_PORT) || 4191;
-const BASE = `http://127.0.0.1:${PORT}`;
+// T502: a URL argument (as the other harnesses take) wins over CARTA_PORT.
+const BASE = process.argv[2] ? process.argv[2].replace(/\/$/, '') : `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
 
@@ -167,7 +168,7 @@ const seedSession = (ref, user) => `(() => {
 })()`;
 
 async function openPanel(page) {
-  await page.locator('.account-avatar-btn').first().click({ timeout: 20000 });
+  await page.locator('.account-door').first().click({ timeout: 20000 });
   await page.locator('.account-panel').waitFor({ timeout: 15000 });
 }
 
@@ -214,7 +215,7 @@ try {
   const page = await ctx.newPage();
   await stubSupabase(page, state);
   await page.goto(`${BASE}/?o=CRL`);
-  await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await page.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(page);
 
   // ---- 1. The hub: one card per destination, no forms.
@@ -293,7 +294,8 @@ try {
   if (!/Your plan/.test(passText)) fail(`the plan card has no heading: ${passText}`);
   if (!/2 of 3/.test(passText)) fail(`plan card does not state the live balance: ${passText}`);
   if (await page.locator('.account-pass-feat').count()) fail('the hub repeats the pass feature list');
-  if (!(await passCard.locator('button', { hasText: /See prices|Add days or switch to yearly/ }).count())) {
+  // T502: the free label reads "See Trip Pass prices" since T497.
+  if (!(await passCard.locator('button', { hasText: /See (Trip Pass )?prices|Add days or switch to yearly/ }).count())) {
     fail('the plan card has no door to the passes');
   }
   ok('plan card: balance and one door to the passes');
@@ -754,7 +756,7 @@ try {
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) });
   });
   await pageY.goto(`${BASE}/?o=CRL`);
-  await pageY.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await pageY.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(pageY);
   const planY = pageY.locator('.acct-plan');
   await planY.locator('button', { hasText: 'Cancel yearly plan' }).waitFor({ timeout: 15000 });
@@ -795,7 +797,7 @@ try {
   const pageG = await ctxG.newPage();
   await stubSupabase(pageG, state);
   await pageG.goto(`${BASE}/?o=CRL`);
-  await pageG.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await pageG.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(pageG);
   await goToProfile(pageG);
   // The password route is on the security spoke since T390 (brief V3-8).
@@ -827,11 +829,11 @@ try {
   await ctx2.addInitScript(seedSession(PROJECT_REF, USER));
   const page2 = await ctx2.newPage();
   await stubSupabase(page2, state);
-  await page2.goto(`${BASE}/?o=CRL&tab=map`);
+  await page2.goto(`${BASE}/?o=CRL&tab=explore`);
   await page2.waitForTimeout(2500);
   // :visible keeps the header avatar (display:none on mobile since Account
   // moved to the bottom bar) from shadowing the item that can be clicked.
-  const mobileBtn = page2.locator('.mobile-account-btn:visible, .bottom-nav-item:has-text("Account"), .account-avatar-btn:visible').first();
+  const mobileBtn = page2.locator('.bottom-nav-item:has-text("Account"), .account-door:visible').first();
   await mobileBtn.click({ timeout: 30000 });
   await page2.locator('.account-panel').waitFor({ timeout: 15000 });
   await page2.waitForTimeout(500);

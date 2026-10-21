@@ -1,15 +1,14 @@
-// Headless verify for the mobile bottom nav: Destinations | Explore | plus |
-// My trips | Account, with the raised plus opening the Trip planner / Day
-// planner chooser.
+// Headless verify for the phone bottom nav (T496): Explore | Plan | My trips |
+// Account, four slots of --tap-main, no plus; Plan with nothing in progress
+// opens the "Plan something new" page with two tiles, Trip and One day.
 //
 //   node scripts/verify_bottom_nav.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
-// Runs at a 390x844 phone viewport. Asserts: no Home tab in the bar, the four
-// labelled items render whole (no ellipsis truncation), the plus chooser
-// opens/closes as two drawn tiles side by side with no sub line (T465), both
-// chooser options land on their planner tab, My trips opens
-// the saved panel and Account opens the account panel. Screenshots to
-// shots/bottom-nav-*.png.
+// Runs at a 390x844 phone viewport. Asserts: no Home slot, the four labelled
+// slots render whole and at least 48 px tall, Plan opens the start page whose
+// two tiles land on the trip and the day planner with Plan still marked, My
+// trips and Account open their pages with their own address, and Back closes
+// Account. Screenshots to shots/bottom-nav-*.png.
 
 import { chromium } from 'playwright';
 
@@ -36,93 +35,76 @@ await page.waitForTimeout(3000);
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
-// Bar contents: Destinations + Explore + My trips + Account around one plus.
+const active = () => page.locator('.bottom-nav-item.active .bottom-nav-label').first().innerText().catch(() => '');
+
+// Bar contents: Explore + Plan + My trips + Account, no plus.
 const labels = await page.locator('.bottom-nav .bottom-nav-label').allInnerTexts();
-check('bar labels are Destinations | Explore | My trips | Account',
+check('bar labels are Explore | Plan | My trips | Account',
   labels.length === 4
-  && /destinations/i.test(labels[0]) && /explore/i.test(labels[1])
+  && /explore/i.test(labels[0]) && /^plan$/i.test(labels[1].trim())
   && /my trips/i.test(labels[2]) && /account/i.test(labels[3]), labels.join(' | '));
 check('no Home item in the bar', !labels.some((l) => /home/i.test(l)));
-check('plus button renders', await page.locator('.bottom-nav-plus').isVisible());
-// No label may truncate: a clipped DESTINATI... reads as a broken bar.
+check('no plus in the bar', (await page.locator('.bottom-nav-plus, .plan-chooser').count()) === 0);
+const slotHeights = await page.locator('.bottom-nav-item').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
+check('every slot is at least 48 px tall (--tap-main)', slotHeights.every((h) => h >= 48), slotHeights.join(', '));
 const clipped = await page.locator('.bottom-nav-label').evaluateAll(
   (els) => els.filter((el) => el.scrollWidth > el.clientWidth).map((el) => el.textContent));
 check('no label truncates', clipped.length === 0, clipped.join(' | '));
+check('Explore is the default place', /explore/i.test(await active()));
 await page.screenshot({ path: 'shots/bottom-nav-bar.png' });
 
-// Plus -> chooser -> Trip planner.
-await page.locator('.bottom-nav-plus').click();
-await page.waitForTimeout(400);
-check('chooser opens', await page.locator('.plan-chooser').isVisible());
-const chooserTitles = await page.locator('.plan-chooser-title').allInnerTexts();
-check('chooser lists both planners', /trip planner/i.test(chooserTitles[0] || '')
-  && /day planner/i.test(chooserTitles[1] || ''), chooserTitles.join(' | '));
-// T465: two tiles side by side, each a drawing and a name, no sub line, and
-// both well over the touch floor.
-const tiles = await page.evaluate(() => [...document.querySelectorAll('.plan-chooser-item')].map((e) => {
+// Plan with nothing in progress -> the start page.
+await page.evaluate(() => { try { localStorage.removeItem('carta.tripDraft.v1'); } catch { /* */ } });
+await page.locator('.bottom-nav-item').nth(1).click();
+await page.waitForTimeout(800);
+check('Plan opens "Plan something new"', /plan something new/i.test(await page.locator('.plan-start-h').innerText().catch(() => '')));
+check('Plan marked active', /^plan$/i.test((await active()).trim()));
+check('the address names Plan', /[?&]tab=plan/.test(page.url()), page.url());
+const tiles = await page.evaluate(() => [...document.querySelectorAll('.plan-start-tile')].map((e) => {
   const r = e.getBoundingClientRect();
-  return { top: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height), art: !!e.querySelector('svg.plan-chooser-art'), text: e.innerText.trim() };
+  return { w: Math.round(r.width), h: Math.round(r.height), art: !!e.querySelector('svg.plan-start-art'), text: e.innerText.trim() };
 }));
-check('chooser is two tiles side by side, drawn, with no sub line',
-  tiles.length === 2 && tiles[0].top === tiles[1].top && tiles.every((x) => x.art && x.w >= 44 && x.h >= 88 && !/\n/.test(x.text))
-  && (await page.locator('.plan-chooser-sub').count()) === 0, JSON.stringify(tiles));
-check('chooser names itself', /plan something new/i.test(await page.locator('#plan-chooser-h').innerText().catch(() => '')));
-await page.screenshot({ path: 'shots/bottom-nav-chooser.png' });
+check('two drawn tiles, Trip and One day, well over the touch floor',
+  tiles.length === 2 && tiles.every((x) => x.art && x.h >= 88) && /trip/i.test(tiles[0].text) && /one day/i.test(tiles[1].text), JSON.stringify(tiles));
+await page.screenshot({ path: 'shots/bottom-nav-planstart.png' });
 
-await page.locator('.plan-chooser-item').first().click();
+await page.locator('.plan-start-tile').first().click();
 await page.waitForTimeout(2500);
-check('chooser closes after picking', !(await page.locator('.plan-chooser').isVisible().catch(() => false)));
 check('Trip planner mounts', await page.locator('.trip-planner-screen').first().isVisible().catch(() => false));
-check('plus marked active on a planner tab', await page.locator('.bottom-nav-plus.active').isVisible());
-await page.screenshot({ path: 'shots/bottom-nav-trip.png' });
+check('Plan still marked on the trip', /^plan$/i.test((await active()).trim()));
 
-// Plus -> Day planner.
-await page.locator('.bottom-nav-plus').click();
-await page.waitForTimeout(400);
-await page.locator('.plan-chooser-item').nth(1).click();
+// Back to the start page, then One day.
+await page.goBack();
+await page.waitForTimeout(800);
+check('Back returns to the start page', await page.locator('.plan-start').isVisible().catch(() => false));
+await page.locator('.plan-start-tile').nth(1).click();
 await page.waitForTimeout(2500);
-check('Day planner reached via chooser', await page.locator('.bottom-nav-plus.active').isVisible());
-
-// Backdrop click closes without navigating.
-await page.locator('.bottom-nav-plus').click();
-await page.waitForTimeout(300);
-await page.locator('.plan-chooser-backdrop').click({ position: { x: 20, y: 200 } });
-await page.waitForTimeout(300);
-check('backdrop click closes the chooser', !(await page.locator('.plan-chooser').isVisible().catch(() => false)));
-
-// Destinations (leftmost) -> the places tab.
-await page.locator('.bottom-nav-item').nth(0).click();
-await page.waitForTimeout(1200);
-check('Destinations opens the places tab', await page.locator('.places-tab').isVisible());
-check('Destinations item marked active', await page.locator('.bottom-nav-item.active .bottom-nav-label').first()
-  .innerText().then((t) => /destinations/i.test(t)).catch(() => false));
+check('One day opens the day planner inside Plan', /mode=day/.test(page.url()) && /^plan$/i.test((await active()).trim()), page.url());
 
 // Explore.
-await page.locator('.bottom-nav-item').nth(1).click();
+await page.locator('.bottom-nav-item').nth(0).click();
 await page.waitForTimeout(1500);
-check('Explore returns to the map', await page.locator('.bottom-nav-item.active .bottom-nav-label').first()
-  .innerText().then((t) => /explore/i.test(t)).catch(() => false));
+check('Explore opens Places', await page.locator('.explore-tab').isVisible().catch(() => false));
 
 // My trips.
 await page.locator('.bottom-nav-item').nth(2).click();
 await page.waitForTimeout(1200);
-check('My trips opens the saved panel', await page.locator('.bottom-nav-item.active .bottom-nav-label').first()
-  .innerText().then((t) => /my trips/i.test(t)).catch(() => false));
+check('My trips is marked and addressed', /my trips/i.test(await active()) && /[?&]tab=trips/.test(page.url()), page.url());
 await page.screenshot({ path: 'shots/bottom-nav-saved.png' });
 
-// Account (rightmost) opens the account panel and takes the active state.
+// Account (rightmost) opens the account page and takes the active state.
 await page.locator('.bottom-nav-item').nth(3).click();
 await page.waitForTimeout(1200);
-check('Account opens the account panel', await page.locator('.account-panel').isVisible());
-check('Account item marked active', await page.locator('.bottom-nav-item.active .bottom-nav-label').first()
-  .innerText().then((t) => /account/i.test(t)).catch(() => false));
-check('no account avatar in the mobile top bar', !(await page.locator('.account-avatar-btn').isVisible().catch(() => false)));
+check('Account opens the account page', await page.locator('.account-panel').isVisible());
+check('Account item marked active', /account/i.test(await active()));
+check('Account has an address', /[?&]tab=account/.test(page.url()), page.url());
+check('Account carries "How Carta works"', /how carta works/i.test(await page.locator('.account-panel').innerText().catch(() => '')));
 await page.screenshot({ path: 'shots/bottom-nav-account.png' });
 
-// Tapping Account again closes the panel (a toggle, like a tab).
-await page.locator('.bottom-nav-item').nth(3).click();
-await page.waitForTimeout(600);
-check('Account tap toggles the panel shut', !(await page.locator('.account-panel').isVisible().catch(() => false)));
+// Back closes Account onto My trips (each page is a step in the history).
+await page.goBack();
+await page.waitForTimeout(800);
+check('Back closes Account', !(await page.locator('.account-panel').isVisible().catch(() => false)));
 
 const failed = checks.filter((c) => !c.ok);
 console.log('=== bottom nav verify ===  target:', URL);

@@ -8,8 +8,10 @@ import { MAX_PARTY } from '../lib/tripTotal.js';
  * (12 and over), children 3 to 11 (half on beds, meals and public fares) and
  * babies 0 to 2 (free). The Who step shows it open; the price card opens it
  * from its People row. lib/tripTotal.js is where the rule is priced.
+ * size="main" gives the plus and minus the 48 px of a main action (the
+ * planner's first step, T500); the price card keeps the 44 px floor.
  */
-export function PartyEditor({ value, onChange, compact = false }) {
+export function PartyEditor({ value, onChange, compact = false, size = '' }) {
   const { t } = useI18n();
   const { adults = 1, children = 0, babies = 0 } = value || {};
   const room = MAX_PARTY - adults - children - babies;
@@ -19,7 +21,7 @@ export function PartyEditor({ value, onChange, compact = false }) {
     { key: 'babies', label: t('plan.babies'), sub: t('plan.babiesSub'), v: babies, min: 0 },
   ];
   return (
-    <div className={`party ${compact ? 'is-compact' : ''}`}>
+    <div className={`party ${compact ? 'is-compact' : ''} ${size === 'main' ? 'is-main' : ''}`}>
       {rows.map((r) => (
         <div className="party-row" key={r.key}>
           <span className="party-label">

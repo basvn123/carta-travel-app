@@ -24,8 +24,15 @@ import { scrollBehavior } from '../lib/motion.js';
  *   render    (item, index) => a kit <Card layout="tile">
  *   extra     an optional control after the heading (a map link)
  *   onAll     called with the new state when See all toggles
+ *   lead      an optional row between the heading and the strip (the
+ *             Overview's category chips, T499)
+ *   onSeeAll  when given, See all leaves for the full list elsewhere (the
+ *             Overview's tracks open the Nearby tab, T499) instead of
+ *             turning the strip into a grid in place
  */
-export function DestTrack({ id, title, level = 2, items, render, extra = null, onAll = null, t }) {
+export function DestTrack({
+  id, title, level = 2, items, render, extra = null, onAll = null, lead = null, onSeeAll = null, t,
+}) {
   const H = level === 3 ? 'h3' : 'h2';
   const stripRef = React.useRef(null);
   const [all, setAll] = React.useState(false);
@@ -73,7 +80,7 @@ export function DestTrack({ id, title, level = 2, items, render, extra = null, o
   if (!items.length) return null;
   // Three or fewer cards fit a desktop row as they are; a grid of them says
   // nothing a strip does not.
-  const canAll = items.length > 3;
+  const canAll = !onSeeAll && items.length > 3;
   return (
     <div className={`dphoto${all ? ' is-all' : ''}`}>
       <div className="dphoto-head">
@@ -82,6 +89,11 @@ export function DestTrack({ id, title, level = 2, items, render, extra = null, o
         {canAll && (
           <Button variant="quiet" size="sm" className="dphoto-all" onClick={toggleAll} aria-expanded={all}>
             {all ? t('dest.showLess') : t('rail.seeAllPlain')}
+          </Button>
+        )}
+        {onSeeAll && (
+          <Button variant="quiet" size="sm" className="dphoto-all" onClick={onSeeAll}>
+            {t('rail.seeAllPlain')}
           </Button>
         )}
         {!all && (
@@ -97,6 +109,7 @@ export function DestTrack({ id, title, level = 2, items, render, extra = null, o
           </span>
         )}
       </div>
+      {lead}
       {/* A card reached with Tab comes fully into view at the start of the
           strip, at once: the snap would otherwise leave a half-shown card
           with its focus ring cut by the strip's edge (T446). */}

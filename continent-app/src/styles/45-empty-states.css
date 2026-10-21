@@ -63,7 +63,9 @@ a.cov-near-row { text-decoration: none; }
   font-size: 12px;
   color: var(--ink-soft);
 }
-.cov-empty-btn,
+/* The legacy button look; a kit Button with this class keeps the kit's own
+   secondary (T502: the empty result's "Clear search" read as disabled). */
+.cov-empty-btn:not(.btn),
 .stub-more {
   min-height: var(--tap);
   margin-top: var(--space-4);
@@ -78,7 +80,7 @@ a.cov-near-row { text-decoration: none; }
   cursor: pointer;
 }
 @media (hover: hover) {
-  .cov-empty-btn:hover,
+  .cov-empty-btn:not(.btn):hover,
   .stub-more:hover { border-color: var(--ink); color: var(--ink); }
 }
 .cov-near-row:focus-visible,
@@ -245,3 +247,24 @@ a.cov-near-row { text-decoration: none; }
   font-size: 13px;
   color: var(--ink-soft);
 }
+
+/* The one empty-result block (T498, roadmap 1.3b F, EmptyResult.jsx): one
+   sentence that names the cause, the one action, Clear all beside it, and
+   whatever the layer adds under it (the nearest by name). Left aligned with
+   the list it stands in for; no illustration, no box. */
+.empty-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: var(--space-4) 0 var(--space-6);
+  max-width: var(--measure);
+}
+.empty-result-line {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text);
+}
+.empty-result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.empty-result .cov-empty { margin-top: var(--space-2); width: 100%; }

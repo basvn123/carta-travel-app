@@ -13,7 +13,7 @@ import { buildTripShareUrl } from '../lib/shareLink.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
 import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Money, Segmented } from '../components/ui/index.js';
+import { Button, Money } from '../components/ui/index.js';
 import { cityLabel } from '../lib/placeName.js';
 import { PlanTotal, PaidField } from './PlanTotal.jsx';
 import { scrollBehavior } from '../lib/motion.js';
@@ -218,12 +218,10 @@ function GroundLinkNote({ iata, dir }) {
 }
 
 /**
- * The planned itinerary: Overview + one tab per day.
- *
- * The Overview mirrors the Map tab's grouped receipt (flights / ground / stays,
- * then the grand total) so "Estimated total" is inspectable here too, and lists
- * every day with a jump into that day's tab. Each day keeps a light highlight
- * list (the pace cap) and hands fine-tuning to the Day planner via onPlanDay.
+ * The planned itinerary, one list (T500, roadmap 1.3c section 3): the receipt,
+ * Your route, Your days, the trip kit, Export and share, Before you go. The
+ * Overview and Day by day tabs are gone: a day opens in the day planner
+ * through onPlanDay, with the city, the date and the party filled in.
  */
 // Traveller-facing names for the leg modes (shared with the mode buttons).
 const MODE_LABEL_KEY = {
@@ -365,12 +363,14 @@ export function TripItinerary({
   // T432: the one priced trip (lib/tripTotal.js) and the traveller's own
   // figures, each typed where the thing it paid for is shown.
   priced = null, ownFlight = null, onTravelPaid = null, onOwnLeg = null, onOwnStay = null,
-  mapSlot = null, beforeSlot = null, onPdf = null, party = null, onSetParty = null,
+  beforeSlot = null, onPdf = null, party = null, onSetParty = null,
+  // The total bar opens the receipt (T500): a new receiptOpenKey opens its
+  // lines, and receiptId lets the bar scroll to it.
+  receiptId = undefined, receiptOpenKey = 0,
 }) {
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
   const { t } = useI18n();
-  const [tab, setTab] = useState('overview');
   const [toolOpen, setToolOpen] = useState('');
   const [moreExports, setMoreExports] = useState(false);
   const [shareState, setShareState] = useState('');
@@ -451,13 +451,13 @@ export function TripItinerary({
   };
 
   const handleKml = () => {
-    if (!paywall.require('export')) return;
+    if (!paywall.require('exportMap')) return;
     downloadKml(label || 'carta-trip', tripKml({ label, stopDetails, dayPlan, fmtDate: fmtLong }));
     exportNote(t('export.myMapsHint'), 15000);
   };
 
   const handleIcs = () => {
-    if (!paywall.require('export')) return;
+    if (!paywall.require('exportCal')) return;
     const ics = tripIcs(exportPayload);
     if (!ics) return;
     downloadIcs(label || 'carta-trip', ics);
@@ -498,23 +498,10 @@ export function TripItinerary({
   const AnchorInIcon = anchorIn ? (LEG_ICONS[anchorIn.mode] || BusIcon) : null;
   const AnchorOutIcon = anchorOut ? (LEG_ICONS[anchorOut.mode] || BusIcon) : null;
 
-  const pickDay = (day) => {
-    setTab(day.dayNum);
-    onSelectStop?.(day.stopIndex);
-  };
-
-  const activeDay = typeof tab === 'number' ? dayPlan.find((d) => d.dayNum === tab) : null;
-  const activeIdx = activeDay ? dayPlan.indexOf(activeDay) : -1;
-  // The day switcher (T398, rule "Day list"): Previous and Next move one day,
-  // as the pills did, and the arrow keys do the same while it has focus.
-  const stepDay = (dir) => {
-    const next = dayPlan[(activeIdx < 0 ? 0 : activeIdx) + dir];
-    if (next) pickDay(next);
-  };
-  const onDayKeys = (e) => {
-    if (e.key === 'ArrowLeft') { e.preventDefault(); stepDay(-1); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); stepDay(1); }
-  };
+  // A day row's name shows its stop on the map (carta-design, map and list
+  // in sync); the read-only day view and its switcher went with the Overview
+  // and Day by day tabs (T500): a day opens in the day planner.
+  const showDay = (day) => onSelectStop?.(day.stopIndex);
 
   // The whole trip as a Google Maps driving route (city to city, in order).
   // Route through each city CENTRE, never the raw dest coordinate: for
@@ -576,50 +563,10 @@ export function TripItinerary({
 
   return (
     <div className="itin">
-      {/* Two views, Overview and Day by day, then one day switcher instead of
-          a pill per day that ran off the screen on a phone (T398, rule "Day
-          list"). Every day stays reachable as a link from Your days. */}
-      {dayPlan.length > 0 && (
-        <Segmented
-          block
-          className="itin-tabs"
-          label={t('trip.dayByDay')}
-          value={tab === 'overview' ? 'overview' : 'days'}
-          onChange={(v) => (v === 'overview' ? setTab('overview') : pickDay(activeDay || dayPlan[0]))}
-          options={[
-            { value: 'overview', label: t('itin.overview') },
-            { value: 'days', label: t('trip.dayByDay') },
-          ]}
-        />
-      )}
-      {activeDay && (
-        <div className="itin-dayswitch" role="group" aria-label={t('trip.dayByDay')} onKeyDown={onDayKeys}>
-          <button
-            type="button"
-            className="itin-dayswitch-btn"
-            onClick={() => stepDay(-1)}
-            disabled={activeIdx <= 0}
-          >
-            {t('journey.trackPrev')}
-          </button>
-          <span className="itin-dayswitch-now" aria-live="polite">
-            <span className="itin-dayswitch-pos">{t('itin.dayN', { n: activeIdx + 1 })}</span>
-            <span className="itin-dayswitch-date">{fmtLong(activeDay.date)}</span>
-          </span>
-          <button
-            type="button"
-            className="itin-dayswitch-btn"
-            onClick={() => stepDay(1)}
-            disabled={activeIdx >= dayPlan.length - 1}
-          >
-            {t('journey.trackNext')}
-          </button>
-        </div>
-      )}
-
-      {tab === 'overview' ? (
-        <div className="itin-overview">
+      <div className="itin-overview">
           <PlanTotal
+            id={receiptId}
+            openKey={receiptOpenKey}
             priced={priced}
             dates={datesText}
             party={party}
@@ -635,24 +582,6 @@ export function TripItinerary({
             ) : null}
           />
 
-          {/* The trip's tools, one tap each (T458): what is booked, what is
-              packed, notes, who paid what. They used to sit in one long fold
-              at the foot of the page. */}
-          <section className="itin-tools" aria-labelledby="itin-tools-h">
-            <h2 className="itin-h" id="itin-tools-h">{t('plan.toolsTitle')}</h2>
-            <div className="itin-tool-grid">
-              {tools.map((tool) => (
-                <Button key={tool.key} variant="secondary" className="itin-tool" onClick={() => setToolOpen(tool.key)}
-                  aria-haspopup="dialog">
-                  <span className="itin-tool-icon" aria-hidden="true"><tool.Icon size={24} /></span>
-                  <span className="itin-tool-name">{tool.title}</span>
-                  <span className="itin-tool-state">{tool.state}</span>
-                </Button>
-              ))}
-            </div>
-          </section>
-
-          {mapSlot}
 
           {/* The route as one timeline (T432): the way there, every bed and
               every hop, the way home. Each part carries its figure, and the
@@ -859,7 +788,8 @@ export function TripItinerary({
                 const planned = dayPlanned(d);
                 return (
                   <li className={`itin-day-row ${planned ? 'is-planned' : ''}`} key={d.dayNum}>
-                    <Button variant="quiet" className="itin-day-row-main" onClick={() => pickDay(d)}>
+                    <Button variant="quiet" className="itin-day-row-main" onClick={() => showDay(d)}
+                      aria-label={t('itin.showDayOnMap', { n: d.dayNum, city: d.stop.dest?.city || '' })}>
                       <span className="itin-day-row-num">{t('itin.dayN', { n: d.dayNum })}</span>
                       <span className="itin-day-row-meta">
                         <b>{d.stop.dest?.city}</b>
@@ -868,7 +798,6 @@ export function TripItinerary({
                     </Button>
                     {onPlanDay && (
                       <Button
-                        size="sm"
                         variant={planned ? 'quiet' : 'secondary'}
                         className="itin-day-plan-btn"
                         onClick={() => onPlanDay(d)}
@@ -905,7 +834,21 @@ export function TripItinerary({
             </ol>
           </section>
 
-          {beforeSlot}
+          {/* The trip's tools, one tap each (T458), after the days (T500): first
+              what decides the trip, then the tools to carry it out. */}
+          <section className="itin-tools" aria-labelledby="itin-tools-h">
+            <h2 className="itin-h" id="itin-tools-h">{t('plan.toolsTitle')}</h2>
+            <div className="itin-tool-grid">
+              {tools.map((tool) => (
+                <Button key={tool.key} variant="secondary" className="itin-tool" onClick={() => setToolOpen(tool.key)}
+                  aria-haspopup="dialog">
+                  <span className="itin-tool-icon" aria-hidden="true"><tool.Icon size={24} /></span>
+                  <span className="itin-tool-name">{tool.title}</span>
+                  <span className="itin-tool-state">{tool.state}</span>
+                </Button>
+              ))}
+            </div>
+          </section>
 
           {/* Take the trip with you: the PDF first, then the rest, all in
               view as one grid of equal buttons (T432). */}
@@ -968,52 +911,9 @@ export function TripItinerary({
             )}
             {shareState && <p className="itin-export-note" role="status">{shareState}</p>}
           </section>
-        </div>
-      ) : activeDay ? (
-        <div className="itin-day">
-          {/* The photograph carries nothing; the day's head sits in the
-              paper band under it (T398, rule "Caption band"). */}
-          {activeDay.stop.dest?.image?.url && (
-            <img className="itin-day-hero" src={activeDay.stop.dest.image.url} alt="" loading="lazy" decoding="async" />
-          )}
-          <div className="itin-day-head itin-day-cap">
-            <div className="itin-day-date">{fmtLong(activeDay.date)}</div>
-            <div className="itin-day-city">
-              {t('itin.stayingIn', { city: activeDay.stop.dest?.city })}
-            </div>
-          </div>
-          {activeDay.activities.length === 0 ? (
-            dayPlanned(activeDay) && <p className="itin-day-empty">{t('itin.dayPlannedNote')}</p>
-          ) : (
-            <ol className="itin-visit-list">
-              {activeDay.activities.map((name, idx) => {
-                const item = (activeDay.stop.dest?.activities?.items || []).find((x) => x.name === name);
-                return (
-                  <li key={name} className="itin-visit">
-                    <span className="itin-visit-idx">{idx + 1}</span>
-                    <span className="itin-visit-main">
-                      <span className="itin-visit-name">{name}</span>
-                      {item?.kind && <span className="itin-visit-kind">{item.kind}</span>}
-                    </span>
-                  </li>
-                );
-              })}
-            </ol>
-          )}
-          {activeDay.overflowCount > 0 && (
-            <p className="itin-day-overflow">
-              {activeDay.overflowCount === 1
-                ? t('itin.overflowOne', { n: activeDay.overflowCount })
-                : t('itin.overflowMany', { n: activeDay.overflowCount })}
-            </p>
-          )}
-          {onPlanDay && (
-            <Button variant="secondary" className="itin-day-planner-btn" onClick={() => onPlanDay(activeDay)}>
-              {dayPlanned(activeDay) ? t('itin.editDayBtn') : t('itin.planDayBtn')}
-            </Button>
-          )}
-        </div>
-      ) : null}
+
+          {beforeSlot}
+      </div>
 
       {openTool && (
         <SheetShell title={openTool.title} onClose={() => setToolOpen('')} className="itin-tool-sheet" labelId="itin-tool-sheet-title">

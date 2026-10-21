@@ -3,8 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.itin-day:first-child { border-top: none; padding-top: 0; }
-.itin-day-head { display: flex; align-items: center; gap: 9px; }
 .guide-ccard-pick {
   position: absolute;
   inset: 0;
@@ -397,9 +395,6 @@
 @media (hover: hover) {
   .guide-when-reopen:hover { border-color: var(--accent); color: var(--accent); }
 }
-.itin-day { padding: 12px 0; border-top: 1px solid var(--rule-soft); }
-.itin-day.is-daytrip .itin-day-no { background: var(--accent-bg); color: var(--accent); }
-.itin-day.is-travel .itin-day-no { background: var(--rate-bg); color: var(--rate); }
 .guide-ccard-info {
   position: absolute;
   right: 7px;

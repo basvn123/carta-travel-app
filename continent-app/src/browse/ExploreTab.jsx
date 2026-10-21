@@ -9,7 +9,9 @@ import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail, minVerdict } from './ExploreFilterRail.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
-import { CountryPage } from './CountryPage.jsx';
+import { ExploreCategories } from './ExploreCategories.jsx';
+import { TripStylesRow } from './TripStylesRow.jsx';
+import { EmptyResult } from './EmptyResult.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { kindOf, roleOf, buildNearbyIndex } from '../lib/taxonomy.js';
 import { loadSearchIndex, querySearchIndex } from '../lib/searchIndex.js';
@@ -252,7 +254,7 @@ const ExploreCard = React.memo(function ExploreCard({
   p, role, selected, fav, onSelect, onToggleFav, t, reachMin,
   linked = false, onLink = null, month = null, why = null,
 }) {
-  const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
+  const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best, t) : null;
   // One popover, three doors: hover, focus, and the info control, which
   // pins it until it is pressed again, Escape, or a tap elsewhere.
   const [open, setOpen] = React.useState(null);
@@ -383,8 +385,12 @@ export function ExploreTab({
   indices,
   isMock = false,
   onOpenGuides,
-  // T450: a country page's door to its walks, beaches and rides.
-  onOpenCountryInPlaces = null,
+  // T498 (roadmap 1.3b): the country page is App's (#country=), the six
+  // category tiles hand over to App's one door for a layer, and the trip
+  // library opens from the Trip styles row.
+  onOpenCountry = null,
+  onPickCategory = null,
+  onOpenStyles = null,
   // T462: a search handed over from the home page, once: { facets } applies
   // a guided question, { open: true } opens the search panel on arrival.
   seed = null, onSeedConsumed = null,
@@ -480,8 +486,6 @@ export function ExploreTab({
   const onMapNeedDetail = React.useCallback((id) => {
     catalogue.ensureIds([id]).catch(() => {});
   }, []);
-  // C9: a country is a page, not just a filter.
-  const [countryPage, setCountryPage] = React.useState(null);
   // B2: the fold-and-alias index answers the search box. Loaded on the
   // first real query, then cached for the session.
   const [searchHits, setSearchHits] = React.useState(null);
@@ -636,11 +640,14 @@ export function ExploreTab({
       `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`);
   }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, view, isActive]);
 
-  // New result set: back to one page, back to the top.
+  // New result set: back to one page, back to the top. Keyed on what the set
+  // holds, not on the array's identity (T502: a return to Explore rebuilt the
+  // same rows and threw the reader back to the top).
+  const taxKey = `${taxRows.length}:${taxRows[0]?.id ?? ''}:${taxRows[taxRows.length - 1]?.id ?? ''}`;
   React.useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
-  }, [taxRows]);
+  }, [taxKey]);
   // A pan of the map is a new page too, but not a new scroll position: the
   // map is what the reader is holding, and the list beside it just follows.
   React.useEffect(() => { setVisible(PAGE); }, [bbox, view]);
@@ -962,6 +969,13 @@ export function ExploreTab({
     ? [...BUDGET_STEPS, xf.budget].sort((x, y) => x - y)
     : BUDGET_STEPS;
 
+  // The six categories (T498): Places is this view; a layer hands over to
+  // App with the one country picked here, so the country travels (rule 3).
+  const catTiles = onPickCategory ? (
+    <ExploreCategories current="places" columns={isDesktop ? 2 : 3}
+      onPick={(key) => onPickCategory(key, countryFilter.length === 1 ? countryFilter[0] : '')} />
+  ) : null;
+
   const filterRail = (
     <ExploreFilterRail
       t={t}
@@ -977,7 +991,7 @@ export function ExploreTab({
       reachHours={reachHours} setReachHours={setReachHours}
       reachAvailable={reachAvailable}
       tripKinds={tripKinds} setTripKinds={setTripKinds}
-      onOpenCountry={setCountryPage}
+      onOpenCountry={onOpenCountry}
     />
   );
 
@@ -999,6 +1013,14 @@ export function ExploreTab({
           {/* T457: one heading for the panel, so its h3s sit under an h2, as
               on Destinations. */}
           <h2 className="sr-only">{t('filter.filters')}</h2>
+          {/* What Explore holds, first (T498, roadmap 1.3b A): the six
+              categories two across, then this category's filters. */}
+          {catTiles && (
+            <section className="xrail-sec xcats-sec" aria-labelledby="xcats-h">
+              <h3 className="xrail-h" id="xcats-h">{t('places.sideBrowse')}</h3>
+              {catTiles}
+            </section>
+          )}
           {/* No "Refine" eyebrow (T440). "Clear all" lives once, in the chips
               row above the list (T444). */}
           {filterRail}
@@ -1027,6 +1049,9 @@ export function ExploreTab({
             {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
           </Button>
         </div>
+        {/* Phone only: the six categories as the 2 x 3 grid under the
+            search row (T498, roadmap 1.3b A). */}
+        {!isDesktop && catTiles && <div className="xcats-bar">{catTiles}</div>}
 
         {/* The control bar: what this page is and how many places it holds
             right now (the count, V3), and the two ways to rearrange them.
@@ -1041,7 +1066,7 @@ export function ExploreTab({
             {/* No count beside the title (owner, 2026-10-13): the list is
                 the answer, and an empty one says so in words. */}
             <TitleTag className="xbar-title">{t('explore.title')}</TitleTag>
-            {isMock && <span className="explore-mock">Mock data</span>}
+            {isMock && <span className="explore-mock">{t('explore.mockData')}</span>}
           </div>
           <div className="xbar-tools">
             {viewSwitch('xview-seg')}
@@ -1060,10 +1085,10 @@ export function ExploreTab({
             nothing is published. */}
         <GuidesStrip onOpen={onOpenGuides} />
 
-        {countryFilter.length === 1 && (
+        {countryFilter.length === 1 && onOpenCountry && (
           <Button variant="quiet" size="sm" className="xcountry-link"
             iconEnd={<ChevronRightIcon size={16} />}
-            onClick={() => setCountryPage(countryFilter[0])}>
+            onClick={() => onOpenCountry(countryFilter[0])}>
             {t('cpage.open', {
               country: (availableCountries.find(([c]) => c === countryFilter[0]) || [])[1]
                 || countryFilter[0],
@@ -1123,52 +1148,48 @@ export function ExploreTab({
             </div>
           )}
           <div className="xcontent-main">
+            {/* The trip library as a row at the top of Places (owner T484-e,
+                T489-a, T489-e): "Trip styles" with See all. It counts as one
+                of the rails, so three (two on a phone) follow it. */}
+            {railsIdle && onOpenStyles && (
+              <TripStylesRow t={t} lang={lang} id="xrail-styles"
+                country={countryFilter.length === 1 ? countryFilter[0] : null}
+                onPick={(slug) => onOpenStyles(slug)} onSeeAll={() => onOpenStyles(null)} />
+            )}
             {railsIdle && (
               <ExploreRails rails={rails} onSelect={openWithMember} t={t}
-                favorites={favSet} onToggleFav={onToggleFav} lead={isDesktop ? 4 : 3} />
+                favorites={favSet} onToggleFav={onToggleFav}
+                lead={(isDesktop ? 4 : 3) - (onOpenStyles ? 1 : 0)} />
             )}
             {railsIdle && listed.length > 0 && (
               <h2 className="xlist-title">{t('explore.allPlaces')}</h2>
             )}
 
             {gridTotal === 0 && (
-              <div className="explore-count xempty" role="status">
-                {/* V3 (T383, brief V3-11): an empty grid names what emptied
-                    it and offers the one action that changes the result:
-                    the search when one is typed, else the filter set last
-                    ("Remove ..."), with "Clear all" beside it once two or
-                    more are on. An empty shortlist offers the way back. */}
-                <p className="xempty-line">
-                  {showFavOnly
-                    ? t('results.emptyFav')
-                    : locationQuery
-                      ? t('explore.emptySearch', { q: locationQuery })
-                      : lastChip
-                        ? t('explore.emptyCause', { filter: lastChip.label })
-                        : t('results.empty')}
-                </p>
-                <span className="xempty-actions">
-                  {showFavOnly ? (
-                    <Button variant="secondary" onClick={() => setShowFavOnly(false)}>
-                      {t('explore.showAll')}
-                    </Button>
-                  ) : locationQuery ? (
-                    <Button variant="secondary" onClick={() => setLocationQuery('')}>
-                      {t('results.clearSearch')}
-                    </Button>
-                  ) : lastChip ? (
-                    <>
-                      <Button variant="secondary" onClick={lastChip.remove}>
-                        {t('explore.removeFilter', { filter: lastChip.label })}
-                      </Button>
-                      {chips.length > 1 && (
-                        <Button variant="quiet" onClick={resetAll}>
-                          {t('filter.clearAll')}
-                        </Button>
-                      )}
-                    </>
-                  ) : null}
-                </span>
+              /* One empty block for every category and the library (T498,
+                 roadmap 1.3b F; V3 T383 before it): the sentence names what
+                 emptied the list, one button changes it, Clear all beside
+                 it once two or more filters are on. An empty shortlist
+                 offers the way back. */
+              <EmptyResult
+                className="explore-count xempty"
+                line={showFavOnly
+                  ? t('results.emptyFav')
+                  : locationQuery
+                    ? t('explore.emptySearch', { q: locationQuery })
+                    : lastChip
+                      ? t('explore.emptyCause', { filter: lastChip.label })
+                      : t('results.empty')}
+                action={showFavOnly
+                  ? { label: t('explore.showAll'), onClick: () => setShowFavOnly(false) }
+                  : locationQuery
+                    ? { label: t('results.clearSearch'), onClick: () => setLocationQuery('') }
+                    : lastChip
+                      ? { label: t('explore.removeFilter', { filter: lastChip.label }), onClick: lastChip.remove }
+                      : null}
+                onClearAll={!showFavOnly && !locationQuery && lastChip && chips.length > 1 ? resetAll : null}
+                clearLabel={t('filter.clearAll')}
+              >
                 {locationQuery && searchHits?.suggestions?.length > 0 && (
                   <span className="xsearch-suggest">
                     {t('explore.didYouMean')}
@@ -1178,7 +1199,7 @@ export function ExploreTab({
                     ))}
                   </span>
                 )}
-              </div>
+              </EmptyResult>
             )}
 
             <div className={`xrows${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
@@ -1210,21 +1231,6 @@ export function ExploreTab({
 
       {viewSwitch('xview-fab')}
       </div>
-
-      {countryPage && (
-        <CountryPage
-          iso2={countryPage}
-          rows={rows}
-          onClose={() => setCountryPage(null)}
-          onSelect={(id) => { onSelect(id); }}
-          favorites={favSet}
-          onToggleFav={onToggleFav}
-          onShowAll={(cc) => { setCountryFilter([cc]); setCountryPage(null); }}
-          onOpenOutdoors={onOpenCountryInPlaces
-            ? (cc) => { setCountryPage(null); onOpenCountryInPlaces(cc); }
-            : null}
-        />
-      )}
 
       {/* The same sheet shell Destinations opens, with this tab's own rail as
           its body. `groups` and `countryOptions` stay empty on purpose: the

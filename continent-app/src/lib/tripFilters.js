@@ -17,6 +17,7 @@
  * Pure functions only, so the node tests import them without a JSX loader.
  */
 import { cardTotal } from './tripLength.js';
+import { haversineKm } from './nearby.js';
 
 export const BANDS = ['low', 'mid', 'high'];
 
@@ -111,4 +112,66 @@ export function bandCounts(cards, { length, edges }) {
     if (b) out[b] += 1;
   }
   return out;
+}
+
+/* -- One figure a card (T498, roadmap 1.3b rule 5) -------------------------
+   A trip or style card carries one price: "From {eur} a person a day", the
+   low end of the card's total at the list's length divided by that length's
+   days. Never a range on a card. */
+
+/** A day's share of a total { low, high, days } (cardTotal's shape, or
+ *  styleFromPrice's { low, days }): the low end over the days, whole euros,
+ *  or null when there is no figure or no days. */
+export function perDayFrom(total) {
+  if (!total) return null;
+  const low = Number.isFinite(total.low) ? total.low : total.high;
+  const days = Number(total.days);
+  if (!Number.isFinite(low) || !Number.isFinite(days) || days <= 0) return null;
+  return Math.round(low / days);
+}
+
+/** The card's own from-price a person a day at a length, or null. */
+export function cardPerDay(card, length) {
+  return perDayFrom(cardTotal(card, length));
+}
+
+/** The lowest from-price a person a day across cards at a length (a
+ *  style's figure: the cheapest member, never an average), or null. Read
+ *  per day, so a shorter card with a smaller total does not win by length. */
+export function lowestPerDay(cards, length) {
+  let best = null;
+  for (const c of cards || []) {
+    const v = cardPerDay(c, length);
+    if (v != null && (best == null || v < best)) best = v;
+  }
+  return best;
+}
+
+/** Whether a card visits a country: its main country or any it crosses. */
+export const inCountry = (card, cc) => !!cc && (card?.cc === cc || (card?.countries || []).includes(cc));
+
+/**
+ * The weeks for a country or region rail (T498): the cards in `country`,
+ * or with `near` ({ lat, lon, km }) the cards whose point lies within km of
+ * it. Best first: by rating when cards carry one, else the library's written
+ * order (a stable sort). At most `max` cards. Never mutates the input.
+ */
+export function weeksFor(cards, { country = null, near = null, max = 12 } = {}) {
+  let out = (cards || []).filter(Boolean);
+  if (country) out = out.filter((c) => inCountry(c, country));
+  if (near && Number.isFinite(near.lat) && Number.isFinite(near.lon)) {
+    const km = Number.isFinite(near.km) ? near.km : 50;
+    out = out.filter((c) => Number.isFinite(c.lat) && Number.isFinite(c.lon)
+      && haversineKm(near.lat, near.lon, c.lat, c.lon) <= km);
+  }
+  if (!country && !near) return [];
+  const rated = out.some((c) => Number.isFinite(c.rating));
+  if (rated) {
+    out = out.map((c, i) => ({ c, i })).sort((a, b) => {
+      const x = Number.isFinite(a.c.rating) ? a.c.rating : -Infinity;
+      const y = Number.isFinite(b.c.rating) ? b.c.rating : -Infinity;
+      return y - x || a.i - b.i;
+    }).map((r) => r.c);
+  }
+  return out.slice(0, Math.max(0, max));
 }

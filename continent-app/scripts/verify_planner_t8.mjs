@@ -41,22 +41,14 @@ async function openPlanner(width, height, { favs = [] } = {}) {
   });
   // The shortlist rides in the URL (lib/urlState.js reads ?fav=), which is
   // also how a shared shortlist arrives, so this is the app's own door.
-  const url = favs.length ? `${URL}?fav=${favs.join('.')}` : URL;
+  // T502: Plan's Trip door is its own address since T496-T501 (?tab=plan&mode=trip).
+  const url = `${URL}?tab=plan&mode=trip${favs.length ? `&fav=${favs.join('.')}` : ''}`;
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(2500);
   const guest = page.getByText(/continue without an account/i).first();
   if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
   const got = page.getByRole('button', { name: /got it/i }).first();
   if (await got.isVisible().catch(() => false)) { await got.click().catch(() => {}); await page.waitForTimeout(400); }
-  // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
-  // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
-  const top = page.locator('a, button', { hasText: /trip planner/i }).first();
-  if (await top.isVisible().catch(() => false)) await top.click();
-  else {
-    await page.locator('.bottom-nav-plus').click();
-    await page.waitForTimeout(500);
-    await page.locator('.plan-chooser-item').first().click();
-  }
   await page.waitForTimeout(1800);
   return page;
 }
@@ -84,9 +76,8 @@ const pickWindow = async (page, from = 2, to = 8) => {
   return true;
 };
 
-/** Booked -> From -> When -> Where. */
+/** Trip basics (booked + who) -> When -> Where (T502: six steps since T496-T501). */
 async function toWhereStep(page) {
-  await nextStep(page);
   await nextStep(page);
   await pickWindow(page);
   await nextStep(page);
@@ -105,7 +96,7 @@ try {
   check('T8.1 it says how far along the form is',
     /step\s+1\s+of\s+\d+/i.test(mini), mini.slice(0, 60));
   check('T8.1 the step is named once, in the header above it',
-    /booked/i.test(head) && !/booked/i.test(mini), `${head} / ${mini}`);
+    /trip basics/i.test(head) && !/trip basics/i.test(mini), `${head} / ${mini}`);
   check('T8.1 it carries a progress bar', await page.locator('.wiz-mini-bar > span').count() === 1);
 
   // No horizontal scroll at 375: the reason the rail was replaced.
@@ -143,11 +134,14 @@ try {
   const nextLabel = await page.locator('.guide-next').innerText();
   check('T8.2 Next names where it goes', /next:/i.test(nextLabel), nextLabel);
 
-  // T8.3 the estimate band is absent on the opening questions and on Where.
-  check('T8.3 no estimate band on step 1', await page.locator('.guide-estimate-band').count() === 0);
+  // T8.3 the estimate band became the TripTotalBar (T500): on the opening
+  // questions and on Where it shows no figure yet.
+  check('T8.3 no figure on step 1', await page.locator('.guide-estimate-band').count() === 0
+    && await page.locator('.trip-total-bar .ttb-n').count() === 0);
 
   await toWhereStep(page);
-  check('T8.3 no estimate band on Where', await page.locator('.guide-estimate-band').count() === 0);
+  check('T8.3 no figure on Where', await page.locator('.guide-estimate-band').count() === 0
+    && await page.locator('.trip-total-bar .ttb-n').count() === 0);
   const whereLabel = await page.locator('.guide-next').innerText();
   check('T8.2 Next on Where names the step after it',
     /next:/i.test(whereLabel) && !/next:\s*where/i.test(whereLabel), whereLabel);
@@ -219,8 +213,8 @@ try {
     && (await page.locator('.wiz-mini:visible').count()) === 0);
 
   await toWhereStep(page);
-  check('T8.3 no estimate band on Where (desktop too)',
-    await page.locator('.guide-estimate-band').count() === 0);
+  check('T8.3 the total bar says it prices once there are places (desktop)',
+    await page.locator('.trip-total-bar.is-empty:visible').count() === 1);
 
   // Pick a country, then take a published trip, which is the shortest path to
   // an estimate with real nights in it. The band only exists once something is
@@ -245,19 +239,21 @@ try {
     await page.waitForTimeout(2000);
   }
 
-  const band = page.locator('.guide-estimate-band');
+  // T502: the estimate band is the TripTotalBar since T500; a priced trip
+  // turns it into a button that opens the breakdown sheet.
+  const band = page.locator('.trip-total-bar:not(.is-empty):visible').first();
   if (await band.count()) {
-    check('T8.3 the band is closed by default',
-      !(await band.evaluate((el) => el.classList.contains('open'))));
+    check('T8.3 the breakdown is closed by default',
+      await page.locator('.plan-total-sheet').count() === 0);
     const bandText = (await band.innerText()).replace(/\s+/g, ' ');
-    check('T8.3 nothing in the band is hardcoded English left untranslated',
-      /estimate so far/i.test(bandText) && /details/i.test(bandText), bandText.slice(0, 80));
-    await page.locator('.guide-estimate-main').click();
-    await page.waitForTimeout(500);
+    check('T8.3 the bar states the trip total in words and euros',
+      /your trip costs/i.test(bandText) && /€/.test(bandText), bandText.slice(0, 80));
+    await band.click();
+    await page.waitForTimeout(600);
     check('T8.3 it opens into the breakdown',
-      await page.locator('.guide-estimate-detail').isVisible());
-    check('T8.3 the breakdown totals itself',
-      await page.locator('.guide-estimate-total').count() === 1);
+      await page.locator('.plan-total-sheet:visible').count() > 0);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(500);
   } else {
     check('T8.3 the band appears once there is something to price', false, 'no band on step 5');
   }
@@ -266,7 +262,7 @@ try {
   // T8.6 through to the end, where "Plan your days" has to be waiting.
   for (let i = 0; i < 4 && (await page.locator('.guide-next').count()); i += 1) {
     const label = await page.locator('.guide-next').innerText();
-    if (/arrange/i.test(label)) {
+    if (/arrange|plan my trip/i.test(label)) {
       await page.locator('.guide-next').click();
       await page.waitForTimeout(3000);
       break;
@@ -325,7 +321,8 @@ try {
   if (await useBtn.isVisible().catch(() => false)) {
     await useBtn.click();
     await page.waitForTimeout(2500);
-    const sheetText = (await page.locator('.trip-sheet').innerText()).replace(/\s+/g, ' ');
+    // T502: the planned trip is the .plan-ws workspace; .trip-sheet is gone (T496-T501).
+    const sheetText = (await page.locator('.plan-ws').first().innerText()).replace(/\s+/g, ' ');
     check('T8.5 an undated published trip lands on the travel window',
       /when/i.test(sheetText), sheetText.slice(0, 90));
     check('T8.5 and says why it is asking',

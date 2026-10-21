@@ -7,6 +7,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ChevronRightIcon, CrosshairIcon } from '../components/Icons.jsx';
 import { Button, Card, IconButton, Segmented } from '../components/ui/index.js';
 import { TilePhotos } from './PhotoGallery.jsx';
+import { BedFoodLine } from './DestCards.jsx';
 
 /**
  * The opening of a Destinations section (T428; T183 built the first one).
@@ -148,7 +149,7 @@ export function Strip({ id, title, onSeeAll = null, t, className = '', children 
 /** One wire row as a rail tile, on Explore's three lines (T457): the name;
  *  the flag and where it is, on one line; the measured fact and the Score
  *  on one line, the fact where Explore's tile has its price. */
-export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKey }) {
+export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKey, t = null }) {
   const d = describe(row);
   const key = sharedKey ? sharedKey(row) : null;
   const url = photo(row);
@@ -178,7 +179,7 @@ export function RailTile({ row, describe, photo, photos = null, onOpen, sharedKe
           <span className="dtab-where">{d.where}</span>
         </span>
       ) : null}
-      price={d.fact ? (
+      price={t && d.base && d.base.dayEur != null ? <BedFoodLine base={d.base} t={t} /> : d.fact ? (
         <span className="dtab-fact">
           {d.factLabel && <span className="dtab-fact-l">{d.factLabel} </span>}
           {d.fact}
@@ -204,7 +205,7 @@ export function SectionOpening({
               {rail.rows.map((row) => (
                 <li key={row.id} className="dtab-item">
                   <RailTile row={row} describe={describe} photo={photo} photos={photos} onOpen={onOpen}
-                    sharedKey={sharedKey} />
+                    sharedKey={sharedKey} t={t} />
                 </li>
               ))}
             </Strip>

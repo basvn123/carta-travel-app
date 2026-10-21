@@ -305,9 +305,6 @@
    button, link and field under 44x44. This block is the answer to that list,
    grouped by surface. Widths stay as they were; only the tap box grows. */
 @media (max-width: 768px) {
-  /* app chrome */
-  .header-pricing-btn { height: var(--tap); min-width: var(--tap); }
-
   /* trip wizard */
   .wiz-mini { min-height: var(--tap); padding: 5px 0 6px; margin-top: 2px; }
   .guide-startover { display: inline-flex; align-items: center; min-height: var(--tap); }
@@ -343,7 +340,6 @@
 /* Q1 phone audit, second pass: the Where grid, the Trips step, the trip page,
    Getting there, Finish and the planned view. */
 @media (max-width: 768px) {
-  .app-header-account .header-pricing-btn { height: var(--tap); min-width: var(--tap); }
   .guide-chip { min-width: var(--tap); }
   .guide-datemode button { min-height: var(--tap); }
   .wtrip-len { min-height: var(--tap); min-width: var(--tap); }

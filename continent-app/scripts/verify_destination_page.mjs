@@ -40,7 +40,8 @@ import { mkdirSync, statSync } from 'node:fs';
 // T385: CARTA_PORT points the harness at a preview a session already runs,
 // so parallel sessions never test each other's build on a shared port.
 const PORT = Number(process.env.CARTA_PORT) || 4207;
-const BASE = `http://127.0.0.1:${PORT}/`;
+// T502: a URL argument (as the other harnesses take) wins over CARTA_PORT.
+const BASE = process.argv[2] ? process.argv[2].replace(/\/?$/, '/') : `http://127.0.0.1:${PORT}/`;
 mkdirSync('shots', { recursive: true });
 
 const isUp = async () => {
@@ -86,6 +87,21 @@ const settle = async (page) => {
 const scrollTo = (page, sel) => page.evaluate((s) => {
   document.querySelector(s)?.scrollIntoView({ block: 'start' });
 }, sel);
+// T502: a direct load of #dest= drops the hash (known), so the page is
+// opened the way a card link does it: the app boots, then the hash moves.
+const openDest = async (page, id) => {
+  await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await page.waitForSelector('.bottom-nav', { state: 'attached', timeout: 45000 });
+  await page.waitForTimeout(2500);
+  await page.evaluate((d) => { window.location.hash = `dest=${d}`; }, id);
+  await settle(page);
+};
+// T502: the page is four tabs since T499 (Overview, Nearby, When to go,
+// Practical); a section is only in the DOM on its own tab.
+const tab = async (page, name) => {
+  await page.locator('.destp [role="tab"]', { hasText: name }).first().click();
+  await page.waitForTimeout(1500);
+};
 const openFold = async (page, id) => {
   const t = page.locator(`#sec-${id} .dsec-toggle`);
   if ((await t.getAttribute('aria-expanded').catch(() => 'true')) === 'false') await t.click();
@@ -97,11 +113,14 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 wire(page);
 await seed(page);
 await page.goto(BASE + '#dest=gem:valbona', { waitUntil: 'domcontentloaded', timeout: 45000 });
-await settle(page);
-await page.waitForTimeout(1500);
-
+await page.waitForTimeout(6000);
 const destp = page.locator('.destp');
 check('hash #dest= opens the page at boot', await destp.isVisible());
+await openDest(page, 'gem:valbona');
+await page.waitForTimeout(1500);
+check('the page opens on its Overview tab with four tabs',
+  (await page.locator('.destp [role="tab"]').allInnerTexts()).map((s) => s.trim()).join('|') === 'Overview|Nearby|When to go|Practical'
+  && /overview/i.test(await page.locator('.destp [role="tab"][aria-selected="true"]').innerText()));
 check('city heading says Valbona', /valbona/i.test(await page.locator('.destp-city').textContent().catch(() => '')));
 
 const galleryN = await page.locator('.destp-slide').count();
@@ -130,12 +149,16 @@ check('price card total is the sum of its lines', sum.ok && sum.lines.length >= 
 check('one primary on the page', await page.locator('.destp .btn-primary:visible').count() === 1);
 check('the primary is Plan a trip here', /plan a trip here/i.test(await page.locator('.destp .btn-primary').first().textContent().catch(() => '')));
 
-// Six open sections, at most five folded rows.
+// T502: the Overview tab is open sections only; the folds live on Practical.
 const openN = await page.locator('section.dsec2').count();
-check('open sections render (5 or 6) with no toggle', openN >= 5 && await page.locator('section.dsec2 .dsec-toggle').count() === 0, `${openN} open`);
+check('Overview sections render (3+) with no toggle', openN >= 3 && await page.locator('.destp .dsec-toggle').count() === 0, `${openN} open`);
+await tab(page, 'When to go');
+check('When to go is open', await page.locator('#sec-when .climate-chart').count() === 1);
+check('the tab writes &tab= into the hash', /[#&]tab=when/.test(await page.evaluate(() => window.location.hash)));
+await tab(page, 'Practical');
 const foldsN = await page.locator('.destp .dsec-toggle').count();
 check('at most five folded rows', foldsN <= 5, `${foldsN} folds`);
-check('When to go is open', await page.locator('#sec-when .climate-chart').count() === 1);
+await tab(page, 'Nearby');
 
 // The map mounts when its section comes near the view.
 const mapFar = await page.evaluate(() => {
@@ -155,15 +178,17 @@ for (const [label, sel] of [
   ['numbered highlight marks', '.dhl2-n'],
   // T446: photo tiles where there are photographs, a hairline list for the rest.
   ['things to do tiles or rows', '#sec-do .card, #sec-do .ddo-list li'],
-  ['walk and ride tiles', '#sec-routes .card'],
+  // T502: routes on foot are rows (.drh-row) since T499; walks and rides are tiles.
+  ['walk and ride tiles', '#sec-routes .drh-row, #sec-around-walks .card, #sec-around-rides .card'],
   ['day trip tiles', '#sec-trips .card'],
-  ['booking exits', '.destp-exits .destp-exit'],
   ['photo credit links', '.destp-slide-credit'],
 ]) {
   const n = await page.locator(sel).count();
   check(`${label} present`, n > 0, `${n}`);
 }
 check('day trips carry a score', await page.locator('#sec-trips .score-chip').count() > 0);
+await tab(page, 'Practical');
+check('booking exits present (Practical)', await page.locator('.destp-exits .destp-exit').count() > 0);
 await openFold(page, 'tips');
 check('insider tips render on the deck', await page.locator('.destp-tips .flash-card').count() > 0);
 await openFold(page, 'rating');
@@ -187,11 +212,7 @@ check('no method sentence or count line left',
   !/Set your dates|Priced for|figures here are measured|national basket|Tap a segment|\d+ ideas|\d+ sights|\d+ tips/i.test(pageText));
 await page.screenshot({ path: 'shots/destp-desktop.png', fullPage: false });
 
-// The section rail selects the section in view.
-await scrollTo(page, '#sec-when');
-await page.waitForTimeout(900);
-check('the rail selects When at its section',
-  /when/i.test(await page.locator('.srail a.is-active').first().textContent().catch(() => '')));
+// The section rail went with the four tabs (T499).
 await page.screenshot({ path: 'shots/destp-desktop-scrolled.png' });
 
 // The Lifestyle dialog opens over the page; Escape closes it, not the page.
@@ -211,6 +232,7 @@ check('Escape closes the dialog and keeps the page',
   !(await page.locator('.accom-panel.lifestyle-panel').isVisible().catch(() => false)) && await destp.isVisible());
 
 // ── The PDF download ─────────────────────────────────────────────────────
+await tab(page, 'Overview'); // T502: the PDF door stands on Overview
 const dlPromise = page.waitForEvent('download', { timeout: 25000 }).catch(() => null);
 await page.locator('.destp-pdf').click();
 const dl = await dlPromise;
@@ -238,14 +260,14 @@ await page.waitForTimeout(500);
 check('Escape closes the page', !(await destp.isVisible().catch(() => false)));
 
 // A gateway record describes the CITY, not its airport.
-await page.goto(BASE + '#dest=FCO', { waitUntil: 'domcontentloaded' });
-await settle(page);
+await openDest(page, 'FCO');
 await page.waitForTimeout(1500);
 const shortText = await page.locator('.destp-short').textContent().catch(() => '');
 check('Rome intro is short and names the place', /rome/i.test(shortText) && shortText.length < 460 && !/airport/i.test(shortText.slice(0, 60)), shortText.slice(0, 60));
 const romeDay = await page.locator('.dprice-day .money').textContent().catch(() => '');
 check('Rome prints its day figure with the estimate mark', /~€\d+ est\./.test(romeDay), romeDay);
 // Rome's Pantheon (a Wikidata Special:FilePath image before the fix) loads.
+await tab(page, 'Nearby');
 await scrollTo(page, '#sec-highlights');
 await page.waitForTimeout(1500);
 await page.locator('#sec-highlights .dphoto-all').click().catch(() => {});
@@ -263,30 +285,43 @@ const pantheon = await page.evaluate(() => {
 check('Rome: the Pantheon photograph loads', !!pantheon && pantheon.w > 0, JSON.stringify(pantheon));
 broken = await brokenImages(page);
 check('no broken image on the page (Rome)', broken.length === 0, broken.slice(0, 3).join(' | '));
+check('walk and ride lists cycling for Rome', await page.locator('#sec-around-rides .card', { hasText: /cycling/i }).count() > 0);
+await tab(page, 'When to go');
 await openFold(page, 'festivals');
 check('festivals section renders', await page.locator('.destp-fest').count() > 0);
 check('festivals carry a month', await page.locator('.destp-fest-when:not(.is-undated)').count() > 0);
+await tab(page, 'Practical');
 await openFold(page, 'practical');
 check('city parking rows render', await page.locator('.destp-park').count() > 0);
 check('parking rows carry Waze deeplinks', await page.locator('.destp-park-nav a[href*="waze.com"]').count() > 0);
 check('parking rows carry Google Maps deeplinks', await page.locator('.destp-park-nav a[href*="google.com/maps"]').count() > 0);
 check('parking carries the provenance line', /OpenStreetMap contributors/i.test(await page.locator('#sec-practical').textContent().catch(() => '')));
-check('walk and ride lists cycling for Rome', await page.locator('#sec-routes .card', { hasText: /cycling/i }).count() > 0);
 const cdgText = await (async () => {
-  await page.goto(BASE + '#dest=CDG', { waitUntil: 'domcontentloaded' });
-  await settle(page);
+  await openDest(page, 'CDG');
   return page.locator('.destp-short').textContent().catch(() => '');
 })();
 check('gateway record describes the city, not the airport',
   /paris/i.test(cdgText) && !/^\s*paris charles de gaulle airport/i.test(cdgText), cdgText.slice(0, 50));
+
+// T502 (T499): opened from a card, a tab rewrites &tab= without a history step.
+await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
+await page.waitForSelector('a.card-open[href^="#dest="]', { timeout: 45000 });
+await page.waitForTimeout(1500);
+await page.locator('a.card-open[href^="#dest="]:visible').first().click();
+await settle(page);
+await page.waitForTimeout(1000);
+const histBefore = await page.evaluate(() => window.history.length);
+await tab(page, 'Nearby');
+const afterTab = await page.evaluate(() => ({ len: window.history.length, hash: window.location.hash }));
+check('from a card, a tab writes &tab= without a history step',
+  afterTab.len === histBefore && /[#&]tab=nearby/.test(afterTab.hash), `${histBefore} -> ${afterTab.len} ${afterTab.hash}`);
 await page.close();
 
 // ── 1280 x 720: the primary in view at load ─────────────────────────────
 const small = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 wire(small);
 await seed(small);
-await small.goto(BASE + '#dest=FCO', { waitUntil: 'domcontentloaded', timeout: 45000 });
-await settle(small);
+await openDest(small, 'FCO');
 await small.waitForTimeout(1200);
 const inView = await small.evaluate(() => {
   const b = document.querySelector('.destp .btn-primary')?.getBoundingClientRect();
@@ -299,8 +334,7 @@ await small.close();
 const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
 wire(phone);
 await seed(phone);
-await phone.goto(BASE + '#dest=gem:valbona', { waitUntil: 'domcontentloaded', timeout: 45000 });
-await settle(phone);
+await openDest(phone, 'gem:valbona');
 await phone.waitForTimeout(1500);
 check('phone page opens', await phone.locator('.destp').isVisible());
 check('phone back names the list', (await phone.locator('.destp .ipage-back').innerText()).trim().length > 0);
@@ -315,13 +349,14 @@ const covers = await phone.evaluate(() => {
   return r.width >= window.innerWidth - 1 && r.height >= window.innerHeight - 1;
 });
 check('phone page covers the viewport', covers);
+const phoneScroll = await phone.evaluate(() => document.querySelector('.destp-scroll')?.scrollHeight || 0);
+check('phone page stays within 7,000 px (Overview)', phoneScroll < 7000, `${phoneScroll}px`);
+await tab(phone, 'Nearby');
 const tracksSwipe = await phone.evaluate(() => {
   const s = document.querySelector('#sec-do .dphoto-strip, #sec-routes .dphoto-strip');
   return s ? s.scrollWidth > s.clientWidth + 20 : false;
 });
 check('phone photo tracks swipe sideways', tracksSwipe);
-const phoneScroll = await phone.evaluate(() => document.querySelector('.destp-scroll')?.scrollHeight || 0);
-check('phone page stays within 7,000 px', phoneScroll < 7000, `${phoneScroll}px`);
 await phone.screenshot({ path: 'shots/destp-phone.png' });
 await phone.locator('.destp-scroll').evaluate((el) => { el.scrollTop = 900; });
 await phone.waitForTimeout(600);

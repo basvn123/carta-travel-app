@@ -6,6 +6,7 @@ import { Flag } from './GuidedTripWizardParts.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import { useI18n } from '../i18n/index.jsx';
 import { monthName } from '../lib/dates.js';
+import { dayCostText } from './wizard/wizardSteps.js';
 
 /** A reason that is a count ("1276 rated trails") as a labelled value: the
  *  figure alone in mono through Intl.NumberFormat ("1,276"), the words under
@@ -34,20 +35,16 @@ function Reason({ r, t, lang }) {
 /** How many recommendations before the "show more" link. */
 const PAGE = 6;
 
-/** "From €43 a day a person": the sentence translated whole, the figure alone
- *  in mono, so word order survives every language. */
-export function DayCostLine({ cost, t, className = '' }) {
-  if (!cost) return null;
-  const parts = t('match.fromDay', { eur: '\u0000' }).split('\u0000');
-  return (
-    <p className={`wiz-cost-line ${className}`}>
-      {parts[0]}
-      {/* A figure that stands in for towns not yet measured carries the
-          estimate mark, and nothing else about its source (T438). */}
-      <span className="mono">{cost.national ? `~${cost.minText} ${t('money.est')}` : cost.minText}</span>
-      {parts.slice(1).join('')}
-    </p>
-  );
+/** "From (estimate) a person a day": one sentence from one key, the whole
+ *  estimate (or the measured figure) in its {eur} slot (T490-i), so word order
+ *  survives every language and the estimate mark comes from formatEst only.
+ *  A figure that stands in for towns not yet measured carries the mark, and
+ *  nothing else about its source (T438). `as` is "span" inside a button. */
+export function DayCostLine({ cost, t, className = '', as = 'p' }) {
+  const Tag = as;
+  const text = dayCostText(cost, t);
+  if (!text) return null;
+  return <Tag className={`wiz-cost-line ${className}`}>{t('match.fromDay', { eur: text.visible })}</Tag>;
 }
 
 /**
@@ -63,6 +60,10 @@ export function DayCostLine({ cost, t, className = '' }) {
  */
 function MatchCard({ match, picked, onToggle, onBrief, t, lang, cost }) {
   const reasons = match.reasons || [];
+  // One accessible name for the pick (T490-i): "Italy, from about (figure) a
+  // person a day"; the country alone when there is no price.
+  const costText = dayCostText(cost, t);
+  const name = costText ? t('wizard.countryPickName', { country: match.country, price: costText.spoken }) : match.country;
   const typeLabel = match.topType ? t(`quiz.type.${match.topType}`) : '';
   return (
     <div className={`mcard ${picked ? 'on' : ''}`}>
@@ -71,7 +72,7 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang, cost }) {
         className="mcard-pick"
         onClick={() => onToggle(match.country)}
         aria-pressed={picked}
-        aria-label={match.country}
+        aria-label={name}
       >
         <HeroImage
           url={match.cover}
@@ -90,10 +91,10 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang, cost }) {
           <b>{match.country}</b>
           {picked && <span className="mcard-check"><CheckIcon size={12} /></span>}
         </span>
+        <DayCostLine cost={cost} t={t} as="span" className="mcard-cost" />
       </button>
 
       <div className="mcard-body">
-        <DayCostLine cost={cost} t={t} />
         {/* The match line: what they asked for, and when it is at its best. */}
         {typeLabel && (
           <p className="mcard-match">

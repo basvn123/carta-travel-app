@@ -77,6 +77,7 @@
   /* The floor a finger needs. Icon-only controls get this as a minimum box
      even where the glyph inside is 15px (WCAG 2.5.5). */
   --tap: 44px;
+  --tap-main: 48px;
 
   /* Type */
   --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
@@ -86,7 +87,8 @@
   /* Layout */
   --filter-h:     132px;
   --panel-w:      440px;
-  --bottom-nav-h: 86px;
+  --bottom-nav-h: calc(64px + env(safe-area-inset-bottom, 0px));
+  --drawer-strip: 72px;
 }
 
 /* Focus: every interactive element, unless it swaps in a border-color change. */

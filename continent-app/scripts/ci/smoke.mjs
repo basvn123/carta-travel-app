@@ -60,12 +60,20 @@ const NOISE = /ERR_FAILED|ERR_INTERNET_DISCONNECTED|config is not valid|ERR_NAME
 // What each route must show. Selectors are the ones the existing verify
 // harnesses already assert on, so a class rename breaks one obvious place.
 const ROUTES = [
-  { label: 'Destinations (no tab key)', url: '/', body: '.places-tab' },
-  { label: 'Explore (tab=map)', url: '/?tab=map', body: '.explore-tab' },
-  { label: 'Destinations (tab=places)', url: '/?tab=places', body: '.places-tab' },
-  { label: 'Trip planner (tab=trip)', url: '/?tab=trip', body: '.trip-planner-screen' },
-  { label: 'Day planner (tab=day)', url: '/?tab=day', body: '.day-flow-screen' },
-  // My trips and Account are pages laid over a tab, not tabs of their own.
+  // T496: the places (Explore, Plan, My trips, Account) and the old keys,
+  // which still open (LEGACY_TABS in src/lib/urlState.js).
+  { label: 'Explore (no tab key)', url: '/', body: '.explore-tab' },
+  { label: 'Explore (tab=explore)', url: '/?tab=explore', body: '.explore-tab' },
+  { label: 'Explore, trails (tab=explore&cat=trails)', url: '/?tab=explore&cat=trails', body: '.places-tab' },
+  { label: 'Plan, start (tab=plan&mode=new)', url: '/?tab=plan&mode=new', body: '.plan-start' },
+  { label: 'Plan, trip (tab=plan&mode=trip)', url: '/?tab=plan&mode=trip', body: '.trip-planner-screen' },
+  { label: 'Plan, one day (tab=plan&mode=day)', url: '/?tab=plan&mode=day', body: '.day-flow-screen' },
+  { label: 'Account (tab=account)', url: '/?tab=account', body: '.account-panel' },
+  { label: 'old key: Explore (tab=map)', url: '/?tab=map', body: '.explore-tab' },
+  { label: 'old key: Destinations (tab=places)', url: '/?tab=places', body: '.places-tab' },
+  { label: 'old key: Trip planner (tab=trip)', url: '/?tab=trip', body: '.trip-planner-screen' },
+  { label: 'old key: Day planner (tab=day)', url: '/?tab=day', body: '.day-flow-screen' },
+  // My trips also opens from its mock shelf.
   { label: 'My trips (?savedmock)', url: '/?savedmock=1', body: null },
   { label: 'a shared trail link', url: '/#trail=20050&tc=AT', body: null },
   { label: 'the terms page (?legal=terms)', url: '/?legal=terms', body: null },

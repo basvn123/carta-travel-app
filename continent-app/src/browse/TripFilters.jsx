@@ -3,27 +3,23 @@ import { BANDS, SORTS } from '../lib/tripFilters.js';
 import { formatMoney } from '../lib/money.js';
 import { SHORT, WEEK } from '../lib/tripLength.js';
 import { tagLabel } from '../lib/tripTags.js';
-import { FilterIcon } from '../components/Icons.jsx';
-import { Button } from '../components/ui/index.js';
-import { Dropdown } from '../components/Dropdown.jsx';
-import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
-import { FilterChips } from './FilterChips.jsx';
+import { Chip, Field, Segmented } from '../components/ui/index.js';
+import { InfoDot } from '../components/InfoDot.jsx';
 
 /**
- * The curated trip list's one filter row (T188, rebuilt by T387 for the v6
- * trips brief, item V3.3).
+ * The trip library's filters as parts, not a bar (T498, roadmap 1.3b rule 4
+ * and section C; before: T188, T387).
  *
- * Before: three stacked groups of full-width buttons (length, four cost
- * bands, up to thirteen tags) that pushed the first trip card to 804 px on a
- * 380 px phone, and a cost row that arrived after the library and moved the
- * list. Now one row: the length as a two-segment control (the short version
- * first, the same order as the trip page), one Filters button that opens the
- * shared filter sheet with cost, month, tag and the sort inside. The active
- * filters show as removable chips under the row (rule "Filter chips"), so
- * what narrows the list is always on screen and each one comes off alone.
+ * The library used to carry its own filter bar (.tf-bar). Now it has none:
+ * the active filters are chips in the one refine row (FilterChips), and the
+ * controls live where every other Explore filter lives: in the side panel on
+ * a desktop (TripFilterPanel, the xrail grammar) and in the shared filter
+ * sheet on a phone (tripFilterParts' groups plus TripSheetExtra). One
+ * description feeds all three, so a filter cannot exist in one and not the
+ * other.
  *
- * Length is never a filter that drops a trip: every trip exists at both
- * lengths (lib/tripLength.js). It sets the days and the total each card
+ * Length is never a filter that drops a trip: every trip exists at each
+ * length (lib/tripLength.js). It sets the days and the figure each card
  * shows and the total the cost band tests, and Clear all leaves it alone.
  */
 
@@ -65,117 +61,194 @@ const monthName = (m, lang) => {
   } catch { return String(m); }
 };
 
-export function TripFilters({
-  lengthControl = null, beds = null,
-  band, onBand, edges, counts,
+/**
+ * Every filter of one style's list, described once:
+ *
+ *   groups  [{ key, label, options: [{ key, label, on, disabled }], onToggle }]
+ *           cost and theme, the chip groups (the sheet's and the panel's)
+ *   chips   [{ key, label, remove }] what narrows the list, for FilterChips
+ *   active  how many filters are on (the Filters button's count)
+ *   month, sort, beds  the select and segmented controls' state, for
+ *           TripFilterPanel and TripSheetExtra
+ *
+ * A choice that would show nothing is disabled unless it is the one on.
+ */
+// A description, not a component; it lives beside the components it feeds.
+// eslint-disable-next-line react-refresh/only-export-components
+export function tripFilterParts({
+  band = null, onBand, edges = null, counts = {},
   month = null, onMonth, monthCounts = {},
   tag = null, onTag, tags = [], tagCounts = {},
   sort = 'written', onSort,
-  onClear, resultCount = 0, t, lang,
+  hasBeds = false, cheapBeds = false, onBeds,
+  t, lang,
 }) {
-  const [open, setOpen] = React.useState(false);
-  const btnRef = React.useRef(null);
   const labels = bandLabels(edges, t, lang);
-  const close = React.useCallback(() => setOpen(false), []);
-
-  const active = (band != null && edges ? 1 : 0) + (month ? 1 : 0) + (tag ? 1 : 0);
-
   const groups = [];
   if (edges) {
     groups.push({
       key: 'cost',
-      label: t('journey.fltCost'),
-      options: BANDS.map((key) => ({ key, label: labels[key], n: counts?.[key] ?? 0, on: band === key })),
+      label: t('journey.fltCostPp'),
+      options: BANDS.map((key) => ({
+        key, label: labels[key], on: band === key, disabled: band !== key && !(counts?.[key] > 0),
+      })),
       onToggle: (key) => onBand(band === key ? null : key),
     });
   }
   if (tags.length > 0) {
     groups.push({
       key: 'tag',
-      label: t('journey.fltTag'),
-      options: tags.map((key) => ({ key, label: tagLabel(key), n: tagCounts[key] ?? 0, on: tag === key })),
+      label: t('journey.fltTheme'),
+      options: tags.map((key) => ({
+        key, label: tagLabel(key), on: tag === key, disabled: tag !== key && !(tagCounts[key] > 0),
+      })),
       onToggle: (key) => onTag(tag === key ? null : key),
     });
   }
 
-  // Month (rule "Month"): one select of the twelve months plus "Any".
-  const monthField = (
-    <section className="fsheet-section">
-      <div className="fsheet-fields">
-        <div className="fsheet-field is-wide">
-          <span className="fsheet-label">{t('journey.fltMonth')}</span>
-          <Dropdown
-            value={month ? String(month) : ''}
-            onChange={(v) => onMonth(v ? Number(v) : null)}
-            options={[
-              { value: '', label: t('journey.fltAnyMonth') },
-              ...Array.from({ length: 12 }, (_, i) => ({
-                value: String(i + 1),
-                label: `${monthName(i + 1, lang)} (${monthCounts[i + 1] ?? 0})`,
-              })),
-            ]}
-            placeholder={t('journey.fltAnyMonth')}
-            searchThreshold={99}
-          />
-          <p className="tf-month-note">{t('journey.fltMonthNote')}</p>
-        </div>
-        <div className="fsheet-field is-wide">
-          <span className="fsheet-label">{t('journey.sortLabel')}</span>
-          <Dropdown
-            value={sort}
-            onChange={(v) => onSort(v)}
-            options={SORTS.map((key) => ({ value: key, label: t(`journey.sort.${key}`) }))}
-            placeholder={t('journey.sort.written')}
-            searchThreshold={99}
-          />
-        </div>
-      </div>
-    </section>
-  );
-
-  // The chips name what narrows the list, each removable on its own.
   const chips = [];
   if (band != null && edges) chips.push({ key: 'band', label: labels[band], remove: () => onBand(null) });
   if (month) chips.push({ key: 'month', label: monthName(month, lang), remove: () => onMonth(null) });
   if (tag) chips.push({ key: 'tag', label: tagLabel(tag), remove: () => onTag(null) });
+  if (cheapBeds) chips.push({ key: 'beds', label: t('journey.bedsCheap'), remove: () => onBeds(false) });
 
+  return {
+    groups,
+    chips,
+    active: chips.length,
+    month: { value: month, onChange: onMonth, counts: monthCounts },
+    sort: { value: sort, onChange: onSort },
+    beds: hasBeds || cheapBeds ? { value: cheapBeds, onChange: onBeds } : null,
+    t,
+    lang,
+  };
+}
+
+/** The month select: the twelve months plus Any (rule "Month"). */
+function MonthField({ parts }) {
+  const { t, lang, month } = parts;
   return (
-    <>
-      {/* T431: one row, left aligned, that wraps on a phone: how long, where
-          you sleep, and the rest behind Filters. */}
-      <div className="tf-bar tlib-bar" role="group" aria-label={t('journey.fltAria')}>
-        {lengthControl}
-        <Button
-          ref={btnRef}
-          variant="secondary"
-          size="sm"
-          className="tlib-filters"
-          onClick={() => setOpen(true)}
-          aria-haspopup="dialog"
-          aria-expanded={open}
-          iconStart={<FilterIcon size={16} />}
-        >
-          {t('filter.filters')}
-          {active > 0 && <span className="tlib-count">{active}</span>}
-        </Button>
-        {beds}
+    <Field
+      as="select"
+      className="tf-field"
+      label={t('journey.fltMonth')}
+      value={month.value ? String(month.value) : ''}
+      onChange={(e) => month.onChange(e.target.value ? Number(e.target.value) : null)}
+    >
+      <option value="">{t('journey.fltAnyMonth')}</option>
+      {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+        <option key={m} value={String(m)} disabled={month.value !== m && !(month.counts?.[m] > 0)}>
+          {monthName(m, lang)}
+        </option>
+      ))}
+    </Field>
+  );
+}
+
+function SortField({ parts }) {
+  const { t, sort } = parts;
+  return (
+    <Field
+      as="select"
+      className="tf-field"
+      label={t('journey.sortLabel')}
+      value={sort.value}
+      onChange={(e) => sort.onChange(e.target.value)}
+    >
+      {SORTS.map((key) => <option key={key} value={key}>{t(`journey.sort.${key}`)}</option>)}
+    </Field>
+  );
+}
+
+/** Any bed or budget beds, with the glossary dot on its first mention. */
+function BedsControl({ parts }) {
+  const { t, beds } = parts;
+  return (
+    <div className="tlib-beds">
+      <Segmented
+        size="sm"
+        label={t('journey.bedsLabel')}
+        value={beds.value ? 'cheap' : 'any'}
+        onChange={(v) => beds.onChange(v === 'cheap')}
+        options={[
+          { value: 'any', label: t('journey.bedsAny') },
+          { value: 'cheap', label: t('journey.bedsCheap') },
+        ]}
+      />
+      <InfoDot term="budget-beds" />
+    </div>
+  );
+}
+
+function PanelGroup({ g }) {
+  const hid = `tf-h-${g.key}`;
+  return (
+    <section className="xrail-sec" aria-labelledby={hid}>
+      <h3 className="xrail-h" id={hid}>{g.label}</h3>
+      <div className="xrail-chips" role="group" aria-labelledby={hid}>
+        {g.options.map((o) => (
+          <Chip key={o.key} kind="filter" selected={!!o.on} disabled={o.disabled} onClick={() => g.onToggle(o.key)}>
+            {o.label}
+          </Chip>
+        ))}
       </div>
-      {chips.length > 0 && (
-        <div className="tf-chips">
-          <FilterChips t={t} chips={chips} onClearAll={onClear} />
-        </div>
+    </section>
+  );
+}
+
+/**
+ * The library's filters in the desktop side panel, in its grammar: one
+ * section a group, a 12 px label over the control, in the order the
+ * traveller decides (length, cost, month, beds, theme, then the sort).
+ * Without parts (the styles list, or a style still loading) it holds the
+ * length alone.
+ */
+export function TripFilterPanel({ lengthControl, parts = null, t }) {
+  const group = (key) => (parts ? parts.groups.filter((g) => g.key === key).map((g) => <PanelGroup key={g.key} g={g} />) : null);
+  return (
+    <div className="tf-panel" role="group" aria-label={t('journey.fltAria')}>
+      <section className="xrail-sec" aria-labelledby="tf-h-length">
+        <h3 className="xrail-h" id="tf-h-length">{t('journey.lenLabel')}</h3>
+        {lengthControl}
+      </section>
+      {group('cost')}
+      {parts && (
+        <section className="xrail-sec">
+          <MonthField parts={parts} />
+        </section>
       )}
-      {open && (
-        <PlacesFilterSheet
-          onClose={close}
-          anchorRef={btnRef}
-          groups={groups}
-          extra={monthField}
-          activeFilters={active}
-          resetAll={onClear}
-          resultCount={resultCount}
-        />
+      {parts?.beds && (
+        <section className="xrail-sec" aria-labelledby="tf-h-beds">
+          <h3 className="xrail-h" id="tf-h-beds">{t('journey.bedsLabel')}</h3>
+          <BedsControl parts={parts} />
+        </section>
       )}
-    </>
+      {group('tag')}
+      {parts && (
+        <section className="xrail-sec">
+          <SortField parts={parts} />
+        </section>
+      )}
+    </div>
+  );
+}
+
+/** What the phone's filter sheet holds under its chip groups: the month,
+ *  where you sleep and the sort. */
+export function TripSheetExtra({ parts }) {
+  const { t } = parts;
+  return (
+    <section className="fsheet-section tf-sheet-extra">
+      <div className="fsheet-fields">
+        <div className="fsheet-field is-wide"><MonthField parts={parts} /></div>
+        {parts.beds && (
+          <div className="fsheet-field is-wide">
+            <span className="fsheet-label">{t('journey.bedsLabel')}</span>
+            <BedsControl parts={parts} />
+          </div>
+        )}
+        <div className="fsheet-field is-wide"><SortField parts={parts} /></div>
+      </div>
+    </section>
   );
 }

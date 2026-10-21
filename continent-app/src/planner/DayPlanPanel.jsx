@@ -4,10 +4,12 @@ import { isMustSee, poiKind, poiMapCat } from './dayDraft.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
   RouteIcon, StarIcon, ChevronDownIcon, CloseIcon, ShoeIcon, BusIcon, CarIcon,
-  DiningIcon, HomeIcon, ClockIcon, SparkIcon, PlusIcon, MoreIcon,
+  DiningIcon, HomeIcon, ClockIcon, SparkIcon, PlusIcon, MoreIcon, TicketIcon, CheckIcon,
 } from '../components/Icons.jsx';
 import { Button, IconButton } from '../components/ui/index.js';
-import { fmtClockLoose } from './daySchedule.js';
+import { DAY_BANDS, dayPhase, fmtClock, fmtClockLoose } from './daySchedule.js';
+import { DETAIL_LEVELS } from './dayDetail.js';
+import { formatMoney } from '../lib/money.js';
 import { fmtDur, fmtKm } from './dayFormat.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
 import { durationMs } from '../lib/motion.js';
@@ -26,12 +28,12 @@ export function useDismiss(open, close) {
   const ref = useRef(null);
   useEffect(() => {
     if (!open) return;
-    ref.current?.querySelector('[role="menu"] [role="menuitem"]:not(:disabled)')?.focus();
+    ref.current?.querySelector('[role="menu"] [role^="menuitem"]:not(:disabled)')?.focus();
   }, [open]);
   useEffect(() => {
     if (!open) return undefined;
     const root = ref.current;
-    const items = () => [...(root?.querySelectorAll('[role="menu"] [role="menuitem"]:not(:disabled)') || [])];
+    const items = () => [...(root?.querySelectorAll('[role="menu"] [role^="menuitem"]:not(:disabled)') || [])];
     const onDown = (e) => { if (!ref.current?.contains(e.target)) close(); };
     const onKey = (e) => {
       if (e.key === 'Escape') {
@@ -110,51 +112,6 @@ function useRowSlide(listRef, keys) {
   }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps -- value key: the order of the stops is the only change that should slide
 }
 
-/**
- * The day bar (T433): the shape of the day on one line, with the hours under
- * it. Each stop is a segment as wide as its visit, numbered as on the map;
- * the walks between are the gaps, lunch its own segment. It replaces the
- * unlabelled ink strip the owner and the critique found unreadable: the hour
- * ticks make it a timetable you can read at a glance.
- */
-export function DayBar({ schedule, startMin, focusIdx = null }) {
-  const { t } = useI18n();
-  const rows = schedule?.rows || [];
-  if (!rows.length) return null;
-  const t0 = Number.isFinite(startMin) ? Math.min(startMin, rows[0].arriveMin) : rows[0].arriveMin;
-  const t1 = Math.max(schedule.endMin || 0, rows[rows.length - 1].departMin);
-  const span = Math.max(60, t1 - t0);
-  const pct = (m) => `${((m - t0) / span) * 100}%`;
-  const ticks = [];
-  for (let h = Math.ceil(t0 / 60); h * 60 <= t1; h += 1) ticks.push(h);
-  const step = ticks.length > 8 ? 2 : 1;
-  return (
-    <div className="dayb" aria-hidden="true">
-      <div className="dayb-track">
-        {rows.map((r, i) => (
-          <span
-            key={i}
-            className={`dayb-seg${i === focusIdx ? ' on' : ''}`}
-            style={{ left: pct(r.arriveMin), width: `calc(${((r.departMin - r.arriveMin) / span) * 100}% - 2px)` }}
-          >{(r.departMin - r.arriveMin) / span > 0.06 ? i + 1 : ''}</span>
-        ))}
-        {schedule.lunch && (
-          <span
-            className="dayb-seg is-lunch"
-            style={{ left: pct(schedule.lunch.startMin), width: `calc(${((schedule.lunch.endMin - schedule.lunch.startMin) / span) * 100}% - 2px)` }}
-            title={t('dayws.lunch')}
-          />
-        )}
-      </div>
-      <div className="dayb-ticks">
-        {ticks.filter((h, k) => k % step === 0).map((h) => (
-          <span key={h} style={{ left: pct(h * 60) }}>{String(h).padStart(2, '0')}</span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /** A leg between two rows of the timeline: a checked walk, or the ride a
  *  traveller should take instead, with the directions one tap away. */
 function LegRow({ leg, from, to, t, lang, stepFree }) {
@@ -218,8 +175,9 @@ function hoursUrl(item, city) {
 }
 
 /** A phone's stop tools: one button, the three actions in a menu, so a row
- *  is one line of controls wide rather than three stacked 44 px buttons. */
-function StopMenu({ n, last, onMoveUp, onMoveDown, onRemove, name, t }) {
+ *  is one line of controls wide rather than three stacked 44 px buttons.
+ *  Moving crosses the parts of the day (T501): the menu says what it does. */
+function StopMenu({ canEarlier, canLater, onMoveUp, onMoveDown, onRemove, name, t }) {
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
   const pick = (fn) => () => { setOpen(false); fn(); };
@@ -234,9 +192,9 @@ function StopMenu({ n, last, onMoveUp, onMoveDown, onRemove, name, t }) {
       ><MoreIcon size={18} /></IconButton>
       {open && (
         <span className="dayp-menu dayt-menu-pop" role="menu">
-          <Button variant="quiet" role="menuitem" className="dayp-menu-item" disabled={n === 1} onClick={pick(onMoveUp)}
+          <Button variant="quiet" role="menuitem" className="dayp-menu-item" disabled={!canEarlier} onClick={pick(onMoveUp)}
             iconStart={<ChevronDownIcon size={16} className="dayt-tool-up" />}>{t('dayws.moveUp')}</Button>
-          <Button variant="quiet" role="menuitem" className="dayp-menu-item" disabled={last} onClick={pick(onMoveDown)}
+          <Button variant="quiet" role="menuitem" className="dayp-menu-item" disabled={!canLater} onClick={pick(onMoveDown)}
             iconStart={<ChevronDownIcon size={16} />}>{t('dayws.moveDown')}</Button>
           <Button variant="quiet" role="menuitem" className="dayp-menu-item" onClick={pick(onRemove)}
             iconStart={<CloseIcon size={16} />}>{t('dayws.removeStop')}</Button>
@@ -246,9 +204,24 @@ function StopMenu({ n, last, onMoveUp, onMoveDown, onRemove, name, t }) {
   );
 }
 
+/** The ticket line on a stop (T501, owner T492-d): a price Carta knows, or
+ *  the plain fact that there is one without a price. Nothing for no fee. */
+function TicketLine({ ticket, t, lang }) {
+  if (!ticket || (ticket.kind !== 'known' && ticket.kind !== 'unknown')) return null;
+  if (ticket.kind === 'unknown') {
+    return <span className="dayt-ticket"><TicketIcon size={14} /> {t('dayws.ticketUnknown')}</span>;
+  }
+  const precision = Math.round(ticket.eur) === ticket.eur ? 'whole' : 'cents';
+  return (
+    <span className="dayt-ticket">
+      <TicketIcon size={14} /> {t('dayws.ticket', { price: formatMoney(ticket.eur, { precision, locale: lang }) })}
+    </span>
+  );
+}
+
 function StopRow({
-  item, n, last, time, dwell, flash, onMoveUp, onMoveDown, onRemove, rowRef, rowKey,
-  onHoverChange, offPathM, city, compact, t,
+  item, n, canEarlier, canLater, time, dwell, flash, onMoveUp, onMoveDown, onRemove, rowRef, rowKey,
+  onHoverChange, offPathM, city, compact, ticket, t, lang,
 }) {
   const url = hoursUrl(item, city);
   return (
@@ -275,6 +248,7 @@ function StopRow({
             <span className="dayt-flag">{item.unmapped ? t('dayws.customApprox') : t('dayws.custom')}</span>
           )}
         </span>
+        <TicketLine ticket={ticket} t={t} lang={lang} />
         <span className="dayt-links">
           {url && <a className="dayt-link" href={url} target="_blank" rel="noreferrer">{t('dayws.checkHours')}</a>}
           {offPathM != null && <span className="dayt-flag">{t('dayws.offPath', { m: offPathM })}</span>}
@@ -282,17 +256,17 @@ function StopRow({
       </span>
       {compact ? (
         <span className="dayt-tools">
-          <StopMenu n={n} last={last} onMoveUp={onMoveUp} onMoveDown={onMoveDown} onRemove={onRemove} name={item.name} t={t} />
+          <StopMenu canEarlier={canEarlier} canLater={canLater} onMoveUp={onMoveUp} onMoveDown={onMoveDown} onRemove={onRemove} name={item.name} t={t} />
         </span>
       ) : (
       <span className="dayt-tools">
-        <IconButton className="dayt-tool" onClick={onMoveUp} disabled={n === 1} label={t('dayws.moveUp')}>
+        <IconButton className="dayt-tool" onClick={onMoveUp} disabled={!canEarlier} label={t('dayws.moveUpName', { name: item.name })}>
           <ChevronDownIcon size={18} className="dayt-tool-up" />
         </IconButton>
-        <IconButton className="dayt-tool" onClick={onMoveDown} disabled={last} label={t('dayws.moveDown')}>
+        <IconButton className="dayt-tool" onClick={onMoveDown} disabled={!canLater} label={t('dayws.moveDownName', { name: item.name })}>
           <ChevronDownIcon size={18} />
         </IconButton>
-        <IconButton className="dayt-tool" onClick={onRemove} label={t('dayws.removeStop')}>
+        <IconButton className="dayt-tool" onClick={onRemove} label={t('dayws.removeStopName', { name: item.name })}>
           <CloseIcon size={16} />
         </IconButton>
       </span>
@@ -301,114 +275,305 @@ function StopRow({
   );
 }
 
+const DETAIL_KEYS = { list: 'dayws.detailList', parts: 'dayws.detailParts', hour: 'dayws.detailHour' };
+const BAND_ADD_KEYS = { morning: 'dayws.addToMorning', afternoon: 'dayws.addToAfternoon', evening: 'dayws.addToEvening' };
+
 /**
- * The day, hour by hour (T433). One list from the door and back: when you
- * leave, each stop with its arrival time, how long it takes and a way to
- * check its hours, the leg to the next with its minutes and kilometres as
- * routed on real footpaths (or the ride Carta recommends where no footpath
- * was found), lunch where it falls, and when the day is done.
+ * The quiet "Detail" control (T501, owner T492-c): how much structure the
+ * traveller wants on their day. A small quiet button naming the level now,
+ * opening a menu of the three; never a primary, never in the way.
+ */
+export function DetailMenu({ value, onChange }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const ref = useDismiss(open, () => setOpen(false));
+  return (
+    <span className="dayt-menu dayp-detail" ref={ref}>
+      <Button
+        variant="quiet"
+        size="sm"
+        className="dayp-detail-btn"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={t('dayws.detailAria', { level: t(DETAIL_KEYS[value]) })}
+        onClick={() => setOpen((v) => !v)}
+        iconEnd={<ChevronDownIcon size={16} className={open ? 'plan-chev is-open' : 'plan-chev'} />}
+      >
+        <span className="dayp-detail-lbl">{t('dayws.detail')}</span> {t(DETAIL_KEYS[value])}
+      </Button>
+      {open && (
+        <span className="dayp-menu dayt-menu-pop dayp-detail-pop" role="menu" aria-label={t('dayws.detail')}>
+          {DETAIL_LEVELS.map((lv) => (
+            <Button
+              key={lv}
+              variant="quiet"
+              role="menuitemradio"
+              aria-checked={lv === value}
+              className={`dayp-menu-item${lv === value ? ' is-on' : ''}`}
+              onClick={() => { setOpen(false); onChange(lv); }}
+              iconStart={lv === value ? <CheckIcon size={16} /> : <span className="dayp-menu-gap" aria-hidden="true" />}
+            >{t(DETAIL_KEYS[lv])}</Button>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/** A part's head (T501): the label, its hours, and "Add" for that part. A
+ *  quiet heading over a group of rows, never a card and never coloured. */
+function BandHead({ band, range, onAdd, t }) {
+  return (
+    <li className="dayt-band" data-band={band.key}>
+      <h3 className="dayt-band-h">
+        <span className="dayt-band-name">{t(band.labelKey)}</span>
+        {range && <span className="dayt-band-range">{range}</span>}
+      </h3>
+      {onAdd && (
+        <Button variant="quiet" size="sm" className="dayt-band-add" iconStart={<PlusIcon size={16} />}
+          aria-label={t(BAND_ADD_KEYS[band.key])} onClick={() => onAdd(band.key)}>
+          {t('dayws.bandAdd')}
+        </Button>
+      )}
+    </li>
+  );
+}
+
+/** A meal row (lunch, dinner): no amount of its own, since the food is in
+ *  the day's price already. */
+function MealRow({ kind, time, label }) {
+  return (
+    <li className={`dayt-lunch dayt-meal is-${kind}`}>
+      <span className="dayt-time">{time}</span>
+      <span className="dayt-rail" aria-hidden="true"><DiningIcon size={14} /></span>
+      <span className="dayt-body"><span className="dayt-name">{label}</span></span>
+    </li>
+  );
+}
+
+/** The hours a part covers on this day, as its head prints them. */
+function bandRange(band, startMin, t) {
+  if (band.key === 'evening') return t('dayws.bandFrom', { time: fmtClock(band.fromMin) });
+  const from = band.key === 'morning' && Number.isFinite(startMin) && startMin < band.untilMin ? startMin : band.fromMin;
+  return t('dayws.timeSpan', { from: fmtClockLoose(from), to: fmtClock(band.untilMin) });
+}
+
+/**
+ * The planned day (T433, T501). One list from the door and back, at the
+ * detail the traveller chose (dayDetail.js):
+ *
+ *   list   the stops in order with the walks between: the default
+ *   parts  the same under Morning, Afternoon and Evening, each with "Add";
+ *          Lunch heads the afternoon and Dinner the evening, without amounts
+ *   hour   the clock: every stop's time, lunch and dinner where they fall,
+ *          when the day is done
  *
  *   items       today's stops, in order
  *   schedule    buildDaySchedule() result, plus startMin
+ *   bands       the part each stop starts in (rowBands), aligned to items
  *   legs[i]     leg from stop i to i+1 (see DayPlannerTab legForRow)
  *   stayLeg     the leg from the start to stop 0, or null
  *   offPath[i]  metres from stop i to the nearest path, or null
  *   start       { label, lat, lon } where the day leaves from, or null
+ *   tickets[i]  ticketOf(items[i]) (lib/dayTickets.js)
+ *   onAdd(band) opens the places with that part chosen (null: the day's end)
+ *   onMove(i, dir), canMove(i, dir)   tap moves, across parts
+ *   onBestRoute  reorders inside the parts; asked first (owner T492-e)
  */
 export function DayPlanPanel({
-  items, dayNumber, city, schedule, legs = [], stayLeg = null, offPath = [], start = null,
-  onMoveUp, onMoveDown, onRemove, rowRefs, flashIdx, onHoverRow, focusIdx = null,
-  onAddMore, onAskCarta, onOptimize, canOptimize, aiSummary = '', dwellOf, stepFree = false, compact = false,
-  walksBlock = null,
+  items, dayNumber, city, schedule, bands = [], legs = [], stayLeg = null, offPath = [], start = null,
+  onMove, canMove, onRemove, rowRefs, flashIdx, onHoverRow, focusIdx = null,
+  onAdd, onAskCarta, onBestRoute, canBestRoute = false, aiSummary = '', dwellOf, stepFree = false, compact = false,
+  walksBlock = null, tickets = [], detail = 'list', onDetail,
 }) {
   const { t, lang } = useI18n();
   const listRef = useRef(null);
   const keys = stopKeys(items);
   useRowSlide(listRef, keys);
+  const [asking, setAsking] = useState(false);
+  const keepRef = useRef(null);
+  useEffect(() => { if (asking) keepRef.current?.focus(); }, [asking]);
+  useEffect(() => { setAsking(false); }, [dayNumber]);
+
+  const head = (
+    <div className="dayp-head">
+      <h2 className="dayp-h">{t('dayws.tabYourDay')}</h2>
+      {onDetail && <DetailMenu value={detail} onChange={onDetail} />}
+    </div>
+  );
+
+  const startMin = Number.isFinite(schedule?.startMin) ? schedule.startMin : schedule?.rows?.[0]?.arriveMin;
 
   if (items.length === 0) {
     return (
-      <div className="dayp">
-        <div className="dayp-empty">
-          <h2>{t('dayws.emptyTitle', { n: dayNumber })}</h2>
-          <p>{t('dayws.emptySub', { city: city || t('day.thisCity') })}</p>
-          <div className="dayp-empty-actions">
-            <Button variant="primary" iconStart={<PlusIcon size={16} />} onClick={onAddMore}>{t('dayws.emptyBrowse')}</Button>
-            <Button iconStart={<SparkIcon size={16} />} onClick={onAskCarta}>{t('dayws.emptyAsk')}</Button>
+      <div className="dayp is-empty">
+        {head}
+        {detail === 'parts' ? (
+          <ol className="dayt is-untimed is-bands">
+            {DAY_BANDS.map((b) => (
+              <BandHead key={b.key} band={b} range={null} onAdd={onAdd} t={t} />
+            ))}
+          </ol>
+        ) : (
+          <div className="dayp-empty-line">
+            <p>{t('dayws.dayEmptyShort')}</p>
+            <Button variant="quiet" size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onAdd(null)}>{t('dayws.addPlaces')}</Button>
           </div>
-        </div>
+        )}
+        <Button variant="primary" className="dayp-carta" iconStart={<SparkIcon size={20} />} onClick={onAskCarta}>
+          {t('dayws.emptyCarta', { n: dayNumber })}
+        </Button>
       </div>
     );
   }
 
   const rows = schedule?.rows || [];
-  const lunchAfter = schedule?.lunch ? schedule.lunch.afterIndex : -1;
-  const startMin = Number.isFinite(schedule?.startMin) ? schedule.startMin : rows[0]?.arriveMin;
+  const timed = detail === 'hour';
+  const banded = detail !== 'list';
   const pos = (it) => (Number.isFinite(it?.lat) ? { lat: it.lat, lon: it.lon } : null);
+  const clock = (min) => (timed && Number.isFinite(min) ? fmtClockLoose(min) : '');
+  const bandAt = (min) => dayPhase(min).key;
+
+  // Every row of the day, in clock order, each with the part it belongs to.
+  // A walk belongs to the part of the stop it walks to, so a part's head
+  // sits between a stop and the walk out of it.
+  const seq = [];
+  items.forEach((it, i) => {
+    seq.push({ kind: 'stop', i, band: bands[i] || bandAt(rows[i]?.arriveMin) });
+    if (timed && schedule?.lunch && schedule.lunch.afterIndex === i && i < items.length - 1) {
+      seq.push({ kind: 'lunch', band: bandAt(schedule.lunch.startMin) });
+    }
+    if (timed && schedule?.dinner && schedule.dinner.afterIndex === i && i < items.length - 1) {
+      seq.push({ kind: 'dinner', band: bandAt(schedule.dinner.startMin) });
+    }
+    if (i < items.length - 1) seq.push({ kind: 'leg', i, band: bands[i + 1] || bandAt(rows[i + 1]?.arriveMin) });
+  });
+  if (timed || banded) seq.push({ kind: 'end', band: banded ? bandAt(schedule?.endMin) : null });
+  if (timed && schedule?.dinner && schedule.dinner.afterIndex === items.length - 1) {
+    seq.push({ kind: 'dinner', band: 'evening' });
+  }
+
+  const renderEntry = (e, k) => {
+    if (e.kind === 'stop') {
+      const i = e.i;
+      const it = items[i];
+      return (
+        <StopRow
+          key={keys[i]}
+          rowKey={keys[i]}
+          item={it}
+          n={i + 1}
+          canEarlier={canMove ? canMove(i, -1) : i > 0}
+          canLater={canMove ? canMove(i, 1) : i < items.length - 1}
+          time={timed && rows[i] ? fmtClockLoose(rows[i].arriveMin) : ''}
+          dwell={dwellOf ? dwellOf(it) : null}
+          flash={flashIdx === i || focusIdx === i}
+          onMoveUp={() => onMove(i, -1)}
+          onMoveDown={() => onMove(i, 1)}
+          onRemove={() => onRemove(i)}
+          rowRef={(el) => { if (rowRefs) rowRefs.current[i] = el; }}
+          onHoverChange={(on) => onHoverRow?.(on ? i : null)}
+          offPathM={offPath[i] ?? null}
+          city={city}
+          compact={compact}
+          ticket={tickets[i] || null}
+          t={t}
+          lang={lang}
+        />
+      );
+    }
+    if (e.kind === 'leg') {
+      return <LegRow key={`leg-${keys[e.i]}`} leg={legs[e.i]} from={pos(items[e.i])} to={pos(items[e.i + 1])} t={t} lang={lang} stepFree={stepFree} />;
+    }
+    if (e.kind === 'lunch') {
+      return <MealRow key={`m-l-${k}`} kind="lunch" time={clock(schedule.lunch.startMin)} label={timed ? t('dayws.lunchFor', { min: schedule.lunch.endMin - schedule.lunch.startMin }) : t('dayws.lunch')} />;
+    }
+    if (e.kind === 'dinner') {
+      return <MealRow key={`m-d-${k}`} kind="dinner" time={clock(schedule.dinner.startMin)} label={t('dayws.dinner')} />;
+    }
+    return (
+      <li className="dayt-end" key="end">
+        <span className="dayt-time">{clock(schedule?.endMin)}</span>
+        <span className="dayt-rail is-end" aria-hidden="true"><ClockIcon size={14} /></span>
+        <span className="dayt-body">
+          <span className="dayt-name">{t('dayws.dayDone')}</span>
+          {schedule?.freeMin >= 45 && <span className="dayt-meta">{t('dayws.freeLeft', { dur: fmtDur(schedule.freeMin) })}</span>}
+        </span>
+      </li>
+    );
+  };
+
+  const startRow = (
+    <li className="dayt-start" key="start">
+      <span className="dayt-time">{clock(startMin)}</span>
+      <span className="dayt-rail is-end" aria-hidden="true"><HomeIcon size={14} /></span>
+      <span className="dayt-body"><span className="dayt-name">{start?.label ? t('dayws.leaveFrom', { place: start.label }) : t('dayws.leave')}</span></span>
+    </li>
+  );
+
+  let body;
+  if (!banded) {
+    body = [startRow, stayLeg && <LegRow key="stay-leg" leg={stayLeg} from={pos(start)} to={pos(items[0])} t={t} lang={lang} stepFree={stepFree} />, ...seq.map(renderEntry)];
+  } else {
+    // The parts, always all three: an empty part is its head and "Add".
+    body = [startRow];
+    let s = 0;
+    DAY_BANDS.forEach((b) => {
+      body.push(<BandHead key={`band-${b.key}`} band={b} range={bandRange(b, startMin, t)} onAdd={onAdd} t={t} />);
+      // In "Parts of the day" the meals head their part without a time.
+      if (!timed && b.key === 'afternoon') body.push(<MealRow key="m-lunch" kind="lunch" time="" label={t('dayws.lunch')} />);
+      if (!timed && b.key === 'evening') body.push(<MealRow key="m-dinner" kind="dinner" time="" label={t('dayws.dinner')} />);
+      if (b.key === 'morning' && stayLeg && bands[0] === 'morning') {
+        body.push(<LegRow key="stay-leg" leg={stayLeg} from={pos(start)} to={pos(items[0])} t={t} lang={lang} stepFree={stepFree} />);
+      }
+      const bi = DAY_BANDS.indexOf(b);
+      while (s < seq.length && (seq[s].band == null || DAY_BANDS.findIndex((x) => x.key === seq[s].band) <= bi)) {
+        // The walk from the door belongs to the first stop's part.
+        if (seq[s].kind === 'stop' && seq[s].i === 0 && stayLeg && bands[0] !== 'morning') {
+          body.push(<LegRow key="stay-leg" leg={stayLeg} from={pos(start)} to={pos(items[0])} t={t} lang={lang} stepFree={stepFree} />);
+        }
+        body.push(renderEntry(seq[s], s));
+        s += 1;
+      }
+    });
+  }
 
   return (
     <div className="dayp">
+      {head}
       {aiSummary && <p className="dayp-summary"><SparkIcon size={14} /> {aiSummary}</p>}
 
-      <ol className="dayt" ref={listRef}>
-        <li className="dayt-start">
-          <span className="dayt-time">{fmtClockLoose(startMin)}</span>
-          <span className="dayt-rail is-end" aria-hidden="true"><HomeIcon size={14} /></span>
-          <span className="dayt-body"><span className="dayt-name">{start?.label ? t('dayws.leaveFrom', { place: start.label }) : t('dayws.leave')}</span></span>
-        </li>
-        {stayLeg && <LegRow leg={stayLeg} from={pos(start)} to={pos(items[0])} t={t} lang={lang} stepFree={stepFree} />}
-        {items.map((it, i) => (
-          <React.Fragment key={keys[i]}>
-            <StopRow
-              rowKey={keys[i]}
-              item={it}
-              n={i + 1}
-              last={i === items.length - 1}
-              time={rows[i] ? fmtClockLoose(rows[i].arriveMin) : ''}
-              dwell={dwellOf ? dwellOf(it) : null}
-              flash={flashIdx === i || focusIdx === i}
-              onMoveUp={() => onMoveUp(i)}
-              onMoveDown={() => onMoveDown(i)}
-              onRemove={() => onRemove(i)}
-              rowRef={(el) => { if (rowRefs) rowRefs.current[i] = el; }}
-              onHoverChange={(on) => onHoverRow?.(on ? i : null)}
-              offPathM={offPath[i] ?? null}
-              city={city}
-              compact={compact}
-              t={t}
-            />
-            {i === lunchAfter && (
-              <li className="dayt-lunch">
-                <span className="dayt-time">{fmtClockLoose(schedule.lunch.startMin)}</span>
-                <span className="dayt-rail" aria-hidden="true"><DiningIcon size={14} /></span>
-                <span className="dayt-body"><span className="dayt-name">{t('dayws.lunchFor', { min: schedule.lunch.endMin - schedule.lunch.startMin })}</span></span>
-              </li>
-            )}
-            {i < items.length - 1 && <LegRow leg={legs[i]} from={pos(it)} to={pos(items[i + 1])} t={t} lang={lang} stepFree={stepFree} />}
-          </React.Fragment>
-        ))}
-        <li className="dayt-end">
-          <span className="dayt-time">{schedule ? fmtClockLoose(schedule.endMin) : ''}</span>
-          <span className="dayt-rail is-end" aria-hidden="true"><ClockIcon size={14} /></span>
-          <span className="dayt-body">
-            <span className="dayt-name">{t('dayws.dayDone')}</span>
-            {schedule?.freeMin >= 45 && <span className="dayt-meta">{t('dayws.freeLeft', { dur: fmtDur(schedule.freeMin) })}</span>}
-          </span>
-        </li>
+      <ol className={`dayt${timed ? '' : ' is-untimed'}${banded ? ' is-bands' : ''}`} ref={listRef}>
+        {body}
       </ol>
 
       {walksBlock}
 
       <div className="dayp-tools" role="toolbar" aria-label={t('dayws.toolbarAria', { n: dayNumber })}>
-        <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={onAddMore}>{t('dayws.addPlaces')}</Button>
+        <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onAdd(null)}>{t('dayws.addPlaces')}</Button>
         <Button size="sm" iconStart={<SparkIcon size={16} />} onClick={onAskCarta}>{t('dayws.askCarta')}</Button>
-        {canOptimize && (
-          <Button size="sm" iconStart={<RouteIcon size={16} />} onClick={onOptimize}>{t('dayws.addReorder')}</Button>
+        {canBestRoute && (
+          <Button size="sm" iconStart={<RouteIcon size={16} />} aria-expanded={asking} onClick={() => setAsking(true)}>{t('dayws.bestRoute')}</Button>
         )}
       </div>
+      {asking && (
+        <div
+          className="dayp-ask"
+          role="group"
+          aria-label={t('dayws.bestRoute')}
+          onKeyDown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); setAsking(false); } }}
+        >
+          <p>{t(banded ? 'dayws.bestRouteAskParts' : 'dayws.bestRouteAsk', { n: dayNumber })}</p>
+          <div className="dayp-ask-acts">
+            <Button variant="secondary" size="sm" ref={keepRef} onClick={() => setAsking(false)}>{t('dayws.bestRouteKeep')}</Button>
+            <Button variant="primary" size="sm" onClick={() => { setAsking(false); onBestRoute(); }}>{t('dayws.bestRouteGo')}</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 /**
  * Undo instead of confirm (carta-design rule N6, T409).

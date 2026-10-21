@@ -99,7 +99,6 @@
   border-radius: 10px;
   margin-bottom: 14px;
 }
-.dayp-empty { text-align: center; padding: 26px 4px 8px; }
 .daya { padding-top: 12px; }
 .daya-empty, .daya-thin {
   font-size: 12.5px;
@@ -197,9 +196,6 @@
 }
 @media (hover: hover) {
   .daya-more:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
-}
-@media (hover: hover) {
-  .daya-add.on:hover { border-color: var(--danger); color: var(--danger); }
 }
 .daya-custom-add {
   display: inline-flex;
@@ -468,12 +464,10 @@
   .day-sw-morebtn:hover { border-color: var(--ink-soft); }
 }
 @media (max-width: 768px) {
-  .day-ws .trip-sheet-grip-hit { padding: 8px 0 6px; }
   .day-ws .trip-topcard { padding: 0 15px 8px; }
   .day-ws .trip-topcard-name { min-height: 0; line-height: 1.3; }
   .day-ws .day-save-status { margin-top: 2px; }
   .day-ws .day-sw { margin-top: 6px; }
-  .day-ws .trip-sheet-scroll { padding-top: 0; }
   .day-ws .dayp { padding-top: 8px; }
 }
 .day-sw-more .dayp-menu { z-index: 6; }
@@ -599,7 +593,6 @@
   box-shadow: none;
 }
 .day-wizard .dayw-search:focus-within { border-color: var(--focus); outline: 2px solid var(--focus); outline-offset: 1px; box-shadow: none; }
-.day-wizard .dayw-search .trip-add-btn { flex: none; min-height: 48px; }
 .dayw-quick { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dayw-note { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .dayw-results { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--surface); overflow: hidden; }
@@ -666,8 +659,6 @@
 .day-ideas-h { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .day-wizard .day-ideas-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 @media (min-width: 700px) { .day-wizard .day-ideas-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.day-wizard .day-ideas-row.on { border-color: var(--select-border); background: var(--select-bg); }
-@media (hover: hover) { .day-wizard .day-ideas-row:hover:not(.on) { border-color: var(--text-3); } }
 .day-wizard .day-ideas-row.on .day-ideas-row-mark { border-color: var(--select-border); background: var(--surface); color: var(--select-ink); }
 .day-wizard .day-ideas-chips { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .day-wizard .day-ideas-chip {
@@ -698,7 +689,6 @@
 .daychat-fail-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dayw-manual .dayex { display: flex; flex-direction: column; gap: var(--space-4); padding: 0; }
 .dayw-manual .dayex-chips { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; padding-block: 2px; }
-.dayw-manual .dayex-chips .ui-chip { flex: none; }
 .dayw-manual .dayex-card.is-picked { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
 .dayw-manual .dayex-card-meta { display: flex; flex-wrap: wrap; column-gap: var(--space-2); row-gap: 2px; font-size: var(--text-label); color: var(--text-2); }
 .dayex-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); margin: var(--space-3) 0 0; padding: 0; list-style: none; }
@@ -707,9 +697,6 @@
 .day-ws { --panel-w: min(620px, 46vw); }
 @media (min-width: 1280px) { .day-ws { --panel-w: min(760px, 52vw); } }
 .day-ws .dayws-map { position: absolute; inset: 0; }
-.dayex-map .trip-map,
-.daymap-card .trip-map,
-.daymap-full .trip-map { left: 0 !important; }
 .day-ws .dayws-panel {
   position: absolute;
   top: 0; left: 0; bottom: 0;
@@ -724,21 +711,8 @@
   border-right: 1px solid var(--border-soft);
   z-index: 2;
 }
-.dayws-head { display: flex; align-items: center; gap: var(--space-2); }
 .dayws-title { margin: 0; font-size: var(--text-headline); font-weight: 600; line-height: var(--leading-tight); color: var(--text); overflow-wrap: anywhere; }
 .day-ws.is-page .dayws-title { font-size: var(--text-title); }
-.dayws-trip-link {
-  align-self: flex-start;
-  min-height: 32px;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--action);
-  font: inherit;
-  font-size: var(--text-label);
-  font-weight: 600;
-  cursor: pointer;
-}
 .dayws-head .day-save-status::before { content: none; }
 .day-ws .day-sw { margin: 0; }
 .dayws-cities { display: flex; flex-wrap: wrap; gap: var(--space-2); }
@@ -758,21 +732,13 @@
 .day-ws.is-page .days-cost.btn { margin: 0; padding-inline: 0; }
 .day-ws.is-page .days-cost .btn-label { flex-direction: row; align-items: baseline; gap: var(--space-2); }
 .day-ws.is-page .days-time > b { font-size: var(--text-title); }
-.days-cost-fig { font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.days-cost-label { font-size: var(--text-caption); color: var(--text-2); }
-@media (hover: hover) { .days-cost:hover .days-cost-label { color: var(--text); text-decoration: underline; } }
-.dayb { display: flex; flex-direction: column; gap: var(--space-1); }
-.dayb-track { position: relative; height: 26px; border-radius: var(--radius-sm); background: var(--surface-sunken); overflow: hidden; }
-.dayb-seg.is-lunch { background: var(--neutral-100); outline: 1px solid var(--border); outline-offset: -1px; }
-.dayb-ticks { position: relative; height: 16px; }
-.daymap-full { position: absolute; inset: 0; }
 .dayp { display: flex; flex-direction: column; gap: var(--space-4); }
 .dayp-summary { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); font-size: var(--text-body); color: var(--text-2); }
 .dayt { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
 .day-ws.is-page .dayt > li { grid-template-columns: 44px 44px minmax(0, 1fr) auto; column-gap: var(--space-2); }
 .dayt-time .dayt-est { display: block; font-weight: 400; }
 .dayt-time { padding-top: 14px; font-size: var(--text-label); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
-.dayt-start, .dayt-end, .dayt-lunch { min-height: 48px; }
+.dayt-start, .dayt-end { min-height: 48px; }
 .dayt-start .dayt-time, .dayt-end .dayt-time, .dayt-lunch .dayt-time { color: var(--text-2); }
 .dayt-rail { position: relative; display: flex; align-items: center; justify-content: center; align-self: stretch; color: var(--text-2); }
 .dayt-start .dayt-rail::before { top: 50%; }
@@ -810,7 +776,6 @@
 .dayt-leg-text { grid-column: 3 / 4; padding-block: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
 .dayt-leg.is-ride .dayt-leg-text { color: var(--text); }
 .dayp-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.dayp-empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding: var(--space-6) var(--space-4); border: 1px dashed var(--border); border-radius: var(--radius-card); text-align: center; }
 .day-ws .dayws-stay-btn { box-shadow: none; border: 1px solid var(--border-soft); background: var(--surface); min-height: var(--tap); }
 .dayk-sheet .dayws-tips-body { max-height: none; padding: 0; }
 .dayk-import { display: flex; flex-direction: column; gap: var(--space-3); }
@@ -903,7 +868,6 @@
   .day-wizard .guide-recap-chip.is-link { min-height: var(--tap); }
 }
 @media (max-width: 768px) {
-  .day-wizard .wiz-recap-inbody .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .day-wizard .wiz-recap-inbody .guide-recap-inner::-webkit-scrollbar { display: none; }
   .day-wizard .wiz-recap-inbody .guide-recap-chip,
   .day-wizard .wiz-recap-inbody .guide-recap-label { flex: none; white-space: nowrap; }
@@ -967,13 +931,6 @@
   font-size: 12.5px;
   line-height: 1.45;
   color: var(--ink-soft);
-}
-.dayp-empty-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 9px;
-  margin-top: 16px;
 }
 .daya-search input { flex: 1; min-width: 0; border: none; background: none; font-size: 14px; }
 .daya-search-clear {
@@ -1239,31 +1196,9 @@
 }
 .day-wizard .day-ideas-chip-x { width: var(--tap); height: var(--tap); flex: none; }
 .dayw-manual .dayex-chips::-webkit-scrollbar { display: none; }
-.dayws-head-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .dayws-head .day-save-status { flex: none; display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--tap); font-size: var(--text-label); color: var(--text-2); }
 .days-time { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
-.days-cost .btn-label { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; white-space: normal; }
-.days-cost-fig .money-est { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
 .days-route.is-checked svg { color: var(--status-success); }
-.dayb-ticks > span { position: absolute; top: 0; transform: translateX(-50%); font-size: var(--text-caption); font-variant-numeric: tabular-nums; color: var(--text-3); }
-.dayb-ticks > span:first-child { transform: none; }
-.daymap-card {
-  position: relative;
-  height: 180px;
-  flex: none;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  isolation: isolate;
-}
-.daymap-sheet .fsheet-body { position: relative; flex: 1 1 auto; padding: 0; overflow: hidden; }
-.dayt > li {
-  position: relative;
-  display: grid;
-  grid-template-columns: 52px 48px minmax(0, 1fr) auto;
-  column-gap: var(--space-3);
-  align-items: start;
-}
 .dayt-rail::before {
   content: '';
   position: absolute;
@@ -1294,19 +1229,7 @@
   font-variant-numeric: tabular-nums;
 }
 .dayt-leg > .dayt-link { grid-column: 4 / 5; align-self: center; padding-right: var(--space-2); }
-.dayp-empty h2 { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
-.dayp-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin-top: var(--space-2); }
 .dayr-days-wrap { border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
-.dayr-day-h span { font-size: var(--text-label); color: var(--text-2); }
-.dayr-places li {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  min-width: 0;
-  font-size: var(--text-body);
-  color: var(--text);
-  counter-increment: dayr;
-}
 .dayr-carta { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
 .dayw-rail-sheet .plan-total-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .dayw-fork-card .card-title { font-size: var(--text-title); }
@@ -1360,4 +1283,126 @@
 .dayx-gmaps-h { flex: 1 0 100%; margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .day-wizard .guide-foot-summary { flex: 1 1 auto; min-width: 0; }
 .dayw-rail-btn.btn { max-width: 100%; min-width: 0; overflow: hidden; }
-.dayw-rail-btn.btn > :where(.btn-icon, .btn-label, .btn-spinner) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── T501: the planned day (roadmap 1.3d with 1.17) ───────────────────────
+   From 1024 px the day is a column beside the map with the cost bar fixed
+   at its foot; below it the map fills the screen behind the shared map
+   drawer (T500's MapDrawer), whose strip always shows the day's figure. */
+.day-ws.is-desk {
+  display: grid;
+  grid-template-columns: var(--panel-w) minmax(0, 1fr);
+}
+.day-ws .dayws-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-6) var(--space-8);
+}
+.day-ws.is-desk .dayws-map { position: relative; inset: auto; min-width: 0; min-height: 0; }
+.day-ws .dayws-map .trip-map { left: 0 !important; }
+
+/* Phone and tablet: the page bar, then the map under the drawer. */
+.day-ws.is-drawer { display: flex; flex-direction: column; background: var(--surface-page); }
+.dayws-stage { position: relative; flex: 1 1 auto; min-height: 0; }
+.day-ws.is-drawer .dayws-map.is-under { position: absolute; inset: 0; }
+.dayws-drawer-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-4) calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
+}
+.day-ws.is-drawer .dayx-gmaps .btn,
+.day-ws.is-drawer .dayp-tools .btn { min-height: var(--tap-main); }
+.day-ws.is-drawer .day-sw-btn { width: var(--tap-main); height: var(--tap-main); }
+
+/* The head: the day's name and its save state on one line. */
+.dayws-titlebar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.dayws-titlebar .dayws-title { min-width: 0; }
+.dayws-fromtrip { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+
+/* The drawer's strip: the day and its figure, a tap from the receipt. */
+.day-strip { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-width: 0; padding-left: var(--space-4); }
+.day-strip-text { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; }
+.day-strip-title,
+.day-strip-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.day-strip-title { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.day-strip-sub { font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.day-strip .dcb-fig { align-items: flex-end; text-align: right; }
+
+/* The cost bar at the foot of the day (desktop): the trip first inside a
+   trip (owner T492-f), then the day; each part opens what it holds. */
+.day-cost-bar {
+  flex: none;
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.day-cost-bar.has-trip .dcb-trip.btn { border-right: 1px solid var(--border-soft); }
+.day-cost-bar .dcb-part.btn:disabled { background: transparent; color: var(--text); }
+.day-cost-bar .dcb-part.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+@media (hover: hover) {
+  .day-cost-bar .dcb-part.btn:not(:disabled):hover { background: var(--surface-hover); }
+}
+.dcb-lbl { flex: none; font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
+.dcb-fig { display: flex; flex-direction: column; min-width: 0; }
+.dcb-n { font-size: var(--text-lead); font-weight: 700; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dcb-unit { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.dcb-open { margin-left: auto; display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); font-weight: 600; color: var(--action); white-space: nowrap; }
+
+/* The compact receipt (a sheet). */
+.day-receipt { display: flex; flex-direction: column; gap: var(--space-4); }
+.day-receipt-trip { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
+.day-receipt-trip-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.day-receipt-life.btn { align-self: flex-start; }
+
+/* The day's head: "Your day" and the quiet Detail control. */
+.dayp-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.dayp-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
+.dayp-detail { position: relative; flex: none; }
+.dayp-detail-lbl { color: var(--text-2); font-weight: 400; }
+.dayp-menu-gap { display: inline-block; width: 16px; }
+
+/* The parts of the day: a quiet head over a group of rows, never a card,
+   never a colour; "Add" for that part at its end. */
+.day-ws .dayt > li.dayt-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+}
+.dayt-band-h { margin: 0; display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.dayt-band-range { font-weight: 400; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.dayt.is-bands .dayt-meal .dayt-name { font-size: var(--text-label); color: var(--text-2); }
+
+/* List and Parts of the day carry no clock: the time column goes. */
+.day-ws .dayt.is-untimed > li { grid-template-columns: 48px minmax(0, 1fr) auto; }
+.day-ws.is-page .dayt.is-untimed > li { grid-template-columns: 44px minmax(0, 1fr) auto; }
+.dayt.is-untimed .dayt-time { display: none; }
+.dayt.is-untimed .dayt-leg > .dayt-link { grid-column: 3 / 4; }
+.dayt.is-untimed .dayt-start .dayt-body,
+.dayt.is-untimed .dayt-end .dayt-body,
+.dayt.is-untimed .dayt-lunch .dayt-body { padding-top: var(--space-3); }
+
+/* A ticket on a stop: a price Carta knows, or that there is one. */
+.dayt-ticket { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
+
+/* An empty day: the parts (or one line) and one primary. */
+.dayp-empty-line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
+
+/* "Best route" asks first (owner T492-e): one sentence, two buttons. */
+.dayp-ask { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.dayp-ask-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* The places to add, in the day's column or the drawer. */
+.dayws-add { display: flex; flex-direction: column; gap: var(--space-4); }
+.dayws-add-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.dayws-add-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }

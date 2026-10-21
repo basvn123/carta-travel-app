@@ -25,8 +25,7 @@
    phone chrome in 24-destination-workspace.css). */
 .app-header-brand,
 .header-nav-item,
-.bottom-nav-item,
-.plan-chooser-item { text-decoration: none; }
+.bottom-nav-item { text-decoration: none; }
 .app-header-brand { color: var(--text); min-height: var(--tap); }
 
 /* The count chip (carta-design "Count chip"): the shortlist's size after
@@ -63,14 +62,16 @@
   background: var(--text);
 }
 .header-nav-item.active .nav-dot { background: var(--select-ink); }
-.bottom-nav-plus { position: relative; }
-.bottom-nav-plus .nav-dot {
+/* On the phone's Plan icon the dot sits on the glyph's corner with a white
+   ring so it reads over the selected pill too. */
+.bottom-nav-icon .nav-dot {
   position: absolute;
-  top: var(--space-1);
-  right: var(--space-1);
+  top: calc(-1 * var(--space-1));
+  right: calc(-1 * var(--space-1));
   box-sizing: content-box;
   border: 2px solid var(--surface);
 }
+.bottom-nav-item.active .bottom-nav-icon .nav-dot { background: var(--select-ink); }
 
 /* The settings line (carta-design "Settings line"): one band under the
    header on Explore, Destinations and the Trip planner. A timetable row:
@@ -138,15 +139,6 @@
   outline: 2px solid var(--focus);
   outline-offset: -2px;
 }
-.settings-currency {
-  display: inline-flex;
-  align-items: center;
-  flex: none;
-  padding: 0 var(--space-3);
-  font-size: var(--text-label);
-  color: var(--text-2);
-  white-space: nowrap;
-}
 .settings-line-extra {
   display: flex;
   align-items: center;
@@ -160,11 +152,9 @@
 @container settings (max-width: 760px) {
   .settings-origin-city,
   .settings-part-lifestyle .settings-part-label,
-  .settings-part-language .settings-part-label,
   .settings-part-dates .settings-part-label { display: none; }
 }
 @container settings (max-width: 560px) {
-  .settings-currency,
   .settings-vibe { display: none; }
 }
 @container settings (max-width: 440px) {
@@ -330,13 +320,6 @@
    (DIRECTION.md part 9, "no tint on the Lifestyle door"). */
 .app-header-brand .brand-name { color: var(--text); }
 .header-friends-btn svg { color: var(--text-2); }
-.account-avatar-btn { box-shadow: none; }
-.account-avatar {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-.account-avatar-btn.on .account-avatar { border-color: var(--select-border); }
 .lifestyle-btn {
   border-color: var(--border);
   background: transparent;
@@ -700,9 +683,7 @@ html [data-focus-quiet]:focus-visible { outline-color: transparent; }
    the 32 to 38 px they had). Row T381-d. */
 @media (pointer: coarse) {
   .header-nav-item,
-  .account-avatar-btn,
   .account-signin-btn { min-height: var(--tap); }
-  .account-avatar-btn { min-width: var(--tap); }
 }
 
 /* Safe areas (brief V5-4). The header takes the top and side insets, the bar
@@ -722,9 +703,6 @@ html [data-focus-quiet]:focus-visible { outline-color: transparent; }
     padding-left: max(2px, env(safe-area-inset-left, 0px));
     padding-right: max(2px, env(safe-area-inset-right, 0px));
   }
-  /* Room for the longest label (Dutch "Bestemmingen") at 360 px: the labels
-     shrink before they truncate. */
-  .bottom-nav-plus { margin-left: 2px; margin-right: 2px; }
 }
 
 /* The on-screen keyboard (row T390-d, DIRECTION.md part 7): while a text
@@ -818,18 +796,8 @@ html.kbd-open .bottom-nav { display: none; }
    T426 (roadmap 1.2): the shell on the Lagoon kit
    -------------------------------------------------------------------------- */
 
-/* Get a pass is a kit secondary (Button size sm). Its old class
-   (.header-pricing-btn) still carries rules in 16-auth, 23, 24 and 26; those
-   rules no longer match anything and go with their own surfaces. The header
-   Friends button went in T466: Friends has one door, in Account. */
-.shell-pass-btn { white-space: nowrap; }
-@media (pointer: coarse) {
-  .shell-pass-btn { min-width: var(--tap); }
-}
-/* The narrowest phones keep the glyph alone; the name stays in aria-label. */
-@media (max-width: 379px) {
-  .shell-pass-btn .btn-label { display: none; }
-}
+/* "Get a pass" left the header (T496, owner T473), and every rule for it
+   and its older class .header-pricing-btn went with it (T485-j, T371-e). */
 
 /* One gutter on every tab (T427): the header, the settings line and the
    content start and end on the same line from 769 px. */
@@ -846,7 +814,6 @@ html.kbd-open .bottom-nav { display: none; }
 @media (min-width: 769px) {
   .settings-line-parts { flex: 1 1 auto; }
   .settings-line-parts > .settings-slot { flex: 1 1 0; min-width: 0; }
-  .settings-line-parts > .settings-slot-language { flex: 0 0 auto; }
   .settings-line-parts > .settings-slot .origin-picker.is-settings { flex: 1 1 auto; min-width: 0; }
   .settings-line .settings-part {
     flex: 1 1 auto;
@@ -870,5 +837,355 @@ html.kbd-open .bottom-nav { display: none; }
     text-overflow: ellipsis;
   }
   .settings-line-parts > .settings-slot:first-child .settings-part { padding-left: 0; }
-  .settings-currency { flex: none; padding: 0 0 0 var(--space-4); }
+}
+
+/* --------------------------------------------------------------------------
+   T496 (roadmap 1.3a and 2.18): the app shell and the three places
+   -------------------------------------------------------------------------- */
+
+/* The desktop header: the logo, Explore, Plan and My trips after it, the
+   account icon at the far right. One row of 64 px; every place is a --tap
+   target with its icon and its word, the one on screen in the selected tint. */
+@media (min-width: 769px) {
+  .app-header {
+    flex-wrap: nowrap;
+    gap: var(--space-5);
+    min-height: 64px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .app-header-brand { gap: var(--space-2); }
+  .app-header-brand .brand-name {
+    font-size: var(--text-title);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .header-nav { gap: var(--space-1); }
+  .header-nav-item,
+  .header-nav-item.active {
+    min-height: var(--tap);
+    margin: 0;
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-control);
+    font-size: var(--text-label);
+    font-weight: 600;
+  }
+  .header-nav-item { color: var(--text-2); }
+  .header-nav-item.active { color: var(--select-ink); background: var(--select-bg); }
+  .header-nav-icon { display: inline-block; }
+  .header-nav-label { display: inline; }
+  .header-nav-item .nav-count { margin-left: var(--space-1); }
+}
+@media (min-width: 769px) and (hover: hover) {
+  .header-nav-item:not(.active):hover { color: var(--text); background: var(--surface-sunken); }
+}
+.header-nav-item:focus-visible,
+.app-header-brand:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-control);
+}
+
+/* The account icon: a 44 px round door around a 32 px disc, the person
+   glyph for a guest and the initial when signed in. On Account it carries
+   the selected tint; no word beside it (1.3a D1, item 6). */
+.account-door {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: var(--radius-pill);
+  color: var(--text-2);
+  text-decoration: none;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.account-door-disc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-2);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.account-door-disc.has-initial { color: var(--text); }
+@media (hover: hover) {
+  .account-door:not(.on):hover { background: var(--surface-sunken); }
+  .account-door:not(.on):hover .account-door-disc { background: var(--surface); }
+}
+.account-door.on { background: var(--select-bg); }
+.account-door.on .account-door-disc { background: var(--surface); color: var(--select-ink); }
+.account-door:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* The skip link (1.3a, landmarks): first in the tab order, out of sight
+   until it has focus, then a kit secondary in the top corner. */
+.skip-link {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + var(--space-2));
+  left: var(--space-2);
+  z-index: var(--z-toast);
+  transform: translateY(calc(-100% - var(--space-5)));
+}
+.skip-link:focus,
+.skip-link:focus-visible { transform: none; }
+
+/* A phone has no header row: with nothing above the settings band on Plan,
+   My trips and Account, the bar keeps only the safe area and loses its rule. */
+@media (max-width: 768px) {
+  .top-bar:not(:has(.settings-line)) { border-bottom: 0; }
+}
+
+/* The bottom nav's slots: the icon in a box the selected pill fits, the
+   initial in a 24 px disc when signed in. */
+.bottom-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.bottom-nav-initial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: 1;
+}
+.bottom-nav-item.active .bottom-nav-initial { background: var(--surface); color: var(--select-ink); }
+.bottom-nav-item:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+/* The settings line on a phone (1.3a T1): one sentence for the dates and
+   the party, one button for the bed, a hairline between them. */
+.settings-line-phone { gap: 0; padding: 0 var(--space-2); }
+.settings-summary,
+.settings-bed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.settings-summary { flex: 1 1 auto; min-width: 0; }
+.settings-summary-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+.settings-summary-pre { color: var(--text-2); }
+.settings-summary-chev,
+.settings-bed-icon { flex: none; color: var(--text-2); }
+.settings-bed { flex: none; margin-left: var(--space-1); }
+.settings-bed::before {
+  content: "";
+  align-self: center;
+  width: 1px;
+  height: var(--space-5);
+  margin-right: var(--space-2);
+  background: var(--border-soft);
+}
+.settings-summary[aria-expanded="true"] { background: var(--surface-sunken); }
+@media (hover: hover) {
+  .settings-summary:hover,
+  .settings-bed:hover { background: var(--surface-sunken); }
+}
+.settings-summary:focus-visible,
+.settings-bed:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+/* "Prices for" drops first on a phone, so the dates and the party never
+   cut off (T502: at 390 px it ended in "2 ..."); the bed always stays. */
+@container settings (max-width: 440px) {
+  .settings-summary-pre { display: none; }
+}
+
+/* The settings sheet (1.3a T2) and the date popover share their rows: a
+   section label over the control, a Nights and a People stepper on one line
+   with their word, then one Done on the phone. */
+.settings-sheet-sec + .settings-sheet-sec { margin-top: var(--space-5); }
+.settings-sheet-h {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  margin-top: var(--space-3);
+}
+.settings-sheet-sec.settings-row { margin-top: var(--space-5); }
+.settings-row-label,
+.settings-sheet-h.settings-row-label {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--text);
+}
+.settings-sheet .origin-picker { display: block; }
+.settings-sheet .origin-btn {
+  justify-content: space-between;
+  width: 100%;
+  max-width: none;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+}
+/* The airport list opens in the sheet's own flow, not as a popover over
+   it, so a keyboard never covers the field (1.3a T5). */
+.settings-sheet .origin-pop {
+  position: static;
+  width: auto;
+  max-width: none;
+  max-height: 50dvh;
+  margin-top: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  box-shadow: none;
+}
+.settings-sheet:has(input:focus) { max-height: calc(100dvh - env(safe-area-inset-top, 0px)); }
+.settings-done { margin-top: var(--space-6); min-height: var(--tap-main); }
+html.kbd-open .settings-done { display: none; }
+
+/* Plan with nothing in progress (PlanStart.jsx): "Plan something new" and
+   two equal tiles, each a drawing over its name and one line. Stacked on a
+   phone, side by side from 600 px, in a calm centred column. */
+.plan-start {
+  position: absolute;
+  top: var(--filter-h);
+  left: 0;
+  right: 0;
+  bottom: var(--bottom-nav-h);
+  overflow-y: auto;
+  background: var(--surface-page);
+}
+.plan-start-wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--gutter) var(--space-8);
+}
+.plan-start-h {
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.plan-start-tiles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.plan-start-tile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "art art" "text chev";
+  align-items: end;
+  gap: var(--space-4) var(--space-3);
+  min-height: var(--tap-main);
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+.plan-start-art {
+  grid-area: art;
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  aspect-ratio: 132 / 64;
+}
+.pca-line { fill: none; stroke: var(--text-3); stroke-width: 2; stroke-linecap: round; }
+.pca-stop { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
+.pca-stop-end { fill: var(--text); }
+.pca-bar { fill: var(--surface-sunken); stroke: var(--border); stroke-width: 1; }
+.plan-start-text {
+  grid-area: text;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.plan-start-title {
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+}
+.plan-start-sub {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.plan-start-chev { grid-area: chev; color: var(--text-2); }
+@media (hover: hover) {
+  .plan-start-tile:hover { border-color: var(--text-3); }
+}
+.plan-start-tile:active { background: var(--surface-sunken); }
+.plan-start-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.plan-start-saved {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  margin-top: var(--space-4);
+  color: var(--action);
+  font-size: var(--text-body);
+  font-weight: 600;
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .plan-start-saved:hover { text-decoration: underline; }
+}
+.plan-start-saved:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+@media (min-width: 600px) {
+  .plan-start-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+}
+@media (min-width: 769px) {
+  .plan-start-wrap { padding-top: var(--space-8); }
+  .plan-start-tile { padding: var(--space-6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-door, .account-door-disc,
+  .settings-summary, .settings-bed, .plan-start-tile { transition: none; }
+}
+
+/* Account carries the currency with the language (T496, owner T485-g). */
+.account-currency {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
 }

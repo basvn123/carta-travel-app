@@ -101,20 +101,23 @@ function useNearViewport(fn) {
   return ref;
 }
 
-/** The add button a card and a row share. */
+/** The add button a card and a row share: the card's labelled action (T501,
+ *  roadmap 1.3d), under the text and never on the photograph. Picked, it
+ *  reads "In your day" with a tick on the light selected tint. */
 function AddButton({ row, picked, onToggle, t }) {
   if (!row.add) return null;
   return (
     <button
+      type="button"
       className={`dayex-add${picked ? ' on' : ''}`}
       onClick={() => onToggle(row)}
       aria-pressed={picked}
       aria-label={picked
         ? t('dayex.removeFromDay', { name: row.name })
         : t('dayex.addToDay', { name: row.name })}
-      title={picked ? t('dayex.inYourDay') : t('dayex.addToDayShort')}
     >
       {picked ? <CheckIcon size={18} /> : <PlusIcon size={18} />}
+      <span className="dayex-add-label">{picked ? t('dayex.inYourDay') : t('dayex.addToDayShort')}</span>
     </button>
   );
 }

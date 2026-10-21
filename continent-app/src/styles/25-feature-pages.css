@@ -627,13 +627,17 @@
   color: var(--ink-soft);
 }
 
-/* The region page (T450 on the kit): one full-screen record, a hero from its
-   best-rated member, the kit row cards with the Score, neighbours as
-   buttons. Tokens only. */
+/* The region page (T450 on the kit; T498 to the detail page grammar,
+   roadmap 1.3b section E): the photo first, the name, a fact block with
+   the page's one primary (a sticky side column from 1024 px, inside the
+   1180 px reading cap), a rail per layer, then compact rows for the towns
+   and the unscored items, neighbours as door buttons. Tokens only. */
 .rgnp {
   position: fixed;
   inset: 0;
-  z-index: calc(var(--z-page) + 100);
+  /* Over the country page (+10), under a destination page (+40) it opens
+     (T498: a town here opens over the region, and closing it lands back). */
+  z-index: calc(var(--z-page) + 20);
   display: flex;
   flex-direction: column;
   background: var(--surface-page);
@@ -641,52 +645,126 @@
 /* The bar stays put (PageBar, T474); the record scrolls under it. */
 .rgnp-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .rgnp-inner {
-  max-width: 860px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: var(--space-4) var(--space-5) var(--space-8);
+  padding: var(--space-3) var(--gutter) var(--space-8);
 }
+.rgnp-grid { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
+.rgnp-grid > * { min-width: 0; }
+
+/* The photo, 3:2, at most 40 percent of a phone's height and 60 on desktop;
+   its credit under it in --text-3, never on it. */
+.rgnp-hero { margin: 0; }
+.rgnp-hero-frame {
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  aspect-ratio: 3 / 2;
+  max-height: 40vh;
+  max-height: 40dvh;
+}
+.rgnp-hero-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.rgnp-credit {
+  margin-top: var(--space-1);
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-3);
+  overflow-wrap: anywhere;
+}
+.rgnp-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.rgnp-credit a:hover { color: var(--text-2); }
+
 /* What kind of region and where, under its name (T474), as an item page's
    head reads. */
-.rgnp-kind {
+.rgnp-head { display: flex; flex-direction: column; gap: var(--space-1); }
+.rgnp h1 {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-wrap: balance;
+}
+.rgnp-kind,
+.rgnp-sub {
   margin: 0;
   font-size: var(--text-body);
   color: var(--text-2);
 }
-.rgnp h1 {
-  margin: var(--space-2) 0 var(--space-1);
-  font-size: var(--text-headline);
-  font-weight: 700;
-  line-height: var(--leading-tight);
+.rgnp-missing { display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* The fact block: label over value, hairlines between, no card and no
+   colour (carta-design "Detail page grammar"), then the one primary. */
+.rgnp-side { display: flex; flex-direction: column; gap: var(--space-4); }
+.rgnp-facts { margin: 0; }
+.rgnp-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border-soft);
+}
+.rgnp-fact:first-child { border-top: 0; padding-top: 0; }
+.rgnp-fact dt { font-size: var(--text-caption); color: var(--text-2); }
+.rgnp-fact dd {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--text);
 }
-.rgnp-hero {
-  margin: var(--space-4) 0 var(--space-5);
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-  aspect-ratio: 21 / 9;
-}
-.rgnp-hero-img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.rgnp-sect {
-  margin: var(--space-6) 0 var(--space-3);
+.rgnp-unit { font-size: var(--text-body); font-weight: 400; color: var(--text-2); }
+.rgnp-plan { min-height: var(--tap-main); }
+
+/* A rail's tile and the compact rows: the kit's Card; the photo-less slot
+   is the flag-and-name placeholder, sized to the 72 px row photo. */
+.rgnp-tile .card-title { font-size: var(--text-lead); }
+.rgnp-row .hero-blank { gap: 3px; }
+.rgnp-row .hero-blank-mark { font-size: var(--text-label); }
+.rgnp-sect-head {
+  margin: 0 0 var(--space-3);
   font-size: var(--text-title);
   font-weight: 600;
+  line-height: var(--leading-tight);
   color: var(--text);
 }
 .rgnp-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.rgnp-card .card-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.rgnp-card-noimg { display: block; width: 100%; height: 100%; background: var(--surface-sunken); }
-.rgnp-card.rgnp-listed { border-style: dashed; }
-.rgnp-card-sub { font-size: var(--text-body); color: var(--text-2); }
+.rgnp-list > li { display: flex; min-width: 0; }
+.rgnp-list > li > .card { flex: 1 1 auto; min-width: 0; }
 .rgnp-neigh { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-@media (max-width: 768px) {
-  .rgnp-inner { padding: var(--space-3) var(--space-4) var(--space-8); }
-  .rgnp h1 { font-size: var(--text-title); }
-  .rgnp-hero { aspect-ratio: 16 / 9; border-radius: var(--radius-control); }
+
+@media (min-width: 769px) {
+  .rgnp-inner { padding: var(--space-4) var(--space-6) var(--space-8); }
+  .rgnp h1 { font-size: var(--text-headline); }
+  .rgnp-hero-frame { max-height: 60vh; max-height: 60dvh; }
+}
+/* Two columns from 1024 px: the photo across the cap, then the record on
+   the left and the fact block as a sticky side column on the right. The
+   side spans every row, so its height never stretches a row beside it. */
+@media (min-width: 1024px) {
+  .rgnp-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    column-gap: var(--space-7);
+    row-gap: var(--space-6);
+    align-items: start;
+  }
+  .rgnp-grid > * { grid-column: 1; }
+  .rgnp-grid > .rgnp-hero { grid-column: 1 / -1; }
+  .rgnp-grid > .rgnp-side {
+    grid-column: 2;
+    grid-row: 2 / span 40;
+    position: sticky;
+    top: var(--space-4);
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -1515,63 +1593,34 @@
    the mouse and a finger keep talking to the map exactly as before. */
  /* display:grid beats the hidden attr otherwise */
 
-/* --- country pages (PLAN.md C9; T450 on the kit) ------------------------- */
-.cpage {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  overflow-y: auto;
-  background: var(--surface-page);
-}
-.cpg-bar {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  padding: var(--space-2) var(--space-4);
-  background: var(--surface-page);
-}
-.cpg-wrap {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 clamp(var(--space-4), 4vw, var(--space-7)) var(--space-8);
-}
+/* --- country pages (PLAN.md C9; T450 on the kit; T498 a real page) ------ */
+/* The page wears the region page's grammar (.rgnp: the page bar, the 1180 px
+   cap, the sticky fact column from 1024 px); these rules are its own parts.
+   It sits under a region or destination page it opens (+20, +40). */
+.rgnp.cpg-page { z-index: calc(var(--z-page) + 10); }
 .cpg-hero {
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-card);
   background: var(--surface-sunken);
-  height: clamp(240px, 32vw, 400px);
+  aspect-ratio: 3 / 2;
+  max-height: 40vh;
+  max-height: 40dvh;
+  width: 100%;
 }
 .cpg-hero .dgal { position: absolute; inset: 0; }
-.cpg-head { margin: var(--space-5) 0 var(--space-4); }
 .cpg-name {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   margin: 0;
-  font-size: var(--text-headline);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  color: var(--text);
 }
-.cpg-line { margin: var(--space-2) 0 0; font-size: var(--text-lead); color: var(--text-2); max-width: 60ch; }
-.cpg-keys {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-7);
-  margin: 0 0 var(--space-5);
-}
-.cpg-key { margin: 0; min-width: 0; }
-.cpg-key dt { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
-.cpg-key dd { margin: 2px 0 0; font-size: var(--text-lead); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
-.cpg-unit { font-weight: 400; color: var(--text-2); }
-.cpg-doors { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-6); }
-.cpg-rails { display: flex; flex-direction: column; gap: var(--space-6); }
-@media (max-width: 768px) {
-  .cpg-hero { height: auto; aspect-ratio: 4 / 3; border-radius: var(--radius-control); }
-  .cpg-name { font-size: var(--text-title); }
+.cpg-line { margin: 0; font-size: var(--text-lead); line-height: var(--leading-body); color: var(--text-2); max-width: var(--measure); }
+.cpg-months { margin-top: var(--space-2); }
+.cpg-fact-text { font-weight: 400; }
+.cpg-every { align-self: flex-start; }
+@media (min-width: 769px) {
+  .cpg-hero { max-height: 60vh; max-height: 60dvh; }
 }
 
 /* --- search hints and suggestions (PLAN.md B2) --------------------------- */

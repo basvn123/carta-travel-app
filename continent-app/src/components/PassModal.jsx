@@ -9,18 +9,23 @@ import { resumeYearly } from '../lib/billing.js';
 import { CheckIcon, CloseIcon } from './Icons.jsx';
 import { Button, Chip, IconButton } from './ui/index.js';
 import { TermsOfService } from './TermsOfService.jsx';
+import {
+  REASON_COPY, SOFT, initialPick, FAIL_KEY, PENDING_PASS_KEY,
+} from '../lib/passMoments.js';
 import '../styles/71-pass.css';
 
 /**
  * The pass panel (T460): built to be decided in one look.
  *
- *   1. A heading that names the moment (a spent allowance, an export, a
- *      second trip), and a line under it only where it reassures.
- *   2. Two plans as one radio choice: Yearly, which renews and is
- *      recommended, and the Trip Pass, paid once for 60 days. The billed
+ *   1. A heading that names what the Trip Pass gives at this moment, with
+ *      the full name (roadmap 1.15 point 5, T497), and a line under it with
+ *      the price and the days from pricing.js.
+ *   2. Two plans as one radio choice: the Trip Pass, paid once for 60 days,
+ *      chosen at a paid moment (T488-g), and Yearly, which renews. The billed
  *      amount is the large figure; the monthly figure is small and only ever
  *      beside it, never instead of it.
- *   3. What the chosen plan adds, in plain numbers, once.
+ *   3. What the plan adds, in plain numbers, once, only where no line under
+ *      the heading says it already.
  *   4. One primary, "Continue to payment". Stripe's page carries the order
  *      button the law words ("Pay" or "Subscribe") and the withdrawal waiver
  *      tick box (checkout function, consent_collection).
@@ -29,33 +34,7 @@ import '../styles/71-pass.css';
  *
  * Free is a line, not a card: it is what the traveller already has.
  */
-const REASON_COPY = {
-  plans:     { heading: 'pass.headingPlans' },
-  ground:    { heading: 'pass.headingGround' },
-  export:    { heading: 'pass.headingExport',    sub: 'pass.subExport' },
-  import:    { heading: 'pass.headingImport',    sub: 'pass.subImport' },
-  share:     { heading: 'pass.headingShare',     sub: 'pass.subShare' },
-  save:      { heading: 'pass.headingSave',      sub: 'pass.subSave' },
-  plansLow:  { heading: 'pass.headingPlansLow' },
-  celebrate: { heading: 'pass.headingCelebrate' },
-  expiring:  { heading: 'pass.headingExpiring' },
-};
-
-const FAIL_KEY = {
-  auth: 'pass.errSignIn',
-  no_auth_config: 'pass.errSignIn',
-  no_stripe: 'pass.errUnavailable',
-  no_price: 'pass.errUnavailable',
-  bad_tier: 'pass.errGeneric',
-  stripe_error: 'pass.errGeneric',
-  pass_max: 'pass.errMax',
-  subscribed: 'pass.errSubscribed',
-  quota_check: 'pass.errUnavailable',
-  network: 'pass.errNetwork',
-};
-
-/** A guest's chosen plan, kept through sign-in (Google leaves the page). */
-export const PENDING_PASS_KEY = 'carta.pendingPass';
+export { PENDING_PASS_KEY };
 
 export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedIn, initialTier = '' }) {
   const { t, lang } = useI18n();
@@ -65,11 +44,11 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
   // Cancelled with paid time left: the answer is to keep it, not to buy a
   // second subscription beside it.
   const cancelling = !!(entitlement?.subscription?.live && entitlement?.subscription?.cancelling);
-  // The yearly plan is offered first and chosen by default; a Trip Pass
-  // holder is offered the switch, a free traveller the better value.
-  // A Trip Pass running out is offered more days first; everyone else sees
-  // the yearly plan chosen.
-  const [pick, setPick] = useState(initialTier === 'trip' || (current === 'trip' && reason === 'expiring') ? 'trip' : 'year');
+  const [pick, setPick] = useState(() => initialPick(reason, current, initialTier));
+  // The recommended mark only where the sheet itself recommends: an offer
+  // nobody asked for. At a paid moment the Trip Pass is chosen, and a chip on
+  // the other plan would argue with the choice the sheet just made.
+  const recommend = SOFT.has(reason);
   const [busy, setBusy] = useState(false);
   const [failCode, setFailCode] = useState('');
   const [termsOpen, setTermsOpen] = useState(false);
@@ -78,7 +57,15 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
   useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef, enabled: !termsOpen });
 
   const copy = REASON_COPY[reason] || {};
-  const heading = t(copy.heading || 'pass.heading');
+  // Every figure in the heading and the line under it comes from pricing.js.
+  const vars = {
+    price: formatPrice(TIERS.trip.priceCents, locale),
+    days: TIERS.trip.periodDays,
+    n: reason === 'plans' ? TIERS.trip.aiPlans : TIERS.trip.grounded,
+  };
+  // A pass holder who used up the pass's own plans has no free plans to name.
+  const headingKey = reason === 'plans' && current !== 'free' ? 'pass.headingPlansUsed' : copy.heading;
+  const heading = t(headingKey || 'pass.heading', { n: TIERS.free.aiPlans });
   const left = daysLeft(entitlement?.expiresAt);
   const fmtDate = (iso) => {
     try { return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso)); } catch { return ''; }
@@ -113,12 +100,12 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
     ground: t('pass.addSearches', { n: plan.grounded }),
     export: t('pass.addExports'),
     save: t('pass.addTrips'),
-    share: t('pass.addTogether'),
     import: t('pass.addImport'),
   };
-  const LEAD = { plansLow: 'plans', celebrate: 'save', expiring: 'plans' };
-  const first = ADD[reason] ? reason : LEAD[reason] || 'plans';
-  const adds = [first, ...['plans', 'ground', 'export', 'save', 'share', 'import'].filter((k) => k !== first)]
+  // The list only where no line under the heading says what the pass adds:
+  // asking for the prices, an offer, a pass running out.
+  const first = ADD[reason] ? reason : 'plans';
+  const adds = copy.sub ? [] : [first, ...['plans', 'ground', 'export', 'save', 'import'].filter((k) => k !== first)]
     .map((k) => ADD[k]);
 
   // What the traveller holds now, in one line.
@@ -144,7 +131,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
           <h2 className="pass-title" id="pass-title">{heading}</h2>
           <IconButton ref={closeRef} label={t('shape.close')} onClick={onClose}><CloseIcon size={16} /></IconButton>
         </div>
-        {copy.sub && <p className="pass-sub">{t(copy.sub)}</p>}
+        {copy.sub && <p className="pass-sub">{t(copy.sub, vars)}</p>}
         {holding && <p className="pass-holding">{holding}</p>}
 
         {subscribed ? (
@@ -158,7 +145,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
         ) : (
           <>
             <div className="pass-plans" role="radiogroup" aria-label={t('pass.choose')}>
-              {['year', 'trip'].map((id) => {
+              {['trip', 'year'].map((id) => {
                 const tier = TIERS[id];
                 const on = pick === id;
                 const recurring = isRecurring(id);
@@ -183,7 +170,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
                     <span className="pass-plan-body">
                       <span className="pass-plan-top">
                         <span className="pass-plan-name">{t(tier.labelKey)}</span>
-                        {tier.featured && <Chip kind="status" tone="neutral">{t('pass.recommended')}</Chip>}
+                        {tier.featured && recommend && <Chip kind="status" tone="neutral">{t('pass.recommended')}</Chip>}
                       </span>
                       <span className="pass-plan-price">
                         <span className="pass-plan-fig">{formatPrice(tier.priceCents, locale)}</span>
@@ -203,12 +190,14 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
               })}
             </div>
 
-            <div className="pass-adds">
-              <h3 className="pass-adds-title">{t('pass.addsTitle')}</h3>
-              <ul>
-                {adds.map((a) => <li key={a}><span aria-hidden="true"><CheckIcon size={16} /></span><span>{a}</span></li>)}
-              </ul>
-            </div>
+            {adds.length > 0 && (
+              <div className="pass-adds">
+                <h3 className="pass-adds-title">{t('pass.addsTitle')}</h3>
+                <ul>
+                  {adds.map((a) => <li key={a}><span aria-hidden="true"><CheckIcon size={16} /></span><span>{a}</span></li>)}
+                </ul>
+              </div>
+            )}
 
             {failCode && <p className="pass-error" role="alert">{t(FAIL_KEY[failCode] || 'pass.errGeneric')}</p>}
 
@@ -219,7 +208,8 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
                     : t('pass.continueTrip', { price: formatPrice(plan.priceCents, locale) })}
             </Button>
             <p className="pass-free">
-              {current === 'free' ? `${t('pass.freeLine', { n: TIERS.free.aiPlans })} ` : ''}{t('pass.keepNote')}
+              {/* The one sentence about what is free (roadmap 1.15 point 6). */}
+              {current === 'free' ? `${t('pass.freeSentence')} ` : ''}{t('pass.keepNote')}
             </p>
           </>
         )}

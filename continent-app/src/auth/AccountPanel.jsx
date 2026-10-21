@@ -798,6 +798,10 @@ export function AccountPanel({
                 </button>
               ))}
             </div>
+            {/* The currency moved here from the settings line with the
+                language (T496, owner T485-g): it moves no price, and EUR is
+                the only one, so it is a plain statement, not a control. */}
+            <p className="account-currency">{t('settings.currency')}</p>
           </div>
 
           {/* What they hold today, as one status line and one door to the
@@ -807,7 +811,8 @@ export function AccountPanel({
               numbers, so the hub no longer repeats a price list with ticks.
               Until the balance is known the line holds its place as a still
               block (carta-design "Loading"), so the button does not jump. */}
-          {user && <PlanSection balance={<PassBalance entitlement={entitlement} t={t} />} />}
+          {/* Guests too (roadmap 1.15): Free, the one sentence, the prices. */}
+          <PlanSection balance={user ? <PassBalance entitlement={entitlement} t={t} /> : null} />
 
           {/* The account's own spokes on a phone (brief V3-7, V3-8). On a
               phone Friends had no door here, only a 38 px icon in the top
@@ -828,9 +833,9 @@ export function AccountPanel({
               up, read the fine print. All three work signed out. */}
           <div className="panel-section account-help-section">
             <div className="account-menu account-menu-help">
-              {/* The way back to the home page on a phone (T464, owner
-                  2026-10-17), where the brand mark is small and the bottom
-                  nav has no room. A link, because it changes the view. */}
+              {/* The way back to the home page on a phone (T464; T496, owner
+                  T485-c: "How Carta works"), where the header and its logo
+                  are not drawn. A link, because it changes the view. */}
               {onOpenHome && (
                 <a
                   className="account-nav account-menu-row"
@@ -842,7 +847,7 @@ export function AccountPanel({
                   }}
                 >
                   <span className="account-menu-icon"><HomeIcon size={17} /></span>
-                  <span className="account-menu-label">{t('nav.home')}</span>
+                  <span className="account-menu-label">{t('nav.howCartaWorks')}</span>
                   <ChevronRightIcon size={16} className="account-menu-chev" />
                 </a>
               )}

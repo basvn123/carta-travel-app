@@ -6,6 +6,7 @@ import { CountryFold, RailFold as Fold } from './RailFold.jsx';
 import { TRIP_KINDS } from '../lib/trip_kinds.js';
 import { KIND_ICONS } from './CategoryRail.jsx';
 import { formatMoney } from '../lib/money.js';
+import { DayPriceDot } from '../components/DayPriceDot.jsx';
 import { countryName } from '../lib/countryName.js';
 
 /**
@@ -98,13 +99,22 @@ export function ExploreFilterRail({
       )}
 
       <section className="xrail-sec xrail-pair">
-        <Field as="select" label={t('filter.budget')} value={xf.budget ?? ''}
-          onChange={(e) => patch({ budget: e.target.value ? Number(e.target.value) : null })}>
-          <option value="">{t('explore.budgetAny')}</option>
-          {budgetSteps.map((n) => (
-            <option key={n} value={n}>{t('explore.budgetUpTo', { eur: formatMoney(n) })}</option>
-          ))}
-        </Field>
+        {/* What the day figure holds, once per view, on the first place
+            it has a name (T498, roadmap 1.3b rule 6): the dot sits after
+            the label, outside it, so the label stays the select's name. */}
+        <div className="xrail-budget">
+          <span className="xrail-label-row">
+            <label className="field-label" htmlFor="xrail-budget">{t('filter.budget')}</label>
+            <DayPriceDot />
+          </span>
+          <Field as="select" id="xrail-budget" hideLabel label={t('filter.budget')} value={xf.budget ?? ''}
+            onChange={(e) => patch({ budget: e.target.value ? Number(e.target.value) : null })}>
+            <option value="">{t('explore.budgetAny')}</option>
+            {budgetSteps.map((n) => (
+              <option key={n} value={n}>{t('explore.budgetUpTo', { eur: formatMoney(n) })}</option>
+            ))}
+          </Field>
+        </div>
         <Field as="select" label={t('filter.month')} value={xf.month || ''}
           onChange={(e) => patch({ month: e.target.value ? Number(e.target.value) : null })}>
           <option value="">{t('filter.anyMonth')}</option>

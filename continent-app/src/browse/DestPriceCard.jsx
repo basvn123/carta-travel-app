@@ -11,11 +11,12 @@ import { formatEst } from '../lib/money.js';
 import { Stepper } from '../components/FilterControls.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { ReceiptLine, ReceiptSum, useSettleChanged } from '../components/ReceiptCard.jsx';
-import { FlightSheet } from '../components/FirstRunReceipt.jsx';
+import { FlightSheet } from '../components/FlightSheet.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { ChevronDownIcon, ChevronRightIcon, RouteIcon, SunIcon } from '../components/Icons.jsx';
 import { isNational } from '../components/CostSummary.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
+import { dayIncludesText } from '../lib/dayIncludes.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 
 /**
@@ -144,6 +145,10 @@ export function DestPriceCard({
           </span>
           <span className="dprice-day-unit">{t('dest.priceDayUnit')}</span>
         </p>
+        {/* What the day includes (T499, owner answer T491-h). From 1024 px
+            the card is where the first screen reads it; on a phone the head
+            carries it and this line hides (64-v6-destination.css). */}
+        <p className="dprice-incl">{dayIncludesText(t)}</p>
       </header>
 
       <div className="dprice-inputs" role="group" aria-label={t('receipt.stripAria')}>

@@ -369,10 +369,46 @@
 
 /* ── Build it myself ──────────────────────────────────────────────────── */
 .dayw-manual .dayex-view { flex: none; }
-/* A photo card carries nothing on its photograph. */
+/* A photo card carries nothing on its photograph. T501 (roadmap 1.3d): "Add
+   to day" is the card's labelled action, in the body under the text, secondary
+   at rest and the light selected tint with a tick once picked. Scoped to
+   .dayw-manual so it beats the round photo button in planners-held.css. */
+.dayw-manual .dayex-add {
+  position: static;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--space-2);
+  width: auto; height: auto;
+  min-height: var(--tap-main);
+  margin: auto var(--space-3) var(--space-3);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: none;
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+@media (hover: hover) {
+  .dayw-manual .dayex-add:hover { border-color: var(--text); color: var(--text); }
+}
+.dayw-manual .dayex-add.on {
+  background: var(--select-bg);
+  border-color: var(--select-border);
+  color: var(--select-ink);
+}
+/* The What heading stays one row on a phone, so the first place shows above
+   the fold; the question shortens before the search and List|Map wrap. */
+.dayw-manual .dayw-q .dayex-what-head { flex-wrap: nowrap; }
+.dayw-manual .dayw-q .dayex-what-head .wiz-q-h {
+  min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 
 /* Places without a photograph: compact rows, never a fake image. */
 .dayex-row .dayex-add { position: static; flex: none; }
+.dayw-manual .dayex-row .dayex-add { margin: 0; padding: 0 var(--space-3); }
 
 /* ── The planned day ──────────────────────────────────────────────────── */
 /* Maps set into a card or a sheet fill it; the full-page map sits beside the panel. */

@@ -1,34 +1,27 @@
 import React, { useRef } from 'react';
 import { useNavMarker } from '../lib/motion.js';
 import Logo from './Logo.jsx';
-import { Button } from './ui/index.js';
 import { useI18n } from '../i18n/index.jsx';
-import { usePaywall } from '../hooks/usePaywall.jsx';
 import { tabHref } from '../lib/urlState.js';
-import {
-  PersonIcon, CompassIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon,
-  TicketIcon, HomeIcon,
-} from './Icons.jsx';
+import { PersonIcon, CompassIcon, RouteIcon, BookmarkIcon } from './Icons.jsx';
 
-const NAV_ITEMS = [
-  // Home leads (T464, owner 2026-10-17: the brand mark alone was too quiet a
-  // way back to the home page).
-  { key: 'home', labelKey: 'nav.home', Icon: HomeIcon },
-  { key: 'places', labelKey: 'nav.places', Icon: GlobeIcon },
-  // The tab is still keyed 'map' (state, share links, deep links all use it),
-  // but it reads Explore here exactly as it does in the phone bar: one name
-  // for one section, whatever the window width.
-  { key: 'map', labelKey: 'nav.explore', Icon: CompassIcon },
-  { key: 'trip', labelKey: 'nav.trip', Icon: RouteIcon },
-  { key: 'day', labelKey: 'nav.day', Icon: ListDayIcon },
+/* The three places (T496, roadmap 1.3a and 1.15; owner T485-b): Explore,
+   Plan and My trips, in this order on both widths. Home is the logo and
+   Account the icon at the far right; neither is a tab, and the pass is not in
+   the bar (T473). BottomNav draws the same list with Account as a fourth
+   slot. */
+export const PLACE_ITEMS = [
+  { key: 'explore', labelKey: 'nav.explore', Icon: CompassIcon },
+  { key: 'plan', labelKey: 'nav.plan', Icon: RouteIcon },
+  { key: 'trips', labelKey: 'nav.myTrips', Icon: BookmarkIcon },
 ];
 
 /**
- * One door into a section, as a real link (T381, the navigation rule): the
- * href is the section's own address, so a middle click opens it in a new tab
+ * One door into a place, as a real link (T381, the navigation rule): the
+ * href is the place's own address, so a middle click opens it in a new tab
  * and a long press copies it; a plain click stays in the app and goes through
- * the one door, goToTab, which also writes the history entry. The address is
- * re-read from the bar whenever the link is about to be used, because the
+ * the one door, App's goTo, which also writes the history entry. The address
+ * is re-read from the bar whenever the link is about to be used, because the
  * query moves under it (useUrlSync rewrites it 300 ms after every change).
  */
 export function SectionLink({ tab, onNavigate, className, current, title, children, ...rest }) {
@@ -57,9 +50,10 @@ export function SectionLink({ tab, onNavigate, className, current, title, childr
 
 /**
  * The count chip and the state dot (carta-design, count chip). The chip is
- * the shortlist's size in mono; the dot says a plan is in progress. Both are
- * drawn for the eye only: the words ride along for screen readers, so the
- * item's name stays its label followed by one plain sentence.
+ * the shortlist's size, stars only (owner T488-f); the dot says a plan is in
+ * progress and not saved. Both are drawn for the eye only: the words ride
+ * along for screen readers, so the item's name stays its label followed by
+ * one plain sentence.
  */
 export function NavCount({ n }) {
   const { t } = useI18n();
@@ -82,151 +76,96 @@ export function NavDot({ on }) {
   );
 }
 
-function AccountButton({ user, onOpenAccount, accountOpen }) {
-  const { t } = useI18n();
+/** Who is signed in, as the one letter the avatar disc carries. */
+export function accountInitial(user) {
   const fullName = user?.user_metadata?.full_name?.trim();
-  const initial = (fullName || user?.email || '?')[0].toUpperCase();
-  // Pressed state, and a second press closes: on desktop the account page has
-  // no cross of its own (see .account-panel .panel-close), so this button is
-  // its only door, both ways.
+  return (fullName || user?.email || '?')[0].toUpperCase();
+}
+
+/**
+ * The account icon (1.3a D1, item 6): a 44 px round door with a 32 px disc,
+ * the person glyph for a guest and the initial when signed in. A link to the
+ * Account place; on Account it carries the selected tint.
+ */
+function AccountLink({ user, current, onNavigate }) {
+  const { t } = useI18n();
+  const name = user ? (user.user_metadata?.full_name?.trim() || user.email) : t('header.accountTitle');
   return (
-    <button
-      type="button"
-      className={`account-avatar-btn${accountOpen ? ' on' : ''}`}
-      aria-current={accountOpen ? 'page' : undefined}
-      onClick={onOpenAccount}
-      title={user ? (fullName || user.email) : t('header.accountTitle')}
+    <SectionLink
+      tab="account"
+      className={`account-door${current ? ' on' : ''}`}
+      current={current}
+      onNavigate={onNavigate}
+      title={name}
+      aria-label={name}
     >
-      <span className="account-avatar">
-        {user ? initial : <PersonIcon size={14} />}
+      <span className={`account-door-disc${user ? ' has-initial' : ''}`} aria-hidden="true">
+        {user ? accountInitial(user) : <PersonIcon size={18} />}
       </span>
-      <span className="account-avatar-label">{t('header.account')}</span>
-    </button>
+    </SectionLink>
   );
 }
 
-// Always-mounted top panel: brand + section tabs on the left, the Map tab's
-// filters in the middle, and account access on the right, a single row, not
-// a separate header stacked above the filter bar. The brand mark is a link
-// to the landing page, the app's home (T381, rule R1). The tabs are
-// desktop-only; on mobile they collapse (CSS) and BottomNav takes over as the
-// Destinations/Explore/Trip planner/Day planner switch. `children` is the
-// FilterBar, injected only on the Explore tab.
-//
-// The "travelling from" picker used to live in this row's right edge. It now
-// floats over the map itself, level with the Destinations pill (see
-// .map-toolrow in App), where it has room to state the question it is asking.
+// The desktop header (CSS hides it below 769 px, where BottomNav and the
+// settings band take over): the logo, the three places after it, Explore's
+// search slot and the account icon at the far right. One row, 64 px.
 export function AppHeader({
-  user, onOpenAccount, accountOpen, onSeePricing,
-  onBrandClick,
-  activeTab, onChangeTab,
-  savedOpen, onToggleSaved,
-  // The shortlist's size for the count chip after My trips, and whether a
-  // trip plan is in progress (the state dot on the Trip planner tab).
+  user,
+  // The place on screen ('explore' | 'plan' | 'trips' | 'account' | 'home'
+  // | 'pricing'): the bar marks what is actually showing.
+  place,
+  onNavigate,
+  // The shortlist's size for the count chip after My trips, and whether an
+  // unsaved trip plan is in progress (the state dot on Plan).
   savedCount = 0, planInProgress = false,
-  children,
 }) {
   const { t, lang } = useI18n();
   const navRef = useRef(null);
   const markerRef = useRef(null);
-  const activeKey = savedOpen && !accountOpen ? 'saved' : (accountOpen ? '' : activeTab);
-  useNavMarker(navRef, markerRef, `${activeKey}:${lang}:${savedCount}:${planInProgress}`, {
+  useNavMarker(navRef, markerRef, `${place}:${lang}:${savedCount}:${planInProgress}`, {
     itemSelector: '.header-nav-item.active',
   });
-  // The pass chip is chrome, not a gate, so it goes straight to the price
-  // table. A caller may still override where it points; nothing does today.
-  const paywall = usePaywall();
-  // A live yearly plan renews by itself: there is nothing left to sell in
-  // the header, so the chip steps aside (T460).
-  const subscribed = paywall.entitlement?.subscription?.live && !paywall.entitlement.subscription.cancelling;
-  const seePricing = subscribed ? null : (onSeePricing || paywall.openPrices);
   return (
-    <div className={`app-header ${children ? 'has-filters' : ''}`}>
+    <div className="app-header">
       <SectionLink
         tab="home"
         className="app-header-brand"
-        onNavigate={onBrandClick}
-        current={activeTab === 'home' && !savedOpen && !accountOpen}
+        onNavigate={onNavigate}
+        current={place === 'home'}
         title={t('nav.brandTitle')}
         aria-label={t('nav.brandTitle')}
       >
-        <Logo size={46} className="brand-mark" />
-        <span className="brand-text">
-          <span className="brand-name">Carta</span>
-          <span className="brand-sub">{t('brand.sub')}</span>
-        </span>
-        <span className="brand-divider" aria-hidden="true" />
+        <Logo size={36} className="brand-mark" />
+        <span className="brand-name">Carta</span>
       </SectionLink>
 
-      {/* Desktop-only section switch (BottomNav covers this below 768px).
-          A page laid over a tab (My trips, Account) takes the active state
-          away from it: the bar marks what is actually on screen, which is the
-          same rule BottomNav follows. */}
       <nav className="header-nav" ref={navRef} aria-label={t('nav.sectionsLabel')}>
         <span className="nav-marker" ref={markerRef} aria-hidden="true" />
-        {NAV_ITEMS.map(({ key, labelKey, Icon }) => {
-          const on = activeTab === key && !savedOpen && !accountOpen;
+        {PLACE_ITEMS.map(({ key, labelKey, Icon }) => {
+          const on = place === key;
           return (
             <SectionLink
               key={key}
               tab={key}
               className={`header-nav-item ${on ? 'active' : ''}`}
               current={on}
-              onNavigate={onChangeTab}
-              title={t(labelKey)}
+              onNavigate={onNavigate}
             >
-              <Icon size={15} className="header-nav-icon" />
+              <Icon size={16} className="header-nav-icon" />
               <span className="header-nav-label">{t(labelKey)}</span>
-              {key === 'trip' && <NavDot on={planInProgress} />}
+              {key === 'plan' && <NavDot on={planInProgress} />}
+              {key === 'trips' && <NavCount n={savedCount} />}
             </SectionLink>
           );
         })}
-        {/* My trips is a page laid over the tab, not a section of its own:
-            a toggle, so a button, announcing aria-current while it is the
-            page on screen. One name for it on both widths (T381). */}
-        <button
-          type="button"
-          className={`header-nav-item ${savedOpen && !accountOpen ? 'active' : ''}`}
-          aria-current={savedOpen && !accountOpen ? 'page' : undefined}
-          onClick={onToggleSaved}
-          title={t('nav.myTrips')}
-        >
-          <BookmarkIcon size={15} className="header-nav-icon" />
-          <span className="header-nav-label">{t('nav.myTrips')}</span>
-          <NavCount n={savedCount} />
-        </button>
       </nav>
 
-      {children && <div className="app-header-filters">{children}</div>}
-
       <div className="app-header-account">
-        {/* Passes entry: "Get a pass", a kit secondary on every width (T426;
-            secondary chrome is never filled in brown). The language
-            picker left this row for the Account panel: switching languages is
-            rare, the row over the map is not the place to spend width on it. */}
-        {seePricing && (
-          <Button
-            variant="secondary"
-            size="sm"
-            className="shell-pass-btn"
-            iconStart={<TicketIcon size={16} />}
-            onClick={seePricing}
-            title={t('header.seePricing')}
-            aria-label={t('header.passes')}
-          >
-            {t('header.passes')}
-          </Button>
-        )}
-        {/* Desktop only (CSS hides it below 769px), and Explore's alone:
-            that tab portals its search field in here. Destinations used to
-            as well and no longer does; its field now heads its own column,
-            under this bar and over the results it searches. The slot
-            collapses when empty (:empty), so the planner tabs and
-            Destinations leave no hole in the row. */}
+        {/* Explore's alone: that place portals its search field in here.
+            The slot collapses when empty (:empty), so every other place
+            leaves no hole in the row. */}
         <div className="header-search-slot" id="header-search-slot" />
-        {/* Friends has one door (T466): the Friends row in Account. The
-            header button repeated it, the double door T461's critique named. */}
-        <AccountButton user={user} onOpenAccount={onOpenAccount} accountOpen={accountOpen} />
+        <AccountLink user={user} current={place === 'account'} onNavigate={onNavigate} />
       </div>
     </div>
   );

@@ -2759,10 +2759,10 @@
    reachable from every screen instead of only from the ones behind a panel.
    56px is the mobile header row (see .app-header-account). ─────────────── */
 @media (max-width: 768px) {
-  .app-header { z-index: calc(var(--z-shell) + 2); }
   .account-panel,
   .saved-trips-panel {
-    top: 56px;
+    top: 0;
+    padding-top: env(safe-area-inset-top, 0px);
     /* Read as a tab, not as a sheet laid over one. Explore is the model:
        .explore-tab is one page of paper starting under the header with no
        rule and no shadow, and on a phone these two are reached the same way,
@@ -2785,11 +2785,6 @@
   .account-panel .panel-header { padding-right: 16px; }
 }
 
-/* T426-b, T428: the header friends and pricing chips are gone; their rules
-   went with them. The account cluster keeps its narrow-screen gap. */
-@media (max-width: 420px) {
-  .app-header-account { gap: 6px; padding: 0 14px 0 8px; }
-}
 
 /* ── Somebody else's trip, as a shape before it is a list ────────────────────
    The map leads both foreign-trip views. Same containment rule as the record
