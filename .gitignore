@@ -224,5 +224,5 @@ carta-backups/
 # the convention above.
 cache/guided/*
 
-# Stay-price layer state and builds (T512): journal, pools, downloads. Lives in R2 stays/state on Actions.
+# Stay-price layer state and builds (T531): journal, pools, downloads. Lives in R2 stays/state on Actions.
 cache/stays/

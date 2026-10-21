@@ -1,5 +1,5 @@
 @echo off
-REM Twice-yearly Booking.com + Hostelworld list-price scrape (T513), owner's laptop.
+REM Twice-yearly Booking.com + Hostelworld list-price scrape (T532), owner's laptop.
 REM
 REM Owner decision 2026-10-21: scraped in March and September for star class,
 REM dorm beds and the towns Xotelo misses. One plain browser tab, 3 to 6 s per

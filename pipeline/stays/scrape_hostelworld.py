@@ -5,7 +5,7 @@ pages, stop and resume tomorrow on a block, only medians are published.
 
 Per destination that has hostels (OSM supply or Xotelo pool) and per monthly
 probe date: the city list page for 1 guest. Each card gives "Dorms from" (per
-bed) and "Privates from" (the cheapest private for 1 guest; T511 checks
+bed) and "Privates from" (the cheapest private for 1 guest; T530 checks
 whether Hostelworld shows it per person or per room, build_stays reads
 STATE/spike.json "hw_private_per_person").
 

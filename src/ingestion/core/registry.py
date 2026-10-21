@@ -180,7 +180,7 @@ RUNS: dict[str, Run] = {
     "pipeline/harvest_urban_fabric.py": Run("manual", "", "manual"),
     "pipeline/harvest_wikivoyage.py": Run("backfill", "guide", "hard"),
     "pipeline/harvest_wikivoyage_listings.py": Run("monthly", "poi_significance", "soft"),
-    # pipeline/stays/: the stay-price layer (T511-T517). The monthly half also
+    # pipeline/stays/: the stay-price layer (T530-T536). The monthly half also
     # runs on GitHub Actions (.github/workflows/stays-refresh.yml); the scrape
     # half is the owner's twice-yearly laptop run, so it is manual here.
     "pipeline/stays/harvest_eurostat.py": Run("monthly", "stays", "soft"),
@@ -1405,14 +1405,14 @@ SOURCES = (
         attributed="Raw ETL only",
     ),
     # 5. Destination content layers (pipeline harvesters)
-    # Stay-price layer (T511-T517): only medians per destination are published.
+    # Stay-price layer (T530-T536): only medians per destination are published.
     Source(
         key="xotelo_tripadvisor_rates",
         section="content_layers",
         scripts=('pipeline/stays/discover_xotelo.py', 'pipeline/stays/price_xotelo.py'),
         name="Xotelo, TripAdvisor-based hotel prices (`pipeline/stays/price_xotelo.py`)",
         takes="Property lists per TripAdvisor location; dated per-OTA nightly rates for a few anchor properties per destination, reduced to medians",
-        licence="Free public API, no published terms (one developer). Owner decision 2026-10-21, register row T511-a",
+        licence="Free public API, no published terms (one developer). Owner decision 2026-10-21, register row T530-a",
         attribution="Credit TripAdvisor via Xotelo; no property names or links published",
         share_alike="No",
         attributed="Account > Data sources (Xotelo)",
@@ -1423,7 +1423,7 @@ SOURCES = (
         scripts=('pipeline/stays/scrape_booking.py',),
         name="Booking.com search lists, owner-run sample (`pipeline/stays/scrape_booking.py`)",
         takes="List prices, star class and unit name of the first 25 to 50 properties per destination and probe date, twice a year, reduced to medians",
-        licence="Site terms restrict commercial scraping; owner states permission and educational use, 2026-10-21 (register row T511-a)",
+        licence="Site terms restrict commercial scraping; owner states permission and educational use, 2026-10-21 (register row T530-a)",
         attribution="No property names, photos or links published",
         share_alike="No",
         attributed="Account > Data sources (sampled list prices)",
@@ -1434,7 +1434,7 @@ SOURCES = (
         scripts=('pipeline/stays/scrape_hostelworld.py',),
         name="Hostelworld city lists, owner-run sample (`pipeline/stays/scrape_hostelworld.py`)",
         takes="Dorm and private 'from' prices per hostel on the city list page, twice a year, reduced to medians",
-        licence="Site terms; owner states permission and educational use, 2026-10-21 (register row T511-a)",
+        licence="Site terms; owner states permission and educational use, 2026-10-21 (register row T530-a)",
         attribution="No property names, photos or links published",
         share_alike="No",
         attributed="Account > Data sources (sampled list prices)",

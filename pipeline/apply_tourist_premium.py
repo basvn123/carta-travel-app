@@ -2,7 +2,7 @@
 
 Tier: Scheduled (run_pipeline task tourist_premium)
 
-Since T514 (schema v18) this no longer touches accommodation: bed prices come
+Since T533 (schema v18) this no longer touches accommodation: bed prices come
 from the stays layer (pipeline/stays/), which measures hotspot prices from
 dated hotel and Airbnb data instead of marking a country figure up. The
 "accommodation" column of the table below is history.

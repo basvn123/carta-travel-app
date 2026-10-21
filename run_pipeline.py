@@ -1903,12 +1903,12 @@ TASKS = [
         "cadence": "quarterly",
         "writes_app_data": True,
         "cmds": [[PY, "pipeline/apply_tourist_premium.py"]],
-        "note": ("food half only since T514: beds come from the stays layer, which "
+        "note": ("food half only since T533: beds come from the stays layer, which "
                  "measures hotspot prices instead of marking them up."),
     },
     {
         "key": "stays_discover",
-        "title": "Stay layer: Xotelo property pool + OSM supply (T512)",
+        "title": "Stay layer: Xotelo property pool + OSM supply (T531)",
         "cadence": "quarterly",
         "writes_app_data": False,
         "soft": True,
@@ -1921,7 +1921,7 @@ TASKS = [
     },
     {
         "key": "stays",
-        "title": "Stay layer: Eurostat + Inside Airbnb + Xotelo prices -> stays wire (T512)",
+        "title": "Stay layer: Eurostat + Inside Airbnb + Xotelo prices -> stays wire (T531)",
         "cadence": "monthly",
         "writes_app_data": True,
         "soft": True,

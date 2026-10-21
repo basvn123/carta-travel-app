@@ -1,4 +1,4 @@
-# Monthly stay-price refresh (T513). Owner decision 2026-10-21: GitHub Actions.
+# Monthly stay-price refresh (T532). Owner decision 2026-10-21: GitHub Actions.
 #
 # What it does, every week on Monday (the Xotelo slice) and fully on the first
 # Monday of the month:
@@ -16,7 +16,7 @@
 # runners use datacenter IPs and that run is the owner's laptop task
 # (scripts/stays_scrape.bat), which uploads its journal rows to the same state.
 #
-# Secrets (owner, register row T513-a): R2_ACCOUNT_ID, R2_ACCESS_KEY_ID,
+# Secrets (owner, register row T532-a): R2_ACCOUNT_ID, R2_ACCESS_KEY_ID,
 # R2_SECRET_ACCESS_KEY, SERPAPI_KEY (free plan; optional).
 
 name: stays-refresh

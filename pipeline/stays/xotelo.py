@@ -40,7 +40,7 @@ COUNTRY_GEO = {
     "LI": "g190357", "MC": "g190405",
     # Latvia's country id is unknown; its regions cover the 23 destinations.
     "LV": ["g274960", "g274964", "g274965", "g274961"],
-    # No verified id yet (T511): Montenegro, Faroe Islands, San Marino, Kosovo.
+    # No verified id yet (T530): Montenegro, Faroe Islands, San Marino, Kosovo.
     # Their 39 destinations are priced by the Booking scrape or modelled.
 }
 

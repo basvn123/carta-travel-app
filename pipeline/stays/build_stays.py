@@ -6,7 +6,7 @@ Inputs (STATE, pulled from R2 on Actions):
   iab.json         Inside Airbnb medians per destination
   supply.json      OSM counts per destination
   eurostat.json    HICP CP112 (drift), nights (season fill-in), PLI (ladder)
-  spike.json       hw_private_per_person (T511)
+  spike.json       hw_private_per_person (T530)
   calibration.json SerpApi free-tier error (gate)
 
 Method, per destination and bed type:

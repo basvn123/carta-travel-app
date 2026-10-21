@@ -1,4 +1,4 @@
-"""Shared helpers for the stay-price layer (schema v18, T511-T517).
+"""Shared helpers for the stay-price layer (schema v18, T530-T536).
 
 Every script in pipeline/stays/ is run by path (``python pipeline/stays/x.py``)
 and imports this module through the sys.path line at its top, the same way the
@@ -10,7 +10,7 @@ The layer prices one bed for every destination, every bed type and every month:
               (per room), bnb_room (Airbnb private room), bnb_home (whole place,
               per capacity bucket).
 
-Sources (all free; see Execution/P11/T511-T517-stay-prices.md):
+Sources (all free; see Execution/P11/T530-T536-stay-prices.md):
   Xotelo (dated OTA prices, primary), Inside Airbnb (CC BY 4.0), Booking.com and
   Hostelworld (owner-run scrape twice a year: star class, dorm beds, gaps),
   OpenStreetMap + Wikidata (supply), Eurostat (HICP drift, regional nights).

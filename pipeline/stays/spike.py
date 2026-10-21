@@ -1,9 +1,9 @@
-"""T511 source spike for the scrape half: run this on the owner's laptop.
+"""T530 source spike for the scrape half: run this on the owner's laptop.
 
 It samples 20 destinations (5 big cities, 5 mid towns, 5 small towns, 5
 seasonal islands and coasts) and runs the real scrapers on two monthly probes
 (February and August), in a separate state folder (cache/stays/spike) so the
-real journal stays clean. Then it answers the T511 questions:
+real journal stays clean. Then it answers the T530 questions:
 
   * does Booking serve the list (or a challenge), and how many pages per hour?
   * do cards carry a price, a star class and a unit name? share of each
@@ -58,7 +58,7 @@ def run(script, ids, a):
 
 def report(con, ids, secs):
     q = lambda sql, *a: con.execute(sql, a).fetchall()  # noqa: E731
-    lines = ["# T511 scrape spike", ""]
+    lines = ["# T530 scrape spike", ""]
     for src in ("booking", "hostelworld"):
         n_pages = q("select count(*) from done where source=?", src)[0][0]
         rows = q("select dest_id, kind, stars, bed, chk_in, price_eur from obs where source=?", src)
