@@ -1,0 +1,278 @@
+/* The pricing page (T497, roadmap 1.15 and 2.18), on the kit and the roles
+   only. Imported by pass/PricingPage.jsx, so none of this is in the
+   first-paint stylesheet.
+
+   A full-screen page in the one page grammar (PageBar on top, the record
+   scrolls under it), a reading column that caps at 920 px. Three bounded
+   objects, each bordered and never shadowed: the comparison (two columns
+   with a hairline between them), the two plans, the questions. Brown only
+   on the one primary, the links and the focus ring. */
+
+.prc {
+  position: fixed;
+  inset: 0;
+  /* Over the tabs and under the pass sheet (page + 120), so a guest who
+     chose a plan sees the sheet open over this page after signing in. */
+  z-index: calc(var(--z-page) + 60);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-page);
+  color: var(--text);
+}
+/* The sign-in sheet a guest opens from here sits over the page, not under. */
+body:has(.prc[aria-modal="true"]) .auth-overlay { z-index: calc(var(--z-page) + 110); }
+/* The page's h1 is the only one in the outline while it is open. */
+body:has(.prc[aria-modal="true"]) .tab-h1 { display: none; }
+
+.prc-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.prc-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Head ─────────────────────────────────────────────────────────────── */
+
+.prc-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.prc-lead {
+  max-width: var(--measure);
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-lead);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+/* What the traveller holds now: a status line, ink with a dot, never green. */
+.prc-holding {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+.prc-holding::before {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--status-success);
+  transform: translateY(-1px);
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────── */
+
+.prc-section { margin-top: var(--space-8); }
+.prc-h2 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+/* What stays free and what a pass adds: one object, two columns. */
+.prc-compare {
+  display: grid;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.prc-col { padding: var(--space-5); }
+.prc-col + .prc-col { border-top: 1px solid var(--border-soft); }
+.prc-col-title {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+}
+.prc-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prc-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+}
+.prc-mark {
+  display: inline-flex;
+  flex: none;
+  margin-top: 1px;
+  color: var(--text-2);
+}
+
+/* The two plans: equal cards, figures first, the button at the foot. */
+.prc-plans {
+  display: grid;
+  gap: var(--space-4);
+}
+.prc-plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.prc-plan-name {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+}
+.prc-plan-price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 var(--space-2);
+  margin: var(--space-1) 0 0;
+}
+.prc-plan-fig {
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.prc-plan-per { font-size: var(--text-body); color: var(--text-2); }
+.prc-plan-note,
+.prc-plan-blurb {
+  margin: 0;
+  font-size: var(--text-label);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.prc-plan-blurb { font-size: var(--text-body); color: var(--text); }
+.prc-plan-lines {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  padding: var(--space-3) 0 0;
+  border-top: 1px solid var(--border-soft);
+  list-style: none;
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+}
+.prc-plan-act {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+/* Each plan's one button is the size of a place's primary (T485-a). */
+.prc-plan-act .btn { min-height: var(--tap-main, var(--tap)); }
+.prc-error { margin: 0; font-size: var(--text-body); color: var(--danger); }
+.prc-legal {
+  margin: 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.prc-keep {
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-label);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+
+/* The questions: native disclosure rows, hairlines inside one object. */
+.prc-faq {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.prc-q + .prc-q { border-top: 1px solid var(--border-soft); }
+.prc-q-sum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius-card);
+}
+.prc-q-sum::-webkit-details-marker { display: none; }
+.prc-q-sum::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: var(--space-1);
+  border-right: 1.5px solid var(--text-2);
+  border-bottom: 1.5px solid var(--text-2);
+  transform: rotate(45deg);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.prc-q[open] > .prc-q-sum::after { transform: rotate(-135deg); }
+.prc-q-sum:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+@media (hover: hover) {
+  .prc-q-sum { transition: background-color var(--dur-1) var(--ease-out); }
+  .prc-q-sum:hover { background: var(--surface-hover); }
+}
+.prc-q-body { padding: 0 var(--space-5) var(--space-4); }
+.prc-q-a {
+  max-width: var(--measure);
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
+.prc-q-act {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+.prc-status { margin: 0; font-size: var(--text-body); color: var(--text); }
+.prc-status:empty { display: none; }
+
+.prc-foot { margin: var(--space-6) 0 0; font-size: var(--text-label); }
+.prc-terms {
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prc-terms:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+@media (min-width: 769px) {
+  .prc-inner { padding-top: var(--space-8); }
+  .prc-title { font-size: var(--text-display); }
+  .prc-compare { grid-template-columns: 1fr 1fr; }
+  .prc-col { padding: var(--space-6); }
+  .prc-col + .prc-col { border-top: 0; border-left: 1px solid var(--border-soft); }
+  .prc-plans { grid-template-columns: 1fr 1fr; }
+  .prc-plan { padding: var(--space-6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prc-q-sum,
+  .prc-q-sum::after { transition: none; }
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useI18n } from '../i18n/index.jsx';
+import { useI18n, tOutsideProvider } from '../i18n/index.jsx';
 
 /**
  * Real climate normals (NASA POWER, 2001-2020) as a 12-month comfort strip:
@@ -28,8 +28,10 @@ export function comfortTier(c) {
 }
 
 // Collapse a list of 1-12 month numbers into readable ranges, e.g.
-// [4,5,9,10,11] -> "Apr-May, Sep-Nov".
-export function fmtMonthRanges(nums) {
+// [4,5,9,10,11] -> "Apr to May, Sep to Nov", the joiner from the
+// language (T502: ranges use the word "to", never a hyphen). Pass the
+// component's t; outside one the stored language is used.
+export function fmtMonthRanges(nums, t = tOutsideProvider) {
   if (!nums || !nums.length) return '';
   const sorted = [...nums].sort((a, b) => a - b);
   const runs = [];
@@ -40,7 +42,7 @@ export function fmtMonthRanges(nums) {
   }
   runs.push([start, prev]);
   return runs
-    .map(([a, b]) => (a === b ? MONTHS_SHORT[a - 1] : `${MONTHS_SHORT[a - 1]}-${MONTHS_SHORT[b - 1]}`))
+    .map(([a, b]) => (a === b ? MONTHS_SHORT[a - 1] : t('detail.monthRange', { from: MONTHS_SHORT[a - 1], to: MONTHS_SHORT[b - 1] })))
     .join(', ');
 }
 
@@ -56,9 +58,14 @@ export function fmtMonthRanges(nums) {
  * height and its ink weight, the best months a bold initial beside the
  * "Best weather" words, no hue and no legend; the key line above says what
  * the shade means, so the strip reads the same in greyscale.
+ *
+ * `compact` (T499, the destination page's Overview) draws the same ink
+ * strip without the figures under it, with the "Best weather" line above it
+ * and no legend: the full strip with figures is one tap away, on When to go.
  */
-export function ClimateStrip({ climate, month = null, figures = false }) {
+export function ClimateStrip({ climate, month = null, figures = false, compact = false }) {
   const { t } = useI18n();
+  const ink = figures || compact;
   const [hoverI, setHoverI] = React.useState(null);
   const months = climate.m || [];
   if (months.length !== 12) return null;
@@ -68,7 +75,7 @@ export function ClimateStrip({ climate, month = null, figures = false }) {
   const cMax = Math.max(...comforts);
   const span = cMax - cMin || 1;
   const best = new Set(climate.best || []);
-  const bestLabel = fmtMonthRanges(climate.best);
+  const bestLabel = fmtMonthRanges(climate.best, t);
 
   const legend = [
     { tier: 'great', key: 'bestTime.climateLegendIdeal' },
@@ -85,15 +92,15 @@ export function ClimateStrip({ climate, month = null, figures = false }) {
       {bestLabel && !figures && (
         <p className="climate-best">{t('bestTime.climateBest', { months: bestLabel })}</p>
       )}
-      <div className={`climate-chart ${figures ? 'has-figures' : ''}`} role={figures ? 'list' : undefined}>
+      <div className={`climate-chart ${ink ? 'has-figures' : ''} ${compact ? 'is-compact' : ''}`} role={ink ? 'list' : undefined}>
         {months.map((m, i) => (
           <div
             key={i}
             className={`climate-col ${best.has(i + 1) ? 'is-best' : ''} ${month === i + 1 ? 'is-chosen' : ''}`}
-            onMouseEnter={figures ? undefined : () => setHoverI(i)}
-            onMouseLeave={figures ? undefined : () => setHoverI(null)}
-            role={figures ? 'listitem' : undefined}
-            aria-label={figures ? `${MONTHS_SHORT[i]}: ${t('bestTime.climateTip', {
+            onMouseEnter={ink ? undefined : () => setHoverI(i)}
+            onMouseLeave={ink ? undefined : () => setHoverI(null)}
+            role={ink ? 'listitem' : undefined}
+            aria-label={ink ? `${MONTHS_SHORT[i]}: ${t('bestTime.climateTip', {
               hi: m[T_HIGH] == null ? '?' : Math.round(m[T_HIGH]),
               lo: m[T_LOW] == null ? '?' : Math.round(m[T_LOW]),
               precip: m[PRECIP] == null ? '?' : Math.round(m[PRECIP]),
@@ -113,7 +120,7 @@ export function ClimateStrip({ climate, month = null, figures = false }) {
                 <div className="climate-rain" aria-hidden="true">{m[PRECIP] == null ? '' : Math.round(m[PRECIP])}</div>
               </>
             )}
-            {!figures && hoverI === i && (
+            {!ink && hoverI === i && (
               <div className="climate-tip">
                 <b>{MONTHS_SHORT[i]}</b>{' '}
                 {t('bestTime.climateTip', {
@@ -126,7 +133,7 @@ export function ClimateStrip({ climate, month = null, figures = false }) {
           </div>
         ))}
       </div>
-      {!figures && (
+      {!ink && (
       <div className="bt-legend climate-legend">
         {legend.map((l) => (
           <span key={l.tier} className="bt-legend-item">

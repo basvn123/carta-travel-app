@@ -29,11 +29,16 @@ export function FaqView({ onFeedback }) {
     yearPrice: formatPrice(TIERS.year.priceCents),
     email: CONTACT,
   }), []);
+  // "What does a pass add?" opens with the one sentence about what is free
+  // (roadmap 1.15 point 6), read from its own key so it can never drift.
+  const answer = (k) => (k === 'adds'
+    ? `${t('pass.freeSentence')} ${t('account.fq.addsA', vars)}`
+    : t(`account.fq.${k}A`, vars));
   const needle = q.trim().toLowerCase();
   const groups = FAQ.map((g) => ({
     ...g,
     rows: g.items
-      .map((k) => ({ k, q: t(`account.fq.${k}Q`), a: t(`account.fq.${k}A`, vars) }))
+      .map((k) => ({ k, q: t(`account.fq.${k}Q`), a: answer(k) }))
       .filter((r) => !needle || r.q.toLowerCase().includes(needle) || r.a.toLowerCase().includes(needle)),
   })).filter((g) => g.rows.length);
   // A search that leaves two questions or fewer opens them.

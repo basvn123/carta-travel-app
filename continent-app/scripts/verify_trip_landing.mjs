@@ -5,6 +5,10 @@
 //
 //   node scripts/verify_trip_landing.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
+// T502: the booked question is .wbook-tile tiles (plus "Nothing yet") on the
+// Trip basics step since T500, and the wizard has six steps.
+const BOOKED = '.ui-tile-group:has(.wbook-tile) .ui-tile';
+//
 // Desktop 1440x900 plus a 390x844 phone pass. Screenshots to shots/trip-landing-*.png.
 
 import { chromium } from 'playwright';
@@ -29,23 +33,14 @@ async function openPlanner(width, height) {
       localStorage.setItem('carta.welcomeSeen', '1');
     } catch { /* storage unavailable */ }
   });
-  await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  // T502: Plan's Trip door is its own address (?tab=plan&mode=trip, T496-T501).
+  await page.goto(URL + '?tab=plan&mode=trip', { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(3000);
   const guest = page.getByText(/continue without an account/i).first();
   if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1500); }
   for (const label of [/got it/i, /start here/i]) {
     const b = page.getByRole('button', { name: label }).first();
     if (await b.isVisible().catch(() => false)) { await b.click(); await page.waitForTimeout(600); }
-  }
-  // Desktop reaches the planner from the header tabs; the phone bar has no
-  // planner slot, it opens the plus chooser and picks "Trip planner" there.
-  const top = page.locator('.header-tab, .app-nav-link, nav a, button', { hasText: /trip planner/i }).first();
-  if (await top.isVisible().catch(() => false)) {
-    await top.click();
-  } else {
-    await page.locator('.bottom-nav-plus').click();
-    await page.waitForTimeout(600);
-    await page.locator('.plan-chooser-item').first().click();
   }
   await page.waitForTimeout(2500);
   return page;
@@ -58,35 +53,33 @@ async function openPlanner(width, height) {
   check('it opens on step one, not a chooser', await page.locator('.guide-path').count() === 0
     && (await page.locator('.guide-title').first().innerText().catch(() => '')).length > 0); // T408: the title is the step's name now, not "Set up your trip"
   check('the first question is what is already booked',
-    await page.locator('.guide-booked-bit').count() === 3, String(await page.locator('.guide-booked-bit').count()));
+    await page.locator(BOOKED).count() === 3, String(await page.locator(BOOKED).count()));
   check('no locator map', await page.locator('.trip-map').count() === 0);
   check('no bottom sheet', await page.locator('.trip-sheet').count() === 0);
   check('no modal backdrop', await page.locator('.guide-overlay').count() === 0);
   check('inline shell renders', await page.locator('.guide-inline').isVisible().catch(() => false));
   check('app header still visible', await page.locator('.top-bar').isVisible().catch(() => false));
   check('the step rail is up from the first screen', await page.locator('.wiz-steps').isVisible().catch(() => false));
-  check('four steps when nothing is booked', await page.locator('.wiz-step').count() === 7, // T408: seven steps since T388 (Booked, From, When, Where, Trips, Getting there, Finish)
+  check('six steps when nothing is booked', await page.locator('.wiz-step').count() === 6, // T502: six since T500 (Trip basics, When, Where, Trips, Getting there, Review)
     String(await page.locator('.wiz-step').count()));
   check('no back button on the first screen', await page.locator('.guide-foot-actions .guide-back').count() === 0);
-  const box = await page.locator('.guide-booked-bit').first().boundingBox();
+  const box = await page.locator(BOOKED).first().boundingBox();
   const bar = await page.locator('.top-bar').boundingBox();
   check('cards sit below the header', box && bar && box.y > bar.y + bar.height - 2, JSON.stringify({ card: box?.y, bar: bar && bar.y + bar.height }));
   await page.screenshot({ path: 'shots/trip-landing-desktop.png' });
 
   // Booking the beds drops the country step: three steps, and the third
   // screen is the traveller's own list.
-  await page.locator('.guide-booked-bit', { hasText: /where you sleep/i }).click();
+  await page.locator('.wbook-tile', { hasText: /places to sleep/i }).click();
   await page.waitForTimeout(500);
-  check('booked stays drop a step', await page.locator('.wiz-step').count() === 6, // T408: seven minus the booked stays step
+  check('booked stays drop a step', await page.locator('.wiz-step').count() === 5, // T502: six minus Where and Trips, plus Your stays
     String(await page.locator('.wiz-step').count()));
-  await page.locator('.guide-booked-bit', { hasText: /where you sleep/i }).click();
+  await page.locator('.wbook-tile', { hasText: /places to sleep/i }).click();
   await page.waitForTimeout(500);
-  check('unticking brings it back', await page.locator('.wiz-step').count() === 7);
+  check('unticking brings it back', await page.locator('.wiz-step').count() === 6);
 
   // ── Where step: photo cards by default, map one tap away ──
-  // T408: since T388 the From step sits between Booked and When; step over it.
-  await page.locator('.guide-next').first().click();
-  await page.waitForTimeout(800);
+  // T502: Trip basics (booked + who) is one step since T500; step over it.
   await page.locator('.guide-next').first().click();
   await page.waitForTimeout(800);
   const days = page.locator('.cal-day:not(.disabled):not(.outside)');
@@ -114,13 +107,13 @@ async function openPlanner(width, height) {
   check('picking a country enables Next', await page.locator('.guide-next').isEnabled());
   await page.screenshot({ path: 'shots/trip-landing-where-list.png' });
 
-  await page.locator('.guide-where-view button', { hasText: /^map$/i }).first().click();
-  await page.waitForTimeout(2500);
-  check('map view swaps in the map', await page.locator('.guide-where-map .cpm').isVisible().catch(() => false));
-  check('map view hides the card grid', await page.locator('.guide-cgrid').count() === 0);
-  const mapH = (await page.locator('.guide-where-map .cpm').boundingBox())?.height || 0;
+  // T502: on a desktop the map stands in the wizard's aside beside the cards
+  // since T500, so the Grid | Map toggle (and its swap checks) is phone-only.
+  await page.waitForTimeout(1500);
+  check('the aside map stands beside the cards', await page.locator('.wiz-aside-map .cpm').isVisible().catch(() => false)
+    && await page.locator('.guide-cgrid').isVisible());
+  const mapH = (await page.locator('.wiz-aside-map .cpm').boundingBox())?.height || 0;
   check('map is tall enough to read', mapH > 300, String(Math.round(mapH)));
-  check('map view hides the list-only search', await page.locator('.guide-search').count() === 0);
   await page.screenshot({ path: 'shots/trip-landing-where-map.png' });
   await page.close();
 }
@@ -128,13 +121,11 @@ async function openPlanner(width, height) {
 // ── Phone ──
 {
   const page = await openPlanner(390, 844);
-  check('phone: opens on the first question', await page.locator('.guide-booked-bit').count() === 3);
+  check('phone: opens on the first question', await page.locator(BOOKED).count() === 3);
   check('phone: no launcher card over a map', await page.locator('.trip-launcher').count() === 0);
   const scrollW = await page.evaluate(() => document.documentElement.scrollWidth);
   check('phone: no horizontal scroll', scrollW <= 390, String(scrollW));
   await page.screenshot({ path: 'shots/trip-landing-phone.png' });
-  await page.locator('.guide-next').first().click();
-  await page.waitForTimeout(800);
   await page.locator('.guide-next').first().click();
   await page.waitForTimeout(800);
   const pdays = page.locator('.cal-day:not(.disabled):not(.outside)');

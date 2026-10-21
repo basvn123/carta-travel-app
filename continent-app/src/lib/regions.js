@@ -232,3 +232,122 @@ export function regionShareUrl(id) {
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   return `${origin}/#region=${encodeURIComponent(id)}`;
 }
+
+
+/* ---------------------------------------------------------------------------
+ * The region page's links to the rest of the catalogue (T498, roadmap 1.3b
+ * section E). A region file carries outdoor items and no towns, no climate
+ * and no price, so the page borrows them from the catalogue rows Explore
+ * already holds (usePlaceRows): the towns within reach of the region's
+ * items, the nearest priced one for the day price, and the months those
+ * towns agree on. All pure, so they are tested in node.
+ * ------------------------------------------------------------------------- */
+
+const EARTH_KM = 6371;
+
+function finitePoint(p) {
+  return p && Number.isFinite(p.lat) && Number.isFinite(p.lon);
+}
+
+function kmBetween(a, b) {
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLon = (b.lon - a.lon) * rad;
+  const h = Math.sin(dLat / 2) ** 2
+    + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2;
+  return 2 * EARTH_KM * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+function rowScore(row) {
+  const s = row?.rating?.score;
+  return Number.isFinite(s) ? s : -Infinity;
+}
+
+/** The middle of a region: the mean of its items that carry coordinates
+ *  (beaches, lakes, mountains; trails and cycle routes ship none). */
+export function regionCentre(cards) {
+  const pts = (cards || []).filter(finitePoint);
+  if (!pts.length) return null;
+  const lat = pts.reduce((s, p) => s + p.lat, 0) / pts.length;
+  const lon = pts.reduce((s, p) => s + p.lon, 0) / pts.length;
+  return { lat, lon };
+}
+
+/**
+ * The catalogue towns of one country within `km` of any of the region's
+ * items, best rated first, at most `max`. No item with coordinates means no
+ * honest "here", so the answer is empty rather than the whole country.
+ */
+export function townsNear(rows, cards, iso2, km = 25, max = 12) {
+  const pts = (cards || []).filter(finitePoint);
+  if (!pts.length) return [];
+  const out = [];
+  for (const row of rows || []) {
+    if (!finitePoint(row)) continue;
+    if (iso2 && row.iso2 !== iso2) continue;
+    if (pts.some((p) => kmBetween(p, row) <= km)) out.push(row);
+  }
+  out.sort((a, b) => (rowScore(b) - rowScore(a)) || String(a.city || '').localeCompare(String(b.city || '')));
+  return out.slice(0, max);
+}
+
+/**
+ * The priced town nearest to `point` within `km`: the same country first,
+ * then any, so a border coast never borrows a price from across the line
+ * while a town of its own is in reach. Null when nothing priced is close
+ * enough, and the page then prints no price at all.
+ */
+export function nearestPriced(rows, point, iso2, km = 40) {
+  if (!finitePoint(point)) return null;
+  let same = null;
+  let any = null;
+  for (const row of rows || []) {
+    if (!finitePoint(row) || !Number.isFinite(row.cost?.dayEur)) continue;
+    const d = kmBetween(point, row);
+    if (d > km) continue;
+    if (!any || d < any.d) any = { row, d };
+    if (iso2 && row.iso2 === iso2 && (!same || d < same.d)) same = { row, d };
+  }
+  return (same || any)?.row ?? null;
+}
+
+/**
+ * The months the towns here agree on (owner answer T489-f): nothing unless
+ * at least half the towns carry climate data, then the months that at least
+ * half of those towns name as best, ascending.
+ */
+export function bestMonthsOf(rows) {
+  const list = rows || [];
+  if (!list.length) return [];
+  const withData = list.filter((r) => Array.isArray(r?.climate?.best) && r.climate.best.length);
+  if (withData.length * 2 < list.length) return [];
+  const tally = new Map();
+  for (const r of withData) {
+    for (const m of new Set(r.climate.best)) {
+      if (Number.isInteger(m) && m >= 1 && m <= 12) tally.set(m, (tally.get(m) || 0) + 1);
+    }
+  }
+  return [...tally.entries()]
+    .filter(([, n]) => n * 2 >= withData.length)
+    .map(([m]) => m)
+    .sort((a, b) => a - b);
+}
+
+function regionTotal(r) {
+  return Object.values(r?.counts || {}).reduce((s, n) => s + (Number.isFinite(n) ? n : 0), 0);
+}
+
+/**
+ * One country's regions of the given kinds, the fullest first (item counts
+ * summed over the layers), empty ones left out. `index` is what
+ * loadRegionIndex() resolves to. The country page's "Coasts and ranges"
+ * door row reads this.
+ */
+export function regionsForCountry(index, iso2, { kinds = ['coast', 'range'], limit = 12 } = {}) {
+  if (!index || !Array.isArray(index.regions) || !iso2) return [];
+  const want = new Set(kinds);
+  return index.regions
+    .filter((r) => r.country === iso2 && want.has(r.kind) && regionTotal(r) > 0)
+    .sort((a, b) => (regionTotal(b) - regionTotal(a)) || String(a.name).localeCompare(String(b.name)))
+    .slice(0, limit);
+}

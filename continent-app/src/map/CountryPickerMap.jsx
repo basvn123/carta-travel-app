@@ -116,11 +116,12 @@ export function CountryPickerMap({
         promoteId: 'iso2',
       });
 
-      // A planning map's picks are ink (T398, rule "Map and list in sync": a
-      // picked place is ink and only the live route is accent), the hover a
-      // paper tint, a recommendation a dashed ink line.
-      const ink = token('--ink');
-      const inkFill = token('--ink-fill');
+      // A picked country is the one selected state (owner T490-d): the light
+      // --select-bg fill with a --text edge, never brown, because a country
+      // is not a live route. Others stay neutral; the hover is a paper tint,
+      // a recommendation a dashed ink line.
+      const ink = token('--text');
+      const selFill = token('--select-bg');
       const inkSoft = token('--ink-soft');
       const hoverFill = token('--paper-dim');
       const rule = token('--rule');
@@ -132,13 +133,13 @@ export function CountryPickerMap({
         paint: {
           'fill-color': [
             'case',
-            ['boolean', ['feature-state', 'selected'], false], inkFill,
+            ['boolean', ['feature-state', 'selected'], false], selFill,
             ['boolean', ['feature-state', 'hover'], false], hoverFill,
             token('--bg-card'),
           ],
           'fill-opacity': [
             'case',
-            ['boolean', ['feature-state', 'selected'], false], 0.35,
+            ['boolean', ['feature-state', 'selected'], false], 0.95,
             ['boolean', ['feature-state', 'hover'], false], 0.9,
             0.55,
           ],
@@ -161,12 +162,33 @@ export function CountryPickerMap({
             ['boolean', ['feature-state', 'recommended'], false], 1.4,
             0.6,
           ],
-          // A recommendation is a suggestion, so it is dotted: visibly
-          // different from the solid line that means "you picked this".
-          'line-dasharray': [
+          // A recommendation is drawn by the dotted layer below instead.
+          'line-opacity': [
             'case',
-            ['boolean', ['feature-state', 'recommended'], false], ['literal', [2, 1.6]],
-            ['literal', [1, 0]],
+            ['boolean', ['feature-state', 'selected'], false], 1,
+            ['boolean', ['feature-state', 'recommended'], false], 0,
+            1,
+          ],
+        },
+      });
+      // A recommendation is a suggestion, so it is dotted: visibly different
+      // from the solid line that means "you picked this". MapLibre cannot
+      // drive line-dasharray from feature state (T502: the console error
+      // "data expressions not supported"), so the dots are their own layer,
+      // shown through line-opacity, which can.
+      map.addLayer({
+        id: 'cpm-line-rec',
+        type: 'line',
+        source: 'cpm-countries',
+        paint: {
+          'line-color': inkSoft,
+          'line-width': 1.4,
+          'line-dasharray': [2, 1.6],
+          'line-opacity': [
+            'case',
+            ['boolean', ['feature-state', 'selected'], false], 0,
+            ['boolean', ['feature-state', 'recommended'], false], 1,
+            0,
           ],
         },
       });
@@ -199,7 +221,8 @@ export function CountryPickerMap({
         source: 'cpm-labels',
         layout: {
           'text-field': ['get', 'name'],
-          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+          // A stack the basemap's glyph server carries (T502: Open Sans Semibold 404'd).
+          'text-font': ['Montserrat SemiBold', 'Open Sans Bold', 'Noto Sans Regular'],
           'text-size': ['interpolate', ['linear'], ['zoom'], 3, 9, 6, 13],
           'text-allow-overlap': false,
         },

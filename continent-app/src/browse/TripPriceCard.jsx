@@ -4,7 +4,7 @@ import { useFirstRun } from '../lib/firstRunContext.js';
 import { readOwnFare, writeOwnFare, markFirstResultSeen } from '../lib/firstRun.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
 import { Stepper } from '../components/FilterControls.jsx';
-import { FlightSheet } from '../components/FirstRunReceipt.jsx';
+import { FlightSheet } from '../components/FlightSheet.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';

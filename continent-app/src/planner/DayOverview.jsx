@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button } from '../components/ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import {
   DownloadIcon, ShareIcon, LinkIcon, MapPinIcon, RouteIcon, CalendarIcon, ChevronDownIcon,
@@ -9,25 +9,24 @@ import {
 import { fmtClockLoose } from './daySchedule.js';
 import { fmtKm } from './dayFormat.js';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
-import { DayBar, SettledLine } from './DayPlanPanel.jsx';
+import { SettledLine } from './DayPlanPanel.jsx';
 
 /**
- * The planned day's head card (T433): the day in one look, the way the trip
- * planner's price card is the trip in one look. When it starts and ends, how
- * many stops, how far on foot, and what a day here costs one person at the
- * traveller's Lifestyle (the same figure Explore prints for the town, so no
- * two screens disagree), then the day bar, then whether the walks were
- * checked. Every route claim it makes is the route checker's verdict.
+ * The planned day's head card (T433, T501): the day in one look. When it
+ * starts and ends, how many stops, how far on foot, and whether the walks
+ * were checked. The day's figure left this card (roadmap 1.3d): it lives
+ * in the cost bar at the foot of the day on a desktop and in the drawer's
+ * strip on a phone, where a tap opens the compact receipt (T492-k). The day
+ * bar went too: the parts of the day show the day's shape now.
  *
- *   dayFig   { eur, est } a day here for one person, or null
  *   route    { state: 'checking' | 'checked' | 'flagged' | 'offline', flagged }
  */
 export function DaySummary({
-  schedule, stops, walkKm, dayFig, route, onLifestyle, focusIdx = null, title = null,
+  schedule, stops, walkKm, route, title = null,
 }) {
   const { t, lang } = useI18n();
   const startMin = schedule?.startMin;
-  const value = `${stops}|${walkKm}|${schedule?.endMin ?? ''}|${dayFig?.eur ?? ''}`;
+  const value = `${stops}|${walkKm}|${schedule?.endMin ?? ''}`;
   return (
     <section className="days-card" aria-label={t('dayws.summaryAria')}>
       {title}
@@ -44,14 +43,7 @@ export function DaySummary({
             {walkKm > 0 && <span>{t('dayws.aboutSteps', { n: formatSteps(kmToSteps(walkKm), lang) })}</span>}
           </SettledLine>
         </div>
-        {dayFig && Number.isFinite(dayFig.eur) && (
-          <Button variant="quiet" className="days-cost" onClick={onLifestyle} title={t('dayws.costTitle')}>
-            <span className="days-cost-fig"><Money value={dayFig.eur} est={dayFig.est} /></span>
-            <span className="days-cost-label">{t('dayws.costLabel')}</span>
-          </Button>
-        )}
       </div>
-      {schedule && stops > 0 && <DayBar schedule={schedule} startMin={startMin} focusIdx={focusIdx} />}
       {stops > 1 && route && (
         <p className={`days-route is-${route.state}`} role="status">
           {route.state === 'checked' && <CheckIcon size={14} />}

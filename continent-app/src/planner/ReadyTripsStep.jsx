@@ -7,7 +7,7 @@ import { isFav } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
-import { eur } from '../lib/format.js';
+import { DayCostLine } from './CountryMatchCards.jsx';
 import { RouteIcon, CheckIcon, SparkIcon, StarIcon, CloseIcon } from '../components/Icons.jsx';
 
 /**
@@ -137,7 +137,7 @@ function tripPhotos(trips, destinations) {
  * one swaps which trip the card IS, so the buttons below always act on what
  * the card is currently showing.
  */
-function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip = null, party = 2 }) {
+function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, dayCostFor = null }) {
   // Which variant the card is showing. It starts on the one groupTripVariants
   // preselected (nearest the window) and only moves when the traveller says so.
   const [shownId, setShownId] = useState(trip.id);
@@ -146,11 +146,11 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip =
   // The group is rebuilt whenever the countries or the window change, so the
   // preselection can move under a card that is still mounted.
   useEffect(() => { setShownId(trip.id); }, [trip.id]);
-  // The trip's beds and days for the party, priced stop by stop through the
-  // same function the planned receipt uses (T388, rule "Cost on cards"), so
-  // picking the card does not change the figure. No figure when a stop is not
-  // in the catalogue or has no price: a partial sum would read as cheap.
-  const cost = useMemo(() => (priceTrip ? priceTrip(shown.cities || []) : null), [priceTrip, shown]);
+  // The card's one price line (owner T490-e, rule "Cost on cards"): the day
+  // per person at the traveller's Lifestyle from the cheapest town the trip
+  // sleeps in, never an average, from the cost index Explore prices with.
+  // No figure when no stop is priced.
+  const cost = useMemo(() => (dayCostFor ? dayCostFor(shown.cities || []) : null), [dayCostFor, shown]);
 
   return (
     <div className={`wtrip ${chosen ? 'on' : ''}`}>
@@ -168,7 +168,9 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip =
             <span className="wtrip-star" title={t('ready.starred')}><StarIcon size={12} /></span>
           )}
           <span className="wtrip-days">
-            <b>{shown.days}</b> {t(shown.days === 1 ? 'trip.dayWord' : 'trip.daysWord')}
+            {/* One key with the figure inside (T490-i); a published trip is
+                never a single day. */}
+            {t('ready.lenDays', { n: shown.days })}
           </span>
           {chosen && <span className="wtrip-check"><CheckIcon size={12} /></span>}
         </div>
@@ -184,14 +186,7 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip =
           ))}
         </p>
 
-        {cost != null && cost > 0 && (() => {
-          const parts = t(party === 1 ? 'plan.cardTotalOne' : 'plan.cardTotalMany', { eur: '\u0000', n: party }).split('\u0000');
-          return (
-            <p className="wiz-cost-line wtrip-total">
-              {parts[0]}<span className="mono">~{eur(cost)}</span>{parts.slice(1).join('')}
-            </p>
-          );
-        })()}
+        <DayCostLine cost={cost} t={t} className="wtrip-total" />
 
         {variants.length > 1 && (
           <div className="wtrip-lens" role="group" aria-label={t('ready.lengthsLabel')}>
@@ -227,7 +222,7 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, priceTrip =
 
 export function ReadyTripsStep({
   countries, allCountries, windowNights, selectedId, onPick, onToggleCountry, onBuildOwn,
-  onRestorePick, onOpenTrip, destinations = null, favorites = null, priceTrip = null, party = 2,
+  onRestorePick, onOpenTrip, destinations = null, favorites = null, dayCostFor = null,
 }) {
   const { t } = useI18n();
   const [rows, setRows] = useState(null);   // null = loading
@@ -356,8 +351,7 @@ export function ReadyTripsStep({
                 onPick={onPick}
                 onOpen={onOpenTrip}
                 t={t}
-                priceTrip={priceTrip}
-                party={party}
+                dayCostFor={dayCostFor}
               />
             ))}
           </div>

@@ -20,7 +20,6 @@
   padding: var(--space-3) 0;
   border-bottom: 1px solid var(--rule-soft);
 }
-.trip-sheet-footer-row > .trip-save-planned-btn:only-of-type { flex: 1 1 auto; }
 .trip-more-item {
   display: flex;
   align-items: center;
@@ -41,8 +40,6 @@
 }
 @media (max-width: 768px) {
   .trip-wizard-modal .guide-foot-inner { flex-wrap: nowrap; gap: var(--space-2); }
-  .trip-wizard-modal .guide-foot-actions .guide-next { flex: none; }
-  .trip-wizard-modal .guide-foot-actions .guide-back { padding: 0 var(--space-3); }
 }
 @media (max-width: 768px) {
   .trip-wizard-modal .guide-head { padding: var(--space-2) var(--space-4) var(--space-2); }
@@ -174,35 +171,6 @@
   .guide-datemode button { transition: none; }
   .wtrip-choose:active { transform: none; }
 }
-.itin-breakdown-body .trip-total-row { border-bottom: 1px solid var(--rule-soft); }
-.itin-dayswitch {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) 0 0;
-}
-.itin-dayswitch-btn:disabled { opacity: 0.45; cursor: default; }
-.itin-dayswitch-btn:active:not(:disabled) { transform: scale(0.97); }
-@media (hover: hover) {
-  .itin-dayswitch-btn:hover:not(:disabled) { border-color: var(--ink-soft); }
-}
-.itin-dayswitch-pos {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.itin-dayswitch-date {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.itin-day-cap .itin-day-city { font-size: 19px; }
-@media (prefers-reduced-motion: reduce) {
-  .itin-dayswitch-btn:active:not(:disabled) { transform: none; }
-}
 .cbrief-hero-name {
   position: static;
   padding: var(--space-2) var(--space-4);
@@ -249,7 +217,6 @@
 .trip-wizard-modal .guide-canvas > .guide-sub { margin: calc(-1 * var(--space-3)) 0 var(--space-5); }
 @media (max-width: 768px) {
   .trip-wizard-modal.wiz-inline .guide-body { padding: var(--space-4) var(--gutter) var(--space-6); }
-  .trip-wizard-modal .wiz-recap-inbody .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .trip-wizard-modal .wiz-recap-inbody .guide-recap-chip { flex: none; }
 }
 .trip-wizard-modal .guide-airport-chip-row { flex-wrap: wrap; gap: var(--space-2); }
@@ -475,26 +442,7 @@
   .trip-planner-screen.is-planned { --panel-w: min(620px, 46vw); }
 }
 .trip-planner-screen.is-page .trip-topcard { padding-top: var(--space-4); }
-.trip-planner-screen.is-page .trip-sheet { overflow-y: auto; display: block; }
-.trip-planner-screen.is-page .trip-sheet-scroll { overflow: visible; min-height: 0; }
 .trip-planner-screen.is-page .trip-sheet-footer { position: sticky; bottom: 0; z-index: 2; }
-.trip-mapcard {
-  margin: 0 0 var(--space-2);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: var(--surface);
-}
-.trip-mapcard-map { position: relative; height: 210px; background: var(--surface-sunken); }
-.trip-mapcard-map .trip-map,
-.trip-mapcard-map > div { position: absolute !important; inset: 0 !important; }
-.trip-mapfull {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  background: var(--surface-page);
-}
-.trip-mapfull .trip-map { left: 0 !important; }
 .trip-peek-slot {
   position: absolute;
   left: calc(var(--panel-w) + var(--space-4));
@@ -607,15 +555,6 @@
 @media (max-width: 560px) {
   .itin-export-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-.itin-day-hero {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  height: auto;
-  object-fit: cover;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
 .bgo { display: flex; flex-direction: column; gap: var(--space-3); }
 .bgo-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .bgo-h { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
@@ -645,11 +584,7 @@
 .wpicked-date,
 .tlegs .tleg-date,
 .trip-topcard-sub,
-.trip-topcard-count,
 .itin .fare-prov-est { font-size: var(--text-caption); }
-@media (max-width: 768px) {
-  .trip-wizard-modal .wiz-recap-inbody .guide-recap-inner { flex-wrap: wrap; overflow: visible; }
-}
 .trip-wizard-modal .wiz-step.now .wiz-step-mark {
   background: var(--select-bg);
   color: var(--select-ink);
@@ -665,7 +600,6 @@
   background: var(--surface-sunken);
   color: var(--text);
 }
-.trip-mapcard-map { height: 180px; }
 @media (min-width: 1280px) {
   .trip-planner-screen.is-planned { --panel-w: min(760px, 52vw); }
 }
@@ -678,7 +612,6 @@
 }
 .bgo-track { align-items: start; }
 .itin-hop .itin-leg-main { min-height: var(--tap); }
-.trip-mapcard { isolation: isolate; }
 .trip-planner-screen.is-page .trip-sheet-footer { z-index: var(--z-sticky); }
 @media (max-width: 640px) {
   .itin-end { grid-template-columns: auto minmax(0, 1fr); }
@@ -818,8 +751,6 @@
 .bgo-track .bgo-card { height: 232px; }
 .bgo-meta { display: flex; align-items: center; gap: var(--space-2); }
 .trip-planner-screen .trip-pin.active .trip-pin-shape { background: var(--action); outline: 2px solid var(--text); outline-offset: 2px; }
-.trip-mapcard-map { height: 150px; }
-.trip-mapcard .trip-pin-tag { display: none; }
 .wstays { display: flex; flex-direction: column; gap: var(--space-4); }
 .wstay-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .wstay {
@@ -898,7 +829,6 @@
 .trip-planner-screen .trip-stop-tools .trip-stop-remove { grid-area: remove; align-self: start; }
 .trip-planner-screen .trip-stop-tools .trip-stop-remove:hover { color: var(--danger); }
 .trip-planner-screen .trip-block-title { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.trip-save-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
 .trip-edit-footer .trip-edit-done.btn { flex: 1 1 auto; }
 .itin-airport-hop { display: flex; align-items: center; flex-wrap: nowrap; gap: var(--space-3); padding: var(--space-2) 0 var(--space-2) var(--space-6); }
 .wtrip.on .wtrip-choose {
@@ -1011,50 +941,10 @@
     padding: 0;
   }
 }
-.itin-breakdown-body .trip-total-row .val,
-.itin-breakdown-body .itin-bd-leg .val {
-  font-family: var(--mono);
-  font-size: 15px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.itin-dayswitch-btn {
-  flex: none;
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 600;
-  transition: border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
-}
-@media (pointer: fine) {
-  .itin-dayswitch-btn { min-height: 32px; }
-}
-.itin-dayswitch-now {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .itin-dayswitch-btn { transition: none; }
-}
 .tlegs-sec .guide-section-title svg { color: var(--ink-soft); }
 .guide-overlay.trip-wizard-overlay .guide-close {
   min-width: var(--tap);
   min-height: var(--tap);
-}
-@media (pointer: coarse) {
-  .itin-dayswitch-btn {
-    min-width: var(--tap);
-    min-height: var(--tap);
-  }
 }
 .trip-wizard-modal .wiz-main .guide-canvas {
   max-width: none;
@@ -1071,10 +961,8 @@
   .trip-wizard-modal .guide-airport-chip { flex: none; }
 }
 .plan-input dt { font-size: var(--text-label); color: var(--text-2); }
-.plan-input dd { margin: 0; font-size: var(--text-body); color: var(--text); text-align: right; }
 .plan-total-more { border-top: 1px solid var(--border-soft); }
 .plan-line dt { color: var(--text-2); }
-.plan-line dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
 .plan-paid { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .plan-paid.is-set .plan-paid-input { border-color: var(--select-border); background: var(--select-bg); }
 .plan-paid-input::placeholder { color: var(--text-3); }
@@ -1083,23 +971,11 @@
 .tlegs .tleg-est { padding-bottom: 12px; font-size: var(--text-body); color: var(--text-2); white-space: nowrap; }
 .wrev-fact { padding: var(--space-3) var(--space-4); min-width: 0; }
 .wrev-fact dt { font-size: var(--text-caption); color: var(--text-2); }
-.wrev-fact dd { margin: 2px 0 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .wrev-stop-main { display: flex; flex-direction: column; min-width: 0; }
 @media (max-width: 640px) {
   .wrev-stop .plan-paid { grid-column: 1 / -1; }
 }
 .booked-stop .plan-paid { flex: none; }
-.trip-mapcard-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: 0 var(--space-2) 0 var(--space-4);
-  min-height: 52px;
-  border-top: 1px solid var(--border-soft);
-  font-size: var(--text-label);
-  color: var(--text-2);
-}
 .trip-peek-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .trip-peek-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
 .itin-end-main { display: flex; flex-direction: column; min-width: 0; }
@@ -1113,9 +989,7 @@
   border-top: 1px solid var(--border-soft);
 }
 .itin-hop > .itin-transfer { flex: 1 1 260px; min-width: 0; }
-.itin-extras > div { display: flex; justify-content: space-between; min-height: 36px; align-items: center; border-bottom: 1px solid var(--border-soft); font-size: var(--text-body); }
 .itin-extras dt { color: var(--text-2); }
-.itin-extras dd { margin: 0; }
 .itin-days-list .itin-day-row-num { width: 56px; flex: none; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .itin-days-list .itin-day-row-meta { display: flex; flex-direction: column; min-width: 0; }
 .itin-days-list .itin-day-row-meta b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
@@ -1135,7 +1009,6 @@
 }
 .bgo-card.bgo-intel { max-height: 420px; overflow-y: auto; }
 .trip-wizard-modal .guide-foot-summary { overflow: visible; height: auto; min-height: var(--tap); }
-.trip-mapcard-foot { justify-content: flex-end; min-height: var(--tap); }
 @media (max-width: 640px) {
   .wrev-stop .plan-paid { grid-column: 1 / -1; justify-self: start; }
 }
@@ -1185,3 +1058,218 @@
 .itin-airport-hop-icon { flex: none; color: var(--text-2); }
 .itin-airport-hop-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .itin-airport-hop-eur { flex: none; font-size: var(--text-body); color: var(--text); }
+/* T500: the trip planner in one workspace (roadmap 1.3c section 3, 1.17).
+   From 1024 px the list on the left (55 percent) and the map on the right
+   with the total bar under it; the actions sit at the foot of the list on the
+   same line as the bar. Below 1024 px the map fills the screen and the trip
+   lies over it in the shared map drawer (src/components/MapDrawer.jsx). */
+.trip-planner-screen.plan-ws { background: var(--surface-page); }
+.plan-ws.is-desk {
+  display: grid;
+  grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+}
+.plan-ws-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+.plan-ws-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: var(--space-5);
+}
+.plan-ws-side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.plan-ws-map {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--surface-sunken);
+}
+.plan-ws .plan-ws-map .trip-map { left: 0 !important; }
+.plan-ws-map.is-under { position: absolute; inset: 0; }
+.plan-ws.is-desk .trip-peek-slot {
+  left: var(--space-4);
+  right: auto;
+  bottom: var(--space-4);
+  width: min(420px, calc(100% - 2 * var(--space-4)));
+}
+.plan-ws .trip-peek-slot.is-top {
+  left: var(--space-3);
+  right: var(--space-3);
+  top: var(--space-3);
+  bottom: auto;
+  width: auto;
+  z-index: calc(var(--z-float) + 1);
+}
+.plan-ws .trip-topcard {
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+}
+.plan-ws .trip-topcard-name {
+  font: inherit;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  width: 100%;
+  min-height: var(--tap);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: transparent;
+  padding: 0 var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .plan-ws .trip-topcard-name:hover { background: var(--surface-hover); }
+}
+.plan-ws .trip-topcard-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--action); background: var(--surface); }
+.plan-ws .trip-topcard-sub {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font);
+  font-size: var(--text-label);
+  color: var(--text-2);
+}
+.plan-ws .plan-ws-actions {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.plan-ws.is-desk .plan-ws-actions { min-height: calc(var(--tap-main) + 2 * var(--space-3)); justify-content: center; }
+
+/* Saved, and where (T500, 2.19). The positive status rule: ink text after a
+   6 px dot, never a green box. */
+.trip-device-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-label);
+  color: var(--text);
+}
+.trip-device-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--status-success);
+  flex: none;
+}
+
+/* The toast: one line on --surface in the bottom slot, never over the nav. */
+.plan-ws .trip-save-toast,
+.trip-planner-blank .trip-save-toast {
+  bottom: calc(var(--bottom-nav-h) + var(--space-3));
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-label);
+  font-weight: 500;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  box-shadow: var(--elev-2);
+  z-index: var(--z-toast);
+}
+.plan-ws.is-phone .trip-save-toast { bottom: calc(var(--bottom-nav-h) + var(--drawer-strip) + var(--space-3)); }
+
+/* The total bar (T500, owner T490-g): the trip's one figure, read from
+   priceTrip(). It opens the receipt and never holds the primary. */
+.trip-total-bar {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-main);
+  color: var(--text);
+  text-align: left;
+  background: var(--surface);
+}
+@media (hover: hover) {
+  .trip-total-bar.btn:hover { background: var(--surface-hover); }
+}
+.trip-total-bar.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.trip-total-bar .ttb-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  width: 100%;
+  min-width: 0;
+}
+.trip-total-bar .ttb-n { font-size: var(--text-lead); font-weight: 700; white-space: nowrap; }
+.trip-total-bar .ttb-n .money-est { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
+.trip-total-bar .ttb-lbl { font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
+.trip-total-bar .ttb-sub { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.trip-total-bar .ttb-empty { font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
+.trip-total-bar.is-bar {
+  flex: none;
+  width: 100%;
+  min-height: calc(var(--tap-main) + 2 * var(--space-3));
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+}
+.trip-total-bar.is-bar.btn { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border); }
+.trip-total-bar.is-strip {
+  flex: 1 1 auto;
+  align-self: stretch;
+  min-width: 0;
+  background: transparent;
+}
+.trip-total-bar.is-strip.btn { padding: 0 var(--space-2) 0 var(--space-4); }
+.trip-total-bar.is-strip .ttb-body,
+.trip-total-bar.is-strip.is-empty .ttb-body { padding-left: 0; }
+.trip-total-bar.is-strip:not(.btn) { padding: 0 var(--space-2) 0 var(--space-4); }
+.trip-total-bar.is-strip .ttb-text { display: flex; flex-direction: column; min-width: 0; }
+.trip-total-bar.is-foot { background: transparent; }
+.trip-total-bar.is-foot.btn { padding: 0 var(--space-1); border-radius: var(--radius-control); }
+.trip-total-bar.is-foot .ttb-lbl { font-size: var(--text-micro); font-weight: 600; }
+.trip-total-bar.is-foot.is-empty { max-width: 14em; }
+.trip-total-bar.is-foot .ttb-empty { font-size: var(--text-caption); line-height: var(--leading-ui); }
+
+/* The map drawer (T500, owner T490-h, T490-k): 72 px strip, half, up to
+   under the header. One height, slid by transform; the body takes the room
+   that shows. Shared with the day planner (T501). */
+/* The planned trip keeps the page gutter, in the desktop column and the phone
+   drawer (T502: the receipt card, the route and the days ran into both edges). */
+.plan-ws-scroll .itin,
+.plan-ws-drawer .map-drawer-scroll .itin { padding-inline: var(--gutter); }
+.map-drawer-foot .plan-ws-actions { padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px)); }
+@media (prefers-reduced-motion: reduce) {
+  .trip-total-bar.btn,
+  .plan-ws .trip-topcard-name { transition: none; }
+}
+
+/* The bottom nav steps aside while a drawer is nearly full (T492-g), the way
+   it does for the keyboard. Read through :has so a planner kept mounted in a
+   hidden tab, or under My trips or Account, never hides it. T501: the day
+   planner gets this by rendering MapDrawer. */
+
+/* A device trip meets an account trip (T490-f): two equal cards. */
+.trip-keep-lead { margin: 0 0 var(--space-4); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
+.trip-keep-list { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+@media (min-width: 560px) { .trip-keep-list { grid-template-columns: 1fr 1fr; } }
+.trip-keep-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.trip-keep-where { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.trip-keep-name { font-size: var(--text-lead); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.trip-keep-line { font-size: var(--text-label); color: var(--text-2); }
+
+/* The day rows: the way into a day is a main action, 48 px (T472-f). */

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { LinkIcon, TrashIcon, PersonIcon, PlusIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { usePaywall } from '../hooks/usePaywall.jsx';
 import { Button, IconButton, Segmented, Field } from '../components/ui/index.js';
 import {
   fetchTripShares, createTripShare, revokeTripShare, buildShareUrl,
@@ -74,7 +73,6 @@ function AskInline({ text, sub, keepLabel, goLabel, goVariant = 'danger', onKeep
  * Without 052 on the project the link row hides itself.
  */
 function PlanTogether({ userId, tripPlanId, t, title }) {
-  const paywall = usePaywall();
   const [people, setPeople] = useState([]);
   const [friends, setFriends] = useState([]);
   const [links, setLinks] = useState({ links: [], missing: false });
@@ -105,7 +103,6 @@ function PlanTogether({ userId, tripPlanId, t, title }) {
   const canAsk = friends.filter((f) => !onTrip.has(f.userId));
 
   const inviteByLink = async () => {
-    if (!paywall.require('share')) return;
     setBusy('link');
     setError('');
     try {
@@ -137,7 +134,6 @@ function PlanTogether({ userId, tripPlanId, t, title }) {
 
   const ask = async () => {
     if (!pick) return;
-    if (!paywall.require('share')) return;
     setBusy('ask');
     setError('');
     try {
@@ -231,7 +227,6 @@ export function TripSharePanel({
   userId, tripPlanId, visibility = 'private', onVisibility, canInvite = true, title = '',
 }) {
   const { t, lang } = useI18n();
-  const paywall = usePaywall();
   const [scope, setScope] = useState('itinerary');
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -302,9 +297,8 @@ export function TripSharePanel({
   };
 
   const make = async () => {
-    // The first share link is free, always: it is how the next traveller
-    // hears about Carta. A second one is a habit, and that is what a pass is for.
-    if (links.length >= 1 && !paywall.require('share')) return;
+    // Every share link is free (T488-b): it is how the next traveller hears
+    // about Carta, and planning together is planning.
     setBusy(true);
     setError('');
     try {

@@ -117,18 +117,21 @@ for (const view of ['phone', 'desk']) {
   const band = await page.$eval('.dtab-countryband-name', (e) => e.textContent.trim()).catch(() => '');
   check(band === 'Croatia', `${tag}the country band names it`, band);
   const go = await page.$('.dtab-countryband-go');
-  check(go !== null, `${tag}the band has the door to Explore`);
+  // T498: the band's door is the country's own page (#country=), Places in
+  // the same country being one tile away.
+  check(go !== null, `${tag}the band has the door to the country page`);
   if (go) {
     await go.click();
     await page.waitForTimeout(2500);
-    const exploreOn = await page.evaluate(() => new URLSearchParams(location.search).get('tab'));
-    check(exploreOn === 'map' || exploreOn === null, `${tag}the door opens Explore`, String(exploreOn));
+    const hash = await page.evaluate(() => location.hash);
+    const pageOn = await page.$('.cpg-page');
+    check(/country=HR/.test(hash) && pageOn !== null, `${tag}the door opens Croatia's page`, hash);
   }
   await page.close();
 
   // A link straight to a section and a country.
   page = await open(browser, view, '?tab=places&dc=lakes&dn=SI');
-  const on = await page.$eval('.dtab-cats [aria-selected="true"]', (e) => e.textContent.trim()).catch(() => '');
+  const on = await page.$eval('.xcats [aria-selected="true"]', (e) => e.textContent.trim()).catch(() => '');
   check(on === 'Lakes', `${tag}dc=lakes&dn=SI opens Lakes`, on);
   check((await page.$eval('.dtab-countryband-name', (e) => e.textContent.trim()).catch(() => '')) === 'Slovenia', `${tag}and Slovenia's band`);
   await page.close();

@@ -88,6 +88,24 @@ const MAX_MOODS = 3;
 const BOT_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('paymock');
 
+// T501 (T492-j): a guest who signs in at the last question keeps the answers.
+// The chat is parked in sessionStorage per day (sign-in may reload the page)
+// and runs once the traveller is signed in. Storage can throw; it is optional.
+const CHAT_PARK_MAX_MS = 30 * 60 * 1000;
+const chatParkKey = (dateISO, townId) => `carta.dayChat.v1:${dateISO || ''}:${townId || ''}`;
+function readChatPark(key) {
+  try {
+    const rec = JSON.parse(window.sessionStorage.getItem(key) || 'null');
+    return rec && Date.now() - (rec.at || 0) < CHAT_PARK_MAX_MS ? rec : null;
+  } catch { return null; }
+}
+function writeChatPark(key, rec) {
+  try { window.sessionStorage.setItem(key, JSON.stringify(rec)); } catch { /* storage off */ }
+}
+function clearChatPark(key) {
+  try { window.sessionStorage.removeItem(key); } catch { /* storage off */ }
+}
+
 const MOOD_OPTIONS = [
   { key: 'sights', labelKey: 'chat.moodSights', Icon: CastleIcon },
   { key: 'museums', labelKey: 'chat.moodMuseums', Icon: MuseumIcon },
@@ -242,7 +260,10 @@ export function CartaChatPlanner({
   onSignIn = null,
 }) {
   const { t, lang } = useI18n();
-  const [step, setStep] = useState(0);
+  // T501 (T492-j): the parked chat for this day, read once on mount.
+  const parkKey = chatParkKey(dateISO, presetTownId || defaultTownId);
+  const [parked] = useState(() => readChatPark(parkKey));
+  const [step, setStep] = useState(() => parked?.step || 0);
   // Moods the ideas step already implies: someone who named a beach has
   // answered "beach and water" without being asked, so the question opens
   // with it ticked rather than blank.
@@ -262,6 +283,7 @@ export function CartaChatPlanner({
       ? { moods: [...new Set([...impliedMoods, ...initialAnswers.moods])].slice(0, MAX_MOODS) }
       : {}),
     ...(presetTownId ? { town: presetTownId } : {}),
+    ...(parked?.answers || {}),
   }));
   // Festivals that match the date default the toggle on: the traveller is
   // told what is happening rather than asked whether to look. The dossier is
@@ -271,7 +293,7 @@ export function CartaChatPlanner({
   useEffect(() => {
     if (hasEvents && !eventsTouched.current) setAnswers((a) => ({ ...a, events: true }));
   }, [hasEvents]);
-  const [freeText, setFreeText] = useState('');
+  const [freeText, setFreeText] = useState(() => parked?.freeText || '');
   const [phase, setPhase] = useState('ask'); // ask | busy | result | fail
   const [result, setResult] = useState(null);
   const [rounds, setRounds] = useState(0);
@@ -445,6 +467,7 @@ export function CartaChatPlanner({
     };
     const res = await onRun(full, (stage) => setStages((prev) => [...prev, stage]));
     credit.refresh();
+    clearChatPark(parkKey);
     if (res.ok) {
       // T433: the plan opens as the day itself. The old in-chat proposal
       // (and its "Import onto my map") was a second overview of the same
@@ -478,10 +501,31 @@ export function CartaChatPlanner({
   const finish = () => {
     const next = { ...answers, extra: freeText.trim() };
     setAnswers(next);
-    if (!signedIn && onSignIn && !BOT_MOCK) { onSignIn(); return; }
+    if (!signedIn && onSignIn && !BOT_MOCK) {
+      writeChatPark(parkKey, { answers: next, freeText, step, pending: true, at: Date.now() });
+      onSignIn();
+      return;
+    }
     if (credit.out && !BOT_MOCK) { credit.openPasses('plans'); return; }
     generate(next, '');
   };
+
+  // T501 (T492-j): once the guest is signed in, the parked chat runs once,
+  // exactly as finish() would for a signed-in traveller.
+  const resumedRef = useRef(false);
+  useEffect(() => {
+    if (!signedIn || phase !== 'ask' || resumedRef.current) return;
+    const rec = readChatPark(parkKey);
+    if (!rec?.pending) return;
+    resumedRef.current = true;
+    clearChatPark(parkKey);
+    const next = { ...answers, ...rec.answers };
+    setAnswers(next);
+    if (credit.out && !BOT_MOCK) { credit.openPasses('plans'); return; }
+    generate(next, '');
+    // Runs on the sign-in edge only; the ref keeps it to one run.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedIn, phase, parkKey]);
 
   const nextQ = () => {
     if (current?.key === 'extra' || isLast) { finish(); return; }
@@ -489,7 +533,11 @@ export function CartaChatPlanner({
   };
 
   const foot = phase === 'ask' && current ? {
-    back: () => (stepSafe === 0 ? onBack() : go(stepSafe - 1)),
+    back: () => {
+      if (stepSafe !== 0) { go(stepSafe - 1); return; }
+      clearChatPark(parkKey); // T501: leaving the chat drops the parked answers
+      onBack();
+    },
     summary: isLast ? <CreditChip /> : null,
     next: {
       label: isLast

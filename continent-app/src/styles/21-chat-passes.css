@@ -211,6 +211,11 @@
 .account-panel .panel-header.account-header-bare { padding-bottom: 0; }
 .account-panel .panel-header.account-header-bare .panel-tag { margin-bottom: 0; }
 .account-panel .panel-header.account-header-bare + .panel-section { padding-top: 10px; }
+/* One left edge on a phone (T502): the heading sat on the 16 px gutter while
+   every section below used .panel-section's 28 px, as My trips once did. */
+@media (max-width: 768px) {
+  .account-panel .panel-section { padding-left: var(--gutter); padding-right: var(--gutter); }
+}
 
 .account-section-hint {
   font-size: 13px;

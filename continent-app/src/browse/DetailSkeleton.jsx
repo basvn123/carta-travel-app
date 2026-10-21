@@ -604,7 +604,7 @@ export function DetailPage({
                 {alternatives.length > 0 && (
                   <section className="ipage-alts" aria-labelledby="ipage-alts-h">
                     <Track title={t('item.notQuite')} headingId="ipage-alts-h" size="third">
-                      {alternatives.map((a) => <AlternativeCard key={a.key} {...a} />)}
+                      {alternatives.map(({ key, ...a }) => <AlternativeCard key={key} {...a} />)}
                     </Track>
                   </section>
                 )}

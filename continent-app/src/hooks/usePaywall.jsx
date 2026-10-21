@@ -40,7 +40,7 @@ import { E2E_SEAMS } from '../lib/e2eSeams.js';
  * Every reason the pass modal can open, and how insistent each one is.
  *
  * `kind` is the only thing decided here. The copy each reason leads with
- * lives in REASON_COPY inside components/PassModal.jsx, because the modal
+ * lives in REASON_COPY in lib/passMoments.js (T497), because the modal
  * must not import the hook that mounts it. Adding a reason means adding its
  * heading there and to all six locales.
  */
@@ -48,18 +48,24 @@ import { E2E_SEAMS } from '../lib/e2eSeams.js';
 const QUOTA_REASONS = new Set(['plans', 'ground', 'plansLow']);
 
 export const GATES = {
-  // Hard gates: the traveller pressed something that needs a pass.
+  // Hard gates: the traveller pressed something that needs a pass. Every PDF
+  // is one (T488-a: the trip, the day, the destination and every item page
+  // through useItemPdf); the calendar and map files name themselves.
+  // Planning together and a second share link are free (T488-b), so there is
+  // no 'share' gate any more.
   export:    { kind: 'hard' },
+  exportCal: { kind: 'hard' },
+  exportMap: { kind: 'hard' },
   import:    { kind: 'hard' },
-  share:     { kind: 'hard' },
   save:      { kind: 'hard' },
   plans:     { kind: 'hard' },
   ground:    { kind: 'hard' },
-  // Soft gates: nothing was blocked, this is an offer.
+  // Soft gates: nothing was blocked, this is an offer. Only the two that
+  // inform: a plan left, a pass nearly up. The offer after a first trip
+  // ("celebrate") is gone (T488-c): it opened while nothing paid was tapped.
   plansLow:  { kind: 'soft' },
-  celebrate: { kind: 'soft' },
   expiring:  { kind: 'soft' },
-  // Browsing the prices on purpose, from the header or the account panel.
+  // Browsing the prices on purpose, from Account, Home or an AI allowance.
   browse:    { kind: 'hard' },
 };
 
@@ -194,6 +200,8 @@ export function PaywallProvider({ children, onSignIn }) {
 
   const close = useCallback(() => {
     setReason('');
+    // A plan chosen before signing in applies to that one opening only.
+    setInitialTier('');
     openedHard.current = false;
     entitlement.refresh();
   }, [entitlement]);

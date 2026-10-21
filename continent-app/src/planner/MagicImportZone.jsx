@@ -4,6 +4,7 @@ import { CreditChip } from '../components/CreditChip.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { SparkIcon, UploadIcon } from '../components/Icons.jsx';
+import { Button } from '../components/ui/index.js';
 import {
   filesToPayload, requestBookingImport, IMPORT_ACCEPT, MAX_IMPORT_FILES,
 } from './bookingImport.js';
@@ -27,6 +28,9 @@ export function MagicImportZone({ onResult, importContext, leadKey = 'extras.imp
   const [dragOver, setDragOver] = useState(false);
   const [urlValue, setUrlValue] = useState('');
   const fileRef = useRef(null);
+  // Files dropped while the pass sheet asked: kept, never lost (roadmap 1.15
+  // point 5), so closing the sheet leaves them one tap from being read.
+  const heldRef = useRef(null);
   const paywall = usePaywall();
 
   // Files, pasted text and links all end up here, so this is the only place
@@ -51,6 +55,15 @@ export function MagicImportZone({ onResult, importContext, leadKey = 'extras.imp
 
   const handleFiles = async (fileList) => {
     if (!fileList || !fileList.length || state.phase === 'busy') return;
+    // The pass is asked for the moment a file lands (T488-h), before Carta
+    // reads a byte of it, not after the files were prepared.
+    if (!paywall.require('import')) {
+      const files = Array.from(fileList);
+      heldRef.current = files;
+      setState({ phase: 'held', name: files.map((f) => f.name).join(', ') });
+      return;
+    }
+    heldRef.current = null;
     setState({ phase: 'busy' });
     const payload = await filesToPayload(fileList);
     if (payload.error) {
@@ -151,6 +164,15 @@ export function MagicImportZone({ onResult, importContext, leadKey = 'extras.imp
             <div className="extras-drop-status ok">
               {t('extras.importDone', { filled: state.filled || 0, staged: state.staged || 0 })}
               {state.left != null && ` ${t('extras.importLeft', { left: state.left })}`}
+            </div>
+          )}
+          {state.phase === 'held' && (
+            <div className="extras-drop-status" role="status">
+              {t('extras.importHeld', { name: state.name })}
+              {' '}
+              <Button variant="quiet" size="sm" onClick={() => handleFiles(heldRef.current)}>
+                {t('extras.importHeldGo')}
+              </Button>
             </div>
           )}
           {state.phase === 'error' && (

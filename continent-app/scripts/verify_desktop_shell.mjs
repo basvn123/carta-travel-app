@@ -37,37 +37,29 @@ const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
 page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
 page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 120)); });
 await seed(page);
-await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+// T502: Destinations folded into Explore (T498); its panel is Explore's
+// Trails layer now, ?tab=explore&cat=trails.
+await page.goto(URL + '?tab=explore&cat=trails', { waitUntil: 'domcontentloaded', timeout: 45000 });
 await page.waitForTimeout(3500);
 
 // The bar: page ground, not white; the active section underlined; the pass
 // button on the full accent; friends folded to its icon.
 const barBg = await bg(page, '.top-bar');
-check('top bar sits on the page ground', barBg === 'rgb(248, 246, 240)', barBg);
+// T502: --surface-page is #f6f5f2 since the Lagoon tokens (DESIGN.md).
+check('top bar sits on the page ground', barBg === 'rgb(246, 245, 242)', barBg);
 check('a header tab is active', await page.locator('.header-nav-item.active').count() === 1);
-const passBg = await bg(page, '.header-pricing-btn');
-// Since T360 the pass chip is secondary chrome (carta-design "Secondary
-// chrome"): transparent or paper with a --rule border, never the accent,
-// which belongs to each page's one primary (T381, register row T370-a).
-check('Get a pass is secondary chrome, not the accent',
-  !['rgb(224, 90, 71)', 'rgb(206, 56, 35)'].includes(passBg), passBg);
-const passLabel = (await page.locator('.header-pricing-btn').innerText().catch(() => '')).trim();
-check('pass button says Get a pass', /get a pass/i.test(passLabel), passLabel);
+// The pass button checks went with the button (T496-T501: no pass in the header).
 check('friends label folded to the icon',
   await page.locator('.header-friends-label').first().isHidden().catch(() => true));
 
 // Destinations: its search heads the column (NOT the header slot, which this
 // tab gave up), the left panel stands, the toolbar card is gone.
-check('search heads the results column',
+// T502: since the fold into Explore (T498) the layer portals its search
+// into the header slot, the way Explore does: one field there.
+check('search stands in the header slot',
   await page.locator('#header-search-slot .places-search input').isVisible());
-check('search left the header slot',
-  await page.locator('.header-search-slot .places-search input').count() === 0);
-const searchTop = (await page.locator('#header-search-slot').boundingBox())?.y ?? 0;
-const listTop = (await page.locator('.places-list').first().boundingBox())?.y ?? 0;
-const barBottom = (await page.locator('.top-bar').boundingBox() || { y: 0, height: 0 });
-check('it sits under the bar and over the results',
-  searchTop >= barBottom.y + barBottom.height - 1 && searchTop < listTop,
-  `bar ends ${Math.round(barBottom.y + barBottom.height)}, search ${Math.round(searchTop)}, list ${Math.round(listTop)}`);
+check('the header slot holds one search field',
+  await page.locator('#header-search-slot input').count() === 1);
 check('side panel renders', await page.locator('.places-side').isVisible());
 check('toolbar card folded away', await page.locator('.places-toolbar').isHidden());
 // Seven since Cycling joined General/Trips/Trails/Beaches/Lakes/Mountains.
@@ -91,7 +83,8 @@ check('country dropdown in the panel', await page.locator('.places-side .side-co
 await page.locator('.dtab-cats [role="tab"]', { hasText: /trails/i }).first().click();
 await page.waitForTimeout(1200);
 const onBg = await bg(page, '.dtab-cats [aria-selected="true"]');
-check('selected tile wears the ink fill', onBg === 'rgb(43, 52, 70)', onBg);
+// T502: the selected state is the --select-bg tint (#f6e7d3, DESIGN.md "No Slab Rule").
+check('selected tile wears the select tint', onBg === 'rgb(246, 231, 211)', onBg);
 // It stays on Trails: General, the category this used to return to, is
 // retired, and Trails is a category with a country index for the sorts.
 await page.waitForTimeout(800);
@@ -120,25 +113,27 @@ await page.waitForTimeout(400);
 // ── Explore ──
 await page.locator('.header-nav-item', { hasText: /explore/i }).first().click();
 await page.waitForTimeout(2500);
+// T502: Explore opens on its rails; See all is the list with the side panel.
+await page.locator('.xrails-all:visible').first().click();
+await page.waitForTimeout(2500);
 check('explore side panel renders', await page.locator('.explore-side').isVisible());
 check('explore toolbar folded away', await page.locator('.explore-toolbar').isHidden());
 // T391: Explore v5 (T383) draws the trip types as the rail's toggles
 // (.xrail-toggle) in its side panel; the old kind-rail chips are gone.
-check('kind tiles in the panel', await page.locator('.explore-side .xrail-toggle').count() >= 9);
+// T502: the kit tiles and the trip kinds are .ui-tile toggles in the panel.
+check('kind tiles in the panel', await page.locator('.explore-side .ui-tile').count() >= 9);
 check('explore search in the header',
-  await page.locator('.header-search-slot .results-search-input').isVisible());
+  await page.locator('.header-search-slot .gsearch-trigger').isVisible());
 
-// v5: the card is body-forward again, four facts under the photograph,
-// with the info button as the door to the rest.
-const card = page.locator('.xcard').first();
+// T502: the card is a compact row since T427 (photograph, name, country,
+// price); the info button is gone and the preview opens on hover.
+const card = page.locator('.xrow').first();
 check('card body carries the name',
-  (await card.locator('.xcard-body .xcard-name').innerText().catch(() => '')).trim().length > 1);
-check('card body is on screen', await card.locator('.xcard-body').isVisible());
-check('info button renders', await card.locator('.xcard-info').isVisible());
-// The explanation sits behind the button: click opens the preview panel.
-await card.locator('.xcard-info').click();
-await page.waitForTimeout(600);
-check('info opens the explanation', await card.locator('.xcard-preview').isVisible());
+  (await card.locator('.xrow-body .xrow-name').innerText().catch(() => '')).trim().length > 1);
+check('card body is on screen', await card.locator('.xrow-body').isVisible());
+await card.hover();
+await page.waitForTimeout(1200);
+check('hover opens the explanation', await card.locator('.xcard-preview').isVisible());
 await page.screenshot({ path: 'shots/desktop-explore.png' });
 await page.mouse.move(10, 500);
 await page.waitForTimeout(300);
@@ -151,15 +146,15 @@ await page.waitForTimeout(300);
 const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
 phone.on('pageerror', (e) => errors.push('phone pageerror: ' + e.message.split('\n')[0]));
 await seed(phone);
-await phone.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+await phone.goto(URL + '?tab=explore&cat=trails', { waitUntil: 'domcontentloaded', timeout: 45000 });
 await phone.waitForTimeout(3000);
 check('phone: side panel absent', await phone.locator('.side-panel').first().isHidden().catch(() => true));
-check('phone: toolbar stays inline', await phone.locator('.places-toolbar').isVisible());
-check('phone: search stays inline', await phone.locator('.places-toolbar .places-search input').isVisible());
-check('phone: the brand stands in the bar',
-  await phone.locator('.app-header-brand .brand-name').isVisible().catch(() => false));
+// T502: the toolbar is .dtab-top since the fold (T498); the phone brand
+// check went with the phone header bar (T496-T501: none on browse views).
+check('phone: toolbar stays inline', await phone.locator('.dtab-top').isVisible());
+check('phone: search stays inline', await phone.locator('.dtab-top .places-search input').isVisible());
 check('phone: no card chrome on the toolbar',
-  (await bg(phone, '.places-toolbar')) === 'rgba(0, 0, 0, 0)');
+  (await bg(phone, '.dtab-top')) === 'rgba(0, 0, 0, 0)');
 // T391: up to six categories on a phone are a 2 x 3 grid of equal buttons,
 // never a sideways strip that hides some (carta-design "Filter chips", built
 // by the V3 destinations session); this asserted the sideways row before.
@@ -191,7 +186,7 @@ const navState = await phone.locator('.bottom-nav').evaluate((nav) => {
   };
 }).catch(() => null);
 check('phone: the active bottom tab wears the ink pill',
-  !!navState && navState.on === 'true' && navState.marker === 'rgb(43, 52, 70)' && navState.label !== 'rgb(206, 56, 35)',
+  !!navState && navState.on === 'true' && navState.marker === 'rgb(246, 231, 211)' && navState.label !== 'rgb(206, 56, 35)',
   JSON.stringify(navState));
 await phone.screenshot({ path: 'shots/mobile-destinations.png' });
 const phoneNav = phone.locator('.bottom-nav-item', { hasText: /explore/i }).first();
@@ -199,13 +194,14 @@ await phoneNav.click();
 await phone.waitForTimeout(2500);
 // T391: Explore v5 (T383) replaced the toolbar with its input row
 // (.xinputs) under the title bar; this asserted the old .explore-toolbar.
-check('phone: explore input row stays inline', await phone.locator('.xinputs').first().isVisible());
-const pCard = phone.locator('.xcard').first();
-check('phone: explore card body is on screen', await pCard.locator('.xcard-body').isVisible().catch(() => false));
+// T502: the guided search button replaced the input row (T442).
+check('phone: explore search stays inline', await phone.locator('.gsearch-trigger:visible').first().isVisible());
+await phone.locator('.xrails-all:visible').first().click();
+await phone.waitForTimeout(2500);
+// T502: the card is a compact row since T427 (no info button, no grid).
+const pCard = phone.locator('.xrow').first();
+check('phone: explore card body is on screen', await pCard.locator('.xrow-body').isVisible().catch(() => false));
 check('phone: explore card has no photo overlay', await pCard.locator('.xcard-overlay').count() === 0);
-check('phone: info button stays hidden', await pCard.locator('.xcard-info').isHidden().catch(() => true));
-check('phone: explore cards run two abreast', await phone.locator('.explore-grid').evaluate(
-  (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 2));
 await phone.screenshot({ path: 'shots/mobile-explore.png' });
 
 // ── Report ──

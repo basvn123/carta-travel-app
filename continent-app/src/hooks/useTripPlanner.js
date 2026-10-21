@@ -112,6 +112,10 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // city when unset, so older drafts keep pricing.
   const [carHome, setCarHome] = useState(draft?.carHome || null);
   const [planId, setPlanId] = useState(null);
+  // The trip kept on this device without an account (T500, carta.deviceTrip.v1):
+  // its key, so a save knows this trip from a second one. Null for a trip that
+  // was never saved on the device.
+  const [deviceKey, setDeviceKey] = useState(draft?.deviceKey || null);
   const [planLabel, setPlanLabel] = useState(draft?.planLabel || '');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
   const [planned, setPlanned] = useState(draft?.planned || false); // true = show the day-by-day itinerary view
@@ -134,11 +138,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, ownStays, children, babies,
+      stayTier, ownStays, children, babies, deviceKey,
     });
   }, [children, babies, tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier, ownStays]);
+      stayTier, ownStays, deviceKey]);
 
   // Each stop with its chained dates (the same chain priceTrip prices).
   const stopDetails = useMemo(
@@ -265,6 +269,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setPlanLabel('');
     setPlanned(false);
     setOwnStays({});
+    setDeviceKey(null);
   }, [setTransferMode]);
 
   // Load a whole itinerary the guided wizard just assembled: a start date, an
@@ -307,6 +312,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     // transfer choice (a leftover "taxi" would silently reprice this one).
     setTransferMode('auto');
     setPlanId(null);
+    setDeviceKey(null);
     setPlanned(false);
     // A brand-new trip must not inherit day picks from a previous, abandoned
     // draft: both run under TRIP_DRAFT_PLAN_ID until saved, and stale indices
@@ -428,6 +434,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     const plan = await fetchTripPlanWithStops(tripPlanId);
     const sorted = (plan.stops || []).slice();
     setPlanId(plan.id);
+    setDeviceKey(null);
     setPlanLabel(plan.label || '');
     // Reconstruct the trip window + per-stop nights from the stored dates.
     const first = sorted[0];
@@ -463,13 +470,16 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setPlanned(false);
   }, []);
 
-  const savePlan = useCallback(async (userId) => {
+  // asPlanId saves this trip OVER an account trip (T500, T490-f: a device trip
+  // meets an account that already holds one and the traveller keeps this one).
+  const savePlan = useCallback(async (userId, { asPlanId = null } = {}) => {
     if (!userId || stops.length < 1) return null;
     setSaveState('saving');
+    const targetId = asPlanId || planId;
     try {
-      const id = planId || await createTripPlan(userId, planLabel || null);
+      const id = targetId || await createTripPlan(userId, planLabel || null);
       // Renames of an already-saved trip must stick too, not just first saves.
-      if (planId) await renameTripPlan(id, planLabel || null);
+      if (targetId) await renameTripPlan(id, planLabel || null);
       await saveTripPlanStops(id, userId, stopDetails.map((s, i) => {
         const isLast = i === stopDetails.length - 1;
         return {
@@ -492,7 +502,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       // re-key its picks/preferences from the draft id to the real plan id.
       // Through the store's persist functions (not raw setItem) so the move
       // also reaches account sync: the draft id never syncs, the real id must.
-      if (!planId && typeof window !== 'undefined') {
+      if (!targetId && typeof window !== 'undefined') {
         try {
           const picks = window.localStorage.getItem(assignmentsKey(TRIP_DRAFT_PLAN_ID));
           if (picks != null) {
@@ -512,6 +522,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
         } catch { /* private mode */ }
       }
       setPlanId(id);
+      setDeviceKey(null);
       setSaveState('saved');
       setTimeout(() => setSaveState('idle'), 2000);
       return id;
@@ -521,7 +532,46 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     }
   }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, ownStays, children, babies]);
 
+  // The trip as the device keeps it (T500): the same fields the draft holds,
+  // so a device trip reopens exactly as it was saved.
+  const snapshot = useMemo(() => ({
+    tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planLabel, planned,
+    stayTier, ownStays, children, babies,
+  }), [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
+    baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planLabel, planned,
+    stayTier, ownStays, children, babies]);
+
+  // Put a kept trip back on the planner (a device trip, T500).
+  const loadSnapshot = useCallback((d, key = null) => {
+    if (!d || !Array.isArray(d.stops)) return;
+    setTripStart(d.tripStart || '');
+    setTripEnd(d.tripEnd || '');
+    setStops(d.stops);
+    setGroupSize(d.groupSize || 2);
+    setChildren(d.children || 0);
+    setBabies(d.babies || 0);
+    setTransportPref(d.transportPref || 'auto');
+    setLegModes(d.legModes || {});
+    setOwnLegs(d.ownLegs || {});
+    setTransferModeRaw(normalizeTransferMode(d.transferMode));
+    setPace(d.pace || 'balanced');
+    if (d.stayTier) setStayTier(d.stayTier);
+    setBaggage(d.baggage || 'cabin');
+    setAnchorId(d.anchorId || null);
+    setAnchorOrigin(d.anchorOrigin || null);
+    setReturnAnchorId(d.returnAnchorId || null);
+    setOwnFlight(d.ownFlight || null);
+    setCarHome(d.carHome || null);
+    setOwnStays(d.ownStays || {});
+    setPlanLabel(d.planLabel || '');
+    setPlanId(null);
+    setDeviceKey(key);
+    setPlanned(d.planned !== false);
+  }, []);
+
   return {
+    snapshot, loadSnapshot, deviceKey, setDeviceKey,
     tripStart, setTripStart, tripEnd, setTripEnd,
     stops, stopDetails, plannedNights, windowNights,
     groupSize, setGroupSize, children, babies, setParty,

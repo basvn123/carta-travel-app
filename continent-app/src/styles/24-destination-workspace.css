@@ -2393,8 +2393,6 @@
     background: var(--paper);
     border-bottom-color: var(--rule-soft);
   }
-  .app-header-brand .brand-sub { display: none; }
-  .app-header-brand .brand-divider { display: none; }
   .header-nav { gap: 4px; }
   .header-nav-item {
     position: relative;
@@ -2402,7 +2400,6 @@
     padding: 10px 4px;
     border-radius: 0;
     font-family: var(--ui);
-    font-size: 13.5px;
     font-weight: 600;
     text-transform: none;
     letter-spacing: 0;
@@ -2423,31 +2420,9 @@
   .header-nav-icon { display: none; }
   .header-nav-label { display: inline; }
 
-  /* Get a pass: a secondary (T360, owner call on T166-a). The accent is left
-     for each page's one primary action, so the chip is transparent with a
-     --rule border and the 6px control radius. */
-  .header-pricing-btn {
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    background: transparent;
-    color: var(--ink);
-    font-weight: 600;
-    box-shadow: none;
-  }
-  .header-pricing-btn svg { color: var(--accent); }
-  .header-pricing-btn:hover {
-    border-color: var(--ink-soft);
-    background: var(--paper-dim);
-    color: var(--ink);
-  }
-  .header-pricing-label { display: none; }
-  .header-pricing-label-short { display: inline; }
-
   /* Friends folds to its icon; the avatar already says who. */
   .header-friends-btn { width: 38px; padding: 0; justify-content: center; }
   .header-friends-label { display: none; }
-  .account-avatar-btn { padding: 4px; box-shadow: none; }
-  .account-avatar-label { display: none; }
 
   /* The search field the active browse tab portals in. */
   .header-search-slot {
@@ -2642,7 +2617,6 @@
 /* Two nits the first screenshots caught: the pass chip must stay one line,
    and no panel row may stand on pure white. */
 @media (min-width: 769px) {
-  .header-pricing-btn { white-space: nowrap; }
   /* The panel row keeps the accent tint the toolbar pill has: it is the one
      control in this column that changes what every euro figure MEANS, and a
      --paper-dim row here is exactly the invisibility this pass fixes. */
@@ -2656,15 +2630,13 @@
 @media (min-width: 769px) and (max-width: 1120px) {
   .app-header { gap: 10px; padding: 9px 16px; }
   .header-nav { gap: 0; }
-  .header-nav-item { margin: 0 2px; font-size: 12.5px; }
+  .header-nav-item { margin: 0 2px; }
   .header-search-slot { flex: 0 1 180px; min-width: 110px; }
-  .header-pricing-btn { padding: 0 10px; }
 }
 @media (min-width: 769px) and (max-width: 910px) {
   .app-header { gap: 8px; }
   .app-header-brand { gap: 0; }
-  .app-header-brand .brand-text { display: none; }
-  .header-nav-item { font-size: 12px; }
+  .app-header-brand .brand-name { display: none; }
 }
 
 /* Wrapping is decided on flex-basis, not on the shrunken size, so on the
@@ -2692,8 +2664,6 @@
   }
   .app-header-brand .brand-mark { width: 32px; height: 32px; }
   .app-header-brand .brand-name { font-size: 22px; color: var(--accent); }
-  .app-header-brand .brand-sub { display: none; }
-  .app-header-brand .brand-divider { display: none; }
   .header-friends-btn svg { color: var(--accent); }
 
   /* ── The bottom panel: the accent tick and the accent colour mark where
@@ -3387,8 +3357,8 @@
    one in use. A tinted chip was the last "selected" state in the app that did
    not look like the rest of them. */
 .account-shell .account-lang-opt {
-  border-color: var(--rule-soft);
-  background: var(--paper-dim);
+  border-color: var(--border);
+  background: var(--surface);
 }
 @media (hover: hover) {
   .account-shell .account-lang-opt:hover { border-color: var(--rule); color: var(--ink); }

@@ -1,0 +1,6 @@
+/* Rules only the item pages render that scripts/css-routes.mjs --hold
+   keeps in the first paint: the cascade proof could not clear them for the
+   route sheet. Imported last in src/styles.css, so each still comes after the
+   whole main sheet as it did in src/styles/items.css. Same order as there. */
+
+.sig .cycle-bars .rsurf + .rsurf { margin-top: 0; }

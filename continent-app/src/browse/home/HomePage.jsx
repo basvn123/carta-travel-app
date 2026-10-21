@@ -105,7 +105,6 @@ function HomePasses({ t }) {
     t('pass.addPlansTrip', { n: TIERS.trip.aiPlans }),
     t('pass.addExports'),
     t('pass.addTrips'),
-    t('pass.addTogether'),
     t('pass.addImport'),
   ];
   const promises = [
@@ -116,6 +115,8 @@ function HomePasses({ t }) {
   return (
     <section className="home-section home-passes" aria-labelledby="home-passes-title">
       <h2 id="home-passes-title" className="home-h2">{t('home.priceTitle')}</h2>
+      {/* The one sentence about what is free (roadmap 1.15 point 6). */}
+      <p className="home-sub home-passes-free">{t('pass.freeSentence')}</p>
       <ul className="home-plan-grid">
         {TIER_ORDER.map((id) => {
           const tier = TIERS[id];

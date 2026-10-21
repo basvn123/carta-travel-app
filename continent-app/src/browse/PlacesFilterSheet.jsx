@@ -28,6 +28,18 @@ import { Button, Chip, IconButton } from '../components/ui/index.js';
  * The shell (portal, focus trap, swipe to dismiss) uses the shared .fsheet
  * class names, so every filter sheet is one surface with different contents.
  */
+/** The nouns the primary can count (filter.showOne.* and filter.showMany.*). */
+export const SHOW_NOUNS = ['places', 'trails', 'beaches', 'lakes', 'mountains', 'cycling', 'trips'];
+
+/** "Show 214 places": the answer to the filters, not a catalogue count, so
+ *  it may stand on the button (roadmap 1.3b B). Zero says so in words. */
+export function showLabel(t, noun, n, lang) {
+  const k = SHOW_NOUNS.includes(noun) ? noun : 'places';
+  if (!n) return t('filter.showNone');
+  if (n === 1) return t(`filter.showOne.${k}`);
+  return t(`filter.showMany.${k}`, { n: Number(n).toLocaleString(lang) });
+}
+
 export function PlacesFilterSheet({
   onClose: closeNow,
   anchorRef,
@@ -37,8 +49,11 @@ export function PlacesFilterSheet({
   activeFilters = 0,
   resetAll,
   resultCount = 0,
+  // What the list holds, for the primary's words (T498, roadmap 1.3b B):
+  // "Show 214 places", "Show 38 beaches". A key of SHOW_NOUNS.
+  noun = 'places',
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const sheetRef = React.useRef(null);
   const panelRef = React.useRef(null);
   const closeRef = React.useRef(null);
@@ -222,15 +237,15 @@ export function PlacesFilterSheet({
           <p className="fsheet-none" role="status">{t('filter.noneLine')}</p>
         )}
         <div className={`fsheet-foot ${resultCount === 0 ? 'is-empty' : ''}`}>
-          {/* T440: kit buttons, and no count on the apply button (owner,
-              2026-10-13: no catalogue counts as page furniture). An empty
-              result still says so in words. */}
-          <Button variant="secondary" className="fsheet-clear" onClick={resetAll}
+          {/* T498 (roadmap 1.3b B): Clear all is quiet beside the one
+              primary, and the primary says what the list will hold, so the
+              answer shows before the sheet closes. */}
+          <Button variant="quiet" className="fsheet-clear" onClick={resetAll}
             disabled={activeFilters === 0}>
             {t('filter.clearAll')}
           </Button>
           <Button variant="primary" className={`fsheet-apply${resultCount === 0 ? ' is-empty' : ''}`} onClick={onClose}>
-            {resultCount === 0 ? t('filter.showNone') : t('filter.showPlaces')}
+            {showLabel(t, noun, resultCount, lang)}
           </Button>
         </div>
       </div>

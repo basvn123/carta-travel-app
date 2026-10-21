@@ -156,6 +156,16 @@
   text-overflow: ellipsis;
 }
 .pcard-month-m { font-variant-numeric: tabular-nums; color: var(--text); }
+/* "Bed and food in {city}: ~92 est. a person a day" on an outdoor card
+   (T498, owner T489-d): the card's one price line, the figure in ink and
+   tabular, the words in --text-2; it may wrap to a second line on a phone
+   rather than lose the figure to an ellipsis. */
+.pcard-dayin {
+  font-size: var(--text-label);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.pcard-dayin .money { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
 .card.pcard .pcard-hook > .pcard-gem { color: var(--text); }
 
 /* The "not scored" word in the Score's place. */

@@ -449,6 +449,8 @@
 }
 .acct-plan-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
 .acct-plan-name { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+/* The one sentence about what is free (roadmap 1.15 point 6, T497). */
+.acct-plan-free { margin: 0; max-width: var(--measure); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 .acct-plan-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 /* The balance reads as a sentence under the plan name, left as every line
    on the card (the hub rule in 21-chat-passes right-aligned it). */
@@ -470,6 +472,9 @@
 .acct-error { margin: 0; font-size: var(--text-body); color: var(--danger); }
 .acct-status { display: inline-flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text); }
 .acct-status::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--status-success, var(--green)); }
+/* An empty live region keeps its place in the tree but shows no dot (T502:
+   a guest saw a lone green dot under the free sentence). */
+.acct-status:empty { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 
 /* FAQ: a search, then groups of questions that open in place. */
 .acct-faq { display: flex; flex-direction: column; gap: var(--space-5); }

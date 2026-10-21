@@ -139,6 +139,16 @@
     margin: calc(-1 * 18px) calc(-1 * 18px) var(--space-4);
     border-bottom: 1px solid var(--rule-soft);
   }
+  /* One row that scrolls sideways (T502): wrapped, the 44 px chips left a
+     tall gap between the people and the dates. */
+  .trip-wizard-modal .wiz-recap-inbody .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .trip-wizard-modal .wiz-recap-inbody .guide-recap-inner::-webkit-scrollbar { display: none; }
+}
+/* The review's Change links start on the label's edge (T502). */
+.wrev-change.btn { margin-inline-start: calc(-1 * var(--space-3)); }
+/* Every day of the wizard's calendar is a full tap on touch (T502: 26 px). */
+@media (pointer: coarse) {
+  .trip-wizard-modal .cal-inline .cal-day { min-height: var(--tap); }
 }
 /* Progress is data, not an action: the bar is ink (brief row 31). */
 .trip-wizard-modal .wiz-mini-bar > span { background: var(--ink-fill); }
@@ -483,17 +493,6 @@
 
 /* ── The planned trip ───────────────────────────────────────────────────── */
 /* Desktop: a wider column for the data, the map beside it. */
-/* Phone: the trip is a page; the map is a card in it. */
-.trip-planner-screen.is-page .trip-sheet {
-  inset: 0;
-  top: 0;
-  width: 100%;
-  max-height: none;
-  height: auto;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-}
 /* The page scrolls as one: the trip's name leaves with the content, and only
    the one-row footer stays (carta-design: a flow's fixed chrome on a phone at
    most a quarter of the screen). */

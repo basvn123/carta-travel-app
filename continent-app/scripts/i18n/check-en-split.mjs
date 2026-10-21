@@ -16,7 +16,7 @@ for (const m of html.matchAll(/assets\/([\w.-]+\.js)/g)) closure(m[1], eagerFile
 const restFile = files.find((f) => f.includes('carta-en-rest'));
 const langFiles = new Set(files.filter((f) => /^(nl|de|fr|es|it)-/.test(f)));
 console.log('rest chunk', restFile, 'eager?', eagerFiles.has(restFile));
-const enFile = [...eagerFiles].find((f) => code[f].includes('"brand.sub"'));
+const enFile = [...eagerFiles].find((f) => code[f].includes('"shell.tagline":'));
 console.log('eager strings chunk', enFile);
 const TOK = /[A-Za-z][\w-]*(?:\.[\w-]+)+/g;
 let bad = 0;

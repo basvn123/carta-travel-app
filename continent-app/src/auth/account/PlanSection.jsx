@@ -8,7 +8,9 @@ import { openBillingPortal, cancelYearly, resumeYearly } from '../../lib/billing
 /**
  * Your plan, on the Account hub (T461, with T460's billing behind it).
  *
- *   Free        what is left of the free plans, and "See plans"
+ *   Guest       Free, the one sentence about what is free, and "See Trip
+ *               Pass prices" (roadmap 1.15: the block shows for guests too)
+ *   Free        the same, with what is left of the free plans
  *   Trip Pass   the days left and the plans left, "Add days or switch"
  *   Yearly      "Renews {date}", the plans left, "Manage payment" (Stripe's
  *               billing page: card, invoices) and "Cancel yearly plan"
@@ -18,7 +20,7 @@ import { openBillingPortal, cancelYearly, resumeYearly } from '../../lib/billing
  * box promise (German BGB 312k): one tap, one sentence to confirm in place,
  * done; the plan runs to the end of the paid year.
  */
-export function PlanSection({ balance }) {
+export function PlanSection({ balance = null }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
   const e = paywall.entitlement;
@@ -62,7 +64,10 @@ export function PlanSection({ balance }) {
     e.refresh?.();
   };
 
-  const tier = TIERS[e.tier] || TIERS.free;
+  // A guest holds the free plan and has no balance to wait for.
+  const guest = !paywall.signedIn;
+  const tier = guest ? TIERS.free : (TIERS[e.tier] || TIERS.free);
+  const free = guest || e.tier === 'free';
   const yearly = e.tier === 'year' && sub?.live;
   const cancelling = yearly && sub.cancelling;
   const left = daysLeft(e.expiresAt);
@@ -83,7 +88,8 @@ export function PlanSection({ balance }) {
           <span className="acct-plan-name">{t(tier.labelKey)}</span>
           {status && <Chip kind="status" tone="neutral">{status}</Chip>}
         </div>
-        {e.known ? balance : <span className="account-pass-status is-loading" aria-hidden="true" />}
+        {free && <p className="acct-plan-free">{t('pass.freeSentence')}</p>}
+        {guest ? null : e.known ? balance : <span className="account-pass-status is-loading" aria-hidden="true" />}
         {err && <p className="acct-error" role="alert">{err}</p>}
         <p className="acct-status" role="status">{said}</p>
 
@@ -103,9 +109,9 @@ export function PlanSection({ balance }) {
               </Button>
             </div>
           </div>
-        ) : e.known && (
+        ) : (guest || e.known) && (
           <div className="acct-plan-actions">
-            {e.tier === 'free' && (
+            {free && (
               <Button onClick={() => paywall.openPrices('browse')}>{t('account.planSee')}</Button>
             )}
             {e.tier === 'trip' && (

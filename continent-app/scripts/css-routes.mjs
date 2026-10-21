@@ -473,7 +473,9 @@ if (mode === 'check' && args.includes('--hold')) {
   }
   const all = parsed.flatMap((x) => x.list);
   const globals = files.flatMap((f) => f.list);
-  const held = new Set();
+  // A selector the eager bundle now names (not route-only any more) is held
+  // too: in the first paint it is right whichever screen uses it (T502).
+  const held = new Set(all.filter((e) => familyOf(e.sel) !== e.fam));
   const heldFi = order.length;
   for (let round = 0; round < 50; round++) {
     const route = all.filter((e) => !held.has(e));

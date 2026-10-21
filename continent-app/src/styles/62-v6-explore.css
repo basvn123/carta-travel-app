@@ -310,6 +310,7 @@
    Destinations rails' "See all" is the same link (T457). */
 .explore-shell .xrails-all,
 .places-shell .dtab-all,
+.explore-shell .dtab-all,
 .explore-shell .side-clear {
   color: var(--ink);
   font-weight: 500;
@@ -320,6 +321,7 @@
 @media (hover: hover) {
   .explore-shell .xrails-all:hover,
   .places-shell .dtab-all:hover,
+  .explore-shell .dtab-all:hover,
   .explore-shell .side-clear:hover { color: var(--ink-soft); text-decoration: underline; }
 }
 /* The gauge in ink, the cheapest band green as good news in data; the
@@ -745,7 +747,8 @@
    panels (T457: Explore's trip types, Destinations' sections), and the
    Destinations sections' 2 x 3 grid at the top of a phone column. */
 .side-panel .xrail-tiles .ui-tile,
-.dtab-bar .xrail-tiles .ui-tile {
+.dtab-bar .xrail-tiles .ui-tile,
+.xcats-bar .xrail-tiles .ui-tile {
   flex-direction: column;
   justify-content: center;
   gap: var(--space-1);
@@ -753,9 +756,23 @@
   padding: var(--space-2) var(--space-1);
 }
 .side-panel .xrail-tiles .ui-tile-label,
-.dtab-bar .xrail-tiles .ui-tile-label { text-align: center; white-space: nowrap; overflow-wrap: normal; }
+.dtab-bar .xrail-tiles .ui-tile-label,
+.xcats-bar .xrail-tiles .ui-tile-label { text-align: center; white-space: nowrap; overflow-wrap: normal; }
 .side-panel .xrail-tiles .ui-tile-tick,
-.dtab-bar .xrail-tiles .ui-tile-tick { top: var(--space-1); margin-top: 0; right: var(--space-1); }
+.dtab-bar .xrail-tiles .ui-tile-tick,
+.xcats-bar .xrail-tiles .ui-tile-tick { top: var(--space-1); margin-top: 0; right: var(--space-1); }
+/* The six Explore categories (T498, roadmap 1.3b A): the 2 x 3 grid under
+   the phone's search row, the same tiles two across in the desktop panel,
+   a hairline under them there so the category's own filters read as its. */
+/* 16 px under the search row on both sides of Explore (T498). */
+.xcats-bar { margin: var(--space-2) 0 var(--space-4); }
+.side-panel .xcats-sec {
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-soft);
+}
+/* "Budget a day" with the day-price dot after it, outside the label. */
+.xrail-budget { display: flex; flex-direction: column; min-width: 0; }
+.xrail-label-row { display: inline-flex; align-items: center; }
 .xrail-pair {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

@@ -172,6 +172,9 @@
   /* The floor a finger needs. Icon-only controls get this as a minimum box
      even where the glyph inside is 15px (WCAG 2.5.5). */
   --tap: 44px;
+  /* Each place's one primary action and the phone's bottom-nav slots (T496,
+     owner decision T472-f). --tap stays the floor for everything else. */
+  --tap-main: 48px;
 
   /* ---- 3. Legacy names, aliased (retired by the migration) -------------- */
 
@@ -305,9 +308,13 @@
   /* Layout */
   --filter-h:     132px;
   --panel-w:      440px;
-  /* The phone bar plus the home-indicator inset, so the bar keeps 68 px for
-     its items on a notched phone and everything above it clears the bar. */
-  --bottom-nav-h: calc(86px + env(safe-area-inset-bottom, 0px));
+  /* The phone bar, 64 px, plus the home-indicator inset, so the bar keeps
+     --tap-main for its slots on a notched phone and everything above it
+     clears the bar (T496, 1.3a). */
+  --bottom-nav-h: calc(64px + env(safe-area-inset-bottom, 0px));
+  /* The planners' map drawer at rest: the strip that always shows the
+     amount (T500, owner T490-h). src/lib/mapDrawerState.js mirrors it. */
+  --drawer-strip: 72px;
 
   /* Motion (T380, design direction v6, docs/design-v6/DIRECTION.md part 2).
      Four durations and two easings; every transition and animation reads

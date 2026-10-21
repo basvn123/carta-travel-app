@@ -4,6 +4,7 @@ import { loadCoverage } from '../lib/regions.js';
 import { LAYER_NOUN } from '../lib/footers.js';
 import { stripDashes } from '../lib/format.js';
 import { routeTitle } from '../lib/cycleStory.js';
+import { featureHref, linkOpener } from '../lib/featureHref.js';
 import {
   countryCase, loadNearest, loadNearestOf, OPEN_AS, FAR_KM, IMPOSSIBLE, LAYER_CAT,
 } from '../lib/coverageEmpty.js';
@@ -111,9 +112,16 @@ export function NearestLine({ noneKey, noneVars = {}, layers, cc, from, skipId =
           <MonoLine t={t} k="cov.nearestOne" vars={{}}
             mono={{ km: nf(hit.km) }}
             slots={{
-              name: onOpen
-                ? <button type="button" className="sec-none-link" onClick={() => onOpen(hit.layer, hit.row)}>{rowName(hit.layer, hit.row, t)}</button>
-                : rowName(hit.layer, hit.row, t),
+              // A page opens through a real link with its address (T499, row
+              // T491-l); a plain click still opens it in place.
+              name: onOpen && featureHref(hit.layer, hit.row)
+                ? (
+                  <a className="sec-none-link" href={featureHref(hit.layer, hit.row)}
+                    onClick={linkOpener(() => onOpen(hit.layer, hit.row))}>{rowName(hit.layer, hit.row, t)}</a>
+                )
+                : onOpen
+                  ? <button type="button" className="sec-none-link" onClick={() => onOpen(hit.layer, hit.row)}>{rowName(hit.layer, hit.row, t)}</button>
+                  : rowName(hit.layer, hit.row, t),
             }} />
         </p>
       )}

@@ -36,6 +36,14 @@ function prerenderedBoot(doc) {
 export function bootPaths(loc = window.location, hist = window.history, flagOn = false, doc = globalThis.document) {
   try {
     const path = loc.pathname || '/';
+    // The Trip Pass prices have their own address (T496, owner T488-d):
+    // /pricing and its language forms open the pricing place.
+    if (/^\/(?:(?:nl|de|fr|es|it)\/)?pricing\/?$/.test(path)) {
+      const q = new URLSearchParams(loc.search || '');
+      q.set('tab', 'pricing');
+      hist.replaceState(null, '', `/?${q.toString()}${loc.hash || ''}`);
+      return 'pricing';
+    }
     if (path !== '/') {
       const parsed = parsePath(path);
       // A destination's week page (T224) opens the destination it prices.

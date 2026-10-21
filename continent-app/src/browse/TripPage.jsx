@@ -483,7 +483,7 @@ export function TripPage({
     archetype: trip.archetype,
     stops: (trip.cities || trip.stops || []).length,
     days: trip.days,
-    seasonText: seasonMonths.length > 0 && seasonMonths.length < 12 ? fmtMonthRanges(seasonMonths) : '',
+    seasonText: seasonMonths.length > 0 && seasonMonths.length < 12 ? fmtMonthRanges(seasonMonths, t) : '',
   }) : [];
   const themes = (trip.themes || []).map((x) => themeLabel(x, t)).filter(Boolean);
   // The card already carries the chosen photograph, so it paints

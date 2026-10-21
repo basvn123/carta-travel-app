@@ -75,11 +75,13 @@ export function PlaceCardNoPhoto({ children = null }) {
  * @param hookClass  the class the hook's wrapper keeps for the harnesses
  * @param note       the month line, when the traveller has a month of their own
  * @param foot       a price, where the card has one (a city day)
+ * @param dayLine    "Bed and food in {city}: {price} a person a day", the
+ *                   nearest town's day on an outdoor card (T498, owner T489-d)
  * @param sharedKey  the key the opened page claims its header photograph with
  */
 export const PlaceCard = React.memo(function PlaceCard({
   className = '', testId, onClick, media, seal = null,
-  lead = null, fill, hookClass = 'places-bcard-tags', foot = null, note,
+  lead = null, fill, hookClass = 'places-bcard-tags', foot = null, note, dayLine = null,
   sharedKey = null,
 }) {
   const { title, where, hook = [], values = [], icons = [], gem = null } = fill;
@@ -143,6 +145,7 @@ export const PlaceCard = React.memo(function PlaceCard({
             </span>
           )}
           {note ? <span className="pcard-note">{note}</span> : null}
+          {dayLine}
         </span>
       )}
     />

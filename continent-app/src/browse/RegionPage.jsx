@@ -3,13 +3,25 @@
  * "beach" and "country": a coastal stretch, a mountain range, or a NUTS2
  * region, composed from /region/{ID}.json exactly as the export wrote it.
  *
- *   editorial   seed picks a person vouched for, pinned first (empty until
- *               the layer briefs land, the slot ships now)
+ * Since T498 (roadmap 1.3b section E) the page reads as the item pages do
+ * (carta-design "Detail page grammar"): the photo first, then the name and
+ * what kind of region it is, then what decides a trip (the day price of the
+ * nearest priced town, the best months, one "Plan a trip here" primary; a
+ * sticky side column from 1024 px), then one rail per layer, the towns here,
+ * the weeks through it, the unscored items and the regions next door.
+ *
+ *   editorial   seed picks a person vouched for, pinned first in their rail
  *   rated       published rows, ranked; each carries its own score
- *   listed      rows that exist but are not scored. A DIFFERENT card, not a
- *               dimmer one: dashed border, a "not scored yet" chip where the
- *               score would sit, and one honest line about why it is shown.
+ *   listed      rows that exist but are not scored: the same compact row as
+ *               every other list, with a "Not scored yet" status chip where
+ *               the Score would sit (T498: the dashed border was a second
+ *               card style and is gone)
  *   neighbours  "nothing here? try next door", straight from the wire
+ *
+ * The region file carries no towns, no climate and no price, so those come
+ * from the catalogue rows Explore holds (`rows`, usePlaceRows), joined by
+ * distance in lib/regions.js. A thin region shows a shorter page: every
+ * block below the head is left out when it has nothing, never drawn empty.
  *
  * Opening a card hands over to the layer's own page through the same
  * onOpenFeature callback DestinationPage uses, so a beach opened from the
@@ -19,19 +31,27 @@
  * escape-stack lesson: this page can sit over other overlays and the
  * topmost layer must eat the key.
  */
-import React, { useEffect, useRef, useState } from 'react';
-import { loadRegion, loadRegionIndex, regionShareUrl } from '../lib/regions.js';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  loadRegion, loadRegionIndex, regionShareUrl,
+  regionCentre, townsNear, nearestPriced, bestMonthsOf,
+} from '../lib/regions.js';
 import { nearestRegions } from '../lib/coverageEmpty.js';
 import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
-import { Button, Card } from '../components/ui/index.js';
+import { Button, Card, Chip, Money } from '../components/ui/index.js';
 import { PageBar } from './PageBar.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
+import { isNational } from '../components/CostSummary.jsx';
 import { okPhoto } from '../lib/photoVeto.js';
 import { countryName } from '../lib/countryName.js';
+import { Strip } from './SectionOpening.jsx';
+import { DayPrice, SaveButton } from './ExploreCards.jsx';
+import { fmtMonthRanges } from './ClimateStrip.jsx';
+import { WeeksRow } from './TripStylesRow.jsx';
 
 const KIND_KEY = {
   coast: 'region.kind.coast',
@@ -51,37 +71,110 @@ const LAYER_TO_FEATURE = {
   trail: 'trails',
 };
 
-function cardImage(card) {
+// One rail per layer, in this order, titled with the category's own name.
+const LAYER_RAILS = [
+  ['beach', 'places.catBeaches'],
+  ['trail', 'places.catTrails'],
+  ['lake', 'places.catLakes'],
+  ['mountain', 'places.catMountains'],
+  ['cycling', 'places.catCycling'],
+];
+
+const RAIL_MAX = 12;
+const TOWN_KM = 25;
+const PRICE_KM = 40;
+const WEEKS_KM = 60;
+
+function firstImage(card) {
   // Two shapes reach a card: beaches, lakes and mountains ship `images[]`
   // of objects, trails ship a single `img` that is ALSO an object. Reading
   // `img` as a string dropped every trail photograph on the page while the
   // wire carried it, so both shapes are unwrapped here.
-  const first = (card.images && card.images[0]) || card.img;
+  return (card.images && card.images[0]) || card.img || null;
+}
+
+function cardImage(card) {
+  const first = firstImage(card);
   const url = typeof first === 'string' ? first : first && first.u;
   return typeof url === 'string' && url.startsWith('https://') ? okPhoto(url) : null;
 }
 
-function RegionCard({ card, listed, t, onOpen }) {
-  const img = cardImage(card);
-  const score = typeof card.score === 'number' ? card.score
+function cardScore(card) {
+  return typeof card.score === 'number' ? card.score
     : typeof card.rating === 'number' ? card.rating : null;
-  const where = card.region || card.range || null;
+}
+
+/** A rated or editorial item as a rail tile: 4:3 photo, name, where, Score. */
+function RegionTile({ card, onOpen }) {
+  const score = cardScore(card);
   return (
     <Card
-      className={`rgnp-card${listed ? ' rgnp-listed' : ''}`}
-      media={img
-        ? <img src={img} alt="" loading="lazy" />
-        : <span className="rgnp-card-noimg" aria-hidden="true" />}
-      title={<span className="rgnp-card-name">{card.name}</span>}
+      layout="tile"
+      className="rgnp-card rgnp-tile"
+      media={(
+        <HeroImage url={cardImage(card)} city={card.name} iso2={card.cc || card.country}
+          className="rgnp-media-img" maxWidth={640} sizes="(max-width: 768px) 78vw, 280px" ratio={[4, 3]} />
+      )}
+      title={card.name}
       onOpen={() => onOpen(card)}
-      meta={listed ? t('region.listedChip') : where}
-      rating={!listed && score != null ? <ScoreChip rating={{ score }} size="sm" /> : null}
+      meta={card.region || card.range || null}
+      rating={score != null ? <ScoreChip rating={{ score }} size="sm" /> : null}
     />
   );
 }
 
-export function RegionPage({ id, fav = false, onFav = null, onClose, onOpenFeature, onOpenRegion, backLabel = '' }) {
-  const { t } = useI18n();
+/** An unscored item: the compact row every list uses, a status chip for the Score. */
+function ListedRow({ card, t, onOpen }) {
+  return (
+    <Card
+      layout="row"
+      className="rgnp-card rgnp-row"
+      media={(
+        <HeroImage url={cardImage(card)} city={card.name} iso2={card.cc || card.country}
+          className="rgnp-media-img" maxWidth={160} sizes="72px" ratio={[1, 1]} />
+      )}
+      title={card.name}
+      onOpen={() => onOpen(card)}
+      meta={card.region || card.range || null}
+      rating={<Chip kind="status" tone="neutral">{t('region.listedChip')}</Chip>}
+    />
+  );
+}
+
+/** A catalogue town as a compact row: photo, name, Score, the day price. */
+function TownRow({ p, onSelect, fav, onToggleFav, t }) {
+  return (
+    <Card
+      layout="row"
+      className="rgnp-row"
+      media={(
+        <HeroImage url={p.image} city={p.city} iso2={p.iso2}
+          className="rgnp-media-img" maxWidth={160} sizes="72px" ratio={[1, 1]} />
+      )}
+      title={p.city}
+      href={`#dest=${encodeURIComponent(p.id)}`}
+      onOpen={(e) => {
+        // A real link: a plain click opens the place here, a modifier click
+        // lets the browser open it in a new tab.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        onSelect(p.id);
+      }}
+      price={<DayPrice cost={p.cost} t={t} />}
+      rating={<ScoreChip rating={p.rating} size="sm" />}
+      actions={onToggleFav ? (
+        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} />
+      ) : null}
+    />
+  );
+}
+
+export function RegionPage({
+  id, fav = false, onFav = null, onClose, onOpenFeature, onOpenRegion, backLabel = '',
+  rows = [], onSelectDest = null, onPlanTrip = null, onOpenJourney = null,
+  onSeeAllLayer = null, favorites = null, onToggleFav = null,
+}) {
+  const { t, lang } = useI18n();
   const [data, setData] = useState(undefined);
   const [failed, setFailed] = useState(false);
   const [tries, setTries] = useState(0);
@@ -137,6 +230,38 @@ export function RegionPage({ id, fav = false, onFav = null, onClose, onOpenFeatu
     io.observe(el);
     return () => io.disconnect();
   }, [id, loaded]);
+
+  // Everything the page borrows from the catalogue, derived once per region.
+  const region = data?.region || null;
+  const iso2 = region?.country || null;
+  const derived = useMemo(() => {
+    if (!data?.region) return null;
+    const all = [...(data.editorial || []), ...(data.rated || []), ...(data.listed || [])];
+    const centre = regionCentre(all);
+    const towns = townsNear(rows, all, iso2, TOWN_KM);
+    const priced = nearestPriced(rows, centre, iso2, PRICE_KM);
+    const months = bestMonthsOf(towns);
+    // One rail per layer: editorial picks pinned first, then the rated
+    // best first. A card in both lists appears once.
+    const rails = LAYER_RAILS.map(([layer, key]) => {
+      const seen = new Set();
+      const pinned = (data.editorial || []).filter((c) => c.layer === layer);
+      const ranked = (data.rated || []).filter((c) => c.layer === layer)
+        .sort((a, b) => (cardScore(b) ?? -1) - (cardScore(a) ?? -1));
+      const cards = [...pinned, ...ranked].filter((c) => {
+        const k = `${c.layer}:${c.id}`;
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+      return { layer, key, cards };
+    }).filter((r) => r.cards.length > 0);
+    // The page's photograph: its best member's own, with its credit.
+    const best = [...rails.flatMap((r) => r.cards)]
+      .sort((a, b) => (cardScore(b) ?? -1) - (cardScore(a) ?? -1));
+    const heroCard = [...(data.editorial || []), ...best].find((c) => cardImage(c)) || null;
+    return { centre, towns, priced, months, rails, heroCard };
+  }, [data, rows, iso2]);
 
   const open = (card) => {
     const feature = LAYER_TO_FEATURE[card.layer];
@@ -194,102 +319,162 @@ export function RegionPage({ id, fav = false, onFav = null, onClose, onOpenFeatu
     return shell(<LoadingBlock label={t('region.loading')} rows={4} />);
   }
 
-  if (data === null) {
+  if (data === null || !region || !derived) {
     // An id that resolves to no file at all: a stale link, or a region
     // that left the spine. Say which, rather than showing an empty shell
     // that reads as a broken page.
     return shell(
-      <>
-          <h1 ref={headEl}>{t('region.notFound')}</h1>
-          <p className="rgnp-card-sub">{t('region.notFoundHint')}</p>
-          {nearIds.length > 0 && (
-            <div className="cov-empty" data-testid="region-nearest">
-              <p className="cov-empty-head">{t('region.nearestHead')}</p>
-              <ul className="cov-near">
-                {nearIds.map((r) => (
-                  <li key={r.id}>
-                    <button type="button" className="cov-near-row" onClick={() => onOpenRegion?.(r.id)}>
-                      <span className="cov-near-name">{r.name}</span>
-                      <span className="cov-near-meta"><span className="mono">{r.id}</span></span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-      </>,
+      <div className="rgnp-missing">
+        <h1 ref={headEl}>{t('region.notFound')}</h1>
+        <p className="rgnp-sub">{t('region.notFoundHint')}</p>
+        {nearIds.length > 0 && (
+          <div className="cov-empty" data-testid="region-nearest">
+            <p className="cov-empty-head">{t('region.nearestHead')}</p>
+            <ul className="cov-near">
+              {nearIds.map((r) => (
+                <li key={r.id}>
+                  <button type="button" className="cov-near-row" onClick={() => onOpenRegion?.(r.id)}>
+                    <span className="cov-near-name">{r.name}</span>
+                    <span className="cov-near-meta"><span className="mono">{r.id}</span></span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>,
     );
   }
 
-  const region = data?.region;
-  // The page's photograph: its best-rated member's own, where one exists.
-  const heroUrl = [...(data?.editorial || []), ...(data?.rated || [])].map(cardImage).find(Boolean) || null;
+  const { centre, towns, priced, months, rails, heroCard } = derived;
+  const heroUrl = heroCard ? cardImage(heroCard) : null;
+  const heroMeta = heroCard ? firstImage(heroCard) : null;
+  const credit = heroMeta && typeof heroMeta === 'object'
+    ? [heroMeta.by, heroMeta.lic].filter(Boolean).join(', ')
+    : '';
+  const creditPage = heroMeta && typeof heroMeta.page === 'string' && heroMeta.page.startsWith('https://')
+    ? heroMeta.page : null;
+  const canPlan = Boolean(onPlanTrip && iso2);
+  const hasFacts = Boolean(priced) || months.length > 0;
+
   return shell(
-    <>
-        {region && (
-          <>
-            {/* The name first, then what kind of region it is and where
-                (T474, row T435-e), as the item pages' head reads. */}
-            <h1 ref={headEl}>{region.name}</h1>
-            <p className="rgnp-kind">
-              {t(KIND_KEY[region.kind] || 'region.kind.nuts2')}
-              {region.country ? `, ${countryName(region.country, region.country)}` : ''}
-            </p>
-            {heroUrl && (
-              <div className="rgnp-hero">
-                <HeroImage url={heroUrl} city={region.name} className="rgnp-hero-img"
-                  maxWidth={1280} sizes="(max-width: 860px) 100vw, 860px" ratio={[21, 9]} eager />
-              </div>
-            )}
+    <div className="rgnp-grid">
+      {heroUrl && (
+        <figure className="rgnp-hero">
+          <div className="rgnp-hero-frame">
+            <HeroImage url={heroUrl} city={region.name} iso2={iso2} className="rgnp-hero-img"
+              maxWidth={1280} sizes="(max-width: 1180px) 100vw, 1180px" ratio={[3, 2]} eager />
+          </div>
+          {credit && (
+            <figcaption className="rgnp-credit">
+              {creditPage
+                ? <a href={creditPage} target="_blank" rel="noopener noreferrer">{t('region.photoBy', { credit })}</a>
+                : t('region.photoBy', { credit })}
+            </figcaption>
+          )}
+        </figure>
+      )}
 
-            {data.editorial?.length > 0 && (
-              <div className="rgnp-list">
-                {data.editorial.map((card) => (
-                  <RegionCard key={`e-${card.layer}-${card.id}`} card={card}
-                        listed={false} t={t} onOpen={open} />
-                ))}
-              </div>
-            )}
+      {/* The name first, then what kind of region it is and where
+          (T474, row T435-e), as the item pages' head reads. */}
+      <header className="rgnp-head">
+        <h1 ref={headEl}>{region.name}</h1>
+        <p className="rgnp-kind">
+          {t(KIND_KEY[region.kind] || 'region.kind.nuts2')}
+          {iso2 ? `, ${countryName(iso2, iso2)}` : ''}
+        </p>
+      </header>
 
-            {data.rated?.length > 0 && (
-              <>
-                <h2 className="rgnp-sect">{t('region.ratedHead')}</h2>
-                <div className="rgnp-list">
-                  {data.rated.map((card) => (
-                    <RegionCard key={`r-${card.layer}-${card.id}`} card={card}
-                          listed={false} t={t} onOpen={open} />
-                  ))}
+      {(hasFacts || canPlan) && (
+        <aside className="rgnp-side" aria-label={region.name}>
+          {hasFacts && (
+            <dl className="rgnp-facts">
+              {priced && (
+                <div className="rgnp-fact">
+                  <dt>{t('item.dayIn', { city: priced.city })}</dt>
+                  <dd>
+                    <Money value={priced.cost.dayEur} est={isNational(priced.cost)} />
+                    <span className="rgnp-unit"> {t('dest.priceDayUnit')}</span>
+                  </dd>
                 </div>
-              </>
-            )}
-
-            {data.listed?.length > 0 && (
-              <>
-                <h2 className="rgnp-sect">{t('region.listedHead')}</h2>
-                <div className="rgnp-list">
-                  {data.listed.map((card) => (
-                    <RegionCard key={`l-${card.layer}-${card.id}`} card={card}
-                          listed t={t} onOpen={open} />
-                  ))}
+              )}
+              {months.length > 0 && (
+                <div className="rgnp-fact">
+                  <dt>{t('dest.keyBest')}</dt>
+                  <dd>{fmtMonthRanges(months, t)}</dd>
                 </div>
-              </>
-            )}
+              )}
+            </dl>
+          )}
+          {canPlan && (
+            <Button variant="primary" block className="rgnp-plan" onClick={() => onPlanTrip(iso2)}>
+              {t('region.planTrip')}
+            </Button>
+          )}
+        </aside>
+      )}
 
-            {data.neighbours?.length > 0 && (
-              <>
-                <h2 className="rgnp-sect">{t('region.neighboursHead')}</h2>
-                <div className="rgnp-neigh">
-                  {data.neighbours.map((n) => (
-                    <Button key={n.id} variant="secondary" size="sm" onClick={() => onOpenRegion?.(n.id)}>
-                      {n.name}
-                    </Button>
-                  ))}
-                </div>
-              </>
-            )}
-          </>
-        )}
-    </>,
-    { name: region?.name || '', canShare: Boolean(region) },
+      {rails.map(({ layer, key, cards }) => {
+        const feature = LAYER_TO_FEATURE[layer];
+        const more = onSeeAllLayer && iso2 && feature ? () => onSeeAllLayer(feature, iso2) : null;
+        return (
+          <Strip key={layer} id={`rgnp-rail-${layer}`} title={t(key)} onSeeAll={more} t={t} className="rgnp-rail">
+            {cards.slice(0, RAIL_MAX).map((card) => (
+              <li key={`${card.layer}-${card.id}`} className="dtab-item">
+                <RegionTile card={card} onOpen={open} />
+              </li>
+            ))}
+          </Strip>
+        );
+      })}
+
+      {towns.length > 0 && onSelectDest && (
+        <section className="rgnp-sect" aria-labelledby="rgnp-towns">
+          <h2 className="rgnp-sect-head" id="rgnp-towns">{t('region.townsHead')}</h2>
+          <ul className="rgnp-list">
+            {towns.map((p) => (
+              <li key={p.id}>
+                <TownRow p={p} onSelect={onSelectDest} t={t}
+                  fav={favorites ? favorites.has(p.id) : false}
+                  onToggleFav={onToggleFav} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {onOpenJourney && centre && (
+        <WeeksRow t={t} lang={lang} id="rgnp-weeks" title={t('region.weeksHead')}
+          country={iso2} near={{ lat: centre.lat, lon: centre.lon, km: WEEKS_KM }}
+          onOpen={onOpenJourney} />
+      )}
+
+      {data.listed?.length > 0 && (
+        <section className="rgnp-sect" aria-labelledby="rgnp-listed">
+          <h2 className="rgnp-sect-head" id="rgnp-listed">{t('region.listedHead')}</h2>
+          <ul className="rgnp-list">
+            {data.listed.map((card) => (
+              <li key={`l-${card.layer}-${card.id}`}>
+                <ListedRow card={card} t={t} onOpen={open} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {data.neighbours?.length > 0 && (
+        <section className="rgnp-sect" aria-labelledby="rgnp-neigh">
+          <h2 className="rgnp-sect-head" id="rgnp-neigh">{t('region.neighboursHead')}</h2>
+          <div className="rgnp-neigh">
+            {data.neighbours.map((n) => (
+              <Button key={n.id} variant="secondary" size="sm" onClick={() => onOpenRegion?.(n.id)}>
+                {n.name}
+              </Button>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>,
+    { name: region.name, canShare: true },
   );
 }

@@ -73,3 +73,5 @@
    whole main sheet as their route sheet loaded them. */
 @import './styles/planners-held.css';
 @import './styles/admin-held.css';
+/* T481: route rules held in the first paint by css-routes --hold. */
+@import './styles/items-held.css';

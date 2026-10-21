@@ -382,7 +382,7 @@ export function CycleFamilyPage({ familyRef, onClose, onOpenRoute }) {
       <div className="cycle-inner">
         <header className="cycle-head">
           <button type="button" className="cycle-back" onClick={onClose}
-            aria-label={t('common.close')}>
+            aria-label={t('a11y.close')}>
             <ArrowLeftIcon size={16} />
           </button>
           <div className="cycle-title">

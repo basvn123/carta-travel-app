@@ -28,85 +28,8 @@
   .account-signin-btn:hover { background: var(--accent); border-color: var(--accent); }
 }
 
-.account-avatar-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 14px 5px 5px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  font-family: inherit;
-  box-shadow: var(--shadow-1);
-  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .account-avatar-btn:hover { border-color: var(--ink); background: var(--paper-dim); }
-}
-/* On the account page. The bar has to say so: the section tabs give up their
-   underline while a page stands over them, and nothing else in the row would
-   otherwise mark where you are. */
-.account-avatar-btn.on {
-  border-color: var(--select-border);
-  background: var(--select-bg);
-}
-.account-avatar-btn.on .account-avatar-label { color: var(--select-ink); }
-.account-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--paper);
-  font-family: var(--display);
-  font-size: 13px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-.account-avatar-label {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--ink-soft);
-}
-
-/* "See pricing" in the header: quiet chrome next to the account button, the
-   same pill height, action-brown only on the glyph so it reads as a place to go
-   rather than an alert. */
-.header-pricing-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 38px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  box-shadow: var(--shadow-1);
-  cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.header-pricing-btn svg { color: var(--accent); flex-shrink: 0; }
-@media (hover: hover) {
-  .header-pricing-btn:hover { border-color: var(--ink); background: var(--paper-dim); color: var(--ink); }
-}
-/* Short "Passes" wording is the mobile chip's label; desktop keeps the full
-   "See pricing". The narrowest phones fall back to the glyph alone, still on
-   a 44px target. */
-.header-pricing-label-short { display: none; }
-@media (max-width: 379px) {
-  .app-header-account .header-pricing-label-short { display: none; }
-  .app-header-account .header-pricing-btn { padding: 0 8px; }
-}
-
 @media (max-width: 880px) {
   .account-slot { width: 100%; justify-content: flex-end; margin: 2px 0 0; }
-  .account-avatar-label { display: none; }
-  .account-avatar-btn { padding: 4px; }
 }
 /* Below 768px the desktop account slot is replaced by .mobile-account-btn in
    the filter bar's own header row (see the mobile filter-bar block above);
