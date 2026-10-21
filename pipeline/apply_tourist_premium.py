@@ -1,6 +1,11 @@
-"""Tourist-hotspot price premium layer (schema v14).
+"""Tourist-hotspot price premium layer (schema v14), food and drink only.
 
-Tier: Scheduled (run_pipeline task lodging)
+Tier: Scheduled (run_pipeline task tourist_premium)
+
+Since T533 (schema v18) this no longer touches accommodation: bed prices come
+from the stays layer (pipeline/stays/), which measures hotspot prices from
+dated hotel and Airbnb data instead of marking a country figure up. The
+"accommodation" column of the table below is history.
 
 Problem: 476 of 524 destinations carry their COUNTRY's average basket, so
 Santorini was priced like mainland Greece, the Amalfi Coast like average
@@ -133,8 +138,6 @@ DINING_KEYS = ("meal_mid_eur", "meal_cheap_eur", "fastfood_eur",
                "drink_out_eur", "cocktail_eur", "coffee_eur")
 GROCERY_KEYS = ("grocery_day_eur",)
 CLUB_KEYS = ("club_entry_eur",)
-ACCOM_KEYS = ("per_person_night_eur", "cleaning_per_person_eur",
-              "entire_home_night_eur")
 
 PREMIUM_MODEL = {
     "version": "tourist_premium_v1",
@@ -174,35 +177,26 @@ def patch(path: Path) -> None:
         return
     data = json.loads(path.read_text(encoding="utf-8"))
     dests = data.get("destinations", {})
-    n_cost = n_accom = 0
+    n_cost = 0
     for did, dest in dests.items():
         tier = PREMIUM_TIERS.get(did)
         costs = dest.get("costs")
-        accom = dest.get("accommodation")
         if not tier:
             # A rerun after removing a place from the list must undo it.
             if costs and costs.get("tourist_premium"):
                 _strip_block(costs)
-            if accom and accom.get("tourist_premium"):
-                _strip_block(accom)
             continue
-        dining, grocery, club, accom_m = MULTIPLIERS[tier]
+        dining, grocery, club, _ = MULTIPLIERS[tier]
         if costs and costs.get("level") == "country":
             _apply_block(costs, [(DINING_KEYS, dining), (GROCERY_KEYS, grocery),
                                  (CLUB_KEYS, club)], tier)
             n_cost += 1
         elif costs and costs.get("tourist_premium"):
             _strip_block(costs)   # gained real city data since - undo the bump
-        if accom and accom.get("level") == "country":
-            _apply_block(accom, [(ACCOM_KEYS, accom_m)], tier)
-            n_accom += 1
-        elif accom and accom.get("tourist_premium"):
-            _strip_block(accom)
     data["meta"]["tourist_premium_model"] = PREMIUM_MODEL
     atomic_write_json(path, data, indent=1, ensure_ascii=False)
     unmatched = [d for d in PREMIUM_TIERS if d not in dests]
-    print(f"  {path.name}: dining premium on {n_cost}, accommodation premium "
-          f"on {n_accom} destinations"
+    print(f"  {path.name}: dining premium on {n_cost} destinations"
           + (f" | UNMATCHED ids: {unmatched}" if unmatched else ""))
 
 

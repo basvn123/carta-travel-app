@@ -1,0 +1,165 @@
+# Monthly stay-price refresh (T532). Owner decision 2026-10-21: GitHub Actions.
+#
+# What it does, every week on Monday (the Xotelo slice) and fully on the first
+# Monday of the month:
+#   1. pull the private state (journal, Xotelo pool and anchors, last build)
+#      from the private R2 bucket carta-stays-state
+#   2. Xotelo: price the next slice of anchor properties (resumable, 5.5 h cap)
+#   3. first Monday: Eurostat + Inside Airbnb + SerpApi free-tier calibration;
+#      first Monday of Jan/Apr/Jul/Oct: rediscover the Xotelo pool + OSM supply
+#   4. build_stays --gate; on a passed gate, publish the public wire to
+#      r2:carta/data/stays-live/v1/ (data.carta-europetravel.com); on a failed
+#      gate the previous files stay live and the job fails visibly
+#   5. push the state back, always, so the next run resumes
+#
+# Nothing large enters git. The Booking/Hostelworld scrape is NOT here: GitHub
+# runners use datacenter IPs and that run is the owner's laptop task
+# (scripts/stays_scrape.bat), which uploads its journal rows to the same state.
+#
+# Secrets (owner, register row T532-a): R2_ACCOUNT_ID, R2_ACCESS_KEY_ID,
+# R2_SECRET_ACCESS_KEY, SERPAPI_KEY (free plan; optional).
+
+name: stays-refresh
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "Run the monthly steps now (Eurostat, Inside Airbnb, calibration)"
+        type: boolean
+        default: true
+      discover:
+        description: "Rediscover the Xotelo pool and OSM supply (about 4 hours)"
+        type: boolean
+        default: false
+      bootstrap:
+        description: "Xotelo bootstrap: all 12 months for every anchor (repeat until done)"
+        type: boolean
+        default: false
+      publish_prefix:
+        description: "R2 prefix to publish to (use a test prefix for a dry run)"
+        type: string
+        default: "data/stays-live/v1"
+
+concurrency:
+  group: stays-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      PYTHONIOENCODING: utf-8
+      STAYS_STATE: ${{ github.workspace }}/cache/stays
+      STAYS_OUT: ${{ github.workspace }}/cache/stays/out
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      R2: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+      SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          sparse-checkout: |
+            pipeline
+            continent-app/public/app_data.json
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install "httpx>=0.27" "duckdb>=1.1"
+
+      - name: Which steps run today
+        id: plan
+        run: |
+          dom=$(date -u +%d); mon=$(date -u +%m)
+          full=false; discover=false
+          if [ "$dom" -le 7 ]; then full=true; fi
+          if [ "$full" = true ] && [[ "$mon" =~ ^(01|04|07|10)$ ]]; then discover=true; fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            full="${{ inputs.full }}"; discover="${{ inputs.discover }}"
+          fi
+          echo "full=$full" >> "$GITHUB_OUTPUT"
+          echo "discover=$discover" >> "$GITHUB_OUTPUT"
+          echo "prefix=${{ inputs.publish_prefix || 'data/stays-live/v1' }}" >> "$GITHUB_OUTPUT"
+          echo "full=$full discover=$discover"
+
+      - name: Pull state from R2
+        run: |
+          mkdir -p "$STAYS_STATE"
+          aws s3 sync "s3://carta-stays-state/state/" "$STAYS_STATE/" --endpoint-url "$R2" \
+            --exclude "iab/*" --only-show-errors
+
+      - name: Discover (quarterly)
+        if: steps.plan.outputs.discover == 'true'
+        timeout-minutes: 240
+        run: |
+          python pipeline/stays/discover_xotelo.py
+          python pipeline/stays/harvest_supply.py --refresh
+
+      - name: Eurostat + Inside Airbnb (monthly)
+        if: steps.plan.outputs.full == 'true'
+        run: |
+          python pipeline/stays/harvest_eurostat.py
+          python pipeline/stays/harvest_iab.py
+
+      - name: Xotelo slice
+        timeout-minutes: 340
+        run: |
+          hours=5.5
+          if [ "${{ steps.plan.outputs.discover }}" = "true" ]; then hours=1; fi
+          if [ "${{ inputs.bootstrap }}" = "true" ]; then
+            python pipeline/stays/price_xotelo.py --bootstrap --max-hours "$hours"
+          else
+            python pipeline/stays/price_xotelo.py --max-hours "$hours"
+          fi
+
+      - name: Calibrate (SerpApi free tier)
+        if: steps.plan.outputs.full == 'true'
+        run: python pipeline/stays/calibrate_serpapi.py --n 60
+
+      - name: Build and gate
+        id: build
+        run: |
+          mkdir -p "$STAYS_OUT/v1"
+          aws s3 cp "s3://carta/${{ steps.plan.outputs.prefix }}/manifest.json" "$STAYS_OUT/v1/manifest.json" \
+            --endpoint-url "$R2" --only-show-errors || true
+          python pipeline/stays/build_stays.py --gate
+
+      - name: Publish public wire
+        if: steps.plan.outputs.full == 'true' && success()
+        run: |
+          aws s3 sync "$STAYS_OUT/v1/" "s3://carta/${{ steps.plan.outputs.prefix }}/" \
+            --endpoint-url "$R2" --content-type application/json \
+            --cache-control "public, max-age=3600, stale-while-revalidate=86400" --only-show-errors
+          echo "published $(ls "$STAYS_OUT/v1" | wc -l) files to ${{ steps.plan.outputs.prefix }}"
+
+      - name: Push state to R2
+        if: always()
+        run: |
+          # journal_scrape.sqlite belongs to the owner's laptop run: never written here.
+          aws s3 sync "$STAYS_STATE/" "s3://carta-stays-state/state/" --endpoint-url "$R2" \
+            --exclude "iab/*" --exclude "out/*" --exclude "spike/*" \
+            --exclude "journal_scrape.sqlite" --only-show-errors
+
+      - name: Summary
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          m = pathlib.Path(os.environ["STAYS_OUT"]) / "v1" / "manifest.json"
+          if m.exists():
+              d = json.loads(m.read_text())
+              lines = ["## Stay prices", f"built {d['built']}, {d['n']} destinations",
+                       f"observations {d['sources']}", f"gate {d['gate']}"]
+              for k, v in d["coverage"].items():
+                  lines.append(f"- {k}: {v}")
+              open(os.environ["GITHUB_STEP_SUMMARY"], "a").write("\n".join(lines) + "\n")
+          PY

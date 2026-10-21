@@ -1,0 +1,124 @@
+"""Hostelworld dorm and private-room prices, twice a year, run on the laptop.
+
+Same rules as scrape_booking.py: one plain browser tab, 3 to 6 s between
+pages, stop and resume tomorrow on a block, only medians are published.
+
+Per destination that has hostels (OSM supply or Xotelo pool) and per monthly
+probe date: the city list page for 1 guest. Each card gives "Dorms from" (per
+bed) and "Privates from" (the cheapest private for 1 guest; T530 checks
+whether Hostelworld shows it per person or per room, build_stays reads
+STATE/spike.json "hw_private_per_person").
+
+Usage:
+  python pipeline/stays/scrape_hostelworld.py --run 2027-03 --max-hours 3
+  python pipeline/stays/scrape_hostelworld.py --run 2027-03 --only FLR --headed
+"""
+
+import argparse
+import asyncio
+import random
+import sys
+import time
+from datetime import date, timedelta
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from common import (JOURNAL_SCRAPE, STATE, blocked_until, journal, load_destinations, now_iso,  # noqa: E402
+                    priority, read_json, set_block)
+from booking.page import close_overlays, decline_cookies  # noqa: E402
+from hostelworld.page import CARDS_JS, city_url, parse_card  # noqa: E402
+from price_xotelo import probe_day  # noqa: E402
+
+SOURCE = "hostelworld"
+CITY_MAP = STATE / "hostelworld_city.json"   # optional {dest_id: [city, country]}
+
+
+def has_hostels(d, supply, anchors):
+    s = (supply.get(d["id"]) or {}).get("hostel", 0)
+    a = any(x["kind"] == "hostel" for x in anchors.get(d["id"], []))
+    return s > 0 or a
+
+
+async def run(a):
+    from playwright.async_api import async_playwright
+    con = journal(JOURNAL_SCRAPE)
+    if blocked_until(con, SOURCE):
+        print("Hostelworld blocked us earlier; try again tomorrow")
+        return
+    supply = (read_json(STATE / "supply.json", {}) or {}).get("dests", {})
+    anchors = read_json(STATE / "xotelo_anchors.json", {}) or {}
+    overrides = read_json(CITY_MAP, {}) or {}
+    dests = [d for d in sorted(load_destinations(), key=priority)
+             if has_hostels(d, supply, anchors) or d["id"] in overrides]
+    only = {s for s in a.only.split(",") if s}
+    if only:
+        dests = [d for d in dests if d["id"] in only]
+    start = date.fromisoformat(a.run + "-01")
+    t0 = time.monotonic()
+    pages = stored = 0
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=not a.headed)
+        page = await (await browser.new_context(locale="en-GB")).new_page()
+        try:
+            for d in dests:
+                city, country = overrides.get(d["id"]) or (d["city"], d["country"])
+                months = {int(m) for m in a.months.split(",") if m}
+                for k in range(1, 13):
+                    day = probe_day(start, k)
+                    if months and day.month not in months:
+                        continue
+                    task = f"{a.run}|{d['id']}|{day}"
+                    if con.execute("select 1 from done where source=? and task=?",
+                                   (SOURCE, task)).fetchone():
+                        continue
+                    if a.max_hours and time.monotonic() - t0 > a.max_hours * 3600:
+                        raise TimeoutError
+                    url = city_url(city, country, day.isoformat(),
+                                   (day + timedelta(days=1)).isoformat())
+                    resp = await page.goto(url, wait_until="domcontentloaded",
+                                           timeout=60000)
+                    pages += 1
+                    if resp and resp.status in (403, 429):
+                        set_block(con, SOURCE, 20, f"{resp.status} at {d['id']}")
+                        print("blocked: stopping, resume tomorrow")
+                        return
+                    await page.wait_for_timeout(2500)
+                    await decline_cookies(page)
+                    await close_overlays(page)
+                    cards = [parse_card(c) for c in await page.evaluate(CARDS_JS)]
+                    for c in cards:
+                        for bed, price in (("dorm", c["dorm"]), ("private", c["private"])):
+                            if price and 3 <= price <= 1500:
+                                con.execute(
+                                    "insert or ignore into obs values (?,?,?,?,?,?,?,?,?,?,?,?)",
+                                    (SOURCE, d["id"], c["key"], "hostel", None, bed,
+                                     1, day.isoformat(), 1,
+                                     price, None, now_iso()))
+                                stored += 1
+                    con.execute("insert or replace into done values (?,?,?)",
+                                (SOURCE, task, now_iso()))
+                    con.commit()
+                    if not cards and pages == 1:
+                        print(f"{d['id']}: no cards at {url} (add hostelworld_city.json "
+                              f"override?)")
+                        break
+                    await page.wait_for_timeout(int(random.uniform(3000, 6000)))
+        except TimeoutError:
+            print("max hours reached; the next run resumes here")
+        finally:
+            await browser.close()
+    print(f"session: {pages} pages, {stored} prices")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--run", required=True)
+    ap.add_argument("--only", default="")
+    ap.add_argument("--max-hours", type=float, default=3)
+    ap.add_argument("--headed", action="store_true")
+    ap.add_argument("--months", default="")
+    asyncio.run(run(ap.parse_args()))
+
+
+if __name__ == "__main__":
+    main()

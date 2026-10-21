@@ -80,18 +80,16 @@ sees it). A row key links to the source tables that follow.
 | `holidays` | events | Nager.Date public holidays, catalogue countries, current + next year | monthly | `demand_events` | soft | `nager_date` | also part of the weekly ingestion sweep |
 | `school_holidays` | events | OpenHolidays school holidays for the countries it covers | monthly | `demand_events` | soft | `openholidays_api` | also part of the weekly ingestion sweep |
 
-### Harvesters (22)
+### Harvesters (28)
 
 | Script | Cadence | Task | Failure | Ledger rows | Note |
 |---|---|---|---|---|---|
-| `pipeline/harvest_accommodation.py` | quarterly | `lodging` | hard | `inside_airbnb` |  |
 | `pipeline/harvest_activities.py` | backfill | `activities` | hard | `opentripmap` |  |
 | `pipeline/harvest_bathing_water.py` | quarterly | `bathing_water` | hard | `eea_wise_bathing_water`, `eea_wise_bathing_water_eea_spine`, `eea_wise_bathing_water_harvest_bathing_water` |  |
 | `pipeline/harvest_climate_power.py` | backfill | `climate` | hard | `nasa_power_climatology_api`, `nasa_power_2001_2020` |  |
 | `pipeline/harvest_events.py` | monthly | `events` | soft | `wikidata_recurring_events` |  |
+| `pipeline/harvest_food_prices.py` | monthly | `food` | hard | `eurostat_food_price_tables`, `open_food_facts_open_prices` | food and drink model v2 (T513, merged by T536) |
 | `pipeline/harvest_geonames.py` | backfill | `geonames` | hard | `geonames_cities500` |  |
-| `pipeline/harvest_hostelworld.py` | monthly | `staytiers` | hard | `hostelworld_partner_api` | SKIPs without partner credentials |
-| `pipeline/harvest_hotels_liteapi.py` | monthly | `staytiers` | hard | `liteapi_nuitee` | SKIPs without an API key |
 | `pipeline/harvest_image_licenses.py` | manual | none | manual | `wikimedia_commons_file_metadata` |  |
 | `pipeline/harvest_images.py` | backfill | `images` | hard | `wikipedia` |  |
 | `pipeline/harvest_pageviews.py` | monthly | `poi_significance` | soft | `wikipedia`, `wikipedia_enrich_wikidata` | the fame task imports it for the destination half |
@@ -106,13 +104,19 @@ sees it). A row key links to the source tables that follow.
 | `pipeline/harvest_urban_fabric.py` | manual | none | manual | `openstreetmap_via_geofabrik_country` |  |
 | `pipeline/harvest_wikivoyage.py` | backfill | `guide` | hard | `wikivoyage` |  |
 | `pipeline/harvest_wikivoyage_listings.py` | monthly | `poi_significance` | soft | `wikivoyage`, `wikivoyage_listings` |  |
+| `pipeline/stays/calibrate_serpapi.py` | monthly | `stays` | soft | `serpapi_google_hotels_calibration` | SKIPs without SERPAPI_KEY |
+| `pipeline/stays/discover_xotelo.py` | quarterly | `stays_discover` | soft | `xotelo_tripadvisor_rates` |  |
+| `pipeline/stays/harvest_eurostat.py` | monthly | `stays` | soft | `eurostat_hicp_ppp_nights` |  |
+| `pipeline/stays/harvest_iab.py` | monthly | `stays` | soft | `ecb_euro_reference_rates`, `inside_airbnb` | Inside Airbnb publishes quarterly; a run without a new snapshot reuses the download |
+| `pipeline/stays/harvest_supply.py` | quarterly | `stays_discover` | soft | `openstreetmap_overpass_stays` |  |
+| `pipeline/stays/price_xotelo.py` | monthly | `stays` | soft | `xotelo_tripadvisor_rates` |  |
+| `pipeline/stays/scrape_booking.py` | manual | none | manual | `booking_com_search_lists` | owner, March and September, laptop only |
+| `pipeline/stays/scrape_hostelworld.py` | manual | none | manual | `hostelworld_city_lists` | owner, March and September, laptop only |
 
 ## 2. Fare caches and partner APIs
 
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today | Storable copy |
 |---|---|---|---|---|---|---|
-| Hostelworld Partner API (`pipeline/harvest_hostelworld.py`) | Per-city dorm and private-room price medians | Partner / affiliate agreement (credentials pending per stay-tier notes) | Per agreement, verify | No | MISSING, verify agreement display terms | Verify |
-| LiteAPI, Nuitee (`pipeline/harvest_hotels_liteapi.py`) | Per-city 3-star and 4/5-star entry-price medians | LiteAPI terms of service (self-service key) | Per terms, verify | No | MISSING, verify | Verify |
 | Ferryhopper trips widget (collector: ferryhopper) | Port pairs, schedules, base fares (sampling) | Commercial aggregator, no open license. Ingestion README: keep sampling gentle and confirm terms before scaling | n/a | No | Not user-facing yet. RISK: confirm terms before any display | No |
 | Omio | Nothing today: outbound deeplinks only (Impact affiliate, `continent-app/src/lib/omio.js`) | Impact programme terms | n/a | No | n/a. Price display is the subject of `omio_outreach.md` | n/a |
 | Flix prices | Nothing today (the GTFS schedule feed has its own row in section 4, prices are not taken) | n/a | n/a | No | n/a. Price display is the subject of `flix_outreach.md` | n/a |
@@ -160,7 +164,16 @@ the app once those surfaces render from this data.
 
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today | Storable copy |
 |---|---|---|---|---|---|---|
-| Inside Airbnb (`pipeline/harvest_accommodation.py`) | Listing-level nightly medians, per-city seasonality, per-capacity and neighbourhood medians | CC BY 4.0 (per harvester header) | Yes | No | Home footer, Data sources block | Yes, with credit |
+| Eurostat price levels, HICP, exchange rates, NUTS 3 GDP (`pipeline/harvest_food_prices.py`) | prc_ppp_ind, prc_hicp_minr, ert_bil_eur_m and nama_10r_3gdp: the country base, the monthly roll and the income tilt of food prices | Eurostat reuse policy (CC BY 4.0 equivalent) | Yes | No | Account > Data sources (Eurostat) | Yes, with credit |
+| Open Food Facts Open Prices daily dump (`pipeline/harvest_food_prices.py`) | Crowd-sourced shop prices with locations, used as measured anchors in the food model | ODbL 1.0 | Yes | Yes (derived database) | MISSING: add an Open Food Facts credit to Account > Data sources (row T536) | Yes, with credit and share-alike |
+| Xotelo, TripAdvisor-based hotel prices (`pipeline/stays/price_xotelo.py`) | Property lists per TripAdvisor location; dated per-OTA nightly rates for a few anchor properties per destination, reduced to medians | Free public API, no published terms (one developer). Owner decision 2026-10-21, register row T530-a | Credit TripAdvisor via Xotelo; no property names or links published | No | Account > Data sources (Xotelo) | Verify |
+| Booking.com search lists, owner-run sample (`pipeline/stays/scrape_booking.py`) | List prices, star class and unit name of the first 25 to 50 properties per destination and probe date, twice a year, reduced to medians | Site terms restrict commercial scraping; owner states permission and educational use, 2026-10-21 (register row T530-a) | No property names, photos or links published | No | Account > Data sources (sampled list prices) | Verify |
+| Hostelworld city lists, owner-run sample (`pipeline/stays/scrape_hostelworld.py`) | Dorm and private 'from' prices per hostel on the city list page, twice a year, reduced to medians | Site terms; owner states permission and educational use, 2026-10-21 (register row T530-a) | No property names, photos or links published | No | Account > Data sources (sampled list prices) | Verify |
+| OpenStreetMap via Overpass, stays (`pipeline/stays/harvest_supply.py`) | tourism=hotel/hostel/guest_house/motel/apartment with stars, counted per destination | ODbL 1.0 | Yes | Yes (derived database) | Account > Data sources (OpenStreetMap) | Yes, with credit and share-alike |
+| Eurostat HICP CP112, price levels, nights (`pipeline/stays/harvest_eurostat.py`) | prc_hicp_minr accommodation index (drift), prc_ppp_ind A0111 price level, tour_occ_nim nights (season fill-in) | Eurostat reuse policy (CC BY 4.0 equivalent) | Yes | No | Account > Data sources (Eurostat) | Yes, with credit |
+| ECB euro foreign exchange reference rates (`pipeline/stays/harvest_iab.py`) | Daily reference rates to convert Inside Airbnb prices to EUR | ECB statistics reuse, free with source credit | Source credit in the ledger | No | Ledger only (conversion factor, not displayed) | Yes, with credit |
+| SerpApi Google Hotels, free tier (`pipeline/stays/calibrate_serpapi.py`) | Up to 250 searches a month compared with our medians; error figure only, nothing stored or shown | SerpApi terms (free plan) | n/a (not displayed) | No | Not displayed | n/a |
+| Inside Airbnb (`pipeline/stays/harvest_iab.py`) | Listing-level nightly medians per destination footprint: entire place by capacity, private room, shared room | CC BY 4.0 (per harvester header) | Yes | No | Home footer, Data sources block | Yes, with credit |
 | EEA WISE bathing water (`pipeline/harvest_bathing_water.py`) | Official bathing site classifications near each destination | EEA standard re-use policy, effectively CC BY 4.0, verify | Yes | No | WaterQualityBadge shows the rating; source credited in the Account panel's Data sources screen | Yes, with credit |
 | GeoNames cities500 (`pipeline/harvest_geonames.py`) | Population, settlement class, elevation, timezone | CC BY 4.0 (per harvester header) | Yes | No | Home footer, Data sources block | Yes, with credit |
 | Wikipedia (`pipeline/harvest_images.py`, `harvest_pageviews.py`, `pipeline/trails/popularity.py`, live `cityResearch.js`) | Lead image pointers, article URLs, pageview counts, live summaries | Text CC BY-SA 4.0; pageview statistics CC0 | Yes for text | Yes for text | Image credit link on the destination hero (DetailPanel); live research names Wikipedia in the chat copy; Account panel's Data sources screen carries the text credit and licence | Yes, with credit and share-alike |
@@ -704,6 +717,8 @@ script it was and when it was retired.
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today | Storable copy |
 |---|---|---|---|---|---|---|
 | ExchangeRate-API open endpoint (open.er-api.com, was used by the retired Wizz Air harvester) | Daily EUR conversion table (`cache/fx_rates_eur.json`) | Free open endpoint; terms require a credit link ("Rates by Exchange Rate API"), verify current wording | Yes | No | Home footer, Data sources block. RETIRED: the harvester was deleted with the old flight fare logic (T511); the app credit row stays until the app's attribution list drops it | Verify |
+| Hostelworld Partner API (`pipeline/harvest_hostelworld.py`) | Per-city dorm and private-room price medians | Partner / affiliate agreement (credentials pending per stay-tier notes) | Per agreement, verify | No | MISSING, verify agreement display terms | Verify |
+| LiteAPI, Nuitee (`pipeline/harvest_hotels_liteapi.py`) | Per-city 3-star and 4/5-star entry-price medians | LiteAPI terms of service (self-service key) | Per terms, verify | No | MISSING, verify | Verify |
 | WorldClim 2.1 (`pipeline/harvest_climate_worldclim.py`, RETIRED) | Monthly climate normals sampled per destination | Free for academic and other non-commercial use; commercial use needs permission | Yes, citation (Fick and Hijmans 2017) | No | RETIRED. The destination climate strip moved to NASA POWER and the lake season model moved to CHELSA V2.1 on 2026-08-30. No shipped wire is derived from WorldClim; the harvester and its cache are kept only so an old build can be reproduced | No |
 | Wikivoyage as description signal (`pipeline/trails/describe.py`, RETIRED 2026-08-30) | Guide intro for the route name, sent to the model as CONTEXT to judge which supplied facts matter. Never quoted or paraphrased: it is not a mappable source field in the verification pass, and any generated sentence sharing a six word run with the snippet is dropped in code | CC BY-SA 4.0 | Yes if any of its prose is ever used | Yes if any of its prose is ever used | Not attributed and deliberately not used as text. Each `description_grounding` row records which guide, if any, was in context. If a future change quotes it, this becomes a CC BY-SA credit plus share-alike obligation on the description. RETIRED: describe.py no longer runs (the three facts its prose knew are wire fields now, see docs/TRAILS.md), so nothing in the app reaches Wikivoyage through this path any more | Yes, with credit and share-alike |
 | Claude API (`--provider claude`) or Gemini API (`--provider gemini`) in `pipeline/trails/describe.py` | Not a data source: the model only rewrites the facts block we assemble from staged rows. The stored `description_md` is our own text and inherits the licenses of the facts behind it (ODbL for OSM tags and geometry, portal terms for the confirmation line) | Anthropic commercial terms: customer owns the outputs. Google Gemini terms: same for outputs, but on the **free** tier Google may use prompts and responses to improve their products, so only open-data facts go in the prompt | No credit obligation to either vendor | No | n/a. Trail credits still owe OSM and the national portals as above. NOTE: the EEA paid-services rule that put `plan-day` on a billed Gemini key covers API clients offered to users; describe.py is a local batch script and is not one, so the free tier is in scope for it only while it stays local | n/a |

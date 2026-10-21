@@ -342,7 +342,7 @@ def test_apply_gives_a_footprint_anchor_to_its_town_alone():
 
 
 def test_harvest_footprint_is_off_by_default():
-    src = (ROOT / "pipeline" / "harvest_accommodation.py").read_text(encoding="utf-8")
+    src = (ROOT / "pipeline" / "archive" / "harvest_accommodation.py").read_text(encoding="utf-8")
     assert 'want_footprint = "--footprint" in sys.argv' in src
 
 

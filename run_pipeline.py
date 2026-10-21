@@ -1465,33 +1465,58 @@ TASKS = [
                 "with a long lag, so the Worker's own find tier adds newer routes.",
     },
     {
-        "key": "lodging",
-        "title": "Inside Airbnb lodging anchors -> premiums",
+        "key": "tourist_premium",
+        "title": "Tourist-hotspot premium on food and drink (dining, groceries, clubs)",
         "cadence": "quarterly",
         "writes_app_data": True,
-        "cmds": [
-            [PY, "pipeline/harvest_accommodation.py", "--footprint"],
-            [PY, "pipeline/apply_accommodation_anchors.py"],
-            [PY, "pipeline/apply_longtail_granularity.py"],
-            [PY, "pipeline/apply_tourist_premium.py"],
-        ],
-        "note": ("snapshot dates are pinned in harvest_accommodation.py (2026-06). "
-                 "Bump DATASETS + purge cache/iab to actually get newer prices."),
+        "cmds": [[PY, "pipeline/apply_tourist_premium.py"]],
+        "note": ("food half only since T533: beds come from the stays layer, which "
+                 "measures hotspot prices instead of marking them up."),
     },
     {
-        "key": "staytiers",
-        "title": "Hostel + hotel stay tiers (Hostelworld / LiteAPI)",
+        "key": "food",
+        "title": "Food and drink prices per place (Eurostat + Open Prices, T513)",
         "cadence": "monthly",
         "writes_app_data": True,
         "cmds": [
-            [PY, "pipeline/harvest_hostelworld.py"],
-            [PY, "pipeline/harvest_hotels_liteapi.py"],
-            [PY, "pipeline/apply_stay_tiers.py"],
+            [PY, "pipeline/harvest_food_prices.py"],
+            [PY, "pipeline/apply_food_prices.py"],
         ],
-        "note": ("needs HW_CONSUMER_KEY/HW_CONSUMER_SECRET + LITEAPI_KEY in the env; "
-                 "without them the harvesters no-op cleanly (no cache written). Apply "
-                 "REFUSES fixture anchors (dev --fixtures runs) loudly: re-harvest with "
-                 "real keys before this task can ship tiers."),
+        "note": ("no keys; ~1 min. Eurostat publishes the monthly price index around "
+                 "the 17th, so a run after that moves every price to last month. "
+                 "Must run AFTER tourist_premium: apply_tourist_premium.py only "
+                 "touches country-level costs blocks, and this task owns them."),
+    },
+    {
+        "key": "stays_discover",
+        "title": "Stay layer: Xotelo property pool + OSM supply (T531)",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/stays/discover_xotelo.py"],
+            [PY, "pipeline/stays/harvest_supply.py", "--refresh"],
+        ],
+        "note": ("about 4 hours of polite Xotelo calls; state in cache/stays (R2 "
+                 "stays/state on Actions). Anchors are kept between runs."),
+    },
+    {
+        "key": "stays",
+        "title": "Stay layer: Eurostat + Inside Airbnb + Xotelo prices -> stays wire (T531)",
+        "cadence": "monthly",
+        "writes_app_data": True,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/stays/harvest_eurostat.py"],
+            [PY, "pipeline/stays/harvest_iab.py"],
+            [PY, "pipeline/stays/price_xotelo.py", "--max-hours", "6"],
+            [PY, "pipeline/stays/calibrate_serpapi.py"],
+            [PY, "pipeline/stays/build_stays.py", "--gate"],
+            [PY, "pipeline/stays/apply_stays.py"],
+        ],
+        "note": ("the same steps as .github/workflows/stays-refresh.yml, for a local "
+                 "run. The Booking/Hostelworld scrape is the owner's twice-yearly "
+                 "laptop task (scripts/stays_scrape.bat), not part of this."),
     },
 
     # ---- trails content lab (tools/trailslab, local PostGIS): soft + guarded ---- #
