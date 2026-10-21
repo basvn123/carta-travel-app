@@ -1601,7 +1601,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T461-i | T461 | The legal body follows the 68ch --measure token (about 95 characters a line; detector line-length x63); tightening it is a token call | user | open |  |
 | T461-j | T461 | verify_trails_export reports 465 facet counts that disagree with their rows in public/trails/*.json (for example AL grade.moderate 42 vs 44); data, not T461 | next task | open |  |
 | T462-a | T462 | Confirm the home demo story (search: Lake Bled, Lake Bohinj, Zell am See; trip: Ljubljana, Lake Bled, Lake Bohinj) and the six kind photos, STORY and KINDS in continent-app/src/lib/homeDemo.js | user | closed by T463 | |
-| T462-b | T462 | Every figure in the home demo is a national estimate (no city-level town in the story region); accept it or move the story when measured towns exist | user | open | |
+| T462-b | T462 | Every figure in the home demo is a national estimate (no city-level town in the story region); accept it or move the story when measured towns exist | user | closed by T509 | |
 | T462-c | T462 | The home kind tiles link to a bare ?tab=places because Destinations keeps its category in state, not the URL; add a cat parameter to lib/urlState.js so a new tab keeps the kind | next task | open | |
 | T462-d | T462 | Remaining P2 and P3 items of the home page confirming review (blank band under shorter demo scenes, the scene door switching before its scene, the total label wrapping at 1440), Execution/P11/T462-critique/after-confirm.md | next task | closed by T463 | |
 | T462-e | T462 | verify_tab_switching fails 5 of 75 on the header search slot on Destinations and a scroll position (800 to 740), identically on the pre-T462 build | next task | open | |
@@ -1616,7 +1616,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T463-f | T463 | Re-measure LCP and CLS of the home page on a throttled phone now that the first screen carries an eager app capture (trip.webp) | next task | open | |
 | T463-g | T463 | Deploy the T463 home page (supersedes T462-h): npm run build:pages with VITE_E2E_SEAMS empty, then npx wrangler pages deploy dist --project-name carta-app --branch main | user | closed by T463 | |
 | T464-a | T464 | Owner to confirm the five new persona places and photos on the home page (Bovec, Albufeira, Český Krumlov, Porto, Mostar; credits in the T464 report) | user | open | |
-| T464-b | T464 | Owner call: keep the phone story as a compact swipe track (current, shorter page) or stack the five chapters vertically as the researched leaders do (about +1,500 px) | user | open | |
+| T464-b | T464 | Owner call: keep the phone story as a compact swipe track (current, shorter page) or stack the five chapters vertically as the researched leaders do (about +1,500 px) | user | closed by T509 | |
 | T464-c | T464 | .home-page carries container-type: inline-size, so it is the containing block of any position: fixed descendant; a future fixed element on the home page must be portalled out | next task | open | |
 | T464-d | T464 | Fix the day planner copy bugs from T463-c ("1 tips", "A long walk.Bus or tram") and reshoot the day and share captures; outside T464's files, taken by T435 | next task | closed by T435 | |
 | T464-e | T464 | Measure LCP and CLS of the home page on a throttled phone and desktop (T463-f); the eager desktop capture is now 98 KB (100,014 bytes) | next task | open | |
@@ -1628,7 +1628,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T466-d | T466 | The Alongside your friends ledger is still not on the Friends page (it needs the record counts only SavedTripsPanel computes); T390-f stays open for it | next task | open | |
 | T466-e | T466 | Owner to see the new Friends page, the destination page friends line and the My trips faces line on a real phone and confirm the direction | user | open | |
 | T467-a | T467 | Owner to confirm the My trips Visited band (countries as the hero with flags, then cities, trips, nights) on a real phone | user | open | |
-| T467-b | T467 | Owner call: fold the Countries section under the Visited band into the band itself, now that the band shows the flags | user | open | |
+| T467-b | T467 | Owner call: fold the Countries section under the Visited band into the band itself, now that the band shows the flags | user | closed by T503 | |
 | T468-a | T468 | Real-phone round on an iPhone 13 and a Pixel 5: the wizard without the bottom bar, its footer above the home indicator, Report a problem with the keyboard up, the first-run date fields (T402-d) and the next-trip actions with the install hint (T410-h) | user | open | |
 | T468-b | T468 | Owner to confirm the bottom bar stepping aside inside a planner step flow (answers T432-g and T433-i); reverting is one rule in 60-v6-shell.css | user | open | |
 | T435-a | T435 | Journey deep link is dead on a cold load (#journey=<id> lands on the Destinations trips list) and journey tiles are not <a href> | next task | closed by T474 | |
@@ -1651,10 +1651,10 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T469-i | T469 | Stale text: en.js:2341 says 30 years of climate normals (data is 2001-2020), runtime_pricing.js:327 and priceMonths.js:5 say the season curve comes from calendar.csv (it is reviews.csv); fold into 2.11 and 2.12 | next task | open | |
 | T470-a | T470 | Owner step before W49 for roadmap 2.12: create the LiteAPI production key (card verification, no charge, low-limit virtual card) and apply for the Hostelworld partner programme (Partnerize, needs the live site URL); only free endpoints are used | user | open | 1 |
 | T470-b | T470 | harvest_climate_power.py still calls the Open-Meteo elevation API (non-commercial tier); move the lapse correction to Copernicus DEM or Mapterhorn terrain tiles in roadmap 2.11 | next task | open | |
-| T471-a | T471 | Owner call: the food basket for all 3,868 destinations is Numbeo (June 2026), whose commercial use needs a paid licence from $260 a month; replace it with Eurostat price levels per category plus own measurements (recommended, roadmap 2.14) or buy the licence; a launch risk until decided | user | open | 1 |
-| T471-b | T471 | Owner call: the one-line positioning for cost plus logistics (three options in Roadmap/2.14-kosten-en-logistiek.md point 4) before roadmap 1.13 rewrites PRODUCT.md, carta-design and the home page | user | open | |
-| T471-c | T471 | Owner call: may destination alternatives (dupes) cross a border, e.g. Dubrovnik to Kotor; proposal yes for the Europe-wide list, no for the nearby list until the graph knows border crossings | user | open | |
-| T471-d | T471 | Owner call: run a self-hosted MOTIS (train and bus timetables, Transitous itself is non-commercial only) on the Hetzner box for roadmap 2.16, starting with Italy, Austria and Switzerland | user | open | |
+| T471-a | T471 | Owner call: the food basket for all 3,868 destinations is Numbeo (June 2026), whose commercial use needs a paid licence from $260 a month; replace it with Eurostat price levels per category plus own measurements (recommended, roadmap 2.14) or buy the licence; a launch risk until decided | user | closed by T509 | 1 |
+| T471-b | T471 | Owner call: the one-line positioning for cost plus logistics (three options in Roadmap/2.14-kosten-en-logistiek.md point 4) before roadmap 1.13 rewrites PRODUCT.md, carta-design and the home page | user | closed by T505 | |
+| T471-c | T471 | Owner call: may destination alternatives (dupes) cross a border, e.g. Dubrovnik to Kotor; proposal yes for the Europe-wide list, no for the nearby list until the graph knows border crossings | user | closed by T509 | |
+| T471-d | T471 | Owner call: run a self-hosted MOTIS (train and bus timetables, Transitous itself is non-commercial only) on the Hetzner box for roadmap 2.16, starting with Italy, Austria and Switzerland (owner 21 October: postponed) | user | open | |
 | T471-e | T471 | Day route link breaks on phones: googleMapsDirUrl (lib/routing.js) sends up to 9 waypoints but Google allows 3 in a mobile browser, and stops past 9 are dropped silently; the button sits at the bottom of the day; roadmap 1.14 | next task | closed by T487 | |
 | T471-f | T471 | Own-car tolls are always priced from Brussels: apply_toll_layer.py computes driving_toll from meta.home while tripTotal.js applies it from the traveller's carHome; leg tolls average the two endpoint countries and vignettes add 0; roadmap 4.15 | next task | open | |
 | T471-g | T471 | Lifestyle math defects: Foodie prices below Easygoing (self-catered days add to meals out), a coffee a day merges in on load while the label still reads Easygoing, group size does not move the card home price, three style vocabularies; roadmap 2.14 and 4.17 | next task | open | |
@@ -1664,10 +1664,10 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T472-a | T472 | Owner call: three places in the navigation (Explore with Destinations folded in, Plan with trip and day, My trips) plus an account icon; Roadmap/1.15-navigatie-pass-prijsweergave.md point 1; needed by W44 for roadmap 1.15 | user | closed by T473 | 1 |
 | T472-b | T472 | Owner call: the pass name; proposal keep Trip Pass and never show Get a pass alone, since pass reads as a rail or city pass in Europe; roadmap 1.15 | user | closed by T473 | |
 | T472-c | T472 | Owner call: save the first trip on the device without an account (TripPlannerTab.jsx:801 sends guests to sign-in today); roadmap 1.15 and 2.19 | user | closed by T473 | |
-| T472-d | T472 | Owner call: make sharing and co-editing free (second share link and co-planners are pass-gated today in usePaywall.jsx); changes what the pass gives, so before payments go live in roadmap 5.6; rows 5.12 and 5.6 | user | open | |
-| T472-e | T472 | Owner call: the contingency buffer as the traveller's own line on the trip total, off by default; roadmap 1.18 | user | open | |
+| T472-d | T472 | Owner call: make sharing and co-editing free (second share link and co-planners are pass-gated today in usePaywall.jsx); changes what the pass gives, so before payments go live in roadmap 5.6; rows 5.12 and 5.6 | user | closed by T509 | |
+| T472-e | T472 | Owner call: the contingency buffer as the traveller's own line on the trip total, off by default; roadmap 1.18 | user | closed by T509 | |
 | T472-f | T472 | Owner call: 48 px primary actions in the planners and bottom bar (the --tap token is 44 px); a styles.css and DESIGN.md token change; roadmap 1.17 and 4.20 | user | closed by T496 | |
-| T472-g | T472 | Owner call: morning, afternoon and evening bands above the day clock rather than replacing it; roadmap 1.17 and 4.19 | user | open | |
+| T472-g | T472 | Owner call: morning, afternoon and evening bands above the day clock rather than replacing it; roadmap 1.17 and 4.19 | user | closed by T509 | |
 | T472-h | T472 | Live copy says the day figure includes local transport (home.ch2 en.js:36, account.fq.dayA en.js:6912, five other languages) while the destination page says it is excluded and costIndex.js:271 sums stay and food; roadmap 1.16 | next task | closed by T486 | |
 | T472-i | T472 | Moldova, Romania, Kosovo and Albania all carry exactly 48 EUR a night (accommodation.level country), a placeholder rather than four measurements; trace the source in the pipeline; roadmap 2.21 | next task | open | |
 | T472-j | T472 | FirstRunReceipt is no longer mounted but still carries receipt.notIn, cost.stayNational and the old seasonal priceReceipt; remove it or make it the one receipt; roadmap 1.16 | next task | open | |
@@ -1675,20 +1675,20 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T474-b | T474 | supabase-js (52 KB gzip) loads before the first paint in the shared chunk named after useFocusTrap; about 30 modules import supabase synchronously, so deferring it is an auth-layer task (async getSupabase, sign-in tested end to end) | next task | closed by T479 | |
 | T474-c | T474 | The English string table (105 KB gzip) loads before the first paint; the other five languages already load on demand; splitting it by surface is an i18n architecture task | next task | closed by T480 | |
 | T474-d | T474 | 1,089 planner and admin rules stay in the first paint because a later rule could override them; resolve those pairs and rerun scripts/css-routes.mjs --split; the item pages are a third family not yet split | next task | closed by T481 | |
-| T474-e | T474 | Owner call: the trip price card places beds in the Lifestyle panel's comfort order (dorm, private room, entire place, hotel), while the reference stay prices rank an entire place below a private room a person; keep comfort order or switch to price order | user | open | |
+| T474-e | T474 | Owner call: the trip price card places beds in the Lifestyle panel's comfort order (dorm, private room, entire place, hotel), while the reference stay prices rank an entire place below a private room a person; keep comfort order or switch to price order | user | closed by T509 | |
 | T474-f | T474 | Real-phone round on a notched iPhone as the installed app: the shared page bar's height under the inset, the back label at 360 px in German, the phone refine row with the sort chip | user | open | |
 | T474-g | T474 | npx eslint src reports one error, src/browse/ExploreMap.jsx:621, a missing collectKpins dependency in a useCallback; the file was outside this task | next task | open | |
 | T475-a | T475 | Owner step: sign up for the Flix (Awin) and Trainline (Partnerize) affiliate programmes, so every trip leg gets a real-price link next to Omio (whose production link is T315-b); roadmap 4.23 | user | open | |
 | T475-b | T475 | Owner call: may guests create a group vote, or only account holders (voting itself never needs an account); roadmap 5.13 | user | closed by T476 | |
 | T475-c | T475 | Owner call: the headline price on cards and lists, the total for your group and dates once a budget or dates are known (recommended) or the per person day price; part of roadmap 1.8 and 1.19 | user | closed by T476 | 1 |
 | T475-d | T475 | Owner call: default safety buffer in the total budget search (10% recommended, visible and editable); roadmap 1.19 and 2.22 | user | closed by T476 | |
-| T475-e | T475 | Owner call: Hetzner capacity for self-hosted MOTIS next to the data lane, after roadmap 3.11 measures the memory for Italy | user | open | 2 |
+| T475-e | T475 | Owner call: Hetzner capacity for self-hosted MOTIS next to the data lane, after roadmap 3.11 measures the memory for Italy (owner 21 October: postponed) | user | open | 2 |
 | T475-f | T475 | The Not crowded filter keeps only crowd tier 1 and drops the 261 Quiet places (guidedSearch.js:43, quietOk); roadmap 2.24 | next task | open | |
 | T475-g | T475 | Budget input defects before the total budget search: budgetStep snaps a typed total to a day step (ExploreTab.jsx:580), date bounds come from the frozen fare window (return no later than 2026-12-19 for 214 of 285 origins), index.html og and twitter description promise local transport; roadmap 2.22 | next task | open | |
 | T475-h | T475 | Two leg models: the day planner prices day trips with flat bus 0.075 and train 0.15 EUR per km (DayPlannerTab.jsx:1272-1281) while the trip planner uses legTransportOptions, so the same leg shows two prices; roadmap 2.22 | next task | open | |
 | T475-i | T475 | T102-a proposes Transitous for real rail durations, but Transitous allows non-commercial use only; roadmap 3.11 replaces it with self-hosted MOTIS on GTFS, close T102-a when 3.11 lands | next task | open | |
 | T475-j | T475 | The day planner compare step and stay picker would multiply calls to the public OSRM and Nominatim (no SLA); keep comparisons on the matrix and straight lines, route only the picked stops, and plan an own pedestrian router on the box if load grows; roadmap 4.24 | next task | open | |
-| T477-a | T477 | Owner call: six pairs of roadmap rows from the parallel audits overlap (1.12/1.19, 2.16/3.11, 4.15/4.23, 4.19/2.23, 4.16+4.18/4.24, 5.12/5.13) and the buffer conflicts (T475-d decided 10% on by default, T472-e proposes off by default); T471-d and T475-e are the same MOTIS call; see T477 report | user | open | |
+| T477-a | T477 | Owner call: six pairs of roadmap rows from the parallel audits overlap (1.12/1.19, 2.16/3.11, 4.15/4.23, 4.19/2.23, 4.16+4.18/4.24, 5.12/5.13) and the buffer conflicts (T475-d decided 10% on by default, T472-e proposes off by default); T471-d and T475-e are the same MOTIS call; see T477 report | user | closed by T509 | |
 | T477-b | T477 | Remove the merged-in stray branch p11-owner-calls-t470 and its worktree wt/t470 once T477 is on main | next task | closed by T482 | |
 | T478-a | T478 | A saved region with no country shows an empty subtitle line in My trips (MyTripsTabs row.sub); no current region lacks one, but the row does not guard it | next task | open | |
 | T479-a | T479 | scripts/admin/test_edge_errors.mjs needs a database and was not run after getSupabase(); failure logging is now one tick later, so its event-order checks need confirming | next task | open | |
@@ -1789,21 +1789,71 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T492-l | T492 | DAY_PHASES and dayPhase() in daySchedule.js:40 are unused and define four phases; reduce to the three T472-g bands in the 4.19 build | next task | closed by T501 | with 4.19 |
 | T494-a | T494 | The bottom nav safe-area fix was measured only with a zero inset (desktop Chrome); check on a real notched iPhone that the items keep 68 px and no gap shows under toasts; padded scroll containers above the nav now carry a little extra bottom room there | next task | open |  |
 | T495-a | T495 | Read the owner's answers from the decision sheet (https://claude.ai/artifact/UeUtVU7C7zXPQT5NwYXCZU, collection answers) and apply them: close or reword the T484-a to T492-g rows and update the design documents | next task | closed by T502 | after the owner answers |
-| T497-a | T497 | Nothing links to /pricing yet besides its address; add a quiet "See all prices" link from Account's Your plan and the pass sheet | next task | open |  |
+| T497-a | T497 | Nothing links to /pricing yet besides its address; add a quiet "See all prices" link from Account's Your plan and the pass sheet | next task | closed by T503 |  |
 | T498-a | T498 | The country page has no save button: "country" is not a shortlist kind; adding it touches favorites.js and My trips | next task | open |  |
-| T498-b | T498 | "Plan a trip here" on a region page seeds only the country, because the wizard accepts a country, not a town | next task | open |  |
-| T498-c | T498 | Item pages opened from a country or region page return correctly but their back button names their own list | next task | open |  |
-| T498-d | T498 | Browser Back while a region page is open over a country page closes the country page too | next task | open |  |
+| T498-b | T498 | "Plan a trip here" on a region page seeds only the country, because the wizard accepts a country, not a town | next task | closed by T504 |  |
+| T498-c | T498 | Item pages opened from a country or region page return correctly but their back button names their own list | next task | closed by T504 |  |
+| T498-d | T498 | Browser Back while a region page is open over a country page closes the country page too | next task | closed by T504 |  |
 | T498-e | T498 | The region page can show more than four rails (up to five layers plus Weeks here); decide a cap or a fold | user | open |  |
-| T500-a | T500 | My trips does not list the trip saved on this device yet (1.3e) | next task | open | with 1.3e |
-| T500-b | T500 | The wizard's stops map has no numbered pins and a tapped pin does nothing (CityPickerMap.jsx, GuidedTripWizardParts.jsx) | next task | open |  |
-| T501-a | T501 | A guest's chat answers resume after sign-in only if the traveller re-enters the same chat within 30 minutes (sessionStorage) | next task | open |  |
-| T502-a | T502 | fmtMonthRanges prints English month names in all six languages, and the destination key fact says "Apr, May" while its strip says "Apr to May" | next task | open |  |
-| T502-b | T502 | Opening #dest= or #country= directly strips the hash, so a destination tab writes &tab= only when the page was opened from a card | next task | open |  |
-| T502-c | T502 | Reloading ?tab=plan&mode=day drops the trip day and starts a new day | next task | open |  |
+| T500-a | T500 | My trips does not list the trip saved on this device yet (1.3e) | next task | closed by T503 | with 1.3e |
+| T500-b | T500 | The wizard's stops map has no numbered pins and a tapped pin does nothing (CityPickerMap.jsx, GuidedTripWizardParts.jsx) | next task | closed by T507 |  |
+| T501-a | T501 | A guest's chat answers resume after sign-in only if the traveller re-enters the same chat within 30 minutes (sessionStorage) | next task | closed by T507 |  |
+| T502-a | T502 | fmtMonthRanges prints English month names in all six languages, and the destination key fact says "Apr, May" while its strip says "Apr to May" | next task | closed by T507 |  |
+| T502-b | T502 | Opening #dest= or #country= directly strips the hash, so a destination tab writes &tab= only when the page was opened from a card | next task | closed by T507 |  |
+| T502-c | T502 | Reloading ?tab=plan&mode=day drops the trip day and starts a new day | next task | closed by T507 |  |
 | T502-d | T502 | Data: Naples airport's pin sits in the sea on a phone map, and the Amalfi region page lists "Napoli coast" twice under Nearby regions | next task | open |  |
 | T502-e | T502 | The wizard's country cards show catalogue counts ("538 rated trails") and pill Add and What's there buttons; carta-design says no catalogue counts | user | open |  |
-| T502-f | T502 | Icons announce their names to screen readers ("Suggestion Plan your days", "Plane") from T401's icon labels; decorative icons should be aria-hidden | next task | open |  |
-| T502-g | T502 | An empty search shows two different "no match" messages at once | next task | open |  |
+| T502-f | T502 | Icons announce their names to screen readers ("Suggestion Plan your days", "Plane") from T401's icon labels; decorative icons should be aria-hidden | next task | closed by T507 |  |
+| T502-g | T502 | An empty search shows two different "no match" messages at once | next task | closed by T504 |  |
 | T502-h | T502 | Some new links still write the old key ?tab=places, and ?tab=places opens the last category used rather than Places; decide whether old links always land on Places | user | open |  |
 | T502-i | T502 | 52 harnesses in scripts/verify_*.mjs still use removed selectors or old tab keys (the eight main-flow harnesses were updated) | next task | open |  |
+| T503-a | T503 | A trip card's "a person a day" divides the per-person trip total by the nights; confirm nights, or nights plus one | user | open |  |
+| T503-b | T503 | The pass price stays in cents (6.99 and 14.99 euros, the amount charged) against the whole-euros rule 1.8; confirm the exception | user | open |  |
+| T503-c | T503 | The numbers page keeps its catalogue counts and method text as the one page where they may stand; confirm | user | open |  |
+| T503-d | T503 | The numbers page is English only; build the six language versions plus /:lang/about/numbers rewrites in public/_redirects | next task | open |  |
+| T503-e | T503 | A device trip moves into the account only when Plan opens after sign-in (TripPlannerTab); move it at sign-in from anywhere | next task | open |  |
+| T503-f | T503 | /pricing's back control says "Back"; it should name the place it came from ("Account") per carta-design | next task | open |  |
+| T503-g | T503 | Your plan for a free account shows both "See Trip Pass prices" (the sheet) and "See all prices" (the page); keep both or drop one | user | open |  |
+| T503-h | T503 | verify_saved.mjs and verify_past_trip.mjs read .mt-flag and .mt-flags, which now sit in the screen-reader list of the folded Visited band; update them | next task | open |  |
+| T503-i | T503 | The guest device line with its Sign in button was checked in code only (the end-check build had no Supabase config); check it once on the live site | next task | open |  |
+| T504-a | T504 | The wizard ignores destId in the trip seed, so "Plan a trip here" on a region page picks only the country; make the nearest town the first stop (GuidedTripWizard.jsx seed effect) | next task | open |  |
+| T504-b | T504 | Outdoor layers (Beaches, Lakes, Mountains, Trails, Cycling) still use the old map card, peek and PlaceCard; apply the one-overview pattern and the drawer (design question 4) | user | open |  |
+| T504-c | T504 | Owner questions 1, 2, 3, 5 and 7 in Roadmap/1.5-explore-kaart-lijst.md: reason line without a month, docked card on desktop, bookmark versus star, region coverage, drawer at half on a pick | user | open |  |
+| T504-d | T504 | Roadmap 2.13 must ship the month score as rating.month_scores[m] and its sentence as rating.month_why[m], or lib/placeOverview.js follows the names 2.13 picks | next task | open |  |
+| T504-e | T504 | Reloading #country=IT&region=X opens only the region: readRegionFromUrl strips the whole hash at boot before the country is read | next task | open |  |
+| T504-f | T504 | DayPrice says "a person a day" in My trips and SavedTripsPanel too; check that the longer French and German units fit their rows | next task | open |  |
+| T504-g | T504 | A typed /#country=IT link loses its hash to persistState about a second after load (urlState.js keeps only journey and dest), so Back from a region opened there closes the country too; add country and region to that rule | next task | open |  |
+| T504-h | T504 | Map pin labels and the hover tip say "a day", not "a person a day"; on German phone rail tiles "Tag" wraps onto its own line | next task | open |  |
+| T505-a | T505 | The numbers.mjs lede is typed by hand and can drift from PRODUCT.md; feed it from a file inside the app repo or check it against PRODUCT.md | next task | open |  |
+| T505-c | T505 | Next steps carta/3-waves.md still summarises the T201 sentence; update it once p0-next-steps-docs is merged | next task | open |  |
+| T505-d | T505 | Execution/P12/T202-competitive-positioning.md lacks Google Maps and ViaMichelin; a new positioning report should refer to it (closed report not edited) | next task | open |  |
+| T505-e | T505 | The Dutch, German, French, Spanish and Italian wording of home.sub, home.ch5 and the new FAQ answer needs a native read | user | open |  |
+| T505-f | T505 | The numbers page lede says "a bed plus food and drink, per person" after the sentence; confirm the wording | user | open |  |
+| T505-g | T505 | tests/prerenderShell.test.mjs line 91 uses the old title as a fixture; update it if the fixture should mirror index.html | next task | open |  |
+| T506-a | T506 | Should the "How much do you have?" band also sit on Home and hand the query to Explore? The owner places Home himself | user | open |  |
+| T506-b | T506 | Let the traveller type an amount set aside for getting there, taken off the budget as their own figure; without it nearly every place fits (3,664 of 3,855 in the worked example) | user | open |  |
+| T506-c | T506 | Should Carta's own drive estimate count toward the total for "Own car", or does getting there stay "Not priced yet" for every way until 3.11 (proposal: stays unpriced) | user | open |  |
+| T506-d | T506 | Confirm design doc questions 4, 5, 8 and 9 in Roadmap/1.19-budgetzoeken.md: no Tight group without a buffer, the sort order until the 2.13 month score, the day price without the buffer, length in days | user | open |  |
+| T506-e | T506 | After T504, show the budget results as a filter on Explore's own list and map (the group total as the pin price) instead of a separate block | next task | open |  |
+| T506-f | T506 | Add "Plan this trip" to the budget receipt, carrying stop, dates, group and budget into the trip planner (2.22) | next task | open |  |
+| T506-g | T506 | The kit Card's open button cannot carry aria-expanded, so the row that toggles a budget receipt does not announce its state; a kit change | next task | open |  |
+| T506-h | T506 | Low, middle and high amounts per line (Fits only when the high amount fits, per 2.22) wait on priceTrip ranges; until then the buffer is the margin | next task | open |  |
+| T506-i | T506 | Babies under 3 (who travel free) are not in the budget band, although priceTrip supports them | next task | open |  |
+| T507-a | T507 | About 27 harnesses in scripts/verify_*.mjs query classes that no longer exist (day flow, chat, trip sheet, Explore cards, destination page, saved trips); continues T502-i, list in the T507 hand-back | next task | open |  |
+| T507-b | T507 | verify_focus_trap.mjs lines 105 to 140 test the removed .bottom-nav-plus and .plan-chooser modal; test another modal or drop the block | next task | open |  |
+| T507-c | T507 | verify_friends.mjs line 725 checks .shell-pass-btn, which left the header; point it at the pass door or drop the check | next task | open |  |
+| T507-d | T507 | The TripExtras link (line 98) has only its title as accessible name now that its icon is hidden; give it a visible or aria label | next task | open |  |
+| T507-e | T507 | Intl short month names in nl, fr and es are lowercase and may carry a period ("apr", "avr."); capitalise them or use long names | user | open |  |
+| T507-f | T507 | Only the Stays step reacts to a tapped numbered pin; the Trips, Getting there and Finish steps show the numbers but no row reacts | next task | open |  |
+| T507-g | T507 | A guest's parked chat answers are not cleared on sign-out, only at their two-hour expiry | next task | open |  |
+| T507-h | T507 | A reload of a day whose plan was deleted falls back to Start without a word; the restored day also opens only when the day planner tab mounts | next task | open |  |
+| T508-a | T508 | Ryanair, Wizz and "stored fare" comments and the data key no_ryanair_route remain in runtime_pricing.js, origins.js, useAppData.js, useDestinationSearch.js, useTripPlanner.js, GuidedTripWizard.jsx, wizardTransit.js, TermsOfService.jsx, bootIndex.js and cityResearch.js; a comment and rename cleanup | next task | open |  |
+| T508-b | T508 | runtime_pricing.js still has fare-window and fare-weekday code (bestFareWindow, countBookableRoundTrips) kept because useAppData imports it; decide whether the fare snapshot code can go | next task | open |  |
+| T508-c | T508 | The Aviasales affiliate hand-off link (Travelpayouts marker, shown as a provider in the trip links) is still live; keep or remove it | user | open |  |
+| T508-d | T508 | Dead CSS .fare-badge.* (with .ryanair), the unused key trip.tipCatFlights, and the baggage_key choices and meta.baggage_options in the contract | next task | open |  |
+| T508-e | T508 | Pipeline and root not inspected: scripts/sync-data.mjs reads the Ryanair, Wizz, Vueling and Volotea caches; harvest scripts, SCHEMA.md and baggage_options are Ryanair-era; a pipeline audit | next task | open |  |
+| T508-f | T508 | Test fixtures use Ryanair as sample data (ai/test_import_logic.mjs, verify_magic_import.mjs); harmless, change with T508-a | next task | open |  |
+| T508-g | T508 | The origin tooltip still starts "Where are you flying from?" in all six languages, which hints at flights although Carta prices none | next task | open |  |
+| T509-a | T509 | Owner chose to merge each of the six overlapping roadmap row pairs (T477-a): 1.12 and 1.19, 2.16 and 3.11, 4.15 and 4.23, 4.19 and 2.23, 4.16 and 4.18 with 4.24, 5.12 and 5.13; rewrite the roadmap rows | next task | open |  |
+| T509-b | T509 | The trip planner and the day cost bar print cents ("about 1,328.25 euros for 2 people") against the whole-euros rule 1.8 (DIRECTION.md section 11); older than this batch | next task | open |  |
+| T509-c | T509 | Trip planner card labels show the English country name in Dutch ("Beste tijd, Italy"); older than this batch | next task | open |  |

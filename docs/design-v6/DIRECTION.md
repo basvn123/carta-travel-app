@@ -283,3 +283,14 @@ Root repo (branch `p11-v6-direction`): this file; `.claude/skills/carta-design/S
 App repo (branch `p11-v6-direction`): `src/styles/01-tokens.css` (six motion tokens); `src/lib/motion.js` (`durationMs()`); `src/lib/figureChange.js` (new: `settleFigure()` and `useSettledFigure()`); `src/styles/60-v6-shell.css` to `69-v6-account.css` (new, header comment only); `src/styles.css` (ten `@import` lines appended after `46-owner-calls.css`); `scripts/check_ownership.mjs` (new: proves every file in `src/` is owned once).
 
 Nothing a traveller sees changes in this task: the ten stylesheets are empty and the tokens are unused until V3. No screenshot set is saved for V2 for that reason; V3 saves its "after" set against V1's "before".
+
+## 11. Open design choices decided (roadmap 1.8, owner, 21 October 2026)
+
+The owner answered these four in the owner calls sheet (T509). They hold on every screen until a later decision replaces them.
+
+| Choice | Decision |
+| --- | --- |
+| Which price a screen leads with | The price a person a day, on every card, list row, map card and trip card. The group total appears only in budget search (as the headline, with the day price a person under it, T475-c) and on the receipt. |
+| Whole euros or cents | Whole euros everywhere, the receipt included. The one open exception is the pass price itself (T503-b). |
+| The colour of the save star | Unchanged. |
+| The first category of Destinations | Places: Explore always opens on Places (T489-h). |
