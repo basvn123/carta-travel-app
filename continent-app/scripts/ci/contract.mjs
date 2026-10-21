@@ -7,7 +7,7 @@
  * /app_data.json and hands the parsed object straight to useAppData, which
  * reads meta.defaults, meta.baggage_options, meta.accommodation_model and
  * meta.car_model with optional chaining and falls back on every one of them.
- * hydrateForOrigin then walks destinations and rebuilds routes. Nothing
+ * withOriginRoutes then walks destinations and rebuilds routes. Nothing
  * throws. A payload missing half its keys renders an app with no prices and
  * no error, which is exactly the failure that reaches a user rather than a
  * build log.
@@ -22,7 +22,7 @@
  *
  * Deliberately narrow. A field is required here only when the app is visibly
  * broken without it, not merely thinner. meta.schema_version, the currency,
- * the fare window, the defaults block and the baggage options are all read on
+ * the date window, the defaults block and the baggage options are all read on
  * the boot path. Per destination: an id, a tier, a city, a country, an iso2
  * and finite coordinates. Everything else (climate, crowding, guide, beauty,
  * dossier joins) is a layer the app degrades through on purpose, and asserting
@@ -49,30 +49,11 @@ const REQUIRED_META = [
 // Per destination, the fields with no fallback anywhere in the app.
 const REQUIRED_DEST = ['id', 'tier', 'city', 'country', 'iso2'];
 
-// Mirror of src/lib/fareFile.js. A fare slice for an origin whose IATA code
-// collides with a DOS device name ships with a trailing underscore, and the
-// escape has to hold on both ends or that origin silently ships no fares.
-const RESERVED = new Set([
-  'CON', 'PRN', 'AUX', 'NUL',
-  ...Array.from({ length: 10 }, (_, i) => `COM${i}`),
-  ...Array.from({ length: 10 }, (_, i) => `LPT${i}`),
-]);
-
-export function fareFileBase(origin) {
-  const code = String(origin || '').toUpperCase();
-  return RESERVED.has(code) ? `${code}_` : code;
-}
-
 const isFiniteNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
 /**
  * Validate a parsed app_data payload. Returns an array of problem strings;
  * empty means it passes.
- *
- * `fareFiles` is an optional array of fare slice basenames (no extension) as
- * they exist on disk. When given, every basename must be one fareFileBase()
- * could have produced, because a slice named PRN.json is a file git will not
- * index and the app will never fetch.
  *
  * `contract` is the key set parsed from docs/SCHEMA.md by
  * parseSchemaContract(). When given, a meta key or a destination key that
@@ -82,7 +63,7 @@ const isFiniteNum = (v) => typeof v === 'number' && Number.isFinite(v);
  * trimmed fixture: every listed meta key is there, every "every" key is on
  * every destination, and every "some" key is on at least one.
  */
-export function validateAppData(data, { fareFiles = null, contract = null, catalogue = false } = {}) {
+export function validateAppData(data, { contract = null, catalogue = false } = {}) {
   const problems = [];
   const bad = (m) => problems.push(m);
 
@@ -173,42 +154,28 @@ export function validateAppData(data, { fareFiles = null, contract = null, catal
 
   if (contract) problems.push(...checkKeySet(data, contract, { catalogue }));
 
-  if (Array.isArray(fareFiles)) {
-    if (fareFiles.length < 1) {
-      bad('no fare slices found; the app prices nothing without them');
-    }
-    for (const base of fareFiles) {
-      if (fareFileBase(base.replace(/_$/, '')) !== base) {
-        bad(`fare slice "${base}.json" does not match fareFileBase(); `
-          + 'a reserved IATA code must ship with its trailing underscore '
-          + '(see src/lib/fareFile.js)');
-      }
-    }
-  }
-
   return problems;
 }
 
 /**
  * Validate the split wires that sit beside app_data.json (T267, closing the
  * gap T029 recorded): the boot index, the per-country destination files it
- * names, the per-destination POI shards, the per-origin fare slices and the
- * country insights. The checks are structural and narrow, in the same spirit
- * as validateAppData: a field is required here only when the app is visibly
- * broken without it.
+ * names, the per-destination POI shards and the country insights (the
+ * per-origin fare slices went in T511). The checks are structural and
+ * narrow, in the same spirit as validateAppData: a field is required here
+ * only when the app is visibly broken without it.
  *
  *   boot          parsed public/boot.json
  *   chunkNames    basenames of the files that exist in public/dest/
  *   chunks        { name: parsed file } for a sample of those files
  *   poiShards     { name: parsed file } for a sample of public/poi/
- *   fareSlices    { name: parsed file } for a sample of public/fares/
  *   insights      parsed public/country_insights.json
  *
  * Every walk is paired with a minimum count, so an empty sample cannot pass
  * vacuously. `poiMin` lowers the POI floor to 0 only where the shards cannot
  * exist (a git checkout in CI, T082); the caller says so out loud.
  */
-export function validateSplitWires({ boot, chunkNames = null, chunks = {}, poiShards = {}, fareSlices = {}, insights = null } = {}, { poiMin = 1 } = {}) {
+export function validateSplitWires({ boot, chunkNames = null, chunks = {}, poiShards = {}, insights = null } = {}, { poiMin = 1 } = {}) {
   const problems = [];
   const bad = (m) => problems.push(m);
 
@@ -280,19 +247,6 @@ export function validateSplitWires({ boot, chunkNames = null, chunks = {}, poiSh
       }
     }
   }, poiMin);
-
-  sampled('fare slices', fareSlices, (n, file) => {
-    if (file === null || typeof file !== 'object' || Array.isArray(file) || !Object.keys(file).length) {
-      bad(`fares/${n}.json is not a non-empty object`);
-      return;
-    }
-    for (const [anchor, rec] of Object.entries(file)) {
-      if (anchor.startsWith('__')) continue; // slice metadata such as __window, not an anchor record
-      if (rec === null || typeof rec !== 'object' || rec.out === null || typeof rec.out !== 'object') {
-        bad(`fares/${n}.json ${anchor} has no out map`); break;
-      }
-    }
-  }, 1);
 
   if (insights === null || typeof insights !== 'object' || Array.isArray(insights)
       || Object.keys(insights).length < 1) {

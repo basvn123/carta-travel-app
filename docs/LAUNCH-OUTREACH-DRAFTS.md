@@ -11,10 +11,10 @@ Each figure is read from the file beside it. A draft may say nothing else about 
 | Fact | Source |
 |---|---|
 | 43 credit entries | continent-app/src/data/attribution.js, counted by its `source:` keys on 2026-10-06 (43). The EEA appears twice, so there are 42 distinct bodies, and one entry is Carta's own image copies, so 41 outside bodies |
-| The positioning sentence: "Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." | PRODUCT.md, Positioning (owner, 2026-10-21, T471-b). Never say Carta navigates or prices flights |
+| The positioning sentence: "Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." | PRODUCT.md, Positioning (owner, 2026-10-21, T471-b). Never say Carta navigates, or that a flight price is Carta's own (it is Google Flights' price, T517) |
 | 3,868 destinations | Execution/P12/T201-positioning.md, repeated in Execution/P12/T318-numbers-explainer.md |
 | Credits are public without an account | Execution/P12/T318-numbers-explainer.md: the page /about/numbers repeats all 43 credits, and Account then Data sources shows them with no sign-in |
-| Carta does not price flights | Execution/P12/T272-owner-decisions-2026-10-02.md |
+| Carta shows Google Flights' price for the flight, sells no ticket and takes no commission (reverses T272's "does not price flights") | PRODUCT.md, "The one rule the numbers follow"; batch T511-T519 report in Execution/ |
 | Say "credits 43 sources", never "43 open datasets" | Execution/P12/T207-launch-channels.md and attribution.js (CARTO is under its own terms) |
 
 The credit link in the notes is {{CREDIT_URL}}, which should be https://www.carta-europetravel.com/about/numbers. Execution/P12/T318-numbers-explainer.md checked that path locally only; row T318-a asks the owner to confirm it on the Pages deploy before D-7. Do not send a note until that row is closed.

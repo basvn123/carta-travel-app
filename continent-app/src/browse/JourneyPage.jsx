@@ -29,6 +29,10 @@ import { KeyFacts } from './KeyFacts.jsx';
 import { Track } from './Track.jsx';
 import { ItemHead, HighlightCard, AlternativeCard, SourcesLine } from './ItemParts.jsx';
 import { TripPriceCard, TripLengthChoice } from './TripPriceCard.jsx';
+import { useFirstRun } from '../lib/firstRunContext.js';
+import { roundTripNear } from '../lib/flights/flights.js';
+import { FlightChip } from '../components/flights/Flights.jsx';
+import { homeFlightSetup, journeyAirports, backDate } from './cartaFlight.js';
 import { WeekClimb, DayCard } from './TripWeek.jsx';
 import { BookingOrder } from './BookingOrder.jsx';
 import { PackGrid } from './PackGrid.jsx';
@@ -302,6 +306,19 @@ export function JourneyPage({
   }, [tripReady, hook]);
   const gallery = useMemo(() => tripGallery(tripReady), [tripReady]);
   const rail = useMemo(() => railAlternative(railFrom, tripReady), [railFrom, tripReady]);
+  // The flight from the home airport to each gateway (T518): the return a
+  // person near the app's dates, at the length on screen, when the sweep
+  // has one; a gateway without one shows no flight.
+  const fl = homeFlightSetup(useFirstRun());
+  const gateBack = backDate(fl.from, viewDays - 1);
+  const gateFlights = useMemo(() => {
+    const out = {};
+    for (const code of journeyAirports(tripReady)) {
+      const rt = roundTripNear(fl.file, code, fl.from, gateBack, { paying: 1, bagKey: fl.bagKey });
+      if (rt) out[code] = rt;
+    }
+    return out;
+  }, [fl.file, tripReady, fl.from, gateBack, fl.bagKey]);
   const railItems = useMemo(() => RAIL.map(([key, sid, label]) => ({ key, id: sid, label: t(label) })), [t]);
   const { onPdf: download, pdfBusy } = useItemPdf('trip', tripReady, { viewTrip, stats });
 
@@ -643,6 +660,11 @@ export function JourneyPage({
                         <span className="igo-name">{[g.name, g.code].filter(Boolean).join(', ')}</span>
                         {Number.isFinite(g.transferMin) && g.transferTo && (
                           <span className="igo-sub">{t('journey.gatewayTransfer', { time: minutesText(g.transferMin), place: g.transferTo })}</span>
+                        )}
+                        {gateFlights[g.code] && (
+                          <span className="igo-sub">
+                            <FlightChip perSeat={gateFlights[g.code].perSeat} airline={gateFlights[g.code].out.airline} />
+                          </span>
                         )}
                       </span>
                     </li>

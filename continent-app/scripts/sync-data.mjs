@@ -36,9 +36,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { stripDashes } from '../src/lib/format.js';
-import { fareFileBase } from '../src/lib/fareFile.js';
 import { shardName } from '../src/lib/poiShard.js';
-import { destAnchor } from '../src/lib/origins.js';
 import {
   splitCatalogue, mergeCatalogue, buildRankTier, decodeRankTier, RANK_PATH, RANK_FIELDS,
 } from '../src/lib/bootIndex.js';
@@ -49,10 +47,8 @@ const repoRoot = resolve(scriptDir, '..', '..');             // repo root
 const publicDir = resolve(scriptDir, '..', 'public');
 const src = resolve(repoRoot, 'app_data', 'app_data.json');
 const insightsSrc = resolve(repoRoot, 'app_data', 'country_insights.json');
-const airportsCache = resolve(repoRoot, 'cache', 'ryanair_airports.json');
-const wizzAirportsCache = resolve(repoRoot, 'cache', 'wizzair_airports.json');
-const vuelingAirportsCache = resolve(repoRoot, 'cache', 'vueling_airports.json');
-const voloteaAirportsCache = resolve(repoRoot, 'cache', 'volotea_airports.json');
+// Every European airport with a scheduled route (T512, from Eurostat).
+const flightAirports = resolve(repoRoot, 'data', 'flights', '_airports.json');
 
 const kb = (s) => `${Math.round(s.length / 1024)} KB`;
 
@@ -111,171 +107,37 @@ for (const [id, d] of Object.entries(data.destinations || {})) {
   if (d?.image?.hires) delete d.image.hires; // shipped-but-never-read
 }
 
-// Origin airport metadata for the "flying from" picker, from the harvested
-// airports caches. Only the origins actually priced (meta.all_origins, written
-// by the fare patch steps) are shipped, keyed by IATA. Ryanair's cache wins on
-// overlap; the Wizz Air and Vueling caches fill in origins Ryanair never flies
-// (so those don't show as bare IATA codes).
-const anyAirportsCache = existsSync(airportsCache) || existsSync(wizzAirportsCache)
-  || existsSync(vuelingAirportsCache) || existsSync(voloteaAirportsCache);
-if (data.meta?.all_origins && anyAirportsCache) {
-  const air = existsSync(airportsCache) ? JSON.parse(readFileSync(airportsCache, 'utf-8')) : {};
-  const wizz = existsSync(wizzAirportsCache) ? JSON.parse(readFileSync(wizzAirportsCache, 'utf-8')) : {};
-  const vueling = existsSync(vuelingAirportsCache) ? JSON.parse(readFileSync(vuelingAirportsCache, 'utf-8')) : {};
-  const volotea = existsSync(voloteaAirportsCache) ? JSON.parse(readFileSync(voloteaAirportsCache, 'utf-8')) : {};
-  const origins = {};
-  for (const code of data.meta.all_origins) {
-    const a = air[code] || wizz[code] || vueling[code] || volotea[code];
-    if (!a) continue;
-    origins[code] = { name: a.name, city: a.city, country: a.country, lat: a.lat, lon: a.lon };
+// Origin airports for the "flying from" picker (T512): every European airport
+// with a scheduled route, from pipeline/flights/build_routes.py, so every
+// airport is treated the same. The old carrier airport caches and the fare
+// model's meta fields went with the old fare logic (T511).
+if (existsSync(flightAirports)) {
+  data.meta.origins = JSON.parse(readFileSync(flightAirports, 'utf-8'));
+  // OurAirports names the town an airport stands in (Zaventem); where the
+  // catalogue has the airport's own city (Brussels), the picker says that.
+  const cityByIata = {};
+  for (const d of Object.values(data.destinations || {})) {
+    if (d?.iata && d.city && !d.city.includes("(") && !cityByIata[d.iata]) cityByIata[d.iata] = d.city;
   }
-  data.meta.origins = origins;
-  console.log(`[sync-data] origin airports -> meta.origins (${Object.keys(origins).length} of ${data.meta.all_origins.length})`);
-} else if (data.meta?.all_origins) {
-  console.warn('[sync-data] meta.all_origins present but no airports cache - origin picker will show bare IATA codes');
-}
-
-// The fares table is ~70% of the core payload, and a session only ever reads
-// ONE origin's column of it (lib/origins.js hydrateForOrigin). Invert it into
-// per-origin slices - public/fares/CRL.json = { anchor: {out, ret, ...} } -
-// fetched lazily when the origin is chosen/changed, and drop the table (plus
-// each destination's baked `routes`, which hydration always rebuilds anyway)
-// from the boot payload. meta.origin_coverage keeps defaultOrigin() working
-// without the table. Older datasets without `fares` ship unchanged.
-//
-// Each slice also carries a `__window` sidecar: the origin's fare date bounds
-// and its best departure date, so the client stops deriving them by walking
-// the whole hydrated catalogue on first paint (see useAppData).
-
-// The trip length the app opens on, and so the only one whose best departure
-// date is worth precomputing. Mirrors useAppData's `defaultNights`.
-const defaultTripNights = data.meta?.defaults?.trip_length_days ?? 7;
-// How many destinations each anchor airport actually serves. Origin-independent
-// (it is the destination's own anchor and last leg that decide), so it is built
-// once and reused for every origin slice. Mirrors routesForOrigin's two
-// rejections: no anchor, and no honestly priceable last leg (a ground-only gem
-// with no stored transfer).
-const destsPerAnchor = new Map();
-for (const d of Object.values(data.destinations || {})) {
-  const anchor = destAnchor(d);
-  if (!anchor) continue;
-  const priceable = d.tier === 'airport'
-    || (d.transfer && (d.transfer.transfer_eur_one_way_pp != null
-      || d.transfer.transfer_minutes_one_way != null));
-  if (!priceable) continue;
-  destsPerAnchor.set(anchor, (destsPerAnchor.get(anchor) || 0) + 1);
-}
-
-/** `iso` + n days, as YYYY-MM-DD. Mirrors src/lib/dates.js addDays. */
-function addDaysISO(iso, n) {
-  const d = new Date(`${iso}T00:00:00Z`);
-  if (Number.isNaN(d.getTime())) return iso;
-  d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
-}
-
-if (data.fares && Object.keys(data.fares).length) {
-  const faresDir = resolve(publicDir, 'fares');
-  rmSync(faresDir, { recursive: true, force: true });
-  mkdirSync(faresDir, { recursive: true });
-
-  const byOrigin = {}; // origin -> { anchor: rec }
-  for (const [anchor, origins] of Object.entries(data.fares)) {
-    for (const [origin, rec] of Object.entries(origins || {})) {
-      if (!rec) continue;
-      (byOrigin[origin] ||= {})[anchor] = rec;
-    }
+  for (const [code, o] of Object.entries(data.meta.origins)) {
+    if (cityByIata[code]) o.city = cityByIata[code];
   }
-  const coverage = {};
-  let faresBytes = 0;
-  for (const [origin, slice] of Object.entries(byOrigin)) {
-    // Same coverage rule as the old originCoverage(): anchors with real
-    // outbound fares stored.
-    coverage[origin] = Object.values(slice)
-      .filter((rec) => rec?.out && Object.keys(rec.out).length > 0).length;
-
-    // Strip per-day provenance metadata that was only needed during pipeline
-    // merging (merge_tp_staging, harvest_all_origins TP step). The app reads
-    // only the record-level s/o for contract-A provenance; per-day out_o/ret_o
-    // (which day's TP price was observed) and out_x/ret_x (expiry) are not
-    // read at runtime and add ~10% to the wire payload. Keep out_c/ret_c
-    // (which day's source won the cheapest-wins merge) as that feeds the UI.
-    for (const rec of Object.values(slice)) {
-      if (rec) {
-        delete rec.out_o;
-        delete rec.ret_o;
-        delete rec.out_x;
-        delete rec.ret_x;
-      }
-    }
-
-    // Origin codes are harvested IATA (A-Z only), but never trust that for a
-    // file path. fareFileBase() also escapes the codes Windows reserves as
-    // device names (PRN), which git will not index, see lib/fareFile.js.
-    if (!/^[A-Z0-9]{3,4}$/.test(origin)) continue;
-    // The fare window for this origin, precomputed. useAppData used to derive
-    // it on the client by walking every destination x every route x every
-    // fare date key the moment the data parsed - ~300K string comparisons on
-    // the main thread, before first paint. The same answer is one pass over
-    // the slice we already hold here.
-    let minOut = null;
-    let maxRet = null;
-    for (const [anchor, rec] of Object.entries(slice)) {
-      // Only anchors a destination actually resolves to: the client derives
-      // these bounds from hydrated `routes`, and an anchor no destination
-      // reaches (CIY->LIN, say) never becomes a route, so its dates are not
-      // in the window the traveller can pick from.
-      if (!destsPerAnchor.get(anchor)) continue;
-      if (!rec?.out || !Object.keys(rec.out).length) continue; // routesForOrigin's own guard
-      for (const x of Object.keys(rec?.out || {})) if (minOut == null || x < minOut) minOut = x;
-      for (const x of Object.keys(rec?.ret || {})) if (maxRet == null || x > maxRet) maxRet = x;
-    }
-    // The depart date that resolves the most round trips, per trip length.
-    // bestFareWindow() computed this on the client over the whole hydrated
-    // catalogue, on first paint and again on every origin change. Same
-    // algorithm, same answer, over the slice already in hand. Only the
-    // default trip length is precomputed, because that is the only one the
-    // opening window is ever derived for; anything else falls back to the
-    // client walk.
-    const best = {};
-    for (const nights of [defaultTripNights]) {
-      const perStart = new Map();
-      for (const [anchor, rec] of Object.entries(slice)) {
-        // bestFareWindow counts DESTINATIONS, not anchor airports, and an
-        // anchor serves several destinations (every town whose last leg runs
-        // from it). Weight each anchor by how many destinations it actually
-        // resolves for, or the count is wrong wherever that fan-out is not 1.
-        const weight = destsPerAnchor.get(anchor) || 0;
-        if (!weight) continue;
-        if (!rec?.out || !Object.keys(rec.out).length) continue;
-        const out = rec?.out || {};
-        const ret = rec?.ret || {};
-        const starts = new Set();
-        for (const start of Object.keys(out)) {
-          if (out[start] != null && ret[addDaysISO(start, nights)] != null) starts.add(start);
-        }
-        for (const s of starts) perStart.set(s, (perStart.get(s) || 0) + weight);
-      }
-      let top = null;
-      for (const [start, count] of perStart) {
-        if (!top || count > top.count || (count === top.count && start < top.start)) {
-          top = { start, count };
-        }
-      }
-      if (top) best[nights] = [top.start, top.count];
-    }
-    if (minOut && maxRet) {
-      slice.__window = { min_out: minOut, max_ret: maxRet, best_start_by_nights: best };
-    }
-    const out = JSON.stringify(sanitizeDeep(slice));
-    faresBytes += out.length;
-    writeFileSync(resolve(faresDir, `${fareFileBase(origin)}.json`), out);
-  }
-  data.meta.origin_coverage = coverage;
-  delete data.fares;
-  for (const d of Object.values(data.destinations || {})) delete d.routes;
-  console.log(`[sync-data] fares table -> public/fares/ (${Object.keys(byOrigin).length} origins, ${Math.round(faresBytes / 1024)} KB total; core slimmed)`);
+  console.log(`[sync-data] origin airports -> meta.origins (${Object.keys(data.meta.origins).length})`);
+} else {
+  console.warn('[sync-data] data/flights/_airports.json missing - run pipeline/flights/build_routes.py; keeping the master meta.origins');
 }
+for (const k of ['all_origins', 'origin_coverage', 'fares_model', 'fares_model_wizz', 'fares_model_vueling',
+  'fares_model_volotea', 'fares_model_tp', 'fares_model_est']) delete data.meta?.[k];
+
+// No fares on the wire (T511): the old per-origin fare files
+// (public/fares/{IATA}.json), their date-window sidecar and the per-origin
+// coverage counts went with the rest of the old fare logic; the flight module (T517) ships its
+// own data. A master that still carries the fares table has it dropped here,
+// with each destination's baked `routes` (the app rebuilds routes per origin
+// in lib/origins.js), and a leftover public/fares/ folder is cleared.
+rmSync(resolve(publicDir, 'fares'), { recursive: true, force: true });
+if (data.fares) delete data.fares;
+for (const d of Object.values(data.destinations || {})) delete d.routes;
 
 // Wire diet: the app reads only a fraction of some per-destination blocks, and
 // at full-catalogue scale every byte here is multiplied ~25,000x (parse time

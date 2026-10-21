@@ -646,138 +646,93 @@ GeoNames dests) mid-session and re-patches app_data.json. Run the real
 `python harvest_pois_overture.py assign` + `npm run data` only once that
 harvest is finished, or it will be clobbered.
 
-## Fare provenance, contract A (added 2026-08-05)
+## Flight prices (T511 to T518, added 2026-10-21)
 
-Every record of the deduplicated fares table (master `data.fares[anchor][origin]`,
-shipped as per-origin slices `public/fares/<ORIGIN>.json[anchor]` by sync-data.mjs,
-reserved DOS names escaped per `lib/fareFile.js`) now carries provenance. All new
-fields are optional; a record without them is a legacy direct harvest of unknown
-age and must keep working everywhere (the read side is tolerant).
+This replaces "Fare provenance, contract A" (2026-08-05) and "Flight-cost
+input" (T058, T267, T273). T511 removed the per-origin fare slices
+(`public/fares/<ORIGIN>.json`), the master `data.fares` table, the
+`e_out`/`e_ret` estimate bands and every reader of them; the old contract is
+in git history and in the Execution reports. Flight prices are now Google
+Flights' prices, read by Carta's own Worker and published to R2. None of
+these files is in `public/`; the app reads them from the data host
+(`src/lib/flights/flightData.js`).
+
+### Route list (T512)
+
+`pipeline/flights/build_routes.py`, the monthly `flight_routes` task in
+`run_pipeline.py`. Sources: Eurostat `avia_par_{cc}` (monthly passenger
+flights per airport pair, CC BY 4.0) and OurAirports (public domain) for
+ICAO to IATA and airport positions. A pair is kept when it has at least 4
+departures in at least 2 of the last 12 months; the return direction is
+filled in (the UK stopped reporting after 2019); partners outside Europe are
+dropped.
+
+- `data/flights/_routes.json`: `{ built, through, reporters, source, routes:
+  { ORIGIN: { DEST: monthMask } } }`, one entry per one-way route, where
+  `monthMask` is a 12-bit mask of the calendar months it flies (bit 0 =
+  January, 4095 = all year) and `through` is the last Eurostat month used.
+  Uploaded to R2 `carta/data/flights/_routes.json`, where the sweep Worker
+  reads it.
+- `data/flights/_airports.json`: per IATA code `name`, `city`, `country`,
+  `lat`, `lon`. `continent-app/scripts/sync-data.mjs` reads it for the origin
+  picker (`meta.origins`).
+
+### Per-airport price file (T514)
+
+Written hourly by the `flight-sweep` Worker to R2 `data/flights/{IATA}.json`,
+one file per home airport, both directions:
 
 ```jsonc
-"fares": {
-  "<anchor_iata>": {
-    "<origin_iata>": {
-      "out":   { "2026-08-12": 24.99 },   // date -> cheapest EUR, outbound
-      "ret":   { "2026-08-15": 19.99 },   // date -> cheapest EUR, return
-      "out_t": { "2026-08-12": "07:10/09:25" },  // dep/arr times, partial
-      "ret_t": { },
-      "out_c": { "2026-08-12": "W6" },    // per-day winning source, sparse:
-      "ret_c": { },                       //   'W6'|'VY'|'V7'|'TP'; untagged = FR
-      "s": "FR",       // source that CREATED the record's base fares:
-                       //   FR | W6 | VY | V7 | TP  (EST is reserved for the
-                       //   frontend estimate fallback and never stored here)
-      "o": 20670,      // unix epoch DAYS the record's prices were last
-                       //   confirmed by a harvest/merge step
-      "out_o": { "2026-08-12": 20665 },   // per-day observed_at, sparse, only
-      "ret_o": { },                       //   where it differs from `o` (TP)
-      "out_x": { "2026-08-12": 20672 },   // per-day expires_at, sparse, only
-      "ret_x": { },                       //   when the source supplies one (TP)
-      "e_out": { "2026-09": 63 },         // estimate fallback bands: model p50
-      "e_ret": { "2026-09": 58 }          //   month-median EUR per direction,
-                                          //   window months only (added 2026-08-12)
+{
+  "v": 1,
+  "from": "BRU",                 // the home airport
+  "checked": "2026-10-21T21:07:00Z", // when the file was published
+  "to": {                        // home -> DEST
+    "<DEST>": {
+      "2026-11-18": [87, "VY", "21:55", "23:59", 0, 29355847],
+      "2026-11-19": null        // searched, no flight that day
     }
-  }
+  },
+  "back": { "<DEST>": { } }      // DEST -> home, same shape
 }
 ```
 
-Resolution rules (what a reader should compute for a displayed date D):
-- source of D on a side: `out_c[D] || rec.s || 'FR'`
-- observed epoch day of D: `out_o[D] ?? rec.o` (absent on legacy records)
-- expires epoch day of D: `out_x[D]` (usually absent; only cache quotes expire)
-- `e: 1` marks a model estimate. The pipeline NEVER writes it; it is attached
-  by the frontend ground-fare/estimate fallback layer at runtime.
-- `e_out`/`e_ret` are route-level estimate BANDS, not fares: `{YYYY-MM: eur}`
-  p50 month medians from the estimation export (`data/models/
-  fare_estimates.json.gz`), attached by `harvest_all_origins.py` (`patch`, or
-  offline via `est`) for window months only. Real bookable days remain the
-  only entries in `out`/`ret`, so calendars and best-fare windows never show
-  invented flights. The app reads a band ONLY when no stored day matches the
-  chosen dates (`runtime_pricing.pickEstimateForDates`, both directions
-  required), and every surface renders the result as "~EUR X est." with
-  source `EST` (`composeTrip.fare_estimated`).
-- SERVICE GATE (added 2026-08-12): a band month ships only when
-  `data/derived/tp_service_evidence.json` (built by the travelpayouts
-  collector from its raw cached itineraries, airline codes included) shows an
-  airline OUTSIDE the harvested families (FR/RK/RR, W6/W4/W9, VY, V7) flying
-  that direction that month. Rationale: the harvested carriers' stored days
-  ARE their complete calendars, so estimating one of their gaps would invent
-  a flight; only verifiable other-carrier service licenses an estimate.
-  No evidence artifact = no bands at all. `verify_flight_estimates.mjs`
-  asserts the invariant on the shipped slices.
+Per day: `[price, airline, dep, arr, stops, checkedMinute]`, the cheapest
+flight's price on Google Flights (EUR, one adult, one way), the airline's
+IATA code, local departure and arrival, the number of stops and the minute
+it was checked (minutes since 1970). `null` means searched with no flight;
+a missing date was not searched. Writer: `workers/flight-sweep/src/publish.mjs`.
 
-Merge policy (cheapest-wins, direct carriers stay primary):
-- `harvest_all_origins.py patch` rebuilds the table from the Ryanair cache and
-  stamps `s:"FR"` and `o` on every record, then folds in the Travelpayouts
-  staging file `data/derived/tp_fares.json` (contract B: `{meta, fares:[{org,
-  dst, d, eur(int cents), link, obs, exp}]}`) when it exists. Absent staging
-  file = the step is a no-op and the table is byte-identical to the pre-TP
-  behaviour plus the `s`/`o` stamps.
-- TP quotes: expired quotes and days outside the fare window are dropped; a
-  quote only wins a day with NO direct price or a STRICTLY cheaper one, and is
-  tagged `TP` with per-day `out_o`/`out_x`. `org->dst` joins as the out leg of
-  (origin=org, anchor=dst) for origins already served; it also fills the ret
-  leg of an existing (origin=dst, anchor=org) record. No deeplink is stored:
-  the app already builds its Aviasales link from route + date at click time
-  (`lib/affiliate.js`), which is exactly where a TP quote points.
-- Wizz/Vueling/Volotea patches merge cheapest-wins as before, stamp `s`/`o` on
-  routes they create, bump `o` on records they actually touch, and RECLAIM a
-  TP-held day at equal price (a cached quote never beats an equal-or-cheaper
-  direct fare, regardless of merge order); reclaiming clears that day from
-  `out_o`/`out_x`.
-- `harvest_all_origins.py tp` re-merges a refreshed staging file into the
-  existing table offline, between runs.
-- Status since T255 (2026-10-01): every fare harvest is retired and its task
-  cadence is `manual`, so none of the merges above run on a schedule. The
-  shipped fares are frozen at the last run, and since T273 the app shows no
-  figure from them (see "Flight-cost input" below).
+`data/flights/_index.json`: `{ checked, origins: { IATA: n }, airlines:
+{ code: { name, logo } } }`, the airports that have a file and every airline
+the sweep has seen. `data/airlines/{code}.png` is the airline's logo, copied
+once from Google's 70 px logos.
 
-Read side: `lib/origins.js` hydrates `s` and `o` verbatim onto each route.
-Per-day `out_o`/`ret_o` and `out_x`/`ret_x` are merge-time fields only: T057
-removed them from the shipped slices, so the read side no longer carries a
-per-day age or expiry (expiry is a merge-time gate). `lib/carriers.js` maps the `TP` tag to the
-booking source name (Aviasales) since the operating airline of a cached quote
-is only shown at booking. The estimation snapshot gate (`src/estimation/
-snapshot.py`) whitelists record keys and silently skips unknown ones, so the
-provenance fields pass the schema gate without being archived.
+### Live search (T515)
 
-### Flight-cost input (T058, written into the schema by T267; changed by T273)
+`continent-app/functions/api/flights.js`: `GET /api/flights?o=&d=&date=`
+returns every flight of that day for one route, cached at the edge for one
+hour; 502 when Google refuses the search.
 
-Carta does not price flights (owner decision, 2026-10-02, recorded in T272 and
-built in T273). The `fares/` slices still ship and still load, untouched, but
-no surface shows or sums a figure from them. What follows replaces T058's
-contract (`Execution/P3/T058-flight-cost-input-decision.md`, kept for history).
+### What the app shows (T517, T518)
 
-- The only flight figure in a total is the traveller's own. The planner's
-  `ownFlight` (`{ airline, costTotal, mode, outDate, retDate }`, typed in the
-  wizard's "getting there" step or through "Add your fare" on the planner's
-  trip total) becomes `flight.own` with `cost_total`, and that figure is
-  added to the grand total, shown on the receipt and printed in the export as
-  theirs, with no tilde and no estimate tag. An own leg between two stops
-  (`ownLegs`) works the same way.
-- The stored routes still decide where the trip flies. The planner calls
-  `combineTripLegs` for the route (origin, the two airports, the carrier and
-  times as plan facts, the airport transfers) and passes the result through
-  `unpricedFlight` (`trip_planner_pricing.js`), which drops the seat fares,
-  the bag add-on, their sums and the per-direction provenance and sets
-  `priced: false`. The airport transfers stay in the total: they are ground
-  costs Carta prices.
-- `composeTrip` (`runtime_pricing.js`) still resolves a fare to know whether
-  and where a destination can be flown to (stored day, served airport within
-  `PLANE_REACH_KM`, then the `e_out`/`e_ret` band pair), but
-  `plane_grand_total` and `grand_total` leave the flight and the bag add-on
-  out: in plane mode the figure is the airport transfer, a rental where one is
-  needed, and the stay. Its `fare_*` and `flight_*` fields remain for
-  `scripts/verify_flight_estimates.mjs` and nothing on screen reads them.
-- Gone: the "take this trip cheaper" start-date sweep (`cheapestStartDates`),
-  the tilde and "est." tag on flight rows (`flightProv`,
-  `flightBreakdownProv`), the flight share of the Destinations city-day card,
-  and the flight figures in the printed export. The cheaper stop order stays.
-- Data side unchanged. The fields and merge rules above still describe what
-  the wire carries; no fare harvest has run since T255 and none is planned.
-  The harvested-family rule still gates the bands: a band month ships only
-  when the service evidence shows an airline outside the harvested families
-  flying that route that month, and since T255 that family set is empty.
+Per direction, the first that exists wins:
+
+1. A fare the traveller typed in (`ownFlight`, `ownLegs` in the planner),
+   shown as theirs.
+2. In the trip planner, the live search for the exact day, filtered by the
+   chosen hours (any, morning, afternoon, evening).
+3. The sweep's price for the same day; on pages priced at the app's dates,
+   the nearest day within 3 days, and the flight then shows its own date.
+4. Nothing.
+
+A price checked more than 3 days ago is never shown. A flight price is
+Google Flights' figure, not Carta's estimate, so it carries no tilde; it
+always shows the airline, the times, when it was checked and a link to
+Google Flights with "prices may have changed". Bag fees per airline (10 kg
+cabin, 20 kg checked, `src/lib/flights/bagFees.js`) are Carta's estimates and
+carry the tilde and "est.". The airport transfers stay ground costs Carta
+prices.
 
 ## Served data split (added 2026-07-12)
 
@@ -808,8 +763,8 @@ change the header line above and `EXPECTED_SCHEMA_VERSION` in
 
 Only the top level is pinned; the keys inside a block (`rating.score`,
 `costs.meal_mid_eur`) are described in the sections above and not yet checked.
-`routes`, described in the first block, is not on the wire: the app builds it
-in the browser from the fare slices (`hydrateForOrigin`).
+`routes`, described in the first block, is not on the wire. Since T511 there
+are no fare slices; flights come from the sweep files ("Flight prices" above).
 
 The column after the presence says where this file describes the field.
 "Not yet described" marks a field that ships and is read but has no section

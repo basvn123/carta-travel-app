@@ -33,6 +33,10 @@ import {
   tripHeadline, transportLabel, seasonLabel, tripWhy, tripWarnings,
   dayTitle, themeLabel, cardThumb, countryNames,
 } from '../lib/tripStory.js';
+import { useFirstRun } from '../lib/firstRunContext.js';
+import { destAnchor } from '../lib/origins.js';
+import { FlightRow, AirlineMark } from '../components/flights/Flights.jsx';
+import { homeFlightSetup, openJawNear, backDate, withEnds } from './cartaFlight.js';
 
 /**
  * One published trip as a page of its own.
@@ -64,8 +68,10 @@ import {
  * One grammar with the journey page (T387, brief item V3.11): the head is the
  * photograph with a caption band under it and never text on it, the days run
  * in the shared day track (DayTrack.jsx), and the cost fold is a receipt
- * whose estimated lines carry the tilde and "est." in words. Carta does not
- * price flights, so no line of the receipt is ever a flight.
+ * whose estimated lines carry the tilde and "est." in words. Since T518 the
+ * receipt adds Carta's flight from the home airport to the trip's start and
+ * home from its end (Google Flights' fares, never estimated), when the sweep
+ * has one near the app's dates; without one no line is a flight.
  *
  * The map is lazy twice over: maplibre is a large dependency, and the fold's
  * body does not mount while closed, so opening a trip costs no WebGL context
@@ -179,12 +185,51 @@ function Sight({ poi, t }) {
 
    A leg's fare is an estimate from per-country fare levels, never a ticket
    price, so wherever it prints it carries the tilde and "est." in words, set
-   the same way in the route, in a day and in the receipt. Carta does not
-   price flights: a leg whose mode is a flight never prints a figure and never
-   reaches a total. */
+   the same way in the route, in a day and in the receipt. A flight leg prints
+   a figure only when it is Carta's own flight from or to the home airport
+   (T518, `carta` set by cartaLegs below), at the party's fare plus bags; any
+   other flight leg prints none and never reaches a total. */
 
 const FLIGHT_MODES = new Set(['fly', 'flight', 'plane', 'air']);
 const isFlightLeg = (leg) => FLIGHT_MODES.has(String(leg?.mode || '').toLowerCase());
+/** A flight leg with no figure of its own (not Carta's home flight). */
+const isUnpricedFlight = (leg) => isFlightLeg(leg) && !leg?.carta;
+
+const IATA = /^[A-Z]{3}$/;
+/** The airport a stop flies from: its destination's anchor, or the stop's
+ *  own code when the stop is an airport. */
+function stopAirport(stop, destinations) {
+  const code = destAnchor(destinations?.[stop?.dest]);
+  if (code) return code;
+  return IATA.test(String(stop?.dest || '')) ? stop.dest : null;
+}
+
+/** Where the trip starts and ends by air: the first stop's airport (or a
+ *  first leg that leaves from an airport), and the last leg's airport end
+ *  (or the last stop's airport). */
+function tripAirports(detail, destinations) {
+  const stops = detail?.stops || [];
+  const legs = detail?.legs || [];
+  const firstFrom = legs[0]?.from;
+  const lastTo = legs.length ? legs[legs.length - 1]?.to : null;
+  return {
+    start: stopAirport(stops[0], destinations) || (IATA.test(String(firstFrom || '')) ? firstFrom : null),
+    end: (IATA.test(String(lastTo || '')) ? lastTo : null) || stopAirport(stops[stops.length - 1], destinations),
+  };
+}
+
+/** The detail with Carta's figure on the flight legs that are its home
+ *  flight: home to the start, or the end to home. */
+function cartaLegs(detail, carta, home, ends) {
+  if (!detail || !carta || !home) return detail;
+  const legs = (detail.legs || []).map((leg) => {
+    if (!isFlightLeg(leg)) return leg;
+    if (leg.from === home && leg.to === ends.start) return { ...leg, eur: carta.outCost.total, est: false, carta: true };
+    if (leg.from === ends.end && leg.to === home) return { ...leg, eur: carta.backCost.total, est: false, carta: true };
+    return leg;
+  });
+  return { ...detail, legs };
+}
 
 /** "3 h 13" or "45 min", the same clock the day chips use. */
 function legTime(leg, t) {
@@ -217,6 +262,12 @@ function legWords(leg, t) {
   return [mode, legTime(leg, t), km != null ? `${km} km` : ''].filter(Boolean).join(', ');
 }
 
+/** The party the wire priced the trip for (two when it does not say). */
+function tripGroup(detail) {
+  const g = detail?.cost?.group;
+  return Number.isFinite(g) && g > 0 ? g : 2;
+}
+
 /**
  * The trip's own receipt, from the wire's cost block and its legs.
  *
@@ -227,11 +278,28 @@ function legWords(leg, t) {
  * on screen, and the day figure is that total over the trip's days, labelled
  * as such: a figure for the whole party, not for one person.
  */
-function tripReceipt(detail, t) {
+function tripReceipt(detail, t, flight = null) {
   const cost = detail.cost || {};
-  const group = Number.isFinite(cost.group) && cost.group > 0 ? cost.group : 2;
+  const group = tripGroup(detail);
   const anyEst = cost.est !== false;
   const lines = [];
+  // Carta's flight first, there and home, each with its airline (T518).
+  if (flight) {
+    lines.push({
+      k: 'flight-out',
+      label: `${t('flight.flightLine')}, ${t('itin.fromTo', { a: flight.home, b: flight.start })}`,
+      airline: flight.out.airline,
+      eur: Math.round(flight.outCost.total * 100) / 100,
+      est: false,
+    });
+    lines.push({
+      k: 'flight-back',
+      label: `${t('flight.flightLine')}, ${t('itin.fromTo', { a: flight.end, b: flight.home })}`,
+      airline: flight.back.airline,
+      eur: Math.round(flight.backCost.total * 100) / 100,
+      est: false,
+    });
+  }
   if (Number.isFinite(cost.stay_eur)) {
     lines.push({
       k: 'stay',
@@ -262,15 +330,19 @@ function tripReceipt(detail, t) {
     // The wire's legs total includes no flight only when no leg is a flight.
     lines.push({ k: 'legs', label: t('trip.costTravel'), eur: cost.legs_eur, est: anyEst });
   }
-  if (!lines.length) return null;
+  // Flights alone are no receipt: the trip's own cost block prices it.
+  if (lines.length === (flight ? 2 : 0)) return null;
   const total = lines.reduce((sum, l) => sum + l.eur, 0);
   const days = Number(detail.days) || 0;
+  // "A day" stays the days there: the flight there and home is in the total,
+  // not in the figure a day (the same basis as every card and pin).
+  const onTheGround = lines.reduce((sum, l) => (l.k.startsWith('flight-') ? sum : sum + l.eur), 0);
   return {
     lines,
     group,
     est: lines.some((l) => l.est),
     total,
-    perDay: days > 0 ? total / days : null,
+    perDay: days > 0 ? onTheGround / days : null,
     days,
   };
 }
@@ -366,7 +438,7 @@ function DayCard({ day, detail, t }) {
                   <p className="itin-day-leg">
                     <ClockIcon size={12} />
                     <span>{legWords(leg, t)}</span>
-                    {!isFlightLeg(leg) && Number.isFinite(leg.eur) && (
+                    {!isUnpricedFlight(leg) && Number.isFinite(leg.eur) && (
                       <span className="itin-leg-fig mono">{costFig(leg.eur, leg.est !== false, t)}</span>
                     )}
                   </p>
@@ -402,7 +474,21 @@ export function TripPage({
   // telling a screen reader it was modal. See hooks/useFocusTrap.js.
   const pageRef = useRef(null);
   const backRef = useRef(null);
-  const [detail, setDetail] = useState(null);
+  const [rawDetail, setDetail] = useState(null);
+  // Carta's flight (T518): home airport to the trip's start, its end to
+  // home, near the app's leaving day and the trip's nights after it, for
+  // the party the receipt prices. Null without a flight near those days.
+  const ctx = useFirstRun();
+  const fl = homeFlightSetup(ctx);
+  const ends = useMemo(() => tripAirports(rawDetail, data?.destinations), [rawDetail, data]);
+  const flightBack = backDate(fl.from, rawDetail?.nights || ((rawDetail?.days || 2) - 1));
+  const flight = useMemo(() => {
+    if (!rawDetail) return null;
+    const rt = openJawNear(fl.file, ends.start, ends.end, fl.from, flightBack,
+      { paying: tripGroup(rawDetail), bagKey: fl.bagKey });
+    return rt ? { ...rt, home: fl.file.from, start: ends.start, end: ends.end } : null;
+  }, [rawDetail, fl.file, ends, fl.from, flightBack, fl.bagKey]);
+  const detail = useMemo(() => cartaLegs(rawDetail, flight, fl.file?.from, ends), [rawDetail, flight, fl.file, ends]);
   // Arrival focus follows the one page rule (hooks/usePageArrival.js, T474).
   const arrivalRef = usePageArrival(pageRef, detail?.id ?? null);
   useFocusTrap(pageRef, onClose, { initialFocusRef: arrivalRef });
@@ -499,7 +585,7 @@ export function TripPage({
   // the cost fold's summary both read its day line, so the page never shows
   // two different figures for the same day. Until the detail lands, the card's
   // own rounded figure stands in, marked as an estimate the same way.
-  const receipt = detail ? tripReceipt(detail, t) : null;
+  const receipt = detail ? tripReceipt(detail, t, flight) : null;
   let perDayText = null;
   if (receipt && Number.isFinite(receipt.perDay)) {
     perDayText = costFig(receipt.perDay, receipt.est, t);
@@ -705,9 +791,9 @@ export function TripPage({
                         )}
                         {/* The fare is an estimate, so it carries the tilde
                             and "est." in words, set as the receipt sets it.
-                            A flight leg prints no figure: Carta does not
-                            price flights. */}
-                        {!isFlightLeg(detail.legs[i]) && Number.isFinite(detail.legs[i].eur) ? (
+                            A flight leg prints a figure only when it is
+                            Carta's home flight (T518). */}
+                        {!isUnpricedFlight(detail.legs[i]) && Number.isFinite(detail.legs[i].eur) ? (
                           <span className="itin-est itin-leg-fig mono">
                             {costFig(detail.legs[i].eur, detail.legs[i].est !== false, t)}
                           </span>
@@ -810,7 +896,8 @@ export function TripPage({
               cost with the figure right aligned in mono, a 2px ink rule above
               the total, and the day figure under it named for what it is (the
               total over the days, for the whole party). Every estimated line
-              says so in words with the tilde. No line is ever a flight. */}
+              says so in words with the tilde. Carta's flight, when there is
+              one, is its own two lines with the airline's mark (T518). */}
           {detail && (
             <Fold level={2}
               id="sec-cost"
@@ -831,7 +918,10 @@ export function TripPage({
                   <ul className="itin-cost">
                     {receipt.lines.map((line) => (
                       <li key={line.k}>
-                        <span>{line.label}</span>
+                        <span>
+                          {line.airline && <><AirlineMark code={line.airline} size="sm" />{' '}</>}
+                          {line.label}
+                        </span>
                         <b className="mono">{costFig(line.eur, line.est, t)}</b>
                       </li>
                     ))}
@@ -846,6 +936,14 @@ export function TripPage({
                       </li>
                     )}
                   </ul>
+                  {flight && (
+                    <div className="itin-flights">
+                      <FlightRow leg={withEnds(flight.out, flight.home, flight.start)} cost={flight.outCost}
+                        dir="out" bagKey={fl.bagKey} wantedDate={fl.from} />
+                      <FlightRow leg={withEnds(flight.back, flight.end, flight.home)} cost={flight.backCost}
+                        dir="back" bagKey={fl.bagKey} wantedDate={flightBack} />
+                    </div>
+                  )}
                 </div>
               )}
               <p className="tpage-credit">{t('trip.costNote')}</p>

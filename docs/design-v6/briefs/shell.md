@@ -24,7 +24,7 @@ Returning visit, phone. Destinations opens on the Trips category: a 4-tile categ
 
 Explore, phone. Category tiles, search, the Lifestyle button (terracotta tint, the bed and the vibe), a star counter, Filters, a sort select, then a rail of the highest-rated places. A floating List and Map toggle sits over the rail. The cards carry a rating, not a price: the price arrives only on the destination page.
 
-Planners, phone. The plus in the bottom nav opens a two-item chooser (Trip planner, "Route, flights and costs"; Day planner, "Hour by hour in one city") over a scrim. "Flights" is wrong: Carta does not price flights (PRODUCT.md). The Trip planner opens on step 1 of 7 ("What have you booked already?") with nothing from the traveller's earlier browsing carried in; the Day planner opens on step 1 of 4 with a start-address field, then a "Continue a trip" card whose icon sits on a pastel tile (carta-design never list item 1) and whose Sign in button is a second accent fill on the screen.
+Planners, phone. The plus in the bottom nav opens a two-item chooser (Trip planner, "Route, flights and costs"; Day planner, "Hour by hour in one city") over a scrim. "Flights" was wrong when written: Carta did not price flights then (PRODUCT.md, 2026-10-02). (Update 2026-10-21, batch T511-T519: Carta now shows Google Flights' price for the flight, with airline, times and check time; PRODUCT.md.) The Trip planner opens on step 1 of 7 ("What have you booked already?") with nothing from the traveller's earlier browsing carried in; the Day planner opens on step 1 of 4 with a start-address field, then a "Continue a trip" card whose icon sits on a pastel tile (carta-design never list item 1) and whose Sign in button is a second accent fill on the screen.
 
 My trips and Account, phone. Both are full pages reached from the bottom nav. My trips shows Favorites, Planned and Visited tiles and two empty states, each with a pill-shaped accent button (radius 999px, against the 6px rule). Account opens on "Preferences": sign in, a pastel accent card ("Plan the next one together"), the Lifestyle row with its value in accent text, then Language, below the fold. Language is the only place in the app where the language can be changed (`src/auth/AccountPanel.jsx` 925 to 939).
 
@@ -231,7 +231,7 @@ What is missing: one place that shows the traveller's settings (origin, dates, p
 
 What sits in the wrong place: language at the bottom of the account page; the origin inside the Trip planner only; the pass chip as the most colourful object in the header on a phone; the two planners behind a chooser while My trips and Account take full slots.
 
-What sends the traveller elsewhere: no flight price (by design, and stated on the landing page but not in the planner chooser, which says "flights"); no link the traveller can copy for a section, because every navigation item is a `<button>` and only `?tab=` in the address bar carries the view; and the legal texts, which are English only.
+What sends the traveller elsewhere: no flight price (by design at the time of writing, and stated on the landing page but not in the planner chooser, which says "flights"; since 2026-10-21, T517, Carta shows Google Flights' price); no link the traveller can copy for a section, because every navigation item is a `<button>` and only `?tab=` in the address bar carries the view; and the legal texts, which are English only.
 
 ## 5b. Cross-surface layer (for T380)
 

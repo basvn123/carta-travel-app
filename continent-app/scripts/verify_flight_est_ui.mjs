@@ -2,9 +2,8 @@
 // that a fare the traveller typed still counts. Carta does not price flights
 // (owner decision, 2026-10-02): the planner keeps the route it flies, but no
 // receipt row, tag or total carries a Carta flight figure. Rewritten in T273;
-// T266 wrote it to check the "~" and "est." tag T256 put on those rows. (The
-// sibling verify_flight_estimates.mjs checks the pricing maths, not the
-// screen.)
+// T266 wrote it to check the "~" and "est." tag T256 put on those rows. T511
+// removed the old fare data and its pricing harness, so this still holds.
 //
 // Two shared trips from the share hash, both BGY then VCE from Charleroi:
 //   1. no fare of the traveller's: the receipt shows the two flight rows as

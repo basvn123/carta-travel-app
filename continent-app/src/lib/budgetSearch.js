@@ -13,15 +13,20 @@
  * the buffer (T475-d: 10% and on by default) and sorts the outcome.
  *
  * What it prices today: the bed and the food and drink, the two parts
- * priceTrip prices for a stay. What it does not price yet, and never folds
- * into the total: getting there (Carta prices no flight, T273; the train,
- * bus and drive estimates come with 3.11), local transport and tickets
- * (2.22, 2.23). Those are receipt lines without an amount.
+ * priceTrip prices for a stay, and in 'fly' mode getting there (T518): the
+ * return flight from the home airport's swept file (flights/flights.js
+ * roundTripNear, the same helper the city cards use, bags included at the
+ * traveller's baggage choice) plus priceTrip's airport transfers. What it
+ * does not price yet, and never folds into the total: getting there by car,
+ * train or bus (3.11), local transport and tickets (2.22, 2.23). Those are
+ * receipt lines without an amount.
  *
  * Pure: no React, no i18n, so tests/budgetSearch.test.mjs runs it in node.
  */
 import { priceTrip, MAX_PARTY } from './tripTotal.js';
 import { addDays } from './dates.js';
+import { roundTripNear } from './flights/flights.js';
+import { destAnchor } from './origins.js';
 
 export const BUFFER_DEFAULT = 0.1;
 export const BUFFER_STEPS = [0, 0.05, 0.1, 0.15, 0.2];
@@ -29,7 +34,8 @@ export const DAYS_MIN = 2;
 export const DAYS_MAX = 21;
 export const DAYS_DEFAULT = 5;
 export const ADULTS_DEFAULT = 2;
-/** How you get there: your own car, a train or a bus, or a flight. */
+/** How you get there: your own car, a train or a bus, or a flight (only
+ *  'fly' is priced, T518, and only when the home airport's flights are loaded). */
 export const MODES = ['car', 'public', 'fly'];
 export const MODE_DEFAULT = 'public';
 /** "Just over": a place whose total is at most this share above the budget. */
@@ -94,7 +100,8 @@ export function nextMonth(today = new Date()) {
  *   adults   12 and over; children 3 to 11 count half for beds and food
  *   days     trip days; nights = days - 1 (5 days is 4 nights)
  *   month    1 to 12
- *   mode     'car' | 'public' | 'fly', how they get there (named, not priced)
+ *   mode     'car' | 'public' | 'fly', how they get there ('fly' is priced
+ *            when a flights file is given, the others are named only)
  *   buffer   a share of the priced parts, one of BUFFER_STEPS
  */
 export function normalizeQuery(q = {}, today = new Date()) {
@@ -120,8 +127,14 @@ export function normalizeQuery(q = {}, today = new Date()) {
   };
 }
 
+/** True when this search prices the flight: 'fly' with the home airport's file. */
+export function fliesPriced(q, opts = {}) {
+  return q?.mode === 'fly' && !!opts.flights;
+}
+
 /** The planner state of the one-stop trip a search prices. */
-export function budgetTripState(destId, q, { lifestyle = null, stayTier = 'home' } = {}) {
+export function budgetTripState(destId, q, { lifestyle = null, stayTier = 'home', flights = null, bagKey = null } = {}) {
+  const fly = fliesPriced(q, { flights });
   return {
     stops: [{ destinationId: destId, nights: q.nights, activities: [] }],
     tripStart: q.start,
@@ -131,8 +144,11 @@ export function budgetTripState(destId, q, { lifestyle = null, stayTier = 'home'
     babies: 0,
     // The stay alone: with 'owncar', no home in the context and no typed
     // figure, priceTrip routes no flight, prices no drive and no transfer,
-    // so getting there stays its own line, not priced yet.
-    transportPref: 'owncar',
+    // so getting there stays its own line, not priced yet. Flying (T518):
+    // 'auto' routes the flight's airport, so priceTrip adds the transfer
+    // from the runway to the bed; the fare itself is roundTripNear's.
+    transportPref: fly ? 'auto' : 'owncar',
+    baggage: bagKey || 'priority_10kg',
     ownFlight: null,
     carHome: null,
     stayTier,
@@ -153,6 +169,15 @@ export function isEstimate(dest) {
  */
 export function priceForBudget(dest, q, opts = {}) {
   if (!dest?.id || !dest.accommodation || !dest.costs) return null;
+  const fly = fliesPriced(q, opts);
+  // The return flight first: flying with the flights loaded, a place with
+  // no flight near these dates has no total ("no figure when the data is
+  // too thin"), never a total that quietly leaves the flight out.
+  const flight = fly
+    ? roundTripNear(opts.flights, destAnchor(dest), q.start, q.end,
+      { paying: q.head, bagKey: opts.bagKey || 'priority_10kg' })
+    : null;
+  if (fly && !flight) return null;
   const priced = priceTrip(
     budgetTripState(dest.id, q, opts),
     { data: { destinations: { [dest.id]: dest } } },
@@ -162,19 +187,31 @@ export function priceForBudget(dest, q, opts = {}) {
   const beds = Math.round(priced.parts.beds);
   const days = Math.round(priced.parts.days);
   if (!(beds > 0) || !(days > 0)) return null;
-  const core = beds + days;
+  // Getting there by plane: the fare and bags both ways for every seat that
+  // pays, plus the transfer between the airport and the town both ways.
+  const transfers = fly ? Math.round(priced.parts.transfers || 0) : 0;
+  const there = flight ? Math.round(flight.total) + transfers : null;
+  const core = beds + days + (there || 0);
   const buffer = Math.round(core * q.buffer);
   const total = core + buffer;
   return {
     id: dest.id,
     beds,
     days,
+    there,
+    // The flight behind `there`, for the receipt: the legs (airline, day,
+    // checked) and what the bags add, Carta's estimate.
+    flight: flight ? {
+      out: flight.out, back: flight.back, total: Math.round(flight.total),
+      bags: flight.bags, bagsKnown: flight.bagsKnown, transfers,
+    } : null,
     core,
     buffer,
     total,
     // The day price a person under the group total (T475-c): bed plus food
-    // and drink, the same basis as the Explore card, without the buffer.
-    dayPp: Math.round(core / Math.max(1, q.head) / Math.max(1, q.nights)),
+    // and drink, the same basis as the Explore card, without the buffer and
+    // without the flight.
+    dayPp: Math.round((beds + days) / Math.max(1, q.head) / Math.max(1, q.nights)),
     est: isEstimate(dest),
   };
 }
@@ -236,8 +273,18 @@ export function budgetSearch(dests, query, opts = {}, today = new Date()) {
  */
 export function budgetReceipt(result, q) {
   if (!result) return null;
+  // Getting there, when it is priced (a flight, T518), leads the receipt
+  // and leaves the "not in the total" list. The fare is Google Flights'
+  // own; the line is an estimate when bags or a transfer are added to it.
+  const there = result.there != null
+    ? [{
+      key: 'there', mode: q.mode, eur: result.there,
+      est: (result.flight?.bags || 0) > 0 || (result.flight?.transfers || 0) > 0,
+    }]
+    : [];
   return {
     lines: [
+      ...there,
       { key: 'beds', eur: result.beds, est: result.est },
       { key: 'days', eur: result.days, est: result.est },
       { key: 'buffer', eur: result.buffer, pct: q.buffer, est: false },
@@ -246,6 +293,8 @@ export function budgetReceipt(result, q) {
     est: result.est,
     dayPp: result.dayPp,
     left: q.budget != null ? q.budget - result.total : null,
-    unpriced: UNPRICED.map((key) => ({ key, mode: key === 'there' ? q.mode : null })),
+    unpriced: UNPRICED
+      .filter((key) => key !== 'there' || result.there == null)
+      .map((key) => ({ key, mode: key === 'there' ? q.mode : null })),
   };
 }

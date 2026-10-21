@@ -156,12 +156,13 @@ export const TripCard = React.memo(function TripCard({ card, km, onOpen, t, coun
     km != null ? { key: 'km', cls: 'places-card-km', text: bandChip(km, t) } : null,
     assoc.photoUrl && assoc.photoOf ? { key: 'photoof', cls: 'places-card-photoof', text: assoc.photoOf } : null,
   ];
-  // Carta does not price flights (T273): a flying row's figure is the stay
-  // and the ground, and its title says the flight is not in it.
+  // A flying row's figure a person includes the return flight when the
+  // home airport's sweep has one near the dates (T518, composeTrip); only
+  // without one is it the stay and the ground, and its title says so.
   const dayLine = !isCityDay && base && base.dayEur != null ? <BedFoodLine base={base} t={t} /> : null;
   const foot = isCityDay && price ? (
     <span className="places-card-price"
-      title={price.mode === 'plane' ? t('places.priceNoFlight') : undefined}>
+      title={price.mode === 'plane' && !price.flight ? t('places.priceNoFlight') : undefined}>
       {eur(price.pp)}
       <small> {t('money.perPerson')}</small>
     </span>

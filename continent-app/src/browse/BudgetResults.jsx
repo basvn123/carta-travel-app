@@ -132,7 +132,8 @@ export function BudgetResults({ result, onOpen, onClear, monthName, pct, people 
 /**
  * The receipt of one result, the carta-design receipt in whole euros
  * (owner 1.8): a sunken head with the place and the stay, one hairline line
- * per priced part, the buffer, a 2 px rule, the total for the group with the
+ * per priced part (getting there first when a flight is in the total, T518),
+ * the buffer, a 2 px rule, the total for the group with the
  * day price a person under it, then the lines Carta does not price yet,
  * named without an amount and never in the total, and a tinted foot with
  * what is left of the budget.
@@ -140,7 +141,12 @@ export function BudgetResults({ result, onOpen, onClear, monthName, pct, people 
 function BudgetReceipt({ item, q, people, monthName, pct, money, onOpen, onClose }) {
   const { t } = useI18n();
   const r = budgetReceipt(item, q);
-  const label = (l) => (l.key === 'buffer' ? t('budget.line.buffer', { pct: pct(l.pct) }) : t(`budget.line.${l.key}`));
+  const label = (l) => {
+    if (l.key === 'buffer') return t('budget.line.buffer', { pct: pct(l.pct) });
+    // Getting there, priced (a flight, T518): named by the chosen way.
+    if (l.key === 'there') return t(`budget.line.there.${l.mode}`);
+    return t(`budget.line.${l.key}`);
+  };
   const unpricedLabel = (u) => (u.key === 'there' ? t(`budget.line.there.${u.mode}`) : t(`budget.line.${u.key}`));
   const titleId = `bgs-r-${item.id}`;
   const foot = r.left >= 0
@@ -170,15 +176,19 @@ function BudgetReceipt({ item, q, people, monthName, pct, money, onOpen, onClose
           </dd>
         </div>
       </dl>
-      <h5 className="bgs-unpriced-title">{t('budget.notInTotal')}</h5>
-      <dl className="bgs-lines bgs-unpriced">
-        {r.unpriced.map((u) => (
-          <div className="bgs-line" key={u.key} data-line={u.key}>
-            <dt>{unpricedLabel(u)}</dt>
-            <dd>{t('budget.notPriced')}</dd>
-          </div>
-        ))}
-      </dl>
+      {r.unpriced.length > 0 && (
+        <>
+          <h5 className="bgs-unpriced-title">{t('budget.notInTotal')}</h5>
+          <dl className="bgs-lines bgs-unpriced">
+            {r.unpriced.map((u) => (
+              <div className="bgs-line" key={u.key} data-line={u.key}>
+                <dt>{unpricedLabel(u)}</dt>
+                <dd>{t('budget.notPriced')}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      )}
       <p className="bgs-receipt-foot">{foot}</p>
       <div className="bgs-receipt-actions">
         <Button size="sm" onClick={() => onOpen?.(item.id)}>{t('budget.open', { city: item.dest.city })}</Button>

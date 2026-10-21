@@ -53,8 +53,8 @@ never runs without `--only`.
 ### last_success, and what writes it
 
 `logs/pipeline_state.json` is the only memory the driver has. It is a flat map
-of task key to `{"last_success": "<ISO 8601 UTC>"}`, plus one extra top-level
-key, `fares_freshness`, holding the per-origin refresh ledger.
+of task key to `{"last_success": "<ISO 8601 UTC>"}`. The `fares_freshness`
+per-origin ledger it used to carry went with the old fare logic (T511).
 
 The stamp is written immediately after a task succeeds and `save_state` is
 called on the spot (line 2611), not batched to the end. An interrupted run
@@ -95,8 +95,7 @@ calls it "not advised".
 `--ship build|data|none` decides what happens after the tasks. Default is a
 full `npm run build`.
 
-`--max-origins N` only affects the `fares` task, turning it into a targeted
-refresh of the N stalest, highest-priority origins.
+`--max-origins N` is gone with the `fares` task (T511).
 
 Skip flags in the pipeline's other sense, the `--no-images` and `--seed-only`
 style switches on individual layer scripts, are not a `run_pipeline.py`
@@ -125,13 +124,10 @@ The plan is built in `TASKS` list order, and the runner executes it in that
 order. There is no topological sort. Three separate mechanisms carry the real
 dependencies.
 
-The first is list order itself, and it is load-bearing for the fare chain.
-`tp_stage` must precede `fares` so the Ryanair patch merges fresh Travelpayouts
-staging. `fares` must precede `wizz_fares`, which must precede `vueling_fares`,
-which must precede `volotea_fares`, because each carrier merges cheapest-wins
-onto the table the previous one left. `fare_history` archives the fully merged
-result, and `fare_model` trains on that archive. Reordering the `TASKS` list
-would silently break this. Nothing in the code asserts it.
+The first is list order itself. It was load-bearing for the carrier fare
+chain (`tp_stage`, `fares`, `wizz_fares`, `vueling_fares`, `volotea_fares`,
+`fare_history`, `fare_model`), which T511 removed; no task left relies on
+list order alone, but nothing in the code asserts that either.
 
 The second is the `after` field, which is explicit and checked. The trails
 chain is `trails_ingest` to `trails_elevation` and `trails_regionize` and
@@ -210,17 +206,16 @@ A task that fails has two possible outcomes, decided by its `soft` flag.
 A hard failure (`soft` absent or false) appends the key to `failed`, logs
 "stopping before ship to avoid shipping half data", and `break`s out of the
 loop (line 2623). Every later task in the plan is abandoned. The ship is
-skipped, the freshness report still runs, and the process exits 1. Twenty
-tasks are hard: the four carrier fare tasks, `fame`, `flight_times`,
-`crowding`, `bathing_water`, `lodging`, `staytiers`, and all ten backfill
-tasks. The carrier fare tasks are on the manual cadence since T255 and the
-backfill ten are unreachable without `--only`, so only the other six can stop a
-scheduled run.
+skipped, the freshness report still runs, and the process exits 1. Sixteen
+tasks are hard (count of 2026-10-21, after T511 and T512): `fame`,
+`flight_routes`, `crowding`, `bathing_water`, `lodging`, `staytiers`, and all
+ten backfill tasks. The backfill ten are unreachable without `--only`, so only
+the other six can stop a scheduled run.
 
 A soft failure logs "SOFT-FAIL", appends to `soft_failed`, and the run
 continues. Nothing is stamped, so the task is due again next run. Soft is for
-the estimation and ingestion layer and for every layer that is not on the fare
-critical path: 44 of the 64 tasks are soft.
+the estimation and ingestion layer and for every layer that is not on the
+critical path: 42 of the 58 tasks are soft.
 
 A task that raises, as opposed to returning false, is a failed task (T261).
 The guard, the rescore hold, the master backup and the task's `run(ctx)` or
@@ -263,8 +258,8 @@ Task Scheduler hands the process cp1252 and the tasks print accented place
 names. `other_python_running` shells to `tasklist` on `nt` and `pgrep`
 otherwise, and only the Windows branch parses reliably. `node_exe` and
 `npm_exe` fall back to `C:\Program Files\nodejs` when PATH lacks them. The
-reserved-filename set (`PRN`, `CON`, `AUX`, `NUL`, `COM0-9`, `LPT0-9`) mirrors
-`continent-app/src/lib/fareFile.js` and exists only because of NTFS.
+reserved-filename escape for per-origin fare files (`PRN`, `CON` and the rest)
+went with those files in T511.
 
 `run_pipeline.bat` is the scheduled entry point. It `cd /d "%~dp0"`, creates
 `logs`, appends to `logs\pipeline_run.log` and calls `python run_pipeline.py`
@@ -282,8 +277,7 @@ for every child. Everything else is read by the individual scripts, mostly via
 `pipeline/env_local.py`, which loads the repo-root `.env`.
 
 External services with rate caps or credentials, as the tasks describe them:
-Ryanair, Wizz Air, Vueling and Volotea (live fare APIs, hours per full sweep),
-Travelpayouts (`TRAVELPAYOUTS_TOKEN`, skips cleanly when absent), Wikipedia
+Wikipedia
 pageviews (rate limited, and the rate limit is the trap in `fame_step`),
 Wikidata and Commons, Overpass (documented as the flakiest source in the tree,
 and deliberately not guarded for mountains), NASA POWER (two workers maximum),
@@ -307,9 +301,7 @@ side writes a separate dated log).
 
 Drive letters appear in exactly three places, all of them fallbacks rather than
 hard requirements: `_NODE_DIRS` (`C:\Program Files\nodejs` and the x86 twin)
-and nothing else. `ROOT` is relative to the file. The reserved-filename escape
-is harmless on Linux but must stay, because the fare slices already on disk
-carry the escaped names and `fareFile.js` in the app still expects them.
+and nothing else. `ROOT` is relative to the file.
 
 `other_python_running()` needs attention. The `pgrep -f python` branch matches
 any process with "python" in its command line, which on a Linux box running
@@ -318,8 +310,7 @@ best-effort guard written for a single-user Windows desktop.
 
 The lock file and the state file both live under `logs/` relative to the repo
 root. Confirm the cron user can write there. Losing the state file does not
-corrupt anything, but it makes every task due at once, which for the fare
-tasks alone is around 30 hours of network work.
+corrupt anything, but it makes every task due at once.
 
 Nothing in the driver opens a browser or waits on input. `--ship build` runs
 `npm run build` in `continent-app/`, which needs node on PATH. No task prompts.
@@ -374,8 +365,7 @@ running `run_pipeline.py` is removed as stale, because nobody is at the box to
 delete it by hand. SIGTERM, which systemd sends on stop and on timeout, becomes
 a normal exit, so the `finally` releases the lock. Node is looked up on PATH
 first as before, with `/usr/local/bin` and `/opt/node/bin` as the Linux
-fallbacks. `--max-origins N` needed nothing: the freshness report, the
-priority ranking and the cache invalidation are plain JSON and `pathlib`.
+fallbacks.
 
 The box runs the weekly tier only. The monthly and quarterly tasks have not
 been verified on arm64, and the heavy ones belong on the on-demand CAX41
@@ -392,7 +382,49 @@ code, wall time, peak memory and the state-file change of each in
 builds, or two shape summaries of them, by file set, keys, schema version and
 counts.
 
-## The tasks (65 at T029)
+## Flights (T512 to T515, 2026-10-21)
+
+Flight prices are not a pipeline product. The pipeline builds only the route
+list; a Cloudflare Worker does the searching.
+
+- `flight_routes` (monthly, `pipeline/flights/build_routes.py --upload`):
+  Eurostat `avia_par_{cc}` monthly passenger flights per airport pair
+  (CC BY 4.0) plus OurAirports (public domain) for ICAO to IATA and positions.
+  Keeps pairs with at least 4 departures in at least 2 of the last 12 months,
+  fills the return direction (the UK stopped reporting after 2019), keeps
+  European partners only. Writes `data/flights/_routes.json` and
+  `data/flights/_airports.json` and uploads the route list to R2
+  `carta/data/flights/_routes.json`. `continent-app/scripts/sync-data.mjs`
+  reads `_airports.json` for the origin picker (`meta.origins`). Eurostat
+  publishes with a long lag; the Worker's find tier adds newer routes.
+- `flight-sweep` Worker (`continent-app/workers/flight-sweep`): cron every
+  minute plus an hourly publish at :07, D1 database `carta_flights`, R2 bucket
+  `carta`. Each search reads one public Google Flights results page for one
+  route and one day, through the vendored fli-js engine in
+  `continent-app/workers/shared` (`flightSearch.mjs`, `searchDay()`). Tiers:
+  near (the next 14 days, every other day, each route every 12 hours), far
+  (weeks 3 to 26, one day a week, weekly), find (monthly discovery of new
+  direct routes over 150 km). Off-season months are skipped; a route goes
+  dormant after 6 checks without a direct flight. About 100 searches a
+  minute; the Worker pauses an hour after 3 refusals. It publishes
+  `data/flights/{IATA}.json`, `data/flights/_index.json` and the airline logos
+  `data/airlines/{code}.png` (formats in `docs/SCHEMA.md`, "Flight prices").
+  It needs the Workers Paid plan: on the free plan a run gets 50 subrequests
+  and 10 ms CPU, so more than half the searches fail.
+  `scripts/flights/seed-local.mjs` fills the database from a PC.
+- `/api/flights?o=&d=&date=` (`continent-app/functions/api/flights.js`): the
+  live search the trip planner calls, every flight of that day, edge cache
+  one hour, 502 when Google refuses.
+
+Google's terms do not allow automated reading of its pages; the owner has
+accepted that risk (register row in `Execution/_OPEN.md`).
+
+## The tasks (65 at T029, 58 after T511 and T512)
+
+T511 removed the seven fare tasks (`tp_stage`, `fares`, `wizz_fares`,
+`vueling_fares`, `volotea_fares`, `fare_history`, `fare_model`) and
+`flight_times`; T512 added `flight_routes`. The rest of the table is as T029
+measured it.
 
 Wall times are the maximum observed in `logs/*.log` where one was recorded.
 Fifty-four tasks have no recorded time because they have never completed on
@@ -402,13 +434,6 @@ not stop the run.
 
 | Key | Cadence | Script(s) | Writes | Guard | Soft | Wall time | Cron-safe |
 |---|---|---|---|---|---|---|---|
-| `tp_stage` | manual (retired T255) | src.ingestion.run_all | report only | - | yes | not recorded | yes |
-| `fares` | manual (retired T255) | pipeline/harvest_all_origins.py (graph/harvest/patch/refresh) | master | - | no | 24.5 h | yes, but 24 h |
-| `wizz_fares` | manual (retired T255) | pipeline/harvest_wizzair.py (graph/harvest/patch) | master | - | no | 4.7 h | yes, but 4.7 h |
-| `vueling_fares` | manual (retired T255) | pipeline/harvest_vueling.py (graph/harvest/patch) | master | - | no | 35 min | yes, but 36 min |
-| `volotea_fares` | manual (retired T255) | pipeline/harvest_volotea.py (graph/harvest/patch) | master | - | no | 58s | yes |
-| `fare_history` | manual (retired T255) | src.estimation.snapshot | report only | - | yes | 6s | yes |
-| `fare_model` | manual (retired T255) | src.estimation.drift, src.estimation.model, pipeline/harvest_all_origins.py est | master | - | yes | 2 min | yes |
 | `ingestion` | weekly | src.ingestion.run_all | report only | - | yes | not recorded | yes |
 | `demand_events` | monthly | src.ingestion.run_all --only holidays,school_holidays | report only | - | yes | not recorded | yes |
 | `fame` | monthly | pipeline/resolve_dest_articles.py, harvest_pageviews.py, apply_designations.py, apply_beauty_layer.py, apply_place_layer.py, apply_rating_layer.py | master | - | no | 8 min | yes, the cache clear is self-guarded |
@@ -424,7 +449,7 @@ not stop the run.
 | `routes_attach` | after (trails_rate, cycling_publish) | trails/transit_stops.py, trails/derived_activities.py, trails/node_networks.py, trails/attach.py | report only | trailslab_up | yes | not recorded | no: needs the local Docker lab on 5433 |
 | `joins` | after (beaches, lakes, mountains, trails_rate, cycling_publish, trips) | joins/neighbours.py | wire | - | yes | not recorded | yes |
 | `regions` | quarterly | regions/build_regions.py, regions/coverage.py, regions/export_regions.py | wire | regions | yes | not recorded | yes, needs geopandas and h3 |
-| `flight_times` | monthly | harvest_flight_times.py | master | - | no | not recorded | yes |
+| `flight_routes` | monthly | pipeline/flights/build_routes.py --upload | report only (R2 data/flights/_routes.json) | - | no | not recorded | yes |
 | `crowding` | quarterly | harvest_tourism_density.py | master | - | no | not recorded | yes, pinned year needs a human bump |
 | `bathing_water` | quarterly | harvest_bathing_water.py | master | - | no | not recorded | yes, pinned year needs a human bump |
 | `lodging` | quarterly | harvest_accommodation.py, apply_accommodation_anchors.py, apply_longtail_granularity.py, apply_tourist_premium.py | master | - | no | not recorded | yes, Inside Airbnb snapshot needs a human bump |

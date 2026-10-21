@@ -12,7 +12,7 @@
  */
 
 import { ownTravelWord } from './transportLinks.js';
-import { flightTimes } from './format.js';
+import { flightTimes, eurExact } from './format.js';
 import { addDays } from './dates.js';
 
 const pad2 = (n) => String(n).padStart(2, '0');
@@ -91,7 +91,7 @@ function flightEvent({ uid, date, time, summary, description }) {
  * Booking confirmation codes (extras.bookings) land in the descriptions,
  * keyed the same way the itinerary keys them ('flight-out', 'stay-2', ...).
  */
-export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1, extras = null }) {
+export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1, extras = null, cartaFlight = null, airlines = null }) {
   // Keep each stop's ORIGINAL index: booking keys are 'stay-<index into
   // stopDetails>', and filtering must not shift them.
   const stops = stopDetails
@@ -107,8 +107,24 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
     return r ? ` Booking ref ${r}.` : '';
   };
   const events = [];
+  // The flight Carta priced each way (T518): a timed event at its own hours,
+  // with the airline, flight number and Google Flights' fare in the notes.
+  const cartaEvent = (leg, key, refKey) => {
+    const who = [airlines?.[leg.airline]?.name || leg.airline, leg.flightNo].filter(Boolean).join(' ');
+    return flightEvent({
+      uid: `${stamp}-${key}@carta`,
+      date: leg.date,
+      time: leg.dep ? `${leg.dep}/${leg.arr || ''}` : null,
+      summary: `Flight ${leg.from} to ${leg.to}`,
+      description: `${who}, ${leg.dep} to ${leg.arr}. ${eurExact(leg.cost.total)} for ${people} on Google Flights when Carta checked; prices may have changed.${refFor(refKey)} Planned with Carta.`,
+    });
+  };
+  const cfOut = cartaFlight?.out?.cost ? cartaFlight.out : null;
+  const cfBack = cartaFlight?.back?.cost ? cartaFlight.back : null;
 
-  if (flight?.combinable) {
+  if (cfOut) {
+    events.push(cartaEvent(cfOut, 'fly-out', 'flight-out'));
+  } else if (flight?.combinable) {
     events.push(flightEvent({
       uid: `${stamp}-fly-out@carta`,
       date: first.arriveDate,
@@ -140,7 +156,9 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
     }));
   });
 
-  if (flight?.combinable) {
+  if (cfBack) {
+    events.push(cartaEvent(cfBack, 'fly-home', 'flight-home'));
+  } else if (flight?.combinable) {
     events.push(flightEvent({
       uid: `${stamp}-fly-home@carta`,
       date: last.departDate,

@@ -18,6 +18,10 @@ import { isNational } from '../components/CostSummary.jsx';
 import { InfoDot } from '../components/InfoDot.jsx';
 import { dayIncludesText } from '../lib/dayIncludes.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
+import { roundTripNear, legCost } from '../lib/flights/flights.js';
+import { destAnchor } from '../lib/origins.js';
+import { FlightRow, AirlineMark } from '../components/flights/Flights.jsx';
+import { homeFlightSetup, withEnds } from './cartaFlight.js';
 
 /**
  * The destination page's price card (T429): what a day here costs at the
@@ -67,9 +71,19 @@ export function DestPriceCard({
   const costRow = ctx?.indices?.get?.(dest.id) || null;
   const nights = from && to && to > from ? Math.max(1, tripDaysBetween(from, to)) : 7;
   const people = Math.max(1, Math.min(MAX_PARTY, Math.round(choices?.group_size || 2)));
+  // Carta's return flight near the dates (T518), from the home airport's
+  // sweep; a fare the traveller typed wins over it, and with neither the
+  // card prices the stay alone, as before.
+  const flightFile = ctx?.data?.flights || null;
+  const bagKey = homeFlightSetup(ctx).bagKey;
+  const airport = destAnchor(dest);
+  const carta = React.useMemo(
+    () => (fare ? null : roundTripNear(flightFile, airport, from, to, { paying: people, bagKey })),
+    [fare, flightFile, airport, from, to, people, bagKey],
+  );
   const price = React.useMemo(
-    () => priceFromIndex(costRow, nights, people, fare),
-    [costRow, nights, people, fare],
+    () => priceFromIndex(costRow, nights, people, fare, carta),
+    [costRow, nights, people, fare, carta],
   );
 
   const dayRef = React.useRef(null);
@@ -125,8 +139,16 @@ export function DestPriceCard({
     setSheetOpen(false);
   };
 
-  const label = (line) => (line.key === 'flight' ? t('receipt.yourFlight')
+  const home = flightFile?.from || null;
+  const flightLabel = (line) => (line.carta ? (
+    <span className="dprice-flt-label">
+      <AirlineMark code={line.carta.out.airline} size="sm" />{' '}
+      {t('flight.flightLine')}
+    </span>
+  ) : t('receipt.yourFlight'));
+  const label = (line) => (line.key === 'flight' ? flightLabel(line)
     : line.key === 'stay' ? t('receipt.stay', { nights: nightsText }) : t('receipt.ground'));
+  const cartaLine = price.lines.find((l) => l.key === 'flight' && l.carta) || null;
   const stayLine = price.lines.find((l) => l.key === 'stay');
   const foodLine = price.lines.find((l) => l.key === 'ground');
   const share = (l) => (price.total > 0 ? `${(l.eur / price.total) * 100}%` : '0');
@@ -283,9 +305,22 @@ export function DestPriceCard({
         />
       </dl>
 
+      {/* The flight the line prices, there and home, each with its airline,
+          times, when Google Flights was checked and the link to book. */}
+      {cartaLine && (
+        <div className="dprice-flights">
+          <FlightRow leg={withEnds(carta.out, home, airport)} cost={legCost(carta.out, { paying: people, bagKey })}
+            dir="out" bagKey={bagKey} wantedDate={from} />
+          <FlightRow leg={withEnds(carta.back, airport, home)} cost={legCost(carta.back, { paying: people, bagKey })}
+            dir="back" bagKey={bagKey} wantedDate={to} />
+        </div>
+      )}
+
       <div className="dprice-foot">
         <p className="dprice-excludes">
-          {t(fare ? 'dest.priceExcludesFare' : 'dest.priceExcludes')}
+          {/* With a flight in the total, typed or Carta's, getting there is
+              no longer left out. */}
+          {t(fare || cartaLine ? 'dest.priceExcludesFare' : 'dest.priceExcludes')}
           {/* Where the page says a car is needed, its hire is the largest
               cost the day figure leaves out: said once, as a figure (T446). */}
           {Number.isFinite(carDayEur) && carDayEur > 0 && (

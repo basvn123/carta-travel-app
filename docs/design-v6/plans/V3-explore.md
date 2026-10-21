@@ -14,7 +14,7 @@ Direction. The incumbent world, untouched. Structural thesis: inputs on top, a c
 
 Scope. The V3 list of the brief (structure, information, flow). Visual and motion work (popover preview, accent spending, card ratios, chip motion) is V4; tap targets, names and failure states are V5.
 
-Anti-goals. No new colour, no gradient, no hero photograph, no scroll-triggered motion, no second Lifestyle control, no fare of Carta's own, no edit outside the files OWNERSHIP.md gives to explore.
+Anti-goals. No new colour, no gradient, no hero photograph, no scroll-triggered motion, no second Lifestyle control, no fare presented as Carta's own (since 2026-10-21, T517, the Explore card shows Google Flights' price, named as theirs), no edit outside the files OWNERSHIP.md gives to explore.
 
 Assumptions taken without an interview. The settings line (T381) runs in the same wave and is invisible in this branch, so Explore keeps its own Lifestyle door and month select as the fallback (row T380-e). The glossary is the shell's, so the InfoDots on "national" and on the four role words wait for the shell to add the terms; InfoDot renders nothing for an unknown term, so the dot can be wired now and lights up when the term lands.
 

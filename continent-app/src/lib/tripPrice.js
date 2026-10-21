@@ -58,11 +58,12 @@ export function lifestyleShares(lifestyle, stayTier) {
 
 /**
  * The week at the choices: { rows {slot: eur|null}, perPerson, perDay,
- * party, fare, total, est }. perPerson is the sum of the lines when every
- * line has a figure, else the authored total at the spend share. total is
- * perPerson times the party plus the traveller's own fare.
+ * party, fare, carta, total, est }. perPerson is the sum of the lines when
+ * every line has a figure, else the authored total at the spend share. total
+ * is perPerson times the party plus the flight: the traveller's own fare, or
+ * else Carta's return flight for the party (`carta`, roundTripNear(), T517).
  */
-export function tripPrice(budget, { sleepShare = 0.5, spendShare = 0.5, days = 7, party = 1, fare = 0 } = {}) {
+export function tripPrice(budget, { sleepShare = 0.5, spendShare = 0.5, days = 7, party = 1, fare = 0, carta = null } = {}) {
   if (!budget?.totalEur) return null;
   const rows = {};
   for (const slot of SLOTS) {
@@ -75,13 +76,15 @@ export function tripPrice(budget, { sleepShare = 0.5, spendShare = 0.5, days = 7
     : between(budget.totalEur.low, budget.totalEur.high, spendShare);
   const n = Math.max(1, Math.round(party) || 1);
   const own = Number.isFinite(fare) && fare > 0 ? fare : 0;
+  const flight = own || (carta?.total > 0 ? carta.total : 0);
   return {
     rows,
     perPerson,
     perDay: perPerson != null && days > 0 ? Math.round(perPerson / days) : null,
     party: n,
     fare: own,
-    total: perPerson != null ? perPerson * n + own : null,
+    carta: own ? null : (carta?.total > 0 ? carta : null),
+    total: perPerson != null ? perPerson * n + flight : null,
   };
 }
 
@@ -90,7 +93,7 @@ export function tripPrice(budget, { sleepShare = 0.5, spendShare = 0.5, days = 7
  *  included[] and notIncluded[] strings win; otherwise the budget's lines say
  *  what is in, and travel to the start (unless the traveller added it),
  *  insurance and personal spending are out. */
-export function includedRows(trip, { nights = 6, fare = 0 } = {}) {
+export function includedRows(trip, { nights = 6, fare = 0, carta = null } = {}) {
   const own = (trip?.included || []).filter(Boolean);
   const ownOut = (trip?.notIncluded || []).filter(Boolean);
   if (own.length || ownOut.length) {
@@ -105,9 +108,9 @@ export function includedRows(trip, { nights = 6, fare = 0 } = {}) {
   if (b.food) out.push({ key: 'food', in: true, labelKey: 'journey.incFood' });
   if (b.transport) out.push({ key: 'transport', in: true, labelKey: 'journey.incTransport' });
   if (b.activities) out.push({ key: 'activities', in: true, labelKey: 'journey.incActivities' });
-  out.push(fare > 0
-    ? { key: 'travel', in: true, labelKey: 'journey.incTravelOwn' }
-    : { key: 'travel', in: false, labelKey: 'journey.incTravel' });
+  if (fare > 0) out.push({ key: 'travel', in: true, labelKey: 'journey.incTravelOwn' });
+  else if (carta) out.push({ key: 'travel', in: true, labelKey: 'journey.incFlight' });
+  else out.push({ key: 'travel', in: false, labelKey: 'journey.incTravel' });
   out.push({ key: 'insurance', in: false, labelKey: 'journey.incInsurance' });
   out.push({ key: 'personal', in: false, labelKey: 'journey.incPersonal' });
   return out;

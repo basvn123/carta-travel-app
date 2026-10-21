@@ -1,0 +1,157 @@
+/*
+ * Flights (T518; carta-design, DESIGN.md roles and scales only).
+ * A flight reads like a line on a departure board inside Carta's warm
+ * frame: the airline's own mark in a small white square, the times as the
+ * row's title, the airline and stops as meta, the fare a person right
+ * aligned in tabular figures. When it was checked and the way to Google
+ * Flights sit quietly underneath. Brown only on the link (it acts) and the
+ * selected hours segment; no colour carries meaning alone.
+ */
+.flt-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "mark main figs"
+    "mark bags bags"
+    "foot foot foot"
+    "note note note";
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+  align-items: start;
+  padding: var(--space-3) 0;
+}
+.flt-row + .flt-row { border-top: 1px solid var(--border-soft); }
+.flt-row > .flt-mark { grid-area: mark; }
+.flt-main { grid-area: main; min-width: 0; }
+.flt-figs {
+  grid-area: figs;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.flt-unit { font-size: var(--text-caption); font-weight: 400; color: var(--text-3); }
+
+.flt-dir {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--text-2);
+}
+.flt-date { color: var(--text-3); font-weight: 400; font-variant-numeric: tabular-nums; }
+/* Not the day asked for: the date reads in ink so it is noticed. */
+.flt-date.is-moved { color: var(--text); font-weight: 600; }
+.flt-times {
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.flt-plus {
+  margin-left: var(--space-1);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-2);
+  vertical-align: super;
+}
+.flt-meta {
+  font-size: var(--text-label);
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flt-bags {
+  grid-area: bags;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}
+.flt-foot {
+  grid-area: foot;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  font-size: var(--text-caption);
+  color: var(--text-3);
+}
+.flt-foot a {
+  color: var(--action);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  /* a 44 px target without growing the line */
+  padding: var(--space-3) 0;
+  margin: calc(-1 * var(--space-3)) 0;
+}
+.flt-note { grid-area: note; font-size: var(--text-caption); color: var(--text-3); }
+
+.flt-row.is-loading .flt-meta,
+.flt-row.is-none .flt-meta { white-space: normal; }
+.flt-row.is-loading .flt-mark-empty { animation: flt-breathe var(--dur-3, 400ms) ease-out infinite alternate; }
+@keyframes flt-breathe { from { opacity: 0.55; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .flt-row.is-loading .flt-mark-empty { animation: none; }
+}
+
+/* The airline's mark: its own logo on white, never recoloured. */
+.flt-mark {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.flt-mark-md { width: 36px; height: 36px; }
+.flt-mark-sm { width: 22px; height: 22px; }
+.flt-mark img { width: 80%; height: 80%; object-fit: contain; }
+.flt-mark-code {
+  font-size: var(--text-micro);
+  font-weight: 700;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.flt-mark-empty { background: var(--surface-sunken); border-color: transparent; }
+
+/* A card's flight: mark and "Flight from €134", one quiet line. */
+.flt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: var(--text-caption);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.flt-chip-text { overflow: hidden; text-overflow: ellipsis; }
+
+/* Hours, under the row it filters. */
+.flt-hours { padding: var(--space-1) 0 var(--space-2); }
+.flt-hours .seg { width: 100%; }
+
+/* Where the flight sits in other screens' own blocks (T518). */
+.xprice-flight { display: flex; font-weight: 400; margin-top: 2px; min-width: 0; }
+.itin-flight,
+.tleg-flight { margin-top: var(--space-2); }
+.itin-flight .flt-hours,
+.tleg-flight .flt-hours { padding-top: var(--space-2); }
+/* The airline mark inside a receipt line's label. */
+.dprice .flt-mark,
+.tprice .flt-mark,
+.plan-line .flt-mark,
+.xcost .flt-mark { vertical-align: middle; margin-right: var(--space-2); }

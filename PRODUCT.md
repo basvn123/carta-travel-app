@@ -20,7 +20,9 @@ In English: flight search engines such as Skyscanner and Google Flights only sho
 
 Short form, for a subtitle or a store line: a cheap flight is not a cheap trip; Carta shows what the days there cost.
 
-When reusing it, keep the voice rules below: no superlatives, no claim Carta cannot back with a figure, and never imply Carta prices flights.
+Carta brings everything together: the flight, the bed and the days, in one total. (Owner request 2026-10-21, batch T511-T519, reversing T272.)
+
+When reusing it, keep the voice rules below: no superlatives, no claim Carta cannot back with a figure, and never imply the flight price is Carta's own: it is Google Flights' price, shown as theirs.
 
 ## What Carta is
 
@@ -28,9 +30,9 @@ Carta is the one app for planning a trip anywhere in Europe: Stop stitching trip
 
 Every travel product shows a price. Carta shows what the whole day costs, honestly. A bed and a day of eating out are priced at the town's own rates where they were measured there; a figure that stands in for a town not yet measured carries the estimate mark (`~€87 est.`). The method stays in the data, not on the page (owner decision 2026-10-13, T438: no method sentences, no catalogue counts, no coverage notes as page furniture). The same figures carry through unchanged from the Explore card to the destination receipt, the multi-city planner and the hour-by-hour day planner, so no two screens can disagree about what dinner costs. Around the towns sit walking routes, beaches, lakes, summits and cycling routes, each with a page, and where a region is empty the page says so in one line rather than showing a blank grid. Carta takes no booking and no commission on travel; it prices, plans and hands the traveller to the operator. (Positioning from T201, in full in `Execution/P12/T201-positioning.md`. The counts are the 2026-10-02 measurement; read `meta` for today's.)
 
-A price transparency and trip planning tool for Europe. Carta prices the ground for every destination in the catalogue: the bed and the food, per person per day. Local transport and tickets are not in the day figure yet (`costIndex.js` sums stay and food); they arrive as their own receipt lines with roadmap 2.14, and until then no copy may say the day figure includes them (roadmap 1.16). It does not price flights. A traveller who has a fare types in what they paid, and only then does the full-trip total include the flight, as their own figure. Carta then plans the trip city by city and each day hour by hour, and it marks the figures that are estimates.
+A price transparency and trip planning tool for Europe. Carta prices the ground for every destination in the catalogue: the bed and the food, per person per day. Local transport and tickets are not in the day figure yet (`costIndex.js` sums stay and food); they arrive as their own receipt lines with roadmap 2.14, and until then no copy may say the day figure includes them (roadmap 1.16). For the flight it shows Google Flights' price for the route and day, with the airline, the times, when it was checked and a link to Google Flights; a fare the traveller types in replaces it. Bag fees per airline are Carta's estimates. Carta still sells nothing and takes no commission. Carta then plans the trip city by city and each day hour by hour, and it marks the figures that are estimates.
 
-The catalogue is master data in `app_data/app_data.json` and grows with every ingest (3,868 destinations in 43 countries on 2026-10-01; do not copy that figure into UI, read `meta` instead). The app is Vite + React in `continent-app/`, served as static JSON from a CDN. Nothing on the map is live-searched; everything is precomputed by the pipeline and cached.
+The catalogue is master data in `app_data/app_data.json` and grows with every ingest (3,868 destinations in 43 countries on 2026-10-01; do not copy that figure into UI, read `meta` instead). The app is Vite + React in `continent-app/`, served as static JSON from a CDN. Nothing on the map is live-searched; everything is precomputed by the pipeline and cached. Flight prices come from a sweep Worker that checks each route on a schedule and publishes per-airport files; only the trip planner searches one day live.
 
 Live at carta-europetravel.com. Six languages: English, Dutch, French, German, Spanish and Italian, on every surface including the PDF, KML and ICS exports.
 
@@ -58,7 +60,7 @@ Density is a feature. The traveller wants to see forty prices on one phone scree
 
 Every ground cost follows one chain: a real harvested figure first, then a cached third-party figure, then a model estimate, and never a blank. Ground costs are the bed, the food, the local transport and the airport transfer. Each step is labelled for what it is. A harvested figure shows its source and age. A cached figure carries its expiry. An estimate is prefixed with a tilde, tagged "est." and never dressed up as a bookable price. Every external booking link warns that prices may have changed.
 
-Carta does not price flights (owner decision, 2026-10-02). No fare harvest has been live since 2026-10-01, and none is planned. The only flight figure in a total is one the traveller typed in, labelled as theirs. No screen shows or sums a flight figure of Carta's (T273 removed the last of them), so no flight carries a tilde or "est." any more. The tilde and "est." stay for every other estimate.
+Flights follow their own order (owner request 2026-10-21, batch T511-T519, reversing the 2026-10-02 decision). A fare the traveller typed in comes first, labelled as theirs. Then Google Flights' price: searched live in the trip planner for the exact day and chosen hours, or taken from the sweep for the same day (or the nearest day within 3 days, where the flight shows its own date). Then nothing. A price checked more than 3 days ago is never shown. A flight price is Google Flights' figure, not Carta's estimate, so it carries no tilde; it always shows the airline, the times, when it was checked and a link to Google Flights with "prices may have changed". Bag fees (10 kg cabin, 20 kg checked) are Carta's estimates and carry the tilde and "est." like every other estimate.
 
 The product's only real asset is trust in its numbers. Every visual and copy choice follows from that.
 
@@ -70,7 +72,7 @@ Plain, specific, verb first. Every headline carries a verb the traveller recogni
 
 Say less (owner, 2026-10-13). Every sentence on a page earns its place for the traveller. A figure they need beats a claim; a method note, a coverage statement or a catalogue count ("3,855 places") is not page furniture.
 
-Honest, in its own voice. An estimate is marked as one; Carta does not price flights; when the AI is off, the app says it is off. Carta has no testimonials.
+Honest, in its own voice. An estimate is marked as one; a flight price is named as Google Flights', with when it was checked; when the AI is off, the app says it is off. Carta has no testimonials.
 
 Sentence case everywhere. No terminal punctuation on labels, buttons or headings; helper text and body copy take full stops. Contractions are fine. Active voice. A button that says "Save trip" produces "Trip saved."
 
@@ -96,11 +98,11 @@ Success in the first year, as the owner states it (2026-10-13): travellers buy T
 
 ## Evidence on Hand
 
-Real: the catalogue (`app_data/app_data.json`, read `meta` for counts), per-region coverage (`continent-app/public/coverage.json`), licensed photography with credits (`docs/tos/data_licenses.md`), the provenance sentences on every receipt, share cards from `continent-app/scripts/og`. Absent, and never to be fabricated: testimonials, user counts, press, partner logos, live flight fares.
+Real: the catalogue (`app_data/app_data.json`, read `meta` for counts), per-region coverage (`continent-app/public/coverage.json`), licensed photography with credits (`docs/tos/data_licenses.md`), the provenance sentences on every receipt, share cards from `continent-app/scripts/og`. Absent, and never to be fabricated: testimonials, user counts, press, partner logos. Flight prices are real but are Google Flights' figures with a check time, never presented as Carta's.
 
 ## Product Principles
 
-Carta prices and plans; it never sells. No booking, no commission on travel, no flight pricing: it hands the traveller to the operator (owner-confirmed 2026-10-13).
+Carta prices and plans; it never sells. No booking, no commission on travel: it hands the traveller to the operator (owner-confirmed 2026-10-13). It shows Google Flights' price for the flight and links there to book; it sells no ticket (2026-10-21, T511-T519).
 
 Carta never navigates (owner, 2026-10-21, T471-b). No route guidance, no GPS, no turn-by-turn of its own. Carta plans and prices; the traveller's maps app takes them there. Every day and every ride therefore ends in a hand-over to that app, worded "Open in Google Maps" (or "Open Day 2 in Google Maps"), never "Navigate" or "Start route".
 
@@ -135,7 +137,8 @@ Single theme. The app is deliberately light-only: there are no `prefers-color-sc
 | Pass pricing | `continent-app/src/lib/pricing.js` TIERS |
 | Catalogue size and schema | `app_data/app_data.json` `meta`, `docs/SCHEMA.md` |
 | Provenance chain | `docs/1.CARTA.md` |
-| Fare model | `docs/ESTIMATION.md` |
+| Ground fare model | `docs/ESTIMATION.md` |
+| Flight prices (route list, sweep files, live search) | `docs/SCHEMA.md` "Flight prices", `docs/PIPELINE.md` "Flights" |
 | Licences and credits | `docs/tos/data_licenses.md` |
 
 Last reviewed: 2026-10-13 (T420, impeccable init on the legacy file; earlier 2026-10-01, T195).

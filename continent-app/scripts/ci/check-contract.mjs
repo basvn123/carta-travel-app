@@ -85,7 +85,6 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.join(HERE, '..', '..');
 const APP_DATA = path.join(APP_ROOT, 'public', 'app_data.json');
 const FIXTURE = path.join(HERE, 'fixtures', 'contract-min.json');
-const FARES_DIR = path.join(APP_ROOT, 'public', 'fares');
 const REPO_ROOT = process.env.CARTA_REPO_ROOT || path.join(APP_ROOT, '..');
 const SCHEMA_MD = path.join(REPO_ROOT, 'docs', 'SCHEMA.md');
 const MIGRATIONS = process.env.CARTA_MIGRATIONS || path.join(REPO_ROOT, 'supabase', 'migrations');
@@ -176,7 +175,6 @@ const BREAKS = {
     d.destinations = {};
     return d;
   },
-  'fare-file-unescaped': (d) => d, // payload untouched; the break is in fareFiles
   // T082: a field renamed by the pipeline. Every required field survives, so
   // only the documented key set can see it.
   'destination-field-renamed': (d) => {
@@ -263,11 +261,6 @@ const DB_BREAKS = {
   'edge-function-missing': (w) => { w.edgeFunctions.delete('plan-day'); return w; },
 };
 
-// The fare-slice break is not a payload edit, it is a bad filename list.
-const FARE_FILES_FOR = (name) => (name === 'fare-file-unescaped'
-  ? ['BRU', 'PRN'] // PRN.json is the printer on Windows; it must ship as PRN_
-  : null);
-
 let failed = false;
 const fail = (msg) => { failed = true; console.log(`  FAIL  ${msg}`); };
 const pass = (msg) => console.log(`  ok    ${msg}`);
@@ -311,9 +304,6 @@ if (!fs.existsSync(SCHEMA_MD)) {
 }
 
 let real = JSON.parse(fs.readFileSync(APP_DATA, 'utf8'));
-let realFareFiles = fs.existsSync(FARES_DIR)
-  ? fs.readdirSync(FARES_DIR).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5))
-  : null;
 // The real payload as shipped, for the catalogue-mode negative tests below.
 const pristine = seed ? clone(real) : real;
 
@@ -321,12 +311,10 @@ if (seed && seed in PAYLOAD_SEEDS) {
   console.log(`CARTA_CI_SEED_BREAK=${seed}: applying it to the real payload in `
     + 'memory (public/ is not touched)\n');
   real = PAYLOAD_SEEDS[seed](clone(real));
-  const forced = FARE_FILES_FOR(seed);
-  if (forced) realFareFiles = forced;
 }
 
 {
-  const problems = validateAppData(real, { fareFiles: realFareFiles, contract, catalogue: true });
+  const problems = validateAppData(real, { contract, catalogue: true });
   if (problems.length) {
     fail(`public/app_data.json does not satisfy the contract:\n`
       + problems.slice(0, 12).map((p) => `          ${p}`).join('\n')
@@ -334,14 +322,13 @@ if (seed && seed in PAYLOAD_SEEDS) {
   } else {
     pass(`public/app_data.json satisfies the contract `
       + `(schema_version ${real.meta.schema_version}, `
-      + `${Object.keys(real.destinations).length} destinations, `
-      + `${realFareFiles ? realFareFiles.length : 0} fare slices)`);
+      + `${Object.keys(real.destinations).length} destinations)`);
   }
 }
 
 // ---------------------------------------------------------------- the split wires
-// The boot index, the per-country files it names, the POI shards, the fare
-// slices and the country insights. Real files are sampled (the first few of
+// The boot index, the per-country files it names, the POI shards and the
+// country insights. Real files are sampled (the first few of
 // each folder, sorted) because the folders hold thousands of files.
 {
   const PUB = path.join(APP_ROOT, 'public');
@@ -359,7 +346,7 @@ if (seed && seed in PAYLOAD_SEEDS) {
   } else {
     let wires;
     if (derive) {
-      // A git checkout has app_data.json, fares/ and country_insights.json
+      // A git checkout has app_data.json and country_insights.json
       // but not boot.json, dest/ or poi/ (generated, served from R2). Build
       // the first two exactly as sync-data does, and prove the app can merge
       // them back. POI shards cannot be rebuilt: public/app_data.json ships
@@ -380,7 +367,6 @@ if (seed && seed in PAYLOAD_SEEDS) {
         chunkNames: names,
         chunks: Object.fromEntries(names.slice(0, 5).map((n) => [n, chunks[n]])),
         poiShards: load('poi', 8),
-        fareSlices: load('fares', 3),
         insights: fs.existsSync(path.join(PUB, 'country_insights.json')) ? readJson('country_insights.json') : null,
       };
       if (!Object.keys(wires.poiShards).length) {
@@ -392,7 +378,6 @@ if (seed && seed in PAYLOAD_SEEDS) {
         chunkNames: jsonIn('dest').map((f) => f.slice(0, -5)),
         chunks: load('dest', 5),
         poiShards: load('poi', 8),
-        fareSlices: load('fares', 3),
         insights: fs.existsSync(path.join(PUB, 'country_insights.json')) ? readJson('country_insights.json') : null,
       };
     }
@@ -404,8 +389,8 @@ if (seed && seed in PAYLOAD_SEEDS) {
     } else {
       pass(`split wires satisfy the contract (boot index ${wires.boot.d.length} rows, `
         + `${Object.keys(wires.boot.chunks).length} country files, `
-        + `${Object.keys(wires.chunks).length}/${Object.keys(wires.poiShards).length}/`
-        + `${Object.keys(wires.fareSlices).length} sampled dest/poi/fare files)`);
+        + `${Object.keys(wires.chunks).length}/${Object.keys(wires.poiShards).length} `
+        + 'sampled dest/poi files)');
     }
 
     // Negative half: known-bad wires must be rejected, or the gate is vacuous.
@@ -415,12 +400,6 @@ if (seed && seed in PAYLOAD_SEEDS) {
       'boot-schema-bumped': (w) => { w.boot.meta.schema_version += 1; return w; },
       'dest-file-empty': (w) => { w.chunks[Object.keys(w.chunks)[0]] = {}; return w; },
       'poi-shard-not-array': (w) => { w.poiShards[Object.keys(w.poiShards)[0] || 'seeded'] = {}; return w; },
-      'fare-slice-no-out': (w) => {
-        const k = Object.keys(w.fareSlices)[0];
-        const a = Object.keys(w.fareSlices[k])[0];
-        delete w.fareSlices[k][a].out;
-        return w;
-      },
       'insights-empty': (w) => { w.insights = {}; return w; },
       'no-poi-sampled': (w) => { w.poiShards = {}; return w; },
     };
@@ -445,7 +424,7 @@ if (!fs.existsSync(FIXTURE)) {
     + 'run `node scripts/ci/make-fixture.mjs`');
 } else {
   const fixture = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-  const problems = validateAppData(fixture, { fareFiles: ['BRU'], contract });
+  const problems = validateAppData(fixture, { contract });
   if (problems.length) {
     fail(`the fixture no longer satisfies the contract (regenerate it with `
       + `node scripts/ci/make-fixture.mjs):\n`
@@ -460,8 +439,7 @@ if (!fs.existsSync(FIXTURE)) {
   let rejected = 0;
   for (const name of names) {
     const broken = BREAKS[name](clone(fixture));
-    const fareFiles = FARE_FILES_FOR(name) || ['BRU'];
-    const found = validateAppData(broken, { fareFiles, contract });
+    const found = validateAppData(broken, { contract });
     if (found.length) {
       rejected += 1;
       pass(`${name}  ->  rejected: ${found[0]}`);
@@ -474,9 +452,10 @@ if (!fs.existsSync(FIXTURE)) {
   // Pair the per-break loop with a floor, for the same reason validateAppData
   // pairs its destination walk with a minimum count: "every break was
   // rejected" is trivially true of an empty break list, and a future edit that
-  // empties BREAKS would otherwise turn this whole file green.
-  if (names.length < 8) {
-    fail(`only ${names.length} breaks are defined; this gate expects at least 8`);
+  // empties BREAKS would otherwise turn this whole file green. Seven since T511
+  // removed the fare-file break with the fare slices.
+  if (names.length < 7) {
+    fail(`only ${names.length} breaks are defined; this gate expects at least 7`);
   }
 }
 

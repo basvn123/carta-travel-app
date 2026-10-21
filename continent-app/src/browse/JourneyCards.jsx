@@ -7,6 +7,10 @@ import { typeLabel, typeDesc, monthsShort, journeyHash } from '../lib/journeys.j
 import { cardPerDay } from '../lib/tripFilters.js';
 import { openShared } from '../lib/sharedElement.js';
 import { CalendarIcon, RouteIcon } from '../components/Icons.jsx';
+import { cardTotal } from '../lib/tripLength.js';
+import { useFirstRun } from '../lib/firstRunContext.js';
+import { FlightChip } from '../components/flights/Flights.jsx';
+import { homeFlightSetup, journeyAirports, bestRoundTrip, backDate } from './cartaFlight.js';
 
 /**
  * The trip library's two cards, one of each (T498): the style tile and the
@@ -16,6 +20,10 @@ import { CalendarIcon, RouteIcon } from '../components/Icons.jsx';
  * One price a card (roadmap 1.3b rule 5, owner 2026-10-21): "From {eur} a
  * person a day" with the estimate mark, the low end at the list's length over its days
  * (lib/tripFilters.js perDayFrom). Never a range on a card.
+ *
+ * T518: beside it, one quiet flight chip, the cheapest return a person from
+ * the home airport to the week's gateway near the app's dates, when the
+ * sweep has one (cartaFlight.js). Nothing shows without a flight.
  */
 
 // T431: the trip and style tiles, two across from 769 px and one on a phone;
@@ -45,7 +53,7 @@ function DayFrom({ value, t }) {
  *  it, the name, one line of what the week is, and what the cheapest of
  *  them costs a person a day at the list's length. No count of trips: the
  *  list behind the tile is the answer. */
-export function StyleCard({ type, perDay = null, onPick, t, sizes = TILE_SIZES }) {
+export function StyleCard({ type, perDay = null, flight = null, onPick, t, sizes = TILE_SIZES }) {
   const name = typeLabel(type.slug, t, type.name);
   const desc = typeDesc(type.slug, t);
   return (
@@ -59,9 +67,29 @@ export function StyleCard({ type, perDay = null, onPick, t, sizes = TILE_SIZES }
       onOpen={() => onPick(type.slug)}
       meta={desc ? <span className="jstyle-desc">{desc}</span> : null}
       price={Number.isFinite(perDay)
-        ? <DayFrom value={perDay} t={t} />
+        ? (
+          <>
+            <DayFrom value={perDay} t={t} />
+            {/* The style's cheapest return a person, when the caller has one
+                ({ perSeat, airline }, T518). */}
+            {flight && <FlightChip perSeat={flight.perSeat} airline={flight.airline} />}
+          </>
+        )
         : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
     />
+  );
+}
+
+/** The card's return flight a person: out on the app's leaving day, home
+ *  after the card's nights at the list's length, cheapest gateway. */
+function useCardFlight(card, length) {
+  const ctx = useFirstRun();
+  const fl = homeFlightSetup(ctx);
+  const days = cardTotal(card, length)?.days || card.days || 7;
+  const back = backDate(fl.from, days - 1);
+  return React.useMemo(
+    () => bestRoundTrip(fl.file, journeyAirports(card), fl.from, back, { paying: 1, bagKey: fl.bagKey }),
+    [fl.file, card, fl.from, back, fl.bagKey],
   );
 }
 
@@ -90,6 +118,7 @@ function monthsLine(months, lang, t) {
 export function JourneyCard({ card, length, onOpen, t, lang, sizes = TILE_SIZES }) {
   const months = monthsLine(card.months, lang, t);
   const perDay = cardPerDay(card, length);
+  const flight = useCardFlight(card, length);
   const codes = (card.countries || []).length ? card.countries : [card.cc];
   const where = codes.filter(Boolean).map((cc) => localCountryName(cc, cc === card.cc ? card.country : null, lang)).join(', ');
   const urls = (card.photos || []).length ? card.photos : [card.hero?.url];
@@ -133,7 +162,12 @@ export function JourneyCard({ card, length, onOpen, t, lang, sizes = TILE_SIZES 
           )}
         </span>
       )}
-      price={<DayFrom value={perDay} t={t} />}
+      price={(
+        <>
+          <DayFrom value={perDay} t={t} />
+          {flight && <FlightChip perSeat={flight.perSeat} airline={flight.out.airline} />}
+        </>
+      )}
     />
   );
 }

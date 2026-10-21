@@ -3,6 +3,8 @@ import { BAND_KEY, eurDay } from '../lib/costIndex.js';
 import { BedIcon, DiningIcon } from './Icons.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Money } from './ui/Money.jsx';
+import { AirlineMark } from './flights/Flights.jsx';
+import { formatMoney } from '../lib/money.js';
 
 /**
  * The cost language for the whole Explore page: a euro figure, a five-step
@@ -111,6 +113,10 @@ function CostRow({ icon: Icon, label, eur, band, est }) {
  * (the tilde and "est."), the way every other price on Carta says it, and the
  * method sentences the destination page used to print under it left with
  * the page's own (owner, 2026-10-13: the method stays in the data).
+ *
+ * T518: under the day, when the card shows one, the cheapest return flight
+ * a person in the travel month (`cost.flight`), whole euros as on the card.
+ * It is not part of the day, so it sits after the day's sum, not in it.
  */
 export function CostReceipt({ cost, t }) {
   if (!cost || cost.dayEur == null) return null;
@@ -138,6 +144,17 @@ export function CostReceipt({ cost, t }) {
         <span className={`cost-total-band ${BAND_CLASS[cost.dayBand]}`}>{bandWord}</span>
         <span className="cost-total-eur"><Money value={cost.dayEur} est={isNational(cost)} /></span>
       </div>
+      {cost.flight?.perSeat > 0 && (
+        <div className="cost-row cost-row-flight">
+          <span className="cost-row-label">
+            <AirlineMark code={cost.flight.airline} size="sm" />
+            <span className="cost-row-text">{t('flight.flightLine')}</span>
+          </span>
+          {/* The gauge's column stays empty: a flight has no cost band. */}
+          <span aria-hidden="true" />
+          <span className="cost-row-eur">{t('flight.returnPerson', { price: formatMoney(cost.flight.perSeat) })}</span>
+        </div>
+      )}
     </div>
   );
 }

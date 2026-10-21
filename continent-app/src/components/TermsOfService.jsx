@@ -102,13 +102,17 @@ export function TermsOfService({ onClose }) {
           <h3>Every figure is an estimate</h3>
           <p>
             Carta publishes modelled and measured estimates with their
-            provenance. It does not republish any operator's live prices.
+            provenance. The one exception is flights, below.
           </p>
           <p>
-            Carta does not price flights. No flight figure of ours appears on
-            a screen or in a total. A flight counts in a total only when you
-            type in what you paid, and that figure is yours, shown as yours;
-            we do not check it.
+            A flight price on Carta is the price Google Flights showed for that
+            flight when we checked it, with the airline, the times and the time
+            of that check beside it. It is not an offer: Carta sells no tickets,
+            the price can change or the seat can sell out before you book, and
+            the booking site's price is the one that counts. A bag fee added to
+            a flight is our estimate of what that airline usually charges. A
+            fare you type in replaces ours, and that figure is yours, shown as
+            yours; we do not check it.
           </p>
           <p>
             A ground fare (a train, bus or ferry leg, local transport, an

@@ -11,7 +11,6 @@ import { tripKml, downloadKml } from '../lib/kmlExport.js';
 import { tripIcs, downloadIcs } from '../lib/icsExport.js';
 import { buildTripShareUrl } from '../lib/shareLink.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
-import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Money } from '../components/ui/index.js';
 import { cityLabel } from '../lib/placeName.js';
@@ -22,6 +21,9 @@ import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { TRAVEL_MODE_LABEL, legLinks, stayDatesLink } from '../lib/transportLinks.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
+import { FlightRow, HoursFilter } from '../components/flights/Flights.jsx';
+import { useAirlines, airlineName } from '../lib/flights/useAirlines.js';
+import { useLiveFlights, liveKey } from '../lib/flights/useLiveFlights.js';
 
 // How the traveller told us they get there and home. Carta prices none of it,
 // so these two helpers exist to say what THEY said rather than assume a plane:
@@ -54,6 +56,49 @@ function fmtLong(iso) {
 
 /** "Fri 18 Sep, 19:45-21:45", the date plus the priced flight's local dep/arr
  *  hours, when the times harvest covers this leg (just the date otherwise). */
+/**
+ * Whether a live answer for a flight query may still come (T518): asked and
+ * not answered, and not yet given up on. useLiveFlights shares one request
+ * per day with the planner, so this asks nothing new; a search that fails
+ * leaves no answer, so after WAIT_MS the row stops saying it is checking.
+ */
+const WAIT_MS = 20000;
+function useFlightWaiting(queries) {
+  const answers = useLiveFlights(queries);
+  const sig = (queries || []).map((q) => (q ? liveKey(q.o, q.d, q.date) : '')).join('|');
+  const [gaveUp, setGaveUp] = useState('');
+  useEffect(() => {
+    if (!sig) return undefined;
+    const id = window.setTimeout(() => setGaveUp(sig), WAIT_MS);
+    return () => window.clearTimeout(id);
+  }, [sig]);
+  return (q) => Boolean(q && gaveUp !== sig && !answers.has(liveKey(q.o, q.d, q.date)));
+}
+
+/**
+ * Carta's flight for one way (T518): the flight row with its hours filter,
+ * and the door to the traveller's own fare under it. `leg` undefined while a
+ * live answer may come reads as checking; null or no fit reads as none.
+ */
+function ItinFlight({ dir, leg, waiting, query, baggage, hours, onHours, fareField }) {
+  const { t } = useI18n();
+  const state = leg ? null : (leg === undefined && waiting ? 'loading' : 'none');
+  return (
+    <div className="itin-flight">
+      <FlightRow leg={leg || null} cost={leg?.cost} dir={dir} bagKey={baggage} state={state} wantedDate={query?.date || null}>
+        {fareField}
+      </FlightRow>
+      {onHours && (
+        <HoursFilter
+          value={hours || 'any'}
+          onChange={(band) => onHours(dir, band)}
+          label={`${t('flight.hours')}, ${dir === 'back' ? t('flight.back') : t('flight.out')}`}
+        />
+      )}
+    </div>
+  );
+}
+
 const LEG_ICONS = {
   train: TrainIcon, bus: BusIcon, car: CarIcon, fly: PlaneIcon, ferry: FerryIcon,
   public: BusIcon, taxi: CarIcon, rental: CarIcon,
@@ -185,7 +230,7 @@ function AnchorTransferLeg({ leg, from, to, onMode }) {
                 title={leg.recommended === m ? t('transfer.cartaPick') : undefined}
               >
                 <span><MIcon size={12} /> {t(meta?.labelKey || m)}{leg.recommended === m && <SparkIcon size={9} />}</span>
-                <b>{`${estPrefix(fareProv(o))}${eurExact(o.eur_total)}`}</b>
+                <b>{`${o.est ? '~' : ''}${eurExact(o.eur_total)}`}</b>
                 <small>~{fmtHours(o.hours)}</small>
               </button>
             );
@@ -286,7 +331,7 @@ function ItinLeg({ leg, onMode }) {
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
                 <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && !o.own && <SparkIcon size={9} />}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : `${o.own ? '' : estPrefix(fareProv(o))}${eurExact(o.eur_total)}`}</b>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : `${!o.own && o.est ? '~' : ''}${eurExact(o.eur_total)}`}</b>
                 <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             );
@@ -298,7 +343,7 @@ function ItinLeg({ leg, onMode }) {
           {chosen.links.map((l, j) => (
             <a key={j} href={safeUrl(l.url)} target="_blank" rel="noreferrer">{l.label} ↗</a>
           ))}
-          <BookingNote />
+          <p className="booking-note">{t('prov.bookingNote')}</p>
         </div>
       )}
     </div>
@@ -367,6 +412,9 @@ export function TripItinerary({
   // The total bar opens the receipt (T500): a new receiptOpenKey opens its
   // lines, and receiptId lets the bar scroll to it.
   receiptId = undefined, receiptOpenKey = 0,
+  // Carta's flight there and home (T518): the hours wanted each way and the
+  // trip's bag, both from useTripPlanner.
+  flightHours = null, onFlightHours = null, baggage = 'cabin',
 }) {
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
@@ -422,9 +470,15 @@ export function TripItinerary({
   if (carRental) bookingRows.push({ key: 'car', label: t('extras.car'), estimate: carRental.eur_total ?? null });
 
   // Everything the share text / printable PDF needs, in one bag.
+  // Carta's flight each way (T518): shown where no fare of their own is typed.
+  const cartaFlight = priced?.cartaFlight || null;
+  const airlines = useAirlines();
+  const flightWaiting = useFlightWaiting(cartaFlight?.queries);
   const exportPayload = {
     label, stopDetails, dayPlan, flight, flightTransfer, legs, anchorLegs, stayCosts, carRental, vignettes,
     tripHasCar, driveLegs, grandTotal, groupSize,
+    // Carta's flight each way and the airline names it is written with (T518).
+    cartaFlight: priced?.cartaFlight || null, airlines,
     extras, bookingRows,
   };
 
@@ -523,6 +577,10 @@ export function TripItinerary({
   const paidOut = ownFlight ? (split ? Number(ownFlight.costOut) || 0 : Number(ownFlight.costTotal) || 0) : 0;
   const paidBack = ownFlight && split ? Number(ownFlight.costBack) || 0 : 0;
   const travelMode = flight?.driving ? 'car' : (flight?.mode || 'fly');
+  const showFlight = (dir) => Boolean(cartaFlight && !flight?.driving && !((dir === 'out' ? paidOut : paidBack) > 0));
+  const legText = (leg) => (leg
+    ? [airlineName(airlines, leg.airline), t('flight.times', { dep: leg.dep, arr: leg.arr }), fmtLong(leg.date)].filter(Boolean).join(', ')
+    : '');
   const firstCity = stopDetails[0]?.dest?.city || '';
   const lastCity = stopDetails[stopDetails.length - 1]?.dest?.city || '';
   // A flight lands at an airport, not at a town without one (T458): with a
@@ -531,12 +589,16 @@ export function TripItinerary({
   const outIata = flightTransfer ? stopDetails[stopDetails.length - 1]?.dest?.anchor_airport : null;
   const flyIn = inIata ? t('plan.howTo', { how: ownTravelHow(flight, t), place: inIata }) : '';
   const flyOut = outIata ? t('plan.howFrom', { how: ownTravelHow(flight, t), place: outIata }) : '';
-  const thereText = flight?.driving
+  const thereText = showFlight('out') && cartaFlight.out
+    ? legText(cartaFlight.out)
+    : flight?.driving
     ? [driveLegs?.from, driveLegs?.out ? t('trip.driveSub', { km: driveLegs.out.road_km, hours: fmtHours(driveLegs.out.hours) }) : ''].filter(Boolean).join(', ')
     : flight?.combinable
       ? `${t('itin.fromTo', { a: flight.origin, b: flight.into_anchor })}, ${fmtLong(stopDetails[0]?.arriveDate)}`
       : [flyIn || ownTravelHow(flight, t), flyIn ? '' : firstCity, fmtLong(flight?.out_date || stopDetails[0]?.arriveDate)].filter(Boolean).join(', ');
-  const homeText = flight?.driving
+  const homeText = showFlight('back') && cartaFlight.back
+    ? legText(cartaFlight.back)
+    : flight?.driving
     ? (driveLegs?.home ? t('trip.driveSub', { km: driveLegs.home.road_km, hours: fmtHours(driveLegs.home.hours) }) : '')
     : flight?.combinable
       ? `${t('itin.fromTo', { a: flight.out_anchor, b: flight.origin })}, ${fmtLong(stopDetails[stopDetails.length - 1]?.departDate)}`
@@ -545,6 +607,32 @@ export function TripItinerary({
     ? t('plan.dateRange', { a: fmtLong(stopDetails[0].arriveDate), b: fmtLong(stopDetails[stopDetails.length - 1]?.departDate) })
     : '';
   const partyText = groupSize === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: groupSize });
+  // The traveller's own fare each way: the override, always one tap away,
+  // beside Carta's flight when there is one (T518).
+  const outFare = (
+    <PaidField
+      id="paid-out"
+      value={paidOut}
+      estimate={flight?.driving ? driveLegs?.out?.ground_total ?? null : null}
+      label={t('plan.yourFareFor', { people: partyText })}
+      addLabel={t('plan.addYourFare')}
+      onChange={(n) => onTravelPaid?.('out', n)}
+      folded
+      hint={false}
+    />
+  );
+  const backFare = (
+    <PaidField
+      id="paid-back"
+      value={paidBack}
+      estimate={flight?.driving ? driveLegs?.home?.ground_total ?? null : null}
+      label={t('plan.yourFareFor', { people: partyText })}
+      addLabel={t('plan.addYourFare')}
+      onChange={(n) => onTravelPaid?.('back', n)}
+      folded
+      hint={false}
+    />
+  );
   const jumpToFare = () => {
     const el = typeof document !== 'undefined' ? document.getElementById('paid-out') : null;
     if (!el) return;
@@ -591,22 +679,23 @@ export function TripItinerary({
             <ol className="itin-steps">
               <li className="itin-end" id="itin-fare-out">
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
-                <span className="itin-end-main">
+                <div className="itin-end-main">
                   <b>{t('itin.secGetThere')}</b>
                   <small>{thereText}</small>
-                </span>
-                {onTravelPaid && (
-                  <PaidField
-                    id="paid-out"
-                    value={paidOut}
-                    estimate={flight?.driving ? driveLegs?.out?.ground_total ?? null : null}
-                    label={t('plan.yourFareFor', { people: partyText })}
-                    addLabel={t('plan.addYourFare')}
-                    onChange={(n) => onTravelPaid('out', n)}
-                    folded
-                    hint={false}
-                  />
-                )}
+                  {showFlight('out') && (
+                    <ItinFlight
+                      dir="out"
+                      leg={cartaFlight.out}
+                      waiting={flightWaiting(cartaFlight.queries?.[0])}
+                      query={cartaFlight.queries?.[0]}
+                      baggage={baggage}
+                      hours={flightHours?.out}
+                      onHours={onFlightHours}
+                      fareField={onTravelPaid ? outFare : null}
+                    />
+                  )}
+                </div>
+                {onTravelPaid && !showFlight('out') && outFare}
               </li>
               {!anchorIn && flightTransfer && (
                 <FlightTransferRow
@@ -742,22 +831,23 @@ export function TripItinerary({
               )}
               <li className="itin-end">
                 <span className="itin-end-icon"><OwnTravelIcon mode={travelMode} size={16} /></span>
-                <span className="itin-end-main">
+                <div className="itin-end-main">
                   <b>{t('itin.secGetHome')}</b>
                   <small>{homeText}</small>
-                </span>
-                {onTravelPaid && (
-                  <PaidField
-                    id="paid-back"
-                    value={paidBack}
-                    estimate={flight?.driving ? driveLegs?.home?.ground_total ?? null : null}
-                    label={t('plan.yourFareFor', { people: partyText })}
-                    addLabel={t('plan.addYourFare')}
-                    onChange={(n) => onTravelPaid('back', n)}
-                    folded
-                    hint={false}
-                  />
-                )}
+                  {showFlight('back') && (
+                    <ItinFlight
+                      dir="back"
+                      leg={cartaFlight.back}
+                      waiting={flightWaiting(cartaFlight.queries?.[1])}
+                      query={cartaFlight.queries?.[1]}
+                      baggage={baggage}
+                      hours={flightHours?.back}
+                      onHours={onFlightHours}
+                      fareField={onTravelPaid ? backFare : null}
+                    />
+                  )}
+                </div>
+                {onTravelPaid && !showFlight('back') && backFare}
               </li>
             </ol>
             <TransferModePicker

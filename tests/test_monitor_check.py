@@ -123,7 +123,7 @@ class MonitorTests(unittest.TestCase):
 
     def test_pipeline_failed_task(self):
         rows = json.loads(self.stub.routes["/rest/v1/pipeline_runs"][1])
-        rows[0]["failed"] = ["fare_model"]
+        rows[0]["failed"] = ["crowding"]
         self.stub.routes["/rest/v1/pipeline_runs"] = (200, json.dumps(rows).encode())
         self.assertEqual(self.failing(), {"pipeline:failed"})
 

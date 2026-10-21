@@ -19,6 +19,9 @@
 name = "carta-app"
 compatibility_date = "2026-09-23"
 pages_build_output_dir = "dist"
+# functions/api/flights.js (T515) runs the vendored fli-js, which imports
+# node:buffer for its search token.
+compatibility_flags = ["nodejs_compat"]
 
 # The prerendered pages and their share cards (T221, owner decision T272).
 # A bucket of its own, with no custom domain and no public access, so the same

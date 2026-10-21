@@ -20,7 +20,9 @@
 //               the shared day track (T387); the prose is behind "More about
 //               this day", not mounted while closed, and back when opened.
 //   cost        (T387) the cost fold is a receipt: every estimated figure
-//               carries the tilde and "est.", no line is a flight, and the
+//               carries the tilde and "est.", no line is a flight except
+//               Carta's own home flight (T518: its lines carry the airline
+//               mark and Google Flights' fare, not an estimate), and the
 //               fact row's day figure is the receipt's day line.
 //   photos      each day carries a photo strip, every picture of it loaded,
 //               every one is captioned, and each goes through srcset rather
@@ -204,11 +206,14 @@ for (const [label, sel] of [
 // The receipt (T387, brief row C10): every figure that is an estimate says so
 // with the tilde and "est." in words, no line is a flight, and the fact row's
 // day figure is the receipt's own day line (one day figure per page).
-const receiptFigs = await page.locator('#sec-cost .itin-cost li b').allInnerTexts();
+// T518: Carta's home flight lines (an airline mark in the label) print
+// Google Flights' fare to the cent and are not estimates, so they are left
+// out of the estimate check and out of the no-flight check.
+const receiptFigs = await page.locator('#sec-cost .itin-cost li:not(:has(.flt-mark)) b').allInnerTexts();
 const unmarked = receiptFigs.filter((tx) => !/^~ .+ est\.$/.test(tx.trim()));
 check('every receipt figure carries the tilde and "est."', receiptFigs.length > 0 && unmarked.length === 0,
   unmarked.slice(0, 3).join(' | ') || `${receiptFigs.length} figures`);
-const receiptText = await page.locator('#sec-cost .itin-receipt').innerText().catch(() => '');
+const receiptText = (await page.locator('#sec-cost .itin-cost li:not(:has(.flt-mark))').allInnerTexts().catch(() => [])).join('\n');
 check('no flight in the receipt', receiptText !== '' && !/flight|fly|plane/i.test(receiptText));
 check('the receipt has a total over a 2px rule',
   await page.locator('#sec-cost .itin-cost-sum').count() === 1);

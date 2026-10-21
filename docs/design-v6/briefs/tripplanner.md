@@ -309,7 +309,7 @@ What is missing: a price on every choice card; one total that is the same on eve
 
 What sits in the wrong place: "Booked" as the first question (it decides the path, but a traveller who has booked nothing is the common case, and the research says most start undecided); the travellers stepper on Finish; the receipt below the route and above "Your days" in the planned view, when it is the first thing a money-first traveller looks for; "Know before you go" and "Travel cheaper" at the end of a 2,546 px sheet.
 
-What sends them away: Google Flights Explore from the Where step ("Not sure where to go yet?"), Google Flights, Skyscanner and Rome2rio on every leg, and Google Flights from the brief. These are honest (Carta does not price flights) and should stay, but the traveller should leave knowing what Carta already priced: the ground cost of the trip should be on screen when they click out. The chat planner, which the surface list names, is on the Day tab: someone looking for "ask Carta to plan it" on the trip tab will not find it.
+What sends them away: Google Flights Explore from the Where step ("Not sure where to go yet?"), Google Flights, Skyscanner and Rome2rio on every leg, and Google Flights from the brief. These are honest (when written, Carta did not price flights; since 2026-10-21, T517, the planner rows show Google Flights' price with an hours filter and the link out) and should stay, but the traveller should leave knowing what Carta already priced: the ground cost of the trip should be on screen when they click out. The chat planner, which the surface list names, is on the Day tab: someone looking for "ask Carta to plan it" on the trip tab will not find it.
 
 ## 6. Plan (impeccable shape)
 
