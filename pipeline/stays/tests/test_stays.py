@@ -149,3 +149,19 @@ def test_fixture_rows_refused(tmp_path):
                 (date.today().isoformat() + "T00:00:00Z",))
     obs = B.load_obs(con, {}, {"PMI": "ES"}, None)
     assert [o["src"] for o in obs] == ["xotelo"]
+
+
+def test_outlier_rate_and_star_order():
+    obs = _seasonal_obs()
+    # One absurd OTA rate (a suite, a typo) in October must not reach the curve.
+    obs.append(_obs("PMI", "h0", "hotel", "room", probe_day(date(2026, 10, 1), 0), 80 * 25, 3))
+    # A 4-star priced under the 3-stars must not stay under them.
+    for m in range(1, 13):
+        y = 2027 if m < 10 else 2026
+        obs.append(_obs("PMI", "cheap4", "hotel", "room", probe_day(date(y, m, 1), 0), 60 * _season(m), 4))
+        obs.append(_obs("PMI", "cheap4b", "hotel", "room", probe_day(date(y, m, 1), 0), 62 * _season(m), 4))
+    rec = B.build([_dest("PMI", 39.57, 2.65)], obs, {}, {}, {})["PMI"]
+    h3 = rec["month"]["hotel3"]
+    assert max(h3) < 3 * min(h3)
+    b = rec["beds"]
+    assert b["hotel2"] < b["hotel3"] < b["hotel4"] < b["hotel5"]

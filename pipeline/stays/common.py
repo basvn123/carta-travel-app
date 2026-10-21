@@ -147,7 +147,10 @@ create table if not exists blocks (
 def journal(path=None):
     path = Path(path or JOURNAL)
     path.parent.mkdir(parents=True, exist_ok=True)
-    con = sqlite3.connect(path)
+    # WAL and a busy timeout: a build reading the journal while a harvest
+    # writes it must wait, not fail (T536 hit "database is locked").
+    con = sqlite3.connect(path, timeout=60)
+    con.execute("pragma journal_mode=wal")
     con.executescript(SCHEMA_SQL)
     return con
 

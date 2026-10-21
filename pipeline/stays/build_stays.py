@@ -57,6 +57,13 @@ PLI_PROXY = {"GB": "IE", "FO": "DK", "AD": "ES", "LI": "CH", "MC": "FR",
 # in Europe has measured both (never expected after the first runs).
 STAR_DEFAULT = {2: 0.72, 3: 0.92, 4: 1.25, 5: 2.1}
 SEASONAL_CHECK = ["PMI", "JTR", "DBV", "EDI"]
+# One OTA rate can be a typo or a suite: a price this far from the property's
+# own median is dropped, and a month can move a price at most this far.
+OUTLIER = 2.5
+CURVE_MIN, CURVE_MAX = 0.5, 2.2
+# Star classes never come out cheaper than the class below (the T536 first
+# build had Vienna's 4-star under its 3-star from 26 classed hotels).
+STAR_STEP = 1.08
 
 
 def size_bucket(pop):
@@ -145,6 +152,8 @@ def curve_and_level(obs):
     levels, rel = [], [[] for _ in range(12)]
     for ps in by_prop.values():
         med = median([p["price"] for p in ps])
+        ps = [p for p in ps if med / OUTLIER <= p["price"] <= med * OUTLIER]
+        med = median([p["price"] for p in ps])
         levels.append(med)
         for p in ps:
             rel[p["day"].month - 1].append(p["price"] / med)
@@ -157,7 +166,7 @@ def normalise(curve):
     if not vals:
         return curve
     mean = sum(vals) / len(vals)
-    return [round(c / mean, 3) if c else None for c in curve]
+    return [round(min(max(c / mean, CURVE_MIN), CURVE_MAX), 3) if c else None for c in curve]
 
 
 def fill(curve, *fallbacks):
@@ -357,6 +366,14 @@ def build(dests, obs, iab, supply, euro):
             rec["beds"][k] = round(lvl)
             rec["src"][k] = src
             rec["month"][k] = [round(lvl * c) for c in cur]
+        # Stars rise: a class is never cheaper than the class below it.
+        for s in (3, 4, 5):
+            lo, k = rec["beds"].get(f"hotel{s - 1}"), f"hotel{s}"
+            if lo and rec["beds"].get(k) and rec["beds"][k] < lo * STAR_STEP:
+                f = lo * STAR_STEP / rec["beds"][k]
+                rec["beds"][k] = round(rec["beds"][k] * f)
+                rec["month"][k] = [round(v * f) for v in rec["month"][k]]
+                rec["src"][k] = dict(rec["src"][k], scaled=True)
         if "single" in m and h_lvl:
             rec["single"]["hotel"] = round(m["single"]["level"] / h_lvl, 3)
 

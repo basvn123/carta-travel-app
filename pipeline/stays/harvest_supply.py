@@ -53,7 +53,7 @@ def stars_of(tags):
 def fetch(client, cc):
     for attempt in range(4):
         r = client.post(OVERPASS, data={"data": QUERY.format(cc=cc)})
-        if r.status_code in (429, 504):
+        if r.status_code in (429, 502, 503, 504):
             time.sleep(60 * (attempt + 1))
             continue
         r.raise_for_status()
