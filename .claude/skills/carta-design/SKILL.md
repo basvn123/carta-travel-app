@@ -48,9 +48,11 @@ could defend out loud.
 
 ## What Carta is
 
-A price transparency tool for budget travel in Europe. It prices the ground for every destination (bed,
-food, local transport, per person per day), plans the trip city by city and each day hour by hour, and
-marks every estimate as an estimate. It does not price flights: the only flight figure in a total
+"Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." (owner, T471-b, 2026-10-21; the same sentence as PRODUCT.md). One app for planning a trip
+anywhere in Europe, cutting coordination and logistics. It prices the ground for every destination (a bed
+plus food and drink, per person per day; local transport is not in the day figure yet), plans the trip city
+by city and each day hour by hour, and marks every estimate as an estimate. Carta never navigates: no route
+guidance and no GPS, the traveller's maps app takes them there. It does not price flights: the only flight figure in a total
 is one the traveller typed in, labelled as theirs. Never imply otherwise. It takes no booking and no
 commission; it hands the traveller to the operator.
 
@@ -302,11 +304,15 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Workspace (T500, T501).** Desktop: list left, map right, a fixed total bar at the foot that reads only `priceTrip()`, opens the receipt and never holds the primary; inside a trip it shows the trip first, then the day. Phone: the map fills the screen under one MapDrawer with three states (a `--drawer-strip` strip, half, up to under the header); the amount is always in the strip; the handle is a `--tap-main` button, so dragging is never required; the bottom nav hides when the drawer is full. Picked countries on a map are `--select-bg` with a `--text` edge.
 
+**Explore: one overview per place (T504, roadmap 1.5).** A place says the same thing in the list and on the map, because both draw `browse/PlaceOverview.jsx` and read `lib/placeOverview.js`: a 72 px photo, the name with the Score, the flag with the region and country ("Tuscany, Italy", else the country), one reason (a guided answer, else the month's own sentence, else "Good in October", else "Best in May to Sep"; never two), the price a person a day in whole euros through `<Money est>`, and the save control outside the link. With a month the Score is the month's score once the wire carries it, else the base Score. A pin picks, it does not open: the picked pin is the one selected state on the map (`--select-bg` label with the `--select-border` edge, the dot ringed in the action brown), the picked row has the brown edge, and the overview opens the place. List | Map changes the view only; filters, sort and the pick stay (`xi=`). Desktop docks the picked overview at the foot of the map with a close; a phone's map lies under the MapDrawer, whose strip holds List | Map and the handle and whose body lists the places on the map as the same overview rows, the picked one first. A map never draws a second card of its own for a place.
+
 **Day detail (T501, owner T492-c).** The traveller picks how detailed a day is with one quiet Detail control: List (default), Parts of the day (Morning, Afternoon, Evening heads, 12 px 600 `--text-2`, not cards; Lunch and Dinner rows without amounts) or By the hour. Adding never reorders the day; "Best route" asks first. A ticket counts per person only where its price is known, else "Ticket, price not known" and no figure.
 
 **The day sentence.** What a day price includes is built from a list of parts, one key per part ("A bed plus food and drink."), so a transport estimate is one more part later (owner T491-h). The destination page tabs (Overview, Nearby, When to go, Practical) stick under the PageBar by the sticky-rail rule and change the URL without a history step.
 
 **The receipt.** Carta's signature object, wherever a total needs justifying: a `--surface-sunken` head with destination and route, one hairline separated line per cost component with the figure right aligned in cents, a `2px solid var(--text)` rule above the sum, the sum, and a tinted footer showing what one changed input would do to the total. It is the page's one bordered object and may carry `--elev-1` instead of its border, not both. On a trip page the trip's own budget is the receipt (cost bar, lines, est marks, total a person and for the party, the one Lifestyle control under it); a nearby town's receipt is a labelled second view and carries no stay select of its own. A day plan carries one per person figure for the day from the same cost index; a tap opens the compact receipt. A receipt line may appear outside the receipt only when read live from it and set exactly as it sets it.
+
+**Budget search (T506, roadmap 1.19).** One bordered band at the top of Explore (not on Home; the owner places Home): "How much do you have?" first, the only required field, whole euros; under it one sentence states every other input ("2 people, 5 days in October, from Brussels by train or bus") with one quiet Change that opens Who, How long, When, From where and how, and Buffer in place. The search button is a secondary (the one primary belongs in the lower half). Every figure comes from `priceTrip()` through `lib/budgetSearch.js`; no second formula. The answer is "Places that fit {price}", then two groups only, Fits (the total with the buffer is within the budget) and Tight (it fits only by spending the buffer), as compact rows: the total for the group as the headline price, the day price a person under it (bed plus food, no buffer, the card's own basis), then what is left; too dear is one sentence ("3 places are a little over. With {price} more, they fit."), never a list, and no counts beside the headings. Its receipt is the receipt above in whole euros (owner 1.8): Bed, Food and drink, "Buffer, 10%" as its own line (on by default, T475-d), the total, then a "Not in the total yet" head with getting there (named by the chosen way), local transport and tickets, each reading "Not priced yet" in `--text-2` with no amount, tilde or dash, never summed. Inline under its row on a phone, a sticky column beside the list from 1024 px.
 
 **The cost bar.** At most one stacked bar above a receipt's lines, never instead of them: 8 px, full width, one segment per line in receipt order in the `--kind-*` ramp, 1 px `--surface` gaps, no brown, no legend, no percentages.
 
@@ -321,6 +327,8 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 **Ratings.** The Score: a star and the figure in ink, 12 px minimum, no fill (T437). A page head adds the band word. Hidden gems are a brown diamond with the word. Place kind is the ink ramp. Tier names such as "Worth the journey" never appear on screen.
 
 **Plan cards.** Equal weight; the recommended plan is marked with a brown border and a "Recommended" chip and keeps the same ground. Never dim the free plan. State limits as plain numbers.
+
+**My trips, Account and the pass screens (T503).** A trip on My trips carries one price: what it costs a person a day, in whole euros, with the estimate mark where it is one (owner 1.8); the party's total belongs to the receipt in Plan. A trip kept without an account says where it is ("Saved on this device") in one 13 px `--text-2` line under its card, with "Sign in" as a quiet small button, offered only as the way to have it on a second device, never as a condition. The Visited band carries the countries (the figure, the flags, Edit or Add in the same cell, the names as a list for screen readers); there is no second list of countries, and with nothing on the record the band is that one cell and its Add, never a row of zeros. "See all prices" is a quiet link (13 px 600 `--action`, underlined, `--tap` high) to `/pricing` at the foot of Account's Your plan and of the pass sheet, never a second primary; following it from the sheet closes the sheet first. Where the numbers come from (`/about/numbers`) is a link row in Account's help menu and desktop rail; the method and the counts live on that page and nowhere else. The pass price itself stays in cents, the amount charged.
 
 **Suitability strip (retired 2026-10-15, T431).** The three-cell band under a trip hero is gone: the trip page carries a fact band (days, distance, climb, highest point, where you sleep, start) and the difficulty as a status chip in the head (five squares filled `--text` to the level, outlined `--text-3` beyond, plus the word, with an InfoDot). The five squares stay the one difficulty drawing everywhere.
 
@@ -433,6 +441,8 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 - Active voice, verb first. A button that says "Save trip" produces "Trip saved."
 - Errors say what happened and what to do in one sentence, with no apology and no "Error:" prefix.
 - Empty states are an invitation, not an apology: name the space and give the action.
+- A hand-over names the thing and the app: "Open Day 2 in Google Maps", "Open this ride in Google Maps".
+  Never "Navigate", "Start route" or "Directions", because Carta does not navigate.
 - Honest in the product's own voice. Carta does not price flights; the fare is the traveller's own
   entry. When the AI is off, say it is off. An empty result says so in one line.
 - Strings go through i18n keys in all six languages, never concatenation; test labels at the longest
