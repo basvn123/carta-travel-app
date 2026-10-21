@@ -1647,9 +1647,9 @@ def build_one(dest, ctx, refusal_log):
             if dest.get(k) is not None:
                 verdict[k] = dest[k]
 
-    # D3: where to sleep - the neighbourhood prices the wire always carried
-    # and no renderer ever spent, cheapest first, plus the tiers and the
-    # 12-month price curve.
+    # D3: where to sleep - the neighbourhood prices, cheapest first, plus the
+    # annual bed prices per tier (schema v18, T534). The 12-month curve lives
+    # in the stays wire, which the app fetches per country.
     ac = dest.get("accommodation") or {}
     sleep = {}
     if ac.get("neighbourhoods"):
@@ -1657,7 +1657,7 @@ def build_one(dest, ctx, refusal_log):
             ac["neighbourhoods"],
             key=lambda n: n.get("night_eur") if n.get("night_eur") is not None else 1e9,
         )[:8]
-    for k in ("per_person_night_eur", "seasonality", "tiers"):
+    for k in ("beds", "q", "captured"):
         if ac.get(k):
             sleep[k] = ac[k]
 

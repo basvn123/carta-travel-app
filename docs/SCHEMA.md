@@ -1,6 +1,6 @@
 # app_data schema
 
-Live master: `meta.schema_version` = 17. The `Schema vN` sections further down
+Live master: `meta.schema_version` = 18. The `Schema vN` sections further down
 are the additive changelog of layers (their numbering ran ahead of the meta
 field; treat the sections as history, `meta.schema_version` as the contract).
 
@@ -33,8 +33,8 @@ no rental is added.
 the app reads it via `runtime_pricing.js`. Cost data originally came from
 notebook `03_costs` (Numbeo anchors + Eurostat PLI) and accommodation from
 `03b_accommodation` (Inside Airbnb anchors + Eurostat PLI); those v1 notebooks
-are archived in `archive/notebooks/`, and the live accommodation path is
-`pipeline/harvest_accommodation.py` + its apply scripts.
+are archived in `archive/notebooks/`. Since schema v18 (T530-T536) the live
+accommodation path is `pipeline/stays/` (see "Schema v18" below).
 
 ## app_data.json
 
@@ -80,15 +80,13 @@ are archived in `archive/notebooks/`, and the live accommodation path is
       "club_entry_eur":  "nightclub cover charge (estimate)"
     },
     "cost_validation": { "overall_mae_pct": 17.9, "per_item_mae_pct": {...} },
-    "accommodation_model": {                  // applied at runtime per trip
-      "service_fee_pct": 14.0,                // Airbnb guest service fee
-      "cleaning_fee_frac_of_night": 0.5,      // how the stored cleaning fee was derived
-      "weekly_discount_pct": 8.0,             // stays >= min_nights_for_weekly
-      "min_nights_for_weekly": 7,
-      "seasonality": { "1": 0.82, ..., "7": 1.35, "8": 1.35, ..., "12": 0.92 },
-      "assumptions": "entire home/apt; stored value is the annual median ..."
+    "stays": {                                // v18: bed prices (pipeline/stays)
+      "v": 1, "built": "2026-11-02T05:41:10Z",
+      "url": "https://data.carta-europetravel.com/data/stays-live/v1/",  // monthly refresh
+      "fees": { "service_fee_pct": 14, "cleaning_fee_frac_of_night": 0.5,
+                "weekly_discount_pct": 8, "min_nights_for_weekly": 7 },  // Airbnb, entire place
+      "tiers": ["dorm", "private", "room", "home", "hotel2", "hotel3", "hotel4", "hotel5"]
     },
-    "accommodation_validation": { "overall_mae_pct": 16.9, "n_checks": 13 },
     "car_model": {                            // drive-vs-fly + rental parameters
       "consumption_l_per_100km": 6.5,         // compact car, mixed driving
       "fuel_price_eur_per_l": 1.81,           // EU-27 average petrol, fallback
@@ -147,45 +145,20 @@ are archived in `archive/notebooks/`, and the live accommodation path is
         "level": "country",         // "city" (override) or "country"
         "price_source": "numbeo_direct"  // numbeo_city | numbeo_direct | pli_scaled
       },
-      "accommodation": {            // Airbnb anchor (EUR); null if unknown
-        "per_person_night_eur": 30.0,    // annual median entire-home base, per head (no fees)
-        "cleaning_per_person_eur": 15.0, // cleaning fee per booking, per head
-        "entire_home_night_eur": 120,    // headline whole-home median nightly (display)
-        "typical_capacity": 4,           // listing capacity the per-head figure assumes
-        "level": "city",                 // "city" | "country"
-        // inside_airbnb_city (measured, this town, <=20km) |
-        // inside_airbnb_country | airbnb_pli_scaled | *+pop (long-tail pop tier)
-        "price_source": "inside_airbnb_city",
-        // --- specificity fields (harvest_accommodation.py v2), all optional ---
-        "seasonality": [0.5, 0.5, ..., 1.7, 1.7, ..., 0.5],  // this CITY's own 12-mo
-                                         // curve from calendar.csv (idx0=Jan), avg~1.0;
-                                         // overrides meta.accommodation_model.seasonality
-        "capacity_buckets": { "2": 150, "4": 191, "6": 300 }, // OBSERVED whole-home
-                                         // nightly per group size; replaces the
-                                         // modelled occupancy^0.55 extrapolation
-        "neighbourhoods": [              // per-neighbourhood medians (city matches only)
+      "accommodation": {            // v18 bed prices (EUR, annual medians); absent if none
+        "beds": {
+          "dorm": 26,                    // one hostel bed, per person
+          "private": 71,                 // hostel or guesthouse private double, per room
+          "bnb_room": 64,                // Airbnb private room, per room
+          "bnb_home": { "2": 98, "4": 113, "6": 143, "8": 161 },  // entire place by sleepers
+          "hotel2": 66, "hotel3": 84, "hotel4": 115, "hotel5": 190  // double room by star
+        },
+        "q": "measured",                 // measured | nearby | modelled (best of the beds)
+        "captured": "2026-10-21",        // newest observation behind the figures
+        "supply": { "hostel": true, "hotel": true, "hotel5": true, "bnb": true },
+        "neighbourhoods": [              // Inside Airbnb medians, towns with 300+ listings
           { "name": "Oia", "night_eur": 320, "cap": 4, "n": 200 }
-        ],
-        "n_listings": 3587,              // listings behind the median (measured only)
-        "captured": "2026-06-28",        // Inside Airbnb snapshot date
-        "source_place": "Santorini",     // which anchor supplied this
-        "source_km": 0.0,                // distance town->anchor centre (<=20 km)
-        "settlement_tier": "metro",      // long-tail pop tier (+pop sources only)
-        "pop_factor": 1.15,              // multiplier that tier applied
-        "longtail_base": { },            // pre-tier values, for idempotent reruns
-        // --- stay tiers (apply_stay_tiers.py), measured cities only (<=20km),
-        // ANNUAL medians like the Airbnb anchor; the runtime seasons them.
-        // Powers choices.stay_tier: dorm|private|home|hotel3|hotel4|hotel5.
-        "tiers": {
-          "dorm_pp_night_eur": 18.4,       // cheapest-dorm median, PER BED (Hostelworld)
-          "private_room_night_eur": 55.0,  // hostel/guesthouse private double, PER ROOM
-          "hotel3_night_eur": 92.0,        // 3-star double, PER ROOM (LiteAPI)
-          "hotel4_night_eur": 128.0,       // 4-star double, PER ROOM (LiteAPI)
-          "hotel5_night_eur": 210.0,       // 5-star double, PER ROOM (LiteAPI)
-          "n_hostels": 14, "n_hotels": 52, // properties behind the medians
-          "src": "hostelworld+liteapi",    // "fixture" = dev data, never shipped
-          "captured": "2026-07-28"
-        }
+        ]
       },
       "local_transport": {          // "do I need a car here?" (category estimate)
         "car_needed": false,             // true -> a rental is added when you fly in
@@ -830,8 +803,7 @@ here yet.
 | `categories` | meta | required | app_data.json block |
 | `cost_basket` | meta | required | app_data.json block |
 | `cost_validation` | meta | required | app_data.json block |
-| `accommodation_model` | meta | required | app_data.json block |
-| `accommodation_validation` | meta | required | app_data.json block |
+| `stays` | meta | required | app_data.json block |
 | `car_model` | meta | required | app_data.json block; Schema v14 section 2 |
 | `n_destinations` | meta | required | app_data.json block |
 | `is_mock` | meta | required | app_data.json block |
@@ -856,7 +828,6 @@ here yet.
 | `origin_coverage` | meta | required | not yet described |
 | `place_model` | meta | required | not yet described |
 | `rating_model` | meta | required | Schema v14 section 1 |
-| `stay_tiers_available` | meta | required | not yet described |
 | `tourist_premium_model` | meta | required | Schema v14 section 3 |
 | `id` | destination | every | app_data.json block; the record's key |
 | `tier` | destination | every | app_data.json block |
@@ -872,7 +843,7 @@ here yet.
 | `no_ryanair_route` | destination | every | app_data.json block |
 | `anchor_airport` | destination | every | app_data.json block |
 | `costs` | destination | every | app_data.json block |
-| `accommodation` | destination | every | app_data.json block; Stay tiers |
+| `accommodation` | destination | every | app_data.json block; Schema v18 |
 | `local_transport` | destination | every | app_data.json block |
 | `beauty` | destination | every | app_data.json block |
 | `image` | destination | every | app_data.json block (`hires` stripped on the wire) |
@@ -898,3 +869,30 @@ here yet.
 | `members` | destination | some | not yet described (towns grouped under this one, `member_layer.py`) |
 | `wikidata` | destination | some | Schema v15 section 2 |
 | `anchor_estimated` | destination | some | Flight data provenance (auto-anchored destinations) |
+
+## Schema v18 (added 2026-10-21, T530-T536): bed prices for every bed type and month
+
+Replaces the v16/v17 accommodation layer (Inside Airbnb anchors scaled by
+country price level and population, and the fixture hotel/hostel tiers). The
+old scripts are in `pipeline/archive/`.
+
+- **Sources (all free):** Xotelo (TripAdvisor-based, dated per-OTA prices for a
+  few anchor properties per destination, monthly), Inside Airbnb (CC BY 4.0,
+  entire place by capacity, private room), the owner's twice-yearly Booking.com
+  and Hostelworld list scrape (star class, dorm beds, gaps), OpenStreetMap
+  (supply, stars), Eurostat (HICP CP112 drift, price level, nights). Only
+  medians per destination are published.
+- **`dest.accommodation`** carries the annual medians (above). The **stays wire**
+  `stays/v1/{iso2}.json` carries, per destination: `month[bed][12]` (EUR per
+  unit, measured per month), `weekend` (Friday and Saturday factor), `peak`
+  (`xmas`, `easter`, `aug15` factors), `single.hotel` (1-adult room ratio),
+  `season_q` (one letter per month: `m` measured, `f` filled), `src[bed]`
+  (`q`, `from`, `km`, `n`, `scaled`). The app keeps the newer of the baked copy
+  (`public/stays/v1/`) and the monthly refresh (`meta.stays.url`).
+- **Runtime:** `continent-app/src/lib/stayPrice.js` `bedPrice()` prices night by
+  night (each night its month, weekend and peak factors), sizes rooms to the
+  party (dorm per bed, rooms `ceil(people / 2)`, the smallest home that sleeps
+  the group) and adds `meta.stays.fees` on an entire place only.
+- **Refresh:** `.github/workflows/stays-refresh.yml` (weekly Xotelo slice,
+  monthly build and gated publish), `scripts/stays_scrape.bat` (owner's laptop,
+  March and September), `run_pipeline.py` tasks `stays` and `stays_discover`.

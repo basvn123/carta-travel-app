@@ -11,6 +11,7 @@ For every Carta destination with listings inside its footprint (common.footprint
 it writes the medians the stay model uses:
 
   home {2,4,6,8}  entire place, by how many it sleeps (accommodates cap-1..cap)
+  hoods           up to 8 neighbourhood medians, in towns with 300+ listings
   room            private room
   shared          shared room (a dorm-like bed)
   n, dataset, snapshot
@@ -85,16 +86,29 @@ def read_listings(path):
     q = f"""
       select try_cast(latitude as double) lat, try_cast(longitude as double) lon,
              room_type, try_cast(accommodates as integer) acc,
-             try_cast(regexp_replace(price, '[^0-9.]', '', 'g') as double) price
+             try_cast(regexp_replace(price, '[^0-9.]', '', 'g') as double) price,
+             neighbourhood_cleansed hood
       from read_csv_auto('{path.as_posix()}', all_varchar=true)
       where price is not null and latitude is not null"""
     return duckdb.sql(q).fetchall()
 
 
+def neighbourhoods(rows):
+    """Up to 8 neighbourhoods, cheapest first: the median whole place for 3 to
+    4 sleepers in each, where at least 15 such listings exist."""
+    by = {}
+    for _, _, rt, acc, p, hood in rows:
+        if rt == "Entire home/apt" and acc in (3, 4) and hood:
+            by.setdefault(hood, []).append(p)
+    out = [{"name": h, "night_eur": round(median(v)), "cap": 4, "n": len(v)}
+           for h, v in by.items() if len(v) >= 15]
+    return sorted(out, key=lambda x: x["night_eur"])[:8]
+
+
 def summarise(rows):
     home = {c: [] for c in HOME_CAPS}
     room, shared = [], []
-    for _, _, rt, acc, p in rows:
+    for _, _, rt, acc, p, _ in rows:
         if rt == "Entire home/apt" and acc:
             for c in HOME_CAPS:
                 if c - 1 <= acc <= c:
@@ -136,7 +150,7 @@ def main():
             r = client.get(url)
             r.raise_for_status()
             f.write_bytes(r.content)
-        rows = [(lat, lon, rt, acc, p / fx) for lat, lon, rt, acc, p
+        rows = [(lat, lon, rt, acc, p / fx, hood) for lat, lon, rt, acc, p, hood
                 in read_listings(f) if lat and lon and p and 5 <= p / fx <= 3000]
         if not rows:
             continue
@@ -156,6 +170,8 @@ def main():
                 continue
             s = summarise(near)
             s.update(dataset=key, snapshot=snap)
+            if s["n"] >= 300:
+                s["hoods"] = neighbourhoods(near)
             prev = result.get(d["id"])
             if not prev or s["n"] > prev["n"]:
                 result[d["id"]] = s
