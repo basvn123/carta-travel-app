@@ -1858,3 +1858,12 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T509-b | T509 | The trip planner and the day cost bar print cents ("about 1,328.25 euros for 2 people") against the whole-euros rule 1.8 (DIRECTION.md section 11); older than this batch | next task | open |  |
 | T509-c | T509 | Trip planner card labels show the English country name in Dutch ("Beste tijd, Italy"); older than this batch | next task | open |  |
 | T510-a | T510 | The logo north needle is rust #e05a47 again (owner 2026-10-21) but carta-design and DESIGN.md still describe the brown-needle mark; record the owner choice there | next task | open |  |
+| T513-a | T513 | The published food accuracy figure (src/lib/accuracy.js, 88% within 6 euros) was measured on the June 2026 data; re-run tools/benchmark excluding the modelled and city-anchored countries (the Eurostat price level is now a model input) before quoting it for v2 | next task | open |  |
+| T513-b | T513 | No regional income tilt for the UK (526 places), Switzerland, Iceland, Bosnia and the microstates; add ONS ITL3 income for the UK to harvest_food_prices.py | next task | open |  |
+| T513-c | T513 | Draught beer is the weakest food item (24% error on a held-out country); find a beer-specific price source | next task | open |  |
+| T513-d | T513 | The Faroe Islands (9 places) have no food basket and no Eurostat price level and keep their old copied figure | next task | open |  |
+| T513-e | T513 | Numbeo remains only as the June 2026 calibration anchor in cache/costs.json; decide whether to replace it with a lawful measured restaurant price source | next task | open |  |
+| T514-a | T514 | Day bands shift cheaper under food model v2 (dearest band 143 to 71 places) because rural places lost capital prices; decide whether to re-cut CUTS in costIndex.js | next task | open |  |
+| T514-b | T514 | A dining level (cheap eats, local restaurants, fine dining) in the Lifestyle panel, deferred by the owner on 2026-10-21 | next task | open |  |
+| T515-a | T515 | The Food and drink fold was checked on screen in English only (the dev server stalled under low memory); look at it in German and the other four languages at 375 px | next task | open |  |
+| T515-b | T515 | Merge app p11-food-costs into master with a root mirror commit that adds the two new app files, then run run_pipeline.py --only food and sync-data.mjs in the main checkout (steps in the T513-T515 report) | next task | open |  |
