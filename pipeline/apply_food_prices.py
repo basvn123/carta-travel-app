@@ -27,8 +27,10 @@ price = country base x local tilt.
 COUNTRY BASE (per item, per month)
   anchor    measured: the June 2026 country basket (cache/costs.json, 24
             countries); modelled: Europe reference x Eurostat price level of
-            the item's category; legacy: the June basket where Eurostat has
-            no price level (microstates, Moldova, Faroe Islands).
+            the item's category; city-anchored: modelled, blended (geometric
+            mean) with what the country's measured cities imply once their own
+            local tilt is divided out; legacy: the June basket where Eurostat
+            has no price level (microstates, Moldova).
   roll      x local-currency price index of the category (HICP, ECOICOP 2) from
             the anchor's period to the latest month, through the monthly
             exchange rate, so a moving currency moves the euro price.
@@ -96,6 +98,16 @@ PLI_CAT = {g: ("A010101" if g == "shop" else "A0111") for g in ("eat", "chain", 
 ITEM_PLI = {"cocktail_eur": ("A0111", "A010201")}
 HICP_CAT = {g: ("CP011" if g == "shop" else "CP111") for g in ("eat", "chain", "shop")}
 MEASURED_MONTH = "2026-06"       # when cache/costs.json was captured
+
+# Three more measured cities, from pipeline/oneoff/fix_data.py (live Numbeo,
+# June 2026). That script wrote them onto the whole of Austria, Croatia and
+# Czechia; here they are what they are, city prices. Dining and drinks only:
+# groceries and club entry come from the country base.
+CITY_FIXES = {
+    "Vienna": ("AT", 37.50, 18.00, 12.00, 5.50, 4.68),
+    "Split": ("HR", 33.10, 15.00, 10.00, 4.25, 2.45),
+    "Prague": ("CZ", 24.20, 9.68, 8.88, 2.62, 3.28),
+}
 
 CURRENCY = {"GB": "GBP", "CH": "CHF", "LI": "CHF", "NO": "NOK", "SE": "SEK",
             "DK": "DKK", "FO": "DKK", "IS": "ISK", "PL": "PLN", "CZ": "CZK",
@@ -213,8 +225,14 @@ class Roller:
         return eur * fx_from * drift / fx_to
 
 
-def build_country_bases(inputs, baskets, roller):
-    """Country basket per item at the latest month, plus validation numbers."""
+def build_country_bases(inputs, baskets, roller, city_implied=None):
+    """Country basket per item at the latest month, plus validation numbers.
+
+    city_implied {cc: {item: [eur]}}: what each measured city in a country
+    without a measured national basket says the country base is (its price
+    divided by its own local tilt). Blended with the model by geometric mean,
+    so neither one city nor the price level alone sets a whole country."""
+    city_implied = city_implied or {}
     pli = inputs["pli"]
     countries = baskets["countries"]
     measured = {cc: b for cc, b in countries.items() if b.get("source") == "numbeo_direct"}
@@ -273,7 +291,11 @@ def build_country_bases(inputs, baskets, roller):
             kinds[cc] = "measured"
             continue
         m = modelled(cc, ref)
-        if m:
+        if m and city_implied.get(cc):
+            for item, vals in city_implied[cc].items():
+                m[item] = math.sqrt(m[item] * statistics.median(vals))
+            bases[cc], kinds[cc] = m, "city-anchored"
+        elif m:
             bases[cc], kinds[cc] = m, "modelled"
         else:
             bases[cc] = {i: roller.roll(b[i], cc, GROUP[i], MEASURED_MONTH) for i in ITEMS}
@@ -404,36 +426,49 @@ def tilt_for(d, regions, receipts, premium):
 def measured_cities(baskets, dests):
     """The 22 measured city baskets with coordinates from the catalogue."""
     out = []
-    for name, basket in baskets["cities"].items():
+    fixes = {name: {"meal_mid_eur": v[1], "meal_cheap_eur": v[2], "fastfood_eur": v[3],
+                    "drink_out_eur": v[4], "coffee_eur": v[5], "cocktail_eur": round(v[4] * 2.4, 2)}
+             for name, v in CITY_FIXES.items()}
+    for name, basket in {**baskets["cities"], **fixes}.items():
         hits = [d for d in dests.values() if (d.get("city") or "").lower() == name.lower()]
         hits.sort(key=lambda d: d.get("tier") != "airport")
         if hits:
             lat, lon = city_coords(hits[0])
             out.append({"name": name, "cc": hits[0]["iso2"], "lat": lat, "lon": lon,
-                        "basket": basket})
+                        "id": hits[0]["id"], "basket": basket,
+                        "geonames": next((h.get("geonames") for h in hits if h.get("geonames")), None)})
     return out
 
 
 def price_all(dests, inputs, baskets):
     roller = Roller(inputs)
-    bases, kinds, ref, loo = build_country_bases(inputs, baskets, roller)
     regions = Regions(inputs)
     receipts = Receipts(inputs["receipts"]["index"])
     cities = measured_cities(baskets, dests)
     asof = roller.now
     out, city_checks = {}, []
+    measured_cc = {cc for cc, b in baskets["countries"].items() if b.get("source") == "numbeo_direct"}
 
-    for c in cities:                     # how good is the tilt where we can see?
-        probe = {"id": f"city:{c['name']}", "iso2": c["cc"], "lat": c["lat"], "lon": c["lon"],
-                 "geonames": next((d.get("geonames") for d in dests.values()
-                                   if (d.get("city") or "").lower() == c["name"].lower()
-                                   and d.get("geonames")), None)}
-        groups, _, _, _ = tilt_for(probe, regions, receipts, premium=False)
-        cbase = baskets["countries"].get(c["cc"])
-        if cbase:
-            seen = statistics.mean(c["basket"][i] / cbase[i] for i in
-                                   ("meal_mid_eur", "meal_cheap_eur", "coffee_eur", "drink_out_eur"))
-            city_checks.append((c["name"], round(seen, 3), round(groups["eat"], 3)))
+    city_implied = defaultdict(lambda: defaultdict(list))
+    for c in cities:
+        probe = {"id": c["id"], "iso2": c["cc"], "lat": c["lat"], "lon": c["lon"],
+                 "geonames": c["geonames"]}
+        groups, _, _, _ = tilt_for(probe, regions, receipts, premium=True)
+        if c["cc"] not in measured_cc:
+            for i, v in c["basket"].items():
+                if i in ITEMS:
+                    city_implied[c["cc"]][i].append(
+                        roller.roll(v, c["cc"], GROUP[i], MEASURED_MONTH) / groups[GROUP[i]])
+            continue
+        # how good is the tilt where we can see? (no curated premium: the
+        # measured city/country ratio is what the tilt has to find on its own)
+        plain, _, _, _ = tilt_for(probe, regions, receipts, premium=False)
+        cbase = baskets["countries"][c["cc"]]
+        seen = statistics.mean(c["basket"][i] / cbase[i] for i in
+                               ("meal_mid_eur", "meal_cheap_eur", "coffee_eur", "drink_out_eur"))
+        city_checks.append((c["name"], round(seen, 3), round(plain["eat"], 3)))
+
+    bases, kinds, ref, loo = build_country_bases(inputs, baskets, roller, city_implied)
 
     for did, d in dests.items():
         cc = d.get("iso2")
@@ -444,8 +479,11 @@ def price_all(dests, inputs, baskets):
             near = [(haversine_km(lat, lon, c["lat"], c["lon"]), c) for c in cities if c["cc"] == cc]
             near = [x for x in near if x[0] <= CITY_KM]
             city = min(near, key=lambda x: x[0])[1] if near else None
-        if city:
-            block = {i: round_price(i, roller.roll(city["basket"][i], cc, GROUP[i], MEASURED_MONTH))
+        if city and base is not None:
+            # the city's own prices; items it never measured come from its country
+            groups, _, _, _ = tilt_for(d, regions, receipts, premium=True)
+            block = {i: round_price(i, roller.roll(city["basket"][i], cc, GROUP[i], MEASURED_MONTH)
+                                    if i in city["basket"] else base[i] * groups[GROUP[i]])
                      for i in ITEMS}
             block.update({"level": "city", "price_source": VERSION, "city": city["name"]})
             out[did] = block
@@ -469,7 +507,8 @@ def price_all(dests, inputs, baskets):
         "items": list(ITEMS),
         "europe_reference_eur": {k: round(v, 2) for k, v in ref.items()},
         "anchors": {k: sorted(cc for cc, v in kinds.items() if v == k)
-                    for k in ("measured", "modelled", "legacy")},
+                    for k in ("measured", "city-anchored", "modelled", "legacy")},
+        "measured_cities": sorted(c["name"] for c in cities),
         "elasticity": ELASTICITY,
         "tilt_cap": list(TILT_CAP),
         "validation": {"leave_one_country_out_mae_pct": loo,

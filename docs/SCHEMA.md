@@ -328,8 +328,10 @@ no keys). `price = country base x local tilt`.
 
 - **Country base.** The June 2026 country basket (`cache/costs.json`) where it was
   measured (24 countries, `meta.food_country[cc].anchor = "measured"`); else a Europe
-  reference price x the Eurostat price level of the item's category (`modelled`, 13);
-  else the June basket (`legacy`: microstates and Moldova). Every base is rolled from
+  reference price x the Eurostat price level of the item's category (`modelled`, 5);
+  blended by geometric mean with what the country's measured cities imply once their
+  own tilt is divided out (`city-anchored`, 8: AT, BG, CZ, DK, EE, FI, HR, RS); else the
+  June basket (`legacy`: microstates and Moldova). Every base is rolled from
   its period to the latest month by the local HICP (ECOICOP 2: CP111 eating out, CP011
   food) through the monthly euro exchange rate.
 - **Local tilt** (`costs.drivers`, product capped to 0.80 to 1.60): regional income per
@@ -338,8 +340,10 @@ no keys). `price = country base x local tilt`.
   top 15% / 5% of NUTS3 regions by tourist nights per km2), town size (GeoNames), and
   for groceries the Open Food Facts Open Prices matched-product index within 15 km
   (needs 40 prices, shrunk by n / (n + 80)). A driver equal to 1 is left out.
-- **Measured cities.** A place within 15 km of one of the 22 measured cities keeps that
-  city's basket, rolled forward, untilted (`level: "city"`, `costs.city`).
+- **Measured cities.** A place within 15 km of one of the 25 measured cities (the 22
+  June baskets plus Vienna, Prague and Split from `fix_data.py`, which had written them
+  onto whole countries) keeps that city's prices, rolled forward, untilted (`level:
+  "city"`, `costs.city`); items the city never measured come from its country.
 - **`level`**: `region` when any driver moved the price, `country` when none did, `city`
   as above.
 - **Meta.** `meta.food_model` (version, `asof` month, Europe reference prices,
