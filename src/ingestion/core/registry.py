@@ -161,7 +161,7 @@ RUNS: dict[str, Run] = {
     "pipeline/harvest_bathing_water.py": Run("quarterly", "bathing_water", "hard"),
     "pipeline/harvest_climate_power.py": Run("backfill", "climate", "hard"),
     "pipeline/harvest_events.py": Run("monthly", "events", "soft"),
-    "pipeline/harvest_flight_times.py": Run("monthly", "flight_times", "hard",
+    "pipeline/harvest_flight_times.py": Run("manual", "flight_times", "hard",
                                             "reads the retired Ryanair endpoint; "
                                             "scheduled but produces nothing new until "
                                             "a fare source returns"),
@@ -185,6 +185,22 @@ RUNS: dict[str, Run] = {
     "pipeline/harvest_urban_fabric.py": Run("manual", "", "manual"),
     "pipeline/harvest_wikivoyage.py": Run("backfill", "guide", "hard"),
     "pipeline/harvest_wikivoyage_listings.py": Run("monthly", "poi_significance", "soft"),
+    # pipeline/stays/: the stay-price layer (T511-T517). The monthly half also
+    # runs on GitHub Actions (.github/workflows/stays-refresh.yml); the scrape
+    # half is the owner's twice-yearly laptop run, so it is manual here.
+    "pipeline/stays/harvest_eurostat.py": Run("monthly", "stays", "soft"),
+    "pipeline/stays/harvest_iab.py": Run("monthly", "stays", "soft",
+                                         "Inside Airbnb publishes quarterly; a run "
+                                         "without a new snapshot reuses the download"),
+    "pipeline/stays/price_xotelo.py": Run("monthly", "stays", "soft"),
+    "pipeline/stays/calibrate_serpapi.py": Run("monthly", "stays", "soft",
+                                               "SKIPs without SERPAPI_KEY"),
+    "pipeline/stays/discover_xotelo.py": Run("quarterly", "stays_discover", "soft"),
+    "pipeline/stays/harvest_supply.py": Run("quarterly", "stays_discover", "soft"),
+    "pipeline/stays/scrape_booking.py": Run("manual", "", "manual",
+                                            "owner, March and September, laptop only"),
+    "pipeline/stays/scrape_hostelworld.py": Run("manual", "", "manual",
+                                                "owner, March and September, laptop only"),
 }
 
 
@@ -271,9 +287,16 @@ def load_all() -> dict[str, type]:
 # empty when the registry, the tree and run_pipeline.py agree.
 # --------------------------------------------------------------------------
 
+STAY_PREFIXES = ("harvest_", "scrape_", "price_", "discover_", "calibrate_")
+
+
 def harvester_scripts(root: Path = ROOT) -> list[str]:
-    """Every pipeline/harvest_*.py in the tree, repo-relative, posix."""
-    return sorted(p.relative_to(root).as_posix() for p in (root / "pipeline").glob("harvest_*.py"))
+    """Every pipeline/harvest_*.py in the tree, plus the stay layer's fetchers
+    (pipeline/stays/{harvest,scrape,price,discover,calibrate}_*.py), repo-relative, posix."""
+    top = list((root / "pipeline").glob("harvest_*.py"))
+    stays = [p for p in (root / "pipeline" / "stays").glob("*.py")
+             if p.name.startswith(STAY_PREFIXES)]
+    return sorted(p.relative_to(root).as_posix() for p in top + stays)
 
 
 def pipeline_tasks(root: Path = ROOT) -> dict[str, dict]:
@@ -1385,12 +1408,90 @@ SOURCES = (
         attributed="Raw ETL only",
     ),
     # 5. Destination content layers (pipeline harvesters)
+    # Stay-price layer (T511-T517): only medians per destination are published.
+    Source(
+        key="xotelo_tripadvisor_rates",
+        section="content_layers",
+        scripts=('pipeline/stays/discover_xotelo.py', 'pipeline/stays/price_xotelo.py'),
+        name="Xotelo, TripAdvisor-based hotel prices (`pipeline/stays/price_xotelo.py`)",
+        takes="Property lists per TripAdvisor location; dated per-OTA nightly rates for a few anchor properties per destination, reduced to medians",
+        licence="Free public API, no published terms (one developer). Owner decision 2026-10-21, register row T511-a",
+        attribution="Credit TripAdvisor via Xotelo; no property names or links published",
+        share_alike="No",
+        attributed="Account > Data sources (Xotelo)",
+    ),
+    Source(
+        key="booking_com_search_lists",
+        section="content_layers",
+        scripts=('pipeline/stays/scrape_booking.py',),
+        name="Booking.com search lists, owner-run sample (`pipeline/stays/scrape_booking.py`)",
+        takes="List prices, star class and unit name of the first 25 to 50 properties per destination and probe date, twice a year, reduced to medians",
+        licence="Site terms restrict commercial scraping; owner states permission and educational use, 2026-10-21 (register row T511-a)",
+        attribution="No property names, photos or links published",
+        share_alike="No",
+        attributed="Account > Data sources (sampled list prices)",
+    ),
+    Source(
+        key="hostelworld_city_lists",
+        section="content_layers",
+        scripts=('pipeline/stays/scrape_hostelworld.py',),
+        name="Hostelworld city lists, owner-run sample (`pipeline/stays/scrape_hostelworld.py`)",
+        takes="Dorm and private 'from' prices per hostel on the city list page, twice a year, reduced to medians",
+        licence="Site terms; owner states permission and educational use, 2026-10-21 (register row T511-a)",
+        attribution="No property names, photos or links published",
+        share_alike="No",
+        attributed="Account > Data sources (sampled list prices)",
+    ),
+    Source(
+        key="openstreetmap_overpass_stays",
+        section="content_layers",
+        scripts=('pipeline/stays/harvest_supply.py',),
+        name="OpenStreetMap via Overpass, stays (`pipeline/stays/harvest_supply.py`)",
+        takes="tourism=hotel/hostel/guest_house/motel/apartment with stars, counted per destination",
+        licence="ODbL 1.0",
+        attribution="Yes",
+        share_alike="Yes (derived database)",
+        attributed="Account > Data sources (OpenStreetMap)",
+    ),
+    Source(
+        key="eurostat_hicp_ppp_nights",
+        section="content_layers",
+        scripts=('pipeline/stays/harvest_eurostat.py',),
+        name="Eurostat HICP CP112, price levels, nights (`pipeline/stays/harvest_eurostat.py`)",
+        takes="prc_hicp_minr accommodation index (drift), prc_ppp_ind A0111 price level, tour_occ_nim nights (season fill-in)",
+        licence="Eurostat reuse policy (CC BY 4.0 equivalent)",
+        attribution="Yes",
+        share_alike="No",
+        attributed="Account > Data sources (Eurostat)",
+    ),
+    Source(
+        key="ecb_euro_reference_rates",
+        section="content_layers",
+        scripts=('pipeline/stays/harvest_iab.py',),
+        name="ECB euro foreign exchange reference rates (`pipeline/stays/harvest_iab.py`)",
+        takes="Daily reference rates to convert Inside Airbnb prices to EUR",
+        licence="ECB statistics reuse, free with source credit",
+        attribution="Source credit in the ledger",
+        share_alike="No",
+        attributed="Ledger only (conversion factor, not displayed)",
+    ),
+    Source(
+        key="serpapi_google_hotels_calibration",
+        section="content_layers",
+        scripts=('pipeline/stays/calibrate_serpapi.py',),
+        name="SerpApi Google Hotels, free tier (`pipeline/stays/calibrate_serpapi.py`)",
+        takes="Up to 250 searches a month compared with our medians; error figure only, nothing stored or shown",
+        licence="SerpApi terms (free plan)",
+        attribution="n/a (not displayed)",
+        share_alike="No",
+        attributed="Not displayed",
+    ),
     Source(
         key="inside_airbnb",
         section="content_layers",
-        scripts=('pipeline/harvest_accommodation.py',),
-        name="Inside Airbnb (`pipeline/harvest_accommodation.py`)",
-        takes="Listing-level nightly medians, per-city seasonality, per-capacity and neighbourhood medians",
+        scripts=('pipeline/stays/harvest_iab.py', 'pipeline/harvest_accommodation.py'),
+        name="Inside Airbnb (`pipeline/stays/harvest_iab.py`)",
+        takes="Listing-level nightly medians per destination footprint: entire place by capacity, private room, shared room",
         licence="CC BY 4.0 (per harvester header)",
         attribution="Yes",
         share_alike="No",
@@ -2672,6 +2773,13 @@ STORABLE: dict[str, str] = {
     'nager_date': 'Yes',
     'openholidays_api': 'Verify',
     'inside_airbnb': 'Yes, with credit',
+    'xotelo_tripadvisor_rates': 'Verify',
+    'booking_com_search_lists': 'Verify',
+    'hostelworld_city_lists': 'Verify',
+    'openstreetmap_overpass_stays': 'Yes, with credit and share-alike',
+    'eurostat_hicp_ppp_nights': 'Yes, with credit',
+    'ecb_euro_reference_rates': 'Yes, with credit',
+    'serpapi_google_hotels_calibration': 'n/a',
     'eea_wise_bathing_water': 'Yes, with credit',
     'worldclim_2_1': 'No',
     'geonames_cities500': 'Yes, with credit',

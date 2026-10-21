@@ -1927,6 +1927,38 @@ TASKS = [
                  "real keys before this task can ship tiers."),
     },
 
+    {
+        "key": "stays_discover",
+        "title": "Stay layer: Xotelo property pool + OSM supply (T512)",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/stays/discover_xotelo.py"],
+            [PY, "pipeline/stays/harvest_supply.py", "--refresh"],
+        ],
+        "note": ("about 4 hours of polite Xotelo calls; state in cache/stays (R2 "
+                 "stays/state on Actions). Anchors are kept between runs."),
+    },
+    {
+        "key": "stays",
+        "title": "Stay layer: Eurostat + Inside Airbnb + Xotelo prices -> stays wire (T512)",
+        "cadence": "monthly",
+        "writes_app_data": True,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/stays/harvest_eurostat.py"],
+            [PY, "pipeline/stays/harvest_iab.py"],
+            [PY, "pipeline/stays/price_xotelo.py", "--max-hours", "6"],
+            [PY, "pipeline/stays/calibrate_serpapi.py"],
+            [PY, "pipeline/stays/build_stays.py", "--gate"],
+            [PY, "pipeline/stays/apply_stays.py"],
+        ],
+        "note": ("the same steps as .github/workflows/stays-refresh.yml, for a local "
+                 "run. The Booking/Hostelworld scrape is the owner's twice-yearly "
+                 "laptop task (scripts/stays_scrape.bat), not part of this."),
+    },
+
     # ---- trails content lab (tools/trailslab, local PostGIS): soft + guarded ---- #
     {
         "key": "trails_ingest",
