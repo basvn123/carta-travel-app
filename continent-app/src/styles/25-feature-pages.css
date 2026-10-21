@@ -705,15 +705,6 @@
    runs of related facts, so they are divided by rules. A route card is a
    bounded thing, so it gets a border.
    --------------------------------------------------------------------------- */
-
-.cycle-page {
-  position: fixed;
-  inset: 0;
-  z-index: calc(var(--z-page) + 100);
-  overflow-y: auto;
-  background: var(--paper);
-  padding: 18px 20px 64px;
-}
 /* One centred column. Centring every direct child of the page instead
    (`.cycle-page > *`) broke the moment any child rule set its own side
    margins, which the title, the subline and the section list all did: the
@@ -783,7 +774,6 @@
   border: 2px solid var(--on-fill);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
-.cycle-map-pin.end { background: var(--ink); }
 .cycle-elev { margin: 4px 0 10px; }
 .cycle-note { margin: 6px 0; font-size: 14px; color: var(--ink-soft); }
 
@@ -801,8 +791,7 @@
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
-.cycle-surface, .cycle-safety, .cycle-free, .cycle-bike,
-.cycle-pace, .cycle-season, .cycle-agree { white-space: nowrap; }
+.cycle-agree { white-space: nowrap; }
 .cycle-safety-note, .cycle-credit {
   margin: 10px 0 0;
   font-size: 12.5px;
@@ -836,13 +825,6 @@
   font-size: 12px;
   color: var(--ink-mute);
 }
-.cycle-stage-line { font-size: 15px; color: var(--ink); }
-.cycle-stage-meta, .cycle-stage-sleep, .cycle-stage-bail {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-mute);
-}
 
 .cycle-checks {
   margin: 12px 0 0;
@@ -861,9 +843,6 @@
   font-weight: 500;
   cursor: pointer;
   color: var(--ink);
-}
-@media (hover: hover) {
-  .cycle-gpx:hover { background: var(--paper-dim); }
 }
 
 .cycle-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0; }
@@ -908,7 +887,7 @@
 .cycle-tourcard-towns, .cycle-card-why { font-size: 13px; color: var(--ink-soft); }
 .cycle-card-name { font-size: 15px; font-weight: 600; color: var(--ink); }
 /* A listed row has no score, and says so rather than showing a gap. */
-.cycle-card-unrated, .cycle-unrated {
+.cycle-card-unrated {
   font-size: 12.5px;
   font-style: normal;
   color: var(--ink-mute);
@@ -953,16 +932,8 @@
   border-bottom: 1px solid var(--rule-soft);
 }
 .cycle-famitem-name { flex: 1; font-size: 15px; color: var(--ink); }
-.cycle-famitem-km {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
-}
-.cycle-famitem-un { font-size: 12.5px; color: var(--ink-mute); }
 
-.cycle-famchip:focus-visible, .cycle-gpx:focus-visible,
-.cycle-close:focus-visible, .cycle-back:focus-visible {
+.cycle-famchip:focus-visible, .cycle-close:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -1007,7 +978,6 @@
   color: var(--ink-mute);
 }
 .cycle-town-name { flex: 1; min-width: 0; color: var(--ink); }
-.cycle-town-has { font-size: 12.5px; color: var(--ink-soft); text-align: right; }
 
 /* A published EuroVelo section is a door to its route. */
 .cycle-famitem-btn {
@@ -1024,18 +994,11 @@
   text-align: left;
   cursor: pointer;
 }
-@media (hover: hover) {
-  .cycle-famitem-open:hover { background: var(--paper-dim); }
-}
-.cycle-famitem-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 @media (max-width: 560px) {
   .cycle-map { height: 240px; }
-  .cycle-town-has { display: none; }
 }
 @media (max-width: 560px) {
-  .cycle-page { padding: 14px 16px 56px; }
-  .cycle-title { font-size: 22px; }
   .cycle-gallery { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1050,7 +1013,6 @@
 .nbx-block h2 { margin-bottom: 4px; }
 .nbx-list { margin: 0; padding: 0; list-style: none; }
 .nbx-list li { border-top: 1px solid var(--rule-soft); }
-.nbx-list li:last-child { border-bottom: 1px solid var(--rule-soft); }
 .nbx-item {
   display: flex;
   align-items: center;
@@ -1064,14 +1026,6 @@
   color: var(--ink);
   text-align: left;
   cursor: pointer;
-}
-@media (hover: hover) {
-  .nbx-item:hover .nbx-name { text-decoration: underline; }
-}
-.nbx-item:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
 }
 .nbx-name {
   flex: 1;
@@ -1249,8 +1203,6 @@
 /* Good to know: the logistics slots as definition rows. */
 .jpage-log-row dd { color: var(--ink-soft); }
 .jpage-log-text { font-size: 13px; line-height: 1.5; }
-.jpage-lrows { border-top: 1px solid var(--rule-soft); }
-.jpage-lrow { border-bottom: 1px solid var(--rule-soft); }
 .jpage-lrow-btn {
   display: flex;
   align-items: center;
@@ -1266,7 +1218,6 @@
   cursor: pointer;
 }
 .jpage-lrow-icon { flex: none; color: var(--ink-soft); }
-.jpage-lrow-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .jpage-lrow-label { flex: none; font-size: 13px; font-weight: 600; }
 .jpage-lrow-sum {
   flex: 1;
@@ -1278,8 +1229,6 @@
   text-overflow: ellipsis;
 }
 .jpage-lrow-chev { flex: none; margin-left: auto; color: var(--ink-mute); transition: transform .18s ease; }
-.jpage-lrow.is-open .jpage-lrow-chev { transform: rotate(180deg); }
-.jpage-lrow-body { padding: 0 0 var(--space-3) var(--space-5); }
 @media (prefers-reduced-motion: reduce) { .jpage-lrow-chev { transition: none; } }
 
 .jpage-tips ul { list-style: none; margin: 0; padding: 0; }
@@ -2437,16 +2386,9 @@
   border-bottom: 1px solid var(--rule-soft);
   cursor: pointer;
 }
-.rstage { grid-template-columns: 26px 1fr auto; }
-.rbase { grid-template-columns: 62px 1fr auto; }
 .rstages li:last-child .rstage,
 .rbases li:last-child .rbase { border-bottom: none; }
-.rstage:disabled, .rbase:disabled { cursor: default; }
-.rstage-n, .rbase-at { color: var(--ink-soft); font-size: 0.86rem; }
-.rstage-name, .rbase-name { font-weight: 600; }
-.rstage-off { font-size: 0.8rem; color: var(--ink-mute); }
 .rbase-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.rbase-sub { font-size: 0.84rem; color: var(--ink-soft); }
 
 /* Node-network cycling (ROUTES.md R8): a measurement of the mesh, never a
    list of its edges. Sits inside the routes block, after the routes. */
@@ -2736,12 +2678,6 @@
   font: inherit;
   cursor: pointer;
 }
-@media (hover: hover) {
-  .pack-cell:hover { color: var(--ink); }
-}
-.pack-cell.is-on { color: var(--ink); border-bottom-color: var(--ink); }
-.pack-cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.pack-label { font-size: 12px; line-height: 1.25; text-align: center; }
 .pack-why {
   margin: var(--space-3) 0 0;
   padding-top: var(--space-2);
@@ -2844,7 +2780,6 @@
   color: var(--ink);
 }
 .jends .bpage-fact dt { width: 104px; }
-.jends .bpage-fact dd { line-height: 1.5; }
 .jends .bpage-fact dd .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 500; }
 @media (min-width: 760px) {
   .jends { grid-template-columns: repeat(2, minmax(0, 1fr)); }

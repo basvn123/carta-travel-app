@@ -1,0 +1,12 @@
+/* 23-places-pages.css, the rules only the trip and day planners render (T474, CSS per route).
+   The rest of this domain stays in src/styles/23-places-pages.css; a rule lives in one
+   of the two, so edit it where it is. This sheet loads with the route's
+   chunk, after the main sheet, and holds only rules nothing later in the
+   cascade could override; scripts/css-routes.mjs --check proves it on a build. */
+.exp-friendrow {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-basis: 100%;
+  margin-top: 2px;
+}

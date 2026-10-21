@@ -1,0 +1,230 @@
+/* Rules only the admin page render that scripts/css-routes.mjs --hold
+   keeps in the first paint: the cascade proof could not clear them for the
+   route sheet. Imported last in src/styles.css, so each still comes after the
+   whole main sheet as it did in src/styles/admin.css. Same order as there. */
+
+@media (hover: hover) {
+  .adminpage-navbtn:hover { background: var(--paper-dim); color: var(--ink); }
+}
+.adminpage-navbtn.on { background: var(--select-bg); color: var(--select-ink); }
+.adminpage-muted { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 12px; line-height: 1.5; }
+.adminpage-retry {
+  margin-left: 10px;
+  min-height: 32px;
+  padding: 5px 12px;
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  background: none;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--danger);
+  cursor: pointer;
+}
+.adminpage-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 13px;
+  margin: 0 0 18px;
+  border: 1px solid var(--amber);
+  border-radius: 10px;
+  background: var(--amber-bg);
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.adminpage-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 18px 0 0;
+}
+.adminpage-tile {
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 14px 16px;
+}
+.adminpage-tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.adminpage-attention .adminpage-tile {
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.adminpage-namebtn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: var(--ui);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+.adminpage-chip {
+  display: inline-block;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
+  padding: 2px 7px;
+  margin-right: 4px;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+.adminpage-chip.trip { border-color: var(--accent-soft); color: var(--accent); }
+.adminpage-card {
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 20px 22px;
+}
+.adminpage-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .adminpage-seg:hover { border-color: var(--ink-soft); }
+}
+.adminpage-seg.on { border-color: var(--select-border); color: var(--select-ink); background: var(--select-bg); }
+.adminpage-armed {
+  padding: 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper);
+}
+.adminpage-mfa-qr { display: block; width: 168px; height: 168px; margin: 0 0 10px; background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 6px; }
+.adminpage-textarea {
+  width: 100%;
+  padding: 11px 13px;
+  margin-bottom: 10px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  resize: vertical;
+}
+.adminpage-switch.on { border-color: var(--select-border); color: var(--select-ink); background: var(--select-bg); }
+.adminpage-lock {
+  width: min(420px, calc(100vw - 40px));
+  padding: 30px 28px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.adminpage-lock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.adminpage-lock-input {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 15px;
+  color: var(--ink);
+}
+.adminpage-kindtag {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 6px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+.adminpage-fb {
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 16px 18px;
+}
+.adminpage-chip.kind-bug { border-color: var(--ink); color: var(--ink); }
+.adminpage-chip.kind-idea { border-color: var(--rule); color: var(--ink-soft); }
+.adminpage-chip.status-new { border-color: var(--ink); color: var(--ink); }
+.adminpage-chip.status-done { color: var(--ink-mute); }
+.adminpage-select {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg-card);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+}
+@media (hover: hover) {
+  .adminpage-card2:hover { border-color: var(--ink-soft); }
+}
+.adminpage-card2.edited { border-color: var(--accent); }
+.adminpage-card2.hiddenitem { opacity: .5; }
+.adminpage-editedflag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--on-fill);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
+}
+.adminpage-editorbox {
+  width: min(560px, 100%);
+  padding: 24px 26px 26px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.adminpage-fine { font-size: 11.5px; margin-bottom: 12px; }
+.diffviewer { margin: 0 0 16px; border: 1px solid var(--rule-soft); border-radius: 8px; overflow: hidden; }
+.diffviewer-none { padding: 10px 12px; margin: 0; }
+.diffcell-empty { color: var(--ink-mute); font-style: italic; }
+.adminpage-reviewrow.overdue { border-left-color: var(--danger); }
+@media (hover: hover) {
+  .adminpage-reviewrow:hover { background: var(--paper); }
+}
+.adminpage-reviewrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.adminpage-reviewdate {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+.adminpage-reviewdate.overdue { color: var(--danger); }
+.adminpage-chip.status-verified { border-color: var(--green); color: var(--green); }
+.adminpage-chip.status-stale { border-color: var(--ink-soft); color: var(--ink); }
+.adminpage-card2.overdue { border-color: var(--danger); }
+.adminpage-editedflag.overdue { background: var(--danger); }

@@ -15,7 +15,7 @@
  * There is no email route for this in the project, so the app is the
  * delivery: SavedTripsPanel shows the statement against the plan.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 
 const BASE_COLS = [
   'id', 'plan_id', 'plan_label', 'source', 'notice_count', 'facts', 'automated',
@@ -31,6 +31,7 @@ const OWNER_COLS = [...BASE_COLS, 'ground', 'ground_ref'].join(', ');
  *  the read falls back to the columns 039 grants and the notice shows no
  *  ground, rather than hiding every statement. */
 export async function fetchMyStatements() {
+  const supabase = await getSupabase();
   if (!supabase) return [];
   const read = (cols) => supabase
     .from('moderation_statements')
@@ -48,6 +49,7 @@ export async function fetchMyStatements() {
  * already_contested, too_late, forbidden.
  */
 export async function contestStatement(statementId, body) {
+  const supabase = await getSupabase();
   if (!supabase) {
     const err = new Error('auth_not_configured');
     err.code = 'auth_not_configured';

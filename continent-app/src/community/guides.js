@@ -20,7 +20,7 @@
  * public guide can never carry more than a friend's copy of the same trip:
  * no exact dates, no crew, no spend.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { authConfigured, getSupabase } from '../lib/supabaseClient.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /* ---- the verify seam ------------------------------------------------------
@@ -101,6 +101,7 @@ export async function listGuides({ country = null, limit = 60, skip = 0 } = {}) 
     const rows = MOCK === 'none' ? [] : MOCK_GUIDES;
     return country ? rows.filter((g) => g.countries.includes(country)) : rows;
   }
+  const supabase = await getSupabase();
   if (!supabase) return [];
   const { data, error } = await supabase.rpc('list_public_guides', {
     wanted_country: country, max_rows: limit, skip,
@@ -116,6 +117,7 @@ export async function listGuides({ country = null, limit = 60, skip = 0 } = {}) 
  *  gallery and the tap. */
 export async function getGuide(planId) {
   if (MOCK) return planId === MOCK_ONE.tripPlanId ? MOCK_ONE : { ...MOCK_ONE, tripPlanId: planId };
+  const supabase = await getSupabase();
   if (!supabase || !planId) return null;
   const { data, error } = await supabase.rpc('get_public_guide', { wanted_plan: planId });
   if (error) throw error;
@@ -139,11 +141,12 @@ export async function getGuide(planId) {
  * for somebody else, and a reader must never see it fail.
  */
 export function reportGuideOpened(planId) {
-  if (MOCK || !supabase || !planId) return;
-  supabase.rpc('public_guide_opened', { wanted_plan: planId })
+  if (MOCK || !authConfigured || !planId) return;
+  getSupabase()
+    .then((supabase) => supabase.rpc('public_guide_opened', { wanted_plan: planId }))
     .then(({ error }) => {
       if (error) console.warn('[guides] could not record the open:', error.message || error);
-    });
+    }, () => {});
 }
 
 /* ---- reporting one ------------------------------------------------------- */
@@ -181,6 +184,7 @@ export async function reportGuide(planId, reason, contactEmail = null, reporterN
     if (mockReports > 5) throw refuse('too_many');
     return { ok: true };
   }
+  const supabase = await getSupabase();
   if (!supabase) throw refuse('auth_not_configured');
   const { data, error } = await supabase.rpc('report_guide', {
     p_plan_id: planId,

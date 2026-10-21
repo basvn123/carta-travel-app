@@ -1,0 +1,178 @@
+/* 66-v6-trips.css, the rules only the item pages render (T474, CSS per route).
+   The rest of this domain stays in src/styles/66-v6-trips.css; a rule lives in one
+   of the two, so edit it where it is. This sheet loads with the route's
+   chunk, after the main sheet, and holds only rules nothing later in the
+   cascade could override; scripts/css-routes.mjs --check proves it on a build. */
+.jpage .jpage-shot { max-height: 40dvh; width: 100%; object-fit: cover; }
+@media (min-width: 769px) {
+  .jpage .jpage-shot { max-height: 60dvh; }
+}
+.jpage-book-list label { min-height: var(--tap); }
+.jpage-book-count { font-family: var(--ui); }
+@media (min-width: 1024px) {
+  .jpage .jpage-wrap {
+    max-width: 1180px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--panel-w);
+    column-gap: var(--space-7);
+    row-gap: 0;
+    align-items: start;
+  }
+  .jpage .jpage-body { display: contents; }
+}
+.itin-capband {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.itin-capband-score {
+  margin-left: var(--space-2);
+  padding: 2px var(--space-2);
+  border-radius: 6px;
+  background: var(--rate-bg);
+  color: var(--rate);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.itin-facts .tpage-fact-val { white-space: normal; }
+.itin-page .itin-use {
+  min-height: var(--tap);
+  border-radius: 6px;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .itin-page .itin-use:hover { background: var(--accent); }
+}
+@media (hover: hover) {
+  .itin-page .itin-use:hover { background: var(--accent-hover); }
+}
+.itin-page .itin-use:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.itin-page .itin-copied::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-success);
+}
+.itin-leg-fig {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.itin-page .itin-day-leg { flex-wrap: wrap; }
+.itin-page .itin-day-leg .itin-leg-fig { margin-left: auto; }
+.dtrack .tday-head { display: block; }
+.dtrack .tday-chips,
+.dtrack .tday-shots,
+.dtrack .itin-sights,
+.dtrack .itin-day-leg,
+.dtrack .itin-day-note { margin-left: 0; }
+.dtrack .tday-chip { white-space: normal; }
+.dtrack .tday-shot { width: auto; min-width: 0; }
+.dtrack .tday-shot-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: 6px;
+  background: var(--paper-dim);
+}
+.dtrack .tday-shot-cap { font-size: 12px; color: var(--ink-mute); }
+.itin-page .tday-prose { padding: var(--space-1) 0 var(--space-2); }
+.itin-receipt {
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.itin-receipt .itin-cost { padding: 0 var(--space-4); }
+.itin-receipt .itin-cost li {
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  font-family: var(--ui);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.itin-receipt .itin-cost li > span { min-width: 0; }
+.itin-receipt .itin-cost li b {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--ink);
+}
+.itin-receipt .itin-cost-sum {
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink);
+  font-weight: 600;
+}
+.itin-receipt .itin-cost-day { border-bottom: none; }
+@media (prefers-reduced-motion: reduce) {
+  .itin-page .itin-use { transition: none; }
+}
+.jpage .jstrip-word:has(.mono) { text-transform: none; }
+.jpage .rfig-week .tpage-elev-area { fill: var(--rule-soft); }
+.jpage .rfig-week .tpage-elev-line { stroke: var(--ink); }
+@media (max-width: 599px) {
+  .jpage .jweek-beds {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .jpage .jweek-bed {
+    min-height: 32px;
+    padding-block: var(--space-1);
+  }
+  .jpage .jweek-bed:not(.is-out) .jweek-bed-name { display: none; }
+}
+.jpage .lpage-credit-line {
+  white-space: normal;
+  text-overflow: clip;
+}
+@media print {
+  body:has(.jpage),
+  :has(.jpage) {
+    position: static;
+    display: block;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    transform: none;
+    contain: none;
+  }
+  :has(.jpage) > :not(:has(.jpage)):not(.jpage) { display: none; }
+  .jpage {
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .jpage .tpage-scroll {
+    height: auto;
+    overflow: visible;
+  }
+  .jpage .srail,
+  .jpage .jpage-bar-acts,
+  .jpage .dtrack-bar,
+  .jpage .dtrack-dots,
+  .jpage .tl-seg,
+  .jpage .ls-slider-input,
+  .jpage .jweek-picks,
+  .jpage .jpage-exits,
+  .jpage .bpage-base { display: none; }
+  .jpage .jpage-book-list li,
+  .jpage .jpage-budget-rows li { break-inside: avoid; }
+  .jpage .dsec-head,
+  .jpage h2,
+  .jpage h3,
+  .jpage h4 { break-after: avoid; }
+  .jpage .tday-panel { grid-template-rows: 1fr; }
+}

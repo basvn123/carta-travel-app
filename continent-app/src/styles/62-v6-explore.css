@@ -490,7 +490,7 @@
     scrollbar-width: none;
   }
   .explore-shell .xchips::-webkit-scrollbar { display: none; }
-  .explore-shell .xchips > * { flex: none; }
+  .explore-shell .xchips > :where(.xchips-lead, .xchip) { flex: none; }
   .explore-shell .xchips-lead { display: flex; }
   /* The sort as a dropdown chip: the removable chips' height, edge and
      corners, its name in secondary ink, the choice beside it, one chevron. */

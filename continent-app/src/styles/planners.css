@@ -5,11 +5,13 @@
 
 @import './planners/11-trip-planner.css';
 @import './planners/12-guided-trip.css';
+@import './planners/13-day-planner.css';
 @import './planners/17-saved-trips.css';
 @import './planners/18-detail-panel.css';
 @import './planners/19-guide-ratings.css';
 @import './planners/20-day-planner-flow.css';
 @import './planners/21-chat-passes.css';
+@import './planners/23-places-pages.css';
 @import './planners/24-destination-workspace.css';
 @import './planners/26-shortlist-extras.css';
 @import './planners/67-v6-tripplanner.css';

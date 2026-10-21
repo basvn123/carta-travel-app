@@ -11,7 +11,7 @@
  * { ok: false, code } where code is one of: no_auth_config, auth, bad_tier,
  * no_stripe, no_price, pass_max, quota_check, stripe_error, network.
  */
-import { supabase } from './supabaseClient.js';
+import { getSupabase } from './supabaseClient.js';
 import { PAID_TIERS } from './pricing.js';
 import { trackPaywall, markCheckoutRedirect } from './paywallEvents.js';
 
@@ -23,6 +23,10 @@ import { trackPaywall, markCheckoutRedirect } from './paywallEvents.js';
  *   never who paid, which is the half that decides anything.
  */
 export async function startCheckout(tier, reason = '') {
+  // The client loads on first use; a chunk that fails to arrive is the
+  // network failing, and reads as one.
+  const supabase = await getSupabase().catch(() => false);
+  if (supabase === false) return { ok: false, code: 'network' };
   if (!supabase) return { ok: false, code: 'no_auth_config' };
   if (!PAID_TIERS.includes(tier)) return { ok: false, code: 'bad_tier' };
   // Intent, not outcome. Recorded before the round trip so a checkout that

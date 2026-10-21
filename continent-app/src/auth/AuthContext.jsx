@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { supabase, authConfigured } from '../lib/supabaseClient.js';
+import { getSupabase, authConfigured, mayHaveSession } from '../lib/supabaseClient.js';
 
 const AuthContext = createContext(null);
 
@@ -42,7 +42,11 @@ export function hasPasswordIdentity(user) {
  */
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(authConfigured);
+  // A guest with no stored session and no auth redirect in the URL has
+  // nothing to wait for, so the app paints at once and supabase-js loads
+  // after it (T479). Anyone who may be signed in waits for the real session,
+  // as before, so the entry gate never flashes for a returning user.
+  const [loading, setLoading] = useState(mayHaveSession);
   // True while the URL carries a password-recovery link, until the user sets
   // a new password, the app shows the "set new password" screen instead of
   // the normal UI during this window.
@@ -59,26 +63,40 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!authConfigured) return;
+    let live = true;
+    let sub = null;
 
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
+    getSupabase().then((supabase) => {
+      if (!live) return;
+      supabase.auth.getSession().then(({ data }) => {
+        if (!live) return;
+        setSession(data.session);
+        setLoading(false);
+      }).catch(() => {
+        // Network/config failure: fall back to guest mode rather than hanging
+        // forever behind the full-screen loading gate.
+        if (live) setLoading(false);
+      });
+
+      const { data } = supabase.auth.onAuthStateChange((event, next) => {
+        if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true);
+        setSession(next);
+        setLoading(false);
+      });
+      sub = data.subscription;
     }).catch(() => {
-      // Network/config failure: fall back to guest mode rather than hanging
-      // forever behind the full-screen loading gate.
-      setLoading(false);
+      // The supabase-js chunk failed to load: same fallback, guest mode.
+      if (live) setLoading(false);
     });
 
-    const { data: sub } = supabase.auth.onAuthStateChange((event, next) => {
-      if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true);
-      setSession(next);
-      setLoading(false);
-    });
-
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      live = false;
+      if (sub) sub.unsubscribe();
+    };
   }, []);
 
   const signUp = useCallback(async (email, password, fullName) => {
+    const supabase = await getSupabase();
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -93,6 +111,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signIn = useCallback(async (email, password) => {
+    const supabase = await getSupabase();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   }, []);
@@ -101,6 +120,7 @@ export function AuthProvider({ children }) {
   // where onAuthStateChange picks up the new session. Requires the Google
   // provider (client id + secret) to be enabled in the Supabase dashboard.
   const signInWithGoogle = useCallback(async () => {
+    const supabase = await getSupabase();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin },
@@ -109,6 +129,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    const supabase = await getSupabase();
     await supabase.auth.signOut();
   }, []);
 
@@ -122,11 +143,13 @@ export function AuthProvider({ children }) {
    * you are typing on stays signed in.
    */
   const signOutOtherDevices = useCallback(async () => {
+    const supabase = await getSupabase();
     const { error } = await supabase.auth.signOut({ scope: 'others' });
     if (error) throw error;
   }, []);
 
   const sendPasswordReset = useCallback(async (email) => {
+    const supabase = await getSupabase();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin,
     });
@@ -134,6 +157,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const updatePassword = useCallback(async (newPassword) => {
+    const supabase = await getSupabase();
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) throw error;
     setRecoveryMode(false);
@@ -152,6 +176,7 @@ export function AuthProvider({ children }) {
    * "recent login" requirement when secure password change is switched on.
    */
   const reauthenticate = useCallback(async (password) => {
+    const supabase = await getSupabase();
     const email = session?.user?.email;
     if (!email) throw new Error('This account has no email address to verify against.');
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -167,6 +192,7 @@ export function AuthProvider({ children }) {
    * than claiming a change that has not landed yet.
    */
   const updateProfile = useCallback(async ({ fullName, email }) => {
+    const supabase = await getSupabase();
     const attrs = {};
     if (fullName !== undefined) attrs.data = { full_name: fullName };
     if (email !== undefined) attrs.email = email;
@@ -185,6 +211,7 @@ export function AuthProvider({ children }) {
   // row they own (see supabase/migrations/005_delete_user.sql). The anon
   // client can't delete auth users itself, so the RPC is the whole mechanism.
   const deleteAccount = useCallback(async () => {
+    const supabase = await getSupabase();
     const { error } = await supabase.rpc('delete_user');
     if (error) throw error;
     await supabase.auth.signOut();
@@ -206,6 +233,7 @@ export function AuthProvider({ children }) {
    * complete file.
    */
   const exportUserData = useCallback(async () => {
+    const supabase = await getSupabase();
     const { data, error } = await supabase.rpc('export_user_data');
     if (error) throw error;
     if (data?.error) throw new Error(data.error);

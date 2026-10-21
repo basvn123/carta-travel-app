@@ -2,9 +2,10 @@
 // plan id per user, whole payload as jsonb, deleted_at as tombstone).
 // See supabase/migrations/004_day_plans.sql. Callers handle errors: a
 // project that has not run the migration yet must degrade to local-only.
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 
 export async function fetchDayPlanRows(userId) {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from('day_plans')
     .select('plan_id, payload, updated_at, deleted_at')
@@ -18,6 +19,7 @@ export async function fetchDayPlanRows(userId) {
  *  outliving it in the account). Returns the updated_at written. */
 export async function upsertDayPlanRow(userId, planId, payload, deletedAt = null) {
   const updatedAt = new Date().toISOString();
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('day_plans')
     .upsert({

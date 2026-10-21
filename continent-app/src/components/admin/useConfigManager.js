@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { adminListConfig, adminSetConfig, adminSetConfigPublic } from '../../auth/admin.js';
-import { supabase } from '../../lib/supabaseClient.js';
+import { getSupabase } from '../../lib/supabaseClient.js';
 
 // site_config as the Site tab edits it: maintenance, the notice, the flags.
 // Held by the shell so an unsaved edit survives a trip to another tab.
@@ -55,7 +55,8 @@ export function useConfigManager(unlocked, errText, loadAudit) {
 
   useEffect(() => {
     if (!unlocked) return;
-    if (supabase) {
+    getSupabase().then((supabase) => {
+      if (!supabase) return;
       supabase.from('site_config').select('key,value').then(({ data }) => {
         for (const row of data || []) {
           if (row.key === 'announcement' && row.value && typeof row.value === 'object') {
@@ -76,7 +77,7 @@ export function useConfigManager(unlocked, errText, loadAudit) {
           }
         }
       });
-    }
+    }, () => {});
   }, [unlocked]);
 
   const saveNotice = async () => {

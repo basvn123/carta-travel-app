@@ -35,26 +35,9 @@
 
 /* One spec for both map-bar controls: same height, same paper, same hairline,
    so the two corners read as one row and not as two unrelated widgets. */
-.dayws-stay-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 6px 13px;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  background: rgba(246, 245, 242, 0.9);
-  backdrop-filter: blur(8px);
-  /* T389: the house popover shadow, not a literal (moved rules meet the lint). */
-  box-shadow: var(--shadow-2);
-  color: var(--ink);
-  text-align: left;
-  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
-}
 .dayws-stay-btn svg { flex: none; color: var(--text-3); }
 
 .dayws-stay { position: relative; min-width: 0; max-width: min(62%, 340px); }
-.dayws-stay-text { min-width: 0; display: flex; flex-direction: column; }
 .dayws-stay-text small {
   font-family: var(--ui);
   font-weight: 600;
@@ -71,40 +54,6 @@
   white-space: nowrap;
 }
 .dayws-stay-search svg { flex: none; color: var(--ink-mute); }
-.dayws-stay-search input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  background: none;
-  font-size: 13.5px;
-}
-.dayws-stay-find {
-  flex: none;
-  height: 30px;
-  padding: 0 12px;
-  border-radius: 8px;
-  background: var(--action);
-  color: var(--on-fill);
-  font-size: 12.5px;
-  font-weight: 600;
-}
-.dayws-stay-results { margin-top: 8px; display: flex; flex-direction: column; }
-.dayws-stay-none { margin-top: 8px; font-size: 12.5px; color: var(--ink-mute); }
-.dayws-stay-clear {
-  margin-top: 8px;
-  font-size: 12px;
-  color: var(--ink-mute);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.dayws-tips-foot {
-  display: flex;
-  gap: 6px;
-  margin-top: 9px;
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--ink-mute);
-}
 .dayws-tips-foot svg { flex: none; margin-top: 2px; }
 
 .dayws-tip-row {
@@ -113,14 +62,6 @@
   gap: 10px;
   padding: 9px 0;
   border-top: 1px solid var(--rule-soft);
-}
-.dayws-tip-body { flex: 1; min-width: 0; }
-.dayws-tip-note {
-  display: block;
-  margin-top: 2px;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
 }
 .dayws-tip-add {
   flex: none;
@@ -140,7 +81,7 @@
    its prompts are in the plan toolbar's Add menu. */
 
 /* ---- Day bar and tabs, at the top of the sheet ---- */
-.dayws-city-add > *:first-child { flex: 1; min-width: 0; }
+.dayws-city-add > :where(.dropdown):first-child { flex: 1; min-width: 0; }
 
 .dayws-back { margin-top: 22px; }
 
@@ -173,131 +114,26 @@
   line-height: 1.5;
   color: var(--ink-soft);
 }
-.dayp-empty-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 9px;
-  margin-top: 16px;
-}
 
 /* ---- Tab 2: add more ---- */
 /* T399 (brief V4-3): figures are parted by space, as in the head's stats
    line, not by pipes. */
 .daya-search svg { flex: none; color: var(--ink-mute); }
-.daya-search input { flex: 1; min-width: 0; border: none; background: none; font-size: 14px; }
-.daya-search-clear {
-  flex: none;
-  width: 28px; height: 28px;
-  border-radius: 8px;
-  color: var(--ink-mute);
-  font-size: 17px;
-  line-height: 1;
-}
-.daya-picks::-webkit-scrollbar { display: none; }
 
 /* A browsable place: the photo earns its space, and the sentence beside it
    says what the place actually is. */
 /* A card focused from its map pin is outlined in ink (carta-design "Map and
    list in sync": the list side is ink, the map side carries the accent). */
-.daya-shot { flex: none; }
-.daya-text { flex: 1; min-width: 0; }
-.daya-kind { display: block; margin-top: 2px; font-size: 11.5px; color: var(--ink-mute); }
-.daya-blurb {
-  display: block;
-  margin-top: 6px;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.daya-note {
-  display: block;
-  margin-top: 5px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-mute);
-}
 /* Outlined, not filled: a scrolling list of twelve solid action-brown pills
    turns the accent into wallpaper. It fills on hover, where it is the one
    button being aimed at. */
-.daya-sugg-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 7px 0;
-  text-align: left;
-  border-top: 1px solid var(--rule-soft);
-}
-.daya-sugg-text { flex: 1; min-width: 0; }
 .daya-sugg-text b { display: block; font-size: 13px; font-weight: 600; }
 .daya-sugg-text small { display: block; font-size: 11.5px; color: var(--ink-mute); }
-.daya-sugg-add {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px; height: 26px;
-  border-radius: 8px;
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
-}
-
-.daya-far { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
-.daya-tip {
-  display: flex;
-  gap: 7px;
-  margin-top: 14px;
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--ink-mute);
-}
 .daya-tip svg { flex: none; margin-top: 2px; }
 
 /* ---- Tab 3: files and notes ---- */
 .dayf-head h3 { font-family: var(--display); font-size: 16px; font-weight: 500; }
-.dayf-note { display: flex; gap: 7px; margin-top: 10px; }
 .dayf-note svg { flex: none; margin-top: 2px; }
-.dayf-problem {
-  margin-top: 10px;
-  padding: 9px 12px;
-  border-radius: 10px;
-  background: var(--amber-bg);
-  color: var(--amber-ink);
-  font-size: 12.5px;
-  line-height: 1.45;
-}
-
-.dayf-list { list-style: none; margin-top: 12px; }
-.dayf-row {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 9px 0;
-  border-top: 1px solid var(--rule-soft);
-}
-.dayf-glyph {
-  position: relative;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-  overflow: hidden;
-}
-.dayf-info { flex: 1; min-width: 0; }
-.dayf-act {
-  flex: none;
-  width: 32px; height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  color: var(--ink-mute);
-}
 
 /* ---- Responsive ---- */
 
@@ -308,12 +144,6 @@
 /* Very narrow phones: the two map bars stack rather than squeeze. */
 @media (max-width: 420px) {
   .dayws-stay { max-width: calc(100% - 58px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dayws-stay-btn {
-    transition: none;
-  }
 }
 
 
@@ -327,21 +157,12 @@
    piece of persistent state, because "what is in my day so far" is the
    question the whole screen exists to keep answering. */
 .dayex { display: flex; flex-direction: column; gap: 14px; }
-
-.dayex-chips {
-  display: flex; gap: 7px; align-items: center;
-  overflow-x: auto; flex: 1 1 auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.dayex-chips::-webkit-scrollbar { display: none; }
 .dayex-chips .guide-chip { flex: 0 0 auto; }
 
 /* ---- a rail ------------------------------------------------------------ */
 /* Phone: a horizontal strip that snaps, so a rail reads as "there is more
    this way" rather than as a truncated list. */
-.dayex-cards::-webkit-scrollbar { display: none; }
-.dayex-cards > * { flex: 0 0 62%; scroll-snap-align: start; }
+.dayex-cards > :where(.dayex-card, .pcard) { flex: 0 0 62%; scroll-snap-align: start; }
 
 /* ---- a card ------------------------------------------------------------ */
 .dayex-card {
@@ -353,17 +174,9 @@
   overflow: hidden;
   min-width: 0;
 }
-.dayex-card-body {
-  display: flex; flex-direction: column;
-  border: none; background: none; cursor: pointer;
-  padding: 0; margin: 0; text-align: left; font: inherit;
-  min-width: 0;
-}
 .dayex-card-photo img, .dayex-card-photo .hero-blank {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
-.dayex-card-text { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px; min-width: 0; }
-.dayex-card-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .dayex-card-name b { font-size: 14.5px; line-height: 1.3; }
 /* How far, in the unit the distance deserves. The line is a short phrase
    ("22 km, about 39 min drive"), so it takes the UI face: a number inside
@@ -379,12 +192,12 @@
 .dayex-detail-photo img, .dayex-detail-photo .hero-blank {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
-.dayex-detail-acts > * { flex: 1 1 auto; }
+.dayex-detail-acts > :where(.btn) { flex: 1 1 auto; }
 
 /* ---- desktop ----------------------------------------------------------- */
 @media (min-width: 1100px) {
   /* A grid, not a strip: there is room to compare six places at once. */
-  .dayex-cards > * { flex: none; }
+  .dayex-cards > :where(.dayex-card, .pcard) { flex: none; }
 }
 
 /* The builder's phone tap boxes, moved by T389 from the Q1 phone audit block in
@@ -405,58 +218,9 @@
 /* ---- Workspace head: name, status, the day switcher ---- */
 /* The save state is a status word with the house success dot (carta-design
    "Status, not green"), not a green chip that looks like a button. */
-.day-save-status {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: var(--space-1);
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.day-save-status::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--status-success);
-}
 
 /* One control for the days (carta-design "Day list"): Previous, the day, Next,
    then More. */
-.day-sw {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-.day-sw-btn {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--tap);
-  height: var(--tap);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.day-sw-prev svg { transform: scaleX(-1); }
-.day-sw-label {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  white-space: nowrap;
-  overflow: hidden;
-}
-.day-sw-more { position: relative; flex: none; }
 
 /* The add-a-city row has its own way out now that no chip toggles it. */
 
@@ -472,11 +236,6 @@
    on a pointer screen, a bottom sheet on a phone. */
 
 /* ---- Add more on a phone: the pin filters as one row, no hint line ---- */
-
-
-@media (prefers-reduced-motion: reduce) {
-  .day-sw-btn { transition: none; }
-}
 
 /* ============================================================
    T399, design wave V4: visual and dynamic
@@ -514,7 +273,6 @@
    the stripe and the tinted ground go and the trip link is ink, overridden
    from here until the rules move home. The .day-tier-must stripe in 19 has
    no element left to style. */
-.daytrip-reco-main b svg { color: var(--ink-soft); }
 
 /* The stats line: figures in mono with spacing instead of pipes (V4-3). */
 
@@ -530,35 +288,13 @@
 @media (pointer: coarse) {
   /* The 44 px tabs cost 7 px; the head card above them gives 4 back (its bottom padding, 8 to 4)
      so the first stop stays near 420 px and two stops fit above the bottom bar at 360 x 640. */
-  .dayws-stay-btn,
-  .dayws-stay-find,
-  .dayws-stay-clear { min-height: var(--tap); min-width: var(--tap); }
-  .day-undo-btn { min-height: var(--tap); }
-  .dayf-act { min-width: var(--tap); }
   .dayws-tip-add { min-width: var(--tap); min-height: var(--tap); }
-  .dtmenu-btn { min-width: var(--tap); min-height: var(--tap); }
   /* CountryIntel is tripplanner's; only its head inside this surface's tips dialog is lifted. */
-  .dem-map .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
 }
 
 /* ---- Undo toast (rule N6, brief V5-3) ----
    Sits above the bottom bar and its safe area, takes touches (the shared
    save toast does not), and holds one Undo button at --tap. */
-.day-undo-text { min-width: 0; padding: var(--space-2) 0; overflow-wrap: anywhere; }
-.day-undo-btn {
-  flex: none;
-  min-height: 36px;
-  padding: 0 var(--space-4);
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--on-fill);
-  font: inherit;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
 @keyframes day-undo-in {
   from { opacity: 0; transform: translateX(-50%) translateY(6px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -577,17 +313,6 @@
    44 px hit box whatever its drawn size (DIRECTION.md part 7). The pin's
    box is a pseudo-element, so the marker MapLibre positions keeps its own
    position and transform. */
-@media (pointer: coarse) {
-  :is(.day-ws, .dem-map) .dem-pin::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: var(--tap);
-    height: var(--tap);
-    transform: translate(-50%, -50%);
-  }
-}
 
 /* ════════════════════════════════════════════════════════════════════════
    T433, the day planner rebuilt (2026-10-16). The questions wear the trip
@@ -604,80 +329,21 @@
 
 /* Step 1: the field, the one-tap answers under it, the work already started. */
 .day-wizard .dayw-search-ico { flex: none; color: var(--text-2); }
-.day-wizard .dayw-search .day-stay-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 48px;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--text-lead);
-  color: var(--text);
-}
-.day-wizard .dayw-search .day-stay-input::placeholder { color: var(--text-2); }
 .dayw-quick-row svg { color: var(--text-2); }
 .dayw-quick-row small { color: var(--text-2); font-size: var(--text-caption); }
-.dayw-hit-ico { flex: none; color: var(--text-2); display: inline-flex; }
-.dayw-hit-text { display: flex; flex-direction: column; min-width: 0; }
 .dayw-hit-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .dayw-hit-text small { font-size: var(--text-label); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dayw-chosen-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
 .dayw-chosen-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .dayw-chosen-text small { font-size: var(--text-label); color: var(--text-2); }
 
-.dayw-section { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-3); }
-
 /* Step 2: the calendar beside how many days. */
-.dayw-count-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .dayw-count-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .dayw-count-text small { font-size: var(--text-label); color: var(--text-2); }
 
 /* Step 3: ideas, a field and the strongest places with their photos. */
 .day-wizard .day-ideas-search-ico { position: static; flex: none; color: var(--text-2); }
-.day-wizard .day-ideas-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 48px;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--text-body);
-  color: var(--text);
-}
-.day-wizard .day-ideas-input::placeholder { color: var(--text-2); }
-.day-wizard .day-ideas-row .day-thumb { width: 48px; height: 48px; border-radius: var(--radius-sm); flex: none; }
-.day-wizard .day-ideas-row-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
-.day-wizard .day-ideas-row-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .day-wizard .day-ideas-row-text small { font-size: var(--text-label); color: var(--text-2); }
-.day-wizard .day-ideas-row-mark {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  color: var(--text-2);
-}
-.day-wizard .day-ideas-chip .day-thumb { width: 40px; height: 40px; border-radius: var(--radius-sm); flex: none; }
-.day-wizard .day-ideas-chip-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
-.day-wizard .day-ideas-chip-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .day-wizard .day-ideas-chip-text small { font-size: var(--text-label); color: var(--text-2); }
-.day-ideas-when-select {
-  flex: none;
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-size: var(--text-label);
-}
-.day-wizard .day-ideas-chip-x { width: var(--tap); height: var(--tap); flex: none; }
 
 /* Step 4: the fork is in the T459 section below. */
 /* What an AI action costs, before the tap. */
@@ -702,7 +368,6 @@
 /* On a phone the footer is one row: the cost sits on the summary, not in it. */
 
 /* ── Build it myself ──────────────────────────────────────────────────── */
-.dayw-manual .dayex-chips::-webkit-scrollbar { display: none; }
 .dayw-manual .dayex-view { flex: none; }
 /* A photo card carries nothing on its photograph. */
 
@@ -719,33 +384,15 @@
   gap: var(--space-4);
 }
 .dayws-head .dayws-back { flex: none; margin-left: calc(-1 * var(--space-2)); }
-.dayws-head-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.dayws-head .day-save-status { flex: none; display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--tap); font-size: var(--text-label); color: var(--text-2); }
 
 /* The day's card: the time it spans, the stops, the walking, the figure. */
-.days-time { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .days-time > b { font-size: var(--text-headline); font-weight: 600; line-height: var(--leading-tight); font-variant-numeric: tabular-nums; color: var(--text); }
 .days-cost.btn { flex: none; height: auto; min-height: var(--tap); padding: var(--space-1) var(--space-2); margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-2)) 0 0; }
-.days-cost .btn-label { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; white-space: normal; }
-.days-cost-fig .money-est { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
 /* T435: a verdict is ink with the success tick, never green text in a sentence. */
-.days-route.is-checked svg { color: var(--status-success); }
 
 /* The day bar: the day's shape with its hours under it. */
-.dayb-ticks > span { position: absolute; top: 0; transform: translateX(-50%); font-size: var(--text-caption); font-variant-numeric: tabular-nums; color: var(--text-3); }
-.dayb-ticks > span:first-child { transform: none; }
 
 /* The map card on a phone, the full map one tap away. */
-.daymap-card {
-  position: relative;
-  height: 180px;
-  flex: none;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  isolation: isolate;
-}
-.daymap-sheet .fsheet-body { position: relative; flex: 1 1 auto; padding: 0; overflow: hidden; }
 
 .day-ws .dayws-mode { flex: none; }
 /* The start's pin is 18 px; its tap box is the 44 px floor, not 36. */
@@ -753,48 +400,8 @@
 
 /* The day, hour by hour. */
 .dayp-summary svg { flex: none; margin-top: 3px; }
-.dayt > li {
-  position: relative;
-  display: grid;
-  grid-template-columns: 52px 48px minmax(0, 1fr) auto;
-  column-gap: var(--space-3);
-  align-items: start;
-}
-.dayt-rail::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  border-left: 2px dotted var(--border);
-  z-index: 0;
-}
-.dayt-rail > svg { position: relative; z-index: 1; padding: 3px; box-sizing: content-box; background: var(--surface-page); border-radius: 50%; }
-.dayt-rail.is-end > svg { color: var(--text); }
-.dayt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-block: var(--space-2); }
-.dayt-no {
-  position: absolute;
-  top: 2px;
-  left: -6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 4px;
-  border-radius: var(--radius-pill);
-  background: var(--text);
-  color: var(--surface);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
 .dayt-menu-pop { position: absolute; top: 100%; right: 0; z-index: var(--z-overlay); min-width: 200px; }
-.dayt-menu-pop .dayp-menu-item.btn { justify-content: flex-start; width: 100%; color: var(--text); border-radius: 0; }
-.dayt-leg > .dayt-link { grid-column: 4 / 5; align-self: center; padding-right: var(--space-2); }
-.dayp-empty h2 { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
 .dayp-empty p { margin: 0; font-size: var(--text-body); color: var(--text-2); max-width: var(--measure); }
-.dayp-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin-top: var(--space-2); }
 
 /* The start bar in the column, not over the map. */
 
@@ -817,100 +424,39 @@
 /* "Question 3 of 7" sits as a small line over the question. */
 
 /* The rail card: the trip planner's .plan-total, with the day's own lines. */
-.dayr-days-wrap { border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
 .dayr-day-h b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.dayr-day-h span { font-size: var(--text-label); color: var(--text-2); }
-.dayr-places li {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  min-width: 0;
-  font-size: var(--text-body);
-  color: var(--text);
-  counter-increment: dayr;
-}
-.dayr-carta { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
 /* The card scrolls inside the rail rather than running under the footer:
    the head, the recap, the footer and a step of air are what it shares the
    screen with. */
 /* In its sheet the card is the sheet: no second frame, no second title. */
-.dayw-rail-sheet .plan-total-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Step 4: two equal answers. Both photographs fill one frame, so the two
    cards end together (owner: a white gap under "Build it myself"). */
-.dayw-fork-card .card-title { font-size: var(--text-title); }
-.dayw-fork-card .card-meta { white-space: normal; }
-.dayw-fork-tile { position: relative; display: block; min-width: 0; min-height: 0; overflow: hidden; background: var(--surface-sunken); }
 .dayw-fork-photo img,
 .dayw-fork-tile img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
 /* On a phone both answers fit the first screen: the photographs are strips. */
 
 /* Build it myself: Where, then What, then the places, in one column. */
-.dayw-manual .dayex-where-n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  margin-left: var(--space-1);
-  padding: 0 var(--space-1);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.dayw-manual .dayex-what-acts { display: inline-flex; align-items: center; gap: var(--space-2); flex: none; }
 .dayw-manual .dayex-view { display: inline-flex; flex: none; }
-.dayw-manual .dayex-map {
-  position: relative;
-  height: min(560px, 70dvh);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  isolation: isolate;
-}
 /* Three places a theme, side by side wherever three fit. */
 @media (min-width: 640px) {
-  .dayw-manual .dayex-cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-3);
-    overflow: visible;
-    margin: 0;
-    padding-inline: 0;
-  }
-  .dayw-manual .dayex-cards > * { flex: none; }
+  .dayw-manual .dayex-cards > :where(.dayex-card, .pcard) { flex: none; }
 }
-.dayw-manual .dayex-card-name b { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
 
 /* Step 2: every date control on one card, as the trip wizard's When step
    ("a card reads as one question with its parts"). */
-.day-wizard .dayw-when {
-  gap: 0;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  overflow: hidden;
-}
 
 /* A phone keeps the rhythm, a step tighter. */
 
 /* Step 1: the chosen start keeps its one Change (the recap starts at step 2). */
-.dayw-chosen .dayw-start-change.btn { flex: none; min-height: var(--tap); border-radius: var(--radius-pill); }
 
 /* Touch screens: every way back to an answer, and every route link, is a
    44 px target, whatever width the screen is (the recap's chips are 32 px
    from 769 px, and German's "Route" measured 43 px wide). */
-.dayt-link { min-width: var(--tap); justify-content: center; }
 
 /* The footer's summary gives way to Back and Next: a long label (German
    "Noch nichts gewählt") shortens with an ellipsis instead of running
    under the buttons. */
-.day-wizard .guide-foot-summary { flex: 1 1 auto; min-width: 0; }
-.dayw-rail-btn.btn { max-width: 100%; min-width: 0; overflow: hidden; }
-.dayw-rail-btn.btn > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* On a phone the recap is one line that scrolls sideways, so the question
    and the first places stay in the first screen (T459 critique: three

@@ -19,7 +19,7 @@
  *      point in each loader is a single .map() and nothing downstream has to
  *      know this layer exists.
  */
-import { supabase } from './supabaseClient.js';
+import { authConfigured, getSupabase } from './supabaseClient.js';
 import { dataUrl } from './dataHost.js';
 
 // layer -> Map(itemId -> patch)
@@ -37,13 +37,14 @@ function emptyTable() {
 export function overridesReady() {
   if (readyPromise) return readyPromise;
   table = emptyTable();
-  if (!supabase) {
+  if (!authConfigured) {
     readyPromise = Promise.resolve(table);
     return readyPromise;
   }
-  readyPromise = supabase
-    .from('content_overrides')
-    .select('layer,item_id,patch')
+  readyPromise = getSupabase()
+    .then((supabase) => supabase
+      .from('content_overrides')
+      .select('layer,item_id,patch'))
     .then(({ data, error }) => {
       if (!error && Array.isArray(data)) {
         for (const row of data) {

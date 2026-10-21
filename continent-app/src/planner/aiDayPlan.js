@@ -11,7 +11,7 @@
  * spent, function missing, network down) resolves to a typed code the modal
  * turns into the deterministic built-in planner as a fallback.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 import { reportEdgeFailure } from './edgeFailure.js';
 import { trackAiCall } from '../lib/launchEvents.js';
 import {
@@ -78,6 +78,10 @@ export function buildAiCandidates({ items, walkable, excludeIdx, interests, limi
  * network.
  */
 export async function requestAiDayPlan(payload) {
+  // The client loads on first use; a chunk that fails to arrive is the
+  // network failing, and reads as one.
+  const supabase = await getSupabase().catch(() => false);
+  if (supabase === false) return { ok: false, code: 'network' };
   if (!supabase) return { ok: false, code: 'no_auth_config' };
   try {
     // The denominator of the AI failures rate (048, T215-d).

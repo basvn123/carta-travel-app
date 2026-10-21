@@ -1,0 +1,14 @@
+/* The items route sheet (T474, CSS per route): the rules only the item pages
+   render, split out of the main sheet by scripts/css-routes.mjs and imported by
+   the route's lazy entries, so they load with its chunk and not before the
+   first paint. Same order as src/styles.css. */
+
+@import './items/23-places-pages.css';
+@import './items/24-destination-workspace.css';
+@import './items/25-feature-pages.css';
+@import './items/26-shortlist-extras.css';
+@import './items/29-signature.css';
+@import './items/40-upload.css';
+@import './items/65-v6-outdoor.css';
+@import './items/66-v6-trips.css';
+@import './items/70-item-pages.css';

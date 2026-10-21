@@ -9,9 +9,10 @@
  * thrown Error with `code` set, so callers handle transport failures and
  * refusals through one catch.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 
 async function call(fn, args) {
+  const supabase = await getSupabase();
   if (!supabase) {
     const err = new Error('auth_not_configured');
     err.code = 'auth_not_configured';

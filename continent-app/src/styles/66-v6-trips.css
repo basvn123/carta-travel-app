@@ -338,10 +338,6 @@
 }
 /* A hero is at most 40 percent of the viewport on a phone and 60 on a
    desktop, so the strip and its price are on the first screen. */
-.jpage .jpage-shot { max-height: 40dvh; width: 100%; object-fit: cover; }
-@media (min-width: 769px) {
-  .jpage .jpage-shot { max-height: 60dvh; }
-}
 
 /* The length control: one two-segment control on the list and the page. */
 .tl-seg {
@@ -423,7 +419,6 @@
 }
 
 /* Booking order: whole rows at --tap, the due month under the clause. */
-.jpage-book-list label { min-height: var(--tap); }
 .jpage-book-due {
   display: block;
   margin-top: 2px;
@@ -431,7 +426,6 @@
   font-weight: 600;
   color: var(--ink);
 }
-.jpage-book-count { font-family: var(--ui); }
 
 /* "More about this day" reaches the tap floor. */
 .jpage .tday-more { min-height: var(--tap); }
@@ -441,16 +435,7 @@
 
 /* ── Desktop: a plan column and a sticky cost column (rule R8) ──────────── */
 @media (min-width: 1024px) {
-  .jpage .jpage-wrap {
-    max-width: 1180px;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--panel-w);
-    column-gap: var(--space-7);
-    row-gap: 0;
-    align-items: start;
-  }
   .jpage .jpage-wrap > * { grid-column: 1; }
-  .jpage .jpage-body { display: contents; }
   .jpage .jpage-body > * { grid-column: 1; }
   .jpage .jpage-body > .jpage-side {
     grid-column: 2;
@@ -477,10 +462,6 @@
    credit pill are no longer rendered, and the band under the photo holds the
    name, the countries, the themes and the credit on solid paper, flush with
    the photo's bottom edge (the caption band rule). */
-.itin-capband {
-  background: var(--paper);
-  border-bottom: 1px solid var(--rule);
-}
 .itin-capband-in {
   max-width: 760px;
   margin: 0 auto;
@@ -509,17 +490,6 @@
   color: var(--ink-soft);
 }
 /* The score is a rating, so it is ochre and mono, beside the countries. */
-.itin-capband-score {
-  margin-left: var(--space-2);
-  padding: 2px var(--space-2);
-  border-radius: 6px;
-  background: var(--rate-bg);
-  color: var(--rate);
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
 .itin-capband-themes {
   margin: var(--space-1) 0 0;
   font-family: var(--ui);
@@ -538,22 +508,9 @@
 }
 
 /* The fact row: a long estimate ("~ €58.08 est.") may wrap rather than clip. */
-.itin-facts .tpage-fact-val { white-space: normal; }
 
 /* The one primary. A control radius, the hover fill is the accent's own
    hover token, and the hover sits behind a hover-capable pointer. */
-.itin-page .itin-use {
-  min-height: var(--tap);
-  border-radius: 6px;
-  transition: background-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .itin-page .itin-use:hover { background: var(--accent); }
-}
-@media (hover: hover) {
-  .itin-page .itin-use:hover { background: var(--accent-hover); }
-}
-.itin-page .itin-use:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* "Link copied" is a confirmation: ink text after a status dot, never green
    text (the Status, not green rule). */
@@ -563,28 +520,11 @@
   gap: var(--space-2);
   color: var(--ink);
 }
-.itin-page .itin-copied::before {
-  content: "";
-  flex: none;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--status-success);
-}
 
 /* The route: the dot separators are gone from the markup (commas now), and
    the leg's fare sits in mono with its tilde and "est." in words. */
 .itin-page .itin-stop-meta { gap: var(--space-1); }
 .itin-page .itin-leg { flex-wrap: wrap; }
-.itin-leg-fig {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 12px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.itin-page .itin-day-leg { flex-wrap: wrap; }
-.itin-page .itin-day-leg .itin-leg-fig { margin-left: auto; }
 
 /* The days, in the shared day track (styles/32-day-carousel.css draws the
    track, the bar and the dots). Each day is a bordered card like the
@@ -597,7 +537,6 @@
   border-radius: 10px;
   background: var(--bg-card);
 }
-.dtrack .tday-head { display: block; }
 .dtrack .tday-title {
   margin: 0;
   font-family: var(--display);
@@ -607,13 +546,7 @@
   letter-spacing: -0.01em;
   color: var(--ink);
 }
-.dtrack .tday-chips,
-.dtrack .tday-shots,
-.dtrack .tday-more,
-.dtrack .itin-sights,
-.dtrack .itin-day-leg,
-.dtrack .itin-day-note { margin-left: 0; }
-.dtrack .tday-chip { white-space: normal; }
+.dtrack .tday-more { margin-left: 0; }
 
 /* The day's photographs: two 3:2 frames across the card, not a sideways
    scroller inside a sideways track. */
@@ -626,15 +559,6 @@
   overflow: visible;
   scroll-snap-type: none;
 }
-.dtrack .tday-shot { width: auto; min-width: 0; }
-.dtrack .tday-shot-img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 2;
-  border-radius: 6px;
-  background: var(--paper-dim);
-}
-.dtrack .tday-shot-cap { font-size: 12px; color: var(--ink-mute); }
 
 /* "More about this day": a full tap target, ink on hover only where hover
    exists, the chevron turning on the motion tokens. */
@@ -653,18 +577,10 @@
   .itin-page .tday-more:hover { color: var(--ink); }
 }
 .itin-page .tday-more-chev { transition: transform var(--dur-2) var(--ease-out); }
-.itin-page .tday-prose { padding: var(--space-1) 0 var(--space-2); }
 
 /* The cost fold as a receipt: a paper-dim head with the route, one hairline
    line per cost with the figure right aligned in mono, a 2px ink rule above
    the total, the day line under it. */
-.itin-receipt {
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-}
 .itin-receipt-head {
   display: flex;
   align-items: baseline;
@@ -688,35 +604,9 @@
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
 }
-.itin-receipt .itin-cost { padding: 0 var(--space-4); }
-.itin-receipt .itin-cost li {
-  align-items: baseline;
-  padding: var(--space-2) 0;
-  font-family: var(--ui);
-  font-size: 14px;
-  color: var(--ink-soft);
-}
-.itin-receipt .itin-cost li > span { min-width: 0; }
-.itin-receipt .itin-cost li b {
-  flex: none;
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  color: var(--ink);
-}
-.itin-receipt .itin-cost-sum {
-  border-top: 2px solid var(--ink);
-  border-bottom: 1px solid var(--rule-soft);
-  color: var(--ink);
-  font-weight: 600;
-}
-.itin-receipt .itin-cost-day { border-bottom: none; }
 .itin-receipt .itin-cost-day b { color: var(--ink-soft); }
 
 @media (prefers-reduced-motion: reduce) {
-  .itin-page .itin-use { transition: none; }
   .itin-page .tday-more-chev { transition: none; }
 }
 
@@ -751,7 +641,6 @@
 .jcap-card:active .jcap-meta { color: var(--on-fill); }
 
 /* ── The strip's cost cell: the range in mono, "a person" in sans ─────── */
-.jpage .jstrip-word:has(.mono) { text-transform: none; }
 .jpage .jstrip-word .mono {
   font-family: var(--mono);
   font-weight: 500;
@@ -768,8 +657,6 @@
    profile is drawn in the ink ramp here; only the selected day's marker is
    --accent. */
 /* The fold icons and the title hover are the shared .dsec rules since T411. */
-.jpage .rfig-week .tpage-elev-area { fill: var(--rule-soft); }
-.jpage .rfig-week .tpage-elev-line { stroke: var(--ink); }
 
 /* ── One selected day across the week (brief V4.1) ──────────────────────
    The day in view on the track: its effort bar is the one --accent item of
@@ -883,16 +770,6 @@
    beds list one under another with the night and the place in full, the
    text the chip already carries for a screen reader. ──────────────────── */
 @media (max-width: 599px) {
-  .jpage .jweek-beds {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .jpage .jweek-bed {
-    min-height: 32px;
-    padding-block: var(--space-1);
-  }
-  .jpage .jweek-bed:not(.is-out) .jweek-bed-name { display: none; }
   .jpage .jweek-bed .jweek-bed-where {
     position: static;
     width: auto;
@@ -908,10 +785,6 @@
 }
 
 /* ── The photo credit wraps instead of overrunning its box ─────────────── */
-.jpage .lpage-credit-line {
-  white-space: normal;
-  text-overflow: clip;
-}
 
 /* ── Print (brief V5.5): the page prints as the plan. The page is a fixed
    full-height dialog over the app, so print lifts it out of that and lets it
@@ -921,9 +794,7 @@
 @media print {
   /* Every ancestor of the page runs down the paper (no fixed height, no
      clipping, no transform), and its siblings along the way are not printed. */
-  html:has(.jpage),
-  body:has(.jpage),
-  :has(.jpage) {
+  html:has(.jpage) {
     position: static;
     display: block;
     height: auto;
@@ -932,28 +803,7 @@
     transform: none;
     contain: none;
   }
-  :has(.jpage) > :not(:has(.jpage)):not(.jpage) { display: none; }
-  .jpage {
-    position: static;
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-  }
-  .jpage .tpage-scroll {
-    height: auto;
-    overflow: visible;
-  }
   .jpage .tpage-bar,
-  .jpage .srail,
-  .jpage .jpage-bar-acts,
-  .jpage .dtrack-bar,
-  .jpage .dtrack-dots,
-  .jpage .tl-seg,
-  .jpage .ls-slider-input,
-  .jpage .jweek-picks,
-  .jpage .jpage-exits,
-  .jpage .bpage-base,
   .jpage .report-link,
   .jpage .dsec-chev,
   .jpage .tday-more { display: none; }
@@ -968,17 +818,10 @@
     margin-bottom: var(--space-3);
     break-inside: avoid;
   }
-  .jpage .jpage-day,
-  .jpage .jpage-book-list li,
-  .jpage .jpage-budget-rows li { break-inside: avoid; }
-  .jpage .dsec-head,
-  .jpage h2,
-  .jpage h3,
-  .jpage h4 { break-after: avoid; }
+  .jpage .jpage-day { break-inside: avoid; }
   .jpage .jpage-hero img {
     max-height: 7cm;
     object-fit: cover;
   }
-  .jpage .tday-panel { grid-template-rows: 1fr; }
   .jpage * { animation: none; transition: none; }
 }

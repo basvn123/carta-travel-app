@@ -24,7 +24,7 @@
  * different questions, "who is coming" and "who can edit this", and they are
  * kept apart on purpose.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /* The verify seam, same precedent as ?savedmock, ?sharemock, ?badgemock and
@@ -55,6 +55,7 @@ const MOCK_ON_TRIP = [
  *  can ship before the migration is pasted. */
 export async function listTripCoplanners(planId) {
   if (MOCK) return MOCK === 'none' ? [] : MOCK_ON_TRIP;
+  const supabase = await getSupabase();
   if (!supabase || !planId) return [];
   const { data, error } = await supabase.rpc('list_trip_coplanners', { wanted_plan: planId });
   if (error) {
@@ -74,6 +75,7 @@ export async function listTripCoplanners(planId) {
 /** The invitations waiting on you. */
 export async function listCoplanInvites() {
   if (MOCK) return MOCK === 'none' ? [] : MOCK_INVITES;
+  const supabase = await getSupabase();
   if (!supabase) return [];
   const { data, error } = await supabase.rpc('list_coplan_invites');
   if (error) {
@@ -93,6 +95,7 @@ export async function listCoplanInvites() {
 }
 
 export async function inviteCoplanner(planId, ownerId, userId) {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('trip_collaborators')
     .insert({
@@ -112,6 +115,7 @@ export async function inviteCoplanner(planId, ownerId, userId) {
 /** Accepting is an update the invitee is the only person allowed to make.
  *  Both keys are pinned so a stray planId cannot answer somebody else's. */
 export async function acceptCoplanInvite(planId, myUserId) {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('trip_collaborators')
     .update({ status: 'accepted', responded_at: new Date().toISOString() })
@@ -122,6 +126,7 @@ export async function acceptCoplanInvite(planId, myUserId) {
 
 /** Declining, withdrawing and leaving are the same act on the same row. */
 export async function removeCoplanner(planId, userId) {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('trip_collaborators')
     .delete()
@@ -145,6 +150,7 @@ export function coplanLinkUrl(token) {
 
 export async function listCoplanLinks(planId) {
   if (MOCK) return { links: MOCK === 'none' ? [] : [{ token: 'f'.repeat(64), expiresAt: '2026-10-23T10:00:00Z', uses: 1 }] };
+  const supabase = await getSupabase();
   if (!supabase || !planId) return { links: [] };
   const { data, error } = await supabase.rpc('list_coplan_links', { plan: planId });
   if (missingFn(error)) return { links: [], missing: true };
@@ -154,6 +160,7 @@ export async function listCoplanLinks(planId) {
 
 export async function createCoplanLink(planId) {
   if (MOCK) return { token: 'e'.repeat(64), expiresAt: '2026-10-23T10:00:00Z' };
+  const supabase = await getSupabase();
   const { data, error } = await supabase.rpc('create_coplan_link', { plan: planId });
   if (missingFn(error)) return { missing: true };
   if (error) {
@@ -168,6 +175,7 @@ export async function createCoplanLink(planId) {
 
 export async function revokeCoplanLink(token) {
   if (MOCK) return true;
+  const supabase = await getSupabase();
   const { data, error } = await supabase.rpc('revoke_coplan_link', { link: token });
   if (error) throw error;
   return !!data;
@@ -177,6 +185,7 @@ export async function revokeCoplanLink(token) {
 export async function acceptCoplanLink(token) {
   if (!/^[0-9a-f]{64}$/.test(String(token || ''))) return { status: 'gone' };
   if (MOCK) return { status: 'joined', tripPlanId: 'mp1', label: 'Lisbon and Porto' };
+  const supabase = await getSupabase();
   const { data, error } = await supabase.rpc('accept_coplan_link', { link: token });
   if (missingFn(error)) return { status: 'missing' };
   if (error) throw error;

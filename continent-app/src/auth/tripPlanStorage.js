@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 
 /**
  * Every trip this account can open: its own, and any it has accepted an
@@ -17,6 +17,7 @@ import { supabase } from '../lib/supabaseClient.js';
  * does not offer a button that would do nothing.
  */
 export async function fetchTripPlans(userId) {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from('trip_plans')
     .select('*')
@@ -84,6 +85,7 @@ export async function fetchTripPlans(userId) {
 }
 
 export async function fetchTripPlanWithStops(tripPlanId) {
+  const supabase = await getSupabase();
   const [{ data: plan, error: planError }, { data: stops, error: stopsError }] = await Promise.all([
     supabase.from('trip_plans').select('*').eq('id', tripPlanId).single(),
     supabase.from('trip_plan_stops').select('*').eq('trip_plan_id', tripPlanId).order('position', { ascending: true }),
@@ -94,6 +96,7 @@ export async function fetchTripPlanWithStops(tripPlanId) {
 }
 
 export async function createTripPlan(userId, label) {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from('trip_plans')
     .insert({ user_id: userId, label: label || null })
@@ -104,6 +107,7 @@ export async function createTripPlan(userId, label) {
 }
 
 export async function renameTripPlan(id, label) {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('trip_plans')
     .update({ label, updated_at: new Date().toISOString() })
@@ -112,6 +116,7 @@ export async function renameTripPlan(id, label) {
 }
 
 export async function deleteTripPlan(id) {
+  const supabase = await getSupabase();
   const { error } = await supabase.from('trip_plans').delete().eq('id', id);
   if (error) throw error;
 }
@@ -121,6 +126,7 @@ export async function deleteTripPlan(id) {
  *  caller's own id when the row cannot be read, which is the pre-020
  *  behaviour and is always right for a trip you own. */
 async function planOwnerId(tripPlanId, fallback) {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from('trip_plans')
     .select('user_id')
@@ -145,6 +151,7 @@ async function planOwnerId(tripPlanId, fallback) {
  */
 export async function saveTripPlanStops(tripPlanId, userId, stops) {
   const ownerId = await planOwnerId(tripPlanId, userId);
+  const supabase = await getSupabase();
   const { error: deleteError } = await supabase
     .from('trip_plan_stops')
     .delete()

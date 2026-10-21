@@ -80,7 +80,7 @@ function RegionCard({ card, listed, t, onOpen }) {
   );
 }
 
-export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion, backLabel = '' }) {
+export function RegionPage({ id, fav = false, onFav = null, onClose, onOpenFeature, onOpenRegion, backLabel = '' }) {
   const { t } = useI18n();
   const [data, setData] = useState(undefined);
   const [failed, setFailed] = useState(false);
@@ -170,6 +170,8 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion, backLabel
         backRef={backRef}
         name={name}
         nameOn={nameOn}
+        fav={fav}
+        onFav={canShare ? onFav : null}
         onShare={canShare ? share : null}
         shareLabel={t('region.share')}
         copied={copied}

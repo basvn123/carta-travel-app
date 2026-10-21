@@ -134,7 +134,7 @@ export const PlaceCard = React.memo(function PlaceCard({
               {parts.map((h, i) => (
                 <React.Fragment key={h.key || i}>
                   {i > 0 ? ', ' : null}
-                  <span className={[h.cls, h.lead ? 'pcard-lead' : null].filter(Boolean).join(' ') || undefined}
+                  <span className={['pcard-part', h.cls, h.lead ? 'pcard-lead' : null].filter(Boolean).join(' ')}
                     title={h.title}>
                     {h.text}
                   </span>

@@ -7,7 +7,7 @@
  * whose every action comes back "forbidden".
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { supabase, authConfigured } from '../lib/supabaseClient.js';
+import { getSupabase, authConfigured } from '../lib/supabaseClient.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 
 export function useIsAdmin() {
@@ -23,6 +23,7 @@ export function useIsAdmin() {
     const id = ++reqId.current;
     setLoading(true);
     try {
+      const supabase = await getSupabase();
       const { data, error } = await supabase.rpc('is_admin');
       if (id !== reqId.current) return;
       setIsAdmin(!error && data === true);

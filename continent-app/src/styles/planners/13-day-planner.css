@@ -1,0 +1,67 @@
+/* 13-day-planner.css, the rules only the trip and day planners render (T474, CSS per route).
+   The rest of this domain stays in src/styles/13-day-planner.css; a rule lives in one
+   of the two, so edit it where it is. This sheet loads with the route's
+   chunk, after the main sheet, and holds only rules nothing later in the
+   cascade could override; scripts/css-routes.mjs --check proves it on a build. */
+.day-badge-custom {
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+  white-space: nowrap;
+}
+.day-thumb {
+  /* Blockified for free when it is a flex item (every list row), but the AI
+     proposal nests it inside a badge wrapper, and an inline span ignores both
+     of the sizes below. */
+  display: block;
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  object-fit: cover;
+}
+.day-thumb-empty {
+  display: flex; align-items: center; justify-content: center;
+  background-color: var(--paper-dim);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink-mute);
+}
+.trip-block-title svg,
+.trip-leg-main svg,
+.trip-leg-mode svg,
+.guide-car-advice-head svg,
+.guide-car-note svg {
+  vertical-align: -2px;
+}
+.guide-reco-mark {
+  display: inline-flex;
+  align-items: center;
+}
+.guide-reco-mark {
+  color: var(--accent);
+  margin-left: 4px;
+  vertical-align: -1px;
+}
+.shape-head-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14.5px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+  /* Clear of the absolute-positioned close (×) in the top-right corner. */
+  padding-right: 36px;
+}
+.shape-head-step {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}

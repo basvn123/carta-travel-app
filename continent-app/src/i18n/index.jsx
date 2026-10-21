@@ -20,7 +20,41 @@ import React, {
   createContext, useContext, useMemo, useState, useCallback, useEffect,
 } from 'react';
 import { setActiveLocale } from '../lib/localeState.js';
-import { en } from './en.js';
+import { enEager, enWhole } from 'virtual:carta-en';
+
+/* T480: English itself arrives in two parts. en.js stays the one source file;
+ * the build (scripts/i18n/enSplit.mjs) cuts it into the keys the first paint
+ * can reach, bundled here, and the rest, a lazy chunk fetched after the first
+ * commit that adds itself through addEnglish(). Every lazy chunk that names a
+ * key imports that rest statically, so it is always in before such a chunk
+ * runs. The dev server serves en.js whole (enWhole) and none of this happens.
+ *
+ * `en` is the one English object every lookup reads; the rest is merged into
+ * it in place, so CATALOGS.en and the fallbacks below see it the moment it
+ * lands. */
+const en = enEager;
+let enDone = enWhole;
+const enListeners = new Set();
+let enRest = null;
+
+/** Called by the rest chunk as it evaluates. */
+export function addEnglish(strings) {
+  Object.assign(en, strings);
+  enDone = true;
+  enListeners.forEach((fn) => fn());
+}
+
+function loadEnglishRest() {
+  if (enDone || enRest) return;
+  // A failed fetch (offline, stale deploy) settles English as it is, so a
+  // missing key falls back to the key itself, the same last resort as before.
+  enRest = import('virtual:carta-en-rest').catch(() => addEnglish({}));
+}
+
+/* A key not in English yet resolves to '' while the rest is on its way,
+ * never to the raw key: the provider re-renders the moment it lands. Only a
+ * key English truly lacks falls back to itself. */
+const english = (key) => en[key] ?? (enDone ? key : '');
 
 /* Only English is bundled into the entry chunk. The other five catalogs are
  * ~190 KB of source each (~960 KB together, roughly 38% of the main JS bundle
@@ -28,8 +62,8 @@ import { en } from './en.js';
  * download and parse five languages they had not asked for. Each one is now
  * its own chunk, fetched the first time that language is actually selected.
  *
- * English stays static because it is the fallback for every missing key
- * (see the t() below) and the catalog the app opens on. */
+ * The first-paint part of English stays static because it is the fallback
+ * for every missing key (see the t() below) and the catalog the app opens on. */
 const LOADERS = {
   nl: () => import('./nl.js').then((m) => m.nl),
   de: () => import('./de.js').then((m) => m.de),
@@ -83,7 +117,7 @@ const I18nContext = createContext(null);
  *  session, and English otherwise, so it never waits on a download. */
 export function tOutsideProvider(key, vars) {
   const catalog = CATALOGS[initialLang()] || en;
-  return interpolate(catalog[key] ?? en[key] ?? key, vars);
+  return interpolate(catalog[key] ?? english(key), vars);
 }
 
 export function I18nProvider({ children }) {
@@ -112,6 +146,17 @@ export function I18nProvider({ children }) {
     return () => { live = false; };
   }, [lang]);
 
+  // After the first commit, fetch the rest of English and re-render with it.
+  useEffect(() => {
+    if (enWhole) return undefined;
+    const done = () => setLoaded((n) => n + 1);
+    // A lazy chunk may have pulled the rest in before this effect ran.
+    if (enDone) { done(); return undefined; }
+    enListeners.add(done);
+    loadEnglishRest();
+    return () => { enListeners.delete(done); };
+  }, []);
+
   const setLang = useCallback((code) => {
     if (!isLang(code)) return;
     try { localStorage.setItem(LANG_KEY, code); } catch { /* storage unavailable */ }
@@ -124,7 +169,7 @@ export function I18nProvider({ children }) {
   const value = useMemo(() => {
     const catalog = CATALOGS[lang] || en;
     const t = (key, vars) => {
-      const msg = catalog[key] ?? en[key] ?? key;
+      const msg = catalog[key] ?? english(key);
       return interpolate(msg, vars);
     };
     return { lang, setLang, t, languages: LANGUAGES };
@@ -141,7 +186,7 @@ export function useI18n() {
   const ctx = useContext(I18nContext);
   if (!ctx) {
     // Render outside the provider (tests, isolated mounts): plain English.
-    return { lang: 'en', setLang: () => {}, t: (key, vars) => interpolate(en[key] ?? key, vars), languages: LANGUAGES };
+    return { lang: 'en', setLang: () => {}, t: (key, vars) => interpolate(english(key), vars), languages: LANGUAGES };
   }
   return ctx;
 }

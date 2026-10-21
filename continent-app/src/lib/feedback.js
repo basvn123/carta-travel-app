@@ -12,7 +12,7 @@
  * identifiers, nothing about where they are, nothing they did not just
  * choose to send.
  */
-import { supabase } from './supabaseClient.js';
+import { getSupabase } from './supabaseClient.js';
 import { reportKey } from './reportKey.js';
 
 export { REPORT_WHATS, reportKey } from './reportKey.js';
@@ -34,6 +34,7 @@ export function feedbackContext(extra = {}) {
 
 /** Resolves on success, throws with `code` set on refusal. */
 export async function sendFeedback({ message, kind = 'other', email = null, context = null }) {
+  const supabase = await getSupabase();
   if (!supabase) {
     const err = new Error('auth_not_configured');
     err.code = 'auth_not_configured';

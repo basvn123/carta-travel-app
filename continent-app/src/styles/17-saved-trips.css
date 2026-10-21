@@ -14,7 +14,6 @@
 /* Share / download actions under the trip overview: one toggle, collapsed by
    default, opening into a clean vertical list instead of up to six equal-width
    buttons squeezed into a row (each wrapping its label across 2-3 lines). */
-.itin-export { margin-top: 10px; }
 .itin-export-toggle {
   width: 100%;
   display: flex;
@@ -64,7 +63,6 @@
    28px between sections, carried by the section wrapper rather than by each
    title's own ad-hoc margin, so inserting a section (the inbox appears and
    disappears) never changes its neighbours' spacing. */
-.trip-extras { margin-top: 4px; }
 /* The expense ledger is its own component but the same stack: it keeps the
    28px beat where the sections hand over to it. */
 
@@ -101,33 +99,8 @@
 .extras-drop-status.err { color: var(--danger); }
 
 /* What the import touched, named where it touched it. */
-.extras-ai-badge {
-  flex: none;
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 11px;
-  white-space: nowrap;
-}
 
 /* ── Activity Inbox: staged activities waiting for a day ── */
-.extras-inbox-count {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  min-width: 18px; height: 18px;
-  padding: 0 5px;
-  display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
-}
-.extras-inbox-glyph { flex: none; color: var(--ink-mute); display: inline-flex; }
-.extras-inbox-info { flex: 1; min-width: 0; }
-.extras-inbox-meta { font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
 .extras-inbox-day { flex: none; }
 .extras-inbox-day .dropdown-trigger {
   min-width: 0;
@@ -143,7 +116,6 @@
 }
 
 /* Imported activities pinned onto a day row in the days list. */
-.itin-day-extras { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 0 6px 10px; }
 .itin-day-extra small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 .itin-day-extra button {
   border: none; background: none; cursor: pointer;
@@ -153,8 +125,6 @@
   .itin-day-extra button:hover { color: var(--accent); }
 }
 .extras-row-head input[type='checkbox'] { accent-color: var(--accent); flex: none; }
-.extras-label { flex: 1; min-width: 0; font-weight: 600; color: var(--ink); }
-.extras-row.done .extras-label { color: var(--ink-mute); }
 .extras-remove {
   flex: none; border: none; background: none; color: var(--ink-mute);
   font-size: 16px; line-height: 1; padding: 0 4px; cursor: pointer;
@@ -162,25 +132,15 @@
 /* Two fixed rows per booking: code beside the paid amount, then the link on
    its own full line. The old flex-wrap laid the three fields out differently
    per card depending on how long each value happened to be. */
-.extras-fields {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 120px;
-  gap: 6px;
-  margin-top: 7px;
-}
 .extras-input {
   min-width: 0; width: 100%; padding: 6px 9px; font-size: 12.5px;
   border: 1px solid var(--rule); border-radius: 8px; background: var(--paper);
   color: var(--ink);
 }
-.extras-input::placeholder { color: var(--ink-mute); }
-.extras-url-wrap { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; }
-.extras-url { flex: 1; }
 .extras-label-input {
   flex: 1; min-width: 0; padding: 4px 8px; font-size: 13px; font-weight: 600;
   border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink);
 }
-.extras-open-link { flex: none; display: inline-flex; align-items: center; color: var(--accent); padding: 2px; }
 .extras-delta { font-size: 11px; margin-top: 5px; color: var(--ink-soft); }
 .extras-add-btn {
   margin-top: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600;
@@ -191,27 +151,15 @@
   .extras-add-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--ink-mute); }
 }
 .extras-add-btn:disabled { opacity: 0.4; cursor: default; }
-.extras-notes::placeholder { color: var(--ink-mute); }
 .extras-check-row input[type='checkbox'] { accent-color: var(--accent); flex: none; }
-.extras-check-text { flex: 1; min-width: 0; }
-.extras-check-row.done .extras-check-text { color: var(--ink-mute); text-decoration: line-through; }
-.extras-check-add { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
 .extras-check-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
 
 /* ── Group expense ledger ── */
-.exp-ledger { margin-top: 4px; }
 .exp-person { flex: 1 1 110px; min-width: 0; }
-.exp-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .exp-row-main b { font-size: 12.5px; }
 .exp-row-main small { font-size: 10.5px; color: var(--ink-mute); }
-.exp-add { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
 .exp-desc { flex: 2 1 150px; min-width: 0; }
-.exp-cur, .exp-payer { flex: 0 0 auto; }
 .exp-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
-.exp-sharers {
-  flex-basis: 100%;
-  display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
-}
 .exp-balances {
   margin-top: 10px;
   padding: 10px 12px;
@@ -220,7 +168,6 @@
   border-radius: 10px;
 }
 .exp-settle { margin-top: 4px; font-size: 12px; color: var(--ink-soft); }
-.exp-rate-note { margin-top: 6px; font-size: 10px; color: var(--ink-mute); }
 
 /* Even vertical rhythm. The band between the "Saved trips" rule and the first
    shelf ran wider than the gaps between the shelves themselves, so the panel
@@ -963,10 +910,6 @@
 /* Airport-transfer rows are buttons: tap to open the public/taxi/rental
    comparison right in the route view (same look as the plain flight rows). */
 .itin-transfer-main small { margin-left: auto; }
-.itin-transfer-main .itin-leg-change { flex: none; margin-left: 8px; }
-@media (hover: hover) {
-  .itin-transfer-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
-}
 
 /* Home<->first/last-stop drive rows (own-car trips): title stacked over the
    distance/time, rather than side by side like the short flight rows above -

@@ -32,7 +32,9 @@
  *  them. `dest` leads because it is the priced catalogue and the oldest. */
 // `journey` (T390, row T387-b): a week from the journeys library, starred from
 // its page. Addressed by its id alone, like a trip (one file per journey).
-export const FAV_KINDS = ['dest', 'trip', 'journey', 'trail', 'beach', 'lake', 'mountain', 'cycle'];
+// `region` (T478, row T474-a): a coast, range or NUTS-2 region, starred from its
+// page. Addressed by its id alone (one file per region, ids like ES:ES61).
+export const FAV_KINDS = ['dest', 'trip', 'journey', 'region', 'trail', 'beach', 'lake', 'mountain', 'cycle'];
 
 const KIND_SET = new Set(FAV_KINDS);
 
@@ -61,6 +63,7 @@ export const FAV_KIND_LABEL = {
   trip: 'fav.kindTrip',
   // The account surface's key: `fav.*` is the trips surface's prefix.
   journey: 'saved.favKindJourney',
+  region: 'saved.favKindRegion',
   trail: 'fav.kindTrail',
   beach: 'fav.kindBeach',
   lake: 'fav.kindLake',

@@ -18,7 +18,7 @@
  * a signup wall does not get opened. Creating one does, because only a saved
  * trip has something to share, and only an account has saved trips.
  */
-import { supabase } from './../lib/supabaseClient.js';
+import { getSupabase } from './../lib/supabaseClient.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /** Where and when, or the whole memory: story, rating, photographs, and what
@@ -92,6 +92,7 @@ export function stripShareTokenFromUrl() {
  *  refused by get_shared_trip, because a heading that says "links that still
  *  work" must not list one that does not. */
 export async function fetchTripShares(tripPlanId) {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from('trip_shares')
     .select('token, scope, created_at, expires_at, revoked_at')
@@ -104,6 +105,7 @@ export async function fetchTripShares(tripPlanId) {
 }
 
 export async function createTripShare(userId, tripPlanId, scope = 'itinerary', days = DEFAULT_SHARE_DAYS) {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from('trip_shares')
     .insert({
@@ -122,6 +124,7 @@ export async function createTripShare(userId, tripPlanId, scope = 'itinerary', d
  *  re-issued to a different trip by chance, and so "who did I send this to"
  *  stays answerable. */
 export async function revokeTripShare(token) {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('trip_shares')
     .update({ revoked_at: new Date().toISOString() })
@@ -191,6 +194,7 @@ export async function fetchSharedTrip(token) {
   // effect twice) and loads on the retry.
   if (SHARE_MOCK === 'fail' && mockFails < 2) { mockFails += 1; throw new Error('mock network failure'); }
   if (SHARE_MOCK) return SHARE_MOCK === 'gone' ? null : MOCK_TRIP;
+  const supabase = await getSupabase();
   if (!supabase || !token) return null;
   const { data, error } = await supabase.rpc('get_shared_trip', { share_token: token });
   if (error) throw error;
@@ -214,8 +218,10 @@ export async function fetchSharedTrip(token) {
  * depend on a badge being recorded, and a milestone is never worth an error.
  */
 export async function recordShareOpened(token) {
-  if (SHARE_MOCK || !supabase || !token) return;
+  if (SHARE_MOCK || !token) return;
   try {
+    const supabase = await getSupabase();
+    if (!supabase) return;
     await supabase.rpc('shared_trip_opened', { share_token: token });
   } catch {
     /* a project without migration 013, or a network blip: both fine */

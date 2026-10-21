@@ -3,54 +3,16 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.cintel {
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--bg-card);
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-.cintel-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 12px;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  font-family: var(--ui);
-  text-align: left;
-}
 @media (hover: hover) {
   .cintel-head:hover { background: var(--paper); }
 }
 .cintel-country { font-weight: 600; font-size: 14px; color: var(--ink); }
 .cintel-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
-.cintel-chip {
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.cintel-chip.budget-low { background: var(--budget-low-bg); color: var(--green); }
-.cintel-chip.budget-high, .cintel-chip.budget-very_high { background: var(--accent-bg); color: var(--accent); }
+.cintel-chip.budget-very_high { background: var(--accent-bg); color: var(--accent); }
 .cintel-caret { font-family: var(--mono); color: var(--ink-mute); font-size: 14px; margin-left: 4px; }
 .cintel-row { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--paper-dim); }
 .cintel-row:last-child { border-bottom: 0; }
 .cintel-lines { display: flex; flex-direction: column; gap: 7px; }
-.cintel-line {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.cintel-line-warn .cintel-ico { color: var(--accent); }
 .cintel-link { color: var(--accent); text-decoration: none; font-weight: 600; }
 @media (hover: hover) {
   .cintel-link:hover { text-decoration: underline; }
@@ -65,37 +27,14 @@
   margin-left: 6px;
 }
 .cintel-sight-why { display: block; color: var(--ink-soft); }
-.cintel-more {
-  align-self: flex-start;
-  background: none;
-  border: 0;
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 2px 0;
-}
 .cintel-insights { margin: 0; padding-left: 16px; }
 .trip-leg-rich { padding: 0; }
-.trip-leg-main {
-  display: block;
-  width: 100%;
-  background: none;
-  border: 0;
-  padding: 6px 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  text-align: left;
-  cursor: pointer;
-}
 @media (hover: hover) {
   .trip-leg-main:hover { color: var(--ink-soft); }
 }
 .trip-leg-caret { float: right; }
 .trip-leg-detail { padding: 4px 8px 10px; }
 .trip-leg-modes { display: flex; gap: 6px; margin-bottom: 6px; }
-.trip-leg-mode.on { border-color: var(--accent); background: var(--accent-bg); }
 .trip-leg-note { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; margin: 4px 0; }
 .transfer-picker { margin: 6px 0 2px; }
 .transfer-picker-title {
@@ -104,10 +43,8 @@
 }
 .transfer-picker-modes { display: flex; gap: 6px; }
 .transfer-mode-lbl { display: flex; align-items: center; gap: 4px; }
-.transfer-mode.on { border-color: var(--accent); background: var(--accent-bg); color: var(--ink); }
 .trip-leg-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0; }
 .trip-leg-disclaimer { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); margin: 4px 0 0; }
-.trip-savings { border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; background: var(--paper-lift); }
 .trip-saving-row {
   display: flex;
   align-items: center;
@@ -119,34 +56,10 @@
   line-height: 1.45;
 }
 .trip-saving-row:last-of-type { border-bottom: 0; }
-.guide-car-advice {
-  /* One border, no side stripe (T411: the detector's side-tab finding). */
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-  padding: 10px 12px;
-  margin-bottom: 14px;
-}
 .guide-car-advice-head { font-weight: 700; font-size: 13.5px; color: var(--ink); margin-bottom: 4px; }
 .guide-car-note { color: var(--ink); }
 @media (max-width: 768px) {
   .guide-foot { padding-bottom: 16px; flex-wrap: wrap; }
-  .guide-foot-actions .guide-next,
-  .guide-foot-actions .guide-back {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-height: var(--tap);
-  }
-}
-.guide-city-info-btn.open { color: var(--accent); background: var(--accent-bg); }
-@media (hover: hover) {
-  .guide-city-info-btn:hover { color: var(--accent); background: var(--accent-bg); }
-}
-.guide-city-facts {
-  margin: 7px 0 4px;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--paper-dim);
-  padding: 2px 0;
 }
 .guide-city-fact {
   display: flex;
@@ -157,34 +70,12 @@
 }
 .guide-city-fact + .guide-city-fact { border-top: 1px dashed var(--rule); }
 .guide-city-fact-known .guide-city-fact-value { color: var(--ink); }
-.guide-design-quiz {
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper-dim);
-  padding: 14px 16px;
-  margin: 10px 0 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 13px;
-}
 .guide-quiz-go { align-self: flex-start; }
 .day-stay-search:focus-within {
   border-color: var(--ink-soft);
   box-shadow: 0 0 0 3px rgba(11, 116, 128, 0.10);
 }
 .day-stay-input:focus { outline: none; }
-.day-stay-result {
-  text-align: left;
-  padding: 9px 12px;
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--ink-soft);
-  background: var(--paper);
-}
-.day-stay-result + .day-stay-result { border-top: 1px solid var(--rule); }
-@media (hover: hover) {
-  .day-stay-result:hover { background: var(--paper-dim); color: var(--ink); }
-}
 .day-idea-row {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 0;
@@ -200,26 +91,34 @@
   color: var(--accent);
   margin-bottom: 6px;
 }
-.day-plan-walk {
-  display: flex; align-items: flex-start; gap: 10px;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--paper);
-  padding: 9px 10px;
-}
 .day-plan-walk + .day-plan-walk { margin-top: 6px; }
-.day-walk-len-btn {
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--ink-soft);
-  font-size: 10.5px;
+.cintel-flag { width: 24px; height: auto; border-radius: 3px; box-shadow: var(--shadow-1); flex: none; }
+.cintel-body { padding: 2px 14px 6px; border-top: 1px solid var(--rule); }
+.cintel-label {
+  flex: none;
+  width: 82px;
+  font-family: var(--ui);
+  font-size: 12px;
   font-weight: 600;
-  padding: 2px 9px;
-  cursor: pointer;
+  color: var(--ink-soft);
+  padding-top: 3px;
 }
-.day-walk-len-btn.on {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--paper));
+.cintel-row > div { min-width: 0; flex: 1; }
+@media (max-width: 768px) {
+  .guide-foot-actions { flex: 1 1 100%; }
 }
+.guide-city-fact-label {
+  flex: none;
+  width: 84px;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-soft);
+  padding-top: 2px;
+}
+.guide-city-fact-value { flex: 1; min-width: 0; color: var(--ink-soft); }
+.day-stay-input::placeholder { color: var(--ink-mute); }
+.day-idea-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.day-plan-walks { margin-top: 10px; }
+.day-plan-walk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.day-walk-len { display: inline-flex; gap: 4px; margin-top: 4px; }

@@ -47,16 +47,6 @@
   border-top: 1px solid var(--border);
   background: var(--surface);
 }
-.tpage.following .map-tools { display: none; }
-
-@media (min-width: 900px) {
-  /* The sticky map column keeps its toolbar in view. */
-  .dsk-map .dsk-map-frame,
-  .dsk-map .tpage-hero,
-  .dsk-map .cycle-map {
-    height: calc(100dvh - 52px - 2 * var(--space-4) - var(--tap) - var(--space-2));
-  }
-}
 
 /* ── The photo gallery (PhotoGallery.jsx) ──
    The destination page's strip (64-v6-destination.css, under .destp-v3)
@@ -225,48 +215,12 @@
   .ipage .ipage-gallery { margin-top: var(--space-4); border-radius: var(--radius-card); overflow: hidden; }
   .ipage .ipage-gallery .pgal { border-bottom: 0; }
 }
-
-.ipage .ipage-grid { display: block; padding: 0 var(--gutter); }
 .ipage .ipage-grid > * { margin-block: var(--space-6) 0; }
-.ipage .ipage-grid > .ipage-head { margin-top: var(--space-5); }
-.ipage .ipage-grid > .dsk-keyfacts { margin-top: var(--space-4); }
 @media (min-width: 1024px) {
-  .ipage .ipage-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    column-gap: var(--space-7);
-    align-items: start;
-    padding: 0;
-  }
-  .ipage .ipage-grid.has-side { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
   .ipage .ipage-grid > * { grid-column: 1; }
-  .ipage .ipage-grid.has-side > .ipage-side {
-    grid-column: 2;
-    grid-row: 1 / span 40;
-    position: sticky;
-    top: var(--space-4);
-    margin-top: var(--space-5);
-    max-height: calc(100dvh - 52px - 2 * var(--space-4));
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-  }
 }
 
 /* The head: the full name, the Score, where, one hook line. */
-.ipage .ipage-head h1 {
-  margin: 0;
-  font-size: var(--text-headline);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.01em;
-  color: var(--text);
-  overflow-wrap: anywhere;
-  text-wrap: balance;
-}
-@media (min-width: 1024px) {
-  .ipage .ipage-head h1 { font-size: var(--text-display); letter-spacing: -0.02em; }
-}
 .ihead-line {
   display: flex;
   flex-wrap: wrap;
@@ -276,7 +230,6 @@
   font-size: var(--text-body);
   color: var(--text-2);
 }
-.ihead-where { display: inline-flex; align-items: center; gap: var(--space-2); }
 .ihead-sub { margin: var(--space-1) 0 0; font-size: var(--text-body); color: var(--text-3); }
 .ipage .ipage-hook {
   max-width: 62ch;
@@ -298,7 +251,6 @@
 @media (min-width: 560px) {
   .ipage .dsk-kf-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-.ipage .dsk-kf { padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); min-width: 0; }
 .ipage .dsk-kf-label {
   display: flex;
   align-items: center;
@@ -308,7 +260,6 @@
   font-weight: 400;
   color: var(--text-2);
 }
-.ipage .dsk-kf-icon { display: inline-flex; color: var(--text-2); }
 .ipage .dsk-kf-value,
 .ipage .dsk-kf-value.mono {
   margin: 2px 0 0 calc(16px + var(--space-2));
@@ -330,7 +281,6 @@
 .ipage .dsk-kf-foot { margin: var(--space-2) 0 0; font-size: var(--text-caption); color: var(--text-3); }
 
 /* Section heads on the page: one size, a step over the hook. */
-.ipage .ipage-grid h2,
 .itrack-title {
   margin: 0;
   font-size: var(--text-title);
@@ -339,7 +289,6 @@
   letter-spacing: 0;
   color: var(--text);
 }
-.ipage .ipage-grid section > h2 { margin-bottom: var(--space-3); }
 
 /* ── Tracks (Track.jsx) ── */
 .itrack { --itrack-w: 82%; }
@@ -349,9 +298,6 @@
   gap: var(--space-2);
   margin: 0 0 var(--space-3);
 }
-.itrack-head .itrack-title { margin-right: auto; }
-.itrack-ctrl { display: flex; align-items: center; gap: var(--space-1); margin-left: auto; }
-.itrack-pos { margin-right: var(--space-1); font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
 .itrack-arrow.is-prev .icon-btn-glyph { transform: rotate(180deg); }
 .itrack-arrow:disabled { opacity: 0.35; }
 .itrack-row {
@@ -367,8 +313,6 @@
   scroll-padding-inline: var(--gutter);
   scrollbar-width: none;
 }
-.itrack-row::-webkit-scrollbar { display: none; }
-.itrack-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .itrack-cell { display: flex; min-width: 0; scroll-snap-align: start; }
 .itrack-cell > * { flex: 1 1 auto; min-width: 0; }
 @media (min-width: 720px) {
@@ -378,23 +322,10 @@
 @media (min-width: 1024px) {
   .itrack-row { margin: 0; padding-inline: 0; scroll-padding-inline: 0; }
   .itrack-third { --itrack-w: calc((100% - 2 * var(--space-3)) / 2.6); }
-  .ipage-grid:not(.has-side) .itrack-third { --itrack-w: calc((100% - 2 * var(--space-3)) / 3); }
   .itrack-half { --itrack-w: calc((100% - var(--space-3)) / 2); }
-}
-.itrack.is-grid .itrack-row {
-  grid-auto-flow: row;
-  grid-auto-columns: auto;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  margin: 0;
-  padding: 0;
-  overflow: visible;
 }
 @media print {
   .itrack-row { grid-auto-flow: row; grid-template-columns: 1fr 1fr; overflow: visible; }
-  .itrack-ctrl { display: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .itrack-row { scroll-behavior: auto; }
 }
 
 /* ── Why go: a highlight card ── */
@@ -406,7 +337,6 @@
   border-radius: var(--radius-card);
   background: var(--surface);
 }
-.ihl-media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--surface-sunken); }
 .ihl-media img, .ihl-media .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ihl-body { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3) var(--space-4) var(--space-4); }
 .ihl-title { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
@@ -433,19 +363,8 @@
 @media (min-width: 560px) {
   .ibyg-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-.ibyg-row {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken);
-}
 .iicon { display: inline-flex; flex: none; color: var(--text-2); }
-.ibyg-row.is-safety .iicon { color: var(--amber-ink); }
 .ibyg-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ibyg-t { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.ibyg-s { font-size: var(--text-label); font-weight: 400; color: var(--text-2); line-height: var(--leading-ui); }
 
 /* ── Hand-off ── */
 .ipage .ipage-handoff { display: flex; flex-direction: column; gap: var(--space-3); }
@@ -454,49 +373,21 @@
   .ipage .ipage-handoff .dsk-primary-row > * { width: auto; min-width: 280px; }
 }
 .ipage .ipage-cost { margin: 0; font-size: var(--text-body); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.ipage .ipage-cost strong { color: var(--text); font-weight: 600; }
 .ipage .ipage-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 /* ── Getting there ── */
 .igo-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
-.igo-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: var(--tap);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-  color: var(--text);
-}
-.igo-row:first-child { border-top: 1px solid var(--border-soft); }
 .igo-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.igo-sub { font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
 .igo-row a { color: var(--action); }
 
 /* ── Not quite right? ── */
-.ialt .card-media { aspect-ratio: 3 / 2; }
 .ialt-img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ialt-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); color: var(--text-2); }
-.ialt-fact { color: var(--text); font-variant-numeric: tabular-nums; }
 .ialt .card-title { font-size: var(--text-lead); }
 
 /* ── What a price covers ── */
 .iinc { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
-.iinc-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-  color: var(--text);
-}
-.iinc-row:last-child { border-bottom: 0; }
 .iinc-mark { display: inline-flex; flex: none; }
-.iinc-row.is-in .iinc-mark { color: var(--status-success); }
-.iinc-row.is-out .iinc-mark { color: var(--text-3); }
-.iinc-row.is-out .iinc-label { color: var(--text-2); }
 .iinc-label { flex: 1 1 auto; min-width: 0; }
 .iinc-value { flex: none; font-variant-numeric: tabular-nums; font-weight: 600; }
 
@@ -507,23 +398,6 @@
 .isrc > * + * { margin-top: var(--space-2); }
 
 /* The map and the climb in the side column, the toolbar under the map. */
-.ipage .ipage-side .dsk-map { margin: 0; }
-.ipage .ipage-side .dsk-signature { margin: var(--space-4) 0 0; }
-.ipage .dsk-map-frame,
-.ipage .dsk-map .tpage-hero,
-.ipage .dsk-map .cycle-map {
-  height: 46dvh;
-  min-height: 260px;
-  max-height: 440px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
-@media (min-width: 1024px) {
-  .ipage .dsk-map-frame,
-  .ipage .dsk-map .tpage-hero,
-  .ipage .dsk-map .cycle-map { height: 52dvh; max-height: 560px; }
-}
-.ipage.following .dsk-map .tpage-hero { height: auto; max-height: none; border: 0; border-radius: 0; }
 /* Following on the trail page: the map takes the page under the bar, so
    nothing between it and the page may be its containing block. */
 .tpage.following .ipage-side,
@@ -553,13 +427,10 @@
   padding: var(--space-3) 0;
   border-top: 1px solid var(--border-soft);
 }
-.iwhy-t { font-size: var(--text-lead); font-weight: 600; color: var(--text); line-height: var(--leading-tight); }
-.iwhy-s { font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
 
 /* A link that looks like a secondary button (directions open the maps app,
    so they stay a real link). */
 .ipage a.btn { text-decoration: none; }
-.ipage .ipage-acts { align-items: stretch; }
 .ipage .ipage-acts > .btn { min-height: var(--tap); }
 
 /* The way up on a summit page, set as a getting-there row, not a box. */
@@ -575,11 +446,6 @@
   font-size: var(--text-body);
   color: var(--text);
 }
-.ipage .mpage-way-word { font-weight: 600; font-size: var(--text-body); }
-.ipage .mpage-way-name,
-.ipage .mpage-way-src,
-.ipage .mpage-way-note,
-.ipage .mpage-way-ways { font-size: var(--text-caption); color: var(--text-3); }
 
 /* The lake's swim verdict: a status line, a dot and the words (carta-design
    "Status, not green"), never a tinted box. */
@@ -601,17 +467,6 @@
   font-weight: 600;
   color: var(--text);
 }
-.ipage .lpage-swim-word::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: var(--text-3);
-}
-.ipage .lpage-swim-ok .lpage-swim-word::before { background: var(--status-success); }
-.ipage .lpage-swim-stop .lpage-swim-word::before { background: var(--danger); }
-.ipage .lpage-swim-season { font-size: var(--text-body); color: var(--text-2); }
-.ipage .lpage-swim-warn .lpage-swim-word::before { background: var(--amber-ink); }
 
 /* ── A tile's photographs (PhotoGallery.jsx TilePhotos) ── */
 .card-media:has(> .tphotos) { aspect-ratio: auto !important; }
@@ -774,21 +629,11 @@
 /* ══ The trip page (T431) ═════════════════════════════════════════════════
    The item pages' grid with the price card in the side column. Every rule
    reads roles and scales only. */
-.ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { overflow: visible; max-height: none; }
-@media (min-width: 1024px) {
-  .ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { max-height: calc(100dvh - 52px - 2 * var(--space-4)); overflow-y: auto; }
-}
 
 /* Head: the style and the difficulty ride after where. */
 .tstyle-chip { flex: none; }
-.tdiff { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); color: var(--text); }
-.tdiff-squares { display: inline-flex; gap: 2px; }
-.tdiff-sq { width: 8px; height: 8px; border-radius: 0; border: 1px solid var(--text-3); }
-.tdiff-sq.is-on { background: var(--text); border-color: var(--text); }
-.tdiff-word { font-weight: 600; }
 .tdiff .infodot { margin-left: calc(-1 * var(--space-2)); }
 .tdiff-list { margin: var(--space-2) 0 0; padding-left: var(--space-4); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
-.tdiff-list li + li { margin-top: var(--space-1); }
 
 /* The price card: a bordered object (a receipt), the figure first. */
 .tprice {
@@ -800,18 +645,13 @@
   border-radius: var(--radius-card);
   background: var(--surface);
 }
-.tprice-head { display: grid; gap: var(--space-1); }
 .tprice-title { margin: 0; font-size: var(--text-title); font-weight: 600; color: var(--text); }
 .tprice-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); margin: 0; }
-.tprice-fig-n { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); font-variant-numeric: tabular-nums; }
-.tprice-unit { font-size: var(--text-body); color: var(--text-2); }
 .tprice-none { margin: 0; color: var(--text-2); }
 .tprice-row.is-split { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.tprice-label { display: block; font-size: var(--text-label); font-weight: 500; color: var(--text); }
 /* The one Lifestyle control (carta-design "Lifestyle control", T474): a row
    that names the traveller's Lifestyle, label over value like a settings
    part, and opens the panel; under it, one sentence with the trip's range. */
-.tprice-ls { display: grid; gap: var(--space-2); }
 .tprice-ls-btn.btn {
   justify-content: space-between;
   gap: var(--space-3);
@@ -820,16 +660,6 @@
   white-space: normal;
 }
 .tprice-ls-btn .btn-label { display: grid; gap: 2px; flex: 1 1 auto; min-width: 0; }
-.tprice-ls-label { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
-.tprice-ls-value {
-  overflow: hidden;
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--text);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.tprice-ls-btn .btn-icon { color: var(--text-2); }
 .tprice-ls-say {
   margin: 0;
   font-size: var(--text-caption);
@@ -838,43 +668,19 @@
 }
 .tprice-ls-say .money { color: var(--text); font-weight: 600; }
 .tprice-sum, .tprice-lines { display: grid; gap: 0; margin: 0; }
-.tprice-line {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-top: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-}
 .tprice-line dt { display: inline-flex; align-items: center; color: var(--text-2); }
 .tprice-line dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
-.tprice-line.is-total dt { color: var(--text); font-weight: 600; }
-.tprice-line.is-total dd { font-weight: 700; }
-.tprice-acts { display: grid; gap: var(--space-2); }
-.tprice-more { display: grid; gap: var(--space-2); }
 .tprice-toggle { justify-self: start; margin-left: calc(-1 * var(--space-2)); }
-.tprice-lines[hidden] { display: none; }
 .tprice .iinc { margin: 0; }
-.tprice-report { font-size: var(--text-caption); }
 .tday-chev { transition: transform var(--dur-2) var(--ease-out); }
 .tday-chev.is-open { transform: rotate(180deg); }
 @media (prefers-reduced-motion: reduce) { .tday-chev { transition: none; } }
 
 /* Is this week for you. */
-.tfit-months { display: grid; gap: var(--space-2); margin-bottom: var(--space-3); }
-.tfit-label { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
 
 /* The week: the climb chart, the map, the day cards. */
-.tweek { display: grid; gap: var(--space-4); }
 .tweek > h2 { margin: 0; }
 .wclimb { margin: 0; }
-.wclimb-cols {
-  display: grid;
-  grid-template-columns: repeat(var(--wclimb-n), minmax(0, 1fr));
-  gap: var(--space-1);
-  align-items: end;
-}
 .btn.wclimb-col {
   display: block;
   height: auto;
@@ -897,21 +703,10 @@
 .btn.wclimb-col:hover { background: var(--surface-hover); }
 .wclimb-col:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .btn.wclimb-col.is-on { background: var(--select-bg); color: var(--select-ink); }
-.wclimb-fig { font-size: var(--text-caption); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.wclimb-bar-box { position: relative; display: flex; align-items: flex-end; width: 100%; height: 96px; justify-content: center; }
-.wclimb-bar { display: block; width: min(28px, 60%); height: 100%; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--text-3); transform-origin: bottom; transition: transform var(--dur-3) var(--ease-out); }
-.wclimb-col.is-on .wclimb-bar { background: var(--action); }
-.wclimb-col.is-rest .wclimb-bar { background: var(--border); }
-.wclimb-day { font-size: var(--text-caption); font-weight: 600; color: inherit; white-space: nowrap; }
-.wclimb-sub { min-height: 1.2em; font-size: var(--text-micro); font-weight: 500; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .wclimb-cap { margin-top: var(--space-2); font-size: var(--text-caption); color: var(--text-3); }
 @media (max-width: 480px) {
   .wclimb-col .btn-label { grid-template-rows: auto 72px auto auto auto; }
-  .wclimb-bar-box { height: 72px; }
-  .wclimb-sub.is-high { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .wclimb-bar { transition: none; } }
-.tweek-map .dsk-map-frame { height: 280px; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
 .tmap-pin {
   display: grid;
   place-items: center;
@@ -937,7 +732,6 @@
   border-radius: var(--radius-card);
   background: var(--surface);
 }
-.tday-media { aspect-ratio: 3 / 2; overflow: hidden; background: var(--surface-sunken); }
 .tday-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .tday-body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); }
 .tday-n { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
@@ -945,24 +739,15 @@
 .tday-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; }
 .tday-facts li { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-body); color: var(--text); font-variant-numeric: tabular-nums; }
 .tday-icon { display: inline-flex; flex: none; color: var(--text-2); }
-.tday-icon.is-flip { transform: scaleY(-1); }
 .tday-night { display: flex; gap: var(--space-2); margin: 0; padding-top: var(--space-2); border-top: 1px solid var(--border-soft); font-size: var(--text-body); line-height: var(--leading-ui); color: var(--text); }
-.tday-night-l { color: var(--text-2); }
-.tday-night-k { display: block; font-size: var(--text-caption); color: var(--text-2); }
 .tday-more { align-self: flex-start; margin-left: calc(-1 * var(--space-2)); }
-.tday-prose { display: grid; gap: var(--space-3); }
-.tday-when { display: block; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .tday-text, .tprose { margin: 0; max-width: var(--measure); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
 .tday-text b, .tprose b { font-weight: 600; }
 
 /* Getting there. */
-.tgo { display: grid; gap: var(--space-3); }
-.tgo-town { justify-self: start; }
 
 /* Before you go: the cards swipe; the risks first. */
-.tprep { display: grid; gap: var(--space-5); }
 .tprep > h2 { margin: 0; }
-.tprep .itrack-title { font-size: var(--text-title); }
 .gocard {
   display: flex;
   flex-direction: column;
@@ -972,8 +757,6 @@
   border-radius: var(--radius-card);
   background: var(--surface);
 }
-.gocard-icon { display: inline-flex; color: var(--text-2); }
-.gocard.is-risk .gocard-icon { color: var(--amber-ink); }
 .gocard-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .gocard-text.is-clamped .tprose {
   display: -webkit-box;
@@ -985,42 +768,24 @@
 .tprep-pack .itrack-title { margin-bottom: var(--space-3); }
 
 /* Loading. */
-.tskel { display: grid; gap: var(--space-3); padding: var(--space-4) var(--gutter); }
-.tskel-photo { display: block; aspect-ratio: 16 / 9; max-height: 40vh; border-radius: var(--radius-card); background: var(--surface-sunken); }
-.tskel-line { display: block; height: 14px; width: 60%; border-radius: var(--radius-sm); background: var(--surface-sunken); }
-.tskel-line.is-title { height: 28px; width: 80%; }
 /* The sticky column clears the section rail (T431; the item maps too). */
-@media (min-width: 1024px) {
-  .ipage .ipage-grid.has-side > .ipage-side { top: calc(44px + var(--space-4)); }
-  .ipage.jpage .ipage-grid.has-side > .ipage-side.jpage-side { max-height: calc(100dvh - 52px - 44px - 2 * var(--space-4)); }
-}
 .tprice-fig-n .money-est { font-size: var(--text-body); font-weight: 400; color: var(--text-2); }
 .tprice-line .money-est { font-size: var(--text-caption); color: var(--text-2); }
-.tprice .iinc-row { padding-block: var(--space-1); font-size: var(--text-body); }
-.tprice .iinc-row { border-bottom: 0; }
 /* The back control keeps its whole label (T431: "Beach weeks" was cut to
    "Beach w"); the bar title gives way instead. */
 .ipage-bar .ipage-back { flex: none; max-width: 60%; }
 .ipage-bar .ipage-back .btn-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tgo-note { color: var(--text-2); }
-.itrack-pos { white-space: nowrap; }
-@media (max-width: 480px) {
-  .tprep .itrack-title { font-size: var(--text-lead); }
-  .tprep .itrack-pos { display: none; }
-}
 /* "2D" and "3D" are short words: each segment still takes a full tap. */
 .map-tools .seg-item { min-width: var(--tap); justify-content: center; }
 
 /* ── Critique fixes (T430 close-out) ── */
 /* The title takes focus on arrival; it is not a control, so no ring. */
-.ipage .ipage-head h1:focus { outline-color: transparent; }
 /* No figure or helper line under 12 px on the item pages. */
 .ipage small, .ipage .money-est, .ipage .dsk-kf-note { font-size: var(--text-caption); }
 /* The booking hint keeps a readable line. */
-.ipage .jpage-book-hint { max-width: var(--measure); font-size: var(--text-caption); color: var(--text-3); }
 /* One size for every secondary in the hand-off row. */
-.ipage .ipage-acts .btn,
-.ipage .ipage-acts a.btn { min-height: var(--tap); font-size: var(--text-label); padding-inline: var(--space-4); }
+.ipage .ipage-acts .btn { min-height: var(--tap); font-size: var(--text-label); padding-inline: var(--space-4); }
 @media (min-width: 769px) {
   .ipage .ipage-acts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 }
@@ -1040,10 +805,6 @@
 .tmap-pin.is-on::before { background: var(--action); }
 .tmap-pin { isolation: isolate; }
 /* What the price covers: two columns, in and out, so the card stays short. */
-@media (min-width: 1024px) {
-  .tprice .iinc { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--space-3); }
-  .tprice .iinc-row { font-size: var(--text-label); }
-}
 /* Full titles in the compact list rows too (owner, 2026-10-15). */
 .places-list .card.card-row .card-title { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
 .places-list .card.card-row .card-title .card-open { overflow: visible; text-overflow: clip; white-space: normal; text-wrap: balance; }

@@ -16,7 +16,7 @@
  * anybody cares to try. See supabase/migrations/010_profiles.sql, which holds
  * the reasoning and the enforcement.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 
 /** The same rule as the DB check constraint. Kept in both places on purpose:
  *  here so a traveller is told before they submit, there because that is the
@@ -51,6 +51,7 @@ export function handleProblem(handle) {
  * absent one, and says so where somebody will see it.
  */
 export async function fetchMyProfile(userId) {
+  const supabase = await getSupabase();
   if (!supabase || !userId) return null;
   const { data, error } = await supabase
     .from('profiles')
@@ -81,6 +82,7 @@ export async function saveMyProfile(userId, patch) {
   if (patch.displayName !== undefined) row.display_name = patch.displayName?.trim() || null;
   if (patch.avatarEmoji !== undefined) row.avatar_emoji = patch.avatarEmoji || null;
 
+  const supabase = await getSupabase();
   const { error } = await supabase.from('profiles').update(row).eq('user_id', userId);
   if (error) {
     if (error.code === '23505') {
@@ -102,6 +104,7 @@ export async function saveMyProfile(userId, patch) {
 /** One account, by exact handle, or null. Signed-in callers only, enforced by
  *  the grant on the function rather than by this module. */
 export async function findByHandle(handle) {
+  const supabase = await getSupabase();
   if (!supabase) return null;
   const wanted = normaliseHandle(handle);
   if (handleProblem(wanted)) return null;

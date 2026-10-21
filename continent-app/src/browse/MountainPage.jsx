@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import '../styles/items.css';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';

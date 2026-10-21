@@ -9,7 +9,7 @@
  * worth blocking the app for.
  */
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient.js';
+import { authConfigured, getSupabase } from '../lib/supabaseClient.js';
 
 const EMPTY = {};
 let cache = null;
@@ -20,11 +20,14 @@ export function useSiteConfig() {
 
   useEffect(() => {
     if (cache) return undefined;
-    if (!supabase) { setLoading(false); return undefined; }
+    if (!authConfigured) { setLoading(false); return undefined; }
     let live = true;
-    supabase
-      .from('site_config')
-      .select('key,value')
+    getSupabase()
+      .then((supabase) => supabase
+        .from('site_config')
+        .select('key,value'))
+      // A chunk that fails to load reads like a failed query: fail open.
+      .catch((error) => ({ data: null, error }))
       .then(({ data, error }) => {
         if (!live) return;
         if (!error && Array.isArray(data)) {

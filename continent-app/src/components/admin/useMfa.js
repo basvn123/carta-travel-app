@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabaseClient.js';
+import { getSupabase } from '../../lib/supabaseClient.js';
 
 // The second factor in front of delete and ban. Migration 032 makes both
 // RPCs refuse any token that is not aal2, so the page steps the session up
@@ -24,6 +24,7 @@ export function useMfa() {
   const [err, setErr] = useState(null);    // { kind: 'enrol' | 'code', message }
 
   const refresh = useCallback(async () => {
+    const supabase = await getSupabase();
     if (!supabase) return;
     const [{ data: aal }, { data: factors }] = await Promise.all([
       supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
@@ -38,6 +39,7 @@ export function useMfa() {
   const startEnrol = async () => {
     setBusy(true); setErr(null);
     try {
+      const supabase = await getSupabase();
       // An enrolment abandoned halfway leaves an unverified factor behind,
       // and Supabase refuses a second one with the same name.
       const { data: factors } = await supabase.auth.mfa.listFactors();
@@ -63,6 +65,7 @@ export function useMfa() {
     if (!id || code.trim().length !== 6) return;
     setBusy(true); setErr(null);
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: id, code: code.trim() });
       if (error) throw error;
       setEnrolment(null); setCode('');

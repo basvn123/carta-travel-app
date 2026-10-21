@@ -1,0 +1,16 @@
+/* 26-shortlist-extras.css, the rules only the item pages render (T474, CSS per route).
+   The rest of this domain stays in src/styles/26-shortlist-extras.css; a rule lives in one
+   of the two, so edit it where it is. This sheet loads with the route's
+   chunk, after the main sheet, and holds only rules nothing later in the
+   cascade could override; scripts/css-routes.mjs --check proves it on a build. */
+@media (max-width: 768px) {
+  .itin-stop-open {
+    display: inline-flex; align-items: center; min-height: var(--tap);
+  }
+}
+@media (max-width: 768px) {
+  .tpage-act,
+.cycle-gpx { min-height: var(--tap); }
+}
+.bpage-fact dd.mono small,
+.cycle-facts .cycle-facts-bike { font-family: var(--ui); }

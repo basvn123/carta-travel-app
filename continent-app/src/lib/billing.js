@@ -6,9 +6,13 @@
  * Each answers { ok, code } and never throws, so the Account panel can say
  * in one line what went wrong.
  */
-import { supabase } from './supabaseClient.js';
+import { getSupabase } from './supabaseClient.js';
 
 async function call(action) {
+  // The client loads on first use; a chunk that fails to arrive is the
+  // network failing, and reads as one.
+  const supabase = await getSupabase().catch(() => false);
+  if (supabase === false) return { ok: false, code: 'network' };
   if (!supabase) return { ok: false, code: 'no_auth_config' };
   try {
     const { data, error } = await supabase.functions.invoke('billing', { body: { action } });

@@ -18,7 +18,7 @@
  * answers "function not found" and that answer is dropped here, so the
  * failure path the traveller is already on is never made worse by this.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { authConfigured, getSupabase } from '../lib/supabaseClient.js';
 
 /**
  * The codes that mean the service failed, as opposed to the traveller's own
@@ -56,16 +56,16 @@ export function reportClientCrash() {
  *   upstream is the status the function passed on from Gemini or the site.
  */
 export function reportEdgeFailure(fn, code, { origin = 'edge', http = null, upstream = null } = {}) {
-  if (!supabase || !RECORDED.has(code)) return;
+  if (!authConfigured || !RECORDED.has(code)) return;
   try {
-    supabase
-      .rpc('log_edge_error', {
+    getSupabase()
+      .then((supabase) => supabase.rpc('log_edge_error', {
         p_fn: fn,
         p_code: code,
         p_origin: origin,
         p_http: httpStatus(http),
         p_upstream: httpStatus(upstream),
-      })
+      }))
       .then(() => {}, () => {});
   } catch { /* the failure path carries on regardless */ }
 }

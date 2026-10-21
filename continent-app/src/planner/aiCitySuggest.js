@@ -9,7 +9,7 @@
  * places the catalogue doesn't have (Google Search grounding), flagged as
  * such so the caller can snap them to the nearest destination it has data for.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 import { reportEdgeFailure } from './edgeFailure.js';
 import { trackAiCall } from '../lib/launchEvents.js';
 
@@ -45,6 +45,10 @@ export function buildCityCandidates(towns, { limit = 120 } = {}) {
  * network.
  */
 export async function requestCitySuggestion(payload) {
+  // The client loads on first use; a chunk that fails to arrive is the
+  // network failing, and reads as one.
+  const supabase = await getSupabase().catch(() => false);
+  if (supabase === false) return { ok: false, code: 'network' };
   if (!supabase) return { ok: false, code: 'no_auth_config' };
   try {
     // The denominator of the AI failures rate (048, T215-d).
