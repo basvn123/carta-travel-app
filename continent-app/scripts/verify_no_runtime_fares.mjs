@@ -218,13 +218,9 @@ async function dismiss(page) {
 async function walkPlanner(page) {
   const reached = [];
   const next = async () => { await page.locator('.guide-next').first().click({ timeout: 5000 }).catch(() => {}); await page.waitForTimeout(1200); };
-  const top = page.locator('button', { hasText: /trip planner/i }).first();
-  if (await top.isVisible().catch(() => false)) await top.click();
-  else {
-    await page.locator('.bottom-nav-plus').click().catch(() => {});
-    await page.waitForTimeout(500);
-    await page.locator('.plan-chooser-item').first().click().catch(() => {});
-  }
+  // T507: the Plan place (header link or bottom-nav item), then the trip tile on its start page.
+  await page.locator('.header-nav-item:visible, nav.bottom-nav[aria-label="Sections"] .bottom-nav-item:visible').filter({ hasText: /^\s*Plan\s*$/ }).first().click();
+  await page.locator('.plan-start-tile[href*="mode=trip"]:visible').first().click();
   await page.waitForTimeout(1800);
   if (!(await page.locator('.guide-next').count())) return reached;
   reached.push('opened');

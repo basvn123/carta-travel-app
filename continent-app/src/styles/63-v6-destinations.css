@@ -480,3 +480,8 @@
 }
 /* The trip library's filters, portalled into the side panel (T498). */
 .places-side .tlib-slot:empty { display: none; }
+
+/* T504 end check: the outdoor layers' desktop map took the Explore shell's absolute flex rule and collapsed to 2 px. */
+@media (min-width: 769px) {
+  .explore-shell.dtab-mapwrap { position: relative; inset: auto; display: block; }
+}

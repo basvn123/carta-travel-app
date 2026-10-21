@@ -240,7 +240,7 @@ function StopRow({
       <span className="dayt-body">
         <span className="dayt-name">
           {item.name}
-          {isMustSee(item) && <span className="dayt-must" title={t('dayws.mustTitle')}><StarIcon size={12} /></span>}
+          {isMustSee(item) && <span className="dayt-must" title={t('dayws.mustTitle')} role="img" aria-label={t('dayws.mustTitle')}><StarIcon size={12} /></span>}
         </span>
         <span className="dayt-meta">
           {[poiKind(item), dwell ? fmtDur(dwell) : null].filter(Boolean).join(', ')}

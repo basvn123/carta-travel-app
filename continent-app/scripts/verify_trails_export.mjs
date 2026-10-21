@@ -269,7 +269,7 @@ try {
   try {
     await page.getByRole('button', { name: 'Continue without an account' }).click({ timeout: 15000 });
   } catch { /* auth not configured in this build */ }
-  await page.locator('.account-avatar-btn').first().click({ timeout: 60000 });
+  await page.locator('.account-door').first().click({ timeout: 60000 });
   await page.locator('.account-panel').waitFor({ timeout: 30000 });
   await page.locator('.account-nav:visible', { hasText: /^\s*Imprint/ }).first().click({ timeout: 30000 });
 

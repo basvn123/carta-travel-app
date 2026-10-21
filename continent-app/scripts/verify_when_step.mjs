@@ -37,9 +37,9 @@ async function toWhenStep(width, height, fakeNow) {
   if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
   // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
   // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
-  const top = page.locator('a, button', { hasText: /trip planner/i }).first();
-  if (await top.isVisible().catch(() => false)) await top.click();
-  else { await page.locator('.bottom-nav-plus').click(); await page.waitForTimeout(500); await page.locator('.plan-chooser-item').first().click(); }
+  // T507: the Plan place (header link or bottom-nav item), then the trip tile on its start page.
+  await page.locator('.header-nav-item:visible, nav.bottom-nav[aria-label="Sections"] .bottom-nav-item:visible').filter({ hasText: /^\s*Plan\s*$/ }).first().click();
+  await page.locator('.plan-start-tile[href*="mode=trip"]:visible').first().click();
   await page.waitForTimeout(2000);
   // The basics are three steps now (Booked, From, When), so the calendar is
   // two Next presses in; the old run waited for it on step one and timed out

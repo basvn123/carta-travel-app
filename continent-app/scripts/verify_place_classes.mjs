@@ -44,7 +44,7 @@ for (const label of ['Continue without an account', 'Got it', 'START HERE']) {
   }
 }
 
-await page.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
+await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
 await page.waitForSelector('.places-tab', { timeout: 15000 });
 await page.waitForTimeout(600);
 
@@ -160,7 +160,7 @@ for (const label of ['Continue without an account', 'Got it', 'START HERE']) {
   }
 }
 // Desktop enters through the header tabs; the bottom bar is phone-only.
-const deskNav = desk.locator('.header-nav-item', { hasText: /destinations/i }).first();
+const deskNav = desk.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
 if (await deskNav.isVisible().catch(() => false)) await deskNav.click();
 await desk.waitForSelector('.places-tab', { timeout: 15000 });
 await desk.locator('.places-country').selectOption('IT');

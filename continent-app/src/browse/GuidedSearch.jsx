@@ -65,7 +65,7 @@ export function facetLabels(f, labels, nearRow, t) {
 }
 
 export function GuidedSearch({
-  t, lang, guided, rows, countries, facets, nearRow, labels, empty = false,
+  t, lang, guided, rows, countries, facets, nearRow, labels, empty = false, emptyLine = null,
   budgetSteps, onApply, onOpenPlace, inHeader = false,
   // T462: the home page's search field asks for this panel open on arrival.
   requestOpen = false, onOpenRequested = null,
@@ -395,7 +395,7 @@ export function GuidedSearch({
             )}
 
             <div className="gs-foot">
-              {empty && hasFacets && <p className="gs-none" role="status">{t('gs.noMatch')}</p>}
+              {empty && hasFacets && <p className="gs-none" role="status">{emptyLine || t('gs.noMatch')}</p>}
               <div className="gs-foot-actions">
                 <Button variant="quiet" disabled={!hasFacets} onClick={() => onApply({}, true)}>{t('gs.clear')}</Button>
                 <Button variant="primary" onClick={() => setOpen(false)}>{t('filter.showPlaces')}</Button>

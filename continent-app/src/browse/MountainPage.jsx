@@ -127,7 +127,7 @@ function WayUp({ mountain, t }) {
   );
 }
 
-export function MountainPage({ mountain, countryName, onClose, onSelectDest, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
+export function MountainPage({ mountain, countryName, onClose, onSelectDest, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null, backLabel = '' }) {
   const { t, lang } = useI18n();
   const [toast, setToast] = useState(null);
 
@@ -393,7 +393,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     <DetailPage
       name={mountain.name}
       className="bpage lpage mpage"
-      backLabel={t('mtn.back')}
+      backLabel={backLabel || t('mtn.back')}
       onClose={onClose}
       fav={fav}
       onFav={onFav}

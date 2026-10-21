@@ -1396,3 +1396,52 @@
 @media (prefers-reduced-motion: reduce) {
   .explore-shell .xmap-peek { animation: none; }
 }
+
+/* ==========================================================================
+   T504 (roadmap 1.5): one overview per place in the list and on the map.
+   Roles and scales only.
+   ========================================================================== */
+
+/* The picked pin: the one selected state on the map, the light tint with
+   the brown edge (the dot under it carries the brown ring, ExploreMap.jsx).
+   The cheapest keeps its sun marker; picked wins when they are one place. */
+.explore-shell .xmap-kpin.is-label.is-picked {
+  z-index: 4;
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  outline: 1px solid var(--select-border);
+}
+
+/* The picked place on a desktop map: the same overview the list row draws,
+   on the surface at the foot of the frame, with its own close. A floating
+   object takes the shadow and no border. */
+.explore-shell .xmap-picked {
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 5;
+  max-width: 440px;
+  padding-right: var(--tap);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  animation: xpeek-in var(--dur-3) var(--ease-out);
+}
+.explore-shell .xmap-picked .xrow { border-bottom: 0; }
+.explore-shell .xmap-picked-close { position: absolute; top: var(--space-1); right: var(--space-1); }
+
+/* The phone map lies under T500's drawer. The map's box is the drawer's
+   host, so it is positioned and clips the drawer's resting part; the
+   floating List | Map steps into the drawer's strip. */
+@media (max-width: 768px) {
+  .explore-shell.is-map .xcontent-map { position: relative; overflow: hidden; }
+  .explore-shell.is-map .xview-fab { display: none; }
+  .explore-shell .xdrawer .map-drawer-strip-slot { padding-left: var(--space-4); }
+  .explore-shell .xdrawer-rows { display: block; padding: 0 var(--space-2) var(--space-4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xmap-picked { animation: none; }
+}

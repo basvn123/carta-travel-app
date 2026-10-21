@@ -6,9 +6,13 @@ import { onRadioKeys } from './radioKeys.js';
 import {
   ArrowLeftIcon, CheckIcon, ChevronRightIcon, CloseIcon, DownloadIcon,
   FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
-  PersonIcon, QuestionIcon, PiggyIcon, ShareIcon, ShieldIcon, SignOutIcon,
+  PersonIcon, QuestionIcon, PiggyIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
   TrashIcon,
 } from '../components/Icons.jsx';
+
+// The explainer page (scripts/explainer/numbers.mjs), a static page outside
+// the app, built as about/numbers.html and served at this clean path.
+const NUMBERS_HREF = '/about/numbers';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { Imprint } from '../components/Imprint.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
@@ -671,6 +675,8 @@ export function AccountPanel({
     user && isAdmin && { key: 'admin', group: 'account', Icon: LockIcon, label: t('account.menuAdmin'), go: () => { onClose?.(); onOpenAdmin?.(); } },
     { key: 'feedback', group: 'help', view: 'feedback', Icon: FeedbackIcon, label: t('account.menuFeedback'), go: () => setView('feedback') },
     { key: 'faq', group: 'help', view: 'faq', Icon: QuestionIcon, label: t('account.menuFaq'), go: () => setView('faq') },
+    // Where the numbers come from (T503, roadmap 1.3e): a link, it leaves the app.
+    { key: 'numbers', group: 'help', Icon: ReceiptIcon, label: t('account.numbers'), href: NUMBERS_HREF },
     { key: 'share', group: 'help', Icon: ShareIcon, label: shareCopied ? t('account.inviteCopied') : t('account.inviteBtn'), go: handleShare },
     { key: 'privacy', group: 'help', Icon: ShieldIcon, label: t('account.privacyPolicy'), go: () => setPrivacyOpen(true) },
     { key: 'terms', group: 'help', Icon: ShieldIcon, label: t('account.terms'), go: () => setTermsOpen(true) },
@@ -678,7 +684,12 @@ export function AccountPanel({
   ].filter(Boolean);
 
   const renderNav = (group, cls) => NAV.filter((r) => r.group === group).map(
-    ({ key, view: v, Icon, label, go }) => (
+    ({ key, view: v, Icon, label, go, href }) => (href ? (
+      <a key={key} className={`account-nav ${cls}`} href={href}>
+        <Icon size={16} />
+        <span>{label}</span>
+      </a>
+    ) : (
       <button
         key={key}
         type="button"
@@ -689,7 +700,7 @@ export function AccountPanel({
         <Icon size={16} />
         <span>{label}</span>
       </button>
-    ),
+    )),
   );
 
   return (
@@ -864,6 +875,13 @@ export function AccountPanel({
               )}
               <MenuRow icon={<FeedbackIcon size={17} />} label={t('account.menuFeedback')} onClick={() => setView('feedback')} />
               <MenuRow icon={<QuestionIcon size={17} />} label={t('account.menuFaq')} onClick={() => setView('faq')} />
+              {/* Where the numbers come from (T503, roadmap 1.3e): the method
+                  lives on its own page, behind this door, not on every page. */}
+              <a className="account-nav account-menu-row" href={NUMBERS_HREF}>
+                <span className="account-menu-icon"><ReceiptIcon size={17} /></span>
+                <span className="account-menu-label">{t('account.numbers')}</span>
+                <ChevronRightIcon size={16} className="account-menu-chev" />
+              </a>
               <MenuRow icon={<ShareIcon size={17} />} label={shareCopied ? t('account.inviteCopied') : t('account.inviteBtn')} onClick={handleShare} />
               <MenuRow icon={<ShieldIcon size={17} />} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
               <MenuRow icon={<ShieldIcon size={17} />} label={t('account.terms')} onClick={() => setTermsOpen(true)} />

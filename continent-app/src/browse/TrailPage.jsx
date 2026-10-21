@@ -210,7 +210,7 @@ const pdfLine = (pts) => {
   return (pts || []).filter((_, i) => i % step === 0 || i === pts.length - 1);
 };
 
-export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null, onAddToDay = null }) {
+export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null, onAddToDay = null, backLabel = '' }) {
   const { t, lang } = useI18n();
   const { tr, assoc } = card;
   const isCityDay = tr.category === 'citytrip';
@@ -876,7 +876,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     <DetailPage
       name={tr.name}
       className={follow ? 'following' : ''}
-      backLabel={t('detail.backTrails')}
+      backLabel={backLabel || t('detail.backTrails')}
       onClose={onClose}
       onEscape={escapeClose}
       fav={fav}

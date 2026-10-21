@@ -174,6 +174,9 @@ export function JourneyPage({
   // stayTier, stayTiers and onChangeStayTier are still passed by the host;
   // the price card prices the trip's own bed range instead (T430 critique).
   fav = false, onFav = null,
+  // T504 (row T498-c): opened from a country or region page, the back
+  // names that page instead of the trip's own list.
+  backLabel = '',
 }) {
   const { t, lang } = useI18n();
   // undefined = loading, null = not published, 'failed' = the load failed.
@@ -480,7 +483,7 @@ export function JourneyPage({
   return (
     <div className="tpage dsk-page ipage jpage" role="dialog" aria-modal="true" aria-label={trip.title} ref={pageRef}
       data-testid="journey-page" data-sample={trip.sample ? 'true' : undefined}>
-      {bar(typeLabel(trip.tripTypeSlug, t, trip.tripType))}
+      {bar(backLabel || typeLabel(trip.tripTypeSlug, t, trip.tripType))}
 
       <div className="tpage-scroll" ref={scrollEl}>
         <SectionRail items={railItems} scrollRef={scrollEl} heroRef={galleryEl} ready={railReady}

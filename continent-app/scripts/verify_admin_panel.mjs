@@ -705,7 +705,7 @@ const seedSession = (ref, user) => `(() => {
 })()`;
 
 async function openPanel(page) {
-  await page.locator('.account-avatar-btn').first().click({ timeout: 20000 });
+  await page.locator('.account-door').first().click({ timeout: 20000 });
   await page.locator('.account-panel').waitFor({ timeout: 15000 });
 }
 
@@ -781,7 +781,7 @@ try {
   const page = await ctx.newPage();
   await stubSupabase(page, state);
   await page.goto(`${BASE}/?o=CRL`);
-  await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await page.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(page);
   const adminRow = page.locator('.account-nav:visible', { hasText: 'Admin' });
   await adminRow.waitFor({ timeout: WAIT });
@@ -1677,7 +1677,7 @@ try {
   // once per unlock: reseed, then unlock afresh so two reports are new again.
   seedModeration(state);
   await page.goto(`${BASE}/?o=CRL`);
-  await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await page.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(page);
   await openAdmin(page);
   await gotoSection(page, 'Overview');
@@ -1754,7 +1754,7 @@ try {
   const page2 = await ctx2.newPage();
   await stubSupabase(page2, state, { isAdmin: false });
   await page2.goto(`${BASE}/?o=CRL`);
-  await page2.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await page2.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(page2);
   await page2.waitForTimeout(900);
   if (await page2.locator('.account-nav:visible', { hasText: 'Admin' }).count()) {
@@ -1813,7 +1813,7 @@ try {
   await stubSupabase(page4, state);
   await page4.goto(`${BASE}/?o=CRL&tab=map`);
   await page4.waitForTimeout(2500);
-  const mobileBtn = page4.locator('.mobile-account-btn:visible, .bottom-nav-item:has-text("Account"), .account-avatar-btn:visible').first();
+  const mobileBtn = page4.locator('.mobile-account-btn:visible, .bottom-nav-item:has-text("Account"), .account-door:visible').first();
   await mobileBtn.click({ timeout: 30000 });
   await page4.locator('.account-panel').waitFor({ timeout: 15000 });
   await openAdmin(page4);

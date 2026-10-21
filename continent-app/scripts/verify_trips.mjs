@@ -108,8 +108,8 @@ const boot = async (viewport, hash = '') => {
  *  locator resolved mid-render detaches under the click. */
 const toTrips = async (page) => {
   if (!(await page.locator('.places-tab').isVisible().catch(() => false))) {
-    const header = page.locator('.header-nav-item', { hasText: /destinations/i }).first();
-    const bar = page.locator('.bottom-nav-item', { hasText: /destinations/i }).first();
+    const header = page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
+    const bar = page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first();
     if (await header.isVisible().catch(() => false)) await header.click();
     else await bar.click();
     await page.locator('.places-tab').waitFor({ state: 'visible', timeout: 15000 });

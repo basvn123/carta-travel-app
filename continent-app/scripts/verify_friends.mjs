@@ -74,7 +74,7 @@ const ACCOUNT_PANEL = '.account-panel:not(.saved-trips-panel)';
 // is reached the way a traveller reaches it now: Account (the header avatar
 // on a wide screen, the bottom bar on a phone), then the Friends row.
 async function openFriends(p, timeout = 60000) {
-  const avatar = p.locator('.account-avatar-btn:visible').first();
+  const avatar = p.locator('.account-door:visible').first();
   if (await avatar.count()) await avatar.click({ timeout });
   else await p.locator('.bottom-nav-item:visible', { hasText: 'Account' }).first().click({ timeout });
   await p.locator(ACCOUNT_PANEL).waitFor({ timeout: 15000 });
@@ -231,7 +231,7 @@ const run = async () => {
     localStorage.setItem('carta.mapGuideDone', '1');
   })()`);
   await guest.goto(`${BASE}/?o=CRL`);
-  await guest.locator('.account-avatar-btn').first().click({ timeout: 60000 });
+  await guest.locator('.account-door').first().click({ timeout: 60000 });
   await guest.locator('.account-panel').waitFor({ timeout: 15000 });
   const guestText = await guest.locator(ACCOUNT_PANEL).innerText();
   if (/Friends/i.test(guestText)) fail('a guest is offered a Friends row');
@@ -288,10 +288,10 @@ const run = async () => {
   page.on('pageerror', (e) => fail(`page error: ${e.message}`));
   await stub(page, state);
   await page.goto(`${BASE}/?o=CRL`);
-  await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await page.locator('.account-door').first().waitFor({ timeout: 120000 });
 
   /* ---- 2. The spoke, sorted by who it is waiting on ---- */
-  await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await page.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openFriends(page, 15000);
   await page.locator('.frn-find').waitFor({ timeout: 10000 });
 
@@ -551,7 +551,7 @@ const run = async () => {
   const ep = await emptyCtx.newPage();
   await stub(ep, emptyState);
   await ep.goto(`${BASE}/?o=CRL`);
-  await ep.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await ep.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openFriends(ep);
   await ep.locator('.frn-empty-act').waitFor({ timeout: 20000 });
   const emptyBtn = ep.locator('.frn-empty-btn');
@@ -570,7 +570,7 @@ const run = async () => {
   cp.on('pageerror', (e) => fail(`page error on the co-plan band: ${e.message}`));
   await stub(cp, state);
   await cp.goto(`${BASE}/?o=CRL&coplanmock=some`);
-  await cp.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await cp.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openFriends(cp);
   await cp.locator('.frn-find').waitFor({ timeout: 20000 });
   await cp.waitForTimeout(900);
@@ -650,7 +650,7 @@ const run = async () => {
   const dp = await deskCtx.newPage();
   await stub(dp, state);
   await dp.goto(`${BASE}/?o=CRL`);
-  await dp.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await dp.locator('.account-door').first().waitFor({ timeout: 120000 });
   // T461: Friends is a row in Account, with its name painted (row T434-h).
   await openFriends(dp);
   await dp.locator('.frn-find').waitFor({ timeout: 15000 });

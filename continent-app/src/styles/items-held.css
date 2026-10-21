@@ -4,3 +4,26 @@
    whole main sheet as it did in src/styles/items.css. Same order as there. */
 
 .sig .cycle-bars .rsurf + .rsurf { margin-top: 0; }
+.ipage .ipage-head h1 {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+@media (min-width: 1024px) {
+  .ipage .ipage-head h1 { font-size: var(--text-display); letter-spacing: -0.02em; }
+}
+
+.ipage .ipage-grid h2 {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: 0;
+  color: var(--text);
+}

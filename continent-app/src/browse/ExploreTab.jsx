@@ -1,9 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
-import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
-import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail, minVerdict } from './ExploreFilterRail.jsx';
@@ -25,7 +22,6 @@ import {
 import { useTravelMonth } from '../components/SettingsLine.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
-import { HeroImage } from '../components/HeroImage.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 
@@ -62,11 +58,13 @@ function prefetchMap() {
   loadExploreMap().catch(() => { mapPrefetched = false; });
 }
 import { CostReceipt } from '../components/CostSummary.jsx';
-import { Button, Chip, Segmented } from '../components/ui/index.js';
-import { DayPrice, SaveButton } from './ExploreCards.jsx';
+import { Button, Chip, IconButton, Segmented } from '../components/ui/index.js';
+import { PlaceOverview } from './PlaceOverview.jsx';
+import { overviewRegion, overviewReason, overviewScore, reasonText } from '../lib/placeOverview.js';
+import { MapDrawer } from '../components/MapDrawer.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
 import { GuidedSearch } from './GuidedSearch.jsx';
-import { countryName } from '../lib/countryName.js';
+import { BudgetSearch } from './BudgetSearch.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
 } from '../lib/guidedSearch.js';
@@ -110,6 +108,9 @@ const DETAIL_FROM = 6;
  */
 
 const PAGE = 48;
+// The phone drawer's rows: the places on the map, best first, at most this
+// many (the list view holds the rest).
+const DRAWER_MAX = 60;
 
 // The shared predicates (no car, under a budget, quiet) live in
 // lib/guidedSearch.js since T442, so the rails, the filters and the guided
@@ -128,11 +129,6 @@ const BUDGET_STEPS = [40, 60, 80, 100, 130];
 // An old link's "Under €70 a day" toggle (xp=e) lands on this ceiling.
 const LEGACY_CHEAP = 70;
 
-// A row's photograph is a 72 px square (T427, compact rows for every list):
-// Wikimedia's 250 px thumbnail covers it at twice the pixel density. Only the
-// widths in heroImage.js WIKI_WIDTHS render (300 came back broken).
-const ROW_SIZES = '72px';
-const ROW_MAX = 250;
 
 
 /** Door-to-door ground minutes as "3 h 20 min", the same units in all six
@@ -252,7 +248,7 @@ const FOCUS_MS = 400;
 
 const ExploreCard = React.memo(function ExploreCard({
   p, role, selected, fav, onSelect, onToggleFav, t, reachMin,
-  linked = false, onLink = null, month = null, why = null,
+  linked = false, onLink = null, month = null, region = null, reason = null, rating = null,
 }) {
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best, t) : null;
   // One popover, three doors: hover, focus, and the info control, which
@@ -300,67 +296,31 @@ const ExploreCard = React.memo(function ExploreCard({
     ? t('card.topOf', { country: p.country })
     : (p.country_badge ? t('card.rankIn', { n: rank, country: p.country }) : null);
 
+  // T504 (roadmap 1.5): the row IS the place's one overview, the same
+  // component the map's selected place and the phone's drawer draw. The
+  // popover beside it adds what a row cannot fit; it is not a second overview.
   return (
-    <div
-      ref={cardRef}
-      className={`xrow${selected ? ' is-selected' : ''}${preview ? ' previewing' : ''}${linked ? ' is-linked' : ''}`}
-      data-id={p.id}
-      onPointerEnter={(e) => { if (e.pointerType === 'mouse') later('hover', HOVER_MS); onLink?.(p.id); }}
-      onPointerLeave={() => { drop('hover'); onLink?.(null); }}
+    <PlaceOverview
+      p={p} region={region} reason={reason} rating={rating} fav={fav} onToggleFav={onToggleFav} t={t}
+      selected={selected} linked={linked}
+      className={preview ? 'previewing' : ''}
+      rootRef={cardRef}
+      rootProps={{
+        onPointerEnter: (e) => { if (e.pointerType === 'mouse') later('hover', HOVER_MS); onLink?.(p.id); },
+        onPointerLeave: () => { drop('hover'); onLink?.(null); },
+      }}
+      hitProps={{
+        onFocus: () => { later('focus', FOCUS_MS); onLink?.(p.id); },
+        onBlur: () => { drop('focus'); onLink?.(null); },
+        'aria-describedby': preview && place ? popId : undefined,
+      }}
+      onOpen={(e) => openShared(e.currentTarget, p.id, () => onSelect(p.id))}
     >
-      <a
-        className="xrow-hit"
-        href={`#dest=${encodeURIComponent(p.id)}`}
-        onClick={(e) => {
-          // A plain click opens the place here (T444); with a modifier the
-          // browser opens the link, and a new tab reads #dest= at boot.
-          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-          e.preventDefault();
-          openShared(e.currentTarget, p.id, () => onSelect(p.id));
-        }}
-        onFocus={() => { later('focus', FOCUS_MS); onLink?.(p.id); }}
-        onBlur={() => { drop('focus'); onLink?.(null); }}
-        aria-label={t('explore.openDest', { city: p.city })}
-        aria-describedby={preview && place ? popId : undefined}
-      >
-        {/* T427: a compact row, the owner's call for every list (a 72 px
-            photograph, then the name and the Score, the country, the
-            price). Nothing sits on the photograph. */}
-        <span className="xrow-media">
-          <HeroImage
-            url={p.image}
-            city={p.city}
-            iso2={p.iso2}
-            className="xrow-img"
-            maxWidth={ROW_MAX}
-            sizes={ROW_SIZES}
-            ratio={[1, 1]}
-          />
-        </span>
-        <span className="xrow-body">
-          <span className="xrow-line1">
-            <span className="xrow-name">{p.city}</span>
-            <ScoreChip rating={p.rating} size="sm" />
-          </span>
-          <span className="xrow-line2">
-            <CountryFlag country={p.iso2} size={12} />
-            <span className="xrow-country">{countryName(p.iso2, p.country)}</span>
-            {p.rating?.hidden_gem && <HiddenGemTag />}
-            {swimRelevant(p) && (
-              <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
-            )}
-          </span>
-          <DayPrice cost={p.cost} t={t} />
-          {/* Why this place answers the guided question (T442). */}
-          {why && <span className="xrow-why">{why}</span>}
-        </span>
-      </a>
-      <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" />
       {preview && place && (
         <CardPreview id={popId} p={p} t={t} best={best} role={role} countryLine={countryLine}
           reachMin={reachMin} month={month} place={place} reveal={open === 'pin'} />
       )}
-    </div>
+    </PlaceOverview>
   );
 });
 
@@ -455,6 +415,15 @@ export function ExploreTab({
     typeof window !== 'undefined'
       && new URLSearchParams(window.location.search).get('xw') === 'map' ? 'map' : 'grid'));
   const [bbox, setBbox] = React.useState(null);
+  // T504 (roadmap 1.5): the place the traveller picked, on the map or by
+  // opening it from the list. One id for both views, so List | Map keeps it
+  // (rule 7): the pin is the one brown item on the map, the row the one row
+  // with the brown edge. It rides the URL as xi=.
+  const [pickedId, setPickedId] = React.useState(() => (
+    typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search).get('xi') || null : null));
+  // The phone's map drawer (T500's MapDrawer): strip, half or full.
+  const [drawer, setDrawer] = React.useState('strip');
   // The map mounts on its first open and stays (T441).
   const [mapOpened, setMapOpened] = React.useState(view === 'map');
   React.useEffect(() => { if (view === 'map') setMapOpened(true); }, [view]);
@@ -536,6 +505,20 @@ export function ExploreTab({
     (p) => whyFacts(p, dxf, { ...gctx, t, lang, labels: gLabels }).join(', ') || null,
     [dxf, gctx, t, lang, gLabels],
   );
+  // T504 (roadmap 1.5): what a place says in its one overview, worked out
+  // once per place for the list, the map's picked card and the phone's
+  // drawer alike. The month is the one set by hand, else the month of the
+  // traveller's dates; without one the overview shows the base Score.
+  const ovMonth = dxf.month || travelMonth || null;
+  const overviewOf = React.useCallback((p) => ({
+    region: overviewRegion(guided, p.id, lang),
+    rating: overviewScore(p, ovMonth),
+    reason: reasonText(
+      overviewReason(p, { month: ovMonth, why: whyOn ? whyOf(p) : null }),
+      t,
+      { monthName: gLabels.monthInline, monthRanges: (ms) => fmtMonthRanges(ms, t) },
+    ),
+  }), [guided, lang, ovMonth, whyOn, whyOf, t, gLabels]);
 
   // C1's role needs the neighbour count; built once per catalogue.
   const nearby = React.useMemo(
@@ -634,11 +617,12 @@ export function ExploreTab({
     setOrDrop('xc', countryFilter.join(','));
     setOrDrop('xs', sortKey !== 'beauty' ? sortKey : '');
     setOrDrop('xw', view === 'map' ? 'map' : '');
+    setOrDrop('xi', pickedId || '');
     const qs = q.toString();
     // The state rides along: it marks the history step a place opened.
     window.history.replaceState(window.history.state, '',
       `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`);
-  }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, view, isActive]);
+  }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, view, pickedId, isActive]);
 
   // New result set: back to one page, back to the top. Keyed on what the set
   // holds, not on the array's identity (T502: a return to Explore rebuilt the
@@ -675,7 +659,7 @@ export function ExploreTab({
     if (!id && Date.now() < selfScrollUntil.current) return;
     setPinLinkId(id);
     if (!id || Date.now() - listScrolledAt.current < 1000) return;
-    const card = scrollRef.current?.querySelector(`.xcontent-main .xcard[data-id="${CSS.escape(id)}"]`);
+    const card = scrollRef.current?.querySelector(`.xcontent-main .xrow[data-id="${CSS.escape(id)}"]`);
     if (!card) return;
     const reduce = typeof window.matchMedia === 'function'
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -767,6 +751,16 @@ export function ExploreTab({
 
   const favSet = favorites || new Set();
 
+  // The one "no match" sentence (T504, row T502-g): the list's empty block
+  // and the search panel both say it, so an empty search never shows two.
+  const emptyLine = showFavOnly
+    ? t('results.emptyFav')
+    : locationQuery
+      ? t('explore.emptySearch', { q: locationQuery })
+      : lastChip
+        ? t('explore.emptyCause', { filter: lastChip.label })
+        : t('results.empty');
+
   // Desktop chrome: the search field portals into the app header's slot and
   // the controls stand in the left panel; the phone keeps the toolbar card.
   // Only the active tab may claim the slot, because both browse tabs stay
@@ -777,6 +771,39 @@ export function ExploreTab({
     if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
     else setHeaderSlot(null);
   }, [isDesktop, isActive]);
+
+  // T504: picking and opening. A pin picks a place (the overview shows);
+  // the overview, a second tap on the same pin, or a list row opens it. A
+  // place opened from the list is the pick too, so the map and the list
+  // agree on the way back.
+  const openPlace = React.useCallback((id) => {
+    setPickedId(id);
+    openWithMember(id);
+  }, [openWithMember]);
+  const onPick = React.useCallback((id) => {
+    setPickedId(id || null);
+    // On a phone the drawer rises to half with the picked place on top, and
+    // a tap on the open map lowers it again (design 1.5 C, question 7).
+    if (!isDesktop) setDrawer((d) => (id ? (d === 'strip' ? 'half' : d) : 'strip'));
+  }, [isDesktop]);
+  // The picked place, while it survives the filters; filtered out, it
+  // leaves the map and the list together.
+  const pickedRow = React.useMemo(
+    () => (pickedId ? guidedRows.find((p) => p.id === pickedId) || null : null),
+    [pickedId, guidedRows],
+  );
+  // Back on the list, the picked row is in view (rule 7); on a desktop the
+  // list beside the map follows a pick the same way.
+  React.useEffect(() => {
+    if (!pickedId || !isActive) return;
+    if (view === 'map' && !isDesktop) return;
+    const row = scrollRef.current?.querySelector(`.xcontent-main .xrow[data-id="${CSS.escape(pickedId)}"]`);
+    if (!row) return;
+    selfScrollUntil.current = Date.now() + 800;
+    row.scrollIntoView({ block: view === 'map' ? 'nearest' : 'center', behavior: scrollBehavior() });
+    // Only a new pick or a new view moves the list, not every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickedId, view, isActive]);
 
   // The guided search (T442) replaces the free text field: in the header on
   // a desktop, at the top of the tab on a phone. It writes Explore's own
@@ -831,6 +858,7 @@ export function ExploreTab({
       nearRow={nearRow}
       labels={gLabels}
       empty={taxRows.length === 0}
+      emptyLine={emptyLine}
       budgetSteps={BUDGET_STEPS}
       onApply={applyGuided}
       onOpenPlace={openWithMember}
@@ -1075,6 +1103,7 @@ export function ExploreTab({
         </div>
 
 
+        <BudgetSearch data={data} onOpen={openWithMember} />
         {/* C6: active filters as removable chips, right under the bar. */}
         {/* On a phone the sort leads the chip row (62-v6-explore.css), so
             the list has one refine row; the bar's own sort shows otherwise. */}
@@ -1139,12 +1168,54 @@ export function ExploreTab({
                     data drew three Paris dots, labelled "Paris (CDG)"). The
                     map serialises it once and filters by id (P4.5). */}
                 <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
-                  onSelect={openWithMember} onViewport={onMapViewport}
+                  onSelect={openPlace} onViewport={onMapViewport}
                   onNeedDetail={onMapNeedDetail} t={t}
                   ringId={cardLinkId} onPinLink={onPinLink} costs={costIndex}
                   onBack={() => setView('grid')} visible={view === 'map'}
-                  framed={anyActive || searchHits != null} />
+                  framed={anyActive || searchHits != null}
+                  pickedId={pickedRow ? pickedRow.id : null} onPick={onPick}
+                  drawerState={!isDesktop && view === 'map' ? drawer : null} />
               </React.Suspense>
+              {/* T504 (roadmap 1.5 C): the picked place on a desktop map,
+                  the same overview its list row shows, docked at the foot
+                  of the map with its own close. */}
+              {isDesktop && view === 'map' && pickedRow && (
+                <div className="xmap-picked" role="group" aria-label={pickedRow.city}>
+                  <PlaceOverview p={pickedRow} {...overviewOf(pickedRow)} t={t} selected
+                    fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav}
+                    onOpen={() => openPlace(pickedRow.id)} />
+                  <IconButton label={t('detail.close')} tone="plain" className="xmap-picked-close"
+                    onClick={() => onPick(null)}>
+                    <CloseIcon size={16} />
+                  </IconButton>
+                </div>
+              )}
+              {/* On a phone the map lies under T500's drawer: the strip holds
+                  List | Map and the handle; half and full hold the places on
+                  the map as the same overview rows, the picked one first. */}
+              {!isDesktop && view === 'map' && (
+                <MapDrawer
+                  className="xdrawer"
+                  state={drawer}
+                  onStateChange={setDrawer}
+                  ariaLabel={t('explore.drawerAria')}
+                  labels={{ strip: t('explore.drawerStrip'), half: t('drawer.half'), full: t('drawer.full') }}
+                  strip={viewSwitch('xview-strip')}
+                >
+                  <div className="xrows xdrawer-rows">
+                    {pickedRow && (
+                      <PlaceOverview key={`picked-${pickedRow.id}`} p={pickedRow} {...overviewOf(pickedRow)} t={t} selected
+                        fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav}
+                        onOpen={() => openPlace(pickedRow.id)} />
+                    )}
+                    {shownRows.slice(0, DRAWER_MAX).filter((p) => p.id !== pickedRow?.id).map((p) => (
+                      <PlaceOverview key={p.id} p={p} {...overviewOf(p)} t={t}
+                        fav={favSet.has(p.id)} onToggleFav={onToggleFav}
+                        onOpen={() => openPlace(p.id)} />
+                    ))}
+                  </div>
+                </MapDrawer>
+              )}
             </div>
           )}
           <div className="xcontent-main">
@@ -1157,7 +1228,7 @@ export function ExploreTab({
                 onPick={(slug) => onOpenStyles(slug)} onSeeAll={() => onOpenStyles(null)} />
             )}
             {railsIdle && (
-              <ExploreRails rails={rails} onSelect={openWithMember} t={t}
+              <ExploreRails rails={rails} onSelect={openPlace} t={t}
                 favorites={favSet} onToggleFav={onToggleFav}
                 lead={(isDesktop ? 4 : 3) - (onOpenStyles ? 1 : 0)} />
             )}
@@ -1173,13 +1244,7 @@ export function ExploreTab({
                  offers the way back. */
               <EmptyResult
                 className="explore-count xempty"
-                line={showFavOnly
-                  ? t('results.emptyFav')
-                  : locationQuery
-                    ? t('explore.emptySearch', { q: locationQuery })
-                    : lastChip
-                      ? t('explore.emptyCause', { filter: lastChip.label })
-                      : t('results.empty')}
+                line={emptyLine}
                 action={showFavOnly
                   ? { label: t('explore.showAll'), onClick: () => setShowFavOnly(false) }
                   : locationQuery
@@ -1208,16 +1273,16 @@ export function ExploreTab({
                   key={p.id}
                   p={p}
                   role={roleFor(p)}
-                  selected={p.id === selectedId}
+                  selected={p.id === (pickedId || selectedId)}
                   fav={favSet.has(p.id)}
-                  onSelect={openWithMember}
+                  onSelect={openPlace}
                   onToggleFav={onToggleFav}
                   t={t}
                   reachMin={reachMinutes?.get(p.id) ?? null}
                   linked={view === 'map' && p.id === pinLinkId}
                   onLink={view === 'map' ? setCardLinkId : null}
                   month={dxf.month}
-                  why={whyOn ? whyOf(p) : null}
+                  {...overviewOf(p)}
                 />
               ))}
             </div>

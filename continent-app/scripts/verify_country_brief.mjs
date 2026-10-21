@@ -69,13 +69,9 @@ async function openHandPicker(page) {
   if (await got.isVisible().catch(() => false)) { await got.click().catch(() => {}); await page.waitForTimeout(400); }
   // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
   // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
-  const top = page.locator('a, button', { hasText: /trip planner/i }).first();
-  if (await top.isVisible().catch(() => false)) await top.click();
-  else {
-    await page.locator('.bottom-nav-plus').click();
-    await page.waitForTimeout(500);
-    await page.locator('.plan-chooser-item').first().click();
-  }
+  // T507: the Plan place (header link or bottom-nav item), then the trip tile on its start page.
+  await page.locator('.header-nav-item:visible, nav.bottom-nav[aria-label="Sections"] .bottom-nav-item:visible').filter({ hasText: /^\s*Plan\s*$/ }).first().click();
+  await page.locator('.plan-start-tile[href*="mode=trip"]:visible').first().click();
   await page.waitForTimeout(2000);
 
   const next = async () => {

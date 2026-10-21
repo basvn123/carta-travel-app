@@ -13,7 +13,7 @@ import { CONTACT } from '../../lib/contact.js';
  * the answers come from lib/pricing.js, never typed into a string.
  */
 export const FAQ = [
-  { group: 'account.fqgPlanning', items: ['plan', 'together', 'book', 'missing'] },
+  { group: 'account.fqgPlanning', items: ['different', 'plan', 'together', 'book', 'missing'] },
   { group: 'account.fqgPrices', items: ['day', 'est', 'lifestyle', 'flights'] },
   { group: 'account.fqgPasses', items: ['adds', 'difference', 'cancel', 'refund'] },
   { group: 'account.fqgAccount', items: ['need', 'where', 'delete'] },

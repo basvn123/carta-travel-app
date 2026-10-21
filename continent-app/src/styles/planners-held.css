@@ -2159,3 +2159,4 @@
 .daymap-full { position: absolute; inset: 0; }
 .dayb-ticks > span:first-child { transform: none; }
 .daymap-sheet .fsheet-body { position: relative; flex: 1 1 auto; padding: 0; overflow: hidden; }
+.citypick-ic.is-num { font-variant-numeric: tabular-nums; font-size: var(--text-caption); font-weight: 700; line-height: 1; min-width: 10px; text-align: center; }

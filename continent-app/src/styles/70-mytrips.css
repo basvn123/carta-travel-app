@@ -77,6 +77,17 @@
 .mt-empty-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .mt-empty-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .mt-signin-line { margin: 0; }
+/* T503 (T500-a): where the device trip is kept, under its card or row. */
+.mt-device-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-label);
+  line-height: var(--leading-body);
+  color: var(--text-2);
+}
 /* T466: the faces of the friends showing you a trip, the count, and the
    way to Friends; the whole line is one kit button laid out as a row. */
 .btn.mt-friends-line {
@@ -301,19 +312,13 @@
   color: var(--text-2);
 }
 
-.mt-flags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
-.mt-flag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 32px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  font-size: var(--text-label);
-  color: var(--text);
-}
+/* T503 (T467-b): the countries live in the band's hero cell. Edit or Add
+   sits at the end of the cell; the names are a list for screen readers
+   (.mt-flags), the flags beside the figure are what the eye reads. */
+.mt-band-hero dd .mt-band-edit { margin-left: auto; }
+.mt-band.is-empty { grid-template-columns: minmax(0, 1fr); }
+.mt-band.is-empty .mt-band-hero { border-bottom: 0; }
+
 .mt-year { display: flex; flex-direction: column; gap: var(--space-2); }
 .mt-year + .mt-year { margin-top: var(--space-3); }
 .mt-year-title {

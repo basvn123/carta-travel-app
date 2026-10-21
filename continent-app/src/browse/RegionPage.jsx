@@ -266,7 +266,9 @@ export function RegionPage({
   const open = (card) => {
     const feature = LAYER_TO_FEATURE[card.layer];
     if (feature && onOpenFeature) {
-      onOpenFeature(feature, { id: card.id, cc: card.cc || card.country });
+      // The region's name rides along, so the page it opens names this
+      // region in its back control (T504, row T498-c).
+      onOpenFeature(feature, { id: card.id, cc: card.cc || card.country }, region?.name || null);
     }
   };
 
@@ -407,7 +409,7 @@ export function RegionPage({
             </dl>
           )}
           {canPlan && (
-            <Button variant="primary" block className="rgnp-plan" onClick={() => onPlanTrip(iso2)}>
+            <Button variant="primary" block className="rgnp-plan" onClick={() => onPlanTrip(iso2, priced?.id || null)}>
               {t('region.planTrip')}
             </Button>
           )}
@@ -446,7 +448,7 @@ export function RegionPage({
       {onOpenJourney && centre && (
         <WeeksRow t={t} lang={lang} id="rgnp-weeks" title={t('region.weeksHead')}
           country={iso2} near={{ lat: centre.lat, lon: centre.lon, km: WEEKS_KM }}
-          onOpen={onOpenJourney} />
+          onOpen={(card) => onOpenJourney(card, region.name)} />
       )}
 
       {data.listed?.length > 0 && (

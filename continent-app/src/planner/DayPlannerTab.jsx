@@ -83,6 +83,8 @@ import {
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
 import { plannerStore } from './plannerStore.js';
+
+const OPEN_DAY_KEY = 'carta.dayOpen.v1'; // T507: the day open when the page was left
 import {
   loadDiscovered, saveDiscovered, removeDiscovered, subscribeDiscovered, isStale,
 } from './discoveredStore.js';
@@ -500,6 +502,44 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       onOpenPlanConsumed && onOpenPlanConsumed();
     })();
   }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off: the open helpers are rebuilt every render, and re-running while the async open is in flight would open the plan twice
+
+  // T507 (T502-c): a reload on ?tab=plan&mode=day opens the day the traveller
+  // was on (plan, stop, day) instead of starting a new one. Only the three
+  // pointers are kept here; the plan itself and its picks already live in the
+  // plan stores. A hand-off in (open id, seed, shared day) wins over it.
+  const openDayRef = useRef({ restored: false });
+  useEffect(() => {
+    if (!openDayRef.current.restored) return;
+    try {
+      if (plan?.id) window.localStorage.setItem(OPEN_DAY_KEY, JSON.stringify({ id: plan.id, stopIdx, dayIdx }));
+      else window.localStorage.removeItem(OPEN_DAY_KEY);
+    } catch { /* storage off: the day just does not come back */ }
+  }, [plan?.id, stopIdx, dayIdx]); // eslint-disable-line react-hooks/exhaustive-deps -- pointers only
+  useEffect(() => {
+    let rec = null;
+    try { rec = JSON.parse(window.localStorage.getItem(OPEN_DAY_KEY) || 'null'); } catch { rec = null; }
+    if (!rec?.id || openPlanId || daySeed || sharedDayRaw) { openDayRef.current.restored = true; return undefined; }
+    let live = true;
+    (async () => {
+      let opened = false;
+      try {
+        if (rec.id === TRIP_DRAFT_PLAN_ID) {
+          const draft = loadTripDraft();
+          if (draft) { openTripDraft(draft); opened = true; }
+        } else {
+          const sp = standalonePlans.find((x) => x.id === rec.id);
+          if (sp) { openStandalone(sp); opened = true; } else { await openPlan(rec.id); opened = true; }
+        }
+      } catch { /* the plan is gone: Start shows */ }
+      if (opened && live) {
+        setStopIdx(Math.max(0, Number(rec.stopIdx) || 0));
+        setDayIdx(Math.max(0, Number(rec.dayIdx) || 0));
+      }
+      openDayRef.current.restored = true;
+      if (!opened) { try { window.localStorage.removeItem(OPEN_DAY_KEY); } catch { /* ignore */ } }
+    })();
+    return () => { live = false; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- once, at mount
 
   // A seed lands the flow on the When question with the stay answered: the
   // destination's city, or for a trail / beach / lake / mountain the nearest

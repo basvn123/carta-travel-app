@@ -58,7 +58,7 @@ await seed(page);
 await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await page.waitForTimeout(3000);
 
-await page.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
+await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
 await page.waitForTimeout(1200);
 check('destinations tab opens', await page.locator('.places-tab').isVisible());
 
@@ -398,7 +398,7 @@ desk.on('pageerror', (e) => errors.push('desktop pageerror: ' + e.message.split(
 await seed(desk);
 await desk.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await desk.waitForTimeout(3000);
-await desk.locator('.header-nav-item:visible, .bottom-nav-item:visible', { hasText: /destinations/i }).first().click();
+await desk.locator('.header-nav-item:visible, .bottom-nav-item:visible', { hasText: /^\s*explore\s*$/i }).first().click();
 await desk.waitForTimeout(1200);
 // :visible matters. The desktop shell renders the category rail twice, once
 // in the phone toolbar and once in the left panel, and the hidden copy is the

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useI18n, tOutsideProvider } from '../i18n/index.jsx';
+import { monthName } from '../lib/dates.js';
 
 /**
  * Real climate normals (NASA POWER, 2001-2020) as a 12-month comfort strip:
@@ -30,7 +31,8 @@ export function comfortTier(c) {
 // Collapse a list of 1-12 month numbers into readable ranges, e.g.
 // [4,5,9,10,11] -> "Apr to May, Sep to Nov", the joiner from the
 // language (T502: ranges use the word "to", never a hyphen). Pass the
-// component's t; outside one the stored language is used.
+// component's t; outside one the stored language is used. Month names come
+// from Intl in that language (T507: they were English in all six).
 export function fmtMonthRanges(nums, t = tOutsideProvider) {
   if (!nums || !nums.length) return '';
   const sorted = [...nums].sort((a, b) => a - b);
@@ -41,8 +43,10 @@ export function fmtMonthRanges(nums, t = tOutsideProvider) {
     runs.push([start, prev]); start = prev = sorted[i];
   }
   runs.push([start, prev]);
+  const lang = t.lang || 'en';
+  const nm = (n) => monthName(n, lang, false) || MONTHS_SHORT[n - 1];
   return runs
-    .map(([a, b]) => (a === b ? MONTHS_SHORT[a - 1] : t('detail.monthRange', { from: MONTHS_SHORT[a - 1], to: MONTHS_SHORT[b - 1] })))
+    .map(([a, b]) => (a === b ? nm(a) : t('detail.monthRange', { from: nm(a), to: nm(b) })))
     .join(', ');
 }
 
@@ -64,7 +68,8 @@ export function fmtMonthRanges(nums, t = tOutsideProvider) {
  * and no legend: the full strip with figures is one tap away, on When to go.
  */
 export function ClimateStrip({ climate, month = null, figures = false, compact = false }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const mShort = (i) => monthName(i + 1, lang, false) || MONTHS_SHORT[i];
   const ink = figures || compact;
   const [hoverI, setHoverI] = React.useState(null);
   const months = climate.m || [];
@@ -100,7 +105,7 @@ export function ClimateStrip({ climate, month = null, figures = false, compact =
             onMouseEnter={ink ? undefined : () => setHoverI(i)}
             onMouseLeave={ink ? undefined : () => setHoverI(null)}
             role={ink ? 'listitem' : undefined}
-            aria-label={ink ? `${MONTHS_SHORT[i]}: ${t('bestTime.climateTip', {
+            aria-label={ink ? `${mShort(i)}: ${t('bestTime.climateTip', {
               hi: m[T_HIGH] == null ? '?' : Math.round(m[T_HIGH]),
               lo: m[T_LOW] == null ? '?' : Math.round(m[T_LOW]),
               precip: m[PRECIP] == null ? '?' : Math.round(m[PRECIP]),
@@ -122,7 +127,7 @@ export function ClimateStrip({ climate, month = null, figures = false, compact =
             )}
             {!ink && hoverI === i && (
               <div className="climate-tip">
-                <b>{MONTHS_SHORT[i]}</b>{' '}
+                <b>{mShort(i)}</b>{' '}
                 {t('bestTime.climateTip', {
                   hi: m[T_HIGH] == null ? '?' : Math.round(m[T_HIGH]),
                   lo: m[T_LOW] == null ? '?' : Math.round(m[T_LOW]),

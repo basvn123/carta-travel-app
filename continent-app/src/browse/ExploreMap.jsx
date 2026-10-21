@@ -11,6 +11,7 @@ import { isNational } from '../components/CostSummary.jsx';
 import { Button, IconButton } from '../components/ui/index.js';
 import { CloseIcon } from '../components/Icons.jsx';
 import { countryName } from '../lib/countryName.js';
+import { drawerVisiblePx } from '../lib/mapDrawerState.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
@@ -52,6 +53,14 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
  * hover shows, Escape dismisses it, Enter opens the place. `ringId` (a card
  * under the pointer or in focus in the list) rings its pin 2 px in ink, and
  * `onPinLink(id)` tells the list which pin is under the pointer or in focus.
+ *
+ * Picking (T504, roadmap 1.5). With `onPick` the map no longer draws a card
+ * of its own: a tap or click on a pin picks the place (`onPick(id)`), the
+ * caller draws the place's one overview (browse/PlaceOverview.jsx), and a
+ * second tap on the picked pin opens it (`onSelect`). `pickedId` is the one
+ * brown pin; a tap on the open map clears the pick. `drawerState` names the
+ * phone drawer's stop, so the camera keeps the picked pin above it. Without
+ * `onPick` (the outdoor layers, OutdoorMap.jsx) the map keeps its card.
  */
 
 // The Score drawn as a string for the map card (T437, RatingBadge.jsx): the
@@ -116,6 +125,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
 export function ExploreMap({
   rows, all, pins = null, onSelect, onViewport, onNeedDetail, t, ringId = null, onPinLink = null,
   costs = null, onBack = null, visible = true, framed = false,
+  pickedId = null, onPick = null, drawerState = null,
 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
@@ -123,6 +133,17 @@ export function ExploreMap({
   const popupRef = useRef(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const onPickRef = useRef(onPick);
+  onPickRef.current = onPick;
+  const pickedRef = useRef(pickedId);
+  pickedRef.current = pickedId;
+  // A pin pick: a first tap picks, a tap on the picked pin opens (T504).
+  const pickOrOpen = (id) => {
+    if (pickedRef.current === id) onSelectRef.current?.(id);
+    else onPickRef.current?.(id);
+  };
+  const pickOrOpenRef = useRef(pickOrOpen);
+  pickOrOpenRef.current = pickOrOpen;
   const onViewportRef = useRef(onViewport);
   onViewportRef.current = onViewport;
   const onNeedDetailRef = useRef(onNeedDetail);
@@ -343,6 +364,9 @@ export function ExploreMap({
       if (k.eur != null && (!cheapest || k.eur < cheapest.eur)) cheapest = k;
     }
     if (cheapest && !set.includes(cheapest)) set[set.length - 1] = cheapest;
+    // The picked place always keeps its stop and its label (T504).
+    const picked = pickedRef.current ? out.find((k) => k.id === pickedRef.current) : null;
+    if (picked && !set.includes(picked)) set[Math.max(0, set.length - 2)] = picked;
     return set.sort((a, b) => (
       Math.floor(a.y / KPIN_ROW) - Math.floor(b.y / KPIN_ROW)) || (a.x - b.x));
   }, []);
@@ -414,6 +438,19 @@ export function ExploreMap({
           'circle-stroke-color': TC['--ink'],
         },
       });
+      // The picked place (T504): the one brown item on the map, a ring in
+      // the action brown around its dot (house rule "Map and list in sync").
+      map.addLayer({
+        id: 'dest-picked', type: 'circle', source: 'dests',
+        filter: ['==', ['get', 'id'], pickedRef.current || ''],
+        paint: {
+          'circle-radius': ['+', ['get', 'r'], 5],
+          'circle-color': TC['--accent'],
+          'circle-opacity': 0,
+          'circle-stroke-width': 3,
+          'circle-stroke-color': TC['--accent'],
+        },
+      });
 
       // A tap opens the card first and waits (touch has no hover, and the
       // card is the thing worth reading: on a phone at any zoom, T441, a peek
@@ -422,6 +459,13 @@ export function ExploreMap({
       const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
       // A tap on the open map puts the docked card away.
       map.on('click', (e) => {
+        if (onPickRef.current) {
+          // A tap on the open map puts the pick away (T504).
+          if (pickedRef.current && !map.queryRenderedFeatures(e.point, { layers: ['dest-dots'] }).length) {
+            onPickRef.current(null);
+          }
+          return;
+        }
         if (!coarse || !cardRef.current) return;
         if (!map.queryRenderedFeatures(e.point, { layers: ['dest-dots'] }).length) closePop();
       });
@@ -429,6 +473,11 @@ export function ExploreMap({
         const f = e.features?.[0];
         if (!f) return;
         const id = f.properties.id;
+        if (onPickRef.current) {
+          if (f.properties.ld === 0) onNeedDetailRef.current?.(id);
+          pickOrOpenRef.current(id);
+          return;
+        }
         if ((coarse || map.getZoom() >= CARD_FROM) && f.properties.ld !== 0 && cardRef.current !== id) { showCard(map, f); return; }
         onSelectRef.current?.(id);
       });
@@ -445,7 +494,7 @@ export function ExploreMap({
         const f = e.features?.[0];
         if (!f) return;
         if (f.properties.ld !== 0) onPinLinkRef.current?.(f.properties.id);
-        if (map.getZoom() >= CARD_FROM && f.properties.ld !== 0) {
+        if (!onPickRef.current && map.getZoom() >= CARD_FROM && f.properties.ld !== 0) {
           if (cardRef.current !== f.properties.id) showCard(map, f);
         } else {
           showTip(map, f);
@@ -521,6 +570,30 @@ export function ExploreMap({
     }
   }, [ringId]);
 
+  // The picked pin follows the pick, and the camera keeps it in the part of
+  // the map the phone's drawer leaves open (T504).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!readyRef.current || !map?.getLayer('dest-picked')) return;
+    map.setFilter('dest-picked', ['==', ['get', 'id'], pickedId || '']);
+    setKpins(collectKpins(map));
+    if (!pickedId) return;
+    const f = geojsonRef.current.features.find((x) => x.properties.id === pickedId);
+    if (!f) return;
+    const cv = map.getCanvas();
+    const H = cv.clientHeight; const W = cv.clientWidth;
+    const cover = drawerState ? Math.min(H - 80, drawerVisiblePx(drawerState, H)) : 0;
+    const pt = map.project(f.geometry.coordinates);
+    const margin = 48;
+    if (pt.x > margin && pt.x < W - margin && pt.y > margin && pt.y < H - cover - margin) return;
+    const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    map.easeTo({
+      center: f.geometry.coordinates,
+      padding: { top: 0, left: 0, right: 0, bottom: cover },
+      duration: reduce ? 0 : 480,
+    });
+  }, [pickedId, drawerState, collectKpins]);
+
   const kpinLabel = (k) => {
     const cost = k.eur != null ? t('explore.pinCost', { eur: dayFig(k.eur, k.est, t('money.est')) }) : '';
     if (k.score == null) return [k.city, k.country, cost].filter(Boolean).join(', ');
@@ -548,7 +621,8 @@ export function ExploreMap({
     const W = cv?.clientWidth || Infinity;
     const H = cv?.clientHeight || Infinity;
     const order = [...kpins].sort((a, b) => (
-      Number(b.key === cheapestKey) - Number(a.key === cheapestKey))
+      Number(b.id === pickedId) - Number(a.id === pickedId))
+      || (Number(b.key === cheapestKey) - Number(a.key === cheapestKey))
       || (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1)));
     for (const k of order) {
       const name = String(k.city || '');
@@ -570,6 +644,8 @@ export function ExploreMap({
     if (!map) return;
     // The card a tap raised stays up when the same pin is touched again.
     if (cardRef.current === k.id) return;
+    // A picking map draws no card of its own, only the name tip (T504).
+    if (onPickRef.current) { showTip(map, k.feature); return; }
     if (map.getZoom() >= CARD_FROM) showCard(map, k.feature);
     else showTip(map, k.feature);
   };
@@ -586,6 +662,7 @@ export function ExploreMap({
   // and a second tap, on the pin or the card, opens the place (T441), the
   // same as a tap on a dot; a mouse or the keyboard opens it at once.
   const kpinActivate = (k) => {
+    if (onPickRef.current) { closePop(); pickOrOpen(k.id); return; }
     const map = mapRef.current;
     const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
     if (coarse && map && cardRef.current !== k.id) { showCard(map, k.feature); return; }
@@ -707,7 +784,8 @@ export function ExploreMap({
           {kpins.map((k) => {
             const label = !dotOnly.has(k.key);
             const cls = `xmap-kpin${label ? ' is-label' : ''}`
-              + `${k.key === cheapestKey ? ' is-cheapest' : ''}${k.id === ringId ? ' is-ringed' : ''}`;
+              + `${k.key === cheapestKey ? ' is-cheapest' : ''}${k.id === ringId ? ' is-ringed' : ''}`
+              + `${k.id === pickedId ? ' is-picked' : ''}`;
             return (
               <button
                 key={k.key}
@@ -716,6 +794,7 @@ export function ExploreMap({
                 className={cls}
                 style={{ left: k.x, top: k.y, '--kpin-d': `${Math.round(k.r * 2 + 4)}px` }}
                 aria-label={kpinLabel(k)}
+                aria-pressed={onPick ? k.id === pickedId : undefined}
                 onFocus={() => kpinFocus(k)}
                 onBlur={kpinBlur}
                 onPointerEnter={label ? () => kpinFocus(k) : undefined}

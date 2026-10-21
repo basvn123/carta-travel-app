@@ -1,5 +1,6 @@
 import React from 'react';
 import { MONTHS_SHORT } from './ClimateStrip.jsx';
+import { monthName } from '../lib/dates.js';
 import { fetchDestPois } from '../lib/appData.js';
 import { eur } from '../lib/format.js';
 
@@ -79,9 +80,10 @@ export function photoMatcher(rows) {
  *  languages carry it. Month arguments arrive as 1-12 and leave as names. */
 export function tipText(tip, t) {
   const args = { ...(tip.args || {}) };
-  if (args.from_m) args.from = MONTHS_SHORT[args.from_m - 1];
-  if (args.to_m) args.to = MONTHS_SHORT[args.to_m - 1];
-  if (args.month) args.month = MONTHS_SHORT[args.month - 1];
+  const nm = (n) => monthName(n, t.lang || 'en', false) || MONTHS_SHORT[n - 1];
+  if (args.from_m) args.from = nm(args.from_m);
+  if (args.to_m) args.to = nm(args.to_m);
+  if (args.month) args.month = nm(args.month);
   if (args.rental_eur != null) args.rental_eur = eur(args.rental_eur);
   return t(`tip.${tip.code}`, args);
 }

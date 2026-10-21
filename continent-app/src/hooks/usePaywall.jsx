@@ -120,7 +120,7 @@ const PAY_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('paymock');
 
 
-export function PaywallProvider({ children, onSignIn }) {
+export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
   const { user } = useAuth();
   const entitlement = useEntitlement();
   const [reason, setReason] = useState('');
@@ -274,11 +274,21 @@ export function PaywallProvider({ children, onSignIn }) {
   // page, can offer "Sign in" instead of a dead end (T390, brief V3-12). It is
   // the same door, not a second one: App still owns the sign-in sheet.
   const signIn = useCallback(() => { onSignIn?.(); }, [onSignIn]);
+  // The pricing page, App's own door like signIn (T503, T497-a): "See all
+  // prices" under Account's Your plan and under the pass sheet. Null where no
+  // App hands one in, so a surface draws no link it cannot follow.
+  // Held in a ref: App hands in a fresh arrow each render, and the context
+  // value must not change with it.
+  const pricingRef = useRef(onOpenPricing);
+  pricingRef.current = onOpenPricing;
+  const hasPricing = typeof onOpenPricing === 'function';
+  const goPricing = useCallback(() => { pricingRef.current?.(); }, []);
+  const openPricingPage = hasPricing ? goPricing : null;
   const value = useMemo(() => ({
     paid, signedIn, entitlement, reason,
-    require, nudge, openPrices, close, signIn,
+    require, nudge, openPrices, close, signIn, openPricingPage,
     tier: entitlement.tier,
-  }), [paid, signedIn, entitlement, reason, require, nudge, openPrices, close, signIn]);
+  }), [paid, signedIn, entitlement, reason, require, nudge, openPrices, close, signIn, openPricingPage]);
 
   return (
     <PaywallContext.Provider value={value}>
@@ -293,6 +303,7 @@ export function PaywallProvider({ children, onSignIn }) {
               initialTier={initialTier}
               onClose={handleClose}
               onSignIn={() => { close(); onSignIn?.(); }}
+              onSeeAll={openPricingPage ? () => { handleClose(); openPricingPage(); } : null}
             />
           </Suspense>
         </div>
@@ -331,4 +342,5 @@ const FALLBACK = {
   nudge: () => false,
   openPrices: () => {},
   close: () => {},
+  openPricingPage: null,
 };

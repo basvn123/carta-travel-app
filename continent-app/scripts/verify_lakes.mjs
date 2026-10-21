@@ -304,7 +304,7 @@ await seed(page);
 await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await page.waitForTimeout(3000);
 
-await page.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
+await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
 await page.waitForTimeout(1200);
 check('destinations tab opens', await page.locator('.places-tab').isVisible());
 
@@ -558,7 +558,7 @@ await desk.waitForTimeout(3000);
 // the left panel. An unguarded click on a control this width does not render
 // throws after thirty seconds and takes the whole desktop pass with it.
 const deskTab = desk.locator('.header-nav-item:visible, .bottom-nav-item:visible',
-  { hasText: /destinations/i }).first();
+  { hasText: /^\s*explore\s*$/i }).first();
 if (await deskTab.isVisible().catch(() => false)) {
   await deskTab.click();
   await desk.waitForTimeout(1200);

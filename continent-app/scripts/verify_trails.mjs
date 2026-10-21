@@ -136,7 +136,7 @@ await page.waitForTimeout(3000);
 // Desktop uses .header-nav-item; the bottom bar exists in the DOM but is
 // hidden above 768px, so filtering by text alone finds an invisible button.
 // The app also OPENS on Destinations, so the click is only a safety net.
-const destTab = page.locator('.header-nav-item', { hasText: /destinations/i }).first();
+const destTab = page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
 if (await destTab.isVisible().catch(() => false)) {
   await destTab.click();
   await page.waitForTimeout(1200);
@@ -334,7 +334,7 @@ phone.on('pageerror', (e) => errors.push('phone pageerror: ' + String(e.message)
 await seed(phone);
 await phone.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await phone.waitForTimeout(3000);
-await phone.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
+await phone.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
 await phone.waitForTimeout(1200);
 await phone.locator(CAT, { hasText: /trails/i }).click();
 await phone.waitForTimeout(900);

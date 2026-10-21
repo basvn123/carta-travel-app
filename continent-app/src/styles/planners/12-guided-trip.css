@@ -327,3 +327,7 @@
 /* With the map in the right column the Stay briefing takes the step's width. */
 .trip-wizard-modal .guide-stay-wrap.is-aside { display: block; }
 .trip-wizard-modal .guide-stay-wrap.is-aside .guide-city-side { width: auto; max-width: none; flex: none; }
+
+/* T507 (T500-b): the stops map numbers its pins in trip order, and a picked stop's row lights up. */
+.citypick-pin.anchor .citypick-ic.is-num { display: inline; color: var(--action-text); }
+.wstay.is-picked { border-color: var(--select-border); outline: 2px solid var(--focus); outline-offset: 1px; }

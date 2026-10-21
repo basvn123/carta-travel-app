@@ -32,7 +32,8 @@ export function DayPrice({ cost, t }) {
   return (
     <span className="xprice" ref={ref}>
       <Money value={cost.dayEur} est={isNational(cost)} />
-      <span className="xprice-unit"> {t('cost.perDay')}</span>
+      {/* "a person a day" wherever a place is priced (owner 1.8, T504). */}
+      <span className="xprice-unit"> {t('dest.priceDayUnit')}</span>
     </span>
   );
 }

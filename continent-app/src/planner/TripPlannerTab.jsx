@@ -530,6 +530,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // editable stop list so dates/stops can be changed right away.
   useEffect(() => {
     if (!openPlanId) return;
+    // The trip kept on this device, opened from My trips (T503, T500-a).
+    if (typeof openPlanId === 'object' && openPlanId.device) {
+      const stored = loadDeviceTrip();
+      if (stored) { tp.loadSnapshot(stored.trip, stored.key); setSelectedStop(null); setDeviceTrip(stored); }
+      onOpenPlanConsumed && onOpenPlanConsumed();
+      return;
+    }
     const planId = typeof openPlanId === 'object' ? openPlanId.id : openPlanId;
     const editMode = typeof openPlanId === 'object' && openPlanId.edit;
     tp.loadPlan(planId).then(() => {

@@ -4,6 +4,7 @@ import { Button, Chip } from '../../components/ui/index.js';
 import { usePaywall } from '../../hooks/usePaywall.jsx';
 import { TIERS, daysLeft } from '../../lib/pricing.js';
 import { openBillingPortal, cancelYearly, resumeYearly } from '../../lib/billing.js';
+import { tabHref } from '../../lib/urlState.js';
 
 /**
  * Your plan, on the Account hub (T461, with T460's billing behind it).
@@ -129,6 +130,21 @@ export function PlanSection({ balance = null }) {
               <Button ref={cancelRef} variant="quiet" className="acct-cancel" onClick={() => { setSaid(''); setAsk(true); }}>{t('account.planCancel')}</Button>
             )}
           </div>
+        )}
+        {/* Every state ends in one quiet link to the pricing page (T503,
+            T497-a): the whole comparison, never a second primary. */}
+        {paywall.openPricingPage && (
+          <a
+            className="acct-plan-all"
+            href={tabHref('pricing')}
+            onClick={(ev) => {
+              if (ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+              ev.preventDefault();
+              paywall.openPricingPage();
+            }}
+          >
+            {t('pass.seeAll')}
+          </a>
         )}
       </div>
     </section>

@@ -318,7 +318,7 @@ try {
     }));
     await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForTimeout(2500);
-    await page.locator('.bottom-nav-item', { hasText: /destinations/i }).first()
+    await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first()
       .click({ timeout: 15000 }).catch(() => {});
     await page.waitForTimeout(800);
     await page.locator('.dtab-cats [role="tab"]', { hasText: /beaches/i }).first()

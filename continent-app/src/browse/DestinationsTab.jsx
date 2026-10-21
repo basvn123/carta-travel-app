@@ -3665,6 +3665,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <TrailPage
             card={pageCard}
+            backLabel={returnTo?.label || ''}
             {...favProps('trail', pageCard.tr?.id, pageCard.tr?.cc || pageCard.tr?.country)}
             onAddToDay={onAddToDay ? (f) => onAddToDay('trail', f) : null}
             dests={data?.destinations}
@@ -3685,6 +3686,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <JourneyPage
             id={pageJourney.id}
+            backLabel={returnTo?.label || ''}
             {...favProps('journey', pageJourney.id)}
             railFrom={railOrigin(data, origin)}
             stayTier={stayTier}
@@ -3726,6 +3728,7 @@ export function DestinationsTab({
           <Suspense fallback={null}>
             <BeachPage
               beach={pageBeach}
+              backLabel={returnTo?.label || ''}
               {...favProps('beach', pageBeach.id, pageBeach.cc)}
               onAddToDay={onAddToDay ? (f) => onAddToDay('beach', f) : null}
               onOpenNeighbour={openNeighbour}
@@ -3746,6 +3749,7 @@ export function DestinationsTab({
           <Suspense fallback={null}>
             <LakePage
               lake={pageLake}
+              backLabel={returnTo?.label || ''}
               {...favProps('lake', pageLake.id, pageLake.cc)}
               onAddToDay={onAddToDay ? (f) => onAddToDay('lake', f) : null}
               onOpenNeighbour={openNeighbour}
@@ -3772,6 +3776,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <CyclePage
             routeId={pageCycle.routeId}
+            backLabel={returnTo?.label || ''}
             {...favProps('cycle', pageCycle.routeId ?? pageCycle.tourSlug, pageCycle.country)}
             onOpenNeighbour={openNeighbour}
             tourSlug={pageCycle.tourSlug}
@@ -3790,6 +3795,7 @@ export function DestinationsTab({
           <Suspense fallback={null}>
             <MountainPage
               mountain={pageMountain}
+              backLabel={returnTo?.label || ''}
               {...favProps('mountain', pageMountain.id, pageMountain.cc)}
               onAddToDay={onAddToDay ? (f) => onAddToDay('mountain', f) : null}
               onOpenNeighbour={openNeighbour}

@@ -122,7 +122,7 @@ page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) e
 
 await page.goto(APP_URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await page.waitForTimeout(3000);
-await page.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
+await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
 await page.waitForTimeout(1200);
 
 // ── Trails: the price chrome is gone ──────────────────────────────────────

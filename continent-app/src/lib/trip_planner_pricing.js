@@ -23,16 +23,14 @@ import { preferredPublicMode } from './transport.js';
 import { round2 } from './math.js';
 
 
-/** Ryanair-style hold/cabin baggage add-ons, priced PER PERSON, PER ONE-WAY
- *  flight (a round trip pays each fee twice). The stored seat fares are the
- *  bare "seat only" price, so without this a two-bag family looks ~€140
- *  cheaper than it really books. Fees swing wildly by route and date, so these
- *  are deliberately round mid-estimates, always flagged as such in the UI.
+/** Baggage add-ons, priced PER PERSON, PER ONE-WAY leg. These are round
+ *  mid-estimates kept only so an older saved trip keeps its bag key; Carta
+ *  claims no airline's bag rule and shows no flight price (T508).
  */
 export const BAGGAGE_OPTIONS = [
-  { key: 'cabin', label: 'Cabin bag only', per_leg_eur: 0, hint: 'One small bag under the seat - included free' },
-  { key: 'priority', label: 'Priority + 10 kg', per_leg_eur: 20, hint: 'Priority boarding and a 10 kg cabin bag' },
-  { key: 'checked', label: 'Checked 20 kg bag', per_leg_eur: 35, hint: 'A 20 kg bag in the hold' },
+  { key: 'cabin', per_leg_eur: 0 },
+  { key: 'priority', per_leg_eur: 20 },
+  { key: 'checked', per_leg_eur: 35 },
 ];
 
 const BAGGAGE_BY_KEY = Object.fromEntries(BAGGAGE_OPTIONS.map((o) => [o.key, o]));
@@ -41,11 +39,6 @@ const BAGGAGE_BY_KEY = Object.fromEntries(BAGGAGE_OPTIONS.map((o) => [o.key, o])
  *  or an unknown key). */
 export function baggageFeePerLeg(key) {
   return BAGGAGE_BY_KEY[key]?.per_leg_eur ?? 0;
-}
-
-/** Traveller-facing name for a baggage option, for receipts and the export. */
-export function baggageLabel(key) {
-  return BAGGAGE_BY_KEY[key]?.label ?? 'Cabin bag only';
 }
 
 /** Real fares for flying into `destA` and out of `destB`, combined from each
@@ -280,15 +273,14 @@ function legProv(rec, carrier, estimated) {
 // Shared so every surface that shows a trip (the planner's Trip total, the
 // planned Overview, the export) explains a missing flight plan identically, // never a message in one place and a silent gap in another.
 const FLIGHT_REASON_LABELS = {
-  no_shared_origin: "These two stops don't share a departure airport with stored budget fares, so there's no single flight plan connecting them. Try a different first or last stop, or fly home and out again.",
-  no_fare_for_date: 'No fare is stored for one of these exact dates yet. Try nudging the trip dates.',
-  missing_input: 'Pick your travel dates and at least one stop to price the flights.',
+  no_shared_origin: "These two stops don't share a departure airport, so there's no single flight plan connecting them. Try a different first or last stop, or fly home and out again.",
+  missing_input: 'Pick your travel dates and at least one stop to plan the flights.',
 };
 
 /** The traveller-facing explanation for a non-combinable flight result, or a
  *  sensible default. Pass `flight.reason` from combineTripLegs. */
 export function flightReasonLabel(reason) {
-  return FLIGHT_REASON_LABELS[reason] || 'Flights for this trip could not be priced.';
+  return FLIGHT_REASON_LABELS[reason] || 'Add your fare in the Trip planner.';
 }
 
 const GROUND_DETOUR_FACTOR = 1.3;   // road km vs straight-line km (mirrors car_layer.py / apply_airport_anchors.py)

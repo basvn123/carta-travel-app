@@ -183,7 +183,7 @@ export function DayTipsBody({
                           {a.name}
                           <span className="dayws-tip-tag">{a.tag}</span>
                           {a.item && isMustSee(a.item) && (
-                            <span className="dayws-tip-star" title={t('dayws.mustTitle')}><StarIcon size={9} /></span>
+                            <span className="dayws-tip-star" title={t('dayws.mustTitle')} role="img" aria-label={t('dayws.mustTitle')}><StarIcon size={9} /></span>
                           )}
                         </span>
                         <span className="dayws-tip-note">{a.note}</span>

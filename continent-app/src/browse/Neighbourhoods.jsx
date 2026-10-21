@@ -1,6 +1,7 @@
 import React from 'react';
 import { BedIcon } from '../components/Icons.jsx';
 import { MONTHS_SHORT } from './ClimateStrip.jsx';
+import { monthName } from '../lib/dates.js';
 import { eurExact } from '../lib/format.js';
 
 /**
@@ -22,6 +23,7 @@ export function Neighbourhoods({ sleep, t }) {
   const sMin = seasonality ? Math.min(...seasonality) : 0;
   const sMax = seasonality ? Math.max(...seasonality) : 1;
   const cheapMonth = seasonality ? seasonality.indexOf(sMin) : -1;
+  const mShort = (i) => monthName(i + 1, t.lang || 'en', false) || MONTHS_SHORT[i];
 
   return (
     <div className="destp-sleep">
@@ -63,13 +65,13 @@ export function Neighbourhoods({ sleep, t }) {
                 key={MONTHS_SHORT[i]}
                 className={i === cheapMonth ? 'is-low' : ''}
                 style={{ height: `${20 + ((v - sMin) / (sMax - sMin)) * 80}%` }}
-                title={`${MONTHS_SHORT[i]}`}
+                title={mShort(i)}
               />
             ))}
           </div>
           {cheapMonth >= 0 && (
             <p className="destp-season-note">
-              {t('dest.cheapestMonth', { month: MONTHS_SHORT[cheapMonth] })}
+              {t('dest.cheapestMonth', { month: mShort(cheapMonth) })}
             </p>
           )}
         </div>

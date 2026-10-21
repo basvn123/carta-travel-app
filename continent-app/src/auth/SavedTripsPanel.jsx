@@ -7,7 +7,8 @@ import {
   loadTripExtras, persistTripExtras,
 } from '../planner/dayPlanStore.js';
 import { CalendarIcon, BookmarkIcon, CheckIcon, RouteIcon, LinkIcon } from '../components/Icons.jsx';
-import { TileGroup, Tile, Chip } from '../components/ui/index.js';
+import { TileGroup, Tile, Chip, Button } from '../components/ui/index.js';
+import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import {
@@ -36,7 +37,7 @@ import '../styles/70-mytrips.css';
 import { InstallHint } from './InstallHint.jsx';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique,
-  nightsBetween, tripFigure, visitedRecord, yearOf,
+  nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan,
 } from '../lib/myTrips.js';
 import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
@@ -111,7 +112,7 @@ export function SavedTripsPanel({
   // The day-cost map Explore prints from, and the Lifestyle the trip planner
   // prices with, so every figure here is the figure there.
   costs = null, stayTier = 'home', lifestyle = null,
-  onOpenFriends = null, onPlanTripCountry = null,
+  onOpenFriends = null, onPlanTripCountry = null, onOpenDeviceTrip = null,
 }) {
   const { user, configured } = useAuth();
   const { t, lang } = useI18n();
@@ -131,6 +132,10 @@ export function SavedTripsPanel({
   const [tripPlansError, setTripPlansError] = useState('');
   const [statements, setStatements] = useState(SAVED_MOCK ? MOCK_STATEMENTS : []);
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
+  // The one trip kept on this device without an account (T500, carta.
+  // deviceTrip.v1), read once per opening of My trips (T503, owner T500-a).
+  const [deviceStored, setDeviceStored] = useState(() => (SAVED_MOCK ? null : loadDeviceTrip()));
+  const devicePlan = useMemo(() => deviceTripAsPlan(deviceStored, destinations), [deviceStored, destinations]);
   useEffect(() => subscribeDayPlanStore(({ remote }) => {
     if (remote) setDayPlans(loadStandalonePlans());
   }), []);
@@ -299,7 +304,10 @@ export function SavedTripsPanel({
   };
 
   // ── What is on show: the lists without the one removal Undo holds. ──
-  const shownPlans = useMemo(() => tripPlans.filter((p) => `plan:${p.id}` !== heldKey), [tripPlans, heldKey]);
+  const shownPlans = useMemo(
+    () => (devicePlan ? [...tripPlans, devicePlan] : tripPlans).filter((p) => `plan:${p.id}` !== heldKey),
+    [tripPlans, devicePlan, heldKey],
+  );
   const shownDayPlans = useMemo(() => dayPlans.filter((sp) => `day:${sp.id}` !== heldKey), [dayPlans, heldKey]);
   const shownTrips = useMemo(() => trips.filter((x) => `fav:${x.id}` !== heldKey), [trips, heldKey]);
   const { upcomingPlans, pastPlans, upcomingDayPlans, pastDayPlans } = useMemo(
@@ -483,14 +491,26 @@ export function SavedTripsPanel({
     const when = whenParts(p.start_date, p.end_date, todayIso);
     const figure = figures[p.id] || null;
     const removeLabel = t('saved.removeItem', { name: parts.title });
-    const onRemove = p.coplan ? null : () => removeWithUndo({ key: `plan:${p.id}`, label: parts.title, commit: () => handleDeleteTripPlan(p.id) });
-    const below = <>{statementFor(p.id)}{sharePanelFor(p.id, parts.title)}</>;
+    // The trip on this device says where it is kept; signing in is offered
+    // only as the way to have it on a second device (T503, owner T500-a).
+    const device = !!p.device;
+    const onRemove = p.coplan ? null : device
+      ? () => removeWithUndo({ key: `plan:${p.id}`, label: parts.title, commit: () => { clearDeviceTrip(); setDeviceStored(null); } })
+      : () => removeWithUndo({ key: `plan:${p.id}`, label: parts.title, commit: () => handleDeleteTripPlan(p.id) });
+    const below = device ? (
+      <p className="mt-device-line">
+        <span>{t(!user && configured ? 'saved.deviceLine' : 'saved.deviceLineShort')}</span>
+        {!user && configured && (
+          <Button variant="quiet" size="sm" onClick={onOpenAuth}>{t('saved.signIn')}</Button>
+        )}
+      </p>
+    ) : <>{statementFor(p.id)}{sharePanelFor(p.id, parts.title)}</>;
     const common = {
       id: p.id,
       title: parts.title,
       img: resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries }),
       iso2: isoFor(parts.countries),
-      onOpen: () => onLoadTripPlan?.(p.id),
+      onOpen: device ? () => onOpenDeviceTrip?.() : () => onLoadTripPlan?.(p.id),
       onRemove,
       removeLabel,
       below,
@@ -512,8 +532,10 @@ export function SavedTripsPanel({
         people: crew,
         party: figure?.party || null,
         coplanBy: p.coplan ? (p.ownerName || '') : '',
-        onPlanDays: () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
-        onInvite: p.coplan ? null : () => toggleShare(p.id),
+        // A day plan and a share link belong to a trip in an account; the
+        // device trip opens in Plan, where its days begin.
+        onPlanDays: device ? null : () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
+        onInvite: p.coplan || device ? null : () => toggleShare(p.id),
         inviteOpen: openShare === p.id,
       };
     }
@@ -521,7 +543,7 @@ export function SavedTripsPanel({
       ...common,
       meta: [whenText(t, when), fmtRange(p.start_date, p.end_date)].filter(Boolean).join(', '),
       figure: figure ? <TripPrice figure={figure} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
-      menuActions: [
+      menuActions: device ? [] : [
         { key: 'days', label: t('saved.planDays'), icon: <CalendarIcon size={16} />, onClick: () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }) },
         ...(p.coplan ? [] : [{ key: 'share', label: t('saved.shareInvite'), icon: <LinkIcon size={16} />, onClick: () => toggleShare(p.id) }]),
       ],
@@ -857,7 +879,7 @@ export function SavedTripsPanel({
           {phoneFilters && <div className="mt-refine">{phoneFilters}</div>}
         </div>
 
-        <InstallHint hasSavedTrip={trips.length > 0 || tripPlans.length > 0 || dayPlans.length > 0} />
+        <InstallHint hasSavedTrip={trips.length > 0 || tripPlans.length > 0 || dayPlans.length > 0 || !!devicePlan} />
 
         <div className="mt-panel" id="mytrips-panel" role="tabpanel" aria-labelledby="mytrips-panel-title">
           {/* The section's name as the page's h2, for the heading outline; the
@@ -878,6 +900,7 @@ export function SavedTripsPanel({
               onOpenFriends={onOpenFriends}
               onPlanTrip={() => onGoToTab?.('trip')}
               onSignIn={onOpenAuth}
+              signInLine={!devicePlan}
               todayIso={todayIso}
             />
           )}

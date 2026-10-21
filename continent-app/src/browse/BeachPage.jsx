@@ -65,7 +65,7 @@ import { compassPoint } from '../lib/signature.js';
 /** The way down as a level: only the access field says anything about it. */
 const beachLevel = (b) => ACCESS_LEVEL[b?.access] || 0;
 
-export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
+export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null, backLabel = '' }) {
   const { t, lang } = useI18n();
   // The score breakdown has one door since T386: the "How the score is
   // built" row, which carries each part's weight beside its bar. The chip in
@@ -314,7 +314,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
     <DetailPage
       name={beach.name}
       className="bpage"
-      backLabel={t('beach.back')}
+      backLabel={backLabel || t('beach.back')}
       onClose={onClose}
       fav={fav}
       onFav={onFav}

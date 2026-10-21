@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { ScoreChip } from '../../components/RatingBadge.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { cityInsight } from '../../lib/tripGuide.js';
@@ -19,7 +19,7 @@ import { useI18n } from '../../i18n/index.jsx';
  */
 export function StepStays({
   titleTag, stopDates, destinations, nights, setCityNights, ownStays, setOwnStay, bedEstimate,
-  adults, kids, stayQuery, setStayQuery,
+  adults, kids, stayQuery, setStayQuery, pickedStopId = '',
 }) {
   const { t } = useI18n();
   const StepTitle = titleTag;
@@ -35,18 +35,26 @@ export function StepStays({
       .slice(0, 8);
   }, [stayQuery, destinations, nights]);
 
+  // A pin tapped on the stops map picks its row here: highlight and bring it into view.
+  const listRef = useRef(null);
+  useEffect(() => {
+    if (!pickedStopId || !listRef.current) return;
+    const row = listRef.current.querySelector('.wstay.is-picked');
+    if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [pickedStopId]);
+
   return (
     <>
       <StepTitle className="guide-title">{t('wizard.staysTitle')}</StepTitle>
       <div className={`wstays ${stopDates.length ? '' : 'is-empty'}`}>
         {stopDates.length > 0 && (
-          <ol className="wstay-list">
+          <ol className="wstay-list" ref={listRef}>
             {stopDates.map((row, i) => {
               const dest = destinations[row.id];
               if (!dest) return null;
               const leave = row.arrive ? addDays(row.arrive, row.nights) : '';
               return (
-                <li className="wstay" key={`${row.id}-${i}`}>
+                <li className={`wstay${row.id === pickedStopId ? ' is-picked' : ''}`} key={`${row.id}-${i}`} aria-current={row.id === pickedStopId ? 'true' : undefined}>
                   <span className="wstay-index" aria-hidden="true">{i + 1}</span>
                   <CityThumb dest={dest} className="wstay-thumb" />
                   <div className="wstay-info">

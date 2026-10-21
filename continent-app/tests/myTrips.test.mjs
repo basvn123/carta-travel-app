@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import {
   classifyTrips, whenParts, dayPlanEndDate, daysUntil, visitedRecord,
-  plannerStateFromPlan, tripFigure, nightsBetween, yearOf,
+  plannerStateFromPlan, tripFigure, nightsBetween, yearOf, deviceTripAsPlan, DEVICE_PLAN_ID,
 } from '../src/lib/myTrips.js';
 
 const TODAY = '2026-10-16';
@@ -105,5 +105,40 @@ test('tripFigure prices a saved trip the way the planner does', { skip: have ? f
   assert.equal(fig.total, direct.grandTotal);
   assert.equal(fig.party, 2);
   assert.equal(fig.est, true);
+  // T503 (owner 1.8): the card's one figure is a person a day over 5 nights.
+  assert.equal(fig.nights, 5);
+  assert.ok(Math.abs(fig.perPersonDay - direct.perPerson / 5) < 1e-9);
   assert.equal(tripFigure({ stops: [{ destination_id: 'nope', arrive_date: '2026-11-01', depart_date: '2026-11-02' }] }, { data }), null);
+});
+
+// T503 (owner T500-a): the trip kept on this device reads as a trip row, so
+// My trips classifies, prices and draws it with the same code.
+test('deviceTripAsPlan chains the stop dates from the trip start', () => {
+  const dests = { LIS: { city: 'Lisbon', country: 'Portugal' }, OPO: { city: 'Porto', country: 'Portugal' } };
+  const stored = { v: 1, key: 'dt-1', savedAt: 1, trip: {
+    tripStart: '2026-11-14', tripEnd: '2026-11-21', groupSize: 3, planLabel: '',
+    stops: [{ destinationId: 'LIS', nights: 4 }, { destinationId: 'OPO', nights: 3 }],
+  } };
+  const p = deviceTripAsPlan(stored, dests);
+  assert.equal(p.id, DEVICE_PLAN_ID);
+  assert.equal(p.device, true);
+  assert.equal(p.start_date, '2026-11-14');
+  assert.equal(p.end_date, '2026-11-21');
+  assert.deepEqual(p.stops.map((s) => [s.arrive_date, s.depart_date]), [['2026-11-14', '2026-11-18'], ['2026-11-18', '2026-11-21']]);
+  assert.deepEqual(p.countries, ['Portugal']);
+  assert.deepEqual(p.cities, ['Lisbon', 'Porto']);
+  const state = plannerStateFromPlan(p);
+  assert.equal(state.groupSize, 3);
+  assert.deepEqual(state.stops.map((s) => s.nights), [4, 3]);
+  assert.equal(classifyTrips({ plans: [p], todayIso: TODAY }).upcomingPlans.length, 1);
+});
+
+test('deviceTripAsPlan keeps an undated trip upcoming with its nights', () => {
+  const p = deviceTripAsPlan({ key: 'dt-2', trip: { stops: [{ destinationId: 'LIS', nights: 2 }] } });
+  assert.equal(p.start_date, null);
+  assert.equal(p.end_date, null);
+  assert.equal(plannerStateFromPlan(p).stops[0].nights, 2);
+  assert.equal(classifyTrips({ plans: [p], todayIso: TODAY }).upcomingPlans.length, 1);
+  assert.equal(deviceTripAsPlan(null), null);
+  assert.equal(deviceTripAsPlan({ key: 'x', trip: { stops: [] } }), null);
 });

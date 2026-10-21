@@ -50,7 +50,7 @@ export function Empty({ title, action, secondary }) {
  */
 export function TripsTab({
   authed, configured, loading, error, onRetry, next, later, dayPlans,
-  friendsShared, friendFaces = [], onOpenFriends, onPlanTrip, onSignIn, todayIso,
+  friendsShared, friendFaces = [], onOpenFriends, onPlanTrip, onSignIn, todayIso, signInLine = true,
 }) {
   const { t } = useI18n();
   const nothing = !next && !later.length && !dayPlans.length;
@@ -88,7 +88,7 @@ export function TripsTab({
               </div>
             </Section>
           )}
-          {!authed && configured && (
+          {!authed && configured && signInLine && (
             <p className="mt-signin-line">
               <Button variant="quiet" size="sm" onClick={onSignIn}>{t('saved.signIn')}</Button>
             </p>
@@ -255,8 +255,8 @@ export function VisitedCountriesSheet({ fromTrips, manual, onToggle, onClose }) 
 
 /**
  * Visited: the map of the record first (a third of the phone screen), the
- * figures it adds up to as one fact band, the countries as flags with their
- * own edit, then the trips by year.
+ * figures it adds up to as one fact band that carries the countries and their
+ * edit (T503, T467-b), then the trips by year.
  */
 export function VisitedTab({
   record, mapProps, hasMap, mapFull, onMapFull, groups, onAddPast, pastForm, error,
@@ -297,18 +297,21 @@ export function VisitedTab({
         document.body,
       )}
 
-      {hasAny && (
-        /* T467: the countries lead, large, with their flags (the hero
-           figure the travel-stats apps open on); cities, trips and nights
-           follow as the supporting three. No denominator: a share of
-           Carta's catalogue would be a catalogue count, and a share of
-           "Europe" depends on whose list of countries it is. */
-        <dl className="mt-band" aria-label={t('saved.recordFacts')}>
-          <div className="mt-band-cell mt-band-hero">
-            <dt>{t('saved.factCountries')}</dt>
-            <dd>
-              <span className="mt-band-fig">{record.countries.length}</span>
-              {record.countries.length > 0 && (
+      {/* T467: the countries lead, large, with their flags (the hero figure
+          the travel-stats apps open on); cities, trips and nights follow as
+          the supporting three. No denominator: a share of Carta's catalogue
+          would be a catalogue count. T503 (owner T467-b): the countries
+          section is folded in here, its Edit or Add sits in the hero cell and
+          the names are read out from a list, so there is one list of
+          countries, not two. With nothing on the record the band is only
+          that cell and its Add: an invitation, not a row of zeros. */}
+      <dl className={`mt-band${hasAny ? '' : ' is-empty'}`} aria-label={t('saved.recordFacts')}>
+        <div className="mt-band-cell mt-band-hero">
+          <dt>{t('saved.factCountries')}</dt>
+          <dd>
+            {record.countries.length > 0 && (
+              <>
+                <span className="mt-band-fig">{record.countries.length}</span>
                 <span
                   className="mt-band-flags"
                   aria-hidden="true"
@@ -316,32 +319,32 @@ export function VisitedTab({
                 >
                   {record.countries.slice(0, 8).map((c) => <CountryFlag key={c} country={c} size={18} />)}
                 </span>
-              )}
-            </dd>
-          </div>
-          <div className="mt-band-cell"><dt>{t('saved.factCities')}</dt><dd>{record.cities.length}</dd></div>
-          <div className="mt-band-cell"><dt>{t('saved.factTrips')}</dt><dd>{record.trips}</dd></div>
-          <div className="mt-band-cell"><dt>{t('saved.factNights')}</dt><dd>{record.nights}</dd></div>
-        </dl>
-      )}
-
-      <Section
-        id="mt-countries"
-        title={t('saved.countriesTitle')}
-        action={(
-          <Button ref={countriesRef} size="sm" variant="quiet" iconStart={record.countries.length ? <PencilIcon size={16} /> : <PlusIcon size={16} />} onClick={onEditCountries}>
-            {t(record.countries.length ? 'saved.editCountries' : 'saved.addCountries')}
-          </Button>
+                <ul className="sr-only mt-flags">
+                  {record.countries.map((c) => <li key={c} className="mt-flag">{countryName(COUNTRY_ISO2[c], c)}</li>)}
+                </ul>
+              </>
+            )}
+            <Button
+              ref={countriesRef}
+              size="sm"
+              variant="quiet"
+              className="mt-band-edit"
+              iconStart={record.countries.length ? <PencilIcon size={16} /> : <PlusIcon size={16} />}
+              onClick={onEditCountries}
+              aria-label={record.countries.length ? t('saved.editCountriesLabel') : undefined}
+            >
+              {t(record.countries.length ? 'saved.editCountries' : 'saved.addCountries')}
+            </Button>
+          </dd>
+        </div>
+        {hasAny && (
+          <>
+            <div className="mt-band-cell"><dt>{t('saved.factCities')}</dt><dd>{record.cities.length}</dd></div>
+            <div className="mt-band-cell"><dt>{t('saved.factTrips')}</dt><dd>{record.trips}</dd></div>
+            <div className="mt-band-cell"><dt>{t('saved.factNights')}</dt><dd>{record.nights}</dd></div>
+          </>
         )}
-      >
-        {record.countries.length > 0 && (
-          <ul className="mt-flags">
-            {record.countries.map((c) => (
-              <li key={c} className="mt-flag"><CountryFlag country={c} size={16} /><span>{countryName(COUNTRY_ISO2[c], c)}</span></li>
-            ))}
-          </ul>
-        )}
-      </Section>
+      </dl>
 
       <Section
         id="mt-record"

@@ -2,7 +2,9 @@
  * "Where the numbers come from" (T318, register rows T226-b and T207-c).
  *
  * One static page, assembled at build time from files, never typed:
- *   - the positioning sentence of PRODUCT.md (T201), with its two counts read
+ *   - the positioning sentence of PRODUCT.md (owner, T471-b, 21 October 2026;
+ *     the app repo cannot read the root PRODUCT.md, so it is typed here and
+ *     must match it), with its two counts read
  *     from public/boot.json meta.n_destinations and src/lib/urlScheme.js
  *     COUNTRY_SLUGS, so the sentence cannot go stale;
  *   - the provenance sentences of the cost receipt, from src/i18n/en.js
@@ -81,43 +83,54 @@ export async function readFacts(appRoot) {
   return facts;
 }
 
+/* The Lagoon roles (T503, register T421-b), copied from
+   src/styles/01-tokens.css: this page is static HTML outside the app and
+   cannot read the built stylesheet, so it carries the values it uses, as
+   src/map/tokenColors.js does for the map. Figtree comes from the site's own
+   /fonts/: the CSP (public/_headers) allows no font host, which is why the
+   old Google Fonts link never loaded. */
 const CSS = `
-:root{--paper:#f8f6f0;--paper-dim:#efece2;--ink:#0f172a;--ink-soft:#414b5e;--ink-mute:#7d8393;--rule:#ccc7b8;--rule-soft:#e2ded1;--accent:#e05a47;--ink-fill:#2b3446;
---display:'Fraunces','Iowan Old Style',Georgia,serif;--ui:'Plus Jakarta Sans','Inter Tight',system-ui,-apple-system,sans-serif;--mono:'JetBrains Mono','SF Mono',Menlo,monospace;
---space-2:8px;--space-3:12px;--space-4:16px;--space-5:22px;--space-6:30px;--space-7:40px;--space-8:56px;--tap:44px}
+@font-face{font-family:'Figtree';font-style:normal;font-weight:300 900;font-display:swap;src:url(/fonts/Figtree-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Figtree';font-style:normal;font-weight:300 900;font-display:swap;src:url(/fonts/Figtree-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{--surface-page:#f6f5f2;--surface:#ffffff;--text:#1f2a33;--text-2:#44515c;--border:#dcdfdd;--border-soft:#e9eae7;--action:#8c5a2b;--action-hover:#744820;--action-text:#ffffff;--focus:#8c5a2b;
+--ui:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;--text-caption:12px;--text-label:13px;--text-body:14px;--text-lead:16px;--text-title:20px;--text-display:40px;
+--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:40px;--space-8:56px;--tap:44px;--radius-sm:6px;--radius-control:10px}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.55}
+body{margin:0;background:var(--surface-page);color:var(--text);font-family:var(--ui);font-size:var(--text-lead);line-height:1.5;font-variant-numeric:tabular-nums}
+::selection{background:#f6e7d3;color:var(--text)}
 main{max-width:720px;margin:0 auto;padding:var(--space-4) var(--space-4) var(--space-8)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);border-bottom:1px solid var(--rule)}
-.top a{color:var(--ink);text-decoration:none;font-weight:600;min-height:var(--tap);display:inline-flex;align-items:center}
-h1{font-family:var(--display);font-weight:600;font-size:clamp(30px,6vw,44px);line-height:1.1;letter-spacing:-0.02em;margin:var(--space-6) 0 var(--space-4)}
-h2{font-family:var(--ui);font-weight:600;font-size:20px;line-height:1.25;margin:var(--space-7) 0 var(--space-3)}
-p{margin:0 0 var(--space-3)}
-.lede{font-size:18px;color:var(--ink-soft)}
-.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.meta{font-size:13px;color:var(--ink-soft)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);padding-bottom:var(--space-2);border-bottom:1px solid var(--border)}
+.top a{color:var(--text);text-decoration:none;font-weight:600;min-height:var(--tap);display:inline-flex;align-items:center}
+h1{font-weight:700;font-size:clamp(28px,6vw,var(--text-display));line-height:1.2;letter-spacing:-0.02em;margin:var(--space-6) 0 var(--space-4);text-wrap:balance}
+h2{font-weight:600;font-size:var(--text-title);line-height:1.25;margin:var(--space-7) 0 var(--space-3)}
+p{margin:0 0 var(--space-3);max-width:68ch}
+.lede{font-size:18px;color:var(--text-2)}
+.n{font-variant-numeric:tabular-nums}
+.meta{font-size:var(--text-label);color:var(--text-2)}
 ul.rules{list-style:none;margin:0;padding:0}
-ul.rules li{padding:var(--space-3) 0;border-top:1px solid var(--rule-soft)}
-ul.rules li:last-child{border-bottom:1px solid var(--rule-soft)}
-.tablewrap{overflow-x:auto;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-table{border-collapse:collapse;width:100%;min-width:460px;font-size:14px}
-th,td{padding:var(--space-2) var(--space-3);text-align:right;border-top:1px solid var(--rule-soft);white-space:nowrap}
-th:first-child,td:first-child{text-align:left;padding-left:0}
-thead th{border-top:0;font-weight:600;color:var(--ink-soft);font-size:13px}
-td.n{font-size:13px}
-.credits li{font-size:14px}
+ul.rules li{padding:var(--space-3) 0;border-top:1px solid var(--border-soft)}
+ul.rules li:last-child{border-bottom:1px solid var(--border-soft)}
+.tablewrap{overflow-x:auto;padding:var(--space-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-control)}
+table{border-collapse:collapse;width:100%;min-width:460px;font-size:var(--text-body)}
+th,td{padding:var(--space-2) var(--space-3);text-align:right;border-top:1px solid var(--border-soft);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{border-top:0;font-weight:600;color:var(--text-2);font-size:var(--text-label)}
+td.n{font-size:var(--text-label)}
+.credits li{font-size:var(--text-body)}
 .credits b{font-weight:600}
-.cta{display:inline-flex;align-items:center;min-height:var(--tap);padding:0 var(--space-5);background:var(--ink-fill);color:#fff;border-radius:6px;text-decoration:none;font-weight:600;margin-top:var(--space-3)}
-a{color:var(--ink)}
-a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-footer{margin-top:var(--space-8);padding-top:var(--space-4);border-top:1px solid var(--rule);font-size:13px;color:var(--ink-soft)}
+.cta{display:inline-flex;align-items:center;min-height:var(--tap);padding:0 var(--space-5);background:var(--action);color:var(--action-text);border-radius:var(--radius-control);text-decoration:none;font-weight:600;margin-top:var(--space-3)}
+.cta:hover{background:var(--action-hover)}
+a{color:var(--action);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:var(--radius-sm)}
+footer{margin-top:var(--space-8);padding-top:var(--space-4);border-top:1px solid var(--border);font-size:var(--text-label);color:var(--text-2)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 `;
 
 /** Builds the page. Pure: facts in, HTML out. */
 export function renderNumbersPage(f) {
   const { en } = f;
-  const sentence = `Carta is a price transparency tool for budget travel in Europe: for people who start from "what can I afford", it says what a day costs, per person, in ${fmt(f.destinations)} places across ${f.countries} countries, and labels every figure for where it came from.`;
+  const sentence = `Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs: a bed plus food and drink, per person, in ${fmt(f.destinations)} places across ${f.countries} countries, with every figure labelled for where it came from.`;
   const li = (keys) => keys.map((k) => `<li>${esc(en[k])}</li>`).join('');
   const rows = f.layers.map((l) => `<tr><td>${esc(l.label)}</td><td class="n">${fmt(l.published)}</td><td class="n">${fmt(l.listed)}</td><td class="n">${fmt(l.ok)}</td><td class="n">${fmt(l.thin)}</td><td class="n">${fmt(l.empty)}</td></tr>`).join('');
   const accuracy = fill(en['cost.accuracyMethod'], f.accuracy.vars);
@@ -138,12 +151,10 @@ export function renderNumbersPage(f) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="https://www.carta-europetravel.com${NUMBERS_PATH}">
-<meta name="theme-color" content="#f8f6f0">
+<meta name="theme-color" content="#f6f5f2">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Plus+Jakarta+Sans:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/Figtree-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>${CSS}</style>
 </head>
 <body>
@@ -172,10 +183,10 @@ export function renderNumbersPage(f) {
 <p class="meta" style="margin-top:var(--space-3)">Counts as of ${esc(dateOf(f.coverageDate))}, the date of the coverage file.</p>
 
 <h2>The ${f.credits.length} sources Carta credits</h2>
-<p>Every source whose licence asks for a visible credit. The same list is in the app under Account, then Data sources. Not every credit is open data: the basemap is under its provider's own terms.</p>
+<p>Every source whose licence asks for a visible credit. The same list is in the app under Account, then Imprint. Not every credit is open data: the basemap is under its provider's own terms.</p>
 <ul class="rules credits">${credits}</ul>
 
-<p><a class="cta" href="/">Open the map</a></p>
+<p><a class="cta" href="/">Open Explore</a></p>
 <footer>carta-europetravel.com. Prices are estimates unless a line says measured.</footer>
 </main>
 </body>

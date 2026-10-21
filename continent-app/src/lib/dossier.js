@@ -71,8 +71,8 @@ export function destShareUrl(destId) {
 }
 
 /**
- * The #dest= boot hash: read once, synchronously, then stripped, exactly like
- * lib/trails.js does it. Only our own param is touched, because Supabase auth
+ * The #dest= boot hash: read once, synchronously, and kept (T507) so the open
+ * place stays in the address; lib/trails.js and the other layers still strip theirs. Only our own param is touched, because Supabase auth
  * links land in the hash too.
  */
 let destReadResult;
@@ -96,8 +96,9 @@ export function readDestFromUrl() {
   const params = new URLSearchParams(hash.slice(1));
   const id = String(params.get('dest') || '').slice(0, 70);
   if (!DEST_ID_RE.test(id)) return (destReadResult = null);
-  try {
-    window.history.replaceState(null, '', window.location.pathname + window.location.search);
-  } catch { /* the destination still opens; only the address bar stays busy */ }
+  // T507 (T502-b): the hash stays. An address that opened a place keeps
+  // naming it, exactly as a card's push does, so the page can write its tab
+  // (&tab=) and a reload reopens the same tab. App drops it when the page
+  // closes (a direct open has no history step of its own to step back over).
   return (destReadResult = id);
 }

@@ -462,7 +462,7 @@ function lineStart(geometry) {
 }
 
 export function CyclePage({ routeId, tourSlug, country, countryName,
-                            onClose, onOpenNeighbour, fav = false, onFav = null }) {
+                            onClose, onOpenNeighbour, fav = false, onFav = null, backLabel = '' }) {
   const { t, lang } = useI18n();
   const [route, setRoute] = useState(null);
   const [tour, setTour] = useState(null);
@@ -843,7 +843,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
       name={title}
       className="cycle-dpage"
       testId="cycle-page"
-      backLabel={t('detail.backCycle')}
+      backLabel={backLabel || t('detail.backCycle')}
       onClose={onClose}
       fav={fav}
       onFav={onFav}

@@ -147,14 +147,15 @@ export function RecordMapDialog({ title, onClose, children }) {
 export function TripPrice({ figure, className = '' }) {
   const { t } = useI18n();
   const ref = useRef(null);
-  useSettledFigure(ref, figure ? Math.round(figure.total) : null);
-  if (!figure) return null;
+  // One figure a trip card prints (owner 1.8, T503): a person a day in whole
+  // euros, the same unit as Explore. The party's total is the receipt's.
+  const day = figure && Number.isFinite(figure.perPersonDay) ? figure.perPersonDay : null;
+  useSettledFigure(ref, day != null ? Math.round(day) : null);
+  if (day == null) return null;
   return (
     <span className={`mt-price ${className}`.trim()} ref={ref}>
-      <Money value={figure.total} est={figure.est} />
-      <span className="mt-price-unit">
-        {' '}{t(figure.party === 1 ? 'saved.forOne' : 'saved.forN', { n: figure.party })}
-      </span>
+      <Money value={day} est={figure.est} />
+      <span className="mt-price-unit">{' '}{t('dest.priceDayUnit')}</span>
     </span>
   );
 }

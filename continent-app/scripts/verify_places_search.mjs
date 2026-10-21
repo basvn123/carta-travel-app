@@ -89,7 +89,7 @@ await page.waitForTimeout(3000);
 
 // Into the tab. Desktop: the header nav (BottomNav is CSS-hidden above 768px,
 // and clicking a hidden bar is the trap this harness used to fall into).
-const headerTab = page.locator('.header-nav-item', { hasText: /destinations/i }).first();
+const headerTab = page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
 await headerTab.click();
 await page.waitForTimeout(1500);
 check('destinations tab opens', await page.locator('.places-tab').isVisible());

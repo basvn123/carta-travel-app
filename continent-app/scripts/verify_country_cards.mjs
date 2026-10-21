@@ -71,18 +71,9 @@ async function openHandPicker(page, onGridOpen = () => {}) {
   // screen. Asking too early got `false` from BOTH and sent a 1280 desktop
   // down the phone branch, where it waited 30s for a bottom bar that a
   // desktop never renders.
-  const top = page.locator('.header-nav-item', { hasText: /trip planner/i }).first();
-  const fab = page.locator('.bottom-nav-plus');
-  await Promise.race([
-    top.waitFor({ state: 'visible', timeout: 20000 }).catch(() => {}),
-    fab.waitFor({ state: 'visible', timeout: 20000 }).catch(() => {}),
-  ]);
-  if (await top.isVisible().catch(() => false)) await top.click();
-  else {
-    await fab.click();
-    await page.waitForTimeout(500);
-    await page.locator('.plan-chooser-item').first().click();
-  }
+  // T507: the Plan place (header link or bottom-nav item), then the trip tile on its start page.
+  await page.locator('.header-nav-item:visible, nav.bottom-nav[aria-label="Sections"] .bottom-nav-item:visible').filter({ hasText: /^\s*Plan\s*$/ }).first().click();
+  await page.locator('.plan-start-tile[href*="mode=trip"]:visible').first().click();
   await page.waitForTimeout(2000);
 
   const next = async () => {

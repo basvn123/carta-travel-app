@@ -145,7 +145,7 @@ const seedGuest = () => `(() => {
 })()`;
 
 async function openPanel(page) {
-  await page.locator('.account-avatar-btn').first().click({ timeout: 20000 });
+  await page.locator('.account-door').first().click({ timeout: 20000 });
   await page.locator('.account-panel').waitFor({ timeout: 15000 });
 }
 async function goToProfile(page) {
@@ -168,7 +168,7 @@ try {
   const page = await ctx.newPage();
   await stubSupabase(page, state);
   await page.goto(`${BASE}/?o=CRL`);
-  await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await page.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(page);
   await goToProfile(page);
 
@@ -277,7 +277,7 @@ try {
   const pageG = await ctxG.newPage();
   await stubSupabase(pageG, stateG);
   await pageG.goto(`${BASE}/?o=CRL`);
-  await pageG.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await pageG.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(pageG);
   await goToProfile(pageG);
   const sectionG = exportSection(pageG);
@@ -305,7 +305,7 @@ try {
   await ctxOut.addInitScript(seedGuest());
   const pageOut = await ctxOut.newPage();
   await pageOut.goto(`${BASE}/?o=CRL`);
-  await pageOut.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await pageOut.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(pageOut);
   if (await pageOut.locator('button', { hasText: 'Download my data' }).count()) {
     fail('a signed-out visitor is offered a data export');

@@ -135,6 +135,21 @@
   cursor: pointer;
 }
 .pass-terms:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+/* T503 (T497-a): the quiet way to the whole comparison on /pricing, a
+   link like Terms beside it, centred under the sentence about free. */
+.pass-all {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.pass-all:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 
 @media (min-width: 769px) {
   .pass-overlay { align-items: center; padding: var(--space-6); }

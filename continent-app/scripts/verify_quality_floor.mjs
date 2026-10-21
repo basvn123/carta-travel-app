@@ -697,7 +697,7 @@ const PAGES = {
   account: async (page) => {
     await open(page, '');
     await page.locator('.places-ccard, .jstyle-card').first().waitFor({ timeout: 120000 });
-    await visible(page, '.account-avatar-btn, .bottom-nav-item:has-text("Account")').click();
+    await visible(page, '.account-door, .bottom-nav-item:has-text("Account")').click();
     await page.waitForTimeout(1500);
   },
   legal: async (page) => { await open(page, '?legal=terms'); await page.waitForTimeout(3000); },

@@ -109,7 +109,7 @@ export function plannerStateFromPlan(plan, { stayTier = 'home', lifestyle = null
     tripStart: stops[0].arrive_date || '',
     stops: stops.map((s) => ({
       destinationId: s.destination_id,
-      nights: Math.max(1, nightsBetween(s.arrive_date, s.depart_date) || 1),
+      nights: Math.max(1, nightsBetween(s.arrive_date, s.depart_date) || s.nights || 1),
       activities: [],
     })),
     groupSize: c.groupSize || 2,
@@ -148,7 +148,78 @@ export function tripFigure(plan, { data, stayTier, lifestyle } = {}) {
   const p = priced.parts || {};
   const est = (p.beds || 0) + (p.days || 0) + (p.transfers || 0) + (p.between || 0) + (p.car || 0) > 0;
   const c = plan.choices || plan.stops?.[0]?.choices || {};
-  return { total, perPerson: priced.perPerson, party: priced.party?.head || 1, partySet: c.groupSize != null, est };
+  // The one figure a trip card prints (owner 1.8: a person a day, whole
+  // euros): what the trip costs one person, spread over its nights, each
+  // night being a day with a bed and food, as a day price on Explore is.
+  const nights = state.stops.reduce((n, s) => n + (s.nights || 1), 0) || 1;
+  return {
+    total, perPerson: priced.perPerson, perPersonDay: priced.perPerson / nights, nights,
+    party: priced.party?.head || 1, partySet: c.groupSize != null, est,
+  };
+}
+
+/** An ISO date `n` nights after `iso` (calendar arithmetic in UTC). */
+function addNights(iso, n) {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+/** The id the trip kept on this device wears in My trips. */
+export const DEVICE_PLAN_ID = 'device-trip';
+
+/**
+ * The trip kept on this device without an account (planner/deviceTripStore,
+ * T500) in the shape of an account trip row, so My trips classifies, prices
+ * and draws it with the same code (T503, owner T500-a). Each stop's dates are
+ * chained from the trip's start; an undated trip keeps its nights on the stop.
+ * Null when there is no trip or it has no places.
+ */
+export function deviceTripAsPlan(stored, destinations = {}) {
+  const trip = stored?.trip;
+  const raw = (trip?.stops || []).filter((s) => s && s.destinationId);
+  if (!raw.length) return null;
+  const start = trip.tripStart || '';
+  let at = start;
+  const stops = raw.map((s) => {
+    const nights = Math.max(1, Number(s.nights) || 1);
+    const row = { destination_id: s.destinationId, nights };
+    if (at) {
+      row.arrive_date = at;
+      row.depart_date = addNights(at, nights);
+      at = row.depart_date;
+    }
+    return row;
+  });
+  const ids = stops.map((s) => s.destination_id);
+  return {
+    id: DEVICE_PLAN_ID,
+    device: true,
+    deviceKey: stored.key,
+    label: trip.planLabel || null,
+    start_date: start || null,
+    end_date: start ? (trip.tripEnd && trip.tripEnd >= at ? trip.tripEnd : at) : null,
+    destination_ids: ids,
+    cities: orderedUnique(ids.map((id) => destinations[id]?.city)),
+    countries: orderedUnique(ids.map((id) => destinations[id]?.country)),
+    stops,
+    choices: {
+      groupSize: trip.groupSize || 2,
+      children: trip.children || 0,
+      babies: trip.babies || 0,
+      transportPref: trip.transportPref,
+      legModes: trip.legModes,
+      ownLegs: trip.ownLegs,
+      ownStays: trip.ownStays,
+      transferMode: trip.transferMode,
+      baggage: trip.baggage,
+      anchorId: trip.anchorId,
+      anchorOrigin: trip.anchorOrigin,
+      returnAnchorId: trip.returnAnchorId,
+      ownFlight: trip.ownFlight,
+      carHome: trip.carHome,
+    },
+  };
 }
 
 /**

@@ -302,6 +302,7 @@ export function GuidedTripWizard({
   // Re-opens the (answered, folded) stay-style question for editing.
   const [stayStyleOpen, setStayStyleOpen] = useState(false);
   const [focusedId, setFocusedId] = useState(''); // city briefed next to the map
+  const [pickedStopId, setPickedStopId] = useState(''); // stop picked on the numbered stops map
   const [expandedGroups, setExpandedGroups] = useState(() => new Set());
   const [designedNote, setDesignedNote] = useState(false);
   // "Let Carta pick my cities" mini-questionnaire (open + its three answers).
@@ -1129,7 +1130,9 @@ export function GuidedTripWizard({
         });
       }
     }
-    for (const id of includedIds) {
+    // The stops map numbers its pins in trip order (the same numbers as the list).
+    const orderOf = new Map(orderedIncludedIds.map((id, i) => [id, i + 1]));
+    for (const id of (stopsMapStep ? orderedIncludedIds : includedIds)) {
       if (out.some((o) => o.id === id)) continue;
       const dest = destinations[id];
       if (!dest || dest.lat == null) continue;
@@ -1137,12 +1140,13 @@ export function GuidedTripWizard({
         id, city: cityLabel(dest.city), lat: dest.lat, lon: dest.lon,
         tierKey: cityTier(dest).key, score: dest.rating?.score ?? null,
         selected: true, nights: nights[id] || 0,
-        isAnchor: id === anchorId, focused: id === focusedId,
+        isAnchor: id === anchorId, focused: id === (stopsMapStep ? pickedStopId : focusedId),
+        order: stopsMapStep ? orderOf.get(id) : 0,
       });
     }
     return out;
-  }, [stepName, stopsMapStep, selectedCountries, nights, includedIds, anchorId, focusedId, destinations,
-    passesStayFilters]);
+  }, [stepName, stopsMapStep, selectedCountries, nights, includedIds, orderedIncludedIds, anchorId, focusedId,
+    pickedStopId, destinations, passesStayFilters]);
 
   // Landing somewhere pins that country onto the trip, so the Stay step has a
   // region to talk about (more countries can still be added by search).
@@ -1502,7 +1506,7 @@ export function GuidedTripWizard({
               {stepName === 'Stays' && (
                 <StepStays
                   {...{ titleTag: StepTitle, stopDates, destinations, nights, setCityNights, ownStays, setOwnStay, bedEstimate }}
-                  {...{ adults, kids, stayQuery, setStayQuery }}
+                  {...{ adults, kids, stayQuery, setStayQuery, pickedStopId }}
                 />
               )}
 
@@ -1535,7 +1539,7 @@ export function GuidedTripWizard({
               <WizardAside
                 {...{ stepName, priced, summaryDates, party, setParty, gotoGetting }}
                 {...{ allCountries, countries, toggleCountry, recommendedNames, countryCovers }}
-                {...{ mapCities, toggleCity, setFocusedId, anchorDest, includedIds }}
+                {...{ mapCities, toggleCity, setFocusedId, setPickedStopId, anchorDest, includedIds }}
                 onOpenTotal={openTotal}
                 onBrief={(name) => setBriefCountry(briefCountry === name ? '' : name)}
               />

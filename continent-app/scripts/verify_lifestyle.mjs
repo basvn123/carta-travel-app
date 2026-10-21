@@ -177,7 +177,7 @@ try {
   await page.screenshot({ path: `${SHOTS}/lifestyle-door-destinations.png` });
 
   // ---- And in the account hub ----
-  await page.locator('.account-avatar-btn').click();
+  await page.locator('.account-door').click();
   await page.waitForTimeout(900);
   const row = page.getByRole('button', { name: /Lifestyle/i }).first();
   if (!(await row.count())) fail('account hub has no lifestyle row');

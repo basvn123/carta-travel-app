@@ -1,0 +1,190 @@
+/*
+ * Budget search (T506, roadmap 1.19; carta-design "Budget search").
+ * One bordered band above Explore's list: the amount first, the trip in one
+ * sentence with Change, the fields folded under it. The answer below it in
+ * Fits and Tight as compact rows, the receipt inline on a phone and in a
+ * sticky column from 1024 px. Roles and scales only; no brown but the
+ * actions and the selected row.
+ */
+.bgs {
+  margin: var(--space-3) 0 var(--space-5);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.bgs-form { display: flex; flex-direction: column; gap: var(--space-3); }
+.bgs-title {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+.bgs-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: end;
+}
+.bgs-amount input { font-size: var(--text-lead); font-variant-numeric: tabular-nums; }
+.bgs-submit { width: 100%; }
+.bgs-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  font-size: var(--text-body);
+  color: var(--text-2);
+}
+.bgs-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-soft);
+}
+.bgs-fields[hidden] { display: none; }
+.bgs-group { margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.bgs-label {
+  padding: 0;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.bgs-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.bgs-step-name { font-variant-numeric: tabular-nums; }
+.bgs-origin { margin: 0; font-size: var(--text-body); color: var(--text); }
+
+@media (min-width: 769px) {
+  .bgs { padding: var(--space-5); }
+  .bgs-main { grid-template-columns: minmax(0, 360px) auto; justify-content: start; }
+  .bgs-submit { width: auto; }
+  .bgs-main { align-items: start; }
+  .bgs-submit { margin-top: calc(var(--text-label) * 1.4 + 6px); }
+  .bgs-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-6); }
+  .bgs-group-wide { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  .bgs-fields { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .bgs-group-wide { grid-column: span 2; }
+}
+
+/* ---- The answer ----------------------------------------------------- */
+.bgs-results {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-soft);
+}
+.bgs-results-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.bgs-results-title,
+.bgs-group-title {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--text);
+}
+.bgs-group-title { font-size: var(--text-body); margin-top: var(--space-4); }
+.bgs-note { margin: var(--space-1) 0 0; font-size: var(--text-label); color: var(--text-2); }
+.bgs-over { margin-top: var(--space-4); }
+.bgs-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.bgs-more { margin-top: var(--space-2); }
+.bgs-row-img { width: 72px; height: 72px; border-radius: var(--radius-control); object-fit: cover; }
+.bgs-price { display: flex; flex-direction: column; gap: 2px; font-variant-numeric: tabular-nums; }
+.bgs-price-total { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.bgs-price-day,
+.bgs-price-left { font-size: var(--text-caption); color: var(--text-2); }
+
+@media (min-width: 1024px) {
+  .bgs-results-body.has-receipt {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+    gap: var(--space-6);
+    align-items: start;
+  }
+  .bgs-results-side { position: sticky; top: calc(var(--filter-h, 0px) + var(--space-4)); }
+}
+
+/* ---- The receipt (carta-design "The receipt", whole euros, owner 1.8) -- */
+.bgs-receipt {
+  margin-top: var(--space-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.bgs-results-side .bgs-receipt { margin-top: var(--space-4); }
+.bgs-receipt-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-soft);
+}
+.bgs-receipt-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.bgs-receipt-sub { margin: 2px 0 0; font-size: var(--text-label); color: var(--text-2); }
+.bgs-lines { margin: 0; padding: 0 var(--space-4); }
+.bgs-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border-soft);
+  font-size: var(--text-body);
+}
+.bgs-line:first-child { border-top: 0; }
+.bgs-line dt { color: var(--text); min-width: 0; }
+.bgs-line dd {
+  margin: 0;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--text);
+}
+.bgs-line.bgs-sum { border-top: 2px solid var(--text); align-items: end; }
+.bgs-sum dt { font-weight: 600; }
+.bgs-sum dd { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.bgs-sum-eur { font-size: var(--text-title); font-weight: 600; }
+.bgs-sum-day { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.bgs-unpriced-title {
+  margin: var(--space-3) var(--space-4) 0;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.bgs-unpriced dt { color: var(--text-2); }
+.bgs-unpriced dd { font-weight: 400; color: var(--text-2); }
+.bgs-receipt-foot {
+  margin: var(--space-2) 0 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--action-tint);
+  font-size: var(--text-body);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.bgs-receipt-actions { padding: var(--space-3) var(--space-4) var(--space-4); }
+
+/* On a phone the map view is the map: the budget band steps aside, as the
+   sort and the guides strip do (62-v6-explore.css), so the map and the
+   drawer strip reach down to the bottom nav. */
+@media (max-width: 768px) {
+  .explore-shell.is-map .bgs { display: none; }
+}

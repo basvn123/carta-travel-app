@@ -32,8 +32,9 @@ export function KindGlyph({ kind, size = 12, label }) {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      role="img"
-      aria-label={label || kind}
+      role={label === '' ? undefined : 'img'}
+      aria-label={label === '' ? undefined : (label || kind)}
+      aria-hidden={label === '' ? 'true' : undefined}
     >
       {SHAPES[kind] || SHAPES.city}
     </svg>

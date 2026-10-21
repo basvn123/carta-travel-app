@@ -9,6 +9,7 @@ import { resumeYearly } from '../lib/billing.js';
 import { CheckIcon, CloseIcon } from './Icons.jsx';
 import { Button, Chip, IconButton } from './ui/index.js';
 import { TermsOfService } from './TermsOfService.jsx';
+import { tabHref } from '../lib/urlState.js';
 import {
   REASON_COPY, SOFT, initialPick, FAIL_KEY, PENDING_PASS_KEY,
 } from '../lib/passMoments.js';
@@ -36,7 +37,7 @@ import '../styles/71-pass.css';
  */
 export { PENDING_PASS_KEY };
 
-export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedIn, initialTier = '' }) {
+export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedIn, initialTier = '', onSeeAll = null }) {
   const { t, lang } = useI18n();
   const locale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).bcp47;
   const current = entitlement?.tier || 'free';
@@ -212,6 +213,23 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
               {current === 'free' ? `${t('pass.freeSentence')} ` : ''}{t('pass.keepNote')}
             </p>
           </>
+        )}
+
+        {/* The whole comparison is a page (T503, T497-a): one quiet link, never
+            a second primary. It closes the sheet, since a page never opens
+            inside one, and the pricing page's Back returns here. */}
+        {onSeeAll && (
+          <a
+            className="pass-all"
+            href={tabHref('pricing')}
+            onClick={(ev) => {
+              if (ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+              ev.preventDefault();
+              onSeeAll();
+            }}
+          >
+            {t('pass.seeAll')}
+          </a>
         )}
 
         <p className="pass-legal">

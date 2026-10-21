@@ -39,7 +39,7 @@ const PLANE_SVG = '<svg viewBox="0 0 24 24" width="12" height="12" fill="current
  * further cities.
  *
  * `cities`: [{ id, city, lat, lon, tierKey ('top'|'great'|'good'|'ok'),
- *             selected, isAnchor, focused, nights }]
+ *             selected, isAnchor, focused, nights, order (1-based stop number) }]
  */
 export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null }) {
   const containerRef = useRef(null);
@@ -93,7 +93,9 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
         el.className = `citypick-pin tier-${c.tierKey || 'ok'}`;
         const icon = document.createElement('span');
         icon.className = 'citypick-ic';
-        icon.innerHTML = TIER_ICON[c.tierKey] || TIER_ICON.ok;
+        // A stop of the trip (c.order) wears its number; a candidate wears its tier glyph.
+        if (c.order) { icon.classList.add('is-num'); icon.textContent = String(c.order); }
+        else icon.innerHTML = TIER_ICON[c.tierKey] || TIER_ICON.ok;
         const label = document.createElement('span');
         label.className = 'citypick-name';
         label.textContent = c.city;
@@ -119,7 +121,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
         // Named by its own text (city, then its tier line), not "Map marker".
         nameMarker(el);
         revealOnFocus(el, map, [c.lon, c.lat]);
-        pinsRef.current.set(c.id, { marker, el, label, meta });
+        pinsRef.current.set(c.id, { marker, el, label, meta, icon });
       });
       fitRef.current = null;
       if (hasLngLat(anchor)) {
@@ -161,6 +163,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
       p.el.classList.toggle('anchor', !!c.isAnchor);
       p.el.classList.toggle('focused', !!c.focused);
       p.label.textContent = c.city;
+      if (c.order && p.icon.textContent !== String(c.order)) p.icon.textContent = String(c.order);
       // Once a city is in the trip its nights matter most; before that, its
       // rating helps the traveller weigh it. One number per pill, never both.
       if (c.selected && c.nights) {

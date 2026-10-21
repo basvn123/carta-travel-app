@@ -88,22 +88,28 @@ const MAX_MOODS = 3;
 const BOT_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('paymock');
 
-// T501 (T492-j): a guest who signs in at the last question keeps the answers.
-// The chat is parked in sessionStorage per day (sign-in may reload the page)
-// and runs once the traveller is signed in. Storage can throw; it is optional.
-const CHAT_PARK_MAX_MS = 30 * 60 * 1000;
+// T501 (T492-j), T507 (T501-a): a guest who signs in at the last question keeps
+// the answers. The chat is parked in localStorage per day, because the sign-in
+// round trip (an emailed link, a provider redirect) opens a new tab or a new
+// session where sessionStorage is gone. It expires after two hours, an expired
+// or used park is deleted at once, and leaving the chat deletes it too, so the
+// answers (free text included) are not kept longer than the sign-in needs.
+// Storage can throw; it is optional.
+const CHAT_PARK_MAX_MS = 2 * 60 * 60 * 1000;
 const chatParkKey = (dateISO, townId) => `carta.dayChat.v1:${dateISO || ''}:${townId || ''}`;
 function readChatPark(key) {
   try {
-    const rec = JSON.parse(window.sessionStorage.getItem(key) || 'null');
-    return rec && Date.now() - (rec.at || 0) < CHAT_PARK_MAX_MS ? rec : null;
+    const rec = JSON.parse(window.localStorage.getItem(key) || 'null');
+    if (rec && Date.now() - (rec.at || 0) < CHAT_PARK_MAX_MS) return rec;
+    if (rec) window.localStorage.removeItem(key);
+    return null;
   } catch { return null; }
 }
 function writeChatPark(key, rec) {
-  try { window.sessionStorage.setItem(key, JSON.stringify(rec)); } catch { /* storage off */ }
+  try { window.localStorage.setItem(key, JSON.stringify(rec)); } catch { /* storage off */ }
 }
 function clearChatPark(key) {
-  try { window.sessionStorage.removeItem(key); } catch { /* storage off */ }
+  try { window.localStorage.removeItem(key); window.sessionStorage.removeItem(key); } catch { /* storage off */ }
 }
 
 const MOOD_OPTIONS = [

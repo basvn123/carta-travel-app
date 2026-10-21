@@ -228,6 +228,17 @@ export function readRegionFromUrl() {
   return (regionReadResult = { id });
 }
 
+/** The region a hash names (#region=..., or #country=IT&region=... when it
+ *  opened over a country page, T504), or null. Read on every history step,
+ *  unlike readRegionFromUrl, which reads the boot address once. */
+export function regionFromHash(hash) {
+  const m = /(?:^#|&)region=([^&]+)/.exec(String(hash || ''));
+  if (!m) return null;
+  let id = '';
+  try { id = decodeURIComponent(m[1]); } catch { return null; }
+  return /^[A-Za-z0-9:_-]{2,64}$/.test(id) ? id : null;
+}
+
 export function regionShareUrl(id) {
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   return `${origin}/#region=${encodeURIComponent(id)}`;

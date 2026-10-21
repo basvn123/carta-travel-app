@@ -10,6 +10,7 @@ import { useForecast } from '../lib/weather.js';
 import { packingList, packMonth } from '../lib/packing.js';
 import { cheapestStayMonths } from '../lib/costIndex.js';
 import { monthName } from '../lib/dates.js';
+import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import CreditFold from './CreditFold.jsx';
 import { ScoreChip, HiddenGemTag, bandKey } from '../components/RatingBadge.jsx';
@@ -341,7 +342,8 @@ export function DestinationPage({
   const shortIntro = intro?.short || intro?.lead || kf || '';
   const guideUrl = safeUrl(intro?.grounding?.[0]?.url || destination.guide?.url);
   const isUnesco = (destination.designations || []).some((g) => g.kind === 'unesco_whc');
-  const monthList = (ms) => ms.map((m) => monthName(m, lang, false)).join(', ');
+  // Same range wording as the climate strip ("Apr to May"), in the reader's language.
+  const monthList = (ms) => fmtMonthRanges(ms, t);
   const countryLabel = countryName(destination.iso2, destination.country);
   // A score in the reader's own number format (7,7 in German), so a screen
   // reader does not voice it as a date or a version.

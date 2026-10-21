@@ -130,8 +130,8 @@ const seedSession = (ref, user) => `(() => {
 const openSpoke = async (page) => {
   // T466: Friends has one door, the Friends row in Account (the header
   // button went), reached here from the header avatar on a wide screen.
-  await page.locator('.account-avatar-btn, .bottom-nav-item').first().waitFor({ state: 'attached', timeout: 120000 });
-  const avatar = page.locator('.account-avatar-btn:visible').first();
+  await page.locator('.account-door, .bottom-nav-item').first().waitFor({ state: 'attached', timeout: 120000 });
+  const avatar = page.locator('.account-door:visible').first();
   if (await avatar.count()) await avatar.click({ timeout: 120000 });
   else await page.locator('.bottom-nav-item:visible', { hasText: 'Account' }).first().click({ timeout: 120000 });
   await page.locator('.account-panel:not(.saved-trips-panel)').waitFor({ timeout: 15000 });

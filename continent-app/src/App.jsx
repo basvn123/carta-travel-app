@@ -98,7 +98,7 @@ const CountryPage = lazy(() => import('./browse/CountryPage.jsx').then((m) => ({
 import { readTrailFromUrl } from './lib/trails.js';
 import { readDestFromUrl, destFromHash } from './lib/dossier.js';
 import { readBeachFromUrl } from './lib/beaches.js';
-import { readRegionFromUrl } from './lib/regions.js';
+import { readRegionFromUrl, regionFromHash } from './lib/regions.js';
 import { readLakeFromUrl } from './lib/lakes.js';
 import { readMountainFromUrl } from './lib/mountains.js';
 import { readCycleFromUrl } from './lib/cycling.js';
@@ -763,9 +763,14 @@ function TravelApp() {
   /** "Plan a trip here" on a destination page: the trip wizard's Where step
    *  with that destination's country already picked. The wizard maps the
    *  iso2 onto the country name it keys its picks by. */
-  const openTripForCountry = useCallback((iso2) => {
+  const openTripForCountry = useCallback((iso2, destId = null) => {
     if (!iso2 || !/^[A-Za-z]{2}$/.test(String(iso2))) return;
-    setPendingTripSeed({ iso2: String(iso2).toUpperCase() });
+    // T504 (row T498-b): a region page names its nearest priced town too.
+    // The wizard reads only the country so far (GuidedTripWizard.jsx, the
+    // seed effect); `destId` is there for it to take as the first stop.
+    setPendingTripSeed(destId
+      ? { iso2: String(iso2).toUpperCase(), destId: String(destId) }
+      : { iso2: String(iso2).toUpperCase() });
     goToTab('trip');
   }, [goToTab]);
 
@@ -879,6 +884,45 @@ function TravelApp() {
     });
   }, []);
 
+  // The region page is a step in the history too (T504, row T498-d): Back on
+  // a region page opened over a country page closes the region alone. Its
+  // address keeps the country (#country=IT&region=...), so stepping back
+  // lands on the country page, and its own close steps back over the entry.
+  const regionPushedRef = useRef(false);
+  const regionHandoffRef = useRef(false);
+  const openRegionPage = useCallback((rid) => {
+    const id = String(rid || '');
+    if (!id) return;
+    try {
+      if (window.history.state?.cartaRegion !== id) {
+        const cc = countryFromHash(window.location.hash);
+        window.history.pushState({ ...(window.history.state || {}), cartaRegion: id }, '',
+          `${window.location.pathname}${window.location.search}${cc ? `${countryHash(cc)}&` : '#'}region=${encodeURIComponent(id)}`);
+        regionPushedRef.current = true;
+      }
+    } catch { /* sandboxed: the page still opens */ }
+    setPendingRegion({ id });
+  }, []);
+  // Leaving the region page for another surface: its entry stays.
+  const leaveRegionPage = useCallback(() => {
+    setPendingRegion((cur) => {
+      if (cur) regionHandoffRef.current = true;
+      return null;
+    });
+  }, []);
+  const prevRegionRef = useRef(pendingRegion?.id ?? null);
+  useEffect(() => {
+    const was = prevRegionRef.current;
+    const now = pendingRegion?.id ?? null;
+    prevRegionRef.current = now;
+    const handoff = regionHandoffRef.current;
+    regionHandoffRef.current = false;
+    if (!was || now) return;
+    try {
+      if (!handoff && window.history.state?.cartaRegion === was) window.history.back();
+    } catch { /* sandboxed */ }
+  }, [pendingRegion]);
+
   // Where a page opened FROM the country or region page returns to (owner
   // note on T489-a: back paths land where you came from). The trail, beach
   // or week opens in the Explore view under these hoisted pages, so the
@@ -887,16 +931,16 @@ function TravelApp() {
   const openFeatureFrom = useCallback((from, layer, ref) => {
     setReturnTo(from);
     if (countryPage) leaveCountryPage();
-    setPendingRegion(null);
+    leaveRegionPage();
     openFeature(layer, ref);
-  }, [openFeature, leaveCountryPage, countryPage]);
+  }, [openFeature, leaveCountryPage, leaveRegionPage, countryPage]);
   const onReturn = useCallback(() => {
     const r = returnTo;
     setReturnTo(null);
     if (!r) return;
     if (r.kind === 'country') openCountryPage(r.id);
-    else if (r.kind === 'region') setPendingRegion({ id: r.id });
-  }, [returnTo, openCountryPage]);
+    else if (r.kind === 'region') openRegionPage(r.id);
+  }, [returnTo, openCountryPage, openRegionPage]);
   const destReturn = useMemo(
     () => (returnTo ? { label: returnTo.label, onReturn } : null),
     [returnTo, onReturn],
@@ -980,6 +1024,19 @@ function TravelApp() {
       setSelectedId(destFromHash());
       // The country page follows its own step the same way (#country=, T498).
       setCountryPage(countryFromHash(window.location.hash));
+      // And the region page (#region=, T504): its own step shows it; a step
+      // of a page standing over it (a place, an item page) leaves it as it
+      // is; any other step closes a region this session opened.
+      const st = window.history.state || {};
+      const rid = regionFromHash(window.location.hash);
+      const ownStep = rid && st.cartaRegion === rid && !st.cartaPlaces && !st.cartaDest;
+      setPendingRegion((cur) => {
+        if (ownStep) return cur?.id === rid ? cur : { id: rid };
+        if (rid && st.cartaRegion === rid) return cur;
+        if (!regionPushedRef.current) return cur;
+        regionPushedRef.current = false;
+        return null;
+      });
       // My trips and Account have their own steps (T496): stepping onto one
       // opens it over the view that was showing.
       setAccountOpen(route.overlay === 'account');
@@ -1017,6 +1074,10 @@ function TravelApp() {
     prevSelectedRef.current = selectedId;
     if (was && !selectedId && window.history.state?.cartaDest === was) {
       try { window.history.back(); } catch { /* sandboxed */ }
+    } else if (was && !selectedId && destFromHash() === was) {
+      // Opened from an address (T507): there is no step to go back over, so
+      // the address stops naming the place and a reload does not reopen it.
+      try { window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`); } catch { /* sandboxed */ }
     }
   }, [selectedId]);
 
@@ -1397,6 +1458,9 @@ function TravelApp() {
         setAuthModalMode('signin');
         setAuthModalOpen(true);
       }}
+      /* "See all prices" in the pass sheet and Account's Your plan (T503,
+         T497-a): the pricing page is a place, so it is a tab change. */
+      onOpenPricing={() => goToTab('pricing')}
     >
     <FirstRunContext.Provider value={firstRun}>
     <SettingsContext.Provider value={settings}>
@@ -1617,7 +1681,7 @@ function TravelApp() {
             isActive={activeTab === 'places'}
             onPickCategory={openExploreSection}
             onOpenCountryPage={openCountryPage}
-            onOpenRegion={(rid) => setPendingRegion({ id: rid })}
+            onOpenRegion={openRegionPage}
             openStyle={pendingStyle}
             onOpenStyleConsumed={() => setPendingStyle(null)}
             returnTo={destReturn}
@@ -1730,7 +1794,7 @@ function TravelApp() {
               onToggleFav={toggleFav}
               onShowAll={(cc) => { leaveCountryPage(); openExploreSection('places', cc); }}
               onOpenLayer={(layer, cc) => { leaveCountryPage(); openExploreSection(layer, cc); }}
-              onOpenRegion={(rid) => setPendingRegion({ id: rid })}
+              onOpenRegion={openRegionPage}
               onPlanTrip={(cc) => { leaveCountryPage(); openTripForCountry(cc); }}
               onOpenJourney={(card) => openFeatureFrom(
                 { kind: 'country', id: countryPage, label: localCountryName(countryPage) }, 'journey', { id: card.id })}
@@ -1753,15 +1817,15 @@ function TravelApp() {
               onFav={() => toggleFav(pendingRegion.id, 'region')}
               backLabel={countryPage ? localCountryName(countryPage) : backToLabel}
               onClose={() => setPendingRegion(null)}
-              onOpenRegion={(rid) => setPendingRegion({ id: rid })}
-              onOpenFeature={(layer, ref) => openFeatureFrom(
-                { kind: 'region', id: pendingRegion.id, label: null }, layer, ref)}
+              onOpenRegion={openRegionPage}
+              onOpenFeature={(layer, ref, name) => openFeatureFrom(
+                { kind: 'region', id: pendingRegion.id, label: name || null }, layer, ref)}
               rows={placeRows}
               onSelectDest={openDetail}
-              onPlanTrip={(cc) => { setPendingRegion(null); leaveCountryPage(); openTripForCountry(cc); }}
-              onOpenJourney={(card) => openFeatureFrom(
-                { kind: 'region', id: pendingRegion.id, label: null }, 'journey', { id: card.id })}
-              onSeeAllLayer={(layer, cc) => { setPendingRegion(null); leaveCountryPage(); openExploreSection(layer, cc); }}
+              onPlanTrip={(cc, destId) => { leaveRegionPage(); leaveCountryPage(); openTripForCountry(cc, destId); }}
+              onOpenJourney={(card, name) => openFeatureFrom(
+                { kind: 'region', id: pendingRegion.id, label: name || null }, 'journey', { id: card.id })}
+              onSeeAllLayer={(layer, cc) => { leaveRegionPage(); leaveCountryPage(); openExploreSection(layer, cc); }}
               favorites={favDests}
               onToggleFav={toggleFav}
             />
@@ -1841,6 +1905,12 @@ function TravelApp() {
             }}
             onLoadTripPlan={(id) => {
               setPendingTripPlanId(id);
+              goToTab('trip');
+            }}
+            /* The trip kept on this device (T503, T500-a) opens in Plan through
+               the same hand-off, marked so the planner reads the device. */
+            onOpenDeviceTrip={() => {
+              setPendingTripPlanId({ device: true });
               goToTab('trip');
             }}
             /* The shortlist, which the Favorites tab now shows alongside the

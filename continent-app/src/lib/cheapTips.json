@@ -2,38 +2,6 @@
  "generated": "2026-07-22",
  "tips": [
   {
-   "id": "gen-lcc-booking-window",
-   "scope": "generic",
-   "category": "flights",
-   "title": "Book low-cost carriers 4 to 10 weeks out",
-   "tip": "Ryanair, Wizz Air, Vueling and Volotea fares are cheapest roughly 4 to 10 weeks before departure (6 to 8 weeks for short-haul), and rise sharply inside 2 weeks. Booking on a Tuesday or Wednesday is measurably cheaper than weekends, when demand pushes dynamic prices up.",
-   "savings": "20 to 40% vs last-minute"
-  },
-  {
-   "id": "gen-lcc-flex-dates",
-   "scope": "generic",
-   "category": "flights",
-   "title": "Shift travel dates by 1 to 2 days",
-   "tip": "On low-cost carriers, departing Tuesday, Wednesday or Saturday instead of Friday or Sunday commonly cuts the fare by 30 to 50%. Always check the airline's own low-fare calendar (Ryanair Fare Finder, Wizz timetable view) rather than a single date.",
-   "savings": "30 to 50% per ticket"
-  },
-  {
-   "id": "gen-ryanair-bag-2025",
-   "scope": "generic",
-   "category": "flights",
-   "title": "New bigger free personal bag on Ryanair",
-   "tip": "Since the end of summer 2025 Ryanair's free under-seat bag is 40x30x20 cm (24 litres, up 20% from 40x25x20). All Airlines for Europe members adopted this minimum, so one well-packed 24L backpack now flies free on Ryanair, Wizz, Vueling and Volotea. Skip priority boarding unless you truly need a second cabin bag.",
-   "savings": "6 to 36 EUR per flight per person"
-  },
-  {
-   "id": "gen-lcc-checkin-fees",
-   "scope": "generic",
-   "category": "flights",
-   "title": "Check in online to dodge airport fees",
-   "tip": "Ryanair charges around 55 EUR for airport check-in and up to 20 EUR to print a boarding pass at some airports. Check in via the app (opens 24h or 60 days ahead with paid seats) and screenshot the pass. Wizz Air charges about 35 EUR for airport check-in too.",
-   "savings": "35 to 55 EUR per person"
-  },
-  {
    "id": "gen-shoulder-season-med",
    "scope": "generic",
    "category": "stay",
@@ -225,14 +193,6 @@
    "savings": "10 to 25% on lodging"
   },
   {
-   "id": "gen-alt-airports-rail",
-   "scope": "generic",
-   "category": "flights",
-   "title": "Fly to the cheap airport, finish by budget rail or bus",
-   "tip": "Compare total cost of flying into secondary airports plus a budget train or coach: e.g. fly to Milan Bergamo then 10 EUR FlixBus to the city, Frankfurt Hahn plus bus, Barcelona Girona plus 16 EUR coach, Brussels Charleroi plus 17 EUR shuttle. Fares into secondary airports often run 30 to 60% below main hubs; just verify the transfer cost and time before booking.",
-   "savings": "20 to 80 EUR per leg"
-  },
-  {
    "id": "gen-esim-vs-airport-sim",
    "scope": "generic",
    "category": "connectivity",
@@ -370,15 +330,6 @@
    "title": "Tourist tax only in Catalonia and the Balearics",
    "tip": "Most of Spain has no lodging tax. Barcelona adds a regional tax plus a municipal surcharge totalling roughly 5 to 7.5 EUR per person per night in 2026 for hotels and apartments; the Balearics charge up to 4 EUR per night in high season (halved October to April). Staying in Girona, Sitges or Valencia instead avoids or shrinks it.",
    "savings": "25 to 50 EUR per couple per week in Barcelona"
-  },
-  {
-   "id": "es-vueling-volotea-bases",
-   "scope": "country",
-   "country": "ES",
-   "category": "flights",
-   "title": "Vueling and Volotea for domestic hops",
-   "tip": "Vueling (Barcelona hub) and Volotea (mid-size cities like Bilbao, Asturias) sell intra-Spain fares from 15 to 30 EUR booked 4+ weeks out, often beating 4-hour train fares to the islands' gateways and the north coast. For the Canaries and Balearics, residents get 75% subsidies but visitors still find sub-40 EUR fares off-peak.",
-   "savings": "20 to 60 EUR per leg"
   },
   {
    "id": "it-super-economy",
@@ -981,15 +932,6 @@
    "savings": "5 to 10 EUR per tank"
   },
   {
-   "id": "be-charleroi-shuttle",
-   "scope": "country",
-   "country": "BE",
-   "category": "flights",
-   "title": "Charleroi is Brussels' budget airport",
-   "tip": "Ryanair and Wizz fares from Brussels Charleroi routinely undercut Zaventem by 30 to 60%; the Flibco shuttle to Brussels-Midi costs about 17 EUR (cheaper booked online) and takes 55 minutes. Compare total door-to-door cost both ways.",
-   "savings": "20 to 60 EUR per flight"
-  },
-  {
    "id": "gb-advance-12-weeks",
    "scope": "country",
    "country": "GB",
@@ -1431,15 +1373,6 @@
    "savings": "8 to 11 EUR if avoidable"
   },
   {
-   "id": "sk-regiojet-vienna",
-   "scope": "country",
-   "country": "SK",
-   "category": "transport",
-   "title": "Bratislava as Vienna's budget twin",
-   "tip": "RegioJet and Slovak Lines connect Vienna and Bratislava hourly for 5 to 10 EUR (under 1.5 hours). Flying into Bratislava (Ryanair base) or Vienna and hopping across lets you pick whichever fare is cheaper; hotels and restaurants in Bratislava cost 30 to 50% less than Vienna.",
-   "savings": "30 to 50% on the whole city break"
-  },
-  {
    "id": "sk-denne-menu",
    "scope": "country",
    "country": "SK",
@@ -1724,15 +1657,6 @@
    "savings": "50 to 70% per meal"
   },
   {
-   "id": "tr-domestic-transport",
-   "scope": "country",
-   "country": "TR",
-   "category": "transport",
-   "title": "Night buses and AJet or Pegasus",
-   "tip": "Intercity night coaches (Kamil Koc, Metro, Pamukkale) are comfortable and save hotel nights (Istanbul to Cappadocia about 700 to 1100 TL). Booked 3+ weeks out, AJet and Pegasus domestic flights often cost the same as the bus (from about 20 to 35 EUR); the Ankara to Konya and Istanbul YHT high-speed trains are also state-subsidised bargains.",
-   "savings": "a hotel night, or 4 to 8 travel hours"
-  },
-  {
    "id": "tr-money-esim",
    "scope": "country",
    "country": "TR",
@@ -1855,15 +1779,6 @@
    "title": "Free Vilnius and cheap Trakai",
    "tip": "Uzupis, the Hill of Three Crosses and Old Town churches are free; Gediminas Tower hill can be climbed free (tower museum optional). Trakai Castle day trip: 2 EUR local train or bus each way, castle about 12 EUR, vs 40+ EUR organised tours.",
    "savings": "25 to 40 EUR per person"
-  },
-  {
-   "id": "lt-airports",
-   "scope": "country",
-   "country": "LT",
-   "category": "flights",
-   "title": "Kaunas as a Ryanair base",
-   "tip": "Ryanair and Wizz fares into Kaunas are frequently 30 to 50% below Vilnius for the same origin cities; the Kaunas to Vilnius train or bus (5 to 8 EUR, about 1.5h) keeps the total well below a direct Vilnius fare on peak dates.",
-   "savings": "20 to 60 EUR per flight"
   },
   {
    "id": "is-groceries",

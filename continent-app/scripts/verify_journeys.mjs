@@ -118,7 +118,7 @@ try {
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(3000);
 
-  await page.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
+  await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
   await page.waitForTimeout(1200);
   check('destinations tab opens', await page.locator('.places-tab').isVisible());
 

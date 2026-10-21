@@ -66,7 +66,7 @@ await seed(page);
 await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await page.waitForTimeout(3000);
 
-const placesNav = page.locator('.bottom-nav-item', { hasText: /destinations/i }).first();
+const placesNav = page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first();
 await placesNav.click();
 await page.waitForTimeout(1500);
 check('places tab opens from the bar', await page.locator('.places-tab').isVisible());
@@ -291,7 +291,7 @@ desk.on('pageerror', (e) => errors.push('desktop pageerror: ' + e.message.split(
 await seed(desk);
 await desk.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await desk.waitForTimeout(3000);
-const deskTab = desk.locator('.header-nav-item', { hasText: /destinations/i }).first();
+const deskTab = desk.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
 await deskTab.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
 if (await deskTab.isVisible().catch(() => false)) {
   await deskTab.click();

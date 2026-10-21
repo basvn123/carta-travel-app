@@ -119,6 +119,9 @@ export function tOutsideProvider(key, vars) {
   const catalog = CATALOGS[initialLang()] || en;
   return interpolate(catalog[key] ?? english(key), vars);
 }
+// The language this t speaks, so a formatter that only receives t (month
+// names in fmtMonthRanges, T507) can name months in it.
+Object.defineProperty(tOutsideProvider, 'lang', { get: () => initialLang() });
 
 export function I18nProvider({ children }) {
   const [lang, setLangState] = useState(initialLang);
@@ -172,6 +175,7 @@ export function I18nProvider({ children }) {
       const msg = catalog[key] ?? english(key);
       return interpolate(msg, vars);
     };
+    t.lang = lang;
     return { lang, setLang, t, languages: LANGUAGES };
     // `loaded` is in the deps on purpose: it is the signal that CATALOGS[lang]
     // just became real, and it is what rebuilds t() around it.

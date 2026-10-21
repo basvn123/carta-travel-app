@@ -17,7 +17,7 @@ const noop = () => {};
 export function WizardAside({
   stepName, priced, summaryDates, party, setParty, gotoGetting, onOpenTotal,
   allCountries, countries, toggleCountry, recommendedNames, countryCovers, onBrief,
-  mapCities, toggleCity, setFocusedId, anchorDest, includedIds,
+  mapCities, toggleCity, setFocusedId, setPickedStopId, anchorDest, includedIds,
 }) {
   const anchor = anchorDest && anchorDest.lat != null ? { lat: anchorDest.lat, lon: anchorDest.lon } : null;
   let body;
@@ -50,10 +50,16 @@ export function WizardAside({
       </div>
     );
   } else {
-    // The trip's own stops: looking, not choosing, so a pin does nothing.
+    // The trip's own stops, numbered in trip order: a tap picks that stop in
+    // the list beside the map (a second tap lets it go).
     body = (
       <div className="wiz-aside-map">
-        <CityPickerMap cities={mapCities} onToggle={noop} onFocus={noop} anchor={anchor} />
+        <CityPickerMap
+          cities={mapCities}
+          onToggle={noop}
+          onFocus={(id) => setPickedStopId((cur) => (cur === id ? '' : id))}
+          anchor={anchor}
+        />
       </div>
     );
   }

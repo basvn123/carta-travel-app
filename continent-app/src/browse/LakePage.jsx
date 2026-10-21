@@ -75,7 +75,7 @@ const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug',
 /** The way in as a level: only the access field says anything about it. */
 const lakeLevel = (l) => ACCESS_LEVEL[l?.access] || 0;
 
-export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
+export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null, backLabel = '' }) {
   const { t, lang } = useI18n();
   const [toast, setToast] = useState(null);
 
@@ -320,7 +320,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
     <DetailPage
       name={lake.name}
       className="bpage lpage"
-      backLabel={t('lake.back')}
+      backLabel={backLabel || t('lake.back')}
       onClose={onClose}
       fav={fav}
       onFav={onFav}

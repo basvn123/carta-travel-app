@@ -165,7 +165,7 @@ function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t, dayCostFor 
           {/* The list already puts starred trips first; without a mark on the
               card that ordering is invisible and reads as an arbitrary shuffle. */}
           {starred && !chosen && (
-            <span className="wtrip-star" title={t('ready.starred')}><StarIcon size={12} /></span>
+            <span className="wtrip-star" title={t('ready.starred')} role="img" aria-label={t('ready.starred')}><StarIcon size={12} /></span>
           )}
           <span className="wtrip-days">
             {/* One key with the figure inside (T490-i); a published trip is
