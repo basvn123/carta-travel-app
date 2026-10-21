@@ -15,14 +15,19 @@ Rules
     route stays, with its months.
   - The return direction is filled in: the UK stopped reporting after 2019
     and some files fail to download, but a route almost always runs both ways.
-  - Only pairs with both ends among Carta's airports (home airports plus
-    destination anchors) are written.
+  - Routes to partner airports outside Europe are dropped.
+  - Every European route is kept, so every airport is treated the same; the
+    airports that have a route become Carta's home airports (_airports.json,
+    read by continent-app/scripts/sync-data.mjs for the origin picker).
   - A country file whose latest month is more than a year behind the others
     is ignored as a reporter (it still appears as a partner).
 
 Output
-  {"built": ISO, "through": "YYYY-MM", "reporters": [...], "airports": {IATA: [lat, lon]},
-   "routes": {"BRU": {"BCN": 4095, ...}, ...}}
+  _routes.json    {"built": ISO, "through": "YYYY-MM", "reporters": [...],
+                   "routes": {"BRU": {"BCN": 4095, ...}, ...},
+                   "airports": {IATA: [lat, lon]}}
+  _airports.json  {IATA: {"name", "city", "country", "lat", "lon"}} for every
+                  airport with a route
   The number per route is a bitmask of active calendar months (bit 0 =
   January), which the sweep uses to skip a route in its off season.
 
@@ -47,17 +52,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "data" / "raw" / "eurostat_routes"
 OUT = ROOT / "data" / "flights" / "_routes.json"
-APP_PUBLIC = ROOT / "continent-app" / "public" / "app_data.json"
+AIRPORTS_OUT = ROOT / "data" / "flights" / "_airports.json"
 MASTER = ROOT / "app_data" / "app_data.json"
 
 EUROSTAT = ("https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/"
             "avia_par_{cc}?format=TSV&compressed=true")
 OURAIRPORTS = "https://davidmegginson.github.io/ourairports-data/airports.csv"
+OURCOUNTRIES = "https://davidmegginson.github.io/ourairports-data/countries.csv"
 REPORTERS = ("at be bg ch cy de dk ee el es fi fr hr hu ie is it lt lu lv me mk "
              "mt nl no pl pt ro rs se si sk tr uk ba").split()
+# Partner countries kept (Eurostat's codes: EL is Greece, UK the United Kingdom).
+EUROPE = set(("AL AT BA BE BG CH CY CZ DE DK EE EL ES FI FO FR GI HR HU IE IS IT LI LT LU "
+              "LV MD ME MK MT NL NO PL PT RO RS SE SI SK TR UA UK XK").split())
 MIN_FLIGHTS = 4
 MIN_MONTHS = 2
 R2_KEY = "carta/data/flights/_routes.json"
+SIZE_RANK = {"large_airport": 0, "medium_airport": 1, "small_airport": 2}
 
 NUM = re.compile(r"^\s*([0-9.]+)")
 MONTH = re.compile(r"^\d{4}-\d{2}$")
@@ -82,20 +92,32 @@ def fetch(url, dest, offline):
     return dest.read_bytes() if dest.exists() else b""
 
 
-def icao_to_iata(offline):
-    """ICAO -> IATA, and IATA -> [lat, lon] for the discovery pass's distance rule."""
+def short_name(name):
+    """'Brussels South Charleroi Airport' -> 'Brussels South Charleroi'."""
+    return re.sub(r"\s+(International\s+)?Airport$", "", name.strip()) or name
+
+
+def ourairports(offline):
+    """ICAO -> IATA, and IATA -> {name, city, country, lat, lon}."""
+    countries = {r["code"]: r["name"] for r in csv.DictReader(io.StringIO(
+        fetch(OURCOUNTRIES, RAW / "ourcountries.csv", offline).decode("utf-8")))}
     body = fetch(OURAIRPORTS, RAW / "ourairports.csv", offline)
-    out, where = {}, {}
+    to_iata, about, rank = {}, {}, {}
     for r in csv.DictReader(io.StringIO(body.decode("utf-8"))):
-        code = r["icao_code"] or r["gps_code"] or r["ident"]
-        if r["iata_code"] and code:
-            out[code] = r["iata_code"]
-            try:
-                where.setdefault(r["iata_code"], [round(float(r["latitude_deg"]), 3),
-                                                  round(float(r["longitude_deg"]), 3)])
-            except ValueError:
-                pass
-    return out, where
+        code, iata = r["icao_code"] or r["gps_code"] or r["ident"], r["iata_code"]
+        if not iata or not code:
+            continue
+        to_iata[code] = iata
+        k = SIZE_RANK.get(r["type"], 3)
+        try:
+            info = {"name": short_name(r["name"]), "city": r["municipality"] or short_name(r["name"]),
+                    "country": countries.get(r["iso_country"], r["iso_country"]),
+                    "lat": round(float(r["latitude_deg"]), 4), "lon": round(float(r["longitude_deg"]), 4)}
+        except ValueError:
+            continue
+        if iata not in about or k < rank[iata]:  # a shared IATA code goes to the bigger airport
+            about[iata], rank[iata] = info, k
+    return to_iata, about
 
 
 def read_reporter(body):
@@ -113,7 +135,7 @@ def read_reporter(body):
             if key[:3] != ["M", "FLIGHT", "CAF_PAS_DEP"]:
                 continue
             pair = key[3].split("_")
-            if len(pair) != 4 or pair[1] == pair[3]:
+            if len(pair) != 4 or pair[1] == pair[3] or pair[2] not in EUROPE:
                 continue
             months = {}
             for i, h in cols:
@@ -136,10 +158,9 @@ def last_twelve(end):
     return set(out)
 
 
-def carta_airports():
+def anchor_airports():
+    """The airports Carta's destinations fly into, served or not."""
     codes = set()
-    if APP_PUBLIC.exists():
-        codes |= set(json.loads(APP_PUBLIC.read_text(encoding="utf-8"))["meta"].get("origins", {}))
     if MASTER.exists():
         dests = json.loads(MASTER.read_text(encoding="utf-8"))["destinations"]
         for d in (dests.values() if isinstance(dests, dict) else dests):
@@ -152,9 +173,9 @@ def carta_airports():
 def main(argv):
     offline = "--offline" in argv
     RAW.mkdir(parents=True, exist_ok=True)
-    iata, where = icao_to_iata(offline)
-    carta = carta_airports()
-    log(f"{len(iata)} ICAO codes with IATA, {len(carta)} Carta airports")
+    iata, about = ourairports(offline)
+    anchors = anchor_airports()
+    log(f"{len(iata)} ICAO codes with IATA, {len(anchors)} destination airports")
 
     per_reporter, latest = {}, {}
     for cc in REPORTERS:
@@ -191,8 +212,9 @@ def main(argv):
 
     routes = defaultdict(dict)
     for (a, b), mask in sorted(months.items()):
-        if a in carta and b in carta:
+        if a in about and b in about:
             routes[a][b] = mask
+    served = set(routes)
     n = sum(len(v) for v in routes.values())
     out = {
         "built": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -200,13 +222,16 @@ def main(argv):
         "reporters": sorted(c for c in per_reporter if c not in stale),
         "source": "Eurostat avia_par (CC BY 4.0), OurAirports (public domain)",
         "routes": dict(sorted(routes.items())),
-        # Every Carta airport with a position, served or not, so the discovery
-        # pass can look for routes Eurostat does not know yet.
-        "airports": {c: where[c] for c in sorted(carta) if c in where},
+        # Served airports plus every destination airport, so the discovery
+        # pass can look for routes Eurostat does not know yet (UK, Czechia).
+        "airports": {c: [round(about[c]["lat"], 3), round(about[c]["lon"], 3)]
+                     for c in sorted(served | anchors) if c in about},
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, separators=(",", ":")), encoding="utf-8")
-    log(f"{n} routes from {len(routes)} airports -> {OUT.relative_to(ROOT)}")
+    AIRPORTS_OUT.write_text(json.dumps({c: about[c] for c in sorted(served)}, ensure_ascii=False,
+                                       separators=(",", ":")), encoding="utf-8")
+    log(f"{n} routes from {len(routes)} airports -> {OUT.relative_to(ROOT)}, {AIRPORTS_OUT.name}")
 
     if "--upload" in argv:
         subprocess.run(["npx", "wrangler", "r2", "object", "put", R2_KEY, "--file", str(OUT),
