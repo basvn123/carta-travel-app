@@ -1689,7 +1689,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T475-i | T475 | T102-a proposes Transitous for real rail durations, but Transitous allows non-commercial use only; roadmap 3.11 replaces it with self-hosted MOTIS on GTFS, close T102-a when 3.11 lands | next task | open | |
 | T475-j | T475 | The day planner compare step and stay picker would multiply calls to the public OSRM and Nominatim (no SLA); keep comparisons on the matrix and straight lines, route only the picked stops, and plan an own pedestrian router on the box if load grows; roadmap 4.24 | next task | open | |
 | T477-a | T477 | Owner call: six pairs of roadmap rows from the parallel audits overlap (1.12/1.19, 2.16/3.11, 4.15/4.23, 4.19/2.23, 4.16+4.18/4.24, 5.12/5.13) and the buffer conflicts (T475-d decided 10% on by default, T472-e proposes off by default); T471-d and T475-e are the same MOTIS call; see T477 report | user | open | |
-| T477-b | T477 | Remove the merged-in stray branch p11-owner-calls-t470 and its worktree wt/t470 once T477 is on main | next task | open | |
+| T477-b | T477 | Remove the merged-in stray branch p11-owner-calls-t470 and its worktree wt/t470 once T477 is on main | next task | closed by T482 | |
 | T478-a | T478 | A saved region with no country shows an empty subtitle line in My trips (MyTripsTabs row.sub); no current region lacks one, but the row does not guard it | next task | open | |
 | T479-a | T479 | scripts/admin/test_edge_errors.mjs needs a database and was not run after getSupabase(); failure logging is now one tick later, so its event-order checks need confirming | next task | open | |
 | T479-b | T479 | mayHaveSession (lib/supabaseClient.js) reads the default supabase-js storage key sb-<ref>-auth-token; a custom storageKey in createClient must change it too | next task | open | |
@@ -1701,4 +1701,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T481-c | T481 | About 351 rules stay blocked, mostly tag-descendant rules (.x svg, .y b), .destp-grid > * and .bottom-slot > * | next task | open | |
 | T481-d | T481 | Dead CSS left: .dsk-alert and the rest of the .xp-hero-badges rules, named by no code or bundle | next task | open | |
 | T482-a | T482 | 19 of 22 scripts/verify_*.mjs harnesses fail on master (stale after T473 navigation and T474 bars, e.g. the My trips button selector); refresh them so batch end checks can rely on them | next task | open | |
-| T482-b | T482 | wt/ holds thousands of leftover logs, shots and builds from T089 onward; the owner decides what is evidence to keep before a cleanup | user | open | |
+| T482-b | T482 | wt/ holds thousands of leftover logs, shots and builds from T089 onward; owner chose a full cleanup on 2026-10-21; all 27 junctions unlinked first, wt/next-steps (unmerged docs branch) kept | user | closed by T482 | |
