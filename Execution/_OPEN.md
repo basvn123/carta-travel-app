@@ -512,7 +512,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T281-b | T281 | The statement of reasons has been run through the real RPC only at database level (test_statement_of_reasons.mjs, 132 of 132 on a throwaway cluster); the browser path through a real signed-in session is still ?savedmock only, because it needs migrations 036 and 039 live | user | open | after the stage 2 pastes |
 | T281-c | T281 | verify_csp.mjs now reads the real header from public/_headers, but after the rewrite it was only parsed and its header reader checked, not run against a fresh dist (dist was deleted after the smoke run); run it once after the next build | next task | open | |
 | T283-a | T283 | 45 exhaustive-deps disable comments remain outside src/planner, each hiding a hand-picked dependency list: App.jsx 8, auth/SavedTripsPanel.jsx 4, map/TripMap.jsx 4, map/DayExploreMap.jsx 4, map/CityPickerMap.jsx 2, hooks/useAppData.js 2, browse/ExploreTab.jsx 2, browse/DestMap.jsx 2, and one each in planner/AiDayPlanModal.jsx, lib/neighbours.js, hooks/useUrlSync.js, hooks/useFocusTrap.js, hooks/useFavoriteItems.js, hooks/useDestinationSearch.js, components/admin/ContentSection.jsx, components/OriginPicker.jsx, components/DateField.jsx, browse/useFolds.js, browse/TrailPage.jsx, browse/ExploreMap.jsx, browse/DestinationsTab.jsx, browse/DestinationPage.jsx, browse/CategoryRail.jsx (unused, T192-c), browse/AroundHere.jsx, auth/AccountPanel.jsx; audit them the way T283 did the planner | next task | closed by T312 | T312 |
-| T283-b | T283 | DayIdeasStep.jsx line 348 joins a result's place and walk time with a middot separator (U+00B7), so a row reads place, dot, walk time, which the copy rules ban; a copy fix under carta-design, outside a hook audit | next task | open | |
+| T283-b | T283 | DayIdeasStep.jsx line 348 joins a result's place and walk time with a middot separator (U+00B7), so a row reads place, dot, walk time, which the copy rules ban; a copy fix under carta-design, outside a hook audit | next task | closed by T492 | |
 | T283-c | T283 | suggestNextStops still ranks the next-stop suggestions with a +1.2 boost for a frozen snapshot fare on the arrival date; decide whether that survives T273's no-flight-prices rule, since dropping it also ends the full catalogue rescan on every nights bump | next task | open | |
 | T284-a | T284 | Paste supabase/migrations/047_small_schema_fixes.sql in the SQL editor at _OPEN-MASTER stage 2.2 row 16, after 045 and 046 (044 may come before or after it) and look for the notice "small schema fixes self-check passed"; until then crashes are dropped, there is no 'data' feedback kind, no 'cycle' override layer and no admin_adjust_expiry | user | closed by T413 (live on 2026-10-07: 047 pasted by the owner) | after 045 and 046 (stage 2.2 row 16) |
 | T284-b | T284 | admin_edge_errors now returns client crashes under their own key (crashes: total, users, lastAt, daily) and keeps them off the AI figures, but no admin card draws them; add an App crashes card beside EdgeErrors.jsx on the Overview | next task | open | after T284-a |
@@ -1707,3 +1707,84 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T486-a | T486 | detail.groundSub ("Food, drinks and getting around", six languages) is used by no code and contradicts the price sentence; remove with the dead-copy sweep (T472-j, T471-j) | next task | closed by T493 | |
 | T487-a | T487 | TripItinerary.jsx's whole-trip Google Maps link and dayPdf.js's day link still use one googleMapsDirUrl with 9-stop thinning; a phone browser takes 3 stops, use googleMapsDirParts | next task | closed by T493 | |
 | T493-a | T493 | The trip planner's split Google Maps link (TripItinerary.jsx, googleMapsDirParts) was not seen in a browser; check a 5-plus city trip at 390 px and on desktop | next task | open | |
+| T484-a | T484 | Does Home stay a separate tab key behind the logo after 1.15, and where does a new visit land (Roadmap/1.3-tabs-inventaris.md) | user | open |  |
+| T484-b | T484 | Delete components/FirstRunReceipt.jsx (the dead old receipt); first move FlightSheet, which DestPriceCard.jsx and TripPriceCard.jsx still import from it | next task | open |  |
+| T484-c | T484 | Split DestinationsTab.jsx (4,012 lines) and GuidedTripWizard.jsx (3,614 lines) at the tab merge, or after 2.18 | user | open |  |
+| T484-d | T484 | Confirm the T438 removals (no counts in the Explore title, no rail positions, no word "national") hold in the merged Explore | user | open |  |
+| T484-e | T484 | Trip library as rows at the top of Explore or as a category tile (T489 proposes rows, see T489-a) | user | open |  |
+| T484-f | T484 | Drop the day-strip rule (V4.4) from the T378 day planner brief; it was never built | user | open |  |
+| T484-g | T484 | Does one day without a trip live in Plan, or only behind "Plan a day here" on the destination page | user | open |  |
+| T484-h | T484 | About 40 brief rules are marked "niet nagekeken" in 1.3-tabs-inventaris.md (CSS or behaviour not provable from code); check them with a harness or browser before the 2.18 build | next task | open |  |
+| T484-i | T484 | ExploreTab.jsx:1044 renders the literal "Mock data" outside i18n when isMock is true; use a key or drop it | next task | open |  |
+| T485-a | T485 | Adopt --tap-main 48px for the phone bottom bar and each place's primary action (T472-f), or raise --tap; one call for T485-a, T490-h and T492-b | user | open |  |
+| T485-b | T485 | Desktop places left after the logo (1.3a) or centred | user | open |  |
+| T485-c | T485 | How the phone reaches Home with no logo in the shell (1.15 proposes a "How Carta works" row in Account, see T488-e) | user | open |  |
+| T485-d | T485 | Keep the desktop header visible above sub-pages, or PageBar only as now | user | open |  |
+| T485-e | T485 | Should the collapsed phone settings sentence also name the departure airport | user | open |  |
+| T485-f | T485 | Keep the "Europe Travel" strapline under the logo | user | open |  |
+| T485-g | T485 | Move language and "Prices in EUR" out of the settings bar into Account | user | open |  |
+| T485-h | T485 | Confirm removing the Home tab T464 added, now that the logo is the way Home | user | open |  |
+| T485-i | T485 | Drop the carta-design sentence that the phone plus is the only floating control, once the plus goes | user | open |  |
+| T485-j | T485 | In 2.18: close T371-e as superseded and delete the dead .header-pricing-btn and .shell-pass-btn rules (10-shell.css, 16-auth.css, 24-destination-workspace.css, 26-shortlist-extras.css) | next task | open | after 2.18 |
+| T485-k | T485 | The app has no main or header landmark and no skip link; add them with the shell build (1.3a, section Landmarks) | next task | open | with 2.18 |
+| T485-l | T485 | Header tab font sizes in px in 24-destination-workspace.css (13.5px, 12.5px, 12px); use --text-label or drop them | next task | open |  |
+| T488-a | T488 | Is every PDF paid? Item and journey page PDFs (useItemPdf.js, TrailPage, BeachPage, JourneyPage, TripPriceCard) never call paywall.require('export'), the destination PDF does; PRODUCT.md says PDF is paid | user | open |  |
+| T488-b | T488 | T472-d (free co-planners and a second share link) is still open and decides pass sheets 8 and 9 in 1.15-navigatie-ontwerp.md | user | open |  |
+| T488-c | T488 | Remove the celebrate pass nudge | user | open |  |
+| T488-d | T488 | /pricing as a real page or as the pass sheet | user | open |  |
+| T488-e | T488 | Phone door to Home through a row in Account | user | open |  |
+| T488-f | T488 | My trips count shows stars only, or saved trips too | user | open |  |
+| T488-g | T488 | Wording "See Trip Pass prices" and preselecting the Trip Pass at a hard gate; PassModal.jsx:72 defaults to the yearly plan even at a one-trip gate | user | open |  |
+| T488-h | T488 | Import gate when the drop zone opens or when a file is dropped | user | open |  |
+| T488-i | T488 | Write the free sentence and the "pass only at the paid moment" rule into carta-design (part of 1.15's done condition) | next task | open |  |
+| T488-j | T488 | Build 1.15: tab keys explore, plan, trips and account, LEGACY_TABS in urlState.js, PlanStart, header pass removal, eleven sheet headings in six languages, PlanSection for guests (roadmap 2.18) | next task | open | after T488-a to h |
+| T488-k | T488 | My trips and Account open without pushState (App.jsx:300, 346 to 351), so phone Back leaves the section; fixed by their tab keys in 2.18 | next task | open | with T488-j |
+| T489-a | T489 | Trips as a row on Places and on country and region pages, rather than a seventh tile | user | open |  |
+| T489-b | T489 | Rename Explore's "Trip type" filter to "Kind of place" | user | open |  |
+| T489-c | T489 | Outdoor layers get List and Map too | user | open |  |
+| T489-d | T489 | Outdoor cards carry a "Bed and food in {city}" price line | user | open |  |
+| T489-e | T489 | Trip library heading "Trip styles" or "Pick a kind of trip" | user | open |  |
+| T489-f | T489 | Region "Best months" when only part of its items have climate data | user | open |  |
+| T489-g | T489 | A "Plan a trip here" primary on the region page | user | open |  |
+| T489-h | T489 | Explore opens cold on Places or on the remembered category | user | open |  |
+| T489-i | T489 | Region pages have no in-app door (only #region= and saved items); country to region and region to destination links belong with 4.1 | next task | open | with 4.1 |
+| T489-j | T489 | The country page has no URL, PageBar, save or share (CountryPage.jsx:97 to 102); build with 2.18 | next task | open | with 2.18 |
+| T489-k | T489 | Journey cards show a range "{range} a person" (JourneysSection.jsx:194) against the "From {price}" card rule; switch with 1.18 | next task | open | with 1.18 |
+| T490-a | T490 | Plan opens with "A trip or one day?" or straight into the wizard (with T485 and T492) | user | open |  |
+| T490-b | T490 | Booked stays the first wizard question or moves into Getting there | user | open |  |
+| T490-c | T490 | Seven wizard steps down to six by merging Booked and Who (T432-g) | user | open |  |
+| T490-d | T490 | Picked countries coloured --select-bg on the Where map; carta-design has no rule | user | open |  |
+| T490-e | T490 | Library trip card shows the party total or a person-per-day price (T432-k) | user | open |  |
+| T490-f | T490 | A device trip meets an account that already has a trip: keep both (pass?) or let the traveller choose | user | open |  |
+| T490-g | T490 | Add the trip total bar (TripTotalBar) to carta-design as its own component; 4.18 cannot build without it | user | open |  |
+| T490-h | T490 | Phone drawer heights: 72 px strip, 50%, under the header (T458-d) | user | open |  |
+| T490-i | T490 | Country card and MatchCard read only the country name to screen readers (GuidedTripWizard.jsx:2303, CountryMatchCards.jsx:69); give them wizard.countryPickName "Italy, from about €87 a person a day" and money.estSpoken in six languages; DayCostLine via formatEst; plural keys for {n} nights and {n} stops (1.16 follow-up) | next task | open |  |
+| T490-j | T490 | The edit view's receipt sums its own lines (TripPlannerTab.jsx:834, 1326 to 1515) instead of tripLines() or PlanTotal, against the one-price contract in tripTotal.js | next task | open |  |
+| T490-k | T490 | The phone plan sheet resizes only by drag (TripPlannerTab.jsx:973 to 1003); carta-design wants a visible button; built as PlanDrawer in 4.20 | next task | open | with 4.20 |
+| T490-l | T490 | The arrival search (GuidedTripWizard.jsx:2594) has only an aria-label and no visible label | next task | open |  |
+| T491-a | T491 | Approve four destination tabs (Overview, Nearby, When to go, Practical) in place of T429's six open sections | user | open |  |
+| T491-b | T491 | A destination tab changes the URL (&tab=) without a history step | user | open |  |
+| T491-c | T491 | carta-design has no rule for a sticky tab bar; adopt the sticky-rail rule for it | user | open |  |
+| T491-d | T491 | Around before Things to do for areas only, or the same order everywhere | user | open |  |
+| T491-e | T491 | Default Around chip: the category with the most items (at least two), or always Walks | user | open |  |
+| T491-f | T491 | An "Included with a Trip Pass." hint under Download PDF, or the sheet only on tap | user | open |  |
+| T491-g | T491 | Phone price card after the year block, or straight after the key facts as now | user | open |  |
+| T491-h | T491 | The head sentence is only "A bed plus food and drink.", with the exclusions on the card | user | open |  |
+| T491-i | T491 | Build the destination tabs as their own row before 4.1, or inside 4.1 (W7) | user | open |  |
+| T491-j | T491 | Add radius_km per category to the dossier nearby block and a URL per item (4.1 and 3.5); 90% of do items link nowhere | next task | open | with 4.1 |
+| T491-k | T491 | destinationPdf.js:396 to 430 reads d.around only, never d.nearby (Rome's PDF misses three lakes and two beaches); :368 and :411 hardcode "m up" and "km" in English | next task | open |  |
+| T491-l | T491 | NearestLine (CoverageEmpty.jsx:118) and the outdoor tiles (DestinationPage.jsx:1037) open pages with a button instead of a link with href, against carta-design Navigation | next task | open |  |
+| T491-m | T491 | Data: Rome's beach "Ostia Stabulazione Molluschi Masone" is a shellfish monitoring point and its lake "Parco Centrale del Lago" a park pond; filter both kinds out of the layers | next task | open |  |
+| T492-a | T492 | Keep Ideas as its own day planner step, or fold it into What's search | user | open |  |
+| T492-b | T492 | A token for 48 px (--tap-main) or a per-component rule (same call as T485-a) | user | open |  |
+| T492-c | T492 | Day band limits 12:00 and 17:00, and is Dinner a row though the clock ends at 18:00 | user | open |  |
+| T492-d | T492 | Does a ticket count per person in the day price, with the group only on the receipt | user | open |  |
+| T492-e | T492 | May "best route" reorder stops inside a band without asking | user | open |  |
+| T492-f | T492 | Does the trip's cost bar show the day or the trip first (with T490) | user | open |  |
+| T492-g | T492 | Does the bottom nav hide when the drawer is nearly full (with T485 and T468-b) | user | open |  |
+| T492-h | T492 | The 4.19 data lane: harvest OSM fee and charge per POI (extends T378-c) | next task | open | before 4.19 |
+| T492-i | T492 | The day price sentence after 4.19 ("Bed, food and the tickets we know the price of. Not included: local transport.") in six languages | next task | open | after 4.19 |
+| T492-j | T492 | After sign-in the Carta chat must keep its answers and run the plan; today CartaChatPlanner.jsx:481 only calls onSignIn() | next task | open |  |
+| T492-k | T492 | Tapping the day figure (DayOverview.jsx:47) opens the Lifestyle panel; carta-design says it opens the compact receipt (with T389-a) | next task | open | after T389-a |
+| T492-l | T492 | DAY_PHASES and dayPhase() in daySchedule.js:40 are unused and define four phases; reduce to the three T472-g bands in the 4.19 build | next task | open | with 4.19 |
+| T494-a | T494 | The bottom nav safe-area fix was measured only with a zero inset (desktop Chrome); check on a real notched iPhone that the items keep 68 px and no gap shows under toasts; padded scroll containers above the nav now carry a little extra bottom room there | next task | open |  |
