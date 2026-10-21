@@ -126,6 +126,7 @@ def load_listings(root):
     Inside Airbnb snapshots, parsed by the harvester's own function so the
     filters (entire homes, 2 to 8 sleepers, positive price) are identical."""
     sys.path.insert(0, str(root / "pipeline"))
+    sys.path.insert(0, str(root / "pipeline" / "archive"))  # v17 stay model, retired by T514
     import harvest_accommodation as ha  # noqa: E402  (read-only use)
 
     out = {}
@@ -167,6 +168,7 @@ def usable_band(root):
     is a broken harvest (Geneva's prices parse to fractions of a franc), not
     an observation, and is dropped on the same rule the pipeline uses."""
     sys.path.insert(0, str(root / "pipeline"))
+    sys.path.insert(0, str(root / "pipeline" / "archive"))  # v17 stay model, retired by T514
     import apply_accommodation_anchors as aa  # noqa: E402  (read-only use)
     return aa.MIN_NIGHT_EUR, aa.MAX_NIGHT_EUR
 

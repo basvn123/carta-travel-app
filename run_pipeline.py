@@ -1898,35 +1898,14 @@ TASKS = [
         "note": "Eurostat updates ~annually; pass --refresh in the script to re-download.",
     },
     {
-        "key": "lodging",
-        "title": "Inside Airbnb lodging anchors -> premiums",
+        "key": "tourist_premium",
+        "title": "Tourist-hotspot premium on food and drink (dining, groceries, clubs)",
         "cadence": "quarterly",
         "writes_app_data": True,
-        "cmds": [
-            [PY, "pipeline/harvest_accommodation.py", "--footprint"],
-            [PY, "pipeline/apply_accommodation_anchors.py"],
-            [PY, "pipeline/apply_longtail_granularity.py"],
-            [PY, "pipeline/apply_tourist_premium.py"],
-        ],
-        "note": ("snapshot dates are pinned in harvest_accommodation.py (2026-06). "
-                 "Bump DATASETS + purge cache/iab to actually get newer prices."),
+        "cmds": [[PY, "pipeline/apply_tourist_premium.py"]],
+        "note": ("food half only since T514: beds come from the stays layer, which "
+                 "measures hotspot prices instead of marking them up."),
     },
-    {
-        "key": "staytiers",
-        "title": "Hostel + hotel stay tiers (Hostelworld / LiteAPI)",
-        "cadence": "monthly",
-        "writes_app_data": True,
-        "cmds": [
-            [PY, "pipeline/harvest_hostelworld.py"],
-            [PY, "pipeline/harvest_hotels_liteapi.py"],
-            [PY, "pipeline/apply_stay_tiers.py"],
-        ],
-        "note": ("needs HW_CONSUMER_KEY/HW_CONSUMER_SECRET + LITEAPI_KEY in the env; "
-                 "without them the harvesters no-op cleanly (no cache written). Apply "
-                 "REFUSES fixture anchors (dev --fixtures runs) loudly: re-harvest with "
-                 "real keys before this task can ship tiers."),
-    },
-
     {
         "key": "stays_discover",
         "title": "Stay layer: Xotelo property pool + OSM supply (T512)",

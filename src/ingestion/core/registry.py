@@ -154,7 +154,6 @@ RUNS: dict[str, Run] = {
     # pipeline/harvest_*.py: the destination content harvesters. Task keys
     # and cadences are run_pipeline.py's; "manual" with no task is the
     # Manual tier (the script's own header says so).
-    "pipeline/harvest_accommodation.py": Run("quarterly", "lodging", "hard"),
     "pipeline/harvest_activities.py": Run("backfill", "activities", "hard"),
     "pipeline/harvest_all_origins.py": Run("manual", "fares", "hard",
                                            "every fare harvest is retired (T255, 2026-10-01)"),
@@ -166,10 +165,6 @@ RUNS: dict[str, Run] = {
                                             "scheduled but produces nothing new until "
                                             "a fare source returns"),
     "pipeline/harvest_geonames.py": Run("backfill", "geonames", "hard"),
-    "pipeline/harvest_hostelworld.py": Run("monthly", "staytiers", "hard",
-                                           "SKIPs without partner credentials"),
-    "pipeline/harvest_hotels_liteapi.py": Run("monthly", "staytiers", "hard",
-                                              "SKIPs without an API key"),
     "pipeline/harvest_image_licenses.py": Run("manual", "", "manual"),
     "pipeline/harvest_images.py": Run("backfill", "images", "hard"),
     "pipeline/harvest_pageviews.py": Run("monthly", "poi_significance", "soft",
@@ -1069,24 +1064,26 @@ SOURCES = (
     Source(
         key="hostelworld_partner_api",
         section="fare_partners",
-        scripts=('pipeline/harvest_hostelworld.py',),
+        scripts=('pipeline/archive/harvest_hostelworld.py',),
         name="Hostelworld Partner API (`pipeline/harvest_hostelworld.py`)",
         takes="Per-city dorm and private-room price medians",
         licence="Partner / affiliate agreement (credentials pending per stay-tier notes)",
         attribution="Per agreement, verify",
         share_alike="No",
         attributed="MISSING, verify agreement display terms",
+        retired=True,
     ),
     Source(
         key="liteapi_nuitee",
         section="fare_partners",
-        scripts=('pipeline/harvest_hotels_liteapi.py',),
+        scripts=('pipeline/archive/harvest_hotels_liteapi.py',),
         name="LiteAPI, Nuitee (`pipeline/harvest_hotels_liteapi.py`)",
         takes="Per-city 3-star and 4/5-star entry-price medians",
         licence="LiteAPI terms of service (self-service key)",
         attribution="Per terms, verify",
         share_alike="No",
         attributed="MISSING, verify",
+        retired=True,
     ),
     Source(
         key="ferryhopper_trips_widget",
@@ -1489,7 +1486,7 @@ SOURCES = (
     Source(
         key="inside_airbnb",
         section="content_layers",
-        scripts=('pipeline/stays/harvest_iab.py', 'pipeline/harvest_accommodation.py'),
+        scripts=('pipeline/stays/harvest_iab.py',),
         name="Inside Airbnb (`pipeline/stays/harvest_iab.py`)",
         takes="Listing-level nightly medians per destination footprint: entire place by capacity, private room, shared room",
         licence="CC BY 4.0 (per harvester header)",
