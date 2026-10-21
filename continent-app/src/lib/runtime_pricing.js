@@ -2,7 +2,9 @@
  * runtime_pricing.js, schema v7
  *
  * Three layers, all from real data:
- *   1. Flights, cheapest Ryanair round-trip for the chosen dates (dest.routes).
+ *   1. Getting there: which airport the trip lands at and the ground leg from
+ *      it (dest.routes, rebuilt per origin by origins.js). No flight fare: the
+ *      old fare data went in T511; the flight module (T517) adds it back.
  *   2. Accommodation, an Airbnb entire-home nightly estimate (dest.accommodation),
  *      adjusted for season, length-of-stay discount, cleaning + service fees so it
  *      matches what a traveller actually pays. Params: meta.accommodation_model.
@@ -12,8 +14,8 @@
  */
 
 import { round2 } from './math.js';
-import { addDays } from './dates.js';
 import { buildAviasalesLink } from './affiliate.js';
+import { roundTripNear } from './flights/flights.js';
 
 // Nights between two ISO date strings (return must be >= depart).
 export function tripDaysBetween(departDate, returnDate) {
@@ -421,108 +423,24 @@ export function accommodationPerPerson(dest, nights, departDate, model, groupSiz
   };
 }
 
-/** Cheapest origin's outbound+return fare for the given dates, or null. */
-export function pickFareForDates(dest, departDate, returnDate, originPref = 'auto') {
+/** The air route into this destination from the chosen origin, or null.
+ *  dest.routes holds one record per origin whose last leg Carta can price
+ *  (origins.js); there is no fare in it (T511: fares removed; T517 adds
+ *  flights back). */
+export function pickAirRoute(dest, originPref = 'auto') {
   const routes = dest.routes || {};
   const origins = originPref && originPref !== 'auto'
     ? (routes[originPref] ? [originPref] : [])
     : Object.keys(routes);
-  let best = null;
-  for (const o of origins) {
-    const r = routes[o];
-    const out = r.outbound_fare?.[departDate];
-    const ret = r.return_fare?.[returnDate];
-    if (out == null || ret == null) continue;
-    const fare = out + ret;
-    if (best == null || fare < best.fare) {
-      best = {
-        fare,
-        origin: o,
-        out_eur: out,
-        in_eur: ret,
-        anchor_airport: r.anchor_airport || dest.iata,
-        ground_eur: r.ground_transport_one_way_eur || 0,
-        ground_minutes: r.ground_transport_minutes || 0,
-      };
-    }
-  }
-  return best;
-}
-
-/** The flight half of the fallback-chain rule (real quote, then cached
- *  quote, then model estimate, never a blank): the cheapest origin's
- *  estimate-band round trip for the given dates, or null. Bands are the
- *  estimation model's p50 month medians (routes[o].outbound_estimate /
- *  return_estimate, {YYYY-MM: eur}), attached by the fare pipeline only for
- *  routes with fare history. Both directions must be covered: a half-known
- *  round trip would be a guess wearing an estimate's label. Callers treat
- *  the result as ESTIMATED (est flag, "EST" source), and it must only ever
- *  be consulted after pickFareForDates came back empty.
- */
-export function pickEstimateForDates(dest, departDate, returnDate, originPref = 'auto') {
-  const routes = dest.routes || {};
-  const origins = originPref && originPref !== 'auto'
-    ? (routes[originPref] ? [originPref] : [])
-    : Object.keys(routes);
-  const outMonth = departDate.slice(0, 7);
-  const retMonth = returnDate.slice(0, 7);
-  let best = null;
-  for (const o of origins) {
-    const r = routes[o];
-    const out = r.outbound_estimate?.[outMonth];
-    const ret = r.return_estimate?.[retMonth];
-    if (out == null || ret == null) continue;
-    const fare = out + ret;
-    if (best == null || fare < best.fare) {
-      best = {
-        fare,
-        origin: o,
-        out_eur: out,
-        in_eur: ret,
-        anchor_airport: r.anchor_airport || dest.iata,
-        ground_eur: r.ground_transport_one_way_eur || 0,
-        ground_minutes: r.ground_transport_minutes || 0,
-        estimated: true,
-      };
-    }
-  }
-  return best;
-}
-
-/** Contiguous windows of dates (union of outbound_fare across this
- *  destination's routes) that actually have a fare, so when the selected
- *  dates come back with nothing, the UI can tell the traveller which periods
- *  do have data instead of just saying no. Ryanair skips days even on routes
- *  it otherwise serves, so fare dates within `mergeGapDays` of each other are
- *  merged into one window rather than reported as separate gaps; a longer
- *  gap (an off-season pause) starts a new window.
- *  Returns [{ start, end }], sorted by start date, or [] if there's no fare
- *  data for this destination at all.
- */
-export function fareCoverageRanges(dest, mergeGapDays = 10) {
-  const routes = dest?.routes || {};
-  const dates = new Set();
-  for (const r of Object.values(routes)) {
-    for (const d of Object.keys(r.outbound_fare || {})) dates.add(d);
-  }
-  const sorted = [...dates].sort();
-  if (sorted.length === 0) return [];
-
-  const ranges = [];
-  let start = sorted[0], end = sorted[0];
-  for (let i = 1; i < sorted.length; i++) {
-    const d = sorted[i];
-    const gapDays = (new Date(d + 'T00:00:00Z') - new Date(end + 'T00:00:00Z')) / 86400000;
-    if (gapDays <= mergeGapDays) {
-      end = d;
-    } else {
-      ranges.push({ start, end });
-      start = d;
-      end = d;
-    }
-  }
-  ranges.push({ start, end });
-  return ranges;
+  const o = origins[0];
+  if (!o) return null;
+  const r = routes[o];
+  return {
+    origin: o,
+    anchor_airport: r.anchor_airport || dest.iata,
+    ground_eur: r.ground_transport_one_way_eur || 0,
+    ground_minutes: r.ground_transport_minutes || 0,
+  };
 }
 
 /** Per-person on-the-ground spend for the trip, broken down by activity.
@@ -562,11 +480,11 @@ export function groundSpendPerPerson(dest, nights, lifestyle) {
 
 /* ── Plane reach ───────────────────────────────────────────────────────────
  * A destination counts as reachable by plane when a *served* airport, one with
- * real fares for the chosen dates, sits within PLANE_REACH_KM of it. You land
- * there and finish the last leg from arrivals.
+ * an air route from the chosen origin, sits within PLANE_REACH_KM of it. You
+ * land there and finish the last leg from arrivals.
  *
- * The build pipeline (apply_airport_anchors.py) already bakes a nearby airport's
- * fare calendar straight into dest.routes, but only within 60 km. Everything
+ * The build pipeline (apply_airport_anchors.py) already anchors a destination
+ * to a nearby airport in dest.routes, but only within 60 km. Everything
  * from 60 km out to PLANE_REACH_KM is resolved here, at runtime, against the
  * live catalogue, so widening the radius needs no data rebuild.
  */
@@ -585,11 +503,11 @@ const LEG_KMH        = 65;
 const reachCache = new WeakMap();
 
 /** destId -> { id, airport, straight_km } for the nearest served airport within
- *  PLANE_REACH_KM. Only destinations that carry no fares of their own are
+ *  PLANE_REACH_KM. Only destinations that carry no route of their own are
  *  indexed: everything else already flies in directly, or was anchored at build
  *  time. Islands are skipped, there is no road leg from the mainland.
  */
-export function planeReachIndex(allDests) {
+export function nearbyAirportIndex(allDests) {
   if (!allDests) return null;
   const cached = reachCache.get(allDests);
   if (cached) return cached;
@@ -654,10 +572,9 @@ export function planeReachIndex(allDests) {
  *    - otherwise  -> the place works without a car, so bus/train/shuttle in,
  *      priced per person each way.
  */
-/** The shared airport->town ground-leg scale: ONE model for both the
- *  auto-resolved plane fare (airportLastLeg) and the "fly nearby + drive in"
- *  alternatives list (viaNearestAirport), so the same journey never shows two
- *  different prices depending on which surface computed it. */
+/** The airport->town ground-leg scale behind airportLastLeg, on the same
+ *  scale as the pipeline's baked anchor transfers, so the same journey never
+ *  shows two different prices depending on where it was computed. */
 export function lastLegEstimate(straightKm) {
   const roadKm = straightKm * LEG_DETOUR;
   return {
@@ -679,23 +596,22 @@ export function airportLastLeg(dest, straightKm) {
   };
 }
 
-/** The fare to fly to this destination: its own, or, when it has none, the
- *  fare into a served airport within PLANE_REACH_KM, with the last leg priced
- *  in. Returns { fare, via }, either of which may be null.
+/** How the trip flies in: this destination's own air route, or, when it has
+ *  none, the route into a served airport within PLANE_REACH_KM, with the last
+ *  leg priced in. Returns { route, via }, either of which may be null.
  */
-function planeFare(dest, departDate, returnDate, choices, allDests) {
-  const own = pickFareForDates(dest, departDate, returnDate, choices.origin_pref);
-  if (own) return { fare: own, via: null };
+function airRoute(dest, choices, allDests) {
+  const own = pickAirRoute(dest, choices.origin_pref);
+  if (own) return { route: own, via: null };
 
-  // A REAL fare into a nearby served airport still beats estimating this one.
-  const near = allDests ? planeReachIndex(allDests)?.get(dest.id) : null;
+  const near = allDests ? nearbyAirportIndex(allDests)?.get(dest.id) : null;
   if (near) {
-    const nearFare = pickFareForDates(near.airport, departDate, returnDate, choices.origin_pref);
-    if (nearFare) {
+    const nearRoute = pickAirRoute(near.airport, choices.origin_pref);
+    if (nearRoute) {
       const leg = airportLastLeg(dest, near.straight_km);
       return {
-        fare: {
-          ...nearFare,
+        route: {
+          ...nearRoute,
           anchor_airport: near.airport.iata,
           ground_eur: leg.eur_pp_one_way,
           ground_minutes: leg.minutes,
@@ -710,34 +626,30 @@ function planeFare(dest, departDate, returnDate, choices, allDests) {
       };
     }
   }
-
-  // No stored day matches anywhere: the model's month-median band prices the
-  // route as an ESTIMATE (fare.estimated = true) instead of silently forcing
-  // the trip onto the road.
-  const est = pickEstimateForDates(dest, departDate, returnDate, choices.origin_pref);
-  return { fare: est, via: null };
+  return { route: null, via: null };
 }
 
 /** Full trip cost for these dates + choices. Prices the trip two ways and picks
  *  the one in `choices.transport_mode` ('plane' | 'car'):
- *    - plane: the stored routes decide whether and where you can fly (this
- *      destination or an airport within PLANE_REACH_KM of it), but the flight
- *      itself adds nothing to the total: Carta does not price flights (owner
- *      decision, 2026-10-02, T273). The total is the last leg in (shuttle or a
- *      rental car), a rental at the destination when one is needed there, and
- *      the stay. The fare fields below stay for the pricing harness
- *      (scripts/verify_flight_estimates.mjs); no surface shows or sums them.
+ *    - plane: the air routes decide whether and where you can fly (this
+ *      destination or an airport within PLANE_REACH_KM of it). The total is
+ *      the return flight when the home airport's swept file has one near
+ *      these dates (T518: `opts.flights`, flights/flights.js roundTripNear,
+ *      fare and bags for every seat), the last leg in (shuttle or a rental
+ *      car), a rental at the destination when one is needed there, and the
+ *      stay. Without a flight near the dates the plane total leaves it out,
+ *      as before (T511), and `flight` is null so the screen can say so.
  *    - car  : fuel + tolls to drive there and back (only if road-reachable and
  *      within max_drive_km); no rental, you brought your own car.
- *  Accommodation + on-the-ground are added the same way for both. Always exposes
- *  plane_grand_total and car_grand_total so the UI can compare. Returns null if
- *  the destination cannot be reached either way for these dates.
+ *  Accommodation + on-the-ground are added the same way for both. Returns null
+ *  if the destination cannot be reached either way.
  *
  *  `allDests` (the whole catalogue) is optional but enables the nearby-airport
- *  reach above; without it only destinations with their own baked-in fares can
- *  be flown to.
+ *  reach above; without it only destinations with their own air route can be
+ *  flown to. `opts.flights` is the home airport's swept flight file
+ *  (data.flights); without it no flight is priced.
  */
-export function composeTrip(dest, departDate, returnDate, choices, allDests = null) {
+export function composeTrip(dest, departDate, returnDate, choices, allDests = null, opts = {}) {
   if (!dest || !departDate || !returnDate || returnDate <= departDate) return null;
 
   const groupSize = Math.max(1, choices.group_size || 1);
@@ -756,9 +668,8 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
 
   const stayTotal = accomTotal + groundTotal;
 
-  // --- Plane option: flights + baggage, and a rental if a car is needed there.
-  const { fare, via: viaAirport } = planeFare(dest, departDate, returnDate, choices, allDests);
-  const baggageRt = (choices.baggage_per_direction_eur || 0) * 2;
+  // --- Plane option: the last leg in, and a rental if a car is needed there.
+  const { route, via: viaAirport } = airRoute(dest, choices, allDests);
   const rental = rentalEstimate(dest, nights, choices, carModel, departDate); // null if not needed
   const rentalTotal = rental ? rental.total : 0;
 
@@ -766,18 +677,21 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
   // airport and you finish the trip by bus/shuttle. ground_eur is a per-person
   // one-way fare, so count it round-trip and per person. Zero for dests you fly
   // straight into (ground_eur = 0).
-  const transferPpOneWay = fare ? (fare.ground_eur || 0) : 0;
+  const transferPpOneWay = route ? (route.ground_eur || 0) : 0;
   const transferPerPerson = transferPpOneWay * 2;          // there + back
   const transferTotal = transferPerPerson * groupSize;
 
-  let flightPerPerson = null, flightTotal = null, planeGrand = null;
-  if (fare) {
-    flightPerPerson = fare.fare + baggageRt;
-    flightTotal = flightPerPerson * groupSize;
-    // No flightTotal here (T273): the seat fare and the bag add-on are the
-    // airline's price, which Carta does not give.
-    planeGrand = transferTotal + rentalTotal + stayTotal;
-  }
+  // The return flight (T518): out near the first day, home near the last,
+  // into the airport the route lands at, for every seat that pays, with the
+  // traveller's bag on both legs. Null when the sweep has no flight near
+  // these dates, never a guess.
+  const flightRt = route && opts?.flights
+    ? roundTripNear(opts.flights, route.anchor_airport || dest.anchor_airport || dest.iata,
+      departDate, returnDate, { paying: groupSize, bagKey: choices.baggage_key || 'small' })
+    : null;
+  const flightTotal = flightRt ? flightRt.total : 0;
+
+  const planeGrand = route ? flightTotal + transferTotal + rentalTotal + stayTotal : null;
 
   // --- Car option: drive there & back. You have your car, so no rental.
   const driving = drivingEstimate(dest, home, choices, carModel); // null if not drivable
@@ -810,25 +724,23 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
     // destination's own: { kind: 'shuttle' | 'rental', city, iata, road_km, ... }
     via_airport:        viaAirport,
 
-    // Flights (present when a fare exists)
-    origin:             fare?.origin || null,
-    anchor_airport:     fare?.anchor_airport || null,
-    ground_one_way_eur: fare?.ground_eur || 0,
-    ground_minutes:     fare?.ground_minutes || 0,
-    fare_per_person:    fare ? round2(fare.fare) : null,
-    fare_out_eur:       fare ? round2(fare.out_eur) : null,
-    fare_in_eur:        fare ? round2(fare.in_eur) : null,
-    fare_total:         fare ? round2(fare.fare * groupSize) : null,
-    // True when the flight is priced from the estimate bands, not a stored
-    // fare: every surface must render it "~€X est.", never as a quote.
-    fare_estimated:     !!fare?.estimated,
-    baggage_per_person: round2(baggageRt),
-    baggage_total:      round2(baggageRt * groupSize),
-    flight_per_person:  flightPerPerson != null ? round2(flightPerPerson) : null,
-    flight_total:       flightTotal != null ? round2(flightTotal) : null,
+    // The air route (present when one exists; no fare, T511)
+    origin:             route?.origin || null,
+    anchor_airport:     route?.anchor_airport || null,
+    ground_one_way_eur: route?.ground_eur || 0,
+    ground_minutes:     route?.ground_minutes || 0,
+
+    // The return flight in the plane total (T518), or null when none was
+    // found near these dates: { out, back, total } for the group, the legs
+    // as flights/flights.js returns them (airline, date, price a seat, checked).
+    flight:             flightRt ? {
+      out: flightRt.out, back: flightRt.back, total: round2(flightRt.total),
+      perSeat: round2(flightRt.perSeat), bags: round2(flightRt.bags), bagsKnown: flightRt.bagsKnown,
+    } : null,
+    flight_total:       round2(flightTotal),
 
     // Airport->destination transfer (bus/shuttle), round-trip. 0 when you fly
-    // straight in (no anchor). Now included in plane_grand_total.
+    // straight in (no anchor). Included in the plane total.
     transfer_one_way_eur: round2(transferPpOneWay),
     transfer_per_person:  round2(transferPerPerson),
     transfer_total:       round2(transferTotal),
@@ -865,8 +777,7 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
     ground_per_person:  round2(groundPerPerson),
     ground_total:       round2(groundTotal),
 
-    // Totals for both options (for the plane/car comparison) + the selected one.
-    // plane_grand_total leaves the flight out (T273): ground and stay only.
+    // The plane and car totals (for the comparison) + the selected one.
     plane_grand_total:  planeGrand != null ? round2(planeGrand) : null,
     car_grand_total:    carGrand != null ? round2(carGrand) : null,
     grand_total:        round2(grandTotal),
@@ -874,212 +785,10 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
   };
 }
 
-/**
- * "Fly to the nearest airport, then drive/taxi the last stretch", the honest
- * alternative when a destination has no direct fare from the chosen origin for
- * these dates. Scans the catalogue for nearby airport destinations that DO
- * have a real fare, and prices the ground last leg per road km (shared
- * taxi/bus/rental scale, floor €8, same family as the pipeline's anchor
- * transfers). Returns the best few, cheapest door-to-door first.
- */
-export function viaNearestAirport(dest, allDests, departDate, returnDate, choices, { maxKm = 320, limit = 3 } = {}) {
-  if (!dest || dest.lat == null || !allDests) return [];
-  const destRoad = (dest.local_transport || {}).road_connected !== false;
-  if (!destRoad) return [];
-  const out = [];
-  // Measure town -> runway (like planeReachIndex): the traveller starts the
-  // ground leg at the airport and ends in the town, not at another runway.
-  const dc = cityCoords(dest);
-  for (const [id, d] of Object.entries(allDests)) {
-    if (id === dest.id || d.lat == null || d.city === dest.city) continue;
-    if (!d.iata) continue; // needs to be a real airport you can fly into
-    if ((d.local_transport || {}).road_connected === false) continue;
-    const km = haversineKm(dc.lat, dc.lon, d.lat, d.lon);
-    if (km == null || km > maxKm || km < 8) continue;
-    const fare = pickFareForDates(d, departDate, returnDate, choices.origin_pref);
-    if (!fare) continue;
-    // Same scale planeFare charges when it auto-resolves this exact journey.
-    const leg = lastLegEstimate(km);
-    out.push({
-      id,
-      city: d.city,
-      country: d.country,
-      iata: d.iata,
-      fare_per_person: round2(fare.fare),
-      road_km: leg.road_km,
-      drive_hours_one_way: Math.round((leg.minutes / 60) * 10) / 10,
-      leg_eur_pp_one_way: round2(leg.eur_pp_one_way),
-      total_pp_est: round2(fare.fare + leg.eur_pp_one_way * 2),
-    });
-  }
-  out.sort((a, b) => a.total_pp_est - b.total_pp_est);
-  return out.slice(0, limit);
-}
-
-/** The depart date whose round trip actually resolves for the most destinations,
- *  at a fixed trip length. Ryanair flies specific weekdays, so fares are sparse
- *  per date: the earliest date we hold a fare for, the obvious default, can be
- *  bookable for barely a handful of places, which makes the whole map look empty.
- *  Earlier dates win ties, so the default stays as early as it sensibly can.
- *  `minStart` (optional ISO date) excludes any depart date before it, so the
- *  default never lands on a past day.
- *  Returns { start, end, count }, or null when there are no fares at all.
- */
-export function bestFareWindow(allDests, nights, minStart = null) {
-  if (!allDests || !nights || nights < 1) return null;
-
-  const perStart = new Map();   // depart date -> destinations bookable round-trip
-  for (const d of Object.values(allDests)) {
-    const starts = new Set();
-    for (const r of Object.values(d.routes || {})) {
-      const out = r.outbound_fare || {};
-      const ret = r.return_fare || {};
-      for (const start of Object.keys(out)) {
-        if (minStart && start < minStart) continue;
-        if (out[start] != null && ret[addDays(start, nights)] != null) starts.add(start);
-      }
-    }
-    for (const s of starts) perStart.set(s, (perStart.get(s) || 0) + 1);
-  }
-  if (perStart.size === 0) return null;
-
-  let best = null;
-  for (const [start, count] of perStart) {
-    if (!best || count > best.count || (count === best.count && start < best.start)) {
-      best = { start, count };
-    }
-  }
-  return { start: best.start, end: addDays(best.start, nights), count: best.count };
-}
-
-/** How many destinations have a bookable round-trip flight for this exact date
- *  pair (a fare on both the depart and the return day, on the same route).
- *  Ryanair flies specific weekdays, so a date pair restored from a previous
- *  session can land entirely off the fare calendar after a fares refresh; this
- *  cheap probe tells "the map is legitimately empty" apart from "the selected
- *  dates just miss the flying days", so useAppData can re-snap to a real
- *  window instead of pricing every destination as a drive. */
-export function countBookableRoundTrips(allDests, departDate, returnDate) {
-  if (!allDests || !departDate || !returnDate) return 0;
-  let n = 0;
-  for (const d of Object.values(allDests)) {
-    for (const r of Object.values(d.routes || {})) {
-      if (r.outbound_fare?.[departDate] != null && r.return_fare?.[returnDate] != null) {
-        n += 1;
-        break; // this destination is bookable; don't count its other routes
-      }
-    }
-  }
-  return n;
-}
-
 /** Cheapest bookable total for these dates, or null. */
-export function cheapestTotal(dest, departDate, returnDate, choices, allDests = null) {
-  const b = composeTrip(dest, departDate, returnDate, choices, allDests);
+export function cheapestTotal(dest, departDate, returnDate, choices, allDests = null, opts = {}) {
+  const b = composeTrip(dest, departDate, returnDate, choices, allDests, opts);
   return b ? b.grand_total : null;
-}
-
-
-/** Candidate trip start dates for "Best time to go": the union of outbound_fare
- *  keys across the destination's routes (real, bookable Ryanair days). Car-only
- *  destinations (no route data at all) have no per-day flight signal, so this
- *  falls back to a weekly sweep across the app's priced horizon
- *  (meta.start_date/end_date), accommodation and rental still vary by month,
- *  so the sweep isn't wasted.
- */
-function candidateStartDates(dest, meta, allDests = null) {
-  // A destination reached through a nearby airport has no fare calendar of its
-  // own, so borrow that airport's, otherwise the only candidates left are the
-  // coarse weekly sweep below, and the chart disagrees with the price.
-  const routes = (dest?.routes && Object.keys(dest.routes).length > 0)
-    ? dest.routes
-    : (allDests ? planeReachIndex(allDests)?.get(dest?.id)?.airport?.routes : null) || {};
-  const outDates = new Set();
-  for (const r of Object.values(routes)) {
-    for (const d of Object.keys(r.outbound_fare || {})) outDates.add(d);
-  }
-
-  const candidates = [...outDates].sort();
-  if (candidates.length > 0) return candidates;
-
-  const start = meta?.start_date, end = meta?.end_date;
-  if (!start || !end) return [];
-  const swept = [];
-  for (let d = start; d <= end; d = addDays(d, 7)) swept.push(d);
-  return swept;
-}
-
-/** The total trip cost for every bookable start date that keeps a fixed trip
- *  length, across the whole fare window this destination's routes cover, the
- *  data "Best time to go" needs to find the cheapest period and chart the rest.
- *  Reuses composeTrip() per candidate date, so it stays consistent with the
- *  currently selected plane/car mode and every other pricing input.
- *
- *  Returns [{ start, end, nights, total, mode }], sorted by start date, or []
- *  if there isn't enough data to say anything.
- */
-export function cheapestWindows(dest, nights, choices, meta, allDests = null) {
-  if (!dest || !nights || nights < 1) return [];
-
-  const out = [];
-  for (const start of candidateStartDates(dest, meta, allDests)) {
-    const end = addDays(start, nights);
-    const trip = composeTrip(dest, start, end, choices, allDests);
-    if (trip) out.push({ start, end, nights, total: trip.grand_total, mode: trip.transport_mode });
-  }
-  return out;
-}
-
-/** Same idea as cheapestWindows(), but for each candidate start date also
- *  tries every trip length within `flexNights` of `baseNights` and keeps
- *  whichever is cheapest, the "Flexible" length option, for a user who cares
- *  more about the total than an exact number of nights.
- *
- *  Returns [{ start, end, nights, total, mode }] (nights varies per entry),
- *  sorted by start date.
- */
-export function cheapestFlexibleWindows(dest, baseNights, flexNights, choices, meta, allDests = null) {
-  if (!dest || !baseNights || baseNights < 1) return [];
-  const minNights = Math.max(1, baseNights - flexNights);
-  const maxNights = baseNights + flexNights;
-
-  const out = [];
-  for (const start of candidateStartDates(dest, meta, allDests)) {
-    let best = null;
-    for (let n = minNights; n <= maxNights; n++) {
-      const end = addDays(start, n);
-      const trip = composeTrip(dest, start, end, choices, allDests);
-      if (trip && (!best || trip.grand_total < best.total)) {
-        best = { start, end, nights: n, total: trip.grand_total, mode: trip.transport_mode };
-      }
-    }
-    if (best) out.push(best);
-  }
-  return out;
-}
-
-/** Average outbound Ryanair fare by weekday (Mon..Sun), across every origin
- *  and every fetched day, cheapest origin per day. Entries with no data are
- *  null. Surfaces the weekday pattern Ryanair fares reliably have (midweek
- *  cheaper than weekend) without needing a chart of every single day.
- */
-export function fareByWeekday(dest) {
-  const routes = dest?.routes || {};
-  const byDate = new Map();
-  for (const r of Object.values(routes)) {
-    for (const [d, fare] of Object.entries(r.outbound_fare || {})) {
-      if (!byDate.has(d) || fare < byDate.get(d)) byDate.set(d, fare);
-    }
-  }
-
-  const sums = [0, 0, 0, 0, 0, 0, 0];
-  const counts = [0, 0, 0, 0, 0, 0, 0];
-  for (const [d, fare] of byDate) {
-    const dow = (new Date(d + 'T00:00:00Z').getUTCDay() + 6) % 7; // Mon=0 .. Sun=6
-    sums[dow] += fare;
-    counts[dow] += 1;
-  }
-  return sums.map((s, i) => (counts[i] ? Math.round(s / counts[i]) : null));
 }
 
 
@@ -1089,10 +798,9 @@ export function fareByWeekday(dest) {
 // show. The search is always per-person, the app shows a per-person fare, and
 // both providers otherwise report a group total that won't line up.
 //
-// Offers BOTH comparison sites, because they don't return the same set: the
-// budget carriers the app harvests (Ryanair, Wizz, Vueling, Volotea) are sold
-// direct and each aggregator covers a different slice of them, so a fare that
-// looks missing on one often shows up on the other. `links` is ordered with the
+// Offers BOTH comparison sites, because they don't return the same set: budget
+// carriers are sold direct and each aggregator covers a different slice of
+// them, so a fare that looks missing on one often shows up on the other. `links` is ordered with the
 // affiliate-tagged one first (that click is the app's only revenue) and falls
 // back to Skyscanner alone when no marker is configured, so a marker-less dev
 // build behaves exactly as it did before.

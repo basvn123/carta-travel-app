@@ -10,8 +10,8 @@
 //
 //   node scripts/verify_planner_v2.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
-// Nominatim is stubbed (no live geocoding in CI); fares come from the local
-// /fares/*.json slices. Screenshots to shots/planner-v2-*.png.
+// Nominatim is stubbed (no live geocoding in CI). Screenshots to
+// shots/planner-v2-*.png.
 
 import { chromium } from 'playwright';
 

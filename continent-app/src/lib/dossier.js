@@ -6,8 +6,8 @@
  * and the PDF export. When a section is wrong it is wrong in one place.
  *
  * File naming mirrors the pipeline exactly: "gem:bruges" -> "gem-bruges"
- * (a colon is illegal in NTFS names), and DOS device names get the fareFile
- * trailing underscore (PRN -> PRN_), see src/lib/fareFile.js for the story.
+ * (a colon is illegal in NTFS names), and DOS device names get a trailing
+ * underscore (PRN -> PRN_), see reachFileBase in src/lib/reach.js for the story.
  *
  * A missing file under public/ is served as the SPA index at status 200, so
  * the loader checks content-type before parsing, same as every other layer.

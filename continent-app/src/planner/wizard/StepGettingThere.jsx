@@ -19,7 +19,7 @@ import { useI18n } from '../../i18n/index.jsx';
 export function StepGettingThere({
   titleTag, booked, originCard, tripPick, onPickAnother, stopDates, destinations, tripLoading, tripFailed,
   onRetryTrip, tripDetail, tripMissing, gettingLegs, travelValues, setTravelLeg, adults, tripStartDate,
-  onSetStart, dateMin, dateMax, jawHint, legEstimates, groupSize,
+  onSetStart, dateMin, dateMax, jawHint, legEstimates, groupSize, cartaFlight = null,
 }) {
   const { t } = useI18n();
   const StepTitle = titleTag;
@@ -76,6 +76,7 @@ export function StepGettingThere({
                 openJawHint={jawHint}
                 estimates={legEstimates}
                 party={groupSize}
+                cartaFlight={cartaFlight}
               />
             </>
           )}

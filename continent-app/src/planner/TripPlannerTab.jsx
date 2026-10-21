@@ -37,7 +37,6 @@ import { Stepper as KitStepper } from '../components/FilterControls.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 import { geocodeAddress } from '../lib/geocode.js';
-import { fareProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import { scrollBehavior } from '../lib/motion.js';
 
@@ -171,7 +170,8 @@ function LegRow({ leg, onMode }) {
   if (!leg) return <div className="trip-leg">↳ {t('trip.routeUnknown')}</div>;
   if (leg.no_road || !leg.mode) return <div className="trip-leg">↳ {leg.note || t('trip.noOverland')}</div>;
   const chosen = leg.modes[leg.mode];
-  const legProv = fareProv(chosen) || fareProv(leg);
+  // A ground fare from the calibration or the prior is an estimate (groundFares.js).
+  const legEst = Boolean(chosen.est || leg.est);
   return (
     <div className="trip-leg trip-leg-rich">
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
@@ -181,7 +181,9 @@ function LegRow({ leg, onMode }) {
             : `${t(MODE_META[leg.mode].label)}, ${t('trip.legBookedNoPrice')}`)
           : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: `~${eurExact(chosen.eur_pp)}`, hours: fmtHours(chosen.hours) })}
         {leg.long_haul && !chosen.own ? `, ${t('trip.longLeg')}` : ''}
-        {!chosen.own && <FareTag prov={legProv} />}
+        {!chosen.own && legEst && (
+          <span className="fare-prov"><span className="fare-prov-est" title={t('prov.estTitle')}>{t('prov.est')}</span></span>
+        )}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>
       {open && (
@@ -195,7 +197,7 @@ function LegRow({ leg, onMode }) {
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
                 <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && !o.own && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: `${o.own ? '' : estPrefix(fareProv(o))}${eurExact(o.eur_pp)}` })}</b>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: `${!o.own && o.est ? '~' : ''}${eurExact(o.eur_pp)}` })}</b>
                 <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             ))}
@@ -973,6 +975,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               onTravelPaid={setTravelPaid}
               onOwnLeg={(i, mode, n) => tp.setOwnLeg(i, mode, n)}
               onOwnStay={tp.setOwnStay}
+              flightHours={tp.flightHours}
+              onFlightHours={tp.setFlightHours}
+              baggage={tp.baggage}
               receiptId={RECEIPT_ID}
               receiptOpenKey={receiptKey}
               onPdf={async () => {
@@ -1254,7 +1259,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                     variant="card"
                     title={t('plan.tripTotal')}
                   />
-                  {tp.flight?.combinable && !tp.flight?.own && (
+                  {/* Not when Carta has a flight on the receipt (T518). */}
+                  {tp.flight?.combinable && !tp.flight?.own && !tp.priced?.cartaFlight?.out && !tp.priced?.cartaFlight?.back && (
                     <div className="trip-saving-row trip-flight-own-door">
                       <span>{t('trip.flightNotPriced')}</span>
                       <button onClick={() => tp.setOwnFlight({ airline: '', costTotal: 0, mode: 'fly' })}>{t('trip.addOwnFare')}</button>

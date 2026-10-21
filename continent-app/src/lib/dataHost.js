@@ -12,7 +12,7 @@
  *                   data.carta-europetravel.com): the per-country destination
  *                   records, POI lists, dossiers, destinfo, regions, the
  *                   layer pages and the catalogue-sized root files.
- *   fare slices     fares/ and reach/, per origin, also on the data host.
+ *   reach tables    reach/, per origin, also on the data host.
  *   pin tiles       deferred to P15.
  *
  * One switch moves every shard: VITE_DATA_BASE, baked in at build time.
@@ -32,7 +32,6 @@
 export const R2_TIER = Object.freeze([
   'dest',
   'poi',
-  'fares',
   'reach',
   'region',
   'destinfo',

@@ -183,7 +183,6 @@
   "raw-button|src/components/DateField.jsx|<button": 4,
   "raw-button|src/components/Dropdown.jsx|<button": 2,
   "raw-button|src/components/FactMeter.jsx|<button": 1,
-  "money-literal|src/components/FareProvenance.jsx|* €431\"). Not for receipts, whose sum must still equal its parts. */": 1,
   "raw-button|src/components/FavStar.jsx|<button": 1,
   "raw-button|src/components/FilterControls.jsx|<button": 2,
   "raw-button|src/components/InfoDot.jsx|<button": 1,

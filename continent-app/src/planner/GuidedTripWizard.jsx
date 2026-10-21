@@ -1497,6 +1497,7 @@ export function GuidedTripWizard({
                   {...{ titleTag: StepTitle, booked, originCard, tripPick, stopDates, destinations, tripLoading, tripFailed }}
                   {...{ tripDetail, tripMissing, gettingLegs, travelValues, setTravelLeg, adults, tripStartDate }}
                   {...{ dateMin, dateMax, jawHint, legEstimates, groupSize }}
+                  cartaFlight={priced?.cartaFlight || null}
                   onPickAnother={() => { setTripPick(null); goStep(step - 1); }}
                   onRetryTrip={() => setTripTry((n) => n + 1)}
                   onSetStart={(d) => { setStartDate(d); setDateMode('exact'); if (totalNights) setEndDate(addDays(d, totalNights)); }}

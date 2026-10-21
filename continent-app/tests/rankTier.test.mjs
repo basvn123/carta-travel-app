@@ -17,10 +17,9 @@ import {
   splitCatalogue, mergeCatalogue, buildRankTier, decodeRankTier, RANK_FIELDS, RANK_PATH,
 } from "../src/lib/bootIndex.js";
 import { createCatalogue } from "../src/lib/catalogue.js";
-import { hydrateForOrigin, defaultOrigin } from "../src/lib/origins.js";
+import { withOriginRoutes, defaultOrigin } from "../src/lib/origins.js";
 import { composeTrip } from "../src/lib/runtime_pricing.js";
 import { computeCosts } from "../src/lib/costIndex.js";
-import { fareFileBase } from "../src/lib/fareFile.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const pub = join(here, "..", "public");
@@ -158,15 +157,12 @@ test("the published rank tier matches its boot index and the core", { skip: !REA
 test("every destination prices the same from its lite record as from its full one", { skip: !REAL }, () => {
   const { want, liteCore } = realCatalogues();
   const origin = defaultOrigin(want);
-  const fares = join(pub, "fares", `${fareFileBase(origin)}.json`);
-  const slice = existsSync(fares) ? JSON.parse(readFileSync(fares, "utf8")) : {};
-  const full = hydrateForOrigin(want, origin, slice);
-  const lite = hydrateForOrigin(liteCore, origin, slice);
-  const window = slice.__window || {};
-  const depart = window.min_out || want.meta.start_date;
+  const full = withOriginRoutes(want, origin);
+  const lite = withOriginRoutes(liteCore, origin);
+  const depart = want.meta.start_date || "2026-11-14";
   const ret = new Date(Date.parse(depart) + 7 * 864e5).toISOString().slice(0, 10);
   const base = {
-    group_size: 2, baggage_per_direction_eur: 0, origin, transport_mode: "plane",
+    group_size: 2, origin, transport_mode: "plane",
     lifestyle: want.meta.defaults?.lifestyle, accommodation_model: want.meta.accommodation_model,
     car_model: want.meta.car_model, home: want.meta.home, stay_tier: "home",
   };

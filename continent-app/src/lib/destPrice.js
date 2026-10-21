@@ -14,6 +14,9 @@
  *   nights    whole nights, at least 1
  *   people    the party, at least 1
  *   fare      the fare the traveller typed for the whole party, or null
+ *   carta     Carta's return flight for the party near the dates, from
+ *             flights/flights.js roundTripNear(), or null (T517); a typed
+ *             fare wins over it
  *
  * Returns null when the row cannot price a day (no bed or no food figure),
  * else { lines, total, each, est, dayEur, nights, people }. Each line is
@@ -24,7 +27,7 @@
 
 const round2 = (v) => Math.round(v * 100) / 100;
 
-export function priceFromIndex(costRow, nights, people, fare = null) {
+export function priceFromIndex(costRow, nights, people, fare = null, carta = null) {
   if (costRow?.stayEur == null || costRow?.foodEur == null) return null;
   const stay = Number(costRow.stayEur);
   const food = Number(costRow.foodEur);
@@ -36,6 +39,8 @@ export function priceFromIndex(costRow, nights, people, fare = null) {
   const fareEur = Number(fare?.costTotal);
   if (Number.isFinite(fareEur) && fareEur > 0) {
     lines.push({ key: 'flight', eur: round2(fareEur), est: false });
+  } else if (carta?.total > 0) {
+    lines.push({ key: 'flight', eur: round2(carta.total), est: false, carta });
   }
   lines.push({ key: 'stay', eur: round2(stay * n * p), est: costRow.stayLevel !== 'city' });
   lines.push({ key: 'ground', eur: round2(food * n * p), est: costRow.foodLevel !== 'city' });

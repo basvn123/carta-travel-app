@@ -21,6 +21,7 @@ import { createPdf, fileSlug, clean } from './pdfKit.js';
 import { formatMoney } from './money.js';
 import { tripLines } from './tripTotal.js';
 import { tipsForTrip } from './cheapTips.js';
+import { loadAirlines } from './flights/flightData.js';
 
 const LINE_KEY = {
   out: 'itin.secGetThere',
@@ -67,6 +68,9 @@ export async function downloadPlanPdf({
     ? t('plan.dateRange', { a: longDate(first.arriveDate, lang), b: longDate(last.departDate, lang) })
     : '';
   const photos = [];
+  // Carta's flight each way (T518) and the airline names to write it with.
+  const cartaFlight = priced.cartaFlight || null;
+  const airlines = cartaFlight?.out || cartaFlight?.back ? await loadAirlines().catch(() => ({})) : {};
 
   // ── Cover ──
   const cover = first.dest.image?.url
@@ -88,9 +92,11 @@ export async function downloadPlanPdf({
   // ── Price ──
   kit.h2(t('plan.tripTotal'));
   for (const l of tripLines(priced)) {
+    // Google Flights' fare is a measured price, not an estimate (T518).
     const value = l.kind === 'missing' ? t('plan.notIn')
       : l.kind === 'yours' ? `${money(l.eur)} (${t('plan.yours')})`
-        : est(l.eur);
+        : l.kind === 'flight' ? money(l.eur)
+          : est(l.eur);
     kit.moneyRow(t(LINE_KEY[l.key]), value);
   }
   kit.moneyRow(t('receipt.total', { people }), est(priced.grandTotal), { bold: true });
@@ -102,12 +108,24 @@ export async function downloadPlanPdf({
   kit.route(stops.map((s) => [s.dest.lon, s.dest.lat]), { h: 64 });
   const f = priced.flight;
   const travelMode = f?.driving ? 'car' : (f?.mode || 'fly');
-  const travelLine = (dirKey) => {
+  const travelLine = (dirKey, dir) => {
     const how = t(MODE_KEY[travelMode] || 'trip.modeFly');
+    const leg = cartaFlight?.[dir];
     kit.para(t(dirKey), { size: 10.5, style: 'semibold', after: 0.3 });
-    kit.para(how, { size: 9.5, color: C.text2, after: 2 });
+    if (!leg?.cost) {
+      kit.para(how, { size: 9.5, color: C.text2, after: 2 });
+      return;
+    }
+    // The flight Carta priced (T518): airline, flight number, times, the day.
+    const who = [airlines?.[leg.airline]?.name || leg.airline, leg.flightNo].filter(Boolean).join(' ');
+    kit.para(
+      [who, t('flight.times', { dep: leg.dep, arr: leg.arr }), longDate(leg.date, lang)].filter(Boolean).join(', '),
+      { size: 9.5, color: C.text2, after: 0.6 },
+    );
+    kit.moneyRow(`${t('flight.flightLine')} ${leg.from} > ${leg.to}`, money(leg.cost.total));
+    kit.para(t('flight.bookNote'), { size: 8.5, color: C.text3, after: 2 });
   };
-  travelLine('itin.secGetThere');
+  travelLine('itin.secGetThere', 'out');
   stops.forEach((s, i) => {
     const sc = priced.stayCosts[priced.stopDetails.indexOf(s)];
     kit.ensure(22);
@@ -127,7 +145,7 @@ export async function downloadPlanPdf({
     }
     kit.gap(2);
   });
-  travelLine('itin.secGetHome');
+  travelLine('itin.secGetHome', 'back');
 
   // ── Days ──
   if (dayPlan.length) {

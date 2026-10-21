@@ -1,6 +1,7 @@
 // Pipeline health, from migration 041 (T072): when run_pipeline.py last
 // finished, which task keys ran, were skipped, failed or soft-failed, a row
-// count per natural-feature layer, and the fare model's drift-gate verdict.
+// count per natural-feature layer. (The fare model's drift gate went with the
+// old fare logic in T511.)
 //
 // The pipeline runs on the owner's laptop today, not on a server anyone else
 // watches (Execution/P3, T046 to T048, moved the Hetzner infra code but not
@@ -24,7 +25,7 @@ export function PipelineHealth({ health }) {
     );
   }
 
-  const { finishedAt, ageHours, ran, skipped, failed, softFailed, ok, layerCounts, driftGate, destCount } = health;
+  const { finishedAt, ageHours, ran, skipped, failed, softFailed, ok, layerCounts, destCount } = health;
   const when = new Date(finishedAt);
   const ageLabel = ageHours < 48
     ? `${ageHours.toFixed(1)} hours ago`
@@ -67,24 +68,6 @@ export function PipelineHealth({ health }) {
             </ol>
           </section>
 
-          <section className="adminpage-card">
-            <h3 className="adminpage-h3">Fare model drift gate</h3>
-            {driftGate ? (
-              <>
-                <p className={driftGate.action === 'retrain' ? 'adminpage-err' : 'adminpage-ok'}>
-                  {driftGate.verdict} ({driftGate.action})
-                </p>
-                <p className="adminpage-muted">
-                  Max PSI {driftGate.max_psi} on {driftGate.worst_feature}
-                  {driftGate.mape?.now != null && `, MAPE ${(driftGate.mape.now * 100).toFixed(1)}%`}
-                </p>
-              </>
-            ) : (
-              <p className="adminpage-muted">
-                No drift report in this run. Either fare_model did not run, or no model has trained yet.
-              </p>
-            )}
-          </section>
         </div>
       )}
     </section>

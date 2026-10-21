@@ -19,7 +19,9 @@ import {
   FilterIcon, CalendarIcon, CameraIcon, ClockIcon, TrainIcon,
   ChevronDownIcon, ChevronRightIcon, MapPinIcon, ListDayIcon, CloseIcon,
 } from '../components/Icons.jsx';
-import { useTravelMonth } from '../components/SettingsLine.jsx';
+import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
+import { cheapestReturn } from '../lib/flights/flights.js';
+import { destAnchor } from '../lib/origins.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
 import { MonthStrip } from '../components/MonthStrip.jsx';
@@ -481,12 +483,41 @@ export function ExploreTab({
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
-  const { all: allRows, rows, availableCountries, indices: costIndex } = useExploreCatalog({
+  const { all: catAllRows, rows: catRows, availableCountries, indices: costIndex } = useExploreCatalog({
     data, locationQuery, countryFilter, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
     indices, searchHits,
   });
+
+  // T518: the cheapest return flight a person from the home airport's sweep
+  // (data.flights), in the travel month: the traveller's own month when they
+  // set dates (travelMonth), else the month of the dates in use. It rides on
+  // the row's cost as `cost.flight`, so the row, the tile and the hover
+  // receipt read it where they read the day price (DayPrice, CostReceipt).
+  // A place with no flight that month keeps its row object untouched.
+  const settingsLine = useSettings();
+  const flights = data?.flights || null;
+  const flightMonth = settingsLine?.departDate
+    ? String(settingsLine.departDate).slice(0, 7)
+    : new Date().toISOString().slice(0, 7);
+  const flightRows = React.useMemo(() => {
+    if (!flights || !data?.destinations) return null;
+    const m = new Map();
+    for (const p of catAllRows) {
+      const r = cheapestReturn(flights, destAnchor(data.destinations[p.id]), flightMonth);
+      if (r) m.set(p.id, { ...p, cost: { ...p.cost, flight: { perSeat: r.perSeat, airline: r.out.airline } } });
+    }
+    return m;
+  }, [catAllRows, flights, flightMonth, data]);
+  const allRows = React.useMemo(
+    () => (flightRows?.size ? catAllRows.map((p) => flightRows.get(p.id) || p) : catAllRows),
+    [catAllRows, flightRows],
+  );
+  const rows = React.useMemo(
+    () => (flightRows?.size ? catRows.map((p) => flightRows.get(p.id) || p) : catRows),
+    [catRows, flightRows],
+  );
 
   // The guided search's context (T442): the place a "near" facet names (from
   // the list's own merged catalogue), and the one way each facet is named.
