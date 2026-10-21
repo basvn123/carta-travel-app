@@ -102,7 +102,7 @@ Real: the catalogue (`app_data/app_data.json`, read `meta` for counts), per-regi
 
 Carta prices and plans; it never sells. No booking, no commission on travel, no flight pricing: it hands the traveller to the operator (owner-confirmed 2026-10-13).
 
-Carta is not entirely free, and never says it is. Browsing, both planners, one saved trip, the first share link and GPX are free; a Trip Pass (60 days) or the yearly plan adds PDF, ICS and KML export, more saved trips, booking import, co-planners and more AI plans (`lib/pricing.js` TIERS, gates in `hooks/usePaywall.jsx`). The sentence for it is the home page's "Plan for free, pay when you need more" (`home.priceTitle`), or the longer one roadmap 1.15 settles; never "100% free" or "free forever". Where the pass sits in the app is roadmap 1.15 and 2.18.
+Carta is not entirely free, and never says it is. Browsing, both planners, one saved trip, sharing and co-planners (owner T488-b) and GPX are free; a Trip Pass (60 days) or the yearly plan adds every PDF, ICS and KML export, more saved trips, booking import and more AI plans (`lib/pricing.js` TIERS, gates in `hooks/usePaywall.jsx`). The sentence for it is "Planning is free. A Trip Pass adds exports, more saved trips and more AI plans." (`pass.freeSentence`, roadmap 1.15); never "100% free" or "free forever". The pass appears only at a paid moment, in Account and on /pricing (T496, T497).
 
 ## Accessibility constraints
 

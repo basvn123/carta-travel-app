@@ -495,13 +495,14 @@ Sizes are the `--text-*` tokens in the frontmatter; leading is `--leading-tight`
 
 A 4 px spacing grid (`--space-1` to `--space-8` in the frontmatter); T421 moved `--space-5` and `--space-6` onto it (they were 22 and 30 px). `--gutter` is the 16 px side margin. The scale is for new and touched rules; the older stylesheets still carry px literals, which the migration retires.
 
-`--tap` (44 px) is the floor a finger needs. Icon-only controls get it as a minimum box even where the glyph inside is 15 px (WCAG 2.5.5). Nothing interactive is smaller on touch. Under `@media (pointer: fine)` a compact control, such as the small Button or a chip, may be 32 px high (T362).
+`--tap-main` (48 px, T496, owner T485-a) is the height of the phone bottom nav slots and of each place's one primary action (Plan a trip, Add to day, the drawer handle). `--tap` (44 px) is the floor a finger needs. Icon-only controls get it as a minimum box even where the glyph inside is 15 px (WCAG 2.5.5). Nothing interactive is smaller on touch. Under `@media (pointer: fine)` a compact control, such as the small Button or a chip, may be 32 px high (T362).
 
 | Token | Value | Only for |
 |---|---|---|
 | `--filter-h` | `132px` | Height of the filter bar on the map tab |
 | `--panel-w` | `440px` | Width of the desktop detail panel |
-| `--bottom-nav-h` | `calc(86px + env(safe-area-inset-bottom, 0px))` | Height of the phone bottom nav including the home-indicator inset (T494), so nothing above it adds the inset again; set to `0px` where the nav is hidden |
+| `--bottom-nav-h` | `calc(64px + env(safe-area-inset-bottom, 0px))` | Height of the four-slot phone bottom nav including the home-indicator inset (T494, T496), so nothing above it adds the inset again; set to `0px` where the nav is hidden |
+| `--drawer-strip` | `72px` | The collapsed strip of the phone MapDrawer, which always carries the amount (T500) |
 
 Layers, low to high (T474): `--z-base` 0; `--z-sticky` 10, a bar that sticks inside a scroll view; `--z-float` 12, lists and panels floating over the map; `--z-popover` 20, menus, tips and suggestions over those; `--z-header` 25, the app header and top bar; `--z-tray` 30, the open filter tray and a page's own toast; `--z-overlay` 40, drawers, phone panels, the calendar and their scrims; `--z-nav` 50, the bottom nav, the site banner and the plan chooser; `--z-shell` 55, shell panels over the nav (account, the phone header, the destination panel); `--z-modal` 60, dialogs, sheets and full overlays; `--z-toast` 80, a confirmation over a dialog; `--z-menu` 90, phone popovers, and dropdown menus and the loading screen at +10; `--z-page` 200, full-screen pages and what opens over them; `--z-top` 1000, the definition popover and the guides panel; `--z-max` 9999, the crash screen. Inside the map's own layer, `--z-pin-selected` 50 and `--z-pin-hover` 100 lift a price pin. Every z-index of 10 or more reads one of these, or a step inside its band written `calc(var(--z-band) + n)` (a destination page is `calc(var(--z-page) + 40)`); 1 to 9 is stacking inside one component and stays a number. The values are the ones the app shipped with, so the ladder names the order rather than changing it, and the design lint's `z-index-literal` rule keeps it that way. The content column caps at 1180 px.
 
@@ -641,7 +642,7 @@ Every euro the traveller reads goes through one formatter, `src/lib/money.js` (`
 
 ### Navigation
 
-The phone has a white bottom tab bar (`--bottom-nav-h`) with the active icon and label in brown; from 769 px the header carries the tabs. Navigation between pages is links with history and addressable detail pages, never in-page tabs (T380).
+The phone has a white bottom tab bar (`--bottom-nav-h`) of four `--tap-main` slots (Explore, Plan, My trips, Account) with the active icon and label in brown; from 769 px the header carries the logo (the way Home), the three places left after it and the account icon far right (T496). Navigation between pages is links with history and addressable detail pages, never in-page tabs (T380).
 
 **The page bar (T474).** Every full-screen page (destination, item, trip, journey and region) wears one bar, `src/browse/PageBar.jsx` with `.ipage-bar` in `70-item-pages.css`: a quiet back button that names the list it returns to on a phone and a desktop alike (never a bare arrow on one size and a cross on the other), the page's name once its heading has scrolled away, then save and share as icon buttons. It sits on `--surface` with a `--border-soft` hairline, 52 px tall plus the notch inset (content-box, so the inset adds height instead of eating it). A list item that opens a page is a real `<a href>` to the page's address; a plain click opens it in place, a modifier click is the browser's.
 
