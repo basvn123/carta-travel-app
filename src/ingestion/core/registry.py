@@ -153,6 +153,8 @@ RUNS: dict[str, Run] = {
     "pipeline/harvest_bathing_water.py": Run("quarterly", "bathing_water", "hard"),
     "pipeline/harvest_climate_power.py": Run("backfill", "climate", "hard"),
     "pipeline/harvest_events.py": Run("monthly", "events", "soft"),
+    "pipeline/harvest_food_prices.py": Run("monthly", "food", "hard",
+                                           "food and drink model v2 (T513, merged by T536)"),
     "pipeline/harvest_geonames.py": Run("backfill", "geonames", "hard"),
     "pipeline/harvest_image_licenses.py": Run("manual", "", "manual"),
     "pipeline/harvest_images.py": Run("backfill", "images", "hard"),
@@ -1301,6 +1303,29 @@ SOURCES = (
         attributed="Raw ETL only",
     ),
     # 5. Destination content layers (pipeline harvesters)
+    # Food and drink model v2 (T513, rows added at the T536 merge).
+    Source(
+        key="eurostat_food_price_tables",
+        section="content_layers",
+        scripts=('pipeline/harvest_food_prices.py',),
+        name="Eurostat price levels, HICP, exchange rates, NUTS 3 GDP (`pipeline/harvest_food_prices.py`)",
+        takes="prc_ppp_ind, prc_hicp_minr, ert_bil_eur_m and nama_10r_3gdp: the country base, the monthly roll and the income tilt of food prices",
+        licence="Eurostat reuse policy (CC BY 4.0 equivalent)",
+        attribution="Yes",
+        share_alike="No",
+        attributed="Account > Data sources (Eurostat)",
+    ),
+    Source(
+        key="open_food_facts_open_prices",
+        section="content_layers",
+        scripts=('pipeline/harvest_food_prices.py',),
+        name="Open Food Facts Open Prices daily dump (`pipeline/harvest_food_prices.py`)",
+        takes="Crowd-sourced shop prices with locations, used as measured anchors in the food model",
+        licence="ODbL 1.0",
+        attribution="Yes",
+        share_alike="Yes (derived database)",
+        attributed="MISSING: add an Open Food Facts credit to Account > Data sources (row T536)",
+    ),
     # Stay-price layer (T530-T536): only medians per destination are published.
     Source(
         key="xotelo_tripadvisor_rates",
@@ -2703,6 +2728,8 @@ STORABLE: dict[str, str] = {
     'nager_date': 'Yes',
     'openholidays_api': 'Verify',
     'inside_airbnb': 'Yes, with credit',
+    'eurostat_food_price_tables': 'Yes, with credit',
+    'open_food_facts_open_prices': 'Yes, with credit and share-alike',
     'xotelo_tripadvisor_rates': 'Verify',
     'booking_com_search_lists': 'Verify',
     'hostelworld_city_lists': 'Verify',

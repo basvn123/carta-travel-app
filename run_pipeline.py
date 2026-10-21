@@ -1474,6 +1474,20 @@ TASKS = [
                  "measures hotspot prices instead of marking them up."),
     },
     {
+        "key": "food",
+        "title": "Food and drink prices per place (Eurostat + Open Prices, T513)",
+        "cadence": "monthly",
+        "writes_app_data": True,
+        "cmds": [
+            [PY, "pipeline/harvest_food_prices.py"],
+            [PY, "pipeline/apply_food_prices.py"],
+        ],
+        "note": ("no keys; ~1 min. Eurostat publishes the monthly price index around "
+                 "the 17th, so a run after that moves every price to last month. "
+                 "Must run AFTER tourist_premium: apply_tourist_premium.py only "
+                 "touches country-level costs blocks, and this task owns them."),
+    },
+    {
         "key": "stays_discover",
         "title": "Stay layer: Xotelo property pool + OSM supply (T531)",
         "cadence": "quarterly",

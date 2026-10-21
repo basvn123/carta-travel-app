@@ -80,7 +80,7 @@ sees it). A row key links to the source tables that follow.
 | `holidays` | events | Nager.Date public holidays, catalogue countries, current + next year | monthly | `demand_events` | soft | `nager_date` | also part of the weekly ingestion sweep |
 | `school_holidays` | events | OpenHolidays school holidays for the countries it covers | monthly | `demand_events` | soft | `openholidays_api` | also part of the weekly ingestion sweep |
 
-### Harvesters (27)
+### Harvesters (28)
 
 | Script | Cadence | Task | Failure | Ledger rows | Note |
 |---|---|---|---|---|---|
@@ -88,6 +88,7 @@ sees it). A row key links to the source tables that follow.
 | `pipeline/harvest_bathing_water.py` | quarterly | `bathing_water` | hard | `eea_wise_bathing_water`, `eea_wise_bathing_water_eea_spine`, `eea_wise_bathing_water_harvest_bathing_water` |  |
 | `pipeline/harvest_climate_power.py` | backfill | `climate` | hard | `nasa_power_climatology_api`, `nasa_power_2001_2020` |  |
 | `pipeline/harvest_events.py` | monthly | `events` | soft | `wikidata_recurring_events` |  |
+| `pipeline/harvest_food_prices.py` | monthly | `food` | hard | `eurostat_food_price_tables`, `open_food_facts_open_prices` | food and drink model v2 (T513, merged by T536) |
 | `pipeline/harvest_geonames.py` | backfill | `geonames` | hard | `geonames_cities500` |  |
 | `pipeline/harvest_image_licenses.py` | manual | none | manual | `wikimedia_commons_file_metadata` |  |
 | `pipeline/harvest_images.py` | backfill | `images` | hard | `wikipedia` |  |
@@ -163,6 +164,8 @@ the app once those surfaces render from this data.
 
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today | Storable copy |
 |---|---|---|---|---|---|---|
+| Eurostat price levels, HICP, exchange rates, NUTS 3 GDP (`pipeline/harvest_food_prices.py`) | prc_ppp_ind, prc_hicp_minr, ert_bil_eur_m and nama_10r_3gdp: the country base, the monthly roll and the income tilt of food prices | Eurostat reuse policy (CC BY 4.0 equivalent) | Yes | No | Account > Data sources (Eurostat) | Yes, with credit |
+| Open Food Facts Open Prices daily dump (`pipeline/harvest_food_prices.py`) | Crowd-sourced shop prices with locations, used as measured anchors in the food model | ODbL 1.0 | Yes | Yes (derived database) | MISSING: add an Open Food Facts credit to Account > Data sources (row T536) | Yes, with credit and share-alike |
 | Xotelo, TripAdvisor-based hotel prices (`pipeline/stays/price_xotelo.py`) | Property lists per TripAdvisor location; dated per-OTA nightly rates for a few anchor properties per destination, reduced to medians | Free public API, no published terms (one developer). Owner decision 2026-10-21, register row T530-a | Credit TripAdvisor via Xotelo; no property names or links published | No | Account > Data sources (Xotelo) | Verify |
 | Booking.com search lists, owner-run sample (`pipeline/stays/scrape_booking.py`) | List prices, star class and unit name of the first 25 to 50 properties per destination and probe date, twice a year, reduced to medians | Site terms restrict commercial scraping; owner states permission and educational use, 2026-10-21 (register row T530-a) | No property names, photos or links published | No | Account > Data sources (sampled list prices) | Verify |
 | Hostelworld city lists, owner-run sample (`pipeline/stays/scrape_hostelworld.py`) | Dorm and private 'from' prices per hostel on the city list page, twice a year, reduced to medians | Site terms; owner states permission and educational use, 2026-10-21 (register row T530-a) | No property names, photos or links published | No | Account > Data sources (sampled list prices) | Verify |
