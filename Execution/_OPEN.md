@@ -1857,3 +1857,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T509-a | T509 | Owner chose to merge each of the six overlapping roadmap row pairs (T477-a): 1.12 and 1.19, 2.16 and 3.11, 4.15 and 4.23, 4.19 and 2.23, 4.16 and 4.18 with 4.24, 5.12 and 5.13; rewrite the roadmap rows | next task | open |  |
 | T509-b | T509 | The trip planner and the day cost bar print cents ("about 1,328.25 euros for 2 people") against the whole-euros rule 1.8 (DIRECTION.md section 11); older than this batch | next task | open |  |
 | T509-c | T509 | Trip planner card labels show the English country name in Dutch ("Beste tijd, Italy"); older than this batch | next task | open |  |
+| T510-a | T510 | The logo north needle is rust #e05a47 again (owner 2026-10-21) but carta-design and DESIGN.md still describe the brown-needle mark; record the owner choice there | next task | open |  |

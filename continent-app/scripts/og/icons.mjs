@@ -22,31 +22,33 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { APP_ROOT, C } from './tokens.mjs';
+import { APP_ROOT } from './tokens.mjs';
 import { markShapes } from './cards.mjs';
 import { rasterise, closeBrowser } from './render.mjs';
 
 const PUB = path.join(APP_ROOT, 'public');
 const STORE = path.join(APP_ROOT, 'brand', 'store');
 
-/* T438: the app icon is the white compass on the action brown tile (it was
-   lagoon teal from T425), the
-   way an app reads on a home screen; the header keeps the ink mark on white. */
-const ICON_MARK = { ring: C.onFill, inner: C.umber300, north: C.onFill, south: C.umber200, pivot: C.accent, pivotEdge: C.onFill };
+/* Owner 2026-10-21: the app icon is back to the T212 mark, the ink compass
+   with a rust north needle on a cream tile (T436/T438 had made it white on
+   teal, then on brown). Fixed values, not tokens, so a palette change cannot
+   move the brand mark again. */
+const ICON_GROUND = '#f8f6f0';
+const ICON_MARK = { ring: '#0f172a', inner: '#ccc7b8', north: '#e05a47', south: '#0f172a', pivot: ICON_GROUND, pivotEdge: '#0f172a' };
 
-/** A square icon: brown ground, white mark centred and sized as a share of the side. */
+/** A square icon: cream ground, ink mark centred and sized as a share of the side. */
 function iconSvg(size, share, { ground = true } = {}) {
   const m = size * share;
   const o = (size - m) / 2;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`
-    + (ground ? `<rect width="${size}" height="${size}" fill="${C.accent}"/>` : '')
+    + (ground ? `<rect width="${size}" height="${size}" fill="${ICON_GROUND}"/>` : '')
     + `<g transform="translate(${o} ${o}) scale(${m / 32})">${markShapes(ICON_MARK)}</g></svg>`;
 }
 
-/** The favicon: a brown tile with the white mark, so it reads on light and dark tab strips. */
+/** The favicon: a cream tile with the mark, so it reads on a dark tab strip too. */
 export function faviconSvg() {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">`
-    + `<rect width="32" height="32" rx="7" fill="${C.accent}"/>`
+    + `<rect width="32" height="32" rx="7" fill="${ICON_GROUND}"/>`
     + `<g transform="translate(1.5 1.5) scale(0.9375)">${markShapes(ICON_MARK)}</g></svg>\n`;
 }
 
@@ -95,7 +97,7 @@ export async function buildIcons() {
   }
   put(path.join(STORE, 'android', 'playstore-512.png'), await png(iconSvg(512, ANY_SHARE), 512));
   put(path.join(STORE, 'android', 'adaptive-foreground-432.png'), await png(iconSvg(432, ADAPTIVE_SHARE, { ground: false }), 432, { transparent: true }));
-  put(path.join(STORE, 'android', 'adaptive-background-colour.txt'), Buffer.from(`${C.accent}\n`));
+  put(path.join(STORE, 'android', 'adaptive-background-colour.txt'), Buffer.from(`${ICON_GROUND}\n`));
   for (const size of IOS_SIZES) {
     put(path.join(STORE, 'ios', `AppIcon-${size}.png`), await png(iconSvg(size, ANY_SHARE), size));
   }
