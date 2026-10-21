@@ -144,8 +144,11 @@ are archived in `archive/notebooks/`, and the live accommodation path is
         "coffee_eur": 2.12,
         "grocery_day_eur": 11.62,
         "club_entry_eur": 9.76,
-        "level": "country",         // "city" (override) or "country"
-        "price_source": "numbeo_direct"  // numbeo_city | numbeo_direct | pli_scaled
+        "level": "region",          // "city" | "region" | "country" (see Food price model v2)
+        "price_source": "carta_food_v2",  // older data: numbeo_city | numbeo_direct | pli_scaled
+        "drivers": {"inc": 1.03, "tour": 1.04, "size": 1.03, "rcpt": 0.99},  // optional
+        "n_rcpt": 312,              // optional: matched shop prices within 15 km
+        "city": "Porto"             // level "city" only: whose measured basket
       },
       "accommodation": {            // Airbnb anchor (EUR); null if unknown
         "per_person_night_eur": 30.0,    // annual median entire-home base, per head (no fees)
@@ -316,6 +319,40 @@ are archived in `archive/notebooks/`, and the live accommodation path is
   Idempotent: a re-run resets prior auto-anchors first. Everything farther stays
   `no_ryanair_route: true`, the app still shows those, flagged unreachable via
   Ryanair (muted map dot + a separate list section), it just doesn't price them.
+
+## Food price model v2 (T513, `pipeline/apply_food_prices.py`)
+
+Replaces the 90 copied baskets with a price per place, rolled to the latest
+month. Run monthly by `run_pipeline.py --only food` (harvest, then apply, ~1 min,
+no keys). `price = country base x local tilt`.
+
+- **Country base.** The June 2026 country basket (`cache/costs.json`) where it was
+  measured (24 countries, `meta.food_country[cc].anchor = "measured"`); else a Europe
+  reference price x the Eurostat price level of the item's category (`modelled`, 13);
+  else the June basket (`legacy`: microstates and Moldova). Every base is rolled from
+  its period to the latest month by the local HICP (ECOICOP 2: CP111 eating out, CP011
+  food) through the monthly euro exchange rate.
+- **Local tilt** (`costs.drivers`, product capped to 0.80 to 1.60): regional income per
+  head (NUTS3, elasticity 0.15 eating out, 0.08 chains, 0.05 groceries), tourist pressure
+  (the curated `apply_tourist_premium.PREMIUM_TIERS`, else +4% / +8% eating out in the
+  top 15% / 5% of NUTS3 regions by tourist nights per km2), town size (GeoNames), and
+  for groceries the Open Food Facts Open Prices matched-product index within 15 km
+  (needs 40 prices, shrunk by n / (n + 80)). A driver equal to 1 is left out.
+- **Measured cities.** A place within 15 km of one of the 22 measured cities keeps that
+  city's basket, rolled forward, untilted (`level: "city"`, `costs.city`).
+- **`level`**: `region` when any driver moved the price, `country` when none did, `city`
+  as above.
+- **Meta.** `meta.food_model` (version, `asof` month, Europe reference prices,
+  elasticities, sources, validation: leave-one-country-out error per item and the
+  measured-city check) and `meta.food_country` (country base per item plus its anchor).
+- **Inputs.** `cache/food_price_inputs.json` (Eurostat price levels, HICP, FX, NUTS3 income;
+  the Open Prices shop index), from `pipeline/harvest_food_prices.py`.
+- **Rollback.** The first apply saves the blocks it replaces to
+  `cache/food_prices_pre_v2.<folder>_<file>.json`; `apply_food_prices.py --restore` puts
+  them back exactly.
+- `apply_tourist_premium.py` still runs in `lodging`, but only bumps `level == "country"`
+  blocks. A curated place always has a tourism driver, so it is never `country` here
+  and is never bumped twice.
 
 ## Cost data provenance (legacy notebook 03_costs, now archive/notebooks/)
 
