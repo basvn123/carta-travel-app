@@ -11,7 +11,7 @@
  * Never guard a purchase or a generation on this value alone.
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { supabase, authConfigured } from '../lib/supabaseClient.js';
+import { getSupabase, authConfigured } from '../lib/supabaseClient.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 
 const GUEST = {
@@ -37,6 +37,7 @@ const LIVE = new Set(['active', 'trialing', 'past_due']);
 /** The yearly plan's state off the traveller's own entitlement row. */
 async function readSubscription(userId) {
   try {
+    const supabase = await getSupabase();
     const { data, error } = await supabase
       .from('entitlements')
       .select('subscription_id, subscription_status, cancel_at_period_end, renews_at')
@@ -64,6 +65,7 @@ export function useEntitlement() {
     const id = ++reqId.current;
     setState((s) => ({ ...s, loading: true }));
     try {
+      const supabase = await getSupabase();
       const [{ data, error }, subscription] = await Promise.all([
         supabase.rpc('ai_status', { p_user: user.id }),
         readSubscription(user.id),

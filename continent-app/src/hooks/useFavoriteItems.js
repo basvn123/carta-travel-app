@@ -7,6 +7,7 @@ import { loadTrails } from '../lib/trails.js';
 import { loadCycling } from '../lib/cycling.js';
 import { loadTrip } from '../lib/trips.js';
 import { loadJourney } from '../lib/journeys.js';
+import { loadRegion } from '../lib/regions.js';
 
 /**
  * useFavoriteItems, the shortlist with its names and photographs back on.
@@ -109,6 +110,30 @@ function normaliseJourney(row, id) {
 }
 
 /**
+ * A region in the shortlist's row shape: its name, its country and the first
+ * photograph on its cards (the page's own hero rule). The region file nests
+ * the row under `region` and ships its cards as `editorial` and `rated`.
+ * Added by T478 (row T474-a).
+ */
+function normaliseRegion(raw, id) {
+  const row = raw?.region;
+  if (!row) return null;
+  const card = [...(raw.editorial || []), ...(raw.rated || [])]
+    .find((c) => (c.images && c.images[0]) || c.img);
+  const first = card && ((card.images && card.images[0]) || card.img);
+  return {
+    kind: 'region',
+    id: String(id),
+    cc: row.country || '',
+    name: row.name || '',
+    sub: row.country || '',
+    score: null,
+    img: cleanImg((typeof first === 'string' ? first : first && first.u) || null),
+    missing: false,
+  };
+}
+
+/**
  * One feature row by kind, country and id, in the same normalised shape the
  * shortlist rows come back in. For the day planner's ?feat= hand-off link,
  * which carries only those three and needs a name and a point.
@@ -160,9 +185,11 @@ export function useFavoriteItems(favorites, destinations) {
     const byFile = new Map(); // `${kind}:${cc}` -> [item]
     const trips = [];
     const journeys = [];
+    const regions = [];
     for (const it of todo) {
       if (it.kind === 'trip') { trips.push(it); continue; }
       if (it.kind === 'journey') { journeys.push(it); continue; }
+      if (it.kind === 'region') { regions.push(it); continue; }
       const k = `${it.kind}:${it.cc}`;
       if (!byFile.has(k)) byFile.set(k, []);
       byFile.get(k).push(it);
@@ -198,6 +225,13 @@ export function useFavoriteItems(favorites, destinations) {
       const gone = { kind: 'journey', id: it.id, cc: '', name: '', sub: '', img: null, missing: true };
       jobs.push(loadJourney(it.id)
         .then((row) => [[it.key, normaliseJourney(row, it.id) || gone]])
+        .catch(() => [[it.key, gone]]));
+    }
+
+    for (const it of regions) {
+      const gone = { kind: 'region', id: it.id, cc: '', name: '', sub: '', img: null, missing: true };
+      jobs.push(loadRegion(it.id)
+        .then((raw) => [[it.key, normaliseRegion(raw, it.id) || gone]])
         .catch(() => [[it.key, gone]]));
     }
 
@@ -262,7 +296,7 @@ export function useShortlistPoints(favorites) {
   return useMemo(() => {
     const out = [];
     for (const { kind, rows } of sections) {
-      if (kind === 'dest' || kind === 'trip' || kind === 'journey') continue;
+      if (kind === 'dest' || kind === 'trip' || kind === 'journey' || kind === 'region') continue;
       for (const r of rows) {
         if (r.missing || r.pending) continue;
         if (!Number.isFinite(r.lat) || !Number.isFinite(r.lon)) continue;

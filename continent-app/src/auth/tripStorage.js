@@ -1,6 +1,7 @@
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 
 export async function fetchSavedTrips(userId) {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from('saved_trips')
     .select('*')
@@ -11,6 +12,7 @@ export async function fetchSavedTrips(userId) {
 }
 
 export async function saveTrip(userId, trip) {
+  const supabase = await getSupabase();
   const { error } = await supabase.from('saved_trips').insert({
     user_id: userId,
     destination_id: trip.destinationId,
@@ -25,11 +27,13 @@ export async function saveTrip(userId, trip) {
 }
 
 export async function deleteTrip(id) {
+  const supabase = await getSupabase();
   const { error } = await supabase.from('saved_trips').delete().eq('id', id);
   if (error) throw error;
 }
 
 export async function fetchUserSettings(userId) {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from('user_settings')
     .select('settings')
@@ -40,6 +44,7 @@ export async function fetchUserSettings(userId) {
 }
 
 export async function saveUserSettings(userId, settings) {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('user_settings')
     .upsert({ user_id: userId, settings, updated_at: new Date().toISOString() });

@@ -970,6 +970,7 @@ export const fr = {
   "saved.friendsSharedN": "Vos amis vous ont montré {n} voyages.",
   "saved.friendsOpen": "Les voir dans Amis",
   "saved.favKindJourney": "Semaines de voyage",
+  "saved.favKindRegion": "Régions",
   "saved.tripPlans": "Plans de voyage",
   "saved.tripPlansSub": "Itinéraires à plusieurs étapes créés dans le Planificateur de voyage, avec vols et séjours tarifés.",
   "saved.untitledTrip": "Voyage sans titre",

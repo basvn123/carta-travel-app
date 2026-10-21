@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/items.css';
 import { useI18n } from '../i18n/index.jsx';
 import { DetailPage } from './DetailSkeleton.jsx';
 import { ItemHead } from './ItemParts.jsx';

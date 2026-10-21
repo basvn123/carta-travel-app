@@ -478,7 +478,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 }
 
 .admin-pass-now { margin-bottom: 8px; }
-.admin-days label { font-size: 13px; color: var(--ink-soft); }
 .admin-days input {
   width: 90px;
   min-height: 40px;
@@ -687,28 +686,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
    every measured fact, action-brown for the one active thing) and adds no new
    colour. Wide tables scroll inside their own wrapper so the page body never
    scrolls sideways. */
-.adminpage-bar {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 0 20px;
-  height: 60px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--bg-card);
-}
-.adminpage-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: none;
-  font-family: var(--display);
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--ink);
-}
 .adminpage-brand > svg { color: var(--accent); }
-.adminpage-nav { display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; }
 .adminpage-navbtn {
   flex: none;
   min-height: 38px;
@@ -735,17 +713,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   color: var(--ink-soft);
   cursor: pointer;
 }
-
-.adminpage-body {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 26px 24px 80px;
-  max-width: 1240px;
-  width: 100%;
-  margin: 0 auto;
-}
-.adminpage-headrow .adminpage-h1 { margin-bottom: 0; }
 .adminpage-warn > svg { flex: none; color: var(--amber-ink); margin-top: 1px; }
 .adminpage-tile b {
   display: block;
@@ -811,12 +778,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
    inside its frame, so the form is held to the visible width and stays in
    view while the columns scroll. 58px is the phone body padding, the frame
    border and the cell padding. */
-.adminpage-table .adminpage-armed {
-  white-space: normal;
-  position: sticky;
-  left: 14px;
-  max-width: calc(100vw - 58px);
-}
 /* A table whose rows are figures, not doors. The user list opens a detail
    panel on a row click and carries a pointer cursor and a hover fill to say
    so; the AI usage rollup only reports, so it must not offer either. */
@@ -830,31 +791,11 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 }
 /* Audit rows with a previous and a new state (T064-b): the two sides
    whole, side by side, stacked under 640px. */
-.adminpage-auditpair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  min-width: 260px;
-}
 .adminpage-auditpair > div {
   min-width: 0;
   border: 1px solid var(--rule-soft);
   border-radius: 6px;
   padding: 6px 8px;
-}
-.adminpage-auditpair pre {
-  margin: 2px 0 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  max-height: 160px;
-  overflow: auto;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink);
-}
-.adminpage-auditrest { grid-column: 1 / -1; margin: 0; overflow-wrap: anywhere; }
-@media (max-width: 640px) {
-  .adminpage-auditpair { grid-template-columns: 1fr; }
 }
 /* Site tab: one row per key with its visibility switch. */
 .adminpage-keylist li {
@@ -870,22 +811,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 .adminpage-keymeta { flex: 1; min-width: 0; margin: 0; font-size: 12.5px; }
 /* Nav count: a number in mono beside the tab name, so a waiting notice is
    seen without opening the tab. */
-.adminpage-badge {
-  display: inline-block;
-  margin-left: 6px;
-  min-width: 18px;
-  padding: 0 5px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 11.5px;
-  line-height: 18px;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
 /* Overview: what is waiting for a person. A tile that is a button. */
-.adminpage-nametext { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .adminpage-nametext b { font-size: 13.5px; font-weight: 600; color: var(--ink); }
 .adminpage-nametext span { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
 
@@ -920,22 +846,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-@media (hover: hover) {
-  .adminpage-btn.primary:hover { background: var(--ink-soft); border-color: var(--ink-soft); color: var(--paper); }
-}
-@media (hover: hover) {
-  .adminpage-btn.danger:hover { color: var(--danger-dark); border-color: var(--danger-dark); }
-}
-.adminpage-btn.danger.solid { background: var(--danger); border-color: var(--danger); color: var(--on-fill); }
-
-.adminpage-cols {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  gap: 16px;
-  align-items: start;
-  margin-top: 18px;
-}
-.adminpage-detail-id { flex: 1; min-width: 0; }
 .adminpage-detail-id h2 {
   font-family: var(--display);
   font-size: 25px;
@@ -945,7 +855,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   margin: 0;
 }
 .adminpage-detail-id p { margin: 2px 0 0; font-size: 13.5px; color: var(--ink-soft); }
-.adminpage-detail-chips { flex: none; }
 .adminpage-facts > div {
   display: flex;
   align-items: baseline;
@@ -971,14 +880,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-top: 1px solid var(--rule-soft);
 }
 .adminpage-log li:first-child { border-top: none; }
-.adminpage-when {
-  flex: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
-.adminpage-what { font-size: 13px; color: var(--ink); overflow-wrap: anywhere; }
 .adminpage-seg {
   min-height: 38px;
   padding: 7px 16px;
@@ -991,7 +892,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
-.adminpage-inline label { font-size: 13px; color: var(--ink-soft); }
 .adminpage-inline input {
   width: 96px;
   min-height: 42px;
@@ -1008,21 +908,8 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 .adminpage-row .adminpage-lock-input { flex: 1; min-width: 140px; }
 /* The MFA step-up inside an armed ban or delete (T254). A hairline, not a
    second card: it is one step of the action it sits in. */
-.adminpage-mfa { margin: 4px 0 14px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
-.adminpage-mfa .adminpage-err { margin-bottom: 0; }
 .adminpage-mfa-secret { display: block; font-family: var(--mono); font-size: 13px; color: var(--ink); word-break: break-all; user-select: all; }
-.adminpage-row .adminpage-lock-input.adminpage-mfa-code { flex: 0 1 140px; min-width: 120px; letter-spacing: 0.12em; font-variant-numeric: tabular-nums; }
-.adminpage-textarea::placeholder { color: var(--ink-mute); }
 .adminpage-check input { width: 17px; height: 17px; accent-color: var(--accent); }
-
-.adminpage-flag {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 46px;
-  padding: 4px 0;
-  border-top: 1px solid var(--rule-soft);
-}
 .adminpage-flag code {
   flex: 1;
   min-width: 0;
@@ -1062,18 +949,9 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 
 /* The lock, before anything else renders. */
 .adminpage-lock-input.mono { font-family: var(--mono); font-size: 13px; }
-.adminpage-lock-actions { display: flex; gap: 10px; margin-top: 18px; }
-.adminpage-lock-actions .adminpage-btn { flex: 1; }
 
 /* Four weeks of signups. Bars only, no axis: the total is written out
    underneath, so the chart adds shape rather than carrying the number. */
-.adminpage-sparkbar {
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  height: 100%;
-  min-width: 0;
-}
 .adminpage-sparkbar > span {
   width: 100%;
   border-radius: 2px 2px 0 0;
@@ -1085,31 +963,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   gap: 10px;
   padding: 6px 0;
 }
-.adminpage-barlabel {
-  flex: none;
-  width: 74px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.adminpage-bartrack {
-  flex: 1;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  overflow: hidden;
-}
-.adminpage-barnum {
-  flex: none;
-  min-width: 34px;
-  text-align: right;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
 .adminpage-rank li {
   display: flex;
   align-items: baseline;
@@ -1120,15 +973,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   counter-increment: rank;
 }
 .adminpage-rank li:first-child { border-top: none; }
-.adminpage-rankname::before {
-  content: counter(rank) '.';
-  display: inline-block;
-  width: 22px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-}
-.adminpage-rankname em { font-style: normal; color: var(--ink-mute); font-size: 12px; margin-left: 6px; }
 
 /* Hard versus soft, on the paywall funnel's per-gate rank (T034). A plain
    text tag rather than a coloured pill: the two tiles above it already carry
@@ -1138,28 +982,9 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
 
 /* The feedback inbox. One card per message, because a message is a thing
    somebody wrote and reading it is the point. */
-.adminpage-fblist { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
-.adminpage-fbmsg {
-  margin: 0 0 8px;
-  font-size: 14.5px;
-  line-height: 1.55;
-  color: var(--ink);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.adminpage-fbctx {
-  margin: 0 0 12px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  overflow-wrap: anywhere;
-}
-.adminpage-maint { margin-top: 18px; }
 
 @media (max-width: 700px) {
-  .adminpage-bar { gap: 10px; padding: 0 12px; }
   .adminpage-brand span { display: none; }
-  .adminpage-body { padding: 18px 14px 70px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1184,16 +1009,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   transition: border-color var(--dur-1) var(--ease-out);
 }
 .adminpage-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.adminpage-cardmeta {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 0 12px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-mute);
-  min-width: 0;
-}
 .adminpage-cardmeta b { color: var(--rate); font-size: 12px; font-variant-numeric: tabular-nums; }
 .adminpage-cardmeta code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -1208,7 +1023,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   color: var(--ink-mute);
   overflow-wrap: anywhere;
 }
-.adminpage-editorpreview figure { margin: 0; }
 .adminpage-editorpreview figcaption {
   margin-bottom: 5px;
   font-family: var(--ui);
@@ -1224,8 +1038,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border: 1px solid var(--rule-soft);
   background: var(--paper-dim);
 }
-.adminpage-editorbox .adminpage-lock-input { margin-bottom: 4px; }
-.adminpage-editoractions { margin-top: 18px; justify-content: flex-end; }
 
 /* OverrideDiffViewer (T076): the stored patch read against the pipeline's
    own object, so the admin sees what a traveller gets before approving it
@@ -1240,7 +1052,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   border-top: 1px solid var(--rule-soft);
   align-items: start;
 }
-.diffviewer-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-width: 0; }
 .diffcell {
   font-size: 13.5px;
   color: var(--ink);
@@ -1271,12 +1082,6 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
    rather than cards: it is a run of related facts, not a shelf of objects.
    Overdue is --danger, the one alarm colour the admin page already uses for
    errors; the dates are mono because they are measured facts. */
-.adminpage-reviewlist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--rule-soft);
-}
 .adminpage-reviewlist li { border-bottom: 1px solid var(--rule-soft); }
 .adminpage-reviewrow {
   display: flex;
@@ -1295,9 +1100,7 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   color: var(--ink);
   cursor: pointer;
 }
-.adminpage-reviewwhat { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 220px; }
 .adminpage-reviewwhat b { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
-.adminpage-reviewnote { font-size: 13px; color: var(--ink-soft); line-height: 1.45; overflow-wrap: anywhere; }
 .adminpage-reviewfacts code {
   font-family: var(--mono);
   font-size: 11px;
@@ -1305,12 +1108,8 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   overflow-wrap: anywhere;
 }
 .adminpage-reviewset { margin: 18px 0 0; padding: 14px 0 0; border: 0; border-top: 1px solid var(--rule-soft); }
-.adminpage-reviewset legend { float: left; width: 100%; padding: 0; }
-.adminpage-reviewset .adminpage-segment { clear: both; margin-bottom: 6px; }
-.adminpage-reviewset .adminpage-textarea { margin-bottom: 0; }
 /* Found by the T074 380px check: the two preview figures kept their
    min-content width and pushed the editor past a phone screen. */
-.adminpage-reviewset { min-width: 0; }
 @media (prefers-reduced-motion: reduce) {
   .adminpage-card2 { transition: none; }
 }

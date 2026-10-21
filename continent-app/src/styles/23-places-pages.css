@@ -668,7 +668,7 @@
   font-variant-numeric: tabular-nums;
   overflow: hidden;
 }
-.places-card-facts > * { flex: none; }
+.places-card-facts > :where(.pcard-v) { flex: none; }
 .places-card-kind {
   display: inline-block;
   margin-top: 6px;
@@ -1041,7 +1041,6 @@
 .notfor-line + .notfor-line { margin-top: 6px; }
 
 /* ── What is there. A run of facts is a list with hairlines, not cards. ── */
-.bpage-facts dl { margin: 0; }
 .bpage-fact {
   display: flex;
   align-items: baseline;
@@ -1049,7 +1048,6 @@
   padding: 9px 0;
   border-top: 1px solid var(--rule-soft);
 }
-.bpage-fact:last-child { border-bottom: 1px solid var(--rule-soft); }
 .bpage-fact dt {
   flex: none;
   width: 132px;
@@ -1228,12 +1226,6 @@
   border-radius: 3px;
   background: var(--paper-dim);
   overflow: hidden;
-}
-.bpage-bar-fill {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-  background: var(--rate);
 }
 .bpage-bar-n {
   flex: none;
@@ -1435,12 +1427,6 @@
 .lpage-swim-warn { --sw-ink: var(--amber); }
 .lpage-swim-stop { --sw-ink: var(--warn-vivid); }
 .lpage-swim-unknown { --sw-ink: var(--slate-ink); }
-.lpage-swim-word {
-  font-size: 15px;
-  font-weight: 600;
-  /* Ink, not the indicator colour, which is under 4.5:1 as text (T186). */
-  color: var(--ink);
-}
 .lpage-swim-src { font-size: 12.5px; color: var(--ink-soft); }
 .lpage-swim-season {
   flex-basis: 100%;
@@ -1497,18 +1483,6 @@
   gap: 2px;
   padding: 11px 6px 10px;
   background: var(--paper);
-}
-.lpage-sub-n {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 19px;
-  font-weight: 500;
-  color: var(--ink);
-}
-.lpage-sub-label {
-  font-size: 11px;
-  color: var(--ink-mute);
-  text-align: center;
 }
 
 /* Hazards, in their own block and never folded into the paragraph: a cold
@@ -1567,9 +1541,6 @@
   border-radius: 4px;
   background: color-mix(in srgb, var(--ink-mute) 45%, transparent);
 }
-.lpage-months li.warm .lpage-month-bar > span {
-  background: color-mix(in srgb, var(--water-clear) 78%, transparent);
-}
 .lpage-month-c {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
@@ -1594,14 +1565,7 @@
   font-size: 13.5px;
   color: var(--ink);
 }
-.lpage-walks li:last-child { border-bottom: 1px solid var(--rule-soft); }
 .lpage-walks li svg { flex: none; color: var(--ink-mute); }
-.lpage-walks li span {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 .lpage-walks li small {
   flex: none;
   font-family: var(--mono);
@@ -1639,19 +1603,8 @@
 .mpage-way-ride { --way-ink: var(--good-vivid); }
 .mpage-way-near { --way-ink: var(--slate-ink); }
 .mpage-way-foot { --way-ink: var(--slate-ink); }
-.mpage-way-word {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink);
-}
 /* The lift's own name is a proper noun off the map, so it reads as a name
    rather than as part of the sentence. */
-.mpage-way-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.mpage-way-src { font-size: 12.5px; color: var(--ink-soft); }
 .mpage-way-note {
   flex-basis: 100%;
   font-size: 12.5px;
@@ -1778,25 +1731,11 @@
 }
 
 /* ── The route map ── */
-.tpage-hero {
-  position: relative;
-  height: 44vh;
-  min-height: 240px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--paper-dim);
-}
-@media (min-width: 900px) {
-  .tpage-hero { height: 400px; }
-}
 /* !important is load order, not taste: MapLibre puts .maplibregl-map on the
    CONTAINER (this element), and maplibre-gl.css arrives with the lazy chunk
    AFTER styles.css. Same specificity, later sheet wins, so its
    "position: relative; overflow: hidden" collapses the map to zero height and
    the route disappears behind its own clip. */
-.tpage-map {
-  position: absolute !important;
-  inset: 0 !important;
-}
 .tpage-start-pin {
   display: block;
   width: 13px;
@@ -1808,7 +1747,6 @@
 }
 /* The walker's own position. MapLibre rewrites a marker element's inline
    transform every frame, so anything animated lives on the inner dot. */
-.tpage-me { display: block; width: 26px; height: 26px; }
 .tpage-me-dot {
   display: block;
   width: 15px;
@@ -1827,23 +1765,10 @@
 }
 
 /* ── Following: the map takes the page, the HUD reports on it ── */
-.tpage.following .tpage-scroll { overflow: hidden; }
-.tpage.following .tpage-hero {
-  position: absolute;
-  inset: 52px 0 0;
-  height: auto;
-  min-height: 0;
-  z-index: 5;
-  border-bottom: none;
-}
 /* The HUD card would sit on top of the basemap credit, which has to stay
    readable, so the map's own control row moves above it while following.
    !important to beat the app-wide 8px control margin, which is itself
    !important (see .maplibregl-ctrl-bottom-left above). */
-.tpage.following .maplibregl-ctrl-bottom-right,
-.tpage.following .maplibregl-ctrl-bottom-left {
-  margin-bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
-}
 .tpage-hud { position: absolute; inset: 0; pointer-events: none; }
 .tpage-hud-close {
   position: absolute;
@@ -1908,20 +1833,6 @@
   color: var(--danger);
 }
 .tpage-hud-top { display: flex; align-items: baseline; gap: 7px; }
-.tpage-hud-done {
-  font-family: var(--mono);
-  font-size: 30px;
-  font-weight: 500;
-  line-height: 1;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-.tpage-hud-of {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
 .tpage-hud-track {
   height: 6px;
   margin: 9px 0 8px;
@@ -1929,7 +1840,6 @@
   background: var(--paper-dim);
   overflow: hidden;
 }
-.tpage-hud-fill { display: block; height: 100%; background: var(--accent); }
 .tpage-hud-row {
   display: flex;
   flex-wrap: wrap;
@@ -1939,7 +1849,6 @@
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
 }
-.tpage-hud-acc { color: var(--ink-mute); }
 
 /* ── The page body ── */
 .tpage-col {
@@ -1995,25 +1904,11 @@
   background: var(--rule-soft);
   overflow: hidden;
 }
-.tpage-facts > * {
+.tpage-facts > :where(.tpage-fact) {
   flex: 1 1 92px;
   min-width: 0;
 }
-.tpage-fact {
-  padding: 9px 12px 10px;
-  background: var(--bg-card);
-}
-.tpage-fact-val {
-  display: block;
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
 /* Difficulty is a word, not a measurement, so it leaves the mono column. */
-.tpage-fact-val.is-word { font-family: var(--ui); font-size: 14px; font-weight: 600; }
 .tpage-fact-label {
   display: block;
   margin-top: 2px;
@@ -2036,9 +1931,6 @@
   color: var(--on-fill);
   font-size: 15px;
   font-weight: 600;
-}
-@media (hover: hover) {
-  .tpage-primary:hover { filter: brightness(0.95); }
 }
 @media (min-width: 700px) {
   /* A 720px wide button reads as a banner, not an action. */
@@ -2077,10 +1969,8 @@
 }
 
 .tpage-elev { margin-top: 2px; }
-.tpage-elev-svg { display: block; width: 100%; height: 96px; }
 .tpage-elev-area { fill: var(--accent-bg); stroke: none; }
 .tpage-elev-line { fill: none; stroke: var(--accent); stroke-width: 1.6; }
-.tpage-elev-here { stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 3; }
 .tpage-elev-axis {
   display: flex;
   justify-content: space-between;
@@ -2094,12 +1984,6 @@
 .tpage-stops { margin: 0; padding: 0 0 0 22px; }
 .tpage-stops li { padding: 7px 0; border-top: 1px solid var(--rule-soft); }
 .tpage-stops li:first-child { border-top: none; }
-.tpage-stops li::marker {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--accent);
-}
-.tpage-stop-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
 .tpage-stop-facts {
   display: flex;
   gap: 12px;
@@ -2125,9 +2009,6 @@
   color: var(--ink);
   text-decoration: none;
 }
-@media (hover: hover) {
-  .tpage-act:hover { background: var(--paper-dim); }
-}
 .tpage-act-wide { width: 100%; justify-content: center; margin-top: 10px; }
 .tpage-note {
   margin: 10px 0 0;
@@ -2143,13 +2024,6 @@
   align-items: baseline;
   gap: 4px 14px;
 }
-.tpage-start-coords {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-.tpage-start-near { font-size: 12.5px; color: var(--ink-soft); }
 
 .tpage-cta {
   display: flex;
@@ -2204,7 +2078,6 @@
 }
 .tpage-why .tpage-sec-title { margin-bottom: 4px; }
 .tpage-why .tpage-story li { border-top-color: var(--rule); }
-.tpage-why .tpage-story-icon { color: var(--accent); }
 
 /* Loop marker beside the title, matching the chip on the card. */
 .tpage-loop {
@@ -2287,12 +2160,6 @@
 .tpage-highlights { margin: 0; padding: 0 0 0 22px; }
 .tpage-highlights li { padding: 7px 0; border-top: 1px solid var(--rule-soft); }
 .tpage-highlights li:first-child { border-top: none; }
-.tpage-highlights li::marker {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--accent);
-}
-.tpage-hl-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
 .tpage-hl-facts {
   display: flex;
   flex-wrap: wrap;
@@ -2335,7 +2202,7 @@
      simply stops reads as a row that ran out of space. mask does the
      clipping so the last visible chip fades instead of being guillotined. */
 }
-.places-card-kinds > * { flex: none; }
+.places-card-kinds > :where(.pcard-part) { flex: none; }
 @supports (mask-image: linear-gradient(to right, var(--mask-solid), transparent)) {
   .places-card-kinds {
     mask-image: linear-gradient(to right, var(--mask-solid) calc(100% - 18px), transparent 100%);
@@ -2397,10 +2264,6 @@
   font-size: 12px;
   font-weight: 600;
 }
-.tpage-chip-hl {
-  background: var(--accent-bg);
-  color: var(--accent);
-}
 .tpage-chip-suit {
   border: 1px solid var(--rule);
   background: var(--paper-dim);
@@ -2435,24 +2298,7 @@
   color: var(--ink-soft);
 }
 
-.tpage-toast {
-  position: absolute;
-  left: 50%;
-  bottom: calc(28px + env(safe-area-inset-bottom, 0px));
-  transform: translateX(-50%);
-  z-index: var(--z-tray);
-  padding: 11px 16px;
-  border-radius: 10px;
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: var(--shadow-2);
-}
-
-.tpage-back:focus-visible, .tpage-bar-act:focus-visible, .tpage-primary:focus-visible,
-.tpage-act:focus-visible, .tpage-cta:focus-visible, .tpage-hud-close:focus-visible,
-.tpage-recentre:focus-visible {
+.tpage-back:focus-visible, .tpage-bar-act:focus-visible, .tpage-primary:focus-visible, .tpage-cta:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -2905,13 +2751,6 @@
 }
 
 /* ── Friend chips under the ledger's traveller slots ────────────────────── */
-.exp-friendrow {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex-basis: 100%;
-  margin-top: 2px;
-}
 
 /* ── The header stays put while a slide-over is open ───────────────────────
    Account and My trips are full-bleed on a phone and used to start at top:0,

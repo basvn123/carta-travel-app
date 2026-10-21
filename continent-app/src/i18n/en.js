@@ -1202,6 +1202,7 @@ export const en = {
   "saved.friendsSharedN": "Friends showed you {n} trips.",
   "saved.friendsOpen": "See them in Friends",
   "saved.favKindJourney": "Trip weeks",
+  "saved.favKindRegion": "Regions",
   "saved.tripPlans": "Trip plans",
   "saved.tripPlansSub": "Multi-stop routes built in the Trip planner, flights and stays priced.",
   "saved.untitledTrip": "Untitled trip",

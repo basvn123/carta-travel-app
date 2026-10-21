@@ -106,7 +106,6 @@
 /* ── 3 Who this is not for, and the one note that never folds ── */
 .dsk-notfor .notfor { margin: var(--space-4) 0; }
 .dsk-alert { margin: var(--space-4) 0; }
-.dsk-alert > * + * { margin-top: var(--space-3); }
 
 /* ── 4 The map ── */
 .dsk-map { margin: var(--space-4) 0; }

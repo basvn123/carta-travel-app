@@ -19,7 +19,7 @@
  * expense ledger and the photographs in one blob, so "read the row" and "see
  * the trip" have to stay different permissions.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 
 /** What one edge means from the reader's side. `incoming` is a request you
  *  have not answered; `outgoing` is one you sent and they have not. */
@@ -42,6 +42,7 @@ function kindOf(row, userId) {
  * stays a stranger.
  */
 export async function fetchFriendLinks(userId) {
+  const supabase = await getSupabase();
   if (!supabase || !userId) return [];
   const { data, error } = await supabase
     .from('friendships')
@@ -84,6 +85,7 @@ export async function fetchFriendLinks(userId) {
 }
 
 export async function sendFriendRequest(userId, targetUserId) {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('friendships')
     .insert({ requester_id: userId, addressee_id: targetUserId, status: 'pending' });
@@ -100,6 +102,7 @@ export async function sendFriendRequest(userId, targetUserId) {
 }
 
 export async function acceptFriendRequest(id) {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('friendships')
     .update({ status: 'accepted', responded_at: new Date().toISOString() })
@@ -110,6 +113,7 @@ export async function acceptFriendRequest(id) {
 /** Declining, cancelling and unfriending are the same act on the same row:
  *  the link stops existing, and either side may ask again later. */
 export async function removeFriendLink(id) {
+  const supabase = await getSupabase();
   const { error } = await supabase.from('friendships').delete().eq('id', id);
   if (error) throw error;
 }
@@ -117,6 +121,7 @@ export async function removeFriendLink(id) {
 /* ---- reading their trips ---- */
 
 export async function listFriendTrips() {
+  const supabase = await getSupabase();
   if (!supabase) return [];
   const { data, error } = await supabase.rpc('list_friend_trips');
   if (error) throw error;
@@ -143,6 +148,7 @@ export async function listFriendTrips() {
 /** One friend's trip in full, or null when it was set back to private or the
  *  friendship ended between the list and the tap. */
 export async function getFriendTrip(planId) {
+  const supabase = await getSupabase();
   if (!supabase || !planId) return null;
   const { data, error } = await supabase.rpc('get_friend_trip', { wanted_plan: planId });
   if (error) throw error;
@@ -208,6 +214,7 @@ export const VISIBILITIES = ['private', 'friends', 'link', 'public'];
 
 export async function setTripVisibility(tripPlanId, visibility) {
   if (!VISIBILITIES.includes(visibility)) throw new Error('unknown visibility');
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from('trip_plans')
     .update({ visibility, updated_at: new Date().toISOString() })

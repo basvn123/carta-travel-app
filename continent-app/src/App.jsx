@@ -716,6 +716,9 @@ function TravelApp() {
       setPendingCategory('trips');
       setPendingJourney({ id: String(ref.id) });
     }
+    // A starred region (T478, row T474-a): its page is hoisted above the tabs,
+    // so it opens over the Destinations tab the shortlist hops to.
+    else if (layer === 'region' || layer === 'regions') setPendingRegion({ id: String(ref.id) });
     else return;
     goToTab('places');
   }, [goToTab]);
@@ -1479,6 +1482,8 @@ function TravelApp() {
           <Suspense fallback={null}>
             <RegionPage
               id={pendingRegion.id}
+              fav={isFavorite(pendingRegion.id, 'region')}
+              onFav={() => toggleFav(pendingRegion.id, 'region')}
               backLabel={backToLabel}
               onClose={() => setPendingRegion(null)}
               onOpenRegion={(rid) => setPendingRegion({ id: rid })}

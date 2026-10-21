@@ -13,7 +13,7 @@
  * Until 048 is pasted the RPC answers "function not found" and that answer is
  * dropped here, so a link or a wizard is never made worse by a counter.
  */
-import { supabase } from './supabaseClient.js';
+import { authConfigured, getSupabase } from './supabaseClient.js';
 import { aviasalesClickOf } from './affiliate.js';
 import { activityClickOf } from './activityAffiliates.js';
 import { omioClickOf } from './omio.js';
@@ -48,11 +48,11 @@ function seenJustNow(key) {
  * @param {string} [dedupeKey] what makes two ticks the same; defaults to the three fields
  */
 export function trackLaunch(event, target = '', surface = '', dedupeKey = '') {
-  if (!supabase || !EVENTS.has(event)) return;
+  if (!authConfigured || !EVENTS.has(event)) return;
   if (seenJustNow(dedupeKey || `${event}:${target}:${surface}`)) return;
   try {
-    supabase
-      .rpc('launch_count', { p_event: event, p_target: target || null, p_surface: surface || null })
+    getSupabase()
+      .then((supabase) => supabase.rpc('launch_count', { p_event: event, p_target: target || null, p_surface: surface || null }))
       .then(() => {}, () => {});
   } catch { /* the traveller carries on regardless */ }
 }
@@ -61,10 +61,10 @@ export function trackLaunch(event, target = '', surface = '', dedupeKey = '') {
  *  AI failures card). Every call counts, retries included, because each one
  *  is a request a failure could be recorded against. Not deduplicated. */
 export function trackAiCall(fn) {
-  if (!supabase) return;
+  if (!authConfigured) return;
   try {
-    supabase
-      .rpc('launch_count', { p_event: 'ai_call', p_target: fn, p_surface: null })
+    getSupabase()
+      .then((supabase) => supabase.rpc('launch_count', { p_event: 'ai_call', p_target: fn, p_surface: null }))
       .then(() => {}, () => {});
   } catch { /* the AI call carries on regardless */ }
 }

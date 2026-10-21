@@ -15,7 +15,7 @@
  * answer a question this file does not send it, and keeping it that way is
  * cheaper now than arguing about it later.
  */
-import { supabase } from './supabaseClient.js';
+import { authConfigured, getSupabase, whenSupabase } from './supabaseClient.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -52,13 +52,13 @@ function seenJustNow(key) {
  * @param {string} [tier]    the tier held at the time, or being bought
  */
 export function trackPaywall(event, reason = '', tier = '') {
-  if (!supabase || !EVENTS.has(event)) return;
+  if (!authConfigured || !EVENTS.has(event)) return;
   if (seenJustNow(`${event}:${reason}:${tier}`)) return;
   try {
     // Not awaited. The promise is caught so an offline browser does not log an
     // unhandled rejection on every gate.
-    supabase
-      .rpc('paywall_event', { p_event: event, p_reason: reason || null, p_tier: tier || null })
+    getSupabase()
+      .then((supabase) => supabase.rpc('paywall_event', { p_event: event, p_reason: reason || null, p_tier: tier || null }))
       .then(() => {}, () => {});
   } catch { /* the paywall carries on regardless */ }
 }
@@ -89,13 +89,16 @@ export function trackPaywall(event, reason = '', tier = '') {
 let accessToken = '';
 let leavingForCheckout = false;
 
-if (supabase) {
+// Subscribed when the client loads rather than here, so this module does not
+// pull supabase-js into the first paint. The listener's first call carries the
+// session the client starts with, so nothing is missed by waiting.
+whenSupabase((supabase) => {
   try {
     supabase.auth.onAuthStateChange((_event, session) => {
       accessToken = session?.access_token || '';
     });
   } catch { /* no token cached; the anon key is used instead */ }
-}
+});
 
 if (typeof window !== 'undefined') {
   window.addEventListener('pageshow', (e) => {
@@ -124,7 +127,7 @@ export function isLeavingForCheckout() {
  * @param {string} [tier]
  */
 export function trackPaywallOnExit(event, reason = '', tier = '') {
-  if (!supabase || !SUPABASE_URL || !ANON_KEY || !EVENTS.has(event)) return false;
+  if (!authConfigured || !SUPABASE_URL || !ANON_KEY || !EVENTS.has(event)) return false;
   if (seenJustNow(`${event}:${reason}:${tier}`)) return false;
   try {
     fetch(`${SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/rpc/paywall_event`, {

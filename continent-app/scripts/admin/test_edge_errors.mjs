@@ -439,7 +439,7 @@ async function runTests(bin) {
     };
     const hook = `export async function resolve(spec, ctx, next) {
   if (spec.endsWith('/lib/supabaseClient.js')) {
-    return { shortCircuit: true, url: 'data:text/javascript,export const supabase = globalThis.__fakeSupabase; export const authConfigured = true;' };
+    return { shortCircuit: true, url: 'data:text/javascript,export const getSupabase = async () => globalThis.__fakeSupabase; export const whenSupabase = () => {}; export const authConfigured = true;' };
   }
   return next(spec, ctx);
 }`;

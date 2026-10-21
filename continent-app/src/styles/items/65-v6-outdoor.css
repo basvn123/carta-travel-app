@@ -1,0 +1,229 @@
+/* 65-v6-outdoor.css, the rules only the item pages render (T474, CSS per route).
+   The rest of this domain stays in src/styles/65-v6-outdoor.css; a rule lives in one
+   of the two, so edit it where it is. This sheet loads with the route's
+   chunk, after the main sheet, and holds only rules nothing later in the
+   cascade could override; scripts/css-routes.mjs --check proves it on a build. */
+.dsk-page .dsk-kf {
+  min-width: 0;
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.dsk-page .dsk-before .dsk-alert,
+.dsk-page .dsk-before .dsk-notfor .notfor { margin: 0; }
+.dsk-page .dsk-before .dsk-alert + .dsk-notfor { margin-top: var(--space-3); }
+@media (min-width: 700px) {
+  .dsk-page .dsk-primary { max-width: 420px; }
+}
+@media (hover: hover) {
+  .dsk-page .dsk-primary.tpage-primary:hover,
+  .dsk-page .dsk-primary.cycle-gpx:hover {
+    filter: none;
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+}
+.dsk-page .dsk-handoff .dsk-sec { margin: 0; }
+.dsk-page .dsk-getting .tpage-act-wide { margin-top: 0; }
+.dsk-page .dsk-getting .tpage-start { margin: var(--space-2) 0 0; }
+.dsk-page .dsk-getting .tpage-start-coords { font-size: 12px; color: var(--ink-mute); }
+.dsk-page .dsk-getting .bpage-where { margin-bottom: 0; }
+.dsk-page .dsk-station-km {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.dsk-page .dsk-take .tpage-act {
+  height: auto;
+  min-height: var(--tap);
+  margin: 0;
+  border-radius: 6px;
+}
+.dsk-page .dsk-getting .tpage-act,
+.dsk-page .dsk-getting .bpage-where { min-height: var(--tap); border-radius: 6px; }
+.dsk-page .jpage-lrow-sum {
+  display: -webkit-box;
+  white-space: normal;
+  text-overflow: clip;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.35;
+}
+.dsk-page .jpage-lrow-body > .dsk-sub:first-child,
+.dsk-page .jpage-lrow-body > :first-child > .dsk-sub:first-child { margin-top: 0; }
+.dsk-page .dsk-part + .dsk-part,
+.dsk-page .tpage-part + .tpage-part { margin-top: var(--space-2); }
+.dsk-page .rstage.is-static { cursor: default; color: var(--ink); }
+.dsk-page .sig-sq {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--ink-mute);
+  background: transparent;
+}
+.dsk-page .sig-sq.is-on { border-color: var(--select-border); background: var(--ink); }
+.dsk-page .tpage-loop {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+.dsk-page .dsk-head .tpage-title,
+.dsk-page .dsk-head .bpage-name,
+.dsk-page .dsk-head .cycle-title h1 {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+@media (min-width: 769px) {
+  .dsk-page .dsk-head .tpage-title,
+  .dsk-page .dsk-head .bpage-name,
+  .dsk-page .dsk-head .cycle-title h1 { font-size: 40px; line-height: 1.1; }
+  .dsk-page .dsk-grid section h2 { font-size: 26px; }
+}
+.dsk-page #dsk-sec-facts,
+.dsk-page #dsk-sec-getting,
+.dsk-page #dsk-sec-map,
+.dsk-page #dsk-sec-details,
+.dsk-page #dsk-sec-nearby { scroll-margin-top: calc(var(--tap) + var(--space-2)); }
+.dsk-page .dsk-sketch {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background: var(--paper-dim);
+  pointer-events: none;
+}
+.dsk-page .dsk-sketch-svg { width: 100%; height: 100%; overflow: visible; }
+.dsk-page .dsk-sketch-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dsk-page .dsk-sketch-ring { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+.dsk-page .dsk-sketch-dot { fill: var(--ink); }
+.dsk-page .dsk-sketch-name {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-2);
+  max-width: calc(100% - 2 * var(--space-3));
+  overflow: hidden;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dsk-page .dsk-map .maplibregl-canvas {
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+.dsk-page .dsk-map .is-live .maplibregl-canvas { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .dsk-page .dsk-map .maplibregl-canvas { transition: none; }
+}
+.dsk-page .dsk-ptrack-pos {
+  margin-right: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.dsk-page .dsk-ptrack-btn { min-height: var(--tap); padding: 0 var(--space-3); }
+.dsk-page .dsk-ptrack-prev { transform: scaleX(-1); }
+.dsk-page .dsk-ptrack::-webkit-scrollbar { display: none; }
+.dsk-page .dsk-ptrack:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dsk-page .dsk-ptrack-media { aspect-ratio: 3 / 2; background: var(--paper-dim); }
+.dsk-page .dsk-ptrack-at {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.dsk-page .dsk-ptrack-credit .bpage-credit { margin: 0; }
+.dsk-page .dsk-kf-note { line-height: 16px; }
+.dsk-page .jpage-lrow.is-open .jpage-lrow-body:not([hidden]) {
+  animation: dsk-row-in var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) {
+  .dsk-page .jpage-lrow-btn,
+  .dsk-page .jpage-exit,
+  .dsk-page .dsk-take .tpage-act,
+  .dsk-page .dsk-getting .tpage-act {
+    transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+  }
+  .dsk-page .jpage-lrow-btn:hover,
+  .dsk-page .jpage-exit:hover { background: var(--paper-dim); }
+  .dsk-page .dsk-take .tpage-act:hover,
+  .dsk-page .dsk-getting .tpage-act:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+  .dsk-page .jpage-exit:hover .jpage-exit-title {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+.dsk-page .dsk-primary.tpage-primary:active,
+.dsk-page .dsk-primary.cycle-gpx:active {
+  background: var(--accent-press);
+  border-color: var(--accent-press);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dsk-page .jpage-lrow.is-open .jpage-lrow-body:not([hidden]) { animation: none; }
+  .dsk-page .jpage-lrow-btn,
+  .dsk-page .jpage-exit,
+  .dsk-page .dsk-take .tpage-act,
+  .dsk-page .dsk-getting .tpage-act,
+  .dsk-page .dsk-primary.tpage-primary:active,
+  .dsk-page .dsk-primary.cycle-gpx:active { transition: none; }
+}
+.dsk-page .tpage-chip-hl {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+}
+.dsk-page .lpage-swim-ok .lpage-swim-word::before,
+.dsk-page .mpage-way-ride .mpage-way-word::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--space-2);
+  border-radius: 999px;
+  background: var(--status-success);
+  vertical-align: middle;
+}
+.dsk-page .sig-plain-area { fill: var(--rule); stroke: none; }
+.dsk-page .dsk-head .tpage-title,
+.dsk-page .dsk-head .bpage-name,
+.dsk-page .dsk-head .cycle-title h1 {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  text-wrap: balance;
+}
+.dsk-page .dsk-ref { max-width: 100%; overflow-wrap: anywhere; }
+.dsk-page .jstrip-word,
+.dsk-page .dsk-kf-label,
+.dsk-page .jpage-exit-title,
+.dsk-page .jpage-lrow-label {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.dsk-page .dsk-hook { overflow-wrap: break-word; text-wrap: pretty; }
+@media (pointer: coarse) {
+  .dsk-page .maplibregl-ctrl-attrib-button { position: relative; }
+  .dsk-page .maplibregl-ctrl-attrib-button::before {
+    content: '';
+    position: absolute;
+    inset: calc((24px - var(--tap)) / 2);
+  }
+}

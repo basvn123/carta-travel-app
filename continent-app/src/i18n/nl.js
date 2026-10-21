@@ -970,6 +970,7 @@ export const nl = {
   "saved.friendsSharedN": "Vrienden lieten je {n} reizen zien.",
   "saved.friendsOpen": "Bekijk ze bij Vrienden",
   "saved.favKindJourney": "Reisweken",
+  "saved.favKindRegion": "Regio's",
   "saved.tripPlans": "Reisplannen",
   "saved.tripPlansSub": "Routes met meerdere stops uit de Reisplanner, vluchten en verblijf geprijsd.",
   "saved.untitledTrip": "Naamloze reis",

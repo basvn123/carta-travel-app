@@ -315,12 +315,3 @@
   .frr-sum-eur { font-size: 30px; }
 }
 
-/* Found while checking T099 at 380px: the destination page's three action
-   buttons sit in a three-column grid on a phone, and a grid item will not
-   shrink below its label, so "Open in Google Maps" pushed the page 62px
-   sideways. The labels already ellipsize; letting the items shrink is the
-   whole fix. */
-@media (max-width: 720px) {
-  .destp-v2 .destp-head-actions > * { min-width: 0; }
-}
-

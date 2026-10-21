@@ -12,7 +12,7 @@
  * order a new account meets them: first hello, first friend circle, first
  * shown plan, first opened link, first arrival you caused.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /** Ids match the CHECK constraint in migration 013. `target` marks the one
@@ -50,6 +50,7 @@ export async function fetchAchievements(userId) {
     const ids = MOCK_EARNED[BADGE_MOCK] || MOCK_EARNED.some;
     return new Map(ids.map((id) => [id, '2026-08-01T00:00:00Z']));
   }
+  const supabase = await getSupabase();
   if (!supabase || !userId) return null;
   const { data, error } = await supabase
     .from('user_achievements')

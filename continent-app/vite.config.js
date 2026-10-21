@@ -4,6 +4,7 @@ import browserslist from 'browserslist';
 import { browserslistToTargets } from 'lightningcss';
 import { fileURLToPath } from 'node:url';
 import { buildNumbersPage, dataPresent, NUMBERS_PATH } from './scripts/explainer/numbers.mjs';
+import { englishSplit } from './scripts/i18n/enSplit.mjs';
 
 // Vite 8 minifies CSS with Lightning CSS, and with no targets configured it
 // decided `-webkit-backdrop-filter` alone covered everything it was aiming at
@@ -49,7 +50,8 @@ function numbersPage() {
 }
 
 export default defineConfig({
-  plugins: [react(), numbersPage()],
+  // T480: English in a first-paint part and a lazy rest (scripts/i18n/enSplit.mjs).
+  plugins: [react(), numbersPage(), englishSplit(APP_ROOT)],
   server: { port: 5173, host: true },
   css: { lightningcss: { targets: CSS_TARGETS } },
   build: { cssMinify: 'lightningcss' },

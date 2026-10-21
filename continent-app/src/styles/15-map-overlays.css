@@ -1004,7 +1004,6 @@
 /* On a photograph the badges cannot borrow the page's ground, so they bring
    their own: the crowding chip's 9 per cent wash is invisible over a white
    facade, and a chip nobody can read is a warning nobody gets. */
-.xp-hero-badges:not(.is-inline) > * { box-shadow: 0 1px 8px rgba(26, 26, 26, 0.3); }
 .xp-hero-badges:not(.is-inline) .crowd-badge {
   background: rgba(255, 255, 255, 0.94);
   border-color: color-mix(in srgb, var(--cr-ink) 55%, transparent);

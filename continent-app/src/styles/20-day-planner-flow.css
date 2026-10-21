@@ -110,7 +110,6 @@
   color: var(--ink-mute);
   margin: 6px 0 0;
 }
-.carta-plan-row { margin-top: 13px; }
 .carta-plan-chip {
   padding: 6px 11px;
   border-radius: 999px;
@@ -221,9 +220,7 @@
    was typed mid-entry. The field gets the whole row; the button sits under it.
    Side by side returns once there is room (tablet and up). */
 .trip-carfrom-row .trip-ownflight-input { flex: 1; min-width: 0; }
-.trip-carfrom-results { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
 .trip-carfrom-note b { color: var(--ink); }
-.trip-ownflight-date { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .trip-ownflight-date > span {
   font-family: var(--ui);
   font-weight: 600; font-size: 12px;
@@ -248,35 +245,14 @@
    Reuses the carta-plan question rows so the questions read identically to
    the route picker. */
 .ai-plan-head h3 { font-family: var(--display); font-size: 17px; font-weight: 600; color: var(--ink); }
-.ai-plan-badge {
-  /* A plain --ink-soft icon, no tile (never-do 1, accent marks; T411, row
-     T399-d): the AI day plan and the pass dialogs head the same way. */
-  flex: 0 0 auto;
-  color: var(--ink-soft);
-  display: inline-flex; align-items: center; justify-content: center;
-}
 .ai-plan-note { font-size: 11.5px; color: var(--ink-mute); line-height: 1.5; margin-top: 10px; }
 .ai-plan-hills input { accent-color: var(--accent); width: 15px; height: 15px; }
-.ai-plan-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
 .ai-plan-busy p { font-size: 13px; color: var(--ink-soft); margin-top: 12px; }
 
 /* The proposed schedule (modal) + the applied schedule card (day rail). */
 /* The Carta bot's day lands as a cascade rather than all at once, so the
    schedule reads as something being written for you. Staggered by row, capped
    at eight so a long day never feels slow to arrive. */
-@media (prefers-reduced-motion: no-preference) {
-  .ai-sched-stop {
-    /* T389: the overshoot curve went (DIRECTION.md 2.1: no overshoot). */
-    animation: ai-sched-in var(--dur-3) var(--ease-out) both;
-  }
-  .ai-sched-stop:nth-child(2) { animation-delay: 45ms; }
-  .ai-sched-stop:nth-child(3) { animation-delay: 90ms; }
-  .ai-sched-stop:nth-child(4) { animation-delay: 135ms; }
-  .ai-sched-stop:nth-child(5) { animation-delay: 180ms; }
-  .ai-sched-stop:nth-child(6) { animation-delay: 225ms; }
-  .ai-sched-stop:nth-child(7) { animation-delay: 270ms; }
-  .ai-sched-stop:nth-child(n + 8) { animation-delay: 315ms; }
-}
 @keyframes ai-sched-in {
   from { opacity: 0; transform: translateY(7px); }
   to { opacity: 1; transform: translateY(0); }
@@ -284,13 +260,6 @@
 /* The block a proposed stop sits in ("Morning"), labelled once per block, in
    place of the arrival clock this column used to carry. Wider than a 44px
    "09:30" needed, and quiet: it orients, it does not command. */
-.ai-sched-time {
-  flex: 0 0 74px;
-  font-family: var(--ui); font-size: 12px; font-weight: 700;
-color: var(--ink-soft);
-  padding-top: 1px;
-}
-.ai-sched-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .ai-sched-body b { font-size: 13px; font-weight: 600; color: var(--ink); }
 .ai-sched-body small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
 
@@ -320,23 +289,8 @@ color: var(--ink-soft);
   text-align: left;
 }
 button.ai-sched-main { cursor: pointer; }
-.ai-sched-thumb { position: relative; flex: 0 0 auto; }
 /* The stop's number, on its picture, is what ties the row to the numbered pin
    before anything has been tapped. */
-.ai-sched-no {
-  position: absolute;
-  left: -5px; top: -5px;
-  min-width: 18px; height: 18px;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: var(--ink-fill);
-  color: var(--on-fill);
-  font-family: var(--mono); font-size: 10px; font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  box-shadow: 0 0 0 2px var(--paper);
-}
-.ai-sched-stop.ext .ai-sched-no { background: var(--ai-violet); }
 /* Selected: the row and its pin are one thing, so picking either says so on
    both. Kept to a tint and a rule, no lift, this is a list of places and not
    a stack of cards. */
@@ -351,14 +305,6 @@ button.ai-sched-main:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 6px;
-}
-.ai-route-hint {
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--ink-mute);
-}
-@media (max-width: 640px) {
-  .ai-sched-time { flex-basis: 58px; }
 }
 
 /* Applied-schedule card in the day rail */
@@ -387,11 +333,6 @@ button.ai-sched-main:focus-visible {
 /* "Proposal, not yet on your map" framing above the result. */
 
 /* Push the plan back at the AI until it is right. */
-.ai-refine {
-  border-top: 1px solid var(--rule);
-  margin-top: 14px;
-  padding-top: 12px;
-}
 .ai-refine-input {
   flex: 1 1 auto;
   min-width: 0;
@@ -423,14 +364,6 @@ button.ai-sched-main:focus-visible {
    button under the question (.day-flow-howto in 68-v6-dayplanner.css). */
 
 /* One question per screen, vertically centred so it reads as a single ask. */
-.day-flow-step {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 18px;
-  padding-bottom: 40px;
-}
 /* The question and its answer live on one card. Without it the input floats
    alone on the page background and the step reads as an unfinished screen
    rather than a form. */
@@ -474,7 +407,6 @@ button.ai-sched-main:focus-visible {
 }
 /* T399 (carta-design caption band): pressed, the band turns --ink-fill, so
    the press reads in greyscale too. */
-.dtcard:active .dtcard-body { background: var(--select-bg); }
 @media (prefers-reduced-motion: reduce) {
   .dtcard { transition: none; }
 }
@@ -488,21 +420,12 @@ button.ai-sched-main:focus-visible {
    band rule), the heading face at the caption size; the gradient scrim went. */
 /* One badge, top right, answering the only question a list of saved trips
    raises: which of these is the one I am on. */
-.dtcard-body {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding: 11px 13px 12px;
-  min-width: 0;
-}
 
 /* Two grey cards while the trips load, so the section holds its height
    instead of shunting the question up the page when they land. */
-.dtcard.skeleton .dtcard-photo { background: var(--paper-dim); }
 
 /* Signed out, and empty. Both used to be a sentence of grey type, and an
    offer with nothing to press is not an offer. */
-.dtsignin-text { flex: 1 1 auto; min-width: 0; }
 .dtsignin-text b { display: block; font-size: 14px; }
 .dtsignin-text p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
 /* T389 (brief V3-6): "Sign in" and "Plan a trip" are secondaries. Sign in was
@@ -543,10 +466,6 @@ button.ai-sched-main:focus-visible {
 
 /* On a phone the cards are a swipe, not a stack: three trips down the page
    pushes the question that follows them off the fold. */
-@media (max-width: 700px) {
-  .dtcards::-webkit-scrollbar { display: none; }
-  .dtcards > .dtcard { flex: 0 0 82vw; scroll-snap-align: start; }
-}
 /* The chosen destination, above the later questions: city photo, name, the
    picked date once there is one, and the way back to change the answer. */
 
@@ -575,12 +494,6 @@ button.ai-sched-main:focus-visible {
    one line and truncates rather than wrapping the row to three deep. */
 /* Arrow-key focus and hover look the same on purpose: one highlight, whether
    it arrived by mouse or by keyboard. */
-.day-flow-search .day-stay-input {
-  flex: 1 1 auto;
-  font-size: 16px;
-  padding: 14px 16px;
-  border-radius: 12px;
-}
 /* One month is enough to choose a day; the range shading collapses to a
    single highlighted date. */
 /* A month grid stretched across the full panel gave every date a 74px cell
@@ -635,7 +548,6 @@ button.ai-sched-main:focus-visible {
 /* What has been taken so far. Each chip is a small record rather than a
    label: the thumbnail says which place, the distance says whether it is a
    walk, and the four time buttons are the only other thing worth asking. */
-.day-ideas-chip-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .day-ideas-chip-text b {
   font-size: 13.5px; color: var(--ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -669,22 +581,11 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease;
 }
-.day-ideas-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .day-ideas-row-text b {
   font-size: 13.5px; font-weight: 500; color: var(--ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .day-ideas-row-text small { font-size: 11.5px; color: var(--ink-mute); }
-.day-ideas-row-mark {
-  flex: none;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px;
-  border-radius: 7px;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  font-size: 15px; line-height: 1;
-}
-.day-ideas-row.on .day-ideas-row-mark { background: var(--select-bg); color: var(--select-ink); }
 
 /* A phone gets the two choices stacked and full width: side by side they
    were 150px each, which is not a target and not enough room for the helper

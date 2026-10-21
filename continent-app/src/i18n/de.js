@@ -970,6 +970,7 @@ export const de = {
   "saved.friendsSharedN": "Freunde haben dir {n} Reisen gezeigt.",
   "saved.friendsOpen": "Unter Freunde ansehen",
   "saved.favKindJourney": "Reisewochen",
+  "saved.favKindRegion": "Regionen",
   "saved.tripPlans": "Reisepläne",
   "saved.tripPlansSub": "Mehrstufige Routen aus dem Reiseplaner, mit Preisen für Flüge und Unterkünfte.",
   "saved.untitledTrip": "Unbenannte Reise",

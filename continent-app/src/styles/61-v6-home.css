@@ -302,7 +302,7 @@
 /* ── The story ────────────────────────────────────────────────────────── */
 
 .home-story-grid { display: grid; gap: var(--space-4); }
-.home-story-grid > * { min-width: 0; }
+.home-story-grid > :where(.home-story-stage, .home-story-col) { min-width: 0; }
 .home-story-stage { display: none; }
 
 /* The chapter bar: the kit's tabs, scrolling sideways when the language

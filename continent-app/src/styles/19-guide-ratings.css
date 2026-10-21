@@ -358,8 +358,6 @@
   background: var(--paper);
 }
 .guide-city-side-title b { font-size: 15px; }
-.guide-city-side-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.guide-city-side-add { width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 
 /* Mobile: the city briefing stacks under the map and its facts table runs long,
    so the "Add to trip" action used to sit below the fold with nothing but a
@@ -368,32 +366,6 @@
    of the viewport, riding just above the wizard footer while the facts scroll
    behind it. The action the whole step exists for is never more than a glance
    away. (Desktop keeps the bounded side panel, where it was always visible.) */
-@media (max-width: 999px) {
-  /* The single "Add to trip" button keeps its accent fill and lifts off the
-     scrolling facts on a shadow, a docked primary action floating above the
-     footer. (Painting a paper bar behind it would have to sit UNDER the button,
-     not on it, so the button paints its own separation via the shadow.) */
-  .trip-wizard-modal .guide-stay-wrap .guide-city-side-add {
-    position: sticky;
-    bottom: 8px;
-    z-index: 3;
-    margin-top: 14px;
-    box-shadow: 0 6px 22px rgba(26, 26, 26, 0.26);
-  }
-  /* Once a city is in the trip the action becomes a control cluster (nights
-     stepper + remove), which does want a paper bar behind it so the -/+ read
-     against the page rather than over the facts. */
-  .trip-wizard-modal .guide-stay-wrap .guide-city-side-actions {
-    position: sticky;
-    bottom: 6px;
-    z-index: 3;
-    margin: 12px -12px 0;
-    padding: 12px;
-    background: var(--paper);
-    border-top: 1px solid var(--rule);
-    box-shadow: 0 -8px 18px -10px rgba(26, 26, 26, 0.22);
-  }
-}
 
 /* -- Stay style + final summary -- */
 .guide-staystyle .trip-field-label { display: block; margin-bottom: 6px; }
@@ -431,46 +403,8 @@
    rail beside the big map: both fill its height and scroll inside themselves,
    so the map is never pushed off-screen. (Descendant selectors: the guide sits
    in a display:contents wrapper that keeps it mounted while a briefing shows.) */
-.day-explore-side .guide-city-side { flex: 1; min-height: 0; max-height: none; }
 /* The traveller's stay: a pulsing home dot that cannot be missed */
 .dem-stay { display: flex; flex-direction: column; align-items: center; pointer-events: none; position: relative; }
-.dem-stay-pin {
-  position: relative;
-  display: block;
-  line-height: 0;
-  transform-origin: bottom center;
-  transition: transform 0.12s ease;
-  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.32));
-}
-.dem-stay-pulse {
-  position: absolute;
-  top: 1px;
-  left: 50%;
-  width: 24px;
-  height: 24px;
-  margin-left: -12px;
-  border-radius: 50%;
-  background: var(--accent);
-  opacity: 0.25;
-  animation: dem-pulse 1.8s ease-out infinite;
-  z-index: -1;
-}
-.dem-stay-name {
-  order: -1;
-  margin-bottom: 3px;
-  font-family: var(--mono);
-  font-size: var(--text-micro);
-  font-weight: 700;
-  color: var(--accent);
-  background: var(--paper);
-  border-radius: 4px;
-  padding: 1px 5px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 @keyframes dem-pulse {
   0% { transform: scale(0.5); opacity: 0.45; }
   80% { transform: scale(1.5); opacity: 0; }
@@ -497,8 +431,7 @@
   white-space: nowrap;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-.dem-pin-ico,
-.dem-pin-chk {
+.dem-pin-ico {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -511,7 +444,6 @@
 }
 .dem-pin-ico svg,
 .dem-pin-chk svg { width: 12px; height: 12px; }
-.dem-pin-chk { display: none; background: var(--good-ink); }
 /* A place's name is the whole point of the pin, and "Salzburg Hauptbahnho..."
    is a pin the traveller has to click to identify. So the label wraps onto a
    second line instead of being clipped: a pin may grow taller, it may not lie
@@ -620,8 +552,7 @@
   font-family: var(--mono);
   font-size: var(--text-micro);
   font-weight: 700;
-}
-.guide-chip.on .dem-chip-count { background: rgba(255, 255, 255, 0.25); }.guide-city-side-photo-empty { color: var(--ink-mute); }
+}.guide-city-side-photo-empty { color: var(--ink-mute); }
 
 /* Below the wide-desktop breakpoint the landing column is narrow (480px),
    so the map and its side rail stack instead of splitting the row. */
@@ -948,7 +879,6 @@
   color: var(--ink-soft);
   margin-left: auto;
 }
-.guide-card-row { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--rule); }
 
 /* Form and card-deck steps centre in the page instead of clinging to the top
    with a void underneath. margin auto (not justify-content) so a long step
@@ -965,15 +895,8 @@
    all three options sit inside a phone viewport instead of one-and-a-half
    tall stacked cards. The roomy vertical treatment is reserved for the wide
    grid below, where there is horizontal room for it. */
-@media (hover: hover) {
-  .trip-wizard-modal .guide-path:hover {
-    border-color: var(--accent);
-    box-shadow: 0 8px 20px rgba(26, 26, 26, 0.09);
-  }
-}
 /* Tactile confirmation on tap: the whole card is the target, so pressing it
    dips it, the way a physical button gives under a finger. */
-.trip-wizard-modal .guide-path-icon { width: 46px; height: 46px; border-radius: 14px; flex: none; }
 .trip-wizard-modal .guide-path-icon svg { width: 22px; height: 22px; }
 .trip-wizard-modal .guide-path-text b { font-size: 16px; line-height: 1.25; }
 /* Reading contrast, not hint contrast: --ink-mute failed AA on paper. */
@@ -989,7 +912,6 @@
 /* Only when the deck can lay out as a real multi-column grid does the roomy
    vertical card earn its space. */
 @media (min-width: 720px) {
-  .trip-wizard-modal .guide-path-icon { width: 48px; height: 48px; border-radius: 15px; }
   .trip-wizard-modal .guide-path-text b { font-size: 17px; }
 }
 /* The one-question intro reads as a headline, so it centres over its deck. */
@@ -1026,29 +948,10 @@
   background: var(--accent);
   border-radius: 2px;
 }
-.trip-wizard-modal.wiz-inline .guide-path {
-  background: var(--bg-card);
-  border-color: var(--rule-soft);
-  box-shadow: var(--shadow-card);
-}
 /* The tint reads as the card being picked up, so it belongs to hover, not to
    the resting state. */
 /* The chevron sits in its own circle so the card has a visible "go" the eye
    can land on; it fills with the accent on hover. */
-.trip-wizard-modal.wiz-inline .guide-path-chev {
-  width: 32px;
-  height: 32px;
-  justify-content: center;
-  border-radius: 50%;
-  border: 1px solid var(--rule-soft);
-  background: var(--paper);
-  transition: background .14s, border-color .14s, color .14s, transform .14s;
-}
-.trip-wizard-modal.wiz-inline .guide-path-icon {
-  background: var(--accent-bg);
-  color: var(--accent);
-  transition: transform .14s;
-}
 
 /* The deck is dealt: each card arrives just after the one before it. One
    entrance on one screen, not an effect on every section. */
@@ -1075,10 +978,8 @@
    through the column. It collapsed while the step was one plain block and
    stopped the moment the brief turned .guide-where into a grid container,
    which moved the whole picker down 4px as the drawer opened. */
-.guide-where-col { min-width: 0; display: flow-root; }
 /* The toggle is a control, not a banner: it sizes to a thumb, sitting under
    the search row it belongs to. */
-.guide-where-view { width: min(100%, 340px); margin-top: 4px; }
 /* Same control, same size, on the flight step. */
 /* A country card is its best-rated place, photographed. Name and city count
    sit on the picture, so the card carries no second block of text under it. */
@@ -1114,38 +1015,20 @@
    decoration); the hover is a border in 67-v6-tripplanner.css. */
 /* The caption band under the photograph (T398, rule "Caption band"): the
    name never sits on the picture, so no scrim is needed. */
-.guide-ccard-overlay {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
 /* A long name (Bosnia and Herzegovina, North Macedonia) has to wrap rather
    than run off the photograph, and the flag stays on the first line with it. */
-.guide-ccard-name {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  font-family: var(--display);
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--ink);
-  overflow-wrap: anywhere;
-}
 .guide-ccard-name .guide-flag-img-sm { flex: none; margin-top: 2px; }
 /* Picked: the selected state (T398), an ink border and an ink tick in the
    caption band; both in 67-v6-tripplanner.css. */
 /* The map view gets the height the split layout could never give it. Its
    width is capped: run to 1500px and fitting Europe into that letterbox pulls
    Kazakhstan into frame. */
-.guide-where-map { max-width: 1180px; }
 .guide-where-map .cpm { height: min(52vh, 520px); margin-bottom: 0; }
 
 /* Two columns on a phone, not "as many as fit": three 120px cards in a row
    render a country's photograph at postage-stamp size, and the point of the
    card is the photograph. */
 @media (max-width: 719px) {
-  .guide-ccard-name { font-size: 14px; }
   .guide-where-map .cpm { height: 56vh; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1200,12 +1083,9 @@
   color: inherit;
   text-decoration: none;
 }
-.guide-explore-icon { display: inline-flex; color: var(--ink-mute); flex: none; }
-.guide-explore-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .guide-explore-text b { font-size: 13px; font-weight: 600; }
 .guide-explore-text small { font-size: 12px; color: var(--ink-soft); }
 /* The outbound arrow, wherever a link leaves Carta. */
-.ext-arrow { margin-left: 4px; color: var(--ink-mute); flex: none; }
 
 .guide-style-head {
   display: flex;
@@ -1264,12 +1144,6 @@
 
 /* ── Stay: curated route templates ─────────────────────────────────────
    Each card IS a designed route (cities, nights, road km), one tap to take. */
-.guide-template-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 10px;
-  margin-top: 7px;
-}
 .guide-template {
   display: flex;
   flex-direction: column;
@@ -1542,8 +1416,6 @@
   gap: 8px;
   margin-top: 0;
 }
-.guide-card .guide-when-dates { margin-bottom: 0; }
-.guide-card .guide-datemode { margin-bottom: 0; }
 
 /* ── Step 3: how do you get there? ───────────────────────────────────────
    Fly and Car as picture-and-promise cards, capped so two options never
@@ -1609,16 +1481,6 @@
    Map on the left, everything the pick tells you on the right, both the same
    height. The old 1.35 : 1 flex left the briefing column too narrow to hold
    a photo, a rating and a description without them all going thin. */
-@media (min-width: 1000px) {
-  /* Height is what the step actually leaves once its own chrome is counted,
-     so the map ends at the fold instead of running under the footer. The
-     subtraction differs per step because the question above the map does. */
-  .trip-wizard-modal .guide-city-side {
-    height: clamp(340px, calc(100dvh - 545px), 640px);
-    max-height: none;
-  }
-  /* Getting home asks nothing above the map, so it gets the whole page. */
-}
 
 /* The briefing column before anything is picked: a heading, then the picks
    worth tapping first. */
@@ -1635,7 +1497,6 @@
   cursor: pointer;
   transition: border-color .14s, background .14s;
 }
-.guide-side-idle-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 .guide-side-idle-text b { font-size: 13px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
 .guide-side-idle-flag { width: 16px; height: 12px; flex: none; }
 .guide-side-idle-text small {
@@ -1650,8 +1511,6 @@
 .guide-side-idle-fare { font-family: var(--mono); font-size: 13px; color: var(--accent); flex: none; }
 
 /* One control bar above a map step: search, narrowing filters, view switch. */
-.guide-toolbar .guide-search { flex: 1 1 240px; margin-bottom: 0; }
-.guide-toolbar .guide-stay-view { margin: 0 0 0 auto; flex: none; }
 
 /* ── Step 5: the trip summary card ───────────────────────────────────────
    Photo, the four facts that define the trip, the stops and the money, then
@@ -1912,17 +1771,6 @@ color: var(--ink-soft);
 
 /* ── T8.4 "From your shortlist", above the country grid ─────────────────── */
 .guide-shortrow-label svg { color: var(--rate); }
-.guide-shortrow-chip.on .guide-shortrow-n { background: rgba(255, 255, 255, 0.24); color: var(--on-fill); }
-.guide-shortrow-n {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 18px; height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
-  background: var(--paper-dim);
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-}
 
 /* ── T8.4 The star on a favourited ready-made trip ─────────────────────── */
 /* In the caption band under the photograph since T398 (rule "Caption
@@ -1985,13 +1833,6 @@ color: var(--ink-soft);
 
 /* Carta's suggested length vs the nights actually booked: two answers to one
    question, so they can never again share a label. */
-.guide-city-fact-booked {
-  display: block;
-  margin-top: 2px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--accent);
-}
 
 /* ── Map pin density ─────────────────────────────────────────────────────
    Zoomed out, name pills collide with each other and with the basemap's own
@@ -2140,7 +1981,6 @@ color: var(--ink-soft);
 @media (min-width: 900px) and (min-height: 860px) {
   .wiz-inline .guide-canvas > .guide-title { font-size: 27px; letter-spacing: -0.018em; }
   .wiz-inline .guide-when-card .guide-datemode button { font-size: 14.5px; padding: 12px 14px; }
-  .wiz-inline .guide-when-card .guide-range-end { min-width: 168px; padding: 8px 16px; }
   .wiz-inline .guide-when-card .guide-range-end b { font-size: 15px; }
 }
 
@@ -2152,14 +1992,12 @@ color: var(--ink-soft);
   /* The shared rhythm gives the title var(--space-5). On a short window that is
      the single tallest gap on the step, so it comes down with everything else,
      by the same proportion as the padding above it. */
-  .guide-when-card .guide-range-head { margin-bottom: 6px; }
 }
 
 /* Smaller windows again: a browser at half height. Same pass, one notch
    tighter, down to where a date is still a comfortable tap target. */
 @media (max-height: 700px) {
   .trip-wizard-modal.wiz-when .guide-title { font-size: 17px; }
-  .guide-when-card .cal-pane-title { font-size: 12.5px; margin-bottom: 2px; }
 }
 
 /* ── Step transitions ────────────────────────────────────────────────────

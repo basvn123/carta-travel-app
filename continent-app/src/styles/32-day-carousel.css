@@ -49,13 +49,13 @@
 .dtrack::-webkit-scrollbar { display: none; }
 .dtrack:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.dtrack > * {
+.dtrack > :where(.tday, .memo-photo) {
   flex: 0 0 85%;
   min-width: 0;
   scroll-snap-align: start;
 }
 @media (min-width: 1024px) {
-  .dtrack > * { flex-basis: calc((100% - 2 * var(--space-3)) / 3); }
+  .dtrack > :where(.tday, .memo-photo) { flex-basis: calc((100% - 2 * var(--space-3)) / 3); }
 }
 
 /* The day card. It overrides the stacked day's top hairline: in the track

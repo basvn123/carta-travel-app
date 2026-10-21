@@ -12,7 +12,7 @@
  * field the traveller already typed: an import fills blanks, it does not
  * argue with people.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { authConfigured, getSupabase } from '../lib/supabaseClient.js';
 import { reportEdgeFailure } from './edgeFailure.js';
 import { trackAiCall } from '../lib/launchEvents.js';
 import { importMime, MAX_IMPORT_FILES, MAX_IMPORT_BYTES, MAX_IMPORT_TOTAL_BYTES } from './bookingImportLogic.js';
@@ -61,14 +61,17 @@ const fileToB64 = (file) => new Promise((resolve, reject) => {
  * Never raised, fire and forget, like reportEdgeFailure.
  */
 function logParseFailure(inputKind, inputSizeB, mimeType, checkFailed, appVersion = '') {
+  if (!authConfigured) return;
   try {
-    supabase.rpc('log_parse_failure', {
-      p_input_kind: inputKind,
-      p_input_size_b: inputSizeB,
-      p_mime_type: mimeType,
-      p_check_failed: checkFailed,
-      p_app_version: appVersion,
-    });
+    getSupabase()
+      .then((supabase) => supabase.rpc('log_parse_failure', {
+        p_input_kind: inputKind,
+        p_input_size_b: inputSizeB,
+        p_mime_type: mimeType,
+        p_check_failed: checkFailed,
+        p_app_version: appVersion,
+      }))
+      .then(() => {}, () => {});
   } catch {
     // Fire and forget: telemetry failures never affect the traveller.
   }
@@ -121,6 +124,10 @@ function analyzePayload(payload) {
  * plus 'nothing_found' / 'nothing_to_parse' from this endpoint.
  */
 export async function requestBookingImport(payload) {
+  // The client loads on first use; a chunk that fails to arrive is the
+  // network failing, and reads as one.
+  const supabase = await getSupabase().catch(() => false);
+  if (supabase === false) return { ok: false, code: 'network' };
   if (!supabase) return { ok: false, code: 'no_auth_config' };
   const { kind, mimeType, sizeB } = analyzePayload(payload);
 

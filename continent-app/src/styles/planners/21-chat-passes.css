@@ -15,15 +15,8 @@
   width: fit-content;
   max-width: 88%;
 }
-.chat-typing { display: inline-flex; gap: 5px; align-items: center; }
 .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
 .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
-.rbs {
-  border: 1px solid var(--rule);
-  border-radius: 16px;
-  background: var(--paper);
-  overflow: hidden;
-}
 .rbs-head { padding: 13px 16px 0; }
 .rbs-title { font-family: var(--display); font-size: 16px; font-weight: 600; color: var(--ink); }
 .rbs-canvas { padding: 8px 14px 4px; }
@@ -33,7 +26,6 @@
 .rbs-ghost { stroke: var(--rule); stroke-width: 1.6; stroke-dasharray: 3 6; opacity: 0.7; }
 .rbs-node-halo { fill: var(--accent); opacity: 0.14; }
 .rbs-node-dot { fill: var(--paper); stroke: var(--accent); stroke-width: 2; }
-.rbs-node { opacity: 0; animation-duration: 2800ms; animation-timing-function: linear; animation-iteration-count: infinite; }
 .rbs-head-dot { fill: var(--accent); }
 .rbs-log {
   list-style: none;
@@ -49,7 +41,6 @@
 }
 .rbs-line-row.now { color: var(--ink); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
-  .rbs-node { opacity: 1; }
   .rbs-head-dot { display: none; }
 }
 @media (hover: hover) {
@@ -59,47 +50,53 @@
 .chat-opt-text { display: flex; flex-direction: column; gap: 1px; text-align: left; }
 .chat-free-input:focus { outline: none; border-color: var(--accent); }
 .chat-town-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.chat-town-tab {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--ink-soft);
-  font-size: 12.5px; font-weight: 600;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .chat-town-tab:hover { border-color: var(--ink); color: var(--ink); }
-}
-.chat-town-tab.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
-.chat-town-tab:disabled { opacity: .5; cursor: default; }
 .chat-town-resolve .chat-opt { margin-top: 8px; }
 .chat-town-resolve .chat-opt-lead {
   border-color: var(--ink);
   outline: 1px solid var(--ink); outline-offset: -2px;
   background: var(--bg-card);
 }
-.chat-town-working .trip-note { display: flex; align-items: center; gap: 6px; }
 .chat-town-working .chat-typing { margin-top: 8px; }
 .chat-town-anywhere .chat-send { margin-top: 0; }
-.chat-town-map {
-  height: clamp(220px, 38vh, 340px);
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--rule);
-  position: relative;
-}
 .chat-town-ai .chat-free { margin-top: 0; }
 @media (max-width: 768px) {
   .chat-opt { width: 100%; }
 }
 .day-flow-search { border-radius: 12px; }
 .day-flow-search .day-stay-input { font-size: 16px; padding: 15px 18px; }
-.day-flow-search .trip-add-btn { padding-left: 22px; padding-right: 22px; font-size: 14px; }
 @media (max-width: 700px) {
   .day-flow-search .day-stay-input { min-height: 48px; padding: 0 16px; }
-  .day-flow-search .trip-add-btn { min-height: 48px; }
 }
 .ai-plan-balance { color: var(--ink-soft); }
 .ai-plan-upsell-link { margin-left: 6px; }
+.rbs-line {
+  stroke: var(--accent);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: rbs-draw 2800ms linear infinite;
+}
+.rbs-line-ico {
+  flex: none;
+  width: 19px; height: 19px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.rbs-line-text { min-width: 0; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  .rbs-line { animation: none; }
+  .rbs-line { stroke-dashoffset: 0; }
+}
+.chat-opts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
+.chat-free { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.chat-town-picker { margin-top: 12px; }
+.chat-town-note { margin-top: 8px; }
+.chat-town-resolve { margin-top: 10px; }
+.chat-town-working { margin-top: 8px; }
+.chat-town-anywhere { margin-top: 10px; }
+@media (max-width: 720px) {
+  .chat-opt { flex: 1 1 100%; }
+}

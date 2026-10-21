@@ -94,7 +94,7 @@
   min-height: calc(var(--tap) + var(--space-5));
   padding: var(--space-3) var(--space-4);
 }
-.frn-list > * + * { border-top: 1px solid var(--border-soft); }
+.frn-list > * + :where(.frn-row, .frn-trip) { border-top: 1px solid var(--border-soft); }
 .frn-who { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .frn-who b {
   font-size: var(--text-body);

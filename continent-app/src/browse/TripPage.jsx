@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import '../styles/items.css';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import {
   RouteIcon, LoopIcon, BedIcon, TrainIcon,

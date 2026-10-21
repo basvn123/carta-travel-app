@@ -44,7 +44,7 @@
  * a send on a real project answers "did not send, nothing was stored", the
  * same honest failure the guide report gave before 037 was pasted.
  */
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabase } from '../lib/supabaseClient.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { stripImageMetadata, isMetadataFree } from '../lib/stripImageMeta.js';
 import { trimGpx } from '../lib/gpxPrivacy.js';
@@ -208,6 +208,7 @@ export async function submitUpload({
     await new Promise((r) => { setTimeout(r, 250); });
     return { id: 'mock-upload' };
   }
+  const supabase = await getSupabase();
   if (!supabase) throw fail('not_signed_in');
   const { data, error } = await supabase.rpc('begin_upload', {
     p_kind: prepared.kind,

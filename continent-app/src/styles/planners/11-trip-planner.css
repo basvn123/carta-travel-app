@@ -15,18 +15,6 @@
   padding: 6px 20px 12px;
   border-bottom: 1px solid var(--rule);
 }
-.trip-topcard-name {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  border: none;
-  background: transparent;
-  font-family: var(--display);
-  font-size: 19px;
-  color: var(--ink);
-  /* Right padding leaves room for the absolute close button in the corner. */
-  padding: 0 34px 0 0;
-}
 .trip-topcard-name:focus { outline: none; }
 .trip-topcard-count {
   margin-left: 8px;
@@ -55,21 +43,10 @@
   padding-bottom: 8px;
   font-size: 15px;
 }
-.trip-people {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 4px 6px;
-  background: var(--paper);
-}
 .nights-ring-track { stroke: var(--rule); }
 .nights-ring-arc.over { stroke: var(--accent); }
 .trip-nights-text { font-size: 13px; color: var(--ink-soft); }
 .trip-nights-warn { color: var(--accent); font-size: 12px; }
-.trip-stop.active { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
-.trip-stop.dragging { opacity: 0.45; }
 .trip-stop-idx {
   display: flex; align-items: center; justify-content: center;
   width: 24px; height: 24px;
@@ -97,12 +74,6 @@
 }
 .trip-step-suffix { font-size: var(--text-micro); color: var(--ink-mute); }
 .trip-stop-tools { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
-@media (hover: hover) {
-  .trip-stop-move:hover { color: var(--ink); }
-}
-@media (hover: hover) {
-  .trip-stop-remove:hover { color: var(--accent); }
-}
 .trip-leg {
   font-family: var(--mono);
   font-size: 10.5px;
@@ -160,91 +131,108 @@
 }
 .trip-total-row.grand { border-bottom: none; padding-top: 12px; }
 .trip-ownflight-input:focus { outline: none; border-color: var(--accent); }
-@media (hover: hover) {
-  .trip-save-btn:hover:not(:disabled) { opacity: 0.9; }
-}
-.trip-save-btn:disabled { opacity: 0.6; cursor: default; }
-.trip-newtrip-btn {
-  padding: 11px 16px;
-  border-radius: 10px;
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
-  font-size: 13px;
-}
-@media (hover: hover) {
-  .trip-newtrip-btn:hover { border-color: var(--ink-soft); }
-}
 @media (min-width: 769px) {
   .trip-sheet-grip-hit { display: none; }
   .trip-topcard { padding-top: 16px; }
 }
-.trip-save-planned-btn, .trip-planday-btn {
-  padding: 0 14px;
-  white-space: nowrap;
-}
-.daytrip-base .trip-block-title { display: flex; align-items: center; gap: 6px; }
-.daytrip-reco {
-  display: flex; align-items: flex-start; gap: 11px;
-  padding: 11px 13px;
-  /* One border and the card ground, no stripe or tint (T411; the day
-     planner already drew it so from 68-v6-dayplanner.css). */
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-}
 .daytrip-hint { color: var(--good-ink-soft); }
 .daytrip-hint.warn { color: var(--warn-ink); }
 .daytrip-here { display: flex; gap: 6px; align-items: baseline; }
-.daytrip-more {
-  align-self: center;
-  padding: 5px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  cursor: pointer;
-  white-space: nowrap;
-}
 @media (hover: hover) {
   .daytrip-more:hover { border-color: var(--accent); color: var(--accent); }
 }
 .daytrip-mode-btn span svg:last-child:not(:first-child) { color: var(--accent); }
-@media (hover: hover) {
-  .daytrip-mode-btn:hover { border-color: var(--accent); }
-}
-.daytrip-mode-btn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .daytrip-pick-note { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute); }
-.fare-prov {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  margin-left: 6px;
-  vertical-align: baseline;
-}
-.fare-prov-est {
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--ink-soft);
-  background: var(--paper-dim);
-  border: 1px solid var(--rule-soft);
-  border-radius: 4px;
-  padding: 0 4px;
-  cursor: help;
-  white-space: nowrap;
-}
 .fare-prov-age {
   font-size: 10px;
   color: var(--ink-mute);
   white-space: nowrap;
 }
-.booking-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin: 4px 0 0; }
 .trip-sheet-footer-row {
   display: flex;
   align-items: center;
   gap: var(--space-2);
 }
-.trip-footer-error { margin: 0 0 8px; }
 .trip-origin-row { display: flex; }
+.trip-topcard-name::placeholder { color: var(--ink-mute); }
+.trip-topcard-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+.trip-sheet-grip {
+  width: 40px; height: 4px;
+  border-radius: 2px;
+  background: var(--rule);
+  margin: 0 auto;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .trip-sheet-grip-hit:hover .trip-sheet-grip { background: var(--ink-mute); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trip-sheet-grip { transition: none; }
+}
+.trip-sheet-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* A classic (non-overlay) scrollbar is laid out INSIDE the padding box, so on
+     Windows it ate 15 of these 20px and drew itself through the timeline's
+     connector rail. The gutter reserves its own strip beside the padding. */
+  scrollbar-gutter: stable;
+  padding: 6px 20px 22px;
+}
+.trip-block { margin-top: 18px; }
+.trip-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+.trip-nights-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+.trip-stops { margin-top: 14px; }
+.trip-stop-body { flex: 1; min-width: 0; }
+.trip-stop-when {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  margin-top: 1px;
+}
+.trip-suggest-sub {
+  display: flex; align-items: center; gap: 3px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 2px;
+}
+@media (max-width: 768px) {
+  .trip-add-row .dropdown.trip-add-country,
+  .trip-add-row .dropdown.trip-add-city { width: 100%; min-width: 0; }
+}
+.trip-note { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin-top: 8px; }
+.trip-ownflight-fields { display: flex; gap: 8px; margin-top: 8px; }
+.trip-save-row { display: flex; gap: 10px; margin-top: 16px; }
+@media (max-width: 768px) {
+  .trip-sheet-scroll { padding: 6px 15px 18px; }
+  .trip-field { min-width: 104px; }
+}
+.daytrip-reco-icon { color: var(--accent); margin-top: 2px; }
+.daytrip-reco-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.daytrip-reco-main b svg { color: var(--accent); }
+.daytrip-modes { margin-top: 10px; }
+.trip-sheet-footer {
+  flex: none;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+}

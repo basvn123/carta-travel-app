@@ -76,8 +76,6 @@
 .guide-canvas > .guide-title { margin-bottom: var(--space-5); }
 /* A label directly inside a planner surface, not one nested in a card that
    already sets its own. */
-.guide-canvas > .trip-field-label,
-.guide-section > .trip-field-label { display: block; margin-bottom: var(--space-2); }
 
 @media (max-width: 768px) {
   .guide-section + .guide-section { margin-top: var(--space-6); }
@@ -118,13 +116,9 @@
 }
 /* One selected state (T398, rule "Selected state"): ink fill, never the
    accent tint. */
-.wq-chip-icon { flex: none; display: flex; color: var(--ink-soft); }
-.wq-chip.on .wq-chip-icon { color: var(--select-ink); }
-.wq-chip-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .wq-chip-text b { font-size: 13.5px; font-weight: 600; }
 .wq-chip-text small { font-size: 12px; color: var(--ink-soft); }
 .wq-chip.on .wq-chip-text small { color: var(--on-fill); }
-.wq-chip-check { margin-left: auto; flex: none; display: flex; color: var(--on-fill); }
 
 /* An answered question, collapsed to its answer. It stays a button, so
    changing your mind is one tap rather than a walk back through the quiz. */
@@ -143,15 +137,12 @@
   cursor: pointer;
   color: var(--ink);
 }
-.wq-done-check { flex: none; display: flex; color: var(--accent); }
-.wq-done-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
 .wq-done-text small {
   font-family: var(--ui);
   font-size: 12px;
   color: var(--ink-soft);
 }
 .wq-done-text b { font-size: 13.5px; font-weight: 550; }
-.wq-done-edit { flex: none; display: flex; color: var(--ink-mute); }
 
 .wq-next {
   margin-top: var(--space-3);
@@ -164,12 +155,6 @@
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-}
-
-.wq-month {
-  margin-top: var(--space-4);
-  font-size: 12.5px;
-  color: var(--ink-mute);
 }
 
 .wq-results { margin-top: var(--space-7); }
@@ -191,9 +176,6 @@
   object-fit: cover;
   object-position: 50% var(--card-focus, 38%);
 }
-.mcard-place { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-
-.mcard-acts { display: flex; gap: var(--space-2); margin-top: auto; }
 .mcard-info {
   display: inline-flex;
   align-items: center;
@@ -228,7 +210,6 @@
    desktop, and Europe is roughly square, so the height is capped rather than
    let run to the full column: a very tall box fits Europe by WIDTH and fills
    the spare height with Greenland and the Atlantic. */
-.guide-where-map .cpm { height: min(58vh, 520px); margin-bottom: 0; }
 
 .cpm-legend {
   position: absolute;
@@ -249,8 +230,6 @@
    recommendation a dashed ink line; the accent stays for the live route. */
 
 /* Touch: a tap opens this instead of a hover tooltip nobody can reach. */
-.cpm-card-img { width: 56px; height: 56px; border-radius: 9px; object-fit: cover; flex: none; }
-.cpm-card-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
 .cpm-card-text b { font-family: var(--display); font-size: 15px; }
 /* Add is a secondary here: the step's one primary is Next (brief target
    table); added, it takes the selected state. */
@@ -275,7 +254,6 @@
   .wq-cols-2 { grid-template-columns: repeat(2, 1fr); }
   .wq-chip { padding: 8px 10px; }
   .wq-chip-text b { font-size: 12.5px; }
-  .guide-where-map .cpm { height: 62vh; min-height: 380px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -369,11 +347,10 @@
   .guide-chip { min-width: var(--tap); }
   .guide-datemode button { min-height: var(--tap); }
   .wtrip-len { min-height: var(--tap); min-width: var(--tap); }
-  .wready-link, .tday-more, .itin-stop-open, .tleg-link {
+  .wready-link, .tday-more, .tleg-link {
     display: inline-flex; align-items: center; min-height: var(--tap);
   }
   /* "Edit" is one short word, so the pill also needs the width (T193). */
-  .guide-answered-edit { min-width: var(--tap); justify-content: center; }
   .tpage-back { min-height: var(--tap); }
   .tpage-bar-act { width: var(--tap); height: var(--tap); }
   .guide-people button,
@@ -388,7 +365,6 @@
   /* "Next: Getting there" does not fit beside Back and Start over at 375px;
      the actions drop to their own line only when the label needs it, rather
      than breaking the button in two. */
-  .guide-foot-actions { flex: 1 1 auto; justify-content: flex-end; }
   .guide-next { white-space: nowrap; }
 }
 
@@ -407,8 +383,6 @@
   .places-search input,
 .places-country,
 .feat-dayplan,
-.tpage-act,
-.cycle-gpx,
 .bpage-where,
 .bpage-scorebtn,
 .bpage-scorehint,
@@ -445,5 +419,3 @@
 /* The mono rule on two fact rows (T186): the figures stay mono, the words
    beside them are the sans. A note under a journey fact ("per person for the
    week") and the bike a cycling route suits are sentences, not measures. */
-.bpage-fact dd.mono small,
-.cycle-facts .cycle-facts-bike { font-family: var(--ui); }
