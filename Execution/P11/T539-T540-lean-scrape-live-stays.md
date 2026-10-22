@@ -8,7 +8,7 @@ Batch of two tasks, 2026-10-22. The owner asked three things:
 
 Root branch `claude/accommodation-cost-setup-87d85c`. App branch `p11-live-stays`, merged into app master as c9d7ce3.
 
-Production was **not** deployed. The permission check refused the Pages deploy ("Production Deploy"), so it waits for the owner (T540-a). The 44 stays files with the new keys are already on R2, which is harmless: the live app does not read `xk`.
+Production was first refused by the permission check. After the owner approved it ("Yes, deploy app master to Cloudflare Pages production"), it went out as Pages deployment ba4e2ad3. The 44 stays files with the new keys went to R2 before that.
 
 ---
 
@@ -103,10 +103,14 @@ Response times:
 
 ### End check
 
-**Not done in a browser.** Preview origins cannot read the data host, and the production deploy was refused. The endpoint and the price maths are covered by curl and the node tests. After the deploy, check:
-- the Vienna destination page with own dates: the stay line says "Adjusted to live prices for your nights", and the figure changes once the answer lands
-- phone and desktop
-- a town without keys keeps the modelled price with no label
+Production (www.carta-europetravel.com, Pages ba4e2ad3), Vienna, 12 to 15 Dec 2026, 2 people, 3-star hotel:
+- The card first shows the model: Stay €732.00.
+- About 20 s later it moves to €687.44 with "Adjusted to live prices for your nights". The total moves from €1,107.18 to €1,062.62, and the headline reads €177 a person a day.
+- With "Entire place" chosen, nothing changes and there is no label, which is correct because homes are not live.
+- Phone (375 wide): no overflow, and the label wraps under the line.
+- `/api/stays` from the page: 200 in 167 ms with warm cells.
+
+**Caching gotcha.** A browser that loaded the stays files in the hour before the upload keeps its old copy, which has no keys. That covers both the HTTP cache (1 h plus a day of stale-while-revalidate) and the service worker's stale-while-revalidate (`carta-v7`). Live prices start on that browser's next visit after the background refresh. Nothing breaks in the meantime: the model shows.
 
 ### Rollback
 
@@ -116,7 +120,7 @@ Response times:
 
 ## What is still open
 
-- **T540-a.** The production Pages deploy of app master c9d7ce3 waits for the owner. The permission check refused it.
+- **T540-a.** Closed: deployed as ba4e2ad3 after the owner's approval, and checked on production.
 - **T540-b.** Only the destination card asks for live prices. The trip card and the planner's stop beds would use them through `bedPrice()` but never call `loadLiveStay()`.
 - **T540-c.** Xotelo publishes no terms, and the app now calls it per visitor from Cloudflare, behind a 12-hour cache. Whether that is acceptable for a commercial app is the owner's call.
 - **T540-d.** The monthly refresh must have `xotelo_props.json` in the private state bucket. Otherwise `build_stays` writes no `xk`, the newer live copy wins, and live prices silently switch off.

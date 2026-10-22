@@ -1909,7 +1909,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T537-b | T537 | In dev the trip wizard reaches Trips with "0 days" when the dates come only from the URL; not investigated, may predate T537 | next task | closed by T538 |  |
 | T537-c | T537 | Not opened in the browser: trip planner TripPriceCard flight link, Explore hover receipt, day planner, PDFs | next task | open |  |
 | T538-a | T538 | The country brief cost fold (now CostRow, est. marked) was not opened in a browser; it is reached only from the Help me choose match cards | next task | open |  |
-| T540-a | T540 | Production Pages deploy of app master c9d7ce3 (live bed prices) waits for the owner: the session's permission check refused it; R2 stays files with xk are already up | user | open | 1 |
+| T540-a | T540 | Production Pages deploy of app master c9d7ce3 (live bed prices) waits for the owner: the session's permission check refused it; R2 stays files with xk are already up | user | closed by T540 | 1 |
 | T540-b | T540 | Only the destination card calls loadLiveStay; the trip card and the planner's stop beds would use live prices through bedPrice but never ask | next task | open |  |
 | T540-c | T540 | Xotelo publishes no terms and is now called per visitor from Cloudflare (12 h cache); owner decides whether that use is acceptable | user | open |  |
 | T540-d | T540 | The monthly refresh needs xotelo_props.json in the state bucket, or build_stays writes no xk and the newer live copy switches live prices off | next task | open |  |
