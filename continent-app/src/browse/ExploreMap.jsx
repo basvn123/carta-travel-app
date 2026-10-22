@@ -258,6 +258,10 @@ export function ExploreMap({
   rows, all, pins = null, onSelect, onViewport, onNeedDetail, t, ringId = null, onPinLink = null,
   costs = null, onBack = null, visible = true, framed = false, lines = null,
   pickedId = null, onPick = null, drawerState = null,
+  // T600: 'score' labels a pin with its Score instead of the day figure
+  // (beaches, lakes and mountains on their own tabs), and no pin is the
+  // cheapest one.
+  pinFig = 'eur',
 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
@@ -797,10 +801,14 @@ export function ExploreMap({
   // At every zoom the place pins are price labels (T441), and the cheapest
   // of them is the one emphasised pin in view.
   let best = null;
-  for (const k of kpins) {
+  if (pinFig !== 'score') for (const k of kpins) {
     if (k.eur != null && (!best || k.eur < best.eur)) best = k;
   }
   const cheapestKey = best?.key ?? null;
+  // The figure a label leads with: the day figure, or the Score (T600).
+  const pinText = (k) => (pinFig === 'score'
+    ? (k.score != null ? Number(k.score).toFixed(1) : '')
+    : (k.eur != null ? dayFig(k.eur, k.est) : ''));
   // V4 (T393, row T383-c): labels never sit on each other. They are placed
   // in priority order, the cheapest first, then the better-rated; a label
   // that would overlap one already placed stays a dot (still a keyboard
@@ -820,8 +828,9 @@ export function ExploreMap({
       || (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1)));
     for (const k of order) {
       const name = String(k.city || '');
+      const fig = pinText(k);
       const w = LABEL_BOX_W + textWidth(name, false)
-        + (k.eur != null ? LABEL_GAP_W + textWidth(dayFig(k.eur, k.est), true) : 0);
+        + (fig ? LABEL_GAP_W + textWidth(fig, true) : 0);
       const box = { l: k.x - w / 2, r: k.x + w / 2, t: k.y - LABEL_H / 2, b: k.y + LABEL_H / 2 };
       const outside = box.l < 4 || box.t < 4 || box.r > W - 4 || box.b > H - 4;
       if (outside || placed.some((o) => box.l < o.r && o.l < box.r && box.t < o.b && o.t < box.b)) {
@@ -1012,8 +1021,8 @@ export function ExploreMap({
                 {/* T592: read the Kayak way, the figure first and bold,
                     the name smaller after it. */}
                 {label && (
-                  <span className={`xmap-kpin-label${k.eur != null ? ' has-fig' : ''}`} aria-hidden="true">
-                    {k.eur != null && <span className="xmap-kpin-eur">{dayFig(k.eur, k.est)}</span>}
+                  <span className={`xmap-kpin-label${pinText(k) ? ' has-fig' : ''}`} aria-hidden="true">
+                    {pinText(k) && <span className="xmap-kpin-eur">{pinText(k)}</span>}
                     <span className="xmap-kpin-name">{k.city}</span>
                   </span>
                 )}

@@ -12,8 +12,8 @@ import '../styles/84-explore-overview.css';
  * first time Explore opens on a wide screen, one question in the traveller's
  * own words, which goes to Ask Carta, and the four settings the prices hang
  * on (From, Where to, When, Who), each showing its value and opening its own
- * part of the settings line. "Show places" closes it. It is reopened from the
- * overview's door.
+ * part of the settings line. "Show places" closes it. Since T595 it opens on
+ * the first visit only; Ask Carta's field on the overview is the way back in.
  *
  * Shown once per device (localStorage, in try/catch), only from 1024 px, and
  * never when the address already carries a view (a shared link, a filter)

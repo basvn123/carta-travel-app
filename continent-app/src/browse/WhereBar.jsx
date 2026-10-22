@@ -18,8 +18,11 @@ import '../styles/83-where-bar.css';
  *          town becomes the place the list measures from). The view's one
  *          primary stays where it was.
  *
- * On a surface band (--surface, --radius-card, --border, no shadow). On a
- * phone the two fields stack and the button takes the full width.
+ * T600, compact: no band behind it. On a desktop one row, What, Where,
+ * Search and the view pill (`after`); on a phone two, Where with the view
+ * pill, then What with Search. What wears its label inside its box; Where is
+ * a search box (the icon and the placeholder name it), its label kept for
+ * assistive tech only.
  */
 export function WhereBar({ t, what = null, where, onSearch, after = null, children = null }) {
   const [draft, setDraft] = useState(what?.value || '');
@@ -33,7 +36,7 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
   const submit = () => onSearch?.(what ? draft : null);
 
   return (
-    <div className={`wbar${what ? '' : ' is-whereonly'}`} role="search" aria-label={t('where.barAria')}>
+    <div className={`wbar${what ? '' : ' is-whereonly'}${after ? ' has-view' : ''}`} role="search" aria-label={t('where.barAria')}>
       {what && (
         <Field
           as="select"
@@ -49,7 +52,7 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
         </Field>
       )}
       <div className="wbar-where">
-        <label className="field-label" htmlFor={inputId}>{t('where.where')}</label>
+        <label className="field-label sr-only" htmlFor={inputId}>{t('where.where')}</label>
         <div className="wbar-box" ref={where.boxRef}>
           <SearchIcon size={16} className="wbar-icon" />
           <input

@@ -131,7 +131,26 @@ function placeParams(key, { cat } = {}) {
     default: return { tab: key };
   }
 }
-const PLACE_PARAM_KEYS = ['tab', 'mode', 'cat', 'view'];
+// `dq` (T600) is the text a category was opened with: it belongs to that
+// one hand-off, so any move between places drops it.
+const PLACE_PARAM_KEYS = ['tab', 'mode', 'cat', 'view', 'dq'];
+
+/** Longest search text an address carries (T600). */
+const BROWSE_QUERY_MAX = 80;
+
+/**
+ * The search text an Explore category opens with (T600): Explore's overview
+ * hands its Where field over as `dq`, and DestinationsTab starts with it in
+ * its own Where field. Trimmed, capped, '' when there is none.
+ */
+export function browseQueryFrom(search) {
+  try {
+    const raw = new URLSearchParams(search || '').get('dq') || '';
+    return raw.trim().slice(0, BROWSE_QUERY_MAX);
+  } catch {
+    return '';
+  }
+}
 
 /** Build a query string (no leading '?') from the live app state. */
 export function encodeState({
@@ -320,6 +339,9 @@ export function tabHref(key, search = (typeof window !== 'undefined' ? window.lo
   for (const k of PLACE_PARAM_KEYS) q.delete(k);
   for (const [k, v] of Object.entries(placeParams(key, opts))) q.set(k, v);
   if (key === 'account' && opts.view && opts.view !== 'home' && ACCOUNT_VIEWS.includes(opts.view)) q.set('view', opts.view);
+  // T600: the Where text a category is opened with.
+  const dq = key === 'places' ? String(opts.q || '').trim().slice(0, BROWSE_QUERY_MAX) : '';
+  if (dq) q.set('dq', dq);
   return `?${q.toString()}`;
 }
 

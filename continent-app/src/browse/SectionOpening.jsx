@@ -247,7 +247,8 @@ function withMoney(text, money) {
   return <>{text.slice(0, at)}{money}{text.slice(at + SLOT.length)}</>;
 }
 
-/** Up to three facts for a rail's lead card, read from its rows. */
+/** Up to three facts for a rail's lead card, read from its rows, one of
+ *  them marked as the card's large figure. */
 function sectionFacts(layer, rows, describe, t, lang) {
   const facts = [];
   const days = rows.map((r) => describe(r).base?.dayEur).filter(Number.isFinite);
@@ -274,6 +275,10 @@ function sectionFacts(layer, rows, describe, t, lang) {
       facts.push({ key: 'ele', icon: MountainIcon, text: t('rail.factUpTo', { v: `${Math.round(Math.max(...ele)).toLocaleString(lang)} m` }) });
     }
   }
+  // T599: one fact is the lead card's large figure: the cheapest day, else
+  // the highest summit, else the distance span.
+  const big = ['from', 'ele', 'km'].map((k) => facts.find((f) => f.key === k)).find(Boolean);
+  if (big) big.figure = true;
   return facts;
 }
 
@@ -328,7 +333,9 @@ export function SectionOpening({
           {rails.map((rail) => (
             <StoryRail key={rail.key} id={`dtab-rail-${layer}-${rail.key}`} title={rail.title}
               facts={sectionFacts(layer, rail.rows, describe, t, lang)}
-              onSeeAll={rail.onSeeAll} t={t} headingLevel={3} className="open-rail">
+              onSeeAll={rail.onSeeAll} t={t} headingLevel={3} className="open-rail"
+              stack={rail.rows.map((row) => ({ url: photo(row) || (photos ? photos(row)[0] : null), city: describe(row).name }))
+                .filter((ph) => ph.url).slice(0, 3)}>
               {rail.rows.map((row) => (
                 <SectionStoryCard key={row.id} layer={layer} row={row} describe={describe} photo={photo}
                   photos={photos} onOpen={onOpen} sharedKey={sharedKey} t={t} lang={lang} />

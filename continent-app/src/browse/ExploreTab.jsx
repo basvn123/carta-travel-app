@@ -4,7 +4,9 @@ import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
-import { ExploreFilterRail, minVerdict, goodForOf, legMinutes } from './ExploreFilterRail.jsx';
+import { ExploreFilterRail, minVerdict, goodForOf, legMinutes, verdictsFrom } from './ExploreFilterRail.jsx';
+import { FilterChipBar } from './WhereBar.jsx';
+import { TRIP_KINDS } from '../lib/trip_kinds.js';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { ExploreCategories } from './ExploreCategories.jsx';
@@ -67,7 +69,8 @@ import { overviewRegion, overviewReason, overviewScore, reasonText } from '../li
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { MapPlacePanel } from './MapPlacePanel.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
-import { AskChatDoor, AskChatHost } from './ask/AskChatButton.jsx';
+import { AskChatHost } from './ask/AskChatButton.jsx';
+import { openAskChat, closeAskChat, useAskChat } from './ask/askChatStore.js';
 import { CountriesButton } from '../components/CountriesControl.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
@@ -80,7 +83,10 @@ import { decodeBootIndex } from '../lib/bootIndex.js';
 import { formatMoney } from '../lib/money.js';
 import { computeCosts } from '../lib/costIndex.js';
 // T586: the overview first page.
-import { SearchIcon, ArrowLeftIcon, SparkIcon } from '../components/Icons.jsx';
+import {
+  SearchIcon, ArrowLeftIcon, SparkIcon, DiamondIcon, TrainIcon, PersonIcon, PiggyIcon, SunIcon,
+  StarIcon, BootIcon, BeachIcon,
+} from '../components/Icons.jsx';
 // T588: the focused view's toolbar.
 // T585: the start dialog.
 import { StartDialog, shouldOpenStart, markStartSeen } from './StartDialog.jsx';
@@ -851,16 +857,10 @@ export function ExploreTab({
         ? t('explore.emptyCause', { filter: lastChip.label })
         : t('results.empty');
 
-  // Desktop chrome: Ask Carta's door portals into the app header's slot on
-  // every place (T574: Explore hosts the one chat and stays mounted, so the
-  // door is there on Plan and My trips too) and the controls stand in the
-  // left panel; the phone keeps the toolbar card.
+  // Desktop chrome: the controls stand in the left panel. Ask Carta's one
+  // door is the overview's own field (T595, owner 2026-10-22: only on
+  // Explore, not in the header and not on other tabs).
   const isDesktop = useIsDesktop();
-  const [headerSlot, setHeaderSlot] = React.useState(null);
-  React.useEffect(() => {
-    if (isDesktop) setHeaderSlot(document.getElementById('header-search-slot'));
-    else setHeaderSlot(null);
-  }, [isDesktop]);
 
   // T504: picking and opening. A pin picks a place (the overview shows);
   // the overview, a second tap on the same pin, or a list row opens it. A
@@ -1043,8 +1043,8 @@ export function ExploreTab({
         .then(() => setToast(t('explore.linkCopied')), fail);
     } catch { fail(); }
   };
-  // T585: the start dialog, once per device on a wide screen, and again
-  // from the overview's door.
+  // T585: the start dialog, once per device on a wide screen (T595: on the
+  // first visit only; Ask Carta's field took over its door).
   const [startOpen, setStartOpen] = React.useState(false);
   React.useEffect(() => {
     if (!isActive || pageOver) return;
@@ -1115,11 +1115,31 @@ export function ExploreTab({
         seeAll: () => setGemOnly(true) },
       { key: 'nocar', title: t('rail.nocar'), short: t('rail.nocar'), rows: q.nocar,
         seeAll: () => patchXf({ nocar: true }) },
-      { key: 'quiet', title: t('rail.quiet'), short: t('rail.quiet'), rows: q.quiet,
+      { key: 'quiet', title: t('rail.quiet'), short: t('filter.notCrowded'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
     ];
   }, [railsIdle, rows, xf.month, xf.budget, railMonth, lang, guided, favorites, t, patchXf,
     setGemOnly, setSortKey, setShowFavOnly]);
+
+  // T595 (owner 2026-10-22, point 1): the rails' doors stand at the top of
+  // the overview as quick chips that act at once: every rail past the ones
+  // drawn as strips, then the month's price and season rails. The same rail
+  // objects, so a chip opens exactly what that rail's See all opens.
+  const railLead = (isDesktop ? 4 : 3) - (onOpenStyles ? 1 : 0);
+  const quickRails = React.useMemo(() => {
+    const shown = rails.filter((r) => r.rows.length >= 4);
+    const out = shown.slice(railLead);
+    for (const k of ['cost', 'now']) {
+      const r = shown.find((x) => x.key === k);
+      if (r && !out.includes(r)) out.push(r);
+    }
+    return out;
+  }, [rails, railLead]);
+  // The desktop pane beside the overview, opened by "All filters" there;
+  // any filter picked in it opens the focused view, where the pane stays.
+  const [ovPane, setOvPane] = React.useState(false);
+  // Back on the overview the pane is closed again (the focused view has its own).
+  React.useEffect(() => { if (!railsIdle) setOvPane(false); }, [railsIdle]);
 
   // The control bar's three instruments. The count is a measured figure,
   // so it is grouped the way the reader's locale groups thousands.
@@ -1161,6 +1181,62 @@ export function ExploreTab({
     ? [...BUDGET_STEPS, xf.budget].sort((x, y) => x - y)
     : BUDGET_STEPS;
 
+  // T598: the focused view's quick filter chips. Each is one of the pane's
+  // groups over the same state (xf and the trip kinds), so a chip and the
+  // pane always agree. A one-choice group picks again to clear.
+  const quickGroups = (() => {
+    const single = (key, label, values, cur, labelOf, set) => ({
+      key, label,
+      options: values.map((v) => ({ key: String(v), label: labelOf(v), on: cur != null && String(cur) === String(v) })),
+      onToggle: (k) => {
+        const v = values.find((x) => String(x) === k);
+        set(cur != null && String(cur) === k ? null : v);
+      },
+    });
+    const monthFmt = new Intl.DateTimeFormat(lang, { month: 'long' });
+    const goodFor = goodForOf(xf.roles);
+    const out = [
+      {
+        key: 'kind', label: t('filter.tripType'),
+        options: TRIP_KINDS.map((k) => ({ key: k.key, label: t(`kind.${k.key}`), on: tripKinds.includes(k.key) })),
+        onToggle: (k) => setTripKinds(tripKinds.includes(k) ? tripKinds.filter((x) => x !== k) : [...tripKinds, k]),
+      },
+      single('budget', t('filter.budget'), budgetSteps, xf.budget,
+        (n) => t('explore.qfBudget', { eur: formatMoney(n) }), (v) => patchXf({ budget: v })),
+      single('month', t('filter.month'), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], xf.month,
+        (m) => monthFmt.format(new Date(2026, m - 1, 15)), (v) => patchXf({ month: v })),
+      single('good', t('filter.goodFor'), Object.keys(QUICK_GOOD_FOR), goodFor || null,
+        (k) => t(`filter.goodFor.${k}`), (v) => patchXf({ roles: v ? QUICK_GOOD_FOR[v] : [] })),
+      single('rating', t('sort.rating'), ['1', '2', '3'], minVerdict(xf.verdicts) || null,
+        (k) => t(`score.band${k}`), (v) => patchXf({ verdicts: verdictsFrom(v || '') })),
+    ];
+    if (flightLimitAvailable) {
+      out.push(single('flight', t('filter.flightUpTo'), [2, 3, 4, 6], xf.fh,
+        (n) => t('explore.qfFlight', { n }), (v) => patchXf({ fh: v })));
+    }
+    return out;
+  })();
+
+  // T598 (owner point 11): on a desktop the map starts right under the chip
+  // row and fills the rest of the screen. The frame's top is measured with
+  // the list scrolled to the top (the head and chips above it change with
+  // the filters), and the CSS takes the height from it.
+  const contentRef = React.useRef(null);
+  const [mapTop, setMapTop] = React.useState(null);
+  const chipCount = chips.length;
+  React.useLayoutEffect(() => {
+    if (!isDesktop || view !== 'map' || railsIdle) return undefined;
+    const measure = () => {
+      const el = contentRef.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + (scrollRef.current?.scrollTop || 0);
+      setMapTop(Math.round(top));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [isDesktop, view, railsIdle, chipCount]);
+
   // The six categories (T498): Places is this view; a layer hands over to
   // App with the one country picked here, so the country travels (rule 3).
   // T586 (owner decision 7): one row of pills at the top of the content,
@@ -1197,9 +1273,8 @@ export function ExploreTab({
 
 
   return (
-    <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails is-overview' : ' is-focus'}${paneOpen ? '' : ' is-pane-closed'}`}>
+    <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails is-overview' : ' is-focus'}${paneOpen ? '' : ' is-pane-closed'}${railsIdle && ovPane ? ' is-ov-pane' : ''}`}>
       {askHost}
-      {headerSlot && createPortal(<AskChatDoor t={t} className="ac-in-header" />, headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the filter
           rail in folds, trip styles first, with one hairline to the panel's
@@ -1221,52 +1296,30 @@ export function ExploreTab({
 
       <div className="explore-tab" ref={scrollRef}>
       <div className="explore-wrap">
-        {/* Phone only (CSS hides it from 769px): search and the Filters
-            door share one row (brief V3-4). The trip styles live in the
-            sheet now, and Lifestyle and the shortlist in the input row. */}
-        <div className="explore-filterbar xtop">
-          {/* On desktop the same button has portalled into the header. */}
-          {!headerSlot && <AskChatDoor t={t} className="ac-in-bar" />}
-          {/* T581: the countries, in or out, as their own door on a phone
-              (the desktop has them on the settings line). */}
-          {/* In the focused view both move into the toolbar (T588). */}
-          {railsIdle && <CountriesButton s={settingsLine} />}
-          {railsIdle && (
-          <Button
-            variant="secondary"
-            ref={filterBtnRef}
-            className="xfilters-btn"
-            iconStart={<FilterIcon size={18} />}
-            onClick={() => setSheetOpen(true)}
-            aria-haspopup="dialog"
-            aria-expanded={sheetOpen}
-          >
-            {t('filter.filters')}
-            {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
-          </Button>
-          )}
-        </div>
-        {/* T586: the overview leads with what to look for and where. */}
+        {/* T586, T595: the overview leads with one compact block: the
+            headline, Ask Carta's field, the What and Where bar with the map
+            toggle, then the categories and the quick chips. The phone's
+            old Ask Carta and Filters row is gone: both live in the block. */}
         {railsIdle && (
-          <OverviewHero t={t} TitleTag={TitleTag}
+          <OverviewHero t={t} TitleTag={TitleTag} lang={lang}
+            month={xf.month || railMonth}
             locationQuery={locationQuery} setLocationQuery={setLocationQuery}
             onShowAll={() => setFocusAll(true)}
-            onPickCategory={onPickCategory ? (key) => onPickCategory(key, oneCountry || '') : null}
+            onPickCategory={onPickCategory
+              ? (key, q) => onPickCategory(key, oneCountry || '', q) : null}
             onOpenStyles={onOpenStyles ? () => onOpenStyles(null) : null}
-            onTellCarta={isDesktop ? () => setStartOpen(true) : null} />
+            viewToggle={viewSwitch('xov-view')}
+            cats={catTiles}
+            quick={quickRails}
+            countries={!isDesktop ? <CountriesButton s={settingsLine} className="xquick-chip" /> : null}
+            filtersRef={filterBtnRef}
+            filtersOn={isDesktop ? ovPane : sheetOpen}
+            filterCount={chips.length}
+            onAllFilters={() => (isDesktop ? setOvPane((v) => !v) : setSheetOpen(true))} />
         )}
-        {/* The six categories as one row of tabs (T586, owner decision 7). */}
-        {catTiles && <div className="xcats-bar">{catTiles}</div>}
-        {/* The focused view's way back to the overview (T586): a link to
-            the overview's address; Back in the browser does the same. */}
-        {!railsIdle && (
-          <a className="xov-back" href={lens.href}
-            onClick={(e) => { e.preventDefault(); lens.back(); }}>
-            <ArrowLeftIcon size={16} />
-            {t('explore.backOverview')}
-          </a>
-        )}
-
+        {/* The six categories as one row of tabs (T586, owner decision 7);
+            on the overview they sit inside the head block (T595). */}
+        {catTiles && !railsIdle && <div className="xcats-bar">{catTiles}</div>}
         {/* The control bar: what this page is and how many places it holds
             right now (the count, V3), and the two ways to rearrange them.
             On a phone the title is read but not drawn, so the count is the
@@ -1280,8 +1333,17 @@ export function ExploreTab({
                 second one there (row T380-g). Hidden, it is a plain div. */}
             {/* T588: the title and the live count under it (owner
                 2026-10-22, reversing 2026-10-13). */}
+            {/* T598: one head row. The way back to the overview (T586) is
+                a round arrow before the title: a link to the overview's
+                address, drawn as the kit's icon button; Back in the browser
+                does the same. */}
+            <a className="icon-btn icon-btn-surface xov-back" href={lens.href}
+              aria-label={t('explore.backOverview')} title={t('explore.backOverview')}
+              onClick={(e) => { e.preventDefault(); lens.back(); }}>
+              <ArrowLeftIcon size={20} />
+            </a>
             <TitleTag className="xbar-title">{t('explore.placesTitle')}</TitleTag>
-            <span className="xbar-count">
+            <span className="xbar-count sr-only">
               {t(gridTotal === 1 ? 'explore.countOne' : 'explore.countMany',
                 { n: new Intl.NumberFormat(lang).format(gridTotal) })}
             </span>
@@ -1324,6 +1386,10 @@ export function ExploreTab({
         {/* C6: active filters as removable chips, right under the bar. */}
         {/* On a phone the sort leads the chip row (62-v6-explore.css), so
             the list has one refine row; the bar's own sort shows otherwise. */}
+        {/* T598 (owner points 7 and 11): quick filter chips right under the
+            head, AllTrails style, each a small popover over the same state
+            the pane edits; then the active filters. */}
+        {!railsIdle && <FilterChipBar t={t} groups={quickGroups} fmt={(n) => n.toLocaleString(lang)} />}
         {!railsIdle && <FilterChips t={t} chips={chips} onClearAll={resetAll} />}
 
         {/* The one community surface on a browse tab: a real count of what
@@ -1362,7 +1428,8 @@ export function ExploreTab({
             sticky map, the list narrowing to what the map holds. On a
             phone the map takes the column and the floating switch brings
             the list back. */}
-        <div className={`xcontent ${view === 'map' ? 'xcontent--split' : ''}`.trim()}>
+        <div className={`xcontent ${view === 'map' ? 'xcontent--split' : ''}`.trim()} ref={contentRef}
+          style={mapTop != null ? { '--xmap-top': `${mapTop}px` } : undefined}>
           {/* The map comes first in the DOM and CSS puts it in the right
               column (T190): the keyboard reaches the map the reader just
               asked for straight after the control bar, instead of after
@@ -1432,21 +1499,13 @@ export function ExploreTab({
                 country={oneCountry}
                 onPick={(slug) => onOpenStyles(slug)} onSeeAll={() => onOpenStyles(null)} />
             )}
+            {/* The rails' doors, Show all places and the map toggle moved to
+                the head block (T595); the rails draw no doors of their own. */}
             {railsIdle && (
               <ExploreRails rails={rails} onSelect={openPlace} t={t}
                 favorites={favSet} onToggleFav={onToggleFav}
                 month={xf.month || railMonth}
-                lead={(isDesktop ? 4 : 3) - (onOpenStyles ? 1 : 0)} />
-            )}
-            {/* The overview ends in one door to every place (T586); the
-                list under it shows only in the focused view. */}
-            {railsIdle && (
-              <div className="xov-end">
-                <Button variant="secondary" onClick={() => setFocusAll(true)}>
-                  {t('explore.showAllPlaces')}
-                </Button>
-                {viewSwitch('xov-view')}
-              </div>
+                lead={railLead} hideDoors />
             )}
 
             {gridTotal === 0 && (
@@ -1617,54 +1676,107 @@ function useExploreLens({ isActive, railsIdle, focusAll, setFocusAll, clear }) {
 }
 
 /**
- * The overview's head (T586): a headline with a verb, then the Komoot-style
- * bar, "What" over a select of Explore's kinds and "Where" over the place
- * search, with one secondary Search. Places with a place name searches the
- * catalogue; Places alone opens every place; another kind hands over to its
- * tab, as its pill in the tab row does. Beside the bar, on a wide screen,
- * a quiet door to tell Carta in words.
+ * The overview's head (T586, rebuilt compact by T595 on the owner's points
+ * 1, 2, 5 and 6 of 2026-10-22). One block, top to bottom:
+ *
+ *   the headline      a short human question
+ *   Ask Carta         a field-like door with the spark and a typed-looking
+ *                     example; it opens the one chat (the header and the
+ *                     Plan page no longer carry a door)
+ *   the bar           What | Where | Search | the map toggle, on one line
+ *                     from 769 px. Where works for every What: Places
+ *                     searches the catalogue, a category hands the typed
+ *                     text to its tab, Trip styles ignores it.
+ *   the pick row      the category pills, then quick chips that act at
+ *                     once (the rails' doors), All filters and Show all
+ *                     places. One row on a wide screen when it fits; on a
+ *                     phone each group scrolls sideways on its own line.
  */
 function OverviewHero({
-  t, TitleTag, locationQuery, setLocationQuery, onShowAll, onPickCategory, onOpenStyles, onTellCarta,
+  t, TitleTag, lang, month, locationQuery, setLocationQuery, onShowAll, onPickCategory, onOpenStyles,
+  viewToggle, cats, quick, countries, filtersRef, filtersOn, filterCount, onAllFilters,
 }) {
   const [what, setWhat] = React.useState('places');
   const [where, setWhere] = React.useState(locationQuery || '');
   const kinds = EXPLORE_TILES.filter((k) => k.key === 'places' || onPickCategory);
+  const { open: askOpen } = useAskChat();
   const submit = (e) => {
     e.preventDefault();
-    if (what === 'styles') { onOpenStyles?.(); return; }
-    if (what !== 'places') { onPickCategory?.(what); return; }
     const q = where.trim();
+    if (what === 'styles') { onOpenStyles?.(); return; }
+    if (what !== 'places') { onPickCategory?.(what, q); return; }
     if (q) setLocationQuery(q); else onShowAll();
   };
+  const askMonth = new Intl.DateTimeFormat(lang, { month: 'long' })
+    .format(new Date(2026, (month || 11) - 1, 15));
+  const whereId = React.useId();
   return (
     <section className="xov-hero" aria-labelledby="xov-title">
       <TitleTag className="xov-title" id="xov-title">{t('explore.heroTitle')}</TitleTag>
+      <Button variant="secondary" className="xov-ask" aria-expanded={askOpen}
+        iconStart={<SparkIcon size={20} />} iconEnd={<ChevronRightIcon size={18} />}
+        onClick={(e) => (askOpen ? closeAskChat() : openAskChat(e.currentTarget))}>
+        <span className="xov-ask-name">{t('askChat.open')}</span>
+        <span className="xov-ask-prompt">
+          {t('explore.askPrompt', { month: askMonth, eur: formatMoney(80) })}
+        </span>
+      </Button>
       <form className="xov-bar" role="search" aria-label={t('explore.heroSearchAria')} onSubmit={submit}>
-        <Field as="select" className="xov-what" label={t('explore.heroWhat')}
+        <Field as="select" className="xov-what" label={t('explore.heroWhat')} hideLabel
           value={what} onChange={(e) => setWhat(e.target.value)}>
           {kinds.map(({ key, labelKey }) => <option key={key} value={key}>{t(labelKey)}</option>)}
           {onOpenStyles && <option value="styles">{t('journey.rowStyles')}</option>}
         </Field>
         <div className="xov-where">
-          <Field type="search" label={t('explore.heroWhere')} value={where}
-            disabled={what !== 'places'} autoComplete="off" enterKeyHint="search"
-            onChange={(e) => setWhere(e.target.value)} />
+          <label className="sr-only" htmlFor={whereId}>{t('explore.heroWhere')}</label>
           <SearchIcon size={18} className="xov-where-icon" />
+          <input id={whereId} type="search" className="xov-where-input" value={where}
+            placeholder={t('explore.wherePh')} autoComplete="off" enterKeyHint="search"
+            disabled={what === 'styles'}
+            onChange={(e) => setWhere(e.target.value)} />
         </div>
         <Button type="submit" variant="secondary" className="xov-go" iconStart={<SearchIcon size={18} />}>
           {t('explore.heroSearch')}
         </Button>
+        {viewToggle}
       </form>
-      {onTellCarta && (
-        <Button variant="quiet" size="sm" className="xov-door" iconStart={<SparkIcon size={16} />}
-          onClick={onTellCarta}>
-          {t('explore.heroDoor')}
-        </Button>
-      )}
+      <div className="xov-picks">
+        {cats && <div className="xov-cats">{cats}</div>}
+        <div className="xov-quick" role="group" aria-label={t('explore.quickAria')}>
+          {quick.map((r) => (
+            <Button key={r.key} variant="secondary" size="sm" className="xquick-chip"
+              iconStart={QUICK_ICONS[r.key] ? React.createElement(QUICK_ICONS[r.key], { size: 16 }) : null}
+              onClick={r.seeAll}>
+              {r.short || r.title}
+            </Button>
+          ))}
+          {countries}
+          <Button ref={filtersRef} variant="secondary" size="sm"
+            className={`xquick-chip xquick-filters${filtersOn ? ' is-on' : ''}`}
+            iconStart={<FilterIcon size={16} />} aria-expanded={filtersOn}
+            onClick={onAllFilters}>
+            {t('places.allFilters')}
+            {filterCount > 0 && <Chip kind="count" className="xfilters-n">{filterCount}</Chip>}
+          </Button>
+          <Button variant="quiet" size="sm" className="xquick-chip xquick-all"
+            iconEnd={<ChevronRightIcon size={16} />} onClick={onShowAll}>
+            {t('explore.showAllPlaces')}
+          </Button>
+        </div>
+      </div>
     </section>
   );
 }
+
+/** "Good for" in the quick chips (T598): the pane's three choices and the
+ * role keys each stands for (ExploreFilterRail's GOOD_FOR). */
+const QUICK_GOOD_FOR = { base: ['base', 'basecamp'], daytrip: ['daytrip'], stop: ['stop'] };
+
+/** The quick chips' icons: the same line icons the filter pane uses. */
+const QUICK_ICONS = {
+  saved: BookmarkIcon, gems: DiamondIcon, nocar: TrainIcon, quiet: PersonIcon,
+  cost: PiggyIcon, now: SunIcon, top: StarIcon, hiking: BootIcon, beach: BeachIcon,
+};
 
 /**
  * Sort as a menu behind one pill (T588): the choices as menu radios, the

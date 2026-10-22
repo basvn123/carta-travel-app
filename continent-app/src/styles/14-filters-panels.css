@@ -2583,6 +2583,16 @@
   border-top: 1px solid var(--border-soft);
 }
 
+/* Getting there (T597): five ways in one row, icon over word, so the group
+   costs one short row and the panel still fits a desktop screen. */
+.ls-tiles.ls-tiles-way { grid-template-columns: repeat(5, 1fr); gap: var(--space-1); }
+.ls-tiles-way .ls-tile {
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-1);
+  text-align: center;
+}
+
 /* On a phone the habits read as 3x2 still: the rows are short enough, and
    a narrow tile stacks its icon over its word rather than squeezing it. */
 @media (max-width: 480px) {

@@ -58,6 +58,10 @@
 .storyr .storyr-item > .card { flex: 1 1 auto; min-width: 0; }
 
 /* ---- The lead card ------------------------------------------------------ */
+/* T599: filled top to bottom on purpose. The heading at the top, a fanned
+   stack of the rail's first three photographs in the middle (it takes the
+   height the photo cards give the row), the one strong figure, the small
+   facts and "See all" at the foot. */
 .storyr .storyr-lead.card {
   display: flex;
   flex-direction: column;
@@ -69,6 +73,12 @@
   color: var(--text);
   transform: rotate(-2deg);
   transition: transform var(--dur-2) var(--ease-out);
+}
+.storyr .storyr-lead-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
 }
 .storyr .storyr-lead-title {
   margin: 0;
@@ -85,14 +95,81 @@
 .storyr .storyr-lead-line {
   margin: 0;
   color: var(--text-2);
-  font-size: var(--text-body);
+  font-size: var(--text-label);
   line-height: 1.4;
 }
-.storyr .storyr-facts {
+
+/* The stack: three prints fanned from one point, the first place's photo
+   in front. Each print is 4:5 like the cards it previews, sized by the
+   stack's height and capped by its width so the fan fits a 360 px phone;
+   a --surface edge and --elev-1 make them read as prints on the card. */
+.storyr .storyr-stack {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 112px;
+  margin: 0 calc(-1 * var(--space-1));
+  pointer-events: none;
+}
+.storyr .storyr-stack-photo {
+  --fan-x: 0%;
+  --fan-r: 0deg;
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  z-index: 1;
+  height: 88%;
+  aspect-ratio: 4 / 5;
+  max-width: 50%;
+  overflow: hidden;
+  border: 3px solid var(--surface);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  transform: translateX(calc(-50% + var(--fan-x))) rotate(var(--fan-r));
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.storyr .storyr-stack-photo:nth-child(1) { z-index: 3; --fan-r: -1deg; }
+.storyr .storyr-stack-photo:nth-child(2) { z-index: 2; --fan-x: -38%; --fan-r: -9deg; }
+.storyr .storyr-stack-photo:nth-child(3) { z-index: 1; --fan-x: 38%; --fan-r: 8deg; }
+/* Two prints: side by side, a little apart. */
+.storyr .storyr-stack[data-n='2'] .storyr-stack-photo:nth-child(1) { --fan-x: 18%; --fan-r: 4deg; }
+.storyr .storyr-stack[data-n='2'] .storyr-stack-photo:nth-child(2) { --fan-x: -22%; --fan-r: -6deg; }
+.storyr .storyr-stack-photo img,
+.storyr .storyr-stack-photo .hero-blank {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.storyr .storyr-lead-foot {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin: var(--space-1) 0 0;
+  min-width: 0;
+}
+/* The one strong figure: the words small, the figure large and tabular. */
+.storyr .storyr-figure {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--text-label);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.storyr .storyr-figure .money,
+.storyr .storyr-figure .storyr-num,
+.storyr .storyr-figure.is-plain {
+  color: var(--text);
+  font-size: var(--text-headline);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.storyr .storyr-figure.is-plain { font-size: var(--text-title); }
+.storyr .storyr-facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -101,11 +178,11 @@
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
-  color: var(--text);
+  color: var(--text-2);
   font-size: var(--text-label);
   font-variant-numeric: tabular-nums;
 }
-.storyr .storyr-fact-icon { flex: none; color: var(--text-2); }
+.storyr .storyr-fact-icon { flex: none; color: var(--text-3); }
 /* The kit Button as the card's one action: static, so the stretched
    ::after (04-ui.css .card-open) covers the whole lead card; no box of its
    own, since the card is what lifts. */
@@ -113,7 +190,7 @@
   position: static;
   align-self: flex-start;
   gap: var(--space-2);
-  margin-top: auto;
+  margin-top: var(--space-1);
   padding: 0;
   border: 0;
   background: none;
@@ -221,6 +298,9 @@
   .storyr .storyr-card.is-interactive:hover .storyr-go { opacity: 1; transform: scaleX(-1); }
   .storyr .storyr-lead.is-interactive:hover { transform: translateY(-4px); }
   .storyr .storyr-lead.is-interactive:hover .storyr-lead-arrow { transform: scaleX(-1) translateX(-4px); }
+  .storyr .storyr-lead.is-interactive:hover .storyr-stack-photo {
+    transform: translateX(calc(-50% + var(--fan-x) * 1.25)) rotate(calc(var(--fan-r) * 1.4));
+  }
 }
 .storyr .storyr-lead:has(.card-open:focus-visible) .storyr-lead-arrow { transform: scaleX(-1) translateX(-4px); }
 
@@ -264,7 +344,11 @@
   .storyr .storyr-card.card,
   .storyr .storyr-go,
   .storyr .storyr-lead-arrow,
+  .storyr .storyr-stack-photo,
   .storyr .storyr-dot { transition: none; }
+  .storyr .storyr-lead.is-interactive:hover .storyr-stack-photo {
+    transform: translateX(calc(-50% + var(--fan-x))) rotate(var(--fan-r));
+  }
   .storyr .storyr-card.card,
   .storyr .storyr-card.card:hover,
   .storyr .storyr-card:has(.card-open:focus-visible) { transform: none; }

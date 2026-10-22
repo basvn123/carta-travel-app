@@ -29,7 +29,7 @@ import { StoryRail, StoryCard, STORY_SIZES } from './StoryRail.jsx';
  * between the tiles.
  *
  * T587: each strip is a StoryRail (the owner's Komoot rail in Carta's
- * colours): a tilted lead card holding the heading, one line, the "See all"
+ * colours): a tilted lead card holding the heading, a stack of its photos (T599), the "See all"
  * and facts read from the rail's own rows (the cheapest day, the month when
  * every place is good then, the best Score), then tall photo cards with the
  * status and the Score in solid pills on the photo. `month` is the month the
@@ -68,13 +68,17 @@ function withNode(text, node) {
 // The rails whose own question already says the month, or the gem: their
 // cards do not repeat it in the status pill.
 const MONTH_RAILS = new Set(['now', 'cost', 'beach']);
-// One short line under each rail's heading (rail.line.*), where one is written.
-const LINES = new Set(['saved', 'now', 'cost', 'top', 'hiking', 'beach', 'gems', 'nocar', 'quiet']);
+// One short line under a rail's heading (rail.line.*), only where it says
+// something the heading does not (T599: what the day price covers, what a
+// hiking base or a car-free trip means). The other rails speak for themselves.
+const LINES = new Set(['cost', 'hiking', 'nocar']);
 
 const inMonth = (p, month) => !!month && (p.climate?.best || []).includes(month);
 
 /** The lead card's facts, read from the rail's own rows: the cheapest day,
- *  the month when every place in it is good then, and the best Score. */
+ *  the month when every place in it is good then, and the best Score. The
+ *  cheapest day is the card's one large figure (T599); a rail with no price
+ *  shows its best Score large instead. */
 function railFacts(rows, month, monthLong, t) {
   const facts = [];
   const priced = rows.filter((p) => p.cost?.dayEur != null);
@@ -83,6 +87,7 @@ function railFacts(rows, month, monthLong, t) {
     facts.push({
       key: 'from',
       icon: PiggyIcon,
+      figure: true,
       text: withNode(t('rail.factFrom', { price: SLOT }), <Money value={low.cost.dayEur} est={isNational(low.cost)} />),
     });
   }
@@ -91,7 +96,15 @@ function railFacts(rows, month, monthLong, t) {
   }
   const scores = rows.map((p) => p.rating?.score).filter((n) => Number.isFinite(n));
   if (scores.length) {
-    facts.push({ key: 'score', icon: StarIcon, text: t('rail.factScore', { n: Math.max(...scores).toFixed(1) }) });
+    const best = Math.max(...scores).toFixed(1);
+    facts.push({
+      key: 'score',
+      icon: StarIcon,
+      figure: !priced.length,
+      text: priced.length
+        ? t('rail.factScore', { n: best })
+        : withNode(t('rail.factScore', { n: SLOT }), <span className="storyr-num">{best}</span>),
+    });
   }
   return facts;
 }
@@ -148,6 +161,7 @@ function Rail({ r, onSelect, favorites, onToggleFav, t, month, lang }) {
       line={LINES.has(r.key) ? t(`rail.line.${r.key}`) : null}
       facts={railFacts(shown, month, monthLong, t)}
       onSeeAll={r.seeAll}
+      stack={shown.filter((p) => p.image).slice(0, 3).map((p) => ({ url: p.image, city: p.city }))}
       headingLevel={2}
       className="xrails-rail"
       t={t}
@@ -160,12 +174,16 @@ function Rail({ r, onSelect, favorites, onToggleFav, t, month, lang }) {
   );
 }
 
-export function ExploreRails({ rails, onSelect, favorites, onToggleFav, t, lead = 4, month = null }) {
+/** `hideDoors` (T599): leave out the row of further-rail buttons, for a
+ *  page that shows those doors elsewhere (the overview's top). */
+export function ExploreRails({
+  rails, onSelect, favorites, onToggleFav, t, lead = 4, month = null, hideDoors = false,
+}) {
   const { lang } = useI18n();
   const visible = rails.filter((r) => r.rows.length >= 4);
   if (!visible.length) return null;
   const strips = visible.slice(0, lead);
-  const doors = visible.slice(lead);
+  const doors = hideDoors ? [] : visible.slice(lead);
   return (
     <div className="xrails">
       {strips.map((r) => (

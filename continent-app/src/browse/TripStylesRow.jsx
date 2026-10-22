@@ -70,13 +70,14 @@ export function TripStylesRow({ t, lang: _lang, country = null, onPick, onSeeAll
   if (!styles.length) return null;
   const lows = styles.map((tp) => perDay[tp.slug]).filter(Number.isFinite);
   const facts = lows.length
-    ? [{ key: 'from', icon: PiggyIcon, text: withMoney(t('rail.factFrom', { price: SLOT }), <Money value={Math.min(...lows)} est />) }]
+    ? [{ key: 'from', icon: PiggyIcon, figure: true, text: withMoney(t('rail.factFrom', { price: SLOT }), <Money value={Math.min(...lows)} est />) }]
     : [];
   // T587: a StoryRail, the lead card holding the heading and "See all", the
   // styles as tall photo cards (no Score and no status: a style has neither).
   return (
     <StoryRail id={id} title={t('journey.rowStyles')} line={t('rail.line.styles')} facts={facts}
-      onSeeAll={onSeeAll} t={t} className="jrail-styles">
+      onSeeAll={onSeeAll} t={t} className="jrail-styles"
+      stack={styles.filter((tp) => tp.hero?.url).slice(0, 3).map((tp) => ({ url: tp.hero.url, city: tp.slug }))}>
       {styles.map((tp) => (
         <StyleStoryCard key={tp.slug} type={tp} perDay={perDay[tp.slug]} onPick={onPick} t={t} />
       ))}

@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   routeFromSearch, tabHref, tabFromSearch, placeOf, encodeState, decodeState,
-  seedQuery, LEGACY_TABS,
+  seedQuery, LEGACY_TABS, browseQueryFrom,
 } from '../src/lib/urlState.js';
 
 test('every legacy tab opens its new place', () => {
@@ -98,4 +98,25 @@ test('placeOf groups views into the four places', () => {
   assert.equal(placeOf('trip'), 'plan');
   assert.equal(placeOf('day'), 'plan');
   assert.equal(placeOf('home'), 'home');
+});
+
+// T600: Explore's overview hands its Where text to a category as `dq`.
+test('a category opened with Where text keeps it in the address', () => {
+  const href = tabHref('places', '?d=2026-11-14&dn=IT', { cat: 'trails', q: '  Italy ' });
+  const r = routeFromSearch(href);
+  assert.equal(r.view, 'places');
+  assert.equal(r.cat, 'trails');
+  assert.equal(browseQueryFrom(href), 'Italy');
+  assert.equal(new URLSearchParams(href).get('d'), '2026-11-14');
+  // Text with spaces and accents survives the round trip.
+  assert.equal(browseQueryFrom(tabHref('places', '', { cat: 'beaches', q: "Côte d'Azur" })), "Côte d'Azur");
+});
+
+test('the Where text belongs to one hand-off', () => {
+  // Another place, or a category opened without text, drops it.
+  assert.equal(new URLSearchParams(tabHref('map', '?dq=Italy')).has('dq'), false);
+  assert.equal(new URLSearchParams(tabHref('places', '?dq=Italy', { cat: 'lakes' })).has('dq'), false);
+  assert.equal(new URLSearchParams(tabHref('places', '', { cat: 'lakes', q: '   ' })).has('dq'), false);
+  assert.equal(browseQueryFrom(''), '');
+  assert.equal(browseQueryFrom(`?dq=${'x'.repeat(200)}`).length, 80);
 });
