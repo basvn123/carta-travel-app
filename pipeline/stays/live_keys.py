@@ -38,6 +38,11 @@ from price_xotelo import PROPS, SUPPLY_RAW, choose_anchors  # noqa: E402
 V = OUT / "v1"
 PUBLIC = ROOT / "continent-app" / "public" / "stays" / "v1"
 CELL = 4            # grid cells of 1/4 degree, so a town only scans its neighbours
+# T562 calibration (calibrate_live.py, 2026-10-22: 85 ordinary Tuesdays in 26
+# towns, 476 Xotelo calls): tonight / geomean(yearly low, high) ran at 0.804 of
+# the model's own season, so the geometric mean sits about 24% above a hotel's
+# real typical night. typ is scaled by that, so an ordinary week reads 1.0.
+TYP_SCALE = 0.804
 KIND = {"hotel": "h", "guesthouse": "g"}
 
 
@@ -62,7 +67,7 @@ def keys_for(dest, grid, osm_rows):
         if a["kind"] not in KIND or not (lo and hi and 5 <= lo <= hi):
             continue
         out.append([a["key"], KIND[a["kind"]], a.get("stars") or 0, a.get("band", -1),
-                    round((lo * hi) ** 0.5)])
+                    round((lo * hi) ** 0.5 * TYP_SCALE)])
     return out
 
 
