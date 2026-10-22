@@ -619,7 +619,7 @@ Every input the traveller types or picks into.
 - **Hover:** the edge shifts to `--neutral-300`.
 - **Focus:** the 2 px `--focus` ring at a 1 px offset, and the edge turns `--action`.
 - **Error / Disabled:** an error turns the edge `--danger`, sets `aria-invalid`, and shows one sentence under the field in `--danger` at `--text-caption` 600 that says what happened and what to do. Help text sits under the field in `--text-3` at `--text-caption`. Both are tied to the control with `aria-describedby`. Disabled is `--surface-sunken` with `--text-3`.
-- **Rule:** the label is required and always present. `hideLabel` keeps it for assistive tech on a search box whose purpose the icon and context make plain. A placeholder is optional (owner 2026-10-22, T569): an empty field may stay empty, and a placeholder, when there is one, is never the name of a field. Ask Carta's bar has none; its empty field types its suggested questions (see Ask Carta exception).
+- **Rule:** the label is required and always present. `hideLabel` keeps it for assistive tech on a search box whose purpose the icon and context make plain. A placeholder is optional (owner 2026-10-22, T569): an empty field may stay empty, and a placeholder, when there is one, is never the name of a field. Ask Carta's chat field has none; while empty it types its suggested questions (see Ask Carta exception).
 
 ### Icons
 
@@ -675,11 +675,11 @@ Everything else in this file still binds the home page: the motion tokens, the a
 
 ### Ask Carta exception (T569)
 
-Owner 2026-10-22: "I like some animation." Ask Carta's bar on Explore (`src/browse/AskBar.jsx`, `.ask-bar` in `75-ask.css`) may move on its own, and nothing else outside the home page may loop:
+Owner 2026-10-22: "I like some animation." Ask Carta is a chat (T570, `src/browse/ask/`, `76-ask-chat.css`): one "Ask Carta" button (header on desktop, beside Filters on a phone) opens a panel docked right under the settings line on desktop (the list makes room, `--chat-w` 420 px) and a full-screen sheet on a phone. It may move on its own, and nothing else outside the home page may loop:
 
-- **Typed suggestions.** While the field is empty and unfocused it types its suggested questions out one at a time in `--text-3` with a 2 px `--text-3` caret, holds each about 1.8 s, erases it and types the next, in a loop. It stops on focus or a typed letter, pauses while the tab is hidden or the bar is out of view, is `aria-hidden`, and does not run at all under reduced motion.
-- **The caret blinks** (1 s, stepped) only while the suggestions type.
-- **Suggestions arrive** with one opacity fade at `--dur-2` when they change.
+- **Typed suggestions.** While the chat's field is empty it types its suggested questions out one at a time in `--text-3`, holds each about 1.8 s, erases it and types the next, in a loop. A drawn 2 px `--text-3` caret blinks (1 s, stepped) only while the field has no focus. It stops on a typed letter, pauses while the tab is hidden or the field is out of view, is `aria-hidden`, and does not run at all under reduced motion.
+- **The work as steps.** While an answer is made, its real stages show as a list; done steps take a `--text-3` tick, the working one an 8 px `--action` dot pulsing (opacity and scale, 1.2 s), because it is live. Each step fades in at `--dur-2`.
+- **Arrivals.** The panel slides in once at `--dur-3`; a question, the trip card and the suggestions fade in at `--dur-2`, suggestions staggered by at most 120 ms.
 
 ### Interaction
 

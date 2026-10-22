@@ -2,7 +2,6 @@ import React from 'react';
 import { SheetShell } from './SheetShell.jsx';
 import { PlaceOverview } from './PlaceOverview.jsx';
 import { GuidedSlots } from './GuidedSearch.jsx';
-import { AskBar } from './AskBar.jsx';
 import { useAsk, EXAMPLE_KEYS } from './useAsk.js';
 import { Button, Field, IconButton, Segmented } from '../components/ui/index.js';
 import { Stepper } from '../components/FilterControls.jsx';
@@ -46,24 +45,17 @@ const ON_DEVICE = import.meta.env?.VITE_ASK_ON_DEVICE === '1';
  */
 export function AskSearchFull({
   t, lang, guided, rows, countries, labels, facets = {}, nearRow = null, budgetSteps = [40, 60, 80, 100, 130],
-  onApply = null, onOpenPlace, onPlanTrip = null, price, mode = 'explore', inHeader = false, bar = false, places = [],
+  onApply = null, onOpenPlace, onPlanTrip = null, price, mode = 'explore', inHeader = false,
   requestOpen = false, onOpenRequested = null, askSeed = null, retrieve = RETRIEVE, onDevice: deviceProp = undefined, favorites = null, onToggleFav = null,
 }) {
   const [open, setOpen] = React.useState(false);
-  const triggerRef = React.useRef(null);
-  // T568: under Explore's bar the panel takes the field's width, so the
-  // answer opens straight under the question.
-  const [barWidth, setBarWidth] = React.useState(0);
-  const openUnderBar = React.useCallback(() => {
-    if (bar) setBarWidth(triggerRef.current?.offsetWidth || 0);
-    setOpen(true);
-  }, [bar]);
   React.useEffect(() => {
     if (!requestOpen) return;
-    openUnderBar();
+    setOpen(true);
     onOpenRequested?.();
-  }, [requestOpen, onOpenRequested, openUnderBar]);
+  }, [requestOpen, onOpenRequested]);
   const [text, setText] = React.useState('');
+  const triggerRef = React.useRef(null);
   const inputRef = React.useRef(null);
   const answerRef = React.useRef(null);
   // The on-device writer (T557): a new state of it asks for the written
@@ -93,10 +85,10 @@ export function AskSearchFull({
   // waits for the vocabulary like any question asked too early.
   React.useEffect(() => {
     if (!askSeed?.text) return;
-    openUnderBar();
+    setOpen(true);
     setText(askSeed.text);
     setPending(askSeed.text);
-  }, [askSeed, openUnderBar]);
+  }, [askSeed]);
   React.useEffect(() => {
     if (!ready || !pending) return;
     const q = pending;
@@ -138,15 +130,7 @@ export function AskSearchFull({
   const secondaryPlan = onPlanTrip && primary && primary.run !== planIt && intent?.type !== 'when' && intent?.type !== 'about';
 
   return (
-    <div className={bar ? 'ask-bar-wrap' : `gsearch ask${inHeader ? ' is-header' : ''}${summary ? ' has-value' : ''}${mode === 'plan' ? ' is-plan' : ''}`}>
-      {/* T568: on Explore the door is a real field; a question typed in it
-          is asked here and the panel opens on the answer. */}
-      {bar ? (
-        <AskBar ref={triggerRef} t={t} places={places} asked={summary}
-          onAsk={(q) => { openUnderBar(); if (q) submit(null, q); }}
-          onOpen={openUnderBar}
-          onClear={() => { clearAll(); onApply?.({}, true); }} />
-      ) : (<>
+    <div className={`gsearch ask${inHeader ? ' is-header' : ''}${summary ? ' has-value' : ''}${mode === 'plan' ? ' is-plan' : ''}`}>
       <Button ref={triggerRef} variant="secondary" className="gsearch-trigger"
         iconStart={<SparkIcon size={18} />}
         onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
@@ -157,10 +141,9 @@ export function AskSearchFull({
           <CloseIcon size={16} />
         </IconButton>
       )}
-      </>)}
       {open && (
         <SheetShell title={t('ask.title')} onClose={() => setOpen(false)} anchorRef={triggerRef}
-          width={barWidth || 760} className="gsearch-sheet ask-sheet" labelId="ask-title" initialFocusRef={inputRef}
+          width={760} className="gsearch-sheet ask-sheet" labelId="ask-title" initialFocusRef={inputRef}
           closeLabel={t('gs.close')}>
           <div className="gs ask-body">
             <form className="gs-field ask-field" role="search" onSubmit={submit}>
@@ -309,14 +292,16 @@ function Cite({ n }) {
 
 function WrittenAnswer({ t, written, device }) {
   const { state, sentences } = written;
+  // One per answer, and a chat (T570) shows many answers on one page.
+  const hId = React.useId();
   if (state === 'idle') return null;
   const line = {
     off: 'ask.written.off', cap: 'ask.written.cap', error: 'ask.written.error', withdrawn: 'ask.written.withdrawn',
   }[state];
   const quiet = !!line && !sentences.length;
   return (
-    <section className={`ask-written${quiet ? ' is-quiet' : ''}`} aria-labelledby="ask-h-written" aria-busy={state === 'writing'}>
-      <h3 className="ask-written-h" id="ask-h-written">
+    <section className={`ask-written${quiet ? ' is-quiet' : ''}`} aria-labelledby={hId} aria-busy={state === 'writing'}>
+      <h3 className="ask-written-h" id={hId}>
         <SparkIcon size={16} className="ask-written-mark" />
         {t('ask.written.title')}
       </h3>
@@ -339,12 +324,15 @@ function WrittenAnswer({ t, written, device }) {
   );
 }
 
-function AskAnswer({ t, answer, facts, intent, written, answerRef, onOpen, favorites, onToggleFav, onMore, device, children }) {
+/** The answer to one question; also each turn of the chat (T570), which
+ *  puts its trip card under the written answer through `afterWritten`. */
+export function AskAnswer({ t, answer, facts, intent, written, answerRef, onOpen, favorites, onToggleFav, onMore, device, afterWritten = null, children }) {
   return (
     <div className="ask-answer">
       <h3 className="ask-lead" tabIndex={-1} ref={answerRef}>{answer.lead}</h3>
       {answer.note && <p className="ask-note">{answer.note}</p>}
       <WrittenAnswer t={t} written={written} device={device} />
+      {afterWritten}
       {answer.picks.length > 0 && (
         <ol className="ask-picks explore-shell" aria-label={t('ask.picksLabel')}>
           {answer.picks.map((p) => {

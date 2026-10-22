@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { fmtMonthRanges, MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
@@ -20,7 +21,7 @@ import {
 } from '../components/Icons.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { cheapestReturn } from '../lib/flights/flights.js';
-import { destAnchor } from '../lib/origins.js';
+import { destAnchor, originLabel } from '../lib/origins.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { openShared } from '../lib/sharedElement.js';
 import { MonthStrip } from '../components/MonthStrip.jsx';
@@ -64,7 +65,7 @@ import { PlaceOverview } from './PlaceOverview.jsx';
 import { overviewRegion, overviewReason, overviewScore, reasonText } from '../lib/placeOverview.js';
 import { MapDrawer } from '../components/MapDrawer.jsx';
 import { useGuidedData, vibeOf } from '../lib/guidedData.js';
-import { AskSearch } from './AskSearch.jsx';
+import { AskChatButton } from './ask/AskChatButton.jsx';
 import {
   noCarOk, underOk, quietOk, matchGuided, guidedComparator, whyFacts, makeLabels,
 } from '../lib/guidedSearch.js';
@@ -803,9 +804,16 @@ export function ExploreTab({
         ? t('explore.emptyCause', { filter: lastChip.label })
         : t('results.empty');
 
-  // Desktop chrome: the controls stand in the left panel; the phone keeps
-  // the toolbar card. Ask Carta no longer portals into the header (T568).
+  // Desktop chrome: Ask Carta's button portals into the app header's slot
+  // and the controls stand in the left panel; the phone keeps the toolbar
+  // card. Only the active tab may claim the slot (both browse tabs stay
+  // mounted, and two portals into one div would interleave).
   const isDesktop = useIsDesktop();
+  const [headerSlot, setHeaderSlot] = React.useState(null);
+  React.useEffect(() => {
+    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
+    else setHeaderSlot(null);
+  }, [isDesktop, isActive]);
 
   // T504: picking and opening. A pin picks a place (the overview shows);
   // the overview, a second tap on the same pin, or a list row opens it. A
@@ -894,35 +902,36 @@ export function ExploreTab({
     dests: data?.destinations || null,
     origin: settingsLine?.origin || null,
   }), [settingsLine?.lifestyle, settingsLine?.stayTier, settingsLine?.origin, data?.flights, data?.destinations]);
-  // T568: Ask Carta is a field in the main panel, under the chips, at every
-  // width (it left the header); its suggestions name the list's top places.
-  const askPlaces = React.useMemo(() => listed.slice(0, 2).map((p) => p.city).filter(Boolean), [listed]);
-  const searchField = () => (
-    <AskSearch
-      bar
-      places={askPlaces}
+  // T570: Ask Carta is a chat behind one small button (the header on
+  // desktop, beside Filters on a phone), its trip card priced from the same
+  // home airport, dates and party as the list.
+  const askTrip = React.useMemo(() => ({
+    origin: settingsLine?.origin || null,
+    originName: settingsLine?.origin ? originLabel(data, settingsLine.origin) : '',
+    flights: data?.flights || null,
+    depart: settingsLine?.departDate || null,
+    back: settingsLine?.returnDate || null,
+    party: settingsLine?.party || 2,
+    destinations: data?.destinations || null,
+  }), [settingsLine?.origin, settingsLine?.departDate, settingsLine?.returnDate, settingsLine?.party, data]);
+  const askButton = (className) => (
+    <AskChatButton
+      className={className}
       t={t}
       lang={lang}
       guided={guided}
       rows={allRows}
       countries={availableCountries}
-      facets={{
-        vibe: xf.vibe, area: xf.area, near: xf.near,
-        country: countryFilter.length === 1 ? countryFilter[0] : null,
-        month: xf.month, budget: xf.budget, nb: xf.nb, nocar: xf.nocar, quiet: xf.quiet,
-        sort: sortKey === 'cost' ? 'cost' : null,
-      }}
-      nearRow={nearRow}
       labels={gLabels}
-      budgetSteps={BUDGET_STEPS}
-      onApply={applyGuided}
+      price={askPrice}
+      trip={askTrip}
+      onApply={(facets) => applyGuided(facets, true)}
       onOpenPlace={openWithMember}
       onPlanTrip={onPlanTrip}
-      price={askPrice}
       favorites={favorites}
       onToggleFav={onToggleFav}
-      requestOpen={openRequest && isActive}
-      askSeed={askSeed}
+      openRequest={openRequest && isActive && !!headerSlot === isDesktop}
+      seed={!!headerSlot === isDesktop ? askSeed : null}
       onOpenRequested={clearOpenRequest}
     />
   );
@@ -1088,6 +1097,7 @@ export function ExploreTab({
 
   return (
     <div className={`explore-shell${view === 'map' ? ' is-map' : ''}${railsIdle ? ' is-rails' : ''}`}>
+      {headerSlot && createPortal(askButton('ac-in-header'), headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the filter
           rail in folds, trip styles first, with one hairline to the panel's
@@ -1119,6 +1129,8 @@ export function ExploreTab({
             door share one row (brief V3-4). The trip styles live in the
             sheet now, and Lifestyle and the shortlist in the input row. */}
         <div className="explore-filterbar xtop">
+          {/* On desktop the same button has portalled into the header. */}
+          {!headerSlot && askButton('ac-in-bar')}
           <Button
             variant="secondary"
             ref={filterBtnRef}
@@ -1162,9 +1174,6 @@ export function ExploreTab({
         {/* On a phone the sort leads the chip row (62-v6-explore.css), so
             the list has one refine row; the bar's own sort shows otherwise. */}
         <FilterChips t={t} chips={chips} onClearAll={resetAll} lead={sortSelect} />
-
-        {/* T568: Ask Carta, under the filters it can set. */}
-        {searchField()}
 
         {/* The one community surface on a browse tab: a real count of what
             people have published, and one door. Absent entirely when

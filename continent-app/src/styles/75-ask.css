@@ -7,110 +7,6 @@
  * colour alone.
  */
 
-/* Explore's bar (T568): a real field in the main panel under the chips, a
-   bounded object (one border, no shadow), its label kept visible beside the
-   question, then a row of questions to ask. */
-.ask-bar { display: flex; flex-direction: column; gap: var(--space-2); margin: var(--space-2) 0 var(--space-4); }
-.ask-bar-field {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 56px;
-  padding: 0 var(--space-2) 0 var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  transition: border-color var(--dur-1) var(--ease-out);
-}
-.ask-bar-field:focus-within { border-color: var(--action); }
-.ask-bar-field:has(.ask-bar-input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
-.ask-bar-label {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: var(--space-2);
-  padding-right: var(--space-3);
-  border-right: 1px solid var(--border-soft);
-  font-size: var(--text-label);
-  font-weight: 600;
-  line-height: var(--leading-ui);
-  color: var(--text);
-  white-space: nowrap;
-  cursor: text;
-}
-.ask-bar-label svg { color: var(--text-2); }
-.ask-bar-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: var(--tap);
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  font-size: var(--text-lead);
-  font-weight: 400;
-  color: var(--text);
-}
-/* The ring is drawn round the whole field (above); the input's own stays
-   transparent, so forced-colours mode still shows one. */
-.ask-bar-input:focus-visible { outline: 2px solid transparent; }
-.ask-bar-input-wrap { position: relative; display: flex; flex: 1 1 auto; align-items: center; min-width: 0; }
-.ask-bar-input-wrap .ask-bar-input { width: 100%; }
-/* T569: the typed hint, under the empty input, in the input's own type. */
-.ask-bar-hint {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  pointer-events: none;
-  font-size: var(--text-lead);
-  color: var(--text-3);
-  white-space: nowrap;
-}
-.ask-bar-caret {
-  flex: none;
-  width: 2px;
-  height: 1.2em;
-  margin-left: 1px;
-  background: var(--text-3);
-  animation: ask-caret 1s steps(1) infinite;
-}
-@keyframes ask-caret { 50% { opacity: 0; } }
-.ask-bar-kbd {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: var(--text-micro);
-  font-weight: 600;
-  color: var(--text-3);
-}
-@media (pointer: fine) { .ask-bar-kbd { display: inline-flex; } }
-.btn.ask-bar-go { flex: none; }
-.ask-bar-sugs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
-.btn.ask-bar-sug { font-weight: 500; color: var(--text-2); animation: ask-in var(--dur-2) var(--ease-out); }
-@media (hover: hover) {
-  .ask-bar-field:hover:not(:focus-within) { border-color: var(--text-3); }
-  .btn.ask-bar-sug:hover { color: var(--text); }
-}
-@media (max-width: 768px) {
-  .ask-bar { margin-top: 0; }
-  /* One row of questions that scrolls sideways, so the list stays near. */
-  .ask-bar-sugs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); }
-  .ask-bar-sugs::-webkit-scrollbar { display: none; }
-  .ask-bar-sugs li { flex: none; }
-}
-@media (max-width: 479px) {
-  /* The spark stays as the label's mark; its word is read, not drawn. */
-  .ask-bar-label { padding-right: var(--space-2); }
-  .ask-bar-label span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-}
-
 /* The field: the question and its Ask, one row, held at the top of the
    sheet while a long answer scrolls under it (a sticky bar: surface, a
    hairline, no shadow). */
@@ -336,8 +232,5 @@ details[open] > summary .ask-receipt-chev { transform: rotate(180deg); }
 
 @media (prefers-reduced-motion: reduce) {
   .ask-sentence { animation: none; }
-  .ask-bar-field { transition: none; }
-  .btn.ask-bar-sug,
-  .ask-bar-caret { animation: none; }
   .ask-receipt-chev { transition: none; }
 }
